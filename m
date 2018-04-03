@@ -1,42 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932101AbeDCLuJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:50:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59578 "EHLO mx2.suse.de"
+        id S1755421AbeDCLvN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:51:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59810 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932066AbeDCLuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:50:07 -0400
-Date: Tue, 3 Apr 2018 13:50:03 +0200
+        id S1755300AbeDCLvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:51:12 -0400
+Date: Tue, 3 Apr 2018 13:51:10 +0200
 From: Jan Kara <jack@suse.cz>
 To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, david@fromorbit.com, hch@lst.de,
+Cc: linux-nvdimm@lists.01.org, Jan Kara <jack@suse.com>,
+        kbuild test robot <lkp@intel.com>, david@fromorbit.com, hch@lst.de,
         linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, snitzer@redhat.com
-Subject: Re: [PATCH v8 05/18] ext4, dax: introduce ext4_dax_aops
-Message-ID: <20180403115003.qfbedsjtxwirqkh6@quack2.suse.cz>
+        linux-kernel@vger.kernel.org, jack@suse.cz, snitzer@redhat.com
+Subject: Re: [PATCH v8 06/18] ext2, dax: introduce ext2_dax_aops
+Message-ID: <20180403115110.x272sevqcutguna6@quack2.suse.cz>
 References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152246895649.36038.5391043415273091960.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152246896163.36038.15934876342603748972.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <152246895649.36038.5391043415273091960.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152246896163.36038.15934876342603748972.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 30-03-18 21:02:36, Dan Williams wrote:
+On Fri 30-03-18 21:02:41, Dan Williams wrote:
 > In preparation for the dax implementation to start associating dax pages
 > to inodes via page->mapping, we need to provide a 'struct
 > address_space_operations' instance for dax. Otherwise, direct-I/O
 > triggers incorrect page cache assumptions and warnings.
 > 
-> Cc: "Theodore Ts'o" <tytso@mit.edu>
-> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> Cc: linux-ext4@vger.kernel.org
-> Cc: Jan Kara <jack@suse.cz>
+> Cc: Jan Kara <jack@suse.com>
+> Reported-by: kbuild test robot <lkp@intel.com>
 > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
 Looks good. You can add:
@@ -46,90 +43,147 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/ext4/inode.c |   42 +++++++++++++++++++++++++++++++-----------
->  1 file changed, 31 insertions(+), 11 deletions(-)
+>  fs/ext2/ext2.h  |    1 +
+>  fs/ext2/inode.c |   46 +++++++++++++++++++++++++++-------------------
+>  fs/ext2/namei.c |   18 ++----------------
+>  3 files changed, 30 insertions(+), 35 deletions(-)
 > 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index c94780075b04..249a97b19181 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2725,12 +2725,6 @@ static int ext4_writepages(struct address_space *mapping,
->  	percpu_down_read(&sbi->s_journal_flag_rwsem);
->  	trace_ext4_writepages(inode, wbc);
+> diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
+> index 032295e1d386..cc40802ddfa8 100644
+> --- a/fs/ext2/ext2.h
+> +++ b/fs/ext2/ext2.h
+> @@ -814,6 +814,7 @@ extern const struct inode_operations ext2_file_inode_operations;
+>  extern const struct file_operations ext2_file_operations;
 >  
-> -	if (dax_mapping(mapping)) {
-> -		ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev,
-> -						  wbc);
-> -		goto out_writepages;
-> -	}
+>  /* inode.c */
+> +extern void ext2_set_file_ops(struct inode *inode);
+>  extern const struct address_space_operations ext2_aops;
+>  extern const struct address_space_operations ext2_nobh_aops;
+>  extern const struct iomap_ops ext2_iomap_ops;
+> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+> index 9b2ac55ac34f..1e01fabef130 100644
+> --- a/fs/ext2/inode.c
+> +++ b/fs/ext2/inode.c
+> @@ -940,9 +940,6 @@ ext2_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  	loff_t offset = iocb->ki_pos;
+>  	ssize_t ret;
+>  
+> -	if (WARN_ON_ONCE(IS_DAX(inode)))
+> -		return -EIO;
 > -
->  	/*
->  	 * No pages to write? This is mainly a kludge to avoid starting
->  	 * a transaction for special inodes like journal inode on last iput()
-> @@ -2955,6 +2949,27 @@ static int ext4_writepages(struct address_space *mapping,
->  	return ret;
+>  	ret = blockdev_direct_IO(iocb, inode, iter, ext2_get_block);
+>  	if (ret < 0 && iov_iter_rw(iter) == WRITE)
+>  		ext2_write_failed(mapping, offset + count);
+> @@ -952,17 +949,16 @@ ext2_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  static int
+>  ext2_writepages(struct address_space *mapping, struct writeback_control *wbc)
+>  {
+> -#ifdef CONFIG_FS_DAX
+> -	if (dax_mapping(mapping)) {
+> -		return dax_writeback_mapping_range(mapping,
+> -						   mapping->host->i_sb->s_bdev,
+> -						   wbc);
+> -	}
+> -#endif
+> -
+>  	return mpage_writepages(mapping, wbc, ext2_get_block);
 >  }
 >  
-> +static int ext4_dax_writepages(struct address_space *mapping,
-> +			       struct writeback_control *wbc)
+> +static int
+> +ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
 > +{
-> +	int ret;
-> +	long nr_to_write = wbc->nr_to_write;
-> +	struct inode *inode = mapping->host;
-> +	struct ext4_sb_info *sbi = EXT4_SB(mapping->host->i_sb);
-> +
-> +	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
-> +		return -EIO;
-> +
-> +	percpu_down_read(&sbi->s_journal_flag_rwsem);
-> +	trace_ext4_writepages(inode, wbc);
-> +
-> +	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
-> +	trace_ext4_writepages_result(inode, wbc, ret,
-> +				     nr_to_write - wbc->nr_to_write);
-> +	percpu_up_read(&sbi->s_journal_flag_rwsem);
-> +	return ret;
+> +	return dax_writeback_mapping_range(mapping,
+> +			mapping->host->i_sb->s_bdev, wbc);
 > +}
 > +
->  static int ext4_nonda_switch(struct super_block *sb)
->  {
->  	s64 free_clusters, dirty_clusters;
-> @@ -3857,10 +3872,6 @@ static ssize_t ext4_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  	if (ext4_has_inline_data(inode))
->  		return 0;
->  
-> -	/* DAX uses iomap path now */
-> -	if (WARN_ON_ONCE(IS_DAX(inode)))
-> -		return 0;
-> -
->  	trace_ext4_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
->  	if (iov_iter_rw(iter) == READ)
->  		ret = ext4_direct_IO_read(iocb, iter);
-> @@ -3946,6 +3957,13 @@ static const struct address_space_operations ext4_da_aops = {
+>  const struct address_space_operations ext2_aops = {
+>  	.readpage		= ext2_readpage,
+>  	.readpages		= ext2_readpages,
+> @@ -990,6 +986,13 @@ const struct address_space_operations ext2_nobh_aops = {
 >  	.error_remove_page	= generic_error_remove_page,
 >  };
 >  
-> +static const struct address_space_operations ext4_dax_aops = {
-> +	.writepages		= ext4_dax_writepages,
+> +static const struct address_space_operations ext2_dax_aops = {
+> +	.writepages		= ext2_dax_writepages,
 > +	.direct_IO		= noop_direct_IO,
 > +	.set_page_dirty		= noop_set_page_dirty,
 > +	.invalidatepage		= noop_invalidatepage,
 > +};
 > +
->  void ext4_set_aops(struct inode *inode)
->  {
->  	switch (ext4_inode_journal_mode(inode)) {
-> @@ -3958,7 +3976,9 @@ void ext4_set_aops(struct inode *inode)
->  	default:
->  		BUG();
->  	}
-> -	if (test_opt(inode->i_sb, DELALLOC))
+>  /*
+>   * Probably it should be a library function... search for first non-zero word
+>   * or memcmp with zero_page, whatever is better for particular architecture.
+> @@ -1388,6 +1391,18 @@ void ext2_set_inode_flags(struct inode *inode)
+>  		inode->i_flags |= S_DAX;
+>  }
+>  
+> +void ext2_set_file_ops(struct inode *inode)
+> +{
+> +	inode->i_op = &ext2_file_inode_operations;
+> +	inode->i_fop = &ext2_file_operations;
 > +	if (IS_DAX(inode))
-> +		inode->i_mapping->a_ops = &ext4_dax_aops;
-> +	else if (test_opt(inode->i_sb, DELALLOC))
->  		inode->i_mapping->a_ops = &ext4_da_aops;
->  	else
->  		inode->i_mapping->a_ops = &ext4_aops;
+> +		inode->i_mapping->a_ops = &ext2_dax_aops;
+> +	else if (test_opt(inode->i_sb, NOBH))
+> +		inode->i_mapping->a_ops = &ext2_nobh_aops;
+> +	else
+> +		inode->i_mapping->a_ops = &ext2_aops;
+> +}
+> +
+>  struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+>  {
+>  	struct ext2_inode_info *ei;
+> @@ -1480,14 +1495,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+>  		ei->i_data[n] = raw_inode->i_block[n];
+>  
+>  	if (S_ISREG(inode->i_mode)) {
+> -		inode->i_op = &ext2_file_inode_operations;
+> -		if (test_opt(inode->i_sb, NOBH)) {
+> -			inode->i_mapping->a_ops = &ext2_nobh_aops;
+> -			inode->i_fop = &ext2_file_operations;
+> -		} else {
+> -			inode->i_mapping->a_ops = &ext2_aops;
+> -			inode->i_fop = &ext2_file_operations;
+> -		}
+> +		ext2_set_file_ops(inode);
+>  	} else if (S_ISDIR(inode->i_mode)) {
+>  		inode->i_op = &ext2_dir_inode_operations;
+>  		inode->i_fop = &ext2_dir_operations;
+> diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+> index e078075dc66f..55f7caadb093 100644
+> --- a/fs/ext2/namei.c
+> +++ b/fs/ext2/namei.c
+> @@ -107,14 +107,7 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, umode_t mode
+>  	if (IS_ERR(inode))
+>  		return PTR_ERR(inode);
+>  
+> -	inode->i_op = &ext2_file_inode_operations;
+> -	if (test_opt(inode->i_sb, NOBH)) {
+> -		inode->i_mapping->a_ops = &ext2_nobh_aops;
+> -		inode->i_fop = &ext2_file_operations;
+> -	} else {
+> -		inode->i_mapping->a_ops = &ext2_aops;
+> -		inode->i_fop = &ext2_file_operations;
+> -	}
+> +	ext2_set_file_ops(inode);
+>  	mark_inode_dirty(inode);
+>  	return ext2_add_nondir(dentry, inode);
+>  }
+> @@ -125,14 +118,7 @@ static int ext2_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+>  	if (IS_ERR(inode))
+>  		return PTR_ERR(inode);
+>  
+> -	inode->i_op = &ext2_file_inode_operations;
+> -	if (test_opt(inode->i_sb, NOBH)) {
+> -		inode->i_mapping->a_ops = &ext2_nobh_aops;
+> -		inode->i_fop = &ext2_file_operations;
+> -	} else {
+> -		inode->i_mapping->a_ops = &ext2_aops;
+> -		inode->i_fop = &ext2_file_operations;
+> -	}
+> +	ext2_set_file_ops(inode);
+>  	mark_inode_dirty(inode);
+>  	d_tmpfile(dentry, inode);
+>  	unlock_new_inode(inode);
 > 
 -- 
 Jan Kara <jack@suse.com>
