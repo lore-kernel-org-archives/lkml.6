@@ -1,82 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932248AbeDCM4W (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 08:56:22 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:41497 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932141AbeDCM4U (ORCPT
+        id S932180AbeDCM6R (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 08:58:17 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:27000 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932130AbeDCM6P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 08:56:20 -0400
-X-Google-Smtp-Source: AIpwx4+x7OSD3ebkQlh5RCzYn2ER/GyWliX7hYaW0q/WYTdbCIw2dSqzKA7seobfzIm7Pv34VunKdKt34isjkFTeYC8=
-MIME-Version: 1.0
-In-Reply-To: <d5c0c170-07ab-273f-7d4f-301d2bedb992@codeaurora.org>
-References: <1522425494-2916-1-git-send-email-okaya@codeaurora.org>
- <1522425494-2916-2-git-send-email-okaya@codeaurora.org> <20180403104925.fuyajja6tyanlna4@lakrids.cambridge.arm.com>
- <CAK8P3a3fZx42sQY41Pf+Q3fMNrP2FgXvvntnrLkQXbAezOQjEw@mail.gmail.com> <d5c0c170-07ab-273f-7d4f-301d2bedb992@codeaurora.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 3 Apr 2018 14:56:18 +0200
-X-Google-Sender-Auth: BLbWm1vyxsgGIRsrDo2VYgvnHtQ
-Message-ID: <CAK8P3a0+Q-aBbKsqqypZfCVzHTwcepL9KhBP9qJKE+2FknWHMg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
- readX() implementation
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Timur Tabi <timur@codeaurora.org>,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 3 Apr 2018 08:58:15 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180403125813epoutp02019cdde727e4578e70941efa763a3a75~h7mtgsn3H0859008590epoutp02t
+X-AuditID: b6c32a49-71dff70000000fee-75-5ac37a64a92c
+Message-ID: <1166142499.594566.1522760284362.JavaMail.jboss@ep1ml501>
+Mime-Version: 1.0
+Subject: RE: [PATCH v2] arm/stacktrace: stop unwinding after an invalid
+ address.
+Reply-To: v.narang@samsung.com
+From: Vaneet Narang <v.narang@samsung.com>
+To: Maninder Singh <maninder1.s@samsung.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "dustinb@codeaurora.org" <dustinb@codeaurora.org>
+CC: "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
+        PANKAJ MISHRA <pankaj.m@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <1521630645-46715-1-git-send-email-maninder1.s@samsung.com>
+X-Drm-Type: Y,confirm
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Date: Tue, 03 Apr 2018 18:28:04 +0530
+X-CMS-MailID: 20180403125804epcms5p382d3d7ce979f0923eeb71f3414175eed
+Content-Type: multipart/mixed;
+        boundary="----=_Part_594565_288609395.1522760284362"
+X-Sendblock-Type: REQ_APPROVE
+X-MTR: 20180403125804epcms5p382d3d7ce979f0923eeb71f3414175eed
+CMS-TYPE: 105P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDJsWRmVeSWpSXmKPExsWy7bCmum5K1eEogz3bLS0u7k61eN69mM1i
+        0+NrrBaXd81hszg0dS+jxeH5bSwW995sZXJg97h87SKzx+W+XiaPzUvqPfq2rGL0+LxJLoA1
+        KtUmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+gIJYWy
+        xJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUrShoZGeoYG5npGRkZ6JaayVkSlQSUJqxo9vf9kL
+        NktVbGprZ2pgPCHZxcjJISFgIjFhwkvWLkYuDiGB3YwSv5/uYuti5ODgFXCVuL3GB8IUlPi7
+        QxjEFBYIknjwkQ2kU0hATuL4jd2MILawgI7EiXlrGEFK2AS0JD62hIMMFBGYxCjxbv1nZhCH
+        WeAJo8Sh1UfZINbySsxof8oCYUtLbF++FWwQp4CHxN57rxgh4qISfxpgakQl3h+bDxUXkWi9
+        d5YZwhaUePBzN1RcRuL7136wVyQEuoE2T97NAuFMYZRoeAPTbS5x/uR8sG4WAVWJp09XsEPE
+        XSTm3LwMFmcWCJW4ub8Pql5WYuqpdUwQtq3ElR3djBA1fBK9v58wwXyzYx6MrSRx7uBOqC8l
+        JJ50zoS61EPixuZeqJmOEuduXWKdwKg4CxG+s5BshrC1JZYtfM0MUsIsoCmxfpc+RFhNYkr/
+        FzYI20yioX0qC4StKDGl+yH7Akb2VYySqQXFuempxaYFhnmp5XrFibnFpXnpesn5uZsYwalX
+        y3MH46xzPocYBTgYlXh4C1wPRQmxJpYVV+YeYlQBmvVow+oLjFIsefl5qUoivHOzDkcJ8aYk
+        VlalFuXHF5XmpBYfYjQFht9EZinR5HxgvsgriTc0sTQwMTMzNzQwsDRREud1DHSJEhJITyxJ
+        zU5NLUgtgulj4uCUamDU3PbWL3qNyodgrj+HHuwuP6fpr7fy4vHot0XxkzgaeVhXPr7Gw53w
+        ddIt47Nrxe17q7/wz74Rl341oNvgctAdcb/+v+8vVd2cwCW97F6H9ud2qbtaFakfzni4zWA9
+        vVnARtR+S9iMdgafosNP1tea3X0Skr54YvX/9tRL+428Ove0X1vFodSuxFKckWioxVxUnAgA
+        /HruK98DAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180321111139epcas5p4d5b75f4e1b572ae4e55aef737cd6d8e9
+X-RootMTR: 20180321111139epcas5p4d5b75f4e1b572ae4e55aef737cd6d8e9
+References: <1521630645-46715-1-git-send-email-maninder1.s@samsung.com>
+        <CGME20180321111139epcas5p4d5b75f4e1b572ae4e55aef737cd6d8e9@epcms5p3>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 2:44 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
-> On 4/3/2018 7:13 AM, Arnd Bergmann wrote:
->> On Tue, Apr 3, 2018 at 12:49 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->>> Hi,
->>>
->>> On Fri, Mar 30, 2018 at 11:58:13AM -0400, Sinan Kaya wrote:
->>>> The default implementation of mapping readX() to __raw_readX() is wrong.
->>>> readX() has stronger ordering semantics. Compiler is allowed to reorder
->>>> __raw_readX().
->>>
->>> Could you please specify what the compiler is potentially reordering
->>> __raw_readX() against, and why this would be wrong?
->>>
->>> e.g. do we care about prior normal memory accesses, subsequent normal
->>> memory accesses, and/or other IO accesses?
->>>
->>> I assume that the asm-generic __raw_{read,write}X() implementations are
->>> all ordered w.r.t. each other (at least for a specific device).
->>
->> I think that is correct: the compiler won't reorder those because of the
->> 'volatile' pointer dereference, but it can reorder access to a normal
->> pointer against a __raw_readl()/__raw_writel(), which breaks the scenario
->> of using writel to trigger a DMA, or using a readl to see if a DMA has
->> completed.
->
-> Yes, we are worried about memory update vs. IO update ordering here.
-> That was the reason why barrier() was introduced in this patch. I'll try to
-> clarify that better in the commit text.
->
->>
->> The question is whether we should use a stronger barrier such
->> as rmb() amd wmb() here rather than a simple compiler barrier.
->>
->> I would assume that on complex architectures with write buffers and
->> out-of-order prefetching, those are required, while on architectures
->> without those features, the barriers are cheap.
->
-> That's my reasoning too. I'm trying to follow the x86 example here where there
-> is a compiler barrier in writeX() and readX() family of functions.
+------=_Part_594565_288609395.1522760284362
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-I think x86 is the special case here because it implicitly guarantees
-the strict ordering in the hardware, as long as the compiler gets it
-right. For the asm-generic version, it may be better to play safe and
-do the safest version, requiring architectures to override that barrier
-if they want to be faster.
+=C2=A0=0D=0AHi=20Russell,=0D=0A=0D=0A=0D=0A>__dabt_usr+0x44/0x60=0D=0A>0xb6=
+748ea4=0D=0A>=5E=5E=5E=5E=5E=5E=5E=5E=0D=0A=0D=0A>---=20a/arch/arm/kernel/s=
+tacktrace.c=0D=0A>+++=20b/arch/arm/kernel/stacktrace.c=0D=0A>=40=40=20-92,6=
+=20+92,9=20=40=40=20static=20int=20save_trace(struct=20stackframe=20*frame,=
+=20void=20*d)=0D=0A>=20=0D=0A>=20=09regs=20=3D=20(struct=20pt_regs=20*)fram=
+e->sp;=0D=0A>=0D=0A>+=09if=20(=21__kernel_text_address(regs->ARM_pc))=0D=0A=
+>+=09=09return=201;=0D=0A>+=0D=0A>=20=09trace->entries=5Btrace->nr_entries+=
++=5D=20=3D=20regs->ARM_pc;=0D=0A=20=0D=0A=C2=A0=0D=0AAny=20Inputs=20or=20Co=
+mments=20on=20this=20patch=20to=20avoid=20storing=20user=20space=20entries=
+=20=0D=0Aduring=20unwind.=0D=0A=C2=A0=0D=0ARegards,=0D=0AVaneet=20Narang
+------=_Part_594565_288609395.1522760284362
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename="rcptInfo.txt"
+Content-Transfer-Encoding: base64
 
-We could use the same macros that riscv has, using __io_br(),
-__io_ar(), __io_bw() and __io_aw() for before/after read/write.
+DQogICA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT0NCiAgICAgIFN1YmplY3QgICAgOiBbUEFUQ0ggdjJdIGFybS9z
+dGFja3RyYWNlOiBzdG9wIHVud2luZGluZyBhZnRlciBhbiBpbnZhbGlkIGFkZHJlc3MuDQogICAg
+ICBGcm9tICAgICAgIDogTWFuaW5kZXIgU2luZ2ggRW5naW5lZXIvU1JJLURlbGhpLVBsYXRmb3Jt
+IFMvVyAxIFRlYW0vU2Ftc3VuZ8KgRWxlY3Ryb25pY3PCoA0KICAgICAgU2VudCBEYXRlICA6IDIw
+MTgtMDMtMjEgMTY6NDEgIEdNVCs1OjMwDQogICA9PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCiAgICAgICAgICAg
+ICAgICAgIE5hbWUgICAgICAgICAgICAgICAgVHlwZSAgICAgICAgICBKb2IgVGl0bGUgICAgICAg
+ICAgICAgICAgICAgICAgIERlcHQuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIENvbXBh
+bnkgICAgICAgICAgICAgICAgDQogICA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCiAgICAgIGxpbnV4QGFybWxp
+bnV4Lm9yZy51ayAgICAgICAgICBUTw0KICAgICAgZHVzdGluYkBjb2RlYXVyb3JhLm9yZyAgICAg
+ICAgIFRPDQogICAgICBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluLi4uICAgQ0MNCiAgICAgIGxp
+bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcgICBDQw0KICAgICAgQU1JVCBTQUhSQVdBVCAgICAg
+ICAgICAgICAgICAgIENDICAgICAgICAgU3RhZmYgRW5naW5lZXIgICAgICAgICAgICAgU1JJLURl
+bGhpLVBsYXRmb3JtIFMvVyAxIFRlYW0gICAgICAgICAgICAgU2Ftc3VuZ8KgRWxlY3Ryb25pY3MN
+CiAgICAgIFBBTktBSiBNSVNIUkEgICAgICAgICAgICAgICAgICBDQyAgICAgICAgIFByaW5jaXBh
+bCBQcm9mZXNzaW9uYWwgICAgIFNSSS1EZWxoaS1QbGF0Zm9ybSBTL1cgMSBUZWFtICAgICAgICAg
+ICAgIFNhbXN1bmfCoEVsZWN0cm9uaWNzDQogICAgICBNYW5pbmRlciBTaW5naCAgICAgICAgICAg
+ICAgICAgQ0MgICAgICAgICBFbmdpbmVlciAgICAgICAgICAgICAgICAgICBTUkktRGVsaGktUGxh
+dGZvcm0gUy9XIDEgVGVhbSAgICAgICAgICAgICBTYW1zdW5nwqBFbGVjdHJvbmljc8KgDQogICAg
+ICBWYW5lZXQgTmFyYW5nICAgICAgICAgICAgICAgICAgQ0MgICAgICAgICBTdGFmZiBFbmdpbmVl
+ciAgICAgICAgICAgICBTUkktRGVsaGktUGxhdGZvcm0gUy9XIDEgVGVhbSAgICAgICAgICAgICBT
+YW1zdW5nIEVsZWN0cm9uaWNzDQogICA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCg==
 
-      Arnd
+------=_Part_594565_288609395.1522760284362--
