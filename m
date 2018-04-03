@@ -1,69 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753878AbeDCVsM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 17:48:12 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43092 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753121AbeDCVsL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 17:48:11 -0400
-Subject: Re: [PATCH v2 1/3] locking: Document the semantics of
- spin_is_locked()
-To: David Howells <dhowells@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>,
-        paulmck@linux.vnet.ibm.com, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>
-References: <Pine.LNX.4.44L0.1804031557470.1399-100000@iolanthe.rowland.org>
- <7471.1522791794@warthog.procyon.org.uk>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <91b57513-99be-7b77-ebe2-a7c2a121475f@infradead.org>
-Date: Tue, 3 Apr 2018 14:47:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753781AbeDCVvr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 17:51:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753367AbeDCVvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 17:51:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A03721837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AIpwx48N6dqNXosuSQrhLGJQcOEfAvBJHPhTlDD5RBGJ8iwEbci4eyujrUXFg0pfmIhZ6ohYeHjxXbbHwx4efHIm//0=
 MIME-Version: 1.0
-In-Reply-To: <7471.1522791794@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CACdnJuutJeeaaB2kwma0MMd9uDDbKavoHEk4koDLe1M6gYZWXQ@mail.gmail.com>
+References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
+ <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
+ <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
+ <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
+ <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com> <CACdnJuutJeeaaB2kwma0MMd9uDDbKavoHEk4koDLe1M6gYZWXQ@mail.gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Tue, 3 Apr 2018 14:51:23 -0700
+X-Gmail-Original-Message-ID: <CALCETrVR_EcbKv5-4AR6Zm02XHhJQQGNDeO8FGkMbYozmuDTJw@mail.gmail.com>
+Message-ID: <CALCETrVR_EcbKv5-4AR6Zm02XHhJQQGNDeO8FGkMbYozmuDTJw@mail.gmail.com>
+Subject: Re: [GIT PULL] Kernel lockdown for secure boot
+To: Matthew Garrett <mjg59@google.com>
+Cc: Andrew Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morris <jmorris@namei.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Justin Forbes <jforbes@redhat.com>,
+        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 02:43 PM, David Howells wrote:
-> Alan Stern <stern@rowland.harvard.edu> wrote:
-> 
->> + * Returns: 1 if @lock is locked, 0 otherwise.
->> + * However, on !CONFIG_SMP builds with !CONFIG_DEBUG_SPINLOCK,
->> + * the return value is always 0 (see include/linux/spinlock_up.h).
->> + * Therefore you should not rely heavily on the return value.
-> 
-> Seems reasonable.
-> 
-> It might also want to include a note that the lock isn't necessarily held by
-> your own CPU.  I would also use "=n" rather than "!", so maybe something like:
-> 
->  * Returns: 1 if @lock is locked, 0 otherwise.
->  *
->  * Note that the function only tells you that the CPU is seen to be locked,
-
-the CPU is locked??
-
->  * not that it is locked on your CPU.
->  *
->  * Further, on CONFIG_SMP=n builds with CONFIG_DEBUG_SPINLOCK=n, the return
->  * value is always 0 (see include/linux/spinlock_up.h).  Therefore you should
->  * not rely heavily on the return value.
-> 
-> David
-> 
+On Tue, Apr 3, 2018 at 12:29 PM, Matthew Garrett <mjg59@google.com> wrote:
+> On Tue, Apr 3, 2018 at 9:46 AM Andy Lutomirski <luto@kernel.org> wrote:
+>> On Tue, Apr 3, 2018 at 9:29 AM, Matthew Garrett <mjg59@google.com> wrote:
+>> > A kernel that allows users arbitrary access to ring 0 is just an
+>> > overfeatured bootloader. Why would you want secure boot in that case?
+>
+>> To get a chain of trust.  I can provision a system with some public
+>> keys, stored in UEFI authenticated variables, such that the system
+>> will only boot a signed image.  That signed image, can, in turn, load
+>> a signed (or hashed or otherwise verfified) kernel and a verified
+>> initramfs.  The initramfs can run a full system from a verified (using
+>> dm-verity or similar) filesystem, for example.  Now it's very hard to
+>> persistently attack this system.  Chromium OS does something very much
+>> like this, except that it doesn't use UEFI as far as I know.  So does
+>> iOS, and so do some Android versions.  None of this requires lockdown,
+>> or even a separation between usermode and kernelmode, to work
+>> correctly.  One could even do this on an MMU-less system if one really
+>> cared to.  More usefully, someone probably has done this using a
+>> unikernel.
+>
+> That's only viable if you're the only person with the ability to sign stuff
+> for your machine - the moment there are generic distributions that your
+> machine trusts, an attacker can use one as a bootloader to compromise your
+> trust chain.
 
 
--- 
-~Randy
+If you removed "as a bootloader", then I agree with that sentence.
+
+Can someone please explain why the UEFI crowd cares so much about "as
+a bootloader"?  Once I'm able to install an OS (Linux kernel +
+bootloader, Windows embedded doodad, OpenBSD, whatever) on your
+machine, I can use your peripherals, read your data, write your data,
+see your keystrokes, use your network connection, re-flash your BIOS
+(at least as well as any OS can), run VMs, and generally own your
+system.  Somehow you all seem fine with all of this, except that the
+fact that I can chainload something else gives UEFI people the
+willies.
+
+Can someone explain why?
