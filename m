@@ -1,62 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932106AbeDCLwC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:52:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49578 "EHLO mail.kernel.org"
+        id S932127AbeDCLwT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:52:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59999 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755435AbeDCLwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:52:01 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A822133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 3 Apr 2018 07:51:58 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-patch-test@lists.linaro.org,
+        id S932089AbeDCLwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:52:18 -0400
+Date: Tue, 3 Apr 2018 13:52:16 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180403075158.0c0a2795@gandalf.local.home>
-In-Reply-To: <20180403110612.GM5501@dhcp22.suse.cz>
-References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
-        <20180330102038.2378925b@gandalf.local.home>
-        <20180403110612.GM5501@dhcp22.suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
+ pointers
+Message-ID: <20180403115216.mgq3omvl4up24uic@pathway.suse.cz>
+References: <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
+ <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
+ <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
+ <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
+ <1521119343.10722.665.camel@linux.intel.com>
+ <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
+ <1521224375.23017.41.camel@linux.intel.com>
+ <20180329145312.4uqygrjqy3fqyl26@pathway.suse.cz>
+ <1522678523.21176.178.camel@linux.intel.com>
+ <20180403011237.GA7129@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403011237.GA7129@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Apr 2018 13:06:12 +0200
-Michal Hocko <mhocko@kernel.org> wrote:
-
-> > I wonder if I should have the ring buffer allocate groups of pages, to
-> > avoid this. Or try to allocate with NORETRY, one page at a time, and
-> > when that fails, allocate groups of pages with RETRY_MAYFAIL, and that
-> > may keep it from causing an OOM?  
+On Tue 2018-04-03 10:12:37, Sergey Senozhatsky wrote:
+> On (04/02/18 17:15), Andy Shevchenko wrote:
+> > > 
+> > > Hmm, I have never seen the error code in this form.
+> > 
+> > We have limited space to print it and error numbers currently can be up
+> > to 0xfff (4095). So, I have no better idea how to squeeze them while
+> > thinking that "(efault)" is much harder to parse in case of error
 > 
-> I wonder why it really matters. The interface is root only and we expect
-> some sanity from an admin, right? So allocating such a large ring buffer
-> that it sends the system to the OOM is a sign that the admin should be
-> more careful. Balancing on the OOM edge is always a risk and the result
-> will highly depend on the workload running in parallel.
+> 'efault' looks to me like a misspelled 'default', for some reason.
 
-This came up because there's scripts or programs that set the size of
-the ring buffer. The complaint was that the application would just set
-the size to something bigger than what was available and cause an OOM
-killing other applications. The final solution is to simply check the
-available memory before allocating the ring buffer:
+I wonder if (-efault) would help a bit.
 
-	/* Check if the available memory is there first */
-	i = si_mem_available();
-	if (i < nr_pages)
-		return -ENOMEM;
+Even better might be (-EFAULT). But then it would be better to use
+(NULL). It already was but it was explicitly changed to the lowercase
+variant by the commit 0f4f81dce93774a447da3c ("vsprintf: factorize
+"(null)" string").
 
-And it works well.
-
--- Steve
+Best Regards,
+Petr
