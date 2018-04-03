@@ -1,97 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752222AbeDCPEz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:04:55 -0400
-Received: from muru.com ([72.249.23.125]:35006 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751772AbeDCPEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:04:49 -0400
-Date: Tue, 3 Apr 2018 08:04:44 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Dan Williams <dcbw@redhat.com>
-Cc: Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
-Message-ID: <20180403150444.GE5700@atomide.com>
-References: <20180331181935.GX5700@atomide.com>
- <20180331191939.GA8999@amd>
- <20180331194616.GA19388@amd>
- <20180331195524.GB19388@amd>
- <20180331234314.GZ5700@atomide.com>
- <20180401131852.GA11086@amd>
- <20180401153631.GA5700@atomide.com>
- <20180401173012.GB5700@atomide.com>
- <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
- <20180402155754.GD5700@atomide.com>
+        id S1751950AbeDCPM0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:12:26 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:37535 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751233AbeDCPMY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 11:12:24 -0400
+X-Google-Smtp-Source: AIpwx48N2CPMRwg7Hk7YcKyvg6KjJ0eAWjVstcRoaXY4wx7nuU+X2R0DHnMhhEf5+XYeR4pKmj0Efw==
+Date: Tue, 3 Apr 2018 17:12:20 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Thomas Hellstrom <thomas@shipmail.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: Signal handling in a page fault handler
+Message-ID: <20180403151220.GW3881@phenom.ffwll.local>
+Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
+        Thomas Hellstrom <thomas@shipmail.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20180402141058.GL13332@bombadil.infradead.org>
+ <152275879566.32747.9293394837417347482@mail.alporthouse.com>
+ <e10f5e18-299b-57fd-4ba7-800caa1a105d@shipmail.org>
+ <20180403144829.GB28565@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180402155754.GD5700@atomide.com>
+In-Reply-To: <20180403144829.GB28565@bombadil.infradead.org>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [180402 15:59]:
-> * Dan Williams <dcbw@redhat.com> [180402 15:51]:
-> > On Sun, 2018-04-01 at 10:30 -0700, Tony Lindgren wrote:
-> > > * Tony Lindgren <tony@atomide.com> [180401 15:38]:
-> > > Found it! Here's what I need to do over n_gsm:
-> > > 
-> > > ngsm 1 "AT+CFUN=1"
-> > > ngsm 1 "AT+CFUN?"
-> > > ngsm 2 "AT+EACC=3,0"    # enable mic
-> > > ngsm 2 "AT+CLVL=4"      # set speaker volume
-> > > ngsm 2 "AT+CMUT=0"      # unmute mic
-> > 
-> > I tried to look through the QMI dumps we have in libqmi from 2013
-> > (latest Qualcomm posted) and couldn't find anything to do with mic
-> > control, speaker volume, or anything like that.
-> > 
-> > If the modem supports the AT service (which I think it does?  Not
-> > looking at the libqmi dumps right now) then it could potentially tunnel
-> > these AT commands through QMI too.
-> > 
-> > Perhaps Qualcomm added something to the Voice service after 2013, or
-> > perhaps there are other services that might control speaker/mic that we
-> > don't have public dumps for yet though.
+On Tue, Apr 03, 2018 at 07:48:29AM -0700, Matthew Wilcox wrote:
+> On Tue, Apr 03, 2018 at 03:12:35PM +0200, Thomas Hellstrom wrote:
+> > I think the TTM page fault handler originally set the standard for this.
+> > First, IMO any critical section that waits for the GPU (like typically the
+> > page fault handler does), should be locked at least killable. The need for
+> > interruptible locks came from the X server's silken mouse relying on signals
+> > for smooth mouse operations: You didn't want the X server to be stuck in the
+> > kernel waiting for GPU completion when it should handle the cursor move
+> > request.. Now that doesn't seem to be the case anymore but to reiterate
+> > Chris' question, why would the signal persist once returned to user-space?
 > 
-> OK thanks for checking. So probably only n_gsm channel 1 is for normal
-> Qualcomm at commands, and then channel 2 and others are commands
-> implemented by Motorola on the mdm6600.
+> Yeah, you graphics people have had to deal with much more recalcitrant
+> hardware than most of the rest of us ... and less reasonable user
+> expectations ("My graphics card was doing something and I expected
+> everything else to keep going" vs "My hard drive died and my kernel
+> paniced, oh well.")
 > 
-> I guess we'd have to add support for reading and writing to
-> /dev/gsmtty2 at least as it looks like these cannot be accessed
-> via /dev/ttyUSB4. Or at least I have not figured out any other
-> way to access them.
+> I don't know exactly how the signal code works at the delivery end;
+> I'm not sure when TIF_SIGPENDING gets cleared.  I just get concerned
+> when I see one bit of kernel code doing things in a very complicated
+> and careful manner and another bit of kernel code blithely assuming
+> that everything's going to be OK.
 
-Hmm or maybe there is some way to select where qmi to tunnels the
-AT commands to? Some kind of channel type paramenter like n_gsm
-has?
+I think you last line pretty much sums up the proper attitude when writing
+gpu drivers:
 
-Anyways, for trying to figure out things for alsamixer, I tested
-that ngsm 2 "AT+EACC=3,0" is not related to cpcap audio register
-settings and the mic is enabled during the call with Pavel's patch
-with alsamixer "Mode" set to either "Call" or "Normal". Also speaker
-keeps working during the call toggling between "Call" and "Normal".
-"Voice" in alsamixer does also control the speaker volume during
-the call. And setting the second "Speaker" from "Voice" to "HiFi"
-mutes the speaker.
+https://i.imgflip.com/27nm7w.jpg
 
-Then alsamixer capture settings for "Mic2" do change the mic gain
-as expected, and setting "Right" to "Off" mutes the mic. And then
-setting "Left" to "Mic 2" turns on the mic again.
-
-So my guess is that ngsm 2 "AT+EACC=3,0" and ngsm 2 "AT+CLVL=4"
-might control some external amp over the mdm6600 gpio pins?
-With "AT+CLVL" values being 0 7 it sounds like 3 gpios for that?
-
-Regards,
-
-Tony
+Cheers, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
