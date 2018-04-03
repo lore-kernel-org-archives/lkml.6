@@ -1,115 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753242AbeDCTS2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:18:28 -0400
-Received: from mga09.intel.com ([134.134.136.24]:53419 "EHLO mga09.intel.com"
+        id S1752989AbeDCTTM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:19:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752924AbeDCTS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:18:26 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,402,1517904000";
-   d="asc'?scan'208";a="31253898"
-From: "Rustad, Mark D" <mark.d.rustad@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-CC: Alexander Duyck <alexander.duyck@gmail.com>,
-        "Daly, Dan" <dan.daly@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        kvm-devel <kvm@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        "netanel@amazon.com" <netanel@amazon.com>,
-        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>
-Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
- unmanaged SR-IOV on virtio_pci devices
-Thread-Topic: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
- unmanaged SR-IOV on virtio_pci devices
-Thread-Index: AQHTvI1siq32SjdMxU+NwObgk2U5/6PThamAgAABlwCAHA/fgIAASHYAgAAPkYCAAA4nAA==
-Date: Tue, 3 Apr 2018 19:18:23 +0000
-Message-ID: <0927465E-0B56-4903-9F5E-288A7D9C46E6@intel.com>
-References: <20180315183449.3102.64791.stgit@localhost.localdomain>
- <20180315184132.3102.90947.stgit@localhost.localdomain>
- <20180316183042-mutt-send-email-mst@kernel.org>
- <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
- <20180403161151-mutt-send-email-mst@kernel.org>
- <CAKgT0UfeSmG=xsd6sTkg4cOMnZ0QiqtCRDt4PynpF3d6nvvFCA@mail.gmail.com>
- <20180403212503-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180403212503-mutt-send-email-mst@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.233.81.62]
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_C63078D8-EFD9-47F7-B81E-F2320701BA1F";
-        protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1751469AbeDCTTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 15:19:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AEBC20CAA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 3 Apr 2018 16:19:07 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Du, Changbin" <changbin.du@intel.com>
+Cc: jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf trace: remove redundant ')'
+Message-ID: <20180403191907.GE23295@kernel.org>
+References: <1520937601-24952-1-git-send-email-changbin.du@intel.com>
+ <20180316075108.xwenvklz3a6scodh@intel.com>
+ <20180316125045.GC10026@kernel.org>
+ <20180328072631.gj72odnaimsohkmc@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180328072631.gj72odnaimsohkmc@intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_C63078D8-EFD9-47F7-B81E-F2320701BA1F
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii;
-	delsp=yes;
-	format=flowed
+Em Wed, Mar 28, 2018 at 03:26:31PM +0800, Du, Changbin escreveu:
+> Hi Arnaldo,
+> Just a kind reminder. Hope you didn't forget this.
 
-On Apr 3, 2018, at 11:27 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+Ok, applied.
 
->> I'm not sure why you would need a feature bit. The capability is
->> controlled via PCI configuration space. If it is present the device
->> has the capability. If it is not then it does not.
->>
->> Basically if the PCI configuration space is not present then the sysfs
->> entries will not be spawned and nothing will attempt to use this
->> function.
->>
->> - ALex
->
-> It's about compability with older guests which ignore the
-> capability.
->
-> The feature is thus helpful so host knows whether guest supports VFs.
-
-This is not about a guest creating its own VFs. This is about a host PF  
-that happens to have a virtio interface to be able to create virtio VFs  
-that can be assigned to guests. Nothing changes at all from a guest  
-perspective. Or maybe I am not understanding what you mean by "whether  
-guest supports VFs".
-
---
-Mark Rustad, Networking Division, Intel Corporation
-
---Apple-Mail=_C63078D8-EFD9-47F7-B81E-F2320701BA1F
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEE6ug8b0Wg+ULmnksNPA7/547j7m4FAlrD034ACgkQPA7/547j
-7m5NWBAAwS8hSMcLsTqh7qp59nFGFZgOM91t49d2Hh4eZI2XOtGG/4uKk7oiQx6/
-S6p8c3FnA2IFPKSc3HpGk4lha6JL45LE6emSeYmGoyOTaUR+u48HrB65IIPbLjJA
-8B8X+do+vtLyp31t61UH1BcO6oYwgRnAIojrKFjM7ga8fnbn0YprCDuGxIeDF/QY
-iXZ373KYf8rbPDIDt9I9USntO6Id47/usTVeTAiyn6Fvjp0AxWm0/JRdOZvoNn2D
-ZEpugdAm3oPG59IZSk9zQzh61VxAL7qOIsGBON60tYQZsHpJKLmsiwwksW3hhmCB
-cE6bcSKmHA5KkA230UtHVizVnja7zJ4TC5luJmctQ1uNzxUL5kMqDuGpCxpGaBml
-7JlF6mhyTGuz3ZgkOkUaH+flpU2AXJ91kxAw1yB9cjZQ17S7ZHO0ke5/lyhzBV1Y
-oz+02LIpgN6KkSuKWS8M1jSDzWpTt7XXJII5ZdcOn8DYrguW2541vltoZlTh1B71
-rCZgT1RfUjktaEaUlGJ7yZ6f4hPtI5cAdfLXw7BHOZNZgkJNxjCKO3Vvi/HRiyQJ
-KdE4pmd4cwOey0NKwcDR3wdYG1/dKrlQCGzb2siaOiCrdIK46FHA3Ubg8PmA1qNk
-3xdRPPTgy3c8iGGWFnUyOTgLPMgPavz+fsZmtQrzBg4L3QV/CS4=
-=0tdq
------END PGP SIGNATURE-----
-
---Apple-Mail=_C63078D8-EFD9-47F7-B81E-F2320701BA1F--
+- Arnaldo
+ 
+> On Fri, Mar 16, 2018 at 09:50:45AM -0300, Arnaldo Carvalho de Melo wrote:
+> > Em Fri, Mar 16, 2018 at 03:51:09PM +0800, Du, Changbin escreveu:
+> > > Hi Arnaldo, How about this simple one? Thanks.
+> > > 
+> > > On Tue, Mar 13, 2018 at 06:40:01PM +0800, changbin.du@intel.com wrote:
+> > > > From: Changbin Du <changbin.du@intel.com>
+> > > > 
+> > > > There is a redundant ')' at the tail of each event. So remove it.
+> > > > $ sudo perf trace --no-syscalls -e 'kmem:*' -a
+> > > >    899.342 kmem:kfree:(vfs_writev+0xb9) call_site=ffffffff9c453979 ptr=(nil))
+> > > >    899.344 kmem:kfree:(___sys_recvmsg+0x188) call_site=ffffffff9c9b8b88 ptr=(nil))
+> > > > 
+> > > > Signed-off-by: Changbin Du <changbin.du@intel.com>
+> > > > ---
+> > > >  tools/perf/builtin-trace.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > > > index e7f1b18..7273f5f 100644
+> > > > --- a/tools/perf/builtin-trace.c
+> > > > +++ b/tools/perf/builtin-trace.c
+> > > > @@ -1959,7 +1959,7 @@ static int trace__event_handler(struct trace *trace, struct perf_evsel *evsel,
+> > > >  				      trace->output);
+> > > >  	}
+> > > >  
+> > > > -	fprintf(trace->output, ")\n");
+> > > > +	fprintf(trace->output, "\n");
+> > 
+> > It looks simple on the surface, but I couldn't quickly recall why this
+> > ')' was put there in the first place... So I left for later to do a 'git
+> > blame' on this file, etc.
+> > 
+> > - Arnaldo
+> > 
+> > > >  	if (callchain_ret > 0)
+> > > >  		trace__fprintf_callchain(trace, sample);
+> > > > -- 
+> > > > 2.7.4
+> > > > 
+> > > 
+> > > -- 
+> > > Thanks,
+> > > Changbin Du
+> 
+> -- 
+> Thanks,
+> Changbin Du
