@@ -1,53 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932152AbeDCMtO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 08:49:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49666 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932087AbeDCMtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 08:49:13 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
-References: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com> <1522600912-6208-1-git-send-email-andrea.parri@amarulasolutions.com>
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: dhowells@redhat.com, paulmck@linux.vnet.ibm.com,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Andrea Parri <parri.andrea@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 1/3] locking: Document the semantics of spin_is_locked()
+        id S932162AbeDCMxV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 08:53:21 -0400
+Received: from foss.arm.com ([217.140.101.70]:60616 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932087AbeDCMxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 08:53:19 -0400
+Date: Tue, 3 Apr 2018 13:53:12 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Niklas Cassel <nks@flawful.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        cyrille.pitchen@free-electrons.com, Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <niklass@axis.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 06/12] PCI: designware-ep: Make dw_pcie_ep_set_bar()
+ handle 64-bit BARs properly
+Message-ID: <20180403125312.GA18128@e107981-ln.cambridge.arm.com>
+References: <20180328115018.31921-1-niklas.cassel@axis.com>
+ <20180328115018.31921-7-niklas.cassel@axis.com>
+ <45971780-3a46-061d-bb76-2f450401c797@ti.com>
+ <20180402193703.GB23587@flawful.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <29561.1522759749.1@warthog.procyon.org.uk>
-Date: Tue, 03 Apr 2018 13:49:09 +0100
-Message-ID: <29562.1522759749@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180402193703.GB23587@flawful.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
+On Mon, Apr 02, 2018 at 09:37:03PM +0200, Niklas Cassel wrote:
+> On Thu, Mar 29, 2018 at 03:17:11PM +0530, Kishon Vijay Abraham I wrote:
+> > Hi,
+> > 
+> > On Wednesday 28 March 2018 05:20 PM, Niklas Cassel wrote:
+> > > Since a 64-bit BAR consists of a BAR pair, we need to write to both
+> > > BARs in the BAR pair to setup the BAR properly.
+> > > 
+> > > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> > > ---
+> > >  drivers/pci/dwc/pcie-designware-ep.c | 11 +++++++++--
+> > >  1 file changed, 9 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+> > > index 5a0bb53c795c..571b90f88d84 100644
+> > > --- a/drivers/pci/dwc/pcie-designware-ep.c
+> > > +++ b/drivers/pci/dwc/pcie-designware-ep.c
+> > > @@ -138,8 +138,15 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
+> > >  		return ret;
+> > >  
+> > >  	dw_pcie_dbi_ro_wr_en(pci);
+> > > -	dw_pcie_writel_dbi2(pci, reg, size - 1);
+> > > -	dw_pcie_writel_dbi(pci, reg, flags);
+> > > +	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
+> > > +		dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
+> > > +		dw_pcie_writel_dbi(pci, reg, flags);
+> > > +		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
+> > > +		dw_pcie_writel_dbi(pci, reg + 4, 0);
+> > > +	} else {
+> > > +		dw_pcie_writel_dbi2(pci, reg, size - 1);
+> > > +		dw_pcie_writel_dbi(pci, reg, flags);
+> > > +	}
+> > 
+> > 
+> > I think this should work too?
+> > 	dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
+> > 	dw_pcie_writel_dbi(pci, reg, flags);
+> > 
+> > 	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
+> > 		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
+> > 		dw_pcie_writel_dbi(pci, reg + 4, 0);
+> > 	}
+> > 
+> 
+> Hello Kishon,
+> 
+> I agree, your suggestion is more neat.
+> 
+> 
+> Kishon, please tell me if you insist that the long if-statement
+> in pci_epc_set_bar() should be split, since there are 5 different
+> conditions. Because imho, having 5 succeeding if-statements isn't
+> clearer than having 1 long if-statement.
+> 
+> If Kishon agrees with me, then the review comment in this mail
+> seems to be the only review comment.
+> And in that case, perhaps Lorenzo wouldn't mind fixing this up.
+> Or perhaps Lorenzo prefers if I reroll the whole patch series?
 
-> +/**
-> + * spin_is_locked() - Check whether a spinlock is locked.
-> + * @lock: Pointer to the spinlock.
-> + *
-> + * This function is NOT required to provide any memory ordering
-> + * guarantees; it could be used for debugging purposes or, when
-> + * additional synchronization is needed, accompanied with other
-> + * constructs (memory barriers) enforcing the synchronization.
-> + *
-> + * Return: 1, if @lock is (found to be) locked; 0, otherwise.
+I updated it myself in my pci/endpoint branch, please have a look, I
+can't guarantee we can merge this for this cycle though, I will ask
+Bjorn; apologies I could not be online for a while.
 
-It's more complicated than that.  This function is dangerous and should be
-used with extreme care.  In the case where CONFIG_SMP=n the value is locked
-one way or the other and it might be the wrong way.
+Lorenzo
 
-David
+> Kind regards,
+> Niklas
