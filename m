@@ -1,69 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753250AbeDCUIn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 16:08:43 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59279 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752650AbeDCUIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 16:08:42 -0400
-Date: Tue, 3 Apr 2018 22:08:39 +0200
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>, quentin.schulz@bootlin.com,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v5 11/13] ARM: sun9i: smp: Add is_sun9i field
-Message-ID: <20180403220839.0ec8f9b8@dell-desktop.home>
-In-Reply-To: <CAGb2v67EzOHd5_Xj9K3ZuAKVZhA4WrwfTM0gE_eR+H4mF1J4eA@mail.gmail.com>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
-        <20180403061836.3926-12-mylene.josserand@bootlin.com>
-        <20180403084655.x6u7s4jzqdvq2eey@flea>
-        <CAGb2v67EzOHd5_Xj9K3ZuAKVZhA4WrwfTM0gE_eR+H4mF1J4eA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753277AbeDCUJQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 16:09:16 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.107]:21545 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752246AbeDCUJO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 16:09:14 -0400
+Date: Tue, 3 Apr 2018 15:09:12 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Atul Gupta <atul.gupta@chelsio.com>, Harsh Jain <harsh@chelsio.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] crypto : chtls_cm - Fix potential NULL pointer dereferences
+Message-ID: <20180403200912.GA25976@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1f3SEy-003tTy-U7
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.145.54.187]:52958
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add null checks on lookup_tid() return value in order to prevent
+null pointer dereferences.
 
-On Tue, 3 Apr 2018 16:48:41 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+Addresses-Coverity-ID: 1467422 ("Dereference null return value")
+Addresses-Coverity-ID: 1467443 ("Dereference null return value")
+Addresses-Coverity-ID: 1467445 ("Dereference null return value")
+Addresses-Coverity-ID: 1467449 ("Dereference null return value")
+Fixes: cc35c88ae4db ("crypto : chtls - CPL handler definition")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/crypto/chelsio/chtls/chtls_cm.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-> On Tue, Apr 3, 2018 at 4:46 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > On Tue, Apr 03, 2018 at 08:18:34AM +0200, Mylène Josserand wrote:  
-> >> To prepare the support of sun8i-a83t, add a field in the smp_data
-> >> structure to enable the case of sun9i.
-> >>
-> >> Start to handle the differences between sun9i-a80 and sun8i-a83t
-> >> by using this variable.
-> >>
-> >> Add an index to retrieve which structures we are using.  
-> >
-> > This should have been in a separate commit, but maybe we can store a
-> > pointer to the array cell we're using instead of always using the
-> > index?  
-> 
-> Using a pointer would also avoid some of the code movement from the
-> previous patch.
-> 
-> ChenYu
-
-Yep, I will use a pointer instead. Thanks for the correction.
-
-Best regards,
-
+diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
+index 82a473a..23c43b8 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_cm.c
++++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
+@@ -1537,6 +1537,10 @@ static int chtls_rx_data(struct chtls_dev *cdev, struct sk_buff *skb)
+ 	struct sock *sk;
+ 
+ 	sk = lookup_tid(cdev->tids, hwtid);
++	if (unlikely(!sk)) {
++		pr_err("can't find conn. for hwtid %u.\n", hwtid);
++		return -EINVAL;
++	}
+ 	skb_dst_set(skb, NULL);
+ 	process_cpl_msg(chtls_recv_data, sk, skb);
+ 	return 0;
+@@ -1585,6 +1589,10 @@ static int chtls_rx_pdu(struct chtls_dev *cdev, struct sk_buff *skb)
+ 	struct sock *sk;
+ 
+ 	sk = lookup_tid(cdev->tids, hwtid);
++	if (unlikely(!sk)) {
++		pr_err("can't find conn. for hwtid %u.\n", hwtid);
++		return -EINVAL;
++	}
+ 	skb_dst_set(skb, NULL);
+ 	process_cpl_msg(chtls_recv_pdu, sk, skb);
+ 	return 0;
+@@ -1646,6 +1654,10 @@ static int chtls_rx_cmp(struct chtls_dev *cdev, struct sk_buff *skb)
+ 	struct sock *sk;
+ 
+ 	sk = lookup_tid(cdev->tids, hwtid);
++	if (unlikely(!sk)) {
++		pr_err("can't find conn. for hwtid %u.\n", hwtid);
++		return -EINVAL;
++	}
+ 	skb_dst_set(skb, NULL);
+ 	process_cpl_msg(chtls_rx_hdr, sk, skb);
+ 
+@@ -2105,6 +2117,10 @@ static int chtls_wr_ack(struct chtls_dev *cdev, struct sk_buff *skb)
+ 	struct sock *sk;
+ 
+ 	sk = lookup_tid(cdev->tids, hwtid);
++	if (unlikely(!sk)) {
++		pr_err("can't find conn. for hwtid %u.\n", hwtid);
++		return -EINVAL;
++	}
+ 	process_cpl_msg(chtls_rx_ack, sk, skb);
+ 
+ 	return 0;
 -- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.7.4
