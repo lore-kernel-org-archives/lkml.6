@@ -1,128 +1,78 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1581203-1522761500-3-6939946588980951159
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='CN'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522761500; b=AhgMllv5U4GxqvCk4nk5wbg7VCV45O9LstW3qmw5vnAmauF79e
-    lab5NUoRvKlbg7EeHQxvynU+yC51ODIhtTWPGmyK1lMw3ux6VOOczCH8v8IzO0aq
-    5i9SvaCLTEmuvPH6jJE29YDgFuJwA+lSQfHhp10nXyiN9+rfBQp65si0uynH4Ngd
-    jjBBbSQiPZyds4yws0PXFibrM+gcSQEVsitsyw91TKMbX/snEk2DbMgM1KdQB8WG
-    xf7o+/hnLvXd9/EA9kT5DjwhuQ0TlRbE0SjWopwtp58Cpvn9AlKUHp6fcOH+u7dt
-    psptQXh161Re40l7c64CDEX+QZOy5fq5h3TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1522761500; bh=x+0KlvRhj3pzKr2vDJUdJh58OY7isq
-    t8gKw7dSvNlpk=; b=NjliBzUieHNxjMQ7t9Ywzjs6oxKAO538fUNrxg5u5aL/v4
-    IV/vcYrCSIfuu20hK0Jl88UHazr3LlehiCMHYygMp4ZF1bouB/MzOdqiiL0Zzynu
-    vuWZKSm0jhcC+3gk1+MUmzBCoGu6CJkhNdA9quI73me6BRhglfpXnaduKHJDiUp0
-    tTDbHko4JS4vy7VrvDfM1F4rVptfo4u3N1VsrBzHTSt5aHjxfHACuWwlItfndCK7
-    jyEy2tzu6qsjfPrSyNfiH+4mkMabZOWqk5i83cUFg/OsIJM7DsQevUbh6pM6rAuZ
-    j/h+oklV/EVKIYLQZY+fsRCw2MSA9Yk5qD0+8RrQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=163.com header.i=@163.com header.b=FAgzILla x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=s110527;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=163.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=163.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=163.com header.i=@163.com header.b=FAgzILla x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=s110527;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=163.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=163.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDpyzyeM4S34pv/V/v7CFlsvVkmOzpPHjGeikopxypusOHnUgZrgubQfUdNF5uW0qGncciGxR4dDQiUwLkX3ysT/L4+3e0RzZl3nfu7oHhMaQ0oBr+ML
-    WpGOJSRLYtRCZT0QKIa6tjUXKx36ZtjhSLF41jQOdhNFQu5Yetzf87SexBN3hiaoj06VaG3JyqjXNl5KOZ4AVXm6b18Fc5avdKsWVEVE2SFHbS+pv1SSkhQY
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Q2uQqsSm_kQA:10 a=x7bEGLp0ZPQA:10
-    a=DkO5AxQyKTsA:10 a=Kd1tUaAdevIA:10 a=dZbOZ2KzAAAA:8 a=jOMowyQMv3pyrqMPvo8A:9
-    a=KMTR2xLX7hPRLViO:21 a=kiBWNWRWcjAsQYcB:21
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932162AbeDCNSR (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 3 Apr 2018 09:18:17 -0400
-Received: from m12-17.163.com ([220.181.12.17]:55740 "EHLO m12-17.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932151AbeDCNSR (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:18:17 -0400
-From: Xidong Wang <wangxidong_97@163.com>
-To: Xidong Wang <wangxidong_97@163.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+Return-Path: <dan.carpenter@oracle.com>
+X-Google-Smtp-Source: AIpwx4+APROkRpS0Oe0jqlehNPlHa7XsNsiBrYtk8i95JEFtDU8iXGQ/7hIUXeALiyEHgWQpINKE
+ARC-Seal: i=1; a=rsa-sha256; t=1522763540; cv=none;
+        d=google.com; s=arc-20160816;
+        b=r1O8eq/cEi94NVvRwoCSXnk7/fqdjgO8tW9y1Ko9jTCrrJSnIrku081cAr394trh3H
+         xsQuDKpc7WIwBgPtAN/MlFtdIZ3yHqvmSz7NLe1ytqnuhk1VqgpmSBlAP6yL9R/CowNO
+         YRSODwIrSGrln+TcMK7IcTWTtDA0RI+mp3cRuI4We8gKrkNVqz38NLTAzff2wpt3mK7e
+         pKIrL6dFn8lV6w1S9d13c2Z/HFjP6YR82rW+ESPWtnYIwIZGIJcVgbppc4WJKWiaT8R8
+         c68pq5NnZ0hmXrtRWQ03Yd3R2feLQWHzDTSgnF9lKkrpOo9bCKWcOGZawGMUllrjUndN
+         3A0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=GoE87s8AIePtFEamd4pWghFGhYnmiYNN0tkhk+hAuOU=;
+        b=MaWdl7fvHr8HjsPOr64yi4/ZZS3W+iitEQMJsCDjumLtbKVaVqBwLDC8lMk92GwLDj
+         QoQkO/gzZ1rs1T6eTk3vReIFgJYVDWakTzM9Ye5YWSQm0BVhQk1pahnq5NM0DS/aEi9K
+         6O9hxiPG05lSdn4pY8R+NE4eFT2pGi9CXU6a1onEg0FPfeaTtsEZTS3QsrZZRdFBgQ6K
+         uGbzoRmN1sWbdsKK1He8qkLpm2DcQmYz2wRgAoQFHKyC83yGsCOR3g0s4YnU7TZ2kY1t
+         QCvvHsHBCYwc9e2tUCjytIB0WlKXvwP2n4lJtb/RD0xC+UJtJ3mXbkcx678EyeETftFt
+         zGRw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=CRAJm+fi;
+       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=CRAJm+fi;
+       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Date: Tue, 3 Apr 2018 16:52:02 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Xidong Wang <wangxidong_97@163.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, Xidong Wang <2711406067@qq.com>
-Subject: [PATCH 1/1] taging: fbtft: fix memory leak
-Date: Tue,  3 Apr 2018 21:14:28 +0800
-Message-Id: <1522761268-7176-1-git-send-email-wangxidong_97@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: EcCowADHZovnfsNa2UPmBw--.43186S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GF1UJr18Zr48Aw1UJFWkWFg_yoWkArb_W3
-        9293srJrW0kr1xtr18CF9xZFyIgr1fAr4vkasxta9xJa9xWa1rJ3y8Xwn8tw4jqa17Za48
-        CrZ5Jr4aqw10gjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU5uwZ7UUUUU==
-X-Originating-IP: [106.120.213.14]
-X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/xtbBFQMd81Xla+EBZQAAsm
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Xidong Wang <2711406067@qq.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] taging: fbtft: fix memory leak
+Message-ID: <20180403135202.3lj4dwafogo5bwrf@mwanda>
+References: <1522761268-7176-1-git-send-email-wangxidong_97@163.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522761268-7176-1-git-send-email-wangxidong_97@163.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8851 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=435
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804030138
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596731155733578693?=
+X-GMAIL-MSGID: =?utf-8?q?1596733302290492441?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Xidong Wang <2711406067@qq.com>
+There is a typo in the subject.  It should be "Staging" instead of
+"taging:".
 
-In function fbtft_framebuffer_alloc(), the memory allocated by
-framebuffer_alloc() is not released on the error path that txbuflen > 0
-and txbuf, which holds the return value of devm_kzalloc(), is NULL.
-This will result in a memory leak bug.
+On Tue, Apr 03, 2018 at 09:14:28PM +0800, Xidong Wang wrote:
+> From: Xidong Wang <2711406067@qq.com>
+> 
+> In function fbtft_framebuffer_alloc(), the memory allocated by
+> framebuffer_alloc() is not released on the error path that txbuflen > 0
+> and txbuf, which holds the return value of devm_kzalloc(), is NULL.
+> This will result in a memory leak bug.
 
-Signed-off-by: Xidong Wang <2711406067@qq.com>
----
- drivers/staging/fbtft/fbtft-core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
-index 0e36b66..169e9dc 100644
---- a/drivers/staging/fbtft/fbtft-core.c
-+++ b/drivers/staging/fbtft/fbtft-core.c
-@@ -819,7 +819,7 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
- 	if (par->gamma.curves && gamma) {
- 		if (fbtft_gamma_parse_str(par,
- 			par->gamma.curves, gamma, strlen(gamma)))
--			goto alloc_fail;
-+			goto err_info;
- 	}
- 
- 	/* Transmit buffer */
-@@ -872,6 +872,9 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
- 
- 	return info;
- 
-+err_info:
-+	framebuffer_release(info);
-+
- alloc_fail:
- 	vfree(vmem);
- 
--- 
-2.7.4
+The txbuf chunk seems to have been dropped.  You're right that it needs
+to be fixed as well.
+
+        if (txbuflen > 0) {
+                txbuf = devm_kzalloc(par->info->device, txbuflen, GFP_KERNEL);
+                if (!txbuf)
+-                        goto alloc_fail;
++			 goto err_info;
+
+regards,
+dan carpenter
