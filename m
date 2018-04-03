@@ -1,113 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751434AbeDCODR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 10:03:17 -0400
-Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:34266 "EHLO
-        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750722AbeDCODQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 10:03:16 -0400
-Authentication-Results: pio-pvt-msa1.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=flawful.org
-Date: Tue, 3 Apr 2018 16:03:10 +0200
-From: Niklas Cassel <nks@flawful.org>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        cyrille.pitchen@free-electrons.com, Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <niklass@axis.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 06/12] PCI: designware-ep: Make dw_pcie_ep_set_bar()
- handle 64-bit BARs properly
-Message-ID: <20180403140310.GA28539@flawful.org>
-References: <20180328115018.31921-1-niklas.cassel@axis.com>
- <20180328115018.31921-7-niklas.cassel@axis.com>
- <45971780-3a46-061d-bb76-2f450401c797@ti.com>
- <20180402193703.GB23587@flawful.org>
- <20180403125312.GA18128@e107981-ln.cambridge.arm.com>
+        id S1751414AbeDCOF4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 10:05:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750722AbeDCOFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 10:05:54 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86E8120CAA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Tue, 3 Apr 2018 09:05:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jacob Keller <jacob.keller@gmail.com>
+Cc: Tal Gilboa <talgi@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        everest-linux-l2@cavium.com, intel-wired-lan@lists.osuosl.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute
+ max supported link bandwidth
+Message-ID: <20180403140552.GB60020@bhelgaas-glaptop.roam.corp.google.com>
+References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152244390359.135666.14890735614456271032.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <31e66048-e8b8-47ba-baf5-023560b4c124@mellanox.com>
+ <20180402004049.GA131023@bhelgaas-glaptop.roam.corp.google.com>
+ <50346f44-de3f-b226-69ad-6de45e94e261@mellanox.com>
+ <20180402140501.GA244675@bhelgaas-glaptop.roam.corp.google.com>
+ <CA+P7+xr1N+X5DyPwNpWUtfqr9U4pLL9bMoB1wkBdf2K9n6cxKw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180403125312.GA18128@e107981-ln.cambridge.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CA+P7+xr1N+X5DyPwNpWUtfqr9U4pLL9bMoB1wkBdf2K9n6cxKw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 01:53:12PM +0100, Lorenzo Pieralisi wrote:
-> On Mon, Apr 02, 2018 at 09:37:03PM +0200, Niklas Cassel wrote:
-> > On Thu, Mar 29, 2018 at 03:17:11PM +0530, Kishon Vijay Abraham I wrote:
-> > > Hi,
-> > > 
-> > > On Wednesday 28 March 2018 05:20 PM, Niklas Cassel wrote:
-> > > > Since a 64-bit BAR consists of a BAR pair, we need to write to both
-> > > > BARs in the BAR pair to setup the BAR properly.
-> > > > 
-> > > > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> > > > ---
-> > > >  drivers/pci/dwc/pcie-designware-ep.c | 11 +++++++++--
-> > > >  1 file changed, 9 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-> > > > index 5a0bb53c795c..571b90f88d84 100644
-> > > > --- a/drivers/pci/dwc/pcie-designware-ep.c
-> > > > +++ b/drivers/pci/dwc/pcie-designware-ep.c
-> > > > @@ -138,8 +138,15 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
-> > > >  		return ret;
-> > > >  
-> > > >  	dw_pcie_dbi_ro_wr_en(pci);
-> > > > -	dw_pcie_writel_dbi2(pci, reg, size - 1);
-> > > > -	dw_pcie_writel_dbi(pci, reg, flags);
-> > > > +	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
-> > > > +		dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
-> > > > +		dw_pcie_writel_dbi(pci, reg, flags);
-> > > > +		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
-> > > > +		dw_pcie_writel_dbi(pci, reg + 4, 0);
-> > > > +	} else {
-> > > > +		dw_pcie_writel_dbi2(pci, reg, size - 1);
-> > > > +		dw_pcie_writel_dbi(pci, reg, flags);
-> > > > +	}
-> > > 
-> > > 
-> > > I think this should work too?
-> > > 	dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
-> > > 	dw_pcie_writel_dbi(pci, reg, flags);
-> > > 
-> > > 	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
-> > > 		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
-> > > 		dw_pcie_writel_dbi(pci, reg + 4, 0);
-> > > 	}
-> > > 
-> > 
-> > Hello Kishon,
-> > 
-> > I agree, your suggestion is more neat.
-> > 
-> > 
-> > Kishon, please tell me if you insist that the long if-statement
-> > in pci_epc_set_bar() should be split, since there are 5 different
-> > conditions. Because imho, having 5 succeeding if-statements isn't
-> > clearer than having 1 long if-statement.
-> > 
-> > If Kishon agrees with me, then the review comment in this mail
-> > seems to be the only review comment.
-> > And in that case, perhaps Lorenzo wouldn't mind fixing this up.
-> > Or perhaps Lorenzo prefers if I reroll the whole patch series?
+On Mon, Apr 02, 2018 at 05:30:54PM -0700, Jacob Keller wrote:
+> On Mon, Apr 2, 2018 at 7:05 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > +/* PCIe speed to Mb/s reduced by encoding overhead */
+> > +#define PCIE_SPEED2MBS_ENC(speed) \
+> > +       ((speed) == PCIE_SPEED_16_0GT ? (16000*(128/130)) : \
+> > +        (speed) == PCIE_SPEED_8_0GT  ?  (8000*(128/130)) : \
+> > +        (speed) == PCIE_SPEED_5_0GT  ?  (5000*(8/10)) : \
+> > +        (speed) == PCIE_SPEED_2_5GT  ?  (2500*(8/10)) : \
+> > +        0)
+> > +
 > 
-> I updated it myself in my pci/endpoint branch, please have a look, I
-> can't guarantee we can merge this for this cycle though, I will ask
-> Bjorn; apologies I could not be online for a while.
+> Should this be "(speed * x ) / y" instead? wouldn't they calculate
+> 128/130 and truncate that to zero before multiplying by the speed? Or
+> are compilers smart enough to do this the other way to avoid the
+> losses?
 
-Hello Lorenzo,
-
-your pci/endpoint branch looks good.
-
-There is no rush, merge it whenever you think is best.
-
-Have in mind that there is EP support @ patchwork for Rockchip
-and for pcie-designware-plat, so make sure to juggle all the
-branches with care :)
-
-Kind regards,
-Niklas
+Yep, thanks for saving me yet more embarrassment.
