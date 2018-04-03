@@ -1,492 +1,381 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752530AbeDCPpP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:45:15 -0400
-Received: from smtp57.i.mail.ru ([217.69.128.37]:49640 "EHLO smtp57.i.mail.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752478AbeDCPpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:45:03 -0400
-From: Sergey Suloev <ssuloev@orpaltech.com>
-To: Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Sergey Suloev <ssuloev@orpaltech.com>
-Subject: [PATCH v3 6/6] spi: sun6i: add DMA transfers support
-Date: Tue,  3 Apr 2018 18:44:49 +0300
-Message-Id: <20180403154449.2443-7-ssuloev@orpaltech.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180403154449.2443-1-ssuloev@orpaltech.com>
-References: <20180403154449.2443-1-ssuloev@orpaltech.com>
-Authentication-Results: smtp57.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
-X-7FA49CB5: 0D63561A33F958A5762EF02E88E7EF74840FE9263A247D7779C26A50B4EE702F725E5C173C3A84C3A1C30C8AFC676C8B9DA152596D0BA7FB6A58BF81F659395FC4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
-X-Mailru-Sender: C5364AD02485212F3ACDC11E67D8491727495271F58E824348D1FC7163900CF6069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
-X-Mras: OK
+        id S1752600AbeDCPpa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:45:30 -0400
+Received: from mail-eopbgr00106.outbound.protection.outlook.com ([40.107.0.106]:58352
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752478AbeDCPp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 11:45:26 -0400
+Date: Tue, 3 Apr 2018 17:45:19 +0200
+From: Ioan Nicu <ioan.nicu.ext@nokia.com>
+To: Matt Porter <mporter@kernel.crashing.org>,
+        Alexandre Bounine <alexandre.bounine@idt.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Frank Kunz <frank.kunz@nokia.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] rapidio: use a reference count for struct mport_dma_req
+Message-ID: <20180403154519.GB25203@nokia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [131.228.2.30]
+X-ClientProxiedBy: VI1PR08CA0222.eurprd08.prod.outlook.com
+ (2603:10a6:802:15::31) To AM4PR07MB3282.eurprd07.prod.outlook.com
+ (2603:10a6:205:9::23)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8ff103a8-a7a3-41fa-a961-08d59979e9d1
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:AM4PR07MB3282;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB3282;3:+LNFO1IZ9tjvOr6B3elVHZWBFtddiaHJ3vUKV9t6wKk69JfG7je1dxzV6ecexFt1PmlOUv05ZK0zM8XsPIUgvxP5wM++Fug2o1Sy+66CUKyq4Mfrg3REVN3lsziCt6CTSsrtnhzkugTgeScNa5bBcfQjIXy9Cb/XUUhxP64bY3OEDjiUPC9Q6dyOoMPiV8jbs02M7MYH5MsPqv5ATwQzjnVsz2hpQZwdmCnkwWjAzE02s+RX6IHmt/TMNLHmlRqd;25:FZKkqB4W6WLPWGEZIM5RTTWtTOahsaQ6DJR3qHNYmS36qbI9J3oJMN9E3fdN8kqHRy+vJIRJjL/y5IWTLbrZBqFwnafM/7Nj2bFNrgbgUqQcQpVSY1aMuj65cG1Wa3KwOMZMMVhHKK5mHiwyYPDSMV4mIWlKYhPbXSWKavHs/pjiU+TePW31ntV1CE+wlwTJgd7dUzIxjkFN7AF2btQcIJO67vf97enY5MBDJbrKqtbN0NoZgrgM9w5ZR1VyXleXV03gs/kgTSjoNOA7a/dF9yC9zIPMwQcN87rSp7WDbWC0Gapo5l4zpdGFuifWJNL+a4f+hDBN5v6XJ2/nA7huxA==;31:br7ABBwgnI/Avtgrl6biu6jz5Yk5RbS3cnhEKI2LuP5iZUqZQJkUdUqA5iJ1aOLypu+e7XVUrJhbkcgOivBwjP3YnE8FInqAI41NJEhJaaNPasIK3zydnBun6XRmMZQXfS8/joUjrjAe7/OFoc0+vh9qYSdpjhPRWlfi+ciSrt7fxaWKxHrpycxO9RSq/+42o2Fr4+1qdNUkRjZrPsLE63wuC7EAABgqEgrovF/3RpA=
+X-MS-TrafficTypeDiagnostic: AM4PR07MB3282:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ioan.nicu.ext@nokia.com;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB3282;20:TC9UzOrQEWrQfyFPdwbswTL0hTrhUi0TLFFOUwX2zsQaXMHpa96yT94p8IfxyZtMOGT5OcKMn17YlSp5UdPx1HcOLqnSBweLxREy7unEIiVIk8bDGCMW5HfotaIxU/r5byW0rUWIJX0fXjY7EFutjGXhq6zYUSepJjrDsoLTtYUhRS+e3+ISr6Mvx/PC6FQZgLCqG6WsHXCr/NfGTeuoi+3NzL0bBY+tcnEFFAhI3yzDGfznDdwhOf/U89HvrAtA73rEGtE9xwg1EUy5WJg5jCoRncLytiOVgVVTpkVm02ZM7/GVHp51fMAoqjODbyxErZhf+c8Q0xc12BeaxBDDjRttnRAH+iyiCz0DsXE651mO5xWjl8TVptfWs8fEQoiFEmoTjh9G8EGgET5HPRx/6voVfsi2fEWzZTwPmB+XwxcjsZfoCUcPyvWT81RT6uCQzpoQiDAc3tTMr+5xSYWbiZgTC8XoS4VWb2ACoexwBF70TiUEnm4kS2cY5HfGvx7AJbbEr3LuasNUjJ1hClURNmjmeAQI8oSWaMIm5TWKG6CArrtg3wsRT7qPz7PxLAX1fBVFTddLl62UL0qDivos30IwgHIJAkY/pGf7nKKIDWo=;4:yAQv67Q2JsxyCtxtcwGW68sUxR6f5bNH2j6i4YRQJx1HT9PDteG7x51eKMZN+U1wiG1CfkzE+4OZIWKY37i3ERdxK3EzzbxCH7dU2O4LKmLRCQfbioHLyV74ScIkwfI6valKM/jmaPtwmfGmrm2Cl7ePMf/ELJ81RtLH6ojOgdhXOMU2UyhKpdrIITAVibrVXsAB4fxr3L1VyiuZvaRUgUxK8MOV+Gc4g5AQyYYbZM1dbK+G/YT9RS+eLpX1Oxag8F0/hdqfR0LlHuH+nhL3IkDCxcIdYPZOBYcVEq5kZZkyhzqGth/UwPsNWT0ArK6r
+X-Microsoft-Antispam-PRVS: <AM4PR07MB32821DAEBC25AC9182D8F274A6A50@AM4PR07MB3282.eurprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(82608151540597);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231221)(11241501184)(806099)(944501327)(52105095)(6055026)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:AM4PR07MB3282;BCL:0;PCL:0;RULEID:;SRVR:AM4PR07MB3282;
+X-Forefront-PRVS: 0631F0BC3D
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(39860400002)(396003)(39380400002)(57704003)(199004)(189003)(1076002)(69596002)(81156014)(81166006)(956004)(2616005)(23726003)(97736004)(105586002)(21086003)(6666003)(16526019)(50466002)(6116002)(36756003)(25786009)(486005)(86362001)(5660300001)(486005)(186003)(7736002)(8676002)(3846002)(305945005)(8936002)(476003)(55016002)(53936002)(106356001)(68736007)(478600001)(26005)(7696005)(52116002)(59450400001)(386003)(33656002)(47776003)(1857600001)(58126008)(2906002)(16586007)(110136005)(316002)(66066001)(18370500001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR07MB3282;H:nokia.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR07MB3282;23:xyaHVJZx0CxjA/f0U2I0IXPi+4o0wwJLbr5KjPH9N?=
+ =?us-ascii?Q?IH9x0o6MYCSxpTdHvK5gmmMUfjngYs5gFG4CBU5nbINVGPnbSuM0Z55z5K9B?=
+ =?us-ascii?Q?Wll8TWFGozgqlVtg34MSwfbZE1QqF8Au8jjpsRjiQ2ogFYRCGDl9Gq6I0AgM?=
+ =?us-ascii?Q?MUiW9PMQ8q5oXMTbtv19P2FAzgyexW10PMol2IInjwp8o94jZnIs/4W+2Y+m?=
+ =?us-ascii?Q?VvR91AAPkBr35OqSJRCJo9WHuBXrH4PqbTNVstRYo9Ex6oENDuvTg/xdTwSX?=
+ =?us-ascii?Q?wOUlzBEzOWFphDi4z+/sTYwuAJIzE7loMI8uhhuK5c0lyR9uI5aeqjtoPrx+?=
+ =?us-ascii?Q?Hfr0bBGTtot9oI8/6MWlrkUk7s5sRuLAz3rWz3ak1jQleWumOLoNRXhZYdDL?=
+ =?us-ascii?Q?LZ6qWQ1dI30a7+7KJoLUhK8Hai/KU63Z7CFTV3SnZ7X0kxADytoG86nfxhre?=
+ =?us-ascii?Q?fjPG7cvdvcbTzSEgt14HSVz4+wRVlpT+cTYNooW7W10/xw8dQwsHeoY2jYGu?=
+ =?us-ascii?Q?+QgRHlGxNhsBzXVMNlyMmGLNg14iy/56oP5MIpZGOnvclGdLfCj/DfPGPEQb?=
+ =?us-ascii?Q?YfLwVaFy8ob4zxEQes2YeD+NUUOdN0MRwr5KYsQ0C6LjrooziW0Ni5LsAEG5?=
+ =?us-ascii?Q?JWbgMc2aagu0dJEEZDxES/Q9/R4phjfuKEzYTraNtZ8FYoe1JMD6S44tMUC/?=
+ =?us-ascii?Q?+dEfGyPYyKeN7aebpjuF3LPR0ZtlSWY7uxp0cKJuwtiPWBG3UROZ0AgF+Gqf?=
+ =?us-ascii?Q?V95q1Tzxn9UyHGE39y7NbTPaj03KNq1LdQJ5DxeR8+pS0m1ffM9liSqwzFiK?=
+ =?us-ascii?Q?d5XQO+43O19OM4TMow2MqKZPq9JP1pnRr4ly/QMoVr27F3VqcaHl/rXvjDf6?=
+ =?us-ascii?Q?PQah6k1qbS7arS5620MSaRVjUmQS/qgSBPWyA7pc5cjNl+7ImW4+ABbEpFS2?=
+ =?us-ascii?Q?iTj2S38MS8is5jwUQ8r57tGxtLHCFaXXiTfz51dxOz3G2Kb5eTRsgUVdSCqb?=
+ =?us-ascii?Q?UQwDeLuopilgxy59Gt44Y12D0/3Xu6oHAC8EiS3tu6AiW2lfir0WJDbTVk2L?=
+ =?us-ascii?Q?+WdqeZRug97+mw7M9joSYjN4FRlYFzWOiOlT0d7g6wqlauwnS0CCwnMr+Jn1?=
+ =?us-ascii?Q?BsDJ80k+HGHhTJ4EQxS1EKGio1XcXsTG/oVIX4P55TKvcrjevahPfOQA+nQ6?=
+ =?us-ascii?Q?POrif3xzGL/8MI+XjgZuo5oclxZ7ODU04hHT2rX21EIFKyoJL/jd0B8jdO+O?=
+ =?us-ascii?Q?sOLnav8nb3wtWx+wYVcQiBv9PsboekMG2J8CZtUTuZ8Meo0gw7VBV4OjM7s9?=
+ =?us-ascii?B?dz09?=
+X-Microsoft-Antispam-Message-Info: rwlLsvV5Et5XKqREEa/SI4UBwjefjbQaGmg7mJuERcz0YsDw7cs06/cdLoATYAhyca5KaK1sNCRjssPMfIIltXKTmOhexFQ5Ln3P7IeRGgTm0z1V26hRVXRgc/yG8PrfojFbhV+rsE1aPsH7CR3KzdgbLEfvsCIwsDc+umdsKLs6aMKvsFs7Dx+fY/W0jnwH8DgjYq81QvQhqV3bJwI3dAIEqz8dp1nI6mJPcOLB3Yk=
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB3282;6:EoxV9RY3qEfpMhFi4WGOY+FEZL5iM8z1k3jAhAfapFRnzxNBk+u7Itw5XXG/BG6H1MGBawqIiZkoqOyl2wrGqEaxyGaQm331nxXyRWlTeThXCvfS4K1UBJBQMOmiO3QGU4GNHzFsjQwVnKJOYR0EQp+maYHTamBlVGX+SxbjALlLDhK4suFhxGd1XDKiBAALVTSKr3WCjldUhmXo2V0WvcQtLf8R25aqrFQbQ3VOQ2BDpXR1zLHZN7l2xlZpfyWnHxOVy6ObY/9omoJJ+7Zi3a6ivJ48vOc7U9/EliAUVgGNXs0hFeu266xNs7jAzyNYhTxqLg7qZl1HtnWKQ+4muxbadAc45NO0EfTbSQ3CpDWsZNLv2kgz7SDCdN3ABP5zJC2iadr5UpDWee9e1Z96dCaL9Kn3qLihO4WEPO4zpbQ771oyr3Ds5XJfeBpX2nC9vE58e5TrOMfanJPk0osUog==;5:Y5+RtocLHKDAF+vK/ldcAET8zE/Mai7x96SV1LRkO/hYyVsG0cDcMKmIsm3yf8V2fznYk0d7cV87uFmGw4NEo4oTEizyT16xfOCsWC9bHtFp+KnOf3mvYFMvCkTgAavLyQ+bciO/nFqSVQZsX5F2joBXPfaEqyRC1zjWmTa3nhY=;24:fhNZyNvcm3EY3RQGXEb08ftekYqW9DoEhTgLetMti9/1X6K/Mn+zg6Fs2foXlXq55vD3QkZRoVvwQIvqfPtMG3Psl5TfyXdKeqOszrxj01w=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB3282;7:wF82O5HwCDq3Ocfw97cSX7HE6RfB8VMSUQ+3shDTG2OkecUIfyUZGbX3pOKj7IT0p4kBnTKOznLdupVx0n+FaRmfMSDLaTiFTtHRZqkcwhXpS8jTcuX+0MRpoKhn9JUU1nXcgwm1wzvIXaRk1N76nxNoA9ANGdGdKOPcZd0GVlTDXsoCJAu6yVjqW9eiiuDH7656CyvADNcv6+tlPZ3k4Kpl8Qr4ya4yRurSqOOTqf7ueBfTqEEJi7PZFar6bHuR
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2018 15:45:22.2529 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ff103a8-a7a3-41fa-a961-08d59979e9d1
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR07MB3282
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DMA transfers are now available for sun6i and sun8i SoCs.
-The DMA mode is used automatically as soon as requested
-transfer length is more than FIFO length.
+Once the dma request is passed to the DMA engine, the DMA
+subsystem would hold a pointer to this structure and could
+call the completion callback after do_dma_request() has
+timed out.
 
-Changes in v3:
-1) Debug log enhancements.
+The current code deals with this by putting timed out SYNC
+requests to a pending list and freeing them later, when the
+mport cdev device is released. But this still does not
+guarantee that the DMA subsystem is really done with those
+transfers, so in theory dma_xfer_callback/dma_req_free
+could be called after mport_cdev_release_dma and could
+potentially access already freed memory.
 
-Signed-off-by: Sergey Suloev <ssuloev@orpaltech.com>
+This patch simplifies the current handling by using a kref
+in the mport dma request structure, so that it gets freed
+only when nobody uses it anymore.
+
+This also simplifies the code a bit, as FAF transfers are
+now handled in the same way as SYNC and ASYNC transfers.
+There is no need anymore for the pending list and for the
+dma workqueue which was used in case of FAF transfers, so
+we remove them both.
+
+Signed-off-by: Ioan Nicu <ioan.nicu.ext@nokia.com>
 ---
- drivers/spi/spi-sun6i.c | 331 ++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 294 insertions(+), 37 deletions(-)
+ drivers/rapidio/devices/rio_mport_cdev.c | 122 +++++--------------------------
+ 1 file changed, 18 insertions(+), 104 deletions(-)
 
-diff --git a/drivers/spi/spi-sun6i.c b/drivers/spi/spi-sun6i.c
-index 2fa9d6e..7f41871 100644
---- a/drivers/spi/spi-sun6i.c
-+++ b/drivers/spi/spi-sun6i.c
-@@ -14,6 +14,8 @@
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-+#include <linux/dmaengine.h>
-+#include <linux/dma-mapping.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-@@ -55,17 +57,20 @@
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index cfb54e01d758..9d27016c899e 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -212,7 +212,6 @@ struct mport_cdev_priv {
+ #ifdef CONFIG_RAPIDIO_DMA_ENGINE
+ 	struct dma_chan		*dmach;
+ 	struct list_head	async_list;
+-	struct list_head	pend_list;
+ 	spinlock_t              req_lock;
+ 	struct mutex		dma_lock;
+ 	struct kref		dma_ref;
+@@ -258,8 +257,6 @@ static DECLARE_WAIT_QUEUE_HEAD(mport_cdev_wait);
+ static struct class *dev_class;
+ static dev_t dev_number;
  
- #define SUN6I_FIFO_CTL_REG		0x18
- #define SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_MASK	0xff
--#define SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_BITS	0
-+#define SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_POS	0
-+#define SUN6I_FIFO_CTL_RF_DRQ_EN		BIT(8)
- #define SUN6I_FIFO_CTL_RF_RST			BIT(15)
- #define SUN6I_FIFO_CTL_TF_ERQ_TRIG_LEVEL_MASK	0xff
--#define SUN6I_FIFO_CTL_TF_ERQ_TRIG_LEVEL_BITS	16
-+#define SUN6I_FIFO_CTL_TF_ERQ_TRIG_LEVEL_POS	16
-+#define SUN6I_FIFO_CTL_TF_DRQ_EN		BIT(24)
- #define SUN6I_FIFO_CTL_TF_RST			BIT(31)
-+#define SUN6I_FIFO_CTL_DMA_DEDICATE		BIT(9)|BIT(25)
+-static struct workqueue_struct *dma_wq;
+-
+ static void mport_release_mapping(struct kref *ref);
  
- #define SUN6I_FIFO_STA_REG		0x1c
- #define SUN6I_FIFO_STA_RF_CNT_MASK		0x7f
--#define SUN6I_FIFO_STA_RF_CNT_BITS		0
-+#define SUN6I_FIFO_STA_RF_CNT_POS		0
- #define SUN6I_FIFO_STA_TF_CNT_MASK		0x7f
--#define SUN6I_FIFO_STA_TF_CNT_BITS		16
-+#define SUN6I_FIFO_STA_TF_CNT_POS		16
+ static int rio_mport_maint_rd(struct mport_cdev_priv *priv, void __user *arg,
+@@ -539,6 +536,7 @@ static int maint_comptag_set(struct mport_cdev_priv *priv, void __user *arg)
+ #ifdef CONFIG_RAPIDIO_DMA_ENGINE
  
- #define SUN6I_CLK_CTL_REG		0x24
- #define SUN6I_CLK_CTL_CDR2_MASK			0xff
-@@ -135,7 +140,7 @@ static inline u32 sun6i_spi_get_tx_fifo_count(struct sun6i_spi *sspi)
+ struct mport_dma_req {
++	struct kref refcount;
+ 	struct list_head node;
+ 	struct file *filp;
+ 	struct mport_cdev_priv *priv;
+@@ -554,11 +552,6 @@ struct mport_dma_req {
+ 	struct completion req_comp;
+ };
+ 
+-struct mport_faf_work {
+-	struct work_struct work;
+-	struct mport_dma_req *req;
+-};
+-
+ static void mport_release_def_dma(struct kref *dma_ref)
  {
- 	u32 reg = sun6i_spi_read(sspi, SUN6I_FIFO_STA_REG);
- 
--	reg >>= SUN6I_FIFO_STA_TF_CNT_BITS;
-+	reg >>= SUN6I_FIFO_STA_TF_CNT_POS;
- 
- 	return reg & SUN6I_FIFO_STA_TF_CNT_MASK;
- }
-@@ -148,7 +153,7 @@ static inline void sun6i_spi_drain_fifo(struct sun6i_spi *sspi, int len)
- 	/* See how much data is available */
- 	reg = sun6i_spi_read(sspi, SUN6I_FIFO_STA_REG);
- 	reg &= SUN6I_FIFO_STA_RF_CNT_MASK;
--	cnt = reg >> SUN6I_FIFO_STA_RF_CNT_BITS;
-+	cnt = reg >> SUN6I_FIFO_STA_RF_CNT_POS;
- 
- 	if (len > cnt)
- 		len = cnt;
-@@ -177,6 +182,15 @@ static inline void sun6i_spi_fill_fifo(struct sun6i_spi *sspi, int len)
- 	}
+ 	struct mport_dev *md =
+@@ -578,8 +571,10 @@ static void mport_release_dma(struct kref *dma_ref)
+ 	complete(&priv->comp);
  }
  
-+static bool sun6i_spi_can_dma(struct spi_master *master,
-+			      struct spi_device *spi,
-+			      struct spi_transfer *tfr)
-+{
-+	struct sun6i_spi *sspi = spi_master_get_devdata(master);
-+
-+	return tfr->len > sspi->fifo_depth;
-+}
-+
- static void sun6i_spi_set_cs(struct spi_device *spi, bool enable)
+-static void dma_req_free(struct mport_dma_req *req)
++static void dma_req_free(struct kref *ref)
  {
- 	struct sun6i_spi *sspi = spi_master_get_devdata(spi->master);
-@@ -208,6 +222,9 @@ static size_t sun6i_spi_max_transfer_size(struct spi_device *spi)
- 	struct spi_master *master = spi->master;
- 	struct sun6i_spi *sspi = spi_master_get_devdata(master);
++	struct mport_dma_req *req = container_of(ref, struct mport_dma_req,
++			refcount);
+ 	struct mport_cdev_priv *priv = req->priv;
+ 	unsigned int i;
  
-+	if (master->can_dma)
-+		return SUN6I_MAX_XFER_SIZE;
-+
- 	return sspi->fifo_depth;
+@@ -611,30 +606,7 @@ static void dma_xfer_callback(void *param)
+ 	req->status = dma_async_is_tx_complete(priv->dmach, req->cookie,
+ 					       NULL, NULL);
+ 	complete(&req->req_comp);
+-}
+-
+-static void dma_faf_cleanup(struct work_struct *_work)
+-{
+-	struct mport_faf_work *work = container_of(_work,
+-						struct mport_faf_work, work);
+-	struct mport_dma_req *req = work->req;
+-
+-	dma_req_free(req);
+-	kfree(work);
+-}
+-
+-static void dma_faf_callback(void *param)
+-{
+-	struct mport_dma_req *req = (struct mport_dma_req *)param;
+-	struct mport_faf_work *work;
+-
+-	work = kmalloc(sizeof(*work), GFP_ATOMIC);
+-	if (!work)
+-		return;
+-
+-	INIT_WORK(&work->work, dma_faf_cleanup);
+-	work->req = req;
+-	queue_work(dma_wq, &work->work);
++	kref_put(&req->refcount, dma_req_free);
  }
  
-@@ -268,16 +285,187 @@ static int sun6i_spi_wait_for_transfer(struct spi_device *spi,
- 	return 0;
- }
- 
-+static void sun6i_spi_dma_callback(void *param)
-+{
-+	struct spi_master *master = param;
-+
-+	dev_dbg(&master->dev, "DMA transfer complete\n");
-+	spi_finalize_current_transfer(master);
-+}
-+
-+static int sun6i_spi_dmap_prep_tx(struct spi_master *master,
-+				  struct spi_transfer *tfr,
-+				  dma_cookie_t *cookie)
-+{
-+	struct dma_async_tx_descriptor *chan_desc = NULL;
-+
-+	chan_desc = dmaengine_prep_slave_sg(master->dma_tx,
-+					    tfr->tx_sg.sgl, tfr->tx_sg.nents,
-+					    DMA_TO_DEVICE,
-+					    DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-+	if (!chan_desc) {
-+		dev_err(&master->dev,
-+			"Couldn't prepare TX DMA slave\n");
-+		return -EIO;
-+	}
-+
-+	chan_desc->callback = sun6i_spi_dma_callback;
-+	chan_desc->callback_param = master;
-+
-+	*cookie = dmaengine_submit(chan_desc);
-+	dma_async_issue_pending(master->dma_tx);
-+
-+	return 0;
-+}
-+
-+static int sun6i_spi_dmap_prep_rx(struct spi_master *master,
-+				  struct spi_transfer *tfr,
-+				  dma_cookie_t *cookie)
-+{
-+	struct dma_async_tx_descriptor *chan_desc = NULL;
-+
-+	chan_desc = dmaengine_prep_slave_sg(master->dma_rx,
-+					    tfr->rx_sg.sgl, tfr->rx_sg.nents,
-+					    DMA_FROM_DEVICE,
-+					    DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-+	if (!chan_desc) {
-+		dev_err(&master->dev,
-+			"Couldn't prepare RX DMA slave\n");
-+		return -EIO;
-+	}
-+
-+	chan_desc->callback = sun6i_spi_dma_callback;
-+	chan_desc->callback_param = master;
-+
-+	*cookie = dmaengine_submit(chan_desc);
-+	dma_async_issue_pending(master->dma_rx);
-+
-+	return 0;
-+}
-+
-+static int sun6i_spi_transfer_one_dma(struct spi_device *spi,
-+				      struct spi_transfer *tfr)
-+{
-+	struct spi_master *master = spi->master;
-+	struct sun6i_spi *sspi = spi_master_get_devdata(master);
-+	dma_cookie_t tx_cookie = 0,rx_cookie = 0;
-+	enum dma_status status;
-+	int ret;
-+	u32 reg, trig_level = 0;
-+
-+	dev_dbg(&master->dev, "Using DMA mode for transfer\n");
-+
-+	/* Disable interrupts */
-+	sun6i_spi_write(sspi, SUN6I_INT_CTL_REG, 0);
-+
-+	reg = sun6i_spi_read(sspi, SUN6I_FIFO_CTL_REG);
-+
-+	if (sspi->tx_buf) {
-+		ret = sun6i_spi_dmap_prep_tx(master, tfr, &tx_cookie);
-+		if (ret)
-+			goto out;
-+
-+		reg |= SUN6I_FIFO_CTL_TF_DRQ_EN;
-+
-+		trig_level = sspi->fifo_depth;
-+		reg &= ~SUN6I_FIFO_CTL_TF_ERQ_TRIG_LEVEL_MASK;
-+		reg |= (trig_level << SUN6I_FIFO_CTL_TF_ERQ_TRIG_LEVEL_POS);
-+	}
-+
-+	if (sspi->rx_buf) {
-+		ret = sun6i_spi_dmap_prep_rx(master, tfr, &rx_cookie);
-+		if (ret)
-+			goto out;
-+
-+		reg |= SUN6I_FIFO_CTL_RF_DRQ_EN;
-+
-+		trig_level = 1;
-+		reg &= ~SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_MASK;
-+		reg |= (trig_level << SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_POS);
-+	}
-+
-+	/* Enable Dedicated DMA requests */
-+	sun6i_spi_write(sspi, SUN6I_FIFO_CTL_REG,
-+			reg | SUN6I_FIFO_CTL_DMA_DEDICATE);
-+
-+	/* Start transfer */
-+	sun6i_spi_set(sspi, SUN6I_TFR_CTL_REG, SUN6I_TFR_CTL_XCH);
-+
-+	ret = sun6i_spi_wait_for_transfer(spi, tfr);
-+	if (ret)
-+		goto out;
-+
-+	if (sspi->tx_buf && (status = dma_async_is_tx_complete(master->dma_tx,
-+			tx_cookie, NULL, NULL))) {
-+		dev_warn(&master->dev,
-+			"DMA returned completion status of: %s\n",
-+			status == DMA_ERROR ? "error" : "in progress");
-+	}
-+	if (sspi->rx_buf && (status = dma_async_is_tx_complete(master->dma_rx,
-+			rx_cookie, NULL, NULL))) {
-+		dev_warn(&master->dev,
-+			"DMA returned completion status of: %s\n",
-+			status == DMA_ERROR ? "error" : "in progress");
-+	}
-+
-+out:
-+	if (ret) {
-+		dev_dbg(&master->dev, "DMA channel teardown\n");
-+		if (sspi->tx_buf)
-+			dmaengine_terminate_sync(master->dma_tx);
-+		if (sspi->rx_buf)
-+			dmaengine_terminate_sync(master->dma_rx);
-+	}
-+
-+	sun6i_spi_drain_fifo(sspi, sspi->fifo_depth);
-+
-+	return ret;
-+}
-+
-+static int sun6i_spi_transfer_one_pio(struct spi_device *spi,
-+				      struct spi_transfer *tfr)
-+{
-+	struct spi_master *master = spi->master;
-+	struct sun6i_spi *sspi = spi_master_get_devdata(master);
-+	unsigned int trig_level;
-+	int ret;
-+
-+	/* Disable DMA requests */
-+	sun6i_spi_write(sspi, SUN6I_FIFO_CTL_REG, 0);
-+
-+	/*
-+	 * Setup FIFO interrupt trigger level
-+	 * Here we choose 3/4 of the full fifo depth, as it's the hardcoded
-+	 * value used in old generation of Allwinner SPI controller.
-+	 * (See spi-sun4i.c)
-+	 */
-+	trig_level = sspi->fifo_depth / 4 * 3;
-+	sun6i_spi_write(sspi, SUN6I_FIFO_CTL_REG,
-+			(trig_level << SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_POS));
-+
-+	sun6i_spi_fill_fifo(sspi, sspi->fifo_depth);
-+
-+	/* Enable the interrupts */
-+	sun6i_spi_set(sspi, SUN6I_INT_CTL_REG, SUN6I_INT_CTL_TC |
-+					       SUN6I_INT_CTL_RF_RDY);
-+
-+	/* Start transfer */
-+	sun6i_spi_set(sspi, SUN6I_TFR_CTL_REG, SUN6I_TFR_CTL_XCH);
-+
-+	ret = sun6i_spi_wait_for_transfer(spi, tfr);
-+
-+	sun6i_spi_write(sspi, SUN6I_INT_CTL_REG, 0);
-+
-+	return ret;
-+}
-+
- static int sun6i_spi_transfer_one(struct spi_master *master,
- 				  struct spi_device *spi,
- 				  struct spi_transfer *tfr)
- {
- 	struct sun6i_spi *sspi = spi_master_get_devdata(master);
--	unsigned int mclk_rate, div, timeout;
--	unsigned int start, end, tx_time;
--	unsigned int trig_level;
-+	unsigned int mclk_rate, div;
- 	unsigned int tx_len = 0;
--	int ret = 0;
- 	u32 reg;
- 
- 	/* A zero length transfer never finishes if programmed
-@@ -285,10 +473,15 @@ static int sun6i_spi_transfer_one(struct spi_master *master,
- 	if (!tfr->len)
- 		return 0;
- 
--	/* Don't support transfer larger than the FIFO */
--	if (tfr->len > sspi->fifo_depth)
-+	if (tfr->len > SUN6I_MAX_XFER_SIZE)
- 		return -EMSGSIZE;
- 
-+	if (!master->can_dma) {
-+		/* Don't support transfer larger than the FIFO */
-+		if (tfr->len > sspi->fifo_depth)
-+			return -EMSGSIZE;
-+	}
-+
- 	sspi->tx_buf = tfr->tx_buf;
- 	sspi->rx_buf = tfr->rx_buf;
- 	sspi->len = tfr->len;
-@@ -300,16 +493,6 @@ static int sun6i_spi_transfer_one(struct spi_master *master,
- 	sun6i_spi_write(sspi, SUN6I_FIFO_CTL_REG,
- 			SUN6I_FIFO_CTL_RF_RST | SUN6I_FIFO_CTL_TF_RST);
- 
--	/*
--	 * Setup FIFO interrupt trigger level
--	 * Here we choose 3/4 of the full fifo depth, as it's the hardcoded
--	 * value used in old generation of Allwinner SPI controller.
--	 * (See spi-sun4i.c)
--	 */
--	trig_level = sspi->fifo_depth / 4 * 3;
--	sun6i_spi_write(sspi, SUN6I_FIFO_CTL_REG,
--			(trig_level << SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_BITS));
--
- 	/*
- 	 * If it's a TX only transfer, we don't want to fill the RX
- 	 * FIFO with bogus data
-@@ -364,22 +547,10 @@ static int sun6i_spi_transfer_one(struct spi_master *master,
- 	sun6i_spi_write(sspi, SUN6I_BURST_CTL_CNT_REG,
- 			SUN6I_BURST_CTL_CNT_STC(tx_len));
- 
--	/* Fill the TX FIFO */
--	sun6i_spi_fill_fifo(sspi, sspi->fifo_depth);
--
--	/* Enable the interrupts */
--	sun6i_spi_enable_interrupt(sspi, SUN6I_INT_CTL_TC |
--					 SUN6I_INT_CTL_RF_RDY);
--
--	/* Start the transfer */
--	sun6i_spi_set(sspi, SUN6I_TFR_CTL_REG, SUN6I_TFR_CTL_XCH);
--
--	/* Wait for completion */
--	ret = sun6i_spi_wait_for_transfer(spi, tfr);
--
--	sun6i_spi_write(sspi, SUN6I_INT_CTL_REG, 0);
-+	if (sun6i_spi_can_dma(master, spi, tfr))
-+		return sun6i_spi_transfer_one_dma(spi, tfr);
- 
--	return ret;
-+	return sun6i_spi_transfer_one_pio(spi, tfr);
- }
- 
- static irqreturn_t sun6i_spi_handler(int irq, void *dev_id)
-@@ -409,6 +580,77 @@ static irqreturn_t sun6i_spi_handler(int irq, void *dev_id)
- 	return IRQ_NONE;
- }
- 
-+static int sun6i_spi_dma_setup(struct platform_device *pdev,
-+			       struct resource *res)
-+{
-+	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct sun6i_spi *sspi = spi_master_get_devdata(master);
-+	struct dma_slave_config dma_sconf;
-+	int ret;
-+
-+	master->dma_tx = dma_request_slave_channel_reason(&pdev->dev, "tx");
-+	if (IS_ERR(master->dma_tx)) {
-+		dev_err(&pdev->dev, "Unable to acquire DMA TX channel\n");
-+		ret = PTR_ERR(master->dma_tx);
-+		goto out;
-+	}
-+
-+	dma_sconf.direction = DMA_MEM_TO_DEV;
-+	dma_sconf.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+	dma_sconf.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+	dma_sconf.dst_addr = res->start + SUN6I_TXDATA_REG;
-+	dma_sconf.dst_maxburst = 1;
-+	dma_sconf.src_maxburst = 1;
-+
-+	ret = dmaengine_slave_config(master->dma_tx, &dma_sconf);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Unable to configure DMA TX slave\n");
-+		goto err_rel_tx;
-+	}
-+
-+	master->dma_rx = dma_request_slave_channel_reason(&pdev->dev, "rx");
-+	if (IS_ERR(master->dma_rx)) {
-+		dev_err(&pdev->dev, "Unable to acquire DMA RX channel\n");
-+		ret = PTR_ERR(master->dma_rx);
-+		goto err_rel_tx;
-+	}
-+
-+	dma_sconf.direction = DMA_DEV_TO_MEM;
-+	dma_sconf.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+	dma_sconf.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+	dma_sconf.src_addr = res->start + SUN6I_RXDATA_REG;
-+	dma_sconf.src_maxburst = 1;
-+	dma_sconf.dst_maxburst = 1;
-+
-+	ret = dmaengine_slave_config(master->dma_rx, &dma_sconf);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Unable to configure DMA RX slave\n");
-+		goto err_rel_rx;
-+	}
-+
-+	/* don't set can_dma unless both channels are valid*/
-+	master->can_dma = sun6i_spi_can_dma;
-+
-+	return 0;
-+
-+err_rel_rx:
-+	dma_release_channel(master->dma_rx);
-+err_rel_tx:
-+	dma_release_channel(master->dma_tx);
-+out:
-+	master->dma_tx = NULL;
-+	master->dma_rx = NULL;
-+	return ret;
-+}
-+
-+static void sun6i_spi_dma_release(struct spi_master *master)
-+{
-+	if (master->can_dma) {
-+		dma_release_channel(master->dma_rx);
-+		dma_release_channel(master->dma_tx);
-+	}
-+}
-+
- static int sun6i_spi_runtime_resume(struct device *dev)
- {
- 	struct spi_master *master = dev_get_drvdata(dev);
-@@ -530,6 +772,16 @@ static int sun6i_spi_probe(struct platform_device *pdev)
- 		goto err_free_master;
+ /*
+@@ -765,16 +737,14 @@ static int do_dma_request(struct mport_dma_req *req,
+ 		goto err_out;
  	}
  
-+	ret = sun6i_spi_dma_setup(pdev, res);
-+	if (ret) {
-+		if (ret == -EPROBE_DEFER) {
-+			/* wait for the dma driver to load */
-+			goto err_free_master;
-+		}
-+		dev_warn(&pdev->dev,
-+			"Unable to setup DMA channels: DMA transfers disabled\n");
-+	}
+-	if (sync == RIO_TRANSFER_FAF)
+-		tx->callback = dma_faf_callback;
+-	else
+-		tx->callback = dma_xfer_callback;
++	tx->callback = dma_xfer_callback;
+ 	tx->callback_param = req;
+ 
+ 	req->dmach = chan;
+ 	req->sync = sync;
+ 	req->status = DMA_IN_PROGRESS;
+ 	init_completion(&req->req_comp);
++	kref_get(&req->refcount);
+ 
+ 	cookie = dmaengine_submit(tx);
+ 	req->cookie = cookie;
+@@ -785,6 +755,7 @@ static int do_dma_request(struct mport_dma_req *req,
+ 	if (dma_submit_error(cookie)) {
+ 		rmcd_error("submit err=%d (addr:0x%llx len:0x%llx)",
+ 			   cookie, xfer->rio_addr, xfer->length);
++		kref_put(&req->refcount, dma_req_free);
+ 		ret = -EIO;
+ 		goto err_out;
+ 	}
+@@ -860,6 +831,8 @@ rio_dma_transfer(struct file *filp, u32 transfer_mode,
+ 	if (!req)
+ 		return -ENOMEM;
+ 
++	kref_init(&req->refcount);
 +
- 	/*
- 	 * This wake-up/shutdown pattern is to be able to have the
- 	 * device woken up, even if runtime_pm is disabled
-@@ -556,14 +808,19 @@ err_pm_disable:
- 	pm_runtime_disable(&pdev->dev);
- 	sun6i_spi_runtime_suspend(&pdev->dev);
- err_free_master:
-+	sun6i_spi_dma_release(master);
- 	spi_master_put(master);
+ 	ret = get_dma_channel(priv);
+ 	if (ret) {
+ 		kfree(req);
+@@ -968,42 +941,20 @@ rio_dma_transfer(struct file *filp, u32 transfer_mode,
+ 	ret = do_dma_request(req, xfer, sync, nents);
+ 
+ 	if (ret >= 0) {
+-		if (sync == RIO_TRANSFER_SYNC)
+-			goto sync_out;
+-		return ret; /* return ASYNC cookie */
+-	}
+-
+-	if (ret == -ETIMEDOUT || ret == -EINTR) {
+-		/*
+-		 * This can happen only in case of SYNC transfer.
+-		 * Do not free unfinished request structure immediately.
+-		 * Place it into pending list and deal with it later
+-		 */
+-		spin_lock(&priv->req_lock);
+-		list_add_tail(&req->node, &priv->pend_list);
+-		spin_unlock(&priv->req_lock);
+-		return ret;
++		if (sync == RIO_TRANSFER_ASYNC)
++			return ret; /* return ASYNC cookie */
++	} else {
++		rmcd_debug(DMA, "do_dma_request failed with err=%d", ret);
+ 	}
+ 
+-
+-	rmcd_debug(DMA, "do_dma_request failed with err=%d", ret);
+-sync_out:
+-	dma_unmap_sg(chan->device->dev, req->sgt.sgl, req->sgt.nents, dir);
+-	sg_free_table(&req->sgt);
+ err_pg:
+-	if (page_list) {
++	if (!req->page_list) {
+ 		for (i = 0; i < nr_pages; i++)
+ 			put_page(page_list[i]);
+ 		kfree(page_list);
+ 	}
+ err_req:
+-	if (req->map) {
+-		mutex_lock(&md->buf_mutex);
+-		kref_put(&req->map->ref, mport_release_mapping);
+-		mutex_unlock(&md->buf_mutex);
+-	}
+-	put_dma_channel(priv);
+-	kfree(req);
++	kref_put(&req->refcount, dma_req_free);
  	return ret;
  }
  
- static int sun6i_spi_remove(struct platform_device *pdev)
- {
-+	struct spi_master *master = platform_get_drvdata(pdev);
-+
- 	pm_runtime_force_suspend(&pdev->dev);
+@@ -1121,7 +1072,7 @@ static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
+ 		ret = 0;
  
-+	sun6i_spi_dma_release(master);
-+
+ 	if (req->status != DMA_IN_PROGRESS && req->status != DMA_PAUSED)
+-		dma_req_free(req);
++		kref_put(&req->refcount, dma_req_free);
+ 
+ 	return ret;
+ 
+@@ -1966,7 +1917,6 @@ static int mport_cdev_open(struct inode *inode, struct file *filp)
+ 
+ #ifdef CONFIG_RAPIDIO_DMA_ENGINE
+ 	INIT_LIST_HEAD(&priv->async_list);
+-	INIT_LIST_HEAD(&priv->pend_list);
+ 	spin_lock_init(&priv->req_lock);
+ 	mutex_init(&priv->dma_lock);
+ #endif
+@@ -2006,8 +1956,6 @@ static void mport_cdev_release_dma(struct file *filp)
+ 
+ 	md = priv->md;
+ 
+-	flush_workqueue(dma_wq);
+-
+ 	spin_lock(&priv->req_lock);
+ 	if (!list_empty(&priv->async_list)) {
+ 		rmcd_debug(EXIT, "async list not empty filp=%p %s(%d)",
+@@ -2023,20 +1971,7 @@ static void mport_cdev_release_dma(struct file *filp)
+ 				   req->filp, req->cookie,
+ 				   completion_done(&req->req_comp)?"yes":"no");
+ 			list_del(&req->node);
+-			dma_req_free(req);
+-		}
+-	}
+-
+-	if (!list_empty(&priv->pend_list)) {
+-		rmcd_debug(EXIT, "Free pending DMA requests for filp=%p %s(%d)",
+-			   filp, current->comm, task_pid_nr(current));
+-		list_for_each_entry_safe(req,
+-					 req_next, &priv->pend_list, node) {
+-			rmcd_debug(EXIT, "free req->filp=%p cookie=%d compl=%s",
+-				   req->filp, req->cookie,
+-				   completion_done(&req->req_comp)?"yes":"no");
+-			list_del(&req->node);
+-			dma_req_free(req);
++			kref_put(&req->refcount, dma_req_free);
+ 		}
+ 	}
+ 
+@@ -2048,15 +1983,6 @@ static void mport_cdev_release_dma(struct file *filp)
+ 			current->comm, task_pid_nr(current), wret);
+ 	}
+ 
+-	spin_lock(&priv->req_lock);
+-
+-	if (!list_empty(&priv->pend_list)) {
+-		rmcd_debug(EXIT, "ATTN: pending DMA requests, filp=%p %s(%d)",
+-			   filp, current->comm, task_pid_nr(current));
+-	}
+-
+-	spin_unlock(&priv->req_lock);
+-
+ 	if (priv->dmach != priv->md->dma_chan) {
+ 		rmcd_debug(EXIT, "Release DMA channel for filp=%p %s(%d)",
+ 			   filp, current->comm, task_pid_nr(current));
+@@ -2573,8 +2499,6 @@ static void mport_cdev_remove(struct mport_dev *md)
+ 	cdev_device_del(&md->cdev, &md->dev);
+ 	mport_cdev_kill_fasync(md);
+ 
+-	flush_workqueue(dma_wq);
+-
+ 	/* TODO: do we need to give clients some time to close file
+ 	 * descriptors? Simple wait for XX, or kref?
+ 	 */
+@@ -2691,17 +2615,8 @@ static int __init mport_init(void)
+ 		goto err_cli;
+ 	}
+ 
+-	dma_wq = create_singlethread_workqueue("dma_wq");
+-	if (!dma_wq) {
+-		rmcd_error("failed to create DMA work queue");
+-		ret = -ENOMEM;
+-		goto err_wq;
+-	}
+-
  	return 0;
+ 
+-err_wq:
+-	class_interface_unregister(&rio_mport_interface);
+ err_cli:
+ 	unregister_chrdev_region(dev_number, RIO_MAX_MPORTS);
+ err_chr:
+@@ -2717,7 +2632,6 @@ static void __exit mport_exit(void)
+ 	class_interface_unregister(&rio_mport_interface);
+ 	class_destroy(dev_class);
+ 	unregister_chrdev_region(dev_number, RIO_MAX_MPORTS);
+-	destroy_workqueue(dma_wq);
  }
  
+ module_init(mport_init);
 -- 
-2.16.2
+2.16.3
