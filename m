@@ -1,120 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752845AbeDCUGd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 16:06:33 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59153 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751179AbeDCUGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 16:06:31 -0400
-Date: Tue, 3 Apr 2018 22:06:28 +0200
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 08/13] ARM: sunxi: Add initialization of CNTVOFF
-Message-ID: <20180403220628.19c9acaf@dell-desktop.home>
-In-Reply-To: <20180403091218.t6xuq6csjp4uyy5u@flea>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
-        <20180403061836.3926-9-mylene.josserand@bootlin.com>
-        <20180403091218.t6xuq6csjp4uyy5u@flea>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753045AbeDCUIB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 16:08:01 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:44116 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeDCUIA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 16:08:00 -0400
+X-Google-Smtp-Source: AIpwx494bnIHqnlyzb/mlhmJDNzTEO3e+O8ZdXZKUbDKrJX0rtZfgetQdWDYcB8HtjJ6fS99c5oE0d2megDkJUcuwAw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180403154102.150b1be0@gandalf.local.home>
+References: <20180403154102.150b1be0@gandalf.local.home>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 3 Apr 2018 13:07:58 -0700
+X-Google-Sender-Auth: R-acmqlBjKHSgqV5aMOk4Gsozug
+Message-ID: <CAGXu5j+g6nbDz+gjAxZTSf1004J=naAf7b9dPTE0q8+7UtXCLw@mail.gmail.com>
+Subject: Re: [RFC][PATCH] tracing, printk: Force no hashing when
+ trace_printk() is used
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, "Tobin C. Harding" <me@tobin.cc>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Apr 3, 2018 at 12:41 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> Both trace_debug is set and kptr_restrict is set to zero in the same
+> code that produces the above banner. This will allow trace_printk() to
+> not be affected by security code, as trace_printk() should never be run
+> on a machine that needs security of this kind.
 
-Thank you for the review.
+While I think it'd be nice to have a boot-time knob for this (a debate
+that was unsuccessful in earlier threads), I remain skeptical of
+having a _runtime_ knob for this, as then it becomes a target (and
+yes, there are plenty of targets, but why add another).
 
-On Tue, 3 Apr 2018 11:12:18 +0200
-Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+If this was __ro_after_init, maybe that'd be nicer. CONFIG_TRACING=y
+is used everywhere, so this is really just the whole knob debate over
+again. Instead, I've been following Linus's distillation of %p usage
+in the kernel:
 
-> On Tue, Apr 03, 2018 at 08:18:31AM +0200, Mylène Josserand wrote:
-> > Add the initialization of CNTVOFF for sun8i-a83t.
-> > 
-> > For boot CPU, Create a new machine that handles this
-> > function's call in an "init_early" callback.
-> > For secondary CPUs, add this function into secondary_startup
-> > assembly entry.
-> > 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> > ---
-> >  arch/arm/mach-sunxi/headsmp.S |  1 +
-> >  arch/arm/mach-sunxi/sunxi.c   | 18 +++++++++++++++++-
-> >  2 files changed, 18 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-> > index 79890fbe5613..b586b7cf803a 100644
-> > --- a/arch/arm/mach-sunxi/headsmp.S
-> > +++ b/arch/arm/mach-sunxi/headsmp.S
-> > @@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
-> >  
-> >  ENTRY(sunxi_mc_smp_secondary_startup)
-> >  	bl	sunxi_mc_smp_cluster_cache_enable
-> > +	bl	smp_init_cntvoff
-> >  	b	secondary_startup
-> >  ENDPROC(sunxi_mc_smp_secondary_startup)
-> >  
-> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> > index 5e9602ce1573..090784108c0a 100644
-> > --- a/arch/arm/mach-sunxi/sunxi.c
-> > +++ b/arch/arm/mach-sunxi/sunxi.c
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/platform_device.h>
-> >  
-> >  #include <asm/mach/arch.h>
-> > +#include <asm/smp_cntvoff.h>
-> >  
-> >  static const char * const sunxi_board_dt_compat[] = {
-> >  	"allwinner,sun4i-a10",
-> > @@ -62,7 +63,6 @@ MACHINE_END
-> >  static const char * const sun8i_board_dt_compat[] = {
-> >  	"allwinner,sun8i-a23",
-> >  	"allwinner,sun8i-a33",
-> > -	"allwinner,sun8i-a83t",
-> >  	"allwinner,sun8i-h2-plus",
-> >  	"allwinner,sun8i-h3",
-> >  	"allwinner,sun8i-r40",
-> > @@ -75,6 +75,22 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
-> >  	.dt_compat	= sun8i_board_dt_compat,
-> >  MACHINE_END
-> >  
-> > +void __init sun8i_cntvoff_init(void)
-> > +{
-> > +	smp_init_cntvoff();  
-> 
-> Can't this be moved to the SMP setup code?
+http://lkml.kernel.org/r/CA+55aFwQEd_d40g4mUCSsVRZzrFPUJt74vc6PPpb675hYNXcKw@mail.gmail.com
 
-I tried to put it in the first lines of "sunxi_mc_smp_init" function
-but it did not work. I tried to find some callbacks to have an
-early "init" and I only found the "init_early"'s one. There is probably
-another way to handle that so do not hesitate to tell me any ideas.
-
-> 
-> > +}
-> > +
-> > +static const char * const sun8i_cntvoff_board_dt_compat[] = {
-> > +	"allwinner,sun8i-a83t",
-> > +	NULL,
-> > +};
-> > +
-> > +DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i boards needing cntvoff")  
-> 
-> All of the SoCs need CNTVOFF, so that doesn't really make sense. Why
-> not just calling it for what it is: an A83t?
-
-Sure, I will update it.
-
-Best regards,
+-Kees
 
 -- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Kees Cook
+Pixel Security
