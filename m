@@ -1,133 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932282AbeDCNUf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:20:35 -0400
-Received: from sauhun.de ([88.99.104.3]:42248 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932151AbeDCNUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:20:34 -0400
-Date: Tue, 3 Apr 2018 15:20:32 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Davidlohr Bueso <dave@stgolabs.net>,
-        David Howells <dhowells@redhat.com>
-Cc: peterz@infradead.org, mingo@kernel.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 1/6] drivers/i2c: Update i2c_trace_msg static key to
- modern api
-Message-ID: <20180403132032.bseezddmd6rrka6g@ninjato>
-References: <20180326210929.5244-1-dave@stgolabs.net>
- <20180326210929.5244-2-dave@stgolabs.net>
+        id S932329AbeDCNVk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:21:40 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:57664 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932292AbeDCNVj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:21:39 -0400
+Subject: Re: [PATCH 3/8] bindings: PCI: designware: Add support for the EP in
+ designware driver
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+ <dd582bfc2780679b7a092d23547c316234a84c34.1522235224.git.gustavo.pimentel@synopsys.com>
+ <405911c8-fffc-5bd7-76c5-f7aabde3b7bc@ti.com>
+ <87ba8936-e870-f52b-2ff1-0aea90d0a25c@synopsys.com>
+ <f94889e3-ba6f-5aba-d0ab-85db5d434cc9@ti.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <331e32c4-a39b-b5a6-6fbd-6eef7ca4b27c@synopsys.com>
+Date: Tue, 3 Apr 2018 14:20:45 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xxl2fqw3fz72krmp"
-Content-Disposition: inline
-In-Reply-To: <20180326210929.5244-2-dave@stgolabs.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <f94889e3-ba6f-5aba-d0ab-85db5d434cc9@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Kishon,
 
---xxl2fqw3fz72krmp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03/04/2018 11:55, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Tuesday 03 April 2018 04:13 PM, Gustavo Pimentel wrote:
+>> Hi Kishon,
+>>
+>> On 02/04/2018 06:35, Kishon Vijay Abraham I wrote:
+>>>
+>>>
+>>> On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
+>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>
+>>> Please add a commit message.
+>>
+>> Ok. I'll add. Thanks for noticing it.
+>>
+>>>> ---
+>>>>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 13 +++++++++++++
+>>>>  1 file changed, 13 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>>> index 6300762..4bb2e08 100644
+>>>> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>>> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>>> @@ -3,6 +3,7 @@
+>>>>  Required properties:
+>>>>  - compatible:
+>>>>  	"snps,dw-pcie" for RC mode;
+>>>> +	"snps,dw-pcie-ep" for EP mode;
+>>>>  - reg: Should contain the configuration address space.
+>>>>  - reg-names: Must be "config" for the PCIe configuration space.
+>>>>      (The old way of getting the configuration address space from "ranges"
+>>>> @@ -56,3 +57,15 @@ Example configuration:
+>>>>  		#interrupt-cells = <1>;
+>>>>  		num-lanes = <1>;
+>>>>  	};
+>>>> +or
+>>>> +	pcie_ep: pcie_ep@dfc00000 {
+>>>> +		compatible = "snps,dw-pcie-ep";
+>>>> +		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
+>>>> +		      <0xdfc01000 0x0001000>, /* IP registers 2 */
+>>>
+>>> Doesn't this have iATU unroll space?
+>>
+>> I don't think EP has it, but I'm no expert on this matter. Can you provide me
+>> some example of having iATU unroll space mapping would be useful in EP scope?
+> 
+> I'm not sure. I thought if the dwc3 core version is 4.80, then it'll have a
+> separate ATU space irrespective of RC mode or EP mode.
 
-On Mon, Mar 26, 2018 at 02:09:24PM -0700, Davidlohr Bueso wrote:
-> No changes in refcount semantics -- key init is false; replace
->=20
-> static_key_slow_inc|dec   with   static_branch_inc|dec
-> static_key_false          with   static_branch_unlikely
->=20
-> Added a '_key' suffix to i2c_trace_msg, for better self
-> documentation.
->=20
+As replied on patch 1, let's leave out  any reference of iATU unroll to avoid
+any confusion. Agree?
 
-CCing David who wrote the original code
+> 
+> Thanks
+> Kishon
+> 
 
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-i2c@vger.kernel.org
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-> ---
->  drivers/i2c/i2c-core-base.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> index 16a3b73375a6..bfcff2a6f0a3 100644
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
-> @@ -69,18 +69,18 @@ static DEFINE_IDR(i2c_adapter_idr);
-> =20
->  static int i2c_detect(struct i2c_adapter *adapter, struct i2c_driver *dr=
-iver);
-> =20
-> -static struct static_key i2c_trace_msg =3D STATIC_KEY_INIT_FALSE;
-> +static DEFINE_STATIC_KEY_FALSE(i2c_trace_msg_key);
->  static bool is_registered;
-> =20
->  int i2c_transfer_trace_reg(void)
->  {
-> -	static_key_slow_inc(&i2c_trace_msg);
-> +	static_branch_inc(&i2c_trace_msg_key);
->  	return 0;
->  }
-> =20
->  void i2c_transfer_trace_unreg(void)
->  {
-> -	static_key_slow_dec(&i2c_trace_msg);
-> +	static_branch_dec(&i2c_trace_msg_key);
->  }
-> =20
->  const struct i2c_device_id *i2c_match_id(const struct i2c_device_id *id,
-> @@ -1848,11 +1848,12 @@ int __i2c_transfer(struct i2c_adapter *adap, stru=
-ct i2c_msg *msgs, int num)
->  	if (adap->quirks && i2c_check_for_quirks(adap, msgs, num))
->  		return -EOPNOTSUPP;
-> =20
-> -	/* i2c_trace_msg gets enabled when tracepoint i2c_transfer gets
-> +	/*
-> +	 * i2c_trace_msg_key gets enabled when tracepoint i2c_transfer gets
->  	 * enabled.  This is an efficient way of keeping the for-loop from
->  	 * being executed when not needed.
->  	 */
-> -	if (static_key_false(&i2c_trace_msg)) {
-> +	if (static_branch_unlikely(&i2c_trace_msg_key)) {
->  		int i;
->  		for (i =3D 0; i < num; i++)
->  			if (msgs[i].flags & I2C_M_RD)
-> @@ -1871,7 +1872,7 @@ int __i2c_transfer(struct i2c_adapter *adap, struct=
- i2c_msg *msgs, int num)
->  			break;
->  	}
-> =20
-> -	if (static_key_false(&i2c_trace_msg)) {
-> +	if (static_branch_unlikely(&i2c_trace_msg_key)) {
->  		int i;
->  		for (i =3D 0; i < ret; i++)
->  			if (msgs[i].flags & I2C_M_RD)
-> --=20
-> 2.13.6
->=20
-
---xxl2fqw3fz72krmp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrDf6AACgkQFA3kzBSg
-KbazIw/9H4eSlFdejqiccIT8tWvw2+Uz4pKkFtrtGrq3SK08rxVjpqYyBykk5m3O
-5GTxFLENW2copdyMPDuXV1j1fgnR3aWEi5jzNOwpmJJNi8uqjIscYuCbpkfAo+q0
-fWMGcCMympf1Qln/Ss4WVci2OYROOpfbPMyQsjecV2XdKfsWUz/kWoP75K+LCcI/
-bqNKAQK8WwrccOYTU0bfGhdI2PCcSupsAFio+pdKtiUXasV9WuklXUa+Madp7r9Q
-fO2W91QZ7AFt/nWBfvD8ngy38fGAPxigazM/n1y7XQw4RkEHSxM0DinlfYJGTz/H
-6zK+TYgU0HgFFzzL1leyXa3N5i7fOJ4rgENV/Df9jozcvYRtSJKuOuWGIUcM16ts
-/KIabp+VfU7kgj/cjve2c3qYPsoqD+MKXGmupAC3GP4bbr1am+P+uP97PGcYnf/5
-GKHgcR8XOs5T6m2nAzYcylN117KesQ/JfLtByu7BksBOnHGKgMkxAB3A1STxobOk
-uT36xkfAL1o96fNGKU0Az5nWVqxnNp3b0dUYo+gz8RQulDVzz4omrMQln5x8BQcm
-mx4IwDgSzeZl2EcbLoDSolNfkh9rttmouTiEqW9FaEJ1Bo4NC+CPmP+Iau8gqcU1
-T2Kbc/YqWevbSEnRNS+9dkWrCsH1cJAu9laegvssTyxknyXu3oU=
-=GKb6
------END PGP SIGNATURE-----
-
---xxl2fqw3fz72krmp--
+Regards,
+Gustavo
