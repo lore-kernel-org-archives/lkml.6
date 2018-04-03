@@ -1,44 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeDCQBB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 12:01:01 -0400
-Received: from smtp37.i.mail.ru ([94.100.177.97]:36416 "EHLO smtp37.i.mail.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751469AbeDCQBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 12:01:00 -0400
-Subject: Re: [PATCH v2 1/6] spi: core: handle timeout error from
- transfer_one()
-To: Mark Brown <broonie@kernel.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180403152905.1524-1-ssuloev@orpaltech.com>
- <20180403152905.1524-2-ssuloev@orpaltech.com>
- <20180403155224.GA11578@sirena.org.uk>
-From: Sergey Suloev <ssuloev@orpaltech.com>
-Message-ID: <c0476d75-821f-7a0d-3c3f-270304e7b032@orpaltech.com>
-Date: Tue, 3 Apr 2018 19:00:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752336AbeDCQHp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 12:07:45 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:53654 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752110AbeDCQHn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 12:07:43 -0400
+Date: Tue, 3 Apr 2018 18:07:12 +0200
+From: Daniel Kiper <daniel.kiper@oracle.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org,
+        ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        eric.snowberg@oracle.com, hpa@zytor.com, jgross@suse.com,
+        konrad.wilk@oracle.com, mingo@redhat.com, tglx@linutronix.de
+Subject: Re: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state during
+ dom0 boot
+Message-ID: <20180403160712.GL26100@olila.local.net-space.pl>
+References: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
+ <1522770281.4522.14.camel@HansenPartnership.com>
 MIME-Version: 1.0
-In-Reply-To: <20180403155224.GA11578@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-Authentication-Results: smtp37.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
-X-7FA49CB5: 0D63561A33F958A521CF74858968C1FA24F7F11A85DFF40117C3D9B8D07C2777725E5C173C3A84C30584FF81F342DA07130BDA849125FBD6A91E23F1B6B78B78B5C8C57E37DE458B4C7702A67D5C3316FA3894348FB808DB48C21F01D89DB561574AF45C6390F7469DAA53EE0834AAEE
-X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917E8CBD4EE5B0A9065ABD080F4C3DE7A92069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
-X-Mras: OK
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1522770281.4522.14.camel@HansenPartnership.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804030166
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 06:52 PM, Mark Brown wrote:
-> On Tue, Apr 03, 2018 at 06:29:00PM +0300, Sergey Suloev wrote:
->> As long as sun4i/sun6i SPI drivers have overriden the default
->> "wait for completion" procedure then we need to properly
->> handle -ETIMEDOUT error from transfer_one().
-> Why is this connected to those drivers specifically?
+On Tue, Apr 03, 2018 at 08:44:41AM -0700, James Bottomley wrote:
+> On Tue, 2018-04-03 at 16:39 +0200, Daniel Kiper wrote:
+> > Initialize UEFI secure boot state during dom0 boot. Otherwise the
+> > kernel
+> > may not even know that it runs on secure boot enabled platform.
+> >
+> > Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+> > ---
+> >  arch/x86/xen/efi.c                        |   57
+> > +++++++++++++++++++++++++++++
+> >  drivers/firmware/efi/libstub/secureboot.c |    3 ++
+> >  2 files changed, 60 insertions(+)
+> >
+> > diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
+> > index a18703b..1804b27 100644
+> > --- a/arch/x86/xen/efi.c
+> > +++ b/arch/x86/xen/efi.c
+> > @@ -115,6 +115,61 @@ static efi_system_table_t __init
+> > *xen_efi_probe(void)
+> >  	return &efi_systab_xen;
+> >  }
+> >  
+> > +/*
+> > + * Determine whether we're in secure boot mode.
+> > + *
+> > + * Please keep the logic in sync with
+> > + * drivers/firmware/efi/libstub/secureboot.c:efi_get_secureboot().
+> > + */
+> > +static enum efi_secureboot_mode xen_efi_get_secureboot(void)
+> > +{
+> > +	static efi_guid_t efi_variable_guid =
+> > EFI_GLOBAL_VARIABLE_GUID;
+> > +	static efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
+> > +	efi_status_t status;
+> > +	u8 moksbstate, secboot, setupmode;
+> > +	unsigned long size;
+> > +
+> > +	size = sizeof(secboot);
+> > +	status = efi.get_variable(L"SecureBoot", &efi_variable_guid,
+> > +				  NULL, &size, &secboot);
+> > +
+> > +	if (status == EFI_NOT_FOUND)
+> > +		return efi_secureboot_mode_disabled;
+> > +
+> > +	if (status != EFI_SUCCESS)
+> > +		goto out_efi_err;
+> > +
+> > +	size = sizeof(setupmode);
+> > +	status = efi.get_variable(L"SetupMode", &efi_variable_guid,
+> > +				  NULL, &size, &setupmode);
+> > +
+> > +	if (status != EFI_SUCCESS)
+> > +		goto out_efi_err;
+> > +
+> > +	if (secboot == 0 || setupmode == 1)
+> > +		return efi_secureboot_mode_disabled;
+> > +
+> > +	/* See if a user has put the shim into insecure mode. */
+> > +	size = sizeof(moksbstate);
+> > +	status = efi.get_variable(L"MokSBStateRT", &shim_guid,
+> > +				  NULL, &size, &moksbstate);
+> > +
+> > +	/* If it fails, we don't care why. Default to secure. */
+> > +	if (status != EFI_SUCCESS)
+> > +		goto secure_boot_enabled;
+> > +
+> > +	if (moksbstate == 1)
+> > +		return efi_secureboot_mode_disabled;
+> > +
+> > + secure_boot_enabled:
+> > +	pr_info("UEFI Secure Boot is enabled.\n");
+> > +	return efi_secureboot_mode_enabled;
+> > +
+> > + out_efi_err:
+> > +	pr_err("Could not determine UEFI Secure Boot status.\n");
+> > +	return efi_secureboot_mode_unknown;
+> > +}
+> > +
+>
+> This looks like a bad idea: you're duplicating the secure boot check in
+>
+> drivers/firmware/efi/libstub/secureboot.c
+>
+> Which is an implementation of policy.  If we have to have policy in the
+> kernel, it should really only be in one place to prevent drift; why
+> can't you simply use the libstub efi_get_secureboot() so we're not
+> duplicating the implementation of policy?
 
-These 2 drivers have their own "waiting" code and not using the code 
-from SPI core.
+Well, here is the first version of this patch: https://lkml.org/lkml/2018/1/9/496
+Ard did not like it. I was not happy too. In general both approaches are not perfect.
+More you can find in the discussion around this patchset. If you have better idea
+how to do that I am happy to implement it.
+
+Daniel
