@@ -1,159 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755241AbeDCJJP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 05:09:15 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:56245 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753441AbeDCJJN (ORCPT
+        id S1755312AbeDCJJ0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 05:09:26 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43752 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753441AbeDCJJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 05:09:13 -0400
-X-Google-Smtp-Source: AIpwx48GAXQv29E3xQM/x0Ooyh3P1tYfEKNyCzx5Zw919+kFP0xENGoe9hNsK39IzJMsMu9m8z/YHQ==
-Date: Tue, 3 Apr 2018 11:09:09 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: christian.koenig@amd.com
-Cc: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        Tue, 3 Apr 2018 05:09:24 -0400
+Date: Tue, 3 Apr 2018 10:09:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Arkadiusz Kwiatkowski <arkadiusz.kwiatkowski@aptiv.com>
+Cc: vigneshr@ti.com, sourav.poddar@ti.com, linux-spi@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
-Message-ID: <20180403090909.GN3881@phenom.ffwll.local>
-Mail-Followup-To: christian.koenig@amd.com, linaro-mm-sig@lists.linaro.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-4-christian.koenig@amd.com>
- <20180329065753.GD3881@phenom.ffwll.local>
- <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
+Subject: Re: [PATCH v2 1/2] spi: spi-ti-qspi: Fix parameters order in
+ regmap_update_bits calls
+Message-ID: <20180403090920.GA30411@sirena.org.uk>
+References: <496c162d-5e3c-e008-a14b-6b990e253e64@ti.com>
+ <1522402884-26790-1-git-send-email-arkadiusz.kwiatkowski@aptiv.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1522402884-26790-1-git-send-email-arkadiusz.kwiatkowski@aptiv.com>
+X-Cookie: Have at you!
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 01:34:24PM +0200, Christian König wrote:
-> Am 29.03.2018 um 08:57 schrieb Daniel Vetter:
-> > On Sun, Mar 25, 2018 at 12:59:56PM +0200, Christian König wrote:
-> > > Add a peer2peer flag noting that the importer can deal with device
-> > > resources which are not backed by pages.
-> > > 
-> > > Signed-off-by: Christian König <christian.koenig@amd.com>
-> > Um strictly speaking they all should, but ttm never bothered to use the
-> > real interfaces but just hacked around the provided sg list, grabbing the
-> > underlying struct pages, then rebuilding&remapping the sg list again.
-> 
-> Actually that isn't correct. TTM converts them to a dma address array
-> because drivers need it like this (at least nouveau, radeon and amdgpu).
-> 
-> I've fixed radeon and amdgpu to be able to deal without it and mailed with
-> Ben about nouveau, but the outcome is they don't really know.
-> 
-> TTM itself doesn't have any need for the pages on imported BOs (you can't
-> mmap them anyway), the real underlying problem is that sg tables doesn't
-> provide what drivers need.
-> 
-> I think we could rather easily fix sg tables, but that is a totally separate
-> task.
 
-Looking at patch 8, the sg table seems perfectly sufficient to convey the
-right dma addresses to the importer. Ofcourse the exporter has to set up
-the right kind of iommu mappings to make this work.
+--ew6BAiZeqk4r7MaW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > The entire point of using sg lists was exactly to allow this use case of
-> > peer2peer dma (or well in general have special exporters which managed
-> > memory/IO ranges not backed by struct page). So essentially you're having
-> > a "I'm totally not broken flag" here.
-> 
-> No, independent of needed struct page pointers we need to note if the
-> exporter can handle peer2peer stuff from the hardware side in general.
-> 
-> So what I've did is just to set peer2peer allowed on the importer because of
-> the driver needs and clear it in the exporter if the hardware can't handle
-> that.
+On Fri, Mar 30, 2018 at 11:41:23AM +0200, Arkadiusz Kwiatkowski wrote:
+> This commit fixes the order of parameters passed to regmap_update_bits
+> function inside spi-ti-qspi driver. Accidentally the code worked
+> correctly when cs=0, but it is not the case for other values.
 
-The only thing the importer seems to do is call the
-pci_peer_traffic_supported, which the exporter could call too. What am I
-missing (since the sturct_page stuff sounds like it's fixed already by
-you)?
--Daniel
+This doesn't apply against current code, please check and resend.
 
-> > I think a better approach would be if we add a requires_struct_page or so,
-> > and annotate the current importers accordingly. Or we just fix them up (it
-> > is all in shared ttm code after all, I think everyone else got this
-> > right).
-> 
-> I would rather not bed on that.
-> 
-> Christian.
-> 
-> > -Daniel
-> > 
-> > > ---
-> > >   drivers/dma-buf/dma-buf.c | 1 +
-> > >   include/linux/dma-buf.h   | 4 ++++
-> > >   2 files changed, 5 insertions(+)
-> > > 
-> > > diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> > > index ffaa2f9a9c2c..f420225f93c6 100644
-> > > --- a/drivers/dma-buf/dma-buf.c
-> > > +++ b/drivers/dma-buf/dma-buf.c
-> > > @@ -565,6 +565,7 @@ struct dma_buf_attachment *dma_buf_attach(const struct dma_buf_attach_info *info
-> > >   	attach->dev = info->dev;
-> > >   	attach->dmabuf = dmabuf;
-> > > +	attach->peer2peer = info->peer2peer;
-> > >   	attach->priv = info->priv;
-> > >   	attach->invalidate = info->invalidate;
-> > > diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-> > > index 15dd8598bff1..1ef50bd9bc5b 100644
-> > > --- a/include/linux/dma-buf.h
-> > > +++ b/include/linux/dma-buf.h
-> > > @@ -313,6 +313,7 @@ struct dma_buf {
-> > >    * @dmabuf: buffer for this attachment.
-> > >    * @dev: device attached to the buffer.
-> > >    * @node: list of dma_buf_attachment.
-> > > + * @peer2peer: true if the importer can handle peer resources without pages.
-> > >    * @priv: exporter specific attachment data.
-> > >    *
-> > >    * This structure holds the attachment information between the dma_buf buffer
-> > > @@ -328,6 +329,7 @@ struct dma_buf_attachment {
-> > >   	struct dma_buf *dmabuf;
-> > >   	struct device *dev;
-> > >   	struct list_head node;
-> > > +	bool peer2peer;
-> > >   	void *priv;
-> > >   	/**
-> > > @@ -392,6 +394,7 @@ struct dma_buf_export_info {
-> > >    * @dmabuf:	the exported dma_buf
-> > >    * @dev:	the device which wants to import the attachment
-> > >    * @priv:	private data of importer to this attachment
-> > > + * @peer2peer:	true if the importer can handle peer resources without pages
-> > >    * @invalidate:	callback to use for invalidating mappings
-> > >    *
-> > >    * This structure holds the information required to attach to a buffer. Used
-> > > @@ -401,6 +404,7 @@ struct dma_buf_attach_info {
-> > >   	struct dma_buf *dmabuf;
-> > >   	struct device *dev;
-> > >   	void *priv;
-> > > +	bool peer2peer;
-> > >   	void (*invalidate)(struct dma_buf_attachment *attach);
-> > >   };
-> > > -- 
-> > > 2.14.1
-> > > 
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+--ew6BAiZeqk4r7MaW
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrDRL8ACgkQJNaLcl1U
+h9BZ9Qf/a5Ds2OxypkXyedwPwkzkiJA32hBqEh1HiWQvPtOljc1wvKMFNFlAG2Lf
+FPCSJWyOiSIMbrN48SMKUn0zshOpY5fOxavHpI16GE0EFlP36Pf9TS9u8N6Qy3nS
++lrmWdVysrUia/d9sg6hNLLs2YNRdfmBijX6XPGaOPqnpGyPSP3y5hXZr9AdKscG
+q1JDPiqtk1NFagiLb4BmO6PJ3CawZQ5jod5qu029BPi8wL/zffLyYaBQRYBfbp8U
+nmHEcrn+urMpmmgmFVSSqMb/puaYx5MbMtngWE6yXTY4Pp8PC/16zBE2/O2gExuw
+JEKYpnq11LWoVGJt+e6O8WUI8eK+vw==
+=CoBX
+-----END PGP SIGNATURE-----
+
+--ew6BAiZeqk4r7MaW--
