@@ -1,120 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755242AbeDCKxs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:53:48 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:31393 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752397AbeDCKxq (ORCPT
+        id S1755380AbeDCKyB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:54:01 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33058 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752410AbeDCKx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:53:46 -0400
-Subject: Re: [PATCH 1/8] bindings: PCI: designware: Example update
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
- <33aa86ee667e8b435db080b8c683cb5df1bd6544.1522235224.git.gustavo.pimentel@synopsys.com>
- <fa001440-0dfe-b84a-e5ef-9285043b5ede@ti.com>
- <36a36857-2d79-2c2d-198d-a3b65cafc768@synopsys.com>
- <c5ffa7d6-40b1-1702-c0fd-9ebb1b4197f8@ti.com>
-CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <170b150d-d2c6-fee8-17f7-12a3107c13ff@ti.com>
-Date: Tue, 3 Apr 2018 16:23:33 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 3 Apr 2018 06:53:57 -0400
+X-Google-Smtp-Source: AIpwx4/vDc5m4e+CjWhfXQu1R3Cz8KQNZBbFWQny9Kmx3wwxGO2fcV41NICZq+nm8BsIVw8FVPK9RQ==
+Date: Tue, 3 Apr 2018 12:53:52 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>, hmclauchlan@fb.com,
+        tautschn@amazon.co.uk, Amir Goldstein <amir73il@gmail.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jaswinder Singh <jaswinder@infradead.org>,
+        Jeff Dike <jdike@addtoit.com>, Jiri Slaby <jslaby@suse.com>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, linux-s390 <linux-s390@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        uml-devel <user-mode-linux-devel@lists.sourceforge.net>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [GIT PULL] remove in-kernel calls to syscalls
+Message-ID: <20180403105352.eicib6jcicif5zoo@gmail.com>
+References: <20180402190454.GB29890@light.dominikbrodowski.net>
+ <CA+55aFyaVVKKbXPFzW1Tr7CTpiLCK+1nGdhS21wnm1j64bqWPA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <c5ffa7d6-40b1-1702-c0fd-9ebb1b4197f8@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFyaVVKKbXPFzW1Tr7CTpiLCK+1nGdhS21wnm1j64bqWPA@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Tuesday 03 April 2018 04:22 PM, Kishon Vijay Abraham I wrote:
-> 
-> 
-> On Tuesday 03 April 2018 04:03 PM, Gustavo Pimentel wrote:
->> Hi Kishon,
->>
->> On 02/04/2018 06:23, Kishon Vijay Abraham I wrote:
->>> Hi,
->>>
->>> On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
->>>> Changes the IP registers size to accommodate the ATU unroll space.
->>>>
->>>> Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers.
->>>>
->>>> Replaces the pcie base address example by a real pcie base address in use.
->>>>
->>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->>>> ---
->>>>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
->>>>  1 file changed, 6 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->>>> index 1da7ade..6300762 100644
->>>> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
->>>> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->>>> @@ -1,7 +1,8 @@
->>>>  * Synopsys DesignWare PCIe interface
->>>>  
->>>>  Required properties:
->>>> -- compatible: should contain "snps,dw-pcie" to identify the core.
->>>> +- compatible:
->>>> +	"snps,dw-pcie" for RC mode;
->>>
->>> I think irrespective of RC mode or EP mode, "snps,dw-pcie" can be used to
->>> identify the pcie core?
->>
->> I guess so. What you suggest? I was just folling the same guideline present
->> here: https://lkml.org/lkml/2017/11/3/310
-> 
-> Okay, I think you should have
-> "snps,dw-pcie-rc", "snps,dw-pcie" for RC mode;
-> 
-> and in the later patch
-> "snps,dw-pcie-ep", "snps,dw-pcie" for EP mode;
-> 
->>
->>>>  - reg: Should contain the configuration address space.
->>>>  - reg-names: Must be "config" for the PCIe configuration space.
->>>>      (The old way of getting the configuration address space from "ranges"
->>>> @@ -41,11 +42,11 @@ EP mode:
->>>>  
->>>>  Example configuration:
->>>>  
->>>> -	pcie: pcie@dffff000 {
->>>> +	pcie: pcie@dfc00000 {
->>>>  		compatible = "snps,dw-pcie";
->>>> -		reg = <0xdffff000 0x1000>, /* Controller registers */
->>>> -		      <0xd0000000 0x2000>; /* PCI config space */
->>>> -		reg-names = "ctrlreg", "config";
->>>> +		reg = <0xdfc00000 0x302000>, /* IP registers */
->>>
->>> which version of synopsys IP is this. I think the ideal thing to do here is to
->>> have a separate register space for iATU.
->>
->> I also agree with that. The unroll iATU was introduced on Synopsys IP version
->> 4.80 and the kernel patch was release on 2016-08-10
->> https://patchwork.ozlabs.org/patch/657796/
->> However a separate register space for iATU implies some extra code do handle it
->> (and of course some tests) that don't fit into this patch series, in my point of
->> view. Can this task enter in the backlog in order to be done in another patch
->> series?
-> 
-> Yes sure. I think we should also make sure existing binding doesn't break.
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-And IMO we should have a new compatible "snps,dw-pcie-4.80" in order to enable
-iATU unroll.
+> On Mon, Apr 2, 2018 at 12:04 PM, Dominik Brodowski
+> <linux@dominikbrodowski.net> wrote:
+> >
+> > This patchset removes all in-kernel calls to syscall functions in the
+> > kernel with the exception of arch/.
+> 
+> Ok, this finished off my arch updates for today, I'll probably move on
+> to driver pulls tomorrow.
+> 
+> Anyway, it's in my tree, will push out once my test build finishes.
 
-Thanks
-Kishon
+Thanks!
+
+Dominik, if you submit the x86 ptregs conversion patches in the next 1-2 days on 
+top of Linus's tree (642e7fd23353), then I can apply them and if they are 
+problem-free I can perhaps tempt Linus with a pull request early next week or so.
+
+The Spectre angle does make me want those changes as well.
+
+Thanks,
+
+	Ingo
