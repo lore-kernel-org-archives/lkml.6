@@ -1,76 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755505AbeDCL4b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:56:31 -0400
-Received: from mga03.intel.com ([134.134.136.65]:4692 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755300AbeDCL43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:56:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,400,1517904000";
-   d="scan'208";a="42999881"
-Message-ID: <1522756585.21176.316.camel@linux.intel.com>
-Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
- pointers
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Date: Tue, 03 Apr 2018 14:56:25 +0300
-In-Reply-To: <20180403115216.mgq3omvl4up24uic@pathway.suse.cz>
-References: <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
-         <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
-         <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
-         <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
-         <1521119343.10722.665.camel@linux.intel.com>
-         <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
-         <1521224375.23017.41.camel@linux.intel.com>
-         <20180329145312.4uqygrjqy3fqyl26@pathway.suse.cz>
-         <1522678523.21176.178.camel@linux.intel.com>
-         <20180403011237.GA7129@jagdpanzerIV>
-         <20180403115216.mgq3omvl4up24uic@pathway.suse.cz>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1755495AbeDCL7H (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:59:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50102 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755300AbeDCL7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:59:05 -0400
+Date: Tue, 3 Apr 2018 14:59:03 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: =?utf-8?B?aGFpYmluemhhbmco5byg5rW35paMKQ==?=
+        <haibinzhang@tencent.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?bGlkb25nY2hlbijpmYjnq4vkuJwp?= <lidongchen@tencent.com>,
+        =?utf-8?B?eXVuZmFuZ3RhaSjlj7Dov5Dmlrkp?= <yunfangtai@tencent.com>
+Subject: Re: [PATCH] vhost-net: add limitation of sent packets for tx polling
+Message-ID: <20180403144953-mutt-send-email-mst@kernel.org>
+References: <88D661ADF6AFBF42B2AB88D8E7682B0901FC4627@EXMBX-SZMAIL011.tencent.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <88D661ADF6AFBF42B2AB88D8E7682B0901FC4627@EXMBX-SZMAIL011.tencent.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-03 at 13:52 +0200, Petr Mladek wrote:
-> On Tue 2018-04-03 10:12:37, Sergey Senozhatsky wrote:
-> > On (04/02/18 17:15), Andy Shevchenko wrote:
-> > > > 
-> > > > Hmm, I have never seen the error code in this form.
-> > > 
-> > > We have limited space to print it and error numbers currently can
-> > > be up
-> > > to 0xfff (4095). So, I have no better idea how to squeeze them
-> > > while
-> > > thinking that "(efault)" is much harder to parse in case of error
-> > 
-> > 'efault' looks to me like a misspelled 'default', for some reason.
+On Tue, Apr 03, 2018 at 08:08:26AM +0000, haibinzhang(张海斌) wrote:
+> handle_tx will delay rx for a long time when tx busy polling udp packets
+> with small length(e.g. 1byte udp payload), because setting VHOST_NET_WEIGHT
+> takes into account only sent-bytes but no single packet length.
 > 
-> I wonder if (-efault) would help a bit.
+> Tests were done between two Virtual Machines using netperf(UDP_STREAM, len=1),
+> then another machine pinged the client. Result shows as follow:
+> 
+> Packet#       Ping-Latency(ms)
+>               min     avg     max
+> Origin      3.319  18.489  57.503
+> 64          1.643   2.021   2.552
+> 128         1.825   2.600   3.224
+> 256         1.997   2.710   4.295
+> 512*        1.860   3.171   4.631
+> 1024        2.002   4.173   9.056
+> 2048        2.257   5.650   9.688
+> 4096        2.093   8.508  15.943
+> 
+> 512 is selected, which is multi-VRING_SIZE
 
-It's 9 characters, not going to satisfy sizeof(void *) * 2 on 32-bit
-systems.
+There's no guarantee vring size is 256.
 
-> Even better might be (-EFAULT). But then it would be better to use
-> (NULL). It already was but it was explicitly changed to the lowercase
-> variant by the commit 0f4f81dce93774a447da3c ("vsprintf: factorize
-> "(null)" string").
+Could you pls try with a different tx ring size?
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+I suspect we want:
+
+#define VHOST_NET_PKT_WEIGHT(vq) ((vq)->num * 2)
+
+
+> and close to VHOST_NET_WEIGHT/MTU.
+
+Puzzled by this part.  Does tweaking MTU change anything?
+
+> To evaluate this change, another tests were done using netperf(RR, TX) between
+> two machines with Intel(R) Xeon(R) Gold 6133 CPU @ 2.50GHz. Result as follow
+> does not show obvious changes:
+> 
+> TCP_RR
+> 
+> size/sessions/+thu%/+normalize%
+>    1/       1/  -7%/        -2%
+>    1/       4/  +1%/         0%
+>    1/       8/  +1%/        -2%
+>   64/       1/  -6%/         0%
+>   64/       4/   0%/        +2%
+>   64/       8/   0%/         0%
+>  256/       1/  -3%/        -4%
+>  256/       4/  +3%/        +4%
+>  256/       8/  +2%/         0%
+> 
+> UDP_RR
+> 
+> size/sessions/+thu%/+normalize%
+>    1/       1/  -5%/        +1%
+>    1/       4/  +4%/        +1%
+>    1/       8/  -1%/        -1%
+>   64/       1/  -2%/        -3%
+>   64/       4/  -5%/        -1%
+>   64/       8/   0%/        -1%
+>  256/       1/  +7%/        +1%
+>  256/       4/  +1%/        +1%
+>  256/       8/  +2%/        +2%
+> 
+> TCP_STREAM
+> 
+> size/sessions/+thu%/+normalize%
+>   64/       1/   0%/        -3%
+>   64/       4/  +3%/        -1%
+>   64/       8/  +9%/        -4%
+>  256/       1/  +1%/        -4%
+>  256/       4/  -1%/        -1%
+>  256/       8/  +7%/        +5%
+>  512/       1/  +1%/         0%
+>  512/       4/  +1%/        -1%
+>  512/       8/  +7%/        -5%
+> 1024/       1/   0%/        -1%
+> 1024/       4/  +3%/         0%
+> 1024/       8/  +8%/        +5%
+> 2048/       1/  +2%/        +2%
+> 2048/       4/  +1%/         0%
+> 2048/       8/  -2%/         0%
+> 4096/       1/  -2%/         0%
+> 4096/       4/  +2%/         0%
+> 4096/       8/  +9%/        -2%
+> 
+> Signed-off-by: Haibin Zhang <haibinzhang@tencent.com>
+> Signed-off-by: Yunfang Tai <yunfangtai@tencent.com>
+> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+> ---
+>  drivers/vhost/net.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> index 8139bc70ad7d..13a23f3f3ea4 100644
+> --- a/drivers/vhost/net.c
+> +++ b/drivers/vhost/net.c
+> @@ -44,6 +44,10 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
+>   * Using this limit prevents one virtqueue from starving others. */
+>  #define VHOST_NET_WEIGHT 0x80000
+>  
+> +/* Max number of packets transferred before requeueing the job.
+> + * Using this limit prevents one virtqueue from starving rx. */
+> +#define VHOST_NET_PKT_WEIGHT 512
+> +
+>  /* MAX number of TX used buffers for outstanding zerocopy */
+>  #define VHOST_MAX_PEND 128
+>  #define VHOST_GOODCOPY_LEN 256
+> @@ -473,6 +477,7 @@ static void handle_tx(struct vhost_net *net)
+>  	struct socket *sock;
+>  	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+>  	bool zcopy, zcopy_used;
+> +	int sent_pkts = 0;
+>  
+>  	mutex_lock(&vq->mutex);
+>  	sock = vq->private_data;
+> @@ -580,7 +585,8 @@ static void handle_tx(struct vhost_net *net)
+>  		else
+>  			vhost_zerocopy_signal_used(net, vq);
+>  		vhost_net_tx_packet(net);
+> -		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
+> +		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
+> +		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT)) {
+>  			vhost_poll_queue(&vq->poll);
+>  			break;
+>  		}
+> -- 
+> 2.12.3
+> 
