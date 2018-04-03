@@ -1,54 +1,55 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522766730; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522766592; cv=none;
         d=google.com; s=arc-20160816;
-        b=Fp1f1jzagx9EPBYGr0JzMyrC9i/hAyaxQsbBgXPzgWWmGsGCcxUYwxl4GDoDJsonD0
-         ImfySleXiI+9GiFs9FqGmkCZJv2+dsJuZAVLaAVdJswrwnjr36QLKuGwQt6ttY+k4/8H
-         9e1K9nkVPP1+VPIKyBWlHyA0hWbyY8cUpBaik51bhKRmmx6y8T2zRjKfGPfrc0w3CIFP
-         UlFnXvaxgYiGcsQAmz/Jyl3Ksq/vg+pwhY4i5GVOaqN/ZuRMMEwYUpXCbaTyEGPEfN5n
-         V9k34MN5Q+QQAobTspWmzQSk5Gq8RamBPxA4CGjoGX5WEQCa/8DG0EDAzG/2bcLduM9l
-         97fA==
+        b=ogGkbgPXN4RLhtzcpy7TUVMHJk1h1HhpaMrXREAPmZ/x62vu8vkgE8pa/FrE3IEUg8
+         f6DlTWqOMKO+wuctcGtURFvQREMk7A6OOa0FAYVQl89RZDomCUTGmjZMgAO8Sj9mh9KF
+         KSCZ20QFizBXi1IwPWO/ls/lVRU0TgGevai8km5n3Y4qaLBuenOgoBrRBL9GadSBLzZo
+         Uh02GiLqVfhE7eqnlgosD2UlItG8avW5XPgAx40ZhnSJneixZytLwz+TRCjlZS+hP9/z
+         sufkUn7a1hLXIKgDQx9cA+OoJMUaZcP5wvXGT1xczgRxM7vWo6ujS1/C5KONJyuX4q5v
+         mrdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=1a5oEW7isbL9XxyI+mp4Xx36o7kfKeWwd9hU7nPOHUU=;
-        b=MUm8a9I9kvbsm8OPOqGmvarckmwzEVqinNdfB7m1QvL0g2oiRADkAxw+sjgu47cxp5
-         D8SLRaEvnLly0Rr0N8IwlWWN8wPfrVZRbXqRGBEnwv+Pxs3tJ9QsxuRg6q1socKSzGgH
-         q2rYXb/9m4JIhDMbjR+5MRvJ/kDBRDhWxkIr+GiyE5dnNkbBeqhSlkBFtulVs2hD7hwT
-         jkuJzvlX0oKBK+tc06ivC1s5a0ur2EfShFYyD39MuLhX9zoDl192LTnc6A870MGVgmYF
-         7sQHIm7SOV9Lhl0KTnUfJxslhs74qLDVNf/3f8uwV95cHw4cJk8hmf6lvzl4gFLOIs5s
-         kufQ==
+        bh=4ixr+ZmGKZKymQH5+5qhubEIpq4O/dKfkEJEeGW/n1g=;
+        b=n9BK/VlJZ8UcWBvT+V6eYdME3SBNPBg2WwvOhrG/ll3x6Zfm4dWoeMo4ov50Ndqqou
+         gbX+GLqXb9D1NpLfNxqj6UClvy03x0c3sC+2svsME7axxr/xJv1ZazfkTBonVAgYUnJh
+         XJBd+odS6bluUII92ubSDaPoHMNkmqasIdhx7FyHnkZ8cDcFzBbYAtDHZKOkQE/INI0T
+         UWMkN4pTSfPDNWuaSbkDZe5RKyMT6bBqNxBi9PbNCczMZyc0BZ9+7rXc4rPQvI19zqwA
+         F3NFDRJ/o3WIzA824rp/8Fc/68rYW1TuG7dnQSLfgHNtctIJgOWf3NmmnnK4LYAgQPPn
+         1Z9w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=qUwoasuI;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=kM22JMwb;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=qUwoasuI;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=kM22JMwb;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx48lwj2dfhG/pq/WQ7FjG8z4+mOcp7YpthP/LkiN15DAJG04UiHySYY963O6dVxKddJgVP/e0jmtk7oMiWEj2MA=
+X-Google-Smtp-Source: AIpwx4+vBDwGN/JBKDRQgr4pFQBovZukH8xWanRg3x54HtCFDGHXoiKQUsDk8xAswj/bpaefdfXYEviVB4zFM91IHUY=
 MIME-Version: 1.0
-In-Reply-To: <a724eee6-7aff-df8b-de2b-8e9446e94623@virtuozzo.com>
-References: <cover.1521828273.git.andreyknvl@google.com> <b79947167d09478d3f61d2ec8de37322c0e1fe92.1521828274.git.andreyknvl@google.com>
- <a724eee6-7aff-df8b-de2b-8e9446e94623@virtuozzo.com>
+In-Reply-To: <2ab69c9c-6e80-ea79-e72e-012753ed3db0@virtuozzo.com>
+References: <cover.1521828273.git.andreyknvl@google.com> <774016f707e494da419a2d0d8a03409e6befcaf8.1521828274.git.andreyknvl@google.com>
+ <2ab69c9c-6e80-ea79-e72e-012753ed3db0@virtuozzo.com>
 From: Andrey Konovalov <andreyknvl@google.com>
-Date: Tue, 3 Apr 2018 16:45:26 +0200
-Message-ID: <CAAeHK+w9T8dTKP8tuw+B2MojvzRE6YQ1=O1FddZA62cYaeLV2g@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 08/15] khwasan: add tag related helper functions
+Date: Tue, 3 Apr 2018 16:43:10 +0200
+Message-ID: <CAAeHK+z37yRzK1Q6F32G=eB6_k+s_YQOoR8LLqNppxZsKMWiZg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 05/15] khwasan: initialize shadow to 0xff
 To: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Cc: Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>,
 	Jonathan Corbet <corbet@lwn.net>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
-	Christopher Li <sparse@chrisli.org>, Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>, Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Michal Marek <michal.lkml@markovi.net>, Mark Rutland <mark.rutland@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>, Yury Norov <ynorov@caviumnetworks.com>,
-	Nick Desaulniers <ndesaulniers@google.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Kristina Martsenko <kristina.martsenko@arm.com>, Punit Agrawal <punit.agrawal@arm.com>,
-	Dave Martin <Dave.Martin@arm.com>, Michael Weiser <michael.weiser@gmx.de>,
-	James Morse <james.morse@arm.com>, Julien Thierry <julien.thierry@arm.com>,
-	Steve Capper <steve.capper@arm.com>, Tyler Baicar <tbaicar@codeaurora.org>,
-	"Eric W . Biederman" <ebiederm@xmission.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Will Deacon <will.deacon@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>,
+	Marc Zyngier <marc.zyngier@arm.com>, Christopher Li <sparse@chrisli.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>,
+	Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Yury Norov <ynorov@caviumnetworks.com>, Nick Desaulniers <ndesaulniers@google.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Kristina Martsenko <kristina.martsenko@arm.com>,
+	Punit Agrawal <punit.agrawal@arm.com>, Dave Martin <Dave.Martin@arm.com>,
+	Michael Weiser <michael.weiser@gmx.de>, James Morse <james.morse@arm.com>,
+	Julien Thierry <julien.thierry@arm.com>, Steve Capper <steve.capper@arm.com>,
+	Tyler Baicar <tbaicar@codeaurora.org>, "Eric W . Biederman" <ebiederm@xmission.com>,
+	Stephen Boyd <stephen.boyd@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>, Paul Lawrence <paullawrence@google.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, David Woodhouse <dwmw@amazon.co.uk>,
 	Sandipan Das <sandipan@linux.vnet.ibm.com>, Kees Cook <keescook@chromium.org>,
@@ -66,46 +67,153 @@ Cc: Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>,
 	Jann Horn <jannh@google.com>, Mark Brand <markbrand@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595752710383893280?=
-X-GMAIL-MSGID: =?utf-8?q?1596736647149717567?=
+X-GMAIL-THRID: =?utf-8?q?1595752704259499318?=
+X-GMAIL-MSGID: =?utf-8?q?1596736502680825672?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 30, 2018 at 6:13 PM, Andrey Ryabinin
+On Fri, Mar 30, 2018 at 6:07 PM, Andrey Ryabinin
 <aryabinin@virtuozzo.com> wrote:
->
->
 > On 03/23/2018 09:05 PM, Andrey Konovalov wrote:
->
->> diff --git a/mm/kasan/khwasan.c b/mm/kasan/khwasan.c
->> index 24d75245e9d0..da4b17997c71 100644
->> --- a/mm/kasan/khwasan.c
->> +++ b/mm/kasan/khwasan.c
->> @@ -39,6 +39,57 @@
->>  #include "kasan.h"
->>  #include "../slab.h"
+>> A KHWASAN shadow memory cell contains a memory tag, that corresponds to
+>> the tag in the top byte of the pointer, that points to that memory. The
+>> native top byte value of kernel pointers is 0xff, so with KHWASAN we
+>> need to initialize shadow memory to 0xff. This commit does that.
 >>
->> +int khwasan_enabled;
+>> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+>> ---
+>>  arch/arm64/mm/kasan_init.c | 11 ++++++++++-
+>>  include/linux/kasan.h      |  8 ++++++++
+>>  mm/kasan/common.c          |  7 +++++++
+>>  3 files changed, 25 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
+>> index dabfc1ecda3d..d4bceba60010 100644
+>> --- a/arch/arm64/mm/kasan_init.c
+>> +++ b/arch/arm64/mm/kasan_init.c
+>> @@ -90,6 +90,10 @@ static void __init kasan_pte_populate(pmd_t *pmdp, unsigned long addr,
+>>       do {
+>>               phys_addr_t page_phys = early ? __pa_symbol(kasan_zero_page)
+>>                                             : kasan_alloc_zeroed_page(node);
+>> +#if KASAN_SHADOW_INIT != 0
+>> +             if (!early)
+>> +                     memset(__va(page_phys), KASAN_SHADOW_INIT, PAGE_SIZE);
+>> +#endif
 >
-> This is not unused (set, but never used).
+> Less ugly way to do the same:
+>         if (KASAN_SHADOW_INIT != 0 && !early)
+>                 memset(__va(page_phys), KASAN_SHADOW_INIT, PAGE_SIZE);
+>
+>
+> But the right approach here would be allocating uninitialized memory (see memblock_virt_alloc_try_nid_raw())
+> and do "if (!early) memset(.., KASAN_SHADOW_INIT, ..)" afterwards.
 
-It's used in the "khwasan: add hooks implementation" patch. I'll move
-it's declaration there as well.
+Will do!
+
+>
+>
+>>               next = addr + PAGE_SIZE;
+>>               set_pte(ptep, pfn_pte(__phys_to_pfn(page_phys), PAGE_KERNEL));
+>>       } while (ptep++, addr = next, addr != end && pte_none(READ_ONCE(*ptep)));
+>> @@ -139,6 +143,11 @@ asmlinkage void __init kasan_early_init(void)
+>>               KASAN_SHADOW_END - (1UL << (64 - KASAN_SHADOW_SCALE_SHIFT)));
+>>       BUILD_BUG_ON(!IS_ALIGNED(KASAN_SHADOW_START, PGDIR_SIZE));
+>>       BUILD_BUG_ON(!IS_ALIGNED(KASAN_SHADOW_END, PGDIR_SIZE));
+>> +
+>> +#if KASAN_SHADOW_INIT != 0
+>> +     memset(kasan_zero_page, KASAN_SHADOW_INIT, PAGE_SIZE);
+>> +#endif
+>> +
+>
+>  if (KASAN_SHADOW_INIT)
+>         memset(...)
+>
+> Note that, if poisoning of stack variables will work in the same fashion as classic
+> KASAN (compiler generated code writes to shadow in function prologue) than content
+> of this page will be ruined very fast. Which makes this initialization questionable.
+
+I think I agree with you on this. Since this page immediately gets
+dirty and we ignore all reports until proper shadow is set up anyway,
+there's no need to initialize it.
+
+>
+>
+>
+>>       kasan_pgd_populate(KASAN_SHADOW_START, KASAN_SHADOW_END, NUMA_NO_NODE,
+>>                          true);
+>>  }
+>> @@ -235,7 +244,7 @@ void __init kasan_init(void)
+>>               set_pte(&kasan_zero_pte[i],
+>>                       pfn_pte(sym_to_pfn(kasan_zero_page), PAGE_KERNEL_RO));
+>>
+>> -     memset(kasan_zero_page, 0, PAGE_SIZE);
+>> +     memset(kasan_zero_page, KASAN_SHADOW_INIT, PAGE_SIZE);
+>>       cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
+>>
+>>       /* At this point kasan is fully initialized. Enable error messages */
+>> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+>> index 3c45e273a936..700734dff218 100644
+>> --- a/include/linux/kasan.h
+>> +++ b/include/linux/kasan.h
+>> @@ -139,6 +139,8 @@ static inline size_t kasan_metadata_size(struct kmem_cache *cache) { return 0; }
+>>
+>>  #ifdef CONFIG_KASAN_CLASSIC
+>>
+>> +#define KASAN_SHADOW_INIT 0
+>> +
+>>  void kasan_cache_shrink(struct kmem_cache *cache);
+>>  void kasan_cache_shutdown(struct kmem_cache *cache);
+>>
+>> @@ -149,4 +151,10 @@ static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
+>>
+>>  #endif /* CONFIG_KASAN_CLASSIC */
+>>
+>> +#ifdef CONFIG_KASAN_TAGS
+>> +
+>> +#define KASAN_SHADOW_INIT 0xFF
+>> +
+>> +#endif /* CONFIG_KASAN_TAGS */
+>> +
+>>  #endif /* LINUX_KASAN_H */
+>> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+>> index 08f6c8cb9f84..f4ccb9425655 100644
+>> --- a/mm/kasan/common.c
+>> +++ b/mm/kasan/common.c
+>> @@ -253,6 +253,9 @@ int kasan_module_alloc(void *addr, size_t size)
+>>                       __builtin_return_address(0));
+>>
+>>       if (ret) {
+>> +#if KASAN_SHADOW_INIT != 0
+>> +             __memset(ret, KASAN_SHADOW_INIT, shadow_size);
+>> +#endif
+>
+> Drop __GFP_ZERO from above and remove this #if/#endif.
+
+Will do!
+
+>
+>
+>>               find_vm_area(addr)->flags |= VM_KASAN;
+>>               kmemleak_ignore(ret);
+>>               return 0;
+>> @@ -297,6 +300,10 @@ static int __meminit kasan_mem_notifier(struct notifier_block *nb,
+>>               if (!ret)
+>>                       return NOTIFY_BAD;
+>>
+>> +#if KASAN_SHADOW_INIT != 0
+>> +             __memset(ret, KASAN_SHADOW_INIT, shadow_end - shadow_start);
+>> +#endif
+>> +
+>
+> No need to initialize anything here, kasan_free_pages() will do this later.
+
+OK, will fix this!
+
+>
+>
+>>               kmemleak_ignore(ret);
+>>               return NOTIFY_OK;
+>>       }
+>>
 
 Thanks!
-
->
->> +
->> +static DEFINE_PER_CPU(u32, prng_state);
->> +
->> +void khwasan_init(void)
->> +{
->> +     int cpu;
->> +
->> +     for_each_possible_cpu(cpu) {
->> +             per_cpu(prng_state, cpu) = get_random_u32();
->> +     }
->> +     WRITE_ONCE(khwasan_enabled, 1);
->> +}
->> +
->
