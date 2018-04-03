@@ -1,140 +1,477 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755471AbeDCLRQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:17:16 -0400
-Received: from mail-db5eur01on0118.outbound.protection.outlook.com ([104.47.2.118]:27298
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755337AbeDCLRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:17:14 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=aryabinin@virtuozzo.com;
-Subject: Re: general protection fault in __mem_cgroup_free
-To: Michal Hocko <mhocko@kernel.org>,
-        syzbot <syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com>
-Cc: cgroups@vger.kernel.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
-References: <001a113fe4c0a623b10568bb75ea@google.com>
- <20180403093733.GI5501@dhcp22.suse.cz> <20180403094329.GJ5501@dhcp22.suse.cz>
- <20180403105048.GK5501@dhcp22.suse.cz>
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <a91a520d-f56d-56bf-d784-89fb4562ef3c@virtuozzo.com>
-Date: Tue, 3 Apr 2018 14:18:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755443AbeDCLWz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:22:55 -0400
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:2764 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755121AbeDCLWy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:22:54 -0400
+X-IronPort-AV: E=Sophos;i="5.48,400,1517875200";
+   d="scan'208";a="70964740"
+Date: Tue, 3 Apr 2018 12:22:44 +0100
+From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+CC: <xen-devel@lists.xen.org>, <linux-kernel@vger.kernel.org>,
+        Bob Liu <bob.liu@oracle.com>,
+        Somasundaram Krishnasamy <somasundaram.krishnasamy@oracle.com>
+Subject: Re: [PATCH v1] xen-blkfront: dynamic configuration of per-vbd
+ resources
+Message-ID: <20180403112244.vlg7j7ynxwkxwhs7@MacBook-Pro-de-Roger.local>
+References: <20180402174232.28642-1-konrad.wilk@oracle.com>
+ <20180402174232.28642-2-konrad.wilk@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180403105048.GK5501@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: HE1P18901CA0022.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:3:8b::32) To VI1PR08MB3261.eurprd08.prod.outlook.com
- (2603:10a6:803:3d::16)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a5bf4324-5fe2-433e-c3c9-08d59954725b
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3261;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3261;3:qzckuw1JT/QzQxeYgLMa0Ratu2D5fMpbUY4KJkgdcf9RJEpIPcKZH98HmunGtAuIQMSDaeOLExNXlvh+oWq2PNo5Hou27iNCgJ9F3YAfMRfbVarqUiupS6B5WYI4Qe9JWuh8sFHk3Uq6GLheVcYh7j1tHC5uP5dxSWWb70/ahkZKNu88JAiFTzKUeqFWS1Cfs3YYgqOBdIlXjxPOOj+NkkbWncKvhYM0i38eGMht7x2/GZuob5ZJ3MmrxNkQ3ZOR;25:sS4zexnqfiYJuHuCBl5Qz7g3SoioSHUIBpIJIyFxcV9lc8StuqgWO/QCAAUxu798SZAbYxi8peXZiyvVwmdQEU2sIHlLnEcK1HBmRgw1ZL0pS0kIRBXZqYI66p0zs7Gvjr6auBzNE5eJUtWUyeGjU2gD3JPGzA0lHLMHdNfNImuON42tvWHkISKwC9IhPgGr3ME+g9POoClb461JBXOvRXJolK4JfkSNR4iFEN7vfR79GUovn5hORg7wiq7t2RkEmJa87CRcTOUF34pMwaWIoBDOGmgUQW9TjXuOBKIpPTLvKBJyDZPqLsOd4Zu7NGYieYb/xf2qtMr04/BldiaNpw==;31:mj0WRJHSWvTynz67YfKJL1hvQnCJHuIO+dnsl9HLe9A4J2pbAebR/7wChkYwYJR3kedEoCuwkgQ5wYzLURJWXccOBVXnPJHT+fR8ePApjH4AkA/yAwY6TolzA3R5Yf78bwsmwLiHof6eyr8mGOxU4v3GRorK+hvktIx9WyDdqWxSMtHXlJ19gvTpDK/TIt311yMDGWNwEfET8gWzUhaURDPhzk2Ok4IzbGzacyf9qmI=
-X-MS-TrafficTypeDiagnostic: VI1PR08MB3261:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3261;20:NpLZyvDyzrglPIYgIogaI/Hxa/ViuPRv5tcE4TO2p/y4MCcockjYzzD/AdLB+e87v5ZIrcF3AU5a98iJRtJ2xa2tv09WsOROGaun58FwB8aU0J9uYCxPrkYfncqezzw/dup7FanLlBJA18/syl0zEdSYOIv5lLP0x9Fygf1en4aakCTKndc8HLEmmPvZvIFOQqBXsYB3M8ZYHVF01Lwh+p78p3s/0tPz0wCWXIGySsReebHM/d6Kgofg0rRqFyaGHj9frSzTOnx/6X0hW1QERALu56t1NeLcUn/5OIyv+dESYpE8M1+UlMWX5JKO7Y0xIlamuONK0GO24XD+KWI8oJNAlrB85qS4N/5KeS88AGJw0mC4Hbe/0FhbQPvy9VMmFSZeMHohRDUesLEyVYKrhuxZF5p8KfKfsOD6nhULjJUib49FErEGZuXTL7h+H2/ybH15Qn6WIGqoSvGRsbB0EGsN4dMy6YCQdHvnT5bwnwX2UlSUsNpfU2RAuDcE54wW;4:0wzATlp7iJB0L9Xgl1qmYqr/iGOxiW+YTrj0v1VX3z44SpRnl0FYOc4CApotJcnqmGgLd++JD4bos36M/ZvoVCcdaVSqNOt2gfzTaNNQH/4kc5X2trXnBVmD0dPZNvLtLoZjg0t2j0BBi4YAXP5Rv2eEa9bTeXBbicZPVqi2+n//4N8sDZfvggvk8NBSW8Be1uqpQk3SsqMGM7HpwyGUlxB2JjhpCVPShJhLHViDhAPSW9yopzpIz+URzaUHF0BKRLLKpr1SzT0sRZ34UkHb4Q==
-X-Microsoft-Antispam-PRVS: <VI1PR08MB3261ABF087456B2894774F88B0A50@VI1PR08MB3261.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:VI1PR08MB3261;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3261;
-X-Forefront-PRVS: 0631F0BC3D
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39850400004)(396003)(39380400002)(346002)(376002)(366004)(189003)(199004)(16526019)(81156014)(2906002)(66066001)(81166006)(65806001)(65956001)(65826007)(8676002)(478600001)(59450400001)(7736002)(76176011)(53546011)(386003)(6486002)(64126003)(186003)(31686004)(77096007)(52116002)(86362001)(39060400002)(47776003)(25786009)(55236004)(31696002)(305945005)(68736007)(229853002)(26005)(575784001)(4326008)(8936002)(6666003)(93886005)(6246003)(476003)(36756003)(110136005)(16576012)(316002)(23676004)(11346002)(53936002)(105586002)(6116002)(5660300001)(486005)(446003)(3846002)(52146003)(106356001)(2616005)(50466002)(97736004)(486005)(230700001)(2486003)(956004)(58126008);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR08MB3261;H:[172.16.25.12];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA4TUIzMjYxOzIzOlNxWHE5RjNjUDFUc0tEaEhEYW9wbW9KK3J1?=
- =?utf-8?B?TjU2cTY4Z1ZZRFp3Vjl6NGlaSVVicVJBYXBScG8xTUhxQ3h2czhoUVJNV1pZ?=
- =?utf-8?B?ZU16ZVhvdWpvcnhkS1Q1N1lNeHhNS1g5MjZKWUZYSkkwdS9QYm5nOHFsaHJm?=
- =?utf-8?B?UFQ1Y1poZGVQUWpCSmpnVDNlcUpFOStXeGJmam5yRU9yUURsekpCQnBNTmVS?=
- =?utf-8?B?ckh6M2tIK0dJbHpoaFlNamtTSUxDVGFtQVZWQXhGV1EyMkVrbHVwM3EzNGVK?=
- =?utf-8?B?OWk5aDhWaUVIL2x0OUJnaVNEUDYrN0I1TitmWmtqU1pySExzeFQzN2NCQXh5?=
- =?utf-8?B?S251eTE1UVNtc1RwNDYwTldHaVltdzIzckcxblJmSnhaMTFuVE5OVFN6Tm0z?=
- =?utf-8?B?RklYMzRDbGdVVHlyV2JxdERVT1hsN04wSWhWbXBXMFBrUCtzcmQ2dWJweFRo?=
- =?utf-8?B?eEkvQjBKY2hweWNIYUQybnc2RzdZOUhjTU5wTGFGeFNaNGk2SUFTbUswcmR3?=
- =?utf-8?B?NDdzb1lvN1FJWThQZ2VLQXE5Nlh5NzVOYlBCalZ6amxLUXA4cWtxUGFpcjgz?=
- =?utf-8?B?bnVoMUlqYmRlQ05wUlVvVXNlbkY3WEhrSlNVUXVZRk9FZWRlU0piRXJoRFZq?=
- =?utf-8?B?a0ZXWW8xZjc1K2NsR200a0IyY0pOb1FSWTBVL2p5Q1FrSnhKYi9xZHlVNkpT?=
- =?utf-8?B?a2M5OTdRZHp2QkthSE82VmJWWjNiaEZ0cTJ6cXRZTTdMbHdtdlJwVUFScUNG?=
- =?utf-8?B?QzZnZlQ5UGsrMUR5NkFIRzFzQis4aHpVK3k3bXlKeTBSU2g1ZlJxWmIxZjRN?=
- =?utf-8?B?c2lQZ012Z0NWb1ltUXZqOHJWK0hvaGYxb2RRVjN6Sk1PYUFRT2tyL3dpV1c3?=
- =?utf-8?B?UWxxd0xTaDJ5VmRKSmVsaWdxMHhoejZoSFB3QkFPMTNKZTZHci9aU0tsdTd0?=
- =?utf-8?B?azUxVnZ2djBjTVRjR3k0RHluVmpwR3hMWkxMNGFvY3pZK2xaaWtwVUhnR1do?=
- =?utf-8?B?TEpPcHAydktEcUFpRVJ0Yy9ROXhNOFBXdWtFeitsMzdCYjQwam16Sm1JdWxr?=
- =?utf-8?B?WEluNVp6Skt0dTY5VmI4bHlieTl4VVdZOVN1OFF4QTFQd2xHQ1lpUFhNNU9G?=
- =?utf-8?B?VHVMYzNVMHM0ejkvUzhrQkVvbW9JbThoeGxjdFdCM1JPYVVOZkxQdjI2bk1F?=
- =?utf-8?B?am5vSldCcjZ6NDJmVEMxYndHVzJqUjgwT2xHYldianF5empLRkZwSFpGdXN1?=
- =?utf-8?B?N3lGYWtCY1lwYzBtRjlBMnpjWHorN05nSVcxQ2JVN3hkSDVRcnlYd2ZoajFM?=
- =?utf-8?B?SnJWaFdEZ2ovd09ycTFtZUtBM05xS3k4SjZwMitPbzZXNDFtdDJHMFdYUW4r?=
- =?utf-8?B?UlVsVXZlVWxNa0F3Ylo3TitaRWVYWTdPZ1Q1ZDhON1Nwb3ZTdkpVbTlBZ0M2?=
- =?utf-8?B?Sjl2c1duRFpQWVpEckdJa1ZaY3YrUjluSGxiKzBSdy9Kdm9vVVFXTW1SaUgx?=
- =?utf-8?B?cVJPd0lzWWFZSW9IeE9wTDZVQ0ZBTVlNTEpheGpxcUJNUjhaWFRsbzdUOFhQ?=
- =?utf-8?B?OEVsZWEyQk5uRVlMNVRpL29CK2JBWkxtWlpuZUtJa0RFMVlpRFIrTHlhRWo3?=
- =?utf-8?B?RGM4YmJmdHN3UFBqRGF4em5lQVdsdDRUa1NXTFA1NFBuOG9TQUZoekprZDFT?=
- =?utf-8?B?N1FkZHdDUmVUTnIwMUxCNFJqVjdHOTF6Vmt3Tnh4dGFQNWpJYk9DdDFTU1V3?=
- =?utf-8?B?TCsrdGpMUmc0RTJPYUpHSlZURzVlRkozdkNGdjh2Mko2c1VTaWVldU1hOFhR?=
- =?utf-8?B?Y2JYN0FqUW94TCs3VkdYanYvRUd2S0t5dWVXdS9pM3V6MnVyU2t1eitoWXRH?=
- =?utf-8?B?ZDFvaVFNNFAxamlkcExQUmpGejFsZzJVQ3Y3STFnSUdiZWUvdTlXVG9LOWxL?=
- =?utf-8?B?bkhCUzJ5LzVxQ2w4dFIzbkZibTJUNU1lVGgra1J5Rm9JVm1SVC9qRnlQQTFr?=
- =?utf-8?B?UXpTQWtMMC91SENnZ3VSVnZrL1pTeU40elZwMCt2OXlpTS9UUWViU3J3cTJ4?=
- =?utf-8?B?MW5Ock9Ia3NBcXpBY1N4ZitGUEhhSDhhejlieVZ2aTBrdkdXS0oxZGhZRkhq?=
- =?utf-8?B?ZVE9PQ==?=
-X-Microsoft-Antispam-Message-Info: LWwI9vSyRcJNrN/b8qSocmvwhWhkJXJvzHUenM99ZsOpiGe6a/UM7gxVv6E1JEKpPpS1RSCk49MikYpnVfmT9ets9gEwBezoqvs3ITjzykacwdHRH6LE55fpdvjHoFrkk8j0MXO2YiI7MZlpLyUQ3sL901gitdz1hla2ihulNp1OJ+StasvZ99Pq/nC6RzIN
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3261;6:HP/8Zs4O+58dpUVofMeLWoTEXNnogE8AO02FlICqDWksJLwPg0CJPUbleaDaT4PNmUZ452ZQBCOAyvnHhJ15VvPdlGKE15EYOQlQaBMsJS5S88gfbpXMUp/9nohaExf1miNdbKgywhCuCeprPjINlcG15DPpjCk9azUitJUfpASgkbYv9OCXk2f/1hFSvggU0QJam5eF2D/63phWYeVQT8mJw8uCLWudiEYdakJYJKp0RKbO0kTG1MSy88P02LTTqQPGVHI0VbsmfKF4eqH8SuvQdJW/tqHAG5zRD3oVgeIuveI8gPKsJ7B3F7AKQ4wikEue5V3R+xqF7w/oDGEpyaQCSLpn6AcGLLoWwJfzkC2p9o3fOxtwq+iXcLUXKVhtdUghwOvp2NpDO/x9YEcq1sLC/NXdq7V5rKZTEYTRfybPXXjOTNPRtrhrza7fd0CwdRxZTU15AqXW4fRMQ35nIQ==;5:FYLWi7nPCRcuC/xKZvxSRNspdlrVGcvsh9j4nrxkAOiQRz2RkbKPtIjnRUd1lQGKwyh3GRnhr80S6F4Fvkw9rF17Q85DlUA0g+/im/mk+RZgENKt2L3Oo3P7maMIc3eGrxHAgmeOjUofmPJJUAgc/Punxpvyrkamp+HlExMVheY=;24:cSti1ZxSIylqmIgRj/pN1somJKPsbM9HA2INWKfXDcij4OHsNyo780PnzIqSl+psy4a2LoRQ9ZH/VnKhNI8/UVNSpfHOyf8XFFd+n+u+EOw=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3261;7:DUN+LGo3VStyBrDDG0PF/G/1Elu+/oWlAm6YOW0I3+MeZBSMmnyOhtqJz91CPBIMMAcgNHQ7RS0u2S+jhbJrJWwNVmz6YM0Li9mg8lw7mO5XNmCDbv+FMHtCyzu1Yn5RSLW2N6SZ1nmp/qQ6+O++HnK+LwtQeMrwCXMZIP4LdiQthQiwcgGDPbC9CkteGclmWm3bZncWTyyAdV5cDlZb4Sq0PLa0ixwXUj5HU7I1aOgy54tvz3F49QiPaJgUQxHO;20:HdPLY+LZlzrVqY7WPiCgWgA1RaCinrGREymGFmpaYDeCCsCjHP5jcNRzLJlBc3dnwwRqkFI3zqBupQwMNh7Iz8rYuPPsScELwGL9qmlthTHUxPSPB2SI80Kh9zDwJQRyW7Y8BkMtuVWA6PKTm7jk//XtILtPWaiaDQg5xBrrejE=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2018 11:17:11.0837 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5bf4324-5fe2-433e-c3c9-08d59954725b
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3261
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180402174232.28642-2-konrad.wilk@oracle.com>
+User-Agent: NeoMutt/20180323
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 01:50 PM, Michal Hocko wrote:
-> Here we go
+On Mon, Apr 02, 2018 at 01:42:32PM -0400, Konrad Rzeszutek Wilk wrote:
+> From: Bob Liu <bob.liu@oracle.com>
 > 
-> From 38f0f08a3f9f19c106ae53350e43dc97e2e3a4d8 Mon Sep 17 00:00:00 2001
-> From: Michal Hocko <mhocko@suse.com>
-> Date: Tue, 3 Apr 2018 12:40:41 +0200
-> Subject: [PATCH] memcg: fix per_node_info cleanup
+> The current VBD layer reserves buffer space for each attached device based on
+> three statically configured settings which are read at boot time.
+>  * max_indirect_segs: Maximum amount of segments.
+>  * max_ring_page_order: Maximum order of pages to be used for the shared ring.
+>  * max_queues: Maximum of queues(rings) to be used.
 > 
-> syzbot has triggered a NULL ptr dereference when allocation fault
-> injection enforces a failure and alloc_mem_cgroup_per_node_info
-> initializes memcg->nodeinfo only half way through. __mem_cgroup_free
-> still tries to free all per-node data and dereferences pn->lruvec_stat_cpu
-> unconditioanlly even if the specific per-node data hasn't been
-> initialized.
+> But the storage backend, workload, and guest memory result in very different
+> tuning requirements. It's impossible to centrally predict application
+> characteristics so it's best to leave allow the settings can be dynamiclly
+> adjusted based on workload inside the Guest.
 > 
-> The bug is quite unlikely to hit because small allocations do not fail
-> and we would need quite some numa nodes to make struct mem_cgroup_per_node
-> large enough to cross the costly order.
+> Usage:
+> Show current values:
+> cat /sys/devices/vbd-xxx/max_indirect_segs
+> cat /sys/devices/vbd-xxx/max_ring_page_order
+> cat /sys/devices/vbd-xxx/max_queues
 > 
-> Reported-by: syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com
-> Fixes: 00f3ca2c2d66 ("mm: memcontrol: per-lruvec stats infrastructure")
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-
-Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-
+> Write new values:
+> echo <new value> > /sys/devices/vbd-xxx/max_indirect_segs
+> echo <new value> > /sys/devices/vbd-xxx/max_ring_page_order
+> echo <new value> > /sys/devices/vbd-xxx/max_queues
+> 
+> Signed-off-by: Bob Liu <bob.liu@oracle.com>
+> Signed-off-by: Somasundaram Krishnasamy <somasundaram.krishnasamy@oracle.com>
+> Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 > ---
->  mm/memcontrol.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/block/xen-blkfront.c | 320 ++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 304 insertions(+), 16 deletions(-)
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e3d5a0a7917f..0a9c4d5194f3 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4340,6 +4340,9 @@ static void free_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
->  {
->  	struct mem_cgroup_per_node *pn = memcg->nodeinfo[node];
+> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+> index 92ec1bbece51..4ebd368f4d1a 100644
+> --- a/drivers/block/xen-blkfront.c
+> +++ b/drivers/block/xen-blkfront.c
+> @@ -46,6 +46,7 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/bitmap.h>
+>  #include <linux/list.h>
+> +#include <linux/delay.h>
 >  
-> +	if (!pn)
-> +		return;
+>  #include <xen/xen.h>
+>  #include <xen/xenbus.h>
+> @@ -217,6 +218,11 @@ struct blkfront_info
+>  	/* Save uncomplete reqs and bios for migration. */
+>  	struct list_head requests;
+>  	struct bio_list bio_list;
+> +	/* For dynamic configuration. */
+> +	unsigned int reconfiguring:1;
+
+bool reconfiguring:1 maybe?
+
+And I would likely place it together with the feature_ fields, so that
+no more padding is added to the struct.
+
+> +	int new_max_indirect_segments;
+> +	int new_max_ring_page_order;
+> +	int new_max_queues;
+
+All the ints should be unsigned ints AFAICT.
+
+>  };
+>  
+>  static unsigned int nr_minors;
+> @@ -1355,6 +1361,31 @@ static void blkif_free(struct blkfront_info *info, int suspend)
+>  	for (i = 0; i < info->nr_rings; i++)
+>  		blkif_free_ring(&info->rinfo[i]);
+>  
+> +	/* Remove old xenstore nodes. */
+> +	if (info->nr_ring_pages > 1)
+> +		xenbus_rm(XBT_NIL, info->xbdev->nodename, "ring-page-order");
 > +
->  	free_percpu(pn->lruvec_stat_cpu);
->  	kfree(pn);
+> +	if (info->nr_rings == 1) {
+> +		if (info->nr_ring_pages == 1) {
+> +			xenbus_rm(XBT_NIL, info->xbdev->nodename, "ring-ref");
+> +		} else {
+> +			for (i = 0; i < info->nr_ring_pages; i++) {
+> +				char ring_ref_name[RINGREF_NAME_LEN];
+> +
+> +				snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
+> +				xenbus_rm(XBT_NIL, info->xbdev->nodename, ring_ref_name);
+> +			}
+> +		}
+> +	} else {
+> +		xenbus_rm(XBT_NIL, info->xbdev->nodename, "multi-queue-num-queues");
+> +
+> +		for (i = 0; i < info->nr_rings; i++) {
+> +			char queuename[QUEUE_NAME_LEN];
+> +
+> +			snprintf(queuename, QUEUE_NAME_LEN, "queue-%u", i);
+> +			xenbus_rm(XBT_NIL, info->xbdev->nodename, queuename);
+> +		}
+> +	}
+>  	kfree(info->rinfo);
+>  	info->rinfo = NULL;
+>  	info->nr_rings = 0;
+> @@ -1778,10 +1809,18 @@ static int talk_to_blkback(struct xenbus_device *dev,
+>  	if (!info)
+>  		return -ENODEV;
+>  
+> -	max_page_order = xenbus_read_unsigned(info->xbdev->otherend,
+> -					      "max-ring-page-order", 0);
+> -	ring_page_order = min(xen_blkif_max_ring_order, max_page_order);
+> -	info->nr_ring_pages = 1 << ring_page_order;
+> +	err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
+> +			   "max-ring-page-order", "%u", &max_page_order);
+> +	if (err != 1)
+> +		info->nr_ring_pages = 1;
+> +	else {
+> +		ring_page_order = min(xen_blkif_max_ring_order, max_page_order);
+> +		if (info->new_max_ring_page_order) {
+> +			BUG_ON(info->new_max_ring_page_order > max_page_order);
+> +			ring_page_order = info->new_max_ring_page_order;
+> +		}
+> +		info->nr_ring_pages = 1 << ring_page_order;
+> +	}
+
+You could likely simply this as:
+
+max_page_order = xenbus_read_unsigned(info->xbdev->otherend,
+				      "max-ring-page-order", 0);
+if ((info->new_max_ring_page_order) {
+	BUG_ON(info->new_max_ring_page_order > max_page_order);
+	info->nr_ring_pages = 1 << info->new_max_ring_page_order;
+} else
+	info->nr_ring_pages = 1 << min(xen_blkif_max_ring_order, max_page_order);
+
+I'm not sure of the benefit of switching the xenbus_read_unsigned to a
+xenbus_scanf. IMO it seems to make the code more complex.
+
+>  
+>  	err = negotiate_mq(info);
+>  	if (err)
+> @@ -1903,6 +1942,10 @@ static int negotiate_mq(struct blkfront_info *info)
+>  	backend_max_queues = xenbus_read_unsigned(info->xbdev->otherend,
+>  						  "multi-queue-max-queues", 1);
+>  	info->nr_rings = min(backend_max_queues, xen_blkif_max_queues);
+> +	if (info->new_max_queues) {
+> +		BUG_ON(info->new_max_queues > backend_max_queues);
+> +		info->nr_rings = info->new_max_queues;
+> +	}
+>  	/* We need at least one ring. */
+>  	if (!info->nr_rings)
+>  		info->nr_rings = 1;
+> @@ -2261,6 +2304,8 @@ static int blkfront_setup_indirect(struct blkfront_ring_info *rinfo)
+>   */
+>  static void blkfront_gather_backend_features(struct blkfront_info *info)
+>  {
+> +	int err;
+> +	int persistent;
+
+unsigned int. You use the '%u' format specifier below.
+
+>  	unsigned int indirect_segments;
+>  
+>  	info->feature_flush = 0;
+> @@ -2291,19 +2336,241 @@ static void blkfront_gather_backend_features(struct blkfront_info *info)
+>  	if (xenbus_read_unsigned(info->xbdev->otherend, "feature-discard", 0))
+>  		blkfront_setup_discard(info);
+>  
+> -	info->feature_persistent =
+> -		!!xenbus_read_unsigned(info->xbdev->otherend,
+> -				       "feature-persistent", 0);
+> +	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
+> +			"feature-persistent", "%u", &persistent,
+> +			NULL);
+> +
+> +	info->feature_persistent = err ? 0 : persistent;
+> +
+> +	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
+> +			    "feature-max-indirect-segments", "%u", &indirect_segments,
+> +			    NULL);
+> +	if (err)
+> +		info->max_indirect_segments = 0;
+> +	else {
+> +		info->max_indirect_segments = min(indirect_segments,
+> +						  xen_blkif_max_segments);
+> +		if (info->new_max_indirect_segments) {
+> +			BUG_ON(info->new_max_indirect_segments > indirect_segments);
+> +			info->max_indirect_segments = info->new_max_indirect_segments;
+> +		}
+> +	}
+
+Again I think using xenbus_read_unsigned makes the code simpler, see
+the suggestion regarding new_max_ring_page_order.
+
+> +}
+> +
+> +static ssize_t max_ring_page_order_show(struct device *dev,
+> +					struct device_attribute *attr, char *page)
+> +{
+> +	struct blkfront_info *info = dev_get_drvdata(dev);
+> +
+> +	return sprintf(page, "%u\n", get_order(info->nr_ring_pages * XEN_PAGE_SIZE));
+> +}
+> +
+> +static ssize_t max_indirect_segs_show(struct device *dev,
+> +				      struct device_attribute *attr, char *page)
+> +{
+> +	struct blkfront_info *info = dev_get_drvdata(dev);
+> +
+> +	return sprintf(page, "%u\n", info->max_indirect_segments);
+> +}
+> +
+> +static ssize_t max_queues_show(struct device *dev,
+> +			       struct device_attribute *attr, char *page)
+> +{
+> +	struct blkfront_info *info = dev_get_drvdata(dev);
+> +
+> +	return sprintf(page, "%u\n", info->nr_rings);
+> +}
+> +
+> +static ssize_t dynamic_reconfig_device(struct blkfront_info *info, ssize_t count)
+
+Not sure you need to pass 'count' here. dynamic_reconfig_device
+doesn't care about count at all. This function should just return < 0
+for error or 0 on success.
+
+> +{
+> +	unsigned int i;
+> +	int err = -EBUSY;
+> +	unsigned int inflight;
+> +
+> +	/*
+> +	 * Make sure no migration in parallel, device lock is actually a
+> +	 * mutex.
+> +	 */
+> +	if (!device_trylock(&info->xbdev->dev)) {
+> +		pr_err("Fail to acquire dev:%s lock, may be in migration.\n",
+> +			dev_name(&info->xbdev->dev));
+> +		return err;
+> +	}
+> +
+> +	/*
+> +	 * Prevent new requests and guarantee no uncompleted reqs.
+> +	 */
+> +	blk_mq_freeze_queue(info->rq);
+> +	inflight = atomic_read(&info->gd->part0.in_flight[0]) +
+> +		   atomic_read(&info->gd->part0.in_flight[1]);
+> +	if (inflight)
+> +		goto out;
+
+Er, I'm not sure I like this approach. Why not just switch the state
+to closed, wait for the backend to also switch to closed, reconnect
+and then requeue any pending requests on the shadow copy of the ring?
+
+Basically like what is currently done for migration.
+
+> +
+> +	/*
+> +	 * Front 				Backend
+> +	 * Switch to XenbusStateClosed
+> +	 *					frontend_changed():
+> +	 *					 case XenbusStateClosed:
+> +	 *						xen_blkif_disconnect()
+> +	 *						Switch to XenbusStateClosed
+> +	 * blkfront_resume():
+> +	 *					frontend_changed():
+> +	 *						reconnect
+> +	 * Wait until XenbusStateConnected
+> +	 */
+> +	info->reconfiguring = true;
+> +	xenbus_switch_state(info->xbdev, XenbusStateClosed);
+> +
+> +	/* Poll every 100ms, 1 minute timeout. */
+> +	for (i = 0; i < 600; i++) {
+> +		/*
+> +		 * Wait backend enter XenbusStateClosed, blkback_changed()
+> +		 * will clear reconfiguring.
+> +		 */
+> +		if (!info->reconfiguring)
+> +			goto resume;
+> +		schedule_timeout_interruptible(msecs_to_jiffies(100));
+> +	}
+> +	goto out;
+
+This shouldn't be done with a busy loop. Why not do this in
+blkback_changed instead?
+
+> +
+> +resume:
+> +	if (blkfront_resume(info->xbdev))
+> +		goto out;
+> +
+> +	/* Poll every 100ms, 1 minute timeout. */
+> +	for (i = 0; i < 600; i++) {
+> +		/* Wait blkfront enter StateConnected which is done by blkif_recover(). */
+> +		if (info->xbdev->state == XenbusStateConnected) {
+> +			err = count;
+> +			goto out;
+> +		}
+> +		schedule_timeout_interruptible(msecs_to_jiffies(100));
+> +	}
+> +
+> +out:
+> +	blk_mq_unfreeze_queue(info->rq);
+> +	device_unlock(&info->xbdev->dev);
+> +
+> +	return err;
+> +}
+> +
+> +static ssize_t max_indirect_segs_store(struct device *dev,
+> +		struct device_attribute *attr, const char *buf, size_t count)
+> +{
+> +	ssize_t ret;
+> +	unsigned int max_segs = 0, backend_max_segs = 0;
+> +	struct blkfront_info *info = dev_get_drvdata(dev);
+> +	int err;
+> +
+> +	ret = kstrtouint(buf, 10, &max_segs);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (max_segs == info->max_indirect_segments)
+> +		return count;
+> +
+> +	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
+> +			    "feature-max-indirect-segments", "%u", &backend_max_segs,
+
+Having to read all the backend features every time the user writes to
+the device nodes seems inefficient, although I assume this is not
+supposed to happen frequently...
+
+> +			    NULL);
+> +	if (err) {
+> +		pr_err("Backend %s doesn't support feature-indirect-segments.\n",
+> +			info->xbdev->otherend);
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	if (max_segs > backend_max_segs) {
+> +		pr_err("Invalid max indirect segment (%u), backend-max: %u.\n",
+> +			max_segs, backend_max_segs);
+> +		return -EINVAL;
+> +	}
+>  
+> -	indirect_segments = xenbus_read_unsigned(info->xbdev->otherend,
+> -					"feature-max-indirect-segments", 0);
+> -	if (indirect_segments > xen_blkif_max_segments)
+> -		indirect_segments = xen_blkif_max_segments;
+> -	if (indirect_segments <= BLKIF_MAX_SEGMENTS_PER_REQUEST)
+> -		indirect_segments = 0;
+> -	info->max_indirect_segments = indirect_segments;
+> +	info->new_max_indirect_segments = max_segs;
+> +
+> +	return dynamic_reconfig_device(info, count);
+
+No need to pass count, just use:
+
+return dynamic_reconfig_device(info) :? count;
+
+(same for all the cases below).
+
 >  }
-> 
+>  
+> +static ssize_t max_ring_page_order_store(struct device *dev,
+> +				 struct device_attribute *attr,
+> +				 const char *buf, size_t count)
+> +{
+> +	ssize_t ret;
+> +	unsigned int max_order = 0, backend_max_order = 0;
+> +	struct blkfront_info *info = dev_get_drvdata(dev);
+> +	int err;
+> +
+> +	ret = kstrtouint(buf, 10, &max_order);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if ((1 << max_order) == info->nr_ring_pages)
+> +		return count;
+> +
+> +	if (max_order > XENBUS_MAX_RING_GRANT_ORDER) {
+> +		pr_err("Invalid max_ring_page_order (%u), max: %u.\n",
+> +			max_order, XENBUS_MAX_RING_GRANT_ORDER);
+> +		return -EINVAL;
+> +	}
+> +
+> +	err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
+> +			   "max-ring-page-order", "%u", &backend_max_order);
+> +	if (err != 1) {
+> +		pr_err("Backend %s doesn't support feature multi-page-ring.\n",
+> +			info->xbdev->otherend);
+> +		return -EOPNOTSUPP;
+> +	}
+> +	if (max_order > backend_max_order) {
+> +		pr_err("Invalid max_ring_page_order (%u), backend supports max: %u.\n",
+> +			max_order, backend_max_order);
+> +		return -EINVAL;
+> +	}
+> +	info->new_max_ring_page_order = max_order;
+> +
+> +	return dynamic_reconfig_device(info, count);
+> +}
+> +
+> +static ssize_t max_queues_store(struct device *dev,
+> +				struct device_attribute *attr,
+> +				const char *buf, size_t count)
+> +{
+> +	ssize_t ret;
+> +	unsigned int max_queues = 0, backend_max_queues = 0;
+> +	struct blkfront_info *info = dev_get_drvdata(dev);
+> +	int err;
+> +
+> +	ret = kstrtouint(buf, 10, &max_queues);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (max_queues == info->nr_rings)
+> +		return count;
+> +
+> +	if (max_queues > num_online_cpus()) {
+> +		pr_err("Invalid max_queues (%u), can't bigger than online cpus: %u.\n",
+> +			max_queues, num_online_cpus());
+> +		return -EINVAL;
+> +	}
+> +
+> +	err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
+> +			   "multi-queue-max-queues", "%u", &backend_max_queues);
+> +	if (err != 1) {
+> +		pr_err("Backend %s doesn't support block multi queue.\n",
+> +			info->xbdev->otherend);
+> +		return -EOPNOTSUPP;
+> +	}
+> +	if (max_queues > backend_max_queues) {
+> +		pr_err("Invalid max_queues (%u), backend supports max: %u.\n",
+> +			max_queues, backend_max_queues);
+> +		return -EINVAL;
+> +	}
+> +	info->new_max_queues = max_queues;
+> +
+> +	return dynamic_reconfig_device(info, count);
+> +}
+> +
+> +static DEVICE_ATTR_RW(max_queues);
+> +static DEVICE_ATTR_RW(max_ring_page_order);
+> +static DEVICE_ATTR_RW(max_indirect_segs);
+
+Can't you just use the same attribute for all the nodes? Also this
+could be:
+
+const static DEVICE_ATTR_RW(node_attr);
+
+Thanks, Roger.
