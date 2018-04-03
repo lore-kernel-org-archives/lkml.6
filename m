@@ -1,100 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932162AbeDCMxV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 08:53:21 -0400
-Received: from foss.arm.com ([217.140.101.70]:60616 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932087AbeDCMxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 08:53:19 -0400
-Date: Tue, 3 Apr 2018 13:53:12 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Niklas Cassel <nks@flawful.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        cyrille.pitchen@free-electrons.com, Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <niklass@axis.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 06/12] PCI: designware-ep: Make dw_pcie_ep_set_bar()
- handle 64-bit BARs properly
-Message-ID: <20180403125312.GA18128@e107981-ln.cambridge.arm.com>
-References: <20180328115018.31921-1-niklas.cassel@axis.com>
- <20180328115018.31921-7-niklas.cassel@axis.com>
- <45971780-3a46-061d-bb76-2f450401c797@ti.com>
- <20180402193703.GB23587@flawful.org>
+        id S932192AbeDCMzS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 08:55:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33162 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932087AbeDCMzQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 08:55:16 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EA1B1605FF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: linux-mips@linux-mips.org, arnd@arndb.de, timur@codeaurora.org,
+        sulrich@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, Paul Burton <paul.burton@mips.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] MIPS: io: prevent compiler reordering on the default writeX() implementation
+Date: Tue,  3 Apr 2018 08:55:03 -0400
+Message-Id: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180402193703.GB23587@flawful.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 02, 2018 at 09:37:03PM +0200, Niklas Cassel wrote:
-> On Thu, Mar 29, 2018 at 03:17:11PM +0530, Kishon Vijay Abraham I wrote:
-> > Hi,
-> > 
-> > On Wednesday 28 March 2018 05:20 PM, Niklas Cassel wrote:
-> > > Since a 64-bit BAR consists of a BAR pair, we need to write to both
-> > > BARs in the BAR pair to setup the BAR properly.
-> > > 
-> > > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> > > ---
-> > >  drivers/pci/dwc/pcie-designware-ep.c | 11 +++++++++--
-> > >  1 file changed, 9 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-> > > index 5a0bb53c795c..571b90f88d84 100644
-> > > --- a/drivers/pci/dwc/pcie-designware-ep.c
-> > > +++ b/drivers/pci/dwc/pcie-designware-ep.c
-> > > @@ -138,8 +138,15 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
-> > >  		return ret;
-> > >  
-> > >  	dw_pcie_dbi_ro_wr_en(pci);
-> > > -	dw_pcie_writel_dbi2(pci, reg, size - 1);
-> > > -	dw_pcie_writel_dbi(pci, reg, flags);
-> > > +	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
-> > > +		dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
-> > > +		dw_pcie_writel_dbi(pci, reg, flags);
-> > > +		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
-> > > +		dw_pcie_writel_dbi(pci, reg + 4, 0);
-> > > +	} else {
-> > > +		dw_pcie_writel_dbi2(pci, reg, size - 1);
-> > > +		dw_pcie_writel_dbi(pci, reg, flags);
-> > > +	}
-> > 
-> > 
-> > I think this should work too?
-> > 	dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
-> > 	dw_pcie_writel_dbi(pci, reg, flags);
-> > 
-> > 	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
-> > 		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
-> > 		dw_pcie_writel_dbi(pci, reg + 4, 0);
-> > 	}
-> > 
-> 
-> Hello Kishon,
-> 
-> I agree, your suggestion is more neat.
-> 
-> 
-> Kishon, please tell me if you insist that the long if-statement
-> in pci_epc_set_bar() should be split, since there are 5 different
-> conditions. Because imho, having 5 succeeding if-statements isn't
-> clearer than having 1 long if-statement.
-> 
-> If Kishon agrees with me, then the review comment in this mail
-> seems to be the only review comment.
-> And in that case, perhaps Lorenzo wouldn't mind fixing this up.
-> Or perhaps Lorenzo prefers if I reroll the whole patch series?
+writeX() has a strong ordering semantics with respect to memory updates.
+In the abscence of a write barrier or a compiler barrier, commpiler can
+reorder register and memory update instructions. This breaks the writeX()
+API.
 
-I updated it myself in my pci/endpoint branch, please have a look, I
-can't guarantee we can merge this for this cycle though, I will ask
-Bjorn; apologies I could not be online for a while.
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+---
+ arch/mips/include/asm/io.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Lorenzo
-
-> Kind regards,
-> Niklas
+diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
+index 0cbf3af..fd00ddaf 100644
+--- a/arch/mips/include/asm/io.h
++++ b/arch/mips/include/asm/io.h
+@@ -307,7 +307,7 @@ static inline void iounmap(const volatile void __iomem *addr)
+ #if defined(CONFIG_CPU_CAVIUM_OCTEON) || defined(CONFIG_LOONGSON3_ENHANCEMENT)
+ #define war_io_reorder_wmb()		wmb()
+ #else
+-#define war_io_reorder_wmb()		do { } while (0)
++#define war_io_reorder_wmb()		barrier()
+ #endif
+ 
+ #define __BUILD_MEMORY_SINGLE(pfx, bwlq, type, irq)			\
+-- 
+2.7.4
