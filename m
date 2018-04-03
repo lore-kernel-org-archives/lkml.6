@@ -1,140 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755341AbeDCIvY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 04:51:24 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51516 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755110AbeDCIvW (ORCPT
+        id S1755362AbeDCIvv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 04:51:51 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52110 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755198AbeDCIvs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 04:51:22 -0400
-Date: Tue, 3 Apr 2018 10:51:20 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Dan Williams <dcbw@redhat.com>
-Cc: Woody Suwalski <terraluna977@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        Netdev list <netdev@vger.kernel.org>
-Subject: linux-next on x60: hangs when I request suspend was Re: linux-next
- on x60: network manager often complains "network is disabled" after resume
-Message-ID: <20180403085120.GD3926@amd>
-References: <20180318104023.GA10392@amd>
- <70721f83-344a-0f23-223b-9c81f6e9e32a@gmail.com>
- <20180319092106.GA5683@amd>
- <1521474008.20208.2.camel@redhat.com>
- <20180319173356.GA28462@amd>
- <1521481549.20208.8.camel@redhat.com>
- <20180320080334.GA31772@amd>
- <1521551568.16848.5.camel@redhat.com>
- <20180325061927.GA2148@amd>
- <95efbba35c3389015d4919a59f8d01bc2d375a19.camel@redhat.com>
+        Tue, 3 Apr 2018 04:51:48 -0400
+X-Google-Smtp-Source: AIpwx4+IvEMpX+oUg4hB2+GZUOJq5lvQhZrDuxk+Zv/wO3k/dYL1HuzaM9v+nnvIjNBzV8kTK4XR1Q==
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IMjqdzrDRly81ofr"
-Content-Disposition: inline
-In-Reply-To: <95efbba35c3389015d4919a59f8d01bc2d375a19.camel@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180403084745.zuq6o3tlxpvcynev@flea>
+References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
+ <20180403061836.3926-11-mylene.josserand@bootlin.com> <20180403084745.zuq6o3tlxpvcynev@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 3 Apr 2018 16:51:25 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66QTGkMC21SS-zAbToVcmOp3oO4YMbvC5SyWwA2kP8uGg@mail.gmail.com>
+Message-ID: <CAGb2v66QTGkMC21SS-zAbToVcmOp3oO4YMbvC5SyWwA2kP8uGg@mail.gmail.com>
+Subject: Re: [PATCH v5 10/13] ARM: sun9i: smp: Move structures
+To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        LABBE Corentin <clabbe.montjoie@gmail.com>, quentin.schulz@bootlin.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Apr 3, 2018 at 4:47 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> On Tue, Apr 03, 2018 at 08:18:33AM +0200, Mylène Josserand wrote:
+>> To prepare the support for sun8i-a83t, move some structures
+>> at the beginning of the file.
+>>
+>> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+>
+> I'm not quite sure what would be the benefit from that, if it's was
+> working before, then it would probably work in your case as welle, right?
 
---IMjqdzrDRly81ofr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You should only need to move struct sunxi_mc_smp_data, since you are reading
+the is_sun9i field. I suppose you could also get away with adding a global
+variable just for that, and not have to store an index or pointer. Then none
+of this code movement would be necessary. It would be slightly harder to
+understand, but it's still contained within this file, and it has a clear
+purpose, so I would call that acceptable.
 
-Hi!
-
-I wanted to re-test next (4.16.0-rc7-next-20180329), but that one does
-not suspend at all.
-
-I normally suspend by pressing power button in MATE, but that action
-currently results in machine hanging.
-
-								Pavel
-
-
-On Mon 2018-03-26 10:33:55, Dan Williams wrote:
-> On Sun, 2018-03-25 at 08:19 +0200, Pavel Machek wrote:
-> > > > > Ok, what does 'nmcli dev' and 'nmcli radio' show?
-> > > >=20
-> > > > Broken state.
-> > > >=20
-> > > > pavel@amd:~$ nmcli dev
-> > > > DEVICE  TYPE      STATE        CONNECTION
-> > > > eth1    ethernet  unavailable  --
-> > > > lo      loopback  unmanaged    --
-> > > > wlan0   wifi      unmanaged    --
-> > >=20
-> > > If the state is "unmanaged" on resume, that would indicate a
-> > > problem
-> > > with sleep/wake and likely not a kernel network device issue.
-> > >=20
-> > > We should probably move this discussion to the NM lists to debug
-> > > further.  Before you suspend, run "nmcli gen log level trace" to
-> > > turn
-> > > on full debug logging, then reproduce the issue, and send a pointer
-> > > to
-> > > those logs (scrubbed for anything you consider sensitive) to the NM
-> > > mailing list.
-> >=20
-> > Hmm :-)
-> >=20
-> > root@amd:/data/pavel# nmcli gen log level trace
-> > Error: Unknown log level 'trace'
->=20
-> What NM version?  'trace' is pretty old (since 1.0 from December 2014)
-> so unless you're using a really, really old version of Debian I'd
-> expect you'd have it.  Anyway, debug would do.
->=20
-> > root@amd:/data/pavel# nmcli gen log level help
-> > Error: Unknown log level 'help'
->=20
-> nmcli gen help
->=20
-> > root@amd:/data/pavel# nmcli gen log level
-> > Error: value for 'level' argument is required.
-> > root@amd:/data/pavel# nmcli gen log level debug
->=20
-> This should be OK.
->=20
-> > root@amd:/data/pavel# cat /var/log/sys/log
->=20
-> It routes it to whatever the syslog 'daemon' facility logs to (however
-> that's configured on your system).  Usually /var/log/messages or
-> /var/log/daemon.log or sometimes your distro configures it to
-> /var/log/NetworkManager.log.
->=20
-> Or if you're using a systemd-based distro, it would probably be in the
-> systemd journal so "journalctl -b -u NetworkManager"
->=20
-> > Where do I get the logs? I don't see much in the syslog...
->=20
-> > And.. It seems that it is "every other suspend". One resume results
-> > in
-> > broken network, one in working one, one in broken one...
->=20
-> Does your distro use pm-utils, upower, or systemd for suspend/resume
-> handling?
->=20
-> Dan
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---IMjqdzrDRly81ofr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrDQIgACgkQMOfwapXb+vJlNwCffj9I76y/inQmM5n3MBpHRnQ2
-/d8An0c2qoHmtzrhJj/9CeogIKHuLobz
-=KQ5p
------END PGP SIGNATURE-----
-
---IMjqdzrDRly81ofr--
+ChenYu
