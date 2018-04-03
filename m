@@ -1,200 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755386AbeDCK5o (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:57:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53462 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754869AbeDCK5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:57:43 -0400
-Date: Tue, 3 Apr 2018 12:57:37 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v3 05/14] s390: vfio-ap: base implementation of VFIO AP
- device driver
-Message-ID: <20180403125737.15cb55fb.cohuck@redhat.com>
-In-Reply-To: <1521051954-25715-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1521051954-25715-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1755364AbeDCK6S (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:58:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52701 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752410AbeDCK6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 06:58:17 -0400
+Date: Tue, 3 Apr 2018 12:58:15 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] mm: consider non-anonymous thp as unmovable page
+Message-ID: <20180403105815.GL5501@dhcp22.suse.cz>
+References: <1522730788-24530-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <20180403075928.GC5501@dhcp22.suse.cz>
+ <20180403082405.GA23809@hori1.linux.bs1.fc.nec.co.jp>
+ <20180403083451.GG5501@dhcp22.suse.cz>
+ <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Mar 2018 14:25:45 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-
-> Introduces a new AP device driver. This device driver
-> is built on the VFIO mediated device framework. The framework
-> provides sysfs interfaces that facilitate passthrough
-> access by guests to devices installed on the linux host.
+On Tue 03-04-18 13:54:11, Kirill A. Shutemov wrote:
+> On Tue, Apr 03, 2018 at 10:34:51AM +0200, Michal Hocko wrote:
+> > On Tue 03-04-18 08:24:06, Naoya Horiguchi wrote:
+> > > On Tue, Apr 03, 2018 at 09:59:28AM +0200, Michal Hocko wrote:
+> > > > On Tue 03-04-18 13:46:28, Naoya Horiguchi wrote:
+> > > > > My testing for the latest kernel supporting thp migration found out an
+> > > > > infinite loop in offlining the memory block that is filled with shmem
+> > > > > thps.  We can get out of the loop with a signal, but kernel should
+> > > > > return with failure in this case.
+> > > > >
+> > > > > What happens in the loop is that scan_movable_pages() repeats returning
+> > > > > the same pfn without any progress. That's because page migration always
+> > > > > fails for shmem thps.
+> > > >
+> > > > Why does it fail? Shmem pages should be movable without any issues.
+> > > 
+> > > .. because try_to_unmap_one() explicitly skips unmapping for migration.
+> > > 
+> > >   #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> > >                   /* PMD-mapped THP migration entry */
+> > >                   if (!pvmw.pte && (flags & TTU_MIGRATION)) {
+> > >                           VM_BUG_ON_PAGE(PageHuge(page) || !PageTransCompound(page), page);
+> > >   
+> > >                           if (!PageAnon(page))
+> > >                                   continue;
+> > >   
+> > >                           set_pmd_migration_entry(&pvmw, page);
+> > >                           continue;
+> > >                   }
+> > >   #endif
+> > > 
+> > > When I implemented this code, I felt hard to work on both of anon thp
+> > > and shmem thp at one time, so I separated the proposal into smaller steps.
+> > > Shmem uses pagecache so we need some non-trivial effort (including testing)
+> > > to extend thp migration for shmem. But I think it's a reasonable next step.
+> > 
+> > OK, I see. I have forgot about this part. Please be explicit about that
+> > in the changelog. Also the proper fix is to not use movable zone for
+> > shmem page THP rather than hack around it in the hotplug specific code
+> > IMHO.
 > 
-> The VFIO AP device driver will serve two purposes:
-> 
-> 1. Provide the interfaces to reserve AP devices for exclusive
->    use by KVM guests. This is accomplished by unbinding the
->    devices to be reserved for guest usage from the default AP
->    device driver and binding them to the VFIO AP device driver.
-> 
-> 2. Implements the functions, callbacks and sysfs attribute
->    interfaces required to create one or more VFIO mediated
->    devices each of which will be used to configure the AP
->    matrix for a guest and serve as a file descriptor
->    for facilitating communication between QEMU and the
->    VFIO AP device driver.
-> 
-> When the VFIO AP device driver is initialized:
-> 
-> * It registers with the AP bus for control of type 10 (CEX4
->   and newer) AP queue devices. The probe and remove callbacks
->   will be provided to support the binding/unbinding of
->   AP queue devices to/from the VFIO AP device driver.
-> 
-> * Creates a /sys/devices/vfio-ap/matrix device to hold
->   the APQNs of the AP devices bound to the VFIO
->   AP device driver and serves as the parent of the
->   mediated devices created for each guest.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> ---
->  MAINTAINERS                           |    2 +
->  arch/s390/Kconfig                     |   11 +++
->  drivers/s390/crypto/Makefile          |    4 +
->  drivers/s390/crypto/vfio_ap_drv.c     |  135 +++++++++++++++++++++++++++++++++
->  drivers/s390/crypto/vfio_ap_private.h |   22 ++++++
->  include/uapi/linux/vfio.h             |    2 +
->  6 files changed, 176 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
->  create mode 100644 drivers/s390/crypto/vfio_ap_private.h
-> 
+> No. We should just split the page before running
+> try_to_unmap(TTU_MIGRATION) on the page.
 
-> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-> new file mode 100644
-> index 0000000..459e595
-> --- /dev/null
-> +++ b/drivers/s390/crypto/vfio_ap_drv.c
-> @@ -0,0 +1,135 @@
-> +/*
-> + * VFIO based AP device driver
-> + *
-> + * Copyright IBM Corp. 2017
-
-Update to 2018?
-
-> + *
-> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/slab.h>
-> +
-> +#include "vfio_ap_private.h"
-> +
-> +#define VFIO_AP_ROOT_NAME "vfio_ap"
-> +#define VFIO_AP_DEV_TYPE_NAME "ap_matrix"
-> +#define VFIO_AP_DEV_NAME "matrix"
-> +
-> +MODULE_AUTHOR("IBM Corporation");
-> +MODULE_DESCRIPTION("VFIO AP device driver, Copyright IBM Corp. 2017");
-> +MODULE_LICENSE("GPL v2");
-> +
-> +static struct device *vfio_ap_root_device;
-> +
-> +static struct ap_driver vfio_ap_drv;
-> +
-> +static struct ap_matrix *ap_matrix;
-> +
-> +static struct device_type vfio_ap_dev_type = {
-> +	.name = VFIO_AP_DEV_TYPE_NAME,
-> +};
-> +
-> +/* Only type 10 adapters (CEX4 and later) are supported
-> + * by the AP matrix device driver
-> + */
-> +static struct ap_device_id ap_queue_ids[] = {
-> +	{ .dev_type = AP_DEVICE_TYPE_CEX4,
-> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
-> +	{ .dev_type = AP_DEVICE_TYPE_CEX5,
-> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
-> +	{ .dev_type = AP_DEVICE_TYPE_CEX6,
-> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
-> +	{ /* end of sibling */ },
-> +};
-> +
-> +MODULE_DEVICE_TABLE(vfio_ap, ap_queue_ids);
-> +
-> +static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void vfio_ap_matrix_dev_release(struct device *dev)
-> +{
-> +	struct ap_matrix *ap_matrix = dev_get_drvdata(dev);
-> +
-> +	kfree(ap_matrix);
-> +}
-> +
-> +static int vfio_ap_matrix_dev_create(void)
-> +{
-> +	int ret;
-> +
-> +	vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
-> +
-> +	ret = IS_ERR(vfio_ap_root_device);
-> +	if (ret) {
-
-Minor nit: I'd contract that to
-
-if (IS_ERR(vfio_ap_root_device)) {
-
-(you're writing ret in any case)
-
-> +		ret = PTR_ERR(vfio_ap_root_device);
-> +		goto done;
-> +	}
-> +
-> +	ap_matrix = kzalloc(sizeof(*ap_matrix), GFP_KERNEL);
-> +	if (!ap_matrix) {
-> +		ret = -ENOMEM;
-> +		goto matrix_alloc_err;
-> +	}
-> +
-> +	ap_matrix->device.type = &vfio_ap_dev_type;
-> +	dev_set_name(&ap_matrix->device, "%s", VFIO_AP_DEV_NAME);
-> +	ap_matrix->device.parent = vfio_ap_root_device;
-> +	ap_matrix->device.release = vfio_ap_matrix_dev_release;
-> +	ap_matrix->device.driver = &vfio_ap_drv.driver;
-> +
-> +	ret = device_register(&ap_matrix->device);
-> +	if (ret)
-> +		goto matrix_reg_err;
-> +
-> +	goto done;
-> +
-> +matrix_reg_err:
-> +	put_device(&ap_matrix->device);
-> +	kfree(ap_matrix);
-
-The kfree() is wrong: If you called device_register for the embedded
-struct device, this needs to be handled via the ->release callback
-exclusively (IOW, the put_device() is enough and the kfree needs to go).
-
-> +
-> +matrix_alloc_err:
-> +	root_device_unregister(vfio_ap_root_device);
-> +
-> +done:
-> +	return ret;
-> +}
+If splitting is a preffered way then I do not have any objection. We
+just cannot keep unmovable objects in the zone movable.
+-- 
+Michal Hocko
+SUSE Labs
