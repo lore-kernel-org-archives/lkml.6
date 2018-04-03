@@ -1,117 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754697AbeDCABE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 20:01:04 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:52095 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754620AbeDCABC (ORCPT
+        id S1754705AbeDCALq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 20:11:46 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41742 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754550AbeDCALo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 20:01:02 -0400
-X-Google-Smtp-Source: AIpwx4+QVJACQMh/rT9CT/VrFzl7FmUtyQubntCvFtFj2qy9LoLhvdX1JE9pC5THQmyniiFGT2GynSkUX8J+R4t3K57g5mKGE1XJ
+        Mon, 2 Apr 2018 20:11:44 -0400
+X-Google-Smtp-Source: AIpwx49zHzYrALZT47sMYF6wGENGdZXteMQJoZSb/7BEWiYLkc4OPmy5uck1VL+RDnx5F5R+QS/0Sw==
+Date: Mon, 2 Apr 2018 17:11:42 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 17/24] mm: Protect mm_rb tree with a rwlock
+In-Reply-To: <1520963994-28477-18-git-send-email-ldufour@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1804021711090.34466@chino.kir.corp.google.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-18-git-send-email-ldufour@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Date: Mon, 02 Apr 2018 17:01:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113fe6c0e792260568e6664c@google.com>
-Subject: kernel BUG at fs/hfs/inode.c:LINE!
-From: syzbot <syzbot+599e1f94d33497d03385@syzkaller.appspotmail.com>
-To: dave.kleikamp@oracle.com, jack@suse.cz, jlayton@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, 13 Mar 2018, Laurent Dufour wrote:
 
-syzbot hit the following crash on upstream commit
-86bbbebac1933e6e95e8234c4f7d220c5ddd38bc (Mon Apr 2 18:47:07 2018 +0000)
-Merge branch 'ras-core-for-linus' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=599e1f94d33497d03385
+> This change is inspired by the Peter's proposal patch [1] which was
+> protecting the VMA using SRCU. Unfortunately, SRCU is not scaling well in
+> that particular case, and it is introducing major performance degradation
+> due to excessive scheduling operations.
+> 
+> To allow access to the mm_rb tree without grabbing the mmap_sem, this patch
+> is protecting it access using a rwlock.  As the mm_rb tree is a O(log n)
+> search it is safe to protect it using such a lock.  The VMA cache is not
+> protected by the new rwlock and it should not be used without holding the
+> mmap_sem.
+> 
+> To allow the picked VMA structure to be used once the rwlock is released, a
+> use count is added to the VMA structure. When the VMA is allocated it is
+> set to 1.  Each time the VMA is picked with the rwlock held its use count
+> is incremented. Each time the VMA is released it is decremented. When the
+> use count hits zero, this means that the VMA is no more used and should be
+> freed.
+> 
+> This patch is preparing for 2 kind of VMA access :
+>  - as usual, under the control of the mmap_sem,
+>  - without holding the mmap_sem for the speculative page fault handler.
+> 
+> Access done under the control the mmap_sem doesn't require to grab the
+> rwlock to protect read access to the mm_rb tree, but access in write must
+> be done under the protection of the rwlock too. This affects inserting and
+> removing of elements in the RB tree.
+> 
+> The patch is introducing 2 new functions:
+>  - vma_get() to find a VMA based on an address by holding the new rwlock.
+>  - vma_put() to release the VMA when its no more used.
+> These services are designed to be used when access are made to the RB tree
+> without holding the mmap_sem.
+> 
+> When a VMA is removed from the RB tree, its vma->vm_rb field is cleared and
+> we rely on the WMB done when releasing the rwlock to serialize the write
+> with the RMB done in a later patch to check for the VMA's validity.
+> 
+> When free_vma is called, the file associated with the VMA is closed
+> immediately, but the policy and the file structure remained in used until
+> the VMA's use count reach 0, which may happens later when exiting an
+> in progress speculative page fault.
+> 
+> [1] https://patchwork.kernel.org/patch/5108281/
+> 
+> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5460031726157824
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5078997125824512
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6017537137442816
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=6801295859785128502
-compiler: gcc (GCC) 7.1.1 20170620
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+599e1f94d33497d03385@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-IPVS: ftp: loaded support on port[0] = 21
-hfs: unable to locate alternate MDB
-hfs: continuing without an alternate MDB
-------------[ cut here ]------------
-kernel BUG at fs/hfs/inode.c:441!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 22 Comm: kworker/u4:1 Not tainted 4.16.0+ #11
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: writeback wb_workfn (flush-7:0)
-RIP: 0010:hfs_write_inode+0xe6/0xc50 fs/hfs/inode.c:441
-RSP: 0018:ffff8801d9466780 EFLAGS: 00010293
-RAX: ffff8801d945a5c0 RBX: 1ffff1003b28ccf4 RCX: ffffffff820f97f6
-RDX: 0000000000000000 RSI: ffff8801d9466de8 RDI: ffff8801d97b4740
-RBP: ffff8801d94668e8 R08: ffffed003b6246c3 R09: ffffed003b6246c3
-R10: 0000000000000001 R11: ffffed003b6246c2 R12: ffff8801d97b4700
-R13: 0000000000000000 R14: ffff8801d94668c0 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f233bf15000 CR3: 000000000846a003 CR4: 00000000001606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  write_inode fs/fs-writeback.c:1182 [inline]
-  __writeback_single_inode+0x9d0/0x1250 fs/fs-writeback.c:1381
-  writeback_sb_inodes+0x688/0xff0 fs/fs-writeback.c:1586
-  wb_writeback+0x444/0xdb0 fs/fs-writeback.c:1762
-  wb_do_writeback fs/fs-writeback.c:1907 [inline]
-  wb_workfn+0x2c6/0x15a0 fs/fs-writeback.c:1948
-  process_one_work+0xc97/0x1c40 kernel/workqueue.c:2113
-  worker_thread+0x1c3/0x1380 kernel/workqueue.c:2247
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-Code: 0f 0f 87 ff 00 00 00 e8 09 91 61 ff 49 83 ff 03 0f 84 58 06 00 00 49  
-83 ff 04 74 11 49 83 ff 02 0f 84 e0 00 00 00 e8 ea 90 61 ff <0f> 0b e8 e3  
-90 61 ff 49 8d 7c 24 28 48 b8 00 00 00 00 00 fc ff
-RIP: hfs_write_inode+0xe6/0xc50 fs/hfs/inode.c:441 RSP: ffff8801d9466780
----[ end trace 58207cc73dd7e339 ]---
-Kernel panic - not syncing: Fatal exception
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+Can __free_vma() be generalized for mm/nommu.c's delete_vma() and 
+do_mmap()?
