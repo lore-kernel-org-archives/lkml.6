@@ -1,77 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753032AbeDCTjQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:39:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38958 "EHLO mx1.redhat.com"
+        id S1753207AbeDCTjd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:39:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39008 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752132AbeDCTjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:39:14 -0400
-Date: Tue, 3 Apr 2018 15:39:13 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        david <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 10/18] dax, dm: introduce ->fs_{claim, release}()
- dax_device infrastructure
-Message-ID: <20180403193912.GC6556@redhat.com>
-References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152246898322.36038.17918469633893320678.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CAPcyv4jaZV3AhYaOA3d0SQ-AOvb4RKhj4_q-PR0bpt3aoax2mA@mail.gmail.com>
+        id S1752478AbeDCTja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 15:39:30 -0400
+Date: Tue, 3 Apr 2018 15:39:27 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 15/24] mm: Introduce __vm_normal_page()
+Message-ID: <20180403193927.GD5935@redhat.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1520963994-28477-16-git-send-email-ldufour@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4jaZV3AhYaOA3d0SQ-AOvb4RKhj4_q-PR0bpt3aoax2mA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520963994-28477-16-git-send-email-ldufour@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03 2018 at  2:24pm -0400,
-Dan Williams <dan.j.williams@intel.com> wrote:
-
-> On Fri, Mar 30, 2018 at 9:03 PM, Dan Williams <dan.j.williams@intel.com> wrote:
-> > In preparation for allowing filesystems to augment the dev_pagemap
-> > associated with a dax_device, add an ->fs_claim() callback. The
-> > ->fs_claim() callback is leveraged by the device-mapper dax
-> > implementation to iterate all member devices in the map and repeat the
-> > claim operation across the array.
-> >
-> > In order to resolve collisions between filesystem operations and DMA to
-> > DAX mapped pages we need a callback when DMA completes. With a callback
-> > we can hold off filesystem operations while DMA is in-flight and then
-> > resume those operations when the last put_page() occurs on a DMA page.
-> > The ->fs_claim() operation arranges for this callback to be registered,
-> > although that implementation is saved for a later patch.
-> >
-> > Cc: Alasdair Kergon <agk@redhat.com>
-> > Cc: Mike Snitzer <snitzer@redhat.com>
+On Tue, Mar 13, 2018 at 06:59:45PM +0100, Laurent Dufour wrote:
+> When dealing with the speculative fault path we should use the VMA's field
+> cached value stored in the vm_fault structure.
 > 
-> Mike, do these DM touches look ok to you?  We need these ->fs_claim()
-> / ->fs_release() interfaces for device-mapper to set up filesystem-dax
-> infrastructure on all sub-devices whenever a dax-capable DM device is
-> mounted. It builds on the device-mapper dax dependency removal
-> patches.
+> Currently vm_normal_page() is using the pointer to the VMA to fetch the
+> vm_flags value. This patch provides a new __vm_normal_page() which is
+> receiving the vm_flags flags value as parameter.
+> 
+> Note: The speculative path is turned on for architecture providing support
+> for special PTE flag. So only the first block of vm_normal_page is used
+> during the speculative path.
 
-I'd prefer dm_dax_iterate() be renamed to dm_dax_iterate_devices()
+Might be a good idea to explicitly have SPECULATIVE Kconfig option depends
+on ARCH_PTE_SPECIAL and a comment for !HAVE_PTE_SPECIAL in the function
+explaining that speculative page fault should never reach that point.
 
-But dm_dax_iterate() is weird... it is simply returning the struct
-dax_device *dax_dev that is passed: seemingly without actually directly
-changing anything about that dax_device (I can infer that you're
-claiming the underlying devices, but...)
-
-In general user's of ti->type->iterate_devices can get a result back
-(via 'int' return).. you aren't using it that way (and maybe dax will
-never have a need to return an answer).  But all said, I think I'd
-prefer to see dm_dax_iterate_devices() return void.
-
-But please let me know if I'm missing something, thanks.
-
-Mike
+Cheers,
+Jérôme
