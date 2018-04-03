@@ -1,69 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755331AbeDCWjb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 18:39:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753801AbeDCWj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 18:39:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DFCD2133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-From: Andy Lutomirski <luto@kernel.org>
-To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH] x86/entry/64: Drop idtentry's manual stack switch for user entries
-Date: Tue,  3 Apr 2018 15:39:26 -0700
-Message-Id: <90aab80c1f906e70742eaa4512e3c9b5e62d59d4.1522794757.git.luto@kernel.org>
-X-Mailer: git-send-email 2.14.3
+        id S1756706AbeDCWkD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 18:40:03 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45326 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755322AbeDCWjh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 18:39:37 -0400
+X-Google-Smtp-Source: AIpwx48guNFEG/HrIVEl65/xX4bveDr6PaCLsHZEreVcJa78dgTnTi7zjcBXp5iR5SPfW71fW9FEcQ==
+Date: Tue, 03 Apr 2018 15:39:36 -0700 (PDT)
+X-Google-Original-Date: Tue, 03 Apr 2018 15:37:40 PDT (-0700)
+Subject: Re: [GIT pull] irq updates for 4.17
+In-Reply-To: <alpine.DEB.2.21.1804031349110.2511@nanos.tec.linutronix.de>
+CC: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+From: Palmer Dabbelt <palmer@sifive.com>
+To: tglx@linutronix.de
+Message-ID: <mhng-524aadcd-1897-4376-ab3c-10c43e79793d@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For non-paranoid entries, idtentry knows how to switch from the
-kernel stack to the user stack, as does error_entry.  This results
-in pointless duplication and code bloat.  Make idtentry stop
-thinking about stacks for non-paranoid entries.
+On Tue, 03 Apr 2018 05:03:56 PDT (-0700), tglx@linutronix.de wrote:
+> Palmer Dabbelt (2):
+>       genirq: Add CONFIG_GENERIC_IRQ_MULTI_HANDLER
+>       RISC-V: Move to the new GENERIC_IRQ_MULTI_HANDLER handler
 
-This reduces text size by 5377 bytes.
+Oh, sorry, I must have screwed something up here.  I attempted to send out a v4 
+of this patch set that doesn't break ARM here
 
-This goes back to commit 7f2590a110b8 ("x86/entry/64: Use a per-CPU
-trampoline stack for IDT entries").
+    https://lkml.org/lkml/2018/3/27/671
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
+I assume it's too late to swap this out for that?  If so that's OK, I can just 
+send a follow-on.
 
-Hi all-
-
-I have more cleanups in the works, but this is enough of I win by itself
-that I wanted to get it out there.
-
- arch/x86/entry/entry_64.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 9b114675fbc0..e237913a056b 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -908,7 +908,7 @@ ENTRY(\sym)
- 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
- 	.endif
- 
--	.if \paranoid < 2
-+	.if \paranoid == 1
- 	testb	$3, CS-ORIG_RAX(%rsp)		/* If coming from userspace, switch stacks */
- 	jnz	.Lfrom_usermode_switch_stack_\@
- 	.endif
-@@ -955,7 +955,7 @@ ENTRY(\sym)
- 	jmp	error_exit
- 	.endif
- 
--	.if \paranoid < 2
-+	.if \paranoid == 1
- 	/*
- 	 * Entry from userspace.  Switch stacks and treat it
- 	 * as a normal entry.  This means that paranoid handlers
--- 
-2.14.3
+Sorry for breaking things!
