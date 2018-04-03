@@ -1,80 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754790AbeDCBuB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 21:50:01 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35460 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752109AbeDCBt7 (ORCPT
+        id S1754796AbeDCCBI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 22:01:08 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:43508 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752109AbeDCCBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 21:49:59 -0400
-X-Google-Smtp-Source: AIpwx4+ofz6+C5YnxH2gidyrfiyRNoeTuH/gZva/JGfmWKUCxxgFggiKRDbg634VBJxEfzzz1sJSjtzNOntB250Ru5A=
+        Mon, 2 Apr 2018 22:01:02 -0400
+X-Google-Smtp-Source: AIpwx4+2zk/LMF6kz0PIzF7Sfy2YOtpOx+4E/ND4B0kgtrI24ctrtCm+y8aoLEyOSZU81sgRiaq9r+Xra+vxGdD5iqDBqbDe19Dx
 MIME-Version: 1.0
-In-Reply-To: <20180402104148.m3hhkhjhdb5y7gyu@gmail.com>
-References: <20180402104148.m3hhkhjhdb5y7gyu@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 2 Apr 2018 18:49:58 -0700
-X-Google-Sender-Auth: y9f3KYyYboKFQRlnbKR40OmFdag
-Message-ID: <CA+55aFwWKLGKQmzAHKbfwtiqL-AmB2z8GKAO-dYeB1Oq-Q6uvA@mail.gmail.com>
-Subject: Re: [GIT PULL] EFI updates for v4.17
-To: Ingo Molnar <mingo@kernel.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-efi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 02 Apr 2018 19:01:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <001a1148578c10e4700568e814eb@google.com>
+Subject: WARNING in up_write
+From: syzbot <syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 2, 2018 at 3:41 AM, Ingo Molnar <mingo@kernel.org> wrote:
->
->  - Use efi_switch_mm() on x86 instead of manipulating %cr3 directly
+Hello,
 
-This seems to cause new warnings, both on my laptop and my desktop.
-I'm surprised you don't see them.
+syzbot hit the following crash on upstream commit
+86bbbebac1933e6e95e8234c4f7d220c5ddd38bc (Mon Apr 2 18:47:07 2018 +0000)
+Merge branch 'ras-core-for-linus' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=dc5ab2babdf22ca091af
 
-Looks like this:
+So far this crash happened 8 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5688491102961664
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5709211904245760
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5720789257027584
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=6801295859785128502
+compiler: gcc (GCC) 7.1.1 20170620
 
-    WARNING: CPU: 0 PID: 0 at arch/x86/include/asm/tlbflush.h:134
-load_new_mm_cr3+0x114/0x170
-    Modules linked in:
-    CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.16.0-02277-gbc16d4052f1a #1
-    Hardware name: System manufacturer System Product Name/Z170-K,
-BIOS 3301 02/08/2017
-    RIP: 0010:load_new_mm_cr3+0x114/0x170
-    RSP: 0000:ffffffff9b203e38 EFLAGS: 00010046
-    RAX: 0000000000000000 RBX: ffffffff9b26f5a0 RCX: 0000000000000000
-    RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff9b20a000
-    RBP: ffffffff9b203e90 R08: 0000000000000000 R09: 000000000f63eb29
-    R10: ffffffff9b203ea8 R11: 00000000c3292018 R12: 0000000000000000
-    R13: ffffffff9b2e1180 R14: 000000000001ee80 R15: 0000000000000000
-    FS:  0000000000000000(0000) GS:ffff968df6c00000(0000) knlGS:0000000000000000
-    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-    CR2: ffff968df6fff000 CR3: 00000004261e6002 CR4: 00000000000606b0
-    DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-    DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-    Call Trace:
-     switch_mm_irqs_off+0x267/0x590
-     switch_mm+0xe/0x20
-     efi_switch_mm+0x3e/0x50
-     efi_enter_virtual_mode+0x43f/0x4da
-     start_kernel+0x3bf/0x458
-     secondary_startup_64+0xa5/0xb0
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-and the reason seems to be some oddity of secondary_startup() doing
-this very early, because the warning is this:
+EXT4-fs (sda1): shut down requested (0)
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
+WARNING: CPU: 1 PID: 4441 at kernel/locking/rwsem.c:133  
+up_write+0x1cc/0x210 kernel/locking/rwsem.c:133
+Kernel panic - not syncing: panic_on_warn set ...
 
-        VM_WARN_ON_ONCE(!this_cpu_has(X86_FEATURE_PCID));
+CPU: 1 PID: 4441 Comm: syzkaller594909 Not tainted 4.16.0+ #11
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x1a7/0x27d lib/dump_stack.c:53
+  panic+0x1f8/0x42c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:up_write+0x1cc/0x210 kernel/locking/rwsem.c:133
+RSP: 0018:ffff8801b349f710 EFLAGS: 00010286
+RAX: dffffc0000000008 RBX: ffff8801ccc0ce40 RCX: ffffffff815ae26e
+RDX: 0000000000000000 RSI: 1ffff10036693e92 RDI: 1ffff10036693e67
+RBP: ffff8801b349f798 R08: fffffbfff10b0659 R09: fffffbfff10b0659
+R10: ffff8801b349f708 R11: fffffbfff10b0658 R12: 1ffff10036693ee2
+R13: dffffc0000000000 R14: ffff8801b349f770 R15: ffff8801ccc0ce98
+  percpu_up_write+0xca/0x110 kernel/locking/percpu-rwsem.c:183
+  sb_freeze_unlock fs/super.c:1390 [inline]
+  thaw_super+0x1ca/0x260 fs/super.c:1524
+  thaw_bdev+0x151/0x180 fs/block_dev.c:555
+  ext4_shutdown fs/ext4/ioctl.c:489 [inline]
+  ext4_ioctl+0x1f85/0x3e60 fs/ext4/ioctl.c:1048
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
+  SYSC_ioctl fs/ioctl.c:701 [inline]
+  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x440109
+RSP: 002b:00007fffce185d28 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440109
+RDX: 0000000020000100 RSI: 000000008004587d RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 000000000000000f R09: 65732f636f72702f
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401990
+R13: 0000000000401a20 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-and obviously I *do* have X86_FEATURE_PCID on my machine, but
-presumably that bit hasn't been set yet this early in the secondary
-CPU boot.
 
-The above is a pure guess from the call trace, maybe there's something
-else going on.
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-Everything seems to *work* despite the warning, but this needs fixing.
-
-                  Linus
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
