@@ -1,92 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752278AbeDCPdD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:33:03 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:38023 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeDCPdB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:33:01 -0400
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Tue, 03 Apr 2018 17:33:00 +0200
-X-ME-IP: 86.201.130.131
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Vinod Koul <vinod.koul@intel.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH 14/15] ARM: pxa: change SSP devices allocation
-References: <20180402142656.26815-1-robert.jarzmik@free.fr>
-        <20180402142656.26815-15-robert.jarzmik@free.fr>
-        <CAK8P3a2hYWO2eweg3zpR7iJoqtH4uxJLAxJAno7L96G7nA2HxQ@mail.gmail.com>
-X-URL: http://belgarath.falguerolles.org/
-Date: Tue, 03 Apr 2018 17:32:58 +0200
-In-Reply-To: <CAK8P3a2hYWO2eweg3zpR7iJoqtH4uxJLAxJAno7L96G7nA2HxQ@mail.gmail.com>
-        (Arnd Bergmann's message of "Tue, 3 Apr 2018 09:06:46 +0200")
-Message-ID: <87lge4485x.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
+        id S1752196AbeDCPj3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:39:29 -0400
+Received: from sauhun.de ([88.99.104.3]:43330 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751413AbeDCPj1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 11:39:27 -0400
+Date: Tue, 3 Apr 2018 17:39:25 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] i2c: i2c-stm32f7: Add DMA support
+Message-ID: <20180403153925.lg37rezuvs6hefks@ninjato>
+References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+ <1521650940-11651-6-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="y4m7u7dns5mivz3x"
+Content-Disposition: inline
+In-Reply-To: <1521650940-11651-6-git-send-email-pierre-yves.mordret@st.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
 
-chop chop ... removed several mail recipients to leave only the ASoC / PXA
-subset ...
+--y4m7u7dns5mivz3x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On Mon, Apr 2, 2018 at 4:26 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
->
->>
->> +static struct pxa_ssp_info pxa_ssp_infos[] = {
->> +       { .dma_chan_rx_name = "ssp1_rx", .dma_chan_tx_name = "ssp1_tx", },
->> +       { .dma_chan_rx_name = "ssp1_rx", .dma_chan_tx_name = "ssp1_tx", },
->> +       { .dma_chan_rx_name = "ssp2_rx", .dma_chan_tx_name = "ssp2_tx", },
->> +       { .dma_chan_rx_name = "ssp2_rx", .dma_chan_tx_name = "ssp2_tx", },
->> +       { .dma_chan_rx_name = "ssp3_rx", .dma_chan_tx_name = "ssp3_tx", },
->> +       { .dma_chan_rx_name = "ssp3_rx", .dma_chan_tx_name = "ssp3_tx", },
->> +       { .dma_chan_rx_name = "ssp4_rx", .dma_chan_tx_name = "ssp4_tx", },
->> +       { .dma_chan_rx_name = "ssp4_rx", .dma_chan_tx_name = "ssp4_tx", },
->> +};
->
-> This part looks odd to me, you're adding an extra level of indirection to
-> do two stages of lookups in some form of platform data.
-That's unfortunately right.
 
-> Why can't you just always use "rx" and "tx" as the names here?
-Well I couldn't. I'll explain you why, and maybe you'll find a better solution.
+> +#define STM32F7_I2C_DMA_LEN_MIN			0x1
+...
 
-That all is related to how ASoC and SSP interact.
-If I remember correctly, here is how it works :
- - the DMA channel is requested in sound/arm/pxa2xx-pcm-lib.c:128
-	return snd_dmaengine_pcm_open(
-		substream, dma_request_slave_channel(rtd->platform->dev,
-   The trick is that the device here is _not_ the SSP one, it's if memory serves
-   me well the pxa-pcm-audio one.
+> +	if (i2c_dev->dma && f7_msg->count >= STM32F7_I2C_DMA_LEN_MIN) {
 
-   As a consequence, the device cannot be used to differenciate which SSP
-   exactly is providing the sound samples stream. This information is
-   nevertheless required to choose the correct requestor line, which is a 1-to-1
-   match to the SSP port.
+Are you using DMA for every message with a length >= 1? The setup of
+that might be more expensive than the DMA gain, if so.
 
-   The indirection in the channel name is used to choose the correct requestor
-   line for a given SSP port providing the samples.
 
-   It also must be underlined that this dma request serves both AC97 and SSP as
-   sample providers.
+--y4m7u7dns5mivz3x
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> (also, I don't see why each line is duplicated, but I'm sure there's
-> an easy answer for that).
-Ahh that is an unfortunate rebase most probably :)
+-----BEGIN PGP SIGNATURE-----
 
-Cheers.
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrDoC0ACgkQFA3kzBSg
+KbaRGQ//Us4GEynp2Xb4y6E2hTmv8kAhqvPGPAy/IUzs5dqlYuw29ZQNJ/K/kPBS
+ud7NW4RQMBYbQiWQGNPINvoR3h/QthDwOhUT7DNA1IgJ0Jvmybvr96aTtuE5YUn5
+A81ZKV6AdpdXH+GVRHOetMfNWxc747Jwy250YnlUen3WkMiiJhUHYb39l0W4zL1g
+Iqzgp8khAKRgO7M5yZ4FieCKFA9lrL6vAYNDxcj8+Tb9h/ffR0vZwRGYc0TnpK0p
+YmIYCDVBIptuoHcin7AMgGPNwn2WrzSOxzdlqkZKFWaBfvDfIJOv49zADLSt1NGT
+42/Vs7ErMDLPU1kor/78XDK6P/AinKQ60bEsGccWY2buNeWbPdXn8AL5TlwMPWhh
+NCTrWwj4X1O/bagULaxZBa9GukjuTRTuq/pRUU2h2kgxEyx32w74/nIKMcEzioJW
+STRd95Ir8DPAT/L+G/stJ0V4tgaKqy0BJIYb9o0i9vHU7wrSvVn+rTE8cA/BAW5H
+q60HlC//jG72vMMFmqNdvwAydYYgT8fumok5fxrM7efwfTspORta8+xxPeNi00GN
+IQCx4xW5ggXdy/tttfxPEDI/b+BxpEeMyNiocNlW4bChEbPJbeVPCNPwrmHnJzv3
+RFlK1jwNaIQ9HyP8QQKV0Lgg5se5Z5U2jvj2WB+5dLMTmKwXk3w=
+=y6a8
+-----END PGP SIGNATURE-----
 
--- 
-Robert
+--y4m7u7dns5mivz3x--
