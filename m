@@ -1,65 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932073AbeDCJRE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 05:17:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:57457 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754510AbeDCJRC (ORCPT
+        id S1755290AbeDCJSU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 05:18:20 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:42643 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753292AbeDCJSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 05:17:02 -0400
-Subject: Re: [PATCH 2/2] HID: i2c-hid: Fix resume issue on Raydium touchscreen
- device
-From: Aaron Ma <aaron.ma@canonical.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org
-References: <20180102173006.506-1-aaron.ma@canonical.com>
- <20180102173006.506-2-aaron.ma@canonical.com>
- <CAO-hwJJ3n3YD1+pKvKRRoCX8y-5xZwemKLuLi7aqWSQT=J645A@mail.gmail.com>
- <7ddae302-a44f-b729-c826-082bdcb38d70@canonical.com>
- <e8e8a5d2-ee14-54a8-b30b-66d5cc9404b1@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=aaron.ma@canonical.com; keydata=
- xsBNBFffeLkBCACi4eE4dPsgWN6B9UDOVcAvb5QgU/hRG6yS0I1lGKQv4KA+bke0c5g8clbO
- 9gIlIl2bityfA9NzBsDik4Iei3AxMbFyxv9keMwcOFQBIOZF0P3f05qjxftF8P+yp9QTV4hp
- BkFzsXzWRgXN3r8hU8wqZybepF4B1C83sm2kQ5A5N0AUGbZli9i2G+/VscG9sWfLy8T7f4YW
- MjmlijCjoV6k29vsmTWQPZ7EApNpvR5BnZQPmQWzkkr0lNXlsKcyLgefQtlwg6drK4fe4wz0
- ouBIHJEiXE1LWK1hUzkCUASra4WRwKk1Mv/NLLE/aJRqEvF2ukt3uVuM77RWfl7/H/v5ABEB
- AAHNIUFhcm9uIE1hIDxhYXJvbi5tYUBjYW5vbmljYWwuY29tPsLAdwQTAQgAIQUCV994uQIb
- AwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDNxCzQfVU6ntJ9B/9aVy0+RkLqF9QpLmw+
- LAf1m3Fd+4ZarPTerqDqkLla3ekYhbrEtlI1mYuB5f+gtrIjmcW27gacHdslKB9YwaL8B4ZB
- GJKhcrntLg4YPzYUnXZkHHTv1hMw7fBYw82cBT+EbG0Djh6Po6Ihqyr3auHhfFcp1PZH4Mtq
- 6hN5KaDZzF/go+tRF5e4bn61Nhdue7mrhFSlfkzLG2ehHWmRV+S91ksH81YDFnazK0sRINBx
- V1S8ts3WJ2f1AbgmnDlbK3c/AfI5YxnIHn/x2ZdXj1P/wn7DgZHmpMy5DMuk0gN34NLUPLA/
- cHeKoBAF8emugljiKecKBpMTLe8FrVOxbkrazsBNBFffeLkBCACweKP3Wx+gK81+rOUpuQ00
- sCyKzdtMuXXJ7oL4GzYHbLfJq+F+UHpQbytVGTn3R5+Y61v41g2zTYZooaC+Hs1+ixf+buG2
- +2LZjPSELWPNzH9lsKNlCcEvu1XhyyHkBDbnFFHWlUlql3nSXMo//dOTG/XGKaEaZUxjCLUC
- 8ehLc16DJDvdXsPwWhHrCH/4k92F6qQ14QigBMsl75jDTDJMEYgRYEBT1D/bwxdIeoN1BfIG
- mYgf059RrWax4SMiJtVDSUuDOpdwoEcZ0FWesRfbFrM+k/XKiIbjMZSvLunA4FIsOdWYOob4
- Hh0rsm1G+fBLYtT+bE26OWpQ/lSn4TdhABEBAAHCwF8EGAEIAAkFAlffeLkCGwwACgkQzcQs
- 0H1VOp6p5Af/ap5EVuP1AhFdPD3pXLNrUUt72W3cuAOjXyss43qFC2YRjGfktrizsDjQU46g
- VKoD6EW9XUPgvYM+k8BJEoXDLhHWnCnMKlbHP3OImxzLRhF4kdlnLicz1zKRcessQatRpJgG
- NIiD+eFyh0CZcWBO1BB5rWikjO/idicHao2stFdaBmIeXvhT9Xp6XNFEmzOmfHps+kKpWshY
- 9LDAU0ERBNsW4bekOCa/QxfqcbZYRjrVQvya0EhrPhq0bBpzkIL/7QSBMcdv6IajTlHnLARF
- nAIofCEKeEl7+ksiRapL5Nykcbt4dldE3sQWxIybC94SZ4inENKw6I8RNpigWm0R5w==
-Message-ID: <f9becc3a-516f-7eed-06a9-c9e5610b9fd3@canonical.com>
-Date: Tue, 3 Apr 2018 17:16:55 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 3 Apr 2018 05:18:17 -0400
+X-Google-Smtp-Source: AIpwx4+zzGm4SLQZ01e1iVkj4JN78RtU58Tug34md+HZra2n9yLP2FMBb95OOP6zgGhXfsCgoyVjDVm3kiIJLs0QkQs=
 MIME-Version: 1.0
-In-Reply-To: <e8e8a5d2-ee14-54a8-b30b-66d5cc9404b1@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAK8P3a2pdmLOHb2wkPVvqLDo71Rf3hLVfhG7vsMzaPD-DMEzSg@mail.gmail.com>
+References: <CAK8P3a0q70FYtBaCcsBPejVULgsbJPwUG7QmrkU9NJpr7oTzpQ@mail.gmail.com>
+ <CA+55aFzmQ9specaytsjEb=iNm-NHE5kxMSy_H_jKvqZa4-Fomw@mail.gmail.com> <CAK8P3a2pdmLOHb2wkPVvqLDo71Rf3hLVfhG7vsMzaPD-DMEzSg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 3 Apr 2018 11:18:15 +0200
+X-Google-Sender-Auth: 9IuMQACax08SVMORj-zOUsd6uoU
+Message-ID: <CAMuHMdVZg8BL7D2eB-FnDbJabU3sfda6nOnaCdJj-3OC-+KP0g@mail.gmail.com>
+Subject: Re: [GIT PULL] arch: remove obsolete architecture ports
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        James Hogan <jhogan@kernel.org>, David Howells <dhowells@redhat.com>,
+        "moderated list:PANASONIC MN10300..." <linux-am33-list@redhat.com>,
+        Hirokazu Takata <takata@linux-m32r.org>,
+        Lennox Wu <lennox.wu@gmail.com>, Aaron Wu <Aaron.Wu@analog.com>,
+        Bryan Wu <cooloney@gmail.com>,
+        Chris Metcalf <chris.d.metcalf@gmail.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri:
+On Mon, Apr 2, 2018 at 9:54 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Mon, Apr 2, 2018 at 8:57 PM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> Regarding a possible revert, that would indeed involve reverting
+> multiple patches for most architectures, plus parts of at least these
+> three:
+>
+>   Documentation: arch-support: remove obsolete architectures
+>   treewide: simplify Kconfig dependencies for removed archs
+>   ktest: remove obsolete architectures
+>
+> For those, I went the other way, and removed all architectures at
+> once to simplify my work and to avoid touching the same files up
+> to eight times with interdependent patches (which couldn't
+> be reverted without conflicts either).
+>
+> There are a couple of driver removal patches that got picked up
+> into subsystem trees instead of this tree, so a full revert would also
+> involve finding other drivers, but if you prefer to have the patches
+> completely split up by arch, I could rework the series that way.
 
-This patch is pending for long time.
+In reality, a resurrection may not be implemented as a pure revert, but as
+the addition of a new architecture, implemented using modern features (DT,
+CCF, ...).
 
-Could you merge this single patch to upstream?
+Cfr. the resurrected arch/h8300, which doesn't have much in common with
+the removed one:
 
-Regards,
-Aaron
+$ git diff --stat v3.12..v4.2 -- arch/h8300
+[...]
+ 197 files changed, 3155 insertions(+), 7849 deletions(-)
+
+(for a total of ca. 6200 lines)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
