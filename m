@@ -1,77 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752216AbeDCPu1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:50:27 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35456 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751461AbeDCPu0 (ORCPT
+        id S1751946AbeDCPwo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:52:44 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42458 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751649AbeDCPwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:50:26 -0400
-Date: Tue, 3 Apr 2018 17:50:24 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Dan Williams <dcbw@redhat.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
-Message-ID: <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
-References: <20180331191939.GA8999@amd>
- <20180331194616.GA19388@amd>
- <20180331195524.GB19388@amd>
- <20180331234314.GZ5700@atomide.com>
- <20180401131852.GA11086@amd>
- <20180401153631.GA5700@atomide.com>
- <20180401173012.GB5700@atomide.com>
- <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
- <20180402155754.GD5700@atomide.com>
- <20180403150444.GE5700@atomide.com>
+        Tue, 3 Apr 2018 11:52:42 -0400
+Date: Tue, 3 Apr 2018 16:52:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sergey Suloev <ssuloev@orpaltech.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] spi: core: handle timeout error from
+ transfer_one()
+Message-ID: <20180403155224.GA11578@sirena.org.uk>
+References: <20180403152905.1524-1-ssuloev@orpaltech.com>
+ <20180403152905.1524-2-ssuloev@orpaltech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
 Content-Disposition: inline
-In-Reply-To: <20180403150444.GE5700@atomide.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180403152905.1524-2-ssuloev@orpaltech.com>
+X-Cookie: Cynic, n.:
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
 
-> > OK thanks for checking. So probably only n_gsm channel 1 is for normal
-> > Qualcomm at commands, and then channel 2 and others are commands
-> > implemented by Motorola on the mdm6600.
-> > 
-> > I guess we'd have to add support for reading and writing to
-> > /dev/gsmtty2 at least as it looks like these cannot be accessed
-> > via /dev/ttyUSB4. Or at least I have not figured out any other
-> > way to access them.
-> 
-> Hmm or maybe there is some way to select where qmi to tunnels the
-> AT commands to? Some kind of channel type paramenter like n_gsm
-> has?
-> 
-> Anyways, for trying to figure out things for alsamixer, I tested
-> that ngsm 2 "AT+EACC=3,0" is not related to cpcap audio register
-> settings and the mic is enabled during the call with Pavel's patch
-> with alsamixer "Mode" set to either "Call" or "Normal". Also speaker
-> keeps working during the call toggling between "Call" and "Normal".
-> "Voice" in alsamixer does also control the speaker volume during
-> the call. And setting the second "Speaker" from "Voice" to "HiFi"
-> mutes the speaker.
+--VS++wcV0S1rZb1Fb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Take a look at the patch. Selecting "call" does something at hardware
-level, selecting "normal" is a nop.
+On Tue, Apr 03, 2018 at 06:29:00PM +0300, Sergey Suloev wrote:
+> As long as sun4i/sun6i SPI drivers have overriden the default
+> "wait for completion" procedure then we need to properly
+> handle -ETIMEDOUT error from transfer_one().
 
-Sorry for confusion.
+Why is this connected to those drivers specifically?
 
-Yes, that patch needs more work.
+--VS++wcV0S1rZb1Fb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-								Pavel
+-----BEGIN PGP SIGNATURE-----
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrDozUACgkQJNaLcl1U
+h9DiiAf/TxkH07nauiAh1vLXq1Cgu4J0BnUFgZLNMuEr7efgpYGxPmJRsvuSMVJp
+uJWPVl6WsI4xnogwnz1LwzOGJ65BJx9RJYvDf+I9Gq6Y1tvAA1qJMlnGjTyGSD35
++VG9+jDfSv0kwmR+Fawf6i4Yzod3VBIRnWVg1E8jSIFSf7yNx17fJ7XBoqwMKGBT
+71RtzHLbKdtkPj98nr7hZcUoytB7qDZxJw6NROZDZzZXNGA0k5OtioTXbKJGnCkn
+LpitfZWqKPSQQ1B6/2sUTjXEX8nJw7LWVvAduiq8mzongCkicJlEwSurjZ7K8UcW
+m3Apg9c9OGAa65v4GOLC1lEcQkl88A==
+=zoIV
+-----END PGP SIGNATURE-----
+
+--VS++wcV0S1rZb1Fb--
