@@ -1,89 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754784AbeDCCSh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 22:18:37 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:13008 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754725AbeDCCSg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 22:18:36 -0400
-X-UUID: ec513e69d1c547e68bea8ac885686feb-20180403
-Message-ID: <1522721904.18424.51.camel@mtkswgap22>
-Subject: Re: [PATCH net] net: dsa: mt7530: Use NULL instead of plain integer
-From: Sean Wang <sean.wang@mediatek.com>
-To: Florian Fainelli <f.fainelli@gmail.com>
-CC: <netdev@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-Date: Tue, 3 Apr 2018 10:18:24 +0800
-In-Reply-To: <20180402232414.19671-1-f.fainelli@gmail.com>
-References: <20180402232414.19671-1-f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1754773AbeDCCXu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 22:23:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50882 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754725AbeDCCXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 22:23:49 -0400
+From: NeilBrown <neilb@suse.com>
+To: David Miller <davem@davemloft.net>
+Date: Tue, 03 Apr 2018 12:23:40 +1000
+Cc: tgraf@suug.ch, herbert@gondor.apana.org.au, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] rhashtable_walk fixes
+In-Reply-To: <20180330.101826.1844442556880257787.davem@davemloft.net>
+References: <152228607974.16370.14544827502467836789.stgit@noble> <20180330.101826.1844442556880257787.davem@davemloft.net>
+Message-ID: <8760591103.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23760.004
-X-TM-AS-Result: No-15.290600-8.000000-10
-X-TMASE-MatchedRID: +c13yJDs9034OiVTWoD8RMmB4bNJoA6MjLOy13Cgb4+qvcIF1TcLYBCz
-        9g14hIMaUxPAM3J2QaoL6G+1LgVPyzAPG7OdV/f5XP5rFAucBUHzvNxVvAWejd9RlPzeVuQQXGl
-        pMstVe4Ra43+J+risUKUS0MnJVHzyTX7PJ/OU3vKDGx/OQ1GV8rHlqZYrZqdI+gtHj7OwNO3DW0
-        xVTs41PCxRafCzgzVfdYvI3q/OzLoOpuLrAtPac1w60UwZ9GtI
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--15.290600-8.000000
-X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23760.004
-X-TMASE-POSTMAN: 2-d;
-X-MTK: N
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-02 at 16:24 -0700, Florian Fainelli wrote:
-> We would be passing 0 instead of NULL as the rsp argument to
-> mt7530_fdb_cmd(), fix that.
-> 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Sean Wang <sean.wang@mediatek.com>
+On Fri, Mar 30 2018, David Miller wrote:
 
-BTW, does the part of the commit message should be updated with "passing
-NULL instead of 0"?
+> From: NeilBrown <neilb@suse.com>
+> Date: Thu, 29 Mar 2018 12:19:09 +1100
+>
+>> These two patches apply on top of my previous "rhashtable: reset iter
+>> when rhashtable_walk_start sees new table" patch.
+>>=20
+>> The first fixes a bug that I found in rhltable_insert().
+>>=20
+>> The second is an alternate to my "rhashtable: allow a walk of the hash
+>> table without missing object."
+>> This version doesn't require an API change and should be reliable for
+>> rhltables too (my first version didn't handle these correctly).
+>
+> Neil, please don't mix and match patches.
+>
+> Also when you need to change a patch in a series, please post the entire
+> new series not just the patch that changes.
+>
+> Patch #1 in this series is unnecessary.  As Herbert explained this has
+> been fixed already.
+>
+> So please repost freshly the patches that are relevant and you want me
+> to consider for inclusion.  Also be explicit and clear about which of
+> my two networking trees you are targetting these changes.
 
+Hi Dave,
+ I'm sorry if I've caused some confusion, but I didn't think that I was
+ submitting patches to you and know nothing about your two trees.
+ I was submitting patches to Thomas and Herbert, the registered
+ maintainers of rhashtable.  I assumed they would review, respond, and
+ take responsibility for getting them upstream, if that's what they
+ decided, based on whatever arrangements they have in place.
 
-> Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  drivers/net/dsa/mt7530.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
-> index 4e53c5ce23ff..a7f6c0a62fc7 100644
-> --- a/drivers/net/dsa/mt7530.c
-> +++ b/drivers/net/dsa/mt7530.c
-> @@ -917,7 +917,7 @@ mt7530_port_fdb_add(struct dsa_switch *ds, int port,
->  
->  	mutex_lock(&priv->reg_mutex);
->  	mt7530_fdb_write(priv, vid, port_mask, addr, -1, STATIC_ENT);
-> -	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, 0);
-> +	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, NULL);
->  	mutex_unlock(&priv->reg_mutex);
->  
->  	return ret;
-> @@ -933,7 +933,7 @@ mt7530_port_fdb_del(struct dsa_switch *ds, int port,
->  
->  	mutex_lock(&priv->reg_mutex);
->  	mt7530_fdb_write(priv, vid, port_mask, addr, -1, STATIC_EMP);
-> -	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, 0);
-> +	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, NULL);
->  	mutex_unlock(&priv->reg_mutex);
->  
->  	return ret;
-> @@ -1293,7 +1293,7 @@ mt7530_setup(struct dsa_switch *ds)
->  	}
->  
->  	/* Flush the FDB table */
-> -	ret = mt7530_fdb_cmd(priv, MT7530_FDB_FLUSH, 0);
-> +	ret = mt7530_fdb_cmd(priv, MT7530_FDB_FLUSH, NULL);
->  	if (ret < 0)
->  		return ret;
->  
+ If it is appropriate I can resend all of my patches that receive an
+ Ack as a coherent series, and send this to you nominating a particular
+ tree, but I'm unlikely to do that unless asked and told which tree to
+ nominate.
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrC5awACgkQOeye3VZi
+gblgbw/7Bs+w5kLnhO7r31SB4z38gCyYHK1lWub/bhXamriv0kdGyoPpZG2nBIW1
+AtRzkAuTUtpdpDTUspeuFRvAVDin6JkYuX2nI4lFJpPq3iHWJ0Lxuqr0O5s+Mmxz
+VxNQhj9x3M71tq4URpA0Zw0ejGhoomvgARKKL6M6tHQraW4b3KcS7ddnoGYogi5r
+q6MHqeu1cM3XJPc3VlvKlXf0r2/o8ZfSsoNdzTnSYtxjYX7vYXqTrsxcWkTNfHwO
+Bj/Qi6yCESmwGw0QkkV/dQVqgw6Cd5rqQ/vnZWa4B/2/xru1JaPdGGDIKUP1KaAx
+MkznE29x47/GRao4iXKrd3cHJDYcvOfoQiD23UCGffT7SrtPe60UcpHKMXKquo8w
+xEOz0PrFu+fq9F+achbcvmL3eRDj3ZGo5twaF/vlfuPh5lCCxepHxXrolnu0hxO5
+HgfW6bO04CdP/VYftuuMwbMe9lQscX5to4/t1WHjDTJ8R5C4uTkAAGEZNEjwWduh
+Y5KYcutFW1u/jza8FEWyqn0Z7OP6gVOrKm5hWaNj3WImrkvNkqoTGi30V9cS7i+s
+3ylKBhsAHrz35x4oc1KyT3KcC1ekbC3Gy1BgdQtMiLbPHM5uk7X2P+GZVF1a8GeE
+2xQUa6l5mlF3ynmMLb2fwTVd9Sk68UkDh15lCtXpp+29dLirS6A=
+=LDxQ
+-----END PGP SIGNATURE-----
+--=-=-=--
