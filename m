@@ -1,192 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeDDUfB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 16:35:01 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:39644 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751773AbeDDUe7 (ORCPT
+        id S1752268AbeDDUff (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 16:35:35 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:57910 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1751654AbeDDUfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:34:59 -0400
-From: Maran Wilson <maran.wilson@oracle.com>
-To: x86@kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, jgross@suse.com
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        roger.pau@citrix.com, boris.ostrovsky@oracle.com, rkrcmar@redhat.com,
-        maran.wilson@oracle.com
-Subject: [PATCH v6 7/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-Date: Wed,  4 Apr 2018 13:34:36 -0700
-Message-Id: <1522874076-18409-1-git-send-email-maran.wilson@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1522873659-17572-1-git-send-email-maran.wilson@oracle.com>
-References: <1522873659-17572-1-git-send-email-maran.wilson@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8853 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=7 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804040198
+        Wed, 4 Apr 2018 16:35:34 -0400
+Date: Wed, 4 Apr 2018 16:35:32 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: Daniel Jordan <daniel.m.jordan@oracle.com>
+cc: parri.andrea@gmail.com, <will.deacon@arm.com>, <peterz@infradead.org>,
+        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
+        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
+        <paulmck@linux.vnet.ibm.com>, <akiyks@gmail.com>,
+        <linux-kernel@vger.kernel.org>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Pasha Tatashin <pasha.tatashin@oracle.com>
+Subject: Re: Control dependency between prior load in while condition and
+ later store?
+In-Reply-To: <087a5ca4-e788-60ee-9145-3a078781cf05@oracle.com>
+Message-ID: <Pine.LNX.4.44L0.1804041623530.1401-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For certain applications it is desirable to rapidly boot a KVM virtual
-machine. In cases where legacy hardware and software support within the
-guest is not needed, Qemu should be able to boot directly into the
-uncompressed Linux kernel binary without the need to run firmware.
+On Wed, 4 Apr 2018, Daniel Jordan wrote:
 
-There already exists an ABI to allow this for Xen PVH guests and the ABI
-is supported by Linux and FreeBSD:
+> A question for memory-barriers.txt aficionados.
+> 
+> Is there a control dependency between the prior load of 'a' and the 
+> later store of 'c'?:
+> 
+>    while (READ_ONCE(a));
+>    WRITE_ONCE(c, 1);
 
-   https://xenbits.xen.org/docs/unstable/misc/pvh.html
+I would say that yes, there is.
 
-This patch enables Qemu to use that same entry point for booting KVM
-guests.
+> I have my doubts because memory-barriers.txt doesn't talk much about 
+> loops and because of what that document says here:
+> 
+>    In addition, control dependencies apply only to the then-clause and
+>    else-clause of the if-statement in question.  In particular, it does
+>    not necessarily apply to code following the if-statement:
+> 
+>    	q = READ_ONCE(a);
+>    	if (q) {
+>    		WRITE_ONCE(b, 1);
+>    	} else {
+>    		WRITE_ONCE(b, 2);
+>    	}
+>    	WRITE_ONCE(c, 1);  /* BUG: No ordering against the read from 'a'. */
 
-Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
-Suggested-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Tested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
----
- arch/x86/Kbuild                   |  2 +-
- arch/x86/Kconfig                  |  8 ++++++++
- arch/x86/platform/pvh/Makefile    |  4 ++--
- arch/x86/platform/pvh/enlighten.c | 43 +++++++++++++++++++++++++++++----------
- 4 files changed, 43 insertions(+), 14 deletions(-)
+This refers to situations where the two code paths meet up at the end
+of the "if" statement.  If they don't meet up (because one of the paths
+branches away -- especially if it branches backward) then the 
+disclaimer doesn't apply, and everything following the "if" is 
+dependent.
 
-diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
-index 2089e4414300..c625f57472f7 100644
---- a/arch/x86/Kbuild
-+++ b/arch/x86/Kbuild
-@@ -7,7 +7,7 @@ obj-$(CONFIG_KVM) += kvm/
- # Xen paravirtualization support
- obj-$(CONFIG_XEN) += xen/
- 
--obj-$(CONFIG_XEN_PVH) += platform/pvh/
-+obj-$(CONFIG_PVH) += platform/pvh/
- 
- # Hyper-V paravirtualization support
- obj-$(subst m,y,$(CONFIG_HYPERV)) += hyperv/
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index e3b836d7ad09..1e6d83e181b5 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -787,6 +787,14 @@ config PVH
- 	  This option enables the PVH entry point for guest virtual machines
- 	  as specified in the x86/HVM direct boot ABI.
- 
-+config KVM_GUEST_PVH
-+	bool "Support for running as a KVM PVH guest"
-+	depends on KVM_GUEST
-+	select PVH
-+	---help---
-+	  This option enables starting KVM guests via the PVH entry point as
-+	  specified in the x86/HVM direct boot ABI.
-+
- config KVM_DEBUG_FS
- 	bool "Enable debug information for KVM Guests in debugfs"
- 	depends on KVM_GUEST && DEBUG_FS
-diff --git a/arch/x86/platform/pvh/Makefile b/arch/x86/platform/pvh/Makefile
-index 9fd25efcd2a3..5dec5067c9fb 100644
---- a/arch/x86/platform/pvh/Makefile
-+++ b/arch/x86/platform/pvh/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- OBJECT_FILES_NON_STANDARD_head.o := y
- 
--obj-$(CONFIG_XEN_PVH) += enlighten.o
--obj-$(CONFIG_XEN_PVH) += head.o
-+obj-$(CONFIG_PVH) += enlighten.o
-+obj-$(CONFIG_PVH) += head.o
-diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
-index efbceba8db4f..815a09ad625c 100644
---- a/arch/x86/platform/pvh/enlighten.c
-+++ b/arch/x86/platform/pvh/enlighten.c
-@@ -8,6 +8,9 @@
- #include <asm/e820/api.h>
- #include <asm/x86_init.h>
- 
-+#include <asm/xen/interface.h>
-+#include <asm/xen/hypercall.h>
-+
- #include <xen/interface/memory.h>
- #include <xen/interface/hvm/start_info.h>
- 
-@@ -40,11 +43,28 @@ void __init __weak mem_map_via_hcall(struct boot_params *ptr __maybe_unused)
- 	BUG();
- }
- 
--static void __init init_pvh_bootparams(void)
-+static void __init init_pvh_bootparams(bool xen_guest)
- {
- 	memset(&pvh_bootparams, 0, sizeof(pvh_bootparams));
- 
--	mem_map_via_hcall(&pvh_bootparams);
-+	if ((pvh_start_info.version > 0) && (pvh_start_info.memmap_entries)) {
-+		struct hvm_memmap_table_entry *ep;
-+		int i;
-+
-+		ep = __va(pvh_start_info.memmap_paddr);
-+		pvh_bootparams.e820_entries = pvh_start_info.memmap_entries;
-+
-+		for (i = 0; i < pvh_bootparams.e820_entries ; i++, ep++) {
-+			pvh_bootparams.e820_table[i].addr = ep->addr;
-+			pvh_bootparams.e820_table[i].size = ep->size;
-+			pvh_bootparams.e820_table[i].type = ep->type;
-+		}
-+	} else if (xen_guest) {
-+		mem_map_via_hcall(&pvh_bootparams);
-+	} else {
-+		/* Non-xen guests are not supported by version 0 */
-+		BUG();
-+	}
- 
- 	if (pvh_bootparams.e820_entries < E820_MAX_ENTRIES_ZEROPAGE - 1) {
- 		pvh_bootparams.e820_table[pvh_bootparams.e820_entries].addr =
-@@ -75,7 +95,7 @@ static void __init init_pvh_bootparams(void)
- 	 * environment (i.e. hardware_subarch 0).
- 	 */
- 	pvh_bootparams.hdr.version = 0x212;
--	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
-+	pvh_bootparams.hdr.type_of_loader = ((xen_guest ? 0x9 : 0xb) << 4) | 0;
- 
- 	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
- }
-@@ -90,13 +110,10 @@ void __init __weak xen_pvh_init(void)
- 	BUG();
- }
- 
--/*
-- * When we add support for other hypervisors like Qemu/KVM, this routine can
-- * selectively invoke the appropriate initialization based on guest type.
-- */
--static void hypervisor_specific_init(void)
-+static void hypervisor_specific_init(bool xen_guest)
- {
--	xen_pvh_init();
-+	if (xen_guest)
-+		xen_pvh_init();
- }
- 
- /*
-@@ -105,13 +122,17 @@ static void hypervisor_specific_init(void)
-  */
- void __init xen_prepare_pvh(void)
- {
-+
-+	u32 msr = xen_cpuid_base();
-+	bool xen_guest = !!msr;
-+
- 	if (pvh_start_info.magic != XEN_HVM_START_MAGIC_VALUE) {
- 		xen_raw_printk("Error: Unexpected magic value (0x%08x)\n",
- 				pvh_start_info.magic);
- 		BUG();
- 	}
- 
--	hypervisor_specific_init();
-+	hypervisor_specific_init(xen_guest);
- 
--	init_pvh_bootparams();
-+	init_pvh_bootparams(xen_guest);
- }
--- 
-2.16.1
+The reason is because the compiler knows that code following the "if" 
+statement will be executed unconditionally if the paths meet up, so it 
+can move that code back before the "if" (provided nothing else prevents 
+such motion).  But if the paths don't meet up, the compiler can't 
+perform the code motion -- if it did then the program might end up 
+executing something that should not have been executed!
+
+> It's not obvious to me how the then-clause/else-clause idea maps onto 
+> loops, but if we think of the example at the top like this...
+> 
+>    while (1) {
+>        if (!READ_ONCE(a)) {
+>            WRITE_ONCE(c, 1);
+>            break;
+>        }
+>    }
+> 
+> ...then the dependent store is within the then-clause.  Viewed this way, 
+> it seems there would be a control dependency between a and c.
+> 
+> Is that right?
+
+Yes, except that a more accurate view of the object code would be
+something like this:
+
+Loop:	r1 = READ_ONCE(a);
+	if (r1)
+		goto Loop;
+	else
+		;	// Do nothing
+	WRITE_ONCE(c, 1);
+
+Here you can see that one path branches backward, so everything 
+following the "if" is dependent on the READ_ONCE.
+
+Alan
