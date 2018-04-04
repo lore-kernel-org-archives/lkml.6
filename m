@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751534AbeDDI7o (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:59:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34635 "EHLO mx2.suse.de"
+        id S1751602AbeDDI74 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:59:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34647 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751412AbeDDI7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:59:41 -0400
+        id S1751413AbeDDI7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 04:59:43 -0400
 From: Petr Mladek <pmladek@suse.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -17,9 +17,9 @@ Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v4 8/9] vsprintf: Prevent crash when dereferencing invalid pointers
-Date: Wed,  4 Apr 2018 10:58:42 +0200
-Message-Id: <20180404085843.16050-9-pmladek@suse.com>
+Subject: [PATCH v4 9/9] vsprintf: Avoid confusion between invalid address and value
+Date: Wed,  4 Apr 2018 10:58:43 +0200
+Message-Id: <20180404085843.16050-10-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180404085843.16050-1-pmladek@suse.com>
 References: <20180404085843.16050-1-pmladek@suse.com>
@@ -27,463 +27,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We already prevent crash when dereferencing some obviously broken
-pointers. But the handling is not consistent. Sometimes we print "(null)"
-only for pure NULL pointer, sometimes for pointers in the first
-page and sometimes also for pointers in the last page (error codes).
+We are able to detect invalid values handled by %p[iI] printk specifier.
+The current error message is "invalid address". It might cause confusion
+against "(efault)" reported by the generic valid_pointer_address() check.
 
-Note that printk() call this code under logbuf_lock. Any recursive
-printks are redirected to the printk_safe implementation and the messages
-are stored into per-CPU buffers. These buffers might be eventually flushed
-in printk_safe_flush_on_panic() but it is not guaranteed.
-
-This patch adds a check using probe_kernel_read(). It is not a full-proof
-test. But it should help to see the error message in 99% situations where
-the kernel would silently crash otherwise.
-
-Also it makes the error handling unified for "%s" and the many %p*
-specifiers that need to read the data from a given address. We print:
-
-   + (null)   when accessing data on pure pure NULL address
-   + (efault) when accessing data on an invalid address
-
-It does not affect the %p* specifiers that just print the given address
-in some form, namely %pF, %pf, %pS, %ps, %pB, %pK, %px, and plain %p.
-
-Note that we print (efault) from security reasons. In fact, the real
-address can be seen only by %px or eventually %pK.
+Let's unify the style and use the more appropriate error code description
+"(einval)".
 
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- Documentation/core-api/printk-formats.rst |   7 ++
- lib/test_printf.c                         |  37 ++++++--
- lib/vsprintf.c                            | 137 ++++++++++++++++++++++--------
- 3 files changed, 136 insertions(+), 45 deletions(-)
+ Documentation/core-api/printk-formats.rst | 1 +
+ lib/vsprintf.c                            | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-index 934559b3c130..dc020087b12a 100644
+index dc020087b12a..974af53e9b43 100644
 --- a/Documentation/core-api/printk-formats.rst
 +++ b/Documentation/core-api/printk-formats.rst
-@@ -50,6 +50,13 @@ A raw pointer value may be printed with %p which will hash the address
- before printing. The kernel also supports extended specifiers for printing
- pointers of different types.
+@@ -56,6 +56,7 @@ might be printed instead of the unreachable information::
  
-+Some of the extended specifiers print the data on the given address instead
-+of printing the address itself. In this case, the following error messages
-+might be printed instead of the unreachable information::
-+
-+	(null)	 data on plain NULL address
-+	(efault) data on invalid address
-+
+ 	(null)	 data on plain NULL address
+ 	(efault) data on invalid address
++	(einval) invalid data on a valid address
+ 
  Plain Pointers
  --------------
- 
-diff --git a/lib/test_printf.c b/lib/test_printf.c
-index 71ebfa43ad05..6bc386d7c7c6 100644
---- a/lib/test_printf.c
-+++ b/lib/test_printf.c
-@@ -209,12 +209,12 @@ test_string(void)
- #define ZEROS "00000000"	/* hex 32 zero bits */
- 
- static int __init
--plain_format(void)
-+plain_format(void *ptr)
- {
- 	char buf[PLAIN_BUF_SIZE];
- 	int nchars;
- 
--	nchars = snprintf(buf, PLAIN_BUF_SIZE, "%p", PTR);
-+	nchars = snprintf(buf, PLAIN_BUF_SIZE, "%p", ptr);
- 
- 	if (nchars != PTR_WIDTH || strncmp(buf, ZEROS, strlen(ZEROS)) != 0)
- 		return -1;
-@@ -227,6 +227,7 @@ plain_format(void)
- #define PTR_WIDTH 8
- #define PTR ((void *)0x456789ab)
- #define PTR_STR "456789ab"
-+#define ZEROS ""
- 
- static int __init
- plain_format(void)
-@@ -238,12 +239,12 @@ plain_format(void)
- #endif	/* BITS_PER_LONG == 64 */
- 
- static int __init
--plain_hash(void)
-+plain_hash(void *ptr)
- {
- 	char buf[PLAIN_BUF_SIZE];
- 	int nchars;
- 
--	nchars = snprintf(buf, PLAIN_BUF_SIZE, "%p", PTR);
-+	nchars = snprintf(buf, PLAIN_BUF_SIZE, "%p", ptr);
- 
- 	if (nchars != PTR_WIDTH || strncmp(buf, PTR_STR, PTR_WIDTH) == 0)
- 		return -1;
-@@ -256,18 +257,18 @@ plain_hash(void)
-  * after an address is hashed.
-  */
- static void __init
--plain(void)
-+plain(void *ptr)
- {
- 	int err;
- 
--	err = plain_hash();
-+	err = plain_hash(ptr);
- 	if (err) {
- 		pr_warn("plain 'p' does not appear to be hashed\n");
- 		failed_tests++;
- 		return;
- 	}
- 
--	err = plain_format();
-+	err = plain_format(ptr);
- 	if (err) {
- 		pr_warn("hashing plain 'p' has unexpected format\n");
- 		failed_tests++;
-@@ -275,6 +276,24 @@ plain(void)
- }
- 
- static void __init
-+null_pointer(void)
-+{
-+	plain(NULL);
-+	test(ZEROS "00000000", "%px", NULL);
-+	test("(null)", "%pE", NULL);
-+}
-+
-+#define PTR_INVALID ((void *)0x000000ab)
-+
-+static void __init
-+invalid_pointer(void)
-+{
-+	plain(PTR_INVALID);
-+	test(ZEROS "000000ab", "%px", PTR_INVALID);
-+	test("(efault)", "%pE", PTR_INVALID);
-+}
-+
-+static void __init
- symbol_ptr(void)
- {
- }
-@@ -497,7 +516,9 @@ flags(void)
- static void __init
- test_pointer(void)
- {
--	plain();
-+	plain(PTR);
-+	null_pointer();
-+	invalid_pointer();
- 	symbol_ptr();
- 	kernel_ptr();
- 	struct_resource();
 diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 3551b7957d9e..1a080a75a825 100644
+index 1a080a75a825..4fcd4ce91d32 100644
 --- a/lib/vsprintf.c
 +++ b/lib/vsprintf.c
-@@ -599,12 +599,46 @@ char *__string(char *buf, char *end, const char *s, struct printf_spec spec)
- 	return widen_string(buf, len, end, spec);
- }
- 
-+ /*
-+  * This is not a fool-proof test. 99% of the time that this will fault is
-+  * due to a bad pointer, not one that crosses into bad memory. Just test
-+  * the address to make sure it doesn't fault due to a poorly added printk
-+  * during debugging.
-+  */
-+static const char *check_pointer_access(const void *ptr)
-+{
-+	char byte;
-+
-+	if (!ptr)
-+		return "(null)";
-+
-+	if (probe_kernel_address(ptr, byte))
-+		return "(efault)";
-+
-+	return NULL;
-+}
-+
-+
-+static bool valid_pointer_access(char **buf, char *end, const void *ptr,
-+				 struct printf_spec spec)
-+{
-+	const char *err_msg;
-+
-+	err_msg = check_pointer_access(ptr);
-+	if (err_msg) {
-+		*buf = __string(*buf, end, err_msg, spec);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
- static noinline_for_stack
- char *string(char *buf, char *end, const char *s,
- 		   struct printf_spec spec)
- {
--	if ((unsigned long)s < PAGE_SIZE)
--		s = "(null)";
-+	if (!valid_pointer_access(&buf, end, s, spec))
-+		return buf;
- 
- 	return __string(buf, end, s, spec);
- }
-@@ -686,6 +720,9 @@ char *dentry_name(char *buf, char *end, const struct dentry *d, struct printf_sp
- 	int depth;
- 	int i, n;
- 
-+	if (!valid_pointer_access(&buf, end, d, spec))
-+		return buf;
-+
- 	switch (fmt[1]) {
- 		case '2': case '3': case '4':
- 			depth = fmt[1] - '0';
-@@ -726,8 +763,12 @@ static noinline_for_stack
- char *bdev_name(char *buf, char *end, struct block_device *bdev,
- 		struct printf_spec spec, const char *fmt)
- {
--	struct gendisk *hd = bdev->bd_disk;
--	
-+	struct gendisk *hd;
-+
-+	if (!valid_pointer_access(&buf, end, bdev, spec))
-+		return buf;
-+
-+	hd = bdev->bd_disk;
- 	buf = string(buf, end, hd->disk_name, spec);
- 	if (bdev->bd_part->partno) {
- 		if (isdigit(hd->disk_name[strlen(hd->disk_name)-1])) {
-@@ -826,6 +867,9 @@ char *resource_string(char *buf, char *end, struct resource *res,
- 	int decode = (fmt[0] == 'R') ? 1 : 0;
- 	const struct printf_spec *specp;
- 
-+	if (!valid_pointer_access(&buf, end, res, spec))
-+		return buf;
-+
- 	*p++ = '[';
- 	if (res->flags & IORESOURCE_IO) {
- 		p = __string(p, pend, "io  ", str_spec);
-@@ -888,9 +932,8 @@ char *hex_string(char *buf, char *end, u8 *addr, struct printf_spec spec,
- 		/* nothing to print */
- 		return buf;
- 
--	if (ZERO_OR_NULL_PTR(addr))
--		/* NULL pointer */
--		return string(buf, end, NULL, spec);
-+	if (!valid_pointer_access(&buf, end, addr, spec))
-+		return buf;
- 
- 	switch (fmt[1]) {
- 	case 'C':
-@@ -937,6 +980,9 @@ char *bitmap_string(char *buf, char *end, unsigned long *bitmap,
- 	int i, chunksz;
- 	bool first = true;
- 
-+	if (!valid_pointer_access(&buf, end, bitmap, spec))
-+		return buf;
-+
- 	/* reused to print numbers */
- 	spec = (struct printf_spec){ .flags = SMALL | ZEROPAD, .base = 16 };
- 
-@@ -978,6 +1024,9 @@ char *bitmap_list_string(char *buf, char *end, unsigned long *bitmap,
- 	int cur, rbot, rtop;
- 	bool first = true;
- 
-+	if (!valid_pointer_access(&buf, end, bitmap, spec))
-+		return buf;
-+
- 	/* reused to print numbers */
- 	spec = (struct printf_spec){ .base = 10 };
- 
-@@ -1019,6 +1068,9 @@ char *mac_address_string(char *buf, char *end, u8 *addr,
- 	char separator;
- 	bool reversed = false;
- 
-+	if (!valid_pointer_access(&buf, end, addr, spec))
-+		return buf;
-+
- 	switch (fmt[1]) {
- 	case 'F':
- 		separator = '-';
-@@ -1319,9 +1371,12 @@ char *ip4_addr_string_sa(char *buf, char *end, const struct sockaddr_in *sa,
- }
- 
- static noinline_for_stack
--char *ip_addr_string(char *buf, char *end, const void *ptr,
--		     struct printf_spec spec, const char *fmt)
-+char *ip_addr_string(char *buf, char *end, void *ptr, struct printf_spec spec,
-+		     const char *fmt)
- {
-+	if (!valid_pointer_access(&buf, end, ptr, spec))
-+		return buf;
-+
- 	switch (fmt[1]) {
- 	case '6':
- 		return ip6_addr_string(buf, end, ptr, spec, fmt);
-@@ -1361,9 +1416,8 @@ char *escaped_string(char *buf, char *end, u8 *addr, struct printf_spec spec,
- 	if (spec.field_width == 0)
- 		return buf;				/* nothing to print */
- 
--	if (ZERO_OR_NULL_PTR(addr))
--		return string(buf, end, NULL, spec);	/* NULL pointer */
--
-+	if (!valid_pointer_access(&buf, end, addr, spec))
-+		return buf;
- 
- 	do {
- 		switch (fmt[count++]) {
-@@ -1410,10 +1464,14 @@ char *escaped_string(char *buf, char *end, u8 *addr, struct printf_spec spec,
- }
- 
- static noinline_for_stack
--char *va_format(char *buf, char *end, struct va_format *va_fmt)
-+char *va_format(char *buf, char *end, struct va_format *va_fmt,
-+		struct printf_spec spec, const char *fmt)
- {
- 	va_list va;
- 
-+	if (!valid_pointer_access(&buf, end, va_fmt, spec))
-+		return buf;
-+
- 	va_copy(va, *va_fmt->va);
- 	buf += vsnprintf(buf, end > buf ? end - buf : 0,
- 			 va_fmt->fmt, va);
-@@ -1432,6 +1490,9 @@ char *uuid_string(char *buf, char *end, const u8 *addr,
- 	const u8 *index = uuid_index;
- 	bool uc = false;
- 
-+	if (!valid_pointer_access(&buf, end, addr, spec))
-+		return buf;
-+
- 	switch (*(++fmt)) {
- 	case 'L':
- 		uc = true;		/* fall-through */
-@@ -1517,11 +1578,15 @@ char *restricted_pointer(char *buf, char *end, const void *ptr,
- }
- 
- static noinline_for_stack
--char *netdev_bits(char *buf, char *end, const void *addr, const char *fmt)
-+char *netdev_bits(char *buf, char *end, const void *addr,
-+		  struct printf_spec spec, const char *fmt)
- {
- 	unsigned long long num;
- 	int size;
- 
-+	if (!valid_pointer_access(&buf, end, addr, spec))
-+		return buf;
-+
- 	switch (fmt[1]) {
- 	case 'F':
- 		num = *(const netdev_features_t *)addr;
-@@ -1537,11 +1602,15 @@ char *netdev_bits(char *buf, char *end, const void *addr, const char *fmt)
- }
- 
- static noinline_for_stack
--char *address_val(char *buf, char *end, const void *addr, const char *fmt)
-+char *address_val(char *buf, char *end, const void *addr,
-+		  struct printf_spec spec, const char *fmt)
- {
- 	unsigned long long num;
- 	int size;
- 
-+	if (!valid_pointer_access(&buf, end, addr, spec))
-+		return buf;
-+
- 	switch (fmt[1]) {
- 	case 'd':
- 		num = *(const dma_addr_t *)addr;
-@@ -1566,8 +1635,8 @@ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
- 		return buf;
+@@ -1395,7 +1395,7 @@ char *ip_addr_string(char *buf, char *end, void *ptr, struct printf_spec spec,
+ 		case AF_INET6:
+ 			return ip6_addr_string_sa(buf, end, &sa->v6, spec, fmt);
+ 		default:
+-			return __string(buf, end, "(invalid address)", spec);
++			return __string(buf, end, "(einval)", spec);
+ 		}}
  	}
  
--	if (!clk)
--		return string(buf, end, NULL, spec);
-+	if (!valid_pointer_access(&buf, end, clk, spec))
-+		return buf;
- 
- 	switch (fmt[1]) {
- 	case 'r':
-@@ -1622,11 +1691,15 @@ char *format_flags(char *buf, char *end, unsigned long flags,
- }
- 
- static noinline_for_stack
--char *flags_string(char *buf, char *end, void *flags_ptr, const char *fmt)
-+char *flags_string(char *buf, char *end, void *flags_ptr,
-+		   struct printf_spec spec, const char *fmt)
- {
- 	unsigned long flags;
- 	const struct trace_print_flags *names;
- 
-+	if (!valid_pointer_access(&buf, end, flags_ptr, spec))
-+		return buf;
-+
- 	switch (fmt[1]) {
- 	case 'p':
- 		flags = *(unsigned long *)flags_ptr;
-@@ -1919,18 +1992,6 @@ static noinline_for_stack
- char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 	      struct printf_spec spec)
- {
--	const int default_width = 2 * sizeof(void *);
--
--	if (!ptr && *fmt != 'K' && *fmt != 'x') {
--		/*
--		 * Print (null) with the same width as a pointer so it makes
--		 * tabular output look nice.
--		 */
--		if (spec.field_width == -1)
--			spec.field_width = default_width;
--		return __string(buf, end, "(null)", spec);
--	}
--
- 	switch (*fmt) {
- 	case 'F':
- 	case 'f':
-@@ -1972,13 +2033,13 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 	case 'U':
- 		return uuid_string(buf, end, ptr, spec, fmt);
- 	case 'V':
--		return va_format(buf, end, ptr);
-+		return va_format(buf, end, ptr, spec, fmt);
- 	case 'K':
- 		return restricted_pointer(buf, end, ptr, spec);
- 	case 'N':
--		return netdev_bits(buf, end, ptr, fmt);
-+		return netdev_bits(buf, end, ptr, spec, fmt);
- 	case 'a':
--		return address_val(buf, end, ptr, fmt);
-+		return address_val(buf, end, ptr, spec, fmt);
- 	case 'd':
- 		return dentry_name(buf, end, ptr, spec, fmt);
- 	case 'C':
-@@ -1993,7 +2054,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- #endif
- 
- 	case 'G':
--		return flags_string(buf, end, ptr, fmt);
-+		return flags_string(buf, end, ptr, spec, fmt);
- 	case 'O':
- 		return kobject_string(buf, end, ptr, spec, fmt);
- 	case 'x':
-@@ -2609,11 +2670,13 @@ int vbin_printf(u32 *bin_buf, size_t size, const char *fmt, va_list args)
- 
- 		case FORMAT_TYPE_STR: {
- 			const char *save_str = va_arg(args, char *);
-+			const char *err_msg;
- 			size_t len;
- 
--			if ((unsigned long)save_str > (unsigned long)-PAGE_SIZE
--					|| (unsigned long)save_str < PAGE_SIZE)
--				save_str = "(null)";
-+			err_msg = check_pointer_access(save_str);
-+			if (err_msg)
-+				save_str = err_msg;
-+
- 			len = strlen(save_str) + 1;
- 			if (str + len < end)
- 				memcpy(str, save_str, len);
 -- 
 2.13.6
