@@ -1,55 +1,55 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49QGOF9xAJP8fRcJuPCjnDrRfCgBvEmF00SBJUHipdo65w+O7x8CvW0yxf9Q0QXc/LZyYrs
-ARC-Seal: i=1; a=rsa-sha256; t=1522855986; cv=none;
+X-Google-Smtp-Source: AIpwx4+kP9qBAtkeQsi5MyvpPce2L4wLXyyiZfwTGAWdRav0c6FcsAAVLmG1e5c3owPWfUNcXftE
+ARC-Seal: i=1; a=rsa-sha256; t=1522855981; cv=none;
         d=google.com; s=arc-20160816;
-        b=tVmAGh5veN+NSDAmRKGvFPpWl2Wd3H+Z3d5CXXrLYNML3QzEJhWawJ4XOKmwunqrlO
-         mAsXAhRqqhGQw1YNx20yfMb0uacFZUh8C+FkgirPaghkLdeyrlAHVII8E2qlHmNNtbw9
-         6AGH5qtqc3EESYWuBvuYfy45BLJ5E4JGRjUZgXyN569DAhioQq0w1b9Ic1VUdEGrBczu
-         sgjPipAf7kth4erdX9cR4/LxmlEg5bbPmoLIk0FlVLwNrCS7xOWFmRSwWU03GiWjSyGg
-         RpRtMbBqol84z5+mm717fAa9uStJGVNUgoQhgTRZ1AgGCTiaXR1wZdminMpJa9hSuzXW
-         vbiQ==
+        b=MG/5bQ8cvUW8lYO19jwWvs2+94g73jB0+j2vLJXWzS1+Wpp3nZFv7q0769QGw3bnLJ
+         uePFKP7Repx9HWAqYe6o5aGvSZ3pizt9ynmg6Beat7F017vL/jNlDmwqwkGDX8bUxhDr
+         axvOgA0ryNaDfzlFz3i2GLRCq1ILtPTbtZS2MCZd7dXnsAiioDpMicjyaxfVp1HgHHwI
+         oqTihwAHQgbfBRwhGkGISZncrX+XZNYRfRUP1pCSyGtEnaGMuLpVSUMkWUosFPMEtYHX
+         FOHfr99do054nVEKuCIUwjh5UVDxuaySJAOrVOpnu2W5ZnEZw5i98ZyFOmJ1sR4h94VH
+         HisQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
          :from:cc:to:subject:arc-authentication-results;
-        bh=aLRxZYz2dWfGodTfwTjwybIoCoS4fegJz5n7P3/pY4w=;
-        b=GMvHGDlpeKoNPRG1NMscEk9Wx3mPta8NNNQOf6HhCpGwitRSs2or3AbWHHyizInxUr
-         THJyeU+NtPP8zwdjT7pK2l7CvFkrhWShbNCnIbG380J7cdOxFvsGgQo9Ch+UlkFGNBiM
-         NEdOexDCpsZSB79UUlXNBfi0nQ7XEfLv7/UO7GW78eC1edIARtDZkV/JMIUIsbpMCTiW
-         Dl245Au6qrQTkhLgHlqF8beru06QEBl4d9+UglgM/bHhVOrgQNtyTxJP6NQnMsnJiEBt
-         VXtJYJOgrn7cryjXtaN+/uGKdi9djBdymM1ZbbBQSV03G8JuSlC3SfLgIduonc5HQuVv
-         luDQ==
+        bh=HcnLIp2gM6bDx62M9XMae0HWInXhYpRfwonGwC9Y+Go=;
+        b=eJrsePwX1+71ppTLllRIkcBuRdAMPJpaJJzXw6Zv0tAzCoD8gKYUcKbib9sfSUDcgQ
+         Yj8WlVYMECgv7zLTYX9uZk+t/nVU8gimGspavo9ec7SdyFQy7j0cd2m+sxxIeJuFQAPW
+         OZuGW020OFGZN4Il5Qq0uxHsa/rq0a5SYYxmUxk9Nn5VECVcv21cBN3NWfzNFNi08NYJ
+         1jYvedgM5/IqbttOBl/kK4zANbF9ezNzkQRk1wFzxjk8lSR5f0hEmAGwYwpMr7slvTDY
+         Z3Yij7zA4eCzFXNcGPzRlwgCHFckhw2lFBW8DMu2rkTuqsWQGti64+Tc6jCKX13UT2o+
+         9CDw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Subject: Patch "media: v4l2-compat-ioctl32.c: fix ctrl_is_pointer" has been added to the 3.18-stable tree
+Subject: Patch "media: v4l2-compat-ioctl32.c: don't copy back the result for certain errors" has been added to the 3.18-stable tree
 To: mchehab@s-opensource.com,alexander.levin@microsoft.com,gregkh@linuxfoundation.org,hans.verkuil@cisco.com,linux-kernel@vger.kernel.org,linux-media@vger.kernel.org,mchehab@infradead.org,sakari.ailus@linux.intel.com
 Cc: <stable@vger.kernel.org>, <stable-commits@vger.kernel.org>
 From: <gregkh@linuxfoundation.org>
-Date: Wed, 04 Apr 2018 17:32:48 +0200
-In-Reply-To: <63df92f6981785c5e31c1d8e796e827344cc75f3.1522260310.git.mchehab@s-opensource.com>
-Message-ID: <152285596820209@kroah.com>
+Date: Wed, 04 Apr 2018 17:32:46 +0200
+In-Reply-To: <9d0bb62c2dc7caee1fd2b9199fc1a22ec8479395.1522260310.git.mchehab@s-opensource.com>
+Message-ID: <152285596621542@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ANSI_X3.4-1968
 Content-Transfer-Encoding: 8bit
 X-stable: commit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596830239251872482?=
-X-GMAIL-MSGID: =?utf-8?q?1596830239251872482?=
+X-GMAIL-THRID: =?utf-8?q?1596830233555552249?=
+X-GMAIL-MSGID: =?utf-8?q?1596830233555552249?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
 This is a note to let you know that I've just added the patch titled
 
-    media: v4l2-compat-ioctl32.c: fix ctrl_is_pointer
+    media: v4l2-compat-ioctl32.c: don't copy back the result for certain errors
 
 to the 3.18-stable tree which can be found at:
     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 
 The filename of the patch is:
-     media-v4l2-compat-ioctl32.c-fix-ctrl_is_pointer.patch
+     media-v4l2-compat-ioctl32.c-don-t-copy-back-the-result-for-certain-errors.patch
 and it can be found in the queue-3.18 subdirectory.
 
 If you, or anyone else, feels it should not be added to the stable tree,
@@ -58,26 +58,19 @@ please let <stable@vger.kernel.org> know about it.
 
 >From foo@baz Wed Apr  4 17:30:18 CEST 2018
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Date: Wed, 28 Mar 2018 15:12:27 -0300
-Subject: media: v4l2-compat-ioctl32.c: fix ctrl_is_pointer
+Date: Wed, 28 Mar 2018 15:12:32 -0300
+Subject: media: v4l2-compat-ioctl32.c: don't copy back the result for certain errors
 To: Linux Media Mailing List <linux-media@vger.kernel.org>, stable@vger.kernel.org
 Cc: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Sasha Levin <alexander.levin@microsoft.com>
-Message-ID: <63df92f6981785c5e31c1d8e796e827344cc75f3.1522260310.git.mchehab@s-opensource.com>
+Message-ID: <9d0bb62c2dc7caee1fd2b9199fc1a22ec8479395.1522260310.git.mchehab@s-opensource.com>
 
 From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit b8c601e8af2d08f733d74defa8465303391bb930 upstream.
+commit d83a8243aaefe62ace433e4384a4f077bed86acb upstream.
 
-ctrl_is_pointer just hardcoded two known string controls, but that
-caused problems when using e.g. custom controls that use a pointer
-for the payload.
-
-Reimplement this function: it now finds the v4l2_ctrl (if the driver
-uses the control framework) or it calls vidioc_query_ext_ctrl (if the
-driver implements that directly).
-
-In both cases it can now check if the control is a pointer control
-or not.
+Some ioctls need to copy back the result even if the ioctl returned
+an error. However, don't do this for the error code -ENOTTY.
+It makes no sense in that cases.
 
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
@@ -85,122 +78,21 @@ Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   59 +++++++++++++++++---------
- 1 file changed, 39 insertions(+), 20 deletions(-)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
 --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
 +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -18,6 +18,8 @@
- #include <linux/videodev2.h>
- #include <linux/v4l2-subdev.h>
- #include <media/v4l2-dev.h>
-+#include <media/v4l2-fh.h>
-+#include <media/v4l2-ctrls.h>
- #include <media/v4l2-ioctl.h>
- 
- static long native_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-@@ -575,24 +577,39 @@ struct v4l2_ext_control32 {
- 	};
- } __attribute__ ((packed));
- 
--/* The following function really belong in v4l2-common, but that causes
--   a circular dependency between modules. We need to think about this, but
--   for now this will do. */
--
--/* Return non-zero if this control is a pointer type. Currently only
--   type STRING is a pointer type. */
--static inline int ctrl_is_pointer(u32 id)
--{
--	switch (id) {
--	case V4L2_CID_RDS_TX_PS_NAME:
--	case V4L2_CID_RDS_TX_RADIO_TEXT:
--		return 1;
--	default:
--		return 0;
-+/* Return true if this control is a pointer type. */
-+static inline bool ctrl_is_pointer(struct file *file, u32 id)
-+{
-+	struct video_device *vdev = video_devdata(file);
-+	struct v4l2_fh *fh = NULL;
-+	struct v4l2_ctrl_handler *hdl = NULL;
-+	struct v4l2_query_ext_ctrl qec = { id };
-+	const struct v4l2_ioctl_ops *ops = vdev->ioctl_ops;
-+
-+	if (test_bit(V4L2_FL_USES_V4L2_FH, &vdev->flags))
-+		fh = file->private_data;
-+
-+	if (fh && fh->ctrl_handler)
-+		hdl = fh->ctrl_handler;
-+	else if (vdev->ctrl_handler)
-+		hdl = vdev->ctrl_handler;
-+
-+	if (hdl) {
-+		struct v4l2_ctrl *ctrl = v4l2_ctrl_find(hdl, id);
-+
-+		return ctrl && ctrl->is_ptr;
+@@ -943,6 +943,9 @@ static long do_video_ioctl(struct file *
+ 		set_fs(old_fs);
  	}
+ 
++	if (err == -ENOTTY)
++		return err;
 +
-+	if (!ops->vidioc_query_ext_ctrl)
-+		return false;
-+
-+	return !ops->vidioc_query_ext_ctrl(file, fh, &qec) &&
-+		(qec.flags & V4L2_CTRL_FLAG_HAS_PAYLOAD);
- }
- 
--static int get_v4l2_ext_controls32(struct v4l2_ext_controls *kp, struct v4l2_ext_controls32 __user *up)
-+static int get_v4l2_ext_controls32(struct file *file,
-+				   struct v4l2_ext_controls *kp,
-+				   struct v4l2_ext_controls32 __user *up)
- {
- 	struct v4l2_ext_control32 __user *ucontrols;
- 	struct v4l2_ext_control __user *kcontrols;
-@@ -624,7 +641,7 @@ static int get_v4l2_ext_controls32(struc
- 			return -EFAULT;
- 		if (get_user(id, &kcontrols->id))
- 			return -EFAULT;
--		if (ctrl_is_pointer(id)) {
-+		if (ctrl_is_pointer(file, id)) {
- 			void __user *s;
- 
- 			if (get_user(p, &ucontrols->string))
-@@ -639,7 +656,9 @@ static int get_v4l2_ext_controls32(struc
- 	return 0;
- }
- 
--static int put_v4l2_ext_controls32(struct v4l2_ext_controls *kp, struct v4l2_ext_controls32 __user *up)
-+static int put_v4l2_ext_controls32(struct file *file,
-+				   struct v4l2_ext_controls *kp,
-+				   struct v4l2_ext_controls32 __user *up)
- {
- 	struct v4l2_ext_control32 __user *ucontrols;
- 	struct v4l2_ext_control __user *kcontrols =
-@@ -671,7 +690,7 @@ static int put_v4l2_ext_controls32(struc
- 		/* Do not modify the pointer when copying a pointer control.
- 		   The contents of the pointer was changed, not the pointer
- 		   itself. */
--		if (ctrl_is_pointer(id))
-+		if (ctrl_is_pointer(file, id))
- 			size -= sizeof(ucontrols->value64);
- 		if (copy_in_user(ucontrols, kcontrols, size))
- 			return -EFAULT;
-@@ -884,7 +903,7 @@ static long do_video_ioctl(struct file *
- 	case VIDIOC_G_EXT_CTRLS:
- 	case VIDIOC_S_EXT_CTRLS:
- 	case VIDIOC_TRY_EXT_CTRLS:
--		err = get_v4l2_ext_controls32(&karg.v2ecs, up);
-+		err = get_v4l2_ext_controls32(file, &karg.v2ecs, up);
- 		compatible_arg = 0;
- 		break;
- 	case VIDIOC_DQEVENT:
-@@ -911,7 +930,7 @@ static long do_video_ioctl(struct file *
- 	case VIDIOC_G_EXT_CTRLS:
- 	case VIDIOC_S_EXT_CTRLS:
- 	case VIDIOC_TRY_EXT_CTRLS:
--		if (put_v4l2_ext_controls32(&karg.v2ecs, up))
-+		if (put_v4l2_ext_controls32(file, &karg.v2ecs, up))
- 			err = -EFAULT;
- 		break;
- 	}
+ 	/* Special case: even after an error we need to put the
+ 	   results back for these ioctls since the error_idx will
+ 	   contain information on which control failed. */
 
 
 Patches currently in stable-queue which might be from mchehab@s-opensource.com are
