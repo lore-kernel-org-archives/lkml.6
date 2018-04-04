@@ -1,85 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751437AbeDDKIi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:08:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40499 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750812AbeDDKIh (ORCPT
+        id S1751262AbeDDKQE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:16:04 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59058 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751095AbeDDKQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:08:37 -0400
-Date: Wed, 4 Apr 2018 03:08:27 -0700
-From: tip-bot for Palmer Dabbelt <tipbot@zytor.com>
-Message-ID: <tip-83fbdf1c0595470d98ee99a6474099aee870640f@git.kernel.org>
-Cc: arnd@arndb.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-        palmer@sifive.com, tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        palmer@sifive.com, hpa@zytor.com, arnd@arndb.de,
-        torvalds@linux-foundation.org
-In-Reply-To: <20180404043130.31277-3-palmer@sifive.com>
-References: <20180404043130.31277-3-palmer@sifive.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] openrisc: Set CONFIG_MULTI_IRQ_HANDLER
-Git-Commit-ID: 83fbdf1c0595470d98ee99a6474099aee870640f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 4 Apr 2018 06:16:03 -0400
+Date: Wed, 4 Apr 2018 11:16:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: Re: [GIT PULL] regulator updates for v4.17
+Message-ID: <20180404101600.GA7691@sirena.org.uk>
+References: <20180402163413.GV29239@sirena.org.uk>
+ <CA+55aFwXUh6AkFoYN4DihjaYwNjD-ti=hw5jz6f-bhjXYS+dNQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
 Content-Disposition: inline
+In-Reply-To: <CA+55aFwXUh6AkFoYN4DihjaYwNjD-ti=hw5jz6f-bhjXYS+dNQ@mail.gmail.com>
+X-Cookie: An idle mind is worth two in the bush.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  83fbdf1c0595470d98ee99a6474099aee870640f
-Gitweb:     https://git.kernel.org/tip/83fbdf1c0595470d98ee99a6474099aee870640f
-Author:     Palmer Dabbelt <palmer@sifive.com>
-AuthorDate: Tue, 3 Apr 2018 21:31:29 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 4 Apr 2018 12:04:28 +0200
 
-openrisc: Set CONFIG_MULTI_IRQ_HANDLER
+--sdtB3X0nJg68CQEu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-arm has an optional MULTI_IRQ_HANDLER, which openrisc copied but didn't
-make optional.  The multi irq handler infrastructure has been copied to
-generic code selectable with a new config symbol. That symbol can be
-selected by randconfig builds and can cause build breakage.
+On Tue, Apr 03, 2018 at 12:00:24PM -0700, Linus Torvalds wrote:
+> On Mon, Apr 2, 2018 at 9:34 AM, Mark Brown <broonie@kernel.org> wrote:
 
-Introduce CONFIG_MULTI_IRQ_HANDLER as an intermediate step which prevents
-the core config symbol from being selected. The openrisc local config
-symbol will be removed once openrisc gets converted to the generic code.
+> > A very small set of updates for the regulator API this time around,
+> > there's a few bug fixes and also:
 
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Link: https://lkml.kernel.org/r/20180404043130.31277-3-palmer@sifive.com
+> Heh. This one was "very small", and the regmap update was "fairly large".
 
----
- arch/openrisc/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+> I think the regmap one was smaller. This one actually has a new
+> driver, the regmap one looked like mostly cleanups.
 
-diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
-index 339df7324e9c..9ecad05bfc73 100644
---- a/arch/openrisc/Kconfig
-+++ b/arch/openrisc/Kconfig
-@@ -27,6 +27,7 @@ config OPENRISC
- 	select GENERIC_STRNLEN_USER
- 	select GENERIC_SMP_IDLE_THREAD
- 	select MODULES_USE_ELF_RELA
-+	select MULTI_IRQ_HANDLER
- 	select HAVE_DEBUG_STACKOVERFLOW
- 	select OR1K_PIC
- 	select CPU_NO_EFFICIENT_FFS if !OPENRISC_HAVE_INST_FF1
-@@ -68,6 +69,9 @@ config STACKTRACE_SUPPORT
- config LOCKDEP_SUPPORT
- 	def_bool  y
- 
-+config MULTI_IRQ_HANDLER
-+	def_bool y
-+
- source "init/Kconfig"
- 
- source "kernel/Kconfig.freezer"
+> But I've used your words for the commit logs.
+
+Yeah, I know - I'm not so much measuring it by the absolute volume of
+changes as I am by how many changes I expect to see in the subsystem and
+where they are (core vs drivers). =20
+
+--sdtB3X0nJg68CQEu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrEpd0ACgkQJNaLcl1U
+h9AUVQf+PTX31Dra49s5ZtcKmlMfO3CYrvRNtmPowjKBSRn6T3XWlgBh2nnScXs1
+bS50F5TbVC7bD3GOcux8v1kbKJ9jx3aAsHUrukeBWcdE9OLBKOKe4f6vtfl55YAZ
+PvKk5FkSt3YyUD81VJ3daJrLmBRocM9xDlmWuJ2I7Y37YW5JHnJQRUnEPXZArxKJ
+S5BVqTcnDOK29skJLGra+Of6SJHnOcR1eH05iwWea3b8nx1HTxrHr9jq387xjdiK
+HUndTmFHqhAG1vqi56U+WJe3yF8AvZhMU6aY98SXlaIDneHe1KxJJS/FRR0k2ktD
+JQ7xnljNzYny5lgG5jqyGYtuKAnV5A==
+=OsQ8
+-----END PGP SIGNATURE-----
+
+--sdtB3X0nJg68CQEu--
