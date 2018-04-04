@@ -1,63 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752102AbeDDPwS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:52:18 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:40624 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751588AbeDDPwR (ORCPT
+        id S1752193AbeDDPw1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:52:27 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33762 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752020AbeDDPwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:52:17 -0400
-Date: Wed, 04 Apr 2018 11:52:15 -0400 (EDT)
-Message-Id: <20180404.115215.419039708931754897.davem@davemloft.net>
-To: arnd@arndb.de
-Cc: jakub.kicinski@netronome.com, dsa@cumulusnetworks.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netdevsim: remove incorrect __net_initdata annotations
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180404121347.3089169-1-arnd@arndb.de>
-References: <20180404121347.3089169-1-arnd@arndb.de>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Wed, 4 Apr 2018 11:52:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5321B607A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
+ readX() implementation
+To: Palmer Dabbelt <palmer@sifive.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: mark.rutland@arm.com, timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <mhng-fe49c525-788d-4ce7-9703-95e2b3eaeca6@palmer-si-x1c4>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <691b903c-e97d-0a25-28c5-690318bb215a@codeaurora.org>
+Date: Wed, 4 Apr 2018 11:52:20 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <mhng-fe49c525-788d-4ce7-9703-95e2b3eaeca6@palmer-si-x1c4>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed,  4 Apr 2018 14:12:39 +0200
-
-> The __net_initdata section cannot currently be used for structures that
-> get cleaned up in an exitcall using unregister_pernet_operations:
+On 4/3/2018 6:29 PM, Palmer Dabbelt wrote:
+> On Tue, 03 Apr 2018 05:56:18 PDT (-0700), Arnd Bergmann wrote:
+>> On Tue, Apr 3, 2018 at 2:44 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
+>>> On 4/3/2018 7:13 AM, Arnd Bergmann wrote:
+>>>> On Tue, Apr 3, 2018 at 12:49 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On Fri, Mar 30, 2018 at 11:58:13AM -0400, Sinan Kaya wrote:
+>>>>>> The default implementation of mapping readX() to __raw_readX() is wrong.
+>>>>>> readX() has stronger ordering semantics. Compiler is allowed to reorder
+>>>>>> __raw_readX().
+>>>>>
+>>>>> Could you please specify what the compiler is potentially reordering
+>>>>> __raw_readX() against, and why this would be wrong?
+>>>>>
+>>>>> e.g. do we care about prior normal memory accesses, subsequent normal
+>>>>> memory accesses, and/or other IO accesses?
+>>>>>
+>>>>> I assume that the asm-generic __raw_{read,write}X() implementations are
+>>>>> all ordered w.r.t. each other (at least for a specific device).
+>>>>
+>>>> I think that is correct: the compiler won't reorder those because of the
+>>>> 'volatile' pointer dereference, but it can reorder access to a normal
+>>>> pointer against a __raw_readl()/__raw_writel(), which breaks the scenario
+>>>> of using writel to trigger a DMA, or using a readl to see if a DMA has
+>>>> completed.
+>>>
+>>> Yes, we are worried about memory update vs. IO update ordering here.
+>>> That was the reason why barrier() was introduced in this patch. I'll try to
+>>> clarify that better in the commit text.
+>>>
+>>>>
+>>>> The question is whether we should use a stronger barrier such
+>>>> as rmb() amd wmb() here rather than a simple compiler barrier.
+>>>>
+>>>> I would assume that on complex architectures with write buffers and
+>>>> out-of-order prefetching, those are required, while on architectures
+>>>> without those features, the barriers are cheap.
+>>>
+>>> That's my reasoning too. I'm trying to follow the x86 example here where there
+>>> is a compiler barrier in writeX() and readX() family of functions.
+>>
+>> I think x86 is the special case here because it implicitly guarantees
+>> the strict ordering in the hardware, as long as the compiler gets it
+>> right. For the asm-generic version, it may be better to play safe and
+>> do the safest version, requiring architectures to override that barrier
+>> if they want to be faster.
+>>
+>> We could use the same macros that riscv has, using __io_br(),
+>> __io_ar(), __io_bw() and __io_aw() for before/after read/write.
 > 
-> WARNING: vmlinux.o(.text+0x868c34): Section mismatch in reference from the function nsim_devlink_exit() to the (unknown reference) .init.data:(unknown)
-> The function nsim_devlink_exit() references
-> the (unknown reference) __initdata (unknown).
-> This is often because nsim_devlink_exit lacks a __initdata
-> annotation or the annotation of (unknown) is wrong.
-> WARNING: vmlinux.o(.text+0x868c64): Section mismatch in reference from the function nsim_devlink_init() to the (unknown reference) .init.data:(unknown)
-> WARNING: vmlinux.o(.text+0x8692bc): Section mismatch in reference from the function nsim_fib_exit() to the (unknown reference) .init.data:(unknown)
-> WARNING: vmlinux.o(.text+0x869300): Section mismatch in reference from the function nsim_fib_init() to the (unknown reference) .init.data:(unknown)
+> FWIW, when I wrote this I wasn't sure what the RISC-V memory model was going to be so I just picked something generic.  In other words, it's already a generic interface, just one that we're the only users of :).
 > 
-> As that warning tells us, discarding the structure after a module is
-> loaded would lead to a undefined behavior when that module is removed.
-> 
-> It might be possible to change that annotation so it has no effect for
-> loadable modules, but I have not figured out exactly how to do that, and
-> we want this to be fixed in -rc1.
-> 
-> This just removes the annotations, just like we do for all other such
-> modules.
-> 
-> Fixes: 37923ed6b8ce ("netdevsim: Add simple FIB resource controller via devlink")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Hmmm...
+Are we looking for something like this?
 
-__net_initdata defines to nothing if network namespaces are enabled.
 
-That's the whole point.
+diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
+index e8c2078..693a82f 100644
+--- a/include/asm-generic/io.h
++++ b/include/asm-generic/io.h
+@@ -101,6 +101,16 @@ static inline void __raw_writeq(u64 value, volatile void __iomem *addr)
+ #endif
+ #endif /* CONFIG_64BIT */
+ 
++#ifndef __io_br()
++#define __io_br()	do {} while (0)
++#endif
++
++#ifdef rmb
++#define __io_ar()	rmb();
++#else
++#define __io_ar()	barrier();
++#endif
++
+ /*
+  * {read,write}{b,w,l,q}() access little endian memory and return result in
+  * native endianness.
+@@ -108,35 +118,46 @@ static inline void __raw_writeq(u64 value, volatile void __iomem *addr)
+ 
+ #ifndef readb
+ #define readb readb
+-static inline u8 readb(const volatile void __iomem *addr)
+-{
+-	return __raw_readb(addr);
+-}
++#define readb(c)				\
++	({ u8  __v;				\
++	 __io_br();				\
++	 __v = __raw_readb(c);			\
++	 __io_ar();				\
++	 __v; })
+ #endif
+ 
+ #ifndef readw
+ #define readw readw
+-static inline u16 readw(const volatile void __iomem *addr)
+-{
+-	return __le16_to_cpu(__raw_readw(addr));
+-}
++#define readw(c)				\
++    ({ u16 __v;					\
++						\
++     __io_br();					\
++      __v = __le16_to_cpu(__raw_readw(c));	\
++     __io_ar();					\
++     __v; })
+ #endif
+ 
+ #ifndef readl
+ #define readl readl
+-static inline u32 readl(const volatile void __iomem *addr)
+-{
+-	return __le32_to_cpu(__raw_readl(addr));
+-}
++#define readl(c)				\
++    ({ u32 __v;					\
++						\
++     __io_br();					\
++      __v = __le32_to_cpu(__raw_readl(c));	\
++     __io_ar();					\
++     __v; })
+ #endif
+ 
+ #ifdef CONFIG_64BIT
+ #ifndef readq
+ #define readq readq
+-static inline u64 readq(const volatile void __iomem *addr)
+-{
+-	return __le64_to_cpu(__raw_readq(addr));
+-}
++#define readq(c)				\
++    ({ u64 __v;					\
++						\
++     __io_br();					\
++      __v = __le64_to_cpu(__raw_readq(c));	\
++     __io_ar();					\
++     __v; })
+ #endif
+ #endif /* CONFIG_64BIT */
+  
 
-Therefore, if NETNS is disabled, "unregister_pernet_operations" cannot
-happen and this is the only time when __net_initdata actually does
-something.
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
