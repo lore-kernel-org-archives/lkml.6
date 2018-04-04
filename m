@@ -1,175 +1,93 @@
-Return-Path: <mpe@ellerman.id.au>
-X-Google-Smtp-Source: AIpwx49tW1Byb5Wd+W7R0BaBXoDVn//QztR6JJ3ZAYhzIvSNOawQ3qna7u3l8Tf7+4r4kqN8vkb9
-ARC-Seal: i=1; a=rsa-sha256; t=1522838303; cv=none;
+Return-Path: <logang@deltatee.com>
+X-Google-Smtp-Source: AIpwx4/KjTbP2mKGuUHdfXDZDF1L4/SaAxPJq8DUq8proJZn9as+0NJhCqTCBK0GhRpEqcx/mHYT
+ARC-Seal: i=1; a=rsa-sha256; t=1522857297; cv=none;
         d=google.com; s=arc-20160816;
-        b=kbbzu5UzKyjAJBgbFzGEApjYS5tWVwwZKaOq0TdgfQXjoSIZ9m1f+050uiawsvy4fa
-         lYLG+JnDFIBRgtYpMKOcnR7t6mXKLiBq6pWrJvYttqI4DUr6vqkYvSinmwCP8t5vfbMy
-         4SwcO2vPc5rgqpx8We5Wk6KeY9x8QNjeuRlsRnYgVdvJ30vrtORNx+VT2PtIcMjafFbV
-         BhXDMj2FxDlaCI6NQdsO4jDpy42TQJCX3hFdsqXL6ozXh5R695UjWjAPSnSLQ0MnnezZ
-         3dk/N84RT4uPqQErFjj7rjV54Cwn6cr6+hXBqSKUdtJdhrVsGenpgDibFy6kCD0iWElV
-         DD0g==
+        b=fPyFANGNS8dFP0aQH9EuOXbfqlS3G9DYYT8zMORU7asLiTM92jSPDVUC3kypk/GK5i
+         /BeIQIlHMz/AiASt3FeUmpmtrxSPuczPkpRAY1VlphlJnwqTqoOfuwNeDUdE75E2Of5l
+         IJTNWF5fQbcOG1oS4hhMgNSmdRyQTSRNowNvll/xQ8Qs6epYFd5dj8EZp7d8shBCqFBj
+         gSw8WdBQyBEqoGAqnqPkk+Ub8tkdfyooXY0LfiUIOOGbNzIGusixoY1Hu5jLFHWO5bpy
+         m+SjsTy84TG7ZrYD5fdC0SxqLOytUjkpTH1Da6z3hgzjMGWc37tHUfFMU+877HNgCTQc
+         6Geg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:arc-authentication-results;
-        bh=P5yN2m22ZyXzfntAo3AkFsXHSwmtIwYOz+/M3N9Qvno=;
-        b=TxPIBOEjpLpshrqkN5ZH7ueGZu8liQVLC1KhZfuDD8IrJ3b1pDQs4aYHWrGzLnlEcS
-         4kP8fUZ93uwgHl25NrSMPfQcLZ6/RSTOqJ3m8jldJaa4ntqL9EI5TL78+9uweUvL+/RC
-         +yMxRsDiwvXmR4GixWUWu7vqc8BAYuc4YJZWPTEYHzCJKr51qekIhfMsj+dnkofQVE8k
-         lPU7gUXMrRgaFoRsczmkqikzeGpIQqMWmpQCmQt4Rw9BKEpkHVIS0VR0bnvrRIn78aQh
-         yPrBsWideV0BmtQKPhRx6UHg6qm//mhMLKMUQOzN+V7KIsbWrxxmDFz8SH0TdPfFX6Xm
-         qWOg==
+        h=subject:content-transfer-encoding:content-language:in-reply-to
+         :mime-version:user-agent:date:message-id:from:references:cc:to
+         :arc-authentication-results;
+        bh=u+jehJXtVcJNFz9/2l+oAir5XDIH9v277/3uWsZZKDY=;
+        b=ytY1v5cDCtRtFxHf+c0mZlU1j1YhSByTZ7uKK2sjs5V8/N9HU2cAsH3sBq1oM2d5eC
+         o6D/ZFBR2rAabZecWG4usggSaZdD6mmjs5mdN4m5dN5UAyTPsyL8B1xeolmyHuDB0eFf
+         TsRUyaX7vGU3V7aJ4sFPnK6iYrYjcae2xc3mRrcWiB6Avk1GFYBHW4G+gEROC7igMMuL
+         RWWfYorHHgp3xC6TROdkPc8EDpuUX/4HpqmeJC4IDozWyGxLCdQFyDjRKIK3vc4VHuxg
+         dGhOBTzJw7ytGkTjvPSIqfoODV7Cxzsd1ql46Uf5y9FvFE0N+U1PbgcvJeNgzXvyzc2l
+         7cQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 103.22.144.67 is neither permitted nor denied by best guess record for domain of mpe@ellerman.id.au) smtp.mailfrom=mpe@ellerman.id.au
+       spf=pass (google.com: domain of logang@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=logang@deltatee.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 103.22.144.67 is neither permitted nor denied by best guess record for domain of mpe@ellerman.id.au) smtp.mailfrom=mpe@ellerman.id.au
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, akpm@linux-foundation.org
+       spf=pass (google.com: domain of logang@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=logang@deltatee.com
+To: Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-ntb@googlegroups.com,
+ linux-crypto@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, akpm@linux-foundation.org
 Cc: Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko
- <andy.shevchenko@gmail.com>, Horia =?utf-8?Q?Geant=C4=83?=
- <horia.geanta@nxp.com>, Logan Gunthorpe <logang@deltatee.com>
-Subject: Re: [PATCH v15 0/9] Add io{read|write}64 to io-64-atomic headers
-In-Reply-To: <20180327230834.5931-1-logang@deltatee.com>
+ <andy.shevchenko@gmail.com>, =?UTF-8?Q?Horia_Geant=c4=83?=
+ <horia.geanta@nxp.com>
 References: <20180327230834.5931-1-logang@deltatee.com>
-Date: Wed, 04 Apr 2018 20:38:16 +1000
-Message-ID: <87r2nvmf3b.fsf@concordia.ellerman.id.au>
+ <87r2nvmf3b.fsf@concordia.ellerman.id.au>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <515f5c92-ac02-6e09-830e-46ea4d462652@deltatee.com>
+Date: Wed, 4 Apr 2018 09:54:41 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <87r2nvmf3b.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: horia.geanta@nxp.com, andy.shevchenko@gmail.com, arnd@arndb.de, akpm@linux-foundation.org, gregkh@linuxfoundation.org, linux-crypto@vger.kernel.org, linux-ntb@googlegroups.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, mpe@ellerman.id.au
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v15 0/9] Add io{read|write}64 to io-64-atomic headers
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596134127286634027?=
-X-GMAIL-MSGID: =?utf-8?q?1596811696964622193?=
+X-GMAIL-MSGID: =?utf-8?q?1596831613781259613?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Logan Gunthorpe <logang@deltatee.com> writes:
+On 4/4/2018 4:38 AM, Michael Ellerman wrote:
+> What's the plan for getting it merged? Seems we don't have one?
 
-> This is v14 of my cleanup series to push a number of instances of people
-> defining their own io{read|write}64 functions into common headers seing
-> they don't exist in non-64bit systems. This series adds inline functions to the
-> io-64-nonatomic headers and then cleans up the drivers that defined their
-> own copies.
->
-> This cleanup was originally requested by Greg after he reviewed my
-> Switchtec NTB code. And I hope someone can pick it up or at least give
-> feedback on it soon as it's been around relatively unchanged for a few
-> cycles now and I'm getting a bit tired of resubmitting it with little to
-> no interest.
+Yeah, so far there is no plan. I'm not really sure who's attention I 
+need to get or how to get it.
 
-Yeah fair enough.
+> Given it touches two arches and generic stuff and drivers and crypto,
+> it's a bit of a mess to merge. It's not really something I want to merge
+> via the powerpc tree.
 
-What's the plan for getting it merged? Seems we don't have one?
+Understood.
 
-Given it touches two arches and generic stuff and drivers and crypto,
-it's a bit of a mess to merge. It's not really something I want to merge
-via the powerpc tree.
+> Is there any way to split it? I couldn't immediately see what the hard
+> dependencies were between the patches.
 
-Is there any way to split it? I couldn't immediately see what the hard
-dependencies were between the patches.
+Yes, a couple of patches have already been taken by their maintainers 
+over the last few cycles.
 
-eg. It looks like I could take the two powerpc patches on their own for
-4.17, and then the rest could go via other trees?
+> eg. It looks like I could take the two powerpc patches on their own for
+> 4.17, and then the rest could go via other trees?
 
-Is patch 1 stand alone?
+Yup! If you can take the powerpc patches I can keep trying to get the 
+rest in. They are largely independent and shouldn't really change 
+anything without the following patches.
 
-The other option is to ask Andrew Morton to take it, as he often carries
-these cross-tree type series.
+> Is patch 1 stand alone?
 
-cheers
+Essentially, yes, but patch 5 depends on it seeing it's changing the 
+same area and is trying to avoid creating the same kbuild warnings that 
+patch 1 suppresses.
 
-> Changes since v14:
-> - Rebased onto v4.16-rc7
-> - Replace the first two patches so that instead of correcting the
->   endianness annotations we change to using writeX() and readX() with
->   swabX() calls. This makes the big-endian functions more symmetric
->   with the little-endian versions (with respect to barriers that are
->   not included in the raw functions). As a side effect, it also fixes
->   the kbuild warnings that the first two patches tried to address.
->
-> Changes since v13:
-> - Changed the subject of patch 0001 to correct a nit pointed out by Luc
->
-> Changes since v12:
-> - Rebased onto v4.16-rc6
-> - Split patch 0001 into two and reworked the commit log as requested
->   by Luc Van Oostenryck
->
-> Changes since v11:
-> - Rebased onto v4.16-rc5
-> - Added a patch (0001) to fix some old and new sparse warnings
->   that the kbuild robot warned about this cycle. The latest version
->   of sparse was required to reproduce these.
-> - Added a patch (0002) to add io{read|write}64 to parisc which the kbuild
->   robot also found errors for this cycle
->
-> Changes since v10:
-> - Rebased onto v4.16-rc4, this droped the drm/tilcdc patch which was
->   picked up by that tree and is already in 4.16.
->
-> Changes since v9:
-> - Rebased onto v4.15-rc6
-> - Fixed a couple of issues in the new version of the CAAM patch as
->   pointed out by Horia
->
-> Changes since v8:
-> - Rebased onto v4.15-rc2, as a result rewrote patch 7 seeing someone did
->   some similar cleanup in that area.
-> - Added a patch to clean up the Switchtec NTB driver which landed in
->   v4.15-rc1
->
-> Changes since v7:
-> - Fix minor nits from Andy Shevchenko
-> - Rebased onto v4.14-rc1
->
-> Changes since v6:
->  ** none **
->
-> Changes since v5:
-> - Added a fix to the tilcdc driver to ensure it doesn't use the
->   non-atomic operation. (This includes adding io{read|write}64[be]_is_nonatomic
->   defines).
->
-> Changes since v4:
-> - Add functions so the powerpc implementation of iomap.c compiles. (As
->   noticed by Horia)
->
-> Changes since v3:
->
-> - I noticed powerpc didn't use the appropriate functions seeing
->   readq/writeq were not defined when iomap.h was included. Thus I've
->   included a patch to adjust this
-> - Fixed some mistakes with a couple of the defines in io-64-nonatomic*
->   headers
-> - Fixed a typo noticed by Horia.
->
-> (earlier versions were drastically different)
->
-> --
->
-> Logan Gunthorpe (9):
->   iomap: Use non-raw io functions for io{read|write}XXbe
->   parisc: iomap: introduce io{read|write}64
->   powerpc: io.h: move iomap.h include so that it can use readq/writeq
->     defs
->   powerpc: iomap.c: introduce io{read|write}64_{lo_hi|hi_lo}
->   iomap: introduce io{read|write}64_{lo_hi|hi_lo}
->   io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
->   ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
->   crypto: caam: cleanup CONFIG_64BIT ifdefs when using io{read|write}64
->   ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common
->     header
->
->  arch/parisc/include/asm/io.h           |   9 +++
->  arch/parisc/lib/iomap.c                |  64 +++++++++++++++
->  arch/powerpc/include/asm/io.h          |   6 +-
->  arch/powerpc/kernel/iomap.c            |  40 ++++++++++
->  drivers/crypto/caam/regs.h             |  30 +------
->  drivers/ntb/hw/intel/ntb_hw_intel.c    |  30 +------
->  drivers/ntb/hw/mscc/ntb_hw_switchtec.c |  36 +--------
->  include/asm-generic/iomap.h            |  26 ++++--
->  include/linux/io-64-nonatomic-hi-lo.h  |  64 +++++++++++++++
->  include/linux/io-64-nonatomic-lo-hi.h  |  64 +++++++++++++++
->  lib/iomap.c                            | 140 ++++++++++++++++++++++++++++++++-
->  11 files changed, 409 insertions(+), 100 deletions(-)
->
-> --
-> 2.11.0
+> The other option is to ask Andrew Morton to take it, as he often carries
+> these cross-tree type series.
+
+Thanks for the tip! I'll copy him when I repost it after the merge window.
+
+Logan
