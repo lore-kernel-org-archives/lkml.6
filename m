@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752729AbeDDX6e (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 19:58:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35548 "EHLO
+        id S1752770AbeDDX6r (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 19:58:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35648 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752628AbeDDX63 (ORCPT
+        with ESMTP id S1752661AbeDDX6b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 19:58:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BD0360F6E
+        Wed, 4 Apr 2018 19:58:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1133560F6E
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
@@ -15,9 +15,9 @@ To: arnd@arndb.de, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/5] io: define stronger ordering for the default writeX() implementation
-Date: Wed,  4 Apr 2018 19:58:18 -0400
-Message-Id: <1522886301-25955-3-git-send-email-okaya@codeaurora.org>
+Subject: [PATCH v3 5/5] io: change inX() to have their own IO barrier overrides
+Date: Wed,  4 Apr 2018 19:58:20 -0400
+Message-Id: <1522886301-25955-5-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522886301-25955-1-git-send-email-okaya@codeaurora.org>
 References: <1522886301-25955-1-git-send-email-okaya@codeaurora.org>
@@ -27,61 +27,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The default implementation of mapping writeX() to __raw_writeX() is wrong.
-writeX() has stronger ordering semantics. Compiler is allowed to reorder
-memory writes against __raw_writeX().
-
-Use the previously defined __io_aw() and __io_bw() macros to harden
-code generation according to architecture support.
+Open code readX() inside inX() so that inX() variants have their own
+overrideable Port IO barrier combinations as __io_pbr() and __io_par() for
+actions to be taken before port IO and after port IO read.
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- include/asm-generic/io.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ include/asm-generic/io.h | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-index fc554af..ca268d9 100644
+index 38a96d1..da51092 100644
 --- a/include/asm-generic/io.h
 +++ b/include/asm-generic/io.h
-@@ -207,7 +207,9 @@ static inline u64 readq(const volatile void __iomem *addr)
- #define writeb writeb
- static inline void writeb(u8 value, volatile void __iomem *addr)
+@@ -432,7 +432,12 @@ static inline void writesq(volatile void __iomem *addr, const void *buffer,
+ #define inb inb
+ static inline u8 inb(unsigned long addr)
  {
-+	__io_bw();
- 	__raw_writeb(value, addr);
-+	__io_aw();
+-	return readb(PCI_IOBASE + addr);
++	u8 val;
++
++	__io_pbr();
++	val = __raw_readb(PCI_IOBASE + addr);
++	__io_par();
++	return val;
  }
  #endif
  
-@@ -215,7 +217,9 @@ static inline void writeb(u8 value, volatile void __iomem *addr)
- #define writew writew
- static inline void writew(u16 value, volatile void __iomem *addr)
+@@ -440,7 +445,12 @@ static inline u8 inb(unsigned long addr)
+ #define inw inw
+ static inline u16 inw(unsigned long addr)
  {
-+	__io_bw();
- 	__raw_writew(cpu_to_le16(value), addr);
-+	__io_aw();
+-	return readw(PCI_IOBASE + addr);
++	u16 val;
++
++	__io_pbr();
++	val = __le16_to_cpu(__raw_readw(PCI_IOBASE + addr));
++	__io_par();
++	return val;
  }
  #endif
  
-@@ -223,7 +227,9 @@ static inline void writew(u16 value, volatile void __iomem *addr)
- #define writel writel
- static inline void writel(u32 value, volatile void __iomem *addr)
+@@ -448,7 +458,12 @@ static inline u16 inw(unsigned long addr)
+ #define inl inl
+ static inline u32 inl(unsigned long addr)
  {
-+	__io_bw();
- 	__raw_writel(__cpu_to_le32(value), addr);
-+	__io_aw();
+-	return readl(PCI_IOBASE + addr);
++	u32 val;
++
++	__io_pbr();
++	val = __le32_to_cpu(__raw_readl(PCI_IOBASE + addr));
++	__io_par();
++	return val;
  }
  #endif
  
-@@ -232,7 +238,9 @@ static inline void writel(u32 value, volatile void __iomem *addr)
- #define writeq writeq
- static inline void writeq(u64 value, volatile void __iomem *addr)
- {
-+	__io_bw();
- 	__raw_writeq(__cpu_to_le64(value), addr);
-+	__io_aw();
- }
- #endif
- #endif /* CONFIG_64BIT */
 -- 
 2.7.4
