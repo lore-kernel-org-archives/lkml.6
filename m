@@ -1,56 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751403AbeDDKT6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:19:58 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33091 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751155AbeDDKT5 (ORCPT
+        id S1751447AbeDDKUG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:20:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44842 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751155AbeDDKUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:19:57 -0400
-Date: Wed, 4 Apr 2018 12:19:54 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Palmer Dabbelt <palmer@sifive.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT pull] irq updates for 4.17
-In-Reply-To: <CA+55aFxRZQgPwtjS0+eiCZvkEVFvOKktuiwG4TZ653Yso3E4bA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1804041215180.2056@nanos.tec.linutronix.de>
-References: <CA+55aFynLQp=n0_e=AQfMpwsGpCLhgFsw3uGPfuVCS1wJD3v4w@mail.gmail.com> <mhng-99170edc-de54-4394-aaae-555658220549@palmer-si-x1c4> <CA+55aFxRZQgPwtjS0+eiCZvkEVFvOKktuiwG4TZ653Yso3E4bA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 4 Apr 2018 06:20:02 -0400
+Subject: Re: [mm] b1f0502d04: INFO:trying_to_register_non-static_key
+To: David Rientjes <rientjes@google.com>
+Cc: kernel test robot <fengguang.wu@intel.com>, paulmck@linux.vnet.ibm.com,
+        peterz@infradead.org, akpm@linux-foundation.org, kirill@shutemov.name,
+        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, lkp@01.org
+References: <20180317075119.u6yuem2bhxvggbz3@inn>
+ <792c0f75-7e7f-cd81-44ae-4205f6e4affc@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1803251510040.80485@chino.kir.corp.google.com>
+ <aa6f2ff1-ff67-106a-e0e4-522ac82a7bf0@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1804031748120.27686@chino.kir.corp.google.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Wed, 4 Apr 2018 12:19:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <alpine.DEB.2.20.1804031748120.27686@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18040410-0012-0000-0000-000005C6E67A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040410-0013-0000-0000-00001942F818
+Message-Id: <147e8be3-2c33-2111-aacc-dc2bb932fa8c@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804040110
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Apr 2018, Linus Torvalds wrote:
-> On Tue, Apr 3, 2018 at 6:51 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
-> >
-> > Thanks!  The linked patch set should be fully bisectable, while this one
-> > will fail on some ARM randconfigs.
-> 
-> If it's only some (not very realistic) randconfigs, I suspect an
-> incremental fix is probably the easier solution, rather than redoing
-> that whole branch.
-> 
-> So mind at least sending that incremental fix on top of the branch to
-> Thomas and making his life easier if he decides to go that way?
-> 
-> And if Thomas is busy doing something else (*), and I come back to
-> this tomorrow as-is, I'd want to pull his tree and just apply the
-> incremental fix anyway, so it makes sense to send it to me as well.
-> 
->                     Linus
-> 
-> (*) I have long since accepted that some people have a life outside of
-> kernel development too, and don't always reply immediately. I may not
-> _understand_ it, but I am resigned to the fact.
 
-I briefly returned from that other life and applied the 3 patches on top
-after massaging the changelogs a bit and pushed everything out for you to
-pull.
 
-Thanks,
+On 04/04/2018 02:48, David Rientjes wrote:
+> On Wed, 28 Mar 2018, Laurent Dufour wrote:
+> 
+>> On 26/03/2018 00:10, David Rientjes wrote:
+>>> On Wed, 21 Mar 2018, Laurent Dufour wrote:
+>>>
+>>>> I found the root cause of this lockdep warning.
+>>>>
+>>>> In mmap_region(), unmap_region() may be called while vma_link() has not been
+>>>> called. This happens during the error path if call_mmap() failed.
+>>>>
+>>>> The only to fix that particular case is to call
+>>>> seqcount_init(&vma->vm_sequence) when initializing the vma in mmap_region().
+>>>>
+>>>
+>>> Ack, although that would require a fixup to dup_mmap() as well.
+>>
+>> You're right, I'll fix that too.
+>>
+> 
+> I also think the following is needed:
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -312,6 +312,10 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
+>  	vma->vm_flags = VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
+>  	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+>  	INIT_LIST_HEAD(&vma->anon_vma_chain);
+> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+> +	seqcount_init(&vma->vm_sequence);
+> +	atomic_set(&vma->vm_ref_count, 0);
+> +#endif
+> 
+>  	err = insert_vm_struct(mm, vma);
+>  	if (err)
 
-	tglx
+No, this not needed because the vma is allocated with kmem_cache_zalloc() so
+vm_ref_count is 0, and insert_vm_struc() will later call
+__vma_link_rb() which will call seqcount_init().
+
+Furhtermore, in case of error, the vma structure is freed without calling
+get_vma() so there is risk of lockdep warning.
