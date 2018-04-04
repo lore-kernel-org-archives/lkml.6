@@ -1,47 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755345AbeDDCjl convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 22:39:41 -0400
-Received: from elephants.elehost.com ([216.66.27.132]:42936 "EHLO
-        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754850AbeDDCjj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 22:39:39 -0400
-From: "Randall S. Becker" <rsbecker@nexbridge.com>
-To: "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>
-Cc: "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
-        <git-packagers@googlegroups.com>
-References: <xmqq6059z9kz.fsf@gitster-ct.c.googlers.com>
-In-Reply-To: <xmqq6059z9kz.fsf@gitster-ct.c.googlers.com>
-Subject: RE: [ANNOUNCE] Git v2.17.0
-Date: Tue, 3 Apr 2018 22:39:29 -0400
-Message-ID: <025601d3cbbe$2b5a9da0$820fd8e0$@nexbridge.com>
+        id S1755172AbeDDCkk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 22:40:40 -0400
+Received: from mga05.intel.com ([192.55.52.43]:42393 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754060AbeDDCki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 22:40:38 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,404,1517904000";
+   d="scan'208";a="213736660"
+Date: Wed, 4 Apr 2018 10:31:05 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: "Du, Changbin" <changbin.du@intel.com>, jolsa@redhat.com,
+        peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf trace: remove redundant ')'
+Message-ID: <20180404023104.tq6v6pyseevbcr6q@intel.com>
+References: <1520937601-24952-1-git-send-email-changbin.du@intel.com>
+ <20180316075108.xwenvklz3a6scodh@intel.com>
+ <20180316125045.GC10026@kernel.org>
+ <20180328072631.gj72odnaimsohkmc@intel.com>
+ <20180403191907.GE23295@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFhLuUQLx28uJBqsgyhh0QfTRDAYKTVHiJw
-Content-Language: en-ca
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403191907.GE23295@kernel.org>
+User-Agent: NeoMutt/20180323-6-5ca392
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On April 2, 2018 3:34 PM, Junio C Hamano wrote:
-> Subject: [ANNOUNCE] Git v2.17.0
+On Tue, Apr 03, 2018 at 04:19:07PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Mar 28, 2018 at 03:26:31PM +0800, Du, Changbin escreveu:
+> > Hi Arnaldo,
+> > Just a kind reminder. Hope you didn't forget this.
 > 
-> The latest feature release Git v2.17.0 is now available at the usual places.  It is
-> comprised of 516 non-merge commits since v2.16.0, contributed by 71
-> people, 20 of which are new faces.
-
-The NonStop platform variant's regression suite (after applying are now very small set of platform mods) had the usual failures in t1308:23, t1404:52, and 4 in t9001. This is equivalent to the same breaks since 2.8.5 through 2.16.2. We should be installing in production tomorrow.
-
-Thanks for everyone's hard work.
-
-Cheers,
-Randall
-
--- Brief whoami:
- NonStop developer since approximately 211288444200000000
- UNIX developer since approximately 421664400
--- In my real life, I talk too much.
+> Ok, applied.
+> 
+> - Arnaldo
+>  
+Got it, thanks!
