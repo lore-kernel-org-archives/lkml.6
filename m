@@ -1,52 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751332AbeDDRsk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 13:48:40 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58382 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750915AbeDDRsi (ORCPT
+        id S1751403AbeDDRtO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 13:49:14 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34978 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbeDDRtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 13:48:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 783626024C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
- readX() implementation
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Palmer Dabbelt <palmer@sifive.com>,
-        Mark Rutland <mark.rutland@arm.com>, Timur Tabi <timur@codeaurora.org>,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <mhng-fe49c525-788d-4ce7-9703-95e2b3eaeca6@palmer-si-x1c4>
- <691b903c-e97d-0a25-28c5-690318bb215a@codeaurora.org>
- <CAK8P3a2pGQb7TqQtuw0ZpQ=8CwXiRmRKKc1GwvEgKDgofxJ3nA@mail.gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <9b0d7db3-0830-9661-6dc8-39523daa8f32@codeaurora.org>
-Date: Wed, 4 Apr 2018 13:48:35 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 4 Apr 2018 13:49:13 -0400
+X-Google-Smtp-Source: AIpwx4+YaFWVi3+Er6lyBBszYC6F46Fi7B/COM9FhuY5+COn3q2m2muhSnPG9B5QIATo+08uWrO3Nw==
+Date: Wed, 4 Apr 2018 20:49:09 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: ebiederm@xmission.com
+Cc: alban.crequy@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [RFC][WIP] namespace.c: Allow some unprivileged proc
+ mounts when not fully visible
+Message-ID: <20180404174909.GB2540@avx2>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2pGQb7TqQtuw0ZpQ=8CwXiRmRKKc1GwvEgKDgofxJ3nA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/4/2018 11:55 AM, Arnd Bergmann wrote:
-> Yes, exactly, plus the same for write and in/out of course.
+> The only option I have seen proposed that might qualify as something
+> general purpose and simple is a new filesystem that is just the process
+> directories of proc.
 
-I was looking at this...
+While "mount -t pid" and "mount -t sysctl" are decades overdue, I don't
+think they cover everything.
 
-inb() and outb() seem to be calling writeb(). It gets the wmb/barrier automatically
-when we fix writeb().
-
-Did I miss something?
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+IIRC some gcc versions read /proc/meminfo on every invocation. Now
+imagine such program doesn't have a fallback if /proc/ doesn't exist
+(how many thousands such programs are there?) So user is going to ask
+for /proc with just /proc/meminfo only. At this point it is back to
+nearly full /proc.
