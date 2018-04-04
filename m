@@ -1,61 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeDDQ6g (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 12:58:36 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:37232 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbeDDQ6e (ORCPT
+        id S1752635AbeDDQ76 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 12:59:58 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37236 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752070AbeDDQ74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 12:58:34 -0400
-X-Google-Smtp-Source: AIpwx4+YKnJfGE2H4dN6LI9V3XCGvpyGBMWiPoS+Coa1rFQMrbCF9ZIjb9F+0Zzi8GO6fK1JTFzPZg==
-Date: Wed, 4 Apr 2018 09:58:29 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, vdavydov.dev@gmail.com,
-        guro@fb.com, riel@surriel.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        cgroups@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/3] mm: memcontrol: Use cgroup_rstat for event accounting
-Message-ID: <20180404165829.GA3126663@devbig577.frc2.facebook.com>
-References: <20180324160901.512135-1-tj@kernel.org>
- <20180324160901.512135-2-tj@kernel.org>
- <20180404140855.GA28966@cmpxchg.org>
- <20180404141850.GC28966@cmpxchg.org>
- <20180404143447.GJ6312@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404143447.GJ6312@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 4 Apr 2018 12:59:56 -0400
+X-Google-Smtp-Source: AIpwx4/Kmxff1EfcSQiCQMlZ35yigqYVDEhVHYULESGH1MO9xYn5Od2G5/a19MZ2snRtA3YNG8/5Sg==
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [PATCH] KVM: vmx: unify adjacent #ifdefs
+Date: Wed,  4 Apr 2018 18:59:22 +0200
+Message-Id: <1522861162-47491-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+vmx_save_host_state has multiple ifdefs for CONFIG_X86_64 that have
+no other code between them.  Simplify by reducing them to a single
+conditional.
 
-On Wed, Apr 04, 2018 at 04:34:47PM +0200, Michal Hocko wrote:
-> > > The lazy updates are neat, but I'm a little concerned at the memory
-> > > footprint. On a 64-cpu machine for example, this adds close to 9000
-> > > words to struct mem_cgroup. And we really only need the accuracy for
-> > > the 4 cgroup items in memory.events, not all VM events and stats.
-> > > 
-> > > Why not restrict the patch to those? It would also get rid of the
-> > > weird sharing between VM and cgroup enums.
-> > 
-> > In fact, I wonder if we need per-cpuness for MEMCG_LOW, MEMCG_HIGH
-> > etc. in the first place. They describe super high-level reclaim and
-> > OOM events, so they're not nearly as hot as other VM events and
-> > stats. We could probably just have a per-memcg array of atomics.
-> 
-> Agreed!
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/vmx.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-Ah, yeah, if we aren't worried about the update frequency of
-MEMCG_HIGH, which likely is the highest freq, we can just switch to
-atomic_t.  I'm gonna apply the cgroup stat refactoring patches to
-cgroup, so if we ever wanna switch the counter to rstat, we can easily
-do that later.
-
-Thasnks.
-
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 939c8724feb4..a1572461786e 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -2392,20 +2392,16 @@ static void vmx_save_host_state(struct kvm_vcpu *vcpu)
+ #ifdef CONFIG_X86_64
+ 	savesegment(ds, vmx->host_state.ds_sel);
+ 	savesegment(es, vmx->host_state.es_sel);
+-#endif
+ 
+-#ifdef CONFIG_X86_64
+ 	vmcs_writel(HOST_FS_BASE, current->thread.fsbase);
+ 	vmcs_writel(HOST_GS_BASE, cpu_kernelmode_gs_base(cpu));
+-#else
+-	vmcs_writel(HOST_FS_BASE, segment_base(vmx->host_state.fs_sel));
+-	vmcs_writel(HOST_GS_BASE, segment_base(vmx->host_state.gs_sel));
+-#endif
+ 
+-#ifdef CONFIG_X86_64
+ 	vmx->msr_host_kernel_gs_base = current->thread.gsbase;
+ 	if (is_long_mode(&vmx->vcpu))
+ 		wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
++#else
++	vmcs_writel(HOST_FS_BASE, segment_base(vmx->host_state.fs_sel));
++	vmcs_writel(HOST_GS_BASE, segment_base(vmx->host_state.gs_sel));
+ #endif
+ 	if (boot_cpu_has(X86_FEATURE_MPX))
+ 		rdmsrl(MSR_IA32_BNDCFGS, vmx->host_state.msr_host_bndcfgs);
 -- 
-tejun
+1.8.3.1
