@@ -1,73 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751216AbeDDJlv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:41:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47764 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750812AbeDDJlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:41:50 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] KVM: x86: hyperv: simplistic HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE} implementation
-References: <20180402161059.8488-1-vkuznets@redhat.com>
-        <20180402161059.8488-4-vkuznets@redhat.com>
-        <20180403191508.GA7386@flask> <87d0zfcoed.fsf@vitty.brq.redhat.com>
-Date: Wed, 04 Apr 2018 11:41:46 +0200
-In-Reply-To: <87d0zfcoed.fsf@vitty.brq.redhat.com> (Vitaly Kuznetsov's message
-        of "Wed, 04 Apr 2018 11:27:22 +0200")
-Message-ID: <878ta3cnqd.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1751296AbeDDJmX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:42:23 -0400
+Received: from osg.samsung.com ([64.30.133.232]:45807 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751236AbeDDJmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 05:42:22 -0400
+Date: Wed, 4 Apr 2018 06:41:20 -0300
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: Re: linux-next: manual merge of the v4l-dvb tree with the
+ asm-generic tree
+Message-ID: <20180404064112.747dbe14@vento.lan>
+In-Reply-To: <20180404090900.2cc0645e@canb.auug.org.au>
+References: <20180315122921.24520368@canb.auug.org.au>
+        <20180404090900.2cc0645e@canb.auug.org.au>
+Organization: Samsung
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vitaly Kuznetsov <vkuznets@redhat.com> writes:
+Em Wed, 4 Apr 2018 09:09:00 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
 
-> Radim Krčmář <rkrcmar@redhat.com> writes:
->
->> 2018-04-02 18:10+0200, Vitaly Kuznetsov:
->>> +		if (vcpu != current_vcpu)
->>> +			kvm_vcpu_kick(vcpu);
->>
->> The spec says that
->>
->>  "This call guarantees that by the time control returns back to the
->>   caller, the observable effects of all flushes on the specified virtual
->>   processors have occurred."
->>
->> Other KVM code doesn't assume that kvm_vcpu_kick() and a delay provides
->> that guarantee;  kvm_make_all_cpus_request waits for the target CPU to
->> exit before saying that TLB has been flushed.
->>
->> I am leaning towards the safer variant here as well.  (Anyway, it's a
->> good time to figure out if we really need it.)
->
-> Ha, it depends on how we define "observable effects" :-)
->
-> I think kvm_vcpu_kick() is enough as the corresponding vCPU can't
-> actually observe old mapping after being kicked (even if we didn't flush
-> yet we're not running). Or do you see any possible problem with such
-> definition?
->
+> Hi all,
+> 
+> On Thu, 15 Mar 2018 12:29:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the v4l-dvb tree got a conflict in:
+> > 
+> >   drivers/media/platform/blackfin/bfin_capture.c
+> > 
+> > between commit:
+> > 
+> >   b9ec40bf7d29 ("media: platform: remove blackfin capture driver")
+> > 
+> > from the asm-generic tree and commit:
+> > 
+> >   4471109e3894 ("media: convert g/s_parm to g/s_frame_interval in subdevs")
+> > 
+> > from the v4l-dvb tree.
+> > 
+> > I fixed it up (I just removed the file) and can carry the fix as
+> > necessary. This is now fixed as far as linux-next is concerned, but any
+> > non trivial conflicts should be mentioned to your upstream maintainer
+> > when your tree is submitted for merging.  You may also want to consider
+> > cooperating with the maintainer of the conflicting tree to minimise any
+> > particularly complex conflicts.  
+> 
+> This conflict now exists between the v4l-dvb tree and Linus' tree.
 
-Oh, now I see it myself -- native_smp_send_reschedule() only does
-apic->send_IPI() so this is indeed unsafe. We need something like
-kvm_make_all_cpus_request() with a mask (and, to make it fast, we'll
-probably have to pre-allocate these).
-
-Will do in v2, thanks!
+Thanks for warning me. Merged from Linus on all media trees/branches.
 
 -- 
-  Vitaly
+Thanks,
+Mauro
