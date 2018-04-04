@@ -1,22 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeDDIvS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:51:18 -0400
-Received: from zimbra.mrvanes.com ([94.103.150.236]:56760 "EHLO
-        zimbra.mrvanes.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751017AbeDDIvQ (ORCPT
+        id S1751538AbeDDIxH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:53:07 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:59665 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751284AbeDDIxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:51:16 -0400
-From: Martin van Es <martin@mrvanes.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Martin <bugs@mrvanes.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: input: fix battery level reporting on BT mice
-Date: Wed, 04 Apr 2018 10:51:14 +0200
-Message-ID: <1694587.16DWc6HTFx@minivanes>
-In-Reply-To: <nycvar.YFH.7.76.1804041032560.15778@cbobk.fhfr.pm>
-References: <20180403175220.GA148162@dtor-ws> <10651380.a6EbCRfp8J@minivanes> <nycvar.YFH.7.76.1804041032560.15778@cbobk.fhfr.pm>
+        Wed, 4 Apr 2018 04:53:03 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: [PATCH v9 09/10] cpuidle: menu: Refine idle state selection for running tick
+Date: Wed, 04 Apr 2018 10:49:34 +0200
+Message-ID: <5752796.zf5UeYB95r@aspire.rjw.lan>
+In-Reply-To: <1736751.LdhZHb50jq@aspire.rjw.lan>
+References: <1736751.LdhZHb50jq@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -24,10 +30,151 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, April 4, 2018 10:33:16 AM CEST Jiri Kosina wrote:
-> Can I add your Tested-by: while applying the commit?
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-That's ok.
+If the tick isn't stopped, the target residency of the state selected
+by the menu governor may be greater than the actual time to the next
+tick and that means lost energy.
 
-Best regards,
-Martin
+To avoid that, make tick_nohz_get_sleep_length() return the current
+time to the next event (before stopping the tick) in addition to the
+estimated one via an extra pointer argument and make menu_select()
+use that value to refine the state selection when necessary.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v8 -> v9:
+ * Avoid using idle state 0 if it is disabled.
+ * Rebase.
+
+---
+ drivers/cpuidle/governors/menu.c |   27 +++++++++++++++++++++++++--
+ include/linux/tick.h             |    7 ++++---
+ kernel/time/tick-sched.c         |   12 ++++++------
+ 3 files changed, 35 insertions(+), 11 deletions(-)
+
+Index: linux-pm/include/linux/tick.h
+===================================================================
+--- linux-pm.orig/include/linux/tick.h
++++ linux-pm/include/linux/tick.h
+@@ -121,7 +121,7 @@ extern void tick_nohz_idle_enter(void);
+ extern void tick_nohz_idle_exit(void);
+ extern void tick_nohz_irq_exit(void);
+ extern bool tick_nohz_idle_got_tick(void);
+-extern ktime_t tick_nohz_get_sleep_length(void);
++extern ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next);
+ extern unsigned long tick_nohz_get_idle_calls(void);
+ extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
+ extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
+@@ -144,9 +144,10 @@ static inline void tick_nohz_idle_enter(
+ static inline void tick_nohz_idle_exit(void) { }
+ static inline bool tick_nohz_idle_got_tick(void) { return false; }
+ 
+-static inline ktime_t tick_nohz_get_sleep_length(void)
++static inline ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
+ {
+-	return NSEC_PER_SEC / HZ;
++	*delta_next = NSEC_PER_SEC / HZ;
++	return *delta_next;
+ }
+ static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
+ static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
+Index: linux-pm/kernel/time/tick-sched.c
+===================================================================
+--- linux-pm.orig/kernel/time/tick-sched.c
++++ linux-pm/kernel/time/tick-sched.c
+@@ -1047,10 +1047,11 @@ bool tick_nohz_idle_got_tick(void)
+ 
+ /**
+  * tick_nohz_get_sleep_length - return the expected length of the current sleep
++ * @delta_next: duration until the next event if the tick cannot be stopped
+  *
+  * Called from power state control code with interrupts disabled
+  */
+-ktime_t tick_nohz_get_sleep_length(void)
++ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
+ {
+ 	struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
+ 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+@@ -1064,12 +1065,14 @@ ktime_t tick_nohz_get_sleep_length(void)
+ 
+ 	WARN_ON_ONCE(!ts->inidle);
+ 
++	*delta_next = ktime_sub(dev->next_event, now);
++
+ 	if (!can_stop_idle_tick(cpu, ts))
+-		goto out_dev;
++		return *delta_next;
+ 
+ 	next_event = tick_nohz_next_event(ts, cpu);
+ 	if (!next_event)
+-		goto out_dev;
++		return *delta_next;
+ 
+ 	/*
+ 	 * If the next highres timer to expire is earlier than next_event, the
+@@ -1079,9 +1082,6 @@ ktime_t tick_nohz_get_sleep_length(void)
+ 			   hrtimer_next_event_without(&ts->sched_timer));
+ 
+ 	return ktime_sub(next_event, now);
+-
+-out_dev:
+-	return ktime_sub(dev->next_event, now);
+ }
+ 
+ /**
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -295,6 +295,7 @@ static int menu_select(struct cpuidle_dr
+ 	unsigned int expected_interval;
+ 	unsigned long nr_iowaiters, cpu_load;
+ 	int resume_latency = dev_pm_qos_raw_read_value(device);
++	ktime_t delta_next;
+ 
+ 	if (data->needs_update) {
+ 		menu_update(drv, dev);
+@@ -312,7 +313,7 @@ static int menu_select(struct cpuidle_dr
+ 	}
+ 
+ 	/* determine the expected residency time, round up */
+-	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length());
++	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
+ 
+ 	get_iowait_load(&nr_iowaiters, &cpu_load);
+ 	data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
+@@ -396,9 +397,31 @@ static int menu_select(struct cpuidle_dr
+ 	 * expected idle duration is shorter than the tick period length.
+ 	 */
+ 	if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
+-	    expected_interval < TICK_USEC)
++	    expected_interval < TICK_USEC) {
++		unsigned int delta_next_us = ktime_to_us(delta_next);
++
+ 		*stop_tick = false;
+ 
++		if (!tick_nohz_tick_stopped() && idx > 0 &&
++		    drv->states[idx].target_residency > delta_next_us) {
++			/*
++			 * The tick is not going to be stopped and the target
++			 * residency of the state to be returned is not within
++			 * the time until the next timer event including the
++			 * tick, so try to correct that.
++			 */
++			for (i = idx - 1; i >= 0; i--) {
++			    if (drv->states[i].disabled ||
++			        dev->states_usage[i].disable)
++					continue;
++
++				idx = i;
++				if (drv->states[i].target_residency <= delta_next_us)
++					break;
++			}
++		}
++	}
++
+ 	data->last_state_idx = idx;
+ 
+ 	return data->last_state_idx;
