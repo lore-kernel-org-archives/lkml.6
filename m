@@ -1,133 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751787AbeDDLyi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 07:54:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46312 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751698AbeDDLyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 07:54:36 -0400
-Subject: Re: [PATCH v5 1/2] KVM: X86: Introduce handle_ud()
-To: Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Liran Alon <liran.alon@oracle.com>
-References: <1522798129-14588-1-git-send-email-wanpengli@tencent.com>
- <1522798129-14588-2-git-send-email-wanpengli@tencent.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <9d68b1b4-04e6-46d6-70b4-6ebcb0a0c4aa@redhat.com>
-Date: Wed, 4 Apr 2018 13:54:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751573AbeDDL4T (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 07:56:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56082 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751216AbeDDL4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 07:56:18 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3198C2133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Wed, 4 Apr 2018 13:56:14 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: mapphone-mdm6600: add gpiolib dependency
+Message-ID: <20180404115614.o5h5k6h4hmpjxaed@earth.universe>
+References: <20180404102733.3747591-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <1522798129-14588-2-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="nqqjfwbtibbah4dv"
+Content-Disposition: inline
+In-Reply-To: <20180404102733.3747591-1-arnd@arndb.de>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.04.2018 01:28, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Introduce handle_ud() to handle invalid opcode, this function will be
-> used by later patches.
-> 
-> Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> Reviewed-by: Liran Alon <liran.alon@oracle.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> Cc: Liran Alon <liran.alon@oracle.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+
+--nqqjfwbtibbah4dv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Wed, Apr 04, 2018 at 12:27:19PM +0200, Arnd Bergmann wrote:
+> Without gpiolib, the gpiod_get_array_value_cansleep() is an empty stub,
+> so gcc notices that the resulting array is never initialized:
+>=20
+> drivers/phy/motorola/phy-mapphone-mdm6600.c: In function 'phy_mdm6600_sta=
+tus':
+> drivers/phy/motorola/phy-mapphone-mdm6600.c:188:16: error: 'values[0]' is=
+ used uninitialized in this function [-Werror=3Duninitialized]
+>    val |=3D values[i] << i;
+>           ~~~~~~^~~
+> drivers/phy/motorola/phy-mapphone-mdm6600.c:188:16: error: 'values[1]' is=
+ used uninitialized in this function [-Werror=3Duninitialized]
+> drivers/phy/motorola/phy-mapphone-mdm6600.c:188:16: error: 'values[2]' is=
+ used uninitialized in this function [-Werror=3Duninitialized]
+> cc1: all warnings being treated as errors
+>=20
+> With gpiolib enabled, this can't happen and we don't get the warning, so
+> let's just add a Kconfig dependency for it.
+>=20
+> Fixes: 5d1ebbda0318 ("phy: mapphone-mdm6600: Add USB PHY driver for MDM66=
+00 on Droid 4")
+> Cc: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+
+-- Sebastian
+
 > ---
->  arch/x86/kvm/svm.c |  9 +--------
->  arch/x86/kvm/vmx.c | 10 ++--------
->  arch/x86/kvm/x86.c | 13 +++++++++++++
->  arch/x86/kvm/x86.h |  2 ++
->  4 files changed, 18 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index f66fc2e..e0a3f56 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -2676,14 +2676,7 @@ static int bp_interception(struct vcpu_svm *svm)
->  
->  static int ud_interception(struct vcpu_svm *svm)
->  {
-> -	int er;
-> -
-> -	er = emulate_instruction(&svm->vcpu, EMULTYPE_TRAP_UD);
-> -	if (er == EMULATE_USER_EXIT)
-> -		return 0;
-> -	if (er != EMULATE_DONE)
-> -		kvm_queue_exception(&svm->vcpu, UD_VECTOR);
-> -	return 1;
-> +	return handle_ud(&svm->vcpu);
->  }
->  
->  static int ac_interception(struct vcpu_svm *svm)
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index b2f8a70..0f11243 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -6436,14 +6436,8 @@ static int handle_exception(struct kvm_vcpu *vcpu)
->  	if (is_nmi(intr_info))
->  		return 1;  /* already handled by vmx_vcpu_run() */
->  
-> -	if (is_invalid_opcode(intr_info)) {
-> -		er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
-> -		if (er == EMULATE_USER_EXIT)
-> -			return 0;
-> -		if (er != EMULATE_DONE)
-> -			kvm_queue_exception(vcpu, UD_VECTOR);
-> -		return 1;
-> -	}
-> +	if (is_invalid_opcode(intr_info))
-> +		return handle_ud(vcpu);
+>  drivers/phy/motorola/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/phy/motorola/Kconfig b/drivers/phy/motorola/Kconfig
+> index 82651524ffb9..718f8729701d 100644
+> --- a/drivers/phy/motorola/Kconfig
+> +++ b/drivers/phy/motorola/Kconfig
+> @@ -13,7 +13,7 @@ config PHY_CPCAP_USB
+> =20
+>  config PHY_MAPPHONE_MDM6600
+>  	tristate "Motorola Mapphone MDM6600 modem USB PHY driver"
+> -	depends on OF && USB_SUPPORT
+> +	depends on OF && USB_SUPPORT && GPIOLIB
+>  	select GENERIC_PHY
+>  	help
+>  	  Enable this for MDM6600 USB modem to work on Motorola phones
+> --=20
+> 2.9.0
+>=20
 
-(maybe different on this branch) isn't "er" now unused?
+--nqqjfwbtibbah4dv
+Content-Type: application/pgp-signature; name="signature.asc"
 
->  
->  	error_code = 0;
->  	if (intr_info & INTR_INFO_DELIVER_CODE_MASK)
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 7d9a444..1eb495e 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -4840,6 +4840,19 @@ int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
->  }
->  EXPORT_SYMBOL_GPL(kvm_write_guest_virt_system);
->  
-> +int handle_ud(struct kvm_vcpu *vcpu)
-> +{
-> +	enum emulation_result er;
-> +
-> +	er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
-> +	if (er == EMULATE_USER_EXIT)
-> +		return 0;
-> +	if (er != EMULATE_DONE)
-> +		kvm_queue_exception(vcpu, UD_VECTOR);
-> +	return 1;
+-----BEGIN PGP SIGNATURE-----
 
-I would now actually prefer
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrEvVUACgkQ2O7X88g7
++ppxuw//ZMEm1ePwtcw5/7uhCTxI61SrVlSNLzALZMQunk9TJs2wWVOS4U4i1CCB
+PzYK7Ith326wcnhHDQljkHdlpFRjMoOC6gD3+KubtrgVlwf9rHby41D8ox4W8cyk
+xKZnNiuoLjx1PxZ63QLJNoTOC4r6BTg4D/DDpct1jqyOD+wRDTxK9OxuGHU6iEZe
+nnC2RqEQv4patdhRwnijmcso+k2sLZS0EDMk4u6kNG5HyoqIjAZOhv15BG+9GqiJ
+7SbI8s4GrlEkQWJaYfL05sX8b7MbC4RVKF6ePVgizh9DRvUqovXHUo7oFIQHZcJe
+2aDGAVYWT2UgmFP8X2vNCnxAqxXfP2svY0dmB2bH2EaHyUl5sCXif9QQUtyyh2nL
+dpukoizwAniEJAqqq/dFaEEDwhxEP4Wkp7/szeLr2l6kNGbw0Py/x1yYWDN1rz7h
++KoW/Cnmq9/aTkXxaiNtxzgP6XfnDLOBZGqRh+8OD/aS4Hw+g7q/o7faMt9t+AnC
+3dhq9MR45CMWptZifB9iCSzQbi2rSHtDRntqYi/rUxd4fzzzJEveV2riL6QuEAzi
+hZ0Go8rOA4Xg8zBdLcLdExAQDJlIDKBYnfBS9OPwX2UY3+dUWgz2930D6+eSDRvG
+wN1rBNOOQXS812q+2NpaM55rQSZn3NTmZkHCtILwVDLV4xEGsD8=
+=mpBT
+-----END PGP SIGNATURE-----
 
-if (er == EMULATE_DONE)
-	return 1 ...
-
-
-Anyhow,
-
-Reviewed-by: David Hildenbrand <david@redhat.com>
-
-
--- 
-
-Thanks,
-
-David / dhildenb
+--nqqjfwbtibbah4dv--
