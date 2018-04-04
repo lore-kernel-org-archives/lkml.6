@@ -1,65 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752276AbeDDTCT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:02:19 -0400
-Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.173]:35798 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751571AbeDDTCR (ORCPT
+        id S1751529AbeDDTEf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:04:35 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:58270 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751296AbeDDTEd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:02:17 -0400
-X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WiucxqETr1IQ==
-X-RZG-CLASS-ID: mo00
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v2 0/5] pcal6524 extensions for pca953x
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <cover.1522868422.git.hns@goldelico.com>
-Date: Wed, 4 Apr 2018 21:02:12 +0200
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com
-Message-Id: <4DCDA9A2-934F-4BAA-AC33-54E3DDA741AD@goldelico.com>
-References: <cover.1522868422.git.hns@goldelico.com>
-To: Kumar Gala <galak@codeaurora.org>, andy.shevchenko@gmail.com,
-        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>
-X-Mailer: Apple Mail (2.3124)
+        Wed, 4 Apr 2018 15:04:33 -0400
+Subject: Re: [PATCHv4 06/10] mfd: ti-lmu: add PWM support
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Sebastian Reichel <sre@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>
+CC: Jingoo Han <jingoohan1@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+        <linux-kernel@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>
+References: <20180330172414.26575-1-sebastian.reichel@collabora.co.uk>
+ <20180330172414.26575-7-sebastian.reichel@collabora.co.uk>
+From: Dan Murphy <dmurphy@ti.com>
+Message-ID: <e2b6ec34-c5b8-2ff1-ee05-4c41fc255295@ti.com>
+Date: Wed, 4 Apr 2018 14:04:16 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180330172414.26575-7-sebastian.reichel@collabora.co.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w34J2Pfo002033
+
+Sebastian
+
+-Milo
+
+On 03/30/2018 12:24 PM, Sebastian Reichel wrote:
+> This adds support to acquire the optional PWM channel,
+> that can be used by some of the LMU variants.
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> ---
+>  drivers/mfd/ti-lmu.c       | 11 +++++++++++
+>  include/linux/mfd/ti-lmu.h |  3 +++
+>  2 files changed, 14 insertions(+)
+> 
+> diff --git a/drivers/mfd/ti-lmu.c b/drivers/mfd/ti-lmu.c
+> index ce16c896879b..f43b8acc30e1 100644
+> --- a/drivers/mfd/ti-lmu.c
+> +++ b/drivers/mfd/ti-lmu.c
+> @@ -183,6 +183,17 @@ static int ti_lmu_probe(struct i2c_client *cl, const struct i2c_device_id *id)
+>  		return ret;
+>  	}
+>  
+> +	lmu->pwm = devm_pwm_get(dev, "lmu-backlight");
+
+Patch 9 of this series, or a derivative of it, should technically be before Patch 6 so that the binding is correct.
+Otherwise the binding will not match the code
+
+Dan
 
 
-> Am 04.04.2018 um 21:00 schrieb H. Nikolaus Schaller <hns@goldelico.com>:
+
+> +	if (IS_ERR(lmu->pwm)) {
+> +		ret = PTR_ERR(lmu->pwm);
+> +		if (ret != -EINVAL) {
+> +			dev_err(dev, "Failed to get PWM: %d\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		lmu->pwm = NULL;
+> +	}
+> +
+>  	ret = ti_lmu_enable_hw(lmu, id->driver_data);
+>  	if (ret)
+>  		return ret;
+> diff --git a/include/linux/mfd/ti-lmu.h b/include/linux/mfd/ti-lmu.h
+> index 1ef51ed36be5..246ab5145dff 100644
+> --- a/include/linux/mfd/ti-lmu.h
+> +++ b/include/linux/mfd/ti-lmu.h
+> @@ -17,6 +17,7 @@
+>  #include <linux/notifier.h>
+>  #include <linux/regmap.h>
+>  #include <linux/gpio/consumer.h>
+> +#include <linux/pwm.h>
+>  
+>  /* Notifier event */
+>  #define LMU_EVENT_MONITOR_DONE		0x01
+> @@ -77,12 +78,14 @@ enum lm363x_regulator_id {
+>   * @dev:	Parent device pointer
+>   * @regmap:	Used for i2c communcation on accessing registers
+>   * @en_gpio:	GPIO for HWEN pin [Optional]
+> + * @pwm:	PWM for module [Optional]
+>   * @notifier:	Notifier for reporting hwmon event
+>   */
+>  struct ti_lmu {
+>  	struct device *dev;
+>  	struct regmap *regmap;
+>  	struct gpio_desc *en_gpio;
+> +	struct pwm_device *pwm;
+>  	struct blocking_notifier_head notifier;
+>  };
+>  #endif
 > 
-> V2:
-> * added PCA_PCAL flags if matched through of-table
-> * fix address calculation for extended PCAL6524 registers
-> * hack to map LEVEL_LOW to EDGE_FALLING to be able to
->  test in combination with ts3a227e driver
-> * improve description of bindings for optional vcc-supply
->  and interrupt-controller;
-> 
-> 2018-03-10 09:32:53: no initial description
-> 
-> H. Nikolaus Schaller (5):
->  gpio: pca953x: set the PCA_PCAL flag also when matching by DT
->  gpio: pca953x: add register definitions for pcal6524 and fix address
->    calculation
->  [RFC] gpio: pca953x: hack to map LEVEL irqs to EDGE irqs (may loose
->    interrupts/hang)
->  DTS: Bindings: pca953x driver provides an optional vcc-supply property
->  DTS: Bindings: pca953x: add example how to use interrupt-controller
->    and gpio-controller
-> 
-> .../devicetree/bindings/gpio/gpio-pca953x.txt      | 34 +++++++++++++++++++++
-> drivers/gpio/gpio-pca953x.c                        | 35 ++++++++++++++++++----
-> 2 files changed, 64 insertions(+), 5 deletions(-)
-> 
-> -- 
-> 2.12.2
-> 
+
+
+-- 
+------------------
+Dan Murphy
