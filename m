@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751704AbeDDRZF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 13:25:05 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34327 "EHLO
+        id S1751809AbeDDRZN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 13:25:13 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40173 "EHLO
         mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751318AbeDDRZB (ORCPT
+        with ESMTP id S1751713AbeDDRZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 13:25:01 -0400
-X-Google-Smtp-Source: AIpwx481G/Mwwp/Gq6v54jpr3oI4KHotaeI332xYaa4IrFwUjYm0TbUkblAluf3O828Irg+AOOvChw==
+        Wed, 4 Apr 2018 13:25:09 -0400
+X-Google-Smtp-Source: AIpwx48Foh6owUF6SkElji9ucUmowU9cJNo1UUigFd6lBhr3I6j3feGN5jrrrvVPtbYxwkEb/A4zJQ==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
 Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
@@ -17,9 +17,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 6/9] arm64: dts: actions: Add gpio line names to Bubblegum-96 board
-Date: Wed,  4 Apr 2018 22:52:55 +0530
-Message-Id: <20180404172258.7678-7-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v7 7/9] gpio: Add gpio driver for Actions OWL S900 SoC
+Date: Wed,  4 Apr 2018 22:52:56 +0530
+Message-Id: <20180404172258.7678-8-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180404172258.7678-1-manivannan.sadhasivam@linaro.org>
 References: <20180404172258.7678-1-manivannan.sadhasivam@linaro.org>
@@ -27,216 +27,241 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add gpio line names to Actions Semi S900 based Bubblegum-96 board.
+Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
+controlling the gpio shares the same register range with pinctrl block.
+
+GPIO registers are organized as 6 banks and each bank controls the
+maximum of 32 gpios.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 195 ++++++++++++++++++++++
- 1 file changed, 195 insertions(+)
+ drivers/gpio/Kconfig    |   8 +++
+ drivers/gpio/Makefile   |   1 +
+ drivers/gpio/gpio-owl.c | 184 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 193 insertions(+)
+ create mode 100644 drivers/gpio/gpio-owl.c
 
-diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-index ff043c961d75..02dbb4291d68 100644
---- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-+++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-@@ -34,3 +34,198 @@
- 	status = "okay";
- 	clocks = <&cmu CLK_UART5>;
- };
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 8dbb2280538d..75533f55ad0e 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -364,6 +364,14 @@ config GPIO_OMAP
+ 	help
+ 	  Say yes here to enable GPIO support for TI OMAP SoCs.
+ 
++config GPIO_OWL
++	tristate "Actions Semi OWL GPIO support"
++	default ARCH_ACTIONS
++	depends on ARCH_ACTIONS || COMPILE_TEST
++	depends on OF_GPIO
++	help
++	  Say yes here to enable GPIO support for Actions Semi OWL SoCs.
 +
+ config GPIO_PL061
+ 	bool "PrimeCell PL061 GPIO support"
+ 	depends on ARM_AMBA
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index cccb0d40846c..b2bb11d4675f 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -91,6 +91,7 @@ obj-$(CONFIG_GPIO_MXC)		+= gpio-mxc.o
+ obj-$(CONFIG_GPIO_MXS)		+= gpio-mxs.o
+ obj-$(CONFIG_GPIO_OCTEON)	+= gpio-octeon.o
+ obj-$(CONFIG_GPIO_OMAP)		+= gpio-omap.o
++obj-$(CONFIG_GPIO_OWL)		+= gpio-owl.o
+ obj-$(CONFIG_GPIO_PCA953X)	+= gpio-pca953x.o
+ obj-$(CONFIG_GPIO_PCF857X)	+= gpio-pcf857x.o
+ obj-$(CONFIG_GPIO_PCH)		+= gpio-pch.o
+diff --git a/drivers/gpio/gpio-owl.c b/drivers/gpio/gpio-owl.c
+new file mode 100644
+index 000000000000..354636229fee
+--- /dev/null
++++ b/drivers/gpio/gpio-owl.c
+@@ -0,0 +1,184 @@
++// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * GPIO name legend: proper name = the GPIO line is used as GPIO
-+ *         NC = not connected (pin out but not routed from the chip to
-+ *              anything the board)
-+ *         "[PER]" = pin is muxed for [peripheral] (not GPIO)
-+ *         LSEC = Low Speed External Connector
-+ *         HSEC = High Speed External Connector
++ * OWL SoC's GPIO driver
 + *
-+ * Line names are taken from the schematic "Schematics Bubblegum96"
-+ * version v1.0
-+ *
-+ * For the lines routed to the external connectors the
-+ * lines are named after the 96Boards CE Specification 1.0,
-+ * Appendix "Expansion Connector Signal Description".
-+ *
-+ * When the 96Boards naming of a line and the schematic name of
-+ * the same line are in conflict, the 96Boards specification
-+ * takes precedence, which means that the external UART on the
-+ * LSEC is named UART0 while the schematic and SoC names this
-+ * UART2. Only exception is the I2C lines for which the schematic
-+ * naming has been preferred. This is only for the informational
-+ * lines i.e. "[FOO]", the GPIO named lines "GPIO-A" thru "GPIO-L"
-+ * are the only ones actually used for GPIO.
++ * Copyright (c) 2018 Linaro Ltd.
++ * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 + */
 +
-+&gpioa {
-+	gpio-line-names =
-+		"GPIO-A", /* GPIO_0, LSEC pin 23 */
-+		"GPIO-B", /* GPIO_1, LSEC pin 24 */
-+		"GPIO-C", /* GPIO_2, LSEC pin 25 */
-+		"GPIO-D", /* GPIO_3, LSEC pin 26 */
-+		"GPIO-E", /* GPIO_4, LSEC pin 27 */
-+		"GPIO-F", /* GPIO_5, LSEC pin 28 */
-+		"GPIO-G", /* GPIO_6, LSEC pin 29 */
-+		"GPIO-H", /* GPIO_7, LSEC pin 30 */
-+		"GPIO-I", /* GPIO_8, LSEC pin 31 */
-+		"GPIO-J", /* GPIO_9, LSEC pin 32 */
-+		"NC", /* GPIO_10 */
-+		"NC", /* GPIO_11 */
-+		"SIRQ2_1V8", /* GPIO_12 */
-+		"PCM0_OUT", /* GPIO_13 */
-+		"WIFI_LED", /* GPIO_14 */
-+		"PCM0_SYNC", /* GPIO_15 */
-+		"PCM0_CLK", /* GPIO_16 */
-+		"PCM0_IN", /* GPIO_17 */
-+		"BT_LED", /* GPIO_18 */
-+		"LED0", /* GPIO_19 */
-+		"LED1", /* GPIO_20 */
-+		"JTAG_TCK", /* GPIO_21 */
-+		"JTAG_TMS", /* GPIO_22 */
-+		"JTAG_TDI", /* GPIO_23 */
-+		"JTAG_TDO", /* GPIO_24 */
-+		"[UART1_RxD]", /* GPIO_25, LSEC pin 13 */
-+		"NC", /* GPIO_26 */
-+		"[UART1_TxD]", /* GPIO_27, LSEC pin 11 */
-+		"SD0_D0", /* GPIO_28 */
-+		"SD0_D1", /* GPIO_29 */
-+		"SD0_D2", /* GPIO_30 */
-+		"SD0_D3"; /* GPIO_31 */
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/gpio/driver.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++#define GPIO_OUTEN	0x0000
++#define GPIO_INEN	0x0004
++#define GPIO_DAT	0x0008
++
++struct owl_gpio {
++	struct gpio_chip gpio;
++	void __iomem *base;
++	spinlock_t lock;
 +};
 +
-+&gpiob {
-+	gpio-line-names =
-+		"SD1_D0", /* GPIO_32 */
-+		"SD1_D1", /* GPIO_33 */
-+		"SD1_D2", /* GPIO_34 */
-+		"SD1_D3", /* GPIO_35 */
-+		"SD0_CMD", /* GPIO_36 */
-+		"SD0_CLK", /* GPIO_37 */
-+		"SD1_CMD", /* GPIO_38 */
-+		"SD1_CLK", /* GPIO_39 */
-+		"SPI0_SCLK", /* GPIO_40, LSEC pin 8 */
-+		"SPI0_CS", /* GPIO_41, LSEC pin 12 */
-+		"SPI0_DIN", /* GPIO_42, LSEC pin 10 */
-+		"SPI0_DOUT", /* GPIO_43, LSEC pin 14 */
-+		"I2C5_SDATA", /* GPIO_44, HSEC pin 36 */
-+		"I2C5_SCLK", /* GPIO_45, HSEC pin 38 */
-+		"UART0_RX", /* GPIO_46, LSEC pin 7 */
-+		"UART0_TX", /* GPIO_47, LSEC pin 5 */
-+		"UART0_RTSB", /* GPIO_48, LSEC pin 9 */
-+		"UART0_CTSB", /* GPIO_49, LSEC pin 3 */
-+		"I2C4_SCLK", /* GPIO_50, HSEC pin 32 */
-+		"I2C4_SDATA", /* GPIO_51, HSEC pin 34 */
-+		"I2C0_SCLK", /* GPIO_52 */
-+		"I2C0_SDATA", /* GPIO_53 */
-+		"I2C1_SCLK", /* GPIO_54, LSEC pin 15 */
-+		"I2C1_SDATA", /* GPIO_55, LSEC pin 17 */
-+		"I2C2_SCLK", /* GPIO_56, LSEC pin 19 */
-+		"I2C2_SDATA", /* GPIO_57, LSEC pin 21 */
-+		"CSI0_DN0", /* GPIO_58, HSEC pin 10 */
-+		"CSI0_DP0", /* GPIO_59, HSEC pin 8 */
-+		"CSI0_DN1", /* GPIO_60, HSEC pin 16 */
-+		"CSI0_DP1", /* GPIO_61, HSEC pin 14 */
-+		"CSI0_CN", /* GPIO_62, HSEC pin 4 */
-+		"CSI0_CP"; /* GPIO_63, HSEC pin 2 */
-+};
++static void owl_gpio_update_reg(void __iomem *base, unsigned int pin, int flag)
++{
++	u32 val;
 +
-+&gpioc {
-+	gpio-line-names =
-+		"CSI0_DN2", /* GPIO_64, HSEC pin 22 */
-+		"CSI0_DP2", /* GPIO_65, HSEC pin 20 */
-+		"CSI0_DN3", /* GPIO_66, HSEC pin 28 */
-+		"CSI0_DP3", /* GPIO_67, HSEC pin 26 */
-+		"[CLK0]", /* GPIO_68, HSEC pin 15 */
-+		"CSI1_DN0", /* GPIO_69, HSEC pin 44 */
-+		"CSI1_DP0", /* GPIO_70, HSEC pin 42 */
-+		"CSI1_DN1", /* GPIO_71, HSEC pin 50 */
-+		"CSI1_DP1", /* GPIO_72, HSEC pin 48 */
-+		"CSI1_CN", /* GPIO_73, HSEC pin 56 */
-+		"CSI1_CP", /* GPIO_74, HSEC pin 54 */
-+		"[CLK1]"; /* GPIO_75, HSEC pin 17 */
-+};
++	val = readl_relaxed(base);
 +
-+&gpiod {
-+	gpio-line-names =
-+		"[GPIOD0]", /* GPIO_76 */
-+		"[GPIOD1]", /* GPIO_77 */
-+		"BT_RST_N", /* GPIO_78 */
-+		"EXT_DC_EN", /* GPIO_79 */
-+		"[PCM_DI]", /* GPIO_80, LSEC pin 22 */
-+		"[PCM_DO]", /* GPIO_81, LSEC pin 20 */
-+		"[PCM_CLK]", /* GPIO_82, LSEC pin 18 */
-+		"[PCM_FS]", /* GPIO_83, LSEC pin 16 */
-+		"WAKE_BT", /* GPIO_84 */
-+		"WL_REG_ON", /* GPIO_85 */
-+		"NC", /* GPIO_86 */
-+		"NC", /* GPIO_87 */
-+		"NC", /* GPIO_88 */
-+		"NC", /* GPIO_89 */
-+		"NC", /* GPIO_90 */
-+		"WIFI_WAKE", /* GPIO_91 */
-+		"BT_WAKE", /* GPIO_92 */
-+		"NC", /* GPIO_93 */
-+		"OTG_EN2", /* GPIO_94 */
-+		"OTG_EN", /* GPIO_95 */
-+		"DSI_DP3", /* GPIO_96, HSEC pin 45 */
-+		"DSI_DN3", /* GPIO_97, HSEC pin 47 */
-+		"DSI_DP1", /* GPIO_98, HSEC pin 33 */
-+		"DSI_DN1", /* GPIO_99, HSEC pin 35 */
-+		"DSI_CP", /* GPIO_100, HSEC pin 21 */
-+		"DSI_CN", /* GPIO_101, HSEC pin 23 */
-+		"DSI_DP0", /* GPIO_102, HSEC pin 27 */
-+		"DSI_DN0", /* GPIO_103, HSEC pin 29 */
-+		"DSI_DP2", /* GPIO_104, HSEC pin 39 */
-+		"DSI_DN2"; /* GPIO_105, HSEC pin 41 */
-+};
++	if (flag)
++		val |= BIT(pin);
++	else
++		val &= ~BIT(pin);
 +
-+&gpioe {
-+	gpio-line-names =
-+		"N0_D0", /* GPIO_106 */
-+		"N0_D1", /* GPIO_107 */
-+		"N0_D2", /* GPIO_108 */
-+		"N0_D3", /* GPIO_109 */
-+		"N0_D4", /* GPIO_110 */
-+		"N0_D5", /* GPIO_111 */
-+		"N0_D6", /* GPIO_112 */
-+		"N0_D7", /* GPIO_113 */
-+		"N0_DQS", /* GPIO_114 */
-+		"N0_DQSN", /* GPIO_115 */
-+		"NC", /* GPIO_116 */
-+		"NC", /* GPIO_117 */
-+		"NC", /* GPIO_118 */
-+		"N0_CEB1", /* GPIO_119 */
-+		"CARD_DT", /* GPIO_120 */
-+		"N0_CEB3", /* GPIO_121 */
-+		"SD_DAT0", /* GPIO_122, HSEC pin 1 */
-+		"SD_DAT1", /* GPIO_123, HSEC pin 3 */
-+		"SD_DAT2", /* GPIO_124, HSEC pin 5 */
-+		"SD_DAT3", /* GPIO_125, HSEC pin 7 */
-+		"NC", /* GPIO_126 */
-+		"NC", /* GPIO_127 */
-+		"[PWR_BTN_N]", /* GPIO_128, LSEC pin 4 */
-+		"[RST_BTN_N]", /* GPIO_129, LSEC pin 6 */
-+		"NC", /* GPIO_130 */
-+		"SD_CMD", /* GPIO_131 */
-+		"GPIO-L", /* GPIO_132, LSEC pin 34 */
-+		"GPIO-K", /* GPIO_133, LSEC pin 33 */
-+		"NC", /* GPIO_134 */
-+		"SD_SCLK", /* GPIO_135 */
-+		"NC", /* GPIO_136 */
-+		"JTAG_TRST"; /* GPIO_137 */
-+};
++	writel_relaxed(val, base);
++}
 +
-+&gpiof {
-+	gpio-line-names =
-+		"I2C3_SCLK", /* GPIO_138 */
-+		"LED2", /* GPIO_139 */
-+		"LED3", /* GPIO_140 */
-+		"I2C3_SDATA", /* GPIO_141 */
-+		"UART3_RX", /* GPIO_142 */
-+		"UART3_TX", /* GPIO_143 */
-+		"UART3_RTSB", /* GPIO_144 */
-+		"UART3_CTSB"; /* GPIO_145 */
++static int owl_gpio_request(struct gpio_chip *chip, unsigned int offset)
++{
++	struct owl_gpio *gpio = gpiochip_get_data(chip);
++
++	/*
++	 * GPIOs have higher priority over other modules, so either setting
++	 * them as OUT or IN is sufficient
++	 */
++	spin_lock(&gpio->lock);
++	owl_gpio_update_reg(gpio->base + GPIO_OUTEN, offset, true);
++	spin_unlock(&gpio->lock);
++
++	return 0;
++}
++
++static void owl_gpio_free(struct gpio_chip *chip, unsigned int offset)
++{
++	struct owl_gpio *gpio = gpiochip_get_data(chip);
++
++	spin_lock(&gpio->lock);
++	/* disable gpio output */
++	owl_gpio_update_reg(gpio->base + GPIO_OUTEN, offset, false);
++
++	/* disable gpio input */
++	owl_gpio_update_reg(gpio->base + GPIO_INEN, offset, false);
++	spin_unlock(&gpio->lock);
++}
++
++static int owl_gpio_get(struct gpio_chip *chip, unsigned int offset)
++{
++	struct owl_gpio *gpio = gpiochip_get_data(chip);
++	u32 val;
++
++	spin_lock(&gpio->lock);
++	val = readl_relaxed(gpio->base + GPIO_DAT);
++	spin_unlock(&gpio->lock);
++
++	return !!(val & BIT(offset));
++}
++
++static void owl_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
++{
++	struct owl_gpio *gpio = gpiochip_get_data(chip);
++
++	spin_lock(&gpio->lock);
++	owl_gpio_update_reg(gpio->base + GPIO_DAT, offset, value);
++	spin_unlock(&gpio->lock);
++}
++
++static int owl_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
++{
++	struct owl_gpio *gpio = gpiochip_get_data(chip);
++
++	spin_lock(&gpio->lock);
++	owl_gpio_update_reg(gpio->base + GPIO_OUTEN, offset, false);
++	owl_gpio_update_reg(gpio->base + GPIO_INEN, offset, true);
++	spin_unlock(&gpio->lock);
++
++	return 0;
++}
++
++static int owl_gpio_direction_output(struct gpio_chip *chip,
++				unsigned int offset, int value)
++{
++	struct owl_gpio *gpio = gpiochip_get_data(chip);
++
++	spin_lock(&gpio->lock);
++	owl_gpio_update_reg(gpio->base + GPIO_INEN, offset, false);
++	owl_gpio_update_reg(gpio->base + GPIO_OUTEN, offset, true);
++	owl_gpio_update_reg(gpio->base + GPIO_DAT, offset, value);
++	spin_unlock(&gpio->lock);
++
++	return 0;
++}
++
++static int owl_gpio_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct owl_gpio *gpio;
++	u32 ngpios;
++	int ret;
++
++	gpio = devm_kzalloc(dev, sizeof(*gpio), GFP_KERNEL);
++	if (!gpio)
++		return -ENOMEM;
++
++	gpio->base = of_iomap(dev->of_node, 0);
++	if (IS_ERR(gpio->base))
++		return PTR_ERR(gpio->base);
++
++	/*
++	 * Get the number of gpio's for this bank. If none specified,
++	 * then fall back to 32.
++	 */
++	ret = of_property_read_u32(dev->of_node, "ngpios", &ngpios);
++	if (ret)
++		ngpios = 32;
++
++	spin_lock_init(&gpio->lock);
++
++	gpio->gpio.request = owl_gpio_request;
++	gpio->gpio.free = owl_gpio_free;
++	gpio->gpio.get = owl_gpio_get;
++	gpio->gpio.set = owl_gpio_set;
++	gpio->gpio.direction_input = owl_gpio_direction_input;
++	gpio->gpio.direction_output = owl_gpio_direction_output;
++
++	gpio->gpio.base = -1;
++	gpio->gpio.parent = dev;
++	gpio->gpio.label = dev_name(dev);
++	gpio->gpio.ngpio = ngpios;
++
++	platform_set_drvdata(pdev, gpio);
++
++	ret = devm_gpiochip_add_data(dev, &gpio->gpio, gpio);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to register gpiochip\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id owl_gpio_of_match[] = {
++	{ .compatible = "actions,s900-gpio", },
++	{ /* sentinel */ }
 +};
++MODULE_DEVICE_TABLE(of, owl_gpio_of_match);
++
++static struct platform_driver owl_gpio_driver = {
++	.driver		= {
++		.name	= "owl-gpio",
++		.of_match_table = owl_gpio_of_match,
++	},
++	.probe		= owl_gpio_probe,
++};
++module_platform_driver(owl_gpio_driver);
++
++MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
++MODULE_DESCRIPTION("Actions Semi OWL SoCs GPIO driver");
++MODULE_LICENSE("GPL");
 -- 
 2.14.1
