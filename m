@@ -1,97 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeDDPv0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:51:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43422 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751620AbeDDPvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:51:24 -0400
-Date: Wed, 4 Apr 2018 11:51:20 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/hmm: fix header file if/else/endif maze, again
-Message-ID: <20180404155120.GA3331@redhat.com>
-References: <20180404110236.804484-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180404110236.804484-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752102AbeDDPwS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:52:18 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:40624 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751588AbeDDPwR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:52:17 -0400
+Date: Wed, 04 Apr 2018 11:52:15 -0400 (EDT)
+Message-Id: <20180404.115215.419039708931754897.davem@davemloft.net>
+To: arnd@arndb.de
+Cc: jakub.kicinski@netronome.com, dsa@cumulusnetworks.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netdevsim: remove incorrect __net_initdata annotations
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180404121347.3089169-1-arnd@arndb.de>
+References: <20180404121347.3089169-1-arnd@arndb.de>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 01:02:15PM +0200, Arnd Bergmann wrote:
-> The last fix was still wrong, as we need the inline dummy functions
-> also for the case that CONFIG_HMM is enabled but CONFIG_HMM_MIRROR
-> is not:
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed,  4 Apr 2018 14:12:39 +0200
+
+> The __net_initdata section cannot currently be used for structures that
+> get cleaned up in an exitcall using unregister_pernet_operations:
 > 
-> kernel/fork.o: In function `__mmdrop':
-> fork.c:(.text+0x14f6): undefined reference to `hmm_mm_destroy'
+> WARNING: vmlinux.o(.text+0x868c34): Section mismatch in reference from the function nsim_devlink_exit() to the (unknown reference) .init.data:(unknown)
+> The function nsim_devlink_exit() references
+> the (unknown reference) __initdata (unknown).
+> This is often because nsim_devlink_exit lacks a __initdata
+> annotation or the annotation of (unknown) is wrong.
+> WARNING: vmlinux.o(.text+0x868c64): Section mismatch in reference from the function nsim_devlink_init() to the (unknown reference) .init.data:(unknown)
+> WARNING: vmlinux.o(.text+0x8692bc): Section mismatch in reference from the function nsim_fib_exit() to the (unknown reference) .init.data:(unknown)
+> WARNING: vmlinux.o(.text+0x869300): Section mismatch in reference from the function nsim_fib_init() to the (unknown reference) .init.data:(unknown)
 > 
-> This adds back the second copy of the dummy functions, hopefully
-> this time in the right place.
+> As that warning tells us, discarding the structure after a module is
+> loaded would lead to a undefined behavior when that module is removed.
 > 
-> Fixes: 8900d06a277a ("mm/hmm: fix header file if/else/endif maze")
+> It might be possible to change that annotation so it has no effect for
+> loadable modules, but I have not figured out exactly how to do that, and
+> we want this to be fixed in -rc1.
+> 
+> This just removes the annotations, just like we do for all other such
+> modules.
+> 
+> Fixes: 37923ed6b8ce ("netdevsim: Add simple FIB resource controller via devlink")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+Hmmm...
 
-Hopefuly this is the last config combinatorial issue...
+__net_initdata defines to nothing if network namespaces are enabled.
 
-> ---
->  include/linux/hmm.h | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-> index 5d26e0a223d9..39988924de3a 100644
-> --- a/include/linux/hmm.h
-> +++ b/include/linux/hmm.h
-> @@ -376,8 +376,18 @@ bool hmm_vma_range_done(struct hmm_range *range);
->   * See the function description in mm/hmm.c for further documentation.
->   */
->  int hmm_vma_fault(struct hmm_range *range, bool block);
-> -#endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
->  
-> +/* Below are for HMM internal use only! Not to be used by device driver! */
-> +void hmm_mm_destroy(struct mm_struct *mm);
-> +
-> +static inline void hmm_mm_init(struct mm_struct *mm)
-> +{
-> +	mm->hmm = NULL;
-> +}
-> +#else /* IS_ENABLED(CONFIG_HMM_MIRROR) */
-> +static inline void hmm_mm_destroy(struct mm_struct *mm) {}
-> +static inline void hmm_mm_init(struct mm_struct *mm) {}
-> +#endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
->  
->  #if IS_ENABLED(CONFIG_DEVICE_PRIVATE) ||  IS_ENABLED(CONFIG_DEVICE_PUBLIC)
->  struct hmm_devmem;
-> @@ -550,16 +560,9 @@ struct hmm_device {
->  struct hmm_device *hmm_device_new(void *drvdata);
->  void hmm_device_put(struct hmm_device *hmm_device);
->  #endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
-> -
-> -/* Below are for HMM internal use only! Not to be used by device driver! */
-> -void hmm_mm_destroy(struct mm_struct *mm);
-> -
-> -static inline void hmm_mm_init(struct mm_struct *mm)
-> -{
-> -	mm->hmm = NULL;
-> -}
->  #else /* IS_ENABLED(CONFIG_HMM) */
->  static inline void hmm_mm_destroy(struct mm_struct *mm) {}
->  static inline void hmm_mm_init(struct mm_struct *mm) {}
->  #endif /* IS_ENABLED(CONFIG_HMM) */
-> +
->  #endif /* LINUX_HMM_H */
-> -- 
-> 2.9.0
-> 
+That's the whole point.
+
+Therefore, if NETNS is disabled, "unregister_pernet_operations" cannot
+happen and this is the only time when __net_initdata actually does
+something.
