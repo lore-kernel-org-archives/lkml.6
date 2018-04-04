@@ -1,79 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeDDMp3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:45:29 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36267 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751534AbeDDMpZ (ORCPT
+        id S1751787AbeDDMqY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:46:24 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54449 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751556AbeDDMqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:45:25 -0400
-X-Google-Smtp-Source: AIpwx4/GUehitLpM0OWJsmKKA756gfgbXCBCoe8hvvM4r6JE/wluQCBm0vaJjg9FL/3tHGYVo+Rs+u36RF9kmGDE3T0=
+        Wed, 4 Apr 2018 08:46:22 -0400
+X-Google-Smtp-Source: AIpwx4/RQp0QYgmBfoHyG76Lj79d43pfsmgdhu9daktfDdNAkhs0DtNjf+BslFf1wfVNNTs3qjSxXtNcAuUq8oMnEv8=
 MIME-Version: 1.0
-In-Reply-To: <1520951200-24703-1-git-send-email-phil.edworthy@renesas.com>
-References: <1520951200-24703-1-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
+References: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 4 Apr 2018 14:45:23 +0200
-Message-ID: <CAPDyKFqFnPosPTb2x5=aeXjGqAJBDgKBCV9pJRfkREecChyJ9w@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: sdhci-of-arasan: Add quirk to avoid unexpected
- interrupt msgs
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
+Date: Wed, 4 Apr 2018 14:46:21 +0200
+Message-ID: <CAPDyKFrkp0bMPEz==CHO8BzttPQ5sV_S6O_dJOvVkzWnqNV3vw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: card: Don't show eMMC RPMB and BOOT areas in /proc/partitions
+To: Harish Jenny K N <harish_kandiga@mentor.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Shawn Lin <shawn.lin@rock-chips.com>,
-        Michal Simek <michal.simek@xilinx.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 March 2018 at 15:26, Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> On SD 2.00 cards we get lots of these messages:
-> "mmc0: Got data interrupt 0x00000002 even though no data operation was in progress"
-> By applying the SDHCI_QUIRK2_STOP_WITH_TC quirk, the messages no longer happen.
+On 27 February 2018 at 12:33, Harish Jenny K N
+<harish_kandiga@mentor.com> wrote:
+> From: Andrew Gabbasov <andrew_gabbasov@mentor.com>
 >
-> A single card claiming to be SD 3.00 compliant also generates the interrupts,
-> but since the card's manfacturing date is 2002 mar, it's unlikely to really be
-> SD 3.00. This card is a 8GB SanDisk 'SU08G' 8.0 (SDHC class 4).
+> Since RPMB area is accessible via special ioctl only and boot areas
+> are unlikely to contain any partitions, exclude them all from listing
+> in /proc/partitions. This will hide them from various user-level
+> software (e.g. fdisk), thus avoiding unnecessary access attempts.
 >
-> This has been reported on Xilinx devices that also use the Arasan IP.
-> See https://patchwork.kernel.org/patch/8062871/
->
-> This has been tested on the Renesas RZ/ND-DB board with the RZ/N1 SoC. The
-> Arasan IP in this device is version 1.39a and uses a max SD clock of 50MHz and
-> does not support DDR modes.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
 
-Queued for 3.18, thanks!
+Queued up for 3.18, thanks!
 
 Kind regards
 Uffe
 
 > ---
-> v2:
->  - Changed commit msg to detail the cards that fail.
->  - Provided the IP version and further background info.
-> ---
->  drivers/mmc/host/sdhci-of-arasan.c | 3 ++-
+>  drivers/mmc/core/block.c | 3 ++-
 >  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-> index c33a5f7..ab66e32 100644
-> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> @@ -290,7 +290,8 @@ static const struct sdhci_pltfm_data sdhci_arasan_pdata = {
->         .ops = &sdhci_arasan_ops,
->         .quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
->         .quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-> -                       SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
-> +                       SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN |
-> +                       SDHCI_QUIRK2_STOP_WITH_TC,
->  };
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index 20135a5..376e47e 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -2341,7 +2341,8 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
+>         set_disk_ro(md->disk, md->read_only || default_ro);
+>         md->disk->flags = GENHD_FL_EXT_DEVT;
+>         if (area_type & (MMC_BLK_DATA_AREA_RPMB | MMC_BLK_DATA_AREA_BOOT))
+> -               md->disk->flags |= GENHD_FL_NO_PART_SCAN;
+> +               md->disk->flags |= GENHD_FL_NO_PART_SCAN
+> +                                  | GENHD_FL_SUPPRESS_PARTITION_INFO;
 >
->  static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>         /*
+>          * As discussed on lkml, GENHD_FL_REMOVABLE should:
 > --
-> 2.7.4
+> 1.9.1
 >
