@@ -1,87 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeDEAFA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 20:05:00 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:42155 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752484AbeDEAE6 (ORCPT
+        id S1752774AbeDEAGB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 20:06:01 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:58452 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752311AbeDEAGA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 20:04:58 -0400
-X-Google-Smtp-Source: AIpwx49ou9PqxStqpcxHdV3ASG8kvmm82spUO7poaETO0JnspMV+F/+y/w1v2J1hCGwXPRSfLlTBDvNZ9kQJkmn4p0w=
+        Wed, 4 Apr 2018 20:06:00 -0400
+From: Deepak Rawat <drawat@vmware.com>
+To: <dri-devel@lists.freedesktop.org>, <thellstrom@vmware.com>,
+        <syeh@vmware.com>
+CC: <linux-graphics-maintainer@vmware.com>, <daniel@ffwll.ch>,
+        <ville.syrjala@linux.intel.com>, <lukasz.spintzyk@displaylink.com>,
+        <noralf@tronnes.org>, <robdclark@gmail.com>, <gustavo@padovan.org>,
+        <maarten.lankhorst@linux.intel.com>, <seanpaul@chromium.org>,
+        <airlied@linux.ie>, <linux-kernel@vger.kernel.org>,
+        Deepak Rawat <drawat@vmware.com>
+Subject: [RFC 0/3] drm: page-flip with damage
+Date: Wed, 4 Apr 2018 16:49:05 -0700
+Message-ID: <1522885748-67122-1-git-send-email-drawat@vmware.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <f8da5618-6d80-e209-fb28-0dc11cee5c1d@redhat.com>
-References: <1522798129-14588-1-git-send-email-wanpengli@tencent.com>
- <1522798129-14588-3-git-send-email-wanpengli@tencent.com> <48d06146-f508-e883-72cb-881e043f9c72@redhat.com>
- <CANRm+CwMRb9hbV5PjGMoTe1oDa+cEZ0ex7N-1J5NkWiCV62M4A@mail.gmail.com> <f8da5618-6d80-e209-fb28-0dc11cee5c1d@redhat.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Thu, 5 Apr 2018 08:04:57 +0800
-Message-ID: <CANRm+Cz55bkFrd=pHt7ca+7-HP03Ap7hupSVQQSVckTYnX3+HQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] KVM: X86: Add Force Emulation Prefix for "emulate
- the next instruction"
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Liran Alon <liran.alon@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-05 1:09 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
-> On 04/04/2018 15:35, Wanpeng Li wrote:
->> 2018-04-04 19:59 GMT+08:00 David Hildenbrand <david@redhat.com>:
->>>
->>>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->>>> index 1eb495e..a55ecef 100644
->>>> --- a/arch/x86/kvm/x86.c
->>>> +++ b/arch/x86/kvm/x86.c
->>>> @@ -146,6 +146,9 @@ bool __read_mostly enable_vmware_backdoor = false;
->>>>  module_param(enable_vmware_backdoor, bool, S_IRUGO);
->>>>  EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
->>>>
->>>> +static bool __read_mostly force_emulation_prefix = false;
->>>> +module_param(force_emulation_prefix, bool, S_IRUGO);
->>>> +
->>>>  #define KVM_NR_SHARED_MSRS 16
->>>>
->>>>  struct kvm_shared_msrs_global {
->>>> @@ -4844,6 +4847,21 @@ int handle_ud(struct kvm_vcpu *vcpu)
->>>>  {
->>>>       enum emulation_result er;
->>>>
->>>> +     if (force_emulation_prefix) {
->>>> +             char sig[5]; /* ud2; .ascii "kvm" */
->>>> +             struct x86_exception e;
->>>> +
->>>> +             if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
->>>> +                             kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e))
->>>> +                     goto emulate_ud;
->>>> +
->>>> +             if (memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0) {
->>>> +                     kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
->>>> +                     return emulate_instruction(vcpu, 0) == EMULATE_DONE;
->>>
->>> What if we would have an invalid instruction here? Shouldn't you handle
->>> the emulate_instruction() like below?
->>> (e.g. keep a variable with the emulation type (0 vs EMULTYPE_TRAP_UD)
->>> and reuse emulate_ud below)
->>
->> emulate_instruction(vcpu, 0) can handle invalid instruction.
->
-> But David's observation is still better because your code doesn't handle usermode exits.
+Hi All,
 
-My code handles it, return emulate_instruction(vcpu, 0) ==
-EMULATE_DONE, it will return 0 since EMULATE_USER_EXIT == EMULATE_DONE
-fails.
+This is extension to Lukasz Spintzyk earlier draft of damage interface for drm.
+Bascially a new plane property is added called "DAMAGE_CLIPS" which is simply
+an array of drm_rect (exported to userspace as drm_mode_rect). The clips
+represents damage in framebuffer coordinate of attached fb to the plane.
 
-> I've fixed this up.
+Helper iterator is added to traverse the damage rectangles and get the damage
+clips in framebuffer, plane or crtc coordinates as need by driver
+implementation. Finally a helper to reset damage in case need full update is
+required. Drivers interested in page-flip with damage should call this from
+atomic_check hook.
 
-Thanks. The codes similar to my v3 but more beauty. :) I change to
-this view since Radim's comments to v3
-https://www.spinics.net/lists/kvm/msg166999.html
+With the RFC for atomic implementation of dirtyfb ioctl I was thinking
+should we need to consider dirty_fb flags, especially
+DRM_MODE_FB_DIRTY_ANNOTATE_COPY to be passed with atomic
+DAMAGE_CLIPS property blob? I didn't considered that untill now. If no driver
+uses that in my opinion for simplicity this can be ignored?
 
-Regards,
-Wanpeng Li
+About overlaping of damage rectangles is also not finalized. This really
+depends on driver specific implementation and can be left open-ended?
+
+My knowledge is limited to vmwgfx so would like to hear about other driver use
+cases and this can be modified in keeping other drivers need.
+
+Going forward driver implementation for vmwgfx and user-space implementation
+of kmscube/weston will be next step to test the changes.
+
+Thanks,
+Deepak
+
+Deepak Rawat (2):
+  drm: Add helper iterator functions to iterate over plane damage.
+  drm: Add helper to validate damage during modeset_check
+
+Lukasz Spintzyk (1):
+  drm: Add DAMAGE_CLIPS property to plane
+
+ drivers/gpu/drm/drm_atomic.c        |  42 +++++++++
+ drivers/gpu/drm/drm_atomic_helper.c | 173 ++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/drm_mode_config.c   |   5 ++
+ drivers/gpu/drm/drm_plane.c         |  12 +++
+ include/drm/drm_atomic_helper.h     |  41 +++++++++
+ include/drm/drm_mode_config.h       |  15 ++++
+ include/drm/drm_plane.h             |  16 ++++
+ include/uapi/drm/drm_mode.h         |  15 ++++
+ 8 files changed, 319 insertions(+)
+
+-- 
+2.7.4
