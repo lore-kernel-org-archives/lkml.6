@@ -1,67 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753117AbeDDDHU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 23:07:20 -0400
-Received: from m12-17.163.com ([220.181.12.17]:58603 "EHLO m12-17.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751850AbeDDDHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 23:07:19 -0400
-From: Xidong Wang <wangxidong_97@163.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Mans Rullgard <mans@mansr.com>
-Cc: Xidong Wang <wangxidong_97@163.com>, linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] mtd:nand:fix memory leak
-Date: Wed,  4 Apr 2018 11:05:51 +0800
-Message-Id: <1522811151-18853-1-git-send-email-wangxidong_97@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: EcCowADn90sVQcRa4Ik6CA--.51098S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JF13KrWDZrW8XF4rGrWUXFb_yoWDuFb_Ww
-        4S9ryxtry29a4j9ry7KF4fJry2kF4IgrWrWw1Fqw4fta48JF1xt3ZrZrnxuw48uF4FgrW5
-        A3y5Ar1fAw43XjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU5VxR3UUUUU==
-X-Originating-IP: [106.120.213.14]
-X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/1tbiPRse81SIWJ-JewAAsi
+        id S1753277AbeDDDO7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 23:14:59 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:32893 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752860AbeDDDO6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 23:14:58 -0400
+X-Google-Smtp-Source: AIpwx48wK3JWS1ZrEUJWRSWenC/FCzvcgQOMZBzyXj2CCD0sgm/SM+YmP2OR/MPIqmsYpv8CeqOSRw==
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>, Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <sboyd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+        Leo Yan <leo.yan@linaro.org>, Kaihua Zhong <zhongkaihua@huawei.com>,
+        Tao Wang <kevin.wangtao@hisilicon.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Guodong Xu <guodong.xu@linaro.org>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>
+Subject: [PATCH 0/5] Hi3660: enable power management features
+Date: Wed,  4 Apr 2018 11:14:30 +0800
+Message-Id: <1522811675-12741-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function tango_nand_probe(), the memory allocated by
-clk_get() is not released on the normal path and
-the error path that IS_ERR(nfc->chan) returns true.
-This will result in a memory leak bug.
+Since hi3660 drivers have been merged into Linux kernel (mailbox driver is in
+Linux-next branch and other drivers are existed in Linux mainline kernel), so
+this patch series is to enable power management features on hi3660.
 
-Signed-off-by: Xidong Wang <wangxidong_97@163.com>
----
- drivers/mtd/nand/tango_nand.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+This patch series includes device tree binding for mailbox, stub clock and CPU
+OPPs, and has one patch to consolidate the Kconfigs for driver modules.
 
-diff --git a/drivers/mtd/nand/tango_nand.c b/drivers/mtd/nand/tango_nand.c
-index c5bee00b..8083459 100644
---- a/drivers/mtd/nand/tango_nand.c
-+++ b/drivers/mtd/nand/tango_nand.c
-@@ -648,12 +648,15 @@ static int tango_nand_probe(struct platform_device *pdev)
- 		return PTR_ERR(clk);
- 
- 	nfc->chan = dma_request_chan(&pdev->dev, "rxtx");
--	if (IS_ERR(nfc->chan))
-+	if (IS_ERR(nfc->chan)) {
-+		clk_put(clk);
- 		return PTR_ERR(nfc->chan);
-+	}
- 
- 	platform_set_drvdata(pdev, nfc);
- 	nand_hw_control_init(&nfc->hw);
- 	nfc->freq_kHz = clk_get_rate(clk) / 1000;
-+	clk_put(clk);
- 
- 	for_each_child_of_node(pdev->dev.of_node, np) {
- 		err = chip_init(&pdev->dev, np);
+This patch set have been tested on Hikey960 and also verified the patch 'hisi:
+Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX' for Hikey620.
+
+
+Daniel Lezcano (1):
+  hisi: Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX
+
+Kaihua Zhong (2):
+  dts: arm64: hi3660: Add mailbox node
+  dts: arm64: hi3660: Add stub clock node
+
+Leo Yan (1):
+  dts: arm64: hi3660: Add CPU frequency scaling support
+
+Tao Wang (1):
+  dts: arm64: hi3660: Add thermal cooling management
+
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 145 ++++++++++++++++++++++++++++++
+ arch/arm64/configs/defconfig              |   1 -
+ drivers/clk/hisilicon/Kconfig             |  13 +--
+ drivers/mailbox/Kconfig                   |  12 ++-
+ 4 files changed, 161 insertions(+), 10 deletions(-)
+
 -- 
-2.7.4
+1.9.1
