@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752065AbeDDTAo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:00:44 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.170]:33576 "EHLO
+        id S1752249AbeDDTBv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:01:51 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.171]:26697 "EHLO
         mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751941AbeDDTAh (ORCPT
+        with ESMTP id S1751971AbeDDTAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:00:37 -0400
+        Wed, 4 Apr 2018 15:00:43 -0400
 X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0pA1dWeZVY=
 X-RZG-CLASS-ID: mo00
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
@@ -19,9 +19,9 @@ To: galak@codeaurora.org, andy.shevchenko@gmail.com,
 Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 1/5] gpio: pca953x: set the PCA_PCAL flag also when matching by DT
-Date: Wed,  4 Apr 2018 21:00:20 +0200
-Message-Id: <077c220b9ce1853ed725d85244165d05bff75b36.1522868422.git.hns@goldelico.com>
+Subject: [PATCH v2 3/5] [RFC] gpio: pca953x: hack to map LEVEL irqs to EDGE irqs (may loose interrupts/hang)
+Date: Wed,  4 Apr 2018 21:00:22 +0200
+Message-Id: <637f00dd7da98cfeffdc6080914a5f67b433da50.1522868423.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1522868422.git.hns@goldelico.com>
 References: <cover.1522868422.git.hns@goldelico.com>
@@ -31,31 +31,59 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The of_device_table is missing the PCA_PCAL flag so the
-pcal6524 would be operated in tca6424 compatibility mode which
-does not handle the new interrupt mask registers.
+So far the interrupt type from the DTS is ignored, i.e.
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+	interrupt-parent = <&pcal6524>
+	interrupts = <10 IRQ_TYPE_EDGE_RISING>
+
+does not overwrite a
+
+	devm_request_threaded_irq(..., IRQ_TYPE_LEVEL_LOW, ...)
+
+in driver code. Therefore, the pca953x driver rejects the
+setup of the irq because it can only handle EDGE interrupts
+so far.
+
+This hack translates level interrupts to edge interrupts
+for the pca953x chips. This is enough for initial testing,
+but not a good solution since interrupts may be lost.
+
+If for example the connected chip requests a IRQ_TYPE_LEVEL_LOW
+this may have the reason that there may be multiple different
+interrupt sources in the chip - wired-or together to the
+input of the pca953x. Now if we do edge detecion only,
+the first interrupt will generate an EDGE_FALLING, but a
+second one won't ever if the first interrupt wasn't already
+processed.
+
+IMHO a better solution would be to make the pca953x interrupt
+handler check if the irq input is still in the active
+level and run the device specific handler again.
+
+But this is a major rework that I must leave to others
+with more knowledge and time to work on it. This RFC
+patch is for having a reminder.
+
+Not Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/gpio/gpio-pca953x.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index d2ead4b1cf61..4a075619b93e 100644
+index c70acba710c7..c21cfdee2eb6 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -936,8 +936,10 @@ static const struct of_device_id pca953x_dt_ids[] = {
- 	{ .compatible = "nxp,pca9575", .data = OF_957X(16, PCA_INT), },
- 	{ .compatible = "nxp,pca9698", .data = OF_953X(40, 0), },
+@@ -521,6 +521,11 @@ static int pca953x_irq_set_type(struct irq_data *d, unsigned int type)
+ 	int bank_nb = d->hwirq / BANK_SZ;
+ 	u8 mask = 1 << (d->hwirq % BANK_SZ);
  
--	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT), },
--	{ .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT), },
-+	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT |
-+							    PCA_PCAL), },
-+	{ .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT |
-+							     PCA_PCAL), },
- 
- 	{ .compatible = "maxim,max7310", .data = OF_953X( 8, 0), },
- 	{ .compatible = "maxim,max7312", .data = OF_953X(16, PCA_INT), },
++	if (type & IRQ_TYPE_LEVEL_LOW)
++		type |= IRQ_TYPE_EDGE_FALLING;
++	if (type & IRQ_TYPE_LEVEL_HIGH)
++		type |= IRQ_TYPE_EDGE_RISING;
++
+ 	if (!(type & IRQ_TYPE_EDGE_BOTH)) {
+ 		dev_err(&chip->client->dev, "irq %d: unsupported type %d\n",
+ 			d->irq, type);
 -- 
 2.12.2
