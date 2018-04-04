@@ -1,117 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751618AbeDDIxz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:53:55 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57472 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751017AbeDDIxG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:53:06 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
-Subject: [PATCH v9 03/10] sched: idle: Do not stop the tick before cpuidle_idle_call()
-Date: Wed, 04 Apr 2018 10:36:20 +0200
-Message-ID: <49129842.FegiqWMPcW@aspire.rjw.lan>
-In-Reply-To: <1736751.LdhZHb50jq@aspire.rjw.lan>
-References: <1736751.LdhZHb50jq@aspire.rjw.lan>
+        id S1751807AbeDDIyR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:54:17 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43991 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751735AbeDDIyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 04:54:15 -0400
+Subject: Re: [PATCH] lib: logic_pio: Fix potential NULL pointer dereference
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20180403211505.GA29612@embeddedor.com>
+CC: <linux-kernel@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddeodr.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <c5cc072b-88cb-979c-3645-9b59319dd511@huawei.com>
+Date: Wed, 4 Apr 2018 09:54:04 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180403211505.GA29612@embeddedor.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 03/04/2018 22:15, Gustavo A. R. Silva wrote:
+> new_range is being dereferenced before it is null checked, hence
+> there is a potential null pointer dereference.
+>
+> Fix this by moving the pointer dereference after new_range has
+> been properly null checked.
+>
 
-Make cpuidle_idle_call() decide whether or not to stop the tick.
+Hi Gustavo,
 
-First, the cpuidle_enter_s2idle() path deals with the tick (and with
-the entire timekeeping for that matter) by itself and it doesn't need
-the tick to be stopped beforehand.
+In fact we expect new_range to never be NULL. But, if we're going to 
+check, then better make sure the check is correct...
 
-Second, to address the issue with short idle duration predictions
-by the idle governor after the tick has been stopped, it will be
-necessary to change the ordering of cpuidle_select() with respect
-to tick_nohz_idle_stop_tick().  To prepare for that, put a
-tick_nohz_idle_stop_tick() call in the same branch in which
-cpuidle_select() is called.
+Thanks,
+John
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
----
+> Addresses-Coverity-ID: 1466163 ("Dereference before null check")
+> Fixes: 0a7198426259 ("lib: Add generic PIO mapping method")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-v8 -> v9:
- * No changes in the patch.
- * Tag from Frederic.
+Reviewed-by: John Garry <john.garry@huawei.com>
 
----
- kernel/sched/idle.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-Index: linux-pm/kernel/sched/idle.c
-===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -146,13 +146,15 @@ static void cpuidle_idle_call(void)
- 	}
- 
- 	/*
--	 * Tell the RCU framework we are entering an idle section,
--	 * so no more rcu read side critical sections and one more
-+	 * The RCU framework needs to be told that we are entering an idle
-+	 * section, so no more rcu read side critical sections and one more
- 	 * step to the grace period
- 	 */
--	rcu_idle_enter();
- 
- 	if (cpuidle_not_available(drv, dev)) {
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		default_idle_call();
- 		goto exit_idle;
- 	}
-@@ -169,16 +171,26 @@ static void cpuidle_idle_call(void)
- 
- 	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
- 		if (idle_should_enter_s2idle()) {
-+			rcu_idle_enter();
-+
- 			entered_state = cpuidle_enter_s2idle(drv, dev);
- 			if (entered_state > 0) {
- 				local_irq_enable();
- 				goto exit_idle;
- 			}
-+
-+			rcu_idle_exit();
- 		}
- 
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		next_state = cpuidle_find_deepest_state(drv, dev);
- 		call_cpuidle(drv, dev, next_state);
- 	} else {
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		/*
- 		 * Ask the cpuidle framework to choose a convenient idle state.
- 		 */
-@@ -245,7 +257,6 @@ static void do_idle(void)
- 			tick_nohz_idle_restart_tick();
- 			cpu_idle_poll();
- 		} else {
--			tick_nohz_idle_stop_tick();
- 			cpuidle_idle_call();
- 		}
- 		arch_cpu_idle_exit();
+> ---
+>  lib/logic_pio.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/lib/logic_pio.c b/lib/logic_pio.c
+> index 29cedea..30dfdce 100644
+> --- a/lib/logic_pio.c
+> +++ b/lib/logic_pio.c
+> @@ -33,8 +33,8 @@ static DEFINE_MUTEX(io_range_mutex);
+>  int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
+>  {
+>  	struct logic_pio_hwaddr *range;
+> -	resource_size_t start = new_range->hw_start;
+> -	resource_size_t end = new_range->hw_start + new_range->size;
+> +	resource_size_t start;
+> +	resource_size_t end;
+>  	resource_size_t mmio_sz = 0;
+>  	resource_size_t iio_sz = MMIO_UPPER_LIMIT;
+>  	int ret = 0;
+> @@ -42,6 +42,9 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
+>  	if (!new_range || !new_range->fwnode || !new_range->size)
+>  		return -EINVAL;
+>
+> +	start = new_range->hw_start;
+> +	end = new_range->hw_start + new_range->size;
+> +
+>  	mutex_lock(&io_range_mutex);
+>  	list_for_each_entry_rcu(range, &io_range_list, list) {
+>  		if (range->fwnode == new_range->fwnode) {
+>
