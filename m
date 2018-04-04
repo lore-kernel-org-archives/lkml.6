@@ -1,55 +1,55 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+6h/7ZITbYVs8pxNlxAYBWKSiY03FCRrowKAR1f5ZAbzy15Ks+HXB+6KW8mrvun1onSy86
-ARC-Seal: i=1; a=rsa-sha256; t=1522855961; cv=none;
+X-Google-Smtp-Source: AIpwx4/CqKyh87vUDAQMZXE1cT2u7RKTsjLeSoe8OdKiE8uWXs0KdXX06A5U7CJqo4fCcy6OPyDp
+ARC-Seal: i=1; a=rsa-sha256; t=1522855959; cv=none;
         d=google.com; s=arc-20160816;
-        b=j0z0HbdW5DZ95G1MIWOdSmceh3P7cmJ1qgIxR9fQJRHcvW6KnmXsbdamGlEi5udXd6
-         wpuUMihsMrHn+gqtWTE7oe38cV92FzhTBCOouMJSAeYOiCteHpe/BU62BNcdvY6HOPTO
-         W7Uem+kXnvLzpR70fkNAWtgSWZ2hlPXCDxNug1dKniTWZwapQ2cBc4xBwtGZy9ISajE/
-         YNZHBtzmbM90rMGqYcIH2ACwWofHydRfyySHwIZ15iadFPLVdIWB7lx+WX3f0SFZ620P
-         xuuhaLdoTOKviAGzRRnTlbaEsNcwX9sl5dgvoahYV8ya8G64hB8Kqw7VkIbVN16a0yqU
-         CO+A==
+        b=guV2Bip8VZuHTZlLlxsP7hXcGjg5O7Zop9VkGI5YNodUig92IkGQmQ+GHeBzaUDbd/
+         isLcZszX+FCbsS+NQz9LXtsXtyFvdGluMzXZnnh3MFJ0gaC3R/uRntuqvuVmdfL5ugCk
+         hfovKolrEe0GwMQTGoU2gL7FJK8h6DDU2gnadF6VZ8KnJP94DudQsQc1CXspmcaz9Frr
+         40vS1GEYSHtjHlzjNasoKQxBUej3jaSzYoadNJhBjv7tTERIzdPujv9ZinmKwcVHhwQL
+         IOEJolbmwR6Sqs2WdTfV9VEVtHNHgN09MyfCPKzpQgxE3aEwHSseoFCYtVncto3q3vA+
+         EC8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
          :from:cc:to:subject:arc-authentication-results;
-        bh=CZ6efskGF8xgEmmPYNUr7Lwe0IAs0mlKlWMYH//gzU0=;
-        b=LXlFuyRmEsUPEfBHAAAFRNKnS/ZJs9Oca63Vl2+pPOU2bzx3ymVMjs44B6axklg1iX
-         cP3GM0LEtbbut7TkVWkeilvSfTGwiWptJTN3GkOuB4ZuLsUZ9GdPXbvJ3yyUXlB6/501
-         wEY7UzE3b+/BRo/x+bz9YSPtkhioInWRHnFMDinhphmIuixSsSDpL8UWe7cdnK1uQtp1
-         jhEXkUitU1HRGlyuF7INVDTK/5aXJGj/HOW5v7RMoWwQc1EK6Yb06oWq2eg1UmjgJsvW
-         qnHh0hgNpTDSO/8oSpW1UpRi2hAloaDfeZV5VWguheBvVMgh84kdqNhk6QRw2Me/g5ZB
-         WAqA==
+        bh=KxvowzqmOP39PSwgXuFU3oicsvtKtNeKkOagWmcOvYY=;
+        b=C6xK+oN+E5zJ8QM/oQU+kyRsrPUWRmlUecn7IKZP1XAA7RG1gNRWWAex3OoktWVV/X
+         6cw1arqhWsU+twkm20PdWepB1/+YBJTLy4j51jGVvxi+S4cNH1S10xf3miEVRnd9izzt
+         4jyBN6SRylZB9GO29VbIdGl3O33QPuWM/OGLagf99L7kMulQ41TOY52amlqS6C3JN8Rc
+         sxkQGfUdhc07KVcnfzcPd+2ZSfeXVt3GSlqgYX3AFEXZyX6mlZDCB0arN6OMnMiaxItW
+         eQMIkxxVOv2B1hizMcbYTcCzdMN3YEFZTBdEgMfBcGFCx096MM7LxO6jhKFO/1o8i5nE
+         050w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Subject: Patch "media: v4l2-compat-ioctl32: Copy v4l2_window->global_alpha" has been added to the 3.18-stable tree
-To: mchehab@s-opensource.com,alexander.levin@microsoft.com,danielmentz@google.com,gregkh@linuxfoundation.org,hans.verkuil@cisco.com,linux-kernel@vger.kernel.org,linux-media@vger.kernel.org,mchehab@infradead.org
+Subject: Patch "media: media/v4l2-ctrls: volatiles should not generate CH_VALUE" has been added to the 3.18-stable tree
+To: mchehab@s-opensource.com,gregkh@linuxfoundation.org,hans.verkuil@cisco.com,linux-kernel@vger.kernel.org,linux-media@vger.kernel.org,mchehab@infradead.org,mchehab@osg.samsung.com,ricardo.ribalda@gmail.com
 Cc: <stable@vger.kernel.org>, <stable-commits@vger.kernel.org>
 From: <gregkh@linuxfoundation.org>
-Date: Wed, 04 Apr 2018 17:32:39 +0200
-In-Reply-To: <63c220c11ade842157669d03bdaf10b84a6d91a9.1522260310.git.mchehab@s-opensource.com>
-Message-ID: <15228559596979@kroah.com>
+Date: Wed, 04 Apr 2018 17:32:38 +0200
+In-Reply-To: <1663cf48e2eb96405c5d6d874020aa9925ee217f.1522260310.git.mchehab@s-opensource.com>
+Message-ID: <15228559581742@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ANSI_X3.4-1968
 Content-Transfer-Encoding: 8bit
 X-stable: commit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596830213216986176?=
-X-GMAIL-MSGID: =?utf-8?q?1596830213216986176?=
+X-GMAIL-THRID: =?utf-8?q?1596830210453367963?=
+X-GMAIL-MSGID: =?utf-8?q?1596830210453367963?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
 This is a note to let you know that I've just added the patch titled
 
-    media: v4l2-compat-ioctl32: Copy v4l2_window->global_alpha
+    media: media/v4l2-ctrls: volatiles should not generate CH_VALUE
 
 to the 3.18-stable tree which can be found at:
     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 
 The filename of the patch is:
-     media-v4l2-compat-ioctl32-copy-v4l2_window-global_alpha.patch
+     media-media-v4l2-ctrls-volatiles-should-not-generate-ch_value.patch
 and it can be found in the queue-3.18 subdirectory.
 
 If you, or anyone else, feels it should not be added to the stable tree,
@@ -58,61 +58,45 @@ please let <stable@vger.kernel.org> know about it.
 
 >From foo@baz Wed Apr  4 17:30:18 CEST 2018
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Date: Wed, 28 Mar 2018 15:12:29 -0300
-Subject: media: v4l2-compat-ioctl32: Copy v4l2_window->global_alpha
+Date: Wed, 28 Mar 2018 15:12:35 -0300
+Subject: media: media/v4l2-ctrls: volatiles should not generate CH_VALUE
 To: Linux Media Mailing List <linux-media@vger.kernel.org>, stable@vger.kernel.org
-Cc: Daniel Mentz <danielmentz@google.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Sasha Levin <alexander.levin@microsoft.com>
-Message-ID: <63c220c11ade842157669d03bdaf10b84a6d91a9.1522260310.git.mchehab@s-opensource.com>
+Cc: Ricardo Ribalda <ricardo.ribalda@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Message-ID: <1663cf48e2eb96405c5d6d874020aa9925ee217f.1522260310.git.mchehab@s-opensource.com>
 
-From: Daniel Mentz <danielmentz@google.com>
+From: Ricardo Ribalda <ricardo.ribalda@gmail.com>
 
-commit 025a26fa14f8fd55d50ab284a30c016a5be953d0 upstream.
+Volatile controls should not generate CH_VALUE events.
 
-Commit b2787845fb91 ("V4L/DVB (5289): Add support for video output
-overlays.") added the field global_alpha to struct v4l2_window but did
-not update the compat layer accordingly. This change adds global_alpha
-to struct v4l2_window32 and copies the value for global_alpha back and
-forth.
+Set has_changed to false to prevent this happening.
 
-Signed-off-by: Daniel Mentz <danielmentz@google.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/media/v4l2-core/v4l2-ctrls.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -45,6 +45,7 @@ struct v4l2_window32 {
- 	compat_caddr_t		clips; /* actually struct v4l2_clip32 * */
- 	__u32			clipcount;
- 	compat_caddr_t		bitmap;
-+	__u8                    global_alpha;
- };
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -1619,6 +1619,15 @@ static int cluster_changed(struct v4l2_c
  
- static int get_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
-@@ -53,7 +54,8 @@ static int get_v4l2_window32(struct v4l2
- 	    copy_from_user(&kp->w, &up->w, sizeof(up->w)) ||
- 	    get_user(kp->field, &up->field) ||
- 	    get_user(kp->chromakey, &up->chromakey) ||
--	    get_user(kp->clipcount, &up->clipcount))
-+	    get_user(kp->clipcount, &up->clipcount) ||
-+	    get_user(kp->global_alpha, &up->global_alpha))
- 		return -EFAULT;
- 	if (kp->clipcount > 2048)
- 		return -EINVAL;
-@@ -86,7 +88,8 @@ static int put_v4l2_window32(struct v4l2
- 	if (copy_to_user(&up->w, &kp->w, sizeof(kp->w)) ||
- 	    put_user(kp->field, &up->field) ||
- 	    put_user(kp->chromakey, &up->chromakey) ||
--	    put_user(kp->clipcount, &up->clipcount))
-+	    put_user(kp->clipcount, &up->clipcount) ||
-+	    put_user(kp->global_alpha, &up->global_alpha))
- 		return -EFAULT;
- 	return 0;
- }
+ 		if (ctrl == NULL)
+ 			continue;
++		/*
++		 * Set has_changed to false to avoid generating
++		 * the event V4L2_EVENT_CTRL_CH_VALUE
++		 */
++		if (ctrl->flags & V4L2_CTRL_FLAG_VOLATILE) {
++			ctrl->has_changed = false;
++			continue;
++		}
++
+ 		for (idx = 0; !ctrl_changed && idx < ctrl->elems; idx++)
+ 			ctrl_changed = !ctrl->type_ops->equal(ctrl, idx,
+ 				ctrl->p_cur, ctrl->p_new);
 
 
 Patches currently in stable-queue which might be from mchehab@s-opensource.com are
