@@ -1,61 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752581AbeDDQ5r (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 12:57:47 -0400
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:35500 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752258AbeDDQ5o (ORCPT
+        id S1752604AbeDDQ6g (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 12:58:36 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:37232 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752069AbeDDQ6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 12:57:44 -0400
-X-Google-Smtp-Source: AIpwx49x+EyHNx6f6hEA1f2qaYL8h4NB4T8y6d+qbJ4qbXMLg8mMh55tPJ3T1XK5c/6nRft6Bk+h8fXA1dE/eGCvzvM=
+        Wed, 4 Apr 2018 12:58:34 -0400
+X-Google-Smtp-Source: AIpwx4+YKnJfGE2H4dN6LI9V3XCGvpyGBMWiPoS+Coa1rFQMrbCF9ZIjb9F+0Zzi8GO6fK1JTFzPZg==
+Date: Wed, 4 Apr 2018 09:58:29 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, vdavydov.dev@gmail.com,
+        guro@fb.com, riel@surriel.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/3] mm: memcontrol: Use cgroup_rstat for event accounting
+Message-ID: <20180404165829.GA3126663@devbig577.frc2.facebook.com>
+References: <20180324160901.512135-1-tj@kernel.org>
+ <20180324160901.512135-2-tj@kernel.org>
+ <20180404140855.GA28966@cmpxchg.org>
+ <20180404141850.GC28966@cmpxchg.org>
+ <20180404143447.GJ6312@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180402163242.GC14165@lunn.ch>
-References: <1522250043-8065-5-git-send-email-tharvey@gateworks.com>
- <20180330010757.GA12896@roeck-us.net> <CAJ+vNU3ARKLK5AcssEP-_P8AmwnAnS8VtAEO1ppwum2jpCqAYQ@mail.gmail.com>
- <20180330181954.GA17580@roeck-us.net> <CAJ+vNU1f+SH16hs3heMA_A2KcbzbXXmJtPxi0uiL4+4tNWgYoQ@mail.gmail.com>
- <20180402163242.GC14165@lunn.ch>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Wed, 4 Apr 2018 09:57:42 -0700
-Message-ID: <CAJ+vNU2RxHngXa00=zx84ifJ6wWh=vN84shRsT5sWYG1G74zeA@mail.gmail.com>
-Subject: Re: [v3,4/4] watchdog: add Gateworks System Controller support
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Wim Van Sebroeck <wim@iguana.be>, Mark Brown <broonie@kernel.org>,
-        linux-input@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180404143447.GJ6312@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 2, 2018 at 9:32 AM, Andrew Lunn <andrew@lunn.ch> wrote:
->> The 'use case' we have been using this in for a couple years is that
->> users who want to use this watchdog will enable it externally (we have
->> a command in the bootloader) and if enabled the kernel driver (that
->> I'm proposing here which we've been using out-of-tree) will register
->> the watchdog device and the userspace watchdog process can open the
->> device and start tickling it. If the watchdog is never enabled (or
->> disabled via the bootloader command) the kernel driver fails to probe
->> and the SoC's watchdog can be used.
->
-> Hi Tim
->
-> Is there any reason not to give the user the choice to use both
-> watchdogs? Normally you write drivers to expose the hardware, and then
-> let the users choice if they want to use it.
->
+Hello,
 
-Andrew,
+On Wed, Apr 04, 2018 at 04:34:47PM +0200, Michal Hocko wrote:
+> > > The lazy updates are neat, but I'm a little concerned at the memory
+> > > footprint. On a 64-cpu machine for example, this adds close to 9000
+> > > words to struct mem_cgroup. And we really only need the accuracy for
+> > > the 4 cgroup items in memory.events, not all VM events and stats.
+> > > 
+> > > Why not restrict the patch to those? It would also get rid of the
+> > > weird sharing between VM and cgroup enums.
+> > 
+> > In fact, I wonder if we need per-cpuness for MEMCG_LOW, MEMCG_HIGH
+> > etc. in the first place. They describe super high-level reclaim and
+> > OOM events, so they're not nearly as hot as other VM events and
+> > stats. We could probably just have a per-memcg array of atomics.
+> 
+> Agreed!
 
-I don't know what value the SoC watchdog has if you have the GSC
-watchdog available that can power cycle the board but I would agree
-normally you would expose all of them. I suppose this may be a
-different case because I'm expecting the user to go and manually
-enable the watchdog instead of using the kernel to do it which means
-if its not enabled its not really available to be used.
+Ah, yeah, if we aren't worried about the update frequency of
+MEMCG_HIGH, which likely is the highest freq, we can just switch to
+atomic_t.  I'm gonna apply the cgroup stat refactoring patches to
+cgroup, so if we ever wanna switch the counter to rstat, we can easily
+do that later.
 
-Tim
+Thasnks.
+
+-- 
+tejun
