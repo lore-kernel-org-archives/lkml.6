@@ -1,141 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751451AbeDDNEK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:04:10 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40509 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750995AbeDDNEG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:04:06 -0400
-X-Google-Smtp-Source: AIpwx4/CCx2Ivq9QSpf7ODb5HW61fahwwB+gNnn2GQLEcE0gSz5SYh3fNVKiH22bHGlMgULD2aeWnQ==
-Date: Wed, 4 Apr 2018 15:03:57 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH 0/3] Documentation/features: Provide and apply
- "features-refresh.sh"
-Message-ID: <20180404130357.GA9125@andrea>
-References: <1522774551-9503-1-git-send-email-andrea.parri@amarulasolutions.com>
- <20180404045632.uniwfrl32bjmsn5g@gmail.com>
+        id S1751251AbeDDNH0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:07:26 -0400
+Received: from mga17.intel.com ([192.55.52.151]:19194 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750890AbeDDNHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:07:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,406,1517904000";
+   d="scan'208";a="30953696"
+Subject: [PATCH v5 3/3] perf script: extend misc field decoding with switch
+ out event type
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <4554372e-0b4f-d2dd-8be6-1fc925b51074@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <0a9638a8-d552-c278-4838-8c7edc92a574@linux.intel.com>
+Date: Wed, 4 Apr 2018 16:07:19 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404045632.uniwfrl32bjmsn5g@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <4554372e-0b4f-d2dd-8be6-1fc925b51074@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 06:56:32AM +0200, Ingo Molnar wrote:
-> 
-> * Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
-> 
-> > In Ingo's words [1]:
-> > 
-> >   "[...]  what should be done instead is to write a script that refreshes
-> >    all the arch-support.txt files in-place. [...]
-> > 
-> >    It's OK for the script to have various quirks for weirdly implemented
-> >    features and exceptions: i.e. basically whenever it gets a feature wrong,
-> >    we can just tweak the script with quirks to make it all work out of box.
-> > 
-> >    [...]  But in the end there should only be a single new script:
-> > 
-> >      Documentation/features/scripts/features-refresh.sh
-> > 
-> >    ... which operates on the arch-support.txt files and refreshes them in
-> >    place, and which, after all the refreshes have been committed, should
-> >    produce an empty 'git diff' result."
-> > 
-> >   "[...]  New features can then be added by basically just creating a
-> >    header-only arch-support.txt file, such as:
-> > 
-> >      triton:~/tip/Documentation/features> cat foo/bar/arch-support.txt
-> >      #
-> >      # Feature name:          shiny new fubar kernel feature
-> >      #         Kconfig:       ARCH_USE_FUBAR
-> >      #         description:   arch supports the fubar feature
-> >      #
-> > 
-> >    And running Documentation/features/scripts/features-refresh.sh would
-> >    auto-generate the arch support matrix. [...]
-> >  
-> >    This way we soft- decouple the refreshing of the entries from the
-> >    introduction of the features, while still making it all easy to keep
-> >    sync and to extend."
-> > 
-> > This RFC presents a first attempt to implement such a feature/script, and
-> > applies it script on top of Arnd's:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git arch-removal
-> > 
-> > Patch 1/3 provides the "features-refresh.sh" script.  Patch 2/3 removes the
-> > "BPF-JIT" feature file and it creates header-only files for "cBPF-JIT" and
-> > "eBPF-JIT".  Patch 3/3 presents the results of running the script; this run
-> > also printed to standard output the following warnings:
-> > 
-> >   WARNING: '__HAVE_ARCH_STRNCASECMP' is not a valid Kconfig
-> >   WARNING: 'Optimized asm/rwsem.h' is not a valid Kconfig
-> >   WARNING: '!ARCH_USES_GETTIMEOFFSET' is not a valid Kconfig
-> >   WARNING: '__HAVE_ARCH_PTE_SPECIAL' is not a valid Kconfig
-> > 
-> > (I'm sending these patches with empty commit messagges, for early feedback:
-> >  I'll fill in these messages in subsequent versions if this makes sense...)
-> > 
-> > Cheers,
-> >   Andrea
-> > 
-> > Andrea Parri (3):
-> >   Documentation/features: Add script that refreshes the arch support status files in place
-> >   Documentation/features/core: Add arch support status files for 'cBPF-JIT' and 'eBPF-JIT'
-> >   Documentation/features: Refresh and auto-generate the arch support status files in place
-> 
-> Ok, this series is really impressive at its RFC stage already!
-> 
-> Beyond fixing those warnings, I'd also suggest another change: please make the 
-> new BPF features patch the last one, so that the 'refresh' patch shows how much 
-> original bit-rot we gathered recently.
-> 
-> The 'new features' patch should then also include the result of also running the 
-> script, i.e. a single patch adding the base fields and the generated parts as 
-> well. That will be the usual development flow anyway - people won't do two-part 
-> patches just to show which bits are by hand and which are auto-generated.
 
-Yes, I'll do.
+Append 'p' sign to 'S' tag designating the type of context switch out event so 
+'Sp' means preemption context switch. Documentation is extended to cover 
+new presentation changes.
 
-Let me ask some hints about the warnings, as I'm not sure how to 'fix' them;
-we have:
+perf script --show-switch-events -F +misc -I -i perf.data:
 
-  a) __HAVE_ARCH_STRNCASECMP
-     __HAVE_ARCH_PTE_SPECIAL
+          hdparm  4073 [004] U       762.198265:     380194 cycles:ppp:      7faf727f5a23 strchr (/usr/lib64/ld-2.26.so)
+          hdparm  4073 [004] K       762.198366:     441572 cycles:ppp:  ffffffffb9218435 alloc_set_pte (/lib/modules/4.16.0-rc6+/build/vmlinux)
+          hdparm  4073 [004] S       762.198391: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
+         swapper     0 [004]         762.198392: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
+         swapper     0 [004] Sp      762.198477: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  4073/4073 
+          hdparm  4073 [004]         762.198478: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
+         swapper     0 [007] K       762.198514:    2303073 cycles:ppp:  ffffffffb98b0c66 intel_idle (/lib/modules/4.16.0-rc6+/build/vmlinux)
+         swapper     0 [007] Sp      762.198561: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  1134/1134 
+  kworker/u16:18  1134 [007]         762.198562: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
+  kworker/u16:18  1134 [007] S       762.198567: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
 
-  b) Optimized asm/rwsem.h
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
+ tools/perf/builtin-script.c              |  5 ++++-
+ 2 files changed, 13 insertions(+), 9 deletions(-)
 
-  c) !ARCH_USES_GETTIMEOFFSET  
-
-For (c), I see two options:
-
-  1. replace that with 'ARCH_USES_GETTIMEOFFSET' (and update the status
-     matrix accordingly)
-
-  2. add logics/code to the script to handle simple boolean expressions
-     (mmh, this could get nasty really soon... let's say: limiting to a
-     leading '!', to start with ;)
-
-For (a), I realize that 'grep-ing' the macros in arch-specific _sources_
-does serve the purpose of producing the hard-coded status matrices; but
-is this a reasonable approach? (e.g., can produce 'false-positives'?)
-
-What could it be a suitable solution for (b)? are there Kconfig options
-which I could in place of that expression? some other suggestion?
-
-Thanks,
-  Andrea
-
-
-> 
-> Thanks,
-> 
-> 	Ingo
+diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
+index 36ec0257f8d3..afdafe2110a1 100644
+--- a/tools/perf/Documentation/perf-script.txt
++++ b/tools/perf/Documentation/perf-script.txt
+@@ -228,14 +228,15 @@ OPTIONS
+ 	For sample events it's possible to display misc field with -F +misc option,
+ 	following letters are displayed for each bit:
+ 
+-	  PERF_RECORD_MISC_KERNEL        K
+-	  PERF_RECORD_MISC_USER          U
+-	  PERF_RECORD_MISC_HYPERVISOR    H
+-	  PERF_RECORD_MISC_GUEST_KERNEL  G
+-	  PERF_RECORD_MISC_GUEST_USER    g
+-	  PERF_RECORD_MISC_MMAP_DATA*    M
+-	  PERF_RECORD_MISC_COMM_EXEC     E
+-	  PERF_RECORD_MISC_SWITCH_OUT    S
++	  PERF_RECORD_MISC_KERNEL               K
++	  PERF_RECORD_MISC_USER                 U
++	  PERF_RECORD_MISC_HYPERVISOR           H
++	  PERF_RECORD_MISC_GUEST_KERNEL         G
++	  PERF_RECORD_MISC_GUEST_USER           g
++	  PERF_RECORD_MISC_MMAP_DATA*           M
++	  PERF_RECORD_MISC_COMM_EXEC            E
++	  PERF_RECORD_MISC_SWITCH_OUT           S
++	  PERF_RECORD_MISC_SWITCH_OUT_PREEMPT   Sp
+ 
+ 	  $ perf script -F +misc ...
+ 	   sched-messaging  1414 K     28690.636582:       4590 cycles ...
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 313c42423393..0f916e8e1835 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -657,8 +657,11 @@ static int perf_sample__fprintf_start(struct perf_sample *sample,
+ 			break;
+ 		case PERF_RECORD_SWITCH:
+ 		case PERF_RECORD_SWITCH_CPU_WIDE:
+-			if (has(SWITCH_OUT))
++			if (has(SWITCH_OUT)) {
+ 				ret += fprintf(fp, "S");
++				if (sample->misc & PERF_RECORD_MISC_SWITCH_OUT_PREEMPT)
++					ret += fprintf(fp, "p");
++			}
+ 		default:
+ 			break;
+ 		}
