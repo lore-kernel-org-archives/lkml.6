@@ -1,149 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751813AbeDDFZz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 01:25:55 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35388 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750853AbeDDFZx (ORCPT
+        id S1752045AbeDDF3I (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 01:29:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40631 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750853AbeDDF3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 01:25:53 -0400
-X-Google-Smtp-Source: AIpwx4+MRq9AlzpzT6c1XYYwYTbFcj3v2O82X7DjtNVavy1AH4y1AIouatbankZXb//rPLaL/dUzVw==
-Date: Wed, 4 Apr 2018 07:25:48 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Changbin Du <changbin.du@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jin Yao <yao.jin@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Kan Liang <kan.liang@intel.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
-        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL 00/17] perf/core improvements and fixes
-Message-ID: <20180404052548.iyntuvweumellzi3@gmail.com>
-References: <20180404022158.12190-1-acme@kernel.org>
+        Wed, 4 Apr 2018 01:29:07 -0400
+Date: Tue, 3 Apr 2018 22:28:54 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-m2yl8wj0uxs8pncq2ncfcx46@git.kernel.org>
+Cc: wangnan0@huawei.com, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, hpa@zytor.com, tglx@linutronix.de,
+        acme@redhat.com, kirill.shutemov@linux.intel.com, dsahern@gmail.com,
+        jolsa@kernel.org, namhyung@kernel.org, mingo@kernel.org
+Reply-To: wangnan0@huawei.com, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com, acme@redhat.com, tglx@linutronix.de,
+        jolsa@kernel.org, namhyung@kernel.org, dsahern@gmail.com,
+        mingo@kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] tools headers: Synchronize x86's cpufeatures.h
+Git-Commit-ID: 5e2a146bbdae6095b13bca9ebe26a867030ae010
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180404022158.12190-1-acme@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  5e2a146bbdae6095b13bca9ebe26a867030ae010
+Gitweb:     https://git.kernel.org/tip/5e2a146bbdae6095b13bca9ebe26a867030ae010
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 29 Mar 2018 11:46:53 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 2 Apr 2018 07:57:37 -0300
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+tools headers: Synchronize x86's cpufeatures.h
 
-> Hi Ingo,
-> 
-> 	Please consider pulling,
-> 
-> - Arnaldo
-> 
-> Test results at the end of this message, as usual.
-> 
-> The following changes since commit 1159e09476536250c2a0173d4298d15114df7a89:
-> 
->   perf/x86/intel: Enable C-state residency events for Cannon Lake (2018-03-31 11:28:36 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo-4.17-20180403
-> 
-> for you to fetch changes up to 51125a29a395048fdb3429b8c4ca0ada57097744:
-> 
->   perf trace: Remove redundant ')' (2018-04-03 16:16:41 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/core improvements and fixes:
-> 
-> - Show only failing syscalls with 'perf trace --failure' (Arnaldo Carvalho de Melo)
-> 
-> 	e.g: See what 'openat' syscalls are failing:
-> 
->   # perf trace --failure -e openat
->    762.323 ( 0.007 ms): VideoCapture/4566 openat(dfd: CWD, filename: /dev/video2) = -1 ENOENT No such file or directory
->    <SNIP N /dev/videoN open attempts... sigh, where is that improvised camera lid?!? 8-) >
->    790.228 ( 0.008 ms): VideoCapture/4566 openat(dfd: CWD, filename: /dev/video63) = -1 ENOENT No such file or directory
->   ^C#
-> 
-> - Show information about the event (freq, nr_samples, total period/nr_events) in
->   the annotate --tui and --stdio2 'perf annotate' output, similar to the
->   first line in the 'perf report --tui', but just for the samples for
->   the annotated symbol (Arnaldo Carvalho de Melo)
-> 
-> - Introduce 'perf version --build-options' to show what features were
->   linked, aliased as well as a shorter 'perf -vv' (Jin Yao)
-> 
-> - Add a "dso_size" sort order (Kim Phillips)
-> 
-> - Remove redundant ')' in the tracepoint output in 'perf trace' (Changbin Du)
-> 
-> - Synchronize x86's cpufeatures.h, no effect on tools (Arnaldo Carvalho de Melo)
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Arnaldo Carvalho de Melo (9):
->       tools headers: Synchronize x86's cpufeatures.h
->       perf trace: Show only failing syscalls
->       perf hists browser: Rename perf_evsel_browser_title to a more descriptive name
->       perf hists: Introduce hists__scnprint_title()
->       perf hists: Move hists__scnprintf_title() away from the TUI code
->       perf ui browser: Move the extra title lines from the hists browser
->       perf annotate: Introduce annotation__scnprintf_samples_period() method
->       perf annotate browser: Show extra title line with event information
->       perf annotate stdio2: Print more descriptive event information header
-> 
-> Changbin Du (1):
->       perf trace: Remove redundant ')'
-> 
-> Jin Yao (5):
->       perf config: Add some new -DHAVE_XXX to CFLAGS
->       perf config: Rename to HAVE_DWARF_GETLOCATIONS_SUPPORT
->       perf version: Print the compiled-in status of libraries
->       perf tools: Add 'perf -vv' as an alias to 'perf version --build-options'
->       perf version: Add man page
-> 
-> Jiri Olsa (1):
->       tools include: Add config.h header file
-> 
-> Kim Phillips (1):
->       perf tools: Add a "dso_size" sort order
-> 
->  tools/arch/x86/include/asm/cpufeatures.h  |   2 +
->  tools/include/tools/config.h              |  34 ++++++++
->  tools/perf/Documentation/perf-report.txt  |   1 +
->  tools/perf/Documentation/perf-trace.txt   |   3 +
->  tools/perf/Documentation/perf-version.txt |  24 ++++++
->  tools/perf/Makefile.config                |   8 +-
->  tools/perf/builtin-trace.c                |  11 ++-
->  tools/perf/builtin-version.c              |  82 +++++++++++++++++++-
->  tools/perf/perf.c                         |   6 ++
->  tools/perf/perf.h                         |   1 +
->  tools/perf/ui/browser.c                   |   8 +-
->  tools/perf/ui/browser.h                   |   2 +
->  tools/perf/ui/browsers/annotate.c         |  31 +++++++-
->  tools/perf/ui/browsers/hists.c            | 125 +++++++-----------------------
->  tools/perf/util/annotate.c                |  48 ++++++++++--
->  tools/perf/util/annotate.h                |  12 +++
->  tools/perf/util/dwarf-aux.c               |   2 +-
->  tools/perf/util/hist.c                    |  81 +++++++++++++++++++
->  tools/perf/util/hist.h                    |   7 ++
->  tools/perf/util/map.h                     |   4 +
->  tools/perf/util/sort.c                    |  41 ++++++++++
->  tools/perf/util/sort.h                    |   1 +
->  22 files changed, 418 insertions(+), 116 deletions(-)
->  create mode 100644 tools/include/tools/config.h
->  create mode 100644 tools/perf/Documentation/perf-version.txt
+Due to these commits:
 
-Pulled, thanks a lot Arnaldo!
+  1da961d72ab0 ("x86/cpufeatures: Add Intel Total Memory Encryption cpufeature")
+  7958b2246fad ("x86/cpufeatures: Add Intel PCONFIG cpufeature")
 
-	Ingo
+To silence this perf build warning:
+
+  Warning: Kernel ABI header at 'tools/arch/x86/include/asm/cpufeatures.h' differs from latest version at 'arch/x86/include/asm/cpufeatures.h'
+
+Nothing in those csets requires changes in tools/perf/, so just
+sync it to silence the build.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-m2yl8wj0uxs8pncq2ncfcx46@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/x86/include/asm/cpufeatures.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
+index f41079da38c5..d554c11e01ff 100644
+--- a/tools/arch/x86/include/asm/cpufeatures.h
++++ b/tools/arch/x86/include/asm/cpufeatures.h
+@@ -316,6 +316,7 @@
+ #define X86_FEATURE_VPCLMULQDQ		(16*32+10) /* Carry-Less Multiplication Double Quadword */
+ #define X86_FEATURE_AVX512_VNNI		(16*32+11) /* Vector Neural Network Instructions */
+ #define X86_FEATURE_AVX512_BITALG	(16*32+12) /* Support for VPOPCNT[B,W] and VPSHUF-BITQMB instructions */
++#define X86_FEATURE_TME			(16*32+13) /* Intel Total Memory Encryption */
+ #define X86_FEATURE_AVX512_VPOPCNTDQ	(16*32+14) /* POPCNT for vectors of DW/QW */
+ #define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
+ #define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
+@@ -328,6 +329,7 @@
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
+ #define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
+ #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
++#define X86_FEATURE_PCONFIG		(18*32+18) /* Intel PCONFIG */
+ #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
+ #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
