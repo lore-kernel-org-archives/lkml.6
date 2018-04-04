@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752834AbeDEAGI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 20:06:08 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:58457 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752794AbeDEAGF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752803AbeDEAGF (ORCPT <rfc822;w@1wt.eu>);
         Wed, 4 Apr 2018 20:06:05 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:14300 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752311AbeDEAGC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 20:06:02 -0400
 From: Deepak Rawat <drawat@vmware.com>
 To: <dri-devel@lists.freedesktop.org>, <thellstrom@vmware.com>,
         <syeh@vmware.com>
@@ -16,9 +16,9 @@ CC: <linux-graphics-maintainer@vmware.com>, <daniel@ffwll.ch>,
         <maarten.lankhorst@linux.intel.com>, <seanpaul@chromium.org>,
         <airlied@linux.ie>, <linux-kernel@vger.kernel.org>,
         Deepak Rawat <drawat@vmware.com>
-Subject: [RFC 3/3] drm: Add helper to validate damage during modeset_check
-Date: Wed, 4 Apr 2018 16:49:08 -0700
-Message-ID: <1522885748-67122-4-git-send-email-drawat@vmware.com>
+Subject: [RFC 2/3] drm: Add helper iterator functions to iterate over plane damage.
+Date: Wed, 4 Apr 2018 16:49:07 -0700
+Message-ID: <1522885748-67122-3-git-send-email-drawat@vmware.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522885748-67122-1-git-send-email-drawat@vmware.com>
 References: <1522885748-67122-1-git-send-email-drawat@vmware.com>
@@ -28,86 +28,201 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a helper which should be called by driver which enable
-damage (by calling drm_plane_enable_damage_clips) from atomic_check
-hook. This helper for now set the damage to NULL for the planes on crtc
-which need full modeset.
-
-The driver also need to check for other crtc properties which can
-affect damage in atomic_check hook, like gamma, ctm, etc. Plane related
-properties which affect damage can be handled in damage iterator.
+With damage property in drm_plane_state, this patch adds helper iterator
+to traverse the damage clips. Iterator will return the damage rectangles
+in framebuffer, plane or crtc coordinates as need by driver
+implementation.
 
 Signed-off-by: Deepak Rawat <drawat@vmware.com>
 ---
- drivers/gpu/drm/drm_atomic_helper.c | 47 +++++++++++++++++++++++++++++++++++++
- include/drm/drm_atomic_helper.h     |  2 ++
- 2 files changed, 49 insertions(+)
+ drivers/gpu/drm/drm_atomic_helper.c | 122 ++++++++++++++++++++++++++++++++++++
+ include/drm/drm_atomic_helper.h     |  39 ++++++++++++
+ 2 files changed, 161 insertions(+)
 
 diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 355b514..23f44ab 100644
+index 55b44e3..355b514 100644
 --- a/drivers/gpu/drm/drm_atomic_helper.c
 +++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -3987,3 +3987,50 @@ drm_atomic_helper_damage_iter_next(struct drm_atomic_helper_damage_iter *iter,
- 	return true;
+@@ -3865,3 +3865,125 @@ void __drm_atomic_helper_private_obj_duplicate_state(struct drm_private_obj *obj
+ 	memcpy(state, obj->state, sizeof(*state));
  }
- EXPORT_SYMBOL(drm_atomic_helper_damage_iter_next);
+ EXPORT_SYMBOL(__drm_atomic_helper_private_obj_duplicate_state);
 +
 +/**
-+ * drm_atomic_helper_check_damage - validate state object for damage changes
-+ * @dev: DRM device
-+ * @state: the driver state object
++ * drm_atomic_helper_damage_iter_init - initialize the damage iterator
++ * @iter: The iterator to initialize.
++ * @type: Coordinate type caller is interested in.
++ * @state: plane_state from which to iterate the damage clips.
++ * @hdisplay: Width of crtc on which plane is scanned out.
++ * @vdisplay: Height of crtc on which plane is scanned out.
 + *
-+ * Check the state object if damage is required or not. In case damage is not
-+ * required e.g. need modeset, the damage blob is set to NULL.
++ * Initialize an iterator that is used to translate and clip a set of damage
++ * rectangles in framebuffer coordinates to plane and crtc coordinates. The type
++ * argument specify which type of coordinate to iterate in.
 + *
-+ * NOTE: This helper is not called by core. Those driver which enable damage
-+ * using drm_plane_enable_damage_clips should call this from their @atomic_check
-+ * hook.
++ * Returns: 0 on success and negative error code on error. If an error code is
++ * returned then it means the plane state should not update.
 + */
-+int drm_atomic_helper_check_damage(struct drm_device *dev,
-+				   struct drm_atomic_state *state)
++int
++drm_atomic_helper_damage_iter_init(struct drm_atomic_helper_damage_iter *iter,
++				   enum drm_atomic_helper_damage_clip_type type,
++				   const struct drm_plane_state *state,
++				   uint32_t hdisplay, uint32_t vdisplay)
 +{
-+	struct drm_crtc *crtc;
-+	struct drm_plane *plane;
-+	struct drm_crtc_state *crtc_state;
-+	unsigned plane_mask;
-+	int i;
++	if (!state || !state->crtc || !state->fb)
++		return -EINVAL;
 +
-+	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
-+		if (!drm_atomic_crtc_needs_modeset(crtc_state))
-+			continue;
++	memset(iter, 0, sizeof(*iter));
++	iter->clips = (struct drm_rect *)state->damage_clips->data;
++	iter->num_clips = state->num_clips;
++	iter->type = type;
 +
-+		plane_mask = crtc_state->plane_mask;
-+		plane_mask |= crtc->state->plane_mask;
-+
-+		drm_for_each_plane_mask(plane, dev, plane_mask) {
-+			struct drm_plane_state *plane_state =
-+				drm_atomic_get_plane_state(state, plane);
-+
-+			if (IS_ERR(plane_state))
-+				return PTR_ERR(plane_state);
-+
-+			if (plane_state->damage_clips) {
-+				drm_property_blob_put(plane_state->damage_clips);
-+				plane_state->damage_clips = NULL;
-+				plane_state->num_clips = 0;
-+			}
-+		}
++	/*
++	 * Full update in case of scaling or rotation. In future support for
++	 * scaling/rotating damage clips can be added
++	 */
++	if (state->crtc_w != (state->src_w >> 16) ||
++	    state->crtc_h != state->src_h >> 16 || state->rotation != 0) {
++		iter->curr_clip = iter->num_clips;
++		return 0;
 +	}
++
++	iter->fb_src.x1 = 0;
++	iter->fb_src.y1 = 0;
++	iter->fb_src.x2 = state->fb->width;
++	iter->fb_src.y2 = state->fb->height;
++
++	iter->plane_src.x1 = state->src_x >> 16;
++	iter->plane_src.y1 = state->src_y >> 16;
++	iter->plane_src.x2 = iter->plane_src.x1 + (state->src_w >> 16);
++	iter->plane_src.y2 = iter->plane_src.y1 + (state->src_h >> 16);
++	iter->translate_plane_x = -iter->plane_src.x1;
++	iter->translate_plane_y = -iter->plane_src.y1;
++
++	/* Clip plane src rect to fb dimensions */
++	drm_rect_intersect(&iter->plane_src, &iter->fb_src);
++
++	iter->crtc_src.x1 = 0;
++	iter->crtc_src.y1 = 0;
++	iter->crtc_src.x2 = hdisplay;
++	iter->crtc_src.y2 = vdisplay;
++	iter->translate_crtc_x = -(iter->plane_src.x1 - state->crtc_x);
++	iter->translate_crtc_x = -(iter->plane_src.y1 - state->crtc_y);
++
++	/* Clip crtc src rect to plane dimensions */
++	drm_rect_translate(&iter->crtc_src, -iter->translate_crtc_x,
++			   -iter->translate_crtc_x);
++	drm_rect_intersect(&iter->crtc_src, &iter->plane_src);
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL(drm_atomic_helper_check_damage);
++EXPORT_SYMBOL(drm_atomic_helper_damage_iter_init);
++
++/**
++ * drm_atomic_helper_damage_iter_next - advance the damage iterator
++ * @iter: The iterator to advance.
++ * @rect: Return a rectangle in coordinate specified during iterator init.
++ *
++ * Returns:  true if the output is valid, false if we've reached the end of the
++ * rectangle list. If the first call return false, means need full update.
++ */
++bool
++drm_atomic_helper_damage_iter_next(struct drm_atomic_helper_damage_iter *iter,
++				   struct drm_rect *rect)
++{
++	const struct drm_rect *curr_clip;
++
++next_clip:
++	if (iter->curr_clip >= iter->num_clips)
++		return false;
++
++	curr_clip = &iter->clips[iter->curr_clip];
++	iter->curr_clip++;
++
++	rect->x1 = curr_clip->x1;
++	rect->x2 = curr_clip->x2;
++	rect->y1 = curr_clip->y1;
++	rect->y2 = curr_clip->y2;
++
++	/* Clip damage rect within fb limit */
++	if (!drm_rect_intersect(rect, &iter->fb_src))
++		goto next_clip;
++	else if (iter->type & DRM_ATOMIC_HELPER_DAMAGE_CLIP_TYPE_FB)
++		return true;
++
++	/* Clip damage rect within plane limit */
++	if (!drm_rect_intersect(rect, &iter->plane_src))
++		goto next_clip;
++	else if (iter->type & DRM_ATOMIC_HELPER_DAMAGE_CLIP_TYPE_PLANE) {
++		drm_rect_translate(rect, iter->translate_plane_x,
++				   iter->translate_plane_y);
++		return true;
++	}
++
++	/* Clip damage rect within crtc limit */
++	if (!drm_rect_intersect(rect, &iter->crtc_src))
++		goto next_clip;
++
++	drm_rect_translate(rect, iter->translate_crtc_x,
++			   iter->translate_crtc_y);
++
++	return true;
++}
++EXPORT_SYMBOL(drm_atomic_helper_damage_iter_next);
 diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
-index ebd4b66..b12335c 100644
+index 26aaba5..ebd4b66 100644
 --- a/include/drm/drm_atomic_helper.h
 +++ b/include/drm/drm_atomic_helper.h
-@@ -224,6 +224,8 @@ drm_atomic_helper_damage_iter_init(struct drm_atomic_helper_damage_iter *iter,
- bool
- drm_atomic_helper_damage_iter_next(struct drm_atomic_helper_damage_iter *iter,
- 				   struct drm_rect *rect);
-+int drm_atomic_helper_check_damage(struct drm_device *dev,
-+				   struct drm_atomic_state *state);
+@@ -36,6 +36,37 @@ struct drm_atomic_state;
+ struct drm_private_obj;
+ struct drm_private_state;
+ 
++/**
++ * enum drm_atomic_helper_damage_clip_type - type of clips to iterator over
++ *
++ * While using drm_atomic_helper_damage_iter the type of clip coordinates caller
++ * is interested in.
++ */
++enum drm_atomic_helper_damage_clip_type {
++	DRM_ATOMIC_HELPER_DAMAGE_CLIP_TYPE_FB       = 0x0,
++	DRM_ATOMIC_HELPER_DAMAGE_CLIP_TYPE_PLANE    = 0x1,
++	DRM_ATOMIC_HELPER_DAMAGE_CLIP_TYPE_CRTC     = 0x2,
++};
++
++/**
++ * struct drm_atomic_helper_damage_iter - damage clip iterator
++ *
++ * This iterator tracks state needed to walk the list of damage clips.
++ */
++struct drm_atomic_helper_damage_iter {
++	enum drm_atomic_helper_damage_clip_type type;
++	const struct drm_rect *clips;
++	uint32_t num_clips;
++	uint32_t curr_clip;
++	struct drm_rect fb_src;
++	int translate_plane_x;
++	int translate_plane_y;
++	struct drm_rect plane_src;
++	int translate_crtc_x;
++	int translate_crtc_y;
++	struct drm_rect crtc_src;
++};
++
+ int drm_atomic_helper_check_modeset(struct drm_device *dev,
+ 				struct drm_atomic_state *state);
+ int drm_atomic_helper_check_plane_state(struct drm_plane_state *plane_state,
+@@ -185,6 +216,14 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
+ 				       struct drm_modeset_acquire_ctx *ctx);
+ void __drm_atomic_helper_private_obj_duplicate_state(struct drm_private_obj *obj,
+ 						     struct drm_private_state *state);
++int
++drm_atomic_helper_damage_iter_init(struct drm_atomic_helper_damage_iter *iter,
++				   enum drm_atomic_helper_damage_clip_type type,
++				   const struct drm_plane_state *state,
++				   uint32_t hdisplay, uint32_t vdisplay);
++bool
++drm_atomic_helper_damage_iter_next(struct drm_atomic_helper_damage_iter *iter,
++				   struct drm_rect *rect);
  
  /**
   * drm_atomic_crtc_for_each_plane - iterate over planes currently attached to CRTC
