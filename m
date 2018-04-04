@@ -1,109 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753214AbeDDC6m (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 22:58:42 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:38721 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752274AbeDDC6k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 22:58:40 -0400
-X-Google-Smtp-Source: AIpwx4/hxSwsXIejdgOOaEMrVNXMnwE+vPFeiCXnZ77lyFnZ/K6Im2UxDnfTM9eYKSnrZ+BhdDXcSwh7HrxzRWN7G6U=
-MIME-Version: 1.0
-In-Reply-To: <20180403135607.GC5501@dhcp22.suse.cz>
-References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
- <20180330102038.2378925b@gandalf.local.home> <20180403110612.GM5501@dhcp22.suse.cz>
- <20180403075158.0c0a2795@gandalf.local.home> <20180403121614.GV5501@dhcp22.suse.cz>
- <20180403082348.28cd3c1c@gandalf.local.home> <20180403123514.GX5501@dhcp22.suse.cz>
- <20180403093245.43e7e77c@gandalf.local.home> <20180403135607.GC5501@dhcp22.suse.cz>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Wed, 4 Apr 2018 10:58:39 +0800
-Message-ID: <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753117AbeDDDHU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 23:07:20 -0400
+Received: from m12-17.163.com ([220.181.12.17]:58603 "EHLO m12-17.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751850AbeDDDHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 23:07:19 -0400
+From: Xidong Wang <wangxidong_97@163.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>
+Cc: Xidong Wang <wangxidong_97@163.com>, linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] mtd:nand:fix memory leak
+Date: Wed,  4 Apr 2018 11:05:51 +0800
+Message-Id: <1522811151-18853-1-git-send-email-wangxidong_97@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: EcCowADn90sVQcRa4Ik6CA--.51098S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JF13KrWDZrW8XF4rGrWUXFb_yoWDuFb_Ww
+        4S9ryxtry29a4j9ry7KF4fJry2kF4IgrWrWw1Fqw4fta48JF1xt3ZrZrnxuw48uF4FgrW5
+        A3y5Ar1fAw43XjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU5VxR3UUUUU==
+X-Originating-IP: [106.120.213.14]
+X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/1tbiPRse81SIWJ-JewAAsi
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 9:56 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Tue 03-04-18 09:32:45, Steven Rostedt wrote:
->> On Tue, 3 Apr 2018 14:35:14 +0200
->> Michal Hocko <mhocko@kernel.org> wrote:
-> [...]
->> > Being clever is OK if it doesn't add a tricky code. And relying on
->> > si_mem_available is definitely tricky and obscure.
->>
->> Can we get the mm subsystem to provide a better method to know if an
->> allocation will possibly succeed or not before trying it? It doesn't
->> have to be free of races. Just "if I allocate this many pages right
->> now, will it work?" If that changes from the time it asks to the time
->> it allocates, that's fine. I'm not trying to prevent OOM to never
->> trigger. I just don't want to to trigger consistently.
->
-> How do you do that without an actuall allocation request? And more
-> fundamentally, what if your _particular_ request is just fine but it
-> will get us so close to the OOM edge that the next legit allocation
-> request simply goes OOM? There is simply no sane interface I can think
-> of that would satisfy a safe/sensible "will it cause OOM" semantic.
->
-The point is the app which try to allocate the size over the line will escape
-the OOM and let other innocent to be sacrificed. However, the one which you
-mentioned above will be possibly selected by OOM that triggered by consequnce
-failed allocation.
+In function tango_nand_probe(), the memory allocated by
+clk_get() is not released on the normal path and
+the error path that IS_ERR(nfc->chan) returns true.
+This will result in a memory leak bug.
 
->> > > Perhaps I should try to allocate a large group of pages with
->> > > RETRY_MAYFAIL, and if that fails go back to NORETRY, with the thinking
->> > > that the large allocation may reclaim some memory that would allow the
->> > > NORETRY to succeed with smaller allocations (one page at a time)?
->> >
->> > That again relies on a subtle dependencies of the current
->> > implementation. So I would rather ask whether this is something that
->> > really deserves special treatment. If admin asks for a buffer of a
->> > certain size then try to do so. If we get OOM then bad luck you cannot
->> > get large memory buffers for free...
->>
->> That is not acceptable to me nor to the people asking for this.
->>
->> The problem is known. The ring buffer allocates memory page by page,
->> and this can allow it to easily take all memory in the system before it
->> fails to allocate and free everything it had done.
->
-> Then do not allow buffers that are too large. How often do you need
-> buffers that are larger than few megs or small % of the available
-> memory? Consuming excessive amount of memory just to trace workload
-> which will need some memory on its own sounds just dubious to me.
->
->> If you don't like the use of si_mem_available() I'll do the larger
->> pages method. Yes it depends on the current implementation of memory
->> allocation. It will depend on RETRY_MAYFAIL trying to allocate a large
->> number of pages, and fail if it can't (leaving memory for other
->> allocations to succeed).
->>
->> The allocation of the ring buffer isn't critical. It can fail to
->> expand, and we can tell the user -ENOMEM. I original had NORETRY
->> because I rather have it fail than cause an OOM. But there's folks
->> (like Joel) that want it to succeed when there's available memory in
->> page caches.
->
-> Then implement a retry logic on top of NORETRY. You can control how hard
-> to retry to satisfy the request yourself. You still risk that your
-> allocation will get us close to OOM for _somebody_ else though.
->
->> I'm fine if the admin shoots herself in the foot if the ring buffer
->> gets big enough to start causing OOMs, but I don't want it to cause
->> OOMs if there's not even enough memory to fulfill the ring buffer size
->> itself.
->
-> I simply do not see the difference between the two. Both have the same
-> deadly effect in the end. The direct OOM has an arguable advantage that
-> the effect is immediate rather than subtle with potential performance
-> side effects until the machine OOMs after crawling for quite some time.
->
-> --
-> Michal Hocko
-> SUSE Labs
+Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+---
+ drivers/mtd/nand/tango_nand.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/tango_nand.c b/drivers/mtd/nand/tango_nand.c
+index c5bee00b..8083459 100644
+--- a/drivers/mtd/nand/tango_nand.c
++++ b/drivers/mtd/nand/tango_nand.c
+@@ -648,12 +648,15 @@ static int tango_nand_probe(struct platform_device *pdev)
+ 		return PTR_ERR(clk);
+ 
+ 	nfc->chan = dma_request_chan(&pdev->dev, "rxtx");
+-	if (IS_ERR(nfc->chan))
++	if (IS_ERR(nfc->chan)) {
++		clk_put(clk);
+ 		return PTR_ERR(nfc->chan);
++	}
+ 
+ 	platform_set_drvdata(pdev, nfc);
+ 	nand_hw_control_init(&nfc->hw);
+ 	nfc->freq_kHz = clk_get_rate(clk) / 1000;
++	clk_put(clk);
+ 
+ 	for_each_child_of_node(pdev->dev.of_node, np) {
+ 		err = chip_init(&pdev->dev, np);
+-- 
+2.7.4
