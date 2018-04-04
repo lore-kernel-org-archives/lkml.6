@@ -1,376 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752483AbeDDTYU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:24:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54048 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752074AbeDDTTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:19:25 -0400
-From: jglisse@redhat.com
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [RFC PATCH 63/79] mm/page: convert page's index lookup to be against specific mapping
-Date: Wed,  4 Apr 2018 15:18:17 -0400
-Message-Id: <20180404191831.5378-28-jglisse@redhat.com>
-In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
-References: <20180404191831.5378-1-jglisse@redhat.com>
+        id S1752548AbeDDTY3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:24:29 -0400
+Received: from mail-pl0-f53.google.com ([209.85.160.53]:33210 "EHLO
+        mail-pl0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751535AbeDDTY0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:24:26 -0400
+X-Google-Smtp-Source: AIpwx48BP+GcZWKKngBzOsiXjeXomkvHLbov6gyL88oMM/XZbaVE5ZA0wZPpfLBvGZX4t69xasrg0jnD6eWGR/PvGho=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <001a1148578c10e4700568e814eb@google.com>
+References: <001a1148578c10e4700568e814eb@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 4 Apr 2018 21:24:05 +0200
+Message-ID: <CACT4Y+bL_+3ZJLE_1KzGNrz4hi=Si-KKsKLCd09TMD1Ux2jpgg@mail.gmail.com>
+Subject: Re: WARNING in up_write
+To: syzbot <syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
+On Tue, Apr 3, 2018 at 4:01 AM, syzbot
+<syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot hit the following crash on upstream commit
+> 86bbbebac1933e6e95e8234c4f7d220c5ddd38bc (Mon Apr 2 18:47:07 2018 +0000)
+> Merge branch 'ras-core-for-linus' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> syzbot dashboard link:
+> https://syzkaller.appspot.com/bug?extid=dc5ab2babdf22ca091af
+>
+> So far this crash happened 8 times on upstream.
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5688491102961664
+> syzkaller reproducer:
+> https://syzkaller.appspot.com/x/repro.syz?id=5709211904245760
+> Raw console output:
+> https://syzkaller.appspot.com/x/log.txt?id=5720789257027584
+> Kernel config:
+> https://syzkaller.appspot.com/x/.config?id=6801295859785128502
+> compiler: gcc (GCC) 7.1.1 20170620
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
 
-This patch switch mm to lookup the page index or offset value to be
-against specific mapping. The page index value only have a meaning
-against a mapping.
++Ted for ext4 frames
 
-Using coccinelle:
----------------------------------------------------------------------
-@@
-struct page *P;
-expression E;
-@@
--P->index = E
-+page_set_index(P, E)
-
-@@
-struct page *P;
-@@
--P->index
-+page_index(P)
-
-@@
-struct page *P;
-@@
--page_index(P) << PAGE_SHIFT
-+page_offset(P)
-
-@@
-expression E;
-@@
--page_index(E)
-+_page_index(E, mapping)
-
-@@
-expression E1, E2;
-@@
--page_set_index(E1, E2)
-+_page_set_index(E1, mapping, E2)
-
-@@
-expression E;
-@@
--page_to_index(E)
-+_page_to_index(E, mapping)
-
-@@
-expression E;
-@@
--page_to_pgoff(E)
-+_page_to_pgoff(E, mapping)
-
-@@
-expression E;
-@@
--page_offset(E)
-+_page_offset(E, mapping)
-
-@@
-expression E;
-@@
--page_file_offset(E)
-+_page_file_offset(E, mapping)
----------------------------------------------------------------------
-
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: linux-mm@kvack.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
----
- mm/filemap.c        | 26 ++++++++++++++------------
- mm/page-writeback.c | 16 +++++++++-------
- mm/shmem.c          | 11 +++++++----
- mm/truncate.c       | 11 ++++++-----
- 4 files changed, 36 insertions(+), 28 deletions(-)
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 012a53964215..a41c7cfb6351 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -118,7 +118,8 @@ static int page_cache_tree_insert(struct address_space *mapping,
- 	void **slot;
- 	int error;
- 
--	error = __radix_tree_create(&mapping->page_tree, page->index, 0,
-+	error = __radix_tree_create(&mapping->page_tree,
-+				    _page_index(page, mapping), 0,
- 				    &node, &slot);
- 	if (error)
- 		return error;
-@@ -155,7 +156,8 @@ static void page_cache_tree_delete(struct address_space *mapping,
- 		struct radix_tree_node *node;
- 		void **slot;
- 
--		__radix_tree_lookup(&mapping->page_tree, page->index + i,
-+		__radix_tree_lookup(&mapping->page_tree,
-+				    _page_index(page, mapping) + i,
- 				    &node, &slot);
- 
- 		VM_BUG_ON_PAGE(!node && nr != 1, page);
-@@ -791,12 +793,12 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
- 		void (*freepage)(struct page *);
- 		unsigned long flags;
- 
--		pgoff_t offset = old->index;
-+		pgoff_t offset = _page_index(old, mapping);
- 		freepage = mapping->a_ops->freepage;
- 
- 		get_page(new);
- 		new->mapping = mapping;
--		new->index = offset;
-+		_page_set_index(new, mapping, offset);
- 
- 		spin_lock_irqsave(&mapping->tree_lock, flags);
- 		__delete_from_page_cache(old, NULL);
-@@ -850,7 +852,7 @@ static int __add_to_page_cache_locked(struct page *page,
- 
- 	get_page(page);
- 	page->mapping = mapping;
--	page->index = offset;
-+	_page_set_index(page, mapping, offset);
- 
- 	spin_lock_irq(&mapping->tree_lock);
- 	error = page_cache_tree_insert(mapping, page, shadowp);
-@@ -1500,7 +1502,7 @@ struct page *find_lock_entry(struct address_space *mapping, pgoff_t offset)
- 			put_page(page);
- 			goto repeat;
- 		}
--		VM_BUG_ON_PAGE(page_to_pgoff(page) != offset, page);
-+		VM_BUG_ON_PAGE(_page_to_pgoff(page, mapping) != offset, page);
- 	}
- 	return page;
- }
-@@ -1559,7 +1561,7 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
- 			put_page(page);
- 			goto repeat;
- 		}
--		VM_BUG_ON_PAGE(page->index != offset, page);
-+		VM_BUG_ON_PAGE(_page_index(page, mapping) != offset, page);
- 	}
- 
- 	if (page && (fgp_flags & FGP_ACCESSED))
-@@ -1751,7 +1753,7 @@ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
- 
- 		pages[ret] = page;
- 		if (++ret == nr_pages) {
--			*start = pages[ret - 1]->index + 1;
-+			*start = _page_index(pages[ret - 1], mapping) + 1;
- 			goto out;
- 		}
- 	}
-@@ -1837,7 +1839,7 @@ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
- 		 * otherwise we can get both false positives and false
- 		 * negatives, which is just confusing to the caller.
- 		 */
--		if (page->mapping == NULL || page_to_pgoff(page) != iter.index) {
-+		if (page->mapping == NULL || _page_to_pgoff(page, mapping) != iter.index) {
- 			put_page(page);
- 			break;
- 		}
-@@ -1923,7 +1925,7 @@ unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
- 
- 		pages[ret] = page;
- 		if (++ret == nr_pages) {
--			*index = pages[ret - 1]->index + 1;
-+			*index = _page_index(pages[ret - 1], mapping) + 1;
- 			goto out;
- 		}
- 	}
-@@ -2540,7 +2542,7 @@ int filemap_fault(struct vm_fault *vmf)
- 		put_page(page);
- 		goto retry_find;
- 	}
--	VM_BUG_ON_PAGE(page->index != offset, page);
-+	VM_BUG_ON_PAGE(_page_index(page, mapping) != offset, page);
- 
- 	/*
- 	 * We have a locked page in the page cache, now we need to check
-@@ -2667,7 +2669,7 @@ void filemap_map_pages(struct vm_fault *vmf,
- 			goto unlock;
- 
- 		max_idx = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE);
--		if (page->index >= max_idx)
-+		if (_page_index(page, mapping) >= max_idx)
- 			goto unlock;
- 
- 		if (file->f_ra.mmap_miss > 0)
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 3c14d44639c8..ed9424f84715 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2201,7 +2201,7 @@ int write_cache_pages(struct address_space *mapping,
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
- 
--			done_index = page->index;
-+			done_index = _page_index(page, mapping);
- 
- 			lock_page(page);
- 
-@@ -2251,7 +2251,8 @@ int write_cache_pages(struct address_space *mapping,
- 					 * not be suitable for data integrity
- 					 * writeout).
- 					 */
--					done_index = page->index + 1;
-+					done_index = _page_index(page,
-+								 mapping) + 1;
- 					done = 1;
- 					break;
- 				}
-@@ -2470,7 +2471,8 @@ int __set_page_dirty_nobuffers(struct page *page)
- 		BUG_ON(page_mapping(page) != mapping);
- 		WARN_ON_ONCE(!PagePrivate(page) && !PageUptodate(page));
- 		account_page_dirtied(page, mapping);
--		radix_tree_tag_set(&mapping->page_tree, page_index(page),
-+		radix_tree_tag_set(&mapping->page_tree,
-+				   _page_index(page, mapping),
- 				   PAGECACHE_TAG_DIRTY);
- 		spin_unlock_irqrestore(&mapping->tree_lock, flags);
- 		unlock_page_memcg(page);
-@@ -2732,7 +2734,7 @@ int test_clear_page_writeback(struct page *page)
- 		ret = TestClearPageWriteback(page);
- 		if (ret) {
- 			radix_tree_tag_clear(&mapping->page_tree,
--						page_index(page),
-+						_page_index(page, mapping),
- 						PAGECACHE_TAG_WRITEBACK);
- 			if (bdi_cap_account_writeback(bdi)) {
- 				struct bdi_writeback *wb = inode_to_wb(inode);
-@@ -2785,7 +2787,7 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
- 						   PAGECACHE_TAG_WRITEBACK);
- 
- 			radix_tree_tag_set(&mapping->page_tree,
--						page_index(page),
-+						_page_index(page, mapping),
- 						PAGECACHE_TAG_WRITEBACK);
- 			if (bdi_cap_account_writeback(bdi))
- 				inc_wb_stat(inode_to_wb(inode), WB_WRITEBACK);
-@@ -2800,11 +2802,11 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
- 		}
- 		if (!PageDirty(page))
- 			radix_tree_tag_clear(&mapping->page_tree,
--						page_index(page),
-+						_page_index(page, mapping),
- 						PAGECACHE_TAG_DIRTY);
- 		if (!keep_write)
- 			radix_tree_tag_clear(&mapping->page_tree,
--						page_index(page),
-+						_page_index(page, mapping),
- 						PAGECACHE_TAG_TOWRITE);
- 		spin_unlock_irqrestore(&mapping->tree_lock, flags);
- 	} else {
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 7fee65df10b4..7f3168d547c8 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -588,7 +588,7 @@ static int shmem_add_to_page_cache(struct page *page,
- 
- 	page_ref_add(page, nr);
- 	page->mapping = mapping;
--	page->index = index;
-+	_page_set_index(page, mapping, index);
- 
- 	spin_lock_irq(&mapping->tree_lock);
- 	if (PageTransHuge(page)) {
-@@ -644,7 +644,9 @@ static void shmem_delete_from_page_cache(struct page *page, void *radswap)
- 	VM_BUG_ON_PAGE(PageCompound(page), page);
- 
- 	spin_lock_irq(&mapping->tree_lock);
--	error = shmem_radix_tree_replace(mapping, page->index, page, radswap);
-+	error = shmem_radix_tree_replace(mapping, _page_index(page, mapping),
-+					 page,
-+					 radswap);
- 	page->mapping = NULL;
- 	mapping->nrpages--;
- 	__dec_node_page_state(page, NR_FILE_PAGES);
-@@ -822,7 +824,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
- 				continue;
- 			}
- 
--			VM_BUG_ON_PAGE(page_to_pgoff(page) != index, page);
-+			VM_BUG_ON_PAGE(_page_to_pgoff(page, mapping) != index,
-+				       page);
- 
- 			if (!trylock_page(page))
- 				continue;
-@@ -1267,7 +1270,7 @@ static int shmem_writepage(struct address_space *_mapping, struct page *page,
- 	VM_BUG_ON_PAGE(PageCompound(page), page);
- 	BUG_ON(!PageLocked(page));
- 	mapping = page->mapping;
--	index = page->index;
-+	index = _page_index(page, mapping);
- 	inode = mapping->host;
- 	info = SHMEM_I(inode);
- 	if (info->flags & VM_LOCKED)
-diff --git a/mm/truncate.c b/mm/truncate.c
-index a9415c96c966..57d4d0948f40 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -181,7 +181,8 @@ truncate_cleanup_page(struct address_space *mapping, struct page *page)
- {
- 	if (page_mapped(page)) {
- 		pgoff_t nr = PageTransHuge(page) ? HPAGE_PMD_NR : 1;
--		unmap_mapping_pages(mapping, page->index, nr, false);
-+		unmap_mapping_pages(mapping, _page_index(page, mapping), nr,
-+				    false);
- 	}
- 
- 	if (page_has_private(page))
-@@ -353,7 +354,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
- 
- 			if (!trylock_page(page))
- 				continue;
--			WARN_ON(page_to_index(page) != index);
-+			WARN_ON(_page_to_index(page, mapping) != index);
- 			if (PageWriteback(page)) {
- 				unlock_page(page);
- 				continue;
-@@ -447,7 +448,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
- 				continue;
- 
- 			lock_page(page);
--			WARN_ON(page_to_index(page) != index);
-+			WARN_ON(_page_to_index(page, mapping) != index);
- 			wait_on_page_writeback(page);
- 			truncate_inode_page(mapping, page);
- 			unlock_page(page);
-@@ -571,7 +572,7 @@ unsigned long invalidate_mapping_pages(struct address_space *mapping,
- 			if (!trylock_page(page))
- 				continue;
- 
--			WARN_ON(page_to_index(page) != index);
-+			WARN_ON(_page_to_index(page, mapping) != index);
- 
- 			/* Middle of THP: skip */
- 			if (PageTransTail(page)) {
-@@ -701,7 +702,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 			}
- 
- 			lock_page(page);
--			WARN_ON(page_to_index(page) != index);
-+			WARN_ON(_page_to_index(page, mapping) != index);
- 			if (page_is_truncated(page, mapping)) {
- 				unlock_page(page);
- 				continue;
--- 
-2.14.3
+> EXT4-fs (sda1): shut down requested (0)
+> ------------[ cut here ]------------
+> DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
+> WARNING: CPU: 1 PID: 4441 at kernel/locking/rwsem.c:133 up_write+0x1cc/0x210
+> kernel/locking/rwsem.c:133
+> Kernel panic - not syncing: panic_on_warn set ...
+>
+> CPU: 1 PID: 4441 Comm: syzkaller594909 Not tainted 4.16.0+ #11
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x1a7/0x27d lib/dump_stack.c:53
+>  panic+0x1f8/0x42c kernel/panic.c:183
+>  __warn+0x1dc/0x200 kernel/panic.c:547
+>  report_bug+0x1f4/0x2b0 lib/bug.c:186
+>  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+> RIP: 0010:up_write+0x1cc/0x210 kernel/locking/rwsem.c:133
+> RSP: 0018:ffff8801b349f710 EFLAGS: 00010286
+> RAX: dffffc0000000008 RBX: ffff8801ccc0ce40 RCX: ffffffff815ae26e
+> RDX: 0000000000000000 RSI: 1ffff10036693e92 RDI: 1ffff10036693e67
+> RBP: ffff8801b349f798 R08: fffffbfff10b0659 R09: fffffbfff10b0659
+> R10: ffff8801b349f708 R11: fffffbfff10b0658 R12: 1ffff10036693ee2
+> R13: dffffc0000000000 R14: ffff8801b349f770 R15: ffff8801ccc0ce98
+>  percpu_up_write+0xca/0x110 kernel/locking/percpu-rwsem.c:183
+>  sb_freeze_unlock fs/super.c:1390 [inline]
+>  thaw_super+0x1ca/0x260 fs/super.c:1524
+>  thaw_bdev+0x151/0x180 fs/block_dev.c:555
+>  ext4_shutdown fs/ext4/ioctl.c:489 [inline]
+>  ext4_ioctl+0x1f85/0x3e60 fs/ext4/ioctl.c:1048
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
+>  SYSC_ioctl fs/ioctl.c:701 [inline]
+>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
+>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> RIP: 0033:0x440109
+> RSP: 002b:00007fffce185d28 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440109
+> RDX: 0000000020000100 RSI: 000000008004587d RDI: 0000000000000003
+> RBP: 00000000006ca018 R08: 000000000000000f R09: 65732f636f72702f
+> R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401990
+> R13: 0000000000401a20 R14: 0000000000000000 R15: 0000000000000000
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/001a1148578c10e4700568e814eb%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
