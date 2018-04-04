@@ -1,61 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755092AbeDDCiZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 22:38:25 -0400
-Received: from m12-18.163.com ([220.181.12.18]:49633 "EHLO m12-18.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754682AbeDDCiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 22:38:23 -0400
-From: Xidong Wang <wangxidong_97@163.com>
-To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jack Wang <jinpu.wang@profitbricks.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.de>
-Cc: Kees Cook <keescook@chromium.org>, Pan Bian <bianpan2016@163.com>,
-        Xidong Wang <wangxidong_97@163.com>,
-        Romain Perier <romain.perier@collabora.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] scsi:mvsas:fix memory leak
-Date: Wed,  4 Apr 2018 10:37:52 +0800
-Message-Id: <1522809472-11749-1-git-send-email-wangxidong_97@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: EsCowACHLkeCOsRatf3rDA--.42347S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWruF1ktF4DXryDAw4kAw1kXwb_yoWfArb_WF
-        W0qrn7Jr4Ykwn7Jw18WrsFvryI9w4fWa1kuFsIqryayF1fZF4DAa18WrnxZw4xC3y8CFyU
-        A34DJw4fArnFvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU5aksDUUUUU==
-X-Originating-IP: [106.120.213.14]
-X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/1tbiyAge81p62HJpWAAAsW
+        id S1755217AbeDDCic (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 22:38:32 -0400
+Received: from mail-ot0-f178.google.com ([74.125.82.178]:35843 "EHLO
+        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755098AbeDDCi2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 22:38:28 -0400
+X-Google-Smtp-Source: AIpwx4/uuygUEDfsZmwwP6DBDINh3wyiKJmhmNGvIL/XBmTKK5QxDNjyYn0jlwhRohaY0p1tdnk9gGuZlTMwW0XCVEE=
+MIME-Version: 1.0
+In-Reply-To: <afdf0498-c0a9-936c-0c9b-1b6da6eb5957@lwfinger.net>
+References: <CA+A7VXX+z8FrDhzW2BQ6AGMJ=_j_53wkUL_YNgkreEbWSh+jCw@mail.gmail.com>
+ <afdf0498-c0a9-936c-0c9b-1b6da6eb5957@lwfinger.net>
+From: =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Date: Tue, 3 Apr 2018 19:37:47 -0700
+Message-ID: <CA+A7VXWjWaSSUiX3h_rpFXrSwtUkynKR9tpvnsSe=DZrC+mF-Q@mail.gmail.com>
+Subject: Re: RTL8723BE performance regression
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Ping-Ke Shih <pkshih@realtek.com>, Birming Chiu <birming@realtek.com>,
+        Shaofu <shaofu@realtek.com>, Steven Ting <steventing@realtek.com>,
+        Chaoming Li <chaoming_li@realsil.com.cn>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Daniel Drake <drake@endlessm.com>,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>,
+        linux@endlessm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w342caTJ008800
 
-In function mvs_pci_init(), the memory allocated by
-scsi_host_alloc() is not released on the error path that mvi,
-which holds the return value of mvs_pci_alloc(), is NULL.
-This will result in a memory leak bug.
+On Tue, Apr 3, 2018 at 7:28 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
 
-Signed-off-by: Xidong Wang <wangxidong_97@163.com>
----
- drivers/scsi/mvsas/mv_init.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+(...)
 
-diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
-index 8c91637..936b8ef 100644
---- a/drivers/scsi/mvsas/mv_init.c
-+++ b/drivers/scsi/mvsas/mv_init.c
-@@ -370,8 +370,10 @@ static struct mvs_info *mvs_pci_alloc(struct pci_dev *pdev,
- 	mvi = kzalloc(sizeof(*mvi) +
- 		(1L << mvs_chips[ent->driver_data].slot_width) *
- 		sizeof(struct mvs_slot_info), GFP_KERNEL);
--	if (!mvi)
-+	if (!mvi) {
-+		scsi_host_put(shost);
- 		return NULL;
-+	}
- 
- 	mvi->pdev = pdev;
- 	mvi->dev = &pdev->dev;
--- 
-2.7.4
+> As the antenna selection code changes affected your first bisection, do you
+> have one of those HP laptops with only one antenna and the incorrect coding
+> in the FUSE?
+
+Yes, that is why I've been passing ant_sel=1 during my tests -- this
+was needed to achieve a good performance in the past, before this
+regression. I've also opened the laptop chassis and confirmed the
+antenna cable is plugged to the connector labeled with "1" on the
+card.
+
+> If so, please make sure that you still have the same signal
+> strength for good and bad cases. I have tried to keep the driver and the
+> btcoex code in sync, but there may be some combinations of antenna
+> configuration and FUSE contents that cause the code to fail.
+>
+
+What is the recommended way to monitor the signal strength?
+
+Thanks for such a quick reply,
+
+--
+João Paulo Rechi Vita
+http://about.me/jprvita
