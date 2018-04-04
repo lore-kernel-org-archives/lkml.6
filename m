@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752552AbeDDT2B (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:28:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54010 "EHLO mx1.redhat.com"
+        id S1752583AbeDDT2S (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:28:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42162 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751869AbeDDTTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:19:17 -0400
+        id S1751852AbeDDTTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:19:16 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org
@@ -16,9 +16,9 @@ Cc: linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
         Jan Kara <jack@suse.cz>, Josef Bacik <jbacik@fb.com>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [RFC PATCH 32/79] fs/block: do not rely on page->mapping get it from the context
-Date: Wed,  4 Apr 2018 15:18:06 -0400
-Message-Id: <20180404191831.5378-17-jglisse@redhat.com>
+Subject: [RFC PATCH 31/79] fs/block: add struct address_space to __block_write_begin_int() args
+Date: Wed,  4 Apr 2018 15:18:05 -0400
+Message-Id: <20180404191831.5378-16-jglisse@redhat.com>
 In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
 References: <20180404191831.5378-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -30,9 +30,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-This patch remove most dereference of page->mapping and get the mapping
-from the call context (either already available in the function or by
-adding it to function arguments).
+Add struct address_space to __block_write_begin_int() arguments.
+
+One step toward dropping reliance on page->mapping.
+
+----------------------------------------------------------------------
+@exists@
+identifier M;
+expression E1, E2, E3, E4, E5;
+@@
+struct address_space *M;
+...
+-__block_write_begin_int(E1, E2, E3, E4, E5)
++__block_write_begin_int(M, E1, E2, E3, E4, E5)
+
+@exists@
+identifier M, F;
+expression E1, E2, E3, E4, E5;
+@@
+F(..., struct address_space *M, ...) {...
+-__block_write_begin_int(E1, E2, E3, E4, E5)
++__block_write_begin_int(M, E1, E2, E3, E4, E5)
+...}
+----------------------------------------------------------------------
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Cc: Jens Axboe <axboe@kernel.dk>
@@ -44,38 +64,34 @@ Cc: Jan Kara <jack@suse.cz>
 Cc: Josef Bacik <jbacik@fb.com>
 Cc: Mel Gorman <mgorman@techsingularity.net>
 ---
- fs/block_dev.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/buffer.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 502b6643bc74..dd9da97615e3 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -564,14 +564,14 @@ EXPORT_SYMBOL(thaw_bdev);
- static int blkdev_writepage(struct address_space *mapping, struct page *page,
- 			    struct writeback_control *wbc)
- {
--	return block_write_full_page(page->mapping->host, page,
-+	return block_write_full_page(mapping->host, page,
- 				     blkdev_get_block, wbc);
+diff --git a/fs/buffer.c b/fs/buffer.c
+index de16588d7f7f..c83878d0a4c0 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1943,8 +1943,9 @@ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
+ 	}
  }
  
- static int blkdev_readpage(struct file * file, struct address_space *mapping,
- 			   struct page * page)
+-int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
+-		get_block_t *get_block, struct iomap *iomap)
++int __block_write_begin_int(struct address_space *mapping, struct page *page,
++		loff_t pos, unsigned len, get_block_t *get_block,
++		struct iomap *iomap)
  {
--	return block_read_full_page(page->mapping->host,page,blkdev_get_block);
-+	return block_read_full_page(mapping->host,page,blkdev_get_block);
+ 	unsigned from = pos & (PAGE_SIZE - 1);
+ 	unsigned to = from + len;
+@@ -2031,7 +2032,8 @@ int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
+ int __block_write_begin(struct address_space *mapping, struct page *page,
+ 		loff_t pos, unsigned len, get_block_t *get_block)
+ {
+-	return __block_write_begin_int(page, pos, len, get_block, NULL);
++	return __block_write_begin_int(mapping, page, pos, len, get_block,
++				       NULL);
  }
+ EXPORT_SYMBOL(__block_write_begin);
  
- static int blkdev_readpages(struct file *file, struct address_space *mapping,
-@@ -1941,7 +1941,7 @@ EXPORT_SYMBOL_GPL(blkdev_read_iter);
- static int blkdev_releasepage(struct address_space *mapping,
- 			      struct page *page, gfp_t wait)
- {
--	struct super_block *super = BDEV_I(page->mapping->host)->bdev.bd_super;
-+	struct super_block *super = BDEV_I(mapping->host)->bdev.bd_super;
- 
- 	if (super && super->s_op->bdev_try_to_free_page)
- 		return super->s_op->bdev_try_to_free_page(super, page, wait);
 -- 
 2.14.3
