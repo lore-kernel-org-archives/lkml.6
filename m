@@ -1,79 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752320AbeDDPzQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:55:16 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:35005 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752030AbeDDPzO (ORCPT
+        id S1752552AbeDDPzl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:55:41 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:35901 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752505AbeDDPzj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:55:14 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R251e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T-fnNOH_1522857303;
-Subject: Re: [RFC] prctl: Deprecate non PR_SET_MM_MAP operations
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Cyrill Gorcunov <gorcunov@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, Andrey Vagin <avagin@openvz.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-References: <20180403223722.GA15783@uranus.lan>
- <48bcd917-4eb8-9da6-ec4b-e76a654695c4@linux.alibaba.com>
- <20180404053541.GA6312@dhcp22.suse.cz>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <40dde421-5300-b11f-860a-cf19aea00ec9@linux.alibaba.com>
-Date: Wed, 4 Apr 2018 08:54:59 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Wed, 4 Apr 2018 11:55:39 -0400
+X-Google-Smtp-Source: AIpwx48uoELUl4OSikKeP7bGV1dACNSi7PUi0DTVdrwCwxpmD+q5IAYHpfVx7rwXlfuFIklU219mBTJJPMa1Qia/Zm0=
 MIME-Version: 1.0
-In-Reply-To: <20180404053541.GA6312@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <691b903c-e97d-0a25-28c5-690318bb215a@codeaurora.org>
+References: <mhng-fe49c525-788d-4ce7-9703-95e2b3eaeca6@palmer-si-x1c4> <691b903c-e97d-0a25-28c5-690318bb215a@codeaurora.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 4 Apr 2018 17:55:37 +0200
+X-Google-Sender-Auth: kitM1YEuHUCznrWM91P7kxYHR-Q
+Message-ID: <CAK8P3a2pGQb7TqQtuw0ZpQ=8CwXiRmRKKc1GwvEgKDgofxJ3nA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
+ readX() implementation
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: Palmer Dabbelt <palmer@sifive.com>,
+        Mark Rutland <mark.rutland@arm.com>, Timur Tabi <timur@codeaurora.org>,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 4/3/18 10:35 PM, Michal Hocko wrote:
-> On Tue 03-04-18 16:15:20, Yang Shi wrote:
+On Wed, Apr 4, 2018 at 5:52 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
+> On 4/3/2018 6:29 PM, Palmer Dabbelt wrote:
 >>
->> On 4/3/18 3:37 PM, Cyrill Gorcunov wrote:
->>> An ability to manipulate mm_struct fields was introduced in
->>> sake of CRIU in first place. Later we provide more suitable
->>> and safe operation PR_SET_MM_MAP where all fields to be modifed
->>> are passed in one structure which allows us to make more detailed
->>> verification.
->>>
->>> Still old interface remains present for compatibility reason
->>> though CRIU itself already switched to PR_SET_MM_MAP on its
->>> own long ago.
->>>
->>> Googling didn't reveal some other users of this operation
->>> so I think it should be safe to issue deprecation warning
->>> first time and get rid of this interface after a couple
->>> of releases.
->>>
->>> CC: Andrey Vagin <avagin@openvz.org>
->>> CC: Andrew Morton <akpm@linuxfoundation.org>
->>> CC: Pavel Emelyanov <xemul@virtuozzo.com>
->>> CC: Michael Kerrisk <mtk.manpages@gmail.com>
->>> CC: Yang Shi <yang.shi@linux.alibaba.com>
->>> CC: Michal Hocko <mhocko@kernel.org>
->>> Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
->>> ---
->>> Or we can simply drop it off because PR_SET_MM_MAP covers all needs,
->>> and I would rather prefer to do that asap.
->> Thanks for making it deprecated. I'd prefer just drop it off if nobody
->> objects. The change will get soaked in linux-next for a while , we will know
->> if it breaks compatibility (it sounds very unlikely).
-> Yeah, let's just drop it and have the patch in linux-next (via mmotm)
-> for 2 release cycles and see whether somebody complains.
-
-BTW, I will do my v3 on top of the patch (drop off prctl_set_mm).
-
-Yang
-
 >
-> You can add
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> for such a patch.
+> Are we looking for something like this?
+
+Yes, exactly, plus the same for write and in/out of course.
+
+> diff --git a/inc
+>  #ifndef readb
+>  #define readb readb
+> -static inline u8 readb(const volatile void __iomem *addr)
+> -{
+> -       return __raw_readb(addr);
+> -}
+> +#define readb(c)                               \
+> +       ({ u8  __v;                             \
+> +        __io_br();                             \
+> +        __v = __raw_readb(c);                  \
+> +        __io_ar();                             \
+> +        __v; })
+>  #endif
+
+I would prefer leaving these as inline functions, but that's only
+a cosmetic difference.
+
+       Arnd
