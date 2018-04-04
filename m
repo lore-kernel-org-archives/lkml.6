@@ -1,88 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751313AbeDDNIx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:08:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44563 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750842AbeDDNIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:08:52 -0400
-Date: Wed, 4 Apr 2018 15:08:50 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>, Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>, Jessica Yu <jeyu@kernel.org>,
-        Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] livepatch: Initialize shadow variables by init
- function safely
-Message-ID: <20180404130850.5wnhj3rnc7iwvosu@pathway.suse.cz>
-References: <20180313155448.1998-1-pmladek@suse.com>
- <20180313155448.1998-2-pmladek@suse.com>
- <20180314192702.h6fvqoo7myt426ww@redhat.com>
- <20180314194436.fl5xro6aixroqzxk@treble>
+        id S1751270AbeDDNK3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:10:29 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35148 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750842AbeDDNK1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:10:27 -0400
+X-Google-Smtp-Source: AIpwx49jlMMiq41zVjIFBYMkeWcNg5mSaV6+pNmtWPu132G3lgGDA1DTCtK+fIss/maaEn3qtuVUkXYUTBg2wYCvEII=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180314194436.fl5xro6aixroqzxk@treble>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180404125345.4008862-1-arnd@arndb.de>
+References: <20180404125345.4008862-1-arnd@arndb.de>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Wed, 4 Apr 2018 15:10:26 +0200
+Message-ID: <CAOi1vP8KMoSKuw87wBJkAe5ke8Vb0jQ4qeizdX5jrfaChxNCCg@mail.gmail.com>
+Subject: Re: [PATCH] [v2] rbd: avoid Wreturn-type warnings
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jason Dillaman <dillaman@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-03-14 14:44:36, Josh Poimboeuf wrote:
-> On Wed, Mar 14, 2018 at 03:27:02PM -0400, Joe Lawrence wrote:
-> > On Tue, Mar 13, 2018 at 04:54:47PM +0100, Petr Mladek wrote:
-> > > The existing API allows to pass a sample data to initialize the shadow
-> > > data. It works well when the data are position independent. But it fails
-> > > miserably when we need to set a pointer to the shadow structure itself.
-> > > 
-> > > Unfortunately, we might need to initialize the pointer surprisingly
-> > > often because of struct list_head. It is even worse because the list
-> > > might be hidden in other common structures, for example, struct mutex,
-> > > struct wait_queue_head.
-> > > 
-> > > This patch makes the API more safe. A custom init function and data
-> > > are passed to klp_shadow_*alloc() functions instead of the sample data.
-> > 
-> > Yup, this looks kinda familiar, I remember tinkering with the same idea
-> > last year [1] before settling on the simpler API.
-> > 
-> > [1] https://github.com/torvalds/linux/compare/master...joe-lawrence:shadow_variables_v2_c
-> > 
-> > > Note that the init_data are not longer a template for the shadow->data.
-> > > It might point to any data that might be necessary when the init
-> > > function is called.
-> > 
-> > I'm not opposed to changing the API, but I was wondering if you had
-> > thought about expanding it as an alternative? 
-> > 
-> > When working on this last summer, I remember holding onto to some less
-> > than intuitive naming conventions so that I could support a basic API
-> > and an extended API with bells and whistles like this patchset
-> > implements.  It didn't seem too difficult to layer the basic API ontop
-> > of one like this (see [1] for example), so maybe that's an option to
-> > keep basic shadow variable usage a little simpler.  /two cents
-> 
-> I like Petr's new API.  It's not a big deal to just pass a couple of
-> NULLs if you don't need the callback.
-> 
-> And I prefer fewer functions anyway -- maybe it's my functionitis
-> allergies acting up again.
+On Wed, Apr 4, 2018 at 2:53 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> A new set of warnings appeared in next-20180403 in some configurations
+> when gcc cannot see that rbd_assert(0) leads to an unreachable code
+> path:
+>
+> drivers/block/rbd.c: In function 'rbd_img_is_write':
+> drivers/block/rbd.c:1397:1: error: control reaches end of non-void function [-Werror=return-type]
+> drivers/block/rbd.c: In function '__rbd_obj_handle_request':
+> drivers/block/rbd.c:2499:1: error: control reaches end of non-void function [-Werror=return-type]
+> drivers/block/rbd.c: In function 'rbd_obj_handle_write':
+> drivers/block/rbd.c:2471:1: error: control reaches end of non-void function [-Werror=return-type]
+>
+> As the rbd_assert() here shows has no extra information beyond the verbose
+> BUG(), we can simply use BUG() directly in its place.  This is reliably
+> detected as not returning on any architecture, since it doesn't depend
+> on the unlikely() comparison that confused gcc.
+>
+> Fixes: 3da691bf4366 ("rbd: new request handling code")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/block/rbd.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 07dc5419bd63..5f7f4d4b78a8 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -1392,7 +1392,7 @@ static bool rbd_img_is_write(struct rbd_img_request *img_req)
+>         case OBJ_OP_DISCARD:
+>                 return true;
+>         default:
+> -               rbd_assert(0);
+> +               BUG();
+>         }
+>  }
+>
+> @@ -2466,7 +2466,7 @@ static bool rbd_obj_handle_write(struct rbd_obj_request *obj_req)
+>                 }
+>                 return false;
+>         default:
+> -               rbd_assert(0);
+> +               BUG();
+>         }
+>  }
+>
+> @@ -2494,7 +2494,7 @@ static bool __rbd_obj_handle_request(struct rbd_obj_request *obj_req)
+>                 }
+>                 return false;
+>         default:
+> -               rbd_assert(0);
+> +               BUG();
+>         }
+>  }
+>
 
-Yeah, I think that that two APIs might cause confusion. Especially
-because *data and *init_data have different meaning. I would prefer
-to keep only the first one.
+Applied.
 
+Thanks,
 
-> > Perhaps shadow variables are another candidate for some kind of
-> > kselftest?
-> 
-> Indeed!
-
-It would be great.
-
-
-Best Regards,
-Petr
-
-PS: Thanks all for the feedback.
+                Ilya
