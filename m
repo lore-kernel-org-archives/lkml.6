@@ -1,166 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751528AbeDDIzf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:55:35 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:55147 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751339AbeDDIxE (ORCPT
+        id S1751461AbeDDI4Y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:56:24 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:40722 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751244AbeDDI4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:53:04 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
-Subject: [PATCH v9 07/10] time: hrtimer: Introduce hrtimer_next_event_without()
-Date: Wed, 04 Apr 2018 10:45:39 +0200
-Message-ID: <101528364.6nGUqP0EsC@aspire.rjw.lan>
-In-Reply-To: <1736751.LdhZHb50jq@aspire.rjw.lan>
-References: <1736751.LdhZHb50jq@aspire.rjw.lan>
+        Wed, 4 Apr 2018 04:56:20 -0400
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: "peterz@infradead.org" <peterz@infradead.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+CC: "wbx@uclibc-ng.org" <wbx@uclibc-ng.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "jcmvbkbc@gmail.com" <jcmvbkbc@gmail.com>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH] ARC: Improve cmpxchng syscall implementation
+Thread-Topic: [PATCH] ARC: Improve cmpxchng syscall implementation
+Thread-Index: AQHTv3F6C4JZhTz2+k+N1OG5jGcfeKPX0MIAgAK2WQCAFb4KAA==
+Date: Wed, 4 Apr 2018 08:56:13 +0000
+Message-ID: <1522832172.4851.7.camel@synopsys.com>
+References: <20180319110002.27419-1-abrodkin@synopsys.com>
+         <5bc39838-b1c5-ef65-f97d-8777ed33bda0@synopsys.com>
+         <1521633274.9805.30.camel@synopsys.com>
+In-Reply-To: <1521633274.9805.30.camel@synopsys.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.225.15.87]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C5DC4CC0C9F18446860494BECE814167@internal.synopsys.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w348uTD1002790
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi Vineet, Peter,
 
-The next set of changes will need to compute the time to the next
-hrtimer event over all hrtimers except for the scheduler tick one.
+On Wed, 2018-03-21 at 14:54 +0300, Alexey Brodkin wrote:
+> Hi Vineet,
+> 
+> On Mon, 2018-03-19 at 11:29 -0700, Vineet Gupta wrote:
+> > On 03/19/2018 04:00 AM, Alexey Brodkin wrote:
+> > > arc_usr_cmpxchg syscall is supposed to be used on platforms
+> > > that lack support of Load-Locked/Store-Conditional instructions
+> > > in hardware. And in that case we mimic missing hardware features
+> > > with help of kernel's sycall that "atomically" checks current
+> > > value in memory and then if it matches caller expectation new
+> > > value is written to that same location.
+> > > 
+> > 
+> > ...
+> > ...
+> > 
+> > > 
+> > > 2. What's worse if we're dealing with data from not yet allocated
+> > >     page (think of pre-copy-on-write state) we'll successfully
+> > >     read data but on write we'll silently return to user-space
+> > >     with correct result 
+> > 
+> > This is technically incorrect, even for reading, you need a page, which could be 
+> > common zero page in certain cases.
+> 
+> Ok I'll reword it like.
+> 
+> > 
+> > (which we really read just before). That leads
+> > >     to very strange problems in user-space app further down the line
+> > >     because new value was never written to the destination.
+> > > 
+> > > 3. Regardless of what went wrong we'll return from syscall
+> > >     and user-space application will continue to execute.
+> > >     Even if user's pointer was completely bogus.
+> > 
+> > Again we are exaggerating (from technical correctness POV) - if user pointer was 
+> > bogs, the read would not have worked in first place etc. So lets tone down the 
+> > rhetoric.
+> 
+> Ok here I may rephrase it like that:
+> ------------------------------->8-----------------------------
+> 3. Regardless of what went wrong we'll return from syscall
+>    and user-space application will continue to execute.
+> ------------------------------->8-----------------------------
+> 
+> > 
+> > >     In case of hardware LL/SC that app would have been killed
+> > >     by the kernel.
+> > > 
+> > > With that change we attempt to imrove on all 3 items above:
+> > > 
+> > > 1. We still disable preemption around read-and-write of
+> > >     user's data but if we happen to fail with either of them
+> > >     we're enabling preemption and try to force page fault so
+> > >     that we have a correct mapping in the TLB. Then re-try
+> > >     again in "atomic" context.
+> > > 
+> > > 2. If real page fault fails or even access_ok() returns false
+> > >     we send SIGSEGV to the user-space process so if something goes
+> > >     seriously wrong we'll know about it much earlier.
+> > > 
+> > 
+> > 
+> > >   
+> > >   	/*
+> > >   	 * This is only for old cores lacking LLOCK/SCOND, which by defintion
+> > > @@ -60,23 +62,48 @@ SYSCALL_DEFINE3(arc_usr_cmpxchg, int *, uaddr, int, expected, int, new)
+> > >   	/* Z indicates to userspace if operation succeded */
+> > >   	regs->status32 &= ~STATUS_Z_MASK;
+> > >   
+> > > -	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(int)))
+> > > -		return -EFAULT;
+> > > +	ret = access_ok(VERIFY_WRITE, uaddr, sizeof(*uaddr));
+> > > +	if (!ret)
+> > > +		goto fail;
+> > >   
+> > > +again:
+> > >   	preempt_disable();
+> > >   
+> > > -	if (__get_user(uval, uaddr))
+> > > -		goto done;
+> > > -
+> > > -	if (uval == expected) {
+> > > -		if (!__put_user(new, uaddr))
+> > > +	ret = __get_user(val, uaddr);
+> > > +	if (ret == -EFAULT) {
+> > 
+> > 
+> > Lets see if this warrants adding complexity ! This implies that TLB entry with 
+> > Read permissions didn't exist for reading the var and page fault handler could not 
+> > wire up even a zero page due to preempt_disable, meaning it was something not 
+> > touched by userspace already - sort of uninitialized variable in user code.
+> 
+> Ok I completely missed the fact that fast path TLB miss handler is being
+> executed even if we have preemption disabled. So given the mapping exist
+> we do not need to retry with enabled preemption.
+> 
+> Still maybe I'm a bit paranoid here but IMHO it's good to be ready for a corner-case
+> when the pointer is completely bogus and there's no mapping for him.
+> I understand that today we only expect this syscall to be used from libc's
+> internals but as long as syscall exists nobody stops anybody from using it
+> directly without libc. So maybe instead of doing get_user_pages_fast() just
+> send a SIGSEGV to the process? At least user will realize there's some problem
+> at earlier stage.
+> 
+> > Otherwise it is extremely unlikely to start with a TLB entry with Read 
+> > permissions, followed by syscall Trap only to find the entry missing, unless a 
+> > global TLB flush came from other cores, right in the middle. But this syscall is 
+> > not guaranteed to work with SMP anyways, so lets ignore any SMP misdoings here.
+> 
+> Well but that's exactly the situation I was debugging: we start from data from read-only
+> page and on attempt to write back modified value COW machinery gets involved.
+> 
+> That was on UP platform.
+> 
+> > Now in case it was *an* uninitialized var, do we have to guarantee any well 
+> > defined semantics for the kernel emulation of cmpxchg ? IMO it should be fine to 
+> > return 0 or -EFAULT etc. Infact -EFAULT is better as it will force a retry loop on 
+> > user side, given the typical cmpxchg usage pattern.
+> 
+> The problem is libc only expects to get a value read from memory.
+> And in theory expected value might be -14 which is basically -EFAULT.
+> I'm not talking about 0 at all because in some cases that's exactly what
+> user-space expects.
+> 
+> So if we read unexpected value then we'll just return it without even attempting
+> to write.
+> 
+> If we read expected data but fail to write then we'll send a SIGSEGV and
+> return whatever... let it be -EFAULT - anyways the app will be killed on exit from
+> this syscall.
 
-To that end introduce a new helper function,
-hrtimer_next_event_without(), for computing the time until the next
-hrtimer event over all timers except for one and modify the underlying
-code in __hrtimer_next_event_base() to prepare it for being called by
-that new function.
+Any comments on my comments above?
 
-No intentional changes in functionality.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v8 -> v9:
- * Make fewer changes to the existing code.
- * Add a new helper function for the handling of the use case at hand.
-
----
- include/linux/hrtimer.h |    1 
- kernel/time/hrtimer.c   |   55 ++++++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 54 insertions(+), 2 deletions(-)
-
-Index: linux-pm/include/linux/hrtimer.h
-===================================================================
---- linux-pm.orig/include/linux/hrtimer.h
-+++ linux-pm/include/linux/hrtimer.h
-@@ -426,6 +426,7 @@ static inline ktime_t hrtimer_get_remain
- }
- 
- extern u64 hrtimer_get_next_event(void);
-+extern u64 hrtimer_next_event_without(const struct hrtimer *exclude);
- 
- extern bool hrtimer_active(const struct hrtimer *timer);
- 
-Index: linux-pm/kernel/time/hrtimer.c
-===================================================================
---- linux-pm.orig/kernel/time/hrtimer.c
-+++ linux-pm/kernel/time/hrtimer.c
-@@ -490,6 +490,7 @@ __next_base(struct hrtimer_cpu_base *cpu
- 	while ((base = __next_base((cpu_base), &(active))))
- 
- static ktime_t __hrtimer_next_event_base(struct hrtimer_cpu_base *cpu_base,
-+					 const struct hrtimer *exclude,
- 					 unsigned int active,
- 					 ktime_t expires_next)
- {
-@@ -502,9 +503,24 @@ static ktime_t __hrtimer_next_event_base
- 
- 		next = timerqueue_getnext(&base->active);
- 		timer = container_of(next, struct hrtimer, node);
-+		if (timer == exclude) {
-+			/* Get to the next timer in the queue. */
-+			struct rb_node *rbn = rb_next(&next->node);
-+
-+			next = rb_entry_safe(rbn, struct timerqueue_node, node);
-+			if (!next)
-+				continue;
-+
-+			timer = container_of(next, struct hrtimer, node);
-+		}
- 		expires = ktime_sub(hrtimer_get_expires(timer), base->offset);
- 		if (expires < expires_next) {
- 			expires_next = expires;
-+
-+			/* Skip cpu_base update if a timer is being excluded. */
-+			if (exclude)
-+				continue;
-+
- 			if (timer->is_soft)
- 				cpu_base->softirq_next_timer = timer;
- 			else
-@@ -548,7 +564,8 @@ __hrtimer_get_next_event(struct hrtimer_
- 	if (!cpu_base->softirq_activated && (active_mask & HRTIMER_ACTIVE_SOFT)) {
- 		active = cpu_base->active_bases & HRTIMER_ACTIVE_SOFT;
- 		cpu_base->softirq_next_timer = NULL;
--		expires_next = __hrtimer_next_event_base(cpu_base, active, KTIME_MAX);
-+		expires_next = __hrtimer_next_event_base(cpu_base, NULL,
-+							 active, KTIME_MAX);
- 
- 		next_timer = cpu_base->softirq_next_timer;
- 	}
-@@ -556,7 +573,8 @@ __hrtimer_get_next_event(struct hrtimer_
- 	if (active_mask & HRTIMER_ACTIVE_HARD) {
- 		active = cpu_base->active_bases & HRTIMER_ACTIVE_HARD;
- 		cpu_base->next_timer = next_timer;
--		expires_next = __hrtimer_next_event_base(cpu_base, active, expires_next);
-+		expires_next = __hrtimer_next_event_base(cpu_base, NULL, active,
-+							 expires_next);
- 	}
- 
- 	return expires_next;
-@@ -1200,6 +1218,39 @@ u64 hrtimer_get_next_event(void)
- 
- 	raw_spin_unlock_irqrestore(&cpu_base->lock, flags);
- 
-+	return expires;
-+}
-+
-+/**
-+ * hrtimer_next_event_without - time until next expiry event w/o one timer
-+ * @exclude:	timer to exclude
-+ *
-+ * Returns the next expiry time over all timers except for the @exclude one or
-+ * KTIME_MAX if none of them is pending.
-+ */
-+u64 hrtimer_next_event_without(const struct hrtimer *exclude)
-+{
-+	struct hrtimer_cpu_base *cpu_base = this_cpu_ptr(&hrtimer_bases);
-+	u64 expires = KTIME_MAX;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&cpu_base->lock, flags);
-+
-+	if (__hrtimer_hres_active(cpu_base)) {
-+		unsigned int active;
-+
-+		if (!cpu_base->softirq_activated) {
-+			active = cpu_base->active_bases & HRTIMER_ACTIVE_SOFT;
-+			expires = __hrtimer_next_event_base(cpu_base, exclude,
-+							    active, KTIME_MAX);
-+		}
-+		active = cpu_base->active_bases & HRTIMER_ACTIVE_HARD;
-+		expires = __hrtimer_next_event_base(cpu_base, exclude, active,
-+						    expires);
-+	}
-+
-+	raw_spin_unlock_irqrestore(&cpu_base->lock, flags);
-+
- 	return expires;
- }
- #endif
+-Alexey
