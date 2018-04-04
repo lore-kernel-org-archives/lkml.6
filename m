@@ -1,23 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751362AbeDDSE1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 14:04:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58738 "EHLO
+        id S1751460AbeDDSEe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 14:04:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44250 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750915AbeDDSE0 (ORCPT
+        by vger.kernel.org with ESMTP id S1750915AbeDDSE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 14:04:26 -0400
+        Wed, 4 Apr 2018 14:04:28 -0400
 From: Sandipan Das <sandipan@linux.vnet.ibm.com>
 To: acme@kernel.org, jolsa@redhat.com
 Cc: linux-kernel@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com
-Subject: [PATCH 1/3] perf tools: Fix perf builds with clang support
-Date: Wed,  4 Apr 2018 23:34:17 +0530
+Subject: [PATCH 2/3] perf clang: Add support for recent clang versions
+Date: Wed,  4 Apr 2018 23:34:18 +0530
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180404180419.19056-1-sandipan@linux.vnet.ibm.com>
+References: <20180404180419.19056-1-sandipan@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18040418-0040-0000-0000-00000449C0E0
+x-cbid: 18040418-0040-0000-0000-0000042A76FC
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040418-0041-0000-0000-000020EDD1CF
-Message-Id: <20180404180419.19056-1-sandipan@linux.vnet.ibm.com>
+x-cbparentid: 18040418-0041-0000-0000-0000262DAA10
+Message-Id: <20180404180419.19056-2-sandipan@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -29,30 +34,71 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For libclang, some distro packages provide static libraries (.a)
-while some provide shared libraries (.so). Currently, perf code
-can only be linked with static libraries. This makes perf build
-possible for both cases.
+The clang API calls used by perf have changed in recent
+releases and builds succeed with libclang-3.9 only. This
+introduces compatibility with libclang-4.0 and above.
 
-Fixes: d58ac0bf8d1e ("perf build: Add clang and llvm compile and linking support")
+Without this patch, we will see the following compilation
+errors with libclang-4.0+:
+
+ util/c++/clang.cpp: In function ‘clang::CompilerInvocation* perf::createCompilerInvocation(llvm::opt::ArgStringList, llvm::StringRef&, clang::DiagnosticsEngine&)’:
+ util/c++/clang.cpp:62:33: error: ‘IK_C’ was not declared in this scope
+   Opts.Inputs.emplace_back(Path, IK_C);
+                                  ^~~~
+ util/c++/clang.cpp: In function ‘std::unique_ptr<llvm::Module> perf::getModuleFromSource(llvm::opt::ArgStringList, llvm::StringRef, llvm::IntrusiveRefCntPtr<clang::vfs::FileSystem>)’:
+ util/c++/clang.cpp:75:26: error: no matching function for call to ‘clang::CompilerInstance::setInvocation(clang::CompilerInvocation*)’
+   Clang.setInvocation(&*CI);
+                           ^
+ In file included from util/c++/clang.cpp:14:0:
+ /usr/include/clang/Frontend/CompilerInstance.h:231:8: note: candidate: void clang::CompilerInstance::setInvocation(std::shared_ptr<clang::CompilerInvocation>)
+    void setInvocation(std::shared_ptr<CompilerInvocation> Value);
+         ^~~~~~~~~~~~~
+
+Fixes: 00b86691c77c ("perf clang: Add builtin clang support ant test case")
 Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
 ---
- tools/perf/Makefile.perf | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/util/c++/clang.cpp | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index f7517e1b73f8..83e453de36f8 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -364,7 +364,8 @@ LIBS = -Wl,--whole-archive $(PERFLIBS) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive
+diff --git a/tools/perf/util/c++/clang.cpp b/tools/perf/util/c++/clang.cpp
+index 1bfc946e37dc..bf31ceab33bd 100644
+--- a/tools/perf/util/c++/clang.cpp
++++ b/tools/perf/util/c++/clang.cpp
+@@ -9,6 +9,7 @@
+  * Copyright (C) 2016 Huawei Inc.
+  */
  
- ifeq ($(USE_CLANG), 1)
-   CLANGLIBS_LIST = AST Basic CodeGen Driver Frontend Lex Tooling Edit Sema Analysis Parse Serialization
--  LIBCLANG = $(foreach l,$(CLANGLIBS_LIST),$(wildcard $(shell $(LLVM_CONFIG) --libdir)/libclang$(l).a))
-+  CLANGLIBS_NOEXT_LIST = $(foreach l,$(CLANGLIBS_LIST),$(shell $(LLVM_CONFIG) --libdir)/libclang$(l))
-+  LIBCLANG = $(foreach l,$(CLANGLIBS_NOEXT_LIST),$(wildcard $(l).a $(l).so))
-   LIBS += -Wl,--start-group $(LIBCLANG) -Wl,--end-group
- endif
++#include "clang/Basic/Version.h"
+ #include "clang/CodeGen/CodeGenAction.h"
+ #include "clang/Frontend/CompilerInvocation.h"
+ #include "clang/Frontend/CompilerInstance.h"
+@@ -58,7 +59,8 @@ createCompilerInvocation(llvm::opt::ArgStringList CFlags, StringRef& Path,
  
+ 	FrontendOptions& Opts = CI->getFrontendOpts();
+ 	Opts.Inputs.clear();
+-	Opts.Inputs.emplace_back(Path, IK_C);
++	Opts.Inputs.emplace_back(Path,
++			FrontendOptions::getInputKindForExtension("c"));
+ 	return CI;
+ }
+ 
+@@ -71,10 +73,17 @@ getModuleFromSource(llvm::opt::ArgStringList CFlags,
+ 
+ 	Clang.setVirtualFileSystem(&*VFS);
+ 
++#if CLANG_VERSION_MAJOR < 4
+ 	IntrusiveRefCntPtr<CompilerInvocation> CI =
+ 		createCompilerInvocation(std::move(CFlags), Path,
+ 					 Clang.getDiagnostics());
+ 	Clang.setInvocation(&*CI);
++#else
++	std::shared_ptr<CompilerInvocation> CI(
++		createCompilerInvocation(std::move(CFlags), Path,
++					 Clang.getDiagnostics()));
++	Clang.setInvocation(CI);
++#endif
+ 
+ 	std::unique_ptr<CodeGenAction> Act(new EmitLLVMOnlyAction(&*LLVMCtx));
+ 	if (!Clang.ExecuteAction(*Act))
 -- 
 2.14.3
