@@ -1,34 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeDDL5P (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 07:57:15 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:47046 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751279AbeDDL5N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 07:57:13 -0400
-Subject: Re: [PATCH 3/8] bindings: PCI: designware: Add support for the EP in
- designware driver
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
- <dd582bfc2780679b7a092d23547c316234a84c34.1522235224.git.gustavo.pimentel@synopsys.com>
- <20180404115014.GC24669@red-moon>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <d48b4dc7-41a5-2304-c310-f7b4e08973a8@synopsys.com>
-Date: Wed, 4 Apr 2018 12:56:19 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751710AbeDDL7S (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 07:59:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60976 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751216AbeDDL7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 07:59:16 -0400
+Subject: Re: [PATCH v5 2/2] KVM: X86: Add Force Emulation Prefix for "emulate
+ the next instruction"
+To: Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Liran Alon <liran.alon@oracle.com>
+References: <1522798129-14588-1-git-send-email-wanpengli@tencent.com>
+ <1522798129-14588-3-git-send-email-wanpengli@tencent.com>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <48d06146-f508-e883-72cb-881e043f9c72@redhat.com>
+Date: Wed, 4 Apr 2018 13:59:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180404115014.GC24669@red-moon>
+In-Reply-To: <1522798129-14588-3-git-send-email-wanpengli@tencent.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -36,57 +32,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
 
-On 04/04/2018 12:50, Lorenzo Pieralisi wrote:
-> On Wed, Mar 28, 2018 at 12:38:33PM +0100, Gustavo Pimentel wrote:
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 1eb495e..a55ecef 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -146,6 +146,9 @@ bool __read_mostly enable_vmware_backdoor = false;
+>  module_param(enable_vmware_backdoor, bool, S_IRUGO);
+>  EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
+>  
+> +static bool __read_mostly force_emulation_prefix = false;
+> +module_param(force_emulation_prefix, bool, S_IRUGO);
+> +
+>  #define KVM_NR_SHARED_MSRS 16
+>  
+>  struct kvm_shared_msrs_global {
+> @@ -4844,6 +4847,21 @@ int handle_ud(struct kvm_vcpu *vcpu)
+>  {
+>  	enum emulation_result er;
+>  
+> +	if (force_emulation_prefix) {
+> +		char sig[5]; /* ud2; .ascii "kvm" */
+> +		struct x86_exception e;
+> +
+> +		if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
+> +				kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e))
+> +			goto emulate_ud;
+> +
+> +		if (memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0) {
+> +			kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
+> +			return emulate_instruction(vcpu, 0) == EMULATE_DONE;
+
+What if we would have an invalid instruction here? Shouldn't you handle
+the emulate_instruction() like below?
+(e.g. keep a variable with the emulation type (0 vs EMULTYPE_TRAP_UD)
+and reuse emulate_ud below)
+
+> +		}
+> +	}
+> +
+> +emulate_ud:
+>  	er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
+>  	if (er == EMULATE_USER_EXIT)
+>  		return 0;
 > 
-> Please always write a commit log even if it is trivial.
 
-Ok, Kishon has also refered that. On next patch version it'll contain a log
-description.
 
-> 
-> Thanks,
-> Lorenzo
-> 
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> index 6300762..4bb2e08 100644
->> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> @@ -3,6 +3,7 @@
->>  Required properties:
->>  - compatible:
->>  	"snps,dw-pcie" for RC mode;
->> +	"snps,dw-pcie-ep" for EP mode;
->>  - reg: Should contain the configuration address space.
->>  - reg-names: Must be "config" for the PCIe configuration space.
->>      (The old way of getting the configuration address space from "ranges"
->> @@ -56,3 +57,15 @@ Example configuration:
->>  		#interrupt-cells = <1>;
->>  		num-lanes = <1>;
->>  	};
->> +or
->> +	pcie_ep: pcie_ep@dfc00000 {
->> +		compatible = "snps,dw-pcie-ep";
->> +		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
->> +		      <0xdfc01000 0x0001000>, /* IP registers 2 */
->> +		      <0xd0000000 0x2000000>; /* Configuration space */
->> +		reg-names = "dbi", "dbi2", "addr_space";
->> +		device_type = "pci";
->> +		num-ib-windows = <6>;
->> +		num-ob-windows = <2>;
->> +		num-lanes = <1>;
->> +	};
->> -- 
->> 2.7.4
->>
->>
+-- 
 
-Regards,
-Gustavo
+Thanks,
+
+David / dhildenb
