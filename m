@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755061AbeDDCXQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 22:23:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36620 "EHLO mail.kernel.org"
+        id S1755105AbeDDCXW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 22:23:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755008AbeDDCXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 22:23:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715242133F
+        id S1755063AbeDDCXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 22:23:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2DC9217CE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -17,9 +17,9 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>, Jin Yao <yao.jin@intel.com>,
         Kan Liang <kan.liang@intel.com>, Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 06/17] perf config: Rename to HAVE_DWARF_GETLOCATIONS_SUPPORT
-Date: Tue,  3 Apr 2018 23:21:47 -0300
-Message-Id: <20180404022158.12190-7-acme@kernel.org>
+Subject: [PATCH 07/17] perf version: Print the compiled-in status of libraries
+Date: Tue,  3 Apr 2018 23:21:48 -0300
+Message-Id: <20180404022158.12190-8-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180404022158.12190-1-acme@kernel.org>
 References: <20180404022158.12190-1-acme@kernel.org>
@@ -29,49 +29,185 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jin Yao <yao.jin@linux.intel.com>
 
-In Makefile.config, to make all libraries flags have _SUPPORT suffix,
-rename HAVE_DWARF_GETLOCATIONS to HAVE_DWARF_GETLOCATIONS_SUPPORT
+This patch checks the values passed by CFLAGS (-DHAVE_XXX) and then
+print the status of libraries.
+
+For example, if HAVE_DWARF_SUPPORT is defined, that means the library
+"dwarf" is compiled-in. The patch will print the status "on" for this
+library otherwise it print the status "OFF".
+
+A new option '--build-options' created for 'perf version' supports the
+printing of library status.
+
+For example:
+
+$ ./perf version --build-options
+    or
+  ./perf --version --build-options
+    or
+  ./perf -v --build-options
+
+perf version 4.13.rc5.g6727c5
+                 dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+    dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+                 glibc: [ on  ]  # HAVE_GLIBC_SUPPORT
+                  gtk2: [ on  ]  # HAVE_GTK2_SUPPORT
+              libaudit: [ OFF ]  # HAVE_LIBAUDIT_SUPPORT
+                libbfd: [ on  ]  # HAVE_LIBBFD_SUPPORT
+                libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+               libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+               libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+             libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+             libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+             libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+    libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+                  zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+                  lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+             get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+                   bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+
+v4:
+
+1. Also print the macro name. That would make it easier
+   to grep around in the source looking for where code
+   related a particular features is located.
+
+2. Update since HAVE_DWARF_GETLOCATIONS is renamed to
+   HAVE_DWARF_GETLOCATIONS_SUPPORT
+
+v3:
+
+Remove following unnecessary help message.
+
+1. [ on  ]: library is compiled-in
+   [ OFF ]: library is disabled in make configuration
+            OR library is not installed in build environment
+
+2. Create '--build-options' option.
+
+3. Use standard option parsing API 'parse_options'.
+
+v2:
+
+1. Use IS_BUILTIN macro to replace #ifdef/#endif block.
+
+2. Print color for on/OFF.
 
 Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Suggested-by: Ingo Molnar <mingo@kernel.org>
+Suggested-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jin Yao <yao.jin@intel.com>
 Cc: Kan Liang <kan.liang@intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1522402036-22915-4-git-send-email-yao.jin@linux.intel.com
+Link: http://lkml.kernel.org/r/1522402036-22915-5-git-send-email-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.config  | 2 +-
- tools/perf/util/dwarf-aux.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/builtin-version.c | 82 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 81 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index deb8fba2f4f1..c7abd83a8e19 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -346,7 +346,7 @@ else
-       ifneq ($(feature-dwarf_getlocations), 1)
-         msg := $(warning Old libdw.h, finding variables at given 'perf probe' point will not work, install elfutils-devel/libdw-dev >= 0.157);
-       else
--        CFLAGS += -DHAVE_DWARF_GETLOCATIONS
-+        CFLAGS += -DHAVE_DWARF_GETLOCATIONS_SUPPORT
-       endif # dwarf_getlocations
-     endif # Dwarf support
-   endif # libelf support
-diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-index f5acda13dcfa..7eb7de5aee44 100644
---- a/tools/perf/util/dwarf-aux.c
-+++ b/tools/perf/util/dwarf-aux.c
-@@ -979,7 +979,7 @@ int die_get_varname(Dwarf_Die *vr_die, struct strbuf *buf)
- 	return ret < 0 ? ret : strbuf_addf(buf, "\t%s", dwarf_diename(vr_die));
- }
+diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
+index 37019c5d675f..2abe3910d6b6 100644
+--- a/tools/perf/builtin-version.c
++++ b/tools/perf/builtin-version.c
+@@ -1,11 +1,91 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "builtin.h"
+ #include "perf.h"
++#include "color.h"
+ #include <linux/compiler.h>
++#include <tools/config.h>
+ #include <stdio.h>
++#include <string.h>
++#include <subcmd/parse-options.h>
  
--#ifdef HAVE_DWARF_GETLOCATIONS
-+#ifdef HAVE_DWARF_GETLOCATIONS_SUPPORT
- /**
-  * die_get_var_innermost_scope - Get innermost scope range of given variable DIE
-  * @sp_die: a subprogram DIE
+-int cmd_version(int argc __maybe_unused, const char **argv __maybe_unused)
++int version_verbose;
++
++struct version {
++	bool	build_options;
++};
++
++static struct version version;
++
++static struct option version_options[] = {
++	OPT_BOOLEAN(0, "build-options", &version.build_options,
++		    "display the build options"),
++};
++
++static const char * const version_usage[] = {
++	"perf version [<options>]",
++	NULL
++};
++
++static void on_off_print(const char *status)
++{
++	printf("[ ");
++
++	if (!strcmp(status, "OFF"))
++		color_fprintf(stdout, PERF_COLOR_RED, "%-3s", status);
++	else
++		color_fprintf(stdout, PERF_COLOR_GREEN, "%-3s", status);
++
++	printf(" ]");
++}
++
++static void status_print(const char *name, const char *macro,
++			 const char *status)
+ {
++	printf("%22s: ", name);
++	on_off_print(status);
++	printf("  # %s\n", macro);
++}
++
++#define STATUS(__d, __m)				\
++do {							\
++	if (IS_BUILTIN(__d))				\
++		status_print(#__m, #__d, "on");		\
++	else						\
++		status_print(#__m, #__d, "OFF");	\
++} while (0)
++
++static void library_status(void)
++{
++	STATUS(HAVE_DWARF_SUPPORT, dwarf);
++	STATUS(HAVE_DWARF_GETLOCATIONS_SUPPORT, dwarf_getlocations);
++	STATUS(HAVE_GLIBC_SUPPORT, glibc);
++	STATUS(HAVE_GTK2_SUPPORT, gtk2);
++	STATUS(HAVE_LIBAUDIT_SUPPORT, libaudit);
++	STATUS(HAVE_LIBBFD_SUPPORT, libbfd);
++	STATUS(HAVE_LIBELF_SUPPORT, libelf);
++	STATUS(HAVE_LIBNUMA_SUPPORT, libnuma);
++	STATUS(HAVE_LIBNUMA_SUPPORT, numa_num_possible_cpus);
++	STATUS(HAVE_LIBPERL_SUPPORT, libperl);
++	STATUS(HAVE_LIBPYTHON_SUPPORT, libpython);
++	STATUS(HAVE_SLANG_SUPPORT, libslang);
++	STATUS(HAVE_LIBCRYPTO_SUPPORT, libcrypto);
++	STATUS(HAVE_LIBUNWIND_SUPPORT, libunwind);
++	STATUS(HAVE_DWARF_SUPPORT, libdw-dwarf-unwind);
++	STATUS(HAVE_ZLIB_SUPPORT, zlib);
++	STATUS(HAVE_LZMA_SUPPORT, lzma);
++	STATUS(HAVE_AUXTRACE_SUPPORT, get_cpuid);
++	STATUS(HAVE_LIBBPF_SUPPORT, bpf);
++}
++
++int cmd_version(int argc, const char **argv)
++{
++	argc = parse_options(argc, argv, version_options, version_usage,
++			     PARSE_OPT_STOP_AT_NON_OPTION);
++
+ 	printf("perf version %s\n", perf_version_string);
++
++	if (version.build_options || version_verbose == 1)
++		library_status();
++
+ 	return 0;
+ }
 -- 
 2.14.3
