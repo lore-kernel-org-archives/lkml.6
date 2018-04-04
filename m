@@ -1,98 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752490AbeDDXUU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 19:20:20 -0400
-Received: from s18231873.onlinehome-server.info ([217.160.179.168]:50416 "EHLO
-        godking.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752390AbeDDXUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 19:20:18 -0400
-Subject: Re: [PATCH] Add Second Fan Support for Thinkpad P50
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <1522693621-3124-1-git-send-email-agk@godking.net>
- <CAHp75Vc1KV3i6Jp-t=cD5DjYDMPHA0Zz77RkN0kmrvb1WLj6gA@mail.gmail.com>
-Cc: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        ibm-acpi-devel@lists.sourceforge.net,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Alexander Kappner <agk@godking.net>
-Message-ID: <5cbdc251-6aa2-3fc2-3bb8-6f95cac11838@godking.net>
-Date: Wed, 4 Apr 2018 16:20:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Icedove/45.3.0
+        id S1752550AbeDDXVN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 19:21:13 -0400
+Received: from ozlabs.org ([103.22.144.67]:32871 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752392AbeDDXVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 19:21:11 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 5 Apr 2018 09:19:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Andrei Vagin <avagin@virtuozzo.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Michal Hocko <mhocko@suse.com>,
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        david <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: Re: [v8, 11/18] mm, dax: enable filesystems to trigger dev_pagemap
+ ->page_free callbacks
+Message-ID: <20180405091946.7ca20ead@canb.auug.org.au>
+In-Reply-To: <CAPcyv4jd+aSzMvGHJ6O8K5vJ+qmH=XU2i2bzsGvZENXnkpM7=g@mail.gmail.com>
+References: <152246898837.36038.26895928842345061.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <20180404212340.GA12737@outlook.office365.com>
+        <CAPcyv4jknruAmkPEVx0X6Bd3uRs_FYdPf-W-5cDO1Z+kaG5+uw@mail.gmail.com>
+        <CAPcyv4jd+aSzMvGHJ6O8K5vJ+qmH=XU2i2bzsGvZENXnkpM7=g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vc1KV3i6Jp-t=cD5DjYDMPHA0Zz77RkN0kmrvb1WLj6gA@mail.gmail.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/sgDCFHZZhV61WXqrqZ/wP=B"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy: Thanks for pushing, and for the pointers regarding formalities; I'll keep those in mind. 
+--Sig_/sgDCFHZZhV61WXqrqZ/wP=B
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Also, it would be great if someone could test the fan reporting on a P70 Thinkpad (which has the same fan configuration as my P50 and thus likely needs the same quirk).
+Hi Dan,
 
-Best
-Alexander Kappner
- 
-> On Mon, Apr 2, 2018 at 9:27 PM, Alexander Kappner <agk@...> wrote:
->> The Thinkpad P50 has 2 fans. Add the 2FAN quirk so the tpacpi driver
->> properly reports both fan speeds.
->> Because the P50 doesn't report the version of its EC controller, we need to
->> identify it by BIOS version (N1).
-> 
-> I have pushed it with changes discussed to my review and testing queue, thanks!
-> 
-> I'm not sure if you were about to send a new version (no need
-> anymore), though for the next time, please be familiar with
-> https://elixir.bootlin.com/linux/latest/source/Documentation/process/submitting-patches.rst
-> (in particular, section 8).
-> 
-> And additional information, we are using special prefixes for our
-> subsystem, i.e.
-> "platform/x86: $DRIVER_NAME: ".
-> 
->> Signed-off-by: Alexander Kappner <agk@...>
->> ---
->>  drivers/platform/x86/thinkpad_acpi.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
->> index d5eaf3b1..ebdc300 100644
->> --- a/drivers/platform/x86/thinkpad_acpi.c
->> +++ b/drivers/platform/x86/thinkpad_acpi.c
->> @@ -8699,16 +8699,24 @@ static const struct attribute_group fan_attr_group = {
->>           .ec = TPID(__id1, __id2),             \
->>           .quirks = __quirks }
->>
->> +#define TPACPI_FAN_QL_BIOS(__id1, __id2, __quirks)     \
->> +       { .vendor = PCI_VENDOR_ID_LENOVO,       \
->> +         .bios = TPID(__id1, __id2),           \
->> +         .ec = TPACPI_MATCH_ANY,               \
->> +         .quirks = __quirks }
->> +
->>  static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
->>         TPACPI_FAN_QI('1', 'Y', TPACPI_FAN_Q1),
->>         TPACPI_FAN_QI('7', '8', TPACPI_FAN_Q1),
->>         TPACPI_FAN_QI('7', '6', TPACPI_FAN_Q1),
->>         TPACPI_FAN_QI('7', '0', TPACPI_FAN_Q1),
->>         TPACPI_FAN_QL('7', 'M', TPACPI_FAN_2FAN),
->> +       TPACPI_FAN_QL_BIOS('N', '1', TPACPI_FAN_2FAN) // Thinkpad P50 has 2 fans
->>  };
->>
->>  #undef TPACPI_FAN_QL
->>  #undef TPACPI_FAN_QI
->> +#undef TPACPI_FAN_QL_BIOS
->>
->>  static int __init fan_init(struct ibm_init_struct *iibm)
->>  {
->> --
->> 2.1.4
->>
-> 
-> 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+On Wed, 4 Apr 2018 14:35:20 -0700 Dan Williams <dan.j.williams@intel.com> w=
+rote:
+>
+> New branch pushed out with this offending commit removed.
+
+Thanks, I refetched.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/sgDCFHZZhV61WXqrqZ/wP=B
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrFXZIACgkQAVBC80lX
+0GzkHwgAoJUYgLchV2FPkM6kN5+QkaSI/dMQ571cQ+bs5JkrfAkANCdIr1LNVk5p
+JxFaMZccM3i4K/6t+/h84UowZV6Qk3W2GkrPhxUpFKsCWEc3w4wXrZRN71c4rM5D
+FIHHwY29bOj3wiP5ngOTFFR0D8F8cnrOD2k+bTetaNpCbuJ63am+I8NiI15qfzU3
+n5J+S+Ra7m4aCBi3n/pQqTKWKJehpjE3FSd5qwepBLXLsCXiQtcDzIT1+U0vvX27
+b/F2UAoOwZa8EZCsBCSDzQD5PX6/vSwk11hXkoveRhyhy7P8YOniRin8u/KOefsl
++8T7T2oYf/74PSICuIObkzEf9ZSQHQ==
+=nbIL
+-----END PGP SIGNATURE-----
+
+--Sig_/sgDCFHZZhV61WXqrqZ/wP=B--
