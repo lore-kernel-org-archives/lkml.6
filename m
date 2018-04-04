@@ -1,14 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756211AbeDDALC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 20:11:02 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:38750 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755942AbeDDAK6 (ORCPT
+        id S1756686AbeDDASU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 20:18:20 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:43114 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756161AbeDDASR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 20:10:58 -0400
-X-Google-Smtp-Source: AIpwx4/mUq9E2pCC7KRAhQyBd7bp9e041ZDVDiCqqceJ9MBKIs2FVjvSnUPYhNoBz1/73b/AMW1QMiEQ4ugZfFVnPwI=
+        Tue, 3 Apr 2018 20:18:17 -0400
+X-Google-Smtp-Source: AIpwx49yzvYCa20/24WU+e7uBLmN589lboxFlPGGnDPyIwNT0j++qX7bWt0rCQLoR1OntQPmXffboHC537GBNnxTABg=
 MIME-Version: 1.0
+In-Reply-To: <CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
  <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
  <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
@@ -25,42 +26,56 @@ References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145
  <CACdnJutZFKX+izBxRYbyxefT5KrKhVV0XsymU=vBhywd+TOE3A@mail.gmail.com>
  <CA+55aFwVUmjZ+Swe9xUdDOEE+EOoaU3dh7BcrH74BOLCi8y_Kw@mail.gmail.com>
  <CACdnJuvqQQ+hidokY5GA7g-yrAs5-358it0cs+m_d4RFDMuB_w@mail.gmail.com> <CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
-In-Reply-To: <CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Wed, 04 Apr 2018 00:10:47 +0000
-Message-ID: <CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 4 Apr 2018 02:17:55 +0200
+Message-ID: <CAG48ez1MRsDGoea5MwGTXK6R0LJy9u0mX-1VrSSskwnV98kEjQ@mail.gmail.com>
 Subject: Re: [GIT PULL] Kernel lockdown for secure boot
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: luto@kernel.org, David Howells <dhowells@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, jmorris@namei.org,
+Cc: Matthew Garrett <mjg59@google.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morris <jmorris@namei.org>,
         Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jforbes@redhat.com, linux-man@vger.kernel.org, jlee@suse.com,
+        Justin Forbes <jforbes@redhat.com>,
+        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
         LSM List <linux-security-module@vger.kernel.org>,
-        linux-api@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
         linux-efi <linux-efi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 5:06 PM Linus Torvalds
-<torvalds@linux-foundation.org>
-wrote:
-
+On Wed, Apr 4, 2018 at 2:06 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 > On Tue, Apr 3, 2018 at 4:59 PM, Matthew Garrett <mjg59@google.com> wrote:
-> >
-> > Ok. So we can build distribution kernels that *always* have this on,
-and to
-> > turn it off you have to disable Secure Boot and install a different
-kernel.
-
+>>
+>> Ok. So we can build distribution kernels that *always* have this on, and to
+>> turn it off you have to disable Secure Boot and install a different kernel.
+>
 > Bingo.
-
+>
 > Exactly like EVERY OTHER KERNEL CONFIG OPTION.
+>
+> Just like all the ones that I've mentioned several times.
+>
+> Or, like a lot of other kernel options, maybe have a way to just
+> disable it on the kernel command line, and let the user know about it.
+>
+> That would still be better than disabling secure boot entirely in your
+> world view, so it's (a) more convenient and (b) better.
+>
+> Again, in no case does it make sense to tie it into "how did we boot".
+> Because that's just inconvenient for everybody.
 
-So your argument is that we should make the user experience worse? Without
-some sort of verified boot mechanism, lockdown is just security theater.
-There's no good reason to enable it unless you have some mechanism for
-verifying that you booted something you trust.
+Without taking a stance regarding whether I think that kernel lockdown
+makes sense, I think Matthew's point is this:
+If you don't have lockdown, secure boot doesn't provide a benefit,
+since an attacker could just modify the init binary instead of messing
+with your kernel.
+If you have secure boot, you want lockdown to prevent chainloading
+into a backdoored version of the real OS.
