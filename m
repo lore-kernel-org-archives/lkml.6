@@ -1,100 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753124AbeDDAkb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 20:40:31 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:45359 "EHLO
-        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751457AbeDDAka (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 20:40:30 -0400
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: iamjoonsoo.kim@lge.com
-X-Original-SENDERIP: 10.177.220.142
-X-Original-MAILFROM: iamjoonsoo.kim@lge.com
-Date: Wed, 4 Apr 2018 09:40:27 +0900
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-To: linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, cl@linux.com, mm-commits@vger.kernel.org,
-        penberg@kernel.org, rientjes@google.com, sunnyddayss@gmail.com
-Subject: Re: + mm-slabc-remove-duplicated-check-of-colour_next.patch added to
- -mm tree
-Message-ID: <20180404004027.GB6628@js1304-desktop>
-References: <20180312221333.aYPvPxhxp%akpm@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312221333.aYPvPxhxp%akpm@linux-foundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1753828AbeDDAmb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 20:42:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:29220 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754156AbeDDAmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 20:42:22 -0400
+From: Al Stone <ahs3@redhat.com>
+To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Al Stone <ahs3@redhat.com>
+Subject: [PATCH 0/3] mailbox: ACPI: Remove incorrect error message about parsing PCCT
+Date: Tue,  3 Apr 2018 18:42:08 -0600
+Message-Id: <20180404004211.6141-1-ahs3@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 03:13:33PM -0700, akpm@linux-foundation.org wrote:
-> 
-> The patch titled
->      Subject: mm/slab.c: remove duplicated check of colour_next
-> has been added to the -mm tree.  Its filename is
->      mm-slabc-remove-duplicated-check-of-colour_next.patch
-> 
-> This patch should soon appear at
->     http://ozlabs.org/~akpm/mmots/broken-out/mm-slabc-remove-duplicated-check-of-colour_next.patch
-> and later at
->     http://ozlabs.org/~akpm/mmotm/broken-out/mm-slabc-remove-duplicated-check-of-colour_next.patch
-> 
-> Before you just go and hit "reply", please:
->    a) Consider who else should be cc'ed
->    b) Prefer to cc a suitable mailing list as well
->    c) Ideally: find the original patch on the mailing list and do a
->       reply-to-all to that, adding suitable additional cc's
-> 
-> *** Remember to use Documentation/process/submit-checklist.rst when testing your code ***
-> 
-> The -mm tree is included into linux-next and is updated
-> there every 3-4 working days
-> 
-> ------------------------------------------------------
-> From: Roman Lakeev <sunnyddayss@gmail.com>
-> Subject: mm/slab.c: remove duplicated check of colour_next
-> 
-> Remove check that offset greater than cachep->colour bacause this is
-> already checked in previous lines.
-> 
-> Link: http://lkml.kernel.org/r/877eqilr71.fsf@gmail.com
-> Signed-off-by: Roman Lakeev <sunnyddayss@gmail.com>
-> Acked-by: Christoph Lameter <cl@linux.com>
-> Acked-by: David Rientjes <rientjes@google.com>
-> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
-> 
->  mm/slab.c |    6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff -puN mm/slab.c~mm-slabc-remove-duplicated-check-of-colour_next mm/slab.c
-> --- a/mm/slab.c~mm-slabc-remove-duplicated-check-of-colour_next
-> +++ a/mm/slab.c
-> @@ -2674,11 +2674,7 @@ static struct page *cache_grow_begin(str
->  	if (n->colour_next >= cachep->colour)
->  		n->colour_next = 0;
->  
-> -	offset = n->colour_next;
-> -	if (offset >= cachep->colour)
-> -		offset = 0;
-> -
-> -	offset *= cachep->colour_off;
-> +	offset = n->colour_next * cachep->colour_off;
->  
->  	/* Get slab management. */
->  	freelist = alloc_slabmgmt(cachep, page, offset,
+This set of patches provide some cleanup in ACPI for minor issues
+found while correcting a bogus error message (the first two patches),
+and the correction for the error message itself (patch 3/3).  Note
+that patches 1/3 and 2/3 are not required for 3/3 to work: 1/3 only
+changes a comment and 2/3 makes an ACPI table parsing loop a wee bit
+more robust.
 
-Hello, all.
+For patch 3/3, many systems on boot have been reporting "Error parsing
+PCC subspaces from PCCT" which turns out to not be an error at all.
+The issue is that the probe for ACPI mailboxes defined in the PCCT
+(Platform Communications Channel Table) makes a faulty assumption about
+the content of the PCCT.  What's more, when the error is reported, no
+further PCC mailboxes are set up, even when they have been defined
+in the PCCT.  So, in the reported cases, there was no error and the
+data in the PCCT was being ignored.  This is described in more detail
+in patch 3/3.
 
-This n->colour_next can be update at the other cpu since
-there is no lock to protect it. So, removing this one
-another check can make the offset overflow.
+Since these patches primarily involve ACPI usages, it may make
+sense for all of them to go through the linux-acpi tree; clearly,
+this is up to the maintainers, though.
 
-Andrew, could you drop this patch?
 
-Thanks.
+Al Stone (3):
+  ACPI: improve function documentation for acpi_parse_entries_array()
+  ACPI: ensure acpi_parse_entries_array() does not access non-existent
+    table data
+  mailbox: ACPI: erroneous error message when parsing the ACPI PCCT
+
+ drivers/acpi/tables.c |  9 ++---
+ drivers/mailbox/pcc.c | 99 +++++++++++++++++++++++++++++++++++++--------------
+ 2 files changed, 78 insertions(+), 30 deletions(-)
+
+-- 
+2.14.3
