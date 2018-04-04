@@ -1,56 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753088AbeDDVZH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 17:25:07 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:52267 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752492AbeDDVZG (ORCPT
+        id S1752967AbeDDVZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 17:25:56 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:34492 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751749AbeDDVZy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 17:25:06 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-From: Chris Wilson <chris@chris-wilson.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: intel-gfx@lists.freedesktop.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH] trace: Fixup logic inversion on setting trace_global_clock defaults
-Date: Wed,  4 Apr 2018 22:24:50 +0100
-Message-Id: <20180404212450.26646-1-chris@chris-wilson.co.uk>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <7D320425-063C-4C54-BAD2-8843ADCD8D6A@goodmis.org>
-References: <7D320425-063C-4C54-BAD2-8843ADCD8D6A@goodmis.org>
-X-Originating-IP: 78.156.65.138
-X-Country: code=GB country="United Kingdom" ip=78.156.65.138
+        Wed, 4 Apr 2018 17:25:54 -0400
+X-Google-Smtp-Source: AIpwx4/3r27RaiMq3pASLhRVPgmAs32TGXxma8oeytvG1CpDSCFauQIeFmU/EaAOYATVRKoqi0emJN14jZLjgmfrH3o=
+MIME-Version: 1.0
+In-Reply-To: <3265889.eu5sbW8aRz@natalenko.name>
+References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jLwyot++C2EXs+032Lz5WdG65GsEJ-Q55rfhSbkG1Nh+A@mail.gmail.com>
+ <3265889.eu5sbW8aRz@natalenko.name>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 4 Apr 2018 14:25:51 -0700
+X-Google-Sender-Auth: 2VakgCmm7edjiGaWi1ywHDeok-o
+Message-ID: <CAGXu5jL++CEmLzFtGMVMhGWBzHpsRNJPTsEoc7Pw1dP--=azCA@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w34LQ1ij019221
 
-In commit 932066a15335 ("tracing: Default to using trace_global_clock if
-sched_clock is unstable"), the logic for deciding to override the
-default clock if unstable was reversed from the earlier posting. I was
-trying to reduce the width of the message by using an early return
-rather than a if-block, but reverted back to using the if-block and
-accidentally left the predicate inverted.
+On Wed, Apr 4, 2018 at 1:49 PM, Oleksandr Natalenko
+<oleksandr@natalenko.name> wrote:
+> Hi.
+>
+> On středa 4. dubna 2018 22:21:53 CEST Kees Cook wrote:
+>>
+>> ...
+>> That means scsi_sense_cache should be 96 bytes in size? But a 22 byte
+>> read starting at offset 94 happened? That seems like a 20 byte read
+>> beyond the end of the SLUB object? Though if it were reading past the
+>> actual end of the object, I'd expect the hardened usercopy BUG (rather
+>> than the WARN) to kick in. Ah, it looks like
+>> /sys/kernel/slab/scsi_sense_cache/slab_size shows this to be 128 bytes
+>> of actual allocation, so the 20 bytes doesn't strictly overlap another
+>> object (hence no BUG):
+>> ...
+>
+>
+> Actually, I can trigger a BUG too:
+>
+> [  129.259213] usercopy: Kernel memory exposure attempt detected from SLUB
+> object 'scsi_sense_cache' (offset 119, size 22)!
 
-Fixes: 932066a15335 ("tracing: Default to using trace_global_clock if sched_clock is unstable")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Wow, yeah, that's totally outside the slub object_size. How did you
+trigger this? Just luck or something specific?
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 0f47e653ffd8..e18e69183c9a 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8602,7 +8602,7 @@ late_initcall_sync(clear_boot_tracer);
- __init static int tracing_set_default_clock(void)
- {
- 	/* sched_clock_stable() is determined in late_initcall */
--	if (trace_boot_clock || sched_clock_stable()) {
-+	if (!trace_boot_clock && !sched_clock_stable()) {
- 		printk(KERN_WARNING
- 		       "Unstable clock detected, switching default tracing clock to \"global\"\n"
- 		       "If you want to keep using the local clock, then add:\n"
+> [  129.265167] ------------[ cut here ]------------
+> [  129.267579] kernel BUG at mm/usercopy.c:100!
+>
+> And also offset can be different, as you may see:
+>
+> [   55.993224] Bad or missing usercopy whitelist? Kernel memory exposure
+> attempt detected from SLUB object 'scsi_sense_cache' (offset 76, size 22)!
+> [   55.998678] WARNING: CPU: 0 PID: 1305 at mm/usercopy.c:81 usercopy_warn
+> +0x7e/0xa0
+>
+> It looks like only the size stays the same.
+
+I'd really like to understand how the buffer position can be
+changing... I'd expect that to break all kinds of things (i.e.
+free()ing the slab later would break too...)
+
+>> Can you send me your .config? What SCSI drivers are you using in the
+>> VM and on the real server?
+>
+> This is an Arch kernel with a config available here [1].
+>
+> For both server and VM "lspci -vv" shows "ahci" in use. Is this what you are
+> asking for?
+
+I think so, yeah.
+
+>> Are you able to see what ioctl()s smartctl is issuing? I'll try to
+>> reproduce this on my end...
+>
+> As per [2], strace shows "SG_IO" requests. Is this detailed enough?
+
+That's useful, yeah. I'll try Douglas's suggestion of "smartctl -r
+scsiioctl,3 ..." too.
+
+> Thanks for looking into it.
+
+Thanks for the report! I hope someone more familiar with sg_io() can
+help explain the changing buffer offset... :P
+
+-Kees
+
 -- 
-2.16.3
+Kees Cook
+Pixel Security
