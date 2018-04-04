@@ -1,260 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751284AbeDDKDH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:03:07 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40064 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750890AbeDDKDE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:03:04 -0400
-X-Google-Smtp-Source: AIpwx4/y8UccVOCQGxtK2ht569uJryatZyFF9wKxgCEQ1NhjLfCYDxRagE8EwVLJzj3/soTOLi32Gw==
-Date: Wed, 4 Apr 2018 12:03:00 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Hellstrom <thomas@shipmail.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
-Message-ID: <20180404100300.GE3881@phenom.ffwll.local>
-Mail-Followup-To: Rob Clark <robdclark@gmail.com>,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org,
-        Thomas Hellstrom <thomas@shipmail.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-References: <20180403224225.26776-1-robdclark@gmail.com>
+        id S1751236AbeDDKHB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:07:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42975 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750812AbeDDKHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 06:07:00 -0400
+Date: Wed, 4 Apr 2018 12:06:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        snitzer@redhat.com
+Subject: Re: [PATCH v8 15/18] mm, fs, dax: handle layout changes to pinned
+ dax mappings
+Message-ID: <20180404100657.qpodshwzmh4djwej@quack2.suse.cz>
+References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152246901060.36038.4487158506830998280.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180404094656.dssixqvvdcp5jff2@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180403224225.26776-1-robdclark@gmail.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180404094656.dssixqvvdcp5jff2@quack2.suse.cz>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 06:42:23PM -0400, Rob Clark wrote:
-> Add an atomic helper to implement dirtyfb support.  This is needed to
-> support DSI command-mode panels with x11 userspace (ie. when we can't
-> rely on pageflips to trigger a flush to the panel).
+On Wed 04-04-18 11:46:56, Jan Kara wrote:
+> On Fri 30-03-18 21:03:30, Dan Williams wrote:
+> > Background:
+> > 
+> > get_user_pages() in the filesystem pins file backed memory pages for
+> > access by devices performing dma. However, it only pins the memory pages
+> > not the page-to-file offset association. If a file is truncated the
+> > pages are mapped out of the file and dma may continue indefinitely into
+> > a page that is owned by a device driver. This breaks coherency of the
+> > file vs dma, but the assumption is that if userspace wants the
+> > file-space truncated it does not matter what data is inbound from the
+> > device, it is not relevant anymore. The only expectation is that dma can
+> > safely continue while the filesystem reallocates the block(s).
+> > 
+> > Problem:
+> > 
+> > This expectation that dma can safely continue while the filesystem
+> > changes the block map is broken by dax. With dax the target dma page
+> > *is* the filesystem block. The model of leaving the page pinned for dma,
+> > but truncating the file block out of the file, means that the filesytem
+> > is free to reallocate a block under active dma to another file and now
+> > the expected data-incoherency situation has turned into active
+> > data-corruption.
+> > 
+> > Solution:
+> > 
+> > Defer all filesystem operations (fallocate(), truncate()) on a dax mode
+> > file while any page/block in the file is under active dma. This solution
+> > assumes that dma is transient. Cases where dma operations are known to
+> > not be transient, like RDMA, have been explicitly disabled via
+> > commits like 5f1d43de5416 "IB/core: disable memory registration of
+> > filesystem-dax vmas".
+> > 
+> > The dax_layout_busy_page() routine is called by filesystems with a lock
+> > held against mm faults (i_mmap_lock) to find pinned / busy dax pages.
+> > The process of looking up a busy page invalidates all mappings
+> > to trigger any subsequent get_user_pages() to block on i_mmap_lock.
+> > The filesystem continues to call dax_layout_busy_page() until it finally
+> > returns no more active pages. This approach assumes that the page
+> > pinning is transient, if that assumption is violated the system would
+> > have likely hung from the uncompleted I/O.
+> > 
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Jeff Moyer <jmoyer@redhat.com>
+> > Cc: Dave Chinner <david@fromorbit.com>
+> > Cc: Matthew Wilcox <mawilcox@microsoft.com>
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> > Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Reported-by: Christoph Hellwig <hch@lst.de>
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> > ---
+> >  drivers/dax/super.c |    2 +
+> >  fs/dax.c            |   92 +++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/dax.h |   25 ++++++++++++++
+> >  mm/gup.c            |    5 +++
+> >  4 files changed, 123 insertions(+), 1 deletion(-)
 > 
-> To signal to the driver that the async atomic update needs to
-> synchronize with fences, even though the fb didn't change, the
-> drm_atomic_state::dirty flag is added.
+> ...
 > 
-> Signed-off-by: Rob Clark <robdclark@gmail.com>
-> ---
-> Background: there are a number of different folks working on getting
-> upstream kernel working on various different phones/tablets with qcom
-> SoC's.. many of them have command mode panels, so we kind of need a
-> way to support the legacy dirtyfb ioctl for x11 support.
+> > +/**
+> > + * dax_layout_busy_page - find first pinned page in @mapping
+> > + * @mapping: address space to scan for a page with ref count > 1
+> > + *
+> > + * DAX requires ZONE_DEVICE mapped pages. These pages are never
+> > + * 'onlined' to the page allocator so they are considered idle when
+> > + * page->count == 1. A filesystem uses this interface to determine if
+> > + * any page in the mapping is busy, i.e. for DMA, or other
+> > + * get_user_pages() usages.
+> > + *
+> > + * It is expected that the filesystem is holding locks to block the
+> > + * establishment of new mappings in this address_space. I.e. it expects
+> > + * to be able to run unmap_mapping_range() and subsequently not race
+> > + * mapping_mapped() becoming true. It expects that get_user_pages() pte
+> > + * walks are performed under rcu_read_lock().
+> > + */
+> > +struct page *dax_layout_busy_page(struct address_space *mapping)
+> > +{
+> > +	pgoff_t	indices[PAGEVEC_SIZE];
+> > +	struct page *page = NULL;
+> > +	struct pagevec pvec;
+> > +	pgoff_t	index, end;
+> > +	unsigned i;
+> > +
+> > +	/*
+> > +	 * In the 'limited' case get_user_pages() for dax is disabled.
+> > +	 */
+> > +	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
+> > +		return NULL;
+> > +
+> > +	if (!dax_mapping(mapping) || !mapping_mapped(mapping))
+> > +		return NULL;
+> > +
+> > +	pagevec_init(&pvec);
+> > +	index = 0;
+> > +	end = -1;
+> > +	/*
+> > +	 * Flush dax_layout_lock() sections to ensure all possible page
+> > +	 * references have been taken, or otherwise arrange for faults
+> > +	 * to block on the filesystem lock that is taken for
+> > +	 * establishing new mappings.
+> > +	 */
+> > +	unmap_mapping_range(mapping, 0, 0, 1);
+> > +	synchronize_rcu();
 > 
-> I know there is work on a proprer non-legacy atomic property for
-> userspace to communicate dirty-rect(s) to the kernel, so this can
-> be improved from triggering a full-frame flush once that is in
-> place.  But we kinda needa a stop-gap solution.
+> So I still don't like the use of RCU for this. It just seems as an abuse to
+> use RCU like that. Furthermore it has a hefty latency cost for the truncate
+> path. A trivial test to truncate 100 times the last page of a 16k file that
+> is mmaped (only the first page):
 > 
-> I had considered an in-driver solution for this, but things get a
-> bit tricky if userspace ands up combining dirtyfb ioctls with page-
-> flips, because we need to synchronize setting various CTL.FLUSH bits
-> with setting the CTL.START bit.  (ie. really all we need to do for
-> cmd mode panels is bang CTL.START, but is this ends up racing with
-> pageflips setting FLUSH bits, then bad things.)  The easiest soln
-> is to wrap this up as an atomic commit and rely on the worker to
-> serialize things.  Hence adding an atomic dirtyfb helper.
+> DAX+your patches	3.899s
+> non-DAX			0.015s
 > 
-> I guess at least the helper, with some small addition to translate
-> and pass-thru the dirty rect(s) is useful to the final atomic dirty-
-> rect property solution.  Depending on how far off that is, a stop-
-> gap solution could be useful.
-> 
->  drivers/gpu/drm/drm_atomic_helper.c | 66 +++++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/msm/msm_atomic.c    |  5 ++-
->  drivers/gpu/drm/msm/msm_fb.c        |  1 +
->  include/drm/drm_atomic_helper.h     |  4 +++
->  include/drm/drm_plane.h             |  9 +++++
->  5 files changed, 84 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index c35654591c12..a578dc681b27 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -3504,6 +3504,7 @@ void __drm_atomic_helper_plane_duplicate_state(struct drm_plane *plane,
->  	if (state->fb)
->  		drm_framebuffer_get(state->fb);
->  
-> +	state->dirty = false;
->  	state->fence = NULL;
->  	state->commit = NULL;
->  }
-> @@ -3847,6 +3848,71 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
->  }
->  EXPORT_SYMBOL(drm_atomic_helper_legacy_gamma_set);
->  
-> +/**
-> + * drm_atomic_helper_dirtyfb - helper for dirtyfb
-> + *
-> + * A helper to implement drm_framebuffer_funcs::dirty
-> + */
-> +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
-> +			      struct drm_file *file_priv, unsigned flags,
-> +			      unsigned color, struct drm_clip_rect *clips,
-> +			      unsigned num_clips)
-> +{
-> +	struct drm_modeset_acquire_ctx ctx;
-> +	struct drm_atomic_state *state;
-> +	struct drm_plane *plane;
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * When called from ioctl, we are interruptable, but not when
-> +	 * called internally (ie. defio worker)
-> +	 */
-> +	drm_modeset_acquire_init(&ctx,
-> +		file_priv ? DRM_MODESET_ACQUIRE_INTERRUPTIBLE : 0);
-> +
-> +	state = drm_atomic_state_alloc(fb->dev);
-> +	if (!state) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +	state->acquire_ctx = &ctx;
-> +
-> +retry:
-> +	drm_for_each_plane(plane, fb->dev) {
-> +		struct drm_plane_state *plane_state;
-> +
-> +		if (plane->state->fb != fb)
-> +			continue;
-> +
-> +		plane_state = drm_atomic_get_plane_state(state, plane);
-> +		if (IS_ERR(plane_state)) {
-> +			ret = PTR_ERR(plane_state);
-> +			goto out;
-> +		}
-> +
-> +		plane_state->dirty = true;
-> +	}
-> +
-> +	ret = drm_atomic_nonblocking_commit(state);
-> +
-> +out:
-> +	if (ret == -EDEADLK) {
-> +		drm_atomic_state_clear(state);
-> +		ret = drm_modeset_backoff(&ctx);
-> +		if (!ret)
-> +			goto retry;
-> +	}
-> +
-> +	drm_atomic_state_put(state);
-> +
-> +	drm_modeset_drop_locks(&ctx);
-> +	drm_modeset_acquire_fini(&ctx);
-> +
-> +	return ret;
-> +
-> +}
-> +EXPORT_SYMBOL(drm_atomic_helper_dirtyfb);
-> +
->  /**
->   * __drm_atomic_helper_private_duplicate_state - copy atomic private state
->   * @obj: CRTC object
-> diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
-> index bf5f8c39f34d..bb55a048e98b 100644
-> --- a/drivers/gpu/drm/msm/msm_atomic.c
-> +++ b/drivers/gpu/drm/msm/msm_atomic.c
-> @@ -201,7 +201,10 @@ int msm_atomic_commit(struct drm_device *dev,
->  	 * Figure out what fence to wait for:
->  	 */
->  	for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i) {
-> -		if ((new_plane_state->fb != old_plane_state->fb) && new_plane_state->fb) {
-> +		bool sync_fb = new_plane_state->fb &&
-> +			((new_plane_state->fb != old_plane_state->fb) ||
-> +			 new_plane_state->dirty);
+> So you can see synchronize_rcu() increased time to run truncate(2) more
+> than 200 times (the process is indeed sitting in __wait_rcu_gp all the
+> time). IMHO that's just too costly.
 
-Why do you have this optimization even here? Imo flipping to the same fb
-should result in the fb getting fully uploaded, whether you're doing a
-legacy page_flip, and atomic one or just a plane update.
+Forgot to add some more thoughts: Maybe we could use global percpu rwsem
+for this instead of RCU? That would cut down the truncate latency and the
+cost on GUP path should be very small. Or I'm still not convinced that my
+PageTruncateInProgress() idea cannot be made to work - that would be free
+on the GUP side for the non-DAX case, relatively cheap for the DAX case,
+and also reasonably cheap for the truncate side. But I admit it requires
+more work on the fs side to propagate offsets that are going to be
+truncated into the DAX helper.
 
-Iirc some userspace does use that as essentially a full-plane frontbuffer
-rendering flush already. IOW I don't think we need your
-plane_state->dirty, it's implied to always be true - why would userspace
-do a flip otherwise?
-
-The helper itself to map dirtyfb to a nonblocking atomic commit looks
-reasonable, but misses a bunch of the trickery discussed with Noralf and
-others I think.
--Daniel
-
-> +		if (sync_fb) {
->  			struct drm_gem_object *obj = msm_framebuffer_bo(new_plane_state->fb, 0);
->  			struct msm_gem_object *msm_obj = to_msm_bo(obj);
->  			struct dma_fence *fence = reservation_object_get_excl_rcu(msm_obj->resv);
-> diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
-> index 0e0c87252ab0..a5d882a34a33 100644
-> --- a/drivers/gpu/drm/msm/msm_fb.c
-> +++ b/drivers/gpu/drm/msm/msm_fb.c
-> @@ -62,6 +62,7 @@ static void msm_framebuffer_destroy(struct drm_framebuffer *fb)
->  static const struct drm_framebuffer_funcs msm_framebuffer_funcs = {
->  	.create_handle = msm_framebuffer_create_handle,
->  	.destroy = msm_framebuffer_destroy,
-> +	.dirty = drm_atomic_helper_dirtyfb,
->  };
->  
->  #ifdef CONFIG_DEBUG_FS
-> diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
-> index 26aaba58d6ce..9b7a95c2643d 100644
-> --- a/include/drm/drm_atomic_helper.h
-> +++ b/include/drm/drm_atomic_helper.h
-> @@ -183,6 +183,10 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
->  				       u16 *red, u16 *green, u16 *blue,
->  				       uint32_t size,
->  				       struct drm_modeset_acquire_ctx *ctx);
-> +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
-> +			      struct drm_file *file_priv, unsigned flags,
-> +			      unsigned color, struct drm_clip_rect *clips,
-> +			      unsigned num_clips);
->  void __drm_atomic_helper_private_obj_duplicate_state(struct drm_private_obj *obj,
->  						     struct drm_private_state *state);
->  
-> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-> index f7bf4a48b1c3..296fa22bda7a 100644
-> --- a/include/drm/drm_plane.h
-> +++ b/include/drm/drm_plane.h
-> @@ -76,6 +76,15 @@ struct drm_plane_state {
->  	 */
->  	struct drm_framebuffer *fb;
->  
-> +	/**
-> +	 * @dirty:
-> +	 *
-> +	 * Flag that indicates the fb contents have changed even though the
-> +	 * fb has not.  This is mostly a stop-gap solution until we have
-> +	 * atomic dirty-rect(s) property.
-> +	 */
-> +	bool dirty;
-> +
->  	/**
->  	 * @fence:
->  	 *
-> -- 
-> 2.14.3
-> 
+								Honza
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
