@@ -1,108 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752316AbeDDPxK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:53:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55942 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751874AbeDDPxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:53:08 -0400
-Subject: Re: [PATCH] kvm: Add emulation for movups/movupd
-To: Stefan Fritsch <sf@sfritsch.de>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180401155444.7006-1-sf@sfritsch.de>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <fbc6c706-e9ec-7d90-b8b4-858413cf922e@redhat.com>
-Date: Wed, 4 Apr 2018 17:53:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752394AbeDDPxQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:53:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752320AbeDDPxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:53:13 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FEF520838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 4 Apr 2018 11:53:10 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH] ring-buffer: Add set/clear_current_oom_origin() during
+ allocations
+Message-ID: <20180404115310.6c69e7b9@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180401155444.7006-1-sf@sfritsch.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/04/2018 17:54, Stefan Fritsch wrote:
-> This is very similar to the aligned versions movaps/movapd.
-> 
-> We have seen the corresponding emulation failures with openbsd as guest
-> and with Windows 10 with intel HD graphics pass through.
-> 
-> Signed-off-by: Christian Ehrhardt <christian_ehrhardt@genua.de>
-> Signed-off-by: Stefan Fritsch <sf@sfritsch.de>
-> ---
->  arch/x86/kvm/emulate.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index d91eaeb01034..7dda8e38c19a 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -4498,6 +4498,10 @@ static const struct gprefix pfx_0f_2b = {
->  	ID(0, &instr_dual_0f_2b), ID(0, &instr_dual_0f_2b), N, N,
->  };
->  
-> +static const struct gprefix pfx_0f_10_0f_11 = {
-> +	I(Unaligned, em_mov), I(Unaligned, em_mov), N, N,
-> +};
-> +
->  static const struct gprefix pfx_0f_28_0f_29 = {
->  	I(Aligned, em_mov), I(Aligned, em_mov), N, N,
->  };
-> @@ -4709,7 +4713,9 @@ static const struct opcode twobyte_table[256] = {
->  	DI(ImplicitOps | Priv, invd), DI(ImplicitOps | Priv, wbinvd), N, N,
->  	N, D(ImplicitOps | ModRM | SrcMem | NoAccess), N, N,
->  	/* 0x10 - 0x1F */
-> -	N, N, N, N, N, N, N, N,
-> +	GP(ModRM | DstReg | SrcMem | Mov | Sse, &pfx_0f_10_0f_11),
-> +	GP(ModRM | DstMem | SrcReg | Mov | Sse, &pfx_0f_10_0f_11),
-> +	N, N, N, N, N, N,
->  	D(ImplicitOps | ModRM | SrcMem | NoAccess),
->  	N, N, N, N, N, N, D(ImplicitOps | ModRM | SrcMem | NoAccess),
->  	/* 0x20 - 0x2F */
-> 
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Applied, thanks.
+As si_mem_available() can say there is enough memory even though the memory
+available is not useable by the ring buffer, it is best to not kill innocent
+applications because the ring buffer is taking up all the memory while it is
+trying to allocate a great deal of memory.
 
-Paolo
+If the allocator is user space (because kernel threads can also increase the
+size of the kernel ring buffer on boot up), then after si_mem_available()
+says there is enough memory, set the OOM killer to kill the current task if
+an OOM triggers during the allocation.
+
+Link: http://lkml.kernel.org/r/20180404062340.GD6312@dhcp22.suse.cz
+
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/ring_buffer.c | 48 ++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 38 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 966128f02121..c9cb9767d49b 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -22,6 +22,7 @@
+ #include <linux/hash.h>
+ #include <linux/list.h>
+ #include <linux/cpu.h>
++#include <linux/oom.h>
+ 
+ #include <asm/local.h>
+ 
+@@ -1162,35 +1163,60 @@ static int rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
+ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
+ {
+ 	struct buffer_page *bpage, *tmp;
++	bool user_thread = current->mm != NULL;
++	gfp_t mflags;
+ 	long i;
+ 
+-	/* Check if the available memory is there first */
++	/*
++	 * Check if the available memory is there first.
++	 * Note, si_mem_available() only gives us a rough estimate of available
++	 * memory. It may not be accurate. But we don't care, we just want
++	 * to prevent doing any allocation when it is obvious that it is
++	 * not going to succeed.
++	 */
+ 	i = si_mem_available();
+ 	if (i < nr_pages)
+ 		return -ENOMEM;
+ 
++	/*
++	 * __GFP_RETRY_MAYFAIL flag makes sure that the allocation fails
++	 * gracefully without invoking oom-killer and the system is not
++	 * destabilized.
++	 */
++	mflags = GFP_KERNEL | __GFP_RETRY_MAYFAIL;
++
++	/*
++	 * If a user thread allocates too much, and si_mem_available()
++	 * reports there's enough memory, even though there is not.
++	 * Make sure the OOM killer kills this thread. This can happen
++	 * even with RETRY_MAYFAIL because another task may be doing
++	 * an allocation after this task has taken all memory.
++	 * This is the task the OOM killer needs to take out during this
++	 * loop, even if it was triggered by an allocation somewhere else.
++	 */
++	if (user_thread)
++		set_current_oom_origin();
+ 	for (i = 0; i < nr_pages; i++) {
+ 		struct page *page;
+-		/*
+-		 * __GFP_RETRY_MAYFAIL flag makes sure that the allocation fails
+-		 * gracefully without invoking oom-killer and the system is not
+-		 * destabilized.
+-		 */
++
+ 		bpage = kzalloc_node(ALIGN(sizeof(*bpage), cache_line_size()),
+-				    GFP_KERNEL | __GFP_RETRY_MAYFAIL,
+-				    cpu_to_node(cpu));
++				    mflags, cpu_to_node(cpu));
+ 		if (!bpage)
+ 			goto free_pages;
+ 
+ 		list_add(&bpage->list, pages);
+ 
+-		page = alloc_pages_node(cpu_to_node(cpu),
+-					GFP_KERNEL | __GFP_RETRY_MAYFAIL, 0);
++		page = alloc_pages_node(cpu_to_node(cpu), mflags, 0);
+ 		if (!page)
+ 			goto free_pages;
+ 		bpage->page = page_address(page);
+ 		rb_init_page(bpage->page);
++
++		if (user_thread && fatal_signal_pending(current))
++			goto free_pages;
+ 	}
++	if (user_thread)
++		clear_current_oom_origin();
+ 
+ 	return 0;
+ 
+@@ -1199,6 +1225,8 @@ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
+ 		list_del_init(&bpage->list);
+ 		free_buffer_page(bpage);
+ 	}
++	if (user_thread)
++		clear_current_oom_origin();
+ 
+ 	return -ENOMEM;
+ }
+-- 
+2.13.6
