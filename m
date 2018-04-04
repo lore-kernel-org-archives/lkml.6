@@ -1,136 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeDDIn1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:43:27 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:35178 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750995AbeDDInZ (ORCPT
+        id S1751401AbeDDItJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:49:09 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:32874 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750995AbeDDItH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:43:25 -0400
-X-Google-Smtp-Source: AIpwx4/B/vZTCgP90DiuQzCQDD9hQREvlHhcRfum+68GI279lkdkC08q9j1Lr7qsqkyW8ZfETcqm1Q==
-Date: Wed, 4 Apr 2018 10:43:20 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Thomas Hellstrom <thomas@shipmail.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
-Message-ID: <20180404084320.GA3881@phenom.ffwll.local>
-Mail-Followup-To: Thomas Hellstrom <thomas@shipmail.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180403224225.26776-1-robdclark@gmail.com>
- <CAKMK7uEH3Qu_Lkok60bOYkik6kyvDGtrS0kcQ=dFmCLRD-+1HA@mail.gmail.com>
- <307adb15-412a-1fe2-f116-27fe5b4a657d@shipmail.org>
+        Wed, 4 Apr 2018 04:49:07 -0400
+Date: Wed, 4 Apr 2018 10:49:05 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: x32 suspend failuer in Re: linux-next: Tree for Apr 4
+Message-ID: <20180404084905.GA12303@amd>
+References: <20180404165559.4cd0c12c@canb.auug.org.au>
+ <20180404075047.GB9342@amd>
+ <CAJZ5v0hxyXtyKacJufivL9HWbQBsxTBYVipnHK4+QquTYjpc+A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
 Content-Disposition: inline
-In-Reply-To: <307adb15-412a-1fe2-f116-27fe5b4a657d@shipmail.org>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAJZ5v0hxyXtyKacJufivL9HWbQBsxTBYVipnHK4+QquTYjpc+A@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 10:22:21AM +0200, Thomas Hellstrom wrote:
-> Hi,
-> 
-> On 04/04/2018 08:58 AM, Daniel Vetter wrote:
-> > On Wed, Apr 4, 2018 at 12:42 AM, Rob Clark <robdclark@gmail.com> wrote:
-> > > Add an atomic helper to implement dirtyfb support.  This is needed to
-> > > support DSI command-mode panels with x11 userspace (ie. when we can't
-> > > rely on pageflips to trigger a flush to the panel).
-> > > 
-> > > To signal to the driver that the async atomic update needs to
-> > > synchronize with fences, even though the fb didn't change, the
-> > > drm_atomic_state::dirty flag is added.
-> > > 
-> > > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> > > ---
-> > > Background: there are a number of different folks working on getting
-> > > upstream kernel working on various different phones/tablets with qcom
-> > > SoC's.. many of them have command mode panels, so we kind of need a
-> > > way to support the legacy dirtyfb ioctl for x11 support.
-> > > 
-> > > I know there is work on a proprer non-legacy atomic property for
-> > > userspace to communicate dirty-rect(s) to the kernel, so this can
-> > > be improved from triggering a full-frame flush once that is in
-> > > place.  But we kinda needa a stop-gap solution.
-> > > 
-> > > I had considered an in-driver solution for this, but things get a
-> > > bit tricky if userspace ands up combining dirtyfb ioctls with page-
-> > > flips, because we need to synchronize setting various CTL.FLUSH bits
-> > > with setting the CTL.START bit.  (ie. really all we need to do for
-> > > cmd mode panels is bang CTL.START, but is this ends up racing with
-> > > pageflips setting FLUSH bits, then bad things.)  The easiest soln
-> > > is to wrap this up as an atomic commit and rely on the worker to
-> > > serialize things.  Hence adding an atomic dirtyfb helper.
-> > > 
-> > > I guess at least the helper, with some small addition to translate
-> > > and pass-thru the dirty rect(s) is useful to the final atomic dirty-
-> > > rect property solution.  Depending on how far off that is, a stop-
-> > > gap solution could be useful.
-> > Adding Noralf, who iirc already posted the full dirty helpers already somewhere.
-> > -Daniel
-> 
-> I've asked Deepak to RFC the core changes suggested for the full dirty blob
-> on dri-devel. It builds on DisplayLink's suggestion, with a simple helper to
-> get to the desired coordinates.
-> 
-> One thing to perhaps discuss is how we would like to fit this with
-> front-buffer rendering and the dirty ioctl. In the page-flip context, the
-> dirty rects, like egl's swapbuffer_with_damage is a hint to restrict the
-> damage region that can be fully ignored by the driver, new content is
-> indicated by a new framebuffer.
-> 
-> We could do the same for frontbuffer rendering: Either set a dirty flag like
-> you do here, or provide a content_age state member. Since we clear the dirty
-> flag on state copies, I guess that would be sufficient. The blob rectangles
-> would then become a hint to restrict the damage region.
 
-I'm not entirely following here - I thought for frontbuffer rendering the
-dirty rects have always just been a hint, and that the driver was always
-free to re-upload the entire buffer to the screen.
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And through a helper like Rob's proposing here (and have floated around in
-different versions already) we'd essentially map a frontbuffer dirtyfb
-call to a fake flip with dirty rect. Manual upload drivers already need to
-upload the entire screen if they get a flip, since some userspace uses
-that to flush out frontbuffer rendering (instead of calling dirtyfb).
+On Wed 2018-04-04 09:58:17, Rafael J. Wysocki wrote:
+> On Wed, Apr 4, 2018 at 9:50 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> > Hi!
+> >
+> >> Please do not add any v4.18 destined stuff to your linux-next included
+> >> trees until after v4.17-rc1 has been released.
+> >
+> > On thinkpad x60, suspend does not suspend at all with this -next
+> > version. Previous versions suspended/resumed fine but broke networking.
+> >
+> > Any ideas? I guess bisecting on next would not be easy?
+>=20
+> Well, why would it be different from a bisect on any other git repo?
 
-So from that pov the new dirty flag is kinda not necessary imo.
+Well, v4.16-rc4 is parent of v4.16-rc6, but next-20180304 is not
+parent of next-20180307.
 
-> Another approach would be to have the presence of dirty rects without
-> framebuffer change to indicate frontbuffer rendering.
-> 
-> I think I like the first approach best, although it may be tempting for
-> user-space apps to just set the dirty bit instead of providing the full
-> damage region.
+But you are right that if I do bisect between -linus and -next, it
+should work.
 
-Or I'm not following you here, because I don't quite see the difference
-between dirtyfb and a flip.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Anyway, does s2ram work for you in -next? Are you testing 32bit?
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--HcAYCG3uE/tztfnV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrEkYEACgkQMOfwapXb+vLG4QCgsFeKGFXML6N/TenjjVMvDLz5
+eW0An2VftGX/HEQTmpKPKF9iGVJJD0Oo
+=pdrV
+-----END PGP SIGNATURE-----
+
+--HcAYCG3uE/tztfnV--
