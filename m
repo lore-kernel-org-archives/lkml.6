@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755187AbeDDBNo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 21:13:44 -0400
-Received: from mga12.intel.com ([192.55.52.136]:41790 "EHLO mga12.intel.com"
+        id S1754975AbeDDBMv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 21:12:51 -0400
+Received: from mga03.intel.com ([134.134.136.65]:44002 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754985AbeDDBMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 21:12:53 -0400
+        id S1754887AbeDDBMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 21:12:50 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,403,1517904000";
-   d="scan'208";a="39177868"
-Subject: [PATCH 09/11] x86/pti: enable global pages for shared areas
+   d="scan'208";a="29340448"
+Subject: [PATCH 07/11] x86/mm: comment _PAGE_GLOBAL mystery
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
         aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
         keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
         namit@vmware.com
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Tue, 03 Apr 2018 18:10:07 -0700
+Date: Tue, 03 Apr 2018 18:10:04 -0700
 References: <20180404010946.6186729B@viggo.jf.intel.com>
 In-Reply-To: <20180404010946.6186729B@viggo.jf.intel.com>
-Message-Id: <20180404011007.A381CC8A@viggo.jf.intel.com>
+Message-Id: <20180404011004.FE082845@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,11 +29,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-The entry/exit text and cpu_entry_area are mapped into userspace and
-the kernel.  But, they are not _PAGE_GLOBAL.  This creates unnecessary
-TLB misses.
+I was mystified as to where the _PAGE_GLOBAL in the kernel page tables
+for kernel text came from.  I audited all the places I could find, but
+I missed one: head_64.S.
 
-Add the _PAGE_GLOBAL flag for these areas.
+The page tables that we create in here live for a long time, and they
+also have _PAGE_GLOBAL set, despite whether the processor supports it
+or not.  It's harmless, and we got *lucky* that the pageattr code
+accidentally clears it when we wipe it out of __supported_pte_mask and
+then later try to mark kernel text read-only.
+
+Comment some of these properties to make it easier to find and
+understand in the future.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
@@ -46,60 +53,36 @@ Cc: x86@kernel.org
 Cc: Nadav Amit <namit@vmware.com>
 ---
 
- b/arch/x86/mm/cpu_entry_area.c |   10 +++++++++-
- b/arch/x86/mm/pti.c            |   14 +++++++++++++-
- 2 files changed, 22 insertions(+), 2 deletions(-)
+ b/arch/x86/kernel/head_64.S |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff -puN arch/x86/mm/cpu_entry_area.c~kpti-why-no-global arch/x86/mm/cpu_entry_area.c
---- a/arch/x86/mm/cpu_entry_area.c~kpti-why-no-global	2018-04-02 16:41:17.157605167 -0700
-+++ b/arch/x86/mm/cpu_entry_area.c	2018-04-02 16:41:17.162605167 -0700
-@@ -27,8 +27,16 @@ EXPORT_SYMBOL(get_cpu_entry_area);
- void cea_set_pte(void *cea_vaddr, phys_addr_t pa, pgprot_t flags)
- {
- 	unsigned long va = (unsigned long) cea_vaddr;
-+	pte_t pte = pfn_pte(pa >> PAGE_SHIFT, flags);
- 
--	set_pte_vaddr(va, pfn_pte(pa >> PAGE_SHIFT, flags));
+diff -puN arch/x86/kernel/head_64.S~comment-global-page arch/x86/kernel/head_64.S
+--- a/arch/x86/kernel/head_64.S~comment-global-page	2018-04-02 16:41:16.085605170 -0700
++++ b/arch/x86/kernel/head_64.S	2018-04-02 16:41:16.088605170 -0700
+@@ -399,8 +399,13 @@ NEXT_PAGE(level3_ident_pgt)
+ 	.quad	level2_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
+ 	.fill	511, 8, 0
+ NEXT_PAGE(level2_ident_pgt)
+-	/* Since I easily can, map the first 1G.
 +	/*
-+	 * The cpu_entry_area is shared between the user and kernel
-+	 * page tables.  All of its ptes can safely be global.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_PGE))
-+		pte = pte_set_flags(pte, _PAGE_GLOBAL);
-+
-+	set_pte_vaddr(va, pte);
- }
- 
- static void __init
-diff -puN arch/x86/mm/pti.c~kpti-why-no-global arch/x86/mm/pti.c
---- a/arch/x86/mm/pti.c~kpti-why-no-global	2018-04-02 16:41:17.159605167 -0700
-+++ b/arch/x86/mm/pti.c	2018-04-02 16:41:17.163605167 -0700
-@@ -300,6 +300,18 @@ pti_clone_pmds(unsigned long start, unsi
- 			return;
- 
- 		/*
-+		 * Setting 'target_pmd' below creates a mapping in both
-+		 * the user and kernel page tables.  It is effectively
-+		 * global, so set it as global in both copies.  Note:
-+		 * the X86_FEATURE_PGE check is not _required_ because
-+		 * the CPU ignores _PAGE_GLOBAL when PGE is not
-+		 * supported.  The check keeps consistentency with
-+		 * code that only set this bit when supported.
-+		 */
-+		if (boot_cpu_has(X86_FEATURE_PGE))
-+			*pmd = pmd_set_flags(*pmd, _PAGE_GLOBAL);
-+
-+		/*
- 		 * Copy the PMD.  That is, the kernelmode and usermode
- 		 * tables will share the last-level page tables of this
- 		 * address range
-@@ -348,7 +360,7 @@ static void __init pti_clone_entry_text(
- {
- 	pti_clone_pmds((unsigned long) __entry_text_start,
- 			(unsigned long) __irqentry_text_end,
--		       _PAGE_RW | _PAGE_GLOBAL);
-+		       _PAGE_RW);
- }
- 
- /*
++	 * Since I easily can, map the first 1G.
+ 	 * Don't set NX because code runs from these pages.
++	 *
++	 * Note: This sets _PAGE_GLOBAL despite whether
++	 * the CPU supports it or it is enabled.  But,
++	 * the CPU should ignore the bit.
+ 	 */
+ 	PMDS(0, __PAGE_KERNEL_IDENT_LARGE_EXEC, PTRS_PER_PMD)
+ #else
+@@ -431,6 +436,10 @@ NEXT_PAGE(level2_kernel_pgt)
+ 	 * (NOTE: at +512MB starts the module area, see MODULES_VADDR.
+ 	 *  If you want to increase this then increase MODULES_VADDR
+ 	 *  too.)
++	 *
++	 *  This table is eventually used by the kernel during normal
++	 *  runtime.  Care must be taken to clear out undesired bits
++	 *  later, like _PAGE_RW or _PAGE_GLOBAL in some cases.
+ 	 */
+ 	PMDS(0, __PAGE_KERNEL_LARGE_EXEC,
+ 		KERNEL_IMAGE_SIZE/PMD_SIZE)
 _
