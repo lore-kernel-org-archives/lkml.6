@@ -1,36 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752258AbeDDPwk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:52:40 -0400
-Received: from mga03.intel.com ([134.134.136.65]:9896 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752202AbeDDPwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:52:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,407,1517904000";
-   d="scan'208";a="188623060"
-Subject: Re: [PATCH 09/11] x86/pti: enable global pages for shared areas
-To: Nadav Amit <namit@vmware.com>
-References: <20180404010946.6186729B@viggo.jf.intel.com>
- <20180404011007.A381CC8A@viggo.jf.intel.com>
- <5DEE9F6E-535C-4DBF-A513-69D9FD5C0235@vmware.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "keescook@google.com" <keescook@google.com>,
-        Hugh Dickins <hughd@google.com>, Juergen Gross <jgross@suse.com>,
-        "x86@kernel.org" <x86@kernel.org>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <50385d91-58a9-4b14-06bc-2340b99933c3@linux.intel.com>
-Date: Wed, 4 Apr 2018 08:52:37 -0700
+        id S1752316AbeDDPxK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:53:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55942 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751874AbeDDPxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:53:08 -0400
+Subject: Re: [PATCH] kvm: Add emulation for movups/movupd
+To: Stefan Fritsch <sf@sfritsch.de>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180401155444.7006-1-sf@sfritsch.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
+ UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
+ AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
+ sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
+ FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
+ VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
+ Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
+ znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
+ IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
+ du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
+ dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
+ utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
+ Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
+ wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
+ fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
+ 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
+ zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
+ oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
+ uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
+ plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
+ HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
+ 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
+ iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
+ 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
+ /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
+ 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <fbc6c706-e9ec-7d90-b8b4-858413cf922e@redhat.com>
+Date: Wed, 4 Apr 2018 17:53:04 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <5DEE9F6E-535C-4DBF-A513-69D9FD5C0235@vmware.com>
+In-Reply-To: <20180401155444.7006-1-sf@sfritsch.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -38,78 +63,46 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 09:45 PM, Nadav Amit wrote:
-> Dave Hansen <dave.hansen@linux.intel.com> wrote:
+On 01/04/2018 17:54, Stefan Fritsch wrote:
+> This is very similar to the aligned versions movaps/movapd.
 > 
->>
->> From: Dave Hansen <dave.hansen@linux.intel.com>
->>
->> The entry/exit text and cpu_entry_area are mapped into userspace and
->> the kernel.  But, they are not _PAGE_GLOBAL.  This creates unnecessary
->> TLB misses.
->>
->> Add the _PAGE_GLOBAL flag for these areas.
->>
->> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
->> Cc: Andrea Arcangeli <aarcange@redhat.com>
->> Cc: Andy Lutomirski <luto@kernel.org>
->> Cc: Linus Torvalds <torvalds@linux-foundation.org>
->> Cc: Kees Cook <keescook@google.com>
->> Cc: Hugh Dickins <hughd@google.com>
->> Cc: Juergen Gross <jgross@suse.com>
->> Cc: x86@kernel.org
->> Cc: Nadav Amit <namit@vmware.com>
->> ---
->>
->> b/arch/x86/mm/cpu_entry_area.c |   10 +++++++++-
->> b/arch/x86/mm/pti.c            |   14 +++++++++++++-
->> 2 files changed, 22 insertions(+), 2 deletions(-)
->>
->> diff -puN arch/x86/mm/cpu_entry_area.c~kpti-why-no-global arch/x86/mm/cpu_entry_area.c
->> --- a/arch/x86/mm/cpu_entry_area.c~kpti-why-no-global	2018-04-02 16:41:17.157605167 -0700
->> +++ b/arch/x86/mm/cpu_entry_area.c	2018-04-02 16:41:17.162605167 -0700
->> @@ -27,8 +27,16 @@ EXPORT_SYMBOL(get_cpu_entry_area);
->> void cea_set_pte(void *cea_vaddr, phys_addr_t pa, pgprot_t flags)
->> {
->> 	unsigned long va = (unsigned long) cea_vaddr;
->> +	pte_t pte = pfn_pte(pa >> PAGE_SHIFT, flags);
->>
->> -	set_pte_vaddr(va, pfn_pte(pa >> PAGE_SHIFT, flags));
->> +	/*
->> +	 * The cpu_entry_area is shared between the user and kernel
->> +	 * page tables.  All of its ptes can safely be global.
->> +	 */
->> +	if (boot_cpu_has(X86_FEATURE_PGE))
->> +		pte = pte_set_flags(pte, _PAGE_GLOBAL);
+> We have seen the corresponding emulation failures with openbsd as guest
+> and with Windows 10 with intel HD graphics pass through.
 > 
-> I think it would be safer to check that the PTE is indeed present before
-> setting _PAGE_GLOBAL. For example, percpu_setup_debug_store() sets PAGE_NONE
-> for non-present entries. In this case, since PAGE_NONE and PAGE_GLOBAL use
-> the same bit, everything would be fine, but it might cause bugs one day.
-
-That's a reasonable safety thing to add, I think.
-
-But, looking at it, I am wondering why we did this in
-percpu_setup_debug_store():
-
-        for (; npages; npages--, cea += PAGE_SIZE)
-                cea_set_pte(cea, 0, PAGE_NONE);
-
-Did we really want that to be PAGE_NONE, or was it supposed to create a
-PTE that returns true for pte_none()?
-
->> 		/*
->> +		 * Setting 'target_pmd' below creates a mapping in both
->> +		 * the user and kernel page tables.  It is effectively
->> +		 * global, so set it as global in both copies.  Note:
->> +		 * the X86_FEATURE_PGE check is not _required_ because
->> +		 * the CPU ignores _PAGE_GLOBAL when PGE is not
->> +		 * supported.  The check keeps consistentency with
->> +		 * code that only set this bit when supported.
->> +		 */
->> +		if (boot_cpu_has(X86_FEATURE_PGE))
->> +			*pmd = pmd_set_flags(*pmd, _PAGE_GLOBAL);
+> Signed-off-by: Christian Ehrhardt <christian_ehrhardt@genua.de>
+> Signed-off-by: Stefan Fritsch <sf@sfritsch.de>
+> ---
+>  arch/x86/kvm/emulate.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> Same here.
+> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+> index d91eaeb01034..7dda8e38c19a 100644
+> --- a/arch/x86/kvm/emulate.c
+> +++ b/arch/x86/kvm/emulate.c
+> @@ -4498,6 +4498,10 @@ static const struct gprefix pfx_0f_2b = {
+>  	ID(0, &instr_dual_0f_2b), ID(0, &instr_dual_0f_2b), N, N,
+>  };
+>  
+> +static const struct gprefix pfx_0f_10_0f_11 = {
+> +	I(Unaligned, em_mov), I(Unaligned, em_mov), N, N,
+> +};
+> +
+>  static const struct gprefix pfx_0f_28_0f_29 = {
+>  	I(Aligned, em_mov), I(Aligned, em_mov), N, N,
+>  };
+> @@ -4709,7 +4713,9 @@ static const struct opcode twobyte_table[256] = {
+>  	DI(ImplicitOps | Priv, invd), DI(ImplicitOps | Priv, wbinvd), N, N,
+>  	N, D(ImplicitOps | ModRM | SrcMem | NoAccess), N, N,
+>  	/* 0x10 - 0x1F */
+> -	N, N, N, N, N, N, N, N,
+> +	GP(ModRM | DstReg | SrcMem | Mov | Sse, &pfx_0f_10_0f_11),
+> +	GP(ModRM | DstMem | SrcReg | Mov | Sse, &pfx_0f_10_0f_11),
+> +	N, N, N, N, N, N,
+>  	D(ImplicitOps | ModRM | SrcMem | NoAccess),
+>  	N, N, N, N, N, N, D(ImplicitOps | ModRM | SrcMem | NoAccess),
+>  	/* 0x20 - 0x2F */
+> 
 
-Is there  a reason that the pmd_none() check above this does not work?
+Applied, thanks.
+
+Paolo
