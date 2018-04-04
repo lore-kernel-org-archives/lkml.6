@@ -1,86 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751454AbeDDOnA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:43:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34512 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751247AbeDDOm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:42:59 -0400
-Date: Wed, 4 Apr 2018 16:42:55 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180404144255.GK6312@dhcp22.suse.cz>
-References: <20180403123514.GX5501@dhcp22.suse.cz>
- <20180403093245.43e7e77c@gandalf.local.home>
- <20180403135607.GC5501@dhcp22.suse.cz>
- <20180403101753.3391a639@gandalf.local.home>
- <20180403161119.GE5501@dhcp22.suse.cz>
- <20180403185627.6bf9ea9b@gandalf.local.home>
- <20180404062039.GC6312@dhcp22.suse.cz>
- <20180404085901.5b54fe32@gandalf.local.home>
- <20180404141052.GH6312@dhcp22.suse.cz>
- <20180404102527.763250b4@gandalf.local.home>
+        id S1751461AbeDDOoT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:44:19 -0400
+Received: from alln-iport-7.cisco.com ([173.37.142.94]:49037 "EHLO
+        alln-iport-7.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeDDOoR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 10:44:17 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0DLAAAM4sRa/5pdJa1cGQEBAQEBAQE?=
+ =?us-ascii?q?BAQEBAQcBAQEBAYNCgVAyi1WNCIF0gQ+SVYF6C4UDAoQ+ITQYAQIBAQEBAQE?=
+ =?us-ascii?q?CbCiFIgEBAQECAScTPxACAQg2EDIlAgQODYR9CK1VM4hBgiWHYoFUP4QQikM?=
+ =?us-ascii?q?Clz4IAo4ngTqDWYcxK48rAhETAYEkARw4gVJwFYJ+gh8XEY4GjUmBFwEB?=
+X-IronPort-AV: E=Sophos;i="5.48,406,1517875200";
+   d="scan'208";a="93533460"
+From: "Jon Rosen (jrosen)" <jrosen@cisco.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>, Kees Cook <keescook@chromium.org>,
+        David Windsor <dwindsor@gmail.com>,
+        "Rosen, Rami" <rami.rosen@intel.com>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        "Mike Maloney" <maloney@google.com>,
+        Benjamin Poirier <bpoirier@suse.com>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH] packet: mark ring entry as in-use inside spin_lock to
+ prevent RX ring overrun
+Thread-Topic: [RFC PATCH] packet: mark ring entry as in-use inside spin_lock
+ to prevent RX ring overrun
+Thread-Index: AQHTy5aFtVi5IJ8ejEig7CpBQEL4WqPv73kAgAC8vKA=
+Date: Wed, 4 Apr 2018 14:34:48 +0000
+Message-ID: <54c7cbde468c45609e36738baa5ea084@XCH-RTP-016.cisco.com>
+References: <20180403215526.15934-1-jrosen@cisco.com>
+ <20180403161630.24f8339c@xeon-e3>
+In-Reply-To: <20180403161630.24f8339c@xeon-e3>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.82.254.164]
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404102527.763250b4@gandalf.local.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w34EiM0V021616
 
-On Wed 04-04-18 10:25:27, Steven Rostedt wrote:
-> On Wed, 4 Apr 2018 16:10:52 +0200
-> Michal Hocko <mhocko@kernel.org> wrote:
+
+
+> > diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> > index e0f3f4a..264d7b2 100644
+> > --- a/net/packet/af_packet.c
+> > +++ b/net/packet/af_packet.c
+> > @@ -2287,6 +2287,15 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+> >  		if (po->stats.stats1.tp_drops)
+> >  			status |= TP_STATUS_LOSING;
+> >  	}
+> > +
+> > +        /*
+> > +         * Mark this entry as TP_STATUS_IN_PROGRESS to prevent other
+> > +         * kernel threads from re-using this same entry.
+> > +         */
+> > +#define TP_STATUS_IN_PROGRESS TP_STATUS_LOSING
+> > +	if (po->tp_version <= TPACKET_V2)
+> > +            __packet_set_status(po, h.raw, TP_STATUS_IN_PROGRESS);
+> > +
+> >  	po->stats.stats1.tp_packets++;
+> >  	if (copy_skb) {
+> >  		status |= TP_STATUS_COPY;
 > 
-> > On Wed 04-04-18 08:59:01, Steven Rostedt wrote:
-> > [...]
-> > > +       /*
-> > > +        * Check if the available memory is there first.
-> > > +        * Note, si_mem_available() only gives us a rough estimate of available
-> > > +        * memory. It may not be accurate. But we don't care, we just want
-> > > +        * to prevent doing any allocation when it is obvious that it is
-> > > +        * not going to succeed.
-> > > +        */
-> > > +       i = si_mem_available();
-> > > +       if (i < nr_pages)
-> > > +               return -ENOMEM;
-> > > +
-> > > 
-> > > Better?  
-> > 
-> > I must be really missing something here. How can that work at all for
-> > e.g. the zone_{highmem/movable}. You will get false on the above tests
-> > even when you will have hard time to allocate anything from your
-> > destination zones.
-> 
-> You mean we will get true on the above tests?  Again, the current
-> method is to just say screw it and try to allocate.
+> This patch looks correct. Please resend it with proper signed-off-by
+> and with a kernel code indenting style (tabs).  Is this bug present
+> since the beginning of af_packet and multiqueue devices or did it get
+> introduced in some previous kernel?
 
-No, you will get false on that test. Say that you have a system with
-large ZONE_MOVABLE. Now your kernel allocations can fit only into
-!movable zones (say we have 1G for !movable and 3G for movable). Now say
-that !movable zones are getting close to the edge while movable zones
-are full of reclaimable pages. si_mem_available will tell you there is a
-_lot_ of memory available while your GFP_KERNEL request will happily
-consume the rest of !movable zones and trigger OOM. See?
+Sorry about the tabs, I'll fix that and try to figure out what I did wrong with
+the signed-off-by.
 
-[...]
-> I'm looking for something where "yes" means "there may be enough, but
-> there may not be, buyer beware", and "no" means "forget it, don't even
-> start, because you just asked for more than possible".
+I've looked back as far as I could find online (2.6.11) and it would appear that
+this bug has always been there.
 
-We do not have _that_ something other than try to opportunistically
-allocate and see what happens. Sucks? Maybe yes but I really cannot
-think of an interface with sane semantic that would catch all the
-different scenarios.
--- 
-Michal Hocko
-SUSE Labs
+Thanks, jon.
