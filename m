@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeDDMQY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:16:24 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38730 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751306AbeDDMQW (ORCPT
+        id S1751281AbeDDMSt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:18:49 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37501 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751117AbeDDMSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:16:22 -0400
-X-Google-Smtp-Source: AIpwx4/AOTgwSDYJeb44V/3L16N5Tv0/8nZB/bm0+ArsY+7zzR4xgN+72hbkwL65MLV4rRI5F3RboQ==
-Date: Wed, 4 Apr 2018 14:16:17 +0200
+        Wed, 4 Apr 2018 08:18:47 -0400
+X-Google-Smtp-Source: AIpwx4/yXqzLep5hOG6jVvivZmefO11/6kOIAgNLkPBFoZCblBu+9GYmm2H6DwNFCe46SfsZfQQdnA==
+Date: Wed, 4 Apr 2018 14:18:43 +0200
 From: Daniel Vetter <daniel@ffwll.ch>
 To: Rob Clark <robdclark@gmail.com>
-Cc: Thomas Hellstrom <thomas@shipmail.org>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
         freedreno <freedreno@lists.freedesktop.org>,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Thomas Hellstrom <thomas@shipmail.org>,
         Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
         <ville.syrjala@linux.intel.com>,
         Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
@@ -23,15 +22,15 @@ Cc: Thomas Hellstrom <thomas@shipmail.org>,
         Gustavo Padovan <gustavo@padovan.org>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
-Message-ID: <20180404121617.GK3881@phenom.ffwll.local>
+Message-ID: <20180404121843.GL3881@phenom.ffwll.local>
 Mail-Followup-To: Rob Clark <robdclark@gmail.com>,
-        Thomas Hellstrom <thomas@shipmail.org>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         freedreno <freedreno@lists.freedesktop.org>,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Thomas Hellstrom <thomas@shipmail.org>,
         Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
         Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
         Deepak Singh Rawat <drawat@vmware.com>,
@@ -40,189 +39,279 @@ Mail-Followup-To: Rob Clark <robdclark@gmail.com>,
         Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 References: <20180403224225.26776-1-robdclark@gmail.com>
- <CAKMK7uEH3Qu_Lkok60bOYkik6kyvDGtrS0kcQ=dFmCLRD-+1HA@mail.gmail.com>
- <307adb15-412a-1fe2-f116-27fe5b4a657d@shipmail.org>
- <20180404084320.GA3881@phenom.ffwll.local>
- <fa4074c7-5469-a69f-e4aa-bdc84e1a919a@shipmail.org>
- <20180404095604.GD3881@phenom.ffwll.local>
- <CAF6AEGs4BdOUQQH6N8_ywTA=8uraJNm8FGc1ZL8Pm9tqymy3Nw@mail.gmail.com>
+ <20180404100300.GE3881@phenom.ffwll.local>
+ <20180404102108.GF3881@phenom.ffwll.local>
+ <CAF6AEGtowtdQmUxNF_F3B3Yow+PDB43Eb0VJ_ZqGKpVw1iZBzA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAF6AEGs4BdOUQQH6N8_ywTA=8uraJNm8FGc1ZL8Pm9tqymy3Nw@mail.gmail.com>
+In-Reply-To: <CAF6AEGtowtdQmUxNF_F3B3Yow+PDB43Eb0VJ_ZqGKpVw1iZBzA@mail.gmail.com>
 X-Operating-System: Linux phenom 4.15.0-1-amd64 
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 07:40:32AM -0400, Rob Clark wrote:
-> On Wed, Apr 4, 2018 at 5:56 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > On Wed, Apr 04, 2018 at 11:10:08AM +0200, Thomas Hellstrom wrote:
-> >> On 04/04/2018 10:43 AM, Daniel Vetter wrote:
-> >> > On Wed, Apr 04, 2018 at 10:22:21AM +0200, Thomas Hellstrom wrote:
-> >> > > Hi,
-> >> > >
-> >> > > On 04/04/2018 08:58 AM, Daniel Vetter wrote:
-> >> > > > On Wed, Apr 4, 2018 at 12:42 AM, Rob Clark <robdclark@gmail.com> wrote:
-> >> > > > > Add an atomic helper to implement dirtyfb support.  This is needed to
-> >> > > > > support DSI command-mode panels with x11 userspace (ie. when we can't
-> >> > > > > rely on pageflips to trigger a flush to the panel).
-> >> > > > >
-> >> > > > > To signal to the driver that the async atomic update needs to
-> >> > > > > synchronize with fences, even though the fb didn't change, the
-> >> > > > > drm_atomic_state::dirty flag is added.
-> >> > > > >
-> >> > > > > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> >> > > > > ---
-> >> > > > > Background: there are a number of different folks working on getting
-> >> > > > > upstream kernel working on various different phones/tablets with qcom
-> >> > > > > SoC's.. many of them have command mode panels, so we kind of need a
-> >> > > > > way to support the legacy dirtyfb ioctl for x11 support.
-> >> > > > >
-> >> > > > > I know there is work on a proprer non-legacy atomic property for
-> >> > > > > userspace to communicate dirty-rect(s) to the kernel, so this can
-> >> > > > > be improved from triggering a full-frame flush once that is in
-> >> > > > > place.  But we kinda needa a stop-gap solution.
-> >> > > > >
-> >> > > > > I had considered an in-driver solution for this, but things get a
-> >> > > > > bit tricky if userspace ands up combining dirtyfb ioctls with page-
-> >> > > > > flips, because we need to synchronize setting various CTL.FLUSH bits
-> >> > > > > with setting the CTL.START bit.  (ie. really all we need to do for
-> >> > > > > cmd mode panels is bang CTL.START, but is this ends up racing with
-> >> > > > > pageflips setting FLUSH bits, then bad things.)  The easiest soln
-> >> > > > > is to wrap this up as an atomic commit and rely on the worker to
-> >> > > > > serialize things.  Hence adding an atomic dirtyfb helper.
-> >> > > > >
-> >> > > > > I guess at least the helper, with some small addition to translate
-> >> > > > > and pass-thru the dirty rect(s) is useful to the final atomic dirty-
-> >> > > > > rect property solution.  Depending on how far off that is, a stop-
-> >> > > > > gap solution could be useful.
-> >> > > > Adding Noralf, who iirc already posted the full dirty helpers already somewhere.
-> >> > > > -Daniel
-> >> > > I've asked Deepak to RFC the core changes suggested for the full dirty blob
-> >> > > on dri-devel. It builds on DisplayLink's suggestion, with a simple helper to
-> >> > > get to the desired coordinates.
-> >> > >
-> >> > > One thing to perhaps discuss is how we would like to fit this with
-> >> > > front-buffer rendering and the dirty ioctl. In the page-flip context, the
-> >> > > dirty rects, like egl's swapbuffer_with_damage is a hint to restrict the
-> >> > > damage region that can be fully ignored by the driver, new content is
-> >> > > indicated by a new framebuffer.
-> >> > >
-> >> > > We could do the same for frontbuffer rendering: Either set a dirty flag like
-> >> > > you do here, or provide a content_age state member. Since we clear the dirty
-> >> > > flag on state copies, I guess that would be sufficient. The blob rectangles
-> >> > > would then become a hint to restrict the damage region.
-> >> > I'm not entirely following here - I thought for frontbuffer rendering the
-> >> > dirty rects have always just been a hint, and that the driver was always
-> >> > free to re-upload the entire buffer to the screen.
+On Wed, Apr 04, 2018 at 07:35:58AM -0400, Rob Clark wrote:
+> On Wed, Apr 4, 2018 at 6:21 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> > On Wed, Apr 04, 2018 at 12:03:00PM +0200, Daniel Vetter wrote:
+> >> On Tue, Apr 03, 2018 at 06:42:23PM -0400, Rob Clark wrote:
+> >> > Add an atomic helper to implement dirtyfb support.  This is needed to
+> >> > support DSI command-mode panels with x11 userspace (ie. when we can't
+> >> > rely on pageflips to trigger a flush to the panel).
 > >> >
-> >> > And through a helper like Rob's proposing here (and have floated around in
-> >> > different versions already) we'd essentially map a frontbuffer dirtyfb
-> >> > call to a fake flip with dirty rect. Manual upload drivers already need to
-> >> > upload the entire screen if they get a flip, since some userspace uses
-> >> > that to flush out frontbuffer rendering (instead of calling dirtyfb).
+> >> > To signal to the driver that the async atomic update needs to
+> >> > synchronize with fences, even though the fb didn't change, the
+> >> > drm_atomic_state::dirty flag is added.
 > >> >
-> >> > So from that pov the new dirty flag is kinda not necessary imo.
+> >> > Signed-off-by: Rob Clark <robdclark@gmail.com>
+> >> > ---
+> >> > Background: there are a number of different folks working on getting
+> >> > upstream kernel working on various different phones/tablets with qcom
+> >> > SoC's.. many of them have command mode panels, so we kind of need a
+> >> > way to support the legacy dirtyfb ioctl for x11 support.
 > >> >
-> >> > > Another approach would be to have the presence of dirty rects without
-> >> > > framebuffer change to indicate frontbuffer rendering.
-> >> > >
-> >> > > I think I like the first approach best, although it may be tempting for
-> >> > > user-space apps to just set the dirty bit instead of providing the full
-> >> > > damage region.
-> >> > Or I'm not following you here, because I don't quite see the difference
-> >> > between dirtyfb and a flip.
-> >> > -Daniel
+> >> > I know there is work on a proprer non-legacy atomic property for
+> >> > userspace to communicate dirty-rect(s) to the kernel, so this can
+> >> > be improved from triggering a full-frame flush once that is in
+> >> > place.  But we kinda needa a stop-gap solution.
+> >> >
+> >> > I had considered an in-driver solution for this, but things get a
+> >> > bit tricky if userspace ands up combining dirtyfb ioctls with page-
+> >> > flips, because we need to synchronize setting various CTL.FLUSH bits
+> >> > with setting the CTL.START bit.  (ie. really all we need to do for
+> >> > cmd mode panels is bang CTL.START, but is this ends up racing with
+> >> > pageflips setting FLUSH bits, then bad things.)  The easiest soln
+> >> > is to wrap this up as an atomic commit and rely on the worker to
+> >> > serialize things.  Hence adding an atomic dirtyfb helper.
+> >> >
+> >> > I guess at least the helper, with some small addition to translate
+> >> > and pass-thru the dirty rect(s) is useful to the final atomic dirty-
+> >> > rect property solution.  Depending on how far off that is, a stop-
+> >> > gap solution could be useful.
+> >> >
+> >> >  drivers/gpu/drm/drm_atomic_helper.c | 66 +++++++++++++++++++++++++++++++++++++
+> >> >  drivers/gpu/drm/msm/msm_atomic.c    |  5 ++-
+> >> >  drivers/gpu/drm/msm/msm_fb.c        |  1 +
+> >> >  include/drm/drm_atomic_helper.h     |  4 +++
+> >> >  include/drm/drm_plane.h             |  9 +++++
+> >> >  5 files changed, 84 insertions(+), 1 deletion(-)
+> >> >
+> >> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> >> > index c35654591c12..a578dc681b27 100644
+> >> > --- a/drivers/gpu/drm/drm_atomic_helper.c
+> >> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> >> > @@ -3504,6 +3504,7 @@ void __drm_atomic_helper_plane_duplicate_state(struct drm_plane *plane,
+> >> >     if (state->fb)
+> >> >             drm_framebuffer_get(state->fb);
+> >> >
+> >> > +   state->dirty = false;
+> >> >     state->fence = NULL;
+> >> >     state->commit = NULL;
+> >> >  }
+> >> > @@ -3847,6 +3848,71 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
+> >> >  }
+> >> >  EXPORT_SYMBOL(drm_atomic_helper_legacy_gamma_set);
+> >> >
+> >> > +/**
+> >> > + * drm_atomic_helper_dirtyfb - helper for dirtyfb
+> >> > + *
+> >> > + * A helper to implement drm_framebuffer_funcs::dirty
+> >> > + */
+> >> > +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
+> >> > +                         struct drm_file *file_priv, unsigned flags,
+> >> > +                         unsigned color, struct drm_clip_rect *clips,
+> >> > +                         unsigned num_clips)
+> >> > +{
+> >> > +   struct drm_modeset_acquire_ctx ctx;
+> >> > +   struct drm_atomic_state *state;
+> >> > +   struct drm_plane *plane;
+> >> > +   int ret = 0;
+> >> > +
+> >> > +   /*
+> >> > +    * When called from ioctl, we are interruptable, but not when
+> >> > +    * called internally (ie. defio worker)
+> >> > +    */
+> >> > +   drm_modeset_acquire_init(&ctx,
+> >> > +           file_priv ? DRM_MODESET_ACQUIRE_INTERRUPTIBLE : 0);
+> >> > +
+> >> > +   state = drm_atomic_state_alloc(fb->dev);
+> >> > +   if (!state) {
+> >> > +           ret = -ENOMEM;
+> >> > +           goto out;
+> >> > +   }
+> >> > +   state->acquire_ctx = &ctx;
+> >> > +
+> >> > +retry:
+> >> > +   drm_for_each_plane(plane, fb->dev) {
+> >> > +           struct drm_plane_state *plane_state;
+> >> > +
+> >> > +           if (plane->state->fb != fb)
+> >> > +                   continue;
+> >> > +
+> >> > +           plane_state = drm_atomic_get_plane_state(state, plane);
+> >> > +           if (IS_ERR(plane_state)) {
+> >> > +                   ret = PTR_ERR(plane_state);
+> >> > +                   goto out;
+> >> > +           }
+> >> > +
+> >> > +           plane_state->dirty = true;
+> >> > +   }
+> >> > +
+> >> > +   ret = drm_atomic_nonblocking_commit(state);
+> >> > +
+> >> > +out:
+> >> > +   if (ret == -EDEADLK) {
+> >> > +           drm_atomic_state_clear(state);
+> >> > +           ret = drm_modeset_backoff(&ctx);
+> >> > +           if (!ret)
+> >> > +                   goto retry;
+> >> > +   }
+> >> > +
+> >> > +   drm_atomic_state_put(state);
+> >> > +
+> >> > +   drm_modeset_drop_locks(&ctx);
+> >> > +   drm_modeset_acquire_fini(&ctx);
+> >> > +
+> >> > +   return ret;
+> >> > +
+> >> > +}
+> >> > +EXPORT_SYMBOL(drm_atomic_helper_dirtyfb);
+> >> > +
+> >> >  /**
+> >> >   * __drm_atomic_helper_private_duplicate_state - copy atomic private state
+> >> >   * @obj: CRTC object
+> >> > diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
+> >> > index bf5f8c39f34d..bb55a048e98b 100644
+> >> > --- a/drivers/gpu/drm/msm/msm_atomic.c
+> >> > +++ b/drivers/gpu/drm/msm/msm_atomic.c
+> >> > @@ -201,7 +201,10 @@ int msm_atomic_commit(struct drm_device *dev,
+> >> >      * Figure out what fence to wait for:
+> >> >      */
+> >> >     for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i) {
+> >> > -           if ((new_plane_state->fb != old_plane_state->fb) && new_plane_state->fb) {
+> >> > +           bool sync_fb = new_plane_state->fb &&
+> >> > +                   ((new_plane_state->fb != old_plane_state->fb) ||
+> >> > +                    new_plane_state->dirty);
 > >>
-> >> OK, let me rephrase:
+> >> Why do you have this optimization even here? Imo flipping to the same fb
+> >> should result in the fb getting fully uploaded, whether you're doing a
+> >> legacy page_flip, and atomic one or just a plane update.
 > >>
-> >> From the driver's point-of-view, in the atomic world, new content and the
-> >> need for manual upload is indicated by a change in fb attached to the plane.
+> >> Iirc some userspace does use that as essentially a full-plane frontbuffer
+> >> rendering flush already. IOW I don't think we need your
+> >> plane_state->dirty, it's implied to always be true - why would userspace
+> >> do a flip otherwise?
 > >>
-> >> With Rob's patch here, (correct me if I'm wrong) in addition new content and
-> >> the need for manual upload is identified by the dirty flag, (since the fb
-> >> stays the same and the driver thus never identifies a page-flip).
+> >> The helper itself to map dirtyfb to a nonblocking atomic commit looks
+> >> reasonable, but misses a bunch of the trickery discussed with Noralf and
+> >> others I think.
 > >
-> > Hm, I'm not entirely sure Rob's approach is correct. Imo a pageflip
-> > (atomic or not) should result in the entire buffer getting uploaded. The
-> > dirty flag is kinda redundant, a flip with the same buffer works the same
-> > way as a dirtyfb with the entire buffer as the dirty rectangle.
+> > Ok, I've done some history digging:
+> >
+> > - i915 and nouveau unconditionally wait for fences, even for same-fb
+> >   flips.
+> > - no idea what amdgpu and vmwgfx are doing, they're not using
+> >   plane_state->fence for implicit fences.
+> > - most arm-soc drivers do have this "optimization" in their code, and it
+> >   even managed to get into the new drm_gem_fb_prepare_fb helper (which I
+> >   reviewed, or well claimed to have ... oops). Afaict it goes back to the
+> >   original msm atomic code, and was then dutifully copypasted all over the
+> >   place.
+> >
+> > If folks are ok I'll do a patch series to align drivers with i915/nouveau.
+> > Well, any driver using reservation_object_get_excl_rcu +
+> > drm_atomic_set_fence_for_plane combo, since amdgpu and vmwgfx don't I have
+> > no idea what they're doing or whether they might have the same bug.
 > 
-> Userspace could do a pageflip, but (with buffer-age extension) only
-> re-render part of the frame.  So there is a use-case for full frame
-> pageflip with hints about what region(s) changed since previous frame.
-> 
-> (Of course userspace could screw that up and get different results on
-> "command" vs "video" style display.. in that case, it gets to keep
-> both pieces)
+> if you do a patch series, I think do it the other way around and align
+> to msm ;-)
 
-I'm not against dirty on flips with the same buffer as an optimization.
-Disagreement here is around whether a flip to the same buffer means:
-a) nothing changed, upload nothing
-b) entire buffer might have changed
+The problem is that this would break i915 userspace afaik, which I think
+is using a frontbuffer page flip to flush out uploads (and re-enable self
+refresh and stuff like that). So that we can't do easily.
 
-I'm proposing we standardize on b) (with maybe the exception of legacy
-cursor ioctls because those are special) and add the dirty rects as an
-option to optimize this more.
+> I think otherwise we could end up stalling while x11 does front buffer
+> rendering for something unrelated (maybe I was hitting that with
+> cursor updates?)
 
-Either way you'd always have to follow the implicit fence (which is what
-your msm hunk seems to be doing, but only for dirtyfb).
+Why would you stall on something unrelated if we unconditionally fish out
+the fence? Especially cursor rendering isn't done through the gpu at all
+afaik.
 -Daniel
 
 > 
 > BR,
 > -R
 > 
-> 
-> >> In both these situations, clip rects can provide a hint to restrict the
-> >> dirty region.
+> > From looking at at least the various prepare_fb callbacks I don't see any
+> > other drivers doing funny stuff around implicit fences.
+> > -Daniel
+> >
+> >> > +           if (sync_fb) {
+> >> >                     struct drm_gem_object *obj = msm_framebuffer_bo(new_plane_state->fb, 0);
+> >> >                     struct msm_gem_object *msm_obj = to_msm_bo(obj);
+> >> >                     struct dma_fence *fence = reservation_object_get_excl_rcu(msm_obj->resv);
+> >> > diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
+> >> > index 0e0c87252ab0..a5d882a34a33 100644
+> >> > --- a/drivers/gpu/drm/msm/msm_fb.c
+> >> > +++ b/drivers/gpu/drm/msm/msm_fb.c
+> >> > @@ -62,6 +62,7 @@ static void msm_framebuffer_destroy(struct drm_framebuffer *fb)
+> >> >  static const struct drm_framebuffer_funcs msm_framebuffer_funcs = {
+> >> >     .create_handle = msm_framebuffer_create_handle,
+> >> >     .destroy = msm_framebuffer_destroy,
+> >> > +   .dirty = drm_atomic_helper_dirtyfb,
+> >> >  };
+> >> >
+> >> >  #ifdef CONFIG_DEBUG_FS
+> >> > diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
+> >> > index 26aaba58d6ce..9b7a95c2643d 100644
+> >> > --- a/include/drm/drm_atomic_helper.h
+> >> > +++ b/include/drm/drm_atomic_helper.h
+> >> > @@ -183,6 +183,10 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
+> >> >                                    u16 *red, u16 *green, u16 *blue,
+> >> >                                    uint32_t size,
+> >> >                                    struct drm_modeset_acquire_ctx *ctx);
+> >> > +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
+> >> > +                         struct drm_file *file_priv, unsigned flags,
+> >> > +                         unsigned color, struct drm_clip_rect *clips,
+> >> > +                         unsigned num_clips);
+> >> >  void __drm_atomic_helper_private_obj_duplicate_state(struct drm_private_obj *obj,
+> >> >                                                  struct drm_private_state *state);
+> >> >
+> >> > diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> >> > index f7bf4a48b1c3..296fa22bda7a 100644
+> >> > --- a/include/drm/drm_plane.h
+> >> > +++ b/include/drm/drm_plane.h
+> >> > @@ -76,6 +76,15 @@ struct drm_plane_state {
+> >> >      */
+> >> >     struct drm_framebuffer *fb;
+> >> >
+> >> > +   /**
+> >> > +    * @dirty:
+> >> > +    *
+> >> > +    * Flag that indicates the fb contents have changed even though the
+> >> > +    * fb has not.  This is mostly a stop-gap solution until we have
+> >> > +    * atomic dirty-rect(s) property.
+> >> > +    */
+> >> > +   bool dirty;
+> >> > +
+> >> >     /**
+> >> >      * @fence:
+> >> >      *
+> >> > --
+> >> > 2.14.3
+> >> >
 > >>
-> >> Now I was thinking about the preferred way for user-space to communicate
-> >> front buffer rendering through the atomic ioctl:
-> >>
-> >> 1) Expose a dirty (or content_age property)
-> >> 2) Attach a clip-rect blob property.
-> >> 3) Fake a page-flip by ping-ponging two frame-buffers pointing to the same
-> >> underlying buffer object.
-> >>
-> >> Are you saying that people are already using 3) and we should keep using
-> >> that?
+> >> --
+> >> Daniel Vetter
+> >> Software Engineer, Intel Corporation
+> >> http://blog.ffwll.ch
 > >
-> > I'm saying they're using 3b), flip the same buffer wrapped in the same
-> > drm_framebuffer, and expect it to work.
-> >
-> > The only advantage dirtyfb has is that it allows you to supply the
-> > optimized upload rectangles, but at the cost of a funny api (it's working
-> > on the fb, not the plane/crtc you want to upload) and lack of drm_event to
-> > confirm when exactly you uploaded your stuff. But imo they should be the
-> > same underlying operation.
-> >
-> > Also note that atomic helpers don't optimize out plane flips for same
-> > buffers. We only optimize out some of the waiting, in a failed attempt at
-> > making cursors stall less, but that's not fixed with the async plane
-> > update stuff. And we can obviously optimize out the prepare/cleanup hooks,
-> > because the buffer should be pinned already.
-> >
-> > So imo for a quick fix I think we need:
-> > 1) Fix drivers (or at least msm) to upload buffers for manual upload on
-> > all flips (well, all screen updates). Probably should do the fence waiting
-> > unconditionally too (and handle cursors with the new async stuff).
-> > 2) Tiny helper that remaps a dirtyfb call into a nonblocking atomic
-> > commit, which currently means we're throwing the dirty rect optimization
-> > into the wind. But that could easily be added to the drm_plane_state,
-> > without exposing it to userspace as a property just yet.
-> >
-> > Cheers, Daniel
 > > --
 > > Daniel Vetter
 > > Software Engineer, Intel Corporation
 > > http://blog.ffwll.ch
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
 Daniel Vetter
