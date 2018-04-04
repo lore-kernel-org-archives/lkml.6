@@ -1,85 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751410AbeDDMzY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:55:24 -0400
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:52298 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750842AbeDDMzW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:55:22 -0400
-X-Google-Smtp-Source: AIpwx4+bd0m7S4DUrtaKx0o55Vytp9SwTAqHWWhHWDLkOPofmHGi/+fXljowDKIi0olIynQi+Ra4enp2ZNnQy7lLxIw=
+        id S1751278AbeDDM5B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:57:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48568 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751097AbeDDM5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 08:57:00 -0400
+Subject: Re: WARNING in account_page_dirtied
+To: Jan Kara <jack@suse.cz>
+Cc: syzbot <syzbot+b7772c65a1d88bfd8fca@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, axboe@kernel.dk, hannes@cmpxchg.org,
+        jlayton@redhat.com, keescook@chromium.org, laoar.shao@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+References: <001a113ff9ca1684ab0568cc6bb6@google.com>
+ <20180403120529.z3mthf2v64he52gg@quack2.suse.cz>
+ <b81bbecb-1c3c-ca92-84a5-15db63611db6@redhat.com>
+ <20180404123634.6wz5ctjkryzm5nf7@quack2.suse.cz>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <0d2e8961-a14a-e033-030a-ee2bed6c0f9d@redhat.com>
+Date: Wed, 4 Apr 2018 13:56:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180403211326.4907f1bc@laptop64.home>
-References: <20180402122536.5083-1-jandryuk@gmail.com> <20180402123435.5587-1-jandryuk@gmail.com>
- <20180403211326.4907f1bc@laptop64.home>
-From: Jason Andryuk <jandryuk@gmail.com>
-Date: Wed, 4 Apr 2018 08:55:20 -0400
-Message-ID: <CAKf6xpu4=kLuqZqFsxqFCzLMyLBZyi3C9W_yyssEt=56dhF6RA@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: i801: blacklist Host Notify on HP EliteBook G3 850
-To: Andreas Radke <andyrtr@archlinux.org>
-Cc: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>,
-        benjamin.tissoires@redhat.com, aduggan@synaptics.com,
-        linux-i2c@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180404123634.6wz5ctjkryzm5nf7@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 3:13 PM, Andreas Radke <andyrtr@archlinux.org> wrote:
-> Am Mon,  2 Apr 2018 08:34:35 -0400
-> schrieb Jason Andryuk <jandryuk@gmail.com>:
+Hi,
+
+
+On 04/04/18 13:36, Jan Kara wrote:
+> Hi,
 >
->> The HP EliteBook G3 850 has a weird bug where a subsequent cold boot
->> hangs while plugged in if Linux enables the Host Notify features of
->> i2c-i801.  The cold boot hang depends on how the system boots.  It
->> does not hang on UEFI Grub text boot or legacy Grub text boot.  But
->> it does hang on legacy Grub graphical boot and Intel Boot Agent PXE
->> text boot. Booting unplugged is not affected.
+> On Wed 04-04-18 10:24:48, Steven Whitehouse wrote:
+>> On 03/04/18 13:05, Jan Kara wrote:
+>>> Hello,
+>>>
+>>> On Sun 01-04-18 10:01:02, syzbot wrote:
+>>>> syzbot hit the following crash on upstream commit
+>>>> 10b84daddbec72c6b440216a69de9a9605127f7a (Sat Mar 31 17:59:00 2018 +0000)
+>>>> Merge branch 'perf-urgent-for-linus' of
+>>>> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+>>>> syzbot dashboard link:
+>>>> https://syzkaller.appspot.com/bug?extid=b7772c65a1d88bfd8fca
+>>>>
+>>>> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5705587757154304
+>>>> syzkaller reproducer:
+>>>> https://syzkaller.appspot.com/x/repro.syz?id=5644332530925568
+>>>> Raw console output:
+>>>> https://syzkaller.appspot.com/x/log.txt?id=5472755969425408
+>>>> Kernel config:
+>>>> https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
+>>>> compiler: gcc (GCC) 7.1.1 20170620
+>>>>
+>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>>> Reported-by: syzbot+b7772c65a1d88bfd8fca@syzkaller.appspotmail.com
+>>>> It will help syzbot understand when the bug is fixed. See footer for
+>>>> details.
+>>>> If you forward the report, please keep this part and the footer.
+>>>>
+>>>> gfs2: fsid=loop0.0: jid=0, already locked for use
+>>>> gfs2: fsid=loop0.0: jid=0: Looking at journal...
+>>>> gfs2: fsid=loop0.0: jid=0: Done
+>>>> gfs2: fsid=loop0.0: first mount done, others may mount
+>>>> gfs2: fsid=loop0.0: found 1 quota changes
+>>>> WARNING: CPU: 0 PID: 4469 at ./include/linux/backing-dev.h:341 inode_to_wb
+>>>> include/linux/backing-dev.h:338 [inline]
+>>>> WARNING: CPU: 0 PID: 4469 at ./include/linux/backing-dev.h:341
+>>>> account_page_dirtied+0x8f9/0xcb0 mm/page-writeback.c:2416
+>>>> Kernel panic - not syncing: panic_on_warn set ...
+>>>>
+>>>> CPU: 0 PID: 4469 Comm: syzkaller368843 Not tainted 4.16.0-rc7+ #9
+>>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>>>> Google 01/01/2011
+>>>> Call Trace:
+>>>>    __dump_stack lib/dump_stack.c:17 [inline]
+>>>>    dump_stack+0x194/0x24d lib/dump_stack.c:53
+>>>>    panic+0x1e4/0x41c kernel/panic.c:183
+>>>>    __warn+0x1dc/0x200 kernel/panic.c:547
+>>>>    report_bug+0x1f4/0x2b0 lib/bug.c:186
+>>>>    fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+>>>>    fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>>>>    do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>>>>    do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>>>>    invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+>>>> RIP: 0010:inode_to_wb include/linux/backing-dev.h:338 [inline]
+>>>> RIP: 0010:account_page_dirtied+0x8f9/0xcb0 mm/page-writeback.c:2416
+>>>> RSP: 0018:ffff8801d966e5c0 EFLAGS: 00010093
+>>>> RAX: ffff8801acb7e600 RBX: 1ffff1003b2cdcba RCX: ffffffff818f47a9
+>>>> RDX: 0000000000000000 RSI: ffff8801d3338148 RDI: 0000000000000082
+>>>> RBP: ffff8801d966e698 R08: 1ffff1003b2cdc13 R09: 000000000000000c
+>>>> R10: ffff8801d966e558 R11: 0000000000000002 R12: ffff8801c96f0368
+>>>> R13: ffffea0006b12780 R14: ffff8801c96f01d8 R15: ffff8801c96f01d8
+>>>>    __set_page_dirty+0x100/0x4b0 fs/buffer.c:605
+>>>>    mark_buffer_dirty+0x454/0x5d0 fs/buffer.c:1126
+>>> Huh, I don't see how this could possibly happen. The warning is:
+>>>
+>>>           WARN_ON_ONCE(debug_locks &&
+>>>                        (!lockdep_is_held(&inode->i_lock) &&
+>>>                         !lockdep_is_held(&inode->i_mapping->tree_lock) &&
+>>>                         !lockdep_is_held(&inode->i_wb->list_lock)));
+>>>
+>>> Now __set_page_dirty() which called account_page_dirtied() just did:
+>>>
+>>> spin_lock_irqsave(&mapping->tree_lock, flags);
+>>>
+>>> Now the fact is that account_page_dirtied() actually checks
+>>> mapping->host->i_mapping->tree_lock so if mapping->host->i_mapping doesn't
+>>> get us back to 'mapping', that would explain the warning. But then
+>>> something would have to be very wrong in the GFS2 land... Adding some GFS2
+>>> related CCs just in case they have some idea.
+>> So I looked at this for some time trying to work out what is going on. I'm
+>> sill not 100% sure now, but lets see if we can figure it out....
 >>
->> Disabling the Host Notify feature with disable_feature=0x20 works
->> around the bug, so automatically do so based on DMI information.
+>> The stack trace shows a call path to the end of the journal flush code where
+>> we are unpinning pages that have been through the journal. Assuming that
+>> jdata is not in use (it is used for some internal files, even if it is not
+>> selected by the user) then it is most likely that this applies to a metadata
+>> page.
 >>
->> More information can be found here:
->> https://www.spinics.net/lists/linux-i2c/msg33938.html
+>> For recent gfs2, all the metadata pages are kept in an address space which
+>> for inodes is in the relevant glock, and for resource groups is a single
+>> address space kept for only that purpose in the super block. In both of
+>> those cases the mapping->host points to the block device inode. Since the
+>> inode's mapping->host reflects only the block device address space (unused
+>> by gfs2) we would not expect it to point back to the relevant address space.
+>>
+>> As far as I can tell this usage is ok, since it doesn't make much sense to
+>> require lots of inodes to be hanging around uselessly just to keep metadata
+>> pages in. That after all, is why the address space and inode are separate
+>> structures in the first place since it is not a one to one relationship. So
+>> I think that probably explains why this triggers, since the test is not
+>> really a valid one in all cases,
+> The problem is we really do expect mapping->host->i_mapping == mapping as
+> we pass mapping and inode interchangebly in the mm code. The address_space
+> and inodes are separate structures because you can have many inodes
+> pointing to one address space (block devices). However it is not allowed
+> for several address_spaces to point to one inode! That way mm code may end
+> up using different address_spaces in different places although they should
+> be the same one as is the case in this assert... Probably you use these
+> address_spaces in a very limited way and so things seem to work but it is
+> really a pure coincidence. From a very quick look you seem to be using
+> these special address_spaces to track dirty metadata associated with an
+> inode? Anything else?
 >
-> I'm faced with similar cold boot issues on my HP ProBook 430 G4 model.
-> Trying your hint with adding
-> "options i2c_i801 disable_features=0x20"
-> to /etc/modprobe.d/i2c_i801.conf doesn't seem to solve it for me.
+> 								Honza
 
-Maybe verify the option is set by checking
-/sys/module/i2c_i801/parameters/disable_features ?  Looks like dmesg
-should also report "SMBus Host Notify disabled by user" when disabled.
-I run with i801 built-in, so I was specifying the option on the kernel
-command line.
+Yes, either an inode or a rgrp. However I'm fairly sure that we landed 
+up doing that because we were told that inodes and address spaces were 
+intended to be independent at some point in the past. They are used in a 
+fairly limited way and mostly so that we can efficiently invalidate 
+metadata belonging to a particular inode (or rgrp).
 
-> My system boots legacy grub in text mode (KMS) and seems to keep hanging
-> even with that option set.
+In the rgrp case we could just use the existing block dev inode's 
+address space except that we'd have to make sure that we invalidated it 
+on mount. The rgrps are easy because each one is a single extent only. 
+For the inode metadata case, we did (a very long time ago) try tracking 
+the metadata in a different way and it was not very efficient at all, so 
+using a separate address space was the best solution we could find at 
+the time.
 
-Your cold boot hang is in legacy grub itself?  Legacy grub text mode
-actually doesn't hang my G3 850 - it was switching to the graphical
-splash screen that seemed to do it.  PXE booting via F12 was another
-consistent way to hang.  It was very early in the PXE boot code -
-before it checked the link status.  So you could try that with it just
-plugged into a switch even if you don't have a PXE boot setup.
+We do not want to go back to having two struct inodes for each real 
+inode since that took up a lot of memory in cases where there were lots 
+of small files...
 
->From my previous post:
-"""
-The Boot Agent hang prints "Client Mac Addr 00-11-22-33-44-55<cursor>"
-and hangs.  A normal boot prints a GUID on the same line and
-continues.
-"""
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs/gfs2/glock.c?id=009d851837ab26cab18adda6169a813f70b0b21b
 
-Otherwise, unfortunately, it might just be a different issue.
 
-> Do you have any further idea?
+and now I remember that is also resolved an issue of a circular 
+dependency between inodes used for the metadata address space and 
+"proper" inodes too. When we introduced the change in the above patch, 
+both inodes and glock were using the address spaces in the glock, 
+however we further optimised the rgrps at a later date to share a single 
+address space between them.
 
-For the G3 850, I bisected to the commit introducing i801 Host Notify
-support.  It's time consuming, but you could do the same.  I first
-noticed the issue when I moved from a working stable 4.4 to stable
-4.14.  I tried some fedora kernels in between which narrowed down the
-bisect range.  You could similarly grab and test pre-compiled kernels
-to more quickly hone in on the regression range.
+So while that doesn't solve the problem, it does, I hope, explain some 
+of the background,
 
-Regards,
-Jason
+Steve.
