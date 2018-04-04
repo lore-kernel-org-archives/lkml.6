@@ -1,69 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752163AbeDDPqd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:46:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36202 "EHLO mx1.redhat.com"
+        id S1752292AbeDDPrf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:47:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751648AbeDDPq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:46:29 -0400
-Date: Wed, 4 Apr 2018 11:46:28 -0400 (EDT)
-From: Bob Peterson <rpeterso@redhat.com>
-To: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: cluster-devel@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        NeilBrown <neilb@suse.com>, Thomas Graf <tgraf@suug.ch>,
-        Tom Herbert <tom@quantonium.net>
-Message-ID: <1366548861.16037365.1522856788263.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20180329120612.6104-1-agruenba@redhat.com>
-References: <20180329120612.6104-1-agruenba@redhat.com>
-Subject: Re: [Cluster-devel] [PATCH v2 0/2] gfs2: Stop using
- rhashtable_walk_peek
+        id S1751696AbeDDPrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:47:33 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D13A20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 4 Apr 2018 11:47:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180404114730.65118279@gandalf.local.home>
+In-Reply-To: <20180404142329.GI6312@dhcp22.suse.cz>
+References: <20180403110612.GM5501@dhcp22.suse.cz>
+        <20180403075158.0c0a2795@gandalf.local.home>
+        <20180403121614.GV5501@dhcp22.suse.cz>
+        <20180403082348.28cd3c1c@gandalf.local.home>
+        <20180403123514.GX5501@dhcp22.suse.cz>
+        <20180403093245.43e7e77c@gandalf.local.home>
+        <20180403135607.GC5501@dhcp22.suse.cz>
+        <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com>
+        <20180404062340.GD6312@dhcp22.suse.cz>
+        <20180404101149.08f6f881@gandalf.local.home>
+        <20180404142329.GI6312@dhcp22.suse.cz>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.3.116.80, 10.4.195.4]
-Thread-Topic: gfs2: Stop using rhashtable_walk_peek
-Thread-Index: ZtGGhfwbsmsK5M0roIu6JXkYVcw0MQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Original Message -----
-> Here's a second version of the patch (now a patch set) to eliminate
-> rhashtable_walk_peek in gfs2.
-> 
-> The first patch introduces lockref_put_not_zero, the inverse of
-> lockref_get_not_zero.
-> 
-> The second patch eliminates rhashtable_walk_peek in gfs2.  In
-> gfs2_glock_iter_next, the new lockref function from patch one is used to
-> drop a lockref count as long as the count doesn't drop to zero.  This is
-> almost always the case; if there is a risk of dropping the last
-> reference, we must defer that to a work queue because dropping the last
-> reference may sleep.
-> 
-> Thanks,
-> Andreas
-> 
-> Andreas Gruenbacher (2):
->   lockref: Add lockref_put_not_zero
->   gfs2: Stop using rhashtable_walk_peek
-> 
->  fs/gfs2/glock.c         | 47 ++++++++++++++++++++++++++++-------------------
->  include/linux/lockref.h |  1 +
->  lib/lockref.c           | 28 ++++++++++++++++++++++++++++
->  3 files changed, 57 insertions(+), 19 deletions(-)
-> 
-> --
-> 2.14.3
+On Wed, 4 Apr 2018 16:23:29 +0200
+Michal Hocko <mhocko@kernel.org> wrote:
 
-Hi,
+> > 
+> > I tried it out, I did the following:
+> > 
+> > 	set_current_oom_origin();
+> > 	for (i = 0; i < nr_pages; i++) {
+> > 		struct page *page;
+> > 		/*
+> > 		 * __GFP_RETRY_MAYFAIL flag makes sure that the allocation fails
+> > 		 * gracefully without invoking oom-killer and the system is not
+> > 		 * destabilized.
+> > 		 */
+> > 		bpage = kzalloc_node(ALIGN(sizeof(*bpage), cache_line_size()),
+> > 				    GFP_KERNEL | __GFP_RETRY_MAYFAIL,
+> > 				    cpu_to_node(cpu));
+> > 		if (!bpage)
+> > 			goto free_pages;
+> > 
+> > 		list_add(&bpage->list, pages);
+> > 
+> > 		page = alloc_pages_node(cpu_to_node(cpu),
+> > 					GFP_KERNEL | __GFP_RETRY_MAYFAIL, 0);
+> > 		if (!page)
+> > 			goto free_pages;  
+> 
+> 		if (fatal_signal_pending())
+> 			fgoto free_pages;
 
-The patches look good. The big question is whether to add them to this
-merge window while it's still open. Opinions?
+I originally was going to remove the RETRY_MAYFAIL, but adding this
+check (at the end of the loop though) appears to have OOM consistently
+kill this task.
 
-Acked-by: Bob Peterson <rpeterso@redhat.com>
+I still like to keep RETRY_MAYFAIL, because it wont trigger OOM if
+nothing comes in and tries to do an allocation, but instead will fail
+nicely with -ENOMEM.
 
-Regards,
+-- Steve
 
-Bob Peterson
+
+> 
+> > 		bpage->page = page_address(page);
+> > 		rb_init_page(bpage->page);
+> > 	}
+> > 	clear_current_oom_origin();  
