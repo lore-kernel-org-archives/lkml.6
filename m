@@ -1,180 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752193AbeDDPw1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:52:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33762 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752020AbeDDPwX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:52:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5321B607A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
- readX() implementation
-To: Palmer Dabbelt <palmer@sifive.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: mark.rutland@arm.com, timur@codeaurora.org, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <mhng-fe49c525-788d-4ce7-9703-95e2b3eaeca6@palmer-si-x1c4>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <691b903c-e97d-0a25-28c5-690318bb215a@codeaurora.org>
-Date: Wed, 4 Apr 2018 11:52:20 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S1752258AbeDDPwk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:52:40 -0400
+Received: from mga03.intel.com ([134.134.136.65]:9896 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752202AbeDDPwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:52:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,407,1517904000";
+   d="scan'208";a="188623060"
+Subject: Re: [PATCH 09/11] x86/pti: enable global pages for shared areas
+To: Nadav Amit <namit@vmware.com>
+References: <20180404010946.6186729B@viggo.jf.intel.com>
+ <20180404011007.A381CC8A@viggo.jf.intel.com>
+ <5DEE9F6E-535C-4DBF-A513-69D9FD5C0235@vmware.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "keescook@google.com" <keescook@google.com>,
+        Hugh Dickins <hughd@google.com>, Juergen Gross <jgross@suse.com>,
+        "x86@kernel.org" <x86@kernel.org>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <50385d91-58a9-4b14-06bc-2340b99933c3@linux.intel.com>
+Date: Wed, 4 Apr 2018 08:52:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <mhng-fe49c525-788d-4ce7-9703-95e2b3eaeca6@palmer-si-x1c4>
+In-Reply-To: <5DEE9F6E-535C-4DBF-A513-69D9FD5C0235@vmware.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/3/2018 6:29 PM, Palmer Dabbelt wrote:
-> On Tue, 03 Apr 2018 05:56:18 PDT (-0700), Arnd Bergmann wrote:
->> On Tue, Apr 3, 2018 at 2:44 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
->>> On 4/3/2018 7:13 AM, Arnd Bergmann wrote:
->>>> On Tue, Apr 3, 2018 at 12:49 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->>>>> Hi,
->>>>>
->>>>> On Fri, Mar 30, 2018 at 11:58:13AM -0400, Sinan Kaya wrote:
->>>>>> The default implementation of mapping readX() to __raw_readX() is wrong.
->>>>>> readX() has stronger ordering semantics. Compiler is allowed to reorder
->>>>>> __raw_readX().
->>>>>
->>>>> Could you please specify what the compiler is potentially reordering
->>>>> __raw_readX() against, and why this would be wrong?
->>>>>
->>>>> e.g. do we care about prior normal memory accesses, subsequent normal
->>>>> memory accesses, and/or other IO accesses?
->>>>>
->>>>> I assume that the asm-generic __raw_{read,write}X() implementations are
->>>>> all ordered w.r.t. each other (at least for a specific device).
->>>>
->>>> I think that is correct: the compiler won't reorder those because of the
->>>> 'volatile' pointer dereference, but it can reorder access to a normal
->>>> pointer against a __raw_readl()/__raw_writel(), which breaks the scenario
->>>> of using writel to trigger a DMA, or using a readl to see if a DMA has
->>>> completed.
->>>
->>> Yes, we are worried about memory update vs. IO update ordering here.
->>> That was the reason why barrier() was introduced in this patch. I'll try to
->>> clarify that better in the commit text.
->>>
->>>>
->>>> The question is whether we should use a stronger barrier such
->>>> as rmb() amd wmb() here rather than a simple compiler barrier.
->>>>
->>>> I would assume that on complex architectures with write buffers and
->>>> out-of-order prefetching, those are required, while on architectures
->>>> without those features, the barriers are cheap.
->>>
->>> That's my reasoning too. I'm trying to follow the x86 example here where there
->>> is a compiler barrier in writeX() and readX() family of functions.
->>
->> I think x86 is the special case here because it implicitly guarantees
->> the strict ordering in the hardware, as long as the compiler gets it
->> right. For the asm-generic version, it may be better to play safe and
->> do the safest version, requiring architectures to override that barrier
->> if they want to be faster.
->>
->> We could use the same macros that riscv has, using __io_br(),
->> __io_ar(), __io_bw() and __io_aw() for before/after read/write.
+On 04/03/2018 09:45 PM, Nadav Amit wrote:
+> Dave Hansen <dave.hansen@linux.intel.com> wrote:
 > 
-> FWIW, when I wrote this I wasn't sure what the RISC-V memory model was going to be so I just picked something generic.  In other words, it's already a generic interface, just one that we're the only users of :).
+>>
+>> From: Dave Hansen <dave.hansen@linux.intel.com>
+>>
+>> The entry/exit text and cpu_entry_area are mapped into userspace and
+>> the kernel.  But, they are not _PAGE_GLOBAL.  This creates unnecessary
+>> TLB misses.
+>>
+>> Add the _PAGE_GLOBAL flag for these areas.
+>>
+>> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+>> Cc: Andrea Arcangeli <aarcange@redhat.com>
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> Cc: Kees Cook <keescook@google.com>
+>> Cc: Hugh Dickins <hughd@google.com>
+>> Cc: Juergen Gross <jgross@suse.com>
+>> Cc: x86@kernel.org
+>> Cc: Nadav Amit <namit@vmware.com>
+>> ---
+>>
+>> b/arch/x86/mm/cpu_entry_area.c |   10 +++++++++-
+>> b/arch/x86/mm/pti.c            |   14 +++++++++++++-
+>> 2 files changed, 22 insertions(+), 2 deletions(-)
+>>
+>> diff -puN arch/x86/mm/cpu_entry_area.c~kpti-why-no-global arch/x86/mm/cpu_entry_area.c
+>> --- a/arch/x86/mm/cpu_entry_area.c~kpti-why-no-global	2018-04-02 16:41:17.157605167 -0700
+>> +++ b/arch/x86/mm/cpu_entry_area.c	2018-04-02 16:41:17.162605167 -0700
+>> @@ -27,8 +27,16 @@ EXPORT_SYMBOL(get_cpu_entry_area);
+>> void cea_set_pte(void *cea_vaddr, phys_addr_t pa, pgprot_t flags)
+>> {
+>> 	unsigned long va = (unsigned long) cea_vaddr;
+>> +	pte_t pte = pfn_pte(pa >> PAGE_SHIFT, flags);
+>>
+>> -	set_pte_vaddr(va, pfn_pte(pa >> PAGE_SHIFT, flags));
+>> +	/*
+>> +	 * The cpu_entry_area is shared between the user and kernel
+>> +	 * page tables.  All of its ptes can safely be global.
+>> +	 */
+>> +	if (boot_cpu_has(X86_FEATURE_PGE))
+>> +		pte = pte_set_flags(pte, _PAGE_GLOBAL);
 > 
+> I think it would be safer to check that the PTE is indeed present before
+> setting _PAGE_GLOBAL. For example, percpu_setup_debug_store() sets PAGE_NONE
+> for non-present entries. In this case, since PAGE_NONE and PAGE_GLOBAL use
+> the same bit, everything would be fine, but it might cause bugs one day.
 
-Are we looking for something like this?
+That's a reasonable safety thing to add, I think.
 
+But, looking at it, I am wondering why we did this in
+percpu_setup_debug_store():
 
-diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-index e8c2078..693a82f 100644
---- a/include/asm-generic/io.h
-+++ b/include/asm-generic/io.h
-@@ -101,6 +101,16 @@ static inline void __raw_writeq(u64 value, volatile void __iomem *addr)
- #endif
- #endif /* CONFIG_64BIT */
- 
-+#ifndef __io_br()
-+#define __io_br()	do {} while (0)
-+#endif
-+
-+#ifdef rmb
-+#define __io_ar()	rmb();
-+#else
-+#define __io_ar()	barrier();
-+#endif
-+
- /*
-  * {read,write}{b,w,l,q}() access little endian memory and return result in
-  * native endianness.
-@@ -108,35 +118,46 @@ static inline void __raw_writeq(u64 value, volatile void __iomem *addr)
- 
- #ifndef readb
- #define readb readb
--static inline u8 readb(const volatile void __iomem *addr)
--{
--	return __raw_readb(addr);
--}
-+#define readb(c)				\
-+	({ u8  __v;				\
-+	 __io_br();				\
-+	 __v = __raw_readb(c);			\
-+	 __io_ar();				\
-+	 __v; })
- #endif
- 
- #ifndef readw
- #define readw readw
--static inline u16 readw(const volatile void __iomem *addr)
--{
--	return __le16_to_cpu(__raw_readw(addr));
--}
-+#define readw(c)				\
-+    ({ u16 __v;					\
-+						\
-+     __io_br();					\
-+      __v = __le16_to_cpu(__raw_readw(c));	\
-+     __io_ar();					\
-+     __v; })
- #endif
- 
- #ifndef readl
- #define readl readl
--static inline u32 readl(const volatile void __iomem *addr)
--{
--	return __le32_to_cpu(__raw_readl(addr));
--}
-+#define readl(c)				\
-+    ({ u32 __v;					\
-+						\
-+     __io_br();					\
-+      __v = __le32_to_cpu(__raw_readl(c));	\
-+     __io_ar();					\
-+     __v; })
- #endif
- 
- #ifdef CONFIG_64BIT
- #ifndef readq
- #define readq readq
--static inline u64 readq(const volatile void __iomem *addr)
--{
--	return __le64_to_cpu(__raw_readq(addr));
--}
-+#define readq(c)				\
-+    ({ u64 __v;					\
-+						\
-+     __io_br();					\
-+      __v = __le64_to_cpu(__raw_readq(c));	\
-+     __io_ar();					\
-+     __v; })
- #endif
- #endif /* CONFIG_64BIT */
-  
+        for (; npages; npages--, cea += PAGE_SIZE)
+                cea_set_pte(cea, 0, PAGE_NONE);
 
+Did we really want that to be PAGE_NONE, or was it supposed to create a
+PTE that returns true for pte_none()?
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+>> 		/*
+>> +		 * Setting 'target_pmd' below creates a mapping in both
+>> +		 * the user and kernel page tables.  It is effectively
+>> +		 * global, so set it as global in both copies.  Note:
+>> +		 * the X86_FEATURE_PGE check is not _required_ because
+>> +		 * the CPU ignores _PAGE_GLOBAL when PGE is not
+>> +		 * supported.  The check keeps consistentency with
+>> +		 * code that only set this bit when supported.
+>> +		 */
+>> +		if (boot_cpu_has(X86_FEATURE_PGE))
+>> +			*pmd = pmd_set_flags(*pmd, _PAGE_GLOBAL);
+> 
+> Same here.
+
+Is there  a reason that the pmd_none() check above this does not work?
