@@ -1,67 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752511AbeDDWuU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 18:50:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59576 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752297AbeDDWuS (ORCPT
+        id S1752615AbeDDWxG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 18:53:06 -0400
+Received: from mail-it0-f43.google.com ([209.85.214.43]:40359 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752318AbeDDWxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 18:50:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 79370602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: linux-pci@vger.kernel.org, sulrich@codeaurora.org,
-        timur@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] PCI: quirk HT1100 & HT2000 and one HT2100 Root Ports for Extended Tags
-Date: Wed,  4 Apr 2018 18:50:09 -0400
-Message-Id: <1522882209-9743-1-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 4 Apr 2018 18:53:04 -0400
+X-Google-Smtp-Source: AIpwx4/aJA2gFGpqe7egzf/ZWoaAmmMRkLSyFZlJ44xw/tA77ujHrI2XCPmk0M1QUHxO3KyXRafc7nd4EQnFCuncKXA=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <152287964415.14760.2996398134900556495.stgit@warthog.procyon.org.uk>
+References: <152287959470.14760.10350886166577848180.stgit@warthog.procyon.org.uk>
+ <152287964415.14760.2996398134900556495.stgit@warthog.procyon.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 4 Apr 2018 15:53:02 -0700
+X-Google-Sender-Auth: nWZ1cIcngkXJrxNnirgo51CnY3U
+Message-ID: <CA+55aFymk0Na_eBp1FSoDgNhyBAnS7X_ZwgG6++LsvjpcUfuxw@mail.gmail.com>
+Subject: Re: [PATCH 06/12] fscache: Detect multiple relinquishment of a cookie
+To: David Howells <dhowells@redhat.com>
+Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-cachefs@redhat.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-afs@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Per PCIe r3.1, sec 2.2.6.2 and 7.8.4, a Requester may not use 8-bit Tags
-unless its Extended Tag Field Enable is set, but all Receivers/Completers
-must handle 8-bit Tags correctly regardless of their Extended Tag Field
-Enable.
+On Wed, Apr 4, 2018 at 3:07 PM, David Howells <dhowells@redhat.com> wrote:
+> Report if an fscache cookie is relinquished multiple times by the netfs.
+>
+> -       set_bit(FSCACHE_COOKIE_RELINQUISHED, &cookie->flags);
+> +       if (test_and_set_bit(FSCACHE_COOKIE_RELINQUISHED, &cookie->flags))
+> +               BUG();
 
-Some devices do not handle 8-bit Tags as Completers, so add a quirk for
-them.  If we find such a device, we disable Extended Tags for the entire
-hierarchy to make peer-to-peer DMA possible.
+Ugh. Please try to avoid adding BUG() calls for reporting. They can
+often cause the machine to be basically dead.
 
-The Broadcom HT1100/HT2000/HT2100 seems to have issues with handling 8-bit
-tags.  Mark it as broken.
+This one seem fairly ok, simply because it looks like the only caller
+doesn't really hold a lot of locks (the superblock s_umount lock, but
+that may be all).
 
-Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=196197
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/pci/quirks.c | 4 ++++
- 1 file changed, 4 insertions(+)
+So I'll pull this change, I just wanted people to realize that if this
+is a "help make sure we notice if things go wrong", then
+"WARN_ON_ONCE()" or something is usually a better choice than
+"potentially kill the machine and make it harder to actually see the
+error".
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 8b14bd3..f012742 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4813,9 +4813,13 @@ static void quirk_no_ext_tags(struct pci_dev *pdev)
- 
- 	pci_walk_bus(bridge->bus, pci_configure_extended_tags, NULL);
- }
-+DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0132, quirk_no_ext_tags);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0140, quirk_no_ext_tags);
-+DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0141, quirk_no_ext_tags);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0142, quirk_no_ext_tags);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0144, quirk_no_ext_tags);
-+DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0420, quirk_no_ext_tags);
-+DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0422, quirk_no_ext_tags);
- 
- #ifdef CONFIG_PCI_ATS
- /*
--- 
-2.7.4
+                 Linus
