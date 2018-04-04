@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752070AbeDDUOE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 16:14:04 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36790 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeDDUOB (ORCPT
+        id S1751984AbeDDUPL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 16:15:11 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53358 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751579AbeDDUPK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:14:01 -0400
-X-Google-Smtp-Source: AIpwx4+kXrCROlXSfRxOl689X4gs8IBbZ3dR4Ds5scUTjBUCylgjJKlc3a1bLIWQetf/R/2PhxxMvw==
+        Wed, 4 Apr 2018 16:15:10 -0400
+X-Google-Smtp-Source: AIpwx49EFBaZmAqM2Xgi4jw+7e+nrR2J9v3zZNhz9Vf8SrEqgLZnlVJqDi+9Q1vc7W0d0jpXNWeBOQ==
 From: Mathieu Malaterre <malat@debian.org>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Christophe Leroy <christophe.leroy@c-s.fr>,
@@ -15,12 +15,12 @@ Cc: Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 11/19] powerpc/powermac: Move pmac_pfunc_base_install prototype to header file
-Date: Wed,  4 Apr 2018 22:13:55 +0200
-Message-Id: <20180404201355.27925-1-malat@debian.org>
+Subject: [PATCH v3 09/19] powerpc/chrp/pci: Make some functions static
+Date: Wed,  4 Apr 2018 22:15:03 +0200
+Message-Id: <20180404201504.28003-1-malat@debian.org>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180322202007.23088-12-malat@debian.org>
-References: <20180322202007.23088-12-malat@debian.org>
+In-Reply-To: <20180322202007.23088-10-malat@debian.org>
+References: <20180322202007.23088-10-malat@debian.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -28,44 +28,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pmac_pfunc_base_install prototype was declared in powermac/smp.c since
-function was used there, move it to pmac_pfunc.h header to be visible in
-pfunc_base.c. Fix a warning treated as error with W=1:
+These functions can all be static, make it so. Fix warnings treated as
+errors with W=1:
 
-  arch/powerpc/platforms/powermac/pfunc_base.c:330:12: error: no previous prototype for ‘pmac_pfunc_base_install’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/pci.c:34:5: error: no previous prototype for ‘gg2_read_config’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/pci.c:61:5: error: no previous prototype for ‘gg2_write_config’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/pci.c:97:5: error: no previous prototype for ‘rtas_read_config’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/pci.c:112:5: error: no previous prototype for ‘rtas_write_config’ [-Werror=missing-prototypes]
 
-Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
-v3: remove extern keyword
+v3: style: fix alignement issue (checkpatch --strict)
 v2: no change
- arch/powerpc/include/asm/pmac_pfunc.h | 1 +
- arch/powerpc/platforms/powermac/smp.c | 1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/chrp/pci.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/pmac_pfunc.h b/arch/powerpc/include/asm/pmac_pfunc.h
-index 73bd8f28f2a8..cee4e9f5b8cf 100644
---- a/arch/powerpc/include/asm/pmac_pfunc.h
-+++ b/arch/powerpc/include/asm/pmac_pfunc.h
-@@ -245,6 +245,7 @@ extern void pmf_put_function(struct pmf_function *func);
+diff --git a/arch/powerpc/platforms/chrp/pci.c b/arch/powerpc/platforms/chrp/pci.c
+index 0f512d35f7c5..5ddb57b82921 100644
+--- a/arch/powerpc/platforms/chrp/pci.c
++++ b/arch/powerpc/platforms/chrp/pci.c
+@@ -31,7 +31,7 @@ void __iomem *gg2_pci_config_base;
+  * limit the bus number to 3 bits
+  */
  
- extern int pmf_call_one(struct pmf_function *func, struct pmf_args *args);
+-int gg2_read_config(struct pci_bus *bus, unsigned int devfn, int off,
++static int gg2_read_config(struct pci_bus *bus, unsigned int devfn, int off,
+ 			   int len, u32 *val)
+ {
+ 	volatile void __iomem *cfg_data;
+@@ -58,7 +58,7 @@ int gg2_read_config(struct pci_bus *bus, unsigned int devfn, int off,
+ 	return PCIBIOS_SUCCESSFUL;
+ }
  
-+int pmac_pfunc_base_install(void);
+-int gg2_write_config(struct pci_bus *bus, unsigned int devfn, int off,
++static int gg2_write_config(struct pci_bus *bus, unsigned int devfn, int off,
+ 			    int len, u32 val)
+ {
+ 	volatile void __iomem *cfg_data;
+@@ -94,8 +94,8 @@ static struct pci_ops gg2_pci_ops =
+ /*
+  * Access functions for PCI config space using RTAS calls.
+  */
+-int rtas_read_config(struct pci_bus *bus, unsigned int devfn, int offset,
+-		     int len, u32 *val)
++static int rtas_read_config(struct pci_bus *bus, unsigned int devfn, int offset,
++			    int len, u32 *val)
+ {
+ 	struct pci_controller *hose = pci_bus_to_host(bus);
+ 	unsigned long addr = (offset & 0xff) | ((devfn & 0xff) << 8)
+@@ -109,8 +109,8 @@ int rtas_read_config(struct pci_bus *bus, unsigned int devfn, int offset,
+ 	return rval? PCIBIOS_DEVICE_NOT_FOUND: PCIBIOS_SUCCESSFUL;
+ }
  
- /* Suspend/resume code called by via-pmu directly for now */
- extern void pmac_pfunc_base_suspend(void);
-diff --git a/arch/powerpc/platforms/powermac/smp.c b/arch/powerpc/platforms/powermac/smp.c
-index 95275e0e2efa..447da6db450a 100644
---- a/arch/powerpc/platforms/powermac/smp.c
-+++ b/arch/powerpc/platforms/powermac/smp.c
-@@ -65,7 +65,6 @@
- #endif
- 
- extern void __secondary_start_pmac_0(void);
--extern int pmac_pfunc_base_install(void);
- 
- static void (*pmac_tb_freeze)(int freeze);
- static u64 timebase;
+-int rtas_write_config(struct pci_bus *bus, unsigned int devfn, int offset,
+-		      int len, u32 val)
++static int rtas_write_config(struct pci_bus *bus, unsigned int devfn, int offset,
++			     int len, u32 val)
+ {
+ 	struct pci_controller *hose = pci_bus_to_host(bus);
+ 	unsigned long addr = (offset & 0xff) | ((devfn & 0xff) << 8)
 -- 
 2.11.0
