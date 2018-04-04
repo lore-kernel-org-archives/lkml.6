@@ -1,46 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751296AbeDDH5O convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 03:57:14 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:49209 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750908AbeDDH5N (ORCPT
+        id S1751219AbeDDH6U (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 03:58:20 -0400
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:42487 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750736AbeDDH6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 03:57:13 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Content-Type: text/plain; charset="utf-8"
+        Wed, 4 Apr 2018 03:58:19 -0400
+X-Google-Smtp-Source: AIpwx4/PoZQh5B/rWhWhN34DS2dkezv7xkW7BQB4TVS3z9tbcBk8pFzKXXLOf7cgiuokvxcCCf4SKRkZZht/rYq2AnI=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Xidong Wang <wangxidong_97@163.com>,
-        "Jani Nikula" <jani.nikula@linux.intel.com>,
-        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
-        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
-        "David Airlie" <airlied@linux.ie>
-From: Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <1522827474-5120-1-git-send-email-wangxidong_97@163.com>
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, "Xidong Wang" <wangxidong_97@163.com>
-References: <1522827474-5120-1-git-send-email-wangxidong_97@163.com>
-Message-ID: <152282857443.25182.14236056855796176035@mail.alporthouse.com>
-User-Agent: alot/0.3.6
-Subject: Re: [PATCH 1/1] drm/i915: Do not use kfree() to free kmem_cache_alloc()
- return value
-Date: Wed, 04 Apr 2018 08:56:14 +0100
+In-Reply-To: <20180404075047.GB9342@amd>
+References: <20180404165559.4cd0c12c@canb.auug.org.au> <20180404075047.GB9342@amd>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 4 Apr 2018 09:58:17 +0200
+X-Google-Sender-Auth: NCX2oi_5N3hwyuqXsbjqL_rPozc
+Message-ID: <CAJZ5v0hxyXtyKacJufivL9HWbQBsxTBYVipnHK4+QquTYjpc+A@mail.gmail.com>
+Subject: Re: x32 suspend failuer in Re: linux-next: Tree for Apr 4
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Xidong Wang (2018-04-04 08:37:54)
-> In eb_lookup_vmas(), the return value of kmem_cache_alloc() is freed
-> with kfree(). I think the expected paired function is kmem_cahce_free().
-> 
-> Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+On Wed, Apr 4, 2018 at 9:50 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> Hi!
+>
+>> Please do not add any v4.18 destined stuff to your linux-next included
+>> trees until after v4.17-rc1 has been released.
+>
+> On thinkpad x60, suspend does not suspend at all with this -next
+> version. Previous versions suspended/resumed fine but broke networking.
+>
+> Any ideas? I guess bisecting on next would not be easy?
 
-That is indeed what it should be doing,
-
-Fixes: d1b48c1e7184 ("drm/i915: Replace execbuf vma ht with an idr")
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: <stable@vger.kernel.org> # v4.14+
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
--Chris
+Well, why would it be different from a bisect on any other git repo?
