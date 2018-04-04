@@ -1,104 +1,132 @@
-Return-Path: <martin@martingkelly.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522859500; cv=none;
+Return-Path: <kernel-hardening-return-12849-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx48H4aqybco/6zT0jTZykUrmWwFa1kUkLTXw6dZDdvH5kDbKnNKs6C1YYJRxG6CGSyAgXPsR
+ARC-Seal: i=1; a=rsa-sha256; t=1522846656; cv=none;
         d=google.com; s=arc-20160816;
-        b=QCdAJEKsnCBZoBdhSlM8JwP2/MRvA+roPM66KcpmXnz7swuuSDyGfoe8IXgKPCzrsv
-         TMFsUhBe7Q2iuyXlp8UgogMLxGT/NtocEC0auQGaP4JiRXYUVxA2e35DH0YESJg634Yx
-         8b0WIu+BJvRSEkOheyCKwBCvpuwUBf/BbN/rH6exWPWNr3hjIRDy15qBPBu8GoQAKAbH
-         FI+SLlOo70TSRgq3KXtRURZdZV7ReJJUD4QfI9bv+Sm7Cvm+F7Nfv7s4rxZxNvF9ERxG
-         DSEivnXcf8W7+LNBm9cIjTOpjV3QenCyLUj9LP5jeaMoyK/YrMaFuWkdKBJIm0IXaXlr
-         xCog==
+        b=pX5nFHG1KH7p4wA5XQZ1mxPscEObJp5aUR6zkILmE+4qxFrJm5pUu63mrw3qZRi0pH
+         MfdkxZ+0NdHGAJW9Sg7y5hneTWHC6XvcgYtuVpwHNO5jn/pTk/EHVU6zkQh++5mmO3G2
+         BgU1PnPAi4KLqgEpC2afBa/4IxAxKAW34fOX1V6G2VMUuQcc+tpMz1ww0QN/9tChrNwt
+         1x/ZgjcB4/9FnMwx4J6+Poq2N8ZhcZMeuEfv/2fQ/569yzuSy2NSEDX6Xznxqr7Cwb3j
+         NtazdV4BE5Um462Isx1DQGSYZ0FV/lj9Z45cY5vFoU85vBfZcK+OzCwzm91fvVJ+zfa6
+         kheg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=iTkwI1q9bP+P2oi2w9zpx0jBWjiO1FbAlM5lqTyW/q8=;
-        b=oYTuFrzHWVInS77BsPCx6w4K4RiItN2syIXTqZN6rvojVMNZy/n/m4XQ7z5v/cQWSm
-         doh1VrcUDrodigeA7F2CKv3X1x3QSHLQ+5XhLMIZ/uhHH4LlC1wuykS29GyvvnpbtcQq
-         de8+MGtGZfjntCp+jd728MdPVj48e8xakLw9Zev8UyovazmZJCyxJQkZTXerJ/uX9Juf
-         iUCpHOIwax6juK8RCHcMMxoXPNkYA4AtrQYwIMF5eyS9Zjod20LIxGeS72BsZ4mPtu8U
-         iUyMSy/0gHj2U82qw75AxIp/c+zDI3SDAvCOu2xjlhF58WHxXGK2e3hRaisB4vY7eVw3
-         VfTw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:delivered-to:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=xRAObPQub1H6AuquoGhwmEBPv2KkvbzJNUKAsXuiTa4=;
+        b=CC0Qu6GLkUaI/7e6M2RmVl3LfxqSzkybo406UkijJL1xaCnUp7e1HHYGmhiEGJag9O
+         GImXc3/NwsLdqi79y39/K4Og00r54SeNDoQVFvV5K/dvjV8cIj4gsiDGc4WL2cYbWOBs
+         bU5ZDNZ4VvjAr4STBlOPvjFtOLtDU+6zs4ilH2O8SWyjh47KMTk8n9HmfmuvMh106yXW
+         dWgE+8SE4WUiCy9E8KZ192XBJfjGB1k4ZZ5NHZPoVEJyGncZxSnKrX6tfJ7kjuPAmnTg
+         R5nQSDVZx20/FGZxqvAUDzv1ZnxcGiKM04LNh+OGrHC4Gf3YCbxpQxetdkUMj6bp/esp
+         J0kQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@martingkelly-com.20150623.gappssmtp.com header.s=20150623 header.b=u3i45uGE;
-       spf=pass (google.com: domain of martin@martingkelly.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=martin@martingkelly.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=N1UaOiZO;
+       spf=pass (google.com: domain of kernel-hardening-return-12849-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12849-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@martingkelly-com.20150623.gappssmtp.com header.s=20150623 header.b=u3i45uGE;
-       spf=pass (google.com: domain of martin@martingkelly.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=martin@martingkelly.com
-X-Google-Smtp-Source: AIpwx49r1LgtD0JiuULPYiOWRHu80adOjuJ+sE/O364tZtAM6qxlqchPEXHgtDoO3rFAEQ4A+HwS+w==
-Subject: Re: [PATCH v2] tools: fix cross-compile var clobbering
-To: Jiri Slaby <jslaby@suse.cz>, linux-kbuild@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>,
- Stephen Hemminger <sthemmin@microsoft.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Pali_Roh=c3=a1r?=
- <pali.rohar@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Robert Moore <robert.moore@intel.com>, Lv Zheng <lv.zheng@intel.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Valentina Manea <valentina.manea.m@gmail.com>,
- Shuah Khan <shuahkh@osg.samsung.com>, Shuah Khan <shuah@kernel.org>,
- Mario Limonciello <mario.limonciello@dell.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-References: <20180106201601.11074-1-martin@martingkelly.com>
- <20180107214028.23771-1-martin@martingkelly.com>
- <cc9e8b57-b2e0-91a5-aa9f-9488c78a9860@suse.cz>
-From: Martin Kelly <martin@martingkelly.com>
-Message-ID: <54661ff7-5c2a-473b-e08c-1cd267353c03@martingkelly.com>
-Date: Wed, 4 Apr 2018 09:31:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       dkim=pass header.i=@linaro.org header.s=google header.b=N1UaOiZO;
+       spf=pass (google.com: domain of kernel-hardening-return-12849-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12849-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 MIME-Version: 1.0
-In-Reply-To: <cc9e8b57-b2e0-91a5-aa9f-9488c78a9860@suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1522045994-21913-1-git-send-email-me@tobin.cc>
+References: <1522045994-21913-1-git-send-email-me@tobin.cc>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 4 Apr 2018 14:45:31 +0200
+Message-ID: <CAPDyKFobX6U4_st0nE7-yHt1SPFu4diLhzTaswY6Xt3BrruvAA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: pwrseq: Use kmalloc_array instead of stack VLA
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com,
+	Tycho Andersen <tycho@tycho.ws>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1588971508260159741?=
-X-GMAIL-MSGID: =?utf-8?q?1596833923134905483?=
+X-GMAIL-THRID: =?utf-8?q?1595980934577926333?=
+X-GMAIL-MSGID: =?utf-8?q?1596820455331382848?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/04/2018 06:20 AM, Jiri Slaby wrote:
-> On 01/07/2018, 10:40 PM, Martin Kelly wrote:
->> From: Martin Kelly <martin@martingkelly.com>
-> ...
->> --- a/tools/power/acpi/Makefile.config
->> +++ b/tools/power/acpi/Makefile.config
->> @@ -56,9 +56,6 @@ INSTALL_SCRIPT = ${INSTALL_PROGRAM}
->>   # to compile vs uClibc, that can be done here as well.
->>   CROSS = #/usr/i386-linux-uclibc/usr/bin/i386-uclibc-
->>   CROSS_COMPILE ?= $(CROSS)
->> -CC = $(CROSS_COMPILE)gcc
->> -LD = $(CROSS_COMPILE)gcc
-> 
-> This one makes difference -- acpi is special. This used to be:
-> LD = gcc
-> 
-> Now it is:
-> LD = ld
-> 
-> And due to that, we get:
-> ld: unrecognized option '-D_LINUX'
-> 
-> Should we do:
-> LD = $(CC)
-> 
-> or fix this elsewhere differently?
-> 
-> thanks,
+On 26 March 2018 at 08:33, Tobin C. Harding <me@tobin.cc> wrote:
+> The use of stack Variable Length Arrays needs to be avoided, as they
+> can be a vector for stack exhaustion, which can be both a runtime bug
+> (kernel Oops) or a security flaw (overwriting memory beyond the
+> stack). Also, in general, as code evolves it is easy to lose track of
+> how big a VLA can get. Thus, we can end up having runtime failures
+> that are hard to debug. As part of the directive[1] to remove all VLAs
+> from the kernel, and build with -Wvla.
 >
-Yes, I think LD = $(CC) should work. $(CC) will be defaulted to 
-$(CROSS_COMPILE)gcc due to the call to $(call 
-allow-override,CC,$(CROSS_COMPILE)gcc) in 
-tools/scripts/Makefile.include. The allow-override function will 
-correctly handle env and command-line settings.
+> Currently driver is using a VLA declared using the number of descriptors.  This
+> array is used to store integer values and is later used as an argument to
+> `gpiod_set_array_value_cansleep()` This can be avoided by using
+> `kmalloc_array()` to allocate memory for the array of integer values.  Memory is
+> free'd before return from function.
+>
+> From the code it appears that it is safe to sleep so we can use GFP_KERNEL
+> (based _cansleep() suffix of function `gpiod_set_array_value_cansleep()`.
+>
+> It can be expected that this patch will result in a small increase in overhead
+> due to the use of `kmalloc_array()`
+>
+> [1] https://lkml.org/lkml/2018/3/7/621
+>
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
 
-This will clobber any special $(LD) settings that the user has set, but 
-that was true as well for the acpi Makefile before this patch.
+Thanks, queued for 3.18!
+
+Kind regards
+Uffe
+
+> ---
+>
+> Patch is untested.  I was not able to fully grok the call chain involved
+> with this change so was unable to quantify the total degradation
+> of performance.
+>
+> Line calling to gpiod_set_array_value_cansleep() is 83 characters long,
+> patch attempts to leave the code as clean as possible.  Open to
+> suggestions for improvement.  I tried various forms of while loop and
+> pointer arithmetic for the setting of `values` but in the end settled
+> for array indexing, again open to suggestions.
+>
+> thanks,
+> Tobin.
+>
+>  drivers/mmc/core/pwrseq_simple.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
+> index 13ef162cf066..a8b9fee4d62a 100644
+> --- a/drivers/mmc/core/pwrseq_simple.c
+> +++ b/drivers/mmc/core/pwrseq_simple.c
+> @@ -40,14 +40,18 @@ static void mmc_pwrseq_simple_set_gpios_value(struct mmc_pwrseq_simple *pwrseq,
+>         struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
+>
+>         if (!IS_ERR(reset_gpios)) {
+> -               int i;
+> -               int values[reset_gpios->ndescs];
+> +               int i, *values;
+> +               int nvalues = reset_gpios->ndescs;
+>
+> -               for (i = 0; i < reset_gpios->ndescs; i++)
+> +               values = kmalloc_array(nvalues, sizeof(int), GFP_KERNEL);
+> +               if (!values)
+> +                       return;
+> +
+> +               for (i = 0; i < nvalues; i++)
+>                         values[i] = value;
+>
+> -               gpiod_set_array_value_cansleep(
+> -                       reset_gpios->ndescs, reset_gpios->desc, values);
+> +               gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc, values);
+> +               kfree(values);
+>         }
+>  }
+>
+> --
+> 2.7.4
+>
