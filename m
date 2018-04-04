@@ -1,73 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751516AbeDDLt3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 07:49:29 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43550 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750915AbeDDLt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 07:49:28 -0400
-Date: Wed, 4 Apr 2018 12:50:14 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: bhelgaas@google.com, Joao.Pinto@synopsys.com, jingoohan1@gmail.com,
-        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/8] bindings: PCI: designware: Add support for the EP in
- designware driver
-Message-ID: <20180404115014.GC24669@red-moon>
-References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
- <dd582bfc2780679b7a092d23547c316234a84c34.1522235224.git.gustavo.pimentel@synopsys.com>
+        id S1751579AbeDDLuK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 07:50:10 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:45864 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbeDDLuJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 07:50:09 -0400
+X-Google-Smtp-Source: AIpwx4+IdVk5OAWEx2+dBrSRLZeP6sjnf+C1pVQTdbx3hdQgTtJ0swOZeexmF9eYLU58wd0yRxf2sHPJ0ZH0+rhYdgM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dd582bfc2780679b7a092d23547c316234a84c34.1522235224.git.gustavo.pimentel@synopsys.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <3099c108-6acc-fd54-2aa4-dc323f566291@intel.com>
+References: <1521534986-21907-1-git-send-email-zhang.chunyan@linaro.org>
+ <CAG2=9p8y9bMsZ8u0gaumW9B7t3GEAhJ6ChQcE8qg_to_T7wwXg@mail.gmail.com>
+ <CAPDyKFp_MYRTQmLcfkrZe+Ux9ZBZQgsAaZSzzLteVYS7sW0VCw@mail.gmail.com> <3099c108-6acc-fd54-2aa4-dc323f566291@intel.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 4 Apr 2018 13:50:08 +0200
+Message-ID: <CAPDyKFqOn7AfDw31DisPrXbHQqEAiNg=1=OneUa_wvCi7i1xKw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] mmc: add support for sdhci 4.0
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Chunyan Zhang <zhang.chunyan@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Billows Wu <billows.wu@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 12:38:33PM +0100, Gustavo Pimentel wrote:
+On 4 April 2018 at 13:43, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> On 04/04/18 13:17, Ulf Hansson wrote:
+>> On 4 April 2018 at 11:05, Chunyan Zhang <zhang.chunyan@linaro.org> wrote:
+>>> Hi Ulf,
+>>>
+>>> Do you have some comments on this patch-set?
+>>
+>> No objections from my side of the series, however I am relying on
+>> Adrian's ack before I pick any of the patches.
+>
+> We don't have any drivers that enable v4 mode.  Really we need that, so that
+> we are supporting features that are actually in use.  Equally some evidence
+> of testing would be expected.
 
-Please always write a commit log even if it is trivial.
+Right, this makes perfect sense to me as well!
 
-Thanks,
-Lorenzo
-
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
->  Documentation/devicetree/bindings/pci/designware-pcie.txt | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> index 6300762..4bb2e08 100644
-> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> @@ -3,6 +3,7 @@
->  Required properties:
->  - compatible:
->  	"snps,dw-pcie" for RC mode;
-> +	"snps,dw-pcie-ep" for EP mode;
->  - reg: Should contain the configuration address space.
->  - reg-names: Must be "config" for the PCIe configuration space.
->      (The old way of getting the configuration address space from "ranges"
-> @@ -56,3 +57,15 @@ Example configuration:
->  		#interrupt-cells = <1>;
->  		num-lanes = <1>;
->  	};
-> +or
-> +	pcie_ep: pcie_ep@dfc00000 {
-> +		compatible = "snps,dw-pcie-ep";
-> +		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
-> +		      <0xdfc01000 0x0001000>, /* IP registers 2 */
-> +		      <0xd0000000 0x2000000>; /* Configuration space */
-> +		reg-names = "dbi", "dbi2", "addr_space";
-> +		device_type = "pci";
-> +		num-ib-windows = <6>;
-> +		num-ob-windows = <2>;
-> +		num-lanes = <1>;
-> +	};
-> -- 
-> 2.7.4
-> 
-> 
+Kind regards
+Uffe
