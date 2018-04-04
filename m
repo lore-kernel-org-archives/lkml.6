@@ -1,116 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752313AbeDDU4s (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 16:56:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60012 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752051AbeDDU4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:56:47 -0400
-Date: Wed, 4 Apr 2018 22:56:43 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Jason Andryuk <jandryuk@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, benjamin.tissoires@redhat.com,
-        andyrtr@archlinux.org, aduggan@synaptics.com,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: i801: blacklist Host Notify on HP EliteBook G3
- 850
-Message-ID: <20180404225643.6b40782f@endymion>
-In-Reply-To: <20180402123435.5587-1-jandryuk@gmail.com>
-References: <20180402122536.5083-1-jandryuk@gmail.com>
-        <20180402123435.5587-1-jandryuk@gmail.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1752156AbeDDVFW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 17:05:22 -0400
+Received: from smtprelay0188.hostedemail.com ([216.40.44.188]:35882 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751749AbeDDVFV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 17:05:21 -0400
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,rostedt@goodmis.org,:::::,RULES_HIT:41:152:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1513:1515:1516:1518:1521:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2896:3138:3139:3140:3141:3142:3353:3865:3867:3868:3870:3871:3872:3873:4321:4605:5007:6671:7652:7875:7903:9040:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12438:12555:12895:12986:13007:13255:14181:14721:21080:21451:21611:21627:30012:30026:30051:30054:30069:30090,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
+X-HE-Tag: cart55_393fc02d6b353
+X-Filterd-Recvd-Size: 3542
+Date: Wed, 04 Apr 2018 16:56:23 -0400
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180404205102.20816-1-chris@chris-wilson.co.uk>
+References: <20180330150132.16903-1-chris@chris-wilson.co.uk> <20180404205102.20816-1-chris@chris-wilson.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v3] trace: Default to using trace_global_clock if sched_clock is unstable
+To: Chris Wilson <chris@chris-wilson.co.uk>, linux-kernel@vger.kernel.org
+CC: intel-gfx@lists.freedesktop.org
+From: Steven Rostedt <rostedt@goodmis.org>
+Message-ID: <7D320425-063C-4C54-BAD2-8843ADCD8D6A@goodmis.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason,
+Can you add a patch on top. I already added your patch to my tree.
 
-On Mon,  2 Apr 2018 08:34:35 -0400, Jason Andryuk wrote:
-> The HP EliteBook G3 850 has a weird bug where a subsequent cold boot
-> hangs while plugged in if Linux enables the Host Notify features of
-> i2c-i801.  The cold boot hang depends on how the system boots.  It does
-> not hang on UEFI Grub text boot or legacy Grub text boot.  But it does
-> hang on legacy Grub graphical boot and Intel Boot Agent PXE text boot.
-> Booting unplugged is not affected.
+See branch ftrace/core
+git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+
+-- Steve
+
+
+On April 4, 2018 4:51:02 PM EDT, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+>Across suspend, we may see a very large drift in timestamps if the
+>sched
+>clock is unstable, prompting the global trace's ringbuffer code to warn
+>and suggest switching to the global clock. Preempt this request by
+>detecting when the sched clock is unstable (determined during
+>late_initcall) and automatically switching the default clock over to
+>trace_global_clock.
+>
+>This should prevent requiring user interaction to resolve warnings such
+>as:
+>
+>Delta way too big! 18446743856563626466 ts=18446744054496180323 write
+>stamp = 197932553857
+>    If you just came from a suspend/resume,
+>    please switch to the trace global clock:
+>    echo global > /sys/kernel/debug/tracing/trace_clock
+>
+>Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+>Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>---
+>v2: Tell the user what's happening and what they can do to correct it.
+>v3: Restore the correct logic to switch only if the default trace clock
+>(no override) is found to be *not* stable.
+>---
+> kernel/trace/trace.c | 19 +++++++++++++++++++
+> 1 file changed, 19 insertions(+)
+>
+>diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+>index 13baf85b27d8..a1810b053f65 100644
+>--- a/kernel/trace/trace.c
+>+++ b/kernel/trace/trace.c
+>@@ -41,6 +41,7 @@
+> #include <linux/nmi.h>
+> #include <linux/fs.h>
+> #include <linux/trace.h>
+>+#include <linux/sched/clock.h>
+> #include <linux/sched/rt.h>
 > 
-> Disabling the Host Notify feature with disable_feature=0x20 works around
-> the bug, so automatically do so based on DMI information.
+> #include "trace.h"
+>@@ -8505,3 +8506,21 @@ __init static int clear_boot_tracer(void)
 > 
-> More information can be found here:
-> https://www.spinics.net/lists/linux-i2c/msg33938.html
-> 
-> Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
-> ---
-> I only added my machine to the blacklist, since it's the only one I've
-> tested.  More systems can be added when identified and tested.
-> 
-> v2: Fix open brace on function definition
-> 
->  drivers/i2c/busses/i2c-i801.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-> index 692b34125866..3e8e613c0801 100644
-> --- a/drivers/i2c/busses/i2c-i801.c
-> +++ b/drivers/i2c/busses/i2c-i801.c
-> @@ -1042,6 +1042,25 @@ static const struct pci_device_id i801_ids[] = {
->  MODULE_DEVICE_TABLE(pci, i801_ids);
->  
->  #if defined CONFIG_X86 && defined CONFIG_DMI
-> +static const struct dmi_system_id host_notify_dmi_blacklist[] = {
-> +	{
-> +		.ident = "HP EliteBook G3 850",
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "HP"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "HP EliteBook 850 G3"),
-
-Please consider using DMI_EXACT_MATCH if possible, as it is faster.
-
-> +		},
-> +	},
-> +};
-
-Arrays passed to dmi_check_system must be terminated with an empty
-element.
-
-> +
-> +static void blacklist_features(struct i801_priv *priv)
-> +{
-> +	if (dmi_check_system(host_notify_dmi_blacklist)) {
-> +		dev_warn(&priv->pci_dev->dev,
-> +			 "SMBus Host Notify disabled on this system");
-> +		priv->features &= ~FEATURE_HOST_NOTIFY;
-> +	}
-> +}
-> +
->  static unsigned char apanel_addr;
->  
->  /* Scan the system ROM for the signature "FJKEYINF" */
-> @@ -1159,6 +1178,7 @@ static void i801_probe_optional_slaves(struct i801_priv *priv)
->  #else
->  static void __init input_apanel_init(void) {}
->  static void i801_probe_optional_slaves(struct i801_priv *priv) {}
-> +static void blacklist_features(struct i801_priv *priv) {}
->  #endif	/* CONFIG_X86 && CONFIG_DMI */
->  
->  #if IS_ENABLED(CONFIG_I2C_MUX_GPIO) && defined CONFIG_DMI
-> @@ -1562,6 +1582,7 @@ static int i801_probe(struct pci_dev *dev, const struct pci_device_id *id)
->  				   i801_feature_names[i]);
->  	}
->  	priv->features &= ~disable_features;
-> +	blacklist_features(priv);
->  
->  	err = pcim_enable_device(dev);
->  	if (err) {
-
-Other than that, it looks good to me.
-
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
+> fs_initcall(tracer_init_tracefs);
+> late_initcall_sync(clear_boot_tracer);
+>+
+>+#ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
+>+__init static int tracing_set_default_clock(void)
+>+{
+>+	/* sched_clock_stable() is determined in late_initcall */
+>+	if (!trace_boot_clock && !sched_clock_stable()) {
+>+		printk(KERN_WARNING
+>+		       "Unstable clock detected, switching default tracing clock to
+>\"global\"\n"
+>+		       "If you want to keep using the local clock, then add:\n"
+>+		       "  \"trace_clock=local\"\n"
+>+		       "on the kernel command line\n");
+>+		tracing_set_clock(&global_trace, "global");
+>+	}
+>+
+>+	return 0;
+>+}
+>+late_initcall_sync(tracing_set_default_clock);
+>+#endif
 
 -- 
-Jean Delvare
-SUSE L3 Support
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
