@@ -1,82 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751239AbeDDNta convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:49:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49311 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750842AbeDDNt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:49:28 -0400
-Date: Wed, 4 Apr 2018 15:49:16 +0200
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>, quentin.schulz@bootlin.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 01/13] ARM: move cputype definitions into another
- file
-Message-ID: <20180404154916.66870e98@dell-desktop.home>
-In-Reply-To: <4ba0f1c4-a52a-b9f5-67ac-bf348a13228a@gmail.com>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
-        <20180403061836.3926-2-mylene.josserand@bootlin.com>
-        <CAGb2v64GL=1UcYs1tFp-mS07vbHBao82SEhyzUrUHB++2-EKBg@mail.gmail.com>
-        <4ba0f1c4-a52a-b9f5-67ac-bf348a13228a@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751296AbeDDNtz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:49:55 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:41114 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeDDNtx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:49:53 -0400
+X-Google-Smtp-Source: AIpwx49m4JjRvI2BIPJSKmgtocdjmFYr1JJaBIS6uNs05kUUskDHXcna6zHoDcIYUJgjQSW7qFGXcaE5L0DcXErsvZE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180403215526.15934-1-jrosen@cisco.com>
+References: <20180403215526.15934-1-jrosen@cisco.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Wed, 4 Apr 2018 15:49:11 +0200
+Message-ID: <CAF=yD-L8DaS7LW4SAaTRd2RPxVnfrdiVLCdWJxxaTu3Hn8ORSA@mail.gmail.com>
+Subject: Re: [RFC PATCH] packet: mark ring entry as in-use inside spin_lock to
+ prevent RX ring overrun
+To: Jon Rosen <jrosen@cisco.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>, Kees Cook <keescook@chromium.org>,
+        David Windsor <dwindsor@gmail.com>,
+        "Rosen, Rami" <rami.rosen@intel.com>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        Mike Maloney <maloney@google.com>,
+        Benjamin Poirier <bpoirier@suse.com>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Florian,
+On Tue, Apr 3, 2018 at 11:55 PM, Jon Rosen <jrosen@cisco.com> wrote:
+> Fix PACKET_RX_RING bug for versions TPACKET_V1 and TPACKET_V2 which
+> casues the ring to get corrupted by allowing multiple kernel threads
+> to claim ownership of the same ring entry, Mark the ring entry as
+> already being used within the spin_lock to prevent other kernel
+> threads from reusing the same entry before it's fully filled in,
+> passed to user space, and then eventually passed back to the kernel
+> for use with a new packet.
+>
+> Note that the proposed change may modify the semantics of the
+> interface between kernel space and user space in a way which may cause
+> some applications to no longer work properly.
 
-On Tue, 3 Apr 2018 12:56:30 -0700
-Florian Fainelli <f.fainelli@gmail.com> wrote:
+As long as TP_STATUS_USER (1) is not set, userspace should ignore
+the slot..
 
-> On 04/02/2018 11:52 PM, Chen-Yu Tsai wrote:
-> > On Tue, Apr 3, 2018 at 2:18 PM, Mylène Josserand
-> > <mylene.josserand@bootlin.com> wrote:  
-> >> To add the support for SMP on sun8i-a83t, we will use some
-> >> definitions in an assembly file so move definitions into
-> >> another file to separate C functions and macro defintions.  
-> > 
-> > Instead of moving the definitions, you could guard all the C
-> > stuff in "#ifndef __ASSEMBLY__". AFAIK a few header files do that.  
-> 
-> Which is effectively what this patch does (still waiting for an ACK):
-> 
-> https://patchwork.kernel.org/patch/10239855/
+>    One issue with the above proposed change to use TP_STATUS_IN_PROGRESS
+>    is that the documentation of the tp_status field is somewhat
+>    inconsistent.  In some places it's described as TP_STATUS_KERNEL(0)
+>    meaning the entry is owned by the kernel and !TP_STATUS_KERNEL(0)
+>    meaning the entry is owned by user space.  In other places ownership
+>    by user space is defined by the TP_STATUS_USER(1) bit being set.
 
-Thanks for pointing out this existing patch.
-I will use it for my next series and add my Tested-by (once tested, of
-course).
+But indeed this example in packet_mmap.txt is problematic
 
-Best regards,
+    if (status == TP_STATUS_KERNEL)
+        retval = poll(&pfd, 1, timeout);
 
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+It does not really matter whether the docs are possibly inconsistent and
+which one is authoritative. Examples like the above make it likely that
+some user code expects such code to work.
 
-> 
-> > 
-> > ChenYu
-> >   
-> >> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> >> ---
-> >>  arch/arm/include/asm/cputype.h     | 94 +-----------------------------------
-> >>  arch/arm/include/asm/cputype_def.h | 98 ++++++++++++++++++++++++++++++++++++++  
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >   
-> 
-> 
+> +++ b/net/packet/af_packet.c
+> @@ -2287,6 +2287,15 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+>                 if (po->stats.stats1.tp_drops)
+>                         status |= TP_STATUS_LOSING;
+>         }
+> +
+> +        /*
+> +         * Mark this entry as TP_STATUS_IN_PROGRESS to prevent other
+> +         * kernel threads from re-using this same entry.
+> +         */
+> +#define TP_STATUS_IN_PROGRESS TP_STATUS_LOSING
+
+No need to reinterpret existing flags. tp_status is a u32 with
+sufficient undefined bits.
+
+> +       if (po->tp_version <= TPACKET_V2)
+> +            __packet_set_status(po, h.raw, TP_STATUS_IN_PROGRESS);
+> +
+>         po->stats.stats1.tp_packets++;
+>         if (copy_skb) {
+>                 status |= TP_STATUS_COPY;
+> --
+> 2.10.3.dirty
+>
