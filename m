@@ -1,71 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752550AbeDDXVN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 19:21:13 -0400
-Received: from ozlabs.org ([103.22.144.67]:32871 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752392AbeDDXVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 19:21:11 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 5 Apr 2018 09:19:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Andrei Vagin <avagin@virtuozzo.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Michal Hocko <mhocko@suse.com>,
-        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        david <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: Re: [v8, 11/18] mm, dax: enable filesystems to trigger dev_pagemap
- ->page_free callbacks
-Message-ID: <20180405091946.7ca20ead@canb.auug.org.au>
-In-Reply-To: <CAPcyv4jd+aSzMvGHJ6O8K5vJ+qmH=XU2i2bzsGvZENXnkpM7=g@mail.gmail.com>
-References: <152246898837.36038.26895928842345061.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <20180404212340.GA12737@outlook.office365.com>
-        <CAPcyv4jknruAmkPEVx0X6Bd3uRs_FYdPf-W-5cDO1Z+kaG5+uw@mail.gmail.com>
-        <CAPcyv4jd+aSzMvGHJ6O8K5vJ+qmH=XU2i2bzsGvZENXnkpM7=g@mail.gmail.com>
+        id S1752656AbeDDXdA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 19:33:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57665 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752395AbeDDXc5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 19:32:57 -0400
+Date: Wed, 4 Apr 2018 16:31:28 -0700
+From: tip-bot for Sai Praneeth <tipbot@zytor.com>
+Message-ID: <tip-162ee5a8ab49be40d253f90e94aef712470a3a24@git.kernel.org>
+Cc: jlee@suse.com, ravi.v.shankar@intel.com, matt@codeblueprint.co.uk,
+        a.p.zijlstra@chello.nl, luto@kernel.org, akpm@linux-foundation.org,
+        tony.luck@intel.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, dave.hansen@intel.com,
+        mst@redhat.com, ricardo.neri@intel.com, sai.praneeth.prakhya@intel.com,
+        hpa@zytor.com, ard.biesheuvel@linaro.org, peterz@infradead.org,
+        tglx@linutronix.de, bp@alien8.de
+Reply-To: hpa@zytor.com, ard.biesheuvel@linaro.org, tglx@linutronix.de,
+        peterz@infradead.org, bp@alien8.de, a.p.zijlstra@chello.nl,
+        matt@codeblueprint.co.uk, jlee@suse.com, ravi.v.shankar@intel.com,
+        luto@kernel.org, tony.luck@intel.com, akpm@linux-foundation.org,
+        mingo@kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, sai.praneeth.prakhya@intel.com,
+        ricardo.neri@intel.com, mst@redhat.com, dave.hansen@intel.com
+In-Reply-To: <1522870459-7432-1-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1522870459-7432-1-git-send-email-sai.praneeth.prakhya@intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:efi/urgent] x86/mm: Fix bogus warning during EFI bootup, use
+ boot_cpu_has() instead of this_cpu_has() in build_cr3_noflush()
+Git-Commit-ID: 162ee5a8ab49be40d253f90e94aef712470a3a24
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sgDCFHZZhV61WXqrqZ/wP=B"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/sgDCFHZZhV61WXqrqZ/wP=B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:  162ee5a8ab49be40d253f90e94aef712470a3a24
+Gitweb:     https://git.kernel.org/tip/162ee5a8ab49be40d253f90e94aef712470a3a24
+Author:     Sai Praneeth <sai.praneeth.prakhya@intel.com>
+AuthorDate: Wed, 4 Apr 2018 12:34:19 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 5 Apr 2018 01:27:49 +0200
 
-Hi Dan,
+x86/mm: Fix bogus warning during EFI bootup, use boot_cpu_has() instead of this_cpu_has() in build_cr3_noflush()
 
-On Wed, 4 Apr 2018 14:35:20 -0700 Dan Williams <dan.j.williams@intel.com> w=
-rote:
->
-> New branch pushed out with this offending commit removed.
+Linus reported the following boot warning:
 
-Thanks, I refetched.
+  WARNING: CPU: 0 PID: 0 at arch/x86/include/asm/tlbflush.h:134 load_new_mm_cr3+0x114/0x170
+  [...]
+  Call Trace:
+  switch_mm_irqs_off+0x267/0x590
+  switch_mm+0xe/0x20
+  efi_switch_mm+0x3e/0x50
+  efi_enter_virtual_mode+0x43f/0x4da
+  start_kernel+0x3bf/0x458
+  secondary_startup_64+0xa5/0xb0
 
---=20
-Cheers,
-Stephen Rothwell
+... after merging:
 
---Sig_/sgDCFHZZhV61WXqrqZ/wP=B
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  03781e40890c: x86/efi: Use efi_switch_mm() rather than manually twiddling with %cr3
 
------BEGIN PGP SIGNATURE-----
+When the platform supports PCID and if CONFIG_DEBUG_VM=y is enabled,
+build_cr3_noflush() (called via switch_mm()) does a sanity check to see
+if X86_FEATURE_PCID is set.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrFXZIACgkQAVBC80lX
-0GzkHwgAoJUYgLchV2FPkM6kN5+QkaSI/dMQ571cQ+bs5JkrfAkANCdIr1LNVk5p
-JxFaMZccM3i4K/6t+/h84UowZV6Qk3W2GkrPhxUpFKsCWEc3w4wXrZRN71c4rM5D
-FIHHwY29bOj3wiP5ngOTFFR0D8F8cnrOD2k+bTetaNpCbuJ63am+I8NiI15qfzU3
-n5J+S+Ra7m4aCBi3n/pQqTKWKJehpjE3FSd5qwepBLXLsCXiQtcDzIT1+U0vvX27
-b/F2UAoOwZa8EZCsBCSDzQD5PX6/vSwk11hXkoveRhyhy7P8YOniRin8u/KOefsl
-+8T7T2oYf/74PSICuIObkzEf9ZSQHQ==
-=nbIL
------END PGP SIGNATURE-----
+Presently, build_cr3_noflush() uses "this_cpu_has(X86_FEATURE_PCID)" to
+perform the check but this_cpu_has() works only after SMP is initialized
+(i.e. per cpu cpu_info's should be populated) and this happens to be very
+late in the boot process (during rest_init()).
 
---Sig_/sgDCFHZZhV61WXqrqZ/wP=B--
+As efi_runtime_services() are called during (early) kernel boot time
+and run time, modify build_cr3_noflush() to use boot_cpu_has() all the
+time. As suggested by Dave Hansen, this should be OK because all CPU's have
+same capabilities on x86.
+
+With this change the warning is fixed.
+
+( Dave also suggested that we put a warning in this_cpu_has() if it's used
+  early in the boot process. This is still work in progress as it affects
+  MCE. )
+
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Lee Chun-Yi <jlee@suse.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Cc: Ricardo Neri <ricardo.neri@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/1522870459-7432-1-git-send-email-sai.praneeth.prakhya@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/tlbflush.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 84137c22fdfa..6690cd3fc8b1 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -131,7 +131,12 @@ static inline unsigned long build_cr3(pgd_t *pgd, u16 asid)
+ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
+ {
+ 	VM_WARN_ON_ONCE(asid > MAX_ASID_AVAILABLE);
+-	VM_WARN_ON_ONCE(!this_cpu_has(X86_FEATURE_PCID));
++	/*
++	 * Use boot_cpu_has() instead of this_cpu_has() as this function
++	 * might be called during early boot. This should work even after
++	 * boot because all CPU's the have same capabilities:
++	 */
++	VM_WARN_ON_ONCE(!boot_cpu_has(X86_FEATURE_PCID));
+ 	return __sme_pa(pgd) | kern_pcid(asid) | CR3_NOFLUSH;
+ }
+ 
