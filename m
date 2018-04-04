@@ -1,43 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752648AbeDDRGW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 13:06:22 -0400
-Received: from mail-yb0-f173.google.com ([209.85.213.173]:36605 "EHLO
-        mail-yb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752238AbeDDRGU (ORCPT
+        id S1752566AbeDDRJ3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 13:09:29 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40887 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752100AbeDDRJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 13:06:20 -0400
-X-Google-Smtp-Source: AIpwx49YENabvuKc/+mAr/M9pi99rYaiiDv0JVoutgJ58013jESQXxnS24hh0yFcjZWNlwZ94z3zoA==
-Date: Wed, 4 Apr 2018 10:06:17 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: IDE-ML <linux-ide@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] libata changes for v4.17-rc1
-Message-ID: <20180404170617.GB3126663@devbig577.frc2.facebook.com>
-References: <20180403143257.GN388343@devbig577.frc2.facebook.com>
- <CA+55aFyU+MnzfTfkvCgNJp+QZJdyfYrJmdzy0Z_PbxOcBTfByA@mail.gmail.com>
+        Wed, 4 Apr 2018 13:09:27 -0400
+X-Google-Smtp-Source: AIpwx48HcEK/NJm0YY7VBMnXsAsvIN4B+/9AVEs9v3FkBUHCCiiCtQc1JMrfJKvsMnDMfUDbG+KgpQ==
+Subject: Re: [PATCH v5 2/2] KVM: X86: Add Force Emulation Prefix for "emulate
+ the next instruction"
+To: Wanpeng Li <kernellwp@gmail.com>, David Hildenbrand <david@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Liran Alon <liran.alon@oracle.com>
+References: <1522798129-14588-1-git-send-email-wanpengli@tencent.com>
+ <1522798129-14588-3-git-send-email-wanpengli@tencent.com>
+ <48d06146-f508-e883-72cb-881e043f9c72@redhat.com>
+ <CANRm+CwMRb9hbV5PjGMoTe1oDa+cEZ0ex7N-1J5NkWiCV62M4A@mail.gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+Message-ID: <f8da5618-6d80-e209-fb28-0dc11cee5c1d@redhat.com>
+Date: Wed, 4 Apr 2018 19:09:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFyU+MnzfTfkvCgNJp+QZJdyfYrJmdzy0Z_PbxOcBTfByA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CANRm+CwMRb9hbV5PjGMoTe1oDa+cEZ0ex7N-1J5NkWiCV62M4A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 05:59:04PM -0700, Linus Torvalds wrote:
-> People hotplug ATA _controllers_?   :-O
+On 04/04/2018 15:35, Wanpeng Li wrote:
+> 2018-04-04 19:59 GMT+08:00 David Hildenbrand <david@redhat.com>:
+>>
+>>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>>> index 1eb495e..a55ecef 100644
+>>> --- a/arch/x86/kvm/x86.c
+>>> +++ b/arch/x86/kvm/x86.c
+>>> @@ -146,6 +146,9 @@ bool __read_mostly enable_vmware_backdoor = false;
+>>>  module_param(enable_vmware_backdoor, bool, S_IRUGO);
+>>>  EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
+>>>
+>>> +static bool __read_mostly force_emulation_prefix = false;
+>>> +module_param(force_emulation_prefix, bool, S_IRUGO);
+>>> +
+>>>  #define KVM_NR_SHARED_MSRS 16
+>>>
+>>>  struct kvm_shared_msrs_global {
+>>> @@ -4844,6 +4847,21 @@ int handle_ud(struct kvm_vcpu *vcpu)
+>>>  {
+>>>       enum emulation_result er;
+>>>
+>>> +     if (force_emulation_prefix) {
+>>> +             char sig[5]; /* ud2; .ascii "kvm" */
+>>> +             struct x86_exception e;
+>>> +
+>>> +             if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
+>>> +                             kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e))
+>>> +                     goto emulate_ud;
+>>> +
+>>> +             if (memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0) {
+>>> +                     kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
+>>> +                     return emulate_instruction(vcpu, 0) == EMULATE_DONE;
+>>
+>> What if we would have an invalid instruction here? Shouldn't you handle
+>> the emulate_instruction() like below?
+>> (e.g. keep a variable with the emulation type (0 vs EMULTYPE_TRAP_UD)
+>> and reuse emulate_ud below)
 > 
-> As opposed to just the disks a'la eSATA?
+> emulate_instruction(vcpu, 0) can handle invalid instruction.
 
-Heh, yeah, it's surprising.  IIUC, it's people trying pcie hotplug (I
-don't know whether they try physically) on SAS controllers on fancy
-machines.
+But David's observation is still better because your code doesn't handle
+usermode exits.  I've fixed this up.
 
-Thanks.
-
--- 
-tejun
+Paolo
