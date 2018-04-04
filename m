@@ -1,93 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751270AbeDDNnj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:43:39 -0400
-Received: from mail-it0-f53.google.com ([209.85.214.53]:50572 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750890AbeDDNni (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:43:38 -0400
-X-Google-Smtp-Source: AIpwx4/m9d14zaYlZWj47khVoj9/NfCRZpowmN1FjIU7Y00UXQirc13bCwQqyIa6UCUS4fhtBeeKvleu2jUyxbshem4=
+        id S1751300AbeDDNnw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:43:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750890AbeDDNnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:43:51 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E75A321707
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Wed, 4 Apr 2018 08:43:49 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Zhichang Yuan <yuanzhichang@hisilicon.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddeodr.com>,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH] lib: logic_pio: Fix potential NULL pointer dereference
+Message-ID: <20180404134349.GQ9322@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180403211505.GA29612@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com>
-References: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
- <20180329125324.GR4589@e105550-lin.cambridge.arm.com> <CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com>
- <74865492-d9a6-649d-d37c-a5a6a8c28f23@arm.com> <CAKfTPtDy2uUj4amA9MARUz9qS=+urwV2edyQn+fW70hkN+CgoQ@mail.gmail.com>
- <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 4 Apr 2018 15:43:17 +0200
-Message-ID: <CAKfTPtCQayuu5-84931ZxzXV1-roV_CfRd_5wXG1oxOEUZmZgw@mail.gmail.com>
-Subject: Re: [PATCH] sched: support dynamiQ cluster
-To: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403211505.GA29612@embeddedor.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 April 2018 at 12:44, Valentin Schneider <valentin.schneider@arm.com> wrote:
-> Hi,
->
-> On 03/04/18 13:17, Vincent Guittot wrote:
->> Hi Valentin,
->>
-> [...]
->>>
->>> I believe ASYM_PACKING behaves better here because the workload is only
->>> sysbench threads. As stated above, since task utilization is disregarded, I
->>
->> It behaves better because it doesn't wait for the task's utilization
->> to reach a level before assuming the task needs high compute capacity.
->> The utilization gives an idea of the running time of the task not the
->> performance level that is needed
->>
->
-> That's my point actually. ASYM_PACKING disregards utilization and moves those
-> threads to the big cores ASAP, which is good here because it's just sysbench
-> threads.
->
-> What I meant was that if the task composition changes, IOW we mix "small"
-> tasks (e.g. periodic stuff) and "big" tasks (performance-sensitive stuff like
-> sysbench threads), we shouldn't assume all of those require to run on a big
-> CPU. The thing is, ASYM_PACKING can't make the difference between those, so
+[+cc linux-pci]
 
-That's the 1st point where I tend to disagree: why big cores are only
-for long running task and periodic stuff can't need to run on big
-cores to get max compute capacity ?
-You make the assumption that only long running tasks need high compute
-capacity. This patch wants to always provide max compute capacity to
-the system and not only long running task
+On Tue, Apr 03, 2018 at 04:15:05PM -0500, Gustavo A. R. Silva wrote:
+> new_range is being dereferenced before it is null checked, hence
+> there is a potential null pointer dereference.
+> 
+> Fix this by moving the pointer dereference after new_range has
+> been properly null checked.
+> 
+> Addresses-Coverity-ID: 1466163 ("Dereference before null check")
+> Fixes: 0a7198426259 ("lib: Add generic PIO mapping method")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-> it'll all come down to which task spawned first.
->
-> Furthermore, ASYM_PACKING will forcefully move tasks via active balance
-> regardless of the imbalance as long as a big CPU is idle.
->
-> So we could have a scenario where loads of "small" tasks spawn, and they all
-> get moved to a big CPU until they're all full (because they're periodic tasks
-> so the big CPUs will eventually be idle and will pull another task as long as
-> they get some idle time).
->
-> Then, before the load tracking signals of those tasks ramp up high enough
-> that the load balancer would try to move those to LITTLE CPUs, some "big"
-> tasks spawn. They get scheduled on LITTLE CPUs, and now the system will look
-> balanced so nothing will be done.
+Folded into 0a7198426259 on pci/lpc, thanks!
 
-As explained above, as long as the big CPUs are always used,I don't
-think it's a problem. What is a problem is if a task stays on a little
-CPU whereas a big CPU is idle because we can provide more throughput
-
->
->
-> I acknowledge this all sounds convoluted but I hope it highlights what I
-> think could go wrong with ASYM_PACKING on asymmetric systems.
->
-> Regards,
-> Valentin
+> ---
+>  lib/logic_pio.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/lib/logic_pio.c b/lib/logic_pio.c
+> index 29cedea..30dfdce 100644
+> --- a/lib/logic_pio.c
+> +++ b/lib/logic_pio.c
+> @@ -33,8 +33,8 @@ static DEFINE_MUTEX(io_range_mutex);
+>  int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
+>  {
+>  	struct logic_pio_hwaddr *range;
+> -	resource_size_t start = new_range->hw_start;
+> -	resource_size_t end = new_range->hw_start + new_range->size;
+> +	resource_size_t start;
+> +	resource_size_t end;
+>  	resource_size_t mmio_sz = 0;
+>  	resource_size_t iio_sz = MMIO_UPPER_LIMIT;
+>  	int ret = 0;
+> @@ -42,6 +42,9 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
+>  	if (!new_range || !new_range->fwnode || !new_range->size)
+>  		return -EINVAL;
+>  
+> +	start = new_range->hw_start;
+> +	end = new_range->hw_start + new_range->size;
+> +
+>  	mutex_lock(&io_range_mutex);
+>  	list_for_each_entry_rcu(range, &io_range_list, list) {
+>  		if (range->fwnode == new_range->fwnode) {
+> -- 
+> 2.7.4
+> 
