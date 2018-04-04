@@ -1,76 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751353AbeDDJDB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:03:01 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47291 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751095AbeDDJDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:03:00 -0400
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: enlarge block plug coverage
-Date: Wed, 4 Apr 2018 17:02:06 +0800
-Message-ID: <20180404090206.83549-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
+        id S1750908AbeDDJEK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:04:10 -0400
+Received: from mail-ot0-f179.google.com ([74.125.82.179]:33248 "EHLO
+        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeDDJEJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 05:04:09 -0400
+X-Google-Smtp-Source: AIpwx4+a9Hf9oYnX39nLDOqV1bDIxgywMG3/nH4oCGI4uQ8Pl6qY//s+JnhXDjxf+/bDED7ZbUBQZLMv0S3oi/utLiE=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+From: Lorenz Bauer <lmb@cloudflare.com>
+Date: Wed, 4 Apr 2018 11:04:08 +0200
+Message-ID: <CACAyw9-TvamC2HMNv=WDk_aeAM=R7J_BgLiKjevY5+am71W6-A@mail.gmail.com>
+Subject: PROBLEM: Using BPF_PROG_TEST_RUN with data_out != NULL is unsafe
+To: ast@kernel.org, daniel@iogearbox.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3494IPD002849
 
-This patch enlarges block plug coverage in __issue_discard_cmd, in
-order to collect more pending bios before issuing them, to avoid
-being disturbed by previous discard I/O in IO aware discard mode.
+Hello,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- fix to move plug to correct place.
- fs/f2fs/segment.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I’ve encountered an issue when using BPF_PROG_TEST_RUN and capturing the output.
+The kernel copies data into user space without checking the length of
+the destination buffer.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8f0b5ba46315..e61faff9b109 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1202,6 +1202,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 	int i, iter = 0, issued = 0;
- 	bool io_interrupted = false;
- 
-+	blk_start_plug(&plug);
-+
- 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
- 		if (i + 1 < dpolicy->granularity)
- 			break;
-@@ -1211,7 +1213,6 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 		if (list_empty(pend_list))
- 			goto next;
- 		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
--		blk_start_plug(&plug);
- 		list_for_each_entry_safe(dc, tmp, pend_list, list) {
- 			f2fs_bug_on(sbi, dc->state != D_PREP);
- 
-@@ -1227,7 +1228,6 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 			if (++iter >= dpolicy->max_requests)
- 				break;
- 		}
--		blk_finish_plug(&plug);
- next:
- 		mutex_unlock(&dcc->cmd_lock);
- 
-@@ -1235,6 +1235,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 			break;
- 	}
- 
-+	blk_finish_plug(&plug);
-+
- 	if (!issued && io_interrupted)
- 		issued = -1;
- 
+In bpf_test_finish(), size is the amount of data in the XDP buffer /
+skb after the program is run. This can be larger than data_size_in due
+to bpf_xdp_adjust_head() and friends.
+bpf_test_finish doesn’t clamp size to data_size_out, which is what I
+was expecting.
+
+What is the correct way to use this interface?
+
+Best,
+Lorenz
+
 -- 
-2.15.0.55.gc2ece9dc4de6
+Lorenz Bauer  |  Systems Engineer
+25 Lavington St., London SE1 0NZ
+
+www.cloudflare.com
