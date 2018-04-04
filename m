@@ -1,89 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeDDSGe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 14:06:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34296 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750915AbeDDSGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 14:06:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A15020838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 4 Apr 2018 14:06:30 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v2] lockdep: Do not record irq state within lockdep code
-Message-ID: <20180404140630.3f4f4c7a@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751356AbeDDSOW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 14:14:22 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34980 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbeDDSOV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 14:14:21 -0400
+Date: Wed, 4 Apr 2018 20:14:11 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Nadav Amit <namit@vmware.com>
+cc: Dave Hansen <dave.hansen@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "keescook@google.com" <keescook@google.com>,
+        Hugh Dickins <hughd@google.com>, Juergen Gross <jgross@suse.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 09/11] x86/pti: enable global pages for shared areas
+In-Reply-To: <2D4AE288-DD01-416B-9633-1BC9B6A20BFF@vmware.com>
+Message-ID: <alpine.DEB.2.21.1804042011550.1492@nanos.tec.linutronix.de>
+References: <20180404010946.6186729B@viggo.jf.intel.com> <20180404011007.A381CC8A@viggo.jf.intel.com> <5DEE9F6E-535C-4DBF-A513-69D9FD5C0235@vmware.com> <50385d91-58a9-4b14-06bc-2340b99933c3@linux.intel.com> <2D4AE288-DD01-416B-9633-1BC9B6A20BFF@vmware.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+On Wed, 4 Apr 2018, Nadav Amit wrote:
+> Dave Hansen <dave.hansen@linux.intel.com> wrote:
+> > On 04/03/2018 09:45 PM, Nadav Amit wrote:
+> >> Dave Hansen <dave.hansen@linux.intel.com> wrote:
+> >>> void cea_set_pte(void *cea_vaddr, phys_addr_t pa, pgprot_t flags)
+> >>> {
+> >>> 	unsigned long va = (unsigned long) cea_vaddr;
+> >>> +	pte_t pte = pfn_pte(pa >> PAGE_SHIFT, flags);
+> >>> 
+> >>> -	set_pte_vaddr(va, pfn_pte(pa >> PAGE_SHIFT, flags));
+> >>> +	/*
+> >>> +	 * The cpu_entry_area is shared between the user and kernel
+> >>> +	 * page tables.  All of its ptes can safely be global.
+> >>> +	 */
+> >>> +	if (boot_cpu_has(X86_FEATURE_PGE))
+> >>> +		pte = pte_set_flags(pte, _PAGE_GLOBAL);
+> >> 
+> >> I think it would be safer to check that the PTE is indeed present before
+> >> setting _PAGE_GLOBAL. For example, percpu_setup_debug_store() sets PAGE_NONE
+> >> for non-present entries. In this case, since PAGE_NONE and PAGE_GLOBAL use
+> >> the same bit, everything would be fine, but it might cause bugs one day.
+> > 
+> > That's a reasonable safety thing to add, I think.
+> > 
+> > But, looking at it, I am wondering why we did this in
+> > percpu_setup_debug_store():
+> > 
+> >        for (; npages; npages--, cea += PAGE_SIZE)
+> >                cea_set_pte(cea, 0, PAGE_NONE);
+> > 
+> > Did we really want that to be PAGE_NONE, or was it supposed to create a
+> > PTE that returns true for pte_none()?
+> 
+> I yield it to others to answer...
 
-While debugging where things were going wrong with mapping
-enabling/disabling interrupts with the lockdep state and actual real
-enabling and disabling interrupts, I had to silent the irq
-disabling/enabling in debug_check_no_locks_freed() because it was
-always showing up as it was called before the splat was.
+My bad. I should have used pgprot(0).
 
-Use raw_local_irq_save/restore() for not only debug_check_no_locks_freed()
-but for all internal lockdep functions, as they hide useful information
-about where interrupts were used incorrectly last.
+Thanks,
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 89b5f83f1969..113d825b28cf 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -1261,11 +1261,11 @@ unsigned long lockdep_count_forward_deps(struct lock_class *class)
- 	this.parent = NULL;
- 	this.class = class;
- 
--	local_irq_save(flags);
-+	raw_local_irq_save(flags);
- 	arch_spin_lock(&lockdep_lock);
- 	ret = __lockdep_count_forward_deps(&this);
- 	arch_spin_unlock(&lockdep_lock);
--	local_irq_restore(flags);
-+	raw_local_irq_restore(flags);
- 
- 	return ret;
- }
-@@ -1288,11 +1288,11 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
- 	this.parent = NULL;
- 	this.class = class;
- 
--	local_irq_save(flags);
-+	raw_local_irq_save(flags);
- 	arch_spin_lock(&lockdep_lock);
- 	ret = __lockdep_count_backward_deps(&this);
- 	arch_spin_unlock(&lockdep_lock);
--	local_irq_restore(flags);
-+	raw_local_irq_restore(flags);
- 
- 	return ret;
- }
-@@ -4407,7 +4407,7 @@ void debug_check_no_locks_freed(const void *mem_from, unsigned long mem_len)
- 	if (unlikely(!debug_locks))
- 		return;
- 
--	local_irq_save(flags);
-+	raw_local_irq_save(flags);
- 	for (i = 0; i < curr->lockdep_depth; i++) {
- 		hlock = curr->held_locks + i;
- 
-@@ -4418,7 +4418,7 @@ void debug_check_no_locks_freed(const void *mem_from, unsigned long mem_len)
- 		print_freed_lock_bug(curr, mem_from, mem_from + mem_len, hlock);
- 		break;
- 	}
--	local_irq_restore(flags);
-+	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(debug_check_no_locks_freed);
- 
+	tglx
