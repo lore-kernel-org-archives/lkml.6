@@ -1,107 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751465AbeDDJRi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:17:38 -0400
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:51239
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751155AbeDDJRg (ORCPT
+        id S1751275AbeDDJS5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:18:57 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:56605 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750772AbeDDJS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:17:36 -0400
-X-ASG-Debug-ID: 1522833443-093b7e10b323ed0001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-To: <rjw@rjwysocki.net>
-CC: <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf capabilities
-Date: Wed, 4 Apr 2018 17:16:20 +0800
-X-ASG-Orig-Subj: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf capabilities
-Message-ID: <1522833380-18438-1-git-send-email-shunyong.yang@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 4 Apr 2018 05:18:56 -0400
+From: Matt Redfearn <matt.redfearn@mips.com>
+To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
+CC: <linux-mips@linux-mips.org>, Alban Bedel <albeu@free.fr>,
+        Antony Pavlov <antonynpavlov@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] MIPS: vmlinuz: Fix compiler intrinsics location and build directly
+Date: Wed, 4 Apr 2018 10:18:22 +0100
+Message-ID: <1522833502-28007-1-git-send-email-matt.redfearn@mips.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <20180403160728.GB3275@saruman>
+References: <20180403160728.GB3275@saruman>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.5.21.109]
-X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
-X-Barracuda-Connect: localhost[10.128.0.14]
-X-Barracuda-Start-Time: 1522833443
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.7723 1.0000 1.9682
-X-Barracuda-Spam-Score: 1.97
-X-Barracuda-Spam-Status: No, SCORE=1.97 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49579
+X-Originating-IP: [192.168.155.41]
+X-BESS-ID: 1522833523-452059-6216-47763-1
+X-BESS-VER: 2018.4.1-r1804031856
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191678
         Rule breakdown below
          pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When multiple cpus are related in one cpufreq policy, the first online
-cpu will be chosen by default to handle cpufreq operations. Let's take
-cpu0 and cpu1 as an example.
+Since commit "MIPS: use generic GCC library routines from lib/", MIPS
+now uses the generic lib/ashldi3.c, but bswapsi.c still comes from
+arch/mips/lib. The rules for including these into vmlinuz need updating
+to reflect these locations.
+Both objects need to be built with different CFLAGS for inclusion to
+vmlinuz rather than simply including the object built for the main
+kernel image. But the copy of the source C file can be avoided by simply
+calling cmd,cc_o_c to build the object from the source directly. This
+also removes the need for the .gitignore file to ignore the copied
+files, and the extra-y rule to clean them.
 
-When cpu0 is offline, policy->cpu will be shifted to cpu1. Cpu1's perf
-capabilities should be initialized. Otherwise, perf capabilities are 0s
-and speed change can not take effect.
-
-This patch copies perf capabilities of the first online cpu to other
-shared cpus when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
-
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 ---
 
-Changes in v2:
-  -Add unlikely in cpu comparison per Kumar's comments.
-  -Fix coding style per Kumar's comments.
+ arch/mips/boot/compressed/.gitignore | 2 --
+ arch/mips/boot/compressed/Makefile   | 8 ++++----
+ 2 files changed, 4 insertions(+), 6 deletions(-)
+ delete mode 100644 arch/mips/boot/compressed/.gitignore
 
-Changes in v1:
-  -Drop RFC tag,
-     The original RFC link,
-     https://patchwork.kernel.org/patch/10299055/.
-
-     This patch solves same issue as RFC above.
-
-     Patch name is changed as code is too much different with RFC above.
-
-  -Remove extra init() per Viresh Kumar's comments and only handle
-   CPPC CPUFREQ_SHARED_TYPE_ANY case.
-
----
- drivers/cpufreq/cppc_cpufreq.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index 8f7b21a4d537..679e43b9c980 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -164,9 +164,20 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	policy->cpuinfo.transition_latency = cppc_get_transition_latency(cpu_num);
- 	policy->shared_type = cpu->shared_type;
+diff --git a/arch/mips/boot/compressed/.gitignore b/arch/mips/boot/compressed/.gitignore
+deleted file mode 100644
+index ebae133f1d00..000000000000
+--- a/arch/mips/boot/compressed/.gitignore
++++ /dev/null
+@@ -1,2 +0,0 @@
+-ashldi3.c
+-bswapsi.c
+diff --git a/arch/mips/boot/compressed/Makefile b/arch/mips/boot/compressed/Makefile
+index adce180f3ee4..8f04d659a915 100644
+--- a/arch/mips/boot/compressed/Makefile
++++ b/arch/mips/boot/compressed/Makefile
+@@ -46,10 +46,10 @@ $(obj)/uart-ath79.c: $(srctree)/arch/mips/ath79/early_printk.c
  
--	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
-+	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
-+		int i;
-+
- 		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
--	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
-+
-+		for_each_cpu(i, policy->cpus) {
-+			if (unlikely(i == policy->cpu))
-+				continue;
-+
-+			memcpy(&all_cpu_data[i]->perf_caps,
-+			       &cpu->perf_caps,
-+			       sizeof(cpu->perf_caps));
-+		}
-+	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
- 		/* Support only SW_ANY for now. */
- 		pr_debug("Unsupported CPU co-ord type\n");
- 		return -EFAULT;
+ vmlinuzobjs-$(CONFIG_KERNEL_XZ) += $(obj)/ashldi3.o $(obj)/bswapsi.o
+ 
+-extra-y += ashldi3.c bswapsi.c
+-$(obj)/ashldi3.o $(obj)/bswapsi.o: KBUILD_CFLAGS += -I$(srctree)/arch/mips/lib
+-$(obj)/ashldi3.c $(obj)/bswapsi.c: $(obj)/%.c: $(srctree)/arch/mips/lib/%.c
+-	$(call cmd,shipped)
++$(obj)/ashldi3.o: $(srctree)/lib/ashldi3.c
++	$(call cmd,cc_o_c)
++$(obj)/bswapsi.o: $(srctree)/arch/mips/lib/bswapsi.c
++	$(call cmd,cc_o_c)
+ 
+ targets := $(notdir $(vmlinuzobjs-y))
+ 
 -- 
-1.8.3.1
+2.7.4
