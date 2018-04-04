@@ -1,128 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752170AbeDDUV5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 16:21:57 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:44193 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751852AbeDDUVz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:21:55 -0400
-X-Google-Smtp-Source: AIpwx4+7848BaypOhLM0tIIRgI3YaMFVCkB4QIdmZXoBfkCZwGxj6aT/a1m+4HSFjBBwkYT8WyK3ey48JXS3CEXyF60=
+        id S1752110AbeDDU3o (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 16:29:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48308 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751965AbeDDU3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 16:29:43 -0400
+From: Lyude Paul <lyude@redhat.com>
+To: intel-gfx@lists.freedesktop.org
+Cc: "David Airlie" <airlied@linux.ie>,
+        "Rodrigo Vivi" <rodrigo.vivi@intel.com>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        "Jani Nikula" <jani.nikula@linux.intel.com>,
+        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 0/1] Keep AUX on while disabling DPMS for MST
+Date: Wed,  4 Apr 2018 16:29:30 -0400
+Message-Id: <20180404202932.6811-1-lyude@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <10360653.ov98egbaqx@natalenko.name>
-References: <10360653.ov98egbaqx@natalenko.name>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 4 Apr 2018 13:21:53 -0700
-X-Google-Sender-Auth: lmkkBB_ij2dEV-tP0s6zS52ebrI
-Message-ID: <CAGXu5jLwyot++C2EXs+032Lz5WdG65GsEJ-Q55rfhSbkG1Nh+A@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 12:07 PM, Oleksandr Natalenko
-<oleksandr@natalenko.name> wrote:
-> With v4.16 I get the following dump while using smartctl:
-> [...]
-> [  261.262135] Bad or missing usercopy whitelist? Kernel memory exposure
-> attempt detected from SLUB object 'scsi_sense_cache' (offset 94, size 22)!
-> [...]
-> [  261.345976] Call Trace:
-> [  261.350620]  __check_object_size+0x130/0x1a0
-> [  261.355775]  sg_io+0x269/0x3f0
-> [  261.360729]  ? path_lookupat+0xaa/0x1f0
-> [  261.364027]  ? current_time+0x18/0x70
-> [  261.366684]  scsi_cmd_ioctl+0x257/0x410
-> [  261.369871]  ? xfs_bmapi_read+0x1c3/0x340 [xfs]
-> [  261.372231]  sd_ioctl+0xbf/0x1a0 [sd_mod]
-> [  261.375456]  blkdev_ioctl+0x8ca/0x990
-> [  261.381156]  ? read_null+0x10/0x10
-> [  261.384984]  block_ioctl+0x39/0x40
-> [  261.388739]  do_vfs_ioctl+0xa4/0x630
-> [  261.392624]  ? vfs_write+0x164/0x1a0
-> [  261.396658]  SyS_ioctl+0x74/0x80
-> [  261.399563]  do_syscall_64+0x74/0x190
-> [  261.402685]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+Resend that was required anyway since I missed some t-b's and some acks.
+Trying to figure out what patchwork is doing that's making this patch
+not get noticed. Maybe it's the lack of cover letters on the previous
+versions of this....
 
-This is:
+Lyude Paul (1):
+  drm/i915: Keep AUX block running when disabling DPMS for MST
 
-sg_io+0x269/0x3f0:
-blk_complete_sghdr_rq at block/scsi_ioctl.c:280
- (inlined by) sg_io at block/scsi_ioctl.c:376
-
-which is:
-
-        if (req->sense_len && hdr->sbp) {
-                int len = min((unsigned int) hdr->mx_sb_len, req->sense_len);
-
-                if (!copy_to_user(hdr->sbp, req->sense, len))
-                        hdr->sb_len_wr = len;
-                else
-                        ret = -EFAULT;
-        }
-
-> [...]
-> I can easily reproduce it with a qemu VM and 2 virtual SCSI disks by calling
-> smartctl in a loop and doing some usual background I/O. The warning is
-> triggered within 3 minutes or so (not instantly).
->
-> Initially, it was produced on my server after a kernel update (because disks
-> are monitored with smartctl via Zabbix).
->
-> Looks like the thing was introduced with
-> 0afe76e88c57d91ef5697720aed380a339e3df70.
->
-> Any idea how to deal with this please? If needed, I can provide any additional
-> info, and also I'm happy/ready to test any proposed patches.
-
-Interesting, and a little confusing. So, what's strange here is that
-the scsi_sense_cache already has a full whitelist:
-
-                       kmem_cache_create_usercopy("scsi_sense_cache",
-                               SCSI_SENSE_BUFFERSIZE, 0, SLAB_HWCACHE_ALIGN,
-                               0, SCSI_SENSE_BUFFERSIZE, NULL);
-
-Arg 2 is the buffer size, arg 5 is the whitelist offset (0), and the
-whitelist size (same as arg2). In other words, the entire buffer
-should be whitelisted.
-
-include/scsi/scsi_cmnd.h says:
-
-#define SCSI_SENSE_BUFFERSIZE  96
-
-That means scsi_sense_cache should be 96 bytes in size? But a 22 byte
-read starting at offset 94 happened? That seems like a 20 byte read
-beyond the end of the SLUB object? Though if it were reading past the
-actual end of the object, I'd expect the hardened usercopy BUG (rather
-than the WARN) to kick in. Ah, it looks like
-/sys/kernel/slab/scsi_sense_cache/slab_size shows this to be 128 bytes
-of actual allocation, so the 20 bytes doesn't strictly overlap another
-object (hence no BUG):
-
-/sys/kernel/slab/scsi_sense_cache# grep . object_size usersize slab_size
-object_size:96
-usersize:96
-slab_size:128
-
-Ah, right, due to SLAB_HWCACHE_ALIGN, the allocation is rounded up to
-the next cache line size, so there's 32 bytes of padding to reach 128.
-
-James or Martin, is this over-read "expected" behavior? i.e. does the
-sense cache buffer usage ever pull the ugly trick of silently
-expanding its allocation into the space the slab allocator has given
-it? If not, this looks like a real bug.
-
-What I don't see is how req->sense is _not_ at offset 0 in the
-scsi_sense_cache object...
-
--Kees
+ drivers/gpu/drm/i915/intel_dp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 -- 
-Kees Cook
-Pixel Security
+2.14.3
