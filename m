@@ -1,86 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751451AbeDDOlr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:41:47 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53270 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751247AbeDDOlp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:41:45 -0400
-Date: Wed, 4 Apr 2018 15:41:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Tim Harvey <tharvey@gateworks.com>, Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/4] mfd: add Gateworks System Controller core driver
-Message-ID: <20180404144119.GD7691@sirena.org.uk>
-References: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
- <1522250043-8065-3-git-send-email-tharvey@gateworks.com>
- <CAJ+vNU3-gaTcMAzo5wB6oSfE-JQC3NBVRJS5zFMTE-nVpD4F5g@mail.gmail.com>
- <20180403164715.GA5676@lunn.ch>
- <CAJ+vNU31f+iY5LOG6QmdJetb=pPvY_gpKoS+49FSy70U1Ksd8g@mail.gmail.com>
- <20180404131239.GD20869@lunn.ch>
+        id S1751454AbeDDOnA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:43:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34512 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751247AbeDDOm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 10:42:59 -0400
+Date: Wed, 4 Apr 2018 16:42:55 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180404144255.GK6312@dhcp22.suse.cz>
+References: <20180403123514.GX5501@dhcp22.suse.cz>
+ <20180403093245.43e7e77c@gandalf.local.home>
+ <20180403135607.GC5501@dhcp22.suse.cz>
+ <20180403101753.3391a639@gandalf.local.home>
+ <20180403161119.GE5501@dhcp22.suse.cz>
+ <20180403185627.6bf9ea9b@gandalf.local.home>
+ <20180404062039.GC6312@dhcp22.suse.cz>
+ <20180404085901.5b54fe32@gandalf.local.home>
+ <20180404141052.GH6312@dhcp22.suse.cz>
+ <20180404102527.763250b4@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5gxpn/Q6ypwruk0T"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180404131239.GD20869@lunn.ch>
-X-Cookie: An idle mind is worth two in the bush.
+In-Reply-To: <20180404102527.763250b4@gandalf.local.home>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed 04-04-18 10:25:27, Steven Rostedt wrote:
+> On Wed, 4 Apr 2018 16:10:52 +0200
+> Michal Hocko <mhocko@kernel.org> wrote:
+> 
+> > On Wed 04-04-18 08:59:01, Steven Rostedt wrote:
+> > [...]
+> > > +       /*
+> > > +        * Check if the available memory is there first.
+> > > +        * Note, si_mem_available() only gives us a rough estimate of available
+> > > +        * memory. It may not be accurate. But we don't care, we just want
+> > > +        * to prevent doing any allocation when it is obvious that it is
+> > > +        * not going to succeed.
+> > > +        */
+> > > +       i = si_mem_available();
+> > > +       if (i < nr_pages)
+> > > +               return -ENOMEM;
+> > > +
+> > > 
+> > > Better?  
+> > 
+> > I must be really missing something here. How can that work at all for
+> > e.g. the zone_{highmem/movable}. You will get false on the above tests
+> > even when you will have hard time to allocate anything from your
+> > destination zones.
+> 
+> You mean we will get true on the above tests?  Again, the current
+> method is to just say screw it and try to allocate.
 
---5gxpn/Q6ypwruk0T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+No, you will get false on that test. Say that you have a system with
+large ZONE_MOVABLE. Now your kernel allocations can fit only into
+!movable zones (say we have 1G for !movable and 3G for movable). Now say
+that !movable zones are getting close to the edge while movable zones
+are full of reclaimable pages. si_mem_available will tell you there is a
+_lot_ of memory available while your GFP_KERNEL request will happily
+consume the rest of !movable zones and trigger OOM. See?
 
-On Wed, Apr 04, 2018 at 03:12:39PM +0200, Andrew Lunn wrote:
-> > What about the 'reset' functionality? Is there something in the power
-> > supply API for hooking in a GPIO based power switch (in my case it
-> > would be i2c) as I would think that would be common for ATX supplies?
-> > I didn't see anything in Documentation/power.
+[...]
+> I'm looking for something where "yes" means "there may be enough, but
+> there may not be, buyer beware", and "no" means "forget it, don't even
+> start, because you just asked for more than possible".
 
-> > This is what led me to the restart handler idea. Ultimately when
-> > someone issues a 'reboot' I would like it to use the GSC to
-> > power-cycle the board.
-
-> I think you end up with the same problem. By the time you need to turn
-> the power supply off, too much of the kernel is shut down to be able
-> to use I2C. And if you are in the middle of an Oops, you have no idea
-> of the current state. Another I2C transaction could be under way etc.
-> All the current reset drivers are pretty much self contained, atomic
-> and use KISS hardware like a GPIO.
-
-> Maybe you best bet is to see if you can find any other I2C PMICs which
-> the kernel supports.
-
-Most systems have a handshake for final power down via asserting signals
-rather than using register writes, the final power down sequence usually
-runs way after software.  There's a few things that don't which just
-unceremoniously cut the power earlier on without completing the full
-power down sequence which for all practical purposes mostly works.
-
---5gxpn/Q6ypwruk0T
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrE5A4ACgkQJNaLcl1U
-h9DgoAf+NlREIN0n4GCyKvQf462pdjqt/gmnsC2BNEK8Mj1EUiX+m6x776go5EtQ
-1Ss8tiBw6FqizVl/UEreGaSKAla/G3ksf4WXY8Y1DLnh86vLF13njlSFTSTUd+9I
-R+FuERcjkksvH47j2+xhznMf8gTSrlzJnnuWPjqfFXMlGCeOIdeiNpg/CzcTYnBD
-q2SZYWYAaqA9fJ8rc6ZDealK5U1cnCzyZiJCqGDBHtl3PgmZWFXjHAMfM86MfY9p
-2yur6ADSkx9kOwe20LA8aZGcU9EZzAhiRakUm4d/ovXH+w+faj+rt+UH943uabZW
-8i7kHaRzOBsVCA11FgDYY14UcJcXDQ==
-=3nwB
------END PGP SIGNATURE-----
-
---5gxpn/Q6ypwruk0T--
+We do not have _that_ something other than try to opportunistically
+allocate and see what happens. Sucks? Maybe yes but I really cannot
+think of an interface with sane semantic that would catch all the
+different scenarios.
+-- 
+Michal Hocko
+SUSE Labs
