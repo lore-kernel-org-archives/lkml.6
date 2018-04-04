@@ -1,130 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752656AbeDDXdA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 19:33:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57665 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752395AbeDDXc5 (ORCPT
+        id S1752529AbeDDXe1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 19:34:27 -0400
+Received: from mail-pl0-f48.google.com ([209.85.160.48]:46872 "EHLO
+        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752391AbeDDXeZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 19:32:57 -0400
-Date: Wed, 4 Apr 2018 16:31:28 -0700
-From: tip-bot for Sai Praneeth <tipbot@zytor.com>
-Message-ID: <tip-162ee5a8ab49be40d253f90e94aef712470a3a24@git.kernel.org>
-Cc: jlee@suse.com, ravi.v.shankar@intel.com, matt@codeblueprint.co.uk,
-        a.p.zijlstra@chello.nl, luto@kernel.org, akpm@linux-foundation.org,
-        tony.luck@intel.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, dave.hansen@intel.com,
-        mst@redhat.com, ricardo.neri@intel.com, sai.praneeth.prakhya@intel.com,
-        hpa@zytor.com, ard.biesheuvel@linaro.org, peterz@infradead.org,
-        tglx@linutronix.de, bp@alien8.de
-Reply-To: hpa@zytor.com, ard.biesheuvel@linaro.org, tglx@linutronix.de,
-        peterz@infradead.org, bp@alien8.de, a.p.zijlstra@chello.nl,
-        matt@codeblueprint.co.uk, jlee@suse.com, ravi.v.shankar@intel.com,
-        luto@kernel.org, tony.luck@intel.com, akpm@linux-foundation.org,
-        mingo@kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, sai.praneeth.prakhya@intel.com,
-        ricardo.neri@intel.com, mst@redhat.com, dave.hansen@intel.com
-In-Reply-To: <1522870459-7432-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1522870459-7432-1-git-send-email-sai.praneeth.prakhya@intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/urgent] x86/mm: Fix bogus warning during EFI bootup, use
- boot_cpu_has() instead of this_cpu_has() in build_cr3_noflush()
-Git-Commit-ID: 162ee5a8ab49be40d253f90e94aef712470a3a24
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 4 Apr 2018 19:34:25 -0400
+X-Google-Smtp-Source: AIpwx4/WvBYvwYIsuQCU/I3BTDgihe1vQUR4ML5Pmkh85IxFQHT7jkjfHQIou96/Gwc3Q0JX3jKjDg==
+Date: Thu, 5 Apr 2018 09:34:14 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: rcu_process_callbacks irqsoff latency caused by taking spinlock
+ with irqs disabled
+Message-ID: <20180405093414.2273203e@roar.ozlabs.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  162ee5a8ab49be40d253f90e94aef712470a3a24
-Gitweb:     https://git.kernel.org/tip/162ee5a8ab49be40d253f90e94aef712470a3a24
-Author:     Sai Praneeth <sai.praneeth.prakhya@intel.com>
-AuthorDate: Wed, 4 Apr 2018 12:34:19 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 5 Apr 2018 01:27:49 +0200
+Hi Paul,
 
-x86/mm: Fix bogus warning during EFI bootup, use boot_cpu_has() instead of this_cpu_has() in build_cr3_noflush()
+Just looking at latencies, and RCU showed up as one of the maximums.
+This is a 2 socket system with (176 CPU threads). Just doing a
+`make -j 352` kernel build. Got a max latency of 3ms. I don't think
+that's anything to worry about really, but I wanted to check the
+cause.
 
-Linus reported the following boot warning:
+# tracer: irqsoff
+#
+# irqsoff latency trace v1.1.5 on 4.16.0-01530-g43d1859f0994
+# --------------------------------------------------------------------
+# latency: 3055 us, #19/19, CPU#135 | (M:server VP:0, KP:0, SP:0 HP:0 #P:176)
+#    -----------------
+#    | task: cc1-58689 (uid:1003 nice:0 policy:0 rt_prio:0)
+#    -----------------
+#  => started at: rcu_process_callbacks
+#  => ended at:   _raw_spin_unlock_irqrestore
+#
+#
+#                  _------=> CPU#            
+#                 / _-----=> irqs-off        
+#                | / _----=> need-resched    
+#                || / _---=> hardirq/softirq 
+#                ||| / _--=> preempt-depth   
+#                |||| /     delay            
+#  cmd     pid   ||||| time  |   caller      
+#     \   /      |||||  \    |   /         
+   <...>-58689 135d.s.    0us : rcu_process_callbacks
+   <...>-58689 135d.s.    1us : cpu_needs_another_gp <-rcu_process_callbacks
+   <...>-58689 135d.s.    2us : rcu_segcblist_future_gp_needed <-cpu_needs_another_gp
+   <...>-58689 135d.s.    3us#: _raw_spin_lock <-rcu_process_callbacks
+   <...>-58689 135d.s. 3047us : rcu_start_gp <-rcu_process_callbacks
+   <...>-58689 135d.s. 3048us : rcu_advance_cbs <-rcu_start_gp
+   <...>-58689 135d.s. 3049us : rcu_segcblist_pend_cbs <-rcu_advance_cbs
+   <...>-58689 135d.s. 3049us : rcu_segcblist_advance <-rcu_advance_cbs
+   <...>-58689 135d.s. 3050us : rcu_accelerate_cbs <-rcu_start_gp
+   <...>-58689 135d.s. 3050us : rcu_segcblist_pend_cbs <-rcu_accelerate_cbs
+   <...>-58689 135d.s. 3051us : rcu_segcblist_accelerate <-rcu_accelerate_cbs
+   <...>-58689 135d.s. 3052us : trace_rcu_future_gp.isra.0 <-rcu_accelerate_cbs
+   <...>-58689 135d.s. 3052us : trace_rcu_future_gp.isra.0 <-rcu_accelerate_cbs
+   <...>-58689 135d.s. 3053us : rcu_start_gp_advanced.isra.35 <-rcu_start_gp
+   <...>-58689 135d.s. 3053us : cpu_needs_another_gp <-rcu_start_gp_advanced.isra.35
+   <...>-58689 135d.s. 3054us : _raw_spin_unlock_irqrestore <-rcu_process_callbacks
+   <...>-58689 135d.s. 3055us : _raw_spin_unlock_irqrestore
+   <...>-58689 135d.s. 3056us : trace_hardirqs_on <-_raw_spin_unlock_irqrestore
+   <...>-58689 135d.s. 3061us : <stack trace>
 
-  WARNING: CPU: 0 PID: 0 at arch/x86/include/asm/tlbflush.h:134 load_new_mm_cr3+0x114/0x170
-  [...]
-  Call Trace:
-  switch_mm_irqs_off+0x267/0x590
-  switch_mm+0xe/0x20
-  efi_switch_mm+0x3e/0x50
-  efi_enter_virtual_mode+0x43f/0x4da
-  start_kernel+0x3bf/0x458
-  secondary_startup_64+0xa5/0xb0
+So it's taking a contende lock with interrupts disabled:
 
-... after merging:
+static void
+__rcu_process_callbacks(struct rcu_state *rsp)
+{
+        unsigned long flags;
+        bool needwake;
+        struct rcu_data *rdp = raw_cpu_ptr(rsp->rda);
 
-  03781e40890c: x86/efi: Use efi_switch_mm() rather than manually twiddling with %cr3
+        WARN_ON_ONCE(!rdp->beenonline);
 
-When the platform supports PCID and if CONFIG_DEBUG_VM=y is enabled,
-build_cr3_noflush() (called via switch_mm()) does a sanity check to see
-if X86_FEATURE_PCID is set.
+        /* Update RCU state based on any recent quiescent states. */
+        rcu_check_quiescent_state(rsp, rdp);
 
-Presently, build_cr3_noflush() uses "this_cpu_has(X86_FEATURE_PCID)" to
-perform the check but this_cpu_has() works only after SMP is initialized
-(i.e. per cpu cpu_info's should be populated) and this happens to be very
-late in the boot process (during rest_init()).
+        /* Does this CPU require a not-yet-started grace period? */
+        local_irq_save(flags);
+        if (cpu_needs_another_gp(rsp, rdp)) {
+                raw_spin_lock_rcu_node(rcu_get_root(rsp)); /* irqs disabled. */
+                needwake = rcu_start_gp(rsp);
+                raw_spin_unlock_irqrestore_rcu_node(rcu_get_root(rsp), flags);
+                if (needwake)
+                        rcu_gp_kthread_wake(rsp);
+        } else {
+                local_irq_restore(flags);
+        }
 
-As efi_runtime_services() are called during (early) kernel boot time
-and run time, modify build_cr3_noflush() to use boot_cpu_has() all the
-time. As suggested by Dave Hansen, this should be OK because all CPU's have
-same capabilities on x86.
+Because irqs are disabled before taking the lock, we can't spin with
+interrupts enabled.
 
-With this change the warning is fixed.
+cpu_needs_another_gp needs interrupts off to prevent races with normal
+callback registry, but that doesn't seem to be preventing any wider
+races in this code, because we immediately re-enable interrupts anyway
+if no gp is needed. So an interrupt can come in right after that and
+queue something up.
 
-( Dave also suggested that we put a warning in this_cpu_has() if it's used
-  early in the boot process. This is still work in progress as it affects
-  MCE. )
+So then the question is whether it's safe-albeit-racy to call with
+interrupts ensabled? Would be nice to move it to a spin_lock_irqsave.
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Lee Chun-Yi <jlee@suse.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Ricardo Neri <ricardo.neri@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/1522870459-7432-1-git-send-email-sai.praneeth.prakhya@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/tlbflush.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 84137c22fdfa..6690cd3fc8b1 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -131,7 +131,12 @@ static inline unsigned long build_cr3(pgd_t *pgd, u16 asid)
- static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
- {
- 	VM_WARN_ON_ONCE(asid > MAX_ASID_AVAILABLE);
--	VM_WARN_ON_ONCE(!this_cpu_has(X86_FEATURE_PCID));
-+	/*
-+	 * Use boot_cpu_has() instead of this_cpu_has() as this function
-+	 * might be called during early boot. This should work even after
-+	 * boot because all CPU's the have same capabilities:
-+	 */
-+	VM_WARN_ON_ONCE(!boot_cpu_has(X86_FEATURE_PCID));
- 	return __sme_pa(pgd) | kern_pcid(asid) | CR3_NOFLUSH;
- }
- 
+Thanks,
+Nick
