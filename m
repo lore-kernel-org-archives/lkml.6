@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751255AbeDDMmn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:42:43 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40158 "EHLO
+        id S1751296AbeDDMmv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:42:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40268 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750915AbeDDMml (ORCPT
+        with ESMTP id S1750915AbeDDMms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:42:41 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ACF516076C
+        Wed, 4 Apr 2018 08:42:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E44B560F5F
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From: Abhishek Sahu <absahu@codeaurora.org>
@@ -21,10 +21,12 @@ Cc: David Woodhouse <dwmw2@infradead.org>,
         linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
         Archit Taneja <architt@codeaurora.org>,
         Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 0/9] Update for QCOM NAND driver
-Date: Wed,  4 Apr 2018 18:12:16 +0530
-Message-Id: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+Subject: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device parameter
+Date: Wed,  4 Apr 2018 18:12:17 +0530
+Message-Id: <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -32,51 +34,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series mainly deals with error handling and erased page
-bitflip detection for QCOM NAND driver.
+Currently the driver uses the ECC strength specified in
+device tree. The ONFI or JEDEC device parameter page
+contains the ‘ECC correctability’ field which indicates the
+number of bits that the host should be able to correct per
+512 bytes of data. The ecc correctability is assigned in
+chip parameter during device probe time. QPIC/EBI2 NAND
+supports 4/8-bit ecc correction. The Same kind of board
+can have different NAND parts so use the ecc strength
+from device parameter (if its non zero) instead of
+device tree.
 
-1. The error handling was missing for some of the cases so fixed
-   the same.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/mtd/nand/qcom_nandc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-2. Add the support for taking ECC strength from ONFI parameter.
-   The earlier QCOM boards were coming with 4-bit ECC chip but
-   now the same boards are coming with 8-bit ECC chip since the
-   earlier 4-bit parts are obsolete from some vendors.
-
-3. We got few issues related with NAND erased page bitflips. The
-   QCOM NAND controller can’t detect the bitflip in completely erased
-   page so added the support to detect the same. It implemented the
-   logic mentioned in patch [1] which didn’t go in mainline and later
-   the generic functions were provided [2] to count the number of
-   bitflips and make all 0xff. This patch series did some optimization
-   logic to prevent the unnecessary full page raw read and data copy
-   from QCOM NAND controller to DMA.
-
-4. Following are the testing done for these patches in QCOM IPQ8074
-   HK01 (4-bit and 8-bit ECC chip) and IPQ806x AP148 boards.
-    a. Run all mtd test and check if it passes
-    b. Introduce custom bitflips in erased page and check if it
-       returns no error/EUCLEAN/EBADMSG depending upon number of
-       bitflips and position.
-    c. Introduce failure condition for operational failure and
-       check if it detects the same.
-
-[1]: https://patchwork.ozlabs.org/patch/328994/
-[2]: https://patchwork.ozlabs.org/patch/509970/
-
-Abhishek Sahu (9):
-  mtd: nand: qcom: use the ecc strength from device parameter
-  mtd: nand: qcom: wait for desc completion in all BAM channels
-  mtd: nand: qcom: erased page detection for uncorrectable errors only
-  mtd: nand: qcom: fix null pointer access for erased buffer detection
-  mtd: nand: qcom: parse read errors for read oob also
-  mtd: nand: qcom: support for checking read errors for last codeword
-  mtd: nand: qcom: check for operation errors in case of raw read
-  mtd: nand: qcom: helper function for raw read
-  mtd: nand: qcom: erased page bitflips detection
-
- drivers/mtd/nand/qcom_nandc.c | 468 ++++++++++++++++++++++++++++++------------
- 1 file changed, 333 insertions(+), 135 deletions(-)
-
+diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
+index 563b759..8dd40de 100644
+--- a/drivers/mtd/nand/qcom_nandc.c
++++ b/drivers/mtd/nand/qcom_nandc.c
+@@ -2334,6 +2334,14 @@ static int qcom_nand_host_setup(struct qcom_nand_host *host)
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * Read the required ecc strength from NAND device and overwrite
++	 * the device tree ecc strength for devices which require
++	 * ecc correctability bits >= 8
++	 */
++	if (chip->ecc_strength_ds >= 8)
++		ecc->strength = 8;
++
+ 	wide_bus = chip->options & NAND_BUSWIDTH_16 ? true : false;
+ 
+ 	if (ecc->strength >= 8) {
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
