@@ -1,46 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750908AbeDDJEK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:04:10 -0400
-Received: from mail-ot0-f179.google.com ([74.125.82.179]:33248 "EHLO
-        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeDDJEJ (ORCPT
+        id S1751419AbeDDJEm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:04:42 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:45083 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750950AbeDDJEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:04:09 -0400
-X-Google-Smtp-Source: AIpwx4+a9Hf9oYnX39nLDOqV1bDIxgywMG3/nH4oCGI4uQ8Pl6qY//s+JnhXDjxf+/bDED7ZbUBQZLMv0S3oi/utLiE=
+        Wed, 4 Apr 2018 05:04:40 -0400
+Subject: Re: [PATCH v2 3/6] i2c: i2c-stm32f7: Add initial SMBus protocols
+ support
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+ <1521650940-11651-4-git-send-email-pierre-yves.mordret@st.com>
+ <20180324224911.xz3fz2jojcdrovb4@ninjato>
+ <2fadcd7f-3bfc-997e-a30e-808f6d854f2c@st.com>
+ <20180403153122.ux6hnnmexwmq3soz@ninjato>
+From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+Message-ID: <07e24b50-0f6e-2960-8543-92d5a2668373@st.com>
+Date: Wed, 4 Apr 2018 11:04:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-From: Lorenz Bauer <lmb@cloudflare.com>
-Date: Wed, 4 Apr 2018 11:04:08 +0200
-Message-ID: <CACAyw9-TvamC2HMNv=WDk_aeAM=R7J_BgLiKjevY5+am71W6-A@mail.gmail.com>
-Subject: PROBLEM: Using BPF_PROG_TEST_RUN with data_out != NULL is unsafe
-To: ast@kernel.org, daniel@iogearbox.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180403153122.ux6hnnmexwmq3soz@ninjato>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_02:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3494IPD002849
 
-Hello,
 
-I’ve encountered an issue when using BPF_PROG_TEST_RUN and capturing the output.
-The kernel copies data into user space without checking the length of
-the destination buffer.
 
-In bpf_test_finish(), size is the amount of data in the XDP buffer /
-skb after the program is run. This can be larger than data_size_in due
-to bpf_xdp_adjust_head() and friends.
-bpf_test_finish doesn’t clamp size to data_size_out, which is what I
-was expecting.
+On 04/03/2018 05:31 PM, Wolfram Sang wrote:
+> 
+>>>> All SMBus protocols are implemented except SMBus-specific protocols.
+>>>
+>>> What does that mean?
+>>
+>> It miss SMBus Host Notification and SMBBus Alert. They are almost ready but I'm
+>> struggling to put them back to operational state after recent changes related to
+>> SMBust Host Notification. A more "classic" interrupt base solution has been put
+>> in place but I fail to use implement it in my side.
+>> Another patch set is going to be delivered for these 2 commands.
+> 
+> This is totally fine to implement it incrementally. Please just update the
+> commit message with the more detailed explanation above.
+> 
 
-What is the correct way to use this interface?
+Ok. I get.
 
-Best,
-Lorenz
-
--- 
-Lorenz Bauer  |  Systems Engineer
-25 Lavington St., London SE1 0NZ
-
-www.cloudflare.com
+>>> That is quite some complexity considering we have I2C_FUNC_SMBUS_EMUL. I
+>>> don't mind, but you really want that?
+>>>
+>>
+>> All SMBBus commands are implemented as such. I never try to emulation commands.
+>> Should we use emulation SMBus commands or real commands... Don't know.
+> 
+> You won't see any difference on the wire. I don't know your HW. It might
+> be that SMBus mode is more "automatic" and uses less interrupts. Or
+> stuff like Alert or HostNotification only works in this mode. If you and
+> the driver maintainers think it is worth the added complexity, I am
+> fine, too.
+> 
+Ok. I see.
+I am the maintainer. So yes I keep it as such ... with this complexity ;)
