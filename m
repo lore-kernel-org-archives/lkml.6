@@ -1,83 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751579AbeDDMnY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:43:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41342 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751525AbeDDMnV (ORCPT
+        id S1751726AbeDDMnd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:43:33 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36439 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751591AbeDDMn3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:43:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2294D6055B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 6/9] mtd: nand: qcom: support for checking read errors for last codeword
-Date: Wed,  4 Apr 2018 18:12:22 +0530
-Message-Id: <1522845745-6624-7-git-send-email-absahu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+        Wed, 4 Apr 2018 08:43:29 -0400
+X-Google-Smtp-Source: AIpwx49d1uMjvLsun/S9ksxIBwfJ9q44QiCZAl6Z/8JKXTgXwswmHzO9Bswe2Sb7Hr2dWLFeuWu/gQ==
+Subject: Re: [PATCH 2/4] nvmet-rdma: Use new SGL alloc/free helper for
+ requests
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Cc: Christoph Hellwig <hch@lst.de>, James Smart <james.smart@broadcom.com>
+References: <20180329160721.4691-1-logang@deltatee.com>
+ <20180329160721.4691-3-logang@deltatee.com>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <2fbc3260-6682-f789-9500-2961293ff3b4@grimberg.me>
+Date: Wed, 4 Apr 2018 15:43:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180329160721.4691-3-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add boolean function argument in parse_read_errors to identify
-whether the read error has been called for complete page read or
-only last codeword read. This will help in subsequent patches to
-detect ECC errors in case of last codeword read.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/mtd/nand/qcom_nandc.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+> @@ -565,24 +565,24 @@ static u16 nvmet_rdma_map_sgl_keyed(struct nvmet_rdma_rsp *rsp,
+>   {
+>   	struct rdma_cm_id *cm_id = rsp->queue->cm_id;
+>   	u64 addr = le64_to_cpu(sgl->addr);
+> -	u32 len = get_unaligned_le24(sgl->length);
+>   	u32 key = get_unaligned_le32(sgl->key);
+>   	int ret;
+>   
+> +	rsp->req.transfer_len = get_unaligned_le24(sgl->length);
+> +
 
-diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
-index ba43752..dce97e8 100644
---- a/drivers/mtd/nand/qcom_nandc.c
-+++ b/drivers/mtd/nand/qcom_nandc.c
-@@ -1570,7 +1570,7 @@ struct read_stats {
-  * errors. this is equivalent to what 'ecc->correct()' would do.
-  */
- static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
--			     u8 *oob_buf)
-+			     u8 *oob_buf, bool last_cw)
- {
- 	struct nand_chip *chip = &host->chip;
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
-@@ -1579,12 +1579,12 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
- 	unsigned int max_bitflips = 0;
- 	struct read_stats *buf;
- 	bool flash_op_err = false;
--	int i;
-+	int i, cw_cnt = last_cw ? 1 : ecc->steps;
- 
- 	buf = (struct read_stats *)nandc->reg_read_buf;
- 	nandc_read_buffer_sync(nandc, true);
- 
--	for (i = 0; i < ecc->steps; i++, buf++) {
-+	for (i = 0; i < cw_cnt; i++, buf++) {
- 		u32 flash, buffer, erased_cw;
- 		int data_len, oob_len;
- 
-@@ -1743,7 +1743,8 @@ static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
- 	free_descs(nandc);
- 
- 	if (!ret)
--		ret = parse_read_errors(host, data_buf_start, oob_buf_start);
-+		ret = parse_read_errors(host, data_buf_start, oob_buf_start,
-+					false);
- 
- 	return ret;
- }
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+IIRC, this might result in nvmet-rdma executing data-transfer even
+for failed requests in some error cases. I'm not sure this is the
+only case, but have you tested what happens in error cases?
+
+See nvmet_rdma_need_data_in()/nvmet_rdma_need_data_out() which look
+at transfer_len.
+
+>   	/* no data command? */
+> -	if (!len)
+> +	if (!rsp->req.transfer_len)
+>   		return 0;
+>   
+> -	rsp->req.sg = sgl_alloc(len, GFP_KERNEL, &rsp->req.sg_cnt);
+> -	if (!rsp->req.sg)
+> -		return NVME_SC_INTERNAL;
+> +	ret = nvmet_req_alloc_sgl(&rsp->req, &rsp->queue->nvme_sq);
+> +	if (ret < 0)
+> +		goto error_out;
+>   
+>   	ret = rdma_rw_ctx_init(&rsp->rw, cm_id->qp, cm_id->port_num,
+>   			rsp->req.sg, rsp->req.sg_cnt, 0, addr, key,
+>   			nvmet_data_dir(&rsp->req));
+>   	if (ret < 0)
+> -		return NVME_SC_INTERNAL;
+> -	rsp->req.transfer_len += len;
+> +		goto error_out;
+>   	rsp->n_rdma += ret;
+>   
+>   	if (invalidate) {
+> @@ -591,6 +591,10 @@ static u16 nvmet_rdma_map_sgl_keyed(struct nvmet_rdma_rsp *rsp,
+>   	}
+>   
+>   	return 0;
+> +
+> +error_out:
+> +	rsp->req.transfer_len = 0;
+> +	return NVME_SC_INTERNAL;
+>   }
+>   
+>   static u16 nvmet_rdma_map_sgl(struct nvmet_rdma_rsp *rsp)
+> 
