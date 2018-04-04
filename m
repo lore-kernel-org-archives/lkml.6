@@ -1,100 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751275AbeDDI7a (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:59:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34542 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751216AbeDDI73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:59:29 -0400
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v4 2/9] vsprintf: Consistent %pK handling for kptr_restrict == 0
-Date: Wed,  4 Apr 2018 10:58:36 +0200
-Message-Id: <20180404085843.16050-3-pmladek@suse.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180404085843.16050-1-pmladek@suse.com>
-References: <20180404085843.16050-1-pmladek@suse.com>
+        id S1751353AbeDDJDB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:03:01 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47291 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751095AbeDDJDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 05:03:00 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: enlarge block plug coverage
+Date: Wed, 4 Apr 2018 17:02:06 +0800
+Message-ID: <20180404090206.83549-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-restricted_pointer() pretends that it prints the address when kptr_restrict
-is set to zero. But it is never called in this situation. Instead,
-pointer() falls back to ptr_to_id() and hashes the pointer.
+This patch enlarges block plug coverage in __issue_discard_cmd, in
+order to collect more pending bios before issuing them, to avoid
+being disturbed by previous discard I/O in IO aware discard mode.
 
-This patch removes the potential confusion. klp_restrict is checked only
-in restricted_pointer().
-
-It should actually fix a small race when the address might get printed
-unhashed:
-
-CPU0                            CPU1
-
-pointer()
-  if (!kptr_restrict)
-     /* for example set to 2 */
-  restricted_pointer()
-				/* echo 0 >/proc/sys/kernel/kptr_restrict */
-				proc_dointvec_minmax_sysadmin()
-				  klpr_restrict = 0;
-    switch(kptr_restrict)
-      case 0:
-	break:
-
-    number()
-
-Fixes: commit ef0010a30935de4e0211 ("vsprintf: don't use 'restricted_pointer()' when not restricting")
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tobin Harding <me@tobin.cc>
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- lib/vsprintf.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+v2:
+- fix to move plug to correct place.
+ fs/f2fs/segment.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index c0c677c6a833..9ade2c4f21ba 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -637,7 +637,8 @@ static int __init initialize_ptr_random(void)
- early_initcall(initialize_ptr_random);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 8f0b5ba46315..e61faff9b109 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1202,6 +1202,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 	int i, iter = 0, issued = 0;
+ 	bool io_interrupted = false;
  
- /* Maps a pointer to a 32 bit unique identifier. */
--static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
-+static char *ptr_to_id(char *buf, char *end,
-+		       const void *ptr, struct printf_spec spec)
- {
- 	unsigned long hashval;
- 	const int default_width = 2 * sizeof(ptr);
-@@ -1426,8 +1427,8 @@ char *restricted_pointer(char *buf, char *end, const void *ptr,
++	blk_start_plug(&plug);
++
+ 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+ 		if (i + 1 < dpolicy->granularity)
+ 			break;
+@@ -1211,7 +1213,6 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 		if (list_empty(pend_list))
+ 			goto next;
+ 		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+-		blk_start_plug(&plug);
+ 		list_for_each_entry_safe(dc, tmp, pend_list, list) {
+ 			f2fs_bug_on(sbi, dc->state != D_PREP);
  
- 	switch (kptr_restrict) {
- 	case 0:
--		/* Always print %pK values */
--		break;
-+		/* Handle as %p, hash and do _not_ leak addresses. */
-+		return ptr_to_id(buf, end, ptr, spec);
- 	case 1: {
- 		const struct cred *cred;
- 
-@@ -1931,8 +1932,6 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 			return buf;
+@@ -1227,7 +1228,6 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 			if (++iter >= dpolicy->max_requests)
+ 				break;
  		}
- 	case 'K':
--		if (!kptr_restrict)
--			break;
- 		return restricted_pointer(buf, end, ptr, spec);
- 	case 'N':
- 		return netdev_bits(buf, end, ptr, fmt);
+-		blk_finish_plug(&plug);
+ next:
+ 		mutex_unlock(&dcc->cmd_lock);
+ 
+@@ -1235,6 +1235,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 			break;
+ 	}
+ 
++	blk_finish_plug(&plug);
++
+ 	if (!issued && io_interrupted)
+ 		issued = -1;
+ 
 -- 
-2.13.6
+2.15.0.55.gc2ece9dc4de6
