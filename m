@@ -1,91 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751984AbeDDUPL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 16:15:11 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53358 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeDDUPK (ORCPT
+        id S1751975AbeDDUSk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 16:18:40 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53438 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751516AbeDDUSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:15:10 -0400
-X-Google-Smtp-Source: AIpwx49EFBaZmAqM2Xgi4jw+7e+nrR2J9v3zZNhz9Vf8SrEqgLZnlVJqDi+9Q1vc7W0d0jpXNWeBOQ==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christophe Leroy <christophe.leroy@c-s.fr>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 09/19] powerpc/chrp/pci: Make some functions static
-Date: Wed,  4 Apr 2018 22:15:03 +0200
-Message-Id: <20180404201504.28003-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180322202007.23088-10-malat@debian.org>
-References: <20180322202007.23088-10-malat@debian.org>
+        Wed, 4 Apr 2018 16:18:39 -0400
+Date: Wed, 4 Apr 2018 22:18:37 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        pali.rohar@gmail.com, sre@kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi,
+        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
+        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
+        sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        jinb.park7@gmail.com, keescook@chromium.org,
+        rmk+kernel@armlinux.org.uk
+Subject: FORTIFY_SOURCE breaks ARM compilation in -next -- was Re: ARM
+ compile failure in Re: linux-next: Tree for Apr 4
+Message-ID: <20180404201837.GA9710@amd>
+References: <20180404165559.4cd0c12c@canb.auug.org.au>
+ <20180404074856.GA9342@amd>
+ <20180404175852.GI5700@atomide.com>
+ <20180404184622.GA8608@amd>
+ <20180404195951.GJ5700@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+Content-Disposition: inline
+In-Reply-To: <20180404195951.GJ5700@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These functions can all be static, make it so. Fix warnings treated as
-errors with W=1:
 
-  arch/powerpc/platforms/chrp/pci.c:34:5: error: no previous prototype for ‘gg2_read_config’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/chrp/pci.c:61:5: error: no previous prototype for ‘gg2_write_config’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/chrp/pci.c:97:5: error: no previous prototype for ‘rtas_read_config’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/chrp/pci.c:112:5: error: no previous prototype for ‘rtas_write_config’ [-Werror=missing-prototypes]
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
-v3: style: fix alignement issue (checkpatch --strict)
-v2: no change
- arch/powerpc/platforms/chrp/pci.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+On Wed 2018-04-04 12:59:51, Tony Lindgren wrote:
+> * Pavel Machek <pavel@ucw.cz> [180404 18:47]:
+> > Hi!
+> >=20
+> > > > When trying to build kernel for N900, I get:
+> > > >=20
+> > > >   CC      lib/timerqueue.o
+> > > >     CC      lib/vsprintf.o
+> > > >     lib/string.c: In function 'strstr':
+> > > >     lib/string.c:478:8: error: inlining failed in call to
+> > > >     always_inline 'strlen': function not inlinable
+> > > >     lib/string.c:903:5: error: called from here
+> > > >     lib/string.c:478:8: error: inlining failed in call to
+> > > >     always_inline 'strlen': function not inlinable
+> > > >     lib/string.c:906:5: error: called from here
+> > > >     lib/string.c:855:15: error: inlining failed in call to
+> > > >     always_inline 'memcmp': function not inlinable
+> > > >     ...
+> > > > pavel@duo:/data/l/linux-next-n900$ git branch -l
+> > > > * (detached from next-20180403)
+> > > >=20
+> > > > I'm using
+> > > >=20
+> > > > eval ` eldk-switch.sh -r 5.4 armv7a`
+> > > >=20
+> > > > for cross-compilation.
+> > >=20
+> > > Hmm I'm not seeing build issues with next-20180404, did this somehow
+> > > already get sorted out?
+> >=20
+> > It seems it is config-dependend. omap2plus_defconfig compiles ok for
+> > me.
+> >=20
+> > Can you try with attached .config?
+>=20
+> That still builds for me. This with plain gcc-7.3.0 binutils-2.30
+> built with buildall script.
 
-diff --git a/arch/powerpc/platforms/chrp/pci.c b/arch/powerpc/platforms/chrp/pci.c
-index 0f512d35f7c5..5ddb57b82921 100644
---- a/arch/powerpc/platforms/chrp/pci.c
-+++ b/arch/powerpc/platforms/chrp/pci.c
-@@ -31,7 +31,7 @@ void __iomem *gg2_pci_config_base;
-  * limit the bus number to 3 bits
-  */
- 
--int gg2_read_config(struct pci_bus *bus, unsigned int devfn, int off,
-+static int gg2_read_config(struct pci_bus *bus, unsigned int devfn, int off,
- 			   int len, u32 *val)
- {
- 	volatile void __iomem *cfg_data;
-@@ -58,7 +58,7 @@ int gg2_read_config(struct pci_bus *bus, unsigned int devfn, int off,
- 	return PCIBIOS_SUCCESSFUL;
- }
- 
--int gg2_write_config(struct pci_bus *bus, unsigned int devfn, int off,
-+static int gg2_write_config(struct pci_bus *bus, unsigned int devfn, int off,
- 			    int len, u32 val)
- {
- 	volatile void __iomem *cfg_data;
-@@ -94,8 +94,8 @@ static struct pci_ops gg2_pci_ops =
- /*
-  * Access functions for PCI config space using RTAS calls.
-  */
--int rtas_read_config(struct pci_bus *bus, unsigned int devfn, int offset,
--		     int len, u32 *val)
-+static int rtas_read_config(struct pci_bus *bus, unsigned int devfn, int offset,
-+			    int len, u32 *val)
- {
- 	struct pci_controller *hose = pci_bus_to_host(bus);
- 	unsigned long addr = (offset & 0xff) | ((devfn & 0xff) << 8)
-@@ -109,8 +109,8 @@ int rtas_read_config(struct pci_bus *bus, unsigned int devfn, int offset,
- 	return rval? PCIBIOS_DEVICE_NOT_FOUND: PCIBIOS_SUCCESSFUL;
- }
- 
--int rtas_write_config(struct pci_bus *bus, unsigned int devfn, int offset,
--		      int len, u32 val)
-+static int rtas_write_config(struct pci_bus *bus, unsigned int devfn, int offset,
-+			     int len, u32 val)
- {
- 	struct pci_controller *hose = pci_bus_to_host(bus);
- 	unsigned long addr = (offset & 0xff) | ((devfn & 0xff) << 8)
--- 
-2.11.0
+Thanks.
+
+Ok, let me try to bisect it. Compile-problem should be easy...
+
+Hmm. And as it is compile-problem in single file, it should even be
+reasonably fast. I did not realize how easy it would be:
+
+#!/bin/bash
+set -e
+cp config.ok .config
+yes '' | ARCH=3Darm make lib/string.o
+
+And the winner is:
+
+ee333554fed55555a986a90bb097ac7f9d6f05bf is the first bad commit
+commit ee333554fed55555a986a90bb097ac7f9d6f05bf
+Author: Jinbum Park <jinb.park7@gmail.com>
+Date:   Tue Mar 6 01:39:24 2018 +0100
+
+    ARM: 8749/1: Kconfig: Add ARCH_HAS_FORTIFY_SOURCE
+
+    CONFIG_FORTIFY_SOURCE detects various overflows at compile-time.
+        (6974f0c4555e ("include/linux/string.h:
+    add the option of fortified string.h functions)
+   =20
+    ARCH_HAS_FORTIFY_SOURCE means that the architecture can be built
+    and
+    run with CONFIG_FORTIFY_SOURCE.
+   =20
+    Since ARM can be built and run with that flag like other
+    architectures,
+    select ARCH_HAS_FORTIFY_SOURCE as default.
+   =20
+    Acked-by: Kees Cook <keescook@chromium.org>
+    Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+    Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+
+:040000 040000 2bff2f75ba36dd838a8ded3028b745d9f13f4c4a
+									e61289e33a1fb71b1a6c05c442d45ea40bd5aba0
+									M
+									arch
+bisect run success
+pavel@duo:/data/l/linux-next-n900$=20
+
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrFMx0ACgkQMOfwapXb+vIr9QCbBhT4nZ8xYIgT15jzxo4EoP3J
+QiQAn0b+e+VyPD+fPDyBaC/BByfnmXhZ
+=vsoP
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
