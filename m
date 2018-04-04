@@ -1,70 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753729AbeDDAo4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 20:44:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47350 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753468AbeDDAmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 20:42:24 -0400
-From: Al Stone <ahs3@redhat.com>
-To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Al Stone <ahs3@redhat.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>
-Subject: [PATCH 2/3] ACPI: ensure acpi_parse_entries_array() does not access non-existent table data
-Date: Tue,  3 Apr 2018 18:42:10 -0600
-Message-Id: <20180404004211.6141-3-ahs3@redhat.com>
-In-Reply-To: <20180404004211.6141-1-ahs3@redhat.com>
-References: <20180404004211.6141-1-ahs3@redhat.com>
+        id S1754726AbeDDAsi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 20:48:38 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39773 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753298AbeDDAsh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 20:48:37 -0400
+X-Google-Smtp-Source: AIpwx4+ZNlk9wS9GyKIL+Y5Ayz6UNZdNy8ddlFY4myPtg94UWPVzKzCRuCDQqhiPt58HIgRwvK/7aQ==
+Date: Tue, 3 Apr 2018 17:48:34 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: kernel test robot <fengguang.wu@intel.com>, paulmck@linux.vnet.ibm.com,
+        peterz@infradead.org, akpm@linux-foundation.org, kirill@shutemov.name,
+        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, lkp@01.org
+Subject: Re: [mm] b1f0502d04: INFO:trying_to_register_non-static_key
+In-Reply-To: <aa6f2ff1-ff67-106a-e0e4-522ac82a7bf0@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1804031748120.27686@chino.kir.corp.google.com>
+References: <20180317075119.u6yuem2bhxvggbz3@inn> <792c0f75-7e7f-cd81-44ae-4205f6e4affc@linux.vnet.ibm.com> <alpine.DEB.2.20.1803251510040.80485@chino.kir.corp.google.com> <aa6f2ff1-ff67-106a-e0e4-522ac82a7bf0@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For ACPI tables that have subtables, acpi_parse_entries_array() gets used
-to step through each of the subtables in memory.  The primary loop for this
-was checking that the beginning location of the subtable being examined
-plus the length of struct acpi_subtable_header was not beyond the end of
-the complete ACPI table; if it wasn't, the subtable could be examined, but
-if it was the loop would terminate as it should.
+On Wed, 28 Mar 2018, Laurent Dufour wrote:
 
-In the middle of this subtable loop, a callback is used to examine the
-subtable in detail.
+> On 26/03/2018 00:10, David Rientjes wrote:
+> > On Wed, 21 Mar 2018, Laurent Dufour wrote:
+> > 
+> >> I found the root cause of this lockdep warning.
+> >>
+> >> In mmap_region(), unmap_region() may be called while vma_link() has not been
+> >> called. This happens during the error path if call_mmap() failed.
+> >>
+> >> The only to fix that particular case is to call
+> >> seqcount_init(&vma->vm_sequence) when initializing the vma in mmap_region().
+> >>
+> > 
+> > Ack, although that would require a fixup to dup_mmap() as well.
+> 
+> You're right, I'll fix that too.
+> 
 
-Should the callback function try to examine elements of the subtable that
-are located past the subtable header, and the ACPI table containing this
-subtable has an incorrect length, it is possible to access either invalid
-or protected memory and cause a fault.  And, the length of struct
-acpi_subtable_header will always be smaller than the length of the actual
-subtable.
+I also think the following is needed:
 
-To fix this, we make the main loop check that the beginning of the
-subtable being examined plus the actual length of the subtable does
-not go past the end of the enclosing ACPI table.  While this cannot
-protect us from malicious callback functions, it can prevent us from
-failing because of some poorly constructed ACPI tables.
-
-Found by inspection.  There is no functional change to existing code
-that is known to work when calling acpi_parse_entries_array().
-
-Signed-off-by: Al Stone <ahs3@redhat.com>
-Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
----
- drivers/acpi/tables.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-index b6ac8162a2c0..672a1f22c3a5 100644
---- a/drivers/acpi/tables.c
-+++ b/drivers/acpi/tables.c
-@@ -271,8 +271,7 @@ acpi_parse_entries_array(char *id, unsigned long table_size,
- 	entry = (struct acpi_subtable_header *)
- 	    ((unsigned long)table_header + table_size);
+diff --git a/fs/exec.c b/fs/exec.c
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -312,6 +312,10 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
+ 	vma->vm_flags = VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
+ 	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+ 	INIT_LIST_HEAD(&vma->anon_vma_chain);
++#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
++	seqcount_init(&vma->vm_sequence);
++	atomic_set(&vma->vm_ref_count, 0);
++#endif
  
--	while (((unsigned long)entry) + sizeof(struct acpi_subtable_header) <
--	       table_end) {
-+	while (((unsigned long)entry + entry->length) <= table_end) {
- 		if (max_entries && count >= max_entries)
- 			break;
- 
--- 
-2.14.3
+ 	err = insert_vm_struct(mm, vma);
+ 	if (err)
