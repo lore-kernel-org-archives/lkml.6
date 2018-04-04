@@ -1,54 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751296AbeDDNge (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:36:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37502 "EHLO mail.kernel.org"
+        id S1751283AbeDDNjY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:39:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751167AbeDDNgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:36:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA23206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 4 Apr 2018 09:36:30 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Kees Cook <keescook@chromium.org>, LKML <linux-kernel@vger.kernel.org>,
-        "Tobin C. Harding" <me@tobin.cc>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Subject: Re: [RFC][PATCH] tracing, printk: Force no hashing when
- trace_printk() is used
-Message-ID: <20180404093630.63fc0dd9@gandalf.local.home>
-In-Reply-To: <20180404074927.GG4082@hirez.programming.kicks-ass.net>
-References: <20180403154102.150b1be0@gandalf.local.home>
-        <CAGXu5j+g6nbDz+gjAxZTSf1004J=naAf7b9dPTE0q8+7UtXCLw@mail.gmail.com>
-        <20180403170612.7b11fc41@gandalf.local.home>
-        <20180404074927.GG4082@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1750842AbeDDNjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:39:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A6B7206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Wed, 4 Apr 2018 10:39:20 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] perf stat: enable 1ms interval for printing event
+ counters values
+Message-ID: <20180404133920.GA966@kernel.org>
+References: <b842ad6a-d606-32e4-afe5-974071b5198e@linux.intel.com>
+ <20180404070516.GB2313@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180404070516.GB2313@krava>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Apr 2018 09:49:27 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Tue, Apr 03, 2018 at 05:06:12PM -0400, Steven Rostedt wrote:
-> > If you are concerned about attack surface, I could make it a bit more
-> > difficult to tweak by malicious software. What about the patch below?
-> > It would be much more difficult to modify this knob from an attack
-> > vector.  
+Em Wed, Apr 04, 2018 at 09:05:16AM +0200, Jiri Olsa escreveu:
+> On Tue, Apr 03, 2018 at 09:18:33PM +0300, Alexey Budankov wrote:
+> > 
+> > Currently print count interval for performance counters values is 
+> > limited by 10ms so reading the values at frequencies higher than 100Hz 
+> > is restricted by the tool.
+> > 
+> > This change makes perf stat -I possible on frequencies up to 1KHz and, 
+> > to some extent, makes perf stat -I to be on-par with perf record 
+> > sampling profiling.
+> > 
+> > When running perf stat -I for monitoring e.g. PCIe uncore counters and 
+> > at the same time profiling some I/O workload by perf record e.g. for 
+> > cpu-cycles and context switches, it is then possible to observe 
+> > consolidated CPU/OS/IO(Uncore) performance picture for that workload.
+> > 
+> > Tool overhead warning printed when specifying -v option can be missed 
+> > due to screen scrolling in case you have output to the console 
+> > so message is moved into help available by running perf stat -h.
+> > 
+> > Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> > ---
+> > 
+> > Changes in v2:
+> >  - updated minimum value to 1ms at perf-stat.txt manual
 > 
-> Not if you build using clang, because that doesn't support asm-goto and
-> thus falls back to a simple runtime variable, which is exactly what Kees
-> didn't want.
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Fix clang ;-)
+Thanks, applied to perf/core.
 
--- Steve
+- Arnaldo
