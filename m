@@ -1,30 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751563AbeDDFcH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 01:32:07 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43327 "EHLO
+        id S1752912AbeDDFcg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 01:32:36 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59045 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751245AbeDDFcG (ORCPT
+        with ESMTP id S1751097AbeDDFcf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 01:32:06 -0400
-Date: Tue, 3 Apr 2018 22:31:44 -0700
+        Wed, 4 Apr 2018 01:32:35 -0400
+Date: Tue, 3 Apr 2018 22:32:12 -0700
 From: tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-9ff2a64708a642b3dee867d0a083171077663b0a@git.kernel.org>
-Cc: peterz@infradead.org, yao.jin@intel.com, ak@linux.intel.com,
-        jolsa@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, acme@redhat.com,
-        kan.liang@intel.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        yao.jin@linux.intel.com
-Reply-To: ak@linux.intel.com, jolsa@kernel.org, peterz@infradead.org,
-        yao.jin@intel.com, kan.liang@intel.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, yao.jin@linux.intel.com, tglx@linutronix.de,
-        hpa@zytor.com, acme@redhat.com, alexander.shishkin@linux.intel.com
-In-Reply-To: <1522402036-22915-5-git-send-email-yao.jin@linux.intel.com>
-References: <1522402036-22915-5-git-send-email-yao.jin@linux.intel.com>
+Message-ID: <tip-3aa94b10ab0a818ed9fa2dc06c40812c136f9a5a@git.kernel.org>
+Cc: acme@redhat.com, tglx@linutronix.de, peterz@infradead.org,
+        ak@linux.intel.com, kan.liang@intel.com,
+        alexander.shishkin@linux.intel.com, hpa@zytor.com,
+        yao.jin@linux.intel.com, yao.jin@intel.com, jolsa@kernel.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, yao.jin@linux.intel.com, mingo@kernel.org,
+        jolsa@kernel.org, yao.jin@intel.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, acme@redhat.com, ak@linux.intel.com,
+        peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        kan.liang@intel.com
+In-Reply-To: <1522402036-22915-6-git-send-email-yao.jin@linux.intel.com>
+References: <1522402036-22915-6-git-send-email-yao.jin@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf version: Print the compiled-in status of
- libraries
-Git-Commit-ID: 9ff2a64708a642b3dee867d0a083171077663b0a
+Subject: [tip:perf/urgent] perf tools: Add 'perf -vv' as an alias to 'perf
+ version --build-options'
+Git-Commit-ID: 3aa94b10ab0a818ed9fa2dc06c40812c136f9a5a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,32 +38,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9ff2a64708a642b3dee867d0a083171077663b0a
-Gitweb:     https://git.kernel.org/tip/9ff2a64708a642b3dee867d0a083171077663b0a
+Commit-ID:  3aa94b10ab0a818ed9fa2dc06c40812c136f9a5a
+Gitweb:     https://git.kernel.org/tip/3aa94b10ab0a818ed9fa2dc06c40812c136f9a5a
 Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Fri, 30 Mar 2018 17:27:14 +0800
+AuthorDate: Fri, 30 Mar 2018 17:27:15 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 2 Apr 2018 13:50:30 -0300
+CommitDate: Mon, 2 Apr 2018 13:50:35 -0300
 
-perf version: Print the compiled-in status of libraries
+perf tools: Add 'perf -vv' as an alias to 'perf version --build-options'
 
-This patch checks the values passed by CFLAGS (-DHAVE_XXX) and then
-print the status of libraries.
+We keep having bug reports that when users build perf on their own, but
+they don't install some needed libraries such as libelf,
+libbfd/libibery.
 
-For example, if HAVE_DWARF_SUPPORT is defined, that means the library
-"dwarf" is compiled-in. The patch will print the status "on" for this
-library otherwise it print the status "OFF".
+The perf can build, but it is missing important functionality.
 
-A new option '--build-options' created for 'perf version' supports the
-printing of library status.
+This patch provides a new option '-vv' for perf which will print the
+compiled-in status of libraries.
+
+The 'perf -vv' is mapped to 'perf version --build-options'.
 
 For example:
 
-$ ./perf version --build-options
-    or
-  ./perf --version --build-options
-    or
-  ./perf -v --build-options
+$ ./perf -vv
 
 perf version 4.13.rc5.g6727c5
                  dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
@@ -85,37 +83,16 @@ numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
              get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
                    bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
 
-v4:
-
-1. Also print the macro name. That would make it easier
-   to grep around in the source looking for where code
-   related a particular features is located.
-
-2. Update since HAVE_DWARF_GETLOCATIONS is renamed to
-   HAVE_DWARF_GETLOCATIONS_SUPPORT
-
 v3:
 
-Remove following unnecessary help message.
-
-1. [ on  ]: library is compiled-in
-   [ OFF ]: library is disabled in make configuration
-            OR library is not installed in build environment
-
-2. Create '--build-options' option.
-
-3. Use standard option parsing API 'parse_options'.
+One bug is found in v2. It didn't process the option like '-vabc'
+correctly. Fix this bug.
 
 v2:
 
-1. Use IS_BUILTIN macro to replace #ifdef/#endif block.
-
-2. Print color for on/OFF.
+Use a global variable version_verbose to record the number of 'v'.
 
 Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Suggested-by: Jiri Olsa <jolsa@kernel.org>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -123,106 +100,39 @@ Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jin Yao <yao.jin@intel.com>
 Cc: Kan Liang <kan.liang@intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1522402036-22915-5-git-send-email-yao.jin@linux.intel.com
+Link: http://lkml.kernel.org/r/1522402036-22915-6-git-send-email-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-version.c | 82 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 81 insertions(+), 1 deletion(-)
+ tools/perf/perf.c | 6 ++++++
+ tools/perf/perf.h | 1 +
+ 2 files changed, 7 insertions(+)
 
-diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
-index 37019c5d675f..2abe3910d6b6 100644
---- a/tools/perf/builtin-version.c
-+++ b/tools/perf/builtin-version.c
-@@ -1,11 +1,91 @@
- // SPDX-License-Identifier: GPL-2.0
- #include "builtin.h"
- #include "perf.h"
-+#include "color.h"
- #include <linux/compiler.h>
-+#include <tools/config.h>
- #include <stdio.h>
-+#include <string.h>
-+#include <subcmd/parse-options.h>
+diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+index 1b3fc8ec0fa2..1659029d03fc 100644
+--- a/tools/perf/perf.c
++++ b/tools/perf/perf.c
+@@ -190,6 +190,12 @@ static int handle_options(const char ***argv, int *argc, int *envchanged)
+ 			break;
+ 		}
  
--int cmd_version(int argc __maybe_unused, const char **argv __maybe_unused)
-+int version_verbose;
++		if (!strcmp(cmd, "-vv")) {
++			(*argv)[0] = "version";
++			version_verbose = 1;
++			break;
++		}
 +
-+struct version {
-+	bool	build_options;
-+};
-+
-+static struct version version;
-+
-+static struct option version_options[] = {
-+	OPT_BOOLEAN(0, "build-options", &version.build_options,
-+		    "display the build options"),
-+};
-+
-+static const char * const version_usage[] = {
-+	"perf version [<options>]",
-+	NULL
-+};
-+
-+static void on_off_print(const char *status)
-+{
-+	printf("[ ");
-+
-+	if (!strcmp(status, "OFF"))
-+		color_fprintf(stdout, PERF_COLOR_RED, "%-3s", status);
-+	else
-+		color_fprintf(stdout, PERF_COLOR_GREEN, "%-3s", status);
-+
-+	printf(" ]");
-+}
-+
-+static void status_print(const char *name, const char *macro,
-+			 const char *status)
- {
-+	printf("%22s: ", name);
-+	on_off_print(status);
-+	printf("  # %s\n", macro);
-+}
-+
-+#define STATUS(__d, __m)				\
-+do {							\
-+	if (IS_BUILTIN(__d))				\
-+		status_print(#__m, #__d, "on");		\
-+	else						\
-+		status_print(#__m, #__d, "OFF");	\
-+} while (0)
-+
-+static void library_status(void)
-+{
-+	STATUS(HAVE_DWARF_SUPPORT, dwarf);
-+	STATUS(HAVE_DWARF_GETLOCATIONS_SUPPORT, dwarf_getlocations);
-+	STATUS(HAVE_GLIBC_SUPPORT, glibc);
-+	STATUS(HAVE_GTK2_SUPPORT, gtk2);
-+	STATUS(HAVE_LIBAUDIT_SUPPORT, libaudit);
-+	STATUS(HAVE_LIBBFD_SUPPORT, libbfd);
-+	STATUS(HAVE_LIBELF_SUPPORT, libelf);
-+	STATUS(HAVE_LIBNUMA_SUPPORT, libnuma);
-+	STATUS(HAVE_LIBNUMA_SUPPORT, numa_num_possible_cpus);
-+	STATUS(HAVE_LIBPERL_SUPPORT, libperl);
-+	STATUS(HAVE_LIBPYTHON_SUPPORT, libpython);
-+	STATUS(HAVE_SLANG_SUPPORT, libslang);
-+	STATUS(HAVE_LIBCRYPTO_SUPPORT, libcrypto);
-+	STATUS(HAVE_LIBUNWIND_SUPPORT, libunwind);
-+	STATUS(HAVE_DWARF_SUPPORT, libdw-dwarf-unwind);
-+	STATUS(HAVE_ZLIB_SUPPORT, zlib);
-+	STATUS(HAVE_LZMA_SUPPORT, lzma);
-+	STATUS(HAVE_AUXTRACE_SUPPORT, get_cpuid);
-+	STATUS(HAVE_LIBBPF_SUPPORT, bpf);
-+}
-+
-+int cmd_version(int argc, const char **argv)
-+{
-+	argc = parse_options(argc, argv, version_options, version_usage,
-+			     PARSE_OPT_STOP_AT_NON_OPTION);
-+
- 	printf("perf version %s\n", perf_version_string);
-+
-+	if (version.build_options || version_verbose == 1)
-+		library_status();
-+
- 	return 0;
- }
+ 		/*
+ 		 * Check remaining flags.
+ 		 */
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 8fec1abd0f1f..a1a97956136f 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -84,6 +84,7 @@ struct record_opts {
+ struct option;
+ extern const char * const *record_usage;
+ extern struct option *record_options;
++extern int version_verbose;
+ 
+ int record__parse_freq(const struct option *opt, const char *str, int unset);
+ #endif
