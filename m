@@ -1,46 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752393AbeDDV0N (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 17:26:13 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36741 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752313AbeDDV0M (ORCPT
+        id S1752282AbeDDV2B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 17:28:01 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35158 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752170AbeDDV16 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 17:26:12 -0400
-X-Google-Smtp-Source: AIpwx4/I/34lhsdrt4rgbVmH/LRxYrYdb7/nqvOn4h0nj0Rqn30+HQXWL34BpYZ25JemJ/uTukiEsQ==
-Date: Thu, 5 Apr 2018 00:26:10 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrey Vagin <avagin@openvz.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH] prctl: Deprecate non PR_SET_MM_MAP operations
-Message-ID: <20180404212610.GI15783@uranus.lan>
-References: <20180404185523.GG15783@uranus.lan>
- <ca6a276b-d986-c977-9448-6cfc3ebef0f8@linux.alibaba.com>
+        Wed, 4 Apr 2018 17:27:58 -0400
+X-Google-Smtp-Source: AIpwx48hIiDKq+nYsY7sBNKvdvCYt3IIak8VrmFNHK3OpqQhcy0khth1ludF3vh4RBT2WY9NvsH67pq5IfGb7J6jYRM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca6a276b-d986-c977-9448-6cfc3ebef0f8@linux.alibaba.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180404212340.GA12737@outlook.office365.com>
+References: <152246898837.36038.26895928842345061.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180404212340.GA12737@outlook.office365.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Wed, 4 Apr 2018 14:27:57 -0700
+Message-ID: <CAPcyv4jknruAmkPEVx0X6Bd3uRs_FYdPf-W-5cDO1Z+kaG5+uw@mail.gmail.com>
+Subject: Re: [v8, 11/18] mm, dax: enable filesystems to trigger dev_pagemap
+ ->page_free callbacks
+To: Andrei Vagin <avagin@virtuozzo.com>
+Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Michal Hocko <mhocko@suse.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        david <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 02:16:33PM -0700, Yang Shi wrote:
-> On 4/4/18 11:55 AM, Cyrill Gorcunov wrote:
-> > An ability to manipulate mm_struct fields was introduced in
-> > sake of CRIU in first place. Later we provide more suitable
-> > and safe operation PR_SET_MM_MAP where all fields to be modifed
-> > are passed in one structure which allows us to make more detailed
-> > verification.
-> > 
-> > -
-> >   	if (arg5 || (arg4 && (opt != PR_SET_MM_AUXV &&
-> 
-> This PR_SET_MM_AUXV should be removed too? There is not callsite to
-> prctl_set_auxv() anymore.
+On Wed, Apr 4, 2018 at 2:23 PM, Andrei Vagin <avagin@virtuozzo.com> wrote:
+> Hi Dan,
+>
+> I catch the following bug on the linux-next 20180404. git bisect brought me to this commit:
 
-Yeah, good point. Will update.
+Yes, I will be yanking this functionality out of -next shortly and try
+again for v4.18.
