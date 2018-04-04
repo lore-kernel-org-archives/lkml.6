@@ -1,99 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeDDUte (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 16:49:34 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:14274 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751849AbeDDUtd (ORCPT
+        id S1752232AbeDDUvS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 16:51:18 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:51934 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751849AbeDDUvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:49:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name D08BD3329AE
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Wed, 04 Apr 2018 22:49:30 +0200
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Kees Cook <keescook@chromium.org>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-In-Reply-To: <CAGXu5jLwyot++C2EXs+032Lz5WdG65GsEJ-Q55rfhSbkG1Nh+A@mail.gmail.com>
-References: <10360653.ov98egbaqx@natalenko.name>
- <CAGXu5jLwyot++C2EXs+032Lz5WdG65GsEJ-Q55rfhSbkG1Nh+A@mail.gmail.com>
-Message-ID: <3265889.eu5sbW8aRz@natalenko.name>
-User-Agent: Roundcube Webmail/1.3.5
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1522874971;
-        h=from:sender:reply-to:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:in-reply-to:references:list-id:list-owner:list-unsubscribe:list-subscribe:list-post;
-        bh=+1FYR7/Cwoue5Ud+Sw/QtnzY6mSsv6qKvr587Jvz4qI=;
-        b=JqpF3KTa2WLLElR1NsUcRyyNBWr6o0mtItpNVU8Age+l920imJV5lOjNzkcb/QMAGvw6ta
-        +s1hlWeb5Qb36vyfZlLtalPup9CMKiFRl03VSZJa25Hw9Yav3UTTp+eD6uWonHA1TcTuGI
-        1IfCBW/FYL//+L+poNv0c8eyJ73DpTs=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1522874971; a=rsa-sha256;
-        cv=none;
-        b=wFCbBgqmwDolBNDqYCWGnuaz2En+OH4SymOdwAQ+2CuyqSSQbnMHjrbNnPfgp0gslDKzXphFhXsu5Uh5ZeCAgp6fnWcHkqHGmHd0BB4NMugC7UoscJ4qKjVdXOnvpnHQfl7LAQZBVBrvOzaX94w81PztqmSeJZbFCBXndf874jQ=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
+        Wed, 4 Apr 2018 16:51:17 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+From: Chris Wilson <chris@chris-wilson.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: intel-gfx@lists.freedesktop.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v3] trace: Default to using trace_global_clock if sched_clock is unstable
+Date: Wed,  4 Apr 2018 21:51:02 +0100
+Message-Id: <20180404205102.20816-1-chris@chris-wilson.co.uk>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180330150132.16903-1-chris@chris-wilson.co.uk>
+References: <20180330150132.16903-1-chris@chris-wilson.co.uk>
+X-Originating-IP: 78.156.65.138
+X-Country: code=GB country="United Kingdom" ip=78.156.65.138
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+Across suspend, we may see a very large drift in timestamps if the sched
+clock is unstable, prompting the global trace's ringbuffer code to warn
+and suggest switching to the global clock. Preempt this request by
+detecting when the sched clock is unstable (determined during
+late_initcall) and automatically switching the default clock over to
+trace_global_clock.
 
-On středa 4. dubna 2018 22:21:53 CEST Kees Cook wrote:
-> ...
-> That means scsi_sense_cache should be 96 bytes in size? But a 22 byte
-> read starting at offset 94 happened? That seems like a 20 byte read
-> beyond the end of the SLUB object? Though if it were reading past the
-> actual end of the object, I'd expect the hardened usercopy BUG (rather
-> than the WARN) to kick in. Ah, it looks like
-> /sys/kernel/slab/scsi_sense_cache/slab_size shows this to be 128 bytes
-> of actual allocation, so the 20 bytes doesn't strictly overlap another
-> object (hence no BUG):
-> ...
+This should prevent requiring user interaction to resolve warnings such
+as:
 
-Actually, I can trigger a BUG too:
+    Delta way too big! 18446743856563626466 ts=18446744054496180323 write stamp = 197932553857
+    If you just came from a suspend/resume,
+    please switch to the trace global clock:
+    echo global > /sys/kernel/debug/tracing/trace_clock
 
-[  129.259213] usercopy: Kernel memory exposure attempt detected from 
-SLUB
-object 'scsi_sense_cache' (offset 119, size 22)!
-[  129.265167] ------------[ cut here ]------------
-[  129.267579] kernel BUG at mm/usercopy.c:100!
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+v2: Tell the user what's happening and what they can do to correct it.
+v3: Restore the correct logic to switch only if the default trace clock
+(no override) is found to be *not* stable.
+---
+ kernel/trace/trace.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-And also offset can be different, as you may see:
-
-[   55.993224] Bad or missing usercopy whitelist? Kernel memory exposure
-attempt detected from SLUB object 'scsi_sense_cache' (offset 76, size 
-22)!
-[   55.998678] WARNING: CPU: 0 PID: 1305 at mm/usercopy.c:81 
-usercopy_warn
-+0x7e/0xa0
-
-It looks like only the size stays the same.
-
-> Can you send me your .config? What SCSI drivers are you using in the
-> VM and on the real server?
-
-This is an Arch kernel with a config available here [1].
-
-For both server and VM "lspci -vv" shows "ahci" in use. Is this what you 
-are
-asking for?
-
-> Are you able to see what ioctl()s smartctl is issuing? I'll try to
-> reproduce this on my end...
-
-As per [2], strace shows "SG_IO" requests. Is this detailed enough?
-
-Thanks for looking into it.
-
-Regards,
-   Oleksandr
-
-[1] https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?
-h=packages/linux&id=d7625be23f83416491d202d5cea96e5a871fb216
-[2] https://gist.github.com/6f58f8891468aeba1ab2cc9f45668735
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 13baf85b27d8..a1810b053f65 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -41,6 +41,7 @@
+ #include <linux/nmi.h>
+ #include <linux/fs.h>
+ #include <linux/trace.h>
++#include <linux/sched/clock.h>
+ #include <linux/sched/rt.h>
+ 
+ #include "trace.h"
+@@ -8505,3 +8506,21 @@ __init static int clear_boot_tracer(void)
+ 
+ fs_initcall(tracer_init_tracefs);
+ late_initcall_sync(clear_boot_tracer);
++
++#ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
++__init static int tracing_set_default_clock(void)
++{
++	/* sched_clock_stable() is determined in late_initcall */
++	if (!trace_boot_clock && !sched_clock_stable()) {
++		printk(KERN_WARNING
++		       "Unstable clock detected, switching default tracing clock to \"global\"\n"
++		       "If you want to keep using the local clock, then add:\n"
++		       "  \"trace_clock=local\"\n"
++		       "on the kernel command line\n");
++		tracing_set_clock(&global_trace, "global");
++	}
++
++	return 0;
++}
++late_initcall_sync(tracing_set_default_clock);
++#endif
+-- 
+2.16.3
