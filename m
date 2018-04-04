@@ -1,103 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751447AbeDDKUG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:20:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44842 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751155AbeDDKUC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:20:02 -0400
-Subject: Re: [mm] b1f0502d04: INFO:trying_to_register_non-static_key
-To: David Rientjes <rientjes@google.com>
-Cc: kernel test robot <fengguang.wu@intel.com>, paulmck@linux.vnet.ibm.com,
-        peterz@infradead.org, akpm@linux-foundation.org, kirill@shutemov.name,
-        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org, lkp@01.org
-References: <20180317075119.u6yuem2bhxvggbz3@inn>
- <792c0f75-7e7f-cd81-44ae-4205f6e4affc@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1803251510040.80485@chino.kir.corp.google.com>
- <aa6f2ff1-ff67-106a-e0e4-522ac82a7bf0@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1804031748120.27686@chino.kir.corp.google.com>
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date: Wed, 4 Apr 2018 12:19:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751360AbeDDKUs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:20:48 -0400
+Received: from ozlabs.org ([103.22.144.67]:44743 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750762AbeDDKUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 06:20:46 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Frederic Weisbecker <frederic@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>, Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>
+Subject: Re: [PATCH 07/10] powerpc: Switch to generic local_softirq_pending() implementation
+In-Reply-To: <1522467293-7320-8-git-send-email-frederic@kernel.org>
+References: <1522467293-7320-1-git-send-email-frederic@kernel.org> <1522467293-7320-8-git-send-email-frederic@kernel.org>
+Date: Wed, 04 Apr 2018 20:20:42 +1000
+Message-ID: <87zi2jmfwl.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1804031748120.27686@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18040410-0012-0000-0000-000005C6E67A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040410-0013-0000-0000-00001942F818
-Message-Id: <147e8be3-2c33-2111-aacc-dc2bb932fa8c@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804040110
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Frederic Weisbecker <frederic@kernel.org> writes:
 
+> Remove the ad-hoc implementation, the generic code now allows us not to
+> reinvent the wheel.
+>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: James E.J. Bottomley <jejb@parisc-linux.org>
+> Cc: Helge Deller <deller@gmx.de>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Fenghua Yu <fenghua.yu@intel.com>
+> ---
+>  arch/powerpc/include/asm/hardirq.h | 7 -------
+>  1 file changed, 7 deletions(-)
 
-On 04/04/2018 02:48, David Rientjes wrote:
-> On Wed, 28 Mar 2018, Laurent Dufour wrote:
-> 
->> On 26/03/2018 00:10, David Rientjes wrote:
->>> On Wed, 21 Mar 2018, Laurent Dufour wrote:
->>>
->>>> I found the root cause of this lockdep warning.
->>>>
->>>> In mmap_region(), unmap_region() may be called while vma_link() has not been
->>>> called. This happens during the error path if call_mmap() failed.
->>>>
->>>> The only to fix that particular case is to call
->>>> seqcount_init(&vma->vm_sequence) when initializing the vma in mmap_region().
->>>>
->>>
->>> Ack, although that would require a fixup to dup_mmap() as well.
->>
->> You're right, I'll fix that too.
->>
-> 
-> I also think the following is needed:
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -312,6 +312,10 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
->  	vma->vm_flags = VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
->  	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
->  	INIT_LIST_HEAD(&vma->anon_vma_chain);
-> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> +	seqcount_init(&vma->vm_sequence);
-> +	atomic_set(&vma->vm_ref_count, 0);
-> +#endif
-> 
->  	err = insert_vm_struct(mm, vma);
->  	if (err)
+If I'm reading it right the generic code implements exactly the same as
+what we have now, so:
 
-No, this not needed because the vma is allocated with kmem_cache_zalloc() so
-vm_ref_count is 0, and insert_vm_struc() will later call
-__vma_link_rb() which will call seqcount_init().
+  Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-Furhtermore, in case of error, the vma structure is freed without calling
-get_vma() so there is risk of lockdep warning.
+cheers
+
+> diff --git a/arch/powerpc/include/asm/hardirq.h b/arch/powerpc/include/asm/hardirq.h
+> index 5986d47..383f628 100644
+> --- a/arch/powerpc/include/asm/hardirq.h
+> +++ b/arch/powerpc/include/asm/hardirq.h
+> @@ -25,15 +25,8 @@ typedef struct {
+>  DECLARE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
+>  
+>  #define __ARCH_IRQ_STAT
+> -
+> -#define local_softirq_pending()	__this_cpu_read(irq_stat.__softirq_pending)
+> -
+> -#define __ARCH_SET_SOFTIRQ_PENDING
+>  #define __ARCH_IRQ_EXIT_IRQS_DISABLED
+>  
+> -#define set_softirq_pending(x) __this_cpu_write(irq_stat.__softirq_pending, (x))
+> -#define or_softirq_pending(x) __this_cpu_or(irq_stat.__softirq_pending, (x))
+> -
+>  static inline void ack_bad_irq(unsigned int irq)
+>  {
+>  	printk(KERN_CRIT "unexpected IRQ trap at vector %02x\n", irq);
+> -- 
+> 2.7.4
