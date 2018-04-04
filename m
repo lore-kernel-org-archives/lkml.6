@@ -1,81 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752586AbeDDQ4d (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 12:56:33 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:41464 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752439AbeDDQ4b (ORCPT
+        id S1752581AbeDDQ5r (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 12:57:47 -0400
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:35500 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752258AbeDDQ5o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 12:56:31 -0400
-Date: Wed, 04 Apr 2018 12:54:08 -0400 (EDT)
-Message-Id: <20180404.125408.177932788493384392.davem@davemloft.net>
-To: arnd@arndb.de
-Cc: jakub.kicinski@netronome.com, dsa@cumulusnetworks.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netdevsim: remove incorrect __net_initdata annotations
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <CAK8P3a0um2irY2P_3xffqRcmu5mJ+iA9iO4eW5381zBBmPRQfg@mail.gmail.com>
-References: <20180404121347.3089169-1-arnd@arndb.de>
-        <20180404.115215.419039708931754897.davem@davemloft.net>
-        <CAK8P3a0um2irY2P_3xffqRcmu5mJ+iA9iO4eW5381zBBmPRQfg@mail.gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Wed, 4 Apr 2018 12:57:44 -0400
+X-Google-Smtp-Source: AIpwx49x+EyHNx6f6hEA1f2qaYL8h4NB4T8y6d+qbJ4qbXMLg8mMh55tPJ3T1XK5c/6nRft6Bk+h8fXA1dE/eGCvzvM=
+MIME-Version: 1.0
+In-Reply-To: <20180402163242.GC14165@lunn.ch>
+References: <1522250043-8065-5-git-send-email-tharvey@gateworks.com>
+ <20180330010757.GA12896@roeck-us.net> <CAJ+vNU3ARKLK5AcssEP-_P8AmwnAnS8VtAEO1ppwum2jpCqAYQ@mail.gmail.com>
+ <20180330181954.GA17580@roeck-us.net> <CAJ+vNU1f+SH16hs3heMA_A2KcbzbXXmJtPxi0uiL4+4tNWgYoQ@mail.gmail.com>
+ <20180402163242.GC14165@lunn.ch>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Wed, 4 Apr 2018 09:57:42 -0700
+Message-ID: <CAJ+vNU2RxHngXa00=zx84ifJ6wWh=vN84shRsT5sWYG1G74zeA@mail.gmail.com>
+Subject: Re: [v3,4/4] watchdog: add Gateworks System Controller support
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Wim Van Sebroeck <wim@iguana.be>, Mark Brown <broonie@kernel.org>,
+        linux-input@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 4 Apr 2018 18:03:41 +0200
+On Mon, Apr 2, 2018 at 9:32 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+>> The 'use case' we have been using this in for a couple years is that
+>> users who want to use this watchdog will enable it externally (we have
+>> a command in the bootloader) and if enabled the kernel driver (that
+>> I'm proposing here which we've been using out-of-tree) will register
+>> the watchdog device and the userspace watchdog process can open the
+>> device and start tickling it. If the watchdog is never enabled (or
+>> disabled via the bootloader command) the kernel driver fails to probe
+>> and the SoC's watchdog can be used.
+>
+> Hi Tim
+>
+> Is there any reason not to give the user the choice to use both
+> watchdogs? Normally you write drivers to expose the hardware, and then
+> let the users choice if they want to use it.
+>
 
-> On Wed, Apr 4, 2018 at 5:52 PM, David Miller <davem@davemloft.net> wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->> Date: Wed,  4 Apr 2018 14:12:39 +0200
->>
->>> The __net_initdata section cannot currently be used for structures that
->>> get cleaned up in an exitcall using unregister_pernet_operations:
->>>
->>> WARNING: vmlinux.o(.text+0x868c34): Section mismatch in reference from the function nsim_devlink_exit() to the (unknown reference) .init.data:(unknown)
->>> The function nsim_devlink_exit() references
->>> the (unknown reference) __initdata (unknown).
->>> This is often because nsim_devlink_exit lacks a __initdata
->>> annotation or the annotation of (unknown) is wrong.
->>> WARNING: vmlinux.o(.text+0x868c64): Section mismatch in reference from the function nsim_devlink_init() to the (unknown reference) .init.data:(unknown)
->>> WARNING: vmlinux.o(.text+0x8692bc): Section mismatch in reference from the function nsim_fib_exit() to the (unknown reference) .init.data:(unknown)
->>> WARNING: vmlinux.o(.text+0x869300): Section mismatch in reference from the function nsim_fib_init() to the (unknown reference) .init.data:(unknown)
->>>
->>> As that warning tells us, discarding the structure after a module is
->>> loaded would lead to a undefined behavior when that module is removed.
->>>
->>> It might be possible to change that annotation so it has no effect for
->>> loadable modules, but I have not figured out exactly how to do that, and
->>> we want this to be fixed in -rc1.
->>>
->>> This just removes the annotations, just like we do for all other such
->>> modules.
->>>
->>> Fixes: 37923ed6b8ce ("netdevsim: Add simple FIB resource controller via devlink")
->>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->>
->> Hmmm...
->>
->> __net_initdata defines to nothing if network namespaces are enabled.
->>
->> That's the whole point.
->>
->> Therefore, if NETNS is disabled, "unregister_pernet_operations" cannot
->> happen and this is the only time when __net_initdata actually does
->> something.
-> 
-> The problem happens with CONFIG_NETNS=n: __net_initdata turns into
-> __initdata, and nsim_fib_net_ops is referenced from a function that is
-> not marked __init (i.e. nsim_fib_exit).
-> 
-> The logic to turn __net_initdata into __init only makes sense for
-> subsystems that have no way to be unregistered, i.e. code which is
-> always built-in, or non-unloadable modules.
+Andrew,
 
-Ok, I see it.
+I don't know what value the SoC watchdog has if you have the GSC
+watchdog available that can power cycle the board but I would agree
+normally you would expose all of them. I suppose this may be a
+different case because I'm expecting the user to go and manually
+enable the watchdog instead of using the kernel to do it which means
+if its not enabled its not really available to be used.
 
-I'll apply this for now, thanks.
+Tim
