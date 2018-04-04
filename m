@@ -1,62 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751318AbeDDKR5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:17:57 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:43230 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751098AbeDDKR4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:17:56 -0400
-X-Google-Smtp-Source: AIpwx4/KLSqdbWR6eYy5Oywxjy31sgNNShkLCbzoCENDB3s7stEFGL8SAUHndptu+vgeOXDsdQ1v2Wzs7a1v10bWTew=
+        id S1751406AbeDDKSG convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:18:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44775 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751326AbeDDKSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 06:18:04 -0400
+From: =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <sfrench@samba.org>
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddeor.com>
+Subject: Re: [PATCH v2] cifs: smb2pdu: Fix potential NULL pointer dereference
+In-Reply-To: <20180403210039.GA28968@embeddedor.com>
+References: <20180403210039.GA28968@embeddedor.com>
+User-Agent: Notmuch/0.22.1 (http://notmuchmail.org) Emacs/25.1.1 (x86_64-unknown-linux-gnu)
+Date: Wed, 04 Apr 2018 12:18:00 +0200
+Message-ID: <87muyjff6v.fsf@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <CAG2=9p8y9bMsZ8u0gaumW9B7t3GEAhJ6ChQcE8qg_to_T7wwXg@mail.gmail.com>
-References: <1521534986-21907-1-git-send-email-zhang.chunyan@linaro.org> <CAG2=9p8y9bMsZ8u0gaumW9B7t3GEAhJ6ChQcE8qg_to_T7wwXg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 4 Apr 2018 12:17:54 +0200
-Message-ID: <CAPDyKFp_MYRTQmLcfkrZe+Ux9ZBZQgsAaZSzzLteVYS7sW0VCw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] mmc: add support for sdhci 4.0
-To: Chunyan Zhang <zhang.chunyan@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Billows Wu <billows.wu@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 April 2018 at 11:05, Chunyan Zhang <zhang.chunyan@linaro.org> wrote:
-> Hi Ulf,
+"Gustavo A. R. Silva" <garsilva@embeddedor.com> writes:
+> tcon->ses is being dereferenced before it is null checked, hence
+> there is a potential null pointer dereference.
 >
-> Do you have some comments on this patch-set?
-
-No objections from my side of the series, however I am relying on
-Adrian's ack before I pick any of the patches.
-
-Kind regards
-Uffe
-
+> Fix this by moving the pointer dereference after tcon->ses has
+> been properly null checked.
 >
-> Thanks,
-> Chunyan
->
-> On 20 March 2018 at 16:36, Chunyan Zhang <zhang.chunyan@linaro.org> wrote:
->> From the SD host controller version 4.0 on, SDHCI implementation either
->> is version 3 compatible or version 4 mode. This patch-set covers those
->> changes which are common for SDHCI 4.0 version, regardless of whether
->> they are used with SD or eMMC storage devices.
->>
->> Chunyan Zhang (3):
->>   mmc: sdhci: add sd host v4 mode
->>   mmc: sdhci: made changes for System Address register of SDMA
->>   mmc: sdhci: add ADMA2 64-bit addressing support for V4 mode
->>
->>  drivers/mmc/host/sdhci.c | 66 +++++++++++++++++++++++++++++++++++++-----------
->>  drivers/mmc/host/sdhci.h | 29 +++++++++++++++++----
->>  2 files changed, 75 insertions(+), 20 deletions(-)
->>
->> --
->> 2.7.4
->>
+> Addresses-Coverity-ID: 1467426 ("Dereference before null check")
+> Fixes: 93012bf98416 ("cifs: add server->vals->header_preamble_size")
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+
+-- 
+Aurélien Aptel / SUSE Labs Samba Team
+GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+SUSE Linux GmbH, Maxfeldstraße 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
