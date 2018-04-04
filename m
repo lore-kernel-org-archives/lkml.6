@@ -1,52 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753828AbeDDAmb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 20:42:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:29220 "EHLO mx1.redhat.com"
+        id S1754256AbeDDAmd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 20:42:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43956 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754156AbeDDAmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 20:42:22 -0400
+        id S1754160AbeDDAmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 20:42:23 -0400
 From: Al Stone <ahs3@redhat.com>
 To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Al Stone <ahs3@redhat.com>
-Subject: [PATCH 0/3] mailbox: ACPI: Remove incorrect error message about parsing PCCT
-Date: Tue,  3 Apr 2018 18:42:08 -0600
-Message-Id: <20180404004211.6141-1-ahs3@redhat.com>
+Cc: Al Stone <ahs3@redhat.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>
+Subject: [PATCH 1/3] ACPI: improve function documentation for acpi_parse_entries_array()
+Date: Tue,  3 Apr 2018 18:42:09 -0600
+Message-Id: <20180404004211.6141-2-ahs3@redhat.com>
+In-Reply-To: <20180404004211.6141-1-ahs3@redhat.com>
+References: <20180404004211.6141-1-ahs3@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This set of patches provide some cleanup in ACPI for minor issues
-found while correcting a bogus error message (the first two patches),
-and the correction for the error message itself (patch 3/3).  Note
-that patches 1/3 and 2/3 are not required for 3/3 to work: 1/3 only
-changes a comment and 2/3 makes an ACPI table parsing loop a wee bit
-more robust.
+I found the description of the table_size argument to the function
+acpi_parse_entries_array() unclear and ambiguous.  This is a minor
+documentation change to improve that description so I don't misuse
+the argument again in the future, and it is hopefully clearer to
+other future users.
 
-For patch 3/3, many systems on boot have been reporting "Error parsing
-PCC subspaces from PCCT" which turns out to not be an error at all.
-The issue is that the probe for ACPI mailboxes defined in the PCCT
-(Platform Communications Channel Table) makes a faulty assumption about
-the content of the PCCT.  What's more, when the error is reported, no
-further PCC mailboxes are set up, even when they have been defined
-in the PCCT.  So, in the reported cases, there was no error and the
-data in the PCCT was being ignored.  This is described in more detail
-in patch 3/3.
+Signed-off-by: Al Stone <ahs3@redhat.com>
+Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+---
+ drivers/acpi/tables.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Since these patches primarily involve ACPI usages, it may make
-sense for all of them to go through the linux-acpi tree; clearly,
-this is up to the maintainers, though.
-
-
-Al Stone (3):
-  ACPI: improve function documentation for acpi_parse_entries_array()
-  ACPI: ensure acpi_parse_entries_array() does not access non-existent
-    table data
-  mailbox: ACPI: erroneous error message when parsing the ACPI PCCT
-
- drivers/acpi/tables.c |  9 ++---
- drivers/mailbox/pcc.c | 99 +++++++++++++++++++++++++++++++++++++--------------
- 2 files changed, 78 insertions(+), 30 deletions(-)
-
+diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+index 6c5ee7e66842..b6ac8162a2c0 100644
+--- a/drivers/acpi/tables.c
++++ b/drivers/acpi/tables.c
+@@ -222,7 +222,9 @@ void acpi_table_print_madt_entry(struct acpi_subtable_header *header)
+  * acpi_parse_entries_array - for each proc_num find a suitable subtable
+  *
+  * @id: table id (for debugging purposes)
+- * @table_size: single entry size
++ * @table_size: size of the root table; i.e., the offset from the very
++ *              first byte of the complete ACPI table, to the first byte
++ *              of the first subtable
+  * @table_header: where does the table start?
+  * @proc: array of acpi_subtable_proc struct containing entry id
+  *        and associated handler with it
+@@ -400,7 +402,7 @@ int __init acpi_table_parse(char *id, acpi_tbl_table_handler handler)
+ 		return -ENODEV;
+ }
+ 
+-/* 
++/*
+  * The BIOS is supposed to supply a single APIC/MADT,
+  * but some report two.  Provide a knob to use either.
+  * (don't you wish instance 0 and 1 were not the same?)
 -- 
 2.14.3
