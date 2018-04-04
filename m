@@ -1,81 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754230AbeDDBD0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 21:03:26 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42727 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753328AbeDDBDY (ORCPT
+        id S1754739AbeDDBJf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 21:09:35 -0400
+Received: from gateway36.websitewelcome.com ([192.185.199.121]:43937 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754203AbeDDBJe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 21:03:24 -0400
-X-Google-Smtp-Source: AIpwx4/50G+r8pvjs2p/X3uGnM3iA8Ueap143rJir4iZxuDWHzEhRbd66JWelDAbtW4oTkx7bKvjxg==
-Date: Tue, 3 Apr 2018 18:03:22 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-cc: kernel test robot <fengguang.wu@intel.com>, paulmck@linux.vnet.ibm.com,
-        peterz@infradead.org, akpm@linux-foundation.org, kirill@shutemov.name,
-        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org, lkp@01.org
-Subject: Re: [mm] b1f0502d04: INFO:trying_to_register_non-static_key
-In-Reply-To: <alpine.DEB.2.20.1804031748120.27686@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.20.1804031802110.50064@chino.kir.corp.google.com>
-References: <20180317075119.u6yuem2bhxvggbz3@inn> <792c0f75-7e7f-cd81-44ae-4205f6e4affc@linux.vnet.ibm.com> <alpine.DEB.2.20.1803251510040.80485@chino.kir.corp.google.com> <aa6f2ff1-ff67-106a-e0e4-522ac82a7bf0@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1804031748120.27686@chino.kir.corp.google.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Tue, 3 Apr 2018 21:09:34 -0400
+Date: Tue, 3 Apr 2018 20:09:31 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] clk: samsung: s3c: Mark expected switch fall-through
+Message-ID: <20180404010931.GA30291@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1f3Wvd-003acI-A7
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.145.54.187]:57914
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Apr 2018, David Rientjes wrote:
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-> > >> I found the root cause of this lockdep warning.
-> > >>
-> > >> In mmap_region(), unmap_region() may be called while vma_link() has not been
-> > >> called. This happens during the error path if call_mmap() failed.
-> > >>
-> > >> The only to fix that particular case is to call
-> > >> seqcount_init(&vma->vm_sequence) when initializing the vma in mmap_region().
-> > >>
-> > > 
-> > > Ack, although that would require a fixup to dup_mmap() as well.
-> > 
-> > You're right, I'll fix that too.
-> > 
-> 
-> I also think the following is needed:
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -312,6 +312,10 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
->  	vma->vm_flags = VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
->  	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
->  	INIT_LIST_HEAD(&vma->anon_vma_chain);
-> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> +	seqcount_init(&vma->vm_sequence);
-> +	atomic_set(&vma->vm_ref_count, 0);
-> +#endif
->  
->  	err = insert_vm_struct(mm, vma);
->  	if (err)
-> 
+Notice that in this particular case I replaced the comma wiht a dash,
+which is what GCC is expecting to find when there are other comments
+in the same line in which "fall through" appears.
 
-Ugh, I think there are a number of other places where this is needed as 
-well in mm/mmap.c.  I think it would be better to just create a new 
-alloc_vma(unsigned long flags) that all vma allocators can use and for 
-CONFIG_SPECULATIVE_PAGE_FAULT will initialize the seqcount_t and atomic_t.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+This code was compiled with GCC 7.3.0
+
+ drivers/clk/samsung/clk-s3c2443.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+index c46e6d5..7ebb87f 100644
+--- a/drivers/clk/samsung/clk-s3c2443.c
++++ b/drivers/clk/samsung/clk-s3c2443.c
+@@ -429,7 +429,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
+ 				ARRAY_SIZE(s3c2450_gates));
+ 		samsung_clk_register_alias(ctx, s3c2450_aliases,
+ 				ARRAY_SIZE(s3c2450_aliases));
+-		/* fall through, as s3c2450 extends the s3c2416 clocks */
++		/* fall through - as s3c2450 extends the s3c2416 clocks */
+ 	case S3C2416:
+ 		samsung_clk_register_div(ctx, s3c2416_dividers,
+ 				ARRAY_SIZE(s3c2416_dividers));
+-- 
+2.7.4
