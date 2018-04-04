@@ -1,84 +1,251 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751726AbeDDMnd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:43:33 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36439 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbeDDMn3 (ORCPT
+        id S1751846AbeDDMnl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:43:41 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41718 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751743AbeDDMni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:43:29 -0400
-X-Google-Smtp-Source: AIpwx49d1uMjvLsun/S9ksxIBwfJ9q44QiCZAl6Z/8JKXTgXwswmHzO9Bswe2Sb7Hr2dWLFeuWu/gQ==
-Subject: Re: [PATCH 2/4] nvmet-rdma: Use new SGL alloc/free helper for
- requests
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Cc: Christoph Hellwig <hch@lst.de>, James Smart <james.smart@broadcom.com>
-References: <20180329160721.4691-1-logang@deltatee.com>
- <20180329160721.4691-3-logang@deltatee.com>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <2fbc3260-6682-f789-9500-2961293ff3b4@grimberg.me>
-Date: Wed, 4 Apr 2018 15:43:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180329160721.4691-3-logang@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 4 Apr 2018 08:43:38 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3648C60F78
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 8/9] mtd: nand: qcom: helper function for raw read
+Date: Wed,  4 Apr 2018 18:12:24 +0530
+Message-Id: <1522845745-6624-9-git-send-email-absahu@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch does minor code reorganization for raw reads.
+Currently the raw read is required for complete page but for
+subsequent patches related with erased codeword bit flips
+detection, only few CW should be read. So, this patch adds
+helper function and introduces the read CW bitmask which
+specifies which CW reads are required in complete page.
 
-> @@ -565,24 +565,24 @@ static u16 nvmet_rdma_map_sgl_keyed(struct nvmet_rdma_rsp *rsp,
->   {
->   	struct rdma_cm_id *cm_id = rsp->queue->cm_id;
->   	u64 addr = le64_to_cpu(sgl->addr);
-> -	u32 len = get_unaligned_le24(sgl->length);
->   	u32 key = get_unaligned_le32(sgl->key);
->   	int ret;
->   
-> +	rsp->req.transfer_len = get_unaligned_le24(sgl->length);
-> +
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/mtd/nand/qcom_nandc.c | 186 +++++++++++++++++++++++++-----------------
+ 1 file changed, 110 insertions(+), 76 deletions(-)
 
-IIRC, this might result in nvmet-rdma executing data-transfer even
-for failed requests in some error cases. I'm not sure this is the
-only case, but have you tested what happens in error cases?
-
-See nvmet_rdma_need_data_in()/nvmet_rdma_need_data_out() which look
-at transfer_len.
-
->   	/* no data command? */
-> -	if (!len)
-> +	if (!rsp->req.transfer_len)
->   		return 0;
->   
-> -	rsp->req.sg = sgl_alloc(len, GFP_KERNEL, &rsp->req.sg_cnt);
-> -	if (!rsp->req.sg)
-> -		return NVME_SC_INTERNAL;
-> +	ret = nvmet_req_alloc_sgl(&rsp->req, &rsp->queue->nvme_sq);
-> +	if (ret < 0)
-> +		goto error_out;
->   
->   	ret = rdma_rw_ctx_init(&rsp->rw, cm_id->qp, cm_id->port_num,
->   			rsp->req.sg, rsp->req.sg_cnt, 0, addr, key,
->   			nvmet_data_dir(&rsp->req));
->   	if (ret < 0)
-> -		return NVME_SC_INTERNAL;
-> -	rsp->req.transfer_len += len;
-> +		goto error_out;
->   	rsp->n_rdma += ret;
->   
->   	if (invalidate) {
-> @@ -591,6 +591,10 @@ static u16 nvmet_rdma_map_sgl_keyed(struct nvmet_rdma_rsp *rsp,
->   	}
->   
->   	return 0;
-> +
-> +error_out:
-> +	rsp->req.transfer_len = 0;
-> +	return NVME_SC_INTERNAL;
->   }
->   
->   static u16 nvmet_rdma_map_sgl(struct nvmet_rdma_rsp *rsp)
-> 
+diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
+index 40c790e..f5d1fa4 100644
+--- a/drivers/mtd/nand/qcom_nandc.c
++++ b/drivers/mtd/nand/qcom_nandc.c
+@@ -1590,6 +1590,114 @@ static int check_flash_errors(struct qcom_nand_host *host, int cw_cnt)
+ }
+ 
+ /*
++ * Helper to perform the page raw read operation. The read_cw_mask will be
++ * used to specify the codewords for which the data should be read. The
++ * single page contains multiple CW. Sometime, only few CW data is required
++ * in complete page. Also, start address will be determined with
++ * this CW mask to skip unnecessary data copy from NAND flash device. Then,
++ * actual data copy from NAND controller to data buffer will be done only
++ * for the CWs which have the mask set.
++ */
++static int
++nandc_read_page_raw(struct mtd_info *mtd, struct nand_chip *chip,
++		    u8 *data_buf, u8 *oob_buf,
++		    int page, unsigned long read_cw_mask)
++{
++	struct qcom_nand_host *host = to_qcom_nand_host(chip);
++	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
++	struct nand_ecc_ctrl *ecc = &chip->ecc;
++	int i, ret;
++	int read_loc, start_step, last_step;
++
++	nand_read_page_op(chip, page, 0, NULL, 0);
++
++	host->use_ecc = false;
++	start_step = ffs(read_cw_mask) - 1;
++	last_step = fls(read_cw_mask);
++
++	clear_bam_transaction(nandc);
++	set_address(host, host->cw_size * start_step, page);
++	update_rw_regs(host, last_step - start_step, true);
++	config_nand_page_read(nandc);
++
++	for (i = start_step; i < last_step; i++) {
++		int data_size1, data_size2, oob_size1, oob_size2;
++		int reg_off = FLASH_BUF_ACC;
++
++		data_size1 = mtd->writesize - host->cw_size * (ecc->steps - 1);
++		oob_size1 = host->bbm_size;
++
++		if (i == (ecc->steps - 1)) {
++			data_size2 = ecc->size - data_size1 -
++				     ((ecc->steps - 1) << 2);
++			oob_size2 = (ecc->steps << 2) + host->ecc_bytes_hw +
++				    host->spare_bytes;
++		} else {
++			data_size2 = host->cw_data - data_size1;
++			oob_size2 = host->ecc_bytes_hw + host->spare_bytes;
++		}
++
++		/*
++		 * Don't perform actual data copy from NAND controller to data
++		 * buffer through DMA for this codeword
++		 */
++		if (!(read_cw_mask & BIT(i))) {
++			if (nandc->props->is_bam)
++				nandc_set_read_loc(nandc, 0, 0, 0, 1);
++
++			config_nand_cw_read(nandc, false);
++
++			data_buf += data_size1 + data_size2;
++			oob_buf += oob_size1 + oob_size2;
++
++			continue;
++		}
++
++		if (nandc->props->is_bam) {
++			read_loc = 0;
++			nandc_set_read_loc(nandc, 0, read_loc, data_size1, 0);
++			read_loc += data_size1;
++
++			nandc_set_read_loc(nandc, 1, read_loc, oob_size1, 0);
++			read_loc += oob_size1;
++
++			nandc_set_read_loc(nandc, 2, read_loc, data_size2, 0);
++			read_loc += data_size2;
++
++			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
++		}
++
++		config_nand_cw_read(nandc, false);
++
++		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
++		reg_off += data_size1;
++		data_buf += data_size1;
++
++		read_data_dma(nandc, reg_off, oob_buf, oob_size1, 0);
++		reg_off += oob_size1;
++		oob_buf += oob_size1;
++
++		read_data_dma(nandc, reg_off, data_buf, data_size2, 0);
++		reg_off += data_size2;
++		data_buf += data_size2;
++
++		read_data_dma(nandc, reg_off, oob_buf, oob_size2, 0);
++		oob_buf += oob_size2;
++	}
++
++	ret = submit_descs(nandc);
++	if (ret)
++		dev_err(nandc->dev, "failure to read raw page\n");
++
++	free_descs(nandc);
++
++	if (!ret)
++		ret = check_flash_errors(host, last_step - start_step);
++
++	return 0;
++}
++
++/*
+  * reads back status registers set by the controller to notify page read
+  * errors. this is equivalent to what 'ecc->correct()' would do.
+  */
+@@ -1839,82 +1947,8 @@ static int qcom_nandc_read_page_raw(struct mtd_info *mtd,
+ 				    struct nand_chip *chip, uint8_t *buf,
+ 				    int oob_required, int page)
+ {
+-	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+-	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+-	u8 *data_buf, *oob_buf;
+-	struct nand_ecc_ctrl *ecc = &chip->ecc;
+-	int i, ret;
+-	int read_loc;
+-
+-	nand_read_page_op(chip, page, 0, NULL, 0);
+-	data_buf = buf;
+-	oob_buf = chip->oob_poi;
+-
+-	host->use_ecc = false;
+-
+-	clear_bam_transaction(nandc);
+-	update_rw_regs(host, ecc->steps, true);
+-	config_nand_page_read(nandc);
+-
+-	for (i = 0; i < ecc->steps; i++) {
+-		int data_size1, data_size2, oob_size1, oob_size2;
+-		int reg_off = FLASH_BUF_ACC;
+-
+-		data_size1 = mtd->writesize - host->cw_size * (ecc->steps - 1);
+-		oob_size1 = host->bbm_size;
+-
+-		if (i == (ecc->steps - 1)) {
+-			data_size2 = ecc->size - data_size1 -
+-				     ((ecc->steps - 1) << 2);
+-			oob_size2 = (ecc->steps << 2) + host->ecc_bytes_hw +
+-				    host->spare_bytes;
+-		} else {
+-			data_size2 = host->cw_data - data_size1;
+-			oob_size2 = host->ecc_bytes_hw + host->spare_bytes;
+-		}
+-
+-		if (nandc->props->is_bam) {
+-			read_loc = 0;
+-			nandc_set_read_loc(nandc, 0, read_loc, data_size1, 0);
+-			read_loc += data_size1;
+-
+-			nandc_set_read_loc(nandc, 1, read_loc, oob_size1, 0);
+-			read_loc += oob_size1;
+-
+-			nandc_set_read_loc(nandc, 2, read_loc, data_size2, 0);
+-			read_loc += data_size2;
+-
+-			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
+-		}
+-
+-		config_nand_cw_read(nandc, false);
+-
+-		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
+-		reg_off += data_size1;
+-		data_buf += data_size1;
+-
+-		read_data_dma(nandc, reg_off, oob_buf, oob_size1, 0);
+-		reg_off += oob_size1;
+-		oob_buf += oob_size1;
+-
+-		read_data_dma(nandc, reg_off, data_buf, data_size2, 0);
+-		reg_off += data_size2;
+-		data_buf += data_size2;
+-
+-		read_data_dma(nandc, reg_off, oob_buf, oob_size2, 0);
+-		oob_buf += oob_size2;
+-	}
+-
+-	ret = submit_descs(nandc);
+-	if (ret)
+-		dev_err(nandc->dev, "failure to read raw page\n");
+-
+-	free_descs(nandc);
+-
+-	if (!ret)
+-		ret = check_flash_errors(host, ecc->steps);
+-
+-	return 0;
++	return nandc_read_page_raw(mtd, chip, buf, chip->oob_poi, page,
++				   BIT(chip->ecc.steps) - 1);
+ }
+ 
+ /* implements ecc->read_oob() */
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
