@@ -1,67 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752013AbeDDTAm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:00:42 -0400
-Received: from mail-pl0-f47.google.com ([209.85.160.47]:40555 "EHLO
-        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751946AbeDDTAh (ORCPT
+        id S1752276AbeDDTCT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:02:19 -0400
+Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.173]:35798 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751571AbeDDTCR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:00:37 -0400
-X-Google-Smtp-Source: AIpwx4+tjded2WpZeyMounFWwep6RJGJ07GrFlnJGzvJD+F1S3Cxm+tv1uG5OUr4k2EUAcL8c5flWA/QBDLE+45hb4I=
-MIME-Version: 1.0
-In-Reply-To: <CAM_iQpV89LRuJovA840T0pUQYXkZvecezLmg6=Hp0PxfziOxUQ@mail.gmail.com>
-References: <0000000000003584570568da18dd@google.com> <06c79d3f-3f28-7f1e-9431-66c18149c9e6@virtuozzo.com>
- <CACT4Y+Zb4Y1=H8Vtd1d+ULKu-P3ftud=SgFqSAfu9SE6Lu3LMA@mail.gmail.com>
- <0eb5ed24-012a-89c9-bac9-796a0276221a@virtuozzo.com> <CAM_iQpV89LRuJovA840T0pUQYXkZvecezLmg6=Hp0PxfziOxUQ@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 4 Apr 2018 21:00:16 +0200
-Message-ID: <CACT4Y+aRqG8i1WUKAF925aqN9Nrg43YE1AjGzzLC5hZs4ZawDw@mail.gmail.com>
-Subject: Re: possible deadlock in skb_queue_tail
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, Ingo Molnar <mingo@kernel.org>,
-        syzbot <syzbot+6b495100f17ca8554ab9@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        David Windsor <dwindsor@gmail.com>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        Hans Liljestrand <ishkamiel@gmail.com>,
-        Kees Cook <keescook@chromium.org>, LKML <linux-kernel@vger.kernel.org>,
-        Matthew Dawson <matthew@mjdsystems.ca>,
-        Mateusz Jurczyk <mjurczyk@google.com>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>,
-        xemul@virtuozzo.com
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 4 Apr 2018 15:02:17 -0400
+X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WiucxqETr1IQ==
+X-RZG-CLASS-ID: mo00
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH v2 0/5] pcal6524 extensions for pca953x
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <cover.1522868422.git.hns@goldelico.com>
+Date: Wed, 4 Apr 2018 21:02:12 +0200
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Message-Id: <4DCDA9A2-934F-4BAA-AC33-54E3DDA741AD@goldelico.com>
+References: <cover.1522868422.git.hns@goldelico.com>
+To: Kumar Gala <galak@codeaurora.org>, andy.shevchenko@gmail.com,
+        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w34J2Pfo002033
 
-On Wed, Apr 4, 2018 at 7:08 AM, Cong Wang <xiyou.wangcong@gmail.com> wrote:
-> On Tue, Apr 3, 2018 at 4:42 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->> On 03.04.2018 14:25, Dmitry Vyukov wrote:
->>> On Tue, Apr 3, 2018 at 11:50 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>>> sk_diag_dump_icons() dumps only sockets in TCP_LISTEN state.
->>>> TCP_LISTEN state may be assigned in only place in net/unix/af_unix.c:
->>>> it's unix_listen(). The function is applied to stream and seqpacket
->>>> socket types.
->>>>
->>>> It can't be stream because of the second stack, and seqpacket also can't,
->>>> as I don't think it's possible for gcc to inline unix_seqpacket_sendmsg()
->>>> in the way, we don't see it in the stack.
->>>>
->>>> So, this is looks like false positive result for me.
->>>>
->>>> Kirill
->>>
->>> Do you mean that these &(&u->lock)->rlock/1 referenced in 2 stacks are
->>> always different?
->>
->> In these 2 particular stacks they have to be different.
->
-> So actually my patch could fix this false positive? I thought it couldn't.
-> https://patchwork.ozlabs.org/patch/894342/
 
-You know better!
-If you suspect it can fix this report, and nobody has better
-proposals, then we can just mark this as being fixed with your commit
-and then see if it triggers again with your commit or not.
+> Am 04.04.2018 um 21:00 schrieb H. Nikolaus Schaller <hns@goldelico.com>:
+> 
+> V2:
+> * added PCA_PCAL flags if matched through of-table
+> * fix address calculation for extended PCAL6524 registers
+> * hack to map LEVEL_LOW to EDGE_FALLING to be able to
+>  test in combination with ts3a227e driver
+> * improve description of bindings for optional vcc-supply
+>  and interrupt-controller;
+> 
+> 2018-03-10 09:32:53: no initial description
+> 
+> H. Nikolaus Schaller (5):
+>  gpio: pca953x: set the PCA_PCAL flag also when matching by DT
+>  gpio: pca953x: add register definitions for pcal6524 and fix address
+>    calculation
+>  [RFC] gpio: pca953x: hack to map LEVEL irqs to EDGE irqs (may loose
+>    interrupts/hang)
+>  DTS: Bindings: pca953x driver provides an optional vcc-supply property
+>  DTS: Bindings: pca953x: add example how to use interrupt-controller
+>    and gpio-controller
+> 
+> .../devicetree/bindings/gpio/gpio-pca953x.txt      | 34 +++++++++++++++++++++
+> drivers/gpio/gpio-pca953x.c                        | 35 ++++++++++++++++++----
+> 2 files changed, 64 insertions(+), 5 deletions(-)
+> 
+> -- 
+> 2.12.2
+> 
