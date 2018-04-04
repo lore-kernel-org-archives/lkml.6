@@ -1,49 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752202AbeDDUcz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 16:32:55 -0400
-Received: from mail-ua0-f173.google.com ([209.85.217.173]:42168 "EHLO
-        mail-ua0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751749AbeDDUcx (ORCPT
+        id S1752393AbeDDUdG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 16:33:06 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60396 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752224AbeDDUdD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:32:53 -0400
-X-Google-Smtp-Source: AIpwx485Zlj9Phy9+DB5ejEopNheSWvgYoC7SJwdsh3FhbJF9WaTQUI/6B+38l6TxBZOpFN2FGTv1oIf7AGBGGiFDnA=
-MIME-Version: 1.0
-In-Reply-To: <10360653.ov98egbaqx@natalenko.name>
-References: <10360653.ov98egbaqx@natalenko.name>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 4 Apr 2018 13:32:52 -0700
-X-Google-Sender-Auth: ddaBpVq6dP0Rdt22gqC8RmhieEY
-Message-ID: <CAGXu5jLTSd4wx6hxj6FCJ4O2PkqFyRw6nwu=0Y1NpoaRZKefWw@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 4 Apr 2018 16:33:03 -0400
+From: Maran Wilson <maran.wilson@oracle.com>
+To: x86@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
+        jgross@suse.com
+Cc: boris.ostrovsky@oracle.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, roger.pau@citrix.com, rkrcmar@redhat.com,
+        maran.wilson@oracle.com
+Subject: [PATCH v6 3/7] xen/pvh: Create a new file for Xen specific PVH code
+Date: Wed,  4 Apr 2018 13:32:40 -0700
+Message-Id: <1522873962-18156-1-git-send-email-maran.wilson@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1522873659-17572-1-git-send-email-maran.wilson@oracle.com>
+References: <1522873659-17572-1-git-send-email-maran.wilson@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8853 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804040198
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 12:07 PM, Oleksandr Natalenko
-<oleksandr@natalenko.name> wrote:
-> [  261.262135] Bad or missing usercopy whitelist? Kernel memory exposure
-> attempt detected from SLUB object 'scsi_sense_cache' (offset 94, size 22)!
-> I can easily reproduce it with a qemu VM and 2 virtual SCSI disks by calling
-> smartctl in a loop and doing some usual background I/O. The warning is
-> triggered within 3 minutes or so (not instantly).
+We need to refactor PVH entry code so that support for other hypervisors
+like Qemu/KVM can be added more easily.
 
-Also:
+The first step in that direction is to create a new file that will
+eventually hold the Xen specific routines.
 
-Can you send me your .config? What SCSI drivers are you using in the
-VM and on the real server?
+Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
+---
+ arch/x86/platform/pvh/enlighten.c |  5 ++---
+ arch/x86/xen/Makefile             |  1 +
+ arch/x86/xen/enlighten_pvh.c      | 10 ++++++++++
+ 3 files changed, 13 insertions(+), 3 deletions(-)
+ create mode 100644 arch/x86/xen/enlighten_pvh.c
 
-Are you able to see what ioctl()s smartctl is issuing? I'll try to
-reproduce this on my end...
-
--Kees
-
+diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
+index aa1c6a6831a9..74ff1c3d2789 100644
+--- a/arch/x86/platform/pvh/enlighten.c
++++ b/arch/x86/platform/pvh/enlighten.c
+@@ -17,10 +17,9 @@
+ /*
+  * PVH variables.
+  *
+- * xen_pvh pvh_bootparams and pvh_start_info need to live in data segment
+- * since they are used after startup_{32|64}, which clear .bss, are invoked.
++ * pvh_bootparams and pvh_start_info need to live in the data segment since
++ * they are used after startup_{32|64}, which clear .bss, are invoked.
+  */
+-bool xen_pvh __attribute__((section(".data"))) = 0;
+ struct boot_params pvh_bootparams __attribute__((section(".data")));
+ struct hvm_start_info pvh_start_info __attribute__((section(".data")));
+ 
+diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
+index f1b850607212..ae5c6f1f0fe0 100644
+--- a/arch/x86/xen/Makefile
++++ b/arch/x86/xen/Makefile
+@@ -20,6 +20,7 @@ obj-y		:= enlighten.o multicalls.o mmu.o irq.o \
+ obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o mmu_hvm.o suspend_hvm.o
+ obj-$(CONFIG_XEN_PV)			+= setup.o apic.o pmu.o suspend_pv.o \
+ 						p2m.o enlighten_pv.o mmu_pv.o
++obj-$(CONFIG_XEN_PVH)			+= enlighten_pvh.o
+ 
+ obj-$(CONFIG_EVENT_TRACING) += trace.o
+ 
+diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
+new file mode 100644
+index 000000000000..c5409c1f259f
+--- /dev/null
++++ b/arch/x86/xen/enlighten_pvh.c
+@@ -0,0 +1,10 @@
++#include <linux/types.h>
++
++/*
++ * PVH variables.
++ *
++ * The variable xen_pvh needs to live in the data segment since it is used
++ * after startup_{32|64} is invoked, which will clear the .bss segment.
++ */
++bool xen_pvh __attribute__((section(".data"))) = 0;
++
 -- 
-Kees Cook
-Pixel Security
+2.16.1
