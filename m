@@ -1,167 +1,138 @@
-Return-Path: <Matt.Redfearn@mips.com>
-X-Google-Smtp-Source: AIpwx48Jgl6oZi4MUFu43DHGdNM8y+/VQgKVgJ2QAHNXCvOsqUk2mqgzREO1cSXxJRVESs5laYIU
-ARC-Seal: i=1; a=rsa-sha256; t=1524219842; cv=none;
-        d=google.com; s=arc-20160816;
-        b=MZhR4zpKISNyhujrmH0xrQ25ZJPMsFRkMH3JbIHSWhC2FSFGHskxgc95nJYY45tbS3
-         H8jQyIh46dwhkW6NNzNxa9SXYkshuGu14A6Hcbo+WVpEQVhzwpiDJDhJo9sVPmAMEcqD
-         /9u0K+qFm0fV+0KivO1pm6B2YOoPLIoupucYYVOMYtF8XQIsc+ujz7mcRTaBq0uLLTEC
-         LzZvnWTrI14K8hXc8ZP8OMYeKLWpz9gvhVtI6mAozkAdGBcjlCdPFPEg64i8KfADYrAP
-         M5f23hW5b2OHfqadWDoUnoTxk3J4N2nTKluxrAq2kgjhRbslupE3G0rChImI9d9hJoMX
-         yUTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:arc-authentication-results;
-        bh=GS34jFl7smnN+NjtFQB7dALQDBQBaP0C1q1pWmTANdc=;
-        b=DyZdBCIP+2YTtgHUnF6pbVXn0k9xURflgC3r/ZZrwMYqgDS7Vol5akit7f6qjFsjrK
-         u9kRkxksbHeDmzaB18sTdIpB4d7W3m2gmR5XbAEaQGdxHdiSol5jG+2Z6/L//vPIDbq+
-         BznIdVCz2JWcRQYMEm0MMNOR22yE3Prr66klTdl7VG6YZ55ezPlfBYwhDlGBYVdWHSSF
-         N9Ttlg1A+Qz+WidY4wGtn9Oi4MBEemDMPTamdPpr8MbXF0lgRtaVURvDn2s4RZoIQNFR
-         9RKgUXFlaL5QlnWIL7eSZ4j36DnDFKDXibVGW9wkBF2Qt+S64dI3dD9SYmmLWsotUTmJ
-         yg2g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of matt.redfearn@mips.com designates 64.235.154.211 as permitted sender) smtp.mailfrom=Matt.Redfearn@mips.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of matt.redfearn@mips.com designates 64.235.154.211 as permitted sender) smtp.mailfrom=Matt.Redfearn@mips.com
-From: Matt Redfearn <matt.redfearn@mips.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
-	Florian Fainelli <f.fainelli@gmail.com>
-CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
-	Huacai Chen <chenhc@lemote.com>, <linux-kernel@vger.kernel.org>, Paul Burton
-	<paul.burton@mips.com>, Kate Stewart <kstewart@linuxfoundation.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Maciej W. Rozycki"
-	<macro@mips.com>
-Subject: [PATCH v3 1/7] MIPS: Probe for MIPS MT perf counters per TC
-Date: Fri, 20 Apr 2018 11:23:03 +0100
-Message-ID: <1524219789-31241-2-git-send-email-matt.redfearn@mips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524219789-31241-1-git-send-email-matt.redfearn@mips.com>
-References: <1524219789-31241-1-git-send-email-matt.redfearn@mips.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2960132-1522805464-2-3586363181982756993
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522805463; b=TFUhaU5OI9IvY28Fzzu5SMNWplvZUqTN2LX9MUsu9Y4sWMV7RZ
+    BVwSMYv9KWuOdXzRSfH3nDkuZ4vWe7q8DA92yxDnq8Cv/nCImnEZPh52W8YzNoy0
+    txxUNENPueU62UOv8u9bqvaWrDZm/wZ9XJV+v+buJ/vOuITnyavyv89pA5MEyWUW
+    MErEe42j+9MvoamKTD+QI0GU2JwY0PnfMqpQGlHtmcg9W4/VL9ZeRnXLgQpnAd34
+    9Bx41L4k4A8h57ItjBiTjm1Z5Ilsh4A/ktapC52l1jR1KJri2YgsuOydnmrx+yJz
+    jTKsnxiElrvz8wmhGkWJyFS2rzavSEr6QK4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1522805463; bh=Wxvpk
+    MCKstm4aA1GaGh0tWC+zNiiVDDuFkDsbzfVFiA=; b=f9MgpwYbhYAPV1zRMyYqR
+    RGbW7mm3jW/7dlG1IcxPnDL/vQwSVdD8GHw6RZkd2Y4NIgquvywTnkWdVjYXs63Y
+    845bYpRycgv73K8b+MpH+zxBF4WeqIvwgCjraYKraNFOsIGt5iuMggNBYXQ9B1Nm
+    Z5GDH4aNdWl2gQecBcgxCLs5BpLxhOrYFL6+iRrrjFC/veV489xyVsX+fiOrPMF9
+    jZjU1IH5qcOrlBDJFrIMDfs82Kp1ztDt3C/i6V2WxZP8iEcpYrbckSLigRAjq//7
+    82bcKPTXsPRBT0R9neYfb/4cEIZUfUXnmLFIcipqD3Rlrbh8ec+ChjMzaSWDcYWb
+    g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ewXol+if x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ciuTuj+5;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ewXol+if x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ciuTuj+5;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfAdJXFK59MQpRHMros8OD7GNifXi6lHH5uuylv8lHjV/oVb5ry4YHsGwSIQzFIbBebysKzuieaRgldeWKtI9G0gnu9nAPwFCKngm3EMRnZsvnxvrl4sx
+    wk5qFwATG+T56d3RKwRGRs6n/FVbwb+M8I207pgH7B4A+o8Py7ACmZ4e7kWqfCfXrwzS2naprXCqbhVQadDLiXA4Fvz+gLnY/yIuIFFKfwW5/cS1xoMF7L/e
+    zCbHsLIynLMy71Z09xNeOA==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=hYmUjySZVVQA:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=ebSz1K5H0lkh_LnaBu0A:9
+    a=9EuuYhcozYrM_K_i:21 a=PIGTtmBwfBpZAOCA:21 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx4+RG8yXGXdxnwAUKOIx69CO2h/8WzzNzA9Zum5G/MGHNDbwq7nS1cbkShPBTJHKPqYUX9Ywrg==
+Date: Tue, 3 Apr 2018 22:30:50 -0300
+From: Jefferson Capovilla <jefcap@gmail.com>
+To: gregkh@linuxfoundation.org
+Subject: [PATCH] staging: mt7621-eth: fix line over 80 char issue in
+ mtk_set_link_ksettings()
+Message-ID: <20180404013050.GA31356@jefcap-VirtualBox>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.155.41]
-X-BESS-ID: 1524219830-321459-15390-33906-1
-X-BESS-VER: 2018.5-r1804181636
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192193
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, , linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598260345146824674?=
-X-GMAIL-MSGID: =?utf-8?q?1598260345146824674?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Processors implementing the MIPS MT ASE may have performance counters
-implemented per core or per TC. Processors implemented by MIPS
-Technologies signify presence per TC through a bit in the implementation
-specific Config7 register. Currently the code which probes for their
-presence blindly reads a magic number corresponding to this bit, despite
-it potentially having a different meaning in the CPU implementation.
+Fix 'line over 80 characters' issue found by checkpatch.pl script in
+mtk_set_link_ksettings().
 
-Since CPU features are generally detected by cpu-probe.c, perform the
-detection here instead. Introduce cpu_set_mt_per_tc_perf which checks
-the bit in config7 and call it from MIPS CPUs known to implement this
-bit and the MT ASE, specifically, the 34K, 1004K and interAptiv.
-
-Once the presence of the per-tc counter is indicated in cpu_data, tests
-for it can be updated to use this flag.
-
-Suggested-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-
+Signed-off-by: Jefferson Capovilla <jefcap@gmail.com>
 ---
+ drivers/staging/mt7621-eth/ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes in v3:
-New patch to detect feature presence in cpu-probe.c
-
-Changes in v2: None
-
- arch/mips/include/asm/cpu.h      |  2 ++
- arch/mips/include/asm/mipsregs.h |  5 +++++
- arch/mips/kernel/cpu-probe.c     | 12 ++++++++++++
- 3 files changed, 19 insertions(+)
-
-diff --git a/arch/mips/include/asm/cpu.h b/arch/mips/include/asm/cpu.h
-index d39324c4adf1..5b9d02ef4f60 100644
---- a/arch/mips/include/asm/cpu.h
-+++ b/arch/mips/include/asm/cpu.h
-@@ -418,6 +418,8 @@ enum cpu_type_enum {
- 				MBIT_ULL(54)	/* CPU shares FTLB RAM with another */
- #define MIPS_CPU_SHARED_FTLB_ENTRIES \
- 				MBIT_ULL(55)	/* CPU shares FTLB entries with another */
-+#define MIPS_CPU_MT_PER_TC_PERF_COUNTERS \
-+				MBIT_ULL(56)	/* CPU has perf counters implemented per TC (MIPSMT ASE) */
+diff --git a/drivers/staging/mt7621-eth/ethtool.c b/drivers/staging/mt7621-eth/ethtool.c
+index 38ba0c0..e9f4092 100644
+--- a/drivers/staging/mt7621-eth/ethtool.c
++++ b/drivers/staging/mt7621-eth/ethtool.c
+@@ -52,7 +52,8 @@ static int mtk_set_link_ksettings(struct net_device *dev,
+ 			mac->phy_dev = mac->hw->phy->phy[cmd->base.phy_address];
+ 			mac->phy_flags = MTK_PHY_FLAG_PORT;
+ 		} else if (mac->hw->mii_bus) {
+-			mac->phy_dev = mdiobus_get_phy(mac->hw->mii_bus, cmd->base.phy_address);
++			mac->phy_dev = mdiobus_get_phy(mac->hw->mii_bus,
++						       cmd->base.phy_address);
+ 			if (!mac->phy_dev)
+ 				return -ENODEV;
+ 			mac->phy_flags = MTK_PHY_FLAG_ATTACH;
+@@ -62,7 +63,6 @@ static int mtk_set_link_ksettings(struct net_device *dev,
+ 	}
  
- /*
-  * CPU ASE encodings
-diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
-index 858752dac337..a4baaaa02bc8 100644
---- a/arch/mips/include/asm/mipsregs.h
-+++ b/arch/mips/include/asm/mipsregs.h
-@@ -684,6 +684,11 @@
- #define MIPS_CONF7_IAR		(_ULCAST_(1) << 10)
- #define MIPS_CONF7_AR		(_ULCAST_(1) << 16)
+ 	return phy_ethtool_ksettings_set(mac->phy_dev, cmd);
+-
+ }
  
-+/* Config7 Bits specific to MIPS Technologies. */
-+
-+/* Performance counters implemented Per TC */
-+#define MTI_CONF7_PTC		(_ULCAST_(1) << 19)
-+
- /* WatchLo* register definitions */
- #define MIPS_WATCHLO_IRW	(_ULCAST_(0x7) << 0)
- 
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index cf3fd549e16d..1241c2a23d90 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -414,6 +414,14 @@ static int __init ftlb_disable(char *s)
- 
- __setup("noftlb", ftlb_disable);
- 
-+/*
-+ * Check if the CPU has per tc perf counters
-+ */
-+static inline void cpu_set_mt_per_tc_perf(struct cpuinfo_mips *c)
-+{
-+	if (read_c0_config7() & MTI_CONF7_PTC)
-+		c->options |= MIPS_CPU_MT_PER_TC_PERF_COUNTERS;
-+}
- 
- static inline void check_errata(void)
- {
-@@ -1569,6 +1577,7 @@ static inline void cpu_probe_mips(struct cpuinfo_mips *c, unsigned int cpu)
- 		c->cputype = CPU_34K;
- 		c->writecombine = _CACHE_UNCACHED;
- 		__cpu_name[cpu] = "MIPS 34Kc";
-+		cpu_set_mt_per_tc_perf(c);
- 		break;
- 	case PRID_IMP_74K:
- 		c->cputype = CPU_74K;
-@@ -1589,6 +1598,7 @@ static inline void cpu_probe_mips(struct cpuinfo_mips *c, unsigned int cpu)
- 		c->cputype = CPU_1004K;
- 		c->writecombine = _CACHE_UNCACHED;
- 		__cpu_name[cpu] = "MIPS 1004Kc";
-+		cpu_set_mt_per_tc_perf(c);
- 		break;
- 	case PRID_IMP_1074K:
- 		c->cputype = CPU_1074K;
-@@ -1598,10 +1608,12 @@ static inline void cpu_probe_mips(struct cpuinfo_mips *c, unsigned int cpu)
- 	case PRID_IMP_INTERAPTIV_UP:
- 		c->cputype = CPU_INTERAPTIV;
- 		__cpu_name[cpu] = "MIPS interAptiv";
-+		cpu_set_mt_per_tc_perf(c);
- 		break;
- 	case PRID_IMP_INTERAPTIV_MP:
- 		c->cputype = CPU_INTERAPTIV;
- 		__cpu_name[cpu] = "MIPS interAptiv (multi)";
-+		cpu_set_mt_per_tc_perf(c);
- 		break;
- 	case PRID_IMP_PROAPTIV_UP:
- 		c->cputype = CPU_PROAPTIV;
+ static void mtk_get_drvinfo(struct net_device *dev,
 -- 
 2.7.4
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
