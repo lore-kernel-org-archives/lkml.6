@@ -1,210 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751906AbeDDJGh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:06:37 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:38551 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751404AbeDDJGe (ORCPT
+        id S1751722AbeDDJHJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:07:09 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:45350 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751251AbeDDJHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:06:34 -0400
-X-Google-Smtp-Source: AIpwx4/p2iB+EXRwlecWw0xkq7NTbq/n0yU8wxocQgXmXOE9TFGG6Ra0Mpuc7+mfmZEzgunTz7fAQ8Rl/RD788MRm00=
+        Wed, 4 Apr 2018 05:07:08 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Peter Rosin <peda@axentia.se>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Rob Herring <robh+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 0/5] allow override of bus format in bridges
+Date: Wed, 04 Apr 2018 12:07:15 +0300
+Message-ID: <1563250.XEJxFDuW0h@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAKMK7uH-=BqU+vuePTq4joY3XS2ypvtSKYvpv1LLyovPpSXv6A@mail.gmail.com>
+References: <20180326212447.7380-1-peda@axentia.se> <2233231.my6BbD3pcT@avalon> <CAKMK7uH-=BqU+vuePTq4joY3XS2ypvtSKYvpv1LLyovPpSXv6A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFqH_53j2CwxmLwvaK8mrroEtKz7ZBEmRdr3Db6-dunWyqYw8A@mail.gmail.com>
-References: <20180320122751.14019-1-enric.balletbo@collabora.com>
- <20180320122751.14019-6-enric.balletbo@collabora.com> <20180328110330.y4pq5mhm73jfq6j6@dell>
- <CAFqH_53j2CwxmLwvaK8mrroEtKz7ZBEmRdr3Db6-dunWyqYw8A@mail.gmail.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Wed, 4 Apr 2018 11:06:33 +0200
-Message-ID: <CAFqH_50f-NZCd8up8U1djMBO-8znxGK7rcEuWh6ahyvypF8D+A@mail.gmail.com>
-Subject: Re: [PATCH v4 5/8] mfd: cros_ec_dev: Register cros_ec_accel_legacy
- driver as a subdevice.
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>, kernel@collabora.com,
-        Gwendal Grignou <gwendal@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3496gSL002886
 
-Hi again,
+Hi Daniel,
 
-2018-04-04 10:03 GMT+02:00 Enric Balletbo Serra <eballetbo@gmail.com>:
-> Hi Lee,
->
-> 2018-03-28 13:03 GMT+02:00 Lee Jones <lee.jones@linaro.org>:
->> On Tue, 20 Mar 2018, Enric Balletbo i Serra wrote:
->>
->>> With this patch, the cros_ec_ctl driver will register the legacy
->>> accelerometer driver (named cros_ec_accel_legacy) if it fails to
->>> register sensors through the usual path cros_ec_sensors_register().
->>> This legacy device is present on Chromebook devices with older EC
->>> firmware only supporting deprecated EC commands (Glimmer based devices).
->>>
->>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
->>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
->>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->>> ---
->>>
->>> Changes in v4:
->>> - [5/8] Nit: EC -> ECs (Lee Jones)
->>> - [5/8] Statically define cros_ec_accel_legacy_cells (Lee Jones)
->>>
->>> Changes in v3:
->>> - [5/8] Add the Reviewed-by Andy Shevchenko.
->>>
->>> Changes in v2:
->>> - [5/8] Add the Reviewed-by Gwendal.
->>>
->>>  drivers/mfd/cros_ec_dev.c | 70 +++++++++++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 70 insertions(+)
->>>
->>> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
->>> index f60a53f11942..0d541d59d6f5 100644
->>> --- a/drivers/mfd/cros_ec_dev.c
->>> +++ b/drivers/mfd/cros_ec_dev.c
->>> @@ -389,6 +389,73 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
->>>       kfree(msg);
->>>  }
->>>
->>> +static struct cros_ec_sensor_platform sensor_platforms[] = {
->>> +     {
->>> +             .sensor_num = 0,
->>> +     },
->>> +     {
->>> +             .sensor_num = 1,
->>> +     }
->>> +};
->>
->> Also no need to be so many  lines.
->>
->> Each one of these entries can be placed on a single line.
->>
->> And there's no need for a comma if there is nothing to separate.
->>
->>         { .sensor_num = 0 },
->>         { .sensor_num = 1 }
->>
->> Also, this seems like a pretty pointless struct.
->>
->> What is the sensor_num property used for?
->>
->> Why does it care what sensor number it is?
->>
->
-> I thought that was used but after look again I didn't see where, so
-> seems that you have reason and this struct is pointless. I'll remove
-> this and the .id in the cells, we can always send a patch later
-> introducing this if I am missing something. I'll send another version.
->
+On Wednesday, 4 April 2018 09:34:41 EEST Daniel Vetter wrote:
+> On Wed, Apr 4, 2018 at 12:28 AM, Laurent Pinchart wrote:
+> > On Wednesday, 28 March 2018 10:08:26 EEST Daniel Vetter wrote:
+> >> On Mon, Mar 26, 2018 at 11:24:42PM +0200, Peter Rosin wrote:
+> >>> Hi!
+> >>> 
+> >>> [I got to v2 sooner than expected]
+> >>> 
+> >>> I have an Atmel sama5d31 hooked up to an lvds encoder and then
+> >>> on to an lvds panel. Which seems like something that has been
+> >>> done one or two times before...
+> >>> 
+> >>> The problem is that the bus_format of the SoC and the panel do
+> >>> not agree. The SoC driver (atmel-hlcdc) can handle the
+> >>> rgb444, rgb565, rgb666 and rgb888 bus formats. The hardware is
+> >>> wired for the rgb565 case. The lvds encoder supports rgb888 on
+> >>> its input side with the LSB wires for each color simply pulled
+> >>> down internally in the encoder in my case which means that the
+> >>> rgb565 bus_format is the format that works best. And the panel
+> >>> is expecting lvds (vesa-24), which is what the encoder outputs.
+> >>> 
+> >>> The reason I "blame" the bus_format of the drm_connector is that
+> >>> with the below DT snippet, things do not work *exactly* due to
+> >>> that. At least, it starts to work if I hack the panel-lvds driver
+> >>> to report the rgb565 bus_format instead of vesa-24.
+> >>> 
+> >>>     panel: panel {
+> >>>             compatible = "panel-lvds";
+> >>>             
+> >>>             width-mm = <304>;
+> >>>             height-mm = <228;
+> >>>             
+> >>>             data-mapping = "vesa-24";
+> >>>             
+> >>>             panel-timing {
+> >>>                     // 1024x768 @ 60Hz (typical)
+> >>>                     clock-frequency = <52140000 65000000 71100000>;
+> >>>                     hactive = <1024>;
+> >>>                     vactive = <768>;
+> >>>                     hfront-porch = <48 88 88>;
+> >>>                     hback-porch = <96 168 168>;
+> >>>                     hsync-len = <32 64 64>;
+> >>>                     vfront-porch = <8 13 14>;
+> >>>                     vback-porch = <8 13 14>;
+> >>>                     vsync-len = <8 12 14>;
+> >>>             };
+> >>>             
+> >>>             port {
+> >>>                     panel_input: endpoint {
+> >>>                             remote-endpoint = <&lvds_encoder_output>;
+> >>>                     };
+> >>>             };
+> >>>     };
+> >>>     
+> >>>     lvds-encoder {
+> >>>             compatible = "ti,ds90c185", "lvds-encoder";
+> >>>             
+> >>>             ports {
+> >>>                     #address-cells = <1>;
+> >>>                     #size-cells = <0>;
+> >>>                     
+> >>>                     port@0 {
+> >>>                             reg = <0>;
+> >>>                             
+> >>>                             lvds_encoder_input: endpoint {
+> >>>                                     remote-endpoint = <&hlcdc_output>;
+> >>>                             };
+> >>>                     };
+> >>>                     
+> >>>                     port@1 {
+> >>>                             reg = <1>;
+> >>>                             
+> >>>                             lvds_encoder_output: endpoint {
+> >>>                                     remote-endpoint = <&panel_input>;
+> >>>                             };
+> >>>                     };
+> >>>             };
+> >>>     };
+> >>> 
+> >>> But, instead of perverting the panel-lvds driver with support
+> >>> for a totally fake non-lvds bus_format, I intruduce an API that allows
+> >>> display controller drivers to query the required bus_format of any
+> >>> intermediate bridges, and match up with that instead of the formats
+> >>> given by the drm_connector. I trigger this with this addition to the
+> >>> 
+> >>> lvds-encoder DT node:
+> >>>             interface-pix-fmt = "rgb565";
+> >>> 
+> >>> Naming is hard though, so I'm not sure if that's good?
+> >>> 
+> >>> I threw in the first patch, since that is the actual lvds encoder
+> >>> I have in this case.
+> >>> 
+> >>> Suggestions welcome.
+> >> 
+> >> Took a quick look, feels rather un-atomic. And there's beend discussing
+> >> for other bridge related state that we might want to track (like the full
+> >> adjusted_mode that might need to be adjusted at each stage in the chain).
+> >> So here's my suggestions:
+> >> 
+> >> - Add an optional per-bridge internal state struct using the support in
+> >>   https://dri.freedesktop.org/docs/drm/gpu/drm-kms.html#handling-driver-> >>   private-state
+> >> 
+> >>   Yes it says "driver private", but since bridge is just helper stuff
+> >>   that's all included. "driver private" == "not exposed as uapi" here.
+> >>   Include all the usual convenience wrappers to get at the state for a
+> >>   bridge.
+> >> 
+> >> - Then stuff your bus_format into that new drm_bridge_state struct.
+> >> 
+> >> - Add a new bridge callback atomic_check, which gets that bridge state as
+> >>   parameter (similar to all the other atomic_check functions).
+> >> 
+> >> This way we can even handle the bus_format dynamically, through the
+> >> atomic framework your bridge's atomic_check callback can look at the
+> >> entire atomic state (both up and down the chain if needed), it all neatly
+> >> fits into atomic overall and it's much easier to extend.
+> > 
+> > While I think we'll eventually need bridge states, I don't think that's
+> > need yet. The bus formats reported by this patch series are static. We're
+> > not talking about the currently configured format for a bridge, but about
+> > the list of supported formats. This is similar to the bus_formats field
+> > present in the drm_display_info structure. There is thus in my opinion no
+> > need to interface this with atomic until we need to track the current
+> > format (and I think that will indeed happen at some point, but I don't
+> > think Peter needs this feature for now). That's why I've told Peter that
+> > I would like a bridge API to report the information and haven't requested
+> > a state-based implementation.
+> 
+> If it's static, why a dynamic callback? Just add it to struct
+> drm_bridge, require it's filled out before registering the bridge,
+> done.
 
-Ok, forget what I said.
+If I remember correctly I mentioned both options in my initial proposal, 
+without a personal preference. A new field in struct drm_bridge would 
+certainly work for me.
 
-Actually, sensor_num is used by the cros_ec_legacy driver to get the
-right sensor properties from the EC and to get the sensor data from
-the EC, sensor_num is the offset passed to the EC read command.
+> >> Please also cc Laurent Pinchart on this.
+> >> 
+> >>> Changes since v1 https://lkml.org/lkml/2018/3/17/221
+> >>> - Add a proper bridge API to query the bus_format instead of abusing
+> >>>   the ->get_modes part of the code. This is cleaner but requires
+> >>>   changes to all display controller drivers wishing to participate.
+> >>> - Add patch to adjust the atmel-hlcdc driver according to the above.
+> >>> - Hook the new info into the bridge local to the lvds-encoder instead
+> >>>   of messing about with new interfaces for the panel-bridge driver.
+> >>> - Add patch with a DT parsing function of bus_formats in a central
+> >>>   place.
+> >>> - Rephrase the addition of ti,ds90c185 to the lvds-transmitter binding.
+> >>> 
+> >>> Peter Rosin (5):
+> >>>   dt-bindings: display: bridge: lvds-transmitter: add ti,ds90c185
+> >>>   drm: bridge: add API to query the expected input formats of bridges
+> >>>   drm: of: add display bus-format parser
+> >>>   drm: bridge: lvds-encoder: allow specifying the input bus format
+> >>>   drm/atmel-hlcdc: take bridges into account when selecting output
+> >>>     format
+> >>>  
+> >>>  .../bindings/display/bridge/lvds-transmitter.txt   | 14 ++++-
+> >>>  .../devicetree/bindings/display/bus-format.txt     | 35 +++++++++++++
+> >>>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c     | 49 +++++++++++++--
+> >>>  drivers/gpu/drm/bridge/lvds-encoder.c              | 25 +++++++++
+> >>>  drivers/gpu/drm/drm_bridge.c                       | 32 ++++++++++++
+> >>>  drivers/gpu/drm/drm_of.c                           | 59 +++++++++++++++
+> >>>  include/drm/drm_bridge.h                           | 18 +++++++
+> >>>  include/drm/drm_of.h                               |  9 ++++
+> >>>  8 files changed, 237 insertions(+), 4 deletions(-)
+> >>>  create mode 100644
+> >>>  Documentation/devicetree/bindings/display/bus-format.txt
 
-.id is not used but as there are two accelerometers that use the same
-driver, shouldn't we set the id (or I am missing something)?
+-- 
+Regards,
 
-+static const struct mfd_cell cros_ec_accel_legacy_cells[] = {
-+     { .name = "cros-ec-accel-legacy", .id = 0 },
-+     { .name = "cros-ec-accel-legacy", .id = 1 },
-+ };
-
-???
-
-Thanks,
-  Enric
-
-> Thanks,
->   Enric
->
->>> +static const struct mfd_cell cros_ec_accel_legacy_cells[] = {
->>> +     {
->>> +             .name = "cros-ec-accel-legacy",
->>> +             .id = 0,
->>
->> What are you using this for?
->>
->>> +             .platform_data = &sensor_platforms[0],
->>> +             .pdata_size = sizeof(struct cros_ec_sensor_platform),
->>> +     },
->>> +     {
->>> +             .name = "cros-ec-accel-legacy",
->>> +             .id = 1,
->>
->> And this?
->>
->>> +             .platform_data = &sensor_platforms[1],
->>> +             .pdata_size = sizeof(struct cros_ec_sensor_platform),
->>> +     }
->>> +};
->>> +
->>> +static void cros_ec_accel_legacy_register(struct cros_ec_dev *ec)
->>> +{
->>> +     struct cros_ec_device *ec_dev = ec->ec_dev;
->>> +     u8 status;
->>> +     int ret;
->>> +
->>> +     /*
->>> +      * ECs that need legacy support are the main EC, directly connected to
->>> +      * the AP.
->>> +      */
->>> +     if (ec->cmd_offset != 0)
->>> +             return;
->>> +
->>> +     /*
->>> +      * Check if EC supports direct memory reads and if EC has
->>> +      * accelerometers.
->>> +      */
->>> +     if (!ec_dev->cmd_readmem)
->>> +             return;
->>> +
->>> +     ret = ec_dev->cmd_readmem(ec_dev, EC_MEMMAP_ACC_STATUS, 1, &status);
->>> +     if (ret < 0) {
->>> +             dev_warn(ec->dev, "EC does not support direct reads.\n");
->>> +             return;
->>> +     }
->>> +
->>> +     /* Check if EC has accelerometers. */
->>> +     if (!(status & EC_MEMMAP_ACC_STATUS_PRESENCE_BIT)) {
->>> +             dev_info(ec->dev, "EC does not have accelerometers.\n");
->>> +             return;
->>> +     }
->>> +
->>> +     /*
->>> +      * Register 2 accelerometers
->>> +      */
->>> +     ret = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
->>> +                           cros_ec_accel_legacy_cells,
->>> +                           ARRAY_SIZE(cros_ec_accel_legacy_cells),
->>> +                           NULL, 0, NULL);
->>> +     if (ret)
->>> +             dev_err(ec_dev->dev, "failed to add EC sensors\n");
->>> +}
->>> +
->>>  static const struct mfd_cell cros_ec_rtc_cells[] = {
->>>       {
->>>               .name = "cros-ec-rtc",
->>> @@ -442,6 +509,9 @@ static int ec_device_probe(struct platform_device *pdev)
->>>       /* check whether this EC is a sensor hub. */
->>>       if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
->>>               cros_ec_sensors_register(ec);
->>> +     else
->>> +             /* Workaroud for older EC firmware */
->>> +             cros_ec_accel_legacy_register(ec);
->>>
->>>       /* Check whether this EC instance has RTC host command support */
->>>       if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
->>
->> --
->> Lee Jones [李琼斯]
->> Linaro Services Technical Lead
->> Linaro.org │ Open source software for ARM SoCs
->> Follow Linaro: Facebook | Twitter | Blog
+Laurent Pinchart
