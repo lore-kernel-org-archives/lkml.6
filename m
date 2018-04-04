@@ -1,88 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751270AbeDDNK3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:10:29 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35148 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750842AbeDDNK1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:10:27 -0400
-X-Google-Smtp-Source: AIpwx49jlMMiq41zVjIFBYMkeWcNg5mSaV6+pNmtWPu132G3lgGDA1DTCtK+fIss/maaEn3qtuVUkXYUTBg2wYCvEII=
+        id S1751275AbeDDNNG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:13:06 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50903 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751195AbeDDNND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:13:03 -0400
+Date: Wed, 4 Apr 2018 15:12:39 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/4] mfd: add Gateworks System Controller core driver
+Message-ID: <20180404131239.GD20869@lunn.ch>
+References: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
+ <1522250043-8065-3-git-send-email-tharvey@gateworks.com>
+ <CAJ+vNU3-gaTcMAzo5wB6oSfE-JQC3NBVRJS5zFMTE-nVpD4F5g@mail.gmail.com>
+ <20180403164715.GA5676@lunn.ch>
+ <CAJ+vNU31f+iY5LOG6QmdJetb=pPvY_gpKoS+49FSy70U1Ksd8g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180404125345.4008862-1-arnd@arndb.de>
-References: <20180404125345.4008862-1-arnd@arndb.de>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Wed, 4 Apr 2018 15:10:26 +0200
-Message-ID: <CAOi1vP8KMoSKuw87wBJkAe5ke8Vb0jQ4qeizdX5jrfaChxNCCg@mail.gmail.com>
-Subject: Re: [PATCH] [v2] rbd: avoid Wreturn-type warnings
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Jason Dillaman <dillaman@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJ+vNU31f+iY5LOG6QmdJetb=pPvY_gpKoS+49FSy70U1Ksd8g@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 2:53 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> A new set of warnings appeared in next-20180403 in some configurations
-> when gcc cannot see that rbd_assert(0) leads to an unreachable code
-> path:
->
-> drivers/block/rbd.c: In function 'rbd_img_is_write':
-> drivers/block/rbd.c:1397:1: error: control reaches end of non-void function [-Werror=return-type]
-> drivers/block/rbd.c: In function '__rbd_obj_handle_request':
-> drivers/block/rbd.c:2499:1: error: control reaches end of non-void function [-Werror=return-type]
-> drivers/block/rbd.c: In function 'rbd_obj_handle_write':
-> drivers/block/rbd.c:2471:1: error: control reaches end of non-void function [-Werror=return-type]
->
-> As the rbd_assert() here shows has no extra information beyond the verbose
-> BUG(), we can simply use BUG() directly in its place.  This is reliably
-> detected as not returning on any architecture, since it doesn't depend
-> on the unlikely() comparison that confused gcc.
->
-> Fixes: 3da691bf4366 ("rbd: new request handling code")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/block/rbd.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 07dc5419bd63..5f7f4d4b78a8 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -1392,7 +1392,7 @@ static bool rbd_img_is_write(struct rbd_img_request *img_req)
->         case OBJ_OP_DISCARD:
->                 return true;
->         default:
-> -               rbd_assert(0);
-> +               BUG();
->         }
->  }
->
-> @@ -2466,7 +2466,7 @@ static bool rbd_obj_handle_write(struct rbd_obj_request *obj_req)
->                 }
->                 return false;
->         default:
-> -               rbd_assert(0);
-> +               BUG();
->         }
->  }
->
-> @@ -2494,7 +2494,7 @@ static bool __rbd_obj_handle_request(struct rbd_obj_request *obj_req)
->                 }
->                 return false;
->         default:
-> -               rbd_assert(0);
-> +               BUG();
->         }
->  }
->
+> What about the 'reset' functionality? Is there something in the power
+> supply API for hooking in a GPIO based power switch (in my case it
+> would be i2c) as I would think that would be common for ATX supplies?
+> I didn't see anything in Documentation/power.
+> 
+> This is what led me to the restart handler idea. Ultimately when
+> someone issues a 'reboot' I would like it to use the GSC to
+> power-cycle the board.
 
-Applied.
+Hi Tim
 
-Thanks,
+I think you end up with the same problem. By the time you need to turn
+the power supply off, too much of the kernel is shut down to be able
+to use I2C. And if you are in the middle of an Oops, you have no idea
+of the current state. Another I2C transaction could be under way etc.
+All the current reset drivers are pretty much self contained, atomic
+and use KISS hardware like a GPIO.
 
-                Ilya
+Maybe you best bet is to see if you can find any other I2C PMICs which
+the kernel supports.
+
+    Andrew
