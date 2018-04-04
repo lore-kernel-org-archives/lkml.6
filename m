@@ -1,63 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751368AbeDDOhk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:37:40 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:40555 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751244AbeDDOhi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:37:38 -0400
-X-Google-Smtp-Source: AIpwx4/Y9oTfN0L6NlDUjHc8cEJCzqOqE+mlyeVEJyt6q62AZ1v4f63Nz4Mko70BE51NJ8517Bohgw==
-From: Till Smejkal <till.smejkal@googlemail.com>
-X-Google-Original-From: Till Smejkal <till.smejkal@gmail.com>
-Date: Wed, 4 Apr 2018 16:37:35 +0200
-To: Ferenc =?iso-8859-1?Q?W=E1gner?= <wferi@niif.hu>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: What's the priority of the idle task?
-Message-ID: <20180404143735.GA23925@aton>
-Mail-Followup-To: Ferenc =?iso-8859-1?Q?W=E1gner?= <wferi@niif.hu>,
-        linux-kernel@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87muykk2p2.fsf@lant.ki.iif.hu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751466AbeDDOiE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:38:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40856 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751365AbeDDOiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 10:38:02 -0400
+From: Waiman Long <longman@redhat.com>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH] locking/rwsem: Add up_write_non_owner() for percpu_up_write()
+Date: Wed,  4 Apr 2018 10:37:26 -0400
+Message-Id: <1522852646-2196-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 03 Apr 2018, Ferenc Wágner wrote:
-> As explained by several (if somewhat old) articles [2,3,4], the Linux
-> idle task (PID=0, one per CPU) is run when there are no other tasks to
-> run. To get the scheduler do this, the idle task must have the lowest
-> priority reserved for it. That old Documentation/ftrace.txt in the
-> linked LWN article explicitly says that
-> 
-> > The prio "140" is reserved for the idle task which is the lowest
-> > priority thread (pid 0).
-> 
-> This makes sense, but under Linux 4.9
-> 
-> # perf record -e sched:sched_switch sleep 1
-> # perf script
->    sleep  6526 [000] 362661.310842: sched:sched_switch: sleep:6526 [120] S ==> swapper/0:0 [120]
-> 
-> reports a priority of 120 for swapper/0 (in the closing bracket),
-> contradicting the above.
-> 
-> How does the Linux scheduler handle the idle task nowadays? The commits
-> removing the quoted text from ftrace.txt (87d80de28, 294ae4011) didn't
-> help.
+The commit 8c5db92a705d ("locking/rwsem: Add DEBUG_RWSEMS to look for
+lock/unlock mismatches") causes a warning in ext4 fstests due to the
+fact that the freeze and thaw ioctls, by design, are run in different
+processes. This is not a bug in the commit itself. Rather, we need a
+up_write() variant that annotates the fact that it can be called from
+a task different from the one that took the lock.
 
-The idle task has its own scheduling class that only handles the idle threads per CPU
-core. This scheduling class has the lowest priority of the scheduling classes
-available in the kernel. This means that it is the last one in the list of scheduling
-classes that are asked at a task switch whether they have a task to schedule on the
-CPU. Hence, the idle task is not managed by CFS and accordingly doesn't have any nice
-value or priority (or at least it is not important nowadays). Interesting files in
-the kernel source that might contain more information are kernel/sched/idle_task.c,
-kernel/sched/sched.h and kernel/sched/core.c.
+The new API is up_write_non_owner() and the percpu_up_write() function
+is modified to use it instead of the plain up_write().
 
-Regards
-Till
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ include/linux/rwsem.h         |  6 ++++++
+ kernel/locking/percpu-rwsem.c |  4 +++-
+ kernel/locking/rwsem.c        | 13 +++++++++++++
+ 3 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+index 56707d5..0e2a425 100644
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -187,4 +187,10 @@ static inline int rwsem_is_contended(struct rw_semaphore *sem)
+ # define up_read_non_owner(sem)			up_read(sem)
+ #endif
+ 
++#ifdef CONFIG_DEBUG_RWSEMS
++extern void up_write_non_owner(struct rw_semaphore *sem);
++#else
++# define up_write_non_owner(sem)	up_write(sem)
++#endif
++
+ #endif /* _LINUX_RWSEM_H */
+diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
+index 883cf1b..13decf2 100644
+--- a/kernel/locking/percpu-rwsem.c
++++ b/kernel/locking/percpu-rwsem.c
+@@ -179,8 +179,10 @@ void percpu_up_write(struct percpu_rw_semaphore *sem)
+ 
+ 	/*
+ 	 * Release the write lock, this will allow readers back in the game.
++	 * percpu_up_write() may be called from a task different from the one
++	 * taking the lock.
+ 	 */
+-	up_write(&sem->rw_sem);
++	up_write_non_owner(&sem->rw_sem);
+ 
+ 	/*
+ 	 * Once this completes (at least one RCU-sched grace period hence) the
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index 30465a2..140d5ef 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -222,4 +222,17 @@ void up_read_non_owner(struct rw_semaphore *sem)
+ 
+ #endif
+ 
++#ifdef CONFIG_DEBUG_RWSEMS
++/*
++ * release a write lock from a different task
++ */
++void up_write_non_owner(struct rw_semaphore *sem)
++{
++	rwsem_release(&sem->dep_map, 1, _RET_IP_);
++	DEBUG_RWSEMS_WARN_ON(!sem->owner || (sem->owner == RWSEM_READER_OWNED));
+ 
++	rwsem_clear_owner(sem);
++	__up_write(sem);
++}
++EXPORT_SYMBOL(up_write_non_owner);
++#endif
+-- 
+1.8.3.1
