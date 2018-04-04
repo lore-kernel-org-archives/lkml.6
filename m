@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752576AbeDDTUl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:20:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54108 "EHLO mx1.redhat.com"
+        id S1752538AbeDDTUk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:20:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46138 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752257AbeDDTTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:19:33 -0400
+        id S1752268AbeDDTTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:19:35 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Andrea Arcangeli <aarcange@redhat.com>
-Subject: [RFC PATCH 75/79] mm/page_ronly: add page read only core structure and helpers.
-Date: Wed,  4 Apr 2018 15:18:27 -0400
-Message-Id: <20180404191831.5378-38-jglisse@redhat.com>
+Subject: [RFC PATCH 79/79] mm/ksm: set page->mapping to page_ronly struct instead of stable_node.
+Date: Wed,  4 Apr 2018 15:18:31 -0400
+Message-Id: <20180404191831.5378-42-jglisse@redhat.com>
 In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
 References: <20180404191831.5378-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -26,192 +26,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-Page read only is a generic framework for page write protection.
-It reuses the same mechanism as KSM by using the lower bit of the
-page->mapping fields, and KSM is converted to use this generic
-framework.
+Set page->mapping to the page_ronly struct instead of stable_node
+struct. There is no functional change as page_ronly is just a field
+of stable_node.
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 ---
- include/linux/page_ronly.h | 169 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 169 insertions(+)
- create mode 100644 include/linux/page_ronly.h
+ mm/ksm.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/page_ronly.h b/include/linux/page_ronly.h
-new file mode 100644
-index 000000000000..6312d4f015ea
---- /dev/null
-+++ b/include/linux/page_ronly.h
-@@ -0,0 +1,169 @@
-+/*
-+ * Copyright 2015 Red Hat Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * Authors: Jérôme Glisse <jglisse@redhat.com>
-+ */
-+/*
-+ * Page read only generic wrapper. This is common struct use to write protect
-+ * page by means of forbidding anyone from inserting a pte (page table entry)
-+ * with write flag set. It reuse the ksm mecanism (which use lower bit of the
-+ * mapping field of struct page).
-+ */
-+#ifndef LINUX_PAGE_RONLY_H
-+#define LINUX_PAGE_RONLY_H
-+#ifdef CONFIG_PAGE_RONLY
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 6085068fb8b3..52b0ae291d23 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -39,6 +39,7 @@
+ #include <linux/freezer.h>
+ #include <linux/oom.h>
+ #include <linux/numa.h>
++#include <linux/page_ronly.h>
+ 
+ #include <asm/tlbflush.h>
+ #include "internal.h"
+@@ -126,6 +127,7 @@ struct ksm_scan {
+ 
+ /**
+  * struct stable_node - node of the stable rbtree
++ * @ronly: Page read only struct wrapper (see include/linux/page_ronly.h).
+  * @node: rb node of this ksm page in the stable tree
+  * @head: (overlaying parent) &migrate_nodes indicates temporarily on that list
+  * @hlist_dup: linked into the stable_node->hlist with a stable_node chain
+@@ -137,6 +139,7 @@ struct ksm_scan {
+  * @nid: NUMA node id of stable tree in which linked (may not match kpfn)
+  */
+ struct stable_node {
++	struct page_ronly ronly;
+ 	union {
+ 		struct rb_node node;	/* when node of stable tree */
+ 		struct {		/* when listed for migration */
+@@ -318,13 +321,15 @@ static void __init ksm_slab_free(void)
+ 
+ static inline struct stable_node *page_stable_node(struct page *page)
+ {
+-	return PageReadOnly(page) ? page_rmapping(page) : NULL;
++	struct page_ronly *ronly = page_ronly(page);
 +
-+#include <linux/types.h>
-+#include <linux/page-flags.h>
-+#include <linux/buffer_head.h>
-+#include <linux/mm_types.h>
-+
-+
-+/* enum page_ronly_event - Event that trigger a call to unprotec().
-+ *
-+ * @PAGE_RONLY_SWAPIN: Page fault on at an address with a swap entry pte.
-+ * @PAGE_RONLY_WFAULT: Write page fault.
-+ * @PAGE_RONLY_GUP: Get user page.
-+ */
-+enum page_ronly_event {
-+	PAGE_RONLY_SWAPIN,
-+	PAGE_RONLY_WFAULT,
-+	PAGE_RONLY_GUP,
-+};
-+
-+/* struct page_ronly_ops - Page read only operations.
-+ *
-+ * @unprotect: Callback to unprotect a page (mandatory).
-+ * @rmap_walk: Callback to walk reverse mapping of a page (mandatory).
-+ *
-+ * Kernel user that want to use the page write protection mechanism have to
-+ * provide a number of callback.
-+ */
-+struct page_ronly_ops {
-+	struct page *(*unprotect)(struct page *page,
-+				  unsigned long addr,
-+				  struct vm_area_struct *vma,
-+				  enum page_ronly_event event);
-+	int (*rmap_walk)(struct page *page, struct rmap_walk_control *rwc);
-+};
-+
-+/* struct page_ronly - Replace page->mapping when a page is write protected.
-+ *
-+ * @ops: Pointer to page read only operations.
-+ *
-+ * Page that are write protect have their page->mapping field pointing to this
-+ * wrapper structure. It must be allocated by page read only user and must be
-+ * free (if needed) inside unprotect() callback.
-+ */
-+struct page_ronly {
-+	const struct page_ronly_ops	*ops;
-+};
-+
-+
-+/* page_ronly() - Return page_ronly struct if any or NULL.
-+ *
-+ * @page: The page for which to replace the page->mapping field.
-+ */
-+static inline struct page_ronly *page_ronly(struct page *page)
-+{
-+	return PageReadOnly(page) ? page_rmapping(page) : NULL;
-+}
-+
-+/* page_ronly_set() - Replace page->mapping with ptr to page_ronly struct.
-+ *
-+ * @page: The page for which to replace the page->mapping field.
-+ * @ronly: The page_ronly structure to set.
-+ *
-+ * Page must be locked.
-+ */
-+static inline void page_ronly_set(struct page *page, struct page_ronly *ronly)
-+{
-+	VM_BUG_ON_PAGE(!PageLocked(page), page);
-+
-+	page->mapping = (void *)ronly + (PAGE_MAPPING_ANON|PAGE_MAPPING_RONLY);
-+}
-+
-+/* page_ronly_unprotect() - Unprotect a read only protected page.
-+ *
-+ * @page: The page to unprotect.
-+ * @addr: Fault address that trigger the unprotect.
-+ * @vma: The vma of the fault address.
-+ * @event: Event which triggered the unprotect.
-+ *
-+ * Page must be locked and must be a read only page.
-+ */
-+static inline struct page *page_ronly_unprotect(struct page *page,
-+						unsigned long addr,
-+						struct vm_area_struct *vma,
-+						enum page_ronly_event event)
-+{
-+	struct page_ronly *pageronly;
-+
-+	VM_BUG_ON_PAGE(!PageLocked(page), page);
-+	/*
-+	 * Rely on the page lock to protect against concurrent modifications
-+	 * to that page's node of the stable tree.
-+	 */
-+	VM_BUG_ON_PAGE(!PageReadOnly(page), page);
-+	pageronly = page_ronly(page);
-+	if (pageronly)
-+		return pageronly->ops->unprotect(page, addr, vma, event);
-+	/* Safest fallback. */
-+	return page;
-+}
-+
-+/* page_ronly_rmap_walk() - Walk all CPU page table mapping of a page.
-+ *
-+ * @page: The page for which to replace the page->mapping field.
-+ * @rwc: Private control variable for each reverse walk.
-+ *
-+ * Page must be locked and must be a read only page.
-+ */
-+static inline void page_ronly_rmap_walk(struct page *page,
-+					struct rmap_walk_control *rwc)
-+{
-+	struct page_ronly *pageronly;
-+
-+	VM_BUG_ON_PAGE(!PageLocked(page), page);
-+	/*
-+	 * Rely on the page lock to protect against concurrent modifications
-+	 * to that page's node of the stable tree.
-+	 */
-+	VM_BUG_ON_PAGE(!PageReadOnly(page), page);
-+	pageronly = page_ronly(page);
-+	if (pageronly)
-+		pageronly->ops->rmap_walk(page, rwc);
-+}
-+
-+#else /* CONFIG_PAGE_RONLY */
-+
-+static inline struct page *page_ronly_unprotect(struct page *page,
-+						unsigned long addr,
-+						struct vm_area_struct *vma,
-+						enum page_ronly_event event)
-+{
-+	/* This should not happen ! */
-+	VM_BUG_ON_PAGE(1, page);
-+	return page;
-+}
-+
-+static inline int page_ronly_rmap_walk(struct page *page,
-+				       struct rmap_walk_control *rwc)
-+{
-+	/* This should not happen ! */
-+	BUG();
-+	return 0;
-+}
-+
-+#endif /* CONFIG_PAGE_RONLY */
-+#endif /* LINUX_PAGE_RONLY_H */
++	return ronly ? container_of(ronly, struct stable_node, ronly) : NULL;
+ }
+ 
+ static inline void set_page_stable_node(struct page *page,
+ 					struct stable_node *stable_node)
+ {
+-	page->mapping = (void *)((unsigned long)stable_node | PAGE_MAPPING_RONLY);
++	page_ronly_set(page, stable_node ? &stable_node->ronly : NULL);
+ }
+ 
+ static __always_inline bool is_stable_node_chain(struct stable_node *chain)
 -- 
 2.14.3
