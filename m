@@ -1,116 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751231AbeDDGsn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 02:48:43 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:14321 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750736AbeDDGsl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 02:48:41 -0400
-Subject: Re: [PATCH v8 25/42] ARM: davinci: dm644x: add new clock init using
- common clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-26-git-send-email-david@lechnology.com>
- <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
- <43c266b8-c023-a1b4-c751-bd46c2fb910d@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <cda6f3bc-7ca9-68e9-80ca-baf6d4860c95@ti.com>
-Date: Wed, 4 Apr 2018 12:17:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751212AbeDDGuv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 02:50:51 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37757 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750714AbeDDGuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 02:50:50 -0400
+Date: Wed, 4 Apr 2018 08:50:48 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Sergey Suloev <ssuloev@orpaltech.com>
+Cc: Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] spi: sun6i: restrict transfer length in PIO-mode
+Message-ID: <20180404065048.n76r3ytuznd6fqsl@flea>
+References: <20180403154449.2443-1-ssuloev@orpaltech.com>
+ <20180403154449.2443-4-ssuloev@orpaltech.com>
 MIME-Version: 1.0
-In-Reply-To: <43c266b8-c023-a1b4-c751-bd46c2fb910d@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x2g666rsck4bpfrm"
+Content-Disposition: inline
+In-Reply-To: <20180403154449.2443-4-ssuloev@orpaltech.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 03 April 2018 10:00 PM, David Lechner wrote:
-> On 04/03/2018 05:26 AM, Sekhar Nori wrote:
->> On Friday 16 March 2018 08:22 AM, David Lechner wrote:
->>> +static struct resource dm644x_pll1_resources[] = {
->>> +    {
->>> +        .start    = DAVINCI_PLL1_BASE,
->>> +        .end    = DAVINCI_PLL1_BASE + SZ_4K - 1,
->>
->> The .end should be DAVINCI_PLL1_BASE + SZ_1K - 1, otherwise it prevents
->> PLL2 from getting registered.
->>
->>> +        .flags    = IORESOURCE_MEM,
->>> +    },
->>> +};
->>> +
->>> +static struct platform_device dm644x_pll1_device = {
->>> +    .name        = "dm644x-pll1",
->>> +    .id        = -1,
->>> +    .resource    = dm644x_pll1_resources,
->>> +    .num_resources    = ARRAY_SIZE(dm644x_pll1_resources),
->>> +};
->>> +
->>> +static struct resource dm644x_pll2_resources[] = {
->>> +    {
->>> +        .start    = DAVINCI_PLL2_BASE,
->>> +        .end    = DAVINCI_PLL2_BASE + SZ_4K - 1,
->>
->> And this too should be fixed, else it prevents the PSC from getting
->> registered.
->>
->>> +        .flags    = IORESOURCE_MEM,
->>> +    },
->>> +};
->>
->> With these fixed, I still had to enable 'clk_ignore_unused' on DM644x
->> EVM to get to NFS boot. I think root of the problem is that pm_runtime()
->> APIs are not working in the legacy boot mode.
->>
->> This can be seen even on the DA850 LCDK in legacy boot. pm_genpd_summary
->> in debugfs shows all domains are off and there are no devices registered
->> under the "da850-psc1: emac" domain. NFS mounting still works on the
->> DA850 LCDK because clk_summary shows enable and prepare count of 4 for
->> emac. Not sure how that's happening. But on DM644x EVM, the emac clock
->> enable count is 0.
->>
->> Still looking at whats going wrong here. I am testing your v8 branch
->> with clk-davinci branch from clk-next merged to get the fixes Stephen
->> made.
->>
-> 
-> In legacy mode, genpd is not being used. I didn't see any mechanism for
 
-Ah, I got stumped by the genpd related debug entries popping up.
-Probably something should be done to make sure they don't show up in
-legacy boot. And some comments to that effect in psc.c will help.
+--x2g666rsck4bpfrm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> genpd lookup without device tree. So, we are still relying on the
-> matching in arch/arm/mach-davinci/pm_domain.c.
+On Tue, Apr 03, 2018 at 06:44:46PM +0300, Sergey Suloev wrote:
+> There is no need to handle 3/4 empty interrupt as the maximum
+> supported transfer length in PIO mode is equal to FIFO depth,
+> i.e. 128 bytes for sun6i and 64 bytes for sun8i SoCs.
+>
+> Changes in v3:
+> 1) Restored processing of 3/4 FIFO full interrupt.
+>=20
+> Signed-off-by: Sergey Suloev <ssuloev@orpaltech.com>
+> ---
+>  drivers/spi/spi-sun6i.c | 41 +++++++++++++++++------------------------
+>  1 file changed, 17 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/drivers/spi/spi-sun6i.c b/drivers/spi/spi-sun6i.c
+> index 78acc1f..c09ad10 100644
+> --- a/drivers/spi/spi-sun6i.c
+> +++ b/drivers/spi/spi-sun6i.c
+> @@ -207,7 +207,10 @@ static void sun6i_spi_set_cs(struct spi_device *spi,=
+ bool enable)
+> =20
+>  static size_t sun6i_spi_max_transfer_size(struct spi_device *spi)
+>  {
+> -	return SUN6I_MAX_XFER_SIZE - 1;
+> +	struct spi_master *master =3D spi->master;
+> +	struct sun6i_spi *sspi =3D spi_master_get_devdata(master);
+> +
+> +	return sspi->fifo_depth;
 
-This is fine. We just need legacy boot to keep working without regressions.
+Doesn't that effectively revert 3288d5cb40c0 ?
 
-> 
-> I suspect we need to fix the clock lookups in
-> drivers/clk/davinci/psc-dm644x.c.
-> 
-> LPSC_CLKDEV2(emac_clkdev,        NULL,        "davinci_emac.1",
->                     "fck",        "davinci_mdio.0");
-> 
-> NULL might need to be changed to "fck" to be picked up by pm matching
-> and "davinci_emac.1" should be verified that it matches the actual EMAC
-> device name.
+Why do you need to do so?
 
-NULL con_id matches what we have for DA850 and also what we had for
-DM644x prior to CCF conversion. So, I did not really suspect that. The
-device name does match. I will check what else could be going on based
-on your input.
+>  }
+> =20
+>  static int sun6i_spi_prepare_message(struct spi_master *master,
+> @@ -255,8 +258,14 @@ static int sun6i_spi_transfer_one(struct spi_master =
+*master,
+>  	int ret =3D 0;
+>  	u32 reg;
+> =20
+> -	if (tfr->len > SUN6I_MAX_XFER_SIZE)
+> -		return -EINVAL;
+> +	/* A zero length transfer never finishes if programmed
+> +	   in the hardware */
 
-Thanks,
-Sekhar
+Improper comment style here. Please make sure to run checkpatch before
+sending your patches.
+
+> +	if (!tfr->len)
+> +		return 0;
+
+Can that case even happen?
+
+> +	/* Don't support transfer larger than the FIFO */
+> +	if (tfr->len > sspi->fifo_depth)
+> +		return -EMSGSIZE;
+
+You're changing the return type, why?
+
+>  	reinit_completion(&sspi->done);
+>  	sspi->tx_buf =3D tfr->tx_buf;
+> @@ -278,8 +287,7 @@ static int sun6i_spi_transfer_one(struct spi_master *=
+master,
+>  	 */
+>  	trig_level =3D sspi->fifo_depth / 4 * 3;
+>  	sun6i_spi_write(sspi, SUN6I_FIFO_CTL_REG,
+> -			(trig_level << SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_BITS) |
+> -			(trig_level << SUN6I_FIFO_CTL_TF_ERQ_TRIG_LEVEL_BITS));
+> +			(trig_level << SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_BITS));
+> =20
+> =20
+>  	reg =3D sun6i_spi_read(sspi, SUN6I_TFR_CTL_REG);
+> @@ -343,11 +351,8 @@ static int sun6i_spi_transfer_one(struct spi_master =
+*master,
+>  	sun6i_spi_fill_fifo(sspi, sspi->fifo_depth);
+> =20
+>  	/* Enable the interrupts */
+> -	sun6i_spi_write(sspi, SUN6I_INT_CTL_REG, SUN6I_INT_CTL_TC);
+>  	sun6i_spi_enable_interrupt(sspi, SUN6I_INT_CTL_TC |
+>  					 SUN6I_INT_CTL_RF_RDY);
+> -	if (tx_len > sspi->fifo_depth)
+> -		sun6i_spi_enable_interrupt(sspi, SUN6I_INT_CTL_TF_ERQ);
+
+This would also need to be explained in your commit log.
+
+> =20
+>  	/* Start the transfer */
+>  	reg =3D sun6i_spi_read(sspi, SUN6I_TFR_CTL_REG);
+> @@ -376,7 +381,9 @@ out:
+>  static irqreturn_t sun6i_spi_handler(int irq, void *dev_id)
+>  {
+>  	struct sun6i_spi *sspi =3D dev_id;
+> -	u32 status =3D sun6i_spi_read(sspi, SUN6I_INT_STA_REG);
+> +	u32 status;
+> +
+> +	status =3D sun6i_spi_read(sspi, SUN6I_INT_STA_REG);
+
+Why is this change needed?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--x2g666rsck4bpfrm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrEdccACgkQ0rTAlCFN
+r3S+eQ/9HbB9a0Bu9GSUqKNddsUQGUv8G9PmtADvdnB/zX1UZeN5AjSDFhVRdXGK
+juXLAvllnJchNZr6YICSRJdTLWuno9ZltZ3WwZBRVdlSMulhov9y0Nl1TrLMadmW
+d7kkR5B9eJ2TNH8gM6k9HDKKnOjmg86eOY6kkWy0E2JUD+mG6q26Fx2mG3X2P6P3
+Loa2mGoDzJ10mhoNqcX6Cu7aw5Eu5Lf9piTJ9+fRANCKOzDarP5HFcdRb0F0fRKz
+1Wgw/xg5NvMxXy49ve1bLaCjDWe1snzdRN+UaoiOe+dbjfTEakyHWSPwlXwOfsHX
+gTnv6TUUwZKzllVMlQj4k0NjnQztVAnUdxw/3YXSueiMfVXawCkMEWXHtCtb/foc
+qVJa6lqU99gRqPFrXEtK+LI/Q/7trLnqmDopvkVwuJ8ti5jJ8rHG4HhFgJzHJln2
+wA0LV9Hfkr+fgxq424Wm7Vp0ESL232fJadHsc68feQfq2D6hLi7sBah6maT6SNQ6
+Abr+ds/kOLygUv1rHcM8eGhlsS1fXO3fefMyS3jzSYSlip/CrbncDlHVNJYCKiaD
+Y41MeiFCywzPlkRFr4z6UPBz2m0wRsJyt/xgl2BuDzMIA4tKruYq+Bc5bkne19KU
+9AD7p7liQbusxWKGZDDXz3sAKnbd3VMSLB6xGcux4yxVlq5eGi8=
+=8VxK
+-----END PGP SIGNATURE-----
+
+--x2g666rsck4bpfrm--
