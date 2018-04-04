@@ -1,182 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751654AbeDDMqX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:46:23 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44762 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751265AbeDDMqP (ORCPT
+        id S1751561AbeDDMqW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:46:22 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:60917 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeDDMqT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:46:15 -0400
-X-Google-Smtp-Source: AIpwx4+N+0DNWLVN707n8Mmw/VYdeyY6U7idyDPU9csAYkb3kV4patPQjLwixDCVbTwiPSLohY7yc4HB90E75OMbqf4=
-MIME-Version: 1.0
-In-Reply-To: <a8548725-f245-b9ea-a309-56c030f81a16@rock-chips.com>
-References: <1522275511-7693-1-git-send-email-agk@godking.net> <a8548725-f245-b9ea-a309-56c030f81a16@rock-chips.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 4 Apr 2018 14:46:14 +0200
-Message-ID: <CAPDyKFqD8vwuhebpOO6EfjzbdV_Mf+hbGZ5fLWOsVChMZ+w5XQ@mail.gmail.com>
-Subject: Re: [PATCH] [mmc_block] Prevent bus reference leak in mmc_blk_init
-To: Shawn Lin <shawn.lin@rock-chips.com>,
-        Alexander Kappner <agk@godking.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 4 Apr 2018 08:46:19 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        x86@kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86: olpc: fix inconsistent MFD_CS5535 configuration
+Date: Wed,  4 Apr 2018 14:44:54 +0200
+Message-Id: <20180404124539.3817101-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:/ZNhyHeyDQY0ULX6e8wEL2IepuLPvaVOxSbBBw+C5mg+zeJ0A6g
+ GD9XOhJ1DSLVGqm6NtLOguIqmKN30eZmcsWWGHZ2b81d1YZdGYlcDWINcWx97ZtPu4FRjf5
+ FqdewPPO8m8QDsYLTeOakIXozAn4ZkDTfBm8c/p4QQFuRwsBsoYZswIyIC2rBQdqur3rbkH
+ cv2oMd+iqQ2xod77o6yAA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:u5cOkHKqAcc=:Wb/TQjg3BcCanjBotQiO8c
+ oSr3H3WMf7hN6qYg6AgjET2byMgLNlwooad5uOCPcucpeEzBA+OSDtNe5Ga+HsLRdCgvT87n1
+ +aRuB/paHuZS24dYCowcJKNy3mCnhl624n6VH8wVbs9yLBsKdLRVqTUmVoWcrXjIDouvxPiln
+ UkvvyM4inmZn37GyTVapTod1KK7OPAkxm9D3H0kufT6JM44rNysr9YCWwZ+5g1+eaPrqT+h0T
+ wgQOibcndtk5gl3qlzM71tHx3cXGaUgWJYXOBeCrmoIDi6nJpDEANdcLQVT9ZS8LYPqCx3y+u
+ bMi6yR+rSJgTXlN5hPKqsBe+dCMD1cyyFTtgNJemKCaZ9jw1yjRWKh0NJj01iEu9DJnOcoKJN
+ PJiilavbFZ5TWMzmfu5+pz2I03s3KsUGvJ+0L25zDjwSZetdP/MjKRIlSrY8D9UAMURX8I+RT
+ JF/SrA+HXlKh9V/jsrKAhqjRr2Dk525kju+YEbHsFIbRMkW1MUmFz0HirtFOZwa7dZtZ9Vcaf
+ faLE4RisoMT0hq2UssqhCDCeJH2McSttZskTg0LgfDwJ3Z84cBOLav7Z3gwqnx7NkQV0mKH/r
+ xUTvpyI0rbOrcKtTG/fz4R0jpK2srBFHqGWfptZonpMnNoWTvaasxa92lK+6fvj1dFKbPHsLO
+ sj7T5+AUJPjIFcCk9Y43PjTRKYkuntEbyiPr+PIVLBRls/u8tCbks7c1c/5p4F6AtSq705Ez4
+ vg1mGAIdHRpZs99QhYJAchC9eN5cVfJH3Bf1/w==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 March 2018 at 11:52, Shawn Lin <shawn.lin@rock-chips.com> wrote:
-> On 2018/3/29 6:18, Alexander Kappner wrote:
->>
->> Upon module load, mmc_block allocates a bus with bus_register in
->> mmc_blk_init. This reference never gets freed during module unload.
->> Subsequent re-insertions of the module fail and BUG() is triggered:
->
->
-> WARN() is triggered.
->
->>
->> [   84.583342] sysfs: cannot create duplicate filename '/bus/mmc_rpmb'
->>
->> [   84.583373] CPU: 6 PID: 1825 Comm: modprobe Tainted: P           O
->> 4.16.0-rc6-00384-gf36b753 #30
->> [   84.583381] Hardware name: LENOVO 20ENCTO1WW/20ENCTO1WW, BIOS N1EET62W
->> (1.35 ) 11/10/2016
->> [   84.583385] Call Trace:
->> [   84.583401]  dump_stack+0x5a/0x75
->> [   84.583411]  sysfs_warn_dup+0x58/0x70
->> [   84.583419]  sysfs_create_dir_ns+0x70/0x80
->> [   84.583437]  kobject_add_internal+0xa5/0x2c0
->> [   84.583453]  kset_register+0x44/0x60
->> [   84.583470]  bus_register+0xc6/0x270
->> [   84.583479]  ? 0xffffffffa000d000
->> [   84.583492]  mmc_blk_init+0x12/0x1000 [mmc_block]
->> [   84.583501]  do_one_initcall+0x4e/0x194
->> [   84.583510]  ? ___cache_free+0x21/0x2b0
->> [   84.583524]  do_init_module+0x5a/0x20f
->> [   84.583533]  load_module+0x235c/0x2510
->> [   84.583550]  ? SYSC_finit_module+0x80/0xb0
->> [   84.583558]  SYSC_finit_module+0x80/0xb0
->> [   84.583570]  do_syscall_64+0x77/0x290
->> [   84.583580]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
->> [   84.583587] RIP: 0033:0x7f452a3ad5b9
->> [   84.583593] RSP: 002b:00007fff4562ba18 EFLAGS: 00000206 ORIG_RAX:
->> 0000000000000139
->> [   84.583602] RAX: ffffffffffffffda RBX: 000056092895c520 RCX:
->> 00007f452a3ad5b9
->> [   84.583607] RDX: 0000000000000000 RSI: 000056092697b3d9 RDI:
->> 0000000000000003
->> [   84.583612] RBP: 000056092697b3d9 R08: 0000000000000000 R09:
->> 000056092895d310
->> [   84.583617] R10: 0000000000000003 R11: 0000000000000206 R12:
->> 0000000000000000
->> [   84.583623] R13: 000056092895c430 R14: 0000000000040000 R15:
->> 0000000000040000
->> [   84.583647] ------------[ cut here ]------------
->> [   84.583656] kobject_add_internal failed for mmc_rpmb with -EEXIST,
->> don't try to register things with the same name in the same directory.
->> [   84.583694] WARNING: CPU: 6 PID: 1825 at lib/kobject.c:238
->> kobject_add_internal+0x296/0x2c0
->> [   84.583705] Modules linked in: mmc_block(+) rtsx_pci_sdmmc rtsx_pci
->> iwlmvm mac80211 nvidia_drm(PO) nvidia_modeset(PO) iwlwifi nvidia(PO)
->> cfg80211 qmi_wwan thinkpad_acpi rfkill sdhci_pci cqhci sdhci mfd_core [last
->> unloaded: mmc_block]
->> [   84.583770] CPU: 6 PID: 1825 Comm: modprobe Tainted: P           O
->> 4.16.0-rc6-00384-gf36b753 #30
->> [   84.583774] Hardware name: LENOVO 20ENCTO1WW/20ENCTO1WW, BIOS N1EET62W
->> (1.35 ) 11/10/2016
->> [   84.583782] RIP: 0010:kobject_add_internal+0x296/0x2c0
->> [   84.583786] RSP: 0018:ffffc9000769bc58 EFLAGS: 00010296
->> [   84.583791] RAX: 000000000000007d RBX: ffff880fcf588618 RCX:
->> 0000000000000000
->> [   84.583796] RDX: 0000000000040400 RSI: 00000000000000f6 RDI:
->> 00000000ffffffff
->> [   84.583801] RBP: 00000000ffffffef R08: 0000000000000000 R09:
->> 0000000000000354
->> [   84.583806] R10: ffffffff8251fc74 R11: 0000000000000353 R12:
->> ffff88100d3cf698
->> [   84.583811] R13: ffff880fcf588618 R14: ffffffffa0028590 R15:
->> ffffffffa0028540
->> [   84.583818] FS:  00007f452a853700(0000) GS:ffff881053d80000(0000)
->> knlGS:0000000000000000
->> [   84.583823] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   84.583837] CR2: 00007f452a3faea0 CR3: 0000000fc89e4004 CR4:
->> 00000000003606e0
->> [   84.583850] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
->> 0000000000000000
->> [   84.583863] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
->> 0000000000000400
->> [   84.583875] Call Trace:
->> [   84.583893]  kset_register+0x44/0x60
->> [   84.583902]  bus_register+0xc6/0x270
->> [   84.583910]  ? 0xffffffffa000d000
->> [   84.583926]  mmc_blk_init+0x12/0x1000 [mmc_block]
->> [   84.583940]  do_one_initcall+0x4e/0x194
->> [   84.583948]  ? ___cache_free+0x21/0x2b0
->> [   84.583966]  do_init_module+0x5a/0x20f
->> [   84.583979]  load_module+0x235c/0x2510
->> [   84.583995]  ? SYSC_finit_module+0x80/0xb0
->> [   84.584001]  SYSC_finit_module+0x80/0xb0
->> [   84.584010]  do_syscall_64+0x77/0x290
->> [   84.584016]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
->> [   84.584021] RIP: 0033:0x7f452a3ad5b9
->> [   84.584025] RSP: 002b:00007fff4562ba18 EFLAGS: 00000206 ORIG_RAX:
->> 0000000000000139
->> [   84.584030] RAX: ffffffffffffffda RBX: 000056092895c520 RCX:
->> 00007f452a3ad5b9
->> [   84.584034] RDX: 0000000000000000 RSI: 000056092697b3d9 RDI:
->> 0000000000000003
->> [   84.584038] RBP: 000056092697b3d9 R08: 0000000000000000 R09:
->> 000056092895d310
->> [   84.584043] R10: 0000000000000003 R11: 0000000000000206 R12:
->> 0000000000000000
->> [   84.584047] R13: 000056092895c430 R14: 0000000000040000 R15:
->> 0000000000040000
->> [   84.584053] Code: 7b 20 49 89 c4 48 85 ff 0f 84 10 fe ff ff e9 cd fd ff
->> ff 48 8b 13 48 c7 c6 00 80 f4 81 48 c7 c7 e0 ad 0f 82 31 c0 e8 ca 9a 7b ff
->> <0f> 0b e9 5f fe ff ff 0f 0b 0f 0b 0f 0b 0f 0b e9 71 ff ff ff 0f
->> [   84.584147] ---[ end trace d27b36e0e2c0e7e5 ]---
->> [   84.584162] mmcblk: could not register RPMB bus type
->>
->> Steps to reproduce:
->>
->> Build with CONFIG_MMC_BLOCK=m
->>
->> modprobe mmc_block
->> rmmod mmc_block
->> modprobe mmc_block
->>
->> The proposed patch deallocates the reference in mmc_blk_exit.
->>
->
-> Fixes: 97548575bef3 ("mmc: block: Convert RPMB to a character device")
-> Cc: Stable <stable@vger.kernel.org>
->
->> Signed-off-by: Alexander Kappner <agk@godking.net>
->> ---
->>   drivers/mmc/core/block.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
->> index 2cfb963..9c6f639 100644
->> --- a/drivers/mmc/core/block.c
->> +++ b/drivers/mmc/core/block.c
->> @@ -3087,6 +3087,7 @@ static void __exit mmc_blk_exit(void)
->>         mmc_unregister_driver(&mmc_driver);
->>         unregister_blkdev(MMC_BLOCK_MAJOR, "mmc");
->>         unregister_chrdev_region(mmc_rpmb_devt, MAX_DEVICES);
->> +       bus_unregister(&mmc_rpmb_bus_type);
->
->
-> Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
->
->>   }
->>     module_init(mmc_blk_init);
->>
->
+This Kconfig warning appeared after a fix to the Kconfig validation.
+The GPIO_CS5535 driver depends on the MFD_CS5535 driver, but the former
+is selected in places where the latter is not:
 
-Shawn, Alexander - thanks, applied for fixes!
+WARNING: unmet direct dependencies detected for GPIO_CS5535
+  Depends on [m]: GPIOLIB [=y] && (X86 [=y] || MIPS || COMPILE_TEST [=y]) && MFD_CS5535 [=m]
+  Selected by [y]:
+  - OLPC_XO1_SCI [=y] && X86_32 [=y] && OLPC [=y] && OLPC_XO1_PM [=y] && INPUT [=y]=y
 
-Kind regards
-Uffe
+The warning does seem appropriate, since the GPIO_CS5535 driver won't
+work unless MFD_CS5535 is also present. However, there is no link time
+dependency between the two, so this caused no problems during randconfig
+testing before.
+
+This changes the 'select GPIO_CS5535' to 'depends on GPIO_CS5535' to
+avoid the issue, at the expense of making it harder to configure the
+driver (one now has to select the dependencies first).
+
+The 'select MFD_CORE' part is completely redundant, since we already
+depend on MFD_CS5535 here, so I'm removing that as well.
+
+Ideally, the private symbols exported by that cs5535 gpio driver would
+just be converted to gpiolib interfaces so we could expletely avoid
+this dependency.
+
+Fixes: f622f8279581 ("kconfig: warn unmet direct dependency of tristate symbols selected by y")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/x86/Kconfig | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index bf4ddea48e61..ffb2b858e2b1 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2773,11 +2773,9 @@ config OLPC_XO1_RTC
+ 
+ config OLPC_XO1_SCI
+ 	bool "OLPC XO-1 SCI extras"
+-	depends on OLPC && OLPC_XO1_PM
++	depends on OLPC && OLPC_XO1_PM && GPIO_CS5535=y
+ 	depends on INPUT=y
+ 	select POWER_SUPPLY
+-	select GPIO_CS5535
+-	select MFD_CORE
+ 	---help---
+ 	  Add support for SCI-based features of the OLPC XO-1 laptop:
+ 	   - EC-driven system wakeups
+-- 
+2.9.0
