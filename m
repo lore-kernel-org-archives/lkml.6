@@ -1,45 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754902AbeDDBRC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 21:17:02 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7148 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753124AbeDDBRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 21:17:00 -0400
-Subject: Re: [PATCH] f2fs: remove unmatched zero_user_segment when convert
- inline dentry
-To: Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
-        <chao@kernel.org>, <yunlong.song@icloud.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1522755761-131554-1-git-send-email-yunlong.song@huawei.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <8c280631-71a6-4432-898e-1662b2c6c8a7@huawei.com>
-Date: Wed, 4 Apr 2018 09:16:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <1522755761-131554-1-git-send-email-yunlong.song@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1754897AbeDDBSC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 21:18:02 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34790 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754057AbeDDBSB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 21:18:01 -0400
+From: Rohit Jain <rohit.k.jain@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, steven.sistare@oracle.com,
+        joelaf@google.com, jbacik@fb.com, juri.lelli@redhat.com,
+        dhaval.giani@oracle.com, efault@gmx.de, riel@surriel.com
+Subject: [RESEND PATCH v3] sched/fair: Remove check in idle_balance against migration_cost
+Date: Tue,  3 Apr 2018 18:17:10 -0700
+Message-Id: <1522804630-19925-1-git-send-email-rohit.k.jain@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804040009
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/3 19:42, Yunlong Song wrote:
-> Since the layout of regular dentry block is different from inline dentry
-> block, zero_user_segment starting from MAX_INLINE_DATA(dir) is not
-> correct for regular dentry block, besides, bitmap is already copied and
-> used, so there is no necessary to zero page at all, so just remove the
-> zero_user_segment is OK.
-> 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Patch "1b9508f6 sched: Rate-limit newidle" reduced the CPU time spent in
+idle_balance() by refusing to balance if the average idle time was less
+than sysctl_sched_migration_cost.  Since then, more refined methods for
+reducing CPU time have been added, including dynamic measurement of search
+cost in curr_cost and a check for this_rq->rd->overload.  The original
+check of sysctl_sched_migration_cost is no longer necessary, and is in
+fact harmful because it discourages load balancing, so delete it.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+1) An internal Oracle RDBMS OLTP test test on an 8-socket Exadata shows
+a 2.2% gain in throughput.
 
-Thanks,
+2) Hackbench results on 2 socket, 44 core and 88 threads Intel x86 machine
+(lower is better):
+
++--------------+-----------------+-------------------------+
+|              | Without Patch   |With Patch               |
++------+-------+--------+--------+----------------+--------+
+|Loops | Groups|Average |%Std Dev|Average         |%Std Dev|
++------+-------+--------+--------+----------------+--------+
+|100000| 4     |8.313   |0.64    |8.284  (+0.35%) |2.09    |
+|100000| 8     |14.606  |1.73    |14.451 (+1.07%) |1.32    |
+|100000| 16    |26.203  |0.72    |25.509 (+2.65%) |0.19    |
+|100000| 25    |38.270  |0.20    |36.545 (+4.51%) |0.30    |
++------+-------+--------+--------+----------------+--------+
+
+3) tbench sample results on 2 socket, 44 core and 88 threads Intel x86
+machine:
+
+Without Patch:
+
+Throughput 670.753 MB/sec   2 clients   2 procs  max_latency=0.150 ms
+Throughput 1530.57 MB/sec   5 clients   5 procs  max_latency=0.366 ms
+Throughput 2911.36 MB/sec  10 clients  10 procs  max_latency=0.917 ms
+Throughput 5626.88 MB/sec  20 clients  20 procs  max_latency=5.037 ms
+Throughput 8925.31 MB/sec  40 clients  40 procs  max_latency=7.510 ms
+
+With Patch:
+
+Throughput 672.377 MB/sec   2 clients   2 procs  max_latency=0.269 ms
+Throughput 1562.44 MB/sec   5 clients   5 procs  max_latency=5.774 ms
+Throughput 2973.76 MB/sec  10 clients  10 procs  max_latency=0.527 ms
+Throughput 5726.74 MB/sec  20 clients  20 procs  max_latency=2.187 ms
+Throughput 9162.58 MB/sec  40 clients  40 procs  max_latency=4.713 ms
+
+4) lkp-robot reported unixbench.score +19.4% improvement
+https://lists.01.org/pipermail/lkp/2018-March/008284.html
+
+Changelog:
+* v1->v2: Changed the per-domain accounting of load-balance cost to just
+  removing the check against overall migration_cost, which works well.
+* v2->v3: Pulled to the latest source code and re-tested the benchmarks.
+
+Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+
+---
+ kernel/sched/fair.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0951d1c..7e2da71 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9787,8 +9787,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+ 	 */
+ 	rq_unpin_lock(this_rq, rf);
+ 
+-	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
+-	    !this_rq->rd->overload) {
++	if (!this_rq->rd->overload) {
+ 
+ 		rcu_read_lock();
+ 		sd = rcu_dereference_check_sched_domain(this_rq->sd);
+-- 
+2.7.4
