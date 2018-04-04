@@ -1,101 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754961AbeDDBwW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 21:52:22 -0400
-Received: from mail-ot0-f175.google.com ([74.125.82.175]:41642 "EHLO
-        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753916AbeDDBwT (ORCPT
+        id S1754969AbeDDBzu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 21:55:50 -0400
+Received: from mail2.tencent.com ([163.177.67.195]:56035 "EHLO
+        mail2.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754711AbeDDBzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 21:52:19 -0400
-X-Google-Smtp-Source: AIpwx48kTAxSgSqXdSW8SccQyaPTVWYzSnZXUdQAdI+QD9xsKojHBw8WbLwedMvM1IIfRFn2BnPdmMr3YESOIZ2w08I=
+        Tue, 3 Apr 2018 21:55:49 -0400
+From: =?utf-8?B?aGFpYmluemhhbmco5byg5rW35paMKQ==?=
+        <haibinzhang@tencent.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: Jason Wang <jasowang@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?bGlkb25nY2hlbijpmYjnq4vkuJwp?= <lidongchen@tencent.com>,
+        =?utf-8?B?eXVuZmFuZ3RhaSjlj7Dov5Dmlrkp?= <yunfangtai@tencent.com>
+Subject: Re: [PATCH] vhost-net: add limitation of sent packets for tx
+ polling(Internet mail)
+Thread-Topic: [PATCH] vhost-net: add limitation of sent packets for tx
+ polling(Internet mail)
+Thread-Index: AdPLtvyLAVcvvUmPSxa4+XB8+lGZAw==
+Date: Wed, 4 Apr 2018 01:55:44 +0000
+Message-ID: <88D661ADF6AFBF42B2AB88D8E7682B0901FC46AB@EXMBX-SZMAIL011.tencent.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.19.90.75]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-From: =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
-Date: Tue, 3 Apr 2018 18:51:38 -0700
-Message-ID: <CA+A7VXX+z8FrDhzW2BQ6AGMJ=_j_53wkUL_YNgkreEbWSh+jCw@mail.gmail.com>
-Subject: RTL8723BE performance regression
-To: Larry Finger <Larry.Finger@lwfinger.net>,
-        Yan-Hsuan Chuang <yhchuang@realtek.com>,
-        Ping-Ke Shih <pkshih@realtek.com>, Birming Chiu <birming@realtek.com>,
-        Shaofu <shaofu@realtek.com>, Steven Ting <steventing@realtek.com>,
-        Chaoming Li <chaoming_li@realsil.com.cn>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Daniel Drake <drake@endlessm.com>,
-        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>,
-        linux@endlessm.com
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w341qPiA008640
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w341tsST008648
 
-Hello,
 
-I've been trying to track a performance regression on the RTL8723BE
-WiFi adapter, which mainly affects the upload bandwidth (although we
-can see a decreased download performance as well, the effect on upload
-is more drastic). This was first reported by users after upgrading
-from our 4.11-based kernel to our 4.13-based kernel, but also
-confirmed to affect our development branch (4.15-based kernel) and
-wireless-drivers-next at the
-wireless-drivers-next-for-davem-2018-03-29 tag. This is happening on
-an HP laptop that needs rtl8723be.ant_sel=1 (and all the following
-tests have been made with that param).
+>On Tue, Apr 03, 2018 at 12:29:47PM +0000, haibinzhang wrote:
+>> >On Tue, Apr 03, 2018 at 08:08:26AM +0000, haibinzhang wrote:
+>> >> handle_tx will delay rx for a long time when tx busy polling udp packets
+>> >> with small length(e.g. 1byte udp payload), because setting VHOST_NET_WEIGHT
+>> >> takes into account only sent-bytes but no single packet length.
+>> >> 
+>> >> Tests were done between two Virtual Machines using netperf(UDP_STREAM, len=1),
+>> >> then another machine pinged the client. Result shows as follow:
+>> >> 
+>> >> Packet#       Ping-Latency(ms)
+>> >>               min     avg     max
+>> >> Origin      3.319  18.489  57.503
+>> >> 64          1.643   2.021   2.552
+>> >> 128         1.825   2.600   3.224
+>> >> 256         1.997   2.710   4.295
+>> >> 512*        1.860   3.171   4.631
+>> >> 1024        2.002   4.173   9.056
+>> >> 2048        2.257   5.650   9.688
+>> >> 4096        2.093   8.508  15.943
+>> >> 
+>> >> 512 is selected, which is multi-VRING_SIZE
+>> >
+>> >There's no guarantee vring size is 256.
+>> >
+>> >Could you pls try with a different tx ring size?
+>> >
+>> >I suspect we want:
+>> >
+>> >#define VHOST_NET_PKT_WEIGHT(vq) ((vq)->num * 2)
+>> >
+>> >
+>> >> and close to VHOST_NET_WEIGHT/MTU.
+>> >
+>> >Puzzled by this part.  Does tweaking MTU change anything?
+>> 
+>> The MTU of ethernet is 1500, so VHOST_NET_WEIGHT/MTU equals 0x80000/1500=350.
+>
+>We should include the 12 byte header so it's a bit lower.
+>
+>> Then sent-bytes cannot reach VHOST_NET_WEIGHT in one handle_tx even with 1500-bytes 
+>> frame if packet# is less than 350. So packet# must be bigger than 350.
+>> 512 meets this condition
+>
+>What you seem to say is this:
+>
+>	imagine MTU sized buffers. With these we stop after 350
+>	packets. Thus adding another limit > 350 will not
+>	slow us down.
+>
+>	Fair enough but won't apply with smaller packet
+>	sizes, will it?
 
-My first bisect attempt pointed me to the following commit:
+Right.
 
-bcd37f4a0831 rtlwifi: btcoex: 23b 2ant: let bt transmit when hw
-initialisation done
+>
+>	I still think a simpler argument carries more weight:
+>
+>ring size is a hint from device about a burst size
+>it can tolerate. Based on benchmarks, we tweak
+>the limit to 2 * vq size as that seems to
+>perform a bit better, and is still safer
+>than no limit on # of packets as is done now.
+>
+>	but this needs testing with another ring size.
+>	Could you try that please?
 
-Which I later found to be already fixed by
+Get it. 
+We will test with another ring size and submit again
 
-a33fcba6ec01 rtlwifi: btcoexist: Fix breakage of ant_sel for rtl8723be.
-
-That fix is already included in v4.15 though (and our dev branch as
-well), so I did a second bisect, now cherry-picking a33fcba6ec01 at
-every step, and it pointed me to the following commit:
-
-7937f02d1953 rtlwifi: btcoex: hook external functions for newer chips
-
-Reverting that commit on top of our development branch fixes the
-problem, but on top of v4.15 I get mixed results: a few times getting
-a good upload performance (~5-6Mbps) but most of the time just getting
-~1-1.5Mpbs (which is still better than the 0.0 then test failure I've
-gotten on most bad points of the bisect).
-
-Bisecting the downstream patches we carry on top of v4.15 (we base our
-kernel on Ubuntu's, so there are quite a few downstream changes) did
-not bring any clarity, as at all bisect points (plus reverting
-7937f02d1953) the performance was good, so probably there was some
-other difference in the resulting kernels from my initial revert of
-that patch on top of v4.15 and each step during the bisect. I've
-experimented a bit with fwlps=0, but it did not bring any conclusive
-results either. I'll try to look at other things that may have changed
-(configuration perhaps?), but I don't have a clear plan yet.
-
-Have you seen anything similar, or have any other ideas or suggestions
-to track this problem? Even without crystal clear results, it looks
-like 7937f02d1953 is having a negative impact on the RTL8723BE
-performance, so perhaps it is worth reverting it and reworking it a
-later point?
-
-This are the results (testing with speedtest.net) I got at some key points:
-
-Version        Commit        Ping        Down        Up
-
-v4.11            a351e9b        12        25.44        5.99
-v4.11            a351e9b        131      17.02        5.89
-
-v4.13            569dbb8        174      14.08        0.00
-v4.13            569dbb8        261      8.41          0.00
-
-v4.15+revert d8a5b80        19        23.86        1.41
-v4.15+revert d8a5b80        189      18.69        1.39
-
-Best regards,
-
---
-João Paulo Rechi Vita
-http://about.me/jprvita
+>
+>	
+>> and is also DEFAULT VRING_SIZE aligned.
+>
+>Neither Linux nor virtio have a default vring size. It's a historical
+>construct that exists in qemu for qemu compatibility
+>reasons.
+>
+>> >
+>> >> To evaluate this change, another tests were done using netperf(RR, TX) between
+>> >> two machines with Intel(R) Xeon(R) Gold 6133 CPU @ 2.50GHz. Result as follow
+>> >> does not show obvious changes:
+>> >> 
+>> >> TCP_RR
+>> >> 
+>> >> size/sessions/+thu%/+normalize%
+>> >>    1/       1/  -7%/        -2%
+>> >>    1/       4/  +1%/         0%
+>> >>    1/       8/  +1%/        -2%
+>> >>   64/       1/  -6%/         0%
+>> >>   64/       4/   0%/        +2%
+>> >>   64/       8/   0%/         0%
+>> >>  256/       1/  -3%/        -4%
+>> >>  256/       4/  +3%/        +4%
+>> >>  256/       8/  +2%/         0%
+>> >> 
+>> >> UDP_RR
+>> >> 
+>> >> size/sessions/+thu%/+normalize%
+>> >>    1/       1/  -5%/        +1%
+>> >>    1/       4/  +4%/        +1%
+>> >>    1/       8/  -1%/        -1%
+>> >>   64/       1/  -2%/        -3%
+>> >>   64/       4/  -5%/        -1%
+>> >>   64/       8/   0%/        -1%
+>> >>  256/       1/  +7%/        +1%
+>> >>  256/       4/  +1%/        +1%
+>> >>  256/       8/  +2%/        +2%
+>> >> 
+>> >> TCP_STREAM
+>> >> 
+>> >> size/sessions/+thu%/+normalize%
+>> >>   64/       1/   0%/        -3%
+>> >>   64/       4/  +3%/        -1%
+>> >>   64/       8/  +9%/        -4%
+>> >>  256/       1/  +1%/        -4%
+>> >>  256/       4/  -1%/        -1%
+>> >>  256/       8/  +7%/        +5%
+>> >>  512/       1/  +1%/         0%
+>> >>  512/       4/  +1%/        -1%
+>> >>  512/       8/  +7%/        -5%
+>> >> 1024/       1/   0%/        -1%
+>> >> 1024/       4/  +3%/         0%
+>> >> 1024/       8/  +8%/        +5%
+>> >> 2048/       1/  +2%/        +2%
+>> >> 2048/       4/  +1%/         0%
+>> >> 2048/       8/  -2%/         0%
+>> >> 4096/       1/  -2%/         0%
+>> >> 4096/       4/  +2%/         0%
+>> >> 4096/       8/  +9%/        -2%
+>> >> 
+>> >> Signed-off-by: Haibin Zhang <haibinzhang@tencent.com>
+>> >> Signed-off-by: Yunfang Tai <yunfangtai@tencent.com>
+>> >> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+>> >> ---
+>> >>  drivers/vhost/net.c | 8 +++++++-
+>> >>  1 file changed, 7 insertions(+), 1 deletion(-)
+>> >> 
+>> >> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+>> >> index 8139bc70ad7d..13a23f3f3ea4 100644
+>> >> --- a/drivers/vhost/net.c
+>> >> +++ b/drivers/vhost/net.c
+>> >> @@ -44,6 +44,10 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
+>> >>   * Using this limit prevents one virtqueue from starving others. */
+>> >>  #define VHOST_NET_WEIGHT 0x80000
+>> >>  
+>> >> +/* Max number of packets transferred before requeueing the job.
+>> >> + * Using this limit prevents one virtqueue from starving rx. */
+>> >> +#define VHOST_NET_PKT_WEIGHT 512
+>> >> +
+>> >>  /* MAX number of TX used buffers for outstanding zerocopy */
+>> >>  #define VHOST_MAX_PEND 128
+>> >>  #define VHOST_GOODCOPY_LEN 256
+>> >> @@ -473,6 +477,7 @@ static void handle_tx(struct vhost_net *net)
+>> >>  	struct socket *sock;
+>> >>  	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+>> >>  	bool zcopy, zcopy_used;
+>> >> +	int sent_pkts = 0;
+>> >>  
+>> >>  	mutex_lock(&vq->mutex);
+>> >>  	sock = vq->private_data;
+>> >> @@ -580,7 +585,8 @@ static void handle_tx(struct vhost_net *net)
+>> >>  		else
+>> >>  			vhost_zerocopy_signal_used(net, vq);
+>> >>  		vhost_net_tx_packet(net);
+>> >> -		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
+>> >> +		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
+>> >> +		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT)) {
+>> >>  			vhost_poll_queue(&vq->poll);
+>> >>  			break;
+>> >>  		}
+>> >> -- 
+>> >> 2.12.3
+>> >> 
+>> 
