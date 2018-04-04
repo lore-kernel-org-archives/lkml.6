@@ -1,199 +1,457 @@
-Return-Path: <cpandya@codeaurora.org>
-X-Google-Smtp-Source: AIpwx48C+1ho/2OJmoPskgUM9ZrWCWza21TkqTSRDuiwfWHK1qrXQ4oIBjG0TAnetwcg2doLROb+
-ARC-Seal: i=1; a=rsa-sha256; t=1522742526; cv=none;
-        d=google.com; s=arc-20160816;
-        b=QRNA/bAssDmPuK1OUdSC8w9Nc+i32M/ctiudPGe5Fy6H8wPYOZekgrnxR9kXryStdf
-         umrcFksieHMU2MB3tfhCAfcibbZvga5/wKVWEOVcm/iTno32qwPAsUUAC0bHUQH0Fc//
-         TiXE4+7YgsNNmCp/Ag0lFIHeukq51pZOqRp6pcfhcqpN3bV7ehzdqof1x+JbrVCBsCwo
-         ZZohl0DXaGERaATZTFRoULlowcYXFNZnNAvlMQ6fx51MHbsp6fksdH1lTYV9FmnB11Hb
-         5Y4otgJHfIfw8VdHcPNecMPo/+14ljZUkLG94KOMwPMOOE5pBqUm7CCesdx6NP6SjiZF
-         MXpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=JU1teH6+fv5QEx7pH4LHUdKoM0Y0RR7QiVHOCr/Bwek=;
-        b=jlpmv/SmfkBZ5jrlzV4zZoGkONCe9RDbD+0DzEgDyEbgMu0CTO7BSbP02NN/JF8OHX
-         +Mivcz7+7dAW/eDo1owjWudjhdYsce/pa5+QJN4D+wqZgE8m8C8EoV8Z5DN+6pVU4WQM
-         R/rTtlmaEf/6PfgZOk0IRs1dEVtGrzndiYkXN1Ktn41nAGuv5OkFMgXCnOylkQCkYtfC
-         IRKIv2oIhe+gOesjx2ZfqzB1S40FQ/Tk0fyx0kJi1gYsIO12v0Jb2M6XL29w57/72tz0
-         FdGTuxcOMQ1YzW2on5kKV45fx978Kx2I18AwMKHGctCzJ3nivDJk7fcCHJyOX7q2511A
-         Sc6g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=fy1cIKyt;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=iSzcruUY;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=fy1cIKyt;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=iSzcruUY;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AF012602BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-From: Chintan Pandya <cpandya@codeaurora.org>
-To: catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	mark.rutland@arm.com,
-	toshi.kani@hpe.com
-Cc: arnd@arndb.de,
-	ard.biesheuvel@linaro.org,
-	marc.zyngier@arm.com,
-	james.morse@arm.com,
-	kristina.martsenko@arm.com,
-	takahiro.akashi@linaro.org,
-	gregkh@linuxfoundation.org,
-	tglx@linutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v8 1/4] ioremap: Update pgtable free interfaces with addr
-Date: Tue,  3 Apr 2018 13:30:43 +0530
-Message-Id: <1522742446-5084-2-git-send-email-cpandya@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522742446-5084-1-git-send-email-cpandya@codeaurora.org>
-References: <1522742446-5084-1-git-send-email-cpandya@codeaurora.org>
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-831531-1522869421-2-6375203127959595943
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES roenfr, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='ru',
+  MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522869420; b=ovrHhRU8JrxZjq4BX7dLfVPLu6xxb3Gcz5QmvL5cnlfqX+eeEJ
+    JlSMo4WfMtarTLcToDHGmkRVaJcuQ7IzmX9SvCzomyDArtb19E2HIV+TGHHVq6vt
+    XJuinWy01QeCXfvz1HvXTYHgi6AqTdwS+UK2YI0VzUdnc9NvblOlMGp6Z3JrIgz7
+    JIxpO+sJjZAVcDNG7gnq9Qb0MCNqdUKFTsSbinE6pYonnpe/VKPBRqZnAed2eaSr
+    qyW7rnpuQh0nRQQkxsRdm5sQJqH40TF2FJBwdbYYQmDmcKD9hrsD95kVCnnfPJbT
+    0XP2xNdT2o20MzitHy/IZsRXnfqN3qU5fUCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1522869420; bh=R7aIObFUWRQW9Efk/gWLiJPI5MzUxe
+    1fXQQUFYJvzbU=; b=Tv5LIdFuN8Zd7A/woAEzMXD8Sj5+VpLSznAVIhtevOxlAS
+    xWW6KcnvLi4K1SUhnNGmMM6VmqlHiAvN9TDmevYSXBlEceRYflTpqaeVd5dHWCgt
+    aXUDRMLTn/7JwdTyU1NnY6zc4hHLs+4Kqqxb55Z4Z93iN0Z5Tygy2F7GdYr58ZCS
+    dK+xE/IptyC7jGVUZq3bTXuJbfVxv44+2cyld18I3CAdS6QU7hpcruFha7EmBnzR
+    uDJK/jwaTipg9AWyVxMz2KWEfMkKEcqxu6LtDhOFNbJUJxvbrvapPCWyFwvXsc/L
+    sDWzPJF1MfDzfLFSh0Ckpz9i0NWO6Xn5IyXzk0iA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim-adsp=unknown (ADSP policy from yandex-team.ru);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=e+xj5NAm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=yandex-team.ru;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=yandex-team.ru header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim-adsp=unknown (ADSP policy from yandex-team.ru);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=e+xj5NAm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=yandex-team.ru;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=yandex-team.ru header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPa19uN2wbg8VlMvvMhVjJnCOj5MSg7e0kY63J5NKESI7VQkF+6U+UXpB8pJN5u1PB96zZKC8QyGPxDQ5gZBGxVjbX2N6KegezKLvDpHRDyGv0Kq31N5
+    VC7iKpQDNQsuZdVjXlzhsm7mYXILz04BLHnkloRQ7wvbpSnFFClyygTxNFUScNHMidKvRSiu0ScR8z43HhNm3MGfK8O8Dx+yzRJUjBm2jRE3LfM3mO9bqeUZ
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
+    a=Kd1tUaAdevIA:10 a=6R7veym_AAAA:8 a=D19gQVrFAAAA:8 a=VwQbUJbxAAAA:8
+    a=9fOCo2EG3t4pBztz3ckA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=ILCOIF4F_8SzUMnO7jNM:22 a=W4TVW4IDbPiebHqcZpNg:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751296AbeDDTQ6 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 4 Apr 2018 15:16:58 -0400
+Received: from forwardcorp1j.cmail.yandex.net ([5.255.227.105]:44676 "EHLO
+        forwardcorp1j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751231AbeDDTQ5 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 4 Apr 2018 15:16:57 -0400
+Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: [PATCH RFC v5] pidns: introduce syscall translate_pid
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To: linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jann Horn <jannh@google.com>,
+        Serge Hallyn <serge.hallyn@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date: Wed, 04 Apr 2018 22:11:51 +0300
+Message-ID: <152286911105.615669.14053871624892399807.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596097435911624997?=
-X-GMAIL-MSGID: =?utf-8?q?1596711267120148872?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch ("mm/vmalloc: Add interfaces to free unmapped
-page table") adds following 2 interfaces to free the page
-table in case we implement huge mapping.
+Each process have different pids, one for each pid namespace it belongs.
+When interaction happens within single pid-ns translation isn't required.
+More complicated scenarios needs special handling.
 
-pud_free_pmd_page() and pmd_free_pte_page()
+For example:
+- reading pid-files or logs written inside container with pid namespace
+- attaching with ptrace to tasks from different pid namespace
+- passing pids across pid namespaces in any kind of API
 
-Some architectures (like arm64) needs to do proper TLB
-maintanance after updating pagetable entry even in map.
-Why ? Read this,
-https://patchwork.kernel.org/patch/10134581/
+Currently there are several interfaces that could be used here:
 
-Pass 'addr' in these interfaces so that proper TLB ops
-can be performed.
+Pid namespaces are identified by inode number of /proc/[pid]/ns/pid.
 
-Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+Pids for nested Pid namespaces are shown in file /proc/[pid]/status.
+In some cases conversion pid -> vpid could be easily done using this
+information, but backward translation requires scanning all tasks.
+
+Unix socket automatically translates pid attached to SCM_CREDENTIALS.
+This requires CAP_SYS_ADMIN for sending arbitrary pids and entering
+into pid namespace, this expose process and could be insecure.
+
+This patch adds new syscall for converting pids between pid namespaces:
+
+pid_t translate_pid(pid_t pid, int source_type, int source,
+                               int target_type, int target);
+
+@source_type and @target_type defines type of following arguments:
+
+TRANSLATE_PID_CURRENT_PIDNS  - current pid namespace, argument is unused
+TRANSLATE_PID_TASK_PIDNS     - task pid-ns, argument is task pid
+TRANSLATE_PID_FD_PIDNS       - pidns fd, argument is file descriptor
+
+Syscall returns pid in target pid-ns or zero if task have no pid there.
+
+Error codes:
+-EINVAL   - @source or @target couldn't be resolved into pid namespace
+-ESRCH    - task with @pid is not found in @source pid-namespace
+
+Other pid namespaces are referenced either by pid of any process who
+lives inside it or by file descriptor pointing to /proc/[pid]/ns/pid.
+Latter method provides better protection against races but in some
+cases requires CAP_SYS_PTRACE.
+
+Translate_pid could breach pid isolation and return pids from outer pid
+namespaces iff process already has file descriptor pointing to them.
+
+
+Examples:
+
+- get pid in current pid namespace
+
+translate_pid(pid, TRANSLATE_PID_FD_PIDNS, ns_fd,
+                   TRANSLATE_PID_CURRENT_PIDNS, 0)
+or
+translate_pid(pid, TRANSLATE_PID_TASK_PIDNS, ns_pid,
+                   TRANSLATE_PID_CURRENT_PIDNS, 0)
+
+- get pid in other pid namespace
+
+translate_pid(pid, TRANSLATE_PID_CURRENT_PIDNS, 0,
+                   TRANSLATE_PID_FD_PIDNS, ns_fd)
+or
+translate_pid(pid, TRANSLATE_PID_CURRENT_PIDNS, 0,
+                   TRANSLATE_PID_TASK_PIDNS, ns_pid)
+
+- get deepest pid
+
+translate_pid(pid, TRANSLATE_PID_CURRENT_PIDNS, 0,
+                   TRANSLATE_PID_TASK_PIDNS, pid)
+
+- get pid of init task for namespace
+
+translate_pid(1, TRANSLATE_PID_FD_PIDNS, ns_fd,
+                 TRANSLATE_PID_CURRENT_PIDNS, 0)
+
+
+This syscall also could be used for checking topology of pid namespaces:
+
+- ns1 nests inside ns2
+
+translate_pid(1, TRANSLATE_PID_FD_PIDNS, ns1_fd,
+                 TRANSLATE_PID_FD_PIDNS, ns2_fd) > 1
+
+- task1 lives in same pid-namespace as task2
+
+translate_pid(1, TRANSLATE_PID_TASK_PIDNS, task1_pid,
+                 TRANSLATE_PID_TASK_PIDNS, task2_pid) == 1
+
+- task1 is isolated from task2
+
+translate_pid(task1_pid, TRANSLATE_PID_CURRENT_PIDNS, 0,
+                         TRANSLATE_PID_TASK_PIDNS, task2_pid) == 0
+
+- pid is reachable from ns
+
+translate_pid(pid, TRANSLATE_PID_CURRENT_PIDNS, 0,
+                   TRANSLATE_PID_FD_PIDNS, ns_fd) > 0
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+
 ---
- arch/arm64/mm/mmu.c           | 4 ++--
- arch/x86/mm/pgtable.c         | 8 +++++---
- include/asm-generic/pgtable.h | 8 ++++----
- lib/ioremap.c                 | 4 ++--
- 4 files changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 2dbb2c9..da98828 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -973,12 +973,12 @@ int pmd_clear_huge(pmd_t *pmdp)
- 	return 1;
+v1: https://lkml.org/lkml/2015/9/15/411
+v2: https://lkml.org/lkml/2015/9/24/278
+ * use namespace-fd as second/third argument
+ * add -pid for getting parent pid
+ * move code into kernel/sys.c next to getppid
+ * drop ifdef CONFIG_PID_NS
+ * add generic syscall
+v3: https://lkml.org/lkml/2015/9/28/3
+ * use proc_ns_fdget()
+ * update description
+ * rebase to next-20150925
+ * fix conflict with mlock2
+v4: https://lkml.org/lkml/2017/10/16/852
+ * rename into translate_pid()
+ * remove syscall if CONFIG_PID_NS=n
+ * drop -pid for parent task
+ * drop fget-fdget optimizations
+ * add helper get_pid_ns_by_fd()
+ * wire only into x86
+v5:
+ * rewrite commit message
+ * resolve pidns by task pid or by pidns fd
+ * add arguments source_type and target_type
+
+--- sample tool translate_pid.c ---
+
+#define _GNU_SOURCE
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sched.h>
+#include <fcntl.h>
+#include <err.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#ifndef SYS_translate_pid
+#ifdef __x86_64__
+#define SYS_translate_pid 333
+#endif
+#endif
+
+#ifndef TRANSLATE_PID_CURRENT_PIDNS
+#define TRANSLATE_PID_CURRENT_PIDNS	0
+#define TRANSLATE_PID_TASK_PIDNS	1
+#define TRANSLATE_PID_FD_PIDNS		2
+#endif
+
+pid_t translate_pid(pid_t pid, int source_type, int source,
+			       int target_type, int target) {
+	return syscall(SYS_translate_pid, pid, source_type, source,
+					       target_type, target);
+}
+
+int main(int argc, char **argv) {
+	int pid, source, target;
+	char buf[64];
+
+	if (argc != 4)
+		errx(1, "usage: %s <pid> <source> <traget>", argv[0]);
+
+	pid = atoi(argv[1]);
+	int source_type, target_type;
+	source = atoi(argv[2]);
+	target = atoi(argv[3]);
+
+	if (source < 0) {
+		source_type = TRANSLATE_PID_TASK_PIDNS;
+		source = -source;
+	} else if (source > 0) {
+		source_type = TRANSLATE_PID_FD_PIDNS;
+		sprintf(buf, "/proc/%d/ns/pid", source);
+		source = open(buf, O_RDONLY);
+		if (source < 0)
+			err(2, "open source %s", buf);
+	} else {
+		source_type = TRANSLATE_PID_CURRENT_PIDNS;
+	}
+
+	if (target < 0) {
+		target_type = TRANSLATE_PID_TASK_PIDNS;
+		target = -target;
+	} else if (target > 0) {
+		target_type = TRANSLATE_PID_FD_PIDNS;
+		sprintf(buf, "/proc/%d/ns/pid", target);
+		target = open(buf, O_RDONLY);
+		if (target < 0)
+			err(2, "open target %s", buf);
+	} else {
+		target_type = TRANSLATE_PID_CURRENT_PIDNS;
+	}
+
+	pid = translate_pid(pid, source_type, source, target_type, target);
+	if (pid < 0)
+		err(2, "translate");
+
+	printf("%d\n", pid);
+	return 0;
+}
+
+---
+---
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 +
+ include/linux/syscalls.h               |    4 ++
+ include/uapi/linux/sched.h             |    7 ++++
+ kernel/pid_namespace.c                 |   64 ++++++++++++++++++++++++++++++++
+ kernel/sys_ni.c                        |    3 ++
+ 6 files changed, 80 insertions(+)
+
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index c58f75b088c5..aef52c709845 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -391,3 +391,4 @@
+ 382	i386	pkey_free		sys_pkey_free
+ 383	i386	statx			sys_statx
+ 384	i386	arch_prctl		sys_arch_prctl			compat_sys_arch_prctl
++385	i386	translate_pid		sys_translate_pid
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 5aef183e2f85..1ebdab83c6f4 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -339,6 +339,7 @@
+ 330	common	pkey_alloc		sys_pkey_alloc
+ 331	common	pkey_free		sys_pkey_free
+ 332	common	statx			sys_statx
++333	common	translate_pid		sys_translate_pid
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index b961184f597a..d189a1f61160 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -553,6 +553,10 @@ asmlinkage long sys_clock_nanosleep(clockid_t which_clock, int flags,
+ /* kernel/printk.c */
+ asmlinkage long sys_syslog(int type, char __user *buf, int len);
+ 
++/* kernel/pid_namespace.c */
++asmlinkage long sys_translate_pid(pid_t pid, int source_type, int source,
++				  int target_type, int target);
++
+ /* kernel/ptrace.c */
+ asmlinkage long sys_ptrace(long request, long pid, unsigned long addr,
+ 			   unsigned long data);
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index 22627f80063e..7c45fd8d33d7 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -55,4 +55,11 @@
+ 			 SCHED_FLAG_RECLAIM		| \
+ 			 SCHED_FLAG_DL_OVERRUN)
+ 
++/*
++ * For translate_pid()
++ */
++#define TRANSLATE_PID_CURRENT_PIDNS	0	/* Current pid namespace */
++#define TRANSLATE_PID_TASK_PIDNS	1	/* Namespace by task pid */
++#define TRANSLATE_PID_FD_PIDNS		2	/* Namespace by pidns fd */
++
+ #endif /* _UAPI_LINUX_SCHED_H */
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index 2a2ac53d8b8b..84c8b47289d5 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -13,6 +13,7 @@
+ #include <linux/user_namespace.h>
+ #include <linux/syscalls.h>
+ #include <linux/cred.h>
++#include <linux/file.h>
+ #include <linux/err.h>
+ #include <linux/acct.h>
+ #include <linux/slab.h>
+@@ -380,6 +381,69 @@ static void pidns_put(struct ns_common *ns)
+ 	put_pid_ns(to_pid_ns(ns));
  }
  
--int pud_free_pmd_page(pud_t *pud)
-+int pud_free_pmd_page(pud_t *pud, unsigned long addr)
++/* Under rcu_read_lock(). Returns pointer to pid_namespace or NULL. */
++static struct pid_namespace *resolve_pid_ns(int type, int fd_or_pid)
++{
++	struct pid_namespace *current_ns = task_active_pid_ns(current);
++	struct pid_namespace *pidns = NULL;
++	struct ns_common *ns;
++	struct file *file;
++
++	switch (type) {
++	case TRANSLATE_PID_CURRENT_PIDNS:
++		pidns = current_ns;
++		break;
++	case TRANSLATE_PID_TASK_PIDNS:
++		pidns = ns_of_pid(find_pid_ns(fd_or_pid, current_ns));
++		break;
++	case TRANSLATE_PID_FD_PIDNS:
++		file = proc_ns_fget(fd_or_pid);
++		if (!IS_ERR(file)) {
++			ns = get_proc_ns(file_inode(file));
++			if (ns->ops->type == CLONE_NEWPID)
++				pidns = to_pid_ns(ns);
++			fput(file);
++		}
++		break;
++	}
++
++	return pidns;
++}
++
++/*
++ * translate_pid - convert pid in source pid-ns into target pid-ns.
++ * @pid:    pid for translation
++ * @source_type: one of TRANSLATE_PID_*
++ * @source: depending on @source_type pid-ns fd, pid, or nothing
++ * @target_type: one of TRANSLATE_PID_*
++ * @target: depending on @target_type pid-ns fd, pid, or nothing
++ *
++ * Returns pid in @target pid-ns, zero if task have no pid there,
++ * or -ESRCH if task with @pid does not found in @source pid-ns,
++ * or -EINVAL if @source or @target couldn't be resolved into pid-ns.
++ */
++SYSCALL_DEFINE5(translate_pid, pid_t, pid,
++		int, source_type, int, source,
++		int, target_type, int, target)
++{
++	struct pid_namespace *source_ns, *target_ns;
++	struct pid *struct_pid;
++	pid_t result = -EINVAL;
++
++	rcu_read_lock();
++	source_ns = resolve_pid_ns(source_type, source);
++	if (!source_ns)
++		goto out;
++	target_ns = resolve_pid_ns(target_type, target);
++	if (!target_ns)
++		goto out;
++	struct_pid = find_pid_ns(pid, source_ns);
++	result = struct_pid ? pid_nr_ns(struct_pid, target_ns) : -ESRCH;
++out:
++	rcu_read_unlock();
++	return result;
++}
++
+ static int pidns_install(struct nsproxy *nsproxy, struct ns_common *ns)
  {
- 	return pud_none(*pud);
- }
+ 	struct pid_namespace *active = task_active_pid_ns(current);
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index 6cafc008f6db..777689bce406 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -146,6 +146,9 @@ COND_SYSCALL(delete_module);
+ /* kernel/printk.c */
+ COND_SYSCALL(syslog);
  
--int pmd_free_pte_page(pmd_t *pmd)
-+int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	return pmd_none(*pmd);
- }
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 34cda7e..cd95edc 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -706,11 +706,12 @@ int pmd_clear_huge(pmd_t *pmd)
- /**
-  * pud_free_pmd_page - Clear pud entry and free pmd page.
-  * @pud: Pointer to a PUD.
-+ * @addr: Virtual address associated with pud.
-  *
-  * Context: The pud range has been unmaped and TLB purged.
-  * Return: 1 if clearing the entry succeeded. 0 otherwise.
-  */
--int pud_free_pmd_page(pud_t *pud)
-+int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
- 	pmd_t *pmd;
- 	int i;
-@@ -721,7 +722,7 @@ int pud_free_pmd_page(pud_t *pud)
- 	pmd = (pmd_t *)pud_page_vaddr(*pud);
++/* kernel/pid_namespace.c */
++COND_SYSCALL(sys_translate_pid);
++
+ /* kernel/ptrace.c */
  
- 	for (i = 0; i < PTRS_PER_PMD; i++)
--		if (!pmd_free_pte_page(&pmd[i]))
-+		if (!pmd_free_pte_page(&pmd[i], addr + (i * PMD_SIZE)))
- 			return 0;
- 
- 	pud_clear(pud);
-@@ -733,11 +734,12 @@ int pud_free_pmd_page(pud_t *pud)
- /**
-  * pmd_free_pte_page - Clear pmd entry and free pte page.
-  * @pmd: Pointer to a PMD.
-+ * @addr: Virtual address associated with pmd.
-  *
-  * Context: The pmd range has been unmaped and TLB purged.
-  * Return: 1 if clearing the entry succeeded. 0 otherwise.
-  */
--int pmd_free_pte_page(pmd_t *pmd)
-+int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	pte_t *pte;
- 
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index bfbb44a..e6310f4 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -983,8 +983,8 @@ static inline int p4d_clear_huge(p4d_t *p4d)
- int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot);
- int pud_clear_huge(pud_t *pud);
- int pmd_clear_huge(pmd_t *pmd);
--int pud_free_pmd_page(pud_t *pud);
--int pmd_free_pte_page(pmd_t *pmd);
-+int pud_free_pmd_page(pud_t *pud, unsigned long addr);
-+int pmd_free_pte_page(pmd_t *pmd, unsigned long addr);
- #else	/* !CONFIG_HAVE_ARCH_HUGE_VMAP */
- static inline int p4d_set_huge(p4d_t *p4d, phys_addr_t addr, pgprot_t prot)
- {
-@@ -1010,11 +1010,11 @@ static inline int pmd_clear_huge(pmd_t *pmd)
- {
- 	return 0;
- }
--static inline int pud_free_pmd_page(pud_t *pud)
-+static inline int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
- 	return 0;
- }
--static inline int pmd_free_pte_page(pmd_t *pmd)
-+static inline int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	return 0;
- }
-diff --git a/lib/ioremap.c b/lib/ioremap.c
-index 54e5bba..517f585 100644
---- a/lib/ioremap.c
-+++ b/lib/ioremap.c
-@@ -92,7 +92,7 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
- 		if (ioremap_pmd_enabled() &&
- 		    ((next - addr) == PMD_SIZE) &&
- 		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
--		    pmd_free_pte_page(pmd)) {
-+		    pmd_free_pte_page(pmd, addr)) {
- 			if (pmd_set_huge(pmd, phys_addr + addr, prot))
- 				continue;
- 		}
-@@ -119,7 +119,7 @@ static inline int ioremap_pud_range(p4d_t *p4d, unsigned long addr,
- 		if (ioremap_pud_enabled() &&
- 		    ((next - addr) == PUD_SIZE) &&
- 		    IS_ALIGNED(phys_addr + addr, PUD_SIZE) &&
--		    pud_free_pmd_page(pud)) {
-+		    pud_free_pmd_page(pud, addr)) {
- 			if (pud_set_huge(pud, phys_addr + addr, prot))
- 				continue;
- 		}
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation
-Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
-Collaborative Project
+ /* kernel/sched/core.c */
+
