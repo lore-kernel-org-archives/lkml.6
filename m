@@ -1,52 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753356AbeDDDWQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 23:22:16 -0400
-Received: from m12-11.163.com ([220.181.12.11]:43917 "EHLO m12-11.163.com"
+        id S1753937AbeDDDXN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 23:23:13 -0400
+Received: from mga05.intel.com ([192.55.52.43]:43956 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752834AbeDDDWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 23:22:15 -0400
-From: Xidong Wang <wangxidong_97@163.com>
-To: Vinod Koul <vinod.koul@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc: Xidong Wang <wangxidong_97@163.com>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] dmaengine:jz4740:fix memory leak
-Date: Wed,  4 Apr 2018 11:21:58 +0800
-Message-Id: <1522812118-25763-1-git-send-email-wangxidong_97@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: C8CowACXLLzdRMRa_gBeNQ--.8596S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XFyDKF13ZryxJw4UKF17Jrb_yoW3Xrc_C3
-        WUuryrZrsYkFnxKr1jyrnxZryI9FZ29FZxWwsrt34fKrWrJr15W3y2vr1kGw42grW8GFZ8
-        A3Wjgr4xCF45JjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU5c2-UUUUUU==
-X-Originating-IP: [106.120.213.14]
-X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/1tbi8AEe81UMDaLPWwAAs+
+        id S1753896AbeDDDXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 23:23:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,404,1517904000";
+   d="scan'208";a="30847411"
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH -mm] mm, gup: prevent pmd checking race in follow_pmd_mask()
+Date: Wed,  4 Apr 2018 11:22:57 +0800
+Message-Id: <20180404032257.11422-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function jz4740_dma_probe(), the memory allocated by
-clk_get() is not released on the error path that ret, which holds
-the return value of dma_async_device_register(), is not NULL.
-This will result in a memory leak bug.
+From: Huang Ying <ying.huang@intel.com>
 
-Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+mmap_sem will be read locked when calling follow_pmd_mask().  But this
+cannot prevent PMD from being changed for all cases when PTL is
+unlocked, for example, from pmd_trans_huge() to pmd_none() via
+MADV_DONTNEED.  So it is possible for the pmd_present() check in
+follow_pmd_mask() encounter a none PMD.  This may cause incorrect
+VM_BUG_ON() or infinite loop.  Fixed this via reading PMD entry again
+but only once and checking the local variable and pmd_none() in the
+retry loop.
+
+As Kirill pointed out, with PTL unlocked, the *pmd may be changed
+under us, so read it directly again and again may incur weird bugs.
+So although using *pmd directly other than pmd_present() checking may
+be safe, it is still better to replace them to read *pmd once and
+check the local variable for multiple times.
+
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+ # When PTL unlocked, replace all *pmd with local variable
+Suggested-by: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 ---
- drivers/dma/dma-jz4740.c | 1 +
- 1 file changed, 1 insertion(+)
+ mm/gup.c | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/dma/dma-jz4740.c b/drivers/dma/dma-jz4740.c
-index afd5e10..082c158 100644
---- a/drivers/dma/dma-jz4740.c
-+++ b/drivers/dma/dma-jz4740.c
-@@ -570,6 +570,7 @@ static int jz4740_dma_probe(struct platform_device *pdev)
- 	dma_async_device_unregister(dd);
- err_clk:
- 	clk_disable_unprepare(dmadev->clk);
-+	clk_put(dmadev->clk);
- 	return ret;
- }
+diff --git a/mm/gup.c b/mm/gup.c
+index 2e2df7f3e92d..51734292839b 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -213,53 +213,61 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 				    unsigned long address, pud_t *pudp,
+ 				    unsigned int flags, unsigned int *page_mask)
+ {
+-	pmd_t *pmd;
++	pmd_t *pmd, pmdval;
+ 	spinlock_t *ptl;
+ 	struct page *page;
+ 	struct mm_struct *mm = vma->vm_mm;
  
+ 	pmd = pmd_offset(pudp, address);
+-	if (pmd_none(*pmd))
++	pmdval = READ_ONCE(*pmd);
++	if (pmd_none(pmdval))
+ 		return no_page_table(vma, flags);
+-	if (pmd_huge(*pmd) && vma->vm_flags & VM_HUGETLB) {
++	if (pmd_huge(pmdval) && vma->vm_flags & VM_HUGETLB) {
+ 		page = follow_huge_pmd(mm, address, pmd, flags);
+ 		if (page)
+ 			return page;
+ 		return no_page_table(vma, flags);
+ 	}
+-	if (is_hugepd(__hugepd(pmd_val(*pmd)))) {
++	if (is_hugepd(__hugepd(pmd_val(pmdval)))) {
+ 		page = follow_huge_pd(vma, address,
+-				      __hugepd(pmd_val(*pmd)), flags,
++				      __hugepd(pmd_val(pmdval)), flags,
+ 				      PMD_SHIFT);
+ 		if (page)
+ 			return page;
+ 		return no_page_table(vma, flags);
+ 	}
+ retry:
+-	if (!pmd_present(*pmd)) {
++	if (!pmd_present(pmdval)) {
+ 		if (likely(!(flags & FOLL_MIGRATION)))
+ 			return no_page_table(vma, flags);
+ 		VM_BUG_ON(thp_migration_supported() &&
+-				  !is_pmd_migration_entry(*pmd));
+-		if (is_pmd_migration_entry(*pmd))
++				  !is_pmd_migration_entry(pmdval));
++		if (is_pmd_migration_entry(pmdval))
+ 			pmd_migration_entry_wait(mm, pmd);
++		pmdval = READ_ONCE(*pmd);
++		if (pmd_none(pmdval))
++			return no_page_table(vma, flags);
+ 		goto retry;
+ 	}
+-	if (pmd_devmap(*pmd)) {
++	if (pmd_devmap(pmdval)) {
+ 		ptl = pmd_lock(mm, pmd);
+ 		page = follow_devmap_pmd(vma, address, pmd, flags);
+ 		spin_unlock(ptl);
+ 		if (page)
+ 			return page;
+ 	}
+-	if (likely(!pmd_trans_huge(*pmd)))
++	if (likely(!pmd_trans_huge(pmdval)))
+ 		return follow_page_pte(vma, address, pmd, flags);
+ 
+-	if ((flags & FOLL_NUMA) && pmd_protnone(*pmd))
++	if ((flags & FOLL_NUMA) && pmd_protnone(pmdval))
+ 		return no_page_table(vma, flags);
+ 
+ retry_locked:
+ 	ptl = pmd_lock(mm, pmd);
++	if (unlikely(pmd_none(*pmd))) {
++		spin_unlock(ptl);
++		return no_page_table(vma, flags);
++	}
+ 	if (unlikely(!pmd_present(*pmd))) {
+ 		spin_unlock(ptl);
+ 		if (likely(!(flags & FOLL_MIGRATION)))
 -- 
-2.7.4
+2.15.1
