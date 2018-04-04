@@ -1,86 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752126AbeDDUqg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 16:46:36 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:51860 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751754AbeDDUqf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:46:35 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Content-Type: text/plain; charset="utf-8"
+        id S1752292AbeDDUrS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 16:47:18 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:35726 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751982AbeDDUrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 16:47:17 -0400
+Reply-To: dgilbert@interlog.com
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Kees Cook <keescook@chromium.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <10360653.ov98egbaqx@natalenko.name>
+ <CAGXu5jLTSd4wx6hxj6FCJ4O2PkqFyRw6nwu=0Y1NpoaRZKefWw@mail.gmail.com>
+From: Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <b7fe22f9-4820-11fe-fe92-cf246642d9f6@interlog.com>
+Date: Wed, 4 Apr 2018 16:47:12 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: linux-kernel@vger.kernel.org
-From: Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20180330150132.16903-1-chris@chris-wilson.co.uk>
-Cc: intel-gfx@lists.freedesktop.org,
-        "Steven Rostedt" <rostedt@goodmis.org>
-References: <20180330150132.16903-1-chris@chris-wilson.co.uk>
-Message-ID: <152287477878.1494.3258504745278636088@mail.alporthouse.com>
-User-Agent: alot/0.3.6
-Subject: Re: [PATCH v2 1/2] trace: Default to using trace_global_clock if sched_clock
- is unstable
-Date: Wed, 04 Apr 2018 21:46:18 +0100
+In-Reply-To: <CAGXu5jLTSd4wx6hxj6FCJ4O2PkqFyRw6nwu=0Y1NpoaRZKefWw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Chris Wilson (2018-03-30 16:01:31)
-> Across suspend, we may see a very large drift in timestamps if the sched
-> clock is unstable, prompting the global trace's ringbuffer code to warn
-> and suggest switching to the global clock. Preempt this request by
-> detecting when the sched clock is unstable (determined during
-> late_initcall) and automatically switching the default clock over to
-> trace_global_clock.
+On 2018-04-04 04:32 PM, Kees Cook wrote:
+> On Wed, Apr 4, 2018 at 12:07 PM, Oleksandr Natalenko
+> <oleksandr@natalenko.name> wrote:
+>> [  261.262135] Bad or missing usercopy whitelist? Kernel memory exposure
+>> attempt detected from SLUB object 'scsi_sense_cache' (offset 94, size 22)!
+>> I can easily reproduce it with a qemu VM and 2 virtual SCSI disks by calling
+>> smartctl in a loop and doing some usual background I/O. The warning is
+>> triggered within 3 minutes or so (not instantly).
 > 
-> This should prevent requiring user interaction to resolve warnings such
-> as:
+> Also:
 > 
->     Delta way too big! 18446743856563626466 ts=18446744054496180323 write stamp = 197932553857
->     If you just came from a suspend/resume,
->     please switch to the trace global clock:
->     echo global > /sys/kernel/debug/tracing/trace_clock
+> Can you send me your .config? What SCSI drivers are you using in the
+> VM and on the real server?
 > 
-> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
-> v2: Tell the user what's happening and what they can do to correct it.
-> ---
->  kernel/trace/trace.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 13baf85b27d8..7c155fa879e1 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -41,6 +41,7 @@
->  #include <linux/nmi.h>
->  #include <linux/fs.h>
->  #include <linux/trace.h>
-> +#include <linux/sched/clock.h>
->  #include <linux/sched/rt.h>
->  
->  #include "trace.h"
-> @@ -8505,3 +8506,21 @@ __init static int clear_boot_tracer(void)
->  
->  fs_initcall(tracer_init_tracefs);
->  late_initcall_sync(clear_boot_tracer);
-> +
-> +#ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
-> +__init static int tracing_set_default_clock(void)
-> +{
-> +       /* sched_clock_stable() is determined in late_initcall */
-> +       if (trace_boot_clock || sched_clock_stable()) {
+> Are you able to see what ioctl()s smartctl is issuing? I'll try to
+> reproduce this on my end...
 
-Oh flip, I reversed the logic from v1.
-
-I was going to do an early return:
-
-	if (trace_boot_clock || sched_clock_stable())
-		return;
-
-to shift the message to the left slightly, at left it half way.
-
-(I was wondering why CI didn't show the same results as v1!)
--Chris
+smartctl -r scsiioctl,3 ....
