@@ -1,80 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751251AbeDDJyo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:54:44 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:36883 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750736AbeDDJyn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:54:43 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Dan Williams <dan.j.williams@intel.com>,
-        Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Shaohua Li <shli@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-raid@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] dm: fix DAX dependency
-Date: Wed,  4 Apr 2018 11:54:15 +0200
-Message-Id: <20180404095427.2537184-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:XF3krF2cufn5ZqbP1HwLxfM9yMhIKbJ0j+SUPY/m6Jgd7+zUvrc
- dBe7Tapg94uK6OvZ7XQh3GeSLkg9K3Oic0yNIAw287U+QpUfU8fmnLqM+wM+rb+BvkkM8Zu
- Zg2EJ0a9Hpq1ONgNgEN3xzYtWs3/t6KPPxPt3cUYzKuIg/Eb0OuJ280OiRx+hzCyhzIpZna
- SrRikSFiky6l/69apegbg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:nSWNP0NIF80=:ldmkHYkY5GMm6bSTtb/Coo
- oRUrLxXzhmMXyOwh2V1tqqBGBgZSs+9J9nu9/BzT6KldwJLlyU4VBFnyhDP+p8UQNuVsEJ8zN
- ZkTXQb1TDkqsKNK/FwVV7NnXF0cWyD1az2OXJx/oOu0XZ6FQLswJL8B/Cc1mGylmDR1eKWQ/t
- SCmVEphXOoEW5Dxf8SnPqKmsF335xrTQZmXOf77RYJTWLbytDNM4g71JfQIfHv54QaKNhDzNg
- WnY3+pA3vGubntstyDR2UwQiMkhqXkKpx48a656oc2m7V6iWu1be6FY3zmldQiWUXGFP1O3CC
- M/+Aad85y9PtKsjATBCeZZBYieKKlbbUHA+V/fz2viPHN+OEUy8U/IJIFlEoixRW+NlXF5pCj
- vk2Gm5p6itWzMXgTxs4YSvtnetPjO+mhCRto9TX0G8H2tcFcz39/Wjrdaikb8nSd10yHJtRS2
- zhh1uUJyl8Vd6buxl5KfmHRKuiFL+ss2Q4aqw4mcz6dvOlcK6PgurzP9gg9/CPxUrnJ7PpdaC
- xK7pd+fSq+bh62vNbvH61mqMGiT55toiG0fG2LKxVC5MVgIm9GkJV+kVosLxigFTU5zXjPTyf
- W+5F3D4AdN/QMnRm6k3Ul3/zbV1UcWokGzsz2I/ScdAQAs+kI521Ipe9DXHGg7ED8f5MKFDtU
- QISknX5IC9wXJ1rS3jQdXtRK8PlnN0O8zkG7cM77RSSJB0xhLWnafLM7htCsbT72ikI6FgL9x
- NQ1Iu8pSzXCwnvNGCBpc+6KQugc69y2n5c7Fhg==
+        id S1751278AbeDDJzW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:55:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41527 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750812AbeDDJzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 05:55:20 -0400
+Date: Wed, 4 Apr 2018 11:55:18 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        snitzer@redhat.com
+Subject: Re: [PATCH v8 18/18] xfs, dax: introduce xfs_break_dax_layouts()
+Message-ID: <20180404095518.65exgpxuca3tqhav@quack2.suse.cz>
+References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152246902607.36038.15813002361509305325.stgit@dwillia2-desk3.amr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152246902607.36038.15813002361509305325.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building device mapper with CONFIG_DAX=m now results in a link error:
+On Fri 30-03-18 21:03:46, Dan Williams wrote:
+> xfs_break_dax_layouts(), similar to xfs_break_leased_layouts(), scans
+> for busy / pinned dax pages and waits for those pages to go idle before
+> any potential extent unmap operation.
+> 
+> dax_layout_busy_page() handles synchronizing against new page-busy
+> events (get_user_pages). It invalidates all mappings to trigger the
+> get_user_pages slow path which will eventually block on the xfs inode
+> lock held in XFS_MMAPLOCK_EXCL mode. If dax_layout_busy_page() finds a
+> busy page it returns it for xfs to wait for the page-idle event that
+> will fire when the page reference count reaches 1 (recall ZONE_DEVICE
+> pages are idle at count 1, see generic_dax_pagefree()).
+> 
+> While waiting, the XFS_MMAPLOCK_EXCL lock is dropped in order to not
+> deadlock the process that might be trying to elevate the page count of
+> more pages before arranging for any of them to go idle. I.e. the typical
+> case of submitting I/O is that iov_iter_get_pages() elevates the
+> reference count of all pages in the I/O before starting I/O on the first
+> page. The process of elevating the reference count of all pages involved
+> in an I/O may cause faults that need to take XFS_MMAPLOCK_EXCL.
+> 
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dave Chinner <david@fromorbit.com>
+> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-drivers/md/dm.o: In function `dm_put_table_device':
-dm.c:(.text+0x33c): undefined reference to `put_dax'
-drivers/md/dm.o: In function `cleanup_mapped_device':
-dm.c:(.text+0x1054): undefined reference to `kill_dax'
-dm.c:(.text+0x105c): undefined reference to `put_dax'
-drivers/md/dm.o: In function `dm_get_table_device':
-dm.c:(.text+0x2744): undefined reference to `dax_get_by_host'
-drivers/md/dm-table.o: In function `device_dax_write_cache_enabled':
-dm-table.c:(.text+0x1030): undefined reference to `dax_write_cache_enabled'
-drivers/md/dm-table.o: In function `dm_table_set_restrictions':
-dm-table.c:(.text+0x29b8): undefined reference to `dax_write_cache'
+...
 
-This adds a dependency that prevents the invalid configuration, allowing
-a built-in device mapper only if DAX is either built-in as well, or
-completely disabled.
+> ---
+>  fs/xfs/xfs_file.c |   60 +++++++++++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 49 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 51e6506bdcb1..0342f6fb782f 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -752,6 +752,38 @@ xfs_file_write_iter(
+>  	return ret;
+>  }
+>  
+> +static void
+> +xfs_wait_var_event(
+> +	struct inode		*inode,
+> +	uint			iolock,
+> +	bool			*did_unlock)
+> +{
+> +	struct xfs_inode        *ip = XFS_I(inode);
+> +
+> +	*did_unlock = true;
+> +	xfs_iunlock(ip, iolock);
+> +	schedule();
+> +	xfs_ilock(ip, iolock);
+> +}
 
-Fixes: 4de1c562f7e9 ("dax, dm: allow device-mapper to operate without dax support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-The regression only showed up in linux-next at the start of the merge
-window. Any idea what happened?
----
- drivers/md/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+With this scheme, there's a problem that it can be easily livelocked. E.g.
+when I created a program that maps a file on DAX fs and does AIO DIO from
+it indefinitely (with 64 iocbs in flight), truncate of that file never gets
+past xfs_break_layouts(). The reason is that once we drop all locks, new
+iocbs can be submitted, they grab new page references and these prevent
+truncation next time... So I think we need to somehow fix this retry scheme
+so that we guarantee forward progress of the truncate. E.g. if we kept
+IOLOCK locked, that would prevent new iocbs from being submitted...
 
-diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-index 49287135b86c..5e5a47c5ff82 100644
---- a/drivers/md/Kconfig
-+++ b/drivers/md/Kconfig
-@@ -200,6 +200,7 @@ config BLK_DEV_DM_BUILTIN
- 
- config BLK_DEV_DM
- 	tristate "Device mapper support"
-+	depends on DAX || DAX=n
- 	select BLK_DEV_DM_BUILTIN
- 	---help---
- 	  Device-mapper is a low level volume manager.  It works by allowing
+								Honza
+
+
+> +
+> +static int
+> +xfs_break_dax_layouts(
+> +	struct inode		*inode,
+> +	uint			iolock,
+> +	bool			*did_unlock)
+> +{
+> +	struct page		*page;
+> +
+> +	*did_unlock = false;
+> +	page = dax_layout_busy_page(inode->i_mapping);
+> +	if (!page)
+> +		return 0;
+> +
+> +	return ___wait_var_event(&page->_refcount,
+> +			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
+> +			0, 0, xfs_wait_var_event(inode, iolock, did_unlock));
+> +}
+> +
+>  int
+>  xfs_break_layouts(
+>  	struct inode		*inode,
+> @@ -763,17 +795,23 @@ xfs_break_layouts(
+>  
+>  	ASSERT(xfs_isilocked(XFS_I(inode), XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL));
+>  
+> -	switch (reason) {
+> -	case BREAK_UNMAP:
+> -		ASSERT(xfs_isilocked(XFS_I(inode), XFS_MMAPLOCK_EXCL));
+> -		/* fall through */
+> -	case BREAK_WRITE:
+> -		error = xfs_break_leased_layouts(inode, iolock, &retry);
+> -		break;
+> -	default:
+> -		WARN_ON_ONCE(1);
+> -		return -EINVAL;
+> -	}
+> +	do {
+> +		switch (reason) {
+> +		case BREAK_UNMAP:
+> +			ASSERT(xfs_isilocked(XFS_I(inode), XFS_MMAPLOCK_EXCL));
+> +
+> +			error = xfs_break_dax_layouts(inode, *iolock, &retry);
+> +			/* fall through */
+> +		case BREAK_WRITE:
+> +			if (error || retry)
+> +				break;
+> +			error = xfs_break_leased_layouts(inode, iolock, &retry);
+> +			break;
+> +		default:
+> +			WARN_ON_ONCE(1);
+> +			return -EINVAL;
+> +		}
+> +	} while (error == 0 && retry);
+>  
+>  	return error;
+>  }
+> 
 -- 
-2.9.0
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
