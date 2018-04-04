@@ -1,77 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754726AbeDDAsi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 20:48:38 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39773 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753298AbeDDAsh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 20:48:37 -0400
-X-Google-Smtp-Source: AIpwx4+ZNlk9wS9GyKIL+Y5Ayz6UNZdNy8ddlFY4myPtg94UWPVzKzCRuCDQqhiPt58HIgRwvK/7aQ==
-Date: Tue, 3 Apr 2018 17:48:34 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-cc: kernel test robot <fengguang.wu@intel.com>, paulmck@linux.vnet.ibm.com,
-        peterz@infradead.org, akpm@linux-foundation.org, kirill@shutemov.name,
-        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org, lkp@01.org
-Subject: Re: [mm] b1f0502d04: INFO:trying_to_register_non-static_key
-In-Reply-To: <aa6f2ff1-ff67-106a-e0e4-522ac82a7bf0@linux.vnet.ibm.com>
-Message-ID: <alpine.DEB.2.20.1804031748120.27686@chino.kir.corp.google.com>
-References: <20180317075119.u6yuem2bhxvggbz3@inn> <792c0f75-7e7f-cd81-44ae-4205f6e4affc@linux.vnet.ibm.com> <alpine.DEB.2.20.1803251510040.80485@chino.kir.corp.google.com> <aa6f2ff1-ff67-106a-e0e4-522ac82a7bf0@linux.vnet.ibm.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1754246AbeDDAw2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 20:52:28 -0400
+Received: from m12-18.163.com ([220.181.12.18]:58715 "EHLO m12-18.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753298AbeDDAw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 20:52:27 -0400
+From: Xidong Wang <wangxidong_97@163.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Vitaly Wool <vitalywool@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: wangxidong_97@163.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] z3fold: fix memory leak
+Date: Wed,  4 Apr 2018 08:51:51 +0800
+Message-Id: <1522803111-29209-1-git-send-email-wangxidong_97@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: EsCowABXFkeqIcRaUDbfDA--.39463S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xw17JrWUGr1kKr48Aw4rGrg_yoWxtFg_Gr
+        W8Ww10gr9xJ3WjqrWDAa18AryI9398Zr47WFnIkry7KFWYyF92krn7Xr93WFW8u3y7WFyU
+        CrW5K3W7XanxGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU5gmRUUUUUU==
+X-Originating-IP: [106.120.213.14]
+X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/1tbi8AEe81UMDaEh0AAAsY
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Mar 2018, Laurent Dufour wrote:
+In function z3fold_create_pool(), the memory allocated by
+__alloc_percpu() is not released on the error path that pool->compact_wq
+, which holds the return value of create_singlethread_workqueue(), is NULL.
+This will result in a memory leak bug.
 
-> On 26/03/2018 00:10, David Rientjes wrote:
-> > On Wed, 21 Mar 2018, Laurent Dufour wrote:
-> > 
-> >> I found the root cause of this lockdep warning.
-> >>
-> >> In mmap_region(), unmap_region() may be called while vma_link() has not been
-> >> called. This happens during the error path if call_mmap() failed.
-> >>
-> >> The only to fix that particular case is to call
-> >> seqcount_init(&vma->vm_sequence) when initializing the vma in mmap_region().
-> >>
-> > 
-> > Ack, although that would require a fixup to dup_mmap() as well.
-> 
-> You're right, I'll fix that too.
-> 
+Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+---
+ mm/z3fold.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I also think the following is needed:
-
-diff --git a/fs/exec.c b/fs/exec.c
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -312,6 +312,10 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
- 	vma->vm_flags = VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
- 	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
- 	INIT_LIST_HEAD(&vma->anon_vma_chain);
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	seqcount_init(&vma->vm_sequence);
-+	atomic_set(&vma->vm_ref_count, 0);
-+#endif
- 
- 	err = insert_vm_struct(mm, vma);
- 	if (err)
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index d589d31..b987cc5 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -490,6 +490,7 @@ static struct z3fold_pool *z3fold_create_pool(const char *name, gfp_t gfp,
+ out_wq:
+ 	destroy_workqueue(pool->compact_wq);
+ out:
++	free_percpu(pool->unbuddied);
+ 	kfree(pool);
+ 	return NULL;
+ }
+-- 
+2.7.4
