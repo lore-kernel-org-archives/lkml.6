@@ -1,273 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751439AbeDDKgS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:36:18 -0400
-Received: from mga05.intel.com ([192.55.52.43]:60963 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751104AbeDDKgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:36:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,405,1517904000";
-   d="scan'208";a="213823969"
-Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
-To: Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Thomas Hellstrom <thomas@shipmail.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-References: <20180403224225.26776-1-robdclark@gmail.com>
- <20180404100300.GE3881@phenom.ffwll.local>
- <20180404102108.GF3881@phenom.ffwll.local>
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Message-ID: <4976c166-32b2-75ef-ee78-7e7893dd4121@linux.intel.com>
-Date: Wed, 4 Apr 2018 12:36:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751350AbeDDKiy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:38:54 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:36414 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750814AbeDDKiw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 06:38:52 -0400
+Date: Wed, 4 Apr 2018 12:38:24 +0200
+From: Daniel Kiper <daniel.kiper@oracle.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org,
+        ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        eric.snowberg@oracle.com, hpa@zytor.com, jgross@suse.com,
+        konrad.wilk@oracle.com, mingo@redhat.com, tglx@linutronix.de
+Subject: Re: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state during
+ dom0 boot
+Message-ID: <20180404103824.GM26100@olila.local.net-space.pl>
+References: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
+ <1522770281.4522.14.camel@HansenPartnership.com>
+ <20180403160712.GL26100@olila.local.net-space.pl>
+ <1522774852.4522.25.camel@HansenPartnership.com>
 MIME-Version: 1.0
-In-Reply-To: <20180404102108.GF3881@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1522774852.4522.25.camel@HansenPartnership.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804040107
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Op 04-04-18 om 12:21 schreef Daniel Vetter:
-> On Wed, Apr 04, 2018 at 12:03:00PM +0200, Daniel Vetter wrote:
->> On Tue, Apr 03, 2018 at 06:42:23PM -0400, Rob Clark wrote:
->>> Add an atomic helper to implement dirtyfb support.  This is needed to
->>> support DSI command-mode panels with x11 userspace (ie. when we can't
->>> rely on pageflips to trigger a flush to the panel).
->>>
->>> To signal to the driver that the async atomic update needs to
->>> synchronize with fences, even though the fb didn't change, the
->>> drm_atomic_state::dirty flag is added.
->>>
->>> Signed-off-by: Rob Clark <robdclark@gmail.com>
->>> ---
->>> Background: there are a number of different folks working on getting
->>> upstream kernel working on various different phones/tablets with qcom
->>> SoC's.. many of them have command mode panels, so we kind of need a
->>> way to support the legacy dirtyfb ioctl for x11 support.
->>>
->>> I know there is work on a proprer non-legacy atomic property for
->>> userspace to communicate dirty-rect(s) to the kernel, so this can
->>> be improved from triggering a full-frame flush once that is in
->>> place.  But we kinda needa a stop-gap solution.
->>>
->>> I had considered an in-driver solution for this, but things get a
->>> bit tricky if userspace ands up combining dirtyfb ioctls with page-
->>> flips, because we need to synchronize setting various CTL.FLUSH bits
->>> with setting the CTL.START bit.  (ie. really all we need to do for
->>> cmd mode panels is bang CTL.START, but is this ends up racing with
->>> pageflips setting FLUSH bits, then bad things.)  The easiest soln
->>> is to wrap this up as an atomic commit and rely on the worker to
->>> serialize things.  Hence adding an atomic dirtyfb helper.
->>>
->>> I guess at least the helper, with some small addition to translate
->>> and pass-thru the dirty rect(s) is useful to the final atomic dirty-
->>> rect property solution.  Depending on how far off that is, a stop-
->>> gap solution could be useful.
->>>
->>>  drivers/gpu/drm/drm_atomic_helper.c | 66 +++++++++++++++++++++++++++++++++++++
->>>  drivers/gpu/drm/msm/msm_atomic.c    |  5 ++-
->>>  drivers/gpu/drm/msm/msm_fb.c        |  1 +
->>>  include/drm/drm_atomic_helper.h     |  4 +++
->>>  include/drm/drm_plane.h             |  9 +++++
->>>  5 files changed, 84 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
->>> index c35654591c12..a578dc681b27 100644
->>> --- a/drivers/gpu/drm/drm_atomic_helper.c
->>> +++ b/drivers/gpu/drm/drm_atomic_helper.c
->>> @@ -3504,6 +3504,7 @@ void __drm_atomic_helper_plane_duplicate_state(struct drm_plane *plane,
->>>  	if (state->fb)
->>>  		drm_framebuffer_get(state->fb);
->>>  
->>> +	state->dirty = false;
->>>  	state->fence = NULL;
->>>  	state->commit = NULL;
->>>  }
->>> @@ -3847,6 +3848,71 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
->>>  }
->>>  EXPORT_SYMBOL(drm_atomic_helper_legacy_gamma_set);
->>>  
->>> +/**
->>> + * drm_atomic_helper_dirtyfb - helper for dirtyfb
->>> + *
->>> + * A helper to implement drm_framebuffer_funcs::dirty
->>> + */
->>> +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
->>> +			      struct drm_file *file_priv, unsigned flags,
->>> +			      unsigned color, struct drm_clip_rect *clips,
->>> +			      unsigned num_clips)
->>> +{
->>> +	struct drm_modeset_acquire_ctx ctx;
->>> +	struct drm_atomic_state *state;
->>> +	struct drm_plane *plane;
->>> +	int ret = 0;
->>> +
->>> +	/*
->>> +	 * When called from ioctl, we are interruptable, but not when
->>> +	 * called internally (ie. defio worker)
->>> +	 */
->>> +	drm_modeset_acquire_init(&ctx,
->>> +		file_priv ? DRM_MODESET_ACQUIRE_INTERRUPTIBLE : 0);
->>> +
->>> +	state = drm_atomic_state_alloc(fb->dev);
->>> +	if (!state) {
->>> +		ret = -ENOMEM;
->>> +		goto out;
->>> +	}
->>> +	state->acquire_ctx = &ctx;
->>> +
->>> +retry:
->>> +	drm_for_each_plane(plane, fb->dev) {
->>> +		struct drm_plane_state *plane_state;
->>> +
->>> +		if (plane->state->fb != fb)
->>> +			continue;
->>> +
->>> +		plane_state = drm_atomic_get_plane_state(state, plane);
->>> +		if (IS_ERR(plane_state)) {
->>> +			ret = PTR_ERR(plane_state);
->>> +			goto out;
->>> +		}
->>> +
->>> +		plane_state->dirty = true;
->>> +	}
->>> +
->>> +	ret = drm_atomic_nonblocking_commit(state);
->>> +
->>> +out:
->>> +	if (ret == -EDEADLK) {
->>> +		drm_atomic_state_clear(state);
->>> +		ret = drm_modeset_backoff(&ctx);
->>> +		if (!ret)
->>> +			goto retry;
->>> +	}
->>> +
->>> +	drm_atomic_state_put(state);
->>> +
->>> +	drm_modeset_drop_locks(&ctx);
->>> +	drm_modeset_acquire_fini(&ctx);
->>> +
->>> +	return ret;
->>> +
->>> +}
->>> +EXPORT_SYMBOL(drm_atomic_helper_dirtyfb);
->>> +
->>>  /**
->>>   * __drm_atomic_helper_private_duplicate_state - copy atomic private state
->>>   * @obj: CRTC object
->>> diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
->>> index bf5f8c39f34d..bb55a048e98b 100644
->>> --- a/drivers/gpu/drm/msm/msm_atomic.c
->>> +++ b/drivers/gpu/drm/msm/msm_atomic.c
->>> @@ -201,7 +201,10 @@ int msm_atomic_commit(struct drm_device *dev,
->>>  	 * Figure out what fence to wait for:
->>>  	 */
->>>  	for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i) {
->>> -		if ((new_plane_state->fb != old_plane_state->fb) && new_plane_state->fb) {
->>> +		bool sync_fb = new_plane_state->fb &&
->>> +			((new_plane_state->fb != old_plane_state->fb) ||
->>> +			 new_plane_state->dirty);
->> Why do you have this optimization even here? Imo flipping to the same fb
->> should result in the fb getting fully uploaded, whether you're doing a
->> legacy page_flip, and atomic one or just a plane update.
->>
->> Iirc some userspace does use that as essentially a full-plane frontbuffer
->> rendering flush already. IOW I don't think we need your
->> plane_state->dirty, it's implied to always be true - why would userspace
->> do a flip otherwise?
->>
->> The helper itself to map dirtyfb to a nonblocking atomic commit looks
->> reasonable, but misses a bunch of the trickery discussed with Noralf and
->> others I think.
-> Ok, I've done some history digging:
+On Tue, Apr 03, 2018 at 10:00:52AM -0700, James Bottomley wrote:
+> On Tue, 2018-04-03 at 18:07 +0200, Daniel Kiper wrote:
+> > On Tue, Apr 03, 2018 at 08:44:41AM -0700, James Bottomley wrote:
+
+[...]
+
+> > > This looks like a bad idea: you're duplicating the secure boot
+> > > check in
+> > >
+> > > drivers/firmware/efi/libstub/secureboot.c
+> > >
+> > > Which is an implementation of policy.  If we have to have policy in
+> > > the kernel, it should really only be in one place to prevent drift;
+> > > why can't you simply use the libstub efi_get_secureboot() so we're
+> > > not duplicating the implementation of policy?
+> >
+> > Well, here is the first version of this patch:
+> > https://lkml.org/lkml/2018/1/9/496 Ard did not like it. I was not
+> > happy too. In general both approaches are not perfect. More you can
+> > find in the discussion around this patchset. If you have better idea
+> > how to do that I am happy to implement it.
 >
-> - i915 and nouveau unconditionally wait for fences, even for same-fb
->   flips.
-> - no idea what amdgpu and vmwgfx are doing, they're not using
->   plane_state->fence for implicit fences.
-I thought plane_state->fence was used for explicit fences, so its use by drivers
-would interfere with it? I don't think fencing would work on msm or vc4..
-> - most arm-soc drivers do have this "optimization" in their code, and it
->   even managed to get into the new drm_gem_fb_prepare_fb helper (which I
->   reviewed, or well claimed to have ... oops). Afaict it goes back to the
->   original msm atomic code, and was then dutifully copypasted all over the
->   place.
->
-> If folks are ok I'll do a patch series to align drivers with i915/nouveau.
-> Well, any driver using reservation_object_get_excl_rcu +
-> drm_atomic_set_fence_for_plane combo, since amdgpu and vmwgfx don't I have
-> no idea what they're doing or whether they might have the same bug.
->
-> From looking at at least the various prepare_fb callbacks I don't see any
-> other drivers doing funny stuff around implicit fences.
-> -Daniel
->
->>> +		if (sync_fb) {
->>>  			struct drm_gem_object *obj = msm_framebuffer_bo(new_plane_state->fb, 0);
->>>  			struct msm_gem_object *msm_obj = to_msm_bo(obj);
->>>  			struct dma_fence *fence = reservation_object_get_excl_rcu(msm_obj->resv);
->>> diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
->>> index 0e0c87252ab0..a5d882a34a33 100644
->>> --- a/drivers/gpu/drm/msm/msm_fb.c
->>> +++ b/drivers/gpu/drm/msm/msm_fb.c
->>> @@ -62,6 +62,7 @@ static void msm_framebuffer_destroy(struct drm_framebuffer *fb)
->>>  static const struct drm_framebuffer_funcs msm_framebuffer_funcs = {
->>>  	.create_handle = msm_framebuffer_create_handle,
->>>  	.destroy = msm_framebuffer_destroy,
->>> +	.dirty = drm_atomic_helper_dirtyfb,
->>>  };
->>>  
->>>  #ifdef CONFIG_DEBUG_FS
->>> diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
->>> index 26aaba58d6ce..9b7a95c2643d 100644
->>> --- a/include/drm/drm_atomic_helper.h
->>> +++ b/include/drm/drm_atomic_helper.h
->>> @@ -183,6 +183,10 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
->>>  				       u16 *red, u16 *green, u16 *blue,
->>>  				       uint32_t size,
->>>  				       struct drm_modeset_acquire_ctx *ctx);
->>> +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
->>> +			      struct drm_file *file_priv, unsigned flags,
->>> +			      unsigned color, struct drm_clip_rect *clips,
->>> +			      unsigned num_clips);
->>>  void __drm_atomic_helper_private_obj_duplicate_state(struct drm_private_obj *obj,
->>>  						     struct drm_private_state *state);
->>>  
->>> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
->>> index f7bf4a48b1c3..296fa22bda7a 100644
->>> --- a/include/drm/drm_plane.h
->>> +++ b/include/drm/drm_plane.h
->>> @@ -76,6 +76,15 @@ struct drm_plane_state {
->>>  	 */
->>>  	struct drm_framebuffer *fb;
->>>  
->>> +	/**
->>> +	 * @dirty:
->>> +	 *
->>> +	 * Flag that indicates the fb contents have changed even though the
->>> +	 * fb has not.  This is mostly a stop-gap solution until we have
->>> +	 * atomic dirty-rect(s) property.
->>> +	 */
->>> +	bool dirty;
->>> +
->>>  	/**
->>>  	 * @fence:
->>>  	 *
->>> -- 
->>> 2.14.3
->>>
->> -- 
->> Daniel Vetter
->> Software Engineer, Intel Corporation
->> http://blog.ffwll.ch
+> One way might be simply to have the pre exit-boot-services code lay
+> down a variable containing the state which you pick up, rather than you
+
+Do you mean variable in kernel proper or something like that? If yes this
+is not possible. EFI Linux stub is not executed in Xen dom0. All UEFI
+infrastructure is owned and operated by Xen. Dom0 kernel can access some
+stuff in UEFI, including variables, via hypercall. However, when dom0
+runs only UEFI runtime services are available.
+
+> calling efi code separately and trying to use the insecure RT
+
+I am not sure why they are insecure.
+
+> variables.  That way there's a uniform view of the internal kernel
+> secure boot state that everyone can use.
+
+That would be perfect but I have a feeling that in form proposed above
+it is not possible.
+
+Daniel
