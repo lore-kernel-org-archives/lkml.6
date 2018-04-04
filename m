@@ -1,43 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751973AbeDDJPc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:15:32 -0400
-Received: from www62.your-server.de ([213.133.104.62]:42046 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751212AbeDDJPb (ORCPT
+        id S1751329AbeDDJQs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:16:48 -0400
+Received: from mail.netline.ch ([148.251.143.178]:39437 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750772AbeDDJQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:15:31 -0400
-Subject: Re: [PATCH] kernel/bpf/syscall: fix warning defined but not used
-To: Anders Roxell <anders.roxell@linaro.org>, ast@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180403120947.9321-1-anders.roxell@linaro.org>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <327e3c1f-860b-e2b4-7475-34a409c62fae@iogearbox.net>
-Date: Wed, 4 Apr 2018 11:15:29 +0200
+        Wed, 4 Apr 2018 05:16:47 -0400
+Subject: Re: [RFC] Per file OOM badness
+To: Lucas Stach <l.stach@pengutronix.de>, Michal Hocko <mhocko@kernel.org>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Christian.Koenig@amd.com, linux-mm@kvack.org,
+        amd-gfx@lists.freedesktop.org, Roman Gushchin <guro@fb.com>
+References: <20180118170006.GG6584@dhcp22.suse.cz>
+ <20180123152659.GA21817@castle.DHCP.thefacebook.com>
+ <20180123153631.GR1526@dhcp22.suse.cz>
+ <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
+ <20180124092847.GI1526@dhcp22.suse.cz>
+ <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
+ <20180124110141.GA28465@dhcp22.suse.cz>
+ <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
+ <20180124115059.GC28465@dhcp22.suse.cz>
+ <60e18da8-4d6e-dec9-7aef-ff003605d513@daenzer.net>
+ <20180130102855.GY21609@dhcp22.suse.cz>
+ <1522074988.1196.1.camel@pengutronix.de>
+From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Message-ID: <3778a205-8b30-d147-b1f6-0a93d1de8beb@daenzer.net>
+Date: Wed, 4 Apr 2018 11:09:25 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180403120947.9321-1-anders.roxell@linaro.org>
+In-Reply-To: <1522074988.1196.1.camel@pengutronix.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 02:09 PM, Anders Roxell wrote:
-> There will be a build warning -Wunused-function if CONFIG_CGROUP_BPF
-> isn't defined, since the only user is inside #ifdef CONFIG_CGROUP_BPF:
-> kernel/bpf/syscall.c:1229:12: warning: ‘bpf_prog_attach_check_attach_type’
->     defined but not used [-Wunused-function]
->  static int bpf_prog_attach_check_attach_type(const struct bpf_prog *prog,
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On 2018-03-26 04:36 PM, Lucas Stach wrote:
+> Am Dienstag, den 30.01.2018, 11:28 +0100 schrieb Michal Hocko:
+>> On Tue 30-01-18 10:29:10, Michel Dänzer wrote:
+>>> On 2018-01-24 12:50 PM, Michal Hocko wrote:
+>>>> On Wed 24-01-18 12:23:10, Michel Dänzer wrote:
+>>>>> On 2018-01-24 12:01 PM, Michal Hocko wrote:
+>>>>>> On Wed 24-01-18 11:27:15, Michel Dänzer wrote:
+>>>>
+>>>> [...]
+>>>>>>> 2. If the OOM killer kills a process which is sharing BOs
+>>>>>>> with another
+>>>>>>> process, this should result in the other process dropping
+>>>>>>> its references
+>>>>>>> to the BOs as well, at which point the memory is released.
+>>>>>>
+>>>>>> OK. How exactly are those BOs mapped to the userspace?
+>>>>>
+>>>>> I'm not sure what you're asking. Userspace mostly uses a GEM
+>>>>> handle to
+>>>>> refer to a BO. There can also be userspace CPU mappings of the
+>>>>> BO's
+>>>>> memory, but userspace doesn't need CPU mappings for all BOs and
+>>>>> only
+>>>>> creates them as needed.
+>>>>
+>>>> OK, I guess you have to bear with me some more. This whole stack
+>>>> is a
+>>>> complete uknonwn. I am mostly after finding a boundary where you
+>>>> can
+>>>> charge the allocated memory to the process so that the oom killer
+>>>> can
+>>>> consider it. Is there anything like that? Except for the proposed
+>>>> file
+>>>> handle hack?
+>>>
+>>> How about the other way around: what APIs can we use to charge /
+>>> "uncharge" memory to a process? If we have those, we can experiment
+>>> with
+>>> different places to call them.
+>>
+>> add_mm_counter() and I would add a new counter e.g. MM_KERNEL_PAGES.
 > 
-> Current code moves function bpf_prog_attach_check_attach_type inside
-> ifdef CONFIG_CGROUP_BPF.
+> So is anyone still working on this? This is hurting us bad enough that
+> I don't want to keep this topic rotting for another year.
 > 
-> Fixes: 5e43f899b03a ("bpf: Check attach type at prog load time")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> If no one is currently working on this I would volunteer to give the
+> simple "just account private, non-shared buffers in process RSS" a
+> spin.
 
-Applied to bpf tree, thanks Anders!
+Sounds good. FWIW, I think shared buffers can also be easily handled by
+accounting them in each process which has a reference. But that's more
+of a detail, shouldn't make a big difference overall either way.
+
+
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
