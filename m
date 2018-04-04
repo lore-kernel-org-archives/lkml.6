@@ -1,174 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751560AbeDDOkd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:40:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52934 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751443AbeDDOkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:40:16 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RFC] KVM: x86: VMX: hyper-v: Enlightened MSR-Bitmap support
-Date: Wed,  4 Apr 2018 16:40:12 +0200
-Message-Id: <20180404144012.15063-1-vkuznets@redhat.com>
+        id S1751451AbeDDOlr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:41:47 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53270 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeDDOlp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 10:41:45 -0400
+Date: Wed, 4 Apr 2018 15:41:19 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Tim Harvey <tharvey@gateworks.com>, Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/4] mfd: add Gateworks System Controller core driver
+Message-ID: <20180404144119.GD7691@sirena.org.uk>
+References: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
+ <1522250043-8065-3-git-send-email-tharvey@gateworks.com>
+ <CAJ+vNU3-gaTcMAzo5wB6oSfE-JQC3NBVRJS5zFMTE-nVpD4F5g@mail.gmail.com>
+ <20180403164715.GA5676@lunn.ch>
+ <CAJ+vNU31f+iY5LOG6QmdJetb=pPvY_gpKoS+49FSy70U1Ksd8g@mail.gmail.com>
+ <20180404131239.GD20869@lunn.ch>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5gxpn/Q6ypwruk0T"
+Content-Disposition: inline
+In-Reply-To: <20180404131239.GD20869@lunn.ch>
+X-Cookie: An idle mind is worth two in the bush.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enlightened MSR-Bitmap is a natural extension of Enlightened VMCS:
-Hyper-V Top Level Functional Specification states:
 
-"The L1 hypervisor may collaborate with the L0 hypervisor to make MSR
-accesses more efficient. It can enable enlightened MSR bitmaps by setting
-the corresponding field in the enlightened VMCS to 1. When enabled, the L0
-hypervisor does not monitor the MSR bitmaps for changes. Instead, the L1
-hypervisor must invalidate the corresponding clean field after making
-changes to one of the MSR bitmaps."
+--5gxpn/Q6ypwruk0T
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-RFC part: while the implementation is simple and straightforward, I'm not
-observing any performance improvement with this patch. I tried both
-tight CPUID loop and tight loops reading different MSR (which we intercept
-in L1 and which we don't). The fluctuations in the results is too big
-(probably because there's no CPU pinning in Hyper-V and there's an always
-running Windows in parallel). I'd be very grateful for any insights or
-ideas how this can be tested.
----
- arch/x86/include/asm/hyperv-tlfs.h |  9 ++++++++-
- arch/x86/kvm/vmx.c                 | 34 +++++++++++++++++++++++++++++++++-
- 2 files changed, 41 insertions(+), 2 deletions(-)
+On Wed, Apr 04, 2018 at 03:12:39PM +0200, Andrew Lunn wrote:
+> > What about the 'reset' functionality? Is there something in the power
+> > supply API for hooking in a GPIO based power switch (in my case it
+> > would be i2c) as I would think that would be common for ATX supplies?
+> > I didn't see anything in Documentation/power.
 
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index 1c602ad4bda8..26e7e2240066 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -300,6 +300,9 @@ struct ms_hyperv_tsc_page {
- /* TSC emulation after migration */
- #define HV_X64_MSR_REENLIGHTENMENT_CONTROL	0x40000106
- 
-+/* Nested features (CPUID 0x4000000A) EAX */
-+#define HV_X64_NESTED_MSR_BITMAP		BIT(19)
-+
- struct hv_reenlightenment_control {
- 	__u64 vector:8;
- 	__u64 reserved1:8;
-@@ -665,7 +668,11 @@ struct hv_enlightened_vmcs {
- 	u32 hv_clean_fields;
- 	u32 hv_padding_32;
- 	u32 hv_synthetic_controls;
--	u32 hv_enlightenments_control;
-+	struct {
-+		u32 nested_flush_hypercall:1;
-+		u32 msr_bitmap:1;
-+		u32 reserved:30;
-+	} hv_enlightenments_control;
- 	u32 hv_vp_id;
- 
- 	u64 hv_vm_id;
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index b2f8a700aeef..73313a71dd1b 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -1014,6 +1014,7 @@ static const u32 vmx_msr_index[] = {
- };
- 
- DEFINE_STATIC_KEY_FALSE(enable_evmcs);
-+DEFINE_STATIC_KEY_FALSE(enable_emsr_bitmap);
- 
- #define current_evmcs ((struct hv_enlightened_vmcs *)this_cpu_read(current_vmcs))
- 
-@@ -1090,6 +1091,15 @@ static inline u16 evmcs_read16(unsigned long field)
- 	return *(u16 *)((char *)current_evmcs + offset);
- }
- 
-+static inline void evmcs_touch_msr_bitmap(void)
-+{
-+	if (unlikely(!current_evmcs))
-+		return;
-+
-+	current_evmcs->hv_clean_fields &=
-+		~HV_VMX_ENLIGHTENED_CLEAN_FIELD_MSR_BITMAP;
-+}
-+
- static void evmcs_load(u64 phys_addr)
- {
- 	struct hv_vp_assist_page *vp_ap =
-@@ -1174,6 +1184,7 @@ static inline u32 evmcs_read32(unsigned long field) { return 0; }
- static inline u16 evmcs_read16(unsigned long field) { return 0; }
- static inline void evmcs_load(u64 phys_addr) {}
- static inline void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf) {}
-+static inline void evmcs_touch_msr_bitmap(void) {}
- #endif /* IS_ENABLED(CONFIG_HYPERV) */
- 
- static inline bool is_exception_n(u32 intr_info, u8 vector)
-@@ -4206,6 +4217,8 @@ static struct vmcs *alloc_vmcs(void)
- 
- static int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
- {
-+	struct hv_enlightened_vmcs *evmcs;
-+
- 	loaded_vmcs->vmcs = alloc_vmcs();
- 	if (!loaded_vmcs->vmcs)
- 		return -ENOMEM;
-@@ -4218,6 +4231,11 @@ static int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
- 		if (!loaded_vmcs->msr_bitmap)
- 			goto out_vmcs;
- 		memset(loaded_vmcs->msr_bitmap, 0xff, PAGE_SIZE);
-+
-+		if (static_branch_unlikely(&enable_emsr_bitmap)) {
-+			evmcs = (struct hv_enlightened_vmcs *)loaded_vmcs->vmcs;
-+			evmcs->hv_enlightenments_control.msr_bitmap = 1;
-+		}
- 	}
- 	return 0;
- 
-@@ -5335,6 +5353,9 @@ static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bit
- 	if (!cpu_has_vmx_msr_bitmap())
- 		return;
- 
-+	if (static_branch_unlikely(&enable_emsr_bitmap))
-+		evmcs_touch_msr_bitmap();
-+
- 	/*
- 	 * See Intel PRM Vol. 3, 20.6.9 (MSR-Bitmap Address). Early manuals
- 	 * have the write-low and read-high bitmap offsets the wrong way round.
-@@ -5370,6 +5391,9 @@ static void __always_inline vmx_enable_intercept_for_msr(unsigned long *msr_bitm
- 	if (!cpu_has_vmx_msr_bitmap())
- 		return;
- 
-+	if (static_branch_unlikely(&enable_emsr_bitmap))
-+		evmcs_touch_msr_bitmap();
-+
- 	/*
- 	 * See Intel PRM Vol. 3, 20.6.9 (MSR-Bitmap Address). Early manuals
- 	 * have the write-low and read-high bitmap offsets the wrong way round.
-@@ -12790,8 +12814,16 @@ static int __init vmx_init(void)
- 		}
- 
- 		if (enlightened_vmcs) {
--			pr_info("KVM: vmx: using Hyper-V Enlightened VMCS\n");
- 			static_branch_enable(&enable_evmcs);
-+
-+			/* Nested MSR-Bitmap */
-+			if (ms_hyperv.nested_features &
-+			    HV_X64_NESTED_MSR_BITMAP)
-+				static_branch_enable(&enable_emsr_bitmap);
-+
-+			pr_info("KVM: vmx: using Hyper-V Enlightened VMCS %s\n",
-+				!static_branch_likely(&enable_emsr_bitmap) ? ""
-+				: "with MSR-Bitmap");
- 		}
- 	} else {
- 		enlightened_vmcs = false;
--- 
-2.14.3
+> > This is what led me to the restart handler idea. Ultimately when
+> > someone issues a 'reboot' I would like it to use the GSC to
+> > power-cycle the board.
+
+> I think you end up with the same problem. By the time you need to turn
+> the power supply off, too much of the kernel is shut down to be able
+> to use I2C. And if you are in the middle of an Oops, you have no idea
+> of the current state. Another I2C transaction could be under way etc.
+> All the current reset drivers are pretty much self contained, atomic
+> and use KISS hardware like a GPIO.
+
+> Maybe you best bet is to see if you can find any other I2C PMICs which
+> the kernel supports.
+
+Most systems have a handshake for final power down via asserting signals
+rather than using register writes, the final power down sequence usually
+runs way after software.  There's a few things that don't which just
+unceremoniously cut the power earlier on without completing the full
+power down sequence which for all practical purposes mostly works.
+
+--5gxpn/Q6ypwruk0T
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrE5A4ACgkQJNaLcl1U
+h9DgoAf+NlREIN0n4GCyKvQf462pdjqt/gmnsC2BNEK8Mj1EUiX+m6x776go5EtQ
+1Ss8tiBw6FqizVl/UEreGaSKAla/G3ksf4WXY8Y1DLnh86vLF13njlSFTSTUd+9I
+R+FuERcjkksvH47j2+xhznMf8gTSrlzJnnuWPjqfFXMlGCeOIdeiNpg/CzcTYnBD
+q2SZYWYAaqA9fJ8rc6ZDealK5U1cnCzyZiJCqGDBHtl3PgmZWFXjHAMfM86MfY9p
+2yur6ADSkx9kOwe20LA8aZGcU9EZzAhiRakUm4d/ovXH+w+faj+rt+UH943uabZW
+8i7kHaRzOBsVCA11FgDYY14UcJcXDQ==
+=3nwB
+-----END PGP SIGNATURE-----
+
+--5gxpn/Q6ypwruk0T--
