@@ -1,82 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751807AbeDDIyR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:54:17 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43991 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751735AbeDDIyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:54:15 -0400
-Subject: Re: [PATCH] lib: logic_pio: Fix potential NULL pointer dereference
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20180403211505.GA29612@embeddedor.com>
-CC: <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddeodr.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <c5cc072b-88cb-979c-3645-9b59319dd511@huawei.com>
-Date: Wed, 4 Apr 2018 09:54:04 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1751487AbeDDIxF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:53:05 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:50662 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeDDIxD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 04:53:03 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: [PATCH v9 10/10] cpuidle: menu: Avoid selecting shallow states with stopped tick
+Date: Wed, 04 Apr 2018 10:50:36 +0200
+Message-ID: <6542020.eHGLEK9V0J@aspire.rjw.lan>
+In-Reply-To: <1736751.LdhZHb50jq@aspire.rjw.lan>
+References: <1736751.LdhZHb50jq@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <20180403211505.GA29612@embeddedor.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/04/2018 22:15, Gustavo A. R. Silva wrote:
-> new_range is being dereferenced before it is null checked, hence
-> there is a potential null pointer dereference.
->
-> Fix this by moving the pointer dereference after new_range has
-> been properly null checked.
->
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Hi Gustavo,
+If the scheduler tick has been stopped already and the governor
+selects a shallow idle state, the CPU can spend a long time in that
+state if the selection is based on an inaccurate prediction of idle
+time.  That effect turns out to be relevant, so it needs to be
+mitigated.
 
-In fact we expect new_range to never be NULL. But, if we're going to 
-check, then better make sure the check is correct...
+To that end, modify the menu governor to discard the result of the
+idle time prediction if the tick is stopped and the predicted idle
+time is less than the tick period length, unless the tick timer is
+going to expire soon.
 
-Thanks,
-John
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-> Addresses-Coverity-ID: 1466163 ("Dereference before null check")
-> Fixes: 0a7198426259 ("lib: Add generic PIO mapping method")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+v8 -> v9: No changes.
 
-Reviewed-by: John Garry <john.garry@huawei.com>
+---
+ drivers/cpuidle/governors/menu.c |   29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
-> ---
->  lib/logic_pio.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/lib/logic_pio.c b/lib/logic_pio.c
-> index 29cedea..30dfdce 100644
-> --- a/lib/logic_pio.c
-> +++ b/lib/logic_pio.c
-> @@ -33,8 +33,8 @@ static DEFINE_MUTEX(io_range_mutex);
->  int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
->  {
->  	struct logic_pio_hwaddr *range;
-> -	resource_size_t start = new_range->hw_start;
-> -	resource_size_t end = new_range->hw_start + new_range->size;
-> +	resource_size_t start;
-> +	resource_size_t end;
->  	resource_size_t mmio_sz = 0;
->  	resource_size_t iio_sz = MMIO_UPPER_LIMIT;
->  	int ret = 0;
-> @@ -42,6 +42,9 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
->  	if (!new_range || !new_range->fwnode || !new_range->size)
->  		return -EINVAL;
->
-> +	start = new_range->hw_start;
-> +	end = new_range->hw_start + new_range->size;
-> +
->  	mutex_lock(&io_range_mutex);
->  	list_for_each_entry_rcu(range, &io_range_list, list) {
->  		if (range->fwnode == new_range->fwnode) {
->
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -352,13 +352,28 @@ static int menu_select(struct cpuidle_dr
+ 	 */
+ 	data->predicted_us = min(data->predicted_us, expected_interval);
+ 
+-	/*
+-	 * Use the performance multiplier and the user-configurable
+-	 * latency_req to determine the maximum exit latency.
+-	 */
+-	interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
+-	if (latency_req > interactivity_req)
+-		latency_req = interactivity_req;
++	if (tick_nohz_tick_stopped()) {
++		/*
++		 * If the tick is already stopped, the cost of possible short
++		 * idle duration misprediction is much higher, because the CPU
++		 * may be stuck in a shallow idle state for a long time as a
++		 * result of it.  In that case say we might mispredict and try
++		 * to force the CPU into a state for which we would have stopped
++		 * the tick, unless the tick timer is going to expire really
++		 * soon anyway.
++		 */
++		if (data->predicted_us < TICK_USEC)
++			data->predicted_us = min_t(unsigned int, TICK_USEC,
++						   ktime_to_us(delta_next));
++	} else {
++		/*
++		 * Use the performance multiplier and the user-configurable
++		 * latency_req to determine the maximum exit latency.
++		 */
++		interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
++		if (latency_req > interactivity_req)
++			latency_req = interactivity_req;
++	}
+ 
+ 	expected_interval = data->predicted_us;
+ 	/*
