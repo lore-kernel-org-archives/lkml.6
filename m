@@ -1,89 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751470AbeDDONb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:13:31 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36530 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751178AbeDDONa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:13:30 -0400
-X-Google-Smtp-Source: AIpwx48+Gx2hyAmEBKkR6MmqG0u82SIvf3sZxGSn36P4w0Im1FrNtJH4cm7v4T253eLN2Vte8F3nFA==
-To: linux-kernel@vger.kernel.org
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Subject: Are you in MAINTAINERS? Get your free Nitrokey Start.
-Organization: The Linux Foundation
-Message-ID: <ddbe4227-c03a-07f0-2451-dc98cdcd7c72@linuxfoundation.org>
-Date: Wed, 4 Apr 2018 10:13:26 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751231AbeDDORd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:17:33 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:50000 "EHLO gum.cmpxchg.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750853AbeDDORc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 10:17:32 -0400
+Date: Wed, 4 Apr 2018 10:18:50 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: mhocko@kernel.org, vdavydov.dev@gmail.com, guro@fb.com,
+        riel@surriel.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/3] mm: memcontrol: Use cgroup_rstat for event accounting
+Message-ID: <20180404141850.GC28966@cmpxchg.org>
+References: <20180324160901.512135-1-tj@kernel.org>
+ <20180324160901.512135-2-tj@kernel.org>
+ <20180404140855.GA28966@cmpxchg.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="aXk7CLCEnNhbghkxq1skxMsHXrFOzl474"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180404140855.GA28966@cmpxchg.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---aXk7CLCEnNhbghkxq1skxMsHXrFOzl474
-Content-Type: multipart/mixed; boundary="roKWrjJTZdeMCpPqw2lKoKGo7VRXvi5CE";
- protected-headers="v1"
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Message-ID: <ddbe4227-c03a-07f0-2451-dc98cdcd7c72@linuxfoundation.org>
-Subject: Are you in MAINTAINERS? Get your free Nitrokey Start.
+On Wed, Apr 04, 2018 at 10:08:55AM -0400, Johannes Weiner wrote:
+> On Sat, Mar 24, 2018 at 09:08:59AM -0700, Tejun Heo wrote:
+> > @@ -91,6 +91,9 @@ struct mem_cgroup_stat_cpu {
+> >  	unsigned long events[MEMCG_NR_EVENTS];
+> >  	unsigned long nr_page_events;
+> >  	unsigned long targets[MEM_CGROUP_NTARGETS];
+> > +
+> > +	/* for cgroup rstat delta calculation */
+> > +	unsigned long last_events[MEMCG_NR_EVENTS];
+> >  };
+> >  
+> >  struct mem_cgroup_reclaim_iter {
+> > @@ -233,7 +236,11 @@ struct mem_cgroup {
+> >  
+> >  	struct mem_cgroup_stat_cpu __percpu *stat_cpu;
+> >  	atomic_long_t		stat[MEMCG_NR_STAT];
+> > -	atomic_long_t		events[MEMCG_NR_EVENTS];
+> > +
+> > +	/* events is managed by cgroup rstat */
+> > +	unsigned long long	events[MEMCG_NR_EVENTS];	/* local */
+> > +	unsigned long long	tree_events[MEMCG_NR_EVENTS];	/* subtree */
+> > +	unsigned long long	pending_events[MEMCG_NR_EVENTS];/* propagation */
+> 
+> The lazy updates are neat, but I'm a little concerned at the memory
+> footprint. On a 64-cpu machine for example, this adds close to 9000
+> words to struct mem_cgroup. And we really only need the accuracy for
+> the 4 cgroup items in memory.events, not all VM events and stats.
+> 
+> Why not restrict the patch to those? It would also get rid of the
+> weird sharing between VM and cgroup enums.
 
---roKWrjJTZdeMCpPqw2lKoKGo7VRXvi5CE
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: quoted-printable
-
-TL,DR: If you are in MAINTAINERS (or have a @kernel.org email address),
-you can get a free Nitrokey Start to help secure your PGP private keys.
-https://kernel.org/nitrokey-digital-tokens-for-kernel-developers.html
-
-
-Hello, all:
-
-We've been promoting the use of PGP signatures with git repositories.
-Linus relies on signed tags when pulling directly from maintainers, and
-if you host your repositories publicly, others can benefit from PGP
-signatures in your git repository when they cherry-pick commits for
-out-of-tree projects like Android or various SoCs not maintained in
-mainline.
-
-With that in mind, we would like to help safeguard your private PGP keys
-from being exposed should the contents of your home directory become
-available to attackers either via malware or some result of human error.
-If you are a subsystem maintainer and your email address is in the
-MAINTAINERS file (prefixed with M:), then you qualify for a new program
-announced today by The Linux Foundation and Nitrokey.
-
-For the details, please read the full announcement here:
-https://kernel.org/nitrokey-digital-tokens-for-kernel-developers.html
-
-I'll be happy to answer any questions you may have.
-
-Best regards,
---=20
-Konstantin Ryabitsev
-Director, IT Infrastructure Security
-The Linux Foundation
-
-
---roKWrjJTZdeMCpPqw2lKoKGo7VRXvi5CE--
-
---aXk7CLCEnNhbghkxq1skxMsHXrFOzl474
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYIAB0WIQR2vl2yUnHhSB5njDW2xBzjVmSZbAUCWsTdhgAKCRC2xBzjVmSZ
-bJZqAQDt7VNkJPnz/yg/EMUoGH0Q9zpaPg3itajy5fuYA4sMIQD/S9cjfHLNm1kf
-GQChWrM9g17nYN4aIw8dWEik6l+STw8=
-=v0/W
------END PGP SIGNATURE-----
-
---aXk7CLCEnNhbghkxq1skxMsHXrFOzl474--
+In fact, I wonder if we need per-cpuness for MEMCG_LOW, MEMCG_HIGH
+etc. in the first place. They describe super high-level reclaim and
+OOM events, so they're not nearly as hot as other VM events and
+stats. We could probably just have a per-memcg array of atomics.
