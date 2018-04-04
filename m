@@ -1,60 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751612AbeDDPSt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:18:49 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38683 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751417AbeDDPSs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:18:48 -0400
-X-Google-Smtp-Source: AIpwx49Chiwt9YqT/Dxum9vohQcSL4YMlUZtY5SbLWfbu8k5kcZDnR69SeGMsgJVteaiIIii3bwXLg==
-Date: Wed, 04 Apr 2018 08:18:47 -0700 (PDT)
-X-Google-Original-Date: Wed, 04 Apr 2018 08:08:27 PDT (-0700)
-Subject: Re: [GIT pull] irq updates for 4.17
-In-Reply-To: <alpine.DEB.2.21.1804041215180.2056@nanos.tec.linutronix.de>
-CC: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-From: Palmer Dabbelt <palmer@sifive.com>
-To: tglx@linutronix.de
-Message-ID: <mhng-c21c8548-7183-480c-ba39-00007856d118@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1751709AbeDDPUh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:20:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42398 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751360AbeDDPUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:20:36 -0400
+Date: Wed, 4 Apr 2018 23:20:19 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+Message-ID: <20180404152018.GB24824@ming.t460p>
+References: <20180308105358.1506-1-ming.lei@redhat.com>
+ <20180308105358.1506-5-ming.lei@redhat.com>
+ <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de>
+ <20180403160001.GA25255@ming.t460p>
+ <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1804041317550.2056@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1804041317550.2056@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 04 Apr 2018 03:19:54 PDT (-0700), tglx@linutronix.de wrote:
-> On Tue, 3 Apr 2018, Linus Torvalds wrote:
->> On Tue, Apr 3, 2018 at 6:51 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
->> >
->> > Thanks!  The linked patch set should be fully bisectable, while this one
->> > will fail on some ARM randconfigs.
->>
->> If it's only some (not very realistic) randconfigs, I suspect an
->> incremental fix is probably the easier solution, rather than redoing
->> that whole branch.
->>
->> So mind at least sending that incremental fix on top of the branch to
->> Thomas and making his life easier if he decides to go that way?
->>
->> And if Thomas is busy doing something else (*), and I come back to
->> this tomorrow as-is, I'd want to pull his tree and just apply the
->> incremental fix anyway, so it makes sense to send it to me as well.
->>
->>                     Linus
->>
->> (*) I have long since accepted that some people have a life outside of
->> kernel development too, and don't always reply immediately. I may not
->> _understand_ it, but I am resigned to the fact.
->
-> I briefly returned from that other life and applied the 3 patches on top
-> after massaging the changelogs a bit and pushed everything out for you to
-> pull.
->
-> Thanks,
->
-> 	tglx
+On Wed, Apr 04, 2018 at 02:45:18PM +0200, Thomas Gleixner wrote:
+> On Wed, 4 Apr 2018, Thomas Gleixner wrote:
+> > I'm aware how that hw-queue stuff works. But that only works if the
+> > spreading algorithm makes the interrupts affine to offline/not-present CPUs
+> > when the block device is initialized.
+> > 
+> > In the example above:
+> > 
+> > > > > 	irq 39, cpu list 0,4
+> > > > > 	irq 40, cpu list 1,6
+> > > > > 	irq 41, cpu list 2,5
+> > > > > 	irq 42, cpu list 3,7
+> > 
+> > and assumed that at driver init time only CPU 0-3 are online then the
+> > hotplug of CPU 4-7 will not result in any interrupt delivered to CPU 4-7.
+> > 
+> > So the extra assignment to CPU 4-7 in the affinity mask has no effect
+> > whatsoever and even if the spreading result is 'perfect' it just looks
+> > perfect as it is not making any difference versus the original result:
+> > 
+> > > > >   irq 39, cpu list 0
+> > > > >   irq 40, cpu list 1
+> > > > >   irq 41, cpu list 2
+> > > > >   irq 42, cpu list 3
+> 
+> And looking deeper into the changes, I think that the first spreading step
+> has to use cpu_present_mask and not cpu_online_mask.
+> 
+> Assume the following scenario:
+> 
+> Machine with 8 present CPUs is booted, the 4 last CPUs are
+> unplugged. Device with 4 queues is initialized.
+> 
+> The resulting spread is going to be exactly your example:
+> 
+>  	irq 39, cpu list 0,4
+>  	irq 40, cpu list 1,6
+>  	irq 41, cpu list 2,5
+>  	irq 42, cpu list 3,7
+> 
+> Now the 4 offline CPUs are plugged in again. These CPUs won't ever get an
+> interrupt as all interrupts stay on CPU 0-3 unless one of these CPUs is
+> unplugged. Using cpu_present_mask the spread would be:
+> 
+>  	irq 39, cpu list 0,1
+>  	irq 40, cpu list 2,3
+>  	irq 41, cpu list 4,5
+>  	irq 42, cpu list 6,7
 
-Works for me.  Thanks!
+Given physical CPU hotplug isn't common, this way will make only irq 39
+and irq 40 active most of times, so performance regression is caused just
+as Kashyap reported.
+
+> 
+> while on a machine where CPU 4-7 are NOT present, but advertised as
+> possible the spread would be:
+> 
+>  	irq 39, cpu list 0,4
+>  	irq 40, cpu list 1,6
+>  	irq 41, cpu list 2,5
+>  	irq 42, cpu list 3,7
+
+I think this way is still better, since performance regression can be
+avoided, and there is at least one CPU for covering one irq vector,
+in reality, it is often enough.
+
+As I mentioned in another email, I still don't understand why interrupts
+can't be delivered to CPU 4~7 after these CPUs become present & online.
+Seems in theory, interrupts should be delivered to these CPUs since
+affinity info has been programmed to interrupt controller already. 
+
+Or do we still need CPU hotplug handler for device driver to tell device
+the CPU hotplug change for delivering interrupts to new added CPUs?
+
+
+Thanks,
+Ming
