@@ -1,119 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751571AbeDDOri (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:47:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35880 "EHLO mx2.suse.de"
+        id S1751392AbeDDOxq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:53:46 -0400
+Received: from mga03.intel.com ([134.134.136.65]:6629 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751274AbeDDOrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:47:37 -0400
-Date: Wed, 4 Apr 2018 16:47:35 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180404144735.GL6312@dhcp22.suse.cz>
-References: <20180403121614.GV5501@dhcp22.suse.cz>
- <20180403082348.28cd3c1c@gandalf.local.home>
- <20180403123514.GX5501@dhcp22.suse.cz>
- <20180403093245.43e7e77c@gandalf.local.home>
- <20180403135607.GC5501@dhcp22.suse.cz>
- <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com>
- <20180404062340.GD6312@dhcp22.suse.cz>
- <20180404101149.08f6f881@gandalf.local.home>
- <20180404142329.GI6312@dhcp22.suse.cz>
- <20180404103111.2ea16efa@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404103111.2ea16efa@gandalf.local.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751251AbeDDOxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 10:53:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,406,1517904000";
+   d="scan'208";a="30655942"
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To: Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Markus Metzger <markus.t.metzger@intel.com>
+Subject: [PATCH v2] perf: Suppress AUX/OVERWRITE records
+Date: Wed,  4 Apr 2018 17:53:23 +0300
+Message-Id: <20180404145323.28651-1-alexander.shishkin@linux.intel.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180403173207.GA8921@arm.com>
+References: <20180403173207.GA8921@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 04-04-18 10:31:11, Steven Rostedt wrote:
-> On Wed, 4 Apr 2018 16:23:29 +0200
-> Michal Hocko <mhocko@kernel.org> wrote:
-> 
-> > On Wed 04-04-18 10:11:49, Steven Rostedt wrote:
-> > > On Wed, 4 Apr 2018 08:23:40 +0200
-> > > Michal Hocko <mhocko@kernel.org> wrote:
-> > >   
-> > > > If you are afraid of that then you can have a look at {set,clear}_current_oom_origin()
-> > > > which will automatically select the current process as an oom victim and
-> > > > kill it.  
-> > > 
-> > > Would it even receive the signal? Does alloc_pages_node() even respond
-> > > to signals? Because the OOM happens while the allocation loop is
-> > > running.  
-> > 
-> > Well, you would need to do something like:
-> > 
-> > > 
-> > > I tried it out, I did the following:
-> > > 
-> > > 	set_current_oom_origin();
-> > > 	for (i = 0; i < nr_pages; i++) {
-> > > 		struct page *page;
-> > > 		/*
-> > > 		 * __GFP_RETRY_MAYFAIL flag makes sure that the allocation fails
-> > > 		 * gracefully without invoking oom-killer and the system is not
-> > > 		 * destabilized.
-> > > 		 */
-> > > 		bpage = kzalloc_node(ALIGN(sizeof(*bpage), cache_line_size()),
-> > > 				    GFP_KERNEL | __GFP_RETRY_MAYFAIL,
-> > > 				    cpu_to_node(cpu));
-> > > 		if (!bpage)
-> > > 			goto free_pages;
-> > > 
-> > > 		list_add(&bpage->list, pages);
-> > > 
-> > > 		page = alloc_pages_node(cpu_to_node(cpu),
-> > > 					GFP_KERNEL | __GFP_RETRY_MAYFAIL, 0);
-> > > 		if (!page)
-> > > 			goto free_pages;  
-> > 
-> > 		if (fatal_signal_pending())
-> > 			fgoto free_pages;
-> 
-> But wouldn't page be NULL in this case?
+It has been pointed out to me many times that it is useful to be able
+to switch off AUX records to save the bandwidth for records that actually
+matter, for example, in AUX overwrite mode.
 
-__GFP_RETRY_MAYFAIL itself fails rather than triggers the OOM killer.
-You still might get killed from other allocation context which can
-trigger the OOM killer though. In any case you would back off and fail,
-no?
+The usefulness of PERF_RECORD_AUX is in some of its flags, like the
+TRUNCATED flag that tells the decoder where exactly gaps in the trace are.
+The OVERWRITE flag, on the other hand will be set on every single record
+in overwrite mode. However, a PERF_RECORD_AUX[flags=OVERWRITE] is
+generated on every target task's sched_out, which over time adds up to
+a lot of useless information.
 
-> > > 		bpage->page = page_address(page);
-> > > 		rb_init_page(bpage->page);
-> > > 	}
-> > > 	clear_current_oom_origin();  
-> > 
-> > If you use __GFP_RETRY_MAYFAIL it would have to be somedy else to
-> > trigger the OOM killer and this user context would get killed. If you
-> > drop __GFP_RETRY_MAYFAIL it would be this context to trigger the OOM but
-> > it would still be the selected victim.
-> 
-> Then we guarantee to kill the process instead of just sending a
-> -ENOMEM, which would change user space ABI, and is a NO NO.
+If any folks out there have userspace that depends on a constant stream of
+OVERWRITE records for a good reason, they'll have to let us know.
 
-I see. Although I would expect it would be echo writing to a file most
-of the time. But I am not really familiar what traces usually do so I
-will not speculate.
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Markus Metzger <markus.t.metzger@intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+---
+ kernel/events/ring_buffer.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-> Ideally, we want to avoid an OOM. I could add the above as well, when
-> si_mem_avaiable() returns something that is greater than what is
-> available, and at least this is the process that will get the OOM if it
-> fails to allocate.
-> 
-> Would that work for you?
-
-I have responded wrt si_mem_avaiable in other email but yes, using the
-oom_origin would reduce the immediate damage at least.
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 6c6b3c48db71..c4edd8fbc5d9 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -458,10 +458,20 @@ void perf_aux_output_end(struct perf_output_handle *handle, unsigned long size)
+ 	if (size || handle->aux_flags) {
+ 		/*
+ 		 * Only send RECORD_AUX if we have something useful to communicate
++		 *
++		 * Note: the OVERWRITE records by themselves are not considered
++		 * useful, as they don't communicate any *new* information,
++		 * aside from the short-lived offset, that becomes history at
++		 * the next event sched-in and therefore isn't useful.
++		 * The userspace that needs to copy out AUX data in overwrite
++		 * mode should know to use user_page::aux_head for the actual
++		 * offset. So, from now on we don't output AUX records that
++		 * have *only* OVERWRITE flag set.
+ 		 */
+ 
+-		perf_event_aux_event(handle->event, aux_head, size,
+-		                     handle->aux_flags);
++		if (handle->aux_flags & ~(u64)PERF_AUX_FLAG_OVERWRITE)
++			perf_event_aux_event(handle->event, aux_head, size,
++			                     handle->aux_flags);
+ 	}
+ 
+ 	rb->user_page->aux_head = rb->aux_head;
 -- 
-Michal Hocko
-SUSE Labs
+2.16.3
