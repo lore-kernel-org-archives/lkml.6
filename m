@@ -1,67 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751324AbeDDKnO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:43:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48196 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750827AbeDDKnN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:43:13 -0400
-Date: Wed, 4 Apr 2018 11:42:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Sergey Suloev <ssuloev@orpaltech.com>, Chen-Yu Tsai <wens@csie.org>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] spi: core: handle timeout error from
- transfer_one()
-Message-ID: <20180404104252.GC7691@sirena.org.uk>
-References: <20180403152905.1524-1-ssuloev@orpaltech.com>
- <20180403152905.1524-2-ssuloev@orpaltech.com>
- <20180403155224.GA11578@sirena.org.uk>
- <c0476d75-821f-7a0d-3c3f-270304e7b032@orpaltech.com>
- <20180403161824.GB11578@sirena.org.uk>
- <dad0ea81-2dd6-ccc3-a0c9-cf20ff195b7f@orpaltech.com>
- <20180404070817.6cens44jvlmdaxtm@flea>
+        id S1751361AbeDDKoI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:44:08 -0400
+Received: from foss.arm.com ([217.140.101.70]:43044 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750827AbeDDKoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 06:44:07 -0400
+Subject: Re: [PATCH] sched: support dynamiQ cluster
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Morten Rasmussen <morten.rasmussen@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>
+References: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
+ <20180329125324.GR4589@e105550-lin.cambridge.arm.com>
+ <CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com>
+ <74865492-d9a6-649d-d37c-a5a6a8c28f23@arm.com>
+ <CAKfTPtDy2uUj4amA9MARUz9qS=+urwV2edyQn+fW70hkN+CgoQ@mail.gmail.com>
+From: Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com>
+Date: Wed, 4 Apr 2018 11:44:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="69pVuxX8awAiJ7fD"
-Content-Disposition: inline
-In-Reply-To: <20180404070817.6cens44jvlmdaxtm@flea>
-X-Cookie: An idle mind is worth two in the bush.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAKfTPtDy2uUj4amA9MARUz9qS=+urwV2edyQn+fW70hkN+CgoQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---69pVuxX8awAiJ7fD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 03/04/18 13:17, Vincent Guittot wrote:
+> Hi Valentin,
+> 
+[...]
+>>
+>> I believe ASYM_PACKING behaves better here because the workload is only
+>> sysbench threads. As stated above, since task utilization is disregarded, I
+> 
+> It behaves better because it doesn't wait for the task's utilization
+> to reach a level before assuming the task needs high compute capacity.
+> The utilization gives an idea of the running time of the task not the
+> performance level that is needed
+> 
 
-On Wed, Apr 04, 2018 at 09:08:18AM +0200, Maxime Ripard wrote:
+That's my point actually. ASYM_PACKING disregards utilization and moves those
+threads to the big cores ASAP, which is good here because it's just sysbench
+threads.
 
-> And I'm pretty sure that papering over an error returned by a driver
-> is not the right thing to do.
+What I meant was that if the task composition changes, IOW we mix "small"
+tasks (e.g. periodic stuff) and "big" tasks (performance-sensitive stuff like
+sysbench threads), we shouldn't assume all of those require to run on a big
+CPU. The thing is, ASYM_PACKING can't make the difference between those, so
+it'll all come down to which task spawned first.
 
-We've got specific error handling for timeouts - they get accounted for
-separately in the stats.  It *shouldn't* affect actual operation and
-AFAICT it doesn't.  I think the main problem here is that the commit
-message is very unclear.
+Furthermore, ASYM_PACKING will forcefully move tasks via active balance
+regardless of the imbalance as long as a big CPU is idle.
 
---69pVuxX8awAiJ7fD
-Content-Type: application/pgp-signature; name="signature.asc"
+So we could have a scenario where loads of "small" tasks spawn, and they all
+get moved to a big CPU until they're all full (because they're periodic tasks
+so the big CPUs will eventually be idle and will pull another task as long as
+they get some idle time).
 
------BEGIN PGP SIGNATURE-----
+Then, before the load tracking signals of those tasks ramp up high enough 
+that the load balancer would try to move those to LITTLE CPUs, some "big"
+tasks spawn. They get scheduled on LITTLE CPUs, and now the system will look
+balanced so nothing will be done.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrErCsACgkQJNaLcl1U
-h9C5Vgf+OToh7RTZkBZDR/42P3i4DVvulaQv12xyeiY8y0/cVS2T5BnlWo4H0xZ5
-0NLmSRjaEJcf2hLnQE8vyOtDKHPYa/nfwdPmadimsvIHlKQ3Vumzw+8LP1WLgRxp
-GmIhOosBUZ2BuCaGeidlXu6fjT3Ngh34IHg4WOH3gx7++oclzzZQG3Ka0JCA/4fL
-U+tG+EUVbABd0UHznYj/j/5nuIW0Uga2ChsgpLPdZYU4vF0F1RPrHC79PfAdlQxZ
-T8LQQaCdUTYKvz/H0Os+fQygFssielvdpyGWppvE98o/BHmtdMWkbcoQqIVzMWw2
-phnrI7nVJuAMpegLx/Bb0IouNVpNAg==
-=n2XR
------END PGP SIGNATURE-----
 
---69pVuxX8awAiJ7fD--
+I acknowledge this all sounds convoluted but I hope it highlights what I
+think could go wrong with ASYM_PACKING on asymmetric systems.
+
+Regards,
+Valentin
