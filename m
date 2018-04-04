@@ -1,41 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751616AbeDDPH4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:07:56 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:39910 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751350AbeDDPHz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:07:55 -0400
-Date: Wed, 04 Apr 2018 11:07:53 -0400 (EDT)
-Message-Id: <20180404.110753.1310108334071287240.davem@davemloft.net>
-To: f.fainelli@gmail.com
-Cc: netdev@vger.kernel.org, opendmb@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 0/2] net: Broadcom drivers sparse fixes
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180402225856.4351-1-f.fainelli@gmail.com>
-References: <20180402225856.4351-1-f.fainelli@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1751735AbeDDPIX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:08:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46130 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751439AbeDDPIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:08:22 -0400
+Date: Wed, 4 Apr 2018 23:08:05 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+Message-ID: <20180404150759.GA24824@ming.t460p>
+References: <20180308105358.1506-1-ming.lei@redhat.com>
+ <20180308105358.1506-5-ming.lei@redhat.com>
+ <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de>
+ <20180403160001.GA25255@ming.t460p>
+ <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Mon,  2 Apr 2018 15:58:54 -0700
-
-> This patch series fixes the same warning reported by sparse in bcmsysport and
-> bcmgenet in the code that deals with inserting the TX checksum pointers:
+On Wed, Apr 04, 2018 at 10:25:16AM +0200, Thomas Gleixner wrote:
+> On Wed, 4 Apr 2018, Ming Lei wrote:
+> > On Tue, Apr 03, 2018 at 03:32:21PM +0200, Thomas Gleixner wrote:
+> > > On Thu, 8 Mar 2018, Ming Lei wrote:
+> > > > 1) before 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
+> > > > 	irq 39, cpu list 0
+> > > > 	irq 40, cpu list 1
+> > > > 	irq 41, cpu list 2
+> > > > 	irq 42, cpu list 3
+> > > > 
+> > > > 2) after 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
+> > > > 	irq 39, cpu list 0-2
+> > > > 	irq 40, cpu list 3-4,6
+> > > > 	irq 41, cpu list 5
+> > > > 	irq 42, cpu list 7
+> > > > 
+> > > > 3) after applying this patch against V4.15+:
+> > > > 	irq 39, cpu list 0,4
+> > > > 	irq 40, cpu list 1,6
+> > > > 	irq 41, cpu list 2,5
+> > > > 	irq 42, cpu list 3,7
+> > > 
+> > > That's more or less window dressing. If the device is already in use when
+> > > the offline CPUs get hot plugged, then the interrupts still stay on cpu 0-3
+> > > because the effective affinity of interrupts on X86 (and other
+> > > architectures) is always a single CPU.
+> > > 
+> > > So this only might move interrupts to the hotplugged CPUs when the device
+> > > is initialized after CPU hotplug and the actual vector allocation moves an
+> > > interrupt out to the higher numbered CPUs if they have less vectors
+> > > allocated than the lower numbered ones.
+> > 
+> > It works for blk-mq devices, such as NVMe.
+> > 
+> > Now NVMe driver creates num_possible_cpus() hw queues, and each
+> > hw queue is assigned one msix irq vector.
+> > 
+> > Storage is Client/Server model, that means the interrupt is only
+> > delivered to CPU after one IO request is submitted to hw queue and
+> > it is completed by this hw queue.
+> > 
+> > When CPUs is hotplugged, and there will be IO submitted from these
+> > CPUs, then finally IOs complete and irq events are generated from
+> > hw queues, and notify these submission CPU by IRQ finally.
 > 
-> drivers/net/ethernet/broadcom/bcmsysport.c:1155:26: warning: cast from restricted __be16
-> drivers/net/ethernet/broadcom/bcmsysport.c:1155:26: warning: incorrect type in argument 1 (different base types)
-> drivers/net/ethernet/broadcom/bcmsysport.c:1155:26:    expected unsigned short [unsigned] [usertype] val
-> drivers/net/ethernet/broadcom/bcmsysport.c:1155:26:    got restricted __be16 [usertype] protocol
+> I'm aware how that hw-queue stuff works. But that only works if the
+> spreading algorithm makes the interrupts affine to offline/not-present CPUs
+> when the block device is initialized.
 > 
-> This patch fixes both issues by using the same construct and not swapping
-> skb->protocol but instead the values we are checking against.
+> In the example above:
+> 
+> > > > 	irq 39, cpu list 0,4
+> > > > 	irq 40, cpu list 1,6
+> > > > 	irq 41, cpu list 2,5
+> > > > 	irq 42, cpu list 3,7
+> 
+> and assumed that at driver init time only CPU 0-3 are online then the
+> hotplug of CPU 4-7 will not result in any interrupt delivered to CPU 4-7.
 
-Series applied, thanks Florian.
+Indeed, and I just tested this case, and found that no interrupts are
+delivered to CPU 4-7.
+
+In theory, the affinity has been assigned to these irq vectors, and
+programmed to interrupt controller, I understand it should work.
+
+Could you explain it a bit why interrupts aren't delivered to CPU 4-7?
+
+
+Thanks,
+Ming
