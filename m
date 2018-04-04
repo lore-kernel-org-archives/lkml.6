@@ -1,85 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754818AbeDDBkc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 21:40:32 -0400
-Received: from mail-pl0-f50.google.com ([209.85.160.50]:39674 "EHLO
-        mail-pl0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753733AbeDDBka (ORCPT
+        id S1754876AbeDDBvS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 21:51:18 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44387 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753916AbeDDBvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 21:40:30 -0400
-X-Google-Smtp-Source: AIpwx4+kSTH0uP09qpBjkKEqhgXPNxARIUjy/sb4fjRuNZZOlbyOJeo8vgf+25ypnJeNO+PYxfCgZg==
-Date: Wed, 4 Apr 2018 10:40:23 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Vaneet Narang <v.narang@samsung.com>
-Cc: Maninder Singh <maninder1.s@samsung.com>,
-        "sergey.senozhatsky.work@gmail.com"
-        <sergey.senozhatsky.work@gmail.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "ngupta@vflare.org" <ngupta@vflare.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "anton@enomsg.org" <anton@enomsg.org>,
-        "ccross@android.com" <ccross@android.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        PANKAJ MISHRA <pankaj.m@samsung.com>,
-        AMIT SAHRAWAT <a.sahrawat@samsung.com>
-Subject: Re: [PATCH 1/1] lz4: Implement lz4 with dynamic offset length.
-Message-ID: <20180404014023.GA5087@jagdpanzerIV>
-References: <20180403122642.GA26934@jagdpanzerIV>
- <20180321074948.GA2746@jagdpanzerIV>
- <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
- <1521607242-3968-2-git-send-email-maninder1.s@samsung.com>
- <20180402055152epcms5p546fdb62381b769ed0c719f3bedcee3b8@epcms5p5>
- <CGME20180321044149epcas5p12cba1afa5fc0f493a47fe20c4a7394bd@epcms5p7>
- <576192949.596772.1522763027665.JavaMail.jboss@ep1ml501>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <576192949.596772.1522763027665.JavaMail.jboss@ep1ml501>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 3 Apr 2018 21:51:17 -0400
+X-Google-Smtp-Source: AIpwx4/0DDhtTa+ipy/pRBunU6IAyFXYDO8GfUFnTWyFq41f9NHvj0u60r+cSnY+ztzURypWc+rZvA==
+Date: Tue, 03 Apr 2018 18:51:16 -0700 (PDT)
+X-Google-Original-Date: Tue, 03 Apr 2018 17:43:48 PDT (-0700)
+Subject: Re: [GIT pull] irq updates for 4.17
+In-Reply-To: <CA+55aFynLQp=n0_e=AQfMpwsGpCLhgFsw3uGPfuVCS1wJD3v4w@mail.gmail.com>
+CC: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+From: Palmer Dabbelt <palmer@sifive.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <mhng-99170edc-de54-4394-aaae-555658220549@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/03/18 19:13), Vaneet Narang wrote:
-> Hi Sergey,
-> 
-> >You shrink a 2 bytes offset down to a 1 byte offset, thus you enforce that
-> 2 Byte offset is not shrinked to 1 byte, Its only 1 bit is reserved out of
-> 16 bits of offset. So only 15 Bits can be used to store offset value.
+On Tue, 03 Apr 2018 17:27:41 PDT (-0700), Linus Torvalds wrote:
+> On Tue, Apr 3, 2018 at 3:39 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
+>>
+>> I assume it's too late to swap this out for that?  If so that's OK, I can
+>> just send a follow-on.
+>>
+>> Sorry for breaking things!
+>
+> Thomas,
+>  I'll delay pulling your trees until tomorrow in case you want to fix
+> things up.
+>
+> And after that, I guess we can fix it up after-the-fact too.
 
-Yes, you are right. My bad, was thinking about something else.
-
-> >'page should be less than 32KB', which I'm sure will be confusing. 
-> lz4_dyn will work on bigger data length(> 32k) but in that case compression
-> ratio may not be better than LZ4. This is same as LZ4 compressing data more 
-> than 64K (16Bits). LZ4 can't store offset more than 64K similarly
-> LZ4 dyn can't store offset more than 32K.
-
-Then drop that `if PAGE_SIZE' thing. I'd rather do that stuff internally
-in lz4... if it needed at all.
-
-> >And you
-> >rely on lz4_dyn users to do the right thing - namely, to use that 'nice'
-> >`#if (PAGE_SIZE < (32 * KB))'. 
-> They don't need to add this code
-
-Then drop it.
-
-> >Apart from that, lz4_dyn supports only data
-> >in up to page_size chunks. Suppose my system has page_size of less than 32K,
-> >so I legitimately can enable lz4_dyn, but suppose that I will use it
-> >somewhere where I don't work with page_size-d chunks. Will I able to just
-> >do tfm->compress(src, sz) on random buffers? The whole thing looks to be
-> >quite fragile.
-> No thats not true, lz4_dyn can work for random buffers and it need not be 
-> of page size chunks. There is no difference in Lz4 and Lz4 dyn working. 
-
-You are right.
-
-	-ss
+Thanks!  The linked patch set should be fully bisectable, while this one will 
+fail on some ARM randconfigs.
