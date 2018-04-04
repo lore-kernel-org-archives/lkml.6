@@ -1,147 +1,152 @@
-Return-Path: <maran.wilson@oracle.com>
-X-Google-Smtp-Source: AIpwx49xUkaiCjCQ3Q0C0BQoRmOKFyd/YAvp7WDDzkcoWcM760d1qakehXGtF+pgiATzboTKh/Cs
-ARC-Seal: i=1; a=rsa-sha256; t=1522873922; cv=none;
-        d=google.com; s=arc-20160816;
-        b=wYZRhOZ9X3k7hc8sfMvUZrUliwCzEkO5GzfyufvLTXXJMVN07OXNmxS/W6+JPu+d8J
-         QB23x1SRF5G16fLPfigsdOfL6LhFb2LM0d36Li6qcGzEhqLAHzSOnL2fHvgY2hmHmI/C
-         CWiZnRYM2xGsarpfYVMw5SDKgLZ+xp+ifoXQkj7gwPpX9qAzisVeUWNkYD6BbTJ5WELO
-         g2c8JyJLURoQT7dnFNQ/H6wd+G3vxJwtTvOAQDJ03vhXHkew0AS5m3HcQg4wlXvEKnQ2
-         a4iRAxtdBUeDa4nZSpSgG9z6NspLvPhm4S/bIC2Kk1gSxu0hY93MblqvA2oB1rCDOrZP
-         1YeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=IVmfDqQz06KsdsoIi2L75gar3ZvEEMgeQb4mGnjAVHA=;
-        b=HKC/NqUAGkT5nyX43W2JoZYnXoZXe7f4j96II+tiII2mZF0Xx3OeykkhpML3BcAn3x
-         ZfwZzN/1fep7s+rKXzpom/y6CF08MdCoNrQhyZQDYJWhhEFMlQKzpBA0HYukeaxEbjN9
-         1w2QA7hu/Qq8BjK6uz6cbDhBOxpLiqhq2YFUgVp6ufx/QZ70m4V/X3h1stFU37ZXVfWZ
-         LoJw12wlSFAGbQLe3a/NBi0MdNhXzTIHusEUQJaEG7A2u/NKpFkG1C5nlrEIYj3n1GSx
-         RTl7O5mn3ve9sQIpoaARPV7beM+9N9UJvR2xKsFS4PbNC38uMsNKSKdJUvPshF3ML7j8
-         rH/g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=gMpkMBnr;
-       spf=pass (google.com: domain of maran.wilson@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=maran.wilson@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=gMpkMBnr;
-       spf=pass (google.com: domain of maran.wilson@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=maran.wilson@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-From: Maran Wilson <maran.wilson@oracle.com>
-To: x86@kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, jgross@suse.com
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        boris.ostrovsky@oracle.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, mchehab@kernel.org,
-        linus.walleij@linaro.org, rdunlap@infradead.org, roger.pau@citrix.com,
-        rkrcmar@redhat.com, maran.wilson@oracle.com
-Subject: [PATCH v6 2/7] xen/pvh: Move PVH entry code out of Xen specific tree
-Date: Wed,  4 Apr 2018 13:31:30 -0700
-Message-Id: <1522873890-18005-1-git-send-email-maran.wilson@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1522873659-17572-1-git-send-email-maran.wilson@oracle.com>
-References: <1522873659-17572-1-git-send-email-maran.wilson@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8853 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804040198
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-990257-1522873811-2-7504547188564746751
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522873810; b=Bry7j0k67NKeptsWrbxJNXkDJ8OuEyxJHG20As3oJnGcS28csA
+    cc+0lFu1TCZPhT0euW8L7jiBJRSxfTUFbP+UmZiz2/2pZY6x2mOYKT9yqyx5WFdw
+    eiOY9OgZ3bQqIBS0+BXNiJuD7l/VlGxkfhTE8mrJanj6KydjT+tiPf0KNQGz3g0n
+    g5AJLnf7RtTcjf24Z4IpLMjLlkbc+V5kJ/DCyE+IQwuskOsH8mu6mWoLFEsAx6nj
+    FqsWFM85ShDYc5+l2ZOTkOoWN48WpF9siO6JvrKlV/9kCksZJ6I2ciBzYnhpL0r7
+    ZIv0HtUFHYEMwYg6i6XnUgi0M+sBcSVwnvnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1522873810;
+    bh=VciGYlp4mlUgulcOPdzdh8k4s5oxIbbR3H2jJcM8NVs=; b=HpKutk2QqO/5
+    e8XFyr1hgZ3Iocp7tJh/bSujMOjkUF2MG1GvgJYDmGVomr8dK+lZ/DZSr5PBP6Uv
+    zAqAUFSiXqc6wS2W/EdLo5q0Kg2HwEy4Lr2QUJuJ5jyX0/No8sUL25+BzYE0GnjK
+    /k04f92eGFZu5f2uaceiKtU8UFxHDiReixkCiQcvXtPVEHVv09MsGNwkwBeaHDCD
+    ul/S55mZ83oaEfBrBvGIZhBjHbW5EYz/tSVRR3IPDQ4VErkhtN6BeouUJBUKMH70
+    Joi7yV56i/6Q3xzrmrb0nn8Lfgd38b29AUidmXhRJyCYFwAtiRkCUUyTteo6HUII
+    lMQhRSE07A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPrRg4SY0C6xVuGEr/N8ajK1wbNHWD2Io+qVHIm+srkWSc+cdnrmjc+K862rjPfhMRtIarf7meNJ0QuxLvNOA7VrwLZT1Hca+icvT4qIttnhQA86hOh2
+    roF7bRPCF2xpEnjFOb4JX/xdTuaN5xUaYoKAKf83uraSoeNX5PiTSpkjXVy9GMfx8ajQzvIFDpPV+cRqfp6Gsl2YpY7WoaISwsOqNKE2StUWYjoL79T0FC8e
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=fgeN0leQug2GkSvOKpYA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751965AbeDDU3z (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 4 Apr 2018 16:29:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45542 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751981AbeDDU3o (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 4 Apr 2018 16:29:44 -0400
+From: Lyude Paul <lyude@redhat.com>
+To: intel-gfx@lists.freedesktop.org
+Cc: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+        <ville.syrjala@linux.intel.com>, stable@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] drm/i915: Keep AUX block running when disabling DPMS for MST
+Date: Wed,  4 Apr 2018 16:29:31 -0400
+Message-Id: <20180404202932.6811-2-lyude@redhat.com>
+In-Reply-To: <20180404202932.6811-1-lyude@redhat.com>
+References: <20180404202932.6811-1-lyude@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596849045801507905?=
-X-GMAIL-MSGID: =?utf-8?q?1596849045801507905?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Once hypervisors other than Xen start using the PVH entry point for
-starting VMs, we would like the option of being able to compile PVH entry
-capable kernels without enabling CONFIG_XEN and all the code that comes
-along with that. To allow that, we are moving the PVH code out of Xen and
-into files sitting at a higher level in the tree.
+While enabling/disabling DPMS before link training with MST hubs is
+perfectly valid; unfortunately disabling DPMS results in some devices
+disabling their AUX CH block as well. For SST this isn't as much of a
+problem, but for MST we need to be able to continue handling aux
+transactions even when none of the sinks are turned on since it's
+possible for us to have a single atomic commit which results in
+disabling each downstream sink, followed by subsequently re-enabling
+each sink.
 
-This patch is not introducing any code or functional changes, just moving
-files from one location to another.
+If we don't do this, we'll end up stalling any pending ESI interrupts
+from the sink for up to 1ms. Unfortunately, dropping ESIs during this
+timespan makes it so that link fallback retraining for MST (which I will
+be submitting to the ML shortly) fails due to the channel EQ failure
+interrupts potentially getting dropped. Additionally, when performing a
+modeset that brings the hub status's link status from bad -> good having
+ESIs disabled for that long causes us to miss the hub's response to us
+trying to start link training as well.
 
-Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Since any sink with MST is going to support DisplayPort 1.2 anyway, save
+us the hassle of trying to wait until the sink comes back up and just
+never shut the aux block down.
+
+Changes since v2:
+ - Fix patch name, no functional changes
+Changes since v3:
+ - acks, t-b's
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Acked-by: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: stable@vger.kernel.org
+Fixes: ad260ab32a4d9 ("drm/i915/dp: Write to SET_POWER dpcd to enable MST hub.")
 ---
- MAINTAINERS                                                | 1 +
- arch/x86/Kbuild                                            | 2 ++
- arch/x86/platform/pvh/Makefile                             | 5 +++++
- arch/x86/{xen/enlighten_pvh.c => platform/pvh/enlighten.c} | 0
- arch/x86/{xen/xen-pvh.S => platform/pvh/head.S}            | 0
- arch/x86/xen/Makefile                                      | 3 ---
- 6 files changed, 8 insertions(+), 3 deletions(-)
- create mode 100644 arch/x86/platform/pvh/Makefile
- rename arch/x86/{xen/enlighten_pvh.c => platform/pvh/enlighten.c} (100%)
- rename arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} (100%)
+ drivers/gpu/drm/i915/intel_dp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 65ab509e4a42..52afae73beab 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15189,6 +15189,7 @@ L:	xen-devel@lists.xenproject.org (moderated for non-subscribers)
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git
- S:	Supported
- F:	arch/x86/xen/
-+F:	arch/x86/platform/pvh/
- F:	drivers/*/xen-*front.c
- F:	drivers/xen/
- F:	arch/x86/include/asm/xen/
-diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
-index 0038a2d10a7a..2089e4414300 100644
---- a/arch/x86/Kbuild
-+++ b/arch/x86/Kbuild
-@@ -7,6 +7,8 @@ obj-$(CONFIG_KVM) += kvm/
- # Xen paravirtualization support
- obj-$(CONFIG_XEN) += xen/
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index 62f82c4298ac..0479c377981b 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -2589,11 +2589,13 @@ void intel_dp_sink_dpms(struct intel_dp *intel_dp, int mode)
+ 		return;
  
-+obj-$(CONFIG_XEN_PVH) += platform/pvh/
+ 	if (mode != DRM_MODE_DPMS_ON) {
++		unsigned char data = intel_dp->is_mst ?
++			DP_SET_POWER_D3_AUX_ON : DP_SET_POWER_D3;
 +
- # Hyper-V paravirtualization support
- obj-$(subst m,y,$(CONFIG_HYPERV)) += hyperv/
+ 		if (downstream_hpd_needs_d0(intel_dp))
+ 			return;
  
-diff --git a/arch/x86/platform/pvh/Makefile b/arch/x86/platform/pvh/Makefile
-new file mode 100644
-index 000000000000..9fd25efcd2a3
---- /dev/null
-+++ b/arch/x86/platform/pvh/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+OBJECT_FILES_NON_STANDARD_head.o := y
-+
-+obj-$(CONFIG_XEN_PVH) += enlighten.o
-+obj-$(CONFIG_XEN_PVH) += head.o
-diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/platform/pvh/enlighten.c
-similarity index 100%
-rename from arch/x86/xen/enlighten_pvh.c
-rename to arch/x86/platform/pvh/enlighten.c
-diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/platform/pvh/head.S
-similarity index 100%
-rename from arch/x86/xen/xen-pvh.S
-rename to arch/x86/platform/pvh/head.S
-diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
-index d83cb5478f54..f1b850607212 100644
---- a/arch/x86/xen/Makefile
-+++ b/arch/x86/xen/Makefile
-@@ -1,6 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- OBJECT_FILES_NON_STANDARD_xen-asm_$(BITS).o := y
--OBJECT_FILES_NON_STANDARD_xen-pvh.o := y
+-		ret = drm_dp_dpcd_writeb(&intel_dp->aux, DP_SET_POWER,
+-					 DP_SET_POWER_D3);
++		ret = drm_dp_dpcd_writeb(&intel_dp->aux, DP_SET_POWER, data);
+ 	} else {
+ 		struct intel_lspcon *lspcon = dp_to_lspcon(intel_dp);
  
- ifdef CONFIG_FUNCTION_TRACER
- # Do not profile debug and lowlevel utilities
-@@ -21,7 +20,6 @@ obj-y		:= enlighten.o multicalls.o mmu.o irq.o \
- obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o mmu_hvm.o suspend_hvm.o
- obj-$(CONFIG_XEN_PV)			+= setup.o apic.o pmu.o suspend_pv.o \
- 						p2m.o enlighten_pv.o mmu_pv.o
--obj-$(CONFIG_XEN_PVH)			+= enlighten_pvh.o
- 
- obj-$(CONFIG_EVENT_TRACING) += trace.o
- 
-@@ -33,4 +31,3 @@ obj-$(CONFIG_XEN_DEBUG_FS)	+= debugfs.o
- obj-$(CONFIG_XEN_DOM0)		+= vga.o
- obj-$(CONFIG_SWIOTLB_XEN)	+= pci-swiotlb-xen.o
- obj-$(CONFIG_XEN_EFI)		+= efi.o
--obj-$(CONFIG_XEN_PVH)	 	+= xen-pvh.o
 -- 
-2.16.1
+2.14.3
