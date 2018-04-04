@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751560AbeDDPGb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:06:31 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:39882 "EHLO
+        id S1751616AbeDDPH4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:07:56 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:39910 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751363AbeDDPG3 (ORCPT
+        with ESMTP id S1751350AbeDDPHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:06:29 -0400
-Date: Wed, 04 Apr 2018 11:06:23 -0400 (EDT)
-Message-Id: <20180404.110623.1227186154122913076.davem@davemloft.net>
-To: dhowells@redhat.com
-Cc: netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        Wed, 4 Apr 2018 11:07:55 -0400
+Date: Wed, 04 Apr 2018 11:07:53 -0400 (EDT)
+Message-Id: <20180404.110753.1310108334071287240.davem@davemloft.net>
+To: f.fainelli@gmail.com
+Cc: netdev@vger.kernel.org, opendmb@gmail.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] rxrpc: Fix undefined packet handling
+Subject: Re: [PATCH net 0/2] net: Broadcom drivers sparse fixes
 From: David Miller <davem@davemloft.net>
-In-Reply-To: <152270949946.20618.15535005483715424318.stgit@warthog.procyon.org.uk>
-References: <152270949946.20618.15535005483715424318.stgit@warthog.procyon.org.uk>
+In-Reply-To: <20180402225856.4351-1-f.fainelli@gmail.com>
+References: <20180402225856.4351-1-f.fainelli@gmail.com>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
@@ -24,14 +24,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
-Date: Mon, 02 Apr 2018 23:51:39 +0100
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Mon,  2 Apr 2018 15:58:54 -0700
 
-> By analogy with other Rx implementations, RxRPC packet types 9, 10 and 11
-> should just be discarded rather than being aborted like other undefined
-> packet types.
+> This patch series fixes the same warning reported by sparse in bcmsysport and
+> bcmgenet in the code that deals with inserting the TX checksum pointers:
 > 
-> Reported-by: Jeffrey Altman <jaltman@auristor.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
+> drivers/net/ethernet/broadcom/bcmsysport.c:1155:26: warning: cast from restricted __be16
+> drivers/net/ethernet/broadcom/bcmsysport.c:1155:26: warning: incorrect type in argument 1 (different base types)
+> drivers/net/ethernet/broadcom/bcmsysport.c:1155:26:    expected unsigned short [unsigned] [usertype] val
+> drivers/net/ethernet/broadcom/bcmsysport.c:1155:26:    got restricted __be16 [usertype] protocol
+> 
+> This patch fixes both issues by using the same construct and not swapping
+> skb->protocol but instead the values we are checking against.
 
-Applied, thank you.
+Series applied, thanks Florian.
