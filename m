@@ -1,121 +1,157 @@
-Return-Path: <ebiederm@xmission.com>
-X-Google-Smtp-Source: AIpwx4/+9nS5r1cik8Ls7cd5rBcviKBFn38zyC0WHUm326IYinkzyu82KhSZBid4ZLKC8f0tIsRd
-ARC-Seal: i=1; a=rsa-sha256; t=1523033393; cv=none;
+Return-Path: <christian.brauner@canonical.com>
+X-Google-Smtp-Source: AIpwx4+gQVSj+4xAgggh4toMkSXhxQ8yo7rKL8x8FLrPeeTgPLh7SO1VGbZ8+eHO+r7qKF00xMvy
+ARC-Seal: i=1; a=rsa-sha256; t=1522873854; cv=none;
         d=google.com; s=arc-20160816;
-        b=jVaKdwOaPbZECM0eTe5QKmL3/20+fdqza+Eoo9h6clAx4NnZcAv8DrcK3mtZwbTwb/
-         yXdFMMzB7RtnJZpCZTex78D3d73L1YHdTSSRdQr0jEI+SN86+4HSnevKbk3rrFYrhz2Q
-         2uy4yH913yIH5CG507WRFaDQQkURjl06MoLcJbQbdeG8MRnUW9rRV0bNp8kYicll8IOH
-         +WU3gTz1Dnulmidk361Qd8V9vQb8E4YcyKR2sl5j/2L0w0T1S5qNVxLCh5lFWXpck7bW
-         SsbFFh9Vqow5X8ACauIM6lNPbYi4SPK7fvohcL12JUXPEC6vDjkTZGUZc4PdzVSbREXP
-         wTjg==
+        b=RL98C57y2FMn5BNVamoUSNqKAvluXuDqN0TxlAvoMjVX2P+9zeiM9ybVRaaYghl4Ey
+         1Bd7Jw0FMBvGg8KVIM2EhigNMV1HJLV5v34kTFw9wlv72X3cDGV8diCVhyKVi1qLN5qn
+         abnmiPMjJ5mWw1YDBLI+JWSV0Jfm8OFoDnGKBskOrpbhDHPQUNeM0avjoQl+J/yBdZaV
+         ETUZDtJixnenrxqaFZHnw9F2gD6gOWJUgITbzaZfFreZCR24Vyn15qJEO46Giouk+pqI
+         pQU7yYCicvR79K/cVgXDoentEHJq34X/ROHwWlx8MMWsOYlHKHWP+wa/mnkiXu4wnscy
+         6RGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:mime-version:user-agent:message-id:in-reply-to:date
-         :references:cc:to:from:arc-authentication-results;
-        bh=GXqw09iE2WZ6rnrZSQhBqwG9bvnySPnsVKmdiubPjbo=;
-        b=uv9qf7lPQjE4mfk+8mY9hkjU06bZ2mWO/clgCEQufIv5v17sLDSSMDniaNJ7DGajqj
-         VfzJX/MtDkGTQtCky7OWo/7cP29JedLnYIcdsauIlSFq2xROwxkulijvkdaaghxhSpku
-         h0kzDZgnt4dtLFj/KcrgP+LId4L2KoE2WkGc00L0jy+zXtbR1OsUPNreSG6B3Xz9EmcM
-         X0TB78kzAwbwBsEO3NlwAtdl/SrPQyo4c0I3AOtx4iN+BUgMuUmbedtauwNem16RqFso
-         s4Cup6z8XbTVD9enqcPXuztgYTl1ghchy+UvlHjQrzm0MQ//1EOiYX136kM6FpwirX+r
-         bICg==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:date:from:arc-authentication-results;
+        bh=4GnNlBgR6OfNCBbe73oz+r4FITLhgrfDW70F4NsF01Q=;
+        b=qtFaRQXq2OEBrOQiGAMfKlX2FPd1bGANF8wDQh1kHYRZppoIyH0cPVBvupHzZ2gqc1
+         lQAFowWV2cHsUS8OLA4OGRRX7ML6xUtUfYk2OIC6UhZtO1+u2S2EFG1vkPxesSEqgr8Z
+         4sdwLoYbQPVRBzsoCISkLWnu3lMBXsimDyHx7dc8s6HwJD35Bco/cUlnAljM2zmVinvJ
+         A42tYmlY2cHzXp5PKbx3RpA6F59PfG0VLMfhCjqw3W5QkDdVWv40M3eHpgkQYF3Hz4Ll
+         UPXgGwPJNsEvTJ6V8VFtcxAnR6NTe37u90b8vTJhByQw2Q36LFDhSmZx7XUnnkb5b7+j
+         rEdg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.233 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
+       spf=pass (google.com: best guess record for domain of christian.brauner@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=christian.brauner@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.233 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Christian Brauner <christian.brauner@canonical.com>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>,  davem@davemloft.net,  gregkh@linuxfoundation.org,  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,  avagin@virtuozzo.com,  serge@hallyn.com
+       spf=pass (google.com: best guess record for domain of christian.brauner@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=christian.brauner@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+From: Christian Brauner <christian.brauner@canonical.com>
+X-Google-Original-From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Wed, 4 Apr 2018 22:30:49 +0200
+To: ebiederm@xmission.com, davem@davemloft.net, gregkh@linuxfoundation.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: avagin@virtuozzo.com, ktkhai@virtuozzo.com, serge@hallyn.com
+Subject: Re: [PATCH net] netns: filter uevents correctly
+Message-ID: <20180404203048.GA21118@gmail.com>
 References: <20180404194857.29375-1-christian.brauner@ubuntu.com>
-	<442e89b8-e947-6eeb-1bcb-fa28f22a25f0@virtuozzo.com>
-	<20180405140709.GA1697@gmail.com>
-	<941de2b9-332f-75fc-f8ac-4059a9b5426f@virtuozzo.com>
-	<20180405144130.GB26043@gmail.com> <87in953ryi.fsf@xmission.com>
-	<20180406130704.GB9263@gmail.com> <874lko2y22.fsf@xmission.com>
-	<20180406160757.GA16281@gmail.com>
-Date: Fri, 06 Apr 2018 11:48:40 -0500
-In-Reply-To: <20180406160757.GA16281@gmail.com> (Christian Brauner's message
-	of "Fri, 6 Apr 2018 18:07:59 +0200")
-Message-ID: <878ta01dsn.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1f4UYg-0003es-NN;;;mid=<878ta01dsn.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.140.30;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18UpTC+KkMTUX3vAjek7BPquY8uFNX+Mq8=
-X-SA-Exim-Connect-IP: 97.119.140.30
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4993]
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Christian Brauner <christian.brauner@canonical.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 169 ms - load_scoreonly_sql: 0.03 (0.0%),
-	signal_user_changed: 2.5 (1.5%), b_tie_ro: 1.79 (1.1%), parse: 0.72 (0.4%),
-	extract_message_metadata: 9 (5.6%), get_uri_detail_list: 0.98 (0.6%),
-	tests_pri_-1000: 4.5 (2.7%), tests_pri_-950: 1.10 (0.7%), tests_pri_-900:
-	0.92 (0.5%), tests_pri_-400: 17 (10.1%), check_bayes: 16 (9.6%), b_tokenize:
-	5 (3.1%), b_tok_get_all: 5 (3.2%), b_comp_prob: 1.58 (0.9%), b_tok_touch_all:
-	2.2 (1.3%), b_finish: 0.58 (0.3%), tests_pri_0: 126 (74.8%),
-	check_dkim_signature: 0.44 (0.3%), check_dkim_adsp: 2.5 (1.5%),
-	tests_pri_500: 3.6 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH net-next] netns: filter uevents correctly
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180404194857.29375-1-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596846368169451603?=
-X-GMAIL-MSGID: =?utf-8?q?1597016262742739652?=
+X-GMAIL-MSGID: =?utf-8?q?1596848974946652807?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Christian Brauner <christian.brauner@canonical.com> writes:
+On Wed, Apr 04, 2018 at 09:48:57PM +0200, Christian Brauner wrote:
+> commit 07e98962fa77 ("kobject: Send hotplug events in all network namespaces")
+> 
+> enabled sending hotplug events into all network namespaces back in 2010.
+> Over time the set of uevents that get sent into all network namespaces has
+> shrunk. We have now reached the point where hotplug events for all devices
+> that carry a namespace tag are filtered according to that namespace.
+> 
+> Specifically, they are filtered whenever the namespace tag of the kobject
+> does not match the namespace tag of the netlink socket. One example are
+> network devices. Uevents for network devices only show up in the network
+> namespaces these devices are moved to or created in.
+> 
+> However, any uevent for a kobject that does not have a namespace tag
+> associated with it will not be filtered and we will *try* to broadcast it
+> into all network namespaces.
+> 
+> The original patchset was written in 2010 before user namespaces were a
+> thing. With the introduction of user namespaces sending out uevents became
+> partially isolated as they were filtered by user namespaces:
+> 
+> net/netlink/af_netlink.c:do_one_broadcast()
+> 
+> if (!net_eq(sock_net(sk), p->net)) {
+>         if (!(nlk->flags & NETLINK_F_LISTEN_ALL_NSID))
+>                 return;
+> 
+>         if (!peernet_has_id(sock_net(sk), p->net))
+>                 return;
+> 
+>         if (!file_ns_capable(sk->sk_socket->file, p->net->user_ns,
+>                              CAP_NET_BROADCAST))
+>         j       return;
+> }
+> 
+> The file_ns_capable() check will check whether the caller had
+> CAP_NET_BROADCAST at the time of opening the netlink socket in the user
+> namespace of interest. This check is fine in general but seems insufficient
+> to me when paired with uevents. The reason is that devices always belong to
+> the initial user namespace so uevents for kobjects that do not carry a
+> namespace tag should never be sent into another user namespace. This has
+> been the intention all along. But there's one case where this breaks,
+> namely if a new user namespace is created by root on the host and an
+> identity mapping is established between root on the host and root in the
+> new user namespace. Here's a reproducer:
+> 
+>  sudo unshare -U --map-root
+>  udevadm monitor -k
+>  # Now change to initial user namespace and e.g. do
+>  modprobe kvm
+>  # or
+>  rmmod kvm
+> 
+> will allow the non-initial user namespace to retrieve all uevents from the
+> host. This seems very anecdotal given that in the general case user
+> namespaces do not see any uevents and also can't really do anything useful
+> with them.
+> 
+> Additionally, it is now possible to send uevents from userspace. As such we
+> can let a sufficiently privileged (CAP_SYS_ADMIN in the owning user
+> namespace of the network namespace of the netlink socket) userspace process
+> make a decision what uevents should be sent.
+> 
+> This makes me think that we should simply ensure that uevents for kobjects
+> that do not carry a namespace tag are *always* filtered by user namespace
+> in kobj_bcast_filter(). Specifically:
+> - If the owning user namespace of the uevent socket is not init_user_ns the
+>   event will always be filtered.
+> - If the network namespace the uevent socket belongs to was created in the
+>   initial user namespace but was opened from a non-initial user namespace
+>   the event will be filtered as well.
+> Put another way, uevents for kobjects not carrying a namespace tag are now
+> always only sent to the initial user namespace. The regression potential
+> for this is near to non-existent since user namespaces can't really do
+> anything with interesting devices.
+> 
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
->> At a practical level there should be no receivers.  Plus performance
->> issues.  At least my memory is that any unprivileged user on the system
->> is allowed to listen to those events.
->
-> Any unprivileged user is allowed to listen to uevents if they have
-> net_broadcast in the user namespace the uevent socket was opened in;
-> unless I'm misreading.
+That was supposed to be [PATCH net] not [PATCH net-next] which is
+obviously closed. Sorry about that.
 
-I believe you are.
+Christian
 
-This code in do_one_broadcast.
-
-	if (!net_eq(sock_net(sk), p->net)) {
-		if (!(nlk->flags & NETLINK_F_LISTEN_ALL_NSID))
-			return;
-
-		if (!peernet_has_id(sock_net(sk), p->net))
-			return;
-
-		if (!file_ns_capable(sk->sk_socket->file, p->net->user_ns,
-				     CAP_NET_BROADCAST))
-			return;
-	}
-
-Used to just be:
-	if (!net_eq(sock_net(sk), p->net))
-        	return;
-
-Which makes sense when you have a shared hash table and a shared mc_list
-between network namespaces.
-
-There is a non-container use of network namespaces where you just need
-different contexts were ip addresses can overlap etc.  In that
-configuration where a single program is mananging multiple network
-namespaces being able to listen to rtnetlink events in all of them is an
-advantage.
-
-For that case a special socket option NETLINK_F_LISTEN_ALL_NSID was
-added that allowed one socket to listen for events from multiple network
-namespaces.
-
-If we rework the code in af_netlink.c that matters.  However for just
-understanding uevents you can assume there are no sockets with
-NETLINK_F_LISTEN_ALL_NSID set.
-
-Eric
+> ---
+>  lib/kobject_uevent.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+> index 15ea216a67ce..cb98cddb6e3b 100644
+> --- a/lib/kobject_uevent.c
+> +++ b/lib/kobject_uevent.c
+> @@ -251,7 +251,15 @@ static int kobj_bcast_filter(struct sock *dsk, struct sk_buff *skb, void *data)
+>  		return sock_ns != ns;
+>  	}
+>  
+> -	return 0;
+> +	/*
+> +	 * The kobject does not carry a namespace tag so filter by user
+> +	 * namespace below.
+> +	 */
+> +	if (sock_net(dsk)->user_ns != &init_user_ns)
+> +		return 1;
+> +
+> +	/* Check if socket was opened from non-initial user namespace. */
+> +	return sk_user_ns(dsk) != &init_user_ns;
+>  }
+>  #endif
+>  
+> -- 
+> 2.15.1
+> 
