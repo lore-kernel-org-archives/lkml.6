@@ -1,90 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751432AbeDDJIj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:08:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41834 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751242AbeDDJIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:08:38 -0400
-Date: Wed, 4 Apr 2018 10:08:32 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Yury Norov <ynorov@caviumnetworks.com>
-Cc: Will Deacon <will.deacon@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Christopher Lameter <cl@linux.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] smp: introduce kick_active_cpus_sync()
-Message-ID: <20180404090831.62dtaqo4ojrmozj7@lakrids.cambridge.arm.com>
-References: <20180325175004.28162-1-ynorov@caviumnetworks.com>
- <20180325175004.28162-3-ynorov@caviumnetworks.com>
- <20180327102116.GA2464@arm.com>
- <20180401111108.mudkiewzn33sifvk@yury-thinkpad>
- <20180403134832.2cdae64uwuot6ryz@lakrids.cambridge.arm.com>
- <20180404033625.gkn4q7kb2xf6d6mo@yury-thinkpad>
+        id S1751415AbeDDJKV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:10:21 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:18065 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751241AbeDDJKT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 05:10:19 -0400
+Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
+To: Rob Clark <robdclark@gmail.com>,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
+        Deepak Singh Rawat <drawat@vmware.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180403224225.26776-1-robdclark@gmail.com>
+ <CAKMK7uEH3Qu_Lkok60bOYkik6kyvDGtrS0kcQ=dFmCLRD-+1HA@mail.gmail.com>
+ <307adb15-412a-1fe2-f116-27fe5b4a657d@shipmail.org>
+ <20180404084320.GA3881@phenom.ffwll.local>
+From: Thomas Hellstrom <thomas@shipmail.org>
+Message-ID: <fa4074c7-5469-a69f-e4aa-bdc84e1a919a@shipmail.org>
+Date: Wed, 4 Apr 2018 11:10:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404033625.gkn4q7kb2xf6d6mo@yury-thinkpad>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180404084320.GA3881@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 06:36:25AM +0300, Yury Norov wrote:
-> On Tue, Apr 03, 2018 at 02:48:32PM +0100, Mark Rutland wrote:
-> > On Sun, Apr 01, 2018 at 02:11:08PM +0300, Yury Norov wrote:
-> > > @@ -840,8 +861,10 @@ el0_svc:
-> > >  	mov	wsc_nr, #__NR_syscalls
-> > >  el0_svc_naked:					// compat entry point
-> > >  	stp	x0, xscno, [sp, #S_ORIG_X0]	// save the original x0 and syscall number
-> > > +	isb_if_eqs
-> > >  	enable_dbg_and_irq
-> > > -	ct_user_exit 1
-> > > +	ct_user_exit
-> > 
-> > I don't think this is safe. here we issue the ISB *before* exiting a
-> > quiesecent state, so I think we can race with another CPU that calls
-> > kick_all_active_cpus_sync, e.g.
-> > 
-> > 	CPU0				CPU1
-> > 
-> > 	ISB
-> > 					patch_some_text()
-> > 					kick_all_active_cpus_sync()
-> > 	ct_user_exit
-> > 
-> > 	// not synchronized!
-> > 	use_of_patched_text()
-> > 
-> > ... and therefore the ISB has no effect, which could be disasterous.
-> > 
-> > I believe we need the ISB *after* we transition into a non-quiescent
-> > state, so that we can't possibly miss a context synchronization event.
->  
-> I decided to put isb() in entry because there's a chance that there will
-> be patched code prior to exiting a quiescent state.
+On 04/04/2018 10:43 AM, Daniel Vetter wrote:
+> On Wed, Apr 04, 2018 at 10:22:21AM +0200, Thomas Hellstrom wrote:
+>> Hi,
+>>
+>> On 04/04/2018 08:58 AM, Daniel Vetter wrote:
+>>> On Wed, Apr 4, 2018 at 12:42 AM, Rob Clark <robdclark@gmail.com> wrote:
+>>>> Add an atomic helper to implement dirtyfb support.  This is needed to
+>>>> support DSI command-mode panels with x11 userspace (ie. when we can't
+>>>> rely on pageflips to trigger a flush to the panel).
+>>>>
+>>>> To signal to the driver that the async atomic update needs to
+>>>> synchronize with fences, even though the fb didn't change, the
+>>>> drm_atomic_state::dirty flag is added.
+>>>>
+>>>> Signed-off-by: Rob Clark <robdclark@gmail.com>
+>>>> ---
+>>>> Background: there are a number of different folks working on getting
+>>>> upstream kernel working on various different phones/tablets with qcom
+>>>> SoC's.. many of them have command mode panels, so we kind of need a
+>>>> way to support the legacy dirtyfb ioctl for x11 support.
+>>>>
+>>>> I know there is work on a proprer non-legacy atomic property for
+>>>> userspace to communicate dirty-rect(s) to the kernel, so this can
+>>>> be improved from triggering a full-frame flush once that is in
+>>>> place.  But we kinda needa a stop-gap solution.
+>>>>
+>>>> I had considered an in-driver solution for this, but things get a
+>>>> bit tricky if userspace ands up combining dirtyfb ioctls with page-
+>>>> flips, because we need to synchronize setting various CTL.FLUSH bits
+>>>> with setting the CTL.START bit.  (ie. really all we need to do for
+>>>> cmd mode panels is bang CTL.START, but is this ends up racing with
+>>>> pageflips setting FLUSH bits, then bad things.)  The easiest soln
+>>>> is to wrap this up as an atomic commit and rely on the worker to
+>>>> serialize things.  Hence adding an atomic dirtyfb helper.
+>>>>
+>>>> I guess at least the helper, with some small addition to translate
+>>>> and pass-thru the dirty rect(s) is useful to the final atomic dirty-
+>>>> rect property solution.  Depending on how far off that is, a stop-
+>>>> gap solution could be useful.
+>>> Adding Noralf, who iirc already posted the full dirty helpers already somewhere.
+>>> -Daniel
+>> I've asked Deepak to RFC the core changes suggested for the full dirty blob
+>> on dri-devel. It builds on DisplayLink's suggestion, with a simple helper to
+>> get to the desired coordinates.
+>>
+>> One thing to perhaps discuss is how we would like to fit this with
+>> front-buffer rendering and the dirty ioctl. In the page-flip context, the
+>> dirty rects, like egl's swapbuffer_with_damage is a hint to restrict the
+>> damage region that can be fully ignored by the driver, new content is
+>> indicated by a new framebuffer.
+>>
+>> We could do the same for frontbuffer rendering: Either set a dirty flag like
+>> you do here, or provide a content_age state member. Since we clear the dirty
+>> flag on state copies, I guess that would be sufficient. The blob rectangles
+>> would then become a hint to restrict the damage region.
+> I'm not entirely following here - I thought for frontbuffer rendering the
+> dirty rects have always just been a hint, and that the driver was always
+> free to re-upload the entire buffer to the screen.
+>
+> And through a helper like Rob's proposing here (and have floated around in
+> different versions already) we'd essentially map a frontbuffer dirtyfb
+> call to a fake flip with dirty rect. Manual upload drivers already need to
+> upload the entire screen if they get a flip, since some userspace uses
+> that to flush out frontbuffer rendering (instead of calling dirtyfb).
+>
+> So from that pov the new dirty flag is kinda not necessary imo.
+>
+>> Another approach would be to have the presence of dirty rects without
+>> framebuffer change to indicate frontbuffer rendering.
+>>
+>> I think I like the first approach best, although it may be tempting for
+>> user-space apps to just set the dirty bit instead of providing the full
+>> damage region.
+> Or I'm not following you here, because I don't quite see the difference
+> between dirtyfb and a flip.
+> -Daniel
 
-If we do patch entry text, then I think we have no option but to use
-kick_all_active_cpus_sync(), or we risk races similar to the above.
+OK, let me rephrase:
 
-> But after some headscratching, I think it's safe. I'll do like you
-> suggested here.
+ From the driver's point-of-view, in the atomic world, new content and 
+the need for manual upload is indicated by a change in fb attached to 
+the plane.
 
-Sounds good.
+With Rob's patch here, (correct me if I'm wrong) in addition new content 
+and the need for manual upload is identified by the dirty flag, (since 
+the fb stays the same and the driver thus never identifies a page-flip).
 
-Thanks,
-Mark.
+In both these situations, clip rects can provide a hint to restrict the 
+dirty region.
+
+Now I was thinking about the preferred way for user-space to communicate 
+front buffer rendering through the atomic ioctl:
+
+1) Expose a dirty (or content_age property)
+2) Attach a clip-rect blob property.
+3) Fake a page-flip by ping-ponging two frame-buffers pointing to the 
+same underlying buffer object.
+
+Are you saying that people are already using 3) and we should keep using 
+that?
+
+/Thomas
