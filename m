@@ -1,159 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751935AbeDDPRH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:17:07 -0400
-Received: from mga05.intel.com ([192.55.52.43]:7764 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751447AbeDDPRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:17:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,406,1517904000";
-   d="scan'208";a="30984765"
-Message-ID: <1522855023.32118.14.camel@tzanussi-mobl.amr.corp.intel.com>
-Subject: Re: [PATCH 3/4] tracing: Add action comparisons when testing
- matching hist triggers
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Date: Wed, 04 Apr 2018 10:17:03 -0500
-In-Reply-To: <20180404213338.5bcd14994d8e0142b5bfefc6@kernel.org>
-References: <cover.1522256721.git.tom.zanussi@linux.intel.com>
-         <a7fd668b87ec10736c8f016ac4279c8480d50c2b.1522256721.git.tom.zanussi@linux.intel.com>
-         <20180403001025.6dfed9403d50d20104e54458@kernel.org>
-         <1522688973.3254.8.camel@tzanussi-mobl.amr.corp.intel.com>
-         <20180404213338.5bcd14994d8e0142b5bfefc6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4 (3.10.4-4.fc20) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751612AbeDDPSt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:18:49 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38683 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751417AbeDDPSs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:18:48 -0400
+X-Google-Smtp-Source: AIpwx49Chiwt9YqT/Dxum9vohQcSL4YMlUZtY5SbLWfbu8k5kcZDnR69SeGMsgJVteaiIIii3bwXLg==
+Date: Wed, 04 Apr 2018 08:18:47 -0700 (PDT)
+X-Google-Original-Date: Wed, 04 Apr 2018 08:08:27 PDT (-0700)
+Subject: Re: [GIT pull] irq updates for 4.17
+In-Reply-To: <alpine.DEB.2.21.1804041215180.2056@nanos.tec.linutronix.de>
+CC: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+From: Palmer Dabbelt <palmer@sifive.com>
+To: tglx@linutronix.de
+Message-ID: <mhng-c21c8548-7183-480c-ba39-00007856d118@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
+On Wed, 04 Apr 2018 03:19:54 PDT (-0700), tglx@linutronix.de wrote:
+> On Tue, 3 Apr 2018, Linus Torvalds wrote:
+>> On Tue, Apr 3, 2018 at 6:51 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
+>> >
+>> > Thanks!  The linked patch set should be fully bisectable, while this one
+>> > will fail on some ARM randconfigs.
+>>
+>> If it's only some (not very realistic) randconfigs, I suspect an
+>> incremental fix is probably the easier solution, rather than redoing
+>> that whole branch.
+>>
+>> So mind at least sending that incremental fix on top of the branch to
+>> Thomas and making his life easier if he decides to go that way?
+>>
+>> And if Thomas is busy doing something else (*), and I come back to
+>> this tomorrow as-is, I'd want to pull his tree and just apply the
+>> incremental fix anyway, so it makes sense to send it to me as well.
+>>
+>>                     Linus
+>>
+>> (*) I have long since accepted that some people have a life outside of
+>> kernel development too, and don't always reply immediately. I may not
+>> _understand_ it, but I am resigned to the fact.
+>
+> I briefly returned from that other life and applied the 3 patches on top
+> after massaging the changelogs a bit and pushed everything out for you to
+> pull.
+>
+> Thanks,
+>
+> 	tglx
 
-On Wed, 2018-04-04 at 21:33 +0900, Masami Hiramatsu wrote:
-> Hi Tom,
-> 
-> On Mon, 02 Apr 2018 12:09:33 -0500
-> Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
-> 
-> > after:
-> > 
-> >   # echo 'wakeup_latency u64 lat; pid_t pid' >> /sys/kernel/debug/tracing/synthetic_events
-> >   # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-> >   # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0 if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-> >   # echo 'hist:keys=next_pid:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,next_pid) if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-> >   # echo 'hist:keys=next_pid:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,prev_pid) if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-> >   # echo 'hist:keys=next_pid if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-> 
-> I ensured this sequence has no problem.
-> After above sequence, the trigger file shows
-> 
-> ======
-> # cat events/sched/sched_switch/trigger
-> hist:keys=next_pid:vals=hitcount:wakeup_lat=common_timestamp.usecs-$ts0:sort=hitcount:size=2048:clock=global if next_comm=="cyclictest" [active]
-> hist:keys=next_pid:vals=hitcount:sort=hitcount:size=2048:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,next_pid) if next_comm=="cyclictest" [active]
-> hist:keys=next_pid:vals=hitcount:sort=hitcount:size=2048:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,prev_pid) if next_comm=="cyclictest" [active]
-> hist:keys=next_pid:vals=hitcount:sort=hitcount:size=2048 if next_comm=="cyclictest" [active]
-> ======
-> 
-> So I clear the last one
-> 
-> ======
-> # echo '!hist:keys=next_pid if next_comm=="cyclictest"' >> events/sched/sched_switch/trigger
-> #
-> ======
-> 
-> OK, it should be removed. I can not see it anymore on the trigger file.
-> 
-> ======
-> # cat events/sched/sched_switch/trigger
-> hist:keys=next_pid:vals=hitcount:wakeup_lat=common_timestamp.usecs-$ts0:sort=hitcount:size=2048:clock=global if next_comm=="cyclictest" [active]
-> hist:keys=next_pid:vals=hitcount:sort=hitcount:size=2048:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,next_pid) if next_comm=="cyclictest" [active]
-> hist:keys=next_pid:vals=hitcount:sort=hitcount:size=2048:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,prev_pid) if next_comm=="cyclictest" [active]
-> ======
-> 
-> But when I missed to remove it again, it is accepted (is not an error?)
-> 
-> ======
-> # echo '!hist:keys=next_pid if next_comm=="cyclictest"' >> events/sched/sched_switch/trigger
-> #
-> ======
-
-This is consistent with existing behavior, not only for the hist
-triggers but ftrace in general I think e.g.
-
-# echo 'traceoff:1 if nr_rq > 1' >> /sys/kernel/debug/tracing/events/block/block_unplug/trigger
-# echo '!traceoff:1 if nr_rq > 1' >> /sys/kernel/debug/tracing/events/block/block_unplug/trigger
-# echo '!traceoff:1 if nr_rq > 1' >> /sys/kernel/debug/tracing/events/block/block_unplug/trigger
-
-# echo 'try_to_wake_up:enable_event:sched:sched_switch:2' >> set_ftrace_filter
-# echo '!try_to_wake_up:enable_event:sched:sched_switch:2' >> set_ftrace_filter
-# echo '!try_to_wake_up:enable_event:sched:sched_switch:2' >> set_ftrace_filter
-
-Neither produces an error trying to remove an already-removed trigger.
-Or are you thinking about something else?
-
-> 
-> Hmm... anyway, let's clear others too.
-> 
-> ======
-> # echo '!hist:keys=next_pid:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,next_pid) if next_comm=="cyclictest"' >> events/sched/sched_switch/trigger
-> # echo '!hist:keys=next_pid:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,prev_pid) if next_comm=="cyclictest"' >> events/sched/sched_switch/trigger
-> # cat events/sched/sched_switch/trigger
-> # Available triggers:
-> # traceon traceoff snapshot stacktrace enable_event disable_event enable_hist disable_hist hist
-> ======
-> 
-> OK, it is cleared now.
-> 
-> Now I test it again.
-> 
-> ======
-> # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> events/sched/sched_wakeup/trigger
-> sh: write error: Invalid argument
-> ======
-> 
-> Oops, what's the error?
-> 
-> ======
-> # cat events/sched/sched_switch/hist
-> 
-> ERROR: Variable already defined: ts0
->   Last command: keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"
-> ======
-> 
-
-Hmm, but ts0 is defined on sched_wakeup - you removed the triggers on
-sched_switch, but I didn't see where you removed the sched_wakeup
-trigger defining ts0... 
-
-> Hmm, how can I undef ts0 and test it again?
-
-You should be able to remove the sched_wakeup trigger defining ts0 and
-after doing that test again.  At least I was able to:
-
-# echo '!hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> 
-events/sched/sched_wakeup/trigger
-
-# echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"'
->> events/sched/sched_wakeup/trigger
-
-Thanks,
-
-Tom
-
-
-
-> If I can not clean it, the testcase must fail on the 2nd time.
-> 
-> Thank you,
-> 
+Works for me.  Thanks!
