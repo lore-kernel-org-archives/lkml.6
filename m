@@ -1,55 +1,55 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49UdEBWiVUXctxpo/DkXBOpg9+BX3hRT0GH/AvvOmuMKq4aJ98oXv2nUzSDvnF5hWGETBki
-ARC-Seal: i=1; a=rsa-sha256; t=1522855964; cv=none;
+X-Google-Smtp-Source: AIpwx4+6h/7ZITbYVs8pxNlxAYBWKSiY03FCRrowKAR1f5ZAbzy15Ks+HXB+6KW8mrvun1onSy86
+ARC-Seal: i=1; a=rsa-sha256; t=1522855961; cv=none;
         d=google.com; s=arc-20160816;
-        b=fPVf7zqbRF9DojbxfJPfT1eWUfX7kxIjY/or9IlbXWYa1vxGrZeHs1Un11LM6Pj9Md
-         Vj1leZ5ZT5YbjTiIvU/wJZSyUdokapNsUIrlw6VQtiL1MCeNycQ5ghiCDLtlxQT5yX+4
-         KYH4ytsWS34whaxqGaWN3DJmLZxk9cyZWgPOFwzlm8Nnsoh61oNF8Urz1wtZHWkUe75G
-         9qhshU1MA7CXf8huHz5YnNmBwxcvsaV2gWhaVj8PMfVNv8pSs2tphpyR0pRrQ5AOuQZN
-         Sq6lhCxPG0jSGMA1YXiA+uUDLEUvvywKo0ARROP3oexWdn0HFXK+BMVqMGKU7aaKZsUu
-         o5oA==
+        b=j0z0HbdW5DZ95G1MIWOdSmceh3P7cmJ1qgIxR9fQJRHcvW6KnmXsbdamGlEi5udXd6
+         wpuUMihsMrHn+gqtWTE7oe38cV92FzhTBCOouMJSAeYOiCteHpe/BU62BNcdvY6HOPTO
+         W7Uem+kXnvLzpR70fkNAWtgSWZ2hlPXCDxNug1dKniTWZwapQ2cBc4xBwtGZy9ISajE/
+         YNZHBtzmbM90rMGqYcIH2ACwWofHydRfyySHwIZ15iadFPLVdIWB7lx+WX3f0SFZ620P
+         xuuhaLdoTOKviAGzRRnTlbaEsNcwX9sl5dgvoahYV8ya8G64hB8Kqw7VkIbVN16a0yqU
+         CO+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
          :from:cc:to:subject:arc-authentication-results;
-        bh=/6CsFiIFVS+xahbb0HlAE+BJkyi5E05P3myH58rpgiA=;
-        b=bcpPjwy4Qn4lK+F2ZErdDBbqpELV5k5V3dHeQf+mbQbJgXAiK/O8UoH9n6ktFhs40B
-         NJuYqf797szEkbgtN5v0mNA4v83TR/fFY4uc2YFWYQQcRtYMkXTZ1eM9wlEr397/cWat
-         HdjxW/e+/lIpPNCxvBdJtKFc5L/h7xR6Ne8hnlHx+A/e7ku9p4ql/U5izTgpTa/AfUjy
-         9VmfIvHskODxa52PraIC0R5CIUzSBtZ6hxBBSZzu0kgXjBEGU+lVA72l9e2WrUayt8Cp
-         JVblf/SGJsIdOyLQyWIS9L1YsBdYFQxuOsjC6AmMrvGqgulMKfvduGjXAOAosXMVsuAS
-         VoSQ==
+        bh=CZ6efskGF8xgEmmPYNUr7Lwe0IAs0mlKlWMYH//gzU0=;
+        b=LXlFuyRmEsUPEfBHAAAFRNKnS/ZJs9Oca63Vl2+pPOU2bzx3ymVMjs44B6axklg1iX
+         cP3GM0LEtbbut7TkVWkeilvSfTGwiWptJTN3GkOuB4ZuLsUZ9GdPXbvJ3yyUXlB6/501
+         wEY7UzE3b+/BRo/x+bz9YSPtkhioInWRHnFMDinhphmIuixSsSDpL8UWe7cdnK1uQtp1
+         jhEXkUitU1HRGlyuF7INVDTK/5aXJGj/HOW5v7RMoWwQc1EK6Yb06oWq2eg1UmjgJsvW
+         qnHh0hgNpTDSO/8oSpW1UpRi2hAloaDfeZV5VWguheBvVMgh84kdqNhk6QRw2Me/g5ZB
+         WAqA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Subject: Patch "media: v4l2-compat-ioctl32: initialize a reserved field" has been added to the 3.18-stable tree
-To: mchehab@s-opensource.com,gregkh@linuxfoundation.org,linux-kernel@vger.kernel.org,linux-media@vger.kernel.org,mchehab@infradead.org
+Subject: Patch "media: v4l2-compat-ioctl32: Copy v4l2_window->global_alpha" has been added to the 3.18-stable tree
+To: mchehab@s-opensource.com,alexander.levin@microsoft.com,danielmentz@google.com,gregkh@linuxfoundation.org,hans.verkuil@cisco.com,linux-kernel@vger.kernel.org,linux-media@vger.kernel.org,mchehab@infradead.org
 Cc: <stable@vger.kernel.org>, <stable-commits@vger.kernel.org>
 From: <gregkh@linuxfoundation.org>
-Date: Wed, 04 Apr 2018 17:32:40 +0200
-In-Reply-To: <d8a647b26822fb0a86f6ee7dff4d6eb1e85e1398.1522260310.git.mchehab@s-opensource.com>
-Message-ID: <1522855960120189@kroah.com>
+Date: Wed, 04 Apr 2018 17:32:39 +0200
+In-Reply-To: <63c220c11ade842157669d03bdaf10b84a6d91a9.1522260310.git.mchehab@s-opensource.com>
+Message-ID: <15228559596979@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ANSI_X3.4-1968
 Content-Transfer-Encoding: 8bit
 X-stable: commit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596830215476788640?=
-X-GMAIL-MSGID: =?utf-8?q?1596830215476788640?=
+X-GMAIL-THRID: =?utf-8?q?1596830213216986176?=
+X-GMAIL-MSGID: =?utf-8?q?1596830213216986176?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
 This is a note to let you know that I've just added the patch titled
 
-    media: v4l2-compat-ioctl32: initialize a reserved field
+    media: v4l2-compat-ioctl32: Copy v4l2_window->global_alpha
 
 to the 3.18-stable tree which can be found at:
     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 
 The filename of the patch is:
-     media-v4l2-compat-ioctl32-initialize-a-reserved-field.patch
+     media-v4l2-compat-ioctl32-copy-v4l2_window-global_alpha.patch
 and it can be found in the queue-3.18 subdirectory.
 
 If you, or anyone else, feels it should not be added to the stable tree,
@@ -58,40 +58,61 @@ please let <stable@vger.kernel.org> know about it.
 
 >From foo@baz Wed Apr  4 17:30:18 CEST 2018
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Date: Wed, 28 Mar 2018 15:12:37 -0300
-Subject: media: v4l2-compat-ioctl32: initialize a reserved field
+Date: Wed, 28 Mar 2018 15:12:29 -0300
+Subject: media: v4l2-compat-ioctl32: Copy v4l2_window->global_alpha
 To: Linux Media Mailing List <linux-media@vger.kernel.org>, stable@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <d8a647b26822fb0a86f6ee7dff4d6eb1e85e1398.1522260310.git.mchehab@s-opensource.com>
+Cc: Daniel Mentz <danielmentz@google.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Sasha Levin <alexander.levin@microsoft.com>
+Message-ID: <63c220c11ade842157669d03bdaf10b84a6d91a9.1522260310.git.mchehab@s-opensource.com>
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Daniel Mentz <danielmentz@google.com>
 
-The get_v4l2_create32() function is missing a logic with
-would be cleaning a reserved field, causing v4l2-compliance
-to complain:
+commit 025a26fa14f8fd55d50ab284a30c016a5be953d0 upstream.
 
- Buffer ioctls (Input 0):
-		fail: v4l2-test-buffers.cpp(506): check_0(crbufs.reserved, sizeof(crbufs.reserved))
-	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: FAIL
+Commit b2787845fb91 ("V4L/DVB (5289): Add support for video output
+overlays.") added the field global_alpha to struct v4l2_window but did
+not update the compat layer accordingly. This change adds global_alpha
+to struct v4l2_window32 and copies the value for global_alpha back and
+forth.
 
+Signed-off-by: Daniel Mentz <danielmentz@google.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
 +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -247,7 +247,8 @@ static int get_v4l2_create32(struct v4l2
- {
- 	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
- 	    copy_in_user(kp, up,
--			 offsetof(struct v4l2_create_buffers32, format)))
-+			 offsetof(struct v4l2_create_buffers32, format)) ||
-+	    copy_in_user(kp->reserved, up->reserved, sizeof(kp->reserved)))
+@@ -45,6 +45,7 @@ struct v4l2_window32 {
+ 	compat_caddr_t		clips; /* actually struct v4l2_clip32 * */
+ 	__u32			clipcount;
+ 	compat_caddr_t		bitmap;
++	__u8                    global_alpha;
+ };
+ 
+ static int get_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
+@@ -53,7 +54,8 @@ static int get_v4l2_window32(struct v4l2
+ 	    copy_from_user(&kp->w, &up->w, sizeof(up->w)) ||
+ 	    get_user(kp->field, &up->field) ||
+ 	    get_user(kp->chromakey, &up->chromakey) ||
+-	    get_user(kp->clipcount, &up->clipcount))
++	    get_user(kp->clipcount, &up->clipcount) ||
++	    get_user(kp->global_alpha, &up->global_alpha))
  		return -EFAULT;
- 	return __get_v4l2_format32(&kp->format, &up->format,
- 				   aux_buf, aux_space);
+ 	if (kp->clipcount > 2048)
+ 		return -EINVAL;
+@@ -86,7 +88,8 @@ static int put_v4l2_window32(struct v4l2
+ 	if (copy_to_user(&up->w, &kp->w, sizeof(kp->w)) ||
+ 	    put_user(kp->field, &up->field) ||
+ 	    put_user(kp->chromakey, &up->chromakey) ||
+-	    put_user(kp->clipcount, &up->clipcount))
++	    put_user(kp->clipcount, &up->clipcount) ||
++	    put_user(kp->global_alpha, &up->global_alpha))
+ 		return -EFAULT;
+ 	return 0;
+ }
 
 
 Patches currently in stable-queue which might be from mchehab@s-opensource.com are
