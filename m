@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754926AbeDDCXE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 22:23:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36478 "EHLO mail.kernel.org"
+        id S1754988AbeDDCXI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 22:23:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754825AbeDDCXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 22:23:01 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE188217D6
+        id S1754813AbeDDCXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 22:23:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD36021834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 03/17] perf trace: Show only failing syscalls
-Date: Tue,  3 Apr 2018 23:21:44 -0300
-Message-Id: <20180404022158.12190-4-acme@kernel.org>
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jin Yao <yao.jin@intel.com>,
+        Kan Liang <kan.liang@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 04/17] tools include: Add config.h header file
+Date: Tue,  3 Apr 2018 23:21:45 -0300
+Message-Id: <20180404022158.12190-5-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180404022158.12190-1-acme@kernel.org>
 References: <20180404022158.12190-1-acme@kernel.org>
@@ -26,168 +27,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-For instance:
+Adding IS_BUILTIN macro and its dependencies into tools world.
 
-  # perf probe "vfs_getname=getname_flags:72 pathname=result->name:string"
-  Added new event:
-    probe:vfs_getname    (on getname_flags:72 with pathname=result->name:string)
+It's taken from kernel's include/linux/kconfig.h, which can't be taken
+completely due to its kconfig dependencies.
 
-  You can now use it in all perf tools, such as:
-
-	  perf record -e probe:vfs_getname -aR sleep 1
-
-  # perf trace --failure sleep 1
-     0.043 ( 0.010 ms): sleep/10978 access(filename: /etc/ld.so.preload, mode: R) = -1 ENOENT No such file or directory
-
-For reference, here are all the syscalls in this case:
-
-  # perf trace sleep 1
-         ? (         ): sleep/10976  ... [continued]: execve()) = 0
-       0.027 ( 0.001 ms): sleep/10976 brk() = 0x55bdc2d04000
-       0.044 ( 0.010 ms): sleep/10976 access(filename: /etc/ld.so.preload, mode: R) = -1 ENOENT No such file or directory
-       0.057 ( 0.006 ms): sleep/10976 openat(dfd: CWD, filename: /etc/ld.so.cache, flags: CLOEXEC) = 3
-       0.064 ( 0.002 ms): sleep/10976 fstat(fd: 3, statbuf: 0x7fffac22b370) = 0
-       0.067 ( 0.003 ms): sleep/10976 mmap(len: 111457, prot: READ, flags: PRIVATE, fd: 3) = 0x7feec8615000
-       0.071 ( 0.001 ms): sleep/10976 close(fd: 3) = 0
-       0.080 ( 0.007 ms): sleep/10976 openat(dfd: CWD, filename: /lib64/libc.so.6, flags: CLOEXEC) = 3
-       0.088 ( 0.002 ms): sleep/10976 read(fd: 3, buf: 0x7fffac22b538, count: 832) = 832
-       0.092 ( 0.001 ms): sleep/10976 fstat(fd: 3, statbuf: 0x7fffac22b3d0) = 0
-       0.094 ( 0.002 ms): sleep/10976 mmap(len: 8192, prot: READ|WRITE, flags: PRIVATE|ANONYMOUS) = 0x7feec8613000
-       0.099 ( 0.004 ms): sleep/10976 mmap(len: 3889792, prot: EXEC|READ, flags: PRIVATE|DENYWRITE, fd: 3) = 0x7feec8057000
-       0.104 ( 0.007 ms): sleep/10976 mprotect(start: 0x7feec8203000, len: 2097152) = 0
-       0.112 ( 0.005 ms): sleep/10976 mmap(addr: 0x7feec8403000, len: 24576, prot: READ|WRITE, flags: PRIVATE|DENYWRITE|FIXED, fd: 3, off: 1753088) = 0x7feec8403000
-       0.120 ( 0.003 ms): sleep/10976 mmap(addr: 0x7feec8409000, len: 14976, prot: READ|WRITE, flags: PRIVATE|ANONYMOUS|FIXED) = 0x7feec8409000
-       0.128 ( 0.001 ms): sleep/10976 close(fd: 3) = 0
-       0.139 ( 0.001 ms): sleep/10976 arch_prctl(option: 4098, arg2: 140663540761856) = 0
-       0.186 ( 0.004 ms): sleep/10976 mprotect(start: 0x7feec8403000, len: 16384, prot: READ) = 0
-       0.204 ( 0.003 ms): sleep/10976 mprotect(start: 0x55bdc0ec3000, len: 4096, prot: READ) = 0
-       0.209 ( 0.004 ms): sleep/10976 mprotect(start: 0x7feec8631000, len: 4096, prot: READ) = 0
-       0.214 ( 0.010 ms): sleep/10976 munmap(addr: 0x7feec8615000, len: 111457) = 0
-       0.269 ( 0.001 ms): sleep/10976 brk() = 0x55bdc2d04000
-       0.271 ( 0.002 ms): sleep/10976 brk(brk: 0x55bdc2d25000) = 0x55bdc2d25000
-       0.274 ( 0.001 ms): sleep/10976 brk() = 0x55bdc2d25000
-       0.278 ( 0.007 ms): sleep/10976 open(filename: /usr/lib/locale/locale-archive, flags: CLOEXEC) = 3
-       0.288 ( 0.001 ms): sleep/10976 fstat(fd: 3</usr/lib/locale/locale-archive>, statbuf: 0x7feec8408aa0) = 0
-       0.290 ( 0.003 ms): sleep/10976 mmap(len: 113045344, prot: READ, flags: PRIVATE, fd: 3) = 0x7feec1488000
-       0.297 ( 0.001 ms): sleep/10976 close(fd: 3</usr/lib/locale/locale-archive>) = 0
-       0.325 (1000.193 ms): sleep/10976 nanosleep(rqtp: 0x7fffac22c0b0) = 0
-    1000.560 ( 0.006 ms): sleep/10976 close(fd: 1) = 0
-    1000.573 ( 0.005 ms): sleep/10976 close(fd: 2) = 0
-    1000.596 (         ): sleep/10976 exit_group()
-  #
-
-And can be done systemwide, etc, with backtraces:
-
-  # perf trace --max-stack=16 --failure sleep 1
-     0.048 ( 0.015 ms): sleep/11092 access(filename: /etc/ld.so.preload, mode: R) = -1 ENOENT No such file or directory
-                                       __access (inlined)
-                                       dl_main (/usr/lib64/ld-2.26.so)
-  #
-
-Or for some specific syscalls:
-
-  # perf trace --max-stack=16 -e openat --failure cat /tmp/rien
-  cat: /tmp/rien: No such file or directory
-       0.251 ( 0.012 ms): cat/11106 openat(dfd: CWD, filename: /tmp/rien) = -1 ENOENT No such file or directory
-                                         __libc_open64 (inlined)
-                                         main (/usr/bin/cat)
-                                         __libc_start_main (/usr/lib64/libc-2.26.so)
-                                         _start (/usr/bin/cat)
-  #
-
-Look for inotify* syscalls that fail, system wide, for 2 seconds, with backtraces:
-
-  # perf trace -a --max-stack=16 --failure -e inotify* sleep 2
-   819.165 ( 0.058 ms): gmain/1724 inotify_add_watch(fd: 8<anon_inode:inotify>, pathname: /home/acme/~, mask: 16789454) = -1 ENOENT No such file or directory
-                                       __GI_inotify_add_watch (inlined)
-                                       _ik_watch (/usr/lib64/libgio-2.0.so.0.5400.3)
-                                       _ip_start_watching (/usr/lib64/libgio-2.0.so.0.5400.3)
-                                       im_scan_missing (/usr/lib64/libgio-2.0.so.0.5400.3)
-                                       g_timeout_dispatch (/usr/lib64/libglib-2.0.so.0.5400.3)
-                                       g_main_context_dispatch (/usr/lib64/libglib-2.0.so.0.5400.3)
-                                       g_main_context_iterate.isra.23 (/usr/lib64/libglib-2.0.so.0.5400.3)
-                                       g_main_context_iteration (/usr/lib64/libglib-2.0.so.0.5400.3)
-                                       glib_worker_main (/usr/lib64/libglib-2.0.so.0.5400.3)
-                                       g_thread_proxy (/usr/lib64/libglib-2.0.so.0.5400.3)
-                                       start_thread (/usr/lib64/libpthread-2.26.so)
-                                       __GI___clone (inlined)
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-8f7d3mngaxvi7tlzloz3n7cs@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jin Yao <yao.jin@intel.com>
+Cc: Kan Liang <kan.liang@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1522402036-22915-2-git-send-email-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-trace.txt | 3 +++
- tools/perf/builtin-trace.c              | 9 ++++++---
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ tools/include/tools/config.h | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 tools/include/tools/config.h
 
-diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
-index 5a7035c5c523..115db9e06ecd 100644
---- a/tools/perf/Documentation/perf-trace.txt
-+++ b/tools/perf/Documentation/perf-trace.txt
-@@ -117,6 +117,9 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
- --sched::
- 	Accrue thread runtime and provide a summary at the end of the session.
- 
-+--failure::
-+	Show only syscalls that failed, i.e. that returned < 0.
+diff --git a/tools/include/tools/config.h b/tools/include/tools/config.h
+new file mode 100644
+index 000000000000..08ade7df8132
+--- /dev/null
++++ b/tools/include/tools/config.h
+@@ -0,0 +1,34 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _TOOLS_CONFIG_H
++#define _TOOLS_CONFIG_H
 +
- -i::
- --input::
- 	Process events from a given perf data file.
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 87b95c9410b4..4e03f0f68241 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -112,6 +112,7 @@ struct trace {
- 	bool			multiple_threads;
- 	bool			summary;
- 	bool			summary_only;
-+	bool			failure_only;
- 	bool			show_comm;
- 	bool			print_sample;
- 	bool			show_tool_stats;
-@@ -1565,7 +1566,7 @@ static int trace__printf_interrupted_entry(struct trace *trace)
- 	struct thread_trace *ttrace;
- 	size_t printed;
- 
--	if (trace->current == NULL)
-+	if (trace->failure_only || trace->current == NULL)
- 		return 0;
- 
- 	ttrace = thread__priv(trace->current);
-@@ -1638,7 +1639,7 @@ static int trace__sys_enter(struct trace *trace, struct perf_evsel *evsel,
- 					   args, trace, thread);
- 
- 	if (sc->is_exit) {
--		if (!(trace->duration_filter || trace->summary_only || trace->min_stack)) {
-+		if (!(trace->duration_filter || trace->summary_only || trace->failure_only || trace->min_stack)) {
- 			trace__fprintf_entry_head(trace, thread, 0, false, ttrace->entry_time, trace->output);
- 			fprintf(trace->output, "%-70s)\n", ttrace->entry_str);
- 		}
-@@ -1742,7 +1743,7 @@ static int trace__sys_exit(struct trace *trace, struct perf_evsel *evsel,
- 		}
- 	}
- 
--	if (trace->summary_only)
-+	if (trace->summary_only || (ret >= 0 && trace->failure_only))
- 		goto out;
- 
- 	trace__fprintf_entry_head(trace, thread, duration, duration_calculated, ttrace->entry_time, trace->output);
-@@ -3087,6 +3088,8 @@ int cmd_trace(int argc, const char **argv)
- 	OPT_INCR('v', "verbose", &verbose, "be more verbose"),
- 	OPT_BOOLEAN('T', "time", &trace.full_time,
- 		    "Show full timestamp, not time relative to first start"),
-+	OPT_BOOLEAN(0, "failure", &trace.failure_only,
-+		    "Show only syscalls that failed"),
- 	OPT_BOOLEAN('s', "summary", &trace.summary_only,
- 		    "Show only syscall summary with statistics"),
- 	OPT_BOOLEAN('S', "with-summary", &trace.summary,
++/* Subset of include/linux/kconfig.h */
++
++#define __ARG_PLACEHOLDER_1 0,
++#define __take_second_arg(__ignored, val, ...) val
++
++/*
++ * Helper macros to use CONFIG_ options in C/CPP expressions. Note that
++ * these only work with boolean and tristate options.
++ */
++
++/*
++ * Getting something that works in C and CPP for an arg that may or may
++ * not be defined is tricky.  Here, if we have "#define CONFIG_BOOGER 1"
++ * we match on the placeholder define, insert the "0," for arg1 and generate
++ * the triplet (0, 1, 0).  Then the last step cherry picks the 2nd arg (a one).
++ * When CONFIG_BOOGER is not defined, we generate a (... 1, 0) pair, and when
++ * the last step cherry picks the 2nd arg, we get a zero.
++ */
++#define __is_defined(x)			___is_defined(x)
++#define ___is_defined(val)		____is_defined(__ARG_PLACEHOLDER_##val)
++#define ____is_defined(arg1_or_junk)	__take_second_arg(arg1_or_junk 1, 0)
++
++/*
++ * IS_BUILTIN(CONFIG_FOO) evaluates to 1 if CONFIG_FOO is set to 'y', 0
++ * otherwise. For boolean options, this is equivalent to
++ * IS_ENABLED(CONFIG_FOO).
++ */
++#define IS_BUILTIN(option) __is_defined(option)
++
++#endif /* _TOOLS_CONFIG_H */
 -- 
 2.14.3
