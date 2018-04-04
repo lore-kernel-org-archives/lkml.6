@@ -1,104 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755362AbeDDCY1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 22:24:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755307AbeDDCX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 22:23:58 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 151FE217CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        =?UTF-8?q?Martin=20Li=C5=A1ka?= <mliska@suse.cz>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 16/17] perf annotate stdio2: Print more descriptive event information header
-Date: Tue,  3 Apr 2018 23:21:57 -0300
-Message-Id: <20180404022158.12190-17-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180404022158.12190-1-acme@kernel.org>
-References: <20180404022158.12190-1-acme@kernel.org>
+        id S1755450AbeDDCYz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 22:24:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41746 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754687AbeDDCXs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 22:23:48 -0400
+Date: Tue, 3 Apr 2018 19:23:47 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Rao Shoaib <rao.shoaib@oracle.com>
+Cc: linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com,
+        joe@perches.com, brouer@redhat.com, linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] kfree_rcu() should use kfree_bulk() interface
+Message-ID: <20180404022347.GA17512@bombadil.infradead.org>
+References: <1522776173-7190-1-git-send-email-rao.shoaib@oracle.com>
+ <1522776173-7190-3-git-send-email-rao.shoaib@oracle.com>
+ <20180403205822.GB30145@bombadil.infradead.org>
+ <d434c58c-082b-9a17-8d15-9c66e0c1941a@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d434c58c-082b-9a17-8d15-9c66e0c1941a@oracle.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Tue, Apr 03, 2018 at 05:55:55PM -0700, Rao Shoaib wrote:
+> On 04/03/2018 01:58 PM, Matthew Wilcox wrote:
+> > I think you might be better off with an IDR.  The IDR can always
+> > contain one entry, so there's no need for this 'rbf_list_head' or
+> > __rcu_bulk_schedule_list.  The IDR contains its first 64 entries in
+> > an array (if that array can be allocated), so it's compatible with the
+> > kfree_bulk() interface.
+> > 
+> I have just familiarized myself with what IDR is by reading your article. If
+> I am incorrect please correct me.
+> 
+> The list and head you have pointed are only used� if the container can not
+> be allocated. That could happen with IDR as well. Note that the containers
+> are allocated at boot time and are re-used.
 
-To match the recently added event header information to --tui, e.g.:
+No, it can't happen with the IDR.  The IDR can always contain one entry
+without allocating anything.  If you fail to allocate the second entry,
+just free the first entry.
 
-  # perf annotate --ignore-vmlinux --stdio2 _raw_spin_lock_irqsave
-  Samples: 128  of event 'cycles:ppp', 4000 Hz, Event count (approx.): 48617682
-  _raw_spin_lock_irqsave() /proc/kcore
-    0.78        nop
-    7.03        push   %rbx
-    3.12        pushfq
-    6.25        pop    %rax
-                nop
-                mov    %rax,%rbx
-    3.12        cli
-                nop
-                xor    %eax,%eax
-                mov    $0x1,%edx
-   79.69        lock   cmpxchg %edx,(%rdi)
-                test   %eax,%eax
-              ↓ jne    2b
-                mov    %rbx,%rax
-                pop    %rbx
-              ← retq
-          2b:   mov    %eax,%esi
-              → callq  *ffffffffb30eaed0
-                mov    %rbx,%rax
-                pop    %rbx
-              ← retq
-  #
+> IDR seems to have some overhead, such as I have to specifically add the
+> pointer and free the ID, plus radix tree maintenance.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Martin Liška <mliska@suse.cz>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-ujy46x7cldyhyxelyf2b9quy@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/annotate.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+... what?  Adding a pointer is simply idr_alloc(), and you get back an
+integer telling you which index it has.  Your data structure has its
+own set of overhead.
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index b956bb7eabcf..fffe16af9797 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2325,7 +2325,7 @@ int symbol__tty_annotate2(struct symbol *sym, struct map *map,
- 	struct dso *dso = map->dso;
- 	struct rb_root source_line = RB_ROOT;
- 	struct annotation_options opts = annotation__default_options;
--	const char *ev_name = perf_evsel__name(evsel);
-+	struct annotation *notes = symbol__annotation(sym);
- 	char buf[1024];
- 
- 	if (symbol__annotate2(sym, map, evsel, &opts, NULL) < 0)
-@@ -2337,12 +2337,8 @@ int symbol__tty_annotate2(struct symbol *sym, struct map *map,
- 		print_summary(&source_line, dso->long_name);
- 	}
- 
--	if (perf_evsel__is_group_event(evsel)) {
--		perf_evsel__group_desc(evsel, buf, sizeof(buf));
--		ev_name = buf;
--	}
--
--	fprintf(stdout, "%s() %s\nEvent: %s\n\n", sym->name, dso->long_name, ev_name);
-+	annotation__scnprintf_samples_period(notes, buf, sizeof(buf), evsel);
-+	fprintf(stdout, "%s\n%s() %s\n", buf, sym->name, dso->long_name);
- 	symbol__annotate_fprintf2(sym, stdout);
- 
- 	annotated_source__purge(symbol__annotation(sym)->src);
--- 
-2.14.3
+IDR has a bulk-free option (idr_destroy()), but it doesn't have a get-bulk
+function yet.  I think that's a relatively straightforward function to
+add ...
+
+/*
+ * Return: number of elements pointed to by 'ptrs'.
+ */
+int idr_get_bulk(struct idr *idr, void __rcu ***ptrs, u32 *start)
+{
+	struct radix_tree_iter iter;
+	void __rcu **slot;
+	unsigned long base = idr->idr_base;
+	unsigned long id = *start;
+
+	id = (id < base) ? 0 : id - base;
+	slot = radix_tree_iter_find(&idr->idr_rt, &iter, id);
+	if (!slot)
+		return 0;
+	*start = iter.index + base;
+	*ptrs = slot;
+	return iter.next_index - iter.index;
+}
+
+(completely untested, but you get the idea.  For your case, it's just
+going to return a pointer to the first slot).
+
+> The change would also require retesting. So I would like to keep the current
+> design.
+
+That's not how review works.
