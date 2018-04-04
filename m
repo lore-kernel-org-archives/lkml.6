@@ -1,49 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752834AbeDDRNg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 13:13:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35196 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752316AbeDDRNe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 13:13:34 -0400
-Subject: Re: [PATCH] tools: restore READ_ONCE() C++ compatibility
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, lizhijian@cn.fujitsu.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-References: <20180404163445.16492-1-mark.rutland@arm.com>
-From: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Date: Wed, 4 Apr 2018 22:43:16 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752676AbeDDRPM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 13:15:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58646 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752131AbeDDRPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 13:15:11 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 857D820838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 4 Apr 2018 13:15:01 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] lockdep: Do not record irq state in
+ debug_check_no_locks_freed()
+Message-ID: <20180404131501.0eeb0139@gandalf.local.home>
+In-Reply-To: <20180404162305.GK4043@hirez.programming.kicks-ass.net>
+References: <20180404121904.6713fb9d@gandalf.local.home>
+        <20180404162305.GK4043@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180404163445.16492-1-mark.rutland@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18040417-0040-0000-0000-0000042A7321
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040417-0041-0000-0000-0000262DA621
-Message-Id: <7fb04d1a-79a9-0896-577b-193458e1cd48@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804040172
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
-
-On 04/04/2018 10:04 PM, Mark Rutland wrote:
+On Wed, 4 Apr 2018 18:23:05 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> Zhijian, Sandipan, does this patch work for you?
-> 
+> Makes sense, could you convert all of them just to make sure there
+> aren't any left?
 
-Yes it does. Thanks for the fix.
+There's a few others. I'll send another patch.
 
-- Sandipan
+-- Steve
