@@ -1,61 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751365AbeDDRpP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 13:45:15 -0400
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:39267 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750915AbeDDRpN (ORCPT
+        id S1751413AbeDDRp1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 13:45:27 -0400
+Received: from mail-io0-f181.google.com ([209.85.223.181]:45712 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbeDDRpZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 13:45:13 -0400
-X-Google-Smtp-Source: AIpwx4+FqAtW0kuuebxoqRoE5ZfoT2stPRYCS+44hj9/ixG5VWnBnyy50NTzLemwYnfIih8S10019Q==
-Date: Wed, 4 Apr 2018 20:45:09 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: alban@kinvolk.io
-Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com
-Subject: Re: [PATCH] [RFC][WIP] namespace.c: Allow some unprivileged proc
- mounts when not fully visible
-Message-ID: <20180404174509.GA2540@avx2>
+        Wed, 4 Apr 2018 13:45:25 -0400
+X-Google-Smtp-Source: AIpwx4/f3cilMbGVQGkXYw3CWJBWoOhF7eKedwtnJJj3SyammxoogI+7rkDsZGfnrJkpMVL6VRSEWcnYr/MG+tULwfg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+X-Originating-IP: [212.51.149.109]
+In-Reply-To: <20180404162433.GB16142@bombadil.infradead.org>
+References: <20180402141058.GL13332@bombadil.infradead.org>
+ <20180404093254.GC3881@phenom.ffwll.local> <20180404143900.GA1777@bombadil.infradead.org>
+ <CAKMK7uEb0e4ifxMkqbp4DBNFnuWk0T5k8z0SU=U95Y6pe39Z+g@mail.gmail.com> <20180404162433.GB16142@bombadil.infradead.org>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date: Wed, 4 Apr 2018 19:45:23 +0200
+Message-ID: <CAKMK7uGb=G=6r0gntqGxev8cMemYqjpJurRjXbf1F5pKmrtMvg@mail.gmail.com>
+Subject: Re: Signal handling in a page fault handler
+To: Matthew Wilcox <willy@infradead.org>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux MM <linux-mm@kvack.org>, Souptick Joarder <jrdr.linux@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Instead, it introduces new options in proc to disable some proc entries (TBD).
+On Wed, Apr 4, 2018 at 6:24 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Wed, Apr 04, 2018 at 05:15:46PM +0200, Daniel Vetter wrote:
+>> On Wed, Apr 4, 2018 at 4:39 PM, Matthew Wilcox <willy@infradead.org> wrote:
+>> > I actually have plans to allow mutex_lock_{interruptible,killable} to
+>> > return -EWOULDBLOCK if a flag is set.  So this doesn't seem entirely
+>> > unrelated.  Something like this perhaps:
+>> >
+>> >  struct task_struct {
+>> > +       unsigned int sleep_state;
+>> >  };
+>> >
+>> >  static noinline int __sched
+>> > -__mutex_lock_interruptible_slowpath(struct mutex *lock)
+>> > +__mutex_lock_slowpath(struct mutex *lock, long state)
+>> >  {
+>> > -       return __mutex_lock(lock, TASK_INTERRUPTIBLE, 0, NULL, _RET_IP_);
+>> > +       if (state == TASK_NOBLOCK)
+>> > +               return -EWOULDBLOCK;
+>> > +       return __mutex_lock(lock, state, 0, NULL, _RET_IP_);
+>> >  }
+>> >
+>> > +int __sched mutex_lock_state(struct mutex *lock, long state)
+>> > +{
+>> > +       might_sleep();
+>> > +
+>> > +       if (__mutex_trylock_fast(lock))
+>> > +               return 0;
+>> > +
+>> > +       return __mutex_lock_slowpath(lock, state);
+>> > +}
+>> > +EXPORT_SYMBOL(mutex_lock_state);
+>> >
+>> > Then the page fault handler can do something like:
+>> >
+>> >         old_state = current->sleep_state;
+>> >         current->sleep_state = TASK_INTERRUPTIBLE;
+>> >         ...
+>> >         current->sleep_state = old_state;
+>> >
+>> >
+>> > This has the page-fault-in-a-signal-handler problem.  I don't know if
+>> > there's a way to determine if we're already in a signal handler and use
+>> > a different sleep_state ...?
+>>
+>> Not sure what problem you're trying to solve, but I don't think that's
+>> the one we have. The only way what we do goes wrong is if the fault
+>> originates from kernel context. For faults from the signal handler I
+>> think you just get to keep the pieces. Faults form kernel we can
+>> detect through FAULT_FLAG_USER.
+>
+> Gah, I didn't explain well enough ;-(
+>
+> From the get_user_pages (and similar) handlers, we'd do
+>
+>          old_state = current->sleep_state;
+>          current->sleep_state = TASK_KILLABLE;
+>          ...
+>          current->sleep_state = old_state;
+>
+> So you wouldn't need to discriminate on whether FAULT_FLAG_USER was set,
+> but could just use current->sleep_state.
+>
+>> The issue I'm seeing is the following:
+>> 1. Some kernel code does copy_*_user, and it points at a gpu mmap region.
+>> 2. We fault and go into the gpu driver fault handler. That refuses to
+>> insert the pte because a signal is pending (because of all the
+>> interruptible waits and locks).
+>> 3. Fixup section runs, which afaict tries to do the copy once more
+>> using copy_user_handle_tail.
+>> 4. We fault again, because the pte is still not present.
+>> 5. GPU driver is still refusing to install the pte because signals are pending.
+>> 6. Fixup section for copy_user_handle_tail just bails out.
+>> 7. copy_*_user returns and indicates that that not all bytes have been copied.
+>> 8. syscall (or whatever it is) bails out and returns to userspace,
+>> most likely with -EFAULT (but this ofc depends upon the syscall and
+>> what it should do when userspace access faults.
+>> 9. Signal finally gets handled, but the syscall already failed, and no
+>> one will restart it. If userspace is prudent, it might fail (or maybe
+>> hit an assert or something).
+>
+> I think my patch above fixes this.  It makes the syscall killable rather
+> than interruptible, so it can never observe the short read / -EFAULT
+> return if it gets a fatal signal, and the non-fatal signal will be held
+> off until the syscall completes.
+>
+>> Or maybe I'm confused by your diff, since nothing seems to use
+>> current->sleep_state. The problem is also that it's any sleep we do
+>> (they all tend to be interruptible, at least when waiting for the gpu
+>> or taking any locks that might be held while waiting for the gpu, or
+>> anything else that might be blocked waiting for the gpu really). So
+>> only patching mutex_lock won't fix this.
+>
+> Sure, I was only patching mutex_lock_state in as an illustration.
+> I've also got a 'state' equivalent for wait_on_page_bit() (although
+> I'm not sure you care ...).
+>
+> Looks like you'd need wait_for_completion_state() and
+> wait_event_state_timeout() as well.
 
-No, no, no, no.
+Yeah, plus ww_mutex_lock_state, and same for the dma_fence wait
+functions, but we can patch those once the core stuff has landed.
 
-Blacklists are bad, mmkay.
+The part I'm wondering about, that you didn't really illustrate: Are
+mutex_lock_interruptible&friends supposed to automatically use
+current->sleep_state, or are we somehow supposed to pass that through
+the call stack? Or is the idea that we'd mass-convert all the gpu code
+that can be reached from the fault handlers to use the new _state
+variants, which will internally consult sleep_state?
 
-The reason is that quite dangerous new /proc entries get added
-(think /proc/kpageflags) and suddenly they are enabled inside container.
+Asking since the former would be best for us: Most paths can do
+interruptible, but some can't, so changing the current->state logic to
+take the most limiting of both the explicitly passed sleep_state and
+the one set in current->sleep_state would be best. Otrherwise if you
+have a path that can at most do killable waits, but it's context might
+either allow fully interruptible or killable or even neither, then
+there's still some fragile code around.
 
-> The granularity does not need to be per proc entry.
-
-I think it does. Grouping always becomes either too fine or too coarse.
-
-> Granularity can be improved later if use cases exist.
-
-Granularity can not be tightened as it may break existing users.
-So new granularity options are going to be invented until finally it is
-per file.
-
->	"maskedPaths": [
->		"/proc/kcore",
->		"/proc/latency_stats",
->		"/proc/timer_list",
->		"/proc/timer_stats",
->		"/proc/sched_debug",
->		"/sys/firmware",
->		"/proc/scsi"
->	],
-
-Just say no to drugs.
-
-
-> /proc/kcore
-
-As a side note:
-/proc/kcore should be more or less safe because it is under CAP_SYS_RAWIO.
+Bonus points if you could even nest assignemtns to
+current->sleep_state (even when there's not really all that many
+options), similar to how preempt_disable and other atomic sections
+nest.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
