@@ -1,83 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755883AbeDDAbO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 20:31:14 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:55217 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750758AbeDDAbN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 20:31:13 -0400
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: iamjoonsoo.kim@lge.com
-X-Original-SENDERIP: 10.177.220.142
-X-Original-MAILFROM: iamjoonsoo.kim@lge.com
-Date: Wed, 4 Apr 2018 09:31:10 +0900
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        zhaoyang.huang@spreadtrum.com, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        vel Tatashin <pasha.tatashin@oracle.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org
-Subject: Re: [PATCH v1] mm: help the ALLOC_HARDER allocation pass the
- watermarki when CMA on
-Message-ID: <20180404003028.GA6628@js1304-desktop>
-References: <1521791852-7048-1-git-send-email-zhaoyang.huang@spreadtrum.com>
- <20180323083847.GJ23100@dhcp22.suse.cz>
- <CAGWkznHxTaymoEuFEQ+nN0ZvpPLhdE_fbwpT3pbDf+NQyHw-3g@mail.gmail.com>
- <20180323093327.GM23100@dhcp22.suse.cz>
- <20180323130408.0c6451fac02c49b535ec7485@linux-foundation.org>
+        id S1753623AbeDDAeI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 20:34:08 -0400
+Received: from mga02.intel.com ([134.134.136.20]:10500 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751922AbeDDAeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 20:34:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,403,1517904000";
+   d="scan'208";a="217313295"
+Subject: Re: [PATCH ipmi/kcs_bmc v1] ipmi: kcs_bmc: optimize the data buffers
+ allocation
+To: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <1521116452-4993-1-git-send-email-haiyue.wang@linux.intel.com>
+ <50ba7cd8-0e14-d8b7-a10c-5dee17946722@linux.intel.com>
+ <143afdd1-bdde-fb9b-d21c-8dc8eeb24e6c@acm.org>
+From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
+Message-ID: <3b51eb4a-1fe5-097d-9b62-e0e46b7f9d62@linux.intel.com>
+Date: Wed, 4 Apr 2018 08:34:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180323130408.0c6451fac02c49b535ec7485@linux-foundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <143afdd1-bdde-fb9b-d21c-8dc8eeb24e6c@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 01:04:08PM -0700, Andrew Morton wrote:
-> On Fri, 23 Mar 2018 10:33:27 +0100 Michal Hocko <mhocko@kernel.org> wrote:
-> 
-> > On Fri 23-03-18 17:19:26, Zhaoyang Huang wrote:
-> > > On Fri, Mar 23, 2018 at 4:38 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> > > > On Fri 23-03-18 15:57:32, Zhaoyang Huang wrote:
-> > > >> For the type of 'ALLOC_HARDER' page allocation, there is an express
-> > > >> highway for the whole process which lead the allocation reach __rmqueue_xxx
-> > > >> easier than other type.
-> > > >> However, when CMA is enabled, the free_page within zone_watermark_ok() will
-> > > >> be deducted for number the pages in CMA type, which may cause the watermark
-> > > >> check fail, but there are possible enough HighAtomic or Unmovable and
-> > > >> Reclaimable pages in the zone. So add 'alloc_harder' here to
-> > > >> count CMA pages in to clean the obstacles on the way to the final.
-> > > >
-> > > > This is no longer the case in the current mmotm tree. Have a look at
-> > > > Joonsoo's zone movable based CMA patchset http://lkml.kernel.org/r/1512114786-5085-1-git-send-email-iamjoonsoo.kim@lge.com
-> > > >
-> > > Thanks for the information. However, I can't find the commit in the
-> > > latest mainline, is it merged?
-> > 
-> > Not yet. It is still sitting in the mmomt tree. I am not sure what is
-> > the merge plan but I guess it is still waiting for some review feedback.
-> 
-> http://lkml.kernel.org/r/20171222001113.GA1729@js1304-P5Q-DELUXE
-> 
-> That patchset has been floating about since December and still has
-> unresolved issues.
-> 
-> Joonsoo, can you please let us know the status?
+Just a small piece of cake, not so urgent. I just try to understand
 
-Hello, Andrew.
-Sorry for a late response.
+the code commitment process, such as time etc. :)
 
-Today, I finally have answered the question from Michal and it seems
-that there is no problem at all.
+Thanks!
 
-http://lkml.kernel.org/r/CAAmzW4NGv7RyCYyokPoj4aR3ySKub4jaBZ3k=pt_YReFbByvsw@mail.gmail.com
+BR,
+Haiyue
 
-You can merge the patch as is.
-
-Thanks.
+On 2018-04-04 02:45, Corey Minyard wrote:
+> On 04/03/2018 01:00 AM, Wang, Haiyue wrote:
+>> Hi Corey,
+>>
+>> The 4.17 merge window is opened now, this patch is not yet in 
+>> linux-next tree,
+>>
+>> so it will be merged into 4.18 ?
+>>
+>
+> Yeah, this came in kind of late, and I had some other critical
+> things I was having to focus on, so I've been kind of out of the loop.
+>
+> If it's urgent, I can work on getting it into 4.17 later, but I'd rather
+> wait on 4.18.
+>
+> -corey
+>
+>> Thanks & Regards,
+>>
+>> Haiyue
+>>
+>> On 2018-03-15 20:20, Haiyue Wang wrote:
+>>> Allocate a continuous memory block for the three KCS data buffers with
+>>> related index assignment.
+>>>
+>>> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+>>> ---
+>>>   drivers/char/ipmi/kcs_bmc.c | 10 ++++++----
+>>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
+>>> index fbfc05e..dc19c0d 100644
+>>> --- a/drivers/char/ipmi/kcs_bmc.c
+>>> +++ b/drivers/char/ipmi/kcs_bmc.c
+>>> @@ -435,6 +435,7 @@ static const struct file_operations kcs_bmc_fops 
+>>> = {
+>>>   struct kcs_bmc *kcs_bmc_alloc(struct device *dev, int sizeof_priv, 
+>>> u32 channel)
+>>>   {
+>>>       struct kcs_bmc *kcs_bmc;
+>>> +    void *buf;
+>>>         kcs_bmc = devm_kzalloc(dev, sizeof(*kcs_bmc) + sizeof_priv, 
+>>> GFP_KERNEL);
+>>>       if (!kcs_bmc)
+>>> @@ -448,11 +449,12 @@ struct kcs_bmc *kcs_bmc_alloc(struct device 
+>>> *dev, int sizeof_priv, u32 channel)
+>>>       mutex_init(&kcs_bmc->mutex);
+>>>       init_waitqueue_head(&kcs_bmc->queue);
+>>>   -    kcs_bmc->data_in = devm_kmalloc(dev, KCS_MSG_BUFSIZ, 
+>>> GFP_KERNEL);
+>>> -    kcs_bmc->data_out = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
+>>> -    kcs_bmc->kbuffer = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
+>>> -    if (!kcs_bmc->data_in || !kcs_bmc->data_out || !kcs_bmc->kbuffer)
+>>> +    buf = devm_kmalloc_array(dev, 3, KCS_MSG_BUFSIZ, GFP_KERNEL);
+>>> +    if (!buf)
+>>>           return NULL;
+>>> +    kcs_bmc->data_in  = buf;
+>>> +    kcs_bmc->data_out = buf + KCS_MSG_BUFSIZ;
+>>> +    kcs_bmc->kbuffer  = buf + KCS_MSG_BUFSIZ * 2;
+>>>         kcs_bmc->miscdev.minor = MISC_DYNAMIC_MINOR;
+>>>       kcs_bmc->miscdev.name = dev_name(dev);
+>>
+>
