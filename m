@@ -1,93 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752030AbeDDUVX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 16:21:23 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:37417 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751867AbeDDUVV (ORCPT
+        id S1752170AbeDDUV5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 16:21:57 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:44193 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751852AbeDDUVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:21:21 -0400
-X-Google-Smtp-Source: AIpwx49zD4scP09Mt/0bS0GHgB1eMjSIBv081M1YB68IecXhfhvPD8uszJIWaIcvu6u9LFQFQxbv48vUYv337w0FvEA=
+        Wed, 4 Apr 2018 16:21:55 -0400
+X-Google-Smtp-Source: AIpwx4+7848BaypOhLM0tIIRgI3YaMFVCkB4QIdmZXoBfkCZwGxj6aT/a1m+4HSFjBBwkYT8WyK3ey48JXS3CEXyF60=
 MIME-Version: 1.0
-In-Reply-To: <20180329180743.Horde.0e_zt3S4Pqcv7Z0dJwOgOg9@messagerie.si.c-s.fr>
-References: <20180322202007.23088-2-malat@debian.org> <20180328192717.656-1-malat@debian.org>
- <20180329180743.Horde.0e_zt3S4Pqcv7Z0dJwOgOg9@messagerie.si.c-s.fr>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Wed, 4 Apr 2018 22:21:00 +0200
-X-Google-Sender-Auth: dn59x4QpYktff1SddH3_72fgPE4
-Message-ID: <CA+7wUszBw9Jw8z7x6h-OO=-LfxSWYS08DTTBozkPg08KbAzBNA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/19] powerpc/powermac: Mark variable x as unused
-To: LEROY Christophe <christophe.leroy@c-s.fr>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
+In-Reply-To: <10360653.ov98egbaqx@natalenko.name>
+References: <10360653.ov98egbaqx@natalenko.name>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 4 Apr 2018 13:21:53 -0700
+X-Google-Sender-Auth: lmkkBB_ij2dEV-tP0s6zS52ebrI
+Message-ID: <CAGXu5jLwyot++C2EXs+032Lz5WdG65GsEJ-Q55rfhSbkG1Nh+A@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w34KLUjA027544
 
-On Thu, Mar 29, 2018 at 6:07 PM, LEROY Christophe
-<christophe.leroy@c-s.fr> wrote:
-> Mathieu Malaterre <malat@debian.org> a écrit :
->
->
->> Since the value of x is never intended to be read, declare it with gcc
->> attribute as unused. Fix warning treated as error with W=1:
->>
->>   arch/powerpc/platforms/powermac/bootx_init.c:471:21: error: variable ‘x’
->> set but not used [-Werror=unused-but-set-variable]
->>
->> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->> ---
->> v2: move x variable within its local scope
->>
->>  arch/powerpc/platforms/powermac/bootx_init.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/powerpc/platforms/powermac/bootx_init.c
->> b/arch/powerpc/platforms/powermac/bootx_init.c
->> index c3c9bbb3573a..d44e8571c1ec 100644
->> --- a/arch/powerpc/platforms/powermac/bootx_init.c
->> +++ b/arch/powerpc/platforms/powermac/bootx_init.c
->> @@ -468,7 +468,7 @@ void __init bootx_init(unsigned long r3, unsigned long
->> r4)
->>         boot_infos_t *bi = (boot_infos_t *) r4;
->>         unsigned long hdr;
->>         unsigned long space;
->> -       unsigned long ptr, x;
->> +       unsigned long ptr;
->>         char *model;
->>         unsigned long offset = reloc_offset();
->>
->> @@ -562,6 +562,7 @@ void __init bootx_init(unsigned long r3, unsigned long
->> r4)
->>          * MMU switched OFF, so this should not be useful anymore.
->>          */
->>         if (bi->version < 4) {
->> +               unsigned long x __maybe_unused;
->>                 bootx_printf("Touching pages...\n");
->
->
-> Stylewise, there should be an empty line after your declaration.
+On Wed, Apr 4, 2018 at 12:07 PM, Oleksandr Natalenko
+<oleksandr@natalenko.name> wrote:
+> With v4.16 I get the following dump while using smartctl:
+> [...]
+> [  261.262135] Bad or missing usercopy whitelist? Kernel memory exposure
+> attempt detected from SLUB object 'scsi_sense_cache' (offset 94, size 22)!
+> [...]
+> [  261.345976] Call Trace:
+> [  261.350620]  __check_object_size+0x130/0x1a0
+> [  261.355775]  sg_io+0x269/0x3f0
+> [  261.360729]  ? path_lookupat+0xaa/0x1f0
+> [  261.364027]  ? current_time+0x18/0x70
+> [  261.366684]  scsi_cmd_ioctl+0x257/0x410
+> [  261.369871]  ? xfs_bmapi_read+0x1c3/0x340 [xfs]
+> [  261.372231]  sd_ioctl+0xbf/0x1a0 [sd_mod]
+> [  261.375456]  blkdev_ioctl+0x8ca/0x990
+> [  261.381156]  ? read_null+0x10/0x10
+> [  261.384984]  block_ioctl+0x39/0x40
+> [  261.388739]  do_vfs_ioctl+0xa4/0x630
+> [  261.392624]  ? vfs_write+0x164/0x1a0
+> [  261.396658]  SyS_ioctl+0x74/0x80
+> [  261.399563]  do_syscall_64+0x74/0x190
+> [  261.402685]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-See v3
+This is:
 
-> But I believe you should remove that ugly loop and replace it by a call to
-> fault_in_pages_readable()
+sg_io+0x269/0x3f0:
+blk_complete_sghdr_rq at block/scsi_ioctl.c:280
+ (inlined by) sg_io at block/scsi_ioctl.c:376
 
-I have no idea on how to test the the new code, and it did not look
-straightforward.
+which is:
 
-> Christophe
->>
->>
->>                 /*
->> --
->> 2.11.0
+        if (req->sense_len && hdr->sbp) {
+                int len = min((unsigned int) hdr->mx_sb_len, req->sense_len);
+
+                if (!copy_to_user(hdr->sbp, req->sense, len))
+                        hdr->sb_len_wr = len;
+                else
+                        ret = -EFAULT;
+        }
+
+> [...]
+> I can easily reproduce it with a qemu VM and 2 virtual SCSI disks by calling
+> smartctl in a loop and doing some usual background I/O. The warning is
+> triggered within 3 minutes or so (not instantly).
 >
+> Initially, it was produced on my server after a kernel update (because disks
+> are monitored with smartctl via Zabbix).
 >
+> Looks like the thing was introduced with
+> 0afe76e88c57d91ef5697720aed380a339e3df70.
 >
+> Any idea how to deal with this please? If needed, I can provide any additional
+> info, and also I'm happy/ready to test any proposed patches.
+
+Interesting, and a little confusing. So, what's strange here is that
+the scsi_sense_cache already has a full whitelist:
+
+                       kmem_cache_create_usercopy("scsi_sense_cache",
+                               SCSI_SENSE_BUFFERSIZE, 0, SLAB_HWCACHE_ALIGN,
+                               0, SCSI_SENSE_BUFFERSIZE, NULL);
+
+Arg 2 is the buffer size, arg 5 is the whitelist offset (0), and the
+whitelist size (same as arg2). In other words, the entire buffer
+should be whitelisted.
+
+include/scsi/scsi_cmnd.h says:
+
+#define SCSI_SENSE_BUFFERSIZE  96
+
+That means scsi_sense_cache should be 96 bytes in size? But a 22 byte
+read starting at offset 94 happened? That seems like a 20 byte read
+beyond the end of the SLUB object? Though if it were reading past the
+actual end of the object, I'd expect the hardened usercopy BUG (rather
+than the WARN) to kick in. Ah, it looks like
+/sys/kernel/slab/scsi_sense_cache/slab_size shows this to be 128 bytes
+of actual allocation, so the 20 bytes doesn't strictly overlap another
+object (hence no BUG):
+
+/sys/kernel/slab/scsi_sense_cache# grep . object_size usersize slab_size
+object_size:96
+usersize:96
+slab_size:128
+
+Ah, right, due to SLAB_HWCACHE_ALIGN, the allocation is rounded up to
+the next cache line size, so there's 32 bytes of padding to reach 128.
+
+James or Martin, is this over-read "expected" behavior? i.e. does the
+sense cache buffer usage ever pull the ugly trick of silently
+expanding its allocation into the space the slab allocator has given
+it? If not, this looks like a real bug.
+
+What I don't see is how req->sense is _not_ at offset 0 in the
+scsi_sense_cache object...
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
