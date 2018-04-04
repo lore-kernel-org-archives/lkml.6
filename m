@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752458AbeDDT3C (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:29:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49370 "EHLO mx1.redhat.com"
+        id S1752654AbeDDT3X (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:29:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35208 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751722AbeDDTTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:19:10 -0400
+        id S1751696AbeDDTTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:19:07 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com,
         Alexander Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
         Jan Kara <jack@suse.cz>, Josef Bacik <jbacik@fb.com>,
         Mel Gorman <mgorman@techsingularity.net>,
         Jeff Layton <jlayton@redhat.com>
-Subject: [RFC PATCH 27/79] fs: add struct address_space to fscache_read*() callback arguments
-Date: Wed,  4 Apr 2018 15:18:01 -0400
-Message-Id: <20180404191831.5378-12-jglisse@redhat.com>
+Subject: [RFC PATCH 24/79] fs: add struct inode to nobh_writepage() arguments
+Date: Wed,  4 Apr 2018 15:17:59 -0400
+Message-Id: <20180404191831.5378-10-jglisse@redhat.com>
 In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
 References: <20180404191831.5378-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -30,15 +29,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-Add struct address_space to fscache_read*() callback argument. Note
-this patch only add arguments and modify call site conservatily using
-page->mapping and thus the end result is as before this patch.
+Add struct inode to nobh_writepage(). Note this patch only add arguments
+and modify call site conservatily using page->mapping and thus the end
+result is as before this patch.
 
 One step toward dropping reliance on page->mapping.
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: linux-cachefs@redhat.com
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: Tejun Heo <tj@kernel.org>
@@ -47,198 +44,70 @@ Cc: Josef Bacik <jbacik@fb.com>
 Cc: Mel Gorman <mgorman@techsingularity.net>
 Cc: Jeff Layton <jlayton@redhat.com>
 ---
- fs/9p/cache.c                 |  4 +++-
- fs/afs/file.c                 |  4 +++-
- fs/ceph/cache.c               | 10 ++++++----
- fs/cifs/fscache.c             |  6 ++++--
- fs/fscache/page.c             |  1 +
- fs/nfs/fscache.c              |  4 +++-
- include/linux/fscache-cache.h |  2 +-
- include/linux/fscache.h       |  9 ++++++---
- 8 files changed, 27 insertions(+), 13 deletions(-)
+ fs/buffer.c                 | 5 ++---
+ fs/ext2/inode.c             | 2 +-
+ fs/gfs2/aops.c              | 3 ++-
+ include/linux/buffer_head.h | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/9p/cache.c b/fs/9p/cache.c
-index 8185bfe4492f..3f122d35c54d 100644
---- a/fs/9p/cache.c
-+++ b/fs/9p/cache.c
-@@ -273,7 +273,8 @@ void __v9fs_fscache_invalidate_page(struct address_space *mapping,
- 	}
- }
- 
--static void v9fs_vfs_readpage_complete(struct page *page, void *data,
-+static void v9fs_vfs_readpage_complete(struct address_space *mapping,
-+				       struct page *page, void *data,
- 				       int error)
- {
- 	if (!error)
-@@ -299,6 +300,7 @@ int __v9fs_readpage_from_fscache(struct inode *inode, struct page *page)
- 		return -ENOBUFS;
- 
- 	ret = fscache_read_or_alloc_page(v9inode->fscache,
-+					 page->mapping,
- 					 page,
- 					 v9fs_vfs_readpage_complete,
- 					 NULL,
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index f87e997b9df9..23ff51343dd3 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -203,7 +203,8 @@ void afs_put_read(struct afs_read *req)
- /*
-  * deal with notification that a page was read from the cache
+diff --git a/fs/buffer.c b/fs/buffer.c
+index aa7d9be68581..31298f4f0300 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2730,10 +2730,9 @@ EXPORT_SYMBOL(nobh_write_end);
+  * that it tries to operate without attaching bufferheads to
+  * the page.
   */
--static void afs_file_readpage_read_complete(struct page *page,
-+static void afs_file_readpage_read_complete(struct address_space *mapping,
-+					    struct page *page,
- 					    void *data,
- 					    int error)
+-int nobh_writepage(struct page *page, get_block_t *get_block,
+-			struct writeback_control *wbc)
++int nobh_writepage(struct inode *inode, struct page *page,
++		get_block_t *get_block, struct writeback_control *wbc)
  {
-@@ -271,6 +272,7 @@ int afs_page_filler(void *data, struct address_space *mapping,
- 	/* is it cached? */
- #ifdef CONFIG_AFS_FSCACHE
- 	ret = fscache_read_or_alloc_page(vnode->cache,
-+					 page->mapping,
- 					 page,
- 					 afs_file_readpage_read_complete,
- 					 NULL,
-diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
-index a3ab265d3215..14438f1ed7e0 100644
---- a/fs/ceph/cache.c
-+++ b/fs/ceph/cache.c
-@@ -266,7 +266,9 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
- 	}
+-	struct inode * const inode = page->mapping->host;
+ 	loff_t i_size = i_size_read(inode);
+ 	const pgoff_t end_index = i_size >> PAGE_SHIFT;
+ 	unsigned offset;
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 37439d1e544c..11b3c3e7ea65 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -926,7 +926,7 @@ static int ext2_nobh_writepage(struct address_space *mapping,
+ 			struct page *page,
+ 			struct writeback_control *wbc)
+ {
+-	return nobh_writepage(page, ext2_get_block, wbc);
++	return nobh_writepage(page->mapping->host, page, ext2_get_block, wbc);
  }
  
--static void ceph_readpage_from_fscache_complete(struct page *page, void *data, int error)
-+static void ceph_readpage_from_fscache_complete(struct address_space *mapping,
-+						struct page *page, void *data,
-+						int error)
- {
- 	if (!error)
- 		SetPageUptodate(page);
-@@ -293,9 +295,9 @@ int ceph_readpage_from_fscache(struct inode *inode, struct page *page)
- 	if (!cache_valid(ci))
- 		return -ENOBUFS;
+ static sector_t ext2_bmap(struct address_space *mapping, sector_t block)
+diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+index 8cfd4c7d884c..ff02313b86e6 100644
+--- a/fs/gfs2/aops.c
++++ b/fs/gfs2/aops.c
+@@ -142,7 +142,8 @@ static int gfs2_writepage(struct address_space *mapping, struct page *page,
+ 	if (ret <= 0)
+ 		return ret;
  
--	ret = fscache_read_or_alloc_page(ci->fscache, page,
--					 ceph_readpage_from_fscache_complete, NULL,
--					 GFP_KERNEL);
-+	ret = fscache_read_or_alloc_page(ci->fscache, page->mapping, page,
-+					 ceph_readpage_from_fscache_complete,
-+					 NULL, GFP_KERNEL);
- 
- 	switch (ret) {
- 		case 0: /* Page found */
-diff --git a/fs/cifs/fscache.c b/fs/cifs/fscache.c
-index 8d4b7bc8ae91..25f259a83fe0 100644
---- a/fs/cifs/fscache.c
-+++ b/fs/cifs/fscache.c
-@@ -140,7 +140,8 @@ int cifs_fscache_release_page(struct page *page, gfp_t gfp)
- 	return 1;
+-	return nobh_writepage(page, gfs2_get_block_noalloc, wbc);
++	return nobh_writepage(page->mapping->host, page,
++			      gfs2_get_block_noalloc, wbc);
  }
  
--static void cifs_readpage_from_fscache_complete(struct page *page, void *ctx,
-+static void cifs_readpage_from_fscache_complete(struct address_space *mapping,
-+						struct page *page, void *ctx,
- 						int error)
- {
- 	cifs_dbg(FYI, "%s: (0x%p/%d)\n", __func__, page, error);
-@@ -158,7 +159,8 @@ int __cifs_readpage_from_fscache(struct inode *inode, struct page *page)
+ /* This is the same as calling block_write_full_page, but it also
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index cab143668834..fb68a3358330 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -265,8 +265,8 @@ int nobh_write_end(struct file *, struct address_space *,
+ 				loff_t, unsigned, unsigned,
+ 				struct page *, void *);
+ int nobh_truncate_page(struct address_space *, loff_t, get_block_t *);
+-int nobh_writepage(struct page *page, get_block_t *get_block,
+-                        struct writeback_control *wbc);
++int nobh_writepage(struct inode *inode, struct page *page,
++		get_block_t *get_block, struct writeback_control *wbc);
  
- 	cifs_dbg(FYI, "%s: (fsc:%p, p:%p, i:0x%p\n",
- 		 __func__, CIFS_I(inode)->fscache, page, inode);
--	ret = fscache_read_or_alloc_page(CIFS_I(inode)->fscache, page,
-+	ret = fscache_read_or_alloc_page(CIFS_I(inode)->fscache,
-+					 page->mapping, page,
- 					 cifs_readpage_from_fscache_complete,
- 					 NULL,
- 					 GFP_KERNEL);
-diff --git a/fs/fscache/page.c b/fs/fscache/page.c
-index 7112b42ad8c5..0c3d322a7b52 100644
---- a/fs/fscache/page.c
-+++ b/fs/fscache/page.c
-@@ -408,6 +408,7 @@ int fscache_wait_for_operation_activation(struct fscache_object *object,
-  *   0		- dispatched a read - it'll call end_io_func() when finished
-  */
- int __fscache_read_or_alloc_page(struct fscache_cookie *cookie,
-+				 struct address_space *mapping,
- 				 struct page *page,
- 				 fscache_rw_complete_t end_io_func,
- 				 void *context,
-diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
-index d63bea8bbfbb..e1cf607f8959 100644
---- a/fs/nfs/fscache.c
-+++ b/fs/nfs/fscache.c
-@@ -301,7 +301,8 @@ void __nfs_fscache_invalidate_page(struct page *page, struct inode *inode)
-  * Handle completion of a page being read from the cache.
-  * - Called in process (keventd) context.
-  */
--static void nfs_readpage_from_fscache_complete(struct page *page,
-+static void nfs_readpage_from_fscache_complete(struct address_space *mapping,
-+					       struct page *page,
- 					       void *context,
- 					       int error)
- {
-@@ -334,6 +335,7 @@ int __nfs_readpage_from_fscache(struct nfs_open_context *ctx,
- 		 nfs_i_fscache(inode), page, page->index, page->flags, inode);
+ void buffer_init(void);
  
- 	ret = fscache_read_or_alloc_page(nfs_i_fscache(inode),
-+					 page->mapping,
- 					 page,
- 					 nfs_readpage_from_fscache_complete,
- 					 ctx,
-diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index 4c467ef50159..7ae49d0306d5 100644
---- a/include/linux/fscache-cache.h
-+++ b/include/linux/fscache-cache.h
-@@ -468,7 +468,7 @@ void fscache_set_store_limit(struct fscache_object *object, loff_t i_size)
- static inline void fscache_end_io(struct fscache_retrieval *op,
- 				  struct page *page, int error)
- {
--	op->end_io_func(page, op->context, error);
-+	op->end_io_func(op->mapping, page, op->context, error);
- }
- 
- static inline void __fscache_use_cookie(struct fscache_cookie *cookie)
-diff --git a/include/linux/fscache.h b/include/linux/fscache.h
-index 13db0098d3a9..f62df8c68e7a 100644
---- a/include/linux/fscache.h
-+++ b/include/linux/fscache.h
-@@ -50,7 +50,8 @@ struct fscache_cache_tag;
- struct fscache_cookie;
- struct fscache_netfs;
- 
--typedef void (*fscache_rw_complete_t)(struct page *page,
-+typedef void (*fscache_rw_complete_t)(struct address_space *mapping,
-+				      struct page *page,
- 				      void *context,
- 				      int error);
- 
-@@ -216,6 +217,7 @@ extern int __fscache_attr_changed(struct fscache_cookie *);
- extern void __fscache_invalidate(struct fscache_cookie *);
- extern void __fscache_wait_on_invalidate(struct fscache_cookie *);
- extern int __fscache_read_or_alloc_page(struct fscache_cookie *,
-+					struct address_space *mapping,
- 					struct page *,
- 					fscache_rw_complete_t,
- 					void *,
-@@ -530,14 +532,15 @@ int fscache_reserve_space(struct fscache_cookie *cookie, loff_t size)
-  */
- static inline
- int fscache_read_or_alloc_page(struct fscache_cookie *cookie,
-+			       struct address_space *mapping,
- 			       struct page *page,
- 			       fscache_rw_complete_t end_io_func,
- 			       void *context,
- 			       gfp_t gfp)
- {
- 	if (fscache_cookie_valid(cookie) && fscache_cookie_enabled(cookie))
--		return __fscache_read_or_alloc_page(cookie, page, end_io_func,
--						    context, gfp);
-+		return __fscache_read_or_alloc_page(cookie, mapping, page,
-+						    end_io_func, context, gfp);
- 	else
- 		return -ENOBUFS;
- }
 -- 
 2.14.3
