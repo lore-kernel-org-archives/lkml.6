@@ -1,107 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753623AbeDDAeI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 20:34:08 -0400
-Received: from mga02.intel.com ([134.134.136.20]:10500 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751922AbeDDAeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 20:34:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,403,1517904000";
-   d="scan'208";a="217313295"
-Subject: Re: [PATCH ipmi/kcs_bmc v1] ipmi: kcs_bmc: optimize the data buffers
- allocation
-To: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <1521116452-4993-1-git-send-email-haiyue.wang@linux.intel.com>
- <50ba7cd8-0e14-d8b7-a10c-5dee17946722@linux.intel.com>
- <143afdd1-bdde-fb9b-d21c-8dc8eeb24e6c@acm.org>
-From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
-Message-ID: <3b51eb4a-1fe5-097d-9b62-e0e46b7f9d62@linux.intel.com>
-Date: Wed, 4 Apr 2018 08:34:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753124AbeDDAkb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 20:40:31 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:45359 "EHLO
+        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751457AbeDDAka (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 20:40:30 -0400
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: iamjoonsoo.kim@lge.com
+X-Original-SENDERIP: 10.177.220.142
+X-Original-MAILFROM: iamjoonsoo.kim@lge.com
+Date: Wed, 4 Apr 2018 09:40:27 +0900
+From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+To: linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, cl@linux.com, mm-commits@vger.kernel.org,
+        penberg@kernel.org, rientjes@google.com, sunnyddayss@gmail.com
+Subject: Re: + mm-slabc-remove-duplicated-check-of-colour_next.patch added to
+ -mm tree
+Message-ID: <20180404004027.GB6628@js1304-desktop>
+References: <20180312221333.aYPvPxhxp%akpm@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <143afdd1-bdde-fb9b-d21c-8dc8eeb24e6c@acm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312221333.aYPvPxhxp%akpm@linux-foundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just a small piece of cake, not so urgent. I just try to understand
+On Mon, Mar 12, 2018 at 03:13:33PM -0700, akpm@linux-foundation.org wrote:
+> 
+> The patch titled
+>      Subject: mm/slab.c: remove duplicated check of colour_next
+> has been added to the -mm tree.  Its filename is
+>      mm-slabc-remove-duplicated-check-of-colour_next.patch
+> 
+> This patch should soon appear at
+>     http://ozlabs.org/~akpm/mmots/broken-out/mm-slabc-remove-duplicated-check-of-colour_next.patch
+> and later at
+>     http://ozlabs.org/~akpm/mmotm/broken-out/mm-slabc-remove-duplicated-check-of-colour_next.patch
+> 
+> Before you just go and hit "reply", please:
+>    a) Consider who else should be cc'ed
+>    b) Prefer to cc a suitable mailing list as well
+>    c) Ideally: find the original patch on the mailing list and do a
+>       reply-to-all to that, adding suitable additional cc's
+> 
+> *** Remember to use Documentation/process/submit-checklist.rst when testing your code ***
+> 
+> The -mm tree is included into linux-next and is updated
+> there every 3-4 working days
+> 
+> ------------------------------------------------------
+> From: Roman Lakeev <sunnyddayss@gmail.com>
+> Subject: mm/slab.c: remove duplicated check of colour_next
+> 
+> Remove check that offset greater than cachep->colour bacause this is
+> already checked in previous lines.
+> 
+> Link: http://lkml.kernel.org/r/877eqilr71.fsf@gmail.com
+> Signed-off-by: Roman Lakeev <sunnyddayss@gmail.com>
+> Acked-by: Christoph Lameter <cl@linux.com>
+> Acked-by: David Rientjes <rientjes@google.com>
+> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Pekka Enberg <penberg@kernel.org>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+> 
+>  mm/slab.c |    6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff -puN mm/slab.c~mm-slabc-remove-duplicated-check-of-colour_next mm/slab.c
+> --- a/mm/slab.c~mm-slabc-remove-duplicated-check-of-colour_next
+> +++ a/mm/slab.c
+> @@ -2674,11 +2674,7 @@ static struct page *cache_grow_begin(str
+>  	if (n->colour_next >= cachep->colour)
+>  		n->colour_next = 0;
+>  
+> -	offset = n->colour_next;
+> -	if (offset >= cachep->colour)
+> -		offset = 0;
+> -
+> -	offset *= cachep->colour_off;
+> +	offset = n->colour_next * cachep->colour_off;
+>  
+>  	/* Get slab management. */
+>  	freelist = alloc_slabmgmt(cachep, page, offset,
 
-the code commitment process, such as time etc. :)
+Hello, all.
 
-Thanks!
+This n->colour_next can be update at the other cpu since
+there is no lock to protect it. So, removing this one
+another check can make the offset overflow.
 
-BR,
-Haiyue
+Andrew, could you drop this patch?
 
-On 2018-04-04 02:45, Corey Minyard wrote:
-> On 04/03/2018 01:00 AM, Wang, Haiyue wrote:
->> Hi Corey,
->>
->> The 4.17 merge window is opened now, this patch is not yet in 
->> linux-next tree,
->>
->> so it will be merged into 4.18 ?
->>
->
-> Yeah, this came in kind of late, and I had some other critical
-> things I was having to focus on, so I've been kind of out of the loop.
->
-> If it's urgent, I can work on getting it into 4.17 later, but I'd rather
-> wait on 4.18.
->
-> -corey
->
->> Thanks & Regards,
->>
->> Haiyue
->>
->> On 2018-03-15 20:20, Haiyue Wang wrote:
->>> Allocate a continuous memory block for the three KCS data buffers with
->>> related index assignment.
->>>
->>> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
->>> ---
->>>   drivers/char/ipmi/kcs_bmc.c | 10 ++++++----
->>>   1 file changed, 6 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
->>> index fbfc05e..dc19c0d 100644
->>> --- a/drivers/char/ipmi/kcs_bmc.c
->>> +++ b/drivers/char/ipmi/kcs_bmc.c
->>> @@ -435,6 +435,7 @@ static const struct file_operations kcs_bmc_fops 
->>> = {
->>>   struct kcs_bmc *kcs_bmc_alloc(struct device *dev, int sizeof_priv, 
->>> u32 channel)
->>>   {
->>>       struct kcs_bmc *kcs_bmc;
->>> +    void *buf;
->>>         kcs_bmc = devm_kzalloc(dev, sizeof(*kcs_bmc) + sizeof_priv, 
->>> GFP_KERNEL);
->>>       if (!kcs_bmc)
->>> @@ -448,11 +449,12 @@ struct kcs_bmc *kcs_bmc_alloc(struct device 
->>> *dev, int sizeof_priv, u32 channel)
->>>       mutex_init(&kcs_bmc->mutex);
->>>       init_waitqueue_head(&kcs_bmc->queue);
->>>   -    kcs_bmc->data_in = devm_kmalloc(dev, KCS_MSG_BUFSIZ, 
->>> GFP_KERNEL);
->>> -    kcs_bmc->data_out = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
->>> -    kcs_bmc->kbuffer = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
->>> -    if (!kcs_bmc->data_in || !kcs_bmc->data_out || !kcs_bmc->kbuffer)
->>> +    buf = devm_kmalloc_array(dev, 3, KCS_MSG_BUFSIZ, GFP_KERNEL);
->>> +    if (!buf)
->>>           return NULL;
->>> +    kcs_bmc->data_in  = buf;
->>> +    kcs_bmc->data_out = buf + KCS_MSG_BUFSIZ;
->>> +    kcs_bmc->kbuffer  = buf + KCS_MSG_BUFSIZ * 2;
->>>         kcs_bmc->miscdev.minor = MISC_DYNAMIC_MINOR;
->>>       kcs_bmc->miscdev.name = dev_name(dev);
->>
->
+Thanks.
