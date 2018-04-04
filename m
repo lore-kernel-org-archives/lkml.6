@@ -1,88 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751332AbeDDN2X (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:28:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751155AbeDDN2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:28:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C6221720
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 4 Apr 2018 14:28:16 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Pavel Machek <pavel@ucw.cz>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        "moderated list:PANASONIC MN10300..." <linux-am33-list@redhat.com>,
-        Hirokazu Takata <takata@linux-m32r.org>,
-        Lennox Wu <lennox.wu@gmail.com>, Aaron Wu <Aaron.Wu@analog.com>,
-        Bryan Wu <cooloney@gmail.com>,
-        Chris Metcalf <chris.d.metcalf@gmail.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>
-Subject: Re: [GIT PULL] arch: remove obsolete architecture ports
-Message-ID: <20180404132815.GC25517@saruman>
-References: <CAK8P3a0q70FYtBaCcsBPejVULgsbJPwUG7QmrkU9NJpr7oTzpQ@mail.gmail.com>
- <CA+55aFzmQ9specaytsjEb=iNm-NHE5kxMSy_H_jKvqZa4-Fomw@mail.gmail.com>
- <CAK8P3a2pdmLOHb2wkPVvqLDo71Rf3hLVfhG7vsMzaPD-DMEzSg@mail.gmail.com>
- <CAMuHMdVZg8BL7D2eB-FnDbJabU3sfda6nOnaCdJj-3OC-+KP0g@mail.gmail.com>
- <20180404080142.GC9342@amd>
- <CAK8P3a3Rj7utFTrNrNiv3948whE9Tsta9mmLPdX5HxBhif-_9w@mail.gmail.com>
+        id S1751418AbeDDN2b (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:28:31 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:42162 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751155AbeDDN23 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:28:29 -0400
+X-Google-Smtp-Source: AIpwx48d1OggI6ZRS68jSR63lHO7jOR+AYEKyvDCFq3ueysaO/cVK86o8wtFHbFn0cHOdxXU/lRUaxl/psX2MB3VAh4=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dkEUBIird37B8yKS"
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3Rj7utFTrNrNiv3948whE9Tsta9mmLPdX5HxBhif-_9w@mail.gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <9d68b1b4-04e6-46d6-70b4-6ebcb0a0c4aa@redhat.com>
+References: <1522798129-14588-1-git-send-email-wanpengli@tencent.com>
+ <1522798129-14588-2-git-send-email-wanpengli@tencent.com> <9d68b1b4-04e6-46d6-70b4-6ebcb0a0c4aa@redhat.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Wed, 4 Apr 2018 21:28:28 +0800
+Message-ID: <CANRm+Cxc9uVqS9J98qLTCg3WHDef1G6-AZT0TOgT_FQ3DsWFAQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] KVM: X86: Introduce handle_ud()
+To: David Hildenbrand <david@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Liran Alon <liran.alon@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w34DSb8e017808
 
+2018-04-04 19:54 GMT+08:00 David Hildenbrand <david@redhat.com>:
+> On 04.04.2018 01:28, Wanpeng Li wrote:
+>> From: Wanpeng Li <wanpengli@tencent.com>
+>>
+>> Introduce handle_ud() to handle invalid opcode, this function will be
+>> used by later patches.
+>>
+>> Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>> Reviewed-by: Liran Alon <liran.alon@oracle.com>
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+>> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>> Cc: Liran Alon <liran.alon@oracle.com>
+>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>> ---
+>>  arch/x86/kvm/svm.c |  9 +--------
+>>  arch/x86/kvm/vmx.c | 10 ++--------
+>>  arch/x86/kvm/x86.c | 13 +++++++++++++
+>>  arch/x86/kvm/x86.h |  2 ++
+>>  4 files changed, 18 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+>> index f66fc2e..e0a3f56 100644
+>> --- a/arch/x86/kvm/svm.c
+>> +++ b/arch/x86/kvm/svm.c
+>> @@ -2676,14 +2676,7 @@ static int bp_interception(struct vcpu_svm *svm)
+>>
+>>  static int ud_interception(struct vcpu_svm *svm)
+>>  {
+>> -     int er;
+>> -
+>> -     er = emulate_instruction(&svm->vcpu, EMULTYPE_TRAP_UD);
+>> -     if (er == EMULATE_USER_EXIT)
+>> -             return 0;
+>> -     if (er != EMULATE_DONE)
+>> -             kvm_queue_exception(&svm->vcpu, UD_VECTOR);
+>> -     return 1;
+>> +     return handle_ud(&svm->vcpu);
+>>  }
+>>
+>>  static int ac_interception(struct vcpu_svm *svm)
+>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>> index b2f8a70..0f11243 100644
+>> --- a/arch/x86/kvm/vmx.c
+>> +++ b/arch/x86/kvm/vmx.c
+>> @@ -6436,14 +6436,8 @@ static int handle_exception(struct kvm_vcpu *vcpu)
+>>       if (is_nmi(intr_info))
+>>               return 1;  /* already handled by vmx_vcpu_run() */
+>>
+>> -     if (is_invalid_opcode(intr_info)) {
+>> -             er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
+>> -             if (er == EMULATE_USER_EXIT)
+>> -                     return 0;
+>> -             if (er != EMULATE_DONE)
+>> -                     kvm_queue_exception(vcpu, UD_VECTOR);
+>> -             return 1;
+>> -     }
+>> +     if (is_invalid_opcode(intr_info))
+>> +             return handle_ud(vcpu);
+>
+> (maybe different on this branch) isn't "er" now unused?
 
---dkEUBIird37B8yKS
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hmm, It is used in other place of the function handle_exception.
 
-On Wed, Apr 04, 2018 at 10:38:41AM +0200, Arnd Bergmann wrote:
-> Also, now that the other architectures are gone, a lot of changes can
-> be done more easily that will be incompatible with a pure revert, so
-> the more time passes, the harder it will get to do that.
+>
+>>
+>>       error_code = 0;
+>>       if (intr_info & INTR_INFO_DELIVER_CODE_MASK)
+>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>> index 7d9a444..1eb495e 100644
+>> --- a/arch/x86/kvm/x86.c
+>> +++ b/arch/x86/kvm/x86.c
+>> @@ -4840,6 +4840,19 @@ int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
+>>  }
+>>  EXPORT_SYMBOL_GPL(kvm_write_guest_virt_system);
+>>
+>> +int handle_ud(struct kvm_vcpu *vcpu)
+>> +{
+>> +     enum emulation_result er;
+>> +
+>> +     er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
+>> +     if (er == EMULATE_USER_EXIT)
+>> +             return 0;
+>> +     if (er != EMULATE_DONE)
+>> +             kvm_queue_exception(vcpu, UD_VECTOR);
+>> +     return 1;
+>
+> I would now actually prefer
+>
+> if (er == EMULATE_DONE)
+>         return 1 ...
 
-Yes, and an out-of-tree arch port (as effectively these arches now are)
-requires constant maintenance (often subtle runtime breakage) to keep up
-to date with each new kernel release, which happens mostly automatically
-=66rom arch maintainer POV while they're merged.
+Keep the original one I think.
 
-Even without changes intentionally taking advantage of not having to
-care about these arches, it'll be only a few cycles at the most before a
-plain revert won't "just work".
-
-Cheers
-James
-
---dkEUBIird37B8yKS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlrE0u8ACgkQbAtpk944
-dnpouw/7BuX2Xq6CccnKjZ0E6fXJrndakmq3V81c5YtmhPBNilFw/n2Rpf0k0edd
-HflcS2dsfIDBL6CB6mZIrXidwTcaIgYdClbOK+VNReyzcCGKqBWFguxQ4YF6H+Qt
-5Ri1ihoHveHtCkZC2Om9wA8GD5p0283QpHnI19pHCQwL0XblU56dE1210UEDT4CB
-ehPIzr7QaOAk8zeN97iB5xEjx6i7xoZQ1e9b4yOERQoR4rTtfx0CyJ75CfdZKVh3
-DXenWrRaen4+AeGbczkEeraJI7fL73Uw48Eb8KzZXbqWR21aH4wedb5t1No7T3hK
-igW7KhQ/yvwONhEngjyAQ7tIENwckBTtscJm0Amti9fek47i+bMVzVL9Ho2ZlMND
-0cb0v07reizXbmjEPVP9ZEQW5FwgYAj+72TD+EvUNHYq6n6pSwOPXZCbtk7LjBBR
-MKQ/Wj5FPP89QtA78gDgNfzByRzZPoHK2xbxwy7zstanWTBA0iEJ+jUQzL+bMMVM
-CwBI9SGSxbL5hoqk9cd/Owiks7LOhJSyz/R9J39chmB5bqyS0jRDY9j5KSSVYeoI
-LWi2fJklr24hIB5xBKow+S3ft5RTqgZOQ1YqRPCLbo1EGXKbGCZ6F2No8KHep2si
-rIRA4BLuhM6rz7vVGaRwYN2C5I3Kw6xSI1JWZSNqm4nrEvpMruw=
-=ztgU
------END PGP SIGNATURE-----
-
---dkEUBIird37B8yKS--
+Regards,
+Wanpeng Li
