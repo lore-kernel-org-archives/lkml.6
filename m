@@ -1,57 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751275AbeDDNNG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:13:06 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:50903 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751195AbeDDNND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:13:03 -0400
-Date: Wed, 4 Apr 2018 15:12:39 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/4] mfd: add Gateworks System Controller core driver
-Message-ID: <20180404131239.GD20869@lunn.ch>
-References: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
- <1522250043-8065-3-git-send-email-tharvey@gateworks.com>
- <CAJ+vNU3-gaTcMAzo5wB6oSfE-JQC3NBVRJS5zFMTE-nVpD4F5g@mail.gmail.com>
- <20180403164715.GA5676@lunn.ch>
- <CAJ+vNU31f+iY5LOG6QmdJetb=pPvY_gpKoS+49FSy70U1Ksd8g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJ+vNU31f+iY5LOG6QmdJetb=pPvY_gpKoS+49FSy70U1Ksd8g@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1751233AbeDDNQi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:16:38 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34855 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750853AbeDDNQg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:16:36 -0400
+X-Google-Smtp-Source: AIpwx48dpVFL9BapUpL0vosDQLVm2eeDWf/wvSDENMs8XRxM47AbhIbZ4u5PSDVBh8lcj4g4xQQb5g==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/4] ARM: imx: use device properties for at24 eeprom
+Date: Wed,  4 Apr 2018 15:16:23 +0200
+Message-Id: <20180404131627.9135-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> What about the 'reset' functionality? Is there something in the power
-> supply API for hooking in a GPIO based power switch (in my case it
-> would be i2c) as I would think that would be common for ATX supplies?
-> I didn't see anything in Documentation/power.
-> 
-> This is what led me to the restart handler idea. Ultimately when
-> someone issues a 'reboot' I would like it to use the GSC to
-> power-cycle the board.
+We want to work towards phasing out the at24_platform_data structure.
+There are few users and its contents can be represented using generic
+device properties. Using device properties only will allow us to
+significantly simplify the at24 configuration code.
 
-Hi Tim
+This series converts all users of at24_platform_data to using generic
+device properties or - as is the case with PATCH 1/4 - drops the
+platform data entirely since it's not needed.
 
-I think you end up with the same problem. By the time you need to turn
-the power supply off, too much of the kernel is shut down to be able
-to use I2C. And if you are in the middle of an Oops, you have no idea
-of the current state. Another I2C transaction could be under way etc.
-All the current reset drivers are pretty much self contained, atomic
-and use KISS hardware like a GPIO.
+Bartosz Golaszewski (4):
+  ARM: imx: vpr200: drop at24_platform_data
+  ARM: imx: pcm043: use device properties for at24 eeprom
+  ARM: imx: pca100: use device properties for at24 eeprom
+  ARM: imx: pcm037: use device properties for at24 eeprom
 
-Maybe you best bet is to see if you can find any other I2C PMICs which
-the kernel supports.
+ arch/arm/mach-imx/mach-pca100.c | 13 ++++++-------
+ arch/arm/mach-imx/mach-pcm037.c | 13 ++++++-------
+ arch/arm/mach-imx/mach-pcm043.c | 13 ++++++-------
+ arch/arm/mach-imx/mach-vpr200.c |  9 +--------
+ 4 files changed, 19 insertions(+), 29 deletions(-)
 
-    Andrew
+-- 
+2.16.3
