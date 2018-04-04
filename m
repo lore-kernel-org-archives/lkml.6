@@ -1,81 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751392AbeDDOxq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:53:46 -0400
-Received: from mga03.intel.com ([134.134.136.65]:6629 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751251AbeDDOxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:53:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,406,1517904000";
-   d="scan'208";a="30655942"
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Markus Metzger <markus.t.metzger@intel.com>
-Subject: [PATCH v2] perf: Suppress AUX/OVERWRITE records
-Date: Wed,  4 Apr 2018 17:53:23 +0300
-Message-Id: <20180404145323.28651-1-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180403173207.GA8921@arm.com>
-References: <20180403173207.GA8921@arm.com>
+        id S1751454AbeDDOz0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:55:26 -0400
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:51008 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751251AbeDDOzY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 10:55:24 -0400
+X-Google-Smtp-Source: AIpwx48zHNidD7YXc3iPSY5P38QkTfBkSw0mMzYTlLL4uSBuBcBzBzlIebt+WSSTGRz/fOrSU7TlFWCnpdx9CBRY/uE=
+MIME-Version: 1.0
+In-Reply-To: <CA+A7VXX+z8FrDhzW2BQ6AGMJ=_j_53wkUL_YNgkreEbWSh+jCw@mail.gmail.com>
+References: <CA+A7VXX+z8FrDhzW2BQ6AGMJ=_j_53wkUL_YNgkreEbWSh+jCw@mail.gmail.com>
+From: Steve deRosier <derosier@gmail.com>
+Date: Wed, 4 Apr 2018 07:54:42 -0700
+X-Google-Sender-Auth: X6l87kEar-8LGWA5LRUasd9Ege0
+Message-ID: <CALLGbRJqE_ZGbT5w-K39FRHDzBHrH_SfJH-3mPjdZFje5AENYw@mail.gmail.com>
+Subject: Re: RTL8723BE performance regression
+To: =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>,
+        Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Ping-Ke Shih <pkshih@realtek.com>, Birming Chiu <birming@realtek.com>,
+        Shaofu <shaofu@realtek.com>, Steven Ting <steventing@realtek.com>,
+        Chaoming Li <chaoming_li@realsil.com.cn>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Daniel Drake <drake@endlessm.com>,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w34EtUa2025048
 
-It has been pointed out to me many times that it is useful to be able
-to switch off AUX records to save the bandwidth for records that actually
-matter, for example, in AUX overwrite mode.
+On Tue, Apr 3, 2018 at 6:51 PM, João Paulo Rechi Vita <jprvita@gmail.com> wrote:
+>
+> This are the results (testing with speedtest.net) I got at some key points:
+>
+> Version        Commit        Ping        Down        Up
+>
+> v4.11            a351e9b        12        25.44        5.99
+> v4.11            a351e9b        131      17.02        5.89
+>
+> v4.13            569dbb8        174      14.08        0.00
+> v4.13            569dbb8        261      8.41          0.00
+>
+> v4.15+revert d8a5b80        19        23.86        1.41
+> v4.15+revert d8a5b80        189      18.69        1.39
+>
 
-The usefulness of PERF_RECORD_AUX is in some of its flags, like the
-TRUNCATED flag that tells the decoder where exactly gaps in the trace are.
-The OVERWRITE flag, on the other hand will be set on every single record
-in overwrite mode. However, a PERF_RECORD_AUX[flags=OVERWRITE] is
-generated on every target task's sched_out, which over time adds up to
-a lot of useless information.
+I recommend doing throughput testing in a closed system using iperf.
+speedtest.net is potentially useful for testing your ISP's bandwidth
+at some particular point in time, but little else as it exposes you to
+too many variables. I wouldn't take those numbers to mean much and the
+inconclusive results you're getting could be explained by external
+network loading and having little to do with your bisect effort. I can
+get that spread in numbers from speedtest.net without making any
+changes other than the time of day I do the test.
 
-If any folks out there have userspace that depends on a constant stream of
-OVERWRITE records for a good reason, they'll have to let us know.
+Here's how to do it. Install iperf2 (you could use iperf3, personal
+choice) on two machines, one being your device under test (DUT). Setup
+a network configuration that looks similar to this:
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Markus Metzger <markus.t.metzger@intel.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
----
- kernel/events/ring_buffer.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+server <==hardwire==> AP <--wireless link--> DUT
 
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index 6c6b3c48db71..c4edd8fbc5d9 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -458,10 +458,20 @@ void perf_aux_output_end(struct perf_output_handle *handle, unsigned long size)
- 	if (size || handle->aux_flags) {
- 		/*
- 		 * Only send RECORD_AUX if we have something useful to communicate
-+		 *
-+		 * Note: the OVERWRITE records by themselves are not considered
-+		 * useful, as they don't communicate any *new* information,
-+		 * aside from the short-lived offset, that becomes history at
-+		 * the next event sched-in and therefore isn't useful.
-+		 * The userspace that needs to copy out AUX data in overwrite
-+		 * mode should know to use user_page::aux_head for the actual
-+		 * offset. So, from now on we don't output AUX records that
-+		 * have *only* OVERWRITE flag set.
- 		 */
- 
--		perf_event_aux_event(handle->event, aux_head, size,
--		                     handle->aux_flags);
-+		if (handle->aux_flags & ~(u64)PERF_AUX_FLAG_OVERWRITE)
-+			perf_event_aux_event(handle->event, aux_head, size,
-+			                     handle->aux_flags);
- 	}
- 
- 	rb->user_page->aux_head = rb->aux_head;
--- 
-2.16.3
+Be sure your hardwire is more bandwidth than your wireless link is
+capable of, or set it up where the server is the AP. What you're
+looking for here is environmental consistency, not maximum throughput
+numbers.
+
+On the computer hardwired to the network, start the server, we'll
+assume it has an ip of 192.168.33.18:
+
+    iperf -s
+
+On your DUT:
+
+    iperf -c 192.168.33.18
+
+That's the most basic setup, check the man page for more options.
+
+You will get best results if you can exclude other computers from your
+test network and other wireless devices from your airspace.
+
+- Steve
+
+--
+Steve deRosier
+Cal-Sierra Consulting LLC
+https://www.cal-sierra.com/
