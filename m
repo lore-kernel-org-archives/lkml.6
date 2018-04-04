@@ -1,81 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751242AbeDDNnT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:43:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43398 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751117AbeDDNnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:43:18 -0400
-Date: Wed, 4 Apr 2018 09:43:15 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
-        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: dm: fix DAX dependency
-Message-ID: <20180404134315.GA14708@redhat.com>
-References: <20180404095427.2537184-1-arnd@arndb.de>
+        id S1751270AbeDDNnj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:43:39 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:50572 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750890AbeDDNni (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:43:38 -0400
+X-Google-Smtp-Source: AIpwx4/m9d14zaYlZWj47khVoj9/NfCRZpowmN1FjIU7Y00UXQirc13bCwQqyIa6UCUS4fhtBeeKvleu2jUyxbshem4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404095427.2537184-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com>
+References: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
+ <20180329125324.GR4589@e105550-lin.cambridge.arm.com> <CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com>
+ <74865492-d9a6-649d-d37c-a5a6a8c28f23@arm.com> <CAKfTPtDy2uUj4amA9MARUz9qS=+urwV2edyQn+fW70hkN+CgoQ@mail.gmail.com>
+ <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 4 Apr 2018 15:43:17 +0200
+Message-ID: <CAKfTPtCQayuu5-84931ZxzXV1-roV_CfRd_5wXG1oxOEUZmZgw@mail.gmail.com>
+Subject: Re: [PATCH] sched: support dynamiQ cluster
+To: Valentin Schneider <valentin.schneider@arm.com>
+Cc: Morten Rasmussen <morten.rasmussen@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04 2018 at  5:54am -0400,
-Arnd Bergmann <arnd@arndb.de> wrote:
+On 4 April 2018 at 12:44, Valentin Schneider <valentin.schneider@arm.com> wrote:
+> Hi,
+>
+> On 03/04/18 13:17, Vincent Guittot wrote:
+>> Hi Valentin,
+>>
+> [...]
+>>>
+>>> I believe ASYM_PACKING behaves better here because the workload is only
+>>> sysbench threads. As stated above, since task utilization is disregarded, I
+>>
+>> It behaves better because it doesn't wait for the task's utilization
+>> to reach a level before assuming the task needs high compute capacity.
+>> The utilization gives an idea of the running time of the task not the
+>> performance level that is needed
+>>
+>
+> That's my point actually. ASYM_PACKING disregards utilization and moves those
+> threads to the big cores ASAP, which is good here because it's just sysbench
+> threads.
+>
+> What I meant was that if the task composition changes, IOW we mix "small"
+> tasks (e.g. periodic stuff) and "big" tasks (performance-sensitive stuff like
+> sysbench threads), we shouldn't assume all of those require to run on a big
+> CPU. The thing is, ASYM_PACKING can't make the difference between those, so
 
-> Building device mapper with CONFIG_DAX=m now results in a link error:
-> 
-> drivers/md/dm.o: In function `dm_put_table_device':
-> dm.c:(.text+0x33c): undefined reference to `put_dax'
-> drivers/md/dm.o: In function `cleanup_mapped_device':
-> dm.c:(.text+0x1054): undefined reference to `kill_dax'
-> dm.c:(.text+0x105c): undefined reference to `put_dax'
-> drivers/md/dm.o: In function `dm_get_table_device':
-> dm.c:(.text+0x2744): undefined reference to `dax_get_by_host'
-> drivers/md/dm-table.o: In function `device_dax_write_cache_enabled':
-> dm-table.c:(.text+0x1030): undefined reference to `dax_write_cache_enabled'
-> drivers/md/dm-table.o: In function `dm_table_set_restrictions':
-> dm-table.c:(.text+0x29b8): undefined reference to `dax_write_cache'
-> 
-> This adds a dependency that prevents the invalid configuration, allowing
-> a built-in device mapper only if DAX is either built-in as well, or
-> completely disabled.
-> 
-> Fixes: 4de1c562f7e9 ("dax, dm: allow device-mapper to operate without dax support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> The regression only showed up in linux-next at the start of the merge
-> window. Any idea what happened?
-> ---
->  drivers/md/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-> index 49287135b86c..5e5a47c5ff82 100644
-> --- a/drivers/md/Kconfig
-> +++ b/drivers/md/Kconfig
-> @@ -200,6 +200,7 @@ config BLK_DEV_DM_BUILTIN
->  
->  config BLK_DEV_DM
->  	tristate "Device mapper support"
-> +	depends on DAX || DAX=n
->  	select BLK_DEV_DM_BUILTIN
->  	---help---
->  	  Device-mapper is a low level volume manager.  It works by allowing
-> -- 
-> 2.9.0
-> 
+That's the 1st point where I tend to disagree: why big cores are only
+for long running task and periodic stuff can't need to run on big
+cores to get max compute capacity ?
+You make the assumption that only long running tasks need high compute
+capacity. This patch wants to always provide max compute capacity to
+the system and not only long running task
 
-Seems fine, CONFIG_DAX=m was an oversight in commit 4de1c562f7e9
+> it'll all come down to which task spawned first.
+>
+> Furthermore, ASYM_PACKING will forcefully move tasks via active balance
+> regardless of the imbalance as long as a big CPU is idle.
+>
+> So we could have a scenario where loads of "small" tasks spawn, and they all
+> get moved to a big CPU until they're all full (because they're periodic tasks
+> so the big CPUs will eventually be idle and will pull another task as long as
+> they get some idle time).
+>
+> Then, before the load tracking signals of those tasks ramp up high enough
+> that the load balancer would try to move those to LITTLE CPUs, some "big"
+> tasks spawn. They get scheduled on LITTLE CPUs, and now the system will look
+> balanced so nothing will be done.
 
-Dan, do you want to just fold this into that original commit?  Either
-way, please feel free to pick this up.
+As explained above, as long as the big CPUs are always used,I don't
+think it's a problem. What is a problem is if a task stays on a little
+CPU whereas a big CPU is idle because we can provide more throughput
 
-Thanks Arnd.
-
-Reviewed-by: Mike Snitzer <snitzer@redhat.com>
+>
+>
+> I acknowledge this all sounds convoluted but I hope it highlights what I
+> think could go wrong with ASYM_PACKING on asymmetric systems.
+>
+> Regards,
+> Valentin
