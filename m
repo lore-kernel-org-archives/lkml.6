@@ -1,70 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751418AbeDDSEc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 14:04:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52054 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751213AbeDDSE3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 14:04:29 -0400
-From: Sandipan Das <sandipan@linux.vnet.ibm.com>
-To: acme@kernel.org, jolsa@redhat.com
-Cc: linux-kernel@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com
-Subject: [PATCH 3/3] perf tests clang: Fix function name for clang IR test
-Date: Wed,  4 Apr 2018 23:34:19 +0530
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180404180419.19056-1-sandipan@linux.vnet.ibm.com>
-References: <20180404180419.19056-1-sandipan@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18040418-0044-0000-0000-000005437D37
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040418-0045-0000-0000-00002883953F
-Message-Id: <20180404180419.19056-3-sandipan@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804040180
+        id S1751425AbeDDSGe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 14:06:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750915AbeDDSGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 14:06:33 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A15020838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 4 Apr 2018 14:06:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH v2] lockdep: Do not record irq state within lockdep code
+Message-ID: <20180404140630.3f4f4c7a@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As stated in tests/llvm-src-base.c, the name of the bpf function
-should be "bpf_func__SyS_epoll_pwait" but this clang test fails
-as it tries to lookup "bpf_func__SyS_epoll_wait".
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Before applying patch:
+While debugging where things were going wrong with mapping
+enabling/disabling interrupts with the lockdep state and actual real
+enabling and disabling interrupts, I had to silent the irq
+disabling/enabling in debug_check_no_locks_freed() because it was
+always showing up as it was called before the splat was.
 
-55: builtin clang support                                 :
-55.1: builtin clang compile C source to IR                : FAILED!
-55.2: builtin clang compile C source to ELF object        : Skip
+Use raw_local_irq_save/restore() for not only debug_check_no_locks_freed()
+but for all internal lockdep functions, as they hide useful information
+about where interrupts were used incorrectly last.
 
-After applying patch:
-
-55: builtin clang support                                 :
-55.1: builtin clang compile C source to IR                : Ok
-55.2: builtin clang compile C source to ELF object        : Ok
-
-Fixes: e67d52d411c3 ("perf clang: Update test case to use real BPF script")
-Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- tools/perf/util/c++/clang-test.cpp | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/c++/clang-test.cpp b/tools/perf/util/c++/clang-test.cpp
-index a4014d786676..7b042a5ebc68 100644
---- a/tools/perf/util/c++/clang-test.cpp
-+++ b/tools/perf/util/c++/clang-test.cpp
-@@ -41,7 +41,7 @@ int test__clang_to_IR(void)
- 	if (!M)
- 		return -1;
- 	for (llvm::Function& F : *M)
--		if (F.getName() == "bpf_func__SyS_epoll_wait")
-+		if (F.getName() == "bpf_func__SyS_epoll_pwait")
- 			return 0;
- 	return -1;
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 89b5f83f1969..113d825b28cf 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -1261,11 +1261,11 @@ unsigned long lockdep_count_forward_deps(struct lock_class *class)
+ 	this.parent = NULL;
+ 	this.class = class;
+ 
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	arch_spin_lock(&lockdep_lock);
+ 	ret = __lockdep_count_forward_deps(&this);
+ 	arch_spin_unlock(&lockdep_lock);
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ 
+ 	return ret;
  }
--- 
-2.14.3
+@@ -1288,11 +1288,11 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
+ 	this.parent = NULL;
+ 	this.class = class;
+ 
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	arch_spin_lock(&lockdep_lock);
+ 	ret = __lockdep_count_backward_deps(&this);
+ 	arch_spin_unlock(&lockdep_lock);
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ 
+ 	return ret;
+ }
+@@ -4407,7 +4407,7 @@ void debug_check_no_locks_freed(const void *mem_from, unsigned long mem_len)
+ 	if (unlikely(!debug_locks))
+ 		return;
+ 
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	for (i = 0; i < curr->lockdep_depth; i++) {
+ 		hlock = curr->held_locks + i;
+ 
+@@ -4418,7 +4418,7 @@ void debug_check_no_locks_freed(const void *mem_from, unsigned long mem_len)
+ 		print_freed_lock_bug(curr, mem_from, mem_from + mem_len, hlock);
+ 		break;
+ 	}
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ }
+ EXPORT_SYMBOL_GPL(debug_check_no_locks_freed);
+ 
