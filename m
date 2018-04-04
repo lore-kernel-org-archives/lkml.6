@@ -1,78 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751339AbeDDR67 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 13:58:59 -0400
-Received: from muru.com ([72.249.23.125]:35250 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751213AbeDDR65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 13:58:57 -0400
-Date: Wed, 4 Apr 2018 10:58:52 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        pali.rohar@gmail.com, sre@kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
-Subject: Re: ARM compile failure in Re: linux-next: Tree for Apr 4
-Message-ID: <20180404175852.GI5700@atomide.com>
-References: <20180404165559.4cd0c12c@canb.auug.org.au>
- <20180404074856.GA9342@amd>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404074856.GA9342@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751315AbeDDSCF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 14:02:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37742 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750890AbeDDSCD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 14:02:03 -0400
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@redhat.com
+Cc: linux-kernel@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
+        sukadev@linux.vnet.ibm.com
+Subject: [RFC PATCH] perf tools powerpc: Fix callchain ip filtering
+Date: Wed,  4 Apr 2018 23:31:52 +0530
+X-Mailer: git-send-email 2.14.3
+X-TM-AS-GCONF: 00
+x-cbid: 18040418-0040-0000-0000-0000042A76CB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040418-0041-0000-0000-0000262DA9DF
+Message-Id: <20180404180152.18964-1-sandipan@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804040180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [180404 07:50]:
-> Hi!
-> 
-> > Please do not add any v4.18 destined stuff to your linux-next included
-> > trees until after v4.17-rc1 has been released.
-> > 
-> > Changes since 20180403:
-> > 
-> > The vfs tree still had its build failure for which I reverted a commit.
-> > 
-> > Non-merge commits (relative to Linus' tree): 8505
-> >  8493 files changed, 392779 insertions(+), 275941 deletions(-)
-> > 
-> > ----------------------------------------------------------------------------
-> 
-> When trying to build kernel for N900, I get:
-> 
->   CC      lib/timerqueue.o
->     CC      lib/vsprintf.o
->     lib/string.c: In function 'strstr':
->     lib/string.c:478:8: error: inlining failed in call to
->     always_inline 'strlen': function not inlinable
->     lib/string.c:903:5: error: called from here
->     lib/string.c:478:8: error: inlining failed in call to
->     always_inline 'strlen': function not inlinable
->     lib/string.c:906:5: error: called from here
->     lib/string.c:855:15: error: inlining failed in call to
->     always_inline 'memcmp': function not inlinable
->     ...
-> pavel@duo:/data/l/linux-next-n900$ git branch -l
-> * (detached from next-20180403)
-> 
-> I'm using
-> 
-> eval ` eldk-switch.sh -r 5.4 armv7a`
-> 
-> for cross-compilation.
+For powerpc64, if a probe is added for a function without specifying
+a line number, the corresponding trap instruction is placed at offset
+0 (for big endian) or 8 (for little endian) from the start address of
+the function. This address is in the function prologue and the trap
+instruction preceeds the instructions to set up the stack frame.
 
-Hmm I'm not seeing build issues with next-20180404, did this somehow
-already get sorted out?
+Therefore, at this point during execution, the return address for the
+function is yet to be written to its caller's stack frame. So, the LR
+value at index 2 of the callchain ips provided by the kernel is still
+valid and must not be skipped.
 
-Regards,
+This can be observed on a powerpc64le system running Fedora 27 as
+shown below.
 
-Tony
+ # perf probe -x /usr/lib64/libc-2.26.so -a inet_pton
+ # perf record -e probe_libc:inet_pton/max-stack=3/ ping -6 -c 1 ::1
+ # perf script
+
+Without this patch, the output is:
+
+ ping 27909 [007] 532219.943481: probe_libc:inet_pton: (7fff99b0af28)
+                   15af28 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+                   1105b4 getaddrinfo (/usr/lib64/libc-2.26.so)
+
+With this patch applied, the output is:
+
+ ping 27909 [007] 532219.943481: probe_libc:inet_pton: (7fff99b0af28)
+                   15af28 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+                   10fa54 gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
+                   1105b4 getaddrinfo (/usr/lib64/libc-2.26.so)
+
+Fixes: a60335ba3298 ("perf tools powerpc: Adjust callchain based on DWARF debug info")
+Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+---
+ tools/perf/arch/powerpc/util/skip-callchain-idx.c | 58 ++++++++++++++++-------
+ 1 file changed, 41 insertions(+), 17 deletions(-)
+
+diff --git a/tools/perf/arch/powerpc/util/skip-callchain-idx.c b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
+index 0c370f81e002..1533d85191fd 100644
+--- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
++++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
+@@ -212,6 +212,37 @@ static int check_return_addr(struct dso *dso, u64 map_start, Dwarf_Addr pc)
+ 	return rc;
+ }
+ 
++/*
++ * Return:
++ *	0 if return address for the program counter @pc is on stack
++ *	1 if return address is in LR and no new stack frame was allocated
++ *	2 if return address is in LR and a new frame was allocated (but not
++ *		yet used)
++ *	-1 in case of errors
++ */
++static int get_return_addr(struct thread *thread, u64 ip)
++{
++	struct addr_location al;
++	struct dso *dso = NULL;
++	int rc = -1;
++
++	thread__find_addr_location(thread, PERF_RECORD_MISC_USER,
++			MAP__FUNCTION, ip, &al);
++
++	if (!al.map || !al.map->dso) {
++		pr_debug("%" PRIx64 " dso is NULL\n", ip);
++		return rc;
++	}
++
++	dso = al.map->dso;
++	rc = check_return_addr(dso, al.map->start, ip);
++
++	pr_debug("[DSO %s, sym %s, ip 0x%" PRIx64 "] rc %d\n",
++				dso->long_name, al.sym->name, ip, rc);
++
++	return rc;
++}
++
+ /*
+  * The callchain saved by the kernel always includes the link register (LR).
+  *
+@@ -237,32 +268,25 @@ static int check_return_addr(struct dso *dso, u64 map_start, Dwarf_Addr pc)
+  */
+ int arch_skip_callchain_idx(struct thread *thread, struct ip_callchain *chain)
+ {
+-	struct addr_location al;
+-	struct dso *dso = NULL;
+ 	int rc;
+-	u64 ip;
+ 	u64 skip_slot = -1;
+ 
+ 	if (chain->nr < 3)
+ 		return skip_slot;
+ 
+-	ip = chain->ips[2];
++	rc = get_return_addr(thread, chain->ips[1]);
+ 
+-	thread__find_addr_location(thread, PERF_RECORD_MISC_USER,
+-			MAP__FUNCTION, ip, &al);
+-
+-	if (al.map)
+-		dso = al.map->dso;
+-
+-	if (!dso) {
+-		pr_debug("%" PRIx64 " dso is NULL\n", ip);
++	if (rc == 1)
++		/* Return address is still in LR and has not been updated
++		 * in caller's stack frame. This is because the probe was
++		 * placed at an offset from the start of the function that
++		 * comes before the prologue code to set up the stack frame.
++		 * So, an attempt to skip an entry based on chain->ips[2],
++		 * i.e. the LR value, should not be made.
++		 */
+ 		return skip_slot;
+-	}
+ 
+-	rc = check_return_addr(dso, al.map->start, ip);
+-
+-	pr_debug("[DSO %s, sym %s, ip 0x%" PRIx64 "] rc %d\n",
+-				dso->long_name, al.sym->name, ip, rc);
++	rc = get_return_addr(thread, chain->ips[2]);
+ 
+ 	if (rc == 0) {
+ 		/*
+-- 
+2.14.3
