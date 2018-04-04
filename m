@@ -1,31 +1,75 @@
-Return-Path: <jforbes@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522805450; cv=none;
-        d=google.com; s=arc-20160816;
-        b=yQkWtTOvCiCp4CXJEp1ctq1Gxh9UpJ+jXzVSxzOHfrzOfhBHuacG1ZmpguttNE8+82
-         XYGmRpK+/69rDmEd3FGaJKOrr710JFtr69BVKodR6I4bNoIjGyimZpi50e3+jNBZlTXm
-         efKs3+XAy9aWoyjtRjyTN+VNGuXCii88RSZThR+7CvDEgmECYaSzxBvtbEITgN/JQhCD
-         PmgGtC5xyE/a0fosE2f2TQ5kmJ1TUfZPv6+mL6sR2IxFb2jBvhsrHIjEFwAPdZbcjMBx
-         46Egu1T8tbBKh+5M1xJ98i4B89sMBvjGwFC5ds9cE5KMhXDR95inm/B8O49alghi+e3u
-         isPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:arc-authentication-results;
-        bh=M308pbioOzyXvLEDs5qW4O38uNlkmphbyaawTz/qTWs=;
-        b=LHGgGacmggV2IktcGk6Eu+NcTrWU3TGQtUVzHVPEJ0OTcMQnsoIxyG7PAWUNYov3M5
-         i5se4OL/oDGDbYWVUQT4vt22bBaqERH0Sii5hbY4IQdxoz/ZKNsw+gX5dAWzFs4raIGu
-         Rumme2DN3KJ6QeKog0e/jQLcaOhXKlMulm55j5tHE9JAMX05nYlUFSeVIvyHKicUTC3l
-         p9i/9uWqksslnnaPy+fa65APlMZQW7HQDhNbOFt4j/7j6Uy45X5HwjQ/hLsTBzmSuwaJ
-         gqGm0LNl6falYH26nn2cx659cKail4nRdwpN3HAz5MiDd3BkrPybMeDgbRyR9qEu1Yzj
-         URJQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jforbes@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jforbes@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jforbes@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jforbes@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AIpwx49u4kH0LxYopCD7OQHbe1fwKUit0stYNrbsu13kF49A4dvBgPhmr86FyZ4pSGicWBCSq7Begy8odOadkxOEB4M=
+Return-Path: <linux-security-module-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2960132-1522807090-2-7346497851808576012
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: linux@kroah.com
+X-Delivered-to: linux@kroah.com
+X-Mail-from: linux-security-module-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522807090; b=hEd2ecNYR/2syVyK1cioNlkBhqSiEubiWbxbMzTpEAJgQhGQO2
+    IHiLU93tyrw8SJKIkXJ/V94pK9rPpy0/B4L4Wv6JwNdzBOnvVjDhi7bK84Kuadej
+    uHCXcWAVVLBrFjExxT0VGvRz5Unf4niOq5iRxm3P/Eq7PFOmbc4Qy+O1cTIEkRe8
+    +VYvs/NHSfAONQALX99EwM8WtZ7LyhiogXu8+c+w826ZyMgCRFOTy46khvuxyoRx
+    /xhKC21wC3Fm7AY3kHUgX4XjtNxE59LZ9sMiNZaF/JOQyS720Jj7FyvO6nTxmke8
+    zT85Pl+McNnXrrNv8O7a9daLToCSdnWUbbcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1522807090; bh=O7spP2c5DvSLV/g1iOimBbwtQ/DzhqVuD0uv+FVVhI
+    s=; b=hy915m9I2CfEmGgSEEOm0JQQ3zaKV02hYkpqel6cwDTadiDhILv+N6YJZG
+    Ttdito3hIQTP9w3JEjc8RpJdZQ91mYr/o/7n+PXXAxD97zZd2GfjyWwoeAWGLOua
+    dGPmwqyu4J4SVgmQ0ybv+JKDnoyU62PvUzcGtxupSL5SOZtic2tt8kHW4LR/ItK1
+    BZNmRRNq2hF6f2ITu3fkC70GNZJf+v917THg+k3g9wvd15nta6sM4VBjT3l0CY5t
+    ir5VJbbYCjnpyQYiVVsr8A/AFNVDH75+beJ63aOpTQd1R9v1XcD0GdOCCx1gIx5d
+    eo5koWWEF45kKQy9MLdBO5024/Qw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=U9NnnwrL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=sqKa7VrC x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=N4C+BVdY;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=U9NnnwrL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=sqKa7VrC x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=N4C+BVdY;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGTkEI66a9xZ4bNxDJWNAtSJPcwKQvNQBGyQmdQw8fAsuuIO+ZkuUwhV9G6az+AJ/Dz/NdLJa8yDXLvPq+zOdlA2gCguu5ummqZ7lUCYvvS1WcF0CjH5
+    x+iXyHCZr9G/7MbMf8gXnVKBuRq5j4loqwP2wtHwmmSDvC4i7Sn82MDxRujPkDIeSvlWi8lKPGGOZG+5zx1efbGbSIWq67kQDpAlHzM5AqsfKgsh1PnJjo8E
+    wN2HB+ek8umzoYMIjdGTRg==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=9qT49oP9OcZM68Mw1QQA:9
+    a=sBXk-BIWODszrEqo:21 a=9irfx8GaDnYMu7FP:21 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752949AbeDDB6H (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 3 Apr 2018 21:58:07 -0400
+Received: from mail-it0-f45.google.com ([209.85.214.45]:36218 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751469AbeDDB6F (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Tue, 3 Apr 2018 21:58:05 -0400
+X-Google-Smtp-Source: AIpwx482W/SvaXFztJiymv5Y+6CQ4qnJDFh58t++je78jBtxKIIWjQA1F6R1PCAuWfC8+urL/Rod7kb3z4tff8SiucU=
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com>
+In-Reply-To: <CAFbkSA0ursG3RGWU19LQiD6u30h5V=Aqj3oVyHQCiX6MLopYUg@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
  <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
  <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
@@ -48,141 +92,78 @@ References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145
  <CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
  <CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
  <CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
- <CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com> <CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com>
-From: Justin Forbes <jforbes@redhat.com>
-Date: Tue, 3 Apr 2018 20:30:49 -0500
-Message-ID: <CAFbkSA0ursG3RGWU19LQiD6u30h5V=Aqj3oVyHQCiX6MLopYUg@mail.gmail.com>
+ <CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com>
+ <CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com> <CAFbkSA0ursG3RGWU19LQiD6u30h5V=Aqj3oVyHQCiX6MLopYUg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 3 Apr 2018 18:58:03 -0700
+X-Google-Sender-Auth: SwEPnjFBhkDS4mBJUdknFg354rI
+Message-ID: <CA+55aFwGmbNCjHpXHhtMWLobVkX=eq6_xEg=42jQ+M-EK4Tq2g@mail.gmail.com>
 Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Garrett <mjg59@google.com>, Andrew Lutomirski <luto@kernel.org>,
-	David Howells <dhowells@redhat.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	James Morris <jmorris@namei.org>, Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-man <linux-man@vger.kernel.org>,
-	joeyli <jlee@suse.com>, LSM List <linux-security-module@vger.kernel.org>,
-	Linux API <linux-api@vger.kernel.org>, Kees Cook <keescook@chromium.org>,
-	linux-efi <linux-efi@vger.kernel.org>
-Content-Type: multipart/alternative; boundary="000000000000e27fd70568fbc536"
+To: Justin Forbes <jforbes@redhat.com>
+Cc: Matthew Garrett <mjg59@google.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morris <jmorris@namei.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596407243846270411?=
-X-GMAIL-MSGID: =?utf-8?q?1596777247357017425?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---000000000000e27fd70568fbc536
-Content-Type: text/plain; charset="UTF-8"
+On Tue, Apr 3, 2018 at 6:30 PM, Justin Forbes <jforbes@redhat.com> wrote:
+>>
+>> If there actually was a good explanation for the tie-in, it should
+>> have been front-and-center and explained as such.
+>>
+> Honestly, yes, the major distros have been shipping this patch set for years
+> now, and every time it comes to upstream, the same damn arguments emerge.
 
-On Tue, Apr 3, 2018 at 7:56 PM, Linus Torvalds <
-torvalds@linux-foundation.org> wrote:
+Well, I think it's because the explanations have been bogus.
 
-> On Tue, Apr 3, 2018 at 5:46 PM, Matthew Garrett <mjg59@google.com> wrote:
-> >
-> > The generic distros have been shipping this policy for the past 5 years.
->
-> .. so apparently it doesn't actually break things? Why not enable it
-> by default then?
->
-> And if "turn off secure boot" really is the accepted - and actuially
-> used - workaround for the breakage, then
->
-> While there is very little breakage in the *years* we have been shipping
-this in distro kernels, the accepted and used workaround has always been
-"turn off secure boot" or sign/import your own keys, depending on the
-problems encountered.
+Just look at this thread. It took closer to a hundred emails (ok, so
+I'm exaggerating, but not _that_ much) until the *real* reason for the
+tie-in was actually exposed.
 
+For the first 50+ emails, the explanation was "oh, only if you do
+secure boot does this make sense".
 
->    WHY THE HELL DIDN'T YOU START OFF BY EXPLAINING THAT IN THE FIRST
-> PLACE WHEN PEOPLE ASKED WHY THE TIE-IN EXISTED?
->
-> Sorry for shouting, but really. We have a thread of just *how* many
-> email messages that asked for the explanation for this? All we got was
-> incomprehensible and illogical crap explanations.
+Which is still pure BULLSHIT. Of _course_ that kind of stuff raises
+peoples hackles and makes people not trust the messenger - he's
+clearly being evasive and there must be something else going on.
 
-If there actually was a good explanation for the tie-in, it should
-> have been front-and-center and explained as such.
->
-> Honestly, yes, the major distros have been shipping this patch set for
-years now, and every time it comes to upstream, the same damn arguments
-emerge.  I do not disagree that there are uses for lockdown outside of
-secure boot, provided you have some other mechanism to verify your chain, I
-believe chrome OS does. But the tie to secure boot is because that is the
-use case that users have been using for years, it was discussed at kernel
-summit quite a while ago, plans went forward there seemed to be agreement,
-and when it comes time for a pull request, people come out of the woodwork
-with an expectation that it solves every problem or it doesn't need to
-exist. What is here is a good starting point. I would expect that if it
-were merged, others would build upon that and use much of the code already
-in place to extend it. It is tied to secure boot because that is what has
-been using this for years as it never seems to get upstream.  I am sure
-that once it does finally land, it can and will be extended to other
-things, but I don't think I would want to spend a lot of time trying to
-leverage another external patch set that has been delayed upstream so many
-times until it actually did land.
-As for the ties to MS that come up every time, and have here as well, there
-is no requirement on the MS signature. You can import your own keys if you
-don't want them involved, I keep a "test key" imported for actually running
-what I build locally.
+So instead of the bullshit explanations, just explain the purely
+_practical_ side.
 
---000000000000e27fd70568fbc536
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Because I find it a *lot* more convincing to hear:
 
-<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><div class=3D"gmail_quo=
-te">On Tue, Apr 3, 2018 at 7:56 PM, Linus Torvalds <span dir=3D"ltr">&lt;<a=
- href=3D"mailto:torvalds@linux-foundation.org" target=3D"_blank">torvalds@l=
-inux-foundation.org</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quo=
-te" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"=
-><span class=3D"">On Tue, Apr 3, 2018 at 5:46 PM, Matthew Garrett &lt;<a hr=
-ef=3D"mailto:mjg59@google.com">mjg59@google.com</a>&gt; wrote:<br>
-&gt;<br>
-&gt; The generic distros have been shipping this policy for the past 5 year=
-s.<br>
-<br>
-</span>.. so apparently it doesn&#39;t actually break things? Why not enabl=
-e it<br>
-by default then?<br>
-<br>
-And if &quot;turn off secure boot&quot; really is the accepted - and actuia=
-lly<br>
-used - workaround for the breakage, then<br>
-<br></blockquote><div>While there is very little breakage in the *years* we=
- have been shipping this in distro kernels, the accepted and used workaroun=
-d has always been &quot;turn off secure boot&quot; or sign/import your own =
-keys, depending on the problems encountered.=C2=A0</div><div>=C2=A0</div><b=
-lockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px =
-#ccc solid;padding-left:1ex">
-=C2=A0 =C2=A0WHY THE HELL DIDN&#39;T YOU START OFF BY EXPLAINING THAT IN TH=
-E FIRST<br>
-PLACE WHEN PEOPLE ASKED WHY THE TIE-IN EXISTED?<br>
-<br>
-Sorry for shouting, but really. We have a thread of just *how* many<br>
-email messages that asked for the explanation for this? All we got was<br>
-incomprehensible and illogical crap explanations.</blockquote><blockquote c=
-lass=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;=
-padding-left:1ex">
-If there actually was a good explanation for the tie-in, it should<br>
-have been front-and-center and explained as such.<br><span class=3D"HOEnZb"=
-><font color=3D"#888888"><br></font></span></blockquote><div>Honestly, yes,=
- the major distros have been shipping this patch set for years now, and eve=
-ry time it comes to upstream, the same damn arguments emerge.=C2=A0 I do no=
-t disagree that there are uses for lockdown outside of secure boot, provide=
-d you have some other mechanism to verify your chain, I believe chrome OS d=
-oes. But the tie to secure boot is because that is the use case that users =
-have been using for years, it was discussed at kernel summit quite a while =
-ago, plans went forward there seemed to be agreement, and when it comes tim=
-e for a pull request, people come out of the woodwork with an expectation t=
-hat it solves every problem or it doesn&#39;t need to exist. What is here i=
-s a good starting point. I would expect that if it were merged, others woul=
-d build upon that and use much of the code already in place to extend it. I=
-t is tied to secure boot because that is what has been using this for years=
- as it never seems to get upstream.=C2=A0 I am sure that once it does final=
-ly land, it can and will be extended to other things, but I don&#39;t think=
- I would want to spend a lot of time trying to leverage another external pa=
-tch set that has been delayed upstream so many times until it actually did =
-land.</div><div>As for the ties to MS that come up every time, and have her=
-e as well, there is no requirement on the MS signature. You can import your=
- own keys if you don&#39;t want them involved, I keep a &quot;test key&quot=
-; imported for actually running what I build locally.</div><div>=C2=A0</div=
-></div></div></div>
+   "We'd like to just enable it all the time, but it's known to break
+    some unusual hardware cases that we can't fix in software, and we
+    wanted *some* way to disable it that requires explicit and verified
+    user intervention to do that, and disabling secure boot is the
+    easiest hack we could come up with".
 
---000000000000e27fd70568fbc536--
+See? No bullshit. Just straight talk about the *actual* reason why
+people decided on this particular tie-in, and admitting that it's a
+hack, but also clearly stating the reason for the hack.
+
+Now, I still don't necessarily agree that it's the best possible
+option, but when stated in those terms I at least understand why that
+option was picked as a reasonable one, and it changes the discussion a
+lot, and (at least for me) makes it much more palatable.
+
+Because as long as the explanation is just some "you must use secure
+boot or you've already lost and further security is pointless"
+hocus-pocus magical thinking, I immediately go "no, that sounds
+completely bogus, and it makes testing and coverage much worse, we've
+done other things quite like that without this secure boot tie-in".
+
+             Linus
