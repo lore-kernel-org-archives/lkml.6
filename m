@@ -1,287 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751593AbeDDKVP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:21:15 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36190 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751556AbeDDKVN (ORCPT
+        id S1751339AbeDDKYd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:24:33 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:54457 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeDDKYc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:21:13 -0400
-X-Google-Smtp-Source: AIpwx49WTg4v8mDlH0/UzOP/mfV/0jA4+Xx4sdRWzj0sh/oBYKxJwTFIb5j31qHzifAwASA/O0Te3w==
-Date: Wed, 4 Apr 2018 12:21:08 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Hellstrom <thomas@shipmail.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
-Message-ID: <20180404102108.GF3881@phenom.ffwll.local>
-Mail-Followup-To: Rob Clark <robdclark@gmail.com>,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org,
-        Thomas Hellstrom <thomas@shipmail.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-References: <20180403224225.26776-1-robdclark@gmail.com>
- <20180404100300.GE3881@phenom.ffwll.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404100300.GE3881@phenom.ffwll.local>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 4 Apr 2018 06:24:32 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Joerg Roedel <joro@8bytes.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Robin Murphy <robin.murphy@arm.com>, Tomasz Figa <tfiga@chromium.org>,
+        Simon Xue <xxm@rock-chips.com>, Marc Zyngier <marc.zyngier@arm.com>,
+        iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iommu: rockchip: fix building without CONFIG_OF
+Date: Wed,  4 Apr 2018 12:23:53 +0200
+Message-Id: <20180404102401.3634085-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:7CmUPavO3w1gNayRTTinbvsD5Hwunayj36eLBmr1zHhRH1ejn4w
+ obFJth4IhGTL7uSaBD8/qipw+71XqPckzNnJdpNvqi15Zr0Dg+xXAnh/7GzOvAvkaryWnho
+ FCWG/f6FReptov5LiQVDo9bW3+KDhQZMu8KKdrYfTx17dhRQ53rPoU+XpZ/54b6Oou9TVLS
+ k8yDjPTxB4W1nsStolNdQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ZWoxCgApfZk=:aRqQG8UVibrgDW9/KcBJUZ
+ i4ROiA1cWmNvCgui6/RDAtsi1ULIBOY5Y8ueW8qgGmDw8UueSE+MgAxfWgZAS42LJtSQAwVJT
+ SwqnL1GBYlh6XyCNdFC38wKQxXoBaflhDSewJgYl9bv+Jzew0xase0aK3uzHLrBOwYdOP9R00
+ liVNcIUVRPvNWd5uTrBAzfG2gxqANqG5TTkqRmi0dg263260ytuntVFfEJGK7FcRuCxdNsizu
+ hBVZBY3KE+Iy+690qR1bgvIROTcV+3B95Ja76017fFBye8M3474fBFzT5uvVmCwcjQWw/BWSf
+ DEpBVKdGZS7ChXbfDKXPuEsbLh+MZyT1r7OkwrCPgMpRp4tYSupXd1dYQgxqSw8aoJN/hNJTX
+ Dx0O+FeyGoswyt5wJ9zU96tiFJrB/b23ncQdE/o5yZt9/wG2ynACov5meyPU2dFf6JDHCXvmG
+ M9Pduu0LraX1GTSXRxwcRlx1P6uPURlQY6ddOMzSojofNrkJe4BC4ZhhZ3Xp42NxeShovJlgl
+ y/jH5YzQfeEmFB5wfHtpmO4shjZucvNOF/zNYJf231W9XGrTrdfrGwEb4WJ4cZjp16JheHwRX
+ tfgiSx14nz9+WZxT4CovQNEruhtGL5BzzpWkx01QLgyXeb+QwUwpjWorc47700+S/CWYG4nuF
+ fvcYA3GxJsa5Ee89VZmuqIrhk7twsRRLJuFy2RNO/5koIXWWAvNTwiN0Chq/yNiWCrsxT/kaw
+ AkPrcxiuoFLp68xPDiEhOkKT+Bi+NB1q2r+EXA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 12:03:00PM +0200, Daniel Vetter wrote:
-> On Tue, Apr 03, 2018 at 06:42:23PM -0400, Rob Clark wrote:
-> > Add an atomic helper to implement dirtyfb support.  This is needed to
-> > support DSI command-mode panels with x11 userspace (ie. when we can't
-> > rely on pageflips to trigger a flush to the panel).
-> > 
-> > To signal to the driver that the async atomic update needs to
-> > synchronize with fences, even though the fb didn't change, the
-> > drm_atomic_state::dirty flag is added.
-> > 
-> > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> > ---
-> > Background: there are a number of different folks working on getting
-> > upstream kernel working on various different phones/tablets with qcom
-> > SoC's.. many of them have command mode panels, so we kind of need a
-> > way to support the legacy dirtyfb ioctl for x11 support.
-> > 
-> > I know there is work on a proprer non-legacy atomic property for
-> > userspace to communicate dirty-rect(s) to the kernel, so this can
-> > be improved from triggering a full-frame flush once that is in
-> > place.  But we kinda needa a stop-gap solution.
-> > 
-> > I had considered an in-driver solution for this, but things get a
-> > bit tricky if userspace ands up combining dirtyfb ioctls with page-
-> > flips, because we need to synchronize setting various CTL.FLUSH bits
-> > with setting the CTL.START bit.  (ie. really all we need to do for
-> > cmd mode panels is bang CTL.START, but is this ends up racing with
-> > pageflips setting FLUSH bits, then bad things.)  The easiest soln
-> > is to wrap this up as an atomic commit and rely on the worker to
-> > serialize things.  Hence adding an atomic dirtyfb helper.
-> > 
-> > I guess at least the helper, with some small addition to translate
-> > and pass-thru the dirty rect(s) is useful to the final atomic dirty-
-> > rect property solution.  Depending on how far off that is, a stop-
-> > gap solution could be useful.
-> > 
-> >  drivers/gpu/drm/drm_atomic_helper.c | 66 +++++++++++++++++++++++++++++++++++++
-> >  drivers/gpu/drm/msm/msm_atomic.c    |  5 ++-
-> >  drivers/gpu/drm/msm/msm_fb.c        |  1 +
-> >  include/drm/drm_atomic_helper.h     |  4 +++
-> >  include/drm/drm_plane.h             |  9 +++++
-> >  5 files changed, 84 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> > index c35654591c12..a578dc681b27 100644
-> > --- a/drivers/gpu/drm/drm_atomic_helper.c
-> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> > @@ -3504,6 +3504,7 @@ void __drm_atomic_helper_plane_duplicate_state(struct drm_plane *plane,
-> >  	if (state->fb)
-> >  		drm_framebuffer_get(state->fb);
-> >  
-> > +	state->dirty = false;
-> >  	state->fence = NULL;
-> >  	state->commit = NULL;
-> >  }
-> > @@ -3847,6 +3848,71 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
-> >  }
-> >  EXPORT_SYMBOL(drm_atomic_helper_legacy_gamma_set);
-> >  
-> > +/**
-> > + * drm_atomic_helper_dirtyfb - helper for dirtyfb
-> > + *
-> > + * A helper to implement drm_framebuffer_funcs::dirty
-> > + */
-> > +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
-> > +			      struct drm_file *file_priv, unsigned flags,
-> > +			      unsigned color, struct drm_clip_rect *clips,
-> > +			      unsigned num_clips)
-> > +{
-> > +	struct drm_modeset_acquire_ctx ctx;
-> > +	struct drm_atomic_state *state;
-> > +	struct drm_plane *plane;
-> > +	int ret = 0;
-> > +
-> > +	/*
-> > +	 * When called from ioctl, we are interruptable, but not when
-> > +	 * called internally (ie. defio worker)
-> > +	 */
-> > +	drm_modeset_acquire_init(&ctx,
-> > +		file_priv ? DRM_MODESET_ACQUIRE_INTERRUPTIBLE : 0);
-> > +
-> > +	state = drm_atomic_state_alloc(fb->dev);
-> > +	if (!state) {
-> > +		ret = -ENOMEM;
-> > +		goto out;
-> > +	}
-> > +	state->acquire_ctx = &ctx;
-> > +
-> > +retry:
-> > +	drm_for_each_plane(plane, fb->dev) {
-> > +		struct drm_plane_state *plane_state;
-> > +
-> > +		if (plane->state->fb != fb)
-> > +			continue;
-> > +
-> > +		plane_state = drm_atomic_get_plane_state(state, plane);
-> > +		if (IS_ERR(plane_state)) {
-> > +			ret = PTR_ERR(plane_state);
-> > +			goto out;
-> > +		}
-> > +
-> > +		plane_state->dirty = true;
-> > +	}
-> > +
-> > +	ret = drm_atomic_nonblocking_commit(state);
-> > +
-> > +out:
-> > +	if (ret == -EDEADLK) {
-> > +		drm_atomic_state_clear(state);
-> > +		ret = drm_modeset_backoff(&ctx);
-> > +		if (!ret)
-> > +			goto retry;
-> > +	}
-> > +
-> > +	drm_atomic_state_put(state);
-> > +
-> > +	drm_modeset_drop_locks(&ctx);
-> > +	drm_modeset_acquire_fini(&ctx);
-> > +
-> > +	return ret;
-> > +
-> > +}
-> > +EXPORT_SYMBOL(drm_atomic_helper_dirtyfb);
-> > +
-> >  /**
-> >   * __drm_atomic_helper_private_duplicate_state - copy atomic private state
-> >   * @obj: CRTC object
-> > diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
-> > index bf5f8c39f34d..bb55a048e98b 100644
-> > --- a/drivers/gpu/drm/msm/msm_atomic.c
-> > +++ b/drivers/gpu/drm/msm/msm_atomic.c
-> > @@ -201,7 +201,10 @@ int msm_atomic_commit(struct drm_device *dev,
-> >  	 * Figure out what fence to wait for:
-> >  	 */
-> >  	for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i) {
-> > -		if ((new_plane_state->fb != old_plane_state->fb) && new_plane_state->fb) {
-> > +		bool sync_fb = new_plane_state->fb &&
-> > +			((new_plane_state->fb != old_plane_state->fb) ||
-> > +			 new_plane_state->dirty);
-> 
-> Why do you have this optimization even here? Imo flipping to the same fb
-> should result in the fb getting fully uploaded, whether you're doing a
-> legacy page_flip, and atomic one or just a plane update.
-> 
-> Iirc some userspace does use that as essentially a full-plane frontbuffer
-> rendering flush already. IOW I don't think we need your
-> plane_state->dirty, it's implied to always be true - why would userspace
-> do a flip otherwise?
-> 
-> The helper itself to map dirtyfb to a nonblocking atomic commit looks
-> reasonable, but misses a bunch of the trickery discussed with Noralf and
-> others I think.
+We get a build error when compiling the iommu driver without CONFIG_OF:
 
-Ok, I've done some history digging:
+drivers/iommu/rockchip-iommu.c: In function 'rk_iommu_of_xlate':
+drivers/iommu/rockchip-iommu.c:1101:2: error: implicit declaration of function 'of_dev_put'; did you mean 'of_node_put'? [-Werror=implicit-function-declaration]
 
-- i915 and nouveau unconditionally wait for fences, even for same-fb
-  flips.
-- no idea what amdgpu and vmwgfx are doing, they're not using
-  plane_state->fence for implicit fences.
-- most arm-soc drivers do have this "optimization" in their code, and it
-  even managed to get into the new drm_gem_fb_prepare_fb helper (which I
-  reviewed, or well claimed to have ... oops). Afaict it goes back to the
-  original msm atomic code, and was then dutifully copypasted all over the
-  place.
+This replaces the of_dev_put() with the equivalent platform_device_put(),
+and adds an error check for of_find_device_by_node() returning NULL,
+which seems to be appropriate here given that we pass the device into
+platform_get_drvdata() next, and that of_find_device_by_node() might
+theoretically return a NULL pointer.
 
-If folks are ok I'll do a patch series to align drivers with i915/nouveau.
-Well, any driver using reservation_object_get_excl_rcu +
-drm_atomic_set_fence_for_plane combo, since amdgpu and vmwgfx don't I have
-no idea what they're doing or whether they might have the same bug.
+Fixes: 5fd577c3eac3 ("iommu/rockchip: Use OF_IOMMU to attach devices automatically")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+This warning appears to only have been introduced in linux-next after
+the merge window opened.
+---
+ drivers/iommu/rockchip-iommu.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
->From looking at at least the various prepare_fb callbacks I don't see any
-other drivers doing funny stuff around implicit fences.
--Daniel
-
-> > +		if (sync_fb) {
-> >  			struct drm_gem_object *obj = msm_framebuffer_bo(new_plane_state->fb, 0);
-> >  			struct msm_gem_object *msm_obj = to_msm_bo(obj);
-> >  			struct dma_fence *fence = reservation_object_get_excl_rcu(msm_obj->resv);
-> > diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
-> > index 0e0c87252ab0..a5d882a34a33 100644
-> > --- a/drivers/gpu/drm/msm/msm_fb.c
-> > +++ b/drivers/gpu/drm/msm/msm_fb.c
-> > @@ -62,6 +62,7 @@ static void msm_framebuffer_destroy(struct drm_framebuffer *fb)
-> >  static const struct drm_framebuffer_funcs msm_framebuffer_funcs = {
-> >  	.create_handle = msm_framebuffer_create_handle,
-> >  	.destroy = msm_framebuffer_destroy,
-> > +	.dirty = drm_atomic_helper_dirtyfb,
-> >  };
-> >  
-> >  #ifdef CONFIG_DEBUG_FS
-> > diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
-> > index 26aaba58d6ce..9b7a95c2643d 100644
-> > --- a/include/drm/drm_atomic_helper.h
-> > +++ b/include/drm/drm_atomic_helper.h
-> > @@ -183,6 +183,10 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
-> >  				       u16 *red, u16 *green, u16 *blue,
-> >  				       uint32_t size,
-> >  				       struct drm_modeset_acquire_ctx *ctx);
-> > +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
-> > +			      struct drm_file *file_priv, unsigned flags,
-> > +			      unsigned color, struct drm_clip_rect *clips,
-> > +			      unsigned num_clips);
-> >  void __drm_atomic_helper_private_obj_duplicate_state(struct drm_private_obj *obj,
-> >  						     struct drm_private_state *state);
-> >  
-> > diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-> > index f7bf4a48b1c3..296fa22bda7a 100644
-> > --- a/include/drm/drm_plane.h
-> > +++ b/include/drm/drm_plane.h
-> > @@ -76,6 +76,15 @@ struct drm_plane_state {
-> >  	 */
-> >  	struct drm_framebuffer *fb;
-> >  
-> > +	/**
-> > +	 * @dirty:
-> > +	 *
-> > +	 * Flag that indicates the fb contents have changed even though the
-> > +	 * fb has not.  This is mostly a stop-gap solution until we have
-> > +	 * atomic dirty-rect(s) property.
-> > +	 */
-> > +	bool dirty;
-> > +
-> >  	/**
-> >  	 * @fence:
-> >  	 *
-> > -- 
-> > 2.14.3
-> > 
-> 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
-
+diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+index 5fc8656c60f9..fe9c9cc1a9d4 100644
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -1094,11 +1094,15 @@ static int rk_iommu_of_xlate(struct device *dev,
+ 		return -ENOMEM;
+ 
+ 	iommu_dev = of_find_device_by_node(args->np);
++	if (!iommu_dev) {
++		kfree(data);
++		return -ENODEV;
++	}
+ 
+ 	data->iommu = platform_get_drvdata(iommu_dev);
+ 	dev->archdata.iommu = data;
+ 
+-	of_dev_put(iommu_dev);
++	platform_device_put(iommu_dev);
+ 
+ 	return 0;
+ }
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.9.0
