@@ -1,32 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751887AbeDDMpT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:45:19 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:53587 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751534AbeDDMpQ (ORCPT
+        id S1751979AbeDDMpY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:45:24 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:33626 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751534AbeDDMpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:45:16 -0400
-X-Google-Smtp-Source: AIpwx49/rov984gWEtfTBUvTuxf3pejbZckcE0HeB58NtR6/jI9iJnrGg3nuQOlO4az/lrNSklYk2Q==
-Subject: Re: [PATCH 3/4] nvmet-fc: Don't use the count returned by the
- dma_map_sg call
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Cc: Christoph Hellwig <hch@lst.de>, James Smart <james.smart@broadcom.com>
-References: <20180329160721.4691-1-logang@deltatee.com>
- <20180329160721.4691-4-logang@deltatee.com>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <301f1426-4a49-5ffa-447b-690ba7ac2116@grimberg.me>
-Date: Wed, 4 Apr 2018 15:45:13 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 4 Apr 2018 08:45:20 -0400
+Date: Wed, 4 Apr 2018 14:45:18 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Ming Lei <ming.lei@redhat.com>
+cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+In-Reply-To: <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1804041317550.2056@nanos.tec.linutronix.de>
+References: <20180308105358.1506-1-ming.lei@redhat.com> <20180308105358.1506-5-ming.lei@redhat.com> <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de> <20180403160001.GA25255@ming.t460p>
+ <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180329160721.4691-4-logang@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+On Wed, 4 Apr 2018, Thomas Gleixner wrote:
+> I'm aware how that hw-queue stuff works. But that only works if the
+> spreading algorithm makes the interrupts affine to offline/not-present CPUs
+> when the block device is initialized.
+> 
+> In the example above:
+> 
+> > > > 	irq 39, cpu list 0,4
+> > > > 	irq 40, cpu list 1,6
+> > > > 	irq 41, cpu list 2,5
+> > > > 	irq 42, cpu list 3,7
+> 
+> and assumed that at driver init time only CPU 0-3 are online then the
+> hotplug of CPU 4-7 will not result in any interrupt delivered to CPU 4-7.
+> 
+> So the extra assignment to CPU 4-7 in the affinity mask has no effect
+> whatsoever and even if the spreading result is 'perfect' it just looks
+> perfect as it is not making any difference versus the original result:
+> 
+> > > >   irq 39, cpu list 0
+> > > >   irq 40, cpu list 1
+> > > >   irq 41, cpu list 2
+> > > >   irq 42, cpu list 3
+
+And looking deeper into the changes, I think that the first spreading step
+has to use cpu_present_mask and not cpu_online_mask.
+
+Assume the following scenario:
+
+Machine with 8 present CPUs is booted, the 4 last CPUs are
+unplugged. Device with 4 queues is initialized.
+
+The resulting spread is going to be exactly your example:
+
+ 	irq 39, cpu list 0,4
+ 	irq 40, cpu list 1,6
+ 	irq 41, cpu list 2,5
+ 	irq 42, cpu list 3,7
+
+Now the 4 offline CPUs are plugged in again. These CPUs won't ever get an
+interrupt as all interrupts stay on CPU 0-3 unless one of these CPUs is
+unplugged. Using cpu_present_mask the spread would be:
+
+ 	irq 39, cpu list 0,1
+ 	irq 40, cpu list 2,3
+ 	irq 41, cpu list 4,5
+ 	irq 42, cpu list 6,7
+
+while on a machine where CPU 4-7 are NOT present, but advertised as
+possible the spread would be:
+
+ 	irq 39, cpu list 0,4
+ 	irq 40, cpu list 1,6
+ 	irq 41, cpu list 2,5
+ 	irq 42, cpu list 3,7
+
+Hmm?
+
+Thanks,
+
+	tglx
