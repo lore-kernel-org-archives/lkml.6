@@ -1,148 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751418AbeDDOq5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:46:57 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:48374 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeDDOqz (ORCPT
+        id S1751535AbeDDOrF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:47:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33978 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751251AbeDDOrD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:46:55 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Alban Crequy <alban.crequy@gmail.com>
-Cc: Alban Crequy <alban@kinvolk.io>, Dongsu Park <dongsu@kinvolk.io>,
-        Iago Lopez Galeiras <iago@kinvolk.io>,
-        Stephen J Day <stephen.day@docker.com>,
-        Michael Crosby <crosbymichael@gmail.com>,
-        Jess Frazelle <acidburn@microsoft.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, Daniel J Walsh <dwalsh@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, containers@lists.linux-foundation.org
-References: <20180404115311.725-1-alban@kinvolk.io>
-Date: Wed, 04 Apr 2018 09:45:43 -0500
-In-Reply-To: <20180404115311.725-1-alban@kinvolk.io> (Alban Crequy's message
-        of "Wed, 4 Apr 2018 13:53:11 +0200")
-Message-ID: <87tvsrjai0.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 4 Apr 2018 10:47:03 -0400
+Date: Wed, 4 Apr 2018 15:46:22 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>,
+        Colin King <colin.king@canonical.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH] ASoC: atmel_ssc_dai: fix spelling mistake:
+ "Stoping" -> "Stopping"
+Message-ID: <20180404144622.GE7691@sirena.org.uk>
+References: <20180330154420.6903-1-colin.king@canonical.com>
+ <20180403134540.GA29017@lenoch>
+ <20180404102425.cwj7vzvrvi2obcoi@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1f3jgZ-0000v5-FX;;;mid=<87tvsrjai0.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+Sc/hgLAaw7gzA8cG8aXFJ47TLRXVX3DA=
-X-SA-Exim-Connect-IP: 67.3.145.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Alban Crequy <alban.crequy@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 788 ms - load_scoreonly_sql: 0.08 (0.0%),
-        signal_user_changed: 4.2 (0.5%), b_tie_ro: 2.7 (0.3%), parse: 4.3 (0.5%),
-        extract_message_metadata: 8 (1.0%), get_uri_detail_list: 4.2 (0.5%),
-        tests_pri_-1000: 7 (0.9%), tests_pri_-950: 1.80 (0.2%), tests_pri_-900: 1.43
-        (0.2%), tests_pri_-400: 36 (4.6%), check_bayes: 34 (4.4%), b_tokenize: 14
-        (1.8%), b_tok_get_all: 10 (1.2%), b_comp_prob: 3.7 (0.5%), b_tok_touch_all:
-        3.9 (0.5%), b_finish: 0.78 (0.1%), tests_pri_0: 706 (89.6%),
-        check_dkim_signature: 0.68 (0.1%), check_dkim_adsp: 6 (0.8%), tests_pri_500:
-        4.8 (0.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] [RFC][WIP] namespace.c: Allow some unprivileged proc mounts when not fully visible
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ILuaRSyQpoVaJ1HG"
+Content-Disposition: inline
+In-Reply-To: <20180404102425.cwj7vzvrvi2obcoi@mwanda>
+X-Cookie: An idle mind is worth two in the bush.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alban Crequy <alban.crequy@gmail.com> writes:
 
-> Since Linux v4.2 with commit 1b852bceb0d1 ("mnt: Refactor the logic for
-> mounting sysfs and proc in a user namespace"), new mounts of proc or
-> sysfs in non init userns are only allowed when there is at least one
-> fully-visible proc or sysfs mount.
->
-> This is to enforce that proc/sysfs files masked by a mount are still
-> masked in a new mount in a unprivileged userns. The locked mount logic
-> for bind mounts (has_locked_children()) was not enough in the case of
-> proc/sysfs new mounts because some files in proc (/proc/kcore) exist as
-> a singleton rather than being owned by a specific proc mount.
->
-> Unfortunately, this blocks me from using userns from within a Docker
-> container because Docker containers mask entries such as /proc/kcore. My
-> use case is to build container images with arbitrary commands (such as
-> using "RUN" commands in Dockerfiles) without privileges and from within
-> a Docker container. Those arbitrary commands could be shell scripts that
-> require /proc.
+--ILuaRSyQpoVaJ1HG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This is an understandable problem.  /proc/kcore is a file that policy
-has a very reasonable right to make inaccessible.  Allowing unprivileged
-users to bypass the policy setup by root is not ok, and is the whole
-point of the restrictions.
+On Wed, Apr 04, 2018 at 01:24:26PM +0300, Dan Carpenter wrote:
 
+> Trivial patches should just be trivial instead of evolving into a thread
+> that lasts for days.
 
-I need to hear why you can't fix Docker.  Why your subcommand needs to
-mount proc in the first place.  Neither have been mentioned.  So far
-this looks like ``my sysadmin told me no, can I have a kernel patch to
-get around that''.  Not something I support at all.
+Indeed, and it's usually easier to just send a further trivial patch
+rather than just talk about it.
 
+> Why is "buff += 8;" indented too far?  And why does every line end in a
+> space character?  And I think about it for 10 minutes and then delete my
+> patch because it's too much hassle to deal with for something small.
 
+The other option is to just send it and not worry too much about it
+getting applied or not.
 
-Before we get a kernel change for something like this there need to be
-clear evidence this raises to the point of something that is really
-going to be used and will have multiple users, and the proposal will
-be simple and maintainble.
+--ILuaRSyQpoVaJ1HG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Hiding files in /proc simply because they were mounted over in the
-parent proc does not qualify as simple or maintainble by any means.
-Way too much mixing of the layers.  Needing to read from the parent
-proc to find which files were already hidden makes this doubly complex.
+-----BEGIN PGP SIGNATURE-----
 
-Files like /proc/kcore can not be hidden always and automatically
-because their attributes can change so they may reasonably be made
-available to users who are not the global root.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrE5T0ACgkQJNaLcl1U
+h9B76wf/aaCZ6Rv8dYbsjZdyld31M/xsNOwpdFiEgAF2iOsClaidV7P1z7rFYUJx
+iPeJbZ9x03hp2DU3fpn3ReDLpA8pZoqrhgZNebMOs+ye1guK6Gp/PiKbyusvZ9E+
+81c8S8U6e0UjXP8ZlAD5PYTyJcOL7REXwHeUdbUF8nvGmhEF9nwqumCsqUp8Jb5M
+g6rVjbdH4ab2P4zrWjAkjfKGLbbPaIHPMjz9BlTghpSqAg4FKCSjounsT0aulvR2
+/qwQrzfzuHQ3SabW9AuugF6DR2b8V2cdM/d+E58OGf9twS77rgc4uUez0paCij/i
+3foKesQaDPJMMpSzPbed+KPM/Fg7rg==
+=Yp6y
+-----END PGP SIGNATURE-----
 
-The only option I have seen proposed that might qualify as something
-general purpose and simple is a new filesystem that is just the process
-directories of proc.  As there would in essence be no files that would
-need restrictions it would be safe to allow anyone to mount without
-restriction.
-
-> The following commands show my problem:
->
-> $ sudo docker run -ti --rm --cap-add=SYS_ADMIN busybox sh -c 'unshare -U -r -p -m -f mount -t proc proc /home && echo ok'
-> mount: permission denied (are you root?)
->
-> $ sudo docker run -ti --rm --cap-add=SYS_ADMIN busybox sh -c 'mkdir -p /unmasked-proc && mount -t proc proc /unmasked-proc && unshare -U -r -p -m -f mount -t proc proc /home && echo ok'
-> ok
-
-Actually this does not show your problem because it does not reveal why
-you need to mount proc.
-
-That is a ``Doctor it hurts when I do this'' example where the Doctor
-will reasonably tell you ``Don't do that then''.
-
-
-> For my use case, I will need to support at least the following entries:
->
-> $ sudo docker run -ti --rm busybox sh -c 'mount|grep /proc/'
-> proc on /proc/asound type proc (ro,nosuid,nodev,noexec,relatime)
-> proc on /proc/bus type proc (ro,nosuid,nodev,noexec,relatime)
-> proc on /proc/fs type proc (ro,nosuid,nodev,noexec,relatime)
-> proc on /proc/irq type proc (ro,nosuid,nodev,noexec,relatime)
-> proc on /proc/sys type proc (ro,nosuid,nodev,noexec,relatime)
-> proc on /proc/sysrq-trigger type proc (ro,nosuid,nodev,noexec,relatime)
-> tmpfs on /proc/kcore type tmpfs (rw,context="...",nosuid,mode=755)
-> tmpfs on /proc/latency_stats type tmpfs (rw,context="...",nosuid,mode=755)
-> tmpfs on /proc/timer_list type tmpfs (rw,context="...",nosuid,mode=755)
-> tmpfs on /proc/sched_debug type tmpfs (rw,context="...",nosuid,mode=755)
-> tmpfs on /proc/scsi type tmpfs (ro,seclabel,relatime)
-
-It looks like a cruft free cousin of proc that is just processes would
-be applicable to your usecase.
-
-Eric
+--ILuaRSyQpoVaJ1HG--
