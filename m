@@ -1,159 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751279AbeDDHpS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 03:45:18 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38904 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750711AbeDDHpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 03:45:16 -0400
-Date: Wed, 4 Apr 2018 09:45:15 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 08/13] ARM: sunxi: Add initialization of CNTVOFF
-Message-ID: <20180404074515.r6nbkpcyy6vfelbr@flea>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
- <20180403061836.3926-9-mylene.josserand@bootlin.com>
- <20180403091218.t6xuq6csjp4uyy5u@flea>
- <20180403220628.19c9acaf@dell-desktop.home>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="oka76lsnw6ugovnn"
-Content-Disposition: inline
-In-Reply-To: <20180403220628.19c9acaf@dell-desktop.home>
-User-Agent: NeoMutt/20180323
+        id S1751167AbeDDHrG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 03:47:06 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51050 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750772AbeDDHrF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 03:47:05 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180404074702euoutp012f973f62c5b8c7495b8365434c728a30~iLASmr7sq0960709607euoutp01R
+X-AuditID: cbfec7f5-b5fff700000028a9-dc-5ac482f428f8
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+From: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To: Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-kernel@vger.kernel.org,
+        Karol Lewandowski <k.lewandowsk@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH] ARM: decompressor: restore r1 and r2 just before jumping to
+ the kernel
+Date: Wed, 04 Apr 2018 09:46:58 +0200
+Message-id: <20180404074658.28288-1-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.11.0
+Organization: Samsung R&D Institute Poland
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsWy7djP87pfmo5EGXzpNLPYOGM9q0Xjp7nM
+        FjcPrWC02PT4GqvF5V1z2CwOTd3LaLH2yF12B3aPy9cuMntsXlLv0bdlFaPH501yASxRXDYp
+        qTmZZalF+nYJXBkdVy8zFzznqDjXuZS9gfEHWxcjJ4eEgInE9xVXGLsYuTiEBFYwSpyfPJEJ
+        wvnMKPF16SlmmKrLpy+yQiSWMUpsbFsL1s4rICjxY/I9li5GDg5mAXmJI5eyQcLMApoSW3ev
+        Z4eo/8IoMfPEGVaQBJuAo0T/0hNgtohAgMTpYz/AhjKDFO14/w5sqLBApMTSj4/BilgEVCVO
+        3ZkBtcxaYtqFZhaIi+QldrVdBKvhF9CSWNN0nQVkkITAEjaJg3MfskMUuUic/bgN6gVhiVfH
+        t0DFZSQ6Ow4yQdjlEu/m7IeKNzBKfP6lB2FbS/xZNZEN4h0+iUnbpjODfCkhwCvR0SYEUeIB
+        ZO5ihLAdJa5+fAx2m5BArMSkRxNYJzDKzkIKo1mIMJqFFEYLGJlXMYqnlhbnpqcWG+ellusV
+        J+YWl+al6yXn525iBCaG0/+Of93BuO9P0iFGAQ5GJR7egAWHo4RYE8uKK3MPMUpwMCuJ8O5Q
+        OhIlxJuSWFmVWpQfX1Sak1p8iFGag0VJnDdOoy5KSCA9sSQ1OzW1ILUIJsvEwSnVwOjXxiEU
+        cFTD+L7gYwcVtpWLPeoOHteYX6Vmpeb1oPTP9Z/GcTHq353d+HZu7bn75sy/5+IvsisunSzv
+        OtiZkOZbL1I8rWZC0ZfcPFU7Pgk1Pf5HTM9rzHoDPi0x3SsQ0S4pNcF1wsFdesERqxwLcxPW
+        5n1iZzN3NchadPVcz3ZFBVX5C6tvKrEUZyQaajEXFScCADi7RggIAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsVy+t/xy7pfmo5EGTzeJ2SxccZ6VovGT3OZ
+        LW4eWsFosenxNVaLy7vmsFkcmrqX0WLtkbvsDuwel69dZPbYvKTeo2/LKkaPz5vkAliiuGxS
+        UnMyy1KL9O0SuDI6rl5mLnjOUXGucyl7A+MPti5GTg4JAROJy6cvsoLYQgJLGCUm3KsHsXkF
+        BCV+TL7H0sXIwcEsIC9x5FI2SJhZQF1i0rxFzF2MXEDl3xglVnzdwwiSYBNwlOhfegJsjoiA
+        n8TdPweYIBq+MEp8XukHYgsLREos/fgYrIZFQFXi1J0ZbBC7rCWmXWhmgbhHXmJXG8Q9/AJa
+        EmuarrNMYOSbheSkWQgnzUJy0gJG5lWMIqmlxbnpucWGesWJucWleel6yfm5mxiBIbrt2M/N
+        OxgvbQw+xCjAwajEw7ti0eEoIdbEsuLK3EOMEhzMSiK8O5SORAnxpiRWVqUW5ccXleakFh9i
+        lOZgURLnPW9QGSUkkJ5YkpqdmlqQWgSTZeLglGpgdPoetn/RJb4qtekd7y4eTp6md+C8UuSx
+        Hwc0brv0PGex3McsU6G06sl7hvD3Tj2TA5z/pf9fm9S5bf5b05V29hbewet0E494fLlbW7/u
+        Xda6hiC7jLppcUc3c/peKnuSu4Oh62uAAJu3zIMH5wNU+c4I3VJIzP6htPtg67MO3ocb11/Y
+        NrHQTomlOCPRUIu5qDgRAE1KiHZNAgAA
+X-CMS-MailID: 20180404074700eucas1p12cdb8b0de3da46c433e505555129c7e6
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180404074700eucas1p12cdb8b0de3da46c433e505555129c7e6
+X-RootMTR: 20180404074700eucas1p12cdb8b0de3da46c433e505555129c7e6
+References: <CGME20180404074700eucas1p12cdb8b0de3da46c433e505555129c7e6@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hypervisor setup before __enter_kernel destroys the value sotred in
+r1. The value needs to be restored just before the jump.
 
---oka76lsnw6ugovnn
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+---
+ arch/arm/boot/compressed/head.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Tue, Apr 03, 2018 at 10:06:28PM +0200, Myl=E8ne Josserand wrote:
-> Hello,
->=20
-> Thank you for the review.
->=20
-> On Tue, 3 Apr 2018 11:12:18 +0200
-> Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->=20
-> > On Tue, Apr 03, 2018 at 08:18:31AM +0200, Myl=E8ne Josserand wrote:
-> > > Add the initialization of CNTVOFF for sun8i-a83t.
-> > >=20
-> > > For boot CPU, Create a new machine that handles this
-> > > function's call in an "init_early" callback.
-> > > For secondary CPUs, add this function into secondary_startup
-> > > assembly entry.
-> > >=20
-> > > Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
-> > > ---
-> > >  arch/arm/mach-sunxi/headsmp.S |  1 +
-> > >  arch/arm/mach-sunxi/sunxi.c   | 18 +++++++++++++++++-
-> > >  2 files changed, 18 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/head=
-smp.S
-> > > index 79890fbe5613..b586b7cf803a 100644
-> > > --- a/arch/arm/mach-sunxi/headsmp.S
-> > > +++ b/arch/arm/mach-sunxi/headsmp.S
-> > > @@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
-> > > =20
-> > >  ENTRY(sunxi_mc_smp_secondary_startup)
-> > >  	bl	sunxi_mc_smp_cluster_cache_enable
-> > > +	bl	smp_init_cntvoff
-> > >  	b	secondary_startup
-> > >  ENDPROC(sunxi_mc_smp_secondary_startup)
-> > > =20
-> > > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> > > index 5e9602ce1573..090784108c0a 100644
-> > > --- a/arch/arm/mach-sunxi/sunxi.c
-> > > +++ b/arch/arm/mach-sunxi/sunxi.c
-> > > @@ -16,6 +16,7 @@
-> > >  #include <linux/platform_device.h>
-> > > =20
-> > >  #include <asm/mach/arch.h>
-> > > +#include <asm/smp_cntvoff.h>
-> > > =20
-> > >  static const char * const sunxi_board_dt_compat[] =3D {
-> > >  	"allwinner,sun4i-a10",
-> > > @@ -62,7 +63,6 @@ MACHINE_END
-> > >  static const char * const sun8i_board_dt_compat[] =3D {
-> > >  	"allwinner,sun8i-a23",
-> > >  	"allwinner,sun8i-a33",
-> > > -	"allwinner,sun8i-a83t",
-> > >  	"allwinner,sun8i-h2-plus",
-> > >  	"allwinner,sun8i-h3",
-> > >  	"allwinner,sun8i-r40",
-> > > @@ -75,6 +75,22 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family=
-")
-> > >  	.dt_compat	=3D sun8i_board_dt_compat,
-> > >  MACHINE_END
-> > > =20
-> > > +void __init sun8i_cntvoff_init(void)
-> > > +{
-> > > +	smp_init_cntvoff(); =20
-> >=20
-> > Can't this be moved to the SMP setup code?
->=20
-> I tried to put it in the first lines of "sunxi_mc_smp_init" function
-> but it did not work. I tried to find some callbacks to have an
-> early "init" and I only found the "init_early"'s one. There is probably
-> another way to handle that so do not hesitate to tell me any ideas.
-
-It's hard to say without more context about why it doesn't work. Have
-you checked the order between early_initcall, the timer initialization
-function and init_early?
-
-> > > +}
-> > > +
-> > > +static const char * const sun8i_cntvoff_board_dt_compat[] =3D {
-> > > +	"allwinner,sun8i-a83t",
-> > > +	NULL,
-> > > +};
-> > > +
-> > > +DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i boards needing c=
-ntvoff") =20
-> >=20
-> > All of the SoCs need CNTVOFF, so that doesn't really make sense. Why
-> > not just calling it for what it is: an A83t?
->=20
-> Sure, I will update it.
-
-Looking back at that code, I guess you want to change also the
-smp_init_cntvoff function. It's not really related to SMP either.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---oka76lsnw6ugovnn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrEgooACgkQ0rTAlCFN
-r3Rq+A//RAPf5bwK82NFgP/VFiRpC9mqJuh6gtx3jQGiRSS7wD0GUaWhjPVTp4CD
-SujWxgVBKNcbJXThoMwfEmVOJaZAfcy+v+Oc5j0x5x2ARFSg/l3t3wVcocEsUZtP
-vYYqotb5+nnLnSMLEnTCbvx2pM++FpsJbSoUjChDziU06nCd/r/nBGg3UfECV0AB
-jWy2qdNNjctkdUXt2ZM0iZPcFmVBY4PcqUIqka7N+4WHc5YiVb8t9rrEn/NZLmat
-SV1pgJsac8Q1rfgs9j3rlc9p+3rTwN9JgOZMT+3G6UAkPCBjH+vX60UBKVG/Rpab
-VnwmIZ2GE4YvH+cC9/azd5wLzouIdE8QrivWUvpUb4BMYuepZGClRKZ+YwwgJNWs
-+5HIIHMfi9aNKdSCILzwZHW5Fq3IjH/jGetJ7OOam7DVbiE24KzFgZk8eoBviIrj
-qK71wNpCx1x4XY3x41I6P1/ivy6/D58xGy7B0aAqW3I3lcMVjy02CBem77u+dEGv
-rPTQextWoNokosmkyoU1NVqZxFAxHNaNQXcUyS4E+P1KHHYDppVmnB4q/yWgAk22
-5EIti+7UQCfy2gSIpQMU4UAMdxmGMdYhfz4fb1h+vv1+r0gnFu8yK9R6rh0INs4h
-SB7107rn4is6arbfI4iGxdXbatrkSg/I59FxU+cRkcnKitB4/8U=
-=B29i
------END PGP SIGNATURE-----
-
---oka76lsnw6ugovnn--
+diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
+index 182bf6add0b9..517e0e18f0b8 100644
+--- a/arch/arm/boot/compressed/head.S
++++ b/arch/arm/boot/compressed/head.S
+@@ -561,8 +561,6 @@ not_relocated:	mov	r0, #0
+ 		bl	decompress_kernel
+ 		bl	cache_clean_flush
+ 		bl	cache_off
+-		mov	r1, r7			@ restore architecture number
+-		mov	r2, r8			@ restore atags pointer
+ 
+ #ifdef CONFIG_ARM_VIRT_EXT
+ 		mrs	r0, spsr		@ Get saved CPU boot mode
+@@ -1365,6 +1363,8 @@ __hyp_reentry_vectors:
+ 
+ __enter_kernel:
+ 		mov	r0, #0			@ must be 0
++		mov	r1, r7			@ restore architecture number
++		mov	r2, r8			@ restore atags pointer
+  ARM(		mov	pc, r4		)	@ call kernel
+  M_CLASS(	add	r4, r4, #1	)	@ enter in Thumb mode for M class
+  THUMB(		bx	r4		)	@ entry point is always ARM for A/R classes
+-- 
+2.11.0
