@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752185AbeDDEcR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 00:32:17 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40880 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751944AbeDDEcP (ORCPT
+        id S1752316AbeDDEcV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 00:32:21 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:36861 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751944AbeDDEcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 00:32:15 -0400
-X-Google-Smtp-Source: AIpwx49utf+lp89LlreKJYhCLzF2gYlcXnM9gMp6d5kCYNvir+IsDNlyvZZhtBRmH2er3AMP2Fgfxg==
-Subject: [PATCH 1/3] arm64: Set CONFIG_MULTI_IRQ_HANDLER
-Date: Tue,  3 Apr 2018 21:31:28 -0700
-Message-Id: <20180404043130.31277-2-palmer@sifive.com>
+        Wed, 4 Apr 2018 00:32:18 -0400
+X-Google-Smtp-Source: AIpwx4/ju23HThV1+tO0EWDUCg4uo+IUxwyQWPxn2GCDrqryW0kNVA2r3EehMe1YTduMUZnTtvcTig==
+Subject: [PATCH 3/3] irq: GENERIC_IRQ_MULTI_HANDLER conflicts with MULTI_IRQ_HANDLER
+Date: Tue,  3 Apr 2018 21:31:30 -0700
+Message-Id: <20180404043130.31277-4-palmer@sifive.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180404043130.31277-1-palmer@sifive.com>
 References: <CA+55aFxRZQgPwtjS0+eiCZvkEVFvOKktuiwG4TZ653Yso3E4bA@mail.gmail.com>
@@ -24,37 +24,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm has an optional MULTI_IRQ_HANDLER, which arm64 copied but didn't
-make optional.  I'm converting this to generic code, but in order to aid
-the porting effort I want to define this on arm64 for a bit.  This will
-go away at the end of this patch set.
+These define the same symbol so they're mutually exclusive.  By the end
+of this patch set I'll have removed MULTI_IRQ_HANDLER, but for now it's
+slightly easier to make these as conflicting so architectures that now
+define MULTI_IRQ_HANDLER won't get the generic version selected by
+randconfig.
+
+This will go away when every port is converted over to
+GENERIC_IRQ_MULTI_HANDLER.
 
 Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 ---
- arch/arm64/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/irq/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 7381eeb7ef8e..302d0b681676 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -132,6 +132,7 @@ config ARM64
- 	select IRQ_DOMAIN
- 	select IRQ_FORCED_THREADING
- 	select MODULES_USE_ELF_RELA
-+	select MULTI_IRQ_HANDLER
- 	select NO_BOOTMEM
- 	select OF
- 	select OF_EARLY_FLATTREE
-@@ -275,6 +276,9 @@ config ARCH_SUPPORTS_UPROBES
- config ARCH_PROC_KCORE_TEXT
- 	def_bool y
+diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
+index 5f3e2baefca9..c6766f326072 100644
+--- a/kernel/irq/Kconfig
++++ b/kernel/irq/Kconfig
+@@ -134,6 +134,7 @@ config GENERIC_IRQ_DEBUGFS
+ endmenu
  
-+config MULTI_IRQ_HANDLER
-+	def_bool y
-+
- source "init/Kconfig"
- 
- source "kernel/Kconfig.freezer"
+ config GENERIC_IRQ_MULTI_HANDLER
++	depends on !MULTI_IRQ_HANDLER
+ 	bool
+ 	help
+ 	  Allow to specify the low level IRQ handler at run time.
 -- 
 2.16.1
