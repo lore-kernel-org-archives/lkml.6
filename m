@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751936AbeDDJAz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:00:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34552 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751236AbeDDI7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751275AbeDDI7a (ORCPT <rfc822;w@1wt.eu>);
         Wed, 4 Apr 2018 04:59:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34542 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751216AbeDDI73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 04:59:29 -0400
 From: Petr Mladek <pmladek@suse.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -16,10 +16,11 @@ Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v4 3/9] vsprintf: Do not check address of well-known strings
-Date: Wed,  4 Apr 2018 10:58:37 +0200
-Message-Id: <20180404085843.16050-4-pmladek@suse.com>
+        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH v4 2/9] vsprintf: Consistent %pK handling for kptr_restrict == 0
+Date: Wed,  4 Apr 2018 10:58:36 +0200
+Message-Id: <20180404085843.16050-3-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180404085843.16050-1-pmladek@suse.com>
 References: <20180404085843.16050-1-pmladek@suse.com>
@@ -27,270 +28,73 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are going to check the address using probe_kernel_address(). It will
-be more expensive and it does not make sense for well known address.
+restricted_pointer() pretends that it prints the address when kptr_restrict
+is set to zero. But it is never called in this situation. Instead,
+pointer() falls back to ptr_to_id() and hashes the pointer.
 
-This patch splits the string() function. The variant without the check
-is then used on locations that handle string constants or strings defined
-as local variables.
+This patch removes the potential confusion. klp_restrict is checked only
+in restricted_pointer().
 
-This patch does not change the existing behavior.
+It should actually fix a small race when the address might get printed
+unhashed:
 
+CPU0                            CPU1
+
+pointer()
+  if (!kptr_restrict)
+     /* for example set to 2 */
+  restricted_pointer()
+				/* echo 0 >/proc/sys/kernel/kptr_restrict */
+				proc_dointvec_minmax_sysadmin()
+				  klpr_restrict = 0;
+    switch(kptr_restrict)
+      case 0:
+	break:
+
+    number()
+
+Fixes: commit ef0010a30935de4e0211 ("vsprintf: don't use 'restricted_pointer()' when not restricting")
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Tobin Harding <me@tobin.cc>
+Cc: Kees Cook <keescook@chromium.org>
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- lib/vsprintf.c | 79 ++++++++++++++++++++++++++++++++--------------------------
- 1 file changed, 43 insertions(+), 36 deletions(-)
+ lib/vsprintf.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 9ade2c4f21ba..dd71738d7a09 100644
+index c0c677c6a833..9ade2c4f21ba 100644
 --- a/lib/vsprintf.c
 +++ b/lib/vsprintf.c
-@@ -582,14 +582,11 @@ char *widen_string(char *buf, int n, char *end, struct printf_spec spec)
- }
+@@ -637,7 +637,8 @@ static int __init initialize_ptr_random(void)
+ early_initcall(initialize_ptr_random);
  
- static noinline_for_stack
--char *string(char *buf, char *end, const char *s, struct printf_spec spec)
-+char *__string(char *buf, char *end, const char *s, struct printf_spec spec)
+ /* Maps a pointer to a 32 bit unique identifier. */
+-static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
++static char *ptr_to_id(char *buf, char *end,
++		       const void *ptr, struct printf_spec spec)
  {
- 	int len = 0;
- 	size_t lim = spec.precision;
+ 	unsigned long hashval;
+ 	const int default_width = 2 * sizeof(ptr);
+@@ -1426,8 +1427,8 @@ char *restricted_pointer(char *buf, char *end, const void *ptr,
  
--	if ((unsigned long)s < PAGE_SIZE)
--		s = "(null)";
--
- 	while (lim--) {
- 		char c = *s++;
- 		if (!c)
-@@ -602,6 +599,16 @@ char *string(char *buf, char *end, const char *s, struct printf_spec spec)
- 	return widen_string(buf, len, end, spec);
- }
+ 	switch (kptr_restrict) {
+ 	case 0:
+-		/* Always print %pK values */
+-		break;
++		/* Handle as %p, hash and do _not_ leak addresses. */
++		return ptr_to_id(buf, end, ptr, spec);
+ 	case 1: {
+ 		const struct cred *cred;
  
-+static noinline_for_stack
-+char *string(char *buf, char *end, const char *s,
-+		   struct printf_spec spec)
-+{
-+	if ((unsigned long)s < PAGE_SIZE)
-+		s = "(null)";
-+
-+	return __string(buf, end, s, spec);
-+}
-+
- static bool have_filled_random_ptr_key __read_mostly;
- static siphash_key_t ptr_key __read_mostly;
- 
-@@ -646,7 +653,7 @@ static char *ptr_to_id(char *buf, char *end,
- 	if (unlikely(!have_filled_random_ptr_key)) {
- 		spec.field_width = default_width;
- 		/* string length must be less than default_width */
--		return string(buf, end, "(ptrval)", spec);
-+		return __string(buf, end, "(ptrval)", spec);
- 	}
- 
- #ifdef CONFIG_64BIT
-@@ -755,7 +762,7 @@ char *symbol_string(char *buf, char *end, void *ptr,
- 	else
- 		sprint_symbol_no_offset(sym, value);
- 
--	return string(buf, end, sym, spec);
-+	return __string(buf, end, sym, spec);
- #else
- 	return special_hex_number(buf, end, value, sizeof(void *));
- #endif
-@@ -821,27 +828,27 @@ char *resource_string(char *buf, char *end, struct resource *res,
- 
- 	*p++ = '[';
- 	if (res->flags & IORESOURCE_IO) {
--		p = string(p, pend, "io  ", str_spec);
-+		p = __string(p, pend, "io  ", str_spec);
- 		specp = &io_spec;
- 	} else if (res->flags & IORESOURCE_MEM) {
--		p = string(p, pend, "mem ", str_spec);
-+		p = __string(p, pend, "mem ", str_spec);
- 		specp = &mem_spec;
- 	} else if (res->flags & IORESOURCE_IRQ) {
--		p = string(p, pend, "irq ", str_spec);
-+		p = __string(p, pend, "irq ", str_spec);
- 		specp = &dec_spec;
- 	} else if (res->flags & IORESOURCE_DMA) {
--		p = string(p, pend, "dma ", str_spec);
-+		p = __string(p, pend, "dma ", str_spec);
- 		specp = &dec_spec;
- 	} else if (res->flags & IORESOURCE_BUS) {
--		p = string(p, pend, "bus ", str_spec);
-+		p = __string(p, pend, "bus ", str_spec);
- 		specp = &bus_spec;
- 	} else {
--		p = string(p, pend, "??? ", str_spec);
-+		p = __string(p, pend, "??? ", str_spec);
- 		specp = &mem_spec;
- 		decode = 0;
- 	}
- 	if (decode && res->flags & IORESOURCE_UNSET) {
--		p = string(p, pend, "size ", str_spec);
-+		p = __string(p, pend, "size ", str_spec);
- 		p = number(p, pend, resource_size(res), *specp);
- 	} else {
- 		p = number(p, pend, res->start, *specp);
-@@ -852,21 +859,21 @@ char *resource_string(char *buf, char *end, struct resource *res,
- 	}
- 	if (decode) {
- 		if (res->flags & IORESOURCE_MEM_64)
--			p = string(p, pend, " 64bit", str_spec);
-+			p = __string(p, pend, " 64bit", str_spec);
- 		if (res->flags & IORESOURCE_PREFETCH)
--			p = string(p, pend, " pref", str_spec);
-+			p = __string(p, pend, " pref", str_spec);
- 		if (res->flags & IORESOURCE_WINDOW)
--			p = string(p, pend, " window", str_spec);
-+			p = __string(p, pend, " window", str_spec);
- 		if (res->flags & IORESOURCE_DISABLED)
--			p = string(p, pend, " disabled", str_spec);
-+			p = __string(p, pend, " disabled", str_spec);
- 	} else {
--		p = string(p, pend, " flags ", str_spec);
-+		p = __string(p, pend, " flags ", str_spec);
- 		p = number(p, pend, res->flags, flag_spec);
- 	}
- 	*p++ = ']';
- 	*p = '\0';
- 
--	return string(buf, end, sym, spec);
-+	return __string(buf, end, sym, spec);
- }
- 
- static noinline_for_stack
-@@ -1037,7 +1044,7 @@ char *mac_address_string(char *buf, char *end, u8 *addr,
- 	}
- 	*p = '\0';
- 
--	return string(buf, end, mac_addr, spec);
-+	return __string(buf, end, mac_addr, spec);
- }
- 
- static noinline_for_stack
-@@ -1200,7 +1207,7 @@ char *ip6_addr_string(char *buf, char *end, const u8 *addr,
- 	else
- 		ip6_string(ip6_addr, addr, fmt);
- 
--	return string(buf, end, ip6_addr, spec);
-+	return __string(buf, end, ip6_addr, spec);
- }
- 
- static noinline_for_stack
-@@ -1211,7 +1218,7 @@ char *ip4_addr_string(char *buf, char *end, const u8 *addr,
- 
- 	ip4_string(ip4_addr, addr, fmt);
- 
--	return string(buf, end, ip4_addr, spec);
-+	return __string(buf, end, ip4_addr, spec);
- }
- 
- static noinline_for_stack
-@@ -1273,7 +1280,7 @@ char *ip6_addr_string_sa(char *buf, char *end, const struct sockaddr_in6 *sa,
- 	}
- 	*p = '\0';
- 
--	return string(buf, end, ip6_addr, spec);
-+	return __string(buf, end, ip6_addr, spec);
- }
- 
- static noinline_for_stack
-@@ -1308,7 +1315,7 @@ char *ip4_addr_string_sa(char *buf, char *end, const struct sockaddr_in *sa,
- 	}
- 	*p = '\0';
- 
--	return string(buf, end, ip4_addr, spec);
-+	return __string(buf, end, ip4_addr, spec);
- }
- 
- static noinline_for_stack
-@@ -1409,7 +1416,7 @@ char *uuid_string(char *buf, char *end, const u8 *addr,
- 
- 	*p = 0;
- 
--	return string(buf, end, uuid, spec);
-+	return __string(buf, end, uuid, spec);
- }
- 
- int kptr_restrict __read_mostly;
-@@ -1437,7 +1444,7 @@ char *restricted_pointer(char *buf, char *end, const void *ptr,
- 		 * because its test for CAP_SYSLOG would be meaningless.
- 		 */
- 		if (in_irq() || in_serving_softirq() || in_nmi())
--			return string(buf, end, "pK-error", spec);
-+			return __string(buf, end, "pK-error", spec);
- 
- 		/*
- 		 * Only print the real pointer value if the current
-@@ -1613,13 +1620,13 @@ char *device_node_gen_full_name(const struct device_node *np, char *buf, char *e
- 
- 	/* special case for root node */
- 	if (!parent)
--		return string(buf, end, "/", strspec);
-+		return __string(buf, end, "/", strspec);
- 
- 	for (depth = 0; parent->parent; depth++)
- 		parent = parent->parent;
- 
- 	for ( ; depth >= 0; depth--) {
--		buf = string(buf, end, "/", strspec);
-+		buf = __string(buf, end, "/", strspec);
- 		buf = string(buf, end, device_node_name_for_depth(np, depth),
- 			     strspec);
- 	}
-@@ -1647,10 +1654,10 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
- 	str_spec.field_width = -1;
- 
- 	if (!IS_ENABLED(CONFIG_OF))
--		return string(buf, end, "(!OF)", spec);
-+		return __string(buf, end, "(!OF)", spec);
- 
- 	if ((unsigned long)dn < PAGE_SIZE)
--		return string(buf, end, "(null)", spec);
-+		return __string(buf, end, "(null)", spec);
- 
- 	/* simple case without anything any more format specifiers */
- 	fmt++;
-@@ -1686,7 +1693,7 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
- 			tbuf[2] = of_node_check_flag(dn, OF_POPULATED) ? 'P' : '-';
- 			tbuf[3] = of_node_check_flag(dn, OF_POPULATED_BUS) ? 'B' : '-';
- 			tbuf[4] = 0;
--			buf = string(buf, end, tbuf, str_spec);
-+			buf = __string(buf, end, tbuf, str_spec);
- 			break;
- 		case 'c':	/* major compatible string */
- 			ret = of_property_read_string(dn, "compatible", &p);
-@@ -1697,10 +1704,10 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
- 			has_mult = false;
- 			of_property_for_each_string(dn, "compatible", prop, p) {
- 				if (has_mult)
--					buf = string(buf, end, ",", str_spec);
--				buf = string(buf, end, "\"", str_spec);
-+					buf = __string(buf, end, ",", str_spec);
-+				buf = __string(buf, end, "\"", str_spec);
- 				buf = string(buf, end, p, str_spec);
--				buf = string(buf, end, "\"", str_spec);
-+				buf = __string(buf, end, "\"", str_spec);
- 
- 				has_mult = true;
- 			}
-@@ -1857,7 +1864,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 		 */
- 		if (spec.field_width == -1)
- 			spec.field_width = default_width;
--		return string(buf, end, "(null)", spec);
-+		return __string(buf, end, "(null)", spec);
- 	}
- 
- 	switch (*fmt) {
-@@ -1913,7 +1920,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 			case AF_INET6:
- 				return ip6_addr_string_sa(buf, end, &sa->v6, spec, fmt);
- 			default:
--				return string(buf, end, "(invalid address)", spec);
-+				return __string(buf, end, "(invalid address)", spec);
- 			}}
+@@ -1931,8 +1932,6 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+ 			return buf;
  		}
- 		break;
+ 	case 'K':
+-		if (!kptr_restrict)
+-			break;
+ 		return restricted_pointer(buf, end, ptr, spec);
+ 	case 'N':
+ 		return netdev_bits(buf, end, ptr, fmt);
 -- 
 2.13.6
