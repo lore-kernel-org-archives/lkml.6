@@ -1,76 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752117AbeDDTud (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:50:33 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:46583 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751588AbeDDTub (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:50:31 -0400
-X-Google-Smtp-Source: AIpwx4/jrqa0wYOie1AiozqsiWXOQbESJFgsBF5prKUmQUE1wJ9b0fsGvaoI2U83u+EArs1d64UV8GgYXjzdqeH8M5o=
+        id S1752156AbeDDTut (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:50:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48100 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751517AbeDDTur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:50:47 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6F421707
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 4 Apr 2018 15:50:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tim Tianyang Chen <tianyang.chen@oracle.com>
+Cc: Dhaval Giani <dhaval.giani@oracle.com>, linux-kernel@vger.kernel.org,
+        tim.tianyang.chen@alumni.upenn.edu
+Subject: Re: [PATCH v3 0/4] Ktest: add email support
+Message-ID: <20180404155045.0137e8f5@gandalf.local.home>
+In-Reply-To: <20180403183819.5dbb89d9@gandalf.local.home>
+References: <1522094884-22718-1-git-send-email-tianyang.chen@oracle.com>
+        <ba4461ff-57ea-0861-4aab-e704b549474f@oracle.com>
+        <26923e02-7eef-dc80-c9fc-7ecfa9842229@oracle.com>
+        <20180403183819.5dbb89d9@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <9b0d7db3-0830-9661-6dc8-39523daa8f32@codeaurora.org>
-References: <mhng-fe49c525-788d-4ce7-9703-95e2b3eaeca6@palmer-si-x1c4>
- <691b903c-e97d-0a25-28c5-690318bb215a@codeaurora.org> <CAK8P3a2pGQb7TqQtuw0ZpQ=8CwXiRmRKKc1GwvEgKDgofxJ3nA@mail.gmail.com>
- <9b0d7db3-0830-9661-6dc8-39523daa8f32@codeaurora.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 4 Apr 2018 21:50:29 +0200
-X-Google-Sender-Auth: fBAKkYZJrfvG9D-IgVWGtmmRKdI
-Message-ID: <CAK8P3a2Cg59cTzUq2_8sopeY9BktM7a6_4nunMJVA5fQFaVLug@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
- readX() implementation
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Palmer Dabbelt <palmer@sifive.com>,
-        Mark Rutland <mark.rutland@arm.com>, Timur Tabi <timur@codeaurora.org>,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 7:48 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
-> On 4/4/2018 11:55 AM, Arnd Bergmann wrote:
->> Yes, exactly, plus the same for write and in/out of course.
->
-> I was looking at this...
->
-> inb() and outb() seem to be calling writeb(). It gets the wmb/barrier automatically
-> when we fix writeb().
->
-> Did I miss something?
+On Tue, 3 Apr 2018 18:38:19 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-At least outb() needs stricter barriers than writeb() in theory, what
-we want here
-is that outb() has not just made it out to the device but that the
-write has been
-confirmed completed by the device. Some architectures can't do it, but those
-that can should have an easy way to hook into that using a separate set of
-barriers.
+> On Tue, 3 Apr 2018 12:52:20 -0700
+> Tim Tianyang Chen <tianyang.chen@oracle.com> wrote:
+> 
+> > Hi Steve, did you get a chance to take a look? cc'ing myself and a 
+> > personal email. When I sent the patchset I forgot to include.  
+> 
+> Sorry, I'm trying to get my own ktest patches in (I have a bunch of non
+> committed changes) and I need to clean them up before adding yours.
+> 
+> I'll take a look at them tonight or tomorrow.
 
-Using the riscv barrier names, we could do this like
+I started working on ktest again, but didn't get as far as I wanted.
+I'll be continuing more on it tomorrow. I want this ready for this
+merge window, so it is high on my priority list (including your
+patches).
 
-#ifndef __io_bw()
-#define __io_bw()      wmb()
-#endif
-
-#ifndef __io_aw
-#define __io_aw()      barrier()
-#endif
-
-#ifndef __io_pbw
-#define __io_pbw()     __io_bw()
-#endif
-
-#ifndef __io_paw
-#define __io_paw()     __io_aw()
-#endif
-
-and the same thing for reads. This way, an architecture could override
-any of those, but still get reasonable defaults for the others.
-For __io_bw(), I picked barrier() instead of do {} while (0), no idea
-if that's any better, I just play safe here.
-
-     Arnd
+-- Steve
