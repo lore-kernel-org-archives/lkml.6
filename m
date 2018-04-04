@@ -1,112 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752148AbeDDVQT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 17:16:19 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:34502 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751749AbeDDVQS (ORCPT
+        id S1752282AbeDDVQx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 17:16:53 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:47144 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752240AbeDDVQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 17:16:18 -0400
-Subject: Re: Control dependency between prior load in while condition and
- later store?
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: parri.andrea@gmail.com, will.deacon@arm.com, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, paulmck@linux.vnet.ibm.com,
-        akiyks@gmail.com, linux-kernel@vger.kernel.org,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Pasha Tatashin <pasha.tatashin@oracle.com>
-References: <Pine.LNX.4.44L0.1804041623530.1401-100000@iolanthe.rowland.org>
-From: Daniel Jordan <daniel.m.jordan@oracle.com>
-Organization: Oracle
-Message-ID: <4fa47ea8-e208-16d6-3b78-747049e3ee53@oracle.com>
-Date: Wed, 4 Apr 2018 17:10:05 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 4 Apr 2018 17:16:52 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T-gSTc._1522876593;
+Subject: Re: [PATCH] prctl: Deprecate non PR_SET_MM_MAP operations
+To: Cyrill Gorcunov <gorcunov@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Andrey Vagin <avagin@openvz.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>
+References: <20180404185523.GG15783@uranus.lan>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <ca6a276b-d986-c977-9448-6cfc3ebef0f8@linux.alibaba.com>
+Date: Wed, 4 Apr 2018 14:16:33 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <Pine.LNX.4.44L0.1804041623530.1401-100000@iolanthe.rowland.org>
+In-Reply-To: <20180404185523.GG15783@uranus.lan>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8853 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=961
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804040204
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/04/2018 04:35 PM, Alan Stern wrote:
-> On Wed, 4 Apr 2018, Daniel Jordan wrote:
-> 
->> A question for memory-barriers.txt aficionados.
->>
->> Is there a control dependency between the prior load of 'a' and the
->> later store of 'c'?:
->>
->>     while (READ_ONCE(a));
->>     WRITE_ONCE(c, 1);
-> 
-> I would say that yes, there is.
-> 
->> I have my doubts because memory-barriers.txt doesn't talk much about
->> loops and because of what that document says here:
->>
->>     In addition, control dependencies apply only to the then-clause and
->>     else-clause of the if-statement in question.  In particular, it does
->>     not necessarily apply to code following the if-statement:
->>
->>     	q = READ_ONCE(a);
->>     	if (q) {
->>     		WRITE_ONCE(b, 1);
->>     	} else {
->>     		WRITE_ONCE(b, 2);
->>     	}
->>     	WRITE_ONCE(c, 1);  /* BUG: No ordering against the read from 'a'. */
-> 
-> This refers to situations where the two code paths meet up at the end
-> of the "if" statement.  If they don't meet up (because one of the paths
-> branches away -- especially if it branches backward) then the
-> disclaimer doesn't apply, and everything following the "if" is
-> dependent.
 
-Ok, that's the part I wasn't getting: this is how the while loop changes 
-the situation.
 
-> The reason is because the compiler knows that code following the "if"
-> statement will be executed unconditionally if the paths meet up, so it
-> can move that code back before the "if" (provided nothing else prevents
-> such motion).  But if the paths don't meet up, the compiler can't
-> perform the code motion -- if it did then the program might end up
-> executing something that should not have been executed!
-> 
->> It's not obvious to me how the then-clause/else-clause idea maps onto
->> loops, but if we think of the example at the top like this...
->>
->>     while (1) {
->>         if (!READ_ONCE(a)) {
->>             WRITE_ONCE(c, 1);
->>             break;
->>         }
->>     }
->>
->> ...then the dependent store is within the then-clause.  Viewed this way,
->> it seems there would be a control dependency between a and c.
->>
->> Is that right?
-> 
-> Yes, except that a more accurate view of the object code would be
-> something like this:
-> 
-> Loop:	r1 = READ_ONCE(a);
-> 	if (r1)
-> 		goto Loop;
-> 	else
-> 		;	// Do nothing
-> 	WRITE_ONCE(c, 1);
-> 
-> Here you can see that one path branches backward, so everything
-> following the "if" is dependent on the READ_ONCE.
+On 4/4/18 11:55 AM, Cyrill Gorcunov wrote:
+> An ability to manipulate mm_struct fields was introduced in
+> sake of CRIU in first place. Later we provide more suitable
+> and safe operation PR_SET_MM_MAP where all fields to be modifed
+> are passed in one structure which allows us to make more detailed
+> verification.
+>
+> Still old interface remains present for compatibility reason
+> though CRIU itself already switched to PR_SET_MM_MAP on its
+> own long ago.
+>
+> Googling didn't reveal some other users of this operation
+> so I think it should be safe to remove this interface.
+>
+> CC: Andrey Vagin <avagin@openvz.org>
+> CC: Andrew Morton <akpm@linuxfoundation.org>
+> CC: Pavel Emelyanov <xemul@virtuozzo.com>
+> CC: Michael Kerrisk <mtk.manpages@gmail.com>
+> CC: Yang Shi <yang.shi@linux.alibaba.com>
+> CC: Michal Hocko <mhocko@kernel.org>
+> Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+> ---
+>   kernel/sys.c |  146 -----------------------------------------------------------
+>   1 file changed, 2 insertions(+), 144 deletions(-)
+>
+> Index: linux-ml.git/kernel/sys.c
+> ===================================================================
+> --- linux-ml.git.orig/kernel/sys.c
+> +++ linux-ml.git/kernel/sys.c
+> @@ -2001,44 +2001,9 @@ static int prctl_set_mm_map(int opt, con
+>   }
+>   #endif /* CONFIG_CHECKPOINT_RESTORE */
+>   
+> -static int prctl_set_auxv(struct mm_struct *mm, unsigned long addr,
+> -			  unsigned long len)
+> -{
+> -	/*
+> -	 * This doesn't move the auxiliary vector itself since it's pinned to
+> -	 * mm_struct, but it permits filling the vector with new values.  It's
+> -	 * up to the caller to provide sane values here, otherwise userspace
+> -	 * tools which use this vector might be unhappy.
+> -	 */
+> -	unsigned long user_auxv[AT_VECTOR_SIZE];
+> -
+> -	if (len > sizeof(user_auxv))
+> -		return -EINVAL;
+> -
+> -	if (copy_from_user(user_auxv, (const void __user *)addr, len))
+> -		return -EFAULT;
+> -
+> -	/* Make sure the last entry is always AT_NULL */
+> -	user_auxv[AT_VECTOR_SIZE - 2] = 0;
+> -	user_auxv[AT_VECTOR_SIZE - 1] = 0;
+> -
+> -	BUILD_BUG_ON(sizeof(user_auxv) != sizeof(mm->saved_auxv));
+> -
+> -	task_lock(current);
+> -	memcpy(mm->saved_auxv, user_auxv, len);
+> -	task_unlock(current);
+> -
+> -	return 0;
+> -}
+> -
+>   static int prctl_set_mm(int opt, unsigned long addr,
+>   			unsigned long arg4, unsigned long arg5)
+>   {
+> -	struct mm_struct *mm = current->mm;
+> -	struct prctl_mm_map prctl_map;
+> -	struct vm_area_struct *vma;
+> -	int error;
+> -
+>   	if (arg5 || (arg4 && (opt != PR_SET_MM_AUXV &&
 
-That clears it up, thanks very much!
+This PR_SET_MM_AUXV should be removed too? There is not callsite to 
+prctl_set_auxv() anymore.
+
+Thanks,
+Yang
+
+>   			      opt != PR_SET_MM_MAP &&
+>   			      opt != PR_SET_MM_MAP_SIZE)))
+> @@ -2049,115 +2014,8 @@ static int prctl_set_mm(int opt, unsigne
+>   		return prctl_set_mm_map(opt, (const void __user *)addr, arg4);
+>   #endif
+>   
+> -	if (!capable(CAP_SYS_RESOURCE))
+> -		return -EPERM;
+> -
+> -	if (opt == PR_SET_MM_EXE_FILE)
+> -		return prctl_set_mm_exe_file(mm, (unsigned int)addr);
+> -
+> -	if (opt == PR_SET_MM_AUXV)
+> -		return prctl_set_auxv(mm, addr, arg4);
+> -
+> -	if (addr >= TASK_SIZE || addr < mmap_min_addr)
+> -		return -EINVAL;
+> -
+> -	error = -EINVAL;
+> -
+> -	down_write(&mm->mmap_sem);
+> -	vma = find_vma(mm, addr);
+> -
+> -	prctl_map.start_code	= mm->start_code;
+> -	prctl_map.end_code	= mm->end_code;
+> -	prctl_map.start_data	= mm->start_data;
+> -	prctl_map.end_data	= mm->end_data;
+> -	prctl_map.start_brk	= mm->start_brk;
+> -	prctl_map.brk		= mm->brk;
+> -	prctl_map.start_stack	= mm->start_stack;
+> -	prctl_map.arg_start	= mm->arg_start;
+> -	prctl_map.arg_end	= mm->arg_end;
+> -	prctl_map.env_start	= mm->env_start;
+> -	prctl_map.env_end	= mm->env_end;
+> -	prctl_map.auxv		= NULL;
+> -	prctl_map.auxv_size	= 0;
+> -	prctl_map.exe_fd	= -1;
+> -
+> -	switch (opt) {
+> -	case PR_SET_MM_START_CODE:
+> -		prctl_map.start_code = addr;
+> -		break;
+> -	case PR_SET_MM_END_CODE:
+> -		prctl_map.end_code = addr;
+> -		break;
+> -	case PR_SET_MM_START_DATA:
+> -		prctl_map.start_data = addr;
+> -		break;
+> -	case PR_SET_MM_END_DATA:
+> -		prctl_map.end_data = addr;
+> -		break;
+> -	case PR_SET_MM_START_STACK:
+> -		prctl_map.start_stack = addr;
+> -		break;
+> -	case PR_SET_MM_START_BRK:
+> -		prctl_map.start_brk = addr;
+> -		break;
+> -	case PR_SET_MM_BRK:
+> -		prctl_map.brk = addr;
+> -		break;
+> -	case PR_SET_MM_ARG_START:
+> -		prctl_map.arg_start = addr;
+> -		break;
+> -	case PR_SET_MM_ARG_END:
+> -		prctl_map.arg_end = addr;
+> -		break;
+> -	case PR_SET_MM_ENV_START:
+> -		prctl_map.env_start = addr;
+> -		break;
+> -	case PR_SET_MM_ENV_END:
+> -		prctl_map.env_end = addr;
+> -		break;
+> -	default:
+> -		goto out;
+> -	}
+> -
+> -	error = validate_prctl_map(&prctl_map);
+> -	if (error)
+> -		goto out;
+> -
+> -	switch (opt) {
+> -	/*
+> -	 * If command line arguments and environment
+> -	 * are placed somewhere else on stack, we can
+> -	 * set them up here, ARG_START/END to setup
+> -	 * command line argumets and ENV_START/END
+> -	 * for environment.
+> -	 */
+> -	case PR_SET_MM_START_STACK:
+> -	case PR_SET_MM_ARG_START:
+> -	case PR_SET_MM_ARG_END:
+> -	case PR_SET_MM_ENV_START:
+> -	case PR_SET_MM_ENV_END:
+> -		if (!vma) {
+> -			error = -EFAULT;
+> -			goto out;
+> -		}
+> -	}
+> -
+> -	mm->start_code	= prctl_map.start_code;
+> -	mm->end_code	= prctl_map.end_code;
+> -	mm->start_data	= prctl_map.start_data;
+> -	mm->end_data	= prctl_map.end_data;
+> -	mm->start_brk	= prctl_map.start_brk;
+> -	mm->brk		= prctl_map.brk;
+> -	mm->start_stack	= prctl_map.start_stack;
+> -	mm->arg_start	= prctl_map.arg_start;
+> -	mm->arg_end	= prctl_map.arg_end;
+> -	mm->env_start	= prctl_map.env_start;
+> -	mm->env_end	= prctl_map.env_end;
+> -
+> -	error = 0;
+> -out:
+> -	up_write(&mm->mmap_sem);
+> -	return error;
+> +	pr_warn_once("Non PR_SET_MM_MAP operations are deprecated\n");
+> +	return -EINVAL;
+>   }
+>   
+>   #ifdef CONFIG_CHECKPOINT_RESTORE
