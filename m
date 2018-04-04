@@ -1,41 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752282AbeDDV2B (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 17:28:01 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:35158 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752170AbeDDV16 (ORCPT
+        id S1752249AbeDDV3J (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 17:29:09 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40671 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751956AbeDDV3I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 17:27:58 -0400
-X-Google-Smtp-Source: AIpwx48hIiDKq+nYsY7sBNKvdvCYt3IIak8VrmFNHK3OpqQhcy0khth1ludF3vh4RBT2WY9NvsH67pq5IfGb7J6jYRM=
+        Wed, 4 Apr 2018 17:29:08 -0400
+X-Google-Smtp-Source: AIpwx49sKrS7e1Q3Fggzcf97An1ULezChW+qQ8zIqPpXW9Sq+lglKrj6UDcybbz76AOtrocOEKOFig==
+Date: Thu, 5 Apr 2018 00:29:06 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andrey Vagin <avagin@openvz.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH] prctl: Deprecate non PR_SET_MM_MAP operations
+Message-ID: <20180404212906.GJ15783@uranus.lan>
+References: <20180404185523.GG15783@uranus.lan>
+ <6c784c94-e7a3-7dad-20bc-179a8720e98c@infradead.org>
+ <20180404200426.GH15783@uranus.lan>
+ <467373a7-8b2b-971c-4e62-7fae043c96fe@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180404212340.GA12737@outlook.office365.com>
-References: <152246898837.36038.26895928842345061.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180404212340.GA12737@outlook.office365.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Wed, 4 Apr 2018 14:27:57 -0700
-Message-ID: <CAPcyv4jknruAmkPEVx0X6Bd3uRs_FYdPf-W-5cDO1Z+kaG5+uw@mail.gmail.com>
-Subject: Re: [v8, 11/18] mm, dax: enable filesystems to trigger dev_pagemap
- ->page_free callbacks
-To: Andrei Vagin <avagin@virtuozzo.com>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Michal Hocko <mhocko@suse.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        david <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <467373a7-8b2b-971c-4e62-7fae043c96fe@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 2:23 PM, Andrei Vagin <avagin@virtuozzo.com> wrote:
-> Hi Dan,
->
-> I catch the following bug on the linux-next 20180404. git bisect brought me to this commit:
+On Wed, Apr 04, 2018 at 01:53:08PM -0700, Randy Dunlap wrote:
+> > 
+> > At first this was plain warning without code removal but I've
+> > been advised that dropping it completely may be a better idea
+> > which I agree https://lkml.org/lkml/2018/4/4/31 Or you mean the
+> > warning message itsef? We aready have similars, for example
+> > in kernel/auditfilter.c
+> 
+> The traditional way (eons ago) to deprecate something was to add a
+> printk() and then delete the feature a few years later.
+> Still, I have no objection to dropping that prctl.
+> 
+> Sorry if I wasn't clear.  I was objecting to the "language", i.e., to the
+> word "deprecated."  Deprecated means frowned on, advised against, etc.
+> It does not mean "deleted."
 
-Yes, I will be yanking this functionality out of -next shortly and try
-again for v4.18.
+True. I remember this rule of deprecation. But when I dropped the
+code I though which message to put here (or should I put it at
+all) and since "deprecated" was the first word came into mind
+I decided to grep sources, the result you see by its own :)
+
+> 
+> > printk(KERN_ERR "AUDIT_POSSIBLE is deprecated\n");
+> 
+> Yeah, that one's wrong also.  :)
+
+So, maybe just get rid of any warning message at all?
