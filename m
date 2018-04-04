@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752276AbeDDTXg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:23:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54070 "EHLO mx1.redhat.com"
+        id S1752586AbeDDTYC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:24:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49488 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752089AbeDDTT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:19:27 -0400
+        id S1752075AbeDDTT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:19:26 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Jan Kara <jack@suse.cz>, Josef Bacik <jbacik@fb.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [RFC PATCH 65/79] mm/swap: add struct swap_info_struct swap_readpage() arguments
-Date: Wed,  4 Apr 2018 15:18:19 -0400
-Message-Id: <20180404191831.5378-30-jglisse@redhat.com>
+        Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
+        Josef Bacik <jbacik@fb.com>, Mel Gorman <mgorman@techsingularity.net>
+Subject: [RFC PATCH 64/79] mm/buffer: use _page_has_buffers() instead of page_has_buffers()
+Date: Wed,  4 Apr 2018 15:18:18 -0400
+Message-Id: <20180404191831.5378-29-jglisse@redhat.com>
 In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
 References: <20180404191831.5378-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -29,115 +29,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-Add struct swap_info_struct swap_readpage() arguments. One step toward
-dropping reliance on page->private during swap read back.
+The former need the address_space for which the buffer_head is being
+lookup.
+
+----------------------------------------------------------------------
+@exists@
+identifier M;
+expression E;
+@@
+struct address_space *M;
+...
+-page_buffers(E)
++_page_buffers(E, M)
+
+@exists@
+identifier M, F;
+expression E;
+@@
+F(..., struct address_space *M, ...) {...
+-page_buffers(E)
++_page_buffers(E, M)
+...}
+
+@exists@
+identifier M;
+expression E;
+@@
+struct address_space *M;
+...
+-page_has_buffers(E)
++_page_has_buffers(E, M)
+
+@exists@
+identifier M, F;
+expression E;
+@@
+F(..., struct address_space *M, ...) {...
+-page_has_buffers(E)
++_page_has_buffers(E, M)
+...}
+
+@exists@
+identifier I;
+expression E;
+@@
+struct inode *I;
+...
+-page_buffers(E)
++_page_buffers(E, I->i_mapping)
+
+@exists@
+identifier I, F;
+expression E;
+@@
+F(..., struct inode *I, ...) {...
+-page_buffers(E)
++_page_buffers(E, I->i_mapping)
+...}
+
+@exists@
+identifier I;
+expression E;
+@@
+struct inode *I;
+...
+-page_has_buffers(E)
++_page_has_buffers(E, I->i_mapping)
+
+@exists@
+identifier I, F;
+expression E;
+@@
+F(..., struct inode *I, ...) {...
+-page_has_buffers(E)
++_page_has_buffers(E, I->i_mapping)
+...}
+----------------------------------------------------------------------
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 CC: Andrew Morton <akpm@linux-foundation.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>
 Cc: Tejun Heo <tj@kernel.org>
 Cc: Jan Kara <jack@suse.cz>
 Cc: Josef Bacik <jbacik@fb.com>
 Cc: Mel Gorman <mgorman@techsingularity.net>
 ---
- include/linux/swap.h |  6 ++++--
- mm/memory.c          |  2 +-
- mm/page_io.c         |  4 ++--
- mm/swap_state.c      | 12 ++++++++----
- 4 files changed, 15 insertions(+), 9 deletions(-)
+ mm/migrate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 2f6abe9652f6..90c26ec2997c 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -383,7 +383,8 @@ extern void kswapd_stop(int nid);
- #include <linux/blk_types.h> /* for bio_end_io_t */
+diff --git a/mm/migrate.c b/mm/migrate.c
+index c2a613283fa2..e4b20ac6cf36 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -768,10 +768,10 @@ int buffer_migrate_page(struct address_space *mapping,
+ 	struct buffer_head *bh, *head;
+ 	int rc;
  
- /* linux/mm/page_io.c */
--extern int swap_readpage(struct page *page, bool do_poll);
-+extern int swap_readpage(struct swap_info_struct *sis, struct page *page,
-+			 bool do_poll);
- extern int swap_writepage(struct address_space *mapping, struct page *page,
- 			  struct writeback_control *wbc);
- extern void end_swap_bio_write(struct bio *bio);
-@@ -486,7 +487,8 @@ extern void exit_swap_address_space(unsigned int type);
+-	if (!page_has_buffers(page))
++	if (!_page_has_buffers(page, mapping))
+ 		return migrate_page(mapping, newpage, page, mode);
  
- #else /* CONFIG_SWAP */
+-	head = page_buffers(page);
++	head = _page_buffers(page, mapping);
  
--static inline int swap_readpage(struct page *page, bool do_poll)
-+static inline int swap_readpage(struct swap_info_struct *sis, struct page *page,
-+				bool do_poll)
- {
- 	return 0;
- }
-diff --git a/mm/memory.c b/mm/memory.c
-index 1311599a164b..6ffd76528e7b 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2949,7 +2949,7 @@ int do_swap_page(struct vm_fault *vmf)
- 				__SetPageSwapBacked(page);
- 				set_page_private(page, entry.val);
- 				lru_cache_add_anon(page);
--				swap_readpage(page, true);
-+				swap_readpage(si, page, true);
- 			}
- 		} else {
- 			if (vma_readahead)
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 6e548b588490..f4e05c90c87e 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -349,11 +349,11 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
- 	return ret;
- }
+ 	rc = migrate_page_move_mapping(mapping, newpage, page, head, mode, 0);
  
--int swap_readpage(struct page *page, bool synchronous)
-+int swap_readpage(struct swap_info_struct *sis, struct page *page,
-+		  bool synchronous)
- {
- 	struct bio *bio;
- 	int ret = 0;
--	struct swap_info_struct *sis = page_swap_info(page);
- 	blk_qc_t qc;
- 	struct gendisk *disk;
- 
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 39ae7cfad90f..40a2437e3c34 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -466,8 +466,10 @@ struct page *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 	struct page *retpage = __read_swap_cache_async(entry, gfp_mask,
- 			vma, addr, &page_was_allocated);
- 
--	if (page_was_allocated)
--		swap_readpage(retpage, do_poll);
-+	if (page_was_allocated) {
-+		struct swap_info_struct *sis = swp_swap_info(entry);
-+		swap_readpage(sis, retpage, do_poll);
-+	}
- 
- 	return retpage;
- }
-@@ -585,7 +587,8 @@ struct page *swapin_readahead(swp_entry_t entry, gfp_t gfp_mask,
- 		if (!page)
- 			continue;
- 		if (page_allocated) {
--			swap_readpage(page, false);
-+			struct swap_info_struct *sis = swp_swap_info(entry);
-+			swap_readpage(sis, page, false);
- 			if (offset != entry_offset &&
- 			    likely(!PageTransCompound(page))) {
- 				SetPageReadahead(page);
-@@ -748,7 +751,8 @@ struct page *do_swap_page_readahead(swp_entry_t fentry, gfp_t gfp_mask,
- 		if (!page)
- 			continue;
- 		if (page_allocated) {
--			swap_readpage(page, false);
-+			struct swap_info_struct *sis = swp_swap_info(entry);
-+			swap_readpage(sis, page, false);
- 			if (i != swap_ra->offset &&
- 			    likely(!PageTransCompound(page))) {
- 				SetPageReadahead(page);
 -- 
 2.14.3
