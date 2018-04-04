@@ -1,68 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752473AbeDDXKU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 19:10:20 -0400
-Received: from mail-pl0-f54.google.com ([209.85.160.54]:40795 "EHLO
-        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752264AbeDDXKT (ORCPT
+        id S1752626AbeDDXMF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 19:12:05 -0400
+Received: from mail-pl0-f52.google.com ([209.85.160.52]:44754 "EHLO
+        mail-pl0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752390AbeDDXLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 19:10:19 -0400
-X-Google-Smtp-Source: AIpwx4/Lcar/wSvyDOgQ2Kyop0jE+16gjaSFwm1qVgdpj/7BNjqzmW6Dh9ifNlTN+uPb82d5XEKWMA==
-Date: Thu, 5 Apr 2018 08:10:14 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v4 2/9] vsprintf: Consistent %pK handling for
- kptr_restrict == 0
-Message-ID: <20180404231014.GA622@jagdpanzerIV>
-References: <20180404085843.16050-1-pmladek@suse.com>
- <20180404085843.16050-3-pmladek@suse.com>
+        Wed, 4 Apr 2018 19:11:52 -0400
+X-Google-Smtp-Source: AIpwx49FZX8sWofGyot8Bkc8lUHWtUQOAUqg8upZeEsJ2DW6HWbLctrQVTPenjl9prWQKdyoXM3+lA==
+Date: Thu, 5 Apr 2018 09:11:38 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: sched_rt_period_timer causing large latencies
+Message-ID: <20180405091138.6ef14d15@roar.ozlabs.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404085843.16050-3-pmladek@suse.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/04/18 10:58), Petr Mladek wrote:
->
-> restricted_pointer() pretends that it prints the address when kptr_restrict
-> is set to zero. But it is never called in this situation. Instead,
-> pointer() falls back to ptr_to_id() and hashes the pointer.
-> 
-> This patch removes the potential confusion. klp_restrict is checked only
-> in restricted_pointer().
-> 
-> It should actually fix a small race when the address might get printed
-> unhashed:
+Hi,
 
-Early morning, didn't have my coffee yet [like really didn't].
+I'm seeing some pretty big latencies on a ~idle system when a CPU wakes
+out of a nohz idle. Looks like it's due to the taking a lot of remote
+locks and cache lines. irqoff trace:
 
-But I don't see how you "fix" a race. "echo 0" might still be called
-later than switch().
+latency: 407 us, #608/608, CPU#3 | (M:server VP:0, KP:0, SP:0 HP:0 #P:176)
 
-[..]
-> @@ -1426,8 +1427,8 @@ char *restricted_pointer(char *buf, char *end, const void *ptr,
->  
->  	switch (kptr_restrict) {
->  	case 0:
-> -		/* Always print %pK values */
-> -		break;
-> +		/* Handle as %p, hash and do _not_ leak addresses. */
-> +		return ptr_to_id(buf, end, ptr, spec);
+  <idle>-0       3d...    0us : decrementer_common
+  <idle>-0       3d...    1us : timer_interrupt <-decrementer_common
+  <idle>-0       3d...    2us : irq_enter <-timer_interrupt
+  <idle>-0       3d...    2us : rcu_irq_enter <-irq_enter
+  <idle>-0       3d...    3us : rcu_nmi_enter <-irq_enter
+  <idle>-0       3d...    4us : rcu_dynticks_eqs_exit <-rcu_nmi_enter
+  <idle>-0       3d...    4us : __local_bh_disable_ip <-irq_enter
+  <idle>-0       3d...    5us : tick_irq_enter <-irq_enter
+  <idle>-0       3d...    6us : tick_check_oneshot_broadcast_this_cpu <-tick_irq_enter
+  <idle>-0       3d...    6us : ktime_get <-tick_irq_enter
+  <idle>-0       3d...    7us : update_ts_time_stats <-tick_irq_enter
+  <idle>-0       3d...    8us : nr_iowait_cpu <-update_ts_time_stats
+  <idle>-0       3d...    9us : _local_bh_enable <-irq_enter
+  <idle>-0       3d...   10us : __local_bh_enable <-irq_enter
+  <idle>-0       3d.h.   10us : __timer_interrupt <-timer_interrupt
+  <idle>-0       3d.h.   11us : hrtimer_interrupt <-__timer_interrupt
+  <idle>-0       3d.h.   12us : _raw_spin_lock_irqsave <-hrtimer_interrupt
+  <idle>-0       3d.h.   13us : ktime_get_update_offsets_now <-hrtimer_interrupt
+  <idle>-0       3d.h.   13us : __hrtimer_run_queues <-hrtimer_interrupt
+  <idle>-0       3d.h.   14us : __remove_hrtimer <-__hrtimer_run_queues
+  <idle>-0       3d.h.   15us : _raw_spin_unlock_irqrestore <-__hrtimer_run_queues
+  <idle>-0       3d.h.   16us : tick_sched_timer <-__hrtimer_run_queues
+  <idle>-0       3d.h.   16us : ktime_get <-tick_sched_timer
+  <idle>-0       3d.h.   17us : tick_sched_do_timer <-tick_sched_timer
+  <idle>-0       3d.h.   18us : tick_sched_handle.isra.5 <-tick_sched_timer
+  <idle>-0       3d.h.   19us : update_process_times <-tick_sched_handle.isra.5
+  <idle>-0       3d.h.   19us : account_process_tick <-update_process_times
+  <idle>-0       3d.h.   20us : run_local_timers <-update_process_times
+  <idle>-0       3d.h.   21us : hrtimer_run_queues <-run_local_timers
+  <idle>-0       3d.h.   21us : raise_softirq <-run_local_timers
+  <idle>-0       3d.h.   22us : __raise_softirq_irqoff <-raise_softirq
+  <idle>-0       3d.h.   23us : rcu_check_callbacks <-update_process_times
+  <idle>-0       3d.h.   24us : rcu_sched_qs <-rcu_check_callbacks
+  <idle>-0       3d.h.   25us : rcu_bh_qs <-rcu_check_callbacks
+  <idle>-0       3d.h.   25us : rcu_segcblist_ready_cbs <-rcu_check_callbacks
+  <idle>-0       3d.h.   26us : cpu_needs_another_gp <-rcu_check_callbacks
+  <idle>-0       3d.h.   27us : invoke_rcu_core <-rcu_check_callbacks
+  <idle>-0       3d.h.   28us : raise_softirq <-invoke_rcu_core
+  <idle>-0       3d.h.   28us : __raise_softirq_irqoff <-raise_softirq
+  <idle>-0       3d.h.   29us : scheduler_tick <-update_process_times
+  <idle>-0       3d.h.   30us : _raw_spin_lock <-scheduler_tick
+  <idle>-0       3d.h.   31us : update_rq_clock <-scheduler_tick
+  <idle>-0       3d.h.   31us : task_tick_idle <-scheduler_tick
+  <idle>-0       3d.h.   32us : cpu_load_update_active <-scheduler_tick
+  <idle>-0       3d.h.   33us : tick_nohz_tick_stopped <-cpu_load_update_active
+  <idle>-0       3d.h.   33us : cpu_load_update <-scheduler_tick
+  <idle>-0       3d.h.   34us : sched_avg_update <-cpu_load_update
+  <idle>-0       3d.h.   35us : calc_global_load_tick <-scheduler_tick
+  <idle>-0       3d.h.   36us : trigger_load_balance <-scheduler_tick
+  <idle>-0       3d.h.   36us : raise_softirq <-trigger_load_balance
+  <idle>-0       3d.h.   37us : __raise_softirq_irqoff <-raise_softirq
+  <idle>-0       3d.h.   38us : run_posix_cpu_timers <-update_process_times
+  <idle>-0       3d.h.   39us : profile_tick <-tick_sched_handle.isra.5
+  <idle>-0       3d.h.   39us : hrtimer_forward <-tick_sched_timer
+  <idle>-0       3d.h.   40us : _raw_spin_lock_irq <-__hrtimer_run_queues
+  <idle>-0       3d.h.   41us : enqueue_hrtimer <-__hrtimer_run_queues
+  <idle>-0       3d.h.   42us : __remove_hrtimer <-__hrtimer_run_queues
+  <idle>-0       3d.h.   42us : _raw_spin_unlock_irqrestore <-__hrtimer_run_queues
+  <idle>-0       3d.h.   44us : sched_rt_period_timer <-__hrtimer_run_queues
+  <idle>-0       3d.h.   44us : _raw_spin_lock <-sched_rt_period_timer
+  <idle>-0       3d.h.   45us : ktime_get <-sched_rt_period_timer
+  <idle>-0       3d.h.   46us : hrtimer_forward <-sched_rt_period_timer
+  <idle>-0       3d.h.   47us : _raw_spin_lock <-sched_rt_period_timer
+  <idle>-0       3d.h.   48us : _raw_spin_lock <-sched_rt_period_timer
+  ... 527 more locks snipped ...
+  <idle>-0       3d.h.  403us : ktime_get <-sched_rt_period_timer
+  <idle>-0       3d.h.  403us : hrtimer_forward <-sched_rt_period_timer
+  <idle>-0       3d.h.  404us : _raw_spin_lock_irq <-__hrtimer_run_queues
+  <idle>-0       3d.h.  404us : __hrtimer_get_next_event <-hrtimer_interrupt
+  <idle>-0       3d.h.  404us : __hrtimer_next_event_base <-__hrtimer_get_next_event
+  <idle>-0       3d.h.  405us : __hrtimer_next_event_base <-hrtimer_interrupt
+  <idle>-0       3d.h.  405us : _raw_spin_unlock_irqrestore <-hrtimer_interrupt
+  <idle>-0       3d.h.  405us : tick_program_event <-hrtimer_interrupt
+  <idle>-0       3d.h.  406us : clockevents_program_event <-tick_program_event
+  <idle>-0       3d.h.  406us : ktime_get <-clockevents_program_event
+  <idle>-0       3d.h.  406us : decrementer_set_next_event <-clockevents_program_event
+  <idle>-0       3d.h.  407us : irq_exit <-timer_interrupt
+  <idle>-0       3d...  407us : __do_softirq <-irq_exit
+  <idle>-0       3d...  407us : __local_bh_disable_ip <-__do_softirq
+  <idle>-0       3d.s.  408us : __do_softirq
+  <idle>-0       3d.s.  408us : trace_hardirqs_on <-__do_softirq
+  <idle>-0       3d.s.  411us : <stack trace>
 
->From "Always print pK values" to "Always print hashed values"... Do we need
-%pK then? You probably need to update printk-formats.rst as well.
+This is only a 2 socket system with 176 CPUs, so not huge or extreme
+remote latency. I suspect this contributes to significantly higher
+occasional latency spikes when it hits some runqueue lock contention.
 
-	-ss
+Any way this can be improved? Any config options or settings should be
+changed?
+
+Thanks,
+Nick
