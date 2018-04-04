@@ -1,347 +1,232 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753148AbeDDCWu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 22:22:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36356 "EHLO mail.kernel.org"
+        id S1754801AbeDDCW7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 22:22:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752274AbeDDCWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 22:22:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFDE52178C
+        id S1752316AbeDDCWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 22:22:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86BB82178F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Changbin Du <changbin.du@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jin Yao <yao.jin@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Kan Liang <kan.liang@intel.com>,
         Kim Phillips <kim.phillips@arm.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        =?UTF-8?q?Martin=20Li=C5=A1ka?= <mliska@suse.cz>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
         Milian Wolff <milian.wolff@kdab.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Wang Nan <wangnan0@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [GIT PULL 00/17] perf/core improvements and fixes
-Date: Tue,  3 Apr 2018 23:21:41 -0300
-Message-Id: <20180404022158.12190-1-acme@kernel.org>
+Subject: [PATCH 01/17] perf tools: Add a "dso_size" sort order
+Date: Tue,  3 Apr 2018 23:21:42 -0300
+Message-Id: <20180404022158.12190-2-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180404022158.12190-1-acme@kernel.org>
+References: <20180404022158.12190-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
+From: Kim Phillips <kim.phillips@arm.com>
 
-	Please consider pulling,
+Add DSO size to perf report/top sort output list.
 
-- Arnaldo
+This includes adding a map__size fn to map.h, which is
+approximately equal to the DSO data file_size:
 
-Test results at the end of this message, as usual.
+  DSO				file size	map (end-start)	file / (end-start)
+  libwebkit2gtk-4.0.so.37.24.9	43260072	41295872	95%
+  libglib-2.0.so.0.5400.1		 1125680	 1118208	99%
+  libc-2.26.so			 1960656 	 1925120	101%
+  libdbus-1.so.3.14.13		  309456 	  303104	102%
 
-The following changes since commit 1159e09476536250c2a0173d4298d15114df7a89:
+Sample output:
 
-  perf/x86/intel: Enable C-state residency events for Cannon Lake (2018-03-31 11:28:36 +0200)
+  $ ./perf report -s dso_size,dso
+  Samples: 2K of event 'cycles:uppp', Event count (approx.): 128373340
+  Overhead  DSO size  Shared Object
+    90.62%   unknown  [unknown]
+     2.87%   1118208  libglib-2.0.so.0.5400.1
+     1.92%    303104  libdbus-1.so.3.14.13
+     1.42%   1925120  libc-2.26.so
+     0.77%  41295872  libwebkit2gtk-4.0.so.37.24.9
+     0.61%    335872  libgobject-2.0.so.0.5400.1
+     0.41%   1052672  libgdk-3.so.0.2200.25
+     0.36%    106496  libpthread-2.26.so
+     0.29%    221184  dbus-daemon
+     0.17%    159744  ld-2.26.so
+     0.13%     49152  libwayland-client.so.0.3.0
+     0.12%   1642496  libgio-2.0.so.0.5400.1
+     0.09%   7327744  libgtk-3.so.0.2200.25
+     0.09%  12324864  libmozjs-52.so.0.0.0
+     0.05%   4796416  perf
+     0.04%    843776  libgjs.so.0.0.0
+     0.03%   1409024  libmutter-clutter-1.so
 
-are available in the Git repository at:
+Committer testing:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo-4.17-20180403
+To sort by DSO size, use:
 
-for you to fetch changes up to 51125a29a395048fdb3429b8c4ca0ada57097744:
-
-  perf trace: Remove redundant ')' (2018-04-03 16:16:41 -0300)
-
-----------------------------------------------------------------
-perf/core improvements and fixes:
-
-- Show only failing syscalls with 'perf trace --failure' (Arnaldo Carvalho de Melo)
-
-	e.g: See what 'openat' syscalls are failing:
-
-  # perf trace --failure -e openat
-   762.323 ( 0.007 ms): VideoCapture/4566 openat(dfd: CWD, filename: /dev/video2) = -1 ENOENT No such file or directory
-   <SNIP N /dev/videoN open attempts... sigh, where is that improvised camera lid?!? 8-) >
-   790.228 ( 0.008 ms): VideoCapture/4566 openat(dfd: CWD, filename: /dev/video63) = -1 ENOENT No such file or directory
-  ^C#
-
-- Show information about the event (freq, nr_samples, total period/nr_events) in
-  the annotate --tui and --stdio2 'perf annotate' output, similar to the
-  first line in the 'perf report --tui', but just for the samples for
-  the annotated symbol (Arnaldo Carvalho de Melo)
-
-- Introduce 'perf version --build-options' to show what features were
-  linked, aliased as well as a shorter 'perf -vv' (Jin Yao)
-
-- Add a "dso_size" sort order (Kim Phillips)
-
-- Remove redundant ')' in the tracepoint output in 'perf trace' (Changbin Du)
-
-- Synchronize x86's cpufeatures.h, no effect on tools (Arnaldo Carvalho de Melo)
-
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-----------------------------------------------------------------
-Arnaldo Carvalho de Melo (9):
-      tools headers: Synchronize x86's cpufeatures.h
-      perf trace: Show only failing syscalls
-      perf hists browser: Rename perf_evsel_browser_title to a more descriptive name
-      perf hists: Introduce hists__scnprint_title()
-      perf hists: Move hists__scnprintf_title() away from the TUI code
-      perf ui browser: Move the extra title lines from the hists browser
-      perf annotate: Introduce annotation__scnprintf_samples_period() method
-      perf annotate browser: Show extra title line with event information
-      perf annotate stdio2: Print more descriptive event information header
-
-Changbin Du (1):
-      perf trace: Remove redundant ')'
-
-Jin Yao (5):
-      perf config: Add some new -DHAVE_XXX to CFLAGS
-      perf config: Rename to HAVE_DWARF_GETLOCATIONS_SUPPORT
-      perf version: Print the compiled-in status of libraries
-      perf tools: Add 'perf -vv' as an alias to 'perf version --build-options'
-      perf version: Add man page
-
-Jiri Olsa (1):
-      tools include: Add config.h header file
-
-Kim Phillips (1):
-      perf tools: Add a "dso_size" sort order
-
- tools/arch/x86/include/asm/cpufeatures.h  |   2 +
- tools/include/tools/config.h              |  34 ++++++++
- tools/perf/Documentation/perf-report.txt  |   1 +
- tools/perf/Documentation/perf-trace.txt   |   3 +
- tools/perf/Documentation/perf-version.txt |  24 ++++++
- tools/perf/Makefile.config                |   8 +-
- tools/perf/builtin-trace.c                |  11 ++-
- tools/perf/builtin-version.c              |  82 +++++++++++++++++++-
- tools/perf/perf.c                         |   6 ++
- tools/perf/perf.h                         |   1 +
- tools/perf/ui/browser.c                   |   8 +-
- tools/perf/ui/browser.h                   |   2 +
- tools/perf/ui/browsers/annotate.c         |  31 +++++++-
- tools/perf/ui/browsers/hists.c            | 125 +++++++-----------------------
- tools/perf/util/annotate.c                |  48 ++++++++++--
- tools/perf/util/annotate.h                |  12 +++
- tools/perf/util/dwarf-aux.c               |   2 +-
- tools/perf/util/hist.c                    |  81 +++++++++++++++++++
- tools/perf/util/hist.h                    |   7 ++
- tools/perf/util/map.h                     |   4 +
- tools/perf/util/sort.c                    |  41 ++++++++++
- tools/perf/util/sort.h                    |   1 +
- 22 files changed, 418 insertions(+), 116 deletions(-)
- create mode 100644 tools/include/tools/config.h
- create mode 100644 tools/perf/Documentation/perf-version.txt
-
-Test results:
-
-The first ones are container (docker) based builds of tools/perf with and
-without libelf support.  Where clang is available, it is also used to build
-perf with/without libelf.
-
-The objtool and samples/bpf/ builds are disabled now that I'm switching from
-using the sources in a local volume to fetching them from a http server to
-build it inside the container, to make it easier to build in a container cluster.
-Those will come back later.
-
-Several are cross builds, the ones with -x-ARCH and the android one, and those
-may not have all the features built, due to lack of multi-arch devel packages,
-available and being used so far on just a few, like
-debian:experimental-x-{arm64,mipsel}.
-
-The 'perf test' one will perform a variety of tests exercising
-tools/perf/util/, tools/lib/{bpf,traceevent,etc}, as well as run perf commands
-with a variety of command line event specifications to then intercept the
-sys_perf_event syscall to check that the perf_event_attr fields are set up as
-expected, among a variety of other unit tests.
-
-Then there is the 'make -C tools/perf build-test' ones, that build tools/perf/
-with a variety of feature sets, exercising the build with an incomplete set of
-features as well as with a complete one. It is planned to have it run on each
-of the containers mentioned above, using some container orchestration
-infrastructure. Get in contact if interested in helping having this in place.
-
-  # dm
-   1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
-   2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
-   3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
-   4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
-   5 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
-   6 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-11)
-   7 amazonlinux:2                 : Ok   gcc (GCC) 7.2.1 20170915 (Red Hat 7.2.1-2)
-   8 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
-   9 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
-  10 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
-  11 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
-  12 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)
-  13 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
-  14 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u1) 4.9.2
-  15 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
-  16 debian:experimental           : Ok   gcc (Debian 7.3.0-14) 7.3.0
-  17 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 7.3.0-12) 7.3.0
-  18 debian:experimental-x-mips    : Ok   mips-linux-gnu-gcc (Debian 7.3.0-12) 7.3.0
-  19 debian:experimental-x-mips64  : Ok   mips64-linux-gnuabi64-gcc (Debian 7.3.0-12) 7.3.0
-  20 debian:experimental-x-mipsel  : Ok   mipsel-linux-gnu-gcc (Debian 7.3.0-12) 7.3.0
-  21 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
-  22 fedora:21                     : Ok   gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
-  23 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
-  24 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
-  25 fedora:24                     : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
-  26 fedora:24-x-ARC-uClibc        : Ok   arc-linux-gcc (ARCompact ISA Linux uClibc toolchain 2017.09-rc2) 7.1.1 20170710
-  27 fedora:25                     : Ok   gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
-  28 fedora:26                     : Ok   gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
-  29 fedora:27                     : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
-  30 fedora:28                     : Ok   gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
-  31 fedora:rawhide                : Ok   gcc (GCC) 8.0.1 20180222 (Red Hat 8.0.1-0.16)
-  32 gentoo-stage3-amd64:latest    : Ok   gcc (Gentoo 6.4.0-r1 p1.3) 6.4.0
-  33 mageia:5                      : Ok   gcc (GCC) 4.9.2
-  34 mageia:6                      : Ok   gcc (Mageia 5.5.0-1.mga6) 5.5.0
-  35 opensuse:42.1                 : Ok   gcc (SUSE Linux) 4.8.5
-  36 opensuse:42.2                 : Ok   gcc (SUSE Linux) 4.8.5
-  37 opensuse:42.3                 : Ok   gcc (SUSE Linux) 4.8.5
-  38 opensuse:tumbleweed           : Ok   gcc (SUSE Linux) 7.3.0
-  39 oraclelinux:6                 : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
-  40 oraclelinux:7                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16.0.3)
-  41 ubuntu:12.04.5                : Ok   gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
-  42 ubuntu:14.04.4                : Ok   gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
-  43 ubuntu:14.04.4-x-linaro-arm64 : Ok   aarch64-linux-gnu-gcc (Linaro GCC 5.4-2017.05) 5.4.1 20170404
-  44 ubuntu:15.04                  : Ok   gcc (Ubuntu 4.9.2-10ubuntu13) 4.9.2
-  45 ubuntu:16.04                  : Ok   gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  46 ubuntu:16.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  47 ubuntu:16.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  48 ubuntu:16.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  49 ubuntu:16.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  50 ubuntu:16.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  51 ubuntu:16.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  52 ubuntu:16.10                  : Ok   gcc (Ubuntu 6.2.0-5ubuntu12) 6.2.0 20161005
-  53 ubuntu:17.04                  : Ok   gcc (Ubuntu 6.3.0-12ubuntu2) 6.3.0 20170406
-  53 ubuntu:17.10                  : Ok   gcc (Ubuntu 7.2.0-8ubuntu3) 7.2.0
-  54 ubuntu:18.04                  : Ok   gcc (Ubuntu 7.2.0-16ubuntu1) 7.2.0
-
-  # uname -a
-  Linux jouet 4.16.0-rc7 #3 SMP Mon Mar 26 14:35:30 -03 2018 x86_64 x86_64 x86_64 GNU/Linux
-  # perf test
-   1: vmlinux symtab matches kallsyms                       : Ok
-   2: Detect openat syscall event                           : Ok
-   3: Detect openat syscall event on all cpus               : Ok
-   4: Read samples using the mmap interface                 : Ok
-   5: Test data source output                               : Ok
-   6: Parse event definition strings                        : Ok
-   7: Simple expression parser                              : Ok
-   8: PERF_RECORD_* events & perf_sample fields             : Ok
-   9: Parse perf pmu format                                 : Ok
-  10: DSO data read                                         : Ok
-  11: DSO data cache                                        : Ok
-  12: DSO data reopen                                       : Ok
-  13: Roundtrip evsel->name                                 : Ok
-  14: Parse sched tracepoints fields                        : Ok
-  15: syscalls:sys_enter_openat event fields                : Ok
-  16: Setup struct perf_event_attr                          : Ok
-  17: Match and link multiple hists                         : Ok
-  18: 'import perf' in python                               : Ok
-  19: Breakpoint overflow signal handler                    : Ok
-  20: Breakpoint overflow sampling                          : Ok
-  21: Breakpoint accounting                                 : Skip
-  22: Number of exit events of a simple workload            : Ok
-  23: Software clock events period values                   : Ok
-  24: Object code reading                                   : Ok
-  25: Sample parsing                                        : Ok
-  26: Use a dummy software event to keep tracking           : Ok
-  27: Parse with no sample_id_all bit set                   : Ok
-  28: Filter hist entries                                   : Ok
-  29: Lookup mmap thread                                    : Ok
-  30: Share thread mg                                       : Ok
-  31: Sort output of hist entries                           : Ok
-  32: Cumulate child hist entries                           : Ok
-  33: Track with sched_switch                               : Ok
-  34: Filter fds with revents mask in a fdarray             : Ok
-  35: Add fd to a fdarray, making it autogrow               : Ok
-  36: kmod_path__parse                                      : Ok
-  37: Thread map                                            : Ok
-  38: LLVM search and compile                               :
-  38.1: Basic BPF llvm compile                              : Ok
-  38.2: kbuild searching                                    : Ok
-  38.3: Compile source for BPF prologue generation          : Ok
-  38.4: Compile source for BPF relocation                   : Ok
-  39: Session topology                                      : Ok
-  40: BPF filter                                            :
-  40.1: Basic BPF filtering                                 : Ok
-  40.2: BPF pinning                                         : Ok
-  40.3: BPF prologue generation                             : Ok
-  40.4: BPF relocation checker                              : Ok
-  41: Synthesize thread map                                 : Ok
-  42: Remove thread map                                     : Ok
-  43: Synthesize cpu map                                    : Ok
-  44: Synthesize stat config                                : Ok
-  45: Synthesize stat                                       : Ok
-  46: Synthesize stat round                                 : Ok
-  47: Synthesize attr update                                : Ok
-  48: Event times                                           : Ok
-  49: Read backward ring buffer                             : Ok
-  50: Print cpu map                                         : Ok
-  51: Probe SDT events                                      : Ok
-  52: is_printable_array                                    : Ok
-  53: Print bitmap                                          : Ok
-  54: perf hooks                                            : Ok
-  55: builtin clang support                                 : Skip (not compiled in)
-  56: unit_number__scnprintf                                : Ok
-  57: mem2node                                              : Ok
-  58: x86 rdpmc                                             : Ok
-  59: Convert perf time to TSC                              : Ok
-  60: DWARF unwind                                          : Ok
-  61: x86 instruction decoder - new instructions            : Ok
-  62: Use vfs_getname probe to get syscall args filenames   : Ok
-  63: probe libc's inet_pton & backtrace it with ping       : Ok
-  64: Check open filename arg using perf trace + vfs_getname: Ok
-  65: probe libc's inet_pton & backtrace it with ping       : Ok
-  66: Add vfs_getname probe to get syscall args filenames   : Ok
+  # perf report -F dso_size,dso,overhead -s dso_size
+  <SNIP>
+     3465216  libdns-export.so.174.0.1   0.00%
+     3522560  libgc.so.1.0.3             0.00%
+     3538944  libbfd-2.29-13.fc27.so     0.59%
+     3670016  libunistring.so.2.1.0      0.00%
+     3723264  libguile-2.0.so.22.8.1     0.00%
+     3776512  libgio-2.0.so.0.5400.3     0.00%
+     3891200  libc-2.26.so               0.96%
+     3944448  libmozjs-17.0.so           0.00%
+     4218880  libperl.so.5.26.1          0.18%
+     4452352  libpython2.7.so.1.0        0.02%
+     4472832  perf                       0.02%
+     4603904  git                        0.01%
+     4751360  libcrypto.so.1.1.0g        0.00%
+     5005312  libslang.so.2.3.1          0.00%
+     7315456  libgtk-3.so.0.2200.26      0.09%
+     8818688  i965_dri.so                2.46%
+     8818688  i965_dri.so (deleted)      1.26%
+    12414976  libmozjs-52.so.0.0.0       0.03%
+    23642112  cc1                        2.02%
+    27889664  [kernel.kallsyms]         25.41%
+    80834560  libxul.so (deleted)       15.68%
+    98078720  chrome                    32.03%
+  1056964608  [kernel.kallsyms]          1.59%
   #
 
-  $ make -C tools/perf build-test
-  make: Entering directory '/home/acme/git/perf/tools/perf'
-  - tarpkg: ./tests/perf-targz-src-pkg .
-                make_install_O: make install
-            make_install_bin_O: make install-bin
-                   make_pure_O: make
-              make_clean_all_O: make clean all
-                   make_help_O: make help
-                  make_no_ui_O: make NO_NEWT=1 NO_SLANG=1 NO_GTK2=1
-               make_no_slang_O: make NO_SLANG=1
-            make_no_auxtrace_O: make NO_AUXTRACE=1
-           make_no_libpython_O: make NO_LIBPYTHON=1
-           make_no_libbionic_O: make NO_LIBBIONIC=1
-              make_no_libbpf_O: make NO_LIBBPF=1
-           make_no_backtrace_O: make NO_BACKTRACE=1
-                make_minimal_O: make NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1 NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1 NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1 NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1 NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1
-             make_no_libnuma_O: make NO_LIBNUMA=1
-             make_no_libperl_O: make NO_LIBPERL=1
-       make_util_pmu_bison_o_O: make util/pmu-bison.o
-  make_no_libdw_dwarf_unwind_O: make NO_LIBDW_DWARF_UNWIND=1
-                 make_static_O: make LDFLAGS=-static
-                    make_doc_O: make doc
-            make_no_libaudit_O: make NO_LIBAUDIT=1
-              make_no_libelf_O: make NO_LIBELF=1
-                   make_tags_O: make tags
-            make_no_demangle_O: make NO_DEMANGLE=1
-           make_no_libunwind_O: make NO_LIBUNWIND=1
-                make_no_newt_O: make NO_NEWT=1
-        make_with_babeltrace_O: make LIBBABELTRACE=1
-             make_util_map_o_O: make util/map.o
-                  make_debug_O: make DEBUG=1
-         make_with_clangllvm_O: make LIBCLANGLLVM=1
-                 make_perf_o_O: make perf.o
-   make_install_prefix_slash_O: make install prefix=/tmp/krava/
-             make_no_scripts_O: make NO_LIBPYTHON=1 NO_LIBPERL=1
-                make_no_gtk2_O: make NO_GTK2=1
-         make_install_prefix_O: make install prefix=/tmp/krava
-  OK
-  make: Leaving directory '/home/acme/git/perf/tools/perf'
-  $
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>
+Cc: Milian Wolff <milian.wolff@kdab.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180327060956.1c01ebe67a2a941bb4468c6f@arm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Documentation/perf-report.txt |  1 +
+ tools/perf/util/hist.h                   |  1 +
+ tools/perf/util/map.h                    |  4 ++++
+ tools/perf/util/sort.c                   | 41 ++++++++++++++++++++++++++++++++
+ tools/perf/util/sort.h                   |  1 +
+ 5 files changed, 48 insertions(+)
+
+diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+index e1a660e60849..917e36fde6d8 100644
+--- a/tools/perf/Documentation/perf-report.txt
++++ b/tools/perf/Documentation/perf-report.txt
+@@ -80,6 +80,7 @@ OPTIONS
+ 	- comm: command (name) of the task which can be read via /proc/<pid>/comm
+ 	- pid: command and tid of the task
+ 	- dso: name of library or module executed at the time of sample
++	- dso_size: size of library or module executed at the time of sample
+ 	- symbol: name of function executed at the time of sample
+ 	- symbol_size: size of function executed at the time of sample
+ 	- parent: name of function matched to the parent regex filter. Unmatched
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index e869cad4d89f..32fbf26e0c18 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -61,6 +61,7 @@ enum hist_column {
+ 	HISTC_SRCLINE_TO,
+ 	HISTC_TRACE,
+ 	HISTC_SYM_SIZE,
++	HISTC_DSO_SIZE,
+ 	HISTC_NR_COLS, /* Last entry */
+ };
+ 
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index edeb7291c8e1..0e9bbe01b0ab 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -103,6 +103,10 @@ static inline u64 identity__map_ip(struct map *map __maybe_unused, u64 ip)
+ 	return ip;
+ }
+ 
++static inline size_t map__size(const struct map *map)
++{
++	return map->end - map->start;
++}
+ 
+ /* rip/ip <-> addr suitable for passing to `objdump --start-address=` */
+ u64 map__rip_2objdump(struct map *map, u64 rip);
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index e8514f651865..26a68dfd8a4f 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -1545,6 +1545,46 @@ struct sort_entry sort_sym_size = {
+ 	.se_width_idx	= HISTC_SYM_SIZE,
+ };
+ 
++/* --sort dso_size */
++
++static int64_t _sort__dso_size_cmp(struct map *map_l, struct map *map_r)
++{
++	int64_t size_l = map_l != NULL ? map__size(map_l) : 0;
++	int64_t size_r = map_r != NULL ? map__size(map_r) : 0;
++
++	return size_l < size_r ? -1 :
++		size_l == size_r ? 0 : 1;
++}
++
++static int64_t
++sort__dso_size_cmp(struct hist_entry *left, struct hist_entry *right)
++{
++	return _sort__dso_size_cmp(right->ms.map, left->ms.map);
++}
++
++static int _hist_entry__dso_size_snprintf(struct map *map, char *bf,
++					  size_t bf_size, unsigned int width)
++{
++	if (map && map->dso)
++		return repsep_snprintf(bf, bf_size, "%*d", width,
++				       map__size(map));
++
++	return repsep_snprintf(bf, bf_size, "%*s", width, "unknown");
++}
++
++static int hist_entry__dso_size_snprintf(struct hist_entry *he, char *bf,
++					 size_t size, unsigned int width)
++{
++	return _hist_entry__dso_size_snprintf(he->ms.map, bf, size, width);
++}
++
++struct sort_entry sort_dso_size = {
++	.se_header	= "DSO size",
++	.se_cmp		= sort__dso_size_cmp,
++	.se_snprintf	= hist_entry__dso_size_snprintf,
++	.se_width_idx	= HISTC_DSO_SIZE,
++};
++
+ 
+ struct sort_dimension {
+ 	const char		*name;
+@@ -1569,6 +1609,7 @@ static struct sort_dimension common_sort_dimensions[] = {
+ 	DIM(SORT_TRANSACTION, "transaction", sort_transaction),
+ 	DIM(SORT_TRACE, "trace", sort_trace),
+ 	DIM(SORT_SYM_SIZE, "symbol_size", sort_sym_size),
++	DIM(SORT_DSO_SIZE, "dso_size", sort_dso_size),
+ 	DIM(SORT_CGROUP_ID, "cgroup_id", sort_cgroup_id),
+ };
+ 
+diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+index f5901c10a563..035b62e2c60b 100644
+--- a/tools/perf/util/sort.h
++++ b/tools/perf/util/sort.h
+@@ -220,6 +220,7 @@ enum sort_type {
+ 	SORT_TRANSACTION,
+ 	SORT_TRACE,
+ 	SORT_SYM_SIZE,
++	SORT_DSO_SIZE,
+ 	SORT_CGROUP_ID,
+ 
+ 	/* branch stack specific sort keys */
+-- 
+2.14.3
