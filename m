@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeDDETP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 00:19:15 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53551 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750778AbeDDETO (ORCPT
+        id S1751544AbeDDET0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 00:19:26 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52393 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeDDETY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 00:19:14 -0400
-X-Google-Smtp-Source: AIpwx49vg3welxdpQaaHu4FTGbdKvlZDpy1MsA7h9RLXgdj1+BQFR9FyMjV5I6+Zth4y1H2NybXbVg==
+        Wed, 4 Apr 2018 00:19:24 -0400
+X-Google-Smtp-Source: AIpwx4880vkjA8gNbrZDyW5ymA7rj4wcyeu1oEJAKPCW57Ks9HK96a0Hstx/cXvKmrCNpbQU0vieZg==
 From: Kirill Marinushkin <k.marinushkin@gmail.com>
 To: Mark Brown <broonie@kernel.org>
 Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
@@ -16,47 +16,96 @@ Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Liam Girdwood <liam.r.girdwood@linux.intel.com>,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
         Kirill Marinushkin <k.marinushkin@gmail.com>
-Subject: [PATCH v4 0/3] ASoC: topology: Improve hw_configs
-Date: Wed,  4 Apr 2018 06:19:36 +0200
-Message-Id: <20180404041939.23317-1-k.marinushkin@gmail.com>
+Subject: [PATCH v4 1/3] ASoC: topology: Fix bclk and fsync inversion in set_link_hw_format()
+Date: Wed,  4 Apr 2018 06:19:37 +0200
+Message-Id: <20180404041939.23317-2-k.marinushkin@gmail.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180404041939.23317-1-k.marinushkin@gmail.com>
+References: <20180404041939.23317-1-k.marinushkin@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mark,
+The values of bclk and fsync are inverted WRT the codec. But the existing
+solution already works for Broadwell, see the alsa-lib config:
 
-This patch series waits since 20th of February, because it modifies UAPI headers
-and should be done in sync with ALSA. I see that previously there was no clear
-understanding, how to do this in sync.
+`alsa-lib/src/conf/topology/broadwell/broadwell.conf`
 
-Two days ago I discussed with Takashi, and he suggested the following steps:
+This commit provides the backwards-compatible solution to fix this misuse.
 
-Step 1. A person from Intel, who knows the topic (Pierre), adds his
-"Reviewed-by" or "Acked-by" tags
-Step 2. I clarify with you to apply the Linux part (this patch series)
-Step 3. After that, I clarify with Takashi to apply the ALSA part (it is ready,
-but not sent untill we apply the Linux part)
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Tested-by: Pan Xiuli <xiuli.pan@linux.intel.com>
+Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
+---
+ include/uapi/sound/asoc.h | 16 ++++++++++++++--
+ sound/soc/soc-topology.c  | 12 +++++++-----
+ 2 files changed, 21 insertions(+), 7 deletions(-)
 
-The step 1 is done. Old patches are reviewed by Pierre, so they have his
-"Reviewed-by" tag. New patches are suggested by him, and we agreed on the
-implementation, so they have his "Acked-by" tag.
-
-Now we are on the step 2. If you don't have anything against this patch series,
-please apply it to Linux.
-
-Best Regards,
-Kirill
-
-Kirill Marinushkin (3):
-  ASoC: topology: Fix bclk and fsync inversion in set_link_hw_format()
-  ASoC: topology: Add missing clock gating parameter when parsing
-    hw_configs
-  ASoC: topology: Add definitions for mclk_direction values
-
- include/uapi/sound/asoc.h | 29 +++++++++++++++++++++++++----
- sound/soc/soc-topology.c  | 19 ++++++++++++++-----
- 2 files changed, 39 insertions(+), 9 deletions(-)
-
+diff --git a/include/uapi/sound/asoc.h b/include/uapi/sound/asoc.h
+index 69c37ecbff7e..f0e5e21efa54 100644
+--- a/include/uapi/sound/asoc.h
++++ b/include/uapi/sound/asoc.h
+@@ -160,6 +160,18 @@
+ #define SND_SOC_TPLG_LNK_FLGBIT_SYMMETRIC_SAMPLEBITS    (1 << 2)
+ #define SND_SOC_TPLG_LNK_FLGBIT_VOICE_WAKEUP            (1 << 3)
+ 
++/* DAI topology BCLK parameter
++ * For the backwards capability, by default codec is bclk master
++ */
++#define SND_SOC_TPLG_BCLK_CM         0 /* codec is bclk master */
++#define SND_SOC_TPLG_BCLK_CS         1 /* codec is bclk slave */
++
++/* DAI topology FSYNC parameter
++ * For the backwards capability, by default codec is fsync master
++ */
++#define SND_SOC_TPLG_FSYNC_CM         0 /* codec is fsync master */
++#define SND_SOC_TPLG_FSYNC_CS         1 /* codec is fsync slave */
++
+ /*
+  * Block Header.
+  * This header precedes all object and object arrays below.
+@@ -315,8 +327,8 @@ struct snd_soc_tplg_hw_config {
+ 	__u8 clock_gated;	/* 1 if clock can be gated to save power */
+ 	__u8 invert_bclk;	/* 1 for inverted BCLK, 0 for normal */
+ 	__u8 invert_fsync;	/* 1 for inverted frame clock, 0 for normal */
+-	__u8 bclk_master;	/* 1 for master of BCLK, 0 for slave */
+-	__u8 fsync_master;	/* 1 for master of FSYNC, 0 for slave */
++	__u8 bclk_master;	/* SND_SOC_TPLG_BCLK_ value */
++	__u8 fsync_master;	/* SND_SOC_TPLG_FSYNC_ value */
+ 	__u8 mclk_direction;    /* 0 for input, 1 for output */
+ 	__le16 reserved;	/* for 32bit alignment */
+ 	__le32 mclk_rate;	/* MCLK or SYSCLK freqency in Hz */
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index 01a50413c66f..c5bdc673b195 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -1994,13 +1994,15 @@ static void set_link_hw_format(struct snd_soc_dai_link *link,
+ 			link->dai_fmt |= SND_SOC_DAIFMT_IB_IF;
+ 
+ 		/* clock masters */
+-		bclk_master = hw_config->bclk_master;
+-		fsync_master = hw_config->fsync_master;
+-		if (!bclk_master && !fsync_master)
++		bclk_master = (hw_config->bclk_master ==
++			       SND_SOC_TPLG_BCLK_CM);
++		fsync_master = (hw_config->fsync_master ==
++				SND_SOC_TPLG_FSYNC_CM);
++		if (bclk_master && fsync_master)
+ 			link->dai_fmt |= SND_SOC_DAIFMT_CBM_CFM;
+-		else if (bclk_master && !fsync_master)
+-			link->dai_fmt |= SND_SOC_DAIFMT_CBS_CFM;
+ 		else if (!bclk_master && fsync_master)
++			link->dai_fmt |= SND_SOC_DAIFMT_CBS_CFM;
++		else if (bclk_master && !fsync_master)
+ 			link->dai_fmt |= SND_SOC_DAIFMT_CBM_CFS;
+ 		else
+ 			link->dai_fmt |= SND_SOC_DAIFMT_CBS_CFS;
 -- 
 2.13.6
