@@ -1,110 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeDDTAr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:00:47 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.171]:12319 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751944AbeDDTAh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:00:37 -0400
-X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0pA1dWeZVY=
-X-RZG-CLASS-ID: mo00
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-To: galak@codeaurora.org, andy.shevchenko@gmail.com,
-        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 2/5] gpio: pca953x: add register definitions for pcal6524 and fix address calculation
-Date: Wed,  4 Apr 2018 21:00:21 +0200
-Message-Id: <69ab73657c5e75db94fab027c9957dbbb73047a7.1522868423.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.12.2
-In-Reply-To: <cover.1522868422.git.hns@goldelico.com>
-References: <cover.1522868422.git.hns@goldelico.com>
-In-Reply-To: <cover.1522868422.git.hns@goldelico.com>
-References: <cover.1522868422.git.hns@goldelico.com>
+        id S1752197AbeDDTBJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:01:09 -0400
+Received: from mga11.intel.com ([192.55.52.93]:55747 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751938AbeDDTAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:00:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,407,1517904000";
+   d="scan'208";a="44917952"
+Subject: Re: [alsa-devel] [PATCH v4 0/3] ASoC: topology: Improve hw_configs
+To: Kirill Marinushkin <k.marinushkin@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>,
+        Pan Xiuli <xiuli.pan@linux.intel.com>, linux-kernel@vger.kernel.org,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>
+References: <20180404041939.23317-1-k.marinushkin@gmail.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <1ff8e154-e76f-b57a-cd79-cd42fdecf92b@linux.intel.com>
+Date: Wed, 4 Apr 2018 13:57:12 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180404041939.23317-1-k.marinushkin@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCAL chips ("L" seems to stand for "latched") have additional
-registers starting at address 0x40 to control the latches,
-interrupt mask, pull-up and pull down etc.
+On 4/3/18 11:19 PM, Kirill Marinushkin wrote:
+> Hello Mark,
+> 
+> This patch series waits since 20th of February, because it modifies UAPI headers
+> and should be done in sync with ALSA. I see that previously there was no clear
+> understanding, how to do this in sync.
+> 
+> Two days ago I discussed with Takashi, and he suggested the following steps:
+> 
+> Step 1. A person from Intel, who knows the topic (Pierre), adds his
+> "Reviewed-by" or "Acked-by" tags
+> Step 2. I clarify with you to apply the Linux part (this patch series)
+> Step 3. After that, I clarify with Takashi to apply the ALSA part (it is ready,
+> but not sent untill we apply the Linux part)
+> 
+> The step 1 is done. Old patches are reviewed by Pierre, so they have his
+> "Reviewed-by" tag. New patches are suggested by him, and we agreed on the
+> implementation, so they have his "Acked-by" tag.
 
-The constants are so far defined in a way that they fit for
-the pcal9555a when shifted by the number of banks, i.e. multiplied
-by 2.
+I just checked all the patches one more time and I am indeed good with 
+the changes
+Thanks Kirill for clarifying those misleading settings in 
+backwards-compatible ways and indirectly helping on our SOF work.
 
-Now the pcal6524 has 3 banks which means the relative offset
-must be multiplied by 4 which gives a wrong result if not done
-carefully, since the base offset is already included in the offset.
-
-For the basic registers shared with all pca93xx/tca64xx chips
-there is no such offset.
-
-Therefore, we add code to adjust the register number for exended
-registers in this case.
-
-And we add additional register offset constants (not yet used by
-the driver code) which are specific to the pcal6524.
-
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/gpio/gpio-pca953x.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 4a075619b93e..c70acba710c7 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -41,9 +41,19 @@
- #define PCA957X_MSK		6
- #define PCA957X_INTS		7
- 
--#define PCAL953X_IN_LATCH	34
--#define PCAL953X_INT_MASK	37
--#define PCAL953X_INT_STAT	38
-+#define PCAL953X_OUT_STRENGTH	0x20
-+#define PCAL953X_IN_LATCH	0x22
-+#define PCAL953X_PULL_EN	0x23
-+#define PCAL953X_PULL_SEL	0x24
-+#define PCAL953X_INT_MASK	0x25
-+#define PCAL953X_INT_STAT	0x26
-+#define PCAL953X_OUT_CONF	0x27
-+
-+#define PCAL6524_INT_EDGE	0x28
-+#define PCAL6524_INT_CLR	0x2a
-+#define PCAL6524_IN_STATUS	0x2b
-+#define PCAL6524_OUT_INDCONF	0x2c
-+#define PCAL6524_DEBOUNCE	0x2d
- 
- #define PCA_GPIO_MASK		0x00FF
- #define PCA_INT			0x0100
-@@ -208,6 +218,10 @@ static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
- {
- 	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
- 
-+	/* adjust register address for pcal6524 */
-+	if (reg >= PCAL953X_OUT_STRENGTH)
-+		reg -= PCAL953X_OUT_STRENGTH >> 1;
-+
- 	return i2c_smbus_write_i2c_block_data(chip->client,
- 					      (reg << bank_shift) | REG_ADDR_AI,
- 					      NBANK(chip), val);
-@@ -250,6 +264,10 @@ static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
- {
- 	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
- 
-+	/* adjust register address for pcal6524 */
-+	if (reg >= PCAL953X_OUT_STRENGTH)
-+		reg -= PCAL953X_OUT_STRENGTH >> 1;
-+
- 	return i2c_smbus_read_i2c_block_data(chip->client,
- 					     (reg << bank_shift) | REG_ADDR_AI,
- 					     NBANK(chip), val);
--- 
-2.12.2
+> 
+> Now we are on the step 2. If you don't have anything against this patch series,
+> please apply it to Linux.
+> 
+> Best Regards,
+> Kirill
+> 
+> Kirill Marinushkin (3):
+>    ASoC: topology: Fix bclk and fsync inversion in set_link_hw_format()
+>    ASoC: topology: Add missing clock gating parameter when parsing
+>      hw_configs
+>    ASoC: topology: Add definitions for mclk_direction values
+> 
+>   include/uapi/sound/asoc.h | 29 +++++++++++++++++++++++++----
+>   sound/soc/soc-topology.c  | 19 ++++++++++++++-----
+>   2 files changed, 39 insertions(+), 9 deletions(-)
+> 
