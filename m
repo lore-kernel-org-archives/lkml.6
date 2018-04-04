@@ -1,123 +1,223 @@
-Date: Wed, 4 Apr 2018 12:32:46 +0200
+Date: Wed, 4 Apr 2018 12:31:40 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Driver core updates for 4.17-rc1
-Message-ID: <20180404103246.GA12602@kroah.com>
+	Jiri Slaby <jslaby@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY/Serial patches for 4.17-rc1
+Message-ID: <20180404103140.GA10186@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The following changes since commit 0c8efd610b58cb23cefdfa12015799079aef94ae:
+The following changes since commit c698ca5278934c0ae32297a8725ced2e27585d7f:
 
-  Linux 4.16-rc5 (2018-03-11 17:25:09 -0700)
+  Linux 4.16-rc6 (2018-03-18 17:48:42 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/ tags/driver-core-4.17-rc1
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/ tags/tty-4.17-rc1
 
-for you to fetch changes up to 1fe56e0cafd7e4cf26f3582aad0c7705fceff498:
+for you to fetch changes up to 4f794097797f551917b68797e39f25fcb17d5b3a:
 
-  drivers: base: remove check for callback in coredump_store() (2018-03-23 18:08:02 +0100)
+  serial: expose buf_overrun count through proc interface (2018-03-23 16:34:06 +0100)
 
 ----------------------------------------------------------------
-Driver core patches for 4.17-rc1
+TTY/Serial driver patches for 4.17-rc1
 
-Here is the "big" set of driver core patches for 4.17-rc1.
+Here is the big set of tty and serial driver patches for 4.17-rc1
 
-There's really not much here, just a bunch of firmware code refactoring
-from Luis as he attempts to wrangle that codebase into something that is
-managable, along with a bunch of userspace tests for it.  Other than
-that, a handful of small bugfixes and reverts of things that didn't work
-out.
+Not all that big really, most are just small fixes and additions to
+existing drivers.  There's a bunch of work on the imx serial driver
+recently for some reason, and a new embedded serial driver added as
+well.
 
-Full details are in the shortlog, it's not all that much.
+Full details are in the shortlog.
 
-All of these have been in linux-next for a while with no reported
-issues.
+All of these have been in the linux-next tree for a while with no
+reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Andy Shevchenko (1):
-      lib/kobject: Join string literals back
+Alexey Khoroshilov (1):
+      serial: mxs-auart: disable clks of Alphascale ASM9260
 
-Arend van Spriel (2):
-      drivers: base: add description for .coredump() callback
-      drivers: base: remove check for callback in coredump_store()
+Andy Shevchenko (2):
+      serial, pci_ids: Move duplicate IDs to PCI IDs database
+      serial: 8250_dw: Switch to use acpi_dev_present()
 
-Arvind Yadav (4):
-      base: soc: use put_device() instead of kfree()
-      driver core: platform: use put_device() if device_register fail
-      driver core: node: use put_device() if device_register fail
-      driver core: cpu: use put_device() if device_register fail
+Bich HEMON (3):
+      dt-bindings: serial: stm32: add RS485 optional properties
+      serial: stm32: add support for RS485 hardware control mode
+      serial: stm32: fix initialization of RS485 mode
 
-Gaku Inami (1):
-      Revert "base: arch_topology: fix section mismatch build warnings"
+Christian Brauner (4):
+      devpts: hoist out check for DEVPTS_SUPER_MAGIC
+      devpts: resolve devpts bind-mounts
+      devpts: comment devpts_mntget()
+      selftests: add devpts selftests
 
-Luis R. Rodriguez (21):
-      test_firmware: add simple firmware firmware test library
-      test_firmware: enable custom fallback testing on limited kernel configs
-      test_firmware: replace syfs fallback check with kconfig_has helper
-      firmware: enable to split firmware_class into separate target files
-      firmware: simplify CONFIG_FW_LOADER_USER_HELPER_FALLBACK further
-      firmware: use helpers for setting up a temporary cache timeout
-      firmware: move loading timeout under struct firmware_fallback_config
-      firmware: split firmware fallback functionality into its own file
-      firmware: move firmware loader into its own directory
-      firmware: enable run time change of forcing fallback loader
-      firmware: enable to force disable the fallback mechanism at run time
-      test_firmware: expand on library with shared helpers
-      test_firmware: test three firmware kernel configs using a proc knob
-      rename: _request_firmware_load() fw_load_sysfs_fallback()
-      firmware: fix checking for return values for fw_add_devm_name()
-      firmware: add helper to check to see if fw cache is setup
-      test_firmware: modify custom fallback tests to use unique files
-      firmware: ensure the firmware cache is not used on incompatible calls
-      firmware: fix typo on pr_info_once() when ignore_sysfs_fallback is used
-      firmware: add firmware_request_cache() to help with cache on reboot
-      mt7601u: use firmware_request_cache() to address cache on reboot
+Colin Ian King (1):
+      serial: mvebu-uart: remove duplicated bit-wise or of STAT_FRM_ERR
 
-Stephen Rothwell (1):
-      firmware: explicitly include vmalloc.h
+Frédéric Danis (1):
+      serdev: Fix typo in serdev_device_alloc
 
- .../driver-api/firmware/fallback-mechanisms.rst    |   2 +-
- .../driver-api/firmware/request_firmware.rst       |  14 +
- MAINTAINERS                                        |   2 +-
- drivers/base/Makefile                              |   2 +-
- drivers/base/arch_topology.c                       |  12 +-
- drivers/base/cpu.c                                 |   4 +-
- drivers/base/dd.c                                  |   3 +-
- drivers/base/firmware_loader/Makefile              |   7 +
- drivers/base/firmware_loader/fallback.c            | 675 +++++++++++++++++
- drivers/base/firmware_loader/fallback.h            |  67 ++
- drivers/base/firmware_loader/fallback_table.c      |  55 ++
- drivers/base/firmware_loader/firmware.h            | 115 +++
- .../{firmware_class.c => firmware_loader/main.c}   | 833 ++-------------------
- drivers/base/node.c                                |   4 +-
- drivers/base/platform.c                            |   4 +-
- drivers/base/soc.c                                 |   2 +
- drivers/net/wireless/mediatek/mt7601u/mcu.c        |   2 +-
- include/linux/device.h                             |   1 +
- include/linux/firmware.h                           |   3 +
- kernel/sysctl.c                                    |  11 +
- lib/kobject.c                                      |  39 +-
- tools/testing/selftests/firmware/Makefile          |   2 +-
- tools/testing/selftests/firmware/config            |   4 +
- tools/testing/selftests/firmware/fw_fallback.sh    |  65 +-
- tools/testing/selftests/firmware/fw_filesystem.sh  |  72 +-
- tools/testing/selftests/firmware/fw_lib.sh         | 194 +++++
- tools/testing/selftests/firmware/fw_run_tests.sh   |  70 ++
- 27 files changed, 1370 insertions(+), 894 deletions(-)
- create mode 100644 drivers/base/firmware_loader/Makefile
- create mode 100644 drivers/base/firmware_loader/fallback.c
- create mode 100644 drivers/base/firmware_loader/fallback.h
- create mode 100644 drivers/base/firmware_loader/fallback_table.c
- create mode 100644 drivers/base/firmware_loader/firmware.h
- rename drivers/base/{firmware_class.c => firmware_loader/main.c} (60%)
- create mode 100755 tools/testing/selftests/firmware/fw_lib.sh
- create mode 100755 tools/testing/selftests/firmware/fw_run_tests.sh
+Gabriel Matni (1):
+      serial: mvebu-uart: fix tx lost characters
+
+Geert Uytterhoeven (9):
+      serial: arc_uart: Fix out-of-bounds access through DT alias
+      serial: fsl_lpuart: Fix out-of-bounds access through DT alias
+      serial: imx: Fix out-of-bounds access through serial port index
+      serial: mxs-auart: Fix out-of-bounds access through serial port index
+      serial: pxa: Fix out-of-bounds access through serial port index
+      serial: samsung: Fix out-of-bounds access through serial port index
+      serial: sh-sci: Fix out-of-bounds access through DT alias
+      serial: sirf: Fix out-of-bounds access through DT alias
+      serial: xuartps: Fix out-of-bounds access through DT alias
+
+Greg Kroah-Hartman (1):
+      Merge 4.16-rc6 into tty-next
+
+Jan Kundrát (1):
+      gpio: serial: max310x: Use HW type for gpio_chip's label
+
+Jeremy Kerr (1):
+      serial: expose buf_overrun count through proc interface
+
+Joel Stanley (1):
+      serial: 8250: Add Nuvoton NPCM UART
+
+Joshua Scott (1):
+      serial: 8250_dw: Allow TX FIFO to drain before writing to UART_LCR
+
+Karthikeyan Ramasubramanian (1):
+      tty: serial: msm_geni_serial: Add serial driver support for GENI based QUP
+
+Kees Cook (4):
+      console: SisUSB2VGA: Drop dummy con_font_get()
+      console: Fill in struct consw argument names
+      console: Expand dummy functions for CFI
+      console: Drop added "static" for newport_con
+
+Mathieu Malaterre (1):
+      powerpc: Mark the variable earlycon_acpi_spcr_enable maybe_unused
+
+Michael Moese (1):
+      8250-men-mcb: add support for 16z025 and 16z057
+
+Mike Frysinger (1):
+      vt: change SGR 21 to follow the standards
+
+Palmer Dabbelt (1):
+      tty: New RISC-V SBI console driver
+
+Patrice Chotard (3):
+      tty: st-asc: Update tty alias
+      ARM: dts: STi: Fix aliases property name for STi boards
+      ARM: dts: STi: Remove "console=ttyASN" from bootargs for STi boards
+
+Sergei Shtylyov (1):
+      DT: serial: renesas,sci-serial: document R8A77980 bindings
+
+Troy Kisky (1):
+      tty: serial: imx: allow breaks to be received when using dma
+
+Ulrich Hecht (1):
+      serial: sh-sci: use hrtimer for receive timeout
+
+Uwe Kleine-König (22):
+      serial: altera: ensure port->regshift is honored consistently
+      serial: altera: don't enable any irq if the device doesn't feature an irq
+      serial: altera: set RRDY flag also without irq
+      serial: imx: drop if that always evaluates to true
+      serial: imx: rename variables to match the register names
+      serial: imx: Only handle irqs that are actually enabled
+      serial: imx: simplify tracking of dma being initialized
+      serial: imx: drop check for enabled dma in .startup
+      serial: imx: Rename register fields to match newer reference manuals
+      serial: imx: document functions that are called with port.lock taken
+      serial: imx: add wrappers for writel and readl
+      serial: imx: implement shadow registers for UCRx and UFCR
+      serial: imx: simplify some conditions related to dma
+      serial: imx: simplify check that prevents starting PIO when DMA is in use
+      serial: imx: use u32 variables with matching names for registers
+      serial: imx: setup fifo waterlevel before enabling aging timer
+      serial: imx: Stop to receive in .stop_rx()
+      serial: imx: ensure that RX irqs are off if RX is off
+      serial: imx: Also enable the aging timer in PIO mode
+      serial: imx: Fix handling of TC irq in combination with DMA
+      serial: imx: don't prepare to send if no data is available
+      serial: imx: consistently use imx_uart_ as prefix for all functions
+
+Vignesh R (2):
+      serial: 8250: Don't service RX FIFO if interrupts are disabled
+      serial: 8250: 8250_omap: Fix throttling when DMA is enabled
+
+Wei Yongjun (1):
+      tty: serial: msm_geni_serial: Fix return value check in qcom_geni_serial_probe()
+
+ Documentation/devicetree/bindings/serial/8250.txt  |    1 +
+ .../bindings/serial/renesas,sci-serial.txt         |    2 +
+ .../devicetree/bindings/serial/st,stm32-usart.txt  |    2 +
+ arch/arm/boot/dts/stih407-b2120.dts                |    4 +-
+ arch/arm/boot/dts/stih410-b2120.dts                |    4 +-
+ arch/arm/boot/dts/stih410-b2260.dts                |    4 +-
+ arch/arm/boot/dts/stih418-b2199.dts                |    4 +-
+ drivers/parport/parport_serial.c                   |    3 -
+ drivers/tty/hvc/Kconfig                            |   10 +
+ drivers/tty/hvc/Makefile                           |    1 +
+ drivers/tty/hvc/hvc_riscv_sbi.c                    |   60 +
+ drivers/tty/serdev/core.c                          |    2 +-
+ drivers/tty/serial/8250/8250_dw.c                  |   34 +-
+ drivers/tty/serial/8250/8250_men_mcb.c             |  125 +-
+ drivers/tty/serial/8250/8250_of.c                  |    1 +
+ drivers/tty/serial/8250/8250_omap.c                |   11 +-
+ drivers/tty/serial/8250/8250_pci.c                 |    3 -
+ drivers/tty/serial/8250/8250_port.c                |   36 +-
+ drivers/tty/serial/8250/Kconfig                    |    5 +-
+ drivers/tty/serial/Kconfig                         |   15 +
+ drivers/tty/serial/Makefile                        |    1 +
+ drivers/tty/serial/altera_uart.c                   |   58 +-
+ drivers/tty/serial/arc_uart.c                      |    5 +
+ drivers/tty/serial/fsl_lpuart.c                    |    4 +
+ drivers/tty/serial/imx.c                           | 1209 +++++++++++---------
+ drivers/tty/serial/max310x.c                       |    2 +-
+ drivers/tty/serial/mvebu-uart.c                    |    4 +-
+ drivers/tty/serial/mxs-auart.c                     |   40 +-
+ drivers/tty/serial/pxa.c                           |    4 +
+ drivers/tty/serial/qcom_geni_serial.c              | 1158 +++++++++++++++++++
+ drivers/tty/serial/samsung.c                       |    4 +
+ drivers/tty/serial/serial_core.c                   |    2 +
+ drivers/tty/serial/sh-sci.c                        |   51 +-
+ drivers/tty/serial/sirfsoc_uart.c                  |    5 +
+ drivers/tty/serial/st-asc.c                        |    4 +-
+ drivers/tty/serial/stm32-usart.c                   |  134 ++-
+ drivers/tty/serial/stm32-usart.h                   |    3 +
+ drivers/tty/serial/xilinx_uartps.c                 |    2 +-
+ drivers/tty/vt/vt.c                                |    6 +-
+ drivers/usb/misc/sisusbvga/sisusb_con.c            |   68 +-
+ drivers/video/console/dummycon.c                   |   69 +-
+ drivers/video/console/newport_con.c                |    8 +-
+ drivers/video/console/vgacon.c                     |   20 +-
+ drivers/video/fbdev/core/fbcon.c                   |    3 +-
+ fs/devpts/inode.c                                  |   66 +-
+ include/linux/console.h                            |   58 +-
+ include/linux/pci_ids.h                            |    3 +
+ include/linux/serial_core.h                        |    2 +-
+ include/uapi/linux/serial_core.h                   |    3 +
+ tools/testing/selftests/Makefile                   |    1 +
+ tools/testing/selftests/filesystems/.gitignore     |    1 +
+ tools/testing/selftests/filesystems/Makefile       |    2 +-
+ tools/testing/selftests/filesystems/devpts_pts.c   |  313 +++++
+ 53 files changed, 2902 insertions(+), 738 deletions(-)
+ create mode 100644 drivers/tty/hvc/hvc_riscv_sbi.c
+ create mode 100644 drivers/tty/serial/qcom_geni_serial.c
+ create mode 100644 tools/testing/selftests/filesystems/devpts_pts.c
