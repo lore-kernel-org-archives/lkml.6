@@ -1,63 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751460AbeDDIdU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:33:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60569 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751274AbeDDIdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:33:18 -0400
-Date: Wed, 4 Apr 2018 10:33:16 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Martin van Es <martin@mrvanes.com>
-cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Martin <bugs@mrvanes.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: input: fix battery level reporting on BT mice
-In-Reply-To: <10651380.a6EbCRfp8J@minivanes>
-Message-ID: <nycvar.YFH.7.76.1804041032560.15778@cbobk.fhfr.pm>
-References: <20180403175220.GA148162@dtor-ws> <10651380.a6EbCRfp8J@minivanes>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1751401AbeDDIiq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:38:46 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:40988 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751277AbeDDIin (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 04:38:43 -0400
+X-Google-Smtp-Source: AIpwx49hQvuDERRe0cVrR3vxi1onvWV7xGJFieuSroRv/EuhLoZ0d7nj7popAZnK/SmsCSGIQEPxQ1L7mmnHJFJppow=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180404080142.GC9342@amd>
+References: <CAK8P3a0q70FYtBaCcsBPejVULgsbJPwUG7QmrkU9NJpr7oTzpQ@mail.gmail.com>
+ <CA+55aFzmQ9specaytsjEb=iNm-NHE5kxMSy_H_jKvqZa4-Fomw@mail.gmail.com>
+ <CAK8P3a2pdmLOHb2wkPVvqLDo71Rf3hLVfhG7vsMzaPD-DMEzSg@mail.gmail.com>
+ <CAMuHMdVZg8BL7D2eB-FnDbJabU3sfda6nOnaCdJj-3OC-+KP0g@mail.gmail.com> <20180404080142.GC9342@amd>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 4 Apr 2018 10:38:41 +0200
+X-Google-Sender-Auth: davWhcUMJCTE0r6v_hdF35FNadk
+Message-ID: <CAK8P3a3Rj7utFTrNrNiv3948whE9Tsta9mmLPdX5HxBhif-_9w@mail.gmail.com>
+Subject: Re: [GIT PULL] arch: remove obsolete architecture ports
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        James Hogan <jhogan@kernel.org>, David Howells <dhowells@redhat.com>,
+        "moderated list:PANASONIC MN10300..." <linux-am33-list@redhat.com>,
+        Hirokazu Takata <takata@linux-m32r.org>,
+        Lennox Wu <lennox.wu@gmail.com>, Aaron Wu <Aaron.Wu@analog.com>,
+        Bryan Wu <cooloney@gmail.com>,
+        Chris Metcalf <chris.d.metcalf@gmail.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Apr 2018, Martin van Es wrote:
+On Wed, Apr 4, 2018 at 10:01 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> On Tue 2018-04-03 11:18:15, Geert Uytterhoeven wrote:
 
-> Hi Dimitry,
-> 
-> I reapplied the 3 commits I had to revert earlier and applied your patch. Have 
-> correct battery level reading on my BT mouse back!
-> 
-> /sys/class/power_supply/hid-00:1f:20:fd:cb:be-battery# grep "" *
-> capacity:53
-> grep: device: Is a directory
-> model_name:Bluetooth Mouse M336/M337/M535
-> online:1
-> grep: power: Is a directory
-> grep: powers: Is a directory
-> present:1
-> scope:Device
-> status:Discharging
-> grep: subsystem: Is a directory
-> type:Battery
-> uevent:POWER_SUPPLY_NAME=hid-00:1f:20:fd:cb:be-battery
-> uevent:POWER_SUPPLY_PRESENT=1
-> uevent:POWER_SUPPLY_ONLINE=1
-> uevent:POWER_SUPPLY_CAPACITY=53
-> uevent:POWER_SUPPLY_MODEL_NAME=Bluetooth Mouse M336/M337/M535
-> uevent:POWER_SUPPLY_STATUS=Discharging
-> uevent:POWER_SUPPLY_SCOPE=Device
-> 
-> rdesc file is attached
-> 
-> Thx for the effort!
+>> In reality, a resurrection may not be implemented as a pure revert, but as
+>> the addition of a new architecture, implemented using modern features (DT,
+>> CCF, ...).
+>
+> By insisting on new features instead of pure revert + incremental
+> updates, you pretty much make sure resurection will not be possible
+> :-(.
 
-Can I add your Tested-by: while applying the commit?
+It wasn't that anybody demanded it to be that way, but rather that the
+maintainer chose to do it like that, as you can see from the first version
+that got posted: https://marc.info/?l=linux-arch&m=142181640803103
+This is the only reference point we have, since no other architecture
+ever got removed and then put back.
 
-Thanks,
+Also, now that the other architectures are gone, a lot of changes can
+be done more easily that will be incompatible with a pure revert, so
+the more time passes, the harder it will get to do that.
 
--- 
-Jiri Kosina
-SUSE Labs
+Some of the architectures (e.g. tile or cris) have been kept up to
+date, but others had already bitrotted to the point where they were
+unlikely to work on any real hardware for many relases, but a revert
+could still be used as a starting point in theory.
+
+      Arnd
