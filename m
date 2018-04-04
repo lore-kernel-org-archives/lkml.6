@@ -1,63 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755217AbeDDCic (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 22:38:32 -0400
-Received: from mail-ot0-f178.google.com ([74.125.82.178]:35843 "EHLO
-        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755098AbeDDCi2 (ORCPT
+        id S1755345AbeDDCjl convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 22:39:41 -0400
+Received: from elephants.elehost.com ([216.66.27.132]:42936 "EHLO
+        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754850AbeDDCjj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 22:38:28 -0400
-X-Google-Smtp-Source: AIpwx4/uuygUEDfsZmwwP6DBDINh3wyiKJmhmNGvIL/XBmTKK5QxDNjyYn0jlwhRohaY0p1tdnk9gGuZlTMwW0XCVEE=
+        Tue, 3 Apr 2018 22:39:39 -0400
+From: "Randall S. Becker" <rsbecker@nexbridge.com>
+To: "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>
+Cc: "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
+        <git-packagers@googlegroups.com>
+References: <xmqq6059z9kz.fsf@gitster-ct.c.googlers.com>
+In-Reply-To: <xmqq6059z9kz.fsf@gitster-ct.c.googlers.com>
+Subject: RE: [ANNOUNCE] Git v2.17.0
+Date: Tue, 3 Apr 2018 22:39:29 -0400
+Message-ID: <025601d3cbbe$2b5a9da0$820fd8e0$@nexbridge.com>
 MIME-Version: 1.0
-In-Reply-To: <afdf0498-c0a9-936c-0c9b-1b6da6eb5957@lwfinger.net>
-References: <CA+A7VXX+z8FrDhzW2BQ6AGMJ=_j_53wkUL_YNgkreEbWSh+jCw@mail.gmail.com>
- <afdf0498-c0a9-936c-0c9b-1b6da6eb5957@lwfinger.net>
-From: =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
-Date: Tue, 3 Apr 2018 19:37:47 -0700
-Message-ID: <CA+A7VXWjWaSSUiX3h_rpFXrSwtUkynKR9tpvnsSe=DZrC+mF-Q@mail.gmail.com>
-Subject: Re: RTL8723BE performance regression
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Yan-Hsuan Chuang <yhchuang@realtek.com>,
-        Ping-Ke Shih <pkshih@realtek.com>, Birming Chiu <birming@realtek.com>,
-        Shaofu <shaofu@realtek.com>, Steven Ting <steventing@realtek.com>,
-        Chaoming Li <chaoming_li@realsil.com.cn>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Daniel Drake <drake@endlessm.com>,
-        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>,
-        linux@endlessm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFhLuUQLx28uJBqsgyhh0QfTRDAYKTVHiJw
+Content-Language: en-ca
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w342caTJ008800
 
-On Tue, Apr 3, 2018 at 7:28 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+On April 2, 2018 3:34 PM, Junio C Hamano wrote:
+> Subject: [ANNOUNCE] Git v2.17.0
+> 
+> The latest feature release Git v2.17.0 is now available at the usual places.  It is
+> comprised of 516 non-merge commits since v2.16.0, contributed by 71
+> people, 20 of which are new faces.
 
-(...)
+The NonStop platform variant's regression suite (after applying are now very small set of platform mods) had the usual failures in t1308:23, t1404:52, and 4 in t9001. This is equivalent to the same breaks since 2.8.5 through 2.16.2. We should be installing in production tomorrow.
 
-> As the antenna selection code changes affected your first bisection, do you
-> have one of those HP laptops with only one antenna and the incorrect coding
-> in the FUSE?
+Thanks for everyone's hard work.
 
-Yes, that is why I've been passing ant_sel=1 during my tests -- this
-was needed to achieve a good performance in the past, before this
-regression. I've also opened the laptop chassis and confirmed the
-antenna cable is plugged to the connector labeled with "1" on the
-card.
+Cheers,
+Randall
 
-> If so, please make sure that you still have the same signal
-> strength for good and bad cases. I have tried to keep the driver and the
-> btcoex code in sync, but there may be some combinations of antenna
-> configuration and FUSE contents that cause the code to fail.
->
-
-What is the recommended way to monitor the signal strength?
-
-Thanks for such a quick reply,
-
---
-João Paulo Rechi Vita
-http://about.me/jprvita
+-- Brief whoami:
+ NonStop developer since approximately 211288444200000000
+ UNIX developer since approximately 421664400
+-- In my real life, I talk too much.
