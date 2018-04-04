@@ -1,51 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeDDTut (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:50:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48100 "EHLO mail.kernel.org"
+        id S1751683AbeDDT77 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:59:59 -0400
+Received: from muru.com ([72.249.23.125]:35278 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751517AbeDDTur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:50:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6F421707
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 4 Apr 2018 15:50:44 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tim Tianyang Chen <tianyang.chen@oracle.com>
-Cc: Dhaval Giani <dhaval.giani@oracle.com>, linux-kernel@vger.kernel.org,
-        tim.tianyang.chen@alumni.upenn.edu
-Subject: Re: [PATCH v3 0/4] Ktest: add email support
-Message-ID: <20180404155045.0137e8f5@gandalf.local.home>
-In-Reply-To: <20180403183819.5dbb89d9@gandalf.local.home>
-References: <1522094884-22718-1-git-send-email-tianyang.chen@oracle.com>
-        <ba4461ff-57ea-0861-4aab-e704b549474f@oracle.com>
-        <26923e02-7eef-dc80-c9fc-7ecfa9842229@oracle.com>
-        <20180403183819.5dbb89d9@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751519AbeDDT75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:59:57 -0400
+Date: Wed, 4 Apr 2018 12:59:51 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        pali.rohar@gmail.com, sre@kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi,
+        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
+        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
+        sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
+Subject: Re: ARM compile failure in Re: linux-next: Tree for Apr 4
+Message-ID: <20180404195951.GJ5700@atomide.com>
+References: <20180404165559.4cd0c12c@canb.auug.org.au>
+ <20180404074856.GA9342@amd>
+ <20180404175852.GI5700@atomide.com>
+ <20180404184622.GA8608@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180404184622.GA8608@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Apr 2018 18:38:19 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Tue, 3 Apr 2018 12:52:20 -0700
-> Tim Tianyang Chen <tianyang.chen@oracle.com> wrote:
+* Pavel Machek <pavel@ucw.cz> [180404 18:47]:
+> Hi!
 > 
-> > Hi Steve, did you get a chance to take a look? cc'ing myself and a 
-> > personal email. When I sent the patchset I forgot to include.  
+> > > When trying to build kernel for N900, I get:
+> > > 
+> > >   CC      lib/timerqueue.o
+> > >     CC      lib/vsprintf.o
+> > >     lib/string.c: In function 'strstr':
+> > >     lib/string.c:478:8: error: inlining failed in call to
+> > >     always_inline 'strlen': function not inlinable
+> > >     lib/string.c:903:5: error: called from here
+> > >     lib/string.c:478:8: error: inlining failed in call to
+> > >     always_inline 'strlen': function not inlinable
+> > >     lib/string.c:906:5: error: called from here
+> > >     lib/string.c:855:15: error: inlining failed in call to
+> > >     always_inline 'memcmp': function not inlinable
+> > >     ...
+> > > pavel@duo:/data/l/linux-next-n900$ git branch -l
+> > > * (detached from next-20180403)
+> > > 
+> > > I'm using
+> > > 
+> > > eval ` eldk-switch.sh -r 5.4 armv7a`
+> > > 
+> > > for cross-compilation.
+> > 
+> > Hmm I'm not seeing build issues with next-20180404, did this somehow
+> > already get sorted out?
 > 
-> Sorry, I'm trying to get my own ktest patches in (I have a bunch of non
-> committed changes) and I need to clean them up before adding yours.
+> It seems it is config-dependend. omap2plus_defconfig compiles ok for
+> me.
 > 
-> I'll take a look at them tonight or tomorrow.
+> Can you try with attached .config?
 
-I started working on ktest again, but didn't get as far as I wanted.
-I'll be continuing more on it tomorrow. I want this ready for this
-merge window, so it is high on my priority list (including your
-patches).
+That still builds for me. This with plain gcc-7.3.0 binutils-2.30
+built with buildall script.
 
--- Steve
+Regards,
+
+Tony
