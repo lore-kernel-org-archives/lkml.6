@@ -1,101 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751735AbeDDPIX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:08:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46130 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751439AbeDDPIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:08:22 -0400
-Date: Wed, 4 Apr 2018 23:08:05 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Laurence Oberman <loberman@redhat.com>
-Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-Message-ID: <20180404150759.GA24824@ming.t460p>
-References: <20180308105358.1506-1-ming.lei@redhat.com>
- <20180308105358.1506-5-ming.lei@redhat.com>
- <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de>
- <20180403160001.GA25255@ming.t460p>
- <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1751518AbeDDPLY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:11:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51028 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751413AbeDDPLX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:11:23 -0400
+From: "Desnes A. Nunes do Rosario" <desnesn@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: bhelgaas@google.com
+Subject: [PATCH, RESEND, pci, v2] pci: Delete PCI disabling informational messages
+Date: Wed,  4 Apr 2018 12:10:35 -0300
+X-Mailer: git-send-email 2.14.3
+X-TM-AS-GCONF: 00
+x-cbid: 18040415-0008-0000-0000-000002F11BB1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008801; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000256; SDB=6.01013031; UDB=6.00516334; IPR=6.00792296;
+ MB=3.00020414; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-04 15:11:18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040415-0009-0000-0000-000038C8A28B
+Message-Id: <20180404151035.12140-1-desnesn@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804040153
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 10:25:16AM +0200, Thomas Gleixner wrote:
-> On Wed, 4 Apr 2018, Ming Lei wrote:
-> > On Tue, Apr 03, 2018 at 03:32:21PM +0200, Thomas Gleixner wrote:
-> > > On Thu, 8 Mar 2018, Ming Lei wrote:
-> > > > 1) before 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-> > > > 	irq 39, cpu list 0
-> > > > 	irq 40, cpu list 1
-> > > > 	irq 41, cpu list 2
-> > > > 	irq 42, cpu list 3
-> > > > 
-> > > > 2) after 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-> > > > 	irq 39, cpu list 0-2
-> > > > 	irq 40, cpu list 3-4,6
-> > > > 	irq 41, cpu list 5
-> > > > 	irq 42, cpu list 7
-> > > > 
-> > > > 3) after applying this patch against V4.15+:
-> > > > 	irq 39, cpu list 0,4
-> > > > 	irq 40, cpu list 1,6
-> > > > 	irq 41, cpu list 2,5
-> > > > 	irq 42, cpu list 3,7
-> > > 
-> > > That's more or less window dressing. If the device is already in use when
-> > > the offline CPUs get hot plugged, then the interrupts still stay on cpu 0-3
-> > > because the effective affinity of interrupts on X86 (and other
-> > > architectures) is always a single CPU.
-> > > 
-> > > So this only might move interrupts to the hotplugged CPUs when the device
-> > > is initialized after CPU hotplug and the actual vector allocation moves an
-> > > interrupt out to the higher numbered CPUs if they have less vectors
-> > > allocated than the lower numbered ones.
-> > 
-> > It works for blk-mq devices, such as NVMe.
-> > 
-> > Now NVMe driver creates num_possible_cpus() hw queues, and each
-> > hw queue is assigned one msix irq vector.
-> > 
-> > Storage is Client/Server model, that means the interrupt is only
-> > delivered to CPU after one IO request is submitted to hw queue and
-> > it is completed by this hw queue.
-> > 
-> > When CPUs is hotplugged, and there will be IO submitted from these
-> > CPUs, then finally IOs complete and irq events are generated from
-> > hw queues, and notify these submission CPU by IRQ finally.
-> 
-> I'm aware how that hw-queue stuff works. But that only works if the
-> spreading algorithm makes the interrupts affine to offline/not-present CPUs
-> when the block device is initialized.
-> 
-> In the example above:
-> 
-> > > > 	irq 39, cpu list 0,4
-> > > > 	irq 40, cpu list 1,6
-> > > > 	irq 41, cpu list 2,5
-> > > > 	irq 42, cpu list 3,7
-> 
-> and assumed that at driver init time only CPU 0-3 are online then the
-> hotplug of CPU 4-7 will not result in any interrupt delivered to CPU 4-7.
+The disabling informational messages on the PCI subsystem should be deleted
+since they do not represent any real value for the system logs.
 
-Indeed, and I just tested this case, and found that no interrupts are
-delivered to CPU 4-7.
+These messages are either not presented, or presented for all PCI devices
+(e.g., powerpc now realigns all PCI devices to its page size). Thus, they
+are flooding system logs and can be interpreted as a false positive for
+total PCI failure on the system.
 
-In theory, the affinity has been assigned to these irq vectors, and
-programmed to interrupt controller, I understand it should work.
+[root@system user]# dmesg | grep -i disabling
+[    0.692270] pci 0000:00:00.0: Disabling memory decoding and releasing memory resources
+[    0.692324] pci 0000:00:00.0: disabling bridge mem windows
+[    0.729134] pci 0001:00:00.0: Disabling memory decoding and releasing memory resources
+[    0.737352] pci 0001:00:00.0: disabling bridge mem windows
+[    0.776295] pci 0002:00:00.0: Disabling memory decoding and releasing memory resources
+[    0.784509] pci 0002:00:00.0: disabling bridge mem windows
+... and goes on for all PCI devices on the system ...
 
-Could you explain it a bit why interrupts aren't delivered to CPU 4-7?
+Fixes: 38274637699 ("powerpc/powernv: Override pcibios_default_alignment() to force PCI devices to be page aligned")
+Signed-off-by: Desnes A. Nunes do Rosario <desnesn@linux.vnet.ibm.com>
+---
+ drivers/pci/pci.c       | 1 -
+ drivers/pci/setup-res.c | 2 --
+ 2 files changed, 3 deletions(-)
 
-
-Thanks,
-Ming
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 8c71d1a66cdd..1563ce1ee091 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -5505,7 +5505,6 @@ void pci_reassigndev_resource_alignment(struct pci_dev *dev)
+ 		return;
+ 	}
+ 
+-	pci_info(dev, "Disabling memory decoding and releasing memory resources\n");
+ 	pci_read_config_word(dev, PCI_COMMAND, &command);
+ 	command &= ~PCI_COMMAND_MEMORY;
+ 	pci_write_config_word(dev, PCI_COMMAND, command);
+diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
+index 369d48d6c6f1..6bd35e8e7cde 100644
+--- a/drivers/pci/setup-res.c
++++ b/drivers/pci/setup-res.c
+@@ -172,8 +172,6 @@ EXPORT_SYMBOL(pci_claim_resource);
+ 
+ void pci_disable_bridge_window(struct pci_dev *dev)
+ {
+-	pci_info(dev, "disabling bridge mem windows\n");
+-
+ 	/* MMIO Base/Limit */
+ 	pci_write_config_dword(dev, PCI_MEMORY_BASE, 0x0000fff0);
+ 
+-- 
+2.14.3
