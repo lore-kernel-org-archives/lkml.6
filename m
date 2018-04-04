@@ -1,94 +1,194 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751167AbeDDHrG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 03:47:06 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51050 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750772AbeDDHrF (ORCPT
+        id S1751247AbeDDHsm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 03:48:42 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:38267 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750711AbeDDHsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 03:47:05 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180404074702euoutp012f973f62c5b8c7495b8365434c728a30~iLASmr7sq0960709607euoutp01R
-X-AuditID: cbfec7f5-b5fff700000028a9-dc-5ac482f428f8
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-From: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-To: Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Karol Lewandowski <k.lewandowsk@samsung.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-Subject: [PATCH] ARM: decompressor: restore r1 and r2 just before jumping to
- the kernel
-Date: Wed, 04 Apr 2018 09:46:58 +0200
-Message-id: <20180404074658.28288-1-l.stelmach@samsung.com>
-X-Mailer: git-send-email 2.11.0
-Organization: Samsung R&D Institute Poland
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsWy7djP87pfmo5EGXzpNLPYOGM9q0Xjp7nM
-        FjcPrWC02PT4GqvF5V1z2CwOTd3LaLH2yF12B3aPy9cuMntsXlLv0bdlFaPH501yASxRXDYp
-        qTmZZalF+nYJXBkdVy8zFzznqDjXuZS9gfEHWxcjJ4eEgInE9xVXGLsYuTiEBFYwSpyfPJEJ
-        wvnMKPF16SlmmKrLpy+yQiSWMUpsbFsL1s4rICjxY/I9li5GDg5mAXmJI5eyQcLMApoSW3ev
-        Z4eo/8IoMfPEGVaQBJuAo0T/0hNgtohAgMTpYz/AhjKDFO14/w5sqLBApMTSj4/BilgEVCVO
-        3ZkBtcxaYtqFZhaIi+QldrVdBKvhF9CSWNN0nQVkkITAEjaJg3MfskMUuUic/bgN6gVhiVfH
-        t0DFZSQ6Ow4yQdjlEu/m7IeKNzBKfP6lB2FbS/xZNZEN4h0+iUnbpjODfCkhwCvR0SYEUeIB
-        ZO5ihLAdJa5+fAx2m5BArMSkRxNYJzDKzkIKo1mIMJqFFEYLGJlXMYqnlhbnpqcWG+ellusV
-        J+YWl+al6yXn525iBCaG0/+Of93BuO9P0iFGAQ5GJR7egAWHo4RYE8uKK3MPMUpwMCuJ8O5Q
-        OhIlxJuSWFmVWpQfX1Sak1p8iFGag0VJnDdOoy5KSCA9sSQ1OzW1ILUIJsvEwSnVwOjXxiEU
-        cFTD+L7gYwcVtpWLPeoOHteYX6Vmpeb1oPTP9Z/GcTHq353d+HZu7bn75sy/5+IvsisunSzv
-        OtiZkOZbL1I8rWZC0ZfcPFU7Pgk1Pf5HTM9rzHoDPi0x3SsQ0S4pNcF1wsFdesERqxwLcxPW
-        5n1iZzN3NchadPVcz3ZFBVX5C6tvKrEUZyQaajEXFScCADi7RggIAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsVy+t/xy7pfmo5EGTzeJ2SxccZ6VovGT3OZ
-        LW4eWsFosenxNVaLy7vmsFkcmrqX0WLtkbvsDuwel69dZPbYvKTeo2/LKkaPz5vkAliiuGxS
-        UnMyy1KL9O0SuDI6rl5mLnjOUXGucyl7A+MPti5GTg4JAROJy6cvsoLYQgJLGCUm3KsHsXkF
-        BCV+TL7H0sXIwcEsIC9x5FI2SJhZQF1i0rxFzF2MXEDl3xglVnzdwwiSYBNwlOhfegJsjoiA
-        n8TdPweYIBq+MEp8XukHYgsLREos/fgYrIZFQFXi1J0ZbBC7rCWmXWhmgbhHXmJXG8Q9/AJa
-        EmuarrNMYOSbheSkWQgnzUJy0gJG5lWMIqmlxbnpucWGesWJucWleel6yfm5mxiBIbrt2M/N
-        OxgvbQw+xCjAwajEw7ti0eEoIdbEsuLK3EOMEhzMSiK8O5SORAnxpiRWVqUW5ccXleakFh9i
-        lOZgURLnPW9QGSUkkJ5YkpqdmlqQWgSTZeLglGpgdPoetn/RJb4qtekd7y4eTp6md+C8UuSx
-        Hwc0brv0PGex3McsU6G06sl7hvD3Tj2TA5z/pf9fm9S5bf5b05V29hbewet0E494fLlbW7/u
-        Xda6hiC7jLppcUc3c/peKnuSu4Oh62uAAJu3zIMH5wNU+c4I3VJIzP6htPtg67MO3ocb11/Y
-        NrHQTomlOCPRUIu5qDgRAE1KiHZNAgAA
-X-CMS-MailID: 20180404074700eucas1p12cdb8b0de3da46c433e505555129c7e6
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180404074700eucas1p12cdb8b0de3da46c433e505555129c7e6
-X-RootMTR: 20180404074700eucas1p12cdb8b0de3da46c433e505555129c7e6
-References: <CGME20180404074700eucas1p12cdb8b0de3da46c433e505555129c7e6@eucas1p1.samsung.com>
+        Wed, 4 Apr 2018 03:48:40 -0400
+X-Auth-Info: 9iXgxgrCDpEr3atFKSVpQ3odpFIzbzMp7rJoSSjdeCk=
+Date: Wed, 4 Apr 2018 09:48:26 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] ARM: dts: tpc: Device tree description of the iMX6Q
+ TPC board
+Message-ID: <20180404094826.36b2b998@jawa>
+In-Reply-To: <CAOMZO5BMWtWo6O_qKOsA_27xaReGDGczrujqRW8k23pkwscvDA@mail.gmail.com>
+References: <20180403165945.3981-1-lukma@denx.de>
+        <CAOMZO5BMWtWo6O_qKOsA_27xaReGDGczrujqRW8k23pkwscvDA@mail.gmail.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/nmmmztlZ7hmKqpB._.hHImE"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hypervisor setup before __enter_kernel destroys the value sotred in
-r1. The value needs to be restored just before the jump.
+--Sig_/nmmmztlZ7hmKqpB._.hHImE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
----
- arch/arm/boot/compressed/head.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Fabio,
 
-diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
-index 182bf6add0b9..517e0e18f0b8 100644
---- a/arch/arm/boot/compressed/head.S
-+++ b/arch/arm/boot/compressed/head.S
-@@ -561,8 +561,6 @@ not_relocated:	mov	r0, #0
- 		bl	decompress_kernel
- 		bl	cache_clean_flush
- 		bl	cache_off
--		mov	r1, r7			@ restore architecture number
--		mov	r2, r8			@ restore atags pointer
- 
- #ifdef CONFIG_ARM_VIRT_EXT
- 		mrs	r0, spsr		@ Get saved CPU boot mode
-@@ -1365,6 +1363,8 @@ __hyp_reentry_vectors:
- 
- __enter_kernel:
- 		mov	r0, #0			@ must be 0
-+		mov	r1, r7			@ restore architecture number
-+		mov	r2, r8			@ restore atags pointer
-  ARM(		mov	pc, r4		)	@ call kernel
-  M_CLASS(	add	r4, r4, #1	)	@ enter in Thumb mode for M class
-  THUMB(		bx	r4		)	@ entry point is always ARM for A/R classes
--- 
-2.11.0
+Thanks for the feedback,
+
+> Hi Lukasz,
+>=20
+> On Tue, Apr 3, 2018 at 1:59 PM, Lukasz Majewski <lukma@denx.de> wrote:
+>=20
+> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> > b/Documentation/devicetree/bindings/vendor-prefixes.txt index
+> > ae850d6c0ad3..8ff7eadc8bef 100644 ---
+> > a/Documentation/devicetree/bindings/vendor-prefixes.txt +++
+> > b/Documentation/devicetree/bindings/vendor-prefixes.txt @@ -181,6
+> > +181,7 @@ karo        Ka-Ro electronics GmbH keithkoep      Keith &
+> > Koep GmbH keymile        Keymile GmbH
+> >  khadas Khadas
+> > +kiebackpeter    Kieback & Peter GmbH =20
+>=20
+> This should be a separate patch.
+
+Ok.
+
+>=20
+> >  kinetic Kinetic Technologies
+> >  kingnovel      Kingnovel Technology Co., Ltd.
+> >  kosagi Sutajio Ko-Usagi PTE Ltd.
+> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> > index ade7a38543dc..c148c4cf28f2 100644
+> > --- a/arch/arm/boot/dts/Makefile
+> > +++ b/arch/arm/boot/dts/Makefile
+> > @@ -459,6 +459,7 @@ dtb-$(CONFIG_SOC_IMX6Q) +=3D \
+> >         imx6q-icore-ofcap10.dtb \
+> >         imx6q-icore-ofcap12.dtb \
+> >         imx6q-icore-rqs.dtb \
+> > +       imx6q-kp-tpc.dtb \
+> >         imx6q-marsboard.dtb \
+> >         imx6q-mccmon6.dtb \
+> >         imx6q-nitrogen6x.dtb \
+> > diff --git a/arch/arm/boot/dts/imx6q-kp-tpc.dts
+> > b/arch/arm/boot/dts/imx6q-kp-tpc.dts new file mode 100644
+> > index 000000000000..b5646040b516
+> > --- /dev/null
+> > +++ b/arch/arm/boot/dts/imx6q-kp-tpc.dts
+> > @@ -0,0 +1,23 @@
+> > +/*
+> > + * Copyright 2018
+> > + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> > + *
+> > + * SPDX-License-Identifier: (GPL-2.0+ OR MIT) =20
+>=20
+> This line should be the first one and start with //
+
+Ok.
+
+>=20
+> > + */
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include "imx6q-kp.dtsi"
+> > +
+> > +/ {
+> > +       model =3D "Freescale i.MX6 Qwuad K+P TPC Board";
+> > +       compatible =3D "kiebackpeter,imx6q-tpc", "fsl,imx6q";
+> > +
+> > +       memory: memory@10000000 { =20
+>=20
+> Only memory@10000000 is enough.
+
+Ok.
+
+>=20
+> > --- /dev/null
+> > +++ b/arch/arm/boot/dts/imx6q-kp.dtsi
+> > @@ -0,0 +1,460 @@
+> > +/*
+> > + * Copyright 2018
+> > + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> > + *
+> > + * SPDX-License-Identifier: (GPL-2.0+ OR MIT) =20
+>=20
+> Same here.
+>=20
+> > +       beeper {
+> > +               compatible =3D "pwm-beeper";
+> > +               pwms =3D <&pwm2 0 500000>; //2kHz =20
+>=20
+> No // style comments, please.
+>=20
+> > +       lcd_panel: lcd-panel {
+> > +               compatible =3D "auo,g070vvn01"; =20
+>=20
+> I don't see this compatible string in linux-next.
+
+I've sent support for this display yesterday.
+
+[PATCH] display: panel: Add AUO g070vvn01 display support (800x480)
+
+
+>=20
+> > +&i2c1 {
+> > +       clock-frequency =3D <400000>;
+> > +       pinctrl-names =3D "default";
+> > +       pinctrl-0 =3D <&pinctrl_i2c1>;
+> > +       status =3D "okay";
+> > +
+> > +       goodix_ts@5d {
+> > +               compatible =3D "goodix,gt911";
+> > +               reg =3D <0x5d>;
+> > +               pinctrl-names =3D "default";
+> > +               pinctrl-0 =3D <&pinctrl_ts>;
+> > +               interrupt-parent =3D <&gpio1>;
+> > +               interrupts =3D <9 IRQ_TYPE_EDGE_FALLING>;
+> > +               irq-gpios =3D <&gpio1 9 GPIO_ACTIVE_HIGH>;
+> > +               reset-gpios =3D <&gpio5 2 GPIO_ACTIVE_HIGH>;
+> > +       };
+> > +
+> > +       rx8025@32 {
+> > +               compatible =3D "dallas,rx8025"; =20
+>=20
+> I don't see this compatible string in linux-next.
+
+Ach... it should be "dallas,ds1307" as it supports also this chip. I
+will fix it in v2.
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/nmmmztlZ7hmKqpB._.hHImE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlrEg0oACgkQAR8vZIA0
+zr0WyAf/YhvvxahEhRzc0WlrKD87kP5Be7v6bOfiCAglUIh+DT1vfyWjzSq4j+V2
+lRNHjDQzUNfOzNu6vhPyMdtiTsRGBObBggw2gSMV8POSAxI+2R39jmmDcsorZCca
+bxFfP5tPKSx/PT9OkhcnQdxo27zE1oWfySlDBxKRqWqSdTJRHA85g3S4gVY/4wyc
+RwD+IDMmBeYR31WUqJkDOlvMGZZvi4DmqNtUSHJFEFHgCNXazh8ANzTqoZDY9E5k
+oN9wF38RNtJGD7SvvN1MaNHTjdEznqZgk20EPeoYkuSLYDdaPFocnoXJTksmVeNX
+6xyAiPmgRVtFpiCIxBr65TNZe9ahnw==
+=zvnV
+-----END PGP SIGNATURE-----
+
+--Sig_/nmmmztlZ7hmKqpB._.hHImE--
