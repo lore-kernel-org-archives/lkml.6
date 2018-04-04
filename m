@@ -1,97 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751368AbeDDIZZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:25:25 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:60909 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751324AbeDDIZT (ORCPT
+        id S1751313AbeDDI2B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:28:01 -0400
+Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:43323 "EHLO
+        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751163AbeDDI16 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:25:19 -0400
-Date: Wed, 4 Apr 2018 10:25:16 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Ming Lei <ming.lei@redhat.com>
-cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Laurence Oberman <loberman@redhat.com>
-Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-In-Reply-To: <20180403160001.GA25255@ming.t460p>
-Message-ID: <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
-References: <20180308105358.1506-1-ming.lei@redhat.com> <20180308105358.1506-5-ming.lei@redhat.com> <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de> <20180403160001.GA25255@ming.t460p>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 4 Apr 2018 04:27:58 -0400
+Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
+To: Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
+        Deepak Singh Rawat <drawat@vmware.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180403224225.26776-1-robdclark@gmail.com>
+ <CAKMK7uEH3Qu_Lkok60bOYkik6kyvDGtrS0kcQ=dFmCLRD-+1HA@mail.gmail.com>
+From: Thomas Hellstrom <thomas@shipmail.org>
+Message-ID: <307adb15-412a-1fe2-f116-27fe5b4a657d@shipmail.org>
+Date: Wed, 4 Apr 2018 10:22:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAKMK7uEH3Qu_Lkok60bOYkik6kyvDGtrS0kcQ=dFmCLRD-+1HA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Apr 2018, Ming Lei wrote:
-> On Tue, Apr 03, 2018 at 03:32:21PM +0200, Thomas Gleixner wrote:
-> > On Thu, 8 Mar 2018, Ming Lei wrote:
-> > > 1) before 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-> > > 	irq 39, cpu list 0
-> > > 	irq 40, cpu list 1
-> > > 	irq 41, cpu list 2
-> > > 	irq 42, cpu list 3
-> > > 
-> > > 2) after 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-> > > 	irq 39, cpu list 0-2
-> > > 	irq 40, cpu list 3-4,6
-> > > 	irq 41, cpu list 5
-> > > 	irq 42, cpu list 7
-> > > 
-> > > 3) after applying this patch against V4.15+:
-> > > 	irq 39, cpu list 0,4
-> > > 	irq 40, cpu list 1,6
-> > > 	irq 41, cpu list 2,5
-> > > 	irq 42, cpu list 3,7
-> > 
-> > That's more or less window dressing. If the device is already in use when
-> > the offline CPUs get hot plugged, then the interrupts still stay on cpu 0-3
-> > because the effective affinity of interrupts on X86 (and other
-> > architectures) is always a single CPU.
-> > 
-> > So this only might move interrupts to the hotplugged CPUs when the device
-> > is initialized after CPU hotplug and the actual vector allocation moves an
-> > interrupt out to the higher numbered CPUs if they have less vectors
-> > allocated than the lower numbered ones.
-> 
-> It works for blk-mq devices, such as NVMe.
-> 
-> Now NVMe driver creates num_possible_cpus() hw queues, and each
-> hw queue is assigned one msix irq vector.
-> 
-> Storage is Client/Server model, that means the interrupt is only
-> delivered to CPU after one IO request is submitted to hw queue and
-> it is completed by this hw queue.
-> 
-> When CPUs is hotplugged, and there will be IO submitted from these
-> CPUs, then finally IOs complete and irq events are generated from
-> hw queues, and notify these submission CPU by IRQ finally.
+Hi,
 
-I'm aware how that hw-queue stuff works. But that only works if the
-spreading algorithm makes the interrupts affine to offline/not-present CPUs
-when the block device is initialized.
+On 04/04/2018 08:58 AM, Daniel Vetter wrote:
+> On Wed, Apr 4, 2018 at 12:42 AM, Rob Clark <robdclark@gmail.com> wrote:
+>> Add an atomic helper to implement dirtyfb support.  This is needed to
+>> support DSI command-mode panels with x11 userspace (ie. when we can't
+>> rely on pageflips to trigger a flush to the panel).
+>>
+>> To signal to the driver that the async atomic update needs to
+>> synchronize with fences, even though the fb didn't change, the
+>> drm_atomic_state::dirty flag is added.
+>>
+>> Signed-off-by: Rob Clark <robdclark@gmail.com>
+>> ---
+>> Background: there are a number of different folks working on getting
+>> upstream kernel working on various different phones/tablets with qcom
+>> SoC's.. many of them have command mode panels, so we kind of need a
+>> way to support the legacy dirtyfb ioctl for x11 support.
+>>
+>> I know there is work on a proprer non-legacy atomic property for
+>> userspace to communicate dirty-rect(s) to the kernel, so this can
+>> be improved from triggering a full-frame flush once that is in
+>> place.  But we kinda needa a stop-gap solution.
+>>
+>> I had considered an in-driver solution for this, but things get a
+>> bit tricky if userspace ands up combining dirtyfb ioctls with page-
+>> flips, because we need to synchronize setting various CTL.FLUSH bits
+>> with setting the CTL.START bit.  (ie. really all we need to do for
+>> cmd mode panels is bang CTL.START, but is this ends up racing with
+>> pageflips setting FLUSH bits, then bad things.)  The easiest soln
+>> is to wrap this up as an atomic commit and rely on the worker to
+>> serialize things.  Hence adding an atomic dirtyfb helper.
+>>
+>> I guess at least the helper, with some small addition to translate
+>> and pass-thru the dirty rect(s) is useful to the final atomic dirty-
+>> rect property solution.  Depending on how far off that is, a stop-
+>> gap solution could be useful.
+> Adding Noralf, who iirc already posted the full dirty helpers already somewhere.
+> -Daniel
 
-In the example above:
+I've asked Deepak to RFC the core changes suggested for the full dirty 
+blob on dri-devel. It builds on DisplayLink's suggestion, with a simple 
+helper to get to the desired coordinates.
 
-> > > 	irq 39, cpu list 0,4
-> > > 	irq 40, cpu list 1,6
-> > > 	irq 41, cpu list 2,5
-> > > 	irq 42, cpu list 3,7
+One thing to perhaps discuss is how we would like to fit this with 
+front-buffer rendering and the dirty ioctl. In the page-flip context, 
+the dirty rects, like egl's swapbuffer_with_damage is a hint to restrict 
+the damage region that can be fully ignored by the driver, new content 
+is indicated by a new framebuffer.
 
-and assumed that at driver init time only CPU 0-3 are online then the
-hotplug of CPU 4-7 will not result in any interrupt delivered to CPU 4-7.
+We could do the same for frontbuffer rendering: Either set a dirty flag 
+like you do here, or provide a content_age state member. Since we clear 
+the dirty flag on state copies, I guess that would be sufficient. The 
+blob rectangles would then become a hint to restrict the damage region.
 
-So the extra assignment to CPU 4-7 in the affinity mask has no effect
-whatsoever and even if the spreading result is 'perfect' it just looks
-perfect as it is not making any difference versus the original result:
+Another approach would be to have the presence of dirty rects without 
+framebuffer change to indicate frontbuffer rendering.
 
-> > >   irq 39, cpu list 0
-> > >   irq 40, cpu list 1
-> > >   irq 41, cpu list 2
-> > >   irq 42, cpu list 3
+I think I like the first approach best, although it may be tempting for 
+user-space apps to just set the dirty bit instead of providing the full 
+damage region.
 
-Thanks,
-
-	tglx
+/Thomas
