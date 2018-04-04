@@ -1,49 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751285AbeDDJas (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:30:48 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:32907 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeDDJar (ORCPT
+        id S1750938AbeDDJdA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:33:00 -0400
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:53926 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750736AbeDDJc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:30:47 -0400
-Date: Wed, 4 Apr 2018 11:30:41 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Shivappa Vikas <vikas.shivappa@intel.com>
-cc: Vikas Shivappa <vikas.shivappa@linux.intel.com>, tony.luck@intel.com,
-        ravi.v.shankar@intel.com, fenghua.yu@intel.com,
-        sai.praneeth.prakhya@intel.com, x86@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, ak@linux.intel.com
-Subject: Re: [PATCH 1/6] x86/intel_rdt/mba_sc: Add documentation for MBA
- software controller
-In-Reply-To: <alpine.DEB.2.10.1804031146530.27913@vshiva-Udesk>
-Message-ID: <alpine.DEB.2.21.1804041111170.2056@nanos.tec.linutronix.de>
-References: <1522362376-3505-1-git-send-email-vikas.shivappa@linux.intel.com> <1522362376-3505-2-git-send-email-vikas.shivappa@linux.intel.com> <alpine.DEB.2.21.1803302153280.1479@nanos.tec.linutronix.de> <alpine.DEB.2.21.1804031625150.2511@nanos.tec.linutronix.de>
- <alpine.DEB.2.10.1804031146530.27913@vshiva-Udesk>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 4 Apr 2018 05:32:58 -0400
+X-Google-Smtp-Source: AIpwx4/htZhZqafPJgrzyOTLymWJH1R6Ie4eiizim5YtK+nc8+/vdAuKR8eGFs1C7rGV+VQuEsN0uQ==
+Date: Wed, 4 Apr 2018 11:32:54 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: Signal handling in a page fault handler
+Message-ID: <20180404093254.GC3881@phenom.ffwll.local>
+Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20180402141058.GL13332@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180402141058.GL13332@bombadil.infradead.org>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Apr 2018, Shivappa Vikas wrote:
-> On Tue, 3 Apr 2018, Thomas Gleixner wrote:
-> >  The proposed new interface has no upper limit. The existing percentage
-> >  based implementation has at least some notion of limit and scale; not
-> >  really helpful either because of the hardware implementation. but I
-> > 
-> >  How is the poor admin supposed to configure that new thing without
-> >  knowing what the actual hardware limits are in the first place?
+On Mon, Apr 02, 2018 at 07:10:58AM -0700, Matthew Wilcox wrote:
 > 
-> That is true. The default values only put it to a very high bandwidth which
-> means user gets to use everything. There seems no other way other than
-> caliberating to know the actual max bandwidth in bytes. That could be a better
-> value to have as default so admin knows the limit. I will explore if there is
-> a way to calculate the same without caliberating.
+> Souptick and I have been auditing the various page fault handler routines
+> and we've noticed that graphics drivers assume that a signal should be
+> able to interrupt a page fault.  In contrast, the page cache takes great
+> care to allow only fatal signals to interrupt a page fault.
+> 
+> I believe (but have not verified) that a non-fatal signal being delivered
+> to a task which is in the middle of a page fault may well end up in an
+> infinite loop, attempting to handle the page fault and failing forever.
+> 
+> Here's one of the simpler ones:
+> 
+>         ret = mutex_lock_interruptible(&etnaviv_obj->lock);
+>         if (ret)
+>                 return VM_FAULT_NOPAGE;
+> 
+> (many other drivers do essentially the same thing including i915)
+> 
+> On seeing NOPAGE, the fault handler believes the PTE is in the page
+> table, so does nothing before it returns to arch code at which point
+> I get lost in the magic assembler macros.  I believe it will end up
+> returning to userspace if the signal is non-fatal, at which point it'll
+> go right back into the page fault handler, and mutex_lock_interruptible()
+> will immediately fail.  So we've converted a sleeping lock into the most
+> expensive spinlock.
+> 
+> I don't think the graphics drivers really want to be interrupted by
+> any signal.  I think they want to be interruptible by fatal signals
+> and should use the mutex_lock_killable / fatal_signal_pending family of
+> functions.  That's going to be a bit of churn, funnelling TASK_KILLABLE
+> / TASK_INTERRUPTIBLE all the way down into the dma-fence code.  Before
+> anyone gets started on that, I want to be sure that my analysis is
+> correct, and the drivers are doing the wrong thing by using interruptible
+> waits in a page fault handler.
 
-Right, ideally we get that information from the hardware.
+So we've done some experiments for the case where the fault originated
+from kernel context (copy_to|from_user and friends). The fixup code seems
+to retry the copy once after the fault (in copy_user_handle_tail), if that
+fails again we get a short read/write. This might result in an -EFAULT,
+short read()/write() or anything else really, depending upon the syscall
+api.
 
-Thanks,
+Except in some code paths in gpu drivers where we convert anything into
+-ERESTARTSYS/EINTR if there's a signal pending it won't ever result in the
+syscall getting restarted (well except maybe short read/writes if
+userspace bothers with that).
 
-	tglx
+So I guess gpu fault handlers indeed break the kernel's expectations, but
+then I think we're getting away with that because the inner workings of
+gpu memory objects is all heavily abstracted away by opengl/vulkan and
+friends.
+
+I guess what we could do is try to only do killable sleeps if it's a
+kernel fault, but that means wiring a flag through all the callchains. Not
+pretty. Except when there's a magic set of functions that would convert
+all interruptible sleeps to killable ones only for us.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
