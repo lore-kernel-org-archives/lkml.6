@@ -1,209 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752315AbeDDTcM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:32:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35142 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751470AbeDDTTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:19:02 -0400
-From: jglisse@redhat.com
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        id S1751613AbeDDTe0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:34:26 -0400
+Received: from mga04.intel.com ([192.55.52.120]:34488 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751301AbeDDTeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:34:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,407,1517904000";
+   d="scan'208";a="44056418"
+From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Jan Kara <jack@suse.cz>, Josef Bacik <jbacik@fb.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [RFC PATCH 06/79] mm/page: add helpers to dereference struct page index field
-Date: Wed,  4 Apr 2018 15:17:53 -0400
-Message-Id: <20180404191831.5378-4-jglisse@redhat.com>
-In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
-References: <20180404191831.5378-1-jglisse@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH] x86: Use boot_cpu_has() instead of this_cpu_has() in build_cr3_noflush()
+Date: Wed,  4 Apr 2018 12:34:19 -0700
+Message-Id: <1522870459-7432-1-git-send-email-sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-Regroup all helpers that dereference struct page.index field into one
-place and require a the address_space (mapping) against which caller
-is looking the index (offset, pgoff, ...)
+When the platform supports PCID and if CONFIG_DEBUG_VM is enabled,
+build_cr3_noflush() (called via switch_mm()) does a sanity check to see
+if X86_FEATURE_PCID is set. Presently, build_cr3_noflush() uses
+"this_cpu_has(X86_FEATURE_PCID)" to perform the check but this_cpu_has()
+works only after SMP is initialized (i.e. per cpu cpu_info's should be
+populated) and this happens to be very late in the boot process (during
+rest_init).
 
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: linux-mm@kvack.org
-CC: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <jbacik@fb.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
+As efi_runtime_services() are called during (early) kernel boot time
+and run time, modify build_cr3_noflush() to use boot_cpu_has() all the
+time. As suggested by Dave, this should be OK because all cpu's have
+same capabilities anyways (for x86).
+
+Without this change we see below warning during kernel boot.
+
+WARNING: CPU: 0 PID: 0 at arch/x86/include/asm/tlbflush.h:134
+load_new_mm_cr3+0x114/0x170
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.16.0-02277-gbc16d4052f1a #1
+Hardware name: System manufacturer System Product Name/Z170-K, BIOS 3301
+02/08/2017
+RIP: 0010:load_new_mm_cr3+0x114/0x170
+RSP: 0000:ffffffff9b203e38 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: ffffffff9b26f5a0 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff9b20a000
+RBP: ffffffff9b203e90 R08: 0000000000000000 R09: 000000000f63eb29
+R10: ffffffff9b203ea8 R11: 00000000c3292018 R12: 0000000000000000
+R13: ffffffff9b2e1180 R14: 000000000001ee80 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff968df6c00000(0000)
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff968df6fff000 CR3: 00000004261e6002 CR4: 00000000000606b0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+switch_mm_irqs_off+0x267/0x590
+switch_mm+0xe/0x20
+efi_switch_mm+0x3e/0x50
+efi_enter_virtual_mode+0x43f/0x4da
+start_kernel+0x3bf/0x458
+secondary_startup_64+0xa5/0xb0
+
+Dave also suggested that we put a warning in this_cpu_has() if it's used
+early in the boot process. This is still work in progress as it effects
+MCE.
+
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lee Chun-Yi <jlee@suse.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Ricardo Neri <ricardo.neri@intel.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
 ---
- include/linux/mm-page.h | 136 ++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/mm.h      |   5 ++
- 2 files changed, 141 insertions(+)
- create mode 100644 include/linux/mm-page.h
+ arch/x86/include/asm/tlbflush.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/mm-page.h b/include/linux/mm-page.h
-new file mode 100644
-index 000000000000..2981db45eeef
---- /dev/null
-+++ b/include/linux/mm-page.h
-@@ -0,0 +1,136 @@
-+/*
-+ * Copyright 2018 Red Hat Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * Authors: Jérôme Glisse <jglisse@redhat.com>
-+ */
-+/*
-+ * This header file regroup everything that deal with struct page and has no
-+ * outside dependency except basic types header files.
-+ */
-+/* Protected against rogue include ... do not include this file directly */
-+#ifdef DOT_NOT_INCLUDE___INSIDE_MM
-+#ifndef MM_PAGE_H
-+#define MM_PAGE_H
-+
-+/* External struct dependencies: */
-+struct address_space;
-+
-+/* External function dependencies: */
-+extern pgoff_t __page_file_index(struct page *page);
-+
-+
-+/*
-+ * _page_index() - return page index value (with special case for swap)
-+ * @page: page struct pointer for which we want the index value
-+ * @mapping: mapping against which we want the page index
-+ * Returns: index value for the page in the given mapping
-+ *
-+ * The index value of a page is against a given mapping and page which belongs
-+ * to swap cache need special handling. For swap cache page what we want is the
-+ * swap offset which is store encoded with other fields in page->private.
-+ */
-+static inline unsigned long _page_index(struct page *page,
-+		struct address_space *mapping)
-+{
-+	if (unlikely(PageSwapCache(page)))
-+		return __page_file_index(page);
-+	return page->index;
-+}
-+
-+/*
-+ * _page_set_index() - set page index value against a give mapping
-+ * @page: page struct pointer for which we want the index value
-+ * @mapping: mapping against which we want the page index
-+ * @index: index value to set
-+ */
-+static inline void _page_set_index(struct page *page,
-+		struct address_space *mapping,
-+		unsigned long index)
-+{
-+	page->index = index;
-+}
-+
-+/*
-+ * _page_to_index() - page index value against a give mapping
-+ * @page: page struct pointer for which we want the index value
-+ * @mapping: mapping against which we want the page index
-+ * Returns: index value for the page in the given mapping
-+ *
-+ * The index value of a page is against a given mapping. THP page need special
-+ * handling has the index is set in the head page thus the final index value is
-+ * the tail page index plus the number of page from current page to head page.
-+ */
-+static inline unsigned long _page_to_index(struct page *page,
-+		struct address_space *mapping)
-+{
-+	unsigned long pgoff;
-+
-+	if (likely(!PageTransTail(page)))
-+		return page->index;
-+
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 84137c22fdfa..42e040859067 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -131,7 +131,12 @@ static inline unsigned long build_cr3(pgd_t *pgd, u16 asid)
+ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
+ {
+ 	VM_WARN_ON_ONCE(asid > MAX_ASID_AVAILABLE);
+-	VM_WARN_ON_ONCE(!this_cpu_has(X86_FEATURE_PCID));
 +	/*
-+	 *  We don't initialize ->index for tail pages: calculate based on
-+	 *  head page
++	 * Use boot_cpu_has() instead of this_cpu_has() as this function
++	 * might be called during early boot. This should work even after
++	 * boot because all cpu's have same capabilities anyways.
 +	 */
-+	pgoff = compound_head(page)->index;
-+	pgoff += page - compound_head(page);
-+	return pgoff;
-+}
-+
-+/*
-+ * _page_to_pgoff() - page pgoff value against a give mapping
-+ * @page: page struct pointer for which we want the index value
-+ * @mapping: mapping against which we want the page index
-+ * Returns: pgoff value for the page in the given mapping
-+ *
-+ * The pgoff value of a page is against a given mapping. Hugetlb pages need
-+ * special handling as for they have page->index in size of the huge pages
-+ * (PMD_SIZE or  PUD_SIZE), not in PAGE_SIZE as other types of pages.
-+ *
-+ * FIXME convert hugetlb to multi-order entries.
-+ */
-+static inline unsigned long _page_to_pgoff(struct page *page,
-+		struct address_space *mapping)
-+{
-+	if (unlikely(PageHeadHuge(page)))
-+		return page->index << compound_order(page);
-+
-+	return _page_to_index(page, mapping);
-+}
-+
-+/*
-+ * _page_offset() - page offset (in bytes) against a give mapping
-+ * @page: page struct pointer for which we want the index value
-+ * @mapping: mapping against which we want the page index
-+ * Returns: page offset (in bytes) for the page in the given mapping
-+ */
-+static inline unsigned long _page_offset(struct page *page,
-+		struct address_space *mapping)
-+{
-+	return page->index << PAGE_SHIFT;
-+}
-+
-+/*
-+ * _page_file_offset() - page offset (in bytes) against a give mapping
-+ * @page: page struct pointer for which we want the index value
-+ * @mapping: mapping against which we want the page index
-+ * Returns: page offset (in bytes) for the page in the given mapping
-+ */
-+static inline unsigned long _page_file_offset(struct page *page,
-+		struct address_space *mapping)
-+{
-+	return page->index << PAGE_SHIFT;
-+}
-+
-+#endif /* MM_PAGE_H */
-+#endif /* DOT_NOT_INCLUDE___INSIDE_MM */
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ad06d42adb1a..874a10f011ee 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2673,5 +2673,10 @@ void __init setup_nr_node_ids(void);
- static inline void setup_nr_node_ids(void) {}
- #endif
++	VM_WARN_ON_ONCE(!boot_cpu_has(X86_FEATURE_PCID));
+ 	return __sme_pa(pgd) | kern_pcid(asid) | CR3_NOFLUSH;
+ }
  
-+/* Include here while header consolidation process is in progress */
-+#define DOT_NOT_INCLUDE___INSIDE_MM
-+#include <linux/mm-page.h>
-+#undef DOT_NOT_INCLUDE___INSIDE_MM
-+
- #endif /* __KERNEL__ */
- #endif /* _LINUX_MM_H */
 -- 
-2.14.3
+2.7.4
