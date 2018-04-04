@@ -1,120 +1,125 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-227748-1522850245-2-8375753604003164383
+X-Cyrus-Session-Id: sloti22d1t05-470151-1522858860-2-17925299290883518756
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522850244; b=SjqdL3ZIrqF42wLYWyANH4d61Le4ZEhlAr3JNQJHhtICC1C4tB
-    oMkyt2kuSWS02hr6T8ehNwVM9zRi7iSezTqqY9OfW0aRLLMe6U3aobv9fxcN16av
-    4lvVFBY6GkX1iYZ+X4Nv2aH4QN00NnaeCWIpv82tJGH9vWtFrM0UwaMPqc0x5JWn
-    wMFhn02sqvBHvrbl0J/+JizWdTSnf8X1VS5ziIJ8665hoQ7zBs+mZis7ntorC+7P
-    jm8GTIyoSm8wT4/KMYfsx3sxluChnP277YA9GbRd9q32HO1JE7nO/agrF9uglOrL
-    tcJ3oiLuvXHmwL8pdG+1PDM4wBmC23W/gqlQ==
+    1522858860; b=JUy9aGepXYsi3xlO8IBxXaEWsjfAatCyyb5msDl2uKI/7Rri2G
+    Px6zMgobVpXdPmCdaqsa/mJdBLNyfGnwbYln2hShWuFsytE8hRfwkHDlV+3ue9Wk
+    V9Pxf4SvPgwFdTGxAxogzuzs14w+BCmdDMRi8Fam5EGn0q0kXvPJwFifqr/ocITU
+    2KQnqc246qRZKIbUOYHHiiU6RmTf/R7RHNlNXGboMGwpP0BO13OHhY+CFpXh7k4p
+    eO6Rjh26fq6RxlKuYtIluOTbRvwv8dPJax9z/KCB3vMFaSmKGaNnfyMTSJA/HJVw
+    bOHnzKlUFsSSs2pjgf3SEPmQ4IKuCGvFx7vA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:in-reply-to:references:to:cc:subject
-    :mime-version:content-type:content-id:date:message-id:sender
-    :list-id; s=fm2; t=1522850244; bh=XL0gaCOOixaJbYY8/RZCpnao46Oozl
-    WsFGneOTTOQKQ=; b=joaCUKuc+t/W6P9Fsd6NEjBDpzSEgMXAzG6c3rLoJi/jB5
-    UZrIQLbBRaXjagmWUBYwlPYpSuvDne5S5tdJ15eUcKNtLon7as6IYIX/6zIRQk7h
-    C2b60Z8ow3bxM3XfU96H7M7UIQD0pVlmBNAPTaO2ZMQ/1crsvA03ZATynWEUKnaP
-    5oDYzye68gK22rxADBMTEO1WpxFwyVCnYHFGQev9g0mx1hfNaCpvZQtq327k0heq
-    VBRDNTuFo/eSgSKlDk0tojTuYu1FC3FGwNoc5EmGBUOEA9mAwvSTNXAEg4rrcaaT
-    A0t7XfSsxPDR933jpYDydamVIC8jVZZODMa+veIA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    messagingengine.com; h=mime-version:references:in-reply-to:from
+    :date:message-id:subject:to:content-type:sender:list-id; s=fm2;
+    t=1522858860; bh=jNtwkQa0aT4RO0KEH78+oC378Emr1982p1fnNJjgfiE=; b=
+    qGpeYPnvDgS5ihPyCCYfIFIc2cLmF1+fhr4wmtaucMHMdNlQukkYh96sw9x1bGFQ
+    k/RTY79RX1TT4AAkfElba5DJMv8NNFrMJDIED68eIg/3CNpo+U6YnO2LbFMaCUqb
+    E6+l6vNRqq1HDx37qz6lUzNvd2eS0Kk3dObUe0CR7vJtlJb+pYy3MHdgcyt0pFnu
+    cdYQFuZlU6AtM4drh3q3tcnvqjmw8TkEGelz4WYIIyC4Br1pocTWSKEnwoSRFjux
+    2pWAGovFwPqaiE6Rk9/OSF9X40zFXPlJVpWbVqvdOQPF0jcL8ATOO08OrGop+KlK
+    LHOygoc6rSruQKoikJY2JA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=udk/+daQ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=nbCv8vYJ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=udk/+daQ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=nbCv8vYJ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCNO7RZmnM25+/Ds8kYaasGBo6CLrXBHKGbTlcZgT1vK+6oEP0zEkFeB3sPg+cmm90Xyzo1ooMgctAQT0Qp1DuuDZ3UFpSymyypGQMxbcuuheOcT1hAO
-    WbQxcGfQFDTXeKQ8De1efTiuUcO1l8Gok9buupwF935r83/hacFa/BW4EQHHO4diTsEHLBKEpfvsemYenaYFiLoJEIq1FknbtAIJ2nl8yah3fVl30G1b9Djz
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=dsrfxofS0-3d_g-25oEA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+X-CM-Envelope: MS4wfEubszubWyBaEac7WFztFN8+udazITop3gGWorlw20BQgFtiiqo/Ev8F1Jf4Ub2OjVAIKJ+zUlCIQnzabQUHykttV0ipfR3yhUJ5lcQLSB3G0fQQ+MQh
+    c3/fYtQhVlsCWO74xWg0SsW6jlMKiCDdtSZVoB/mVpkThq7rEoaDqW7lWZq6duQbSufrYVkxBHzg20IVCidBZy6AOr43gDRDC1ZaYHi5XOEyreTLLazmAQrh
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=BoNv7qHuTjCj7_PzGN0A:9 a=7IWdw6aFAX7hGTmX:21
+    a=4I91lv15M3YWr13U:21 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751213AbeDDN5V (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 4 Apr 2018 09:57:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43980 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750853AbeDDN5U (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:57:20 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180404135251.GD16242@thunk.org>
-References: <20180404135251.GD16242@thunk.org> <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com> <CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com> <CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com> <CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com> <CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com> <CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com> <CACdnJuuek-sS3esmomNOkjBMV_6VPL2NFCzRd+UGxbZrMe=4nw@mail.gmail.com> <CA+55aFxgrh5eeG9MRSEsJtyL5yTe0TehZ=BS2josGJaLxoMMBQ@mail.gmail.com> <CACdnJutuBaE3RaDx0KM5vDF9Sinrp=3tG9csrS-H3eU-J7-Utw@mail.gmail.com> <24353.1522848817@warthog.procyon.org.uk>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: dhowells@redhat.com, Matthew Garrett <mjg59@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        luto@kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        jmorris@namei.org, Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        id S1751944AbeDDQU5 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 4 Apr 2018 12:20:57 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35277 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751886AbeDDQUz (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 4 Apr 2018 12:20:55 -0400
+X-Google-Smtp-Source: AIpwx4976anfY+FyARkXgVVBBt2n/3ttmrhGzCHBaQLonJh1Qq949sTaeo2TceAJhC0I/KK6PTuE2vDDpgz0q1l/AtM=
+MIME-Version: 1.0
+References: <CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
+ <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
+ <CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
+ <CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
+ <CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
+ <CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com>
+ <CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com>
+ <CACdnJuuek-sS3esmomNOkjBMV_6VPL2NFCzRd+UGxbZrMe=4nw@mail.gmail.com>
+ <CA+55aFxgrh5eeG9MRSEsJtyL5yTe0TehZ=BS2josGJaLxoMMBQ@mail.gmail.com>
+ <CACdnJutuBaE3RaDx0KM5vDF9Sinrp=3tG9csrS-H3eU-J7-Utw@mail.gmail.com> <20180404125743.GB16242@thunk.org>
+In-Reply-To: <20180404125743.GB16242@thunk.org>
+From: Matthew Garrett <mjg59@google.com>
+Date: Wed, 04 Apr 2018 16:20:43 +0000
+Message-ID: <CACdnJutKZL-48Ua=GYgU2vs38N5MjovP5+ENUNzVpmpi4-QFTQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Kernel lockdown for secure boot
+To: tytso@mit.edu, Linus Torvalds <torvalds@linux-foundation.org>,
+        luto@kernel.org, David Howells <dhowells@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, jmorris@namei.org,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         jforbes@redhat.com, linux-man@vger.kernel.org, jlee@suse.com,
         LSM List <linux-security-module@vger.kernel.org>,
         linux-api@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         linux-efi <linux-efi@vger.kernel.org>
-Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <27480.1522850235.1@warthog.procyon.org.uk>
-Date: Wed, 04 Apr 2018 14:57:15 +0100
-Message-ID: <27481.1522850235@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Theodore Y. Ts'o <tytso@mit.edu> wrote:
+On Wed, Apr 4, 2018 at 5:57 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
 
-> > Lockdown mode restricts kexec to booting an authorised image (where the
-> > authorisation may be by signature or by IMA).
-> 
-> If that's true, then Matthew's assertion that lockdown w/o secure boot
-> is insecure goes away, no?
+> On Wed, Apr 04, 2018 at 04:30:18AM +0000, Matthew Garrett wrote:
+> > What I'm afraid of is this turning into a "security" feature that ends
+up
+> > being circumvented in most scenarios where it's currently deployed - eg,
+> > module signatures are mostly worthless in the non-lockdown case because
+you
+> > can just grab the sig_enforce symbol address and then kexec a preamble
+that
+> > flips it back to N regardless of the kernel config.
 
-No.
+> Whoa.  Why doesn't lockdown prevent kexec?  Put another away, why
+> isn't this a problem for people who are fearful that Linux could be
+> used as part of a Windows boot virus in a Secure UEFI context?
 
-Lockdown prevents the running kernel from being modified (or, at least, that's
-the hope).
-
-But it doesn't do anything to prevent the kernel being modified before
-lockdown is engaged.
-
-We are trying to use secureboot to protect the system to the point that
-lockdown can take over.
-
-David
-
+It does - I was talking about the non-lockdown case. In the lockdown case
+you can only kexec images you trust, so there's no problem. Red Hat have
+been shipping a signed kdump image for years.
