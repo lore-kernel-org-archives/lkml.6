@@ -1,92 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751528AbeDDSPV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 14:15:21 -0400
-Received: from mga17.intel.com ([192.55.52.151]:35133 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751417AbeDDSPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 14:15:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,407,1517904000";
-   d="scan'208";a="217550135"
-Reply-To: thor.thayer@linux.intel.com
-Subject: Re: RFC: Using regmap in ARM64 for EL3 register access
-To: Sudeep Holla <sudeep.holla@arm.com>, Mark Brown <broonie@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <0cf26fec-a702-9d57-c7e0-85064690133c@linux.intel.com>
- <7034387b-8dd9-77fa-95f0-63c805849ced@arm.com>
-From: Thor Thayer <thor.thayer@linux.intel.com>
-Message-ID: <2f15aea6-e3f0-f6e1-6797-efb2f9b78180@linux.intel.com>
-Date: Wed, 4 Apr 2018 13:18:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751558AbeDDSQE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 14:16:04 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60184 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751231AbeDDSQC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 14:16:02 -0400
+Subject: Re: [PATCH] iommu/vt-d: fix usage of force parameter in
+ intel_ir_reconfigure_irte()
+From: Jag Raman <jag.raman@oracle.com>
+To: joro@8bytes.org, tglx@linutronix.de
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <1520375981-4958-1-git-send-email-jag.raman@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <23b8f026-2dc2-e00e-98d5-f1a090e3e534@oracle.com>
+Date: Wed, 4 Apr 2018 14:06:39 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <7034387b-8dd9-77fa-95f0-63c805849ced@arm.com>
+In-Reply-To: <1520375981-4958-1-git-send-email-jag.raman@oracle.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804040181
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sudeep,
 
-On 04/04/2018 05:47 AM, Sudeep Holla wrote:
+
+On 3/6/2018 5:39 PM, Jagannathan Raman wrote:
+> It was noticed that the IRTE configured for guest OS kernel
+> was over-written while the guest was running. As a result,
+> vt-d Posted Interrupts configured for the guest are not being
+> delivered directly, and instead bounces off the host. Every
+> interrupt delivery takes a VM Exit.
 > 
+> It was noticed that the following stack is doing the over-write:
+> [  147.463177]  modify_irte+0x171/0x1f0
+> [  147.463405]  intel_ir_set_affinity+0x5c/0x80
+> [  147.463641]  msi_domain_set_affinity+0x32/0x90
+> [  147.463881]  irq_do_set_affinity+0x37/0xd0
+> [  147.464125]  irq_set_affinity_locked+0x9d/0xb0
+> [  147.464374]  __irq_set_affinity+0x42/0x70
+> [  147.464627]  write_irq_affinity.isra.5+0xe1/0x110
+> [  147.464895]  proc_reg_write+0x38/0x70
+> [  147.465150]  __vfs_write+0x36/0x180
+> [  147.465408]  ? handle_mm_fault+0xdf/0x200
+> [  147.465671]  ? _cond_resched+0x15/0x30
+> [  147.465936]  vfs_write+0xad/0x1a0
+> [  147.466204]  SyS_write+0x52/0xc0
+> [  147.466472]  do_syscall_64+0x74/0x1a0
+> [  147.466744]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 > 
-> On 30/03/18 00:00, Thor Thayer wrote:
->> Hi,
->>
->> I'm working on an ARM64 architecture that needs to manipulate some
->> protected registers that are only accessible in EL3. Linux is running at
->> EL1 which doesn't have the proper permissions for these registers.
->>
-> If the hardware/IP registers are designed not to provide access to EL1,
-> then providing one in software by some means is simply wrong approach to
-> solve whatever issue you are trying to address here.
+> reversing the sense of force check in intel_ir_reconfigure_irte()
+> restores proper posted interrupt functionality
 > 
-Thank you for the reply!
-
-Sorry, I didn't describe this very well. This mechanism is similar to 
-PSCI. We have System Management registers that could be needed by more 
-than 1 virtual machine. So arbitration is needed and we use U-Boot for this.
-
->> Since U-Boot is running at the higher EL3, we communicate to the U-Boot
->> functions through a SMC mechanism.
->>
-> Please follow SMCCC to add any SMC interface.
+> Signed-off-by: Jagannathan Raman <jag.raman@oracle.com>
+> ---
+>   Hi Thomas,
 > 
-Yes, the existing implementation is doing this and implements a SiP 
-service framework.
-
->> The regmap framework seems like a good match for accessing these
->> registers. We need the same functionality as I2C and SPI regmaps - read,
->> write, and update registers.
->>
-> No, providing register access to EL1 using regmap+SMC just defeats the
-> hardware security restrictions and may provide ways to exploit.
-> Why not abstract to the level of services you need ?
+>   I noticed that you added intel_ir_reconfigure_irte() with the
+>   following commit:
+>   d491bdff888e ("iommu/vt-d: Reevaluate vector configuration on
+>   activate()")
 > 
-I'm not following about abstracting the level of services. For accessing 
-the registers, I thought a regmap implementation would be nice because 
-of the read/write/update functionality that would wrap around the SMC 
-SiP service functions.
-
->> Any comments or suggestions about using regmap for this purpose? Is
->> there a better method?
->>
-> If you are looking for power management features, then PSCI and SCMI are
-> couple of specifications to look at. I would really like to know more
-> details on your use case to provide any suggestions.
+>   Could you please confirm the usage of "force" parameter in
+>   intel_ir_reconfigure_irte()?
 > 
-Thank you for those pointers. I vaguely knew about PSCI but I wasn't 
-aware of SCMI. Let me study these interfaces, particularly SCMI, before 
-I reply further because this may answer many of my questions.
+>   drivers/iommu/intel_irq_remapping.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
+> index 66f69af..3062a15 100644
+> --- a/drivers/iommu/intel_irq_remapping.c
+> +++ b/drivers/iommu/intel_irq_remapping.c
+> @@ -1136,7 +1136,7 @@ static void intel_ir_reconfigure_irte(struct irq_data *irqd, bool force)
+>   	irte->dest_id = IRTE_DEST(cfg->dest_apicid);
+>   
+>   	/* Update the hardware only if the interrupt is in remapped mode. */
+> -	if (!force || ir_data->irq_2_iommu.mode == IRQ_REMAPPING)
+> +	if (force || ir_data->irq_2_iommu.mode == IRQ_REMAPPING)
+>   		modify_irte(&ir_data->irq_2_iommu, irte);
+>   }
+>   
+> 
 
-Thank you again,
-
-Thor
+*ping*
