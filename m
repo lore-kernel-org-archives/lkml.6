@@ -1,54 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751236AbeDDH3S (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 03:29:18 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50474 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750842AbeDDH3R (ORCPT
+        id S1751195AbeDDHf4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 03:35:56 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45593 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750736AbeDDHfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 03:29:17 -0400
-Subject: Re: [PATCH 2/2] kfree_rcu() should use kfree_bulk() interface
-To: Christopher Lameter <cl@linux.com>
-Cc: linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com,
-        joe@perches.com, willy@infradead.org, brouer@redhat.com,
-        linux-mm@kvack.org
-References: <1522647064-27167-1-git-send-email-rao.shoaib@oracle.com>
- <1522647064-27167-3-git-send-email-rao.shoaib@oracle.com>
- <alpine.DEB.2.20.1804021217070.24404@nuc-kabylake>
-From: Rao Shoaib <rao.shoaib@oracle.com>
-Message-ID: <d6a58a0d-be8b-44e9-29c7-ef2588afefbf@oracle.com>
-Date: Wed, 4 Apr 2018 00:28:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 4 Apr 2018 03:35:54 -0400
+X-Google-Smtp-Source: AIpwx4+2ne9I9+YkAxaydfXBtXLkQQ/bREC7frU55S2O72Qk1CvsF5ZD8AIQzt3eKpTP1T48A+yHFfZF8+yi0PXFDqM=
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1804021217070.24404@nuc-kabylake>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=808
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804040075
+In-Reply-To: <1522142993-25654-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1522142993-25654-1-git-send-email-yamada.masahiro@socionext.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 4 Apr 2018 09:35:53 +0200
+Message-ID: <CAPDyKFpgrHTD9_FcfAi7kU3_N0=Hqty4tS7suTotPF98kzxM-w@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-cadence: send tune request twice to work
+ around errata
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Piotr Sroka <piotrs@cadence.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 27 March 2018 at 11:29, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Cadence sent out an errata report to their customers of this IP.
+> This errata is not so severe, but the tune request should be sent
+> twice to avoid the potential issue.
+>
+> Quote from the report:
+>
+> Problem Summary
+> ---------------
+> The IP6116 SD/eMMC PHY design has a timing issue on receive data path.
+> This issue may lead to an incorrect values of read/write pointers of
+> the synchronization FIFO. Such a situation can happen at the SDR104
+> and HS200 tuning procedure when the PHY is requested to change a phase
+> of sampling clock when moving to the next tuning iteration.
+>
+> Workarounds
+> -----------
+> The following are valid workarounds to resolve the issue:
+>
+> 1. In eMMC mode, software sends tune request twice instead of once at
+>    each iteration. This means that the clock phase is not changed on
+>    the second request so there is no potential for clock instability.
+> 2. In SD mode, software must not use the hardware tuning and instead
+>    perform an almost identical procedure to eMMC, using the HRS34 Tune
+>    Force register.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
+Do you want this to be tagged for stable as well? And perhaps you
+could add a fixes tag?
 
-On 04/02/2018 10:20 AM, Christopher Lameter wrote:
-> On Sun, 1 Apr 2018, rao.shoaib@oracle.com wrote:
->
->> kfree_rcu() should use the new kfree_bulk() interface for freeing
->> rcu structures as it is more efficient.
-> It would be even better if this approach could also use
->
-> 	kmem_cache_free_bulk()
->
-> or
->
-> 	kfree_bulk()
-Sorry I do not understand your comment. The patch is using kfree_bulk() 
-which is an inline function.
+Kind regards
+Uffe
 
-Shoaib
+> ---
+>
+>  drivers/mmc/host/sdhci-cadence.c | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+> index 0f589e2..bc30d16 100644
+> --- a/drivers/mmc/host/sdhci-cadence.c
+> +++ b/drivers/mmc/host/sdhci-cadence.c
+> @@ -253,6 +253,7 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
+>         struct sdhci_cdns_priv *priv = sdhci_cdns_priv(host);
+>         void __iomem *reg = priv->hrs_addr + SDHCI_CDNS_HRS06;
+>         u32 tmp;
+> +       int i, ret;
+>
+>         if (WARN_ON(!FIELD_FIT(SDHCI_CDNS_HRS06_TUNE, val)))
+>                 return -EINVAL;
+> @@ -260,11 +261,24 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
+>         tmp = readl(reg);
+>         tmp &= ~SDHCI_CDNS_HRS06_TUNE;
+>         tmp |= FIELD_PREP(SDHCI_CDNS_HRS06_TUNE, val);
+> -       tmp |= SDHCI_CDNS_HRS06_TUNE_UP;
+> -       writel(tmp, reg);
+>
+> -       return readl_poll_timeout(reg, tmp, !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
+> -                                 0, 1);
+> +       /*
+> +        * Workaround for IP errata:
+> +        * The IP6116 SD/eMMC PHY design has a timing issue on receive data
+> +        * path. Send tune request twice.
+> +        */
+> +       for (i = 0; i < 2; i++) {
+> +               tmp |= SDHCI_CDNS_HRS06_TUNE_UP;
+> +               writel(tmp, reg);
+> +
+> +               ret = readl_poll_timeout(reg, tmp,
+> +                                        !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
+> +                                        0, 1);
+> +
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+>  }
+>
+>  static int sdhci_cdns_execute_tuning(struct mmc_host *mmc, u32 opcode)
+> --
+> 2.7.4
+>
