@@ -1,74 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754861AbeDDCeu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 22:34:50 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37063 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752750AbeDDCer (ORCPT
+        id S1755048AbeDDCfD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 22:35:03 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34655 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752750AbeDDCfB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 22:34:47 -0400
-X-Google-Smtp-Source: AIpwx4+Q++wRW/OUPi53WR2tznW/QxhrNzpUxiupNDOJrXa1Cz3dyvm565mM9axx0urheVb45JYpz7ZVJgzBfsQDfCM=
-MIME-Version: 1.0
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 3 Apr 2018 19:34:25 -0700
-Message-ID: <CAADnVQLu5EZLJ1C9-dd4=K+sed6+38oy047+nqCMfuPFB=wttw@mail.gmail.com>
-Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-To: Andy Lutomirski <luto@kernel.org>
-Cc: David Howells <dhowells@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morris <jmorris@namei.org>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+        Tue, 3 Apr 2018 22:35:01 -0400
+X-Google-Smtp-Source: AIpwx4/RdWVNQzDKaaam3+erJzNl8oos4e8zlA7okrB30+Pq89wY868xWuG6UmeX3HB+bXRpQfqG0w==
+Date: Wed, 4 Apr 2018 11:34:55 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Kees Cook <keescook@chromium.org>, LKML <linux-kernel@vger.kernel.org>,
+        "Tobin C. Harding" <me@tobin.cc>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Justin Forbes <jforbes@redhat.com>,
-        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH v2] tracing, printk: Force no hashing when trace_printk()
+ is used
+Message-ID: <20180404023455.GA493@jagdpanzerIV>
+References: <20180403173126.4f79af9e@gandalf.local.home>
+ <CAGXu5jLbNtn9CqqCeG3UHmWfC9=qPmhjSLw9vu0Zcyt04XaQ+A@mail.gmail.com>
+ <20180403180313.3cc8bb27@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403180313.3cc8bb27@gandalf.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 9:26 AM, Andy Lutomirski <luto@kernel.org> wrote:
-> On Tue, Apr 3, 2018 at 8:41 AM, Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
->> On Tue, Apr 03, 2018 at 08:11:07AM -0700, Andy Lutomirski wrote:
->>> >
->>> >> "bpf: Restrict kernel image access functions when the kernel is locked down":
->>> >> This patch just sucks in general.
->>> >
->>> > Yes - but that's what Alexei Starovoitov specified.  bpf kind of sucks since
->>> > it gives you unrestricted access to the kernel.
->>>
->>> bpf, in certain contexts, gives you unrestricted access to *reading*
->>> kernel memory.  bpf should, under no circumstances, let you write to
->>> the kernel unless you're using fault injection or similar.
->>>
->>> I'm surprised that Alexei acked this patch.  If something like XDP or
->>> bpfilter starts becoming widely used, this patch will require a lot of
->>> reworking to avoid breaking standard distros.
->>
->> my understanding was that this lockdown set attemps to disallow _reads_
->> of kernel memory from anything, so first version of patch was adding
->> run-time checks for bpf_probe_read() which is no-go
->> and without this helper the bpf for tracing is losing a lot of its power,
->> so the easiest is to disable it all.
->
-> Fair enough.
+On (04/03/18 18:03), Steven Rostedt wrote:
+> 
+> > he'd want you to change all the trace_printk()s to %px with
+> > justifications, though.
+> 
+> What trace_printk()s do you want to change? They are throw away
+> functions. trace_printk() is not something that stays in the kernel.
+> It's added during debugging and then removed before submitting what you
+> are working on upstream.
 
-Actually looking at the patch again:
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=efi-lock-down&id=78bb0059c3b8304a8d124b55feebc780fb3e0500
+Seems that your patch also can fix up bpf_trace_printk() - it doesn't
+even support %px, only hashed %p, which it passes to __trace_printk().
 
-If the only thing that folks are paranoid about is reading
-arbitrary kernel memory with bpf_probe_read() helper
-then preferred patch would be to disable it during verification
-when in lockdown mode.
-No run-time overhead and android folks will be happy
-that lockdown doesn't break their work.
-They converted out-of-tree networking accounting
-module and corresponding user daemon to use bpf:
-https://www.linuxplumbersconf.org/2017/ocw/system/presentations/4791/original/eBPF%20cgroup%20filters%20for%20data%20usage%20accounting%20on%20Android.pdf
+	-ss
