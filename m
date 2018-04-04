@@ -1,104 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeDDVFW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 17:05:22 -0400
-Received: from smtprelay0188.hostedemail.com ([216.40.44.188]:35882 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751749AbeDDVFV (ORCPT
+        id S1752224AbeDDVM2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 17:12:28 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:38597 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751749AbeDDVMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 17:05:21 -0400
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,rostedt@goodmis.org,:::::,RULES_HIT:41:152:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1513:1515:1516:1518:1521:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2896:3138:3139:3140:3141:3142:3353:3865:3867:3868:3870:3871:3872:3873:4321:4605:5007:6671:7652:7875:7903:9040:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12438:12555:12895:12986:13007:13255:14181:14721:21080:21451:21611:21627:30012:30026:30051:30054:30069:30090,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
-X-HE-Tag: cart55_393fc02d6b353
-X-Filterd-Recvd-Size: 3542
-Date: Wed, 04 Apr 2018 16:56:23 -0400
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180404205102.20816-1-chris@chris-wilson.co.uk>
-References: <20180330150132.16903-1-chris@chris-wilson.co.uk> <20180404205102.20816-1-chris@chris-wilson.co.uk>
+        Wed, 4 Apr 2018 17:12:25 -0400
+X-Google-Smtp-Source: AIpwx4/fVnyN5UQ/XV7YD2C9Z4iWF5bXRrdF3g33Ie6OBLolg5lMGMt/IUcqwcGDpQxYeVaATfLJLw==
+Reply-To: ahs3@redhat.com
+Subject: Re: [PATCH 3/3] mailbox: ACPI: erroneous error message when parsing
+ the ACPI PCCT
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+References: <20180404004211.6141-4-ahs3@redhat.com>
+ <201804050450.ecZCFiQT%fengguang.wu@intel.com>
+From: Al Stone <ahs3@redhat.com>
+Organization: Red Hat, Inc.
+Message-ID: <24e06eb5-d23a-5619-b4ed-bc012b9bfbf8@redhat.com>
+Date: Wed, 4 Apr 2018 15:12:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v3] trace: Default to using trace_global_clock if sched_clock is unstable
-To: Chris Wilson <chris@chris-wilson.co.uk>, linux-kernel@vger.kernel.org
-CC: intel-gfx@lists.freedesktop.org
-From: Steven Rostedt <rostedt@goodmis.org>
-Message-ID: <7D320425-063C-4C54-BAD2-8843ADCD8D6A@goodmis.org>
+In-Reply-To: <201804050450.ecZCFiQT%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Can you add a patch on top. I already added your patch to my tree.
-
-See branch ftrace/core
-git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-
--- Steve
-
-
-On April 4, 2018 4:51:02 PM EDT, Chris Wilson <chris@chris-wilson.co.uk> wrote:
->Across suspend, we may see a very large drift in timestamps if the
->sched
->clock is unstable, prompting the global trace's ringbuffer code to warn
->and suggest switching to the global clock. Preempt this request by
->detecting when the sched clock is unstable (determined during
->late_initcall) and automatically switching the default clock over to
->trace_global_clock.
->
->This should prevent requiring user interaction to resolve warnings such
->as:
->
->Delta way too big! 18446743856563626466 ts=18446744054496180323 write
->stamp = 197932553857
->    If you just came from a suspend/resume,
->    please switch to the trace global clock:
->    echo global > /sys/kernel/debug/tracing/trace_clock
->
->Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
->Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
->---
->v2: Tell the user what's happening and what they can do to correct it.
->v3: Restore the correct logic to switch only if the default trace clock
->(no override) is found to be *not* stable.
->---
-> kernel/trace/trace.c | 19 +++++++++++++++++++
-> 1 file changed, 19 insertions(+)
->
->diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
->index 13baf85b27d8..a1810b053f65 100644
->--- a/kernel/trace/trace.c
->+++ b/kernel/trace/trace.c
->@@ -41,6 +41,7 @@
-> #include <linux/nmi.h>
-> #include <linux/fs.h>
-> #include <linux/trace.h>
->+#include <linux/sched/clock.h>
-> #include <linux/sched/rt.h>
+On 04/04/2018 02:39 PM, kbuild test robot wrote:
+> Hi Al,
 > 
-> #include "trace.h"
->@@ -8505,3 +8506,21 @@ __init static int clear_boot_tracer(void)
+> Thank you for the patch! Perhaps something to improve:
 > 
-> fs_initcall(tracer_init_tracefs);
-> late_initcall_sync(clear_boot_tracer);
->+
->+#ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
->+__init static int tracing_set_default_clock(void)
->+{
->+	/* sched_clock_stable() is determined in late_initcall */
->+	if (!trace_boot_clock && !sched_clock_stable()) {
->+		printk(KERN_WARNING
->+		       "Unstable clock detected, switching default tracing clock to
->\"global\"\n"
->+		       "If you want to keep using the local clock, then add:\n"
->+		       "  \"trace_clock=local\"\n"
->+		       "on the kernel command line\n");
->+		tracing_set_clock(&global_trace, "global");
->+	}
->+
->+	return 0;
->+}
->+late_initcall_sync(tracing_set_default_clock);
->+#endif
+> [auto build test WARNING on pm/linux-next]
+> [also build test WARNING on v4.16 next-20180404]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Al-Stone/ACPI-improve-function-documentation-for-acpi_parse_entries_array/20180404-151910
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+> 
+> smatch warnings:
+> drivers/mailbox/pcc.c:392 count_pcc_subspaces() warn: always true condition '(pcct_ss->header.type >= 0) => (0-255 >= 0)'
+> 
+> vim +392 drivers/mailbox/pcc.c
+> 
+>    374	
+>    375	/*+
+>    376	 *
+>    377	 * count_pcc_subspaces -- Count the PCC subspaces that are not used in
+>    378	 *		reduced hardware systems.
+>    379	 * @header: Pointer to the ACPI subtable header under the PCCT.
+>    380	 * @end: End of subtable entry.
+>    381	 *
+>    382	 * Return: 0 for Success, else errno.
+>    383	 *
+>    384	 * This gets called for each entry in the PCC table.
+>    385	 */
+>    386	static int count_pcc_subspaces(struct acpi_subtable_header *header,
+>    387			const unsigned long end)
+>    388	{
+>    389		struct acpi_pcct_subspace *pcct_ss =
+>    390					(struct acpi_pcct_subspace *) header;
+>    391	
+>  > 392		if ((pcct_ss->header.type >= ACPI_PCCT_TYPE_GENERIC_SUBSPACE) &&
+>    393		    (pcct_ss->header.type <= ACPI_PCCT_TYPE_RESERVED) &&
+>    394		    (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE) &&
+>    395		    (pcct_ss->header.type !=
+>    396					ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2)) {
+
+Aha.  Yup, can be rewritten as:
+
+	if ((pcct_ss->header.type <= ACPI_PCCT_TYPE_RESERVED) &&
+	    (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE) &&
+	    (pcct_ss->header.type !=
+				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2)) {
+
+I will let this patch sit for a little while to see if there are any further
+comments before sending out a v2.
+
+>    397			pr_warn("PCCT count: useful subtype = %d\n",
+>    398				pcct_ss->header.type);
+>    399			return 0;
+>    400		}
+>    401		pr_warn("PCCT count: unwanted subtype = %d\n", pcct_ss->header.type);
+>    402		return -EINVAL;
+>    403	}
+>    404	
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
+
 
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+ciao,
+al
+-----------------------------------
+Al Stone
+Software Engineer
+Red Hat, Inc.
+ahs3@redhat.com
+-----------------------------------
