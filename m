@@ -1,94 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751274AbeDDOZb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:25:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42464 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751117AbeDDOZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:25:30 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE70320838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 4 Apr 2018 10:25:27 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-patch-test@lists.linaro.org,
+        id S1751306AbeDDO0O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:26:14 -0400
+Received: from smtprelay0059.hostedemail.com ([216.40.44.59]:58253 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751179AbeDDO0M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 10:26:12 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1537:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:2901:3138:3139:3140:3141:3142:3622:3865:3867:3871:3872:3874:4321:5007:10004:10400:10848:11232:11658:11914:12740:12760:12895:13069:13146:13230:13311:13357:13439:14659:21080:21627:30012:30054:30070:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: edge06_8d16cf9dafb00
+X-Filterd-Recvd-Size: 1534
+Message-ID: <1522851967.11185.1.camel@perches.com>
+Subject: Re: [PATCH v4 6/9] vsprintf: Factor out %pV handler as va_format()
+From: Joe Perches <joe@perches.com>
+To: Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180404102527.763250b4@gandalf.local.home>
-In-Reply-To: <20180404141052.GH6312@dhcp22.suse.cz>
-References: <20180403121614.GV5501@dhcp22.suse.cz>
-        <20180403082348.28cd3c1c@gandalf.local.home>
-        <20180403123514.GX5501@dhcp22.suse.cz>
-        <20180403093245.43e7e77c@gandalf.local.home>
-        <20180403135607.GC5501@dhcp22.suse.cz>
-        <20180403101753.3391a639@gandalf.local.home>
-        <20180403161119.GE5501@dhcp22.suse.cz>
-        <20180403185627.6bf9ea9b@gandalf.local.home>
-        <20180404062039.GC6312@dhcp22.suse.cz>
-        <20180404085901.5b54fe32@gandalf.local.home>
-        <20180404141052.GH6312@dhcp22.suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Date: Wed, 04 Apr 2018 07:26:07 -0700
+In-Reply-To: <20180404085843.16050-7-pmladek@suse.com>
+References: <20180404085843.16050-1-pmladek@suse.com>
+         <20180404085843.16050-7-pmladek@suse.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Apr 2018 16:10:52 +0200
-Michal Hocko <mhocko@kernel.org> wrote:
-
-> On Wed 04-04-18 08:59:01, Steven Rostedt wrote:
-> [...]
-> > +       /*
-> > +        * Check if the available memory is there first.
-> > +        * Note, si_mem_available() only gives us a rough estimate of available
-> > +        * memory. It may not be accurate. But we don't care, we just want
-> > +        * to prevent doing any allocation when it is obvious that it is
-> > +        * not going to succeed.
-> > +        */
-> > +       i = si_mem_available();
-> > +       if (i < nr_pages)
-> > +               return -ENOMEM;
-> > +
-> > 
-> > Better?  
+On Wed, 2018-04-04 at 10:58 +0200, Petr Mladek wrote:
+> Move the code from the long pointer() function. We are going to add a check
+> for the access to the address that will make it even more complicated.
 > 
-> I must be really missing something here. How can that work at all for
-> e.g. the zone_{highmem/movable}. You will get false on the above tests
-> even when you will have hard time to allocate anything from your
-> destination zones.
+> This patch does not change the existing behavior.
 
-You mean we will get true on the above tests?  Again, the current
-method is to just say screw it and try to allocate.
+But it might increase stack consumption.
 
-I originally just used NORETRY which would only allocate memory that is
-currently available and not try to reclaim anything. But people like
-Joel at Google that required increasing the buffer when memory was
-mostly taken up by page cache changed it from NORETRY to RETRY_MAYFAIL.
-
-But this now causes the issue that a large allocation can take up all
-memory even when the allocation requested is guaranteed to fail,
-because there is not enough memory to pull this off.
-
-We just want a way to say "hey, is there enough memory in the system to
-allocate all these pages before we try? We don't need specifics, we
-just want to make sure we are not allocating way too much".
-
-The answer I want is "yes there may be enough (but you may not be able
-to use it)" or "no, there is definitely not enough for that".
-
-Currently si_mem_available() is the closest thing we have to answering
-that question. I'm fine if the answer is "Yes" even if I can't allocate
-that memory.
-
-I'm looking for something where "yes" means "there may be enough, but
-there may not be, buyer beware", and "no" means "forget it, don't even
-start, because you just asked for more than possible".
-
--- Steve
+As the %pV is recursive, this is may not
+be a good thing.
