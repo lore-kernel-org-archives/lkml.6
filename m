@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754945AbeDDBMt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 21:12:49 -0400
-Received: from mga07.intel.com ([134.134.136.100]:26742 "EHLO mga07.intel.com"
+        id S1755051AbeDDBM7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 21:12:59 -0400
+Received: from mga17.intel.com ([192.55.52.151]:38880 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754887AbeDDBMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 21:12:46 -0400
+        id S1755009AbeDDBM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 21:12:56 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,403,1517904000";
-   d="scan'208";a="43808150"
-Subject: [PATCH 05/11] x86/mm: do not auto-massage page protections
+   d="scan'208";a="43192033"
+Subject: [PATCH 10/11] x86/pti: never implicitly clear _PAGE_GLOBAL for kernel image
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
         aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
         keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
         namit@vmware.com
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Tue, 03 Apr 2018 18:09:58 -0700
+Date: Tue, 03 Apr 2018 18:10:09 -0700
 References: <20180404010946.6186729B@viggo.jf.intel.com>
 In-Reply-To: <20180404010946.6186729B@viggo.jf.intel.com>
-Message-Id: <20180404010958.44C7DE5F@viggo.jf.intel.com>
+Message-Id: <20180404011009.63B08E87@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,24 +29,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-A PTE is constructed from a physical address and a pgprotval_t.
-__PAGE_KERNEL, for instance, is a pgprot_t and must be converted
-into a pgprotval_t before it can be used to create a PTE.  This is
-done implicitly within functions like pfn_pte() by massage_pgprot().
+Summary:
 
-However, this makes it very challenging to set bits (and keep them
-set) if your bit is being filtered out by massage_pgprot().
+In current kernels, with PTI enabled, no pages are marked Global. This
+potentially increases TLB misses.  But, the mechanism by which the Global
+bit is set and cleared is rather haphazard.  This patch makes the process
+more explicit.  In the end, it leaves us with Global entries in the page
+tables for the areas truly shared by userspace and kernel and increases
+TLB hit rates.
 
-This moves the bit filtering out of pfn_pte() and friends.  For
-users of PAGE_KERNEL*, filtering will be done automatically inside
-those macros but for users of __PAGE_KERNEL*, they need to do their
-own filtering now.
+The place this patch really shines in on systems without PCIDs.  In this
+case, we are using an lseek microbenchmark[1] to see how a reasonably
+non-trivial syscall behaves.  Higher is better:
 
-Note that we also just move pfn_pte/pmd/pud() over to check_pgprot()
-instead of massage_pgprot().  This way, we still *look* for
-unsupported bits and properly warn about them if we find them.  This
-might happen if an unfiltered __PAGE_KERNEL* value was passed in,
-for instance.
+No Global pages (baseline): 6077741 lseeks/sec
+88 Global Pages (this set): 7528609 lseeks/sec (+23.9%)
+
+On a modern Skylake desktop with PCIDs, the benefits are tangible, but not
+huge for a kernel compile (lower is better):
+
+No Global pages (baseline): 186.951 seconds time elapsed  ( +-  0.35% )
+28 Global pages (this set): 185.756 seconds time elapsed  ( +-  0.09% )
+                             -1.195 seconds (-0.64%)
+
+I also re-checked everything using the lseek1 test[1]:
+
+No Global pages (baseline): 15783951 lseeks/sec
+28 Global pages (this set): 16054688 lseeks/sec
+			     +270737 lseeks/sec (+1.71%)
+
+The effect is more visible, but still modest.
+
+Details:
+
+The kernel page tables are inherited from head_64.S which rudely marks
+them as _PAGE_GLOBAL.  For PTI, we have been relying on the grace of
+$DEITY and some insane behavior in pageattr.c to clear _PAGE_GLOBAL.
+This patch tries to do better.
+
+First, stop filtering out "unsupported" bits from being cleared in the
+pageattr code.  It's fine to filter out *setting* these bits but it
+is insane to keep us from clearing them.
+
+Then, *explicitly* go clear _PAGE_GLOBAL from the kernel identity map.
+Do not rely on pageattr to do it magically.
+
+After this patch, we can see that "GLB" shows up in each copy of the
+page tables, that we have the same number of global entries in each
+and that they are the *same* entries.
+
+# grep -c GLB /sys/kernel/debug/page_tables/*
+/sys/kernel/debug/page_tables/current_kernel:11
+/sys/kernel/debug/page_tables/current_user:11
+/sys/kernel/debug/page_tables/kernel:11
+
+# for f in `ls /sys/kernel/debug/page_tables/`; do grep GLB /sys/kernel/debug/page_tables/$f > $f.GLB; done
+# md5sum *.GLB
+9caae8ad6a1fb53aca2407ec037f612d  current_kernel.GLB
+9caae8ad6a1fb53aca2407ec037f612d  current_user.GLB
+9caae8ad6a1fb53aca2407ec037f612d  kernel.GLB
+
+A quick visual audit also shows that all the entries make sense.
+0xfffffe0000000000 is the cpu_entry_area and 0xffffffff81c00000
+is the entry/exit text:
+
+# grep -c GLB /sys/kernel/debug/page_tables/current_user
+0xfffffe0000000000-0xfffffe0000002000           8K     ro                 GLB NX pte
+0xfffffe0000002000-0xfffffe0000003000           4K     RW                 GLB NX pte
+0xfffffe0000003000-0xfffffe0000006000          12K     ro                 GLB NX pte
+0xfffffe0000006000-0xfffffe0000007000           4K     ro                 GLB x  pte
+0xfffffe0000007000-0xfffffe000000d000          24K     RW                 GLB NX pte
+0xfffffe000002d000-0xfffffe000002e000           4K     ro                 GLB NX pte
+0xfffffe000002e000-0xfffffe000002f000           4K     RW                 GLB NX pte
+0xfffffe000002f000-0xfffffe0000032000          12K     ro                 GLB NX pte
+0xfffffe0000032000-0xfffffe0000033000           4K     ro                 GLB x  pte
+0xfffffe0000033000-0xfffffe0000039000          24K     RW                 GLB NX pte
+0xffffffff81c00000-0xffffffff81e00000           2M     ro         PSE     GLB x  pmd
+
+1. https://github.com/antonblanchard/will-it-scale/blob/master/tests/lseek1.c
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
@@ -59,248 +119,107 @@ Cc: x86@kernel.org
 Cc: Nadav Amit <namit@vmware.com>
 ---
 
- b/arch/x86/include/asm/pgtable.h |   27 ++++++++++++++++++++++-----
- b/arch/x86/kernel/head64.c       |    2 ++
- b/arch/x86/kernel/ldt.c          |    6 +++++-
- b/arch/x86/mm/ident_map.c        |    3 +++
- b/arch/x86/mm/iomap_32.c         |    6 ++++++
- b/arch/x86/mm/ioremap.c          |    3 +++
- b/arch/x86/mm/kasan_init_64.c    |   14 +++++++++++++-
- b/arch/x86/mm/pgtable.c          |    3 +++
- b/arch/x86/power/hibernate_64.c  |   20 +++++++++++++++-----
- 9 files changed, 72 insertions(+), 12 deletions(-)
+ b/arch/x86/mm/init.c     |    8 +-------
+ b/arch/x86/mm/pageattr.c |   12 +++++++++---
+ b/arch/x86/mm/pti.c      |   25 +++++++++++++++++++++++++
+ 3 files changed, 35 insertions(+), 10 deletions(-)
 
-diff -puN arch/x86/include/asm/pgtable.h~x86-no-auto-massage arch/x86/include/asm/pgtable.h
---- a/arch/x86/include/asm/pgtable.h~x86-no-auto-massage	2018-04-02 16:41:14.811605173 -0700
-+++ b/arch/x86/include/asm/pgtable.h	2018-04-02 16:41:14.829605173 -0700
-@@ -526,22 +526,39 @@ static inline pgprotval_t massage_pgprot
- 	return protval;
- }
+diff -puN arch/x86/mm/init.c~clear-global-for-pti arch/x86/mm/init.c
+--- a/arch/x86/mm/init.c~clear-global-for-pti	2018-04-02 16:41:17.718605166 -0700
++++ b/arch/x86/mm/init.c	2018-04-02 16:41:17.725605166 -0700
+@@ -161,12 +161,6 @@ struct map_range {
  
-+static inline pgprotval_t check_pgprot(pgprot_t pgprot)
-+{
-+	pgprotval_t massaged_val = massage_pgprot(pgprot);
-+
-+	/* mmdebug.h can not be included here because of dependencies */
-+#ifdef CONFIG_DEBUG_VM
-+	WARN_ONCE(pgprot_val(pgprot) != massaged_val,
-+		  "attempted to set unsupported pgprot: %016lx "
-+		  "bits: %016lx supported: %016lx\n",
-+		  pgprot_val(pgprot),
-+		  pgprot_val(pgprot) ^ massaged_val,
-+		  __supported_pte_mask);
-+#endif
-+
-+	return massaged_val;
-+}
-+
- static inline pte_t pfn_pte(unsigned long page_nr, pgprot_t pgprot)
+ static int page_size_mask;
+ 
+-static void enable_global_pages(void)
+-{
+-	if (!static_cpu_has(X86_FEATURE_PTI))
+-		__supported_pte_mask |= _PAGE_GLOBAL;
+-}
+-
+ static void __init probe_page_size_mask(void)
  {
- 	return __pte(((phys_addr_t)page_nr << PAGE_SHIFT) |
--		     massage_pgprot(pgprot));
-+		     check_pgprot(pgprot));
- }
- 
- static inline pmd_t pfn_pmd(unsigned long page_nr, pgprot_t pgprot)
- {
- 	return __pmd(((phys_addr_t)page_nr << PAGE_SHIFT) |
--		     massage_pgprot(pgprot));
-+		     check_pgprot(pgprot));
- }
- 
- static inline pud_t pfn_pud(unsigned long page_nr, pgprot_t pgprot)
- {
- 	return __pud(((phys_addr_t)page_nr << PAGE_SHIFT) |
--		     massage_pgprot(pgprot));
-+		     check_pgprot(pgprot));
- }
- 
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
-@@ -553,7 +570,7 @@ static inline pte_t pte_modify(pte_t pte
- 	 * the newprot (if present):
- 	 */
- 	val &= _PAGE_CHG_MASK;
--	val |= massage_pgprot(newprot) & ~_PAGE_CHG_MASK;
-+	val |= check_pgprot(newprot) & ~_PAGE_CHG_MASK;
- 
- 	return __pte(val);
- }
-@@ -563,7 +580,7 @@ static inline pmd_t pmd_modify(pmd_t pmd
- 	pmdval_t val = pmd_val(pmd);
- 
- 	val &= _HPAGE_CHG_MASK;
--	val |= massage_pgprot(newprot) & ~_HPAGE_CHG_MASK;
-+	val |= check_pgprot(newprot) & ~_HPAGE_CHG_MASK;
- 
- 	return __pmd(val);
- }
-diff -puN arch/x86/kernel/head64.c~x86-no-auto-massage arch/x86/kernel/head64.c
---- a/arch/x86/kernel/head64.c~x86-no-auto-massage	2018-04-02 16:41:14.813605173 -0700
-+++ b/arch/x86/kernel/head64.c	2018-04-02 16:41:14.830605173 -0700
-@@ -195,6 +195,8 @@ unsigned long __head __startup_64(unsign
- 	pud[i + 1] = (pudval_t)pmd + pgtable_flags;
- 
- 	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
-+	/* Filter out unsupported __PAGE_KERNEL_* bits: */
-+	pmd_entry &= __supported_pte_mask;
- 	pmd_entry += sme_get_me_mask();
- 	pmd_entry +=  physaddr;
- 
-diff -puN arch/x86/kernel/ldt.c~x86-no-auto-massage arch/x86/kernel/ldt.c
---- a/arch/x86/kernel/ldt.c~x86-no-auto-massage	2018-04-02 16:41:14.815605173 -0700
-+++ b/arch/x86/kernel/ldt.c	2018-04-02 16:41:14.830605173 -0700
-@@ -145,6 +145,7 @@ map_ldt_struct(struct mm_struct *mm, str
- 		unsigned long offset = i << PAGE_SHIFT;
- 		const void *src = (char *)ldt->entries + offset;
- 		unsigned long pfn;
-+		pgprot_t pte_prot;
- 		pte_t pte, *ptep;
- 
- 		va = (unsigned long)ldt_slot_va(slot) + offset;
-@@ -163,7 +164,10 @@ map_ldt_struct(struct mm_struct *mm, str
- 		 * target via some kernel interface which misses a
- 		 * permission check.
- 		 */
--		pte = pfn_pte(pfn, __pgprot(__PAGE_KERNEL_RO & ~_PAGE_GLOBAL));
-+	       	pte_prot = __pgprot(__PAGE_KERNEL_RO & ~_PAGE_GLOBAL);
-+		/* Filter out unsuppored __PAGE_KERNEL* bits: */
-+		pgprot_val(pte_prot) |= __supported_pte_mask;
-+		pte = pfn_pte(pfn, pte_prot);
- 		set_pte_at(mm, va, ptep, pte);
- 		pte_unmap_unlock(ptep, ptl);
+ 	/*
+@@ -187,7 +181,7 @@ static void __init probe_page_size_mask(
+ 	__supported_pte_mask &= ~_PAGE_GLOBAL;
+ 	if (boot_cpu_has(X86_FEATURE_PGE)) {
+ 		cr4_set_bits_and_update_boot(X86_CR4_PGE);
+-		enable_global_pages();
++		__supported_pte_mask |= _PAGE_GLOBAL;
  	}
-diff -puN arch/x86/mm/ident_map.c~x86-no-auto-massage arch/x86/mm/ident_map.c
---- a/arch/x86/mm/ident_map.c~x86-no-auto-massage	2018-04-02 16:41:14.817605173 -0700
-+++ b/arch/x86/mm/ident_map.c	2018-04-02 16:41:14.830605173 -0700
-@@ -98,6 +98,9 @@ int kernel_ident_mapping_init(struct x86
- 	if (!info->kernpg_flag)
- 		info->kernpg_flag = _KERNPG_TABLE;
  
-+	/* Filter out unsupported __PAGE_KERNEL_* bits: */
-+	info->kernpg_flag &= __default_kernel_pte_mask;
-+
- 	for (; addr < end; addr = next) {
- 		pgd_t *pgd = pgd_page + pgd_index(addr);
- 		p4d_t *p4d;
-diff -puN arch/x86/mm/iomap_32.c~x86-no-auto-massage arch/x86/mm/iomap_32.c
---- a/arch/x86/mm/iomap_32.c~x86-no-auto-massage	2018-04-02 16:41:14.818605173 -0700
-+++ b/arch/x86/mm/iomap_32.c	2018-04-02 16:41:14.830605173 -0700
-@@ -44,6 +44,9 @@ int iomap_create_wc(resource_size_t base
- 		return ret;
- 
- 	*prot = __pgprot(__PAGE_KERNEL | cachemode2protval(pcm));
-+	/* Filter out unsupported __PAGE_KERNEL* bits: */
-+	pgprot_val(*prot) &= __default_kernel_pte_mask;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(iomap_create_wc);
-@@ -88,6 +91,9 @@ iomap_atomic_prot_pfn(unsigned long pfn,
- 		prot = __pgprot(__PAGE_KERNEL |
- 				cachemode2protval(_PAGE_CACHE_MODE_UC_MINUS));
- 
-+	/* Filter out unsupported __PAGE_KERNEL* bits: */
-+	pgprot_val(prot) &= __default_kernel_pte_mask;
-+
- 	return (void __force __iomem *) kmap_atomic_prot_pfn(pfn, prot);
- }
- EXPORT_SYMBOL_GPL(iomap_atomic_prot_pfn);
-diff -puN arch/x86/mm/ioremap.c~x86-no-auto-massage arch/x86/mm/ioremap.c
---- a/arch/x86/mm/ioremap.c~x86-no-auto-massage	2018-04-02 16:41:14.820605173 -0700
-+++ b/arch/x86/mm/ioremap.c	2018-04-02 16:41:14.831605173 -0700
-@@ -816,6 +816,9 @@ void __init __early_set_fixmap(enum fixe
- 	}
- 	pte = early_ioremap_pte(addr);
- 
-+        /* Sanitize 'prot' against any unsupported bits: */
-+        pgprot_val(flags) &= __default_kernel_pte_mask;
-+
- 	if (pgprot_val(flags))
- 		set_pte(pte, pfn_pte(phys >> PAGE_SHIFT, flags));
- 	else
-diff -puN arch/x86/mm/kasan_init_64.c~x86-no-auto-massage arch/x86/mm/kasan_init_64.c
---- a/arch/x86/mm/kasan_init_64.c~x86-no-auto-massage	2018-04-02 16:41:14.822605173 -0700
-+++ b/arch/x86/mm/kasan_init_64.c	2018-04-02 16:41:14.831605173 -0700
-@@ -269,6 +269,12 @@ void __init kasan_early_init(void)
- 	pudval_t pud_val = __pa_nodebug(kasan_zero_pmd) | _KERNPG_TABLE;
- 	p4dval_t p4d_val = __pa_nodebug(kasan_zero_pud) | _KERNPG_TABLE;
- 
-+	/* Mask out unsupported __PAGE_KERNEL bits: */
-+	pte_val &= __default_kernel_pte_mask;
-+	pmd_val &= __default_kernel_pte_mask;
-+	pud_val &= __default_kernel_pte_mask;
-+	p4d_val &= __default_kernel_pte_mask;
-+
- 	for (i = 0; i < PTRS_PER_PTE; i++)
- 		kasan_zero_pte[i] = __pte(pte_val);
- 
-@@ -371,7 +377,13 @@ void __init kasan_init(void)
- 	 */
- 	memset(kasan_zero_page, 0, PAGE_SIZE);
- 	for (i = 0; i < PTRS_PER_PTE; i++) {
--		pte_t pte = __pte(__pa(kasan_zero_page) | __PAGE_KERNEL_RO | _PAGE_ENC);
-+		pte_t pte;
-+		pgprot_t prot;
-+
-+		prot = __pgprot(__PAGE_KERNEL_RO | _PAGE_ENC);
-+		pgprot_val(prot) &= __default_kernel_pte_mask;
-+
-+		pte = __pte(__pa(kasan_zero_page) | pgprot_val(prot));
- 		set_pte(&kasan_zero_pte[i], pte);
- 	}
- 	/* Flush TLBs again to be sure that write protection applied. */
-diff -puN arch/x86/mm/pgtable.c~x86-no-auto-massage arch/x86/mm/pgtable.c
---- a/arch/x86/mm/pgtable.c~x86-no-auto-massage	2018-04-02 16:41:14.824605173 -0700
-+++ b/arch/x86/mm/pgtable.c	2018-04-02 16:41:14.831605173 -0700
-@@ -583,6 +583,9 @@ void __native_set_fixmap(enum fixed_addr
- void native_set_fixmap(enum fixed_addresses idx, phys_addr_t phys,
- 		       pgprot_t flags)
- {
-+	/* Sanitize 'prot' against any unsupported bits: */
-+	pgprot_val(flags) &= __default_kernel_pte_mask;
-+
- 	__native_set_fixmap(idx, pfn_pte(phys >> PAGE_SHIFT, flags));
- }
- 
-diff -puN arch/x86/power/hibernate_64.c~x86-no-auto-massage arch/x86/power/hibernate_64.c
---- a/arch/x86/power/hibernate_64.c~x86-no-auto-massage	2018-04-02 16:41:14.826605173 -0700
-+++ b/arch/x86/power/hibernate_64.c	2018-04-02 16:41:14.831605173 -0700
-@@ -51,6 +51,12 @@ static int set_up_temporary_text_mapping
- 	pmd_t *pmd;
- 	pud_t *pud;
- 	p4d_t *p4d = NULL;
-+	pgprot_t pgtable_prot = __pgprot(_KERNPG_TABLE);
-+	pgprot_t pmd_text_prot = __pgprot(__PAGE_KERNEL_LARGE_EXEC);
-+
-+	/* Filter out unsupported __PAGE_KERNEL* bits: */
-+	pgprot_val(pmd_text_prot) &= __default_kernel_pte_mask;
-+	pgprot_val(pgtable_prot)  &= __default_kernel_pte_mask;
+ 	/* By the default is everything supported: */
+diff -puN arch/x86/mm/pageattr.c~clear-global-for-pti arch/x86/mm/pageattr.c
+--- a/arch/x86/mm/pageattr.c~clear-global-for-pti	2018-04-02 16:41:17.720605166 -0700
++++ b/arch/x86/mm/pageattr.c	2018-04-02 16:41:17.726605166 -0700
+@@ -1411,11 +1411,11 @@ static int change_page_attr_set_clr(unsi
+ 	memset(&cpa, 0, sizeof(cpa));
  
  	/*
- 	 * The new mapping only has to cover the page containing the image
-@@ -81,15 +87,19 @@ static int set_up_temporary_text_mapping
- 		return -ENOMEM;
- 
- 	set_pmd(pmd + pmd_index(restore_jump_address),
--		__pmd((jump_address_phys & PMD_MASK) | __PAGE_KERNEL_LARGE_EXEC));
-+		__pmd((jump_address_phys & PMD_MASK) | pgprot_val(pmd_text_prot)));
- 	set_pud(pud + pud_index(restore_jump_address),
--		__pud(__pa(pmd) | _KERNPG_TABLE));
-+		__pud(__pa(pmd) | pgprot_val(pgtable_prot)));
- 	if (p4d) {
--		set_p4d(p4d + p4d_index(restore_jump_address), __p4d(__pa(pud) | _KERNPG_TABLE));
--		set_pgd(pgd + pgd_index(restore_jump_address), __pgd(__pa(p4d) | _KERNPG_TABLE));
-+		p4d_t new_p4d = __p4d(__pa(pud) | pgprot_val(pgtable_prot));
-+		pgd_t new_pgd = __pgd(__pa(p4d) | pgprot_val(pgtable_prot));
+-	 * Check, if we are requested to change a not supported
+-	 * feature:
++	 * Check, if we are requested to set a not supported
++	 * feature.  Clearing non-supported features is OK.
+ 	 */
+ 	mask_set = canon_pgprot(mask_set);
+-	mask_clr = canon_pgprot(mask_clr);
 +
-+		set_p4d(p4d + p4d_index(restore_jump_address), new_p4d);
-+		set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
- 	} else {
- 		/* No p4d for 4-level paging: point the pgd to the pud page table */
--		set_pgd(pgd + pgd_index(restore_jump_address), __pgd(__pa(pud) | _KERNPG_TABLE));
-+		pgd_t new_pgd = __pgd(__pa(p4d) | pgprot_val(pgtable_prot));
-+		set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
- 	}
+ 	if (!pgprot_val(mask_set) && !pgprot_val(mask_clr) && !force_split)
+ 		return 0;
  
- 	return 0;
+@@ -1758,6 +1758,12 @@ int set_memory_4k(unsigned long addr, in
+ 					__pgprot(0), 1, 0, NULL);
+ }
+ 
++int set_memory_nonglobal(unsigned long addr, int numpages)
++{
++	return change_page_attr_clear(&addr, numpages,
++				      __pgprot(_PAGE_GLOBAL), 0);
++}
++
+ static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
+ {
+ 	struct cpa_data cpa;
+diff -puN arch/x86/mm/pti.c~clear-global-for-pti arch/x86/mm/pti.c
+--- a/arch/x86/mm/pti.c~clear-global-for-pti	2018-04-02 16:41:17.722605166 -0700
++++ b/arch/x86/mm/pti.c	2018-04-02 16:41:17.726605166 -0700
+@@ -364,6 +364,27 @@ static void __init pti_clone_entry_text(
+ }
+ 
+ /*
++ * This is the only user for it and it is not arch-generic like
++ * the other set_memory.h functions.  Just extern it.
++ */
++extern int set_memory_nonglobal(unsigned long addr, int numpages);
++void pti_set_kernel_image_nonglobal(void)
++{
++	/*
++	 * The identity map is created with PMDs, regardless of the
++	 * actual length of the kernel.  We need to clear
++	 * _PAGE_GLOBAL up to a PMD boundary, not just to the end
++	 * of the image.
++	 */
++	unsigned long start = PFN_ALIGN(_text);
++	unsigned long end = ALIGN((unsigned long)_end, PMD_PAGE_SIZE);
++
++	pr_debug("set kernel image non-global\n");
++
++	set_memory_nonglobal(start, (end - start) >> PAGE_SHIFT);
++}
++
++/*
+  * Initialize kernel page table isolation
+  */
+ void __init pti_init(void)
+@@ -374,6 +395,10 @@ void __init pti_init(void)
+ 	pr_info("enabled\n");
+ 
+ 	pti_clone_user_shared();
++
++	/* Undo all global bits from the init pagetables in head_64.S: */
++	pti_set_kernel_image_nonglobal();
++	/* Replace some of the global bits just for shared entry text: */
+ 	pti_clone_entry_text();
+ 	pti_setup_espfix64();
+ 	pti_setup_vsyscall();
 _
