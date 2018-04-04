@@ -1,80 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751270AbeDDNX5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:23:57 -0400
-Received: from imap.thunk.org ([74.207.234.97]:60352 "EHLO imap.thunk.org"
+        id S1751306AbeDDNYS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:24:18 -0400
+Received: from mga12.intel.com ([192.55.52.136]:39646 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751117AbeDDNX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:23:56 -0400
-Date: Wed, 4 Apr 2018 09:23:54 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: Waiman Long <longman@redhat.com>, Oleg Nesterov <oleg@redhat.com>
-Subject: REGRESSION/TEST FAILURE caused by DEBUG_RWSEMS
-Message-ID: <20180404132354.GA13897@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Waiman Long <longman@redhat.com>, Oleg Nesterov <oleg@redhat.com>
+        id S1750853AbeDDNYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:24:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,406,1517904000";
+   d="scan'208";a="217570116"
+Date: Wed, 4 Apr 2018 21:24:00 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Xidong Wang <wangxidong_97@163.com>
+Cc: kbuild-all@01.org, Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Xidong Wang <wangxidong_97@163.com>
+Subject: Re: [PATCH 1/1] drm/i915:Do not use kfree() to free
+ kmem_cache_alloc() return value
+Message-ID: <201804042127.0qfhF0n9%fengguang.wu@intel.com>
+References: <1522823851-28177-1-git-send-email-wangxidong_97@163.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1522823851-28177-1-git-send-email-wangxidong_97@163.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit 5149cbac4235: "locking/rwsem: Add DEBUG_RWSEMS to look for
-lock/unlock emismatches" (newly added in this merge window) will cause
-xfstests tests failures in generic/068 for all file systems.
+Hi Xidong,
 
-This is because the freeze and thaw ioctls, by design, are run in
-different processes.  It looks like the concern for why
-CONFIG_DEBUG_RWSEMS was added is because read/write semaphores can
-spin --- which if the case, we need to make sure that (a) the spinlock
-code path is not used for the freeze/thaw ioctls, and (b) we don't
-trigger the debug WARN_ON.
+Thank you for the patch! Perhaps something to improve:
 
-Cheers,
+[auto build test WARNING on drm-intel/for-linux-next]
+[also build test WARNING on v4.16 next-20180403]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-						- Ted
+url:    https://github.com/0day-ci/linux/commits/Xidong-Wang/drm-i915-Do-not-use-kfree-to-free-kmem_cache_alloc-return-value/20180404-193341
+base:   git://anongit.freedesktop.org/drm-intel for-linux-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-generic/068		[08:52:46][   24.807316] run fstests generic/068 at 2018-04-04 08:52:46
-[   25.444734] ------------[ cut here ]------------
-[   25.446991] DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
-[   25.447017] WARNING: CPU: 0 PID: 1302 at /usr/projects/linux/ext4/kernel/locking/rwsem.c:133 up_write+0x113/0x150
-[   25.453885] CPU: 0 PID: 1302 Comm: xfs_io Not tainted 4.16.0-rc7-xfstests-00114-g5149cbac4235 #130
-[   25.457294] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-[   25.460534] RIP: 0010:up_write+0x113/0x150
-[   25.462096] RSP: 0018:ffff88006504fd30 EFLAGS: 00010282
-[   25.464061] RAX: dffffc0000000008 RBX: ffff880068ab2af8 RCX: ffffffff89a28dde
-[   25.466724] RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000293
-[   25.469543] RBP: ffff880068ab2b60 R08: fffffbfff179d951 R09: fffffbfff179d951
-[   25.472608] R10: ffff88007ffca010 R11: fffffbfff179d950 R12: ffff880068ab27a0
-[   25.475331] R13: ffff880068ab24f0 R14: ffff880068ab2ca0 R15: ffffffff89cf4d47
-[   25.478000] FS:  0000000001665880(0000) GS:ffff88006d400000(0000) knlGS:0000000000000000
-[   25.481025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   25.483216] CR2: 000000000166a018 CR3: 00000000696e8000 CR4: 00000000000006f0
-[   25.485900] Call Trace:
-[   25.487035]  percpu_up_write+0x4c/0x60
-[   25.488532]  thaw_super+0x1c4/0x250
-[   25.489904]  do_vfs_ioctl+0xe14/0xfb0
-[   25.491296]  ? ioctl_preallocate+0x1a0/0x1a0
-[   25.492860]  ? _copy_to_user+0x9d/0xc0
-[   25.494179]  ? SyS_sysinfo+0x82/0xc0
-[   25.495500]  ? SyS_getcpu+0x120/0x120
-[   25.496815]  SyS_ioctl+0x43/0x80
-[   25.497944]  ? do_vfs_ioctl+0xfb0/0xfb0
-[   25.499268]  do_syscall_64+0x1a0/0x640
-[   25.500566]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-[   25.502038] RIP: 0033:0x45d4c7
-[   25.502901] RSP: 002b:00007ffe95712ff8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[   25.505362] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 000000000045d4c7
-[   25.507286] RDX: 00007ffe9571300c RSI: ffffffffc0045878 RDI: 0000000000000003
-[   25.509408] RBP: 0000000001669290 R08: 0000000000000000 R09: 0000000000000000
-[   25.511525] R10: 0000000000434cc0 R11: 0000000000000246 R12: 0000000000000001
-[   25.513404] R13: 0000000001669270 R14: 000000000166a2d0 R15: 0000000001669270
-[   25.515260] Code: 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 48 8b 05 64 84 c2 03 85 c0 75 86 48 c7 c6 20 2a 66 8b 48 c7 c7 e0 29 66 8b e8 ed 07 f2 ff <0f> 0b e9 6c ff ff ff e8 41 74 2d 00 e9 2a ff ff ff 48 89 ef e8 
-[   25.520602] ---[ end trace 28e00b42ae928cb1 ]---
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/gpu/drm/i915/i915_gem_execbuffer.c:731:41: sparse: incorrect type in argument 1 (different base types) @@    expected struct kmem_cache *<noident> @@    got struct i915_lut_struct kmem_cache *<noident> @@
+   drivers/gpu/drm/i915/i915_gem_execbuffer.c:731:41:    expected struct kmem_cache *<noident>
+   drivers/gpu/drm/i915/i915_gem_execbuffer.c:731:41:    got struct i915_lut_handle *[assigned] lut
+>> drivers/gpu/drm/i915/i915_gem_execbuffer.c:731:40: sparse: not enough arguments for function kmem_cache_free
+   drivers/gpu/drm/i915/i915_gem_execbuffer.c: In function 'eb_lookup_vmas':
+   drivers/gpu/drm/i915/i915_gem_execbuffer.c:731:20: error: passing argument 1 of 'kmem_cache_free' from incompatible pointer type [-Werror=incompatible-pointer-types]
+       kmem_cache_free(lut);
+                       ^~~
+   In file included from include/linux/reservation.h:44:0,
+                    from drivers/gpu/drm/i915/i915_gem_execbuffer.c:30:
+   include/linux/slab.h:356:6: note: expected 'struct kmem_cache *' but argument is of type 'struct i915_lut_handle *'
+    void kmem_cache_free(struct kmem_cache *, void *);
+         ^~~~~~~~~~~~~~~
+   drivers/gpu/drm/i915/i915_gem_execbuffer.c:731:4: error: too few arguments to function 'kmem_cache_free'
+       kmem_cache_free(lut);
+       ^~~~~~~~~~~~~~~
+   In file included from include/linux/reservation.h:44:0,
+                    from drivers/gpu/drm/i915/i915_gem_execbuffer.c:30:
+   include/linux/slab.h:356:6: note: declared here
+    void kmem_cache_free(struct kmem_cache *, void *);
+         ^~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+vim +731 drivers/gpu/drm/i915/i915_gem_execbuffer.c
+
+   685	
+   686	static int eb_lookup_vmas(struct i915_execbuffer *eb)
+   687	{
+   688		struct radix_tree_root *handles_vma = &eb->ctx->handles_vma;
+   689		struct drm_i915_gem_object *obj;
+   690		unsigned int i;
+   691		int err;
+   692	
+   693		if (unlikely(i915_gem_context_is_closed(eb->ctx)))
+   694			return -ENOENT;
+   695	
+   696		if (unlikely(i915_gem_context_is_banned(eb->ctx)))
+   697			return -EIO;
+   698	
+   699		INIT_LIST_HEAD(&eb->relocs);
+   700		INIT_LIST_HEAD(&eb->unbound);
+   701	
+   702		for (i = 0; i < eb->buffer_count; i++) {
+   703			u32 handle = eb->exec[i].handle;
+   704			struct i915_lut_handle *lut;
+   705			struct i915_vma *vma;
+   706	
+   707			vma = radix_tree_lookup(handles_vma, handle);
+   708			if (likely(vma))
+   709				goto add_vma;
+   710	
+   711			obj = i915_gem_object_lookup(eb->file, handle);
+   712			if (unlikely(!obj)) {
+   713				err = -ENOENT;
+   714				goto err_vma;
+   715			}
+   716	
+   717			vma = i915_vma_instance(obj, eb->vm, NULL);
+   718			if (unlikely(IS_ERR(vma))) {
+   719				err = PTR_ERR(vma);
+   720				goto err_obj;
+   721			}
+   722	
+   723			lut = kmem_cache_alloc(eb->i915->luts, GFP_KERNEL);
+   724			if (unlikely(!lut)) {
+   725				err = -ENOMEM;
+   726				goto err_obj;
+   727			}
+   728	
+   729			err = radix_tree_insert(handles_vma, handle, vma);
+   730			if (unlikely(err)) {
+ > 731				kmem_cache_free(lut);
+   732				goto err_obj;
+   733			}
+   734	
+   735			/* transfer ref to ctx */
+   736			vma->open_count++;
+   737			list_add(&lut->obj_link, &obj->lut_list);
+   738			list_add(&lut->ctx_link, &eb->ctx->handles_list);
+   739			lut->ctx = eb->ctx;
+   740			lut->handle = handle;
+   741	
+   742	add_vma:
+   743			err = eb_add_vma(eb, i, vma);
+   744			if (unlikely(err))
+   745				goto err_vma;
+   746	
+   747			GEM_BUG_ON(vma != eb->vma[i]);
+   748			GEM_BUG_ON(vma->exec_flags != &eb->flags[i]);
+   749		}
+   750	
+   751		/* take note of the batch buffer before we might reorder the lists */
+   752		i = eb_batch_index(eb);
+   753		eb->batch = eb->vma[i];
+   754		GEM_BUG_ON(eb->batch->exec_flags != &eb->flags[i]);
+   755	
+   756		/*
+   757		 * SNA is doing fancy tricks with compressing batch buffers, which leads
+   758		 * to negative relocation deltas. Usually that works out ok since the
+   759		 * relocate address is still positive, except when the batch is placed
+   760		 * very low in the GTT. Ensure this doesn't happen.
+   761		 *
+   762		 * Note that actual hangs have only been observed on gen7, but for
+   763		 * paranoia do it everywhere.
+   764		 */
+   765		if (!(eb->flags[i] & EXEC_OBJECT_PINNED))
+   766			eb->flags[i] |= __EXEC_OBJECT_NEEDS_BIAS;
+   767		if (eb->reloc_cache.has_fence)
+   768			eb->flags[i] |= EXEC_OBJECT_NEEDS_FENCE;
+   769	
+   770		eb->args->flags |= __EXEC_VALIDATED;
+   771		return eb_reserve(eb);
+   772	
+   773	err_obj:
+   774		i915_gem_object_put(obj);
+   775	err_vma:
+   776		eb->vma[i] = NULL;
+   777		return err;
+   778	}
+   779	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
