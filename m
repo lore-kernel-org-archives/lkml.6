@@ -1,109 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751434AbeDDIjf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:39:35 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:53750 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeDDIjd (ORCPT
+        id S1751401AbeDDIn1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:43:27 -0400
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:35178 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750995AbeDDInZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:39:33 -0400
-Subject: Re: [PATCH 2/2] kfree_rcu() should use kfree_bulk() interface
-From: Rao Shoaib <rao.shoaib@oracle.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com,
-        joe@perches.com, brouer@redhat.com, linux-mm@kvack.org
-References: <1522776173-7190-1-git-send-email-rao.shoaib@oracle.com>
- <1522776173-7190-3-git-send-email-rao.shoaib@oracle.com>
- <20180403205822.GB30145@bombadil.infradead.org>
- <d434c58c-082b-9a17-8d15-9c66e0c1941a@oracle.com>
- <20180404022347.GA17512@bombadil.infradead.org>
- <954a9ea2-5202-4ee3-1fa2-21acf8d07cdb@oracle.com>
-Message-ID: <d446938e-a3ee-04d0-ea68-96d85d632c3f@oracle.com>
-Date: Wed, 4 Apr 2018 01:39:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 4 Apr 2018 04:43:25 -0400
+X-Google-Smtp-Source: AIpwx4/B/vZTCgP90DiuQzCQDD9hQREvlHhcRfum+68GI279lkdkC08q9j1Lr7qsqkyW8ZfETcqm1Q==
+Date: Wed, 4 Apr 2018 10:43:20 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Thomas Hellstrom <thomas@shipmail.org>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
+        <ville.syrjala@linux.intel.com>,
+        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
+        Deepak Singh Rawat <drawat@vmware.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
+Message-ID: <20180404084320.GA3881@phenom.ffwll.local>
+Mail-Followup-To: Thomas Hellstrom <thomas@shipmail.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
+        Deepak Singh Rawat <drawat@vmware.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180403224225.26776-1-robdclark@gmail.com>
+ <CAKMK7uEH3Qu_Lkok60bOYkik6kyvDGtrS0kcQ=dFmCLRD-+1HA@mail.gmail.com>
+ <307adb15-412a-1fe2-f116-27fe5b4a657d@shipmail.org>
 MIME-Version: 1.0
-In-Reply-To: <954a9ea2-5202-4ee3-1fa2-21acf8d07cdb@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804040086
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <307adb15-412a-1fe2-f116-27fe5b4a657d@shipmail.org>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 04, 2018 at 10:22:21AM +0200, Thomas Hellstrom wrote:
+> Hi,
+> 
+> On 04/04/2018 08:58 AM, Daniel Vetter wrote:
+> > On Wed, Apr 4, 2018 at 12:42 AM, Rob Clark <robdclark@gmail.com> wrote:
+> > > Add an atomic helper to implement dirtyfb support.  This is needed to
+> > > support DSI command-mode panels with x11 userspace (ie. when we can't
+> > > rely on pageflips to trigger a flush to the panel).
+> > > 
+> > > To signal to the driver that the async atomic update needs to
+> > > synchronize with fences, even though the fb didn't change, the
+> > > drm_atomic_state::dirty flag is added.
+> > > 
+> > > Signed-off-by: Rob Clark <robdclark@gmail.com>
+> > > ---
+> > > Background: there are a number of different folks working on getting
+> > > upstream kernel working on various different phones/tablets with qcom
+> > > SoC's.. many of them have command mode panels, so we kind of need a
+> > > way to support the legacy dirtyfb ioctl for x11 support.
+> > > 
+> > > I know there is work on a proprer non-legacy atomic property for
+> > > userspace to communicate dirty-rect(s) to the kernel, so this can
+> > > be improved from triggering a full-frame flush once that is in
+> > > place.  But we kinda needa a stop-gap solution.
+> > > 
+> > > I had considered an in-driver solution for this, but things get a
+> > > bit tricky if userspace ands up combining dirtyfb ioctls with page-
+> > > flips, because we need to synchronize setting various CTL.FLUSH bits
+> > > with setting the CTL.START bit.  (ie. really all we need to do for
+> > > cmd mode panels is bang CTL.START, but is this ends up racing with
+> > > pageflips setting FLUSH bits, then bad things.)  The easiest soln
+> > > is to wrap this up as an atomic commit and rely on the worker to
+> > > serialize things.  Hence adding an atomic dirtyfb helper.
+> > > 
+> > > I guess at least the helper, with some small addition to translate
+> > > and pass-thru the dirty rect(s) is useful to the final atomic dirty-
+> > > rect property solution.  Depending on how far off that is, a stop-
+> > > gap solution could be useful.
+> > Adding Noralf, who iirc already posted the full dirty helpers already somewhere.
+> > -Daniel
+> 
+> I've asked Deepak to RFC the core changes suggested for the full dirty blob
+> on dri-devel. It builds on DisplayLink's suggestion, with a simple helper to
+> get to the desired coordinates.
+> 
+> One thing to perhaps discuss is how we would like to fit this with
+> front-buffer rendering and the dirty ioctl. In the page-flip context, the
+> dirty rects, like egl's swapbuffer_with_damage is a hint to restrict the
+> damage region that can be fully ignored by the driver, new content is
+> indicated by a new framebuffer.
+> 
+> We could do the same for frontbuffer rendering: Either set a dirty flag like
+> you do here, or provide a content_age state member. Since we clear the dirty
+> flag on state copies, I guess that would be sufficient. The blob rectangles
+> would then become a hint to restrict the damage region.
 
+I'm not entirely following here - I thought for frontbuffer rendering the
+dirty rects have always just been a hint, and that the driver was always
+free to re-upload the entire buffer to the screen.
 
-On 04/04/2018 12:16 AM, Rao Shoaib wrote:
->
->
-> On 04/03/2018 07:23 PM, Matthew Wilcox wrote:
->> On Tue, Apr 03, 2018 at 05:55:55PM -0700, Rao Shoaib wrote:
->>> On 04/03/2018 01:58 PM, Matthew Wilcox wrote:
->>>> I think you might be better off with an IDR.  The IDR can always
->>>> contain one entry, so there's no need for this 'rbf_list_head' or
->>>> __rcu_bulk_schedule_list.  The IDR contains its first 64 entries in
->>>> an array (if that array can be allocated), so it's compatible with the
->>>> kfree_bulk() interface.
->>>>
->>> I have just familiarized myself with what IDR is by reading your 
->>> article. If
->>> I am incorrect please correct me.
->>>
->>> The list and head you have pointed are only used  if the container 
->>> can not
->>> be allocated. That could happen with IDR as well. Note that the 
->>> containers
->>> are allocated at boot time and are re-used.
->> No, it can't happen with the IDR.  The IDR can always contain one entry
->> without allocating anything.  If you fail to allocate the second entry,
->> just free the first entry.
->>
->>> IDR seems to have some overhead, such as I have to specifically add the
->>> pointer and free the ID, plus radix tree maintenance.
->> ... what?  Adding a pointer is simply idr_alloc(), and you get back an
->> integer telling you which index it has.  Your data structure has its
->> own set of overhead.
-> The only overhead is a pointer that points to the head and an int to 
-> keep count. If I use idr, I would have to allocate an struct idr which 
-> is much larger. idr_alloc()/idr_destroy() operations are much more 
-> costly than updating two pointers. As the pointers are stored in 
-> slots/nodes corresponding to the id, I would  have to retrieve the 
-> pointers by calling idr_remove() to pass them to be freed, the 
-> slots/nodes would constantly be allocated and freed.
->
-> IDR is a very useful interface for allocating/managing ID's but I 
-> really do not see the justification for using it over here, perhaps 
-> you can elaborate more on the benefits and also on how I can just pass 
-> the array to be freed.
->
-> Shoaib
->
-I may have mis-understood your comment. You are probably suggesting that 
-I use IDR instead of allocating following containers.
+And through a helper like Rob's proposing here (and have floated around in
+different versions already) we'd essentially map a frontbuffer dirtyfb
+call to a fake flip with dirty rect. Manual upload drivers already need to
+upload the entire screen if they get a flip, since some userspace uses
+that to flush out frontbuffer rendering (instead of calling dirtyfb).
 
-+	struct		rcu_bulk_free_container *rbf_container;
-+	struct		rcu_bulk_free_container *rbf_cached_container;
+So from that pov the new dirty flag is kinda not necessary imo.
 
+> Another approach would be to have the presence of dirty rects without
+> framebuffer change to indicate frontbuffer rendering.
+> 
+> I think I like the first approach best, although it may be tempting for
+> user-space apps to just set the dirty bit instead of providing the full
+> damage region.
 
-IDR uses radix_tree_node which allocates following two arrays. since I 
-do not need any ID's why not just use the radix_tree_node directly, but 
-I do not need a radix tree either, so why not just use an array. That is 
-what I am doing.
-
-void __rcu      *slots[RADIX_TREE_MAP_SIZE];
-unsigned long   tags[RADIX_TREE_MAX_TAGS][RADIX_TREE_TAG_LONGS]; ==> Not 
-needed
-
-As far as allocation failure is concerned, the allocation has to be done 
-at run time. If the allocation of a container can fail, so can the 
-allocation of radix_tree_node as it also requires memory.
-
-I really do not see any advantages of using IDR. The structure I have is 
-much simpler and does exactly what I need.
-
-Shoaib
+Or I'm not following you here, because I don't quite see the difference
+between dirtyfb and a flip.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
