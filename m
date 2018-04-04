@@ -1,51 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752615AbeDDWxG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 18:53:06 -0400
-Received: from mail-it0-f43.google.com ([209.85.214.43]:40359 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752318AbeDDWxE (ORCPT
+        id S1752550AbeDDXF1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 19:05:27 -0400
+Received: from mail-pl0-f47.google.com ([209.85.160.47]:38718 "EHLO
+        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752495AbeDDXF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 18:53:04 -0400
-X-Google-Smtp-Source: AIpwx4/aJA2gFGpqe7egzf/ZWoaAmmMRkLSyFZlJ44xw/tA77ujHrI2XCPmk0M1QUHxO3KyXRafc7nd4EQnFCuncKXA=
+        Wed, 4 Apr 2018 19:05:26 -0400
+X-Google-Smtp-Source: AIpwx4/AbLJB0hdn6+ib986lao9GS85ohUgq4yzu79SgzUVtCa98Tn3FgMRA9UhVBKOUUvZRDkHkIBQIbNnh0RxN/M4=
 MIME-Version: 1.0
-In-Reply-To: <152287964415.14760.2996398134900556495.stgit@warthog.procyon.org.uk>
-References: <152287959470.14760.10350886166577848180.stgit@warthog.procyon.org.uk>
- <152287964415.14760.2996398134900556495.stgit@warthog.procyon.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 4 Apr 2018 15:53:02 -0700
-X-Google-Sender-Auth: nWZ1cIcngkXJrxNnirgo51CnY3U
-Message-ID: <CA+55aFymk0Na_eBp1FSoDgNhyBAnS7X_ZwgG6++LsvjpcUfuxw@mail.gmail.com>
-Subject: Re: [PATCH 06/12] fscache: Detect multiple relinquishment of a cookie
-To: David Howells <dhowells@redhat.com>
-Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-cachefs@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-afs@lists.infradead.org
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 4 Apr 2018 18:05:04 -0500
+Message-ID: <CAH2r5ms+u37sOrL9=hVG6cCKc3qAvgLJaXFKsB4aUihZwbvV=w@mail.gmail.com>
+Subject: Noisy Sparse warnings
+To: LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 3:07 PM, David Howells <dhowells@redhat.com> wrote:
-> Report if an fscache cookie is relinquished multiple times by the netfs.
->
-> -       set_bit(FSCACHE_COOKIE_RELINQUISHED, &cookie->flags);
-> +       if (test_and_set_bit(FSCACHE_COOKIE_RELINQUISHED, &cookie->flags))
-> +               BUG();
+I have been getting the following sparse warnings repeatedly on my
+current Ubutu (17.10) when compiling the current mainline kernel:
 
-Ugh. Please try to avoid adding BUG() calls for reporting. They can
-often cause the machine to be basically dead.
+./arch/x86/include/asm/nospec-branch.h:144:38: warning: Unknown escape '@'
+./include/linux/string.h:239:1: error: attribute 'gnu_inline': unknown attribute
 
-This one seem fairly ok, simply because it looks like the only caller
-doesn't really hold a lot of locks (the superblock s_umount lock, but
-that may be all).
+I get the same sparse error whether I use the default sparse that
+Ubuntu ships (0.5.0) or the current sparse (0.5.2-rc1)
 
-So I'll pull this change, I just wanted people to realize that if this
-is a "help make sure we notice if things go wrong", then
-"WARN_ON_ONCE()" or something is usually a better choice than
-"potentially kill the machine and make it harder to actually see the
-error".
+Ideas?
 
-                 Linus
+
+-- 
+Thanks,
+
+Steve
