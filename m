@@ -1,149 +1,137 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-940803-1522873001-2-15423917660474638563
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4185186-1522844564-2-4479319423130329535
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522873001; b=D1BjFC11U0lhRULG3YG3eoWGGZkhMUBrfZACJxSZsk/QLjxQef
-    3VF8Q+/X5ja6kfhlTfYm87BC8XO7T57pDw5zZ4PPUsjppmLHna/7ezl4WwWzb6Dt
-    owmAyCp3CUOwSVA1ovfBHiuAdMJ+Xeuo6Hd9DDRXwQfVRLCAm+bQE5DVvaYHfnru
-    wGfwaD/bK2QjGe3GPJ1EUqCalYfWjSixiU8URYzioPvw97noowNWkxiYegGd9BLh
-    hhq46DqEOyB3uQaZdAY+ESN+0PUY3rzPzlvbALffVEPdq9lrgOto9DYlqfP/xmKK
-    Ojwfm3YqJM2mWrgDIRCXeExlwoRcFmp3DOPg==
+    1522844563; b=v3sg7npc5rHB7Vy3e0gkNmYlLsjpjTqnlyEGlBuXWR7PvsAZQ7
+    l3ssENOKIHM/Mt7hcEm3s6m5RFlEwRrJC2ArzdGfPg1MjZz25uAVlZA9YRQ0iw0O
+    jSpQwlKF9fmcP/N5OwnDQK+WbDQ89EErLKAR60XIvhY+Vv4ufudk7XviAn9/zHk+
+    7uLVGVheHy3sQwOZPo+3d3Ca3xrZDOcslhBP6StAwG1EUnV5CqawoEhtRNIdOIRu
+    Tm0xm6C1dEYTvEg5MJ8GeG3NzqKNoMx2xLTYRD/KqvSyv3augKk2Cib4W/R4iXct
+    Zn49cuzQxzGjRoNvxsCt6M069dDLiPGN5eiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:content-transfer-encoding:sender
-    :list-id; s=fm2; t=1522873001; bh=skNhlii13ov9Gc80Rst3gsLRgCtzmK
-    VTje33BnW2iBU=; b=PvBlSBUam1RzN226xKkJuu/CETBGwrV2xCanUcJTeRi+Uo
-    x5nJcAnGKLoM+i7sSj1B6JKiswJpYPN5ozB+9CMSO0jJcV6PiioQgz2zPRgk5xkd
-    RPAy1RAlrd4Q1SD+RuJD3pby3XRlAbXLwJhrHjK239XAV5gb/uG3lNe6dPVs+doK
-    zcoivFbam7KBJsZ8q810F9WFXp02DgH9HkUfMO2meDEyFCDTy7ktX7o+4s5LIHZQ
-    ZD+S+iF19NwXGOcgYUS/MxbS8G6z3Sdi/2FYLbub3uidZ3u5mXun9DcMKg4MwTB4
-    VJvfPyoOc7x6fNrXi6OZKpdilHpV+viICXFqt6Hw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1522844563; bh=fQ9U/GuMRXJPOcU6d/4VBItmb2OEvu
+    +qzmuo6CHhum0=; b=HsRKoji0W7d7wmJppeZ25u0oZAGYAIRQ39Jz1Y4R1/oFEm
+    27IblqgQe5YpSs9AglRm+jksu74Nz73/1L1OYCcSecll8hyqzIMJQw2rYRI267WD
+    GEzm4JBrrN6h5na/tLyVdsaB+5aYtR80R/ZUp4BjX7r0iUP3cEWfHI41utW0/vZ7
+    x49DKsaa7a3kUzUXwEWgz6YJiDHjKWC9TsB49ozUku/fu/1IzSuC0D5zfVjMCB7T
+    APLnU0ZrYb9RrZ8iTncOxh+yItZVgdUO+ozaxtpsbN+jYMZpQwK1AxG7Xo3eJaYz
+    gTLGmJBIPZOKRbEgRf9sSyTzsjqI1agEGJ6s9YVA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNhEUG9/UFVa23l6uLAmgLGComvza/c6Q8gNkyhM69BOPvO4EDylwCC/fljzqUni9xWGTMqQTWylHcZUa+2X2oz+1bEqurJxboMcc2VNv6TmSpZMiDaE
-    1TVc3S+dy7ZRbZk2RAoOzArjdEJkntUOmTgGlgHkXZ09g+u6bYl9oQOA0rCCxbQaGvJFpx26XCh/cHuGbnswCUObii0Nlq+fA1L06dAdPJX/m6vm+xp0LTHO
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=fgeN0leQug2GkSvOKpYA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfGa22biqoXEQj626ZA6QlrPXW3UrDhv06X3Nm7D4nBZFcRrDG9KnRt+dggaW+z/vxH9Fw7kS2M8ZgXm8I1BIrNs6GzJiwTwIyNOJ/cYOO6N8rIyY2WEb
+    J05DWatg0ga5/956nleMRCS6yV+rDmdEu53lQ5ffCoqXDC0diaOxOf4nrr0N7OrTV7HaDfLavrXIzaslgU9ZM+8dBMYYsWnkk07YK1MY1yCZN1hiStWiCUpP
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=3DJk4ypkVB3yUxPikFcA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751900AbeDDUQj (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 4 Apr 2018 16:16:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37602 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751852AbeDDUQi (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:16:38 -0400
-From: Lyude Paul <lyude@redhat.com>
-To: intel-gfx@lists.freedesktop.org
-Cc: Laura Abbott <labbott@redhat.com>,
-        Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
-        <ville.syrjala@linux.intel.com>, stable@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2][RESEND] drm/i915: Keep AUX block running when disabling DPMS for MST
-Date: Wed,  4 Apr 2018 16:16:24 -0400
-Message-Id: <20180404201624.5678-1-lyude@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+        id S1751415AbeDDMWZ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 4 Apr 2018 08:22:25 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:50965 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751213AbeDDMWX (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 4 Apr 2018 08:22:23 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: select USB_COMMON for usb role switch config
+Date: Wed,  4 Apr 2018 14:21:53 +0200
+Message-Id: <20180404122211.3309577-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:eLycvauCzdub3/12xFAtyMkBXdZ7y/i7Wb9jFwfQ7d3rY1wwQzm
+ o2akWzo4Q9LnoGQMpZKZiVVP+pMaXbMDLWxShzpLJUyAuWJHp2Ip6V06N0oZQoPC5Qt1JOA
+ XppkUqs7Zcx+4E+zScYzycbpUvF9PX5gXCnMFNWw35utB6BL0bBoXHMsOkx5+7Ttq3BE9Gh
+ IexzJQeKwPkPkfKl+3Dzg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:il4lm52IWlU=:WGO1VG/8c1LppcMWeBmddM
+ zhH1YOAGxc73AzEpqued1z/ERhkUF6c8upoaHgb9xOMCbR2Db3gWLMCWb91vMbCgW5SgzFbSK
+ +Zd1Z44ojZN0iAeAoeyoh46xZ6Icc7KOaABkuwE/A/zRv0yQCGodTJ4mRMG7P7imArtZaCc79
+ j701FHK18hSF1ZGthSwS5qEilEYC2S+Bq/IlZeO+SAIWUG11DkANdFK+2WGFmz1BRgmwTBHPT
+ ibrRTY0k/Hx7gptTTtcvtaOi0IaP2HdkMZD6mp6mWvB0xAFz1l90AfVEcOcwHRd0zH2rowMpc
+ TDYREAcjPbuLy5ShygVXjDkiiCOALgOCk1V9aP2dT6eywUjhJSsBdqxA4TpaBIKMfeoEcEJ3y
+ t10wKC/gRvu0d9MJakXs6DopZYwmfq/dC6HfSjJYq05rs7QeiG4Vm2E1nZC6js6sw8ijcbmIM
+ MH/PPWxLJpWB+hr1t/YvLm04OU9WPHGuQEjK9kjs+qkRWIooB8ZoTsiW0eP+alNVl1TlWhfT7
+ EJhBB60yXiMjxd9PbpQMYgMvJBGvOG1O1JjSyt5AjMMyuVRIfbB74GRpDNiIxXkicwGqzuwMn
+ 22Qpeev455Gv58rGRetHSGeu7pdh+foLYH20PHayCimJLkhxDtp8R0PegGj4+7T9gzF1enKLI
+ Jn+f8ud+tTmRsw1NQyU8krs8FJonXYHVOS/swJB9HF2WgPMOQIeipP1zGi+IaRxnKIy9276lX
+ MXpaG/zQ5TAbawqkVFC3jvddYbSFYk0JDgO0zw==
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-While enabling/disabling DPMS before link training with MST hubs is
-perfectly valid; unfortunately disabling DPMS results in some devices
-disabling their AUX CH block as well. For SST this isn't as much of a
-problem, but for MST we need to be able to continue handling aux
-transactions even when none of the sinks are turned on since it's
-possible for us to have a single atomic commit which results in
-disabling each downstream sink, followed by subsequently re-enabling
-each sink.
+The new axp288 extcon driver has no dependency on USB itself but
+calls the usb role switch helper functions. This causes a link error
+when USB_COMMON is disabled, as that subdirectory never gets entered:
 
-If we don't do this, we'll end up stalling any pending ESI interrupts
-from the sink for up to 1ms. Unfortunately, dropping ESIs during this
-timespan makes it so that link fallback retraining for MST (which I will
-be submitting to the ML shortly) fails due to the channel EQ failure
-interrupts potentially getting dropped. Additionally, when performing a
-modeset that brings the hub status's link status from bad -> good having
-ESIs disabled for that long causes us to miss the hub's response to us
-trying to start link training as well.
+drivers/extcon/extcon-axp288.o: In function `axp288_usb_role_work':
+extcon-axp288.c:(.text+0x47b): undefined reference to `usb_role_switch_set_role'
+extcon-axp288.c:(.text+0x498): undefined reference to `usb_role_switch_get_role'
+drivers/extcon/extcon-axp288.o: In function `axp288_extcon_probe':
+extcon-axp288.c:(.text+0x675): undefined reference to `usb_role_switch_get'
+extcon-axp288.c:(.text+0x6d1): undefined reference to `usb_role_switch_put'
+drivers/extcon/extcon-axp288.o: In function `axp288_put_role_sw':
+extcon-axp288.c:(.text+0x1c): undefined reference to `usb_role_switch_put'
 
-Since any sink with MST is going to support DisplayPort 1.2 anyway, save
-us the hassle of trying to wait until the sink comes back up and just
-never shut the aux block down.
+There are multiple ways of fixing this, I chose to 'select USB_COMMON',
+since that is how we solved the same problem for other helpers like
+USB_LED_TRIG or PHY drivers.
 
-Changes since v2:
- - Fix patch name, no functional changes
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: stable@vger.kernel.org
-Fixes: ad260ab32a4d9 ("drm/i915/dp: Write to SET_POWER dpcd to enable MST hub.")
+Fixes: d54f063cdbe4 ("extcon: axp288: Set USB role where necessary")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/gpu/drm/i915/intel_dp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-index 62f82c4298ac..0479c377981b 100644
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@ -2589,11 +2589,13 @@ void intel_dp_sink_dpms(struct intel_dp *intel_dp, int mode)
- 		return;
+diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
+index 75f7fb151f71..987fc5ba6321 100644
+--- a/drivers/usb/Kconfig
++++ b/drivers/usb/Kconfig
+@@ -207,5 +207,6 @@ config USB_ULPI_BUS
  
- 	if (mode != DRM_MODE_DPMS_ON) {
-+		unsigned char data = intel_dp->is_mst ?
-+			DP_SET_POWER_D3_AUX_ON : DP_SET_POWER_D3;
-+
- 		if (downstream_hpd_needs_d0(intel_dp))
- 			return;
+ config USB_ROLE_SWITCH
+ 	tristate
++	select USB_COMMON
  
--		ret = drm_dp_dpcd_writeb(&intel_dp->aux, DP_SET_POWER,
--					 DP_SET_POWER_D3);
-+		ret = drm_dp_dpcd_writeb(&intel_dp->aux, DP_SET_POWER, data);
- 	} else {
- 		struct intel_lspcon *lspcon = dp_to_lspcon(intel_dp);
- 
+ endif # USB_SUPPORT
 -- 
-2.14.3
+2.9.0
+
