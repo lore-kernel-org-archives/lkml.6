@@ -1,138 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752391AbeDDWF3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 18:05:29 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:36678 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752232AbeDDWF2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 18:05:28 -0400
-To: akpm@linux-foundation.org
-Cc: dvyukov@google.com, paulmck@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        torvalds@linux-foundation.org, msb@chromium.org, peterz@infradead.org,
-        tglx@linutronix.de, vegard.nossum@oracle.com
-Subject: [PATCH v2] locking/hung_task: Show all hung tasks before panic
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1522678324-4855-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-        <20180402153530.GN3948@linux.vnet.ibm.com>
-        <CACT4Y+Yk0hEDj2EcXTJ5BcTHE0m1Sn0e9RfY=6KC4nWhWOHPmw@mail.gmail.com>
-In-Reply-To: <CACT4Y+Yk0hEDj2EcXTJ5BcTHE0m1Sn0e9RfY=6KC4nWhWOHPmw@mail.gmail.com>
-Message-Id: <201804050705.BHE57833.HVFOFtSOMQJFOL@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Thu, 5 Apr 2018 07:05:21 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1752545AbeDDWGo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 18:06:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55180 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752274AbeDDWGn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 18:06:43 -0400
+Subject: [PATCH net-next 00/12] fscache: Fixes, traces and development
+From: David Howells <dhowells@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
+Date: Wed, 04 Apr 2018 23:06:34 +0100
+Message-ID: <152287959470.14760.10350886166577848180.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we get a hung task it can often be valuable to see _all_ the hung
-tasks on the system before calling panic().
 
-Quoting from https://syzkaller.appspot.com/text?tag=CrashReport&id=5316056503549952
-----------------------------------------
-INFO: task syz-executor0:6540 blocked for more than 120 seconds.
-      Not tainted 4.16.0+ #13
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor0   D23560  6540   4521 0x80000004
-Call Trace:
- context_switch kernel/sched/core.c:2848 [inline]
- __schedule+0x8fb/0x1ef0 kernel/sched/core.c:3490
- schedule+0xf5/0x430 kernel/sched/core.c:3549
- schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3607
- __mutex_lock_common kernel/locking/mutex.c:833 [inline]
- __mutex_lock+0xb7f/0x1810 kernel/locking/mutex.c:893
- mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
- lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
- __blkdev_driver_ioctl block/ioctl.c:303 [inline]
- blkdev_ioctl+0x1759/0x1e00 block/ioctl.c:601
- ioctl_by_bdev+0xa5/0x110 fs/block_dev.c:2060
- isofs_get_last_session fs/isofs/inode.c:567 [inline]
- isofs_fill_super+0x2ba9/0x3bc0 fs/isofs/inode.c:660
- mount_bdev+0x2b7/0x370 fs/super.c:1119
- isofs_mount+0x34/0x40 fs/isofs/inode.c:1560
- mount_fs+0x66/0x2d0 fs/super.c:1222
- vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
- vfs_kern_mount fs/namespace.c:2514 [inline]
- do_new_mount fs/namespace.c:2517 [inline]
- do_mount+0xea4/0x2b90 fs/namespace.c:2847
- ksys_mount+0xab/0x120 fs/namespace.c:3063
- SYSC_mount fs/namespace.c:3077 [inline]
- SyS_mount+0x39/0x50 fs/namespace.c:3074
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-(...snipped...)
-Showing all locks held in the system:
-(...snipped...)
-2 locks held by syz-executor0/6540:
- #0: 00000000566d4c39 (&type->s_umount_key#49/1){+.+.}, at: alloc_super fs/super.c:211 [inline]
- #0: 00000000566d4c39 (&type->s_umount_key#49/1){+.+.}, at: sget_userns+0x3b2/0xe60 fs/super.c:502 /* down_write_nested(&s->s_umount, SINGLE_DEPTH_NESTING); */
- #1: 0000000043ca8836 (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355 /* mutex_lock_nested(&lo->lo_ctl_mutex, 1); */
-(...snipped...)
-3 locks held by syz-executor7/6541:
- #0: 0000000043ca8836 (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355 /* mutex_lock_nested(&lo->lo_ctl_mutex, 1); */
- #1: 000000007bf3d3f9 (&bdev->bd_mutex){+.+.}, at: blkdev_reread_part+0x1e/0x40 block/ioctl.c:192
- #2: 00000000566d4c39 (&type->s_umount_key#50){.+.+}, at: __get_super.part.10+0x1d3/0x280 fs/super.c:663 /* down_read(&sb->s_umount); */
-----------------------------------------
+Hi Linus,
 
-When reporting an AB-BA deadlock like shown above, it would be nice if
-trace of PID=6541 is printed as well as trace of PID=6540 before calling
-panic().
+Here are some patches that fix some AFS's usage of fscache, two of which
+conflict with later patches in this series, so I've included them here:
 
-Showing hung tasks up to /proc/sys/kernel/hung_task_warnings could delay
-calling panic() but normally there should not be so many hung tasks.
+ (1) Need to invalidate the cache if a foreign data change is detected on
+     the server.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mandeep Singh Baines <msb@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
+ (2) Move the vnode ID uniquifier (equivalent to i_generation) from the
+     auxiliary data to the index key to prevent a race between file delete
+     and a subsequent file create seeing the same index key.
+
+ (3) Need to retire cookies that correspond to files that we think got
+     deleted on the server.
+
+There are some patches to fix some things in fscache and cachefiles:
+
+ (4) Fix a couple of checker warnings.
+
+ (5) Correctly indicate to the end-of-operation callback whether an
+     operation completed or was cancelled.
+
+ (6) Add a check for multiple cookie relinquishment.
+
+ (7) Fix a path through the asynchronous write that doesn't wake up a
+     waiter for a page if the cache decides not to write that page, but
+     discards it instead.
+
+There a couple of patches to add tracepoints to fscache and cachefiles:
+
+ (8) Add tracepoints for cookie operators, object state machine execution,
+     cachefiles object management and cachefiles VFS operations.
+
+ (9) Add tracepoints for fscache operation management and page wrangling.
+
+And then three development patches:
+
+(10) Attach the index key and auxiliary data to the cookie, pass this
+     information through various fscache-netfs API functions and get rid of
+     the callbacks to the netfs to get it.
+
+     This means that the cache can get at this information, even if the
+     netfs goes away.  It also means that the cache can be lazy in updating
+     the coherency data.
+
+(11) Pass the object data size through various fscache-netfs API rather
+     than calling back to the netfs for it, and store the value in the
+     object.
+
+     This makes it easier to correctly resize the object, as the size is
+     updated on writes to the cache, rather than calling back out to the
+     netfs.
+
+(12) Maintain a catalogue of allocated cookies.  This makes it possible to
+     catch cookie collision up front rather than down in the bowels of the
+     cache being run from a service thread from the object state machine.
+
+     This will also make it possible in the future to reconnect to a cookie
+     that's not gone dead yet because it's waiting for finalisation of the
+     storage and also make it possible to bring cookies online if the cache
+     is added after the cookie has been obtained.
+
+
+The patches are tagged here:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+	tags/fscache-next-20180404
+
+and can also be found on this branch:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-next
+
+David
 ---
- kernel/hung_task.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+David Howells (12):
+      afs: Invalidate cache on server data change
+      afs: Use the vnode ID uniquifier in the cache key not the aux data
+      afs: Be more aggressive in retiring cached vnodes
+      fscache, cachefiles: Fix checker warnings
+      fscache: Pass the correct cancelled indications to fscache_op_complete()
+      fscache: Detect multiple relinquishment of a cookie
+      fscache: Fix hanging wait on page discarded by writeback
+      fscache: Add tracepoints
+      fscache: Add more tracepoints
+      fscache: Attach the index key and aux data to the cookie
+      fscache: Pass object size in rather than calling back for it
+      fscache: Maintain a catalogue of allocated cookies
 
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index 751593e..32b4794 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -44,6 +44,7 @@
- 
- static int __read_mostly did_panic;
- static bool hung_task_show_lock;
-+static bool hung_task_call_panic;
- 
- static struct task_struct *watchdog_task;
- 
-@@ -127,10 +128,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
- 	touch_nmi_watchdog();
- 
- 	if (sysctl_hung_task_panic) {
--		if (hung_task_show_lock)
--			debug_show_all_locks();
--		trigger_all_cpu_backtrace();
--		panic("hung_task: blocked tasks");
-+		hung_task_show_lock = true;
-+		hung_task_call_panic = true;
- 	}
- }
- 
-@@ -193,6 +192,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 	rcu_read_unlock();
- 	if (hung_task_show_lock)
- 		debug_show_all_locks();
-+	if (hung_task_call_panic) {
-+		trigger_all_cpu_backtrace();
-+		panic("hung_task: blocked tasks");
-+	}
- }
- 
- static long hung_timeout_jiffies(unsigned long last_checked,
--- 
-1.8.3.1
+
+ Documentation/filesystems/caching/netfs-api.txt |  157 +++----
+ fs/9p/cache.c                                   |  100 +---
+ fs/afs/cache.c                                  |  150 ------
+ fs/afs/cell.c                                   |    6 
+ fs/afs/file.c                                   |    6 
+ fs/afs/inode.c                                  |   49 ++
+ fs/afs/internal.h                               |    7 
+ fs/afs/volume.c                                 |    6 
+ fs/cachefiles/interface.c                       |   61 ++-
+ fs/cachefiles/internal.h                        |    2 
+ fs/cachefiles/main.c                            |    1 
+ fs/cachefiles/namei.c                           |   75 ++-
+ fs/cachefiles/rdwr.c                            |    1 
+ fs/cachefiles/xattr.c                           |    8 
+ fs/ceph/cache.c                                 |  113 +----
+ fs/cifs/cache.c                                 |  168 -------
+ fs/cifs/fscache.c                               |  130 +++++-
+ fs/cifs/fscache.h                               |   13 +
+ fs/fscache/cache.c                              |    2 
+ fs/fscache/cookie.c                             |  386 ++++++++++++++---
+ fs/fscache/fsdef.c                              |   55 --
+ fs/fscache/internal.h                           |   43 ++
+ fs/fscache/main.c                               |    1 
+ fs/fscache/netfs.c                              |   26 -
+ fs/fscache/object-list.c                        |   28 +
+ fs/fscache/object.c                             |   66 ++-
+ fs/fscache/operation.c                          |   26 +
+ fs/fscache/page.c                               |   84 +++-
+ fs/fscache/stats.c                              |    1 
+ fs/nfs/fscache-index.c                          |  159 -------
+ fs/nfs/fscache.c                                |   89 +++-
+ fs/nfs/fscache.h                                |   15 +
+ include/linux/fscache-cache.h                   |   26 +
+ include/linux/fscache.h                         |  141 ++++--
+ include/trace/events/cachefiles.h               |  325 ++++++++++++++
+ include/trace/events/fscache.h                  |  535 +++++++++++++++++++++++
+ 36 files changed, 2012 insertions(+), 1049 deletions(-)
+ create mode 100644 include/trace/events/cachefiles.h
+ create mode 100644 include/trace/events/fscache.h
