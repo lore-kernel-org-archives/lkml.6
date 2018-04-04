@@ -1,101 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752439AbeDDQ1D (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 12:27:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41694 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751606AbeDDQ07 (ORCPT
+        id S1752566AbeDDQ1O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 12:27:14 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:45914 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751606AbeDDQ1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 12:26:59 -0400
-Subject: Re: [PATCH v9 15/24] mm: Introduce __vm_normal_page()
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1520963994-28477-16-git-send-email-ldufour@linux.vnet.ibm.com>
- <20180403193927.GD5935@redhat.com>
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date: Wed, 4 Apr 2018 18:26:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 4 Apr 2018 12:27:12 -0400
+X-Google-Smtp-Source: AIpwx4+cjS1JkDi1ryKQ1k65bNbcpDxgXMD4OMjWdzLYWNTjs9QKXkuvwssA5QhJDGzVan+pBKHoY0g7o4ARqYmAOog=
 MIME-Version: 1.0
-In-Reply-To: <20180403193927.GD5935@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18040416-0040-0000-0000-00000449B9A7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040416-0041-0000-0000-000020EDCA52
-Message-Id: <a3446d86-8a29-a9f2-a1fe-b8cc1b748132@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804040165
+In-Reply-To: <20180404074927.GG4082@hirez.programming.kicks-ass.net>
+References: <20180403154102.150b1be0@gandalf.local.home> <CAGXu5j+g6nbDz+gjAxZTSf1004J=naAf7b9dPTE0q8+7UtXCLw@mail.gmail.com>
+ <20180403170612.7b11fc41@gandalf.local.home> <20180404074927.GG4082@hirez.programming.kicks-ass.net>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 4 Apr 2018 09:27:10 -0700
+X-Google-Sender-Auth: 28PjUD6AF6rA_LXKi3lEtuRgBj0
+Message-ID: <CAGXu5jLkmcM+dWwr8FReWN9zFn31DakxAmXc4OfXT4qCymF7Qw@mail.gmail.com>
+Subject: Re: [RFC][PATCH] tracing, printk: Force no hashing when
+ trace_printk() is used
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>, "Tobin C. Harding" <me@tobin.cc>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 4, 2018 at 12:49 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Apr 03, 2018 at 05:06:12PM -0400, Steven Rostedt wrote:
+>> If you are concerned about attack surface, I could make it a bit more
+>> difficult to tweak by malicious software. What about the patch below?
+>> It would be much more difficult to modify this knob from an attack
+>> vector.
+>
+> Not if you build using clang, because that doesn't support asm-goto and
+> thus falls back to a simple runtime variable, which is exactly what Kees
+> didn't want.
 
+Nah, Clang will get asm-goto soon. I'm not worried about that. Besides
+the "yay new target issue", I was concerned about Linus yelling about
+seeing the knob added he specifically said he didn't want. :P
 
-On 03/04/2018 21:39, Jerome Glisse wrote:
-> On Tue, Mar 13, 2018 at 06:59:45PM +0100, Laurent Dufour wrote:
->> When dealing with the speculative fault path we should use the VMA's field
->> cached value stored in the vm_fault structure.
->>
->> Currently vm_normal_page() is using the pointer to the VMA to fetch the
->> vm_flags value. This patch provides a new __vm_normal_page() which is
->> receiving the vm_flags flags value as parameter.
->>
->> Note: The speculative path is turned on for architecture providing support
->> for special PTE flag. So only the first block of vm_normal_page is used
->> during the speculative path.
-> 
-> Might be a good idea to explicitly have SPECULATIVE Kconfig option depends
-> on ARCH_PTE_SPECIAL and a comment for !HAVE_PTE_SPECIAL in the function
-> explaining that speculative page fault should never reach that point.
+-Kees
 
-Unfortunately there is no ARCH_PTE_SPECIAL in the config file, it is defined in
-the per architecture header files.
-So I can't do anything in the Kconfig file
-
-However, I can check that at build time, and doing such a check in
-__vm_normal_page sounds to be a good place, like that:
-
-@@ -869,6 +870,14 @@ struct page *__vm_normal_page(struct vm_area_struct *vma,
-unsigned long addr,
-
-        /* !HAVE_PTE_SPECIAL case follows: */
-
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+       /* This part should never get called when the speculative page fault
-+        * handler is turned on. This is mainly because we can't rely on
-+        * vm_start.
-+        */
-+#error CONFIG_SPECULATIVE_PAGE_FAULT requires HAVE_PTE_SPECIAL
-+#endif
-+
-        if (unlikely(vma_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
-                if (vma_flags & VM_MIXEDMAP) {
-                        if (!pfn_valid(pfn))
-
-Thanks,
-Laurent.
+-- 
+Kees Cook
+Pixel Security
