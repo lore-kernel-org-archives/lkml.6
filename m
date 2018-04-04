@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-990257-1522873811-2-7504547188564746751
+X-Cyrus-Session-Id: sloti22d1t05-940803-1522873001-2-15423917660474638563
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,24 +14,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522873810; b=Bry7j0k67NKeptsWrbxJNXkDJ8OuEyxJHG20As3oJnGcS28csA
-    cc+0lFu1TCZPhT0euW8L7jiBJRSxfTUFbP+UmZiz2/2pZY6x2mOYKT9yqyx5WFdw
-    eiOY9OgZ3bQqIBS0+BXNiJuD7l/VlGxkfhTE8mrJanj6KydjT+tiPf0KNQGz3g0n
-    g5AJLnf7RtTcjf24Z4IpLMjLlkbc+V5kJ/DCyE+IQwuskOsH8mu6mWoLFEsAx6nj
-    FqsWFM85ShDYc5+l2ZOTkOoWN48WpF9siO6JvrKlV/9kCksZJ6I2ciBzYnhpL0r7
-    ZIv0HtUFHYEMwYg6i6XnUgi0M+sBcSVwnvnA==
+    1522873001; b=D1BjFC11U0lhRULG3YG3eoWGGZkhMUBrfZACJxSZsk/QLjxQef
+    3VF8Q+/X5ja6kfhlTfYm87BC8XO7T57pDw5zZ4PPUsjppmLHna/7ezl4WwWzb6Dt
+    owmAyCp3CUOwSVA1ovfBHiuAdMJ+Xeuo6Hd9DDRXwQfVRLCAm+bQE5DVvaYHfnru
+    wGfwaD/bK2QjGe3GPJ1EUqCalYfWjSixiU8URYzioPvw97noowNWkxiYegGd9BLh
+    hhq46DqEOyB3uQaZdAY+ESN+0PUY3rzPzlvbALffVEPdq9lrgOto9DYlqfP/xmKK
+    Ojwfm3YqJM2mWrgDIRCXeExlwoRcFmp3DOPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1522873810;
-    bh=VciGYlp4mlUgulcOPdzdh8k4s5oxIbbR3H2jJcM8NVs=; b=HpKutk2QqO/5
-    e8XFyr1hgZ3Iocp7tJh/bSujMOjkUF2MG1GvgJYDmGVomr8dK+lZ/DZSr5PBP6Uv
-    zAqAUFSiXqc6wS2W/EdLo5q0Kg2HwEy4Lr2QUJuJ5jyX0/No8sUL25+BzYE0GnjK
-    /k04f92eGFZu5f2uaceiKtU8UFxHDiReixkCiQcvXtPVEHVv09MsGNwkwBeaHDCD
-    ul/S55mZ83oaEfBrBvGIZhBjHbW5EYz/tSVRR3IPDQ4VErkhtN6BeouUJBUKMH70
-    Joi7yV56i/6Q3xzrmrb0nn8Lfgd38b29AUidmXhRJyCYFwAtiRkCUUyTteo6HUII
-    lMQhRSE07A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1522873001; bh=skNhlii13ov9Gc80Rst3gsLRgCtzmK
+    VTje33BnW2iBU=; b=PvBlSBUam1RzN226xKkJuu/CETBGwrV2xCanUcJTeRi+Uo
+    x5nJcAnGKLoM+i7sSj1B6JKiswJpYPN5ozB+9CMSO0jJcV6PiioQgz2zPRgk5xkd
+    RPAy1RAlrd4Q1SD+RuJD3pby3XRlAbXLwJhrHjK239XAV5gb/uG3lNe6dPVs+doK
+    zcoivFbam7KBJsZ8q810F9WFXp02DgH9HkUfMO2meDEyFCDTy7ktX7o+4s5LIHZQ
+    ZD+S+iF19NwXGOcgYUS/MxbS8G6z3Sdi/2FYLbub3uidZ3u5mXun9DcMKg4MwTB4
+    VJvfPyoOc7x6fNrXi6OZKpdilHpV+viICXFqt6Hw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -41,7 +40,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -53,35 +52,35 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPrRg4SY0C6xVuGEr/N8ajK1wbNHWD2Io+qVHIm+srkWSc+cdnrmjc+K862rjPfhMRtIarf7meNJ0QuxLvNOA7VrwLZT1Hca+icvT4qIttnhQA86hOh2
-    roF7bRPCF2xpEnjFOb4JX/xdTuaN5xUaYoKAKf83uraSoeNX5PiTSpkjXVy9GMfx8ajQzvIFDpPV+cRqfp6Gsl2YpY7WoaISwsOqNKE2StUWYjoL79T0FC8e
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNhEUG9/UFVa23l6uLAmgLGComvza/c6Q8gNkyhM69BOPvO4EDylwCC/fljzqUni9xWGTMqQTWylHcZUa+2X2oz+1bEqurJxboMcc2VNv6TmSpZMiDaE
+    1TVc3S+dy7ZRbZk2RAoOzArjdEJkntUOmTgGlgHkXZ09g+u6bYl9oQOA0rCCxbQaGvJFpx26XCh/cHuGbnswCUObii0Nlq+fA1L06dAdPJX/m6vm+xp0LTHO
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
     a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=fgeN0leQug2GkSvOKpYA:9
     a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751965AbeDDU3z (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 4 Apr 2018 16:29:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45542 "EHLO mx1.redhat.com"
+        id S1751900AbeDDUQj (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 4 Apr 2018 16:16:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37602 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751981AbeDDU3o (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 4 Apr 2018 16:29:44 -0400
+        id S1751852AbeDDUQi (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 4 Apr 2018 16:16:38 -0400
 From: Lyude Paul <lyude@redhat.com>
 To: intel-gfx@lists.freedesktop.org
-Cc: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+Cc: Laura Abbott <labbott@redhat.com>,
+        Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
         <ville.syrjala@linux.intel.com>, stable@vger.kernel.org,
         Jani Nikula <jani.nikula@linux.intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] drm/i915: Keep AUX block running when disabling DPMS for MST
-Date: Wed,  4 Apr 2018 16:29:31 -0400
-Message-Id: <20180404202932.6811-2-lyude@redhat.com>
-In-Reply-To: <20180404202932.6811-1-lyude@redhat.com>
-References: <20180404202932.6811-1-lyude@redhat.com>
+Subject: [PATCH v2][RESEND] drm/i915: Keep AUX block running when disabling DPMS for MST
+Date: Wed,  4 Apr 2018 16:16:24 -0400
+Message-Id: <20180404201624.5678-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -115,12 +114,10 @@ never shut the aux block down.
 
 Changes since v2:
  - Fix patch name, no functional changes
-Changes since v3:
- - acks, t-b's
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
-Acked-by: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-Tested-by: Laura Abbott <labbott@redhat.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
 Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
 Cc: stable@vger.kernel.org
 Fixes: ad260ab32a4d9 ("drm/i915/dp: Write to SET_POWER dpcd to enable MST hub.")
