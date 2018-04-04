@@ -1,112 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751195AbeDDHf4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 03:35:56 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:45593 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750736AbeDDHfy (ORCPT
+        id S1751281AbeDDHhX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 03:37:23 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60796 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeDDHhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 03:35:54 -0400
-X-Google-Smtp-Source: AIpwx4+2ne9I9+YkAxaydfXBtXLkQQ/bREC7frU55S2O72Qk1CvsF5ZD8AIQzt3eKpTP1T48A+yHFfZF8+yi0PXFDqM=
+        Wed, 4 Apr 2018 03:37:22 -0400
+Date: Wed, 4 Apr 2018 09:37:15 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Daniel Wagner <wagi@monom.org>
+Cc: linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>, stable-rt@vger.kernel.org
+Subject: Re: [PATCH RT 1/3] alarmtimer: Prevent live lock in alarm_cancel()
+Message-ID: <20180404073715.gwiabamwvvyi2bum@linutronix.de>
+References: <20180328100746.18668-1-bigeasy@linutronix.de>
+ <c248f69e-1016-e7ec-64c2-1b8756524a49@monom.org>
 MIME-Version: 1.0
-In-Reply-To: <1522142993-25654-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1522142993-25654-1-git-send-email-yamada.masahiro@socionext.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 4 Apr 2018 09:35:53 +0200
-Message-ID: <CAPDyKFpgrHTD9_FcfAi7kU3_N0=Hqty4tS7suTotPF98kzxM-w@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-cadence: send tune request twice to work
- around errata
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Piotr Sroka <piotrs@cadence.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c248f69e-1016-e7ec-64c2-1b8756524a49@monom.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 March 2018 at 11:29, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Cadence sent out an errata report to their customers of this IP.
-> This errata is not so severe, but the tune request should be sent
-> twice to avoid the potential issue.
->
-> Quote from the report:
->
-> Problem Summary
-> ---------------
-> The IP6116 SD/eMMC PHY design has a timing issue on receive data path.
-> This issue may lead to an incorrect values of read/write pointers of
-> the synchronization FIFO. Such a situation can happen at the SDR104
-> and HS200 tuning procedure when the PHY is requested to change a phase
-> of sampling clock when moving to the next tuning iteration.
->
-> Workarounds
-> -----------
-> The following are valid workarounds to resolve the issue:
->
-> 1. In eMMC mode, software sends tune request twice instead of once at
->    each iteration. This means that the clock phase is not changed on
->    the second request so there is no potential for clock instability.
-> 2. In SD mode, software must not use the hardware tuning and instead
->    perform an almost identical procedure to eMMC, using the HRS34 Tune
->    Force register.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On 2018-04-03 20:32:36 [+0200], Daniel Wagner wrote:
+> Hi Sebastian,
+> 
+> On 03/28/2018 12:07 PM, Sebastian Andrzej Siewior wrote:
+> > If alarm_try_to_cancel() requires a retry, then depending on the
+> > priority setting the retry loop might prevent timer callback completion
+> > on RT. Prevent that by waiting for completion on RT, no change for a
+> > non RT kernel.
+> > 
+> > Cc: stable-rt@vger.kernel.org
+> 
+> How relevant is this serie for trees before eae1c4ae275f ("posix-timers:
+> Make use of cancel/arm callbacks")? Patch #2 seems to depend on that change
+> which was added in v4.12.
 
-Do you want this to be tagged for stable as well? And perhaps you
-could add a fixes tag?
+so #1 looks relevant since that alarmtimer was introduced. #2 since the
+change you mentioned because after that patch alarmtimer would be
+handled wrongly - before you should do the schedule_timout() which
+should be fine.  And #3 since 3.0+ (since the RCU-readsection was added)
+but it is not easy to trigger (you would have to delete the timer while
+a callback is waiting for it).
 
-Kind regards
-Uffe
+> Thanks,
+> Daniel
 
-> ---
->
->  drivers/mmc/host/sdhci-cadence.c | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-> index 0f589e2..bc30d16 100644
-> --- a/drivers/mmc/host/sdhci-cadence.c
-> +++ b/drivers/mmc/host/sdhci-cadence.c
-> @@ -253,6 +253,7 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
->         struct sdhci_cdns_priv *priv = sdhci_cdns_priv(host);
->         void __iomem *reg = priv->hrs_addr + SDHCI_CDNS_HRS06;
->         u32 tmp;
-> +       int i, ret;
->
->         if (WARN_ON(!FIELD_FIT(SDHCI_CDNS_HRS06_TUNE, val)))
->                 return -EINVAL;
-> @@ -260,11 +261,24 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
->         tmp = readl(reg);
->         tmp &= ~SDHCI_CDNS_HRS06_TUNE;
->         tmp |= FIELD_PREP(SDHCI_CDNS_HRS06_TUNE, val);
-> -       tmp |= SDHCI_CDNS_HRS06_TUNE_UP;
-> -       writel(tmp, reg);
->
-> -       return readl_poll_timeout(reg, tmp, !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
-> -                                 0, 1);
-> +       /*
-> +        * Workaround for IP errata:
-> +        * The IP6116 SD/eMMC PHY design has a timing issue on receive data
-> +        * path. Send tune request twice.
-> +        */
-> +       for (i = 0; i < 2; i++) {
-> +               tmp |= SDHCI_CDNS_HRS06_TUNE_UP;
-> +               writel(tmp, reg);
-> +
-> +               ret = readl_poll_timeout(reg, tmp,
-> +                                        !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
-> +                                        0, 1);
-> +
-> +               return ret;
-> +       }
-> +
-> +       return 0;
->  }
->
->  static int sdhci_cdns_execute_tuning(struct mmc_host *mmc, u32 opcode)
-> --
-> 2.7.4
->
+Sebastian
