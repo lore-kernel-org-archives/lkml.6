@@ -1,60 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751410AbeDDOAS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:00:18 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:38951 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750995AbeDDOAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:00:14 -0400
-X-Google-Smtp-Source: AIpwx48bXI7sutXNOo6myRsArc7VSNR3rJVb3oVQmCWk6yazG5Qdg1keh+n/rLL0hZNDrhSwjsX5WyVNl1LoL/+8G3U=
+        id S1751353AbeDDOCR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:02:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55530 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751117AbeDDOCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 10:02:16 -0400
+Date: Wed, 4 Apr 2018 16:02:11 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Jason Andryuk <jandryuk@gmail.com>
+Cc: Andreas Radke <andyrtr@archlinux.org>,
+        Wolfram Sang <wsa@the-dreams.de>, benjamin.tissoires@redhat.com,
+        aduggan@synaptics.com, linux-i2c@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] i2c: i801: blacklist Host Notify on HP EliteBook G3
+ 850
+Message-ID: <20180404160211.57ae77ea@endymion>
+In-Reply-To: <CAKf6xpu4=kLuqZqFsxqFCzLMyLBZyi3C9W_yyssEt=56dhF6RA@mail.gmail.com>
+References: <20180402122536.5083-1-jandryuk@gmail.com>
+        <20180402123435.5587-1-jandryuk@gmail.com>
+        <20180403211326.4907f1bc@laptop64.home>
+        <CAKf6xpu4=kLuqZqFsxqFCzLMyLBZyi3C9W_yyssEt=56dhF6RA@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180404095427.2537184-1-arnd@arndb.de>
-References: <20180404095427.2537184-1-arnd@arndb.de>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Wed, 4 Apr 2018 07:00:13 -0700
-Message-ID: <CAPcyv4hc67fhOvZ21JOy+pvoTepCjvuqk3TS=U8tN=6+vEkdFQ@mail.gmail.com>
-Subject: Re: [PATCH] dm: fix DAX dependency
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        Shaohua Li <shli@kernel.org>, linux-raid <linux-raid@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 2:54 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> Building device mapper with CONFIG_DAX=m now results in a link error:
->
-> drivers/md/dm.o: In function `dm_put_table_device':
-> dm.c:(.text+0x33c): undefined reference to `put_dax'
-> drivers/md/dm.o: In function `cleanup_mapped_device':
-> dm.c:(.text+0x1054): undefined reference to `kill_dax'
-> dm.c:(.text+0x105c): undefined reference to `put_dax'
-> drivers/md/dm.o: In function `dm_get_table_device':
-> dm.c:(.text+0x2744): undefined reference to `dax_get_by_host'
-> drivers/md/dm-table.o: In function `device_dax_write_cache_enabled':
-> dm-table.c:(.text+0x1030): undefined reference to `dax_write_cache_enabled'
-> drivers/md/dm-table.o: In function `dm_table_set_restrictions':
-> dm-table.c:(.text+0x29b8): undefined reference to `dax_write_cache'
->
-> This adds a dependency that prevents the invalid configuration, allowing
-> a built-in device mapper only if DAX is either built-in as well, or
-> completely disabled.
->
-> Fixes: 4de1c562f7e9 ("dax, dm: allow device-mapper to operate without dax support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> The regression only showed up in linux-next at the start of the merge
-> window. Any idea what happened?
+Hi Jason, Andreas,
 
-I had some larger reworks of dax pending in -next until I got a late
-report of a UML build error. Investigating that made me realize that I
-missed the device-mapper dax support in those dax reworks, I started
-pulling in late changes. However, this wider rework is to feel too
-late for 4.17...
+On Wed, 4 Apr 2018 08:55:20 -0400, Jason Andryuk wrote:
+> On Tue, Apr 3, 2018 at 3:13 PM, Andreas Radke <andyrtr@archlinux.org> wrote:
+> > I'm faced with similar cold boot issues on my HP ProBook 430 G4 model.
+> > Trying your hint with adding
+> > "options i2c_i801 disable_features=0x20"
+> > to /etc/modprobe.d/i2c_i801.conf doesn't seem to solve it for me.  
+> 
+> Maybe verify the option is set by checking
+> /sys/module/i2c_i801/parameters/disable_features ?  Looks like dmesg
+> should also report "SMBus Host Notify disabled by user" when disabled.
+> I run with i801 built-in, so I was specifying the option on the kernel
+> command line.
 
-Thanks for the fix, I'll get it folded in and reevaluate what bits are
-still viable / tested enough to push at this stage.
+Another thing to think of is that you may have to rebuild the
+initrd/initramfs after editing /etc/modprobe.d/i2c_i801.conf if
+i2c-i801 happens to be part of it (and make sure
+that /etc/modprobe.d/i2c_i801.conf is indeed included in
+initrd/initramfs then.)
+
+> > My system boots legacy grub in text mode (KMS) and seems to keep hanging
+> > even with that option set.  
+> 
+> Your cold boot hang is in legacy grub itself?  Legacy grub text mode
+> actually doesn't hang my G3 850 - it was switching to the graphical
+> splash screen that seemed to do it.  PXE booting via F12 was another
+> consistent way to hang.  It was very early in the PXE boot code -
+> before it checked the link status.  So you could try that with it just
+> plugged into a switch even if you don't have a PXE boot setup.
+> 
+> From my previous post:
+> """
+> The Boot Agent hang prints "Client Mac Addr 00-11-22-33-44-55<cursor>"
+> and hangs.  A normal boot prints a GUID on the same line and
+> continues.
+> """
+> 
+> Otherwise, unfortunately, it might just be a different issue.
+
+I recall reports about hangs when we first added support for
+interrupts. I think we addressed all the bugs in this area since then
+but maybe not. So you may want to try disable_features=0x30 to disable
+both interrupts and SMBus Host Notify.
+
+-- 
+Jean Delvare
+SUSE L3 Support
