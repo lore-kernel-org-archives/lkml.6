@@ -1,126 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752626AbeDDXMF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 19:12:05 -0400
-Received: from mail-pl0-f52.google.com ([209.85.160.52]:44754 "EHLO
-        mail-pl0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752390AbeDDXLw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 19:11:52 -0400
-X-Google-Smtp-Source: AIpwx49FZX8sWofGyot8Bkc8lUHWtUQOAUqg8upZeEsJ2DW6HWbLctrQVTPenjl9prWQKdyoXM3+lA==
-Date: Thu, 5 Apr 2018 09:11:38 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: sched_rt_period_timer causing large latencies
-Message-ID: <20180405091138.6ef14d15@roar.ozlabs.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752490AbeDDXUU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 19:20:20 -0400
+Received: from s18231873.onlinehome-server.info ([217.160.179.168]:50416 "EHLO
+        godking.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752390AbeDDXUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 19:20:18 -0400
+Subject: Re: [PATCH] Add Second Fan Support for Thinkpad P50
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <1522693621-3124-1-git-send-email-agk@godking.net>
+ <CAHp75Vc1KV3i6Jp-t=cD5DjYDMPHA0Zz77RkN0kmrvb1WLj6gA@mail.gmail.com>
+Cc: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Alexander Kappner <agk@godking.net>
+Message-ID: <5cbdc251-6aa2-3fc2-3bb8-6f95cac11838@godking.net>
+Date: Wed, 4 Apr 2018 16:20:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Icedove/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAHp75Vc1KV3i6Jp-t=cD5DjYDMPHA0Zz77RkN0kmrvb1WLj6gA@mail.gmail.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Andy: Thanks for pushing, and for the pointers regarding formalities; I'll keep those in mind. 
 
-I'm seeing some pretty big latencies on a ~idle system when a CPU wakes
-out of a nohz idle. Looks like it's due to the taking a lot of remote
-locks and cache lines. irqoff trace:
+Also, it would be great if someone could test the fan reporting on a P70 Thinkpad (which has the same fan configuration as my P50 and thus likely needs the same quirk).
 
-latency: 407 us, #608/608, CPU#3 | (M:server VP:0, KP:0, SP:0 HP:0 #P:176)
-
-  <idle>-0       3d...    0us : decrementer_common
-  <idle>-0       3d...    1us : timer_interrupt <-decrementer_common
-  <idle>-0       3d...    2us : irq_enter <-timer_interrupt
-  <idle>-0       3d...    2us : rcu_irq_enter <-irq_enter
-  <idle>-0       3d...    3us : rcu_nmi_enter <-irq_enter
-  <idle>-0       3d...    4us : rcu_dynticks_eqs_exit <-rcu_nmi_enter
-  <idle>-0       3d...    4us : __local_bh_disable_ip <-irq_enter
-  <idle>-0       3d...    5us : tick_irq_enter <-irq_enter
-  <idle>-0       3d...    6us : tick_check_oneshot_broadcast_this_cpu <-tick_irq_enter
-  <idle>-0       3d...    6us : ktime_get <-tick_irq_enter
-  <idle>-0       3d...    7us : update_ts_time_stats <-tick_irq_enter
-  <idle>-0       3d...    8us : nr_iowait_cpu <-update_ts_time_stats
-  <idle>-0       3d...    9us : _local_bh_enable <-irq_enter
-  <idle>-0       3d...   10us : __local_bh_enable <-irq_enter
-  <idle>-0       3d.h.   10us : __timer_interrupt <-timer_interrupt
-  <idle>-0       3d.h.   11us : hrtimer_interrupt <-__timer_interrupt
-  <idle>-0       3d.h.   12us : _raw_spin_lock_irqsave <-hrtimer_interrupt
-  <idle>-0       3d.h.   13us : ktime_get_update_offsets_now <-hrtimer_interrupt
-  <idle>-0       3d.h.   13us : __hrtimer_run_queues <-hrtimer_interrupt
-  <idle>-0       3d.h.   14us : __remove_hrtimer <-__hrtimer_run_queues
-  <idle>-0       3d.h.   15us : _raw_spin_unlock_irqrestore <-__hrtimer_run_queues
-  <idle>-0       3d.h.   16us : tick_sched_timer <-__hrtimer_run_queues
-  <idle>-0       3d.h.   16us : ktime_get <-tick_sched_timer
-  <idle>-0       3d.h.   17us : tick_sched_do_timer <-tick_sched_timer
-  <idle>-0       3d.h.   18us : tick_sched_handle.isra.5 <-tick_sched_timer
-  <idle>-0       3d.h.   19us : update_process_times <-tick_sched_handle.isra.5
-  <idle>-0       3d.h.   19us : account_process_tick <-update_process_times
-  <idle>-0       3d.h.   20us : run_local_timers <-update_process_times
-  <idle>-0       3d.h.   21us : hrtimer_run_queues <-run_local_timers
-  <idle>-0       3d.h.   21us : raise_softirq <-run_local_timers
-  <idle>-0       3d.h.   22us : __raise_softirq_irqoff <-raise_softirq
-  <idle>-0       3d.h.   23us : rcu_check_callbacks <-update_process_times
-  <idle>-0       3d.h.   24us : rcu_sched_qs <-rcu_check_callbacks
-  <idle>-0       3d.h.   25us : rcu_bh_qs <-rcu_check_callbacks
-  <idle>-0       3d.h.   25us : rcu_segcblist_ready_cbs <-rcu_check_callbacks
-  <idle>-0       3d.h.   26us : cpu_needs_another_gp <-rcu_check_callbacks
-  <idle>-0       3d.h.   27us : invoke_rcu_core <-rcu_check_callbacks
-  <idle>-0       3d.h.   28us : raise_softirq <-invoke_rcu_core
-  <idle>-0       3d.h.   28us : __raise_softirq_irqoff <-raise_softirq
-  <idle>-0       3d.h.   29us : scheduler_tick <-update_process_times
-  <idle>-0       3d.h.   30us : _raw_spin_lock <-scheduler_tick
-  <idle>-0       3d.h.   31us : update_rq_clock <-scheduler_tick
-  <idle>-0       3d.h.   31us : task_tick_idle <-scheduler_tick
-  <idle>-0       3d.h.   32us : cpu_load_update_active <-scheduler_tick
-  <idle>-0       3d.h.   33us : tick_nohz_tick_stopped <-cpu_load_update_active
-  <idle>-0       3d.h.   33us : cpu_load_update <-scheduler_tick
-  <idle>-0       3d.h.   34us : sched_avg_update <-cpu_load_update
-  <idle>-0       3d.h.   35us : calc_global_load_tick <-scheduler_tick
-  <idle>-0       3d.h.   36us : trigger_load_balance <-scheduler_tick
-  <idle>-0       3d.h.   36us : raise_softirq <-trigger_load_balance
-  <idle>-0       3d.h.   37us : __raise_softirq_irqoff <-raise_softirq
-  <idle>-0       3d.h.   38us : run_posix_cpu_timers <-update_process_times
-  <idle>-0       3d.h.   39us : profile_tick <-tick_sched_handle.isra.5
-  <idle>-0       3d.h.   39us : hrtimer_forward <-tick_sched_timer
-  <idle>-0       3d.h.   40us : _raw_spin_lock_irq <-__hrtimer_run_queues
-  <idle>-0       3d.h.   41us : enqueue_hrtimer <-__hrtimer_run_queues
-  <idle>-0       3d.h.   42us : __remove_hrtimer <-__hrtimer_run_queues
-  <idle>-0       3d.h.   42us : _raw_spin_unlock_irqrestore <-__hrtimer_run_queues
-  <idle>-0       3d.h.   44us : sched_rt_period_timer <-__hrtimer_run_queues
-  <idle>-0       3d.h.   44us : _raw_spin_lock <-sched_rt_period_timer
-  <idle>-0       3d.h.   45us : ktime_get <-sched_rt_period_timer
-  <idle>-0       3d.h.   46us : hrtimer_forward <-sched_rt_period_timer
-  <idle>-0       3d.h.   47us : _raw_spin_lock <-sched_rt_period_timer
-  <idle>-0       3d.h.   48us : _raw_spin_lock <-sched_rt_period_timer
-  ... 527 more locks snipped ...
-  <idle>-0       3d.h.  403us : ktime_get <-sched_rt_period_timer
-  <idle>-0       3d.h.  403us : hrtimer_forward <-sched_rt_period_timer
-  <idle>-0       3d.h.  404us : _raw_spin_lock_irq <-__hrtimer_run_queues
-  <idle>-0       3d.h.  404us : __hrtimer_get_next_event <-hrtimer_interrupt
-  <idle>-0       3d.h.  404us : __hrtimer_next_event_base <-__hrtimer_get_next_event
-  <idle>-0       3d.h.  405us : __hrtimer_next_event_base <-hrtimer_interrupt
-  <idle>-0       3d.h.  405us : _raw_spin_unlock_irqrestore <-hrtimer_interrupt
-  <idle>-0       3d.h.  405us : tick_program_event <-hrtimer_interrupt
-  <idle>-0       3d.h.  406us : clockevents_program_event <-tick_program_event
-  <idle>-0       3d.h.  406us : ktime_get <-clockevents_program_event
-  <idle>-0       3d.h.  406us : decrementer_set_next_event <-clockevents_program_event
-  <idle>-0       3d.h.  407us : irq_exit <-timer_interrupt
-  <idle>-0       3d...  407us : __do_softirq <-irq_exit
-  <idle>-0       3d...  407us : __local_bh_disable_ip <-__do_softirq
-  <idle>-0       3d.s.  408us : __do_softirq
-  <idle>-0       3d.s.  408us : trace_hardirqs_on <-__do_softirq
-  <idle>-0       3d.s.  411us : <stack trace>
-
-This is only a 2 socket system with 176 CPUs, so not huge or extreme
-remote latency. I suspect this contributes to significantly higher
-occasional latency spikes when it hits some runqueue lock contention.
-
-Any way this can be improved? Any config options or settings should be
-changed?
-
-Thanks,
-Nick
+Best
+Alexander Kappner
+ 
+> On Mon, Apr 2, 2018 at 9:27 PM, Alexander Kappner <agk@...> wrote:
+>> The Thinkpad P50 has 2 fans. Add the 2FAN quirk so the tpacpi driver
+>> properly reports both fan speeds.
+>> Because the P50 doesn't report the version of its EC controller, we need to
+>> identify it by BIOS version (N1).
+> 
+> I have pushed it with changes discussed to my review and testing queue, thanks!
+> 
+> I'm not sure if you were about to send a new version (no need
+> anymore), though for the next time, please be familiar with
+> https://elixir.bootlin.com/linux/latest/source/Documentation/process/submitting-patches.rst
+> (in particular, section 8).
+> 
+> And additional information, we are using special prefixes for our
+> subsystem, i.e.
+> "platform/x86: $DRIVER_NAME: ".
+> 
+>> Signed-off-by: Alexander Kappner <agk@...>
+>> ---
+>>  drivers/platform/x86/thinkpad_acpi.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+>> index d5eaf3b1..ebdc300 100644
+>> --- a/drivers/platform/x86/thinkpad_acpi.c
+>> +++ b/drivers/platform/x86/thinkpad_acpi.c
+>> @@ -8699,16 +8699,24 @@ static const struct attribute_group fan_attr_group = {
+>>           .ec = TPID(__id1, __id2),             \
+>>           .quirks = __quirks }
+>>
+>> +#define TPACPI_FAN_QL_BIOS(__id1, __id2, __quirks)     \
+>> +       { .vendor = PCI_VENDOR_ID_LENOVO,       \
+>> +         .bios = TPID(__id1, __id2),           \
+>> +         .ec = TPACPI_MATCH_ANY,               \
+>> +         .quirks = __quirks }
+>> +
+>>  static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
+>>         TPACPI_FAN_QI('1', 'Y', TPACPI_FAN_Q1),
+>>         TPACPI_FAN_QI('7', '8', TPACPI_FAN_Q1),
+>>         TPACPI_FAN_QI('7', '6', TPACPI_FAN_Q1),
+>>         TPACPI_FAN_QI('7', '0', TPACPI_FAN_Q1),
+>>         TPACPI_FAN_QL('7', 'M', TPACPI_FAN_2FAN),
+>> +       TPACPI_FAN_QL_BIOS('N', '1', TPACPI_FAN_2FAN) // Thinkpad P50 has 2 fans
+>>  };
+>>
+>>  #undef TPACPI_FAN_QL
+>>  #undef TPACPI_FAN_QI
+>> +#undef TPACPI_FAN_QL_BIOS
+>>
+>>  static int __init fan_init(struct ibm_init_struct *iibm)
+>>  {
+>> --
+>> 2.1.4
+>>
+> 
+> 
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
