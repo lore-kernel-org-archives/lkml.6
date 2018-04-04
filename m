@@ -1,146 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752394AbeDDPxQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:53:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752320AbeDDPxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:53:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FEF520838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 4 Apr 2018 11:53:10 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH] ring-buffer: Add set/clear_current_oom_origin() during
- allocations
-Message-ID: <20180404115310.6c69e7b9@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752320AbeDDPzQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:55:16 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:35005 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752030AbeDDPzO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:55:14 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R251e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T-fnNOH_1522857303;
+Subject: Re: [RFC] prctl: Deprecate non PR_SET_MM_MAP operations
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Cyrill Gorcunov <gorcunov@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, Andrey Vagin <avagin@openvz.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+References: <20180403223722.GA15783@uranus.lan>
+ <48bcd917-4eb8-9da6-ec4b-e76a654695c4@linux.alibaba.com>
+ <20180404053541.GA6312@dhcp22.suse.cz>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <40dde421-5300-b11f-860a-cf19aea00ec9@linux.alibaba.com>
+Date: Wed, 4 Apr 2018 08:54:59 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180404053541.GA6312@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-As si_mem_available() can say there is enough memory even though the memory
-available is not useable by the ring buffer, it is best to not kill innocent
-applications because the ring buffer is taking up all the memory while it is
-trying to allocate a great deal of memory.
 
-If the allocator is user space (because kernel threads can also increase the
-size of the kernel ring buffer on boot up), then after si_mem_available()
-says there is enough memory, set the OOM killer to kill the current task if
-an OOM triggers during the allocation.
+On 4/3/18 10:35 PM, Michal Hocko wrote:
+> On Tue 03-04-18 16:15:20, Yang Shi wrote:
+>>
+>> On 4/3/18 3:37 PM, Cyrill Gorcunov wrote:
+>>> An ability to manipulate mm_struct fields was introduced in
+>>> sake of CRIU in first place. Later we provide more suitable
+>>> and safe operation PR_SET_MM_MAP where all fields to be modifed
+>>> are passed in one structure which allows us to make more detailed
+>>> verification.
+>>>
+>>> Still old interface remains present for compatibility reason
+>>> though CRIU itself already switched to PR_SET_MM_MAP on its
+>>> own long ago.
+>>>
+>>> Googling didn't reveal some other users of this operation
+>>> so I think it should be safe to issue deprecation warning
+>>> first time and get rid of this interface after a couple
+>>> of releases.
+>>>
+>>> CC: Andrey Vagin <avagin@openvz.org>
+>>> CC: Andrew Morton <akpm@linuxfoundation.org>
+>>> CC: Pavel Emelyanov <xemul@virtuozzo.com>
+>>> CC: Michael Kerrisk <mtk.manpages@gmail.com>
+>>> CC: Yang Shi <yang.shi@linux.alibaba.com>
+>>> CC: Michal Hocko <mhocko@kernel.org>
+>>> Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+>>> ---
+>>> Or we can simply drop it off because PR_SET_MM_MAP covers all needs,
+>>> and I would rather prefer to do that asap.
+>> Thanks for making it deprecated. I'd prefer just drop it off if nobody
+>> objects. The change will get soaked in linux-next for a while , we will know
+>> if it breaks compatibility (it sounds very unlikely).
+> Yeah, let's just drop it and have the patch in linux-next (via mmotm)
+> for 2 release cycles and see whether somebody complains.
 
-Link: http://lkml.kernel.org/r/20180404062340.GD6312@dhcp22.suse.cz
+BTW, I will do my v3 on top of the patch (drop off prctl_set_mm).
 
-Suggested-by: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/ring_buffer.c | 48 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 38 insertions(+), 10 deletions(-)
+Yang
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 966128f02121..c9cb9767d49b 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -22,6 +22,7 @@
- #include <linux/hash.h>
- #include <linux/list.h>
- #include <linux/cpu.h>
-+#include <linux/oom.h>
- 
- #include <asm/local.h>
- 
-@@ -1162,35 +1163,60 @@ static int rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
- static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
- {
- 	struct buffer_page *bpage, *tmp;
-+	bool user_thread = current->mm != NULL;
-+	gfp_t mflags;
- 	long i;
- 
--	/* Check if the available memory is there first */
-+	/*
-+	 * Check if the available memory is there first.
-+	 * Note, si_mem_available() only gives us a rough estimate of available
-+	 * memory. It may not be accurate. But we don't care, we just want
-+	 * to prevent doing any allocation when it is obvious that it is
-+	 * not going to succeed.
-+	 */
- 	i = si_mem_available();
- 	if (i < nr_pages)
- 		return -ENOMEM;
- 
-+	/*
-+	 * __GFP_RETRY_MAYFAIL flag makes sure that the allocation fails
-+	 * gracefully without invoking oom-killer and the system is not
-+	 * destabilized.
-+	 */
-+	mflags = GFP_KERNEL | __GFP_RETRY_MAYFAIL;
-+
-+	/*
-+	 * If a user thread allocates too much, and si_mem_available()
-+	 * reports there's enough memory, even though there is not.
-+	 * Make sure the OOM killer kills this thread. This can happen
-+	 * even with RETRY_MAYFAIL because another task may be doing
-+	 * an allocation after this task has taken all memory.
-+	 * This is the task the OOM killer needs to take out during this
-+	 * loop, even if it was triggered by an allocation somewhere else.
-+	 */
-+	if (user_thread)
-+		set_current_oom_origin();
- 	for (i = 0; i < nr_pages; i++) {
- 		struct page *page;
--		/*
--		 * __GFP_RETRY_MAYFAIL flag makes sure that the allocation fails
--		 * gracefully without invoking oom-killer and the system is not
--		 * destabilized.
--		 */
-+
- 		bpage = kzalloc_node(ALIGN(sizeof(*bpage), cache_line_size()),
--				    GFP_KERNEL | __GFP_RETRY_MAYFAIL,
--				    cpu_to_node(cpu));
-+				    mflags, cpu_to_node(cpu));
- 		if (!bpage)
- 			goto free_pages;
- 
- 		list_add(&bpage->list, pages);
- 
--		page = alloc_pages_node(cpu_to_node(cpu),
--					GFP_KERNEL | __GFP_RETRY_MAYFAIL, 0);
-+		page = alloc_pages_node(cpu_to_node(cpu), mflags, 0);
- 		if (!page)
- 			goto free_pages;
- 		bpage->page = page_address(page);
- 		rb_init_page(bpage->page);
-+
-+		if (user_thread && fatal_signal_pending(current))
-+			goto free_pages;
- 	}
-+	if (user_thread)
-+		clear_current_oom_origin();
- 
- 	return 0;
- 
-@@ -1199,6 +1225,8 @@ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
- 		list_del_init(&bpage->list);
- 		free_buffer_page(bpage);
- 	}
-+	if (user_thread)
-+		clear_current_oom_origin();
- 
- 	return -ENOMEM;
- }
--- 
-2.13.6
+>
+> You can add
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> for such a patch.
