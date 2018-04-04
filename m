@@ -1,42 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751362AbeDDMgt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:36:49 -0400
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:42645 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751038AbeDDMgs (ORCPT
+        id S1751301AbeDDMi2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:38:28 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52709 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbeDDMi0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:36:48 -0400
-X-Google-Smtp-Source: AIpwx4+1dSebRYHMxeRSDkZwwPCznd9IzH+qP4+F7YzT10tIm3DrjzI2kTMjWEGo7wnRhnZPqya9aA==
-Subject: Re: [PATCH] nvme-multipath: implement active-active round-robin path
- selector
-To: Christoph Hellwig <hch@lst.de>, Baegjae Sung <baegjae@gmail.com>
-Cc: keith.busch@intel.com, axboe@fb.com, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20180327043851.6640-1-baegjae@gmail.com>
- <20180328080646.GB20373@lst.de>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <a8574e1c-d749-3abd-bc7d-2d6010087993@grimberg.me>
-Date: Wed, 4 Apr 2018 15:36:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180328080646.GB20373@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 4 Apr 2018 08:38:26 -0400
+X-Google-Smtp-Source: AIpwx4+k2y3hDlviyr/IhkLRMdDNf6JshWPYOorWN6HYgU720Prt7GjOtGYUOo6F0YcYLTtMr61wqg==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] ARM: omap1: osk: use device properties for at24 eeprom
+Date: Wed,  4 Apr 2018 14:38:22 +0200
+Message-Id: <20180404123822.5664-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We want to work towards phasing out the at24_platform_data structure.
+There are few users and its contents can be represented using generic
+device properties. Using device properties only will allow us to
+significantly simplify the at24 configuration code.
 
-> For PCIe devices the right policy is not a round robin but to use
-> the pcie device closer to the node.  I did a prototype for that
-> long ago and the concept can work.  Can you look into that and
-> also make that policy used automatically for PCIe devices?
+Remove the at24_platform_data structure and replace it with an array
+of property entries. Drop the byte_len/size property, as the model name
+already implies the EEPROM's size.
 
-I think that active/active makes sense for fabrics (link throughput
-aggregation) but also for dual-ported pci devices (given that
-this is a real use-case).
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ arch/arm/mach-omap1/board-osk.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-I agree that the default can be a home-node path selection.
+diff --git a/arch/arm/mach-omap1/board-osk.c b/arch/arm/mach-omap1/board-osk.c
+index c66372ed29e2..9ffa8d755a59 100644
+--- a/arch/arm/mach-omap1/board-osk.c
++++ b/arch/arm/mach-omap1/board-osk.c
+@@ -303,22 +303,22 @@ static const struct omap_lcd_config osk_lcd_config __initconst = {
+ #ifdef	CONFIG_OMAP_OSK_MISTRAL
+ 
+ #include <linux/input.h>
+-#include <linux/platform_data/at24.h>
++#include <linux/property.h>
+ #include <linux/spi/spi.h>
+ #include <linux/spi/ads7846.h>
+ 
+ #include <linux/platform_data/keypad-omap.h>
+ 
+-static struct at24_platform_data at24c04 = {
+-	.byte_len	= SZ_4K / 8,
+-	.page_size	= 16,
++static const struct property_entry mistral_at24_properties[] = {
++	PROPERTY_ENTRY_U32("pagesize", 16),
++	{ }
+ };
+ 
+ static struct i2c_board_info __initdata mistral_i2c_board_info[] = {
+ 	{
+ 		/* NOTE:  powered from LCD supply */
+ 		I2C_BOARD_INFO("24c04", 0x50),
+-		.platform_data	= &at24c04,
++		.properties = mistral_at24_properties,
+ 	},
+ 	/* TODO when driver support is ready:
+ 	 *  - optionally ov9640 camera sensor at 0x30
+-- 
+2.16.3
