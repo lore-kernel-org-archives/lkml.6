@@ -1,109 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752224AbeDDVM2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 17:12:28 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:38597 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751749AbeDDVMZ (ORCPT
+        id S1752148AbeDDVQT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 17:16:19 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:34502 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751749AbeDDVQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 17:12:25 -0400
-X-Google-Smtp-Source: AIpwx4/fVnyN5UQ/XV7YD2C9Z4iWF5bXRrdF3g33Ie6OBLolg5lMGMt/IUcqwcGDpQxYeVaATfLJLw==
-Reply-To: ahs3@redhat.com
-Subject: Re: [PATCH 3/3] mailbox: ACPI: erroneous error message when parsing
- the ACPI PCCT
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
-References: <20180404004211.6141-4-ahs3@redhat.com>
- <201804050450.ecZCFiQT%fengguang.wu@intel.com>
-From: Al Stone <ahs3@redhat.com>
-Organization: Red Hat, Inc.
-Message-ID: <24e06eb5-d23a-5619-b4ed-bc012b9bfbf8@redhat.com>
-Date: Wed, 4 Apr 2018 15:12:22 -0600
+        Wed, 4 Apr 2018 17:16:18 -0400
+Subject: Re: Control dependency between prior load in while condition and
+ later store?
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: parri.andrea@gmail.com, will.deacon@arm.com, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, paulmck@linux.vnet.ibm.com,
+        akiyks@gmail.com, linux-kernel@vger.kernel.org,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Pasha Tatashin <pasha.tatashin@oracle.com>
+References: <Pine.LNX.4.44L0.1804041623530.1401-100000@iolanthe.rowland.org>
+From: Daniel Jordan <daniel.m.jordan@oracle.com>
+Organization: Oracle
+Message-ID: <4fa47ea8-e208-16d6-3b78-747049e3ee53@oracle.com>
+Date: Wed, 4 Apr 2018 17:10:05 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <201804050450.ecZCFiQT%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <Pine.LNX.4.44L0.1804041623530.1401-100000@iolanthe.rowland.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8853 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=961
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804040204
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/04/2018 02:39 PM, kbuild test robot wrote:
-> Hi Al,
+On 04/04/2018 04:35 PM, Alan Stern wrote:
+> On Wed, 4 Apr 2018, Daniel Jordan wrote:
 > 
-> Thank you for the patch! Perhaps something to improve:
+>> A question for memory-barriers.txt aficionados.
+>>
+>> Is there a control dependency between the prior load of 'a' and the
+>> later store of 'c'?:
+>>
+>>     while (READ_ONCE(a));
+>>     WRITE_ONCE(c, 1);
 > 
-> [auto build test WARNING on pm/linux-next]
-> [also build test WARNING on v4.16 next-20180404]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> I would say that yes, there is.
 > 
-> url:    https://github.com/0day-ci/linux/commits/Al-Stone/ACPI-improve-function-documentation-for-acpi_parse_entries_array/20180404-151910
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+>> I have my doubts because memory-barriers.txt doesn't talk much about
+>> loops and because of what that document says here:
+>>
+>>     In addition, control dependencies apply only to the then-clause and
+>>     else-clause of the if-statement in question.  In particular, it does
+>>     not necessarily apply to code following the if-statement:
+>>
+>>     	q = READ_ONCE(a);
+>>     	if (q) {
+>>     		WRITE_ONCE(b, 1);
+>>     	} else {
+>>     		WRITE_ONCE(b, 2);
+>>     	}
+>>     	WRITE_ONCE(c, 1);  /* BUG: No ordering against the read from 'a'. */
 > 
-> smatch warnings:
-> drivers/mailbox/pcc.c:392 count_pcc_subspaces() warn: always true condition '(pcct_ss->header.type >= 0) => (0-255 >= 0)'
-> 
-> vim +392 drivers/mailbox/pcc.c
-> 
->    374	
->    375	/*+
->    376	 *
->    377	 * count_pcc_subspaces -- Count the PCC subspaces that are not used in
->    378	 *		reduced hardware systems.
->    379	 * @header: Pointer to the ACPI subtable header under the PCCT.
->    380	 * @end: End of subtable entry.
->    381	 *
->    382	 * Return: 0 for Success, else errno.
->    383	 *
->    384	 * This gets called for each entry in the PCC table.
->    385	 */
->    386	static int count_pcc_subspaces(struct acpi_subtable_header *header,
->    387			const unsigned long end)
->    388	{
->    389		struct acpi_pcct_subspace *pcct_ss =
->    390					(struct acpi_pcct_subspace *) header;
->    391	
->  > 392		if ((pcct_ss->header.type >= ACPI_PCCT_TYPE_GENERIC_SUBSPACE) &&
->    393		    (pcct_ss->header.type <= ACPI_PCCT_TYPE_RESERVED) &&
->    394		    (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE) &&
->    395		    (pcct_ss->header.type !=
->    396					ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2)) {
+> This refers to situations where the two code paths meet up at the end
+> of the "if" statement.  If they don't meet up (because one of the paths
+> branches away -- especially if it branches backward) then the
+> disclaimer doesn't apply, and everything following the "if" is
+> dependent.
 
-Aha.  Yup, can be rewritten as:
+Ok, that's the part I wasn't getting: this is how the while loop changes 
+the situation.
 
-	if ((pcct_ss->header.type <= ACPI_PCCT_TYPE_RESERVED) &&
-	    (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE) &&
-	    (pcct_ss->header.type !=
-				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2)) {
-
-I will let this patch sit for a little while to see if there are any further
-comments before sending out a v2.
-
->    397			pr_warn("PCCT count: useful subtype = %d\n",
->    398				pcct_ss->header.type);
->    399			return 0;
->    400		}
->    401		pr_warn("PCCT count: unwanted subtype = %d\n", pcct_ss->header.type);
->    402		return -EINVAL;
->    403	}
->    404	
+> The reason is because the compiler knows that code following the "if"
+> statement will be executed unconditionally if the paths meet up, so it
+> can move that code back before the "if" (provided nothing else prevents
+> such motion).  But if the paths don't meet up, the compiler can't
+> perform the code motion -- if it did then the program might end up
+> executing something that should not have been executed!
 > 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>> It's not obvious to me how the then-clause/else-clause idea maps onto
+>> loops, but if we think of the example at the top like this...
+>>
+>>     while (1) {
+>>         if (!READ_ONCE(a)) {
+>>             WRITE_ONCE(c, 1);
+>>             break;
+>>         }
+>>     }
+>>
+>> ...then the dependent store is within the then-clause.  Viewed this way,
+>> it seems there would be a control dependency between a and c.
+>>
+>> Is that right?
 > 
+> Yes, except that a more accurate view of the object code would be
+> something like this:
+> 
+> Loop:	r1 = READ_ONCE(a);
+> 	if (r1)
+> 		goto Loop;
+> 	else
+> 		;	// Do nothing
+> 	WRITE_ONCE(c, 1);
+> 
+> Here you can see that one path branches backward, so everything
+> following the "if" is dependent on the READ_ONCE.
 
-
--- 
-ciao,
-al
------------------------------------
-Al Stone
-Software Engineer
-Red Hat, Inc.
-ahs3@redhat.com
------------------------------------
+That clears it up, thanks very much!
