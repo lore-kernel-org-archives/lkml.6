@@ -1,153 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751167AbeDDJ12 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:27:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35480 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750772AbeDDJ1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:27:25 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] KVM: x86: hyperv: simplistic HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE} implementation
-References: <20180402161059.8488-1-vkuznets@redhat.com>
-        <20180402161059.8488-4-vkuznets@redhat.com>
-        <20180403191508.GA7386@flask>
-Date: Wed, 04 Apr 2018 11:27:22 +0200
-In-Reply-To: <20180403191508.GA7386@flask> ("Radim \=\?utf-8\?B\?S3LEjW3DocWZ\?\=
- \=\?utf-8\?B\?Iidz\?\= message of "Tue,
-        3 Apr 2018 21:15:08 +0200")
-Message-ID: <87d0zfcoed.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1751037AbeDDJ3O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:29:14 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55767 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750736AbeDDJ3N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 05:29:13 -0400
+X-Google-Smtp-Source: AIpwx4+x0d3za4XLG3+PkxPgtFy6ZiIzJgKlcXJf8ilZut4e+Cbz2FSIkjTOTvoZmsx0wBPTaDNRQsERDIn/6zCKd3Q=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180404062340.GD6312@dhcp22.suse.cz>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180330102038.2378925b@gandalf.local.home> <20180403110612.GM5501@dhcp22.suse.cz>
+ <20180403075158.0c0a2795@gandalf.local.home> <20180403121614.GV5501@dhcp22.suse.cz>
+ <20180403082348.28cd3c1c@gandalf.local.home> <20180403123514.GX5501@dhcp22.suse.cz>
+ <20180403093245.43e7e77c@gandalf.local.home> <20180403135607.GC5501@dhcp22.suse.cz>
+ <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com> <20180404062340.GD6312@dhcp22.suse.cz>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Wed, 4 Apr 2018 17:29:11 +0800
+Message-ID: <CAGWkznGht+9dh_37QNC+qkrhOF1_AuJVh6vVcG-50=oOVX6ecw@mail.gmail.com>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Radim Krčmář <rkrcmar@redhat.com> writes:
-
-> 2018-04-02 18:10+0200, Vitaly Kuznetsov:
->> Implement HvFlushVirtualAddress{List,Space} hypercalls in a simplistic way:
->> do full TLB flush with KVM_REQ_TLB_FLUSH and rely on kvm_vcpu_kick()
->> kicking only vCPUs which are currently IN_GUEST_MODE.
->> 
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->>  arch/x86/kvm/hyperv.c | 54 ++++++++++++++++++++++++++++++++++++++++++++-------
->>  arch/x86/kvm/trace.h  | 24 +++++++++++++++++++++++
->>  2 files changed, 71 insertions(+), 7 deletions(-)
->> 
->> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
->> index 3cb3bb68db7e..aa866994366d 100644
->> --- a/arch/x86/kvm/hyperv.c
->> +++ b/arch/x86/kvm/hyperv.c
->> @@ -1242,6 +1242,49 @@ int kvm_hv_get_msr_common(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
->>  		return kvm_hv_get_msr(vcpu, msr, pdata);
->>  }
->>  
->> +static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
->> +			    u16 rep_cnt)
->> +{
->> +	struct kvm *kvm = current_vcpu->kvm;
->> +	struct hv_tlb_flush flush;
->> +	struct kvm_vcpu *vcpu;
->> +	int i;
->> +
->> +	if (unlikely(kvm_read_guest(kvm, ingpa, &flush, sizeof(flush))))
->> +		return HV_STATUS_INVALID_HYPERCALL_INPUT;
->> +
->> +	trace_kvm_hv_flush_tlb(flush.processor_mask, flush.address_space,
->> +			       flush.flags);
->> +
->> +	kvm_for_each_vcpu(i, vcpu, kvm) {
->> +		struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
->> +
->> +		if (!(flush.flags & HV_FLUSH_ALL_PROCESSORS) &&
->> +		    !(flush.processor_mask & BIT_ULL(hv->vp_index)))
->> +			continue;
->> +
->> +		/*
->> +		 * vcpu->arch.cr3 may not be up-to-date for running vCPUs so we
->> +		 * can't analyze it here, flush TLB regardless of the specified
->> +		 * address space.
->> +		 */
->> +		kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
->> +
->> +		/*
->> +		 * It is very unlikely but possible that we're doing an extra
->> +		 * kick here (e.g. if the vCPU has just entered the guest and
->> +		 * has its TLB flushed).
->> +		 */
->> +		if (vcpu != current_vcpu)
->> +			kvm_vcpu_kick(vcpu);
+On Wed, Apr 4, 2018 at 2:23 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Wed 04-04-18 10:58:39, Zhaoyang Huang wrote:
+>> On Tue, Apr 3, 2018 at 9:56 PM, Michal Hocko <mhocko@kernel.org> wrote:
+>> > On Tue 03-04-18 09:32:45, Steven Rostedt wrote:
+>> >> On Tue, 3 Apr 2018 14:35:14 +0200
+>> >> Michal Hocko <mhocko@kernel.org> wrote:
+>> > [...]
+>> >> > Being clever is OK if it doesn't add a tricky code. And relying on
+>> >> > si_mem_available is definitely tricky and obscure.
+>> >>
+>> >> Can we get the mm subsystem to provide a better method to know if an
+>> >> allocation will possibly succeed or not before trying it? It doesn't
+>> >> have to be free of races. Just "if I allocate this many pages right
+>> >> now, will it work?" If that changes from the time it asks to the time
+>> >> it allocates, that's fine. I'm not trying to prevent OOM to never
+>> >> trigger. I just don't want to to trigger consistently.
+>> >
+>> > How do you do that without an actuall allocation request? And more
+>> > fundamentally, what if your _particular_ request is just fine but it
+>> > will get us so close to the OOM edge that the next legit allocation
+>> > request simply goes OOM? There is simply no sane interface I can think
+>> > of that would satisfy a safe/sensible "will it cause OOM" semantic.
+>> >
+>> The point is the app which try to allocate the size over the line will escape
+>> the OOM and let other innocent to be sacrificed. However, the one which you
+>> mentioned above will be possibly selected by OOM that triggered by consequnce
+>> failed allocation.
 >
-> The spec says that
->
->  "This call guarantees that by the time control returns back to the
->   caller, the observable effects of all flushes on the specified virtual
->   processors have occurred."
->
-> Other KVM code doesn't assume that kvm_vcpu_kick() and a delay provides
-> that guarantee;  kvm_make_all_cpus_request waits for the target CPU to
-> exit before saying that TLB has been flushed.
->
-> I am leaning towards the safer variant here as well.  (Anyway, it's a
-> good time to figure out if we really need it.)
-
-Ha, it depends on how we define "observable effects" :-)
-
-I think kvm_vcpu_kick() is enough as the corresponding vCPU can't
-actually observe old mapping after being kicked (even if we didn't flush
-yet we're not running). Or do you see any possible problem with such
-definition?
-
-
->
->> +	}
->> +
->> +	/* We always do full TLB flush, set rep_done = rep_cnt. */
->> +	return (u64)HV_STATUS_SUCCESS |
->> +		((u64)rep_cnt << HV_HYPERCALL_REP_START_OFFSET) |
->
-> Why at bits 48-59?  I don't see this field in the spec.
->
-
-True, it is only for 'input'. Will drop.
-
-
->> +		((u64)rep_cnt << HV_HYPERCALL_REP_COMP_OFFSET);
->> +}
->> +
->>  bool kvm_hv_hypercall_enabled(struct kvm *kvm)
->>  {
->>  	return READ_ONCE(kvm->arch.hyperv.hv_hypercall) & HV_X64_MSR_HYPERCALL_ENABLE;
->> @@ -1345,12 +1388,6 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
->>  
->>  	trace_kvm_hv_hypercall(code, fast, rep_cnt, rep_idx, ingpa, outgpa);
->>  
->> -	/* Hypercall continuation is not supported yet */
->> -	if (rep_cnt || rep_idx) {
->> -		ret = HV_STATUS_INVALID_HYPERCALL_CODE;
->
-> Hm, we should have returned HV_STATUS_INVALID_HYPERCALL_INPUT in any
-> case.  I think it would be good to still fail in case of non-rep
-> hypercalls,
-
-Sure. I skimmed through the spec and didn't find any direct reference
-that specifying 'rep' bit for non-rep hypercalls is forbidden but this
-is definitely a guest bug if it does that. 
-
-Thanks for the review!
-
--- 
-  Vitaly
+> If you are afraid of that then you can have a look at {set,clear}_current_oom_origin()
+> which will automatically select the current process as an oom victim and
+> kill it.
+But we can not call the function on behalf of the current process
+which maybe don't want
+to be killed for memory reason. It is proper to tell it ENOMEM and let
+it make further decision.
+> --
+> Michal Hocko
+> SUSE Labs
