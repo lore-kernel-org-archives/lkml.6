@@ -1,128 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750908AbeDDG2D (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 02:28:03 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37065 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750711AbeDDG2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 02:28:01 -0400
-Date: Wed, 4 Apr 2018 08:27:59 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Sergey Suloev <ssuloev@orpaltech.com>
-Cc: Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] spi: sun4i: add DMA transfers support
-Message-ID: <20180404062759.6iplyaezcppahrpu@flea>
-References: <20180329185907.27281-1-ssuloev@orpaltech.com>
- <20180329185907.27281-7-ssuloev@orpaltech.com>
- <20180403081711.rqsp77mgnuvlnzt5@flea>
- <19d5907c-f081-21ce-1b72-7c0a331eb073@orpaltech.com>
+        id S1750916AbeDDGby (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 02:31:54 -0400
+Received: from mx-fe5-210.meituan.com ([103.37.138.210]:48640 "EHLO
+        mx02.meituan.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750714AbeDDGbw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 02:31:52 -0400
+DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com 6548B297675C
+Subject: Re: [RFC] Is it correctly that the usage for spin_{lock|unlock}_irq
+ in clear_page_dirty_for_io
+To: Greg Thelen <gthelen@google.com>, Michal Hocko <mhocko@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+        akpm@osdl.org, LKML <linux-kernel@vger.kernel.org>, npiggin@gmail.com
+References: <157ed606-4a61-508b-d26a-2f5d638f39bb@meituan.com>
+ <d5f73e91-6fd5-12ab-d005-93a72e146464@meituan.com>
+ <20180403120312.GS5501@dhcp22.suse.cz>
+ <CAHH2K0Y2=Hc-W+JsTeHvgi9_59OKh+fJEgTY-x48gh18f_MQ6Q@mail.gmail.com>
+From: Wang Long <wanglong19@meituan.com>
+Message-ID: <2cb713cd-0b9b-594c-31db-b4582f8ba822@meituan.com>
+Date: Wed, 4 Apr 2018 14:31:36 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nhlxsoo76i3tt5tr"
-Content-Disposition: inline
-In-Reply-To: <19d5907c-f081-21ce-1b72-7c0a331eb073@orpaltech.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <CAHH2K0Y2=Hc-W+JsTeHvgi9_59OKh+fJEgTY-x48gh18f_MQ6Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---nhlxsoo76i3tt5tr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 03, 2018 at 04:03:32PM +0300, Sergey Suloev wrote:
-> On 04/03/2018 11:17 AM, Maxime Ripard wrote:
-> > On Thu, Mar 29, 2018 at 09:59:07PM +0300, Sergey Suloev wrote:
-> > > +static int sun4i_spi_dma_setup(struct device *dev,
-> > > +			       struct resource *res)
-> > > +{
-> > > +	struct spi_master *master =3D dev_get_drvdata(dev);
-> > > +	struct dma_slave_config dma_sconf;
-> > > +	int ret;
-> > > +
-> > > +	master->dma_tx =3D dma_request_slave_channel_reason(dev, "tx");
-> > > +	if (IS_ERR(master->dma_tx)) {
-> > > +		dev_err(dev, "Unable to acquire DMA TX channel\n");
-> > > +		ret =3D PTR_ERR(master->dma_tx);
-> > > +		goto out;
-> > > +	}
-> > > +
-> > > +	dma_sconf.direction =3D DMA_MEM_TO_DEV;
-> > > +	dma_sconf.src_addr_width =3D DMA_SLAVE_BUSWIDTH_1_BYTE;
-> > > +	dma_sconf.dst_addr_width =3D DMA_SLAVE_BUSWIDTH_1_BYTE;
-> > I guess that would depend on the size of the transfer, right?
+On 4/4/2018 7:12 AM, Greg Thelen wrote:
+> On Tue, Apr 3, 2018 at 5:03 AM Michal Hocko <mhocko@kernel.org> wrote:
 >
-> no
-> "this is the width in bytes of the source (RX)register where DMA data sha=
-ll
-> be read. If the sourceis memory this may be ignored depending on
-> architecture."
-> AFAIK is should be 1 byte for SPI side and seems to be ignored for memory
-> side, but as soon as I don't know what should be correct value for memory
-> side I just put 1 there too.
-
-I meant the number of bits per word, sorry. That width would only
-apply if you have 8 bits per word, but that seems to always be the
-case. So nevermind.
-
-> > > +	dma_sconf.dst_addr =3D res->start + SUN4I_TXDATA_REG;
-> > > +	dma_sconf.dst_maxburst =3D 1;
-> > > +	dma_sconf.src_maxburst =3D 1;
-> >
-> > And a burst of 1 seems sub-optimal here.
+>> On Mon 02-04-18 19:50:50, Wang Long wrote:
+>>> Hi,  Johannes Weiner and Tejun Heo
+>>>
+>>> I use linux-4.4.y to test the new cgroup controller io and the current
+>>> stable kernel linux-4.4.y has the follow logic
+>>>
+>>>
+>>> int clear_page_dirty_for_io(struct page *page){
+>>> ...
+>>> ...
+>>>                  memcg = mem_cgroup_begin_page_stat(page); ----------(a)
+>>>                  wb = unlocked_inode_to_wb_begin(inode, &locked);
+> ---------(b)
+>>>                  if (TestClearPageDirty(page)) {
+>>>                          mem_cgroup_dec_page_stat(memcg,
+> MEM_CGROUP_STAT_DIRTY);
+>>>                          dec_zone_page_state(page, NR_FILE_DIRTY);
+>>>                          dec_wb_stat(wb, WB_RECLAIMABLE);
+>>>                          ret =1;
+>>>                  }
+>>>                  unlocked_inode_to_wb_end(inode, locked); -----------(c)
+>>>                  mem_cgroup_end_page_stat(memcg); -------------(d)
+>>>                  return ret;
+>>> ...
+>>> ...
+>>> }
+>>>
+>>>
+>>> when memcg is moving, and I_WB_SWITCH flags for inode is set. the logic
+>>> is the following:
+>>>
+>>>
+>>> spin_lock_irqsave(&memcg->move_lock, flags); -------------(a)
+>>>          spin_lock_irq(&inode->i_mapping->tree_lock); ------------(b)
+>>>          spin_unlock_irq(&inode->i_mapping->tree_lock); -----------(c)
+>>> spin_unlock_irqrestore(&memcg->move_lock, flags); -----------(d)
+>>>
+>>>
+>>> after (c) , the local irq is enabled. I think it is not correct.
+>>>
+>>> We get a deadlock backtrace after (c), the cpu get an softirq and in the
+>>> irq it also call mem_cgroup_begin_page_stat to lock the same
+>>> memcg->move_lock.
+>>>
+>>> Since the conditions are too harsh, this scenario is difficult to
+>>> reproduce.  But it really exists.
+>>>
+>>> So how about change (b) (c) to spin_lock_irqsave/spin_lock_irqrestore?
+>> Yes, it seems we really need this even for the current tree. Please note
+>> that At least clear_page_dirty_for_io doesn't lock memcg anymore.
+>> __cancel_dirty_page still uses lock_page_memcg though (former
+>> mem_cgroup_begin_page_stat).
+>> --
+>> Michal Hocko
+>> SUSE Labs
+> I agree the issue looks real in 4.4 stable and upstream.  It seems like
+> unlocked_inode_to_wb_begin/_end should use spin_lock_irqsave/restore.
 >
-> I did some tests before with 3/4 FIFO size but it didn't work and I got
-> stuck with 1 byte.
-> It seems like 1 byte is the correct value because in SPI protocol we can
-> only send 1 byte in 1 burst.
+> I'm testing a little patch now.
+Thanks.
 
-That's not about the SPI burst, it's about the DMA burst.
-
-> >=20
-> > > +	ret =3D sun4i_spi_dma_setup(&pdev->dev, res);
-> > > +	if (ret) {
-> > > +		if (ret =3D=3D -EPROBE_DEFER) {
-> > > +			/* wait for the dma driver to load */
-> > > +			goto err_free_master;
-> > > +		}
-> > > +		dev_warn(&pdev->dev, "DMA transfer not supported\n");
-> > Saying why it's not supported would be great.
->
-> I can put more info in this log
-> but there is already a message printed from sun4_spi_dma_setup() if any
-> error occurs
-
-Then you don't need both.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nhlxsoo76i3tt5tr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrEcG4ACgkQ0rTAlCFN
-r3QqkBAAlyZ6TmUCUympCkIuX4YGYN6ZlBabfQvToqyNtS1FmGl/lZi/zFRNQPR/
-NfjP1l8mv6gK7p5XrdVGa3WAduYLVwfO90pkB1jdE5UDXkZUTzQfmDPJ3ji+bLl4
-JYD7IdyC1W06CgZmTza1o9MQhrVnuBpvSRxERGhcDcntOExOn+O59TI2McVfQu6w
-aTpMpvieM78k+jXGGGP3Wln+5lBFvm2ufMgdMRuzkWA7mpWKc5QzOigQxKOqK48l
-oly401C58JVi0RusLwifNoN0tjaG+mzooHtNGFhvhY+r5pS2+ilj9pLqOEgmbKho
-Zs+WylSKeXL87aaKt1LppRIewFFFgDD44IqhT4gYEyfsDn1JXQNRTmW04dlfrOCx
-okHutHExWSH/PcpN9gj2cLADyg8AYu8ZW4LHgoc0SeOMvBGo6B7ZqriKsO59p6t5
-d+f/VqQNbKNeC6BFreZtpbd8F4EmNGQkoRIEyJNITCOjCFY5XTe4NaVKk+YlCR1l
-mD8S9gs4eg9jZtoE6euSbv/LowHDy5ogY4eig+KFLCN5Vl7RD3vBf5RPb2/H4Fj2
-TcK9g8jUpoSGEJWnpfyDR1C7z3pLHPmEPeUPPtLC9x0nLuZP5vykgFa8NxKjbkzH
-FyFdmoHqILe4C9BIfSIrzpC0LN+dDauz8Sq0phqcmj7jFsX0BGI=
-=whQm
------END PGP SIGNATURE-----
-
---nhlxsoo76i3tt5tr--
+When fix it on upstream. The longterm kernel 4.9 and 4.14 also need to fix.
