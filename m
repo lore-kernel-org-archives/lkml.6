@@ -1,76 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751306AbeDDKfz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:35:55 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:60510 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750814AbeDDKfx (ORCPT
+        id S1751367AbeDDKgG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:36:06 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38443 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751178AbeDDKgE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:35:53 -0400
-Date: Wed, 4 Apr 2018 13:24:26 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Ladislav Michl <ladis@linux-mips.org>
-Cc: Colin King <colin.king@canonical.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [alsa-devel] [PATCH] ASoC: atmel_ssc_dai: fix spelling mistake:
- "Stoping" -> "Stopping"
-Message-ID: <20180404102425.cwj7vzvrvi2obcoi@mwanda>
-References: <20180330154420.6903-1-colin.king@canonical.com>
- <20180403134540.GA29017@lenoch>
+        Wed, 4 Apr 2018 06:36:04 -0400
+X-Google-Smtp-Source: AIpwx49H8zpkF/Q1hg+cNSZLAFb9isVMkgu29bNdx6jFXgjQyVzxpLXwpp/PVvYpUFu/wsUMJ4eFrg==
+Date: Wed, 4 Apr 2018 16:06:00 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Cc: rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: Re: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
+ capabilities
+Message-ID: <20180404103600.GJ3572@vireshk-i7>
+References: <1522833380-18438-1-git-send-email-shunyong.yang@hxt-semitech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180403134540.GA29017@lenoch>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=373
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804040107
+In-Reply-To: <1522833380-18438-1-git-send-email-shunyong.yang@hxt-semitech.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 03:45:40PM +0200, Ladislav Michl wrote:
-> On Fri, Mar 30, 2018 at 04:44:20PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
+On 04-04-18, 17:16, Shunyong Yang wrote:
+> When multiple cpus are related in one cpufreq policy, the first online
+> cpu will be chosen by default to handle cpufreq operations. Let's take
+> cpu0 and cpu1 as an example.
 > 
-> Hello Colin,
+> When cpu0 is offline, policy->cpu will be shifted to cpu1. Cpu1's perf
+> capabilities should be initialized. Otherwise, perf capabilities are 0s
+> and speed change can not take effect.
 > 
-> > Trivial fix to spelling mistake in pr_debug message text
+> This patch copies perf capabilities of the first online cpu to other
+> shared cpus when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
 > 
-> would you mind making this patch a bit less non-trivial and
-> change pr_debug to dev_dbg dropping Atmel_ssc_dai prefix?
+> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> ---
 > 
-> Thank you.
->
+> Changes in v2:
+>   -Add unlikely in cpu comparison per Kumar's comments.
+>   -Fix coding style per Kumar's comments.
+> 
+> Changes in v1:
+>   -Drop RFC tag,
+>      The original RFC link,
+>      https://patchwork.kernel.org/patch/10299055/.
+> 
+>      This patch solves same issue as RFC above.
+> 
+>      Patch name is changed as code is too much different with RFC above.
+> 
+>   -Remove extra init() per Viresh Kumar's comments and only handle
+>    CPPC CPUFREQ_SHARED_TYPE_ANY case.
+> 
+> ---
+>  drivers/cpufreq/cppc_cpufreq.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index 8f7b21a4d537..679e43b9c980 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -164,9 +164,20 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	policy->cpuinfo.transition_latency = cppc_get_transition_latency(cpu_num);
+>  	policy->shared_type = cpu->shared_type;
+>  
+> -	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
+> +	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
+> +		int i;
+> +
+>  		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
+> -	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
+> +
+> +		for_each_cpu(i, policy->cpus) {
+> +			if (unlikely(i == policy->cpu))
+> +				continue;
+> +
+> +			memcpy(&all_cpu_data[i]->perf_caps,
+> +			       &cpu->perf_caps,
+> +			       sizeof(cpu->perf_caps));
 
-Trivial patches should just be trivial instead of evolving into a thread
-that lasts for days.
+I think this can be written in two lines without violating the 80
+columns rule.
 
-I sometimes write trivial clean up patches for things like:
+> +		}
+> +	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
+>  		/* Support only SW_ANY for now. */
+>  		pr_debug("Unsupported CPU co-ord type\n");
+>  		return -EFAULT;
 
-arch/x86/lib/csum-partial_64.c:97 do_csum() warn: inconsistent indenting
-    88                          /* last up to 7 8byte blocks */
-    89                          count %= 8; 
-    90                          while (count) { 
-    91                                  asm("addq %1,%0\n\t"
-    92                                      "adcq %2,%0\n" 
-    93                                              : "=r" (result)
-    94                                      : "m" (*(unsigned long *)buff), 
-    95                                      "r" (zero),  "0" (result));
-    96                                  --count; 
-    97                                          buff += 8;
-    98                          }
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Why is "buff += 8;" indented too far?  And why does every line end in a
-space character?  And I think about it for 10 minutes and then delete my
-patch because it's too much hassle to deal with for something small.
-
-regards,
-dan carpenter
+-- 
+viresh
