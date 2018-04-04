@@ -1,240 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751352AbeDDG6T (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 02:58:19 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33677 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751028AbeDDG6R (ORCPT
+        id S1751281AbeDDG7q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 02:59:46 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38025 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbeDDG7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 02:58:17 -0400
-X-Google-Smtp-Source: AIpwx493i7c+36Xk+94mgYpM7gg8wcqBDcRWjARE06dGszqE7Y3mNMtzAAF2ngJvf/r9AfEsKxIdJU+zb0ybaS5U9ig=
+        Wed, 4 Apr 2018 02:59:45 -0400
+X-Google-Smtp-Source: AIpwx4+Su4e2P6PphvyBizzHfjRoyMQqnjosAd8rge85ANqJYbRZTbgm+hdnEAdwK8rJUL0POPc1NA==
+Date: Wed, 4 Apr 2018 09:59:42 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>,
+        LKML <linux-kernel@vger.kernel.org>, Andrey Vagin <avagin@openvz.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: [RFC] prctl: Deprecate non PR_SET_MM_MAP operations
+Message-ID: <20180404065942.GB15783@uranus.lan>
+References: <20180403223722.GA15783@uranus.lan>
+ <48bcd917-4eb8-9da6-ec4b-e76a654695c4@linux.alibaba.com>
+ <20180404053541.GA6312@dhcp22.suse.cz>
 MIME-Version: 1.0
-X-Originating-IP: [212.51.149.109]
-In-Reply-To: <20180403224225.26776-1-robdclark@gmail.com>
-References: <20180403224225.26776-1-robdclark@gmail.com>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 4 Apr 2018 08:58:16 +0200
-X-Google-Sender-Auth: XnHRllEeRshFsPhXH3dcesEdNXU
-Message-ID: <CAKMK7uEH3Qu_Lkok60bOYkik6kyvDGtrS0kcQ=dFmCLRD-+1HA@mail.gmail.com>
-Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
-To: Rob Clark <robdclark@gmail.com>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Thomas Hellstrom <thomas@shipmail.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180404053541.GA6312@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 12:42 AM, Rob Clark <robdclark@gmail.com> wrote:
-> Add an atomic helper to implement dirtyfb support.  This is needed to
-> support DSI command-mode panels with x11 userspace (ie. when we can't
-> rely on pageflips to trigger a flush to the panel).
->
-> To signal to the driver that the async atomic update needs to
-> synchronize with fences, even though the fb didn't change, the
-> drm_atomic_state::dirty flag is added.
->
-> Signed-off-by: Rob Clark <robdclark@gmail.com>
-> ---
-> Background: there are a number of different folks working on getting
-> upstream kernel working on various different phones/tablets with qcom
-> SoC's.. many of them have command mode panels, so we kind of need a
-> way to support the legacy dirtyfb ioctl for x11 support.
->
-> I know there is work on a proprer non-legacy atomic property for
-> userspace to communicate dirty-rect(s) to the kernel, so this can
-> be improved from triggering a full-frame flush once that is in
-> place.  But we kinda needa a stop-gap solution.
->
-> I had considered an in-driver solution for this, but things get a
-> bit tricky if userspace ands up combining dirtyfb ioctls with page-
-> flips, because we need to synchronize setting various CTL.FLUSH bits
-> with setting the CTL.START bit.  (ie. really all we need to do for
-> cmd mode panels is bang CTL.START, but is this ends up racing with
-> pageflips setting FLUSH bits, then bad things.)  The easiest soln
-> is to wrap this up as an atomic commit and rely on the worker to
-> serialize things.  Hence adding an atomic dirtyfb helper.
->
-> I guess at least the helper, with some small addition to translate
-> and pass-thru the dirty rect(s) is useful to the final atomic dirty-
-> rect property solution.  Depending on how far off that is, a stop-
-> gap solution could be useful.
+On Wed, Apr 04, 2018 at 07:35:41AM +0200, Michal Hocko wrote:
+> > > Or we can simply drop it off because PR_SET_MM_MAP covers all needs,
+> > > and I would rather prefer to do that asap.
+> > 
+> > Thanks for making it deprecated. I'd prefer just drop it off if nobody
+> > objects. The change will get soaked in linux-next for a while , we will know
+> > if it breaks compatibility (it sounds very unlikely).
+> 
+> Yeah, let's just drop it and have the patch in linux-next (via mmotm)
+> for 2 release cycles and see whether somebody complains.
+> 
+> You can add
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> for such a patch.
 
-Adding Noralf, who iirc already posted the full dirty helpers already somewhere.
--Daniel
-
->
->  drivers/gpu/drm/drm_atomic_helper.c | 66 +++++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/msm/msm_atomic.c    |  5 ++-
->  drivers/gpu/drm/msm/msm_fb.c        |  1 +
->  include/drm/drm_atomic_helper.h     |  4 +++
->  include/drm/drm_plane.h             |  9 +++++
->  5 files changed, 84 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index c35654591c12..a578dc681b27 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -3504,6 +3504,7 @@ void __drm_atomic_helper_plane_duplicate_state(struct drm_plane *plane,
->         if (state->fb)
->                 drm_framebuffer_get(state->fb);
->
-> +       state->dirty = false;
->         state->fence = NULL;
->         state->commit = NULL;
->  }
-> @@ -3847,6 +3848,71 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
->  }
->  EXPORT_SYMBOL(drm_atomic_helper_legacy_gamma_set);
->
-> +/**
-> + * drm_atomic_helper_dirtyfb - helper for dirtyfb
-> + *
-> + * A helper to implement drm_framebuffer_funcs::dirty
-> + */
-> +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
-> +                             struct drm_file *file_priv, unsigned flags,
-> +                             unsigned color, struct drm_clip_rect *clips,
-> +                             unsigned num_clips)
-> +{
-> +       struct drm_modeset_acquire_ctx ctx;
-> +       struct drm_atomic_state *state;
-> +       struct drm_plane *plane;
-> +       int ret = 0;
-> +
-> +       /*
-> +        * When called from ioctl, we are interruptable, but not when
-> +        * called internally (ie. defio worker)
-> +        */
-> +       drm_modeset_acquire_init(&ctx,
-> +               file_priv ? DRM_MODESET_ACQUIRE_INTERRUPTIBLE : 0);
-> +
-> +       state = drm_atomic_state_alloc(fb->dev);
-> +       if (!state) {
-> +               ret = -ENOMEM;
-> +               goto out;
-> +       }
-> +       state->acquire_ctx = &ctx;
-> +
-> +retry:
-> +       drm_for_each_plane(plane, fb->dev) {
-> +               struct drm_plane_state *plane_state;
-> +
-> +               if (plane->state->fb != fb)
-> +                       continue;
-> +
-> +               plane_state = drm_atomic_get_plane_state(state, plane);
-> +               if (IS_ERR(plane_state)) {
-> +                       ret = PTR_ERR(plane_state);
-> +                       goto out;
-> +               }
-> +
-> +               plane_state->dirty = true;
-> +       }
-> +
-> +       ret = drm_atomic_nonblocking_commit(state);
-> +
-> +out:
-> +       if (ret == -EDEADLK) {
-> +               drm_atomic_state_clear(state);
-> +               ret = drm_modeset_backoff(&ctx);
-> +               if (!ret)
-> +                       goto retry;
-> +       }
-> +
-> +       drm_atomic_state_put(state);
-> +
-> +       drm_modeset_drop_locks(&ctx);
-> +       drm_modeset_acquire_fini(&ctx);
-> +
-> +       return ret;
-> +
-> +}
-> +EXPORT_SYMBOL(drm_atomic_helper_dirtyfb);
-> +
->  /**
->   * __drm_atomic_helper_private_duplicate_state - copy atomic private state
->   * @obj: CRTC object
-> diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
-> index bf5f8c39f34d..bb55a048e98b 100644
-> --- a/drivers/gpu/drm/msm/msm_atomic.c
-> +++ b/drivers/gpu/drm/msm/msm_atomic.c
-> @@ -201,7 +201,10 @@ int msm_atomic_commit(struct drm_device *dev,
->          * Figure out what fence to wait for:
->          */
->         for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i) {
-> -               if ((new_plane_state->fb != old_plane_state->fb) && new_plane_state->fb) {
-> +               bool sync_fb = new_plane_state->fb &&
-> +                       ((new_plane_state->fb != old_plane_state->fb) ||
-> +                        new_plane_state->dirty);
-> +               if (sync_fb) {
->                         struct drm_gem_object *obj = msm_framebuffer_bo(new_plane_state->fb, 0);
->                         struct msm_gem_object *msm_obj = to_msm_bo(obj);
->                         struct dma_fence *fence = reservation_object_get_excl_rcu(msm_obj->resv);
-> diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
-> index 0e0c87252ab0..a5d882a34a33 100644
-> --- a/drivers/gpu/drm/msm/msm_fb.c
-> +++ b/drivers/gpu/drm/msm/msm_fb.c
-> @@ -62,6 +62,7 @@ static void msm_framebuffer_destroy(struct drm_framebuffer *fb)
->  static const struct drm_framebuffer_funcs msm_framebuffer_funcs = {
->         .create_handle = msm_framebuffer_create_handle,
->         .destroy = msm_framebuffer_destroy,
-> +       .dirty = drm_atomic_helper_dirtyfb,
->  };
->
->  #ifdef CONFIG_DEBUG_FS
-> diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
-> index 26aaba58d6ce..9b7a95c2643d 100644
-> --- a/include/drm/drm_atomic_helper.h
-> +++ b/include/drm/drm_atomic_helper.h
-> @@ -183,6 +183,10 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
->                                        u16 *red, u16 *green, u16 *blue,
->                                        uint32_t size,
->                                        struct drm_modeset_acquire_ctx *ctx);
-> +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
-> +                             struct drm_file *file_priv, unsigned flags,
-> +                             unsigned color, struct drm_clip_rect *clips,
-> +                             unsigned num_clips);
->  void __drm_atomic_helper_private_obj_duplicate_state(struct drm_private_obj *obj,
->                                                      struct drm_private_state *state);
->
-> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-> index f7bf4a48b1c3..296fa22bda7a 100644
-> --- a/include/drm/drm_plane.h
-> +++ b/include/drm/drm_plane.h
-> @@ -76,6 +76,15 @@ struct drm_plane_state {
->          */
->         struct drm_framebuffer *fb;
->
-> +       /**
-> +        * @dirty:
-> +        *
-> +        * Flag that indicates the fb contents have changed even though the
-> +        * fb has not.  This is mostly a stop-gap solution until we have
-> +        * atomic dirty-rect(s) property.
-> +        */
-> +       bool dirty;
-> +
->         /**
->          * @fence:
->          *
-> --
-> 2.14.3
->
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Sure. Thanks!
