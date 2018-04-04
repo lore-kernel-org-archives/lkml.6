@@ -1,187 +1,426 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752269AbeDDTZH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:25:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49456 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752059AbeDDTTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:19:23 -0400
-From: jglisse@redhat.com
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
-        Josef Bacik <jbacik@fb.com>, Mel Gorman <mgorman@techsingularity.net>
-Subject: [RFC PATCH 50/79] fs: stop relying on mapping field of struct page, get it from context
-Date: Wed,  4 Apr 2018 15:18:14 -0400
-Message-Id: <20180404191831.5378-25-jglisse@redhat.com>
-In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
-References: <20180404191831.5378-1-jglisse@redhat.com>
+        id S1752374AbeDDTZ2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:25:28 -0400
+Received: from mail-io0-f174.google.com ([209.85.223.174]:34818 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752014AbeDDTTW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:19:22 -0400
+X-Google-Smtp-Source: AIpwx49z528Ppn2n95gDiZt/gTfqAvH/uOAubS7FuV37mjjqN/NMLn5I7cq1cem/Lg9eBE900Rn7BUDYFAa3uEHlxhg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <4dac69b7-b0e6-a014-1c36-1a9934f14120@tronnes.org>
+References: <20180403224225.26776-1-robdclark@gmail.com> <4dac69b7-b0e6-a014-1c36-1a9934f14120@tronnes.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 4 Apr 2018 15:19:20 -0400
+Message-ID: <CAF6AEGs4s3SNoMZ0-OM979sH+9Pqv7=FDrZo9OmaEaSej5+DNQ@mail.gmail.com>
+Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
+To: =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Deepak Singh Rawat <drawat@vmware.com>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w34JPYan007105
 
-From: Jérôme Glisse <jglisse@redhat.com>
+On Wed, Apr 4, 2018 at 1:41 PM, Noralf Trønnes <noralf@tronnes.org> wrote:
+>
+>
+> Den 04.04.2018 00.42, skrev Rob Clark:
+>>
+>> Add an atomic helper to implement dirtyfb support.  This is needed to
+>> support DSI command-mode panels with x11 userspace (ie. when we can't
+>> rely on pageflips to trigger a flush to the panel).
+>>
+>> To signal to the driver that the async atomic update needs to
+>> synchronize with fences, even though the fb didn't change, the
+>> drm_atomic_state::dirty flag is added.
+>>
+>> Signed-off-by: Rob Clark <robdclark@gmail.com>
+>> ---
+>> Background: there are a number of different folks working on getting
+>> upstream kernel working on various different phones/tablets with qcom
+>> SoC's.. many of them have command mode panels, so we kind of need a
+>> way to support the legacy dirtyfb ioctl for x11 support.
+>>
+>> I know there is work on a proprer non-legacy atomic property for
+>> userspace to communicate dirty-rect(s) to the kernel, so this can
+>> be improved from triggering a full-frame flush once that is in
+>> place.  But we kinda needa a stop-gap solution.
+>>
+>> I had considered an in-driver solution for this, but things get a
+>> bit tricky if userspace ands up combining dirtyfb ioctls with page-
+>> flips, because we need to synchronize setting various CTL.FLUSH bits
+>> with setting the CTL.START bit.  (ie. really all we need to do for
+>> cmd mode panels is bang CTL.START, but is this ends up racing with
+>> pageflips setting FLUSH bits, then bad things.)  The easiest soln
+>> is to wrap this up as an atomic commit and rely on the worker to
+>> serialize things.  Hence adding an atomic dirtyfb helper.
+>>
+>> I guess at least the helper, with some small addition to translate
+>> and pass-thru the dirty rect(s) is useful to the final atomic dirty-
+>> rect property solution.  Depending on how far off that is, a stop-
+>> gap solution could be useful.
+>
+>
+> I have been waiting for someone to address this since I'm not skilled
+> enough myself to tackle the atomic machinery. It would be be nice to do
+> all flushing during commit since that would mean that the tinydrm drivers
+> could be driven solely through drm_simple_display_pipe_funcs. I wouldn't
+> have to wire through the dirty callback like I do now.
+>
+> I see that you use a nonblocking commit. What happens if a new dirtyfb
+> comes in before the previous is done?
 
-Holy grail, remove all usage of mapping field of struct page inside
-common fs code.
+I'm relying on the workqueue for committing the async part of
+non-blocking commits to serialize things.  This was actually something
+I pretty badly need for msm (otherwise pageflip + dirtyfb causes races
+for settings various FLUSH/START bits which need to happen in a
+certain order)
 
-spatch --sp-file zemantic-015a.spatch --in-place fs/*.c
-----------------------------------------------------------------------
-@exists@
-struct page * P;
-identifier I;
-@@
-struct address_space *I;
-...
--P->mapping
-+I
+This was what killed my earlier lazy plan of handling dirtyfb in drm/msm ;-)
 
-@exists@
-identifier F, I;
-struct page * P;
-@@
-F(..., struct address_space *I, ...) {
-...
--P->mapping
-+I
-...
-}
+> If we could save the dirty clips, then I could use this in tinydrm.
+> A full flush over SPI takes ~50ms so I need to shave off where I can.
+>
+> This works for me in my tinydrm world:
+>
+> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> index c64225274807..218cb36757fa 100644
+> --- a/include/drm/drm_plane.h
+> +++ b/include/drm/drm_plane.h
+> @@ -28,6 +28,7 @@
+>  #include <drm/drm_mode_object.h>
+>  #include <drm/drm_color_mgmt.h>
+>
+> +struct drm_clip_rect;
+>  struct drm_crtc;
+>  struct drm_printer;
+>  struct drm_modeset_acquire_ctx;
+> @@ -85,6 +86,9 @@ struct drm_plane_state {
+>          */
+>         bool dirty;
+>
+> +       struct drm_clip_rect *dirty_clips;
+> +       unsigned int num_dirty_clips;
+> +
+>         /**
+>          * @fence:
+>          *
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c
+> b/drivers/gpu/drm/drm_atomic_helper.c
+> index 8066c508ab50..e00b8247b7c5 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -3521,6 +3521,8 @@ void __drm_atomic_helper_plane_duplicate_state(struct
+> drm_plane *plane,
+>                 drm_framebuffer_get(state->fb);
+>
+>         state->dirty = false;
+> +       state->dirty_clips = NULL;
+> +       state->num_dirty_clips = 0;
+>         state->fence = NULL;
+>         state->commit = NULL;
+>  }
+> @@ -3567,6 +3569,8 @@ void __drm_atomic_helper_plane_destroy_state(struct
+> drm_plane_state *state)
+>
+>         if (state->commit)
+>                 drm_crtc_commit_put(state->commit);
+> +
+> +       kfree(state->dirty_clips);
+>  }
+>  EXPORT_SYMBOL(__drm_atomic_helper_plane_destroy_state);
+>
+> @@ -3877,8 +3881,20 @@ int drm_atomic_helper_dirtyfb(struct drm_framebuffer
+> *fb,
+>         struct drm_modeset_acquire_ctx ctx;
+>         struct drm_atomic_state *state;
+>         struct drm_plane *plane;
+> +       bool fb_found = false;
+>         int ret = 0;
+>
+> +       /* fbdev can flush even when we don't want it to */
+> +       drm_for_each_plane(plane, fb->dev) {
+> +               if (plane->state->fb == fb) {
+> +                       fb_found = true;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       if (!fb_found)
+> +               return 0;
+> +
+>         /*
+>          * When called from ioctl, we are interruptable, but not when
+>          * called internally (ie. defio worker)
+> @@ -3907,6 +3923,25 @@ int drm_atomic_helper_dirtyfb(struct drm_framebuffer
+> *fb,
+>                 }
+>
+>                 plane_state->dirty = true;
+> +               if (clips && num_clips)
+> +                       plane_state->dirty_clips = kmemdup(clips, num_clips
+> * sizeof(*clips),
+> + GFP_KERNEL);
+> +               else
+> +                       plane_state->dirty_clips = kzalloc(sizeof(*clips),
+> GFP_KERNEL);
+> +
+> +               if (!plane_state->dirty_clips) {
+> +                       ret = -ENOMEM;
+> +                       goto out;
+> +               }
+> +
+> +               if (clips && num_clips) {
+> +                       plane_state->num_dirty_clips = num_clips;
+> +               } else {
+> +                       /* TODO: Maybe choose better max values */
+> +                       plane_state->dirty_clips->x2 = ~0;
+> +                       plane_state->dirty_clips->y2 = ~0;
+> +                       plane_state->num_dirty_clips = 1;
+> +               }
+>         }
+>
+>         ret = drm_atomic_nonblocking_commit(state);
+> diff --git a/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c
+> b/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c
+> index e68b528ae64d..1a0c72c496f6 100644
+> --- a/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c
+> +++ b/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c
+> @@ -121,12 +121,14 @@ void tinydrm_display_pipe_update(struct
+> drm_simple_display_pipe *pipe,
+>                                  struct drm_plane_state *old_state)
+>  {
+>         struct tinydrm_device *tdev = pipe_to_tinydrm(pipe);
+> -       struct drm_framebuffer *fb = pipe->plane.state->fb;
+> +       struct drm_plane_state *new_state = pipe->plane.state;
+> +       struct drm_framebuffer *fb = new_state->fb;
+>         struct drm_crtc *crtc = &tdev->pipe.crtc;
+>
+> -       if (fb && (fb != old_state->fb)) {
+> +       if (fb && ((fb != old_state->fb) || new_state->dirty_clips)) {
+>                 if (tdev->fb_dirty)
+> -                       tdev->fb_dirty(fb, NULL, 0, 0, NULL, 0);
+> +                       tdev->fb_dirty(fb, NULL, 0, 0,
+> new_state->dirty_clips,
+> + new_state->num_dirty_clips);
+>         }
+>
+>         if (crtc->state->event) {
+> diff --git a/drivers/gpu/drm/tinydrm/mipi-dbi.c
+> b/drivers/gpu/drm/tinydrm/mipi-dbi.c
+> index 4d1fb31a781f..49dee24dde60 100644
+> --- a/drivers/gpu/drm/tinydrm/mipi-dbi.c
+> +++ b/drivers/gpu/drm/tinydrm/mipi-dbi.c
+> @@ -9,6 +9,7 @@
+>   * (at your option) any later version.
+>   */
+>
+> +#include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_gem_framebuffer_helper.h>
+>  #include <drm/tinydrm/mipi-dbi.h>
+>  #include <drm/tinydrm/tinydrm-helpers.h>
+> @@ -254,7 +257,7 @@ static int mipi_dbi_fb_dirty(struct drm_framebuffer *fb,
+>  static const struct drm_framebuffer_funcs mipi_dbi_fb_funcs = {
+>         .destroy        = drm_gem_fb_destroy,
+>         .create_handle  = drm_gem_fb_create_handle,
+> -       .dirty          = tinydrm_fb_dirty,
+> +       .dirty          = drm_atomic_helper_dirtyfb,
+>  };
+>
+>  /**
+>
+>
+> I did some brief testing a few months back with PRIME buffers imported
+> from vc4 and it looked like X11 sometimes did a page flip followed by a
+> dirtyfb. This kills performance for me since I flush on both. Do you know
+> any details on how/where X11 handles this?
+>
 
-@@
-@@
--mapping = mapping;
+>From vague memory in x11 there is some sort mechanism to track damage
+and flush to kernel when xserver becomes idle.  So pageflip followed
+by dirtyfb doesn't seem too surpising.  I'm not sure how vmwgfx
+handles this, I guess they'd have the same issue..
 
-@@
-@@
--struct address_space *mapping = _mapping;
-----------------------------------------------------------------------
+BR,
+-R
 
-Hand edit:
-    fs/mpage.c __mpage_writepage() coccinelle sematic is too hard ...
-
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <jbacik@fb.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
----
- fs/buffer.c | 11 +++++------
- fs/libfs.c  |  2 +-
- fs/mpage.c  |  9 ++++-----
- 3 files changed, 10 insertions(+), 12 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index b968ac0b65e8..39d8c7315b55 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -327,7 +327,7 @@ void end_buffer_async_write(struct address_space *mapping, struct page *page,
- 		set_buffer_uptodate(bh);
- 	} else {
- 		buffer_io_error(bh, ", lost async page write");
--		mark_buffer_write_io_error(page->mapping, page, bh);
-+		mark_buffer_write_io_error(mapping, page, bh);
- 		clear_buffer_uptodate(bh);
- 		SetPageError(page);
- 	}
-@@ -597,11 +597,10 @@ EXPORT_SYMBOL(mark_buffer_dirty_inode);
-  *
-  * The caller must hold lock_page_memcg().
-  */
--static void __set_page_dirty(struct page *page, struct address_space *_mapping,
-+static void __set_page_dirty(struct page *page, struct address_space *mapping,
- 			     int warn)
- {
- 	unsigned long flags;
--	struct address_space *mapping = page_mapping(page);
- 
- 	spin_lock_irqsave(&mapping->tree_lock, flags);
- 	if (page_is_truncated(page, mapping)) {	/* Race with truncate? */
-@@ -1954,7 +1953,7 @@ int __block_write_begin_int(struct address_space *mapping, struct page *page,
- {
- 	unsigned from = pos & (PAGE_SIZE - 1);
- 	unsigned to = from + len;
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = mapping->host;
- 	unsigned block_start, block_end;
- 	sector_t block;
- 	int err = 0;
-@@ -2456,7 +2455,7 @@ EXPORT_SYMBOL(cont_write_begin);
- int block_commit_write(struct address_space *mapping, struct page *page,
- 		       unsigned from, unsigned to)
- {
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = mapping->host;
- 	__block_commit_write(inode,page,from,to);
- 	return 0;
- }
-@@ -2705,7 +2704,7 @@ int nobh_write_end(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
- 			struct page *page, void *fsdata)
- {
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = mapping->host;
- 	struct buffer_head *head = fsdata;
- 	struct buffer_head *bh;
- 	BUG_ON(fsdata != NULL && page_has_buffers(page));
-diff --git a/fs/libfs.c b/fs/libfs.c
-index ac76b269bbb7..585ef1f37d54 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -475,7 +475,7 @@ int simple_write_end(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
- 			struct page *page, void *fsdata)
- {
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = mapping->host;
- 	loff_t last_pos = pos + copied;
- 
- 	/* zero the stale part of the page if we did a short copy */
-diff --git a/fs/mpage.c b/fs/mpage.c
-index 1eec9d0df23e..ecdef63f464e 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -231,7 +231,7 @@ do_mpage_readpage(struct bio *bio, struct address_space *mapping,
- 		 * so readpage doesn't have to repeat the get_block call
- 		 */
- 		if (buffer_uptodate(map_bh)) {
--			map_buffer_to_page(page->mapping->host, page,
-+			map_buffer_to_page(mapping->host, page,
- 					   map_bh, page_block);
- 			goto confused;
- 		}
-@@ -312,7 +312,7 @@ do_mpage_readpage(struct bio *bio, struct address_space *mapping,
- 	if (bio)
- 		bio = mpage_bio_submit(REQ_OP_READ, 0, bio);
- 	if (!PageUptodate(page))
--	        block_read_full_page(page->mapping->host, page, get_block);
-+	        block_read_full_page(mapping->host, page, get_block);
- 	else
- 		unlock_page(page);
- 	goto out;
-@@ -484,13 +484,12 @@ void clean_page_buffers(struct address_space *mapping, struct page *page)
- 	clean_buffers(mapping, page, ~0U);
- }
- 
--static int __mpage_writepage(struct page *page, struct address_space *_mapping,
-+static int __mpage_writepage(struct page *page, struct address_space *mapping,
- 			     struct writeback_control *wbc, void *data)
- {
- 	struct mpage_data *mpd = data;
- 	struct bio *bio = mpd->bio;
--	struct address_space *mapping = page->mapping;
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = mapping->host;
- 	const unsigned blkbits = inode->i_blkbits;
- 	unsigned long end_index;
- 	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
--- 
-2.14.3
+> Noralf.
+>
+>
+>>   drivers/gpu/drm/drm_atomic_helper.c | 66
+>> +++++++++++++++++++++++++++++++++++++
+>>   drivers/gpu/drm/msm/msm_atomic.c    |  5 ++-
+>>   drivers/gpu/drm/msm/msm_fb.c        |  1 +
+>>   include/drm/drm_atomic_helper.h     |  4 +++
+>>   include/drm/drm_plane.h             |  9 +++++
+>>   5 files changed, 84 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_atomic_helper.c
+>> b/drivers/gpu/drm/drm_atomic_helper.c
+>> index c35654591c12..a578dc681b27 100644
+>> --- a/drivers/gpu/drm/drm_atomic_helper.c
+>> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+>> @@ -3504,6 +3504,7 @@ void
+>> __drm_atomic_helper_plane_duplicate_state(struct drm_plane *plane,
+>>         if (state->fb)
+>>                 drm_framebuffer_get(state->fb);
+>>   +     state->dirty = false;
+>>         state->fence = NULL;
+>>         state->commit = NULL;
+>>   }
+>> @@ -3847,6 +3848,71 @@ int drm_atomic_helper_legacy_gamma_set(struct
+>> drm_crtc *crtc,
+>>   }
+>>   EXPORT_SYMBOL(drm_atomic_helper_legacy_gamma_set);
+>>   +/**
+>> + * drm_atomic_helper_dirtyfb - helper for dirtyfb
+>> + *
+>> + * A helper to implement drm_framebuffer_funcs::dirty
+>> + */
+>> +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
+>> +                             struct drm_file *file_priv, unsigned flags,
+>> +                             unsigned color, struct drm_clip_rect *clips,
+>> +                             unsigned num_clips)
+>> +{
+>> +       struct drm_modeset_acquire_ctx ctx;
+>> +       struct drm_atomic_state *state;
+>> +       struct drm_plane *plane;
+>> +       int ret = 0;
+>> +
+>> +       /*
+>> +        * When called from ioctl, we are interruptable, but not when
+>> +        * called internally (ie. defio worker)
+>> +        */
+>> +       drm_modeset_acquire_init(&ctx,
+>> +               file_priv ? DRM_MODESET_ACQUIRE_INTERRUPTIBLE : 0);
+>> +
+>> +       state = drm_atomic_state_alloc(fb->dev);
+>> +       if (!state) {
+>> +               ret = -ENOMEM;
+>> +               goto out;
+>> +       }
+>> +       state->acquire_ctx = &ctx;
+>> +
+>> +retry:
+>> +       drm_for_each_plane(plane, fb->dev) {
+>> +               struct drm_plane_state *plane_state;
+>> +
+>> +               if (plane->state->fb != fb)
+>> +                       continue;
+>> +
+>> +               plane_state = drm_atomic_get_plane_state(state, plane);
+>> +               if (IS_ERR(plane_state)) {
+>> +                       ret = PTR_ERR(plane_state);
+>> +                       goto out;
+>> +               }
+>> +
+>> +               plane_state->dirty = true;
+>> +       }
+>> +
+>> +       ret = drm_atomic_nonblocking_commit(state);
+>> +
+>> +out:
+>> +       if (ret == -EDEADLK) {
+>> +               drm_atomic_state_clear(state);
+>> +               ret = drm_modeset_backoff(&ctx);
+>> +               if (!ret)
+>> +                       goto retry;
+>> +       }
+>> +
+>> +       drm_atomic_state_put(state);
+>> +
+>> +       drm_modeset_drop_locks(&ctx);
+>> +       drm_modeset_acquire_fini(&ctx);
+>> +
+>> +       return ret;
+>> +
+>> +}
+>> +EXPORT_SYMBOL(drm_atomic_helper_dirtyfb);
+>> +
+>>   /**
+>>    * __drm_atomic_helper_private_duplicate_state - copy atomic private
+>> state
+>>    * @obj: CRTC object
+>> diff --git a/drivers/gpu/drm/msm/msm_atomic.c
+>> b/drivers/gpu/drm/msm/msm_atomic.c
+>> index bf5f8c39f34d..bb55a048e98b 100644
+>> --- a/drivers/gpu/drm/msm/msm_atomic.c
+>> +++ b/drivers/gpu/drm/msm/msm_atomic.c
+>> @@ -201,7 +201,10 @@ int msm_atomic_commit(struct drm_device *dev,
+>>          * Figure out what fence to wait for:
+>>          */
+>>         for_each_oldnew_plane_in_state(state, plane, old_plane_state,
+>> new_plane_state, i) {
+>> -               if ((new_plane_state->fb != old_plane_state->fb) &&
+>> new_plane_state->fb) {
+>> +               bool sync_fb = new_plane_state->fb &&
+>> +                       ((new_plane_state->fb != old_plane_state->fb) ||
+>> +                        new_plane_state->dirty);
+>> +               if (sync_fb) {
+>>                         struct drm_gem_object *obj =
+>> msm_framebuffer_bo(new_plane_state->fb, 0);
+>>                         struct msm_gem_object *msm_obj = to_msm_bo(obj);
+>>                         struct dma_fence *fence =
+>> reservation_object_get_excl_rcu(msm_obj->resv);
+>> diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
+>> index 0e0c87252ab0..a5d882a34a33 100644
+>> --- a/drivers/gpu/drm/msm/msm_fb.c
+>> +++ b/drivers/gpu/drm/msm/msm_fb.c
+>> @@ -62,6 +62,7 @@ static void msm_framebuffer_destroy(struct
+>> drm_framebuffer *fb)
+>>   static const struct drm_framebuffer_funcs msm_framebuffer_funcs = {
+>>         .create_handle = msm_framebuffer_create_handle,
+>>         .destroy = msm_framebuffer_destroy,
+>> +       .dirty = drm_atomic_helper_dirtyfb,
+>>   };
+>>     #ifdef CONFIG_DEBUG_FS
+>> diff --git a/include/drm/drm_atomic_helper.h
+>> b/include/drm/drm_atomic_helper.h
+>> index 26aaba58d6ce..9b7a95c2643d 100644
+>> --- a/include/drm/drm_atomic_helper.h
+>> +++ b/include/drm/drm_atomic_helper.h
+>> @@ -183,6 +183,10 @@ int drm_atomic_helper_legacy_gamma_set(struct
+>> drm_crtc *crtc,
+>>                                        u16 *red, u16 *green, u16 *blue,
+>>                                        uint32_t size,
+>>                                        struct drm_modeset_acquire_ctx
+>> *ctx);
+>> +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
+>> +                             struct drm_file *file_priv, unsigned flags,
+>> +                             unsigned color, struct drm_clip_rect *clips,
+>> +                             unsigned num_clips);
+>>   void __drm_atomic_helper_private_obj_duplicate_state(struct
+>> drm_private_obj *obj,
+>>                                                      struct
+>> drm_private_state *state);
+>>   diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+>> index f7bf4a48b1c3..296fa22bda7a 100644
+>> --- a/include/drm/drm_plane.h
+>> +++ b/include/drm/drm_plane.h
+>> @@ -76,6 +76,15 @@ struct drm_plane_state {
+>>          */
+>>         struct drm_framebuffer *fb;
+>>   +     /**
+>> +        * @dirty:
+>> +        *
+>> +        * Flag that indicates the fb contents have changed even though
+>> the
+>> +        * fb has not.  This is mostly a stop-gap solution until we have
+>> +        * atomic dirty-rect(s) property.
+>> +        */
+>> +       bool dirty;
+>> +
+>>         /**
+>>          * @fence:
+>>          *
+>
+>
