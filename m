@@ -1,40 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeDDP7E (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:59:04 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:35098 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751862AbeDDP7D (ORCPT
+        id S1752283AbeDDP7U (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:59:20 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:24262 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751582AbeDDP7T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:59:03 -0400
-X-Google-Smtp-Source: AIpwx48B1LMmACd5WJsv+qwXM42x5gDSPFg/z/ljtxPQKVxYX9ckSn1obGT0PsztOP+tzOvcAa84jg==
-Date: Wed, 4 Apr 2018 18:58:59 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Michal Hocko <mhocko@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Andrey Vagin <avagin@openvz.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Subject: Re: [RFC] prctl: Deprecate non PR_SET_MM_MAP operations
-Message-ID: <20180404155857.GE15783@uranus.lan>
-References: <20180403223722.GA15783@uranus.lan>
- <48bcd917-4eb8-9da6-ec4b-e76a654695c4@linux.alibaba.com>
- <20180404053541.GA6312@dhcp22.suse.cz>
- <40dde421-5300-b11f-860a-cf19aea00ec9@linux.alibaba.com>
-MIME-Version: 1.0
+        Wed, 4 Apr 2018 11:59:19 -0400
+To: ynorov@caviumnetworks.com
+Cc: syzbot+6887cbb011c8054e8a3d@syzkaller.appspotmail.com,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lizefan@huawei.com, syzkaller-bugs@googlegroups.com,
+        noamca@mellanox.com, linux@rasmusvillemoes.dk, mawilcox@microsoft.com,
+        mchehab@kernel.org, akpm@linux-foundation.org
+Subject: Re: INFO: rcu detected stall in bitmap_parselist
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <000000000000edc3690568cc95eb@google.com>
+        <f1a0af0d-44c5-e938-b48f-0bace885f0a2@I-love.SAKURA.ne.jp>
+        <20180404154136.p7aeye7657q466sq@yury-thinkpad>
+In-Reply-To: <20180404154136.p7aeye7657q466sq@yury-thinkpad>
+Message-Id: <201804050058.EIB64593.LtSFQHFJOMOVFO@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Thu, 5 Apr 2018 00:58:46 +0900
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40dde421-5300-b11f-860a-cf19aea00ec9@linux.alibaba.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 08:54:59AM -0700, Yang Shi wrote:
-> > Yeah, let's just drop it and have the patch in linux-next (via mmotm)
-> > for 2 release cycles and see whether somebody complains.
+Yury Norov wrote:
+> Hi Tetsuo,
 > 
-> BTW, I will do my v3 on top of the patch (drop off prctl_set_mm).
+> Thanks for the patch.
+> 
+> On Wed, Apr 04, 2018 at 09:21:43PM +0900, Tetsuo Handa wrote:
+> > Yury, are you OK with this patch?
+> > 
+> > 
+> > >From 7f21827cdfe9780b4949b22bcd19efa721b463d2 Mon Sep 17 00:00:00 2001
+> > From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > Date: Wed, 4 Apr 2018 21:12:10 +0900
+> > Subject: [PATCH] lib/bitmap: Rewrite __bitmap_parselist().
+> > 
+> > syzbot is catching stalls at __bitmap_parselist() [1]. The trigger is
+> > 
+> >   unsigned long v = 0;
+> >   bitmap_parselist("7:,", &v, BITS_PER_LONG);
+> 
+> Could you add this case to the test_bitmap_parselist()?
+> 
+> > which results in hitting infinite loop at
+> > 
+> >   while (a <= b) {
+> >     off = min(b - a + 1, used_size);
+> >     bitmap_set(maskp, a, off);
+> >     a += group_size;
+> >   }
+> > 
+> > due to used_size == group_size == 0.
+> > 
+> > Current code is difficult to read due to too many flag variables.
+> > Let's rewrite it.
+> 
+> I also don't like current implementation of bitmap_parselist(), but
+> discussion on new code  may take some time. Can you submit minimal
+> fix in separated patch to let people discuss your new implementation
+> without rush?
 
-Sorry for delay, will do in a couple of hours.
+OK. Then you can write the patch. You know current code better than I.
+
+> > @@ -485,6 +485,58 @@ int bitmap_print_to_pagebuf(bool list, char *buf, const unsigned long *maskp,
+> >  }
+> >  EXPORT_SYMBOL(bitmap_print_to_pagebuf);
+> >  
+> > +static bool get_uint(const char **buf, unsigned int *res)
+> > +{
+> > +	const char *p = *buf;
+> > +
+> > +	if (!isdigit(*p))
+> > +		return false;
+> > +	*res = simple_strtoul(p, (char **) buf, 10);
+> 
+> In comment to simple_strtoul(): "This function is obsolete. Please
+> use kstrtoul instead."
+
+I intentionally choose simple_strtoul() because next delimiter (e.g. '-')
+starts at returned address. kstrtoul() fails if next letter starts.
+
+> 
+> > +	return p < *buf;
+
+I think I should limit to "0 <= *res <= INT_MAX" range in order to avoid
+overflow at start += group_size.
+
+> > +}
+> > +
+> > +static int __bitmap_parse_one_chunk(const char *buf, unsigned long *maskp,
+> > +				    const unsigned int nmaskbits)
+> > +{
+> > +	unsigned int start;
+> > +	unsigned int end;
+> > +	unsigned int group_size;
+> > +	unsigned int used_size;
+> > +
+> > +	while (*buf && isspace(*buf))
+> > +		buf++;
+> > +	if (!get_uint(&buf, &start))
+> > +		return -EINVAL;
+> > +	if (*buf == '-') {
+> > +		buf++;
+> > +		if (!get_uint(&buf, &end) || start > end)
+> > +			return -EINVAL;
+> > +		if (*buf == ':') {
+> > +			buf++;
+> > +			if (!get_uint(&buf, &used_size) || *buf++ != '/' ||
+> > +			    !get_uint(&buf, &group_size) ||
+> > +			    used_size > group_size)
+> > +				return -EINVAL;
+> 
+> So this is still not safe against "1-10:0/0", or I miss something?
+> (This is another testcase we should add to test_bitmap.c)
+
+Indeed. We need to make more testcases.
+
+> > +	while (buflen && !err) {
+> > +		char *cp;
+> > +		char tmpbuf[256];
+> > +		unsigned int size = min(buflen,
+> > +					(unsigned int) sizeof(tmpbuf) - 1);
+> > +
+> > +		if (!is_user)
+> > +			memcpy(tmpbuf, buf, size);
+> > +		else if (copy_from_user(tmpbuf, (const char __user __force *)
+> > +					buf, size))
+> > +			return -EFAULT;
+> 
+> This is not safe against this:
+> "[250 whitespaces] 567-890:123/456"
+
+Do we need to accept such insane entry?
+
+> 
+> And it will be Schlemiel the painter's-styled algorithm for input like:
+> "1,2,3,4, ... ,98,99,100". 
+> 
+> I think we need something like __bitmap_parse_get_chunk() to copy
+> coma-separated substrings.
