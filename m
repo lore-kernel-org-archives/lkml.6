@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeDDTT2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 15:19:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49474 "EHLO mx1.redhat.com"
+        id S1752276AbeDDTXg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 15:23:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54070 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751981AbeDDTTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 15:19:25 -0400
+        id S1752089AbeDDTT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 15:19:27 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
-        Josef Bacik <jbacik@fb.com>, Mel Gorman <mgorman@techsingularity.net>
-Subject: [RFC PATCH 52/79] fs/buffer: use _page_has_buffers() instead of page_has_buffers()
-Date: Wed,  4 Apr 2018 15:18:16 -0400
-Message-Id: <20180404191831.5378-27-jglisse@redhat.com>
+        Alexander Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
+        Jan Kara <jack@suse.cz>, Josef Bacik <jbacik@fb.com>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [RFC PATCH 65/79] mm/swap: add struct swap_info_struct swap_readpage() arguments
+Date: Wed,  4 Apr 2018 15:18:19 -0400
+Message-Id: <20180404191831.5378-30-jglisse@redhat.com>
 In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
 References: <20180404191831.5378-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -29,378 +29,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-The former need the address_space for which the buffer_head is being
-lookup.
-
-----------------------------------------------------------------------
-@exists@
-identifier M;
-expression E;
-@@
-struct address_space *M;
-...
--page_buffers(E)
-+_page_buffers(E, M)
-
-@exists@
-identifier M, F;
-expression E;
-@@
-F(..., struct address_space *M, ...) {...
--page_buffers(E)
-+_page_buffers(E, M)
-...}
-
-@exists@
-identifier M;
-expression E;
-@@
-struct address_space *M;
-...
--page_has_buffers(E)
-+_page_has_buffers(E, M)
-
-@exists@
-identifier M, F;
-expression E;
-@@
-F(..., struct address_space *M, ...) {...
--page_has_buffers(E)
-+_page_has_buffers(E, M)
-...}
-
-@exists@
-identifier I;
-expression E;
-@@
-struct inode *I;
-...
--page_buffers(E)
-+_page_buffers(E, I->i_mapping)
-
-@exists@
-identifier I, F;
-expression E;
-@@
-F(..., struct inode *I, ...) {...
--page_buffers(E)
-+_page_buffers(E, I->i_mapping)
-...}
-
-@exists@
-identifier I;
-expression E;
-@@
-struct inode *I;
-...
--page_has_buffers(E)
-+_page_has_buffers(E, I->i_mapping)
-
-@exists@
-identifier I, F;
-expression E;
-@@
-F(..., struct inode *I, ...) {...
--page_has_buffers(E)
-+_page_has_buffers(E, I->i_mapping)
-...}
-----------------------------------------------------------------------
+Add struct swap_info_struct swap_readpage() arguments. One step toward
+dropping reliance on page->private during swap read back.
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 CC: Andrew Morton <akpm@linux-foundation.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
 Cc: Tejun Heo <tj@kernel.org>
 Cc: Jan Kara <jack@suse.cz>
 Cc: Josef Bacik <jbacik@fb.com>
 Cc: Mel Gorman <mgorman@techsingularity.net>
 ---
- fs/buffer.c | 60 ++++++++++++++++++++++++++++++------------------------------
- fs/mpage.c  | 14 +++++++-------
- 2 files changed, 37 insertions(+), 37 deletions(-)
+ include/linux/swap.h |  6 ++++--
+ mm/memory.c          |  2 +-
+ mm/page_io.c         |  4 ++--
+ mm/swap_state.c      | 12 ++++++++----
+ 4 files changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 3c424b7af5af..27b19c629308 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -89,13 +89,13 @@ void buffer_check_dirty_writeback(struct page *page,
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 2f6abe9652f6..90c26ec2997c 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -383,7 +383,8 @@ extern void kswapd_stop(int nid);
+ #include <linux/blk_types.h> /* for bio_end_io_t */
  
- 	BUG_ON(!PageLocked(page));
+ /* linux/mm/page_io.c */
+-extern int swap_readpage(struct page *page, bool do_poll);
++extern int swap_readpage(struct swap_info_struct *sis, struct page *page,
++			 bool do_poll);
+ extern int swap_writepage(struct address_space *mapping, struct page *page,
+ 			  struct writeback_control *wbc);
+ extern void end_swap_bio_write(struct bio *bio);
+@@ -486,7 +487,8 @@ extern void exit_swap_address_space(unsigned int type);
  
--	if (!page_has_buffers(page))
-+	if (!_page_has_buffers(page, mapping))
- 		return;
+ #else /* CONFIG_SWAP */
  
- 	if (PageWriteback(page))
- 		*writeback = true;
- 
--	head = page_buffers(page);
-+	head = _page_buffers(page, mapping);
- 	bh = head;
- 	do {
- 		if (buffer_locked(bh))
-@@ -211,9 +211,9 @@ __find_get_block_slow(struct block_device *bdev, sector_t block)
- 		goto out;
- 
- 	spin_lock(&bd_mapping->private_lock);
--	if (!page_has_buffers(page))
-+	if (!_page_has_buffers(page, bd_mapping))
- 		goto out_unlock;
--	head = page_buffers(page);
-+	head = _page_buffers(page, bd_mapping);
- 	bh = head;
- 	do {
- 		if (!buffer_mapped(bh))
-@@ -648,8 +648,8 @@ int __set_page_dirty_buffers(struct address_space *mapping,
- 		return !TestSetPageDirty(page);
- 
- 	spin_lock(&mapping->private_lock);
--	if (page_has_buffers(page)) {
--		struct buffer_head *head = page_buffers(page);
-+	if (_page_has_buffers(page, mapping)) {
-+		struct buffer_head *head = _page_buffers(page, mapping);
- 		struct buffer_head *bh = head;
- 
- 		do {
-@@ -913,7 +913,7 @@ static sector_t
- init_page_buffers(struct address_space *buffer, struct page *page,
- 		  struct block_device *bdev, sector_t block, int size)
+-static inline int swap_readpage(struct page *page, bool do_poll)
++static inline int swap_readpage(struct swap_info_struct *sis, struct page *page,
++				bool do_poll)
  {
--	struct buffer_head *head = page_buffers(page);
-+	struct buffer_head *head = _page_buffers(page, buffer);
- 	struct buffer_head *bh = head;
- 	int uptodate = PageUptodate(page);
- 	sector_t end_block = blkdev_max_block(I_BDEV(bdev->bd_inode), size);
-@@ -969,8 +969,8 @@ grow_dev_page(struct block_device *bdev, sector_t block,
- 
- 	BUG_ON(!PageLocked(page));
- 
--	if (page_has_buffers(page)) {
--		bh = page_buffers(page);
-+	if (_page_has_buffers(page, inode->i_mapping)) {
-+		bh = _page_buffers(page, inode->i_mapping);
- 		if (bh->b_size == size) {
- 			end_block = init_page_buffers(inode->i_mapping, page,
- 					bdev, (sector_t)index << sizebits,
-@@ -1490,7 +1490,7 @@ void block_invalidatepage(struct address_space *mapping, struct page *page,
- 	unsigned int stop = length + offset;
- 
- 	BUG_ON(!PageLocked(page));
--	if (!page_has_buffers(page))
-+	if (!_page_has_buffers(page, mapping))
- 		goto out;
- 
- 	/*
-@@ -1498,7 +1498,7 @@ void block_invalidatepage(struct address_space *mapping, struct page *page,
- 	 */
- 	BUG_ON(stop > PAGE_SIZE || stop < length);
- 
--	head = page_buffers(page);
-+	head = _page_buffers(page, mapping);
- 	bh = head;
- 	do {
- 		unsigned int next_off = curr_off + bh->b_size;
-@@ -1605,7 +1605,7 @@ void clean_bdev_aliases(struct block_device *bdev, sector_t block, sector_t len)
- 		for (i = 0; i < count; i++) {
- 			struct page *page = pvec.pages[i];
- 
--			if (!page_has_buffers(page))
-+			if (!_page_has_buffers(page, bd_mapping))
- 				continue;
- 			/*
- 			 * We use page lock instead of bd_mapping->private_lock
-@@ -1614,9 +1614,9 @@ void clean_bdev_aliases(struct block_device *bdev, sector_t block, sector_t len)
- 			 */
- 			lock_page(page);
- 			/* Recheck when the page is locked which pins bhs */
--			if (!page_has_buffers(page))
-+			if (!_page_has_buffers(page, bd_inode->i_mapping))
- 				goto unlock_page;
--			head = page_buffers(page);
-+			head = _page_buffers(page, bd_mapping);
- 			bh = head;
- 			do {
- 				if (!buffer_mapped(bh) || (bh->b_blocknr < block))
-@@ -1658,11 +1658,11 @@ static struct buffer_head *create_page_buffers(struct page *page, struct inode *
- {
- 	BUG_ON(!PageLocked(page));
- 
--	if (!page_has_buffers(page))
-+	if (!_page_has_buffers(page, inode->i_mapping))
- 		create_empty_buffers(inode->i_mapping, page,
- 				     1 << READ_ONCE(inode->i_blkbits),
- 				     b_state);
--	return page_buffers(page);
-+	return _page_buffers(page, inode->i_mapping);
+ 	return 0;
+ }
+diff --git a/mm/memory.c b/mm/memory.c
+index 1311599a164b..6ffd76528e7b 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2949,7 +2949,7 @@ int do_swap_page(struct vm_fault *vmf)
+ 				__SetPageSwapBacked(page);
+ 				set_page_private(page, entry.val);
+ 				lru_cache_add_anon(page);
+-				swap_readpage(page, true);
++				swap_readpage(si, page, true);
+ 			}
+ 		} else {
+ 			if (vma_readahead)
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 6e548b588490..f4e05c90c87e 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -349,11 +349,11 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
+ 	return ret;
  }
  
- /*
-@@ -1870,10 +1870,10 @@ void page_zero_new_buffers(struct address_space *buffer, struct page *page,
- 	struct buffer_head *head, *bh;
- 
- 	BUG_ON(!PageLocked(page));
--	if (!page_has_buffers(page))
-+	if (!_page_has_buffers(page, buffer))
- 		return;
- 
--	bh = head = page_buffers(page);
-+	bh = head = _page_buffers(page, buffer);
- 	block_start = 0;
- 	do {
- 		block_end = block_start + bh->b_size;
-@@ -2057,7 +2057,7 @@ static int __block_commit_write(struct inode *inode, struct page *page,
- 	unsigned blocksize;
- 	struct buffer_head *bh, *head;
- 
--	bh = head = page_buffers(page);
-+	bh = head = _page_buffers(page, inode->i_mapping);
- 	blocksize = bh->b_size;
- 
- 	block_start = 0;
-@@ -2209,10 +2209,10 @@ int block_is_partially_uptodate(struct page *page,
- 	struct buffer_head *bh, *head;
- 	int ret = 1;
- 
--	if (!page_has_buffers(page))
-+	if (!_page_has_buffers(page, mapping))
- 		return 0;
- 
--	head = page_buffers(page);
-+	head = _page_buffers(page, mapping);
- 	blocksize = head->b_size;
- 	to = min_t(unsigned, PAGE_SIZE - from, count);
- 	to = from + to;
-@@ -2596,7 +2596,7 @@ int nobh_write_begin(struct address_space *mapping,
- 	*pagep = page;
- 	*fsdata = NULL;
- 
--	if (page_has_buffers(page)) {
-+	if (_page_has_buffers(page, mapping)) {
- 		ret = __block_write_begin(mapping, page, pos, len, get_block);
- 		if (unlikely(ret))
- 			goto out_release;
-@@ -2715,7 +2715,7 @@ int nobh_write_end(struct file *file, struct address_space *mapping,
- 	struct inode *inode = mapping->host;
- 	struct buffer_head *head = fsdata;
- 	struct buffer_head *bh;
--	BUG_ON(fsdata != NULL && page_has_buffers(page));
-+	BUG_ON(fsdata != NULL && _page_has_buffers(page, inode->i_mapping));
- 
- 	if (unlikely(copied < len) && head)
- 		attach_nobh_buffers(mapping, page, head);
-@@ -2822,7 +2822,7 @@ int nobh_truncate_page(struct address_space *mapping,
- 	if (!page)
- 		goto out;
- 
--	if (page_has_buffers(page)) {
-+	if (_page_has_buffers(page, mapping)) {
- has_buffers:
- 		unlock_page(page);
- 		put_page(page);
-@@ -2857,7 +2857,7 @@ int nobh_truncate_page(struct address_space *mapping,
- 			err = -EIO;
- 			goto unlock;
- 		}
--		if (page_has_buffers(page))
-+		if (_page_has_buffers(page, inode->i_mapping))
- 			goto has_buffers;
- 	}
- 	zero_user(page, offset, length);
-@@ -2900,11 +2900,11 @@ int block_truncate_page(struct address_space *mapping,
- 	if (!page)
- 		goto out;
- 
--	if (!page_has_buffers(page))
-+	if (!_page_has_buffers(page, mapping))
- 		create_empty_buffers(mapping, page, blocksize, 0);
- 
- 	/* Find the buffer that contains "offset" */
--	bh = page_buffers(page);
-+	bh = _page_buffers(page, mapping);
- 	pos = blocksize;
- 	while (offset >= pos) {
- 		bh = bh->b_this_page;
-@@ -3260,7 +3260,7 @@ static int
- drop_buffers(struct address_space *mapping, struct page *page,
- 	     struct buffer_head **buffers_to_free)
+-int swap_readpage(struct page *page, bool synchronous)
++int swap_readpage(struct swap_info_struct *sis, struct page *page,
++		  bool synchronous)
  {
--	struct buffer_head *head = page_buffers(page);
-+	struct buffer_head *head = _page_buffers(page, mapping);
- 	struct buffer_head *bh;
- 
- 	bh = head;
-@@ -3491,7 +3491,7 @@ page_seek_hole_data(struct address_space *mapping, struct page *page,
- 	if (lastoff < offset)
- 		lastoff = offset;
- 
--	bh = head = page_buffers(page);
-+	bh = head = _page_buffers(page, mapping);
- 	do {
- 		offset += bh->b_size;
- 		if (lastoff >= offset)
-@@ -3563,7 +3563,7 @@ page_cache_seek_hole_data(struct inode *inode, loff_t offset, loff_t length,
- 
- 			lock_page(page);
- 			if (likely(!page_is_truncated(page, inode->i_mapping)) &&
--			    page_has_buffers(page)) {
-+			    _page_has_buffers(page, inode->i_mapping)) {
- 				lastoff = page_seek_hole_data(inode->i_mapping,
- 							page, lastoff, whence);
- 				if (lastoff >= 0) {
-diff --git a/fs/mpage.c b/fs/mpage.c
-index ecdef63f464e..8141010b9f4c 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -107,7 +107,7 @@ map_buffer_to_page(struct inode *inode, struct page *page,
- 	struct buffer_head *page_bh, *head;
- 	int block = 0;
- 
--	if (!page_has_buffers(page)) {
-+	if (!_page_has_buffers(page, inode->i_mapping)) {
- 		/*
- 		 * don't make any buffers if there is only one buffer on
- 		 * the page and the page just needs to be set up to date
-@@ -120,7 +120,7 @@ map_buffer_to_page(struct inode *inode, struct page *page,
- 		create_empty_buffers(inode->i_mapping, page,
- 				     i_blocksize(inode), 0);
- 	}
--	head = page_buffers(page);
-+	head = _page_buffers(page, inode->i_mapping);
- 	page_bh = head;
- 	do {
- 		if (block == page_block) {
-@@ -166,7 +166,7 @@ do_mpage_readpage(struct bio *bio, struct address_space *mapping,
- 	unsigned nblocks;
- 	unsigned relative_block;
- 
--	if (page_has_buffers(page))
-+	if (_page_has_buffers(page, mapping))
- 		goto confused;
- 
- 	block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
-@@ -453,9 +453,9 @@ static void clean_buffers(struct address_space *mapping, struct page *page,
- {
- 	unsigned buffer_counter = 0;
- 	struct buffer_head *bh, *head;
--	if (!page_has_buffers(page))
-+	if (!_page_has_buffers(page, mapping))
- 		return;
--	head = page_buffers(page);
-+	head = _page_buffers(page, mapping);
- 	bh = head;
- 
- 	do {
-@@ -508,8 +508,8 @@ static int __mpage_writepage(struct page *page, struct address_space *mapping,
+ 	struct bio *bio;
  	int ret = 0;
- 	int op_flags = wbc_to_write_flags(wbc);
+-	struct swap_info_struct *sis = page_swap_info(page);
+ 	blk_qc_t qc;
+ 	struct gendisk *disk;
  
--	if (page_has_buffers(page)) {
--		struct buffer_head *head = page_buffers(page);
-+	if (_page_has_buffers(page, mapping)) {
-+		struct buffer_head *head = _page_buffers(page, mapping);
- 		struct buffer_head *bh = head;
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index 39ae7cfad90f..40a2437e3c34 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -466,8 +466,10 @@ struct page *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 	struct page *retpage = __read_swap_cache_async(entry, gfp_mask,
+ 			vma, addr, &page_was_allocated);
  
- 		/* If they're all mapped and dirty, do it */
+-	if (page_was_allocated)
+-		swap_readpage(retpage, do_poll);
++	if (page_was_allocated) {
++		struct swap_info_struct *sis = swp_swap_info(entry);
++		swap_readpage(sis, retpage, do_poll);
++	}
+ 
+ 	return retpage;
+ }
+@@ -585,7 +587,8 @@ struct page *swapin_readahead(swp_entry_t entry, gfp_t gfp_mask,
+ 		if (!page)
+ 			continue;
+ 		if (page_allocated) {
+-			swap_readpage(page, false);
++			struct swap_info_struct *sis = swp_swap_info(entry);
++			swap_readpage(sis, page, false);
+ 			if (offset != entry_offset &&
+ 			    likely(!PageTransCompound(page))) {
+ 				SetPageReadahead(page);
+@@ -748,7 +751,8 @@ struct page *do_swap_page_readahead(swp_entry_t fentry, gfp_t gfp_mask,
+ 		if (!page)
+ 			continue;
+ 		if (page_allocated) {
+-			swap_readpage(page, false);
++			struct swap_info_struct *sis = swp_swap_info(entry);
++			swap_readpage(sis, page, false);
+ 			if (i != swap_ra->offset &&
+ 			    likely(!PageTransCompound(page))) {
+ 				SetPageReadahead(page);
 -- 
 2.14.3
