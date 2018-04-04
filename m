@@ -1,392 +1,287 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751535AbeDDKVF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:21:05 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:44257 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751460AbeDDKUy (ORCPT
+        id S1751593AbeDDKVP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:21:15 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36190 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751556AbeDDKVN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:20:54 -0400
-Subject: Re: [PATCH 2/8] PCI: dwc: designware: Add support for endpoint mode
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
- <93aafb03af86885994e633da240ef58dbd3f4d53.1522235224.git.gustavo.pimentel@synopsys.com>
- <df477a39-25b9-68f6-bd10-aa45226101e4@ti.com>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <339b02fa-47bb-bd36-a1b2-72ff315c3f7a@synopsys.com>
-Date: Wed, 4 Apr 2018 11:20:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 4 Apr 2018 06:21:13 -0400
+X-Google-Smtp-Source: AIpwx49WTg4v8mDlH0/UzOP/mfV/0jA4+Xx4sdRWzj0sh/oBYKxJwTFIb5j31qHzifAwASA/O0Te3w==
+Date: Wed, 4 Apr 2018 12:21:08 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Hellstrom <thomas@shipmail.org>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
+        <ville.syrjala@linux.intel.com>,
+        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
+        Deepak Singh Rawat <drawat@vmware.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
+Message-ID: <20180404102108.GF3881@phenom.ffwll.local>
+Mail-Followup-To: Rob Clark <robdclark@gmail.com>,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org,
+        Thomas Hellstrom <thomas@shipmail.org>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
+        Deepak Singh Rawat <drawat@vmware.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+References: <20180403224225.26776-1-robdclark@gmail.com>
+ <20180404100300.GE3881@phenom.ffwll.local>
 MIME-Version: 1.0
-In-Reply-To: <df477a39-25b9-68f6-bd10-aa45226101e4@ti.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180404100300.GE3881@phenom.ffwll.local>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/04/2018 06:34, Kishon Vijay Abraham I wrote:
-> Hi,
+On Wed, Apr 04, 2018 at 12:03:00PM +0200, Daniel Vetter wrote:
+> On Tue, Apr 03, 2018 at 06:42:23PM -0400, Rob Clark wrote:
+> > Add an atomic helper to implement dirtyfb support.  This is needed to
+> > support DSI command-mode panels with x11 userspace (ie. when we can't
+> > rely on pageflips to trigger a flush to the panel).
+> > 
+> > To signal to the driver that the async atomic update needs to
+> > synchronize with fences, even though the fb didn't change, the
+> > drm_atomic_state::dirty flag is added.
+> > 
+> > Signed-off-by: Rob Clark <robdclark@gmail.com>
+> > ---
+> > Background: there are a number of different folks working on getting
+> > upstream kernel working on various different phones/tablets with qcom
+> > SoC's.. many of them have command mode panels, so we kind of need a
+> > way to support the legacy dirtyfb ioctl for x11 support.
+> > 
+> > I know there is work on a proprer non-legacy atomic property for
+> > userspace to communicate dirty-rect(s) to the kernel, so this can
+> > be improved from triggering a full-frame flush once that is in
+> > place.  But we kinda needa a stop-gap solution.
+> > 
+> > I had considered an in-driver solution for this, but things get a
+> > bit tricky if userspace ands up combining dirtyfb ioctls with page-
+> > flips, because we need to synchronize setting various CTL.FLUSH bits
+> > with setting the CTL.START bit.  (ie. really all we need to do for
+> > cmd mode panels is bang CTL.START, but is this ends up racing with
+> > pageflips setting FLUSH bits, then bad things.)  The easiest soln
+> > is to wrap this up as an atomic commit and rely on the worker to
+> > serialize things.  Hence adding an atomic dirtyfb helper.
+> > 
+> > I guess at least the helper, with some small addition to translate
+> > and pass-thru the dirty rect(s) is useful to the final atomic dirty-
+> > rect property solution.  Depending on how far off that is, a stop-
+> > gap solution could be useful.
+> > 
+> >  drivers/gpu/drm/drm_atomic_helper.c | 66 +++++++++++++++++++++++++++++++++++++
+> >  drivers/gpu/drm/msm/msm_atomic.c    |  5 ++-
+> >  drivers/gpu/drm/msm/msm_fb.c        |  1 +
+> >  include/drm/drm_atomic_helper.h     |  4 +++
+> >  include/drm/drm_plane.h             |  9 +++++
+> >  5 files changed, 84 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> > index c35654591c12..a578dc681b27 100644
+> > --- a/drivers/gpu/drm/drm_atomic_helper.c
+> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> > @@ -3504,6 +3504,7 @@ void __drm_atomic_helper_plane_duplicate_state(struct drm_plane *plane,
+> >  	if (state->fb)
+> >  		drm_framebuffer_get(state->fb);
+> >  
+> > +	state->dirty = false;
+> >  	state->fence = NULL;
+> >  	state->commit = NULL;
+> >  }
+> > @@ -3847,6 +3848,71 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
+> >  }
+> >  EXPORT_SYMBOL(drm_atomic_helper_legacy_gamma_set);
+> >  
+> > +/**
+> > + * drm_atomic_helper_dirtyfb - helper for dirtyfb
+> > + *
+> > + * A helper to implement drm_framebuffer_funcs::dirty
+> > + */
+> > +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
+> > +			      struct drm_file *file_priv, unsigned flags,
+> > +			      unsigned color, struct drm_clip_rect *clips,
+> > +			      unsigned num_clips)
+> > +{
+> > +	struct drm_modeset_acquire_ctx ctx;
+> > +	struct drm_atomic_state *state;
+> > +	struct drm_plane *plane;
+> > +	int ret = 0;
+> > +
+> > +	/*
+> > +	 * When called from ioctl, we are interruptable, but not when
+> > +	 * called internally (ie. defio worker)
+> > +	 */
+> > +	drm_modeset_acquire_init(&ctx,
+> > +		file_priv ? DRM_MODESET_ACQUIRE_INTERRUPTIBLE : 0);
+> > +
+> > +	state = drm_atomic_state_alloc(fb->dev);
+> > +	if (!state) {
+> > +		ret = -ENOMEM;
+> > +		goto out;
+> > +	}
+> > +	state->acquire_ctx = &ctx;
+> > +
+> > +retry:
+> > +	drm_for_each_plane(plane, fb->dev) {
+> > +		struct drm_plane_state *plane_state;
+> > +
+> > +		if (plane->state->fb != fb)
+> > +			continue;
+> > +
+> > +		plane_state = drm_atomic_get_plane_state(state, plane);
+> > +		if (IS_ERR(plane_state)) {
+> > +			ret = PTR_ERR(plane_state);
+> > +			goto out;
+> > +		}
+> > +
+> > +		plane_state->dirty = true;
+> > +	}
+> > +
+> > +	ret = drm_atomic_nonblocking_commit(state);
+> > +
+> > +out:
+> > +	if (ret == -EDEADLK) {
+> > +		drm_atomic_state_clear(state);
+> > +		ret = drm_modeset_backoff(&ctx);
+> > +		if (!ret)
+> > +			goto retry;
+> > +	}
+> > +
+> > +	drm_atomic_state_put(state);
+> > +
+> > +	drm_modeset_drop_locks(&ctx);
+> > +	drm_modeset_acquire_fini(&ctx);
+> > +
+> > +	return ret;
+> > +
+> > +}
+> > +EXPORT_SYMBOL(drm_atomic_helper_dirtyfb);
+> > +
+> >  /**
+> >   * __drm_atomic_helper_private_duplicate_state - copy atomic private state
+> >   * @obj: CRTC object
+> > diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
+> > index bf5f8c39f34d..bb55a048e98b 100644
+> > --- a/drivers/gpu/drm/msm/msm_atomic.c
+> > +++ b/drivers/gpu/drm/msm/msm_atomic.c
+> > @@ -201,7 +201,10 @@ int msm_atomic_commit(struct drm_device *dev,
+> >  	 * Figure out what fence to wait for:
+> >  	 */
+> >  	for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i) {
+> > -		if ((new_plane_state->fb != old_plane_state->fb) && new_plane_state->fb) {
+> > +		bool sync_fb = new_plane_state->fb &&
+> > +			((new_plane_state->fb != old_plane_state->fb) ||
+> > +			 new_plane_state->dirty);
 > 
-> On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
->> The PCIe controller dual mode is capable of operating in host mode as well
->> as endpoint mode by configuration, therefore this patch aims to add
->> endpoint mode support to the designware driver.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->>  drivers/pci/dwc/Kconfig                       |  45 ++++++--
->>  drivers/pci/dwc/pcie-designware-plat.c        | 157 ++++++++++++++++++++++++--
->>  drivers/pci/endpoint/functions/pci-epf-test.c |   5 +
->>  3 files changed, 187 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
->> index 2f3f5c5..3fd7daf 100644
->> --- a/drivers/pci/dwc/Kconfig
->> +++ b/drivers/pci/dwc/Kconfig
->> @@ -7,8 +7,7 @@ config PCIE_DW
->>  
->>  config PCIE_DW_HOST
->>          bool
->> -	depends on PCI
->> -	depends on PCI_MSI_IRQ_DOMAIN
->> +	depends on PCI && PCI_MSI_IRQ_DOMAIN
->>          select PCIE_DW
->>  
->>  config PCIE_DW_EP
->> @@ -52,16 +51,42 @@ config PCI_DRA7XX_EP
->>  
->>  config PCIE_DW_PLAT
->>  	bool "Platform bus based DesignWare PCIe Controller"
->> -	depends on PCI
->> -	depends on PCI_MSI_IRQ_DOMAIN
->> -	select PCIE_DW_HOST
->> -	---help---
->> -	 This selects the DesignWare PCIe controller support. Select this if
->> -	 you have a PCIe controller on Platform bus.
->> +	help
->> +	  There are two instances of PCIe controller in Designware IP.
->> +	  This controller can work either as EP or RC. In order to enable
->> +	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
->> +	  order to enable device-specific features PCIE_DW_PLAT_EP must be
->> +	  selected.
->>  
->> -	 If you have a controller with this interface, say Y or M here.
->> +config PCIE_DW_PLAT_HOST
->> +	bool "Platform bus based DesignWare PCIe Controller - Host mode"
->> +	depends on PCI && PCI_MSI_IRQ_DOMAIN
->> +	select PCIE_DW_HOST
->> +	select PCIE_DW_PLAT
->> +	default y
->> +	help
->> +	  Enables support for the PCIe controller in the Designware IP to
->> +	  work in host mode. There are two instances of PCIe controller in
->> +	  Designware IP.
->> +	  This controller can work either as EP or RC. In order to enable
->> +	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
->> +	  order to enable device-specific features PCI_DW_PLAT_EP must be
->> +	  selected.
->>  
->> -	 If unsure, say N.
->> +config PCIE_DW_PLAT_EP
->> +	bool "Platform bus based DesignWare PCIe Controller - Endpoint mode"
->> +	depends on PCI && PCI_MSI_IRQ_DOMAIN
->> +	depends on PCI_ENDPOINT
->> +	select PCIE_DW_EP
->> +	select PCIE_DW_PLAT
->> +	help
->> +	  Enables support for the PCIe controller in the Designware IP to
->> +	  work in endpoint mode. There are two instances of PCIe controller
->> +	  in Designware IP.
->> +	  This controller can work either as EP or RC. In order to enable
->> +	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
->> +	  order to enable device-specific features PCI_DW_PLAT_EP must be
->> +	  selected.
->>  
->>  config PCI_EXYNOS
->>  	bool "Samsung Exynos PCIe controller"
->> diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
->> index 5416aa8..921ab07 100644
->> --- a/drivers/pci/dwc/pcie-designware-plat.c
->> +++ b/drivers/pci/dwc/pcie-designware-plat.c
->> @@ -12,19 +12,29 @@
->>  #include <linux/interrupt.h>
->>  #include <linux/kernel.h>
->>  #include <linux/init.h>
->> +#include <linux/of_device.h>
->>  #include <linux/of_gpio.h>
->>  #include <linux/pci.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/resource.h>
->>  #include <linux/signal.h>
->>  #include <linux/types.h>
->> +#include <linux/regmap.h>
->>  
->>  #include "pcie-designware.h"
->>  
->>  struct dw_plat_pcie {
->> -	struct dw_pcie		*pci;
->> +	struct dw_pcie			*pci;
->> +	struct regmap			*regmap;
->> +	enum dw_pcie_device_mode	mode;
->>  };
->>  
->> +struct dw_plat_pcie_of_data {
->> +	enum dw_pcie_device_mode	mode;
->> +};
->> +
->> +static const struct of_device_id dw_plat_pcie_of_match[];
->> +
->>  static int dw_plat_pcie_host_init(struct pcie_port *pp)
->>  {
->>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->> @@ -42,9 +52,61 @@ static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
->>  	.host_init = dw_plat_pcie_host_init,
->>  };
->>  
->> -static int dw_plat_add_pcie_port(struct pcie_port *pp,
->> +static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
->> +{
->> +	dw_pcie_ep_linkup(&pci->ep);
+> Why do you have this optimization even here? Imo flipping to the same fb
+> should result in the fb getting fully uploaded, whether you're doing a
+> legacy page_flip, and atomic one or just a plane update.
 > 
-> .start_link ops is used incorrectly here. .start_link is used when all the
-> endpoint side configuration is done and "is ready" to establish a link with the
-> host. But dw_pcie_ep_linkup is used to inform the function devices that the
-> link "has been" established.
-
-If I move the dw_pcie_ep_linkup call from the dw_plat_pcie_establish_link to the
-dw_plat_pcie_ep_init function it would be more correct in your perspective? If
-not, where you suggest?
-
->> +
->> +	return 0;
->> +}
->> +
->> +static void dw_plat_pcie_stop_link(struct dw_pcie *pci)
->> +{
->> +
->> +}
+> Iirc some userspace does use that as essentially a full-plane frontbuffer
+> rendering flush already. IOW I don't think we need your
+> plane_state->dirty, it's implied to always be true - why would userspace
+> do a flip otherwise?
 > 
-> Not necessary to have empty function here. pci-epc-core will not try to invoke
-> ops which are not populated.
+> The helper itself to map dirtyfb to a nonblocking atomic commit looks
+> reasonable, but misses a bunch of the trickery discussed with Noralf and
+> others I think.
 
-Ok, I'll remove it.
+Ok, I've done some history digging:
 
->> +
->> +static const struct dw_pcie_ops dw_pcie_ops = {
->> +	.start_link = dw_plat_pcie_establish_link,
->> +	.stop_link = dw_plat_pcie_stop_link,
->> +};
->> +
->> +static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
->> +{
->> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->> +	enum pci_barno bar;
->> +
->> +	for (bar = BAR_0; bar <= BAR_5; bar++)
->> +		dw_pcie_ep_reset_bar(pci, bar);
->> +}
->> +
->> +static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
->> +				     enum pci_epc_irq_type type,
->> +				     u8 interrupt_num)
->> +{
->> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->> +
->> +	switch (type) {
->> +	case PCI_EPC_IRQ_LEGACY:
->> +		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
->> +		return -EINVAL;
->> +	case PCI_EPC_IRQ_MSI:
->> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
->> +	default:
->> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static struct dw_pcie_ep_ops pcie_ep_ops = {
->> +	.ep_init = dw_plat_pcie_ep_init,
->> +	.raise_irq = dw_plat_pcie_ep_raise_irq,
->> +};
->> +
->> +static int dw_plat_add_pcie_port(struct dw_plat_pcie *dw_plat_pcie,
->>  				 struct platform_device *pdev)
->>  {
->> +	struct dw_pcie *pci = dw_plat_pcie->pci;
->> +	struct pcie_port *pp = &pci->pp;
->>  	struct device *dev = &pdev->dev;
->>  	int ret;
->>  
->> @@ -63,15 +125,44 @@ static int dw_plat_add_pcie_port(struct pcie_port *pp,
->>  
->>  	ret = dw_pcie_host_init(pp);
->>  	if (ret) {
->> -		dev_err(dev, "failed to initialize host\n");
->> +		dev_err(dev, "Failed to initialize host\n");
->>  		return ret;
->>  	}
->>  
->>  	return 0;
->>  }
->>  
->> -static const struct dw_pcie_ops dw_pcie_ops = {
->> -};
->> +static int dw_plat_add_pcie_ep(struct dw_plat_pcie *dw_plat_pcie,
->> +			       struct platform_device *pdev)
->> +{
->> +	int ret;
->> +	struct dw_pcie_ep *ep;
->> +	struct resource *res;
->> +	struct device *dev = &pdev->dev;
->> +	struct dw_pcie *pci = dw_plat_pcie->pci;
->> +
->> +	ep = &pci->ep;
->> +	ep->ops = &pcie_ep_ops;
->> +
->> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi2");
->> +	pci->dbi_base2 = devm_ioremap(dev, res->start, resource_size(res));
->> +	if (IS_ERR(pci->dbi_base2))
->> +		return PTR_ERR(pci->dbi_base2);
->> +
->> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
->> +	if (!res)
->> +		return -EINVAL;
->> +
->> +	ep->phys_base = res->start;
->> +	ep->addr_size = resource_size(res);
->> +
->> +	ret = dw_pcie_ep_init(ep);
->> +	if (ret) {
->> +		dev_err(dev, "Failed to initialize endpoint\n");
->> +		return ret;
->> +	}
->> +	return 0;
->> +}
->>  
->>  static int dw_plat_pcie_probe(struct platform_device *pdev)
->>  {
->> @@ -80,6 +171,16 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
->>  	struct dw_pcie *pci;
->>  	struct resource *res;  /* Resource from DT */
->>  	int ret;
->> +	const struct of_device_id *match;
->> +	const struct dw_plat_pcie_of_data *data;
->> +	enum dw_pcie_device_mode mode;
->> +
->> +	match = of_match_device(dw_plat_pcie_of_match, dev);
->> +	if (!match)
->> +		return -EINVAL;
->> +
->> +	data = (struct dw_plat_pcie_of_data *)match->data;
->> +	mode = (enum dw_pcie_device_mode)data->mode;
->>  
->>  	dw_plat_pcie = devm_kzalloc(dev, sizeof(*dw_plat_pcie), GFP_KERNEL);
->>  	if (!dw_plat_pcie)
->> @@ -93,23 +194,59 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
->>  	pci->ops = &dw_pcie_ops;
->>  
->>  	dw_plat_pcie->pci = pci;
->> +	dw_plat_pcie->mode = mode;
->> +
->> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
->> +	if (!res)
->> +		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>  
->> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>  	pci->dbi_base = devm_ioremap_resource(dev, res);
->>  	if (IS_ERR(pci->dbi_base))
->>  		return PTR_ERR(pci->dbi_base);
->>  
->>  	platform_set_drvdata(pdev, dw_plat_pcie);
->>  
->> -	ret = dw_plat_add_pcie_port(&pci->pp, pdev);
->> -	if (ret < 0)
->> -		return ret;
->> +	switch (dw_plat_pcie->mode) {
->> +	case DW_PCIE_RC_TYPE:
->> +		if (!IS_ENABLED(CONFIG_PCIE_DW_PLAT_HOST))
->> +			return -ENODEV;
->> +
->> +		ret = dw_plat_add_pcie_port(dw_plat_pcie, pdev);
->> +		if (ret < 0)
->> +			return ret;
->> +		break;
->> +	case DW_PCIE_EP_TYPE:
->> +		if (!IS_ENABLED(CONFIG_PCIE_DW_PLAT_EP))
->> +			return -ENODEV;
->> +
->> +		ret = dw_plat_add_pcie_ep(dw_plat_pcie, pdev);
->> +		if (ret < 0)
->> +			return ret;
->> +		break;
->> +	default:
->> +		dev_err(dev, "INVALID device type %d\n", dw_plat_pcie->mode);
->> +	}
->>  
->>  	return 0;
->>  }
->>  
->> +static const struct dw_plat_pcie_of_data dw_plat_pcie_rc_of_data = {
->> +	.mode = DW_PCIE_RC_TYPE,
->> +};
->> +
->> +static const struct dw_plat_pcie_of_data dw_plat_pcie_ep_of_data = {
->> +	.mode = DW_PCIE_EP_TYPE,
->> +};
->> +
->>  static const struct of_device_id dw_plat_pcie_of_match[] = {
->> -	{ .compatible = "snps,dw-pcie", },
->> +	{
->> +		.compatible = "snps,dw-pcie",
->> +		.data = &dw_plat_pcie_rc_of_data,
->> +	},
->> +	{
->> +		.compatible = "snps,dw-pcie-ep",
->> +		.data = &dw_plat_pcie_ep_of_data,
->> +	},
->>  	{},
->>  };
->>  
->> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
->> index 64d8a17..d7de684 100644
->> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
->> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
->> @@ -451,9 +451,14 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>  	return 0;
->>  }
->>  
->> +static const struct pci_epf_test_data pci_epf_data = {
->> +	.linkup_notifier = false
->> +};
->> +
->>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
->>  	{
->>  		.name = "pci_epf_test",
->> +		.driver_data = (kernel_ulong_t)&pci_epf_data,
+- i915 and nouveau unconditionally wait for fences, even for same-fb
+  flips.
+- no idea what amdgpu and vmwgfx are doing, they're not using
+  plane_state->fence for implicit fences.
+- most arm-soc drivers do have this "optimization" in their code, and it
+  even managed to get into the new drm_gem_fb_prepare_fb helper (which I
+  reviewed, or well claimed to have ... oops). Afaict it goes back to the
+  original msm atomic code, and was then dutifully copypasted all over the
+  place.
+
+If folks are ok I'll do a patch series to align drivers with i915/nouveau.
+Well, any driver using reservation_object_get_excl_rcu +
+drm_atomic_set_fence_for_plane combo, since amdgpu and vmwgfx don't I have
+no idea what they're doing or whether they might have the same bug.
+
+>From looking at at least the various prepare_fb callbacks I don't see any
+other drivers doing funny stuff around implicit fences.
+-Daniel
+
+> > +		if (sync_fb) {
+> >  			struct drm_gem_object *obj = msm_framebuffer_bo(new_plane_state->fb, 0);
+> >  			struct msm_gem_object *msm_obj = to_msm_bo(obj);
+> >  			struct dma_fence *fence = reservation_object_get_excl_rcu(msm_obj->resv);
+> > diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
+> > index 0e0c87252ab0..a5d882a34a33 100644
+> > --- a/drivers/gpu/drm/msm/msm_fb.c
+> > +++ b/drivers/gpu/drm/msm/msm_fb.c
+> > @@ -62,6 +62,7 @@ static void msm_framebuffer_destroy(struct drm_framebuffer *fb)
+> >  static const struct drm_framebuffer_funcs msm_framebuffer_funcs = {
+> >  	.create_handle = msm_framebuffer_create_handle,
+> >  	.destroy = msm_framebuffer_destroy,
+> > +	.dirty = drm_atomic_helper_dirtyfb,
+> >  };
+> >  
+> >  #ifdef CONFIG_DEBUG_FS
+> > diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
+> > index 26aaba58d6ce..9b7a95c2643d 100644
+> > --- a/include/drm/drm_atomic_helper.h
+> > +++ b/include/drm/drm_atomic_helper.h
+> > @@ -183,6 +183,10 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
+> >  				       u16 *red, u16 *green, u16 *blue,
+> >  				       uint32_t size,
+> >  				       struct drm_modeset_acquire_ctx *ctx);
+> > +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
+> > +			      struct drm_file *file_priv, unsigned flags,
+> > +			      unsigned color, struct drm_clip_rect *clips,
+> > +			      unsigned num_clips);
+> >  void __drm_atomic_helper_private_obj_duplicate_state(struct drm_private_obj *obj,
+> >  						     struct drm_private_state *state);
+> >  
+> > diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> > index f7bf4a48b1c3..296fa22bda7a 100644
+> > --- a/include/drm/drm_plane.h
+> > +++ b/include/drm/drm_plane.h
+> > @@ -76,6 +76,15 @@ struct drm_plane_state {
+> >  	 */
+> >  	struct drm_framebuffer *fb;
+> >  
+> > +	/**
+> > +	 * @dirty:
+> > +	 *
+> > +	 * Flag that indicates the fb contents have changed even though the
+> > +	 * fb has not.  This is mostly a stop-gap solution until we have
+> > +	 * atomic dirty-rect(s) property.
+> > +	 */
+> > +	bool dirty;
+> > +
+> >  	/**
+> >  	 * @fence:
+> >  	 *
+> > -- 
+> > 2.14.3
+> > 
 > 
-> This will disable linkup_notifier for existing devices. Please add a new entry
-> to the table to make any modifications to driver data. (I have a configfs fix
-> for this to work. Will post that today).
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
-Are you refering to this patch? https://patchwork.kernel.org/patch/10319695/
-Let's see if I understood it right, this patch will expose the some configfs
-(something like /sys/kernel/config/pci_ep/functions/pci_epf_test/func1/...) that
-ables me to disable the linkup notifier for existing devices without the need to
-change the code like I did, right?
-
-> 
-> Thanks
-> Kishon
-> 
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
