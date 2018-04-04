@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751564AbeDDI3Y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:29:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60982 "EHLO
+        id S1751618AbeDDI3a (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:29:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36232 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751543AbeDDI3V (ORCPT
+        by vger.kernel.org with ESMTP id S1751483AbeDDI3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:29:21 -0400
+        Wed, 4 Apr 2018 04:29:25 -0400
 From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 To: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
         srikar@linux.vnet.ibm.com, rostedt@goodmis.org
@@ -20,20 +20,20 @@ Cc: acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
         naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
         yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH v2 6/9] trace_uprobe: Support SDT markers having reference count (semaphore)
-Date: Wed,  4 Apr 2018 14:01:07 +0530
+Subject: [PATCH v2 7/9] trace_uprobe/sdt: Fix multiple update of same reference counter
+Date: Wed,  4 Apr 2018 14:01:08 +0530
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
 References: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18040408-0020-0000-0000-0000040DDDD0
+x-cbid: 18040408-0044-0000-0000-000005434473
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040408-0021-0000-0000-000042A1EBB0
-Message-Id: <20180404083110.18647-7-ravi.bangoria@linux.vnet.ibm.com>
+x-cbparentid: 18040408-0045-0000-0000-0000288359EC
+Message-Id: <20180404083110.18647-8-ravi.bangoria@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_02:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1804040090
@@ -41,378 +41,299 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Userspace Statically Defined Tracepoints[1] are dtrace style markers
-inside userspace applications. These markers are added by developer at
-important places in the code. Each marker source expands to a single
-nop instruction in the compiled code but there may be additional
-overhead for computing the marker arguments which expands to couple of
-instructions. In case the overhead is more, execution of it can be
-ommited by runtime if() condition when no one is tracing on the marker:
+When virtual memory map for binary/library is being prepared, there is
+no direct one to one mapping between mmap() and virtual memory area. Ex,
+when loader loads the library, it first calls mmap(size = total_size),
+where total_size is addition of size of all elf sections that are going
+to be mapped. Then it splits individual vmas with new mmap()/mprotect()
+calls. Loader does this to ensure it gets continuous address range for
+a library. load_elf_binary() also uses similar tricks while preparing
+mappings of binary.
 
-    if (reference_counter > 0) {
-        Execute marker instructions;
-    }
+Ex for pyhton library,
 
-Default value of reference counter is 0. Tracer has to increment the
-reference counter before tracing on a marker and decrement it when
-done with the tracing.
+  # strace -o out python
+    mmap(NULL, 2738968, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fff92460000
+    mmap(0x7fff926a0000, 327680, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x230000) = 0x7fff926a0000
+    mprotect(0x7fff926a0000, 65536, PROT_READ) = 0
 
-Implement the reference counter logic in trace_uprobe, leaving core
-uprobe infrastructure as is, except one new callback from uprobe_mmap()
-to trace_uprobe.
+Here, the first mmap() maps the whole library into one region. Second
+mmap() and third mprotect() split out the whole region into smaller
+vmas and sets appropriate protection flags.
 
-trace_uprobe definition with reference counter will now be:
+Now, in this case, trace_uprobe_mmap_callback() update the reference
+counter twice -- by second mmap() call and by third mprotect() call --
+because both regions contain reference counter.
 
-  <path>:<offset>[(ref_ctr_offset)]
+But while de-registration, reference counter will get decremented only
+by once leaving reference counter > 0 even if no one is tracing on that
+marker.
 
-There are two different cases while enabling the marker,
- 1. Trace existing process. In this case, find all suitable processes
-    and increment the reference counter in them.
- 2. Enable trace before running target binary. In this case, all mmaps
-    will get notified to trace_uprobe and trace_uprobe will increment
-    the reference counter if corresponding uprobe is enabled.
+Example with python library before patch:
 
-At the time of disabling probes, decrement reference counter in all
-existing target processes.
+    # readelf -n /lib64/libpython2.7.so.1.0 | grep -A1 function__entry
+      Name: function__entry
+      ... Semaphore: 0x00000000002899d8
 
-[1] https://sourceware.org/systemtap/wiki/UserSpaceProbeImplementation
+  Probe on a marker:
+    # echo "p:sdt_python/function__entry /usr/lib64/libpython2.7.so.1.0:0x16a4d4(0x2799d8)" > uprobe_events
 
-Note: 'reference counter' is called as 'semaphore' in original Dtrace
-(or Systemtap, bcc and even in ELF) documentation and code. But the
-term 'semaphore' is misleading in this context. This is just a counter
-used to hold number of tracers tracing on a marker. This is not really
-used for any synchronization. So we are referring it as 'reference
-counter' in kernel / perf code.
+  Start tracing:
+    # perf record -e sdt_python:function__entry -a
+
+  Run python workload:
+    # python
+    # cat /proc/`pgrep python`/maps | grep libpython
+      7fffadb00000-7fffadd40000 r-xp 00000000 08:05 403934  /usr/lib64/libpython2.7.so.1.0
+      7fffadd40000-7fffadd50000 r--p 00230000 08:05 403934  /usr/lib64/libpython2.7.so.1.0
+      7fffadd50000-7fffadd90000 rw-p 00240000 08:05 403934  /usr/lib64/libpython2.7.so.1.0
+
+  Reference counter value has been incremented twice:
+    # dd if=/proc/`pgrep python`/mem bs=1 count=1 skip=$(( 0x7fffadd899d8 )) 2>/dev/null | xxd
+      0000000: 02                                       .
+
+  Kill perf:
+    #
+      ^C[ perf record: Woken up 1 times to write data ]
+      [ perf record: Captured and wrote 0.322 MB perf.data (1273 samples) ]
+
+  Reference conter is still 1 even when no one is tracing on it:
+    # dd if=/proc/`pgrep python`/mem bs=1 count=1 skip=$(( 0x7fffadd899d8 )) 2>/dev/null | xxd
+      0000000: 01                                       .
+
+Ensure increment and decrement happens in sync by keeping list of mms
+in trace_uprobe. Check presence of mm in the list before incrementing
+the reference counter. I.e. for each {trace_uprobe,mm} tuple, reference
+counter must be incremented only by one. Note that we don't check the
+presence of mm in the list at decrement time.
+
+We consider only two case while incrementing the reference counter:
+  1. Target binary is already running when we start tracing. In this
+     case, find all mm which maps region of target binary containing
+     reference counter. Loop over all mms and increment the counter
+     if mm is not already present in the list.
+  2. Tracer is already tracing before target binary starts execution.
+     In this case, all mmap(vma) gets notified to trace_uprobe.
+     Trace_uprobe will update reference counter if vma->vm_mm is not
+     already present in the list.
+
+  There is also a third case which we don't consider, a fork() case.
+  When process with markers forks itself, we don't explicitly increment
+  the reference counter in child process because it should be taken care
+  by dup_mmap(). We also don't add the child mm in the list. This is
+  fine because we don't check presence of mm in the list at decrement
+  time.
+
+After patch:
+
+  Start perf record and then run python...
+  Reference counter value has been incremented only once:
+    # dd if=/proc/`pgrep python`/mem bs=1 count=1 skip=$(( 0x7fff9cbf99d8 )) 2>/dev/null | xxd
+      0000000: 01                                       .
+
+  Kill perf:
+    #
+      ^C[ perf record: Woken up 1 times to write data ]
+      [ perf record: Captured and wrote 0.364 MB perf.data (1427 samples) ]
+
+  Reference conter is reset to 0:
+    # dd if=/proc/`pgrep python`/mem bs=1 count=1 skip=$(( 0x7fff9cbb99d8 )) 2>/dev/null | xxd
+      0000000: 00                                       .
 
 Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-[Fengguang reported/fixed build failure in RFC patch]
 ---
- include/linux/uprobes.h     |  10 +++
- kernel/events/uprobes.c     |  16 +++++
- kernel/trace/trace_uprobe.c | 162 +++++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 186 insertions(+), 2 deletions(-)
+ kernel/trace/trace_uprobe.c | 105 ++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 102 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 7bd2760..2db3ed1 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -122,6 +122,8 @@ struct uprobe_map_info {
- 	unsigned long vaddr;
- };
- 
-+extern void (*uprobe_mmap_callback)(struct vm_area_struct *vma);
-+
- extern int set_swbp(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
- extern int set_orig_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
- extern bool is_swbp_insn(uprobe_opcode_t *insn);
-@@ -136,6 +138,8 @@ struct uprobe_map_info {
- extern void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned long end);
- extern void uprobe_start_dup_mmap(void);
- extern void uprobe_end_dup_mmap(void);
-+extern void uprobe_down_write_dup_mmap(void);
-+extern void uprobe_up_write_dup_mmap(void);
- extern void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm);
- extern void uprobe_free_utask(struct task_struct *t);
- extern void uprobe_copy_process(struct task_struct *t, unsigned long flags);
-@@ -192,6 +196,12 @@ static inline void uprobe_start_dup_mmap(void)
- static inline void uprobe_end_dup_mmap(void)
- {
- }
-+static inline void uprobe_down_write_dup_mmap(void)
-+{
-+}
-+static inline void uprobe_up_write_dup_mmap(void)
-+{
-+}
- static inline void
- uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
- {
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 096d1e6..c691334 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1044,6 +1044,9 @@ static void build_probe_list(struct inode *inode,
- 	spin_unlock(&uprobes_treelock);
- }
- 
-+/* Rightnow the only user of this is trace_uprobe. */
-+void (*uprobe_mmap_callback)(struct vm_area_struct *vma);
-+
- /*
-  * Called from mmap_region/vma_adjust with mm->mmap_sem acquired.
-  *
-@@ -1056,6 +1059,9 @@ int uprobe_mmap(struct vm_area_struct *vma)
- 	struct uprobe *uprobe, *u;
- 	struct inode *inode;
- 
-+	if (uprobe_mmap_callback)
-+		uprobe_mmap_callback(vma);
-+
- 	if (no_uprobe_events() || !valid_vma(vma, true))
- 		return 0;
- 
-@@ -1247,6 +1253,16 @@ void uprobe_end_dup_mmap(void)
- 	percpu_up_read(&dup_mmap_sem);
- }
- 
-+void uprobe_down_write_dup_mmap(void)
-+{
-+	percpu_down_write(&dup_mmap_sem);
-+}
-+
-+void uprobe_up_write_dup_mmap(void)
-+{
-+	percpu_up_write(&dup_mmap_sem);
-+}
-+
- void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
- {
- 	if (test_bit(MMF_HAS_UPROBES, &oldmm->flags)) {
 diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 2014f43..5582c2d 100644
+index 5582c2d..c045174 100644
 --- a/kernel/trace/trace_uprobe.c
 +++ b/kernel/trace/trace_uprobe.c
-@@ -25,6 +25,8 @@
- #include <linux/namei.h>
- #include <linux/string.h>
+@@ -27,6 +27,7 @@
  #include <linux/rculist.h>
-+#include <linux/sched/mm.h>
-+#include <linux/highmem.h>
+ #include <linux/sched/mm.h>
+ #include <linux/highmem.h>
++#include <linux/mmu_notifier.h>
  
  #include "trace_probe.h"
  
-@@ -58,6 +60,7 @@ struct trace_uprobe {
- 	struct inode			*inode;
+@@ -50,6 +51,11 @@ struct trace_uprobe_filter {
+ 	struct list_head	perf_events;
+ };
+ 
++struct sdt_mm_list {
++	struct list_head list;
++	struct mm_struct *mm;
++};
++
+ /*
+  * uprobe event core functions
+  */
+@@ -61,6 +67,8 @@ struct trace_uprobe {
  	char				*filename;
  	unsigned long			offset;
-+	unsigned long			ref_ctr_offset;
+ 	unsigned long			ref_ctr_offset;
++	struct sdt_mm_list		sml;
++	struct mutex			sml_lock;
  	unsigned long			nhit;
  	struct trace_probe		tp;
  };
-@@ -362,10 +365,10 @@ static int create_trace_uprobe(int argc, char **argv)
- {
- 	struct trace_uprobe *tu;
- 	struct inode *inode;
--	char *arg, *event, *group, *filename;
-+	char *arg, *event, *group, *filename, *rctr, *rctr_end;
- 	char buf[MAX_EVENT_NAME_LEN];
- 	struct path path;
--	unsigned long offset;
-+	unsigned long offset, ref_ctr_offset;
- 	bool is_delete, is_return;
- 	int i, ret;
+@@ -274,6 +282,8 @@ static inline bool is_ret_probe(struct trace_uprobe *tu)
+ 	if (is_ret)
+ 		tu->consumer.ret_handler = uretprobe_dispatcher;
+ 	init_trace_uprobe_filter(&tu->filter);
++	mutex_init(&tu->sml_lock);
++	INIT_LIST_HEAD(&(tu->sml.list));
+ 	return tu;
  
-@@ -375,6 +378,7 @@ static int create_trace_uprobe(int argc, char **argv)
- 	is_return = false;
- 	event = NULL;
- 	group = NULL;
-+	ref_ctr_offset = 0;
- 
- 	/* argc must be >= 1 */
- 	if (argv[0][0] == '-')
-@@ -454,6 +458,26 @@ static int create_trace_uprobe(int argc, char **argv)
- 		goto fail_address_parse;
- 	}
- 
-+	/* Parse reference counter offset if specified. */
-+	rctr = strchr(arg, '(');
-+	if (rctr) {
-+		rctr_end = strchr(rctr, ')');
-+		if (rctr > rctr_end || *(rctr_end + 1) != 0) {
-+			ret = -EINVAL;
-+			pr_info("Invalid reference counter offset.\n");
-+			goto fail_address_parse;
-+		}
-+
-+		*rctr++ = '\0';
-+		*rctr_end = '\0';
-+		ret = kstrtoul(rctr, 0, &ref_ctr_offset);
-+		if (ret) {
-+			pr_info("Invalid reference counter offset.\n");
-+			goto fail_address_parse;
-+		}
-+	}
-+
-+	/* Parse uprobe offset. */
- 	ret = kstrtoul(arg, 0, &offset);
- 	if (ret)
- 		goto fail_address_parse;
-@@ -488,6 +512,7 @@ static int create_trace_uprobe(int argc, char **argv)
- 		goto fail_address_parse;
- 	}
- 	tu->offset = offset;
-+	tu->ref_ctr_offset = ref_ctr_offset;
- 	tu->inode = inode;
- 	tu->filename = kstrdup(filename, GFP_KERNEL);
- 
-@@ -620,6 +645,8 @@ static int probes_seq_show(struct seq_file *m, void *v)
- 			break;
- 		}
- 	}
-+	if (tu->ref_ctr_offset)
-+		seq_printf(m, "(0x%lx)", tu->ref_ctr_offset);
- 
- 	for (i = 0; i < tu->tp.nr_args; i++)
- 		seq_printf(m, " %s=%s", tu->tp.args[i].name, tu->tp.args[i].comm);
-@@ -894,6 +921,129 @@ static void uretprobe_trace_func(struct trace_uprobe *tu, unsigned long func,
+ error:
+@@ -921,6 +931,56 @@ static void uretprobe_trace_func(struct trace_uprobe *tu, unsigned long func,
  	return trace_handle_return(s);
  }
  
-+static bool sdt_valid_vma(struct trace_uprobe *tu,
-+			  struct vm_area_struct *vma,
-+			  unsigned long vaddr)
++static bool sdt_check_mm_list(struct trace_uprobe *tu, struct mm_struct *mm)
 +{
-+	return tu->ref_ctr_offset &&
-+		vma->vm_file &&
-+		file_inode(vma->vm_file) == tu->inode &&
-+		vma->vm_flags & VM_WRITE &&
-+		vma->vm_start <= vaddr &&
-+		vma->vm_end > vaddr;
++	struct sdt_mm_list *sml;
++
++	list_for_each_entry(sml, &(tu->sml.list), list)
++		if (sml->mm == mm)
++			return true;
++
++	return false;
 +}
 +
-+static struct vm_area_struct *sdt_find_vma(struct trace_uprobe *tu,
-+					   struct mm_struct *mm,
-+					   unsigned long vaddr)
-+{
-+	struct vm_area_struct *vma = find_vma(mm, vaddr);
++static void sdt_mm_release(struct mmu_notifier *mn, struct mm_struct *mm);
 +
-+	return (vma && sdt_valid_vma(tu, vma, vaddr)) ? vma : NULL;
++static const struct mmu_notifier_ops sdt_mmu_notifier_ops = {
++	.release = sdt_mm_release,
++};
++
++static void sdt_add_mm_list(struct trace_uprobe *tu, struct mm_struct *mm)
++{
++	struct mmu_notifier *mn;
++	struct sdt_mm_list *sml = kzalloc(sizeof(*sml), GFP_KERNEL);
++
++	if (!sml)
++		return;
++	sml->mm = mm;
++	list_add(&(sml->list), &(tu->sml.list));
++
++	/* Register mmu_notifier for this mm. */
++	mn = kzalloc(sizeof(*mn), GFP_KERNEL);
++	if (!mn)
++		return;
++
++	mn->ops = &sdt_mmu_notifier_ops;
++	__mmu_notifier_register(mn, mm);
 +}
 +
-+/*
-+ * Reference counter gate the invocation of probe. If present,
-+ * by default reference counter is 0. One needs to increment
-+ * it before tracing the probe and decrement it when done.
-+ */
-+static int
-+sdt_update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
++static void sdt_del_mm_list(struct trace_uprobe *tu, struct mm_struct *mm)
 +{
-+	void *kaddr;
-+	struct page *page;
-+	struct vm_area_struct *vma;
-+	int ret = 0;
-+	unsigned short *ptr;
++	struct list_head *pos, *q;
++	struct sdt_mm_list *sml;
 +
-+	if (vaddr == 0)
-+		return -EINVAL;
-+
-+	ret = get_user_pages_remote(NULL, mm, vaddr, 1,
-+		FOLL_FORCE | FOLL_WRITE, &page, &vma, NULL);
-+	if (ret <= 0)
-+		return ret;
-+
-+	kaddr = kmap_atomic(page);
-+	ptr = kaddr + (vaddr & ~PAGE_MASK);
-+	*ptr += d;
-+	kunmap_atomic(kaddr);
-+
-+	put_page(page);
-+	return 0;
-+}
-+
-+static void sdt_increment_ref_ctr(struct trace_uprobe *tu)
-+{
-+	struct uprobe_map_info *info;
-+
-+	uprobe_down_write_dup_mmap();
-+	info = uprobe_build_map_info(tu->inode->i_mapping,
-+				tu->ref_ctr_offset, false);
-+	if (IS_ERR(info))
-+		goto out;
-+
-+	while (info) {
-+		down_write(&info->mm->mmap_sem);
-+
-+		if (sdt_find_vma(tu, info->mm, info->vaddr))
-+			sdt_update_ref_ctr(info->mm, info->vaddr, 1);
-+
-+		up_write(&info->mm->mmap_sem);
-+		info = uprobe_free_map_info(info);
++	list_for_each_safe(pos, q, &(tu->sml.list)) {
++		sml = list_entry(pos, struct sdt_mm_list, list);
++		if (sml->mm == mm) {
++			list_del(pos);
++			kfree(sml);
++		}
 +	}
-+
-+out:
-+	uprobe_up_write_dup_mmap();
 +}
 +
-+/* Called with down_write(&vma->vm_mm->mmap_sem) */
-+void trace_uprobe_mmap(struct vm_area_struct *vma)
+ static bool sdt_valid_vma(struct trace_uprobe *tu,
+ 			  struct vm_area_struct *vma,
+ 			  unsigned long vaddr)
+@@ -983,15 +1043,22 @@ static void sdt_increment_ref_ctr(struct trace_uprobe *tu)
+ 	if (IS_ERR(info))
+ 		goto out;
+ 
++	mutex_lock(&tu->sml_lock);
+ 	while (info) {
++		if (sdt_check_mm_list(tu, info->mm))
++			goto cont;
++
+ 		down_write(&info->mm->mmap_sem);
+ 
+-		if (sdt_find_vma(tu, info->mm, info->vaddr))
+-			sdt_update_ref_ctr(info->mm, info->vaddr, 1);
++		if (sdt_find_vma(tu, info->mm, info->vaddr) &&
++		    !sdt_update_ref_ctr(info->mm, info->vaddr, 1))
++			sdt_add_mm_list(tu, info->mm);
+ 
+ 		up_write(&info->mm->mmap_sem);
++cont:
+ 		info = uprobe_free_map_info(info);
+ 	}
++	mutex_unlock(&tu->sml_lock);
+ 
+ out:
+ 	uprobe_up_write_dup_mmap();
+@@ -1015,11 +1082,27 @@ void trace_uprobe_mmap(struct vm_area_struct *vma)
+ 		if (!sdt_valid_vma(tu, vma, vaddr))
+ 			continue;
+ 
+-		sdt_update_ref_ctr(vma->vm_mm, vaddr, 1);
++		mutex_lock(&tu->sml_lock);
++
++		if (!sdt_check_mm_list(tu, vma->vm_mm) &&
++		    !sdt_update_ref_ctr(vma->vm_mm, vaddr, 1))
++			sdt_add_mm_list(tu, vma->vm_mm);
++
++		mutex_unlock(&tu->sml_lock);
+ 	}
+ 	mutex_unlock(&uprobe_lock);
+ }
+ 
++/*
++ * We don't check presence of mm in tu->sml here. We just decrement
++ * the reference counter if we find vma holding the reference counter.
++ *
++ * For tiny binaries/libraries, different mmap regions point to the
++ * same file portion. In such cases, uprobe_build_map_info() returns
++ * same mm multiple times with different virtual address of one
++ * reference counter. But we don't decrement the reference counter
++ * multiple time because we check for VM_WRITE in sdt_valid_vma().
++ */
+ static void sdt_decrement_ref_ctr(struct trace_uprobe *tu)
+ {
+ 	struct uprobe_map_info *info;
+@@ -1030,6 +1113,7 @@ static void sdt_decrement_ref_ctr(struct trace_uprobe *tu)
+ 	if (IS_ERR(info))
+ 		goto out;
+ 
++	mutex_lock(&tu->sml_lock);
+ 	while (info) {
+ 		down_write(&info->mm->mmap_sem);
+ 
+@@ -1037,13 +1121,28 @@ static void sdt_decrement_ref_ctr(struct trace_uprobe *tu)
+ 			sdt_update_ref_ctr(info->mm, info->vaddr, -1);
+ 
+ 		up_write(&info->mm->mmap_sem);
++		sdt_del_mm_list(tu, info->mm);
+ 		info = uprobe_free_map_info(info);
+ 	}
++	mutex_unlock(&tu->sml_lock);
+ 
+ out:
+ 	uprobe_up_write_dup_mmap();
+ }
+ 
++static void sdt_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
 +{
 +	struct trace_uprobe *tu;
-+	unsigned long vaddr;
-+
-+	if (!(vma->vm_flags & VM_WRITE))
-+		return;
 +
 +	mutex_lock(&uprobe_lock);
 +	list_for_each_entry(tu, &uprobe_list, list) {
-+		if (!trace_probe_is_enabled(&tu->tp))
-+			continue;
-+
-+		vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
-+		if (!sdt_valid_vma(tu, vma, vaddr))
-+			continue;
-+
-+		sdt_update_ref_ctr(vma->vm_mm, vaddr, 1);
++		mutex_lock(&tu->sml_lock);
++		sdt_del_mm_list(tu, mm);
++		mutex_unlock(&tu->sml_lock);
 +	}
 +	mutex_unlock(&uprobe_lock);
-+}
-+
-+static void sdt_decrement_ref_ctr(struct trace_uprobe *tu)
-+{
-+	struct uprobe_map_info *info;
-+
-+	uprobe_down_write_dup_mmap();
-+	info = uprobe_build_map_info(tu->inode->i_mapping,
-+				tu->ref_ctr_offset, false);
-+	if (IS_ERR(info))
-+		goto out;
-+
-+	while (info) {
-+		down_write(&info->mm->mmap_sem);
-+
-+		if (sdt_find_vma(tu, info->mm, info->vaddr))
-+			sdt_update_ref_ctr(info->mm, info->vaddr, -1);
-+
-+		up_write(&info->mm->mmap_sem);
-+		info = uprobe_free_map_info(info);
-+	}
-+
-+out:
-+	uprobe_up_write_dup_mmap();
 +}
 +
  typedef bool (*filter_func_t)(struct uprobe_consumer *self,
  				enum uprobe_filter_ctx ctx,
  				struct mm_struct *mm);
-@@ -939,6 +1089,9 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
- 	if (ret)
- 		goto err_buffer;
- 
-+	if (tu->ref_ctr_offset)
-+		sdt_increment_ref_ctr(tu);
-+
- 	return 0;
- 
-  err_buffer:
-@@ -979,6 +1132,9 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
- 
- 	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
- 
-+	if (tu->ref_ctr_offset)
-+		sdt_decrement_ref_ctr(tu);
-+
- 	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
- 	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
- 
-@@ -1423,6 +1579,8 @@ static __init int init_uprobe_trace(void)
- 	/* Profile interface */
- 	trace_create_file("uprobe_profile", 0444, d_tracer,
- 				    NULL, &uprobe_profile_ops);
-+
-+	uprobe_mmap_callback = trace_uprobe_mmap;
- 	return 0;
- }
- 
 -- 
 1.8.3.1
