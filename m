@@ -1,177 +1,265 @@
-Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AIpwx4+TVOMGtSPa5xkKB4A/zhUt2htnKYpgtw/ckF6GBRgs0hqWW0aiHsHbz3lu59RDfQTFNpjO
-ARC-Seal: i=1; a=rsa-sha256; t=1523208406; cv=none;
+Return-Path: <kernel-hardening-return-12859-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/H4l7l2WOJG6DtRCwCwB6pP76ULr0xp57kVAE4o2pQVPuUHJllNPOwk05kk15OqiSv5VkZ
+ARC-Seal: i=1; a=rsa-sha256; t=1522883529; cv=none;
         d=google.com; s=arc-20160816;
-        b=r+oSTfc+NF5O/JDc6bQpPwI24dyentBEiIHIdVkTMXSCMVTXqbQcQTllvR7nYinRTF
-         qu30kFX7suuDlfUW8JaqvVNUsKBqw/6riVOgtEXW/Eua0C+10BdewrnB1i7SdTxiHPWK
-         N8rkwVPBFt3PMZNJr78O9k0h08hHoTcFFgKne+VnZfqL5Ik7GOVlmeyIjfHExlK7WcYO
-         +0e5ymwK9RNiWQzaysmwxivqxuUEsBKlhcauE21y42jYCux5OFzlt6puC9EoW+G3sq7g
-         BajKK6l25rfPMYP9AMIDI/w2QeO5F6PN3IvYVIuVwc5RBDRuYvKGsBALDmzvqp//njaA
-         yITg==
+        b=PdAfDlHsq4J7FTC3eyJQA2a5hebFKiUD8GaGsz6+gAB0G0o7RykbT08dzdRlkxD13A
+         S9A8TMIZofj/LOdaYz1Iz7aLtBgy7GPXw95aIafSFCUjg3gMQfniw0YtMqZ8CwLerjC3
+         k6XV+jS8UGDMs07j+3qOuCvZ8FNBzMvCpzCjDwF+kcp/TeLIw40Ib5oySDBbGHKO4oaC
+         iin85HvYl8c4XYA9t0EKM0i9NdxDgVRQgeX8TEeF30FdzH0PlRy4Z8SCdjotY0yTp6Mn
+         4pklpW91jYn4baKKnp9reOm1NOPl0bXMggmKgCjI0p/nVUEx6u1EYZqdHZjt2tZA9djd
+         yPVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=LxxgdEq15Vaq4ncMLqShukuiVLnSB35xYN2Nv0kuSaw=;
-        b=gXzuejVgEAUuxlRHwBtQezmnw5indxfmvbWEBj+7kZHdldepd84WaI63mVzFpOtJXU
-         wmMP2rXC5A+wEnr3AAQt7SK22Z9Ha1NVqnVkwbMiIp/fURJDCNLmKUNIIbMyr2YcGMTt
-         AM1VRGbgQifXdWKqFB6M+b9nM7LT52sJnLaLhW5Ex90aEkOZ7af+FpqGCUW6U78P2OH6
-         2CFgrqglNF4HoLg2u7aud4KRQT9nSWvuALoGnU/6VKcZzCqYLY3EwM+YEFVZsdZ66wyD
-         n5s51Zi1oCtcMPWTb3ECY1PqSIDgbxDtYRqNjPaH2cmhDib+sMwsnNF580fvRAkaacvM
-         LPLw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=c+jL6eAHHPxcRj5lIZMqA2WMozl4lAUA9YHQTnDvtYg=;
+        b=mOp8viCfNfyf9fyCbVQKcRDE4eQFD6IVYvzqP7lXreYA9nL4crljCs4GSdNqqIfmrq
+         uYbQ20Aqg0zIFC7r5haFrisLp+Pa2A4Pp4H/OoNptfgSn5PXBQzH0NA8HdkMeUF8nd3X
+         BoF2uBpgYQg8+vaZuEtcyG8nAnwf/ZlEuNxHY13nKRRTU0OcJVmhNDBwz9b6qL7cgmzo
+         rlP9kitvVOb2gA0zt8/FdRuaA1rwQUqe1l3eM/Rcz8dpC6r7msLSv60rPyPSWbP5ChiY
+         nQjatkyDk5e3rRcc+V4LbAE0nRgYfk/qQCVrdqNTC66gag9FNg00r3HkiOO/9vne0vY5
+         MlAA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=KBBVJAsb;
+       dkim=pass header.i=@chromium.org header.s=google header.b=EMdE+oPJ;
+       spf=pass (google.com: domain of kernel-hardening-return-12859-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12859-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-From: Hans de Goede <hdegoede@redhat.com>
-To: Darren Hart <dvhart@infradead.org>,
-	Andy Shevchenko <andy@infradead.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H . Peter Anvin" <hpa@zytor.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Peter Jones <pjones@redhat.com>,
-	Dave Olsthoorn <dave@bewaar.me>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Matt Fleming <matt@codeblueprint.co.uk>,
-	David Howells <dhowells@redhat.com>,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	dmitry.torokhov@gmail.com,
-	mfuzzey@parkeon.com,
-	keescook@chromium.org,
-	Kalle Valo <kvalo@codeaurora.org>,
-	Arend Van Spriel <arend.vanspriel@broadcom.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	nbroeking@me.com,
-	bjorn.andersson@linaro.org,
-	Torsten Duwe <duwe@suse.de>,
-	x86@kernel.org,
-	linux-efi@vger.kernel.org
-Subject: [PATCH v2 1/5] efi: Export boot-services code and data as debugfs-blobs
-Date: Sun,  8 Apr 2018 19:26:32 +0200
-Message-Id: <20180408172636.13926-2-hdegoede@redhat.com>
-In-Reply-To: <20180408172636.13926-1-hdegoede@redhat.com>
-References: <20180408172636.13926-1-hdegoede@redhat.com>
+       dkim=pass header.i=@google.com header.s=20161025 header.b=KBBVJAsb;
+       dkim=pass header.i=@chromium.org header.s=google header.b=EMdE+oPJ;
+       spf=pass (google.com: domain of kernel-hardening-return-12859-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12859-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+MIME-Version: 1.0
+Sender: keescook@google.com
+In-Reply-To: <CAGXu5jJbPGifqTkKkqP3OJTCY=YO9+d_fRdvY-Fj_41HH4HFCw@mail.gmail.com>
+References: <1519899591-29761-1-git-send-email-kpark3469@gmail.com>
+ <1519899591-29761-2-git-send-email-kpark3469@gmail.com> <1519899591-29761-3-git-send-email-kpark3469@gmail.com>
+ <1519899591-29761-4-git-send-email-kpark3469@gmail.com> <1519899591-29761-5-git-send-email-kpark3469@gmail.com>
+ <CAGXu5jJbPGifqTkKkqP3OJTCY=YO9+d_fRdvY-Fj_41HH4HFCw@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 4 Apr 2018 16:11:50 -0700
+X-Google-Sender-Auth: nT1md0t8RwsrWXTEMzN7YReOmUM
+Message-ID: <CAGXu5jLBc6Ebqzzcfv7Duy5y6_6apfOgZohmyHdSTUAR5xWmsA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] x86: usercopy: reimplement arch_within_stack_frames
+ with unwinder
+To: Keun-O Park <kpark3469@gmail.com>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>, James Morse <james.morse@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, keun-o.park@darkmatter.ae,
+	Sodagudi Prasad <psodagud@codeaurora.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597199777602363676?=
-X-GMAIL-MSGID: =?utf-8?q?1597199777602363676?=
+X-GMAIL-THRID: =?utf-8?q?1593731067679840173?=
+X-GMAIL-MSGID: =?utf-8?q?1596859120358793819?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Sometimes it is useful to be able to dump the efi boot-services code and
-data. This commit adds these as debugfs-blobs to /sys/kernel/debug/efi,
-but only if efi=debug is passed on the kernel-commandline as this requires
-not freeing those memory-regions, which costs 20+ MB of RAM.
+[resending with the CCs I forgot...]
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v2:
--Do not call pr_err on debugfs call failures
----
- arch/x86/platform/efi/quirks.c |  4 +++
- drivers/firmware/efi/efi.c     | 53 ++++++++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+On Thu, Mar 1, 2018 at 2:19 AM,  <kpark3469@gmail.com> wrote:
+> From: Sahara <keun-o.park@darkmatter.ae>
+>
+> The old arch_within_stack_frames which used the frame pointer is
+> now reimplemented to use frame pointer unwinder apis. So the main
+> functionality is same as before.
+>
+> Signed-off-by: Sahara <keun-o.park@darkmatter.ae>
 
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 5b513ccffde4..0f968c7bcfec 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -374,6 +374,10 @@ void __init efi_free_boot_services(void)
- 	int num_entries = 0;
- 	void *new, *new_md;
- 
-+	/* Keep all regions for /sys/kernel/debug/efi */
-+	if (efi_enabled(EFI_DBG))
-+		return;
-+
- 	for_each_efi_memory_desc(md) {
- 		unsigned long long start = md->phys_addr;
- 		unsigned long long size = md->num_pages << EFI_PAGE_SHIFT;
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index cd42f66a7c85..10c896e8b82b 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -18,6 +18,7 @@
- #include <linux/kobject.h>
- #include <linux/module.h>
- #include <linux/init.h>
-+#include <linux/debugfs.h>
- #include <linux/device.h>
- #include <linux/efi.h>
- #include <linux/of.h>
-@@ -316,6 +317,55 @@ static __init int efivar_ssdt_load(void)
- static inline int efivar_ssdt_load(void) { return 0; }
- #endif
- 
-+#ifdef CONFIG_DEBUG_FS
-+
-+#define EFI_DEBUGFS_MAX_BLOBS 32
-+
-+static struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
-+
-+static void __init efi_debugfs_init(void)
+This will result in slightly more expensive stack checking for
+hardened usercopy, but I think that'd be okay if this could also be
+made to be unwinder-agnostic. Then it would work for ORC too, and
+wouldn't have to depend on just FRAME_POINTER. Without that, I'm not
+sure what the benefit is in changing this?
+
+Further notes below...
+
+> ---
+>  arch/x86/include/asm/unwind.h  |  5 +++
+>  arch/x86/kernel/stacktrace.c   | 77 +++++++++++++++++++++++++++++-------------
+>  arch/x86/kernel/unwind_frame.c |  4 +--
+>  3 files changed, 60 insertions(+), 26 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/unwind.h b/arch/x86/include/asm/unwind.h
+> index 1f86e1b..6f04906f 100644
+> --- a/arch/x86/include/asm/unwind.h
+> +++ b/arch/x86/include/asm/unwind.h
+> @@ -87,6 +87,11 @@ void unwind_init(void);
+>  void unwind_module_init(struct module *mod, void *orc_ip, size_t orc_ip_size,
+>                         void *orc, size_t orc_size);
+>  #else
+> +#ifdef CONFIG_UNWINDER_FRAME_POINTER
+> +#define FRAME_HEADER_SIZE (sizeof(long) * 2)
+> +size_t regs_size(struct pt_regs *regs);
+> +#endif
+> +
+>  static inline void unwind_init(void) {}
+>  static inline
+>  void unwind_module_init(struct module *mod, void *orc_ip, size_t orc_ip_size,
+> diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
+> index f433a33..c26eb55 100644
+> --- a/arch/x86/kernel/stacktrace.c
+> +++ b/arch/x86/kernel/stacktrace.c
+> @@ -12,6 +12,37 @@
+>  #include <asm/unwind.h>
+>
+>
+> +static inline void *get_cur_frame(struct unwind_state *state)
+> +{
+> +       void *frame = NULL;
+> +
+> +#if defined(CONFIG_UNWINDER_ORC)
+> +#elif defined(CONFIG_UNWINDER_FRAME_POINTER)
+> +       if (state->regs)
+> +               frame = (void *)state->regs;
+> +       else
+> +               frame = (void *)state->bp;
+> +#else
+> +#endif
+> +       return frame;
+> +}
+
+What's going on here with the #if statement? Shouldn't this just be:
+
++static inline void *get_cur_frame(struct unwind_state *state)
 +{
-+	struct dentry *efi_debugfs;
-+	efi_memory_desc_t *md;
-+	char name[32];
-+	int type_count[EFI_BOOT_SERVICES_DATA + 1] = {};
-+	int i = 0;
++       void *frame = NULL;
 +
-+	efi_debugfs = debugfs_create_dir("efi", NULL);
-+	if (IS_ERR_OR_NULL(efi_debugfs))
-+		return;
-+
-+	for_each_efi_memory_desc(md) {
-+		switch (md->type) {
-+		case EFI_BOOT_SERVICES_CODE:
-+			snprintf(name, sizeof(name), "boot_services_code%d",
-+				 type_count[md->type]++);
-+			break;
-+		case EFI_BOOT_SERVICES_DATA:
-+			snprintf(name, sizeof(name), "boot_services_data%d",
-+				 type_count[md->type]++);
-+			break;
-+		default:
-+			continue;
-+		}
-+
-+		debugfs_blob[i].size = md->num_pages << EFI_PAGE_SHIFT;
-+		debugfs_blob[i].data = memremap(md->phys_addr,
-+						debugfs_blob[i].size,
-+						MEMREMAP_WB);
-+		if (!debugfs_blob[i].data)
-+			continue;
-+
-+		debugfs_create_blob(name, 0400, efi_debugfs, &debugfs_blob[i]);
-+		i++;
-+		if (i == EFI_DEBUGFS_MAX_BLOBS)
-+			break;
-+	}
-+}
-+#else
-+static inline void efi_debugfs_init(void) {}
++#ifdef CONFIG_UNWINDER_FRAME_POINTER
++       if (state->regs)
++               frame = (void *)state->regs;
++       else
++               frame = (void *)state->bp;
 +#endif
-+
- /*
-  * We register the efi subsystem with the firmware subsystem and the
-  * efivars subsystem with the efi subsystem, if the system was booted with
-@@ -360,6 +410,9 @@ static int __init efisubsys_init(void)
- 		goto err_remove_group;
- 	}
- 
-+	if (efi_enabled(EFI_DBG))
-+		efi_debugfs_init();
-+
- 	return 0;
- 
- err_remove_group:
++       return frame;
++}
+
+?
+
+> +
+> +static inline void *get_frame_end(struct unwind_state *state)
+> +{
+> +       void *frame_end = NULL;
+> +
+> +#if defined(CONFIG_UNWINDER_ORC)
+> +#elif defined(CONFIG_UNWINDER_FRAME_POINTER)
+> +       if (state->regs) {
+> +               frame_end = (void *)state->regs + regs_size(state->regs);
+> +       } else {
+> +               frame_end = (void *)state->bp + FRAME_HEADER_SIZE;
+> +       }
+> +#else
+> +#endif
+> +       return frame_end;
+> +}
+
+Same thing above?
+
+> +
+>  /*
+>   * Walks up the stack frames to make sure that the specified object is
+>   * entirely contained by a single stack frame.
+> @@ -25,31 +56,31 @@ int arch_within_stack_frames(const void * const stack,
+>                              const void * const stackend,
+>                              const void *obj, unsigned long len)
+>  {
+> -#if defined(CONFIG_FRAME_POINTER)
+> -       const void *frame = NULL;
+> -       const void *oldframe;
+> -
+> -       oldframe = __builtin_frame_address(2);
+> -       if (oldframe)
+> -               frame = __builtin_frame_address(3);
+> +#if defined(CONFIG_UNWINDER_FRAME_POINTER)
+> +       struct unwind_state state;
+> +       void *prev_frame_end = NULL;
+>         /*
+> -        * low ----------------------------------------------> high
+> -        * [saved bp][saved ip][args][local vars][saved bp][saved ip]
+> -        *                     ^----------------^
+> -        *               allow copies only within here
+
+I think it's worth keeping this diagram: it explains what region is
+being checked...
+
+> +        * Skip 3 non-inlined frames: arch_within_stack_frames(),
+> +        * check_stack_object() and __check_object_size().
+> +        *
+>          */
+> -       while (stack <= frame && frame < stackend) {
+> -               /*
+> -                * If obj + len extends past the last frame, this
+> -                * check won't pass and the next frame will be 0,
+> -                * causing us to bail out and correctly report
+> -                * the copy as invalid.
+> -                */
+
+Also seems like we should keep the comment for describing what's happening...
+
+> -               if (obj + len <= frame)
+> -                       return obj >= oldframe + 2 * sizeof(void *) ?
+> -                               GOOD_FRAME : BAD_STACK;
+> -               oldframe = frame;
+> -               frame = *(const void * const *)frame;
+> +       unsigned int discard_frames = 3;
+> +
+> +       for (unwind_start(&state, current, NULL, NULL); !unwind_done(&state);
+> +            unwind_next_frame(&state)) {
+> +               if (discard_frames) {
+> +                       discard_frames--;
+> +               } else {
+> +                       void *frame = get_cur_frame(&state);
+> +
+> +                       if (!frame || !prev_frame_end)
+> +                               return NOT_STACK;
+> +                       if (obj + len <= frame)
+> +                               return obj >= prev_frame_end ?
+> +                                               GOOD_FRAME : BAD_STACK;
+> +               }
+> +               /* save current frame end before move to next frame */
+> +               prev_frame_end = get_frame_end(&state);
+>         }
+>         return BAD_STACK;
+>  #else
+> diff --git a/arch/x86/kernel/unwind_frame.c b/arch/x86/kernel/unwind_frame.c
+> index 3dc26f9..c8bfa5c 100644
+> --- a/arch/x86/kernel/unwind_frame.c
+> +++ b/arch/x86/kernel/unwind_frame.c
+> @@ -8,8 +8,6 @@
+>  #include <asm/stacktrace.h>
+>  #include <asm/unwind.h>
+>
+> -#define FRAME_HEADER_SIZE (sizeof(long) * 2)
+> -
+>  unsigned long unwind_get_return_address(struct unwind_state *state)
+>  {
+>         if (unwind_done(state))
+> @@ -69,7 +67,7 @@ static void unwind_dump(struct unwind_state *state)
+>         }
+>  }
+>
+> -static size_t regs_size(struct pt_regs *regs)
+> +size_t regs_size(struct pt_regs *regs)
+>  {
+>         /* x86_32 regs from kernel mode are two words shorter: */
+>         if (IS_ENABLED(CONFIG_X86_32) && !user_mode(regs))
+> --
+> 2.7.4
+>
+
+-Kees
+
+--
+Kees Cook
+Pixel Security
+
+
 -- 
-2.17.0
+Kees Cook
+Pixel Security
