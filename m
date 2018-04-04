@@ -1,101 +1,141 @@
-Return-Path: <hdegoede@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522872524; cv=none;
+Return-Path: <lorenzo.pieralisi@arm.com>
+X-Google-Smtp-Source: AIpwx480iBGmbEZNXuF6wbyUQd3WY7JMwNAVmESyu6gMkgDZwe/EyQFQ8dvIasvtyg1t1ho5DvPU
+ARC-Seal: i=1; a=rsa-sha256; t=1522857706; cv=none;
         d=google.com; s=arc-20160816;
-        b=OmvpxU0LZZJEAaj6URlmWVHAmdAcIPl/mhnN0iuDwVOYVCLxH3hBC+OmQMtlK5CUaj
-         Rz7LwcZH1QBhHqVbPeyisSx7BhrKgkLXVgcD2L6ZTpOttHzLNmXxCcUJNWbewrSPiOP7
-         Bi54qxiSyS/agxvuzG2eWfW9v4HQedUEXOriYjZHV7ILrm1EC7UIulTSGnRvQ3Y41a99
-         N7fGNK3CWlJHaKzGJ46y7eta23NM4jAtPGLwwYSvX2ZBM/eDV1Bm3Aff8xMBguAAXeDR
-         7nBGxfxdm2N+RiFdeOMhbMOR37tnf2fCkL/MhLhYjnC53lt7Kj3uUqWD/gBLXt5q4Ddq
-         RlFg==
+        b=l16cHRE7oq/722qh0UbA73QJmEkAve7ICHYZVw5TFbTbBLqVbZCrH3b19z2zWboZ+g
+         OSnOGTor07udsQPWxrbwVc5BfPQHwRnOBtC2fCx0EFyGggkwy0nWqPEpdSGo5egyzz6T
+         AfCIa+w6bmL+voDNWT5nTQQceZoWZ+TQP9zpaXXEJv2d5VZq+ICOfwPe5lts3VHn0zCG
+         tRzpE4q4ZnOwghG+dr59WxYHwHntxE2Ejs8Iaruq/rVS5b9pOpsHbMUHduqoaZul8nEe
+         x2Jjq++X+D2vpiSrbD1JiRi/uXAKsEY46tNc+0iE0BwJFFev34DcNsg/lklQj2h+b4ta
+         YySg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=H7N2joOmZ85I8u/03K2lzp1lvlBwxLVjBV6WfyH5xAg=;
-        b=bytwsSgQyhdeEctRmkEO4/iR0bKUVjVPUKl0cAsZQUH/r/ryQUvtQ1sT61XxdATSCd
-         zVeFhW75NYXx/9mPZVQ/6gXk0ZW2VfnmJV5MrtAq3nRNKCllKWBrFznj7GxyKAogPD7D
-         1QsOFD7gaujWbo+4OIje7gjlmZVkzw2HRJRXvf6T3wf1g7HHB6q9hNUtaAX1MWYkLDJx
-         2O+oQcQjeMM1jTk4Tn3CmUqArEnO6/hHMgWZrGYvg/OX4EbrxijjnPyunTyLDf6qXnNW
-         WKwK4EwLbLHF94UuhV0PWRsKM6DiL8w7MAfgbk1Ulo4xS6eFJK0M727E72pIrLhjUZ1K
-         0veQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=XMRdbyJcPPOmmYjOw9vw2elB8GE3ADAVOjGnyG6+crc=;
+        b=RGnPuN/QPkXlerSOZqka5MLBxI8DeczlS2hKAXO5PpfmOSKqCm1JBd5lnLfeKFY56L
+         43BJ+tQnoyI6f0nOTG7eS3yz8HuQu44V9V/iM4IuhcAnu5HFURQS4sDSJry2mHx9OtHB
+         rbzKbeYz+GZiht2X5QcbdQgOrvIuZcz4Z4lAzD40Jb5uuzT1fXnjzzUdQLPnoOrjytv3
+         k8AR3hZ8qMWt5JrqjeSgRvpLhwJk7fjCKZwNzWYHBma6z9jrUqmMpAMwlJHlwqmnPgwQ
+         eKz0ztAyQkhzePGwvOov/CXWoSXI/BorXQlPyl/qZcPYaTH2sDhB2uz29HBaD2oeEMaL
+         jeeg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=pass (google.com: domain of lorenzo.pieralisi@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=lorenzo.pieralisi@arm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AIpwx4+w6TS2MTNBXycQTIdNngFm1BZwWV91/wBrIU4Cu3JOqD19O8ZCTyavASBP8dn8zELQQXmd7w==
-Subject: Re: [PATCH] usb: select USB_COMMON for usb role switch config
-To: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180404122211.3309577-1-arnd@arndb.de>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <545bff65-cd68-1694-06e6-5e9d53ab12e9@redhat.com>
-Date: Wed, 4 Apr 2018 22:08:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       spf=pass (google.com: domain of lorenzo.pieralisi@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=lorenzo.pieralisi@arm.com
+Date: Wed, 4 Apr 2018 17:01:38 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+Cc: rjw@rjwysocki.net, gregkh@linuxfoundation.org, hanjun.guo@linaro.org,
+	sudeep.holla@arm.com, yu.zheng@hxt-semitech.com,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	robin.murphy@arm.com
+Subject: Re: [RFC PATCH 2/2] ACPI/IORT: use swiotlb_dma_ops when smmu probe
+ failed
+Message-ID: <20180404160138.GA9317@e107981-ln.cambridge.arm.com>
+References: <1522317660-11080-1-git-send-email-dongsheng.wang@hxt-semitech.com>
+ <1522317660-11080-3-git-send-email-dongsheng.wang@hxt-semitech.com>
 MIME-Version: 1.0
-In-Reply-To: <20180404122211.3309577-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522317660-11080-3-git-send-email-dongsheng.wang@hxt-semitech.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596818231491207540?=
-X-GMAIL-MSGID: =?utf-8?q?1596847581058464698?=
+X-GMAIL-THRID: =?utf-8?q?1596265798784882877?=
+X-GMAIL-MSGID: =?utf-8?q?1596832042059843280?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+[+cc Robin]
 
-On 04-04-18 14:21, Arnd Bergmann wrote:
-> The new axp288 extcon driver has no dependency on USB itself but
-> calls the usb role switch helper functions. This causes a link error
-> when USB_COMMON is disabled, as that subdirectory never gets entered:
+On Thu, Mar 29, 2018 at 03:01:00AM -0700, Wang Dongsheng wrote:
+> If SMMU probe failed, master should use swiotlb as dma ops.
+> SMMU may probe failed with specified environment, so there
+> are not any iommu resources in iommu_device_list.
 > 
-> drivers/extcon/extcon-axp288.o: In function `axp288_usb_role_work':
-> extcon-axp288.c:(.text+0x47b): undefined reference to `usb_role_switch_set_role'
-> extcon-axp288.c:(.text+0x498): undefined reference to `usb_role_switch_get_role'
-> drivers/extcon/extcon-axp288.o: In function `axp288_extcon_probe':
-> extcon-axp288.c:(.text+0x675): undefined reference to `usb_role_switch_get'
-> extcon-axp288.c:(.text+0x6d1): undefined reference to `usb_role_switch_put'
-> drivers/extcon/extcon-axp288.o: In function `axp288_put_role_sw':
-> extcon-axp288.c:(.text+0x1c): undefined reference to `usb_role_switch_put'
-> 
-> There are multiple ways of fixing this, I chose to 'select USB_COMMON',
-> since that is how we solved the same problem for other helpers like
-> USB_LED_TRIG or PHY drivers.
-> 
-> Fixes: d54f063cdbe4 ("extcon: axp288: Set USB role where necessary")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Thanks.
+> The master will always get EPROBE_DEFER from really_probe
+> (dma_configure) but in fact SMMU has probe failed. The issue
+> causes all of masters failed to be driven.
 
-I agree that this is the right way to fix this (matches the other
-drivers/usb/Kconfig bits):
+I added Robin to pick his brain. An alternative would consist
+in using a bus notifier to prevent deferred probing once the SMMU
+driver probing failed but that seems backwards given that a major
+reason to move to deferred probing was to remove the bus notifiers
+dependency in the first place.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+It seems to me this is both an OF/ACPI issue - it is not an IORT
+only problem.
 
-Regards,
+Lorenzo
 
-Hans
-
-
-
+> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
 > ---
->   drivers/usb/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
+>  drivers/acpi/arm64/iort.c | 39 +++++++++++++++++++++++++++++++++------
+>  1 file changed, 33 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
-> index 75f7fb151f71..987fc5ba6321 100644
-> --- a/drivers/usb/Kconfig
-> +++ b/drivers/usb/Kconfig
-> @@ -207,5 +207,6 @@ config USB_ULPI_BUS
->   
->   config USB_ROLE_SWITCH
->   	tristate
-> +	select USB_COMMON
->   
->   endif # USB_SUPPORT
+> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+> index e2f7bdd..a6f4c27 100644
+> --- a/drivers/acpi/arm64/iort.c
+> +++ b/drivers/acpi/arm64/iort.c
+> @@ -774,17 +774,45 @@ static int arm_smmu_iort_xlate(struct device *dev, u32 streamid,
+>  	return ret;
+>  }
+>  
+> -static inline bool iort_iommu_driver_enabled(u8 type)
+> +static int iort_check_dev_dl_status(struct device *dev, void *data)
+>  {
+> +	struct fwnode_handle *fwnode = data;
+> +
+> +	if (dev->fwnode != fwnode)
+> +		return 0;
+> +
+> +	if (dev->links.status == DL_DEV_PROBE_FAILED)
+> +		return -ENODEV;
+> +
+> +	return -EPROBE_DEFER;
+> +}
+> +
+> +static int iort_iommu_driver_enabled(u8 type, struct fwnode_handle *fwnode)
+> +{
+> +	bool buildin;
+> +	int ret;
+> +
+>  	switch (type) {
+>  	case ACPI_IORT_NODE_SMMU_V3:
+> -		return IS_BUILTIN(CONFIG_ARM_SMMU_V3);
+> +		buildin = IS_BUILTIN(CONFIG_ARM_SMMU_V3);
+> +		break;
+>  	case ACPI_IORT_NODE_SMMU:
+> -		return IS_BUILTIN(CONFIG_ARM_SMMU);
+> +		buildin = IS_BUILTIN(CONFIG_ARM_SMMU);
+> +		break;
+>  	default:
+>  		pr_warn("IORT node type %u does not describe an SMMU\n", type);
+> -		return false;
+> +		buildin = false;
+>  	}
+> +
+> +	if (!buildin)
+> +		return -ENODEV;
+> +
+> +	ret = bus_for_each_dev(&platform_bus_type, NULL, fwnode,
+> +			       iort_check_dev_dl_status);
+> +	if (!ret)
+> +		return -EPROBE_DEFER;
+> +
+> +	return ret;
+>  }
+>  
+>  #ifdef CONFIG_IOMMU_API
+> @@ -919,8 +947,7 @@ static int iort_iommu_xlate(struct device *dev, struct acpi_iort_node *node,
+>  	 */
+>  	ops = iommu_ops_from_fwnode(iort_fwnode);
+>  	if (!ops)
+> -		return iort_iommu_driver_enabled(node->type) ?
+> -		       -EPROBE_DEFER : -ENODEV;
+> +		return iort_iommu_driver_enabled(node->type, iort_fwnode);
+>  
+>  	return arm_smmu_iort_xlate(dev, streamid, iort_fwnode, ops);
+>  }
+> -- 
+> 2.7.4
 > 
