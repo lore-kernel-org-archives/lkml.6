@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754975AbeDDBMv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 21:12:51 -0400
-Received: from mga03.intel.com ([134.134.136.65]:44002 "EHLO mga03.intel.com"
+        id S1755276AbeDDBOT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 21:14:19 -0400
+Received: from mga12.intel.com ([192.55.52.136]:41789 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754887AbeDDBMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 21:12:50 -0400
+        id S1754920AbeDDBMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 21:12:48 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,403,1517904000";
-   d="scan'208";a="29340448"
-Subject: [PATCH 07/11] x86/mm: comment _PAGE_GLOBAL mystery
+   d="scan'208";a="34053518"
+Subject: [PATCH 06/11] x86/mm: remove extra filtering in pageattr code
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
         aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
         keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
         namit@vmware.com
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Tue, 03 Apr 2018 18:10:04 -0700
+Date: Tue, 03 Apr 2018 18:10:02 -0700
 References: <20180404010946.6186729B@viggo.jf.intel.com>
 In-Reply-To: <20180404010946.6186729B@viggo.jf.intel.com>
-Message-Id: <20180404011004.FE082845@viggo.jf.intel.com>
+Message-Id: <20180404011002.7112D64B@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,18 +29,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-I was mystified as to where the _PAGE_GLOBAL in the kernel page tables
-for kernel text came from.  I audited all the places I could find, but
-I missed one: head_64.S.
+The pageattr code has a mode where it can set or clear PTE bits in
+existing PTEs, so the page protections of the *new* PTEs come from
+one of two places:
+1. The set/clear masks: cpa->mask_clr / cpa->mask_set
+2. The existing PTE
 
-The page tables that we create in here live for a long time, and they
-also have _PAGE_GLOBAL set, despite whether the processor supports it
-or not.  It's harmless, and we got *lucky* that the pageattr code
-accidentally clears it when we wipe it out of __supported_pte_mask and
-then later try to mark kernel text read-only.
+We filter ->mask_set/clr for supported PTE bits at entry to
+__change_page_attr() so we never need to filter them again.
 
-Comment some of these properties to make it easier to find and
-understand in the future.
+The only other place permissions can come from is an existing PTE
+and those already presumably have good bits.  We do not need to filter
+them again.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
@@ -51,38 +51,47 @@ Cc: Hugh Dickins <hughd@google.com>
 Cc: Juergen Gross <jgross@suse.com>
 Cc: x86@kernel.org
 Cc: Nadav Amit <namit@vmware.com>
+
 ---
 
- b/arch/x86/kernel/head_64.S |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ b/arch/x86/mm/pageattr.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff -puN arch/x86/kernel/head_64.S~comment-global-page arch/x86/kernel/head_64.S
---- a/arch/x86/kernel/head_64.S~comment-global-page	2018-04-02 16:41:16.085605170 -0700
-+++ b/arch/x86/kernel/head_64.S	2018-04-02 16:41:16.088605170 -0700
-@@ -399,8 +399,13 @@ NEXT_PAGE(level3_ident_pgt)
- 	.quad	level2_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
- 	.fill	511, 8, 0
- NEXT_PAGE(level2_ident_pgt)
--	/* Since I easily can, map the first 1G.
-+	/*
-+	 * Since I easily can, map the first 1G.
- 	 * Don't set NX because code runs from these pages.
-+	 *
-+	 * Note: This sets _PAGE_GLOBAL despite whether
-+	 * the CPU supports it or it is enabled.  But,
-+	 * the CPU should ignore the bit.
+diff -puN arch/x86/mm/pageattr.c~x86-pageattr-dont-filter-global arch/x86/mm/pageattr.c
+--- a/arch/x86/mm/pageattr.c~x86-pageattr-dont-filter-global	2018-04-02 16:41:15.543605172 -0700
++++ b/arch/x86/mm/pageattr.c	2018-04-02 16:41:15.547605172 -0700
+@@ -598,7 +598,6 @@ try_preserve_large_page(pte_t *kpte, uns
+ 	req_prot = pgprot_clear_protnone_bits(req_prot);
+ 	if (pgprot_val(req_prot) & _PAGE_PRESENT)
+ 		pgprot_val(req_prot) |= _PAGE_PSE;
+-	req_prot = canon_pgprot(req_prot);
+ 
+ 	/*
+ 	 * old_pfn points to the large page base pfn. So we need
+@@ -718,7 +717,7 @@ __split_large_page(struct cpa_data *cpa,
  	 */
- 	PMDS(0, __PAGE_KERNEL_IDENT_LARGE_EXEC, PTRS_PER_PMD)
- #else
-@@ -431,6 +436,10 @@ NEXT_PAGE(level2_kernel_pgt)
- 	 * (NOTE: at +512MB starts the module area, see MODULES_VADDR.
- 	 *  If you want to increase this then increase MODULES_VADDR
- 	 *  too.)
-+	 *
-+	 *  This table is eventually used by the kernel during normal
-+	 *  runtime.  Care must be taken to clear out undesired bits
-+	 *  later, like _PAGE_RW or _PAGE_GLOBAL in some cases.
- 	 */
- 	PMDS(0, __PAGE_KERNEL_LARGE_EXEC,
- 		KERNEL_IMAGE_SIZE/PMD_SIZE)
+ 	pfn = ref_pfn;
+ 	for (i = 0; i < PTRS_PER_PTE; i++, pfn += pfninc)
+-		set_pte(&pbase[i], pfn_pte(pfn, canon_pgprot(ref_prot)));
++		set_pte(&pbase[i], pfn_pte(pfn, ref_prot));
+ 
+ 	if (virt_addr_valid(address)) {
+ 		unsigned long pfn = PFN_DOWN(__pa(address));
+@@ -935,7 +934,6 @@ static void populate_pte(struct cpa_data
+ 	pte = pte_offset_kernel(pmd, start);
+ 
+ 	pgprot = pgprot_clear_protnone_bits(pgprot);
+-	pgprot = canon_pgprot(pgprot);
+ 
+ 	while (num_pages-- && start < end) {
+ 		set_pte(pte, pfn_pte(cpa->pfn, pgprot));
+@@ -1234,7 +1232,7 @@ repeat:
+ 		 * after all we're only going to change it's attributes
+ 		 * not the memory it points to
+ 		 */
+-		new_pte = pfn_pte(pfn, canon_pgprot(new_prot));
++		new_pte = pfn_pte(pfn, new_prot);
+ 		cpa->pfn = pfn;
+ 		/*
+ 		 * Do we really change anything ?
 _
