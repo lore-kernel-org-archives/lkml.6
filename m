@@ -1,97 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751329AbeDDJQs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:16:48 -0400
-Received: from mail.netline.ch ([148.251.143.178]:39437 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750772AbeDDJQr (ORCPT
+        id S1751465AbeDDJRi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:17:38 -0400
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:51239
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751155AbeDDJRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:16:47 -0400
-Subject: Re: [RFC] Per file OOM badness
-To: Lucas Stach <l.stach@pengutronix.de>, Michal Hocko <mhocko@kernel.org>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Christian.Koenig@amd.com, linux-mm@kvack.org,
-        amd-gfx@lists.freedesktop.org, Roman Gushchin <guro@fb.com>
-References: <20180118170006.GG6584@dhcp22.suse.cz>
- <20180123152659.GA21817@castle.DHCP.thefacebook.com>
- <20180123153631.GR1526@dhcp22.suse.cz>
- <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
- <20180124092847.GI1526@dhcp22.suse.cz>
- <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
- <20180124110141.GA28465@dhcp22.suse.cz>
- <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
- <20180124115059.GC28465@dhcp22.suse.cz>
- <60e18da8-4d6e-dec9-7aef-ff003605d513@daenzer.net>
- <20180130102855.GY21609@dhcp22.suse.cz>
- <1522074988.1196.1.camel@pengutronix.de>
-From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <3778a205-8b30-d147-b1f6-0a93d1de8beb@daenzer.net>
-Date: Wed, 4 Apr 2018 11:09:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 4 Apr 2018 05:17:36 -0400
+X-ASG-Debug-ID: 1522833443-093b7e10b323ed0001-xx1T2L
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+To: <rjw@rjwysocki.net>
+CC: <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf capabilities
+Date: Wed, 4 Apr 2018 17:16:20 +0800
+X-ASG-Orig-Subj: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf capabilities
+Message-ID: <1522833380-18438-1-git-send-email-shunyong.yang@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-In-Reply-To: <1522074988.1196.1.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.5.21.109]
+X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
+X-Barracuda-Connect: localhost[10.128.0.14]
+X-Barracuda-Start-Time: 1522833443
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.7723 1.0000 1.9682
+X-Barracuda-Spam-Score: 1.97
+X-Barracuda-Spam-Status: No, SCORE=1.97 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49579
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-26 04:36 PM, Lucas Stach wrote:
-> Am Dienstag, den 30.01.2018, 11:28 +0100 schrieb Michal Hocko:
->> On Tue 30-01-18 10:29:10, Michel Dänzer wrote:
->>> On 2018-01-24 12:50 PM, Michal Hocko wrote:
->>>> On Wed 24-01-18 12:23:10, Michel Dänzer wrote:
->>>>> On 2018-01-24 12:01 PM, Michal Hocko wrote:
->>>>>> On Wed 24-01-18 11:27:15, Michel Dänzer wrote:
->>>>
->>>> [...]
->>>>>>> 2. If the OOM killer kills a process which is sharing BOs
->>>>>>> with another
->>>>>>> process, this should result in the other process dropping
->>>>>>> its references
->>>>>>> to the BOs as well, at which point the memory is released.
->>>>>>
->>>>>> OK. How exactly are those BOs mapped to the userspace?
->>>>>
->>>>> I'm not sure what you're asking. Userspace mostly uses a GEM
->>>>> handle to
->>>>> refer to a BO. There can also be userspace CPU mappings of the
->>>>> BO's
->>>>> memory, but userspace doesn't need CPU mappings for all BOs and
->>>>> only
->>>>> creates them as needed.
->>>>
->>>> OK, I guess you have to bear with me some more. This whole stack
->>>> is a
->>>> complete uknonwn. I am mostly after finding a boundary where you
->>>> can
->>>> charge the allocated memory to the process so that the oom killer
->>>> can
->>>> consider it. Is there anything like that? Except for the proposed
->>>> file
->>>> handle hack?
->>>
->>> How about the other way around: what APIs can we use to charge /
->>> "uncharge" memory to a process? If we have those, we can experiment
->>> with
->>> different places to call them.
->>
->> add_mm_counter() and I would add a new counter e.g. MM_KERNEL_PAGES.
-> 
-> So is anyone still working on this? This is hurting us bad enough that
-> I don't want to keep this topic rotting for another year.
-> 
-> If no one is currently working on this I would volunteer to give the
-> simple "just account private, non-shared buffers in process RSS" a
-> spin.
+When multiple cpus are related in one cpufreq policy, the first online
+cpu will be chosen by default to handle cpufreq operations. Let's take
+cpu0 and cpu1 as an example.
 
-Sounds good. FWIW, I think shared buffers can also be easily handled by
-accounting them in each process which has a reference. But that's more
-of a detail, shouldn't make a big difference overall either way.
+When cpu0 is offline, policy->cpu will be shifted to cpu1. Cpu1's perf
+capabilities should be initialized. Otherwise, perf capabilities are 0s
+and speed change can not take effect.
 
+This patch copies perf capabilities of the first online cpu to other
+shared cpus when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
 
+Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+---
+
+Changes in v2:
+  -Add unlikely in cpu comparison per Kumar's comments.
+  -Fix coding style per Kumar's comments.
+
+Changes in v1:
+  -Drop RFC tag,
+     The original RFC link,
+     https://patchwork.kernel.org/patch/10299055/.
+
+     This patch solves same issue as RFC above.
+
+     Patch name is changed as code is too much different with RFC above.
+
+  -Remove extra init() per Viresh Kumar's comments and only handle
+   CPPC CPUFREQ_SHARED_TYPE_ANY case.
+
+---
+ drivers/cpufreq/cppc_cpufreq.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index 8f7b21a4d537..679e43b9c980 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -164,9 +164,20 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	policy->cpuinfo.transition_latency = cppc_get_transition_latency(cpu_num);
+ 	policy->shared_type = cpu->shared_type;
+ 
+-	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
++	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
++		int i;
++
+ 		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
+-	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
++
++		for_each_cpu(i, policy->cpus) {
++			if (unlikely(i == policy->cpu))
++				continue;
++
++			memcpy(&all_cpu_data[i]->perf_caps,
++			       &cpu->perf_caps,
++			       sizeof(cpu->perf_caps));
++		}
++	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
+ 		/* Support only SW_ANY for now. */
+ 		pr_debug("Unsupported CPU co-ord type\n");
+ 		return -EFAULT;
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+1.8.3.1
