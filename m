@@ -1,50 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751245AbeDDMXs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:23:48 -0400
-Received: from mga05.intel.com ([192.55.52.43]:64536 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751097AbeDDMXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:23:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,406,1517904000";
-   d="scan'208";a="31454627"
+        id S1751262AbeDDM0Q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:26:16 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:54579 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbeDDM0O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 08:26:14 -0400
+X-Google-Smtp-Source: AIpwx4+fwmvObBAUlnrvs334wD/W8oo8W6Aj8L6QUsgDQouFRaFtxDD2t4idVZhTNyIC2YVZu2hdbQdSIulyY2MmT1E=
+MIME-Version: 1.0
+X-Originating-IP: [212.51.149.109]
+In-Reply-To: <CAF6AEGtzFJwzgrH5TZn6QGLjkkOP7=XV4B1at6xxNvKrabNFww@mail.gmail.com>
+References: <20180403224225.26776-1-robdclark@gmail.com> <20180404100300.GE3881@phenom.ffwll.local>
+ <20180404102108.GF3881@phenom.ffwll.local> <4976c166-32b2-75ef-ee78-7e7893dd4121@linux.intel.com>
+ <CAF6AEGvozzCDtkRjCjMsZ5HtdHXbFiiVM52jZaz=VfshONzqTA@mail.gmail.com>
+ <4386c0a5-e8e4-34d7-a977-4136e1dec44f@linux.intel.com> <CAF6AEGtzFJwzgrH5TZn6QGLjkkOP7=XV4B1at6xxNvKrabNFww@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Wed, 4 Apr 2018 14:26:13 +0200
+X-Google-Sender-Auth: JglWHeohISPwJ9wblPIfh_O4VGo
+Message-ID: <CAKMK7uEMsUOFDWishv6L0519Z7eiz+7LcHMpQAZu1bO7i2dVDA@mail.gmail.com>
 Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
 To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Thomas Hellstrom <thomas@shipmail.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
         Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180403224225.26776-1-robdclark@gmail.com>
- <20180404100300.GE3881@phenom.ffwll.local>
- <20180404102108.GF3881@phenom.ffwll.local>
- <4976c166-32b2-75ef-ee78-7e7893dd4121@linux.intel.com>
- <CAF6AEGvozzCDtkRjCjMsZ5HtdHXbFiiVM52jZaz=VfshONzqTA@mail.gmail.com>
- <4386c0a5-e8e4-34d7-a977-4136e1dec44f@linux.intel.com>
- <CAF6AEGtzFJwzgrH5TZn6QGLjkkOP7=XV4B1at6xxNvKrabNFww@mail.gmail.com>
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Message-ID: <8f1ab430-2d76-367e-c014-7b41af0e2c87@linux.intel.com>
-Date: Wed, 4 Apr 2018 14:23:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAF6AEGtzFJwzgrH5TZn6QGLjkkOP7=XV4B1at6xxNvKrabNFww@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        freedreno <freedreno@lists.freedesktop.org>,
+        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Op 04-04-18 om 14:05 schreef Rob Clark:
+On Wed, Apr 4, 2018 at 2:05 PM, Rob Clark <robdclark@gmail.com> wrote:
 > On Wed, Apr 4, 2018 at 7:49 AM, Maarten Lankhorst
 > <maarten.lankhorst@linux.intel.com> wrote:
 >> Op 04-04-18 om 13:37 schreef Rob Clark:
@@ -213,5 +203,25 @@ Op 04-04-18 om 14:05 schreef Rob Clark:
 >>> for implicit fencing we fish out the implicit fence and stuff it in
 >>> plane_state->fence..
 >> What happens when userspace passes a fence fd to in_fence_fd?
+>
 > mixing implicit sync and explicit sync is undefined
-So a drivers implicit sync may override the explicit sync? Would make more sense if the fences were merged.
+
+It's very well-defined, explicit sync wins. See the kerneldoc for
+drm_atomic_set_fence_for_plane. Since a pile of drivers don't use that
+the reality might be undefined though :-)
+-Daniel
+
+>
+> BR,
+> -R
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
