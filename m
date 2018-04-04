@@ -1,50 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751277AbeDDNzU convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:55:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57204 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750853AbeDDNzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:55:19 -0400
-Subject: Re: REGRESSION/TEST FAILURE caused by DEBUG_RWSEMS
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
-References: <20180404132354.GA13897@thunk.org>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Cc: Ingo Molnar <mingo@redhat.com>
-Message-ID: <5670badd-0268-8a06-6612-b58eb6a304b6@redhat.com>
-Date: Wed, 4 Apr 2018 09:55:18 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1751356AbeDDN7X convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:59:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49543 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750853AbeDDN7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:59:22 -0400
+Date: Wed, 4 Apr 2018 15:59:09 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 07/13] ARM: smp: Add initialization of CNTVOFF
+Message-ID: <20180404155909.148085f7@dell-desktop.home>
+In-Reply-To: <06308f46-ce7c-ddeb-ebca-abd1153138ba@arm.com>
+References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
+        <20180403061836.3926-8-mylene.josserand@bootlin.com>
+        <06308f46-ce7c-ddeb-ebca-abd1153138ba@arm.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180404132354.GA13897@thunk.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/04/2018 09:23 AM, Theodore Y. Ts'o wrote:
-> The commit 5149cbac4235: "locking/rwsem: Add DEBUG_RWSEMS to look for
-> lock/unlock emismatches" (newly added in this merge window) will cause
-> xfstests tests failures in generic/068 for all file systems.
->
-> This is because the freeze and thaw ioctls, by design, are run in
-> different processes.  It looks like the concern for why
-> CONFIG_DEBUG_RWSEMS was added is because read/write semaphores can
-> spin --- which if the case, we need to make sure that (a) the spinlock
-> code path is not used for the freeze/thaw ioctls, and (b) we don't
-> trigger the debug WARN_ON.
->
-> Cheers,
->
-The rwsem code has an up_read_non_owner() function for this kind of
-cross task lock/unlock. I think we should add the corresponding
-up_write_non_owner() for that. It is better to annotate those calls that
-have this issue rather than working around it. I will post a patch to
-address that later today.
+Hi Marc,
 
-Cheers,
-Longman
+Thank you for the review.
+
+On Wed, 4 Apr 2018 14:01:48 +0100
+Marc Zyngier <marc.zyngier@arm.com> wrote:
+
+> Hi Mylène,
+> 
+> On 03/04/18 07:18, Mylène Josserand wrote:
+> > The CNTVOFF register from arch timer is uninitialized.
+> > It should be done by the bootloader but it is currently not the case,
+> > even for boot CPU because this SoC is booting in secure mode.
+> > It leads to an random offset value meaning that each CPU will have a
+> > different time, which isn't working very well.
+> > 
+> > Add assembly code used for boot CPU and secondary CPU cores to make
+> > sure that the CNTVOFF register is initialized. Because this code can
+> > be used by different platforms, add this assembly file in ARM's common
+> > folder.
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > ---
+> >  arch/arm/common/Makefile           |  1 +
+> >  arch/arm/common/smp_cntvoff.S      | 35 +++++++++++++++++++++++++++++++++++
+> >  arch/arm/include/asm/smp_cntvoff.h |  8 ++++++++
+> >  3 files changed, 44 insertions(+)
+> >  create mode 100644 arch/arm/common/smp_cntvoff.S
+> >  create mode 100644 arch/arm/include/asm/smp_cntvoff.h
+> > 
+> > diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+> > index 70b4a14ed993..83117deb86c8 100644
+> > --- a/arch/arm/common/Makefile
+> > +++ b/arch/arm/common/Makefile
+> > @@ -10,6 +10,7 @@ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
+> >  obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
+> >  obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
+> >  obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
+> > +obj-$(CONFIG_SMP)		+= smp_cntvoff.o
+> >  obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
+> >  obj-$(CONFIG_MCPM)		+= mcpm_head.o mcpm_entry.o mcpm_platsmp.o vlock.o
+> >  CFLAGS_REMOVE_mcpm_entry.o	= -pg
+> > diff --git a/arch/arm/common/smp_cntvoff.S b/arch/arm/common/smp_cntvoff.S
+> > new file mode 100644
+> > index 000000000000..65ed199a50fe
+> > --- /dev/null
+> > +++ b/arch/arm/common/smp_cntvoff.S
+> > @@ -0,0 +1,35 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018 Chen-Yu Tsai
+> > + * Copyright (c) 2018 Bootlin
+> > + *
+> > + * Chen-Yu Tsai <wens@csie.org>
+> > + * Mylène Josserand <mylene.josserand@bootlin.com>  
+> 
+> Given that this is literally lifted from shmobile_init_cntvoff, the
+> whole attribution is a bit dubious.
+
+Yes, sorry, I will fix that.
+
+> 
+> > + *
+> > + * SMP support for sunxi based systems with Cortex A7/A15  
+> 
+> That's not restricted to sunxi, is it?
+
+Nope, I will update this line too (bad copy-paste from
+sunxi/headsmp.S...)
+
+> 
+> > + *
+> > + */
+> > +
+> > +#include <linux/linkage.h>
+> > +#include <asm/assembler.h>
+> > +
+> > +ENTRY(smp_init_cntvoff)  
+> 
+> The name doesn't quite reflect the usage constraints. This will only
+> work if used from secure, and is UNPREDICTABLE otherwise (see the CPS
+> instruction). Also, the "smp" prefix is quite misleading, as it only
+> affects the current CPU, and not any other.
+> 
+> How about secure_cntvoff_init instead? Same thing for the file name.
+
+Sure, this name is fine for me.
+
+> 
+> > +	.arch	armv7-a
+> > +	/*
+> > +	 * CNTVOFF has to be initialized either from non-secure Hypervisor
+> > +	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
+> > +	 * then it should be handled by the secure code
+> > +	 */
+> > +	cps	#MON_MODE
+> > +	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
+> > +	orr	r0, r1, #1
+> > +	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
+> > +	isb
+> > +	mov	r0, #0
+> > +	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
+> > +	isb
+> > +	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
+> > +	isb
+> > +	cps	#SVC_MODE
+> > +	ret	lr
+> > +ENDPROC(smp_init_cntvoff)
+> > diff --git a/arch/arm/include/asm/smp_cntvoff.h b/arch/arm/include/asm/smp_cntvoff.h
+> > new file mode 100644
+> > index 000000000000..59a95f7604ee
+> > --- /dev/null
+> > +++ b/arch/arm/include/asm/smp_cntvoff.h
+> > @@ -0,0 +1,8 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +#ifndef __ASMARM_ARCH_CNTVOFF_H
+> > +#define __ASMARM_ARCH_CNTVOFF_H
+> > +
+> > +extern void smp_init_cntvoff(void);
+> > +
+> > +#endif
+> >   
+> 
+> It'd be good to take this opportunity to refactor the shmobile code.
+
+I can do it in this series but I do not have any shmobile platforms so
+I will not be able to test my modifications (only compilation).
+
+If someone can test it for me (who?), it is okay for me to refactor this
+code :)
+
+Best regards,
+
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
