@@ -1,18 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752693AbeDDRLu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 13:11:50 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36306 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752131AbeDDRLs (ORCPT
+        id S1752753AbeDDRMS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 13:12:18 -0400
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:39770 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752100AbeDDRMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 13:11:48 -0400
-X-Google-Smtp-Source: AIpwx48JB2aqzN5R7xBSsh5YlqIdq3TuIlLdvrl18DkH5g9QwdVyQyqWxwiLPS9A74eSnAMcYMdhrA==
-Subject: Re: [PATCH] kvm: x86 : fix a compile warning
-To: Peng Hao <peng.hao2@zte.com.cn>, rkrcmar@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1522631732-3881-1-git-send-email-peng.hao2@zte.com.cn>
+        Wed, 4 Apr 2018 13:12:16 -0400
+X-Google-Smtp-Source: AIpwx48BfvrxK1XIvQaWatjpv7BhDfTJXz+sf5LiDknSs20ZhACFYcWIq7MCUFJZOlpOBYubNlNW2A==
+Subject: Re: [PATCH v5 1/2] KVM: X86: Introduce handle_ud()
+To: David Hildenbrand <david@redhat.com>, Wanpeng Li <kernellwp@gmail.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Liran Alon <liran.alon@oracle.com>
+References: <1522798129-14588-1-git-send-email-wanpengli@tencent.com>
+ <1522798129-14588-2-git-send-email-wanpengli@tencent.com>
+ <9d68b1b4-04e6-46d6-70b4-6ebcb0a0c4aa@redhat.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; keydata=
@@ -50,42 +55,34 @@ Autocrypt: addr=pbonzini@redhat.com; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <572e6879-84d6-d738-534c-8b58a02b8dbc@redhat.com>
-Date: Wed, 4 Apr 2018 19:11:39 +0200
+Message-ID: <16957e9b-103a-0fd5-9e2b-084e9ebc3773@redhat.com>
+Date: Wed, 4 Apr 2018 19:12:13 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1522631732-3881-1-git-send-email-peng.hao2@zte.com.cn>
+In-Reply-To: <9d68b1b4-04e6-46d6-70b4-6ebcb0a0c4aa@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/04/2018 03:15, Peng Hao wrote:
-> fix a "warning: no previous prototype".
+On 04/04/2018 13:54, David Hildenbrand wrote:
+>> +{
+>> +	enum emulation_result er;
+>> +
+>> +	er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
+>> +	if (er == EMULATE_USER_EXIT)
+>> +		return 0;
+>> +	if (er != EMULATE_DONE)
+>> +		kvm_queue_exception(vcpu, UD_VECTOR);
+>> +	return 1;
+> I would now actually prefer
 > 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  arch/x86/kvm/x86.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 18b5ca7..6621319 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -7754,7 +7754,7 @@ int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
->  }
->  EXPORT_SYMBOL_GPL(kvm_task_switch);
->  
-> -int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
-> +static int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
->  {
->  	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG)) {
->  		/*
-> 
+> if (er == EMULATE_DONE)
+> 	return 1 ...
 
-Queued, thanks.
+Why?  The return statement would be duplicated.
 
 Paolo
