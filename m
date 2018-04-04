@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751950AbeDDIbA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 04:31:00 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55824 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751262AbeDDIa7 (ORCPT
+        id S1751979AbeDDIbG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 04:31:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42458 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751219AbeDDIbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 04:30:59 -0400
+        Wed, 4 Apr 2018 04:31:03 -0400
 From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 To: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
         srikar@linux.vnet.ibm.com, rostedt@goodmis.org
@@ -20,8 +20,8 @@ Cc: acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
         naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
         yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH v2 5/9] Uprobe: Export uprobe_map_info along with uprobe_{build/free}_map_info()
-Date: Wed,  4 Apr 2018 14:01:06 +0530
+Subject: [PATCH v2 2/9] mm: Prefix vma_ to vaddr_to_offset() and offset_to_vaddr()
+Date: Wed,  4 Apr 2018 14:01:03 +0530
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
 References: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
@@ -29,10 +29,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18040408-0012-0000-0000-000005C6DACF
+x-cbid: 18040408-0044-0000-0000-000005434467
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040408-0013-0000-0000-00001942EBC7
-Message-Id: <20180404083110.18647-6-ravi.bangoria@linux.vnet.ibm.com>
+x-cbparentid: 18040408-0045-0000-0000-0000288359DE
+Message-Id: <20180404083110.18647-3-ravi.bangoria@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_02:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -44,83 +44,102 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given the file(inode) and offset, build_map_info() finds all
-existing mm that map the portion of file containing offset.
-
-Exporting these functions and data structure will help to use
-them in other set of files.
+Make function names more meaningful by adding vma_ prefix
+to them.
 
 Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
 ---
- include/linux/uprobes.h |  9 +++++++++
- kernel/events/uprobes.c | 14 +++-----------
- 2 files changed, 12 insertions(+), 11 deletions(-)
+ include/linux/mm.h      |  4 ++--
+ kernel/events/uprobes.c | 14 +++++++-------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 0a294e9..7bd2760 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -109,12 +109,19 @@ enum rp_check {
- 	RP_CHECK_RET,
- };
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 95909f2..d7ee526 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2275,13 +2275,13 @@ struct vm_unmapped_area_info {
+ }
  
-+struct address_space;
- struct xol_area;
+ static inline unsigned long
+-offset_to_vaddr(struct vm_area_struct *vma, loff_t offset)
++vma_offset_to_vaddr(struct vm_area_struct *vma, loff_t offset)
+ {
+ 	return vma->vm_start + offset - ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
+ }
  
- struct uprobes_state {
- 	struct xol_area		*xol_area;
- };
- 
-+struct uprobe_map_info {
-+	struct uprobe_map_info *next;
-+	struct mm_struct *mm;
-+	unsigned long vaddr;
-+};
-+
- extern int set_swbp(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
- extern int set_orig_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
- extern bool is_swbp_insn(uprobe_opcode_t *insn);
-@@ -149,6 +156,8 @@ struct uprobes_state {
- extern bool arch_uprobe_ignore(struct arch_uprobe *aup, struct pt_regs *regs);
- extern void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
- 					 void *src, unsigned long len);
-+extern struct uprobe_map_info *uprobe_free_map_info(struct uprobe_map_info *info);
-+extern struct uprobe_map_info *uprobe_build_map_info(struct address_space *mapping, loff_t offset, bool is_register);
- #else /* !CONFIG_UPROBES */
- struct uprobes_state {
- };
+ static inline loff_t
+-vaddr_to_offset(struct vm_area_struct *vma, unsigned long vaddr)
++vma_vaddr_to_offset(struct vm_area_struct *vma, unsigned long vaddr)
+ {
+ 	return ((loff_t)vma->vm_pgoff << PAGE_SHIFT) + (vaddr - vma->vm_start);
+ }
 diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 477dc42..096d1e6 100644
+index bd6f230..535fd39 100644
 --- a/kernel/events/uprobes.c
 +++ b/kernel/events/uprobes.c
-@@ -695,14 +695,7 @@ static void delete_uprobe(struct uprobe *uprobe)
- 	put_uprobe(uprobe);
- }
+@@ -748,7 +748,7 @@ static inline struct map_info *free_map_info(struct map_info *info)
+ 		curr = info;
  
--struct uprobe_map_info {
--	struct uprobe_map_info *next;
--	struct mm_struct *mm;
--	unsigned long vaddr;
--};
--
--static inline struct uprobe_map_info *
--uprobe_free_map_info(struct uprobe_map_info *info)
-+struct uprobe_map_info *uprobe_free_map_info(struct uprobe_map_info *info)
- {
- 	struct uprobe_map_info *next = info->next;
- 	mmput(info->mm);
-@@ -710,9 +703,8 @@ struct uprobe_map_info {
- 	return next;
- }
+ 		info->mm = vma->vm_mm;
+-		info->vaddr = offset_to_vaddr(vma, offset);
++		info->vaddr = vma_offset_to_vaddr(vma, offset);
+ 	}
+ 	i_mmap_unlock_read(mapping);
  
--static struct uprobe_map_info *
--uprobe_build_map_info(struct address_space *mapping, loff_t offset,
--		      bool is_register)
-+struct uprobe_map_info *uprobe_build_map_info(struct address_space *mapping,
-+					      loff_t offset, bool is_register)
- {
- 	unsigned long pgoff = offset >> PAGE_SHIFT;
- 	struct vm_area_struct *vma;
+@@ -807,7 +807,7 @@ static inline struct map_info *free_map_info(struct map_info *info)
+ 			goto unlock;
+ 
+ 		if (vma->vm_start > info->vaddr ||
+-		    vaddr_to_offset(vma, info->vaddr) != uprobe->offset)
++		    vma_vaddr_to_offset(vma, info->vaddr) != uprobe->offset)
+ 			goto unlock;
+ 
+ 		if (is_register) {
+@@ -977,7 +977,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+ 		    uprobe->offset >= offset + vma->vm_end - vma->vm_start)
+ 			continue;
+ 
+-		vaddr = offset_to_vaddr(vma, uprobe->offset);
++		vaddr = vma_offset_to_vaddr(vma, uprobe->offset);
+ 		err |= remove_breakpoint(uprobe, mm, vaddr);
+ 	}
+ 	up_read(&mm->mmap_sem);
+@@ -1023,7 +1023,7 @@ static void build_probe_list(struct inode *inode,
+ 	struct uprobe *u;
+ 
+ 	INIT_LIST_HEAD(head);
+-	min = vaddr_to_offset(vma, start);
++	min = vma_vaddr_to_offset(vma, start);
+ 	max = min + (end - start) - 1;
+ 
+ 	spin_lock(&uprobes_treelock);
+@@ -1076,7 +1076,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+ 	list_for_each_entry_safe(uprobe, u, &tmp_list, pending_list) {
+ 		if (!fatal_signal_pending(current) &&
+ 		    filter_chain(uprobe, UPROBE_FILTER_MMAP, vma->vm_mm)) {
+-			unsigned long vaddr = offset_to_vaddr(vma, uprobe->offset);
++			unsigned long vaddr = vma_offset_to_vaddr(vma, uprobe->offset);
+ 			install_breakpoint(uprobe, vma->vm_mm, vma, vaddr);
+ 		}
+ 		put_uprobe(uprobe);
+@@ -1095,7 +1095,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+ 
+ 	inode = file_inode(vma->vm_file);
+ 
+-	min = vaddr_to_offset(vma, start);
++	min = vma_vaddr_to_offset(vma, start);
+ 	max = min + (end - start) - 1;
+ 
+ 	spin_lock(&uprobes_treelock);
+@@ -1730,7 +1730,7 @@ static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
+ 	if (vma && vma->vm_start <= bp_vaddr) {
+ 		if (valid_vma(vma, false)) {
+ 			struct inode *inode = file_inode(vma->vm_file);
+-			loff_t offset = vaddr_to_offset(vma, bp_vaddr);
++			loff_t offset = vma_vaddr_to_offset(vma, bp_vaddr);
+ 
+ 			uprobe = find_uprobe(inode, offset);
+ 		}
 -- 
 1.8.3.1
