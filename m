@@ -1,29 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754801AbeDDCW7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 22:22:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36410 "EHLO mail.kernel.org"
+        id S1754926AbeDDCXE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 22:23:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752316AbeDDCWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 22:22:53 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86BB82178F
+        id S1754825AbeDDCXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 22:23:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE188217D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Kim Phillips <kim.phillips@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 01/17] perf tools: Add a "dso_size" sort order
-Date: Tue,  3 Apr 2018 23:21:42 -0300
-Message-Id: <20180404022158.12190-2-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 03/17] perf trace: Show only failing syscalls
+Date: Tue,  3 Apr 2018 23:21:44 -0300
+Message-Id: <20180404022158.12190-4-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180404022158.12190-1-acme@kernel.org>
 References: <20180404022158.12190-1-acme@kernel.org>
@@ -31,202 +26,168 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@arm.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Add DSO size to perf report/top sort output list.
+For instance:
 
-This includes adding a map__size fn to map.h, which is
-approximately equal to the DSO data file_size:
+  # perf probe "vfs_getname=getname_flags:72 pathname=result->name:string"
+  Added new event:
+    probe:vfs_getname    (on getname_flags:72 with pathname=result->name:string)
 
-  DSO				file size	map (end-start)	file / (end-start)
-  libwebkit2gtk-4.0.so.37.24.9	43260072	41295872	95%
-  libglib-2.0.so.0.5400.1		 1125680	 1118208	99%
-  libc-2.26.so			 1960656 	 1925120	101%
-  libdbus-1.so.3.14.13		  309456 	  303104	102%
+  You can now use it in all perf tools, such as:
 
-Sample output:
+	  perf record -e probe:vfs_getname -aR sleep 1
 
-  $ ./perf report -s dso_size,dso
-  Samples: 2K of event 'cycles:uppp', Event count (approx.): 128373340
-  Overhead  DSO size  Shared Object
-    90.62%   unknown  [unknown]
-     2.87%   1118208  libglib-2.0.so.0.5400.1
-     1.92%    303104  libdbus-1.so.3.14.13
-     1.42%   1925120  libc-2.26.so
-     0.77%  41295872  libwebkit2gtk-4.0.so.37.24.9
-     0.61%    335872  libgobject-2.0.so.0.5400.1
-     0.41%   1052672  libgdk-3.so.0.2200.25
-     0.36%    106496  libpthread-2.26.so
-     0.29%    221184  dbus-daemon
-     0.17%    159744  ld-2.26.so
-     0.13%     49152  libwayland-client.so.0.3.0
-     0.12%   1642496  libgio-2.0.so.0.5400.1
-     0.09%   7327744  libgtk-3.so.0.2200.25
-     0.09%  12324864  libmozjs-52.so.0.0.0
-     0.05%   4796416  perf
-     0.04%    843776  libgjs.so.0.0.0
-     0.03%   1409024  libmutter-clutter-1.so
+  # perf trace --failure sleep 1
+     0.043 ( 0.010 ms): sleep/10978 access(filename: /etc/ld.so.preload, mode: R) = -1 ENOENT No such file or directory
 
-Committer testing:
+For reference, here are all the syscalls in this case:
 
-To sort by DSO size, use:
-
-  # perf report -F dso_size,dso,overhead -s dso_size
-  <SNIP>
-     3465216  libdns-export.so.174.0.1   0.00%
-     3522560  libgc.so.1.0.3             0.00%
-     3538944  libbfd-2.29-13.fc27.so     0.59%
-     3670016  libunistring.so.2.1.0      0.00%
-     3723264  libguile-2.0.so.22.8.1     0.00%
-     3776512  libgio-2.0.so.0.5400.3     0.00%
-     3891200  libc-2.26.so               0.96%
-     3944448  libmozjs-17.0.so           0.00%
-     4218880  libperl.so.5.26.1          0.18%
-     4452352  libpython2.7.so.1.0        0.02%
-     4472832  perf                       0.02%
-     4603904  git                        0.01%
-     4751360  libcrypto.so.1.1.0g        0.00%
-     5005312  libslang.so.2.3.1          0.00%
-     7315456  libgtk-3.so.0.2200.26      0.09%
-     8818688  i965_dri.so                2.46%
-     8818688  i965_dri.so (deleted)      1.26%
-    12414976  libmozjs-52.so.0.0.0       0.03%
-    23642112  cc1                        2.02%
-    27889664  [kernel.kallsyms]         25.41%
-    80834560  libxul.so (deleted)       15.68%
-    98078720  chrome                    32.03%
-  1056964608  [kernel.kallsyms]          1.59%
+  # perf trace sleep 1
+         ? (         ): sleep/10976  ... [continued]: execve()) = 0
+       0.027 ( 0.001 ms): sleep/10976 brk() = 0x55bdc2d04000
+       0.044 ( 0.010 ms): sleep/10976 access(filename: /etc/ld.so.preload, mode: R) = -1 ENOENT No such file or directory
+       0.057 ( 0.006 ms): sleep/10976 openat(dfd: CWD, filename: /etc/ld.so.cache, flags: CLOEXEC) = 3
+       0.064 ( 0.002 ms): sleep/10976 fstat(fd: 3, statbuf: 0x7fffac22b370) = 0
+       0.067 ( 0.003 ms): sleep/10976 mmap(len: 111457, prot: READ, flags: PRIVATE, fd: 3) = 0x7feec8615000
+       0.071 ( 0.001 ms): sleep/10976 close(fd: 3) = 0
+       0.080 ( 0.007 ms): sleep/10976 openat(dfd: CWD, filename: /lib64/libc.so.6, flags: CLOEXEC) = 3
+       0.088 ( 0.002 ms): sleep/10976 read(fd: 3, buf: 0x7fffac22b538, count: 832) = 832
+       0.092 ( 0.001 ms): sleep/10976 fstat(fd: 3, statbuf: 0x7fffac22b3d0) = 0
+       0.094 ( 0.002 ms): sleep/10976 mmap(len: 8192, prot: READ|WRITE, flags: PRIVATE|ANONYMOUS) = 0x7feec8613000
+       0.099 ( 0.004 ms): sleep/10976 mmap(len: 3889792, prot: EXEC|READ, flags: PRIVATE|DENYWRITE, fd: 3) = 0x7feec8057000
+       0.104 ( 0.007 ms): sleep/10976 mprotect(start: 0x7feec8203000, len: 2097152) = 0
+       0.112 ( 0.005 ms): sleep/10976 mmap(addr: 0x7feec8403000, len: 24576, prot: READ|WRITE, flags: PRIVATE|DENYWRITE|FIXED, fd: 3, off: 1753088) = 0x7feec8403000
+       0.120 ( 0.003 ms): sleep/10976 mmap(addr: 0x7feec8409000, len: 14976, prot: READ|WRITE, flags: PRIVATE|ANONYMOUS|FIXED) = 0x7feec8409000
+       0.128 ( 0.001 ms): sleep/10976 close(fd: 3) = 0
+       0.139 ( 0.001 ms): sleep/10976 arch_prctl(option: 4098, arg2: 140663540761856) = 0
+       0.186 ( 0.004 ms): sleep/10976 mprotect(start: 0x7feec8403000, len: 16384, prot: READ) = 0
+       0.204 ( 0.003 ms): sleep/10976 mprotect(start: 0x55bdc0ec3000, len: 4096, prot: READ) = 0
+       0.209 ( 0.004 ms): sleep/10976 mprotect(start: 0x7feec8631000, len: 4096, prot: READ) = 0
+       0.214 ( 0.010 ms): sleep/10976 munmap(addr: 0x7feec8615000, len: 111457) = 0
+       0.269 ( 0.001 ms): sleep/10976 brk() = 0x55bdc2d04000
+       0.271 ( 0.002 ms): sleep/10976 brk(brk: 0x55bdc2d25000) = 0x55bdc2d25000
+       0.274 ( 0.001 ms): sleep/10976 brk() = 0x55bdc2d25000
+       0.278 ( 0.007 ms): sleep/10976 open(filename: /usr/lib/locale/locale-archive, flags: CLOEXEC) = 3
+       0.288 ( 0.001 ms): sleep/10976 fstat(fd: 3</usr/lib/locale/locale-archive>, statbuf: 0x7feec8408aa0) = 0
+       0.290 ( 0.003 ms): sleep/10976 mmap(len: 113045344, prot: READ, flags: PRIVATE, fd: 3) = 0x7feec1488000
+       0.297 ( 0.001 ms): sleep/10976 close(fd: 3</usr/lib/locale/locale-archive>) = 0
+       0.325 (1000.193 ms): sleep/10976 nanosleep(rqtp: 0x7fffac22c0b0) = 0
+    1000.560 ( 0.006 ms): sleep/10976 close(fd: 1) = 0
+    1000.573 ( 0.005 ms): sleep/10976 close(fd: 2) = 0
+    1000.596 (         ): sleep/10976 exit_group()
   #
 
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>
-Cc: Milian Wolff <milian.wolff@kdab.com>
+And can be done systemwide, etc, with backtraces:
+
+  # perf trace --max-stack=16 --failure sleep 1
+     0.048 ( 0.015 ms): sleep/11092 access(filename: /etc/ld.so.preload, mode: R) = -1 ENOENT No such file or directory
+                                       __access (inlined)
+                                       dl_main (/usr/lib64/ld-2.26.so)
+  #
+
+Or for some specific syscalls:
+
+  # perf trace --max-stack=16 -e openat --failure cat /tmp/rien
+  cat: /tmp/rien: No such file or directory
+       0.251 ( 0.012 ms): cat/11106 openat(dfd: CWD, filename: /tmp/rien) = -1 ENOENT No such file or directory
+                                         __libc_open64 (inlined)
+                                         main (/usr/bin/cat)
+                                         __libc_start_main (/usr/lib64/libc-2.26.so)
+                                         _start (/usr/bin/cat)
+  #
+
+Look for inotify* syscalls that fail, system wide, for 2 seconds, with backtraces:
+
+  # perf trace -a --max-stack=16 --failure -e inotify* sleep 2
+   819.165 ( 0.058 ms): gmain/1724 inotify_add_watch(fd: 8<anon_inode:inotify>, pathname: /home/acme/~, mask: 16789454) = -1 ENOENT No such file or directory
+                                       __GI_inotify_add_watch (inlined)
+                                       _ik_watch (/usr/lib64/libgio-2.0.so.0.5400.3)
+                                       _ip_start_watching (/usr/lib64/libgio-2.0.so.0.5400.3)
+                                       im_scan_missing (/usr/lib64/libgio-2.0.so.0.5400.3)
+                                       g_timeout_dispatch (/usr/lib64/libglib-2.0.so.0.5400.3)
+                                       g_main_context_dispatch (/usr/lib64/libglib-2.0.so.0.5400.3)
+                                       g_main_context_iterate.isra.23 (/usr/lib64/libglib-2.0.so.0.5400.3)
+                                       g_main_context_iteration (/usr/lib64/libglib-2.0.so.0.5400.3)
+                                       glib_worker_main (/usr/lib64/libglib-2.0.so.0.5400.3)
+                                       g_thread_proxy (/usr/lib64/libglib-2.0.so.0.5400.3)
+                                       start_thread (/usr/lib64/libpthread-2.26.so)
+                                       __GI___clone (inlined)
+  #
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180327060956.1c01ebe67a2a941bb4468c6f@arm.com
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-8f7d3mngaxvi7tlzloz3n7cs@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-report.txt |  1 +
- tools/perf/util/hist.h                   |  1 +
- tools/perf/util/map.h                    |  4 ++++
- tools/perf/util/sort.c                   | 41 ++++++++++++++++++++++++++++++++
- tools/perf/util/sort.h                   |  1 +
- 5 files changed, 48 insertions(+)
+ tools/perf/Documentation/perf-trace.txt | 3 +++
+ tools/perf/builtin-trace.c              | 9 ++++++---
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-index e1a660e60849..917e36fde6d8 100644
---- a/tools/perf/Documentation/perf-report.txt
-+++ b/tools/perf/Documentation/perf-report.txt
-@@ -80,6 +80,7 @@ OPTIONS
- 	- comm: command (name) of the task which can be read via /proc/<pid>/comm
- 	- pid: command and tid of the task
- 	- dso: name of library or module executed at the time of sample
-+	- dso_size: size of library or module executed at the time of sample
- 	- symbol: name of function executed at the time of sample
- 	- symbol_size: size of function executed at the time of sample
- 	- parent: name of function matched to the parent regex filter. Unmatched
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index e869cad4d89f..32fbf26e0c18 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -61,6 +61,7 @@ enum hist_column {
- 	HISTC_SRCLINE_TO,
- 	HISTC_TRACE,
- 	HISTC_SYM_SIZE,
-+	HISTC_DSO_SIZE,
- 	HISTC_NR_COLS, /* Last entry */
- };
+diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
+index 5a7035c5c523..115db9e06ecd 100644
+--- a/tools/perf/Documentation/perf-trace.txt
++++ b/tools/perf/Documentation/perf-trace.txt
+@@ -117,6 +117,9 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
+ --sched::
+ 	Accrue thread runtime and provide a summary at the end of the session.
  
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index edeb7291c8e1..0e9bbe01b0ab 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -103,6 +103,10 @@ static inline u64 identity__map_ip(struct map *map __maybe_unused, u64 ip)
- 	return ip;
- }
++--failure::
++	Show only syscalls that failed, i.e. that returned < 0.
++
+ -i::
+ --input::
+ 	Process events from a given perf data file.
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 87b95c9410b4..4e03f0f68241 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -112,6 +112,7 @@ struct trace {
+ 	bool			multiple_threads;
+ 	bool			summary;
+ 	bool			summary_only;
++	bool			failure_only;
+ 	bool			show_comm;
+ 	bool			print_sample;
+ 	bool			show_tool_stats;
+@@ -1565,7 +1566,7 @@ static int trace__printf_interrupted_entry(struct trace *trace)
+ 	struct thread_trace *ttrace;
+ 	size_t printed;
  
-+static inline size_t map__size(const struct map *map)
-+{
-+	return map->end - map->start;
-+}
+-	if (trace->current == NULL)
++	if (trace->failure_only || trace->current == NULL)
+ 		return 0;
  
- /* rip/ip <-> addr suitable for passing to `objdump --start-address=` */
- u64 map__rip_2objdump(struct map *map, u64 rip);
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index e8514f651865..26a68dfd8a4f 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -1545,6 +1545,46 @@ struct sort_entry sort_sym_size = {
- 	.se_width_idx	= HISTC_SYM_SIZE,
- };
+ 	ttrace = thread__priv(trace->current);
+@@ -1638,7 +1639,7 @@ static int trace__sys_enter(struct trace *trace, struct perf_evsel *evsel,
+ 					   args, trace, thread);
  
-+/* --sort dso_size */
-+
-+static int64_t _sort__dso_size_cmp(struct map *map_l, struct map *map_r)
-+{
-+	int64_t size_l = map_l != NULL ? map__size(map_l) : 0;
-+	int64_t size_r = map_r != NULL ? map__size(map_r) : 0;
-+
-+	return size_l < size_r ? -1 :
-+		size_l == size_r ? 0 : 1;
-+}
-+
-+static int64_t
-+sort__dso_size_cmp(struct hist_entry *left, struct hist_entry *right)
-+{
-+	return _sort__dso_size_cmp(right->ms.map, left->ms.map);
-+}
-+
-+static int _hist_entry__dso_size_snprintf(struct map *map, char *bf,
-+					  size_t bf_size, unsigned int width)
-+{
-+	if (map && map->dso)
-+		return repsep_snprintf(bf, bf_size, "%*d", width,
-+				       map__size(map));
-+
-+	return repsep_snprintf(bf, bf_size, "%*s", width, "unknown");
-+}
-+
-+static int hist_entry__dso_size_snprintf(struct hist_entry *he, char *bf,
-+					 size_t size, unsigned int width)
-+{
-+	return _hist_entry__dso_size_snprintf(he->ms.map, bf, size, width);
-+}
-+
-+struct sort_entry sort_dso_size = {
-+	.se_header	= "DSO size",
-+	.se_cmp		= sort__dso_size_cmp,
-+	.se_snprintf	= hist_entry__dso_size_snprintf,
-+	.se_width_idx	= HISTC_DSO_SIZE,
-+};
-+
+ 	if (sc->is_exit) {
+-		if (!(trace->duration_filter || trace->summary_only || trace->min_stack)) {
++		if (!(trace->duration_filter || trace->summary_only || trace->failure_only || trace->min_stack)) {
+ 			trace__fprintf_entry_head(trace, thread, 0, false, ttrace->entry_time, trace->output);
+ 			fprintf(trace->output, "%-70s)\n", ttrace->entry_str);
+ 		}
+@@ -1742,7 +1743,7 @@ static int trace__sys_exit(struct trace *trace, struct perf_evsel *evsel,
+ 		}
+ 	}
  
- struct sort_dimension {
- 	const char		*name;
-@@ -1569,6 +1609,7 @@ static struct sort_dimension common_sort_dimensions[] = {
- 	DIM(SORT_TRANSACTION, "transaction", sort_transaction),
- 	DIM(SORT_TRACE, "trace", sort_trace),
- 	DIM(SORT_SYM_SIZE, "symbol_size", sort_sym_size),
-+	DIM(SORT_DSO_SIZE, "dso_size", sort_dso_size),
- 	DIM(SORT_CGROUP_ID, "cgroup_id", sort_cgroup_id),
- };
+-	if (trace->summary_only)
++	if (trace->summary_only || (ret >= 0 && trace->failure_only))
+ 		goto out;
  
-diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-index f5901c10a563..035b62e2c60b 100644
---- a/tools/perf/util/sort.h
-+++ b/tools/perf/util/sort.h
-@@ -220,6 +220,7 @@ enum sort_type {
- 	SORT_TRANSACTION,
- 	SORT_TRACE,
- 	SORT_SYM_SIZE,
-+	SORT_DSO_SIZE,
- 	SORT_CGROUP_ID,
- 
- 	/* branch stack specific sort keys */
+ 	trace__fprintf_entry_head(trace, thread, duration, duration_calculated, ttrace->entry_time, trace->output);
+@@ -3087,6 +3088,8 @@ int cmd_trace(int argc, const char **argv)
+ 	OPT_INCR('v', "verbose", &verbose, "be more verbose"),
+ 	OPT_BOOLEAN('T', "time", &trace.full_time,
+ 		    "Show full timestamp, not time relative to first start"),
++	OPT_BOOLEAN(0, "failure", &trace.failure_only,
++		    "Show only syscalls that failed"),
+ 	OPT_BOOLEAN('s', "summary", &trace.summary_only,
+ 		    "Show only syscall summary with statistics"),
+ 	OPT_BOOLEAN('S', "with-summary", &trace.summary,
 -- 
 2.14.3
