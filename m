@@ -1,114 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751518AbeDDHSJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 03:18:09 -0400
-Received: from mail.monom.org ([188.138.9.77]:49580 "EHLO mail.monom.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751242AbeDDHRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 03:17:16 -0400
-From: Daniel Wagner <wagi@monom.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <daniel.wagner@siemens.com>, tom.zanussi@linux.intel.com,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        stable-rt@vger.kernel.org
-Subject: [PATCH RT 4/7] arm*: disable NEON in kernel mode
-Date: Wed,  4 Apr 2018 09:16:49 +0200
-Message-Id: <20180404071652.24196-5-wagi@monom.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180404071652.24196-1-wagi@monom.org>
-References: <20180404071652.24196-1-wagi@monom.org>
+        id S1751558AbeDDHSR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 03:18:17 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52738 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751470AbeDDHSP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 03:18:15 -0400
+Subject: Re: [PATCH 2/2] kfree_rcu() should use kfree_bulk() interface
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com,
+        joe@perches.com, brouer@redhat.com, linux-mm@kvack.org
+References: <1522776173-7190-1-git-send-email-rao.shoaib@oracle.com>
+ <1522776173-7190-3-git-send-email-rao.shoaib@oracle.com>
+ <20180403205822.GB30145@bombadil.infradead.org>
+ <d434c58c-082b-9a17-8d15-9c66e0c1941a@oracle.com>
+ <20180404022347.GA17512@bombadil.infradead.org>
+From: Rao Shoaib <rao.shoaib@oracle.com>
+Message-ID: <954a9ea2-5202-4ee3-1fa2-21acf8d07cdb@oracle.com>
+Date: Wed, 4 Apr 2018 00:16:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180404022347.GA17512@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804040075
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-NEON in kernel mode is used by the crypto algorithms and raid6 code.
-While the raid6 code looks okay, the crypto algorithms do not: NEON
-is enabled on first invocation and may allocate/free/map memory before
-the NEON mode is disabled again.
-This needs to be changed until it can be enabled.
-On ARM NEON in kernel mode can be simply disabled. on ARM64 it needs to
-stay on due to possible EFI callbacks so here I disable each algorithm.
 
-Cc: stable-rt@vger.kernel.org
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- arch/arm/Kconfig          |  2 +-
- arch/arm64/crypto/Kconfig | 14 +++++++-------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+On 04/03/2018 07:23 PM, Matthew Wilcox wrote:
+> On Tue, Apr 03, 2018 at 05:55:55PM -0700, Rao Shoaib wrote:
+>> On 04/03/2018 01:58 PM, Matthew Wilcox wrote:
+>>> I think you might be better off with an IDR.  The IDR can always
+>>> contain one entry, so there's no need for this 'rbf_list_head' or
+>>> __rcu_bulk_schedule_list.  The IDR contains its first 64 entries in
+>>> an array (if that array can be allocated), so it's compatible with the
+>>> kfree_bulk() interface.
+>>>
+>> I have just familiarized myself with what IDR is by reading your article. If
+>> I am incorrect please correct me.
+>>
+>> The list and head you have pointed are only used  if the container can not
+>> be allocated. That could happen with IDR as well. Note that the containers
+>> are allocated at boot time and are re-used.
+> No, it can't happen with the IDR.  The IDR can always contain one entry
+> without allocating anything.  If you fail to allocate the second entry,
+> just free the first entry.
+>
+>> IDR seems to have some overhead, such as I have to specifically add the
+>> pointer and free the ID, plus radix tree maintenance.
+> ... what?  Adding a pointer is simply idr_alloc(), and you get back an
+> integer telling you which index it has.  Your data structure has its
+> own set of overhead.
+The only overhead is a pointer that points to the head and an int to 
+keep count. If I use idr, I would have to allocate an struct idr which 
+is much larger. idr_alloc()/idr_destroy() operations are much more 
+costly than updating two pointers. As the pointers are stored in 
+slots/nodes corresponding to the id, I would  have to retrieve the 
+pointers by calling idr_remove() to pass them to be freed, the 
+slots/nodes would constantly be allocated and freed.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 79c4603e9453..5e054a0c4b25 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -2119,7 +2119,7 @@ config NEON
- 
- config KERNEL_MODE_NEON
- 	bool "Support for NEON in kernel mode"
--	depends on NEON && AEABI
-+	depends on NEON && AEABI && !PREEMPT_RT_BASE
- 	help
- 	  Say Y to include support for NEON in kernel mode.
- 
-diff --git a/arch/arm64/crypto/Kconfig b/arch/arm64/crypto/Kconfig
-index 2cf32e9887e1..cd71b3432720 100644
---- a/arch/arm64/crypto/Kconfig
-+++ b/arch/arm64/crypto/Kconfig
-@@ -10,41 +10,41 @@ if ARM64_CRYPTO
- 
- config CRYPTO_SHA1_ARM64_CE
- 	tristate "SHA-1 digest algorithm (ARMv8 Crypto Extensions)"
--	depends on ARM64 && KERNEL_MODE_NEON
-+	depends on ARM64 && KERNEL_MODE_NEON && !PREEMPT_RT_BASE
- 	select CRYPTO_HASH
- 
- config CRYPTO_SHA2_ARM64_CE
- 	tristate "SHA-224/SHA-256 digest algorithm (ARMv8 Crypto Extensions)"
--	depends on ARM64 && KERNEL_MODE_NEON
-+	depends on ARM64 && KERNEL_MODE_NEON && !PREEMPT_RT_BASE
- 	select CRYPTO_HASH
- 
- config CRYPTO_GHASH_ARM64_CE
- 	tristate "GHASH (for GCM chaining mode) using ARMv8 Crypto Extensions"
--	depends on ARM64 && KERNEL_MODE_NEON
-+	depends on ARM64 && KERNEL_MODE_NEON && !PREEMPT_RT_BASE
- 	select CRYPTO_HASH
- 
- config CRYPTO_AES_ARM64_CE
- 	tristate "AES core cipher using ARMv8 Crypto Extensions"
--	depends on ARM64 && KERNEL_MODE_NEON
-+	depends on ARM64 && KERNEL_MODE_NEON && !PREEMPT_RT_BASE
- 	select CRYPTO_ALGAPI
- 
- config CRYPTO_AES_ARM64_CE_CCM
- 	tristate "AES in CCM mode using ARMv8 Crypto Extensions"
--	depends on ARM64 && KERNEL_MODE_NEON
-+	depends on ARM64 && KERNEL_MODE_NEON && !PREEMPT_RT_BASE
- 	select CRYPTO_ALGAPI
- 	select CRYPTO_AES_ARM64_CE
- 	select CRYPTO_AEAD
- 
- config CRYPTO_AES_ARM64_CE_BLK
- 	tristate "AES in ECB/CBC/CTR/XTS modes using ARMv8 Crypto Extensions"
--	depends on ARM64 && KERNEL_MODE_NEON
-+	depends on ARM64 && KERNEL_MODE_NEON && !PREEMPT_RT_BASE
- 	select CRYPTO_BLKCIPHER
- 	select CRYPTO_AES_ARM64_CE
- 	select CRYPTO_ABLK_HELPER
- 
- config CRYPTO_AES_ARM64_NEON_BLK
- 	tristate "AES in ECB/CBC/CTR/XTS modes using NEON instructions"
--	depends on ARM64 && KERNEL_MODE_NEON
-+	depends on ARM64 && KERNEL_MODE_NEON && !PREEMPT_RT_BASE
- 	select CRYPTO_BLKCIPHER
- 	select CRYPTO_AES
- 	select CRYPTO_ABLK_HELPER
--- 
-2.14.3
+IDR is a very useful interface for allocating/managing ID's but I really 
+do not see the justification for using it over here, perhaps you can 
+elaborate more on the benefits and also on how I can just pass the array 
+to be freed.
+
+Shoaib
