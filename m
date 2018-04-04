@@ -1,74 +1,71 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2906851-1522803411-2-10225222441739653425
+Return-Path: <linux-efi-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2906851-1522804407-2-7381205993084389494
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-security-module-owner@vger.kernel.org
+X-Mail-from: linux-efi-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522803411; b=N1BnfZ8llR/n5qlVaR29b9cp8cRqfA1T0tS0kB7XFgviHIhNs7
-    dxJ2itzsRDRrxx+DtSCLUc9C24FIeKNXB78oLKgh9Q0GcWPctNMt+7ds9LPQx4aw
-    OJKAdv9PMN8XLjGsMvZW/tGVjPiDo4Uuma/aVZxRhTqaXY2VGxEcT5whY2C4/RDp
-    /4Xv34ZBcR1Dw+bOYeJeOmJWinDLACygCIG818TprfAJlTAm0yAZbBcPfeQUA6yI
-    S7riFS3ArxX7uJIrjQCu5yfRgrnrjnHTchbaoSTh33a8T1bbyu/NuvIL145665g5
-    E1lQ9B8BQVuqsCtjXkoDosdXXFAxPrBAFtng==
+    1522804406; b=ETKQjwn1c/nQSDqJFjpx7bK1zG07FCHtrb5cFhKKvGHmUPu5xq
+    xi8XEWWqHEwzZb68tSHvgmYu18jb4TSqEC1WVDid66xY1tqUHFr5cTW/RNI6523h
+    V4GZycQQFRutEHncPZ5y7tvw36UA4UUghZI7wKM5harq+kLDX7N/6p2S5/4X1IlW
+    3OxrZEYLW2jQLO3GcrMc2EhfGExyaDGLJ9/JPuz0xCUV5i23h5mE1cw/f8+bfy1E
+    Ove1RVgPH649vpiehFjj0sjKvqf25Mnl0W7qIl/wjmFklIKCja+xCqlhF2Xv6RMQ
+    wuQ/l8FB8WtsAPhU/nGY1cRqWsF4dp6boV3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
+    messagingengine.com; h=mime-version:references:in-reply-to:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1522803411; bh=0T6/FliKJ+n2MWFpMpLJfcHabCgILu1YehuGPPUYQq
-    Q=; b=NCUu9lr9Sie9ym4toHGSFuiHTTqfNPLtqdA/ObCLKnrffql9oRcCMELM6b
-    IrmjNO0lokqHozBNz8w8aKPCPon6JbsNN0CKOriuzP9oD0IuqGMJbqm1yQdZlnum
-    IfCNuYMOPvrhnwe6ivmO7BJdWjUwWFICmlh8EhyEY160uEojoO0AuK/lSvAMG/bi
-    nFUPqbCDzsk8LCWWis7TRu/q+Ydk2fgh/cLkLICjNf25dcHI12MV42706RWGfhY2
-    EcrbXECqCtnRGyq2BVAI52p6hFDEKloOHeD83dLtxsZb/RU0NWAOP5FGLskWoT4G
-    iob1j8s5rpHTHFQS+POxNvjF4qaQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Q9AeUzqE x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=M4UD+SN3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    fm2; t=1522804406; bh=J2AzXVzFNvRJA14FZqzEQq8bUQrE6XmfTp0os2dlga
+    0=; b=KcsQi9axJfZ8s3wLpSEo+Ugm7uHOgdYzoEFWk82/bqA8YosGAN50a+EkMo
+    j41ipiTlWHU7clwHTYq1sHvS1MoQwVyEg4bZo6GrQVPChsEce/0VxwRAVuQheKQj
+    GNnzQI1LCguqgx3oQwTwIEehZ09j9kTCzNaEJm1yYLkjdUg0rm5yhfhbzNyH6f1h
+    /GgUHy5njfvfNJGByBSFb2zoUub2Tf4XKm9IOdRDyMSK0cNuWEpQvf2DBJduwRYl
+    LsdkZNAVJ6mph4lBriGgwGXPx1qSY/hAcyNGCKXRDUjtEqSltYdWxxExIWnbHlB0
+    ajMSrMpM6oVclX3FfH10jo9Dzm8A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=SDjgmioN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DE2UwcS4;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ON91R/P5;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Q9AeUzqE x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=M4UD+SN3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=SDjgmioN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DE2UwcS4;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ON91R/P5;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP2emZ4OKZf56/LawmjHBxqcft6wksGmU+5scfu6H4zCt9D4HW7CWKQbLrhq1w3jPk5yBmWyZcZFl0geJQ+x0DMaqFjQmNjeSVlfBM89j9U4uvKhhTrq
-    J3XOiS18msdxXJu0v4vOMJZ8Mh7r8qIpJd3XTtXWRJm9APdV/lgRSQPpZXxPIn6u+JWrHvb2KpJFsaeVMnh3zF11HfYqUOAGvq5qtjboQmuAATSl25nFAuvb
-    4dk4Omsz/YSPZY4ML2Pn+A==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAepjB45ixMPmDekRuqdHohjxCMFD1/M1NAR47NRc4ozLXdyA1s/A0Q+giBh5R1LfmqHySBxkAhAodfK5jXbzaJA2W5+DaDORnqPNCU7Lc4V3xK1CiMQ
+    L25K6hOCgiqE9fLVWdYhsY80SQA8rnDOCmHfUHOIYTJB4UICXrWBTvBNOCMOH5XCxhkK/O5wK5vfBqMWW+ZdEW6VsxxjXQJDQWquNSz/56pc2tVOt97JTQ63
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=VJ32U7px_5mGT2n6YQIA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=Z4Rwk6OoAAAA:8 a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=iwB4P2d5OmKV7Oa7gz0A:9
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=HkZW87K1Qel5hWWM3VKY:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754806AbeDDA4s (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 3 Apr 2018 20:56:48 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44398 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754803AbeDDA4p (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Apr 2018 20:56:45 -0400
-X-Google-Smtp-Source: AIpwx4839QYyC50quuSyFza/LLjOI/9j++hvEwkY53cUhKvN06+x/xl8GjeTtNnQgyT+CLGmRVePRh5Ffqtirada2a8=
+        id S1755142AbeDDBNZ (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 3 Apr 2018 21:13:25 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:41484 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755133AbeDDBNW (ORCPT
+        <rfc822;linux-efi@vger.kernel.org>); Tue, 3 Apr 2018 21:13:22 -0400
+X-Google-Smtp-Source: AIpwx4/6u6M3w8/dymvvr+mpmVvR4SsBc9CM8g65D6jQrKJEqMmKxVeaoRizug/OeSYB5xwhB0bO8bVJ+Xr8HtE1uZQ=
 MIME-Version: 1.0
-In-Reply-To: <CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com>
 References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
  <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
  <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
@@ -90,50 +87,74 @@ References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145
  <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
  <CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
  <CA+55aFwvuoSHhKnn82VnDndZ6oXMJgwHF604gZ=h3ehHyC600A@mail.gmail.com>
- <CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com> <CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 3 Apr 2018 17:56:43 -0700
-X-Google-Sender-Auth: BO-Z0aaARvuvOjkSwGiK6AOPP1I
-Message-ID: <CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com>
+ <CA+55aFzJ2sQR13T+20MKEJ5co-f3Ev8rRxQkRCWVaeDSUU3yhQ@mail.gmail.com>
+ <CACdnJuti5Riqoi1sesqPALYHq9LT87o4MFj-0Y5BZqqzJ5579g@mail.gmail.com> <CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com>
+In-Reply-To: <CA+55aFwhi=gz3HLoGST9--n1_kLJNP6jsf8GSesSFxTDCdPdtQ@mail.gmail.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Wed, 04 Apr 2018 01:13:10 +0000
+Message-ID: <CACdnJuuek-sS3esmomNOkjBMV_6VPL2NFCzRd+UGxbZrMe=4nw@mail.gmail.com>
 Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-To: Matthew Garrett <mjg59@google.com>
-Cc: Andrew Lutomirski <luto@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morris <jmorris@namei.org>,
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: luto@kernel.org, David Howells <dhowells@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, jmorris@namei.org,
         Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Justin Forbes <jforbes@redhat.com>,
-        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
+        jforbes@redhat.com, linux-man@vger.kernel.org, jlee@suse.com,
         LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        linux-api@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         linux-efi <linux-efi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: owner-linux-security-module@vger.kernel.org
+Sender: linux-efi-owner@vger.kernel.org
+X-Mailing-List: linux-efi@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 3, 2018 at 5:46 PM, Matthew Garrett <mjg59@google.com> wrote:
->
-> The generic distros have been shipping this policy for the past 5 years.
+On Tue, Apr 3, 2018 at 5:56 PM Linus Torvalds
+<torvalds@linux-foundation.org>
+wrote:
 
-.. so apparently it doesn't actually break things? Why not enable it
-by default then?
+> On Tue, Apr 3, 2018 at 5:46 PM, Matthew Garrett <mjg59@google.com> wrote:
+> >
+> > The generic distros have been shipping this policy for the past 5 years.
 
-And if "turn off secure boot" really is the accepted - and actuially
-used - workaround for the breakage, then
+> .. so apparently it doesn't actually break things? Why not enable it
+> by default then?
 
-   WHY THE HELL DIDN'T YOU START OFF BY EXPLAINING THAT IN THE FIRST
-PLACE WHEN PEOPLE ASKED WHY THE TIE-IN EXISTED?
+Because it does break things, and the documented fix is "Disable Secure
+Boot by running mokutil --disable-validation".
 
-Sorry for shouting, but really. We have a thread of just *how* many
-email messages that asked for the explanation for this? All we got was
-incomprehensible and illogical crap explanations.
+> And if "turn off secure boot" really is the accepted - and actuially
+> used - workaround for the breakage, then
 
-If there actually was a good explanation for the tie-in, it should
-have been front-and-center and explained as such.
+>     WHY THE HELL DIDN'T YOU START OFF BY EXPLAINING THAT IN THE FIRST
+> PLACE WHEN PEOPLE ASKED WHY THE TIE-IN EXISTED?
 
-                Linus
+> Sorry for shouting, but really. We have a thread of just *how* many
+> email messages that asked for the explanation for this? All we got was
+> incomprehensible and illogical crap explanations.
+
+There are four cases:
+
+Verified Boot off, lockdown off: Status quo in distro and mainline kernels
+Verified Boot off, lockdown on: Perception of security improvement that's
+trivially circumvented (and so bad)
+Verified Boot on, lockdown off: Perception of security improvement that's
+trivially circumvented (and so bad), status quo in mainline kernels
+Verified Boot on, lockdown on: Security improvement, status quo in distro
+kernels
+
+Of these four options, only two make sense. The most common implementation
+of Verified Boot on x86 platforms is UEFI Secure Boot, so this patchset
+includes an option that (if set) results in the kernel doing the right
+thing without user intervention. This makes it easy for a user to switch
+between the two states that make sense by running a single command and then
+following some prompts on the next reboot. The alternative would be to
+provide a signed kernel that always enabled lockdown and an unsigned kernel
+that didn't, which would (a) increase load on distributions and (b) force
+users to both run mokutil --disable-validation and also install a different
+kernel.
+
+I'm sorry if I've appeared tetchy in this discussion - having several of my
+coworkers shot has not done wonders for my mood.
