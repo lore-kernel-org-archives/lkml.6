@@ -1,75 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751419AbeDDJEm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:04:42 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:45083 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750950AbeDDJEk (ORCPT
+        id S1751523AbeDDJEq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:04:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55414 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbeDDJEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:04:40 -0400
-Subject: Re: [PATCH v2 3/6] i2c: i2c-stm32f7: Add initial SMBus protocols
- support
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
- <1521650940-11651-4-git-send-email-pierre-yves.mordret@st.com>
- <20180324224911.xz3fz2jojcdrovb4@ninjato>
- <2fadcd7f-3bfc-997e-a30e-808f6d854f2c@st.com>
- <20180403153122.ux6hnnmexwmq3soz@ninjato>
-From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <07e24b50-0f6e-2960-8543-92d5a2668373@st.com>
-Date: Wed, 4 Apr 2018 11:04:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 4 Apr 2018 05:04:42 -0400
+Date: Wed, 4 Apr 2018 11:04:40 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Matthew Garrett <mjg59@google.com>
+Cc: luto@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, jmorris@namei.org,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jforbes@redhat.com, linux-man@vger.kernel.org, jlee@suse.com,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-api@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: Re: [GIT PULL] Kernel lockdown for secure boot
+Message-ID: <20180404090440.GA24169@kroah.com>
+References: <CA+55aFyWNok1K-Jo3TQAXGXHvFOTvuOb-Hw977B9RGjBa7prrg@mail.gmail.com>
+ <CACdnJutZFKX+izBxRYbyxefT5KrKhVV0XsymU=vBhywd+TOE3A@mail.gmail.com>
+ <CA+55aFwVUmjZ+Swe9xUdDOEE+EOoaU3dh7BcrH74BOLCi8y_Kw@mail.gmail.com>
+ <CACdnJuvqQQ+hidokY5GA7g-yrAs5-358it0cs+m_d4RFDMuB_w@mail.gmail.com>
+ <CA+55aFwJBGCr-anrdV9N63fUH4V_QJqgr0_fJyHhH=fuqGAoog@mail.gmail.com>
+ <CACdnJuvFqXGLsAv1Km3MmdssHBfuH5-C_vG3A4eq4Yuj0HhFBA@mail.gmail.com>
+ <CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com>
+ <CACdnJuv-VpdhjEe1cMysdHb6Oy67jQqg-_TVHbUrOfH9GmCVvg@mail.gmail.com>
+ <CALCETrVF2vSvoz0sBCrfMKcbJ4hmi=1QJZbUxdvurkimVXr0nA@mail.gmail.com>
+ <CACdnJutmTU4U0nMik0oqGHDEd-xd4Vhi06t3RsZ5tpUgugfNbQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180403153122.ux6hnnmexwmq3soz@ninjato>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_02:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACdnJutmTU4U0nMik0oqGHDEd-xd4Vhi06t3RsZ5tpUgugfNbQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 04, 2018 at 12:19:35AM +0000, Matthew Garrett wrote:
+> On Tue, Apr 3, 2018 at 5:18 PM Andy Lutomirski <luto@kernel.org> wrote:
+> 
+> > if your secure boot-enabled bootloader can't prevent a bad guy from
+> > using malicious kernel command line parameters, then fix it.
+> 
+> How is a bootloader supposed to know what the set of malicious kernel
+> command line parameters is?
 
+It wouldn't, it, if it really were "secure", would not allow any command
+line parameters to be changed.  Which is exactly what those bootloaders
+who "claim" to be secure do.
 
-On 04/03/2018 05:31 PM, Wolfram Sang wrote:
-> 
->>>> All SMBus protocols are implemented except SMBus-specific protocols.
->>>
->>> What does that mean?
->>
->> It miss SMBus Host Notification and SMBBus Alert. They are almost ready but I'm
->> struggling to put them back to operational state after recent changes related to
->> SMBust Host Notification. A more "classic" interrupt base solution has been put
->> in place but I fail to use implement it in my side.
->> Another patch set is going to be delivered for these 2 commands.
-> 
-> This is totally fine to implement it incrementally. Please just update the
-> commit message with the more detailed explanation above.
-> 
+And, just to butt in here, there is no requirement that I have ever
+heard of from anyone at UEFI or Microsoft that this type of "kernel
+feature" is a requirement to allow for a bootloader/kernel to be signed
+with their key.  So that should take the "politics" reason off the table
+here, if people thought that somehow it was even a viable reason...
 
-Ok. I get.
+thanks,
 
->>> That is quite some complexity considering we have I2C_FUNC_SMBUS_EMUL. I
->>> don't mind, but you really want that?
->>>
->>
->> All SMBBus commands are implemented as such. I never try to emulation commands.
->> Should we use emulation SMBus commands or real commands... Don't know.
-> 
-> You won't see any difference on the wire. I don't know your HW. It might
-> be that SMBus mode is more "automatic" and uses less interrupts. Or
-> stuff like Alert or HostNotification only works in this mode. If you and
-> the driver maintainers think it is worth the added complexity, I am
-> fine, too.
-> 
-Ok. I see.
-I am the maintainer. So yes I keep it as such ... with this complexity ;)
+greg k-h
