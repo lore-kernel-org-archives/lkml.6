@@ -1,99 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752492AbeDDV70 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 17:59:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54462 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752458AbeDDV7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 17:59:25 -0400
-Date: Wed, 4 Apr 2018 17:59:16 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 15/24] mm: Introduce __vm_normal_page()
-Message-ID: <20180404215916.GC3331@redhat.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1520963994-28477-16-git-send-email-ldufour@linux.vnet.ibm.com>
- <20180403193927.GD5935@redhat.com>
- <a3446d86-8a29-a9f2-a1fe-b8cc1b748132@linux.vnet.ibm.com>
+        id S1752501AbeDDWDk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 18:03:40 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:36837 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752410AbeDDWDi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 18:03:38 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Alban Crequy <alban.crequy@gmail.com>,
+        Iago Lopez Galeiras <iago@kinvolk.io>,
+        containers@lists.linux-foundation.org,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        linux-kernel@vger.kernel.org, Michael Crosby <crosbymichael@gmail.com>,
+        Stephen J Day <stephen.day@docker.com>,
+        Alban Crequy <alban@kinvolk.io>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Jess Frazelle <acidburn@microsoft.com>
+References: <20180404115311.725-1-alban@kinvolk.io>
+        <87tvsrjai0.fsf@xmission.com> <20180404184250.GA9997@mail.hallyn.com>
+Date: Wed, 04 Apr 2018 17:02:27 -0500
+In-Reply-To: <20180404184250.GA9997@mail.hallyn.com> (Serge E. Hallyn's
+        message of "Wed, 4 Apr 2018 13:42:50 -0500")
+Message-ID: <871sfuiqa4.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a3446d86-8a29-a9f2-a1fe-b8cc1b748132@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-XM-SPF: eid=1f3qVE-0000n2-3O;;;mid=<871sfuiqa4.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+jT4ndV4hVPS5W+jsBPgnuZEu48ipyWR8=
+X-SA-Exim-Connect-IP: 67.3.145.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4992]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;"Serge E. Hallyn" <serge@hallyn.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 224 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 3.9 (1.8%), b_tie_ro: 2.8 (1.3%), parse: 1.00 (0.4%),
+        extract_message_metadata: 11 (4.7%), get_uri_detail_list: 0.54 (0.2%),
+        tests_pri_-1000: 5 (2.4%), tests_pri_-950: 1.01 (0.5%), tests_pri_-900: 0.89
+        (0.4%), tests_pri_-400: 18 (8.0%), check_bayes: 17 (7.5%), b_tokenize: 3.6
+        (1.6%), b_tok_get_all: 6 (2.6%), b_comp_prob: 2.2 (1.0%), b_tok_touch_all:
+        3.2 (1.4%), b_finish: 0.76 (0.3%), tests_pri_0: 96 (42.7%),
+        check_dkim_signature: 0.34 (0.2%), check_dkim_adsp: 4.6 (2.0%),
+        tests_pri_500: 85 (38.1%), poll_dns_idle: 80 (35.5%), rewrite_mail: 0.00
+        (0.0%)
+Subject: Re: [PATCH] [RFC][WIP] namespace.c: Allow some unprivileged proc mounts when not fully visible
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 06:26:44PM +0200, Laurent Dufour wrote:
-> 
-> 
-> On 03/04/2018 21:39, Jerome Glisse wrote:
-> > On Tue, Mar 13, 2018 at 06:59:45PM +0100, Laurent Dufour wrote:
-> >> When dealing with the speculative fault path we should use the VMA's field
-> >> cached value stored in the vm_fault structure.
-> >>
-> >> Currently vm_normal_page() is using the pointer to the VMA to fetch the
-> >> vm_flags value. This patch provides a new __vm_normal_page() which is
-> >> receiving the vm_flags flags value as parameter.
-> >>
-> >> Note: The speculative path is turned on for architecture providing support
-> >> for special PTE flag. So only the first block of vm_normal_page is used
-> >> during the speculative path.
-> > 
-> > Might be a good idea to explicitly have SPECULATIVE Kconfig option depends
-> > on ARCH_PTE_SPECIAL and a comment for !HAVE_PTE_SPECIAL in the function
-> > explaining that speculative page fault should never reach that point.
-> 
-> Unfortunately there is no ARCH_PTE_SPECIAL in the config file, it is defined in
-> the per architecture header files.
-> So I can't do anything in the Kconfig file
+"Serge E. Hallyn" <serge@hallyn.com> writes:
 
-Maybe adding a new Kconfig symbol for ARCH_PTE_SPECIAL very much like
-others ARCH_HAS_
+> Quoting Eric W. Biederman (ebiederm@xmission.com):
+>> It looks like a cruft free cousin of proc that is just processes would
+>> be applicable to your usecase.
+>
+> Just to check - is that something you're working on?
 
-> 
-> However, I can check that at build time, and doing such a check in
-> __vm_normal_page sounds to be a good place, like that:
-> 
-> @@ -869,6 +870,14 @@ struct page *__vm_normal_page(struct vm_area_struct *vma,
-> unsigned long addr,
-> 
->         /* !HAVE_PTE_SPECIAL case follows: */
-> 
-> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> +       /* This part should never get called when the speculative page fault
-> +        * handler is turned on. This is mainly because we can't rely on
-> +        * vm_start.
-> +        */
-> +#error CONFIG_SPECULATIVE_PAGE_FAULT requires HAVE_PTE_SPECIAL
-> +#endif
-> +
->         if (unlikely(vma_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
->                 if (vma_flags & VM_MIXEDMAP) {
->                         if (!pfn_valid(pfn))
-> 
+Only to the point of reviewing code, and I don't have a version to
+review right now.
 
-I am not a fan of #if/#else/#endif in code. But that's a taste thing.
-I honnestly think that adding a Kconfig for special pte is the cleanest
-solution.
-
-Cheers,
-Jérôme
+Eric
