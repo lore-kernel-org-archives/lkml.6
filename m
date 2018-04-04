@@ -1,171 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751236AbeDDKHB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 06:07:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42975 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750812AbeDDKHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 06:07:00 -0400
-Date: Wed, 4 Apr 2018 12:06:57 +0200
-From: Jan Kara <jack@suse.cz>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        snitzer@redhat.com
-Subject: Re: [PATCH v8 15/18] mm, fs, dax: handle layout changes to pinned
- dax mappings
-Message-ID: <20180404100657.qpodshwzmh4djwej@quack2.suse.cz>
-References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152246901060.36038.4487158506830998280.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180404094656.dssixqvvdcp5jff2@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404094656.dssixqvvdcp5jff2@quack2.suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1751295AbeDDKHd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 06:07:33 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40946 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751244AbeDDKHc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 06:07:32 -0400
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC PATCH 1/1] vmscan: Support multiple kswapd threads per node
+From: Buddy Lumpkin <buddy.lumpkin@oracle.com>
+In-Reply-To: <20180403211253.GC30145@bombadil.infradead.org>
+Date: Wed, 4 Apr 2018 03:07:01 -0700
+Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, hannes@cmpxchg.org, riel@surriel.com,
+        mgorman@suse.de, akpm@linux-foundation.org
+Message-Id: <2D4C5B98-6B19-4430-AFA0-83C9D72DB86C@oracle.com>
+References: <1522661062-39745-1-git-send-email-buddy.lumpkin@oracle.com>
+ <1522661062-39745-2-git-send-email-buddy.lumpkin@oracle.com>
+ <20180403133115.GA5501@dhcp22.suse.cz>
+ <20180403190759.GB6779@bombadil.infradead.org>
+ <A1EF8129-7F59-49CB-BEEC-E615FB878CE2@oracle.com>
+ <20180403211253.GC30145@bombadil.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3273)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804040107
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w34A7aPw006590
 
-On Wed 04-04-18 11:46:56, Jan Kara wrote:
-> On Fri 30-03-18 21:03:30, Dan Williams wrote:
-> > Background:
-> > 
-> > get_user_pages() in the filesystem pins file backed memory pages for
-> > access by devices performing dma. However, it only pins the memory pages
-> > not the page-to-file offset association. If a file is truncated the
-> > pages are mapped out of the file and dma may continue indefinitely into
-> > a page that is owned by a device driver. This breaks coherency of the
-> > file vs dma, but the assumption is that if userspace wants the
-> > file-space truncated it does not matter what data is inbound from the
-> > device, it is not relevant anymore. The only expectation is that dma can
-> > safely continue while the filesystem reallocates the block(s).
-> > 
-> > Problem:
-> > 
-> > This expectation that dma can safely continue while the filesystem
-> > changes the block map is broken by dax. With dax the target dma page
-> > *is* the filesystem block. The model of leaving the page pinned for dma,
-> > but truncating the file block out of the file, means that the filesytem
-> > is free to reallocate a block under active dma to another file and now
-> > the expected data-incoherency situation has turned into active
-> > data-corruption.
-> > 
-> > Solution:
-> > 
-> > Defer all filesystem operations (fallocate(), truncate()) on a dax mode
-> > file while any page/block in the file is under active dma. This solution
-> > assumes that dma is transient. Cases where dma operations are known to
-> > not be transient, like RDMA, have been explicitly disabled via
-> > commits like 5f1d43de5416 "IB/core: disable memory registration of
-> > filesystem-dax vmas".
-> > 
-> > The dax_layout_busy_page() routine is called by filesystems with a lock
-> > held against mm faults (i_mmap_lock) to find pinned / busy dax pages.
-> > The process of looking up a busy page invalidates all mappings
-> > to trigger any subsequent get_user_pages() to block on i_mmap_lock.
-> > The filesystem continues to call dax_layout_busy_page() until it finally
-> > returns no more active pages. This approach assumes that the page
-> > pinning is transient, if that assumption is violated the system would
-> > have likely hung from the uncompleted I/O.
-> > 
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Jeff Moyer <jmoyer@redhat.com>
-> > Cc: Dave Chinner <david@fromorbit.com>
-> > Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> > Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Reported-by: Christoph Hellwig <hch@lst.de>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > ---
-> >  drivers/dax/super.c |    2 +
-> >  fs/dax.c            |   92 +++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/dax.h |   25 ++++++++++++++
-> >  mm/gup.c            |    5 +++
-> >  4 files changed, 123 insertions(+), 1 deletion(-)
-> 
-> ...
-> 
-> > +/**
-> > + * dax_layout_busy_page - find first pinned page in @mapping
-> > + * @mapping: address space to scan for a page with ref count > 1
-> > + *
-> > + * DAX requires ZONE_DEVICE mapped pages. These pages are never
-> > + * 'onlined' to the page allocator so they are considered idle when
-> > + * page->count == 1. A filesystem uses this interface to determine if
-> > + * any page in the mapping is busy, i.e. for DMA, or other
-> > + * get_user_pages() usages.
-> > + *
-> > + * It is expected that the filesystem is holding locks to block the
-> > + * establishment of new mappings in this address_space. I.e. it expects
-> > + * to be able to run unmap_mapping_range() and subsequently not race
-> > + * mapping_mapped() becoming true. It expects that get_user_pages() pte
-> > + * walks are performed under rcu_read_lock().
-> > + */
-> > +struct page *dax_layout_busy_page(struct address_space *mapping)
-> > +{
-> > +	pgoff_t	indices[PAGEVEC_SIZE];
-> > +	struct page *page = NULL;
-> > +	struct pagevec pvec;
-> > +	pgoff_t	index, end;
-> > +	unsigned i;
-> > +
-> > +	/*
-> > +	 * In the 'limited' case get_user_pages() for dax is disabled.
-> > +	 */
-> > +	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
-> > +		return NULL;
-> > +
-> > +	if (!dax_mapping(mapping) || !mapping_mapped(mapping))
-> > +		return NULL;
-> > +
-> > +	pagevec_init(&pvec);
-> > +	index = 0;
-> > +	end = -1;
-> > +	/*
-> > +	 * Flush dax_layout_lock() sections to ensure all possible page
-> > +	 * references have been taken, or otherwise arrange for faults
-> > +	 * to block on the filesystem lock that is taken for
-> > +	 * establishing new mappings.
-> > +	 */
-> > +	unmap_mapping_range(mapping, 0, 0, 1);
-> > +	synchronize_rcu();
-> 
-> So I still don't like the use of RCU for this. It just seems as an abuse to
-> use RCU like that. Furthermore it has a hefty latency cost for the truncate
-> path. A trivial test to truncate 100 times the last page of a 16k file that
-> is mmaped (only the first page):
-> 
-> DAX+your patches	3.899s
-> non-DAX			0.015s
-> 
-> So you can see synchronize_rcu() increased time to run truncate(2) more
-> than 200 times (the process is indeed sitting in __wait_rcu_gp all the
-> time). IMHO that's just too costly.
 
-Forgot to add some more thoughts: Maybe we could use global percpu rwsem
-for this instead of RCU? That would cut down the truncate latency and the
-cost on GUP path should be very small. Or I'm still not convinced that my
-PageTruncateInProgress() idea cannot be made to work - that would be free
-on the GUP side for the non-DAX case, relatively cheap for the DAX case,
-and also reasonably cheap for the truncate side. But I admit it requires
-more work on the fs side to propagate offsets that are going to be
-truncated into the DAX helper.
+> On Apr 3, 2018, at 2:12 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> On Tue, Apr 03, 2018 at 01:49:25PM -0700, Buddy Lumpkin wrote:
+>>> Yes, very much this.  If you have a single-threaded workload which is
+>>> using the entirety of memory and would like to use even more, then it
+>>> makes sense to use as many CPUs as necessary getting memory out of its
+>>> way.  If you have N CPUs and N-1 threads happily occupying themselves in
+>>> their own reasonably-sized working sets with one monster process trying
+>>> to use as much RAM as possible, then I'd be pretty unimpressed to see
+>>> the N-1 well-behaved threads preempted by kswapd.
+>> 
+>> The default value provides one kswapd thread per NUMA node, the same
+>> it was without the patch. Also, I would point out that just because you devote
+>> more threads to kswapd, doesn’t mean they are busy. If multiple kswapd threads
+>> are busy, they are almost certainly doing work that would have resulted in
+>> direct reclaims, which are often substantially more expensive than a couple
+>> extra context switches due to preemption.
+> 
+> [...]
+> 
+>> In my previous response to Michal Hocko, I described
+>> how I think we could scale watermarks in response to direct reclaims, and
+>> launch more kswapd threads when kswapd peaks at 100% CPU usage.
+> 
+> I think you're missing my point about the workload ... kswapd isn't
+> "nice", so it will compete with the N-1 threads which are chugging along
+> at 100% CPU inside their working sets.  In this scenario, we _don't_
+> want to kick off kswapd at all; we want the monster thread to clean up
+> its own mess.  If we have idle CPUs, then yes, absolutely, lets have
+> them clean up for the monster, but otherwise, I want my N-1 threads
+> doing their own thing.
 
-								Honza
+For the scenario you describe above. I have my own opinions, but I would rather not
+speculate on what happens. Tomorrow I will try to simulate this situation and i’ll
+report back on the results. I think this actually makes a case for accepting the patch 
+as-is for now.  Please hear me out on this:
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+You mentioned being concerned that an admin will do the wrong thing with this
+tunable. I worked in the System Administrator/System Engineering job families for
+many years and even though I transitioned to spending most of my time on
+performance and kernel work, I still maintain an active role in System Engineering
+related projects, hiring and mentoring.
+
+The kswapd_threads tunable defaults to a value of one, which is the current default
+behavior. I think there are plenty of sysctls that are more confusing than this one. 
+If you want to make a comparison, I would say that Transparent Hugepages is one
+of the best examples of a feature that has confused System Administrators. I am sure
+it works a lot better today, but it has a history of really sharp edges, and it has been
+shipping enabled by default for a long time in the OS distributions I am familiar with.
+I am hopeful that it works better in later kernels as I think we need more features
+like it. Specifically, features that bring high performance to naive third party apps
+that do not make use of advanced features like hugetlbfs, spoke, direct IO, or clumsy
+interfaces like posix_fadvise. But until they are absolutely polished, I wish these kinds
+of features would not be turned on by default. This includes kswapd_threads.
+
+More reasons why implementing this tunable makes sense for now:
+- A feature like this is a lot easier to reason about after it has been used in the field
+   for a while. This includes trying to auto-tune it
+- We need an answer for this problem today. Today there are single NVMe drives
+   capable of 10GB/s and larger systems than the system I used for testing
+- In the scenario you describe above, an admin would have no reason to touch
+  this sysctl
+- I think I mentioned this before. I honestly thought a lot of tuning would be necessary
+  after implementing this but so far that hasn’t been the case. It works pretty well.
+
+
+> 
+> Maybe we should renice kswapd anyway ... thoughts?  We don't seem to have
+> had a nice'd kswapd since 2.6.12, but maybe we played with that earlier
+> and discovered it was a bad idea?
+> 
