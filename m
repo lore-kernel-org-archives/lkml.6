@@ -1,132 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752418AbeDDQAG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 12:00:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51610 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751990AbeDDQAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 12:00:05 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CF3521707
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 4 Apr 2018 12:00:02 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] ring-buffer: Add set/clear_current_oom_origin() during
- allocations
-Message-ID: <20180404120002.6561a5bc@gandalf.local.home>
-In-Reply-To: <20180404115310.6c69e7b9@gandalf.local.home>
-References: <20180404115310.6c69e7b9@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752215AbeDDQDp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 12:03:45 -0400
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:45441 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751503AbeDDQDm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 12:03:42 -0400
+X-Google-Smtp-Source: AIpwx4/uTlFqznWifTNqqIsFt12/yI+yKMOzIfEDV/hnNsK0A/3BNgzH6fZOWZ5tql2cYji8YQZNZ1pwEON7Au8xC4c=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180404.115215.419039708931754897.davem@davemloft.net>
+References: <20180404121347.3089169-1-arnd@arndb.de> <20180404.115215.419039708931754897.davem@davemloft.net>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 4 Apr 2018 18:03:41 +0200
+X-Google-Sender-Auth: bMC13N7Kr2Nxo1pvVmVqSP9INsw
+Message-ID: <CAK8P3a0um2irY2P_3xffqRcmu5mJ+iA9iO4eW5381zBBmPRQfg@mail.gmail.com>
+Subject: Re: [PATCH] netdevsim: remove incorrect __net_initdata annotations
+To: David Miller <davem@davemloft.net>
+Cc: Jakub Kicinski <jakub.kicinski@netronome.com>,
+        David Ahern <dsa@cumulusnetworks.com>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Apr 2018 11:53:10 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, Apr 4, 2018 at 5:52 PM, David Miller <davem@davemloft.net> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> Date: Wed,  4 Apr 2018 14:12:39 +0200
+>
+>> The __net_initdata section cannot currently be used for structures that
+>> get cleaned up in an exitcall using unregister_pernet_operations:
+>>
+>> WARNING: vmlinux.o(.text+0x868c34): Section mismatch in reference from the function nsim_devlink_exit() to the (unknown reference) .init.data:(unknown)
+>> The function nsim_devlink_exit() references
+>> the (unknown reference) __initdata (unknown).
+>> This is often because nsim_devlink_exit lacks a __initdata
+>> annotation or the annotation of (unknown) is wrong.
+>> WARNING: vmlinux.o(.text+0x868c64): Section mismatch in reference from the function nsim_devlink_init() to the (unknown reference) .init.data:(unknown)
+>> WARNING: vmlinux.o(.text+0x8692bc): Section mismatch in reference from the function nsim_fib_exit() to the (unknown reference) .init.data:(unknown)
+>> WARNING: vmlinux.o(.text+0x869300): Section mismatch in reference from the function nsim_fib_init() to the (unknown reference) .init.data:(unknown)
+>>
+>> As that warning tells us, discarding the structure after a module is
+>> loaded would lead to a undefined behavior when that module is removed.
+>>
+>> It might be possible to change that annotation so it has no effect for
+>> loadable modules, but I have not figured out exactly how to do that, and
+>> we want this to be fixed in -rc1.
+>>
+>> This just removes the annotations, just like we do for all other such
+>> modules.
+>>
+>> Fixes: 37923ed6b8ce ("netdevsim: Add simple FIB resource controller via devlink")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Hmmm...
+>
+> __net_initdata defines to nothing if network namespaces are enabled.
+>
+> That's the whole point.
+>
+> Therefore, if NETNS is disabled, "unregister_pernet_operations" cannot
+> happen and this is the only time when __net_initdata actually does
+> something.
 
-> @@ -1162,35 +1163,60 @@ static int rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
->  static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
->  {
->  	struct buffer_page *bpage, *tmp;
-> +	bool user_thread = current->mm != NULL;
-> +	gfp_t mflags;
->  	long i;
->  
-> -	/* Check if the available memory is there first */
-> +	/*
-> +	 * Check if the available memory is there first.
-> +	 * Note, si_mem_available() only gives us a rough estimate of available
-> +	 * memory. It may not be accurate. But we don't care, we just want
-> +	 * to prevent doing any allocation when it is obvious that it is
-> +	 * not going to succeed.
-> +	 */
+The problem happens with CONFIG_NETNS=n: __net_initdata turns into
+__initdata, and nsim_fib_net_ops is referenced from a function that is
+not marked __init (i.e. nsim_fib_exit).
 
-In case you are wondering how I tested this, I simply added:
+The logic to turn __net_initdata into __init only makes sense for
+subsystems that have no way to be unregistered, i.e. code which is
+always built-in, or non-unloadable modules.
 
-#if 0
->  	i = si_mem_available();
->  	if (i < nr_pages)
->  		return -ENOMEM;
-#endif
-
-for the tests. Note, without this, I tried to allocate all memory
-(bisecting it with allocations that failed and allocations that
-succeeded), and couldn't trigger an OOM :-/
-
-Of course, this was on x86_64, where I'm sure I could allocate
-any memory, and probably would have had more luck with a 32bit kernel
-using higmem.
-
--- Steve
-
->  
-> +	/*
-> +	 * __GFP_RETRY_MAYFAIL flag makes sure that the allocation fails
-> +	 * gracefully without invoking oom-killer and the system is not
-> +	 * destabilized.
-> +	 */
-> +	mflags = GFP_KERNEL | __GFP_RETRY_MAYFAIL;
-> +
-> +	/*
-> +	 * If a user thread allocates too much, and si_mem_available()
-> +	 * reports there's enough memory, even though there is not.
-> +	 * Make sure the OOM killer kills this thread. This can happen
-> +	 * even with RETRY_MAYFAIL because another task may be doing
-> +	 * an allocation after this task has taken all memory.
-> +	 * This is the task the OOM killer needs to take out during this
-> +	 * loop, even if it was triggered by an allocation somewhere else.
-> +	 */
-> +	if (user_thread)
-> +		set_current_oom_origin();
->  	for (i = 0; i < nr_pages; i++) {
->  		struct page *page;
-> -		/*
-> -		 * __GFP_RETRY_MAYFAIL flag makes sure that the allocation fails
-> -		 * gracefully without invoking oom-killer and the system is not
-> -		 * destabilized.
-> -		 */
-> +
->  		bpage = kzalloc_node(ALIGN(sizeof(*bpage), cache_line_size()),
-> -				    GFP_KERNEL | __GFP_RETRY_MAYFAIL,
-> -				    cpu_to_node(cpu));
-> +				    mflags, cpu_to_node(cpu));
->  		if (!bpage)
->  			goto free_pages;
->  
->  		list_add(&bpage->list, pages);
->  
-> -		page = alloc_pages_node(cpu_to_node(cpu),
-> -					GFP_KERNEL | __GFP_RETRY_MAYFAIL, 0);
-> +		page = alloc_pages_node(cpu_to_node(cpu), mflags, 0);
->  		if (!page)
->  			goto free_pages;
->  		bpage->page = page_address(page);
->  		rb_init_page(bpage->page);
-> +
-> +		if (user_thread && fatal_signal_pending(current))
-> +			goto free_pages;
->  	}
-> +	if (user_thread)
-> +		clear_current_oom_origin();
->  
->  	return 0;
->  
-> @@ -1199,6 +1225,8 @@ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
->  		list_del_init(&bpage->list);
->  		free_buffer_page(bpage);
->  	}
-> +	if (user_thread)
-> +		clear_current_oom_origin();
->  
->  	return -ENOMEM;
->  }
+       Arnd
