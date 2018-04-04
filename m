@@ -1,319 +1,282 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751281AbeDDMSt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:18:49 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37501 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751117AbeDDMSr (ORCPT
+        id S1751322AbeDDMVn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:21:43 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:11235 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751117AbeDDMVm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:18:47 -0400
-X-Google-Smtp-Source: AIpwx4/yXqzLep5hOG6jVvivZmefO11/6kOIAgNLkPBFoZCblBu+9GYmm2H6DwNFCe46SfsZfQQdnA==
-Date: Wed, 4 Apr 2018 14:18:43 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Thomas Hellstrom <thomas@shipmail.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
-Message-ID: <20180404121843.GL3881@phenom.ffwll.local>
-Mail-Followup-To: Rob Clark <robdclark@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Thomas Hellstrom <thomas@shipmail.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180403224225.26776-1-robdclark@gmail.com>
- <20180404100300.GE3881@phenom.ffwll.local>
- <20180404102108.GF3881@phenom.ffwll.local>
- <CAF6AEGtowtdQmUxNF_F3B3Yow+PDB43Eb0VJ_ZqGKpVw1iZBzA@mail.gmail.com>
+        Wed, 4 Apr 2018 08:21:42 -0400
+Subject: Re: INFO: rcu detected stall in bitmap_parselist
+To: Yury Norov <ynorov@caviumnetworks.com>
+References: <000000000000edc3690568cc95eb@google.com>
+Cc: syzbot <syzbot+6887cbb011c8054e8a3d@syzkaller.appspotmail.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lizefan@huawei.com, syzkaller-bugs@googlegroups.com,
+        Noam Camus <noamca@mellanox.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <f1a0af0d-44c5-e938-b48f-0bace885f0a2@I-love.SAKURA.ne.jp>
+Date: Wed, 4 Apr 2018 21:21:43 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAF6AEGtowtdQmUxNF_F3B3Yow+PDB43Eb0VJ_ZqGKpVw1iZBzA@mail.gmail.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <000000000000edc3690568cc95eb@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 07:35:58AM -0400, Rob Clark wrote:
-> On Wed, Apr 4, 2018 at 6:21 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > On Wed, Apr 04, 2018 at 12:03:00PM +0200, Daniel Vetter wrote:
-> >> On Tue, Apr 03, 2018 at 06:42:23PM -0400, Rob Clark wrote:
-> >> > Add an atomic helper to implement dirtyfb support.  This is needed to
-> >> > support DSI command-mode panels with x11 userspace (ie. when we can't
-> >> > rely on pageflips to trigger a flush to the panel).
-> >> >
-> >> > To signal to the driver that the async atomic update needs to
-> >> > synchronize with fences, even though the fb didn't change, the
-> >> > drm_atomic_state::dirty flag is added.
-> >> >
-> >> > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> >> > ---
-> >> > Background: there are a number of different folks working on getting
-> >> > upstream kernel working on various different phones/tablets with qcom
-> >> > SoC's.. many of them have command mode panels, so we kind of need a
-> >> > way to support the legacy dirtyfb ioctl for x11 support.
-> >> >
-> >> > I know there is work on a proprer non-legacy atomic property for
-> >> > userspace to communicate dirty-rect(s) to the kernel, so this can
-> >> > be improved from triggering a full-frame flush once that is in
-> >> > place.  But we kinda needa a stop-gap solution.
-> >> >
-> >> > I had considered an in-driver solution for this, but things get a
-> >> > bit tricky if userspace ands up combining dirtyfb ioctls with page-
-> >> > flips, because we need to synchronize setting various CTL.FLUSH bits
-> >> > with setting the CTL.START bit.  (ie. really all we need to do for
-> >> > cmd mode panels is bang CTL.START, but is this ends up racing with
-> >> > pageflips setting FLUSH bits, then bad things.)  The easiest soln
-> >> > is to wrap this up as an atomic commit and rely on the worker to
-> >> > serialize things.  Hence adding an atomic dirtyfb helper.
-> >> >
-> >> > I guess at least the helper, with some small addition to translate
-> >> > and pass-thru the dirty rect(s) is useful to the final atomic dirty-
-> >> > rect property solution.  Depending on how far off that is, a stop-
-> >> > gap solution could be useful.
-> >> >
-> >> >  drivers/gpu/drm/drm_atomic_helper.c | 66 +++++++++++++++++++++++++++++++++++++
-> >> >  drivers/gpu/drm/msm/msm_atomic.c    |  5 ++-
-> >> >  drivers/gpu/drm/msm/msm_fb.c        |  1 +
-> >> >  include/drm/drm_atomic_helper.h     |  4 +++
-> >> >  include/drm/drm_plane.h             |  9 +++++
-> >> >  5 files changed, 84 insertions(+), 1 deletion(-)
-> >> >
-> >> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> >> > index c35654591c12..a578dc681b27 100644
-> >> > --- a/drivers/gpu/drm/drm_atomic_helper.c
-> >> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> >> > @@ -3504,6 +3504,7 @@ void __drm_atomic_helper_plane_duplicate_state(struct drm_plane *plane,
-> >> >     if (state->fb)
-> >> >             drm_framebuffer_get(state->fb);
-> >> >
-> >> > +   state->dirty = false;
-> >> >     state->fence = NULL;
-> >> >     state->commit = NULL;
-> >> >  }
-> >> > @@ -3847,6 +3848,71 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
-> >> >  }
-> >> >  EXPORT_SYMBOL(drm_atomic_helper_legacy_gamma_set);
-> >> >
-> >> > +/**
-> >> > + * drm_atomic_helper_dirtyfb - helper for dirtyfb
-> >> > + *
-> >> > + * A helper to implement drm_framebuffer_funcs::dirty
-> >> > + */
-> >> > +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
-> >> > +                         struct drm_file *file_priv, unsigned flags,
-> >> > +                         unsigned color, struct drm_clip_rect *clips,
-> >> > +                         unsigned num_clips)
-> >> > +{
-> >> > +   struct drm_modeset_acquire_ctx ctx;
-> >> > +   struct drm_atomic_state *state;
-> >> > +   struct drm_plane *plane;
-> >> > +   int ret = 0;
-> >> > +
-> >> > +   /*
-> >> > +    * When called from ioctl, we are interruptable, but not when
-> >> > +    * called internally (ie. defio worker)
-> >> > +    */
-> >> > +   drm_modeset_acquire_init(&ctx,
-> >> > +           file_priv ? DRM_MODESET_ACQUIRE_INTERRUPTIBLE : 0);
-> >> > +
-> >> > +   state = drm_atomic_state_alloc(fb->dev);
-> >> > +   if (!state) {
-> >> > +           ret = -ENOMEM;
-> >> > +           goto out;
-> >> > +   }
-> >> > +   state->acquire_ctx = &ctx;
-> >> > +
-> >> > +retry:
-> >> > +   drm_for_each_plane(plane, fb->dev) {
-> >> > +           struct drm_plane_state *plane_state;
-> >> > +
-> >> > +           if (plane->state->fb != fb)
-> >> > +                   continue;
-> >> > +
-> >> > +           plane_state = drm_atomic_get_plane_state(state, plane);
-> >> > +           if (IS_ERR(plane_state)) {
-> >> > +                   ret = PTR_ERR(plane_state);
-> >> > +                   goto out;
-> >> > +           }
-> >> > +
-> >> > +           plane_state->dirty = true;
-> >> > +   }
-> >> > +
-> >> > +   ret = drm_atomic_nonblocking_commit(state);
-> >> > +
-> >> > +out:
-> >> > +   if (ret == -EDEADLK) {
-> >> > +           drm_atomic_state_clear(state);
-> >> > +           ret = drm_modeset_backoff(&ctx);
-> >> > +           if (!ret)
-> >> > +                   goto retry;
-> >> > +   }
-> >> > +
-> >> > +   drm_atomic_state_put(state);
-> >> > +
-> >> > +   drm_modeset_drop_locks(&ctx);
-> >> > +   drm_modeset_acquire_fini(&ctx);
-> >> > +
-> >> > +   return ret;
-> >> > +
-> >> > +}
-> >> > +EXPORT_SYMBOL(drm_atomic_helper_dirtyfb);
-> >> > +
-> >> >  /**
-> >> >   * __drm_atomic_helper_private_duplicate_state - copy atomic private state
-> >> >   * @obj: CRTC object
-> >> > diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
-> >> > index bf5f8c39f34d..bb55a048e98b 100644
-> >> > --- a/drivers/gpu/drm/msm/msm_atomic.c
-> >> > +++ b/drivers/gpu/drm/msm/msm_atomic.c
-> >> > @@ -201,7 +201,10 @@ int msm_atomic_commit(struct drm_device *dev,
-> >> >      * Figure out what fence to wait for:
-> >> >      */
-> >> >     for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i) {
-> >> > -           if ((new_plane_state->fb != old_plane_state->fb) && new_plane_state->fb) {
-> >> > +           bool sync_fb = new_plane_state->fb &&
-> >> > +                   ((new_plane_state->fb != old_plane_state->fb) ||
-> >> > +                    new_plane_state->dirty);
-> >>
-> >> Why do you have this optimization even here? Imo flipping to the same fb
-> >> should result in the fb getting fully uploaded, whether you're doing a
-> >> legacy page_flip, and atomic one or just a plane update.
-> >>
-> >> Iirc some userspace does use that as essentially a full-plane frontbuffer
-> >> rendering flush already. IOW I don't think we need your
-> >> plane_state->dirty, it's implied to always be true - why would userspace
-> >> do a flip otherwise?
-> >>
-> >> The helper itself to map dirtyfb to a nonblocking atomic commit looks
-> >> reasonable, but misses a bunch of the trickery discussed with Noralf and
-> >> others I think.
-> >
-> > Ok, I've done some history digging:
-> >
-> > - i915 and nouveau unconditionally wait for fences, even for same-fb
-> >   flips.
-> > - no idea what amdgpu and vmwgfx are doing, they're not using
-> >   plane_state->fence for implicit fences.
-> > - most arm-soc drivers do have this "optimization" in their code, and it
-> >   even managed to get into the new drm_gem_fb_prepare_fb helper (which I
-> >   reviewed, or well claimed to have ... oops). Afaict it goes back to the
-> >   original msm atomic code, and was then dutifully copypasted all over the
-> >   place.
-> >
-> > If folks are ok I'll do a patch series to align drivers with i915/nouveau.
-> > Well, any driver using reservation_object_get_excl_rcu +
-> > drm_atomic_set_fence_for_plane combo, since amdgpu and vmwgfx don't I have
-> > no idea what they're doing or whether they might have the same bug.
-> 
-> if you do a patch series, I think do it the other way around and align
-> to msm ;-)
+Yury, are you OK with this patch?
 
-The problem is that this would break i915 userspace afaik, which I think
-is using a frontbuffer page flip to flush out uploads (and re-enable self
-refresh and stuff like that). So that we can't do easily.
 
-> I think otherwise we could end up stalling while x11 does front buffer
-> rendering for something unrelated (maybe I was hitting that with
-> cursor updates?)
+>From 7f21827cdfe9780b4949b22bcd19efa721b463d2 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 4 Apr 2018 21:12:10 +0900
+Subject: [PATCH] lib/bitmap: Rewrite __bitmap_parselist().
 
-Why would you stall on something unrelated if we unconditionally fish out
-the fence? Especially cursor rendering isn't done through the gpu at all
-afaik.
--Daniel
+syzbot is catching stalls at __bitmap_parselist() [1]. The trigger is
 
-> 
-> BR,
-> -R
-> 
-> > From looking at at least the various prepare_fb callbacks I don't see any
-> > other drivers doing funny stuff around implicit fences.
-> > -Daniel
-> >
-> >> > +           if (sync_fb) {
-> >> >                     struct drm_gem_object *obj = msm_framebuffer_bo(new_plane_state->fb, 0);
-> >> >                     struct msm_gem_object *msm_obj = to_msm_bo(obj);
-> >> >                     struct dma_fence *fence = reservation_object_get_excl_rcu(msm_obj->resv);
-> >> > diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
-> >> > index 0e0c87252ab0..a5d882a34a33 100644
-> >> > --- a/drivers/gpu/drm/msm/msm_fb.c
-> >> > +++ b/drivers/gpu/drm/msm/msm_fb.c
-> >> > @@ -62,6 +62,7 @@ static void msm_framebuffer_destroy(struct drm_framebuffer *fb)
-> >> >  static const struct drm_framebuffer_funcs msm_framebuffer_funcs = {
-> >> >     .create_handle = msm_framebuffer_create_handle,
-> >> >     .destroy = msm_framebuffer_destroy,
-> >> > +   .dirty = drm_atomic_helper_dirtyfb,
-> >> >  };
-> >> >
-> >> >  #ifdef CONFIG_DEBUG_FS
-> >> > diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
-> >> > index 26aaba58d6ce..9b7a95c2643d 100644
-> >> > --- a/include/drm/drm_atomic_helper.h
-> >> > +++ b/include/drm/drm_atomic_helper.h
-> >> > @@ -183,6 +183,10 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
-> >> >                                    u16 *red, u16 *green, u16 *blue,
-> >> >                                    uint32_t size,
-> >> >                                    struct drm_modeset_acquire_ctx *ctx);
-> >> > +int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
-> >> > +                         struct drm_file *file_priv, unsigned flags,
-> >> > +                         unsigned color, struct drm_clip_rect *clips,
-> >> > +                         unsigned num_clips);
-> >> >  void __drm_atomic_helper_private_obj_duplicate_state(struct drm_private_obj *obj,
-> >> >                                                  struct drm_private_state *state);
-> >> >
-> >> > diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-> >> > index f7bf4a48b1c3..296fa22bda7a 100644
-> >> > --- a/include/drm/drm_plane.h
-> >> > +++ b/include/drm/drm_plane.h
-> >> > @@ -76,6 +76,15 @@ struct drm_plane_state {
-> >> >      */
-> >> >     struct drm_framebuffer *fb;
-> >> >
-> >> > +   /**
-> >> > +    * @dirty:
-> >> > +    *
-> >> > +    * Flag that indicates the fb contents have changed even though the
-> >> > +    * fb has not.  This is mostly a stop-gap solution until we have
-> >> > +    * atomic dirty-rect(s) property.
-> >> > +    */
-> >> > +   bool dirty;
-> >> > +
-> >> >     /**
-> >> >      * @fence:
-> >> >      *
-> >> > --
-> >> > 2.14.3
-> >> >
-> >>
-> >> --
-> >> Daniel Vetter
-> >> Software Engineer, Intel Corporation
-> >> http://blog.ffwll.ch
-> >
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
+  unsigned long v = 0;
+  bitmap_parselist("7:,", &v, BITS_PER_LONG);
 
+which results in hitting infinite loop at
+
+  while (a <= b) {
+    off = min(b - a + 1, used_size);
+    bitmap_set(maskp, a, off);
+    a += group_size;
+  }
+
+due to used_size == group_size == 0.
+
+Current code is difficult to read due to too many flag variables.
+Let's rewrite it. My understanding of "range:used_size/group_size"
+is "start[-end[:used_size/group_size]]" format.
+Please check whether my understanding is correct...
+
+[1] https://syzkaller.appspot.com/bug?id=ad7e0351fbc90535558514a71cd3edc11681997a
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+6887cbb011c8054e8a3d@syzkaller.appspotmail.com>
+Fixes: 0a5ce0831d04382a ("lib/bitmap.c: make bitmap_parselist() thread-safe and much faster")
+Cc: Yury Norov <ynorov@caviumnetworks.com>
+Cc: Noam Camus <noamca@mellanox.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ lib/bitmap.c | 183 +++++++++++++++++++++++++----------------------------------
+ 1 file changed, 78 insertions(+), 105 deletions(-)
+
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index 9e498c7..9cef440 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -485,6 +485,58 @@ int bitmap_print_to_pagebuf(bool list, char *buf, const unsigned long *maskp,
+ }
+ EXPORT_SYMBOL(bitmap_print_to_pagebuf);
+ 
++static bool get_uint(const char **buf, unsigned int *res)
++{
++	const char *p = *buf;
++
++	if (!isdigit(*p))
++		return false;
++	*res = simple_strtoul(p, (char **) buf, 10);
++	return p < *buf;
++}
++
++static int __bitmap_parse_one_chunk(const char *buf, unsigned long *maskp,
++				    const unsigned int nmaskbits)
++{
++	unsigned int start;
++	unsigned int end;
++	unsigned int group_size;
++	unsigned int used_size;
++
++	while (*buf && isspace(*buf))
++		buf++;
++	if (!get_uint(&buf, &start))
++		return -EINVAL;
++	if (*buf == '-') {
++		buf++;
++		if (!get_uint(&buf, &end) || start > end)
++			return -EINVAL;
++		if (*buf == ':') {
++			buf++;
++			if (!get_uint(&buf, &used_size) || *buf++ != '/' ||
++			    !get_uint(&buf, &group_size) ||
++			    used_size > group_size)
++				return -EINVAL;
++		} else {
++			group_size = used_size = end - start + 1;
++		}
++	} else {
++		end = start;
++		group_size = used_size = 1;
++	}
++	if (end >= nmaskbits)
++		return -ERANGE;
++	while (start <= end) {
++		const unsigned int bits = min(end - start + 1, used_size);
++
++		bitmap_set(maskp, start, bits);
++		start += group_size;
++	}
++	while (*buf && isspace(*buf))
++		buf++;
++	return *buf ? -EINVAL : 0;
++}
++
+ /**
+  * __bitmap_parselist - convert list format ASCII string to bitmap
+  * @buf: read nul-terminated user string from this buffer
+@@ -511,113 +563,34 @@ int bitmap_print_to_pagebuf(bool list, char *buf, const unsigned long *maskp,
+  *   - ``-ERANGE``: bit number specified too large for mask
+  */
+ static int __bitmap_parselist(const char *buf, unsigned int buflen,
+-		int is_user, unsigned long *maskp,
+-		int nmaskbits)
++			      const int is_user, unsigned long *maskp,
++			      const int nmaskbits)
+ {
+-	unsigned int a, b, old_a, old_b;
+-	unsigned int group_size, used_size, off;
+-	int c, old_c, totaldigits, ndigits;
+-	const char __user __force *ubuf = (const char __user __force *)buf;
+-	int at_start, in_range, in_partial_range;
+-
+-	totaldigits = c = 0;
+-	old_a = old_b = 0;
+-	group_size = used_size = 0;
++	int err = 0;
+ 	bitmap_zero(maskp, nmaskbits);
+-	do {
+-		at_start = 1;
+-		in_range = 0;
+-		in_partial_range = 0;
+-		a = b = 0;
+-		ndigits = totaldigits;
+-
+-		/* Get the next cpu# or a range of cpu#'s */
+-		while (buflen) {
+-			old_c = c;
+-			if (is_user) {
+-				if (__get_user(c, ubuf++))
+-					return -EFAULT;
+-			} else
+-				c = *buf++;
+-			buflen--;
+-			if (isspace(c))
+-				continue;
+-
+-			/* A '\0' or a ',' signal the end of a cpu# or range */
+-			if (c == '\0' || c == ',')
+-				break;
+-			/*
+-			* whitespaces between digits are not allowed,
+-			* but it's ok if whitespaces are on head or tail.
+-			* when old_c is whilespace,
+-			* if totaldigits == ndigits, whitespace is on head.
+-			* if whitespace is on tail, it should not run here.
+-			* as c was ',' or '\0',
+-			* the last code line has broken the current loop.
+-			*/
+-			if ((totaldigits != ndigits) && isspace(old_c))
+-				return -EINVAL;
+-
+-			if (c == '/') {
+-				used_size = a;
+-				at_start = 1;
+-				in_range = 0;
+-				a = b = 0;
+-				continue;
+-			}
+-
+-			if (c == ':') {
+-				old_a = a;
+-				old_b = b;
+-				at_start = 1;
+-				in_range = 0;
+-				in_partial_range = 1;
+-				a = b = 0;
+-				continue;
+-			}
+-
+-			if (c == '-') {
+-				if (at_start || in_range)
+-					return -EINVAL;
+-				b = 0;
+-				in_range = 1;
+-				at_start = 1;
+-				continue;
+-			}
+-
+-			if (!isdigit(c))
+-				return -EINVAL;
+-
+-			b = b * 10 + (c - '0');
+-			if (!in_range)
+-				a = b;
+-			at_start = 0;
+-			totaldigits++;
+-		}
+-		if (ndigits == totaldigits)
+-			continue;
+-		if (in_partial_range) {
+-			group_size = a;
+-			a = old_a;
+-			b = old_b;
+-			old_a = old_b = 0;
+-		} else {
+-			used_size = group_size = b - a + 1;
+-		}
+-		/* if no digit is after '-', it's wrong*/
+-		if (at_start && in_range)
+-			return -EINVAL;
+-		if (!(a <= b) || !(used_size <= group_size))
+-			return -EINVAL;
+-		if (b >= nmaskbits)
+-			return -ERANGE;
+-		while (a <= b) {
+-			off = min(b - a + 1, used_size);
+-			bitmap_set(maskp, a, off);
+-			a += group_size;
+-		}
+-	} while (buflen && c == ',');
+-	return 0;
++	while (buflen && !err) {
++		char *cp;
++		char tmpbuf[256];
++		unsigned int size = min(buflen,
++					(unsigned int) sizeof(tmpbuf) - 1);
++
++		if (!is_user)
++			memcpy(tmpbuf, buf, size);
++		else if (copy_from_user(tmpbuf, (const char __user __force *)
++					buf, size))
++			return -EFAULT;
++		tmpbuf[size] = '\0';
++		cp = strchr(tmpbuf, ',');
++		if (cp) {
++			*cp = '\0';
++			size = cp - tmpbuf + 1;
++		} else if (size != buflen)
++			return -EINVAL; /* Chunk too long. */
++		buflen -= size;
++		buf += size;
++		err = __bitmap_parse_one_chunk(tmpbuf, maskp, nmaskbits);
++	}
++	return err;
+ }
+ 
+ int bitmap_parselist(const char *bp, unsigned long *maskp, int nmaskbits)
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+1.8.3.1
