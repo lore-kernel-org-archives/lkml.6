@@ -1,110 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750950AbeDDJqp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 05:46:45 -0400
-Received: from mail.netline.ch ([148.251.143.178]:40011 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750736AbeDDJqo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 05:46:44 -0400
-Subject: Re: [RFC] Per file OOM badness
-To: Lucas Stach <l.stach@pengutronix.de>, Michal Hocko <mhocko@kernel.org>
-Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        Christian.Koenig@amd.com, linux-mm@kvack.org,
-        dri-devel@lists.freedesktop.org, Roman Gushchin <guro@fb.com>
-References: <20180118170006.GG6584@dhcp22.suse.cz>
- <20180123152659.GA21817@castle.DHCP.thefacebook.com>
- <20180123153631.GR1526@dhcp22.suse.cz>
- <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
- <20180124092847.GI1526@dhcp22.suse.cz>
- <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
- <20180124110141.GA28465@dhcp22.suse.cz>
- <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
- <20180124115059.GC28465@dhcp22.suse.cz>
- <60e18da8-4d6e-dec9-7aef-ff003605d513@daenzer.net>
- <20180130102855.GY21609@dhcp22.suse.cz>
- <1522074988.1196.1.camel@pengutronix.de>
- <3778a205-8b30-d147-b1f6-0a93d1de8beb@daenzer.net>
- <1522834611.3779.3.camel@pengutronix.de>
-From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <db3dc1d5-bc7a-1ab6-698f-cc180f559cbb@daenzer.net>
-Date: Wed, 4 Apr 2018 11:46:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751259AbeDDJrD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 05:47:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40408 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751155AbeDDJrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 05:47:01 -0400
+Date: Wed, 4 Apr 2018 11:46:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        snitzer@redhat.com
+Subject: Re: [PATCH v8 15/18] mm, fs, dax: handle layout changes to pinned
+ dax mappings
+Message-ID: <20180404094656.dssixqvvdcp5jff2@quack2.suse.cz>
+References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152246901060.36038.4487158506830998280.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1522834611.3779.3.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152246901060.36038.4487158506830998280.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-04 11:36 AM, Lucas Stach wrote:
-> Am Mittwoch, den 04.04.2018, 11:09 +0200 schrieb Michel Dänzer:
->> On 2018-03-26 04:36 PM, Lucas Stach wrote:
->>> Am Dienstag, den 30.01.2018, 11:28 +0100 schrieb Michal Hocko:
->>>> On Tue 30-01-18 10:29:10, Michel Dänzer wrote:
->>>>> On 2018-01-24 12:50 PM, Michal Hocko wrote:
->>>>>> On Wed 24-01-18 12:23:10, Michel Dänzer wrote:
->>>>>>> On 2018-01-24 12:01 PM, Michal Hocko wrote:
->>>>>>>> On Wed 24-01-18 11:27:15, Michel Dänzer wrote:
->>>>>>
->>>>>> [...]
->>>>>>>>> 2. If the OOM killer kills a process which is sharing BOs
->>>>>>>>> with another
->>>>>>>>> process, this should result in the other process dropping
->>>>>>>>> its references
->>>>>>>>> to the BOs as well, at which point the memory is released.
->>>>>>>>
->>>>>>>> OK. How exactly are those BOs mapped to the userspace?
->>>>>>>
->>>>>>> I'm not sure what you're asking. Userspace mostly uses a GEM
->>>>>>> handle to
->>>>>>> refer to a BO. There can also be userspace CPU mappings of the
->>>>>>> BO's
->>>>>>> memory, but userspace doesn't need CPU mappings for all BOs and
->>>>>>> only
->>>>>>> creates them as needed.
->>>>>>
->>>>>> OK, I guess you have to bear with me some more. This whole stack
->>>>>> is a
->>>>>> complete uknonwn. I am mostly after finding a boundary where you
->>>>>> can
->>>>>> charge the allocated memory to the process so that the oom killer
->>>>>> can
->>>>>> consider it. Is there anything like that? Except for the proposed
->>>>>> file
->>>>>> handle hack?
->>>>>
->>>>> How about the other way around: what APIs can we use to charge /
->>>>> "uncharge" memory to a process? If we have those, we can experiment
->>>>> with
->>>>> different places to call them.
->>>>
->>>> add_mm_counter() and I would add a new counter e.g. MM_KERNEL_PAGES.
->>>
->>> So is anyone still working on this? This is hurting us bad enough that
->>> I don't want to keep this topic rotting for another year.
->>>
->>> If no one is currently working on this I would volunteer to give the
->>> simple "just account private, non-shared buffers in process RSS" a
->>> spin.
->>
->> Sounds good. FWIW, I think shared buffers can also be easily handled by
->> accounting them in each process which has a reference. But that's more
->> of a detail, shouldn't make a big difference overall either way.
+On Fri 30-03-18 21:03:30, Dan Williams wrote:
+> Background:
 > 
-> Yes, both options to wither never account shared buffers or to always
-> account them into every process having a reference should be pretty
-> easy. Where it gets hard is when trying to account the buffer only in
-> the last process holding a reference or something like this.
+> get_user_pages() in the filesystem pins file backed memory pages for
+> access by devices performing dma. However, it only pins the memory pages
+> not the page-to-file offset association. If a file is truncated the
+> pages are mapped out of the file and dma may continue indefinitely into
+> a page that is owned by a device driver. This breaks coherency of the
+> file vs dma, but the assumption is that if userspace wants the
+> file-space truncated it does not matter what data is inbound from the
+> device, it is not relevant anymore. The only expectation is that dma can
+> safely continue while the filesystem reallocates the block(s).
+> 
+> Problem:
+> 
+> This expectation that dma can safely continue while the filesystem
+> changes the block map is broken by dax. With dax the target dma page
+> *is* the filesystem block. The model of leaving the page pinned for dma,
+> but truncating the file block out of the file, means that the filesytem
+> is free to reallocate a block under active dma to another file and now
+> the expected data-incoherency situation has turned into active
+> data-corruption.
+> 
+> Solution:
+> 
+> Defer all filesystem operations (fallocate(), truncate()) on a dax mode
+> file while any page/block in the file is under active dma. This solution
+> assumes that dma is transient. Cases where dma operations are known to
+> not be transient, like RDMA, have been explicitly disabled via
+> commits like 5f1d43de5416 "IB/core: disable memory registration of
+> filesystem-dax vmas".
+> 
+> The dax_layout_busy_page() routine is called by filesystems with a lock
+> held against mm faults (i_mmap_lock) to find pinned / busy dax pages.
+> The process of looking up a busy page invalidates all mappings
+> to trigger any subsequent get_user_pages() to block on i_mmap_lock.
+> The filesystem continues to call dax_layout_busy_page() until it finally
+> returns no more active pages. This approach assumes that the page
+> pinning is transient, if that assumption is violated the system would
+> have likely hung from the uncompleted I/O.
+> 
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Jeff Moyer <jmoyer@redhat.com>
+> Cc: Dave Chinner <david@fromorbit.com>
+> Cc: Matthew Wilcox <mawilcox@microsoft.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Reported-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  drivers/dax/super.c |    2 +
+>  fs/dax.c            |   92 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/dax.h |   25 ++++++++++++++
+>  mm/gup.c            |    5 +++
+>  4 files changed, 123 insertions(+), 1 deletion(-)
 
-FWIW, I don't think that would make sense anyway. A shared buffer is
-actually used by all processes which have a reference to it, so it
-should be accounted the same in all of them.
+...
 
+> +/**
+> + * dax_layout_busy_page - find first pinned page in @mapping
+> + * @mapping: address space to scan for a page with ref count > 1
+> + *
+> + * DAX requires ZONE_DEVICE mapped pages. These pages are never
+> + * 'onlined' to the page allocator so they are considered idle when
+> + * page->count == 1. A filesystem uses this interface to determine if
+> + * any page in the mapping is busy, i.e. for DMA, or other
+> + * get_user_pages() usages.
+> + *
+> + * It is expected that the filesystem is holding locks to block the
+> + * establishment of new mappings in this address_space. I.e. it expects
+> + * to be able to run unmap_mapping_range() and subsequently not race
+> + * mapping_mapped() becoming true. It expects that get_user_pages() pte
+> + * walks are performed under rcu_read_lock().
+> + */
+> +struct page *dax_layout_busy_page(struct address_space *mapping)
+> +{
+> +	pgoff_t	indices[PAGEVEC_SIZE];
+> +	struct page *page = NULL;
+> +	struct pagevec pvec;
+> +	pgoff_t	index, end;
+> +	unsigned i;
+> +
+> +	/*
+> +	 * In the 'limited' case get_user_pages() for dax is disabled.
+> +	 */
+> +	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
+> +		return NULL;
+> +
+> +	if (!dax_mapping(mapping) || !mapping_mapped(mapping))
+> +		return NULL;
+> +
+> +	pagevec_init(&pvec);
+> +	index = 0;
+> +	end = -1;
+> +	/*
+> +	 * Flush dax_layout_lock() sections to ensure all possible page
+> +	 * references have been taken, or otherwise arrange for faults
+> +	 * to block on the filesystem lock that is taken for
+> +	 * establishing new mappings.
+> +	 */
+> +	unmap_mapping_range(mapping, 0, 0, 1);
+> +	synchronize_rcu();
 
+So I still don't like the use of RCU for this. It just seems as an abuse to
+use RCU like that. Furthermore it has a hefty latency cost for the truncate
+path. A trivial test to truncate 100 times the last page of a 16k file that
+is mmaped (only the first page):
+
+DAX+your patches	3.899s
+non-DAX			0.015s
+
+So you can see synchronize_rcu() increased time to run truncate(2) more
+than 200 times (the process is indeed sitting in __wait_rcu_gp all the
+time). IMHO that's just too costly.
+
+> +	while (index < end && pagevec_lookup_entries(&pvec, mapping, index,
+> +				min(end - index, (pgoff_t)PAGEVEC_SIZE),
+> +				indices)) {
+> +		for (i = 0; i < pagevec_count(&pvec); i++) {
+> +			struct page *pvec_ent = pvec.pages[i];
+> +			void *entry;
+> +
+> +			index = indices[i];
+> +			if (index >= end)
+> +				break;
+> +
+> +			if (!radix_tree_exceptional_entry(pvec_ent))
+> +				continue;
+
+This would be a bug - so WARN_ON_ONCE() here?
+
+> +
+> +			spin_lock_irq(&mapping->tree_lock);
+> +			entry = get_unlocked_mapping_entry(mapping, index, NULL);
+> +			if (entry)
+> +				page = dax_busy_page(entry);
+> +			put_unlocked_mapping_entry(mapping, index, entry);
+> +			spin_unlock_irq(&mapping->tree_lock);
+> +			if (page)
+> +				break;
+> +		}
+> +		pagevec_remove_exceptionals(&pvec);
+> +		pagevec_release(&pvec);
+> +		index++;
+> +
+> +		if (page)
+> +			break;
+> +	}
+> +	return page;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_layout_busy_page);
+> +
+>  static int __dax_invalidate_mapping_entry(struct address_space *mapping,
+>  					  pgoff_t index, bool trunc)
+>  {
+
+								Honza
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
