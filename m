@@ -1,55 +1,106 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+kP9qBAtkeQsi5MyvpPce2L4wLXyyiZfwTGAWdRav0c6FcsAAVLmG1e5c3owPWfUNcXftE
-ARC-Seal: i=1; a=rsa-sha256; t=1522855981; cv=none;
-        d=google.com; s=arc-20160816;
-        b=MG/5bQ8cvUW8lYO19jwWvs2+94g73jB0+j2vLJXWzS1+Wpp3nZFv7q0769QGw3bnLJ
-         uePFKP7Repx9HWAqYe6o5aGvSZ3pizt9ynmg6Beat7F017vL/jNlDmwqwkGDX8bUxhDr
-         axvOgA0ryNaDfzlFz3i2GLRCq1ILtPTbtZS2MCZd7dXnsAiioDpMicjyaxfVp1HgHHwI
-         oqTihwAHQgbfBRwhGkGISZncrX+XZNYRfRUP1pCSyGtEnaGMuLpVSUMkWUosFPMEtYHX
-         FOHfr99do054nVEKuCIUwjh5UVDxuaySJAOrVOpnu2W5ZnEZw5i98ZyFOmJ1sR4h94VH
-         HisQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :from:cc:to:subject:arc-authentication-results;
-        bh=HcnLIp2gM6bDx62M9XMae0HWInXhYpRfwonGwC9Y+Go=;
-        b=eJrsePwX1+71ppTLllRIkcBuRdAMPJpaJJzXw6Zv0tAzCoD8gKYUcKbib9sfSUDcgQ
-         Yj8WlVYMECgv7zLTYX9uZk+t/nVU8gimGspavo9ec7SdyFQy7j0cd2m+sxxIeJuFQAPW
-         OZuGW020OFGZN4Il5Qq0uxHsa/rq0a5SYYxmUxk9Nn5VECVcv21cBN3NWfzNFNi08NYJ
-         1jYvedgM5/IqbttOBl/kK4zANbF9ezNzkQRk1wFzxjk8lSR5f0hEmAGwYwpMr7slvTDY
-         Z3Yij7zA4eCzFXNcGPzRlwgCHFckhw2lFBW8DMu2rkTuqsWQGti64+Tc6jCKX13UT2o+
-         9CDw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Subject: Patch "media: v4l2-compat-ioctl32.c: don't copy back the result for certain errors" has been added to the 3.18-stable tree
-To: mchehab@s-opensource.com,alexander.levin@microsoft.com,gregkh@linuxfoundation.org,hans.verkuil@cisco.com,linux-kernel@vger.kernel.org,linux-media@vger.kernel.org,mchehab@infradead.org,sakari.ailus@linux.intel.com
+Return-Path: <stable-commits-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-375845-1522855980-2-11818520220391561326
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='ANSI_X3.4-1968'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-commits-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522855978; b=mNbjtE15TLW5zOraL1+MtX0J8LXaM/Cq1eLjZgNVkNF7zugUP1
+    FkRwib5x/FLLu3l6NYMcCjyWvyStlLTpe/6wpjcMRUKFtkjU76SMdw5n2S6Qi+op
+    EyRi3/4Zaj9YW5zXOoRfPLts4BGqGIsWDzdW0uoydNzXAMyBezs1rmvY3UkYzp1A
+    g9rS8N1uqprVTor7XibmfVjgmJPF268KBGBinLXp9j5Zg73cOtatudX3MsH2VdWi
+    EUETGv1z5nvkrrOdND0kN/FVpPSInlYVM7w5qmBXDyEU66tYr9I8wfeKY4wHA0Vt
+    nSECyZadP2lZ3EKXyyBAe7c0egpKqkuh5OBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:from:date:in-reply-to
+    :message-id:mime-version:content-type:content-transfer-encoding
+    :sender:reply-to:list-id; s=fm2; t=1522855978; bh=lAy0UvrysVxH7F
+    DsZIoCJJaFQ9kd1Oo2wzCkq4E+5xw=; b=MMAge9C8G38kJeVlat6np/v0Og58A4
+    7ChQeyQcIVSXw88eDE5ESbXO5T3BsC8vOIgBld4nSGnCpFRWlCfSWvHlfZLTf0xs
+    HRs23HWyqpmiQoiNy5rcOE3TA26AbQ17Wt4t8kmPp2JlJpYz02V8yY0HTam+HEmi
+    fQaFLlQz9HNIgJnzmDJ155LMUnDnUGlCgJOAOOk1DhpuSawUJNmJZNtLSxm21M5r
+    SEjDGfJiSyx85jfFSKLjnNBd23o0/Sl19GrW2BL2x5G8HaiserlQ88rFjUI4Wmoq
+    mc4IQSkuPznGeba5+HIwDtUm9NB7ctYbf0Bz+nRCWjyg1IsXpKZLSg8g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-commits-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-commits-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJG7p/NH1dTT8G9C7IJNxWtAywK8yV8rw4q0EX0k+7dfn4sX4CBLMEYaV6lVNeqY025pEMoBiM3VuEXM9IiL8b/XMrIs4xSJFRCzeKyu5Dp1whfj4H9c
+    rdEewQeLLVjzlQ+SiY7tVqSWSc1JOyIHVEy9Ii5aabb7sXH9dMFcecU5TI/p0TyBO9Edet8BxoJcyURp0ISJDBhDAEFAIOK5BtFieILrUPuRDptsC7P98rdc
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=m6qU47vR8oQA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=vQBBkBfzAAAA:8 a=AUd_NHdVAAAA:8 a=JfrnYn6hAAAA:8
+    a=yMhMjlubAAAA:8 a=QyXUC8HyAAAA:8 a=ag1SF4gXAAAA:8 a=ZE2X6CITjw0rSDiURnsA:9
+    a=pWuVGPOGmILglhdI:21 a=03b9HhTEFPZ55Mw6:21 a=57urXIHmFmcA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22 a=NGXS0kB0m_rannUenejW:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751982AbeDDPc5 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 4 Apr 2018 11:32:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43888 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751976AbeDDPcy (ORCPT
+        <rfc822;stable-commits@vger.kernel.org>);
+        Wed, 4 Apr 2018 11:32:54 -0400
+Subject: Patch "media: v4l2-compat-ioctl32.c: avoid sizeof(type)" has been added to the 3.18-stable tree
+To: mchehab@s-opensource.com, alexander.levin@microsoft.com,
+        gregkh@linuxfoundation.org, hans.verkuil@cisco.com,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        mchehab@infradead.org, sakari.ailus@linux.intel.com
 Cc: <stable@vger.kernel.org>, <stable-commits@vger.kernel.org>
 From: <gregkh@linuxfoundation.org>
-Date: Wed, 04 Apr 2018 17:32:46 +0200
-In-Reply-To: <9d0bb62c2dc7caee1fd2b9199fc1a22ec8479395.1522260310.git.mchehab@s-opensource.com>
-Message-ID: <152285596621542@kroah.com>
+Date: Wed, 04 Apr 2018 17:32:43 +0200
+In-Reply-To: <b2ea40bb0147ce21cf35781d842cba0d60f7e07f.1522260310.git.mchehab@s-opensource.com>
+Message-ID: <152285596322238@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ANSI_X3.4-1968
 Content-Transfer-Encoding: 8bit
 X-stable: commit
+Sender: stable-commits-owner@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org
+X-Mailing-List: stable-commits@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596830233555552249?=
-X-GMAIL-MSGID: =?utf-8?q?1596830233555552249?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
 This is a note to let you know that I've just added the patch titled
 
-    media: v4l2-compat-ioctl32.c: don't copy back the result for certain errors
+    media: v4l2-compat-ioctl32.c: avoid sizeof(type)
 
 to the 3.18-stable tree which can be found at:
     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 
 The filename of the patch is:
-     media-v4l2-compat-ioctl32.c-don-t-copy-back-the-result-for-certain-errors.patch
+     media-v4l2-compat-ioctl32.c-avoid-sizeof-type.patch
 and it can be found in the queue-3.18 subdirectory.
 
 If you, or anyone else, feels it should not be added to the stable tree,
@@ -58,41 +109,327 @@ please let <stable@vger.kernel.org> know about it.
 
 >From foo@baz Wed Apr  4 17:30:18 CEST 2018
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Date: Wed, 28 Mar 2018 15:12:32 -0300
-Subject: media: v4l2-compat-ioctl32.c: don't copy back the result for certain errors
+Date: Wed, 28 Mar 2018 15:12:25 -0300
+Subject: media: v4l2-compat-ioctl32.c: avoid sizeof(type)
 To: Linux Media Mailing List <linux-media@vger.kernel.org>, stable@vger.kernel.org
 Cc: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Sasha Levin <alexander.levin@microsoft.com>
-Message-ID: <9d0bb62c2dc7caee1fd2b9199fc1a22ec8479395.1522260310.git.mchehab@s-opensource.com>
+Message-ID: <b2ea40bb0147ce21cf35781d842cba0d60f7e07f.1522260310.git.mchehab@s-opensource.com>
 
 From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit d83a8243aaefe62ace433e4384a4f077bed86acb upstream.
+commit 333b1e9f96ce05f7498b581509bb30cde03018bf upstream.
 
-Some ioctls need to copy back the result even if the ioctl returned
-an error. However, don't do this for the error code -ENOTTY.
-It makes no sense in that cases.
+Instead of doing sizeof(struct foo) use sizeof(*up). There even were
+cases where 4 * sizeof(__u32) was used instead of sizeof(kp->reserved),
+which is very dangerous when the size of the reserved array changes.
 
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   80 ++++++++++++--------------
+ 1 file changed, 38 insertions(+), 42 deletions(-)
 
 --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
 +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -943,6 +943,9 @@ static long do_video_ioctl(struct file *
- 		set_fs(old_fs);
+@@ -47,7 +47,7 @@ struct v4l2_window32 {
+ 
+ static int get_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
+ {
+-	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_window32)) ||
++	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
+ 	    copy_from_user(&kp->w, &up->w, sizeof(up->w)) ||
+ 	    get_user(kp->field, &up->field) ||
+ 	    get_user(kp->chromakey, &up->chromakey) ||
+@@ -64,7 +64,7 @@ static int get_v4l2_window32(struct v4l2
+ 		if (get_user(p, &up->clips))
+ 			return -EFAULT;
+ 		uclips = compat_ptr(p);
+-		kclips = compat_alloc_user_space(n * sizeof(struct v4l2_clip));
++		kclips = compat_alloc_user_space(n * sizeof(*kclips));
+ 		kp->clips = kclips;
+ 		while (--n >= 0) {
+ 			if (copy_in_user(&kclips->c, &uclips->c, sizeof(uclips->c)))
+@@ -152,14 +152,14 @@ static int __get_v4l2_format32(struct v4
+ 
+ static int get_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
+ {
+-	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_format32)))
++	if (!access_ok(VERIFY_READ, up, sizeof(*up)))
+ 		return -EFAULT;
+ 	return __get_v4l2_format32(kp, up);
+ }
+ 
+ static int get_v4l2_create32(struct v4l2_create_buffers *kp, struct v4l2_create_buffers32 __user *up)
+ {
+-	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_create_buffers32)) ||
++	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
+ 	    copy_from_user(kp, up, offsetof(struct v4l2_create_buffers32, format)))
+ 		return -EFAULT;
+ 	return __get_v4l2_format32(&kp->format, &up->format);
+@@ -196,17 +196,17 @@ static int __put_v4l2_format32(struct v4
+ 
+ static int put_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
+ {
+-	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_format32)) ||
+-		put_user(kp->type, &up->type))
++	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)))
+ 		return -EFAULT;
+ 	return __put_v4l2_format32(kp, up);
+ }
+ 
+ static int put_v4l2_create32(struct v4l2_create_buffers *kp, struct v4l2_create_buffers32 __user *up)
+ {
+-	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_create_buffers32)) ||
+-	    copy_to_user(up, kp, offsetof(struct v4l2_create_buffers32, format.fmt)))
+-			return -EFAULT;
++	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
++	    copy_to_user(up, kp, offsetof(struct v4l2_create_buffers32, format)) ||
++	    copy_to_user(up->reserved, kp->reserved, sizeof(kp->reserved)))
++		return -EFAULT;
+ 	return __put_v4l2_format32(&kp->format, &up->format);
+ }
+ 
+@@ -222,7 +222,7 @@ struct v4l2_standard32 {
+ static int get_v4l2_standard32(struct v4l2_standard *kp, struct v4l2_standard32 __user *up)
+ {
+ 	/* other fields are not set by the user, nor used by the driver */
+-	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_standard32)) ||
++	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
+ 	    get_user(kp->index, &up->index))
+ 		return -EFAULT;
+ 	return 0;
+@@ -230,13 +230,13 @@ static int get_v4l2_standard32(struct v4
+ 
+ static int put_v4l2_standard32(struct v4l2_standard *kp, struct v4l2_standard32 __user *up)
+ {
+-	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_standard32)) ||
++	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
+ 	    put_user(kp->index, &up->index) ||
+ 	    copy_to_user(up->id, &kp->id, sizeof(__u64)) ||
+-	    copy_to_user(up->name, kp->name, 24) ||
++	    copy_to_user(up->name, kp->name, sizeof(up->name)) ||
+ 	    copy_to_user(&up->frameperiod, &kp->frameperiod, sizeof(kp->frameperiod)) ||
+ 	    put_user(kp->framelines, &up->framelines) ||
+-	    copy_to_user(up->reserved, kp->reserved, 4 * sizeof(__u32)))
++	    copy_to_user(up->reserved, kp->reserved, sizeof(kp->reserved)))
+ 		return -EFAULT;
+ 	return 0;
+ }
+@@ -284,7 +284,7 @@ static int get_v4l2_plane32(struct v4l2_
+ 
+ 	if (copy_in_user(up, up32, 2 * sizeof(__u32)) ||
+ 	    copy_in_user(&up->data_offset, &up32->data_offset,
+-			 sizeof(__u32)))
++			 sizeof(up->data_offset)))
+ 		return -EFAULT;
+ 
+ 	if (memory == V4L2_MEMORY_USERPTR) {
+@@ -294,11 +294,11 @@ static int get_v4l2_plane32(struct v4l2_
+ 		if (put_user((unsigned long)up_pln, &up->m.userptr))
+ 			return -EFAULT;
+ 	} else if (memory == V4L2_MEMORY_DMABUF) {
+-		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(int)))
++		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(up32->m.fd)))
+ 			return -EFAULT;
+ 	} else {
+ 		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
+-				 sizeof(__u32)))
++				 sizeof(up32->m.mem_offset)))
+ 			return -EFAULT;
  	}
  
-+	if (err == -ENOTTY)
-+		return err;
-+
- 	/* Special case: even after an error we need to put the
- 	   results back for these ioctls since the error_idx will
- 	   contain information on which control failed. */
+@@ -310,19 +310,19 @@ static int put_v4l2_plane32(struct v4l2_
+ {
+ 	if (copy_in_user(up32, up, 2 * sizeof(__u32)) ||
+ 	    copy_in_user(&up32->data_offset, &up->data_offset,
+-			 sizeof(__u32)))
++			 sizeof(up->data_offset)))
+ 		return -EFAULT;
+ 
+ 	/* For MMAP, driver might've set up the offset, so copy it back.
+ 	 * USERPTR stays the same (was userspace-provided), so no copying. */
+ 	if (memory == V4L2_MEMORY_MMAP)
+ 		if (copy_in_user(&up32->m.mem_offset, &up->m.mem_offset,
+-				 sizeof(__u32)))
++				 sizeof(up->m.mem_offset)))
+ 			return -EFAULT;
+ 	/* For DMABUF, driver might've set up the fd, so copy it back. */
+ 	if (memory == V4L2_MEMORY_DMABUF)
+ 		if (copy_in_user(&up32->m.fd, &up->m.fd,
+-				 sizeof(int)))
++				 sizeof(up->m.fd)))
+ 			return -EFAULT;
+ 
+ 	return 0;
+@@ -336,7 +336,7 @@ static int get_v4l2_buffer32(struct v4l2
+ 	int num_planes;
+ 	int ret;
+ 
+-	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_buffer32)) ||
++	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
+ 	    get_user(kp->index, &up->index) ||
+ 	    get_user(kp->type, &up->type) ||
+ 	    get_user(kp->flags, &up->flags) ||
+@@ -348,8 +348,7 @@ static int get_v4l2_buffer32(struct v4l2
+ 		if (get_user(kp->bytesused, &up->bytesused) ||
+ 		    get_user(kp->field, &up->field) ||
+ 		    get_user(kp->timestamp.tv_sec, &up->timestamp.tv_sec) ||
+-		    get_user(kp->timestamp.tv_usec,
+-			     &up->timestamp.tv_usec))
++		    get_user(kp->timestamp.tv_usec, &up->timestamp.tv_usec))
+ 			return -EFAULT;
+ 
+ 	if (V4L2_TYPE_IS_MULTIPLANAR(kp->type)) {
+@@ -366,13 +365,12 @@ static int get_v4l2_buffer32(struct v4l2
+ 
+ 		uplane32 = compat_ptr(p);
+ 		if (!access_ok(VERIFY_READ, uplane32,
+-			       num_planes * sizeof(struct v4l2_plane32)))
++			       num_planes * sizeof(*uplane32)))
+ 			return -EFAULT;
+ 
+ 		/* We don't really care if userspace decides to kill itself
+ 		 * by passing a very big num_planes value */
+-		uplane = compat_alloc_user_space(num_planes *
+-						 sizeof(struct v4l2_plane));
++		uplane = compat_alloc_user_space(num_planes * sizeof(*uplane));
+ 		kp->m.planes = (__force struct v4l2_plane *)uplane;
+ 
+ 		while (--num_planes >= 0) {
+@@ -420,7 +418,7 @@ static int put_v4l2_buffer32(struct v4l2
+ 	int num_planes;
+ 	int ret;
+ 
+-	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_buffer32)) ||
++	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
+ 	    put_user(kp->index, &up->index) ||
+ 	    put_user(kp->type, &up->type) ||
+ 	    put_user(kp->flags, &up->flags) ||
+@@ -431,7 +429,7 @@ static int put_v4l2_buffer32(struct v4l2
+ 	    put_user(kp->field, &up->field) ||
+ 	    put_user(kp->timestamp.tv_sec, &up->timestamp.tv_sec) ||
+ 	    put_user(kp->timestamp.tv_usec, &up->timestamp.tv_usec) ||
+-	    copy_to_user(&up->timecode, &kp->timecode, sizeof(struct v4l2_timecode)) ||
++	    copy_to_user(&up->timecode, &kp->timecode, sizeof(kp->timecode)) ||
+ 	    put_user(kp->sequence, &up->sequence) ||
+ 	    put_user(kp->reserved2, &up->reserved2) ||
+ 	    put_user(kp->reserved, &up->reserved) ||
+@@ -499,7 +497,7 @@ static int get_v4l2_framebuffer32(struct
+ {
+ 	u32 tmp;
+ 
+-	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_framebuffer32)) ||
++	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
+ 	    get_user(tmp, &up->base) ||
+ 	    get_user(kp->capability, &up->capability) ||
+ 	    get_user(kp->flags, &up->flags) ||
+@@ -513,7 +511,7 @@ static int put_v4l2_framebuffer32(struct
+ {
+ 	u32 tmp = (u32)((unsigned long)kp->base);
+ 
+-	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_framebuffer32)) ||
++	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
+ 	    put_user(tmp, &up->base) ||
+ 	    put_user(kp->capability, &up->capability) ||
+ 	    put_user(kp->flags, &up->flags) ||
+@@ -537,14 +535,14 @@ struct v4l2_input32 {
+    Otherwise it is identical to the 32-bit version. */
+ static inline int get_v4l2_input32(struct v4l2_input *kp, struct v4l2_input32 __user *up)
+ {
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_input32)))
++	if (copy_from_user(kp, up, sizeof(*up)))
+ 		return -EFAULT;
+ 	return 0;
+ }
+ 
+ static inline int put_v4l2_input32(struct v4l2_input *kp, struct v4l2_input32 __user *up)
+ {
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_input32)))
++	if (copy_to_user(up, kp, sizeof(*up)))
+ 		return -EFAULT;
+ 	return 0;
+ }
+@@ -592,7 +590,7 @@ static int get_v4l2_ext_controls32(struc
+ 	int n;
+ 	compat_caddr_t p;
+ 
+-	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_ext_controls32)) ||
++	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
+ 	    get_user(kp->ctrl_class, &up->ctrl_class) ||
+ 	    get_user(kp->count, &up->count) ||
+ 	    get_user(kp->error_idx, &up->error_idx) ||
+@@ -606,10 +604,9 @@ static int get_v4l2_ext_controls32(struc
+ 	if (get_user(p, &up->controls))
+ 		return -EFAULT;
+ 	ucontrols = compat_ptr(p);
+-	if (!access_ok(VERIFY_READ, ucontrols,
+-		       n * sizeof(struct v4l2_ext_control32)))
++	if (!access_ok(VERIFY_READ, ucontrols, n * sizeof(*ucontrols)))
+ 		return -EFAULT;
+-	kcontrols = compat_alloc_user_space(n * sizeof(struct v4l2_ext_control));
++	kcontrols = compat_alloc_user_space(n * sizeof(*kcontrols));
+ 	kp->controls = (__force struct v4l2_ext_control *)kcontrols;
+ 	while (--n >= 0) {
+ 		u32 id;
+@@ -641,7 +638,7 @@ static int put_v4l2_ext_controls32(struc
+ 	int n = kp->count;
+ 	compat_caddr_t p;
+ 
+-	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_ext_controls32)) ||
++	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
+ 	    put_user(kp->ctrl_class, &up->ctrl_class) ||
+ 	    put_user(kp->count, &up->count) ||
+ 	    put_user(kp->error_idx, &up->error_idx) ||
+@@ -653,8 +650,7 @@ static int put_v4l2_ext_controls32(struc
+ 	if (get_user(p, &up->controls))
+ 		return -EFAULT;
+ 	ucontrols = compat_ptr(p);
+-	if (!access_ok(VERIFY_WRITE, ucontrols,
+-		       n * sizeof(struct v4l2_ext_control32)))
++	if (!access_ok(VERIFY_WRITE, ucontrols, n * sizeof(*ucontrols)))
+ 		return -EFAULT;
+ 
+ 	while (--n >= 0) {
+@@ -690,7 +686,7 @@ struct v4l2_event32 {
+ 
+ static int put_v4l2_event32(struct v4l2_event *kp, struct v4l2_event32 __user *up)
+ {
+-	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_event32)) ||
++	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
+ 	    put_user(kp->type, &up->type) ||
+ 	    copy_to_user(&up->u, &kp->u, sizeof(kp->u)) ||
+ 	    put_user(kp->pending, &up->pending) ||
+@@ -698,7 +694,7 @@ static int put_v4l2_event32(struct v4l2_
+ 	    put_user(kp->timestamp.tv_sec, &up->timestamp.tv_sec) ||
+ 	    put_user(kp->timestamp.tv_nsec, &up->timestamp.tv_nsec) ||
+ 	    put_user(kp->id, &up->id) ||
+-	    copy_to_user(up->reserved, kp->reserved, 8 * sizeof(__u32)))
++	    copy_to_user(up->reserved, kp->reserved, sizeof(kp->reserved)))
+ 		return -EFAULT;
+ 	return 0;
+ }
+@@ -715,7 +711,7 @@ static int get_v4l2_edid32(struct v4l2_e
+ {
+ 	u32 tmp;
+ 
+-	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_edid32)) ||
++	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
+ 	    get_user(kp->pad, &up->pad) ||
+ 	    get_user(kp->start_block, &up->start_block) ||
+ 	    get_user(kp->blocks, &up->blocks) ||
+@@ -730,7 +726,7 @@ static int put_v4l2_edid32(struct v4l2_e
+ {
+ 	u32 tmp = (u32)((unsigned long)kp->edid);
+ 
+-	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_edid32)) ||
++	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
+ 	    put_user(kp->pad, &up->pad) ||
+ 	    put_user(kp->start_block, &up->start_block) ||
+ 	    put_user(kp->blocks, &up->blocks) ||
 
 
 Patches currently in stable-queue which might be from mchehab@s-opensource.com are
