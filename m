@@ -1,80 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751353AbeDDOCR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 10:02:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55530 "EHLO mx2.suse.de"
+        id S1751362AbeDDOHl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 10:07:41 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:49970 "EHLO gum.cmpxchg.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751117AbeDDOCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 10:02:16 -0400
-Date: Wed, 4 Apr 2018 16:02:11 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Jason Andryuk <jandryuk@gmail.com>
-Cc: Andreas Radke <andyrtr@archlinux.org>,
-        Wolfram Sang <wsa@the-dreams.de>, benjamin.tissoires@redhat.com,
-        aduggan@synaptics.com, linux-i2c@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] i2c: i801: blacklist Host Notify on HP EliteBook G3
- 850
-Message-ID: <20180404160211.57ae77ea@endymion>
-In-Reply-To: <CAKf6xpu4=kLuqZqFsxqFCzLMyLBZyi3C9W_yyssEt=56dhF6RA@mail.gmail.com>
-References: <20180402122536.5083-1-jandryuk@gmail.com>
-        <20180402123435.5587-1-jandryuk@gmail.com>
-        <20180403211326.4907f1bc@laptop64.home>
-        <CAKf6xpu4=kLuqZqFsxqFCzLMyLBZyi3C9W_yyssEt=56dhF6RA@mail.gmail.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1751117AbeDDOHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 10:07:39 -0400
+Date: Wed, 4 Apr 2018 10:08:55 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: mhocko@kernel.org, vdavydov.dev@gmail.com, guro@fb.com,
+        riel@surriel.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/3] mm: memcontrol: Use cgroup_rstat for event accounting
+Message-ID: <20180404140855.GA28966@cmpxchg.org>
+References: <20180324160901.512135-1-tj@kernel.org>
+ <20180324160901.512135-2-tj@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180324160901.512135-2-tj@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason, Andreas,
+On Sat, Mar 24, 2018 at 09:08:59AM -0700, Tejun Heo wrote:
+> @@ -91,6 +91,9 @@ struct mem_cgroup_stat_cpu {
+>  	unsigned long events[MEMCG_NR_EVENTS];
+>  	unsigned long nr_page_events;
+>  	unsigned long targets[MEM_CGROUP_NTARGETS];
+> +
+> +	/* for cgroup rstat delta calculation */
+> +	unsigned long last_events[MEMCG_NR_EVENTS];
+>  };
+>  
+>  struct mem_cgroup_reclaim_iter {
+> @@ -233,7 +236,11 @@ struct mem_cgroup {
+>  
+>  	struct mem_cgroup_stat_cpu __percpu *stat_cpu;
+>  	atomic_long_t		stat[MEMCG_NR_STAT];
+> -	atomic_long_t		events[MEMCG_NR_EVENTS];
+> +
+> +	/* events is managed by cgroup rstat */
+> +	unsigned long long	events[MEMCG_NR_EVENTS];	/* local */
+> +	unsigned long long	tree_events[MEMCG_NR_EVENTS];	/* subtree */
+> +	unsigned long long	pending_events[MEMCG_NR_EVENTS];/* propagation */
 
-On Wed, 4 Apr 2018 08:55:20 -0400, Jason Andryuk wrote:
-> On Tue, Apr 3, 2018 at 3:13 PM, Andreas Radke <andyrtr@archlinux.org> wrote:
-> > I'm faced with similar cold boot issues on my HP ProBook 430 G4 model.
-> > Trying your hint with adding
-> > "options i2c_i801 disable_features=0x20"
-> > to /etc/modprobe.d/i2c_i801.conf doesn't seem to solve it for me.  
-> 
-> Maybe verify the option is set by checking
-> /sys/module/i2c_i801/parameters/disable_features ?  Looks like dmesg
-> should also report "SMBus Host Notify disabled by user" when disabled.
-> I run with i801 built-in, so I was specifying the option on the kernel
-> command line.
+The lazy updates are neat, but I'm a little concerned at the memory
+footprint. On a 64-cpu machine for example, this adds close to 9000
+words to struct mem_cgroup. And we really only need the accuracy for
+the 4 cgroup items in memory.events, not all VM events and stats.
 
-Another thing to think of is that you may have to rebuild the
-initrd/initramfs after editing /etc/modprobe.d/i2c_i801.conf if
-i2c-i801 happens to be part of it (and make sure
-that /etc/modprobe.d/i2c_i801.conf is indeed included in
-initrd/initramfs then.)
-
-> > My system boots legacy grub in text mode (KMS) and seems to keep hanging
-> > even with that option set.  
-> 
-> Your cold boot hang is in legacy grub itself?  Legacy grub text mode
-> actually doesn't hang my G3 850 - it was switching to the graphical
-> splash screen that seemed to do it.  PXE booting via F12 was another
-> consistent way to hang.  It was very early in the PXE boot code -
-> before it checked the link status.  So you could try that with it just
-> plugged into a switch even if you don't have a PXE boot setup.
-> 
-> From my previous post:
-> """
-> The Boot Agent hang prints "Client Mac Addr 00-11-22-33-44-55<cursor>"
-> and hangs.  A normal boot prints a GUID on the same line and
-> continues.
-> """
-> 
-> Otherwise, unfortunately, it might just be a different issue.
-
-I recall reports about hangs when we first added support for
-interrupts. I think we addressed all the bugs in this area since then
-but maybe not. So you may want to try disable_features=0x30 to disable
-both interrupts and SMBus Host Notify.
-
--- 
-Jean Delvare
-SUSE L3 Support
+Why not restrict the patch to those? It would also get rid of the
+weird sharing between VM and cgroup enums.
