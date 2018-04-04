@@ -1,121 +1,105 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/CqKyh87vUDAQMZXE1cT2u7RKTsjLeSoe8OdKiE8uWXs0KdXX06A5U7CJqo4fCcy6OPyDp
-ARC-Seal: i=1; a=rsa-sha256; t=1522855959; cv=none;
+Return-Path: <kernel-hardening-return-12848-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49kBOYd9r5MpfgsiWAZwYyIzSwK1s/vxGJ4h4e5Vurb4ipinN/P1igTILuRobyu66X5DZzv
+ARC-Seal: i=1; a=rsa-sha256; t=1522846444; cv=none;
         d=google.com; s=arc-20160816;
-        b=guV2Bip8VZuHTZlLlxsP7hXcGjg5O7Zop9VkGI5YNodUig92IkGQmQ+GHeBzaUDbd/
-         isLcZszX+FCbsS+NQz9LXtsXtyFvdGluMzXZnnh3MFJ0gaC3R/uRntuqvuVmdfL5ugCk
-         hfovKolrEe0GwMQTGoU2gL7FJK8h6DDU2gnadF6VZ8KnJP94DudQsQc1CXspmcaz9Frr
-         40vS1GEYSHtjHlzjNasoKQxBUej3jaSzYoadNJhBjv7tTERIzdPujv9ZinmKwcVHhwQL
-         IOEJolbmwR6Sqs2WdTfV9VEVtHNHgN09MyfCPKzpQgxE3aEwHSseoFCYtVncto3q3vA+
-         EC8w==
+        b=XMiD2HLD9WtSMVhBppEvkQAnum3KxIl1wLCTylWygb8P8snzJ9dA9q8SzL8mzlRRD3
+         pzz28BCgNHPXabymJ6NrALHOW436IaG7V/y0peTwtP/MWK7t8vzkMUJxEIwcK6aUWphP
+         Y5nKtolMX4/90b0yrMWwAzeDIZrUqxSKvYcCBqcN1M5Rui2G+kFQHl9ZwqjGKDSCJmBf
+         B0E4DOYK74CMmLtR/hY+D1ShjJfw5sTFxNFhgmh/OXPiTK6K9sKuk2i5t24xoF3ljHKo
+         JGypJ4/CVJv0JsNs3yuhgmZU0WHbstFhVDiQsimA0TSE0sA4P98HhLxN6NCyBqUSsJbe
+         xVQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :from:cc:to:subject:arc-authentication-results;
-        bh=KxvowzqmOP39PSwgXuFU3oicsvtKtNeKkOagWmcOvYY=;
-        b=C6xK+oN+E5zJ8QM/oQU+kyRsrPUWRmlUecn7IKZP1XAA7RG1gNRWWAex3OoktWVV/X
-         6cw1arqhWsU+twkm20PdWepB1/+YBJTLy4j51jGVvxi+S4cNH1S10xf3miEVRnd9izzt
-         4jyBN6SRylZB9GO29VbIdGl3O33QPuWM/OGLagf99L7kMulQ41TOY52amlqS6C3JN8Rc
-         sxkQGfUdhc07KVcnfzcPd+2ZSfeXVt3GSlqgYX3AFEXZyX6mlZDCB0arN6OMnMiaxItW
-         eQMIkxxVOv2B1hizMcbYTcCzdMN3YEFZTBdEgMfBcGFCx096MM7LxO6jhKFO/1o8i5nE
-         050w==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=8cW3gsKXpO29gdUoCTDc9v1UX87CiTI13FQdfTWzl5Q=;
+        b=FruyOaM5TbPGHTvHrfXi97SQtgaFgWkET2mKFfdRvbyOdkqlNCYv0NiIgkM5jPwBLP
+         lBbw/BYNOFYfikw1ZY1gpFv0A5VQgzm5tbHXPIe9VsiOjRNlaYpFDjzJ+AKamqSwerQp
+         +QJ3eav8+oOCUW3OmLpjDfA+kLE4zHDY8PyAt3QiCKc1kzV6oYY3J8qIAv2D3oky7mKm
+         Nxr+0Kteb0eVHW4gWurW9sV7dV10Pywbz35mKS/oTPP9RHQ4heLhjPxAS14ILbbLxLT+
+         bJ6MxRAOaltfiU6zZaArObYThIMfhsA+8O+tCn7EiEQN6Kr5wEEPdmB/+/zvwbARVbwh
+         NdCA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       dkim=pass header.i=@linaro.org header.s=google header.b=G/pU7Rzl;
+       spf=pass (google.com: domain of kernel-hardening-return-12848-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12848-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Subject: Patch "media: media/v4l2-ctrls: volatiles should not generate CH_VALUE" has been added to the 3.18-stable tree
-To: mchehab@s-opensource.com,gregkh@linuxfoundation.org,hans.verkuil@cisco.com,linux-kernel@vger.kernel.org,linux-media@vger.kernel.org,mchehab@infradead.org,mchehab@osg.samsung.com,ricardo.ribalda@gmail.com
-Cc: <stable@vger.kernel.org>, <stable-commits@vger.kernel.org>
-From: <gregkh@linuxfoundation.org>
-Date: Wed, 04 Apr 2018 17:32:38 +0200
-In-Reply-To: <1663cf48e2eb96405c5d6d874020aa9925ee217f.1522260310.git.mchehab@s-opensource.com>
-Message-ID: <15228559581742@kroah.com>
+       dkim=pass header.i=@linaro.org header.s=google header.b=G/pU7Rzl;
+       spf=pass (google.com: domain of kernel-hardening-return-12848-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12848-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ANSI_X3.4-1968
-Content-Transfer-Encoding: 8bit
-X-stable: commit
+In-Reply-To: <90ca44b5-52d0-be74-f36c-55d6f4a9bf25@redhat.com>
+References: <20180310001021.6437-1-labbott@redhat.com> <20180310001021.6437-4-labbott@redhat.com>
+ <CAMuHMdUfGp_rn_fMWdOfWxPvyE1Y9oemm2piXszFTvBi9sQ5Eg@mail.gmail.com> <90ca44b5-52d0-be74-f36c-55d6f4a9bf25@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 4 Apr 2018 14:53:42 +0200
+Message-ID: <CACRpkdbVAr62X9FrkS5cVpfpr+vgvnwmRfy0zKM=Vo=E+LjA9Q@mail.gmail.com>
+Subject: Re: [PATCH 3/4] gpio: Remove VLA from xra1403 driver
+To: Laura Abbott <labbott@redhat.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <keescook@chromium.org>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596830210453367963?=
-X-GMAIL-MSGID: =?utf-8?q?1596830210453367963?=
+X-GMAIL-THRID: =?utf-8?q?1594507318656304803?=
+X-GMAIL-MSGID: =?utf-8?q?1596820232851642649?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Wed, Mar 28, 2018 at 7:27 PM, Laura Abbott <labbott@redhat.com> wrote:
+> On 03/28/2018 12:27 AM, Geert Uytterhoeven wrote:
+>>
+>> Hi Laura,
+>>
+>> On Sat, Mar 10, 2018 at 1:10 AM, Laura Abbott <labbott@redhat.com> wrote:
+>>>
+>>> The new challenge is to remove VLAs from the kernel
+>>> (see https://lkml.org/lkml/2018/3/7/621)
+>>>
+>>> This patch replaces a VLA with an appropriate call to kmalloc_array.
+>>>
+>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>>
+>>
+>> Thanks for your patch!
+>>
+>>> --- a/drivers/gpio/gpio-xra1403.c
+>>> +++ b/drivers/gpio/gpio-xra1403.c
+>>> @@ -126,11 +126,16 @@ static void xra1403_dbg_show(struct seq_file *s,
+>>> struct gpio_chip *chip)
+>>>   {
+>>>          int reg;
+>>>          struct xra1403 *xra = gpiochip_get_data(chip);
+>>> -       int value[xra1403_regmap_cfg.max_register];
+>>
+>>
+>> Apparently xra1403_regmap_cfg.max_register is always 0x15?
+>>
+>> What about adding
+>>
+>>          #define XRA_LAST 15
+>>
+>> at the top, and replacing both "XRA_IFR | 0x01" and
+>> xra1403_regmap_cfg.max_register by XRA_LAST instead?
+>> That would avoid doing yet another memory allocation over and over.
+>>
+>> Gr{oetje,eeting}s,
+>>
+>>                          Geert
+>>
+>
+> I'm okay with making the change but I think Linus already picked
+> up the patch into his gpio trees. Linus, do you want a patch on
+> top of your -devel branch or should I just send a new patch?
 
-This is a note to let you know that I've just added the patch titled
+Yeah a patch on top is fine, I sent my pull request to Torvalds
+today so we can take this as a fix for the -rc cycle simply.
 
-    media: media/v4l2-ctrls: volatiles should not generate CH_VALUE
-
-to the 3.18-stable tree which can be found at:
-    http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
-
-The filename of the patch is:
-     media-media-v4l2-ctrls-volatiles-should-not-generate-ch_value.patch
-and it can be found in the queue-3.18 subdirectory.
-
-If you, or anyone else, feels it should not be added to the stable tree,
-please let <stable@vger.kernel.org> know about it.
-
-
->From foo@baz Wed Apr  4 17:30:18 CEST 2018
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Date: Wed, 28 Mar 2018 15:12:35 -0300
-Subject: media: media/v4l2-ctrls: volatiles should not generate CH_VALUE
-To: Linux Media Mailing List <linux-media@vger.kernel.org>, stable@vger.kernel.org
-Cc: Ricardo Ribalda <ricardo.ribalda@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Message-ID: <1663cf48e2eb96405c5d6d874020aa9925ee217f.1522260310.git.mchehab@s-opensource.com>
-
-From: Ricardo Ribalda <ricardo.ribalda@gmail.com>
-
-Volatile controls should not generate CH_VALUE events.
-
-Set has_changed to false to prevent this happening.
-
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/media/v4l2-core/v4l2-ctrls.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -1619,6 +1619,15 @@ static int cluster_changed(struct v4l2_c
- 
- 		if (ctrl == NULL)
- 			continue;
-+		/*
-+		 * Set has_changed to false to avoid generating
-+		 * the event V4L2_EVENT_CTRL_CH_VALUE
-+		 */
-+		if (ctrl->flags & V4L2_CTRL_FLAG_VOLATILE) {
-+			ctrl->has_changed = false;
-+			continue;
-+		}
-+
- 		for (idx = 0; !ctrl_changed && idx < ctrl->elems; idx++)
- 			ctrl_changed = !ctrl->type_ops->equal(ctrl, idx,
- 				ctrl->p_cur, ctrl->p_new);
-
-
-Patches currently in stable-queue which might be from mchehab@s-opensource.com are
-
-queue-3.18/media-v4l2-compat-ioctl32.c-copy-m.userptr-in-put_v4l2_plane32.patch
-queue-3.18/media-v4l2-compat-ioctl32.c-avoid-sizeof-type.patch
-queue-3.18/media-v4l2-compat-ioctl32.c-drop-pr_info-for-unknown-buffer-type.patch
-queue-3.18/media-v4l2-compat-ioctl32-use-compat_u64-for-video-standard.patch
-queue-3.18/media-v4l2-compat-ioctl32.c-add-missing-vidioc_prepare_buf.patch
-queue-3.18/vb2-v4l2_buf_flag_done-is-set-after-dqbuf.patch
-queue-3.18/media-v4l2-compat-ioctl32.c-refactor-compat-ioctl32-logic.patch
-queue-3.18/media-v4l2-ctrls-fix-sparse-warning.patch
-queue-3.18/media-v4l2-compat-ioctl32.c-fix-ctrl_is_pointer.patch
-queue-3.18/media-v4l2-compat-ioctl32.c-move-helper-functions-to-__get-put_v4l2_format32.patch
-queue-3.18/media-media-v4l2-ctrls-volatiles-should-not-generate-ch_value.patch
-queue-3.18/media-v4l2-compat-ioctl32.c-don-t-copy-back-the-result-for-certain-errors.patch
-queue-3.18/media-v4l2-compat-ioctl32.c-make-ctrl_is_pointer-work-for-subdevs.patch
-queue-3.18/media-v4l2-compat-ioctl32.c-fix-the-indentation.patch
-queue-3.18/media-v4l2-compat-ioctl32-copy-v4l2_window-global_alpha.patch
-queue-3.18/media-v4l2-ioctl.c-don-t-copy-back-the-result-for-enotty.patch
-queue-3.18/media-v4l2-compat-ioctl32.c-copy-clip-list-in-put_v4l2_window32.patch
-queue-3.18/media-v4l2-compat-ioctl32-initialize-a-reserved-field.patch
+Yours,
+Linus Walleij
