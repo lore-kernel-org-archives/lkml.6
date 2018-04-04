@@ -1,41 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756723AbeDDA1n (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 20:27:43 -0400
-Received: from mail-it0-f47.google.com ([209.85.214.47]:37959 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750758AbeDDA1m (ORCPT
+        id S1755883AbeDDAbO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 20:31:14 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:55217 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750758AbeDDAbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 20:27:42 -0400
-X-Google-Smtp-Source: AIpwx4+pIhb+q1dOUYF4QW5scS6p/Sx/dJmcUdvV2t3jHGlzKSorO5QCeU79wAX08PXjgQyWfCZeP5EN97l9pQracTI=
+        Tue, 3 Apr 2018 20:31:13 -0400
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: iamjoonsoo.kim@lge.com
+X-Original-SENDERIP: 10.177.220.142
+X-Original-MAILFROM: iamjoonsoo.kim@lge.com
+Date: Wed, 4 Apr 2018 09:31:10 +0900
+From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        zhaoyang.huang@spreadtrum.com, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        vel Tatashin <pasha.tatashin@oracle.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org
+Subject: Re: [PATCH v1] mm: help the ALLOC_HARDER allocation pass the
+ watermarki when CMA on
+Message-ID: <20180404003028.GA6628@js1304-desktop>
+References: <1521791852-7048-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180323083847.GJ23100@dhcp22.suse.cz>
+ <CAGWkznHxTaymoEuFEQ+nN0ZvpPLhdE_fbwpT3pbDf+NQyHw-3g@mail.gmail.com>
+ <20180323093327.GM23100@dhcp22.suse.cz>
+ <20180323130408.0c6451fac02c49b535ec7485@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <mhng-524aadcd-1897-4376-ab3c-10c43e79793d@palmer-si-x1c4>
-References: <alpine.DEB.2.21.1804031349110.2511@nanos.tec.linutronix.de> <mhng-524aadcd-1897-4376-ab3c-10c43e79793d@palmer-si-x1c4>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 3 Apr 2018 17:27:41 -0700
-X-Google-Sender-Auth: UuMjC3gmMqxb4COSJjMAOArEilo
-Message-ID: <CA+55aFynLQp=n0_e=AQfMpwsGpCLhgFsw3uGPfuVCS1wJD3v4w@mail.gmail.com>
-Subject: Re: [GIT pull] irq updates for 4.17
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180323130408.0c6451fac02c49b535ec7485@linux-foundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 3:39 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
->
-> I assume it's too late to swap this out for that?  If so that's OK, I can
-> just send a follow-on.
->
-> Sorry for breaking things!
+On Fri, Mar 23, 2018 at 01:04:08PM -0700, Andrew Morton wrote:
+> On Fri, 23 Mar 2018 10:33:27 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+> 
+> > On Fri 23-03-18 17:19:26, Zhaoyang Huang wrote:
+> > > On Fri, Mar 23, 2018 at 4:38 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> > > > On Fri 23-03-18 15:57:32, Zhaoyang Huang wrote:
+> > > >> For the type of 'ALLOC_HARDER' page allocation, there is an express
+> > > >> highway for the whole process which lead the allocation reach __rmqueue_xxx
+> > > >> easier than other type.
+> > > >> However, when CMA is enabled, the free_page within zone_watermark_ok() will
+> > > >> be deducted for number the pages in CMA type, which may cause the watermark
+> > > >> check fail, but there are possible enough HighAtomic or Unmovable and
+> > > >> Reclaimable pages in the zone. So add 'alloc_harder' here to
+> > > >> count CMA pages in to clean the obstacles on the way to the final.
+> > > >
+> > > > This is no longer the case in the current mmotm tree. Have a look at
+> > > > Joonsoo's zone movable based CMA patchset http://lkml.kernel.org/r/1512114786-5085-1-git-send-email-iamjoonsoo.kim@lge.com
+> > > >
+> > > Thanks for the information. However, I can't find the commit in the
+> > > latest mainline, is it merged?
+> > 
+> > Not yet. It is still sitting in the mmomt tree. I am not sure what is
+> > the merge plan but I guess it is still waiting for some review feedback.
+> 
+> http://lkml.kernel.org/r/20171222001113.GA1729@js1304-P5Q-DELUXE
+> 
+> That patchset has been floating about since December and still has
+> unresolved issues.
+> 
+> Joonsoo, can you please let us know the status?
 
-Thomas,
- I'll delay pulling your trees until tomorrow in case you want to fix
-things up.
+Hello, Andrew.
+Sorry for a late response.
 
-And after that, I guess we can fix it up after-the-fact too.
+Today, I finally have answered the question from Michal and it seems
+that there is no problem at all.
 
-                  Linus
+http://lkml.kernel.org/r/CAAmzW4NGv7RyCYyokPoj4aR3ySKub4jaBZ3k=pt_YReFbByvsw@mail.gmail.com
+
+You can merge the patch as is.
+
+Thanks.
