@@ -1,87 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751518AbeDDPLY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 11:11:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51028 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751413AbeDDPLX (ORCPT
+        id S1751704AbeDDPPs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 11:15:48 -0400
+Received: from mail-it0-f52.google.com ([209.85.214.52]:40773 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751414AbeDDPPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 11:11:23 -0400
-From: "Desnes A. Nunes do Rosario" <desnesn@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc: bhelgaas@google.com
-Subject: [PATCH, RESEND, pci, v2] pci: Delete PCI disabling informational messages
-Date: Wed,  4 Apr 2018 12:10:35 -0300
-X-Mailer: git-send-email 2.14.3
-X-TM-AS-GCONF: 00
-x-cbid: 18040415-0008-0000-0000-000002F11BB1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008801; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000256; SDB=6.01013031; UDB=6.00516334; IPR=6.00792296;
- MB=3.00020414; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-04 15:11:18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040415-0009-0000-0000-000038C8A28B
-Message-Id: <20180404151035.12140-1-desnesn@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804040153
+        Wed, 4 Apr 2018 11:15:47 -0400
+X-Google-Smtp-Source: AIpwx4+Nfjx3Aw6w5xzqTfKcuU4Zcw/WpCrgZdOttuRbtxBQ7QreTxDhaYrn90mIaTDCiPm/PbFILvF7ePTHx7FHxWE=
+MIME-Version: 1.0
+X-Originating-IP: [212.51.149.109]
+In-Reply-To: <20180404143900.GA1777@bombadil.infradead.org>
+References: <20180402141058.GL13332@bombadil.infradead.org>
+ <20180404093254.GC3881@phenom.ffwll.local> <20180404143900.GA1777@bombadil.infradead.org>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date: Wed, 4 Apr 2018 17:15:46 +0200
+Message-ID: <CAKMK7uEb0e4ifxMkqbp4DBNFnuWk0T5k8z0SU=U95Y6pe39Z+g@mail.gmail.com>
+Subject: Re: Signal handling in a page fault handler
+To: Matthew Wilcox <willy@infradead.org>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux MM <linux-mm@kvack.org>, Souptick Joarder <jrdr.linux@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The disabling informational messages on the PCI subsystem should be deleted
-since they do not represent any real value for the system logs.
+On Wed, Apr 4, 2018 at 4:39 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Wed, Apr 04, 2018 at 11:32:54AM +0200, Daniel Vetter wrote:
+>> So we've done some experiments for the case where the fault originated
+>> from kernel context (copy_to|from_user and friends). The fixup code seems
+>> to retry the copy once after the fault (in copy_user_handle_tail), if that
+>> fails again we get a short read/write. This might result in an -EFAULT,
+>> short read()/write() or anything else really, depending upon the syscall
+>> api.
+>>
+>> Except in some code paths in gpu drivers where we convert anything into
+>> -ERESTARTSYS/EINTR if there's a signal pending it won't ever result in the
+>> syscall getting restarted (well except maybe short read/writes if
+>> userspace bothers with that).
+>>
+>> So I guess gpu fault handlers indeed break the kernel's expectations, but
+>> then I think we're getting away with that because the inner workings of
+>> gpu memory objects is all heavily abstracted away by opengl/vulkan and
+>> friends.
+>>
+>> I guess what we could do is try to only do killable sleeps if it's a
+>> kernel fault, but that means wiring a flag through all the callchains. Not
+>> pretty. Except when there's a magic set of functions that would convert
+>> all interruptible sleeps to killable ones only for us.
+>
+> I actually have plans to allow mutex_lock_{interruptible,killable} to
+> return -EWOULDBLOCK if a flag is set.  So this doesn't seem entirely
+> unrelated.  Something like this perhaps:
+>
+>  struct task_struct {
+> +       unsigned int sleep_state;
+>  };
+>
+>  static noinline int __sched
+> -__mutex_lock_interruptible_slowpath(struct mutex *lock)
+> +__mutex_lock_slowpath(struct mutex *lock, long state)
+>  {
+> -       return __mutex_lock(lock, TASK_INTERRUPTIBLE, 0, NULL, _RET_IP_);
+> +       if (state == TASK_NOBLOCK)
+> +               return -EWOULDBLOCK;
+> +       return __mutex_lock(lock, state, 0, NULL, _RET_IP_);
+>  }
+>
+> +int __sched mutex_lock_state(struct mutex *lock, long state)
+> +{
+> +       might_sleep();
+> +
+> +       if (__mutex_trylock_fast(lock))
+> +               return 0;
+> +
+> +       return __mutex_lock_slowpath(lock, state);
+> +}
+> +EXPORT_SYMBOL(mutex_lock_state);
+>
+> Then the page fault handler can do something like:
+>
+>         old_state = current->sleep_state;
+>         current->sleep_state = TASK_INTERRUPTIBLE;
+>         ...
+>         current->sleep_state = old_state;
+>
+>
+> This has the page-fault-in-a-signal-handler problem.  I don't know if
+> there's a way to determine if we're already in a signal handler and use
+> a different sleep_state ...?
 
-These messages are either not presented, or presented for all PCI devices
-(e.g., powerpc now realigns all PCI devices to its page size). Thus, they
-are flooding system logs and can be interpreted as a false positive for
-total PCI failure on the system.
+Not sure what problem you're trying to solve, but I don't think that's
+the one we have. The only way what we do goes wrong is if the fault
+originates from kernel context. For faults from the signal handler I
+think you just get to keep the pieces. Faults form kernel we can
+detect through FAULT_FLAG_USER.
 
-[root@system user]# dmesg | grep -i disabling
-[    0.692270] pci 0000:00:00.0: Disabling memory decoding and releasing memory resources
-[    0.692324] pci 0000:00:00.0: disabling bridge mem windows
-[    0.729134] pci 0001:00:00.0: Disabling memory decoding and releasing memory resources
-[    0.737352] pci 0001:00:00.0: disabling bridge mem windows
-[    0.776295] pci 0002:00:00.0: Disabling memory decoding and releasing memory resources
-[    0.784509] pci 0002:00:00.0: disabling bridge mem windows
-... and goes on for all PCI devices on the system ...
+The issue I'm seeing is the following:
+1. Some kernel code does copy_*_user, and it points at a gpu mmap region.
+2. We fault and go into the gpu driver fault handler. That refuses to
+insert the pte because a signal is pending (because of all the
+interruptible waits and locks).
+3. Fixup section runs, which afaict tries to do the copy once more
+using copy_user_handle_tail.
+4. We fault again, because the pte is still not present.
+5. GPU driver is still refusing to install the pte because signals are pending.
+6. Fixup section for copy_user_handle_tail just bails out.
+7. copy_*_user returns and indicates that that not all bytes have been copied.
+8. syscall (or whatever it is) bails out and returns to userspace,
+most likely with -EFAULT (but this ofc depends upon the syscall and
+what it should do when userspace access faults.
+9. Signal finally gets handled, but the syscall already failed, and no
+one will restart it. If userspace is prudent, it might fail (or maybe
+hit an assert or something).
 
-Fixes: 38274637699 ("powerpc/powernv: Override pcibios_default_alignment() to force PCI devices to be page aligned")
-Signed-off-by: Desnes A. Nunes do Rosario <desnesn@linux.vnet.ibm.com>
----
- drivers/pci/pci.c       | 1 -
- drivers/pci/setup-res.c | 2 --
- 2 files changed, 3 deletions(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 8c71d1a66cdd..1563ce1ee091 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5505,7 +5505,6 @@ void pci_reassigndev_resource_alignment(struct pci_dev *dev)
- 		return;
- 	}
- 
--	pci_info(dev, "Disabling memory decoding and releasing memory resources\n");
- 	pci_read_config_word(dev, PCI_COMMAND, &command);
- 	command &= ~PCI_COMMAND_MEMORY;
- 	pci_write_config_word(dev, PCI_COMMAND, command);
-diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
-index 369d48d6c6f1..6bd35e8e7cde 100644
---- a/drivers/pci/setup-res.c
-+++ b/drivers/pci/setup-res.c
-@@ -172,8 +172,6 @@ EXPORT_SYMBOL(pci_claim_resource);
- 
- void pci_disable_bridge_window(struct pci_dev *dev)
- {
--	pci_info(dev, "disabling bridge mem windows\n");
--
- 	/* MMIO Base/Limit */
- 	pci_write_config_dword(dev, PCI_MEMORY_BASE, 0x0000fff0);
- 
+Or maybe I'm confused by your diff, since nothing seems to use
+current->sleep_state. The problem is also that it's any sleep we do
+(they all tend to be interruptible, at least when waiting for the gpu
+or taking any locks that might be held while waiting for the gpu, or
+anything else that might be blocked waiting for the gpu really). So
+only patching mutex_lock won't fix this.
+-Daniel
 -- 
-2.14.3
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
