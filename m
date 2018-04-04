@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751973AbeDDRZ1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 13:25:27 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:45706 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751713AbeDDRZY (ORCPT
+        id S1751562AbeDDRY5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 13:24:57 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45583 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751528AbeDDRYx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 13:25:24 -0400
-X-Google-Smtp-Source: AIpwx484yOYiucyglMw4MYvSI6iMIBfqDJrgSARx4xM7VI1hmikG7FoIJ6NEuOT2dM6prd+2NlNINg==
+        Wed, 4 Apr 2018 13:24:53 -0400
+X-Google-Smtp-Source: AIpwx4/z2KrVkZLry1dzNx05ryYisdlPRKcLXarfEMOL6MXwOAbOzPEFZbVwM9zjKg/I4DrfmwDp/Q==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
 Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
@@ -17,9 +17,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 9/9] MAINTAINERS: Add Actions Semi S900 pinctrl and gpio entries
-Date: Wed,  4 Apr 2018 22:52:58 +0530
-Message-Id: <20180404172258.7678-10-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v7 5/9] arm64: dts: actions: Add S900 gpio nodes
+Date: Wed,  4 Apr 2018 22:52:54 +0530
+Message-Id: <20180404172258.7678-6-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180404172258.7678-1-manivannan.sadhasivam@linaro.org>
 References: <20180404172258.7678-1-manivannan.sadhasivam@linaro.org>
@@ -27,31 +27,74 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add S900 pinctrl and gpio entries under ARCH_ACTIONS
+Add gpio nodes for Actions Semi S900 SoC.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- MAINTAINERS | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/actions/s900.dtsi | 51 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 640dabc4c311..d63793ee545e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1125,10 +1125,14 @@ F:	arch/arm/mach-actions/
- F:	arch/arm/boot/dts/owl-*
- F:	arch/arm64/boot/dts/actions/
- F:	drivers/clocksource/owl-*
-+F:	drivers/gpio/gpio-owl.c
-+F:	drivers/pinctrl/actions/*
- F:	drivers/soc/actions/
- F:	include/dt-bindings/power/owl-*
- F:	include/linux/soc/actions/
- F:	Documentation/devicetree/bindings/arm/actions.txt
-+F:	Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-+F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
- F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
- F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
+diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+index 0156483f0f4d..ffab4e3f75de 100644
+--- a/arch/arm64/boot/dts/actions/s900.dtsi
++++ b/arch/arm64/boot/dts/actions/s900.dtsi
+@@ -180,6 +180,57 @@
+ 			clocks = <&cmu CLK_GPIO>;
+ 		};
  
++		gpioa: gpio@e01b0000 {
++			compatible = "actions,s900-gpio";
++			reg = <0x0 0xe01b0000 0x0 0x000c>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 0 32>;
++		};
++
++		gpiob: gpio@e01b000c {
++			compatible = "actions,s900-gpio";
++			reg = <0x0 0xe01b000c 0x0 0x000c>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 32 32>;
++		};
++
++		gpioc: gpio@e01b0018 {
++			compatible = "actions,s900-gpio";
++			reg = <0x0 0xe01b0018 0x0 0x000c>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 64 12>;
++			ngpios = <12>;
++		};
++
++		gpiod: gpio@e01b0024 {
++			compatible = "actions,s900-gpio";
++			reg = <0x0 0xe01b0024 0x0 0x000c>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 76 30>;
++			ngpios = <30>;
++		};
++
++		gpioe: gpio@e01b0030 {
++			compatible = "actions,s900-gpio";
++			reg = <0x0 0xe01b0030 0x0 0x000c>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 106 32>;
++		};
++
++		gpiof: gpio@e01b00f0 {
++			compatible = "actions,s900-gpio";
++			reg = <0x0 0xe01b00f0 0x0 0x000c>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 138 8>;
++			ngpios = <8>;
++		};
++
+ 		timer: timer@e0228000 {
+ 			compatible = "actions,s900-timer";
+ 			reg = <0x0 0xe0228000 0x0 0x8000>;
 -- 
 2.14.1
