@@ -1,91 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751561AbeDDMqW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 08:46:22 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:60917 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751247AbeDDMqT (ORCPT
+        id S1751735AbeDDMsB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:48:01 -0400
+Received: from mail-wr0-f176.google.com ([209.85.128.176]:38198 "EHLO
+        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751284AbeDDMr5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 08:46:19 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86: olpc: fix inconsistent MFD_CS5535 configuration
-Date: Wed,  4 Apr 2018 14:44:54 +0200
-Message-Id: <20180404124539.3817101-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:/ZNhyHeyDQY0ULX6e8wEL2IepuLPvaVOxSbBBw+C5mg+zeJ0A6g
- GD9XOhJ1DSLVGqm6NtLOguIqmKN30eZmcsWWGHZ2b81d1YZdGYlcDWINcWx97ZtPu4FRjf5
- FqdewPPO8m8QDsYLTeOakIXozAn4ZkDTfBm8c/p4QQFuRwsBsoYZswIyIC2rBQdqur3rbkH
- cv2oMd+iqQ2xod77o6yAA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:u5cOkHKqAcc=:Wb/TQjg3BcCanjBotQiO8c
- oSr3H3WMf7hN6qYg6AgjET2byMgLNlwooad5uOCPcucpeEzBA+OSDtNe5Ga+HsLRdCgvT87n1
- +aRuB/paHuZS24dYCowcJKNy3mCnhl624n6VH8wVbs9yLBsKdLRVqTUmVoWcrXjIDouvxPiln
- UkvvyM4inmZn37GyTVapTod1KK7OPAkxm9D3H0kufT6JM44rNysr9YCWwZ+5g1+eaPrqT+h0T
- wgQOibcndtk5gl3qlzM71tHx3cXGaUgWJYXOBeCrmoIDi6nJpDEANdcLQVT9ZS8LYPqCx3y+u
- bMi6yR+rSJgTXlN5hPKqsBe+dCMD1cyyFTtgNJemKCaZ9jw1yjRWKh0NJj01iEu9DJnOcoKJN
- PJiilavbFZ5TWMzmfu5+pz2I03s3KsUGvJ+0L25zDjwSZetdP/MjKRIlSrY8D9UAMURX8I+RT
- JF/SrA+HXlKh9V/jsrKAhqjRr2Dk525kju+YEbHsFIbRMkW1MUmFz0HirtFOZwa7dZtZ9Vcaf
- faLE4RisoMT0hq2UssqhCDCeJH2McSttZskTg0LgfDwJ3Z84cBOLav7Z3gwqnx7NkQV0mKH/r
- xUTvpyI0rbOrcKtTG/fz4R0jpK2srBFHqGWfptZonpMnNoWTvaasxa92lK+6fvj1dFKbPHsLO
- sj7T5+AUJPjIFcCk9Y43PjTRKYkuntEbyiPr+PIVLBRls/u8tCbks7c1c/5p4F6AtSq705Ez4
- vg1mGAIdHRpZs99QhYJAchC9eN5cVfJH3Bf1/w==
+        Wed, 4 Apr 2018 08:47:57 -0400
+X-Google-Smtp-Source: AIpwx4+Ab9r117NipbTHDpHU2vzGwYAiKgCI0WsBVHQXM9u7z4xwzsvL4ZoyAj/p2kvPFVnqcLOcjQ==
+Date: Wed, 4 Apr 2018 14:47:47 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, paulmck@linux.vnet.ibm.com,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 1/3] locking: Document the semantics of
+ spin_is_locked()
+Message-ID: <20180404124747.GA8773@andrea>
+References: <Pine.LNX.4.44L0.1804031557470.1399-100000@iolanthe.rowland.org>
+ <7471.1522791794@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7471.1522791794@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This Kconfig warning appeared after a fix to the Kconfig validation.
-The GPIO_CS5535 driver depends on the MFD_CS5535 driver, but the former
-is selected in places where the latter is not:
+On Tue, Apr 03, 2018 at 10:43:14PM +0100, David Howells wrote:
+> Alan Stern <stern@rowland.harvard.edu> wrote:
+> 
+> > + * Returns: 1 if @lock is locked, 0 otherwise.
+> > + * However, on !CONFIG_SMP builds with !CONFIG_DEBUG_SPINLOCK,
+> > + * the return value is always 0 (see include/linux/spinlock_up.h).
+> > + * Therefore you should not rely heavily on the return value.
+> 
+> Seems reasonable.
+> 
+> It might also want to include a note that the lock isn't necessarily held by
+> your own CPU.  I would also use "=n" rather than "!", so maybe something like:
+> 
+>  * Returns: 1 if @lock is locked, 0 otherwise.
+>  *
+>  * Note that the function only tells you that the CPU is seen to be locked,
+>  * not that it is locked on your CPU.
+>  *
+>  * Further, on CONFIG_SMP=n builds with CONFIG_DEBUG_SPINLOCK=n, the return
+>  * value is always 0 (see include/linux/spinlock_up.h).  Therefore you should
+>  * not rely heavily on the return value.
 
-WARNING: unmet direct dependencies detected for GPIO_CS5535
-  Depends on [m]: GPIOLIB [=y] && (X86 [=y] || MIPS || COMPILE_TEST [=y]) && MFD_CS5535 [=m]
-  Selected by [y]:
-  - OLPC_XO1_SCI [=y] && X86_32 [=y] && OLPC [=y] && OLPC_XO1_PM [=y] && INPUT [=y]=y
+Thank you all for the suggestions.  I plan to integrate these in the next
+version of the patch, which should also include your Co-developed-by:
 
-The warning does seem appropriate, since the GPIO_CS5535 driver won't
-work unless MFD_CS5535 is also present. However, there is no link time
-dependency between the two, so this caused no problems during randconfig
-testing before.
+  Andrea
 
-This changes the 'select GPIO_CS5535' to 'depends on GPIO_CS5535' to
-avoid the issue, at the expense of making it harder to configure the
-driver (one now has to select the dependencies first).
 
-The 'select MFD_CORE' part is completely redundant, since we already
-depend on MFD_CS5535 here, so I'm removing that as well.
-
-Ideally, the private symbols exported by that cs5535 gpio driver would
-just be converted to gpiolib interfaces so we could expletely avoid
-this dependency.
-
-Fixes: f622f8279581 ("kconfig: warn unmet direct dependency of tristate symbols selected by y")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/x86/Kconfig | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index bf4ddea48e61..ffb2b858e2b1 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2773,11 +2773,9 @@ config OLPC_XO1_RTC
- 
- config OLPC_XO1_SCI
- 	bool "OLPC XO-1 SCI extras"
--	depends on OLPC && OLPC_XO1_PM
-+	depends on OLPC && OLPC_XO1_PM && GPIO_CS5535=y
- 	depends on INPUT=y
- 	select POWER_SUPPLY
--	select GPIO_CS5535
--	select MFD_CORE
- 	---help---
- 	  Add support for SCI-based features of the OLPC XO-1 laptop:
- 	   - EC-driven system wakeups
--- 
-2.9.0
+> 
+> David
