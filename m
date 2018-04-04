@@ -1,146 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeDDNBy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 09:01:54 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44188 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750853AbeDDNBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 09:01:52 -0400
-Subject: Re: [PATCH v5 07/13] ARM: smp: Add initialization of CNTVOFF
-To: =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
-        linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        mark.rutland@arm.com, robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org, clabbe.montjoie@gmail.com,
-        quentin.schulz@bootlin.com, thomas.petazzoni@bootlin.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
- <20180403061836.3926-8-mylene.josserand@bootlin.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <06308f46-ce7c-ddeb-ebca-abd1153138ba@arm.com>
-Date: Wed, 4 Apr 2018 14:01:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751392AbeDDNDF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 09:03:05 -0400
+Received: from mga11.intel.com ([192.55.52.93]:36270 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750842AbeDDNDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 09:03:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,406,1517904000";
+   d="scan'208";a="43340095"
+Subject: [PATCH v5 1/3] perf/core: store context switch out type into Perf
+ trace
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <4554372e-0b4f-d2dd-8be6-1fc925b51074@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <3989a37c-536d-f99e-f833-ccba26416284@linux.intel.com>
+Date: Wed, 4 Apr 2018 16:02:56 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180403061836.3926-8-mylene.josserand@bootlin.com>
+In-Reply-To: <4554372e-0b4f-d2dd-8be6-1fc925b51074@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mylène,
 
-On 03/04/18 07:18, Mylène Josserand wrote:
-> The CNTVOFF register from arch timer is uninitialized.
-> It should be done by the bootloader but it is currently not the case,
-> even for boot CPU because this SoC is booting in secure mode.
-> It leads to an random offset value meaning that each CPU will have a
-> different time, which isn't working very well.
-> 
-> Add assembly code used for boot CPU and secondary CPU cores to make
-> sure that the CNTVOFF register is initialized. Because this code can
-> be used by different platforms, add this assembly file in ARM's common
-> folder.
-> 
-> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> ---
->  arch/arm/common/Makefile           |  1 +
->  arch/arm/common/smp_cntvoff.S      | 35 +++++++++++++++++++++++++++++++++++
->  arch/arm/include/asm/smp_cntvoff.h |  8 ++++++++
->  3 files changed, 44 insertions(+)
->  create mode 100644 arch/arm/common/smp_cntvoff.S
->  create mode 100644 arch/arm/include/asm/smp_cntvoff.h
-> 
-> diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-> index 70b4a14ed993..83117deb86c8 100644
-> --- a/arch/arm/common/Makefile
-> +++ b/arch/arm/common/Makefile
-> @@ -10,6 +10,7 @@ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
->  obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
->  obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
->  obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
-> +obj-$(CONFIG_SMP)		+= smp_cntvoff.o
->  obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
->  obj-$(CONFIG_MCPM)		+= mcpm_head.o mcpm_entry.o mcpm_platsmp.o vlock.o
->  CFLAGS_REMOVE_mcpm_entry.o	= -pg
-> diff --git a/arch/arm/common/smp_cntvoff.S b/arch/arm/common/smp_cntvoff.S
-> new file mode 100644
-> index 000000000000..65ed199a50fe
-> --- /dev/null
-> +++ b/arch/arm/common/smp_cntvoff.S
-> @@ -0,0 +1,35 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 Chen-Yu Tsai
-> + * Copyright (c) 2018 Bootlin
-> + *
-> + * Chen-Yu Tsai <wens@csie.org>
-> + * Mylène Josserand <mylene.josserand@bootlin.com>
+Store preempting context switch out event into Perf trace as a part of 
+PERF_RECORD_SWITCH[_CPU_WIDE] record.
 
-Given that this is literally lifted from shmobile_init_cntvoff, the
-whole attribution is a bit dubious.
+Percentage of preempting and non-preempting context switches help 
+understanding the nature of workloads (CPU or IO bound) that are running 
+on a machine;
 
-> + *
-> + * SMP support for sunxi based systems with Cortex A7/A15
+The event is treated as preemption one when task->state value of the 
+thread being switched out is TASK_RUNNING. Event type encoding is 
+implemented using PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit;
+	
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ include/uapi/linux/perf_event.h       | 18 +++++++++++++++---
+ kernel/events/core.c                  |  4 ++++
+ tools/include/uapi/linux/perf_event.h | 18 +++++++++++++++---
+ 3 files changed, 34 insertions(+), 6 deletions(-)
 
-That's not restricted to sunxi, is it?
-
-> + *
-> + */
-> +
-> +#include <linux/linkage.h>
-> +#include <asm/assembler.h>
-> +
-> +ENTRY(smp_init_cntvoff)
-
-The name doesn't quite reflect the usage constraints. This will only
-work if used from secure, and is UNPREDICTABLE otherwise (see the CPS
-instruction). Also, the "smp" prefix is quite misleading, as it only
-affects the current CPU, and not any other.
-
-How about secure_cntvoff_init instead? Same thing for the file name.
-
-> +	.arch	armv7-a
-> +	/*
-> +	 * CNTVOFF has to be initialized either from non-secure Hypervisor
-> +	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
-> +	 * then it should be handled by the secure code
-> +	 */
-> +	cps	#MON_MODE
-> +	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
-> +	orr	r0, r1, #1
-> +	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
-> +	isb
-> +	mov	r0, #0
-> +	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
-> +	isb
-> +	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
-> +	isb
-> +	cps	#SVC_MODE
-> +	ret	lr
-> +ENDPROC(smp_init_cntvoff)
-> diff --git a/arch/arm/include/asm/smp_cntvoff.h b/arch/arm/include/asm/smp_cntvoff.h
-> new file mode 100644
-> index 000000000000..59a95f7604ee
-> --- /dev/null
-> +++ b/arch/arm/include/asm/smp_cntvoff.h
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#ifndef __ASMARM_ARCH_CNTVOFF_H
-> +#define __ASMARM_ARCH_CNTVOFF_H
-> +
-> +extern void smp_init_cntvoff(void);
-> +
-> +#endif
-> 
-
-It'd be good to take this opportunity to refactor the shmobile code.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 912b85b52344..b8e288a1f740 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -650,11 +650,23 @@ struct perf_event_mmap_page {
+ #define PERF_RECORD_MISC_COMM_EXEC		(1 << 13)
+ #define PERF_RECORD_MISC_SWITCH_OUT		(1 << 13)
+ /*
+- * Indicates that the content of PERF_SAMPLE_IP points to
+- * the actual instruction that triggered the event. See also
+- * perf_event_attr::precise_ip.
++ * These PERF_RECORD_MISC_* flags below are safely reused
++ * for the following events:
++ *
++ *   PERF_RECORD_MISC_EXACT_IP           - PERF_RECORD_SAMPLE of precise events
++ *   PERF_RECORD_MISC_SWITCH_OUT_PREEMPT - PERF_RECORD_SWITCH* events
++ *
++ *
++ * PERF_RECORD_MISC_EXACT_IP:
++ *   Indicates that the content of PERF_SAMPLE_IP points to
++ *   the actual instruction that triggered the event. See also
++ *   perf_event_attr::precise_ip.
++ *
++ * PERF_RECORD_MISC_SWITCH_OUT_PREEMPT:
++ *   Indicates that thread was preempted in TASK_RUNNING state.
+  */
+ #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
++#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
+ /*
+  * Reserve the last bit to indicate some extended misc field
+  */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index fc1c330c6bd6..872a5aaa77eb 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7584,6 +7584,10 @@ static void perf_event_switch(struct task_struct *task,
+ 		},
+ 	};
+ 
++	if (!sched_in && task->state == TASK_RUNNING)
++		switch_event.event_id.header.misc |=
++				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
++
+ 	perf_iterate_sb(perf_event_switch_output,
+ 		       &switch_event,
+ 		       NULL);
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index 912b85b52344..b8e288a1f740 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -650,11 +650,23 @@ struct perf_event_mmap_page {
+ #define PERF_RECORD_MISC_COMM_EXEC		(1 << 13)
+ #define PERF_RECORD_MISC_SWITCH_OUT		(1 << 13)
+ /*
+- * Indicates that the content of PERF_SAMPLE_IP points to
+- * the actual instruction that triggered the event. See also
+- * perf_event_attr::precise_ip.
++ * These PERF_RECORD_MISC_* flags below are safely reused
++ * for the following events:
++ *
++ *   PERF_RECORD_MISC_EXACT_IP           - PERF_RECORD_SAMPLE of precise events
++ *   PERF_RECORD_MISC_SWITCH_OUT_PREEMPT - PERF_RECORD_SWITCH* events
++ *
++ *
++ * PERF_RECORD_MISC_EXACT_IP:
++ *   Indicates that the content of PERF_SAMPLE_IP points to
++ *   the actual instruction that triggered the event. See also
++ *   perf_event_attr::precise_ip.
++ *
++ * PERF_RECORD_MISC_SWITCH_OUT_PREEMPT:
++ *   Indicates that thread was preempted in TASK_RUNNING state.
+  */
+ #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
++#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
+ /*
+  * Reserve the last bit to indicate some extended misc field
+  */
