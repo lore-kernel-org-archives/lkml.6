@@ -1,55 +1,55 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49dr06XJrKpGffmjSA6157tzbqGUw7QvukdL/i+sKCcGo7KyZ7K3GZj32eJY96gSYxYwzzL
-ARC-Seal: i=1; a=rsa-sha256; t=1522855978; cv=none;
+X-Google-Smtp-Source: AIpwx497j9ZESIWguWcpEisZF4Ttoev7UUuxpL2UsdY9iNqOGmzWwl7PrWxpW7H/9eX2tXVWk1kk
+ARC-Seal: i=1; a=rsa-sha256; t=1522855976; cv=none;
         d=google.com; s=arc-20160816;
-        b=Zas4k2g7UMC8L1QCpz4TkpvyRw68+vidma1OgKR1ube8Fi7aLjb1o0EaeWHxRmio8z
-         871GK586d4s5EqULKOnUJAdlJwPJRXQnIaX+hzo6tAguuUz+trvrhbjtqSJifsHeyO8J
-         Igq7amhZnFzR30yWh0LKPMBf28m/44qObJkrxoDUb9LRAFCtYhgtdgG4/62+P9ev7aUW
-         hMvEVeAO0uSrUENMYDRB2C5OMqXVAY1Lxou3156DZ9r4oiwKciOszntEaTfmYHU8Uqaj
-         HHc2yLQMX5/VcTTwbip7VE88VlwpXF8TAX1TiPl17l2M+IijiZuZg75/+3n2I08KcE4b
-         3+3Q==
+        b=s3pUZJpOVfcXMyM3u/ezTGsodaVPsIy+B1zbvfjkMSQ2nZh/vjMt2LCNN44VyE6o17
+         de5AYQhUOpt/hrPEf8AuQyFaNS0OsAxz36/TGsNT5N5gN2hJlUwXS5WQpuznjOMpyyYp
+         og/cH/DJB7nrGYetQO/g+KVG7vRt2VE3CjuGGvzJOx+38wmQhghT9hQmIDNsVpcbYBnU
+         xEn2y55kIawOpAYJ2XF/xKV2wcYmuJNc+uoDmoJERFqx69BZNeCBS8YLteQYKUDcQBYS
+         PDcUysWDlgjNG9mw8OQ9t465u6+TxV0VG12HbquJkC0dhXX9K8R6nCHSALvuxqU98gYY
+         ElYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
          :from:cc:to:subject:arc-authentication-results;
-        bh=md20bcZgNCCdMqV2XvkuWevDnwOL6qrAk7Lk8BQRQvM=;
-        b=GinBeS+09ZOp+OLxQ5fi+0VW0ZNgbkDhtJEYw3CgEP6R/yjD8/S6jChBRKuJO/utbq
-         UZUABo4ap/PBebzG0a55C4H9sQ5ybo+S2sYp5elIldB+1JMABklqGvepPd6qYbqpeaTy
-         yXNUG3cmFkW9WbOmS8xsR4sFf3BYPMqnF7CM7284slgrp9BVEwqAKVzdWLU9ETSlrgop
-         8PbsmpBrgXrQpBvGOB38SrbgvQNQnskwJQJL+UiWnaxs7Dp38L8N+23WzwCTaF81fNoz
-         3vR+UG3PZZuPHuHmOHfntEHbYeLTQ9YQH/JF/yqQ7rcoDNXAz+qcmo/Fz0BEaev/05oo
-         ZapA==
+        bh=49UUCdyRy/K7ieZDE3GRe4vKRPXpIB3G2ohbtRJ9yTo=;
+        b=fOqqEmFfU2aCv6pn9EEEpVQi6zGsVlm49u5lax7H0APJ4ci4paogn7XKFYOKXeE50I
+         rO05fhxDv2Pd8vnaJ/c/gUXYjYt1DLzGp/RXUe9tlm8aGwUpOr2cM8lScVS4t5bQoJx4
+         2N+dPKqtiN3FDvAwN7pbVMn2WBS9icRCSpPtpkSt1qUK+lvSbKse0JHblP2UYRPXiEWZ
+         df9gFrzugjPjJ5GbA9TA7Cib5BazmdzyhpUP+uqWXDKtIU+0IK8c4K6jsccnisBAyVEq
+         AW60wTD2RZxzsiFZE7c1TQGrLnxvmZDgExHY8bjffRYKs7WNoUwSjWNzSXLaUcrSQp/s
+         KNYA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Subject: Patch "media: v4l2-compat-ioctl32.c: copy m.userptr in put_v4l2_plane32" has been added to the 3.18-stable tree
+Subject: Patch "media: v4l2-compat-ioctl32.c: copy clip list in put_v4l2_window32" has been added to the 3.18-stable tree
 To: mchehab@s-opensource.com,alexander.levin@microsoft.com,gregkh@linuxfoundation.org,hans.verkuil@cisco.com,linux-kernel@vger.kernel.org,linux-media@vger.kernel.org,mchehab@infradead.org,sakari.ailus@linux.intel.com
 Cc: <stable@vger.kernel.org>, <stable-commits@vger.kernel.org>
 From: <gregkh@linuxfoundation.org>
-Date: Wed, 04 Apr 2018 17:32:45 +0200
-In-Reply-To: <6e6f38fc8542cf41fffcd3067026c4f015564544.1522260310.git.mchehab@s-opensource.com>
-Message-ID: <152285596571248@kroah.com>
+Date: Wed, 04 Apr 2018 17:32:44 +0200
+In-Reply-To: <b203ca17a23bf02398ef39e8f123d30b74df3523.1522260310.git.mchehab@s-opensource.com>
+Message-ID: <1522855964761@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ANSI_X3.4-1968
 Content-Transfer-Encoding: 8bit
 X-stable: commit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596830230583604375?=
-X-GMAIL-MSGID: =?utf-8?q?1596830230583604375?=
+X-GMAIL-THRID: =?utf-8?q?1596830228031397994?=
+X-GMAIL-MSGID: =?utf-8?q?1596830228031397994?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
 This is a note to let you know that I've just added the patch titled
 
-    media: v4l2-compat-ioctl32.c: copy m.userptr in put_v4l2_plane32
+    media: v4l2-compat-ioctl32.c: copy clip list in put_v4l2_window32
 
 to the 3.18-stable tree which can be found at:
     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 
 The filename of the patch is:
-     media-v4l2-compat-ioctl32.c-copy-m.userptr-in-put_v4l2_plane32.patch
+     media-v4l2-compat-ioctl32.c-copy-clip-list-in-put_v4l2_window32.patch
 and it can be found in the queue-3.18 subdirectory.
 
 If you, or anyone else, feels it should not be added to the stable tree,
@@ -58,18 +58,18 @@ please let <stable@vger.kernel.org> know about it.
 
 >From foo@baz Wed Apr  4 17:30:18 CEST 2018
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Date: Wed, 28 Mar 2018 15:12:26 -0300
-Subject: media: v4l2-compat-ioctl32.c: copy m.userptr in put_v4l2_plane32
+Date: Wed, 28 Mar 2018 15:12:30 -0300
+Subject: media: v4l2-compat-ioctl32.c: copy clip list in put_v4l2_window32
 To: Linux Media Mailing List <linux-media@vger.kernel.org>, stable@vger.kernel.org
 Cc: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Sasha Levin <alexander.levin@microsoft.com>
-Message-ID: <6e6f38fc8542cf41fffcd3067026c4f015564544.1522260310.git.mchehab@s-opensource.com>
+Message-ID: <b203ca17a23bf02398ef39e8f123d30b74df3523.1522260310.git.mchehab@s-opensource.com>
 
 From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 8ed5a59dcb47a6f76034ee760b36e089f3e82529 upstream.
+commit a751be5b142ef6bcbbb96d9899516f4d9c8d0ef4 upstream.
 
-The struct v4l2_plane32 should set m.userptr as well. The same
-happens in v4l2_buffer32 and v4l2-compliance tests for this.
+put_v4l2_window32() didn't copy back the clip list to userspace.
+Drivers can update the clip rectangles, so this should be done.
 
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
@@ -77,118 +77,97 @@ Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   47 +++++++++++++++-----------
- 1 file changed, 28 insertions(+), 19 deletions(-)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   59 +++++++++++++++++---------
+ 1 file changed, 40 insertions(+), 19 deletions(-)
 
 --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
 +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -287,19 +287,24 @@ static int get_v4l2_plane32(struct v4l2_
- 			 sizeof(up->data_offset)))
- 		return -EFAULT;
+@@ -50,6 +50,11 @@ struct v4l2_window32 {
  
--	if (memory == V4L2_MEMORY_USERPTR) {
-+	switch (memory) {
-+	case V4L2_MEMORY_MMAP:
-+	case V4L2_MEMORY_OVERLAY:
-+		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
-+				 sizeof(up32->m.mem_offset)))
-+			return -EFAULT;
-+		break;
-+	case V4L2_MEMORY_USERPTR:
- 		if (get_user(p, &up32->m.userptr))
- 			return -EFAULT;
- 		up_pln = compat_ptr(p);
- 		if (put_user((unsigned long)up_pln, &up->m.userptr))
- 			return -EFAULT;
--	} else if (memory == V4L2_MEMORY_DMABUF) {
-+		break;
-+	case V4L2_MEMORY_DMABUF:
- 		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(up32->m.fd)))
- 			return -EFAULT;
--	} else {
--		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
--				 sizeof(up32->m.mem_offset)))
--			return -EFAULT;
-+		break;
- 	}
- 
- 	return 0;
-@@ -308,22 +313,32 @@ static int get_v4l2_plane32(struct v4l2_
- static int put_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __user *up32,
- 			    enum v4l2_memory memory)
+ static int get_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
  {
-+	unsigned long p;
++	struct v4l2_clip32 __user *uclips;
++	struct v4l2_clip __user *kclips;
++	compat_caddr_t p;
++	u32 n;
 +
- 	if (copy_in_user(up32, up, 2 * sizeof(__u32)) ||
- 	    copy_in_user(&up32->data_offset, &up->data_offset,
- 			 sizeof(up->data_offset)))
+ 	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
+ 	    copy_from_user(&kp->w, &up->w, sizeof(up->w)) ||
+ 	    get_user(kp->field, &up->field) ||
+@@ -59,38 +64,54 @@ static int get_v4l2_window32(struct v4l2
  		return -EFAULT;
- 
--	/* For MMAP, driver might've set up the offset, so copy it back.
--	 * USERPTR stays the same (was userspace-provided), so no copying. */
--	if (memory == V4L2_MEMORY_MMAP)
-+	switch (memory) {
-+	case V4L2_MEMORY_MMAP:
-+	case V4L2_MEMORY_OVERLAY:
- 		if (copy_in_user(&up32->m.mem_offset, &up->m.mem_offset,
- 				 sizeof(up->m.mem_offset)))
- 			return -EFAULT;
--	/* For DMABUF, driver might've set up the fd, so copy it back. */
--	if (memory == V4L2_MEMORY_DMABUF)
-+		break;
-+	case V4L2_MEMORY_USERPTR:
-+		if (get_user(p, &up->m.userptr) ||
-+		    put_user((compat_ulong_t)ptr_to_compat((__force void *)p),
-+			     &up32->m.userptr))
-+			return -EFAULT;
-+		break;
-+	case V4L2_MEMORY_DMABUF:
- 		if (copy_in_user(&up32->m.fd, &up->m.fd,
- 				 sizeof(up->m.fd)))
- 			return -EFAULT;
-+		break;
+ 	if (kp->clipcount > 2048)
+ 		return -EINVAL;
+-	if (kp->clipcount) {
+-		struct v4l2_clip32 __user *uclips;
+-		struct v4l2_clip __user *kclips;
+-		int n = kp->clipcount;
+-		compat_caddr_t p;
++	if (!kp->clipcount) {
++		kp->clips = NULL;
++		return 0;
 +	}
  
+-		if (get_user(p, &up->clips))
++	n = kp->clipcount;
++	if (get_user(p, &up->clips))
++		return -EFAULT;
++	uclips = compat_ptr(p);
++	kclips = compat_alloc_user_space(n * sizeof(*kclips));
++	kp->clips = kclips;
++	while (n--) {
++		if (copy_in_user(&kclips->c, &uclips->c, sizeof(uclips->c)))
+ 			return -EFAULT;
+-		uclips = compat_ptr(p);
+-		kclips = compat_alloc_user_space(n * sizeof(*kclips));
+-		kp->clips = kclips;
+-		while (--n >= 0) {
+-			if (copy_in_user(&kclips->c, &uclips->c, sizeof(uclips->c)))
+-				return -EFAULT;
+-			if (put_user(n ? kclips + 1 : NULL, &kclips->next))
+-				return -EFAULT;
+-			uclips += 1;
+-			kclips += 1;
+-		}
+-	} else
+-		kp->clips = NULL;
++		if (put_user(n ? kclips + 1 : NULL, &kclips->next))
++			return -EFAULT;
++		uclips++;
++		kclips++;
++	}
  	return 0;
  }
-@@ -383,6 +398,7 @@ static int get_v4l2_buffer32(struct v4l2
- 	} else {
- 		switch (kp->memory) {
- 		case V4L2_MEMORY_MMAP:
-+		case V4L2_MEMORY_OVERLAY:
- 			if (get_user(kp->m.offset, &up->m.offset))
- 				return -EFAULT;
- 			break;
-@@ -396,10 +412,6 @@ static int get_v4l2_buffer32(struct v4l2
- 				kp->m.userptr = (unsigned long)compat_ptr(tmp);
- 			}
- 			break;
--		case V4L2_MEMORY_OVERLAY:
--			if (get_user(kp->m.offset, &up->m.offset))
--				return -EFAULT;
--			break;
- 		case V4L2_MEMORY_DMABUF:
- 			if (get_user(kp->m.fd, &up->m.fd))
- 				return -EFAULT;
-@@ -456,6 +468,7 @@ static int put_v4l2_buffer32(struct v4l2
- 	} else {
- 		switch (kp->memory) {
- 		case V4L2_MEMORY_MMAP:
-+		case V4L2_MEMORY_OVERLAY:
- 			if (put_user(kp->m.offset, &up->m.offset))
- 				return -EFAULT;
- 			break;
-@@ -463,10 +476,6 @@ static int put_v4l2_buffer32(struct v4l2
- 			if (put_user(kp->m.userptr, &up->m.userptr))
- 				return -EFAULT;
- 			break;
--		case V4L2_MEMORY_OVERLAY:
--			if (put_user(kp->m.offset, &up->m.offset))
--				return -EFAULT;
--			break;
- 		case V4L2_MEMORY_DMABUF:
- 			if (put_user(kp->m.fd, &up->m.fd))
- 				return -EFAULT;
+ 
+ static int put_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
+ {
++	struct v4l2_clip __user *kclips = kp->clips;
++	struct v4l2_clip32 __user *uclips;
++	u32 n = kp->clipcount;
++	compat_caddr_t p;
++
+ 	if (copy_to_user(&up->w, &kp->w, sizeof(kp->w)) ||
+ 	    put_user(kp->field, &up->field) ||
+ 	    put_user(kp->chromakey, &up->chromakey) ||
+ 	    put_user(kp->clipcount, &up->clipcount) ||
+ 	    put_user(kp->global_alpha, &up->global_alpha))
+ 		return -EFAULT;
++
++	if (!kp->clipcount)
++		return 0;
++
++	if (get_user(p, &up->clips))
++		return -EFAULT;
++	uclips = compat_ptr(p);
++	while (n--) {
++		if (copy_in_user(&uclips->c, &kclips->c, sizeof(uclips->c)))
++			return -EFAULT;
++		uclips++;
++		kclips++;
++	}
+ 	return 0;
+ }
+ 
 
 
 Patches currently in stable-queue which might be from mchehab@s-opensource.com are
