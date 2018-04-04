@@ -1,71 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751346AbeDDRnX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 13:43:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51030 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750915AbeDDRnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 13:43:22 -0400
-Subject: Re: [PATCH v5 1/2] KVM: X86: Introduce handle_ud()
-To: Paolo Bonzini <pbonzini@redhat.com>, Wanpeng Li <kernellwp@gmail.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Liran Alon <liran.alon@oracle.com>
-References: <1522798129-14588-1-git-send-email-wanpengli@tencent.com>
- <1522798129-14588-2-git-send-email-wanpengli@tencent.com>
- <9d68b1b4-04e6-46d6-70b4-6ebcb0a0c4aa@redhat.com>
- <16957e9b-103a-0fd5-9e2b-084e9ebc3773@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <e6c4379c-2038-93c2-99d4-51a45cb9b371@redhat.com>
-Date: Wed, 4 Apr 2018 19:43:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751365AbeDDRpP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 13:45:15 -0400
+Received: from mail-wr0-f178.google.com ([209.85.128.178]:39267 "EHLO
+        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbeDDRpN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 13:45:13 -0400
+X-Google-Smtp-Source: AIpwx4+FqAtW0kuuebxoqRoE5ZfoT2stPRYCS+44hj9/ixG5VWnBnyy50NTzLemwYnfIih8S10019Q==
+Date: Wed, 4 Apr 2018 20:45:09 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: alban@kinvolk.io
+Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com
+Subject: Re: [PATCH] [RFC][WIP] namespace.c: Allow some unprivileged proc
+ mounts when not fully visible
+Message-ID: <20180404174509.GA2540@avx2>
 MIME-Version: 1.0
-In-Reply-To: <16957e9b-103a-0fd5-9e2b-084e9ebc3773@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.04.2018 19:12, Paolo Bonzini wrote:
-> On 04/04/2018 13:54, David Hildenbrand wrote:
->>> +{
->>> +	enum emulation_result er;
->>> +
->>> +	er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
->>> +	if (er == EMULATE_USER_EXIT)
->>> +		return 0;
->>> +	if (er != EMULATE_DONE)
->>> +		kvm_queue_exception(vcpu, UD_VECTOR);
->>> +	return 1;
->> I would now actually prefer
->>
->> if (er == EMULATE_DONE)
->> 	return 1 ...
-> 
-> Why?  The return statement would be duplicated.
-> 
-> Paolo
-> 
+> Instead, it introduces new options in proc to disable some proc entries (TBD).
 
-I was talking about two equality checks vs. 1 equality and 1 inequality
-check.
+No, no, no, no.
 
-er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
-if (er == EMULATE_USER_EXIT)
-	return 0;
-else if (er == EMULATE_DONE)
-	return 1;
-return kvm_queue_exception(vcpu, UD_VECTOR);
+Blacklists are bad, mmkay.
+
+The reason is that quite dangerous new /proc entries get added
+(think /proc/kpageflags) and suddenly they are enabled inside container.
+
+> The granularity does not need to be per proc entry.
+
+I think it does. Grouping always becomes either too fine or too coarse.
+
+> Granularity can be improved later if use cases exist.
+
+Granularity can not be tightened as it may break existing users.
+So new granularity options are going to be invented until finally it is
+per file.
+
+>	"maskedPaths": [
+>		"/proc/kcore",
+>		"/proc/latency_stats",
+>		"/proc/timer_list",
+>		"/proc/timer_stats",
+>		"/proc/sched_debug",
+>		"/sys/firmware",
+>		"/proc/scsi"
+>	],
+
+Just say no to drugs.
 
 
--- 
+> /proc/kcore
 
-Thanks,
-
-David / dhildenb
+As a side note:
+/proc/kcore should be more or less safe because it is under CAP_SYS_RAWIO.
