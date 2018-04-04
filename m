@@ -1,90 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752639AbeDDGQt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 02:16:49 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60778 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751643AbeDDGQs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 02:16:48 -0400
-Subject: Re: [PATCH v2] tools include: define READ_ONCE/WRITE_ONCE for C++
-To: linux-kernel@vger.kernel.org
-Cc: Li Zhijian <lizhijian@cn.fujitsu.com>, acme@redhat.com,
-        philip.li@intel.com, mark.rutland@arm.com, paulmck@linux.vnet.ibm.com,
-        mingo@kernel.org
-References: <1512005772-27112-1-git-send-email-lizhijian@cn.fujitsu.com>
-From: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Date: Wed, 4 Apr 2018 11:46:38 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751722AbeDDGUn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 02:20:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45459 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751098AbeDDGUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 02:20:41 -0400
+Date: Wed, 4 Apr 2018 08:20:39 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180404062039.GC6312@dhcp22.suse.cz>
+References: <20180403110612.GM5501@dhcp22.suse.cz>
+ <20180403075158.0c0a2795@gandalf.local.home>
+ <20180403121614.GV5501@dhcp22.suse.cz>
+ <20180403082348.28cd3c1c@gandalf.local.home>
+ <20180403123514.GX5501@dhcp22.suse.cz>
+ <20180403093245.43e7e77c@gandalf.local.home>
+ <20180403135607.GC5501@dhcp22.suse.cz>
+ <20180403101753.3391a639@gandalf.local.home>
+ <20180403161119.GE5501@dhcp22.suse.cz>
+ <20180403185627.6bf9ea9b@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <1512005772-27112-1-git-send-email-lizhijian@cn.fujitsu.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18040406-0044-0000-0000-000005433751
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040406-0045-0000-0000-000028834C3E
-Message-Id: <ddeec38a-3843-b812-7219-7e4fef8f040f@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804040065
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403185627.6bf9ea9b@gandalf.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 11/30/2017 07:06 AM, Li Zhijian wrote:
-> since 6aa7de0, we failed to build perf with C++(clang)
-> to fix the following compile errors
-> --------------
-> lizhijian@haswell-OptiPlex-9020:~/lkp/linux/tools/perf$ make LLVM_CONFIG=/usr/bin/llvm-config-3.9 LIBCLANGLLVM=1
-> ...
->   CC       util/probe-finder.o
-> In file included from /home/lizj/linux/tools/perf/util/util.h:13:0,
->                  from /home/lizj/linux/tools/perf/util/util-cxx.h:20,
->                  from util/c++/clang-c.h:5,
->                  from util/c++/clang-test.cpp:2:
-> /home/lizj/linux/tools/include/asm/../../arch/x86/include/asm/atomic.h: In function ‘int atomic_read(const atomic_t*)’:
-> /home/lizj/linux/tools/include/linux/compiler.h:157:45: error: use of deleted function ‘atomic_read(const atomic_t*)::<anonymous union>::<constructor>()’
->   ({ union { typeof(x) __val; char __c[1]; } __u; __read_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
->                                              ^
-> /home/lizj/linux/tools/include/asm/../../arch/x86/include/asm/atomic.h:28:9: note: in expansion of macro ‘READ_ONCE’
->   return READ_ONCE((v)->counter);
->          ^
-> /home/lizj/linux/tools/include/linux/compiler.h:157:11: note: ‘atomic_read(const atomic_t*)::<anonymous union>::<constructor>()’ is implicitly deleted because the default definition would be ill-formed:
->   ({ union { typeof(x) __val; char __c[1]; } __u; __read_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
->            ^
-> /home/lizj/linux/tools/include/asm/../../arch/x86/include/asm/atomic.h:28:9: note: in expansion of macro ‘READ_ONCE’
->   return READ_ONCE((v)->counter);
->          ^
-> /home/lizj/linux/tools/include/linux/compiler.h:157:11: error: uninitialized const member in ‘union atomic_read(const atomic_t*)::<anonymous>’
->   ({ union { typeof(x) __val; char __c[1]; } __u; __read_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
->            ^
-> /home/lizj/linux/tools/include/asm/../../arch/x86/include/asm/atomic.h:28:9: note: in expansion of macro ‘READ_ONCE’
->   return READ_ONCE((v)->counter);
->          ^
-> /home/lizj/linux/tools/include/linux/compiler.h:157:23: note: ‘const int atomic_read(const atomic_t*)::<anonymous union>::__val’ should be initialized
->   ({ union { typeof(x) __val; char __c[1]; } __u; __read_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
->                        ^
-> /home/lizj/linux/tools/include/asm/../../arch/x86/include/asm/atomic.h:28:9: note: in expansion of macro ‘READ_ONCE’
->   return READ_ONCE((v)->counter);
->          ^
->   LD       tests/perf-in.o
-> ...
-> --------------
+On Tue 03-04-18 18:56:27, Steven Rostedt wrote:
+[...]
+> From your earlier email:
 > 
+> > Except that it doesn't work. si_mem_available is not really suitable for
+> > any allocation estimations. Its only purpose is to provide a very rough
+> > estimation for userspace. Any other use is basically abuse. The
+> > situation can change really quickly. Really it is really hard to be
+> > clever here with the volatility the memory allocations can cause.
+> 
+> Now can you please explain to me why si_mem_available is not suitable
+> for my purpose.
 
-I ran into the same problems while building perf with clang support.
-If the solution proposed here is acceptable, can someone please pick
-up this patch?
+Several problems. It is overly optimistic especially when we are close
+to OOM. The available pagecache or slab reclaimable objects might be pinned
+long enough that your allocation based on that estimation will just make
+the situation worse and result in OOM. More importantly though, your
+allocations are GFP_KERNEL, right, that means that such an allocation
+will not reach to ZONE_MOVABLE or ZONE_HIGMEM (32b systems) while the
+pagecache will. So you will get an overestimate of how much you can
+allocate.
 
---
-With Regards,
-Sandipan
+Really si_mem_available is for proc/meminfo and a rough estimate of the
+free memory because users tend to be confused by seeing MemFree too low
+and complaining that the system has eaten all their memory. I have some
+skepticism about how useful it is in practice apart from showing it in
+top or alike tools. The memory is simply not usable immediately or
+without an overall and visible effect on the whole system.
+
+HTH
+-- 
+Michal Hocko
+SUSE Labs
