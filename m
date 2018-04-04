@@ -1,85 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751710AbeDDL7S (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 07:59:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60976 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751216AbeDDL7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 07:59:16 -0400
-Subject: Re: [PATCH v5 2/2] KVM: X86: Add Force Emulation Prefix for "emulate
- the next instruction"
-To: Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Liran Alon <liran.alon@oracle.com>
-References: <1522798129-14588-1-git-send-email-wanpengli@tencent.com>
- <1522798129-14588-3-git-send-email-wanpengli@tencent.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <48d06146-f508-e883-72cb-881e043f9c72@redhat.com>
-Date: Wed, 4 Apr 2018 13:59:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751559AbeDDMDD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 08:03:03 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:45432 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbeDDMDC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 08:03:02 -0400
+X-Google-Smtp-Source: AIpwx49YS6TUVS9H4aWq+iKFNsCc5K5Gg1v7tC528iP+maQ9/yY6+Q+tNaxh3jlOJe6wB4iFvl47pSOxdY4fL+QmzKM=
 MIME-Version: 1.0
-In-Reply-To: <1522798129-14588-3-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180402102819.599ac67f@xhacker.debian>
+References: <20180330110211.36455347@xhacker.debian> <20180330135932.GB28244@lunn.ch>
+ <20180402102819.599ac67f@xhacker.debian>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 4 Apr 2018 14:03:00 +0200
+X-Google-Sender-Auth: ylWoI4B0EgvXyRzb0lOFrG1Nlm8
+Message-ID: <CAK8P3a3seSZOocrFtdJJzjmDC8YAAXzicHW_YuXh7ivgYijgAw@mail.gmail.com>
+Subject: Re: [PATCH v2] MAINTAINERS: update entry for ARM/berlin
+To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, ARM Maintainers <arm@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 2, 2018 at 4:28 AM, Jisheng Zhang
+<Jisheng.Zhang@synaptics.com> wrote:
+> On Fri, 30 Mar 2018 15:59:32 +0200 Andrew Lunn wrote:
+>
+>> On Fri, Mar 30, 2018 at 11:02:11AM +0800, Jisheng Zhang wrote:
+>> > Synaptics has acquired the Multimedia Solutions Business of Marvell[1].
+>> > So change the berlin entry name and move it to its alphabetical
+>> > location. We move to ARM/Synaptics instead of ARM/Marvell.
+>> >
+>> > This patch also updates my email address from marvell to synaptics.
+>> >
+>> > [1] https://www.synaptics.com/company/news/conexant-marvell
+>> >
+>> > Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+>>
+>> Thanks for the link
+>>
+>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>>
+>> Do you still plan to move the DT files from the Marvell subdirectory?
+>> Are the locations of these files considered fixed?
+>>
+>
+> For new SoCs, the DT files will be put into synaptics sub-directory.
+> But for existing arm64 berlin DT files which currently sits in
+> arch/arm64/boot/dts/marvell, I dunno the proper solution. Could
+> you please give some suggestions? How do other vendors handle this
+> situation in the past?
 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 1eb495e..a55ecef 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -146,6 +146,9 @@ bool __read_mostly enable_vmware_backdoor = false;
->  module_param(enable_vmware_backdoor, bool, S_IRUGO);
->  EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
->  
-> +static bool __read_mostly force_emulation_prefix = false;
-> +module_param(force_emulation_prefix, bool, S_IRUGO);
-> +
->  #define KVM_NR_SHARED_MSRS 16
->  
->  struct kvm_shared_msrs_global {
-> @@ -4844,6 +4847,21 @@ int handle_ud(struct kvm_vcpu *vcpu)
->  {
->  	enum emulation_result er;
->  
-> +	if (force_emulation_prefix) {
-> +		char sig[5]; /* ud2; .ascii "kvm" */
-> +		struct x86_exception e;
-> +
-> +		if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
-> +				kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e))
-> +			goto emulate_ud;
-> +
-> +		if (memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0) {
-> +			kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
-> +			return emulate_instruction(vcpu, 0) == EMULATE_DONE;
+There is no good solution, we sometimes move files, other times we don't.
 
-What if we would have an invalid instruction here? Shouldn't you handle
-the emulate_instruction() like below?
-(e.g. keep a variable with the emulation type (0 vs EMULTYPE_TRAP_UD)
-and reuse emulate_ud below)
+Here, I would probably move it out, but I'd leave it up to you.
 
-> +		}
-> +	}
-> +
-> +emulate_ud:
->  	er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
->  	if (er == EMULATE_USER_EXIT)
->  		return 0;
-> 
-
-
--- 
-
-Thanks,
-
-David / dhildenb
+      Arnd
