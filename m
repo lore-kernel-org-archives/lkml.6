@@ -1,152 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752553AbeDEJ7I (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:59:08 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40850 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752016AbeDEJ7B (ORCPT
+        id S1752466AbeDEJ7b (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:59:31 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:40999 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752006AbeDEJ72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:59:01 -0400
-X-Google-Smtp-Source: AIpwx48dHT33br59icdXbTeZRN6FpJ8F6bVmAcDOBNZNBkXQvQveT5IE0rvtYKKZj7Yv0Z988TQNXQ==
-Date: Thu, 5 Apr 2018 15:28:58 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH] cpufreq/schedutil: Cleanup and document iowait boost
-Message-ID: <20180405095858.GP3572@vireshk-i7>
-References: <20180328090721.26068-1-patrick.bellasi@arm.com>
+        Thu, 5 Apr 2018 05:59:28 -0400
+X-Google-Smtp-Source: AIpwx4/YR02UYWa/+sXK3PERpMlk/GjgY4JWfo2EJGjOZwUJ+bht9ygExzhehbTqpFyyxqlMvMwWeQ==
+Date: Thu, 5 Apr 2018 11:59:24 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Tejun Heo <tj@kernel.org>, Patrice Chotard <patrice.chotard@st.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-ide@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] ata: ahci-platform: add reset control support
+Message-ID: <20180405095924.GB7506@ulmo>
+References: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <20180405095429.GA7506@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tsOsTdHNUZQcU9Ye"
 Content-Disposition: inline
-In-Reply-To: <20180328090721.26068-1-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180405095429.GA7506@ulmo>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28-03-18, 10:07, Patrick Bellasi wrote:
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index 2b124811947d..c840b0626735 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -201,43 +201,80 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->  	return min(util, sg_cpu->max);
->  }
 
-I like the general idea but there are few things which look incorrect
-to me, even in the current code.
+--tsOsTdHNUZQcU9Ye
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> -static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
-> +/**
-> + * sugov_set_iowait_boost updates the IO boost at each wakeup from IO.
-> + * @sg_cpu: the sugov data for the CPU to boost
-> + * @flags:  SCHED_CPUFREQ_IOWAIT if the task is waking up after an IO wait
-> + *
-> + * Each time a task wakes up after an IO operation, the CPU utilization can be
-> + * boosted to a certain utilization which is doubled at each wakeup
-> + * from IO, starting from the utilization of the minimum OPP to that of the
-> + * maximum one.
+On Thu, Apr 05, 2018 at 11:54:29AM +0200, Thierry Reding wrote:
+> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
+> > Add support to get and control a list of resets for the device
+> > as optional and shared. These resets must be kept de-asserted until
+> > the device is enabled.
+> >=20
+> > This is specified as shared because some SoCs like UniPhier series
+> > have common reset controls with all ahci controller instances.
+> >=20
+> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> > ---
+> >  .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
+> >  drivers/ata/ahci.h                                 |  1 +
+> >  drivers/ata/libahci_platform.c                     | 24 ++++++++++++++=
++++++---
+> >  3 files changed, 23 insertions(+), 3 deletions(-)
+>=20
+> This causes a regression on Tegra because we explicitly request the
+> resets after the call to ahci_platform_get_resources().
+>=20
+> From a quick look, ahci_mtk and ahci_st are in the same boat, adding the
+> corresponding maintainers to Cc.
+>=20
+> Patrice, Matthias: does SATA still work for you after this patch? This
+> has been in linux-next since next-20180327.
+>=20
+> Given how this is one of the more hardware-specific bits, perhaps a
+> better way to do this is to move reset handling into a Uniphier driver
+> much like Tegra, Mediatek and ST?
+>=20
+> That said, I don't see SATA support for any of the Socionext hardware
+> either in the DT bindings or drivers/ata, so perhaps it'd be best to
+> back this out again until we have something that's more well tested?
 
-You may also want to write here that the doubling of boost value is
-restricted by rate_limit_us duration, its not that we double every
-time this routine is called.
+Tejun,
 
-> + */
-> +static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, unsigned int flags)
->  {
+I just noticed that Linus already pulled this for v4.17, so backing out
+isn't going to work anymore. Still, I don't think this is tested well
+enough, and given the lack of users of this I think a revert is the best
+option at this point.
 
->  
-> -		/* Clear iowait_boost if the CPU apprears to have been idle. */
-> -		if (delta_ns > TICK_NSEC) {
-> -			sg_cpu->iowait_boost = 0;
-> -			sg_cpu->iowait_boost_pending = false;
-> -		}
+Thierry
 
-So this is the only difference in this routine, everything else is
-re-arrangement IIUC.
+--tsOsTdHNUZQcU9Ye
+Content-Type: application/pgp-signature; name="signature.asc"
 
-There is a problem that I see in existing code as well as code after
-this commit.
+-----BEGIN PGP SIGNATURE-----
 
-Consider this sequence of events on a platform where cpufreq policies
-aren't shared, i.e. each CPU has his own policy.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrF83wACgkQ3SOs138+
+s6FsGw/+NGCyYB3zZfQTbmWc6w7aQKkTM68wBIKQ8CfnEP1Jt95ldFZqpiMyWw+7
+F1TWFxuKgn7t0GcABzlczYHvAkxDE9u+JFyuOh8vzLQctkOcLFmhlegKjwrT8UUp
++0MVxMtNptCyQ2qF9Z65uKuRbRgnltHtaapt6OpS9mBf15ssvC8NMxl/l2FSRcbk
+dPJ3kxTmx5CAS3SHMQV81kO+vJ3HL2zIcDKRIbJfj6lIM0vPtSOWWety4eEVxJpo
+cMejkZfmeQ7iLO5EbAkmeG44RnWsk75BzUN/QKnyPRUlL4owsTRu9HyY5f3K2vO9
+Ap0giLD2y3Rp5pLwqW68BVP0+bco362Yv9d6XEjCma1Pq5cBDNX3F+ig3p8+t0j6
+Ijdzk5G5vKxo3f0xS7L8IkctvQhmSAsRG90BPO/8rDpWxopv3RAWFjYQ18EtZG3q
+jI8MZCQsUF/+JX8XM5olnNj0q9MIaFncBX7Sd9kcEmPzkdDlWhRMBcVjO6Mj+4qm
+HjoMFhrfadK0AhO7TD84SLIC+puGu5blfB6GBfsAcx1e7vAL8fRZe92p3TKm8wT1
+F4taQb3ysHufJySo3ykBN7vkblSm5ZhBbbxgMWyvYQ2AvSrG+ejK7m25UZ2EZxSU
+lluwb4yIdnyo3FHbX25akiz/Ph7F9iT1bGaRLzs4SAHl+/xV64U=
+=Z69j
+-----END PGP SIGNATURE-----
 
-sugov_set_iowait_boost() gets called multiple times for a CPU with
-IOWAIT flag set that leads us to a big boost value, like fmax. The CPU
-goes to idle then and the task wakes up after few ticks.  Because we
-are first checking the IOWAIT flag in this routine, we will double the
-iowait boost. Ideally, based on the TICK_NSEC logic we have, we should
-have first set the iowait boost to 0 and then because the flag was
-set, set the boost to fmin. So the order of this routine needs to get
-fixed in the first patch.
-
-The same problem can happen for cases where the policy is shared as
-well, but chances are less.
-
-> -static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, unsigned long *util,
-> -			       unsigned long *max)
-> +/**
-> + * sugov_iowait_boost boosts a CPU after a wakeup from IO.
-> + * @sg_cpu: the sugov data for the cpu to boost
-> + * @time:   the update time from the caller
-> + * @util:   the utilization to (eventually) boost
-> + * @max:    the maximum value the utilization can be boosted to
-> + *
-> + * A CPU running a task which woken up after an IO operation can have its
-> + * utilization boosted to speed up the completion of those IO operations.
-> + * The IO boost value is increased each time a task wakes up from IO, in
-> + * sugov_set_iowait_boost(), and it's instead decreased by this function,
-> + * each time an increase has not been requested (!iowait_boost_pending).
-> + *
-> + * A CPU which also appears to have been idle for at least one tick has also
-> + * its IO boost utilization reset.
-> + *
-> + * This mechanism is designed to boost high frequently IO waiting tasks, while
-> + * being more conservative on tasks which does sporadic IO operations.
-> + */
-> +static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
-> +			       unsigned long *util, unsigned long *max)
->  {
->  	unsigned int boost_util, boost_max;
->  
-> -	if (!sg_cpu->iowait_boost)
-> +	/* Clear boost if the CPU appears to have been idle enough */
-> +	if (sg_cpu->iowait_boost) {
-> +		s64 delta_ns = time - sg_cpu->last_update;
-> +
-> +		if (delta_ns > TICK_NSEC) {
-> +			sg_cpu->iowait_boost = 0;
-> +			sg_cpu->iowait_boost_pending = false;
-> +		}
->  		return;
-
-This looks incorrect. I have read this 10 times and it looked
-incorrect every single time :(
-
-The "return" statement should be part of the if block itself ? Else we
-will never boost.
-
-> +	}
->  
-
-Now we can reach here even on !sg_cpu->iowait_boost which wasn't the
-case earlier. Though we will eventually return from the routine
-without doing any damage, but we will waste some time running useless
-if/else expressions.
-
-Maybe still have something like
-
-        if (!sg_cpu->iowait_boost)
-                return;
-
-??
-
--- 
-viresh
+--tsOsTdHNUZQcU9Ye--
