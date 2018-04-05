@@ -1,49 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751466AbeDEOmJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:42:09 -0400
-Received: from mail-yb0-f171.google.com ([209.85.213.171]:41718 "EHLO
-        mail-yb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751216AbeDEOmG (ORCPT
+        id S1751506AbeDEOmq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:42:46 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:48186 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeDEOmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:42:06 -0400
-X-Google-Smtp-Source: AIpwx487PDZkM7IjMiPkusZkeLWHQuI/b8FolAGCdhXg1uP9yiEg/lPExvfM4j2o0WO5tNOxGmnhmQ==
-Date: Thu, 5 Apr 2018 07:42:03 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Sitsofe Wheeler <sitsofe@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Stefan Haberland <sth@linux.vnet.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>
-Subject: Re: [BISECTED][REGRESSION] Hang while booting EeePC 900
-Message-ID: <20180405144203.GC3126663@devbig577.frc2.facebook.com>
-References: <CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com>
- <de102067-b589-af05-ae71-496e948000f0@kernel.dk>
- <CALjAwxgtuEv=d1TfvH3EdXqZs=_6F7TinyVhbPdUmTsdK_5ghw@mail.gmail.com>
- <20180402202951.GE388343@devbig577.frc2.facebook.com>
- <CALjAwxhofAEa1Nr8d1+KpB3jimYL9nODf4Fu38oTe7ptgM_+cQ@mail.gmail.com>
+        Thu, 5 Apr 2018 10:42:44 -0400
+X-Auth-Info: CiOP02em4dAjvEbPqs7urniMFAlUrSDsIV11FK7+Oow=
+Date: Thu, 5 Apr 2018 16:42:32 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3] ARM: dts: tpc: Device tree description of the iMX6Q
+ TPC board
+Message-ID: <20180405164134.5ae71ea9@jawa>
+In-Reply-To: <CAOMZO5DHtvX64oseDFsLGiYmQPcb3thUrGeLxX8dgp69vUNZMg@mail.gmail.com>
+References: <20180405070939.22245-1-lukma@denx.de>
+        <CAOMZO5DHtvX64oseDFsLGiYmQPcb3thUrGeLxX8dgp69vUNZMg@mail.gmail.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALjAwxhofAEa1Nr8d1+KpB3jimYL9nODf4Fu38oTe7ptgM_+cQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TIacNO7LMssG4Z_oN2llEqO"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+--Sig_/TIacNO7LMssG4Z_oN2llEqO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 05, 2018 at 09:14:15AM +0100, Sitsofe Wheeler wrote:
-> Just out of interest, does the fact that an abort occurs mean that the
-> hardware is somehow broken or badly behaved?
+Hi Fabio,
 
-Not really.  For example, ATAPI devices depend on exception handling
-to fetch sense data as a part of normal operation which is handled by
-libata exception handler which is invoked by aborting the original
-command.  So, exception handling can often be a part of normal
-operation.
+> Hi Lukasz,
+>=20
+> On Thu, Apr 5, 2018 at 4:09 AM, Lukasz Majewski <lukma@denx.de> wrote:
+>=20
+> > +       reg_audio: regulator-audio {
+> > +               compatible =3D "regulator-fixed";
+> > +               regulator-name =3D "sgtl5000-supply";
+> > +               gpio =3D <&gpio6 31 GPIO_ACTIVE_HIGH>;
+> > +               enable-active-high;
+> > +               regulator-always-on;
+> > +       }; =20
+>=20
+> sgtl5000 has 3 supplies: VDDD, VDDIO, VDDA.
+>=20
+> Which supply does this reg_audio supply to the chip?
 
-Thanks.
+It supplies none of the above. This regulator is needed to enable
+amplifier output placed after sgtl5000 device.
 
--- 
-tejun
+>=20
+> Can't you use any of the existing sgtl5000 regulator bindings to
+> describe this supply?
+
+As stated before - this supply enables the output of the amplifier.
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/TIacNO7LMssG4Z_oN2llEqO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlrGNdgACgkQAR8vZIA0
+zr0w/wgAsJt1lPSubFuoGe0c3+6cE/5LozTI/GFYzrspSaGsCIoh1phNWb2a89PN
+5yYEJztErGuCtE742GPvL0167PHlYPd7As0VlofqPPI4Aro8z6qU5Dp98AxsPkQb
+7O7+zhPCBuFL8q8bl/p66iqQl8O+SJm2p6apOnqBkMlMXqwq82CkwBMGLh8AUoUa
+bXIhNBW0SHwAh18/Ggr+y6taXn1t6PV7aX0Mhvbshpkm99wsQFo3EDZH6tK2mAf/
+JInxb4BJz+gaSUS304Um7G6Sk/qIaQ6IwsxZFd6rNUUYspbtalMsQdFJkHw6N3Go
++ohaMdTj+IydZ2TjtkwwHQG5LZnWFw==
+=96D9
+-----END PGP SIGNATURE-----
+
+--Sig_/TIacNO7LMssG4Z_oN2llEqO--
