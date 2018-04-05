@@ -1,92 +1,65 @@
-Return-Path: <jlee@suse.com>
-X-Google-Smtp-Source: AIpwx49j9Vd9lSfYZoBadt9LUw/vi1FQaJWcS/U0XZzpNsLtOPXzO6rGcm+OUGvxRsWSY34sgnKG
-ARC-Seal: i=1; a=rsa-sha256; t=1523173485; cv=none;
+Return-Path: <gnomes@lxorguk.ukuu.org.uk>
+X-Google-Smtp-Source: AIpwx4+VfDPHSw1jD14jgOXRfHHitme8m1zf+2KeNioLb16/+w8CAKEYUErRGU0eCz3zbtGm6+Gf
+ARC-Seal: i=1; a=rsa-sha256; t=1522950839; cv=none;
         d=google.com; s=arc-20160816;
-        b=RnLDWfaqwHRF2WELZQcyShnLqkEg7KU4uLvRcCR9hxUB2zHle3pS0LOF2Bg38mD0EQ
-         PVK75NiDnIsho3I/ssgnDUVim8PbRPAGzdzt4QW7aE3uoj9x3QJDBE/QFvs+O6vKcwuU
-         MUybbNnGdj2WpSTYLV33H/TtjWYjw0OqNmWtvGqRnEpcdOQRSo2fzLEc2dDbIo+H/kn7
-         tLTtZK3tr4dqTeDxvZKnuGPsgOrX+DkYg5uMLSeqm9UHEtfjluwajXPaFXVsI7mW0Ra4
-         WWuDF5JY8XXkRFf6KJa/S8Ak/SdjEPdDx4vmIPzFIMCzxFkEntMX5IxG1jnSN7bvXdyj
-         utKw==
+        b=QcAIY5RWmxGhGp/1xtr0sUQmBAz1sd6APCoSyJila79beCtJ1FBPk4+YVGOf4f3mjK
+         DAw17zNMw5wHLyiSTk7N2wqHuiEDEUJeny6N1+z9kBJRCG9Kw/I8L3e4fnMm1W97Hz7I
+         n1IB2sEeZmE9Km3l4iRVtF3e02BvY7HXb+Y3ZZCWG5pUMo776GkJ5GFTorxLB7Y4pf0Y
+         xfFhKb3W5+qaS8ZTMDbQSVNDxqHD6HN98oVZ0oH/m0yFTdnCrAREHov9ilTftQxA0zQ6
+         AYmNClDEEQRCX0j6pHwg3ClWVf9t5h2WvTOgRoebE+f0evcG4a+/ej4tuet/qTHPR9GU
+         1z1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=nGoFMcTrcd2g77s680GoA0wKMU5vdzuWHC07S72uY2E=;
-        b=fwfCVDLbzFV3sn4pRsfBLakuQ2NxM4IptHVKtS06EiaG/ekG5xMB3+eXqSFUs+l4TM
-         r92/aiNTwj9pNvoqkvMHCXUoqFSeYSeoNhAbYrHJS3BjtlVpvtKpy4VcvrYv/+qz6Pij
-         6emMUILYcVe2PcsmzEXJvPpMc1Wk18Snb+yPljWvgQIHMlKwDOe+3mKYwTW3KNxbSNLj
-         sYsmFuCdT9iC39CCbhrjf77z1zMHPVwEkwenKdo2gVYLkJHRwKcD2FI5/QF6dH/IhJxq
-         COeFLvmN2vBMw1eURTMvMZO6FicXx05Igbz6DHWRVst8MJCx5GghHaiSQsFQNrEmVlgt
-         EMtw==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=gTo1SJRTi9AndskhrmEqCaqt8msxKb+PzdHqtIm2K70=;
+        b=JrBa3M3yKXPszeKqjz7phd8rb2CwN7H8/EY59j6qcH6mbG8JhY2qBCdvHSGyvTfsjV
+         D/BDxWksxwAr3c0KB2kN9lVHmfopNWhQWKjAWN4ydlJWxQD6rgzZB+E16WzZnxmnZCag
+         sLK4P98GD73Icpr4i91C+XmFYvOlq2ofpJ9JAaqQDil5XofM/7ggJNUbenwQhXhM5soW
+         jVs/wUAwortUIq0OIg0zXp+kF89K+nuYjvB05UighzLqJDsXal10v0/V0c4ttETYPiaL
+         kRH+BWd1qInWYpbSjvWQ591hl6VRtT3ZCMiThKRqB2cLQDyTwyGRKcjA42iDTsGrmjPF
+         NBKQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jlee@suse.com designates 195.135.221.5 as permitted sender) smtp.mailfrom=jlee@suse.com
+       spf=pass (google.com: domain of gnomes@lxorguk.ukuu.org.uk designates 82.70.14.225 as permitted sender) smtp.mailfrom=gnomes@lxorguk.ukuu.org.uk
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jlee@suse.com designates 195.135.221.5 as permitted sender) smtp.mailfrom=jlee@suse.com
-Date: Sun, 8 Apr 2018 15:44:09 +0800
-From: joeyli <jlee@suse.com>
-To: Matthew Garrett <mjg59@google.com>
-Cc: alexei.starovoitov@gmail.com, luto@kernel.org,
-	David Howells <dhowells@redhat.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>, jmorris@namei.org,
-	Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	jforbes@redhat.com, linux-man@vger.kernel.org,
-	LSM List <linux-security-module@vger.kernel.org>,
-	linux-api@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-	linux-efi <linux-efi@vger.kernel.org>
+       spf=pass (google.com: domain of gnomes@lxorguk.ukuu.org.uk designates 82.70.14.225 as permitted sender) smtp.mailfrom=gnomes@lxorguk.ukuu.org.uk
+Date: Thu, 5 Apr 2018 18:53:47 +0100
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: David Howells <dhowells@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>,
+        linux-efi@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,
+        jforbes@redhat.com, linux-man@vger.kernel.org, joeyli <jlee@suse.com>,
+        linux-security-module
+ <linux-security-module@vger.kernel.org>
 Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-Message-ID: <20180408074409.GD7362@linux-l9pv.suse>
-References: <CAADnVQLu5EZLJ1C9-dd4=K+sed6+38oy047+nqCMfuPFB=wttw@mail.gmail.com>
- <CACdnJuv8t3kS5BCowWQ7rMjL2K73913wX2-bb5HF0ddY3iaBHg@mail.gmail.com>
+Message-ID: <20180405185347.2785eb8a@alans-desktop>
+In-Reply-To: <CAKv+Gu9Na0j=T4syinQhPNZTnbhvnpDXR+Za73EmH3FFXV6KHA@mail.gmail.com>
+References: <4136.1522452584@warthog.procyon.org.uk>
+	<alpine.LRH.2.21.1803311145180.7769@namei.org>
+	<17792.1522491600@warthog.procyon.org.uk>
+	<CAKv+Gu9Na0j=T4syinQhPNZTnbhvnpDXR+Za73EmH3FFXV6KHA@mail.gmail.com>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACdnJuv8t3kS5BCowWQ7rMjL2K73913wX2-bb5HF0ddY3iaBHg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1596848216178927191?=
-X-GMAIL-MSGID: =?utf-8?q?1597163159921311633?=
+X-GMAIL-MSGID: =?utf-8?q?1596929699442105474?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 04, 2018 at 04:31:46AM +0000, Matthew Garrett wrote:
-> On Tue, Apr 3, 2018 at 7:34 PM Alexei Starovoitov <
-> alexei.starovoitov@gmail.com> wrote:
-> > If the only thing that folks are paranoid about is reading
-> > arbitrary kernel memory with bpf_probe_read() helper
-> > then preferred patch would be to disable it during verification
-> > when in lockdown mode.
-> > No run-time overhead and android folks will be happy
-> > that lockdown doesn't break their work.
-> > They converted out-of-tree networking accounting
-> > module and corresponding user daemon to use bpf:
-> 
-> https://www.linuxplumbersconf.org/2017/ocw/system/presentations/4791/original/eBPF%20cgroup%20filters%20for%20data%20usage%20accounting%20on%20Android.pdf
-> 
-> An alternative would be to only disable kernel reads if the kernel contains
-> secrets that aren't supposed to be readable by root. If the keyring is
-> configured such that root can read everything, it seems like less of a
-> concern?
+> Furthermore, there is a fundamental deviation from common security
+> sense here, where things like command line parameters and other
+> lockdown specific tunables are blacklisted rather than whitelisted,
 
-Currently the KMK (kernel master key) can be a trusted key (TPM sealed) or a
-user key (plaintext). The EVM keeps a key (plaintext) in memory that
-it is decrypted from a KMK encrypted key. Those kernel reads functions should
-be disabled when the KMK be loaded to keyring.
+I've been complaining about this from the start but it appears to be a
+write only authorship process going on.
 
-You idea is good that kernel can keep those reads functions enabled until KMK
-be loaded. Which means those functions are still available before user enables
-KMK and EVM.
-
-There have another idea is using a tree to register all sensitive data
-then blanking them when reading. Here is a very early developing version:
-
-https://github.com/joeyli/linux-sensitive_data/commits/sensitive-data-tree-v0.1-v4.15
-
-But this approach causes runtime overhead and all sensitive data address must
-be found and registered (e.g. plaintext in encryption module)
-
-Thanks a lot!
-Joey Lee 
+Alan
