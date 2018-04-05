@@ -1,116 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752249AbeDETJS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 15:09:18 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:42105 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751813AbeDETJP (ORCPT
+        id S1752654AbeDETLm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 15:11:42 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43303 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752286AbeDETLk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 15:09:15 -0400
-X-Google-Smtp-Source: AIpwx499I80AAAP0vPWp9dpjM2Icry0wQnzH73/DK5f5kTqkPN5HP6b52nsCjy1M9M1vMGuNb7jnCiT3WyBL8zbfEKo=
+        Thu, 5 Apr 2018 15:11:40 -0400
+X-Google-Smtp-Source: AIpwx49RnVfLayxFTqu/RNt2TMXtVrA/VRDbT23Osr6THmhljP0kifHCyvm+nWo5PtrUaWFp4FNDKA==
+Date: Thu, 5 Apr 2018 21:11:37 +0200
+From: Niklas Cassel <niklas.cassel@linaro.org>
+To: srinivas.kandagatla@linaro.org
+Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
+        david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [v2] ARM: dts: qcom: Add apq8064 Dragon Board 600c support
+Message-ID: <20180405191137.GA17656@localhost.localdomain>
+References: <20180316215436.22906-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <87lge1er31.fsf@kamboji.qca.qualcomm.com>
-References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
- <20180319014032.9394-3-alexey.roslyakov@gmail.com> <5AAF838D.2030105@broadcom.com>
- <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
- <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com> <5AB044C0.9060701@broadcom.com>
- <87po3zxe9n.fsf@kamboji.qca.qualcomm.com> <CAPDyKFr2GVB0+UUpT3GgGBT17TMcrky6X4L_pw+ztTL6ejbCwQ@mail.gmail.com>
- <87lge1er31.fsf@kamboji.qca.qualcomm.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 5 Apr 2018 21:09:14 +0200
-Message-ID: <CAPDyKFog7q2f7rHfm-FFRiGbRvd4NPQrYHP0==Xs-JAGGDKpYQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for brcmfmac
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alexey Roslyakov <alexey.roslyakov@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180316215436.22906-1-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 April 2018 at 15:10, Kalle Valo <kvalo@codeaurora.org> wrote:
-> Ulf Hansson <ulf.hansson@linaro.org> writes:
->
->> On 20 March 2018 at 10:55, Kalle Valo <kvalo@codeaurora.org> wrote:
->>> Arend van Spriel <arend.vanspriel@broadcom.com> writes:
->>>
->>>>>> If I get it right, you mean something like this:
->>>>>>
->>>>>> mmc3: mmc@1c12000 {
->>>>>> ...
->>>>>>          broken-sg-support;
->>>>>>          sd-head-align = 4;
->>>>>>          sd-sgentry-align = 512;
->>>>>>
->>>>>>          brcmf: wifi@1 {
->>>>>>                  ...
->>>>>>          };
->>>>>> };
->>>>>>
->>>>>> Where dt: bindings documentation for these entries should reside?
->>>>>> In generic MMC bindings? Well, this is the very special case and
->>>>>> mmc-linux maintainer will unlikely to accept these changes.
->>>>>> Also, extra kernel code modification might be required. It could make
->>>>>> quite trivial change much more complex.
->>>>>
->>>>> If the MMC maintainers are not copied on this patch series, it will
->>>>> likely be hard for them to identify this patch series and chime in...
->>>>
->>>> The main question is whether this is indeed a "very special case" as
->>>> Alexey claims it to be or that it is likely to be applicable to other
->>>> device and host combinations as you are suggesting.
->>>>
->>>> If these properties are imposed by the host or host controller it
->>>> would make sense to have these in the mmc bindings.
->>>
->>> BTW, last year we were discussing something similar (I mean related to
->>> alignment requirements) with ath10k SDIO patches and at the time the
->>> patch submitter was proposing to have a bounce buffer in ath10k to
->>> workaround that. I don't remember the details anymore, they are on the
->>> ath10k mailing list archive if anyone is curious to know, but I would
->>> not be surprised if they are similar as here. So there might be a need
->>> to solve this in a generic way (but not sure of course as I haven't
->>> checked the details).
->>
->> I re-call something about these as well, here are the patches. Perhaps
->> I should pick some of them up...
->>
->> https://patchwork.kernel.org/patch/10123137/
->> https://patchwork.kernel.org/patch/10123139/
->> https://patchwork.kernel.org/patch/10123141/
->> https://patchwork.kernel.org/patch/10123143/
->
-> Actually I was talking about a different patch, found it now:
->
-> ath10k_sdio: DMA bounce buffers for read write
->
-> https://patchwork.kernel.org/patch/9979543/
+On Fri, Mar 16, 2018 at 09:54:36PM +0000, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patch add support to DB600c board, which is another
+> 96boards based on Qualcomm APQ8064 SoC.
+> 
+> Support for USB, HDMI, PCIe, I2C, SPI, eMMC, microSD card, LEDs
+> device tree nodes is added in this patch.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+> Changes since v1:
+> 	- added chosen node with stdout, suggested by Stephen Boyd
+> 	- removed spi flash node and gpio22 pinconf, as its not required in this patch.
+> 	- removed extra comment lines and fix a node name, spotted by Stephen Boyd.
+> 
+>  arch/arm/boot/dts/Makefile                |   1 +
+>  arch/arm/boot/dts/qcom-apq8064-db600c.dts | 530 ++++++++++++++++++++++++++++++
+>  2 files changed, 531 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/qcom-apq8064-db600c.dts
 
-Ah, yes. This is about buffer alignment, particularly when using DMA.
+Hello Srini (I hope you had a nice vacation!)
 
-Normally there should be no constraint on the alignment, if the
-mmc/sdio controller driver would implement a fallback mechanism from
-DMA to PIO mode, in case the buffer can't be used for DMA.
 
-However, I know about cases where simply PIO doesn't work because of
-broken HW and in many cases the mmc drivers don't implement the
-fallback to PIO even if they could.
+Running checkpatch on this patch gives a few of these warnings:
 
-Moreover, it seems reasonable to anyway have a way for mmc driver to
-inform upper layers about DMA buffer alignment constraints, as to be
-able to use DMA as long as possible.
+WARNING: line over 80 characters
 
-Thoughts?
+These can probably be ignored, since they exist for most
+arch/arm/boot/dts/qcom-*.dts files.
 
-Kind regards
-Uffe
+
+However, it also gives a few of these errors:
+
+ERROR: trailing whitespace
+
+These should probably be fixed, since the are errors and not warnings.
+
+
+Kind regards,
+Niklas
