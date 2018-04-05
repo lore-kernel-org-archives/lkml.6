@@ -1,111 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751482AbeDENNQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:13:16 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:45682 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751277AbeDENNP (ORCPT
+        id S1751487AbeDENRN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:17:13 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47424 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751410AbeDENRD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:13:15 -0400
-X-Google-Smtp-Source: AIpwx4+sApsG4G4jp0IfFUZBON09PmyDzBaUCJCwOszotYNuApSRXpzlXFuZNVWVNb1/VOFDxYmg5+dE8DwrtR4ztbU=
+        Thu, 5 Apr 2018 09:17:03 -0400
+Subject: Re: [PATCH v3 01/14] KVM: s390: refactor crypto initialization
+To: Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1521051954-25715-2-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <49eaa40e-12d7-7ba9-d48f-e72c06e74c8f@de.ibm.com>
+ <0b9915e1-ba1e-2fec-dcc9-93bfdf6e65cf@de.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Thu, 5 Apr 2018 09:16:51 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 5 Apr 2018 15:13:13 +0200
-X-Google-Sender-Auth: fX86iWjTJ-mAbgt24Nj5kmdpJtw
-Message-ID: <CAMuHMdWovmqqgrOvtA=cyineJigwOtv-tGwz_PBVRFrgtryumw@mail.gmail.com>
-Subject: net_dim() may use uninitialized data
-To: Tal Gilboa <talgi@mellanox.com>
-Cc: netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0b9915e1-ba1e-2fec-dcc9-93bfdf6e65cf@de.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18040513-0056-0000-0000-00000437E00C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008808; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000256; SDB=6.01013469; UDB=6.00516595; IPR=6.00792731;
+ MB=3.00020430; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-05 13:16:58
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040513-0057-0000-0000-00000879F50E
+Message-Id: <12626080-d7ee-5cd9-c4fc-ce6702d69738@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-05_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804050139
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w35DDKNx023320
 
-Hi Tal,
-
-With gcc-4.1.2:
-
-    drivers/net/ethernet/broadcom/bcmsysport.c: In function ‘bcm_sysport_poll’:
-    include/linux/net_dim.h:354: warning: ‘curr_stats.ppms’ may be
-used uninitialized in this function
-    include/linux/net_dim.h:354: warning: ‘curr_stats.bpms’ may be
-used uninitialized in this function
-    include/linux/net_dim.h:354: warning: ‘curr_stats.epms’ may be
-used uninitialized in this function
-
-Indeed, ...
-
-| static inline void net_dim_calc_stats(struct net_dim_sample *start,
-|                                       struct net_dim_sample *end,
-|                                       struct net_dim_stats *curr_stats)
-| {
-|         /* u32 holds up to 71 minutes, should be enough */
-|         u32 delta_us = ktime_us_delta(end->time, start->time);
-|         u32 npkts = BIT_GAP(BITS_PER_TYPE(u32), end->pkt_ctr, start->pkt_ctr);
-|         u32 nbytes = BIT_GAP(BITS_PER_TYPE(u32), end->byte_ctr,
-|                              start->byte_ctr);
-|
-|         if (!delta_us)
-|                 return;
-
-... if delta_us is zero, none of the below will be initialized ...
-
-|         curr_stats->ppms = DIV_ROUND_UP(npkts * USEC_PER_MSEC, delta_us);
-|         curr_stats->bpms = DIV_ROUND_UP(nbytes * USEC_PER_MSEC, delta_us);
-|         curr_stats->epms = DIV_ROUND_UP(NET_DIM_NEVENTS * USEC_PER_MSEC,
-|                                         delta_us);
-| }
-|
-| static inline void net_dim(struct net_dim *dim,
-|                            struct net_dim_sample end_sample)
-| {
-|         struct net_dim_stats curr_stats;
-|         u16 nevents;
-|
-|         switch (dim->state) {
-|         case NET_DIM_MEASURE_IN_PROGRESS:
-|                 nevents = BIT_GAP(BITS_PER_TYPE(u16),
-|                                   end_sample.event_ctr,
-|                                   dim->start_sample.event_ctr);
-|                 if (nevents < NET_DIM_NEVENTS)
-|                         break;
-|                 net_dim_calc_stats(&dim->start_sample, &end_sample,
-|                                    &curr_stats);
-
-... in the output parameter curr_stats ...
-
-|                 if (net_dim_decision(&curr_stats, dim)) {
-
-... and net_dim_decision will make some funky decisions based on
-uninitialized data.
-
-What are the proper values to initialize curr_stats with?
-Alternatively, perhaps the call to net_dim_decision() should be made
-dependent on delta_us being non-zero?
-
-|                         dim->state = NET_DIM_APPLY_NEW_PROFILE;
-|                         schedule_work(&dim->work);
-|                         break;
-|                 }
-|                 /* fall through */
-|         case NET_DIM_START_MEASURE:
-|                 dim->state = NET_DIM_MEASURE_IN_PROGRESS;
-|                 break;
-|         case NET_DIM_APPLY_NEW_PROFILE:
-|                 break;
-|         }
-| }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+On 04/05/2018 06:45 AM, Christian Borntraeger wrote:
+>
+> On 04/05/2018 12:42 PM, Christian Borntraeger wrote:
+>>
+>> On 03/14/2018 07:25 PM, Tony Krowiak wrote:
+>>> This patch refactors the code that initializes the crypto
+>>> configuration for a guest. The crypto configuration is contained in
+>>> a crypto control block (CRYCB) which is a satellite control block to
+>>> our main hardware virtualization control block. The CRYCB is
+>>> attached to the main virtualization control block via a CRYCB
+>>> designation (CRYCBD) designation field containing the address of
+>>> the CRYCB as well as its format.
+>>>
+>>> Prior to the introduction of AP device virtualization, there was
+>>> no need to provide access to or specify the format of the CRYCB for
+>>> a guest unless the MSA extension 3 (MSAX3) facility was installed
+>>> on the host system. With the introduction of AP device virtualization,
+>>> the CRYCB and its format must be made accessible to the guest
+>>> regardless of the presence of the MSAX3 facility.
+>>>
+>>> The crypto initialization code is restructured as follows:
+>>>
+>>> * A new compilation unit is introduced to contain all interfaces
+>>>    and data structures related to configuring a guest's CRYCB for
+>>>    both the refactoring of crypto initialization as well as all
+>>>    subsequent patches introducing AP virtualization support.
+>>>
+>>> * Currently, the asm code for querying the AP configuration is
+>>>    duplicated in the AP bus as well as in KVM. Since the KVM
+>>>    code was introduced, the AP bus has externalized the interface
+>>>    for querying the AP configuration. The KVM interface will be
+>>>    replaced with a call to the AP bus interface. Of course, this
+>>>    will be moved to the new compilation unit mentioned above.
+>>>
+>>> * An interface to format the CRYCBD field will be provided via
+>>>    the new compilation unit and called from the KVM vm
+>>>    initialization.
+>>>
+>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>> ---
+>>>   MAINTAINERS                      |   10 ++++++
+>>>   arch/s390/include/asm/kvm-ap.h   |   16 ++++++++++
+>>>   arch/s390/include/asm/kvm_host.h |    1 +
+>>>   arch/s390/kvm/Kconfig            |    1 +
+>>>   arch/s390/kvm/Makefile           |    2 +-
+>>>   arch/s390/kvm/kvm-ap.c           |   48 +++++++++++++++++++++++++++++
+>>>   arch/s390/kvm/kvm-s390.c         |   61 ++++---------------------------------
+>>>   7 files changed, 84 insertions(+), 55 deletions(-)
+>>>   create mode 100644 arch/s390/include/asm/kvm-ap.h
+>>>   create mode 100644 arch/s390/kvm/kvm-ap.c
+>>>
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index 0ec5881..72742d5 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -11875,6 +11875,16 @@ W:	http://www.ibm.com/developerworks/linux/linux390/
+>>>   S:	Supported
+>>>   F:	drivers/s390/crypto/
+>>>
+>>> +S390 VFIO AP DRIVER
+>>> +M:	Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>> +M:	Christian Borntraeger <borntraeger@de.ibm.com>
+>>> +M:	Martin Schwidefsky <schwidefsky@de.ibm.com>
+>>> +L:	linux-s390@vger.kernel.org
+>>> +W:	http://www.ibm.com/developerworks/linux/linux390/
+>>> +S:	Supported
+>>> +F:	arch/s390/include/asm/kvm/kvm-ap.h
+>>> +F:	arch/s390/kvm/kvm-ap.c
+>>> +
+>>>   S390 ZFCP DRIVER
+>>>   M:	Steffen Maier <maier@linux.vnet.ibm.com>
+>>>   M:	Benjamin Block <bblock@linux.vnet.ibm.com>
+>>
+>> The Maintainers update belongs into a different patch (e.g. when you introduce
+>> drivers/s390/crypto/vfio_ap_drv.c )
+> To put it differently. I think kvm-ap code in here is more related to kvm than to
+> vfio-ap.
+Okay, I'll remove this from here. It looks like it is already covered under
+KERNEL VIRTUAL MACHINE for s390 (KVM/s390).
+>   
