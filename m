@@ -1,62 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752307AbeDETNZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 15:13:25 -0400
-Received: from mout.web.de ([212.227.17.11]:57787 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751913AbeDETNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 15:13:23 -0400
+        id S1752488AbeDETNs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 15:13:48 -0400
+Received: from mail-pl0-f53.google.com ([209.85.160.53]:40429 "EHLO
+        mail-pl0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752148AbeDETNq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 15:13:46 -0400
+X-Google-Smtp-Source: AIpwx49iAmj09hRCtAKqoaQyqyHqRivYx5Uz8vr82mV30wAXpcAWopj+gLH6eLmr2s2U6cknMJu5lA==
 Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
  unflattened to FDT
-To: Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org, laurent.pinchart+renesas@ideasonboard.com,
+To: Rob Herring <robh+dt@kernel.org>, Jan Kiszka <jan.kiszka@web.de>
+Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Jailhouse <jailhouse-dev@googlegroups.com>
 References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
  <1520122673-11003-3-git-send-email-frowand.list@gmail.com>
  <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
- <7bbf615b-3cdd-6bb4-6918-33e48de4225d@gmail.com>
-From: Jan Kiszka <jan.kiszka@web.de>
-Openpgp: preference=signencrypt
-Message-ID: <a21dbee8-6e4e-9ceb-c798-dda43c2eae2d@web.de>
-Date: Thu, 5 Apr 2018 21:13:09 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+ <CAL_Jsq+Gu=gwcxJnOF2xybXCh9N2Fp1NV05kuvQ2rif1fdHYrA@mail.gmail.com>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <de44758c-6c40-b951-e235-b2307ae6257e@gmail.com>
+Date: Thu, 5 Apr 2018 12:13:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <7bbf615b-3cdd-6bb4-6918-33e48de4225d@gmail.com>
+In-Reply-To: <CAL_Jsq+Gu=gwcxJnOF2xybXCh9N2Fp1NV05kuvQ2rif1fdHYrA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:5I7KUHipNsaiyYTieuHa0WP9GqMwAaf1ZePrtMnxrat84rAu3mI
- s9Ps6lCf13gQmmbHmXfccZw8fSG3mUvy0exSg1+ghojBGnJ+qf+F5U3iR1L2MqS3yey5qR7
- 0I869FlB/kp7cib/GXBv/dEb673mJo88Ljbvp6tsvf72UOnNn6qIGC1vqro6yyC+xLJp6sZ
- eePJHd+I8taCpn0dq9x0Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:kj6Zi4UTgB4=:Vtm/+FGD1sa6K/GSi8dRNK
- LQaxs32nwienDXtJsReQnAiycFs1OIGI14pk2yqxR2F25rikCA3elEKjyGAhThFObJbkCVnWF
- gAJG5/PN3qJ769S9D4vccsdgRE81NCE89kdfiVVd9zu+uuwK/Qzs9Qno0d9p0Tp5Pir0PI1rv
- ZOs+aLcwI0BMBCAMApT0VPH6m7QQ+jTREwWIzXDTrqOxmiPWPtpWeFVVm5IHKBQCIfHV9/8fV
- oaYUfQ+23x4LBkL6FGOTuFD/mPx4QwXZZSn9rKcGbPGlEh2/keBMDFHxss+1azoxIWYGLvseN
- 64EBFuxk+FJxkWpjPOneHpuyQlH3gnePRJQYGTxa4xLK++PHlyVcatY1cfBb31CN3IgxHuHa0
- kkQIlpopnjS7Jw/n1CQd8go9hPeaEYrsAFo7qBTtCRKM7D5LlX+bcaxB0ZLzI2ROEhGlkBcHv
- 4v9HFGIJ+nNxAUDo29q1w77GB7qELHyTNcXmJZSiJLeJqcT/6KzR6xIVuTjpn+DDmxOenoog7
- QEtvq9iIfgbhM0ie7S4BFZZj9rP4SaO6QOPlA8P3nhjc9wKFe6l0pTl9klGIPxa7yYXpFtLqw
- x1l3SM+Dr75hdVAivYHqenOUdTzCK9bscqumM+PdWFvbraJNCS6gTDS7yQtv59dyq/dqS2XMx
- Chx8NJ1D8z6YtyJYtAKd0BXoN1UrtbSVAE1NiJTrAgU0/OTtWM9Pc4BDLGNEuFoYTCHzUXSUr
- oZeK81pASG3jPomPURB77cO85RH6p1NJw1Mp4wwwPHsUeFRPtcbzsLWgNzoNdwUkFD6LitcNz
- Nu6XZFX8qhi6dH8Mn8ozqwwnHCam5M7O7U2Zf2LvBbP7LDWDttSsIq9neDWWmPZtKErHbF2QM
- gGyzbHWAqUtwN/KWkeeaUOfkL5QF/AgBGo51tm/zDaiQY51YIzm/ahkiCGVTcWQnIhLDhL4z1
- X0zWfp776B27PA3r3tqRSKSa1ufpEgmJbXYMXl/0MielPFgileVIFQlIoJisV26Fe+IyCaoKj
- ww==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-05 20:59, Frank Rowand wrote:
-> Hi Jan,
-> 
-> On 04/04/18 15:35, Jan Kiszka wrote:
+On 04/04/18 17:55, Rob Herring wrote:
+> On Wed, Apr 4, 2018 at 5:35 PM, Jan Kiszka <jan.kiszka@web.de> wrote:
 >> Hi Frank,
 >>
 >> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
@@ -93,29 +74,34 @@ On 2018-04-05 20:59, Frank Rowand wrote:
 >> clear solution. Should we apply the template in disabled form (status =
 >> "disabled"), modify it, and then activate it while it is already applied?
 > 
-> Thank you for the pointer to the driver - that makes it much easier to
-> understand the use case and consider solutions.
+> No. I don't think that will work.
+
+I don't think it will work either.  The drivers won't be probed if the
+nodes are disabled.
+
+
+> The of_overlay_apply() function is still there, but static. We can
+> export it again if the need arises.
+
+I really don't want to export it again.  sigh.
+
+
+> Another option is there is a notifier callback OF_OVERLAY_PRE_APPLY,
+> but I'm not sure we want to make that be the normal interface to make
+> modifications.
+
+This callback is on my list of yet more ways that pointers into the
+(overlay) FDT are exposed.  Which means another solution to the
+underlying problem (which was an FPGA problem) needs to be created.
+I'd prefer that use of this mechanism not be expanded in the mean time.
+
+Even if that were not the case, using the OF_OVERLAY_PRE_APPLY notifier
+to modify the tree is problematic because the notifier(s) is called
+after the overlay FDT is in final form
+
+-Frank
+
 > 
-> If you can make the changes directly on the FDT instead of on the
-> expanded devicetree, then you could move to the new API.
-
-Are there some examples/references on how to edit FDTs in-place in the
-kernel? I'd like to avoid writing the n-th FDT parser/generator.
-
+> Rob
+> .
 > 
-> Looking at the driver, I see one potential issue with that approach.
-> The property "interrupt-map" is added directly to the changeset
-> instead of being an existing property in the overlay.  Is it possible
-> to have this property in the overlay when needed?
-
-Well, the size of that property has a runtime dependency on the gic's
-#address-cells. If that is easy to account for depends a bit on the
-available FDT manipulation services. Or it would take multiple templates
-to handle the different cases (0, 1, or 2 IIRC).
-
-> 
-> I'll also reply to other comments in this thread.
-
-TIA!
-
-Jan
