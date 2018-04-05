@@ -1,84 +1,84 @@
 Return-Path: <gauravdhingra.gxyd@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523010577; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522912652; cv=none;
         d=google.com; s=arc-20160816;
-        b=HF5SPm5C1whxFozVkEldisg4R1CuUzzrNYjc7MvoJisMihBJuc/t6UmUMFK5Da1d78
-         EFLovNHov6Zi1cb5UR9gef5ieiQ/oFShTFcfU348iV5dlUCfaXyfHSnykWYQD4uinCGj
-         GyUbbuhkMOpALWjB7vKbP3OXvm6tyxfj42l+4y/V2Up+CZKBDjfHeSXWJZOE6FQ5U9bT
-         EALyl18Jo6TWwW2YkRzErVKBfQCFS1r9EQ6LvDu3GDwhsktyHehT9Di/W1YoyqbsV68b
-         8YaXsfISWW3Io1R7FKShbOfqZdBbpVU0QPFPbl85qnV65+JvrVX1O3wxrOKvnZSzr1C3
-         oTMQ==
+        b=QLRwYH1UURVJIHRfsyFvsExNUgskX+4jb9cw85uFoaiAa+O96Ng3s23qx8sArCjToE
+         zUEHxiNsp9BJSehLvkLq1EcbuE5Tm+mk9fSsncLhylwLEi/6/Rtf+LkqMybb0Kb2JQ5m
+         Zzh3UCZp/ZobNY0D7OMpmGyRYMUPq09JfGgBCnBnKyKBvVGJuBojbDv6VmkAFOIQ+Y7r
+         5k9vTkB8mA1JfNG4o0qDWbI/ufzpzwjXApgfUjKm2cWnqqcLdAgmUBlfRSQgo/LY2SX5
+         zihZ27lyvWCmds06qS9mgbDyOUClxx0pFzPEmrZhI24OMEGPFo6lRkRevYDc8dmmKCIR
+         qweA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+         :user-agent:date:message-id:references:cc:to:from:subject
          :dkim-signature:arc-authentication-results;
-        bh=iiSgUO67NZ3rc+zJE726TUAss39Nh649lOGPFR+S/18=;
-        b=W5DE6brDVaGtgin9n6aOWW7AFENAuEaGw2R61Bi0W7UWrpZl1R+SXw1BJ6H50k00cH
-         BT9GohtMVQuGZpAte8CIIcqckh3epVpSSv9+5Tufg+042RCP6Pql0F21wl2a0siGw72Q
-         oZr92OR3OgPALIhkTKnWaetf1FzmsGMbZvj9r3sy6CDqTm1sfzFfCl3WIZL++bfor+RU
-         a4AxfteJ26gLRUgnLEoFg73bWPRpOcklEKfeffCkUZDQJtM0JUU/it2vtXGoh0LAda1K
-         XUyldub4eLZRZzIkI9ocAwyukZ2vQZ2rsfi4ku6njCLG3irl3HRdsRjW35ip4eTxT1Qk
-         /d+w==
+        bh=eNaoMGqmbGXwtUpWRqC1+LeiG39FjqllL5PIUyqBmDg=;
+        b=sKnU4GUbpld+O3rlt5Pwrn+eCJ0imnccK6jEDsGsvN6lxrIBR6+dmKUmUZttr+zCAr
+         P8dXUB9+rveGrQjDKLIbZ8KdJahLY1Dp4Dy295PUqlBlMhfV4gyb880l4muJyM4nqmrG
+         4tZArDw2gsJ9uHnZDINzLM498bLUh3RTtCOYnG7V5+16HdhUoqZyk9bMQsFMCRVDg6XH
+         O6saKLkqxDGyW3cxcTl1kHry0JYV8NuHGtOPruEFWd/4tR7JVAO472lkYXyplaoJW8/I
+         5HBBwzIt1pJmSUjO8vY2HBEiCAAH3Z8ayyml2qW2DiNmCTqOmBvgP72mqv9KLJ+evZj2
+         oOEg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=X3jJQzZT;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Fku+MLHU;
        spf=pass (google.com: domain of gauravdhingra.gxyd@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=gauravdhingra.gxyd@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=X3jJQzZT;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Fku+MLHU;
        spf=pass (google.com: domain of gauravdhingra.gxyd@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=gauravdhingra.gxyd@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+CiVmtqMkzPFQqk6dxMb3UZiFiji33vPRAbMwi6WZl92yOu6SQLKf4El7QiySHU7HHC3Xe0A==
+X-Google-Smtp-Source: AIpwx4/Qm72ASDTckoAup1ooZLTNt93Va/TJfY59+Rj8Z6XFiXMycnRC2Fpin7ovA/evxL7Cj7LNww==
 Subject: Re: [PATCH] staging: greybus: Fix warning to limit chars per line
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Mark Greer <mgreer@animalcreek.com>, Johan Hovold <johan@kernel.org>,
- Alex Elder <elder@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180403183246.GA23438@stallman>
- <20180405221941.GA21308@animalcreek.com>
- <CAOh2x==-Ayr40WhMNmABVEjaoFfSwQfyN8SH07mzmZTicLBh-A@mail.gmail.com>
- <4ef1ceb1-395d-753f-1ea2-9affcf682147@gmail.com>
- <20180406102517.GY3572@vireshk-i7> <20180406102638.GZ3572@vireshk-i7>
 From: Gaurav Dhingra <gauravdhingra.gxyd@gmail.com>
-Message-ID: <78ba0852-4437-aa3c-6204-8b03fdb9c42d@gmail.com>
-Date: Fri, 6 Apr 2018 15:59:29 +0530
+To: mgreer@animalcreek.com, johan@kernel.org, elder@kernel.org,
+ gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org
+References: <20180403183246.GA23438@stallman>
+Message-ID: <9c77723c-dc3f-2a86-b7f3-be3b751fdfe2@gmail.com>
+Date: Thu, 5 Apr 2018 12:47:19 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180406102638.GZ3572@vireshk-i7>
+In-Reply-To: <20180403183246.GA23438@stallman>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596750959468280779?=
-X-GMAIL-MSGID: =?utf-8?q?1596992339042597378?=
+X-GMAIL-MSGID: =?utf-8?q?1596889656969410321?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi,
+
+Can anyone please review this patchset? Since this is my first patch 
+set, so I felt it was okay to make change even in the comment, though 
+the patch set fixes the warning. Please let me know in anycase your view 
+on the patchset.
 
 
-On Friday 06 April 2018 03:56 PM, Viresh Kumar wrote:
-> On 06-04-18, 15:55, Viresh Kumar wrote:
->> On 06-04-18, 15:47, Gaurav Dhingra wrote:
->>> I sent in an updated patchset. Though I forgot to add
->>> viresh.kumar@linaro.org to "To" in mail.
->> That's fine, but you still haven't sent it to all the relevant people.
->> You should have used the get_maintainer script (present in kernel
->> source) for that.
->>
->> $ scripts/get_maintainer.pl drivers/staging/greybus/audio_codec.h
->>
->> Vaibhav Agarwal <vaibhav.sr@gmail.com> (maintainer:GREYBUS AUDIO PROTOCOLS DRIVERS)
->> Mark Greer <mgreer@animalcreek.com> (maintainer:GREYBUS AUDIO PROTOCOLS DRIVERS)
->> Johan Hovold <johan@kernel.org> (maintainer:GREYBUS SUBSYSTEM)
->> Alex Elder <elder@kernel.org> (maintainer:GREYBUS SUBSYSTEM)
->> Greg Kroah-Hartman <gregkh@linuxfoundation.org> (maintainer:GREYBUS SUBSYSTEM)
->> greybus-dev@lists.linaro.org (moderated list:GREYBUS SUBSYSTEM)
->> devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
->> linux-kernel@vger.kernel.org (open list)
-> Actually your cc list in V2 is fine, it wasn't correct in v1.
-Yes, I too think it is correct. In v1 I forgot to remove '--nol' from 
-command shown on kernelnewbies/FirstKernelPatch webpage and that removed 
-a few relevant mailing lists.
+On Wednesday 04 April 2018 12:02 AM, Gaurav Dhingra wrote:
+> Wrap comment to fix warning "prefer a maximum 75 chars per line"
+>
+> Signed-off-by: Gaurav Dhingra <gauravdhingra.gxyd@gmail.com>
+> ---
+>   drivers/staging/greybus/audio_codec.h | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/staging/greybus/audio_codec.h b/drivers/staging/greybus/audio_codec.h
+> index a1d5440..01838d9 100644
+> --- a/drivers/staging/greybus/audio_codec.h
+> +++ b/drivers/staging/greybus/audio_codec.h
+> @@ -23,7 +23,9 @@ enum {
+>   	NUM_CODEC_DAIS,
+>   };
+>   
+> -/* device_type should be same as defined in audio.h (Android media layer) */
+> +/* device_type should be same as defined in audio.h
+> + * (Android media layer)
+> + */
+>   enum {
+>   	GBAUDIO_DEVICE_NONE                     = 0x0,
+>   	/* reserved bits */
 
 -- 
 Gaurav Dhingra
