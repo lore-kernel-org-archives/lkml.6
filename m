@@ -1,55 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751392AbeDEOeA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:34:00 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:58028 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDEOd5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:33:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 5A920332E4A
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        id S1751437AbeDEOeQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:34:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44882 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751179AbeDEOeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 10:34:14 -0400
+Date: Thu, 5 Apr 2018 16:34:12 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v4 2/9] vsprintf: Consistent %pK handling for
+ kptr_restrict == 0
+Message-ID: <20180405143412.xuict2cdttr7dzh4@pathway.suse.cz>
+References: <20180404085843.16050-1-pmladek@suse.com>
+ <20180404085843.16050-3-pmladek@suse.com>
+ <20180404231014.GA622@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Thu, 05 Apr 2018 16:33:56 +0200
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Kees Cook <keescook@chromium.org>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        keescook@google.com
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-In-Reply-To: <dee9721a530576e667881d86bbec351b@natalenko.name>
-References: <10360653.ov98egbaqx@natalenko.name>
- <CAGXu5jLwyot++C2EXs+032Lz5WdG65GsEJ-Q55rfhSbkG1Nh+A@mail.gmail.com>
- <3265889.eu5sbW8aRz@natalenko.name>
- <CAGXu5jL++CEmLzFtGMVMhGWBzHpsRNJPTsEoc7Pw1dP--=azCA@mail.gmail.com>
- <7fc01f67a561ce1fad676fc34c2249e7@natalenko.name>
- <CAGXu5jKhiE512yQXp90M+Wie=8RkpMZT-Yi_9BgjfKwibP433g@mail.gmail.com>
- <dee9721a530576e667881d86bbec351b@natalenko.name>
-Message-ID: <08e06234c81fac30ccff5a2695d02f2a@natalenko.name>
-User-Agent: Roundcube Webmail/1.3.5
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1522938836;
-        h=from:sender:reply-to:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:in-reply-to:references:list-id:list-owner:list-unsubscribe:list-subscribe:list-post;
-        bh=sybOaK8dzS2YbGCYCWW0KrY4eYOUWwQYzH6xQZL1ot4=;
-        b=WPYATbTS5gDgichk4knn3zu3FWdxINRZQeJIjln1XxGKX6Gsr+HSinW+giSHx6iDtkZc+G
-        UahyDr1T40EUCi31ZL/V4Vr/FFe/GFq/FTPRVVQoTjss67pifjA0xA4HhG7TDyYXYq0Hzp
-        Kkz6beiNA2G10FqnKuvtnXiBxMtQoTY=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1522938836; a=rsa-sha256;
-        cv=none;
-        b=WGt5BtLTLNcnaFWCb0m/X5U3BglIsAaUvcuXY85bot6DkWIjJ7a3QfPH/Q4gzoEioMRatBQEL0nLeZhXnuLOyZRy1MrcV5XxPkbpW0T2GcnDGmd1+PyRL+dOKTjpYM3ewSetk928bYD/6dhvdWJU6lHloUkuZ3J00DY9Jta/ZeM=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180404231014.GA622@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-05.04.2018 16:32, Oleksandr Natalenko wrote:
-> "-hda sda.img -hdb sda.img"
+On Thu 2018-04-05 08:10:14, Sergey Senozhatsky wrote:
+> On (04/04/18 10:58), Petr Mladek wrote:
+> >
+> > restricted_pointer() pretends that it prints the address when kptr_restrict
+> > is set to zero. But it is never called in this situation. Instead,
+> > pointer() falls back to ptr_to_id() and hashes the pointer.
+> > 
+> > This patch removes the potential confusion. klp_restrict is checked only
+> > in restricted_pointer().
+> > 
+> > It should actually fix a small race when the address might get printed
+> > unhashed:
+> 
+> Early morning, didn't have my coffee yet [like really didn't].
+> 
+> But I don't see how you "fix" a race. "echo 0" might still be called
+> later than switch().
 
-"-hda sda.img -hdb sdb.img", of course, I don't pass the same disk twice 
-☺
+I assume that switch() is safe enough and we always have to take one
+path there. The old code allowed to print the original pointer without
+the capability check (case 0). The new code does:
+
+    case 0: print hashed pointer
+    case 1: keep original pointer only with sufficient privileges
+    case 2:
+    default: set NULL
+
+The old code expected that it would never use case 0. But it was
+possible because of the race.
+
+
+> [..]
+> > @@ -1426,8 +1427,8 @@ char *restricted_pointer(char *buf, char *end, const void *ptr,
+> >  
+> >  	switch (kptr_restrict) {
+> >  	case 0:
+> > -		/* Always print %pK values */
+> > -		break;
+> > +		/* Handle as %p, hash and do _not_ leak addresses. */
+> > +		return ptr_to_id(buf, end, ptr, spec);
+> 
+> >From "Always print pK values" to "Always print hashed values"... Do we need
+> %pK then? You probably need to update printk-formats.rst as well.
+
+It is already correctly documented in Documentation/sysctl/kernel.txt.
+printk-formats.rst uses reference to it.
+
+Best Regards,
+Petr
