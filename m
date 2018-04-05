@@ -1,64 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751404AbeDENEv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:04:51 -0400
-Received: from mga06.intel.com ([134.134.136.31]:46375 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751251AbeDENEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:04:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,411,1517904000";
-   d="scan'208";a="214161521"
-Message-ID: <1522933485.21176.353.camel@linux.intel.com>
-Subject: Re: [PATCH v4 2/9] vsprintf: Consistent %pK handling for
- kptr_restrict == 0
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Date: Thu, 05 Apr 2018 16:04:45 +0300
-In-Reply-To: <20180404085843.16050-3-pmladek@suse.com>
-References: <20180404085843.16050-1-pmladek@suse.com>
-         <20180404085843.16050-3-pmladek@suse.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
+        id S1751503AbeDENJY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:09:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38270 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751326AbeDENJV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 09:09:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7823460850
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: arnd@arndb.de, timur@codeaurora.org, sulrich@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 2/5] io: define stronger ordering for the default readX() implementation
+Date: Thu,  5 Apr 2018 09:09:10 -0400
+Message-Id: <1522933753-19589-2-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522933753-19589-1-git-send-email-okaya@codeaurora.org>
+References: <1522933753-19589-1-git-send-email-okaya@codeaurora.org>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-04-04 at 10:58 +0200, Petr Mladek wrote:
-> restricted_pointer() pretends that it prints the address when
-> kptr_restrict
-> is set to zero. But it is never called in this situation. Instead,
-> pointer() falls back to ptr_to_id() and hashes the pointer.
-> 
-> This patch removes the potential confusion. klp_restrict is checked
-> only
-> in restricted_pointer().
-> 
+The default implementation of mapping readX() to __raw_readX() is wrong.
+readX() has stronger ordering semantics. Compiler is allowed to reorder
+__raw_readX() against the memory accesses following register read.
 
+Use the previously defined __io_ar() and __io_br() macros to harden
+code generation according to architecture support.
 
->  /* Maps a pointer to a 32 bit unique identifier. */
-> -static char *ptr_to_id(char *buf, char *end, void *ptr, struct
-> printf_spec spec)
-> +static char *ptr_to_id(char *buf, char *end,
-> +		       const void *ptr, struct printf_spec spec)
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+---
+ include/asm-generic/io.h | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
-I don't think this change belongs to the patch.
-
-
+diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
+index 570433b..d27e8af 100644
+--- a/include/asm-generic/io.h
++++ b/include/asm-generic/io.h
+@@ -154,7 +154,12 @@ static inline void __raw_writeq(u64 value, volatile void __iomem *addr)
+ #define readb readb
+ static inline u8 readb(const volatile void __iomem *addr)
+ {
+-	return __raw_readb(addr);
++	u8 val;
++
++	__io_br();
++	val = __raw_readb(addr);
++	__io_ar();
++	return val;
+ }
+ #endif
+ 
+@@ -162,7 +167,12 @@ static inline u8 readb(const volatile void __iomem *addr)
+ #define readw readw
+ static inline u16 readw(const volatile void __iomem *addr)
+ {
+-	return __le16_to_cpu(__raw_readw(addr));
++	u16 val;
++
++	__io_br();
++	val = __le16_to_cpu(__raw_readw(addr));
++	__io_ar();
++	return val;
+ }
+ #endif
+ 
+@@ -170,7 +180,12 @@ static inline u16 readw(const volatile void __iomem *addr)
+ #define readl readl
+ static inline u32 readl(const volatile void __iomem *addr)
+ {
+-	return __le32_to_cpu(__raw_readl(addr));
++	u32 val;
++
++	__io_br();
++	val = __le32_to_cpu(__raw_readl(addr));
++	__io_ar();
++	return val;
+ }
+ #endif
+ 
+@@ -179,7 +194,12 @@ static inline u32 readl(const volatile void __iomem *addr)
+ #define readq readq
+ static inline u64 readq(const volatile void __iomem *addr)
+ {
+-	return __le64_to_cpu(__raw_readq(addr));
++	u64 val;
++
++	__io_br();
++	val = __le64_to_cpu(__raw_readq(addr));
++	__io_ar();
++	return val;
+ }
+ #endif
+ #endif /* CONFIG_64BIT */
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.7.4
