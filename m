@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751643AbeDERAb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 13:00:31 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57368 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751389AbeDEQ64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 12:58:56 -0400
+        id S1752080AbeDERAr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 13:00:47 -0400
+Received: from foss.arm.com ([217.140.101.70]:57316 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750786AbeDEQ6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 12:58:55 -0400
 From: Will Deacon <will.deacon@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, peterz@infradead.org,
         mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
         catalin.marinas@arm.com, Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 06/10] barriers: Introduce smp_cond_load_relaxed and atomic_cond_read_relaxed
-Date: Thu,  5 Apr 2018 17:59:03 +0100
-Message-Id: <1522947547-24081-7-git-send-email-will.deacon@arm.com>
+Subject: [PATCH 02/10] locking/qspinlock: Remove unbounded cmpxchg loop from locking slowpath
+Date: Thu,  5 Apr 2018 17:58:59 +0100
+Message-Id: <1522947547-24081-3-git-send-email-will.deacon@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
 References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
@@ -21,94 +21,163 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Whilst we currently provide smp_cond_load_acquire and
-atomic_cond_read_acquire, there are cases where the ACQUIRE semantics are
-not required because of a subsequent fence or release operation once the
-conditional loop has exited.
+The qspinlock locking slowpath utilises a "pending" bit as a simple form
+of an embedded test-and-set lock that can avoid the overhead of explicit
+queuing in cases where the lock is held but uncontended. This bit is
+managed using a cmpxchg loop which tries to transition the uncontended
+lock word from (0,0,0) -> (0,0,1) or (0,0,1) -> (0,1,1).
 
-This patch adds relaxed versions of the conditional spinning primitives
-to avoid unnecessary barrier overhead on architectures such as arm64.
+Unfortunately, the cmpxchg loop is unbounded and lockers can be starved
+indefinitely if the lock word is seen to oscillate between unlocked
+(0,0,0) and locked (0,0,1). This could happen if concurrent lockers are
+able to take the lock in the cmpxchg loop without queuing and pass it
+around amongst themselves.
 
+This patch fixes the problem by unconditionally setting _Q_PENDING_VAL
+using atomic_fetch_or, and then inspecting the old value to see whether
+we need to spin on the current lock owner, or whether we now effectively
+hold the lock. The tricky scenario is when concurrent lockers end up
+queuing on the lock and the lock becomes available, causing us to see
+a lockword of (n,0,0). With pending now set, simply queuing could lead
+to deadlock as the head of the queue may not have observed the pending
+flag being cleared. Conversely, if the head of the queue did observe
+pending being cleared, then it could transition the lock from (n,0,0) ->
+(0,0,1) meaning that any attempt to "undo" our setting of the pending
+bit could race with a concurrent locker trying to set it.
+
+We handle this race by preserving the pending bit when taking the lock
+after reaching the head of the queue and leaving the tail entry intact
+if we saw pending set, because we know that the tail is going to be
+updated shortly.
+
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- include/asm-generic/barrier.h | 27 +++++++++++++++++++++------
- include/linux/atomic.h        |  2 ++
- 2 files changed, 23 insertions(+), 6 deletions(-)
+ kernel/locking/qspinlock.c | 80 ++++++++++++++++++++--------------------------
+ 1 file changed, 35 insertions(+), 45 deletions(-)
 
-diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
-index fe297b599b0a..305e03b19a26 100644
---- a/include/asm-generic/barrier.h
-+++ b/include/asm-generic/barrier.h
-@@ -221,18 +221,17 @@ do {									\
- #endif
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index a192af2fe378..b75361d23ea5 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -294,7 +294,7 @@ static __always_inline u32  __pv_wait_head_or_lock(struct qspinlock *lock,
+ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ {
+ 	struct mcs_spinlock *prev, *next, *node;
+-	u32 new, old, tail;
++	u32 old, tail;
+ 	int idx;
  
- /**
-- * smp_cond_load_acquire() - (Spin) wait for cond with ACQUIRE ordering
-+ * smp_cond_load_relaxed() - (Spin) wait for cond with no ordering guarantees
-  * @ptr: pointer to the variable to wait on
-  * @cond: boolean expression to wait for
-  *
-- * Equivalent to using smp_load_acquire() on the condition variable but employs
-- * the control dependency of the wait to reduce the barrier on many platforms.
-+ * Equivalent to using READ_ONCE() on the condition variable.
-  *
-  * Due to C lacking lambda expressions we load the value of *ptr into a
-  * pre-named variable @VAL to be used in @cond.
-  */
--#ifndef smp_cond_load_acquire
--#define smp_cond_load_acquire(ptr, cond_expr) ({		\
-+#ifndef smp_cond_load_relaxed
-+#define smp_cond_load_relaxed(ptr, cond_expr) ({		\
- 	typeof(ptr) __PTR = (ptr);				\
- 	typeof(*ptr) VAL;					\
- 	for (;;) {						\
-@@ -241,10 +240,26 @@ do {									\
- 			break;					\
- 		cpu_relax();					\
- 	}							\
--	smp_acquire__after_ctrl_dep();				\
- 	VAL;							\
- })
- #endif
+ 	BUILD_BUG_ON(CONFIG_NR_CPUS >= (1U << _Q_TAIL_CPU_BITS));
+@@ -306,58 +306,48 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 		return;
  
-+/**
-+ * smp_cond_load_acquire() - (Spin) wait for cond with ACQUIRE ordering
-+ * @ptr: pointer to the variable to wait on
-+ * @cond: boolean expression to wait for
-+ *
-+ * Equivalent to using smp_load_acquire() on the condition variable but employs
-+ * the control dependency of the wait to reduce the barrier on many platforms.
-+ */
-+#ifndef smp_cond_load_acquire
-+#define smp_cond_load_acquire(ptr, cond_expr) ({		\
-+	typeof(*ptr) _val;					\
-+	_val = smp_cond_load_relaxed(ptr, cond_expr);		\
-+	smp_acquire__after_ctrl_dep();				\
-+	_val;							\
-+})
-+#endif
+ 	/*
++	 * If we observe any contention; queue.
++	 */
++	if (val & ~_Q_LOCKED_MASK)
++		goto queue;
 +
- #endif /* !__ASSEMBLY__ */
- #endif /* __ASM_GENERIC_BARRIER_H */
-diff --git a/include/linux/atomic.h b/include/linux/atomic.h
-index 8b276fd9a127..01ce3997cb42 100644
---- a/include/linux/atomic.h
-+++ b/include/linux/atomic.h
-@@ -654,6 +654,7 @@ static inline int atomic_dec_if_positive(atomic_t *v)
- }
- #endif
++	/*
+ 	 * trylock || pending
+ 	 *
+ 	 * 0,0,0 -> 0,0,1 ; trylock
+ 	 * 0,0,1 -> 0,1,1 ; pending
+ 	 */
+-	for (;;) {
++	val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
++	if (!(val & ~_Q_LOCKED_MASK)) {
+ 		/*
+-		 * If we observe any contention; queue.
++		 * we're pending, wait for the owner to go away.
++		 *
++		 * *,1,1 -> *,1,0
++		 *
++		 * this wait loop must be a load-acquire such that we match the
++		 * store-release that clears the locked bit and create lock
++		 * sequentiality; this is because not all
++		 * clear_pending_set_locked() implementations imply full
++		 * barriers.
+ 		 */
+-		if (val & ~_Q_LOCKED_MASK)
+-			goto queue;
+-
+-		new = _Q_LOCKED_VAL;
+-		if (val == new)
+-			new |= _Q_PENDING_VAL;
+-
++		if (val & _Q_LOCKED_MASK)
++			smp_cond_load_acquire(&lock->val.counter,
++					      !(VAL & _Q_LOCKED_MASK));
+ 		/*
+-		 * Acquire semantic is required here as the function may
+-		 * return immediately if the lock was free.
++		 * take ownership and clear the pending bit.
++		 *
++		 * *,1,0 -> *,0,1
+ 		 */
+-		old = atomic_cmpxchg_acquire(&lock->val, val, new);
+-		if (old == val)
+-			break;
+-
+-		val = old;
+-	}
+-
+-	/*
+-	 * we won the trylock
+-	 */
+-	if (new == _Q_LOCKED_VAL)
++		clear_pending_set_locked(lock);
+ 		return;
++	}
  
-+#define atomic_cond_read_relaxed(v, c)	smp_cond_load_relaxed(&(v)->counter, (c))
- #define atomic_cond_read_acquire(v, c)	smp_cond_load_acquire(&(v)->counter, (c))
+ 	/*
+-	 * we're pending, wait for the owner to go away.
+-	 *
+-	 * *,1,1 -> *,1,0
+-	 *
+-	 * this wait loop must be a load-acquire such that we match the
+-	 * store-release that clears the locked bit and create lock
+-	 * sequentiality; this is because not all clear_pending_set_locked()
+-	 * implementations imply full barriers.
+-	 */
+-	smp_cond_load_acquire(&lock->val.counter, !(VAL & _Q_LOCKED_MASK));
+-
+-	/*
+-	 * take ownership and clear the pending bit.
+-	 *
+-	 * *,1,0 -> *,0,1
++	 * If pending was clear but there are waiters in the queue, then
++	 * we need to undo our setting of pending before we queue ourselves.
+ 	 */
+-	clear_pending_set_locked(lock);
+-	return;
++	if (!(val & _Q_PENDING_MASK))
++		atomic_andnot(_Q_PENDING_VAL, &lock->val);
  
- #ifdef CONFIG_GENERIC_ATOMIC64
-@@ -1075,6 +1076,7 @@ static inline long long atomic64_fetch_andnot_release(long long i, atomic64_t *v
- }
- #endif
- 
-+#define atomic64_cond_read_relaxed(v, c)	smp_cond_load_relaxed(&(v)->counter, (c))
- #define atomic64_cond_read_acquire(v, c)	smp_cond_load_acquire(&(v)->counter, (c))
- 
- #include <asm-generic/atomic-long.h>
+ 	/*
+ 	 * End of pending bit optimistic spinning and beginning of MCS
+@@ -461,15 +451,15 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 	 * claim the lock:
+ 	 *
+ 	 * n,0,0 -> 0,0,1 : lock, uncontended
+-	 * *,0,0 -> *,0,1 : lock, contended
++	 * *,*,0 -> *,*,1 : lock, contended
+ 	 *
+-	 * If the queue head is the only one in the queue (lock value == tail),
+-	 * clear the tail code and grab the lock. Otherwise, we only need
+-	 * to grab the lock.
++	 * If the queue head is the only one in the queue (lock value == tail)
++	 * and nobody is pending, clear the tail code and grab the lock.
++	 * Otherwise, we only need to grab the lock.
+ 	 */
+ 	for (;;) {
+ 		/* In the PV case we might already have _Q_LOCKED_VAL set */
+-		if ((val & _Q_TAIL_MASK) != tail) {
++		if ((val & _Q_TAIL_MASK) != tail || (val & _Q_PENDING_MASK)) {
+ 			set_locked(lock);
+ 			break;
+ 		}
 -- 
 2.1.4
