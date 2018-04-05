@@ -1,296 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751442AbeDEMXy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 08:23:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50539 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751038AbeDEMXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 08:23:42 -0400
-From: Petr Mladek <pmladek@suse.com>
-To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v2 2/2] livepatch: Allow to call a custom callback when freeing shadow variables
-Date: Thu,  5 Apr 2018 14:23:15 +0200
-Message-Id: <20180405122315.29065-3-pmladek@suse.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180405122315.29065-1-pmladek@suse.com>
-References: <20180405122315.29065-1-pmladek@suse.com>
+        id S1751406AbeDEMZH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 08:25:07 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49117 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbeDEMZF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 08:25:05 -0400
+Date: Thu, 5 Apr 2018 14:25:03 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, jikos@suse.cz
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: update-binfmts breaking suspend was Re: x32 suspend failuer in Re:
+ linux-next: Tree for Apr 4
+Message-ID: <20180405122503.GA28446@amd>
+References: <20180404165559.4cd0c12c@canb.auug.org.au>
+ <20180404075047.GB9342@amd>
+ <CAJZ5v0hxyXtyKacJufivL9HWbQBsxTBYVipnHK4+QquTYjpc+A@mail.gmail.com>
+ <20180404084905.GA12303@amd>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Content-Disposition: inline
+In-Reply-To: <20180404084905.GA12303@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We might need to do some actions before the shadow variable is freed.
-For example, we might need to remove it from a list or free some data
-that it points to.
 
-This is already possible now. The user can get the shadow variable
-by klp_shadow_get(), do the necessary actions, and then call
-klp_shadow_free().
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch allows to do it a more elegant way. The user could implement
-the needed actions in a callback that is passed to klp_shadow_free()
-as a parameter. The callback usually does reverse operations to
-the constructor callback that can be called by klp_shadow_*alloc().
+On Wed 2018-04-04 10:49:05, Pavel Machek wrote:
+> On Wed 2018-04-04 09:58:17, Rafael J. Wysocki wrote:
+> > On Wed, Apr 4, 2018 at 9:50 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> > > Hi!
+> > >
+> > >> Please do not add any v4.18 destined stuff to your linux-next includ=
+ed
+> > >> trees until after v4.17-rc1 has been released.
+> > >
+> > > On thinkpad x60, suspend does not suspend at all with this -next
+> > > version. Previous versions suspended/resumed fine but broke networkin=
+g.
+> > >
+> > > Any ideas? I guess bisecting on next would not be easy?
+> >=20
+> > Well, why would it be different from a bisect on any other git repo?
+>=20
+> Well, v4.16-rc4 is parent of v4.16-rc6, but next-20180304 is not
+> parent of next-20180307.
+>=20
+> But you are right that if I do bisect between -linus and -next, it
+> should work.
+>=20
+> Anyway, does s2ram work for you in -next? Are you testing 32bit?
 
-It is especially useful for klp_shadow_free_all(). There we need to do
-these extra actions for each found shadow variable with the given ID.
+Hmm. I tested on T40p. That works ok, so at least some 32bit machines
+do work.
 
-Note that the memory used by the shadow variable itself is still released
-later by rcu callback. It is needed to protect internal structures that
-keep all shadow variables. But the destructor is called immediately.
-The shadow variable must not be access anyway after klp_shadow_free()
-is called. The user is responsible to protect this any suitable way.
+Hmm, and my test scripts were wrong.
 
-Be aware that the destructor is called under klp_shadow_lock. It is
-the same as for the contructor in klp_shadow_alloc().
+Failure is not a hang, as they expect, but... machine locks up, but
+does not suspend, and then continues running after a delay..
 
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- Documentation/livepatch/shadow-vars.txt   | 10 +++++++---
- include/linux/livepatch.h                 |  5 +++--
- kernel/livepatch/shadow.c                 | 26 ++++++++++++++++++--------
- samples/livepatch/livepatch-shadow-fix1.c | 25 +++++++++++++++----------
- samples/livepatch/livepatch-shadow-fix2.c | 27 ++++++++++++++++-----------
- 5 files changed, 59 insertions(+), 34 deletions(-)
+[   35.038766] PM: Syncing filesystems ... done.
+[   35.051246] Freezing user space processes ...
+[   55.060528] Freezing of tasks failed after 20.009 seconds (1 tasks
+refusing to freeze, wq_busy
+=3D0):
+[   55.060552] update-binfmts  D    0  2727      1 0x80000004
+[   55.060576] Call Trace:
+[   55.060600]  __schedule+0x37a/0x7e0
+[   55.060618]  schedule+0x29/0x70
+[   55.060635]  autofs4_wait+0x359/0x7a0
+[   55.060653]  ? wait_woken+0x70/0x70
+[   55.060668]  autofs4_mount_wait+0x4a/0xe0
+[   55.060684]  ? autofs4_mount_wait+0x4a/0xe0
+[   55.060699]  autofs4_d_automount+0xe0/0x200
+[   55.060715]  ? autofs4_d_automount+0xe0/0x200
 
-diff --git a/Documentation/livepatch/shadow-vars.txt b/Documentation/livepatch/shadow-vars.txt
-index 9c7ae191641c..ecc09a7be5dd 100644
---- a/Documentation/livepatch/shadow-vars.txt
-+++ b/Documentation/livepatch/shadow-vars.txt
-@@ -65,11 +65,15 @@ to do actions that can be done only once when a new variable is allocated.
- 
- * klp_shadow_free() - detach and free a <obj, id> shadow variable
-   - find and remove a <obj, id> reference from global hashtable
--    - if found, free shadow variable
-+    - if found
-+      - call destructor function if defined
-+      - free shadow variable
- 
- * klp_shadow_free_all() - detach and free all <*, id> shadow variables
-   - find and remove any <*, id> references from global hashtable
--    - if found, free shadow variable
-+    - if found
-+      - call destructor function if defined
-+      - free shadow variable
- 
- 
- 2. Use cases
-@@ -136,7 +140,7 @@ variable:
- 
- void sta_info_free(struct ieee80211_local *local, struct sta_info *sta)
- {
--	klp_shadow_free(sta, PS_LOCK);
-+	klp_shadow_free(sta, PS_LOCK, NULL);
- 	kfree(sta);
- 	...
- 
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 7e084321b146..aec44b1d9582 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -189,6 +189,7 @@ static inline bool klp_have_reliable_stack(void)
- typedef int (*klp_shadow_ctor_t)(void *obj,
- 				 void *shadow_data,
- 				 void *ctor_data);
-+typedef void (*klp_shadow_dtor_t)(void *obj, void *shadow_data);
- 
- void *klp_shadow_get(void *obj, unsigned long id);
- void *klp_shadow_alloc(void *obj, unsigned long id,
-@@ -197,8 +198,8 @@ void *klp_shadow_alloc(void *obj, unsigned long id,
- void *klp_shadow_get_or_alloc(void *obj, unsigned long id,
- 			      size_t size, gfp_t gfp_flags,
- 			      klp_shadow_ctor_t ctor, void *ctor_data);
--void klp_shadow_free(void *obj, unsigned long id);
--void klp_shadow_free_all(unsigned long id);
-+void klp_shadow_free(void *obj, unsigned long id, klp_shadow_dtor_t dtor);
-+void klp_shadow_free_all(unsigned long id, klp_shadow_dtor_t dtor);
- 
- #else /* !CONFIG_LIVEPATCH */
- 
-diff --git a/kernel/livepatch/shadow.c b/kernel/livepatch/shadow.c
-index 0be07dd7a15a..5dd720d97a7e 100644
---- a/kernel/livepatch/shadow.c
-+++ b/kernel/livepatch/shadow.c
-@@ -244,15 +244,26 @@ void *klp_shadow_get_or_alloc(void *obj, unsigned long id,
- }
- EXPORT_SYMBOL_GPL(klp_shadow_get_or_alloc);
- 
-+static void klp_shadow_free_struct(struct klp_shadow *shadow,
-+				   klp_shadow_dtor_t dtor)
-+{
-+	hash_del_rcu(&shadow->node);
-+	if (dtor)
-+		dtor(shadow->obj, shadow->data);
-+	kfree_rcu(shadow, rcu_head);
-+}
-+
- /**
-  * klp_shadow_free() - detach and free a <obj, id> shadow variable
-  * @obj:	pointer to parent object
-  * @id:		data identifier
-+ * @dtor:	custom callback that can be used to unregister the variable
-+ *		and/or free data that the shadow variable points to (optional)
-  *
-  * This function releases the memory for this <obj, id> shadow variable
-  * instance, callers should stop referencing it accordingly.
-  */
--void klp_shadow_free(void *obj, unsigned long id)
-+void klp_shadow_free(void *obj, unsigned long id, klp_shadow_dtor_t dtor)
- {
- 	struct klp_shadow *shadow;
- 	unsigned long flags;
-@@ -264,8 +275,7 @@ void klp_shadow_free(void *obj, unsigned long id)
- 			       (unsigned long)obj) {
- 
- 		if (klp_shadow_match(shadow, obj, id)) {
--			hash_del_rcu(&shadow->node);
--			kfree_rcu(shadow, rcu_head);
-+			klp_shadow_free_struct(shadow, dtor);
- 			break;
- 		}
- 	}
-@@ -277,11 +287,13 @@ EXPORT_SYMBOL_GPL(klp_shadow_free);
- /**
-  * klp_shadow_free_all() - detach and free all <*, id> shadow variables
-  * @id:		data identifier
-+ * @dtor:	custom callback that can be used to unregister the variable
-+ *		and/or free data that the shadow variable points to (optional)
-  *
-  * This function releases the memory for all <*, id> shadow variable
-  * instances, callers should stop referencing them accordingly.
-  */
--void klp_shadow_free_all(unsigned long id)
-+void klp_shadow_free_all(unsigned long id, klp_shadow_dtor_t dtor)
- {
- 	struct klp_shadow *shadow;
- 	unsigned long flags;
-@@ -291,10 +303,8 @@ void klp_shadow_free_all(unsigned long id)
- 
- 	/* Delete all <*, id> from hash */
- 	hash_for_each(klp_shadow_hash, i, shadow, node) {
--		if (klp_shadow_match(shadow, shadow->obj, id)) {
--			hash_del_rcu(&shadow->node);
--			kfree_rcu(shadow, rcu_head);
--		}
-+		if (klp_shadow_match(shadow, shadow->obj, id))
-+			klp_shadow_free_struct(shadow, dtor);
- 	}
- 
- 	spin_unlock_irqrestore(&klp_shadow_lock, flags);
-diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
-index 04151c7f2631..49b13553eaae 100644
---- a/samples/livepatch/livepatch-shadow-fix1.c
-+++ b/samples/livepatch/livepatch-shadow-fix1.c
-@@ -98,9 +98,19 @@ struct dummy *livepatch_fix1_dummy_alloc(void)
- 	return d;
- }
- 
-+static void livepatch_fix1_dummy_leak_dtor(void *obj, void *shadow_data)
-+{
-+	void *d = obj;
-+	void **shadow_leak = shadow_data;
-+
-+	kfree(*shadow_leak);
-+	pr_info("%s: dummy @ %p, prevented leak @ %p\n",
-+			 __func__, d, *shadow_leak);
-+}
-+
- void livepatch_fix1_dummy_free(struct dummy *d)
- {
--	void **shadow_leak, *leak;
-+	void **shadow_leak;
- 
- 	/*
- 	 * Patch: fetch the saved SV_LEAK shadow variable, detach and
-@@ -109,15 +119,10 @@ void livepatch_fix1_dummy_free(struct dummy *d)
- 	 * was loaded.)
- 	 */
- 	shadow_leak = klp_shadow_get(d, SV_LEAK);
--	if (shadow_leak) {
--		leak = *shadow_leak;
--		klp_shadow_free(d, SV_LEAK);
--		kfree(leak);
--		pr_info("%s: dummy @ %p, prevented leak @ %p\n",
--			 __func__, d, leak);
--	} else {
-+	if (shadow_leak)
-+		klp_shadow_free(d, SV_LEAK, livepatch_fix1_dummy_leak_dtor);
-+	else
- 		pr_info("%s: dummy @ %p leaked!\n", __func__, d);
--	}
- 
- 	kfree(d);
- }
-@@ -163,7 +168,7 @@ static int livepatch_shadow_fix1_init(void)
- static void livepatch_shadow_fix1_exit(void)
- {
- 	/* Cleanup any existing SV_LEAK shadow variables */
--	klp_shadow_free_all(SV_LEAK);
-+	klp_shadow_free_all(SV_LEAK, livepatch_fix1_dummy_leak_dtor);
- 
- 	WARN_ON(klp_unregister_patch(&patch));
- }
-diff --git a/samples/livepatch/livepatch-shadow-fix2.c b/samples/livepatch/livepatch-shadow-fix2.c
-index d6c62844dc15..b34c7bf83356 100644
---- a/samples/livepatch/livepatch-shadow-fix2.c
-+++ b/samples/livepatch/livepatch-shadow-fix2.c
-@@ -68,22 +68,27 @@ bool livepatch_fix2_dummy_check(struct dummy *d, unsigned long jiffies)
- 	return time_after(jiffies, d->jiffies_expire);
- }
- 
-+static void livepatch_fix2_dummy_leak_dtor(void *obj, void *shadow_data)
-+{
-+	void *d = obj;
-+	void **shadow_leak = shadow_data;
-+
-+	kfree(*shadow_leak);
-+	pr_info("%s: dummy @ %p, prevented leak @ %p\n",
-+			 __func__, d, *shadow_leak);
-+}
-+
- void livepatch_fix2_dummy_free(struct dummy *d)
- {
--	void **shadow_leak, *leak;
-+	void **shadow_leak;
- 	int *shadow_count;
- 
- 	/* Patch: copy the memory leak patch from the fix1 module. */
- 	shadow_leak = klp_shadow_get(d, SV_LEAK);
--	if (shadow_leak) {
--		leak = *shadow_leak;
--		klp_shadow_free(d, SV_LEAK);
--		kfree(leak);
--		pr_info("%s: dummy @ %p, prevented leak @ %p\n",
--			 __func__, d, leak);
--	} else {
-+	if (shadow_leak)
-+		klp_shadow_free(d, SV_LEAK, livepatch_fix2_dummy_leak_dtor);
-+	else
- 		pr_info("%s: dummy @ %p leaked!\n", __func__, d);
--	}
- 
- 	/*
- 	 * Patch: fetch the SV_COUNTER shadow variable and display
-@@ -93,7 +98,7 @@ void livepatch_fix2_dummy_free(struct dummy *d)
- 	if (shadow_count) {
- 		pr_info("%s: dummy @ %p, check counter = %d\n",
- 			__func__, d, *shadow_count);
--		klp_shadow_free(d, SV_COUNTER);
-+		klp_shadow_free(d, SV_COUNTER, NULL);
- 	}
- 
- 	kfree(d);
-@@ -140,7 +145,7 @@ static int livepatch_shadow_fix2_init(void)
- static void livepatch_shadow_fix2_exit(void)
- {
- 	/* Cleanup any existing SV_COUNTER shadow variables */
--	klp_shadow_free_all(SV_COUNTER);
-+	klp_shadow_free_all(SV_COUNTER, NULL);
- 
- 	WARN_ON(klp_unregister_patch(&patch));
- }
--- 
-2.13.6
+Did the rework of freezing start already in -next?
+
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrGFZ8ACgkQMOfwapXb+vKK4gCfQnOJ7D75mhKz386tUxywi8i8
+lyMAnjnHozobvose7s62mzpom1kG6+mn
+=DPRS
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
