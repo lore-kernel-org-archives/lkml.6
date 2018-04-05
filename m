@@ -1,62 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751247AbeDEHAM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 03:00:12 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:39489 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750853AbeDEHAK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 03:00:10 -0400
-X-Google-Smtp-Source: AIpwx48rG6RIAZ9vSvbmYtHra/SRabXGZiuWU0Wv+M5OHBmGH3/l2ZbSlDwJf+OMJMzJcbMcAoR1tf+b0utnLKwVGbM=
+        id S1751312AbeDEHB6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 03:01:58 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:58166 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751233AbeDEHBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 03:01:54 -0400
+Date: Thu, 05 Apr 2018 09:01:44 +0200
+Message-ID: <20180405090144.Horde.MbhP02FnROsZKa5LclAqgA6@messagerie.si.c-s.fr>
+From: LEROY Christophe <christophe.leroy@c-s.fr>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Mathieu Malaterre <malat@debian.org>
+Subject: Re: [PATCH v2 03/19] powerpc: Mark variables as unused
+References: <20180322202007.23088-4-malat@debian.org>
+ <20180328193307.978-1-malat@debian.org>
+ <20180329181422.Horde.4gvIQbpSZkuyC4Yzg06PKw2@messagerie.si.c-s.fr>
+ <87fu4atct4.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87fu4atct4.fsf@concordia.ellerman.id.au>
+User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
+Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-In-Reply-To: <1522886301-25955-1-git-send-email-okaya@codeaurora.org>
-References: <1522886301-25955-1-git-send-email-okaya@codeaurora.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 5 Apr 2018 09:00:08 +0200
-X-Google-Sender-Auth: Yc1Eb7_VDfGhebMhMa8dsAvK6Wc
-Message-ID: <CAK8P3a0Noun+8AaRUcMdOX09KXxFXZxfcyUgJnezPkS2gVkg6w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] io: define several IO & PIO barrier types for the
- asm-generic version
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Timur Tabi <timur@codeaurora.org>, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 5, 2018 at 1:58 AM, Sinan Kaya <okaya@codeaurora.org> wrote:
+Michael Ellerman <mpe@ellerman.id.au> a écrit :
 
-Looks good, but I'd change the comments to ones that document exactly
-what those barriers are for:
-
-> +#ifndef __io_ar
-> +#ifdef rmb
-> +/* prefer rmb() as the default implementation of __io_ar() if supported */
-> +#define __io_ar()      rmb()
-
-/*
- * prevent prefetching of coherent DMA data ahead of a dma-complete */
-
-> +#ifndef __io_bw
-> +#ifdef wmb
-> +/* prefer wmb() as the default implementation of __io_bw() if supported */
-> +#define __io_bw()      wmb()
-> +#else
-
-/* flush writes to coherent DMA data before possibly triggering a DMA read */
-
-> +#ifndef __io_aw
-> +#define __io_aw()      barrier()
+> LEROY Christophe <christophe.leroy@c-s.fr> writes:
+>
+>> Mathieu Malaterre <malat@debian.org> a écrit :
+>>
+>>> Add gcc attribute unused for two variables. Fix warnings treated as errors
+>>> with W=1:
+>>>
+>>>   arch/powerpc/kernel/prom_init.c:1388:8: error: variable ‘path’ set
+>>> but not used [-Werror=unused-but-set-variable]
+>>>
+>>> Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>>> ---
+>>> v2: move path within ifdef DEBUG_PROM
+>>>
+>>>  arch/powerpc/kernel/prom_init.c | 6 +++---
+>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/arch/powerpc/kernel/prom_init.c
+>>> b/arch/powerpc/kernel/prom_init.c
+>>> index acf4b2e0530c..4163b11abb6c 100644
+>>> --- a/arch/powerpc/kernel/prom_init.c
+>>> +++ b/arch/powerpc/kernel/prom_init.c
+>>> @@ -603,7 +603,7 @@ static void __init early_cmdline_parse(void)
+>>>  	const char *opt;
+>>>
+>>>  	char *p;
+>>> -	int l = 0;
+>>> +	int l __maybe_unused = 0;
+>>>
+>>>  	prom_cmd_line[0] = 0;
+>>>  	p = prom_cmd_line;
+>>> @@ -1385,7 +1385,7 @@ static void __init reserve_mem(u64 base, u64 size)
+>>>  static void __init prom_init_mem(void)
+>>>  {
+>>>  	phandle node;
+>>> -	char *path, type[64];
+>>> +	char *path __maybe_unused, type[64];
+>>
+>> You should enclose that in an ifdef DEBUG_PROM instead of hiding the warning
+>
+> I disagree, the result is horrible:
+>
+>  static void __init prom_init_mem(void)
+>  {
+> 	phandle node;
+> -	char *path, type[64];
+> +#ifdef DEBUG_PROM
+> +	char *path;
 > +#endif
+> +	char type[64];
+> 	unsigned int plen;
+> 	cell_t *p, *endp;
+> 	__be32 val;
+>
+>
+> The right fix is to move the debug logic into a helper, and put the path
+> in there, eg. something like (not tested):
+>
+> diff --git a/arch/powerpc/kernel/prom_init.c  
+> b/arch/powerpc/kernel/prom_init.c
+> index f9d6befb55a6..b02fa2ccc70b 100644
+> --- a/arch/powerpc/kernel/prom_init.c
+> +++ b/arch/powerpc/kernel/prom_init.c
+> @@ -1389,6 +1389,18 @@ static void __init reserve_mem(u64 base, u64 size)
+>  	mem_reserve_cnt = cnt + 1;
+>  }
+>
+> +#ifdef DEBUG_PROM
+> +static void prom_debug_path(phandle node)
+> +{
+> +	char *path;
+> +	path = prom_scratch;
+> +	memset(path, 0, PROM_SCRATCH_SIZE);
+> +	call_prom("package-to-path", 3, 1, node, path, PROM_SCRATCH_SIZE-1);
+> +	prom_debug("  node %s :\n", path);
+> +}
+> +#else
+> +static void prom_debug_path(phandle node) { }
 
-/* serialize device access against a spin_unlock, usually handled there */
+Or put the ifdef inside the function to avoid double definition ?
 
-The other four patches look perfect already.  What's the timing we need for
-these patches? Are they 4.18 material, or do we need them in 4.17 and
-stable kernels to work around known bugs?
+> +#endif /* DEBUG_PROM */
+>  /*
+>   * Initialize memory allocation mechanism, parse "memory" nodes and
+>   * obtain that way the top of memory and RMO to setup out local allocator
+> @@ -1441,11 +1453,7 @@ static void __init prom_init_mem(void)
+>  		p = regbuf;
+>  		endp = p + (plen / sizeof(cell_t));
+>
+> -#ifdef DEBUG_PROM
+> -		memset(path, 0, PROM_SCRATCH_SIZE);
+> -		call_prom("package-to-path", 3, 1, node, path, PROM_SCRATCH_SIZE-1);
+> -		prom_debug("  node %s :\n", path);
+> -#endif /* DEBUG_PROM */
+> +		prom_debug_path(node);
+>
+>  		while ((endp - p) >= (rac + rsc)) {
+>  			unsigned long base, size;
+>
+>
+> Although that also begs the question of why the hell do we need path at
+> all, and not just use prom_scratch directly?
 
-      Arnd
+Wondering the same, why not use prom_scratch directly
+
+Christophe
+
+>
+> cheers
