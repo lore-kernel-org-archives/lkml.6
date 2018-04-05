@@ -1,120 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751413AbeDEPqf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:46:35 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56522 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750835AbeDEPqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:46:34 -0400
-Date: Thu, 5 Apr 2018 16:46:30 +0100
-From: Morten Rasmussen <morten.rasmussen@arm.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Valentin Schneider <valentin.schneider@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>
-Subject: Re: [PATCH] sched: support dynamiQ cluster
-Message-ID: <20180405154630.GS4589@e105550-lin.cambridge.arm.com>
-References: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
- <20180329125324.GR4589@e105550-lin.cambridge.arm.com>
- <CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com>
- <74865492-d9a6-649d-d37c-a5a6a8c28f23@arm.com>
- <CAKfTPtDy2uUj4amA9MARUz9qS=+urwV2edyQn+fW70hkN+CgoQ@mail.gmail.com>
- <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com>
- <CAKfTPtCQayuu5-84931ZxzXV1-roV_CfRd_5wXG1oxOEUZmZgw@mail.gmail.com>
+        id S1751532AbeDEPrf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:47:35 -0400
+Received: from mga06.intel.com ([134.134.136.31]:53747 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751356AbeDEPrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:47:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,411,1517904000";
+   d="scan'208";a="45188372"
+From: "Wang, Wei W" <wei.w.wang@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
+Subject: RE: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Topic: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Index: AQHTyyXXTsdlmy3QmUiflW8thGbyQqPu3AAAgAB7EICAAMkagIABH5Eg//+aJwCAAIzSsIAASrAAgACdZmA=
+Date: Thu, 5 Apr 2018 15:47:28 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7394A889E@shsmsx102.ccr.corp.intel.com>
+References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
+ <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
+ <20180403214147-mutt-send-email-mst@kernel.org> <5AC43377.2070607@intel.com>
+ <20180404155907-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
+ <20180405040900-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A7F3B@shsmsx102.ccr.corp.intel.com>
+ <20180405170248-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180405170248-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGZjOGM4YjEtNjExMi00MjIzLWFiNWMtYmNlOTY4Zjc2NjZhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6InJhdjZzUEhzXC9Fa1ZoeTRCZFk1ZktpVVN4VGxaQXBHTHhzUm93bHNwdlwvST0ifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtCQayuu5-84931ZxzXV1-roV_CfRd_5wXG1oxOEUZmZgw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 03:43:17PM +0200, Vincent Guittot wrote:
-> On 4 April 2018 at 12:44, Valentin Schneider <valentin.schneider@arm.com> wrote:
-> > Hi,
+On Thursday, April 5, 2018 10:04 PM, Michael S. Tsirkin wrote:
+> On Thu, Apr 05, 2018 at 02:05:03AM +0000, Wang, Wei W wrote:
+> > On Thursday, April 5, 2018 9:12 AM, Michael S. Tsirkin wrote:
+> > > On Thu, Apr 05, 2018 at 12:30:27AM +0000, Wang, Wei W wrote:
+> > > > On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
+> > > > > On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
+> > > > > > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
+> > > > > > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
+> > > > I'm afraid the driver couldn't be aware if the added hints are
+> > > > stale or not,
+> > >
+> > >
+> > > No - I mean that driver has code that compares two values and stops
+> > > reporting. Can one of the values be stale?
 > >
-> > On 03/04/18 13:17, Vincent Guittot wrote:
-> >> Hi Valentin,
-> >>
-> > [...]
-> >>>
-> >>> I believe ASYM_PACKING behaves better here because the workload is only
-> >>> sysbench threads. As stated above, since task utilization is disregarded, I
-> >>
-> >> It behaves better because it doesn't wait for the task's utilization
-> >> to reach a level before assuming the task needs high compute capacity.
-> >> The utilization gives an idea of the running time of the task not the
-> >> performance level that is needed
-> >>
+> > The driver compares "vb->cmd_id_use != vb->cmd_id_received" to decide
+> > if it needs to stop reporting hints, and cmd_id_received is what the
+> > driver reads from host (host notifies the driver to read for the
+> > latest value). If host sends a new cmd id, it will notify the guest to
+> > read again. I'm not sure how that could be a stale cmd id (or maybe I
+> > misunderstood your point here?)
 > >
-> > That's my point actually. ASYM_PACKING disregards utilization and moves those
-> > threads to the big cores ASAP, which is good here because it's just sysbench
-> > threads.
-> >
-> > What I meant was that if the task composition changes, IOW we mix "small"
-> > tasks (e.g. periodic stuff) and "big" tasks (performance-sensitive stuff like
-> > sysbench threads), we shouldn't assume all of those require to run on a big
-> > CPU. The thing is, ASYM_PACKING can't make the difference between those, so
+> > Best,
+> > Wei
 > 
-> That's the 1st point where I tend to disagree: why big cores are only
-> for long running task and periodic stuff can't need to run on big
-> cores to get max compute capacity ?
-> You make the assumption that only long running tasks need high compute
-> capacity. This patch wants to always provide max compute capacity to
-> the system and not only long running task
+> The comparison is done in one thread, the update in another one.
 
-There is no way we can tell if a periodic or short-running tasks
-requires the compute capacity of a big core or not based on utilization
-alone. The utilization can only tell us if a task could potentially use
-more compute capacity, i.e. the utilization approaches the compute
-capacity of its current cpu.
+I think this isn't something that could be solved by adding a lock, unless host waits for the driver's ACK about finishing the update (this is not agreed in the QEMU part discussion).
 
-How we handle low utilization tasks comes down to how we define
-"performance" and if we care about the cost of "performance" (e.g.
-energy consumption).
+Actually virtio_balloon has F_IOMMU_PLATFORM disabled, maybe we don't need to worry about that using DMA api case (we only have gpa added to the vq, and having some entries stay in the vq seems fine). For this feature, I think it would not work with F_IOMMU enabled either.
 
-Placing a low utilization task on a little cpu should always be fine
-from _throughput_ point of view. As long as the cpu has spare cycles it
-means that work isn't piling up faster than it can be processed.
-However, from a _latency_ (completion time) point of view it might be a
-problem, and for latency sensitive tasks I can agree that going for max
-capacity might be better choice.
+If there is any further need (I couldn't think of a need so far), I think we could consider to let host inject a vq interrupt at some point, and then the driver handler can do the virtqueue_get_buf work.
 
-The misfit patches places tasks based on utilization to ensure that
-tasks get the _throughput_ they need if possible. This is in line with
-the placement policy we have in select_task_rq_fair() already.
-
-We shouldn't forget that what we are discussing here is the default
-behaviour when we don't have sufficient knowledge about the tasks in the
-scheduler. So we are looking a reasonable middle-of-the-road policy that
-doesn't kill your performance or the battery. If user-space has its own
-opinion about performance requirements it is free to use task affinity
-to control which cpu the task end up on and ensure that the task gets
-max capacity always. On top of that we have had interfaces in Android
-for years to specify performance requirements for task (groups) to allow
-small tasks to be placed on big cpus and big task to be placed on little
-cpus depending on their requirements. It is even tied into cpufreq as
-well. A lot of effort has gone into Android to get this balance right.
-Patrick is working hard on upstreaming some of those features.
-
-In the bigger picture always going for max capacity is not desirable for
-well-configured big.LITTLE system. You would never exploit the advantage
-of the little cpus as you always use big first and only use little when
-the bigs are overloaded at which point having little cpus at all makes
-little sense. Vendors build big.LITTLE systems because they want a
-better performance/energy trade-off, if they wanted max capacity always,
-they would just built big-only systems.
-
-If we would be that concerned about latency, DVFS would be a problem too
-and we would use nothing but the performance governor. So seen in the
-bigger picture I have to disagree that blindly going for max capacity is
-the right default policy for big.LITTLE. As soon as we involve a energy
-model in the task placement decisions, it definitely isn't.
-
-Morten
+Best,
+Wei
