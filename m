@@ -1,121 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752850AbeDECCF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 22:02:05 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:39916 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752677AbeDECCC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 22:02:02 -0400
-X-Google-Smtp-Source: AIpwx4/H4gQoUFeAY9R8QzCMjARnh5fXICJpxOHdXDRskTFnCLq3yNaKhQIZPFWoVgOTzXZeWlgLU5MrlhPs1YfovjADJZN73zSh
+        id S1752782AbeDECFJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 22:05:09 -0400
+Received: from mga12.intel.com ([192.55.52.136]:19225 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752661AbeDECFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 22:05:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,409,1517904000";
+   d="scan'208";a="39496099"
+From: "Wang, Wei W" <wei.w.wang@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
+Subject: RE: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Topic: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Index: AQHTyyXXTsdlmy3QmUiflW8thGbyQqPu3AAAgAB7EICAAMkagIABH5Eg//+aJwCAAIzSsA==
+Date: Thu, 5 Apr 2018 02:05:03 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7394A7F3B@shsmsx102.ccr.corp.intel.com>
+References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
+ <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
+ <20180403214147-mutt-send-email-mst@kernel.org> <5AC43377.2070607@intel.com>
+ <20180404155907-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
+ <20180405040900-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180405040900-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjkyNWYwMTAtMjczNy00YTdmLTk5NTQtOTVmOGY1ZjJiZTI3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6Ik13NkdCMXVadElUSUJHc1wvb2NBcExPWUdCNTZLelZBMlkwWmd0TUdYMlR3PSJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Date: Wed, 04 Apr 2018 19:02:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a114467485371b605691053fc@google.com>
-Subject: general protection fault in mount_fs
-From: syzbot <syzbot+01ffaf5d9568dd1609f7@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thursday, April 5, 2018 9:12 AM, Michael S. Tsirkin wrote:
+> On Thu, Apr 05, 2018 at 12:30:27AM +0000, Wang, Wei W wrote:
+> > On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
+> > > On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
+> > > > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
+> > > > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
+> > I'm afraid the driver couldn't be aware if the added hints are stale
+> > or not,
+> 
+> 
+> No - I mean that driver has code that compares two values and stops
+> reporting. Can one of the values be stale?
 
-syzbot hit the following crash on upstream commit
-3e968c9f1401088abc9a19ae6ff571644d37a355 (Wed Apr 4 21:19:24 2018 +0000)
-Merge tag 'ext4_for_linus' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=01ffaf5d9568dd1609f7
+The driver compares "vb->cmd_id_use != vb->cmd_id_received" to decide if it needs to stop reporting hints, and cmd_id_received is what the driver reads from host (host notifies the driver to read for the latest value). If host sends a new cmd id, it will notify the guest to read again. I'm not sure how that could be a stale cmd id (or maybe I misunderstood your point here?)
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6269272955289600
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5190169938362368
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5077254979715072
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=9118669095563550941
-compiler: gcc (GCC) 7.1.1 20170620
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+01ffaf5d9568dd1609f7@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-hfsplus: failed to load root directory
-hfsplus: failed to load root directory
-hfsplus: failed to load root directory
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 5704 Comm: syzkaller335224 Not tainted 4.16.0+ #15
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:mount_fs+0x92/0x2d0 fs/super.c:1227
-RSP: 0018:ffff8801acc9fad0 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81b2ddaa
-RDX: 0000000000000019 RSI: 0000000000000000 RDI: 00000000000000c8
-RBP: ffff8801acc9fb00 R08: 1ffff10035993e87 R09: ffffed0035993efc
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff886b29c0
-R13: ffff8801c6243000 R14: ffff8801ac942ac0 R15: 0000000000000000
-FS:  00007f8ca5272700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004c5198 CR3: 00000001af14e000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:2514 [inline]
-  do_new_mount fs/namespace.c:2517 [inline]
-  do_mount+0xea4/0x2b90 fs/namespace.c:2847
-  ksys_mount+0xab/0x120 fs/namespace.c:3063
-  SYSC_mount fs/namespace.c:3077 [inline]
-  SyS_mount+0x39/0x50 fs/namespace.c:3074
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x44a34a
-RSP: 002b:00007f8ca5271d38 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000318 RCX: 000000000044a34a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f8ca5271d50
-RBP: 00000000006e39c4 R08: 0000000020000140 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000003
-R13: 0000000000000004 R14: 00000000006e39c0 R15: 0073756c70736668
-Code: 3d 00 f0 ff ff 48 89 c3 0f 87 eb 01 00 00 e8 66 c6 be ff 48 8d bb c8  
-00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
-0f 85 08 02 00 00 4c 8b b3 c8 00 00 00 4d 85 f6 0f
-RIP: mount_fs+0x92/0x2d0 fs/super.c:1227 RSP: ffff8801acc9fad0
----[ end trace 81f30bb7bca06fe8 ]---
-Kernel panic - not syncing: Fatal exception
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+Best,
+Wei
