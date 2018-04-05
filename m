@@ -1,64 +1,302 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753212AbeDESwe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 14:52:34 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:36801 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751807AbeDESwc (ORCPT
+        id S1753244AbeDESxr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 14:53:47 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57442 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753198AbeDESxp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 14:52:32 -0400
-X-Google-Smtp-Source: AIpwx4/KVvmFmTs9xDt0c5EBKR3loZHt324ZzszbMRvF5AQjqPZbyDIpVb6R66RDszS6rr4MisUGm83gAOLEtLE5V9M=
+        Thu, 5 Apr 2018 14:53:45 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        jacopo mondi <jacopo@jmondi.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        David Airlie <airlied@linux.ie>, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 1/3] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
+Date: Thu, 05 Apr 2018 21:53:42 +0300
+Message-ID: <4187374.XhfWETFJDh@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAL_JsqJUMGo3mxa_Wh=y59TkBzjPyE0CtNuSGV79kZx1XDyaJQ@mail.gmail.com>
+References: <4060923.7DxT9ae38L@avalon> <4549018.sA3EWz2jVz@avalon> <CAL_JsqJUMGo3mxa_Wh=y59TkBzjPyE0CtNuSGV79kZx1XDyaJQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jLwyot++C2EXs+032Lz5WdG65GsEJ-Q55rfhSbkG1Nh+A@mail.gmail.com>
- <3265889.eu5sbW8aRz@natalenko.name> <CAGXu5jL++CEmLzFtGMVMhGWBzHpsRNJPTsEoc7Pw1dP--=azCA@mail.gmail.com>
- <7fc01f67a561ce1fad676fc34c2249e7@natalenko.name> <CAGXu5jKhiE512yQXp90M+Wie=8RkpMZT-Yi_9BgjfKwibP433g@mail.gmail.com>
- <dee9721a530576e667881d86bbec351b@natalenko.name> <08e06234c81fac30ccff5a2695d02f2a@natalenko.name>
- <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 5 Apr 2018 11:52:31 -0700
-X-Google-Sender-Auth: Fht20ijcbvXhXmSRgG_rwMBzqBE
-Message-ID: <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w35IsGoR006525
 
-[forcing non-HTML and resending...]
+Hi Rob,
 
-On Thu, Apr 5, 2018 at 7:33 AM, Oleksandr Natalenko
-<oleksandr@natalenko.name> wrote:
->
-> 05.04.2018 16:32, Oleksandr Natalenko wrote:
->>
->> "-hda sda.img -hdb sda.img"
->
->
-> "-hda sda.img -hdb sdb.img", of course, I don't pass the same disk twice
+On Thursday, 5 April 2018 19:33:33 EEST Rob Herring wrote:
+> On Mon, Apr 2, 2018 at 8:36 AM, Laurent Pinchart wrote:
+> > On Tuesday, 27 March 2018 14:03:25 EEST Vladimir Zapolskiy wrote:
+> >> On 03/27/2018 01:10 PM, jacopo mondi wrote:
+> >>> On Tue, Mar 27, 2018 at 12:37:31PM +0300, Vladimir Zapolskiy wrote:
+> >>>> On 03/27/2018 11:57 AM, jacopo mondi wrote:
+> >>>>> On Tue, Mar 27, 2018 at 11:30:29AM +0300, Vladimir Zapolskiy wrote:
+> >>>>>> On 03/27/2018 11:27 AM, Sergei Shtylyov wrote:
+> >>>>>>> On 3/27/2018 10:33 AM, jacopo mondi wrote:
+> >>>>>>> [...]
+> >>>>>>> 
+> >>>>>>>>>>>>> Document Thine THC63LVD1024 LVDS decoder device tree
+> >>>>>>>>>>>>> bindings.
+> >>>>>>>>>>>>> 
+> >>>>>>>>>>>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >>>>>>>>>>>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> >>>>>>>>>>>>> Reviewed-by: Niklas Söderlund
+> >>>>>>>>>>>>> <niklas.soderlund+renesas@ragnatech.se>
+> >>>>>>>>>>>>> ---
+> >>>>>>>>>>>>> 
+> >>>>>>>>>>>>>   .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 +++
+> >>>>>>>>>>>>>   1 file changed, 66 insertions(+)
+> >>>>>>>>>>>>>   create mode 100644
+> >>>>>>>>>>>>> 
+> >>>>>>>>>>>>> Documentation/devicetree/bindings/display/bridge/thine,thc63l
+> >>>>>>>>>>>>> vd1024.txt
+> >>>>>>>>>>>>> diff --git
+> >>>>>>>>>>>>> a/Documentation/devicetree/bindings/display/bridge/thine,thc6
+> >>>>>>>>>>>>> 3lvd1024.txt
+> >>>>>>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc6
+> >>>>>>>>>>>>> 3lvd1024.txt
+> >>>>>>>>>>>>> new file mode 100644
+> >>>>>>>>>>>>> index 0000000..8225c6a
+> >>>>>>>>>>>>> --- /dev/null
+> >>>>>>>>>>>>> +++
+> >>>>>>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc6
+> >>>>>>>>>>>>> 3lvd1024.txt
+> >>>>>>>>>>>>> @@ -0,0 +1,66 @@
+> >>>>>>>>>>>>> +Thine Electronics THC63LVD1024 LVDS decoder
+> >>>>>>>>>>>>> +-------------------------------------------
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +The THC63LVD1024 is a dual link LVDS receiver designed to
+> >>>>>>>>>>>>> convert LVDS streams
+> >>>>>>>>>>>>> +to parallel data outputs. The chip supports single/dual
+> >>>>>>>>>>>>> input/output modes,
+> >>>>>>>>>>>>> +handling up to two two input LVDS stream and up to two
+> >>>>>>>>>>>>> digital CMOS/TTL outputs.
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +Single or dual operation modes, output data mapping and DDR
+> >>>>>>>>>>>>> output modes are
+> >>>>>>>>>>>>> +configured through input signals and the chip does not
+> >>>>>>>>>>>>> expose any control bus.
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +Required properties:
+> >>>>>>>>>>>>> +- compatible: Shall be "thine,thc63lvd1024"
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +Optional properties:
+> >>>>>>>>>>>>> +- vcc-supply: Power supply for TTL output and digital
+> >>>>>>>>>>>>> circuitry
+> >>>>>>>>>>>>> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
+> >>>>>>>>>>>>> +- lvcc-supply: Power supply for LVDS inputs
+> >>>>>>>>>>>>> +- pvcc-supply: Power supply for PLL circuitry
+> >>>>>>>>>>>> 
+> >>>>>>>>>>>> As explained in a comment to one of the previous versions of
+> >>>>>>>>>>>> this series, I'm tempted to make vcc-supply mandatory and drop
+> >>>>>>>>>>>> the three other power supplies for now, as I believe there's
+> >>>>>>>>>>>> very little chance they will be connected to separately
+> >>>>>>>>>>>> controllable regulators (all supplies use the same voltage). In
+> >>>>>>>>>>>> the very unlikely event that this occurs in design we need to
+> >>>>>>>>>>>> support in the future, the cvcc, lvcc and pvcc supplies can be
+> >>>>>>>>>>>> added later as optional without breaking backward
+> >>>>>>>>>>>> compatibility.
+> >>>>>>>>>>> 
+> >>>>>>>>>>> I'm okay with that.
+> >>>>>>>>>>> 
+> >>>>>>>>>>>> Apart from that,
+> >>>>>>>>>>>> 
+> >>>>>>>>>>>> Reviewed-by: Laurent Pinchart
+> >>>>>>>>>>>> <laurent.pinchart@ideasonboard.com>
+> >>>>>>>>>>>> 
+> >>>>>>>>>>>>> +- pdwn-gpios: Power down GPIO signal. Active low
+> >>>>>>>>>>> 
+> >>>>>>>>>>> powerdown-gpios is the semi-standard name.
+> >>>>>>>>>> 
+> >>>>>>>>>> right, I've also noticed it. If possible please avoid
+> >>>>>>>>>> shortenings in property names.
+> >>>>>>>>> 
+> >>>>>>>>> It is not shortening, it just follow pin name from decoder's
+> >>>>>>>>> datasheet.
+> >>>>>>>>> 
+> >>>>>>>>>>>>> +- oe-gpios: Output enable GPIO signal. Active high
+> >>>>>>>>>>>>> +
+> >>>>>>>>>> 
+> >>>>>>>>>> And this one is also a not ever met property name, please
+> >>>>>>>>>> consider to rename it to 'enable-gpios', for instance display
+> >>>>>>>>>> panels define it.
+> >>>>>>>>> 
+> >>>>>>>>> Again, it follows datasheet naming scheme. Has something changed
+> >>>>>>>>> in DT conventions?
+> >>>>>>>> 
+> >>>>>>>> Seconded. My understanding is that the property name should
+> >>>>>>>> reflect what reported in the the chip manual. For THC63LVD1024 the
+> >>>>>>>> enable and power down pins are named 'OE' and 'PDWN' respectively.
+> >>>>>>> 
+> >>>>>>> But don't we need the vendor prefix in the prop names then, like
+> >>>>>>> "renesas,oe-gpios" then?
+> >>>>>> 
+> >>>>>> Seconded, with a correction to "thine,oe-gpios".
+> >>>>> 
+> >>>>> mmm, okay then...
+> >>>>> 
+> >>>>> A grep for that semi-standard properties names in Documentation/
+> >>>>> returns only usage examples and no actual definitions, so I assume
+> >>>>> this is why they are semi-standard.
+> >>>> 
+> >>>> Here we have to be specific about a particular property, let it be
+> >>>> 'oe-gpios' vs. 'enable-gpios' and let's collect some statistics:
+> >>>> 
+> >>>> % grep -Hr oe-gpios Documentation/devicetree/bindings/* | wc -l
+> >>>> 0
+> >>>> 
+> >>>> $ grep -Hr enable-gpios Documentation/devicetree/bindings/* | wc -l
+> >>>> 86
+> >>>> 
+> >>>> While 'thine,oe-gpios' would be correct, I see no reason to introduce
+> >>>> a vendor specific property to define a pin with a common and well
+> >>>> understood purpose.
+> >>>> 
+> >>>> If you go forward with the vendor specific prefix, apparently you can
+> >>>> set the name to 'thine,oe-gpio' (single) or even to 'thine,oe', or does
+> >>>> the datasheet names the pin as "OE GPIO" or "OE connected to a GPIO"? I
+> >>>> guess no.
+> >>> 
+> >>> Let me clarify I don't want to push for a vendor specific name or
+> >>> similar, I'm fine with using 'semi-standard' names, I'm just confused
+> >>> by the 'semi-standard' definition. I guess from your examples, the
+> >>> usage count makes a difference here.
+> >> 
+> >> yes, in gneneral you can read "semi-standard" as "widely used", thus
+> >> collecting statistics is a good enough method to make a reasoning.
+> >> 
+> >> Hopefully the next evolutionary step of "widely used" is "described in
+> >> standard".
+> >> 
+> >>>> Standards do not define '-gpios' suffix, but partially the description
+> >>>> is found in Documentation/bindings/gpio/gpio.txt, still it is not a
+> >>>> section in any standard as far as I know.
+> >>>> 
+> >>>>> Seems like there is some tribal knowledge involved in defining what
+> >>>>> is semi-standard and what's not, or are those properties documented
+> >>>>> somewhere?
+> >>>> 
+> >>>> The point is that there is no formal standard which describes every
+> >>>> IP, every IC and every single their property, some device node names
+> >>>> and property names are recommended in ePAPR and Devicetree
+> >>>> Specification though.
+> >>>> 
+> >>>> Think of a confusion if 'rst-gpios' (have you seen any ICs with an RST
+> >>>> pin?) and 'reset-gpios' are different. Same applies to 'pdwn-gpios'
+> >>>> vs. 'powerdown-gpios'.
+> >>> 
+> >>> I see all your points and I agree with most of them. Anyway, if the
+> >>> chip manual describes a pin as 'RST' I would not find it confusing to
+> >>> have a 'rst-gpio' defined in bindings :)
+> >>> 
+> >>> Let me be a bit pesky here: what if a chip defines a reset GPIO, which
+> >>> is definitely a reset, but names it, say "XYZ" ? Would you prefer to
+> >>> see it defined as "reset-gpios" for consistency with other bindings,
+> >>> or "xyz-gpios" for consistency with documentation?
+> >> 
+> >> If a pin is definitely an IC reset as you said, then my preference is to
+> >> see it described under 'reset-gpios' property name, plus a comment in
+> >> the IC device tree documentation document about it. I can provide two
+> >> reasons to advocate my position:
+> >> 
+> >> 1) developers spend significantly more time reading and editing the
+> >> actual
+> >> 
+> >>    DTSI/DTS board files rather than reading and editing documentation,
+> >>    it makes sense to use common property names to save time and reduce
+> >>    amount of "what does 'oe' stand for?" type of questions; I suppose
+> >>    that the recommendation to avoid not "widely used" abbreviations in
+> >>    device node and property names arises from the same reasoning,
+> >> 
+> >> 2) "widely used" and "standard" properties are excellent candidates for
+> >> 
+> >>    developing (or re-using) generalization wrappers, it happened so many
+> >>    times in the past, and this process shall be supported in my opinion;
+> >>    due to compatibility restrictions it might be problematic to change
+> >>    property names, and every new exception to "widely used" properties
+> >>    makes problematic to develop and maintain these kinds of wrappers, and
+> >>    of course it postpones a desired "described in standard" recognition.
+> >> 
+> >> If my point of view is accepted, I do admit that a developer who
+> >> translates a board schematics to board DTS file may experience a minor
+> >> discomfort, which is mitigated if relevant pin names are found in device
+> >> tree binding documentation in comments to properties, still the overall
+> >> gain is noticeably higher in my personal opinion.
+> > 
+> > I have to disagree with this. When using a property name that doesn't
+> > correspond to the hardware documentation, developers will need to refer to
+> > the DT bindings documentation to confirm the property name. "Widely used"
+> > property names will not save time, they will use more time. This is of
+> > course marginal and I don't think it would have any noticeable impact,
+> > but I don't think your argument holds.
+> 
+> We can have it both ways. The name should follow the documented
+> name/function. For example, we have enable-gpios which is simply the
+> invert of powerdown-gpios (for software's purposes). Pick the one
+> closest to the documentation. We're not trying to make bindings use
+> "enable" if a signal is called "powerdown".
+> 
+> What we don't want is gratuitous variation in the names based on the
+> whims of hw designers:
+> 
+> resetb-gpios
+> resetn-gpios
+> rst-gpios
+> rstn-gpios
+> nRESET-gpios
+> 
+> ...you get the idea (and I left out vendor prefixes).
 
-Okay. My qemu gets mad about that and wants the format=raw argument,
-so I'm using:
+Do we have a list of standardized names that should be used preferentially ? 
+If not, should we create one ?
 
--drive file=sda.img,format=raw \
--drive file=sdb.img,format=raw \
+> > I'm all for standardizing properties across DT bindings for multiple
+> > components, but doing so in a semi-random fashion will in my opinion not
+> > result in any gain. We can decide that power-down or output-enable GPIOS
+> > should have common property names (and I'm not even sure that would be
+> > useful, but we can certainly discuss it), but in that case someone should
+> > make a proposal and get the names standardized. Unless we do so, no
+> > matter what property name gets picked for a particular binding, it won't
+> > become universally used by magic.
+> 
+> For "output enable", I suspect that is a common signal/function and
+> should have a standardized name. Generally, the way this works is we
+> get several variations and then we try to standardize things. I think
+> we can all agree standardizing first is better. If you want to put it
+> in a common place, please do. Maybe people will read that. Regardless,
+> the only way to enforce following standard names is with review.
+> 
+> Debating "oe" vs. "output-enable" is bikeshedding IMO. Anyone familiar
+> with h/w design should recognize OE.
+> 
+> The reason to try and standardize names is so we can have common
+> drivers or library functions. In particular, for things like GPIOs
+> that need to be configured first for devices on otherwise discoverable
+> buses, this is very useful.
 
-How are you running your smartctl? I'm doing this now:
-
-[1]   Running                 while :; do
-    ( smartctl -a /dev/sda; smartctl -a /dev/sdb ) > /dev/null;
-done &
-
-I assume I'm missing something from your .config, but since I don't
-boot with an initramfs, I had to tweak it a bit. I'll try again...
-
--Kees
+I'm not sure we will ever implement that for the OE or power-down GPIOs, but 
+I'm also not sure we will never do it, so I suppose it makes sense, just in 
+case.
 
 -- 
-Kees Cook
-Pixel Security
+Regards,
+
+Laurent Pinchart
