@@ -1,148 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752685AbeDEApZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 20:45:25 -0400
-Received: from mail-pl0-f50.google.com ([209.85.160.50]:34563 "EHLO
-        mail-pl0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752582AbeDEApY (ORCPT
+        id S1752654AbeDEAvT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 20:51:19 -0400
+Received: from lucky1.263xmail.com ([211.157.147.132]:33400 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752582AbeDEAvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 20:45:24 -0400
-X-Google-Smtp-Source: AIpwx49OjMUnd4MUnX7I5tLVL2WvBOrY21bh95UsdKbxfr/HjQt8N/eh9vEQsaI/eagYHhKKp578zQ==
-Date: Thu, 5 Apr 2018 10:45:12 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: rcu_process_callbacks irqsoff latency caused by taking spinlock
- with irqs disabled
-Message-ID: <20180405104512.25ada2bb@roar.ozlabs.ibm.com>
-In-Reply-To: <20180405001358.GK3948@linux.vnet.ibm.com>
-References: <20180405093414.2273203e@roar.ozlabs.ibm.com>
-        <20180405001358.GK3948@linux.vnet.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 4 Apr 2018 20:51:17 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: zhangfei.gao@linaro.org
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <f894ce938ba4363b611a126649e16381>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc: shawn.lin@rock-chips.com, Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Zhangfei Gao <zhangfei.gao@linaro.org>
+Subject: Re: [PATCH] mmc: dw_mmc-k3: Fix DDR52 mode by setting required clock
+ divisor
+To: Ryan Grachek <ryan@edited.us>
+References: <20180329182423.21201-1-ryan@edited.us>
+ <e3ec3a77-f2f3-2164-4dbb-80e1ba3ebc63@rock-chips.com>
+ <CAGoBSJq+tSpvFZsJLPffTaFBg5o2Nn2eeXXvHqt4Us_dd7==1w@mail.gmail.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <bed16723-6bf0-4bcf-f44c-ebcf7a1e7cc5@rock-chips.com>
+Date: Thu, 5 Apr 2018 08:51:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAGoBSJq+tSpvFZsJLPffTaFBg5o2Nn2eeXXvHqt4Us_dd7==1w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Apr 2018 17:13:58 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+[+ Zhangfei Gao who added support for hi6220]
 
-> On Thu, Apr 05, 2018 at 09:34:14AM +1000, Nicholas Piggin wrote:
-> > Hi Paul,
-> > 
-> > Just looking at latencies, and RCU showed up as one of the maximums.
-> > This is a 2 socket system with (176 CPU threads). Just doing a
-> > `make -j 352` kernel build. Got a max latency of 3ms. I don't think
-> > that's anything to worry about really, but I wanted to check the
-> > cause.  
+On 2018/4/4 23:31, Ryan Grachek wrote:
+> On Tue, Apr 3, 2018 at 6:31 AM, Shawn Lin <shawn.lin@rock-chips.com 
+> <mailto:shawn.lin@rock-chips.com>> wrote:
 > 
-> Well, that 3 milliseconds would cause serious problems for some workloads...
-
-True.
-
-> > # tracer: irqsoff
-> > #
-> > # irqsoff latency trace v1.1.5 on 4.16.0-01530-g43d1859f0994
-> > # --------------------------------------------------------------------
-> > # latency: 3055 us, #19/19, CPU#135 | (M:server VP:0, KP:0, SP:0 HP:0 #P:176)
-> > #    -----------------
-> > #    | task: cc1-58689 (uid:1003 nice:0 policy:0 rt_prio:0)
-> > #    -----------------
-> > #  => started at: rcu_process_callbacks
-> > #  => ended at:   _raw_spin_unlock_irqrestore
-> > #
-> > #
-> > #                  _------=> CPU#            
-> > #                 / _-----=> irqs-off        
-> > #                | / _----=> need-resched    
-> > #                || / _---=> hardirq/softirq 
-> > #                ||| / _--=> preempt-depth   
-> > #                |||| /     delay            
-> > #  cmd     pid   ||||| time  |   caller      
-> > #     \   /      |||||  \    |   /         
-> >    <...>-58689 135d.s.    0us : rcu_process_callbacks
-> >    <...>-58689 135d.s.    1us : cpu_needs_another_gp <-rcu_process_callbacks
-> >    <...>-58689 135d.s.    2us : rcu_segcblist_future_gp_needed <-cpu_needs_another_gp
-> >    <...>-58689 135d.s.    3us#: _raw_spin_lock <-rcu_process_callbacks
-> >    <...>-58689 135d.s. 3047us : rcu_start_gp <-rcu_process_callbacks
-> >    <...>-58689 135d.s. 3048us : rcu_advance_cbs <-rcu_start_gp
-> >    <...>-58689 135d.s. 3049us : rcu_segcblist_pend_cbs <-rcu_advance_cbs
-> >    <...>-58689 135d.s. 3049us : rcu_segcblist_advance <-rcu_advance_cbs
-> >    <...>-58689 135d.s. 3050us : rcu_accelerate_cbs <-rcu_start_gp
-> >    <...>-58689 135d.s. 3050us : rcu_segcblist_pend_cbs <-rcu_accelerate_cbs
-> >    <...>-58689 135d.s. 3051us : rcu_segcblist_accelerate <-rcu_accelerate_cbs
-> >    <...>-58689 135d.s. 3052us : trace_rcu_future_gp.isra.0 <-rcu_accelerate_cbs
-> >    <...>-58689 135d.s. 3052us : trace_rcu_future_gp.isra.0 <-rcu_accelerate_cbs
-> >    <...>-58689 135d.s. 3053us : rcu_start_gp_advanced.isra.35 <-rcu_start_gp
-> >    <...>-58689 135d.s. 3053us : cpu_needs_another_gp <-rcu_start_gp_advanced.isra.35
-> >    <...>-58689 135d.s. 3054us : _raw_spin_unlock_irqrestore <-rcu_process_callbacks
-> >    <...>-58689 135d.s. 3055us : _raw_spin_unlock_irqrestore
-> >    <...>-58689 135d.s. 3056us : trace_hardirqs_on <-_raw_spin_unlock_irqrestore
-> >    <...>-58689 135d.s. 3061us : <stack trace>
-> > 
-> > So it's taking a contende lock with interrupts disabled:
-> > 
-> > static void
-> > __rcu_process_callbacks(struct rcu_state *rsp)
-> > {
-> >         unsigned long flags;
-> >         bool needwake;
-> >         struct rcu_data *rdp = raw_cpu_ptr(rsp->rda);
-> > 
-> >         WARN_ON_ONCE(!rdp->beenonline);
-> > 
-> >         /* Update RCU state based on any recent quiescent states. */
-> >         rcu_check_quiescent_state(rsp, rdp);
-> > 
-> >         /* Does this CPU require a not-yet-started grace period? */
-> >         local_irq_save(flags);
-> >         if (cpu_needs_another_gp(rsp, rdp)) {
-> >                 raw_spin_lock_rcu_node(rcu_get_root(rsp)); /* irqs disabled. */
-> >                 needwake = rcu_start_gp(rsp);
-> >                 raw_spin_unlock_irqrestore_rcu_node(rcu_get_root(rsp), flags);
-> >                 if (needwake)
-> >                         rcu_gp_kthread_wake(rsp);
-> >         } else {
-> >                 local_irq_restore(flags);
-> >         }
-> > 
-> > Because irqs are disabled before taking the lock, we can't spin with
-> > interrupts enabled.
-> > 
-> > cpu_needs_another_gp needs interrupts off to prevent races with normal
-> > callback registry, but that doesn't seem to be preventing any wider
-> > races in this code, because we immediately re-enable interrupts anyway
-> > if no gp is needed. So an interrupt can come in right after that and
-> > queue something up.
-> > 
-> > So then the question is whether it's safe-albeit-racy to call with
-> > interrupts ensabled? Would be nice to move it to a spin_lock_irqsave.  
+>     On 2018/3/30 2:24, oscardagrach wrote:
 > 
-> If I recall correctly, the issue is that an unsynchronized (due to
-> interrupts being enabled) check in the "if" statement can cause extra
-> unneeded grace periods.
-
-If the check is relatively cheap, perhaps you could do a second race
-free verification after taking the lock and disabling interrupts?
-
-> I am guessing that the long latency is caused by lots of CPUs suddenly
-> needing a new grace period at about the same time.  If so, this is
-> a bottleneck that I have been expecting for some time, and one that
-> I would resolve by introducing funnel locking, sort of like SRCU and
-> expedited grace periods already use.
+>     Need at least one line commit body.
 > 
-> Or am I confused about the source of the contention?
+>         Signed-off-by: oscardagrach <ryan@edited.us <mailto:ryan@edited.us>>
+>         ---
+>            drivers/mmc/host/dw_mmc-k3.c | 10 ++++++++--
+>            1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+>         diff --git a/drivers/mmc/host/dw_mmc-k3.c
+>         b/drivers/mmc/host/dw_mmc-k3.c
+>         index 89cdb3d533bb..efc546cb4db8 100644
+>         --- a/drivers/mmc/host/dw_mmc-k3.c
+>         +++ b/drivers/mmc/host/dw_mmc-k3.c
+>         @@ -194,8 +194,14 @@ static void dw_mci_hi6220_set_ios(struct
+>         dw_mci *host, struct mmc_ios *ios)
+>                  int ret;
+>                  unsigned int clock;
+>            -     clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+>         -
+>         +       /* CLKDIV must be 1 for DDR52/8-bit mode */
+>         +       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
+>         +               ios->timing == MMC_TIMING_MMC_DDR52) {
+>         +               mci_writel(host, CLKDIV, 0x1);
+>         +               clock = ios->clock;
+>         +       } else {
+>         +               clock = (ios->clock <= 25000000) ? 25000000 :
+>         ios->clock;
+>         +       }
+> 
+> 
+>     I undertand DDR52/8-bit need CLKDIV fixed 1, but shouldn't the following
+>     change is more sensible?
+> 
+>     if (ios->bus_width == MMC_BUS_WIDTH_8 && ios->timing ==
+>     MMC_TIMING_MMC_DDR52)
+>              clock = ios->clock * 2;
+>     else
+>              clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+> 
+> 
+>     The reason is ios->clock is 52MHz and you could claim 104MHz from the
+>     clock provider and let dw_mmc core take care of the divder to be 1.
+>     Otherwise, you just force it to be DDR52/8-bit with a clk rate of 26MHz.
+> 
+> 
+>                  ret = clk_set_rate(host->biu_clk, clock);
+>                  if (ret)
+>                          dev_warn(host->dev, "failed to set rate
+>         %uHz\n", clock);
+> 
+> 
+> 
 
-The irqsoff tracer doesn't give you a lot of detail about locking
-and concurrency, so it's hard for me to say. Any particular tests
-or details I could try to get, that would help?
+For future wise, please use plain mode mail, but not HTML format.
 
-Note that rcu doesn't show up consistently at the top, this was
-just one that looked *maybe* like it can be improved. So I don't
-know how reproducible it is.
+> Your feedback is correct. I see the Rockchip dwmmc driver has a similar
+> implementation. After applying your suggested changes, however, my board
+> reports "dwmmc_k3 f723d000.dwmmc0: failed to set rate 104000000Hz"
+> during intialization of eMMC. In addition, I do not see CLKDIV being
+> set to 1. clk_set_rate fails and I wonder if this is out-of-scope of
+> the driver.
+> 
+> If I set CLKDIV where I did prior, with your changes, the device fails
+> to set the clock and falls back to 52 MHz (26 MHz) and works fine, but
+> again, CLKDIV is reported as 0 (even though it is 1.) One thing of
+> interest to note is when I manually set the clock by doing:
+> (echo 104000000 > /sys/kernel/debug/mmc0/clock) the device reports back
+> 'mmc_host mmc0: Bus speed (slot 0) = 198400000Hz (slot req 104000000Hz,
+>   actual 99200000HZ div = 1)' which works reliably and clk_set_rate does
+> not report any error.
+> 
 
-Thanks,
-Nick
+When looking closely into the code, at least dw_mci_hi6220_set_ios
+goes wrong with the bus_hz, since it should be ciu_clk but not biu_clk.
+"b" stands for bus, and "c" stands for card IMHO, however bus_hz
+describs the clock to the card, provided by controller. Does the
+following patch help?
+
+
+diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
+index 89cdb3d..9e78cf2 100644
+--- a/drivers/mmc/host/dw_mmc-k3.c
++++ b/drivers/mmc/host/dw_mmc-k3.c
+@@ -194,13 +194,21 @@ static void dw_mci_hi6220_set_ios(struct dw_mci 
+*host, struct mmc_ios *ios)
+         int ret;
+         unsigned int clock;
+
+-       clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
++       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
++           ios->timing == MMC_TIMING_MMC_DDR52)
++               clock = ios->clock * 2;
++       else
++               clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+
+-       ret = clk_set_rate(host->biu_clk, clock);
++       ret = clk_set_rate(host->ciu_clk, clock);
+         if (ret)
+                 dev_warn(host->dev, "failed to set rate %uHz\n", clock);
+
+-       host->bus_hz = clk_get_rate(host->biu_clk);
++       clock = clk_get_rate(host->ciu_clk);
++       if (clock != host->bus_hz) {
++               host->bus_hz = clock;
++               host->current_speed = 0;
++       }
+  }
+
+
+> I am not sure where to begin debugging these clock issues and welcome
+> any feedback.
