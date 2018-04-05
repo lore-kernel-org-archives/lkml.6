@@ -1,94 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751352AbeDEHWX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 03:22:23 -0400
-Received: from mo-csw-fb1516.securemx.jp ([210.130.202.172]:38496 "EHLO
-        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750853AbeDEHWU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 03:22:20 -0400
-X-Iguazu-Qid: 34tMe9Tnp4ADxbP7Mf
-X-Iguazu-QSIG: v=1; s=0; t=1522910439; q=34tMe9Tnp4ADxbP7Mf; m=3sZHinJnENv9eD4T2jTzoMa/fHTxJWBAeEd35+pE67g=
-From: <shinya1.takumi@toshiba.co.jp>
-To: <serge@hallyn.com>, <jmorris@namei.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC v3 0/2] WhiteEgret LSM module
-Thread-Topic: [RFC v3 0/2] WhiteEgret LSM module
-Thread-Index: AQHTyAJOnQ+9r2edhk+NYvbIB0nAd6PsWl+AgAVlmJA=
-Date: Thu, 5 Apr 2018 06:40:36 +0000
-X-TSB-HOP: ON
-Message-ID: <OSBPR01MB21847D1D8A8BC8458CBAD39592BB0@OSBPR01MB2184.jpnprd01.prod.outlook.com>
-References: <20180330083031.2199-1-masanobu2.koike@toshiba.co.jp>
- <20180401200827.GA28101@mail.hallyn.com>
-In-Reply-To: <20180401200827.GA28101@mail.hallyn.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shinya1.takumi@toshiba.co.jp;
-x-originating-ip: [103.91.184.160]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;OSBPR01MB1783;7:N31ltt3CfCwifRJnRsWdj07mvBRAJ8EG4ggk0h9iFuCGQHbUnFaJPs9EJcMgkunzNLYc/f/LYZviZBSJxISzmg3x0n51tmu4FveHDH43Pshm8iaUKNVRBfsVNoW0MAZBfu/WfmUbX60HWOJhEgLY1H1xZggRTH6tHt4VExXqNQr6zszQrLrxC3ixyaxTRfc2vHkZLUaMyCjPiRjcGChvdGcXVwWtTWMoVg7H+l1qmUvGl4BLgGnor4YJK0Yw/2Mm
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: ceb3ecd5-cb50-4267-8d23-08d59ac02376
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB1783;
-x-ms-traffictypediagnostic: OSBPR01MB1783:
-x-microsoft-antispam-prvs: <OSBPR01MB17835B3DB9E08011412CD40E92BB0@OSBPR01MB1783.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(10201501046)(93006095)(93001095)(3002001)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:OSBPR01MB1783;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB1783;
-x-forefront-prvs: 06339BAE63
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39380400002)(39850400004)(376002)(366004)(346002)(199004)(189003)(13464003)(476003)(2900100001)(3280700002)(2906002)(3846002)(186003)(26005)(55016002)(9686003)(6116002)(478600001)(33656002)(25786009)(68736007)(76176011)(5250100002)(305945005)(7736002)(486006)(97736004)(3660700001)(2501003)(110136005)(316002)(966005)(8936002)(7696005)(6306002)(102836004)(14454004)(81166006)(86362001)(53936002)(53546011)(11346002)(99286004)(6246003)(105586002)(446003)(74316002)(59450400001)(106356001)(66066001)(74482002)(81156014)(2201001)(6506007)(6436002)(5660300001)(229853002)(8676002)(422495003);DIR:OUT;SFP:1101;SCL:1;SRVR:OSBPR01MB1783;H:OSBPR01MB2184.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: gPB7zXChjhbuMGeeuE7ESgAZ64UeHgcesluIoz6ag+W4Ilt3TqCM+eCq3kYhX7DJ2MeL3qW5dJfgWbUocSMVHp3D5qlHFO1wQwmeYz/xUBFhIcUS5C53ZCPhSOFEGof1m58z6OIQ0ldH1Omz/zb5Bg0aB4EQj8Gai+g5/36GWqpCWKU8ZhZ5Rm76LdV8m2SLWrAiAALKN51hvw+TUtuMOFrlPvRX1Bgnj3xgvYEiYNwy6mi1UiyydoZC6V8pvFXmlM2rLGq2OWUOumzAwiiJ1VMYUiuPxfT/HiY1SqYSAVe2Ylea3X8emjwyWDz5wsKfyQjoGlg2xCuh+5vMYC4ZTP5by43m8s532nL2JSr664KeIE88YxHmQ052mR1TpxWK+wZLqBE/tPR3E3/PGLSiCQCpGDhMcHIYVu67cfpb6lA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-2022-jp"
+        id S1751437AbeDEHW2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 03:22:28 -0400
+Received: from mout.web.de ([217.72.192.78]:37403 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750853AbeDEHWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 03:22:24 -0400
+Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
+ unflattened to FDT
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jailhouse <jailhouse-dev@googlegroups.com>
+References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
+ <1520122673-11003-3-git-send-email-frowand.list@gmail.com>
+ <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
+ <CAL_Jsq+Gu=gwcxJnOF2xybXCh9N2Fp1NV05kuvQ2rif1fdHYrA@mail.gmail.com>
+From: Jan Kiszka <jan.kiszka@web.de>
+Openpgp: preference=signencrypt
+Message-ID: <935d6135-c5db-e5f8-b850-8ef26ce0c0a0@web.de>
+Date: Thu, 5 Apr 2018 09:22:11 +0200
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: ceb3ecd5-cb50-4267-8d23-08d59ac02376
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Apr 2018 06:40:36.1694
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1783
-MSSCP.TransferMailToMossAgent: 103
-X-OriginatorOrg: toshiba.co.jp
+In-Reply-To: <CAL_Jsq+Gu=gwcxJnOF2xybXCh9N2Fp1NV05kuvQ2rif1fdHYrA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:6VVad5ccTS1OPpB6ZgvmFMvPOdoIePbGcrtEY4cV97soRp6VykV
+ fSzFSTxrYQy04xnIWbFtlUjvq4Dk+i+4L/Zb7XiCuinsrq+PaKajJGpWaXhKdSFPTbllFbQ
+ DbDZ3jllWRw7X8D7t9xGRBzloILENTcFTEizgfe5ZXkEsbtEqRrIZr6sYquIBudAzAS/SdB
+ awwRsLvmVBhMXNrsxjLRw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Go8sDhqdBmo=:Au63ZbBNJDnhPswRzY+KUs
+ ZIqMIYf4cHSWh5Rs8zJfVkd7Rn6Eme26sZqUkNpLK+XWljdAcPNgkQUbMOcXbWrrIOFLy6qxk
+ MUBXyQqn/6NRygFuzb9an6J9q7XcSWXDVX+DWBVheGg1YvoMm+WYM8iV0Hk/kDzGRDr8X4Z4L
+ Udtse+0hTCpTbv1w+S/1d4bWhbsVVslSvMwJTi2gYaBWq1DCTUvK+Pmgw9UJRT95sSL2JglSq
+ eAtyp3KHGfVqpSuFNnEvqTGUcWRyMl5RheR45l+YaFXvSvgCh1uLsEPP8EYMCq+FG6A5k1w2K
+ YGhybFkfFDOphh//nMexPRHx2hN7qQH8YiKqIZwfJhxMoo1anXgNgc3wDap6RSGNR/JwmLgt1
+ QoBbZLGidATs7F2rW54suySCScaqGnPWYFQuBCoxrVs8qT4bZ+jbtjbx/DhdesGYM0+NIgDTk
+ hl3j+YvRr5e85K5jmEP/lrvVaLLI2s7mFaALdqhRWR20fkDWs7Xq1r/aiGUnNCaQPczzGtLx/
+ 7t5SrMWNn/pASvqCVjfM9Q/KGEV/qQe/2ks/CUvjqJs6/ZmUS10O4BBkmTAAtUhz3vpjH7kdA
+ Qrrb4i3pUysE9JabE9IwNzxHtk1wc9RdcUpwHpWBP1hKEmHCyeBMS2zTLu6l3h/lsEJ6f/ZnR
+ ZBAJcnHzzxhwNtCbrLSzwfPRq6h249XWFAfNRReC8D1OykPSHQLDiA6yej0aGx0GsMmCftHNO
+ 5W9Sj+DPIG25l4HOeIiPPGTa6cz6QGs53+T90tWMf6Q/f+hEhTD40P7yKCdNVkBtzMxHNV/bk
+ EnhHJDCcWguZYbReVFwY7YkolxHbw/DTL6EWu9mymX1PTa9BTo=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w357MTfB032162
 
-I am one of developers of WhiteEgret.
-
-> regardling the last one, do you have a plan for handling it?
-Yes, we have a plan to release WhiteEgret v4 patch with a WEUA sample of access control for script programs.
-
-The latest WhiteEgret cannot control script programs since script files read by an interpreter are not hooked by the execve system call.
-We consider that script programs can be controlled by controlling the files inputted by interpreters, accordingly. 
-We consider that the control can be realized using the read system call hooking.
-
-Now, we are developing WhiteEgret with the read system call hooking and WEUA which controls the script files to be read to interpreters using information from the read system call hooking and white list.
-
------Original Message-----
-From: owner-linux-security-module@vger.kernel.org [mailto:owner-linux-security-module@vger.kernel.org] On Behalf Of Serge E. Hallyn
-Sent: Monday, April 2, 2018 5:08 AM
-To: koike masanobu(小池 正修 ＴＤＳＬ （ＩＳＥＣ）［ＳＥＣ運］) <masanobu2.koike@toshiba.co.jp>
-Cc: jmorris@namei.org; serge@hallyn.com; linux-security-module@vger.kernel.org; linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 0/2] WhiteEgret LSM module
-
-Quoting Masanobu Koike (masanobu2.koike@toshiba.co.jp):
-...
-> Assumptions and ToDos
+On 2018-04-05 02:55, Rob Herring wrote:
+> On Wed, Apr 4, 2018 at 5:35 PM, Jan Kiszka <jan.kiszka@web.de> wrote:
+>> Hi Frank,
+>>
+>> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
+>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>
+>>> Move duplicating and unflattening of an overlay flattened devicetree
+>>> (FDT) into the overlay application code.  To accomplish this,
+>>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+>>>
+>>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+>>> code, which is thus responsible for freeing the duplicate FDT.  The
+>>> caller of of_overlay_fdt_apply() remains responsible for freeing the
+>>> original FDT.
+>>>
+>>> The unflattened devicetree now belongs to devicetree code, which is
+>>> thus responsible for freeing the unflattened devicetree.
+>>>
+>>> These ownership changes prevent early freeing of the duplicated FDT
+>>> or the unflattened devicetree, which could result in use after free
+>>> errors.
+>>>
+>>> of_overlay_fdt_apply() is a private function for the anticipated
+>>> overlay loader.
+>>
+>> We are using of_fdt_unflatten_tree + of_overlay_apply in the
+>> (out-of-tree) Jailhouse loader driver in order to register a virtual
+>> device during hypervisor activation with Linux. The DT overlay is
+>> created from a a template but modified prior to application to account
+>> for runtime-specific parameters. See [1] for the current implementation.
+>>
+>> I'm now wondering how to model that scenario best with the new API.
+>> Given that the loader lost ownership of the unflattened tree but the
+>> modification API exist only for the that DT state, I'm not yet seeing a
+>> clear solution. Should we apply the template in disabled form (status =
+>> "disabled"), modify it, and then activate it while it is already applied?
 > 
-> At this stage, WhiteEgret assumes the following.
-> Relaxing these assumptions are future works.
-> - Root is not compromised. And using a whitelist and a WEUA requires 
-> root privilege.
-> - WEUA is reliable.
-> - It is allowed for scripting languages, e.g., Perl or Python, to read 
-> arbitrary scripts and to execute them.
+> No. I don't think that will work.
+> 
+> The of_overlay_apply() function is still there, but static. We can
+> export it again if the need arises.
 
-Hi,
+That would be the simplest solution from our perspective, but I'm not
+sure if that is in the original spirit of this change.
 
-regardling the last one, do you have a plan for handling it?
---
-To unsubscribe from this list: send the line "unsubscribe linux-security-module" in the body of a message to majordomo@vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> Another option is there is a notifier callback OF_OVERLAY_PRE_APPLY,
+> but I'm not sure we want to make that be the normal interface to make
+> modifications.
+
+And would calling modification functions from that callback be legal at all?
+
+Jan
