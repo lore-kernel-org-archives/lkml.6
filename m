@@ -1,90 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751571AbeDEOfY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:35:24 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:47078 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1751195AbeDEOfX (ORCPT
+        id S1751367AbeDEOh3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:37:29 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:41005 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbeDEOh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:35:23 -0400
-Date: Thu, 5 Apr 2018 10:35:22 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Peter Zijlstra <peterz@infradead.org>
-cc: Daniel Jordan <daniel.m.jordan@oracle.com>, <parri.andrea@gmail.com>,
-        <will.deacon@arm.com>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
-        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
-        <paulmck@linux.vnet.ibm.com>, <akiyks@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Pasha Tatashin <pasha.tatashin@oracle.com>
-Subject: Re: Control dependency between prior load in while condition and
- later store?
-In-Reply-To: <20180405073204.GP4043@hirez.programming.kicks-ass.net>
-Message-ID: <Pine.LNX.4.44L0.1804051022170.1384-100000@iolanthe.rowland.org>
+        Thu, 5 Apr 2018 10:37:27 -0400
+Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
+ DA850 PSC
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        David Lechner <david@lechnology.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-13-git-send-email-david@lechnology.com>
+ <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
+ <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
+ <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
+ <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
+Date: Thu, 5 Apr 2018 20:06:16 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Apr 2018, Peter Zijlstra wrote:
-
-> On Wed, Apr 04, 2018 at 04:35:32PM -0400, Alan Stern wrote:
-> > On Wed, 4 Apr 2018, Daniel Jordan wrote:
-> > 
-> > > A question for memory-barriers.txt aficionados.
-> > > 
-> > > Is there a control dependency between the prior load of 'a' and the 
-> > > later store of 'c'?:
-> > > 
-> > >    while (READ_ONCE(a));
-> > >    WRITE_ONCE(c, 1);
-> > 
-> > I would say that yes, there is.
+On Thursday 05 April 2018 07:14 PM, Bartosz Golaszewski wrote:
+> 2018-04-05 15:09 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+>> Hi Bartosz,
+>>
+>> On Friday 09 February 2018 10:18 PM, Michael Turquette wrote:
+>>> On Fri, Feb 9, 2018 at 8:22 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>>> 2018-01-08 3:17 GMT+01:00 David Lechner <david@lechnology.com>:
+>>
+>>>> Hi David,
+>>>>
+>>>> I've been working on moving the genpd code from its own driver to the
+>>>> psc one. I couldn't get the system to boot though and problems
+>>>> happened very early in the boot sequence. I struggled to figure out
+>>>> what's happening, but eventually I noticed that psc uses
+>>>> CLK_OF_DECLARE() to initialize clocks. The functions registered this
+>>>> way are called very early in the boot sequence, way before
+>>>> late_initcall() in which the genpd framework is initialized. This of
+>>
+>> late_initcall() is too late for genpd to be initialized. As you may have
+>> seen with the latest set of patches, we have problems with timer
+>> initialization. After converting to platform devices, PSC and PLL clocks
+>> get initialized post time_init(). We are working that around using
+>> fixed-clocks, which hopefully will work (I still need to test many of
+>> the affected platforms).
+>>
+>> Can you please reply with the exact issue you faced with genpd framework
+>> initialization so we do have that on record.
+>>
 > 
-> Indeed.
+> The exact issue manifested itself in a NULL-pointer dereference panic
+> when I tried moving the genpd code I had initially implemented as a
+> separate platform driver to what I believe was v6 or v7 of David's
+> series (before the psc driver became a platform driver, when it was
+> still using CLK_OF_DECLARE()). When I had tested a simple conversion
+> of that version to a platform_driver, genpd worked fine.
 > 
-> > Yes, except that a more accurate view of the object code would be
-> > something like this:
-> > 
-> > Loop:	r1 = READ_ONCE(a);
-> > 	if (r1)
-> > 		goto Loop;
-> > 	else
-> > 		;	// Do nothing
-> > 	WRITE_ONCE(c, 1);
-> > 
-> > Here you can see that one path branches backward, so everything 
-> > following the "if" is dependent on the READ_ONCE.
-> 
-> Agreed, and I think I even have code that relies on such a pattern
-> somewhere.. Ah.. yes, see smp_cond_load_acquire().
+> I don't have the stack traces from these panics, but I recall some
+> debugfs functions being involved and the genpd late_initcalls are
+> related to debugfs. Looking at it now I don't see how exactly it could
+> fail though.
 
-One does have to be very careful when talking about compiler behavior.  
-This happens to be a particularly delicate point.  My old copy of the
-C++11 draft standard says (section 1.10 paragraph 24):
+Do you have the code where you faced the problem stashed somewhere? I am
+not (yet) advocating going back to CLK_OF_DECLARE(). But there is a
+definite issue with timer being ready when not using CLK_OF_DECLARE().
+So, I want to make sure there the reason why we are going down the
+platform device path is a amply clear.
 
-
-The implementation may assume that any thread will eventually do one of 
-the following:
-
-â- terminate,
-â- make a call to a library I/O function,
-â- access or modify a volatile object, or
-â- perform a synchronization operation or an atomic operation.
-
-[ Note: This is intended to allow compiler transformations such as 
-removal of empty loops, even when termination cannot be proven. - end 
-note ]
-
-
-In this example, READ_ONCE() is in fact a volatile access, so we're 
-okay.  But if it weren't, the compiler might decide to assume the loop 
-will eventually terminate, meaning that the WRITE_ONCE() would always 
-be executed eventually.  Then there would be nothing to prevent the 
-compiler from moving the WRITE_ONCE() up before the start of the loop, 
-which would of course destroy the control dependency.
-
-Alan
+Thanks,
+Sekhar
