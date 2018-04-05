@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3756588-1522960603-2-4045496484642846304
+X-Cyrus-Session-Id: sloti22d1t05-3799332-1522963238-2-10263056146749359171
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,23 +14,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522960602; b=dWcCqIey2lJn22kCBdCEIYL/oCj7tgDTfCUuURGU+GCFT/MnXy
-    JAO0c6xRF+8nDdll/1Q93kMvZecNIl4VXOXSuzJBgZPfawKpQdiMLf7q9MjjHe7q
-    2DsYwgKxd+ugcbL31Rn5Hu2752rXtF2c6K3XzBmZQP9mI5KUTUw9bEfGs+DZXV/Q
-    ndH6z8rYynkmTf8+3gpXynu8sFnVwc+9eJFZuthIUmG7AsCKXgr247t59KjEt5lF
-    suPC0SOWycYhLVftF9jR+Go8C9Jed+vhmcA5WDgoKPmEkCK+K0msMTLaJprRgh49
-    vY2MFRug92dXMhJDEOVxc4hSG9Jg8PQdxK6A==
+    1522963237; b=O67v9zP0Vbn6SSZvQId9eyJaoI6fffIwUpzmB9SnOWU6rAK9JW
+    NgOvMMv5mE+IL/050DzKpnKYcBg520P09EH4e/xw2GBEfZZJc+fBk+kPc25Z2Hq0
+    OlQrJXBkT+piwnErYhNFj1+PIaXQzsHmWRsOM85t7axEJ6RPL93ui//SRmoDrrGb
+    1PWEDKzsBqT5Ph8Zs3LKLOGVt3zOVwQdKY59wuaubK87nX2QZtSe07ySFVOddZ6R
+    iW2BlyUayAxbl/8rFCurofay0m/5BypL1EVbGzwQxF9xzgYgdALYueodMenrnh3K
+    DY6qZ5nPjlWCsgL11msUhD8DFdKCxe6izA9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:content-transfer-encoding:sender
-    :list-id; s=fm2; t=1522960602; bh=xPQvpSvRzR4rx9Yy15BT6WiP8cbMc5
-    gxPS2sjzbit6k=; b=b15d8IUtXDPp8nJtEjvC/PRubd69xNL90OQNJTfEVwjRtg
-    s3kypFKpNB2DpWyV0DXUU18+26ACE+f+WcHQT6iPJuewXpztTtAoNfACRIsR/Muu
-    xJjaMuGRb5ixkgggphjEoywKh3r1qpGhk3gsgIvJfVyR7Q/+mpZeU7XkTx16rbaS
-    rHg5mJV0wO8FrDU5ZnP31Qs/SYaZnuUir5SgHOb9kAXoWudks/TPyDWkssPJ+xhk
-    Lm281g4fqt0no+LrEFdIMndu16oa5K5MbYmtStbn4wTVd5hfYh9WkHMJmVGBhSdl
-    AjmTRHj6iRnO2StttZTwtus4IV76nqZKe+ta5axQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1522963237;
+    bh=seNR4A/j3S/f6nrcsRlF4MZneImmwq6dJDB5q9UuQI8=; b=qS2Y93GJx3s5
+    9PzE+pRRBX7baTgVRuF9VlCCtibt72BEvbCH+DUq684byRNJTBIC+U2eXe5yLGER
+    RCfm+eVFMJiOLzyLEmvHMztQEH6tLev5ArU5qmUKNOZbGk6PoEQoOD55O66BdOAc
+    g+Xy1rOQpatNdZ2gYH91WoKZfDJUJtbvYr7uvQYtkdIHp2dxRUR7V88+9qdLBpBx
+    JsrgHW144BoYTdeiPn64AmsibFbzW9/Dnj5NSx0u6xcYohYaOxzmMlXIGLqnREKT
+    7pZAoi83zYXMyRc4+fjL52Rx0O9hOeyqHNPsRfQWLN4yAzBa5mv8oMSVKGP+42Zq
+    0swO1LeYNQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -40,7 +41,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -52,21 +53,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF6yVm/5rbtnJMLJSaYTMajOOkU7sj7CwPlVmXBbDcWouJ9fMNXmy2oTPob1GEo/o9ALQDjTXl/aDPY4PGmgtmf6ao75+YgzQyCcV7P9ZezXNSB/UV2l
-    IyKuVxF7YbHydlEUGY3UUOpHr2mo0cwH6z+z63YyC0Ahar/6rPLvd31278dSDlTuaxr+AjufWlqcDl5CeBVdl5nbdZtBg5ZOuIdQvIl69AG8p3DrSkhzPcMg
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfPYaWc/79xSVx6VmutmJlN8skdK2VSG5rUZPayejajrKOmyju1V5Fn22386GhkmBdus9chK+OIrZkO+ElPudrMwk5SDnCt2vt1hqivw7R67GeLUAVdNf
+    gT7S6HpNlQJuxw8J0HwfVcjkUWp8eaUIYFAvKWzqAX7DC91jd49WEmuDQJY4kLcrdHgdMsG4bE1mh5g08ePyt1oDIRL1dprCkq3bvdgnipIX76p0PK2ZzteM
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=KYDh_RRHI3FUnStEhLQA:9
+    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=3F37EuN9M9Y0tdts9r8A:9
     a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751365AbeDEUgL (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 5 Apr 2018 16:36:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46662 "EHLO mx1.redhat.com"
+        id S1751443AbeDEVUg (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 5 Apr 2018 17:20:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42004 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751344AbeDEUgK (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 5 Apr 2018 16:36:10 -0400
+        id S1751435AbeDEVUf (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 5 Apr 2018 17:20:35 -0400
 From: Lyude Paul <lyude@redhat.com>
 To: intel-gfx@lists.freedesktop.org
 Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
@@ -77,9 +78,11 @@ Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/i915/dp: Send DPCD ON for MST before phy_up
-Date: Thu,  5 Apr 2018 16:36:01 -0400
-Message-Id: <20180405203601.23242-1-lyude@redhat.com>
+Subject: [PATCH v3] drm/i915/dp: Send DPCD ON for MST before phy_up
+Date: Thu,  5 Apr 2018 17:19:29 -0400
+Message-Id: <20180405211930.1209-1-lyude@redhat.com>
+In-Reply-To: <20180405203601.23242-1-lyude@redhat.com>
+References: <20180405203601.23242-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -117,6 +120,9 @@ Changes since v1:
 - Move intel_dp_sink_dpms() for MST into intel_dp_post_disable_mst() to
   keep enable/disable paths symmetrical
 - Improve commit message - dhnkrn
+Changes since v2:
+- Only send DPMS off when we're disabling the last sink, and only send
+  DPMS on when we're enabling the first sink - dhnkrn
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
@@ -125,12 +131,9 @@ Cc: Laura Abbott <labbott@redhat.com>
 Cc: stable@vger.kernel.org
 Fixes: ad260ab32a4d9 ("drm/i915/dp: Write to SET_POWER dpcd to enable MST hub.")
 ---
-This email should hopefully actually be picked up by patchwork this
-time, hooray!
-
  drivers/gpu/drm/i915/intel_ddi.c    | 6 ++++--
- drivers/gpu/drm/i915/intel_dp_mst.c | 2 ++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/intel_dp_mst.c | 8 +++++++-
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/i915/intel_ddi.c b/drivers/gpu/drm/i915/intel_ddi.c
 index a6672a9abd85..c0bf7419e1c1 100644
@@ -157,24 +160,33 @@ index a6672a9abd85..c0bf7419e1c1 100644
  	intel_disable_ddi_buf(encoder);
  
 diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-index c3de0918ee13..2493bd1e0e59 100644
+index c3de0918ee13..9e6956c08688 100644
 --- a/drivers/gpu/drm/i915/intel_dp_mst.c
 +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -176,6 +176,7 @@ static void intel_mst_post_disable_dp(struct intel_encoder *encoder,
- 	 */
- 	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port,
- 				     false);
-+	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
- 
+@@ -180,9 +180,11 @@ static void intel_mst_post_disable_dp(struct intel_encoder *encoder,
  	intel_dp->active_mst_links--;
  
-@@ -223,6 +224,7 @@ static void intel_mst_pre_enable_dp(struct intel_encoder *encoder,
+ 	intel_mst->connector = NULL;
+-	if (intel_dp->active_mst_links == 0)
++	if (intel_dp->active_mst_links == 0) {
++		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
+ 		intel_dig_port->base.post_disable(&intel_dig_port->base,
+ 						  old_crtc_state, NULL);
++	}
+ 
+ 	DRM_DEBUG_KMS("active links %d\n", intel_dp->active_mst_links);
+ }
+@@ -223,7 +225,11 @@ static void intel_mst_pre_enable_dp(struct intel_encoder *encoder,
  
  	DRM_DEBUG_KMS("active links %d\n", intel_dp->active_mst_links);
  
-+	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
++	if (intel_dp->active_mst_links == 0)
++		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
++
  	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port, true);
++
  	if (intel_dp->active_mst_links == 0)
  		intel_dig_port->base.pre_enable(&intel_dig_port->base,
+ 						pipe_config, NULL);
 -- 
 2.14.3
