@@ -1,108 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751704AbeDEN0A (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:26:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58624 "EHLO mx1.redhat.com"
+        id S1751842AbeDEN0M (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:26:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54194 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751466AbeDENZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:25:54 -0400
+        id S1751359AbeDENZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 09:25:59 -0400
 From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: kt.liao@emc.com.tw, Oliver Haessler <oliver@redhat.com>,
         Benjamin Berg <bberg@redhat.com>, linux-input@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 5/8] Input: elantech - query the resolution in query_info
-Date: Thu,  5 Apr 2018 15:25:34 +0200
-Message-Id: <20180405132537.3218-6-benjamin.tissoires@redhat.com>
+Subject: [PATCH 8/8] input: psmouse-smbus: allow to control psmouse_deactivate
+Date: Thu,  5 Apr 2018 15:25:37 +0200
+Message-Id: <20180405132537.3218-9-benjamin.tissoires@redhat.com>
 In-Reply-To: <20180405132537.3218-1-benjamin.tissoires@redhat.com>
 References: <20180405132537.3218-1-benjamin.tissoires@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The command ETP_RESOLUTION_QUERY also contains the bus information.
-It is better to fetch it once, while we are querying for device
-information.
+This seems to be Synaptics specific, as some Elan touchpads are not
+correctly switching to SMBus if we call deactivate before switching to
+SMBus on cold boot and on resume.
+
+Tested with the T480s
 
 Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 ---
- drivers/input/mouse/elantech.c | 27 +++++++++++++++------------
- drivers/input/mouse/elantech.h |  2 ++
- 2 files changed, 17 insertions(+), 12 deletions(-)
+ drivers/input/mouse/elantech.c      |  2 +-
+ drivers/input/mouse/psmouse-smbus.c | 13 ++++++++++---
+ drivers/input/mouse/psmouse.h       |  1 +
+ drivers/input/mouse/synaptics.c     |  2 +-
+ 4 files changed, 13 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
-index d485664f1563..41af0c9098af 100644
+index 29f55e8e07e9..6009fb7d0d31 100644
 --- a/drivers/input/mouse/elantech.c
 +++ b/drivers/input/mouse/elantech.c
-@@ -1179,7 +1179,6 @@ static int elantech_set_input_params(struct psmouse *psmouse)
- 	struct elantech_data *etd = psmouse->private;
- 	struct elantech_device_info *info = &etd->info;
- 	unsigned int x_min = 0, y_min = 0, x_max = 0, y_max = 0, width = 0;
--	unsigned int x_res = 31, y_res = 31;
+@@ -1771,7 +1771,7 @@ static int elantech_create_smbus(struct psmouse *psmouse,
+ 	};
  
- 	if (elantech_set_range(psmouse, &x_min, &y_min, &x_max, &y_max, &width))
- 		return -1;
-@@ -1232,13 +1231,6 @@ static int elantech_set_input_params(struct psmouse *psmouse)
- 		break;
- 
- 	case 4:
--		if (elantech_get_resolution_v4(psmouse, &x_res, &y_res)) {
--			/*
--			 * if query failed, print a warning and leave the values
--			 * zero to resemble synaptics.c behavior.
--			 */
--			psmouse_warn(psmouse, "couldn't query resolution data.\n");
--		}
- 		elantech_set_buttonpad_prop(psmouse);
- 		__set_bit(BTN_TOOL_QUADTAP, dev->keybit);
- 		/* For X to recognize me as touchpad. */
-@@ -1267,11 +1259,11 @@ static int elantech_set_input_params(struct psmouse *psmouse)
- 		break;
- 	}
- 
--	input_abs_set_res(dev, ABS_X, x_res);
--	input_abs_set_res(dev, ABS_Y, y_res);
-+	input_abs_set_res(dev, ABS_X, info->x_res);
-+	input_abs_set_res(dev, ABS_Y, info->y_res);
- 	if (info->hw_version > 1) {
--		input_abs_set_res(dev, ABS_MT_POSITION_X, x_res);
--		input_abs_set_res(dev, ABS_MT_POSITION_Y, y_res);
-+		input_abs_set_res(dev, ABS_MT_POSITION_X, info->x_res);
-+		input_abs_set_res(dev, ABS_MT_POSITION_Y, info->y_res);
- 	}
- 
- 	etd->y_max = y_max;
-@@ -1720,6 +1712,17 @@ int elantech_query_info(struct psmouse *psmouse,
- 	/* The MSB indicates the presence of the trackpoint */
- 	info->has_trackpoint = (info->capabilities[0] & 0x80) == 0x80;
- 
-+	info->x_res = 31;
-+	info->y_res = 31;
-+	if (info->hw_version == 4) {
-+		if (elantech_get_resolution_v4(psmouse,
-+					       &info->x_res,
-+					       &info->y_res)) {
-+			psmouse_warn(psmouse,
-+				     "failed to query resolution data.\n");
-+		}
-+	}
-+
- 	return 0;
+ 	return psmouse_smbus_init(psmouse, &smbus_board, &pdata,
+-				  sizeof(pdata), leave_breadcrumbs);
++				  sizeof(pdata), false, leave_breadcrumbs);
  }
  
-diff --git a/drivers/input/mouse/elantech.h b/drivers/input/mouse/elantech.h
-index d8ac27fe4597..851df4ce6232 100644
---- a/drivers/input/mouse/elantech.h
-+++ b/drivers/input/mouse/elantech.h
-@@ -120,6 +120,8 @@ struct elantech_device_info {
- 	unsigned char debug;
- 	unsigned char hw_version;
- 	unsigned int fw_version;
-+	unsigned int x_res;
-+	unsigned int y_res;
- 	bool paritycheck;
- 	bool jumpy_cursor;
- 	bool reports_pressure;
+ /**
+diff --git a/drivers/input/mouse/psmouse-smbus.c b/drivers/input/mouse/psmouse-smbus.c
+index c7ac24d119c1..facfe902b073 100644
+--- a/drivers/input/mouse/psmouse-smbus.c
++++ b/drivers/input/mouse/psmouse-smbus.c
+@@ -23,6 +23,7 @@ struct psmouse_smbus_dev {
+ 	struct i2c_client *client;
+ 	struct list_head node;
+ 	bool dead;
++	bool need_deactivate;
+ };
+ 
+ static LIST_HEAD(psmouse_smbus_list);
+@@ -118,7 +119,10 @@ static psmouse_ret_t psmouse_smbus_process_byte(struct psmouse *psmouse)
+ 
+ static int psmouse_smbus_reconnect(struct psmouse *psmouse)
+ {
+-	psmouse_deactivate(psmouse);
++	struct psmouse_smbus_dev *smbdev = psmouse->private;
++
++	if (smbdev->need_deactivate)
++		psmouse_deactivate(psmouse);
+ 
+ 	return 0;
+ }
+@@ -225,6 +229,7 @@ void psmouse_smbus_cleanup(struct psmouse *psmouse)
+ int psmouse_smbus_init(struct psmouse *psmouse,
+ 		       const struct i2c_board_info *board,
+ 		       const void *pdata, size_t pdata_size,
++		       bool need_deactivate,
+ 		       bool leave_breadcrumbs)
+ {
+ 	struct psmouse_smbus_dev *smbdev;
+@@ -236,6 +241,7 @@ int psmouse_smbus_init(struct psmouse *psmouse,
+ 
+ 	smbdev->psmouse = psmouse;
+ 	smbdev->board = *board;
++	smbdev->need_deactivate = need_deactivate;
+ 
+ 	smbdev->board.platform_data = kmemdup(pdata, pdata_size, GFP_KERNEL);
+ 	if (!smbdev->board.platform_data) {
+@@ -243,6 +249,9 @@ int psmouse_smbus_init(struct psmouse *psmouse,
+ 		return -ENOMEM;
+ 	}
+ 
++	if (need_deactivate)
++		psmouse_deactivate(psmouse);
++
+ 	psmouse->private = smbdev;
+ 	psmouse->protocol_handler = psmouse_smbus_process_byte;
+ 	psmouse->reconnect = psmouse_smbus_reconnect;
+@@ -250,8 +259,6 @@ int psmouse_smbus_init(struct psmouse *psmouse,
+ 	psmouse->disconnect = psmouse_smbus_disconnect;
+ 	psmouse->resync_time = 0;
+ 
+-	psmouse_deactivate(psmouse);
+-
+ 	mutex_lock(&psmouse_smbus_mutex);
+ 	list_add_tail(&smbdev->node, &psmouse_smbus_list);
+ 	mutex_unlock(&psmouse_smbus_mutex);
+diff --git a/drivers/input/mouse/psmouse.h b/drivers/input/mouse/psmouse.h
+index dd4ec1f602d7..64c3a5d3fb3e 100644
+--- a/drivers/input/mouse/psmouse.h
++++ b/drivers/input/mouse/psmouse.h
+@@ -225,6 +225,7 @@ struct i2c_board_info;
+ int psmouse_smbus_init(struct psmouse *psmouse,
+ 		       const struct i2c_board_info *board,
+ 		       const void *pdata, size_t pdata_size,
++		       bool need_deactivate,
+ 		       bool leave_breadcrumbs);
+ void psmouse_smbus_cleanup(struct psmouse *psmouse);
+ 
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+index 14a1188561aa..6b1ed53a8b03 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -1751,7 +1751,7 @@ static int synaptics_create_intertouch(struct psmouse *psmouse,
+ 	};
+ 
+ 	return psmouse_smbus_init(psmouse, &intertouch_board,
+-				  &pdata, sizeof(pdata),
++				  &pdata, sizeof(pdata), true,
+ 				  leave_breadcrumbs);
+ }
+ 
 -- 
 2.14.3
