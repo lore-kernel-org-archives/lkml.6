@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751525AbeDEJu2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:50:28 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60530 "EHLO
+        id S1751678AbeDEJud (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:50:33 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60650 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751362AbeDEJuT (ORCPT
+        with ESMTP id S1751530AbeDEJub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:50:19 -0400
+        Thu, 5 Apr 2018 05:50:31 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -25,9 +25,9 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         hshi@chromium.org,
         =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 03/30] drm/bridge: analogix_dp: Don't use fast link training when panel just powered up
-Date: Thu,  5 Apr 2018 11:49:33 +0200
-Message-Id: <20180405095000.9756-4-enric.balletbo@collabora.com>
+Subject: [PATCH v6 08/30] drm/bridge: analogix_dp: Extend hpd check time to 100ms
+Date: Thu,  5 Apr 2018 11:49:38 +0200
+Message-Id: <20180405095000.9756-9-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
 References: <20180405095000.9756-1-enric.balletbo@collabora.com>
@@ -38,77 +38,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zain wang <wzz@rock-chips.com>
+From: Lin Huang <hl@rock-chips.com>
 
-Panel would reset its setting when it powers down. It would forget the last
-succeeded link training setting. So we can't use the last successful link
-training setting to do fast link training. Let's reset fast_train_enable in
-analogix_dp_bridge_disable();
+There was a 1ms delay to detect the hpd signal, which is too short to
+detect a short pulse. This patch extends this delay to 100ms.
 
 Cc: Stéphane Marchesin <marcheu@chromium.org>
-Signed-off-by: zain wang <wzz@rock-chips.com>
+Cc: 征增 王 <wzz@rock-chips.com>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 9 +++++----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 2 +-
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 05a0ca4af057..85dbb1ca9886 100644
+index 5957e2338071..1f4f34149019 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -579,14 +579,14 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
- 		if (retval != 1) {
- 			dev_err(dp->dev, "failed to read downspread %d\n",
- 				retval);
--			dp->fast_train_support = false;
-+			dp->fast_train_enable = false;
- 		} else {
--			dp->fast_train_support =
-+			dp->fast_train_enable =
- 				(spread & DP_NO_AUX_HANDSHAKE_LINK_TRAINING) ?
- 					true : false;
- 		}
- 		dev_dbg(dp->dev, "fast link training %s\n",
--			dp->fast_train_support ? "supported" : "unsupported");
-+			dp->fast_train_enable ? "supported" : "unsupported");
+@@ -76,7 +76,7 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
+ 			return 0;
  
- 		/* set enhanced mode if available */
- 		analogix_dp_set_enhanced_mode(dp);
-@@ -793,7 +793,7 @@ static int analogix_dp_fast_link_train(struct analogix_dp_device *dp)
+ 		timeout_loop++;
+-		usleep_range(10, 11);
++		usleep_range(1000, 1100);
+ 	}
  
- static int analogix_dp_train_link(struct analogix_dp_device *dp)
- {
--	if (dp->fast_train_support)
-+	if (dp->fast_train_enable)
- 		return analogix_dp_fast_link_train(dp);
- 
- 	return analogix_dp_full_link_train(dp, dp->video_info.max_lane_count,
-@@ -1197,6 +1197,7 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 		DRM_ERROR("failed to setup the panel ret = %d\n", ret);
- 
- 	dp->psr_enable = false;
-+	dp->fast_train_enable = false;
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
- }
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 6a96ef7e6934..403ff853464b 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -173,7 +173,7 @@ struct analogix_dp_device {
- 	int			hpd_gpio;
- 	bool                    force_hpd;
- 	bool			psr_enable;
--	bool			fast_train_support;
-+	bool			fast_train_enable;
- 
- 	struct mutex		panel_lock;
- 	bool			panel_is_modeset;
+ 	/*
 -- 
 2.16.3
