@@ -1,94 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752869AbeDEAGs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 20:06:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43354 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752353AbeDEAGq (ORCPT
+        id S1752605AbeDEALW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 20:11:22 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.195]:48769 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752529AbeDEALV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 20:06:46 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9CB7602BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
- readX() implementation
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Palmer Dabbelt <palmer@sifive.com>,
-        Mark Rutland <mark.rutland@arm.com>, Timur Tabi <timur@codeaurora.org>,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <mhng-fe49c525-788d-4ce7-9703-95e2b3eaeca6@palmer-si-x1c4>
- <691b903c-e97d-0a25-28c5-690318bb215a@codeaurora.org>
- <CAK8P3a2pGQb7TqQtuw0ZpQ=8CwXiRmRKKc1GwvEgKDgofxJ3nA@mail.gmail.com>
- <9b0d7db3-0830-9661-6dc8-39523daa8f32@codeaurora.org>
- <CAK8P3a2Cg59cTzUq2_8sopeY9BktM7a6_4nunMJVA5fQFaVLug@mail.gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <d7c63b8f-b315-8593-9683-588598dd1dc1@codeaurora.org>
-Date: Wed, 4 Apr 2018 20:06:42 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 4 Apr 2018 20:11:21 -0400
+Date: Wed, 4 Apr 2018 19:09:44 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] brcm80211: brcmsmac: phy_lcn: remove duplicate code
+Message-ID: <20180405000944.GA22743@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2Cg59cTzUq2_8sopeY9BktM7a6_4nunMJVA5fQFaVLug@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1f3sTK-000T1v-8t
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.145.54.187]:35280
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/4/2018 3:50 PM, Arnd Bergmann wrote:
-> On Wed, Apr 4, 2018 at 7:48 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
->> On 4/4/2018 11:55 AM, Arnd Bergmann wrote:
->>> Yes, exactly, plus the same for write and in/out of course.
->>
->> I was looking at this...
->>
->> inb() and outb() seem to be calling writeb(). It gets the wmb/barrier automatically
->> when we fix writeb().
->>
->> Did I miss something?
-> 
-> At least outb() needs stricter barriers than writeb() in theory, what
-> we want here
-> is that outb() has not just made it out to the device but that the
-> write has been
-> confirmed completed by the device. Some architectures can't do it, but those
-> that can should have an easy way to hook into that using a separate set of
-> barriers.
-> 
-> Using the riscv barrier names, we could do this like
-> 
-> #ifndef __io_bw()
-> #define __io_bw()      wmb()
-> #endif
-> 
-> #ifndef __io_aw
-> #define __io_aw()      barrier()
-> #endif
-> 
-> #ifndef __io_pbw
-> #define __io_pbw()     __io_bw()
-> #endif
-> 
-> #ifndef __io_paw
-> #define __io_paw()     __io_aw()
-> #endif
-> 
-> and the same thing for reads. This way, an architecture could override
-> any of those, but still get reasonable defaults for the others.
-> For __io_bw(), I picked barrier() instead of do {} while (0), no idea
-> if that's any better, I just play safe here.
+Remove and refactor some code in order to avoid having identical code
+for different branches.
 
-I posted V3. I hope I captured what you mean above correctly.
+Notice that this piece of code hasn't been modified since 2011.
 
-> 
->      Arnd
-> 
+Addresses-Coverity-ID: 1226756 ("Identical code for different branches")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c
+index 93d4cde..9d830d2 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c
+@@ -3388,13 +3388,8 @@ void wlc_lcnphy_deaf_mode(struct brcms_phy *pi, bool mode)
+ 	u8 phybw40;
+ 	phybw40 = CHSPEC_IS40(pi->radio_chanspec);
+ 
+-	if (LCNREV_LT(pi->pubpi.phy_rev, 2)) {
+-		mod_phy_reg(pi, 0x4b0, (0x1 << 5), (mode) << 5);
+-		mod_phy_reg(pi, 0x4b1, (0x1 << 9), 0 << 9);
+-	} else {
+-		mod_phy_reg(pi, 0x4b0, (0x1 << 5), (mode) << 5);
+-		mod_phy_reg(pi, 0x4b1, (0x1 << 9), 0 << 9);
+-	}
++	mod_phy_reg(pi, 0x4b0, (0x1 << 5), (mode) << 5);
++	mod_phy_reg(pi, 0x4b1, (0x1 << 9), 0 << 9);
+ 
+ 	if (phybw40 == 0) {
+ 		mod_phy_reg((pi), 0x410,
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.7.4
