@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751896AbeDEJul (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:50:41 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60682 "EHLO
+        id S1752045AbeDEJuw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:50:52 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60882 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751602AbeDEJud (ORCPT
+        with ESMTP id S1751906AbeDEJut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:50:33 -0400
+        Thu, 5 Apr 2018 05:50:49 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -24,9 +24,9 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 09/30] drm/bridge: analogix_dp: Fix incorrect usage of enhanced mode
-Date: Thu,  5 Apr 2018 11:49:39 +0200
-Message-Id: <20180405095000.9756-10-enric.balletbo@collabora.com>
+Subject: [PATCH v6 16/30] drm/bridge: analogix_dp: Fix incorrect operations with register ANALOGIX_DP_FUNC_EN_1
+Date: Thu,  5 Apr 2018 11:49:46 +0200
+Message-Id: <20180405095000.9756-17-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
 References: <20180405095000.9756-1-enric.balletbo@collabora.com>
@@ -36,11 +36,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zain wang <wzz@rock-chips.com>
 
-Enhanced mode is required by the eDP 1.2 specification, and not doing it
-early could result in a period of time where we have a link transmitting
-idle packets without it. Since there is no reason to disable it, we just
-enable it at the beginning of link training and then keep it on all the
-time.
+Register ANALOGIX_DP_FUNC_EN_1(offset 0x18), Rockchip is different to
+Exynos:
+
+on Exynos edp phy,
+BIT 7		MASTER_VID_FUNC_EN_N
+BIT 6		reserved
+BIT 5		SLAVE_VID_FUNC_EN_N
+
+on Rockchip edp phy,
+BIT 7		reserved
+BIT 6		RK_VID_CAP_FUNC_EN_N
+BIT 5		RK_VID_FIFO_FUNC_EN_N
+
+So, we should do some private operations to Rockchip.
 
 Cc: Tomasz Figa <tfiga@chromium.org>
 Signed-off-by: zain wang <wzz@rock-chips.com>
@@ -52,39 +61,60 @@ Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 19 ++++++++++++++-----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |  2 ++
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 1f4f34149019..1e1743b59c77 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -281,6 +281,8 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
- 	retval = drm_dp_dpcd_write(&dp->aux, DP_LINK_BW_SET, buf, 2);
- 	if (retval < 0)
- 		return retval;
-+	/* set enhanced mode if available */
-+	analogix_dp_set_enhanced_mode(dp);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 02ab1aaa9993..4eae206ec31b 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -126,9 +126,14 @@ void analogix_dp_reset(struct analogix_dp_device *dp)
+ 	analogix_dp_stop_video(dp);
+ 	analogix_dp_enable_video_mute(dp, 0);
  
- 	/* Set TX pre-emphasis to minimum */
- 	for (lane = 0; lane < lane_count; lane++)
-@@ -593,8 +595,6 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
- 		dev_dbg(dp->dev, "fast link training %s\n",
- 			dp->fast_train_enable ? "supported" : "unsupported");
+-	reg = MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N |
+-		AUD_FIFO_FUNC_EN_N | AUD_FUNC_EN_N |
+-		HDCP_FUNC_EN_N | SW_FUNC_EN_N;
++	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
++		reg = RK_VID_CAP_FUNC_EN_N | RK_VID_FIFO_FUNC_EN_N |
++			SW_FUNC_EN_N;
++	else
++		reg = MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N |
++			AUD_FIFO_FUNC_EN_N | AUD_FUNC_EN_N |
++			HDCP_FUNC_EN_N | SW_FUNC_EN_N;
++
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_FUNC_EN_1);
  
--		/* set enhanced mode if available */
--		analogix_dp_set_enhanced_mode(dp);
- 		dp->link_train.lt_state = FINISHED;
+ 	reg = SSC_FUNC_EN_N | AUX_FUNC_EN_N |
+@@ -971,8 +976,12 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp)
+ 	u32 reg;
  
- 		return 0;
-@@ -940,8 +940,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
- 	}
+ 	reg = readl(dp->reg_base + ANALOGIX_DP_FUNC_EN_1);
+-	reg &= ~(MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N);
+-	reg |= MASTER_VID_FUNC_EN_N;
++	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type)) {
++		reg &= ~(RK_VID_CAP_FUNC_EN_N | RK_VID_FIFO_FUNC_EN_N);
++	} else {
++		reg &= ~(MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N);
++		reg |= MASTER_VID_FUNC_EN_N;
++	}
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_FUNC_EN_1);
  
- 	analogix_dp_enable_scramble(dp, 1);
--	analogix_dp_enable_rx_to_enhanced_mode(dp, 1);
--	analogix_dp_enable_enhanced_mode(dp, 1);
+ 	reg = readl(dp->reg_base + ANALOGIX_DP_VIDEO_CTL_10);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+index b633a4a5082a..0cf27c731727 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+@@ -127,7 +127,9 @@
  
- 	analogix_dp_init_video(dp);
- 	ret = analogix_dp_config_video(dp);
+ /* ANALOGIX_DP_FUNC_EN_1 */
+ #define MASTER_VID_FUNC_EN_N			(0x1 << 7)
++#define RK_VID_CAP_FUNC_EN_N			(0x1 << 6)
+ #define SLAVE_VID_FUNC_EN_N			(0x1 << 5)
++#define RK_VID_FIFO_FUNC_EN_N			(0x1 << 5)
+ #define AUD_FIFO_FUNC_EN_N			(0x1 << 4)
+ #define AUD_FUNC_EN_N				(0x1 << 3)
+ #define HDCP_FUNC_EN_N				(0x1 << 2)
 -- 
 2.16.3
