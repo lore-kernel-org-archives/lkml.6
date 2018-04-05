@@ -1,80 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751280AbeDEEnI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 00:43:08 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:65159 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751038AbeDEEnG (ORCPT
+        id S1751454AbeDEEtr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 00:49:47 -0400
+Received: from mail-pl0-f41.google.com ([209.85.160.41]:46998 "EHLO
+        mail-pl0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbeDEEtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 00:43:06 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w354gkYT014489
-X-Nifty-SrcIP: [209.85.217.177]
-X-Google-Smtp-Source: AIpwx4/2G+CP2XS8MKDQFKaPTYG3oOba5rA7QPqvmMg91f1jTtVjrstPEBYS83Ra140sRenTDh7JMVnPdWkG9JN18lQ=
+        Thu, 5 Apr 2018 00:49:45 -0400
+X-Google-Smtp-Source: AIpwx4/jNIeb8WIseolWbXcCEYvJabx4h66zF3NQQBAsUZivzdZRZb0cck3zG+2gOkSankOV3MfMdA==
+Date: Thu, 5 Apr 2018 10:19:41 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
+        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
+        rui.zhang@intel.com, daniel.thompson@linaro.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH V2 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+Message-ID: <20180405044941.GK3572@vireshk-i7>
+References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
+ <1519226968-19821-7-git-send-email-daniel.lezcano@linaro.org>
+ <20180223073432.GF26947@vireshk-i7>
+ <faaf027c-e01c-6801-9a0c-ab7e0ba669a1@linaro.org>
+ <20180226043021.GK26947@vireshk-i7>
+ <78504a65-d21a-eea0-d8af-6e12d5747b87@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180329004805.7278-3-labbott@redhat.com>
-References: <20180329004805.7278-1-labbott@redhat.com> <20180329004805.7278-3-labbott@redhat.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 5 Apr 2018 13:42:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASd5Ano4G0Uay8MffBp0yb5TQ_1C+WaGv57pPv_J15_gQ@mail.gmail.com>
-Message-ID: <CAK7LNASd5Ano4G0Uay8MffBp0yb5TQ_1C+WaGv57pPv_J15_gQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] objtool: Support HOSTCFLAGS and HOSTLDFLAGS
-To: Laura Abbott <labbott@redhat.com>
-Cc: Michal Marek <michal.lkml@markovi.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78504a65-d21a-eea0-d8af-6e12d5747b87@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-29 9:48 GMT+09:00 Laura Abbott <labbott@redhat.com>:
-> It may be useful to compile host programs with different flags (e.g.
-> hardening). Ensure that objtool picks up the appropriate flags.
->
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
+On 04-04-18, 10:50, Daniel Lezcano wrote:
+> Mmh, that sounds very complex. May be it is simpler to count the number
+> of cluster and initialize the idle_cdev for each cluster and then go for
+> this loop with the cluster cpumask.
 
+Maybe not sure. I have had such code in the past and it was quite
+straight forward to understand :)
 
-I saw some similar patches before.
-
-I thought they are fixing this way
-https://patchwork.kernel.org/patch/10251259/
-
-but, I am not tacking the progress.
-
-
-
-
->  tools/objtool/Makefile | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-> index e6acc281dd37..0ff3bcac1ca9 100644
-> --- a/tools/objtool/Makefile
-> +++ b/tools/objtool/Makefile
-> @@ -31,8 +31,9 @@ INCLUDES := -I$(srctree)/tools/include \
->             -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
->             -I$(srctree)/tools/objtool/arch/$(ARCH)/include
->  WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
-> -CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
-> -LDFLAGS  += -lelf $(LIBSUBCMD)
-> +CFLAGS   += -Wall -Werror $(WARNINGS) $(HOSTCFLAGS) -fomit-frame-pointer -O2 -g \
-> +           $(INCLUDES)
-> +LDFLAGS  += -lelf $(LIBSUBCMD) $(HOSTLDFLAGS)
->
->  # Allow old libelf to be used:
->  elfshdr := $(shell echo '\#include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
-> --
-> 2.16.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+You can go with whichever version you like.
 
 -- 
-Best Regards
-Masahiro Yamada
+viresh
