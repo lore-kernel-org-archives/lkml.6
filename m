@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752149AbeDEJvB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:51:01 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60966 "EHLO
+        id S1752258AbeDEJvL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:51:11 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:32908 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752051AbeDEJuz (ORCPT
+        with ESMTP id S1752220AbeDEJvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:50:55 -0400
+        Thu, 5 Apr 2018 05:51:08 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -24,78 +24,78 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 19/30] drm/bridge: analogix_dp: Properly log AUX CH errors
-Date: Thu,  5 Apr 2018 11:49:49 +0200
-Message-Id: <20180405095000.9756-20-enric.balletbo@collabora.com>
+Subject: [PATCH v6 25/30] drm/rockchip: Cancel PSR enable work before changing the state
+Date: Thu,  5 Apr 2018 11:49:55 +0200
+Message-Id: <20180405095000.9756-26-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
 References: <20180405095000.9756-1-enric.balletbo@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Tomasz Figa <tfiga@chromium.org>
 
-The code in analogix_dp_transfer() that was supposed to print out:
-  AUX CH error happened
+If we change the state first and reschedule later, we might have the
+work executed according to previous scheduled time and end up with PSR
+re-enabled instantly. Let's cancel the work before changing the state.
 
-Was actually dead code. That's because the previous check (whether
-the interrupt status indicated any errors) would have hit for all
-errors anyway.
+While at it, consolidate psr_disable_handler() to just call
+rockchip_drm_do_flush(), as they are both supposed to do the same.
 
-Let's combine the two error checks so we can actually see AUX CH
-errors.  We'll also downgrade the message to a warning since some of
-these types of errors might be expected for some displays.  If this
-gets too noisy we can downgrade again to debug.
-
-Cc: 征增 王 <wzz@rock-chips.com>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Tomasz Figa <tfiga@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 4eae206ec31b..58e8a28e99aa 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -1105,6 +1105,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 			     struct drm_dp_aux_msg *msg)
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+index a107845ba97c..c8655e625ba2 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+@@ -138,18 +138,6 @@ static void psr_flush_handler(struct work_struct *work)
+ 	mutex_unlock(&psr->lock);
+ }
+ 
+-static void psr_disable_handler(struct work_struct *work)
+-{
+-	struct psr_drv *psr = container_of(work, struct psr_drv, disable_work);
+-
+-	/* If the state has changed since we initiated the flush, do nothing */
+-	mutex_lock(&psr->lock);
+-	if (psr->state == PSR_ENABLE)
+-		psr_set_state_locked(psr, PSR_FLUSH);
+-	mutex_unlock(&psr->lock);
+-	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
+-}
+-
+ /**
+  * rockchip_drm_psr_activate - activate PSR on the given pipe
+  * @encoder: encoder to obtain the PSR encoder
+@@ -198,6 +186,7 @@ EXPORT_SYMBOL(rockchip_drm_psr_deactivate);
+ 
+ static void rockchip_drm_do_flush(struct psr_drv *psr)
  {
- 	u32 reg;
-+	u32 status_reg;
- 	u8 *buffer = msg->buffer;
- 	unsigned int i;
- 	int num_transferred = 0;
-@@ -1193,16 +1194,12 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
++	cancel_delayed_work_sync(&psr->flush_work);
+ 	psr_set_state(psr, PSR_FLUSH);
+ 	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
+ }
+@@ -244,6 +233,13 @@ void rockchip_drm_psr_flush_all(struct drm_device *dev)
+ }
+ EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
  
- 	/* Clear interrupt source for AUX CH access error */
- 	reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
--	if (reg & AUX_ERR) {
-+	status_reg = readl(dp->reg_base + ANALOGIX_DP_AUX_CH_STA);
-+	if ((reg & AUX_ERR) || (status_reg & AUX_STATUS_MASK)) {
- 		writel(AUX_ERR, dp->reg_base + ANALOGIX_DP_INT_STA);
--		goto aux_error;
--	}
- 
--	/* Check AUX CH error access status */
--	reg = readl(dp->reg_base + ANALOGIX_DP_AUX_CH_STA);
--	if ((reg & AUX_STATUS_MASK)) {
--		dev_err(dp->dev, "AUX CH error happened: %d\n\n",
--			reg & AUX_STATUS_MASK);
-+		dev_warn(dp->dev, "AUX CH error happened: %#x (%d)\n",
-+			 status_reg & AUX_STATUS_MASK, !!(reg & AUX_ERR));
- 		goto aux_error;
- 	}
- 
++static void psr_disable_handler(struct work_struct *work)
++{
++	struct psr_drv *psr = container_of(work, struct psr_drv, disable_work);
++
++	rockchip_drm_do_flush(psr);
++}
++
+ static void psr_input_event(struct input_handle *handle,
+ 			    unsigned int type, unsigned int code,
+ 			    int value)
 -- 
 2.16.3
