@@ -1,162 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752654AbeDEAvT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 20:51:19 -0400
-Received: from lucky1.263xmail.com ([211.157.147.132]:33400 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752582AbeDEAvR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 20:51:17 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
-X-RL-SENDER: shawn.lin@rock-chips.com
-X-FST-TO: zhangfei.gao@linaro.org
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: shawn.lin@rock-chips.com
-X-UNIQUE-TAG: <f894ce938ba4363b611a126649e16381>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Cc: shawn.lin@rock-chips.com, Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zhangfei Gao <zhangfei.gao@linaro.org>
-Subject: Re: [PATCH] mmc: dw_mmc-k3: Fix DDR52 mode by setting required clock
- divisor
-To: Ryan Grachek <ryan@edited.us>
-References: <20180329182423.21201-1-ryan@edited.us>
- <e3ec3a77-f2f3-2164-4dbb-80e1ba3ebc63@rock-chips.com>
- <CAGoBSJq+tSpvFZsJLPffTaFBg5o2Nn2eeXXvHqt4Us_dd7==1w@mail.gmail.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <bed16723-6bf0-4bcf-f44c-ebcf7a1e7cc5@rock-chips.com>
-Date: Thu, 5 Apr 2018 08:51:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752641AbeDEA4B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 20:56:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752582AbeDEAz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 20:55:59 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5768217DF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AIpwx48uEbLS08NrPpqfuV48Tc744KY48IQS8xTcHXDZBJbeztg48kSZcAj93IzRlT8Y20Ubz4fHwVD2aNU46gKdAOs=
 MIME-Version: 1.0
-In-Reply-To: <CAGoBSJq+tSpvFZsJLPffTaFBg5o2Nn2eeXXvHqt4Us_dd7==1w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
+References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
+ <1520122673-11003-3-git-send-email-frowand.list@gmail.com> <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Wed, 4 Apr 2018 19:55:36 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+Gu=gwcxJnOF2xybXCh9N2Fp1NV05kuvQ2rif1fdHYrA@mail.gmail.com>
+Message-ID: <CAL_Jsq+Gu=gwcxJnOF2xybXCh9N2Fp1NV05kuvQ2rif1fdHYrA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
+ unflattened to FDT
+To: Jan Kiszka <jan.kiszka@web.de>
+Cc: Frank Rowand <frowand.list@gmail.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jailhouse <jailhouse-dev@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+ Zhangfei Gao who added support for hi6220]
+On Wed, Apr 4, 2018 at 5:35 PM, Jan Kiszka <jan.kiszka@web.de> wrote:
+> Hi Frank,
+>
+> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
+>> From: Frank Rowand <frank.rowand@sony.com>
+>>
+>> Move duplicating and unflattening of an overlay flattened devicetree
+>> (FDT) into the overlay application code.  To accomplish this,
+>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+>>
+>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+>> code, which is thus responsible for freeing the duplicate FDT.  The
+>> caller of of_overlay_fdt_apply() remains responsible for freeing the
+>> original FDT.
+>>
+>> The unflattened devicetree now belongs to devicetree code, which is
+>> thus responsible for freeing the unflattened devicetree.
+>>
+>> These ownership changes prevent early freeing of the duplicated FDT
+>> or the unflattened devicetree, which could result in use after free
+>> errors.
+>>
+>> of_overlay_fdt_apply() is a private function for the anticipated
+>> overlay loader.
+>
+> We are using of_fdt_unflatten_tree + of_overlay_apply in the
+> (out-of-tree) Jailhouse loader driver in order to register a virtual
+> device during hypervisor activation with Linux. The DT overlay is
+> created from a a template but modified prior to application to account
+> for runtime-specific parameters. See [1] for the current implementation.
+>
+> I'm now wondering how to model that scenario best with the new API.
+> Given that the loader lost ownership of the unflattened tree but the
+> modification API exist only for the that DT state, I'm not yet seeing a
+> clear solution. Should we apply the template in disabled form (status =
+> "disabled"), modify it, and then activate it while it is already applied?
 
-On 2018/4/4 23:31, Ryan Grachek wrote:
-> On Tue, Apr 3, 2018 at 6:31 AM, Shawn Lin <shawn.lin@rock-chips.com 
-> <mailto:shawn.lin@rock-chips.com>> wrote:
-> 
->     On 2018/3/30 2:24, oscardagrach wrote:
-> 
->     Need at least one line commit body.
-> 
->         Signed-off-by: oscardagrach <ryan@edited.us <mailto:ryan@edited.us>>
->         ---
->            drivers/mmc/host/dw_mmc-k3.c | 10 ++++++++--
->            1 file changed, 8 insertions(+), 2 deletions(-)
-> 
->         diff --git a/drivers/mmc/host/dw_mmc-k3.c
->         b/drivers/mmc/host/dw_mmc-k3.c
->         index 89cdb3d533bb..efc546cb4db8 100644
->         --- a/drivers/mmc/host/dw_mmc-k3.c
->         +++ b/drivers/mmc/host/dw_mmc-k3.c
->         @@ -194,8 +194,14 @@ static void dw_mci_hi6220_set_ios(struct
->         dw_mci *host, struct mmc_ios *ios)
->                  int ret;
->                  unsigned int clock;
->            -     clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
->         -
->         +       /* CLKDIV must be 1 for DDR52/8-bit mode */
->         +       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
->         +               ios->timing == MMC_TIMING_MMC_DDR52) {
->         +               mci_writel(host, CLKDIV, 0x1);
->         +               clock = ios->clock;
->         +       } else {
->         +               clock = (ios->clock <= 25000000) ? 25000000 :
->         ios->clock;
->         +       }
-> 
-> 
->     I undertand DDR52/8-bit need CLKDIV fixed 1, but shouldn't the following
->     change is more sensible?
-> 
->     if (ios->bus_width == MMC_BUS_WIDTH_8 && ios->timing ==
->     MMC_TIMING_MMC_DDR52)
->              clock = ios->clock * 2;
->     else
->              clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
-> 
-> 
->     The reason is ios->clock is 52MHz and you could claim 104MHz from the
->     clock provider and let dw_mmc core take care of the divder to be 1.
->     Otherwise, you just force it to be DDR52/8-bit with a clk rate of 26MHz.
-> 
-> 
->                  ret = clk_set_rate(host->biu_clk, clock);
->                  if (ret)
->                          dev_warn(host->dev, "failed to set rate
->         %uHz\n", clock);
-> 
-> 
-> 
+No. I don't think that will work.
 
-For future wise, please use plain mode mail, but not HTML format.
+The of_overlay_apply() function is still there, but static. We can
+export it again if the need arises.
 
-> Your feedback is correct. I see the Rockchip dwmmc driver has a similar
-> implementation. After applying your suggested changes, however, my board
-> reports "dwmmc_k3 f723d000.dwmmc0: failed to set rate 104000000Hz"
-> during intialization of eMMC. In addition, I do not see CLKDIV being
-> set to 1. clk_set_rate fails and I wonder if this is out-of-scope of
-> the driver.
-> 
-> If I set CLKDIV where I did prior, with your changes, the device fails
-> to set the clock and falls back to 52 MHz (26 MHz) and works fine, but
-> again, CLKDIV is reported as 0 (even though it is 1.) One thing of
-> interest to note is when I manually set the clock by doing:
-> (echo 104000000 > /sys/kernel/debug/mmc0/clock) the device reports back
-> 'mmc_host mmc0: Bus speed (slot 0) = 198400000Hz (slot req 104000000Hz,
->   actual 99200000HZ div = 1)' which works reliably and clk_set_rate does
-> not report any error.
-> 
+Another option is there is a notifier callback OF_OVERLAY_PRE_APPLY,
+but I'm not sure we want to make that be the normal interface to make
+modifications.
 
-When looking closely into the code, at least dw_mci_hi6220_set_ios
-goes wrong with the bus_hz, since it should be ciu_clk but not biu_clk.
-"b" stands for bus, and "c" stands for card IMHO, however bus_hz
-describs the clock to the card, provided by controller. Does the
-following patch help?
-
-
-diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
-index 89cdb3d..9e78cf2 100644
---- a/drivers/mmc/host/dw_mmc-k3.c
-+++ b/drivers/mmc/host/dw_mmc-k3.c
-@@ -194,13 +194,21 @@ static void dw_mci_hi6220_set_ios(struct dw_mci 
-*host, struct mmc_ios *ios)
-         int ret;
-         unsigned int clock;
-
--       clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
-+       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
-+           ios->timing == MMC_TIMING_MMC_DDR52)
-+               clock = ios->clock * 2;
-+       else
-+               clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
-
--       ret = clk_set_rate(host->biu_clk, clock);
-+       ret = clk_set_rate(host->ciu_clk, clock);
-         if (ret)
-                 dev_warn(host->dev, "failed to set rate %uHz\n", clock);
-
--       host->bus_hz = clk_get_rate(host->biu_clk);
-+       clock = clk_get_rate(host->ciu_clk);
-+       if (clock != host->bus_hz) {
-+               host->bus_hz = clock;
-+               host->current_speed = 0;
-+       }
-  }
-
-
-> I am not sure where to begin debugging these clock issues and welcome
-> any feedback.
+Rob
