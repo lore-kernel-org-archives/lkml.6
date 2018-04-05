@@ -1,130 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751516AbeDEQSY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 12:18:24 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42610 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751519AbeDEQRD (ORCPT
+        id S1752077AbeDEQSo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 12:18:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41420 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeDEQSl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 12:17:03 -0400
-X-Google-Smtp-Source: AIpwx4+3m3M1UsJfDzEzs3tf6CPybHtW268wnNfco1kf5zEFIjujw4z9wDJ8VurrlbVV4fIrYDUb8w==
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: viresh.kumar@linaro.org, edubezval@gmail.com
-Cc: kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>
-Subject: [PATCH v3 4/7] thermal/drivers/Kconfig: Convert the CPU cooling device to a choice
-Date: Thu,  5 Apr 2018 18:16:41 +0200
-Message-Id: <1522945005-7165-5-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
-References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
+        Thu, 5 Apr 2018 12:18:41 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 14466602B6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From: Lina Iyer <ilina@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v5 00/10] drivers/qcom: add RPMH communication suppor
+Date: Thu,  5 Apr 2018 10:18:24 -0600
+Message-Id: <20180405161834.3850-1-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The next changes will add new way to cool down a CPU. In order to
-sanitize and make the overall cpu cooling code consistent and robust
-we must prevent the cpu cooling devices to co-exists with the same
-purpose at the same time in the kernel.
+Changes in v5:
+- Add Reviewed-by tags
+- Rebase on top of 4.16
 
-Make the CPU cooling device a choice in the Kconfig, so only one CPU
-cooling strategy can be chosen.
+Changes in v4:
+- Rename variables as suggested by Stephen and Evan
+- Lot of minor syntax and style fixes
+- Fix FTRACE compilation error
+- Improve doc comments and DT description
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/Kconfig       | 20 +++++++++++++++++---
- drivers/thermal/cpu_cooling.c |  2 ++
- include/linux/cpu_cooling.h   |  6 +++---
- 3 files changed, 22 insertions(+), 6 deletions(-)
+Changes in v3:
+- Address Steven's comments in FTRACE
+- Fix DT documentation as suggested by Rob H
+- Fix error handling in IRQ handler as suggested by Evan
+- Remove locks in rpmh_flush()
+- Improve comments
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index b6adc54..5aaae1b 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -142,17 +142,31 @@ config THERMAL_GOV_POWER_ALLOCATOR
- 	  allocating and limiting power to devices.
- 
- config CPU_THERMAL
--	bool "generic cpu cooling support"
--	depends on CPU_FREQ
-+	bool "Generic cpu cooling support"
- 	depends on THERMAL_OF
- 	help
-+	  Enable the CPU cooling features. If the system has no active
-+	  cooling device available, this option allows to use the CPU
-+	  as a cooling device.
-+
-+choice
-+	prompt "CPU cooling strategies"
-+	depends on CPU_THERMAL
-+	default CPU_FREQ_THERMAL
-+	help
-+	  Select the CPU cooling strategy.
-+
-+config CPU_FREQ_THERMAL
-+        bool "CPU frequency cooling strategy"
-+	depends on CPU_FREQ
-+	help
- 	  This implements the generic cpu cooling mechanism through frequency
- 	  reduction. An ACPI version of this already exists
- 	  (drivers/acpi/processor_thermal.c).
- 	  This will be useful for platforms using the generic thermal interface
- 	  and not the ACPI interface.
- 
--	  If you want this support, you should say Y here.
-+endchoice
- 
- config CLOCK_THERMAL
- 	bool "Generic clock cooling support"
-diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-index 7bdc19f..5c219dc 100644
---- a/drivers/thermal/cpu_cooling.c
-+++ b/drivers/thermal/cpu_cooling.c
-@@ -22,6 +22,7 @@
- 
- #include <trace/events/thermal.h>
- 
-+#ifdef CONFIG_CPU_FREQ_THERMAL
- /*
-  * Cooling state <-> CPUFreq frequency
-  *
-@@ -926,3 +927,4 @@ void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
- 	kfree(cpufreq_cdev);
- }
- EXPORT_SYMBOL_GPL(cpufreq_cooling_unregister);
-+#endif /* CONFIG_CPU_FREQ_THERMAL */
-diff --git a/include/linux/cpu_cooling.h b/include/linux/cpu_cooling.h
-index d4292eb..c0accc7 100644
---- a/include/linux/cpu_cooling.h
-+++ b/include/linux/cpu_cooling.h
-@@ -33,7 +33,7 @@ struct cpufreq_policy;
- typedef int (*get_static_t)(cpumask_t *cpumask, int interval,
- 			    unsigned long voltage, u32 *power);
- 
--#ifdef CONFIG_CPU_THERMAL
-+#ifdef CONFIG_CPU_FREQ_THERMAL
- /**
-  * cpufreq_cooling_register - function to create cpufreq cooling device.
-  * @policy: cpufreq policy.
-@@ -84,7 +84,7 @@ of_cpufreq_power_cooling_register(struct device_node *np,
-  */
- void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev);
- 
--#else /* !CONFIG_CPU_THERMAL */
-+#else /* !CONFIG_CPU_FREQ_THERMAL */
- static inline struct thermal_cooling_device *
- cpufreq_cooling_register(struct cpufreq_policy *policy)
- {
-@@ -118,6 +118,6 @@ void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
- {
- 	return;
- }
--#endif	/* CONFIG_CPU_THERMAL */
-+#endif	/* CONFIG_CPU_FREQ_THERMAL */
- 
- #endif /* __CPU_COOLING_H__ */
--- 
-2.7.4
+Changes in v2:
+- Added sleep/wake, async and batch requests support
+- Addressed Bjorn's comments
+- Private FTRACE for drivers/soc/qcom as suggested by Steven
+- Sparse checked on these patches
+- Use SPDX license commenting sytle
+
+This set of patches add the ability for platform drivers to make use of shared
+resources in newer Qualcomm SoCs like SDM845. Resources that are shared between
+multiple processors in a SoC are generally controlled by a dedicated remote
+processor. The remote processor (Resource Power Manager or RPM in previous QCOM
+SoCs) receives requests for resource state from other processors using the
+shared resource, aggregates the request and applies the result on the shared
+resource. SDM845 advances this concept and uses h/w (hardened I/P) blocks for
+aggregating requests and applying the result on the resource. The resources
+could be clocks, regulators or bandwidth requests for buses. This new
+architecture is called RPM-hardened or RPMH in short.
+
+Since this communication mechanism is completely hardware driven without a
+processor intervention on the remote end, existing mechanisms like RPM-SMD are
+no longer useful. Also, there is no serialization of data or is data is written
+to a shared memory in this new format. The data used is different, unsigned 32
+bits are used for representing an address, data and header. Each resource's
+property is a unique u32 address and have pre-defined set of property specific
+valid values. A request that comprises of <header, addr, data> is sent by
+writing to a set of registers from Linux and transmitted to the remote slave
+through an internal bus. The remote end aggregates this request along with
+requests from other processors for the <addr> and applies the result.
+
+The hardware block that houses this functionality is called Resource State
+Coordinator or RSC. Inside the RSC are set of slots for sending RPMH requests
+called Trigger Commands Sets (TCS). The set of patches are for writing the
+requests into these TCSes and sending them to hardened IP blocks.
+
+The driver design is split into two components. The RSC driver housed in
+rpmh-rsc.c and the set of library functions in rpmh.c that frame the request and
+transmit it using the controller. This first set of patches allow a simple
+synchronous request to be made by the platform drivers. Future patches will add
+more functionality that cater to complex drivers and use cases.
+
+Please consider reviewing this patchset.
+
+v1: https://www.spinics.net/lists/devicetree/msg210980.html
+v2: https://lkml.org/lkml/2018/2/15/852
+v3: https://lkml.org/lkml/2018/3/2/801
+v4: https://lkml.org/lkml/2018/3/9/979
+
+Lina Iyer (10):
+  drivers: qcom: rpmh-rsc: add RPMH controller for QCOM SoCs
+  dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
+  drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
+  drivers: qcom: rpmh: add RPMH helper functions
+  drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
+  drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
+  drivers: qcom: rpmh: cache sleep/wake state requests
+  drivers: qcom: rpmh: allow requests to be sent asynchronously
+  drivers: qcom: rpmh: add support for batch RPMH request
+  drivers: qcom: rpmh-rsc: allow active requests from wake TCS
+
+ .../devicetree/bindings/soc/qcom/rpmh-rsc.txt      | 127 ++++
+ drivers/soc/qcom/Kconfig                           |  10 +
+ drivers/soc/qcom/Makefile                          |   4 +
+ drivers/soc/qcom/rpmh-internal.h                   |  99 +++
+ drivers/soc/qcom/rpmh-rsc.c                        | 768 +++++++++++++++++++++
+ drivers/soc/qcom/rpmh.c                            | 659 ++++++++++++++++++
+ drivers/soc/qcom/trace-rpmh.h                      |  89 +++
+ include/dt-bindings/soc/qcom,rpmh-rsc.h            |  14 +
+ include/soc/qcom/rpmh.h                            |  60 ++
+ include/soc/qcom/tcs.h                             |  56 ++
+ 10 files changed, 1886 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+ create mode 100644 drivers/soc/qcom/rpmh-internal.h
+ create mode 100644 drivers/soc/qcom/rpmh-rsc.c
+ create mode 100644 drivers/soc/qcom/rpmh.c
+ create mode 100644 drivers/soc/qcom/trace-rpmh.h
+ create mode 100644 include/dt-bindings/soc/qcom,rpmh-rsc.h
+ create mode 100644 include/soc/qcom/rpmh.h
+ create mode 100644 include/soc/qcom/tcs.h
+
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
