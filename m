@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751759AbeDEQVF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 12:21:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41704 "EHLO
+        id S1751950AbeDEQVX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 12:21:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41478 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752080AbeDEQSs (ORCPT
+        with ESMTP id S1751363AbeDEQSn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 12:18:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA156602B6
+        Thu, 5 Apr 2018 12:18:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AD2C6081B
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
@@ -15,10 +15,11 @@ To: andy.gross@linaro.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v5 04/10] drivers: qcom: rpmh: add RPMH helper functions
-Date: Thu,  5 Apr 2018 10:18:28 -0600
-Message-Id: <20180405161834.3850-5-ilina@codeaurora.org>
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v5 02/10] dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
+Date: Thu,  5 Apr 2018 10:18:26 -0600
+Message-Id: <20180405161834.3850-3-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405161834.3850-1-ilina@codeaurora.org>
 References: <20180405161834.3850-1-ilina@codeaurora.org>
@@ -26,389 +27,169 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sending RPMH requests and waiting for response from the controller
-through a callback is common functionality across all platform drivers.
-To simplify drivers, add a library functions to create RPMH client and
-send resource state requests.
+Add device binding documentation for Qualcomm Technology Inc's RPMH RSC
+driver. The driver is used for communicating resource state requests for
+shared resources.
 
-rpmh_write() is a synchronous blocking call that can be used to send
-active state requests.
-
+Cc: devicetree@vger.kernel.org
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 
-Changes in v4:
-	- use const struct tcs_cmd in API
-	- remove wait count from this patch
-	- changed -EFAULT to -EINVAL
----
- drivers/soc/qcom/Makefile        |   4 +-
- drivers/soc/qcom/rpmh-internal.h |   2 +
- drivers/soc/qcom/rpmh-rsc.c      |   7 ++
- drivers/soc/qcom/rpmh.c          | 253 +++++++++++++++++++++++++++++++++++++++
- include/soc/qcom/rpmh.h          |  34 ++++++
- 5 files changed, 299 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/qcom/rpmh.c
- create mode 100644 include/soc/qcom/rpmh.h
+Changes in v3:
+	- Move to soc/qcom
+	- Amend text per Stephen's suggestions
 
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index cb6300f6a8e9..bb395c3202ca 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -7,7 +7,9 @@ obj-$(CONFIG_QCOM_PM)	+=	spm.o
- obj-$(CONFIG_QCOM_QMI_HELPERS)	+= qmi_helpers.o
- qmi_helpers-y	+= qmi_encdec.o qmi_interface.o
- obj-$(CONFIG_QCOM_RMTFS_MEM)	+= rmtfs_mem.o
--obj-$(CONFIG_QCOM_RPMH)	+=	rpmh-rsc.o
-+obj-$(CONFIG_QCOM_RPMH)		+= qcom_rpmh.o
-+qcom_rpmh-y			+= rpmh-rsc.o
-+qcom_rpmh-y			+= rpmh.o
- obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
- obj-$(CONFIG_QCOM_SMEM) +=	smem.o
- obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
-diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-index aa73ec4b3e42..125f9faec536 100644
---- a/drivers/soc/qcom/rpmh-internal.h
-+++ b/drivers/soc/qcom/rpmh-internal.h
-@@ -86,4 +86,6 @@ struct rsc_drv {
- 
- int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
- 
-+void rpmh_tx_done(const struct tcs_request *msg, int r);
-+
- #endif /* __RPM_INTERNAL_H__ */
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index f604101a4fc2..c5cde917dba6 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -252,6 +252,8 @@ static void tcs_notify_tx_done(unsigned long data)
- 	struct rsc_drv *drv = (struct rsc_drv *)data;
- 	struct tcs_response *resp;
- 	unsigned long flags;
-+	const struct tcs_request *msg;
-+	int err;
- 
- 	for (;;) {
- 		spin_lock_irqsave(&drv->drv_lock, flags);
-@@ -264,7 +266,10 @@ static void tcs_notify_tx_done(unsigned long data)
- 		list_del(&resp->list);
- 		spin_unlock_irqrestore(&drv->drv_lock, flags);
- 		trace_rpmh_notify_tx_done(drv, resp);
-+		msg = resp->msg;
-+		err = resp->err;
- 		free_response(resp);
-+		rpmh_tx_done(msg, err);
- 	}
- }
- 
-@@ -554,6 +559,8 @@ static int rpmh_rsc_probe(struct platform_device *pdev)
- 	/* Enable the active TCS to send requests immediately */
- 	write_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, 0, drv->tcs[ACTIVE_TCS].mask);
- 
-+	dev_set_drvdata(&pdev->dev, drv);
-+
- 	return devm_of_platform_populate(&pdev->dev);
- }
- 
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+Changes in v2:
+	- Amend text to describe the registers in reg property
+	- Add reg-names for the registers
+	- Update examples to use GIC_SPI in interrupts instead of 0
+	- Rephrase incorrect description
+
+Changes in v3:
+	- Fix unwanted capitalization
+	- Remove clients from the examples, this doc does not describe
+	  them
+	- Rephrase introductory paragraph
+	- Remove hardware specifics from DT bindings
+---
+ .../devicetree/bindings/soc/qcom/rpmh-rsc.txt      | 127 +++++++++++++++++++++
+ 1 file changed, 127 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
 new file mode 100644
-index 000000000000..e3c7491e7baf
+index 000000000000..dcf71a5b302f
 --- /dev/null
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -0,0 +1,253 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-+ */
++++ b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+@@ -0,0 +1,127 @@
++RPMH RSC:
++------------
 +
-+#include <linux/atomic.h>
-+#include <linux/interrupt.h>
-+#include <linux/jiffies.h>
-+#include <linux/kernel.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+#include <linux/wait.h>
++Resource Power Manager Hardened (RPMH) is the mechanism for communicating with
++the hardened resource accelerators on Qualcomm SoCs. Requests to the resources
++can be written to the Trigger Command Set (TCS)  registers and using a (addr,
++val) pair and triggered. Messages in the TCS are then sent in sequence over an
++internal bus.
 +
-+#include <soc/qcom/rpmh.h>
++The hardware block (Direct Resource Voter or DRV) is a part of the h/w entity
++(Resource State Coordinator a.k.a RSC) that can handle a multiple sleep and
++active/wake resource requests. Multiple such DRVs can exist in a SoC and can
++be written to from Linux. The structure of each DRV follows the same template
++with a few variations that are captured by the properties here.
 +
-+#include "rpmh-internal.h"
++A TCS may be triggered from Linux or triggered by the F/W after all the CPUs
++have powered off to facilitate idle power saving. TCS could be classified as -
 +
-+#define RPMH_MAX_MBOXES			2
-+#define RPMH_TIMEOUT_MS			10000
++	SLEEP,  /* Triggered by F/W */
++	WAKE,   /* Triggered by F/W */
++	ACTIVE, /* Triggered by Linux */
++	CONTROL /* Triggered by F/W */
 +
-+#define DEFINE_RPMH_MSG_ONSTACK(rc, s, q, name)		\
-+	struct rpmh_request name = {			\
-+		.msg = {				\
-+			.state = s,			\
-+			.cmds = name.cmd,		\
-+			.num_cmds = 0,			\
-+			.wait_for_compl = true,		\
-+		},					\
-+		.cmd = { { 0 } },			\
-+		.completion = q,			\
-+		.rc = rc,				\
-+	}
++The order in which they are described in the DT, should match the hardware
++configuration.
 +
-+/**
-+ * struct rpmh_request: the message to be sent to rpmh-rsc
-+ *
-+ * @msg: the request
-+ * @cmd: the payload that will be part of the @msg
-+ * @completion: triggered when request is done
-+ * @err: err return from the controller
-+ */
-+struct rpmh_request {
-+	struct tcs_request msg;
-+	struct tcs_cmd cmd[MAX_RPMH_PAYLOAD];
-+	struct completion *completion;
-+	struct rpmh_client *rc;
-+	int err;
-+};
++Requests can be made for the state of a resource, when the subsystem is active
++or idle. When all subsystems like Modem, GPU, CPU are idle, the resource state
++will be an aggregate of the sleep votes from each of those subsystems. Clients
++may request a sleep value for their shared resources in addition to the active
++mode requests.
 +
-+/**
-+ * struct rpmh_ctrlr: our representation of the controller
-+ *
-+ * @drv: the controller instance
-+ */
-+struct rpmh_ctrlr {
-+	struct rsc_drv *drv;
-+};
++Properties:
 +
-+/**
-+ * struct rpmh_client: the client object
-+ *
-+ * @dev: the platform device that is the owner
-+ * @ctrlr: the controller associated with this client.
-+ */
-+struct rpmh_client {
-+	struct device *dev;
-+	struct rpmh_ctrlr *ctrlr;
-+};
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: Should be "qcom,rpmh-rsc".
 +
-+static struct rpmh_ctrlr rpmh_rsc[RPMH_MAX_MBOXES];
-+static DEFINE_MUTEX(rpmh_ctrlr_mutex);
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: The first register specifies the base address of the DRV.
++	            The second register specifies the start address of the
++	            TCS.
 +
-+void rpmh_tx_done(const struct tcs_request *msg, int r)
-+{
-+	struct rpmh_request *rpm_msg = container_of(msg, struct rpmh_request,
-+						    msg);
-+	struct completion *compl = rpm_msg->completion;
++- reg-names:
++	Usage: required
++	Value type: <string>
++	Definition: Maps the register specified in the reg property. Must be
++	            "drv" and "tcs".
 +
-+	rpm_msg->err = r;
++- interrupts:
++	Usage: required
++	Value type: <prop-encoded-interrupt>
++	Definition: The interrupt that trips when a message complete/response
++	           is received for this DRV from the accelerators.
 +
-+	if (r)
-+		dev_err(rpm_msg->rc->dev,
-+			"RPMH TX fail in msg addr=%#x, err=%d\n",
-+			rpm_msg->msg.cmds[0].addr, r);
++- qcom,drv-id:
++	Usage: required
++	Value type: <u32>
++	Definition: the id of the DRV in the RSC block.
 +
-+	/* Signal the blocking thread we are done */
-+	if (compl)
-+		complete(compl);
-+}
-+EXPORT_SYMBOL(rpmh_tx_done);
++- qcom,tcs-config:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: the tuple defining the configuration of TCS.
++	            Must have 2 cells which describe each TCS type.
++	            <type number_of_tcs>.
++	            The order of the TCS must match the hardware
++	            configuration.
++	- Cell #1 (TCS Type): TCS types to be specified -
++	            SLEEP_TCS
++	            WAKE_TCS
++	            ACTIVE_TCS
++	            CONTROL_TCS
++	- Cell #2 (Number of TCS): <u32>
 +
-+/**
-+ * wait_for_tx_done: Wait until the response is received.
-+ *
-+ * @rc: The RPMH client
-+ * @compl: The completion object
-+ * @addr: An addr that we sent in that request
-+ * @data: The data for the address in that request
-+ */
-+static int wait_for_tx_done(struct rpmh_client *rc,
-+			    struct completion *compl, u32 addr, u32 data)
-+{
-+	int ret;
++- label:
++	Usage: optional
++	Value type: <string>
++	Definition: Name for the RSC. The name would be used in trace logs.
 +
-+	might_sleep();
++Drivers that want to use the RSC to communicate with RPMH must specify their
++bindings as child of the RSC controllers they wish to communicate with.
 +
-+	ret = wait_for_completion_timeout(compl,
-+					  msecs_to_jiffies(RPMH_TIMEOUT_MS));
-+	if (ret)
-+		dev_dbg(rc->dev,
-+			"RPMH response received addr=%#x data=%#x\n",
-+			addr, data);
-+	else
-+		dev_err(rc->dev,
-+			"RPMH response timeout addr=%#x data=%#x\n",
-+			addr, data);
++Example 1:
 +
-+	return (ret > 0) ? 0 : -ETIMEDOUT;
-+}
++For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
++register offsets for DRV2 start at 0D00, the register calculations are like
++this -
++First tuple: 0x179C0000 + 0x10000 * 2 = 0x179E0000
++Second tuple: 0x179E0000 + 0xD00 = 0x179E0D00
 +
-+/**
-+ * __rpmh_write: send the RPMH request
-+ *
-+ * @rc: The RPMH client
-+ * @state: Active/Sleep request type
-+ * @rpm_msg: The data that needs to be sent (cmds).
-+ */
-+static int __rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
-+			struct rpmh_request *rpm_msg)
-+{
-+	int ret = -EINVAL;
++	apps_rsc: rsc@179e000 {
++		label = "apps_rsc";
++		compatible = "qcom,rpmh-rsc";
++		reg = <0x179e0000 0x10000>, <0x179e0d00 0x3000>;
++		reg-names = "drv", "tcs";
++		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++		qcom,drv-id = <2>;
++		qcom,tcs-config = <SLEEP_TCS   3>,
++				  <WAKE_TCS    3>,
++				  <ACTIVE_TCS  2>,
++				  <CONTROL_TCS 1>;
++	};
 +
-+	rpm_msg->msg.state = state;
++Example 2:
 +
-+	if (state == RPMH_ACTIVE_ONLY_STATE) {
-+		WARN_ON(irqs_disabled());
-+		ret = rpmh_rsc_send_data(rc->ctrlr->drv, &rpm_msg->msg);
-+		if (!ret)
-+			dev_dbg(rc->dev,
-+				"RPMH request sent addr=%#x, data=%i#x\n",
-+				rpm_msg->msg.cmds[0].addr,
-+				rpm_msg->msg.cmds[0].data);
-+		else
-+			dev_warn(rc->dev,
-+				 "Error in RPMH request addr=%#x, data=%#x\n",
-+				 rpm_msg->msg.cmds[0].addr,
-+				 rpm_msg->msg.cmds[0].data);
-+	}
++For a TCS whose RSC base address is 0xAF20000 and is at DRV id of 0, the
++register offsets for DRV0 start at 01C00, the register calculations are like
++this -
++First tuple: 0xAF20000
++Second tuple: 0xAF20000 + 0x1C00 = 0xAF21C00
 +
-+	return ret;
-+}
-+
-+/**
-+ * rpmh_write: Write a set of RPMH commands and block until response
-+ *
-+ * @rc: The RPMh handle got from rpmh_get_client
-+ * @state: Active/sleep set
-+ * @cmd: The payload data
-+ * @n: The number of elements in @cmd
-+ *
-+ * May sleep. Do not call from atomic contexts.
-+ */
-+int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
-+	       const struct tcs_cmd *cmd, u32 n)
-+{
-+	DECLARE_COMPLETION_ONSTACK(compl);
-+	DEFINE_RPMH_MSG_ONSTACK(rc, state, &compl, rpm_msg);
-+	int ret;
-+
-+	if (IS_ERR_OR_NULL(rc) || !cmd || !n || n > MAX_RPMH_PAYLOAD)
-+		return -EINVAL;
-+
-+	memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
-+	rpm_msg.msg.num_cmds = n;
-+
-+	ret = __rpmh_write(rc, state, &rpm_msg);
-+	if (ret)
-+		return ret;
-+
-+	return wait_for_tx_done(rc, &compl, cmd[0].addr, cmd[0].data);
-+}
-+EXPORT_SYMBOL(rpmh_write);
-+
-+static struct rpmh_ctrlr *get_rpmh_ctrlr(struct platform_device *pdev)
-+{
-+	int i;
-+	struct rsc_drv *drv = dev_get_drvdata(pdev->dev.parent);
-+	struct rpmh_ctrlr *ctrlr = ERR_PTR(-EINVAL);
-+
-+	if (!drv)
-+		return ctrlr;
-+
-+	mutex_lock(&rpmh_ctrlr_mutex);
-+	for (i = 0; i < RPMH_MAX_MBOXES; i++) {
-+		if (rpmh_rsc[i].drv == drv) {
-+			ctrlr = &rpmh_rsc[i];
-+			goto unlock;
-+		}
-+	}
-+
-+	for (i = 0; i < RPMH_MAX_MBOXES; i++) {
-+		if (rpmh_rsc[i].drv == NULL) {
-+			ctrlr = &rpmh_rsc[i];
-+			ctrlr->drv = drv;
-+			break;
-+		}
-+	}
-+	WARN_ON(i == RPMH_MAX_MBOXES);
-+unlock:
-+	mutex_unlock(&rpmh_ctrlr_mutex);
-+	return ctrlr;
-+}
-+
-+/**
-+ * rpmh_get_client: Get the RPMh handle
-+ *
-+ * @pdev: the platform device which needs to communicate with RPM
-+ * accelerators
-+ * May sleep.
-+ */
-+struct rpmh_client *rpmh_get_client(struct platform_device *pdev)
-+{
-+	struct rpmh_client *rc;
-+
-+	rc = kzalloc(sizeof(*rc), GFP_KERNEL);
-+	if (!rc)
-+		return ERR_PTR(-ENOMEM);
-+
-+	rc->dev = &pdev->dev;
-+	rc->ctrlr = get_rpmh_ctrlr(pdev);
-+	if (IS_ERR(rc->ctrlr)) {
-+		kfree(rc);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL(rpmh_get_client);
-+
-+/**
-+ * rpmh_release: Release the RPMH client
-+ *
-+ * @rc: The RPMh handle to be freed.
-+ */
-+void rpmh_release(struct rpmh_client *rc)
-+{
-+	kfree(rc);
-+}
-+EXPORT_SYMBOL(rpmh_release);
-diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
-new file mode 100644
-index 000000000000..95334d4c1ede
---- /dev/null
-+++ b/include/soc/qcom/rpmh.h
-@@ -0,0 +1,34 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef __SOC_QCOM_RPMH_H__
-+#define __SOC_QCOM_RPMH_H__
-+
-+#include <soc/qcom/tcs.h>
-+#include <linux/platform_device.h>
-+
-+struct rpmh_client;
-+
-+#if IS_ENABLED(CONFIG_QCOM_RPMH)
-+int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
-+	       const struct tcs_cmd *cmd, u32 n);
-+
-+struct rpmh_client *rpmh_get_client(struct platform_device *pdev);
-+
-+void rpmh_release(struct rpmh_client *rc);
-+
-+#else
-+
-+static inline int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
-+			     const struct tcs_cmd *cmd, u32 n)
-+{ return -ENODEV; }
-+
-+static inline struct rpmh_client *rpmh_get_client(struct platform_device *pdev)
-+{ return ERR_PTR(-ENODEV); }
-+
-+static inline void rpmh_release(struct rpmh_client *rc) { }
-+#endif /* CONFIG_QCOM_RPMH */
-+
-+#endif /* __SOC_QCOM_RPMH_H__ */
++	disp_rsc: rsc@af20000 {
++		label = "disp_rsc";
++		compatible = "qcom,rpmh-rsc";
++		reg = <0xaf20000 0x10000>, <0xaf21c00 0x3000>;
++		reg-names = "drv", "tcs";
++		interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
++		qcom,drv-id = <0>;
++		qcom,tcs-config = <SLEEP_TCS   1>,
++				  <WAKE_TCS    1>,
++				  <ACTIVE_TCS  0>,
++				  <CONTROL_TCS 0>;
++	};
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
