@@ -1,94 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751434AbeDEOCy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:02:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38652 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751195AbeDEOCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:02:53 -0400
-Date: Thu, 5 Apr 2018 16:02:50 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v4 7/9] vsprintf: Factor out %pO handler as
- kobject_string()
-Message-ID: <20180405140250.aejexhnl7lppvyzb@pathway.suse.cz>
-References: <20180404085843.16050-1-pmladek@suse.com>
- <20180404085843.16050-8-pmladek@suse.com>
- <20180404233511.GB622@jagdpanzerIV>
+        id S1751460AbeDEODa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:03:30 -0400
+Received: from mail-io0-f170.google.com ([209.85.223.170]:41845 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeDEOD3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 10:03:29 -0400
+X-Google-Smtp-Source: AIpwx490p/e1CQJqKmsisrlgLm5Bo4y8JTi2FJdWS3tF+MKLtDw9zWiFb21WvGzdmmZTaewjioYfHZevrF90h/sRCtc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404233511.GB622@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+X-Originating-IP: [212.51.149.109]
+In-Reply-To: <CADnq5_NPs8Oq3AGvVuNHg0KuD7B-8FzSA8SJ+AYfdEyrGFJGTQ@mail.gmail.com>
+References: <20180404223251.28449-1-eric@anholt.net> <CAKMK7uGhm_ixQN3-WWmWK-mrdWRAfPZMuD-=fBEQxbtrMkdVFg@mail.gmail.com>
+ <CADnq5_PdM5MhXMdqnfbQqVgbRT=nKS_1hTvSfLBkp_1sPcErWw@mail.gmail.com>
+ <CAKMK7uGF81MDaCwxw+UKUUUGCLRqVzDdDQpMsJr2BC=4b7_5gA@mail.gmail.com>
+ <CAFd4ddyMvoWObq1728aE8r8MrQNEKsEuxGV+DJMhGH+8EtDaZQ@mail.gmail.com> <CADnq5_NPs8Oq3AGvVuNHg0KuD7B-8FzSA8SJ+AYfdEyrGFJGTQ@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Thu, 5 Apr 2018 16:03:27 +0200
+X-Google-Sender-Auth: jl3EQAbKCYhqhtFZmuRB898DNS0
+Message-ID: <CAKMK7uHW6WsQMc__=E+5a7O=Y=yhjqQMG4wcbekrTAHQv_yTaA@mail.gmail.com>
+Subject: Re: [PATCH] drm/sched: Extend the documentation.
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Nayan Deshmukh <nayan26deshmukh@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-04-05 08:35:11, Sergey Senozhatsky wrote:
-> On (04/04/18 10:58), Petr Mladek wrote:
-> >  static noinline_for_stack
-> > +char *kobject_string(char *buf, char *end, void *ptr,
-> > +		     struct printf_spec spec, const char *fmt)
-> > +{
-> > +	switch (fmt[1]) {
-> > +	case 'F':
-> > +		return device_node_string(buf, end, ptr, spec, fmt + 1);
-> > +	}
-> > +
-> > +	WARN_ONCE(1, "Unsupported pointer format specifier: %%pO%c\n", fmt[1]);
-> > +	return buf;
-> > +}
-> > +
-> > +static noinline_for_stack
-> >  char *pointer_string(char *buf, char *end, const void *ptr,
-> >  		     struct printf_spec spec)
-> >  {
-> > @@ -1982,10 +1995,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
-> >  	case 'G':
-> >  		return flags_string(buf, end, ptr, fmt);
-> >  	case 'O':
-> > -		switch (fmt[1]) {
-> > -		case 'F':
-> > -			return device_node_string(buf, end, ptr, spec, fmt + 1);
-> > -		}
-> > +		return kobject_string(buf, end, ptr, spec, fmt);
-> >  	case 'x':
-> >  		return pointer_string(buf, end, ptr, spec);
-> >  	}
-> 
-> So, previously, unsupported 'O' would end up in ptr_to_id()
+On Thu, Apr 5, 2018 at 3:44 PM, Alex Deucher <alexdeucher@gmail.com> wrote:
+> On Thu, Apr 5, 2018 at 9:41 AM, Nayan Deshmukh
+> <nayan26deshmukh@gmail.com> wrote:
+>> On Thu, Apr 5, 2018 at 6:59 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>>> On Thu, Apr 5, 2018 at 3:27 PM, Alex Deucher <alexdeucher@gmail.com> wrote:
+>>>> On Thu, Apr 5, 2018 at 2:16 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>>>>> On Thu, Apr 5, 2018 at 12:32 AM, Eric Anholt <eric@anholt.net> wrote:
+>>>>>> These comments answer all the questions I had for myself when
+>>>>>> implementing a driver using the GPU scheduler.
+>>>>>>
+>>>>>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>>>>>
+>>>>> Pulling all these comments into the generated kerneldoc would be
+>>>>> awesome, maybe as a new "GPU Scheduler" chapter at the end of
+>>>>> drm-mm.rst? Would mean a bit of busywork to convert the existing raw
+>>>>> comments into proper kerneldoc. Also has the benefit that 0day will
+>>>>> complain when you forget to update the comment when editing the
+>>>>> function prototype - kerneldoc which isn't included anywhere in .rst
+>>>>> won't be checked automatically.
+>>>>
+>>>> I was actually planning to do this myself, but Nayan wanted to do this
+>>>> a prep work for his proposed GSoC project so I was going to see how
+>>>> far he got first.
+>>
+>> It is still on my TODO list. Just got a bit busy with my coursework. I
+>> will try to look at it during the weekend.
+>
+> No worries.  Take your time.
+>
+>>>
+>>> Awesome. I'm also happy to help out with any kerneldoc questions and
+>>> best practices. Technically ofc no clue about the scheduler :-)
+>>>
+>> I was thinking of adding a different rst for scheduler altogther. Will
+>> it be better to add it in drm-mm.rst itself?
+>
+> I had been planning to add a separate file too since it's a separate
+> entity.  Do whatever you think works best.
 
-No, it fallen through to pointer_string() because there was
-missing "break". Therefore it eventually leaked the pointer.
+My recommendation is that to put the gist of the docs all into
+source-code comments. That way there's a much higher chance to spot
+them. In the docs you'll then only have the chapter structure (and not
+sure the scheduler needs more than 1 chapter).
 
-Don't panic. It seems that all %pOF are correct in the mainline.
+drm-mm.rst is a bit misnamed, since it contains all the stuff for
+handling rendering: MM, fences, dma-buf/prime, drm_syncobjs. I think
+scheduler fits very well in that topic range. We can ofc rename it to
+drm-rendering.rst or similar, if the -mm.rst is misleading (plus
+adjust the title).
+-Daniel
 
-> 	case 'O':
-> 		switch (fmt[1]) {
-> 		case 'F':
-> 			return device_node_string()
-> 		}
-> 	}
-> 
-> 	return ptr_to_id();
-> 
-> 
-> 
-> now we will just return `buf' without doing ptr_to_id()?
+>
+> Alex
+>
+>>
+>>> Cheers, Daniel
+>>>> Alex
+>>>>
+>>>>> -Daniel
+>>>>>
+>>>>>> ---
+>>>>>>  include/drm/gpu_scheduler.h | 46 +++++++++++++++++++++++++++++++++----
+>>>>>>  1 file changed, 42 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+>>>>>> index dfd54fb94e10..c053a32341bf 100644
+>>>>>> --- a/include/drm/gpu_scheduler.h
+>>>>>> +++ b/include/drm/gpu_scheduler.h
+>>>>>> @@ -43,10 +43,12 @@ enum drm_sched_priority {
+>>>>>>  };
+>>>>>>
+>>>>>>  /**
+>>>>>> - * A scheduler entity is a wrapper around a job queue or a group
+>>>>>> - * of other entities. Entities take turns emitting jobs from their
+>>>>>> - * job queues to corresponding hardware ring based on scheduling
+>>>>>> - * policy.
+>>>>>> + * drm_sched_entity - A wrapper around a job queue (typically attached
+>>>>>> + * to the DRM file_priv).
+>>>>>> + *
+>>>>>> + * Entities will emit jobs in order to their corresponding hardware
+>>>>>> + * ring, and the scheduler will alternate between entities based on
+>>>>>> + * scheduling policy.
+>>>>>>  */
+>>>>>>  struct drm_sched_entity {
+>>>>>>         struct list_head                list;
+>>>>>> @@ -78,7 +80,18 @@ struct drm_sched_rq {
+>>>>>>
+>>>>>>  struct drm_sched_fence {
+>>>>>>         struct dma_fence                scheduled;
+>>>>>> +
+>>>>>> +       /* This fence is what will be signaled by the scheduler when
+>>>>>> +        * the job is completed.
+>>>>>> +        *
+>>>>>> +        * When setting up an out fence for the job, you should use
+>>>>>> +        * this, since it's available immediately upon
+>>>>>> +        * drm_sched_job_init(), and the fence returned by the driver
+>>>>>> +        * from run_job() won't be created until the dependencies have
+>>>>>> +        * resolved.
+>>>>>> +        */
+>>>>>>         struct dma_fence                finished;
+>>>>>> +
+>>>>>>         struct dma_fence_cb             cb;
+>>>>>>         struct dma_fence                *parent;
+>>>>>>         struct drm_gpu_scheduler        *sched;
+>>>>>> @@ -88,6 +101,13 @@ struct drm_sched_fence {
+>>>>>>
+>>>>>>  struct drm_sched_fence *to_drm_sched_fence(struct dma_fence *f);
+>>>>>>
+>>>>>> +/**
+>>>>>> + * drm_sched_job - A job to be run by an entity.
+>>>>>> + *
+>>>>>> + * A job is created by the driver using drm_sched_job_init(), and
+>>>>>> + * should call drm_sched_entity_push_job() once it wants the scheduler
+>>>>>> + * to schedule the job.
+>>>>>> + */
+>>>>>>  struct drm_sched_job {
+>>>>>>         struct spsc_node                queue_node;
+>>>>>>         struct drm_gpu_scheduler        *sched;
+>>>>>> @@ -112,10 +132,28 @@ static inline bool drm_sched_invalidate_job(struct drm_sched_job *s_job,
+>>>>>>   * these functions should be implemented in driver side
+>>>>>>  */
+>>>>>>  struct drm_sched_backend_ops {
+>>>>>> +       /* Called when the scheduler is considering scheduling this
+>>>>>> +        * job next, to get another struct dma_fence for this job to
+>>>>>> +        * block on.  Once it returns NULL, run_job() may be called.
+>>>>>> +        */
+>>>>>>         struct dma_fence *(*dependency)(struct drm_sched_job *sched_job,
+>>>>>>                                         struct drm_sched_entity *s_entity);
+>>>>>> +
+>>>>>> +       /* Called to execute the job once all of the dependencies have
+>>>>>> +        * been resolved.  This may be called multiple times, if
+>>>>>> +        * timedout_job() has happened and drm_sched_job_recovery()
+>>>>>> +        * decides to try it again.
+>>>>>> +        */
+>>>>>>         struct dma_fence *(*run_job)(struct drm_sched_job *sched_job);
+>>>>>> +
+>>>>>> +       /* Called when a job has taken too long to execute, to trigger
+>>>>>> +        * GPU recovery.
+>>>>>> +        */
+>>>>>>         void (*timedout_job)(struct drm_sched_job *sched_job);
+>>>>>> +
+>>>>>> +       /* Called once the job's finished fence has been signaled and
+>>>>>> +        * it's time to clean it up.
+>>>>>> +        */
+>>>>>>         void (*free_job)(struct drm_sched_job *sched_job);
+>>>>>>  };
+>>>>>>
+>>>>>> --
+>>>>>> 2.17.0
+>>>>>>
+>>>>>> _______________________________________________
+>>>>>> dri-devel mailing list
+>>>>>> dri-devel@lists.freedesktop.org
+>>>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>>>
+>>>>>
+>>>>>
+>>>>> --
+>>>>> Daniel Vetter
+>>>>> Software Engineer, Intel Corporation
+>>>>> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+>>>>> _______________________________________________
+>>>>> dri-devel mailing list
+>>>>> dri-devel@lists.freedesktop.org
+>>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>
+>>>
+>>>
+>>> --
+>>> Daniel Vetter
+>>> Software Engineer, Intel Corporation
+>>> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+>>> _______________________________________________
+>>> dri-devel mailing list
+>>> dri-devel@lists.freedesktop.org
+>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Yes, but it will also generate the WARNING. It should help people
-undestand what is going on. We have no idea what the author
-wanted to do. IMHO, it is confusing to show any random (address)
-in that case.
 
-Best Regards,
-Petr
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
