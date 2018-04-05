@@ -1,70 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752845AbeDECHZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 22:07:25 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:40632 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752739AbeDECHY (ORCPT
+        id S1752794AbeDECJE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 22:09:04 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43174 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752688AbeDECJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 22:07:24 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w3526vMl005533, This message is accepted by code: ctloc85258
-From: Pkshih <pkshih@realtek.com>
-To: =?utf-8?B?6I6K5b2l5a6j?= <yhchuang@realtek.com>,
-        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [rtlwifi-btcoex] Suspicious code in halbtc8821a1ant driver
-Thread-Topic: [rtlwifi-btcoex] Suspicious code in halbtc8821a1ant driver
-Thread-Index: AQHTzH0FBMUd+sG1L0SdpD1aR0w/0KPw5nUA
-Date: Thu, 5 Apr 2018 02:06:56 +0000
-Message-ID: <1522894016.1824.2.camel@realtek.com>
-References: <20180405012540.GA24241@embeddedor.com>
-In-Reply-To: <20180405012540.GA24241@embeddedor.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [114.41.250.117]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6E72E70EE6E7344B8BE4596BEBB70DCD@realtek.com>
+        Wed, 4 Apr 2018 22:09:02 -0400
+X-Google-Smtp-Source: AIpwx48hvbX7QF6ON5bAfNZVxNAfamuNeK2F/d8Qqonn0VT5DXfmsvmxcqx3Q6aaRXDmbSM9J2oQuA==
+Subject: Re: [PATCH] mmc: dw_mmc-k3: Fix DDR52 mode by setting required clock
+ divisor
+To: Shawn Lin <shawn.lin@rock-chips.com>, Ryan Grachek <ryan@edited.us>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liwei213@huawei.com,
+        Suzhuangluan <suzhuangluan@hisilicon.com>
+References: <20180329182423.21201-1-ryan@edited.us>
+ <e3ec3a77-f2f3-2164-4dbb-80e1ba3ebc63@rock-chips.com>
+ <CAGoBSJq+tSpvFZsJLPffTaFBg5o2Nn2eeXXvHqt4Us_dd7==1w@mail.gmail.com>
+ <bed16723-6bf0-4bcf-f44c-ebcf7a1e7cc5@rock-chips.com>
+From: zhangfei <zhangfei.gao@linaro.org>
+Message-ID: <00fe2c61-1cb8-d548-2057-9e70ec18df67@linaro.org>
+Date: Thu, 5 Apr 2018 10:08:57 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <bed16723-6bf0-4bcf-f44c-ebcf7a1e7cc5@rock-chips.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3527UjW006560
 
-On Thu, 2018-04-05 at 01:25 +0000, Gustavo A. R. Silva wrote:
-> Hi all,
-> 
-> While doing some static analysis I came across the following piece of code at
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a1ant.c:1581:
-> 
-> 1581 static void btc8821a1ant_act_bt_sco_hid_only_busy(struct btc_coexist *btcoexist,
-> 1582                                                   u8 wifi_status)
-> 1583 {
-> 1584         /* tdma and coex table */
-> 1585         btc8821a1ant_ps_tdma(btcoexist, NORMAL_EXEC, true, 5);
-> 1586 
-> 1587         if (BT_8821A_1ANT_WIFI_STATUS_NON_CONNECTED_ASSO_AUTH_SCAN ==
-> 1588             wifi_status)
-> 1589                 btc8821a1ant_coex_table_with_type(btcoexist, NORMAL_EXEC, 1);
-> 1590         else
-> 1591                 btc8821a1ant_coex_table_with_type(btcoexist, NORMAL_EXEC, 1);
-> 1592 }
-> 
-> The issue here is that the code for both branches of the if-else statement is identical.
-> 
-> The if-else was introduced a year ago in this commit c6821613e653
-> 
-> I wonder if an argument should be changed in any of the calls to
-> btc8821a1ant_coex_table_with_type?
-> 
-> 
++ Hisilicon colleague
 
-It looks weird. Since we're in spring vacation, I'll check my colleague next Monday.
 
-PK
+On 2018年04月05日 08:51, Shawn Lin wrote:
+> [+ Zhangfei Gao who added support for hi6220]
+>
+> On 2018/4/4 23:31, Ryan Grachek wrote:
+>> On Tue, Apr 3, 2018 at 6:31 AM, Shawn Lin <shawn.lin@rock-chips.com 
+>> <mailto:shawn.lin@rock-chips.com>> wrote:
+>>
+>>     On 2018/3/30 2:24, oscardagrach wrote:
+>>
+>>     Need at least one line commit body.
+>>
+>>         Signed-off-by: oscardagrach <ryan@edited.us 
+>> <mailto:ryan@edited.us>>
+>>         ---
+>>            drivers/mmc/host/dw_mmc-k3.c | 10 ++++++++--
+>>            1 file changed, 8 insertions(+), 2 deletions(-)
+>>
+>>         diff --git a/drivers/mmc/host/dw_mmc-k3.c
+>>         b/drivers/mmc/host/dw_mmc-k3.c
+>>         index 89cdb3d533bb..efc546cb4db8 100644
+>>         --- a/drivers/mmc/host/dw_mmc-k3.c
+>>         +++ b/drivers/mmc/host/dw_mmc-k3.c
+>>         @@ -194,8 +194,14 @@ static void dw_mci_hi6220_set_ios(struct
+>>         dw_mci *host, struct mmc_ios *ios)
+>>                  int ret;
+>>                  unsigned int clock;
+>>            -     clock = (ios->clock <= 25000000) ? 25000000 : 
+>> ios->clock;
+>>         -
+>>         +       /* CLKDIV must be 1 for DDR52/8-bit mode */
+>>         +       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
+>>         +               ios->timing == MMC_TIMING_MMC_DDR52) {
+>>         +               mci_writel(host, CLKDIV, 0x1);
+>>         +               clock = ios->clock;
+>>         +       } else {
+>>         +               clock = (ios->clock <= 25000000) ? 25000000 :
+>>         ios->clock;
+>>         +       }
+>>
+>>
+>>     I undertand DDR52/8-bit need CLKDIV fixed 1, but shouldn't the 
+>> following
+>>     change is more sensible?
+>>
+>>     if (ios->bus_width == MMC_BUS_WIDTH_8 && ios->timing ==
+>>     MMC_TIMING_MMC_DDR52)
+>>              clock = ios->clock * 2;
+>>     else
+>>              clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+>>
+>>
+>>     The reason is ios->clock is 52MHz and you could claim 104MHz from 
+>> the
+>>     clock provider and let dw_mmc core take care of the divder to be 1.
+>>     Otherwise, you just force it to be DDR52/8-bit with a clk rate of 
+>> 26MHz.
+>>
+>>
+>>                  ret = clk_set_rate(host->biu_clk, clock);
+>>                  if (ret)
+>>                          dev_warn(host->dev, "failed to set rate
+>>         %uHz\n", clock);
+>>
+>>
+>>
+>
+> For future wise, please use plain mode mail, but not HTML format.
+>
+>> Your feedback is correct. I see the Rockchip dwmmc driver has a similar
+>> implementation. After applying your suggested changes, however, my board
+>> reports "dwmmc_k3 f723d000.dwmmc0: failed to set rate 104000000Hz"
+>> during intialization of eMMC. In addition, I do not see CLKDIV being
+>> set to 1. clk_set_rate fails and I wonder if this is out-of-scope of
+>> the driver.
+>>
+>> If I set CLKDIV where I did prior, with your changes, the device fails
+>> to set the clock and falls back to 52 MHz (26 MHz) and works fine, but
+>> again, CLKDIV is reported as 0 (even though it is 1.) One thing of
+>> interest to note is when I manually set the clock by doing:
+>> (echo 104000000 > /sys/kernel/debug/mmc0/clock) the device reports back
+>> 'mmc_host mmc0: Bus speed (slot 0) = 198400000Hz (slot req 104000000Hz,
+>>   actual 99200000HZ div = 1)' which works reliably and clk_set_rate does
+>> not report any error.
+>>
+>
+> When looking closely into the code, at least dw_mci_hi6220_set_ios
+> goes wrong with the bus_hz, since it should be ciu_clk but not biu_clk.
+> "b" stands for bus, and "c" stands for card IMHO, however bus_hz
+> describs the clock to the card, provided by controller. Does the
+> following patch help?
+>
+>
+> diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
+> index 89cdb3d..9e78cf2 100644
+> --- a/drivers/mmc/host/dw_mmc-k3.c
+> +++ b/drivers/mmc/host/dw_mmc-k3.c
+> @@ -194,13 +194,21 @@ static void dw_mci_hi6220_set_ios(struct dw_mci 
+> *host, struct mmc_ios *ios)
+>         int ret;
+>         unsigned int clock;
+>
+> -       clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+> +       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
+> +           ios->timing == MMC_TIMING_MMC_DDR52)
+> +               clock = ios->clock * 2;
+> +       else
+> +               clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+>
+> -       ret = clk_set_rate(host->biu_clk, clock);
+> +       ret = clk_set_rate(host->ciu_clk, clock);
+>         if (ret)
+>                 dev_warn(host->dev, "failed to set rate %uHz\n", clock);
+>
+> -       host->bus_hz = clk_get_rate(host->biu_clk);
+> +       clock = clk_get_rate(host->ciu_clk);
+> +       if (clock != host->bus_hz) {
+> +               host->bus_hz = clock;
+> +               host->current_speed = 0;
+> +       }
+>  }
+>
+>
+>> I am not sure where to begin debugging these clock issues and welcome
+>> any feedback.
+>
