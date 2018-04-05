@@ -1,61 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeDEMvX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 08:51:23 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34456 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751359AbeDEMvV (ORCPT
+        id S1751332AbeDEMxi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 08:53:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55458 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751097AbeDEMxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 08:51:21 -0400
-X-Google-Smtp-Source: AIpwx48P4IqPSp8JEG4NyVLJJeowAEoqJmJfhYjkadDTXSX2wCQtM+1QE45ZtVXPo00Kvwjsx99Kr8z9nmQrgqq+wZs=
+        Thu, 5 Apr 2018 08:53:36 -0400
+Subject: Re: [PATCH v9 15/24] mm: Introduce __vm_normal_page()
+To: Jerome Glisse <jglisse@redhat.com>
+Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1520963994-28477-16-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180403193927.GD5935@redhat.com>
+ <a3446d86-8a29-a9f2-a1fe-b8cc1b748132@linux.vnet.ibm.com>
+ <20180404215916.GC3331@redhat.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Thu, 5 Apr 2018 14:53:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAFd5g47AeTtU_uYNOuDKroBwf_FMd+4Z7WgcCM5wyj2e_PEZrQ@mail.gmail.com>
-References: <1521155412-29229-1-git-send-email-tmaimon77@gmail.com>
- <1521155412-29229-2-git-send-email-tmaimon77@gmail.com> <CAFd5g47AeTtU_uYNOuDKroBwf_FMd+4Z7WgcCM5wyj2e_PEZrQ@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 5 Apr 2018 14:51:20 +0200
-X-Google-Sender-Auth: xoVOOPRzLDyZSADQYk3SDjxIGcQ
-Message-ID: <CAK8P3a2AtJUmP+cNVEdyiKJSAst+svNqvHrssgseAHnTzqj40w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] arm: npcm: modify configuration for the NPCM7xx BMC.
-To: Brendan Higgins <brendanhiggins@google.com>
-Cc: Tomer Maimon <tmaimon77@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Avi Fishman <avifishman70@gmail.com>, Joel Stanley <joel@jms.id.au>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Nancy Yuen <yuenn@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180404215916.GC3331@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18040512-0008-0000-0000-000004E713AD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040512-0009-0000-0000-00001E7A2849
+Message-Id: <6ebb4602-9455-65f3-ea60-bfaaee23a859@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-05_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804050135
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 6:56 AM, Brendan Higgins
-<brendanhiggins@google.com> wrote:
-> On Thu, Mar 15, 2018 at 4:16 PM Tomer Maimon <tmaimon77@gmail.com> wrote:
->
->> Modify configuration and MakeFile
->> for the Nuvoton NPCM and NPCM7xx BMC.
->
->> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
->> ---
->>   arch/arm/mach-npcm/Kconfig  | 40 +++++++++++-----------------------------
->>   arch/arm/mach-npcm/Makefile |  4 +++-
->>   2 files changed, 14 insertions(+), 30 deletions(-)
->
-> <snip>
->
-> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+On 04/04/2018 23:59, Jerome Glisse wrote:
+> On Wed, Apr 04, 2018 at 06:26:44PM +0200, Laurent Dufour wrote:
+>>
+>>
+>> On 03/04/2018 21:39, Jerome Glisse wrote:
+>>> On Tue, Mar 13, 2018 at 06:59:45PM +0100, Laurent Dufour wrote:
+>>>> When dealing with the speculative fault path we should use the VMA's field
+>>>> cached value stored in the vm_fault structure.
+>>>>
+>>>> Currently vm_normal_page() is using the pointer to the VMA to fetch the
+>>>> vm_flags value. This patch provides a new __vm_normal_page() which is
+>>>> receiving the vm_flags flags value as parameter.
+>>>>
+>>>> Note: The speculative path is turned on for architecture providing support
+>>>> for special PTE flag. So only the first block of vm_normal_page is used
+>>>> during the speculative path.
+>>>
+>>> Might be a good idea to explicitly have SPECULATIVE Kconfig option depends
+>>> on ARCH_PTE_SPECIAL and a comment for !HAVE_PTE_SPECIAL in the function
+>>> explaining that speculative page fault should never reach that point.
+>>
+>> Unfortunately there is no ARCH_PTE_SPECIAL in the config file, it is defined in
+>> the per architecture header files.
+>> So I can't do anything in the Kconfig file
+> 
+> Maybe adding a new Kconfig symbol for ARCH_PTE_SPECIAL very much like
+> others ARCH_HAS_
+> 
+>>
+>> However, I can check that at build time, and doing such a check in
+>> __vm_normal_page sounds to be a good place, like that:
+>>
+>> @@ -869,6 +870,14 @@ struct page *__vm_normal_page(struct vm_area_struct *vma,
+>> unsigned long addr,
+>>
+>>         /* !HAVE_PTE_SPECIAL case follows: */
+>>
+>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+>> +       /* This part should never get called when the speculative page fault
+>> +        * handler is turned on. This is mainly because we can't rely on
+>> +        * vm_start.
+>> +        */
+>> +#error CONFIG_SPECULATIVE_PAGE_FAULT requires HAVE_PTE_SPECIAL
+>> +#endif
+>> +
+>>         if (unlikely(vma_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+>>                 if (vma_flags & VM_MIXEDMAP) {
+>>                         if (!pfn_valid(pfn))
+>>
+> 
+> I am not a fan of #if/#else/#endif in code. But that's a taste thing.
+> I honnestly think that adding a Kconfig for special pte is the cleanest
+> solution.
 
-Sorry for missing this earlier, I did ask for the rework but then
-didn't see it as it
-wasn't in my arm@kernel.org inbox.
+I do agree, but this should be done in a separate series.
 
-Tomer, please make sure that all patches you want to have included in
-the kernel are sent to that address, while patches you want to have reviewed
-are not sent to it.
+I'll see how this could be done but there are some arch (like powerpc) where
+this is a bit obfuscated for unknown reason.
 
-Normally I don't apply patches during the merge window, but this one fixes
-some build problems, so I've decided to take it.
-
-       Arnd
+For the time being, I'll remove the check and just let the comment in place.
