@@ -1,48 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751454AbeDEEtr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 00:49:47 -0400
-Received: from mail-pl0-f41.google.com ([209.85.160.41]:46998 "EHLO
-        mail-pl0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751038AbeDEEtp (ORCPT
+        id S1751404AbeDEFAr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 01:00:47 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:40636 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbeDEFAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 00:49:45 -0400
-X-Google-Smtp-Source: AIpwx4/jNIeb8WIseolWbXcCEYvJabx4h66zF3NQQBAsUZivzdZRZb0cck3zG+2gOkSankOV3MfMdA==
-Date: Thu, 5 Apr 2018 10:19:41 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
-        rui.zhang@intel.com, daniel.thompson@linaro.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH V2 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
- idle cooling driver
-Message-ID: <20180405044941.GK3572@vireshk-i7>
-References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
- <1519226968-19821-7-git-send-email-daniel.lezcano@linaro.org>
- <20180223073432.GF26947@vireshk-i7>
- <faaf027c-e01c-6801-9a0c-ab7e0ba669a1@linaro.org>
- <20180226043021.GK26947@vireshk-i7>
- <78504a65-d21a-eea0-d8af-6e12d5747b87@linaro.org>
+        Thu, 5 Apr 2018 01:00:45 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w3550dYm032478
+X-Nifty-SrcIP: [209.85.217.171]
+X-Google-Smtp-Source: AIpwx48jUCXJslM1mpGqX+nIGfz45J2op5Q71hxGM5stpIH/lu2M7+kjMbBDjxH4fp971ycpyJS5mkqU9ix6QSW4C0o=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78504a65-d21a-eea0-d8af-6e12d5747b87@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180329004805.7278-4-labbott@redhat.com>
+References: <20180329004805.7278-1-labbott@redhat.com> <20180329004805.7278-4-labbott@redhat.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 5 Apr 2018 13:59:58 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT8gsvd-DP_TAFNSbJ_Bn=H-gjfuirWd9kmxh8Yx60cfA@mail.gmail.com>
+Message-ID: <CAK7LNAT8gsvd-DP_TAFNSbJ_Bn=H-gjfuirWd9kmxh8Yx60cfA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] kbuild: Allow passing additional HOSTCFLAGS and HOSTLDFLAGS
+To: Laura Abbott <labbott@redhat.com>
+Cc: Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04-04-18, 10:50, Daniel Lezcano wrote:
-> Mmh, that sounds very complex. May be it is simpler to count the number
-> of cluster and initialize the idle_cdev for each cluster and then go for
-> this loop with the cluster cpumask.
+2018-03-29 9:48 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+>
+> Similar to AFLAGS_KBUILD, there may be uses (e.g. hardening) for passing in
+> additional flags to host programs. Allow these to be passed in from the
+> environment.
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+>  Documentation/kbuild/kbuild.txt | 9 +++++++++
+>  Makefile                        | 3 +++
+>  2 files changed, 12 insertions(+)
+>
+> diff --git a/Documentation/kbuild/kbuild.txt b/Documentation/kbuild/kbuild.txt
+> index ac2363ea05c5..3751a4bc8596 100644
+> --- a/Documentation/kbuild/kbuild.txt
+> +++ b/Documentation/kbuild/kbuild.txt
+> @@ -24,6 +24,15 @@ KAFLAGS
+>  --------------------------------------------------
+>  Additional options to the assembler (for built-in and modules).
+>
+> +AFLAGS_HOSTCFLAGS
+> +--------------------------------------------------
+> +Additional options passed to the compiler when building host programs.
+> +
+> +AFLAGS_HOSTLDFLAGS
+> +--------------------------------------------------
+> +Additional options passed to the linker (through the compiler) when buidling
+> +host programs.
+> +
 
-Maybe not sure. I have had such code in the past and it was quite
-straight forward to understand :)
 
-You can go with whichever version you like.
+I am afraid you misunderstood the meaning of 'AFLAGS'.
+
+AFLAGS is not 'Additional flags', but 'Assembler flags'
+that are used for compiling *.S files.
+
+AFLAGS for host programs is weird.
+
+
+
+I see similar proposals from different people.
+
+I replied like follows:
+https://lkml.org/lkml/2018/2/28/178
+
+However, Robin seems busy lately.
+
+I will wait a bit, then
+if nobody does this, I may do it.
+
+
+
+
+>  AFLAGS_MODULE
+>  --------------------------------------------------
+>  Additional module specific options to use for $(AS).
+> diff --git a/Makefile b/Makefile
+> index 7ba478ab8c82..2cab3f8d489c 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -367,6 +367,9 @@ HOSTCXXFLAGS := -O2 $(HOST_LFS_CFLAGS)
+>  HOSTLDFLAGS  := $(HOST_LFS_LDFLAGS)
+>  HOST_LOADLIBES := $(HOST_LFS_LIBS)
+>
+> +HOSTCFLAGS  += $(AFLAGS_HOSTCFLAGS)
+> +HOSTLDFLAGS  += $(AFLAGS_HOSTLDFLAGS)
+> +
+>  # Make variables (CC, etc...)
+>  AS             = $(CROSS_COMPILE)as
+>  LD             = $(CROSS_COMPILE)ld
+> --
+> 2.16.2
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 
 -- 
-viresh
+Best Regards
+Masahiro Yamada
