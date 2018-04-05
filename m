@@ -1,104 +1,164 @@
-Return-Path: <benh@kernel.crashing.org>
-X-Google-Smtp-Source: AIpwx4+2YcVwFiQY16F+eY16LuCfQo9U8fvcbQcRriHPqBEROeGBGbFGQNt5faI0IiNmWuS0DMWy
-ARC-Seal: i=1; a=rsa-sha256; t=1523372008; cv=none;
-        d=google.com; s=arc-20160816;
-        b=dzQuEZG2J2heL3FiXCkG9vidOTSigm8xT+Q/DxwmEkUGrsMACYMldBXdcsp5XypLs0
-         zdoZ9DBmH0a6tkKMz9J9T5qsKRj9Lk0+qX/yDHKo6BdAEyKMnL1uU1R4aAl0eFpR4Qpm
-         ZI+erayiGY8odq/MQHDIyLSXu7nRM9Hx0ESGyOC3z47GEHVtohsSeLuElVzpPs8CVqjJ
-         6ypUrGIYqt9s5G8tBCtBQ3WOKWKyByOvHu0cMLn4JGu7y9ldtjeh7kV76mCmylQnXAKG
-         7g7EvwEpNoBOb68SyeeiEtA6MbwtExC4kCuKDCctDRgMbdz7PNS5tgwv456nntFCF9EL
-         yoUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:arc-authentication-results;
-        bh=pL2v50+4a6Q73T6XjffPLR7W6nYtud+cbVUOooozNrE=;
-        b=hMwetNrjXSZ3pJWXywKpg8yp8JJDy9m1gwgTawssdxswezz8vWxx2OKRfS0q2ElMkh
-         JqGdzFzKRZLc4qXsGQVdLHUxyAvOPO16pdyIbHu4JBuxlC3aA1JhBcltTWyK63CLHVkM
-         5gnKpxuZVnNAtE/DqeSPBiL9jG2JzY8yyqDpg9ZTay9SZGgxMgnZCXOPnU2W39z1OIYR
-         waDKInxJ7uzhKRvCdfEh/RkPnNTDG7buT/C2nnAgBDgeA/1VKxYZuuVD7kUfbMGG84Sw
-         1ZsgOk6Sq/Sg92kFVZ7PJxUPqyM5WJ7CoFXPqoILOFk4ZT+8JxIIBuEKBrMC1MzhJUVZ
-         1YUw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of benh@kernel.crashing.org designates 63.228.1.57 as permitted sender) smtp.mailfrom=benh@kernel.crashing.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of benh@kernel.crashing.org designates 63.228.1.57 as permitted sender) smtp.mailfrom=benh@kernel.crashing.org
-Message-ID: <1523371986.11062.101.camel@kernel.crashing.org>
-Subject: Re: How to expose various BMC chip controls ?
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew
- Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel.stanley@au1.ibm.com>,
-        Jeremy
- Kerr <jeremy.kerr@au1.ibm.com>
-Date: Wed, 11 Apr 2018 00:53:06 +1000
-In-Reply-To: <CAK8P3a1vEKOvX-p=QLX_BPCXGJrN-5SQgkA1GYggSukG7SosUQ@mail.gmail.com>
-References: <1523351850.11062.80.camel@kernel.crashing.org>
-	 <CAK8P3a2rC3jymPDJbpxsYZRYMAcSJy6zXjYrxKPHrGxj63vBtg@mail.gmail.com>
-	 <1523365055.11062.95.camel@kernel.crashing.org>
-	 <CAK8P3a1vEKOvX-p=QLX_BPCXGJrN-5SQgkA1GYggSukG7SosUQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3493453-1522953529-2-2002911166901882157
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522953529; b=VrxxdetcH7LrB5Y0lDR4xIHdLFDILd+UFPEHcTy7C0bCTRbkcO
+    B4SfXhlwwuDN08c1d85GqNB7NJGLnuqmH/ns9EBnSR/dkMYOHwUZHHL2uL4f7tG3
+    4htxF6t/Guj7/OfUqno+HPOny0qJm1X0d4BQZ0vHpqPMSiUxJ1qhOnqed0uMDY7j
+    QpQ2pYgXoMI01cjWDFMSEv+NPqkk3URMIgVQdRGsO608BNM7ZGMzrj9v05g2LLo8
+    BoQtyK/b+aEXvxc8hFuQXSOwNlLQBdF18gAggrayTq1C2wC7xAJn9LrfaT4UCy6O
+    xlzq5SlUDCrXwyC0iwMbCkG8VnUZ4CM7NLBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1522953529; bh=
+    +HkYt9+3uSMGeBekXyjPvfS86pd0ppXplTUzbAPELDw=; b=rAuhWcLYhiXgUfSf
+    QCh47U7rY4GoxRXHFaBWzFGMacAhyjKEQ8yVafn2K7azMscZq/bK9p6P3scniJ6m
+    EWucGUiOTIcuobiwWnJC6RCdGNsJvPFDbFwjU4LER8rEhAGoqv0NRYuYLL78dFzK
+    QN9lDotqvEuCKEuxqom8IPjCeeS3DiG4F1aIlz4tLJfvyYjytsQHUTzbDausuPgz
+    124LwD/68Lr3cMw6qKqvQWBZAdo+oJlotDxZ58ftdOv1TCtI8VihD2oQa+AHqDzm
+    NDRqwjSl1gRmpYHN4ra9NQBF8XkEmgg83TL2U9OHM9zqdzfjDQFyC0tcjDdgwIbz
+    Q53DOA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=M9nbxq+b x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ErsXj5/G;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=M9nbxq+b x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ErsXj5/G;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKCSDCR46xHFXcyT2Di3zZf+xSScOPh952UCHZay0p8dZOml6gRz9MbdRIyRyXDdGqYkgL9DForxRH2r2XxWUaz3aGZoO6wU+ksNY1omY7e1KcVjlBRI
+    jBYSWdc+MT+S1BK3FGbNP/gzav1+pWQoSx4GqHm6T3vrAk7fnXiLCZbra3CdUjMB/kabjfk4O5xt5UUS63ah9KMlPqBJWZEC7nIBxE6uKKARhmv0ayB59qYD
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=4hmgV4NtA7EA:10
+    a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=OLL_FvSJAAAA:8 a=pGLkceISAAAA:8
+    a=VwQbUJbxAAAA:8 a=8aizV4YkjxcpfcbxqYwA:9 a=ilC1hCBG63GNt4Ks:21
+    a=5Ugnc2BL6aUX9fzf:21 a=Ey0gUAR8-osA:10 a=7bBtgmo6PNIA:10
+    a=oIrB72frpwYPwTMnlWqB:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751642AbeDESiq (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 5 Apr 2018 14:38:46 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:45752 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751535AbeDESip (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 5 Apr 2018 14:38:45 -0400
+X-Google-Smtp-Source: AIpwx49OMnYcgk4Utalc3PWIUXj6C+D2z0z95P2EJElIdI577pzI1bh62yy0rKmbEPLu7hLy8TDdSA==
+From: Jason Andryuk <jandryuk@gmail.com>
+To: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: benjamin.tissoires@redhat.com, andyrtr@archlinux.org,
+        aduggan@synaptics.com, Jason Andryuk <jandryuk@gmail.com>,
+        stable@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] i2c: i801: blacklist Host Notify on HP EliteBook G3 850
+Date: Thu,  5 Apr 2018 14:38:24 -0400
+Message-Id: <20180405183824.13333-1-jandryuk@gmail.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180404225643.6b40782f@endymion>
+References: <20180404225643.6b40782f@endymion>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597350209516531918?=
-X-GMAIL-MSGID: =?utf-8?q?1597371326790387769?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 2018-04-10 at 15:06 +0200, Arnd Bergmann wrote:
-> On Tue, Apr 10, 2018 at 2:57 PM, Benjamin Herrenschmidt
-> <benh@kernel.crashing.org> wrote:
-> > On Tue, 2018-04-10 at 13:29 +0200, Arnd Bergmann wrote:
-> > > In the cases where an ad-hoc interface is needed, I can see
-> > > two options: we can stick something in drivers/soc that exposes
-> > > it in the least ugly way, completely specific to that particular
-> > > SoC, or we can create a new subsystem from "random BMC
-> > > slave-side interfaces" and have it maintained by you all (leave
-> > > me out of the picture, except if you are looking for ideas).
-> > 
-> > I don't think there enough commonality in these things to create a "BMC
-> > slave interface" class that is anything other than a bunch of sysfs
-> > files.
-> > 
-> > That's why I ended up with my personal conclusion/preference of just
-> > having the syscon "driver" for the SoC just expose a table of a dozen
-> > or so such knobs, and use the DT to describe them to abstract a bit the
-> > difference between SoC models/revisions and how they are wired up in a
-> > given platform.
-> 
-> The idea with having a subsystem for it would be to group stuff together
-> in one directory and have that owned by people that care about it,
-> even if there is little commonality between the things it's used for.
+The HP EliteBook G3 850 has a weird bug where a subsequent cold boot
+hangs while plugged in if Linux enables the Host Notify features of
+i2c-i801.  The cold boot hang depends on how the system boots.  It does
+not hang on UEFI Grub text boot or legacy Grub text boot.  But it does
+hang on legacy Grub graphical boot and Intel Boot Agent PXE text boot.
+Booting unplugged is not affected.
 
-Ok, so we could use a subsystem as a grouping method in sysfs, that
-does make some amount of sense ;-)
+Disabling the Host Notify feature with disable_feature=0x20 works around
+the bug, so automatically do so based on DMI information.
 
-That said, fundamentally, it is going to be exposed by whatever creates
-the syscon for the SoC, so yes, a "SoC" driver is probably the right
-thing to instanciate that thing, as those knobs are very much SoC
-specific. Though I do want to keep the actual definition DT based at
-least for Aspeed.
+More information can be found here:
+https://www.spinics.net/lists/linux-i2c/msg33938.html
 
-As for finding the commonalities, the connundrum here is that we juts
-don't have enough experience of platforms with different kinds of BMCs
-to do that (provided there's anything to find).
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Cc: stable@vger.kernel.org
+---
+v3: Switch to DMI_EXACT_MATCH and add empty element to array
 
-So we can wait a few years until we do and keep out-of-tree crap
-drivers, or just solve the immediate problem in a semi-reasonable way,
-and maybe make things evolve as we get more SoC's into the picture.
+ drivers/i2c/busses/i2c-i801.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-My issue right now is that we need products out of the door (and not
-just we IBM, but everybody using OpenBMC) and we are just carrying
-various horrid out of tree hacks to do so, and that needs urgent
-fixing.
-
-The main worry I have with my own idea here is that it's too easily
-abused for things that shouldn't get in there. But I can't find a way
-around that, we'll just have to be vigilant I suppose...
-
-Cheers,
-Ben.
+diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+index 692b34125866..11149ddae745 100644
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -1042,6 +1042,27 @@ static const struct pci_device_id i801_ids[] = {
+ MODULE_DEVICE_TABLE(pci, i801_ids);
+ 
+ #if defined CONFIG_X86 && defined CONFIG_DMI
++static const struct dmi_system_id host_notify_dmi_blacklist[] = {
++	{
++		.ident = "HP EliteBook G3 850",
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "HP"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME,
++					"HP EliteBook 850 G3"),
++		},
++	},
++	{}
++};
++
++static void blacklist_features(struct i801_priv *priv)
++{
++	if (dmi_check_system(host_notify_dmi_blacklist)) {
++		dev_warn(&priv->pci_dev->dev,
++			 "SMBus Host Notify disabled on this system");
++		priv->features &= ~FEATURE_HOST_NOTIFY;
++	}
++}
++
+ static unsigned char apanel_addr;
+ 
+ /* Scan the system ROM for the signature "FJKEYINF" */
+@@ -1159,6 +1180,7 @@ static void i801_probe_optional_slaves(struct i801_priv *priv)
+ #else
+ static void __init input_apanel_init(void) {}
+ static void i801_probe_optional_slaves(struct i801_priv *priv) {}
++static void blacklist_features(struct i801_priv *priv) {}
+ #endif	/* CONFIG_X86 && CONFIG_DMI */
+ 
+ #if IS_ENABLED(CONFIG_I2C_MUX_GPIO) && defined CONFIG_DMI
+@@ -1562,6 +1584,7 @@ static int i801_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 				   i801_feature_names[i]);
+ 	}
+ 	priv->features &= ~disable_features;
++	blacklist_features(priv);
+ 
+ 	err = pcim_enable_device(dev);
+ 	if (err) {
+-- 
+2.14.3
