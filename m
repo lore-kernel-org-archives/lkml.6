@@ -1,98 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751326AbeDEMOJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 08:14:09 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:16976 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750835AbeDEMOH (ORCPT
+        id S1751356AbeDEMTR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 08:19:17 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:46172 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbeDEMTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 08:14:07 -0400
-Subject: Re: [PATCH v8 20/42] ARM: davinci: pass clock as parameter to
- davinci_timer_init()
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-21-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <43434ed4-162c-cb39-70ef-a458e3999f8b@ti.com>
-Date: Thu, 5 Apr 2018 17:42:51 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 5 Apr 2018 08:19:15 -0400
+X-Google-Smtp-Source: AIpwx4+Ai8NUdLpSdxZPaF25T+Ptqgu7bTpEId0CwxIpIPNkFY/zXfVSEMvfottcFzt9osTnKWVwMw==
+Date: Thu, 5 Apr 2018 08:19:06 -0400
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: 104-dio-48e: make array 'ports' static, shrinks
+ object size
+Message-ID: <20180405121906.GA6274@sophia>
+References: <20180405120012.7671-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <1521168778-27236-21-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180405120012.7671-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 16 March 2018 08:22 AM, David Lechner wrote:
-> This changes davinci_timer_init() so that we pass the clock as a
-> parameter instead of using clk_get(). This is done in preparation
-> for converting to the common clock framework.
-> 
-> It removes the requirement that we have to have a clock with con_id
-> of "timer0", which will be good for DT bindings since clock-names =
-> "timer0" doesn't really make sense.
-> 
-> Additionally, when we convert to the common clock framework, most of
-> the clocks will be platform devices, which will not be available at
-> this point during the boot process, so we will need to pass a clock
-> that is available (i.e. ref_clk) instead of the "timer0" clock.
-> 
-> NB: The comment added in time.c is not entirely true when this patch
-> is applied, but it will be correct once the conversion to the common
-> clock framework is complete in subsequent patches.
+On Thu, Apr 05, 2018 at 01:00:12PM +0100, Colin King wrote:
+>From: Colin Ian King <colin.king@canonical.com>
+>
+>Don't populate the const read-only array 'ports' on the stack but instead
+>make it static. Makes the object code smaller by over 100 buytes:
+>
+>Before:
+>   text	   data	    bss	    dec	    hex	filename
+>  10959	   4952	    832	  16743	   4167	drivers/gpio/gpio-104-dio-48e.o
+>
+>After:
+>   text	   data	    bss	    dec	    hex	filename
+>  10790	   5008	    832	  16630	   40f6	drivers/gpio/gpio-104-dio-48e.o
+>
+>(gcc version 7.2.0 x86_64)
+>
+>Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>---
+> drivers/gpio/gpio-104-dio-48e.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+>index 31e22c93e844..9c4e07fcb74b 100644
+>--- a/drivers/gpio/gpio-104-dio-48e.c
+>+++ b/drivers/gpio/gpio-104-dio-48e.c
+>@@ -188,7 +188,7 @@ static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+> {
+> 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+> 	size_t i;
+>-	const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
+>+	static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
+> 	const unsigned int gpio_reg_size = 8;
+> 	unsigned int bits_offset;
+> 	size_t word_index;
+>-- 
+>2.15.1
+>
 
-I think its better to add the comment when its actually applicable, even
-if it needs to be a separate patch.
+If this makes gpio-104-dio-48e.o smaller, then it may be worthwhile to
+apply similar changes to gpio-104-idi-48.c and gpio-gpio-mm.c which have
+similar get_multiple callback implementations.
 
-> 
-> Also, drop use of extern in header file since we are touching the
-> definition.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-
-> -
-> -void __init davinci_timer_init(void)
-> +void __init davinci_timer_init(struct clk *timer_clk)
->  {
-> -	struct clk *timer_clk;
->  	struct davinci_soc_info *soc_info = &davinci_soc_info;
->  	unsigned int clockevent_id;
->  	unsigned int clocksource_id;
-> @@ -373,7 +371,14 @@ void __init davinci_timer_init(void)
->  		}
->  	}
->  
-> -	timer_clk = clk_get(NULL, "timer0");
-> +	/*
-> +	 * REVISIT: Currently, timer_clk will be "ref_clk". However, the actual
-> +	 * clock for this device comes from a PLL AUXCLK or a PSC clock
-> +	 * (depending on the SoC). The PLL and PSC clocks are not registered
-> +	 * until later in boot because they are platform devices. We should try
-> +	 * again later to get the real clock so that the real clock is not
-> +	 * turned off when disabling unused clocks, which would stop the timer.
-
-This disabling later should not happen because you have the timer clocks
-marked as LPSC_ALWAYS_ENABLED which translates to CLK_IS_CRITICAL and
-that should make sure they are never disabled.
-
-The issue should be documented is that we depend on bootloader leaving
-the timer0 enabled on DM355, DM365, DM644x and DM646x. Of these, I have
-tested only DM644x so far. I will check others and see the status of
-timer0 there.
-
-Its not really a great situation here, but I don't have a good
-alternative to suggest as well if having genpd support in PSC means we
-cannot be using CLK_OF_DECLARE().
-
-Thanks,
-Sekhar
+Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
