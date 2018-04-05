@@ -1,52 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752584AbeDEKBF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 06:01:05 -0400
-Received: from ozlabs.org ([103.22.144.67]:32969 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751487AbeDEKA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 06:00:59 -0400
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: yamada.masahiro@socionext.com
-Cc: akpm@linux-foundation.org, joe@perches.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] lib: Make SECTION_MISMATCH_WARN_ONLY depend on DEBUG_SECTION_MISMATCH
-Date: Thu,  5 Apr 2018 20:00:55 +1000
-Message-Id: <20180405100055.26585-1-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.14.1
+        id S1751579AbeDEJub (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:50:31 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60632 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751518AbeDEJu2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 05:50:28 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
+        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
+        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
+        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
+        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
+        jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
+        hshi@chromium.org,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH v6 07/30] drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the panel
+Date: Thu,  5 Apr 2018 11:49:37 +0200
+Message-Id: <20180405095000.9756-8-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
+References: <20180405095000.9756-1-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_SECTION_MISMATCH_WARN_ONLY says to turn the errors enabled by
-CONFIG_DEBUG_SECTION_MISMATCH into warnings. As such there's no need
-to set the former if the latter is not enabled.
+From: Lin Huang <hl@rock-chips.com>
 
-Currently there's no connection between the two, meaning we can end up
-with this slightly confusing situation:
+When panel is shut down, we should make sure edp can be disabled to avoid
+undefined behavior.
 
-  # CONFIG_DEBUG_SECTION_MISMATCH is not set
-  CONFIG_SECTION_MISMATCH_WARN_ONLY=y
-
-So make CONFIG_SECTION_MISMATCH_WARN_ONLY depend on
-CONFIG_DEBUG_SECTION_MISMATCH.
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Stéphane Marchesin <marcheu@chromium.org>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: zain wang <wzz@rock-chips.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Archit Taneja <architt@codeaurora.org>
 ---
- lib/Kconfig.debug | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 64155e310a9f..39209e951010 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -337,6 +337,7 @@ config DEBUG_SECTION_MISMATCH
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 3269deec739d..5957e2338071 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1160,6 +1160,12 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
  
- config SECTION_MISMATCH_WARN_ONLY
- 	bool "Make section mismatch errors non-fatal"
-+	depends on DEBUG_SECTION_MISMATCH
- 	default y
- 	help
- 	  If you say N here, the build process will fail if there are any
+ 	pm_runtime_get_sync(dp->dev);
+ 
++	ret = clk_prepare_enable(dp->clock);
++	if (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the clock clk [%d]\n", ret);
++		goto out_dp_clk_pre;
++	}
++
+ 	if (dp->plat_data->power_on)
+ 		dp->plat_data->power_on(dp->plat_data);
+ 
+@@ -1191,6 +1197,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 	phy_power_off(dp->phy);
+ 	if (dp->plat_data->power_off)
+ 		dp->plat_data->power_off(dp->plat_data);
++	clk_disable_unprepare(dp->clock);
++out_dp_clk_pre:
+ 	pm_runtime_put_sync(dp->dev);
+ 
+ 	return ret;
+@@ -1233,11 +1241,14 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+ 	}
+ 
+ 	disable_irq(dp->irq);
++	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
+ 	phy_power_off(dp->phy);
+ 
+ 	if (dp->plat_data->power_off)
+ 		dp->plat_data->power_off(dp->plat_data);
+ 
++	clk_disable_unprepare(dp->clock);
++
+ 	pm_runtime_put_sync(dp->dev);
+ 
+ 	ret = analogix_dp_prepare_panel(dp, false, true);
 -- 
-2.14.1
+2.16.3
