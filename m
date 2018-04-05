@@ -1,105 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751603AbeDENLL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:11:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42104 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751249AbeDENLI (ORCPT
+        id S1751482AbeDENNQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:13:16 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:45682 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751277AbeDENNP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:11:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A729160274
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alexey Roslyakov <alexey.roslyakov@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
-Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for brcmfmac
-References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
-        <20180319014032.9394-3-alexey.roslyakov@gmail.com>
-        <5AAF838D.2030105@broadcom.com>
-        <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
-        <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com>
-        <5AB044C0.9060701@broadcom.com>
-        <87po3zxe9n.fsf@kamboji.qca.qualcomm.com>
-        <CAPDyKFr2GVB0+UUpT3GgGBT17TMcrky6X4L_pw+ztTL6ejbCwQ@mail.gmail.com>
-Date: Thu, 05 Apr 2018 16:10:58 +0300
-In-Reply-To: <CAPDyKFr2GVB0+UUpT3GgGBT17TMcrky6X4L_pw+ztTL6ejbCwQ@mail.gmail.com>
-        (Ulf Hansson's message of "Thu, 22 Mar 2018 11:29:53 +0100")
-Message-ID: <87lge1er31.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 5 Apr 2018 09:13:15 -0400
+X-Google-Smtp-Source: AIpwx4+sApsG4G4jp0IfFUZBON09PmyDzBaUCJCwOszotYNuApSRXpzlXFuZNVWVNb1/VOFDxYmg5+dE8DwrtR4ztbU=
 MIME-Version: 1.0
-Content-Type: text/plain
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 5 Apr 2018 15:13:13 +0200
+X-Google-Sender-Auth: fX86iWjTJ-mAbgt24Nj5kmdpJtw
+Message-ID: <CAMuHMdWovmqqgrOvtA=cyineJigwOtv-tGwz_PBVRFrgtryumw@mail.gmail.com>
+Subject: net_dim() may use uninitialized data
+To: Tal Gilboa <talgi@mellanox.com>
+Cc: netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w35DDKNx023320
 
-Ulf Hansson <ulf.hansson@linaro.org> writes:
+Hi Tal,
 
-> On 20 March 2018 at 10:55, Kalle Valo <kvalo@codeaurora.org> wrote:
->> Arend van Spriel <arend.vanspriel@broadcom.com> writes:
->>
->>>>> If I get it right, you mean something like this:
->>>>>
->>>>> mmc3: mmc@1c12000 {
->>>>> ...
->>>>>          broken-sg-support;
->>>>>          sd-head-align = 4;
->>>>>          sd-sgentry-align = 512;
->>>>>
->>>>>          brcmf: wifi@1 {
->>>>>                  ...
->>>>>          };
->>>>> };
->>>>>
->>>>> Where dt: bindings documentation for these entries should reside?
->>>>> In generic MMC bindings? Well, this is the very special case and
->>>>> mmc-linux maintainer will unlikely to accept these changes.
->>>>> Also, extra kernel code modification might be required. It could make
->>>>> quite trivial change much more complex.
->>>>
->>>> If the MMC maintainers are not copied on this patch series, it will
->>>> likely be hard for them to identify this patch series and chime in...
->>>
->>> The main question is whether this is indeed a "very special case" as
->>> Alexey claims it to be or that it is likely to be applicable to other
->>> device and host combinations as you are suggesting.
->>>
->>> If these properties are imposed by the host or host controller it
->>> would make sense to have these in the mmc bindings.
->>
->> BTW, last year we were discussing something similar (I mean related to
->> alignment requirements) with ath10k SDIO patches and at the time the
->> patch submitter was proposing to have a bounce buffer in ath10k to
->> workaround that. I don't remember the details anymore, they are on the
->> ath10k mailing list archive if anyone is curious to know, but I would
->> not be surprised if they are similar as here. So there might be a need
->> to solve this in a generic way (but not sure of course as I haven't
->> checked the details).
->
-> I re-call something about these as well, here are the patches. Perhaps
-> I should pick some of them up...
->
-> https://patchwork.kernel.org/patch/10123137/
-> https://patchwork.kernel.org/patch/10123139/
-> https://patchwork.kernel.org/patch/10123141/
-> https://patchwork.kernel.org/patch/10123143/
+With gcc-4.1.2:
 
-Actually I was talking about a different patch, found it now:
+    drivers/net/ethernet/broadcom/bcmsysport.c: In function ‘bcm_sysport_poll’:
+    include/linux/net_dim.h:354: warning: ‘curr_stats.ppms’ may be
+used uninitialized in this function
+    include/linux/net_dim.h:354: warning: ‘curr_stats.bpms’ may be
+used uninitialized in this function
+    include/linux/net_dim.h:354: warning: ‘curr_stats.epms’ may be
+used uninitialized in this function
 
-ath10k_sdio: DMA bounce buffers for read write
+Indeed, ...
 
-https://patchwork.kernel.org/patch/9979543/
+| static inline void net_dim_calc_stats(struct net_dim_sample *start,
+|                                       struct net_dim_sample *end,
+|                                       struct net_dim_stats *curr_stats)
+| {
+|         /* u32 holds up to 71 minutes, should be enough */
+|         u32 delta_us = ktime_us_delta(end->time, start->time);
+|         u32 npkts = BIT_GAP(BITS_PER_TYPE(u32), end->pkt_ctr, start->pkt_ctr);
+|         u32 nbytes = BIT_GAP(BITS_PER_TYPE(u32), end->byte_ctr,
+|                              start->byte_ctr);
+|
+|         if (!delta_us)
+|                 return;
+
+... if delta_us is zero, none of the below will be initialized ...
+
+|         curr_stats->ppms = DIV_ROUND_UP(npkts * USEC_PER_MSEC, delta_us);
+|         curr_stats->bpms = DIV_ROUND_UP(nbytes * USEC_PER_MSEC, delta_us);
+|         curr_stats->epms = DIV_ROUND_UP(NET_DIM_NEVENTS * USEC_PER_MSEC,
+|                                         delta_us);
+| }
+|
+| static inline void net_dim(struct net_dim *dim,
+|                            struct net_dim_sample end_sample)
+| {
+|         struct net_dim_stats curr_stats;
+|         u16 nevents;
+|
+|         switch (dim->state) {
+|         case NET_DIM_MEASURE_IN_PROGRESS:
+|                 nevents = BIT_GAP(BITS_PER_TYPE(u16),
+|                                   end_sample.event_ctr,
+|                                   dim->start_sample.event_ctr);
+|                 if (nevents < NET_DIM_NEVENTS)
+|                         break;
+|                 net_dim_calc_stats(&dim->start_sample, &end_sample,
+|                                    &curr_stats);
+
+... in the output parameter curr_stats ...
+
+|                 if (net_dim_decision(&curr_stats, dim)) {
+
+... and net_dim_decision will make some funky decisions based on
+uninitialized data.
+
+What are the proper values to initialize curr_stats with?
+Alternatively, perhaps the call to net_dim_decision() should be made
+dependent on delta_us being non-zero?
+
+|                         dim->state = NET_DIM_APPLY_NEW_PROFILE;
+|                         schedule_work(&dim->work);
+|                         break;
+|                 }
+|                 /* fall through */
+|         case NET_DIM_START_MEASURE:
+|                 dim->state = NET_DIM_MEASURE_IN_PROGRESS;
+|                 break;
+|         case NET_DIM_APPLY_NEW_PROFILE:
+|                 break;
+|         }
+| }
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Kalle Valo
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
