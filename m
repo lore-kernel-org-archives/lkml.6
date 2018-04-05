@@ -1,198 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751543AbeDELmB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:42:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44988 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751262AbeDELl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:41:59 -0400
-Date: Thu, 5 Apr 2018 13:41:56 +0200
-From: Jan Kara <jack@suse.cz>
-To: Steven Whitehouse <swhiteho@redhat.com>
-Cc: Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+b7772c65a1d88bfd8fca@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, axboe@kernel.dk, hannes@cmpxchg.org,
-        jlayton@redhat.com, keescook@chromium.org, laoar.shao@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: WARNING in account_page_dirtied
-Message-ID: <20180405114156.fyr7yz3p35pojioe@quack2.suse.cz>
-References: <001a113ff9ca1684ab0568cc6bb6@google.com>
- <20180403120529.z3mthf2v64he52gg@quack2.suse.cz>
- <b81bbecb-1c3c-ca92-84a5-15db63611db6@redhat.com>
- <20180404123634.6wz5ctjkryzm5nf7@quack2.suse.cz>
- <0d2e8961-a14a-e033-030a-ee2bed6c0f9d@redhat.com>
+        id S1751642AbeDELmg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:42:36 -0400
+Received: from mail-by2nam03on0080.outbound.protection.outlook.com ([104.47.42.80]:16483
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751392AbeDELme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 07:42:34 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=thellstrom@vmware.com;
+Subject: Re: [RFC 1/3] drm: Add DAMAGE_CLIPS property to plane
+To: Deepak Rawat <drawat@vmware.com>, dri-devel@lists.freedesktop.org,
+        syeh@vmware.com, linux-graphics-maintainer@vmware.com,
+        ville.syrjala@linux.intel.com, lukasz.spintzyk@displaylink.com,
+        noralf@tronnes.org, robdclark@gmail.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        airlied@linux.ie, linux-kernel@vger.kernel.org
+References: <1522885748-67122-1-git-send-email-drawat@vmware.com>
+ <1522885748-67122-2-git-send-email-drawat@vmware.com>
+ <20180405073525.GP3881@phenom.ffwll.local>
+ <b87e222a-610e-05de-3ba2-7261831af5ec@vmware.com>
+ <20180405100319.GT3881@phenom.ffwll.local>
+From: Thomas Hellstrom <thellstrom@vmware.com>
+Message-ID: <b699fce8-4c76-c997-f989-7406cc3d4c92@vmware.com>
+Date: Thu, 5 Apr 2018 13:42:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d2e8961-a14a-e033-030a-ee2bed6c0f9d@redhat.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180405100319.GT3881@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [155.4.205.56]
+X-ClientProxiedBy: VI1PR0701CA0047.eurprd07.prod.outlook.com
+ (2603:10a6:800:90::33) To DM2PR05MB768.namprd05.prod.outlook.com
+ (2a01:111:e400:244d::27)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ddd7fd6a-52dc-40d6-3c40-08d59aea50fc
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM2PR05MB768;
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR05MB768;3:pf0/zCw2QyzsxwAxwrDbPCnqwBTZwsyWRFfp+PJP2E3Jix3Zd+hNHmUl3npcLBGKRIVm0Ua5VdtryFavgLiABDNw939vmNmxmBD9DnbjHh8K7oDw7GUHFzSlyJCI/kuru1bMFR7mwZgpa2ApynrL98kS9jc4qC2DhVOj999zlN+/nn4vKvwcrNPJYoIWup3be4IFetFg5St101PSAu3GREiX+u2BmMHju99vUzAzBerptpqlspEPvKTZjhSiFIjS;25:f8TrUrwXarnKwJjCAPvyjRZBEFaUh6ex3dEMB3uspBaw+Xj1zPqIoYkmuohSUzQ4YqD1ADbNoz1i70jrNBe81CJAiSo6bqi6EOslDL11gpRi7D+P0lgcqI8nT36u2gVZ+/LilPc5I0c/O1v04vaxEfVhZsWuorTBdATSgbSvBF8MtcaxMKt3P509JfnHA9mCzqMpve1uQ70IYRCsVNqK7idnhuNL+zvFIr0DzMo7UqM2eeaOm+ybY+2U6uBSbiuiMHmoTxfBaR8mdjB6l0xCuQ4VjvyamL7EhFG6TVMB1Cfr+TTG6Sihmrvd6rLy4CKBNmCXs3kWJJkSuIiz5OwFQQ==;31:tPh1UEltpXloiQ/1VTsPERg7lNZqp+mw/LsbAh2g1H10tfZWa1QHRJT5qSv/G5wtoEp9pnICPyEzSPOEy87e2iKL9a4fwKujRWjhAp6kv06vwQY4roRUedjexaWEXW0BjF1//9Eb8L4ToWeW+5Z2Vklu+dnUyrHb9YjZGWKbl4f3XwGU1+K90gIZ/yJ7wDbw2MJ0ckke+f6LbLQxjTolv02cPHOA8VxUBseyXliQVCk=
+X-MS-TrafficTypeDiagnostic: DM2PR05MB768:
+X-LD-Processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR05MB768;20:4/VuL0VcQc9bHiEYdMWZjDbCl0Jx0TvQXM51stc/12ii9lEjITdUtZjWgKRG/Vd22cixmCUrCxzqSlY78TCydVEkYwe6fkS6ECmmBA6BTVTYSPVpbXcnRV4180hK65dozc9oinAbbxL8h1f5v+8w40o/qrE4bZOaXyaCOLPf9gw1f1xoGxzsEH2yhdoYmkZY8ELLAS/eiN1yNITjWKU0pjjSB/xwO9U4O76GCxlFSZHQ0J1te6DcsLr55te8r5kHEyP9dGNXB7Qrt52P6ZHphuU/0zc3XLzDG9VaztfvAI9OVD+HsP05UkSelJ6ZRhNiUGdeXonydVOehmA7I9shBaOxmOqy0toSZTnBPLuhwutRC/bVaArx2YwTuIJexQ3FPN5Nt6xv71O3sLQ4GPMf3/x2p7KqQf/VapaeAGcP2VO8U+m0rVm6JNEmNpwTgNDxwdMUQNzOON5pXwpQeI37MXzsZDWHVkcKDTYbVgVdYjHNFlB6xuSAd+WwegUDELlA;4:cHK/Vf68k/CcYuLdhNv1mDuuxEX5RyTAiZtRqRM0w4l49+tI60wFVzMFt4C/gPVlKe7lFPHjZDW658DOknWzRddEocjajaGNRZ/EyWsQ1keP6OnoHPVVKyVD005TbWx4HB4VwmIDyR9ECNAN7SLzcZqI5jjysYKn6NBU+hF7Q8yXGGYX7d/Db9pUcILgw5oICI9hkNRJUbH67QfusnlG30HO4O+Q654tMrjTOvWBwfmJIf+S4unAgtlCHnQtOkW0d6vqljRRpP3Ov5EmD174qa3t8bUjxfVCqrspId0s6ADqjW5CkOedvbicETNtns0ckjG8lFvYwYo1OQvjK92JBQ==
+X-Microsoft-Antispam-PRVS: <DM2PR05MB768308DB2FBBA32C1F041D1A1BB0@DM2PR05MB768.namprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(10436049006162)(217544274631240);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231221)(944501327)(52105095)(10201501046)(93006095)(93001095)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM2PR05MB768;BCL:0;PCL:0;RULEID:;SRVR:DM2PR05MB768;
+X-Forefront-PRVS: 06339BAE63
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39380400002)(366004)(346002)(376002)(396003)(39860400002)(199004)(189003)(6506007)(53546011)(6512007)(386003)(106356001)(86362001)(575784001)(31696002)(76176011)(93886005)(36756003)(6306002)(16526019)(53936002)(6666003)(966005)(97736004)(186003)(486006)(26005)(66066001)(5660300001)(65806001)(65956001)(25786009)(47776003)(58126008)(68736007)(50466002)(64126003)(23676004)(2906002)(52116002)(2486003)(52146003)(316002)(67846002)(65826007)(3846002)(7416002)(446003)(6116002)(476003)(8936002)(105586002)(2616005)(6246003)(6486002)(230700001)(11346002)(956004)(31686004)(8676002)(7736002)(305945005)(39060400002)(229853002)(81156014)(478600001)(81166006)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR05MB768;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTJQUjA1TUI3Njg7MjM6M0FaZzErMm52MDM5ZTIvMXUwSXZyMHIzd2Fx?=
+ =?utf-8?B?R282WWdqaERLb1dRa0xKVkJvakE4cTVpWnQ0M0tHOC83ajc3ZnpYTjdKc1ha?=
+ =?utf-8?B?emRuMldac3pLKzh6QUVJNFkrUEpZYW1MWGtNaUZaNkR2TDIydTJ0UWxKVU02?=
+ =?utf-8?B?b1lIUHJwY0Mvb0VnWGZvVytKbzZmZGtvWmRFSVQwdTh6T2k1SEpDdytEeldQ?=
+ =?utf-8?B?TWlyZlQ5TkNuNEhmM2QwQmpyV3lqTDF4RVFQK2g2ak44eHhtd3VIbU9aYTNu?=
+ =?utf-8?B?UVNpTndyUm1CWUxaMWI5d3U4VzVqQnZEd0JZeEtGeHdKaWF2d3RMYXpoVkRH?=
+ =?utf-8?B?VENwYXNBZjVneXh3QUdYT1ZxdzBSS2RJMTYxRnZwSGhFaE9KTm15MjZ2emFo?=
+ =?utf-8?B?aGZnSm9tcHFrRk1hTmltQzU4OG5qQ3laUW1Demh6bUo1dU52Wml5OEVCazEr?=
+ =?utf-8?B?VnNwRS8valVwTXBvNzMxOGkvc2t4Q25uMDdoRlE1aGZvOGpjR056KzBlcTdH?=
+ =?utf-8?B?d21XK1lLMTZQdUpZbDNKempUT2NvQWxzaklBOGFJTHJrd29CN2JzaDZrMUlY?=
+ =?utf-8?B?QXFxMDRxMmhFd0h2YlNGUTBlYXJNdThIWjBwUUxCd3JYRmx2NnBTZFNSTzlY?=
+ =?utf-8?B?TFd3YW1TVjAwTnZEbW9rdXlkc0cvY2t1amhhVk9vdjVYTDJzYTdKLzFTeXVa?=
+ =?utf-8?B?YVVLU0YrV3RySUZoZmtxTnh0WE5hVzFLclk2elUrd3NtSW5PVkw4cldqN2lj?=
+ =?utf-8?B?aGkvTGpITk1yWStmRDFsc0wybGNMTVNGY29zeUtwckgrRld5NU0xbWZOeTNT?=
+ =?utf-8?B?Y1p2MG1qMDJjUllRcWx0Yk1wd3gwR3VGeUJxVHVMbHZLcjVTckE0TVN1SzNI?=
+ =?utf-8?B?TVZ0d3czdjlJZldWT2F5WkN4S1lkM1NjbUs2M01TNmkxTVdBd3RXZUJDOSt6?=
+ =?utf-8?B?akxwdFViYnd2anVvZVV1ZDgrWkFQcll4R3laenBHUzJlQ2FrMEFzNi9pVldI?=
+ =?utf-8?B?SW0zYmFBV2EwemNQczdXZ0g4TmhZZXVkeXFnYXh0MmR5Q2wrVTA3TVJweVpl?=
+ =?utf-8?B?aG13RDBzdXpRZTJuSzl3WDNybStHK3A2OTZ1RkovVzZrVHJFZ3poRHZsVndo?=
+ =?utf-8?B?SytJVmI1M0tubGM3Ukx5SGhCSXk0L0ozT25rQldKeUl1NUtrMGgvR2MyTklu?=
+ =?utf-8?B?ZEszVzJwYmdVYzhqakl4cGh6UDVGa0V5dm5NNUZ2SjdCNWJUemw3VTBCaTh5?=
+ =?utf-8?B?aFpDWmk4NVBlaVZ4aC9CdEJOeDh6bEJqQ0JhZlBQZnpqUjJWV3B4aFUvWm5U?=
+ =?utf-8?B?TWl2dDdmclZtWjBFQzNpUzFzazJVcHZkQmFLZjFPOWVnZUFMRFl5bVRkbXRW?=
+ =?utf-8?B?TUV6elBFMzE2czN6Vm0rUzNXRGp3dll0bzhZa3k1NFh1SXBFYzM0R2FxVVpM?=
+ =?utf-8?B?ZGdKUjVvbDVmRjIxVnlyRzA5bkpBVHcvN2hZVTFQdmNzNGtJSGVQcEllTSs5?=
+ =?utf-8?B?NmRWTUlEZFR3MXBsOEZvMXpRVzhsN1V2YmM5WjRhT0RMRm5xeUdiVlVXUVZ5?=
+ =?utf-8?B?SFVkUW44U3RZNExGRFNzd0tlWklhOTJGTmNYalQzN21RdjZ4QjRuMVBhYWNm?=
+ =?utf-8?B?SnI3UDZSSExhOElxUzV3YmRNeWRsMGQyb3pHSWpXbGtPSmcwZk1jWjNkNWV3?=
+ =?utf-8?B?RjNnQlZkbUtqNjVKc3UrekV1RzdXUC80cHZ2V1lQZkhnY21jd2Z1NDFhNjFU?=
+ =?utf-8?B?UmhabFFmcjZpMEErZ2xNVlB1a1Fvbml6WnpFcWFzNFpvSi9nVVRnd0x4QnBC?=
+ =?utf-8?B?QktHU0xWM3BwWXJDZ0NGRDhTdkxaZUR3VTNnblVTa3d2cG1kRmJ1cktucUpp?=
+ =?utf-8?B?SGluL3NUVFVkUHBsY0xkbWtVQ3lLVldCTExlYVBtTDNtWjNtY0YxQ0xiMDVL?=
+ =?utf-8?B?RkQvZmJTQmNGSGs2aHFJQm1TbldiaWxmcXZtcGF2NSttdHhYVlVJay9RbW1C?=
+ =?utf-8?B?d1JvVit2MS9PT2NXaDFlTy9YYi94Ti9XOXpQblBoQkxQc28rMlEvelVOSnQx?=
+ =?utf-8?B?VG5aNnduUHZ3Z0svelQrN3lST3BFUU1ra2t2R0NZUEFrQUxkSDdqY1VsWmZB?=
+ =?utf-8?B?QT09?=
+X-Microsoft-Antispam-Message-Info: grvpXj5XtMn+1kEeVYqKzQKKaxxOjlOH96vw79DWU0bRVPx8JL2IiaQLwtvM/3kGoVBUROCcjiu6FxQRJ9oXLLoZ9gSlW6R8ElwF5oTy6fv1Cghm4YGCW0LCmXbQ8A1Usq2j28qjay/hzetN+k3iqOhJlCo4nMH1uNizWqyNLA1q926R7eiy1D9Yx8nNVF9T
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR05MB768;6:dlCPTqRd7w/ofFkcz45NWkeeRkLJM16VUUGr0e5OFBfGTEMxQ3WrBvyw+dPFljrhkk7EjubpWoz6tX0C33tWzYtty4QpqpfEEDCI2pij+2Xs7Fn3isU6VP12lqyuocE0zHi08GBrWpB7mFTysDzqcOdmrEQLguLmed0RWd3zNenCfJ/FGjoHVkpB4BoJhLUwVGRTlmjM57xUsQw7HOvzVNLNLKvteMlfCKmQ2GbIC7qC5qecsd2AbkoQo/pouzK+ZiJK3L2YYh4au++WGz9zOqkjnpBrAarnr78jZBCOWkQ4C16Ymn6fYrbeTLYVs3vihqWI2Dcj8yoiQrgPwhrVAXg+GYM1JHmZfcCDg3kyo3yQ+r8vVPSAU1mjwi2cLWfCIkkcj+aPdVMNVs7nUrY7zmZaq1NtqUnLoyXJCKqui6Li5FC/Rb2AiMyY2l7MIqH+XqsBxlui15pj6GFXOTZ31w==;5:0ozPs7bVQYuPojNKdqxZ5s4fATVOHCDzOrx9TNN9HBHg62TvncPyReWTiMeqjDylofDQOFfsYIbSs7xPo3wPCezkbFWsQMos2fMuxABat1/SoK0b0XeLzryxBFP65MIX+ZkwMDkyfuK924470vWwPtiFBkDC5u4hlLdOJOyox+0=;24:E1QIplrwSRTrAz39ThC6rJoYar/wgOelBNfcgpIUM7s+QuAj8we+l413624Uh2Z9WezyDh0xT6APKInm7YL16p8sAE8GkKASTzSOeYIduC0=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR05MB768;7:rkAnspt+RXTD1+E7KsYW6w+yHVyawsZwoS1MFruaPekKgqcDzOPOTI1A8tu7YZIjKVOBnxTplX12z7qjfzTKXHX2I124dSvPcCKxKps3ZTLFqufoKohZ5/os4wVY3T7ibbvPmQKaX+5EPPmlhLTOttYI3BCg3KZfJiGKG4iz/VVDHJjlfbl7jajUEbCLDphtT2OsH3cZPqtaaaKaEsMdJY0rVbM7xdY1aFjqD32TOyZKPefs8NTIKHmAUfdnTd1n;20:uugqDfcXDbcv7T0LQrgF7VvvZV4Ov2vg6wvhhCKw/NZVFWqbGwtXYyR9LB+ie42osvZ3rtb3P+0AYpcNcmDzy318v8WGgeUShzICG3K7YSEMTlXOq1ecyzGo4tUobNsc/IC21d9IBzVwLnmBU7jVpuSGf0J55xN1QmrZzQKjjT8=
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2018 11:42:28.9525 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ddd7fd6a-52dc-40d6-3c40-08d59aea50fc
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR05MB768
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 04/05/2018 12:03 PM, Daniel Vetter wrote:
+>
+> On the topic of input validation: Should the kernel check in shared code
+> that all the clip rects are sensible, i.e. within the dimensions of the
+> fb? Relying on drivers for that seems like a bad idea.
 
-On Wed 04-04-18 13:56:53, Steven Whitehouse wrote:
-> On 04/04/18 13:36, Jan Kara wrote:
-> > Hi,
-> > 
-> > On Wed 04-04-18 10:24:48, Steven Whitehouse wrote:
-> > > On 03/04/18 13:05, Jan Kara wrote:
-> > > > Hello,
-> > > > 
-> > > > On Sun 01-04-18 10:01:02, syzbot wrote:
-> > > > > syzbot hit the following crash on upstream commit
-> > > > > 10b84daddbec72c6b440216a69de9a9605127f7a (Sat Mar 31 17:59:00 2018 +0000)
-> > > > > Merge branch 'perf-urgent-for-linus' of
-> > > > > git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> > > > > syzbot dashboard link:
-> > > > > https://syzkaller.appspot.com/bug?extid=b7772c65a1d88bfd8fca
-> > > > > 
-> > > > > C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5705587757154304
-> > > > > syzkaller reproducer:
-> > > > > https://syzkaller.appspot.com/x/repro.syz?id=5644332530925568
-> > > > > Raw console output:
-> > > > > https://syzkaller.appspot.com/x/log.txt?id=5472755969425408
-> > > > > Kernel config:
-> > > > > https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
-> > > > > compiler: gcc (GCC) 7.1.1 20170620
-> > > > > 
-> > > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > > > Reported-by: syzbot+b7772c65a1d88bfd8fca@syzkaller.appspotmail.com
-> > > > > It will help syzbot understand when the bug is fixed. See footer for
-> > > > > details.
-> > > > > If you forward the report, please keep this part and the footer.
-> > > > > 
-> > > > > gfs2: fsid=loop0.0: jid=0, already locked for use
-> > > > > gfs2: fsid=loop0.0: jid=0: Looking at journal...
-> > > > > gfs2: fsid=loop0.0: jid=0: Done
-> > > > > gfs2: fsid=loop0.0: first mount done, others may mount
-> > > > > gfs2: fsid=loop0.0: found 1 quota changes
-> > > > > WARNING: CPU: 0 PID: 4469 at ./include/linux/backing-dev.h:341 inode_to_wb
-> > > > > include/linux/backing-dev.h:338 [inline]
-> > > > > WARNING: CPU: 0 PID: 4469 at ./include/linux/backing-dev.h:341
-> > > > > account_page_dirtied+0x8f9/0xcb0 mm/page-writeback.c:2416
-> > > > > Kernel panic - not syncing: panic_on_warn set ...
-> > > > > 
-> > > > > CPU: 0 PID: 4469 Comm: syzkaller368843 Not tainted 4.16.0-rc7+ #9
-> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > > > > Google 01/01/2011
-> > > > > Call Trace:
-> > > > >    __dump_stack lib/dump_stack.c:17 [inline]
-> > > > >    dump_stack+0x194/0x24d lib/dump_stack.c:53
-> > > > >    panic+0x1e4/0x41c kernel/panic.c:183
-> > > > >    __warn+0x1dc/0x200 kernel/panic.c:547
-> > > > >    report_bug+0x1f4/0x2b0 lib/bug.c:186
-> > > > >    fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
-> > > > >    fixup_bug arch/x86/kernel/traps.c:247 [inline]
-> > > > >    do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-> > > > >    do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-> > > > >    invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-> > > > > RIP: 0010:inode_to_wb include/linux/backing-dev.h:338 [inline]
-> > > > > RIP: 0010:account_page_dirtied+0x8f9/0xcb0 mm/page-writeback.c:2416
-> > > > > RSP: 0018:ffff8801d966e5c0 EFLAGS: 00010093
-> > > > > RAX: ffff8801acb7e600 RBX: 1ffff1003b2cdcba RCX: ffffffff818f47a9
-> > > > > RDX: 0000000000000000 RSI: ffff8801d3338148 RDI: 0000000000000082
-> > > > > RBP: ffff8801d966e698 R08: 1ffff1003b2cdc13 R09: 000000000000000c
-> > > > > R10: ffff8801d966e558 R11: 0000000000000002 R12: ffff8801c96f0368
-> > > > > R13: ffffea0006b12780 R14: ffff8801c96f01d8 R15: ffff8801c96f01d8
-> > > > >    __set_page_dirty+0x100/0x4b0 fs/buffer.c:605
-> > > > >    mark_buffer_dirty+0x454/0x5d0 fs/buffer.c:1126
-> > > > Huh, I don't see how this could possibly happen. The warning is:
-> > > > 
-> > > >           WARN_ON_ONCE(debug_locks &&
-> > > >                        (!lockdep_is_held(&inode->i_lock) &&
-> > > >                         !lockdep_is_held(&inode->i_mapping->tree_lock) &&
-> > > >                         !lockdep_is_held(&inode->i_wb->list_lock)));
-> > > > 
-> > > > Now __set_page_dirty() which called account_page_dirtied() just did:
-> > > > 
-> > > > spin_lock_irqsave(&mapping->tree_lock, flags);
-> > > > 
-> > > > Now the fact is that account_page_dirtied() actually checks
-> > > > mapping->host->i_mapping->tree_lock so if mapping->host->i_mapping doesn't
-> > > > get us back to 'mapping', that would explain the warning. But then
-> > > > something would have to be very wrong in the GFS2 land... Adding some GFS2
-> > > > related CCs just in case they have some idea.
-> > > So I looked at this for some time trying to work out what is going on. I'm
-> > > sill not 100% sure now, but lets see if we can figure it out....
-> > > 
-> > > The stack trace shows a call path to the end of the journal flush code where
-> > > we are unpinning pages that have been through the journal. Assuming that
-> > > jdata is not in use (it is used for some internal files, even if it is not
-> > > selected by the user) then it is most likely that this applies to a metadata
-> > > page.
-> > > 
-> > > For recent gfs2, all the metadata pages are kept in an address space which
-> > > for inodes is in the relevant glock, and for resource groups is a single
-> > > address space kept for only that purpose in the super block. In both of
-> > > those cases the mapping->host points to the block device inode. Since the
-> > > inode's mapping->host reflects only the block device address space (unused
-> > > by gfs2) we would not expect it to point back to the relevant address space.
-> > > 
-> > > As far as I can tell this usage is ok, since it doesn't make much sense to
-> > > require lots of inodes to be hanging around uselessly just to keep metadata
-> > > pages in. That after all, is why the address space and inode are separate
-> > > structures in the first place since it is not a one to one relationship. So
-> > > I think that probably explains why this triggers, since the test is not
-> > > really a valid one in all cases,
-> > The problem is we really do expect mapping->host->i_mapping == mapping as
-> > we pass mapping and inode interchangebly in the mm code. The address_space
-> > and inodes are separate structures because you can have many inodes
-> > pointing to one address space (block devices). However it is not allowed
-> > for several address_spaces to point to one inode! That way mm code may end
-> > up using different address_spaces in different places although they should
-> > be the same one as is the case in this assert... Probably you use these
-> > address_spaces in a very limited way and so things seem to work but it is
-> > really a pure coincidence. From a very quick look you seem to be using
-> > these special address_spaces to track dirty metadata associated with an
-> > inode? Anything else?
-> > 
-> > 								Honza
-> 
-> Yes, either an inode or a rgrp. However I'm fairly sure that we landed up
-> doing that because we were told that inodes and address spaces were intended
-> to be independent at some point in the past. They are used in a fairly
-> limited way and mostly so that we can efficiently invalidate metadata
-> belonging to a particular inode (or rgrp).
-> 
-> In the rgrp case we could just use the existing block dev inode's address
-> space except that we'd have to make sure that we invalidated it on mount.
-> The rgrps are easy because each one is a single extent only. For the inode
-> metadata case, we did (a very long time ago) try tracking the metadata in a
-> different way and it was not very efficient at all, so using a separate
-> address space was the best solution we could find at the time.
-> 
-> We do not want to go back to having two struct inodes for each real inode
-> since that took up a lot of memory in cases where there were lots of small
-> files...
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs/gfs2/glock.c?id=009d851837ab26cab18adda6169a813f70b0b21b
-> 
-> 
-> and now I remember that is also resolved an issue of a circular dependency
-> between inodes used for the metadata address space and "proper" inodes too.
-> When we introduced the change in the above patch, both inodes and glock were
-> using the address spaces in the glock, however we further optimised the
-> rgrps at a later date to share a single address space between them.
-> 
-> So while that doesn't solve the problem, it does, I hope, explain some of
-> the background,
+I guess we could do that.
 
-Yeah, understood. Thanks for the background. Some filesystems use
-address_space->private_list for tracking metadata for that address_space.
-There's also address_space->private_lock for protecting the list. There are
-helpers in fs/buffer.c for working with this list -
-mark_buffer_dirty_inode() for adding buffer to the list,
-sync_mapping_buffers() for writing those buffers, etc. I'm not sure if this
-would be enough for your purposes (either directly using those helpers or
-writing your own just using the storage space in address_space) but I
-wanted to point out how other filesystems (e.g. ext2) solve a similar
-problem.
+There seems to be different needs for different kinds of iterators, but 
+otherwise
+I was thinking that an iterator could just skip invalid rects if found. 
+Then we
+don't need a separate validation step, but OTOH user-space won't get 
+notified if
+that was intended.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I'm not 100% sure user-space would do anything sensible with any error 
+information, though.
+
+/Thomas
+
+
+>
+> That could be done in core code in drm_atomic_plane_check().
+> -Daniel
+>> /Thomas
+>>
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://urldefense.proofpoint.com/v2/url?u=https-3A__lists.freedesktop.org_mailman_listinfo_dri-2Ddevel&d=DwIBAg&c=uilaK90D4TOVoH58JNXRgQ&r=wnSlgOCqfpNS4d02vP68_E9q2BNMCwfD2OZ_6dCFVQQ&m=JV7fhQ4zTiyiKsY8M0Zlf81l7szYePUke8kwSvQv1T8&s=HEcbr-8aoWqRvWGY6RcL1QeAtEyxMRLHbsOtdJFk78I&e=
