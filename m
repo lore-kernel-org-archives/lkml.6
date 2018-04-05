@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753763AbeDEUe2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 16:34:28 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52626 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751454AbeDEUeW (ORCPT
+        id S1753807AbeDEUem (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 16:34:42 -0400
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:45083 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753773AbeDEUej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 16:34:22 -0400
-X-Google-Smtp-Source: AIpwx48UmqBfGbbbb/FNMb7yq7OYmLkaormvoWpMeey8WSWH4fpnIi1m58jT1LFU0B2gB22RRaAzbQ==
+        Thu, 5 Apr 2018 16:34:39 -0400
+X-Google-Smtp-Source: AIpwx4/7kb7ZZJRVorDkdgWtew/tDfrERtEi9m/Fl0WH8wFp/b/BTsw4SlqrRnwduN8XBLoBtdispQ==
 From: Esben Haabendal <esben.haabendal@gmail.com>
 To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-        "open list\:ETHERNET PHY LIBRARY" <netdev@vger.kernel.org>,
+Cc: Richard Cochran <richardcochran@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "open list\:PTP HARDWARE CLOCK SUPPORT" <netdev@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>,
         Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: Re: [PATCH 1/2] net: phy: Helper function for reading strapped configuration values
-In-Reply-To: <49448b00-e3fd-25df-580e-c02428f1bfe6@gmail.com> (Florian
-        Fainelli's message of "Thu, 5 Apr 2018 09:00:13 -0700")
+Subject: Re: [PATCH 2/2] net: phy: dp83640: Read strapped configuration settings
+In-Reply-To: <95678797-bd17-ba3f-8a70-a00b4792a258@gmail.com> (Florian
+        Fainelli's message of "Thu, 5 Apr 2018 09:02:38 -0700")
 References: <20180405114424.8519-1-esben.haabendal@gmail.com>
-        <49448b00-e3fd-25df-580e-c02428f1bfe6@gmail.com>
+        <20180405114424.8519-2-esben.haabendal@gmail.com>
+        <95678797-bd17-ba3f-8a70-a00b4792a258@gmail.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-Date: Thu, 05 Apr 2018 22:34:18 +0200
-Message-ID: <87a7uhjstx.fsf@haabendal.dk>
+Date: Thu, 05 Apr 2018 22:34:35 +0200
+Message-ID: <878ta1jstg.fsf@haabendal.dk>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -33,43 +35,52 @@ Florian Fainelli <f.fainelli@gmail.com> writes:
 > On 04/05/2018 04:44 AM, esben.haabendal@gmail.com wrote:
 >> From: Esben Haabendal <eha@deif.com>
 >> 
->> Add a function for use in PHY driver probe functions, reading current
->> autoneg, speed and duplex configuration from BMCR register.
->> 
->> Useful for PHY that supports hardware strapped configuration, enabling
->> Linux to respect that configuration (i.e. strapped non-autoneg
->> configuration).
->> 
->> Signed-off-by: Esben Haabendal <eha@deif.com>
->> Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
->> ---
->>  drivers/net/phy/phy_device.c | 41 +++++++++++++++++++++++++++++++++++++++++
->>  include/linux/phy.h          |  1 +
->>  2 files changed, 42 insertions(+)
->> 
->> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
->> index 74664a6c0cdc..cc52ff2a2344 100644
->> --- a/drivers/net/phy/phy_device.c
->> +++ b/drivers/net/phy/phy_device.c
->> @@ -1673,6 +1673,47 @@ int genphy_config_init(struct phy_device *phydev)
->>  }
->>  EXPORT_SYMBOL(genphy_config_init);
->>  
->> +/**
->> + * genphy_read_config - read configuration from PHY
->> + * @phydev: target phy_device struct
->> + *
->> + * Description: Reads MII_BMCR and sets phydev autoneg, speed and duplex
->> + * accordingly.  For use in driver probe functions, to respect strapped
->> + * configuration settings.
->> + */
->> +int genphy_read_config(struct phy_device *phydev)
+>> Read configration settings, to allow automatic forced speed/duplex setup
+>> by hardware strapping.
 >
-> This duplicates what already exists, in part at least within
-> genphy_read_status() can you find a way to use that?
+> OK but why? What problem is this solving for you?
 
-Make a small static function for updating duplex and speed fields from a
-BMCR value.  It will not be big re-use, but it would make sense.  I will
-do that in next patch version.
+It is ensuring that the PHY is configured according to the HW design.
+If the HW design has set the strap configuration to fx. fixed 100 Mbit
+full-duplex, this avoids Linux configuring it for auto-negotiation.
+
+> In general, we do not really want to preserve too much of what the PHY
+> has been previously configured with,
+
+Even when this "previous" configuration is the configuration selected by
+the board configuration?
+
+> provided that the PHY driver can re-instate these configuration
+> values.
+
+This is sort of what I try to do here.  The PHY driver needs to check
+the BMCR register to figure out what the strapped configuration was.
+Without that, it is necessary for software configuration to duplicate
+the exact same configuration as is encoded in the strap configuration in
+order for the PHY to be configured as it is supposed to.
+
+> I just wonder how this can be robust when you connect this PHY with
+> auto-negotiation disabled to a peer that expects a set of link
+> parameters not covered by the default advertisement values?
+
+I assume it will fail just as it will if you use ethtool to configure
+the PHY wrongly.
+
+> This really looks like a recipe for disaster when you could just
+> disable auto-negotiation with ethtool.
+
+The current PHY driver approach to always default to enable
+auto-negotation, and then allow user-space to configure it differently
+with ethtool.
+
+With this patch, the default configuration is chosen based on the strap
+configuration, but user-space can still change the configuration with
+ethtool if needed / desired.
+
+I don't think it is such a big change.
+
+Bringing up the PHY with a default configuration according to HW
+strapping instead of an in-kernel SW hard-coded value sounds like a good
+idea to me.
 
 /Esben
