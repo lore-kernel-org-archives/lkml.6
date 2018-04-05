@@ -1,87 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeDEQCq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 12:02:46 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:39019 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeDEQCp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 12:02:45 -0400
-X-Google-Smtp-Source: AIpwx4/cz7dpElz9VmBGYKICuJZjOMjFJ+CU2ELRoJ7YmpY8aEGPH3zLQ5pTceHiDVnBs1jsB/N/0A==
-Subject: Re: [PATCH 2/2] net: phy: dp83640: Read strapped configuration
- settings
-To: esben.haabendal@gmail.com, Richard Cochran <richardcochran@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "open list:PTP HARDWARE CLOCK SUPPORT" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc: Esben Haabendal <eha@deif.com>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-References: <20180405114424.8519-1-esben.haabendal@gmail.com>
- <20180405114424.8519-2-esben.haabendal@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <95678797-bd17-ba3f-8a70-a00b4792a258@gmail.com>
-Date: Thu, 5 Apr 2018 09:02:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751506AbeDEQDU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 12:03:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60937 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751195AbeDEQDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 12:03:19 -0400
+Date: Thu, 5 Apr 2018 18:03:17 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] mm: consider non-anonymous thp as unmovable page
+Message-ID: <20180405160317.GP6312@dhcp22.suse.cz>
+References: <20180403075928.GC5501@dhcp22.suse.cz>
+ <20180403082405.GA23809@hori1.linux.bs1.fc.nec.co.jp>
+ <20180403083451.GG5501@dhcp22.suse.cz>
+ <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
+ <20180405085927.GC6312@dhcp22.suse.cz>
+ <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
+ <20180405124830.GJ6312@dhcp22.suse.cz>
+ <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
+ <20180405150547.GN6312@dhcp22.suse.cz>
+ <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
 MIME-Version: 1.0
-In-Reply-To: <20180405114424.8519-2-esben.haabendal@gmail.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 04/05/2018 04:44 AM, esben.haabendal@gmail.com wrote:
-> From: Esben Haabendal <eha@deif.com>
+On Thu 05-04-18 18:55:51, Kirill A. Shutemov wrote:
+> On Thu, Apr 05, 2018 at 05:05:47PM +0200, Michal Hocko wrote:
+> > On Thu 05-04-18 16:40:45, Kirill A. Shutemov wrote:
+> > > On Thu, Apr 05, 2018 at 02:48:30PM +0200, Michal Hocko wrote:
+> > [...]
+> > > > RIght, I confused the two. What is the proper layer to fix that then?
+> > > > rmap_walk_file?
+> > > 
+> > > Maybe something like this? Totally untested.
+> > 
+> > This looks way too complex. Why cannot we simply split THP page cache
+> > during migration?
 > 
-> Read configration settings, to allow automatic forced speed/duplex setup
-> by hardware strapping.
+> This way we unify the codepath for archictures that don't support THP
+> migration and shmem THP.
 
-OK but why? What problem is this solving for you? In general, we do not
-really want to preserve too much of what the PHY has been previously
-configured with, provided that the PHY driver can re-instate these
-configuration values.
-
-I just wonder how this can be robust when you connect this PHY with
-auto-negotiation disabled to a peer that expects a set of link
-parameters not covered by the default advertisement values? This really
-looks like a recipe for disaster when you could just disable
-auto-negotiation with ethtool.
-
-> 
-> Signed-off-by: Esben Haabendal <eha@deif.com>
-> Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-> ---
->  drivers/net/phy/dp83640.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/net/phy/dp83640.c b/drivers/net/phy/dp83640.c
-> index 654f42d00092..01e21b4998ad 100644
-> --- a/drivers/net/phy/dp83640.c
-> +++ b/drivers/net/phy/dp83640.c
-> @@ -1134,6 +1134,10 @@ static int dp83640_probe(struct phy_device *phydev)
->  	if (!dp83640)
->  		goto no_memory;
->  
-> +	err = genphy_read_config(phydev);
-> +	if (err)
-> +		goto no_config;
-> +
->  	dp83640->phydev = phydev;
->  	INIT_DELAYED_WORK(&dp83640->ts_work, rx_timestamp_work);
->  
-> @@ -1166,6 +1170,7 @@ static int dp83640_probe(struct phy_device *phydev)
->  
->  no_register:
->  	clock->chosen = NULL;
-> +no_config:
->  	kfree(dp83640);
->  no_memory:
->  	dp83640_clock_put(clock);
-> 
-
+But why? There shouldn't be really nothing to prevent THP (anon or
+shemem) to be migratable. If we cannot migrate it at once we can always
+split it. So why should we add another thp specific handling all over
+the place?
 -- 
-Florian
+Michal Hocko
+SUSE Labs
