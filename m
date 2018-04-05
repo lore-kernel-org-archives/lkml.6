@@ -1,58 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeDENa4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:30:56 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52970 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751242AbeDENaz (ORCPT
+        id S1751415AbeDENfi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:35:38 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39623 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751165AbeDENfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:30:55 -0400
-X-Google-Smtp-Source: AIpwx4+3tSbZfcEew9x2bEENOYHJ+ONIHqXHdgKrU2Pj3PLUUkOLc1wdu3TxdfImhm9aSRjwG3fnWw==
-Subject: Re: [PATCH v4 3/9] vsprintf: Do not check address of well-known
- strings
-To: Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org
-References: <20180404085843.16050-1-pmladek@suse.com>
- <20180404085843.16050-4-pmladek@suse.com>
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <0ff89c4e-e20d-467e-de36-61e3a5557c7d@rasmusvillemoes.dk>
-Date: Thu, 5 Apr 2018 15:30:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180404085843.16050-4-pmladek@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 5 Apr 2018 09:35:37 -0400
+X-Google-Smtp-Source: AIpwx4/r0UNTE28r95rmsENkPheWInwjew0zoTio3VCd2NUFWG7/Vk6YPmbNE2tLTOZya6QKXhBsMg==
+From: Esben Haabendal <esben.haabendal@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Esben Haabendal <eha@deif.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] net: phy: marvell: Enable interrupt function on LED2 pin
+Date: Thu,  5 Apr 2018 15:35:04 +0200
+Message-Id: <20180405133504.12257-1-esben.haabendal@gmail.com>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-04 10:58, Petr Mladek wrote:
-> We are going to check the address using probe_kernel_address(). It will
-> be more expensive and it does not make sense for well known address.
-> 
-> This patch splits the string() function. The variant without the check
-> is then used on locations that handle string constants or strings defined
-> as local variables.
-> 
-> This patch does not change the existing behavior.
+From: Esben Haabendal <eha@deif.com>
 
-Please leave string() alone, except for moving the < PAGE_SIZE check to
-a new helper checked_string (feel free to find a better name), and use
-checked_string for handling %s and possibly the few other cases where
-we're passing a user-supplied pointer. That avoids cluttering the entire
-file with double-underscore calls, and e.g. in the %pO case, it's easier
-to understand why one uses two different *string() helpers if the name
-of one somehow conveys how it is different from the other.
+The LED2[2]/INTn pin on Marvell 88E1318S as well as 88E1510/12/14/18 needs
+to be configured to be usable as interrupt not only when WOL is enabled,
+but whenever we rely on interrupts from the PHY.
 
-Rasmus
+Signed-off-by: Esben Haabendal <eha@deif.com>
+Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+---
+ drivers/net/phy/marvell.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+index 0e0978d8a0eb..f03a510f1247 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -457,6 +457,21 @@ static int marvell_of_reg_init(struct phy_device *phydev)
+ }
+ #endif /* CONFIG_OF_MDIO */
+ 
++static int m88e1318_config_intr(struct phy_device *phydev)
++{
++	int err;
++
++	err = marvell_config_intr(phydev);
++	if (err)
++		return err;
++
++	/* Setup LED[2] as interrupt pin (active low) */
++	return phy_modify(phydev, MII_88E1318S_PHY_LED_TCR,
++			  MII_88E1318S_PHY_LED_TCR_FORCE_INT,
++			  MII_88E1318S_PHY_LED_TCR_INTn_ENABLE |
++			  MII_88E1318S_PHY_LED_TCR_INT_ACTIVE_LOW);
++}
++
+ static int m88e1121_config_aneg_rgmii_delays(struct phy_device *phydev)
+ {
+ 	int mscr;
+@@ -2090,7 +2105,7 @@ static struct phy_driver marvell_drivers[] = {
+ 		.config_aneg = &m88e1318_config_aneg,
+ 		.read_status = &marvell_read_status,
+ 		.ack_interrupt = &marvell_ack_interrupt,
+-		.config_intr = &marvell_config_intr,
++		.config_intr = &m88e1318_config_intr,
+ 		.did_interrupt = &m88e1121_did_interrupt,
+ 		.get_wol = &m88e1318_get_wol,
+ 		.set_wol = &m88e1318_set_wol,
+@@ -2189,7 +2204,7 @@ static struct phy_driver marvell_drivers[] = {
+ 		.config_aneg = &m88e1510_config_aneg,
+ 		.read_status = &marvell_read_status,
+ 		.ack_interrupt = &marvell_ack_interrupt,
+-		.config_intr = &marvell_config_intr,
++		.config_intr = &m88e1318_config_intr,
+ 		.did_interrupt = &m88e1121_did_interrupt,
+ 		.get_wol = &m88e1318_get_wol,
+ 		.set_wol = &m88e1318_set_wol,
+-- 
+2.16.3
