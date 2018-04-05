@@ -1,70 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752654AbeDETLm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 15:11:42 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:43303 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752286AbeDETLk (ORCPT
+        id S1752832AbeDETL6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 15:11:58 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33665 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752729AbeDETLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 15:11:40 -0400
-X-Google-Smtp-Source: AIpwx49RnVfLayxFTqu/RNt2TMXtVrA/VRDbT23Osr6THmhljP0kifHCyvm+nWo5PtrUaWFp4FNDKA==
-Date: Thu, 5 Apr 2018 21:11:37 +0200
-From: Niklas Cassel <niklas.cassel@linaro.org>
-To: srinivas.kandagatla@linaro.org
-Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
-        david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [v2] ARM: dts: qcom: Add apq8064 Dragon Board 600c support
-Message-ID: <20180405191137.GA17656@localhost.localdomain>
-References: <20180316215436.22906-1-srinivas.kandagatla@linaro.org>
+        Thu, 5 Apr 2018 15:11:55 -0400
+X-Google-Smtp-Source: AIpwx4+07OWoR08ZqmE2nifnizxrj1Os7X/hmzOhGMYIDvANiaGZNIQ5LIpmCdhOdsX0id2N2szylg==
+Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for
+ brcmfmac
+To: Kalle Valo <kvalo@codeaurora.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
+ <20180319014032.9394-3-alexey.roslyakov@gmail.com>
+ <5AAF838D.2030105@broadcom.com>
+ <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
+ <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com>
+ <5AB044C0.9060701@broadcom.com> <87po3zxe9n.fsf@kamboji.qca.qualcomm.com>
+ <CAPDyKFr2GVB0+UUpT3GgGBT17TMcrky6X4L_pw+ztTL6ejbCwQ@mail.gmail.com>
+ <87lge1er31.fsf@kamboji.qca.qualcomm.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        Alexey Roslyakov <alexey.roslyakov@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5AC674F8.7080100@broadcom.com>
+Date: Thu, 5 Apr 2018 21:11:52 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316215436.22906-1-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <87lge1er31.fsf@kamboji.qca.qualcomm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 09:54:36PM +0000, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> This patch add support to DB600c board, which is another
-> 96boards based on Qualcomm APQ8064 SoC.
-> 
-> Support for USB, HDMI, PCIe, I2C, SPI, eMMC, microSD card, LEDs
-> device tree nodes is added in this patch.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
-> Changes since v1:
-> 	- added chosen node with stdout, suggested by Stephen Boyd
-> 	- removed spi flash node and gpio22 pinconf, as its not required in this patch.
-> 	- removed extra comment lines and fix a node name, spotted by Stephen Boyd.
-> 
->  arch/arm/boot/dts/Makefile                |   1 +
->  arch/arm/boot/dts/qcom-apq8064-db600c.dts | 530 ++++++++++++++++++++++++++++++
->  2 files changed, 531 insertions(+)
->  create mode 100644 arch/arm/boot/dts/qcom-apq8064-db600c.dts
+On 4/5/2018 3:10 PM, Kalle Valo wrote:
+> Ulf Hansson <ulf.hansson@linaro.org> writes:
+>
+>> On 20 March 2018 at 10:55, Kalle Valo <kvalo@codeaurora.org> wrote:
+>>> Arend van Spriel <arend.vanspriel@broadcom.com> writes:
+>>>
+>>>>>> If I get it right, you mean something like this:
+>>>>>>
+>>>>>> mmc3: mmc@1c12000 {
+>>>>>> ...
+>>>>>>           broken-sg-support;
+>>>>>>           sd-head-align = 4;
+>>>>>>           sd-sgentry-align = 512;
+>>>>>>
+>>>>>>           brcmf: wifi@1 {
+>>>>>>                   ...
+>>>>>>           };
+>>>>>> };
+>>>>>>
+>>>>>> Where dt: bindings documentation for these entries should reside?
+>>>>>> In generic MMC bindings? Well, this is the very special case and
+>>>>>> mmc-linux maintainer will unlikely to accept these changes.
+>>>>>> Also, extra kernel code modification might be required. It could make
+>>>>>> quite trivial change much more complex.
+>>>>>
+>>>>> If the MMC maintainers are not copied on this patch series, it will
+>>>>> likely be hard for them to identify this patch series and chime in...
+>>>>
+>>>> The main question is whether this is indeed a "very special case" as
+>>>> Alexey claims it to be or that it is likely to be applicable to other
+>>>> device and host combinations as you are suggesting.
+>>>>
+>>>> If these properties are imposed by the host or host controller it
+>>>> would make sense to have these in the mmc bindings.
+>>>
+>>> BTW, last year we were discussing something similar (I mean related to
+>>> alignment requirements) with ath10k SDIO patches and at the time the
+>>> patch submitter was proposing to have a bounce buffer in ath10k to
+>>> workaround that. I don't remember the details anymore, they are on the
+>>> ath10k mailing list archive if anyone is curious to know, but I would
+>>> not be surprised if they are similar as here. So there might be a need
+>>> to solve this in a generic way (but not sure of course as I haven't
+>>> checked the details).
+>>
+>> I re-call something about these as well, here are the patches. Perhaps
+>> I should pick some of them up...
+>>
+>> https://patchwork.kernel.org/patch/10123137/
+>> https://patchwork.kernel.org/patch/10123139/
+>> https://patchwork.kernel.org/patch/10123141/
+>> https://patchwork.kernel.org/patch/10123143/
+>
+> Actually I was talking about a different patch, found it now:
+>
+> ath10k_sdio: DMA bounce buffers for read write
+>
+> https://patchwork.kernel.org/patch/9979543/
 
-Hello Srini (I hope you had a nice vacation!)
+The patches Uffe mentions are related to this. In brcmfmac we simply 
+implemented functionality to create a scatter list and send it through 
+the MMC stack using SDIO CMD53. It is in the creation of the scatter 
+list that these alignment properties are needed. Moving the whole 
+functionality to the MMC stack will also move those properties into 
+their right context, ie. SDIO host controller.
 
+Our broker_sg_support property is basically doing the bounce buffer 
+thing if I understand it correctly.
 
-Running checkpatch on this patch gives a few of these warnings:
-
-WARNING: line over 80 characters
-
-These can probably be ignored, since they exist for most
-arch/arm/boot/dts/qcom-*.dts files.
-
-
-However, it also gives a few of these errors:
-
-ERROR: trailing whitespace
-
-These should probably be fixed, since the are errors and not warnings.
-
-
-Kind regards,
-Niklas
+Regards,
+Arend
