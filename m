@@ -1,96 +1,243 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752372AbeDEQUM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 12:20:12 -0400
-Received: from gateway34.websitewelcome.com ([192.185.148.194]:42608 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751469AbeDEQUL (ORCPT
+        id S1752286AbeDEQUg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 12:20:36 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41788 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751693AbeDEQSu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 12:20:11 -0400
-Date: Thu, 5 Apr 2018 11:20:06 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Xue Liu <liuxuenetmail@gmail.com>,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>
-Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ieee802154: mcr20a: Fix memory leak in mcr20a_probe
-Message-ID: <20180405162006.GA2199@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1f47cN-000QR3-O5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.145.54.187]:41978
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Thu, 5 Apr 2018 12:18:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18B5A60F71
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From: Lina Iyer <ilina@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v5 05/10] drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
+Date: Thu,  5 Apr 2018 10:18:29 -0600
+Message-Id: <20180405161834.3850-6-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180405161834.3850-1-ilina@codeaurora.org>
+References: <20180405161834.3850-1-ilina@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Free allocated memory for pdata before return.
+Sleep and wake requests are sent when the application processor
+subsystem of the SoC is entering deep sleep states like in suspend.
+These requests help lower the system power requirements when the
+resources are not in use.
 
-Addresses-Coverity-ID: 1466096 ("Resource leak")
-Fixes: 8c6ad9cc5157 ("ieee802154: Add NXP MCR20A IEEE 802.15.4 transceiver driver")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Sleep and wake requests are written to the TCS slots but are not
+triggered at the time of writing. The TCS are triggered by the firmware
+after the last of the CPUs has executed its WFI. Since these requests
+may come in different batches of requests, it is the job of this
+controller driver to find and arrange the requests into the available
+TCSes.
+
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
 ---
- drivers/net/ieee802154/mcr20a.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/soc/qcom/rpmh-internal.h |   9 ++-
+ drivers/soc/qcom/rpmh-rsc.c      | 120 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 128 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
-index 55a22c7..944470d 100644
---- a/drivers/net/ieee802154/mcr20a.c
-+++ b/drivers/net/ieee802154/mcr20a.c
-@@ -1267,7 +1267,7 @@ mcr20a_probe(struct spi_device *spi)
- 	ret = mcr20a_get_platform_data(spi, pdata);
- 	if (ret < 0) {
- 		dev_crit(&spi->dev, "mcr20a_get_platform_data failed.\n");
--		return ret;
-+		goto free_pdata;
+diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+index 125f9faec536..638662721086 100644
+--- a/drivers/soc/qcom/rpmh-internal.h
++++ b/drivers/soc/qcom/rpmh-internal.h
+@@ -14,6 +14,7 @@
+ #define MAX_CMDS_PER_TCS		16
+ #define MAX_TCS_PER_TYPE		3
+ #define MAX_TCS_NR			(MAX_TCS_PER_TYPE * TCS_TYPE_NR)
++#define MAX_TCS_SLOTS			(MAX_CMDS_PER_TCS * MAX_TCS_PER_TYPE)
+ 
+ struct rsc_drv;
+ 
+@@ -45,6 +46,8 @@ struct tcs_response {
+  * @ncpt:      number of commands in each TCS
+  * @lock:      lock for synchronizing this TCS writes
+  * @responses: response objects for requests sent from each TCS
++ * @cmd_cache: flattened cache of cmds in sleep/wake TCS
++ * @slots:     indicates which of @cmd_addr are occupied
+  */
+ struct tcs_group {
+ 	struct rsc_drv *drv;
+@@ -55,6 +58,8 @@ struct tcs_group {
+ 	int ncpt;
+ 	spinlock_t lock;
+ 	struct tcs_response *responses[MAX_TCS_PER_TYPE];
++	u32 *cmd_cache;
++	DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
+ };
+ 
+ /**
+@@ -69,7 +74,7 @@ struct tcs_group {
+  *              list of responses that needs to be sent to caller
+  * @tcs:        TCS groups
+  * @tcs_in_use: s/w state of the TCS
+- * @drv_lock:  synchronize state of the controller
++ * @drv_lock:   synchronize state of the controller
+  */
+ struct rsc_drv {
+ 	const char *name;
+@@ -85,6 +90,8 @@ struct rsc_drv {
+ 
+ 
+ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
++int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
++			     const struct tcs_request *msg);
+ 
+ void rpmh_tx_done(const struct tcs_request *msg, int r);
+ 
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index c5cde917dba6..58fc7254b6f3 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -171,6 +171,12 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+ 	case RPMH_ACTIVE_ONLY_STATE:
+ 		type = ACTIVE_TCS;
+ 		break;
++	case RPMH_WAKE_ONLY_STATE:
++		type = WAKE_TCS;
++		break;
++	case RPMH_SLEEP_STATE:
++		type = SLEEP_TCS;
++		break;
+ 	default:
+ 		return ERR_PTR(-EINVAL);
  	}
- 
- 	/* init reset gpio */
-@@ -1275,7 +1275,7 @@ mcr20a_probe(struct spi_device *spi)
- 		ret = devm_gpio_request_one(&spi->dev, pdata->rst_gpio,
- 					    GPIOF_OUT_INIT_HIGH, "reset");
- 		if (ret)
--			return ret;
-+			goto free_pdata;
- 	}
- 
- 	/* reset mcr20a */
-@@ -1291,7 +1291,8 @@ mcr20a_probe(struct spi_device *spi)
- 	hw = ieee802154_alloc_hw(sizeof(*lp), &mcr20a_hw_ops);
- 	if (!hw) {
- 		dev_crit(&spi->dev, "ieee802154_alloc_hw failed\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto free_pdata;
- 	}
- 
- 	/* init mcr20a local data */
-@@ -1366,6 +1367,8 @@ mcr20a_probe(struct spi_device *spi)
- 
- free_dev:
- 	ieee802154_free_hw(lp->hw);
-+free_pdata:
-+	kfree(pdata);
- 
- 	return ret;
+@@ -439,6 +445,107 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
  }
+ EXPORT_SYMBOL(rpmh_rsc_send_data);
+ 
++static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
++		      int len)
++{
++	int i, j;
++
++	/* Check for already cached commands */
++	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
++		for (j = 0; j < len; j++) {
++			if (tcs->cmd_cache[i] != cmd[0].addr) {
++				if (j == 0)
++					break;
++				WARN(tcs->cmd_cache[i + j] != cmd[j].addr,
++				     "Message does not match previous sequence.\n");
++				return -EINVAL;
++			} else if (j == len - 1) {
++				return i;
++			}
++		}
++	}
++
++	return -ENODATA;
++}
++
++static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
++		      int *m, int *n)
++{
++	int slot, offset;
++	int i = 0;
++
++	/* Find if we already have the msg in our TCS */
++	slot = find_match(tcs, msg->cmds, msg->num_cmds);
++	if (slot >= 0)
++		goto copy_data;
++
++	/* Do over, until we can fit the full payload in a TCS */
++	do {
++		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
++						  i, msg->num_cmds, 0);
++		if (slot == MAX_TCS_SLOTS)
++			return -ENOMEM;
++		i += tcs->ncpt;
++	} while (slot + msg->num_cmds - 1 >= i);
++
++copy_data:
++	bitmap_set(tcs->slots, slot, msg->num_cmds);
++	/* Copy the addresses of the resources over to the slots */
++	for (i = 0; i < msg->num_cmds; i++)
++		tcs->cmd_cache[slot + i] = msg->cmds[i].addr;
++
++	offset = slot / tcs->ncpt;
++	*m = offset + tcs->offset;
++	*n = slot % tcs->ncpt;
++
++	return 0;
++}
++
++static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
++{
++	struct tcs_group *tcs;
++	int m = 0, n = 0;
++	unsigned long flags;
++	int ret;
++
++	tcs = get_tcs_for_msg(drv, msg);
++	if (IS_ERR(tcs))
++		return PTR_ERR(tcs);
++
++	spin_lock_irqsave(&tcs->lock, flags);
++	/* find the m-th TCS and the n-th position in the TCS to write to */
++	ret = find_slots(tcs, msg, &m, &n);
++	if (!ret)
++		__tcs_buffer_write(drv, m, n, msg);
++	spin_unlock_irqrestore(&tcs->lock, flags);
++
++	return ret;
++}
++
++/**
++ * rpmh_rsc_write_ctrl_data: Write request to the controller
++ *
++ * @drv: the controller
++ * @msg: the data to be written to the controller
++ *
++ * There is no response returned for writing the request to the controller.
++ */
++int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, const struct tcs_request *msg)
++{
++	if (!msg || !msg->cmds || !msg->num_cmds ||
++	    msg->num_cmds > MAX_RPMH_PAYLOAD) {
++		pr_err("Payload error\n");
++		return -EINVAL;
++	}
++
++	/* Data sent to this API will not be sent immediately */
++	if (msg->state == RPMH_ACTIVE_ONLY_STATE)
++		return -EINVAL;
++
++	return tcs_ctrl_write(drv, msg);
++}
++EXPORT_SYMBOL(rpmh_rsc_write_ctrl_data);
++
+ static int rpmh_probe_tcs_config(struct platform_device *pdev,
+ 				 struct rsc_drv *drv)
+ {
+@@ -512,6 +619,19 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
+ 		tcs->mask = ((1 << tcs->num_tcs) - 1) << st;
+ 		tcs->offset = st;
+ 		st += tcs->num_tcs;
++
++		/*
++		 * Allocate memory to cache sleep and wake requests to
++		 * avoid reading TCS register memory.
++		 */
++		if (tcs->type == ACTIVE_TCS)
++			continue;
++
++		tcs->cmd_cache = devm_kcalloc(&pdev->dev,
++					      tcs->num_tcs * ncpt, sizeof(u32),
++					      GFP_KERNEL);
++		if (!tcs->cmd_cache)
++			return -ENOMEM;
+ 	}
+ 
+ 	drv->num_tcs = st;
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
