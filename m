@@ -1,76 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752281AbeDEJ67 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:58:59 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60850 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751900AbeDEJuq (ORCPT
+        id S1752553AbeDEJ7I (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:59:08 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40850 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752016AbeDEJ7B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:50:46 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
-        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
-        tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
-        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
-        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
-        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
-        jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 15/30] drm/bridge: analogix_dp: Fix timeout of video streamclk config
-Date: Thu,  5 Apr 2018 11:49:45 +0200
-Message-Id: <20180405095000.9756-16-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
-References: <20180405095000.9756-1-enric.balletbo@collabora.com>
+        Thu, 5 Apr 2018 05:59:01 -0400
+X-Google-Smtp-Source: AIpwx48dHT33br59icdXbTeZRN6FpJ8F6bVmAcDOBNZNBkXQvQveT5IE0rvtYKKZj7Yv0Z988TQNXQ==
+Date: Thu, 5 Apr 2018 15:28:58 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH] cpufreq/schedutil: Cleanup and document iowait boost
+Message-ID: <20180405095858.GP3572@vireshk-i7>
+References: <20180328090721.26068-1-patrick.bellasi@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180328090721.26068-1-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zain wang <wzz@rock-chips.com>
+On 28-03-18, 10:07, Patrick Bellasi wrote:
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index 2b124811947d..c840b0626735 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -201,43 +201,80 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>  	return min(util, sg_cpu->max);
+>  }
 
-The STRM_VALID bit in register ANALOGIX_DP_SYS_CTL_3 may be unstable,
-so we may hit the error log "Timeout of video streamclk ok" since
-checked this unstable bit.
-In fact, we can go continue and the streamclk is ok if we wait enough time,
-it does no effect on display.
-Let's change this error to warn.
+I like the general idea but there are few things which look incorrect
+to me, even in the current code.
 
-Cc: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: zain wang <wzz@rock-chips.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
----
+> -static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
+> +/**
+> + * sugov_set_iowait_boost updates the IO boost at each wakeup from IO.
+> + * @sg_cpu: the sugov data for the CPU to boost
+> + * @flags:  SCHED_CPUFREQ_IOWAIT if the task is waking up after an IO wait
+> + *
+> + * Each time a task wakes up after an IO operation, the CPU utilization can be
+> + * boosted to a certain utilization which is doubled at each wakeup
+> + * from IO, starting from the utilization of the minimum OPP to that of the
+> + * maximum one.
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+You may also want to write here that the doubling of boost value is
+restricted by rate_limit_us duration, its not that we double every
+time this routine is called.
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 5540e2dfc2ec..a72e454a7292 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -921,8 +921,9 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
- 			done_count = 0;
- 		}
- 		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
--			dev_err(dp->dev, "Timeout of video streamclk ok\n");
--			return -ETIMEDOUT;
-+			dev_warn(dp->dev,
-+				 "Ignoring timeout of video streamclk ok\n");
-+			break;
- 		}
- 
- 		usleep_range(1000, 1001);
+> + */
+> +static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, unsigned int flags)
+>  {
+
+>  
+> -		/* Clear iowait_boost if the CPU apprears to have been idle. */
+> -		if (delta_ns > TICK_NSEC) {
+> -			sg_cpu->iowait_boost = 0;
+> -			sg_cpu->iowait_boost_pending = false;
+> -		}
+
+So this is the only difference in this routine, everything else is
+re-arrangement IIUC.
+
+There is a problem that I see in existing code as well as code after
+this commit.
+
+Consider this sequence of events on a platform where cpufreq policies
+aren't shared, i.e. each CPU has his own policy.
+
+sugov_set_iowait_boost() gets called multiple times for a CPU with
+IOWAIT flag set that leads us to a big boost value, like fmax. The CPU
+goes to idle then and the task wakes up after few ticks.  Because we
+are first checking the IOWAIT flag in this routine, we will double the
+iowait boost. Ideally, based on the TICK_NSEC logic we have, we should
+have first set the iowait boost to 0 and then because the flag was
+set, set the boost to fmin. So the order of this routine needs to get
+fixed in the first patch.
+
+The same problem can happen for cases where the policy is shared as
+well, but chances are less.
+
+> -static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, unsigned long *util,
+> -			       unsigned long *max)
+> +/**
+> + * sugov_iowait_boost boosts a CPU after a wakeup from IO.
+> + * @sg_cpu: the sugov data for the cpu to boost
+> + * @time:   the update time from the caller
+> + * @util:   the utilization to (eventually) boost
+> + * @max:    the maximum value the utilization can be boosted to
+> + *
+> + * A CPU running a task which woken up after an IO operation can have its
+> + * utilization boosted to speed up the completion of those IO operations.
+> + * The IO boost value is increased each time a task wakes up from IO, in
+> + * sugov_set_iowait_boost(), and it's instead decreased by this function,
+> + * each time an increase has not been requested (!iowait_boost_pending).
+> + *
+> + * A CPU which also appears to have been idle for at least one tick has also
+> + * its IO boost utilization reset.
+> + *
+> + * This mechanism is designed to boost high frequently IO waiting tasks, while
+> + * being more conservative on tasks which does sporadic IO operations.
+> + */
+> +static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+> +			       unsigned long *util, unsigned long *max)
+>  {
+>  	unsigned int boost_util, boost_max;
+>  
+> -	if (!sg_cpu->iowait_boost)
+> +	/* Clear boost if the CPU appears to have been idle enough */
+> +	if (sg_cpu->iowait_boost) {
+> +		s64 delta_ns = time - sg_cpu->last_update;
+> +
+> +		if (delta_ns > TICK_NSEC) {
+> +			sg_cpu->iowait_boost = 0;
+> +			sg_cpu->iowait_boost_pending = false;
+> +		}
+>  		return;
+
+This looks incorrect. I have read this 10 times and it looked
+incorrect every single time :(
+
+The "return" statement should be part of the if block itself ? Else we
+will never boost.
+
+> +	}
+>  
+
+Now we can reach here even on !sg_cpu->iowait_boost which wasn't the
+case earlier. Though we will eventually return from the routine
+without doing any damage, but we will waste some time running useless
+if/else expressions.
+
+Maybe still have something like
+
+        if (!sg_cpu->iowait_boost)
+                return;
+
+??
+
 -- 
-2.16.3
+viresh
