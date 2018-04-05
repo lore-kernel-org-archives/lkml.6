@@ -1,28 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754095AbeDEWL0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 18:11:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56640 "EHLO
+        id S1753924AbeDEWRy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 18:17:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58064 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752469AbeDEWLZ (ORCPT
+        with ESMTP id S1751443AbeDEWRx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 18:11:25 -0400
-Date: Thu, 5 Apr 2018 15:11:23 -0700
+        Thu, 5 Apr 2018 18:17:53 -0400
+Date: Thu, 5 Apr 2018 15:17:51 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
- reclaimable memory
-Message-Id: <20180405151123.df20d12168d8a38f7a6b02b5@linux-foundation.org>
-In-Reply-To: <20180313004532.GU30522@ZenIV.linux.org.uk>
-References: <20180305133743.12746-1-guro@fb.com>
-        <20180305133743.12746-5-guro@fb.com>
-        <20180312211742.GR30522@ZenIV.linux.org.uk>
-        <20180312223632.GA6124@castle>
-        <20180313004532.GU30522@ZenIV.linux.org.uk>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] mm/vmscan: Don't change pgdat state on base of a
+ single LRU list state.
+Message-Id: <20180405151751.c07ee14496f9d5b691b49c64@linux-foundation.org>
+In-Reply-To: <20180323152029.11084-4-aryabinin@virtuozzo.com>
+References: <20180323152029.11084-1-aryabinin@virtuozzo.com>
+        <20180323152029.11084-4-aryabinin@virtuozzo.com>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -31,33 +29,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018 00:45:32 +0000 Al Viro <viro@ZenIV.linux.org.uk> wrote:
+On Fri, 23 Mar 2018 18:20:28 +0300 Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
 
-> On Mon, Mar 12, 2018 at 10:36:38PM +0000, Roman Gushchin wrote:
+> We have separate LRU list for each memory cgroup. Memory reclaim iterates
+> over cgroups and calls shrink_inactive_list() every inactive LRU list.
+> Based on the state of a single LRU shrink_inactive_list() may flag
+> the whole node as dirty,congested or under writeback. This is obviously
+> wrong and hurtful. It's especially hurtful when we have possibly
+> small congested cgroup in system. Than *all* direct reclaims waste time
+> by sleeping in wait_iff_congested(). And the more memcgs in the system
+> we have the longer memory allocation stall is, because
+> wait_iff_congested() called on each lru-list scan.
 > 
-> > Ah, I see...
-> > 
-> > I think, it's better to account them when we're actually freeing,
-> > otherwise we will have strange path:
-> > (indirectly) reclaimable -> unreclaimable -> free
-> > 
-> > Do you agree?
+> Sum reclaim stats across all visited LRUs on node and flag node as dirty,
+> congested or under writeback based on that sum. Also call
+> congestion_wait(), wait_iff_congested() once per pgdat scan, instead of
+> once per lru-list scan.
 > 
-> > +static void __d_free_external_name(struct rcu_head *head)
-> > +{
-> > +	struct external_name *name;
-> > +
-> > +	name = container_of(head, struct external_name, u.head);
-> > +
-> > +	mod_node_page_state(page_pgdat(virt_to_page(name)),
-> > +			    NR_INDIRECTLY_RECLAIMABLE_BYTES,
-> > +			    -ksize(name));
-> > +
-> > +	kfree(name);
-> > +}
+> This only fixes the problem for global reclaim case. Per-cgroup reclaim
+> may alter global pgdat flags too, which is wrong. But that is separate
+> issue and will be addressed in the next patch.
 > 
-> Maybe, but then you want to call that from __d_free_external() and from
-> failure path in __d_alloc() as well.  Duplicating something that convoluted
-> and easy to get out of sync is just asking for trouble.
+> This change will not have any effect on a systems with all workload
+> concentrated in a single cgroup.
+> 
 
-So.. where are we at with this issue?
+Could we please get this reviewed?
