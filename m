@@ -1,113 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752219AbeDESyt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 14:54:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48943 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751415AbeDESyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 14:54:47 -0400
-Date: Thu, 5 Apr 2018 20:54:44 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Joel Fernandes <joelaf@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180405185444.GQ6312@dhcp22.suse.cz>
-References: <20180404101149.08f6f881@gandalf.local.home>
- <20180404142329.GI6312@dhcp22.suse.cz>
- <20180404114730.65118279@gandalf.local.home>
- <20180405025841.GA9301@bombadil.infradead.org>
- <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
- <20180405142258.GA28128@bombadil.infradead.org>
- <20180405142749.GL6312@dhcp22.suse.cz>
- <20180405151359.GB28128@bombadil.infradead.org>
- <20180405153240.GO6312@dhcp22.suse.cz>
- <20180405161501.GD28128@bombadil.infradead.org>
+        id S1752461AbeDESzO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 14:55:14 -0400
+Received: from mail-pl0-f52.google.com ([209.85.160.52]:34699 "EHLO
+        mail-pl0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752018AbeDESzM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 14:55:12 -0400
+X-Google-Smtp-Source: AIpwx4+PdE/y1aebNCYpR4qakAUl/wLmZoPG706EiCxgJLTCfYnRe6RDMUyX7+nDRScGoVPFm+jIVaHdI/dkk8ghZtQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405161501.GD28128@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180403043854.GL1150@dastard>
+References: <f403043cbe8414177d0568e81405@google.com> <20180403043854.GL1150@dastard>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 5 Apr 2018 20:54:50 +0200
+Message-ID: <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
+Subject: Re: WARNING: bad unlock balance in xfs_iunlock
+To: Dave Chinner <david@fromorbit.com>
+Cc: syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
+        darrick.wong@oracle.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 05-04-18 09:15:01, Matthew Wilcox wrote:
-> On Thu, Apr 05, 2018 at 05:32:40PM +0200, Michal Hocko wrote:
-> > On Thu 05-04-18 08:13:59, Matthew Wilcox wrote:
-> > > Argh.  The comment confused me.  OK, now I've read the source and
-> > > understand that GFP_KERNEL | __GFP_RETRY_MAYFAIL tries exactly as hard
-> > > as GFP_KERNEL *except* that it won't cause OOM itself.  But any other
-> > > simultaneous GFP_KERNEL allocation without __GFP_RETRY_MAYFAIL will
-> > > cause an OOM.  (And that's why we're having a conversation)
-> > 
-> > Well, I can udnerstand how this can be confusing. The all confusion
-> > boils down to the small-never-fails semantic we have. So all reclaim
-> > modificators (__GFP_NOFAIL, __GFP_RETRY_MAYFAIL, __GFP_NORETRY) only
-> > modify the _default_ behavior.
-> 
-> Now that I understand the flag, I'll try to write a more clear
-> explanation.
+On Tue, Apr 3, 2018 at 6:38 AM, Dave Chinner <david@fromorbit.com> wrote:
+> On Mon, Apr 02, 2018 at 07:01:02PM -0700, syzbot wrote:
+>> Hello,
+>>
+>> syzbot hit the following crash on upstream commit
+>> 86bbbebac1933e6e95e8234c4f7d220c5ddd38bc (Mon Apr 2 18:47:07 2018 +0000)
+>> Merge branch 'ras-core-for-linus' of
+>> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+>> syzbot dashboard link:
+>> https://syzkaller.appspot.com/bug?extid=84a67953651a971809ba
+>>
+>> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5719304272084992
+>> syzkaller reproducer:
+>> https://syzkaller.appspot.com/x/repro.syz?id=5767783983874048
+>
+> What a mess. A hand built, hopelessly broken filesystem image made
+> up of hex dumps, written into a mmap()d region of memory, then
+> copied into a tmpfs file and mounted with the loop device.
+>
+> Engineers that can debug broken filesystems don't grow on trees.  If
+> we are to have any hope of understanding what the hell this test is
+> doing, the bot needs to supply us with a copy of the built
+> filesystem image the test uses. We need to be able to point forensic
+> tools at the image to decode all the structures into human readable
+> format - if we are forced to do that by hand or jump through hoops
+> to create our own filesystem image than I'm certainly not going to
+> waste time looking at these reports...
 
-Good luck with that. It took me several iterations to land with the
-current state. It is quite hard to be not misleading yet understandable.
+Hi Dave,
 
-> > > That's a problem because we have places in the kernel that call
-> > > kv[zm]alloc(very_large_size, GFP_KERNEL), and that will turn into vmalloc,
-> > > which will do the exact same thing, only it will trigger OOM all by itself
-> > > (assuming the largest free chunk of address space in the vmalloc area
-> > > is larger than the amount of free memory).
-> > 
-> > well, hardcoded GFP_KERNEL from vmalloc guts is yet another, ehm,
-> > herritage that you are not so proud of.
-> 
-> Certainly not, but that's not what I'm concerned about; I'm concerned
-> about the allocation of the pages, not the allocation of the array
-> containing the page pointers.
+Here is the image:
+https://drive.google.com/file/d/1jzhGGe5SBJcqfsjxCLHoh4Kazke1oTfC/view
+(took me about a minute to extract from test by replacing memfd_create
+with open and running the program).
+Then do the following to trigger the bug:
+losetup /dev/loop0 xfs.repro
+mkdir xfs
+mount -t xfs -o nouuid,prjquota,noikeep,quota /dev/loop0 xfs
 
-Those pages will use the gfp flag you give to vmalloc IIRC. It is page
-tables that are GFP_KERNEL unconditionally.
-
-> > > We could also have a GFP flag that says to only succeed if we're further
-> > > above the existing watermark than normal.  __GFP_LOW (==ALLOC_LOW),
-> > > if you like.  That would give us the desired behaviour of trying all of
-> > > the reclaim methods that GFP_KERNEL would, but not being able to exhaust
-> > > all the memory that GFP_KERNEL allocations would take.
-> > 
-> > Well, I would be really careful with yet another gfp mask. They are so
-> > incredibly hard to define properly and then people kinda tend to screw
-> > your best intentions with their usecases ;)
-> > Failing on low wmark is very close to __GFP_NORETRY or even
-> > __GFP_NOWAIT, btw. So let's try to not overthink this...
-> 
-> Oh, indeed.  We must be able to clearly communicate to users when they
-> should use this flag.  I have in mind something like this:
-> 
->  * __GFP_HIGH indicates that the caller is high-priority and that granting
->  *   the request is necessary before the system can make forward progress.
->  *   For example, creating an IO context to clean pages.
->  *
->  * __GFP_LOW indicates that the caller is low-priority and that it should
->  *   not be allocated pages that would cause the system to get into an
->  *   out-of-memory situation.  For example, allocating multiple individual
->  *   pages in order to satisfy a larger request.
-
-So how exactly the low fits into GFP_NOWAIT, GFP_NORETRY and
-GFP_RETRY_MAFAIL? We _do_have several levels of how hard to try and we
-have users relying on that. And do not forget about costly vs.
-non-costly sizes.
-
-That being said, we should not hijack this thread more and further
-enhancements should be discussed separatelly. I am all for making the
-whole allocation api less obscure but keep in mind that we have really
-hard historical restrictions.
-
--- 
-Michal Hocko
-SUSE Labs
+To answer your more general question: syzbot is not a system to test
+solely file systems, it finds bugs in hundreds of kernel subsystems.
+Generating image for file systems, media files for sound and
+FaceDancer programs that crash host when  FaceDancer device is plugged
+into USB is not feasible. And in the end it's not even clear what
+kernel subsystem is at fault and even if it somehow figures out that
+it's a filesystem, it's unclear that it's exactly an image that
+provokes the bug. syzbot provides C reproducers which is a reasonable
+common ground for bug reports. At this point the bug needs human
+attention. Some bugs are trivial enough that a developer does not even
+need to look at the reproducer. Some bugs are so involved that only an
+expert in a particular subsystem can figure out what happens there.
