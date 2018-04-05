@@ -1,145 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751277AbeDEGQD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 02:16:03 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:39930 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750853AbeDEGQC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 02:16:02 -0400
-X-Google-Smtp-Source: AIpwx4/hI64ogfUQso+dm+hlZoeUI8JScXpe2e6Hk5AnOx4EsMRp/bDl4v1BPSn+h7yrP+IefHxW+8NOlC7STMUIcuE=
+        id S1751318AbeDEGSA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 02:18:00 -0400
+Received: from mga18.intel.com ([134.134.136.126]:24506 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750943AbeDEGR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 02:17:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,410,1517904000";
+   d="scan'208";a="39527979"
+Subject: Re: [PATCH 6/7] perf auxtrace: Make auxtrace_queues__add_buffer()
+ allocate struct buffer
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+References: <1520327598-1317-1-git-send-email-adrian.hunter@intel.com>
+ <1520327598-1317-7-git-send-email-adrian.hunter@intel.com>
+ <20180306202542.GA3701@kernel.org>
+ <3f3b67de-4807-f87a-3861-db4a0f908add@intel.com>
+ <20180307141154.GE3701@kernel.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <d2ca2f6f-4b60-b22c-98f3-900cc544bf99@intel.com>
+Date: Thu, 5 Apr 2018 09:17:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-Originating-IP: [212.51.149.109]
-In-Reply-To: <20180404223251.28449-1-eric@anholt.net>
-References: <20180404223251.28449-1-eric@anholt.net>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Thu, 5 Apr 2018 08:16:01 +0200
-X-Google-Sender-Auth: sqkZ24Uo3-9t6JO8g7QZzOd_aQk
-Message-ID: <CAKMK7uGhm_ixQN3-WWmWK-mrdWRAfPZMuD-=fBEQxbtrMkdVFg@mail.gmail.com>
-Subject: Re: [PATCH] drm/sched: Extend the documentation.
-To: Eric Anholt <eric@anholt.net>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180307141154.GE3701@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 5, 2018 at 12:32 AM, Eric Anholt <eric@anholt.net> wrote:
-> These comments answer all the questions I had for myself when
-> implementing a driver using the GPU scheduler.
->
-> Signed-off-by: Eric Anholt <eric@anholt.net>
+On 07/03/18 16:11, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Mar 07, 2018 at 10:06:50AM +0200, Adrian Hunter escreveu:
+>> On 06/03/18 22:25, Arnaldo Carvalho de Melo wrote:
+>>> Em Tue, Mar 06, 2018 at 11:13:17AM +0200, Adrian Hunter escreveu:
+>>>> In preparation for supporting AUX area sampling buffers,
+>>>> auxtrace_queues__add_buffer() needs to be more generic. To that end, move
+>>>> memory allocation for struct buffer into it.
+>>>>
+>>>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>>>> ---
+>>>>  tools/perf/util/auxtrace.c | 54 +++++++++++++++++++++-------------------------
+>>>>  1 file changed, 24 insertions(+), 30 deletions(-)
+>>>>
+>>>> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+>>>> index fb357a00dd86..e1aff91c54a8 100644
+>>>> --- a/tools/perf/util/auxtrace.c
+>>>> +++ b/tools/perf/util/auxtrace.c
+>>>> @@ -308,7 +308,11 @@ static int auxtrace_queues__add_buffer(struct auxtrace_queues *queues,
+>>>>  				       struct auxtrace_buffer *buffer,
+>>>>  				       struct auxtrace_buffer **buffer_ptr)
+>>>>  {
+>>>> -	int err;
+>>>> +	int err = -ENOMEM;
+>>>> +
+>>>> +	buffer = memdup(buffer, sizeof(*buffer));
+>>>
+>>> this is a bit strange, why not make buffer a local variable in this
+>>> function then?
+>>
+>> Do you mean the following?
+>>
+>> 	struct auxtrace_buffer *new_buf;
+>>
+>> 	new_buf = memdup(buffer, sizeof(*buffer));
+> 
+> I hadn't noticed that you were using buffer as both r and l value :-\
+> 
+> If all you want is to receive that buffer, duplicate it and then use
+> just the duplicate, not needing any reference to the original buffer,
+> then your code is correct, it just looked strange from a quick look, so
+> nevermind, I'll continue processing this one and the others.
 
-Pulling all these comments into the generated kerneldoc would be
-awesome, maybe as a new "GPU Scheduler" chapter at the end of
-drm-mm.rst? Would mean a bit of busywork to convert the existing raw
-comments into proper kerneldoc. Also has the benefit that 0day will
-complain when you forget to update the comment when editing the
-function prototype - kerneldoc which isn't included anywhere in .rst
-won't be checked automatically.
--Daniel
-
-> ---
->  include/drm/gpu_scheduler.h | 46 +++++++++++++++++++++++++++++++++----
->  1 file changed, 42 insertions(+), 4 deletions(-)
->
-> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-> index dfd54fb94e10..c053a32341bf 100644
-> --- a/include/drm/gpu_scheduler.h
-> +++ b/include/drm/gpu_scheduler.h
-> @@ -43,10 +43,12 @@ enum drm_sched_priority {
->  };
->
->  /**
-> - * A scheduler entity is a wrapper around a job queue or a group
-> - * of other entities. Entities take turns emitting jobs from their
-> - * job queues to corresponding hardware ring based on scheduling
-> - * policy.
-> + * drm_sched_entity - A wrapper around a job queue (typically attached
-> + * to the DRM file_priv).
-> + *
-> + * Entities will emit jobs in order to their corresponding hardware
-> + * ring, and the scheduler will alternate between entities based on
-> + * scheduling policy.
->  */
->  struct drm_sched_entity {
->         struct list_head                list;
-> @@ -78,7 +80,18 @@ struct drm_sched_rq {
->
->  struct drm_sched_fence {
->         struct dma_fence                scheduled;
-> +
-> +       /* This fence is what will be signaled by the scheduler when
-> +        * the job is completed.
-> +        *
-> +        * When setting up an out fence for the job, you should use
-> +        * this, since it's available immediately upon
-> +        * drm_sched_job_init(), and the fence returned by the driver
-> +        * from run_job() won't be created until the dependencies have
-> +        * resolved.
-> +        */
->         struct dma_fence                finished;
-> +
->         struct dma_fence_cb             cb;
->         struct dma_fence                *parent;
->         struct drm_gpu_scheduler        *sched;
-> @@ -88,6 +101,13 @@ struct drm_sched_fence {
->
->  struct drm_sched_fence *to_drm_sched_fence(struct dma_fence *f);
->
-> +/**
-> + * drm_sched_job - A job to be run by an entity.
-> + *
-> + * A job is created by the driver using drm_sched_job_init(), and
-> + * should call drm_sched_entity_push_job() once it wants the scheduler
-> + * to schedule the job.
-> + */
->  struct drm_sched_job {
->         struct spsc_node                queue_node;
->         struct drm_gpu_scheduler        *sched;
-> @@ -112,10 +132,28 @@ static inline bool drm_sched_invalidate_job(struct drm_sched_job *s_job,
->   * these functions should be implemented in driver side
->  */
->  struct drm_sched_backend_ops {
-> +       /* Called when the scheduler is considering scheduling this
-> +        * job next, to get another struct dma_fence for this job to
-> +        * block on.  Once it returns NULL, run_job() may be called.
-> +        */
->         struct dma_fence *(*dependency)(struct drm_sched_job *sched_job,
->                                         struct drm_sched_entity *s_entity);
-> +
-> +       /* Called to execute the job once all of the dependencies have
-> +        * been resolved.  This may be called multiple times, if
-> +        * timedout_job() has happened and drm_sched_job_recovery()
-> +        * decides to try it again.
-> +        */
->         struct dma_fence *(*run_job)(struct drm_sched_job *sched_job);
-> +
-> +       /* Called when a job has taken too long to execute, to trigger
-> +        * GPU recovery.
-> +        */
->         void (*timedout_job)(struct drm_sched_job *sched_job);
-> +
-> +       /* Called once the job's finished fence has been signaled and
-> +        * it's time to clean it up.
-> +        */
->         void (*free_job)(struct drm_sched_job *sched_job);
->  };
->
-> --
-> 2.17.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Looks like this patch and patch 7 "perf auxtrace: Make
+auxtrace_queues__add_buffer() do CPU filtering" got left behind.  They still
+apply cleanly.
