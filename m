@@ -1,86 +1,116 @@
-Return-Path: <jyknight@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522950474; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522886726; cv=none;
         d=google.com; s=arc-20160816;
-        b=JSVUr90UDx8sVqcPsO9yb4yWf8B0wKWalI+Pe2ujnzD+gSwC4paG9Y7trBP7UBZsGf
-         HOAjR3YhxfIU54eIa7UiDU8+F8CVxJxwD4yb799dTXW7byye2kwIB+2JeC5fTiHhrxtQ
-         XJKNQbLpTW4RngX88RN/skb6ryLLxAUZv4Q2QUf94VJl2ekBdrLij0GN8QxBPWufI04u
-         gE6/4swBLufijo5JiDHoexf6o7XJw1ORlvrJubtYXp8fzqK0A4RrlQcMy8UB1qxzr8Gq
-         kvarJCGd6y5tFWThyXoukO5hBuDRlJEznLI/6wE6zSM2696VGgO6bocE/jKUw19BBEk5
-         fztQ==
+        b=h5IHTOBiLWw787DE2A6ZDE1eN0z0t9gYsZU3h1HasluzQjltH5P2aWNg08vNQqHCCo
+         HAMfaK8NX40OPagTZSURNOp241KVmHBG/U2NhuJMrSY1vV4RtxPJYAp419veu0/8uiqd
+         nILtCa9cK7tM1Enid8C0+ezc3I62nD0btHbhF2EpLqqDMldpmYEf4YCEn52Cv57yXSzZ
+         M85wXC+pnIhi1vl0VCYZKZoGpN4aYMRcqkXvuBdbCKu6L34iGJs+yrFdPjwLNYPICjJR
+         yqtRW6nfIgA6rKRIzQ1HMTAfhmyYsAJxlAPH2FV4bip8d1Y46EB5q3CkfD0gRnDoLCB3
+         ragw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=AEsIpEyHuhGS3QX1B+hM+uvrVAaKxk+I/gTdmzqUsEc=;
-        b=TqDiXP9Bv1ch8RUoY8eX90g65jRdzjBh2UHv9Tgmd8nthNzRnzVpq/lOZbigfsuO6x
-         OBNtQqi7noxnz5GK6a62asVl1lzs2er4E/MJluZOK+Nx65x68ZW3pqPtc6xROhfihUty
-         mF9PNbXYjjM9uqTc0XF11kCzeYVUgmtHeWAKFeylBtijs5shE/VeoJAe7kdjs44Kf6kX
-         JvoQVd7ubIkEsKvBiK+nkUPApUFpJXFMry5/RJnekkh+Qzg7FiCzzXGBIxkgmFNn/TFD
-         zWLbnFWF4qnK4WO6DKI4Bk9eS9QWOrUpkqLYz9eixCV0EgUqyo/Ni/o4Svi/xhFn8Pyj
-         HtXQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=ECTNhd7sZ4CWcFLuntGNv6lsyBDmqQ6Er/L83dC+SPc=;
+        b=s8UYaHyrFDuYyGeImKTsfbtqL5QQEh26T7/wW9RIjrh00mP1lY5F7GlrN3wDYGw3hU
+         /DsfIjfDq44Htbw7Fcya5fEkDT8u20eM0umvNgoM4IuPGSHPmrUirUX/2Ig1t2b9EkNG
+         27PYjBTJL6MXMByYE9cchv4WrlQLZ6n/dy9Q4U9pY7qPUXOtW9z+HYS97lw0POlE7Fln
+         r2mKGLWpToQBD14Pq+ISENCGjcfpXKUVJnwe24crB7a6cba+4e+8foStftDso13P0Jrx
+         3TDooO6moU68Y/ofZUMgGwXX5fCneCgfnrJakx/ILSOY5VRijOwv9IBR1Fn9ago+6nBX
+         MAZg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=l9GpiT07;
-       spf=pass (google.com: domain of jyknight@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jyknight@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GruHUrVC;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=SBfWyZte;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=l9GpiT07;
-       spf=pass (google.com: domain of jyknight@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jyknight@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx4+8VERL/c0aCzDUEwdkBz/XHcXE7fwt/KdgK+lsJ7ijOdDf+r6eSNZF68g6d5w0jHmAC0MJorYdN6wDIcQyfbU=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GruHUrVC;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=SBfWyZte;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AIpwx48EOntVdJgPYYdXvJCZJf3cDLpqFQEZH9tN6QSuGGR8Lxcwo8uAl8YndZMHHyTiIB1H1MmMjyEDVOPLNzTQFc4=
 MIME-Version: 1.0
-References: <20180404093007.GI4082@hirez.programming.kicks-ass.net>
+Sender: linus971@gmail.com
+In-Reply-To: <20180404233111.GJ87376@google.com>
+References: <20180403180658.GE87376@google.com> <20180404093007.GI4082@hirez.programming.kicks-ass.net>
  <20180404191724.GF87376@google.com> <CAK8P3a1VFWYBymd3AeG1DwW++tCGsP9+vw6t8XSGHby2jmQPqA@mail.gmail.com>
  <20180404205848.GG87376@google.com> <CAK8P3a2tf3v6seq=OeyBakZ1ZXYzzL=tY=aHvKYv-GtD7sWeTA@mail.gmail.com>
  <20180404214639.GH87376@google.com> <CA+55aFwp8vRmf5p09nbunp6DfO+YvvWLj=FsU8KSW0ZwF6u80w@mail.gmail.com>
  <20180404221744.GI87376@google.com> <CA+55aFz+RcyPOTs3WM-FcwoQtgaotcBVqswma7qZ-3O2Fv__9Q@mail.gmail.com>
- <20180404233111.GJ87376@google.com> <20180405072017.GN4043@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180405072017.GN4043@hirez.programming.kicks-ass.net>
-From: James Y Knight <jyknight@google.com>
-Date: Thu, 05 Apr 2018 17:47:42 +0000
-Message-ID: <CAA2zVHocx8PNKk=Uxuh=nv6hO-w+u2hkWhsTPeWxLB_sNQ+bRg@mail.gmail.com>
+ <20180404233111.GJ87376@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 4 Apr 2018 17:05:25 -0700
+X-Google-Sender-Auth: vvA8Fb8YYDnj95s0eLd5C8-9-b4
+Message-ID: <CA+55aFyHzKg3GzTdW4Z+xC5u2FZ8HnduNFi3PYVTGoKCqpR6Dg@mail.gmail.com>
 Subject: Re: [GIT PULL] x86/build changes for v4.17
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mka@chromium.org, Linus Torvalds <torvalds@linux-foundation.org>, arnd@arndb.de,
-	Ingo Molnar <mingo@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-	Andrew Morton <akpm@linux-foundation.org>, Chandler Carruth <chandlerc@google.com>,
-	Stephen Hines <srhines@google.com>, Nick Desaulniers <ndesaulniers@google.com>,
-	Kees Cook <keescook@google.com>, groeck@chromium.org,
-	Greg Hackmann <ghackmann@google.com>, gregkh@linuxfoundation.org
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>, James Y Knight <jyknight@google.com>,
+	Chandler Carruth <chandlerc@google.com>, Stephen Hines <srhines@google.com>,
+	Nick Desaulniers <ndesaulniers@google.com>, Kees Cook <keescook@google.com>,
+	Guenter Roeck <groeck@chromium.org>, Greg Hackmann <ghackmann@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1596675801568391777?=
-X-GMAIL-MSGID: =?utf-8?q?1596929316138920643?=
+X-GMAIL-MSGID: =?utf-8?q?1596862472197829112?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-I think maybe you're confused; those functions do not appear to use
-__builtin_constant_p, which is the issue at hand. Clang's optimizer is of
-course not a complete joke...it can perfectly well optimize functions after
-inlining in order to not generate "shit code gen".
+On Wed, Apr 4, 2018 at 4:31 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> From some experiments it looks like clang, in difference to gcc, does
+> not treat constant values passed as parameters to inline function as
+> constants.
 
-GCC, however, mixes up the concept of a C "constant expression" with the
-results of running optimization passes such as inlining for its
-definition/implementation of __builtin_constant_p. Clang does not, and
-quite likely will not ever, do that.
+Yeah, I think gcc used to have those semantics a long time ago too.
 
-That said, I do believe there are ongoing discussions as to how to best
-provide a useful alternative which is less semantically strange, and not
-too difficult for to conditionally adopt for a gcc/clang-compatible
-codebase such as the kernel.
+Many of our __builtin_constant_p() uses are indeed just in macros, but
+certainly not all.
 
-On Thu, Apr 5, 2018 at 3:20 AM Peter Zijlstra <peterz@infradead.org> wrote:
+Other examples are found in our "fortified" string functions.
 
-> On Wed, Apr 04, 2018 at 04:31:11PM -0700, Matthias Kaehlcke wrote:
+There a clang build will likely simply miss some of the build-time
+fortification checks, and trigger them at runtime instead.
 
-> > From some experiments it looks like clang, in difference to gcc, does
-> > not treat constant values passed as parameters to inline function as
-> > constants.
+Of course, we hopefully don't *have* any build-time failures, because
+gcc will have caught them, so you won't care as long as clang is a
+secondary compiler, but long-term they'd be good.
 
-> Then you're also missing a heap of optimizations in code like
-> rb_erase_augmented() which is specifically constructed to take advantage
-> of constant propagation like that.
+> I'll ask our compiler folks to take a look, with lower priority than
+> other issues in this thread though.
 
-> Other sites where we expect that to happen is __mutex_lock_common(),
-> __update_load_sum() and a bunch of others. There isn't strictly a bug
-> here, but not doing that constant propagation will still result in shit
-> code gen.
+Ack. "asm goto" is way more important. The __builtin_constant_p()
+stuff tends to be for various peephole optimizations.
+
+Another example of that can be found in our x86 bit operations macros:
+
+  static __always_inline void
+  set_bit(long nr, volatile unsigned long *addr)
+  {
+        if (IS_IMMEDIATE(nr)) {
+                asm volatile(LOCK_PREFIX "orb %1,%0"
+                        : CONST_MASK_ADDR(nr, addr)
+                        : "iq" ((u8)CONST_MASK(nr))
+                        : "memory");
+        } else {
+                asm volatile(LOCK_PREFIX __ASM_SIZE(bts) " %1,%0"
+                        : BITOP_ADDR(addr) : "Ir" (nr) : "memory");
+        }
+  }
+
+where that IS_IMMEDIATE() hides a __builtin_constant_p(). But we could
+actually change that - for some reason the test_bit() case looks like
+this:
+
+  #define test_bit(nr, addr)                      \
+        (__builtin_constant_p((nr))             \
+         ? constant_test_bit((nr), (addr))      \
+         : variable_test_bit((nr), (addr)))
+
+which is much more straightforward anyway. I'm not quite sure why we
+did it that odd way anyway, but I bet it's just "hysterical raisins"
+along with the test_bit() not needing inline asm at all for the
+constant case.
+
+             Linus
