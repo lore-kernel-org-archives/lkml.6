@@ -1,71 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751780AbeDEQF2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 12:05:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33878 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751535AbeDEQFL (ORCPT
+        id S1751938AbeDEQFj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 12:05:39 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:21557 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751807AbeDEQFh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 12:05:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 895FB6076C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From: Lina Iyer <ilina@codeaurora.org>
-To: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v6 0/2] drivers/qcom: add Command DB support
-Date: Thu,  5 Apr 2018 10:04:57 -0600
-Message-Id: <20180405160459.16693-1-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.16.3
+        Thu, 5 Apr 2018 12:05:37 -0400
+X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0lfw3o0
+X-RZG-CLASS-ID: mo00
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: letux-kernel@openphoenux.org, linux-omap <linux-omap@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH] ARM: dts: omap3-gta04: Add fixed 26MHz clock as fck for twl
+Date: Thu,  5 Apr 2018 18:05:16 +0200
+Message-Id: <c0b35797744a71df9d8088508814675cc5f07710.1522944315.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.12.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v5:
-	- Remove indirection of command db start address
-	- Rebase on top of 4.16
+The board uses 26MHz oscillator for the twl4030 HFCLK.
+This way we will not depend on the bootloader to configure the
+CFG_BOOT:HFCLK_FREQ
 
-Changes since v4:
-        - Address comments from Stephen and Bjorn
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ arch/arm/boot/dts/omap3-gta04.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-These patches add support for reading a shared memory database in the newer
-QCOM SoCs called Command DB. With the new architecture on SDM845, shared
-resources like clocks, regulators etc., have dynamic properties. These
-properties may change based on external components, board configurations or
-available feature set. A remote processor detects these parameters and fills up
-the database with the resource and available state information. Platform
-drivers that need these shared resources will need to query this database to
-get the address and properties and vote for the state.
-
-The information in the database is static.  The database is read-only memory
-location that is available for Linux. A pre-defined string is used as a key into
-an entry in the database. Generally, platform drivers query the database only
-at init to get the information they need.
-
-[v1]: https://www.spinics.net/lists/linux-arm-msm/msg32462.html
-[v2]: https://lkml.org/lkml/2018/2/8/588
-[v3]: https://lkml.org/lkml/2018/2/16/842
-[v4]: https://patchwork.kernel.org/patch/10242935/
-[v5]: https://lkml.org/lkml/2018/3/14/787
-
-Lina Iyer (2):
-  drivers: qcom: add command DB driver
-  dt-bindings: introduce Command DB for QCOM SoCs
-
- .../bindings/reserved-memory/qcom,cmd-db.txt       |  37 +++
- drivers/of/platform.c                              |   1 +
- drivers/soc/qcom/Kconfig                           |   9 +
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/cmd-db.c                          | 310 +++++++++++++++++++++
- include/soc/qcom/cmd-db.h                          |  45 +++
- 6 files changed, 403 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.txt
- create mode 100644 drivers/soc/qcom/cmd-db.c
- create mode 100644 include/soc/qcom/cmd-db.h
-
---
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
+index 4170be70460e..ac830b917776 100644
+--- a/arch/arm/boot/dts/omap3-gta04.dtsi
++++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+@@ -30,6 +30,13 @@
+ 		display0 = &lcd;
+ 	};
+ 
++	/* fixed 26MHz oscillator */
++	hfclk_26m: oscillator {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <26000000>;
++	};
++
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 
+@@ -312,6 +319,9 @@
+ 		interrupts = <7>; /* SYS_NIRQ cascaded to intc */
+ 		interrupt-parent = <&intc>;
+ 
++		clocks = <&hfclk_26m>;
++		clock-names = "fck";
++
+ 		twl_audio: audio {
+ 			compatible = "ti,twl4030-audio";
+ 			ti,enable-vibra = <1>;
+-- 
+2.12.2
