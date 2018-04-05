@@ -1,95 +1,116 @@
-Return-Path: <pjones@redhat.com>
-X-Google-Smtp-Source: AIpwx4/IF6cFZRLaid8giAjRBEebFYmjq1ZPkKE8TqhIu8ExjiWmJOgPFB9UULTNwiozxt6t2i4I
-ARC-Seal: i=1; a=rsa-sha256; t=1522785216; cv=none;
+Return-Path: <hdegoede@redhat.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522929089; cv=none;
         d=google.com; s=arc-20160816;
-        b=frwmCgLP2Svl58Tycxd/AT4c2o5M1SwDz/4v74L6KO8VfflGVb9WT6W5STcMt7llCI
-         aSOpATpBEE+2eMSfpBBUemhr0P+ciHqG5vuSl2K4q3RbNlVFrKzXYOmwD/C3a8nus1C4
-         EEfjTVhVtfwiraKpDPylvPPsunmUrz4AGIk6N4g2sPHBuEDh34KggPIAtGyPai3Zxi0x
-         h5jdgINTMDwqkSiBb0xGJ1iH0u4SlfqqyORdBtRtONxxw/fOcDIF3b4AcNZl/Nvg5rIM
-         sEK4YFfJ70jXzoppyQLc3AgB0mgn0v0qk9FSiFlxy9gbqFVa36qxtbIcwUg2A0MlFOjy
-         YjNg==
+        b=IcRo51JdgDR2diuDHS1Vg2oXETrFz/gNNUYMFkfYOy8L2GLhhtbx6J/kxXcVip5lQX
+         nyza2KhYkD1l01nAkRoJBUZ9X1VhcVlmf4VvUDUYkfmCLLibrEf9f+ivhAc93jKEdEgu
+         u0MUEvKrMO+WneVzRQF+qKiEsfssl9TXd2bwG0H8tcqXIzhAHCMnz1EJvNe5CzJUw99S
+         eI8bGheAAnNrPqCvM2Sfuiw1wEXJzOODXiUH/T1bCVop+TYabuy4jyhanLVPQi9ui3Eo
+         RT4DDkPRA3lsxb5rHFdgRcFpz0+nrLYBMGKqePBgBVsLxw4PWJcLXnyvK9gX9wIQsyUb
+         i0vw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=TnE6LmlqoREm9nppaIJ2pnPK2WM6TCUppuQ7QZ2veJk=;
-        b=QcQBrt/ldlFr6NHoio0Pcie6RTpNoJNvt5dHk+T3s+bxJxOf2qEv1ovg2OvHN+MF2U
-         r75nmNan3eIPjp3q8eUX+U1BT3y2qdogPFuPkDSdayifd+Tdn47WYDfWm3yxY5FbuxXv
-         PW5k8uDBB/fajDSuETrN4Uuy8FkL7zyZMYwFGABho8buyZ6foLvVDfrt6rYsT29i2GRF
-         lNOXmYdv6g5eG9IYnZOOD5tbtL0lyWhMxKvPTH+U5+jBjSxrpBziz8n0gM2JfPUBfuF9
-         1wXm1ot0HswU075CdJPIkLmRfi6wvmnT4svhcOSqVeKNI+O8a+rGfbFMuco2AV623yzk
-         xg9g==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=bbaUvJKgBfwFsxHGlQqdojxB1GfqQmrQfZIboIwU8Z0=;
+        b=au9OahKSfx47FBg1WjQ6zGt8iDy79taCsifJzLu+Huj/076Gpa5mPSRE6JhLudMwAB
+         NW5VMJ6gk3EHgOZk6Xu+iqrryWQ+luTBFVsvhbl3+CuqAlkJb4t6vA/UpizMkSGMaM4W
+         s9f7SwGqYITIHiXmVeX8ieCHxaNPjrSEcItgX3yjoHp/lj5slJAmBWYnLRqhzja0u/k8
+         CKGv8/O035cmt6s0PD8B5b+T+7AeKtD8ORmMzpO4mRp55dBQ1ksl/bNW2I2zDtPA6PLv
+         O3ItB0mXlh2AWbj5ZsmnHKs6JO0ewsIv+bA7OaP2MMjqk2Pi5YA4Rl1fECRxF1653/Xo
+         mUww==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of pjones@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=pjones@redhat.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of pjones@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=pjones@redhat.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Tue, 3 Apr 2018 12:53:34 -0700
-From: Peter Jones <pjones@redhat.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org, Dave Olsthoorn <dave@bewaar.me>,
-	x86@kernel.org, linux-efi@vger.kernel.org
+X-Google-Smtp-Source: AIpwx4/SQuZCW2ZOuaTG2YMcTpH3QMPUpPXzTmr4GlshxwvMpump0zddg1cdgcyRJgFj8LaDjZaDag==
 Subject: Re: [PATCH 2/2] efi: Add embedded peripheral firmware support
-Message-ID: <20180403195332.tezh6alee26aic2s@redhat.com>
+To: Peter Jones <pjones@redhat.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+ "Luis R . Rodriguez" <mcgrof@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+ Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org, linux-efi@vger.kernel.org
 References: <20180331121944.8618-1-hdegoede@redhat.com>
  <20180331121944.8618-2-hdegoede@redhat.com>
+ <20180403195332.tezh6alee26aic2s@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <b43da07e-5ca6-ce06-c786-5dcbbfc4b300@redhat.com>
+Date: Thu, 5 Apr 2018 13:51:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180331121944.8618-2-hdegoede@redhat.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180403195332.tezh6alee26aic2s@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596455691844480056?=
-X-GMAIL-MSGID: =?utf-8?q?1596756031294781442?=
+X-GMAIL-MSGID: =?utf-8?q?1596906893428029257?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Mar 31, 2018 at 02:19:44PM +0200, Hans de Goede wrote:
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index fddc5f706fd2..1a5ea950f58f 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -455,6 +455,7 @@ int __init efi_mem_desc_lookup(u64 phys_addr, efi_memory_desc_t *out_md)
->  		u64 end;
->  
->  		if (!(md->attribute & EFI_MEMORY_RUNTIME) &&
-> +		    md->type != EFI_BOOT_SERVICES_CODE &&
->  		    md->type != EFI_BOOT_SERVICES_DATA &&
->  		    md->type != EFI_RUNTIME_SERVICES_DATA) {
->  			continue;
+Hi,
 
-Might be worth adding a comment here to ensure nobody comes along later
-and adds something like EFI_BOOT_LOADER_DATA or other stuff that's
-allocated later here.  I don't want to accidentally patch our way into
-having the ability to stumble across a firmware blob somebody dumped
-into the middle of a grub config file, especially since you only need to
-collide crc32 (within the same length) to pre-alias a match.
+On 03-04-18 21:53, Peter Jones wrote:
+> On Sat, Mar 31, 2018 at 02:19:44PM +0200, Hans de Goede wrote:
+>> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+>> index fddc5f706fd2..1a5ea950f58f 100644
+>> --- a/drivers/firmware/efi/efi.c
+>> +++ b/drivers/firmware/efi/efi.c
+>> @@ -455,6 +455,7 @@ int __init efi_mem_desc_lookup(u64 phys_addr, efi_memory_desc_t *out_md)
+>>   		u64 end;
+>>   
+>>   		if (!(md->attribute & EFI_MEMORY_RUNTIME) &&
+>> +		    md->type != EFI_BOOT_SERVICES_CODE &&
+>>   		    md->type != EFI_BOOT_SERVICES_DATA &&
+>>   		    md->type != EFI_RUNTIME_SERVICES_DATA) {
+>>   			continue;
+> 
+> Might be worth adding a comment here to ensure nobody comes along later
+> and adds something like EFI_BOOT_LOADER_DATA or other stuff that's
+> allocated later here.  I don't want to accidentally patch our way into
+> having the ability to stumble across a firmware blob somebody dumped
+> into the middle of a grub config file, especially since you only need to
+> collide crc32 (within the same length) to pre-alias a match.
 
-...
-> +static int __init efi_check_md_for_embedded_firmware(
-> +	efi_memory_desc_t *md, const struct embedded_fw_desc *desc)
-> +{
-...
-> +	if (found_fw_count >= MAX_EMBEDDED_FIRMWARES) {
-> +		pr_err("Error already have %d embedded firmwares\n",
-> +		       MAX_EMBEDDED_FIRMWARES);
-> +		return -ENOSPC;
-> +	}
+As discussed elsewhere in the thread, I'm going to switch to doing a
+kmemdup on the found firmware, so this chunk will go away :)
 
-Doesn't seem like this needs to be pr_err(); after all we have already
-found a valid match, so the firmware vendor has done something
-moderately stupid, but we have a firmware that will probably work.  Of
-course it still needs to return != 0, but pr_warn() or even pr_info()
-seems more reasonable.
+> 
+> ...
+>> +static int __init efi_check_md_for_embedded_firmware(
+>> +	efi_memory_desc_t *md, const struct embedded_fw_desc *desc)
+>> +{
+> ...
+>> +	if (found_fw_count >= MAX_EMBEDDED_FIRMWARES) {
+>> +		pr_err("Error already have %d embedded firmwares\n",
+>> +		       MAX_EMBEDDED_FIRMWARES);
+>> +		return -ENOSPC;
+>> +	}
+> 
+> Doesn't seem like this needs to be pr_err(); after all we have already
+> found a valid match, so the firmware vendor has done something
+> moderately stupid, but we have a firmware that will probably work.  Of
+> course it still needs to return != 0, but pr_warn() or even pr_info()
+> seems more reasonable.
 
-Aside from those nits, looks good to me.
+We break from the search loop as soon as a firmware is found, this can
+only trigger if someone adds a second firmware to the dmi data and then
+does not update MAX_EMBEDDED_FIRMWARES...
 
-Reviewed-by: Peter Jones <pjones@redhat.com>
+But mcgrof wants me to switch to a linked list here, so this is going
+away too.
 
--- 
-  Peter
+> Aside from those nits, looks good to me.
+> 
+> Reviewed-by: Peter Jones <pjones@redhat.com>
+
+Thanks, but v2 is going to have so much changes that I don't feel
+comfortable bringing this forward to v2.
+
+Regards,
+
+Hans
