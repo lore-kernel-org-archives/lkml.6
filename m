@@ -1,114 +1,132 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2880998-1522936208-2-17421892017547219424
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: yes ("Address greg@kroah.com in From header is in addressbook");
- in-addressbook; shared/fdfaecbe-d8f0-4518-a17e-0d89bf6dc529 ("Greg")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522936208; b=td2Oa6YOTObyuFEdN0vZsb1TuNoJgvLnOkTpgKHJHcISkLyUHR
-    V0If9hkt2yl+EyJyZtPOz512yE9bewYAI5E40SZNNHj7o9rPw0p4n67k6JSs298S
-    jjb9IrSTZSnAywquRn6uibtntRYqMih4RHbCIUj8QMsYYwN0liqe4pLKfcqc4rdY
-    bmVKPY10hBHYBa+il+ty/GxTbLuUh0FD3QrGZdwIk3mDNV1nA4pgMzzms3DMjioH
-    Vl6r7iOoLZFly6dSAqoXlptKiUyINPDDkTXcbT39SZF61iJACZm4Bb3mugR1L4ZS
-    tx+jgMy/UIfFN8nBOvf3h6ptoc3AwZ/WNTFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1522936208; bh=yyRnqebxchf1pqJBXeBvL285XG456I
-    R6OAmjNOFV2tA=; b=JQz9GzwWKPMJFaVZvKnfREBRNoXGD1430YZ4pNicmXlZ8M
-    MVXbTJz2Y6kSV8tdPBBEBRDqxUwWSNFbkA0XRp/rAhblL1YGuhyv9/UjTPMQy9fN
-    u997PIjYnsUjzCOcPRKMJUgdibRgwsgkodYlP3rLSwD9Nl7VKwN9GatjDJqad0ig
-    U+AVJxkj/6L3L19mA07Dhdba2E7ilmXFEfOyxw23YhPj1mJLUUAf421P5zWu3B4u
-    8PEj5mTaK2k8JpmGYryqHhOee1vfNHrtHymgyI49YIqWGfhsWYseGUTe9Lt3cNlJ
-    UdS2cPPX2vpC7cRCh4lP+mUu5aBs5Nn702RpZr2Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=D+ob4/8f x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kroah.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=D+ob4/8f x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kroah.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOa8d1ZHYC7L83jwRaiyPwQe4dpvOLwSrVFFQY4VIVq5+C6cQOoN0NSFDHwD/LDzNy5jpCzLE34my1CxFiJZOuTsVhSCQYStTuaj9tvOB4Sa/Nbo9WZO
-    BB23M3uk3/ldCgdw67JpGH91bybI3b8+0i81TWY8SoGqGqW8LVn1sjSMJ21/LoNCG/Fq3+AIeC3bWPKgirpTv9tiR8qO89GV768ezAwP5ti5dPbCxcc3c4UN
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=uumCjD83CAN6e9AYI3YA:9 a=CjuIK1q_8ugA:10
-    a=1R1Xb7_w0-cA:10 a=OREKyDgYLcYA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AIpwx4+n7Nuecq9cJvSSazF0N9UJ65AbP94PGzdoM+bQBRggo8ZEnjAov1WlMd5kUI0U+0tspAmv
+ARC-Seal: i=1; a=rsa-sha256; t=1522913965; cv=none;
+        d=google.com; s=arc-20160816;
+        b=WmgyehkqEQPl/suq+PtqFdhW6ZSCtFBzUPx6b29Hnzr4w/S8VALD+Q9/OIsTKVznKU
+         sd+fuyNPSglTNA3giB01HgxBIJE2ZjfJWKifkmZHzgxScS/SCXMiNLaAaDY2G3K/Q1LS
+         kqDqAZbJB7Bhrm2UHGx57VZ4AYO58INvuXcMjbFyGzNQdMu7+jVTfQB/cSZ3xi2ZNm8P
+         jVkhbCPyfAvr1x7vvffxOt6ytbfqMJMXuVRK4EkFwklt+qEGH26VjRlnadxH7D8JdJq+
+         +ZFoaQp218ZQgl9QWH1UN45bSzT471SbBq1yX7FEKGW2njByUVyzyvb/WuMckRGt8j0M
+         PPAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-id:precedence:sender:content-transfer-encoding:mime-version
+         :references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=q1WlORaGygP4jy8mju4JkaNtWjbNrGVw8tbrHVKudrk=;
+        b=fT/14J6GEvlo8dxZjONVY2IK3t4RhTSBRd7NTc4Z2e0HyF+VTZ4oF7u7nWwaHgwmtu
+         VC/rHTeiHI8x1uUYdIRf9XGfvMeSj4lZ2C88GxSjU+qmrJq5OuKFXQxEYwaY1lHJBVnx
+         Nzq/cWW91Y3nrnlG/QrqB+GstiT+AF8R80iH4oSeWAz+hBMnGWYhvpyIMZFrUR391gie
+         yeeGzkHchHom+C6hlbw4KF0Hk2KHdeOutoGDxb9++VEzIiOJkUd/4PeYNC4+jK9YPgGu
+         Xxo0ZH2EIjf06rv49HMVXYdXP52aL28LrhhLr5TZIqfDIcKwN1VMc8uvginVz8BusAW3
+         I9Hg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=jrtjesCi;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=jrtjesCi;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751406AbeDENuF (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 5 Apr 2018 09:50:05 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:58765 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751165AbeDENuE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 5 Apr 2018 09:50:04 -0400
-X-ME-Sender: <xms:iynGWjmlNNT-0drhwNQchtTM9GRycu7arzvwD7Bjl2W56Hm_s4tUMg>
-Date: Thu, 5 Apr 2018 15:50:02 +0200
-From: Greg KH <greg@kroah.com>
-To: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        aarcange@redhat.com, minchan@kernel.org,
-        kirill.shutemov@linux.intel.com, linux-mm@kvack.org,
-        hughd@google.com, borntraeger@de.ibm.com,
-        gerald.schaefer@de.ibm.com, stable@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] mm/ksm: fix inconsistent accounting of zero pages
-Message-ID: <20180405135002.GA23486@kroah.com>
-References: <1522931274-15552-1-git-send-email-imbrenda@linux.vnet.ibm.com>
+        id S1751195AbeDEHjN (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 5 Apr 2018 03:39:13 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50676 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751104AbeDEHjM (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 5 Apr 2018 03:39:12 -0400
+From: Anders Roxell <anders.roxell@linaro.org>
+To: shuah@kernel.org, pintu.ping@gmail.com
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v2] selftests/android/ion: fix heap_type may be uninitialized
+Date: Thu,  5 Apr 2018 09:39:07 +0200
+Message-Id: <20180405073907.30615-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180308134845.32409-1-anders.roxell@linaro.org>
+References: <20180308134845.32409-1-anders.roxell@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522931274-15552-1-git-send-email-imbrenda@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594377569744869523?=
+X-GMAIL-MSGID: =?utf-8?q?1596891034393035757?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 05, 2018 at 02:27:54PM +0200, Claudio Imbrenda wrote:
-> When using KSM with use_zero_pages, we replace anonymous pages
-> containing only zeroes with actual zero pages, which are not anonymous.
-> We need to do proper accounting of the mm counters, otherwise we will
-> get wrong values in /proc and a BUG message in dmesg when tearing down
-> the mm.
-> 
-> Fixes: e86c59b1b1 ("mm/ksm: improve deduplication of zero pages with colouring")
-> 
-> Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
-> ---
->  mm/ksm.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+gcc warns that 'heap_type' is not initialized if we don't come through
+any of the two 'case' statesments before:
 
-<formletter>
+ionapp_export.c:91:2: warning: ‘heap_type’ may be used uninitialized in
+this function [-Wmaybe-uninitialized]
+  printf("heap_type: %ld, heap_size: %ld\n", heap_type, heap_size);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+In the current code, we initialize the heap_type to -1 before the 'case'
+statements. We also change the print_usage function to state that
+heap_type and heap_size isn't optional, they are mandatory.
 
-</formletter>
+Fixes: 47a18c42d992 ("android/ion: userspace test utility for ion buffer sharing")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ tools/testing/selftests/android/ion/ionapp_export.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/tools/testing/selftests/android/ion/ionapp_export.c b/tools/testing/selftests/android/ion/ionapp_export.c
+index a944e72621a9..67a0263a7f28 100644
+--- a/tools/testing/selftests/android/ion/ionapp_export.c
++++ b/tools/testing/selftests/android/ion/ionapp_export.c
+@@ -31,8 +31,10 @@
+ 
+ void print_usage(int argc, char *argv[])
+ {
+-	printf("Usage: %s [-h <help>] [-i <heap id>] [-s <size in bytes>]\n",
++	printf("Usage: %s [-h <help>] -i <heap id> -s <size in bytes>\n",
+ 		argv[0]);
++	printf("    Supported heap id's 0 or 1\n");
++	printf("    Heap size > 0\n");
+ }
+ 
+ int main(int argc, char *argv[])
+@@ -40,7 +42,8 @@ int main(int argc, char *argv[])
+ 	int opt, ret, status, heapid;
+ 	int sockfd, client_fd, shared_fd;
+ 	unsigned char *map_buf;
+-	unsigned long map_len, heap_type, heap_size, flags;
++	unsigned long map_len, heap_size, flags;
++	long heap_type;
+ 	struct ion_buffer_info info;
+ 	struct socket_info skinfo;
+ 
+@@ -50,6 +53,7 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ 	heap_size = 0;
++	heap_type = -1;
+ 	flags = 0;
+ 
+ 	while ((opt = getopt(argc, argv, "hi:s:")) != -1) {
+@@ -68,7 +72,7 @@ int main(int argc, char *argv[])
+ 				heap_type = ION_HEAP_TYPE_SYSTEM_CONTIG;
+ 				break;
+ 			default:
+-				printf("ERROR: heap type not supported\n");
++				print_usage(argc, argv);
+ 				exit(1);
+ 			}
+ 			break;
+@@ -82,8 +86,7 @@ int main(int argc, char *argv[])
+ 		}
+ 	}
+ 
+-	if (heap_size <= 0) {
+-		printf("heap_size cannot be 0\n");
++	if (heap_size <= 0 || heap_type < 0) {
+ 		print_usage(argc, argv);
+ 		exit(1);
+ 	}
+-- 
+2.11.0
+
