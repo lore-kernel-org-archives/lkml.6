@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752381AbeDEKCA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 06:02:00 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60596 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751443AbeDEJu0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751466AbeDEJu0 (ORCPT <rfc822;w@1wt.eu>);
         Thu, 5 Apr 2018 05:50:26 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60558 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeDEJuW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 05:50:22 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -25,9 +25,9 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         hshi@chromium.org,
         =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 06/30] drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
-Date: Thu,  5 Apr 2018 11:49:36 +0200
-Message-Id: <20180405095000.9756-7-enric.balletbo@collabora.com>
+Subject: [PATCH v6 04/30] drm/bridge: analogix_dp: Retry bridge enable when it failed
+Date: Thu,  5 Apr 2018 11:49:34 +0200
+Message-Id: <20180405095000.9756-5-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
 References: <20180405095000.9756-1-enric.balletbo@collabora.com>
@@ -40,64 +40,201 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zain wang <wzz@rock-chips.com>
 
-Following the correct power up sequence:
-dp_pd=ff => dp_pd=7f => wait 10us => dp_pd=00
+When we enable bridge failed, we have to retry it, otherwise we would get
+the abnormal display.
 
 Cc: Stéphane Marchesin <marcheu@chromium.org>
 Signed-off-by: zain wang <wzz@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 10 ++++++++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |  3 +++
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 65 +++++++++++++++++-----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  3 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  5 +-
+ 3 files changed, 56 insertions(+), 17 deletions(-)
 
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 85dbb1ca9886..bf805f156272 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -43,8 +43,10 @@ struct bridge_init {
+ 	struct device_node *node;
+ };
+ 
+-static void analogix_dp_init_dp(struct analogix_dp_device *dp)
++static int analogix_dp_init_dp(struct analogix_dp_device *dp)
+ {
++	int ret;
++
+ 	analogix_dp_reset(dp);
+ 
+ 	analogix_dp_swreset(dp);
+@@ -56,10 +58,13 @@ static void analogix_dp_init_dp(struct analogix_dp_device *dp)
+ 	analogix_dp_enable_sw_function(dp);
+ 
+ 	analogix_dp_config_interrupt(dp);
+-	analogix_dp_init_analog_func(dp);
++	ret = analogix_dp_init_analog_func(dp);
++	if (ret)
++		return ret;
+ 
+ 	analogix_dp_init_hpd(dp);
+ 	analogix_dp_init_aux(dp);
++	return 0;
+ }
+ 
+ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
+@@ -918,7 +923,7 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static void analogix_dp_commit(struct analogix_dp_device *dp)
++static int analogix_dp_commit(struct analogix_dp_device *dp)
+ {
+ 	int ret;
+ 
+@@ -928,11 +933,10 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 			DRM_ERROR("failed to disable the panel\n");
+ 	}
+ 
+-	ret = readx_poll_timeout(analogix_dp_train_link, dp, ret, !ret, 100,
+-				 DP_TIMEOUT_TRAINING_US * 5);
++	ret = analogix_dp_train_link(dp);
+ 	if (ret) {
+ 		dev_err(dp->dev, "unable to do link train, ret=%d\n", ret);
+-		return;
++		return ret;
+ 	}
+ 
+ 	analogix_dp_enable_scramble(dp, 1);
+@@ -953,6 +957,7 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 	dp->psr_enable = analogix_dp_detect_sink_psr(dp);
+ 	if (dp->psr_enable)
+ 		analogix_dp_enable_sink_psr(dp);
++	return 0;
+ }
+ 
+ /*
+@@ -1149,12 +1154,9 @@ static void analogix_dp_bridge_pre_enable(struct drm_bridge *bridge)
+ 		DRM_ERROR("failed to setup the panel ret = %d\n", ret);
+ }
+ 
+-static void analogix_dp_bridge_enable(struct drm_bridge *bridge)
++static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ {
+-	struct analogix_dp_device *dp = bridge->driver_private;
+-
+-	if (dp->dpms_mode == DRM_MODE_DPMS_ON)
+-		return;
++	int ret;
+ 
+ 	pm_runtime_get_sync(dp->dev);
+ 
+@@ -1162,11 +1164,46 @@ static void analogix_dp_bridge_enable(struct drm_bridge *bridge)
+ 		dp->plat_data->power_on(dp->plat_data);
+ 
+ 	phy_power_on(dp->phy);
+-	analogix_dp_init_dp(dp);
++
++	ret = analogix_dp_init_dp(dp);
++	if (ret)
++		goto out_dp_init;
++
++	ret = analogix_dp_commit(dp);
++	if (ret)
++		goto out_dp_init;
++
+ 	enable_irq(dp->irq);
+-	analogix_dp_commit(dp);
++	return 0;
+ 
+-	dp->dpms_mode = DRM_MODE_DPMS_ON;
++out_dp_init:
++	phy_power_off(dp->phy);
++	if (dp->plat_data->power_off)
++		dp->plat_data->power_off(dp->plat_data);
++	pm_runtime_put_sync(dp->dev);
++
++	return ret;
++}
++
++static void analogix_dp_bridge_enable(struct drm_bridge *bridge)
++{
++	struct analogix_dp_device *dp = bridge->driver_private;
++	int timeout_loop = 0;
++
++	if (dp->dpms_mode == DRM_MODE_DPMS_ON)
++		return;
++
++	while (timeout_loop < MAX_PLL_LOCK_LOOP) {
++		if (analogix_dp_set_bridge(dp) == 0) {
++			dp->dpms_mode = DRM_MODE_DPMS_ON;
++			return;
++		}
++		dev_err(dp->dev, "failed to set bridge, retry: %d\n",
++			timeout_loop);
++		timeout_loop++;
++		usleep_range(10, 11);
++	}
++	dev_err(dp->dev, "too many times retry set bridge, give it up\n");
+ }
+ 
+ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+index 403ff853464b..769255dc6e99 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+@@ -19,6 +19,7 @@
+ #define DP_TIMEOUT_LOOP_COUNT 100
+ #define MAX_CR_LOOP 5
+ #define MAX_EQ_LOOP 5
++#define MAX_PLL_LOCK_LOOP 5
+ 
+ /* Training takes 22ms if AUX channel comm fails. Use this as retry interval */
+ #define DP_TIMEOUT_TRAINING_US			22000
+@@ -197,7 +198,7 @@ void analogix_dp_set_pll_power_down(struct analogix_dp_device *dp, bool enable);
+ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+ 				       enum analog_power_block block,
+ 				       bool enable);
+-void analogix_dp_init_analog_func(struct analogix_dp_device *dp);
++int analogix_dp_init_analog_func(struct analogix_dp_device *dp);
+ void analogix_dp_init_hpd(struct analogix_dp_device *dp);
+ void analogix_dp_force_hpd(struct analogix_dp_device *dp);
+ enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp);
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index b47c5af43560..bb72f8b0e603 100644
+index e78c861b9e06..b47c5af43560 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -321,10 +321,16 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
- 		break;
- 	case POWER_ALL:
- 		if (enable) {
--			reg = DP_PHY_PD | AUX_PD | CH3_PD | CH2_PD |
--				CH1_PD | CH0_PD;
-+			reg = DP_ALL_PD;
- 			writel(reg, dp->reg_base + phy_pd_addr);
- 		} else {
-+			reg = DP_ALL_PD;
-+			writel(reg, dp->reg_base + phy_pd_addr);
-+			usleep_range(10, 15);
-+			reg &= ~DP_INC_BG;
-+			writel(reg, dp->reg_base + phy_pd_addr);
-+			usleep_range(10, 15);
-+
- 			writel(0x00, dp->reg_base + phy_pd_addr);
+@@ -333,7 +333,7 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+ 	}
+ }
+ 
+-void analogix_dp_init_analog_func(struct analogix_dp_device *dp)
++int analogix_dp_init_analog_func(struct analogix_dp_device *dp)
+ {
+ 	u32 reg;
+ 	int timeout_loop = 0;
+@@ -355,7 +355,7 @@ void analogix_dp_init_analog_func(struct analogix_dp_device *dp)
+ 			timeout_loop++;
+ 			if (DP_TIMEOUT_LOOP_COUNT < timeout_loop) {
+ 				dev_err(dp->dev, "failed to get pll lock status\n");
+-				return;
++				return -ETIMEDOUT;
+ 			}
+ 			usleep_range(10, 20);
  		}
- 		break;
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-index 40200c652533..9602668669f4 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-@@ -342,12 +342,15 @@
- #define DP_PLL_REF_BIT_1_2500V			(0x7 << 0)
+@@ -366,6 +366,7 @@ void analogix_dp_init_analog_func(struct analogix_dp_device *dp)
+ 	reg &= ~(SERDES_FIFO_FUNC_EN_N | LS_CLK_DOMAIN_FUNC_EN_N
+ 		| AUX_FUNC_EN_N);
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_FUNC_EN_2);
++	return 0;
+ }
  
- /* ANALOGIX_DP_PHY_PD */
-+#define DP_INC_BG				(0x1 << 7)
-+#define DP_EXP_BG				(0x1 << 6)
- #define DP_PHY_PD				(0x1 << 5)
- #define AUX_PD					(0x1 << 4)
- #define CH3_PD					(0x1 << 3)
- #define CH2_PD					(0x1 << 2)
- #define CH1_PD					(0x1 << 1)
- #define CH0_PD					(0x1 << 0)
-+#define DP_ALL_PD				(0xff)
- 
- /* ANALOGIX_DP_PHY_TEST */
- #define MACRO_RST				(0x1 << 5)
+ void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp)
 -- 
 2.16.3
