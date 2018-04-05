@@ -1,1173 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753690AbeDEUdJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 16:33:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39754 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751365AbeDEUbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 16:31:25 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 17/20] afs: Locally edit directory data for
- mkdir/create/unlink/...
-From: David Howells <dhowells@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Thu, 05 Apr 2018 21:31:23 +0100
-Message-ID: <152296028324.31027.10766351262973381965.stgit@warthog.procyon.org.uk>
-In-Reply-To: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
-References: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
+        id S1753714AbeDEUdU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 16:33:20 -0400
+Received: from mail-pl0-f51.google.com ([209.85.160.51]:43356 "EHLO
+        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753399AbeDEUdS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 16:33:18 -0400
+X-Google-Smtp-Source: AIpwx4+bgmRj5vwZyapKk00jRoLI1cz5sZYlwpE8bOt75OmCW2NrFPLeyK0FmW1JdNb02Ob4dpiJhA==
+Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
+ unflattened to FDT
+To: Jan Kiszka <jan.kiszka@web.de>, Rob Herring <robh+dt@kernel.org>,
+        pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, laurent.pinchart+renesas@ideasonboard.com,
+        Jailhouse <jailhouse-dev@googlegroups.com>
+References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
+ <1520122673-11003-3-git-send-email-frowand.list@gmail.com>
+ <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
+ <7bbf615b-3cdd-6bb4-6918-33e48de4225d@gmail.com>
+ <a21dbee8-6e4e-9ceb-c798-dda43c2eae2d@web.de>
+ <d7e94a45-5d46-0491-e5dc-2b098a11c5b1@gmail.com>
+ <255dffbd-4ff1-42a4-033b-311d49339102@web.de>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <70c766c9-aa4b-d67c-37a0-795fc5bc228f@gmail.com>
+Date: Thu, 5 Apr 2018 13:33:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <255dffbd-4ff1-42a4-033b-311d49339102@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Locally edit the contents of an AFS directory upon a successful inode
-operation that modifies that directory (such as mkdir, create and unlink)
-so that we can avoid the current practice of re-downloading the directory
-after each change.
+On 04/05/18 12:38, Jan Kiszka wrote:
+> On 2018-04-05 21:28, Frank Rowand wrote:
+>> On 04/05/18 12:13, Jan Kiszka wrote:
+>>> On 2018-04-05 20:59, Frank Rowand wrote:
+>>>> Hi Jan,
+>>>>
+>>>> On 04/04/18 15:35, Jan Kiszka wrote:
+>>>>> Hi Frank,
+>>>>>
+>>>>> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
+>>>>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>>>>
+>>>>>> Move duplicating and unflattening of an overlay flattened devicetree
+>>>>>> (FDT) into the overlay application code.  To accomplish this,
+>>>>>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+>>>>>>
+>>>>>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+>>>>>> code, which is thus responsible for freeing the duplicate FDT.  The
+>>>>>> caller of of_overlay_fdt_apply() remains responsible for freeing the
+>>>>>> original FDT.
+>>>>>>
+>>>>>> The unflattened devicetree now belongs to devicetree code, which is
+>>>>>> thus responsible for freeing the unflattened devicetree.
+>>>>>>
+>>>>>> These ownership changes prevent early freeing of the duplicated FDT
+>>>>>> or the unflattened devicetree, which could result in use after free
+>>>>>> errors.
+>>>>>>
+>>>>>> of_overlay_fdt_apply() is a private function for the anticipated
+>>>>>> overlay loader.
+>>>>>
+>>>>> We are using of_fdt_unflatten_tree + of_overlay_apply in the
+>>>>> (out-of-tree) Jailhouse loader driver in order to register a virtual
+>>>>> device during hypervisor activation with Linux. The DT overlay is
+>>>>> created from a a template but modified prior to application to account
+>>>>> for runtime-specific parameters. See [1] for the current implementation.
+>>>>>
+>>>>> I'm now wondering how to model that scenario best with the new API.
+>>>>> Given that the loader lost ownership of the unflattened tree but the
+>>>>> modification API exist only for the that DT state, I'm not yet seeing a
+>>>>> clear solution. Should we apply the template in disabled form (status =
+>>>>> "disabled"), modify it, and then activate it while it is already applied?
+>>>>
+>>>> Thank you for the pointer to the driver - that makes it much easier to
+>>>> understand the use case and consider solutions.
+>>>>
+>>>> If you can make the changes directly on the FDT instead of on the
+>>>> expanded devicetree, then you could move to the new API.
+>>>
+>>> Are there some examples/references on how to edit FDTs in-place in the
+>>> kernel? I'd like to avoid writing the n-th FDT parser/generator.
+>>
+>> I don't know of any existing in-kernel edits of the FDT (but they might
+>> exist).  The functions to access an FDT are in libfdt, which is in
+>> scripts/dtc/libfdt/.
+>>
+> 
+> Ah, libfdt is available for kernel drivers as well. That looks like a
+> viable path on first sight. I'll try that and come back in case it does
+> not solve all issues.
+> 
+>>
+>>>>
+>>>> Looking at the driver, I see one potential issue with that approach.
+>>>> The property "interrupt-map" is added directly to the changeset
+>>>> instead of being an existing property in the overlay.  Is it possible
+>>>> to have this property in the overlay when needed?
+>>>
+>>> Well, the size of that property has a runtime dependency on the gic's
+>>> #address-cells. If that is easy to account for depends a bit on the
+>>> available FDT manipulation services. Or it would take multiple templates
+>>> to handle the different cases (0, 1, or 2 IIRC).
+>>
+>> If I understand create_vpci_of_overlay() correctly, it is assuming a
+>> fixed size of 4 cells.  Line 314 is: for (n = 0, cell = 0; n < 4; n++) {
+>>
+>> Off the top of my head, it is theoretically possible to create a property
+>> that can contain the largest possible size for the property, then shrink
+>> the size by inserting NOPs at the end of the property to shrink it.
+> 
+> Well, I even find fdt_appendprop which sounds like we could keep adding
+> that property on the fly.
+> 
+> How does memory management work with libfdt? Do I have to ensure that
+> the fdt is already backed by an area large enough also for it modified form?
 
-This is viable provided that the directory version number we get back from
-the modifying RPC op is exactly incremented by 1 from what we had
-previously.  The data in the directory contents is in a defined format that
-we have to parse locally to perform lookups and readdir, so modifying isn't
-a problem.
+I have not looked at those functions, so I don't know.
 
-If the edit fails, we just clear the VALID flag on the directory and it
-will be reloaded next time it is needed.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- fs/afs/Makefile            |    1 
- fs/afs/dir.c               |   83 ++++++-
- fs/afs/dir_edit.c          |  505 ++++++++++++++++++++++++++++++++++++++++++++
- fs/afs/fsclient.c          |   35 ++-
- fs/afs/inode.c             |    7 -
- fs/afs/internal.h          |   19 +-
- fs/afs/proc.c              |    4 
- include/trace/events/afs.h |   90 ++++++++
- 8 files changed, 715 insertions(+), 29 deletions(-)
- create mode 100644 fs/afs/dir_edit.c
-
-diff --git a/fs/afs/Makefile b/fs/afs/Makefile
-index 6a055423c192..532acae25453 100644
---- a/fs/afs/Makefile
-+++ b/fs/afs/Makefile
-@@ -12,6 +12,7 @@ kafs-objs := \
- 	cell.o \
- 	cmservice.o \
- 	dir.o \
-+	dir_edit.o \
- 	dynroot.o \
- 	file.o \
- 	flock.o \
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 9efaa1f53bd8..7701e382fa94 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -130,17 +130,26 @@ static bool afs_dir_check_page(struct afs_vnode *dvnode, struct page *page,
- 	qty /= sizeof(union afs_xdr_dir_block);
- 
- 	/* check them */
--	dbuf = page_address(page);
-+	dbuf = kmap(page);
- 	for (tmp = 0; tmp < qty; tmp++) {
- 		if (dbuf->blocks[tmp].hdr.magic != AFS_DIR_MAGIC) {
- 			printk("kAFS: %s(%lx): bad magic %d/%d is %04hx\n",
- 			       __func__, dvnode->vfs_inode.i_ino, tmp, qty,
- 			       ntohs(dbuf->blocks[tmp].hdr.magic));
- 			trace_afs_dir_check_failed(dvnode, off, i_size);
-+			kunmap(page);
- 			goto error;
- 		}
-+
-+		/* Make sure each block is NUL terminated so we can reasonably
-+		 * use string functions on it.  The filenames in the page
-+		 * *should* be NUL-terminated anyway.
-+		 */
-+		((u8 *)&dbuf->blocks[tmp])[AFS_DIR_BLOCK_SIZE - 1] = 0;
- 	}
- 
-+	kunmap(page);
-+
- checked:
- 	afs_stat_v(dvnode, n_read_dir);
- 	return true;
-@@ -1127,6 +1136,7 @@ static int afs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	struct afs_vnode *dvnode = AFS_FS_I(dir);
- 	struct afs_fid newfid;
- 	struct key *key;
-+	u64 data_version = dvnode->status.data_version;
- 	int ret;
- 
- 	mode |= S_IFDIR;
-@@ -1144,7 +1154,7 @@ static int afs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	if (afs_begin_vnode_operation(&fc, dvnode, key)) {
- 		while (afs_select_fileserver(&fc)) {
- 			fc.cb_break = dvnode->cb_break + dvnode->cb_s_break;
--			afs_fs_create(&fc, dentry->d_name.name, mode,
-+			afs_fs_create(&fc, dentry->d_name.name, mode, data_version,
- 				      &newfid, &newstatus, &newcb);
- 		}
- 
-@@ -1158,6 +1168,11 @@ static int afs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 		goto error_key;
- 	}
- 
-+	if (ret == 0 &&
-+	    test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags))
-+		afs_edit_dir_add(dvnode, &dentry->d_name, &newfid,
-+				 afs_edit_dir_for_create);
-+
- 	key_put(key);
- 	_leave(" = 0");
- 	return 0;
-@@ -1181,6 +1196,7 @@ static void afs_dir_remove_subdir(struct dentry *dentry)
- 		clear_nlink(&vnode->vfs_inode);
- 		set_bit(AFS_VNODE_DELETED, &vnode->flags);
- 		clear_bit(AFS_VNODE_CB_PROMISED, &vnode->flags);
-+		clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
- 	}
- }
- 
-@@ -1192,6 +1208,7 @@ static int afs_rmdir(struct inode *dir, struct dentry *dentry)
- 	struct afs_fs_cursor fc;
- 	struct afs_vnode *dvnode = AFS_FS_I(dir);
- 	struct key *key;
-+	u64 data_version = dvnode->status.data_version;
- 	int ret;
- 
- 	_enter("{%x:%u},{%pd}",
-@@ -1207,13 +1224,18 @@ static int afs_rmdir(struct inode *dir, struct dentry *dentry)
- 	if (afs_begin_vnode_operation(&fc, dvnode, key)) {
- 		while (afs_select_fileserver(&fc)) {
- 			fc.cb_break = dvnode->cb_break + dvnode->cb_s_break;
--			afs_fs_remove(&fc, dentry->d_name.name, true);
-+			afs_fs_remove(&fc, dentry->d_name.name, true,
-+				      data_version);
- 		}
- 
- 		afs_vnode_commit_status(&fc, dvnode, fc.cb_break);
- 		ret = afs_end_vnode_operation(&fc);
--		if (ret == 0)
-+		if (ret == 0) {
- 			afs_dir_remove_subdir(dentry);
-+			if (test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags))
-+				afs_edit_dir_remove(dvnode, &dentry->d_name,
-+						    afs_edit_dir_for_rmdir);
-+		}
- 	}
- 
- 	key_put(key);
-@@ -1278,6 +1300,7 @@ static int afs_unlink(struct inode *dir, struct dentry *dentry)
- 	struct afs_vnode *dvnode = AFS_FS_I(dir), *vnode;
- 	struct key *key;
- 	unsigned long d_version = (unsigned long)dentry->d_fsdata;
-+	u64 data_version = dvnode->status.data_version;
- 	int ret;
- 
- 	_enter("{%x:%u},{%pd}",
-@@ -1304,7 +1327,8 @@ static int afs_unlink(struct inode *dir, struct dentry *dentry)
- 	if (afs_begin_vnode_operation(&fc, dvnode, key)) {
- 		while (afs_select_fileserver(&fc)) {
- 			fc.cb_break = dvnode->cb_break + dvnode->cb_s_break;
--			afs_fs_remove(&fc, dentry->d_name.name, false);
-+			afs_fs_remove(&fc, dentry->d_name.name, false,
-+				      data_version);
- 		}
- 
- 		afs_vnode_commit_status(&fc, dvnode, fc.cb_break);
-@@ -1313,6 +1337,10 @@ static int afs_unlink(struct inode *dir, struct dentry *dentry)
- 			ret = afs_dir_remove_link(
- 				dentry, key, d_version,
- 				(unsigned long)dvnode->status.data_version);
-+		if (ret == 0 &&
-+		    test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags))
-+			afs_edit_dir_remove(dvnode, &dentry->d_name,
-+					    afs_edit_dir_for_unlink);
- 	}
- 
- error_key:
-@@ -1334,6 +1362,7 @@ static int afs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 	struct afs_vnode *dvnode = AFS_FS_I(dir);
- 	struct afs_fid newfid;
- 	struct key *key;
-+	u64 data_version = dvnode->status.data_version;
- 	int ret;
- 
- 	mode |= S_IFREG;
-@@ -1355,7 +1384,7 @@ static int afs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 	if (afs_begin_vnode_operation(&fc, dvnode, key)) {
- 		while (afs_select_fileserver(&fc)) {
- 			fc.cb_break = dvnode->cb_break + dvnode->cb_s_break;
--			afs_fs_create(&fc, dentry->d_name.name, mode,
-+			afs_fs_create(&fc, dentry->d_name.name, mode, data_version,
- 				      &newfid, &newstatus, &newcb);
- 		}
- 
-@@ -1369,6 +1398,10 @@ static int afs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 		goto error_key;
- 	}
- 
-+	if (test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags))
-+		afs_edit_dir_add(dvnode, &dentry->d_name, &newfid,
-+				 afs_edit_dir_for_create);
-+
- 	key_put(key);
- 	_leave(" = 0");
- 	return 0;
-@@ -1390,10 +1423,12 @@ static int afs_link(struct dentry *from, struct inode *dir,
- 	struct afs_fs_cursor fc;
- 	struct afs_vnode *dvnode, *vnode;
- 	struct key *key;
-+	u64 data_version;
- 	int ret;
- 
- 	vnode = AFS_FS_I(d_inode(from));
- 	dvnode = AFS_FS_I(dir);
-+	data_version = dvnode->status.data_version;
- 
- 	_enter("{%x:%u},{%x:%u},{%pd}",
- 	       vnode->fid.vid, vnode->fid.vnode,
-@@ -1420,7 +1455,7 @@ static int afs_link(struct dentry *from, struct inode *dir,
- 		while (afs_select_fileserver(&fc)) {
- 			fc.cb_break = dvnode->cb_break + dvnode->cb_s_break;
- 			fc.cb_break_2 = vnode->cb_break + vnode->cb_s_break;
--			afs_fs_link(&fc, vnode, dentry->d_name.name);
-+			afs_fs_link(&fc, vnode, dentry->d_name.name, data_version);
- 		}
- 
- 		afs_vnode_commit_status(&fc, dvnode, fc.cb_break);
-@@ -1436,6 +1471,10 @@ static int afs_link(struct dentry *from, struct inode *dir,
- 		goto error_key;
- 	}
- 
-+	if (test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags))
-+		afs_edit_dir_add(dvnode, &dentry->d_name, &vnode->fid,
-+				 afs_edit_dir_for_link);
-+
- 	key_put(key);
- 	_leave(" = 0");
- 	return 0;
-@@ -1459,6 +1498,7 @@ static int afs_symlink(struct inode *dir, struct dentry *dentry,
- 	struct afs_vnode *dvnode = AFS_FS_I(dir);
- 	struct afs_fid newfid;
- 	struct key *key;
-+	u64 data_version = dvnode->status.data_version;
- 	int ret;
- 
- 	_enter("{%x:%u},{%pd},%s",
-@@ -1483,7 +1523,8 @@ static int afs_symlink(struct inode *dir, struct dentry *dentry,
- 	if (afs_begin_vnode_operation(&fc, dvnode, key)) {
- 		while (afs_select_fileserver(&fc)) {
- 			fc.cb_break = dvnode->cb_break + dvnode->cb_s_break;
--			afs_fs_symlink(&fc, dentry->d_name.name, content,
-+			afs_fs_symlink(&fc, dentry->d_name.name,
-+				       content, data_version,
- 				       &newfid, &newstatus);
- 		}
- 
-@@ -1497,6 +1538,10 @@ static int afs_symlink(struct inode *dir, struct dentry *dentry,
- 		goto error_key;
- 	}
- 
-+	if (test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags))
-+		afs_edit_dir_add(dvnode, &dentry->d_name, &newfid,
-+				 afs_edit_dir_for_symlink);
-+
- 	key_put(key);
- 	_leave(" = 0");
- 	return 0;
-@@ -1519,6 +1564,8 @@ static int afs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	struct afs_fs_cursor fc;
- 	struct afs_vnode *orig_dvnode, *new_dvnode, *vnode;
- 	struct key *key;
-+	u64 orig_data_version, new_data_version;
-+	bool new_negative = d_is_negative(new_dentry);
- 	int ret;
- 
- 	if (flags)
-@@ -1527,6 +1574,8 @@ static int afs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	vnode = AFS_FS_I(d_inode(old_dentry));
- 	orig_dvnode = AFS_FS_I(old_dir);
- 	new_dvnode = AFS_FS_I(new_dir);
-+	orig_data_version = orig_dvnode->status.data_version;
-+	new_data_version = new_dvnode->status.data_version;
- 
- 	_enter("{%x:%u},{%x:%u},{%x:%u},{%pd}",
- 	       orig_dvnode->fid.vid, orig_dvnode->fid.vnode,
-@@ -1552,7 +1601,8 @@ static int afs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			fc.cb_break = orig_dvnode->cb_break + orig_dvnode->cb_s_break;
- 			fc.cb_break_2 = new_dvnode->cb_break + new_dvnode->cb_s_break;
- 			afs_fs_rename(&fc, old_dentry->d_name.name,
--				      new_dvnode, new_dentry->d_name.name);
-+				      new_dvnode, new_dentry->d_name.name,
-+				      orig_data_version, new_data_version);
- 		}
- 
- 		afs_vnode_commit_status(&fc, orig_dvnode, fc.cb_break);
-@@ -1564,6 +1614,21 @@ static int afs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			goto error_key;
- 	}
- 
-+	if (ret == 0) {
-+		if (test_bit(AFS_VNODE_DIR_VALID, &orig_dvnode->flags))
-+		    afs_edit_dir_remove(orig_dvnode, &old_dentry->d_name,
-+					afs_edit_dir_for_rename);
-+
-+		if (!new_negative &&
-+		    test_bit(AFS_VNODE_DIR_VALID, &new_dvnode->flags))
-+			afs_edit_dir_remove(new_dvnode, &new_dentry->d_name,
-+					    afs_edit_dir_for_rename);
-+
-+		if (test_bit(AFS_VNODE_DIR_VALID, &new_dvnode->flags))
-+			afs_edit_dir_add(new_dvnode, &new_dentry->d_name,
-+					 &vnode->fid,  afs_edit_dir_for_rename);
-+	}
-+
- error_key:
- 	key_put(key);
- error:
-diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-new file mode 100644
-index 000000000000..8b400f5aead5
---- /dev/null
-+++ b/fs/afs/dir_edit.c
-@@ -0,0 +1,505 @@
-+/* AFS filesystem directory editing
-+ *
-+ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/fs.h>
-+#include <linux/namei.h>
-+#include <linux/pagemap.h>
-+#include <linux/iversion.h>
-+#include "internal.h"
-+#include "xdr_fs.h"
-+
-+/*
-+ * Find a number of contiguous clear bits in a directory block bitmask.
-+ *
-+ * There are 64 slots, which means we can load the entire bitmap into a
-+ * variable.  The first bit doesn't count as it corresponds to the block header
-+ * slot.  nr_slots is between 1 and 9.
-+ */
-+static int afs_find_contig_bits(union afs_xdr_dir_block *block, unsigned int nr_slots)
-+{
-+	u64 bitmap;
-+	u32 mask;
-+	int bit, n;
-+
-+	bitmap  = (u64)block->hdr.bitmap[0] << 0 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[1] << 1 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[2] << 2 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[3] << 3 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[4] << 4 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[5] << 5 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[6] << 6 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[7] << 7 * 8;
-+	bitmap >>= 1; /* The first entry is metadata */
-+	bit = 1;
-+	mask = (1 << nr_slots) - 1;
-+
-+	do {
-+		if (sizeof(unsigned long) == 8)
-+			n = ffz(bitmap);
-+		else
-+			n = ((u32)bitmap) != 0 ?
-+				ffz((u32)bitmap) :
-+				ffz((u32)(bitmap >> 32)) + 32;
-+		bitmap >>= n;
-+		bit += n;
-+
-+		if ((bitmap & mask) == 0) {
-+			if (bit > 64 - nr_slots)
-+				return -1;
-+			return bit;
-+		}
-+
-+		n = __ffs(bitmap);
-+		bitmap >>= n;
-+		bit += n;
-+	} while (bitmap);
-+
-+	return -1;
-+}
-+
-+/*
-+ * Set a number of contiguous bits in the directory block bitmap.
-+ */
-+static void afs_set_contig_bits(union afs_xdr_dir_block *block,
-+				int bit, unsigned int nr_slots)
-+{
-+	u64 mask, before, after;
-+
-+	mask = (1 << nr_slots) - 1;
-+	mask <<= bit;
-+
-+	before = *(u64 *)block->hdr.bitmap;
-+
-+	block->hdr.bitmap[0] |= (u8)(mask >> 0 * 8);
-+	block->hdr.bitmap[1] |= (u8)(mask >> 1 * 8);
-+	block->hdr.bitmap[2] |= (u8)(mask >> 2 * 8);
-+	block->hdr.bitmap[3] |= (u8)(mask >> 3 * 8);
-+	block->hdr.bitmap[4] |= (u8)(mask >> 4 * 8);
-+	block->hdr.bitmap[5] |= (u8)(mask >> 5 * 8);
-+	block->hdr.bitmap[6] |= (u8)(mask >> 6 * 8);
-+	block->hdr.bitmap[7] |= (u8)(mask >> 7 * 8);
-+
-+	after = *(u64 *)block->hdr.bitmap;
-+}
-+
-+/*
-+ * Clear a number of contiguous bits in the directory block bitmap.
-+ */
-+static void afs_clear_contig_bits(union afs_xdr_dir_block *block,
-+				  int bit, unsigned int nr_slots)
-+{
-+	u64 mask, before, after;
-+
-+	mask = (1 << nr_slots) - 1;
-+	mask <<= bit;
-+
-+	before = *(u64 *)block->hdr.bitmap;
-+
-+	block->hdr.bitmap[0] &= ~(u8)(mask >> 0 * 8);
-+	block->hdr.bitmap[1] &= ~(u8)(mask >> 1 * 8);
-+	block->hdr.bitmap[2] &= ~(u8)(mask >> 2 * 8);
-+	block->hdr.bitmap[3] &= ~(u8)(mask >> 3 * 8);
-+	block->hdr.bitmap[4] &= ~(u8)(mask >> 4 * 8);
-+	block->hdr.bitmap[5] &= ~(u8)(mask >> 5 * 8);
-+	block->hdr.bitmap[6] &= ~(u8)(mask >> 6 * 8);
-+	block->hdr.bitmap[7] &= ~(u8)(mask >> 7 * 8);
-+
-+	after = *(u64 *)block->hdr.bitmap;
-+}
-+
-+/*
-+ * Scan a directory block looking for a dirent of the right name.
-+ */
-+static int afs_dir_scan_block(union afs_xdr_dir_block *block, struct qstr *name,
-+			      unsigned int blocknum)
-+{
-+	union afs_xdr_dirent *de;
-+	u64 bitmap;
-+	int d, len, n;
-+
-+	_enter("");
-+
-+	bitmap  = (u64)block->hdr.bitmap[0] << 0 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[1] << 1 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[2] << 2 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[3] << 3 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[4] << 4 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[5] << 5 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[6] << 6 * 8;
-+	bitmap |= (u64)block->hdr.bitmap[7] << 7 * 8;
-+
-+	for (d = (blocknum == 0 ? AFS_DIR_RESV_BLOCKS0 : AFS_DIR_RESV_BLOCKS);
-+	     d < AFS_DIR_SLOTS_PER_BLOCK;
-+	     d++) {
-+		if (!((bitmap >> d) & 1))
-+			continue;
-+		de = &block->dirents[d];
-+		if (de->u.valid != 1)
-+			continue;
-+
-+		/* The block was NUL-terminated by afs_dir_check_page(). */
-+		len = strlen(de->u.name);
-+		if (len == name->len &&
-+		    memcmp(de->u.name, name->name, name->len) == 0)
-+			return d;
-+
-+		n = round_up(12 + len + 1 + 4, AFS_DIR_DIRENT_SIZE);
-+		n /= AFS_DIR_DIRENT_SIZE;
-+		d += n - 1;
-+	}
-+
-+	return -1;
-+}
-+
-+/*
-+ * Initialise a new directory block.  Note that block 0 is special and contains
-+ * some extra metadata.
-+ */
-+static void afs_edit_init_block(union afs_xdr_dir_block *meta,
-+				union afs_xdr_dir_block *block, int block_num)
-+{
-+	memset(block, 0, sizeof(*block));
-+	block->hdr.npages = htons(1);
-+	block->hdr.magic = AFS_DIR_MAGIC;
-+	block->hdr.bitmap[0] = 1;
-+
-+	if (block_num == 0) {
-+		block->hdr.bitmap[0] = 0xff;
-+		block->hdr.bitmap[1] = 0x1f;
-+		memset(block->meta.alloc_ctrs,
-+		       AFS_DIR_SLOTS_PER_BLOCK,
-+		       sizeof(block->meta.alloc_ctrs));
-+		meta->meta.alloc_ctrs[0] =
-+			AFS_DIR_SLOTS_PER_BLOCK - AFS_DIR_RESV_BLOCKS0;
-+	}
-+
-+	if (block_num < AFS_DIR_BLOCKS_WITH_CTR)
-+		meta->meta.alloc_ctrs[block_num] =
-+			AFS_DIR_SLOTS_PER_BLOCK - AFS_DIR_RESV_BLOCKS;
-+}
-+
-+/*
-+ * Edit a directory's file data to add a new directory entry.  Doing this after
-+ * create, mkdir, symlink, link or rename if the data version number is
-+ * incremented by exactly one avoids the need to re-download the entire
-+ * directory contents.
-+ *
-+ * The caller must hold the inode locked.
-+ */
-+void afs_edit_dir_add(struct afs_vnode *vnode,
-+		      struct qstr *name, struct afs_fid *new_fid,
-+		      enum afs_edit_dir_reason why)
-+{
-+	union afs_xdr_dir_block *meta, *block;
-+	struct afs_xdr_dir_page *meta_page, *dir_page;
-+	union afs_xdr_dirent *de;
-+	struct page *page0, *page;
-+	unsigned int need_slots, nr_blocks, b;
-+	pgoff_t index;
-+	loff_t i_size;
-+	gfp_t gfp;
-+	int slot;
-+
-+	_enter(",,{%d,%s},", name->len, name->name);
-+
-+	i_size = i_size_read(&vnode->vfs_inode);
-+	if (i_size > AFS_DIR_BLOCK_SIZE * AFS_DIR_MAX_BLOCKS ||
-+	    (i_size & (AFS_DIR_BLOCK_SIZE - 1))) {
-+		clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+		return;
-+	}
-+
-+	gfp = vnode->vfs_inode.i_mapping->gfp_mask;
-+	page0 = find_or_create_page(vnode->vfs_inode.i_mapping, 0, gfp);
-+	if (!page0) {
-+		clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+		_leave(" [fgp]");
-+		return;
-+	}
-+
-+	/* Work out how many slots we're going to need. */
-+	need_slots = round_up(12 + name->len + 1 + 4, AFS_DIR_DIRENT_SIZE);
-+	need_slots /= AFS_DIR_DIRENT_SIZE;
-+
-+	meta_page = kmap(page0);
-+	meta = &meta_page->blocks[0];
-+	if (i_size == 0)
-+		goto new_directory;
-+	nr_blocks = i_size / AFS_DIR_BLOCK_SIZE;
-+
-+	/* Find a block that has sufficient slots available.  Each VM page
-+	 * contains two or more directory blocks.
-+	 */
-+	for (b = 0; b < nr_blocks + 1; b++) {
-+		/* If the directory extended into a new page, then we need to
-+		 * tack a new page on the end.
-+		 */
-+		index = b / AFS_DIR_BLOCKS_PER_PAGE;
-+		if (index == 0) {
-+			page = page0;
-+			dir_page = meta_page;
-+		} else {
-+			if (nr_blocks >= AFS_DIR_MAX_BLOCKS)
-+				goto error;
-+			gfp = vnode->vfs_inode.i_mapping->gfp_mask;
-+			page = find_or_create_page(vnode->vfs_inode.i_mapping,
-+						   index, gfp);
-+			if (!page)
-+				goto error;
-+			if (!PagePrivate(page)) {
-+				set_page_private(page, 1);
-+				SetPagePrivate(page);
-+			}
-+			dir_page = kmap(page);
-+		}
-+
-+		/* Abandon the edit if we got a callback break. */
-+		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
-+			goto invalidated;
-+
-+		block = &dir_page->blocks[b % AFS_DIR_BLOCKS_PER_PAGE];
-+
-+		_debug("block %u: %2u %3u %u",
-+		       b,
-+		       (b < AFS_DIR_BLOCKS_WITH_CTR) ? meta->meta.alloc_ctrs[b] : 99,
-+		       ntohs(block->hdr.npages),
-+		       ntohs(block->hdr.magic));
-+
-+		/* Initialise the block if necessary. */
-+		if (b == nr_blocks) {
-+			_debug("init %u", b);
-+			afs_edit_init_block(meta, block, b);
-+			i_size_write(&vnode->vfs_inode, (b + 1) * AFS_DIR_BLOCK_SIZE);
-+		}
-+
-+		/* Only lower dir pages have a counter in the header. */
-+		if (b >= AFS_DIR_BLOCKS_WITH_CTR ||
-+		    meta->meta.alloc_ctrs[b] >= need_slots) {
-+			/* We need to try and find one or more consecutive
-+			 * slots to hold the entry.
-+			 */
-+			slot = afs_find_contig_bits(block, need_slots);
-+			if (slot >= 0) {
-+				_debug("slot %u", slot);
-+				goto found_space;
-+			}
-+		}
-+
-+		if (page != page0) {
-+			unlock_page(page);
-+			kunmap(page);
-+			put_page(page);
-+		}
-+	}
-+
-+	/* There are no spare slots of sufficient size, yet the operation
-+	 * succeeded.  Download the directory again.
-+	 */
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_create_nospc, 0, 0, 0, 0, name->name);
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	goto out_unmap;
-+
-+new_directory:
-+	afs_edit_init_block(meta, meta, 0);
-+	i_size = AFS_DIR_BLOCK_SIZE;
-+	i_size_write(&vnode->vfs_inode, i_size);
-+	slot = AFS_DIR_RESV_BLOCKS0;
-+	page = page0;
-+	block = meta;
-+	nr_blocks = 1;
-+	b = 0;
-+
-+found_space:
-+	/* Set the dirent slot. */
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_create, b, slot,
-+			   new_fid->vnode, new_fid->unique, name->name);
-+	de = &block->dirents[slot];
-+	de->u.valid	= 1;
-+	de->u.unused[0]	= 0;
-+	de->u.hash_next	= 0; // TODO: Really need to maintain this
-+	de->u.vnode	= htonl(new_fid->vnode);
-+	de->u.unique	= htonl(new_fid->unique);
-+	memcpy(de->u.name, name->name, name->len + 1);
-+	de->u.name[name->len] = 0;
-+
-+	/* Adjust the bitmap. */
-+	afs_set_contig_bits(block, slot, need_slots);
-+	if (page != page0) {
-+		unlock_page(page);
-+		kunmap(page);
-+		put_page(page);
-+	}
-+
-+	/* Adjust the allocation counter. */
-+	if (b < AFS_DIR_BLOCKS_WITH_CTR)
-+		meta->meta.alloc_ctrs[b] -= need_slots;
-+
-+	inode_inc_iversion_raw(&vnode->vfs_inode);
-+	afs_stat_v(vnode, n_dir_cr);
-+	_debug("Insert %s in %u[%u]", name->name, b, slot);
-+
-+out_unmap:
-+	unlock_page(page0);
-+	kunmap(page0);
-+	put_page(page0);
-+	_leave("");
-+	return;
-+
-+invalidated:
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_create_inval, 0, 0, 0, 0, name->name);
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	if (page != page0) {
-+		kunmap(page);
-+		put_page(page);
-+	}
-+	goto out_unmap;
-+
-+error:
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_create_error, 0, 0, 0, 0, name->name);
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	goto out_unmap;
-+}
-+
-+/*
-+ * Edit a directory's file data to remove a new directory entry.  Doing this
-+ * after unlink, rmdir or rename if the data version number is incremented by
-+ * exactly one avoids the need to re-download the entire directory contents.
-+ *
-+ * The caller must hold the inode locked.
-+ */
-+void afs_edit_dir_remove(struct afs_vnode *vnode,
-+			 struct qstr *name, enum afs_edit_dir_reason why)
-+{
-+	struct afs_xdr_dir_page *meta_page, *dir_page;
-+	union afs_xdr_dir_block *meta, *block;
-+	union afs_xdr_dirent *de;
-+	struct page *page0, *page;
-+	unsigned int need_slots, nr_blocks, b;
-+	pgoff_t index;
-+	loff_t i_size;
-+	int slot;
-+
-+	_enter(",,{%d,%s},", name->len, name->name);
-+
-+	i_size = i_size_read(&vnode->vfs_inode);
-+	if (i_size < AFS_DIR_BLOCK_SIZE ||
-+	    i_size > AFS_DIR_BLOCK_SIZE * AFS_DIR_MAX_BLOCKS ||
-+	    (i_size & (AFS_DIR_BLOCK_SIZE - 1))) {
-+		clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+		return;
-+	}
-+	nr_blocks = i_size / AFS_DIR_BLOCK_SIZE;
-+
-+	page0 = find_lock_page(vnode->vfs_inode.i_mapping, 0);
-+	if (!page0) {
-+		clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+		_leave(" [fgp]");
-+		return;
-+	}
-+
-+	/* Work out how many slots we're going to discard. */
-+	need_slots = round_up(12 + name->len + 1 + 4, AFS_DIR_DIRENT_SIZE);
-+	need_slots /= AFS_DIR_DIRENT_SIZE;
-+
-+	meta_page = kmap(page0);
-+	meta = &meta_page->blocks[0];
-+
-+	/* Find a page that has sufficient slots available.  Each VM page
-+	 * contains two or more directory blocks.
-+	 */
-+	for (b = 0; b < nr_blocks; b++) {
-+		index = b / AFS_DIR_BLOCKS_PER_PAGE;
-+		if (index != 0) {
-+			page = find_lock_page(vnode->vfs_inode.i_mapping, index);
-+			if (!page)
-+				goto error;
-+			dir_page = kmap(page);
-+		} else {
-+			page = page0;
-+			dir_page = meta_page;
-+		}
-+
-+		/* Abandon the edit if we got a callback break. */
-+		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
-+			goto invalidated;
-+
-+		block = &dir_page->blocks[b % AFS_DIR_BLOCKS_PER_PAGE];
-+
-+		if (b > AFS_DIR_BLOCKS_WITH_CTR ||
-+		    meta->meta.alloc_ctrs[b] <= AFS_DIR_SLOTS_PER_BLOCK - 1 - need_slots) {
-+			slot = afs_dir_scan_block(block, name, b);
-+			if (slot >= 0)
-+				goto found_dirent;
-+		}
-+
-+		if (page != page0) {
-+			unlock_page(page);
-+			kunmap(page);
-+			put_page(page);
-+		}
-+	}
-+
-+	/* Didn't find the dirent to clobber.  Download the directory again. */
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_delete_noent,
-+			   0, 0, 0, 0, name->name);
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	goto out_unmap;
-+
-+found_dirent:
-+	de = &block->dirents[slot];
-+
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_delete, b, slot,
-+			   ntohl(de->u.vnode), ntohl(de->u.unique),
-+			   name->name);
-+
-+	memset(de, 0, sizeof(*de) * need_slots);
-+
-+	/* Adjust the bitmap. */
-+	afs_clear_contig_bits(block, slot, need_slots);
-+	if (page != page0) {
-+		unlock_page(page);
-+		kunmap(page);
-+		put_page(page);
-+	}
-+
-+	/* Adjust the allocation counter. */
-+	if (b < AFS_DIR_BLOCKS_WITH_CTR)
-+		meta->meta.alloc_ctrs[b] += need_slots;
-+
-+	inode_set_iversion_raw(&vnode->vfs_inode, vnode->status.data_version);
-+	afs_stat_v(vnode, n_dir_rm);
-+	_debug("Remove %s from %u[%u]", name->name, b, slot);
-+
-+out_unmap:
-+	unlock_page(page0);
-+	kunmap(page0);
-+	put_page(page0);
-+	_leave("");
-+	return;
-+
-+invalidated:
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_delete_inval,
-+			   0, 0, 0, 0, name->name);
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	if (page != page0) {
-+		unlock_page(page);
-+		kunmap(page);
-+		put_page(page);
-+	}
-+	goto out_unmap;
-+
-+error:
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_delete_error,
-+			   0, 0, 0, 0, name->name);
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	goto out_unmap;
-+}
-diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
-index b66ff0dc8a5a..20d6304a0d3e 100644
---- a/fs/afs/fsclient.c
-+++ b/fs/afs/fsclient.c
-@@ -107,6 +107,13 @@ void afs_update_inode_from_status(struct afs_vnode *vnode,
- 			} else {
- 				set_bit(AFS_VNODE_ZAP_DATA, &vnode->flags);
- 			}
-+		} else if (vnode->status.type == AFS_FTYPE_DIR) {
-+			/* Expected directory change is handled elsewhere so
-+			 * that we can locally edit the directory and save on a
-+			 * download.
-+			 */
-+			if (test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
-+				flags &= ~AFS_VNODE_DATA_CHANGED;
- 		}
- 	}
- 
-@@ -190,10 +197,7 @@ static int xdr_decode_AFSFetchStatus(const __be32 **_bp,
- 
- 	size  = (u64)ntohl(xdr->size_lo);
- 	size |= (u64)ntohl(xdr->size_hi) << 32;
--	if (size != status->size) {
--		status->size = size;
--		flags |= AFS_VNODE_DATA_CHANGED;
--	}
-+	status->size = size;
- 
- 	data_version  = (u64)ntohl(xdr->data_version_lo);
- 	data_version |= (u64)ntohl(xdr->data_version_hi) << 32;
-@@ -736,6 +740,7 @@ static const struct afs_call_type afs_RXFSMakeDir = {
- int afs_fs_create(struct afs_fs_cursor *fc,
- 		  const char *name,
- 		  umode_t mode,
-+		  u64 current_data_version,
- 		  struct afs_fid *newfid,
- 		  struct afs_file_status *newstatus,
- 		  struct afs_callback *newcb)
-@@ -763,7 +768,7 @@ int afs_fs_create(struct afs_fs_cursor *fc,
- 	call->reply[1] = newfid;
- 	call->reply[2] = newstatus;
- 	call->reply[3] = newcb;
--	call->expected_version = vnode->status.data_version;
-+	call->expected_version = current_data_version + 1;
- 
- 	/* marshall the parameters */
- 	bp = call->request;
-@@ -836,7 +841,8 @@ static const struct afs_call_type afs_RXFSRemoveDir = {
- /*
-  * remove a file or directory
-  */
--int afs_fs_remove(struct afs_fs_cursor *fc, const char *name, bool isdir)
-+int afs_fs_remove(struct afs_fs_cursor *fc, const char *name, bool isdir,
-+		  u64 current_data_version)
- {
- 	struct afs_vnode *vnode = fc->vnode;
- 	struct afs_call *call;
-@@ -858,7 +864,7 @@ int afs_fs_remove(struct afs_fs_cursor *fc, const char *name, bool isdir)
- 
- 	call->key = fc->key;
- 	call->reply[0] = vnode;
--	call->expected_version = vnode->status.data_version;
-+	call->expected_version = current_data_version + 1;
- 
- 	/* marshall the parameters */
- 	bp = call->request;
-@@ -920,7 +926,7 @@ static const struct afs_call_type afs_RXFSLink = {
-  * make a hard link
-  */
- int afs_fs_link(struct afs_fs_cursor *fc, struct afs_vnode *vnode,
--		const char *name)
-+		const char *name, u64 current_data_version)
- {
- 	struct afs_vnode *dvnode = fc->vnode;
- 	struct afs_call *call;
-@@ -941,7 +947,7 @@ int afs_fs_link(struct afs_fs_cursor *fc, struct afs_vnode *vnode,
- 	call->key = fc->key;
- 	call->reply[0] = dvnode;
- 	call->reply[1] = vnode;
--	call->expected_version = vnode->status.data_version;
-+	call->expected_version = current_data_version + 1;
- 
- 	/* marshall the parameters */
- 	bp = call->request;
-@@ -1009,6 +1015,7 @@ static const struct afs_call_type afs_RXFSSymlink = {
- int afs_fs_symlink(struct afs_fs_cursor *fc,
- 		   const char *name,
- 		   const char *contents,
-+		   u64 current_data_version,
- 		   struct afs_fid *newfid,
- 		   struct afs_file_status *newstatus)
- {
-@@ -1037,7 +1044,7 @@ int afs_fs_symlink(struct afs_fs_cursor *fc,
- 	call->reply[0] = vnode;
- 	call->reply[1] = newfid;
- 	call->reply[2] = newstatus;
--	call->expected_version = vnode->status.data_version;
-+	call->expected_version = current_data_version + 1;
- 
- 	/* marshall the parameters */
- 	bp = call->request;
-@@ -1117,7 +1124,9 @@ static const struct afs_call_type afs_RXFSRename = {
- int afs_fs_rename(struct afs_fs_cursor *fc,
- 		  const char *orig_name,
- 		  struct afs_vnode *new_dvnode,
--		  const char *new_name)
-+		  const char *new_name,
-+		  u64 current_orig_data_version,
-+		  u64 current_new_data_version)
- {
- 	struct afs_vnode *orig_dvnode = fc->vnode;
- 	struct afs_call *call;
-@@ -1145,8 +1154,8 @@ int afs_fs_rename(struct afs_fs_cursor *fc,
- 	call->key = fc->key;
- 	call->reply[0] = orig_dvnode;
- 	call->reply[1] = new_dvnode;
--	call->expected_version = orig_dvnode->status.data_version;
--	call->expected_version_2 = new_dvnode->status.data_version;
-+	call->expected_version = current_orig_data_version + 1;
-+	call->expected_version_2 = current_new_data_version + 1;
- 
- 	/* marshall the parameters */
- 	bp = call->request;
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 69bcfb82dd69..3808dcbbac6d 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -395,8 +395,11 @@ int afs_validate(struct afs_vnode *vnode, struct key *key)
- 	if (test_bit(AFS_VNODE_CB_PROMISED, &vnode->flags)) {
- 		if (vnode->cb_s_break != vnode->cb_interest->server->cb_s_break) {
- 			vnode->cb_s_break = vnode->cb_interest->server->cb_s_break;
--		} else if (test_bit(AFS_VNODE_DIR_VALID, &vnode->flags) &&
--			   !test_bit(AFS_VNODE_ZAP_DATA, &vnode->flags) &&
-+		} else if (vnode->status.type == AFS_FTYPE_DIR &&
-+			   test_bit(AFS_VNODE_DIR_VALID, &vnode->flags) &&
-+			   vnode->cb_expires_at - 10 > now) {
-+				valid = true;
-+		} else if (!test_bit(AFS_VNODE_ZAP_DATA, &vnode->flags) &&
- 			   vnode->cb_expires_at - 10 > now) {
- 				valid = true;
- 		}
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 3a73c87e7ca8..b4d2fac46fe8 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -269,6 +269,8 @@ struct afs_net {
- 	atomic_t		n_inval;	/* Number of invalidations by the server */
- 	atomic_t		n_relpg;	/* Number of invalidations by releasepage */
- 	atomic_t		n_read_dir;	/* Number of directory pages read */
-+	atomic_t		n_dir_cr;	/* Number of directory entry creation edits */
-+	atomic_t		n_dir_rm;	/* Number of directory entry removal edits */
- };
- 
- extern const char afs_init_sysname[];
-@@ -677,6 +679,13 @@ extern const struct dentry_operations afs_fs_dentry_operations;
- 
- extern void afs_d_release(struct dentry *);
- 
-+/*
-+ * dir_edit.c
-+ */
-+extern void afs_edit_dir_add(struct afs_vnode *, struct qstr *, struct afs_fid *,
-+			     enum afs_edit_dir_reason);
-+extern void afs_edit_dir_remove(struct afs_vnode *, struct qstr *, enum afs_edit_dir_reason);
-+
- /*
-  * dynroot.c
-  */
-@@ -723,14 +732,14 @@ extern void afs_update_inode_from_status(struct afs_vnode *, struct afs_file_sta
- extern int afs_fs_fetch_file_status(struct afs_fs_cursor *, struct afs_volsync *, bool);
- extern int afs_fs_give_up_callbacks(struct afs_net *, struct afs_server *);
- extern int afs_fs_fetch_data(struct afs_fs_cursor *, struct afs_read *);
--extern int afs_fs_create(struct afs_fs_cursor *, const char *, umode_t,
-+extern int afs_fs_create(struct afs_fs_cursor *, const char *, umode_t, u64,
- 			 struct afs_fid *, struct afs_file_status *, struct afs_callback *);
--extern int afs_fs_remove(struct afs_fs_cursor *, const char *, bool);
--extern int afs_fs_link(struct afs_fs_cursor *, struct afs_vnode *, const char *);
--extern int afs_fs_symlink(struct afs_fs_cursor *, const char *, const char *,
-+extern int afs_fs_remove(struct afs_fs_cursor *, const char *, bool, u64);
-+extern int afs_fs_link(struct afs_fs_cursor *, struct afs_vnode *, const char *, u64);
-+extern int afs_fs_symlink(struct afs_fs_cursor *, const char *, const char *, u64,
- 			  struct afs_fid *, struct afs_file_status *);
- extern int afs_fs_rename(struct afs_fs_cursor *, const char *,
--			 struct afs_vnode *, const char *);
-+			 struct afs_vnode *, const char *, u64, u64);
- extern int afs_fs_store_data(struct afs_fs_cursor *, struct address_space *,
- 			     pgoff_t, pgoff_t, unsigned, unsigned);
- extern int afs_fs_setattr(struct afs_fs_cursor *, struct iattr *);
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 090fa8c30ea8..5ced655d08b3 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -898,6 +898,10 @@ static int afs_proc_stats_show(struct seq_file *m, void *v)
- 
- 	seq_printf(m, "dir-data: rdpg=%u\n",
- 		   atomic_read(&net->n_read_dir));
-+
-+	seq_printf(m, "dir-edit: cr=%u rm=%u\n",
-+		   atomic_read(&net->n_dir_cr),
-+		   atomic_read(&net->n_dir_rm));
- 	return 0;
- }
- 
-diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-index 0419b7e1e968..f46dee0f5ced 100644
---- a/include/trace/events/afs.h
-+++ b/include/trace/events/afs.h
-@@ -63,6 +63,27 @@ enum afs_vl_operation {
- 	afs_VL_GetCapabilities	= 65537,	/* AFS Get VL server capabilities */
- };
- 
-+enum afs_edit_dir_op {
-+	afs_edit_dir_create,
-+	afs_edit_dir_create_error,
-+	afs_edit_dir_create_inval,
-+	afs_edit_dir_create_nospc,
-+	afs_edit_dir_delete,
-+	afs_edit_dir_delete_error,
-+	afs_edit_dir_delete_inval,
-+	afs_edit_dir_delete_noent,
-+};
-+
-+enum afs_edit_dir_reason {
-+	afs_edit_dir_for_create,
-+	afs_edit_dir_for_link,
-+	afs_edit_dir_for_mkdir,
-+	afs_edit_dir_for_rename,
-+	afs_edit_dir_for_rmdir,
-+	afs_edit_dir_for_symlink,
-+	afs_edit_dir_for_unlink,
-+};
-+
- #endif /* end __AFS_DECLARE_TRACE_ENUMS_ONCE_ONLY */
- 
- /*
-@@ -106,6 +127,25 @@ enum afs_vl_operation {
- 	EM(afs_YFSVL_GetEndpoints,		"YFSVL.GetEndpoints") \
- 	E_(afs_VL_GetCapabilities,		"VL.GetCapabilities")
- 
-+#define afs_edit_dir_ops				  \
-+	EM(afs_edit_dir_create,			"create") \
-+	EM(afs_edit_dir_create_error,		"c_fail") \
-+	EM(afs_edit_dir_create_inval,		"c_invl") \
-+	EM(afs_edit_dir_create_nospc,		"c_nspc") \
-+	EM(afs_edit_dir_delete,			"delete") \
-+	EM(afs_edit_dir_delete_error,		"d_err ") \
-+	EM(afs_edit_dir_delete_inval,		"d_invl") \
-+	E_(afs_edit_dir_delete_noent,		"d_nent")
-+
-+#define afs_edit_dir_reasons				  \
-+	EM(afs_edit_dir_for_create,		"Create") \
-+	EM(afs_edit_dir_for_link,		"Link  ") \
-+	EM(afs_edit_dir_for_mkdir,		"MkDir ") \
-+	EM(afs_edit_dir_for_rename,		"Rename") \
-+	EM(afs_edit_dir_for_rmdir,		"RmDir ") \
-+	EM(afs_edit_dir_for_symlink,		"Symlnk") \
-+	E_(afs_edit_dir_for_unlink,		"Unlink")
-+
- 
- /*
-  * Export enum symbols via userspace.
-@@ -118,6 +158,8 @@ enum afs_vl_operation {
- afs_call_traces;
- afs_fs_operations;
- afs_vl_operations;
-+afs_edit_dir_ops;
-+afs_edit_dir_reasons;
- 
- /*
-  * Now redefine the EM() and E_() macros to map the enums to the strings that
-@@ -464,6 +506,54 @@ TRACE_EVENT(afs_call_state,
- 		      __entry->ret, __entry->abort)
- 	    );
- 
-+TRACE_EVENT(afs_edit_dir,
-+	    TP_PROTO(struct afs_vnode *dvnode,
-+		     enum afs_edit_dir_reason why,
-+		     enum afs_edit_dir_op op,
-+		     unsigned int block,
-+		     unsigned int slot,
-+		     unsigned int f_vnode,
-+		     unsigned int f_unique,
-+		     const char *name),
-+
-+	    TP_ARGS(dvnode, why, op, block, slot, f_vnode, f_unique, name),
-+
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,		vnode		)
-+		    __field(unsigned int,		unique		)
-+		    __field(enum afs_edit_dir_reason,	why		)
-+		    __field(enum afs_edit_dir_op,	op		)
-+		    __field(unsigned int,		block		)
-+		    __field(unsigned short,		slot		)
-+		    __field(unsigned int,		f_vnode		)
-+		    __field(unsigned int,		f_unique	)
-+		    __array(char,			name, 18	)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    int __len = strlen(name);
-+		    __len = min(__len, 17);
-+		    __entry->vnode	= dvnode->fid.vnode;
-+		    __entry->unique	= dvnode->fid.unique;
-+		    __entry->why	= why;
-+		    __entry->op		= op;
-+		    __entry->block	= block;
-+		    __entry->slot	= slot;
-+		    __entry->f_vnode	= f_vnode;
-+		    __entry->f_unique	= f_unique;
-+		    memcpy(__entry->name, name, __len);
-+		    __entry->name[__len] = 0;
-+			   ),
-+
-+	    TP_printk("d=%x:%x %s %s %u[%u] f=%x:%x %s",
-+		      __entry->vnode, __entry->unique,
-+		      __print_symbolic(__entry->why, afs_edit_dir_reasons),
-+		      __print_symbolic(__entry->op, afs_edit_dir_ops),
-+		      __entry->block, __entry->slot,
-+		      __entry->f_vnode, __entry->f_unique,
-+		      __entry->name)
-+	    );
-+
- #endif /* _TRACE_AFS_H */
- 
- /* This part must be outside protection */
+> 
+> Thanks,
+> Jan
+> 
