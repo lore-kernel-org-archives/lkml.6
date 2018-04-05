@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751618AbeDEPRA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:17:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34448 "EHLO mx1.redhat.com"
+        id S1752226AbeDEPTF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:19:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34474 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751179AbeDEPQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:16:57 -0400
+        id S1751638AbeDEPRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:17:02 -0400
 From: Jiri Olsa <jolsa@kernel.org>
 To: Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>
@@ -18,67 +18,62 @@ Cc: lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>, Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 2/9] perf tools: Add fetch_kernel_buildid function
-Date: Thu,  5 Apr 2018 17:16:38 +0200
-Message-Id: <20180405151645.19130-3-jolsa@kernel.org>
+Subject: [PATCH 4/9] kbuild: Add filechk2 function
+Date: Thu,  5 Apr 2018 17:16:40 +0200
+Message-Id: <20180405151645.19130-5-jolsa@kernel.org>
 In-Reply-To: <20180405151645.19130-1-jolsa@kernel.org>
 References: <20180405151645.19130-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding fetch_kernel_buildid helper function to
-retrieve build id from running kernel. It will
-be used in following patches.
+Adding filechk2 function  that has the same semantics
+as filechk, but it takes the target file from the 2nd
+argument instead of from the '$@' as in the filechk
+function.
 
-Link: http://lkml.kernel.org/n/tip-at98orsncas8v2ito61u3qod@git.kernel.org
+This function is needed when we can't have separate
+target for the file, like in the following patch.
+
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/util.c | 18 ++++++++++++++++++
- tools/perf/util/util.h |  2 ++
- 2 files changed, 20 insertions(+)
+ scripts/Kbuild.include | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 41fc61d941ef..26f93866bc02 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -495,6 +495,24 @@ int parse_notes_buildid(void *note_data, size_t note_len, void *bf,
- 	return -1;
- }
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index 065324a8046f..9775ce2771d4 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -67,6 +67,30 @@ define filechk
+ 	fi
+ endef
  
-+int fetch_kernel_buildid(char *buildid, int size)
-+{
-+	char path[PATH_MAX], *buf;
-+	size_t len;
-+	int err;
++# filechk2 is used to check if the content of a generated file is updated.
++# It follows the same logic as the filechk except instead of the $@ target
++# variable, the checked file is passed in 2nd argument.
++#
++# Sample usage:
++# define filechk_sample
++#	echo $KERNELRELEASE
++# endef
++# version.h : Makefile
++#	$(call filechk2,sample,version.h)
++# endef
++define filechk2
++	$(Q)set -e;					\
++	$(kecho) '  CHK     $(2)';			\
++	mkdir -p $(dir $(2));				\
++	$(filechk_$(1)) < $< > $(2).tmp;		\
++	if [ -r $(2) ] && cmp -s $(2) $(2).tmp; then	\
++		rm -f $(2).tmp;				\
++	else						\
++		$(kecho) '  UPD     $(2)';		\
++		mv -f $(2).tmp $(2);			\
++	fi
++endef
 +
-+	scnprintf(path, PATH_MAX, "%s/kernel/notes",
-+		  sysfs__mountpoint());
-+
-+	if (filename__read_str(path, &buf, &len))
-+		return -EINVAL;
-+
-+	err = parse_notes_buildid(buf, len, buildid, size, false);
-+
-+	free(buf);
-+	return err;
-+}
-+
- const char *perf_tip(const char *dirpath)
- {
- 	struct strlist *tips;
-diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-index 27106548396b..1ccaa957e3ab 100644
---- a/tools/perf/util/util.h
-+++ b/tools/perf/util/util.h
-@@ -48,6 +48,8 @@ extern int cacheline_size;
- int fetch_kernel_version(unsigned int *puint,
- 			 char *str, size_t str_sz);
- 
-+int fetch_kernel_buildid(char *buildid, int size);
-+
- int parse_notes_buildid(void *note_data, size_t note_len, void *bf,
- 			size_t size, bool need_swap);
- 
+ ######
+ # gcc support functions
+ # See documentation in Documentation/kbuild/makefiles.txt
 -- 
 2.13.6
