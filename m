@@ -1,60 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeDEOaz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:30:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751318AbeDEOax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:30:53 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29CCA21720
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 5 Apr 2018 10:30:50 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Joel Fernandes <joelaf@google.com>, Michal Hocko <mhocko@kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180405103050.22f10319@gandalf.local.home>
-In-Reply-To: <20180405142258.GA28128@bombadil.infradead.org>
-References: <20180403123514.GX5501@dhcp22.suse.cz>
-        <20180403093245.43e7e77c@gandalf.local.home>
-        <20180403135607.GC5501@dhcp22.suse.cz>
-        <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com>
-        <20180404062340.GD6312@dhcp22.suse.cz>
-        <20180404101149.08f6f881@gandalf.local.home>
-        <20180404142329.GI6312@dhcp22.suse.cz>
-        <20180404114730.65118279@gandalf.local.home>
-        <20180405025841.GA9301@bombadil.infradead.org>
-        <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
-        <20180405142258.GA28128@bombadil.infradead.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751344AbeDEOct (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:32:49 -0400
+Received: from vulcan.natalenko.name ([104.207.131.136]:57922 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeDEOcr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 10:32:47 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 8838A332E37
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Thu, 05 Apr 2018 16:32:45 +0200
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Kees Cook <keescook@chromium.org>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        keescook@google.com
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+In-Reply-To: <CAGXu5jKhiE512yQXp90M+Wie=8RkpMZT-Yi_9BgjfKwibP433g@mail.gmail.com>
+References: <10360653.ov98egbaqx@natalenko.name>
+ <CAGXu5jLwyot++C2EXs+032Lz5WdG65GsEJ-Q55rfhSbkG1Nh+A@mail.gmail.com>
+ <3265889.eu5sbW8aRz@natalenko.name>
+ <CAGXu5jL++CEmLzFtGMVMhGWBzHpsRNJPTsEoc7Pw1dP--=azCA@mail.gmail.com>
+ <7fc01f67a561ce1fad676fc34c2249e7@natalenko.name>
+ <CAGXu5jKhiE512yQXp90M+Wie=8RkpMZT-Yi_9BgjfKwibP433g@mail.gmail.com>
+Message-ID: <dee9721a530576e667881d86bbec351b@natalenko.name>
+User-Agent: Roundcube Webmail/1.3.5
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1522938765;
+        h=from:sender:reply-to:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:in-reply-to:references:list-id:list-owner:list-unsubscribe:list-subscribe:list-post;
+        bh=YSNv3m3BwVs8sIFvyfsXZQ0vpW9XpnD5UvRNICEwTSo=;
+        b=Nq7LPOVxjAUHS97YSg+kPt3VCzwAu21Fae1xvAF3evyyTrsasHQ2xUnhS4UjhRSn60MQfl
+        irreWYGKK3N/Cdlli4uGRhRhMz3Sng5x3vIDBS8uRRtiKoGq5xEOI5P3Z9PrqXpMlszDnI
+        dgXY8m/qn5G2aD8mAzP5fVUga5BcM4I=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1522938765; a=rsa-sha256;
+        cv=none;
+        b=wRCDhOhRnHxMVZxE+8SqR87q1INDSEn/uaXaCkXtj4m/OjtlLHCCjJ5svmb5YS2y0Z1Cbn5/qgdl1auqiduyA3Yp0XZX+gfbNZX/XgyAMJ6mldONqp5e0wGQlFWrvODOzNJdUl6JO3f9N6dprxqpntV1IyoDhZOn6wI+JOb5LCI=
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
+        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Apr 2018 07:22:58 -0700
-Matthew Wilcox <willy@infradead.org> wrote:
+Hi.
 
-> I understand you don't want GFP_NORETRY.  But why is it more important for
-> this allocation to succeed than other normal GFP_KERNEL allocations?
+05.04.2018 16:21, Kees Cook wrote:
+> I had a VM running over night with:
+> 
+> [1]   Running                 while :; do
+>     smartctl -a /dev/sda > /dev/null;
+> done &
+> [2]-  Running                 while :; do
+>     ls --color=auto -lR / > /dev/null 2> /dev/null;
+> done &
+> [3]+  Running                 while :; do
+>     sleep $(( $RANDOM % 100 )); sync; echo 3 > 
+> /proc/sys/vm/drop_caches;
+> done &
+> 
+> and I haven't seen the issue. :(
+> 
+> FWIW, I'm using the ahci qemu driver:
+> 
+> -drive file=disk-image.raw,if=none,id=drive0,format=raw \
+> -device ahci,id=bus0 \
+> -device ide-drive,bus=bus0.0,drive=drive0
+> 
+> Does this match your qemu instance?
 
-Not sure what you mean by "more important"? Does saying "RETRY_MAYFAIL"
-make it more important? The difference is, if GFP_KERNEL fails, we
-don't want to trigger an OOM, and simply clean up and report -ENOMEM to
-the user. It has nothing to do with being more important than other
-allocations.
+Well, not really. I just pass 2 raw disks as "-hda sda.img -hdb sda.img" 
+(it is a playground VM for me with RAID10, LVM and LUKS inside, but I 
+hope this doesn't matter). Does passing "-hda" differ from your 
+approach?
 
-If there's 100 Megs of memory available, and the user requests a gig of
-memory, it's going to fail. Ideally, it doesn't trigger OOM, but
-instead simply reports -ENOMEM to the user.
-
--- Steve
+Regards,
+   Oleksandr
