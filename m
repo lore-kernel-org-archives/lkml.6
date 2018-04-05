@@ -1,43 +1,43 @@
 Return-Path: <osmithde@osmithde-lnx.cisco.com>
-X-Google-Smtp-Source: AIpwx48Y5FS4l4aHx4qeEX8zpVsKEgqB0zO/I4XxkR2IpW8NtiBFP4oh8J8pjTeZ/luuSpvYJRKl
-ARC-Seal: i=1; a=rsa-sha256; t=1522963202; cv=none;
+X-Google-Smtp-Source: AIpwx4+TR+B9AYSNECe9VDh/MzKG3dDYsF822avgyNiOj+/7jfyDuN2Kp8tRs4y+2AIOWiu26nnb
+ARC-Seal: i=1; a=rsa-sha256; t=1522963149; cv=none;
         d=google.com; s=arc-20160816;
-        b=T3cOAAa8oihdgNdfd8r9SRaupCaO1RtgthsS3Bfh0eCU+uregnM5TQk4c0B0TkkNA4
-         CmiPXpGjwYC2E7Z4a8KGfI7YT/eV0Z0R/qXPEsntKnaCaWUniYnJcEECLL0du5Vu2EzC
-         CIV7QZoy5IMaGvG5WIJ2owCeR9C6yE81d0pVrSWfjZoLJGCv9lssCQGvlaZ5r+CPwfUt
-         Pt7bnPPYA13hJwPoraVE2R5NeXG/xe62032HYZQe2BEbyWSvmTLHUU6lJspv154BMIYy
-         6IDb4+wN1B3BMkFUpboBFcODDUgazIz8NcIwzMx6e21PgVc0F3AEPZMOKWPFNkI2CbnK
-         /PrQ==
+        b=c90s+QdIkyBmZEHOmZd2QSJHPHrCE1MvSQNGlcVZcGglG+de41vJoWOtisEnA4ktu8
+         IaCuintD4CX9Wpd7JWumn9h4juxEfjXYSnyFqzvqiXqX65pA+RUtsXAtnWIIAhqd5Byj
+         VeLktnUPDcdyLHeWH06ZETCRkRTBOm37AtaJ8S6GemsjdGwuhqW8h3WTXdHnWjdcix9e
+         6K46DxigsFeCb9YWGa4QxZZsnmSApJzzjyEHo4TcWVI4dOsfiftN8ARJZoNtA6oneqH1
+         jfxlc7PNW1SQ4zAav+ejHQUeR5jdGMtFxrOLDs6rCPpCfwSuVba0cqeNmTkZOqh3RmaC
+         kWDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=tRCHeP2t/aC7J+LLXXtQjy7VDKcy7wUmLFZd01jEWZg=;
-        b=WIJawBk9lwA7QNuoQBqbtDAvZlWsBzjRo1jMATpa5oCvPG+it8PD5dIoAkCnP1Qutv
-         w03BunkGmS4IlkOP8gg7VseLSHQ08LaaX1zW4w+6YWaSyWZoyya1l2lihO4lzG7Ajk7H
-         tJfWWQvcW8nujgI4CXqrSvl6LeF2iOjTCxzB2O48nsV73FYTOAly+rO/nKv1aRecUkEJ
-         j8p56dbepl4KMlKE9YS2F6YkYfyGSicK/s2X2Ly/rHKkH4QGNGXjmZxLkCMSOfBFcsIO
-         2+tJSHFU6/pv/aOzxlgyhFm32MY26Rgy5K8gpctshTK3tght3gZ/TOpQip2KIX8YxWtW
-         y1Eg==
+        bh=dzzWux0lllsWfYQZVJnqrJr7ez4uqD+SrIJ/7FB54a4=;
+        b=ijL6xriZ3p3p46xCD3GA/d5u7TeQgOtq2i9brFVld2dGidxQ6VDPYQ+rNUK4JHjiVA
+         3NsCeRkUsF/XYBaEvPQ9jn7RBkBoGTGAUJ4ixExoIf8zUxxgRn4OJHK4oEoXDI6h1cc/
+         NP64LXReF5V5CCeJzjRkmCJUHn38XhC7XtTnA9Y25ansbZ7pBq4WIIju8ACUAfHQUURM
+         pCvaaGX2eGY8DlHzC0kPLRniiWE0Kcnwn3l19pf8DFj1tC7H7o8+sjHrxIveiBi4ED4O
+         hHy1GXZCoN646X42kdUakGKafaECpInAieC3/MD9bZVkIxmx9fTKZWHsTkzxvjoB+rOc
+         RtZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@cisco.com header.s=iport header.b=X1TrIfEJ;
-       spf=pass (google.com: best guess record for domain of osmithde@osmithde-lnx.cisco.com designates 173.37.86.77 as permitted sender) smtp.mailfrom=osmithde@osmithde-lnx.cisco.com;
+       dkim=pass header.i=@cisco.com header.s=iport header.b=FROL38jA;
+       spf=pass (google.com: best guess record for domain of osmithde@osmithde-lnx.cisco.com designates 173.37.86.74 as permitted sender) smtp.mailfrom=osmithde@osmithde-lnx.cisco.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=cisco.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@cisco.com header.s=iport header.b=X1TrIfEJ;
-       spf=pass (google.com: best guess record for domain of osmithde@osmithde-lnx.cisco.com designates 173.37.86.77 as permitted sender) smtp.mailfrom=osmithde@osmithde-lnx.cisco.com;
+       dkim=pass header.i=@cisco.com header.s=iport header.b=FROL38jA;
+       spf=pass (google.com: best guess record for domain of osmithde@osmithde-lnx.cisco.com designates 173.37.86.74 as permitted sender) smtp.mailfrom=osmithde@osmithde-lnx.cisco.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=cisco.com
 X-IronPort-AV: E=Sophos;i="5.48,412,1517875200";
-   d="scan'208";a="377269305"
-Date: Thu, 5 Apr 2018 14:22:47 -0700
+   d="scan'208";a="366728819"
+Date: Thu, 5 Apr 2018 14:21:54 -0700
 From: Oliver Smith-Denny <osmithde@cisco.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Sesidhar Baddela <sebaddel@cisco.com>,
         Gian Carlo Boffa <gcboffa@cisco.com>, linux-scsi@vger.kernel.org,
         target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Oliver Smith-Denny <osmithde@cisco.com>
-Subject: [PATCH 08/10] staging: fnic2 add vnic queue interface
-Message-ID: <20180405212247.GI12584@osmithde-lnx.cisco.com>
+Subject: [PATCH 07/10] staging: fnic2 add queue descriptors
+Message-ID: <20180405212154.GH12584@osmithde-lnx.cisco.com>
 References: <20180405211519.GA12584@osmithde-lnx.cisco.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -45,13 +45,12 @@ Content-Disposition: inline
 In-Reply-To: <20180405211519.GA12584@osmithde-lnx.cisco.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596942662945099275?=
-X-GMAIL-MSGID: =?utf-8?q?1596942662945099275?=
+X-GMAIL-THRID: =?utf-8?q?1596942607544161703?=
+X-GMAIL-MSGID: =?utf-8?q?1596942607544161703?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-These files contain low level queueing interfaces
-for hardware.
+These files contain queueing interfaces for software.
 
 Signed-off-by: Oliver Smith-Denny <osmithde@cisco.com>
 Signed-off-by: Sesidhar Baddela <sebaddel@cisco.com>
@@ -62,32 +61,24 @@ Co-Developed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
 Co-Developed-by: Gian Carlo Boffa <gcboffa@cisco.com>
 Co-Developed-by: Oliver Smith-Denny <osmithde@cisco.com>
 ---
- drivers/staging/fnic2/src/vnic_cq.c      |  85 ++++++++++++
- drivers/staging/fnic2/src/vnic_cq.h      | 120 ++++++++++++++++
- drivers/staging/fnic2/src/vnic_cq_copy.h |  61 ++++++++
- drivers/staging/fnic2/src/vnic_rq.c      | 196 ++++++++++++++++++++++++++
- drivers/staging/fnic2/src/vnic_rq.h      | 231 +++++++++++++++++++++++++++++++
- drivers/staging/fnic2/src/vnic_wq.c      | 183 ++++++++++++++++++++++++
- drivers/staging/fnic2/src/vnic_wq.h      | 174 +++++++++++++++++++++++
- drivers/staging/fnic2/src/vnic_wq_copy.c | 115 +++++++++++++++
- drivers/staging/fnic2/src/vnic_wq_copy.h | 127 +++++++++++++++++
- 9 files changed, 1292 insertions(+)
- create mode 100644 drivers/staging/fnic2/src/vnic_cq.c
- create mode 100644 drivers/staging/fnic2/src/vnic_cq.h
- create mode 100644 drivers/staging/fnic2/src/vnic_cq_copy.h
- create mode 100644 drivers/staging/fnic2/src/vnic_rq.c
- create mode 100644 drivers/staging/fnic2/src/vnic_rq.h
- create mode 100644 drivers/staging/fnic2/src/vnic_wq.c
- create mode 100644 drivers/staging/fnic2/src/vnic_wq.h
- create mode 100644 drivers/staging/fnic2/src/vnic_wq_copy.c
- create mode 100644 drivers/staging/fnic2/src/vnic_wq_copy.h
+ drivers/staging/fnic2/src/cq_desc.h      |  74 +++++++++++++++
+ drivers/staging/fnic2/src/cq_enet_desc.h | 158 +++++++++++++++++++++++++++++++
+ drivers/staging/fnic2/src/cq_exch_desc.h | 104 ++++++++++++++++++++
+ drivers/staging/fnic2/src/rq_enet_desc.h |  45 +++++++++
+ drivers/staging/fnic2/src/wq_enet_desc.h |  69 ++++++++++++++
+ 5 files changed, 450 insertions(+)
+ create mode 100644 drivers/staging/fnic2/src/cq_desc.h
+ create mode 100644 drivers/staging/fnic2/src/cq_enet_desc.h
+ create mode 100644 drivers/staging/fnic2/src/cq_exch_desc.h
+ create mode 100644 drivers/staging/fnic2/src/rq_enet_desc.h
+ create mode 100644 drivers/staging/fnic2/src/wq_enet_desc.h
 
-diff --git a/drivers/staging/fnic2/src/vnic_cq.c b/drivers/staging/fnic2/src/vnic_cq.c
+diff --git a/drivers/staging/fnic2/src/cq_desc.h b/drivers/staging/fnic2/src/cq_desc.h
 new file mode 100644
-index 0000000..ac78b1b
+index 0000000..638753d
 --- /dev/null
-+++ b/drivers/staging/fnic2/src/vnic_cq.c
-@@ -0,0 +1,85 @@
++++ b/drivers/staging/fnic2/src/cq_desc.h
+@@ -0,0 +1,74 @@
 +/*
 + * SPDX-License-Identifier: GPL-2.0
 + * Copyright 2018 Cisco Systems, Inc.  All rights reserved.
@@ -105,80 +96,69 @@ index 0000000..ac78b1b
 + * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 + * SOFTWARE.
 + */
-+#include <linux/errno.h>
-+#include <linux/types.h>
-+#include <linux/pci.h>
-+#include "vnic_dev.h"
-+#include "vnic_cq.h"
++#ifndef _CQ_DESC_H_
++#define _CQ_DESC_H_
 +
-+void vnic_cq_free(struct vnic_cq *cq)
++/*
++ * Completion queue descriptor types
++ */
++enum cq_desc_types {
++	CQ_DESC_TYPE_RQ_ENET = 3,
++	CQ_DESC_TYPE_RQ_FCP = 4,
++};
++
++/* Completion queue descriptor: 16B
++ *
++ * All completion queues have this basic layout.  The
++ * type_specific area is unique for each completion
++ * queue type.
++ */
++struct cq_desc {
++	__le16 completed_index;
++	__le16 q_number;
++	uint8_t type_specific[11];
++	uint8_t type_color;
++};
++
++#define CQ_DESC_TYPE_BITS        4
++#define CQ_DESC_TYPE_MASK        ((1 << CQ_DESC_TYPE_BITS) - 1)
++#define CQ_DESC_COLOR_MASK       1
++#define CQ_DESC_COLOR_SHIFT      7
++#define CQ_DESC_Q_NUM_BITS       10
++#define CQ_DESC_Q_NUM_MASK       ((1 << CQ_DESC_Q_NUM_BITS) - 1)
++#define CQ_DESC_COMP_NDX_BITS    12
++#define CQ_DESC_COMP_NDX_MASK    ((1 << CQ_DESC_COMP_NDX_BITS) - 1)
++
++static inline void cq_desc_dec(const struct cq_desc *desc_arg, uint8_t *type, uint8_t *color, uint16_t *q_number, uint16_t *completed_index)
 +{
-+	vnic_dev_free_desc_ring(cq->vdev, &cq->ring);
++	const struct cq_desc *desc = desc_arg;
++	const uint8_t type_color = desc->type_color;
 +
-+	cq->ctrl = NULL;
++	*color = (type_color >> CQ_DESC_COLOR_SHIFT) & CQ_DESC_COLOR_MASK;
++
++	/*
++	 * Make sure color bit is read from desc *before* other fields
++	 * are read from desc.  Hardware guarantees color bit is last
++	 * bit (byte) written.  Adding the rmb() prevents the compiler
++	 * and/or CPU from reordering the reads which would potentially
++	 * result in reading stale values.
++	 */
++
++	rmb();
++
++	*type = type_color & CQ_DESC_TYPE_MASK;
++	*q_number = le16_to_cpu(desc->q_number) & CQ_DESC_Q_NUM_MASK;
++	*completed_index = le16_to_cpu(desc->completed_index) &
++		CQ_DESC_COMP_NDX_MASK;
 +}
 +
-+int vnic_cq_alloc(struct vnic_dev *vdev, struct vnic_cq *cq, unsigned int index,
-+		  unsigned int desc_count, unsigned int desc_size)
-+{
-+	int err;
-+
-+	cq->index = index;
-+	cq->vdev = vdev;
-+
-+	cq->ctrl = vnic_dev_get_res(vdev, RES_TYPE_CQ, index);
-+	if (!cq->ctrl) {
-+		pr_err("Failed to hook CQ[%d] resource\n", index);
-+		return -EINVAL;
-+	}
-+
-+	err = vnic_dev_alloc_desc_ring(vdev, &cq->ring, desc_count, desc_size);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+void vnic_cq_init(struct vnic_cq *cq, unsigned int flow_control_enable,
-+		  unsigned int color_enable, unsigned int cq_head, unsigned int cq_tail,
-+		  unsigned int cq_tail_color, unsigned int interrupt_enable,
-+		  unsigned int cq_entry_enable, unsigned int cq_message_enable,
-+		  unsigned int interrupt_offset, uint64_t cq_message_addr)
-+{
-+	uint64_t paddr;
-+
-+	paddr = (uint64_t)cq->ring.base_addr | VNIC_PADDR_TARGET;
-+	writeq(paddr, &cq->ctrl->ring_base);
-+	iowrite32(cq->ring.desc_count, &cq->ctrl->ring_size);
-+	iowrite32(flow_control_enable, &cq->ctrl->flow_control_enable);
-+	iowrite32(color_enable, &cq->ctrl->color_enable);
-+	iowrite32(cq_head, &cq->ctrl->cq_head);
-+	iowrite32(cq_tail, &cq->ctrl->cq_tail);
-+	iowrite32(cq_tail_color, &cq->ctrl->cq_tail_color);
-+	iowrite32(interrupt_enable, &cq->ctrl->interrupt_enable);
-+	iowrite32(cq_entry_enable, &cq->ctrl->cq_entry_enable);
-+	iowrite32(cq_message_enable, &cq->ctrl->cq_message_enable);
-+	iowrite32(interrupt_offset, &cq->ctrl->interrupt_offset);
-+	writeq(cq_message_addr, &cq->ctrl->cq_message_addr);
-+}
-+
-+void vnic_cq_clean(struct vnic_cq *cq)
-+{
-+	cq->to_clean = 0;
-+	cq->last_color = 0;
-+
-+	iowrite32(0, &cq->ctrl->cq_head);
-+	iowrite32(0, &cq->ctrl->cq_tail);
-+	iowrite32(1, &cq->ctrl->cq_tail_color);
-+
-+	vnic_dev_clear_desc_ring(&cq->ring);
-+}
-diff --git a/drivers/staging/fnic2/src/vnic_cq.h b/drivers/staging/fnic2/src/vnic_cq.h
++#endif /* _CQ_DESC_H_ */
+diff --git a/drivers/staging/fnic2/src/cq_enet_desc.h b/drivers/staging/fnic2/src/cq_enet_desc.h
 new file mode 100644
-index 0000000..010c044
+index 0000000..606cb89
 --- /dev/null
-+++ b/drivers/staging/fnic2/src/vnic_cq.h
-@@ -0,0 +1,120 @@
++++ b/drivers/staging/fnic2/src/cq_enet_desc.h
+@@ -0,0 +1,158 @@
 +/*
 + * SPDX-License-Identifier: GPL-2.0
 + * Copyright 2018 Cisco Systems, Inc.  All rights reserved.
@@ -196,115 +176,153 @@ index 0000000..010c044
 + * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 + * SOFTWARE.
 + */
-+#ifndef _VNIC_CQ_H_
-+#define _VNIC_CQ_H_
++#ifndef _CQ_ENET_DESC_H_
++#define _CQ_ENET_DESC_H_
 +
 +#include "cq_desc.h"
-+#include "vnic_dev.h"
 +
-+/*
-+ * These defines avoid symbol clash between fnic2 and enic (Cisco 10G Eth
-+ * Driver) when both are built with CONFIG options =y
-+ */
-+#define vnic_cq_service fnic2_cq_service
-+#define vnic_cq_free fnic2_cq_free
-+#define vnic_cq_alloc fnic2_cq_alloc
-+#define vnic_cq_init fnic2_cq_init
-+#define vnic_cq_clean fnic2_cq_clean
-+
-+/* Completion queue control */
-+struct vnic_cq_ctrl {
-+	uint64_t	ring_base;		/* 0x00 */
-+	uint32_t	ring_size;		/* 0x08 */
-+	uint32_t	pad0;
-+	uint32_t	flow_control_enable;	/* 0x10 */
-+	uint32_t	pad1;
-+	uint32_t	color_enable;		/* 0x18 */
-+	uint32_t	pad2;
-+	uint32_t	cq_head;		/* 0x20 */
-+	uint32_t	pad3;
-+	uint32_t	cq_tail;		/* 0x28 */
-+	uint32_t	pad4;
-+	uint32_t	cq_tail_color;		/* 0x30 */
-+	uint32_t	pad5;
-+	uint32_t	interrupt_enable;	/* 0x38 */
-+	uint32_t	pad6;
-+	uint32_t	cq_entry_enable;	/* 0x40 */
-+	uint32_t	pad7;
-+	uint32_t	cq_message_enable;	/* 0x48 */
-+	uint32_t	pad8;
-+	uint32_t	interrupt_offset;	/* 0x50 */
-+	uint32_t	pad9;
-+	uint64_t	cq_message_addr;	/* 0x58 */
-+	uint32_t	pad10;
++/* Ethernet completion queue descriptor: 16B */
++struct cq_enet_wq_desc {
++	__le16 completed_index;
++	__le16 q_number;
++	uint8_t reserved[11];
++	uint8_t type_color;
 +};
 +
-+struct vnic_cq {
-+	unsigned int		index;
-+	struct vnic_dev		*vdev;
-+	struct vnic_cq_ctrl	__iomem *ctrl;	/* memory-mapped */
-+	struct vnic_dev_ring	ring;
-+	unsigned int		to_clean;
-+	unsigned int		last_color;
++/* Completion queue descriptor: Ethernet receive queue, 16B */
++struct cq_enet_rq_desc {
++	__le16 completed_index_flags;
++	__le16 q_number_rss_type_flags;
++	__le32 rss_hash;
++	__le16 bytes_written_flags;
++	__le16 vlan;
++	__le16 checksum_fcoe;
++	uint8_t flags;
++	uint8_t type_color;
 +};
 +
-+static inline unsigned int vnic_cq_service(struct vnic_cq *cq,
-+					   unsigned int work_to_do,
-+					   int (*q_service)(struct vnic_dev *vdev, struct cq_desc *cq_desc,
-+					   uint8_t type, uint16_t q_number, uint16_t completed_index))
++#define CQ_ENET_RQ_DESC_FLAGS_INGRESS_PORT          (0x1 << 12)
++#define CQ_ENET_RQ_DESC_FLAGS_FCOE                  (0x1 << 13)
++#define CQ_ENET_RQ_DESC_FLAGS_EOP                   (0x1 << 14)
++#define CQ_ENET_RQ_DESC_FLAGS_SOP                   (0x1 << 15)
++
++#define CQ_ENET_RQ_DESC_RSS_TYPE_BITS               4
++#define CQ_ENET_RQ_DESC_RSS_TYPE_MASK \
++	((1 << CQ_ENET_RQ_DESC_RSS_TYPE_BITS) - 1)
++
++#define CQ_ENET_RQ_DESC_FLAGS_CSUM_NOT_CALC         (0x1 << 14)
++
++#define CQ_ENET_RQ_DESC_BYTES_WRITTEN_BITS          14
++#define CQ_ENET_RQ_DESC_BYTES_WRITTEN_MASK \
++	((1 << CQ_ENET_RQ_DESC_BYTES_WRITTEN_BITS) - 1)
++#define CQ_ENET_RQ_DESC_FLAGS_TRUNCATED             (0x1 << 14)
++#define CQ_ENET_RQ_DESC_FLAGS_VLAN_STRIPPED         (0x1 << 15)
++
++#define CQ_ENET_RQ_DESC_FCOE_SOF_BITS               4
++#define CQ_ENET_RQ_DESC_FCOE_SOF_MASK \
++	((1 << CQ_ENET_RQ_DESC_FCOE_SOF_BITS) - 1)
++#define CQ_ENET_RQ_DESC_FCOE_EOF_BITS               8
++#define CQ_ENET_RQ_DESC_FCOE_EOF_MASK \
++	((1 << CQ_ENET_RQ_DESC_FCOE_EOF_BITS) - 1)
++#define CQ_ENET_RQ_DESC_FCOE_EOF_SHIFT              8
++
++#define CQ_ENET_RQ_DESC_FLAGS_TCP_UDP_CSUM_OK       (0x1 << 0)
++#define CQ_ENET_RQ_DESC_FCOE_FC_CRC_OK              (0x1 << 0)
++#define CQ_ENET_RQ_DESC_FLAGS_UDP                   (0x1 << 1)
++#define CQ_ENET_RQ_DESC_FCOE_ENC_ERROR              (0x1 << 1)
++#define CQ_ENET_RQ_DESC_FLAGS_TCP                   (0x1 << 2)
++#define CQ_ENET_RQ_DESC_FLAGS_IPV4_CSUM_OK          (0x1 << 3)
++#define CQ_ENET_RQ_DESC_FLAGS_IPV6                  (0x1 << 4)
++#define CQ_ENET_RQ_DESC_FLAGS_IPV4                  (0x1 << 5)
++#define CQ_ENET_RQ_DESC_FLAGS_IPV4_FRAGMENT         (0x1 << 6)
++#define CQ_ENET_RQ_DESC_FLAGS_FCS_OK                (0x1 << 7)
++
++static inline void cq_enet_rq_desc_dec(struct cq_enet_rq_desc *desc, uint8_t *type,
++				       uint8_t *color, uint16_t *q_number,
++				       uint16_t *completed_index, uint8_t *ingress_port,
++				       uint8_t *fcoe, uint8_t *eop, uint8_t *sop,
++				       uint8_t *rss_type, uint8_t *csum_not_calc,
++				       uint32_t *rss_hash, uint16_t *bytes_written,
++				       uint8_t *packet_error, uint8_t *vlan_stripped,
++				       uint16_t *vlan, uint16_t *checksum, uint8_t *fcoe_sof,
++				       uint8_t *fcoe_fc_crc_ok, uint8_t *fcoe_enc_error,
++				       uint8_t *fcoe_eof,
++				       uint8_t *tcp_udp_csum_ok, uint8_t *udp, uint8_t *tcp,
++				       uint8_t *ipv4_csum_ok, uint8_t *ipv6, uint8_t *ipv4,
++				       uint8_t *ipv4_fragment, uint8_t *fcs_ok)
 +{
-+	struct cq_desc *cq_desc;
-+	unsigned int work_done = 0;
-+	uint16_t q_number, completed_index;
-+	uint8_t type, color;
++	uint16_t completed_index_flags = le16_to_cpu(desc->completed_index_flags);
++	uint16_t q_number_rss_type_flags =
++		le16_to_cpu(desc->q_number_rss_type_flags);
++	uint16_t bytes_written_flags = le16_to_cpu(desc->bytes_written_flags);
 +
-+	cq_desc = (struct cq_desc *)((uint8_t *)cq->ring.descs +
-+		cq->ring.desc_size * cq->to_clean);
-+	cq_desc_dec(cq_desc, &type, &color,
-+		&q_number, &completed_index);
++	cq_desc_dec((struct cq_desc *)desc, type,
++		color, q_number, completed_index);
 +
-+	while (color != cq->last_color) {
++	*ingress_port = (completed_index_flags &
++		CQ_ENET_RQ_DESC_FLAGS_INGRESS_PORT) ? 1 : 0;
++	*fcoe = (completed_index_flags & CQ_ENET_RQ_DESC_FLAGS_FCOE) ?
++		1 : 0;
++	*eop = (completed_index_flags & CQ_ENET_RQ_DESC_FLAGS_EOP) ?
++		1 : 0;
++	*sop = (completed_index_flags & CQ_ENET_RQ_DESC_FLAGS_SOP) ?
++		1 : 0;
 +
-+		if ((*q_service)(cq->vdev, cq_desc, type,
-+			q_number, completed_index))
-+			break;
++	*rss_type = (uint8_t)((q_number_rss_type_flags >> CQ_DESC_Q_NUM_BITS) &
++		CQ_ENET_RQ_DESC_RSS_TYPE_MASK);
++	*csum_not_calc = (q_number_rss_type_flags &
++		CQ_ENET_RQ_DESC_FLAGS_CSUM_NOT_CALC) ? 1 : 0;
 +
-+		cq->to_clean++;
-+		if (cq->to_clean == cq->ring.desc_count) {
-+			cq->to_clean = 0;
-+			cq->last_color = cq->last_color ? 0 : 1;
-+		}
++	*rss_hash = le32_to_cpu(desc->rss_hash);
 +
-+		cq_desc = (struct cq_desc *)((uint8_t *)cq->ring.descs +
-+			cq->ring.desc_size * cq->to_clean);
-+		cq_desc_dec(cq_desc, &type, &color,
-+			&q_number, &completed_index);
++	*bytes_written = bytes_written_flags &
++		CQ_ENET_RQ_DESC_BYTES_WRITTEN_MASK;
++	*packet_error = (bytes_written_flags &
++		CQ_ENET_RQ_DESC_FLAGS_TRUNCATED) ? 1 : 0;
++	*vlan_stripped = (bytes_written_flags &
++		CQ_ENET_RQ_DESC_FLAGS_VLAN_STRIPPED) ? 1 : 0;
 +
-+		work_done++;
-+		if (work_done >= work_to_do)
-+			break;
++	*vlan = le16_to_cpu(desc->vlan);
++
++	if (*fcoe) {
++		*fcoe_sof = (uint8_t)(le16_to_cpu(desc->checksum_fcoe) &
++			CQ_ENET_RQ_DESC_FCOE_SOF_MASK);
++		*fcoe_fc_crc_ok = (desc->flags &
++			CQ_ENET_RQ_DESC_FCOE_FC_CRC_OK) ? 1 : 0;
++		*fcoe_enc_error = (desc->flags &
++			CQ_ENET_RQ_DESC_FCOE_ENC_ERROR) ? 1 : 0;
++		*fcoe_eof = (uint8_t)((desc->checksum_fcoe >>
++			CQ_ENET_RQ_DESC_FCOE_EOF_SHIFT) &
++			CQ_ENET_RQ_DESC_FCOE_EOF_MASK);
++		*checksum = 0;
++	} else {
++		*fcoe_sof = 0;
++		*fcoe_fc_crc_ok = 0;
++		*fcoe_enc_error = 0;
++		*fcoe_eof = 0;
++		*checksum = le16_to_cpu(desc->checksum_fcoe);
 +	}
 +
-+	return work_done;
++	*tcp_udp_csum_ok =
++		(desc->flags & CQ_ENET_RQ_DESC_FLAGS_TCP_UDP_CSUM_OK) ? 1 : 0;
++	*udp = (desc->flags & CQ_ENET_RQ_DESC_FLAGS_UDP) ? 1 : 0;
++	*tcp = (desc->flags & CQ_ENET_RQ_DESC_FLAGS_TCP) ? 1 : 0;
++	*ipv4_csum_ok =
++		(desc->flags & CQ_ENET_RQ_DESC_FLAGS_IPV4_CSUM_OK) ? 1 : 0;
++	*ipv6 = (desc->flags & CQ_ENET_RQ_DESC_FLAGS_IPV6) ? 1 : 0;
++	*ipv4 = (desc->flags & CQ_ENET_RQ_DESC_FLAGS_IPV4) ? 1 : 0;
++	*ipv4_fragment =
++		(desc->flags & CQ_ENET_RQ_DESC_FLAGS_IPV4_FRAGMENT) ? 1 : 0;
++	*fcs_ok = (desc->flags & CQ_ENET_RQ_DESC_FLAGS_FCS_OK) ? 1 : 0;
 +}
 +
-+void vnic_cq_free(struct vnic_cq *cq);
-+int vnic_cq_alloc(struct vnic_dev *vdev, struct vnic_cq *cq, unsigned int index,
-+		  unsigned int desc_count, unsigned int desc_size);
-+void vnic_cq_init(struct vnic_cq *cq, unsigned int flow_control_enable,
-+		  unsigned int color_enable, unsigned int cq_head, unsigned int cq_tail,
-+		  unsigned int cq_tail_color, unsigned int interrupt_enable,
-+		  unsigned int cq_entry_enable, unsigned int message_enable,
-+		  unsigned int interrupt_offset, uint64_t message_addr);
-+void vnic_cq_clean(struct vnic_cq *cq);
-+
-+#endif /* _VNIC_CQ_H_ */
-diff --git a/drivers/staging/fnic2/src/vnic_cq_copy.h b/drivers/staging/fnic2/src/vnic_cq_copy.h
++#endif /* _CQ_ENET_DESC_H_ */
+diff --git a/drivers/staging/fnic2/src/cq_exch_desc.h b/drivers/staging/fnic2/src/cq_exch_desc.h
 new file mode 100644
-index 0000000..2ddf0b5
+index 0000000..bc7e005c
 --- /dev/null
-+++ b/drivers/staging/fnic2/src/vnic_cq_copy.h
-@@ -0,0 +1,61 @@
++++ b/drivers/staging/fnic2/src/cq_exch_desc.h
+@@ -0,0 +1,104 @@
 +/*
 + * SPDX-License-Identifier: GPL-2.0
 + * Copyright 2018 Cisco Systems, Inc.  All rights reserved.
@@ -322,56 +340,99 @@ index 0000000..2ddf0b5
 + * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 + * SOFTWARE.
 + */
-+#ifndef _VNIC_CQ_COPY_H_
-+#define _VNIC_CQ_COPY_H_
++#ifndef _CQ_EXCH_DESC_H_
++#define _CQ_EXCH_DESC_H_
 +
-+#include "fcpio.h"
++#include "cq_desc.h"
 +
-+static inline unsigned int vnic_cq_copy_service(struct vnic_cq *cq,
-+						int (*q_service)(struct vnic_dev *vdev,
-+						unsigned int index,
-+						struct fcpio_fw_req *desc),
-+						unsigned int work_to_do)
++#define CQ_EXCH_WQ_STATUS_BITS      2
++#define CQ_EXCH_WQ_STATUS_MASK      ((1 << CQ_EXCH_WQ_STATUS_BITS) - 1)
 +
++struct cq_fcp_rq_desc {
++	uint16_t completed_index_eop_sop_prt;
++	uint16_t q_number;
++	uint16_t exchange_id;
++	uint16_t tmpl;
++	uint16_t bytes_written;
++	uint16_t vlan;
++	uint8_t  sof;
++	uint8_t  eof;
++	uint8_t  fcs_fer_fck;
++	uint8_t  type_color;
++};
++
++#define CQ_FCP_RQ_DESC_FLAGS_SOP		(1 << 15)
++#define CQ_FCP_RQ_DESC_FLAGS_EOP		(1 << 14)
++#define CQ_FCP_RQ_DESC_FLAGS_PRT		(1 << 12)
++#define CQ_FCP_RQ_DESC_TMPL_MASK		0x1f
++#define CQ_FCP_RQ_DESC_BYTES_WRITTEN_MASK	0x3fff
++#define CQ_FCP_RQ_DESC_PACKET_ERR_SHIFT		14
++#define CQ_FCP_RQ_DESC_PACKET_ERR_MASK (1 << CQ_FCP_RQ_DESC_PACKET_ERR_SHIFT)
++#define CQ_FCP_RQ_DESC_VS_STRIPPED_SHIFT	15
++#define CQ_FCP_RQ_DESC_VS_STRIPPED_MASK (1 << CQ_FCP_RQ_DESC_VS_STRIPPED_SHIFT)
++#define CQ_FCP_RQ_DESC_FC_CRC_OK_MASK		0x1
++#define CQ_FCP_RQ_DESC_FCOE_ERR_SHIFT		1
++#define CQ_FCP_RQ_DESC_FCOE_ERR_MASK (1 << CQ_FCP_RQ_DESC_FCOE_ERR_SHIFT)
++#define CQ_FCP_RQ_DESC_FCS_OK_SHIFT		7
++#define CQ_FCP_RQ_DESC_FCS_OK_MASK (1 << CQ_FCP_RQ_DESC_FCS_OK_SHIFT)
++
++static inline void cq_fcp_rq_desc_dec(struct cq_fcp_rq_desc *desc_ptr,
++				      uint8_t  *type,
++				      uint8_t  *color,
++				      uint16_t *q_number,
++				      uint16_t *completed_index,
++				      uint8_t  *eop,
++				      uint8_t  *sop,
++				      uint8_t  *fck,
++				      uint16_t *exchange_id,
++				      uint16_t *tmpl,
++				      uint32_t *bytes_written,
++				      uint8_t  *sof,
++				      uint8_t  *eof,
++				      uint8_t  *ingress_port,
++				      uint8_t  *packet_err,
++				      uint8_t  *fcoe_err,
++				      uint8_t  *fcs_ok,
++				      uint8_t  *vlan_stripped,
++				      uint16_t *vlan)
 +{
-+	struct fcpio_fw_req *desc;
-+	unsigned int work_done = 0;
-+	uint8_t color;
-+
-+	desc = (struct fcpio_fw_req *)((uint8_t *)cq->ring.descs +
-+		cq->ring.desc_size * cq->to_clean);
-+	fcpio_color_dec(desc, &color);
-+
-+	while (color != cq->last_color) {
-+
-+		if ((*q_service)(cq->vdev, cq->index, desc))
-+			break;
-+
-+		cq->to_clean++;
-+		if (cq->to_clean == cq->ring.desc_count) {
-+			cq->to_clean = 0;
-+			cq->last_color = cq->last_color ? 0 : 1;
-+		}
-+
-+		desc = (struct fcpio_fw_req *)((uint8_t *)cq->ring.descs +
-+			cq->ring.desc_size * cq->to_clean);
-+		fcpio_color_dec(desc, &color);
-+
-+		work_done++;
-+		if (work_done >= work_to_do)
-+			break;
-+	}
-+
-+	return work_done;
++	cq_desc_dec((struct cq_desc *)desc_ptr, type,
++		    color, q_number, completed_index);
++	*eop = (desc_ptr->completed_index_eop_sop_prt &
++		CQ_FCP_RQ_DESC_FLAGS_EOP) ? 1 : 0;
++	*sop = (desc_ptr->completed_index_eop_sop_prt &
++		CQ_FCP_RQ_DESC_FLAGS_SOP) ? 1 : 0;
++	*ingress_port =
++		(desc_ptr->completed_index_eop_sop_prt &
++		 CQ_FCP_RQ_DESC_FLAGS_PRT) ? 1 : 0;
++	*exchange_id = desc_ptr->exchange_id;
++	*tmpl = desc_ptr->tmpl & CQ_FCP_RQ_DESC_TMPL_MASK;
++	*bytes_written =
++		desc_ptr->bytes_written & CQ_FCP_RQ_DESC_BYTES_WRITTEN_MASK;
++	*packet_err =
++		(desc_ptr->bytes_written & CQ_FCP_RQ_DESC_PACKET_ERR_MASK) >>
++		CQ_FCP_RQ_DESC_PACKET_ERR_SHIFT;
++	*vlan_stripped =
++		(desc_ptr->bytes_written & CQ_FCP_RQ_DESC_VS_STRIPPED_MASK) >>
++		CQ_FCP_RQ_DESC_VS_STRIPPED_SHIFT;
++	*vlan = desc_ptr->vlan;
++	*sof = desc_ptr->sof;
++	*fck = desc_ptr->fcs_fer_fck & CQ_FCP_RQ_DESC_FC_CRC_OK_MASK;
++	*fcoe_err = (desc_ptr->fcs_fer_fck & CQ_FCP_RQ_DESC_FCOE_ERR_MASK) >>
++		CQ_FCP_RQ_DESC_FCOE_ERR_SHIFT;
++	*eof = desc_ptr->eof;
++	*fcs_ok =
++		(desc_ptr->fcs_fer_fck & CQ_FCP_RQ_DESC_FCS_OK_MASK) >>
++		CQ_FCP_RQ_DESC_FCS_OK_SHIFT;
 +}
 +
-+#endif /* _VNIC_CQ_COPY_H_ */
-diff --git a/drivers/staging/fnic2/src/vnic_rq.c b/drivers/staging/fnic2/src/vnic_rq.c
++#endif /* _CQ_EXCH_DESC_H_ */
+diff --git a/drivers/staging/fnic2/src/rq_enet_desc.h b/drivers/staging/fnic2/src/rq_enet_desc.h
 new file mode 100644
-index 0000000..1569091
+index 0000000..c8d6e30
 --- /dev/null
-+++ b/drivers/staging/fnic2/src/vnic_rq.c
-@@ -0,0 +1,196 @@
++++ b/drivers/staging/fnic2/src/rq_enet_desc.h
+@@ -0,0 +1,45 @@
 +/*
 + * SPDX-License-Identifier: GPL-2.0
 + * Copyright 2018 Cisco Systems, Inc.  All rights reserved.
@@ -389,191 +450,40 @@ index 0000000..1569091
 + * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 + * SOFTWARE.
 + */
++#ifndef _RQ_ENET_DESC_H_
++#define _RQ_ENET_DESC_H_
 +
-+#include <linux/errno.h>
-+#include <linux/types.h>
-+#include <linux/pci.h>
-+#include <linux/delay.h>
-+#include <linux/slab.h>
-+#include "vnic_dev.h"
-+#include "vnic_rq.h"
++/* Ethernet receive queue descriptor: 16B */
++struct rq_enet_desc {
++	__le64	address;
++	__le16	length_type;
++	uint8_t	reserved[6];
++};
 +
-+static int vnic_rq_alloc_bufs(struct vnic_rq *rq)
++#define	RQ_ENET_TYPE_ONLY_SOP	0
++
++#define RQ_ENET_LEN_BITS	14
++#define RQ_ENET_LEN_MASK	((1 << RQ_ENET_LEN_BITS) - 1)
++#define RQ_ENET_TYPE_BITS	2
++#define RQ_ENET_TYPE_MASK	((1 << RQ_ENET_TYPE_BITS) - 1)
++
++static inline void rq_enet_desc_enc(struct rq_enet_desc *desc,
++				    uint64_t address,
++				    uint8_t type,
++				    uint16_t length)
 +{
-+	struct vnic_rq_buf *buf;
-+	struct vnic_dev *vdev;
-+	unsigned int i, j, count = rq->ring.desc_count;
-+	unsigned int blks = VNIC_RQ_BUF_BLKS_NEEDED(count);
-+
-+	vdev = rq->vdev;
-+
-+	for (i = 0; i < blks; i++) {
-+		rq->bufs[i] = kzalloc(VNIC_RQ_BUF_BLK_SZ, GFP_ATOMIC);
-+		if (!rq->bufs[i]) {
-+			pr_err("Failed to alloc rq_bufs\n");
-+			return -ENOMEM;
-+		}
-+	}
-+
-+	for (i = 0; i < blks; i++) {
-+		buf = rq->bufs[i];
-+		for (j = 0; j < VNIC_RQ_BUF_BLK_ENTRIES; j++) {
-+			buf->index = i * VNIC_RQ_BUF_BLK_ENTRIES + j;
-+			buf->desc = (uint8_t *)rq->ring.descs +
-+				rq->ring.desc_size * buf->index;
-+			if (buf->index + 1 == count) {
-+				buf->next = rq->bufs[0];
-+				break;
-+			} else if (j + 1 == VNIC_RQ_BUF_BLK_ENTRIES) {
-+				buf->next = rq->bufs[i + 1];
-+			} else {
-+				buf->next = buf + 1;
-+				buf++;
-+			}
-+		}
-+	}
-+
-+	rq->to_use = rq->to_clean = rq->bufs[0];
-+	rq->buf_index = 0;
-+
-+	return 0;
++	desc->address = cpu_to_le64(address);
++	desc->length_type = cpu_to_le16((length & RQ_ENET_LEN_MASK) |
++		((type & RQ_ENET_TYPE_MASK) << RQ_ENET_LEN_BITS));
 +}
 +
-+void vnic_rq_free(struct vnic_rq *rq)
-+{
-+	struct vnic_dev *vdev;
-+	unsigned int i;
-+
-+	vdev = rq->vdev;
-+
-+	vnic_dev_free_desc_ring(vdev, &rq->ring);
-+
-+	for (i = 0; i < VNIC_RQ_BUF_BLKS_MAX; i++) {
-+		kfree(rq->bufs[i]);
-+		rq->bufs[i] = NULL;
-+	}
-+
-+	rq->ctrl = NULL;
-+}
-+
-+int vnic_rq_alloc(struct vnic_dev *vdev, struct vnic_rq *rq, unsigned int index,
-+		  unsigned int desc_count, unsigned int desc_size)
-+{
-+	int err;
-+
-+	rq->index = index;
-+	rq->vdev = vdev;
-+
-+	rq->ctrl = vnic_dev_get_res(vdev, RES_TYPE_RQ, index);
-+	if (!rq->ctrl) {
-+		pr_err("Failed to hook RQ[%d] resource\n", index);
-+		return -EINVAL;
-+	}
-+
-+	vnic_rq_disable(rq);
-+
-+	err = vnic_dev_alloc_desc_ring(vdev, &rq->ring, desc_count, desc_size);
-+	if (err)
-+		return err;
-+
-+	err = vnic_rq_alloc_bufs(rq);
-+	if (err) {
-+		vnic_rq_free(rq);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+void vnic_rq_init(struct vnic_rq *rq, unsigned int cq_index,
-+		  unsigned int error_interrupt_enable,
-+		  unsigned int error_interrupt_offset)
-+{
-+	uint64_t paddr;
-+	uint32_t fetch_index;
-+
-+	paddr = (uint64_t)rq->ring.base_addr | VNIC_PADDR_TARGET;
-+	writeq(paddr, &rq->ctrl->ring_base);
-+	iowrite32(rq->ring.desc_count, &rq->ctrl->ring_size);
-+	iowrite32(cq_index, &rq->ctrl->cq_index);
-+	iowrite32(error_interrupt_enable, &rq->ctrl->error_interrupt_enable);
-+	iowrite32(error_interrupt_offset, &rq->ctrl->error_interrupt_offset);
-+	iowrite32(0, &rq->ctrl->dropped_packet_count);
-+	iowrite32(0, &rq->ctrl->error_status);
-+
-+	/* Use current fetch_index as the ring starting point */
-+	fetch_index = ioread32(&rq->ctrl->fetch_index);
-+	rq->to_use = rq->to_clean =
-+		&rq->bufs[fetch_index / VNIC_RQ_BUF_BLK_ENTRIES]
-+			[fetch_index % VNIC_RQ_BUF_BLK_ENTRIES];
-+	iowrite32(fetch_index, &rq->ctrl->posted_index);
-+
-+	rq->buf_index = 0;
-+}
-+
-+unsigned int vnic_rq_error_status(struct vnic_rq *rq)
-+{
-+	return ioread32(&rq->ctrl->error_status);
-+}
-+
-+void vnic_rq_enable(struct vnic_rq *rq)
-+{
-+	iowrite32(1, &rq->ctrl->enable);
-+}
-+
-+int vnic_rq_disable(struct vnic_rq *rq)
-+{
-+	unsigned int wait;
-+
-+	iowrite32(0, &rq->ctrl->enable);
-+
-+	/* Wait for HW to ACK disable request */
-+	for (wait = 0; wait < 100; wait++) {
-+		if (!(ioread32(&rq->ctrl->running)))
-+			return 0;
-+		udelay(1);
-+	}
-+
-+	pr_err("Failed to disable RQ[%d]\n", rq->index);
-+
-+	return -ETIMEDOUT;
-+}
-+
-+void vnic_rq_clean(struct vnic_rq *rq,
-+		   void (*buf_clean)(struct vnic_rq *rq, struct vnic_rq_buf *buf))
-+{
-+	struct vnic_rq_buf *buf;
-+	uint32_t fetch_index;
-+
-+	WARN_ON(ioread32(&rq->ctrl->enable));
-+
-+	buf = rq->to_clean;
-+
-+	while (vnic_rq_desc_used(rq) > 0) {
-+
-+		(*buf_clean)(rq, buf);
-+
-+		buf = rq->to_clean = buf->next;
-+		rq->ring.desc_avail++;
-+	}
-+
-+	/* Use current fetch_index as the ring starting point */
-+	fetch_index = ioread32(&rq->ctrl->fetch_index);
-+	rq->to_use = rq->to_clean =
-+		&rq->bufs[fetch_index / VNIC_RQ_BUF_BLK_ENTRIES]
-+			[fetch_index % VNIC_RQ_BUF_BLK_ENTRIES];
-+	iowrite32(fetch_index, &rq->ctrl->posted_index);
-+
-+	rq->buf_index = 0;
-+
-+	vnic_dev_clear_desc_ring(&rq->ring);
-+}
-diff --git a/drivers/staging/fnic2/src/vnic_rq.h b/drivers/staging/fnic2/src/vnic_rq.h
++#endif /* _RQ_ENET_DESC_H_ */
+diff --git a/drivers/staging/fnic2/src/wq_enet_desc.h b/drivers/staging/fnic2/src/wq_enet_desc.h
 new file mode 100644
-index 0000000..4ffea9a
+index 0000000..51384c6
 --- /dev/null
-+++ b/drivers/staging/fnic2/src/vnic_rq.h
-@@ -0,0 +1,231 @@
++++ b/drivers/staging/fnic2/src/wq_enet_desc.h
+@@ -0,0 +1,69 @@
 +/*
 + * SPDX-License-Identifier: GPL-2.0
 + * Copyright 2018 Cisco Systems, Inc.  All rights reserved.
@@ -591,842 +501,57 @@ index 0000000..4ffea9a
 + * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 + * SOFTWARE.
 + */
-+#ifndef _VNIC_RQ_H_
-+#define _VNIC_RQ_H_
++#ifndef _WQ_ENET_DESC_H_
++#define _WQ_ENET_DESC_H_
 +
-+#include <linux/pci.h>
-+#include "vnic_dev.h"
-+#include "vnic_cq.h"
-+
-+/*
-+ * These defines avoid symbol clash between fnic2 and enic (Cisco 10G Eth
-+ * Driver) when both are built with CONFIG options =y
-+ */
-+#define vnic_rq_desc_avail fnic2_rq_desc_avail
-+#define vnic_rq_desc_used fnic2_rq_desc_used
-+#define vnic_rq_next_desc fnic2_rq_next_desc
-+#define vnic_rq_next_index fnic2_rq_next_index
-+#define vnic_rq_next_buf_index fnic2_rq_next_buf_index
-+#define vnic_rq_post fnic2_rq_post
-+#define vnic_rq_posting_soon fnic2_rq_posting_soon
-+#define vnic_rq_return_descs fnic2_rq_return_descs
-+#define vnic_rq_service fnic2_rq_service
-+#define vnic_rq_fill fnic2_rq_fill
-+#define vnic_rq_free fnic2_rq_free
-+#define vnic_rq_alloc fnic2_rq_alloc
-+#define vnic_rq_init fnic2_rq_init
-+#define vnic_rq_error_status fnic2_rq_error_status
-+#define vnic_rq_enable fnic2_rq_enable
-+#define vnic_rq_disable fnic2_rq_disable
-+#define vnic_rq_clean fnic2_rq_clean
-+
-+/* Receive queue control */
-+struct vnic_rq_ctrl {
-+	uint64_t ring_base;			/* 0x00 */
-+	uint32_t ring_size;			/* 0x08 */
-+	uint32_t pad0;
-+	uint32_t posted_index;		/* 0x10 */
-+	uint32_t pad1;
-+	uint32_t cq_index;			/* 0x18 */
-+	uint32_t pad2;
-+	uint32_t enable;			/* 0x20 */
-+	uint32_t pad3;
-+	uint32_t running;			/* 0x28 */
-+	uint32_t pad4;
-+	uint32_t fetch_index;		/* 0x30 */
-+	uint32_t pad5;
-+	uint32_t error_interrupt_enable;	/* 0x38 */
-+	uint32_t pad6;
-+	uint32_t error_interrupt_offset;	/* 0x40 */
-+	uint32_t pad7;
-+	uint32_t error_status;		/* 0x48 */
-+	uint32_t pad8;
-+	uint32_t dropped_packet_count;	/* 0x50 */
-+	uint32_t pad9;
-+	uint32_t dropped_packet_count_rc;	/* 0x58 */
-+	uint32_t pad10;
++/* Ethernet work queue descriptor: 16B */
++struct wq_enet_desc {
++	__le64 address;
++	__le16 length;
++	__le16 mss_loopback;
++	__le16 header_length_flags;
++	__le16 vlan_tag;
 +};
 +
-+/* Break the vnic_rq_buf allocations into blocks of 64 entries */
-+#define VNIC_RQ_BUF_BLK_ENTRIES 64
-+#define VNIC_RQ_BUF_BLK_SZ \
-+	(VNIC_RQ_BUF_BLK_ENTRIES * sizeof(struct vnic_rq_buf))
-+#define VNIC_RQ_BUF_BLKS_NEEDED(entries) \
-+	DIV_ROUND_UP(entries, VNIC_RQ_BUF_BLK_ENTRIES)
-+#define VNIC_RQ_BUF_BLKS_MAX VNIC_RQ_BUF_BLKS_NEEDED(4096)
-+
-+#define VNIC_RQ_RETURN_DESC 0
-+
-+#ifndef VNIC_RQ_RETURN_RATE
-+#define VNIC_RQ_RETURN_RATE             0xf     /* keep 2^n - 1 */
-+#endif
-+
-+struct vnic_rq_buf {
-+	struct vnic_rq_buf	*next;
-+	dma_addr_t		dma_addr;
-+	void			*os_buf;
-+	unsigned int		os_buf_index;
-+	unsigned int		len;
-+	unsigned int		index;
-+	void			*desc;
++enum wq_enet {
++	WQ_ENET_LEN_BITS			= 14,
++	WQ_ENET_LEN_MASK			= ((1 << WQ_ENET_LEN_BITS) - 1),
++	WQ_ENET_MSS_BITS			= 14,
++	WQ_ENET_MSS_MASK			= ((1 << WQ_ENET_MSS_BITS) - 1),
++	WQ_ENET_MSS_SHIFT			= 2,
++	WQ_ENET_LOOPBACK_SHIFT			= 1,
++	WQ_ENET_HDRLEN_BITS			= 10,
++	WQ_ENET_HDRLEN_MASK			= ((1 << WQ_ENET_HDRLEN_BITS) - 1),
++	WQ_ENET_FLAGS_OM_BITS			= 2,
++	WQ_ENET_FLAGS_OM_MASK			= ((1 << WQ_ENET_FLAGS_OM_BITS) - 1),
++	WQ_ENET_FLAGS_EOP_SHIFT			= 12,
++	WQ_ENET_FLAGS_CQ_ENTRY_SHIFT		= 13,
++	WQ_ENET_FLAGS_FCOE_ENCAP_SHIFT		= 14,
++	WQ_ENET_FLAGS_VLAN_TAG_INSERT_SHIFT	= 15
 +};
 +
-+struct vnic_rq {
-+	unsigned int			index;
-+	struct vnic_dev			*vdev;
-+	struct vnic_rq_ctrl __iomem	*ctrl;	/* memory-mapped */
-+	struct vnic_dev_ring		ring;
-+	struct vnic_rq_buf		*bufs[VNIC_RQ_BUF_BLKS_MAX];
-+	struct vnic_rq_buf		*to_use;
-+	struct vnic_rq_buf		*to_clean;
-+	void				*os_buf_head;
-+	unsigned int			buf_index;
-+	unsigned int			pkts_outstanding;
-+};
-+
-+static inline unsigned int vnic_rq_desc_avail(struct vnic_rq *rq)
++static inline void wq_enet_desc_enc(struct wq_enet_desc *desc,
++				    uint64_t address, uint16_t length,
++				    uint16_t mss, uint16_t header_length,
++				    uint8_t offload_mode, uint8_t eop,
++				    uint8_t cq_entry, uint8_t fcoe_encap,
++				    uint8_t vlan_tag_insert, uint16_t vlan_tag,
++				    uint8_t loopback)
 +{
-+	/* how many does SW own? */
-+	return rq->ring.desc_avail;
++	desc->address = cpu_to_le64(address);
++	desc->length = cpu_to_le16(length & WQ_ENET_LEN_MASK);
++	desc->mss_loopback = cpu_to_le16((mss & WQ_ENET_MSS_MASK) <<
++		WQ_ENET_MSS_SHIFT | (loopback & 1) << WQ_ENET_LOOPBACK_SHIFT);
++	desc->header_length_flags = cpu_to_le16(
++		(header_length & WQ_ENET_HDRLEN_MASK) |
++		(offload_mode & WQ_ENET_FLAGS_OM_MASK) << WQ_ENET_HDRLEN_BITS |
++		(eop & 1) << WQ_ENET_FLAGS_EOP_SHIFT |
++		(cq_entry & 1) << WQ_ENET_FLAGS_CQ_ENTRY_SHIFT |
++		(fcoe_encap & 1) << WQ_ENET_FLAGS_FCOE_ENCAP_SHIFT |
++		(vlan_tag_insert & 1) << WQ_ENET_FLAGS_VLAN_TAG_INSERT_SHIFT);
++	desc->vlan_tag = cpu_to_le16(vlan_tag);
 +}
 +
-+static inline unsigned int vnic_rq_desc_used(struct vnic_rq *rq)
-+{
-+	/* how many does HW own? */
-+	return rq->ring.desc_count - rq->ring.desc_avail - 1;
-+}
-+
-+static inline void *vnic_rq_next_desc(struct vnic_rq *rq)
-+{
-+	return rq->to_use->desc;
-+}
-+
-+static inline unsigned int vnic_rq_next_index(struct vnic_rq *rq)
-+{
-+	return rq->to_use->index;
-+}
-+
-+static inline unsigned int vnic_rq_next_buf_index(struct vnic_rq *rq)
-+{
-+	return rq->buf_index++;
-+}
-+
-+static inline void vnic_rq_post(struct vnic_rq *rq,
-+				void *os_buf, unsigned int os_buf_index,
-+				dma_addr_t dma_addr, unsigned int len)
-+{
-+	struct vnic_rq_buf *buf = rq->to_use;
-+
-+	buf->os_buf = os_buf;
-+	buf->os_buf_index = os_buf_index;
-+	buf->dma_addr = dma_addr;
-+	buf->len = len;
-+
-+	buf = buf->next;
-+	rq->to_use = buf;
-+	rq->ring.desc_avail--;
-+
-+	/* Move the posted_index every nth descriptor
-+	 */
-+	if ((buf->index & VNIC_RQ_RETURN_RATE) == 0) {
-+		/* Adding write memory barrier prevents compiler and/or CPU
-+		 * reordering, thus avoiding descriptor posting before
-+		 * descriptor is initialized. Otherwise, hardware can read
-+		 * stale descriptor fields.
-+		 */
-+		wmb();
-+		iowrite32(buf->index, &rq->ctrl->posted_index);
-+	}
-+}
-+
-+static inline int vnic_rq_posting_soon(struct vnic_rq *rq)
-+{
-+	return (rq->to_use->index & VNIC_RQ_RETURN_RATE) == 0;
-+}
-+
-+static inline void vnic_rq_return_descs(struct vnic_rq *rq, unsigned int count)
-+{
-+	rq->ring.desc_avail += count;
-+}
-+
-+static inline void vnic_rq_service(struct vnic_rq *rq,
-+				   struct cq_desc *cq_desc, uint16_t completed_index,
-+				   int desc_return, void (*buf_service)(struct vnic_rq *rq,
-+				   struct cq_desc *cq_desc, struct vnic_rq_buf *buf,
-+				   int skipped))
-+{
-+	struct vnic_rq_buf *buf;
-+	int skipped;
-+
-+	buf = rq->to_clean;
-+	while (1) {
-+
-+		skipped = (buf->index != completed_index);
-+
-+		(*buf_service)(rq, cq_desc, buf, skipped);
-+
-+		if (desc_return == VNIC_RQ_RETURN_DESC)
-+			rq->ring.desc_avail++;
-+
-+		rq->to_clean = buf->next;
-+
-+		if (!skipped)
-+			break;
-+
-+		buf = rq->to_clean;
-+	}
-+}
-+
-+static inline int vnic_rq_fill(struct vnic_rq *rq,
-+			       int (*buf_fill)(struct vnic_rq *rq))
-+{
-+	int err;
-+
-+	while (vnic_rq_desc_avail(rq) > 1) {
-+
-+		err = (*buf_fill)(rq);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
-+void vnic_rq_free(struct vnic_rq *rq);
-+int vnic_rq_alloc(struct vnic_dev *vdev, struct vnic_rq *rq, unsigned int index,
-+		  unsigned int desc_count, unsigned int desc_size);
-+void vnic_rq_init(struct vnic_rq *rq, unsigned int cq_index,
-+		  unsigned int error_interrupt_enable,
-+		  unsigned int error_interrupt_offset);
-+unsigned int vnic_rq_error_status(struct vnic_rq *rq);
-+void vnic_rq_enable(struct vnic_rq *rq);
-+int vnic_rq_disable(struct vnic_rq *rq);
-+void vnic_rq_clean(struct vnic_rq *rq,
-+		   void (*buf_clean)(struct vnic_rq *rq, struct vnic_rq_buf *buf));
-+
-+#endif /* _VNIC_RQ_H_ */
-diff --git a/drivers/staging/fnic2/src/vnic_wq.c b/drivers/staging/fnic2/src/vnic_wq.c
-new file mode 100644
-index 0000000..75138f0
---- /dev/null
-+++ b/drivers/staging/fnic2/src/vnic_wq.c
-@@ -0,0 +1,183 @@
-+/*
-+ * SPDX-License-Identifier: GPL-2.0
-+ * Copyright 2018 Cisco Systems, Inc.  All rights reserved.
-+ *
-+ * This program is free software; you may redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-+ * SOFTWARE.
-+ */
-+
-+#include <linux/errno.h>
-+#include <linux/types.h>
-+#include <linux/pci.h>
-+#include <linux/delay.h>
-+#include <linux/slab.h>
-+#include "vnic_dev.h"
-+#include "vnic_wq.h"
-+
-+static int vnic_wq_alloc_bufs(struct vnic_wq *wq)
-+{
-+	struct vnic_wq_buf *buf;
-+	struct vnic_dev *vdev;
-+	unsigned int i, j, count = wq->ring.desc_count;
-+	unsigned int blks = VNIC_WQ_BUF_BLKS_NEEDED(count);
-+
-+	vdev = wq->vdev;
-+
-+	for (i = 0; i < blks; i++) {
-+		wq->bufs[i] = kzalloc(VNIC_WQ_BUF_BLK_SZ, GFP_ATOMIC);
-+		if (!wq->bufs[i]) {
-+			pr_err("Failed to alloc wq_bufs\n");
-+			return -ENOMEM;
-+		}
-+	}
-+
-+	for (i = 0; i < blks; i++) {
-+		buf = wq->bufs[i];
-+		for (j = 0; j < VNIC_WQ_BUF_BLK_ENTRIES; j++) {
-+			buf->index = i * VNIC_WQ_BUF_BLK_ENTRIES + j;
-+			buf->desc = (uint8_t *)wq->ring.descs +
-+				wq->ring.desc_size * buf->index;
-+			if (buf->index + 1 == count) {
-+				buf->next = wq->bufs[0];
-+				break;
-+			} else if (j + 1 == VNIC_WQ_BUF_BLK_ENTRIES) {
-+				buf->next = wq->bufs[i + 1];
-+			} else {
-+				buf->next = buf + 1;
-+				buf++;
-+			}
-+		}
-+	}
-+
-+	wq->to_use = wq->to_clean = wq->bufs[0];
-+
-+	return 0;
-+}
-+
-+void vnic_wq_free(struct vnic_wq *wq)
-+{
-+	struct vnic_dev *vdev;
-+	unsigned int i;
-+
-+	vdev = wq->vdev;
-+
-+	vnic_dev_free_desc_ring(vdev, &wq->ring);
-+
-+	for (i = 0; i < VNIC_WQ_BUF_BLKS_MAX; i++) {
-+		kfree(wq->bufs[i]);
-+		wq->bufs[i] = NULL;
-+	}
-+
-+	wq->ctrl = NULL;
-+
-+}
-+
-+int vnic_wq_alloc(struct vnic_dev *vdev, struct vnic_wq *wq, unsigned int index,
-+		  unsigned int desc_count, unsigned int desc_size)
-+{
-+	int err;
-+
-+	wq->index = index;
-+	wq->vdev = vdev;
-+
-+	wq->ctrl = vnic_dev_get_res(vdev, RES_TYPE_WQ, index);
-+	if (!wq->ctrl) {
-+		pr_err("Failed to hook WQ[%d] resource\n", index);
-+		return -EINVAL;
-+	}
-+
-+	vnic_wq_disable(wq);
-+
-+	err = vnic_dev_alloc_desc_ring(vdev, &wq->ring, desc_count, desc_size);
-+	if (err)
-+		return err;
-+
-+	err = vnic_wq_alloc_bufs(wq);
-+	if (err) {
-+		vnic_wq_free(wq);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+void vnic_wq_init(struct vnic_wq *wq, unsigned int cq_index,
-+		  unsigned int error_interrupt_enable,
-+		  unsigned int error_interrupt_offset)
-+{
-+	uint64_t paddr;
-+
-+	paddr = (uint64_t)wq->ring.base_addr | VNIC_PADDR_TARGET;
-+	writeq(paddr, &wq->ctrl->ring_base);
-+	iowrite32(wq->ring.desc_count, &wq->ctrl->ring_size);
-+	iowrite32(0, &wq->ctrl->fetch_index);
-+	iowrite32(0, &wq->ctrl->posted_index);
-+	iowrite32(cq_index, &wq->ctrl->cq_index);
-+	iowrite32(error_interrupt_enable, &wq->ctrl->error_interrupt_enable);
-+	iowrite32(error_interrupt_offset, &wq->ctrl->error_interrupt_offset);
-+	iowrite32(0, &wq->ctrl->error_status);
-+}
-+
-+unsigned int vnic_wq_error_status(struct vnic_wq *wq)
-+{
-+	return ioread32(&wq->ctrl->error_status);
-+}
-+
-+void vnic_wq_enable(struct vnic_wq *wq)
-+{
-+	iowrite32(1, &wq->ctrl->enable);
-+}
-+
-+int vnic_wq_disable(struct vnic_wq *wq)
-+{
-+	unsigned int wait;
-+
-+	iowrite32(0, &wq->ctrl->enable);
-+
-+	/* Wait for HW to ACK disable request */
-+	for (wait = 0; wait < 100; wait++) {
-+		if (!(ioread32(&wq->ctrl->running)))
-+			return 0;
-+		udelay(1);
-+	}
-+
-+	pr_err("Failed to disable WQ[%d]\n", wq->index);
-+
-+	return -ETIMEDOUT;
-+}
-+
-+void vnic_wq_clean(struct vnic_wq *wq,
-+		   void (*buf_clean)(struct vnic_wq *wq, struct vnic_wq_buf *buf))
-+{
-+	struct vnic_wq_buf *buf;
-+
-+	WARN_ON(ioread32(&wq->ctrl->enable));
-+
-+	buf = wq->to_clean;
-+
-+	while (vnic_wq_desc_used(wq) > 0) {
-+
-+		(*buf_clean)(wq, buf);
-+
-+		buf = wq->to_clean = buf->next;
-+		wq->ring.desc_avail++;
-+	}
-+
-+	wq->to_use = wq->to_clean = wq->bufs[0];
-+
-+	iowrite32(0, &wq->ctrl->fetch_index);
-+	iowrite32(0, &wq->ctrl->posted_index);
-+	iowrite32(0, &wq->ctrl->error_status);
-+
-+	vnic_dev_clear_desc_ring(&wq->ring);
-+}
-diff --git a/drivers/staging/fnic2/src/vnic_wq.h b/drivers/staging/fnic2/src/vnic_wq.h
-new file mode 100644
-index 0000000..bff2f4d
---- /dev/null
-+++ b/drivers/staging/fnic2/src/vnic_wq.h
-@@ -0,0 +1,174 @@
-+/*
-+ * SPDX-License-Identifier: GPL-2.0
-+ * Copyright 2018 Cisco Systems, Inc.  All rights reserved.
-+ *
-+ * This program is free software; you may redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-+ * SOFTWARE.
-+ */
-+#ifndef _VNIC_WQ_H_
-+#define _VNIC_WQ_H_
-+
-+#include <linux/pci.h>
-+#include "vnic_dev.h"
-+#include "vnic_cq.h"
-+
-+/*
-+ * These defines avoid symbol clash between fnic2 and enic (Cisco 10G Eth
-+ * Driver) when both are built with CONFIG options =y
-+ */
-+#define vnic_wq_desc_avail fnic2_wq_desc_avail
-+#define vnic_wq_desc_used fnic2_wq_desc_used
-+#define vnic_wq_next_desc fni_cwq_next_desc
-+#define vnic_wq_post fnic2_wq_post
-+#define vnic_wq_service fnic2_wq_service
-+#define vnic_wq_free fnic2_wq_free
-+#define vnic_wq_alloc fnic2_wq_alloc
-+#define vnic_wq_init fnic2_wq_init
-+#define vnic_wq_error_status fnic2_wq_error_status
-+#define vnic_wq_enable fnic2_wq_enable
-+#define vnic_wq_disable fnic2_wq_disable
-+#define vnic_wq_clean fnic2_wq_clean
-+
-+/* Work queue control */
-+struct vnic_wq_ctrl {
-+	uint64_t ring_base;			/* 0x00 */
-+	uint32_t ring_size;			/* 0x08 */
-+	uint32_t pad0;
-+	uint32_t posted_index;			/* 0x10 */
-+	uint32_t pad1;
-+	uint32_t cq_index;			/* 0x18 */
-+	uint32_t pad2;
-+	uint32_t enable;			/* 0x20 */
-+	uint32_t pad3;
-+	uint32_t running;			/* 0x28 */
-+	uint32_t pad4;
-+	uint32_t fetch_index;			/* 0x30 */
-+	uint32_t pad5;
-+	uint32_t dca_value;			/* 0x38 */
-+	uint32_t pad6;
-+	uint32_t error_interrupt_enable;	/* 0x40 */
-+	uint32_t pad7;
-+	uint32_t error_interrupt_offset;	/* 0x48 */
-+	uint32_t pad8;
-+	uint32_t error_status;			/* 0x50 */
-+	uint32_t pad9;
-+};
-+
-+struct vnic_wq_buf {
-+	struct vnic_wq_buf	*next;
-+	dma_addr_t		dma_addr;
-+	void			*os_buf;
-+	unsigned int		len;
-+	unsigned int		index;
-+	int			sop;
-+	void			*desc;
-+};
-+
-+/* Break the vnic_wq_buf allocations into blocks of 64 entries */
-+#define VNIC_WQ_BUF_BLK_ENTRIES 64
-+#define VNIC_WQ_BUF_BLK_SZ \
-+	(VNIC_WQ_BUF_BLK_ENTRIES * sizeof(struct vnic_wq_buf))
-+#define VNIC_WQ_BUF_BLKS_NEEDED(entries) \
-+	DIV_ROUND_UP(entries, VNIC_WQ_BUF_BLK_ENTRIES)
-+#define VNIC_WQ_BUF_BLKS_MAX VNIC_WQ_BUF_BLKS_NEEDED(4096)
-+
-+struct vnic_wq {
-+	unsigned int			index;
-+	struct vnic_dev			*vdev;
-+	struct vnic_wq_ctrl __iomem	*ctrl;	/* memory-mapped */
-+	struct vnic_dev_ring		ring;
-+	struct vnic_wq_buf		*bufs[VNIC_WQ_BUF_BLKS_MAX];
-+	struct vnic_wq_buf		*to_use;
-+	struct vnic_wq_buf		*to_clean;
-+	unsigned int			pkts_outstanding;
-+};
-+
-+static inline unsigned int vnic_wq_desc_avail(struct vnic_wq *wq)
-+{
-+	/* how many does SW own? */
-+	return wq->ring.desc_avail;
-+}
-+
-+static inline unsigned int vnic_wq_desc_used(struct vnic_wq *wq)
-+{
-+	/* how many does HW own? */
-+	return wq->ring.desc_count - wq->ring.desc_avail - 1;
-+}
-+
-+static inline void *vnic_wq_next_desc(struct vnic_wq *wq)
-+{
-+	return wq->to_use->desc;
-+}
-+
-+static inline void vnic_wq_post(struct vnic_wq *wq,
-+				void *os_buf, dma_addr_t dma_addr,
-+				unsigned int len, int sop, int eop)
-+{
-+	struct vnic_wq_buf *buf = wq->to_use;
-+
-+	buf->sop = sop;
-+	buf->os_buf = eop ? os_buf : NULL;
-+	buf->dma_addr = dma_addr;
-+	buf->len = len;
-+
-+	buf = buf->next;
-+	if (eop) {
-+		/* Adding write memory barrier prevents compiler and/or CPU
-+		 * reordering, thus avoiding descriptor posting before
-+		 * descriptor is initialized. Otherwise, hardware can read
-+		 * stale descriptor fields.
-+		 */
-+		wmb();
-+		iowrite32(buf->index, &wq->ctrl->posted_index);
-+	}
-+	wq->to_use = buf;
-+
-+	wq->ring.desc_avail--;
-+}
-+
-+static inline void vnic_wq_service(struct vnic_wq *wq,
-+				   struct cq_desc *cq_desc, uint16_t completed_index,
-+				   void (*buf_service)(struct vnic_wq *wq,
-+				   struct cq_desc *cq_desc, struct vnic_wq_buf *buf))
-+{
-+	struct vnic_wq_buf *buf;
-+
-+	buf = wq->to_clean;
-+	while (1) {
-+
-+		(*buf_service)(wq, cq_desc, buf);
-+
-+		wq->ring.desc_avail++;
-+
-+		wq->to_clean = buf->next;
-+
-+		if (buf->index == completed_index)
-+			break;
-+
-+		buf = wq->to_clean;
-+	}
-+}
-+
-+void vnic_wq_free(struct vnic_wq *wq);
-+int vnic_wq_alloc(struct vnic_dev *vdev, struct vnic_wq *wq, unsigned int index,
-+		  unsigned int desc_count, unsigned int desc_size);
-+void vnic_wq_init(struct vnic_wq *wq, unsigned int cq_index,
-+		  unsigned int error_interrupt_enable,
-+		  unsigned int error_interrupt_offset);
-+unsigned int vnic_wq_error_status(struct vnic_wq *wq);
-+void vnic_wq_enable(struct vnic_wq *wq);
-+int vnic_wq_disable(struct vnic_wq *wq);
-+void vnic_wq_clean(struct vnic_wq *wq,
-+		   void (*buf_clean)(struct vnic_wq *wq, struct vnic_wq_buf *buf));
-+
-+#endif /* _VNIC_WQ_H_ */
-diff --git a/drivers/staging/fnic2/src/vnic_wq_copy.c b/drivers/staging/fnic2/src/vnic_wq_copy.c
-new file mode 100644
-index 0000000..605c693
---- /dev/null
-+++ b/drivers/staging/fnic2/src/vnic_wq_copy.c
-@@ -0,0 +1,115 @@
-+/*
-+ * SPDX-License-Identifier: GPL-2.0
-+ * Copyright 2018 Cisco Systems, Inc.  All rights reserved.
-+ *
-+ * This program is free software; you may redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-+ * SOFTWARE.
-+ */
-+
-+#include <linux/errno.h>
-+#include <linux/types.h>
-+#include <linux/pci.h>
-+#include <linux/delay.h>
-+#include "vnic_wq_copy.h"
-+
-+void vnic_wq_copy_enable(struct vnic_wq_copy *wq)
-+{
-+	iowrite32(1, &wq->ctrl->enable);
-+}
-+
-+int vnic_wq_copy_disable(struct vnic_wq_copy *wq)
-+{
-+	unsigned int wait;
-+
-+	iowrite32(0, &wq->ctrl->enable);
-+
-+	/* Wait for HW to ACK disable request */
-+	for (wait = 0; wait < 100; wait++) {
-+		if (!(ioread32(&wq->ctrl->running)))
-+			return 0;
-+		udelay(1);
-+	}
-+
-+	pr_err("Failed to disable Copy WQ[%d], fetch index = %d, posted_index = %d\n",
-+	       wq->index, ioread32(&wq->ctrl->fetch_index),
-+	       ioread32(&wq->ctrl->posted_index));
-+
-+	return -ENODEV;
-+}
-+
-+void vnic_wq_copy_clean(struct vnic_wq_copy *wq,
-+			void (*q_clean)(struct vnic_wq_copy *wq,
-+			struct fcpio_host_req *wq_desc))
-+{
-+	WARN_ON(ioread32(&wq->ctrl->enable));
-+
-+	if (vnic_wq_copy_desc_in_use(wq))
-+		vnic_wq_copy_service(wq, -1, q_clean);
-+
-+	wq->to_use_index = wq->to_clean_index = 0;
-+
-+	iowrite32(0, &wq->ctrl->fetch_index);
-+	iowrite32(0, &wq->ctrl->posted_index);
-+	iowrite32(0, &wq->ctrl->error_status);
-+
-+	vnic_dev_clear_desc_ring(&wq->ring);
-+}
-+
-+void vnic_wq_copy_free(struct vnic_wq_copy *wq)
-+{
-+	struct vnic_dev *vdev;
-+
-+	vdev = wq->vdev;
-+	vnic_dev_free_desc_ring(vdev, &wq->ring);
-+	wq->ctrl = NULL;
-+}
-+
-+int vnic_wq_copy_alloc(struct vnic_dev *vdev, struct vnic_wq_copy *wq,
-+		       unsigned int index, unsigned int desc_count,
-+		       unsigned int desc_size)
-+{
-+	int err;
-+
-+	wq->index = index;
-+	wq->vdev = vdev;
-+	wq->to_use_index = wq->to_clean_index = 0;
-+	wq->ctrl = vnic_dev_get_res(vdev, RES_TYPE_WQ, index);
-+	if (!wq->ctrl) {
-+		pr_err("Failed to hook COPY WQ[%d] resource\n", index);
-+		return -EINVAL;
-+	}
-+
-+	vnic_wq_copy_disable(wq);
-+
-+	err = vnic_dev_alloc_desc_ring(vdev, &wq->ring, desc_count, desc_size);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+void vnic_wq_copy_init(struct vnic_wq_copy *wq, unsigned int cq_index,
-+		       unsigned int error_interrupt_enable,
-+		       unsigned int error_interrupt_offset)
-+{
-+	uint64_t paddr;
-+
-+	paddr = (uint64_t)wq->ring.base_addr | VNIC_PADDR_TARGET;
-+	writeq(paddr, &wq->ctrl->ring_base);
-+	iowrite32(wq->ring.desc_count, &wq->ctrl->ring_size);
-+	iowrite32(0, &wq->ctrl->fetch_index);
-+	iowrite32(0, &wq->ctrl->posted_index);
-+	iowrite32(cq_index, &wq->ctrl->cq_index);
-+	iowrite32(error_interrupt_enable, &wq->ctrl->error_interrupt_enable);
-+	iowrite32(error_interrupt_offset, &wq->ctrl->error_interrupt_offset);
-+}
-diff --git a/drivers/staging/fnic2/src/vnic_wq_copy.h b/drivers/staging/fnic2/src/vnic_wq_copy.h
-new file mode 100644
-index 0000000..2ef670c
---- /dev/null
-+++ b/drivers/staging/fnic2/src/vnic_wq_copy.h
-@@ -0,0 +1,127 @@
-+/*
-+ * SPDX-License-Identifier: GPL-2.0
-+ * Copyright 2018 Cisco Systems, Inc.  All rights reserved.
-+ *
-+ * This program is free software; you may redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-+ * SOFTWARE.
-+ */
-+#ifndef _VNIC_WQ_COPY_H_
-+#define _VNIC_WQ_COPY_H_
-+
-+#include <linux/pci.h>
-+#include "vnic_wq.h"
-+#include "fcpio.h"
-+
-+struct vnic_wq_copy {
-+	unsigned int			index;
-+	struct vnic_dev			*vdev;
-+	struct vnic_wq_ctrl __iomem	*ctrl;	/* memory-mapped */
-+	struct vnic_dev_ring		ring;
-+	unsigned int			to_use_index;
-+	unsigned int			to_clean_index;
-+};
-+
-+static inline unsigned int vnic_wq_copy_desc_avail(struct vnic_wq_copy *wq)
-+{
-+	return wq->ring.desc_avail;
-+}
-+
-+static inline unsigned int vnic_wq_copy_desc_in_use(struct vnic_wq_copy *wq)
-+{
-+	return wq->ring.desc_count - 1 - wq->ring.desc_avail;
-+}
-+
-+static inline void *vnic_wq_copy_next_desc(struct vnic_wq_copy *wq)
-+{
-+	struct fcpio_host_req *desc = wq->ring.descs;
-+
-+	return &desc[wq->to_use_index];
-+}
-+
-+static inline void vnic_wq_copy_post(struct vnic_wq_copy *wq)
-+{
-+
-+	((wq->to_use_index + 1) == wq->ring.desc_count) ?
-+		(wq->to_use_index = 0) : (wq->to_use_index++);
-+	wq->ring.desc_avail--;
-+
-+	/* Adding write memory barrier prevents compiler and/or CPU
-+	 * reordering, thus avoiding descriptor posting before
-+	 * descriptor is initialized. Otherwise, hardware can read
-+	 * stale descriptor fields.
-+	 */
-+	wmb();
-+
-+	iowrite32(wq->to_use_index, &wq->ctrl->posted_index);
-+}
-+
-+static inline void vnic_wq_copy_desc_process(struct vnic_wq_copy *wq, uint16_t index)
-+{
-+	unsigned int cnt;
-+
-+	if (wq->to_clean_index <= index)
-+		cnt = (index - wq->to_clean_index) + 1;
-+	else
-+		cnt = wq->ring.desc_count - wq->to_clean_index + index + 1;
-+
-+	wq->to_clean_index = ((index + 1) % wq->ring.desc_count);
-+	wq->ring.desc_avail += cnt;
-+
-+}
-+
-+static inline void vnic_wq_copy_service(struct vnic_wq_copy *wq,
-+					uint16_t completed_index,
-+					void (*q_service)(struct vnic_wq_copy *wq,
-+					struct fcpio_host_req *wq_desc))
-+{
-+	struct fcpio_host_req *wq_desc = wq->ring.descs;
-+	unsigned int curr_index;
-+
-+	while (1) {
-+
-+		if (q_service)
-+			(*q_service)(wq, &wq_desc[wq->to_clean_index]);
-+
-+		wq->ring.desc_avail++;
-+
-+		curr_index = wq->to_clean_index;
-+
-+		/* increment the to-clean index so that we start
-+		 * with an unprocessed index next time we enter the loop
-+		 */
-+		((wq->to_clean_index + 1) == wq->ring.desc_count) ?
-+			(wq->to_clean_index = 0) : (wq->to_clean_index++);
-+
-+		if (curr_index == completed_index)
-+			break;
-+
-+		/* we have cleaned all the entries */
-+		if ((completed_index == (uint16_t)-1) &&
-+		    (wq->to_clean_index == wq->to_use_index))
-+			break;
-+	}
-+}
-+
-+void vnic_wq_copy_enable(struct vnic_wq_copy *wq);
-+int vnic_wq_copy_disable(struct vnic_wq_copy *wq);
-+void vnic_wq_copy_free(struct vnic_wq_copy *wq);
-+int vnic_wq_copy_alloc(struct vnic_dev *vdev, struct vnic_wq_copy *wq,
-+		       unsigned int index, unsigned int desc_count, unsigned int desc_size);
-+void vnic_wq_copy_init(struct vnic_wq_copy *wq, unsigned int cq_index,
-+		       unsigned int error_interrupt_enable,
-+		       unsigned int error_interrupt_offset);
-+void vnic_wq_copy_clean(struct vnic_wq_copy *wq,
-+			void (*q_clean)(struct vnic_wq_copy *wq,
-+			struct fcpio_host_req *wq_desc));
-+
-+#endif /* _VNIC_WQ_COPY_H_ */
++#endif /* _WQ_ENET_DESC_H_ */
 -- 
 1.8.3.1
