@@ -1,118 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752102AbeDELfG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:35:06 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:33964 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751470AbeDELdW (ORCPT
+        id S1752121AbeDELfK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:35:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60844 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751470AbeDELfG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:33:22 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: lee.jones@linaro.org
-Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
-        gwendal@chromium.org, linux-kernel@vger.kernel.org,
-        Vincent Palatin <vpalatin@chromium.org>
-Subject: [PATCH v5 2/8] mfd: cros_ec: free IRQ automatically
-Date: Thu,  5 Apr 2018 13:33:07 +0200
-Message-Id: <20180405113313.27340-3-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180405113313.27340-1-enric.balletbo@collabora.com>
-References: <20180405113313.27340-1-enric.balletbo@collabora.com>
+        Thu, 5 Apr 2018 07:35:06 -0400
+Date: Thu, 5 Apr 2018 04:34:44 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Jia He <hejianet@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Jia He <jia.he@hxt-semitech.com>
+Subject: Re: [PATCH v7 2/5] arm: arm64: page_alloc: reduce unnecessary binary
+ search in memblock_next_valid_pfn()
+Message-ID: <20180405113444.GB2647@bombadil.infradead.org>
+References: <1522915478-5044-1-git-send-email-hejianet@gmail.com>
+ <1522915478-5044-3-git-send-email-hejianet@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522915478-5044-3-git-send-email-hejianet@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Palatin <vpalatin@chromium.org>
+On Thu, Apr 05, 2018 at 01:04:35AM -0700, Jia He wrote:
+> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+> where possible") optimized the loop in memmap_init_zone(). But there is
+> still some room for improvement. E.g. if pfn and pfn+1 are in the same
+> memblock region, we can simply pfn++ instead of doing the binary search
+> in memblock_next_valid_pfn.
 
-Free the IRQ we might have requested when removing the cros_ec device,
-so we can unload and reload the driver properly.
+Sure, but I bet if we are >end_pfn, we're almost certainly going to the
+start_pfn of the next block, so why not test that as well?
 
-Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Vincent Palatin <vpalatin@chromium.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
+> +	/* fast path, return pfn+1 if next pfn is in the same region */
+> +	if (early_region_idx != -1) {
+> +		start_pfn = PFN_DOWN(regions[early_region_idx].base);
+> +		end_pfn = PFN_DOWN(regions[early_region_idx].base +
+> +				regions[early_region_idx].size);
+> +
+> +		if (pfn >= start_pfn && pfn < end_pfn)
+> +			return pfn;
 
-Changes in v5: None
-Changes in v4:
-- [2/8] Add Acked-by Lee Jones.
-
-Changes in v3:
-- [2/8] Add Acked-by Vincent Palatin.
-- [2/8] Add Reviewed-by Andy Shevchenko.
-
-Changes in v2:
-- [2/8] Remove the free_irq in cros_ec_remove.
-
- drivers/mfd/cros_ec.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index 74780f2964a1..ea8aa704b61e 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -119,9 +119,9 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 	}
- 
- 	if (ec_dev->irq) {
--		err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
--					   IRQF_TRIGGER_LOW | IRQF_ONESHOT,
--					   "chromeos-ec", ec_dev);
-+		err = devm_request_threaded_irq(dev, ec_dev->irq, NULL,
-+				ec_irq_thread, IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-+				"chromeos-ec", ec_dev);
- 		if (err) {
- 			dev_err(dev, "Failed to request IRQ %d: %d",
- 				ec_dev->irq, err);
-@@ -135,7 +135,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 		dev_err(dev,
- 			"Failed to register Embedded Controller subdevice %d\n",
- 			err);
--		goto fail_mfd;
-+		return err;
- 	}
- 
- 	if (ec_dev->max_passthru) {
-@@ -153,7 +153,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 			dev_err(dev,
- 				"Failed to register Power Delivery subdevice %d\n",
- 				err);
--			goto fail_mfd;
-+			return err;
- 		}
- 	}
- 
-@@ -162,7 +162,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 		if (err) {
- 			mfd_remove_devices(dev);
- 			dev_err(dev, "Failed to register sub-devices\n");
--			goto fail_mfd;
-+			return err;
- 		}
- 	}
- 
-@@ -180,11 +180,6 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 	cros_ec_acpi_install_gpe_handler(dev);
- 
- 	return 0;
--
--fail_mfd:
--	if (ec_dev->irq)
--		free_irq(ec_dev->irq, ec_dev);
--	return err;
- }
- EXPORT_SYMBOL(cros_ec_register);
- 
-@@ -194,9 +189,6 @@ int cros_ec_remove(struct cros_ec_device *ec_dev)
- 
- 	cros_ec_acpi_remove_gpe_handler();
- 
--	if (ec_dev->irq)
--		free_irq(ec_dev->irq, ec_dev);
--
- 	return 0;
- }
- EXPORT_SYMBOL(cros_ec_remove);
--- 
-2.16.3
+		early_region_idx++;
+		start_pfn = PFN_DOWN(regions[early_region_idx].base);
+		if (pfn >= end_pfn && pfn <= start_pfn)
+			return start_pfn;
+> +	}
