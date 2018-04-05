@@ -1,184 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751534AbeDEPQ5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:16:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34424 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751179AbeDEPQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:16:54 -0400
-From: Jiri Olsa <jolsa@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc: lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        linux-kbuild@vger.kernel.org,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>, Jiri Benc <jbenc@redhat.com>,
-        Stanislav Kozina <skozina@redhat.com>,
-        Jerome Marchand <jmarchan@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>, Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 1/9] perf tools: Make read_build_id function public
-Date: Thu,  5 Apr 2018 17:16:37 +0200
-Message-Id: <20180405151645.19130-2-jolsa@kernel.org>
-In-Reply-To: <20180405151645.19130-1-jolsa@kernel.org>
-References: <20180405151645.19130-1-jolsa@kernel.org>
+        id S1752311AbeDEPTl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:19:41 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37482 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752147AbeDEPTh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:19:37 -0400
+X-Google-Smtp-Source: AIpwx488JiuYTse0dK0Q0KtskgPjFBOOobu5uF0E1o0SgL1Xt6qr/zm+z/byZzR+lk4KA5UPCK9EYg==
+Date: Thu, 5 Apr 2018 17:19:33 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Subject: Re: [PATCH 0/8] use struct pt_regs based syscall calling for x86-64
+Message-ID: <20180405151933.egmt7ressx2ikdnr@gmail.com>
+References: <20180405095307.3730-1-linux@dominikbrodowski.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405095307.3730-1-linux@dominikbrodowski.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And renaming it into parse_notes_buildid to be more
-precise and usable in following patches.
 
-Link: http://lkml.kernel.org/n/tip-v1mz76rkdxfnbfz2v05fumn6@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/symbol-minimal.c | 50 ++--------------------------------------
- tools/perf/util/util.c           | 48 ++++++++++++++++++++++++++++++++++++++
- tools/perf/util/util.h           |  4 ++++
- 3 files changed, 54 insertions(+), 48 deletions(-)
+* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
 
-diff --git a/tools/perf/util/symbol-minimal.c b/tools/perf/util/symbol-minimal.c
-index ff48d0d49584..bd281d3dc508 100644
---- a/tools/perf/util/symbol-minimal.c
-+++ b/tools/perf/util/symbol-minimal.c
-@@ -24,53 +24,6 @@ static bool check_need_swap(int file_endian)
- 	return host_endian != file_endian;
- }
- 
--#define NOTE_ALIGN(sz) (((sz) + 3) & ~3)
--
--#define NT_GNU_BUILD_ID	3
--
--static int read_build_id(void *note_data, size_t note_len, void *bf,
--			 size_t size, bool need_swap)
--{
--	struct {
--		u32 n_namesz;
--		u32 n_descsz;
--		u32 n_type;
--	} *nhdr;
--	void *ptr;
--
--	ptr = note_data;
--	while (ptr < (note_data + note_len)) {
--		const char *name;
--		size_t namesz, descsz;
--
--		nhdr = ptr;
--		if (need_swap) {
--			nhdr->n_namesz = bswap_32(nhdr->n_namesz);
--			nhdr->n_descsz = bswap_32(nhdr->n_descsz);
--			nhdr->n_type = bswap_32(nhdr->n_type);
--		}
--
--		namesz = NOTE_ALIGN(nhdr->n_namesz);
--		descsz = NOTE_ALIGN(nhdr->n_descsz);
--
--		ptr += sizeof(*nhdr);
--		name = ptr;
--		ptr += namesz;
--		if (nhdr->n_type == NT_GNU_BUILD_ID &&
--		    nhdr->n_namesz == sizeof("GNU")) {
--			if (memcmp(name, "GNU", sizeof("GNU")) == 0) {
--				size_t sz = min(size, descsz);
--				memcpy(bf, ptr, sz);
--				memset(bf + sz, 0, size - sz);
--				return 0;
--			}
--		}
--		ptr += descsz;
--	}
--
--	return -1;
--}
--
- int filename__read_debuglink(const char *filename __maybe_unused,
- 			     char *debuglink __maybe_unused,
- 			     size_t size __maybe_unused)
-@@ -153,7 +106,8 @@ int filename__read_build_id(const char *filename, void *bf, size_t size)
- 			if (fread(buf, buf_size, 1, fp) != 1)
- 				goto out_free;
- 
--			ret = read_build_id(buf, buf_size, bf, size, need_swap);
-+			ret = parse_notes_buildid(buf, buf_size, bf, size,
-+						  need_swap);
- 			if (ret == 0)
- 				ret = size;
- 			break;
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 1019bbc5dbd8..41fc61d941ef 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -447,6 +447,54 @@ fetch_kernel_version(unsigned int *puint, char *str,
- 	return 0;
- }
- 
-+#define NOTE_ALIGN(sz) (((sz) + 3) & ~3)
-+
-+#define NT_GNU_BUILD_ID	3
-+
-+int parse_notes_buildid(void *note_data, size_t note_len, void *bf,
-+			size_t size, bool need_swap)
-+{
-+	struct {
-+		u32 n_namesz;
-+		u32 n_descsz;
-+		u32 n_type;
-+	} *nhdr;
-+	void *ptr;
-+
-+	ptr = note_data;
-+	while (ptr < (note_data + note_len)) {
-+		const char *name;
-+		size_t namesz, descsz;
-+
-+		nhdr = ptr;
-+		if (need_swap) {
-+			nhdr->n_namesz = bswap_32(nhdr->n_namesz);
-+			nhdr->n_descsz = bswap_32(nhdr->n_descsz);
-+			nhdr->n_type = bswap_32(nhdr->n_type);
-+		}
-+
-+		namesz = NOTE_ALIGN(nhdr->n_namesz);
-+		descsz = NOTE_ALIGN(nhdr->n_descsz);
-+
-+		ptr += sizeof(*nhdr);
-+		name = ptr;
-+		ptr += namesz;
-+		if (nhdr->n_type == NT_GNU_BUILD_ID &&
-+		    nhdr->n_namesz == sizeof("GNU")) {
-+			if (memcmp(name, "GNU", sizeof("GNU")) == 0) {
-+				size_t sz = min(size, descsz);
-+
-+				memcpy(bf, ptr, sz);
-+				memset(bf + sz, 0, size - sz);
-+				return 0;
-+			}
-+		}
-+		ptr += descsz;
-+	}
-+
-+	return -1;
-+}
-+
- const char *perf_tip(const char *dirpath)
- {
- 	struct strlist *tips;
-diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-index 9496365da3d7..27106548396b 100644
---- a/tools/perf/util/util.h
-+++ b/tools/perf/util/util.h
-@@ -47,6 +47,10 @@ extern int cacheline_size;
- 
- int fetch_kernel_version(unsigned int *puint,
- 			 char *str, size_t str_sz);
-+
-+int parse_notes_buildid(void *note_data, size_t note_len, void *bf,
-+			size_t size, bool need_swap);
-+
- #define KVER_VERSION(x)		(((x) >> 16) & 0xff)
- #define KVER_PATCHLEVEL(x)	(((x) >> 8) & 0xff)
- #define KVER_SUBLEVEL(x)	((x) & 0xff)
--- 
-2.13.6
+> Dominik Brodowski (7):
+>   syscalls: introduce CONFIG_ARCH_HAS_SYSCALL_WRAPPER
+>   syscalls/x86: use struct pt_regs based syscall calling for 64-bit
+>     syscalls
+>   syscalls: prepare ARCH_HAS_SYSCALL_WRAPPER for compat syscalls
+>   syscalls/x86: use struct pt_regs based syscall calling for
+>     IA32_EMULATION and x32
+>   syscalls/x86: unconditionally enable struct pt_regs based syscalls on
+>     x86_64
+>   x86/entry/64: extend register clearing on syscall entry to lower
+>     registers
+>   syscalls/x86: rename struct pt_regs-based sys_*() to __sys_x86_*()
+> 
+> Linus Torvalds (1):
+>   x86: don't pointlessly reload the system call number
+> 
+>  arch/x86/Kconfig                       |   1 +
+>  arch/x86/entry/calling.h               |   2 +
+>  arch/x86/entry/common.c                |  20 +-
+>  arch/x86/entry/entry_64.S              |   3 +-
+>  arch/x86/entry/entry_64_compat.S       |   6 +
+>  arch/x86/entry/syscall_32.c            |  15 +-
+>  arch/x86/entry/syscall_64.c            |   6 +-
+>  arch/x86/entry/syscalls/syscall_32.tbl | 724 +++++++++++++++++----------------
+>  arch/x86/entry/syscalls/syscall_64.tbl | 712 ++++++++++++++++----------------
+>  arch/x86/entry/vsyscall/vsyscall_64.c  |  18 +-
+>  arch/x86/include/asm/syscall.h         |   4 +
+>  arch/x86/include/asm/syscall_wrapper.h | 197 +++++++++
+>  arch/x86/include/asm/syscalls.h        |  17 +-
+>  include/linux/compat.h                 |  22 +
+>  include/linux/syscalls.h               |  25 +-
+>  init/Kconfig                           |  10 +
+>  kernel/sys_ni.c                        |  10 +
+>  kernel/time/posix-stubs.c              |  10 +
+>  18 files changed, 1054 insertions(+), 748 deletions(-)
+>  create mode 100644 arch/x86/include/asm/syscall_wrapper.h
+
+Ok, this series looks mostly good to me, but AFAICS this breaks the UML build:
+
+ make[2]: *** No rule to make target 'archheaders'.  Stop.
+ arch/um/Makefile:119: recipe for target 'archheaders' failed
+ make[1]: *** [archheaders] Error 2
+ make[1]: *** Waiting for unfinished jobs....
+
+Thanks,
+
+	Ingo
