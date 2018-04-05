@@ -1,118 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751503AbeDEL2m (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:28:42 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49316 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750835AbeDEL2l (ORCPT
+        id S1751401AbeDELal (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:30:41 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55702 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeDELai (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:28:41 -0400
-Subject: Re: [RFC] virtio: Use DMA MAP API for devices without an IOMMU
-To: Balbir Singh <bsingharora@gmail.com>
-References: <20180405105631.9514-1-khandual@linux.vnet.ibm.com>
- <CAKTCnz=3b56bGKrqCcZOwBsu0yngS_Rw-9TieNLyHgix4eZrAQ@mail.gmail.com>
-Cc: robh@kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Joe Perches <joe@perches.com>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
-        <linuxppc-dev@lists.ozlabs.org>,
-        Markus Elfring <elfring@users.sourceforge.net>,
-        David Gibson <david@gibson.dropbear.id.au>
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Date: Thu, 5 Apr 2018 16:58:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Thu, 5 Apr 2018 07:30:38 -0400
+X-Google-Smtp-Source: AIpwx49q8bWfD7q+wbd3McLimi46KaD9ktKF5bdEFQLiu7CmKcQuHGv6s4naVJ/5Rv925XCOEo3MnQ==
+Subject: Re: [PATCH] ata: ahci-platform: add reset control support
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, Patrice Chotard <patrice.chotard@st.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <20180405095429.GA7506@ulmo> <20180405202347.2803.4A936039@socionext.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <b2426da6-598c-8ab1-7576-7ca4a151cc2a@redhat.com>
+Date: Thu, 5 Apr 2018 13:30:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAKTCnz=3b56bGKrqCcZOwBsu0yngS_Rw-9TieNLyHgix4eZrAQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180405202347.2803.4A936039@socionext.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18040511-0020-0000-0000-0000040E61B9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040511-0021-0000-0000-000042A27515
-Message-Id: <cd5a975b-87a9-6c2b-3c65-a1c4f54311ef@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-05_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804050123
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/2018 04:44 PM, Balbir Singh wrote:
-> On Thu, Apr 5, 2018 at 8:56 PM, Anshuman Khandual
-> <khandual@linux.vnet.ibm.com> wrote:
->> There are certian platforms which would like to use SWIOTLB based DMA API
->> for bouncing purpose without actually requiring an IOMMU back end. But the
->> virtio core does not allow such mechanism. Right now DMA MAP API is only
->> selected for devices which have an IOMMU and then the QEMU/host back end
->> will process all incoming SG buffer addresses as IOVA instead of simple
->> GPA which is the case for simple bounce buffers after being processed with
->> SWIOTLB API. To enable this usage, it introduces an architecture specific
->> function which will just make virtio core front end select DMA operations
->> structure.
->>
->> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
->> ---
->> This RFC is just to get some feedback. Please ignore the function call
->> back into the architecture. It can be worked out properly later on. But
->> the question is can we have virtio devices in the guest which would like
->> to use SWIOTLB based (or any custom DMA API based) bounce buffering with
->> out actually being an IOMMU devices emulated by QEMU/host as been with
->> the current VIRTIO_F_IOMMU_PLATFORM virtio flag ?
->>
->>  arch/powerpc/platforms/pseries/iommu.c | 6 ++++++
->>  drivers/virtio/virtio_ring.c           | 4 ++++
->>  include/linux/virtio.h                 | 2 ++
->>  3 files changed, 12 insertions(+)
->>
->> diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
->> index 06f02960b439..dd15fbddbe89 100644
->> --- a/arch/powerpc/platforms/pseries/iommu.c
->> +++ b/arch/powerpc/platforms/pseries/iommu.c
->> @@ -1396,3 +1396,9 @@ static int __init disable_multitce(char *str)
->>  __setup("multitce=", disable_multitce);
->>
->>  machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
->> +
->> +bool is_virtio_dma_platform(void)
->> +{
->> +       return true;
->> +}
->> +EXPORT_SYMBOL(is_virtio_dma_platform);
->> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
->> index 71458f493cf8..9f205a79d378 100644
->> --- a/drivers/virtio/virtio_ring.c
->> +++ b/drivers/virtio/virtio_ring.c
->> @@ -144,6 +144,10 @@ struct vring_virtqueue {
->>
->>  static bool vring_use_dma_api(struct virtio_device *vdev)
->>  {
->> +       /* Use DMA API even for virtio devices without an IOMMU */
->> +       if (is_virtio_dma_platform())
->> +               return true;
->> +
->>         if (!virtio_has_iommu_quirk(vdev))
->>                 return true;
->>
->> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
->> index 988c7355bc22..d8bb83d753ea 100644
->> --- a/include/linux/virtio.h
->> +++ b/include/linux/virtio.h
->> @@ -200,6 +200,8 @@ static inline struct virtio_driver *drv_to_virtio(struct device_driver *drv)
->>  int register_virtio_driver(struct virtio_driver *drv);
->>  void unregister_virtio_driver(struct virtio_driver *drv);
->>
->> +extern bool is_virtio_dma_platform(void);
->> +
-> 
-> Where is the default implementation for non-pseries platforms? Will they compile
-> after these changes?
+Hi,
 
-No they wont. This is just a RFC asking for suggestion/feedback on a
-particular direction, will clean up the code later on once we agree
-on this.
+On 05-04-18 13:23, Kunihiko Hayashi wrote:
+> Hi Thierry,
+> 
+> On Thu, 5 Apr 2018 11:54:29 +0200
+> Thierry Reding <thierry.reding@gmail.com> wrote:
+> 
+>> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
+>>> Add support to get and control a list of resets for the device
+>>> as optional and shared. These resets must be kept de-asserted until
+>>> the device is enabled.
+>>>
+>>> This is specified as shared because some SoCs like UniPhier series
+>>> have common reset controls with all ahci controller instances.
+>>>
+>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+>>> ---
+>>>   .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
+>>>   drivers/ata/ahci.h                                 |  1 +
+>>>   drivers/ata/libahci_platform.c                     | 24 +++++++++++++++++++---
+>>>   3 files changed, 23 insertions(+), 3 deletions(-)
+>>
+>> This causes a regression on Tegra because we explicitly request the
+>> resets after the call to ahci_platform_get_resources().
+>>
+>>  From a quick look, ahci_mtk and ahci_st are in the same boat, adding the
+>> corresponding maintainers to Cc.
+>>
+>> Patrice, Matthias: does SATA still work for you after this patch? This
+>> has been in linux-next since next-20180327.
+> 
+> I assume that I use "generic-ahci" driver directly, and this driver has
+> no way to handle resets, so I sent this patch.
+> 
+> However, also as far as I look, some hardware-specific drivers handle their
+> own resets, and call ahci_platform_{enable,disable}_resources().
+> Surely there are paths to call reset control twice in such drivers.
+> 
+> Identically, when the driver also handle their own clocks, they have same issue.
+> 
+>> Given how this is one of the more hardware-specific bits, perhaps a
+>> better way to do this is to move reset handling into a Uniphier driver
+>> much like Tegra, Mediatek and ST?
+> 
+> Since it's difficult to write the resets in general with ahci_platform, I can prepare
+> hardware-specific driver for our SoCs >
+>> That said, I don't see SATA support for any of the Socionext hardware
+>> either in the DT bindings or drivers/ata, so perhaps it'd be best to
+>> back this out again until we have something that's more well tested?
+> 
+> I'm about to use the generic driver, and prepare our phy driver and
+> DT bindings for our SoCs, but not yet.
+
+If the AHCI controller on your SoC works with the generic driver +
+a phy-driver using the generic phy framework, then IMHO that is
+preferred over adding yet another SoC specific AHCI driver. If the
+only reason to do a SoC specific AHCI driver is the need for resets,
+then IMHO we should add a flags parameter to ahci_platform_get_resources
+which specifies which resource-types to get and have the existing
+drivers call ahci_platform_get_resources() without the flag to also
+get resets, where as the generic driver would get resets.
+
+Thierry that should solve the problem, right ?
+
+ > Then it's no problem that we can back this out.
+
+Yes reverting it for now is probably best, but I would like to see
+it get re-introduced while at the same time adding a flags parameter
+to ahci_platform_get_resources() and make the reset handling conditional
+on the flags. This IMHO is better then introducing another SoC driver.
+
+Regards,
+
+Hans
