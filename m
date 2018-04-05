@@ -1,7 +1,35 @@
-Date: Thu, 5 Apr 2018 18:12:14 +0200
-From: gregkh <gregkh@linuxfoundation.org>
-To: Ruxandra Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+Return-Path: <andrew@lunn.ch>
+X-Google-Smtp-Source: AIpwx4+PoDbj0TxojEDFvP5iaZ3p2vmFrH6TttGnUPhEFrsF8TQeF5/b/uyXmyG/pdJxF9v00/7P
+ARC-Seal: i=1; a=rsa-sha256; t=1522947394; cv=none;
+        d=google.com; s=arc-20160816;
+        b=hZN5QKj/j4UsTpewN+AaSWOgdGpaaZdodcwrdOufmfaZ4HNHINtVX6bS2BKiBtaiR4
+         TwIj7gn+ohaAgQNQCDrLiN7K+x84EImbkQ7F2xME3CpnfIxGDPokIrl4prxScMhVGW0K
+         SThkGXOMEwhrrt9+3c3dwuJmZ4fJVmgQu3C0tlgxF+P7UDfUouA+AyLamgd9PUOnte8G
+         uRSybXNzqrd2UtRRh520aQOQEgdOlj6cHy1sHKsAlAXvRFrBI3JoY9UN1W5vXoPeLFSv
+         wHjxRNwIqzkX8EKytCPGmvBlPRGOw2whZVgguDhjs7Zn4c25R3nzO6i7QijESnDKQcU6
+         vQXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=77UbDCa23ng2yHtv+2ajmAyBk24pTStyWoGKOq9xm3w=;
+        b=EwZ3ykbF+0n+jorGETheXafL5k+l83utLcmRsuEmMBkk+p7vif2hLZ09FnnPEIY+pj
+         996RO9eKirQ27c0eBJNZLt9E3nKemy5SW0lEo1zQNQtgRYw3pGV4ZtVJZc3n9XuBU+Bg
+         Bb+2I/DWiM7Vg8RYJbmJof5iICyglxRRdDxOMk38aLNr0BH7D2epsnatiemTgPGdp2BD
+         D5WyVJbgieEy5WPsjbx3pNbNcXjYjSbDnOJZxMFR4ukrm5E+vd3Pt4rRZRCPxmJwAYg8
+         1NadodMFBUFgqwA0fi9bzd9xzMSOkbdosOo924FMycTZNCYZOFZ+yFgstiiLBIEag6An
+         2pTw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@lunn.ch header.s=20171124 header.b=DOTA4kWs;
+       spf=pass (google.com: domain of andrew@lunn.ch designates 185.16.172.187 as permitted sender) smtp.mailfrom=andrew@lunn.ch
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@lunn.ch header.s=20171124 header.b=DOTA4kWs;
+       spf=pass (google.com: domain of andrew@lunn.ch designates 185.16.172.187 as permitted sender) smtp.mailfrom=andrew@lunn.ch
+Date: Thu, 5 Apr 2018 18:56:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: gregkh <gregkh@linuxfoundation.org>
+Cc: Ruxandra Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
 	Stuart Yoder <stuyoder@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
 	Ioana Ciornei <ioana.ciornei@nxp.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -9,9 +37,8 @@ Cc: Andrew Lunn <andrew@lunn.ch>, Laurentiu Tudor <laurentiu.tudor@nxp.com>,
 	Roy Pledge <roy.pledge@nxp.com>,
 	Networking <netdev@vger.kernel.org>
 Subject: Re: [PATCH v3 2/4] bus: fsl-mc: add restool userspace support
-Message-ID: <20180405161214.GB9976@kroah.com>
-References: <20180404010549.GA12443@lunn.ch>
- <CAEac7tYSAmgt-kAcLNToKdrBOZhvq4Q+HxYEG+NkGZAk6kDADw@mail.gmail.com>
+Message-ID: <20180405165631.GB17495@lunn.ch>
+References: <CAEac7tYSAmgt-kAcLNToKdrBOZhvq4Q+HxYEG+NkGZAk6kDADw@mail.gmail.com>
  <20180404124246.GA20869@lunn.ch>
  <5AC5FAA8.80409@nxp.com>
  <20180405114736.GA12178@lunn.ch>
@@ -20,70 +47,59 @@ References: <20180404010549.GA12443@lunn.ch>
  <5AC63610.4000504@nxp.com>
  <20180405152348.GC32663@lunn.ch>
  <HE1PR0402MB2700E32234735AC12C18BB8F94BB0@HE1PR0402MB2700.eurprd04.prod.outlook.com>
+ <20180405161214.GB9976@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <HE1PR0402MB2700E32234735AC12C18BB8F94BB0@HE1PR0402MB2700.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180405161214.GB9976@kroah.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595743497041548891?=
+X-GMAIL-MSGID: =?utf-8?q?1596926086442044386?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 05, 2018 at 03:35:30PM +0000, Ruxandra Ioana Ciocoi Radulescu wrote:
-> > -----Original Message-----
-> > From: Andrew Lunn [mailto:andrew@lunn.ch]
-> > Sent: Thursday, April 5, 2018 6:24 PM
-> > To: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> > Cc: Stuart Yoder <stuyoder@gmail.com>; Arnd Bergmann <arnd@arndb.de>;
-> > Ioana Ciornei <ioana.ciornei@nxp.com>; gregkh
-> > <gregkh@linuxfoundation.org>; Linux Kernel Mailing List <linux-
-> > kernel@vger.kernel.org>; Ruxandra Ioana Ciocoi Radulescu
-> > <ruxandra.radulescu@nxp.com>; Razvan Stefanescu
-> > <razvan.stefanescu@nxp.com>; Roy Pledge <roy.pledge@nxp.com>;
-> > Networking <netdev@vger.kernel.org>
-> > Subject: Re: [PATCH v3 2/4] bus: fsl-mc: add restool userspace support
+> > Hi Andrew,
 > > 
-> > On Thu, Apr 05, 2018 at 02:43:29PM +0000, Laurentiu Tudor wrote:
-> > > Hi Andrew,
-> > >
-> > > On 04/05/2018 03:48 PM, Andrew Lunn wrote:
-> > > >>> Hi Laurentiu
-> > > >>>
-> > > >>> So i can use switchdev without it? I can modprobe the switchdev
-> > > >>> driver, all the physical interfaces will appear, and i can use ip addr
-> > > >>> add etc. I do not need to use a user space tool at all in order to use
-> > > >>> the network functionality?
-> > > >>
-> > > >> Absolutely!
-> > > >
-> > > > Great.
-> > > >
-> > > > Then the easiest way forwards is to simply drop the IOCTL code for the
-> > > > moment. Get the basic support for the hardware into the kernel
-> > > > first. Then come back later to look at dynamic behaviour which needs
-> > > > some form of configuration.
-> > >
-> > > Hmm, not sure I understand. We already have a fully functional ethernet
-> > > driver [1] and a switch driver [2] ...
-> > 
-> > In staging, the tree of crap. You want to get it out of there and into
-> > the main tree. But that effort is being side lined by the discussion
-> > around this IOCTL call.  The best way forward is to to accept Greg is
-> > not going to take this patchset at the moment, and move on. As you
-> > said, it is not needed for the Ethernet and switchdev driver.
-> > 
-> > What needs to happen before the Ethernet driver can be reviewed for
-> > moving out of staging?
+> > We're waiting for the DPIO driver (which we depend on) to be moved
+> > out of staging first, it's currently under review:
+> > https://lkml.org/lkml/2018/3/27/1086
 > 
-> Hi Andrew,
-> 
-> We're waiting for the DPIO driver (which we depend on) to be moved
-> out of staging first, it's currently under review:
-> https://lkml.org/lkml/2018/3/27/1086
+> That's stalled on my side right now as the merge window is open and I
+> can't do any new stuff until after 4.17-rc1 is out.  So everyone please
+> be patient a bit...
 
-That's stalled on my side right now as the merge window is open and I
-can't do any new stuff until after 4.17-rc1 is out.  So everyone please
-be patient a bit...
+I took a quick look.
 
-thanks,
+There are a few inline functions in .c files which is generally
+frowned upon. Let the compiler decide.
 
-greg k-h
+e.g:
+
+static inline struct dpaa2_io *service_select_by_cpu(struct dpaa2_io *d,	
+                                                     int cpu)
+static inline struct dpaa2_io *service_select(struct dpaa2_io *d)
+
+dpaa2_io_down() seems to be too simple. dpaa2_io_create() sets up
+interrupt triggers, notifications, and adds the new object to the
+dpio_list. dpaa2_io_down() seems to just free the memory. Do
+notifications need to be disabled, the object taken off the list?
+
+dpaa2_io_store_create() allocates memory using kzalloc() and then uses
+dma_map_single(,,DMA_FROM_DEVICE). The documentation says:
+
+   DMA_FROM_DEVICE synchronisation must be done before the driver
+   accesses data that may be changed by the device.  This memory
+   should be treated as read-only by the driver.  If the driver needs
+   to write to it at any point, it should be DMA_BIDIRECTIONAL (see
+   below).
+
+Since it has just been allocated, this seems questionable.
+
+I'm also not sure where the correct call to
+dma_map_single(,,DMA_FROM_DEVICE) is?  Should dpaa2_io_store_next()
+doing this?
+
+The DMA API usage might need a closer review.
+
+    Andrew
