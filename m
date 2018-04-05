@@ -1,43 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751579AbeDELsc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:48:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751410AbeDELsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:48:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23BD7217D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 5 Apr 2018 07:48:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH] trace: Fixup logic inversion on setting
- trace_global_clock defaults
-Message-ID: <20180405074828.27a1f370@gandalf.local.home>
-In-Reply-To: <20180404212450.26646-1-chris@chris-wilson.co.uk>
-References: <7D320425-063C-4C54-BAD2-8843ADCD8D6A@goodmis.org>
-        <20180404212450.26646-1-chris@chris-wilson.co.uk>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751949AbeDELsl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:48:41 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58360 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751623AbeDELsi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 07:48:38 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Thu, 05 Apr 2018 07:48:36 -0400
+From: okaya@codeaurora.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Timur Tabi <timur@codeaurora.org>, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arndbergmann@gmail.com
+Subject: Re: [PATCH v3 1/5] io: define several IO & PIO barrier types for the
+ asm-generic version
+In-Reply-To: <CAK8P3a0Noun+8AaRUcMdOX09KXxFXZxfcyUgJnezPkS2gVkg6w@mail.gmail.com>
+References: <1522886301-25955-1-git-send-email-okaya@codeaurora.org>
+ <CAK8P3a0Noun+8AaRUcMdOX09KXxFXZxfcyUgJnezPkS2gVkg6w@mail.gmail.com>
+Message-ID: <e2290e35d919d46a6d45b0e47abb866e@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  4 Apr 2018 22:24:50 +0100
-Chris Wilson <chris@chris-wilson.co.uk> wrote:
+On 2018-04-05 03:00, Arnd Bergmann wrote:
+> On Thu, Apr 5, 2018 at 1:58 AM, Sinan Kaya <okaya@codeaurora.org> 
+> wrote:
+> 
+> Looks good, but I'd change the comments to ones that document exactly
+> what those barriers are for:
+> 
+>> +#ifndef __io_ar
+>> +#ifdef rmb
+>> +/* prefer rmb() as the default implementation of __io_ar() if 
+>> supported */
+>> +#define __io_ar()      rmb()
+> 
+> /*
+>  * prevent prefetching of coherent DMA data ahead of a dma-complete */
+> 
+>> +#ifndef __io_bw
+>> +#ifdef wmb
+>> +/* prefer wmb() as the default implementation of __io_bw() if 
+>> supported */
+>> +#define __io_bw()      wmb()
+>> +#else
+> 
+> /* flush writes to coherent DMA data before possibly triggering a DMA 
+> read */
+> 
+>> +#ifndef __io_aw
+>> +#define __io_aw()      barrier()
+>> +#endif
+> 
+> /* serialize device access against a spin_unlock, usually handled there 
+> */
+> 
 
-> In commit 932066a15335 ("tracing: Default to using trace_global_clock if
-> sched_clock is unstable"), the logic for deciding to override the
-> default clock if unstable was reversed from the earlier posting. I was
-> trying to reduce the width of the message by using an early return
-> rather than a if-block, but reverted back to using the if-block and
-> accidentally left the predicate inverted.
+I will add these and post the next version.
 
-Hey, the inversion found some issues with global clock interacting with
-lockdep, so it was a good bug to have ;-)
+> The other four patches look perfect already.  What's the timing we need 
+> for
+> these patches? Are they 4.18 material, or do we need them in 4.17 and
+> stable kernels to work around known bugs?
 
--- Steve
+I was hoping to get all arch stuff in for 4.17.
+
+Driver developers started removing redundant wmb().
+
+> 
+>       Arnd
