@@ -1,491 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751346AbeDEJlx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:41:53 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:6276 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeDEJlv (ORCPT
+        id S1751401AbeDEJnA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:43:00 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:49368 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751195AbeDEJm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:41:51 -0400
-X-IronPort-AV: E=Sophos;i="5.48,410,1517875200";
-   d="scan'208";a="50714494"
-From: Paul Durrant <paul.durrant@citrix.com>
-To: <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
-        <x86@kernel.org>
-CC: Paul Durrant <paul.durrant@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH] xen/privcmd: add IOCTL_PRIVCMD_MMAP_RESOURCE
-Date: Thu, 5 Apr 2018 10:32:06 +0100
-Message-ID: <20180405093206.3624-1-paul.durrant@citrix.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 5 Apr 2018 05:42:57 -0400
+X-IronPort-AV: E=Sophos;i="5.48,410,1517842800";
+   d="scan'208";a="277312894"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Michel Pollet" <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] gpio: dwapb: Add support for 32 interrupts
+Thread-Topic: [PATCH] gpio: dwapb: Add support for 32 interrupts
+Thread-Index: AQHTxqA8Q/Tp1OQLo0C0CX9dPZ3BD6PpTkCAgAigajA=
+Date: Thu, 5 Apr 2018 09:42:46 +0000
+Message-ID: <TY1PR01MB1769064C77AE3E5ABA4993DAF5BB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+ <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
+In-Reply-To: <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=phil.edworthy@renesas.com;
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB0697;7:H92yXRoodEjWh91Q7O9Y9DelVjAHPJo4kDyUQ6AsH142UvBuD3qAR8riNElVwu5lMY3beFZrMgcw63LvMQCmFuD/mMNv3LcZzSDAXPgz4pkxYiJwGclS+yyuqQEloFK+XIc8pxzoEQWb/VkMOC0EJWiUf3wZSwbg2OkhJbcJNfH+tqyR83pvSxrpnpfDjzpCQjSFpLnPS1k69PZGQN9WFNo7ExMP7/76/hcdeyYdpiAYaFO+lbprkGlJe84oF41S;20:QECfHmDD8s/zs/pldVg2aXci2ef/fPxTmlKvlcuc56XiAazyPNehgQcM4kJQazq02wMpyKXOwRhnNICd4vE6/ggXWZ6tMD8QV/ZIzKOCaHhSLipck5ZfQ/AeY2OMIZiPzphvASf69igQHauaGiEXWqo2dmudS2u+ZyMo693ePv0=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: c2d21190-2d4a-441f-188c-08d59ad99651
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB0697;
+x-ms-traffictypediagnostic: TY1PR01MB0697:
+x-microsoft-antispam-prvs: <TY1PR01MB069782A8DAD3D6495360124BF5BB0@TY1PR01MB0697.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(17755550239193);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:TY1PR01MB0697;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB0697;
+x-forefront-prvs: 06339BAE63
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(346002)(39850400004)(376002)(396003)(189003)(199004)(102836004)(3280700002)(2906002)(3660700001)(6116002)(3846002)(105586002)(97736004)(6246003)(7696005)(106356001)(76176011)(99286004)(66066001)(26005)(9686003)(55016002)(39060400002)(53936002)(25786009)(4326008)(186003)(33656002)(14454004)(2900100001)(6436002)(478600001)(68736007)(8936002)(229853002)(486006)(74316002)(305945005)(8676002)(446003)(11346002)(6916009)(476003)(5660300001)(6506007)(316002)(5250100002)(86362001)(53546011)(81166006)(54906003)(81156014)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB0697;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: LDmZfuexRTCuq6XIcwfexY+CKSu8e/6pQaSYDzgyNVUF1GpFuxBiSvod/585rQV7FJGlA+C2cFEwog74m8jlzxsmmm6ZnLdduE/5jR2xo8I3b9EyW/uodhU8OTxgGWA/yGyFeiElavrNI4Fs+5qoeaf4ErfGON468+NQtawSaaDyOVqX94IMUCuwXBSXgARNcSG+twL82ttnwniHGSJ9eT9X9+qXMZW6JWFeEvwBn8QJBNnqSIhJ23PvfVLyR1HfzV42VrTcy412ugXaT+WXCgPc24zsG2/LCov95EHz6/cSfL9uIJLmX+emQHEBaUxa2Jbn9lhriEtU59qx/DhELycBKdN8wZe+iik+C4Lq6O8QrKfGEn+2kFO0LjyRQC/52eV+wKrVOYSY/VmZihiz9JoDhJA1Ncdx7ZcSCm/C5xI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2d21190-2d4a-441f-188c-08d59ad99651
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Apr 2018 09:42:46.1396
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB0697
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w359h4tD008587
 
-My recent Xen patch series introduces a new HYPERVISOR_memory_op to
-support direct priv-mapping of certain guest resources (such as ioreq
-pages, used by emulators) by a tools domain, rather than having to access
-such resources via the guest P2M.
+Hi Andy,
 
-This patch adds the necessary infrastructure to the privcmd driver and
-Xen MMU code to support direct resource mapping.
+On 30 March 2018 22:26 Andy Shevchenko wrote:
+> On Wed, Mar 28, 2018 at 5:22 PM, Phil Edworthy wrote:
+> > The DesignWare GPIO IP can be configured for either 1 or 32
+> > interrupts,
+> 
+> 1 to 32, or just a choice between two?
+Just a choice of 1 or 32.
+Note that by 'configured' I am talking about the hardware being configured in
+RTL prior to manufacturing a device. Once made, you cannot change it.
+This configuration affects the number of output interrupt signals from the GPIO
+Controller block that are connected to an interrupt controller.
 
-NOTE: The adjustment in the MMU code is partially cosmetic. Xen will now
-      allow a PV tools domain to map guest pages either by GFN or MFN, thus
-      the term 'gfn' has been swapped for 'pfn' in the lower layers of the
-      remap code.
+> > but the driver currently only supports 1 interrupt. See the DesignWare
+> > DW_apb_gpio Databook description of the 'GPIO_INTR_IO' parameter.
+> 
+> Will see after holiday and perhaps make more comments. Here is just a brief
+> review.
+> 
+> > +- interrupts : The interrupts to the parent controller raised when
+> > +GPIOs
+> > +  generate the interrupts. If the controller provides one combined
+> > +interrupt
+> > +  for all GPIOs, specify a single interrupt. If the controller
+> > +provides one
+> > +  interrupt for each GPIO, provide a list of interrupts that
+> > +correspond to each
+> > +  of the GPIO pins. When specifying multiple interrupts, if any of
+> > +the GPIOs are
+> > +  not connected to an interrupt, use the interrupt-mask property.
+> > +- interrupt-mask : a 32-bit bit mask that specifies which interrupts
+> > +in the list
+> > +  of interrupts is valid, bit is 1 for a valid irq.
+> 
+> So, but why one will need that in practice? GPIO driver usually provides a pin
+> based IRQ chip which maps each pin to the corresponding offset inside
+> specific IRQ domain.
+On an ARM device we have this GPIO block connected to the GIC interrupt
+controller, i.e. the Synopsys GPIO controller interrupts can* have a 1 to 1
+mapping to the GIC interrupts. At the moment, the GPIO driver only allows a
+single irq signal to specified.
+* this is not strictly accurate on the device I am working on, there is another
+block of IP between the two, but that doesn't matter in this case.
 
-Signed-off-by: Paul Durrant <paul.durrant@citrix.com>
----
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
----
- arch/x86/xen/mmu.c             |  50 ++++++++++++-----
- drivers/xen/privcmd.c          | 119 +++++++++++++++++++++++++++++++++++++++++
- include/uapi/xen/privcmd.h     |  11 ++++
- include/xen/interface/memory.h |  67 +++++++++++++++++++++++
- include/xen/interface/xen.h    |   7 +--
- include/xen/xen-ops.h          |  24 ++++++++-
- 6 files changed, 260 insertions(+), 18 deletions(-)
+> > +                       struct device_node *np = to_of_node(fwnode);
+> > +                       u32 irq_mask = 0xFFFFFFFF;
+> 
+> Why? Shouldn't it be dependent to the amount of actual pins / ports?
+> Intel Quark has only 8 AFAIR.
+It's just a default which can be overridden via device tree.
+For Quark, since you currently only use a single irq, I guess the HW was
+configured that way. In which case, you wouldn't use any of this.
 
-diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
-index d33e7dbe3129..8453d7be415c 100644
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@ -65,37 +65,42 @@ static void xen_flush_tlb_all(void)
- #define REMAP_BATCH_SIZE 16
- 
- struct remap_data {
--	xen_pfn_t *mfn;
-+	xen_pfn_t *pfn;
- 	bool contiguous;
-+	bool no_translate;
- 	pgprot_t prot;
- 	struct mmu_update *mmu_update;
- };
- 
--static int remap_area_mfn_pte_fn(pte_t *ptep, pgtable_t token,
-+static int remap_area_pfn_pte_fn(pte_t *ptep, pgtable_t token,
- 				 unsigned long addr, void *data)
- {
- 	struct remap_data *rmd = data;
--	pte_t pte = pte_mkspecial(mfn_pte(*rmd->mfn, rmd->prot));
-+	pte_t pte = pte_mkspecial(mfn_pte(*rmd->pfn, rmd->prot));
- 
- 	/* If we have a contiguous range, just update the mfn itself,
- 	   else update pointer to be "next mfn". */
- 	if (rmd->contiguous)
--		(*rmd->mfn)++;
-+		(*rmd->pfn)++;
- 	else
--		rmd->mfn++;
-+		rmd->pfn++;
- 
--	rmd->mmu_update->ptr = virt_to_machine(ptep).maddr | MMU_NORMAL_PT_UPDATE;
-+	rmd->mmu_update->ptr = virt_to_machine(ptep).maddr;
-+	rmd->mmu_update->ptr |= rmd->no_translate ?
-+		MMU_PT_UPDATE_NO_TRANSLATE :
-+		MMU_NORMAL_PT_UPDATE;
- 	rmd->mmu_update->val = pte_val_ma(pte);
- 	rmd->mmu_update++;
- 
- 	return 0;
- }
- 
--static int do_remap_gfn(struct vm_area_struct *vma,
-+static int do_remap_pfn(struct vm_area_struct *vma,
- 			unsigned long addr,
--			xen_pfn_t *gfn, int nr,
-+			xen_pfn_t *pfn, int nr,
- 			int *err_ptr, pgprot_t prot,
--			unsigned domid,
-+			unsigned int domid,
-+			bool no_translate,
- 			struct page **pages)
- {
- 	int err = 0;
-@@ -106,11 +111,12 @@ static int do_remap_gfn(struct vm_area_struct *vma,
- 
- 	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
- 
--	rmd.mfn = gfn;
-+	rmd.pfn = pfn;
- 	rmd.prot = prot;
- 	/* We use the err_ptr to indicate if there we are doing a contiguous
- 	 * mapping or a discontigious mapping. */
- 	rmd.contiguous = !err_ptr;
-+	rmd.no_translate = no_translate;
- 
- 	while (nr) {
- 		int index = 0;
-@@ -121,7 +127,7 @@ static int do_remap_gfn(struct vm_area_struct *vma,
- 
- 		rmd.mmu_update = mmu_update;
- 		err = apply_to_page_range(vma->vm_mm, addr, range,
--					  remap_area_mfn_pte_fn, &rmd);
-+					  remap_area_pfn_pte_fn, &rmd);
- 		if (err)
- 			goto out;
- 
-@@ -175,7 +181,8 @@ int xen_remap_domain_gfn_range(struct vm_area_struct *vma,
- 	if (xen_feature(XENFEAT_auto_translated_physmap))
- 		return -EOPNOTSUPP;
- 
--	return do_remap_gfn(vma, addr, &gfn, nr, NULL, prot, domid, pages);
-+	return do_remap_pfn(vma, addr, &gfn, nr, NULL, prot, domid, false,
-+			    pages);
- }
- EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_range);
- 
-@@ -183,7 +190,7 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
- 			       unsigned long addr,
- 			       xen_pfn_t *gfn, int nr,
- 			       int *err_ptr, pgprot_t prot,
--			       unsigned domid, struct page **pages)
-+			       unsigned int domid, struct page **pages)
- {
- 	if (xen_feature(XENFEAT_auto_translated_physmap))
- 		return xen_xlate_remap_gfn_array(vma, addr, gfn, nr, err_ptr,
-@@ -194,10 +201,25 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
- 	 * cause of "wrong memory was mapped in".
- 	 */
- 	BUG_ON(err_ptr == NULL);
--	return do_remap_gfn(vma, addr, gfn, nr, err_ptr, prot, domid, pages);
-+	return do_remap_pfn(vma, addr, gfn, nr, err_ptr, prot, domid,
-+			    false, pages);
- }
- EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_array);
- 
-+int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
-+			       unsigned long addr,
-+			       xen_pfn_t *mfn, int nr,
-+			       int *err_ptr, pgprot_t prot,
-+			       unsigned int domid, struct page **pages)
-+{
-+	if (xen_feature(XENFEAT_auto_translated_physmap))
-+		return -EOPNOTSUPP;
-+
-+	return do_remap_pfn(vma, addr, mfn, nr, err_ptr, prot, domid,
-+			    true, pages);
-+}
-+EXPORT_SYMBOL_GPL(xen_remap_domain_mfn_array);
-+
- /* Returns: 0 success */
- int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
- 			       int nr, struct page **pages)
-diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-index 1c909183c42a..e8b7e07658f2 100644
---- a/drivers/xen/privcmd.c
-+++ b/drivers/xen/privcmd.c
-@@ -33,6 +33,7 @@
- #include <xen/xen.h>
- #include <xen/privcmd.h>
- #include <xen/interface/xen.h>
-+#include <xen/interface/memory.h>
- #include <xen/interface/hvm/dm_op.h>
- #include <xen/features.h>
- #include <xen/page.h>
-@@ -722,6 +723,120 @@ static long privcmd_ioctl_restrict(struct file *file, void __user *udata)
- 	return 0;
- }
- 
-+struct remap_pfn {
-+	struct mm_struct *mm;
-+	struct page **pages;
-+	pgprot_t prot;
-+	unsigned long i;
-+};
-+
-+static int remap_pfn(pte_t *ptep, pgtable_t token, unsigned long addr,
-+		     void *data)
-+{
-+	struct remap_pfn *r = data;
-+	struct page *page = r->pages[r->i];
-+	pte_t pte = pte_mkspecial(pfn_pte(page_to_pfn(page), r->prot));
-+
-+	set_pte_at(r->mm, addr, ptep, pte);
-+	r->i++;
-+
-+	return 0;
-+}
-+
-+static long privcmd_ioctl_mmap_resource(struct file *file, void __user *udata)
-+{
-+	struct privcmd_data *data = file->private_data;
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma;
-+	struct privcmd_mmap_resource kdata;
-+	xen_pfn_t *pfns = NULL;
-+	struct xen_mem_acquire_resource xdata;
-+	int rc;
-+
-+	if (copy_from_user(&kdata, udata, sizeof(kdata)))
-+		return -EFAULT;
-+
-+	/* If restriction is in place, check the domid matches */
-+	if (data->domid != DOMID_INVALID && data->domid != kdata.dom)
-+		return -EPERM;
-+
-+	down_write(&mm->mmap_sem);
-+
-+	vma = find_vma(mm, kdata.addr);
-+	if (!vma || vma->vm_ops != &privcmd_vm_ops) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
-+
-+	pfns = kcalloc(kdata.num, sizeof(*pfns), GFP_KERNEL);
-+	if (!pfns) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
-+
-+	if (xen_feature(XENFEAT_auto_translated_physmap)) {
-+		struct page **pages;
-+		unsigned int i;
-+
-+		rc = alloc_empty_pages(vma, kdata.num);
-+		if (rc < 0)
-+			goto out;
-+
-+		pages = vma->vm_private_data;
-+		for (i = 0; i < kdata.num; i++) {
-+			pfns[i] = page_to_pfn(pages[i]);
-+			pr_info("pfn[%u] = %p\n", i, (void *)pfns[i]);
-+		}
-+	} else
-+		vma->vm_private_data = PRIV_VMA_LOCKED;
-+
-+	memset(&xdata, 0, sizeof(xdata));
-+	xdata.domid = kdata.dom;
-+	xdata.type = kdata.type;
-+	xdata.id = kdata.id;
-+	xdata.frame = kdata.idx;
-+	xdata.nr_frames = kdata.num;
-+	set_xen_guest_handle(xdata.frame_list, pfns);
-+
-+	xen_preemptible_hcall_begin();
-+	rc = HYPERVISOR_memory_op(XENMEM_acquire_resource, &xdata);
-+	xen_preemptible_hcall_end();
-+
-+	if (rc)
-+		goto out;
-+
-+	if (xen_feature(XENFEAT_auto_translated_physmap)) {
-+		struct remap_pfn r = {
-+			.mm = vma->vm_mm,
-+			.pages = vma->vm_private_data,
-+			.prot = vma->vm_page_prot,
-+		};
-+
-+		rc = apply_to_page_range(r.mm, kdata.addr,
-+					 kdata.num << PAGE_SHIFT,
-+					 remap_pfn, &r);
-+	} else {
-+		unsigned int domid =
-+			(xdata.flags & XENMEM_rsrc_acq_caller_owned) ?
-+			DOMID_SELF : kdata.dom;
-+
-+		rc = xen_remap_domain_mfn_array(vma,
-+						kdata.addr & PAGE_MASK,
-+						pfns, kdata.num, NULL,
-+						vma->vm_page_prot,
-+						domid,
-+						vma->vm_private_data);
-+	}
-+
-+	rc = rc > 0 ? 0 : rc;
-+
-+out:
-+	kfree(pfns);
-+
-+	up_write(&mm->mmap_sem);
-+	return rc;
-+}
-+
- static long privcmd_ioctl(struct file *file,
- 			  unsigned int cmd, unsigned long data)
- {
-@@ -753,6 +868,10 @@ static long privcmd_ioctl(struct file *file,
- 		ret = privcmd_ioctl_restrict(file, udata);
- 		break;
- 
-+	case IOCTL_PRIVCMD_MMAP_RESOURCE:
-+		ret = privcmd_ioctl_mmap_resource(file, udata);
-+		break;
-+
- 	default:
- 		break;
- 	}
-diff --git a/include/uapi/xen/privcmd.h b/include/uapi/xen/privcmd.h
-index 39d3e7b8e993..d2029556083e 100644
---- a/include/uapi/xen/privcmd.h
-+++ b/include/uapi/xen/privcmd.h
-@@ -89,6 +89,15 @@ struct privcmd_dm_op {
- 	const struct privcmd_dm_op_buf __user *ubufs;
- };
- 
-+struct privcmd_mmap_resource {
-+	domid_t dom;
-+	__u32 type;
-+	__u32 id;
-+	__u32 idx;
-+	__u64 num;
-+	__u64 addr;
-+};
-+
- /*
-  * @cmd: IOCTL_PRIVCMD_HYPERCALL
-  * @arg: &privcmd_hypercall_t
-@@ -114,5 +123,7 @@ struct privcmd_dm_op {
- 	_IOC(_IOC_NONE, 'P', 5, sizeof(struct privcmd_dm_op))
- #define IOCTL_PRIVCMD_RESTRICT					\
- 	_IOC(_IOC_NONE, 'P', 6, sizeof(domid_t))
-+#define IOCTL_PRIVCMD_MMAP_RESOURCE				\
-+	_IOC(_IOC_NONE, 'P', 7, sizeof(struct privcmd_mmap_resource))
- 
- #endif /* __LINUX_PUBLIC_PRIVCMD_H__ */
-diff --git a/include/xen/interface/memory.h b/include/xen/interface/memory.h
-index 583dd93b3016..b110142ea996 100644
---- a/include/xen/interface/memory.h
-+++ b/include/xen/interface/memory.h
-@@ -265,4 +265,71 @@ struct xen_remove_from_physmap {
- };
- DEFINE_GUEST_HANDLE_STRUCT(xen_remove_from_physmap);
- 
-+/*
-+ * Get the pages for a particular guest resource, so that they can be
-+ * mapped directly by a tools domain.
-+ */
-+#define XENMEM_acquire_resource 28
-+struct xen_mem_acquire_resource {
-+    /* IN - The domain whose resource is to be mapped */
-+    domid_t domid;
-+    /* IN - the type of resource */
-+    uint16_t type;
-+
-+#define XENMEM_resource_ioreq_server 0
-+#define XENMEM_resource_grant_table 1
-+
-+    /*
-+     * IN - a type-specific resource identifier, which must be zero
-+     *      unless stated otherwise.
-+     *
-+     * type == XENMEM_resource_ioreq_server -> id == ioreq server id
-+     * type == XENMEM_resource_grant_table -> id defined below
-+     */
-+    uint32_t id;
-+
-+#define XENMEM_resource_grant_table_id_shared 0
-+#define XENMEM_resource_grant_table_id_status 1
-+
-+    /* IN/OUT - As an IN parameter number of frames of the resource
-+     *          to be mapped. However, if the specified value is 0 and
-+     *          frame_list is NULL then this field will be set to the
-+     *          maximum value supported by the implementation on return.
-+     */
-+    uint32_t nr_frames;
-+    /*
-+     * OUT - Must be zero on entry. On return this may contain a bitwise
-+     *       OR of the following values.
-+     */
-+    uint32_t flags;
-+
-+    /* The resource pages have been assigned to the calling domain */
-+#define _XENMEM_rsrc_acq_caller_owned 0
-+#define XENMEM_rsrc_acq_caller_owned (1u << _XENMEM_rsrc_acq_caller_owned)
-+
-+    /*
-+     * IN - the index of the initial frame to be mapped. This parameter
-+     *      is ignored if nr_frames is 0.
-+     */
-+    uint64_t frame;
-+
-+#define XENMEM_resource_ioreq_server_frame_bufioreq 0
-+#define XENMEM_resource_ioreq_server_frame_ioreq(n) (1 + (n))
-+
-+    /*
-+     * IN/OUT - If the tools domain is PV then, upon return, frame_list
-+     *          will be populated with the MFNs of the resource.
-+     *          If the tools domain is HVM then it is expected that, on
-+     *          entry, frame_list will be populated with a list of GFNs
-+     *          that will be mapped to the MFNs of the resource.
-+     *          If -EIO is returned then the frame_list has only been
-+     *          partially mapped and it is up to the caller to unmap all
-+     *          the GFNs.
-+     *          This parameter may be NULL if nr_frames is 0.
-+     */
-+    GUEST_HANDLE(xen_pfn_t) frame_list;
-+};
-+typedef struct xen_mem_acquire_resource xen_mem_acquire_resource_t;
-+DEFINE_GUEST_HANDLE_STRUCT(xen_mem_acquire_resource);
-+
- #endif /* __XEN_PUBLIC_MEMORY_H__ */
-diff --git a/include/xen/interface/xen.h b/include/xen/interface/xen.h
-index 4f4830ef8f93..8bfb242f433e 100644
---- a/include/xen/interface/xen.h
-+++ b/include/xen/interface/xen.h
-@@ -265,9 +265,10 @@
-  *
-  * PAT (bit 7 on) --> PWT (bit 3 on) and clear bit 7.
-  */
--#define MMU_NORMAL_PT_UPDATE      0 /* checked '*ptr = val'. ptr is MA.       */
--#define MMU_MACHPHYS_UPDATE       1 /* ptr = MA of frame to modify entry for  */
--#define MMU_PT_UPDATE_PRESERVE_AD 2 /* atomically: *ptr = val | (*ptr&(A|D)) */
-+#define MMU_NORMAL_PT_UPDATE       0 /* checked '*ptr = val'. ptr is MA.      */
-+#define MMU_MACHPHYS_UPDATE        1 /* ptr = MA of frame to modify entry for */
-+#define MMU_PT_UPDATE_PRESERVE_AD  2 /* atomically: *ptr = val | (*ptr&(A|D)) */
-+#define MMU_PT_UPDATE_NO_TRANSLATE 3 /* checked '*ptr = val'. ptr is MA.      */
- 
- /*
-  * MMU EXTENDED OPERATIONS
-diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
-index fd23e42c6024..fd18c974a619 100644
---- a/include/xen/xen-ops.h
-+++ b/include/xen/xen-ops.h
-@@ -63,7 +63,7 @@ static inline void xen_destroy_contiguous_region(phys_addr_t pstart,
- struct vm_area_struct;
- 
- /*
-- * xen_remap_domain_gfn_array() - map an array of foreign frames
-+ * xen_remap_domain_gfn_array() - map an array of foreign frames by gfn
-  * @vma:     VMA to map the pages into
-  * @addr:    Address at which to map the pages
-  * @gfn:     Array of GFNs to map
-@@ -86,6 +86,28 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
- 			       unsigned domid,
- 			       struct page **pages);
- 
-+/*
-+ * xen_remap_domain_mfn_array() - map an array of foreign frames by mfn
-+ * @vma:     VMA to map the pages into
-+ * @addr:    Address at which to map the pages
-+ * @mfn:     Array of MFNs to map
-+ * @nr:      Number entries in the MFN array
-+ * @err_ptr: Returns per-MFN error status.
-+ * @prot:    page protection mask
-+ * @domid:   Domain owning the pages
-+ * @pages:   Array of pages if this domain has an auto-translated physmap
-+ *
-+ * @mfn and @err_ptr may point to the same buffer, the MFNs will be
-+ * overwritten by the error codes after they are mapped.
-+ *
-+ * Returns the number of successfully mapped frames, or a -ve error
-+ * code.
-+ */
-+int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
-+			       unsigned long addr, xen_pfn_t *mfn, int nr,
-+			       int *err_ptr, pgprot_t prot,
-+			       unsigned int domid, struct page **pages);
-+
- /* xen_remap_domain_gfn_range() - map a range of foreign frames
-  * @vma:     VMA to map the pages into
-  * @addr:    Address at which to map the pages
--- 
-2.11.0
+> > +                       int j;
+> > +
+> > +                       /* Optional irq mask */
+> > +                       fwnode_property_read_u32(fwnode,
+> > + "interrupt-mask", &irq_mask);
+> > +
+> > +                       /*
+> > +                        * The IP has configuration options to allow a single
+> > +                        * combined interrupt or one per gpio. If one per gpio,
+> > +                        * some might not be used.
+> > +                        */
+> 
+> > +                       for (j = 0; j < pp->ngpio; j++) {
+> > +                               if (irq_mask & BIT(j)) {
+> 
+> for_each_set_bit() is in kernel for ages!
+There's lot of stuff in the kernel for ages that I can't remember!
+I'll fix this :)
+
+> > +                                       pp->irq[j] = irq_of_parse_and_map(np, j);
+> > +                                       if (pp->irq[j])
+> > +                                               pp->has_irq = true;
+> > +                               }
+> > +                       }
+> 
+> 
+> So, on the first glance the patch looks either superfluous or taking wrong
+> approach. Please, elaborate more why it's done in this way and what the
+> case for all this in practice.
+Hopefully I have explained it a bit better above.
+
+Thanks for your comments
+Phil
