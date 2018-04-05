@@ -1,69 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751346AbeDEMsO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 08:48:14 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56866 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeDEMsM (ORCPT
+        id S1751503AbeDEMs1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 08:48:27 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56926 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeDEMsY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 08:48:12 -0400
-Date: Thu, 5 Apr 2018 14:47:57 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
-Subject: Re: [PATCH v9 10/10] cpuidle: menu: Avoid selecting shallow states
- with stopped tick
-Message-ID: <20180405124757.GQ4082@hirez.programming.kicks-ass.net>
-References: <1736751.LdhZHb50jq@aspire.rjw.lan>
- <6542020.eHGLEK9V0J@aspire.rjw.lan>
+        Thu, 5 Apr 2018 08:48:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D5CF602BA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Joe Perches <joe@perches.com>
+Cc: Christian Lamparter <chunkeey@googlemail.com>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Jussi Kivilinna <jussi.kivilinna@iki.fi>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org
+Subject: Re: [PATCH 06/12] wireless: Convert simple uses of a static const Ethernet broadcast address
+References: <cover.1522479607.git.joe@perches.com>
+        <79196f134a513d50968e8e208a0e56b3c0236ee3.1522479607.git.joe@perches.com>
+        <87po3desix.fsf@kamboji.qca.qualcomm.com>
+Date: Thu, 05 Apr 2018 15:48:17 +0300
+In-Reply-To: <87po3desix.fsf@kamboji.qca.qualcomm.com> (Kalle Valo's message
+        of "Thu, 05 Apr 2018 15:39:50 +0300")
+Message-ID: <87zi2hlsz2.fsf@purkki.adurom.net>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6542020.eHGLEK9V0J@aspire.rjw.lan>
-User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 10:50:36AM +0200, Rafael J. Wysocki wrote:
-> +	if (tick_nohz_tick_stopped()) {
-> +		/*
-> +		 * If the tick is already stopped, the cost of possible short
-> +		 * idle duration misprediction is much higher, because the CPU
-> +		 * may be stuck in a shallow idle state for a long time as a
-> +		 * result of it.  In that case say we might mispredict and try
-> +		 * to force the CPU into a state for which we would have stopped
-> +		 * the tick, unless the tick timer is going to expire really
-> +		 * soon anyway.
+Kalle Valo <kvalo@codeaurora.org> writes:
 
-Wait what; the tick was stopped, therefore it _cannot_ expire soon.
+> Joe Perches <joe@perches.com> writes:
+>
+>> Use the new ether_broadcast_addr global instead to save some object code.
+>>
+>> Signed-off-by: Joe Perches <joe@perches.com>
+>> ---
+>>  drivers/net/wireless/admtek/adm8211.c           | 3 +--
+>>  drivers/net/wireless/ath/carl9170/mac.c         | 4 +---
+>>  drivers/net/wireless/broadcom/b43/main.c        | 3 +--
+>>  drivers/net/wireless/marvell/mwifiex/cfg80211.c | 3 +--
+>>  drivers/net/wireless/realtek/rtlwifi/core.c     | 5 ++---
+>>  drivers/net/wireless/rndis_wlan.c               | 6 +-----
+>>  drivers/net/wireless/ti/wl1251/main.c           | 5 +----
+>>  drivers/net/wireless/ti/wlcore/main.c           | 5 +----
+>>  8 files changed, 9 insertions(+), 25 deletions(-)
+>
+> It would be really helpful if you could CLEARLY document in the patches
+> (or in the cover letter but then you need to cc all parties) to what
+> tree the patches are meant for. Otherwise I, and other maintainers as
+> well, need to waste time trying to guess what's your plan.
 
-*confused*
+Forgot to mention that for me the best approach is to have the tree name
+in subject, just like Dave and Linus both recommend:
 
-Did you mean s/tick/a/ ?
+[PATCH 06/12 wireless-drivers-next] wireless: Convert simple uses of a static const Ethernet broadcast address
 
-> +		 */
-> +		if (data->predicted_us < TICK_USEC)
-> +			data->predicted_us = min_t(unsigned int, TICK_USEC,
-> +						   ktime_to_us(delta_next));
-> +	} else {
-> +		/*
-> +		 * Use the performance multiplier and the user-configurable
-> +		 * latency_req to determine the maximum exit latency.
-> +		 */
-> +		interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
-> +		if (latency_req > interactivity_req)
-> +			latency_req = interactivity_req;
-> +	}
->  
->  	expected_interval = data->predicted_us;
->  	/*
-> 
+This way I can immeaditely see from patchwork to which tree the patch
+should go which helps tremendously. And if the tree name is too long you
+can always shorten it to w-d and w-d-next.
+
+-- 
+Kalle Valo
