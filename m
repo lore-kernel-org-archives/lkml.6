@@ -1,210 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752565AbeDEJyh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:54:37 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:44320 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752672AbeDEJxm (ORCPT
+        id S1752439AbeDEJyf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:54:35 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55975 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752191AbeDEJyc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:53:42 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, mingo@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 4/8] syscalls: prepare ARCH_HAS_SYSCALL_WRAPPER for compat syscalls
-Date: Thu,  5 Apr 2018 11:53:03 +0200
-Message-Id: <20180405095307.3730-5-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180405095307.3730-1-linux@dominikbrodowski.net>
-References: <20180405095307.3730-1-linux@dominikbrodowski.net>
+        Thu, 5 Apr 2018 05:54:32 -0400
+X-Google-Smtp-Source: AIpwx49b+XPnDqeU2YxsOHNMyohIy3lOqYoK4focezfHEqgEf/A6+OadI+93NtWhveGzDOzH1ZZnPQ==
+Date: Thu, 5 Apr 2018 11:54:29 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Tejun Heo <tj@kernel.org>, Patrice Chotard <patrice.chotard@st.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-ide@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] ata: ahci-platform: add reset control support
+Message-ID: <20180405095429.GA7506@ulmo>
+References: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Disposition: inline
+In-Reply-To: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It may be useful for an architecture to override the definitions of the
-COMPAT_SYSCALL_DEFINE0() and __COMPAT_SYSCALL_DEFINEx() macros in
-<linux/compat.h>, in particular to use a different calling convention
-for syscalls. This patch provides a mechanism to do so, based on the
-previously introduced CONFIG_ARCH_HAS_SYSCALL_WRAPPER. If it is enabled,
-<asm/sycall_wrapper.h> is included in <linux/compat.h> and may be used
-to define the macros mentioned above. Moreover, as the syscall calling
-convention may be different if CONFIG_ARCH_HAS_SYSCALL_WRAPPER is set,
-the compat syscall function prototypes in <linux/compat.h> are #ifndef'd
-out in that case.
 
-As some of the syscalls and/or compat syscalls may not be present,
-the COND_SYSCALL() and COND_SYSCALL_COMPAT() macros in kernel/sys_ni.c
-as well as the SYS_NI() and COMPAT_SYS_NI() macros in
-kernel/time/posix-stubs.c can be re-defined in <asm/syscall_wrapper.h> iff
-CONFIG_ARCH_HAS_SYSCALL_WRAPPER is enabled.
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- include/linux/compat.h    | 22 ++++++++++++++++++++++
- init/Kconfig              |  9 ++++++---
- kernel/sys_ni.c           | 10 ++++++++++
- kernel/time/posix-stubs.c | 10 ++++++++++
- 4 files changed, 48 insertions(+), 3 deletions(-)
+On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
+> Add support to get and control a list of resets for the device
+> as optional and shared. These resets must be kept de-asserted until
+> the device is enabled.
+>=20
+> This is specified as shared because some SoCs like UniPhier series
+> have common reset controls with all ahci controller instances.
+>=20
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
+>  .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
+>  drivers/ata/ahci.h                                 |  1 +
+>  drivers/ata/libahci_platform.c                     | 24 ++++++++++++++++=
++++---
+>  3 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 9847c5a013c3..2d85ec5cfda2 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -24,6 +24,17 @@
- #include <asm/siginfo.h>
- #include <asm/signal.h>
- 
-+#ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
-+/*
-+ * It may be useful for an architecture to override the definitions of the
-+ * COMPAT_SYSCALL_DEFINE0 and COMPAT_SYSCALL_DEFINEx() macros, in particular
-+ * to use a different calling convention for syscalls. To allow for that,
-+ + the prototypes for the compat_sys_*() functions below will *not* be included
-+ * if CONFIG_ARCH_HAS_SYSCALL_WRAPPER is enabled.
-+ */
-+#include <asm/syscall_wrapper.h>
-+#endif /* CONFIG_ARCH_HAS_SYSCALL_WRAPPER */
-+
- #ifndef COMPAT_USE_64BIT_TIME
- #define COMPAT_USE_64BIT_TIME 0
- #endif
-@@ -32,10 +43,12 @@
- #define __SC_DELOUSE(t,v) ((__force t)(unsigned long)(v))
- #endif
- 
-+#ifndef COMPAT_SYSCALL_DEFINE0
- #define COMPAT_SYSCALL_DEFINE0(name) \
- 	asmlinkage long compat_sys_##name(void); \
- 	ALLOW_ERROR_INJECTION(compat_sys_##name, ERRNO); \
- 	asmlinkage long compat_sys_##name(void)
-+#endif /* COMPAT_SYSCALL_DEFINE0 */
- 
- #define COMPAT_SYSCALL_DEFINE1(name, ...) \
-         COMPAT_SYSCALL_DEFINEx(1, _##name, __VA_ARGS__)
-@@ -50,6 +63,7 @@
- #define COMPAT_SYSCALL_DEFINE6(name, ...) \
- 	COMPAT_SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
- 
-+#ifndef COMPAT_SYSCALL_DEFINEx
- #define COMPAT_SYSCALL_DEFINEx(x, name, ...)				\
- 	asmlinkage long compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
- 	asmlinkage long compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))\
-@@ -62,6 +76,7 @@
- 		return C_SYSC##name(__MAP(x,__SC_DELOUSE,__VA_ARGS__));	\
- 	}								\
- 	static inline long C_SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__))
-+#endif /* COMPAT_SYSCALL_DEFINEx */
- 
- #ifndef compat_user_stack_pointer
- #define compat_user_stack_pointer() current_user_stack_pointer()
-@@ -517,7 +532,12 @@ int __compat_save_altstack(compat_stack_t __user *, unsigned long);
-  * Please note that these prototypes here are only provided for information
-  * purposes, for static analysis, and for linking from the syscall table.
-  * These functions should not be called elsewhere from kernel code.
-+ *
-+ * As the syscall calling convention may be different from the default
-+ * for architectures overriding the syscall calling convention, do not
-+ * include the prototypes if CONFIG_ARCH_HAS_SYSCALL_WRAPPER is enabled.
-  */
-+#ifndef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
- asmlinkage long compat_sys_io_setup(unsigned nr_reqs, u32 __user *ctx32p);
- asmlinkage long compat_sys_io_submit(compat_aio_context_t ctx_id, int nr,
- 				     u32 __user *iocb);
-@@ -955,6 +975,8 @@ asmlinkage long compat_sys_stime(compat_time_t __user *tptr);
- /* obsolete: net/socket.c */
- asmlinkage long compat_sys_socketcall(int call, u32 __user *args);
- 
-+#endif /* CONFIG_ARCH_HAS_SYSCALL_WRAPPER */
-+
- 
- /*
-  * For most but not all architectures, "am I in a compat syscall?" and
-diff --git a/init/Kconfig b/init/Kconfig
-index 068eb6c3bbf7..2dbc88051bde 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1925,8 +1925,11 @@ config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
- 	bool
- 
- # It may be useful for an architecture to override the definitions of the
--# SYSCALL_DEFINE() and __SYSCALL_DEFINEx() macros in <linux/syscalls.h>,
--# in particular to use a different calling convention for syscalls.
-+# SYSCALL_DEFINE() and __SYSCALL_DEFINEx() macros in <linux/syscalls.h>
-+# and the COMPAT_ variants in <linux/compat.h>, in particular to use a
-+# different calling convention for syscalls. They can also override the
-+# macros for not-implemented syscalls in kernel/sys_ni.c and
-+# kernel/time/posix-stubs.c. All these overrides need to be available in
-+# <asm/syscall_wrapper.h>.
- config ARCH_HAS_SYSCALL_WRAPPER
- 	def_bool n
--	depends on !COMPAT
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index 6cafc008f6db..9791364925dc 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -5,6 +5,11 @@
- 
- #include <asm/unistd.h>
- 
-+#ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
-+/* Architectures may override COND_SYSCALL and COND_SYSCALL_COMPAT */
-+#include <asm/syscall_wrapper.h>
-+#endif /* CONFIG_ARCH_HAS_SYSCALL_WRAPPER */
-+
- /*  we can't #include <linux/syscalls.h> here,
-     but tell gcc to not warn with -Wmissing-prototypes  */
- asmlinkage long sys_ni_syscall(void);
-@@ -17,8 +22,13 @@ asmlinkage long sys_ni_syscall(void)
- 	return -ENOSYS;
- }
- 
-+#ifndef COND_SYSCALL
- #define COND_SYSCALL(name) cond_syscall(sys_##name)
-+#endif /* COND_SYSCALL */
-+
-+#ifndef COND_SYSCALL_COMPAT
- #define COND_SYSCALL_COMPAT(name) cond_syscall(compat_sys_##name)
-+#endif /* COND_SYSCALL_COMPAT */
- 
- /*
-  * This list is kept in the same order as include/uapi/asm-generic/unistd.h.
-diff --git a/kernel/time/posix-stubs.c b/kernel/time/posix-stubs.c
-index b258bee13b02..69a937c3cd81 100644
---- a/kernel/time/posix-stubs.c
-+++ b/kernel/time/posix-stubs.c
-@@ -19,6 +19,11 @@
- #include <linux/posix-timers.h>
- #include <linux/compat.h>
- 
-+#ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
-+/* Architectures may override SYS_NI and COMPAT_SYS_NI */
-+#include <asm/syscall_wrapper.h>
-+#endif
-+
- asmlinkage long sys_ni_posix_timers(void)
- {
- 	pr_err_once("process %d (%s) attempted a POSIX timer syscall "
-@@ -27,8 +32,13 @@ asmlinkage long sys_ni_posix_timers(void)
- 	return -ENOSYS;
- }
- 
-+#ifndef SYS_NI
- #define SYS_NI(name)  SYSCALL_ALIAS(sys_##name, sys_ni_posix_timers)
-+#endif
-+
-+#ifndef COMPAT_SYS_NI
- #define COMPAT_SYS_NI(name)  SYSCALL_ALIAS(compat_sys_##name, sys_ni_posix_timers)
-+#endif
- 
- SYS_NI(timer_create);
- SYS_NI(timer_gettime);
--- 
-2.16.3
+This causes a regression on Tegra because we explicitly request the
+resets after the call to ahci_platform_get_resources().
+
+=46rom a quick look, ahci_mtk and ahci_st are in the same boat, adding the
+corresponding maintainers to Cc.
+
+Patrice, Matthias: does SATA still work for you after this patch? This
+has been in linux-next since next-20180327.
+
+Given how this is one of the more hardware-specific bits, perhaps a
+better way to do this is to move reset handling into a Uniphier driver
+much like Tegra, Mediatek and ST?
+
+That said, I don't see SATA support for any of the Socionext hardware
+either in the DT bindings or drivers/ata, so perhaps it'd be best to
+back this out again until we have something that's more well tested?
+
+Thierry
+
+--3MwIy2ne0vdjdPXF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrF8lEACgkQ3SOs138+
+s6H7EA//fqnLBMRIi+b3go4vL4naTiR/ajPZkj30Gl9LMUb0uprVgnPOC1ClhAEd
+VUqcL75MwXydIasQixfzTEmX2DPXGC4EYaPY1Zv/FDgnC0PXJMOezup8W40mHZKU
+9imul0pq7on0izFRB32xb45s2BXHAVpAyB/uEVthyWopnWK6cvGlaL5BdbHgtVhj
+GaajtH+v6+LY54zquz0noREZqFqDS5ugUHFkZq7Vquza99K2TAs9Jw9O9FaloNZq
+/rwKurnds9aeegnt6661XK5mYjuGzlA0Zwf4zk9uzU71pGmKDBNBu6WEwvTSM1jK
+l8/io7YCmbr4mVbzzoLn3hzzI9loK0ohL3e7mVJO+mORJZBCTjOzBIz+bQOdkU4y
+BQyiX8RK1tl4q1beYKV0HD6sffXiJDTBdHNMON3UNqF9MCOyAaX4t5Nr9MITUsaz
+NggHnWunPeJD0TPDEVrdYGQHj/z4Ri6AAEcuBW6KsPrwLOxRbM+qAw3VF29Ur1fC
+4v5e7Olr1ltu/NmvBiiHEELk8lnVmgZwVacpVLv2a8JZ2XMp0WH9lxVXB57SoEQ7
+KdrmDfYTcpyeCIOrUqdaz64CDsWGbZL+X048KoZmoxV5I5VEcXjCOJzd49CJYNtW
+J9bCVROflae3vM95hOt98CnC1ewPDe/SlR1HX7cySdFdAQxOaXs=
+=5EOF
+-----END PGP SIGNATURE-----
+
+--3MwIy2ne0vdjdPXF--
