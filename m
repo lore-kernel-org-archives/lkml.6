@@ -1,86 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752034AbeDELeW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:34:22 -0400
-Received: from lhrrgout.huawei.com ([194.213.3.17]:34330 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751967AbeDELeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:34:11 -0400
-Subject: Re: [PATCH v4 0/1] Safe LSM (un)loading, and immutable hooks
-To: Peter Dolding <oiaohm@gmail.com>, Sargun Dhillon <sargun@sargun.me>
-CC: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>,
-        <paul@paul-moore.com>, <plautrba@redhat.com>
-References: <cover.1522560550.git.sargun@sargun.me>
- <911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
- <CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
-From: Igor Stoppa <igor.stoppa@huawei.com>
-Message-ID: <63eaa2d5-3662-2240-15fb-ab2227b6903a@huawei.com>
-Date: Thu, 5 Apr 2018 14:34:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.122.225.51]
-X-CFilter-Loop: Reflected
+        id S1752084AbeDELeo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:34:44 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33976 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751359AbeDELdX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 07:33:23 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: lee.jones@linaro.org
+Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
+        gwendal@chromium.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 4/8] mfd: cros_ec_dev: Register cros-ec-rtc driver as a subdevice.
+Date: Thu,  5 Apr 2018 13:33:09 +0200
+Message-Id: <20180405113313.27340-5-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180405113313.27340-1-enric.balletbo@collabora.com>
+References: <20180405113313.27340-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Check whether this EC instance has RTC host command support and instatiate
+the RTC driver as a subdevice in such case.
 
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
 
-On 05/04/18 13:31, Peter Dolding wrote:
-> On Thu, Apr 5, 2018 at 7:55 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+Changes in v5:
+- [4/8] For mfd_cell struct use one line and no need for the comma.
 
-[...]
+Changes in v4:
+- [4/8] Nit: check -> Check (Lee Jones)
+- [4/8] Use ARRAY_SIZE() instead of hardcoded number (Lee Jones)
 
->> A) hooks that are either const or marked as RO after init
->>
->> B) hooks that are writable for a short time, long enough to load
->> additional, non built-in modules, but then get locked down
->> I provided an example some time ago [1]
->>
->> C) hooks that are unloadable (and therefore always attackable?)
+Changes in v3:
+- [4/8] Add the Reviewed-by Andy Shevchenko.
 
-[...]
+Changes in v2:
+- [4/8] Add the Reviewed-by Gwendal.
 
->> Do you have any specific case in mind where this trade-off would be
->> acceptable?
->>
-> 
-> A useful case for loadable/unloadable LSM is development automate QA.
+ drivers/mfd/cros_ec_dev.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-I did not consider this case, but I see the point.
-
-[...]
-
-> I would say normal production machines being able to swap LSM like
-> this does not have much use.
-
-yes, this is what I had in mind
-
-[...]
-
-> There is a shade of grey between something being a security hazard and
-> something being a useful feature.
-
-Maybe the problem I see is only in the naming: if what right now is
-addressed as "mutable" were to be called in some other way that does not
-imply that it's impossible to lock it down, then I think there wouldn't
-be much of a problem anymore.
-
-How about s/mutable/protectable/g ?
-
-Then it could be a boot time parameter to decide if the "extra" hooks
-should be protected or stay writable, for example for performing more
-extensive testing.
-
---
-igor
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index f98e5beffca6..e00bfb1e9030 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -389,6 +389,10 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
+ 	kfree(msg);
+ }
+ 
++static const struct mfd_cell cros_ec_rtc_cells[] = {
++	{ .name = "cros-ec-rtc" }
++};
++
+ static int ec_device_probe(struct platform_device *pdev)
+ {
+ 	int retval = -ENOMEM;
+@@ -437,6 +441,18 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
+ 		cros_ec_sensors_register(ec);
+ 
++	/* Check whether this EC instance has RTC host command support */
++	if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
++		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
++					 cros_ec_rtc_cells,
++					 ARRAY_SIZE(cros_ec_rtc_cells),
++					 NULL, 0, NULL);
++		if (retval)
++			dev_err(ec->dev,
++				"failed to add cros-ec-rtc device: %d\n",
++				retval);
++	}
++
+ 	/* Take control of the lightbar from the EC. */
+ 	lb_manual_suspend_ctrl(ec, 1);
+ 
+-- 
+2.16.3
