@@ -1,227 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751606AbeDES0z (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 14:26:55 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40932 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751417AbeDES0y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 14:26:54 -0400
-X-Google-Smtp-Source: AIpwx49oOeuOdNFrTwyslr6/TUe4cETbUDROOkOP85EthMwNPHwNQkRR8zQVyzoFGW+RNpR9V60FuQ==
-Date: Thu, 5 Apr 2018 21:26:51 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Michal Hocko <mhocko@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
-        Andrey Vagin <avagin@openvz.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Subject: [PATCH v2] prctl: Deprecate non PR_SET_MM_MAP operations
-Message-ID: <20180405182651.GM15783@uranus.lan>
+        id S1751749AbeDESaU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 14:30:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34636 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751415AbeDESaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 14:30:19 -0400
+Date: Thu, 5 Apr 2018 21:30:17 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: "Wang, Wei W" <wei.w.wang@intel.com>
+Cc: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
+Subject: Re: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Message-ID: <20180405212850-mutt-send-email-mst@kernel.org>
+References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
+ <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
+ <20180403214147-mutt-send-email-mst@kernel.org>
+ <5AC43377.2070607@intel.com>
+ <20180404155907-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
+ <20180405040900-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A7F3B@shsmsx102.ccr.corp.intel.com>
+ <20180405170248-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A889E@shsmsx102.ccr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <286AC319A985734F985F78AFA26841F7394A889E@shsmsx102.ccr.corp.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An ability to manipulate mm_struct fields was introduced in
-sake of CRIU in first place. Later we provide more suitable
-and safe operation PR_SET_MM_MAP where all fields to be modifed
-are passed in one structure which allows us to make more detailed
-verification.
+On Thu, Apr 05, 2018 at 03:47:28PM +0000, Wang, Wei W wrote:
+> On Thursday, April 5, 2018 10:04 PM, Michael S. Tsirkin wrote:
+> > On Thu, Apr 05, 2018 at 02:05:03AM +0000, Wang, Wei W wrote:
+> > > On Thursday, April 5, 2018 9:12 AM, Michael S. Tsirkin wrote:
+> > > > On Thu, Apr 05, 2018 at 12:30:27AM +0000, Wang, Wei W wrote:
+> > > > > On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
+> > > > > > On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
+> > > > > > > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
+> > > > > > > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
+> > > > > I'm afraid the driver couldn't be aware if the added hints are
+> > > > > stale or not,
+> > > >
+> > > >
+> > > > No - I mean that driver has code that compares two values and stops
+> > > > reporting. Can one of the values be stale?
+> > >
+> > > The driver compares "vb->cmd_id_use != vb->cmd_id_received" to decide
+> > > if it needs to stop reporting hints, and cmd_id_received is what the
+> > > driver reads from host (host notifies the driver to read for the
+> > > latest value). If host sends a new cmd id, it will notify the guest to
+> > > read again. I'm not sure how that could be a stale cmd id (or maybe I
+> > > misunderstood your point here?)
+> > >
+> > > Best,
+> > > Wei
+> > 
+> > The comparison is done in one thread, the update in another one.
+> 
+> I think this isn't something that could be solved by adding a lock,
+> unless host waits for the driver's ACK about finishing the update
+> (this is not agreed in the QEMU part discussion).
+> 
+> Actually virtio_balloon has F_IOMMU_PLATFORM disabled, maybe we don't
+> need to worry about that using DMA api case (we only have gpa added to
+> the vq, and having some entries stay in the vq seems fine). For this
+> feature, I think it would not work with F_IOMMU enabled either.
 
-Still old interface remains present for compatibility reason
-though CRIU itself already switched to PR_SET_MM_MAP on its
-own long ago.
+Adding a code comment explaining all this might be a good idea.
 
-Googling didn't reveal some other users of this operation
-so I think it should be safe to remove this interface.
-
-v2:
- - Improve warning message
- - Drop redundant args check
-
-CC: Andrey Vagin <avagin@openvz.org>
-CC: Andrew Morton <akpm@linuxfoundation.org>
-CC: Pavel Emelyanov <xemul@virtuozzo.com>
-CC: Michael Kerrisk <mtk.manpages@gmail.com>
-CC: Yang Shi <yang.shi@linux.alibaba.com>
-CC: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
----
- kernel/sys.c |  151 -----------------------------------------------------------
- 1 file changed, 2 insertions(+), 149 deletions(-)
-
-Index: linux-ml.git/kernel/sys.c
-===================================================================
---- linux-ml.git.orig/kernel/sys.c
-+++ linux-ml.git/kernel/sys.c
-@@ -2053,163 +2053,16 @@ static int prctl_set_mm_map(int opt, con
- }
- #endif /* CONFIG_CHECKPOINT_RESTORE */
- 
--static int prctl_set_auxv(struct mm_struct *mm, unsigned long addr,
--			  unsigned long len)
--{
--	/*
--	 * This doesn't move the auxiliary vector itself since it's pinned to
--	 * mm_struct, but it permits filling the vector with new values.  It's
--	 * up to the caller to provide sane values here, otherwise userspace
--	 * tools which use this vector might be unhappy.
--	 */
--	unsigned long user_auxv[AT_VECTOR_SIZE];
--
--	if (len > sizeof(user_auxv))
--		return -EINVAL;
--
--	if (copy_from_user(user_auxv, (const void __user *)addr, len))
--		return -EFAULT;
--
--	/* Make sure the last entry is always AT_NULL */
--	user_auxv[AT_VECTOR_SIZE - 2] = 0;
--	user_auxv[AT_VECTOR_SIZE - 1] = 0;
--
--	BUILD_BUG_ON(sizeof(user_auxv) != sizeof(mm->saved_auxv));
--
--	task_lock(current);
--	memcpy(mm->saved_auxv, user_auxv, len);
--	task_unlock(current);
--
--	return 0;
--}
--
- static int prctl_set_mm(int opt, unsigned long addr,
- 			unsigned long arg4, unsigned long arg5)
- {
--	struct mm_struct *mm = current->mm;
--	struct prctl_mm_map prctl_map;
--	struct vm_area_struct *vma;
--	int error;
--
--	if (arg5 || (arg4 && (opt != PR_SET_MM_AUXV &&
--			      opt != PR_SET_MM_MAP &&
--			      opt != PR_SET_MM_MAP_SIZE)))
--		return -EINVAL;
--
- #ifdef CONFIG_CHECKPOINT_RESTORE
- 	if (opt == PR_SET_MM_MAP || opt == PR_SET_MM_MAP_SIZE)
- 		return prctl_set_mm_map(opt, (const void __user *)addr, arg4);
- #endif
- 
--	if (!capable(CAP_SYS_RESOURCE))
--		return -EPERM;
--
--	if (opt == PR_SET_MM_EXE_FILE)
--		return prctl_set_mm_exe_file(mm, (unsigned int)addr);
--
--	if (opt == PR_SET_MM_AUXV)
--		return prctl_set_auxv(mm, addr, arg4);
--
--	if (addr >= TASK_SIZE || addr < mmap_min_addr)
--		return -EINVAL;
--
--	error = -EINVAL;
--
--	down_write(&mm->mmap_sem);
--	vma = find_vma(mm, addr);
--
--	prctl_map.start_code	= mm->start_code;
--	prctl_map.end_code	= mm->end_code;
--	prctl_map.start_data	= mm->start_data;
--	prctl_map.end_data	= mm->end_data;
--	prctl_map.start_brk	= mm->start_brk;
--	prctl_map.brk		= mm->brk;
--	prctl_map.start_stack	= mm->start_stack;
--	prctl_map.arg_start	= mm->arg_start;
--	prctl_map.arg_end	= mm->arg_end;
--	prctl_map.env_start	= mm->env_start;
--	prctl_map.env_end	= mm->env_end;
--	prctl_map.auxv		= NULL;
--	prctl_map.auxv_size	= 0;
--	prctl_map.exe_fd	= -1;
--
--	switch (opt) {
--	case PR_SET_MM_START_CODE:
--		prctl_map.start_code = addr;
--		break;
--	case PR_SET_MM_END_CODE:
--		prctl_map.end_code = addr;
--		break;
--	case PR_SET_MM_START_DATA:
--		prctl_map.start_data = addr;
--		break;
--	case PR_SET_MM_END_DATA:
--		prctl_map.end_data = addr;
--		break;
--	case PR_SET_MM_START_STACK:
--		prctl_map.start_stack = addr;
--		break;
--	case PR_SET_MM_START_BRK:
--		prctl_map.start_brk = addr;
--		break;
--	case PR_SET_MM_BRK:
--		prctl_map.brk = addr;
--		break;
--	case PR_SET_MM_ARG_START:
--		prctl_map.arg_start = addr;
--		break;
--	case PR_SET_MM_ARG_END:
--		prctl_map.arg_end = addr;
--		break;
--	case PR_SET_MM_ENV_START:
--		prctl_map.env_start = addr;
--		break;
--	case PR_SET_MM_ENV_END:
--		prctl_map.env_end = addr;
--		break;
--	default:
--		goto out;
--	}
--
--	error = validate_prctl_map(&prctl_map);
--	if (error)
--		goto out;
--
--	switch (opt) {
--	/*
--	 * If command line arguments and environment
--	 * are placed somewhere else on stack, we can
--	 * set them up here, ARG_START/END to setup
--	 * command line argumets and ENV_START/END
--	 * for environment.
--	 */
--	case PR_SET_MM_START_STACK:
--	case PR_SET_MM_ARG_START:
--	case PR_SET_MM_ARG_END:
--	case PR_SET_MM_ENV_START:
--	case PR_SET_MM_ENV_END:
--		if (!vma) {
--			error = -EFAULT;
--			goto out;
--		}
--	}
--
--	mm->start_code	= prctl_map.start_code;
--	mm->end_code	= prctl_map.end_code;
--	mm->start_data	= prctl_map.start_data;
--	mm->end_data	= prctl_map.end_data;
--	mm->start_brk	= prctl_map.start_brk;
--	mm->brk		= prctl_map.brk;
--	mm->start_stack	= prctl_map.start_stack;
--	mm->arg_start	= prctl_map.arg_start;
--	mm->arg_end	= prctl_map.arg_end;
--	mm->env_start	= prctl_map.env_start;
--	mm->env_end	= prctl_map.env_end;
--
--	error = 0;
--out:
--	up_write(&mm->mmap_sem);
--	return error;
-+	pr_warn_once("PR_SET_MM_* has been removed. Use PR_SET_MM_MAP instead\n");
-+	return -EINVAL;
- }
- 
- #ifdef CONFIG_CHECKPOINT_RESTORE
+> If there is any further need (I couldn't think of a need so far), I
+> think we could consider to let host inject a vq interrupt at some
+> point, and then the driver handler can do the virtqueue_get_buf work.
+> 
+> Best,
+> Wei
