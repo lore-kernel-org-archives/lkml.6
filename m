@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeDEVWy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 17:22:54 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34312 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751389AbeDEVWw (ORCPT
+        id S1752248AbeDEVXw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 17:23:52 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36181 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751356AbeDEVXv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 17:22:52 -0400
-X-Google-Smtp-Source: AIpwx4/CBf1No65H2LnpK4alEZI4lMCrhi8aKIO6b+kpM6MloR3djwEuEK+y+1pw5Mo+whtBDILLYuRIztSHL+YnWL8=
+        Thu, 5 Apr 2018 17:23:51 -0400
+X-Google-Smtp-Source: AIpwx4/nmy0nBqzckQbiGkOyMvEdeQEKmAv3aPdsEjWsnZlNspMU3Pg9cJ0qWkZzX7HmYWtDPX1UbCbzRgc48JYIr2k=
 MIME-Version: 1.0
 From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 5 Apr 2018 23:22:50 +0200
-X-Google-Sender-Auth: bB2i7yMhhDN2m_m-X4V6R7E4RbY
-Message-ID: <CAK8P3a3Cr34cOcUbxbznHHvUdz1qd0=YLBF8-cc6NF5cgFmK1g@mail.gmail.com>
-Subject: [GIT PULL 2/3] ARM: SoC platform updates for 4.17
+Date: Thu, 5 Apr 2018 23:23:49 +0200
+X-Google-Sender-Auth: NH1HvFlz96gROkkp7N3DxJZ_y3Q
+Message-ID: <CAK8P3a1rJc+3MMMwcYSZ0n14=5e_1v_UdnHexysuqy4RfQPxmA@mail.gmail.com>
+Subject: [GIT PULL 3/3] ARM: SoC driver updates for 4.17
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
@@ -22,6 +22,8 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w35LNxXP020785
 
 The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
 
@@ -29,623 +31,338 @@ The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
+tags/armsoc-drivers
 
-for you to fetch changes up to cd903711fd9dce808b5cc07e509135886d962b0c:
+for you to fetch changes up to 7df3f0bb5f90e3470de2798452000e221420059c:
 
-  arm: npcm: modify configuration for the NPCM7xx BMC. (2018-04-05
-14:49:08 +0200)
-
-----------------------------------------------------------------
-ARM: SoC platform updates for 4.17
-
-This release brings up a new platform based on the old ARM9 core: the
-Nuvoton NPCM is used as a baseboard management controller, competing
-with the better known ASpeed AST2xx series.
-
-Another important change is the addition of ARMv7-A based chips
-in mach-stm32. The older parts in this platform are ARMv7-M based
-microcontrollers, now they are expanding to general-purpose workloads.
-
-The other changes are the usual defconfig updates to enable additional
-drivers, lesser bugfixes. The largest updates as often are the ongoing
-OMAP cleanups, but we also have a number of changes for the older
-PXA and davinci platforms this time.
-
-For the Renesas shmobile/r-car platform, some new infrastructure
-is needed to make the watchdog work correctly.
-
-Supporting Multiprocessing on Allwinner A80 required a significant
-amount of new code, but is not doing anything unexpected.
+  Merge tag 'v4.17-rockchip-drivers-1' of
+ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip
+into next/drivers (2018-03-28 17:08:34 +0200)
 
 ----------------------------------------------------------------
-Alexandre Belloni (1):
-      ARM: reorder mach-*/Kconfig inclusions
+ARM: SoC driver updates for 4.17
 
-Alexandre Torgue (2):
-      ARM: stm32: Kconfig: introduce MACH_STM32F769 flag
-      ARM: stm32: add new STM32F769 MCU
+The main addition this time around is the new ARM "SCMI" framework,
+which is the latest in a series of standards coming from ARM to do power
+management in a platform independent way. This has been through many
+review cycles, and it relies on a rather interesting way of using the
+mailbox subsystem, but in the end I agreed that Sudeep's version was
+the best we could do after all.
 
-Amit Kucheria (3):
-      arm64: defconfig: Enable the APCS IPC driver on Qualcomm platforms
-      arm64: defconfig: enable thermal sensor on QCOM platforms
-      arm64: defconfig: enable more cpufreq governors
+Other changes include:
 
-Andy Shevchenko (1):
-      ARM: pxa/raumfeld: use PROPERTY_ENTRY_U32() directly
+- the ARM CCN driver is moved out of drivers/bus into drivers/perf,
+  which makes more sense. Similarly, the performance monitoring
+  portion of the CCI driver are moved the same way and cleaned up
+  a little more.
+
+- a series of updates to the SCPI framework
+
+- support for the Mediatek mt7623a SoC in drivers/soc
+
+- support for additional NVIDIA Tegra hardware in drivers/soc
+
+- a new reset driver for Socionext Uniphier
+
+- lesser bug fixes in drivers/soc, drivers/tee, drivers/memory, and
+  drivers/firmware and drivers/reset across platforms
+
+----------------------------------------------------------------
+Anders Roxell (1):
+      firmware: arm_scmi: prevent accessing rate_discrete uninitialized
 
 Anson Huang (1):
-      ARM: imx_v6_v7_defconfig: select the CONFIG_CPUFREQ_DT
+      soc: imx: gpc: ARM power domain should be always-on
 
-Ard Biesheuvel (2):
-      arm64: defconfig: add newly added accelerated crypto modules
-      arm64: defconfig: add support for Socionext SynQuacer based platforms
+Arnd Bergmann (16):
+      Merge tag 'reset-for-4.17' of
+git://git.pengutronix.de/git/pza/linux into next/drivers
+      Merge tag 'scpi-updates-4.17' of
+ssh://gitolite.kernel.org/.../sudeep.holla/linux into next/drivers
+      Merge tag 'scmi-updates-4.17' of
+ssh://gitolite.kernel.org/.../sudeep.holla/linux into next/drivers
+      Merge tag 'soc_drivers_for_4.17' of
+ssh://gitolite.kernel.org/.../ssantosh/linux-keystone into
+next/drivers
+      Merge tag 'tee-drv-misc-for-v4.17' of
+https://git.linaro.org:/people/jens.wiklander/linux-tee into
+next/drivers
+      Merge tag 'samsung-drivers-4.17' of
+ssh://gitolite.kernel.org/.../krzk/linux into next/drivers
+      cpufreq: scmi: add thermal dependency
+      Merge tag 'imx-drivers-4.17' of
+ssh://gitolite.kernel.org/.../shawnguo/linux into next/drivers
+      Merge tag 'tegra-for-4.17-firmware' of
+ssh://gitolite.kernel.org/.../tegra/linux into next/drivers
+      Merge tag 'tegra-for-4.17-soc-2' of
+ssh://gitolite.kernel.org/.../tegra/linux into next/drivers
+      Merge tag 'v4.16-next-soc' of
+ssh://gitolite.kernel.org/.../matthias.bgg/linux into next/drivers
+      Merge tag 'amlogic-drivers' of
+ssh://gitolite.kernel.org/.../khilman/linux-amlogic into next/drivers
+      Merge tag 'qcom-drivers-for-4.17' of
+ssh://gitolite.kernel.org/.../agross/linux into next/drivers
+      Merge tag 'scmi-fixes-4.17' of
+ssh://gitolite.kernel.org/.../sudeep.holla/linux into next/drivers
+      Merge tag 'reset-for-4.17-2' of
+git://git.pengutronix.de/git/pza/linux into next/drivers
+      Merge tag 'v4.17-rockchip-drivers-1' of
+ssh://gitolite.kernel.org/.../mmind/linux-rockchip into next/drivers
 
-Arnd Bergmann (33):
-      Merge tag 'davinci-for-v4.17/soc' of
-ssh://gitolite.kernel.org/.../nsekhar/linux-davinci into next/soc
-      Merge tag 'davinci-for-v4.17/defconfig' of
-ssh://gitolite.kernel.org/.../nsekhar/linux-davinci into next/soc
-      Merge tag 'stm32-soc-for-v4.17-1' of
-ssh://gitolite.kernel.org/.../atorgue/stm32 into next/soc
-      Merge tag 'stm32-defconfig-for-v4.17-1' of
-ssh://gitolite.kernel.org/.../atorgue/stm32 into next/soc
-      Merge tag 'omap-for-v4.17/soc-signed' of
-ssh://gitolite.kernel.org/.../tmlind/linux-omap into next/soc
-      Merge tag 'omap-for-v4.17/timer-signed' of
-ssh://gitolite.kernel.org/.../tmlind/linux-omap into next/soc
-      Merge tag 'omap-for-v4.17/am-pm-signed' of
-ssh://gitolite.kernel.org/.../tmlind/linux-omap into next/soc
-      Merge tag 'omap-for-v4.17/ti-sysc-signed' of
-ssh://gitolite.kernel.org/.../tmlind/linux-omap into next/soc
-      Merge tag 'samsung-soc-4.17' of
-ssh://gitolite.kernel.org/.../krzk/linux into next/soc
-      Merge tag 'hisi-defconfig-for-4.17' of
-git://github.com/hisilicon/linux-hisi into next/soc
-      Merge tag 'at91-ab-4.17-soc' of
-ssh://gitolite.kernel.org/.../abelloni/linux into next/soc
-      Merge tag 'pxa-for-4.17' of https://github.com/rjarzmik/linux
-into next/soc
-      Merge tag 'arm-soc/for-4.17/defconfig' of
-https://github.com/Broadcom/stblinux into next/soc
-      Merge tag 'imx-soc-4.17' of
-ssh://gitolite.kernel.org/.../shawnguo/linux into next/soc
-      ARM: imx: select ARM_CPU_SUSPEND for CPU_IDLE as well
-      ARM: imx: fix imx6sll-only build
-      Merge tag 'imx-defconfig-4.17' of
-ssh://gitolite.kernel.org/.../shawnguo/linux into next/soc
-      Merge tag 'tegra-for-4.17-arm64-defconfig' of
-ssh://gitolite.kernel.org/.../tegra/linux into next/soc
-      Merge tag 'renesas-arm64-defconfig-for-v4.17' of
-ssh://gitolite.kernel.org/.../horms/renesas into next/soc
-      Merge tag 'renesas-defconfig-for-v4.17' of
-ssh://gitolite.kernel.org/.../horms/renesas into next/soc
-      Merge tag 'omap-for-v4.17/defconfig-signed' of
-ssh://gitolite.kernel.org/.../tmlind/linux-omap into next/soc
-      Merge tag 'amlogic-defconfig' of
-ssh://gitolite.kernel.org/.../khilman/linux-amlogic into next/soc
-      Merge tag 'armsoc-versatile-drm-defconfig' of
-ssh://gitolite.kernel.org/.../linusw/linux-integrator into next/soc
-      Merge tag 'qcom-arm64-defconfig-for-4.17' of
-ssh://gitolite.kernel.org/.../agross/linux into next/soc
-      Merge tag 'omap-for-v4.17/defconfig-pt2-signed' of
-ssh://gitolite.kernel.org/.../tmlind/linux-omap into next/soc
-      Merge tag 'stratix10_defconfig_for_v4.17' of
-ssh://gitolite.kernel.org/.../dinguyen/linux into next/soc
-      Merge tag 'sunxi-core-for-4.17' of
-ssh://gitolite.kernel.org/.../sunxi/linux into next/soc
-      Merge tag 'renesas-soc-for-v4.17' of
-ssh://gitolite.kernel.org/.../horms/renesas into next/soc
-      Merge tag 'samsung-soc-4.17-2' of
-ssh://gitolite.kernel.org/.../krzk/linux into next/soc
-      Merge tag 'omap-for-v4.17/soc-pt2-signed' of
-ssh://gitolite.kernel.org/.../tmlind/linux-omap into next/soc
-      Merge tag 'v4.17-rockchip-soc32-1' of
-ssh://gitolite.kernel.org/.../mmind/linux-rockchip into next/soc
-      ARM: omap2: fix am43xx build without L2X0
-      Merge tag 'davinci-for-v4.17/soc-2' of
-ssh://gitolite.kernel.org/.../nsekhar/linux-davinci into next/soc
+Bartosz Golaszewski (2):
+      reset: add support for non-DT systems
+      reset: modify the way reset lookup works for board files
 
-Bai Ping (2):
-      ARM: imx: Improve the soc revision calculation flow
-      ARM: imx: Add basic msl support for imx6sll
+Bjorn Andersson (2):
+      soc: qcom: rmtfs-mem: Add support for assigning memory to remote
+      soc: qcom: wcnss_ctrl: Fix increment in NV upload
 
-Benjamin Gaignard (2):
-      ARM: stm32: Fix copyright
-      ARM: stm32: restore reboot capabilities
+Gabriel Fernandez (2):
+      dt-bindings: reset: add STM32MP1 resets
+      reset: stm32mp1: Enable stm32mp1 reset driver
 
-Brendan Higgins (2):
-      MAINTAINERS: Add entry for the Nuvoton NPCM architecture
-      arm: npcm: add basic support for Nuvoton BMCs
+Heiner Kallweit (12):
+      soc: amlogic: meson-gx-pwrc-vpu: don't print error message on
+probe deferral
+      soc: amlogic: meson-gx-pwrc-vpu: fix error on shutdown when
+domain is powered off
+      firmware: arm_scpi: remove two unneeded devm_kfree's in scpi_remove
+      firmware: arm_scpi: make freeing mbox channels device-managed
+      firmware: arm_scpi: make scpi_probe completely device-managed
+      firmware: arm_scpi: improve struct dvfs_info to make code better readable
+      firmware: arm_scpi: improve handling of protocol and firmware
+version subfields
+      firmware: arm_scpi: improve struct sensor_value
+      firmware: arm_scpi: fix incorrect __iomem accesses using correct accessors
+      firmware: arm_scpi: remove struct sensor_capabilities
+      firmware: arm_scpi: use FIELD_GET/_PREP to simplify macro definitions
+      firmware: arm_scpi: improve info message for pre-1.0 firmware
 
-Chen-Yu Tsai (7):
-      ARM: sun9i: Support SMP bring-up on A80
-      ARM: sun9i: smp: Support CPU/cluster power down and hotplugging for cpu1~7
-      dt-bindings: ARM: sunxi: Document A80 SoC secure SRAM usage by SMP hotplug
-      ARM: sun9i: smp: Support cpu0 hotplug
-      ARM: sunxi: mc-smp: Fix "lookback" typo
-      ARM: sunxi: mc-smp: Use DT enable-method for sun9i A80 SMP
-      ARM: sunxi: mc-smp: Split out SoC-specific device node lookup sequence
+Jeffy Chen (2):
+      soc: rockchip: power-domain: use clk_bulk APIs
+      soc: rockchip: power-domain: Add a sanity check on pd->num_clks
 
-Chunyan Zhang (1):
-      MAINTAINERS: Add Spreadtrum SoC entry
+Joel Stanley (2):
+      dt-bindings: aspeed-lpc: Add reset controller
+      reset: simple: Enable for ASPEED systems
 
-Dave Gerlach (4):
-      ARM: OMAP2+: Introduce low-level suspend code for AM33XX
-      ARM: OMAP2+: Introduce low-level suspend code for AM43XX
-      ARM: OMAP2+: pm33xx-core: Add platform code needed for PM
-      soc: ti: Add pm33xx driver for basic suspend support
+Julia Lawall (1):
+      firmware: tegra: adjust tested variable
 
-David Lechner (8):
-      phy: da8xx-usb: rename clock con_ids
-      ARM: da8xx: use platform data for CFGCHIP syscon regmap
-      ARM: davinci: remove watchdog reset
-      ARM: davinci: move davinci_clk_init() to init_time
-      ARM: davinci_all_defconfig: enable SYSCON_REBOOT_MODE
-      ARM: davinci_all_defconfig: set CONFIG_DAVINCI_WATCHDOG=y
-      ARM: davinci: da8xx: fix oops in USB PHY driver due to stack
-allocated platform_data
-      ARM: davinci: da8xx: simplify CFGCHIP regmap_config
+Jérôme Forissier (2):
+      tee: optee: GET_OS_REVISION: document a2 as a build identifier
+      tee: optee: report OP-TEE revision information
 
-Dinh Nguyen (1):
-      arm64: defconfig: enable stmmac ethernet to defconfig
+Katsuhiro Suzuki (1):
+      reset: uniphier: add Pro4/Pro5/PXs2 audio systems reset control
 
-Fabio Estevam (8):
-      ARM: imx_v6_v7_defconfig: Enable AC97 codec support
-      ARM: imx: Remove epit support
-      ARM: imx_v6_v7_defconfig: Re-sync defconfig
-      ARM: imx: pm-imx6: Return the error directly
-      ARM: imx_v6_v7_defconfig: Select CONFIG_SND_SOC_WM8962 explicitly
-      ARM: imx_v4_v5_defconfig: Re-sync defconfig
-      ARM: imx_v4_v5_defconfig: Use the generic fsl-asoc-card driver
-      ARM: mxs_defconfig: Re-sync defconfig
-
-Fabrizio Castro (3):
-      soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
-      ARM: shmobile: Add watchdog support
-      ARM: shmobile: rcar-gen2: Add watchdog support
-
-Florian Fainelli (1):
-      Merge tag 'bcm2835-defconfig-next-2018-02-28' into defconfig/next
-
-Geert Uytterhoeven (6):
-      soc: renesas: rcar-sysc: Mark rcar_sysc_matches[] __initconst
-      ARM: shmobile: rcar-gen2: Fix error check in regulator quirk
-      ARM: shmobile: defconfig: Refresh
-      ARM: shmobile: defconfig: Disable CONFIG_EMBEDDED
-      ARM: nspire: Remove unneeded nspire_map_io()
-      ARM: socfpga: PM: Drop useless check for PM_SUSPEND_STANDBY
-
-Igor Grinberg (3):
-      ARM: pxa: fix static checker warning in pxa3xx-ulpi
-      ARM: pxa: cm-x300: remove inline directive
-      ARM: pxa: ulpi: fix ulpi timeout and slowpath warn
-
-Jacopo Mondi (4):
-      ARM: shmobile: Enable RZA1 pin controller
-      soc: renesas: Identify R-Car M3-N
-      soc: renesas: rcar-sysc: Add R-Car M3-N support
-      soc: renesas: rcar-rst: Add support for R-Car M3-N
-
-Jeffy Chen (1):
-      ARM: rockchip: Set name of pmu regmap_config in smp code
-
-Jerome Brunet (1):
-      arm64: defconfig: enable MESON EFUSE
-
-Jisheng Zhang (1):
-      MAINTAINERS: update entry for ARM/berlin
-
-John Garry (1):
-      arm64: defconfig: enable IOSCHED_DEADLINE
-
-Keerthy (9):
-      ARM: OMAP: dmtimer: Remove all the exports
-      ARM: OMAP: timer: Wrap the inline functions under OMAP2PLUS define
-      ARM: OMAP: Move dmtimer.h out of plat-omap
-      clocksource: timer-ti-dm: Replace architecture
-      ARM: OMAP: Move dmtimer driver out of plat-omap to drivers under
-clocksource
-      clocksource: timer-ti-dm: Add timer ops to the platform data structure
-      clocksource: timer-ti-dm: Populate the timer ops to the pdata
-      pwm: pwm-omap-dmtimer: Adapt driver to utilize dmtimer pdata ops
-      ARM: OMAP: pdata-quirks: Remove unused timer pdata
-
-Kishon Vijay Abraham I (2):
-      ARM: multi_v7_defconfig: Enable CONFIG_MMC_SDHCI_OMAP
-      ARM: omap2plus_defconfig: Enable CONFIG_MMC_SDHCI_OMAP
-
-Krzysztof Kozlowski (1):
-      ARM: EXYNOS: Add SPDX license identifiers
+Krzysztof Kozlowski (3):
+      memory: samsung: Add SPDX license identifiers
+      soc: samsung: Add SPDX license identifiers to headers
+      soc: samsung: pmu: Populate children syscon nodes
 
 Kunihiko Hayashi (1):
-      arm64: defconfig: add CONFIG_UNIPHIER_THERMAL and CONFIG_SNI_AVE
+      reset: uniphier: add ethernet reset control support for PXs3
 
-Ladislav Michl (4):
-      clocksource: timer-ti-dm: Hook device platform data if not
-already assigned
-      clocksource: timer-ti-dm: Make unexported functions static
-      clocksource: timer-ti-dm: Consolidate set source
-      clocksource: timer-ti-dm: Check prescaler value
+Martin Blumenstingl (1):
+      reset: meson: enable level reset support on Meson8b
 
-Linus Walleij (4):
-      ARM: defconfig: Update RealView defconfig
-      ARM: defconfig: Switch RealView boards to use P111 DRM
-      ARM: defconfig: Update Versatile defconfig
-      ARM: defconfig: Configure Versatile boards to use PL111 DRM
-
-Ludovic Barre (4):
-      ARM: configs: multi_v7: add stm32 support
-      Documentation: arm: stm32: move to rst format
-      ARM: stm32: prepare stm32 family to welcome armv7 architecture
-      ARM: stm32: add initial support for STM32MP157
-
-Marco Franchi (1):
-      ARM: imx: Update imx_v6_v7_defconfig for mag3110 support
-
-Marek Szyprowski (2):
-      ARM: EXYNOS: Fix coupled CPU idle freeze on Exynos4210
-      ARM: EXYNOS: Simplify code in coupled CPU idle hot path
-
-Marek Vasut (1):
-      ARM: shmobile: stout: enable R-Car Gen2 regulator quirk
-
-Martin Kaiser (1):
-      ARM: imx: avic: set low-power interrupt mask for imx25
+Masahiro Yamada (1):
+      reset: imx7: add 'depends on HAS_IOMEM' to fix unmet dependency
 
 Mikko Perttunen (3):
-      arm64: defconfig: Enable NVIDIA Tegra194 support
-      arm64: defconfig: Enable CONFIG_ARM_TEGRA186_CPUFREQ
-      arm64: defconfig: Enable CONFIG_TEGRA_BPMP_THERMAL
-
-Miquel Raynal (6):
-      mtd: nand: use Marvell reworked NAND controller driver with all platforms
-      mtd: nand: remove deprecated pxa3xx_nand driver
-      mtd: nand: remove useless fields from pxa3xx NAND platform data
-      dt-bindings: mtd: remove pxa3xx NAND controller documentation
-      arm: dts: pxa: use reworked NAND controller driver
-      MAINTAINERS: remove entry for deleted pxa3xx_nand driver
+      firmware: tegra: Simplify channel management
+      soc/tegra: Add Tegra194 SoC configuration option
+      soc/tegra: pmc: Add Tegra194 compatibility string
 
 Neil Armstrong (1):
-      ARM: configs: add OXNAS v6 defconfig
-
-Nicolas Ferre (3):
-      MAINTAINERS: ARM: at91: update entry for ARM/Microchip
-      Documentation: at91: Update Microchip SoC documentation
-      ARM: at91: Kconfig: Update company to Microchip
-
-Patrice Chotard (2):
-      ARM: configs: stm32: Enable MMC_ARMMMCI and EXT3_FS support
-      ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
+      amlogic: meson-gx-socinfo: Update soc ids
 
 Peng Fan (1):
-      ARM: imx_v6_v7_defconfig: enable OP-TEE
+      tee: correct max value for id allocation
 
-Robert Jarzmik (1):
-      Merge tag 'nand/pxa3xx-removal' of
-git://git.infradead.org/linux-mtd into pxa/for-next
+Peter De Schrijver (1):
+      soc/tegra: pmc: MBIST work around for Tegra210
 
-Sekhar Nori (1):
-      ARM: davinci: board-da830-evm: fix unused const variable warning
+Philipp Zabel (1):
+      Merge branch 'reset/lookup' into reset/next
 
-Sergei Shtylyov (5):
-      soc: renesas: identify R-Car V3H
-      soc: renesas: rcar-rst: add R8A77980 support
-      soc: renesas: r8a77970-sysc: fix power area parents
-      dt-bindings: power: add R8A77980 SYSC power domain definitions
-      soc: renesas: rcar-sysc: add R8A77980 support
+Robin Murphy (6):
+      drivers/bus: Move Arm CCN PMU driver
+      drivers/bus: Split Arm CCI driver
+      perf/arm-cci: Simplify CPU hotplug
+      bus/arm-cci: Streamline devicetree handling a bit
+      perf/arm-cci: Clean up model discovery
+      perf/arm-cci: Untangle global cci_ctrl_base
 
-Simon Horman (2):
-      arm64: defconfig: enable R8A77980 SoC
-      arm64: defconfig: enable R8A77965 SoC
+SF Markus Elfring (1):
+      memory-EMIF: Use seq_putc() in emif_regdump_show()
 
-Simon Shields (1):
-      ARM: EXYNOS: Extend cpuidle support to Midas boards
+Sean Wang (5):
+      dt-bindings: soc: add SCPSYS binding for MT7623 and MT7623A SoC
+      dt-bindings: soc: add header files required for MT7623A SCPSYS dt-binding
+      soc: mediatek: avoid hardcoded value with bus_prot_mask
+      soc: mediatek: add SCPSYS power domain driver for MediaTek MT7623A SoC
+      soc: mediatek: fix the mistaken pointer accessed when subdomains are added
 
-Stefan Agner (8):
-      ARM: imx: add timer stop flag to ARM power off state
-      ARM: multi_v7_defconfig: configure I2C driver built-in
-      ARM: multi_v7_defconfig: add OCOTP driver for NXP SoCs
-      ARM: multi_v7_defconfig: add GPMI NAND controller support
-      ARM: multi_v7_defconfig: add NXP graphics drivers
-      ARM: multi_v7_defconfig: add RN5T618 PMIC family support
-      ARM: multi_v7_defconfig: enable thermal driver for i.MX devices
-      ARM: multi_v7_defconfig: add NXP FlexCAN IP support
+Shawn Lin (1):
+      soc: rockchip: disable jtag switching for RK3228/RK3229 SoCs
 
-Stefan Riedmueller (1):
-      ARM: imx_v6_v7_defconfig: Enable Dialog Semiconductor DA9062 driver
-
-Stefan Wahren (2):
-      ARM: bcm2385_defconfig: Enable BT support for BCM43438
-      ARM: multi_v7_defconfig: Enable thermal driver for RPi 2/3
-
-Suman Anna (7):
-      ARM: OMAP2+: Cleanup omap_gpio_dev_attr usage
-      ARM: OMAP2+: Cleanup omap_i2c_dev_attr usage
-      ARM: OMAP2+: Cleanup omap_timer_capability_dev_attr usage
-      ARM: OMAP2+: Cleanup omap2_spi_dev_attr and other legacy data
-      ARM: OMAP2+: Cleanup omap_mcbsp_dev_attr and other legacy data
-      ARM: OMAP: Move plat/i2c.h into mach-omap1 folder
-      ARM: OMAP2+: Remove unused gpio header file references
-
-Tero Kristo (2):
-      ARM: omap2+: control: add support for auxiliary control module instances
-      ARM: OMAP5: control: add support for control module wkup pad config
+Sudeep Holla (25):
+      firmware: arm_scpi: drop unnecessary type cast to scpi_shared_mem
+      firmware: arm_scpi: remove all single element structures
+      dt-bindings: mailbox: add support for mailbox client shared memory
+      dt-bindings: arm: add support for ARM System Control and
+Management Interface(SCMI) protocol
+      firmware: arm_scmi: add basic driver infrastructure for SCMI
+      firmware: arm_scmi: add common infrastructure and support for
+base protocol
+      firmware: arm_scmi: add scmi protocol bus to enumerate protocol devices
+      firmware: arm_scmi: add initial support for performance protocol
+      firmware: arm_scmi: add initial support for clock protocol
+      firmware: arm_scmi: add initial support for power protocol
+      firmware: arm_scmi: add initial support for sensor protocol
+      firmware: arm_scmi: probe and initialise all the supported protocols
+      firmware: arm_scmi: add support for polling based SCMI transfers
+      firmware: arm_scmi: add option for polling based performance
+domain operations
+      firmware: arm_scmi: refactor in preparation to support
+per-protocol channels
+      firmware: arm_scmi: add per-protocol channels support using idr objects
+      firmware: arm_scmi: add device power domain support using genpd
+      clk: add support for clocks provided by SCMI
+      hwmon: (core) Add hwmon_max to hwmon_sensor_types enumeration
+      hwmon: add support for sensors exported via ARM SCMI
+      cpufreq: add support for CPU DVFS based on SCMI message protocol
+      cpufreq: scmi: add support for fast frequency switching
+      firmware: meson-sm: rework meson_sm_init to use
+module_platform_driver_probe
+      hwmon: (scmi) return -EINVAL when sensor information is unavailable
+      clk: scmi: use devm_of_clk_add_hw_provider() API and drop
+scmi_clocks_remove
 
 Thierry Reding (1):
-      arm64: defconfig: Enable the Tegra SMMU by default
+      soc/tegra: pmc: Pass PMC to tegra_powergate_power_up()
 
-Tomer Maimon (1):
-      arm: npcm: modify configuration for the NPCM7xx BMC.
+Vivek Gautam (1):
+      soc/tegra: pmc: Use the new reset APIs to manage reset controllers
 
-Tony Lindgren (35):
-      ARM: OMAP2+: Include types.h directly for hwmod data
-      Merge branch 'omap-for-v.16/dmtimer-fix' into omap-for-v4.17/timer
-      ARM: OMAP2+: Prepare to pass auxdata for smartreflex
-      bus: ti-sysc: Add fck clock alias for children with notifier_block
-      bus: ti-sysc: Add suspend and resume handling
-      bus: ti-sysc: Handle stdout-path for debug console
-      bus: ti-sysc: Improve handling for no-reset-on-init and no-idle-on-init
-      bus: ti-sysc: Remove unnecessary debugging statements
-      bus: ti-sysc: Add support for platform data callbacks
-      bus: ti-sysc: Handle some devices in omap_device compatible way
-      ARM: OMAP2+: Use v7_invalidate_l1 in omap4_finish_suspend
-      ARM: OMAP2+: Fix typo for wakeup_ns_pa_addr
-      ARM: OMAP2+: Add functions to allocate module data from device tree
-      ARM: OMAP2+: Add checks for device tree based sysconfig data
-      ARM: OMAP2+: Try to parse earlycon from parent too
-      PM / AVS: SmartReflex: Prepare to use device tree based probing
-      ARM: OMAP2+: Enable ti-sysc to use device tree data for smartreflex
-      ARM: omap2plus_defconfig: Update for moved options
-      ARM: omap2plus_defconfig: Add SERIAL_DEV for bluetooth
-      ARM: omap2plus_defconfig: Select MFD_TI_LMU
-      ARM: omap2plus_defconfig: Update LIRC options
-      ARM: omap2plus_defconfig: Add SND_OSSEMUL
-      ARM: omap2plus_defconfig: Drop unneeded options
-      ARM: omap2plus_defconfig: Enable am335x and am437x PM options
-      ARM: omap2plus_defconfig: Enable CEC
-      ARM: omap2plus_defconfig: Switch to use omapdrm by default
-      ARM: omap2plus_defconfig: Enable 8250_OMAP
-      ARM: multi_v7_defconfig: Enable OTG and MUSB as loadable modules
-      ARM: multi_v7_defconfig: Enable various USB PHYs found on omap variants
-      ARM: multi_v7_defconfig: Enable USB gadget configfs as loadable module
-      ARM: omap2plus_defconfig: Enable PWM_VIBRA
-      ARM: omap2plus_defconfig: Add AUDIO_GRAPH_CARD
-      ARM: omap2plus_defconfig: Enable MDM6600 USB PHY
-      ARM: omap2plus_defconfig: Add UINPUT
-      ARM: multi_v7_defconfig: Enable CPCAP related options mostly as
-loadable modules
+Wei Yongjun (1):
+      memory: ti-emif-sram: remove redundant dev_err call in ti_emif_probe()
 
-Tuomas Tynkkynen (1):
-      ARM: multi_v7_defconfig: Enable serial console on RPi 3
+Xiao Yao (1):
+      soc: rockchip: disable jtag switching for RK3128 SoCs
 
-Yoshihiro Shimoda (1):
-      arm64: defconfig: Enable PWM and USB for R-Car
+weiyi.lu@mediatek.com (2):
+      dt-bindings: soc: update MT2712 power dt-bindings
+      soc: mediatek: update power domain data of MT2712
 
- Documentation/arm/{Atmel => Microchip}/README      |   52 +-
- Documentation/arm/stm32/overview.rst               |   34 +
- Documentation/arm/stm32/overview.txt               |   33 -
- Documentation/arm/stm32/stm32f429-overview.rst     |   26 +
- Documentation/arm/stm32/stm32f429-overview.txt     |   22 -
- Documentation/arm/stm32/stm32f746-overview.rst     |   33 +
- Documentation/arm/stm32/stm32f746-overview.txt     |   34 -
- Documentation/arm/stm32/stm32f769-overview.rst     |   35 +
- Documentation/arm/stm32/stm32h743-overview.rst     |   34 +
- Documentation/arm/stm32/stm32h743-overview.txt     |   30 -
- Documentation/arm/stm32/stm32mp157-overview.rst    |   19 +
- Documentation/devicetree/bindings/arm/cpus.txt     |    1 +
- Documentation/devicetree/bindings/arm/omap/mpu.txt |   16 +
- .../devicetree/bindings/arm/sunxi/smp-sram.txt     |   44 +
- .../devicetree/bindings/mtd/pxa3xx-nand.txt        |   50 -
- .../bindings/power/renesas,rcar-sysc.txt           |    2 +
- .../devicetree/bindings/reset/renesas,rst.txt      |    2 +
- MAINTAINERS                                        |   88 +-
- arch/arm/Kconfig                                   |   54 +-
- arch/arm/Makefile                                  |    1 +
- arch/arm/boot/dts/pxa3xx.dtsi                      |    6 +-
- arch/arm/configs/bcm2835_defconfig                 |    4 +
- arch/arm/configs/cm_x300_defconfig                 |    2 +-
- arch/arm/configs/davinci_all_defconfig             |    3 +-
- arch/arm/configs/imx_v4_v5_defconfig               |    9 +-
- arch/arm/configs/imx_v6_v7_defconfig               |   28 +-
- arch/arm/configs/multi_v7_defconfig                |   65 +-
- arch/arm/configs/mxs_defconfig                     |   14 +-
- arch/arm/configs/omap2plus_defconfig               |   99 +-
- arch/arm/configs/oxnas_v6_defconfig                |   93 +
- arch/arm/configs/pxa3xx_defconfig                  |    3 +-
- arch/arm/configs/pxa_defconfig                     |    2 +-
- arch/arm/configs/raumfeld_defconfig                |    2 +-
- arch/arm/configs/realview_defconfig                |   21 +-
- arch/arm/configs/shmobile_defconfig                |    9 +-
- arch/arm/configs/stm32_defconfig                   |    3 +
- arch/arm/configs/versatile_defconfig               |   18 +-
- arch/arm/include/debug/exynos.S                    |    7 +-
- arch/arm/include/debug/samsung.S                   |   10 +-
- arch/arm/mach-at91/Kconfig                         |   14 +-
- arch/arm/mach-davinci/board-da830-evm.c            |   35 +-
- arch/arm/mach-davinci/board-da850-evm.c            |    7 +-
- arch/arm/mach-davinci/board-dm355-evm.c            |    3 +-
- arch/arm/mach-davinci/board-dm355-leopard.c        |    3 +-
- arch/arm/mach-davinci/board-dm365-evm.c            |    3 +-
- arch/arm/mach-davinci/board-dm644x-evm.c           |    3 +-
- arch/arm/mach-davinci/board-dm646x-evm.c           |   21 +-
- arch/arm/mach-davinci/board-mityomapl138.c         |    7 +-
- arch/arm/mach-davinci/board-neuros-osd2.c          |    3 +-
- arch/arm/mach-davinci/board-omapl138-hawk.c        |    7 +-
- arch/arm/mach-davinci/board-sffsdr.c               |    3 +-
- arch/arm/mach-davinci/clock.h                      |    3 -
- arch/arm/mach-davinci/da830.c                      |    7 +-
- arch/arm/mach-davinci/da850.c                      |    7 +-
- arch/arm/mach-davinci/da8xx-dt.c                   |    3 +-
- arch/arm/mach-davinci/davinci.h                    |    4 +
- arch/arm/mach-davinci/devices-da8xx.c              |   57 +-
- arch/arm/mach-davinci/devices.c                    |    7 +-
- arch/arm/mach-davinci/dm355.c                      |    8 +-
- arch/arm/mach-davinci/dm365.c                      |    8 +-
- arch/arm/mach-davinci/dm644x.c                     |    8 +-
- arch/arm/mach-davinci/dm646x.c                     |   22 +-
- arch/arm/mach-davinci/include/mach/common.h        |    2 -
- arch/arm/mach-davinci/include/mach/da8xx.h         |    7 +-
- arch/arm/mach-davinci/time.c                       |   57 -
- arch/arm/mach-davinci/usb-da8xx.c                  |   18 +-
- arch/arm/mach-exynos/exynos.c                      |    3 +-
- arch/arm/mach-exynos/pm.c                          |    8 +-
- arch/arm/mach-imx/Kconfig                          |   22 +-
- arch/arm/mach-imx/Makefile                         |    3 +-
- arch/arm/mach-imx/anatop.c                         |   56 +-
- arch/arm/mach-imx/avic.c                           |   37 +
- arch/arm/mach-imx/cpu.c                            |    3 +
- arch/arm/mach-imx/cpuidle-imx6sl.c                 |    7 +-
- arch/arm/mach-imx/cpuidle-imx6sx.c                 |    1 +
- arch/arm/mach-imx/epit.c                           |  228 ---
- arch/arm/mach-imx/mach-imx6sl.c                    |   10 +-
- arch/arm/mach-imx/mxc.h                            |    6 +
- arch/arm/mach-imx/pm-imx6.c                        |    7 +-
- arch/arm/mach-mmp/aspenite.c                       |    6 +-
- arch/arm/mach-mmp/ttc_dkb.c                        |    9 +-
- arch/arm/mach-npcm/Kconfig                         |   30 +
- arch/arm/mach-npcm/Makefile                        |    4 +
- arch/arm/mach-npcm/headsmp.S                       |   17 +
- arch/arm/mach-npcm/npcm7xx.c                       |   20 +
- arch/arm/mach-npcm/platsmp.c                       |   81 +
- arch/arm/mach-nspire/nspire.c                      |    6 -
- arch/arm/mach-omap1/Kconfig                        |    1 +
- arch/arm/mach-omap1/common.h                       |    3 +-
- arch/arm/mach-omap1/i2c.c                          |    2 -
- .../{plat-omap/include/plat => mach-omap1}/i2c.h   |    9 +-
- arch/arm/mach-omap1/pm.c                           |    2 +-
- arch/arm/mach-omap1/timer.c                        |    2 +-
- arch/arm/mach-omap2/Kconfig                        |    1 +
- arch/arm/mach-omap2/Makefile                       |   16 +
- arch/arm/mach-omap2/board-n8x0.c                   |    4 +-
- arch/arm/mach-omap2/common.h                       |    7 +
- arch/arm/mach-omap2/control.c                      |   20 +-
- arch/arm/mach-omap2/devices.c                      |    2 +-
- arch/arm/mach-omap2/hsmmc.c                        |    2 -
- arch/arm/mach-omap2/i2c.h                          |   15 +-
- arch/arm/mach-omap2/io.c                           |    2 +
- arch/arm/mach-omap2/msdi.c                         |    1 -
- arch/arm/mach-omap2/omap4-sar-layout.h             |    2 +-
- arch/arm/mach-omap2/omap_device.c                  |    5 +
- arch/arm/mach-omap2/omap_hwmod.c                   |  418 +++-
- arch/arm/mach-omap2/omap_hwmod.h                   |    7 +
- arch/arm/mach-omap2/omap_hwmod_2420_data.c         |   11 -
- arch/arm/mach-omap2/omap_hwmod_2430_data.c         |   18 -
- arch/arm/mach-omap2/omap_hwmod_2xxx_ipblock_data.c |   61 +-
- .../mach-omap2/omap_hwmod_33xx_43xx_common_data.h  |    3 -
- .../mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c |   25 +-
- arch/arm/mach-omap2/omap_hwmod_33xx_data.c         |    4 -
- arch/arm/mach-omap2/omap_hwmod_3xxx_data.c         |  116 --
- arch/arm/mach-omap2/omap_hwmod_43xx_data.c         |    8 -
- arch/arm/mach-omap2/omap_hwmod_44xx_data.c         |   75 -
- arch/arm/mach-omap2/omap_hwmod_54xx_data.c         |   54 -
- arch/arm/mach-omap2/omap_hwmod_7xx_data.c          |   53 -
- arch/arm/mach-omap2/omap_hwmod_81xx_data.c         |   31 +-
- arch/arm/mach-omap2/omap_hwmod_common_data.h       |    1 -
- arch/arm/mach-omap2/pdata-quirks.c                 |   86 +-
- arch/arm/mach-omap2/pm-asm-offsets.c               |   31 +
- arch/arm/mach-omap2/pm.h                           |    3 +
- arch/arm/mach-omap2/pm33xx-core.c                  |  189 ++
- arch/arm/mach-omap2/sleep33xx.S                    |  214 ++
- arch/arm/mach-omap2/sleep43xx.S                    |  391 ++++
- arch/arm/mach-omap2/sleep44xx.S                    |    7 +-
- arch/arm/mach-omap2/sr_device.c                    |   27 +-
- arch/arm/mach-omap2/timer.c                        |    2 +-
- arch/arm/mach-pxa/cm-x300.c                        |   14 +-
- arch/arm/mach-pxa/colibri-pxa3xx.c                 |    8 +-
- arch/arm/mach-pxa/colibri.h                        |    2 +-
- arch/arm/mach-pxa/littleton.c                      |   10 +-
- arch/arm/mach-pxa/mxm8x10.c                        |   10 +-
- arch/arm/mach-pxa/pxa3xx-ulpi.c                    |    6 +-
- arch/arm/mach-pxa/raumfeld.c                       |   12 +-
- arch/arm/mach-pxa/zylonite.c                       |   10 +-
- arch/arm/mach-rockchip/platsmp.c                   |    1 +
- arch/arm/mach-shmobile/common.h                    |    4 +
- arch/arm/mach-shmobile/headsmp.S                   |   55 +
- arch/arm/mach-shmobile/platsmp-apmu.c              |    1 +
- arch/arm/mach-shmobile/pm-rcar-gen2.c              |   15 +-
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c |   25 +-
- arch/arm/mach-socfpga/pm.c                         |    1 -
- arch/arm/mach-stm32/Kconfig                        |   46 +-
- arch/arm/mach-stm32/board-dt.c                     |   11 +-
- arch/arm/mach-sunxi/Kconfig                        |    7 +
- arch/arm/mach-sunxi/Makefile                       |    3 +
- arch/arm/mach-sunxi/mc_smp.c                       |  856 ++++++++
- arch/arm/plat-omap/Kconfig                         |    6 -
- arch/arm/plat-omap/Makefile                        |    1 -
- arch/arm64/configs/defconfig                       |   39 +-
- drivers/bus/ti-sysc.c                              |  526 ++++-
- drivers/clocksource/Kconfig                        |    3 +
- drivers/clocksource/Makefile                       |    1 +
- .../dmtimer.c => drivers/clocksource/timer-ti-dm.c |  293 ++-
- drivers/mtd/nand/Kconfig                           |   11 -
- drivers/mtd/nand/Makefile                          |    1 -
- drivers/mtd/nand/marvell_nand.c                    |    3 +-
- drivers/mtd/nand/pxa3xx_nand.c                     | 2105 --------------------
- drivers/phy/ti/phy-da8xx-usb.c                     |   16 +-
- drivers/power/avs/smartreflex.c                    |   41 +-
- drivers/pwm/pwm-omap-dmtimer.c                     |   68 +-
- drivers/soc/renesas/Kconfig                        |   14 +-
- drivers/soc/renesas/Makefile                       |    2 +
- drivers/soc/renesas/r8a77965-sysc.c                |   37 +
- drivers/soc/renesas/r8a77970-sysc.c                |   12 +-
- drivers/soc/renesas/r8a77980-sysc.c                |   52 +
- drivers/soc/renesas/rcar-rst.c                     |   37 +-
- drivers/soc/renesas/rcar-sysc.c                    |    8 +-
- drivers/soc/renesas/rcar-sysc.h                    |    2 +
- drivers/soc/renesas/renesas-soc.c                  |   16 +
- drivers/soc/ti/Kconfig                             |    9 +
- drivers/soc/ti/Makefile                            |    1 +
- drivers/soc/ti/pm33xx.c                            |  349 ++++
- .../dmtimer.h => include/clocksource/timer-ti-dm.h |   44 +-
- include/dt-bindings/power/r8a77965-sysc.h          |   30 +
- include/dt-bindings/power/r8a77980-sysc.h          |   43 +
- include/linux/clk/ti.h                             |    1 +
- include/linux/platform_data/asoc-ti-mcbsp.h        |   12 -
- include/linux/platform_data/dmtimer-omap.h         |   38 +
- include/linux/platform_data/gpio-omap.h            |    5 -
- include/linux/platform_data/mtd-nand-pxa3xx.h      |   43 +-
- include/linux/platform_data/phy-da8xx-usb.h        |   21 +
- include/linux/platform_data/pm33xx.h               |   42 +
- include/linux/platform_data/spi-omap2-mcspi.h      |    8 -
- include/linux/platform_data/ti-sysc.h              |   50 +
- include/linux/power/smartreflex.h                  |   10 +-
- include/linux/serial_s3c.h                         |   17 +-
- 189 files changed, 4979 insertions(+), 3965 deletions(-)
- rename Documentation/arm/{Atmel => Microchip}/README (64%)
- create mode 100644 Documentation/arm/stm32/overview.rst
- delete mode 100644 Documentation/arm/stm32/overview.txt
- create mode 100644 Documentation/arm/stm32/stm32f429-overview.rst
- delete mode 100644 Documentation/arm/stm32/stm32f429-overview.txt
- create mode 100644 Documentation/arm/stm32/stm32f746-overview.rst
- delete mode 100644 Documentation/arm/stm32/stm32f746-overview.txt
- create mode 100644 Documentation/arm/stm32/stm32f769-overview.rst
- create mode 100644 Documentation/arm/stm32/stm32h743-overview.rst
- delete mode 100644 Documentation/arm/stm32/stm32h743-overview.txt
- create mode 100644 Documentation/arm/stm32/stm32mp157-overview.rst
- create mode 100644 Documentation/devicetree/bindings/arm/sunxi/smp-sram.txt
- delete mode 100644 Documentation/devicetree/bindings/mtd/pxa3xx-nand.txt
- create mode 100644 arch/arm/configs/oxnas_v6_defconfig
- delete mode 100644 arch/arm/mach-imx/epit.c
- create mode 100644 arch/arm/mach-npcm/Kconfig
- create mode 100644 arch/arm/mach-npcm/Makefile
- create mode 100644 arch/arm/mach-npcm/headsmp.S
- create mode 100644 arch/arm/mach-npcm/npcm7xx.c
- create mode 100644 arch/arm/mach-npcm/platsmp.c
- rename arch/arm/{plat-omap/include/plat => mach-omap1}/i2c.h (90%)
- create mode 100644 arch/arm/mach-omap2/pm-asm-offsets.c
- create mode 100644 arch/arm/mach-omap2/pm33xx-core.c
- create mode 100644 arch/arm/mach-omap2/sleep33xx.S
- create mode 100644 arch/arm/mach-omap2/sleep43xx.S
- create mode 100644 arch/arm/mach-sunxi/mc_smp.c
- rename arch/arm/plat-omap/dmtimer.c => drivers/clocksource/timer-ti-dm.c (87%)
- delete mode 100644 drivers/mtd/nand/pxa3xx_nand.c
- create mode 100644 drivers/soc/renesas/r8a77965-sysc.c
- create mode 100644 drivers/soc/renesas/r8a77980-sysc.c
- create mode 100644 drivers/soc/ti/pm33xx.c
- rename arch/arm/plat-omap/include/plat/dmtimer.h =>
-include/clocksource/timer-ti-dm.h (87%)
- create mode 100644 include/dt-bindings/power/r8a77965-sysc.h
- create mode 100644 include/dt-bindings/power/r8a77980-sysc.h
- create mode 100644 include/linux/platform_data/phy-da8xx-usb.h
- create mode 100644 include/linux/platform_data/pm33xx.h
+weiyongjun (A) (2):
+      meson-mx-socinfo: Make local function meson_mx_socinfo_init() static
+      meson-gx-socinfo: make local function meson_gx_socinfo_init static
+
+ Documentation/devicetree/bindings/arm/arm,scmi.txt |  179 ++
+ .../devicetree/bindings/arm/samsung/pmu.txt        |    6 +
+ .../devicetree/bindings/mailbox/mailbox.txt        |   28 +
+ .../devicetree/bindings/mfd/aspeed-lpc.txt         |   21 +
+ .../bindings/{arm/ccn.txt => perf/arm-ccn.txt}     |    0
+ .../devicetree/bindings/reset/st,stm32mp1-rcc.txt  |    6 +
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |    5 +-
+ Documentation/{arm/CCN.txt => perf/arm-ccn.txt}    |    0
+ MAINTAINERS                                        |   11 +-
+ drivers/bus/Kconfig                                |   36 -
+ drivers/bus/Makefile                               |    2 -
+ drivers/bus/arm-cci.c                              | 1763 +-------------------
+ drivers/clk/Kconfig                                |   10 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-scmi.c                             |  194 +++
+ drivers/cpufreq/Kconfig.arm                        |   12 +
+ drivers/cpufreq/Makefile                           |    1 +
+ drivers/cpufreq/scmi-cpufreq.c                     |  264 +++
+ drivers/firmware/Kconfig                           |   34 +
+ drivers/firmware/Makefile                          |    1 +
+ drivers/firmware/arm_scmi/Makefile                 |    5 +
+ drivers/firmware/arm_scmi/base.c                   |  253 +++
+ drivers/firmware/arm_scmi/bus.c                    |  221 +++
+ drivers/firmware/arm_scmi/clock.c                  |  343 ++++
+ drivers/firmware/arm_scmi/common.h                 |  105 ++
+ drivers/firmware/arm_scmi/driver.c                 |  871 ++++++++++
+ drivers/firmware/arm_scmi/perf.c                   |  481 ++++++
+ drivers/firmware/arm_scmi/power.c                  |  221 +++
+ drivers/firmware/arm_scmi/scmi_pm_domain.c         |  129 ++
+ drivers/firmware/arm_scmi/sensors.c                |  291 ++++
+ drivers/firmware/arm_scpi.c                        |  211 +--
+ drivers/firmware/meson/meson_sm.c                  |   25 +-
+ drivers/firmware/tegra/bpmp.c                      |  144 +-
+ drivers/hwmon/Kconfig                              |   12 +
+ drivers/hwmon/Makefile                             |    1 +
+ drivers/hwmon/scmi-hwmon.c                         |  225 +++
+ drivers/memory/emif.c                              |    2 +-
+ drivers/memory/samsung/Kconfig                     |    1 +
+ drivers/memory/samsung/Makefile                    |    1 +
+ drivers/memory/samsung/exynos-srom.c               |   18 +-
+ drivers/memory/samsung/exynos-srom.h               |    7 +-
+ drivers/memory/ti-emif-pm.c                        |    1 -
+ drivers/perf/Kconfig                               |   33 +
+ drivers/perf/Makefile                              |    2 +
+ drivers/perf/arm-cci.c                             | 1722 +++++++++++++++++++
+ drivers/{bus => perf}/arm-ccn.c                    |    0
+ drivers/reset/Kconfig                              |   17 +-
+ drivers/reset/Makefile                             |    1 +
+ drivers/reset/core.c                               |   96 +-
+ drivers/reset/reset-meson.c                        |   22 +-
+ drivers/reset/reset-simple.c                       |    2 +
+ drivers/reset/reset-stm32mp1.c                     |  115 ++
+ drivers/reset/reset-uniphier.c                     |    5 +
+ drivers/soc/amlogic/meson-gx-pwrc-vpu.c            |    9 +-
+ drivers/soc/amlogic/meson-gx-socinfo.c             |   12 +-
+ drivers/soc/amlogic/meson-mx-socinfo.c             |    2 +-
+ drivers/soc/imx/gpc.c                              |    1 +
+ drivers/soc/mediatek/mtk-scpsys.c                  |  104 +-
+ drivers/soc/qcom/Kconfig                           |    1 +
+ drivers/soc/qcom/rmtfs_mem.c                       |   34 +
+ drivers/soc/qcom/wcnss_ctrl.c                      |    2 +-
+ drivers/soc/rockchip/grf.c                         |   28 +
+ drivers/soc/rockchip/pm_domains.c                  |   95 +-
+ drivers/soc/samsung/exynos-pmu.c                   |    7 +
+ drivers/soc/tegra/Kconfig                          |   10 +
+ drivers/soc/tegra/pmc.c                            |   98 +-
+ drivers/tee/optee/core.c                           |   23 +
+ drivers/tee/optee/optee_smc.h                      |   10 +-
+ drivers/tee/tee_core.c                             |   14 +-
+ include/dt-bindings/power/mt2712-power.h           |    3 +
+ include/dt-bindings/power/mt7623a-power.h          |   10 +
+ include/dt-bindings/reset/stm32mp1-resets.h        |  108 ++
+ include/linux/hwmon.h                              |    1 +
+ include/linux/reset-controller.h                   |   30 +
+ include/linux/scmi_protocol.h                      |  277 +++
+ include/linux/soc/mediatek/infracfg.h              |    4 +
+ include/linux/soc/samsung/exynos-pmu.h             |    5 +-
+ include/linux/soc/samsung/exynos-regs-pmu.h        |    6 +-
+ include/soc/tegra/bpmp.h                           |    4 +-
+ 79 files changed, 6864 insertions(+), 2191 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/arm,scmi.txt
+ rename Documentation/devicetree/bindings/{arm/ccn.txt =>
+perf/arm-ccn.txt} (100%)
+ create mode 100644 Documentation/devicetree/bindings/reset/st,stm32mp1-rcc.txt
+ rename Documentation/{arm/CCN.txt => perf/arm-ccn.txt} (100%)
+ create mode 100644 drivers/clk/clk-scmi.c
+ create mode 100644 drivers/cpufreq/scmi-cpufreq.c
+ create mode 100644 drivers/firmware/arm_scmi/Makefile
+ create mode 100644 drivers/firmware/arm_scmi/base.c
+ create mode 100644 drivers/firmware/arm_scmi/bus.c
+ create mode 100644 drivers/firmware/arm_scmi/clock.c
+ create mode 100644 drivers/firmware/arm_scmi/common.h
+ create mode 100644 drivers/firmware/arm_scmi/driver.c
+ create mode 100644 drivers/firmware/arm_scmi/perf.c
+ create mode 100644 drivers/firmware/arm_scmi/power.c
+ create mode 100644 drivers/firmware/arm_scmi/scmi_pm_domain.c
+ create mode 100644 drivers/firmware/arm_scmi/sensors.c
+ create mode 100644 drivers/hwmon/scmi-hwmon.c
+ create mode 100644 drivers/perf/arm-cci.c
+ rename drivers/{bus => perf}/arm-ccn.c (100%)
+ create mode 100644 drivers/reset/reset-stm32mp1.c
+ create mode 100644 include/dt-bindings/power/mt7623a-power.h
+ create mode 100644 include/dt-bindings/reset/stm32mp1-resets.h
+ create mode 100644 include/linux/scmi_protocol.h
