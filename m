@@ -1,137 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752571AbeDETgu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 15:36:50 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:50212 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751952AbeDETgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 15:36:48 -0400
-Date: Thu, 5 Apr 2018 15:36:40 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>,
-        kernel-team@fb.com, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] mm: memory.low hierarchical behavior
-Message-ID: <20180405193640.GB27918@cmpxchg.org>
-References: <20180405185921.4942-1-guro@fb.com>
- <20180405185921.4942-2-guro@fb.com>
+        id S1752631AbeDEThJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 15:37:09 -0400
+Received: from mail-pl0-f49.google.com ([209.85.160.49]:46115 "EHLO
+        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751952AbeDEThG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 15:37:06 -0400
+X-Google-Smtp-Source: AIpwx4+9Q+CrrUJ1c4Ejo3xaxkjMGezLL4ISfczD9TjYJkDr6tlsDoBf50VqkECEJSKFNOnnAGTEkA==
+Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
+ unflattened to FDT
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Jan Kiszka <jan.kiszka@web.de>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jailhouse <jailhouse-dev@googlegroups.com>
+References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
+ <1520122673-11003-3-git-send-email-frowand.list@gmail.com>
+ <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
+ <CAL_Jsq+Gu=gwcxJnOF2xybXCh9N2Fp1NV05kuvQ2rif1fdHYrA@mail.gmail.com>
+ <935d6135-c5db-e5f8-b850-8ef26ce0c0a0@web.de>
+ <69c06530-94df-b67b-4e56-6519275afb45@gmail.com>
+ <CAL_JsqKbn_UKdiqo-uOzxzXc3bVT83kx9NqgxAggOb+OPQBsdA@mail.gmail.com>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <07f25928-6ecf-ac34-e724-cad2e94f6ba7@gmail.com>
+Date: Thu, 5 Apr 2018 12:37:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405185921.4942-2-guro@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAL_JsqKbn_UKdiqo-uOzxzXc3bVT83kx9NqgxAggOb+OPQBsdA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 07:59:19PM +0100, Roman Gushchin wrote:
-> This patch aims to address an issue in current memory.low semantics,
-> which makes it hard to use it in a hierarchy, where some leaf memory
-> cgroups are more valuable than others.
+On 04/05/18 12:26, Rob Herring wrote:
+> On Thu, Apr 5, 2018 at 2:16 PM, Frank Rowand <frowand.list@gmail.com> wrote:
+>> On 04/05/18 00:22, Jan Kiszka wrote:
+>>> On 2018-04-05 02:55, Rob Herring wrote:
+>>>> On Wed, Apr 4, 2018 at 5:35 PM, Jan Kiszka <jan.kiszka@web.de> wrote:
+>>>>> Hi Frank,
+>>>>>
+>>>>> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
+>>>>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>>>>
+>>>>>> Move duplicating and unflattening of an overlay flattened devicetree
+>>>>>> (FDT) into the overlay application code.  To accomplish this,
+>>>>>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+>>>>>>
+>>>>>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+>>>>>> code, which is thus responsible for freeing the duplicate FDT.  The
+>>>>>> caller of of_overlay_fdt_apply() remains responsible for freeing the
+>>>>>> original FDT.
+>>>>>>
+>>>>>> The unflattened devicetree now belongs to devicetree code, which is
+>>>>>> thus responsible for freeing the unflattened devicetree.
+>>>>>>
+>>>>>> These ownership changes prevent early freeing of the duplicated FDT
+>>>>>> or the unflattened devicetree, which could result in use after free
+>>>>>> errors.
+>>>>>>
+>>>>>> of_overlay_fdt_apply() is a private function for the anticipated
+>>>>>> overlay loader.
+>>>>>
+>>>>> We are using of_fdt_unflatten_tree + of_overlay_apply in the
+>>>>> (out-of-tree) Jailhouse loader driver in order to register a virtual
+>>>>> device during hypervisor activation with Linux. The DT overlay is
+>>>>> created from a a template but modified prior to application to account
+>>>>> for runtime-specific parameters. See [1] for the current implementation.
+>>>>>
+>>>>> I'm now wondering how to model that scenario best with the new API.
+>>>>> Given that the loader lost ownership of the unflattened tree but the
+>>>>> modification API exist only for the that DT state, I'm not yet seeing a
+>>>>> clear solution. Should we apply the template in disabled form (status =
+>>>>> "disabled"), modify it, and then activate it while it is already applied?
+>>>>
+>>>> No. I don't think that will work.
+>>>>
+>>>> The of_overlay_apply() function is still there, but static. We can
+>>>> export it again if the need arises.
+>>>
+>>> That would be the simplest solution from our perspective, but I'm not
+>>> sure if that is in the original spirit of this change.
+>>
+>> For short term out of tree usage, exporting of_overlay_apply() is ok.
 > 
-> For example, there are memcgs A, A/B, A/C, A/D and A/E:
+> Meaning the out of tree users can go export it themselves.
 > 
->   A      A/memory.low = 2G, A/memory.current = 6G
->  //\\
-> BC  DE   B/memory.low = 3G  B/memory.current = 2G
->          C/memory.low = 1G  C/memory.current = 2G
->          D/memory.low = 0   D/memory.current = 2G
-> 	 E/memory.low = 10G E/memory.current = 0
+>> Yes, for in-tree, exporting it again defeats the attempted process to
+>> solve the overlay issues to make them acceptable in main line.
 > 
-> If we apply memory pressure, B, C and D are reclaimed at
-> the same pace while A's usage exceeds 2G.
-> This is obviously wrong, as B's usage is fully below B's memory.low,
-> and C has 1G of protection as well.
-> Also, A is pushed to the size, which is less than A's 2G memory.low,
-> which is also wrong.
-> 
-> A simple bash script (provided below) can be used to reproduce
-> the problem. Current results are:
->   A:    1430097920
->   A/B:  711929856
->   A/C:  717426688
->   A/D:  741376
->   A/E:  0
-> 
-> To address the issue a concept of effective memory.low is introduced.
-> Effective memory.low is always equal or less than original memory.low.
-> In a case, when there is no memory.low overcommittment (and also for
-> top-level cgroups), these two values are equal.
-> Otherwise it's a part of parent's effective memory.low, calculated as
-> a cgroup's memory.low usage divided by sum of sibling's memory.low
-> usages (under memory.low usage I mean the size of actually protected
-> memory: memory.current if memory.current < memory.low, 0 otherwise).
-> It's necessary to track the actual usage, because otherwise an empty
-> cgroup with memory.low set (A/E in my example) will affect actual
-> memory distribution, which makes no sense. To avoid traversing
-> the cgroup tree twice, page_counters code is reused.
-> 
-> Calculating effective memory.low can be done in the reclaim path,
-> as we conveniently traversing the cgroup tree from top to bottom and
-> check memory.low on each level. So, it's a perfect place to calculate
-> effective memory low and save it to use it for children cgroups.
-> 
-> This also eliminates a need to traverse the cgroup tree from bottom
-> to top each time to check if parent's guarantee is not exceeded.
-> 
-> Setting/resetting effective memory.low is intentionally racy, but
-> it's fine and shouldn't lead to any significant differences in
-> actual memory distribution.
-> 
-> With this patch applied results are matching the expectations:
->   A:    2147930112
->   A/B:  1428721664
->   A/C:  718393344
->   A/D:  815104
->   A/E:  0
-> 
-> Test script:
->   #!/bin/bash
-> 
->   CGPATH="/sys/fs/cgroup"
-> 
->   truncate /file1 --size 2G
->   truncate /file2 --size 2G
->   truncate /file3 --size 2G
->   truncate /file4 --size 50G
-> 
->   mkdir "${CGPATH}/A"
->   echo "+memory" > "${CGPATH}/A/cgroup.subtree_control"
->   mkdir "${CGPATH}/A/B" "${CGPATH}/A/C" "${CGPATH}/A/D" "${CGPATH}/A/E"
-> 
->   echo 2G > "${CGPATH}/A/memory.low"
->   echo 3G > "${CGPATH}/A/B/memory.low"
->   echo 1G > "${CGPATH}/A/C/memory.low"
->   echo 0 > "${CGPATH}/A/D/memory.low"
->   echo 10G > "${CGPATH}/A/E/memory.low"
-> 
->   echo $$ > "${CGPATH}/A/B/cgroup.procs" && vmtouch -qt /file1
->   echo $$ > "${CGPATH}/A/C/cgroup.procs" && vmtouch -qt /file2
->   echo $$ > "${CGPATH}/A/D/cgroup.procs" && vmtouch -qt /file3
->   echo $$ > "${CGPATH}/cgroup.procs" && vmtouch -qt /file4
-> 
->   echo "A:   " `cat "${CGPATH}/A/memory.current"`
->   echo "A/B: " `cat "${CGPATH}/A/B/memory.current"`
->   echo "A/C: " `cat "${CGPATH}/A/C/memory.current"`
->   echo "A/D: " `cat "${CGPATH}/A/D/memory.current"`
->   echo "A/E: " `cat "${CGPATH}/A/E/memory.current"`
-> 
->   rmdir "${CGPATH}/A/B" "${CGPATH}/A/C" "${CGPATH}/A/D" "${CGPATH}/A/E"
->   rmdir "${CGPATH}/A"
->   rm /file1 /file2 /file3 /file4
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: kernel-team@fb.com
-> Cc: linux-mm@kvack.org
-> Cc: cgroups@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
+> The purpose of providing a function to apply an overlay in one step is
+> to handle the common case and avoid open coding the sequence
+> everywhere. That doesn't mean everyone will fall into the common case.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+That was one of the intents behind the change.
+
+The other intent is that with lifetime of the overlay FDT and overlay
+expanded tree visible outside the devicetree core, we can not free the
+overlay FDT or the overlay expanded tree because we need to protect
+against use after free errors.  The open coded examples of applying
+overlays commonly have issues with freeing the overlay FDT and/or the
+overlay expanded tree, which leads to the potential for use after free
+errors.
+
+
+> Of course, it also doesn't mean we have to revert back to the previous
+> way to handle users that need to tweak the unflattened tree before
+> applying.
+> 
+> Rob
+> 
