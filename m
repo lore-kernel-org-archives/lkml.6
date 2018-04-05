@@ -1,143 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752037AbeDEN1y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:27:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58608 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751298AbeDENZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:25:50 -0400
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: kt.liao@emc.com.tw, Oliver Haessler <oliver@redhat.com>,
-        Benjamin Berg <bberg@redhat.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 2/8] input: elan_i2c_smbus - fix corrupted stack
-Date: Thu,  5 Apr 2018 15:25:31 +0200
-Message-Id: <20180405132537.3218-3-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180405132537.3218-1-benjamin.tissoires@redhat.com>
-References: <20180405132537.3218-1-benjamin.tissoires@redhat.com>
+        id S1752077AbeDEN2C (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:28:02 -0400
+Received: from nbd.name ([46.4.11.11]:60262 "EHLO nbd.name"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751242AbeDEN16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 09:27:58 -0400
+Subject: Re: [PATCH 00/12] Ethernet: Add and use ether_<type>_addr globals
+To: Joe Perches <joe@perches.com>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        bridge@lists.linux-foundation.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org
+Cc: linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com
+References: <cover.1522479607.git.joe@perches.com>
+From: Felix Fietkau <nbd@nbd.name>
+Openpgp: preference=signencrypt
+Message-ID: <e0ab9616-64fa-cdbc-7a77-7e25d70c1a52@nbd.name>
+Date: Thu, 5 Apr 2018 15:27:49 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <cover.1522479607.git.joe@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-New ICs (like the one on the Lenovo T480s) answer to
-ETP_SMBUS_IAP_VERSION_CMD 4 bytes instead of 3. This corrupts the stack
-as i2c_smbus_read_block_data() uses the values returned by the i2c
-device to know how many data it need to return.
+On 2018-03-31 09:05, Joe Perches wrote:
+> There are many local static and non-static arrays that are used for
+> Ethernet broadcast address output or comparison.
+> 
+> Centralize the array into a single separate file and remove the local
+> arrays.
+I suspect that for many targets and configurations, the local arrays
+might actually be smaller than exporting a global. You have to factor in
+not just the .text size, but the fact that referencing an exported
+symbol needs a .reloc entry as well, which also eats up some space (at
+least when the code is being built as module).
 
-i2c_smbus_read_block_data() can read up to 32 bytes (I2C_SMBUS_BLOCK_MAX)
-and there is no safeguard on how many bytes are provided in the return
-value. Ensure we always have enough space for any future firmware.
-Also 0-initialize the values to prevent any access to uninitialized memory.
+In my opinion, your series probably causes more bloat in common
+configurations instead of reducing it.
 
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
----
- drivers/input/mouse/elan_i2c_smbus.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+You're also touching several places that could easily use
+eth_broadcast_addr and eth_zero_addr. I think making those changes would
+be more productive than what you did in this series.
 
-diff --git a/drivers/input/mouse/elan_i2c_smbus.c b/drivers/input/mouse/elan_i2c_smbus.c
-index 29f99529b187..cfcb32559925 100644
---- a/drivers/input/mouse/elan_i2c_smbus.c
-+++ b/drivers/input/mouse/elan_i2c_smbus.c
-@@ -130,7 +130,7 @@ static int elan_smbus_get_baseline_data(struct i2c_client *client,
- 					bool max_baseline, u8 *value)
- {
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client,
- 					  max_baseline ?
-@@ -149,7 +149,7 @@ static int elan_smbus_get_version(struct i2c_client *client,
- 				  bool iap, u8 *version)
- {
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client,
- 					  iap ? ETP_SMBUS_IAP_VERSION_CMD :
-@@ -170,7 +170,7 @@ static int elan_smbus_get_sm_version(struct i2c_client *client,
- 				     u8 *clickpad)
- {
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client,
- 					  ETP_SMBUS_SM_VERSION_CMD, val);
-@@ -188,7 +188,7 @@ static int elan_smbus_get_sm_version(struct i2c_client *client,
- static int elan_smbus_get_product_id(struct i2c_client *client, u16 *id)
- {
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client,
- 					  ETP_SMBUS_UNIQUEID_CMD, val);
-@@ -205,7 +205,7 @@ static int elan_smbus_get_checksum(struct i2c_client *client,
- 				   bool iap, u16 *csum)
- {
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client,
- 					  iap ? ETP_SMBUS_FW_CHECKSUM_CMD :
-@@ -226,7 +226,7 @@ static int elan_smbus_get_max(struct i2c_client *client,
- {
- 	int ret;
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	ret = i2c_smbus_read_block_data(client, ETP_SMBUS_RANGE_CMD, val);
- 	if (ret != 3) {
-@@ -246,7 +246,7 @@ static int elan_smbus_get_resolution(struct i2c_client *client,
- {
- 	int ret;
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	ret = i2c_smbus_read_block_data(client, ETP_SMBUS_RESOLUTION_CMD, val);
- 	if (ret != 3) {
-@@ -267,7 +267,7 @@ static int elan_smbus_get_num_traces(struct i2c_client *client,
- {
- 	int ret;
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	ret = i2c_smbus_read_block_data(client, ETP_SMBUS_XY_TRACENUM_CMD, val);
- 	if (ret != 3) {
-@@ -294,7 +294,7 @@ static int elan_smbus_iap_get_mode(struct i2c_client *client,
- {
- 	int error;
- 	u16 constant;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client, ETP_SMBUS_IAP_CTRL_CMD, val);
- 	if (error < 0) {
-@@ -345,7 +345,7 @@ static int elan_smbus_prepare_fw_update(struct i2c_client *client)
- 	int len;
- 	int error;
- 	enum tp_mode mode;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 	u8 cmd[4] = {0x0F, 0x78, 0x00, 0x06};
- 	u16 password;
- 
-@@ -419,7 +419,7 @@ static int elan_smbus_write_fw_block(struct i2c_client *client,
- 	struct device *dev = &client->dev;
- 	int error;
- 	u16 result;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	/*
- 	 * Due to the limitation of smbus protocol limiting
--- 
-2.14.3
+- Felix
