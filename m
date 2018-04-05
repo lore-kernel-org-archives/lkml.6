@@ -1,504 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751368AbeDEPnB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:43:01 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:34156 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750835AbeDEPnA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:43:00 -0400
-X-IronPort-AV: E=Sophos;i="5.48,411,1517875200";
-   d="scan'208";a="50753413"
-From: Paul Durrant <paul.durrant@citrix.com>
-To: <x86@kernel.org>, <xen-devel@lists.xenproject.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Paul Durrant <paul.durrant@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH v2] xen/privcmd: add IOCTL_PRIVCMD_MMAP_RESOURCE
-Date: Thu, 5 Apr 2018 16:42:49 +0100
-Message-ID: <20180405154249.33929-1-paul.durrant@citrix.com>
-X-Mailer: git-send-email 2.11.0
+        id S1751413AbeDEPqf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:46:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56522 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750835AbeDEPqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:46:34 -0400
+Date: Thu, 5 Apr 2018 16:46:30 +0100
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Valentin Schneider <valentin.schneider@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>
+Subject: Re: [PATCH] sched: support dynamiQ cluster
+Message-ID: <20180405154630.GS4589@e105550-lin.cambridge.arm.com>
+References: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
+ <20180329125324.GR4589@e105550-lin.cambridge.arm.com>
+ <CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com>
+ <74865492-d9a6-649d-d37c-a5a6a8c28f23@arm.com>
+ <CAKfTPtDy2uUj4amA9MARUz9qS=+urwV2edyQn+fW70hkN+CgoQ@mail.gmail.com>
+ <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com>
+ <CAKfTPtCQayuu5-84931ZxzXV1-roV_CfRd_5wXG1oxOEUZmZgw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtCQayuu5-84931ZxzXV1-roV_CfRd_5wXG1oxOEUZmZgw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My recent Xen patch series introduces a new HYPERVISOR_memory_op to
-support direct priv-mapping of certain guest resources (such as ioreq
-pages, used by emulators) by a tools domain, rather than having to access
-such resources via the guest P2M.
+On Wed, Apr 04, 2018 at 03:43:17PM +0200, Vincent Guittot wrote:
+> On 4 April 2018 at 12:44, Valentin Schneider <valentin.schneider@arm.com> wrote:
+> > Hi,
+> >
+> > On 03/04/18 13:17, Vincent Guittot wrote:
+> >> Hi Valentin,
+> >>
+> > [...]
+> >>>
+> >>> I believe ASYM_PACKING behaves better here because the workload is only
+> >>> sysbench threads. As stated above, since task utilization is disregarded, I
+> >>
+> >> It behaves better because it doesn't wait for the task's utilization
+> >> to reach a level before assuming the task needs high compute capacity.
+> >> The utilization gives an idea of the running time of the task not the
+> >> performance level that is needed
+> >>
+> >
+> > That's my point actually. ASYM_PACKING disregards utilization and moves those
+> > threads to the big cores ASAP, which is good here because it's just sysbench
+> > threads.
+> >
+> > What I meant was that if the task composition changes, IOW we mix "small"
+> > tasks (e.g. periodic stuff) and "big" tasks (performance-sensitive stuff like
+> > sysbench threads), we shouldn't assume all of those require to run on a big
+> > CPU. The thing is, ASYM_PACKING can't make the difference between those, so
+> 
+> That's the 1st point where I tend to disagree: why big cores are only
+> for long running task and periodic stuff can't need to run on big
+> cores to get max compute capacity ?
+> You make the assumption that only long running tasks need high compute
+> capacity. This patch wants to always provide max compute capacity to
+> the system and not only long running task
 
-This patch adds the necessary infrastructure to the privcmd driver and
-Xen MMU code to support direct resource mapping.
+There is no way we can tell if a periodic or short-running tasks
+requires the compute capacity of a big core or not based on utilization
+alone. The utilization can only tell us if a task could potentially use
+more compute capacity, i.e. the utilization approaches the compute
+capacity of its current cpu.
 
-NOTE: The adjustment in the MMU code is partially cosmetic. Xen will now
-      allow a PV tools domain to map guest pages either by GFN or MFN, thus
-      the term 'mfn' has been swapped for 'pfn' in the lower layers of the
-      remap code.
+How we handle low utilization tasks comes down to how we define
+"performance" and if we care about the cost of "performance" (e.g.
+energy consumption).
 
-Signed-off-by: Paul Durrant <paul.durrant@citrix.com>
----
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
+Placing a low utilization task on a little cpu should always be fine
+from _throughput_ point of view. As long as the cpu has spare cycles it
+means that work isn't piling up faster than it can be processed.
+However, from a _latency_ (completion time) point of view it might be a
+problem, and for latency sensitive tasks I can agree that going for max
+capacity might be better choice.
 
-v2:
- - Fix bug when mapping multiple pages of a resource
----
- arch/x86/xen/mmu.c             |  50 +++++++++++-----
- drivers/xen/privcmd.c          | 130 +++++++++++++++++++++++++++++++++++++++++
- include/uapi/xen/privcmd.h     |  11 ++++
- include/xen/interface/memory.h |  66 +++++++++++++++++++++
- include/xen/interface/xen.h    |   7 ++-
- include/xen/xen-ops.h          |  24 +++++++-
- 6 files changed, 270 insertions(+), 18 deletions(-)
+The misfit patches places tasks based on utilization to ensure that
+tasks get the _throughput_ they need if possible. This is in line with
+the placement policy we have in select_task_rq_fair() already.
 
-diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
-index d33e7dbe3129..8453d7be415c 100644
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@ -65,37 +65,42 @@ static void xen_flush_tlb_all(void)
- #define REMAP_BATCH_SIZE 16
- 
- struct remap_data {
--	xen_pfn_t *mfn;
-+	xen_pfn_t *pfn;
- 	bool contiguous;
-+	bool no_translate;
- 	pgprot_t prot;
- 	struct mmu_update *mmu_update;
- };
- 
--static int remap_area_mfn_pte_fn(pte_t *ptep, pgtable_t token,
-+static int remap_area_pfn_pte_fn(pte_t *ptep, pgtable_t token,
- 				 unsigned long addr, void *data)
- {
- 	struct remap_data *rmd = data;
--	pte_t pte = pte_mkspecial(mfn_pte(*rmd->mfn, rmd->prot));
-+	pte_t pte = pte_mkspecial(mfn_pte(*rmd->pfn, rmd->prot));
- 
- 	/* If we have a contiguous range, just update the mfn itself,
- 	   else update pointer to be "next mfn". */
- 	if (rmd->contiguous)
--		(*rmd->mfn)++;
-+		(*rmd->pfn)++;
- 	else
--		rmd->mfn++;
-+		rmd->pfn++;
- 
--	rmd->mmu_update->ptr = virt_to_machine(ptep).maddr | MMU_NORMAL_PT_UPDATE;
-+	rmd->mmu_update->ptr = virt_to_machine(ptep).maddr;
-+	rmd->mmu_update->ptr |= rmd->no_translate ?
-+		MMU_PT_UPDATE_NO_TRANSLATE :
-+		MMU_NORMAL_PT_UPDATE;
- 	rmd->mmu_update->val = pte_val_ma(pte);
- 	rmd->mmu_update++;
- 
- 	return 0;
- }
- 
--static int do_remap_gfn(struct vm_area_struct *vma,
-+static int do_remap_pfn(struct vm_area_struct *vma,
- 			unsigned long addr,
--			xen_pfn_t *gfn, int nr,
-+			xen_pfn_t *pfn, int nr,
- 			int *err_ptr, pgprot_t prot,
--			unsigned domid,
-+			unsigned int domid,
-+			bool no_translate,
- 			struct page **pages)
- {
- 	int err = 0;
-@@ -106,11 +111,12 @@ static int do_remap_gfn(struct vm_area_struct *vma,
- 
- 	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
- 
--	rmd.mfn = gfn;
-+	rmd.pfn = pfn;
- 	rmd.prot = prot;
- 	/* We use the err_ptr to indicate if there we are doing a contiguous
- 	 * mapping or a discontigious mapping. */
- 	rmd.contiguous = !err_ptr;
-+	rmd.no_translate = no_translate;
- 
- 	while (nr) {
- 		int index = 0;
-@@ -121,7 +127,7 @@ static int do_remap_gfn(struct vm_area_struct *vma,
- 
- 		rmd.mmu_update = mmu_update;
- 		err = apply_to_page_range(vma->vm_mm, addr, range,
--					  remap_area_mfn_pte_fn, &rmd);
-+					  remap_area_pfn_pte_fn, &rmd);
- 		if (err)
- 			goto out;
- 
-@@ -175,7 +181,8 @@ int xen_remap_domain_gfn_range(struct vm_area_struct *vma,
- 	if (xen_feature(XENFEAT_auto_translated_physmap))
- 		return -EOPNOTSUPP;
- 
--	return do_remap_gfn(vma, addr, &gfn, nr, NULL, prot, domid, pages);
-+	return do_remap_pfn(vma, addr, &gfn, nr, NULL, prot, domid, false,
-+			    pages);
- }
- EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_range);
- 
-@@ -183,7 +190,7 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
- 			       unsigned long addr,
- 			       xen_pfn_t *gfn, int nr,
- 			       int *err_ptr, pgprot_t prot,
--			       unsigned domid, struct page **pages)
-+			       unsigned int domid, struct page **pages)
- {
- 	if (xen_feature(XENFEAT_auto_translated_physmap))
- 		return xen_xlate_remap_gfn_array(vma, addr, gfn, nr, err_ptr,
-@@ -194,10 +201,25 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
- 	 * cause of "wrong memory was mapped in".
- 	 */
- 	BUG_ON(err_ptr == NULL);
--	return do_remap_gfn(vma, addr, gfn, nr, err_ptr, prot, domid, pages);
-+	return do_remap_pfn(vma, addr, gfn, nr, err_ptr, prot, domid,
-+			    false, pages);
- }
- EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_array);
- 
-+int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
-+			       unsigned long addr,
-+			       xen_pfn_t *mfn, int nr,
-+			       int *err_ptr, pgprot_t prot,
-+			       unsigned int domid, struct page **pages)
-+{
-+	if (xen_feature(XENFEAT_auto_translated_physmap))
-+		return -EOPNOTSUPP;
-+
-+	return do_remap_pfn(vma, addr, mfn, nr, err_ptr, prot, domid,
-+			    true, pages);
-+}
-+EXPORT_SYMBOL_GPL(xen_remap_domain_mfn_array);
-+
- /* Returns: 0 success */
- int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
- 			       int nr, struct page **pages)
-diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-index 1c909183c42a..cca809a204ab 100644
---- a/drivers/xen/privcmd.c
-+++ b/drivers/xen/privcmd.c
-@@ -33,6 +33,7 @@
- #include <xen/xen.h>
- #include <xen/privcmd.h>
- #include <xen/interface/xen.h>
-+#include <xen/interface/memory.h>
- #include <xen/interface/hvm/dm_op.h>
- #include <xen/features.h>
- #include <xen/page.h>
-@@ -722,6 +723,131 @@ static long privcmd_ioctl_restrict(struct file *file, void __user *udata)
- 	return 0;
- }
- 
-+struct remap_pfn {
-+	struct mm_struct *mm;
-+	struct page **pages;
-+	pgprot_t prot;
-+	unsigned long i;
-+};
-+
-+static int remap_pfn(pte_t *ptep, pgtable_t token, unsigned long addr,
-+		     void *data)
-+{
-+	struct remap_pfn *r = data;
-+	struct page *page = r->pages[r->i];
-+	pte_t pte = pte_mkspecial(pfn_pte(page_to_pfn(page), r->prot));
-+
-+	set_pte_at(r->mm, addr, ptep, pte);
-+	r->i++;
-+
-+	return 0;
-+}
-+
-+static long privcmd_ioctl_mmap_resource(struct file *file, void __user *udata)
-+{
-+	struct privcmd_data *data = file->private_data;
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma;
-+	struct privcmd_mmap_resource kdata;
-+	xen_pfn_t *pfns = NULL;
-+	struct xen_mem_acquire_resource xdata;
-+	int rc;
-+
-+	if (copy_from_user(&kdata, udata, sizeof(kdata)))
-+		return -EFAULT;
-+
-+	/* If restriction is in place, check the domid matches */
-+	if (data->domid != DOMID_INVALID && data->domid != kdata.dom)
-+		return -EPERM;
-+
-+	down_write(&mm->mmap_sem);
-+
-+	vma = find_vma(mm, kdata.addr);
-+	if (!vma || vma->vm_ops != &privcmd_vm_ops) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
-+
-+	pfns = kcalloc(kdata.num, sizeof(*pfns), GFP_KERNEL);
-+	if (!pfns) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
-+
-+	if (xen_feature(XENFEAT_auto_translated_physmap)) {
-+		struct page **pages;
-+		unsigned int i;
-+
-+		rc = alloc_empty_pages(vma, kdata.num);
-+		if (rc < 0)
-+			goto out;
-+
-+		pages = vma->vm_private_data;
-+		for (i = 0; i < kdata.num; i++) {
-+			pfns[i] = page_to_pfn(pages[i]);
-+			pr_info("pfn[%u] = %p\n", i, (void *)pfns[i]);
-+		}
-+	} else
-+		vma->vm_private_data = PRIV_VMA_LOCKED;
-+
-+	memset(&xdata, 0, sizeof(xdata));
-+	xdata.domid = kdata.dom;
-+	xdata.type = kdata.type;
-+	xdata.id = kdata.id;
-+	xdata.frame = kdata.idx;
-+	xdata.nr_frames = kdata.num;
-+	set_xen_guest_handle(xdata.frame_list, pfns);
-+
-+	xen_preemptible_hcall_begin();
-+	rc = HYPERVISOR_memory_op(XENMEM_acquire_resource, &xdata);
-+	xen_preemptible_hcall_end();
-+
-+	if (rc)
-+		goto out;
-+
-+	if (xen_feature(XENFEAT_auto_translated_physmap)) {
-+		struct remap_pfn r = {
-+			.mm = vma->vm_mm,
-+			.pages = vma->vm_private_data,
-+			.prot = vma->vm_page_prot,
-+		};
-+
-+		rc = apply_to_page_range(r.mm, kdata.addr,
-+					 kdata.num << PAGE_SHIFT,
-+					 remap_pfn, &r);
-+	} else {
-+		unsigned int domid =
-+			(xdata.flags & XENMEM_rsrc_acq_caller_owned) ?
-+			DOMID_SELF : kdata.dom;
-+		int num;
-+
-+		num = xen_remap_domain_mfn_array(vma,
-+						 kdata.addr & PAGE_MASK,
-+						 pfns, kdata.num, (int *)pfns,
-+						 vma->vm_page_prot,
-+						 domid,
-+						 vma->vm_private_data);
-+		if (num < 0)
-+			rc = num;
-+		else if (num != kdata.num) {
-+			unsigned int i;
-+
-+			for (i = 0; i < num; i++) {
-+				rc = pfns[i];
-+				if (rc < 0)
-+					break;
-+			}
-+		} else
-+			rc = 0;
-+	}
-+
-+out:
-+	kfree(pfns);
-+
-+	up_write(&mm->mmap_sem);
-+	return rc;
-+}
-+
- static long privcmd_ioctl(struct file *file,
- 			  unsigned int cmd, unsigned long data)
- {
-@@ -753,6 +879,10 @@ static long privcmd_ioctl(struct file *file,
- 		ret = privcmd_ioctl_restrict(file, udata);
- 		break;
- 
-+	case IOCTL_PRIVCMD_MMAP_RESOURCE:
-+		ret = privcmd_ioctl_mmap_resource(file, udata);
-+		break;
-+
- 	default:
- 		break;
- 	}
-diff --git a/include/uapi/xen/privcmd.h b/include/uapi/xen/privcmd.h
-index 39d3e7b8e993..d2029556083e 100644
---- a/include/uapi/xen/privcmd.h
-+++ b/include/uapi/xen/privcmd.h
-@@ -89,6 +89,15 @@ struct privcmd_dm_op {
- 	const struct privcmd_dm_op_buf __user *ubufs;
- };
- 
-+struct privcmd_mmap_resource {
-+	domid_t dom;
-+	__u32 type;
-+	__u32 id;
-+	__u32 idx;
-+	__u64 num;
-+	__u64 addr;
-+};
-+
- /*
-  * @cmd: IOCTL_PRIVCMD_HYPERCALL
-  * @arg: &privcmd_hypercall_t
-@@ -114,5 +123,7 @@ struct privcmd_dm_op {
- 	_IOC(_IOC_NONE, 'P', 5, sizeof(struct privcmd_dm_op))
- #define IOCTL_PRIVCMD_RESTRICT					\
- 	_IOC(_IOC_NONE, 'P', 6, sizeof(domid_t))
-+#define IOCTL_PRIVCMD_MMAP_RESOURCE				\
-+	_IOC(_IOC_NONE, 'P', 7, sizeof(struct privcmd_mmap_resource))
- 
- #endif /* __LINUX_PUBLIC_PRIVCMD_H__ */
-diff --git a/include/xen/interface/memory.h b/include/xen/interface/memory.h
-index 583dd93b3016..4c5751c26f87 100644
---- a/include/xen/interface/memory.h
-+++ b/include/xen/interface/memory.h
-@@ -265,4 +265,70 @@ struct xen_remove_from_physmap {
- };
- DEFINE_GUEST_HANDLE_STRUCT(xen_remove_from_physmap);
- 
-+/*
-+ * Get the pages for a particular guest resource, so that they can be
-+ * mapped directly by a tools domain.
-+ */
-+#define XENMEM_acquire_resource 28
-+struct xen_mem_acquire_resource {
-+    /* IN - The domain whose resource is to be mapped */
-+    domid_t domid;
-+    /* IN - the type of resource */
-+    uint16_t type;
-+
-+#define XENMEM_resource_ioreq_server 0
-+#define XENMEM_resource_grant_table 1
-+
-+    /*
-+     * IN - a type-specific resource identifier, which must be zero
-+     *      unless stated otherwise.
-+     *
-+     * type == XENMEM_resource_ioreq_server -> id == ioreq server id
-+     * type == XENMEM_resource_grant_table -> id defined below
-+     */
-+    uint32_t id;
-+
-+#define XENMEM_resource_grant_table_id_shared 0
-+#define XENMEM_resource_grant_table_id_status 1
-+
-+    /* IN/OUT - As an IN parameter number of frames of the resource
-+     *          to be mapped. However, if the specified value is 0 and
-+     *          frame_list is NULL then this field will be set to the
-+     *          maximum value supported by the implementation on return.
-+     */
-+    uint32_t nr_frames;
-+    /*
-+     * OUT - Must be zero on entry. On return this may contain a bitwise
-+     *       OR of the following values.
-+     */
-+    uint32_t flags;
-+
-+    /* The resource pages have been assigned to the calling domain */
-+#define _XENMEM_rsrc_acq_caller_owned 0
-+#define XENMEM_rsrc_acq_caller_owned (1u << _XENMEM_rsrc_acq_caller_owned)
-+
-+    /*
-+     * IN - the index of the initial frame to be mapped. This parameter
-+     *      is ignored if nr_frames is 0.
-+     */
-+    uint64_t frame;
-+
-+#define XENMEM_resource_ioreq_server_frame_bufioreq 0
-+#define XENMEM_resource_ioreq_server_frame_ioreq(n) (1 + (n))
-+
-+    /*
-+     * IN/OUT - If the tools domain is PV then, upon return, frame_list
-+     *          will be populated with the MFNs of the resource.
-+     *          If the tools domain is HVM then it is expected that, on
-+     *          entry, frame_list will be populated with a list of GFNs
-+     *          that will be mapped to the MFNs of the resource.
-+     *          If -EIO is returned then the frame_list has only been
-+     *          partially mapped and it is up to the caller to unmap all
-+     *          the GFNs.
-+     *          This parameter may be NULL if nr_frames is 0.
-+     */
-+    GUEST_HANDLE(xen_pfn_t) frame_list;
-+};
-+DEFINE_GUEST_HANDLE_STRUCT(xen_mem_acquire_resource);
-+
- #endif /* __XEN_PUBLIC_MEMORY_H__ */
-diff --git a/include/xen/interface/xen.h b/include/xen/interface/xen.h
-index 4f4830ef8f93..8bfb242f433e 100644
---- a/include/xen/interface/xen.h
-+++ b/include/xen/interface/xen.h
-@@ -265,9 +265,10 @@
-  *
-  * PAT (bit 7 on) --> PWT (bit 3 on) and clear bit 7.
-  */
--#define MMU_NORMAL_PT_UPDATE      0 /* checked '*ptr = val'. ptr is MA.       */
--#define MMU_MACHPHYS_UPDATE       1 /* ptr = MA of frame to modify entry for  */
--#define MMU_PT_UPDATE_PRESERVE_AD 2 /* atomically: *ptr = val | (*ptr&(A|D)) */
-+#define MMU_NORMAL_PT_UPDATE       0 /* checked '*ptr = val'. ptr is MA.      */
-+#define MMU_MACHPHYS_UPDATE        1 /* ptr = MA of frame to modify entry for */
-+#define MMU_PT_UPDATE_PRESERVE_AD  2 /* atomically: *ptr = val | (*ptr&(A|D)) */
-+#define MMU_PT_UPDATE_NO_TRANSLATE 3 /* checked '*ptr = val'. ptr is MA.      */
- 
- /*
-  * MMU EXTENDED OPERATIONS
-diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
-index fd23e42c6024..fd18c974a619 100644
---- a/include/xen/xen-ops.h
-+++ b/include/xen/xen-ops.h
-@@ -63,7 +63,7 @@ static inline void xen_destroy_contiguous_region(phys_addr_t pstart,
- struct vm_area_struct;
- 
- /*
-- * xen_remap_domain_gfn_array() - map an array of foreign frames
-+ * xen_remap_domain_gfn_array() - map an array of foreign frames by gfn
-  * @vma:     VMA to map the pages into
-  * @addr:    Address at which to map the pages
-  * @gfn:     Array of GFNs to map
-@@ -86,6 +86,28 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
- 			       unsigned domid,
- 			       struct page **pages);
- 
-+/*
-+ * xen_remap_domain_mfn_array() - map an array of foreign frames by mfn
-+ * @vma:     VMA to map the pages into
-+ * @addr:    Address at which to map the pages
-+ * @mfn:     Array of MFNs to map
-+ * @nr:      Number entries in the MFN array
-+ * @err_ptr: Returns per-MFN error status.
-+ * @prot:    page protection mask
-+ * @domid:   Domain owning the pages
-+ * @pages:   Array of pages if this domain has an auto-translated physmap
-+ *
-+ * @mfn and @err_ptr may point to the same buffer, the MFNs will be
-+ * overwritten by the error codes after they are mapped.
-+ *
-+ * Returns the number of successfully mapped frames, or a -ve error
-+ * code.
-+ */
-+int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
-+			       unsigned long addr, xen_pfn_t *mfn, int nr,
-+			       int *err_ptr, pgprot_t prot,
-+			       unsigned int domid, struct page **pages);
-+
- /* xen_remap_domain_gfn_range() - map a range of foreign frames
-  * @vma:     VMA to map the pages into
-  * @addr:    Address at which to map the pages
--- 
-2.11.0
+We shouldn't forget that what we are discussing here is the default
+behaviour when we don't have sufficient knowledge about the tasks in the
+scheduler. So we are looking a reasonable middle-of-the-road policy that
+doesn't kill your performance or the battery. If user-space has its own
+opinion about performance requirements it is free to use task affinity
+to control which cpu the task end up on and ensure that the task gets
+max capacity always. On top of that we have had interfaces in Android
+for years to specify performance requirements for task (groups) to allow
+small tasks to be placed on big cpus and big task to be placed on little
+cpus depending on their requirements. It is even tied into cpufreq as
+well. A lot of effort has gone into Android to get this balance right.
+Patrick is working hard on upstreaming some of those features.
+
+In the bigger picture always going for max capacity is not desirable for
+well-configured big.LITTLE system. You would never exploit the advantage
+of the little cpus as you always use big first and only use little when
+the bigs are overloaded at which point having little cpus at all makes
+little sense. Vendors build big.LITTLE systems because they want a
+better performance/energy trade-off, if they wanted max capacity always,
+they would just built big-only systems.
+
+If we would be that concerned about latency, DVFS would be a problem too
+and we would use nothing but the performance governor. So seen in the
+bigger picture I have to disagree that blindly going for max capacity is
+the right default policy for big.LITTLE. As soon as we involve a energy
+model in the task placement decisions, it definitely isn't.
+
+Morten
