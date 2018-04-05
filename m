@@ -1,7 +1,7 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1091448-1522880385-2-8469102695688032541
+X-Cyrus-Session-Id: sloti22d1t05-1551978-1522892937-2-1713733939247319822
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
@@ -9,73 +9,68 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522880384; b=GmB6PqtHcdrSKgz6r6ZlneL/iVoLop7mvwxGngd+UT9H2ykP+Q
-    NAyj0fndtcLSXbN5yOAQtHSf6mWd7K8grzYRKqgbzgTYvEQmfoIS2YFb/9E2GTuN
-    jxfBHbBeUCIQSGCmUKOLDiJFMYSRx0zC87VzkqmsL5DgaHiBOq4O2AgGsZDxoEvS
-    pA3Q4E3TtxfAprYH7pYGYmPeUZuwqn4+ZhZFD/gtK72PNqny6S8EEEKHOalG/FhW
-    HZJlxp3/dwdoK1pxEp4XLZpjtCt85vfpDgnjxCDr8SJlvNXj0PUuFXKwwEJqkcTf
-    7h+Acn4L08VzCew20LxPuBm7e64zkqK5k5mw==
+    1522892937; b=jcX6r388m8s3x8drOno11FeKYL6ROFFlF5BblMYskRoEoHcFbP
+    gDcQ9B32+rULmBm3K8SAjyk8eNVmQogplkQVmdhKYXCIgZJADT40B124lmXeB8tE
+    rhKIeN6mSguow+D3Le6WDGuNyzA2vW3r1iqikV4604ZNVWwUDsir2fXJlA1qy3/h
+    VERjgldYHeVbaeTAQOZ1fs/wOHWBfh9r19M7lJ3m6iMb+59P0JLJjUPhT8SOOgtG
+    3n/2R5Avx+a7dG766AVKUdms93TCb3B/n65W5EqdShpe/5P98snzDU0BENGHx4T8
+    CwY5e/4k9JKZ6RswfCyNn8lEaWQy1V0io+Ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:in-reply-to:references:to:cc:subject
-    :mime-version:content-type:content-id:date:message-id:sender
-    :list-id; s=fm2; t=1522880384; bh=iKXa7/nJwge7fvQtjvO2txoNZRWdop
-    fpFFOCp2axUME=; b=WAd7hBu/v40OlUCnGwTKXVgjJhjy4Llf2vPHSyHa6YztQk
-    m57BbFJXeaI96sKb+8GptKLhHZQKhv5xd8nmcacr3zKmWxhJvVJf+ODniM5vDOcd
-    y07NlpykjK1wtC31qE+Gh5mYX4CzhMM016SrlUssjQi5D6cNum+FGybLNHnXhFxp
-    SCa6Dn8AGXK8b6I+DH0umeWCqu/2eKqaPAlp17dWSyhI0fWIJvE/9+1Q3L11rxox
-    SmhD3Iedwl2emrFpEPgb9BCmLVMsXKL5zdtTqGbLjwNb46p9BAIi+GFngYim7szi
-    9y8DfACIlyKJuGrEJD34yy5YR648VVlCBPLGBWYg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1522892937; bh=+LSQRjZYggpV2bjdMjAY7tZ5TXw5KQ
+    Oaxi4ruBdaf3A=; b=T6Ttb8lKV2zSa0KcSqqEz4tvi2yhCuQ5Ft/AVzypqlMKkk
+    r4QxcZxMTTjzn0W/E13rFGTr+F8cdjY5BT2lSMBxmg5FIbNPaRp0Hhi20BVkaA9G
+    syWM/AtiaxKnsQCeFF2aczcOF1NncKYbu+KF4vpSD+QtaWJeNXnHZYQKcGSJW06Z
+    emZ7Pt+ojMBzo3ehgCzHGsrx7XYcDc/CfWCSS8jXrkXge0C3KhTwZYlIYyM2NL3Y
+    HgM82V/jfwjqC6W6PbfceHDrlV6YCHe3w8dD353LA5jt4Y5h2lorlV5BzauwH6x7
+    laNmGUnXW6V3A5x2b9H2maaOu3v1kYDbNwB33aIw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJuUdnXrMEbUlySRNLO1P4tqbB9JqG8IKNlUVZf1RCEX49P78nz+m6+4X9c3lvZ5Rc8boWsBk9ZiH5pG3VWcw3w838nppbj0R/E0rshiqrJwy82FMyCa
-    M4RnN3n5HFUZxF5jJmh45x5mZLi0ooGflVmCP5zUBSzeDQ75f4TWztJivph12hXW8klhKw6DbAGBx2vo9cc6j18u0FfSFT03/RJwfymiZSYQcXG/q+6dr6g0
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMFzGlJ+E9r01rPvvobBdokGGq/a5Cjlo/ZVaejYdXUpmI/5l5mQwgZGsAJ0bp/qU06AKMDblGBkslK/lKuvwuCl7FlgvR6aErmw/7MedqnOLxEsZKHg
+    l/F8H+k8i8c8A2jSrtGVndDvuumwzcbN1Xjkm6uy8X4jQGYN70Ldf78XVSR8qRsV2ICKvvfb604bz4u2/10sF5bi7OQpyYIPKwbUHNeuc9lHfSb8EkOe3JYc
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=gR4Rho1IovKi-j0URZMA:9 a=CjuIK1q_8ugA:10
+    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=hcKa7B41ueMZnoVtdnkA:9 a=CjuIK1q_8ugA:10
     a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752366AbeDDWTd (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 4 Apr 2018 18:19:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42548 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751749AbeDDWTb (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 4 Apr 2018 18:19:31 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAG48ez3edmZo1iFXqpvzOKNY0jLzcqa18KuoRrBaPyfp=7huZQ@mail.gmail.com>
-References: <CAG48ez3edmZo1iFXqpvzOKNY0jLzcqa18KuoRrBaPyfp=7huZQ@mail.gmail.com> <CALCETrUVQLDC6_VEvuAbdCOuGrmcxohqTB6P8eyNojm9AryNkg@mail.gmail.com> <1119.1522858644@warthog.procyon.org.uk>
-To: Jann Horn <jannh@google.com>
-Cc: dhowells@redhat.com, Alexei Starovoitov <ast@kernel.org>,
+        id S1752740AbeDEBsy (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 4 Apr 2018 21:48:54 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:44983 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752642AbeDEBsy (ORCPT
+        <rfc822;groupwise-linux-api@vger.kernel.org:0:0>);
+        Wed, 4 Apr 2018 21:48:54 -0400
+Date: Thu, 5 Apr 2018 09:48:20 +0800
+From: joeyli <jlee@suse.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Jann Horn <jannh@google.com>, Alexei Starovoitov <ast@kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Theodore Y. Ts'o" <tytso@mit.edu>,
@@ -86,34 +81,45 @@ Cc: dhowells@redhat.com, Alexei Starovoitov <ast@kernel.org>,
         Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Justin Forbes <jforbes@redhat.com>,
-        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
+        linux-man <linux-man@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
         Kees Cook <keescook@chromium.org>,
         linux-efi <linux-efi@vger.kernel.org>
-Subject: Re: An actual suggestion (Re: [GIT PULL] Kernel lockdown for secure boot)
+Subject: Re: An actual suggestion (Re: [GIT PULL] Kernel lockdown for secure
+ boot)
+Message-ID: <20180405014820.GB7362@linux-l9pv.suse>
+References: <CAG48ez3edmZo1iFXqpvzOKNY0jLzcqa18KuoRrBaPyfp=7huZQ@mail.gmail.com>
+ <CALCETrUVQLDC6_VEvuAbdCOuGrmcxohqTB6P8eyNojm9AryNkg@mail.gmail.com>
+ <1119.1522858644@warthog.procyon.org.uk>
+ <15406.1522880367@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <15405.1522880367.1@warthog.procyon.org.uk>
-Date: Wed, 04 Apr 2018 23:19:27 +0100
-Message-ID: <15406.1522880367@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <15406.1522880367@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Jann Horn <jannh@google.com> wrote:
-
-> > Uh, no.  bpf, for example, can be used to modify kernel memory.
+On Wed, Apr 04, 2018 at 11:19:27PM +0100, David Howells wrote:
+> Jann Horn <jannh@google.com> wrote:
 > 
-> I'm pretty sure bpf isn't supposed to be able to modify arbitrary
-> kernel memory. AFAIU if you can use BPF to write to arbitrary kernel
-> memory, that's a bug; with CAP_SYS_ADMIN, you can read from userspace,
-> write to userspace, and read from kernelspace, but you shouldn't be
-> able to write to kernelspace.
+> > > Uh, no.  bpf, for example, can be used to modify kernel memory.
+> > 
+> > I'm pretty sure bpf isn't supposed to be able to modify arbitrary
+> > kernel memory. AFAIU if you can use BPF to write to arbitrary kernel
+> > memory, that's a bug; with CAP_SYS_ADMIN, you can read from userspace,
+> > write to userspace, and read from kernelspace, but you shouldn't be
+> > able to write to kernelspace.
+> 
+> Ah - you may be right.  I seem to have misremembered what Joey Lee wrote in
+> his patch description.
+>
 
-Ah - you may be right.  I seem to have misremembered what Joey Lee wrote in
-his patch description.
+Sorry for it's my fault to misunderstood the behavoir of bpf with
+CAP_SYS_ADMIN.
 
-David
+Joey Lee
