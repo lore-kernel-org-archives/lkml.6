@@ -1,216 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751460AbeDEODa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:03:30 -0400
-Received: from mail-io0-f170.google.com ([209.85.223.170]:41845 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeDEOD3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:03:29 -0400
-X-Google-Smtp-Source: AIpwx490p/e1CQJqKmsisrlgLm5Bo4y8JTi2FJdWS3tF+MKLtDw9zWiFb21WvGzdmmZTaewjioYfHZevrF90h/sRCtc=
+        id S1751543AbeDEODn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:03:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55848 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751195AbeDEODm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 10:03:42 -0400
+Date: Thu, 5 Apr 2018 17:03:40 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: "Wang, Wei W" <wei.w.wang@intel.com>
+Cc: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
+Subject: Re: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Message-ID: <20180405170248-mutt-send-email-mst@kernel.org>
+References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
+ <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
+ <20180403214147-mutt-send-email-mst@kernel.org>
+ <5AC43377.2070607@intel.com>
+ <20180404155907-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
+ <20180405040900-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A7F3B@shsmsx102.ccr.corp.intel.com>
 MIME-Version: 1.0
-X-Originating-IP: [212.51.149.109]
-In-Reply-To: <CADnq5_NPs8Oq3AGvVuNHg0KuD7B-8FzSA8SJ+AYfdEyrGFJGTQ@mail.gmail.com>
-References: <20180404223251.28449-1-eric@anholt.net> <CAKMK7uGhm_ixQN3-WWmWK-mrdWRAfPZMuD-=fBEQxbtrMkdVFg@mail.gmail.com>
- <CADnq5_PdM5MhXMdqnfbQqVgbRT=nKS_1hTvSfLBkp_1sPcErWw@mail.gmail.com>
- <CAKMK7uGF81MDaCwxw+UKUUUGCLRqVzDdDQpMsJr2BC=4b7_5gA@mail.gmail.com>
- <CAFd4ddyMvoWObq1728aE8r8MrQNEKsEuxGV+DJMhGH+8EtDaZQ@mail.gmail.com> <CADnq5_NPs8Oq3AGvVuNHg0KuD7B-8FzSA8SJ+AYfdEyrGFJGTQ@mail.gmail.com>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Thu, 5 Apr 2018 16:03:27 +0200
-X-Google-Sender-Auth: jl3EQAbKCYhqhtFZmuRB898DNS0
-Message-ID: <CAKMK7uHW6WsQMc__=E+5a7O=Y=yhjqQMG4wcbekrTAHQv_yTaA@mail.gmail.com>
-Subject: Re: [PATCH] drm/sched: Extend the documentation.
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Nayan Deshmukh <nayan26deshmukh@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <286AC319A985734F985F78AFA26841F7394A7F3B@shsmsx102.ccr.corp.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 5, 2018 at 3:44 PM, Alex Deucher <alexdeucher@gmail.com> wrote:
-> On Thu, Apr 5, 2018 at 9:41 AM, Nayan Deshmukh
-> <nayan26deshmukh@gmail.com> wrote:
->> On Thu, Apr 5, 2018 at 6:59 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
->>> On Thu, Apr 5, 2018 at 3:27 PM, Alex Deucher <alexdeucher@gmail.com> wrote:
->>>> On Thu, Apr 5, 2018 at 2:16 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
->>>>> On Thu, Apr 5, 2018 at 12:32 AM, Eric Anholt <eric@anholt.net> wrote:
->>>>>> These comments answer all the questions I had for myself when
->>>>>> implementing a driver using the GPU scheduler.
->>>>>>
->>>>>> Signed-off-by: Eric Anholt <eric@anholt.net>
->>>>>
->>>>> Pulling all these comments into the generated kerneldoc would be
->>>>> awesome, maybe as a new "GPU Scheduler" chapter at the end of
->>>>> drm-mm.rst? Would mean a bit of busywork to convert the existing raw
->>>>> comments into proper kerneldoc. Also has the benefit that 0day will
->>>>> complain when you forget to update the comment when editing the
->>>>> function prototype - kerneldoc which isn't included anywhere in .rst
->>>>> won't be checked automatically.
->>>>
->>>> I was actually planning to do this myself, but Nayan wanted to do this
->>>> a prep work for his proposed GSoC project so I was going to see how
->>>> far he got first.
->>
->> It is still on my TODO list. Just got a bit busy with my coursework. I
->> will try to look at it during the weekend.
->
-> No worries.  Take your time.
->
->>>
->>> Awesome. I'm also happy to help out with any kerneldoc questions and
->>> best practices. Technically ofc no clue about the scheduler :-)
->>>
->> I was thinking of adding a different rst for scheduler altogther. Will
->> it be better to add it in drm-mm.rst itself?
->
-> I had been planning to add a separate file too since it's a separate
-> entity.  Do whatever you think works best.
+On Thu, Apr 05, 2018 at 02:05:03AM +0000, Wang, Wei W wrote:
+> On Thursday, April 5, 2018 9:12 AM, Michael S. Tsirkin wrote:
+> > On Thu, Apr 05, 2018 at 12:30:27AM +0000, Wang, Wei W wrote:
+> > > On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
+> > > > On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
+> > > > > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
+> > > > > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
+> > > I'm afraid the driver couldn't be aware if the added hints are stale
+> > > or not,
+> > 
+> > 
+> > No - I mean that driver has code that compares two values and stops
+> > reporting. Can one of the values be stale?
+> 
+> The driver compares "vb->cmd_id_use != vb->cmd_id_received" to decide if it needs to stop reporting hints, and cmd_id_received is what the driver reads from host (host notifies the driver to read for the latest value). If host sends a new cmd id, it will notify the guest to read again. I'm not sure how that could be a stale cmd id (or maybe I misunderstood your point here?)
+> 
+> Best,
+> Wei
 
-My recommendation is that to put the gist of the docs all into
-source-code comments. That way there's a much higher chance to spot
-them. In the docs you'll then only have the chapter structure (and not
-sure the scheduler needs more than 1 chapter).
-
-drm-mm.rst is a bit misnamed, since it contains all the stuff for
-handling rendering: MM, fences, dma-buf/prime, drm_syncobjs. I think
-scheduler fits very well in that topic range. We can ofc rename it to
-drm-rendering.rst or similar, if the -mm.rst is misleading (plus
-adjust the title).
--Daniel
-
->
-> Alex
->
->>
->>> Cheers, Daniel
->>>> Alex
->>>>
->>>>> -Daniel
->>>>>
->>>>>> ---
->>>>>>  include/drm/gpu_scheduler.h | 46 +++++++++++++++++++++++++++++++++----
->>>>>>  1 file changed, 42 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
->>>>>> index dfd54fb94e10..c053a32341bf 100644
->>>>>> --- a/include/drm/gpu_scheduler.h
->>>>>> +++ b/include/drm/gpu_scheduler.h
->>>>>> @@ -43,10 +43,12 @@ enum drm_sched_priority {
->>>>>>  };
->>>>>>
->>>>>>  /**
->>>>>> - * A scheduler entity is a wrapper around a job queue or a group
->>>>>> - * of other entities. Entities take turns emitting jobs from their
->>>>>> - * job queues to corresponding hardware ring based on scheduling
->>>>>> - * policy.
->>>>>> + * drm_sched_entity - A wrapper around a job queue (typically attached
->>>>>> + * to the DRM file_priv).
->>>>>> + *
->>>>>> + * Entities will emit jobs in order to their corresponding hardware
->>>>>> + * ring, and the scheduler will alternate between entities based on
->>>>>> + * scheduling policy.
->>>>>>  */
->>>>>>  struct drm_sched_entity {
->>>>>>         struct list_head                list;
->>>>>> @@ -78,7 +80,18 @@ struct drm_sched_rq {
->>>>>>
->>>>>>  struct drm_sched_fence {
->>>>>>         struct dma_fence                scheduled;
->>>>>> +
->>>>>> +       /* This fence is what will be signaled by the scheduler when
->>>>>> +        * the job is completed.
->>>>>> +        *
->>>>>> +        * When setting up an out fence for the job, you should use
->>>>>> +        * this, since it's available immediately upon
->>>>>> +        * drm_sched_job_init(), and the fence returned by the driver
->>>>>> +        * from run_job() won't be created until the dependencies have
->>>>>> +        * resolved.
->>>>>> +        */
->>>>>>         struct dma_fence                finished;
->>>>>> +
->>>>>>         struct dma_fence_cb             cb;
->>>>>>         struct dma_fence                *parent;
->>>>>>         struct drm_gpu_scheduler        *sched;
->>>>>> @@ -88,6 +101,13 @@ struct drm_sched_fence {
->>>>>>
->>>>>>  struct drm_sched_fence *to_drm_sched_fence(struct dma_fence *f);
->>>>>>
->>>>>> +/**
->>>>>> + * drm_sched_job - A job to be run by an entity.
->>>>>> + *
->>>>>> + * A job is created by the driver using drm_sched_job_init(), and
->>>>>> + * should call drm_sched_entity_push_job() once it wants the scheduler
->>>>>> + * to schedule the job.
->>>>>> + */
->>>>>>  struct drm_sched_job {
->>>>>>         struct spsc_node                queue_node;
->>>>>>         struct drm_gpu_scheduler        *sched;
->>>>>> @@ -112,10 +132,28 @@ static inline bool drm_sched_invalidate_job(struct drm_sched_job *s_job,
->>>>>>   * these functions should be implemented in driver side
->>>>>>  */
->>>>>>  struct drm_sched_backend_ops {
->>>>>> +       /* Called when the scheduler is considering scheduling this
->>>>>> +        * job next, to get another struct dma_fence for this job to
->>>>>> +        * block on.  Once it returns NULL, run_job() may be called.
->>>>>> +        */
->>>>>>         struct dma_fence *(*dependency)(struct drm_sched_job *sched_job,
->>>>>>                                         struct drm_sched_entity *s_entity);
->>>>>> +
->>>>>> +       /* Called to execute the job once all of the dependencies have
->>>>>> +        * been resolved.  This may be called multiple times, if
->>>>>> +        * timedout_job() has happened and drm_sched_job_recovery()
->>>>>> +        * decides to try it again.
->>>>>> +        */
->>>>>>         struct dma_fence *(*run_job)(struct drm_sched_job *sched_job);
->>>>>> +
->>>>>> +       /* Called when a job has taken too long to execute, to trigger
->>>>>> +        * GPU recovery.
->>>>>> +        */
->>>>>>         void (*timedout_job)(struct drm_sched_job *sched_job);
->>>>>> +
->>>>>> +       /* Called once the job's finished fence has been signaled and
->>>>>> +        * it's time to clean it up.
->>>>>> +        */
->>>>>>         void (*free_job)(struct drm_sched_job *sched_job);
->>>>>>  };
->>>>>>
->>>>>> --
->>>>>> 2.17.0
->>>>>>
->>>>>> _______________________________________________
->>>>>> dri-devel mailing list
->>>>>> dri-devel@lists.freedesktop.org
->>>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>>>>
->>>>>
->>>>>
->>>>> --
->>>>> Daniel Vetter
->>>>> Software Engineer, Intel Corporation
->>>>> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
->>>>> _______________________________________________
->>>>> dri-devel mailing list
->>>>> dri-devel@lists.freedesktop.org
->>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>>
->>>
->>>
->>> --
->>> Daniel Vetter
->>> Software Engineer, Intel Corporation
->>> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
->>> _______________________________________________
->>> dri-devel mailing list
->>> dri-devel@lists.freedesktop.org
->>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
+The comparison is done in one thread, the update in another one.
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+MST
