@@ -1,127 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751417AbeDEOXb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:23:31 -0400
-Received: from fieldses.org ([173.255.197.46]:45864 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751179AbeDEOXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:23:30 -0400
-Date: Thu, 5 Apr 2018 10:23:29 -0400
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] nfsd changes for 4.17
-Message-ID: <20180405142329.GR20297@fieldses.org>
+        id S1751503AbeDEOYL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:24:11 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:44028 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeDEOYJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 10:24:09 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w35EO3Pn027828
+X-Nifty-SrcIP: [209.85.213.52]
+X-Google-Smtp-Source: AIpwx48Ashp0LMRtQcmZhAdahYTNoQSKO4PkOlZs3rGrLXpJor5DVBr+mQfe/8KVJo60PduqOb6mFUdjBt7+nkOR6yI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From: bfields@fieldses.org (J. Bruce Fields)
+In-Reply-To: <c59adbdd18dc083fc1e08a9a889e67282fcbbaa2.1519668832.git.robin.jarry@6wind.com>
+References: <cover.1519393674.git.robin.jarry@6wind.com> <cover.1519668832.git.robin.jarry@6wind.com>
+ <c59adbdd18dc083fc1e08a9a889e67282fcbbaa2.1519668832.git.robin.jarry@6wind.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 5 Apr 2018 23:23:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASj6O790hbr0de4dU4GPk99LCGBsGj6t65G1iyxA7WhSA@mail.gmail.com>
+Message-ID: <CAK7LNASj6O790hbr0de4dU4GPk99LCGBsGj6t65G1iyxA7WhSA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] kbuild: use HOSTLDFLAGS for single .c executables
+To: Robin Jarry <robin.jarry@6wind.com>
+Cc: Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please pull nfsd changes for 4.17 from:
+2018-02-27 3:41 GMT+09:00 Robin Jarry <robin.jarry@6wind.com>:
+> When compiling executables from a single .c file, the linker is also
+> invoked. Pass the HOSTLDFLAGS like for other linker commands.
+>
+> Signed-off-by: Robin Jarry <robin.jarry@6wind.com>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> ---
+>  scripts/Makefile.host | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.host b/scripts/Makefile.host
+> index e6dc6ae2d7c4..aa971cc3f339 100644
+> --- a/scripts/Makefile.host
+> +++ b/scripts/Makefile.host
+> @@ -84,7 +84,7 @@ hostcxx_flags  = -Wp,-MD,$(depfile) $(__hostcxx_flags)
+>  # Create executable from a single .c file
+>  # host-csingle -> Executable
+>  quiet_cmd_host-csingle         = HOSTCC  $@
+> -      cmd_host-csingle = $(HOSTCC) $(hostc_flags) -o $@ $< \
+> +      cmd_host-csingle = $(HOSTCC) $(hostc_flags) $(HOSTLDFLAGS) -o $@ $< \
+>                 $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F))
+>  $(host-csingle): $(obj)/%: $(src)/%.c FORCE
+>         $(call if_changed_dep,host-csingle)
 
-  git://linux-nfs.org/~bfields/linux.git tags/nfsd-4.17
 
-Chuck Lever did a bunch of work on nfsd tracepoints, on RDMA, and on
-server xdr decoding (with an eye towards eliminating a data copy in the
-RDMA case).
+This one is correct anyway.
 
-I did some refactoring of the delegation code in preparation for
-eliminating some delegation self-conflicts and implementing write
-delegations.
+I applied to linux-kbuild.
 
---b.
 
-Chuck Lever (21):
-      svcrdma: Use pr_err to report Receive errors
-      svcrdma: Consult max_qp_init_rd_atom when accepting connections
-      svcrdma: Clean up rdma_build_arg_xdr
-      sunrpc: Remove unneeded pointer dereference
-      svc: Simplify ->xpo_secure_port
-      sunrpc: Update show_svc_xprt_flags() to include recently added flags
-      sunrpc: Move trace_svc_xprt_dequeue()
-      sunrpc: Simplify do_enqueue tracing
-      sunrpc: Simplify trace_svc_recv
-      sunrpc: Save remote presentation address in svc_xprt for trace events
-      sunrpc: Re-purpose trace_svc_process
-      sunrpc: Report per-RPC execution stats
-      svc: Report xprt dequeue latency
-      nfsd: Fix NFSD trace points
-      nfsd: Record request byte count, not count of vectors
-      nfsd: Add "nfsd_" to trace point names
-      nfsd: Add I/O trace points in the NFSv4 write path
-      nfsd: Add I/O trace points in the NFSv4 read proc
-      nfsd: Trace NFSv4 COMPOUND execution
-      NFSD: Clean up legacy NFS WRITE argument XDR decoders
-      NFSD: Clean up legacy NFS SYMLINK argument XDR decoders
 
-Colin Ian King (1):
-      lockd: make nlm_ntf_refcnt and nlm_ntf_wq static
-
-Eric Biggers (1):
-      sunrpc: remove incorrect HMAC request initialization
-
-Fengguang Wu (1):
-      nfsd: fix boolreturn.cocci warnings
-
-J. Bruce Fields (11):
-      nfsd: remove unsused "cp_consecutive" field
-      nfsd: don't require low ports for gss requests
-      nfsd: simplify put of fi_deleg_file
-      nfsd: simplify nfs4_put_deleg_lease calls
-      nfsd4: set fl_owner to delegation, not file pointer
-      nfsd4: dp->dl_stid.sc_file doesn't need locking
-      nfsd: make nfs4_get_existing_delegation less confusing
-      nfsd: factor out common delegation-destruction code
-      nfsd: move sc_file assignment into alloc_init_deleg
-      nfsd: create a separate lease for each delegation
-      nfsd: fix incorrect umasks
-
-James Ettle (1):
-      sunrpc: Fix unaligned access on sparc64
-
-Jeff Layton (2):
-      nfsd4: send the special close_stateid in v4.0 replies as well
-      nfsd: move nfs4_client allocation to dedicated slabcache
-
-NeilBrown (1):
-      SUNRPC: cache: ignore timestamp written to 'flush' file.
-
-Stefan Agner (1):
-      nfsd: use correct enum type in decode_cb_op_status
-
- fs/lockd/svc.c                           |   4 +-
- fs/nfsd/nfs3proc.c                       |  18 +-
- fs/nfsd/nfs3xdr.c                        |  67 ++------
- fs/nfsd/nfs4callback.c                   |   4 +-
- fs/nfsd/nfs4layouts.c                    |  16 +-
- fs/nfsd/nfs4proc.c                       |  38 ++--
- fs/nfsd/nfs4state.c                      | 286 ++++++++++++++-----------------
- fs/nfsd/nfs4xdr.c                        |  22 +--
- fs/nfsd/nfsfh.c                          |  12 +-
- fs/nfsd/nfsproc.c                        |  23 ++-
- fs/nfsd/nfsxdr.c                         |  63 ++++---
- fs/nfsd/trace.h                          |  98 +++++++++--
- fs/nfsd/vfs.c                            |  65 +++----
- fs/nfsd/vfs.h                            |  11 +-
- fs/nfsd/xdr.h                            |   3 +-
- fs/nfsd/xdr3.h                           |   3 +-
- fs/nfsd/xdr4.h                           |   5 +-
- include/linux/sunrpc/svc.h               |   6 +
- include/linux/sunrpc/svc_rdma.h          |   3 -
- include/linux/sunrpc/svc_xprt.h          |   6 +-
- include/trace/events/sunrpc.h            | 204 +++++++++++++---------
- net/sunrpc/auth_gss/gss_krb5_crypto.c    |   3 -
- net/sunrpc/auth_gss/gss_krb5_seal.c      |   5 +-
- net/sunrpc/auth_gss/gss_krb5_unseal.c    |   4 +-
- net/sunrpc/cache.c                       |  32 ++--
- net/sunrpc/svc.c                         | 118 ++++++++++++-
- net/sunrpc/svc_xprt.c                    |  34 ++--
- net/sunrpc/svcsock.c                     |   8 +-
- net/sunrpc/xprtrdma/svc_rdma.c           |   4 +-
- net/sunrpc/xprtrdma/svc_rdma_recvfrom.c  |  33 ++--
- net/sunrpc/xprtrdma/svc_rdma_transport.c |  38 ++--
- 31 files changed, 721 insertions(+), 515 deletions(-)
+-- 
+Best Regards
+Masahiro Yamada
