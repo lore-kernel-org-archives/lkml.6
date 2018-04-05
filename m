@@ -1,78 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751356AbeDEOVj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:21:39 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:37428 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDEOVh (ORCPT
+        id S1751368AbeDEOXC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:23:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56876 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeDEOXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:21:37 -0400
-X-Google-Smtp-Source: AIpwx49keZVvIQnt01MtkmD8DObrMBhuWeTpCd/XKAmr+Ocb2xNACCcTr+kYQ3w4kOS+hbSQ4GzAcsPoVRPI2LIPCvU=
+        Thu, 5 Apr 2018 10:23:01 -0400
+Date: Thu, 5 Apr 2018 07:22:58 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Michal Hocko <mhocko@kernel.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180405142258.GA28128@bombadil.infradead.org>
+References: <20180403123514.GX5501@dhcp22.suse.cz>
+ <20180403093245.43e7e77c@gandalf.local.home>
+ <20180403135607.GC5501@dhcp22.suse.cz>
+ <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com>
+ <20180404062340.GD6312@dhcp22.suse.cz>
+ <20180404101149.08f6f881@gandalf.local.home>
+ <20180404142329.GI6312@dhcp22.suse.cz>
+ <20180404114730.65118279@gandalf.local.home>
+ <20180405025841.GA9301@bombadil.infradead.org>
+ <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <7fc01f67a561ce1fad676fc34c2249e7@natalenko.name>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jLwyot++C2EXs+032Lz5WdG65GsEJ-Q55rfhSbkG1Nh+A@mail.gmail.com>
- <3265889.eu5sbW8aRz@natalenko.name> <CAGXu5jL++CEmLzFtGMVMhGWBzHpsRNJPTsEoc7Pw1dP--=azCA@mail.gmail.com>
- <7fc01f67a561ce1fad676fc34c2249e7@natalenko.name>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 5 Apr 2018 07:21:31 -0700
-X-Google-Sender-Auth: tif0dVkqJ5OlnzzdS72CcwHtkp8
-Message-ID: <CAGXu5jKhiE512yQXp90M+Wie=8RkpMZT-Yi_9BgjfKwibP433g@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w35ELh4w027127
 
-On Thu, Apr 5, 2018 at 2:56 AM, Oleksandr Natalenko
-<oleksandr@natalenko.name> wrote:
-> Hi.
->
-> 04.04.2018 23:25, Kees Cook wrote:
->>
->> Thanks for the report! I hope someone more familiar with sg_io() can
->> help explain the changing buffer offset... :P
->
->
-> Also, FYI, I kept the server running with smartctl periodically invoked, and
-> it was still triggering BUGs, however, I consider them to be more or less
-> harmless until the server got stuck with high I/O wait this morning after
-> next smartctl invocation. So, it isn't harmless, it seems…
->
-> It could be unrelated, of course, since the journal didn't give me any hint
-> (or a stack trace) on what happened, thus I'll monitor how things behave
-> without smartctl too.
+On Wed, Apr 04, 2018 at 09:12:52PM -0700, Joel Fernandes wrote:
+> On Wed, Apr 4, 2018 at 7:58 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> > On Wed, Apr 04, 2018 at 11:47:30AM -0400, Steven Rostedt wrote:
+> >> I originally was going to remove the RETRY_MAYFAIL, but adding this
+> >> check (at the end of the loop though) appears to have OOM consistently
+> >> kill this task.
+> >>
+> >> I still like to keep RETRY_MAYFAIL, because it wont trigger OOM if
+> >> nothing comes in and tries to do an allocation, but instead will fail
+> >> nicely with -ENOMEM.
+> >
+> > I still don't get why you want RETRY_MAYFAIL.  You know that tries
+> > *harder* to allocate memory than plain GFP_KERNEL does, right?  And
+> > that seems like the exact opposite of what you want.
+> 
+> No. We do want it to try harder but not if its already setup for failure.
 
-I had a VM running over night with:
-
-[1]   Running                 while :; do
-    smartctl -a /dev/sda > /dev/null;
-done &
-[2]-  Running                 while :; do
-    ls --color=auto -lR / > /dev/null 2> /dev/null;
-done &
-[3]+  Running                 while :; do
-    sleep $(( $RANDOM % 100 )); sync; echo 3 > /proc/sys/vm/drop_caches;
-done &
-
-and I haven't seen the issue. :(
-
-FWIW, I'm using the ahci qemu driver:
-
--drive file=disk-image.raw,if=none,id=drive0,format=raw \
--device ahci,id=bus0 \
--device ide-drive,bus=bus0.0,drive=drive0
-
-Does this match your qemu instance?
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+I understand you don't want GFP_NORETRY.  But why is it more important for
+this allocation to succeed than other normal GFP_KERNEL allocations?
