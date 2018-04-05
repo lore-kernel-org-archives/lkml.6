@@ -1,93 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751934AbeDENKm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:10:42 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:25324 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751251AbeDENKk (ORCPT
+        id S1751603AbeDENLL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:11:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42104 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeDENLI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:10:40 -0400
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: Michael Turquette <mturquette@baylibre.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: David Lechner <david@lechnology.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com>
- <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
- <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
-Date: Thu, 5 Apr 2018 18:39:17 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 5 Apr 2018 09:11:08 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A729160274
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexey Roslyakov <alexey.roslyakov@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
+Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for brcmfmac
+References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
+        <20180319014032.9394-3-alexey.roslyakov@gmail.com>
+        <5AAF838D.2030105@broadcom.com>
+        <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
+        <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com>
+        <5AB044C0.9060701@broadcom.com>
+        <87po3zxe9n.fsf@kamboji.qca.qualcomm.com>
+        <CAPDyKFr2GVB0+UUpT3GgGBT17TMcrky6X4L_pw+ztTL6ejbCwQ@mail.gmail.com>
+Date: Thu, 05 Apr 2018 16:10:58 +0300
+In-Reply-To: <CAPDyKFr2GVB0+UUpT3GgGBT17TMcrky6X4L_pw+ztTL6ejbCwQ@mail.gmail.com>
+        (Ulf Hansson's message of "Thu, 22 Mar 2018 11:29:53 +0100")
+Message-ID: <87lge1er31.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartosz,
+Ulf Hansson <ulf.hansson@linaro.org> writes:
 
-On Friday 09 February 2018 10:18 PM, Michael Turquette wrote:
-> On Fri, Feb 9, 2018 at 8:22 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> 2018-01-08 3:17 GMT+01:00 David Lechner <david@lechnology.com>:
-
->> Hi David,
+> On 20 March 2018 at 10:55, Kalle Valo <kvalo@codeaurora.org> wrote:
+>> Arend van Spriel <arend.vanspriel@broadcom.com> writes:
 >>
->> I've been working on moving the genpd code from its own driver to the
->> psc one. I couldn't get the system to boot though and problems
->> happened very early in the boot sequence. I struggled to figure out
->> what's happening, but eventually I noticed that psc uses
->> CLK_OF_DECLARE() to initialize clocks. The functions registered this
->> way are called very early in the boot sequence, way before
->> late_initcall() in which the genpd framework is initialized. This of
-
-late_initcall() is too late for genpd to be initialized. As you may have
-seen with the latest set of patches, we have problems with timer
-initialization. After converting to platform devices, PSC and PLL clocks
-get initialized post time_init(). We are working that around using
-fixed-clocks, which hopefully will work (I still need to test many of
-the affected platforms).
-
-Can you please reply with the exact issue you faced with genpd framework
-initialization so we do have that on record.
-
-Thanks,
-Sekhar
-
->> course makes it impossible to register genpd at the same time we
->> register PSCs.
+>>>>> If I get it right, you mean something like this:
+>>>>>
+>>>>> mmc3: mmc@1c12000 {
+>>>>> ...
+>>>>>          broken-sg-support;
+>>>>>          sd-head-align = 4;
+>>>>>          sd-sgentry-align = 512;
+>>>>>
+>>>>>          brcmf: wifi@1 {
+>>>>>                  ...
+>>>>>          };
+>>>>> };
+>>>>>
+>>>>> Where dt: bindings documentation for these entries should reside?
+>>>>> In generic MMC bindings? Well, this is the very special case and
+>>>>> mmc-linux maintainer will unlikely to accept these changes.
+>>>>> Also, extra kernel code modification might be required. It could make
+>>>>> quite trivial change much more complex.
+>>>>
+>>>> If the MMC maintainers are not copied on this patch series, it will
+>>>> likely be hard for them to identify this patch series and chime in...
+>>>
+>>> The main question is whether this is indeed a "very special case" as
+>>> Alexey claims it to be or that it is likely to be applicable to other
+>>> device and host combinations as you are suggesting.
+>>>
+>>> If these properties are imposed by the host or host controller it
+>>> would make sense to have these in the mmc bindings.
 >>
->> Mike, Stephen - it would be great if you could confirm, but I believe
->> the clock framework now only accepts clock drivers which create real
->> platform drivers, in which case this series would need to be modified.
-> 
-> You are correct. All new uses of CLK_OF_DECLARE are met with high
-> suspicion, and all new drivers should be platform drivers.
-> 
-> There are cases when CLK_OF_DECLARE is necessary (sometimes
-> temporarily while things are reworked), but it seems this is not the
-> case for this driver based on your testing of the platform driver
-> approach. Please use the platform driver approach instead.
-> 
-> Thanks,
-> Mike
-> 
->>
->> David: FYI I quickly converted the functions in psc-da850.c to actual
->> probe callbacks and it worked just fine on a da850-lcdk board.
->>
->> Best regards,
->> Bartosz Golaszewski
+>> BTW, last year we were discussing something similar (I mean related to
+>> alignment requirements) with ath10k SDIO patches and at the time the
+>> patch submitter was proposing to have a bounce buffer in ath10k to
+>> workaround that. I don't remember the details anymore, they are on the
+>> ath10k mailing list archive if anyone is curious to know, but I would
+>> not be surprised if they are similar as here. So there might be a need
+>> to solve this in a generic way (but not sure of course as I haven't
+>> checked the details).
+>
+> I re-call something about these as well, here are the patches. Perhaps
+> I should pick some of them up...
+>
+> https://patchwork.kernel.org/patch/10123137/
+> https://patchwork.kernel.org/patch/10123139/
+> https://patchwork.kernel.org/patch/10123141/
+> https://patchwork.kernel.org/patch/10123143/
+
+Actually I was talking about a different patch, found it now:
+
+ath10k_sdio: DMA bounce buffers for read write
+
+https://patchwork.kernel.org/patch/9979543/
+
+-- 
+Kalle Valo
