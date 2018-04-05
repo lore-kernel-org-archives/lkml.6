@@ -1,146 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeDEPQX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:16:23 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42373 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751179AbeDEPQW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:16:22 -0400
-From: Philippe CORNU <philippe.cornu@st.com>
-To: Daniel Vetter <daniel@ffwll.ch>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>
-CC: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>
-Subject: Re: [PATCH] drm: clarify adjusted_mode for a bridge connected to a
- crtc
-Thread-Topic: [PATCH] drm: clarify adjusted_mode for a bridge connected to a
- crtc
-Thread-Index: AQHTxeNrXc81Ni58ZkqJDtQmzYCJWqPms5kAgAABN4CAC3/hAA==
-Date: Thu, 5 Apr 2018 15:15:58 +0000
-Message-ID: <aaf61d18-f68f-9188-f5ef-9a32b41d7560@st.com>
-References: <20180226121605.12050-1-philippe.cornu@st.com>
- <20180327155102.GW14155@phenom.ffwll.local>
- <ffc34eb4-c5bd-8e53-0dc5-3a3c7a2e111f@st.com>
- <CAKMK7uHkaKBFXLEdycR-Be_WSVvrTfeO1PTE5i1zVLuKFtrbWA@mail.gmail.com>
-In-Reply-To: <CAKMK7uHkaKBFXLEdycR-Be_WSVvrTfeO1PTE5i1zVLuKFtrbWA@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.45]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9026A6AA473AB743AF3936BE5DBCB3EA@st.com>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-05_08:,,
- signatures=0
+        id S1751470AbeDEPQx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:16:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34402 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751179AbeDEPQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:16:52 -0400
+From: Jiri Olsa <jolsa@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc: lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        linux-kbuild@vger.kernel.org,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>, Jiri Benc <jbenc@redhat.com>,
+        Stanislav Kozina <skozina@redhat.com>,
+        Jerome Marchand <jmarchan@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>, Jiri Kosina <jkosina@suse.cz>
+Subject: [RFC 0/9] bpf: Add buildid check support
+Date: Thu,  5 Apr 2018 17:16:36 +0200
+Message-Id: <20180405151645.19130-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w35FGT7j030789
 
-On 03/29/2018 09:39 AM, Daniel Vetter wrote:
-> On Thu, Mar 29, 2018 at 9:35 AM, Philippe CORNU <philippe.cornu@st.com> wrote:
->> Hi Daniel,
->>
->> On 03/27/2018 05:51 PM, Daniel Vetter wrote:
->>> On Mon, Feb 26, 2018 at 01:16:04PM +0100, Philippe Cornu wrote:
->>>> This patch clarifies the adjusted_mode documentation
->>>> for a bridge directly connected to a crtc.
->>>>
->>>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
->>>> ---
->>>> This patch is linked to the discussion https://lkml.org/lkml/2018/1/25/367
->>>
->>> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->>
->> Many thanks for the review.
->>
->>>
->>> Aside, and kinda why I noticed this patch to begin with: You have drm-misc
->>> commit rights, but you seem to not use that. And with 18 patches in the
->>> 4.17 cycle you're the top contributor who's not pushing his own patches.
->>>
->>> What's the hold-up? Tools don't work, or something else? I really think
->>> regular contributors should just push their own stuff themselves (after
->>> appropriate review ofc).
->>> -Daniel
->>>
->>
->> I still consider myself a drm “beginner”, my first patch in drm was last
->> summer so less than 1 year ago.
-> 
-> You're doing great patches, and at least for drm-misc you're the top
-> contributor who doesn't push stuff himself. You're definitely ready to
-> do so!
-> 
->> However, thank you for your encouraging return, I will immediately study
->> the matter (dim...) and prepare myself.
-> 
-> Yes please. And for any questions please ask on #dri-devel on
-> freenode, we're all happy to help out.
-> -Daniel
+hi,
+eBPF programs loaded for kprobes are allowed to read kernel
+internal structures. We check the provided kernel version
+to ensure that the program is loaded for the proper kernel. 
 
-Hi Daniel & Benjamin,
+The problem is that the version check is not enough, because
+it only follows the version setup from kernel's Makefile.
+However, the internal kernel structures change based on the
+.config data, so in practise we have different kernels with
+same version.
 
-I managed to push a first patch on drm-misc-next :-)
+The eBPF kprobe program thus then get loaded for different
+kernel than it's been built for, get wrong data (silently)
+and provide misleading output.
 
-No particular difficulties with dim installation, main encountered 
-issues are "corporate proxies" & ubuntu package updates...
+This patchset implements additional check in eBPF loading code
+on provided build ID (from kernel's elf image, .notes section
+GNU build ID) to ensure we load the eBPF program on correct
+kernel.
 
-So this email is mostly to thank you Benjamin for your good advice and 
-support when using dim.
+Also available in here (based on bpf-next/master):
+  https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+  bpf/checksum
 
-Big thanks,
-Philippe :-)
+This patchset consists of several changes:
 
-> 
->>
->> Thank you,
->> Philippe :-)
->>
->>>>
->>>>    include/drm/drm_bridge.h | 3 ++-
->>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
->>>> index 3270fec46979..b5f3c070467c 100644
->>>> --- a/include/drm/drm_bridge.h
->>>> +++ b/include/drm/drm_bridge.h
->>>> @@ -177,7 +177,8 @@ struct drm_bridge_funcs {
->>>>        * pipeline has been called already. If the bridge is the first element
->>>>        * then this would be &drm_encoder_helper_funcs.mode_set. The display
->>>>        * pipe (i.e.  clocks and timing signals) is off when this function is
->>>> -     * called.
->>>> +     * called. If the bridge is connected to the crtc, the adjusted_mode
->>>> +     * parameter is the one defined in &drm_crtc_state.adjusted_mode.
->>>>        */
->>>>       void (*mode_set)(struct drm_bridge *bridge,
->>>>                        struct drm_display_mode *mode,
->>>> --
->>>> 2.15.1
->>>>
->>>> _______________________________________________
->>>> dri-devel mailing list
->>>> dri-devel@lists.freedesktop.org
->>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> 
-> 
+- adding CONFIG_BUILDID_H option that instructs the build
+  to generate uapi header file with build ID data, that
+  will be included by eBPF program
+
+- adding CONFIG_BPF_BUILDID_CHECK option and new bpf_attr
+  field to allow build ID checking when loading the eBPF
+  program
+
+- changing libbpf to read and pass build ID to the kernel
+
+- several small side fixes
+
+- example perf eBPF code in bpf-samples/bpf-stdout-example.c
+  to show the build ID support/usage.
+
+    # perf record -vv  -e ./bpf-samples/bpf-stdout-example.c kill 2>&1 | grep buildid
+    libbpf: section(7) buildid, size 21, link 0, flags 3, type=1
+    libbpf: kernel buildid of ./bpf-samples/bpf-stdout-example.c is: 6e25edeb408513184e2753bebad25d42314501a0
+
+  The buildid is provided the same way we provide kernel
+  version, in a special "buildid" section:
+
+    # cat ./bpf-samples/bpf-stdout-example.c
+    ...
+    #include <linux/buildid.h>
+
+    char _buildid[] SEC("buildid") = LINUX_BUILDID_DATA;
+    ...
+
+  where LINUX_BUILDID_DATA is defined in the generated buildid.h.
+
+please note it's an RFC ;-) any comments and suggestions are welcome
+
+thanks,
+jirka
+
+
+---
+Jiri Olsa (9):
+      perf tools: Make read_build_id function public
+      perf tools: Add fetch_kernel_buildid function
+      kbuild: Do not pass arguments to link-vmlinux.sh
+      kbuild: Add filechk2 function
+      bpf: Add CONFIG_BUILDID_H option
+      bpf: Add CONFIG_BPF_BUILDID_CHECK option
+      libbpf: Synchronize uapi bpf.h header
+      libbpf: Add support to attach buildid to program load
+      perf tools: The buildid usage in example eBPF program
+
+ Makefile                                    | 14 +++++++++++++-
+ include/uapi/linux/bpf.h                    |  2 ++
+ init/Kconfig                                | 12 ++++++++++++
+ kernel/bpf/syscall.c                        | 84 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ scripts/Kbuild.include                      | 24 ++++++++++++++++++++++++
+ scripts/Makefile                            |  1 +
+ scripts/extract-buildid.c                   | 42 ++++++++++++++++++++++++++++++++++++++++++
+ tools/bpf/bpftool/Makefile                  |  5 ++++-
+ tools/include/uapi/linux/bpf.h              |  3 +++
+ tools/lib/bpf/bpf.c                         |  6 ++++--
+ tools/lib/bpf/bpf.h                         |  5 +++--
+ tools/lib/bpf/libbpf.c                      | 46 ++++++++++++++++++++++++++++++++++++++++------
+ tools/perf/bpf-samples/bpf-stdout-example.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/tests/bpf.c                      |  9 ++++++++-
+ tools/perf/util/symbol-minimal.c            | 50 ++------------------------------------------------
+ tools/perf/util/util.c                      | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/util.h                      |  6 ++++++
+ 17 files changed, 355 insertions(+), 62 deletions(-)
+ create mode 100644 scripts/extract-buildid.c
+ create mode 100644 tools/perf/bpf-samples/bpf-stdout-example.c
