@@ -1,380 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751442AbeDEXTf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 19:19:35 -0400
-Received: from mail-dm3nam03on0053.outbound.protection.outlook.com ([104.47.41.53]:28653
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750835AbeDEXTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 19:19:33 -0400
-From: Deepak Singh Rawat <drawat@vmware.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        linux-graphics-maintainer <linux-graphics-maintainer@vmware.com>,
-        "ville.syrjala@linux.intel.com" <ville.syrjala@linux.intel.com>,
-        "lukasz.spintzyk@displaylink.com" <lukasz.spintzyk@displaylink.com>,
-        "noralf@tronnes.org" <noralf@tronnes.org>,
-        "robdclark@gmail.com" <robdclark@gmail.com>,
-        "gustavo@padovan.org" <gustavo@padovan.org>,
-        "maarten.lankhorst@linux.intel.com"
-        <maarten.lankhorst@linux.intel.com>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC 2/3] drm: Add helper iterator functions to iterate over
- plane damage.
-Thread-Topic: [RFC 2/3] drm: Add helper iterator functions to iterate over
- plane damage.
-Thread-Index: AQHTzG/QxRDvLNOwKUiQ/1JAGDt4gKPxzRuAgAEAjMA=
-Date: Thu, 5 Apr 2018 23:19:29 +0000
-Message-ID: <MWHPR05MB311740B4ED9BD6E7A51739C3BABB0@MWHPR05MB3117.namprd05.prod.outlook.com>
-References: <1522885748-67122-1-git-send-email-drawat@vmware.com>
- <1522885748-67122-3-git-send-email-drawat@vmware.com>
- <20180405075205.GQ3881@phenom.ffwll.local>
-In-Reply-To: <20180405075205.GQ3881@phenom.ffwll.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=drawat@vmware.com;
-x-originating-ip: [66.170.99.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR05MB3597;7:OBFqQ8ZshgpAPbGqMh86374oX9hCGw15GYHRUFSIFVW3IYzU0wOGoGRkKS2LriiCS662q5svvcyDbZsly5s8o5o78BmxFLm67Oi05RKXKF1R1ijMQR+zdaVgoTr2xS8f6CddgwM6ginF9nlF0o2kDfQMKlEX8+WWKj313SjJbwzHm5wuyJq1QBZjg2GJy0Rg+cRPw2qJB138Z4sXT3yG7B28bcp1wUJB7AlIg7CiPIr0sS88CtnwvPGm5hjKIefG;20:J+3fADfcarxhkFfX4/DizAPNr+rltmjP4iLiQWYlT1naYt86GwFnhwX7ZxKnhKoE/MI0DzxAhbsEDbT3bS1vQXHAq99MojoqAbdB/WN/OxRr9sKeUtbOp1Nyut4c+RPQzioTDoJiCUcc1e2+/cslT7Q73VU6N+7i9erZBX8i5iA=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c716d0cc-d554-49a6-8b8b-08d59b4bae80
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR05MB3597;
-x-ms-traffictypediagnostic: MWHPR05MB3597:
-x-ld-processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
-x-microsoft-antispam-prvs: <MWHPR05MB35979CD4D57DF3BAE7984D83BABB0@MWHPR05MB3597.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(61668805478150)(10436049006162);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(3002001)(10201501046)(93006095)(93001095)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:MWHPR05MB3597;BCL:0;PCL:0;RULEID:;SRVR:MWHPR05MB3597;
-x-forefront-prvs: 06339BAE63
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39380400002)(396003)(39860400002)(346002)(366004)(199004)(189003)(76176011)(102836004)(7416002)(9686003)(14454004)(476003)(55016002)(53936002)(7696005)(6246003)(229853002)(6306002)(68736007)(6506007)(486006)(86362001)(966005)(2900100001)(25786009)(6436002)(5890100001)(54906003)(8676002)(74316002)(3660700001)(186003)(3280700002)(97736004)(81166006)(81156014)(2906002)(5250100002)(4326008)(7736002)(5660300001)(478600001)(39060400002)(316002)(59450400001)(26005)(105586002)(446003)(11346002)(6116002)(66066001)(305945005)(6916009)(33656002)(106356001)(99286004)(3846002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR05MB3597;H:MWHPR05MB3117.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: Hnq8uaRq5bjG1Kld898p0F89s3vBp9fE+7pScJG7Q2A1P2Nqoo9M+iQnEl8L54q8ztofw5A4dAb8tM5SsFj4c3L0tAmXmz0FAxZTFOmK0njeTuREMuGWGYSGOIANnrYsXYD9Ktn1lnlqLnIfX6tdJWCrL98DTzROVnldzzgDQjGT+eitSnGpqVrcIWk61V2Ib57GGoDom0on6l+xxFHXy7ejTCDlse4Hpim9dbMqHU2zGxjda5v197eOgCeU5XEBVo5iUa7Am+veHr9jgnk7Wwa8KUNtyxuyZSenh8/IwQJRnIgj548AFI7EejXuGtcZ1sPn0SlYSzFM1PE8odPni134xPrOZ51ILkDiLnqP/hGWp3mNM0ix70Trn5GPLjWA4H7fZjPl94iiUdwOZzVNtHqJXbi8nGAgJgE08pJYn5s=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S1751465AbeDEXUa convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 19:20:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750835AbeDEXU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 19:20:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82AAD21835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c716d0cc-d554-49a6-8b8b-08d59b4bae80
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Apr 2018 23:19:29.2743
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR05MB3597
+Content-Transfer-Encoding: 8BIT
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1522304274-18989-3-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
+ <1522304274-18989-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <152297042791.143116.12493897848354753009@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
+Date: Thu, 05 Apr 2018 16:20:27 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w35NJfB3029281
 
-> 
-> On Wed, Apr 04, 2018 at 04:49:07PM -0700, Deepak Rawat wrote:
-> > With damage property in drm_plane_state, this patch adds helper iterator
-> > to traverse the damage clips. Iterator will return the damage rectangles
-> > in framebuffer, plane or crtc coordinates as need by driver
-> > implementation.
-> >
-> > Signed-off-by: Deepak Rawat <drawat@vmware.com>
-> 
-> I'd really like selftest/unittests for this stuff. There's an awful lot of
-> cornercases in this here (for any of the transformed iterators at least),
-> and unit tests is the best way to make sure we handle them all correctly.
-> 
-> Bonus points if you integrate the new selftests into igt so intel CI can
-> run them, seel igt/tests/drm_mm.c for an example. drm_mm selftest is also
-> the framework I'd copy for this stuff.
-> 
-> > ---
-> >  drivers/gpu/drm/drm_atomic_helper.c | 122
-> ++++++++++++++++++++++++++++++++++++
-> >  include/drm/drm_atomic_helper.h     |  39 ++++++++++++
-> >  2 files changed, 161 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c
-> b/drivers/gpu/drm/drm_atomic_helper.c
-> > index 55b44e3..355b514 100644
-> > --- a/drivers/gpu/drm/drm_atomic_helper.c
-> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> > @@ -3865,3 +3865,125 @@ void
-> __drm_atomic_helper_private_obj_duplicate_state(struct drm_private_obj
-> *obj
-> >  	memcpy(state, obj->state, sizeof(*state));
-> >  }
-> >  EXPORT_SYMBOL(__drm_atomic_helper_private_obj_duplicate_state);
-> > +
-> > +/**
-> > + * drm_atomic_helper_damage_iter_init - initialize the damage iterator
-> > + * @iter: The iterator to initialize.
-> > + * @type: Coordinate type caller is interested in.
-> > + * @state: plane_state from which to iterate the damage clips.
-> > + * @hdisplay: Width of crtc on which plane is scanned out.
-> > + * @vdisplay: Height of crtc on which plane is scanned out.
-> > + *
-> > + * Initialize an iterator that is used to translate and clip a set of damage
-> > + * rectangles in framebuffer coordinates to plane and crtc coordinates.
-> The type
-> > + * argument specify which type of coordinate to iterate in.
-> > + *
-> > + * Returns: 0 on success and negative error code on error. If an error code
-> is
-> > + * returned then it means the plane state should not update.
-> > + */
-> > +int
-> > +drm_atomic_helper_damage_iter_init(struct
-> drm_atomic_helper_damage_iter *iter,
-> > +				   enum
-> drm_atomic_helper_damage_clip_type type,
-> > +				   const struct drm_plane_state *state,
-> > +				   uint32_t hdisplay, uint32_t vdisplay)
-> > +{
-> > +	if (!state || !state->crtc || !state->fb)
-> > +		return -EINVAL;
-> > +
-> > +	memset(iter, 0, sizeof(*iter));
-> > +	iter->clips = (struct drm_rect *)state->damage_clips->data;
-> > +	iter->num_clips = state->num_clips;
-> > +	iter->type = type;
-> > +
-> > +	/*
-> > +	 * Full update in case of scaling or rotation. In future support for
-> > +	 * scaling/rotating damage clips can be added
-> > +	 */
-> > +	if (state->crtc_w != (state->src_w >> 16) ||
-> > +	    state->crtc_h != state->src_h >> 16 || state->rotation != 0) {
-> > +		iter->curr_clip = iter->num_clips;
-> > +		return 0;
-> 
-> Given there's no user of this I have no idea how this manages to provoke a
-> full clip rect. selftest code would be perfect for stuff like this.
-> 
-> Also, I think we should provide a full clip for the case of num_clips ==
-> 0, so that driver code can simply iterate over all clips and doesn't ever
-> have to handle the "no clip rects provided" case as a special case itself.
+Quoting Taniya Das (2018-03-28 23:17:53)
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
+> new file mode 100644
+> index 0000000..8222c88
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
 
-The notion was if iterator does not provide any clip rect then driver need a
-full update but yes I will work on providing a full clip here.
+Can the file name be qcom,rpmh-clk?
 
-> 
-> > +	}
-> > +
-> > +	iter->fb_src.x1 = 0;
-> > +	iter->fb_src.y1 = 0;
-> > +	iter->fb_src.x2 = state->fb->width;
-> > +	iter->fb_src.y2 = state->fb->height;
-> > +
-> > +	iter->plane_src.x1 = state->src_x >> 16;
-> > +	iter->plane_src.y1 = state->src_y >> 16;
-> > +	iter->plane_src.x2 = iter->plane_src.x1 + (state->src_w >> 16);
-> > +	iter->plane_src.y2 = iter->plane_src.y1 + (state->src_h >> 16);
-> > +	iter->translate_plane_x = -iter->plane_src.x1;
-> > +	iter->translate_plane_y = -iter->plane_src.y1;
-> > +
-> > +	/* Clip plane src rect to fb dimensions */
-> > +	drm_rect_intersect(&iter->plane_src, &iter->fb_src);
-> 
-> This smells like driver bug. Also, see Ville's recent efforts to improve
-> the atomic plane clipping, I think drm_plane_state already has all the
-> clip rects you want.
-> 
-> > +
-> > +	iter->crtc_src.x1 = 0;
-> > +	iter->crtc_src.y1 = 0;
-> > +	iter->crtc_src.x2 = hdisplay;
-> > +	iter->crtc_src.y2 = vdisplay;
-> > +	iter->translate_crtc_x = -(iter->plane_src.x1 - state->crtc_x);
-> > +	iter->translate_crtc_x = -(iter->plane_src.y1 - state->crtc_y);
-> > +
-> > +	/* Clip crtc src rect to plane dimensions */
-> > +	drm_rect_translate(&iter->crtc_src, -iter->translate_crtc_x,
-> > +			   -iter->translate_crtc_x);
-> 
-> We can also scale.
-> 
-> > +	drm_rect_intersect(&iter->crtc_src, &iter->plane_src);
-> > +
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL(drm_atomic_helper_damage_iter_init);
-> > +
-> > +/**
-> > + * drm_atomic_helper_damage_iter_next - advance the damage iterator
-> > + * @iter: The iterator to advance.
-> > + * @rect: Return a rectangle in coordinate specified during iterator init.
-> > + *
-> > + * Returns:  true if the output is valid, false if we've reached the end of
-> the
-> > + * rectangle list. If the first call return false, means need full update.
-> > + */
-> > +bool
-> > +drm_atomic_helper_damage_iter_next(struct
-> drm_atomic_helper_damage_iter *iter,
-> > +				   struct drm_rect *rect)
-> > +{
-> > +	const struct drm_rect *curr_clip;
-> > +
-> > +next_clip:
-> > +	if (iter->curr_clip >= iter->num_clips)
-> > +		return false;
-> > +
-> > +	curr_clip = &iter->clips[iter->curr_clip];
-> > +	iter->curr_clip++;
-> > +
-> > +	rect->x1 = curr_clip->x1;
-> > +	rect->x2 = curr_clip->x2;
-> > +	rect->y1 = curr_clip->y1;
-> > +	rect->y2 = curr_clip->y2;
-> > +
-> > +	/* Clip damage rect within fb limit */
-> > +	if (!drm_rect_intersect(rect, &iter->fb_src))
-> > +		goto next_clip;
-> > +	else if (iter->type &
-> DRM_ATOMIC_HELPER_DAMAGE_CLIP_TYPE_FB)
-> > +		return true;
-> > +
-> > +	/* Clip damage rect within plane limit */
-> > +	if (!drm_rect_intersect(rect, &iter->plane_src))
-> > +		goto next_clip;
-> > +	else if (iter->type &
-> DRM_ATOMIC_HELPER_DAMAGE_CLIP_TYPE_PLANE) {
-> > +		drm_rect_translate(rect, iter->translate_plane_x,
-> > +				   iter->translate_plane_y);
-> > +		return true;
-> > +	}
-> > +
-> > +	/* Clip damage rect within crtc limit */
-> > +	if (!drm_rect_intersect(rect, &iter->crtc_src))
-> > +		goto next_clip;
-> > +
-> > +	drm_rect_translate(rect, iter->translate_crtc_x,
-> > +			   iter->translate_crtc_y);
-> > +
-> > +	return true;
-> > +}
-> > +EXPORT_SYMBOL(drm_atomic_helper_damage_iter_next);
-> > diff --git a/include/drm/drm_atomic_helper.h
-> b/include/drm/drm_atomic_helper.h
-> > index 26aaba5..ebd4b66 100644
-> > --- a/include/drm/drm_atomic_helper.h
-> > +++ b/include/drm/drm_atomic_helper.h
-> > @@ -36,6 +36,37 @@ struct drm_atomic_state;
-> >  struct drm_private_obj;
-> >  struct drm_private_state;
-> >
-> > +/**
-> > + * enum drm_atomic_helper_damage_clip_type - type of clips to iterator
-> over
-> > + *
-> > + * While using drm_atomic_helper_damage_iter the type of clip
-> coordinates caller
-> > + * is interested in.
-> > + */
-> > +enum drm_atomic_helper_damage_clip_type {
-> > +	DRM_ATOMIC_HELPER_DAMAGE_CLIP_TYPE_FB       = 0x0,
-> > +	DRM_ATOMIC_HELPER_DAMAGE_CLIP_TYPE_PLANE    = 0x1,
-> > +	DRM_ATOMIC_HELPER_DAMAGE_CLIP_TYPE_CRTC     = 0x2,
-> 
-> I'm confused with what exactly these different types of iterators are
-> supposed to achieve. TYPE_FB makes sense, that's what vmwgfx and other
-> virtual drivers need to figure out which parts of a buffer to upload to
-> the host.
-> 
-> TYPE_PLANE I have no idea who needs that. I suggest we just drop it.
-> 
-> TYPE_CRTC is what I'd want to use for manual upload hw, were instead of
-> compositing the entire screen we can limit the uploaded area to 1 or 2
-> rectangles (depending upon how the hw works). But those drivers want all
-> the crtc clip rects for _all_ the planes combined, not for each plane
-> individually.
-> 
-> My suggestion is to drop TYPE_CRTC until someone needs it for a driver.
-> And most likely the only iterator we want for TYPE_CRTC is one that gives
-> you the overall damage area, including alpha/ctm/gamma/everything else,
-> coalesced into just 1 clip rect. So probably an entirely different
-> function.
-> 
-> Summarizing all this, I'd simplify the iterator to:
-> 
-> drm_atomic_helper_damage_iter_init(iter, plane_state);
-> 
-> And leave the other 2 use-cases to the next patch series. For crtc damage
-> we probably want:
-> 
-> drm_atomic_helper_crtc_damage(drm_atomic_state, rect)
-> 
-> Which internally loops over all planes and also takes all the other state
-> changes into account. That way you also don't have to fix the scaling
-> issue, since your current code only handles translation.
-> 
-> Another bit: drm_atomic_helper.c is huge, I'd vote to put all this stuff
-> into a new drm_damage_helper.[hc], including new section in drm-kms.rst
-> and all that. Splitting up drm_atomic_helper.[hc] is somewhere on my todo
+> @@ -0,0 +1,22 @@
+> +Qualcomm Technologies, Inc. RPMh Clocks
+> +-------------------------------------------------------
+> +
+> +Resource Power Manager Hardened (RPMh) manages shared resources on
+> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
+> +other hardware subsystems via RSC to control clocks.
+> +
+> +Required properties :
+> +- compatible : shall contain "qcom,rpmh-clk-sdm845"
+> +
+> +- #clock-cells : must contain 1
+> +
+> +Example :
+> +
+> +#include <dt-bindings/clock/qcom,rpmh.h>
+> +
+> +       &apps_rsc {
 
-Agreed with the conclusion with inputs from other email.
+> +               clock_rpmh: qcom,rpmhclk {
 
-> ...
-> 
-> Cheers, Daniel
-> 
-> > +};
-> > +
-> > +/**
-> > + * struct drm_atomic_helper_damage_iter - damage clip iterator
-> > + *
-> > + * This iterator tracks state needed to walk the list of damage clips.
-> > + */
-> > +struct drm_atomic_helper_damage_iter {
-> > +	enum drm_atomic_helper_damage_clip_type type;
-> > +	const struct drm_rect *clips;
-> > +	uint32_t num_clips;
-> > +	uint32_t curr_clip;
-> > +	struct drm_rect fb_src;
-> > +	int translate_plane_x;
-> > +	int translate_plane_y;
-> > +	struct drm_rect plane_src;
-> > +	int translate_crtc_x;
-> > +	int translate_crtc_y;
-> > +	struct drm_rect crtc_src;
-> > +};
-> > +
-> >  int drm_atomic_helper_check_modeset(struct drm_device *dev,
-> >  				struct drm_atomic_state *state);
-> >  int drm_atomic_helper_check_plane_state(struct drm_plane_state
-> *plane_state,
-> > @@ -185,6 +216,14 @@ int drm_atomic_helper_legacy_gamma_set(struct
-> drm_crtc *crtc,
-> >  				       struct drm_modeset_acquire_ctx *ctx);
-> >  void __drm_atomic_helper_private_obj_duplicate_state(struct
-> drm_private_obj *obj,
-> >  						     struct drm_private_state
-> *state);
-> > +int
-> > +drm_atomic_helper_damage_iter_init(struct
-> drm_atomic_helper_damage_iter *iter,
-> > +				   enum
-> drm_atomic_helper_damage_clip_type type,
-> > +				   const struct drm_plane_state *state,
-> > +				   uint32_t hdisplay, uint32_t vdisplay);
-> > +bool
-> > +drm_atomic_helper_damage_iter_next(struct
-> drm_atomic_helper_damage_iter *iter,
-> > +				   struct drm_rect *rect);
-> >
-> >  /**
-> >   * drm_atomic_crtc_for_each_plane - iterate over planes currently
-> attached to CRTC
-> > --
-> > 2.7.4
-> >
-> 
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> https://urldefense.proofpoint.com/v2/url?u=http-
-> 3A__blog.ffwll.ch&d=DwIBAg&c=uilaK90D4TOVoH58JNXRgQ&r=zOOG28inJK
-> 0762SxAf-
-> cyZdStnd2NQpRu98lJP2iYGw&m=OWr46Afx4MYOgDehJbODL7IzBsDEeoGiJn
-> okZtIh2Qc&s=BH7dN6UEpjEaMKYHooi2AKk-zLYHXl5F7YT7j55qWO8&e=
+Should say clock-controller for node name.
+
+> +               compatible = "qcom,rpmh-clk-sdm845";
+> +               #clock-cells = <1>;
+
+Is this tabbed out correctly?
+
+> +               };
+> +       };
