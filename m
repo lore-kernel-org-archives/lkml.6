@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751984AbeDEJut (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:50:49 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60798 "EHLO
+        id S1752486AbeDEJ6J (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:58:09 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60912 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751602AbeDEJum (ORCPT
+        with ESMTP id S1751602AbeDEJuv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:50:42 -0400
+        Thu, 5 Apr 2018 05:50:51 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -24,9 +24,9 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 13/30] drm/rockchip: Restore psr->state when enable/disable psr failed
-Date: Thu,  5 Apr 2018 11:49:43 +0200
-Message-Id: <20180405095000.9756-14-enric.balletbo@collabora.com>
+Subject: [PATCH v6 17/30] drm/bridge: analogix_dp: Move fast link training detect to set_bridge
+Date: Thu,  5 Apr 2018 11:49:47 +0200
+Message-Id: <20180405095000.9756-18-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
 References: <20180405095000.9756-1-enric.balletbo@collabora.com>
@@ -36,144 +36,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zain wang <wzz@rock-chips.com>
 
-If we failed disable psr, it would hang the display until next psr
-cycle coming. So we should restore psr->state when it failed.
+It's too early to detect fast link training, if other step after it
+failed, we will set fast_link flag to 1, and retry set_bridge again. In
+this case we will power down and power up panel power supply, and we
+will do fast link training since we have set fast_link flag to 1. In
+fact, we should do full link training now, not the fast link training.
+So we should move the fast link detection at the end of set_bridge.
 
 Cc: Tomasz Figa <tfiga@chromium.org>
 Signed-off-by: zain wang <wzz@rock-chips.com>
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  4 +++-
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 10 +++++-----
- drivers/gpu/drm/rockchip/rockchip_drm_psr.c        | 20 +++++++++++++-------
- drivers/gpu/drm/rockchip/rockchip_drm_psr.h        |  2 +-
- 4 files changed, 22 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 42 +++++++++++++---------
+ 1 file changed, 26 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 75e61ebf6722..5540e2dfc2ec 100644
+index a72e454a7292..69b2c16e5776 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -153,8 +153,10 @@ int analogix_dp_disable_psr(struct analogix_dp_device *dp)
- 	psr_vsc.DB1 = 0;
+@@ -601,7 +601,7 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
+ {
+ 	int lane, lane_count, retval;
+ 	u32 reg;
+-	u8 link_align, link_status[2], adjust_request[2], spread;
++	u8 link_align, link_status[2], adjust_request[2];
  
- 	ret = drm_dp_dpcd_writeb(&dp->aux, DP_SET_POWER, DP_SET_POWER_D0);
--	if (ret != 1)
+ 	usleep_range(400, 401);
+ 
+@@ -645,20 +645,6 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
+ 		dev_dbg(dp->dev, "final lane count = %.2x\n",
+ 			dp->link_train.lane_count);
+ 
+-		retval = drm_dp_dpcd_readb(&dp->aux, DP_MAX_DOWNSPREAD,
+-					   &spread);
+-		if (retval != 1) {
+-			dev_err(dp->dev, "failed to read downspread %d\n",
+-				retval);
+-			dp->fast_train_enable = false;
+-		} else {
+-			dp->fast_train_enable =
+-				(spread & DP_NO_AUX_HANDSHAKE_LINK_TRAINING) ?
+-					true : false;
+-		}
+-		dev_dbg(dp->dev, "fast link training %s\n",
+-			dp->fast_train_enable ? "supported" : "unsupported");
+-
+ 		dp->link_train.lt_state = FINISHED;
+ 
+ 		return 0;
+@@ -996,6 +982,22 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
++static int analogix_dp_fast_link_train_detection(struct analogix_dp_device *dp)
++{
++	int ret;
++	u8 spread;
++
++	ret = drm_dp_dpcd_readb(&dp->aux, DP_MAX_DOWNSPREAD, &spread);
 +	if (ret != 1) {
- 		dev_err(dp->dev, "Failed to set DP Power0 %d\n", ret);
++		dev_err(dp->dev, "failed to read downspread %d\n", ret);
 +		return ret;
 +	}
- 
- 	return analogix_dp_send_psr_spd(dp, &psr_vsc, false);
- }
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 3e8bf79bea58..8c884f9ce713 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -77,13 +77,13 @@ struct rockchip_dp_device {
- 	struct analogix_dp_plat_data plat_data;
- };
- 
--static void analogix_dp_psr_set(struct drm_encoder *encoder, bool enabled)
-+static int analogix_dp_psr_set(struct drm_encoder *encoder, bool enabled)
++	dp->fast_train_enable = !!(spread & DP_NO_AUX_HANDSHAKE_LINK_TRAINING);
++	dev_dbg(dp->dev, "fast link training %s\n",
++		dp->fast_train_enable ? "supported" : "unsupported");
++	return 0;
++}
++
+ static int analogix_dp_commit(struct analogix_dp_device *dp)
  {
- 	struct rockchip_dp_device *dp = to_dp(encoder);
  	int ret;
+@@ -1038,8 +1040,16 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
+ 	if (ret)
+ 		return ret;
  
- 	if (!analogix_dp_psr_enabled(dp->adp))
--		return;
-+		return 0;
- 
- 	DRM_DEV_DEBUG(dp->dev, "%s PSR...\n", enabled ? "Entry" : "Exit");
- 
-@@ -91,13 +91,13 @@ static void analogix_dp_psr_set(struct drm_encoder *encoder, bool enabled)
- 					 PSR_WAIT_LINE_FLAG_TIMEOUT_MS);
- 	if (ret) {
- 		DRM_DEV_ERROR(dp->dev, "line flag interrupt did not arrive\n");
--		return;
-+		return -ETIMEDOUT;
- 	}
- 
- 	if (enabled)
--		analogix_dp_enable_psr(dp->adp);
-+		return analogix_dp_enable_psr(dp->adp);
- 	else
--		analogix_dp_disable_psr(dp->adp);
-+		return analogix_dp_disable_psr(dp->adp);
- }
- 
- static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-index b339ca943139..9376f4396b6b 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-@@ -36,7 +36,7 @@ struct psr_drv {
- 
- 	struct delayed_work	flush_work;
- 
--	void (*set)(struct drm_encoder *encoder, bool enable);
-+	int (*set)(struct drm_encoder *encoder, bool enable);
- };
- 
- static struct psr_drv *find_psr_by_crtc(struct drm_crtc *crtc)
-@@ -93,19 +93,25 @@ static void psr_set_state_locked(struct psr_drv *psr, enum psr_state state)
- 		return;
- 	}
- 
--	psr->state = state;
--
- 	/* Actually commit the state change to hardware */
--	switch (psr->state) {
-+	switch (state) {
- 	case PSR_ENABLE:
--		psr->set(psr->encoder, true);
-+		if (psr->set(psr->encoder, true))
-+			return;
- 		break;
- 
- 	case PSR_DISABLE:
- 	case PSR_FLUSH:
--		psr->set(psr->encoder, false);
-+		if (psr->set(psr->encoder, false))
-+			return;
- 		break;
+-	if (dp->psr_enable)
++	if (dp->psr_enable) {
+ 		ret = analogix_dp_enable_sink_psr(dp);
++		if (ret)
++			return ret;
++	}
 +
-+	default:
-+		pr_err("%s: Unknown state %d\n", __func__, state);
-+		return;
- 	}
-+
-+	psr->state = state;
++	/* Check whether panel supports fast training */
++	ret =  analogix_dp_fast_link_train_detection(dp);
++	if (ret)
++		dp->psr_enable = false;
+ 
+ 	return ret;
  }
- 
- static void psr_set_state(struct psr_drv *psr, enum psr_state state)
-@@ -229,7 +235,7 @@ EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
-  * Zero on success, negative errno on failure.
-  */
- int rockchip_drm_psr_register(struct drm_encoder *encoder,
--			void (*psr_set)(struct drm_encoder *, bool enable))
-+			int (*psr_set)(struct drm_encoder *, bool enable))
- {
- 	struct rockchip_drm_private *drm_drv = encoder->dev->dev_private;
- 	struct psr_drv *psr;
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-index b1ea0155e57c..06537ee27565 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-@@ -22,7 +22,7 @@ int rockchip_drm_psr_activate(struct drm_encoder *encoder);
- int rockchip_drm_psr_deactivate(struct drm_encoder *encoder);
- 
- int rockchip_drm_psr_register(struct drm_encoder *encoder,
--			void (*psr_set)(struct drm_encoder *, bool enable));
-+			int (*psr_set)(struct drm_encoder *, bool enable));
- void rockchip_drm_psr_unregister(struct drm_encoder *encoder);
- 
- #endif /* __ROCKCHIP_DRM_PSR__ */
 -- 
 2.16.3
