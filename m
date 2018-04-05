@@ -1,145 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753426AbeDEUbd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 16:31:33 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:47220 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751465AbeDEUb1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 16:31:27 -0400
-Date: Thu, 5 Apr 2018 22:31:21 +0200
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Subject: Re: [PATCH 0/8] use struct pt_regs based syscall calling for x86-64
-Message-ID: <20180405203121.GA27104@light.dominikbrodowski.net>
-References: <20180405095307.3730-1-linux@dominikbrodowski.net>
- <20180405151933.egmt7ressx2ikdnr@gmail.com>
+        id S1753463AbeDEUbk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 16:31:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39770 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751750AbeDEUbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 16:31:38 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 19/20] afs: Add stats for data transfer operations
+From: David Howells <dhowells@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Thu, 05 Apr 2018 21:31:36 +0100
+Message-ID: <152296029636.31027.9996788773150502222.stgit@warthog.procyon.org.uk>
+In-Reply-To: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
+References: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405151933.egmt7ressx2ikdnr@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 05:19:33PM +0200, Ingo Molnar wrote:
-> Ok, this series looks mostly good to me, but AFAICS this breaks the UML build:
-> 
->  make[2]: *** No rule to make target 'archheaders'.  Stop.
->  arch/um/Makefile:119: recipe for target 'archheaders' failed
->  make[1]: *** [archheaders] Error 2
->  make[1]: *** Waiting for unfinished jobs....
+Add statistics to /proc/fs/afs/stats for data transfer RPC operations.  New
+lines are added that look like:
 
-Ah, that's caused by patch 8/8 which I did and do not like all that much
-anyway: UML re-uses syscall_64.tbl which now has x86-specific entries like
-__sys_x86_pread64, but expects the generic syscall stub sys_pread64
-referenced there. Fixup patch below; could be folded with patch 8/8. Or
-patch 8/8 could simply be dropped from the series altogether...
+	file-rd : n=55794 nb=10252282150
+	file-wr : n=9789 nb=3247763645
 
-Thanks,
-	Dominik
+where n= indicates the number of ops completed and nb= indicates the number
+of bytes successfully transferred.  file-rd is the counts for read/fetch
+operations and file-wr the counts for write/store operations.
 
---------------------------------------------------------------------------
->From f5049ea4e1e5e7751e72a22cbc1b3a9389959a04 Mon Sep 17 00:00:00 2001
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Date: Thu, 5 Apr 2018 22:16:23 +0200
-Subject: [PATCH] syscalls/x86: fix UML syscall table
+Note that directory and symlink downloading are included in the file-rd
+stats at the moment.
 
-To differentiate the different calling regime used on x86, the syscall
-functions received __sys_x86_ as prefix (instead of sys_). This breaks
-the build of UML on 64-bit x86, as it re-uses the same syscall table.
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-To fix this, replace the __sys_x86_ prefix with sys_ during the generation
-of <asm/syscalls_64.h>.
+ fs/afs/file.c     |    6 ++++++
+ fs/afs/internal.h |    4 ++++
+ fs/afs/proc.c     |    7 +++++++
+ fs/afs/write.c    |    6 ++++++
+ 4 files changed, 23 insertions(+)
 
-Fixes: syscalls/x86: rename struct pt_regs-based sys_*() to __sys_x86_*()
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: x86@kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-
-diff --git a/arch/x86/entry/syscalls/syscalltbl.sh b/arch/x86/entry/syscalls/syscalltbl.sh
-index d71ef4bd3615..d6376b87ecb2 100644
---- a/arch/x86/entry/syscalls/syscalltbl.sh
-+++ b/arch/x86/entry/syscalls/syscalltbl.sh
-@@ -20,17 +20,47 @@ syscall_macro() {
-     echo "__SYSCALL_${abi}($nr, $real_entry, $qualifier)"
+diff --git a/fs/afs/file.c b/fs/afs/file.c
+index 91ff1335fd33..e5cac1bc3cf0 100644
+--- a/fs/afs/file.c
++++ b/fs/afs/file.c
+@@ -242,6 +242,12 @@ int afs_fetch_data(struct afs_vnode *vnode, struct key *key, struct afs_read *de
+ 		ret = afs_end_vnode_operation(&fc);
+ 	}
+ 
++	if (ret == 0) {
++		afs_stat_v(vnode, n_fetches);
++		atomic_long_add(desc->actual_len,
++				&afs_v2net(vnode)->n_fetch_bytes);
++	}
++
+ 	_leave(" = %d", ret);
+ 	return ret;
+ }
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 901c11521662..184094810038 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -271,6 +271,10 @@ struct afs_net {
+ 	atomic_t		n_read_dir;	/* Number of directory pages read */
+ 	atomic_t		n_dir_cr;	/* Number of directory entry creation edits */
+ 	atomic_t		n_dir_rm;	/* Number of directory entry removal edits */
++	atomic_t		n_stores;	/* Number of store ops */
++	atomic_long_t		n_store_bytes;	/* Number of bytes stored */
++	atomic_long_t		n_fetch_bytes;	/* Number of bytes fetched */
++	atomic_t		n_fetches;	/* Number of data fetch ops */
+ };
+ 
+ extern const char afs_init_sysname[];
+diff --git a/fs/afs/proc.c b/fs/afs/proc.c
+index 5ced655d08b3..870b0bad03d0 100644
+--- a/fs/afs/proc.c
++++ b/fs/afs/proc.c
+@@ -902,6 +902,13 @@ static int afs_proc_stats_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "dir-edit: cr=%u rm=%u\n",
+ 		   atomic_read(&net->n_dir_cr),
+ 		   atomic_read(&net->n_dir_rm));
++
++	seq_printf(m, "file-rd : n=%u nb=%lu\n",
++		   atomic_read(&net->n_fetches),
++		   atomic_long_read(&net->n_fetch_bytes));
++	seq_printf(m, "file-wr : n=%u nb=%lu\n",
++		   atomic_read(&net->n_stores),
++		   atomic_long_read(&net->n_store_bytes));
+ 	return 0;
  }
  
--emit() {
-+emit64() {
-     abi="$1"
-     nr="$2"
-     entry="$3"
-     compat="$4"
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 70a563c14e6f..eccc16198f68 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -356,6 +356,12 @@ static int afs_store_data(struct address_space *mapping,
+ 	}
  
--    if [ "$abi" = "64" -a -n "$compat" ]; then
-+    if [ "$abi" = "I386" ]; then
-+	echo "emit64() called for a 32-bit syscall" >&2
-+	exit 1
-+    fi
-+
-+    if [ -n "$compat" ]; then
- 	echo "a compat entry for a 64-bit syscall makes no sense" >&2
- 	exit 1
-     fi
- 
-+    if [ -n "$entry" ]; then
-+	# For CONFIG_UML, we need to strip the __sys_x86 prefix
-+	if [ "${entry}" = "${entry#__compat_sys}" ]; then
-+            umlentry="sys${entry#__sys_x86}"
-+	fi
-+
-+	echo "#ifdef CONFIG_X86"
-+	syscall_macro "$abi" "$nr" "$entry"
-+	echo "#else /* CONFIG_UML */"
-+	syscall_macro "$abi" "$nr" "$umlentry"
-+	echo "#endif"
-+    fi
-+}
-+
-+emit32() {
-+    abi="$1"
-+    nr="$2"
-+    entry="$3"
-+    compat="$4"
-+
-+    if [ "$abi" = "64" ]; then
-+	echo "emit32() called for a 64-bit syscall" >&2
-+	exit 1
-+    fi
-+
-     if [ -z "$compat" ]; then
- 	if [ -n "$entry" ]; then
- 	    syscall_macro "$abi" "$nr" "$entry"
-@@ -53,14 +83,14 @@ grep '^[0-9]' "$in" | sort -n | (
- 	    # COMMON is the same as 64, except that we don't expect X32
- 	    # programs to use it.  Our expectation has nothing to do with
- 	    # any generated code, so treat them the same.
--	    emit 64 "$nr" "$entry" "$compat"
-+	    emit64 64 "$nr" "$entry" "$compat"
- 	elif [ "$abi" = "X32" ]; then
- 	    # X32 is equivalent to 64 on an X32-compatible kernel.
- 	    echo "#ifdef CONFIG_X86_X32_ABI"
--	    emit 64 "$nr" "$entry" "$compat"
-+	    emit64 64 "$nr" "$entry" "$compat"
- 	    echo "#endif"
- 	elif [ "$abi" = "I386" ]; then
--	    emit "$abi" "$nr" "$entry" "$compat"
-+	    emit32 "$abi" "$nr" "$entry" "$compat"
- 	else
- 	    echo "Unknown abi $abi" >&2
- 	    exit 1
+ 	switch (ret) {
++	case 0:
++		afs_stat_v(vnode, n_stores);
++		atomic_long_add((last * PAGE_SIZE + to) -
++				(first * PAGE_SIZE + offset),
++				&afs_v2net(vnode)->n_store_bytes);
++		break;
+ 	case -EACCES:
+ 	case -EPERM:
+ 	case -ENOKEY:
