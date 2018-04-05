@@ -1,94 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751779AbeDEKuE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 06:50:04 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54921 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751363AbeDEKuD (ORCPT
+        id S1751896AbeDEKuP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 06:50:15 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47549 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751368AbeDEKuN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 06:50:03 -0400
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "Alexandre TORGUE" <alexandre.torgue@st.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] phy: stm32: Fix printing of wrong uninitialized port
- number
-Thread-Topic: [PATCH] phy: stm32: Fix printing of wrong uninitialized port
- number
-Thread-Index: AQHTzMMQP2C5d1N8iEiUiCFUh5f97qPx/ZJw
-Date: Thu, 5 Apr 2018 10:49:38 +0000
-Message-ID: <3d3bad02a48f4d5cb1d6f0db1d108cbf@SFHDAG3NODE2.st.com>
-References: <1522921619-5790-1-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1522921619-5790-1-git-send-email-geert@linux-m68k.org>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.45]
-Content-Type: text/plain; charset="utf-8"
+        Thu, 5 Apr 2018 06:50:13 -0400
+From: Colin King <colin.king@canonical.com>
+To: Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] orangefs: make struct orangefs_file_vm_ops static
+Date: Thu,  5 Apr 2018 11:50:10 +0100
+Message-Id: <20180405105010.11210-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-05_05:,,
- signatures=0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w35AoAna015912
 
-Hi Geert,
+From: Colin Ian King <colin.king@canonical.com>
 
-Just to let you know, this warning is already fixed by a pending patch I've sent two weeks ago: https://lkml.org/lkml/2018/3/20/424.
+The struct orangefs_file_vm_ops is local to the source and does not need
+to be in global scope, so make it static.
 
-Thanks,
-Amelie
+Cleans up sparse warning:
+fs/orangefs/file.c:547:35: warning: symbol 'orangefs_file_vm_ops' was not
+declared. Should it be static?
 
-> -----Original Message-----
-> From: Geert Uytterhoeven [mailto:geert@linux-m68k.org]
-> Sent: jeudi 5 avril 2018 11:47
-> To: Kishon Vijay Abraham I <kishon@ti.com>; Maxime Coquelin
-> <mcoquelin.stm32@gmail.com>; Alexandre TORGUE
-> <alexandre.torgue@st.com>; Amelie DELAUNAY <amelie.delaunay@st.com>
-> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
-> Geert Uytterhoeven <geert@linux-m68k.org>
-> Subject: [PATCH] phy: stm32: Fix printing of wrong uninitialized port number
-> 
-> drivers/phy/st/phy-stm32-usbphyc.c: In function ‘stm32_usbphyc_probe’:
-> drivers/phy/st/phy-stm32-usbphyc.c:364: warning: ‘i’ may be used
-> uninitialized in this function
-> 
-> Indeed, during the first loop iteration, "i" is uninitialized.
-> However, "i" does not represent the intended PHY instance number to print.
-> 
-> Fix this by printing the correct variable instead.
-> 
-> Fixes: 94c358da3a054520 ("phy: stm32: add support for STM32 USB PHY
-> Controller (USBPHYC)")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
->  drivers/phy/st/phy-stm32-usbphyc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/st/phy-stm32-usbphyc.c b/drivers/phy/st/phy-
-> stm32-usbphyc.c
-> index bc4e78a19c913dc9..1f682c176fd6239e 100644
-> --- a/drivers/phy/st/phy-stm32-usbphyc.c
-> +++ b/drivers/phy/st/phy-stm32-usbphyc.c
-> @@ -367,8 +367,8 @@ static int stm32_usbphyc_probe(struct
-> platform_device *pdev)
->  		if (IS_ERR(phy)) {
->  			ret = PTR_ERR(phy);
->  			if (ret != -EPROBE_DEFER)
-> -				dev_err(dev,
-> -					"failed to create phy%d: %d\n", i, ret);
-> +				dev_err(dev, "failed to create phy%d: %d\n",
-> +					port, ret);
->  			goto put_child;
->  		}
-> 
-> --
-> 2.7.4
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/orangefs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+index 26358efbf794..84f44365bfb3 100644
+--- a/fs/orangefs/file.c
++++ b/fs/orangefs/file.c
+@@ -544,7 +544,7 @@ static int orangefs_fault(struct vm_fault *vmf)
+ 	return filemap_fault(vmf);
+ }
+ 
+-const struct vm_operations_struct orangefs_file_vm_ops = {
++static const struct vm_operations_struct orangefs_file_vm_ops = {
+ 	.fault = orangefs_fault,
+ 	.map_pages = filemap_map_pages,
+ 	.page_mkwrite = filemap_page_mkwrite,
+-- 
+2.15.1
