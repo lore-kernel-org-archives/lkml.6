@@ -1,72 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752846AbeDETnf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 15:43:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:34490 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752641AbeDETnd (ORCPT
+        id S1752875AbeDETno (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 15:43:44 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38875 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752848AbeDETnj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 15:43:33 -0400
-Subject: Re: [PATCH] KVM: vmx: unify adjacent #ifdefs
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <1522861162-47491-1-git-send-email-pbonzini@redhat.com>
-From: Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Message-ID: <94589381-e93e-1a72-e4c1-c15359e6ad8a@oracle.com>
-Date: Thu, 5 Apr 2018 12:43:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.6.0
+        Thu, 5 Apr 2018 15:43:39 -0400
+X-Google-Smtp-Source: AIpwx49c6ZNHFyYaUuxmf0D7M/pzmXlW2dIvu4V+lm5WTVnEh+I6s7Y1/d0pY8ewT99y2mcWMXlegA==
+Date: Thu, 5 Apr 2018 12:43:35 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [git pull] Input updates for v4.17-rc0
+Message-ID: <20180405194335.GA176669@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <1522861162-47491-1-git-send-email-pbonzini@redhat.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8854 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=990
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804050194
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
+Please pull from:
 
-On 04/04/2018 09:59 AM, Paolo Bonzini wrote:
-> vmx_save_host_state has multiple ifdefs for CONFIG_X86_64 that have
-> no other code between them.  Simplify by reducing them to a single
-> conditional.
->
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->   arch/x86/kvm/vmx.c | 10 +++-------
->   1 file changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 939c8724feb4..a1572461786e 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -2392,20 +2392,16 @@ static void vmx_save_host_state(struct kvm_vcpu *vcpu)
->   #ifdef CONFIG_X86_64
->   	savesegment(ds, vmx->host_state.ds_sel);
->   	savesegment(es, vmx->host_state.es_sel);
-> -#endif
->   
-> -#ifdef CONFIG_X86_64
->   	vmcs_writel(HOST_FS_BASE, current->thread.fsbase);
->   	vmcs_writel(HOST_GS_BASE, cpu_kernelmode_gs_base(cpu));
-> -#else
-> -	vmcs_writel(HOST_FS_BASE, segment_base(vmx->host_state.fs_sel));
-> -	vmcs_writel(HOST_GS_BASE, segment_base(vmx->host_state.gs_sel));
-> -#endif
->   
-> -#ifdef CONFIG_X86_64
->   	vmx->msr_host_kernel_gs_base = current->thread.gsbase;
->   	if (is_long_mode(&vmx->vcpu))
->   		wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
-> +#else
-> +	vmcs_writel(HOST_FS_BASE, segment_base(vmx->host_state.fs_sel));
-> +	vmcs_writel(HOST_GS_BASE, segment_base(vmx->host_state.gs_sel));
->   #endif
->   	if (boot_cpu_has(X86_FEATURE_MPX))
->   		rdmsrl(MSR_IA32_BNDCFGS, vmx->host_state.msr_host_bndcfgs);
-Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+
+to receive updates for the input subsystem. You will get:
+
+- a new driver for PhoenixRC Flight Controller Adapter 
+- a new driver for RAVE SP Power button
+- fixes for autosuspend-related deadlocks in a few unput USB dirvers
+- support for 2nd wheel in ATech PS/2 mouse 
+- fix for ALPS trackpoint detection on Thinkpad L570 and Latitude 7370
+- bunch of cleanups in various in PS/2 protocols
+- other assorted changes and fixes
+
+There will be a conflict in drivers/input/joystick/analog.c, please
+resolve so the line reads:
+
+#elif defined(__alpha__) || defined(CONFIG_ARM) || defined(CONFIG_ARM64) || defined(CONFIG_PPC) || defined(CONFIG_RISCV)
+
+Thanks!
+
+Changelog:
+---------
+
+Andi Shyti (1):
+      Input: stmfts, s6sy761 - update my e-mail
+
+Andrey Smirnov (1):
+      Input: add RAVE SP Powerbutton driver
+
+Dennis Wassenberg (1):
+      Input: i8042 - add Lenovo ThinkPad L460 to i8042 reset list
+
+Dmitry Torokhov (14):
+      Input: psmouse - create helper for reporting standard buttons/motion
+      Input: psmouse - clean up code
+      Input: logips2pp - clean up code
+      Input: lifebook - clean up code
+      Input: libps2 - fix switch statement formatting
+      Input: libps2 - use u8 for byte data
+      Input: libps2 - use BIT() for bitmask constants
+      Input: psmouse - move sliced command implementation to libps2
+      Input: libps2 - add debugging statements
+      Input: libps2 - support retransmission of command data
+      Input: libps2 - relax command byte ACK handling
+      Input: trackpoint - combine calls to ps2_command()
+      Input: synaptics - switch to using input_set_capability
+      Input: synaptics - handle errors from input_mt_init_slots()
+
+Francis Therien (1):
+      Input: xpad - add PDP device id 0x02a4
+
+Gustavo A. R. Silva (2):
+      Input: stmpe-keypad - remove VLA usage
+      Input: appletouch - use true and false for boolean values
+
+Jeffy Chen (1):
+      Input: gpio-keys - add support for wakeup event action
+
+Marcus Folkesson (7):
+      Input: synaptics_usb - fix deadlock in autosuspend
+      Input: synaptics_usb - do not rely on input_dev->users
+      Input: pagasus_notetaker - fix deadlock in autosuspend
+      Input: pegasus_notetaker - do not rely on input_dev->users
+      Input: usbtouchscreen - fix deadlock in autosuspend
+      Input: usbtouchscreen - do not rely on input_dev->users
+      Input: pxrc - new driver for PhoenixRC Flight Controller Adapter
+
+Marek Szyprowski (1):
+      Input: stmfts - use async probe & suspend/resume to avoid 2s delay
+
+Maruyama Shohei (1):
+      Input: silead - add Chuwi Hi8 support
+
+Masaki Ota (1):
+      Input: ALPS - fix TrackStick detection on Thinkpad L570 and Latitude 7370
+
+Michael Ellerman (1):
+      Input: analog - use get_cycles() on PPC
+
+Ondrej Zary (1):
+      Input: i8042 - enable MUX on Sony VAIO VGN-CS series to fix touchpad
+
+Pali Rohár (1):
+      Input: alps - report pressure of v3 and v7 trackstick
+
+Stephen Lyons (1):
+      Input: psmouse - add support for 2nd wheel on A4Tech Dual-Scroll wheel mice
+
+Diffstat:
+--------
+
+ .../devicetree/bindings/input/gpio-keys.txt        |   8 +
+ .../bindings/input/zii,rave-sp-pwrbutton.txt       |  22 ++
+ Documentation/input/devices/pxrc.rst               |  57 ++++
+ drivers/input/joystick/Kconfig                     |  10 +
+ drivers/input/joystick/Makefile                    |   1 +
+ drivers/input/joystick/analog.c                    |   2 +-
+ drivers/input/joystick/pxrc.c                      | 303 +++++++++++++++++++
+ drivers/input/joystick/xpad.c                      |   9 +-
+ drivers/input/keyboard/gpio_keys.c                 | 145 +++++++++-
+ drivers/input/keyboard/stmpe-keypad.c              |  16 +-
+ drivers/input/misc/Kconfig                         |   9 +
+ drivers/input/misc/Makefile                        |   1 +
+ drivers/input/misc/rave-sp-pwrbutton.c             |  94 ++++++
+ drivers/input/mouse/alps.c                         |  64 ++--
+ drivers/input/mouse/appletouch.c                   |   6 +-
+ drivers/input/mouse/elantech.c                     |  40 +--
+ drivers/input/mouse/lifebook.c                     |  62 ++--
+ drivers/input/mouse/logips2pp.c                    | 152 +++++-----
+ drivers/input/mouse/psmouse-base.c                 | 189 ++++++------
+ drivers/input/mouse/psmouse.h                      |   5 +-
+ drivers/input/mouse/sentelic.c                     |  11 +-
+ drivers/input/mouse/synaptics.c                    |  90 +++---
+ drivers/input/mouse/synaptics_usb.c                |  31 +-
+ drivers/input/mouse/trackpoint.c                   |  60 ++--
+ drivers/input/serio/i8042-x86ia64io.h              |  24 ++
+ drivers/input/serio/libps2.c                       | 322 ++++++++++++++-------
+ drivers/input/tablet/pegasus_notetaker.c           |  32 +-
+ drivers/input/touchscreen/s6sy761.c                |   2 +-
+ drivers/input/touchscreen/silead.c                 |   1 +
+ drivers/input/touchscreen/stmfts.c                 |   4 +-
+ drivers/input/touchscreen/usbtouchscreen.c         |  24 +-
+ include/dt-bindings/input/gpio-keys.h              |  13 +
+ include/linux/gpio_keys.h                          |   2 +
+ include/linux/libps2.h                             |  38 ++-
+ 34 files changed, 1358 insertions(+), 491 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.txt
+ create mode 100644 Documentation/input/devices/pxrc.rst
+ create mode 100644 drivers/input/joystick/pxrc.c
+ create mode 100644 drivers/input/misc/rave-sp-pwrbutton.c
+ create mode 100644 include/dt-bindings/input/gpio-keys.h
+
+Thanks.
+
+-- 
+Dmitry
