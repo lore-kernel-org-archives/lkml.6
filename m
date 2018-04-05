@@ -1,52 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751249AbeDEC6q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 22:58:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40112 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750890AbeDEC6p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 22:58:45 -0400
-Date: Wed, 4 Apr 2018 19:58:41 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180405025841.GA9301@bombadil.infradead.org>
-References: <20180403121614.GV5501@dhcp22.suse.cz>
- <20180403082348.28cd3c1c@gandalf.local.home>
- <20180403123514.GX5501@dhcp22.suse.cz>
- <20180403093245.43e7e77c@gandalf.local.home>
- <20180403135607.GC5501@dhcp22.suse.cz>
- <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com>
- <20180404062340.GD6312@dhcp22.suse.cz>
- <20180404101149.08f6f881@gandalf.local.home>
- <20180404142329.GI6312@dhcp22.suse.cz>
- <20180404114730.65118279@gandalf.local.home>
+        id S1751262AbeDEDOc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 23:14:32 -0400
+Received: from imap.thunk.org ([74.207.234.97]:34782 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750853AbeDEDOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 23:14:31 -0400
+Date: Wed, 4 Apr 2018 23:14:20 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Waiman Long <longman@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH] locking/rwsem: Add up_write_non_owner() for
+ percpu_up_write()
+Message-ID: <20180405031420.GB22358@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Oleg Nesterov <oleg@redhat.com>
+References: <1522852646-2196-1-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180404114730.65118279@gandalf.local.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1522852646-2196-1-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 11:47:30AM -0400, Steven Rostedt wrote:
-> I originally was going to remove the RETRY_MAYFAIL, but adding this
-> check (at the end of the loop though) appears to have OOM consistently
-> kill this task.
-> 
-> I still like to keep RETRY_MAYFAIL, because it wont trigger OOM if
-> nothing comes in and tries to do an allocation, but instead will fail
-> nicely with -ENOMEM.
+On Wed, Apr 04, 2018 at 10:37:26AM -0400, Waiman Long wrote:
+> The commit 8c5db92a705d ("locking/rwsem: Add DEBUG_RWSEMS to look for
+> lock/unlock mismatches") causes a warning in ext4 fstests due to the
+> fact that the freeze and thaw ioctls, by design, are run in different
+> processes.
 
-I still don't get why you want RETRY_MAYFAIL.  You know that tries
-*harder* to allocate memory than plain GFP_KERNEL does, right?  And
-that seems like the exact opposite of what you want.
+While true, it's not just ext4 fstests --- it's any file system which
+supports freeze/thaw, since it's happening in the vfs layer.  I have
+just as easily replicated the problem using "kvm-xfstests -c xfs
+generic/068".  Or "kvm-xfstests -c btrfs generic/068".
+
+Cheers,
+
+						- Ted
