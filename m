@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752000AbeDEUaQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 16:30:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40932 "EHLO mx1.redhat.com"
+        id S1752081AbeDEUaW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 16:30:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46222 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751315AbeDEUaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 16:30:13 -0400
+        id S1752018AbeDEUaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 16:30:19 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 06/20] afs: Implement @cell substitution handling
+Subject: [PATCH 07/20] afs: Dump bad status record
 From: David Howells <dhowells@redhat.com>
 To: torvalds@linux-foundation.org
 Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Thu, 05 Apr 2018 21:30:11 +0100
-Message-ID: <152296021112.31027.9052230341534673006.stgit@warthog.procyon.org.uk>
+Date: Thu, 05 Apr 2018 21:30:17 +0100
+Message-ID: <152296021747.31027.11571535007053732032.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
 References: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -27,165 +27,71 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement @cell substitution handling such that if @cell is seen as a name
-in a dynamic root mount, then the name of the root cell for that network
-namespace will be substituted for @cell during lookup.
-
-The substitution of @cell for the current net namespace is set by writing
-the cell name to /proc/fs/afs/rootcell.  The value can be obtained by
-reading the file.
-
-For example:
-
-	# mount -t afs none /kafs -o dyn
-	# echo grand.central.org >/proc/fs/afs/rootcell
-	# ls /kafs/@cell
-	archive/  cvs/  doc/  local/  project/  service/  software/  user/  www/
-	# cat /proc/fs/afs/rootcell
-	grand.central.org
+Dump an AFS FileStatus record that is detected as invalid.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/afs/cell.c |    2 ++
- fs/afs/dir.c  |   60 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/afs/proc.c |   35 ++++++++++++++++++++++++++++++++-
- 3 files changed, 96 insertions(+), 1 deletion(-)
+ fs/afs/fsclient.c |   35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index 721425b98b31..fdf4c36cff79 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -130,6 +130,8 @@ static struct afs_cell *afs_alloc_cell(struct afs_net *net,
- 		_leave(" = -ENAMETOOLONG");
- 		return ERR_PTR(-ENAMETOOLONG);
- 	}
-+	if (namelen == 5 && memcmp(name, "@cell", 5) == 0)
-+		return ERR_PTR(-EINVAL);
- 
- 	_enter("%*.*s,%s", namelen, namelen, name, vllist);
- 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 9bac606725ee..4f5e5c15ed6f 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -921,6 +921,62 @@ static struct dentry *afs_lookup(struct inode *dir, struct dentry *dentry,
- 	return NULL;
+diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
+index 75554ee98d02..90aa3eb2c893 100644
+--- a/fs/afs/fsclient.c
++++ b/fs/afs/fsclient.c
+@@ -43,6 +43,26 @@ static void xdr_decode_AFSFid(const __be32 **_bp, struct afs_fid *fid)
+ 	*_bp = bp;
  }
  
 +/*
-+ * Look up @cell in a dynroot directory.  This is a substitution for the
-+ * local cell name for the net namespace.
++ * Dump a bad file status record.
 + */
-+static struct dentry *afs_lookup_atcell(struct dentry *dentry)
++static void xdr_dump_bad(const __be32 *bp)
 +{
-+	struct afs_cell *cell;
-+	struct afs_net *net = afs_d2net(dentry);
-+	struct dentry *parent, *ret;
-+	unsigned int seq = 0;
-+	char *name;
-+	int len;
++	__be32 x[4];
++	int i;
 +
-+	if (!net->ws_cell)
-+		return ERR_PTR(-ENOENT);
++	pr_notice("AFS XDR: Bad status record\n");
++	for (i = 0; i < 5 * 4 * 4; i += 16) {
++		memcpy(x, bp, 16);
++		bp += 4;
++		pr_notice("%03x: %08x %08x %08x %08x\n",
++			  i, ntohl(x[0]), ntohl(x[1]), ntohl(x[2]), ntohl(x[3]));
++	}
 +
-+	parent = dget_parent(dentry);
-+
-+	ret = ERR_PTR(-ENOMEM);
-+	name = kmalloc(AFS_MAXCELLNAME + 1, GFP_KERNEL);
-+	if (!name)
-+		goto out_p;
-+
-+	rcu_read_lock();
-+	do {
-+		read_seqbegin_or_lock(&net->cells_lock, &seq);
-+		cell = rcu_dereference_raw(net->ws_cell);
-+		if (cell) {
-+			len = cell->name_len;
-+			memcpy(name, cell->name, len + 1);
-+		}
-+	} while (need_seqretry(&net->cells_lock, seq));
-+	done_seqretry(&net->cells_lock, seq);
-+	rcu_read_unlock();
-+
-+	ret = ERR_PTR(-ENOENT);
-+	if (!cell)
-+		goto out_n;
-+
-+	ret = lookup_one_len(name, parent, len);
-+	if (IS_ERR(ret) || d_is_positive(ret))
-+		goto out_n;
-+
-+	/* We don't want to d_add() the @cell dentry here as we don't want to
-+	 * the cached dentry to hide changes to the local cell name.
-+	 */
-+	dput(ret);
-+	ret = NULL;
-+
-+out_n:
-+	kfree(name);
-+out_p:
-+	dput(parent);
-+	return ret;
++	memcpy(x, bp, 4);
++	pr_notice("0x50: %08x\n", ntohl(x[0]));
 +}
 +
  /*
-  * Look up an entry in a dynroot directory.
+  * decode an AFSFetchStatus block
   */
-@@ -942,6 +998,10 @@ static struct dentry *afs_dynroot_lookup(struct inode *dir, struct dentry *dentr
- 		return ERR_PTR(-ENAMETOOLONG);
+@@ -97,6 +117,20 @@ static void xdr_decode_AFSFetchStatus(const __be32 **_bp,
+ 	EXTRACT(status->abort_code); /* spare 4 */
+ 	*_bp = bp;
+ 
++	switch (status->type) {
++	case AFS_FTYPE_FILE:
++	case AFS_FTYPE_DIR:
++	case AFS_FTYPE_SYMLINK:
++		break;
++	case AFS_FTYPE_INVALID:
++		if (status->abort_code != 0)
++			goto out;
++		/* Fall through */
++	default:
++		xdr_dump_bad(bp - 2);
++		goto out;
++	}
++
+ 	if (size != status->size) {
+ 		status->size = size;
+ 		changed |= true;
+@@ -145,6 +179,7 @@ static void xdr_decode_AFSFetchStatus(const __be32 **_bp,
+ 		status->data_version = data_version;
  	}
  
-+	if (dentry->d_name.len == 5 &&
-+	    memcmp(dentry->d_name.name, "@cell", 5) == 0)
-+		return afs_lookup_atcell(dentry);
-+
- 	inode = afs_try_auto_mntpt(dentry, dir);
- 	if (IS_ERR(inode)) {
- 		ret = PTR_ERR(inode);
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 7e9d6b2f9734..f28719c8d153 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -334,7 +334,40 @@ static ssize_t afs_proc_cells_write(struct file *file, const char __user *buf,
- static ssize_t afs_proc_rootcell_read(struct file *file, char __user *buf,
- 				      size_t size, loff_t *_pos)
- {
--	return 0;
-+	struct afs_cell *cell;
-+	struct afs_net *net = afs_proc2net(file);
-+	unsigned int seq = 0;
-+	char name[AFS_MAXCELLNAME + 1];
-+	int len;
-+
-+	if (*_pos > 0)
-+		return 0;
-+	if (!net->ws_cell)
-+		return 0;
-+
-+	rcu_read_lock();
-+	do {
-+		read_seqbegin_or_lock(&net->cells_lock, &seq);
-+		len = 0;
-+		cell = rcu_dereference_raw(net->ws_cell);
-+		if (cell) {
-+			len = cell->name_len;
-+			memcpy(name, cell->name, len);
-+		}
-+	} while (need_seqretry(&net->cells_lock, seq));
-+	done_seqretry(&net->cells_lock, seq);
-+	rcu_read_unlock();
-+
-+	if (!len)
-+		return 0;
-+
-+	name[len++] = '\n';
-+	if (len > size)
-+		len = size;
-+	if (copy_to_user(buf, name, len) != 0)
-+		return -EFAULT;
-+	*_pos = 1;
-+	return len;
++out:
+ 	if (vnode)
+ 		write_sequnlock(&vnode->cb_lock);
  }
- 
- /*
