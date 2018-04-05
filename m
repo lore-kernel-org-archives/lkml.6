@@ -1,119 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752631AbeDEThJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 15:37:09 -0400
-Received: from mail-pl0-f49.google.com ([209.85.160.49]:46115 "EHLO
-        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751952AbeDEThG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 15:37:06 -0400
-X-Google-Smtp-Source: AIpwx4+9Q+CrrUJ1c4Ejo3xaxkjMGezLL4ISfczD9TjYJkDr6tlsDoBf50VqkECEJSKFNOnnAGTEkA==
+        id S1752630AbeDETil (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 15:38:41 -0400
+Received: from mout.web.de ([212.227.17.12]:57197 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751932AbeDETij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 15:38:39 -0400
 Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
  unflattened to FDT
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Jan Kiszka <jan.kiszka@web.de>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+To: Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, laurent.pinchart+renesas@ideasonboard.com,
         Jailhouse <jailhouse-dev@googlegroups.com>
 References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
  <1520122673-11003-3-git-send-email-frowand.list@gmail.com>
  <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
- <CAL_Jsq+Gu=gwcxJnOF2xybXCh9N2Fp1NV05kuvQ2rif1fdHYrA@mail.gmail.com>
- <935d6135-c5db-e5f8-b850-8ef26ce0c0a0@web.de>
- <69c06530-94df-b67b-4e56-6519275afb45@gmail.com>
- <CAL_JsqKbn_UKdiqo-uOzxzXc3bVT83kx9NqgxAggOb+OPQBsdA@mail.gmail.com>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <07f25928-6ecf-ac34-e724-cad2e94f6ba7@gmail.com>
-Date: Thu, 5 Apr 2018 12:37:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ <7bbf615b-3cdd-6bb4-6918-33e48de4225d@gmail.com>
+ <a21dbee8-6e4e-9ceb-c798-dda43c2eae2d@web.de>
+ <d7e94a45-5d46-0491-e5dc-2b098a11c5b1@gmail.com>
+From: Jan Kiszka <jan.kiszka@web.de>
+Openpgp: preference=signencrypt
+Message-ID: <255dffbd-4ff1-42a4-033b-311d49339102@web.de>
+Date: Thu, 5 Apr 2018 21:38:26 +0200
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqKbn_UKdiqo-uOzxzXc3bVT83kx9NqgxAggOb+OPQBsdA@mail.gmail.com>
+In-Reply-To: <d7e94a45-5d46-0491-e5dc-2b098a11c5b1@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:wfMDJEwlO2M0XByY+Du3Zi1ffrM3agH0TgolPgwcoM7ecwFEkEu
+ yCbgjqYMyBNK4CPFttHpAAEEdJc/U/wCsvG2edzlbUBaZ/sc0LU8+0zCjceJcWzCi5yLDii
+ 8ZRtA8N//4SM3SNJ/eftTr9Dwpz7ize5lKaAHcBoKk4KXk+wK42+36iNreqAxVLME9nTB3u
+ cR6F1vqTI4RQ/gRKaRjIA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:FSHnvk9S5Bk=:ymKuzdCV/R48qbXcqsfiq+
+ d11GecqdEiDC2iOtT8UfzCxdGgUmdkbeZK5rIVvOfxiXPUIFyP72KWzqi3nrfMGBF2SNt7h4v
+ 1Oz4n6z9auH2+bNiPPVzzB9rrwBxeJFPxIyHnwNXjUooQLyBx0Rw4ZSdbmtaN78HWotuct1XQ
+ VJrAxB7VSn4lJqEZ/l3vRxyEypAj2muyQHNVdMM7RwcWDR7cx1FVOPJAlOSM7/n/OXeLPXqzc
+ ePa0671geC80FVl+jzAw1XS0zRx+S1y/VpUlgCnpyXrUOtjlSTDJaBKKCe4VPbZLjozBJ0Ppd
+ VpLDxIRDSrkmJ852vIqEuJmEBDYdtJ3GJoY0pdu0iop5HMdb1KXyOK5UAru+0n0179xenIwI5
+ bmVXnaz3rd/Rv/Fgyt8zqaYdTzW7/wnzx/1+Sc+KqN/0s7MeoJDU5fjI87wztRi7hdtGXkxRi
+ z+HxdUk41Rz73flCoXrKQwZRyeRf2m5KD1d9f3agCBBVYDGB434tIHKlFKRXSlj3BRoNfLDJR
+ 0WnrX37eUpKSzmaRWRATvENnHwZUaM6fokRtyufeL/8wvKM3QrEOiU5FtxtLvXJ22sqX1SfJr
+ 9pwiolN1AOh3X3OzqzMHd/4cOnX7sVBfDq49AEnqwSTA/YNCzYYzkFgUSHo9jWGn3BXYvALLZ
+ cArK2H5bfIzyXzD24pjW7HTYsOuwCxTP108yw7rxt3fYk2wewTTW07lULO+zCwNF9v7OTj5jY
+ Sv3tuKBTsyPAoh7mDBzhIOlPuGpFxjBii7Bm0fgPi0xlhfgXdTfW3hIZAF5YRvRdWucV62cjm
+ w8b0SQmF2dFIl6BipZyhdT+LPeHjFfpbW5YwF8egqkUFwGqYPI=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/18 12:26, Rob Herring wrote:
-> On Thu, Apr 5, 2018 at 2:16 PM, Frank Rowand <frowand.list@gmail.com> wrote:
->> On 04/05/18 00:22, Jan Kiszka wrote:
->>> On 2018-04-05 02:55, Rob Herring wrote:
->>>> On Wed, Apr 4, 2018 at 5:35 PM, Jan Kiszka <jan.kiszka@web.de> wrote:
->>>>> Hi Frank,
->>>>>
->>>>> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
->>>>>> From: Frank Rowand <frank.rowand@sony.com>
->>>>>>
->>>>>> Move duplicating and unflattening of an overlay flattened devicetree
->>>>>> (FDT) into the overlay application code.  To accomplish this,
->>>>>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
->>>>>>
->>>>>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
->>>>>> code, which is thus responsible for freeing the duplicate FDT.  The
->>>>>> caller of of_overlay_fdt_apply() remains responsible for freeing the
->>>>>> original FDT.
->>>>>>
->>>>>> The unflattened devicetree now belongs to devicetree code, which is
->>>>>> thus responsible for freeing the unflattened devicetree.
->>>>>>
->>>>>> These ownership changes prevent early freeing of the duplicated FDT
->>>>>> or the unflattened devicetree, which could result in use after free
->>>>>> errors.
->>>>>>
->>>>>> of_overlay_fdt_apply() is a private function for the anticipated
->>>>>> overlay loader.
->>>>>
->>>>> We are using of_fdt_unflatten_tree + of_overlay_apply in the
->>>>> (out-of-tree) Jailhouse loader driver in order to register a virtual
->>>>> device during hypervisor activation with Linux. The DT overlay is
->>>>> created from a a template but modified prior to application to account
->>>>> for runtime-specific parameters. See [1] for the current implementation.
->>>>>
->>>>> I'm now wondering how to model that scenario best with the new API.
->>>>> Given that the loader lost ownership of the unflattened tree but the
->>>>> modification API exist only for the that DT state, I'm not yet seeing a
->>>>> clear solution. Should we apply the template in disabled form (status =
->>>>> "disabled"), modify it, and then activate it while it is already applied?
->>>>
->>>> No. I don't think that will work.
->>>>
->>>> The of_overlay_apply() function is still there, but static. We can
->>>> export it again if the need arises.
+On 2018-04-05 21:28, Frank Rowand wrote:
+> On 04/05/18 12:13, Jan Kiszka wrote:
+>> On 2018-04-05 20:59, Frank Rowand wrote:
+>>> Hi Jan,
 >>>
->>> That would be the simplest solution from our perspective, but I'm not
->>> sure if that is in the original spirit of this change.
+>>> On 04/04/18 15:35, Jan Kiszka wrote:
+>>>> Hi Frank,
+>>>>
+>>>> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
+>>>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>>>
+>>>>> Move duplicating and unflattening of an overlay flattened devicetree
+>>>>> (FDT) into the overlay application code.  To accomplish this,
+>>>>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+>>>>>
+>>>>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+>>>>> code, which is thus responsible for freeing the duplicate FDT.  The
+>>>>> caller of of_overlay_fdt_apply() remains responsible for freeing the
+>>>>> original FDT.
+>>>>>
+>>>>> The unflattened devicetree now belongs to devicetree code, which is
+>>>>> thus responsible for freeing the unflattened devicetree.
+>>>>>
+>>>>> These ownership changes prevent early freeing of the duplicated FDT
+>>>>> or the unflattened devicetree, which could result in use after free
+>>>>> errors.
+>>>>>
+>>>>> of_overlay_fdt_apply() is a private function for the anticipated
+>>>>> overlay loader.
+>>>>
+>>>> We are using of_fdt_unflatten_tree + of_overlay_apply in the
+>>>> (out-of-tree) Jailhouse loader driver in order to register a virtual
+>>>> device during hypervisor activation with Linux. The DT overlay is
+>>>> created from a a template but modified prior to application to account
+>>>> for runtime-specific parameters. See [1] for the current implementation.
+>>>>
+>>>> I'm now wondering how to model that scenario best with the new API.
+>>>> Given that the loader lost ownership of the unflattened tree but the
+>>>> modification API exist only for the that DT state, I'm not yet seeing a
+>>>> clear solution. Should we apply the template in disabled form (status =
+>>>> "disabled"), modify it, and then activate it while it is already applied?
+>>>
+>>> Thank you for the pointer to the driver - that makes it much easier to
+>>> understand the use case and consider solutions.
+>>>
+>>> If you can make the changes directly on the FDT instead of on the
+>>> expanded devicetree, then you could move to the new API.
 >>
->> For short term out of tree usage, exporting of_overlay_apply() is ok.
+>> Are there some examples/references on how to edit FDTs in-place in the
+>> kernel? I'd like to avoid writing the n-th FDT parser/generator.
 > 
-> Meaning the out of tree users can go export it themselves.
+> I don't know of any existing in-kernel edits of the FDT (but they might
+> exist).  The functions to access an FDT are in libfdt, which is in
+> scripts/dtc/libfdt/.
 > 
->> Yes, for in-tree, exporting it again defeats the attempted process to
->> solve the overlay issues to make them acceptable in main line.
-> 
-> The purpose of providing a function to apply an overlay in one step is
-> to handle the common case and avoid open coding the sequence
-> everywhere. That doesn't mean everyone will fall into the common case.
 
-That was one of the intents behind the change.
+Ah, libfdt is available for kernel drivers as well. That looks like a
+viable path on first sight. I'll try that and come back in case it does
+not solve all issues.
 
-The other intent is that with lifetime of the overlay FDT and overlay
-expanded tree visible outside the devicetree core, we can not free the
-overlay FDT or the overlay expanded tree because we need to protect
-against use after free errors.  The open coded examples of applying
-overlays commonly have issues with freeing the overlay FDT and/or the
-overlay expanded tree, which leads to the potential for use after free
-errors.
-
-
-> Of course, it also doesn't mean we have to revert back to the previous
-> way to handle users that need to tweak the unflattened tree before
-> applying.
 > 
-> Rob
+>>>
+>>> Looking at the driver, I see one potential issue with that approach.
+>>> The property "interrupt-map" is added directly to the changeset
+>>> instead of being an existing property in the overlay.  Is it possible
+>>> to have this property in the overlay when needed?
+>>
+>> Well, the size of that property has a runtime dependency on the gic's
+>> #address-cells. If that is easy to account for depends a bit on the
+>> available FDT manipulation services. Or it would take multiple templates
+>> to handle the different cases (0, 1, or 2 IIRC).
 > 
+> If I understand create_vpci_of_overlay() correctly, it is assuming a
+> fixed size of 4 cells.  Line 314 is: for (n = 0, cell = 0; n < 4; n++) {
+> 
+> Off the top of my head, it is theoretically possible to create a property
+> that can contain the largest possible size for the property, then shrink
+> the size by inserting NOPs at the end of the property to shrink it.
+
+Well, I even find fdt_appendprop which sounds like we could keep adding
+that property on the fly.
+
+How does memory management work with libfdt? Do I have to ensure that
+the fdt is already backed by an area large enough also for it modified form?
+
+Thanks,
+Jan
