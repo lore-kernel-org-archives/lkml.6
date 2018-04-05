@@ -1,7 +1,7 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-470151-1522858666-2-13977298848853117818
+X-Cyrus-Session-Id: sloti22d1t05-1580473-1522894642-2-12937728914664677777
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
@@ -9,73 +9,68 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522858665; b=A+yivMRBfWJJPyNk+DI0VWfWfUsu80vUQFG3MrlZfMFTfDLoZq
-    4/fp7RsVWzPwMa/cGc06q96NH+Vr2IFZVBcJwC81Lsdn86hzOq524SVWOZb1if+j
-    jauKcjkRhbMnilRoNPaCiXD0LBiyuH7Aml6lotLtsge26u/E/YBTLllG0xDrv7k+
-    2xbSUM/HjIvtu/jWyWhY/rr7kBWxFhySdCjQFUxlFdpVbfMQHLfLClpyNN+qIdhF
-    Fb14aPKXUQtiK+ezc0I4yjffGSZOqxubTX2f5ejCKiJb2lxD50tPlKugIMmNXQ0E
-    NOSyvszwvcD7qgE9dLuLsvpBEf4IhHR1iosA==
+    1522894641; b=Vs2kp0aQPhsl6LojTQaD/TUsEhujWM64/4cMCDjB4XBCXbIJPp
+    jnxoSA7JunwSA4WS6/tOhoMX6dq/iMoPFKK7P2V1TTtIxsE7irlXR/Wqkp1TCVHr
+    XvjnxLzNpwO4LmL+FGPX+8CJ+FN7TNQfh7z34xIDJeLQzjPXx+MSA5w8zKSbu/Tt
+    MTtHJdleVzxdSXuSRabP/tzhh8H2t96boxDaFHJFVa0KRX6YVlIS4R94KBGwspj7
+    C4yEvabKzjcGSssvDUHRQ+//CA+5C0i10IBBCFiWNgdSJBiMvgigg1VOWyAQxjw6
+    d8LmdubGwjwq4n54c2OJJgUgKfHU067OEdAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:in-reply-to:references:to:cc:subject
-    :mime-version:content-type:content-id:date:message-id:sender
-    :list-id; s=fm2; t=1522858665; bh=699DEaoExA2+QHqGHQBvJA3osocusm
-    RJCTizcUJpEVI=; b=oGnDjkcsH5WH3D8M05gPA1TzI7Ah2wZ70a0rXXwyIGnOVd
-    5QTalAqdoQgq/eUFe4LsW873vw3iego9OI8VlX/sXJa8lgWEPsASrjJv8sDuZpHI
-    Bw7YtCovSnnkqb2aizXVZWs/efigHVue5jeNyKTbOz9v2zU6kc/V4kaLA3wtxMOT
-    Tf/gmV3/jMBPzCRt7BR2hS5nXet7hbJ/4ava2UDCtj68IjW65kJQjITFLf2iEop7
-    OdUHRF3OohJXTZSwHxoCdHc6XHjfzR63/G0B8IqtZj92meYFelPiRaPTuDBM8c5h
-    u50bAW61vpON3652Rx29BFC98XI7K08apFDZqEvw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1522894641; bh=mM7RFL8llu9jiXpRgKEarztlCPRPry
+    vv8sT3Fjq26Ck=; b=e5sq3srMlS5IsXmyH/c5mQxlJU/iUYGsedmqXHCo8RnZhI
+    wIsQvL8d+7bSRqksvsy4MD6NMvyjcGw1SKfL7HLF8nWHlBFJc9K64FuYiFPlFqpN
+    j6G1vVmGRSQnrloz5MpTp1WlBLkLSVI+kKctwXENxgFZ2sVere1dHkAj5/qyrcmG
+    jF5IyWgMNJTLrPaubaumK1Wez/FGtRH9CxPsDSECZDTqnj2srY/osmOuzsK9GxXT
+    plrtwDQlTsP/D1CWBDgNH3VAFWgjEdfbwdflCtQh/WX/8k6UcNUrS+alyql+Mrft
+    91QcqU9Pw4SLfAq6K2m6bSuhz2XJO+fYXG5QEsCA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCVpzZe/rrq0jS4URRhdTgC41EO+PHuyW+sBTAGKqFvuL1buHKIV+TeqThJ2nFm0A8jbqb3QF+RyY+nhtuozkDAOcRV0f9K9xg+3AAzRUnLTJBdHoWMY
-    9fBSjfxqqxe7Fd/zSTN8EWI/3BmKJBNIkwPZhJx9+HZ3vgPFAI8ZD/mD3nM3iN2+Epiqvb51aTHqAGe+YNe8km4T+c1bHvTrn2IET6E2IFhdTqeIwlPWiBhX
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOh/XrvT0U1ohs20AuEOChQNFm99yVi/8vpOVkDvqCueTBJdE4UjkmL629c1KSE5NWoP4AYlI6gkIUAbOKIILDzrvO0IgERKrWrPvg0BozayYKhKOeia
+    sVUvMoa1+XB/t62ezTQVH2uxn2M7P3YlORPqlcGaNL6Jpb3AOTQwbG++AElUqKUxkym38ivNpCDPqTV/BybUYeEqJNuWZSBdZZqk/4uvvrCvh/VAY5XuC2IK
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=kQ8WpZnP7M6q8YVFnS8A:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=VwQbUJbxAAAA:8 a=VgKRqyJbdwQXQt1S8sMA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751965AbeDDQR3 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 4 Apr 2018 12:17:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40830 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751606AbeDDQR1 (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 4 Apr 2018 12:17:27 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CALCETrUVQLDC6_VEvuAbdCOuGrmcxohqTB6P8eyNojm9AryNkg@mail.gmail.com>
-References: <CALCETrUVQLDC6_VEvuAbdCOuGrmcxohqTB6P8eyNojm9AryNkg@mail.gmail.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: dhowells@redhat.com,
+        id S1752721AbeDECRI (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 4 Apr 2018 22:17:08 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:40318 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752674AbeDECRH (ORCPT
+        <rfc822;groupwise-linux-api@vger.kernel.org:0:0>);
+        Wed, 4 Apr 2018 22:17:07 -0400
+Date: Thu, 5 Apr 2018 10:16:50 +0800
+From: joeyli <jlee@suse.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Theodore Y. Ts'o" <tytso@mit.edu>,
         Matthew Garrett <mjg59@google.com>,
@@ -85,182 +80,64 @@ Cc: dhowells@redhat.com,
         Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Justin Forbes <jforbes@redhat.com>,
-        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
+        linux-man <linux-man@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
         Kees Cook <keescook@chromium.org>,
         linux-efi <linux-efi@vger.kernel.org>
-Subject: Re: An actual suggestion (Re: [GIT PULL] Kernel lockdown for secure boot)
+Subject: Re: An actual suggestion (Re: [GIT PULL] Kernel lockdown for secure
+ boot)
+Message-ID: <20180405021650.GC7362@linux-l9pv.suse>
+References: <CALCETrUVQLDC6_VEvuAbdCOuGrmcxohqTB6P8eyNojm9AryNkg@mail.gmail.com>
+ <1119.1522858644@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1118.1522858644.1@warthog.procyon.org.uk>
-Date: Wed, 04 Apr 2018 17:17:24 +0100
-Message-ID: <1119.1522858644@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1119.1522858644@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Andy Lutomirski <luto@kernel.org> wrote:
+Hi David, 
 
-> Since this thread has devolved horribly, I'm going to propose a solution.
+On Wed, Apr 04, 2018 at 05:17:24PM +0100, David Howells wrote:
+> Andy Lutomirski <luto@kernel.org> wrote:
 > 
-> 1. Split the "lockdown" state into three levels:  (please don't
-> bikeshed about the names right now.)
+> > Since this thread has devolved horribly, I'm going to propose a solution.
+> > 
+> > 1. Split the "lockdown" state into three levels:  (please don't
+> > bikeshed about the names right now.)
+> > 
+> > LOCKDOWN_NONE: normal behavior
+> > 
+> > LOCKDOWN_PROTECT_INTEGREITY: kernel tries to keep root from writing to
+> > kernel memory
+> > 
+> > LOCKDOWN_PROTECT_INTEGRITY_AND_SECRECY: kernel tries to keep root from
+> > reading or writing kernel memory.
 > 
-> LOCKDOWN_NONE: normal behavior
+> In theory, it's good idea, but in practice it's not as easy to implement as I
+> think you think.
 > 
-> LOCKDOWN_PROTECT_INTEGREITY: kernel tries to keep root from writing to
-> kernel memory
+> Let me list here the things that currently get restricted by lockdown:
 > 
-> LOCKDOWN_PROTECT_INTEGRITY_AND_SECRECY: kernel tries to keep root from
-> reading or writing kernel memory.
+[...snip]
+>  (5) Kexec.
+>
 
-In theory, it's good idea, but in practice it's not as easy to implement as I
-think you think.
+About IMA with kernel module signing and kexec(not on x86_64 yet)...
 
-Let me list here the things that currently get restricted by lockdown:
+Because IMA can be used to verify the integrity of kernel module or even
+the image for kexec. I think that the
+IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY must be enabled at runtime
+when kernel is locked-down.
 
- (1) Manipulation of devices to access the kernel image:
+Because the root can enroll master key to keyring then IMA trusts the ima key
+derived from master key. It causes that the arbitrary signed module can be loaded
+when the root compromised.
 
-	- Ioports & ioperm
-	- /dev/ports
-	- /dev/mem
-	- PCI Bar
-	- Some debugfs files
-	- pcmcia_cis
-	- Driver hardware parameters
-	  - ISA drivers
-	  - TIOCSSERIAL
-	  - SCSI EATA driver
-	- testmmiotrace
-	- firmware
-
- (2) Direct kernel memory modification:
-
-	- /dev/mem
-	- /dev/kmem
-	- bpf
-	- kprobes
-
- (3) Direct kernel memory reading:
-
-	- /dev/mem
-	- /dev/kmem
-	- /dev/kcore
-	- bpf
-	- kprobes
-	- perf
-
- (4) Indirect kernel access:
-
-	- Modules
-	- MSRs
-	- Suspend to disk
-	- ACPI (custom_method, RSDP, table override, error injection)
-
- (5) Kexec.
-
-Note that /dev/mem can be used to access MMIO devices (I'm not sure about
-/dev/kmem, though).  Even reads through /dev/mem can do this.  I'm not sure
-whether that's sufficient to actually affect a modification, though.
-
-Debugfs is particularly icky.  It contains at least a couple of thousand
-files, a few of which provide direct access to hardware, some of which change
-driver behaviour and some of which just give information.  Auditing that pile
-isn't something I really want to have to do.  I'd rather just turn the whole
-lot off, but got persuaded otherwise by people who have been using it to
-provide mechanisms that programs rely on - hence the only allow files that
-have 0444 (and even that is iffy as some of these files have side effects and
-write ops anyway).
-
-> 2. The kexec protocol gets a new flag min_lockdown_level.  A kexeced
-> kernel will boot with at least that lockdown level regardless of its
-> configuration.  kexec sets min_lockdown_level to the running kernels'
-> lockdown_level.  Some future API could allow kexec with a higher
-> min_lockdown_level.  An even fancier future API could allow a
-> LOCKDOWN_PROTECT_INTEGRITY_AND_SECRECY kernel to kexec with
-> min_lockdown_level == LOCKDOWN_PROTECT_INTEGRITY if there's some
-> mechanism that guarantees that memory gets zeroed in the process.
-
-Note that on x86 we already have an allocated flag for passing the secure boot
-flag from kexec/bootloader to the kernel being booted, and what you're
-proposing ought to be redundant.  See boot_params::secure_boot.
-
-> 3. All the bpf and tracing stuf, etc, gets changed so it only takes
-> effect when LOCKDOWN_PROTECT_INTEGRITY_AND_SECRECY is set.
-
-Uh, no.  bpf, for example, can be used to modify kernel memory.  I think only
-the following are safe from being able to talk directly to devices:
-
-	/dev/kmem (O_RDONLY only)
-	/dev/kcore
-	perf
-	some debugfs files
-
-> This removes a giant annoyance on distro kernels that are likely to want to
-> enable LOCKDOWN_PROTECT_INTEGRITY.
-
-*shrug* Distros have been running with the full set for a while.  I haven't
-seen many complaints.
-
-> If you load a key into the kernel, and you want to keep that key safe, you
-> can enable LOCKDOWN_PROTECT_INTEGRITY_AND_SECRECY at that time.  After all,
-> if root is compromised before that, root can just remember a copu of the key
-> in user memory or email it to someone.
-
-If your key needs to be truly protected, it should never be seen unencrypted
-in userspace, rather it should be decrypted in the TPM and then retained in
-kernel memory only.
-
-> ...
-> 6. There's a way to *decrease* the lockdown level below the configured
-> value.  (This ability itself may be gated by a config option.)
-> Choices include a UEFI protected variable,
-
-By turning secure boot off, maybe?
-
-> an authenticated flag passed by the bootloader,
-
-Authenticated how?  How do you stop the running system from passing this to
-the bootloader next time it is run?  I guess you're thinking of a bootloader
-"command" that can only be passed by someone sat at a keyboard and never read
-from the config file.
-
-> and even just some special flag in the boot handoff protocol.
-
-We already have that with secure boot.
-
-> It would be really quite useful for a user to be able to ask their
-> bootloader to reduce the lockdown level for the purpose of a particular boot
-> for debugging.
-
-This I shall grant you - but you have to be able to prevent an attacker inside
-the system from making use of it.  There's a SysRq provided to drop out of
-lockdown mode - in theory only usable if you're sat at a wired keyboard
-connected to the computer.
-
-> 7. kexec does not attempt to think about "secure boot" at all.
-> They're totally separate.
-
-Except that they're not.  The boot_params flag must be set to something by
-kexec on x86 for transfer along the chain.  However, we can leave secure boot
-out for now - that can be treated as a separate issue.
-
-Note that whether you like it or not, distribution kernels already work this
-way and propagate the boot_params flag over kexec.
-
-> What do you all think?  I think that this checks basically all the
-> boxes, is a lot more user friendly than the current patchset or what
-> distros do, and actually makes some sense from a security perspective.
-
-You haven't really defined well what's allowed in _INTEGRITY mode verses
-_SECRECY mode.
-
-I'm currently in the throes of modifying my patchset to make it more inline
-with what Linus mandates: dropping the enablement from secure boot; dropping
-the propagation of the flag over kexec; providing a config option to make it
-mandatory.  There is already a command line option to trigger it.
-
-David
+Thanks
+Joey Lee
