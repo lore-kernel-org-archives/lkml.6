@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751538AbeDERSq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 13:18:46 -0400
-Received: from mail-by2nam03on0060.outbound.protection.outlook.com ([104.47.42.60]:24093
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S1751726AbeDERS6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 13:18:58 -0400
+Received: from mail-bn3nam01on0083.outbound.protection.outlook.com ([104.47.33.83]:64462
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751255AbeDERSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 13:18:43 -0400
+        id S1751571AbeDERSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 13:18:55 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Yuri.Norov@cavium.com;
 From: Yury Norov <ynorov@caviumnetworks.com>
@@ -30,90 +30,152 @@ Cc: Yury Norov <ynorov@caviumnetworks.com>,
         linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
         kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] arm64: entry: isb in el1_irq
-Date: Thu,  5 Apr 2018 20:17:56 +0300
-Message-Id: <20180405171800.5648-2-ynorov@caviumnetworks.com>
+Subject: [PATCH 2/5] arm64: entry: introduce restore_syscall_args macro
+Date: Thu,  5 Apr 2018 20:17:57 +0300
+Message-Id: <20180405171800.5648-3-ynorov@caviumnetworks.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180405171800.5648-1-ynorov@caviumnetworks.com>
 References: <20180405171800.5648-1-ynorov@caviumnetworks.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [50.233.148.156]
-X-ClientProxiedBy: DB6P190CA0021.EURP190.PROD.OUTLOOK.COM (2603:10a6:6:2f::34)
- To BN6PR07MB2897.namprd07.prod.outlook.com (2603:10b6:404:41::15)
+X-ClientProxiedBy: DB6P190CA0020.EURP190.PROD.OUTLOOK.COM (10.175.240.33) To
+ BN6PR07MB2898.namprd07.prod.outlook.com (10.173.28.144)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fa5028c9-c1b6-4cd2-282a-08d59b1945d9
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN6PR07MB2897;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2897;3:iGZJJp8yLziC5sXkLeAdrEZobo08TuRkQXndC3x0Ifpy9QQSgLLAy3Tkl5th6NVUwYkDoGSJJVfFCqRytBWlCo+EXkFbSZYAAWM6BR5CHgsQzWHxmTlgPtzGnMDQhyf4w1N5WdURev10z5FX7RCMyqaGrtcQO7bTvSooxBJskGFEW5FqbjgqcW2YZYcuyiCxIKsBHIa8dEMp5YjCtO77hGx+jXAQXsKylR5tffH8G68zJ/ZNj7Tz23hZh2L9406/;25:g2HSnx+lrN9f/g0I8NqWcK/KPpsPlrTEAgx5lCuXzWl4AgOHDWBKuzRLBURYuIRV+b5woZPn3WEppGOQYC2WaJL5GL4rzYzYzkDS2pu/CVisZDFfXA4Rn7iHzkAL5jQECw696/4+PfKXv70k1Xg2TTBbe9nAmEzuJppr4D6Qq3qoU6dB4270R8W1gnFrYp9yInXwJSrqI/FarWb1UeIVS8Ik/B7tLrqyBtBRY7z7q2gcoDAZYQFuhYkKKwAWbCgU/HzPZPWZ+gVwuXI49YiTdksdmGzVtDKJel95pA3iKiKiKVgtJphTLKamPbhjIca71+JMoIIwW2HpG4eK1pzXkQ==;31:vypeCk4lLh+tbqAhpP1DYlDxbAW7RFHOqlSLU469BTGMjxyknveJ2iDEN8qyBeqIBPsGMea6W0B+pUa1jsDXjJzBCQ/js3Pduy4ROX7eLFzY2V9wX7TpjDC5ZU3gnJTTg5vxfvQobhQdVnKLXFt71Lk8rXHhAfiju8xZCA7MsA4qHFGKafanjk6isDm7l3mKryr5W9p2c1kD2yh3tNbtPehypB6fxJAejBH5skkDlsw=
-X-MS-TrafficTypeDiagnostic: BN6PR07MB2897:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2897;20:YyaQrkLwGobUlPZYi57q99rJ70f80Df/mvOdCDASQ4SCp/oZD6mtkM6eF6iI7Z3eVFqGTIh7ETb7fg/MVzai+STIqycZMQk5jbluVOdE7c+0tAu632khJ1C9gkRwudHBjZzCb4c3baedAPpo+SA7EoKCQEtCKfJs/qlMEGJ3VdJLmBRawPmYPwdHCS3tYYkUWERSukuHnsZguLSjMAEsjernCTtCxwdeN6VD6m2f5GqHG9U0SNaYIVpdJuGTDifEAazcP3fuzb4pIfnKsXYFEuGbetPqVz7sWuoY33jQxiTuNuck726Rk1+L21/B+J11MSCH0hLqKjm5SqcQ1nyLwcIe47r/B8Q69VLCNxRlQ2bOE1/7isjom5ccfhc7mh6EBNoD5Saw3anOpOl3ohrFkhsVI/S6Y5StqKj/Qk/D572PMDysCD2QwKaLFz7OtfmJ5I66IMG95MrJVzTcWPR+VitnEwiY+uBDpliKfYG8atW5C8uevV3cYIvrD6VIUauNrXLU3TKfFztvZ9BWr8f0RJ/LDCKCnWSIRMw8+2pZBZkQMB6NC+o2E3sD5mLKG5SGbKVLQEhEzL6PVu/V5p4MP1EShbtG+EGV3xl94z2Omg4=;4:ooY0potrlnGrEeLq8SV+DJ87/RcbX9DTW5mawSbtMFC9xGN0+eLnhrESKskVgv+e9EWY8qyE4iytXQR2z2ZkqM3tBg9x/5JOCSO91XAMsYRAZ3piiHzlznFiWjFaDUSuye6C4LeHd75hO0qjPZc9cdSYbtlwi2QzaAf/JpSe2Tl47r3Oy9qkrW4GxOl9AIfg/Ta/tdbQgFwv24Dla+sEDFh+fw23tJK80vHL19AryHKBGt2Rr5Ip1xTNhSxsaBn8lhmRga5hmXJXJI/dwSQugc6V2efBUWSnmL2IRr0bM9GLXk/pfglR/A931BQP51N8
-X-Microsoft-Antispam-PRVS: <BN6PR07MB28975F1BA240AB75C3C20CF8E3BB0@BN6PR07MB2897.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(190756311086443);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(10201501046)(3002001)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:BN6PR07MB2897;BCL:0;PCL:0;RULEID:;SRVR:BN6PR07MB2897;
+X-MS-Office365-Filtering-Correlation-Id: 5d2d6b56-9d18-49a7-6ead-08d59b194ede
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN6PR07MB2898;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2898;3:PI8ofFvHyyxqpbMAuCXSI1mN6dF7mA12/40NOt6LcbCM8tZ1WB/rBqlpAz/pPuGOFntTRvuVACi1HjH8a+v6hYhiqVEdD+tjoKILgRgxEBkTNIbIx1XhN05ZKpn+wir2ggJLPK5q5K435WeSLcv4rhDZZ6AMaain0E4M2iNIowiOMA0sZjm5OFj81CiwK1V3s3sk0nqUFcz7MBAsBS+s/ZPBn6dPoe8YIIgicdoiqFKAXde7rNnDuKnVAyYXrCMa;25:R9mcPYIBQPar2BVFKew6rCBD5Pb60zycVj9psIc8P+UNJWeumWs27nN3UCbfgnTnyCfBdJim5ueYPyjQrdHH79H5fEMKILh3CirBOltKu/NUsmfZUHw4U1a0088g26v49tPnMJfLPKPxSUqqDBA6d8bGeieiOyoCgoio69y8SPQXWJ6NM+N7tFuJ/HV+2ukxl20hXHypkmsEH2wxi89xul1X3/igIULiBt6se5efQBpPgp3Yyn9ogdPOAPPdo4gYdDUEJ2kiP0Gn6Kjx4+2x5gHGjcUunF2fmt4ckfRXwQmGIfw+WOQJr8bPPW2PRcUGEzobUhI57LuwDX5KJmQmLQ==;31:1kop6B3b84nSvK5ngNji9b2+3V/8EPCTPPeHU9ovjUwcy8e9sM+HB7c5WgLmVZncjETCGgDqdKtr0Dn5WBxJbdMIs2t/Zenb081bolc0l4QzM+nbX6srQWzWlrutBcuXR0sg2LUepCgfRQYS5C2fjyzLeGrfNPpFK2U4UXhXQXdFFTY/klqJc6OQPXjGOzy/bQvbB4WM0U15lMXA4x95yvSbyYLXqsdkQFfalGYduL0=
+X-MS-TrafficTypeDiagnostic: BN6PR07MB2898:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2898;20:+IS+aOt5YST/qCh5dFl2b7KO5sK4SsSKZoW0v+d3pLEuHhCwfYFi3G18kiqmTUlZmtBqCT7jh+4cZ3EGkLfOv3McSiTVJi2BHk4rFMgGVmxJ+ZyFmTgBVLx4AVDjIGC6tBZEOGZSRhWmW8AK+PtufyrwhduNdK5w01kW/B8HpjR36xadDJegibXqfTO8JbkH+PagGucuwTyg/4zPJ3w7aFRGQ6xJcByjYw5Xw+DGm5qW545K3cgo6pW8KcePzL049AuCR+1v2NaswUGNBnrtyn2wsa0Ze3XF5p095+hlwKnCVPzsQXoqTIEk2Imk2T3/TdPMi41H7/px50PQdF26Geu6Oy6VNfbBh7Lv332g2x7bBZHO2FbBgcU8uyUpRJQubOBPIPeMT8eQyXMWGQu4kthz3rvBZ7+ujZJjQMsjdVRQrit9Rq/pN770u/SaJbrRsD13HQfoNkZnF8Efx5IE1DxM9/FmUkiyYSvVjA3Q+l7qJyTLjigBYiSMTm/o5VE8JIU+OPE2Ax1G9Gatm514wGDF1f7wy/Pa7ICJ63cul10NA5qTde8kz28lUc188MinURtIt+fYRUPphmgj+6EWzxKdBM//P5mq5qYsF1QnZGc=;4:4cZu3oF36867wi0geODIMRqbMJ/IKj6FYW4ejU8vlcUp0fnn9kVT+SK2lVgYufwH1+o5XT5h39KhD3CVgDrZITB2XWVFMEVYctV/SeOkWqVJPobAINvp1fSGkbpX+wFYtYiVuK89KfQBrUNkFD3RmgJEOZE2EGMbNpaqULFy4zWI8J1KS9qA6JHhbujLsH+YMTthLwDAcwkNvLXven9bz1i58g/OSEVmjPDwQBRhjNoUdS5dP9mgAwo/HmGgcde/IqkGb/d9o25tGHMGmKDVkA==
+X-Microsoft-Antispam-PRVS: <BN6PR07MB2898CF3FC0B89CE40AE2FE9CE3BB0@BN6PR07MB2898.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(10201501046)(3231221)(944501327)(52105095)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BN6PR07MB2898;BCL:0;PCL:0;RULEID:;SRVR:BN6PR07MB2898;
 X-Forefront-PRVS: 06339BAE63
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(396003)(376002)(39860400002)(39380400002)(346002)(366004)(189003)(199004)(956004)(186003)(446003)(26005)(6496006)(16526019)(76176011)(52116002)(11346002)(51416003)(1076002)(6116002)(110136005)(3846002)(48376002)(42882007)(36756003)(6666003)(486006)(39060400002)(81156014)(6486002)(81166006)(53936002)(7736002)(386003)(50226002)(8676002)(2616005)(8936002)(476003)(106356001)(7416002)(72206003)(305945005)(478600001)(47776003)(97736004)(2906002)(66066001)(16586007)(68736007)(105586002)(76506005)(25786009)(50466002)(5660300001)(4326008)(316002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR07MB2897;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR07MB2897;23:pTpj+cmmvLbhpzPv+yOBSj7O8RhkLitII1JEqgO5O?=
- =?us-ascii?Q?Vtrhb1xBlFZGiB+4Lx/dDzC6+6QSvGizHEv3cFDIb/+JFUtr+hakXXzsErbV?=
- =?us-ascii?Q?zH5ODtUfuVFum/jiSI9NRsN1aX3BPFJP2+GlVsHw7hGSP+y7INWmhfIaQV2M?=
- =?us-ascii?Q?mEO3TA4qdhlfv1WbV8PQM2w6NpNvh9bYbborAuqtJyuxhA81UJJUHI5Mc6W8?=
- =?us-ascii?Q?yuqmoC8c042HuVDtROEXzys4ArEbLl7zet6Pb39XA6EUgeA5TVAsnKuEsYLN?=
- =?us-ascii?Q?47jS7vAuQxLobikk3N7XeYMUh3Ez5Oqyn20L7hOaqVNAQjAebNyBGMwVn8aw?=
- =?us-ascii?Q?yqDWz67DBG8sggauULVTfRwdtplyiJJpiWQ0/kcx+yS9lnK9uNdRCjba2FkH?=
- =?us-ascii?Q?2GS5Y5EavqU/VLZE9WtfaKIC6KO1KAgJl9uRE5owgpOOMEL0z7Gbe3omtJij?=
- =?us-ascii?Q?s9RS8C/Uj2PiMC1UPLZa3Ny6XbX6Z8VaniNkTKQYb2QME7+/iFd06msw/e3u?=
- =?us-ascii?Q?U0Mc76uRxUykP/yQscckBQz6nL7E3hqnJmN3h+puNfe8tni0N/2yCpVfR0E5?=
- =?us-ascii?Q?tHTMnsXSVHFUBw83L3ALIV3EoLUU6MAQu3idKFYTEOAE+psdPi9RqvRrGntc?=
- =?us-ascii?Q?2PXSOgJMA00b/iN+iI6Sw9gsYtPJFn9JKwa9rinplYyi8e6muSbgN9Qe5eXN?=
- =?us-ascii?Q?A0HkRXfrI4vubY51PH2nSBQYelArklMp+opNzW9OGeMwDsiYtculs0flLH0U?=
- =?us-ascii?Q?P43LjcebwozjTVwN/n5Oc351CQYhDOhtXytr2M4m3EGnN8jeJ/NyYkWagtL/?=
- =?us-ascii?Q?xQLO9tGfItq1f7g5uFY7ABdxFBXmWJv0TtNm5vAJY5KxPoARZfiDe4TSL/NS?=
- =?us-ascii?Q?1iDrblba8UMba6LjiV6s785nxVb4w/mtteUDvCSTudtqakqCpIgczbyPe/4T?=
- =?us-ascii?Q?sQUofV/iFryln2daIU0JtOit3ekR8lztwwcQxIm46OtBHnWYiFjWnDr0b9Fj?=
- =?us-ascii?Q?P5xlEoO908QMP7Ph5YI03xhmRS1MkaiyINtq3YPj7a7VQp2RpoA27d6sKs+e?=
- =?us-ascii?Q?wTlVqDNSYW8VHMCLT8dAKwnrYZuIA5by3VrtWh4u0mZBBCViWNX4D910x0xf?=
- =?us-ascii?Q?dy8gsTjEBX0Vl3CTub3q9O5dnikvVc7u4q48O8qWc35VrGfy+wjswShT+cVX?=
- =?us-ascii?Q?ezcYxalDlve/DqTGdCATfevykX9HuV/azyK1F9XADXfpo/8BKUffb/LZMAig?=
- =?us-ascii?Q?UpTg0PI81+ucLNWsULAv4Kx46sXYPugGtqa+nRHtCvQKn4J6CKnQsgsnjOjH?=
- =?us-ascii?Q?GXWVudPnTmuSwRtFxvK2I4=3D?=
-X-Microsoft-Antispam-Message-Info: a+8V3sCOExWjSiaqyV7DS9s0STWPBd5SS/GXOmbjWnMOwQMrGsQf1++xY4RmQ01wXc1TvjXVltvtw5tcJ0nWLuSOv4LvdZD7fiDkx9Csr97XH8Pf/dEGKpEHMiIeWOR2KLx7xgsOaW8THSkumnPIy4UK2EJje6kA9UTp7qDK9C0Qt25uZoFw+kZRt3luFLrM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2897;6:/gFuUFT0G+vwEWmowXscJ3GqkirFtTusU4eB+p6R0B4eLaMBgprqkIyNOcDEZ/Y3g8jzQj8aLvI2nUvy0hu/g1jTtfCU/8KRHKtAS5cF7bgRdX21hIvNH/4ZASl25bJPC0tDtiXc36sbtJVAmYdwM+Ox4CawmoRjYjns9/wx759YsejGYBKKtfymYrHlJwyaUzSPuU3CjBpdnrD7Ej8ypGqhFyFYD6NHF6CXLzGncOw5WCoBzgyg06dfn+BiIqCvcc8dpGuVGFOqeA58Rw4dkMA8c8LX+2yYTPRHzbiDpyg8sO0dyj2FXGHqD1GnNXymDRhEnfgvN4kbnD0oFraK2rW6AApwlY+lwM72uVdsD1rm29i2SuaLWyyjUdXQcdJYbJ192wt76orq8/Tulf7xgBMQbP8t8Q7xzgTYJnLIXKjYOUk5xMpMy+2iU49ZcRSF77TM5Dq8JRUF5XBiVzvHYg==;5:OC9AJM5pkAiPkv/oQy1H0Ix5t2wo9TIrpox7jRCcppm+67x1H2ZooeqO3oRt77+XRc9p0ew3MMCELdYsUEjaF5ZjIE41byTe5QHBhmEhLBWJos/Am2dB2ta01tLAutgjVFn3sAPwd+1PL8ud10kvxZnYRfjQy8SxySJO6zWAomo=;24:0in496sWnbcOjFmRqDxlL+PC8DDSW+XvwTVoLiZ8iEFYbFfVuSpoGL9eAXdEGUt03AaLXhYyuu+ZrW7Qhtop2QdMw9xS+VoS4bqvYAs2euw=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(376002)(396003)(366004)(39380400002)(346002)(39860400002)(189003)(199004)(7736002)(386003)(478600001)(51416003)(2906002)(16586007)(6116002)(50466002)(3846002)(50226002)(59450400001)(5660300001)(316002)(52116002)(305945005)(486006)(11346002)(76176011)(8936002)(446003)(48376002)(476003)(7416002)(956004)(6496006)(6486002)(2616005)(81166006)(110136005)(81156014)(68736007)(42882007)(4326008)(97736004)(53936002)(25786009)(76506005)(105586002)(36756003)(26005)(8676002)(1076002)(72206003)(47776003)(66066001)(106356001)(16526019)(186003)(39060400002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR07MB2898;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR07MB2898;23:W0S6/5n3t2p11vrCT4ROWaPUjhG+BByLqYRrstRZ/?=
+ =?us-ascii?Q?9JrArH5wN+iVbcHRh+Qa91kRiRkJWXhSD5COElC/fdS5OmY+s1kJMnTCBn49?=
+ =?us-ascii?Q?omqyEsrjVi9lFAqy3ZN2EkzQ7n+hlrBsY76FLyA5NvXNJJg/LWlZmYfbukEs?=
+ =?us-ascii?Q?maFsEatwaTbk50GN/NSlPF5CWl6GaGU0D1i9v+bEC1+04LJqm7ksrT3/2GE1?=
+ =?us-ascii?Q?iGwZ62CaMHbZUdaElDJC+mxixQ5lBEpbAHR4uSDlSX7mMJdpwPo2Ii4vVqvT?=
+ =?us-ascii?Q?G7wPyMyDVfpUtq8/FHk9E4YZjwFtFD4nRii4qwZn3NNi2M3sQHWPcvnSP8Ib?=
+ =?us-ascii?Q?pvKmW565t3Z/94Le4qCCyivX319lYvq8bg29HsQLXsTpwKfGMimeqVlaCPzg?=
+ =?us-ascii?Q?zNlhYkYx5W3BEsAyAWsuNGlccwkVNlLSnaMh8JGK9oaYk9QXlQ8PdihGGSJl?=
+ =?us-ascii?Q?VgXpMt9AjopqaL7RGUVCaGM3PejoR0rhn6TQlOFjqXXQorm1NDNM8qdy6i0x?=
+ =?us-ascii?Q?Xuxcdzmwu2xqnm+27tZYAn7VHkCS6InRV84QGTqe82hoXpz0DTLFhYAvEslz?=
+ =?us-ascii?Q?bCDMb3qxid/3+Mk9RfxV8DAlhuy0kYUMqmbSSbaCep2gNacz/FGM0CIFoGJ2?=
+ =?us-ascii?Q?RYbQJ6Bsbnz6jys6v48TizHptm6OX6YJ2THXvRf4N4yTfyII50eVNx5mVgPi?=
+ =?us-ascii?Q?+Nevd4XnWRw5ZOxdra2/lZwNDjizAnGOxtKeGrsd+RAD9cLBMMLkktdcF03d?=
+ =?us-ascii?Q?TVzFPa2/cSNN5HXgU+QrUTIN4hHzgkz9afQQ8/u/bD5JzQIEm0E1EHysVFtW?=
+ =?us-ascii?Q?+1bp5FcpwDdTQ5odilWqiXSktBaDUTlWPQqWOnDsVQuFNmc0LJwXMUAH6OXF?=
+ =?us-ascii?Q?K7apf/QnXsGB5JvQQg8SXuGBSZ1/0mmtAbXZuozXNkstn8sN882CB92u7tm7?=
+ =?us-ascii?Q?WbSGjCHSzKfc3qUlnqw8wpL3mDtqX3HorJ44+rqD/S2stBquWu//Si/tnXYY?=
+ =?us-ascii?Q?Mt53taMo/WdprzIW+IekYTGVvnkvv/23xpLVCXhaAVQp9KZFJn5j2Axq2DeX?=
+ =?us-ascii?Q?r0EoOtW4RDv2ChUnfqnMED6/CFcysleOFhRz1ISg/mD3SpQKzkBAeUXHOkrr?=
+ =?us-ascii?Q?maVlVDEN0WDMk2fzaqlBwziEjuinmUwcQZ7ql0lNxiZ2cXgmWoJCC9bfUlPj?=
+ =?us-ascii?Q?FkqpZmp+HfaXEGZSKVOXhUXef+rcUJGrhzE8iMeisLgJqEGiEz2VwJdeUJ/6?=
+ =?us-ascii?Q?mjd/x2spTiWZgMtZiR0UG/N1ua+algoxNK5Y+8CaM+y7r1EPMBJazZEOxgHD?=
+ =?us-ascii?Q?cQlCOIgMDkjGfBK/VL7QKrZltmyiIijwNKqWfjJVY7R?=
+X-Microsoft-Antispam-Message-Info: zCqvs85Wcfzv98omHQQoJrerx26/bEYM15lBICmDmoZuhfW7d8/AIT+fJtnO4hgNGCIiz7nnLxWDfMWhIRLWX8SewQ2dQ7unOItcQiTMPw8cylNDsjIxYuTg3UjuMAc0oNzHfe0I558b7qrzObs77vFj9fA14I31MaA66Kfpcguo+RPAlfsi2VGDtvXYWBQP
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2898;6:tObRly6CqlDXD/kPRdtzNK7+SrlT6O44v4rMbQ4eduaAU/6zwSVq/bI+Z1DccyXLZmXtjToE4vaIeiYnE478qx3XRCP1KSMo6PJlKE36cXM83hjz6yVJx+WZw0joUyMCFs3g59+ym3fp2PJULX26cbIRDjJtsrip77fFNL6XSKos7RNt9hf3RkeIWMA6VuA/p0Zsn9KyI7YMmoZDJaO8ZEWS/01f+1yVzgNABRg3dt5AEWtwtfuesAyexEAd86v8NE/Eq9Gu6dopxMFGfFID1cAKqTpw9Glq0Bq3j0JOydEmZiCfD5R9SHj/OF7LNgwANDi12iq23HrlX9aOfG6baXZc9nIFJharU5XS6uWdTrfqGSuMhxT8p/kuyRS6XOb4rIJxZPR8rYvsN0SBH14UfqUom26Ybz4l3E5jyaOm345c/vANzo8svl4Tb0i69LdLcISc16XY9xISLB9X1umksg==;5:dU6NCphcOzlkWRI7CIBU94ATDV6kD3xjZgx5nBWvYZf/s07OKk1n5PbKtkjHZTqVzj+tziD7sYtcb3SOpDepy6i96MzF9aJY+ZslPBAUpadQhODUOi30yrr+UjAq7YqH02tL2/pOzpe6csIvSI62MnuC44Nvv0XQgGBre1Bu4+E=;24:ZU5ew1XA+lqZ9DqqOgC81gDojOV6VrnSOtetNbkc+GDvyQfwz1Hj6SGBZCbqCwYTTO45n46XR0qdNgXEknG6v482JxNMrg/5gsQgLh2XBjI=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2897;7:uSWCGpqiihdf1AZUhJb6Bx15fTomCOTXk2BvL8wocQrRVBId9eGhebcfFjSWqkmsnlV7tD979ctkTqGnj0YlKiNM0Qd30/TOeTfS6eX/aJlCAWy+U4d8yQ9qiZhg0PHg3P4O63KLq2bz9qUMu2HR/41DZYSQkxMeokdUeeH3AbNCLL4QwCPl+eeXVl1BfQxZfw+JgHKJlCDruV4rA9hinWaueu3adYy+GFYGYPR/Yf74j9TDZaQJaAv4aTIcyDFy
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2898;7:LviE19Np27kyPGwHwo8n4mJoH70Xw4ewQJZDnFR6SpNH3BCxeRhFnHm8Qa0+iwwTSBSN4x2rX08CsHcbIT0zGvdYj63idUB6h2J44A2IQ1dNwKdL/zHU4FYzmk0aOXGgbF/R1JTX7KIYOoW9RMloAzB/l057diiumk0PrvwFP9aHsM4r/40zhL02Tu/f5Px6r9da+vY7BL4XPIInE3zcyV80iwJTPLN4ANB6mtcVVOGCQgBg71OifEmKs52ER9Wz
 X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2018 17:18:37.2859 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa5028c9-c1b6-4cd2-282a-08d59b1945d9
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2018 17:18:52.8488 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d2d6b56-9d18-49a7-6ead-08d59b194ede
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR07MB2897
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR07MB2898
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel text patching framework relies on IPI to ensure that other
-SMP cores observe the change. Target core calls isb() in IPI handler
-path, but not at the beginning of el1_irq entry. There's a chance
-that modified instruction will appear prior isb(), and so will not be
-observed.
+Syscall arguments are passed in registers x0..x7. If assembler
+code has to call C functions before passing control to syscall
+handler, it should restore original state of that registers
+after the call.
 
-This patch inserts isb early at el1_irq entry to avoid that chance.
+Currently, syscall arguments restoring is opencoded in el0_svc_naked
+and __sys_trace. This patch introduces restore_syscall_args macro to
+use it there.
+
+Also, parameter 'syscall = 0' is removed from ct_user_exit to make
+el0_svc_naked call restore_syscall_args explicitly. This is needed
+because the following patch of the series adds another call to C
+function in el0_svc_naked, and restoring of syscall args becomes not
+only a matter of ct_user_exit.
 
 Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
 ---
- arch/arm64/kernel/entry.S | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/kernel/entry.S | 37 +++++++++++++++++++++----------------
+ 1 file changed, 21 insertions(+), 16 deletions(-)
 
 diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index ec2ee720e33e..9c06b4b80060 100644
+index 9c06b4b80060..c8d9ec363ddd 100644
 --- a/arch/arm64/kernel/entry.S
 +++ b/arch/arm64/kernel/entry.S
-@@ -593,6 +593,7 @@ ENDPROC(el1_sync)
+@@ -37,22 +37,29 @@
+ #include <asm/unistd.h>
  
- 	.align	6
- el1_irq:
-+	isb					// pairs with aarch64_insn_patch_text
- 	kernel_entry 1
- 	enable_da_f
- #ifdef CONFIG_TRACE_IRQFLAGS
+ /*
+- * Context tracking subsystem.  Used to instrument transitions
+- * between user and kernel mode.
++ * Save/restore needed during syscalls.  Restore syscall arguments from
++ * the values already saved on stack during kernel_entry.
+  */
+-	.macro ct_user_exit, syscall = 0
+-#ifdef CONFIG_CONTEXT_TRACKING
+-	bl	context_tracking_user_exit
+-	.if \syscall == 1
+-	/*
+-	 * Save/restore needed during syscalls.  Restore syscall arguments from
+-	 * the values already saved on stack during kernel_entry.
+-	 */
++	.macro restore_syscall_args
+ 	ldp	x0, x1, [sp]
+ 	ldp	x2, x3, [sp, #S_X2]
+ 	ldp	x4, x5, [sp, #S_X4]
+ 	ldp	x6, x7, [sp, #S_X6]
+-	.endif
++	.endm
++
++	.macro el0_svc_restore_syscall_args
++#if defined(CONFIG_CONTEXT_TRACKING)
++	restore_syscall_args
++#endif
++	.endm
++
++/*
++ * Context tracking subsystem.  Used to instrument transitions
++ * between user and kernel mode.
++ */
++	.macro ct_user_exit
++#ifdef CONFIG_CONTEXT_TRACKING
++	bl	context_tracking_user_exit
+ #endif
+ 	.endm
+ 
+@@ -943,7 +950,8 @@ alternative_else_nop_endif
+ el0_svc_naked:					// compat entry point
+ 	stp	x0, xscno, [sp, #S_ORIG_X0]	// save the original x0 and syscall number
+ 	enable_daif
+-	ct_user_exit 1
++	ct_user_exit
++	el0_svc_restore_syscall_args
+ 
+ 	tst	x16, #_TIF_SYSCALL_WORK		// check for syscall hooks
+ 	b.ne	__sys_trace
+@@ -976,10 +984,7 @@ __sys_trace:
+ 	mov	x1, sp				// pointer to regs
+ 	cmp	wscno, wsc_nr			// check upper syscall limit
+ 	b.hs	__ni_sys_trace
+-	ldp	x0, x1, [sp]			// restore the syscall args
+-	ldp	x2, x3, [sp, #S_X2]
+-	ldp	x4, x5, [sp, #S_X4]
+-	ldp	x6, x7, [sp, #S_X6]
++	restore_syscall_args
+ 	ldr	x16, [stbl, xscno, lsl #3]	// address in the syscall table
+ 	blr	x16				// call sys_* routine
+ 
 -- 
 2.14.1
