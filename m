@@ -1,83 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752084AbeDELeo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:34:44 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:33976 "EHLO
+        id S1751535AbeDELdW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:33:22 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33940 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751359AbeDELdX (ORCPT
+        with ESMTP id S1751195AbeDELdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:33:23 -0400
+        Thu, 5 Apr 2018 07:33:20 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: lee.jones@linaro.org
 Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
-        gwendal@chromium.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/8] mfd: cros_ec_dev: Register cros-ec-rtc driver as a subdevice.
-Date: Thu,  5 Apr 2018 13:33:09 +0200
-Message-Id: <20180405113313.27340-5-enric.balletbo@collabora.com>
+        gwendal@chromium.org, linux-kernel@vger.kernel.org,
+        Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>
+Subject: [PATCH v5 0/8] mfd: cros_ec: add subdevices and fixes
+Date: Thu,  5 Apr 2018 13:33:05 +0200
+Message-Id: <20180405113313.27340-1-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180405113313.27340-1-enric.balletbo@collabora.com>
-References: <20180405113313.27340-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check whether this EC instance has RTC host command support and instatiate
-the RTC driver as a subdevice in such case.
+Hi,
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
+This is the five version of a patchset that collects some patches
+already send but that needed some rework due the patchset to split the
+cros_ec_devs modules in 2 parts. This patchset contains some improvements
+and also some fixes. They can be applied independently and I think that
+all can go through the MFD tree.
+
+Best regards,
+ Enric
 
 Changes in v5:
-- [4/8] For mfd_cell struct use one line and no need for the comma.
+- [4/8] For mfd_cell struct use one line and no need for the comma (Lee Jones)
+- [5/8] For cros_ec_sensor_platform struct place the entries on a single line (Lee Jones)
 
 Changes in v4:
+- [2/8] Add Acked-by Lee Jones.
+- [3/8] Add Acked-by Lee Jones.
 - [4/8] Nit: check -> Check (Lee Jones)
 - [4/8] Use ARRAY_SIZE() instead of hardcoded number (Lee Jones)
+- [5/8] Nit: EC -> ECs (Lee Jones)
+- [5/8] Statically define cros_ec_accel_legacy_cells (Lee Jones)
+- [6/8] Add Acked-by Lee Jones.
+- [7/8] Add Acked-by Lee Jones
+- [7/8] Remove comma in terminator.
+- [8/8] Add Acked-by Lee Jones.
 
 Changes in v3:
+- [2/8] Add Acked-by Vincent Palatin.
+- [2/8] Add Reviewed-by Andy Shevchenko.
+- [3/8] Add Reviewed-by Andy Shevchenko.
 - [4/8] Add the Reviewed-by Andy Shevchenko.
+- [5/8] Add the Reviewed-by Andy Shevchenko.
+- [6/8] Add the Reviewed-by Andy Shevchenko.
+- [7/8] Add the Reviewed-by Andy Shevchenko.
+- [7/8] Avoid commas in terminator entries.
+- [8/8] Add static to cros_ec_i2c_pm_ops.
+- [8/8] Add the Reviewed-by Andy Shevchenko.
 
 Changes in v2:
+- [2/8] Remove the free_irq in cros_ec_remove.
+- [3/8] That patch is new in this series.
 - [4/8] Add the Reviewed-by Gwendal.
+- [5/8] Add the Reviewed-by Gwendal.
+- [6/8] This patch is new in this series.
+- [7/8] Add the Reviewed-by Gwendal.
+- [8/8] This patch is new in this series replacing [5/6] of v1.
 
- drivers/mfd/cros_ec_dev.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Daniel Hung-yu Wu (1):
+  mfd: cros_ec_dev: register shutdown function for debugfs
 
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index f98e5beffca6..e00bfb1e9030 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -389,6 +389,10 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
- 	kfree(msg);
- }
- 
-+static const struct mfd_cell cros_ec_rtc_cells[] = {
-+	{ .name = "cros-ec-rtc" }
-+};
-+
- static int ec_device_probe(struct platform_device *pdev)
- {
- 	int retval = -ENOMEM;
-@@ -437,6 +441,18 @@ static int ec_device_probe(struct platform_device *pdev)
- 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
- 		cros_ec_sensors_register(ec);
- 
-+	/* Check whether this EC instance has RTC host command support */
-+	if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
-+		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-+					 cros_ec_rtc_cells,
-+					 ARRAY_SIZE(cros_ec_rtc_cells),
-+					 NULL, 0, NULL);
-+		if (retval)
-+			dev_err(ec->dev,
-+				"failed to add cros-ec-rtc device: %d\n",
-+				retval);
-+	}
-+
- 	/* Take control of the lightbar from the EC. */
- 	lb_manual_suspend_ctrl(ec, 1);
- 
+Douglas Anderson (1):
+  mfd: cros_ec: Don't try to grab log when suspended
+
+Enric Balletbo i Serra (2):
+  mfd: cros_ec_dev: Register cros-ec-rtc driver as a subdevice.
+  mfd: cros_ec_dev: Register cros_ec_accel_legacy driver as a subdevice.
+
+Joseph Lo (1):
+  mfd: cros_ec_i2c: moving the system sleep pm ops to late
+
+Vincent Palatin (2):
+  mfd: cros_ec: fail early if we cannot identify the EC
+  mfd: cros_ec: free IRQ automatically
+
+Wei-Ning Huang (1):
+  mfd: cros_ec_i2c: add ACPI module device table
+
+ drivers/mfd/cros_ec.c                     | 26 ++++-----
+ drivers/mfd/cros_ec_dev.c                 | 97 ++++++++++++++++++++++++++++++-
+ drivers/mfd/cros_ec_i2c.c                 | 17 +++++-
+ drivers/platform/chrome/cros_ec_debugfs.c | 20 +++++++
+ include/linux/mfd/cros_ec.h               |  2 +
+ 5 files changed, 144 insertions(+), 18 deletions(-)
+
 -- 
 2.16.3
