@@ -1,84 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752311AbeDEPTl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:19:41 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37482 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752147AbeDEPTh (ORCPT
+        id S1751389AbeDEP1G (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:27:06 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:44862 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750835AbeDEP1G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:19:37 -0400
-X-Google-Smtp-Source: AIpwx488JiuYTse0dK0Q0KtskgPjFBOOobu5uF0E1o0SgL1Xt6qr/zm+z/byZzR+lk4KA5UPCK9EYg==
-Date: Thu, 5 Apr 2018 17:19:33 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Subject: Re: [PATCH 0/8] use struct pt_regs based syscall calling for x86-64
-Message-ID: <20180405151933.egmt7ressx2ikdnr@gmail.com>
-References: <20180405095307.3730-1-linux@dominikbrodowski.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405095307.3730-1-linux@dominikbrodowski.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Thu, 5 Apr 2018 11:27:06 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clockevents: Fix kernel messages split across multiple lines
+Date: Thu,  5 Apr 2018 17:26:58 +0200
+Message-Id: <1522942018-14471-1-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Convert the clockevents driver from old-style printk() to pr_info() and
+pr_cont(), to fix split kernel messages like below:
 
-* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+    Clockevents: could not switch to one-shot mode:
+     dummy_timer is not functional.
 
-> Dominik Brodowski (7):
->   syscalls: introduce CONFIG_ARCH_HAS_SYSCALL_WRAPPER
->   syscalls/x86: use struct pt_regs based syscall calling for 64-bit
->     syscalls
->   syscalls: prepare ARCH_HAS_SYSCALL_WRAPPER for compat syscalls
->   syscalls/x86: use struct pt_regs based syscall calling for
->     IA32_EMULATION and x32
->   syscalls/x86: unconditionally enable struct pt_regs based syscalls on
->     x86_64
->   x86/entry/64: extend register clearing on syscall entry to lower
->     registers
->   syscalls/x86: rename struct pt_regs-based sys_*() to __sys_x86_*()
-> 
-> Linus Torvalds (1):
->   x86: don't pointlessly reload the system call number
-> 
->  arch/x86/Kconfig                       |   1 +
->  arch/x86/entry/calling.h               |   2 +
->  arch/x86/entry/common.c                |  20 +-
->  arch/x86/entry/entry_64.S              |   3 +-
->  arch/x86/entry/entry_64_compat.S       |   6 +
->  arch/x86/entry/syscall_32.c            |  15 +-
->  arch/x86/entry/syscall_64.c            |   6 +-
->  arch/x86/entry/syscalls/syscall_32.tbl | 724 +++++++++++++++++----------------
->  arch/x86/entry/syscalls/syscall_64.tbl | 712 ++++++++++++++++----------------
->  arch/x86/entry/vsyscall/vsyscall_64.c  |  18 +-
->  arch/x86/include/asm/syscall.h         |   4 +
->  arch/x86/include/asm/syscall_wrapper.h | 197 +++++++++
->  arch/x86/include/asm/syscalls.h        |  17 +-
->  include/linux/compat.h                 |  22 +
->  include/linux/syscalls.h               |  25 +-
->  init/Kconfig                           |  10 +
->  kernel/sys_ni.c                        |  10 +
->  kernel/time/posix-stubs.c              |  10 +
->  18 files changed, 1054 insertions(+), 748 deletions(-)
->  create mode 100644 arch/x86/include/asm/syscall_wrapper.h
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ kernel/time/tick-oneshot.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-Ok, this series looks mostly good to me, but AFAICS this breaks the UML build:
-
- make[2]: *** No rule to make target 'archheaders'.  Stop.
- arch/um/Makefile:119: recipe for target 'archheaders' failed
- make[1]: *** [archheaders] Error 2
- make[1]: *** Waiting for unfinished jobs....
-
-Thanks,
-
-	Ingo
+diff --git a/kernel/time/tick-oneshot.c b/kernel/time/tick-oneshot.c
+index c1f518e7aa808a28..6fe615d57ebbbe3b 100644
+--- a/kernel/time/tick-oneshot.c
++++ b/kernel/time/tick-oneshot.c
+@@ -82,16 +82,15 @@ int tick_switch_to_oneshot(void (*handler)(struct clock_event_device *))
+ 	if (!dev || !(dev->features & CLOCK_EVT_FEAT_ONESHOT) ||
+ 		    !tick_device_is_functional(dev)) {
+ 
+-		printk(KERN_INFO "Clockevents: "
+-		       "could not switch to one-shot mode:");
++		pr_info("Clockevents: could not switch to one-shot mode:");
+ 		if (!dev) {
+-			printk(" no tick device\n");
++			pr_cont(" no tick device\n");
+ 		} else {
+ 			if (!tick_device_is_functional(dev))
+-				printk(" %s is not functional.\n", dev->name);
++				pr_cont(" %s is not functional.\n", dev->name);
+ 			else
+-				printk(" %s does not support one-shot mode.\n",
+-				       dev->name);
++				pr_cont(" %s does not support one-shot mode.\n",
++					dev->name);
+ 		}
+ 		return -EINVAL;
+ 	}
+-- 
+2.7.4
