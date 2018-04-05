@@ -1,94 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752439AbeDEJyf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:54:35 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55975 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752191AbeDEJyc (ORCPT
+        id S1752589AbeDEJzC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:55:02 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:44322 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752668AbeDEJxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:54:32 -0400
-X-Google-Smtp-Source: AIpwx49b+XPnDqeU2YxsOHNMyohIy3lOqYoK4focezfHEqgEf/A6+OadI+93NtWhveGzDOzH1ZZnPQ==
-Date: Thu, 5 Apr 2018 11:54:29 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Tejun Heo <tj@kernel.org>, Patrice Chotard <patrice.chotard@st.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-ide@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] ata: ahci-platform: add reset control support
-Message-ID: <20180405095429.GA7506@ulmo>
-References: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
-Content-Disposition: inline
-In-Reply-To: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 5 Apr 2018 05:53:42 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, mingo@kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+        Denys Vlasenko <dvlasenk@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH 7/8] x86/entry/64: extend register clearing on syscall entry to lower registers
+Date: Thu,  5 Apr 2018 11:53:06 +0200
+Message-Id: <20180405095307.3730-8-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180405095307.3730-1-linux@dominikbrodowski.net>
+References: <20180405095307.3730-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+To reduce the chance that random user space content leaks down the call
+chain in registers, also clear lower registers on syscall entry:
 
---3MwIy2ne0vdjdPXF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For 64-bit syscalls, extend the register clearing in PUSH_AND_CLEAR_REGS
+to %dx and %cx. This should not hurt at all, also on the other callers
+of that macro. We do not need to clear %rdi and %rsi for syscall entry,
+as those registers are used to pass the parameters to do_syscall_64().
 
-On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
-> Add support to get and control a list of resets for the device
-> as optional and shared. These resets must be kept de-asserted until
-> the device is enabled.
->=20
-> This is specified as shared because some SoCs like UniPhier series
-> have common reset controls with all ahci controller instances.
->=20
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
->  .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
->  drivers/ata/ahci.h                                 |  1 +
->  drivers/ata/libahci_platform.c                     | 24 ++++++++++++++++=
-+++---
->  3 files changed, 23 insertions(+), 3 deletions(-)
+For the 32-bit compat syscalls, do_int80_syscall_32() and
+do_fast_syscall_32() each only take one parameter. Therefore, extend the
+register clearing to %dx, %cx, and %si in entry_SYSCALL_compat and
+entry_INT80_compat.
 
-This causes a regression on Tegra because we explicitly request the
-resets after the call to ahci_platform_get_resources().
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ arch/x86/entry/calling.h         | 2 ++
+ arch/x86/entry/entry_64_compat.S | 6 ++++++
+ 2 files changed, 8 insertions(+)
 
-=46rom a quick look, ahci_mtk and ahci_st are in the same boat, adding the
-corresponding maintainers to Cc.
-
-Patrice, Matthias: does SATA still work for you after this patch? This
-has been in linux-next since next-20180327.
-
-Given how this is one of the more hardware-specific bits, perhaps a
-better way to do this is to move reset handling into a Uniphier driver
-much like Tegra, Mediatek and ST?
-
-That said, I don't see SATA support for any of the Socionext hardware
-either in the DT bindings or drivers/ata, so perhaps it'd be best to
-back this out again until we have something that's more well tested?
-
-Thierry
-
---3MwIy2ne0vdjdPXF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrF8lEACgkQ3SOs138+
-s6H7EA//fqnLBMRIi+b3go4vL4naTiR/ajPZkj30Gl9LMUb0uprVgnPOC1ClhAEd
-VUqcL75MwXydIasQixfzTEmX2DPXGC4EYaPY1Zv/FDgnC0PXJMOezup8W40mHZKU
-9imul0pq7on0izFRB32xb45s2BXHAVpAyB/uEVthyWopnWK6cvGlaL5BdbHgtVhj
-GaajtH+v6+LY54zquz0noREZqFqDS5ugUHFkZq7Vquza99K2TAs9Jw9O9FaloNZq
-/rwKurnds9aeegnt6661XK5mYjuGzlA0Zwf4zk9uzU71pGmKDBNBu6WEwvTSM1jK
-l8/io7YCmbr4mVbzzoLn3hzzI9loK0ohL3e7mVJO+mORJZBCTjOzBIz+bQOdkU4y
-BQyiX8RK1tl4q1beYKV0HD6sffXiJDTBdHNMON3UNqF9MCOyAaX4t5Nr9MITUsaz
-NggHnWunPeJD0TPDEVrdYGQHj/z4Ri6AAEcuBW6KsPrwLOxRbM+qAw3VF29Ur1fC
-4v5e7Olr1ltu/NmvBiiHEELk8lnVmgZwVacpVLv2a8JZ2XMp0WH9lxVXB57SoEQ7
-KdrmDfYTcpyeCIOrUqdaz64CDsWGbZL+X048KoZmoxV5I5VEcXjCOJzd49CJYNtW
-J9bCVROflae3vM95hOt98CnC1ewPDe/SlR1HX7cySdFdAQxOaXs=
-=5EOF
------END PGP SIGNATURE-----
-
---3MwIy2ne0vdjdPXF--
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index be63330c5511..352e70cd33e8 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -114,7 +114,9 @@ For 32-bit we have the following conventions - kernel is built with
+ 	pushq   %rsi		/* pt_regs->si */
+ 	.endif
+ 	pushq	\rdx		/* pt_regs->dx */
++	xorl	%edx, %edx	/* nospec   dx */
+ 	pushq   %rcx		/* pt_regs->cx */
++	xorl	%ecx, %ecx	/* nospec   cx */
+ 	pushq   \rax		/* pt_regs->ax */
+ 	pushq   %r8		/* pt_regs->r8 */
+ 	xorl	%r8d, %r8d	/* nospec   r8 */
+diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+index 08425c42f8b7..9af927e59d49 100644
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -220,8 +220,11 @@ GLOBAL(entry_SYSCALL_compat_after_hwframe)
+ 	pushq	%rax			/* pt_regs->orig_ax */
+ 	pushq	%rdi			/* pt_regs->di */
+ 	pushq	%rsi			/* pt_regs->si */
++	xorl	%esi, %esi		/* nospec   si */
+ 	pushq	%rdx			/* pt_regs->dx */
++	xorl	%edx, %edx		/* nospec   dx */
+ 	pushq	%rbp			/* pt_regs->cx (stashed in bp) */
++	xorl	%ecx, %ecx		/* nospec   cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+ 	pushq   $0			/* pt_regs->r8  = 0 */
+ 	xorl	%r8d, %r8d		/* nospec   r8 */
+@@ -365,8 +368,11 @@ ENTRY(entry_INT80_compat)
+ 
+ 	pushq	(%rdi)			/* pt_regs->di */
+ 	pushq	%rsi			/* pt_regs->si */
++	xorl	%esi, %esi		/* nospec   si */
+ 	pushq	%rdx			/* pt_regs->dx */
++	xorl	%edx, %edx		/* nospec   dx */
+ 	pushq	%rcx			/* pt_regs->cx */
++	xorl	%ecx, %ecx		/* nospec   cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+ 	pushq   $0			/* pt_regs->r8  = 0 */
+ 	xorl	%r8d, %r8d		/* nospec   r8 */
+-- 
+2.16.3
