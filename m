@@ -1,87 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeDES77 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 14:59:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37602 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751655AbeDES75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 14:59:57 -0400
-Date: Thu, 5 Apr 2018 20:59:50 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>, Jiri Benc <jbenc@redhat.com>,
-        Stanislav Kozina <skozina@redhat.com>,
-        Jerome Marchand <jmarchan@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Michal Marek <michal.lkml@markovi.net>, Jiri Kosina <jkosina@suse.cz>
-Subject: Re: [PATCH 3/9] kbuild: Do not pass arguments to link-vmlinux.sh
-Message-ID: <20180405185950.GA3668@krava>
-References: <20180405151645.19130-1-jolsa@kernel.org>
- <20180405151645.19130-4-jolsa@kernel.org>
- <CAK7LNAQHEWAk_J8uZ4_ETR=JzBU9szDCVNxmUvY447uMj1XLVA@mail.gmail.com>
+        id S1752257AbeDETAG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 15:00:06 -0400
+Received: from mail-pl0-f43.google.com ([209.85.160.43]:42489 "EHLO
+        mail-pl0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751655AbeDETAC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 15:00:02 -0400
+X-Google-Smtp-Source: AIpwx4+dIL7MoEHjCdBdOGr1nwSCzx1t+2ffjL2BB20b60fd+i+HaTgDnI5VxkPIgX39mU8q6LXLyQ==
+Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
+ unflattened to FDT
+To: Jan Kiszka <jan.kiszka@web.de>, Rob Herring <robh+dt@kernel.org>,
+        pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, laurent.pinchart+renesas@ideasonboard.com,
+        Jailhouse <jailhouse-dev@googlegroups.com>
+References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
+ <1520122673-11003-3-git-send-email-frowand.list@gmail.com>
+ <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <7bbf615b-3cdd-6bb4-6918-33e48de4225d@gmail.com>
+Date: Thu, 5 Apr 2018 11:59:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQHEWAk_J8uZ4_ETR=JzBU9szDCVNxmUvY447uMj1XLVA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 12:50:00AM +0900, Masahiro Yamada wrote:
-> 2018-04-06 0:16 GMT+09:00 Jiri Olsa <jolsa@kernel.org>:
-> > There's no need to pass LD* arguments to link-vmlinux.sh,
-> > because they are passed as variables. The only argument
-> > the link-vmlinux.sh supports is the 'clean' argument.
-> >
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> 
-> Wrong.
-> 
-> $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux)
-> exist here so that any change in them
-> invokes scripts/linkk-vmlinux.sh
+Hi Jan,
 
-sry, I can't see that.. but it's just a side fix,
-which is actually not needed for the rest
+On 04/04/18 15:35, Jan Kiszka wrote:
+> Hi Frank,
+> 
+> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
+>> From: Frank Rowand <frank.rowand@sony.com>
+>>
+>> Move duplicating and unflattening of an overlay flattened devicetree
+>> (FDT) into the overlay application code.  To accomplish this,
+>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+>>
+>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+>> code, which is thus responsible for freeing the duplicate FDT.  The
+>> caller of of_overlay_fdt_apply() remains responsible for freeing the
+>> original FDT.
+>>
+>> The unflattened devicetree now belongs to devicetree code, which is
+>> thus responsible for freeing the unflattened devicetree.
+>>
+>> These ownership changes prevent early freeing of the duplicated FDT
+>> or the unflattened devicetree, which could result in use after free
+>> errors.
+>>
+>> of_overlay_fdt_apply() is a private function for the anticipated
+>> overlay loader.
+> 
+> We are using of_fdt_unflatten_tree + of_overlay_apply in the
+> (out-of-tree) Jailhouse loader driver in order to register a virtual
+> device during hypervisor activation with Linux. The DT overlay is
+> created from a a template but modified prior to application to account
+> for runtime-specific parameters. See [1] for the current implementation.
+> 
+> I'm now wondering how to model that scenario best with the new API.
+> Given that the loader lost ownership of the unflattened tree but the
+> modification API exist only for the that DT state, I'm not yet seeing a
+> clear solution. Should we apply the template in disabled form (status =
+> "disabled"), modify it, and then activate it while it is already applied?
 
-I'll check on more and address this separately
+Thank you for the pointer to the driver - that makes it much easier to
+understand the use case and consider solutions.
 
-thanks,
-jirka
+If you can make the changes directly on the FDT instead of on the
+expanded devicetree, then you could move to the new API.
+
+Looking at the driver, I see one potential issue with that approach.
+The property "interrupt-map" is added directly to the changeset
+instead of being an existing property in the overlay.  Is it possible
+to have this property in the overlay when needed?
+
+I'll also reply to other comments in this thread.
+
+-Frank
 
 > 
+> Thanks,
+> Jan
 > 
+> [1]
+> https://github.com/siemens/jailhouse/blob/11ef401a9064644bf7faf28e35c97f27ececd81d/driver/pci.c#L280
+> .
 > 
-> 
-> >  Makefile | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/Makefile b/Makefile
-> > index d3300e46f925..a65a3919c6ad 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1027,7 +1027,7 @@ ARCH_POSTLINK := $(wildcard $(srctree)/arch/$(SRCARCH)/Makefile.postlink)
-> >
-> >  # Final link of vmlinux with optional arch pass after final link
-> >  cmd_link-vmlinux =                                                 \
-> > -       $(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux) ;    \
-> > +       $(CONFIG_SHELL) $< ;                                       \
-> >         $(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
-> >
-> >  vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE
-> 
-> 
-> 
-> 
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
