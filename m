@@ -1,81 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751298AbeDEMoc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 08:44:32 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34033 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeDEMoa (ORCPT
+        id S1751346AbeDEMsO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 08:48:14 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56866 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeDEMsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 08:44:30 -0400
-X-Google-Smtp-Source: AIpwx4/zRM+vjHIQk+FITM+SKHikT/xFDPl7amKl7QhXFqM1Q6IQrNmHDO40Tm8Y3oOQT2UkXuqqMQ==
-Subject: Re: [PATCH v7 2/5] arm: arm64: page_alloc: reduce unnecessary binary
- search in memblock_next_valid_pfn()
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Jia He <jia.he@hxt-semitech.com>
-References: <1522915478-5044-1-git-send-email-hejianet@gmail.com>
- <1522915478-5044-3-git-send-email-hejianet@gmail.com>
- <20180405113444.GB2647@bombadil.infradead.org>
-From: Jia He <hejianet@gmail.com>
-Message-ID: <1f809296-e88d-1090-0027-890782b91d6e@gmail.com>
-Date: Thu, 5 Apr 2018 20:44:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 5 Apr 2018 08:48:12 -0400
+Date: Thu, 5 Apr 2018 14:47:57 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH v9 10/10] cpuidle: menu: Avoid selecting shallow states
+ with stopped tick
+Message-ID: <20180405124757.GQ4082@hirez.programming.kicks-ass.net>
+References: <1736751.LdhZHb50jq@aspire.rjw.lan>
+ <6542020.eHGLEK9V0J@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <20180405113444.GB2647@bombadil.infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6542020.eHGLEK9V0J@aspire.rjw.lan>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 04, 2018 at 10:50:36AM +0200, Rafael J. Wysocki wrote:
+> +	if (tick_nohz_tick_stopped()) {
+> +		/*
+> +		 * If the tick is already stopped, the cost of possible short
+> +		 * idle duration misprediction is much higher, because the CPU
+> +		 * may be stuck in a shallow idle state for a long time as a
+> +		 * result of it.  In that case say we might mispredict and try
+> +		 * to force the CPU into a state for which we would have stopped
+> +		 * the tick, unless the tick timer is going to expire really
+> +		 * soon anyway.
 
+Wait what; the tick was stopped, therefore it _cannot_ expire soon.
 
-On 4/5/2018 7:34 PM, Matthew Wilcox Wrote:
-> On Thu, Apr 05, 2018 at 01:04:35AM -0700, Jia He wrote:
->> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
->> where possible") optimized the loop in memmap_init_zone(). But there is
->> still some room for improvement. E.g. if pfn and pfn+1 are in the same
->> memblock region, we can simply pfn++ instead of doing the binary search
->> in memblock_next_valid_pfn.
-> Sure, but I bet if we are >end_pfn, we're almost certainly going to the
-> start_pfn of the next block, so why not test that as well?
->
->> +	/* fast path, return pfn+1 if next pfn is in the same region */
->> +	if (early_region_idx != -1) {
->> +		start_pfn = PFN_DOWN(regions[early_region_idx].base);
->> +		end_pfn = PFN_DOWN(regions[early_region_idx].base +
->> +				regions[early_region_idx].size);
->> +
->> +		if (pfn >= start_pfn && pfn < end_pfn)
->> +			return pfn;
-> 		early_region_idx++;
-> 		start_pfn = PFN_DOWN(regions[early_region_idx].base);
-> 		if (pfn >= end_pfn && pfn <= start_pfn)
-> 			return start_pfn;
-Thanks, thus the binary search in next step can be discarded?
+*confused*
 
--- 
-Cheers,
-Jia
+Did you mean s/tick/a/ ?
+
+> +		 */
+> +		if (data->predicted_us < TICK_USEC)
+> +			data->predicted_us = min_t(unsigned int, TICK_USEC,
+> +						   ktime_to_us(delta_next));
+> +	} else {
+> +		/*
+> +		 * Use the performance multiplier and the user-configurable
+> +		 * latency_req to determine the maximum exit latency.
+> +		 */
+> +		interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
+> +		if (latency_req > interactivity_req)
+> +			latency_req = interactivity_req;
+> +	}
+>  
+>  	expected_interval = data->predicted_us;
+>  	/*
+> 
