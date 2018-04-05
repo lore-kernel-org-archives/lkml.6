@@ -1,99 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751392AbeDEHZk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 03:25:40 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:36658 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751165AbeDEHZj (ORCPT
+        id S1751278AbeDEH1a (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 03:27:30 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:46432 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeDEH13 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 03:25:39 -0400
-Subject: Re: [PATCH] uapi: fix asm/bootparam.h userspace compilation errors
-To: "Dmitry V. Levin" <ldv@altlinux.org>
-References: <20180405043210.GA13254@altlinux.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Openpgp: preference=signencrypt
-Message-ID: <32e449e9-5738-d347-20ad-50ee4a2257e2@siemens.com>
-Date: Thu, 5 Apr 2018 09:25:26 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
-MIME-Version: 1.0
-In-Reply-To: <20180405043210.GA13254@altlinux.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 5 Apr 2018 03:27:29 -0400
+X-Google-Smtp-Source: AIpwx4/rSoELflOE0gFq2AjYWP/4cKcALQ3dYs0MvCSJNpGnIY1PDAjwXfeto68mD3iwm+HhT0PXzQ==
+From: js1304@gmail.com
+X-Google-Original-From: iamjoonsoo.kim@lge.com
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Subject: [PATCH] mm/thp: don't count ZONE_MOVABLE as the target for freepage reserving
+Date: Thu,  5 Apr 2018 16:27:16 +0900
+Message-Id: <1522913236-15776-1-git-send-email-iamjoonsoo.kim@lge.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-05 06:32, Dmitry V. Levin wrote:
-> Consistently use types provided by <linux/types.h> to fix the following
-> asm/bootparam.h userspace compilation errors:
-> 
-> /usr/include/asm/bootparam.h:140:2: error: unknown type name 'u16'
->   u16 version;
-> /usr/include/asm/bootparam.h:141:2: error: unknown type name 'u16'
->   u16 compatible_version;
-> /usr/include/asm/bootparam.h:142:2: error: unknown type name 'u16'
->   u16 pm_timer_address;
-> /usr/include/asm/bootparam.h:143:2: error: unknown type name 'u16'
->   u16 num_cpus;
-> /usr/include/asm/bootparam.h:144:2: error: unknown type name 'u64'
->   u64 pci_mmconfig_base;
-> /usr/include/asm/bootparam.h:145:2: error: unknown type name 'u32'
->   u32 tsc_khz;
-> /usr/include/asm/bootparam.h:146:2: error: unknown type name 'u32'
->   u32 apic_khz;
-> /usr/include/asm/bootparam.h:147:2: error: unknown type name 'u8'
->   u8 standard_ioapic;
-> /usr/include/asm/bootparam.h:148:2: error: unknown type name 'u8'
->   u8 cpu_ids[255];
-> 
-> Fixes: 4a362601baa6 ("x86/jailhouse: Add infrastructure for running in non-root cell")
-> Cc: <stable@vger.kernel.org> # v4.16
-> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-> ---
->  arch/x86/include/uapi/asm/bootparam.h | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-> index aebf60357758..a06cbf019744 100644
-> --- a/arch/x86/include/uapi/asm/bootparam.h
-> +++ b/arch/x86/include/uapi/asm/bootparam.h
-> @@ -137,15 +137,15 @@ struct boot_e820_entry {
->   * setup data structure.
->   */
->  struct jailhouse_setup_data {
-> -	u16	version;
-> -	u16	compatible_version;
-> -	u16	pm_timer_address;
-> -	u16	num_cpus;
-> -	u64	pci_mmconfig_base;
-> -	u32	tsc_khz;
-> -	u32	apic_khz;
-> -	u8	standard_ioapic;
-> -	u8	cpu_ids[255];
-> +	__u16	version;
-> +	__u16	compatible_version;
-> +	__u16	pm_timer_address;
-> +	__u16	num_cpus;
-> +	__u64	pci_mmconfig_base;
-> +	__u32	tsc_khz;
-> +	__u32	apic_khz;
-> +	__u8	standard_ioapic;
-> +	__u8	cpu_ids[255];
->  } __attribute__((packed));
->  
->  /* The so-called "zeropage" */
-> 
+From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 
-Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
+ZONE_MOVABLE only has movable pages so we don't need to keep enough
+freepages to avoid or deal with fragmentation. So, don't count it.
 
-But how did you trigger this?
+This changes min_free_kbytes and thus min_watermark greatly
+if ZONE_MOVABLE is used. It will make the user uses more memory.
 
-Jan
+o System
+22GB ram, fakenuma, 2 nodes. 5 zones are used.
 
+o Before
+min_free_kbytes: 112640
+
+zone_info (min_watermark):
+Node 0, zone      DMA
+        min      19
+Node 0, zone    DMA32
+        min      3778
+Node 0, zone   Normal
+        min      10191
+Node 0, zone  Movable
+        min      0
+Node 0, zone   Device
+        min      0
+Node 1, zone      DMA
+        min      0
+Node 1, zone    DMA32
+        min      0
+Node 1, zone   Normal
+        min      14043
+Node 1, zone  Movable
+        min      127
+Node 1, zone   Device
+        min      0
+
+o After
+min_free_kbytes: 90112
+
+zone_info (min_watermark):
+Node 0, zone      DMA
+        min      15
+Node 0, zone    DMA32
+        min      3022
+Node 0, zone   Normal
+        min      8152
+Node 0, zone  Movable
+        min      0
+Node 0, zone   Device
+        min      0
+Node 1, zone      DMA
+        min      0
+Node 1, zone    DMA32
+        min      0
+Node 1, zone   Normal
+        min      11234
+Node 1, zone  Movable
+        min      102
+Node 1, zone   Device
+        min      0
+
+Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+---
+ mm/khugepaged.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 5de1c6f..92dd4e6 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1880,8 +1880,16 @@ static void set_recommended_min_free_kbytes(void)
+ 	int nr_zones = 0;
+ 	unsigned long recommended_min;
+ 
+-	for_each_populated_zone(zone)
++	for_each_populated_zone(zone) {
++		/*
++		 * We don't need to worry about fragmentation of
++		 * ZONE_MOVABLE since it only has movable pages.
++		 */
++		if (zone_idx(zone) > gfp_zone(GFP_USER))
++			continue;
++
+ 		nr_zones++;
++	}
+ 
+ 	/* Ensure 2 pageblocks are free to assist fragmentation avoidance */
+ 	recommended_min = pageblock_nr_pages * nr_zones * 2;
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+2.7.4
