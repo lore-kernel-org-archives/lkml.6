@@ -1,61 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751389AbeDEP1G (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:27:06 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:44862 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750835AbeDEP1G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:27:06 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clockevents: Fix kernel messages split across multiple lines
-Date: Thu,  5 Apr 2018 17:26:58 +0200
-Message-Id: <1522942018-14471-1-git-send-email-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.7.4
+        id S1751384AbeDEPcp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:32:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54985 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750835AbeDEPco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:32:44 -0400
+Date: Thu, 5 Apr 2018 17:32:40 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180405153240.GO6312@dhcp22.suse.cz>
+References: <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com>
+ <20180404062340.GD6312@dhcp22.suse.cz>
+ <20180404101149.08f6f881@gandalf.local.home>
+ <20180404142329.GI6312@dhcp22.suse.cz>
+ <20180404114730.65118279@gandalf.local.home>
+ <20180405025841.GA9301@bombadil.infradead.org>
+ <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
+ <20180405142258.GA28128@bombadil.infradead.org>
+ <20180405142749.GL6312@dhcp22.suse.cz>
+ <20180405151359.GB28128@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405151359.GB28128@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the clockevents driver from old-style printk() to pr_info() and
-pr_cont(), to fix split kernel messages like below:
+On Thu 05-04-18 08:13:59, Matthew Wilcox wrote:
+> On Thu, Apr 05, 2018 at 04:27:49PM +0200, Michal Hocko wrote:
+> > On Thu 05-04-18 07:22:58, Matthew Wilcox wrote:
+> > > On Wed, Apr 04, 2018 at 09:12:52PM -0700, Joel Fernandes wrote:
+> > > > On Wed, Apr 4, 2018 at 7:58 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> > > > > I still don't get why you want RETRY_MAYFAIL.  You know that tries
+> > > > > *harder* to allocate memory than plain GFP_KERNEL does, right?  And
+> > > > > that seems like the exact opposite of what you want.
+> 
+> Argh.  The comment confused me.  OK, now I've read the source and
+> understand that GFP_KERNEL | __GFP_RETRY_MAYFAIL tries exactly as hard
+> as GFP_KERNEL *except* that it won't cause OOM itself.  But any other
+> simultaneous GFP_KERNEL allocation without __GFP_RETRY_MAYFAIL will
+> cause an OOM.  (And that's why we're having a conversation)
 
-    Clockevents: could not switch to one-shot mode:
-     dummy_timer is not functional.
+Well, I can udnerstand how this can be confusing. The all confusion
+boils down to the small-never-fails semantic we have. So all reclaim
+modificators (__GFP_NOFAIL, __GFP_RETRY_MAYFAIL, __GFP_NORETRY) only
+modify the _default_ behavior.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- kernel/time/tick-oneshot.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+> That's a problem because we have places in the kernel that call
+> kv[zm]alloc(very_large_size, GFP_KERNEL), and that will turn into vmalloc,
+> which will do the exact same thing, only it will trigger OOM all by itself
+> (assuming the largest free chunk of address space in the vmalloc area
+> is larger than the amount of free memory).
 
-diff --git a/kernel/time/tick-oneshot.c b/kernel/time/tick-oneshot.c
-index c1f518e7aa808a28..6fe615d57ebbbe3b 100644
---- a/kernel/time/tick-oneshot.c
-+++ b/kernel/time/tick-oneshot.c
-@@ -82,16 +82,15 @@ int tick_switch_to_oneshot(void (*handler)(struct clock_event_device *))
- 	if (!dev || !(dev->features & CLOCK_EVT_FEAT_ONESHOT) ||
- 		    !tick_device_is_functional(dev)) {
+well, hardcoded GFP_KERNEL from vmalloc guts is yet another, ehm,
+herritage that you are not so proud of.
  
--		printk(KERN_INFO "Clockevents: "
--		       "could not switch to one-shot mode:");
-+		pr_info("Clockevents: could not switch to one-shot mode:");
- 		if (!dev) {
--			printk(" no tick device\n");
-+			pr_cont(" no tick device\n");
- 		} else {
- 			if (!tick_device_is_functional(dev))
--				printk(" %s is not functional.\n", dev->name);
-+				pr_cont(" %s is not functional.\n", dev->name);
- 			else
--				printk(" %s does not support one-shot mode.\n",
--				       dev->name);
-+				pr_cont(" %s does not support one-shot mode.\n",
-+					dev->name);
- 		}
- 		return -EINVAL;
- 	}
+> I considered an alloc_page_array(), but that doesn't fit well with the
+> design of the ring buffer code.  We could have:
+> 
+> struct page *alloc_page_list_node(int nid, gfp_t gfp_mask, unsigned long nr);
+> 
+> and link the allocated pages together through page->lru.
+> 
+> We could also have a GFP flag that says to only succeed if we're further
+> above the existing watermark than normal.  __GFP_LOW (==ALLOC_LOW),
+> if you like.  That would give us the desired behaviour of trying all of
+> the reclaim methods that GFP_KERNEL would, but not being able to exhaust
+> all the memory that GFP_KERNEL allocations would take.
+
+Well, I would be really careful with yet another gfp mask. They are so
+incredibly hard to define properly and then people kinda tend to screw
+your best intentions with their usecases ;)
+Failing on low wmark is very close to __GFP_NORETRY or even
+__GFP_NOWAIT, btw. So let's try to not overthink this...
 -- 
-2.7.4
+Michal Hocko
+SUSE Labs
