@@ -1,164 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752652AbeDEAad convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 20:30:33 -0400
-Received: from mga03.intel.com ([134.134.136.65]:37688 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752591AbeDEAab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 20:30:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,409,1517904000";
-   d="scan'208";a="43543274"
-From: "Wang, Wei W" <wei.w.wang@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
-Subject: RE: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Thread-Topic: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Thread-Index: AQHTyyXXTsdlmy3QmUiflW8thGbyQqPu3AAAgAB7EICAAMkagIABH5Eg
-Date: Thu, 5 Apr 2018 00:30:27 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
-References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
- <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
- <20180403214147-mutt-send-email-mst@kernel.org> <5AC43377.2070607@intel.com>
- <20180404155907-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180404155907-mutt-send-email-mst@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjQzMzUyMGUtNWE2Zi00ZmMwLWI4MDItNDgwODJjYTdiOTU5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlwvQ09ZaWFCa3JheVdkNVFGNktIMjlTUzFIZHJaTHBCU0FnQk11WXM4S2U4PSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1752642AbeDEAg5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 20:36:57 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:55183 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752582AbeDEAgz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 20:36:55 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Marian Marinov <kernel@kyup.com>
+Cc: linux-kernel@vger.kernel.org,
+        Linux Containers <containers@lists.linux-foundation.org>
+References: <1522408620-10578-1-git-send-email-kernel@kyup.com>
+        <87vad7hsdb.fsf@xmission.com>
+        <e6fe4cc7-eed0-fbe2-98af-31c95e35805a@kyup.com>
+Date: Wed, 04 Apr 2018 19:35:46 -0500
+In-Reply-To: <e6fe4cc7-eed0-fbe2-98af-31c95e35805a@kyup.com> (Marian Marinov's
+        message of "Thu, 5 Apr 2018 02:43:00 +0300")
+Message-ID: <876056bicd.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1f3sta-0008Ua-5l;;;mid=<876056bicd.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19R/iUiPWB/nJ51aNLE2yc3Qdw3sJsFwRo=
+X-SA-Exim-Connect-IP: 67.3.145.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Marian Marinov <kernel@kyup.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 339 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 3.5 (1.0%), b_tie_ro: 2.5 (0.7%), parse: 1.18 (0.3%),
+        extract_message_metadata: 17 (5.0%), get_uri_detail_list: 4.2 (1.3%),
+        tests_pri_-1000: 9 (2.6%), tests_pri_-950: 1.59 (0.5%), tests_pri_-900: 1.25
+        (0.4%), tests_pri_-400: 30 (8.8%), check_bayes: 29 (8.4%), b_tokenize: 11
+        (3.3%), b_tok_get_all: 9 (2.6%), b_comp_prob: 3.6 (1.1%), b_tok_touch_all:
+        2.8 (0.8%), b_finish: 0.71 (0.2%), tests_pri_0: 264 (77.9%),
+        check_dkim_signature: 0.60 (0.2%), check_dkim_adsp: 3.9 (1.1%),
+        tests_pri_500: 7 (2.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] uts_namespace: Move boot_id in uts namespace
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
-> On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
-> > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
-> > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
-> > > > +static int add_one_sg(struct virtqueue *vq, unsigned long pfn,
-> > > > +uint32_t len) {
-> > > > +	struct scatterlist sg;
-> > > > +	unsigned int unused;
-> > > > +
-> > > > +	sg_init_table(&sg, 1);
-> > > > +	sg_set_page(&sg, pfn_to_page(pfn), len, 0);
-> > > > +
-> > > > +	/* Detach all the used buffers from the vq */
-> > > > +	while (virtqueue_get_buf(vq, &unused))
-> > > > +		;
-> > > > +
-> > > > +	/*
-> > > > +	 * Since this is an optimization feature, losing a couple of free
-> > > > +	 * pages to report isn't important. We simply return without adding
-> > > > +	 * the page hint if the vq is full.
-> > > why not stop scanning of following pages though?
-> >
-> > Because continuing to send hints is a way to deliver the maximum
-> > possible hints to host. For example, host may have a delay in taking
-> > hints at some point, and then it resumes to take hints soon. If the
-> > driver does not stop when the vq is full, it will be able to put more
-> > hints to the vq once the vq has available entries to add.
-> 
-> What this appears to be is just lack of coordination between host and guest.
-> 
-> But meanwhile you are spending cycles walking the list uselessly.
-> Instead of trying nilly-willy, the standard thing to do is to wait for host to
-> consume an entry and proceed.
-> 
-> Coding it up might be tricky, so it's probably acceptable as is for now, but
-> please replace the justification about with a TODO entry that we should
-> synchronize with the host.
+Marian Marinov <kernel@kyup.com> writes:
 
-Thanks. I plan to add
+> On 04/04/2018 07:02 PM, Eric W. Biederman wrote:
+>> Angel Shtilianov <kernel@kyup.com> writes:
+>> 
+>>> Currently the same boot_id is reported for all containers running
+>>> on a host node, including the host node itself. Even after restarting
+>>> a container it will still have the same persistent boot_id.
+>>>
+>>> This can cause troubles in cases where you have multiple containers
+>>> from the same cluster on one host node. The software inside each
+>>> container will get the same boot_id and thus fail to join the cluster,
+>>> after the first container from the node has already joined.
+>>>
+>>> UTS namespace on other hand keeps the machine specific data, so it
+>>> seems to be the correct place to move the boot_id and instantiate it,
+>>> so each container will have unique id for its own boot lifetime, if
+>>> it has its own uts namespace.
+>> 
+>> Technically this really needs to use the sysctl infrastructure that
+>> allows you to register different files in different namespaces.  That
+>> way the value you read from proc_do_uuid will be based on who opens the
+>> file not on who is reading the file.
+>
+> Ok, so would you accept a patch that reimplements boot_id trough the sysctl infrastructure?
 
-TODO: The current implementation could be further improved by stopping the reporting when the vq is full and continuing the reporting when host notifies that there are available entries for the driver to add.
+Assuming I am convinced this makes sense to do on the semantic level.
 
+>> Practically why does a bind mount on top of boot_id work?  What makes
+>> this a general problem worth solving in the kernel?  Why is hiding the
+>> fact that you are running the same instance of the same kernel a useful
+>> thing? That is the reality.
+>
+> The problem is, that the distros do not know that they are in
+> container and don't know that they have to bind mount something on top
+> of boot_id.  You need to tell Docker, LXC/LXD and all other container
+> runtimes that they need to do this bind mount for boot_id.
 
-> 
-> 
-> >
-> > >
-> > > > +	 * We are adding one entry each time, which essentially results in no
-> > > > +	 * memory allocation, so the GFP_KERNEL flag below can be ignored.
-> > > > +	 * Host works by polling the free page vq for hints after sending the
-> > > > +	 * starting cmd id, so the driver doesn't need to kick after filling
-> > > > +	 * the vq.
-> > > > +	 * Lastly, there is always one entry reserved for the cmd id to use.
-> > > > +	 */
-> > > > +	if (vq->num_free > 1)
-> > > > +		return virtqueue_add_inbuf(vq, &sg, 1, vq, GFP_KERNEL);
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > > +static int virtio_balloon_send_free_pages(void *opaque, unsigned long
-> pfn,
-> > > > +					   unsigned long nr_pages)
-> > > > +{
-> > > > +	struct virtio_balloon *vb = (struct virtio_balloon *)opaque;
-> > > > +	uint32_t len = nr_pages << PAGE_SHIFT;
-> > > > +
-> > > > +	/*
-> > > > +	 * If a stop id or a new cmd id was just received from host, stop
-> > > > +	 * the reporting, and return 1 to indicate an active stop.
-> > > > +	 */
-> > > > +	if (virtio32_to_cpu(vb->vdev, vb->cmd_id_use) != vb-
-> >cmd_id_received)
-> > > > +		return 1;
-> 
-> functions returning int should return 0 or -errno on failure, positive return
-> code should indicate progress.
-> 
-> If you want a boolean, use bool pls.
+Yes.  Anything like this is the responsibility of the container runtime
+one way or another.   Magic to get around fixing the small set of
+container runtimes you care about is a questionable activity.
 
-OK. I plan to change 1  to -EBUSY to indicate the case that host actively asks the driver to stop reporting (This makes the callback return value type consistent with walk_free_mem_block). 
+> I consider this to be a general issue, that lacks good general
+> solution in userspace.  The kernel is providing this boot_id
+> interface, but it is giving wrong data in the context of containers.
+
+I disagree.  Namespaces have never been about hiding that you are on a
+given machine or a single machine.  They are about encapsulating global
+identifers so that process migration can happen, and so that processes
+can be better isolated.  The boot_id is not an identify of an object in
+the kernel at all, and it is designed to be trully globally unique
+across time and space so I am not at all certain that it makes the least
+bit of sense to do anything with a boot_id.
 
 
+That said my memory of boot_id is that was added so that emacs (and
+related programs) could create lock files on nfs and could tell if the
+current machine owns the file, and if so be able to tell if the owner
+of the lock file is alive.
 
-> 
-> 
-> > > > +
-> > > this access to cmd_id_use and cmd_id_received without locks bothers
-> > > me. Pls document why it's safe.
-> >
-> > OK. Probably we could add below to the above comments:
-> >
-> > cmd_id_use and cmd_id_received don't need to be accessed under locks
-> > because the reporting does not have to stop immediately before
-> > cmd_id_received is changed (i.e. when host requests to stop). That is,
-> > reporting more hints after host requests to stop isn't an issue for
-> > this optimization feature, because host will simply drop the stale
-> > hints next time when it needs a new reporting.
-> 
-> What about the other direction? Can this observe a stale value and exit
-> erroneously?
+So there is an argument to be made that boot_id is to coarse.  That
+argument suggest that boot_id is a pid_namespace property.
 
-I'm afraid the driver couldn't be aware if the added hints are stale or not, because host and guest actions happen asynchronously. That is, host side iothread stops taking hints as soon as the migration thread asks to stop, it doesn't wait for any ACK from the driver to stop (as we discussed before, host couldn't always assume that the driver is in a responsive state).
+I have not looked at the users of boot_id, and I don't have a definition
+of boot_id that makes me think it is too coarse.
 
-Btw, we also don't need to worry about any memory left in the vq, since only addresses are added to the vq, there is no real memory allocations.
+If you can provide a clear description of what the semantics are and
+what they should be for boot_id showing how boot_id fits into a
+namespace, making it clear what should happen with checkpoint/restart.
+We can definitely look at changing how the kernel supports boot_id.
 
-Best,
-Wei
+The reason I suggested the bind mount is there are lots of cases where
+people want to lie to applications about the reality of what is going on
+for whatever reason, and we leave those lies to userspace.  Things
+like changing the contents of /proc/cpuinfo.
+
+> Proposing to fix this problem in userspace seams like ignoring the
+> issue.  You could have said to the Consul guys, that they should
+> simply stop using boot_id, because it doesn't work correctly on
+> containers.
+
+I don't know the Consul guys.   From a quick google search I see that
+Consul is an open source project that is aims to be distributed and
+highly available.  It seems a reasonable case to look at to motivate
+changes to boot_id.
+
+That said if I want to be highly available I would find every node
+having the same boot_id to be very worrying, and very useful.  It allows
+detecting if no hardware redundancy is present in a situation.  That
+certainly seems like a good thing.
+
+If you just want to test Consul then hacking boot_id with a bind mount
+seems the right thing.  If you really want to run Consul in production
+I am curious to know how removing the ability to detect if you are on
+the same kernel as another piece of Consul is a good thing.
+
+Eric
