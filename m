@@ -1,66 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751503AbeDEOYL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:24:11 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:44028 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751249AbeDEOYJ (ORCPT
+        id S1751352AbeDEOZq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:25:46 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38659 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeDEOZo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:24:09 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w35EO3Pn027828
-X-Nifty-SrcIP: [209.85.213.52]
-X-Google-Smtp-Source: AIpwx48Ashp0LMRtQcmZhAdahYTNoQSKO4PkOlZs3rGrLXpJor5DVBr+mQfe/8KVJo60PduqOb6mFUdjBt7+nkOR6yI=
+        Thu, 5 Apr 2018 10:25:44 -0400
+X-Google-Smtp-Source: AIpwx495unCRnV5v6hrsNnpRoJnaCmBQR/x6BQC44jj6K/qRAKeJOxn+zfxrl8ttUY0dhiNcDxPJZg==
+Subject: Re: [PATCH v4 4/9] vsprintf: Consolidate handling of unknown pointer
+ specifiers
+To: Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20180404085843.16050-1-pmladek@suse.com>
+ <20180404085843.16050-5-pmladek@suse.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <0fa5a3ec-6002-670b-0470-f523584149de@rasmusvillemoes.dk>
+Date: Thu, 5 Apr 2018 16:25:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <c59adbdd18dc083fc1e08a9a889e67282fcbbaa2.1519668832.git.robin.jarry@6wind.com>
-References: <cover.1519393674.git.robin.jarry@6wind.com> <cover.1519668832.git.robin.jarry@6wind.com>
- <c59adbdd18dc083fc1e08a9a889e67282fcbbaa2.1519668832.git.robin.jarry@6wind.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 5 Apr 2018 23:23:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASj6O790hbr0de4dU4GPk99LCGBsGj6t65G1iyxA7WhSA@mail.gmail.com>
-Message-ID: <CAK7LNASj6O790hbr0de4dU4GPk99LCGBsGj6t65G1iyxA7WhSA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] kbuild: use HOSTLDFLAGS for single .c executables
-To: Robin Jarry <robin.jarry@6wind.com>
-Cc: Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180404085843.16050-5-pmladek@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-27 3:41 GMT+09:00 Robin Jarry <robin.jarry@6wind.com>:
-> When compiling executables from a single .c file, the linker is also
-> invoked. Pass the HOSTLDFLAGS like for other linker commands.
+On 2018-04-04 10:58, Petr Mladek wrote:
+> There are few printk formats that make sense only with two or more
+> specifiers. Also some specifiers make sense only when a kernel feature
+> is enabled.
+> 
+> The handling of unknown specifiers is strange, inconsistent, and
+> even leaking the address. For example, netdev_bits() prints the
+> non-hashed pointer value or clock() prints "(null)".
+> 
+> The best solution seems to be in flags_string(). It does not print any
+> misleading value. Instead it calls WARN_ONCE() describing the unknown
+> specifier. Therefore it clearly shows the problem and helps to find it.
 >
-> Signed-off-by: Robin Jarry <robin.jarry@6wind.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> ---
->  scripts/Makefile.host | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/Makefile.host b/scripts/Makefile.host
-> index e6dc6ae2d7c4..aa971cc3f339 100644
-> --- a/scripts/Makefile.host
-> +++ b/scripts/Makefile.host
-> @@ -84,7 +84,7 @@ hostcxx_flags  = -Wp,-MD,$(depfile) $(__hostcxx_flags)
->  # Create executable from a single .c file
->  # host-csingle -> Executable
->  quiet_cmd_host-csingle         = HOSTCC  $@
-> -      cmd_host-csingle = $(HOSTCC) $(hostc_flags) -o $@ $< \
-> +      cmd_host-csingle = $(HOSTCC) $(hostc_flags) $(HOSTLDFLAGS) -o $@ $< \
->                 $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F))
->  $(host-csingle): $(obj)/%: $(src)/%.c FORCE
->         $(call if_changed_dep,host-csingle)
 
+I'm not sure it's actually worth WARNing about the unknown variants
+since we have static analysis (at least checkpatch and smatch) that
+should catch that. Even just git grep -1 -E '%p"$' finds %pt and %po
+which should get fixed before somebody claims those extensions.
 
-This one is correct anyway.
+But, I don't disagree with trying to fix up the inconsistency, and
+certainly not with fixing netdev_bits(), but it seems you've missed that
+e.g. the "case: 'g'" is completely compiled out for !CONFIG_BLOCK.
+There's also %pOF which is effectively disabled for !CONFIG_OF (which
+obviously makes sense), but with yet a different fallback behaviour.
 
-I applied to linux-kbuild.
+Hm. I think we should somehow distinguish between the cases of "%po" and
+"%pNX", i.e. specifiers/variants that are always bogus, and the cases of
+a %pOF or %pC that somehow happens even though nobody should have a
+struct device_node* or struct clk* to pass.
 
-
-
--- 
-Best Regards
-Masahiro Yamada
+Rasmus
