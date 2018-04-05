@@ -1,122 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeDEOAS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:00:18 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53536 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750835AbeDEOAQ (ORCPT
+        id S1751570AbeDEOBB convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:01:01 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:13435 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751368AbeDEOA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:00:16 -0400
-X-Google-Smtp-Source: AIpwx487elmzUsIXM6ephhlpNzjvLpKYwjgb7bBLxHAYgJ+sQIFv7F0ky01c6fhEtYsx1Acwdeeb9A==
-Subject: Re: [PATCH] ata: ahci-platform: add reset control support
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Patrice CHOTARD <patrice.chotard@st.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Tejun Heo <tj@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org"
-        <linux-mediatek@lists.infradead.org>
-References: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com>
- <20180405095429.GA7506@ulmo> <e33f54ed-2848-9a4f-9669-7fada8c60326@st.com>
- <1f7d0738-1963-21c5-c293-e46fb0214ecf@redhat.com>
- <20180405135435.GA10860@ulmo>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <6ce60a0b-0409-016a-d29c-91b8b9e2ad07@redhat.com>
-Date: Thu, 5 Apr 2018 16:00:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 5 Apr 2018 10:00:59 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 05 Apr 2018 07:00:50 -0700
+From: Bhadram Varka <vbhadram@nvidia.com>
+To: Esben Haabendal <esben.haabendal@gmail.com>
+CC: Esben Haabendal <eha@deif.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: RE: [PATCH] net: phy: marvell: Enable interrupt function on LED2 pin
+Thread-Topic: [PATCH] net: phy: marvell: Enable interrupt function on LED2 pin
+Thread-Index: AQHTzOMZopkF1giP8Ue0qxO7VwjMg6PyMPug
+Date: Thu, 5 Apr 2018 14:00:53 +0000
+Message-ID: <4d9e0665abf7408988fc4ce20c26a08f@bgmail102.nvidia.com>
+References: <20180405133504.12257-1-esben.haabendal@gmail.com>
+In-Reply-To: <20180405133504.12257-1-esben.haabendal@gmail.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.25.73.182]
 MIME-Version: 1.0
-In-Reply-To: <20180405135435.GA10860@ulmo>
-Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Esben,
 
-On 05-04-18 15:54, Thierry Reding wrote:
-> On Thu, Apr 05, 2018 at 03:27:03PM +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 05-04-18 15:17, Patrice CHOTARD wrote:
->>> Hi Thierry
->>>
->>> On 04/05/2018 11:54 AM, Thierry Reding wrote:
->>>> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
->>>>> Add support to get and control a list of resets for the device
->>>>> as optional and shared. These resets must be kept de-asserted until
->>>>> the device is enabled.
->>>>>
->>>>> This is specified as shared because some SoCs like UniPhier series
->>>>> have common reset controls with all ahci controller instances.
->>>>>
->>>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
->>>>> ---
->>>>>     .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
->>>>>     drivers/ata/ahci.h                                 |  1 +
->>>>>     drivers/ata/libahci_platform.c                     | 24 +++++++++++++++++++---
->>>>>     3 files changed, 23 insertions(+), 3 deletions(-)
->>>>
->>>> This causes a regression on Tegra because we explicitly request the
->>>> resets after the call to ahci_platform_get_resources().
->>>
->>> I confirm, we got exactly the same behavior on STi platform.
->>>
->>>>
->>>>    From a quick look, ahci_mtk and ahci_st are in the same boat, adding the
->>>> corresponding maintainers to Cc.
->>>>
->>>> Patrice, Matthias: does SATA still work for you after this patch? This
->>>> has been in linux-next since next-20180327.
->>>
->>> SATA is still working after this patch, but a kernel warning is
->>> triggered due to the fact that resets are both requested by
->>> libahci_platform and by ahci_st driver.
->>
->> So in your case you might be able to remove the reset handling
->> from the ahci_st driver and rely on the new libahci_platform
->> handling instead? If that works that seems like a win to me.
->>
->> As said elsewhere in this thread I think it makes sense to keep (or re-add
->> after a revert) the libahci_platform reset code, but make it conditional
->> on a flag passed to ahci_platform_get_resources(). This way we get
->> the shared code for most cases and platforms which need special handling
->> can opt-out.
-> 
-> Agreed, although I prefer such helpers to be opt-in, rather than
-> opt-out. In my experience that tends make the helpers more resilient to
-> this kind of regression. It also simplifies things because instead of
-> drivers saying "I want all the helpers except this one and that one",
-> they can simply say "I want these helpers and that one". In the former
-> case whenever you add some new (opt-out) feature, you have to update all
-> drivers and add the exception. In the latter you only need to extend the
-> drivers that want to make use of the new helper.
-> 
-> With that in mind, rather than adding a flag to the
-> ahci_platform_get_resources() function, it might be more flexible to
-> split the helpers into finer-grained functions. That way drivers can
-> pick whatever functionality they want from the helpers.
+-----Original Message-----
+From: netdev-owner@vger.kernel.org <netdev-owner@vger.kernel.org> On Behalf Of Esben Haabendal
+Sent: Thursday, April 05, 2018 7:05 PM
+To: netdev@vger.kernel.org
+Cc: Esben Haabendal <eha@deif.com>; Rasmus Villemoes <rasmus.villemoes@prevas.dk>; Andrew Lunn <andrew@lunn.ch>; Florian Fainelli <f.fainelli@gmail.com>; open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: phy: marvell: Enable interrupt function on LED2 pin
 
-Good point, so lets:
+From: Esben Haabendal <eha@deif.com>
 
-1) Revert the patch for now
-2) Have a new version of the patch which adds a ahci_platform_get_resets() helper
-3) Modify the generic drivers/ata/ahci_platform.c driver to call the new
-    ahci_platform_get_resets() between its ahci_platform_get_resources()
-    and ahci_platform_enable_resources() calls.
-    I think that ahci_platform_enable_resources() should still automatically
-    do the right thing wrt resets if ahci_platform_get_resets() was called
-    (otherwise the resets array will be empty and should be skipped)
+The LED2[2]/INTn pin on Marvell 88E1318S as well as 88E1510/12/14/18 needs to be configured to be usable as interrupt not only when WOL is enabled, but whenever we rely on interrupts from the PHY.
 
-This should make the generic driver usable for the UniPhier SoCs and
-maybe some other drivers like the ahci_st driver can also switch to the
-new ahci_platform_get_resets() functionality to reduce their code a bit.
+Signed-off-by: Esben Haabendal <eha@deif.com>
+Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+---
+ drivers/net/phy/marvell.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-Regards,
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c index 0e0978d8a0eb..f03a510f1247 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -457,6 +457,21 @@ static int marvell_of_reg_init(struct phy_device *phydev)  }  #endif /* CONFIG_OF_MDIO */
+ 
++static int m88e1318_config_intr(struct phy_device *phydev) {
++	int err;
++
++	err = marvell_config_intr(phydev);
++	if (err)
++		return err;
++
++	/* Setup LED[2] as interrupt pin (active low) */
++	return phy_modify(phydev, MII_88E1318S_PHY_LED_TCR,
++			  MII_88E1318S_PHY_LED_TCR_FORCE_INT,
++			  MII_88E1318S_PHY_LED_TCR_INTn_ENABLE |
++			  MII_88E1318S_PHY_LED_TCR_INT_ACTIVE_LOW);
 
-Hans
+Can we move this part of the code to m88e1121_config_init() ?
+
+Every time whether we disable or enable the interrupts this part of code will execute.
+
+Thanks!
