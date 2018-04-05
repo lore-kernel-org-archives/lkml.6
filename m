@@ -1,21 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeDEJxp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:53:45 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:44240 "EHLO
+        id S1752764AbeDEJyA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:54:00 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:44358 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752464AbeDEJxk (ORCPT
+        with ESMTP id S1752453AbeDEJxn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:53:40 -0400
+        Thu, 5 Apr 2018 05:53:43 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+Cc: Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 2/8] syscalls: introduce CONFIG_ARCH_HAS_SYSCALL_WRAPPER
-Date: Thu,  5 Apr 2018 11:53:01 +0200
-Message-Id: <20180405095307.3730-3-linux@dominikbrodowski.net>
+        Al Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+        Denys Vlasenko <dvlasenk@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH 3/8] syscalls/x86: use struct pt_regs based syscall calling for 64-bit syscalls
+Date: Thu,  5 Apr 2018 11:53:02 +0200
+Message-Id: <20180405095307.3730-4-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405095307.3730-1-linux@dominikbrodowski.net>
 References: <20180405095307.3730-1-linux@dominikbrodowski.net>
@@ -23,118 +27,325 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It may be useful for an architecture to override the definitions of the
-SYSCALL_DEFINE0() and __SYSCALL_DEFINEx() macros in <linux/syscalls.h>,
-in particular to use a different calling convention for syscalls.
+Let's make use of ARCH_HAS_SYSCALL_WRAPPER on pure 64-bit x86-64 systems:
 
-This patch provides a mechanism to do so: It introduces
-CONFIG_ARCH_HAS_SYSCALL_WRAPPER. If it is enabled, <asm/sycall_wrapper.h>
-is included in <linux/syscalls.h> and may be used to define the macros
-mentioned above. Moreover, as the syscall calling convention may be
-different if CONFIG_ARCH_HAS_SYSCALL_WRAPPER is set, the syscall function
-prototypes in <linux/syscalls.h> are #ifndef'd out in that case.
+Each syscall defines a stub which takes struct pt_regs as its only
+argument. It decodes just those parameters it needs, e.g:
+
+	asmlinkage long sys_xyzzy(const struct pt_regs *regs)
+	{
+		return SyS_xyzzy(regs->di, regs->si, regs->dx);
+	}
+
+This approach avoids leaking random user-provided register content down
+the call chain.
+
+For example, for sys_recv() which is a 4-parameter syscall, the assembly
+now is (in slightly reordered fashion):
+
+	<sys_recv>:
+		callq	<__fentry__>
+
+		/* decode regs->di, ->si, ->dx and ->r10 */
+		mov	0x70(%rdi),%rdi
+		mov	0x68(%rdi),%rsi
+		mov	0x60(%rdi),%rdx
+		mov	0x38(%rdi),%rcx
+
+		[ SyS_recv() is automatically inlined by the compiler,
+		  as it is not [yet] used anywhere else ]
+		/* clear %r9 and %r8, the 5th and 6th args */
+		xor	%r9d,%r9d
+		xor	%r8d,%r8d
+
+		/* do the actual work */
+		callq	__sys_recvfrom
+
+		/* cleanup and return */
+		cltq
+		retq
+
+The only valid place in an x86-64 kernel which rightfully calls
+a syscall function on its own -- vsyscall -- needs to be modified
+to pass struct pt_regs onwards as well.
+
+To keep the syscall table generation working independent of
+SYSCALL_PTREGS being enabled, the stubs are named the same as the
+"original" syscall stubs, i.e. sys_*().
+
+This patch is based on an original proof-of-concept
+
+	From: Linus Torvalds <torvalds@linux-foundation.org>
+	Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+and was split up and heavily modified by me, in particular to base it on
+ARCH_HAS_SYSCALL_WRAPPER, to limit it to 64-bit-only for the time being,
+and to update the vsyscall to the new calling convention.
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- include/linux/syscalls.h | 23 +++++++++++++++++++++++
- init/Kconfig             |  7 +++++++
- 2 files changed, 30 insertions(+)
+ arch/x86/Kconfig                       |  5 +++
+ arch/x86/entry/common.c                |  4 ++
+ arch/x86/entry/syscall_64.c            |  9 ++++-
+ arch/x86/entry/vsyscall/vsyscall_64.c  | 22 +++++++++++
+ arch/x86/include/asm/syscall.h         |  4 ++
+ arch/x86/include/asm/syscall_wrapper.h | 70 ++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/syscalls.h        |  7 ++++
+ include/linux/syscalls.h               |  2 +-
+ 8 files changed, 120 insertions(+), 3 deletions(-)
+ create mode 100644 arch/x86/include/asm/syscall_wrapper.h
 
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 27fede438959..67348efc2540 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2954,3 +2954,8 @@ source "crypto/Kconfig"
+ source "arch/x86/kvm/Kconfig"
+ 
+ source "lib/Kconfig"
++
++config SYSCALL_PTREGS
++	def_bool y
++	depends on X86_64 && !COMPAT
++	select ARCH_HAS_SYSCALL_WRAPPER
+diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+index a8b066dbbf48..e1b91bffa988 100644
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -284,9 +284,13 @@ __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
+ 	nr &= __SYSCALL_MASK;
+ 	if (likely(nr < NR_syscalls)) {
+ 		nr = array_index_nospec(nr, NR_syscalls);
++#ifdef CONFIG_SYSCALL_PTREGS
++		regs->ax = sys_call_table[nr](regs);
++#else
+ 		regs->ax = sys_call_table[nr](
+ 			regs->di, regs->si, regs->dx,
+ 			regs->r10, regs->r8, regs->r9);
++#endif
+ 	}
+ 
+ 	syscall_return_slowpath(regs);
+diff --git a/arch/x86/entry/syscall_64.c b/arch/x86/entry/syscall_64.c
+index c176d2fab1da..6197850adf91 100644
+--- a/arch/x86/entry/syscall_64.c
++++ b/arch/x86/entry/syscall_64.c
+@@ -7,14 +7,19 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/syscall.h>
+ 
++#ifdef CONFIG_SYSCALL_PTREGS
++/* this is a lie, but it does not hurt as sys_ni_syscall just returns -EINVAL */
++extern asmlinkage long sys_ni_syscall(const struct pt_regs *);
++#define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
++#else /* CONFIG_SYSCALL_PTREGS */
++extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
+ #define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
++#endif /* CONFIG_SYSCALL_PTREGS */
+ #include <asm/syscalls_64.h>
+ #undef __SYSCALL_64
+ 
+ #define __SYSCALL_64(nr, sym, qual) [nr] = sym,
+ 
+-extern long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
+-
+ asmlinkage const sys_call_ptr_t sys_call_table[__NR_syscall_max+1] = {
+ 	/*
+ 	 * Smells like a compiler bug -- it doesn't work
+diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
+index 317be365bce3..05eebbf9b989 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_64.c
++++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+@@ -127,6 +127,9 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
+ 	int vsyscall_nr, syscall_nr, tmp;
+ 	int prev_sig_on_uaccess_err;
+ 	long ret;
++#ifdef CONFIG_SYSCALL_PTREGS
++	unsigned long orig_dx;
++#endif
+ 
+ 	/*
+ 	 * No point in checking CS -- the only way to get here is a user mode
+@@ -227,19 +230,38 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
+ 	ret = -EFAULT;
+ 	switch (vsyscall_nr) {
+ 	case 0:
++#ifdef CONFIG_SYSCALL_PTREGS
++		/* this decodes regs->di and regs->si on its own */
++		ret = sys_gettimeofday(regs);
++#else
+ 		ret = sys_gettimeofday(
+ 			(struct timeval __user *)regs->di,
+ 			(struct timezone __user *)regs->si);
++#endif /* CONFIG_SYSCALL_PTREGS */
+ 		break;
+ 
+ 	case 1:
++#ifdef CONFIG_SYSCALL_PTREGS
++		/* this decodes regs->di on its own */
++		ret = sys_time(regs);
++#else
+ 		ret = sys_time((time_t __user *)regs->di);
++#endif /* CONFIG_SYSCALL_PTREGS */
+ 		break;
+ 
+ 	case 2:
++#ifdef CONFIG_SYSCALL_PTREGS
++		/* while we could clobber regs->dx, we didn't in the past... */
++		orig_dx = regs->dx;
++		regs->dx = 0;
++		/* this decodes regs->di, regs->si and regs->dx on its own */
++		ret = sys_getcpu(regs);
++		regs->dx = orig_dx;
++#else
+ 		ret = sys_getcpu((unsigned __user *)regs->di,
+ 				 (unsigned __user *)regs->si,
+ 				 NULL);
++#endif /* CONFIG_SYSCALL_PTREGS */
+ 		break;
+ 	}
+ 
+diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
+index 03eedc21246d..17c62373a6f9 100644
+--- a/arch/x86/include/asm/syscall.h
++++ b/arch/x86/include/asm/syscall.h
+@@ -20,9 +20,13 @@
+ #include <asm/thread_info.h>	/* for TS_COMPAT */
+ #include <asm/unistd.h>
+ 
++#ifdef CONFIG_SYSCALL_PTREGS
++typedef asmlinkage long (*sys_call_ptr_t)(const struct pt_regs *);
++#else
+ typedef asmlinkage long (*sys_call_ptr_t)(unsigned long, unsigned long,
+ 					  unsigned long, unsigned long,
+ 					  unsigned long, unsigned long);
++#endif /* CONFIG_SYSCALL_PTREGS */
+ extern const sys_call_ptr_t sys_call_table[];
+ 
+ #if defined(CONFIG_X86_32)
+diff --git a/arch/x86/include/asm/syscall_wrapper.h b/arch/x86/include/asm/syscall_wrapper.h
+new file mode 100644
+index 000000000000..702bdee377af
+--- /dev/null
++++ b/arch/x86/include/asm/syscall_wrapper.h
+@@ -0,0 +1,70 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * syscall_wrapper.h - x86 specific wrappers to syscall definitions
++ */
++
++#ifndef _ASM_X86_SYSCALL_WRAPPER_H
++#define _ASM_X86_SYSCALL_WRAPPER_H
++
++/*
++ * Instead of the generic __SYSCALL_DEFINEx() definition, this macro takes
++ * struct pt_regs *regs as the only argument of the syscall stub named
++ * sys_*(). It decodes just the registers it needs and passes them on to
++ * the SyS_*() wrapper and then to the SYSC_*() function doing the actual job.
++ * These wrappers and functions are inlined, meaning that the assembly looks
++ * as follows (slightly re-ordered):
++ *
++ * <sys_recv>:			<-- syscall with 4 parameters
++ *	callq	<__fentry__>
++ *
++ *	mov	0x70(%rdi),%rdi	<-- decode regs->di
++ *	mov	0x68(%rdi),%rsi	<-- decode regs->si
++ *	mov	0x60(%rdi),%rdx	<-- decode regs->dx
++ *	mov	0x38(%rdi),%rcx	<-- decode regs->r10
++ *
++ *	xor	%r9d,%r9d	<-- clear %r9
++ *	xor	%r8d,%r8d	<-- clear %r8
++ *
++ *	callq	__sys_recvfrom	<-- do the actual work in __sys_recvfrom()
++ *				    which takes 6 arguments
++ *
++ *	cltq			<-- extend return value to 64-bit
++ *	retq			<-- return
++ *
++ * This approach avoids leaking random user-provided register content down
++ * the call chain.
++ *
++ * As the generic SYSCALL_DEFINE0() macro does not decode any parameters for
++ * obvious reasons, and passing struct pt_regs *regs to it in %rdi does not
++ * hurt, there is no need to override it.
++ */
++#define __SYSCALL_DEFINEx(x, name, ...)					\
++	asmlinkage long sys##name(const struct pt_regs *regs);		\
++	ALLOW_ERROR_INJECTION(sys##name, ERRNO);			\
++	static long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__));		\
++	static inline long SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__));	\
++	asmlinkage long sys##name(const struct pt_regs *regs)		\
++	{								\
++		return SyS##name(__MAP(x,__SC_ARGS			\
++			,,regs->di,,regs->si,,regs->dx			\
++			,,regs->r10,,regs->r8,,regs->r9));		\
++	}								\
++	static long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__))		\
++	{								\
++		long ret = SYSC##name(__MAP(x,__SC_CAST,__VA_ARGS__));	\
++		__MAP(x,__SC_TEST,__VA_ARGS__);				\
++		__PROTECT(x, ret,__MAP(x,__SC_ARGS,__VA_ARGS__));	\
++		return ret;						\
++	}								\
++	static inline long SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__))
++
++/*
++ * For VSYSCALLS, we need to declare these three syscalls with the new
++ * pt_regs-based calling convention for in-kernel use.
++ */
++struct pt_regs;
++asmlinkage long sys_getcpu(const struct pt_regs *regs);		/* di,si,dx */
++asmlinkage long sys_gettimeofday(const struct pt_regs *regs);	/* di,si */
++asmlinkage long sys_time(const struct pt_regs *regs);		/* di */
++
++#endif /* _ASM_X86_SYSCALL_WRAPPER_H */
+diff --git a/arch/x86/include/asm/syscalls.h b/arch/x86/include/asm/syscalls.h
+index ae6e05fdc24b..e4ad93c05f02 100644
+--- a/arch/x86/include/asm/syscalls.h
++++ b/arch/x86/include/asm/syscalls.h
+@@ -18,6 +18,12 @@
+ /* Common in X86_32 and X86_64 */
+ /* kernel/ioport.c */
+ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on);
++
++#ifndef CONFIG_SYSCALL_PTREGS
++/*
++ * If CONFIG_SYSCALL_PTREGS is enabled, a different syscall calling convention
++ * is used. Do not include these -- invalid -- prototypes then
++ */
+ asmlinkage long sys_ioperm(unsigned long, unsigned long, int);
+ asmlinkage long sys_iopl(unsigned int);
+ 
+@@ -53,4 +59,5 @@ asmlinkage long sys_mmap(unsigned long, unsigned long, unsigned long,
+ 			 unsigned long, unsigned long, unsigned long);
+ 
+ #endif /* CONFIG_X86_32 */
++#endif /* CONFIG_SYSCALL_PTREGS */
+ #endif /* _ASM_X86_SYSCALLS_H */
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index b961184f597a..503ab245d4ce 100644
+index 503ab245d4ce..d7168b3a4b4c 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -81,6 +81,17 @@ union bpf_attr;
- #include <linux/key.h>
- #include <trace/syscall.h>
- 
-+#ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
-+/*
-+ * It may be useful for an architecture to override the definitions of the
-+ * SYSCALL_DEFINE0() and __SYSCALL_DEFINEx() macros, in particular to use a
-+ * different calling convention for syscalls. To allow for that, the prototypes
-+ * for the sys_*() functions below will *not* be included if
-+ * CONFIG_ARCH_HAS_SYSCALL_WRAPPER is enabled.
-+ */
-+#include <asm/syscall_wrapper.h>
-+#endif /* CONFIG_ARCH_HAS_SYSCALL_WRAPPER */
-+
- /*
-  * __MAP - apply a macro to syscall arguments
-  * __MAP(n, m, t1, a1, t2, a2, ..., tn, an) will expand to
-@@ -189,11 +200,13 @@ static inline int is_syscall_trace_event(struct trace_event_call *tp_event)
- }
- #endif
- 
-+#ifndef SYSCALL_DEFINE0
- #define SYSCALL_DEFINE0(sname)					\
- 	SYSCALL_METADATA(_##sname, 0);				\
- 	asmlinkage long sys_##sname(void);			\
- 	ALLOW_ERROR_INJECTION(sys_##sname, ERRNO);		\
- 	asmlinkage long sys_##sname(void)
-+#endif /* SYSCALL_DEFINE0 */
- 
- #define SYSCALL_DEFINE1(name, ...) SYSCALL_DEFINEx(1, _##name, __VA_ARGS__)
- #define SYSCALL_DEFINE2(name, ...) SYSCALL_DEFINEx(2, _##name, __VA_ARGS__)
-@@ -209,6 +222,8 @@ static inline int is_syscall_trace_event(struct trace_event_call *tp_event)
- 	__SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
- 
- #define __PROTECT(...) asmlinkage_protect(__VA_ARGS__)
-+
-+#ifndef __SYSCALL_DEFINEx
- #define __SYSCALL_DEFINEx(x, name, ...)					\
- 	asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))	\
- 		__attribute__((alias(__stringify(SyS##name))));		\
-@@ -223,6 +238,7 @@ static inline int is_syscall_trace_event(struct trace_event_call *tp_event)
- 		return ret;						\
- 	}								\
- 	static inline long SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__))
-+#endif /* __SYSCALL_DEFINEx */
- 
- /*
-  * Called before coming back to user-mode. Returning to user-mode with an
-@@ -252,7 +268,12 @@ static inline void addr_limit_user_check(void)
-  * Please note that these prototypes here are only provided for information
-  * purposes, for static analysis, and for linking from the syscall table.
-  * These functions should not be called elsewhere from kernel code.
-+ *
-+ * As the syscall calling convention may be different from the default
-+ * for architectures overriding the syscall calling convention, do not
-+ * include the prototypes if CONFIG_ARCH_HAS_SYSCALL_WRAPPER is enabled.
+@@ -102,7 +102,7 @@ union bpf_attr;
+  * for SYSCALL_DEFINE<n>/COMPAT_SYSCALL_DEFINE<n>
   */
-+#ifndef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
- asmlinkage long sys_io_setup(unsigned nr_reqs, aio_context_t __user *ctx);
- asmlinkage long sys_io_destroy(aio_context_t ctx);
- asmlinkage long sys_io_submit(aio_context_t, long,
-@@ -1076,6 +1097,8 @@ asmlinkage long sys_old_mmap(struct mmap_arg_struct __user *arg);
-  */
- asmlinkage long sys_ni_syscall(void);
- 
-+#endif /* CONFIG_ARCH_HAS_SYSCALL_WRAPPER */
-+
- 
- /*
-  * Kernel code should not call syscalls (i.e., sys_xyzyyz()) directly.
-diff --git a/init/Kconfig b/init/Kconfig
-index 2852692d7c9c..068eb6c3bbf7 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1923,3 +1923,10 @@ source "kernel/Kconfig.locks"
- 
- config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
- 	bool
-+
-+# It may be useful for an architecture to override the definitions of the
-+# SYSCALL_DEFINE() and __SYSCALL_DEFINEx() macros in <linux/syscalls.h>,
-+# in particular to use a different calling convention for syscalls.
-+config ARCH_HAS_SYSCALL_WRAPPER
-+	def_bool n
-+	depends on !COMPAT
+ #define __MAP0(m,...)
+-#define __MAP1(m,t,a) m(t,a)
++#define __MAP1(m,t,a,...) m(t,a)
+ #define __MAP2(m,t,a,...) m(t,a), __MAP1(m,__VA_ARGS__)
+ #define __MAP3(m,t,a,...) m(t,a), __MAP2(m,__VA_ARGS__)
+ #define __MAP4(m,t,a,...) m(t,a), __MAP3(m,__VA_ARGS__)
 -- 
 2.16.3
