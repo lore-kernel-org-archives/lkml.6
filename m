@@ -1,156 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752369AbeDEJvU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:51:20 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:33028 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752272AbeDEJvR (ORCPT
+        id S1752501AbeDEJvr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:51:47 -0400
+Received: from gateway34.websitewelcome.com ([192.185.149.77]:29804 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752460AbeDEJvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:51:17 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
-        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
-        tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
-        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
-        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
-        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
-        jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org, "Kristian H . Kristensen" <hoegsberg@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 29/30] drm/rockchip: Disallow PSR for the whole atomic commit
-Date: Thu,  5 Apr 2018 11:49:59 +0200
-Message-Id: <20180405095000.9756-30-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
-References: <20180405095000.9756-1-enric.balletbo@collabora.com>
+        Thu, 5 Apr 2018 05:51:39 -0400
+Subject: Re: [PATCH v2] Bluetooth: Remove VLA usage in aes_cmac
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20180321010527.GA16616@embeddedor.com>
+ <3BD15121-532A-45E2-B62E-1008C0289500@holtmann.org>
+ <2af25866-4e8a-7f9c-9298-e45abfab20c7@embeddedor.com>
+ <347FC7F5-4BB3-4477-9EF1-BAAA98F1D107@holtmann.org>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <b6336234-7eaa-27d6-3424-665f78033d9b@embeddedor.com>
+Date: Thu, 5 Apr 2018 04:51:36 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <347FC7F5-4BB3-4477-9EF1-BAAA98F1D107@holtmann.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1f41YQ-003IPA-EU
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.145.54.187]:54592
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomasz Figa <tfiga@chromium.org>
 
-Currently PSR flush is triggered from CRTC's .atomic_begin() callback,
-which is executed after modeset disables and enables and before plane
-updates are committed. Since PSR flush and re-enable can be triggered
-asynchronously by external sources (input event, delayed work), it can
-race with hardware programming done in the aforementioned stages.
 
-This patch blocks the PSR completely before hardware programming part
-begins and unblock after it ends. This relies on reference counted PSR
-disable introduced with previous patch.
+On 04/05/2018 03:46 AM, Marcel Holtmann wrote:
 
-Cc: Kristian H. Kristensen <hoegsberg@chromium.org>
-Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
+>> By the way, what is you opinion on replacing crypto_shash_descsize(ctx) with PAGE_SIZE / 8 in SHASH_DESC_ON_STACK?
+>>
+>> Does it work for you?
+> 
+> isn’t that just waste?
+> 
 
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c  | 61 ++++++++++++++++++++++++++++-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c |  7 ----
- 2 files changed, 60 insertions(+), 8 deletions(-)
+Agree.
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index e266539e04e5..d4f4118b482d 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -167,8 +167,67 @@ rockchip_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 	return ERR_PTR(ret);
- }
- 
-+static void
-+rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
-+{
-+	struct drm_crtc *crtc;
-+	struct drm_crtc_state *crtc_state;
-+	struct drm_encoder *encoder;
-+	u32 encoder_mask = 0;
-+	int i;
-+
-+	for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
-+		encoder_mask |= crtc_state->encoder_mask;
-+		encoder_mask |= crtc->state->encoder_mask;
-+	}
-+
-+	drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
-+		rockchip_drm_psr_inhibit_get(encoder);
-+}
-+
-+static void
-+rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
-+{
-+	struct drm_crtc *crtc;
-+	struct drm_crtc_state *crtc_state;
-+	struct drm_encoder *encoder;
-+	u32 encoder_mask = 0;
-+	int i;
-+
-+	for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
-+		encoder_mask |= crtc_state->encoder_mask;
-+		encoder_mask |= crtc->state->encoder_mask;
-+	}
-+
-+	drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
-+		rockchip_drm_psr_inhibit_put(encoder);
-+}
-+
-+static void
-+rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
-+{
-+	struct drm_device *dev = old_state->dev;
-+
-+	rockchip_drm_psr_inhibit_get_state(old_state);
-+
-+	drm_atomic_helper_commit_modeset_disables(dev, old_state);
-+
-+	drm_atomic_helper_commit_modeset_enables(dev, old_state);
-+
-+	drm_atomic_helper_commit_planes(dev, old_state,
-+					DRM_PLANE_COMMIT_ACTIVE_ONLY);
-+
-+	rockchip_drm_psr_inhibit_put_state(old_state);
-+
-+	drm_atomic_helper_commit_hw_done(old_state);
-+
-+	drm_atomic_helper_wait_for_vblanks(dev, old_state);
-+
-+	drm_atomic_helper_cleanup_planes(dev, old_state);
-+}
-+
- static const struct drm_mode_config_helper_funcs rockchip_mode_config_helpers = {
--	.atomic_commit_tail = drm_atomic_helper_commit_tail_rpm,
-+	.atomic_commit_tail = rockchip_atomic_helper_commit_tail_rpm,
- };
- 
- static const struct drm_mode_config_funcs rockchip_drm_mode_config_funcs = {
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 00f7f3441cf6..f14a10ca4792 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -1029,16 +1029,9 @@ static void vop_crtc_atomic_flush(struct drm_crtc *crtc,
- 	}
- }
- 
--static void vop_crtc_atomic_begin(struct drm_crtc *crtc,
--				  struct drm_crtc_state *old_crtc_state)
--{
--	rockchip_drm_psr_flush(crtc);
--}
--
- static const struct drm_crtc_helper_funcs vop_crtc_helper_funcs = {
- 	.mode_fixup = vop_crtc_mode_fixup,
- 	.atomic_flush = vop_crtc_atomic_flush,
--	.atomic_begin = vop_crtc_atomic_begin,
- 	.atomic_enable = vop_crtc_atomic_enable,
- 	.atomic_disable = vop_crtc_atomic_disable,
- };
--- 
-2.16.3
+> The macro itself is this.
+> 
+> #define SHASH_DESC_ON_STACK(shash, ctx)                           \
+>          char __##shash##_desc[sizeof(struct shash_desc) +         \
+>                  crypto_shash_descsize(ctx)] CRYPTO_MINALIGN_ATTR; \
+>          struct shash_desc *shash = (struct shash_desc *)__##shash##_desc
+> 
+> For AES-CMAC, we could always do this with a manual macro that gives us the right size. However that is error prone if any internals change. I think what has to happened that crypto_shash_decsize becomes something the compiler can evaluate at compile time.
+> 
+
+Yeah. That would imply an analysis of the algorithm each of the callers 
+use. In the case of AES-CMAC, what is the maximum digest size?
+
+I tried to find a fixed-length value for AES-CMAC but I didn't get any 
+output with git grep -n _DIGEST_SIZE | grep AES
+
+Thanks
+--
+Gustavo
