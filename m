@@ -1,38 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751437AbeDEK25 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 06:28:57 -0400
-Received: from mga09.intel.com ([134.134.136.24]:63727 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751249AbeDEK24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 06:28:56 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,410,1517904000";
-   d="scan'208";a="34509052"
-Date: Thu, 5 Apr 2018 13:28:51 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: "Bernat, Yehezkel" <yehezkel.bernat@intel.com>
-Cc: Michael Jamet <michael.jamet@intel.com>, linux-kernel@vger.kernel.org,
-        YehezkelShB@gmail.com, Andreas Noever <andreas.noever@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: update my email address
-Message-ID: <20180405102851.GV2173@lahna.fi.intel.com>
-References: <ee1ff8e3-1244-12ea-cc77-a49d1b47987a@intel.com>
+        id S1751419AbeDEKbZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 06:31:25 -0400
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:53241 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeDEKbX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 06:31:23 -0400
+X-Google-Smtp-Source: AIpwx4/1dAj1FHJjoLFPJIGcCz1wfP5f6XhHEwe6K7yNSEHnKuBLbi5TFHrMLjjgTLHlGlYJIW5syg67MOcL5HUwg8Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee1ff8e3-1244-12ea-cc77-a49d1b47987a@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
+References: <cover.1522560550.git.sargun@sargun.me> <911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
+From: Peter Dolding <oiaohm@gmail.com>
+Date: Thu, 5 Apr 2018 20:31:21 +1000
+Message-ID: <CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/1] Safe LSM (un)loading, and immutable hooks
+To: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: Sargun Dhillon <sargun@sargun.me>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>,
+        paul@paul-moore.com, plautrba@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 03:03:10PM +0300, Bernat, Yehezkel wrote:
-> Soon I'll not be available by my Intel email address, so switching to my
-> personal email address instead.
-> 
-> Signed-off-by: Yehezkel Bernat <yehezkel.bernat@intel.com>
+On Thu, Apr 5, 2018 at 7:55 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> On 01/04/18 08:41, Sargun Dhillon wrote:
+>> The biggest security benefit of this patchset is the introduction of
+>> read-only hooks, even if some security modules have mutable hooks.
+>> Currently, if you have any LSMs with mutable hooks it will render all heads, and
+>> list nodes mutable. These are a prime place to attack, because being able to
+>> manipulate those hooks is a way to bypass all LSMs easily, and to create a
+>> persistent, covert channel to intercept nearly all calls.
+>>
+>>
+>> If LSMs have a model to be unloaded, or are compled as modules, they should mark
+>> themselves mutable at compile time, and use the LSM_HOOK_INIT_MUTABLE macro
+>> instead of the LSM_HOOK_INIT macro, so their hooks are on the mutable
+>> chain.
+>
+>
+> I'd rather consider these types of hooks:
+>
+> A) hooks that are either const or marked as RO after init
+>
+> B) hooks that are writable for a short time, long enough to load
+> additional, non built-in modules, but then get locked down
+> I provided an example some time ago [1]
+>
+> C) hooks that are unloadable (and therefore always attackable?)
+>
+> Maybe type-A could be dropped and used only as type-B, if it's
+> acceptable that type-A hooks are vulnerable before lock-down of type-B
+> hooks.
+>
+> I have some doubts about the usefulness of type-C, though.
+> The benefit I see htat it brings is that it avoids having to reboot when
+> a mutable LSM is changed, at the price of leaving it attackable.
+>
+> Do you have any specific case in mind where this trade-off would be
+> acceptable?
+>
 
-Applied, thanks!
+A useful case for loadable/unloadable LSM is development automate QA.
+
+So you have built a new program and you you want to test it against a
+list of different LSM configurations without having to reboot the
+system.  So a run testsuite with LSM off  then enabled LSM1 run
+testsuite again disable LSM1 enable LSM2. run testsuite disable
+LSM2... Basically repeating process.
+
+I would say normal production machines being able to swap LSM like
+this does not have much use.
+
+Sometimes for productivity it makes sense to be able to breach
+security.   The fact you need to test with LSM disabled to know if any
+of the defects you are seeing is LSM configuration related that
+instance is already in the camp of non secure anyhow..
+
+There is a shade of grey between something being a security hazard and
+something being a useful feature.
+
+If development people are not testing that LSM configuration are clean
+because they don't really have enough machined to boot up individual
+instances with each LSM and this results in broken LSM configuration
+being shipped resulting in end users turning LSM off completely.
+Then a little security risk from providing unload-able LSM hooks when
+particularly requested is not that high really.
+
+With all the different LSM options how do application/distribution
+makers validate all the different LSM configurations effectively is a
+question that does need to be answered.  In answering this question
+allowing this form of compromised security as a option might be quite
+a valid move.
+
+Peter Dolding
