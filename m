@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeDEJu6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:50:58 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60938 "EHLO
+        id S1752610AbeDEJ5l (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:57:41 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60982 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751906AbeDEJux (ORCPT
+        with ESMTP id S1752054AbeDEJu6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:50:53 -0400
+        Thu, 5 Apr 2018 05:50:58 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -22,83 +22,70 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         jingoohan1@gmail.com, sw0312.kim@samsung.com,
         linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org, "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        hshi@chromium.org,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 18/30] drm/bridge: analogix_dp: Reorder plat_data->power_off to happen sooner
-Date: Thu,  5 Apr 2018 11:49:48 +0200
-Message-Id: <20180405095000.9756-19-enric.balletbo@collabora.com>
+Subject: [PATCH v6 20/30] drm/bridge: analogix_dp: Properly disable aux chan retries on rockchip
+Date: Thu,  5 Apr 2018 11:49:50 +0200
+Message-Id: <20180405095000.9756-21-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
 References: <20180405095000.9756-1-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Douglas Anderson <dianders@chromium.org>
 
-The current user of the analogix power_off is "analogix_dp-rockchip".
-That driver does this:
-- deactivate PSR
-- turn off a clock
+The comments in analogix_dp_init_aux() claim that we're disabling aux
+channel retries, but then right below it for Rockchip it sets them to
+3.  If we actually need 3 retries for Rockchip then we could adjust
+the comment, but it seems more likely that we want the same retry
+behavior across all platforms.
 
-Both of these things (especially deactive PSR) should be done before
-we turn the PHY power off and turn off analog power.  Let's move the
-callback up.
-
-Note that without this patch (and with
-https://patchwork.kernel.org/patch/9553349/ [seanpaul: this patch was
-not applied, but it seems like the race can still occur]), I experienced
-an error in reboot testing where one thread was at:
-
-  rockchip_drm_psr_deactivate
-  rockchip_dp_powerdown
-  analogix_dp_bridge_disable
-  drm_bridge_disable
-
-...and the other thread was at:
-
-  analogix_dp_send_psr_spd
-  analogix_dp_enable_psr
-  analogix_dp_psr_set
-  psr_flush_handler
-
-The flush handler thread was finding AUX channel errors and eventually
-reported "Failed to apply PSR", where I had a kgdb breakpoint. Presumably
-the device would have eventually given up and shut down anyway, but it
-seems better to fix the order to be more correct.
-
-Cc: Kristian H. Kristensen <hoegsberg@chromium.org>
+Cc: Stéphane Marchesin <marcheu@chromium.org>
+Cc: 征增 王 <wzz@rock-chips.com>
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 69b2c16e5776..a260de4f0bd8 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1337,12 +1337,13 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 	}
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 58e8a28e99aa..a5f2763d72e4 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -481,15 +481,16 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
  
- 	disable_irq(dp->irq);
--	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
--	phy_power_off(dp->phy);
+ 	analogix_dp_reset_aux(dp);
  
- 	if (dp->plat_data->power_off)
- 		dp->plat_data->power_off(dp->plat_data);
- 
-+	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
-+	phy_power_off(dp->phy);
+-	/* Disable AUX transaction H/W retry */
++	/* AUX_BIT_PERIOD_EXPECTED_DELAY doesn't apply to Rockchip IP */
+ 	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
+-		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(0) |
+-		      AUX_HW_RETRY_COUNT_SEL(3) |
+-		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
++		reg = 0;
+ 	else
+-		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) |
+-		      AUX_HW_RETRY_COUNT_SEL(0) |
+-		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
++		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3);
 +
- 	clk_disable_unprepare(dp->clock);
++	/* Disable AUX transaction H/W retry */
++	reg |= AUX_HW_RETRY_COUNT_SEL(0) |
++	       AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
++
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_AUX_HW_RETRY_CTL);
  
- 	pm_runtime_put_sync(dp->dev);
+ 	/* Receive AUX Channel DEFER commands equal to DEFFER_COUNT*64 */
 -- 
 2.16.3
