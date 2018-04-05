@@ -1,62 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeDEMj6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 08:39:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53422 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751061AbeDEMj4 (ORCPT
+        id S1751298AbeDEMoc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 08:44:32 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:34033 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeDEMoa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 08:39:56 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 458B3602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Joe Perches <joe@perches.com>
-Cc: Christian Lamparter <chunkeey@googlemail.com>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Jussi Kivilinna <jussi.kivilinna@iki.fi>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org
-Subject: Re: [PATCH 06/12] wireless: Convert simple uses of a static const Ethernet broadcast address
-References: <cover.1522479607.git.joe@perches.com>
-        <79196f134a513d50968e8e208a0e56b3c0236ee3.1522479607.git.joe@perches.com>
-Date: Thu, 05 Apr 2018 15:39:50 +0300
-In-Reply-To: <79196f134a513d50968e8e208a0e56b3c0236ee3.1522479607.git.joe@perches.com>
-        (Joe Perches's message of "Sat, 31 Mar 2018 00:05:21 -0700")
-Message-ID: <87po3desix.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 5 Apr 2018 08:44:30 -0400
+X-Google-Smtp-Source: AIpwx4/zRM+vjHIQk+FITM+SKHikT/xFDPl7amKl7QhXFqM1Q6IQrNmHDO40Tm8Y3oOQT2UkXuqqMQ==
+Subject: Re: [PATCH v7 2/5] arm: arm64: page_alloc: reduce unnecessary binary
+ search in memblock_next_valid_pfn()
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Jia He <jia.he@hxt-semitech.com>
+References: <1522915478-5044-1-git-send-email-hejianet@gmail.com>
+ <1522915478-5044-3-git-send-email-hejianet@gmail.com>
+ <20180405113444.GB2647@bombadil.infradead.org>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <1f809296-e88d-1090-0027-890782b91d6e@gmail.com>
+Date: Thu, 5 Apr 2018 20:44:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180405113444.GB2647@bombadil.infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Joe Perches <joe@perches.com> writes:
 
-> Use the new ether_broadcast_addr global instead to save some object code.
+
+On 4/5/2018 7:34 PM, Matthew Wilcox Wrote:
+> On Thu, Apr 05, 2018 at 01:04:35AM -0700, Jia He wrote:
+>> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+>> where possible") optimized the loop in memmap_init_zone(). But there is
+>> still some room for improvement. E.g. if pfn and pfn+1 are in the same
+>> memblock region, we can simply pfn++ instead of doing the binary search
+>> in memblock_next_valid_pfn.
+> Sure, but I bet if we are >end_pfn, we're almost certainly going to the
+> start_pfn of the next block, so why not test that as well?
 >
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  drivers/net/wireless/admtek/adm8211.c           | 3 +--
->  drivers/net/wireless/ath/carl9170/mac.c         | 4 +---
->  drivers/net/wireless/broadcom/b43/main.c        | 3 +--
->  drivers/net/wireless/marvell/mwifiex/cfg80211.c | 3 +--
->  drivers/net/wireless/realtek/rtlwifi/core.c     | 5 ++---
->  drivers/net/wireless/rndis_wlan.c               | 6 +-----
->  drivers/net/wireless/ti/wl1251/main.c           | 5 +----
->  drivers/net/wireless/ti/wlcore/main.c           | 5 +----
->  8 files changed, 9 insertions(+), 25 deletions(-)
-
-It would be really helpful if you could CLEARLY document in the patches
-(or in the cover letter but then you need to cc all parties) to what
-tree the patches are meant for. Otherwise I, and other maintainers as
-well, need to waste time trying to guess what's your plan.
-
-I will now drop the four wireless patches from my queue. So if you want
-to me to take them please resubmit.
+>> +	/* fast path, return pfn+1 if next pfn is in the same region */
+>> +	if (early_region_idx != -1) {
+>> +		start_pfn = PFN_DOWN(regions[early_region_idx].base);
+>> +		end_pfn = PFN_DOWN(regions[early_region_idx].base +
+>> +				regions[early_region_idx].size);
+>> +
+>> +		if (pfn >= start_pfn && pfn < end_pfn)
+>> +			return pfn;
+> 		early_region_idx++;
+> 		start_pfn = PFN_DOWN(regions[early_region_idx].base);
+> 		if (pfn >= end_pfn && pfn <= start_pfn)
+> 			return start_pfn;
+Thanks, thus the binary search in next step can be discarded?
 
 -- 
-Kalle Valo
+Cheers,
+Jia
