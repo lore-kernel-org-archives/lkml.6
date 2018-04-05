@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751950AbeDEPRO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:17:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34490 "EHLO mx1.redhat.com"
+        id S1752051AbeDEPRh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:17:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34532 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751624AbeDEPRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:17:09 -0400
+        id S1751624AbeDEPRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:17:16 -0400
 From: Jiri Olsa <jolsa@kernel.org>
 To: Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>
@@ -18,168 +18,72 @@ Cc: lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>, Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 6/9] bpf: Add CONFIG_BPF_BUILDID_CHECK option
-Date: Thu,  5 Apr 2018 17:16:42 +0200
-Message-Id: <20180405151645.19130-7-jolsa@kernel.org>
+Subject: [PATCH 9/9] perf tools: The buildid usage in example eBPF program
+Date: Thu,  5 Apr 2018 17:16:45 +0200
+Message-Id: <20180405151645.19130-10-jolsa@kernel.org>
 In-Reply-To: <20180405151645.19130-1-jolsa@kernel.org>
 References: <20180405151645.19130-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding CONFIG_BPF_BUILDID_CHECK option that forces kernel
-to check on provided build id when loading eBPF program.
-If the build id does not match the one in kernel the program
-fails to load.
+The bpf-samples/bpf-stdout-example.c demonstrates how to put the
+buildid data into eBPF program.
 
-Adding new field into struct bpf_attr. The kern_buildid
-points to the user memory that contains the buildid.
-
-Kernel expose the notes section via sysfs, but there's
-currently no other use for kernel's buildid, so I needed
-to add new __init buildid_init function to parse it out.
-
+Link: http://lkml.kernel.org/n/tip-dq97ddil7h3qbvphbbo8p08c@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- include/uapi/linux/bpf.h |  2 ++
- init/Kconfig             |  9 ++++++
- kernel/bpf/syscall.c     | 84 +++++++++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 94 insertions(+), 1 deletion(-)
+ tools/perf/bpf-samples/bpf-stdout-example.c | 42 +++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 tools/perf/bpf-samples/bpf-stdout-example.c
 
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index c5ec89732a8d..17d8d330e6c7 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -308,6 +308,8 @@ union bpf_attr {
- 		 * (context accesses, allowed helpers, etc).
- 		 */
- 		__u32		expected_attach_type;
-+		/* Checked when prog_type=kprobe and CONFIG_BPF_BUILDID_CHECK. */
-+		__aligned_u64	kern_buildid;
- 	};
- 
- 	struct { /* anonymous struct used by BPF_OBJ_* commands */
-diff --git a/init/Kconfig b/init/Kconfig
-index 572df24dda9b..6d32220de7e0 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1406,6 +1406,15 @@ config BPF_JIT_ALWAYS_ON
- 	  Enables BPF JIT and removes BPF interpreter to avoid
- 	  speculative execution of BPF instructions by the interpreter
- 
-+config BPF_BUILDID_CHECK
-+	bool "Check buildid for kprobe and tracepoint programs"
-+	depends on BPF_SYSCALL
-+	select BUILDID_H
-+	default n
-+	help
-+	  Enables BPF program load code to check on kernel Build ID
-+	  for kprobe programs.
+diff --git a/tools/perf/bpf-samples/bpf-stdout-example.c b/tools/perf/bpf-samples/bpf-stdout-example.c
+new file mode 100644
+index 000000000000..60783442bd5c
+--- /dev/null
++++ b/tools/perf/bpf-samples/bpf-stdout-example.c
+@@ -0,0 +1,42 @@
++#include <uapi/linux/bpf.h>
++#include <linux/buildid.h>
 +
- config USERFAULTFD
- 	bool "Enable userfaultfd() system call"
- 	select ANON_INODES
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 0244973ee544..d0b3bc0bd9e6 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1239,7 +1239,85 @@ static int bpf_prog_attach_check_attach_type(const struct bpf_prog *prog,
- }
- 
- /* last field in 'union bpf_attr' used by this command */
--#define	BPF_PROG_LOAD_LAST_FIELD expected_attach_type
-+#define	BPF_PROG_LOAD_LAST_FIELD kern_buildid
++#define SEC(NAME) __attribute__((section(NAME), used))
 +
-+#ifdef CONFIG_BPF_BUILDID_CHECK
++char _license[] SEC("license") = "GPL";
++int _version    SEC("version") = LINUX_VERSION_CODE;
++char _buildid[] SEC("buildid") = LINUX_BUILDID_DATA;
 +
-+static struct {
-+	const char *ptr;
-+	int         size;
-+} buildid;
++static unsigned long long (*bpf_get_smp_processor_id)(void) =
++	(void *) BPF_FUNC_get_smp_processor_id;
++static int (*bpf_perf_event_output)(void *ctx, void *map,
++                                    unsigned long long flags, void *data,
++                                    int size) =
++        (void *) BPF_FUNC_perf_event_output;
 +
-+#define BUILDID_MAX 40
++struct bpf_map_def {
++        unsigned int type;
++        unsigned int key_size;
++        unsigned int value_size;
++        unsigned int max_entries;
++        unsigned int map_flags;
++        unsigned int inner_map_idx;
++        unsigned int numa_node;
++};
 +
-+static int __check_buildid(union bpf_attr *attr)
++struct bpf_map_def SEC("maps") __bpf_stdout__ = {
++	.type		= BPF_MAP_TYPE_PERF_EVENT_ARRAY,
++	.key_size	= sizeof(int),
++	.value_size	= sizeof(u32),
++	.max_entries	= __NR_CPUS__,
++};
++
++SEC("probe=sys_read")
++int func(void *ctx)
 +{
-+	char id[buildid.size];
++	char output_str[] = "Raise a BPF event!";
 +
-+	/* copy buildid from user space */
-+	if (strncpy_from_user(id, u64_to_user_ptr(attr->kern_buildid),
-+			      buildid.size) < 0)
-+		return -EFAULT;
-+
-+	return memcmp(id, buildid.ptr, buildid.size);
-+}
-+
-+static int check_buildid(union bpf_attr *attr)
-+{
-+	return buildid.ptr ? __check_buildid(attr) : 0;
-+}
-+
-+#define NT_ALIGN(n)	(((n) + 3) & ~3)
-+#define NT_GNU_BUILD_ID	3
-+
-+extern const void __start_notes __weak;
-+extern const void __stop_notes __weak;
-+
-+static int __init buildid_init(void)
-+{
-+	const void *ptr = &__start_notes;
-+
-+	while (ptr < &__stop_notes) {
-+		const Elf64_Nhdr *nhdr = ptr;
-+		size_t namesz = NT_ALIGN(nhdr->n_namesz),
-+		       descsz = NT_ALIGN(nhdr->n_descsz);
-+		const char *name;
-+
-+		ptr += sizeof(*nhdr);
-+		name = ptr;
-+		ptr += namesz;
-+
-+		if (nhdr->n_type != NT_GNU_BUILD_ID ||
-+		    nhdr->n_namesz != sizeof("GNU") ||
-+		    memcmp(name, "GNU", sizeof("GNU"))) {
-+			ptr += descsz;
-+			continue;
-+		}
-+
-+		buildid.ptr = ptr;
-+		buildid.size = descsz;
-+		break;
-+	}
-+
-+	/* Sanity checks on the parsed buildid. */
-+	if (!buildid.ptr) {
-+		pr_warn("bpf: GNU buildid not found, switching off the check\n");
-+	} else if (buildid.size > 64) {
-+		pr_warn("bpf: GNU buildid too long, switching off the check\n");
-+		buildid.ptr = NULL;
-+	}
-+
++	bpf_perf_event_output(ctx, &__bpf_stdout__, bpf_get_smp_processor_id(),
++			      &output_str, sizeof(output_str));
 +	return 0;
 +}
-+
-+subsys_initcall(buildid_init);
-+
-+#else
-+static int check_buildid(union bpf_attr *attr __maybe_unused)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_BPF_BUILDID_CHECK */
- 
- static int bpf_prog_load(union bpf_attr *attr)
- {
-@@ -1271,6 +1349,10 @@ static int bpf_prog_load(union bpf_attr *attr)
- 	    attr->kern_version != LINUX_VERSION_CODE)
- 		return -EINVAL;
- 
-+	if (type == BPF_PROG_TYPE_KPROBE &&
-+	    check_buildid(attr))
-+		return -EINVAL;
-+
- 	if (type != BPF_PROG_TYPE_SOCKET_FILTER &&
- 	    type != BPF_PROG_TYPE_CGROUP_SKB &&
- 	    !capable(CAP_SYS_ADMIN))
 -- 
 2.13.6
