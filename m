@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeDEKC3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 06:02:29 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60566 "EHLO
+        id S1751785AbeDEKC7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 06:02:59 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60474 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751419AbeDEJuY (ORCPT
+        with ESMTP id S1751225AbeDEJuP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:50:24 -0400
+        Thu, 5 Apr 2018 05:50:15 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -25,9 +25,9 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         hshi@chromium.org,
         =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 05/30] drm/bridge: analogix_dp: Wait for HPD signal before configuring link
-Date: Thu,  5 Apr 2018 11:49:35 +0200
-Message-Id: <20180405095000.9756-6-enric.balletbo@collabora.com>
+Subject: [PATCH v6 01/30] drm/bridge: analogix_dp: Move enable video into config_video()
+Date: Thu,  5 Apr 2018 11:49:31 +0200
+Message-Id: <20180405095000.9756-2-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
 References: <20180405095000.9756-1-enric.balletbo@collabora.com>
@@ -38,45 +38,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zain wang <wzz@rock-chips.com>
+From: Lin Huang <hl@rock-chips.com>
 
-According to DP spec v1.3 chap 3.5.1.2 Link Training, Link Policy Maker
-must first detect that the HPD signal is asserted high by the Downstream
-Device before establishing a link with it.
+We need to enable video before analogix_dp_is_video_stream_on(), so
+we can get the right video stream status.
 
+We needed to increase the delay in the timeout loop because there is
+random "Timeout of video streamclk ok" message happen when debug edp
+panel, this time do not define in the spec.
+
+Cc: 征增 王 <wzz@rock-chips.com>
 Cc: Stéphane Marchesin <marcheu@chromium.org>
-Signed-off-by: zain wang <wzz@rock-chips.com>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index bf805f156272..3269deec739d 100644
+index 5c52307146c7..05a0ca4af057 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1169,6 +1169,17 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 	if (ret)
- 		goto out_dp_init;
+@@ -819,11 +819,10 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
+ 		if (analogix_dp_is_slave_video_stream_clock_on(dp) == 0)
+ 			break;
+ 		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
+-			dev_err(dp->dev, "Timeout of video streamclk ok\n");
++			dev_err(dp->dev, "Timeout of slave video streamclk ok\n");
+ 			return -ETIMEDOUT;
+ 		}
+-
+-		usleep_range(1, 2);
++		usleep_range(1000, 1001);
+ 	}
  
-+	/*
-+	 * According to DP spec v1.3 chap 3.5.1.2 Link Training,
-+	 * We should first make sure the HPD signal is asserted high by device
-+	 * when we want to establish a link with it.
-+	 */
-+	ret = analogix_dp_detect_hpd(dp);
-+	if (ret) {
-+		DRM_ERROR("failed to get hpd single ret = %d\n", ret);
-+		goto out_dp_init;
-+	}
+ 	/* Set to use the register calculated M/N video */
+@@ -838,6 +837,9 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
+ 	/* Configure video slave mode */
+ 	analogix_dp_enable_video_master(dp, 0);
+ 
++	/* Enable video */
++	analogix_dp_start_video(dp);
 +
- 	ret = analogix_dp_commit(dp);
- 	if (ret)
- 		goto out_dp_init;
+ 	timeout_loop = 0;
+ 
+ 	for (;;) {
+@@ -948,9 +950,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 			DRM_ERROR("failed to enable the panel\n");
+ 	}
+ 
+-	/* Enable video */
+-	analogix_dp_start_video(dp);
+-
+ 	dp->psr_enable = analogix_dp_detect_sink_psr(dp);
+ 	if (dp->psr_enable)
+ 		analogix_dp_enable_sink_psr(dp);
 -- 
 2.16.3
