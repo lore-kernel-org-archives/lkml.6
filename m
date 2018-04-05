@@ -1,142 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751483AbeDEOI3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:08:29 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54794 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDEOI1 (ORCPT
+        id S1751492AbeDEOJW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:09:22 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:16914 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeDEOJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:08:27 -0400
-X-Google-Smtp-Source: AIpwx49wUyOU/C4PIzPKDcP/1w5MQhsFtt5WavxMc//mlNkUaDdx5T1sAJU7uEzWBKkdgmHkPt+o6g==
-Subject: Re: [PATCH] ata: ahci-platform: add reset control support
-From: Hans de Goede <hdegoede@redhat.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Patrice CHOTARD <patrice.chotard@st.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Tejun Heo <tj@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org"
-        <linux-mediatek@lists.infradead.org>
-References: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com>
- <20180405095429.GA7506@ulmo> <e33f54ed-2848-9a4f-9669-7fada8c60326@st.com>
- <1f7d0738-1963-21c5-c293-e46fb0214ecf@redhat.com>
- <20180405135435.GA10860@ulmo>
- <6ce60a0b-0409-016a-d29c-91b8b9e2ad07@redhat.com>
-Message-ID: <cd3bc161-9a38-1e58-b66f-3ef81e3ed220@redhat.com>
-Date: Thu, 5 Apr 2018 16:08:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thu, 5 Apr 2018 10:09:21 -0400
+Subject: Re: INFO: task hung in __blkdev_get
+To: mingo@redhat.com, peterz@infradead.org
+References: <f403043a9be410acd1055fe5f72e@google.com>
+Cc: syzbot
+        <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Dmitry Vyukov <dvyukov@google.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
+Date: Thu, 5 Apr 2018 23:08:35 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <6ce60a0b-0409-016a-d29c-91b8b9e2ad07@redhat.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <f403043a9be410acd1055fe5f72e@google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+I tried the reproducer in my environment. The reproducer can trivially
+reproduce a hung up. If the bug I'm observing is what the syzbot is
+reporting (I ran the reproducer using init= kernel command line option),
+the reason __blkdev_get() is blocked waiting for bdev->bd_mutex is that
+an exiting thread cannot release bdev->bd_mutex held at __blkdev_put()
+because that thread is unable to return from wait_event_interruptible()
+in blk_queue_enter(). (By the way, since the exiting task is sleeping in
+interruptible state, khungtaskd does not help; we need to use SysRq-t.)
 
-On 05-04-18 16:00, Hans de Goede wrote:
-> Hi,
-> 
-> On 05-04-18 15:54, Thierry Reding wrote:
->> On Thu, Apr 05, 2018 at 03:27:03PM +0200, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 05-04-18 15:17, Patrice CHOTARD wrote:
->>>> Hi Thierry
->>>>
->>>> On 04/05/2018 11:54 AM, Thierry Reding wrote:
->>>>> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
->>>>>> Add support to get and control a list of resets for the device
->>>>>> as optional and shared. These resets must be kept de-asserted until
->>>>>> the device is enabled.
->>>>>>
->>>>>> This is specified as shared because some SoCs like UniPhier series
->>>>>> have common reset controls with all ahci controller instances.
->>>>>>
->>>>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
->>>>>> ---
->>>>>>     .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
->>>>>>     drivers/ata/ahci.h                                 |  1 +
->>>>>>     drivers/ata/libahci_platform.c                     | 24 +++++++++++++++++++---
->>>>>>     3 files changed, 23 insertions(+), 3 deletions(-)
->>>>>
->>>>> This causes a regression on Tegra because we explicitly request the
->>>>> resets after the call to ahci_platform_get_resources().
->>>>
->>>> I confirm, we got exactly the same behavior on STi platform.
->>>>
->>>>>
->>>>>    From a quick look, ahci_mtk and ahci_st are in the same boat, adding the
->>>>> corresponding maintainers to Cc.
->>>>>
->>>>> Patrice, Matthias: does SATA still work for you after this patch? This
->>>>> has been in linux-next since next-20180327.
->>>>
->>>> SATA is still working after this patch, but a kernel warning is
->>>> triggered due to the fact that resets are both requested by
->>>> libahci_platform and by ahci_st driver.
->>>
->>> So in your case you might be able to remove the reset handling
->>> from the ahci_st driver and rely on the new libahci_platform
->>> handling instead? If that works that seems like a win to me.
->>>
->>> As said elsewhere in this thread I think it makes sense to keep (or re-add
->>> after a revert) the libahci_platform reset code, but make it conditional
->>> on a flag passed to ahci_platform_get_resources(). This way we get
->>> the shared code for most cases and platforms which need special handling
->>> can opt-out.
->>
->> Agreed, although I prefer such helpers to be opt-in, rather than
->> opt-out. In my experience that tends make the helpers more resilient to
->> this kind of regression. It also simplifies things because instead of
->> drivers saying "I want all the helpers except this one and that one",
->> they can simply say "I want these helpers and that one". In the former
->> case whenever you add some new (opt-out) feature, you have to update all
->> drivers and add the exception. In the latter you only need to extend the
->> drivers that want to make use of the new helper.
+----------------------------------------
+[  200.731135] a.out           S    0   447    446 0x80000002
+[  200.732646] Call Trace:
+[  200.733566]  ? __schedule+0x2a4/0x9f0
+[  200.734764]  ? _raw_spin_unlock_irqrestore+0x40/0x50
+[  200.736251]  schedule+0x34/0x80
+[  200.737353]  schedule_timeout+0x1cd/0x530
+[  200.738595]  ? collect_expired_timers+0xa0/0xa0
+[  200.739921]  ? blk_queue_enter+0x7d/0x550
+[  200.741500]  blk_queue_enter+0x275/0x550
+[  200.743017]  ? wait_woken+0x80/0x80
+[  200.744273]  generic_make_request+0xe3/0x2a0
+[  200.745621]  ? submit_bio+0x67/0x130
+[  200.746831]  submit_bio+0x67/0x130
+[  200.747915]  ? guard_bio_eod+0xae/0x200
+[  200.749177]  submit_bh_wbc+0x161/0x190
+[  200.750326]  __block_write_full_page+0x15c/0x3c0
+[  200.751678]  ? check_disk_change+0x60/0x60
+[  200.752923]  __writepage+0x11/0x50
+[  200.754023]  write_cache_pages+0x1ea/0x530
+[  200.755575]  ? __test_set_page_writeback+0x440/0x440
+[  200.757039]  ? __lock_acquire+0x38f/0x1a10
+[  200.758718]  generic_writepages+0x5f/0xa0
+[  200.760128]  ? do_writepages+0x12/0x50
+[  200.761281]  do_writepages+0x12/0x50
+[  200.762369]  __filemap_fdatawrite_range+0xc3/0x100
+[  200.763719]  ? __mutex_lock+0x72/0x950
+[  200.764876]  filemap_write_and_wait+0x25/0x60
+[  200.766168]  __blkdev_put+0x71/0x200
+[  200.767261]  blkdev_close+0x1c/0x20
+[  200.768333]  __fput+0x95/0x1d0
+[  200.769339]  task_work_run+0x84/0xa0
+[  200.770767]  do_exit+0x301/0xbf0
+[  200.771877]  ? __do_page_fault+0x2ca/0x510
+[  200.773086]  do_group_exit+0x38/0xb0
+[  200.774260]  SyS_exit_group+0xb/0x10
+[  200.776094]  do_syscall_64+0x68/0x210
+[  200.777486]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-Erm, the idea never was to make this opt-out but rather opt in, so
-we add a flags parameter to ahci_platform_get_resources() and all
-current users pass in 0 for that to keep the current behavior.
+[  200.815616] Showing all locks held in the system:
+[  200.817791] 2 locks held by kworker/0:1/38:
+[  200.819125]  #0: 0000000057489670 ((wq_completion)"events_freezable_power_efficient"){+.+.}, at: process_one_work+0x1e2/0x690
+[  200.821878]  #1: 00000000c9c74590 ((work_completion)(&(&ev->dwork)->work)){+.+.}, at: process_one_work+0x1e2/0x690
+[  200.824690] 1 lock held by a.out/447:
+[  200.826448]  #0: 00000000bedfcca8 (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0x3c/0x200
 
-And only the generic drivers/ata/ahci_platform.c driver will pass
-in a the new AHCI_PLATFORM_GET_RESETS flag, which makes
-ahci_platform_get_resources() (and the other functions) also deal
-with resets.
 
->> With that in mind, rather than adding a flag to the
->> ahci_platform_get_resources() function, it might be more flexible to
->> split the helpers into finer-grained functions. That way drivers can
->> pick whatever functionality they want from the helpers.
-> 
-> Good point, so lets:
-> 
-> 1) Revert the patch for now
-> 2) Have a new version of the patch which adds a ahci_platform_get_resets() helper
-> 3) Modify the generic drivers/ata/ahci_platform.c driver to call the new
->     ahci_platform_get_resets() between its ahci_platform_get_resources()
->     and ahci_platform_enable_resources() calls.
->     I think that ahci_platform_enable_resources() should still automatically
->     do the right thing wrt resets if ahci_platform_get_resets() was called
->     (otherwise the resets array will be empty and should be skipped)
-> 
-> This should make the generic driver usable for the UniPhier SoCs and
-> maybe some other drivers like the ahci_st driver can also switch to the
-> new ahci_platform_get_resets() functionality to reduce their code a bit.
+[  270.495110] a.out           S    0   447    446 0x80000002
+[  270.496770] Call Trace:
+[  270.497779]  ? __schedule+0x2a4/0x9f0
+[  270.498930]  ? _raw_spin_unlock_irqrestore+0x40/0x50
+[  270.500433]  schedule+0x34/0x80
+[  270.501513]  schedule_timeout+0x1cd/0x530
+[  270.502773]  ? collect_expired_timers+0xa0/0xa0
+[  270.504125]  ? blk_queue_enter+0x7d/0x550
+[  270.505706]  blk_queue_enter+0x275/0x550
+[  270.507352]  ? wait_woken+0x80/0x80
+[  270.508614]  generic_make_request+0xe3/0x2a0
+[  270.509913]  ? submit_bio+0x67/0x130
+[  270.511876]  submit_bio+0x67/0x130
+[  270.513160]  ? guard_bio_eod+0xae/0x200
+[  270.514430]  submit_bh_wbc+0x161/0x190
+[  270.515691]  __block_write_full_page+0x15c/0x3c0
+[  270.517024]  ? check_disk_change+0x60/0x60
+[  270.518301]  __writepage+0x11/0x50
+[  270.519420]  write_cache_pages+0x1ea/0x530
+[  270.520691]  ? __test_set_page_writeback+0x440/0x440
+[  270.522118]  ? __lock_acquire+0x38f/0x1a10
+[  270.523377]  generic_writepages+0x5f/0xa0
+[  270.524624]  ? do_writepages+0x12/0x50
+[  270.525974]  do_writepages+0x12/0x50
+[  270.527222]  __filemap_fdatawrite_range+0xc3/0x100
+[  270.529115]  ? __mutex_lock+0x72/0x950
+[  270.530378]  filemap_write_and_wait+0x25/0x60
+[  270.531741]  __blkdev_put+0x71/0x200
+[  270.532904]  blkdev_close+0x1c/0x20
+[  270.534074]  __fput+0x95/0x1d0
+[  270.535139]  task_work_run+0x84/0xa0
+[  270.536331]  do_exit+0x301/0xbf0
+[  270.537458]  ? __do_page_fault+0x2ca/0x510
+[  270.538717]  do_group_exit+0x38/0xb0
+[  270.539830]  SyS_exit_group+0xb/0x10
+[  270.540963]  do_syscall_64+0x68/0x210
+[  270.542097]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-So thinking slightly longer about this, with the opt-in variant
-(which is what I intended all along) I do think that a flags parameter
-is better, because the whole idea behind lib_ahci_platform is to avoid
-having to do err = get_resource_a(), if (err) bail, err = get_resource_b()
-if (err) bail, etc. in all the ahci (platform) drivers. And having fine
-grained helpers re-introduces that.
+[  270.582465] Showing all locks held in the system:
+[  270.584584] 2 locks held by kworker/1:2/136:
+[  270.585939]  #0: 0000000057489670 ((wq_completion)"events_freezable_power_efficient"){+.+.}, at: process_one_work+0x1e2/0x690
+[  270.589850]  #1: 00000000e793cf79 ((work_completion)(&(&ev->dwork)->work)){+.+.}, at: process_one_work+0x1e2/0x690
+[  270.592813] 1 lock held by a.out/447:
+[  270.594237]  #0: 00000000bedfcca8 (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0x3c/0x200
+----------------------------------------
 
-Regards,
+I checked variables using below patch, but no variable changed over time.
 
-Hans
+----------------------------------------
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -857,10 +857,26 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
+                 */
+                smp_rmb();
+
+-               ret = wait_event_interruptible(q->mq_freeze_wq,
+-                               (atomic_read(&q->mq_freeze_depth) == 0 &&
+-                                (preempt || !blk_queue_preempt_only(q))) ||
+-                               blk_queue_dying(q));
++               while (1) {
++                       ret = wait_event_interruptible_timeout
++                               (q->mq_freeze_wq,
++                                (atomic_read(&q->mq_freeze_depth) == 0 &&
++                                 (preempt || !blk_queue_preempt_only(q))) ||
++                                blk_queue_dying(q), 5 * HZ);
++                       if (ret < 0) {
++                               break;
++                       } else if (ret == 0) {
++                               printk("q->mq_freeze_depth=%d preempt=%u "
++                                      "blk_queue_preempt_only(q)=%u "
++                                      "blk_queue_dying(q)=%u\n",
++                                      atomic_read(&q->mq_freeze_depth),
++                                      preempt, blk_queue_preempt_only(q),
++                                      blk_queue_dying(q));
++                       } else {
++                               ret = 0;
++                               break;
++                       }
++               }
+                if (blk_queue_dying(q))
+                        return -ENODEV;
+                if (ret)
+----------------------------------------
+
+[   28.090809] loop: module loaded
+[   43.488409] q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
+[   48.608715] q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
+[   53.728281] q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
+[   58.848387] q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
+(...snipped...)
+[  289.248694] q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
+[  294.368484] q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
+[  299.488896] q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
+[  304.608632] q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
+
+This means that we deadlocked there.
