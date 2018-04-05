@@ -1,73 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeDEVm0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 17:42:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751356AbeDEVmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 17:42:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33384204EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Thu, 5 Apr 2018 22:42:19 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        Alban Bedel <albeu@free.fr>, Antony Pavlov <antonynpavlov@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: vmlinuz: Fix compiler intrinsics location and
- build directly
-Message-ID: <20180405214219.GA31336@saruman>
-References: <20180403160728.GB3275@saruman>
- <1522833502-28007-1-git-send-email-matt.redfearn@mips.com>
- <b05a0ec9-d052-49c7-3e8f-2ba233d84f03@mips.com>
+        id S1752398AbeDEVnK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 17:43:10 -0400
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:53652 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751523AbeDEVnI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 17:43:08 -0400
+X-Google-Smtp-Source: AIpwx4/ODT8l18zuz1Z9uUzaIt2BsUb7rFO17pM2c/Y4YQwgDJIqXon1wPIwZ8ZUZ6aMkOvj8MCz2A==
+Subject: Re: [PATCH 2/1] Kbuild: fix # escaping in .cmd files for future Make
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180325223239.14778-1-linux@rasmusvillemoes.dk>
+ <20180325230918.23161-1-linux@rasmusvillemoes.dk>
+ <CAK7LNASRP4nmKcTsF0QRvCOrX40MMO=FafOs+xG+UNA-b_61Dw@mail.gmail.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <1d69b982-ac3b-af0d-ae1f-16387a8be095@rasmusvillemoes.dk>
+Date: Thu, 5 Apr 2018 23:43:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
-Content-Disposition: inline
-In-Reply-To: <b05a0ec9-d052-49c7-3e8f-2ba233d84f03@mips.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <CAK7LNASRP4nmKcTsF0QRvCOrX40MMO=FafOs+xG+UNA-b_61Dw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-03-26 13:48, Masahiro Yamada wrote:
+> 2018-03-26 8:09 GMT+09:00 Rasmus Villemoes <linux@rasmusvillemoes.dk>:
+>> The latest official Make release is 4.2.1 from mid-2016, but the current
+>> git release has this relevant note in the NEWS file:
+>>
+>>   * WARNING: Backward-incompatibility!
+>>     Number signs (#) appearing inside a macro reference or function invocation
+>>     no longer introduce comments and should not be escaped with backslashes:
+>>     thus a call such as:
+>>       foo := $(shell echo '#')
+>>     is legal.  Previously the number sign needed to be escaped, for example:
+>>       foo := $(shell echo '\#')
+>>     Now this latter will resolve to "\#".  If you want to write makefiles
+>>     portable to both versions, assign the number sign to a variable:
+>>       C := \#
+>>       foo := $(shell echo '$C')
+>>     This was claimed to be fixed in 3.81, but wasn't, for some reason.
+>>     To detect this change search for 'nocomment' in the .FEATURES variable.
+>>
+>> Prepare for whatever future Make release contains that change by fixing
+>> up the .cmd file escaping - without this, make always thinks the command
+>> string has changed and hence rebuilds everything.
+>>
+>> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>> ---
+>> So the previous patch made everything build, but building again
+>> revealed that this central place very much also needed fixing.
+>>
+>>  scripts/Kbuild.include | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+>> index 065324a8046f..7a926e4688f4 100644
+>> --- a/scripts/Kbuild.include
+>> +++ b/scripts/Kbuild.include
+>> @@ -10,6 +10,7 @@ space   := $(empty) $(empty)
+>>  space_escape := _-_SPACE_-_
+>>  right_paren := )
+>>  left_paren := (
+>> +pound := \#
+>>
+>>  ###
+>>  # Name of target with a '.' as filename prefix. foo/bar.o => foo/.bar.o
+>> @@ -328,7 +329,7 @@ endif
+>>  # (needed for make)
+>>  # Replace >'< with >'\''< to be able to enclose the whole string in '...'
+>>  # (needed for the shell)
+>> -make-cmd = $(call escsq,$(subst \#,\\\#,$(subst $$,$$$$,$(cmd_$(1)))))
+>> +make-cmd = $(call escsq,$(subst $(pound),\\$(pound),$(subst $$,$$$$,$(cmd_$(1)))))
+>>
+> 
+> Thanks for the patch, but this changes the behavior.
+> With '#' replaced with $(pound), '\\' does not escape anything,
+> so it is treated as '\\'.
+> 
+> 
+> The following keeps the current behavior:
+> 
+> make-cmd = $(call escsq,$(subst $(pound),\$(pound),$(subst
+> $$,$$$$,$(cmd_$(1)))))
+> 
+> 
+> 
+> But, I think the following is an even better fix:
+> 
+> make-cmd = $(call escsq,$(subst $(pound),$$(pound),$(subst
+> $$,$$$$,$(cmd_$(1)))))
 
---7JfCtLOvnd9MIVvH
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Makefile quoting has never been my strong suit. I actually thought I
+tested my change by looking at some .o.cmd files containing \# before
+and after, but I was fooled by tools/ containing and using their own
+copy of make-cmd - so tools/build/Build.include will also need fixing.
 
-On Thu, Apr 05, 2018 at 11:13:14AM +0100, Matt Redfearn wrote:
-> Actually, this patch would be better inserted as patch 3 in the series=20
-> since it can pull in the generic ashldi3 before the MIPS one is removed=
-=20
-> in the final patch. Here's an updated commit message:
+Yes, writing $(pound) to the .cmd file seems like the safest choice. Do
+you want me to respin or can/will you do the patch(es) yourself?
 
-Thanks Matt, applied.
-
-Cheers
-James
-
---7JfCtLOvnd9MIVvH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlrGmDoACgkQbAtpk944
-dnpc4xAAoHemdzlAjARKsk/B0Bh7hUe9ZdFAnuN/ecqtHp0WXGJKrYq4sF5JgNqo
-yEGmmIJJ0E7lgvc1x5L6acJTaJmeEw59qiW8Ihit4zho7WNSZt0+N9Z7bN7TE96l
-Gi+VGM+HqAPeMqNoVISRpiqFy8gzsYJqq/7tzXmBLi7+wtJPJ2pxMWmNh5WZp7Sc
-tpgBgLJO78B1tcopDCQzwT6vijhj3SIW5cH2tc7YAXmS9KtZZ8SprjTETWUHcmtK
-6Nw5n7jeda4I/ZABMJh+EfXwlmDA0yETftNvl7VClXEoHiEyorY/ekZK0VeNyIwy
-eJEvPsFvMZlnPAEe2Dtr+Lr6V9RHlx4ZfvVWi6kzQtdChWxP6XE5yYi42LEBnp7o
-cfhwqP1KaW/179xMxI4qK7HlQ49dsLVTUk9/tfuVvQ4A4HmUe8YkuQVW/XBOOClE
-EcQC8dvOLJtVpkVD0gAB/McmP6S2tUxsYNRD0DyMlD/oUA9JuClxCwaLuaESFx7n
-F0jGd2rk4lTaDVYmty+y53EGj1VvJK2ySC6nopP+HEHWdpb+p1VLT68IiatLInPy
-S0sJY0OKjtwozVv6zRWPK0JTNgwwz3qPU5PiOkUTiiwQ+e66w49VdkeYJlsQ+Cfs
-sk3dXuBoNPN4qSFMZLeYgRr+si9cs2YVGJ70ICjn38lGbjfWz9g=
-=uUCf
------END PGP SIGNATURE-----
-
---7JfCtLOvnd9MIVvH--
+Rasmus
