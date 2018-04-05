@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751353AbeDELiy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:38:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44724 "EHLO mx2.suse.de"
+        id S1751447AbeDELjE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:39:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44736 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751097AbeDELix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:38:53 -0400
-Date: Thu, 5 Apr 2018 13:38:51 +0200 (CEST)
+        id S1751376AbeDELjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 07:39:02 -0400
+Date: Thu, 5 Apr 2018 13:39:01 +0200 (CEST)
 From: Jiri Kosina <jikos@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] HID for 4.17
-Message-ID: <nycvar.YFH.7.76.1804051333400.28129@cbobk.fhfr.pm>
+Subject: [GIT PULL] trivial for 4.17
+Message-ID: <nycvar.YFH.7.76.1804051334380.28129@cbobk.fhfr.pm>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -23,120 +23,81 @@ Linus,
 
 please pull from
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git for-linus
+  git://git.kernel.org/pub/scm/linux/kernel/git/jikos/trivial.git for-linus
 
-to receive HID updates for 4.17 merge window
-
-=====
-- 3rd generation Wacom Intuos BT device support from Aaron Armstrong 
-  Skomra
-- Support for support for NSG-MR5U and NSG-MR7U devices from Todd Kelner
-- Multitouch Razer Blade Stealth support from Benjamin Tissoires
-- Elantech toucpad support from Alexandrov Stansilav
-- a few other scattered-around fixes and cleanups to drivers and
-  generic code
-=====
+to receive trivial patch queue for 4.17.
 
 Thanks.
 
 ----------------------------------------------------------------
-Aaron Armstrong Skomra (3):
-      HID: wacom: Add support for 3rd generation Intuos BT
-      HID: wacom: generic: Support multiple tools per report
-      HID: wacom: generic: add the "Report Valid" usage
+Frank Asseg (1):
+      tools/thermal: tmon: fix for segfault
 
-Aaron Bottegal (1):
-      HID: corsair: Add K70 Vengeance and K70 RAPIDFIRE to
+Geert Uytterhoeven (1):
+      net: Spelling s/stucture/structure/
 
-Aaron Ma (3):
-      HID: i2c-hid: fix size check and type usage
-      HID: core: Fix size as type u32
-      HID: Fix hid_report_len usage
+Jaak Ristioja (1):
+      Documentation: Fix early-microcode.txt references after file rename
 
-Aishwarya Pant (2):
-      HID: logitech-hidpp: document sysfs interface
-      HID: ntrig: document sysfs interface
+Joe Perches (1):
+      treewide: Align function definition open/close braces
 
-Alexandrov Stansilav (1):
-      HID: Add driver for USB ELAN Touchpad
+Johannes Thumshirn (1):
+      edd: don't spam log if no EDD information is present
 
-Andy Shevchenko (1):
-      HID: i2c-hid: Use ACPI_COMPANION() directly
+Markus Elfring (1):
+      GenWQE: Fix a typo in two comments
 
-Benjamin Tissoires (8):
-      HID: core: rewrite the hid-generic automatic unbind
-      HID: multitouch: export a quirk for the button handling of touchpads
-      HID: multitouch: remove dead zones of Razer Blade Stealth
-      HID: use BIT macro instead of plain integers for flags
-      HID: use BIT() macro for quirks too
-      HID: core: remove the need for HID_QUIRK_NO_EMPTY_INPUT
-      HID: multitouch: do not set HID_QUIRK_NO_INIT_REPORTS
-      HID: core: reset the quirks before calling probe again
+Martin Kelly (1):
+      kfifo: fix inaccurate comment
 
-Colin Ian King (1):
-      HID: asus: make array 'buf' static const
+Masanari Iida (1):
+      treewide: Fix typos in printk
 
-Filip Alac (1):
-      HID: usbhid: extend the polling interval configuration to keyboards
+Rohit Visavalia (1):
+      tracing: Block comments should align the * on each line
 
-Gustavo A. R. Silva (2):
-      HID: hid-ntrig: use true and false for boolean values
-      HID: hid-multitouch: Use true and false for boolean values
-
-Guus Sliepen (1):
-      HID: corsair: Add support for the GLAIVE RGB gaming mouse
-
-Haridhar Kalvala (1):
-      HID: google: Enable PM Full On mode when adjusting backlight
-
-Jiri Kosina (1):
-      HID: wacom: wacom_wac_collection() is local to wacom_wac.c
-
-Todd Kelner (1):
-      HID: sony: Add touchpad support for NSG-MR5U and NSG-MR7U remotes
-
-Tomasz Kramkowski (2):
-      HID: elecom: refer to trackballs by model name instead of series
-      HID: elecom: add support for EX-G M-XT4DRBK trackball
-
-Wei-Ning Huang (1):
-      HID: google: add google hammer HID driver
-
-Xiongfeng Wang (1):
-      HID: uhid: use strlcpy() instead of strncpy()
-
- .../ABI/testing/sysfs-driver-hid-logitech-hidpp    |  19 +
- Documentation/ABI/testing/sysfs-driver-hid-ntrig   |  70 ++++
- Documentation/admin-guide/kernel-parameters.txt    |   3 +
- drivers/hid/Kconfig                                |  20 +-
- drivers/hid/Makefile                               |   2 +
- drivers/hid/hid-asus.c                             |   7 +-
- drivers/hid/hid-core.c                             |  47 ++-
- drivers/hid/hid-corsair.c                          |  24 +-
- drivers/hid/hid-elan.c                             | 421 +++++++++++++++++++++
- drivers/hid/hid-elecom.c                           |  32 +-
- drivers/hid/hid-generic.c                          |  33 --
- drivers/hid/hid-google-hammer.c                    | 138 +++++++
- drivers/hid/hid-ids.h                              |  21 +-
- drivers/hid/hid-input.c                            |  13 +-
- drivers/hid/hid-multitouch.c                       |  68 ++--
- drivers/hid/hid-ntrig.c                            |  12 +-
- drivers/hid/hid-quirks.c                           |  20 +-
- drivers/hid/hid-rmi.c                              |   4 +-
- drivers/hid/hid-sony.c                             | 131 ++++++-
- drivers/hid/hid-uclogic.c                          |   1 -
- drivers/hid/i2c-hid/i2c-hid.c                      |  17 +-
- drivers/hid/uhid.c                                 |  12 +-
- drivers/hid/usbhid/hid-core.c                      |  12 +-
- drivers/hid/wacom_sys.c                            |   4 +-
- drivers/hid/wacom_wac.c                            | 223 ++++++++---
- drivers/hid/wacom_wac.h                            |   4 +-
- include/linux/hid.h                                |  75 ++--
- 27 files changed, 1180 insertions(+), 253 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-logitech-hidpp
- create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-ntrig
- create mode 100644 drivers/hid/hid-elan.c
- create mode 100644 drivers/hid/hid-google-hammer.c
+ Documentation/x86/00-INDEX                            |  4 ++--
+ arch/x86/Kconfig                                      |  2 +-
+ arch/x86/include/asm/atomic64_32.h                    |  2 +-
+ arch/x86/kernel/cpu/microcode/amd.c                   |  2 +-
+ drivers/acpi/custom_method.c                          |  2 +-
+ drivers/acpi/fan.c                                    |  2 +-
+ drivers/firmware/edd.c                                |  8 +++-----
+ drivers/fmc/fmc-core.c                                |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c             |  2 +-
+ drivers/gpu/drm/amd/display/dc/core/dc.c              |  2 +-
+ drivers/gpu/drm/i915/intel_cdclk.c                    |  4 ++--
+ drivers/media/i2c/msp3400-kthreads.c                  |  2 +-
+ drivers/message/fusion/mptsas.c                       |  2 +-
+ drivers/misc/genwqe/card_utils.c                      |  4 ++--
+ drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c  |  2 +-
+ drivers/net/ethernet/qlogic/qed/qed_int.c             |  2 +-
+ drivers/net/ethernet/ti/tlan.c                        |  2 +-
+ drivers/net/wireless/ath/ath9k/xmit.c                 |  2 +-
+ drivers/net/wireless/atmel/atmel.c                    |  2 +-
+ drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c |  2 +-
+ drivers/platform/x86/eeepc-laptop.c                   |  2 +-
+ drivers/rtc/rtc-ab-b5ze-s3.c                          |  2 +-
+ drivers/scsi/aacraid/src.c                            |  4 ++--
+ drivers/scsi/dpt_i2o.c                                |  2 +-
+ drivers/scsi/qedi/qedi_fw.c                           |  2 +-
+ drivers/scsi/sym53c8xx_2/sym_glue.c                   |  2 +-
+ fs/locks.c                                            |  2 +-
+ fs/ocfs2/stack_user.c                                 |  2 +-
+ fs/orangefs/orangefs-utils.c                          |  2 +-
+ fs/xfs/xfs_export.c                                   |  2 +-
+ include/net/iw_handler.h                              |  2 +-
+ kernel/audit.c                                        |  6 +++---
+ kernel/trace/trace.c                                  |  2 +-
+ kernel/trace/trace_printk.c                           |  4 ++--
+ lib/kfifo.c                                           |  2 +-
+ lib/raid6/sse2.c                                      | 14 +++++++-------
+ net/socket.c                                          |  2 +-
+ sound/soc/fsl/fsl_dma.c                               |  2 +-
+ tools/thermal/tmon/sysfs.c                            | 12 +++++++-----
+ tools/thermal/tmon/tmon.c                             |  1 -
+ 40 files changed, 60 insertions(+), 61 deletions(-)
 
 -- 
 Jiri Kosina
