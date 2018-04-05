@@ -1,25 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752464AbeDEJx7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:53:59 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:44356 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752677AbeDEJxn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752706AbeDEJxn (ORCPT <rfc822;w@1wt.eu>);
         Thu, 5 Apr 2018 05:53:43 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:44228 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752454AbeDEJxk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 05:53:40 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
-        Denys Vlasenko <dvlasenk@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH 6/8] syscalls/x86: unconditionally enable struct pt_regs based syscalls on x86_64
-Date: Thu,  5 Apr 2018 11:53:05 +0200
-Message-Id: <20180405095307.3730-7-linux@dominikbrodowski.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        x86@kernel.org
+Subject: [PATCH 1/8] x86: don't pointlessly reload the system call number
+Date: Thu,  5 Apr 2018 11:53:00 +0200
+Message-Id: <20180405095307.3730-2-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405095307.3730-1-linux@dominikbrodowski.net>
 References: <20180405095307.3730-1-linux@dominikbrodowski.net>
@@ -27,250 +23,71 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removing CONFIG_SYSCALL_PTREGS from arch/x86/Kconfig and simply selecting
-ARCH_HAS_SYSCALL_WRAPPER unconditionally on x86-64 allows us to simplify
-several codepaths.
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
+We have it in a register in the low-level asm, just pass it in as an
+argument rather than have do_syscall_64() load it back in from the
+ptregs pointer.
+
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: x86@kernel.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/x86/Kconfig                      |  6 +-----
- arch/x86/entry/common.c               | 10 ++--------
- arch/x86/entry/syscall_32.c           |  6 +++---
- arch/x86/entry/syscall_64.c           |  5 -----
- arch/x86/entry/vsyscall/vsyscall_64.c | 18 ------------------
- arch/x86/include/asm/syscall.h        |  4 ++--
- arch/x86/include/asm/syscalls.h       | 20 ++++----------------
- 7 files changed, 12 insertions(+), 57 deletions(-)
+ arch/x86/entry/common.c   | 12 ++++++------
+ arch/x86/entry/entry_64.S |  3 ++-
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 7bbd6a174722..bcdd3e0e2ef5 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -29,6 +29,7 @@ config X86_64
- 	select HAVE_ARCH_SOFT_DIRTY
- 	select MODULES_USE_ELF_RELA
- 	select X86_DEV_DMA_OPS
-+	select ARCH_HAS_SYSCALL_WRAPPER
- 
- #
- # Arch settings
-@@ -2954,8 +2955,3 @@ source "crypto/Kconfig"
- source "arch/x86/kvm/Kconfig"
- 
- source "lib/Kconfig"
--
--config SYSCALL_PTREGS
--	def_bool y
--	depends on X86_64
--	select ARCH_HAS_SYSCALL_WRAPPER
 diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 425f798b39e3..fbf6a6c3fd2d 100644
+index 74f6eee15179..a8b066dbbf48 100644
 --- a/arch/x86/entry/common.c
 +++ b/arch/x86/entry/common.c
-@@ -284,13 +284,7 @@ __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
- 	nr &= __SYSCALL_MASK;
- 	if (likely(nr < NR_syscalls)) {
- 		nr = array_index_nospec(nr, NR_syscalls);
--#ifdef CONFIG_SYSCALL_PTREGS
- 		regs->ax = sys_call_table[nr](regs);
--#else
--		regs->ax = sys_call_table[nr](
--			regs->di, regs->si, regs->dx,
--			regs->r10, regs->r8, regs->r9);
--#endif
- 	}
+@@ -266,14 +266,13 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
+ }
  
- 	syscall_return_slowpath(regs);
-@@ -325,7 +319,7 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
+ #ifdef CONFIG_X86_64
+-__visible void do_syscall_64(struct pt_regs *regs)
++__visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
+ {
+-	struct thread_info *ti = current_thread_info();
+-	unsigned long nr = regs->orig_ax;
++	struct thread_info *ti;
  
- 	if (likely(nr < IA32_NR_syscalls)) {
- 		nr = array_index_nospec(nr, IA32_NR_syscalls);
--#ifdef CONFIG_SYSCALL_PTREGS
-+#ifdef CONFIG_IA32_EMULATION
- 		regs->ax = ia32_sys_call_table[nr](regs);
- #else
- 		/*
-@@ -338,7 +332,7 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
- 			(unsigned int)regs->bx, (unsigned int)regs->cx,
- 			(unsigned int)regs->dx, (unsigned int)regs->si,
- 			(unsigned int)regs->di, (unsigned int)regs->bp);
--#endif /* CONFIG_SYSCALL_PTREGS */
-+#endif /* CONFIG_IA32_EMULATION */
- 	}
- 
- 	syscall_return_slowpath(regs);
-diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
-index 47060dd8efb1..aa3336a7cb15 100644
---- a/arch/x86/entry/syscall_32.c
-+++ b/arch/x86/entry/syscall_32.c
-@@ -7,17 +7,17 @@
- #include <asm/asm-offsets.h>
- #include <asm/syscall.h>
- 
--#ifdef CONFIG_SYSCALL_PTREGS
-+#ifdef CONFIG_IA32_EMULATION
- /* On X86_64, we use struct pt_regs * to pass parameters to syscalls */
- #define __SYSCALL_I386(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
- 
- /* this is a lie, but it does not hurt as sys_ni_syscall just returns -EINVAL */
- extern asmlinkage long sys_ni_syscall(const struct pt_regs *);
- 
--#else /* CONFIG_SYSCALL_PTREGS */
-+#else /* CONFIG_IA32_EMULATION */
- #define __SYSCALL_I386(nr, sym, qual) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
- extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
--#endif /* CONFIG_SYSCALL_PTREGS */
-+#endif /* CONFIG_IA32_EMULATION */
- 
- #include <asm/syscalls_32.h>
- #undef __SYSCALL_I386
-diff --git a/arch/x86/entry/syscall_64.c b/arch/x86/entry/syscall_64.c
-index 6197850adf91..d5252bc1e380 100644
---- a/arch/x86/entry/syscall_64.c
-+++ b/arch/x86/entry/syscall_64.c
-@@ -7,14 +7,9 @@
- #include <asm/asm-offsets.h>
- #include <asm/syscall.h>
- 
--#ifdef CONFIG_SYSCALL_PTREGS
- /* this is a lie, but it does not hurt as sys_ni_syscall just returns -EINVAL */
- extern asmlinkage long sys_ni_syscall(const struct pt_regs *);
- #define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
--#else /* CONFIG_SYSCALL_PTREGS */
--extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
--#define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
--#endif /* CONFIG_SYSCALL_PTREGS */
- #include <asm/syscalls_64.h>
- #undef __SYSCALL_64
- 
-diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
-index 05eebbf9b989..20b3d4a88ee4 100644
---- a/arch/x86/entry/vsyscall/vsyscall_64.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_64.c
-@@ -127,9 +127,7 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
- 	int vsyscall_nr, syscall_nr, tmp;
- 	int prev_sig_on_uaccess_err;
- 	long ret;
--#ifdef CONFIG_SYSCALL_PTREGS
- 	unsigned long orig_dx;
--#endif
- 
- 	/*
- 	 * No point in checking CS -- the only way to get here is a user mode
-@@ -230,38 +228,22 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
- 	ret = -EFAULT;
- 	switch (vsyscall_nr) {
- 	case 0:
--#ifdef CONFIG_SYSCALL_PTREGS
- 		/* this decodes regs->di and regs->si on its own */
- 		ret = sys_gettimeofday(regs);
--#else
--		ret = sys_gettimeofday(
--			(struct timeval __user *)regs->di,
--			(struct timezone __user *)regs->si);
--#endif /* CONFIG_SYSCALL_PTREGS */
- 		break;
- 
- 	case 1:
--#ifdef CONFIG_SYSCALL_PTREGS
- 		/* this decodes regs->di on its own */
- 		ret = sys_time(regs);
--#else
--		ret = sys_time((time_t __user *)regs->di);
--#endif /* CONFIG_SYSCALL_PTREGS */
- 		break;
- 
- 	case 2:
--#ifdef CONFIG_SYSCALL_PTREGS
- 		/* while we could clobber regs->dx, we didn't in the past... */
- 		orig_dx = regs->dx;
- 		regs->dx = 0;
- 		/* this decodes regs->di, regs->si and regs->dx on its own */
- 		ret = sys_getcpu(regs);
- 		regs->dx = orig_dx;
--#else
--		ret = sys_getcpu((unsigned __user *)regs->di,
--				 (unsigned __user *)regs->si,
--				 NULL);
--#endif /* CONFIG_SYSCALL_PTREGS */
- 		break;
- 	}
- 
-diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
-index 17c62373a6f9..d653139857af 100644
---- a/arch/x86/include/asm/syscall.h
-+++ b/arch/x86/include/asm/syscall.h
-@@ -20,13 +20,13 @@
- #include <asm/thread_info.h>	/* for TS_COMPAT */
- #include <asm/unistd.h>
- 
--#ifdef CONFIG_SYSCALL_PTREGS
-+#ifdef CONFIG_X86_64
- typedef asmlinkage long (*sys_call_ptr_t)(const struct pt_regs *);
- #else
- typedef asmlinkage long (*sys_call_ptr_t)(unsigned long, unsigned long,
- 					  unsigned long, unsigned long,
- 					  unsigned long, unsigned long);
--#endif /* CONFIG_SYSCALL_PTREGS */
-+#endif /* CONFIG_X86_64 */
- extern const sys_call_ptr_t sys_call_table[];
- 
- #if defined(CONFIG_X86_32)
-diff --git a/arch/x86/include/asm/syscalls.h b/arch/x86/include/asm/syscalls.h
-index e4ad93c05f02..d4d18d94695c 100644
---- a/arch/x86/include/asm/syscalls.h
-+++ b/arch/x86/include/asm/syscalls.h
-@@ -19,10 +19,10 @@
- /* kernel/ioport.c */
- long ksys_ioperm(unsigned long from, unsigned long num, int turn_on);
- 
--#ifndef CONFIG_SYSCALL_PTREGS
--/*
-- * If CONFIG_SYSCALL_PTREGS is enabled, a different syscall calling convention
-- * is used. Do not include these -- invalid -- prototypes then
-+#ifdef CONFIG_X86_32
-+/* 
-+ * These definitions are only valid on pure 32-bit systems; x86-64 uses a
-+ * different syscall calling convention
-  */
- asmlinkage long sys_ioperm(unsigned long, unsigned long, int);
- asmlinkage long sys_iopl(unsigned int);
-@@ -38,7 +38,6 @@ asmlinkage long sys_set_thread_area(struct user_desc __user *);
- asmlinkage long sys_get_thread_area(struct user_desc __user *);
- 
- /* X86_32 only */
--#ifdef CONFIG_X86_32
- 
- /* kernel/signal.c */
- asmlinkage long sys_sigreturn(void);
-@@ -48,16 +47,5 @@ struct vm86_struct;
- asmlinkage long sys_vm86old(struct vm86_struct __user *);
- asmlinkage long sys_vm86(unsigned long, unsigned long);
- 
--#else /* CONFIG_X86_32 */
+ 	enter_from_user_mode();
+ 	local_irq_enable();
 -
--/* X86_64 only */
--/* kernel/process_64.c */
--asmlinkage long sys_arch_prctl(int, unsigned long);
--
--/* kernel/sys_x86_64.c */
--asmlinkage long sys_mmap(unsigned long, unsigned long, unsigned long,
--			 unsigned long, unsigned long, unsigned long);
--
- #endif /* CONFIG_X86_32 */
--#endif /* CONFIG_SYSCALL_PTREGS */
- #endif /* _ASM_X86_SYSCALLS_H */
++	ti = current_thread_info();
+ 	if (READ_ONCE(ti->flags) & _TIF_WORK_SYSCALL_ENTRY)
+ 		nr = syscall_trace_enter(regs);
+ 
+@@ -282,8 +281,9 @@ __visible void do_syscall_64(struct pt_regs *regs)
+ 	 * table.  The only functional difference is the x32 bit in
+ 	 * regs->orig_ax, which changes the behavior of some syscalls.
+ 	 */
+-	if (likely((nr & __SYSCALL_MASK) < NR_syscalls)) {
+-		nr = array_index_nospec(nr & __SYSCALL_MASK, NR_syscalls);
++	nr &= __SYSCALL_MASK;
++	if (likely(nr < NR_syscalls)) {
++		nr = array_index_nospec(nr, NR_syscalls);
+ 		regs->ax = sys_call_table[nr](
+ 			regs->di, regs->si, regs->dx,
+ 			regs->r10, regs->r8, regs->r9);
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 936e19642eab..6cfe38665f3c 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -233,7 +233,8 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
+ 	TRACE_IRQS_OFF
+ 
+ 	/* IRQs are off. */
+-	movq	%rsp, %rdi
++	movq	%rax, %rdi
++	movq	%rsp, %rsi
+ 	call	do_syscall_64		/* returns with IRQs disabled */
+ 
+ 	TRACE_IRQS_IRETQ		/* we're about to change IF */
 -- 
 2.16.3
