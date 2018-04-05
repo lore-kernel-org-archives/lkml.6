@@ -1,474 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751543AbeDEQFL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 12:05:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33752 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDEQFJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 12:05:09 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8991060767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From: Lina Iyer <ilina@codeaurora.org>
-To: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Subject: [PATCH v6 1/2] drivers: qcom: add command DB driver
-Date: Thu,  5 Apr 2018 10:04:58 -0600
-Message-Id: <20180405160459.16693-2-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180405160459.16693-1-ilina@codeaurora.org>
-References: <20180405160459.16693-1-ilina@codeaurora.org>
+        id S1751469AbeDEQIA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 12:08:00 -0400
+Received: from mail-sn1nam01on0056.outbound.protection.outlook.com ([104.47.32.56]:23584
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751277AbeDEQH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 12:07:57 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Vadim.Lomovtsev@cavium.com;
+Date: Thu, 5 Apr 2018 09:07:49 -0700
+From: Vadim Lomovtsev <Vadim.Lomovtsev@caviumnetworks.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: sgoutham@cavium.com, sunil.kovvuri@gmail.com, rric@kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, davem@davemloft.net, dnelson@redhat.com,
+        gustavo@embeddedor.com, Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
+Subject: Re: [PATCH] net: thunderx: rework mac addresses list to u64 array
+Message-ID: <20180405160749.GB12703@localhost.localdomain>
+References: <20180405145756.12633-1-Vadim.Lomovtsev@caviumnetworks.com>
+ <20180405150748.GA5716@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405150748.GA5716@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Originating-IP: [50.233.148.156]
+X-ClientProxiedBy: BN6PR16CA0016.namprd16.prod.outlook.com
+ (2603:10b6:404:f5::26) To DM5PR07MB3004.namprd07.prod.outlook.com
+ (2603:10b6:3:e3::14)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4a08c635-51f9-4baa-0708-08d59b0f6412
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR07MB3004;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3004;3:uejzniPb4ul9h48mmnIB8bETvZhoWbO8Is3JnscvhqdAEswK+6DVevIgPL51uHE039BCFw4aXDR82aWlxFTDXh2bjk15GLB3ilO/H1HabOoE8EHg4Nem3gmh3tGCW3h6HiVMC0ZMD6sEO3TwcGGQwO3A8SMxqWg8NZvUn4bR23gHiY2rvwyCOf/0UBJCRYh+b1bfFLJakLbSTr1dg62MHr6FUaRLbzxvqkxJ1Pj0oYI6B6DGiy4RCRB3oa7ubVIp;25:/DASQNhWm0wW9ls6PMB4BjS1fv2n5cykVje4UCwqAdP8cCNHu7IqNDuHLXMiSmFEZOkdSOFIbLd5nk6Y/9R+Gr+ZD9fVcco4wXP/M9FuDDDXMoPkUrV1iTWqFfphTi9VNeRM+niXoH1Er8wLjKjyLx2ZK6bJksFb7xwYio6eSiuttnzZCZotltDmz2BBpXV/GYjh9kSZscVTJRa/Nq1XjpF2fBiZpNFriy0x35+Yq2KpPEgXo5/dlfseQbQ7tu0KO4kd9b/bzzTmu5f7wD99MKSH1YOCvPZb8cW6Y6phZYsKY252fJJwp2KY3EFKUqy0CeEOVc1mLonmJ3z5LWPA/A==;31:HERCmsfYQD+yZkIuPjr7yRbRb/2CoepVfrkNvE6gg8xhur4ni2Vx9kt+qobgQjXBEwV16ogEDnPv4VtQ/2ImbQ0QUbgMGw+7dOA5965Ije5AwnAel0oU4uQxrQm/OxLYcJVO8uCWLAqVzWSDU7z6BrXEKX/Rv2MWxMt9/iSRfXWa6EcDdKHdHEF9SKY+HA0CyBf67yHGNhFyCA3LSv561i5KRvYI72+amSGH8SCM26U=
+X-MS-TrafficTypeDiagnostic: DM5PR07MB3004:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3004;20:p8YtFXAAbj7TD46RRLico0xMPQBN16hMM7Bfx9BlZfwt+DPGflamZwriMC/2TaXJxCydmV3jkQqV4u5W8ZpejH/Uq9j/6I5HiPNzLm9oBkpn+K5t8SAZwnHfYDt4BGwQ6f1H8bne9GW9KG0ikDbmIIFxf9pra3/1ahGEuZ31H8hcpWzKcliSGaXIxDppWE3xNNrSMRfjirexEum+rdKJwsRZyfq1aINQcDg/5mTWJFl4v+gY4fcqhVyvsl3dVn7Uz2EpTHoCIZRb/ydHaSYMOB+hUJyU0UFOxwswj/CLygqcwHvMFJ2bQvVw/OJzEM8Ugybh6guNtTfl57l2os08CK69LcvK6P2KVTd+Ytt2re5wab9hhZ4Fg0p+/8D9yWkMztGWXyKr/3eR1bkPtgcQ59TV7rz5xApRFxwyWnNBp4snV4cRU7QQAy2bkwlztdtwDu79NeJkggxvFz0Xj6cHJv6yoBgeZmtU4wlv1c6NjgCmTwbPa8kfoAy9qkMoo0eybwxrm24gCeCfIKjtP3DLb6dNnYcN/FcsVR5eM7XSnGHrEuOejrzF4z0XVLl/Zp+a3wpNCea72m5Kpd3TJLDcFOEXaOzJy2ElWzFGj/6+csE=;4:aqtxVgBiOxJJ8n2jHTyMVB09TuNRUO2DJKGKQdBK3K/a2mZDLqjbuEn5DpCRYIOm2r+E6p2Ebjp8VpNQiEMHG1kIFsj53AISPc6t9zoSKE2dXcnbr7GsEEBs5hdcuN5/9cbJuCCbgWHVCYxCNDN1zz5Ih6SR1luKpC1M2keDVgqPmpFLfUzIGhQQrW36M/BhjPgubKFFHGPhAnc5Zcn7yXcknHJnQPfnWKmZIalpRKXnkeQFGNZZwmU9M5HyTdx/OhkmVjWI0mAVmYEHWUOEEvWAXdcgvb57YRioq3jU5BVF54HPOeHEz+lJyPdnlwGW
+X-Microsoft-Antispam-PRVS: <DM5PR07MB3004178A7071A45D3CEA5AFE8ABB0@DM5PR07MB3004.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(131327999870524);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(3231221)(944501327)(52105095)(10201501046)(3002001)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR07MB3004;BCL:0;PCL:0;RULEID:;SRVR:DM5PR07MB3004;
+X-Forefront-PRVS: 06339BAE63
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(346002)(366004)(376002)(39860400002)(396003)(39380400002)(189003)(199004)(6666003)(39060400002)(61506002)(47776003)(50466002)(6916009)(316002)(6506007)(53936002)(4326008)(9686003)(229853002)(42882007)(386003)(186003)(52116002)(81166006)(486006)(59450400001)(16586007)(33896004)(478600001)(55016002)(16526019)(68736007)(76176011)(8936002)(6246003)(66066001)(7696005)(8676002)(106356001)(25786009)(107886003)(23726003)(26005)(72206003)(81156014)(33656002)(5660300001)(305945005)(11346002)(1076002)(97736004)(446003)(2906002)(6116002)(58126008)(345774005)(105586002)(7736002)(476003)(3846002)(956004)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR07MB3004;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR07MB3004;23:ObYLouoNAELousZsYa7aem1Ok6Lt0eAdjNyga3bmz?=
+ =?us-ascii?Q?qBfzKobG98C8H1UAzzJPi0w/pll2wRxAvwsoWgLbJwaWkGUdxE5jHVJvubeX?=
+ =?us-ascii?Q?mxGJyyip0rcU7gePNlC8Z2HmPytyM/k7PejIUddbp8/kxmPOc98nCpoiO+zv?=
+ =?us-ascii?Q?kY1EC3o+MLBW6DSZ+cAIosKAysUhLru1q15X7vc0UAy6sM7pI/MizHOiBk4/?=
+ =?us-ascii?Q?9q/nY5TDKOKDrnE6KspUWPkPQfqCdmBAdbdEO3ACm/kN7+6H9NTrwhSSfC3n?=
+ =?us-ascii?Q?+tNfJBobtAuwcxDlpqehRpN3nHghZdZqo+4htcCKrvQLh7ZjNSElqrNRH5PB?=
+ =?us-ascii?Q?tQkdDYGXRpyy5TDhovGgdOI/0pErLvoUpChaptadK26IUMBonJqQ1aWWe3tH?=
+ =?us-ascii?Q?Mha2EmqhJxLYfRGXYoE/G7reCZ2YwseGK+x3Ay1TBWmqIvTKyHrpA4+PVK+M?=
+ =?us-ascii?Q?o3oiDJLvPyTz9Bt3miTKgY//1vGRgEIxjW5IqLQ4p5o4hWVu8wEi+xnLqhK2?=
+ =?us-ascii?Q?H+xENDXz7R/hj2q/WR6YeFvgNfX4PNesK9prZyHl6REO+ncoy27vFFn4Fs/H?=
+ =?us-ascii?Q?3hTWwAaWa1mzi0G8jkeySyjffgVag8So79niHlW24/JXfnhp6vjeQvtN4Jak?=
+ =?us-ascii?Q?NO3mVdk9zSjGWXPfvqdg+6tTMBYELGZHrGATjhnSePTeBwCTY8kydAKSGnex?=
+ =?us-ascii?Q?+f8lxvTBtHT3y+8YzeIdIftd42xU11hm0/4N+kpPSjyQ0CMgBuKyzWRPxHHq?=
+ =?us-ascii?Q?79TSTmxIlHvWsiFZEoIQiyY1AsVGjE1vtr1/8gXZV8YnvEe6Os9+BDUhvvbB?=
+ =?us-ascii?Q?t8psEJ0GzAu03jg6li8PRZ7eMywbS+XQzyzNpRRNog/22RWRnKW7+yQgQyhd?=
+ =?us-ascii?Q?iik4PiEtm3rrbDKn46171QhZxe5fuRwiAs0TONAX4Z6D4f5kLDq0gVg3JXGU?=
+ =?us-ascii?Q?9JUU4CL3aFgNsGxaR8vLrxo+ZK6EaB8Nv7gCdQPkYvm+UcpNPZ7A+m/DkKfU?=
+ =?us-ascii?Q?ixykH3N8VHV+atauN16mu7CaMHfxVEYwiCO4S0mSq8tvg099YdttW4uTETEW?=
+ =?us-ascii?Q?AqyvWs/X/JbLSwvsNPopHQ7Jntmpn5UtVJxTNmVv4LNvhEz6jETYzTwWThpY?=
+ =?us-ascii?Q?IQgPZ/Wo79drZt9PLEj3djdFGSlvqwArh9Sk/RcNhW2D1dhRNvYUBepsLYRL?=
+ =?us-ascii?Q?0KjsAaZI00hkylBV9Q9GDbr0HC4ZEWLJcGZmjtgdKHqgu1058MOjOmsxtFig?=
+ =?us-ascii?Q?bfdkKP7QeeKOphbqQKizYaxhOUWzuyLLEarjmyoJqVdRptQUIzEZPVIjnApO?=
+ =?us-ascii?Q?w/rqjxY/8hkI7p5r2IuKVaPaNvW7PezjaG2PXkNWNXQ9tqjmFRwo7zmWD5Ct?=
+ =?us-ascii?Q?Ld9h/YZo3Xwv/qF8ljzDdYRFEpWvTemGGDee8jfEZzKlog4jgvr8W2CexV+w?=
+ =?us-ascii?Q?plLG1pmbw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: sZxBz1X7YwBQK1/2YEgvf/M+jGOt/Ix/AniGpXymjbN5DiZkBuct1MRzQBCLh+gBcd89jFNYGwTM4Q/8jEKjVJ1QfaG2//n05gjuHCGVeACRtqgoaerioqU/71R1VVzTE2rH8gjo+5TD55bcv9AXSeWttdqlnmL2daPZ1sYy3+AVOS/gw7x3VRbJSL8QGBox
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3004;6:Y78wb68g/PxtrTdXBWk231+IutThg3IC/mLuBd+wdRMdw+nB7uBIrY73BLufD+l0gEgwIzXAnF6WQxKobPC4OKgSQ1JgtNsYEQ8ManukWvaSs5F5BvleSGF5krm35S8wC/MHLWb2UTKkkAQcX4Clw60WcmRLxAp+/1HsGCW654pPLN41xqlnDJsgFWwBK3v2cLQ8omCu8dKNVZMG/09yFBu65CeeFPELZyK2YtBjOZL94NPUaOE6d/wY0/RVYd1MODfC6nvz/j2fBr/eDxWRpQk2rQd3luTzY2lPpa3pKtGbDH+6ZtXMKW72OCnHuxcCO/uJAR8hmoDmMmtC2jltNa9WlPL84yC3T/wBIA3rnb6VDWgRTCVoqiuXQCHiKxq3tKWFELOLPwl2Z31sr8PIlRgr8io3ur+sBR+cSTXGL+4uuIjMtPPDM9KC0AnI5dCNBFmGICznDgqXdDGQyjPymA==;5:pImwv3zNDEBIknOoVMNzxAKFr9Qng1MjoeiXhGVvvvSzmbE9GPc9EvkETTf2EqDodgUUiwlPAs1QvLxjCZQ/OF8jPsWqvmjcD6drLTUFcb8JJacmrEBfHbv0P99hoHiIePmWgLNtLILziOPPX2AiOUj5ct3ginYfPeznaFdZ0wE=;24:jzivD/0iuD/I7q7+tLgMIUQz+P3BU6ask6KIrSStI7/2+GzTFf4TxrwCy69NYV3YQqouV8lb3H6o0HgdPX25FBYoxn1u6EUShD3vajFT9Ls=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3004;7:EUI5zQOtn8JLYw5e5jOu1wdU7Jqnt67J7paD2WhJxqjjZGpb78k8y8R54nSq0ZeuH51pDBGHikniIEsrV9s6qao0edGrrdqth9LsOZBjjukKlukM5vrYv96Gb0EjrLudWQwoxV2SJyfhsBicpXvBVGtJBvGjRYucqTeeFDtyVvKKLYVQEJpOzjEmaAMDs341yAL0hjYYhohRovefWQVJOZJQmwa5pPwt7tGUNA7t59jSZX65DeqxG9EFKpD6P/Ns
+X-OriginatorOrg: caviumnetworks.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2018 16:07:53.3979 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a08c635-51f9-4baa-0708-08d59b0f6412
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR07MB3004
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+Hi Christoph,
 
-Command DB is a simple database in the shared memory of QCOM SoCs, that
-provides information regarding shared resources. Some shared resources
-in the SoC have properties that are probed dynamically at boot by the
-remote processor. The information pertaining to the SoC and the platform
-are made available in the shared memory. Drivers can query this
-information using predefined strings.
+Thank you for your feedback and time.
 
-Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+On Thu, Apr 05, 2018 at 08:07:48AM -0700, Christoph Hellwig wrote:
+> >  struct xcast_addr_list {
+> > -	struct list_head list;
+> >  	int              count;
+> > +	u64              mc[0];
+> 
+> Please use the standard C99 syntax here:
+> 
+> 	u64              mc[];
 
----
+Ok, will update.
 
-Changes in v6:
-	- Remove indirection and use the actual command db memory in DT
+> 
+> > +				mc_list = kmalloc(sizeof(*mc_list) +
+> > +						  sizeof(u64) * netdev_mc_count(netdev),
+> > +						  GFP_ATOMIC);
+> 
+> kmalloc_array(), please.
 
-Changes in v5:
-	- Use strncmp
-	- Add check in probe to ensure the location at dictionary address
-	  is same as the one specified in reserved-memory
-	- Whitespace fixes
-	- Comments updated
----
- drivers/of/platform.c     |   1 +
- drivers/soc/qcom/Kconfig  |   9 ++
- drivers/soc/qcom/Makefile |   1 +
- drivers/soc/qcom/cmd-db.c | 310 ++++++++++++++++++++++++++++++++++++++++++++++
- include/soc/qcom/cmd-db.h |  45 +++++++
- 5 files changed, 366 insertions(+)
- create mode 100644 drivers/soc/qcom/cmd-db.c
- create mode 100644 include/soc/qcom/cmd-db.h
+In this case it would require two memory allocation calls to kmalloc() for
+xcast_addr_list struct and to kmalloc_array() for 'mc' addresses, becasue of
+different data types and so two null-ptr checks .. this is what I'd like get rid off.
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index c00d81dfac0b..26fb43847f4b 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -494,6 +494,7 @@ EXPORT_SYMBOL_GPL(of_platform_default_populate);
- #ifndef CONFIG_PPC
- static const struct of_device_id reserved_mem_matches[] = {
- 	{ .compatible = "qcom,rmtfs-mem" },
-+	{ .compatible = "qcom,cmd-db" },
- 	{ .compatible = "ramoops" },
- 	{}
- };
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index e050eb83341d..b12868a2b92d 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -3,6 +3,15 @@
- #
- menu "Qualcomm SoC drivers"
- 
-+config QCOM_COMMAND_DB
-+	bool "Qualcomm Command DB"
-+	depends on (ARCH_QCOM && OF) || COMPILE_TEST
-+	help
-+	  Command DB queries shared memory by key string for shared system
-+	  resources. Platform drivers that require to set state of a shared
-+	  resource on a RPM-hardened platform must use this database to get
-+	  SoC specific identifier and information for the shared resources.
-+
- config QCOM_GLINK_SSR
- 	tristate "Qualcomm Glink SSR driver"
- 	depends on RPMSG
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index dcebf2814e6d..bbd1230fc441 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
- obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
- obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
- obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-new file mode 100644
-index 000000000000..b5172049f608
---- /dev/null
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -0,0 +1,310 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
-+
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/platform_device.h>
-+#include <linux/types.h>
-+
-+#include <soc/qcom/cmd-db.h>
-+
-+#define NUM_PRIORITY		2
-+#define MAX_SLV_ID		8
-+#define CMD_DB_MAGIC		0x0C0330DBUL
-+#define SLAVE_ID_MASK		0x7
-+#define SLAVE_ID_SHIFT		16
-+
-+#define ENTRY_HEADER(hdr)	((void *)cmd_db_header +	\
-+				sizeof(*cmd_db_header) +	\
-+				hdr->header_offset)
-+
-+#define RSC_OFFSET(hdr, ent)	((void *)cmd_db_header +	\
-+				sizeof(*cmd_db_header) +	\
-+				hdr.data_offset + ent.offset)
-+
-+/**
-+ * struct entry_header: header for each entry in cmddb
-+ *
-+ * @id: resource's identifier
-+ * @priority: unused
-+ * @addr: the address of the resource
-+ * @len: length of the data
-+ * @offset: offset from :@data_offset, start of the data
-+ */
-+struct entry_header {
-+	u64 id;
-+	u32 priority[NUM_PRIORITY];
-+	u32 addr;
-+	u16 len;
-+	u16 offset;
-+};
-+
-+/**
-+ * struct rsc_hdr: resource header information
-+ *
-+ * @slv_id: id for the resource
-+ * @header_offset: entry's header at offset from the end of the cmd_db_header
-+ * @data_offset: entry's data at offset from the end of the cmd_db_header
-+ * @cnt: number of entries for HW type
-+ * @version: MSB is major, LSB is minor
-+ * @reserved: reserved for future use.
-+ */
-+struct rsc_hdr {
-+	u16 slv_id;
-+	u16 header_offset;
-+	u16 data_offset;
-+	u16 cnt;
-+	u16 version;
-+	u16 reserved[3];
-+};
-+
-+/**
-+ * struct cmd_db_header: The DB header information
-+ *
-+ * @version: The cmd db version
-+ * @magic_number: constant expected in the database
-+ * @header: array of resources
-+ * @checksum: checksum for the header. Unused.
-+ * @reserved: reserved memory
-+ * @data: driver specific data
-+ */
-+struct cmd_db_header {
-+	u32 version;
-+	u32 magic_num;
-+	struct rsc_hdr header[MAX_SLV_ID];
-+	u32 checksum;
-+	u32 reserved;
-+	u8 data[];
-+};
-+
-+/**
-+ * DOC: Description of the Command DB database.
-+ *
-+ * At the start of the command DB memory is the cmd_db_header structure.
-+ * The cmd_db_header holds the version, checksum, magic key as well as an
-+ * array for header for each slave (depicted by the rsc_header). Each h/w
-+ * based accelerator is a 'slave' (shared resource) and has slave id indicating
-+ * the type of accelerator. The rsc_header is the header for such individual
-+ * slaves of a given type. The entries for each of these slaves begin at the
-+ * rsc_hdr.header_offset. In addition each slave could have auxiliary data
-+ * that may be needed by the driver. The data for the slave starts at the
-+ * entry_header.offset to the location pointed to by the rsc_hdr.data_offset.
-+ *
-+ * Drivers have a stringified key to a slave/resource. They can query the slave
-+ * information and get the slave id and the auxiliary data and the length of the
-+ * data. Using this information, they can format the request to be sent to the
-+ * h/w accelerator and request a resource state.
-+ */
-+
-+static struct cmd_db_header *cmd_db_header;
-+
-+/**
-+ * cmd_db_ready - Indicates if command DB is available
-+ *
-+ * Return: 0 on success, errno otherwise
-+ */
-+int cmd_db_ready(void)
-+{
-+	if (cmd_db_header == NULL)
-+		return -EPROBE_DEFER;
-+	else if (cmd_db_header->magic_num != CMD_DB_MAGIC)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(cmd_db_ready);
-+
-+static u64 cmd_db_get_u64_id(const char *id)
-+{
-+	u64 rsc_id = 0;
-+	u8 *ch = (u8 *)&rsc_id;
-+
-+	strncpy(ch, id, min(strlen(id), sizeof(rsc_id)));
-+
-+	return rsc_id;
-+}
-+
-+static int cmd_db_get_header(u64 query, struct entry_header *eh,
-+			     struct rsc_hdr *rh)
-+{
-+	struct rsc_hdr *rsc_hdr;
-+	struct entry_header *ent;
-+	int ret, i, j;
-+
-+	ret = cmd_db_ready();
-+	if (ret)
-+		return ret;
-+
-+	if (!eh || !rh)
-+		return -EINVAL;
-+
-+	for (i = 0; i < MAX_SLV_ID; i++) {
-+		rsc_hdr = &cmd_db_header->header[i];
-+		if (!rsc_hdr->slv_id)
-+			break;
-+
-+		ent = ENTRY_HEADER(rsc_hdr);
-+		for (j = 0; j < rsc_hdr->cnt; j++, ent++) {
-+			if (ent->id == query)
-+				break;
-+		}
-+
-+		if (j < rsc_hdr->cnt) {
-+			memcpy(eh, ent, sizeof(*ent));
-+			memcpy(rh, rsc_hdr, sizeof(*rh));
-+			return 0;
-+		}
-+	}
-+
-+	return -ENODEV;
-+}
-+
-+static int cmd_db_get_header_by_rsc_id(const char *id,
-+				       struct entry_header *ent_hdr,
-+				       struct rsc_hdr *rsc_hdr)
-+{
-+	u64 rsc_id = cmd_db_get_u64_id(id);
-+
-+	return cmd_db_get_header(rsc_id, ent_hdr, rsc_hdr);
-+}
-+
-+/**
-+ * cmd_db_read_addr() - Query command db for resource id address.
-+ *
-+ * @id: resource id to query for address
-+ *
-+ * Return: resource address on success, 0 on error
-+ *
-+ * This is used to retrieve resource address based on resource
-+ * id.
-+ */
-+u32 cmd_db_read_addr(const char *id)
-+{
-+	int ret;
-+	struct entry_header ent;
-+	struct rsc_hdr rsc_hdr;
-+
-+	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+
-+	return ret < 0 ? 0 : ent.addr;
-+}
-+EXPORT_SYMBOL(cmd_db_read_addr);
-+
-+/**
-+ * cmd_db_read_aux_data() - Query command db for aux data.
-+ *
-+ *  @id: Resource to retrieve AUX Data on.
-+ *  @data: Data buffer to copy returned aux data to. Returns size on NULL
-+ *  @len: Caller provides size of data buffer passed in.
-+ *
-+ *  Return: size of data on success, errno otherwise
-+ */
-+int cmd_db_read_aux_data(const char *id, u8 *data, size_t len)
-+{
-+	int ret;
-+	struct entry_header ent;
-+	struct rsc_hdr rsc_hdr;
-+
-+	if (!data)
-+		return -EINVAL;
-+
-+	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+	if (ret)
-+		return ret;
-+
-+	if (len < ent.len)
-+		return -EINVAL;
-+
-+	len = min_t(u16, ent.len, len);
-+	memcpy(data, RSC_OFFSET(rsc_hdr, ent), len);
-+
-+	return len;
-+}
-+EXPORT_SYMBOL(cmd_db_read_aux_data);
-+
-+/**
-+ * cmd_db_read_aux_data_len - Get the length of the auxiliary data stored in DB.
-+ *
-+ * @id: Resource to retrieve AUX Data.
-+ *
-+ * Return: size on success, 0 on error
-+ */
-+size_t cmd_db_read_aux_data_len(const char *id)
-+{
-+	int ret;
-+	struct entry_header ent;
-+	struct rsc_hdr rsc_hdr;
-+
-+	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+
-+	return ret < 0 ? 0 : ent.len;
-+}
-+EXPORT_SYMBOL(cmd_db_read_aux_data_len);
-+
-+/**
-+ * cmd_db_read_slave_id - Get the slave ID for a given resource address
-+ *
-+ * @id: Resource id to query the DB for version
-+ *
-+ * Return: cmd_db_hw_type enum on success, CMD_DB_HW_INVALID on error
-+ */
-+enum cmd_db_hw_type cmd_db_read_slave_id(const char *id)
-+{
-+	int ret;
-+	struct entry_header ent;
-+	struct rsc_hdr rsc_hdr;
-+
-+	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+
-+	return ret < 0 ? CMD_DB_HW_INVALID :
-+		       (ent.addr >> SLAVE_ID_SHIFT) & SLAVE_ID_MASK;
-+}
-+EXPORT_SYMBOL(cmd_db_read_slave_id);
-+
-+static int cmd_db_dev_probe(struct platform_device *pdev)
-+{
-+	struct reserved_mem *rmem;
-+	int ret = 0;
-+
-+	rmem = of_reserved_mem_lookup(pdev->dev.of_node);
-+	if (!rmem) {
-+		dev_err(&pdev->dev, "failed to acquire memory region\n");
-+		return -EINVAL;
-+	}
-+
-+	cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WB);
-+	if (IS_ERR_OR_NULL(cmd_db_header)) {
-+		ret = PTR_ERR(cmd_db_header);
-+		cmd_db_header = NULL;
-+		return ret;
-+	}
-+
-+	if (cmd_db_header->magic_num != CMD_DB_MAGIC) {
-+		dev_err(&pdev->dev, "Invalid Command DB Magic\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id cmd_db_match_table[] = {
-+	{ .compatible = "qcom,cmd-db" },
-+	{ },
-+};
-+
-+static struct platform_driver cmd_db_dev_driver = {
-+	.probe  = cmd_db_dev_probe,
-+	.driver = {
-+		   .name = "cmd-db",
-+		   .of_match_table = cmd_db_match_table,
-+	},
-+};
-+
-+static int __init cmd_db_device_init(void)
-+{
-+	return platform_driver_register(&cmd_db_dev_driver);
-+}
-+arch_initcall(cmd_db_device_init);
-diff --git a/include/soc/qcom/cmd-db.h b/include/soc/qcom/cmd-db.h
-new file mode 100644
-index 000000000000..578180cbc134
---- /dev/null
-+++ b/include/soc/qcom/cmd-db.h
-@@ -0,0 +1,45 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
-+
-+#ifndef __QCOM_COMMAND_DB_H__
-+#define __QCOM_COMMAND_DB_H__
-+
-+
-+enum cmd_db_hw_type {
-+	CMD_DB_HW_INVALID = 0,
-+	CMD_DB_HW_MIN     = 3,
-+	CMD_DB_HW_ARC     = CMD_DB_HW_MIN,
-+	CMD_DB_HW_VRM     = 4,
-+	CMD_DB_HW_BCM     = 5,
-+	CMD_DB_HW_MAX     = CMD_DB_HW_BCM,
-+	CMD_DB_HW_ALL     = 0xff,
-+};
-+
-+#if IS_ENABLED(CONFIG_QCOM_COMMAND_DB)
-+u32 cmd_db_read_addr(const char *resource_id);
-+
-+int cmd_db_read_aux_data(const char *resource_id, u8 *data, size_t len);
-+
-+size_t cmd_db_read_aux_data_len(const char *resource_id);
-+
-+enum cmd_db_hw_type cmd_db_read_slave_id(const char *resource_id);
-+
-+int cmd_db_ready(void);
-+#else
-+static inline u32 cmd_db_read_addr(const char *resource_id)
-+{ return 0; }
-+
-+static inline int cmd_db_read_aux_data(const char *resource_id, u8 *data,
-+				       size_t len)
-+{ return -ENODEV; }
-+
-+static inline size_t cmd_db_read_aux_data_len(const char *resource_id)
-+{ return -ENODEV; }
-+
-+static inline enum cmd_db_hw_type cmd_db_read_slave_id(const char *resource_id)
-+{ return -ENODEV; }
-+
-+static inline int cmd_db_ready(void)
-+{ return -ENODEV; }
-+#endif /* CONFIG_QCOM_COMMAND_DB */
-+#endif /* __QCOM_COMMAND_DB_H__ */
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+My idea of this was to keep number of array elements and themselves within the
+same memory block/page to reduce number of memory allocation requests, number
+of allocated pages/blocks and avoid possible memory fragmentation (however, I believe
+the latter is already handled at the mm layer).
+
+WBR,
+Vadim
