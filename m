@@ -1,75 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752674AbeDEAnz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 20:43:55 -0400
-Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:55339 "EHLO
-        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752582AbeDEAny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 20:43:54 -0400
-Date: Wed, 4 Apr 2018 20:26:05 -0400
-From: Wakko Warner <wakko@animx.eu.org>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: 4.15.14 crash with iscsi target and dvd
-Message-ID: <20180405002605.GC10487@animx.eu.org>
-References: <20180331015903.GA29398@animx.eu.org>
- <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
- <20180331221252.GA25573@animx.eu.org>
- <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
- <20180401113721.GA8471@animx.eu.org>
- <20180401163604.GB25011@animx.eu.org>
- <20180401182723.GA31755@animx.eu.org>
- <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+        id S1752685AbeDEApZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 20:45:25 -0400
+Received: from mail-pl0-f50.google.com ([209.85.160.50]:34563 "EHLO
+        mail-pl0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752582AbeDEApY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 20:45:24 -0400
+X-Google-Smtp-Source: AIpwx49OjMUnd4MUnX7I5tLVL2WvBOrY21bh95UsdKbxfr/HjQt8N/eh9vEQsaI/eagYHhKKp578zQ==
+Date: Thu, 5 Apr 2018 10:45:12 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: rcu_process_callbacks irqsoff latency caused by taking spinlock
+ with irqs disabled
+Message-ID: <20180405104512.25ada2bb@roar.ozlabs.ibm.com>
+In-Reply-To: <20180405001358.GK3948@linux.vnet.ibm.com>
+References: <20180405093414.2273203e@roar.ozlabs.ibm.com>
+        <20180405001358.GK3948@linux.vnet.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bart Van Assche wrote:
-> On Sun, 2018-04-01 at 14:27 -0400, Wakko Warner wrote:
-> > Wakko Warner wrote:
-> > > Wakko Warner wrote:
-> > > > I tested 4.14.32 last night with the same oops.  4.9.91 works fine.
-> > > > From the initiator, if I do cat /dev/sr1 > /dev/null it works.  If I mount
-> > > > /dev/sr1 and then do find -type f | xargs cat > /dev/null the target
-> > > > crashes.  I'm using the builtin iscsi target with pscsi.  I can burn from
-> > > > the initiator with out problems.  I'll test other kernels between 4.9 and
-> > > > 4.14.
-> > > 
-> > > So I've tested 4.x.y where x one of 10 11 12 14 15 and y is the latest patch
-> > > (except for 4.15 which was 1 behind)
-> > > Each of these kernels crash within seconds or immediate of doing find -type
-> > > f | xargs cat > /dev/null from the initiator.
-> > 
-> > I tried 4.10.0.  It doesn't completely lockup the system, but the device
-> > that was used hangs.  So from the initiator, it's /dev/sr1 and from the
-> > target it's /dev/sr0.  Attempting to read /dev/sr0 after the oops causes the
-> > process to hang in D state.
-> 
-> Hello Wakko,
-> 
-> Thank you for having narrowed down this further. I think that you encountered
-> a regression either in the block layer core or in the SCSI core. Unfortunately
-> the number of changes between kernel versions v4.9 and v4.10 in these two
-> subsystems is huge. I see two possible ways forward:
-> - Either that you perform a bisect to identify the patch that introduced this
->   regression. However, I'm not sure whether you are familiar with the bisect
->   process.
-> - Or that you identify the command that triggers this crash such that others
->   can reproduce this issue without needing access to your setup.
-> 
-> How about reproducing this crash with the below patch applied on top of
-> kernel v4.15.x? The additional output sent by this patch to the system log
-> should allow us to reproduce this issue by submitting the same SCSI command
-> with sg_raw.
+On Wed, 4 Apr 2018 17:13:58 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
-Sorry for not getting back in touch.  My internet was down.  I haven't tried
-the patch yet.  I'll try to get to that tomorrow.  The system with the issue
-is busy and I can't reboot it right now.
+> On Thu, Apr 05, 2018 at 09:34:14AM +1000, Nicholas Piggin wrote:
+> > Hi Paul,
+> > 
+> > Just looking at latencies, and RCU showed up as one of the maximums.
+> > This is a 2 socket system with (176 CPU threads). Just doing a
+> > `make -j 352` kernel build. Got a max latency of 3ms. I don't think
+> > that's anything to worry about really, but I wanted to check the
+> > cause.  
+> 
+> Well, that 3 milliseconds would cause serious problems for some workloads...
+
+True.
+
+> > # tracer: irqsoff
+> > #
+> > # irqsoff latency trace v1.1.5 on 4.16.0-01530-g43d1859f0994
+> > # --------------------------------------------------------------------
+> > # latency: 3055 us, #19/19, CPU#135 | (M:server VP:0, KP:0, SP:0 HP:0 #P:176)
+> > #    -----------------
+> > #    | task: cc1-58689 (uid:1003 nice:0 policy:0 rt_prio:0)
+> > #    -----------------
+> > #  => started at: rcu_process_callbacks
+> > #  => ended at:   _raw_spin_unlock_irqrestore
+> > #
+> > #
+> > #                  _------=> CPU#            
+> > #                 / _-----=> irqs-off        
+> > #                | / _----=> need-resched    
+> > #                || / _---=> hardirq/softirq 
+> > #                ||| / _--=> preempt-depth   
+> > #                |||| /     delay            
+> > #  cmd     pid   ||||| time  |   caller      
+> > #     \   /      |||||  \    |   /         
+> >    <...>-58689 135d.s.    0us : rcu_process_callbacks
+> >    <...>-58689 135d.s.    1us : cpu_needs_another_gp <-rcu_process_callbacks
+> >    <...>-58689 135d.s.    2us : rcu_segcblist_future_gp_needed <-cpu_needs_another_gp
+> >    <...>-58689 135d.s.    3us#: _raw_spin_lock <-rcu_process_callbacks
+> >    <...>-58689 135d.s. 3047us : rcu_start_gp <-rcu_process_callbacks
+> >    <...>-58689 135d.s. 3048us : rcu_advance_cbs <-rcu_start_gp
+> >    <...>-58689 135d.s. 3049us : rcu_segcblist_pend_cbs <-rcu_advance_cbs
+> >    <...>-58689 135d.s. 3049us : rcu_segcblist_advance <-rcu_advance_cbs
+> >    <...>-58689 135d.s. 3050us : rcu_accelerate_cbs <-rcu_start_gp
+> >    <...>-58689 135d.s. 3050us : rcu_segcblist_pend_cbs <-rcu_accelerate_cbs
+> >    <...>-58689 135d.s. 3051us : rcu_segcblist_accelerate <-rcu_accelerate_cbs
+> >    <...>-58689 135d.s. 3052us : trace_rcu_future_gp.isra.0 <-rcu_accelerate_cbs
+> >    <...>-58689 135d.s. 3052us : trace_rcu_future_gp.isra.0 <-rcu_accelerate_cbs
+> >    <...>-58689 135d.s. 3053us : rcu_start_gp_advanced.isra.35 <-rcu_start_gp
+> >    <...>-58689 135d.s. 3053us : cpu_needs_another_gp <-rcu_start_gp_advanced.isra.35
+> >    <...>-58689 135d.s. 3054us : _raw_spin_unlock_irqrestore <-rcu_process_callbacks
+> >    <...>-58689 135d.s. 3055us : _raw_spin_unlock_irqrestore
+> >    <...>-58689 135d.s. 3056us : trace_hardirqs_on <-_raw_spin_unlock_irqrestore
+> >    <...>-58689 135d.s. 3061us : <stack trace>
+> > 
+> > So it's taking a contende lock with interrupts disabled:
+> > 
+> > static void
+> > __rcu_process_callbacks(struct rcu_state *rsp)
+> > {
+> >         unsigned long flags;
+> >         bool needwake;
+> >         struct rcu_data *rdp = raw_cpu_ptr(rsp->rda);
+> > 
+> >         WARN_ON_ONCE(!rdp->beenonline);
+> > 
+> >         /* Update RCU state based on any recent quiescent states. */
+> >         rcu_check_quiescent_state(rsp, rdp);
+> > 
+> >         /* Does this CPU require a not-yet-started grace period? */
+> >         local_irq_save(flags);
+> >         if (cpu_needs_another_gp(rsp, rdp)) {
+> >                 raw_spin_lock_rcu_node(rcu_get_root(rsp)); /* irqs disabled. */
+> >                 needwake = rcu_start_gp(rsp);
+> >                 raw_spin_unlock_irqrestore_rcu_node(rcu_get_root(rsp), flags);
+> >                 if (needwake)
+> >                         rcu_gp_kthread_wake(rsp);
+> >         } else {
+> >                 local_irq_restore(flags);
+> >         }
+> > 
+> > Because irqs are disabled before taking the lock, we can't spin with
+> > interrupts enabled.
+> > 
+> > cpu_needs_another_gp needs interrupts off to prevent races with normal
+> > callback registry, but that doesn't seem to be preventing any wider
+> > races in this code, because we immediately re-enable interrupts anyway
+> > if no gp is needed. So an interrupt can come in right after that and
+> > queue something up.
+> > 
+> > So then the question is whether it's safe-albeit-racy to call with
+> > interrupts ensabled? Would be nice to move it to a spin_lock_irqsave.  
+> 
+> If I recall correctly, the issue is that an unsynchronized (due to
+> interrupts being enabled) check in the "if" statement can cause extra
+> unneeded grace periods.
+
+If the check is relatively cheap, perhaps you could do a second race
+free verification after taking the lock and disabling interrupts?
+
+> I am guessing that the long latency is caused by lots of CPUs suddenly
+> needing a new grace period at about the same time.  If so, this is
+> a bottleneck that I have been expecting for some time, and one that
+> I would resolve by introducing funnel locking, sort of like SRCU and
+> expedited grace periods already use.
+> 
+> Or am I confused about the source of the contention?
+
+The irqsoff tracer doesn't give you a lot of detail about locking
+and concurrency, so it's hard for me to say. Any particular tests
+or details I could try to get, that would help?
+
+Note that rcu doesn't show up consistently at the top, this was
+just one that looked *maybe* like it can be improved. So I don't
+know how reproducible it is.
+
+Thanks,
+Nick
