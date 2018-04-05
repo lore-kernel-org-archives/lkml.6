@@ -1,38 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751376AbeDELWt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:22:49 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51486 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeDELWs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:22:48 -0400
-Date: Thu, 5 Apr 2018 13:22:43 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] locking/mutex: Optimize __mutex_trylock_fast
-Message-ID: <20180405112243.GN4082@hirez.programming.kicks-ass.net>
-References: <20180405093716.GR4043@hirez.programming.kicks-ass.net>
- <20180405095544.GB23485@arm.com>
+        id S1751443AbeDELXw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:23:52 -0400
+Received: from mx.socionext.com ([202.248.49.38]:17274 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751038AbeDELXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 07:23:49 -0400
+Date: Thu, 05 Apr 2018 20:23:47 +0900
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] ata: ahci-platform: add reset control support
+Cc: Tejun Heo <tj@kernel.org>, Patrice Chotard <patrice.chotard@st.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-ide@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+In-Reply-To: <20180405095429.GA7506@ulmo>
+References: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com> <20180405095429.GA7506@ulmo>
+Message-Id: <20180405202347.2803.4A936039@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405095544.GB23485@arm.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 10:55:45AM +0100, Will Deacon wrote:
+Hi Thierry,
 
-> > +#define atomic_long_try_cmpxchg_relaxed(l, old, new) \
-> > +	(ATOMIC_LONG_PFX(_try_cmpxchg_relaxed)((ATOMIC_LONG_PFX(_t) *)(l), \
-> > +					   (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
+On Thu, 5 Apr 2018 11:54:29 +0200
+Thierry Reding <thierry.reding@gmail.com> wrote:
+
+> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
+> > Add support to get and control a list of resets for the device
+> > as optional and shared. These resets must be kept de-asserted until
+> > the device is enabled.
+> > 
+> > This is specified as shared because some SoCs like UniPhier series
+> > have common reset controls with all ahci controller instances.
+> > 
+> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> > ---
+> >  .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
+> >  drivers/ata/ahci.h                                 |  1 +
+> >  drivers/ata/libahci_platform.c                     | 24 +++++++++++++++++++---
+> >  3 files changed, 23 insertions(+), 3 deletions(-)
 > 
-> Are the casts on old and new strictly needed? We don't have them for the
-> non-try versions...
+> This causes a regression on Tegra because we explicitly request the
+> resets after the call to ahci_platform_get_resources().
+> 
+> From a quick look, ahci_mtk and ahci_st are in the same boat, adding the
+> corresponding maintainers to Cc.
+> 
+> Patrice, Matthias: does SATA still work for you after this patch? This
+> has been in linux-next since next-20180327.
 
-It was required for the pointer; it doesn't want to convert (unsigned
-long *) into (s64 *) without complaining about it :/
+I assume that I use "generic-ahci" driver directly, and this driver has
+no way to handle resets, so I sent this patch.
+
+However, also as far as I look, some hardware-specific drivers handle their 
+own resets, and call ahci_platform_{enable,disable}_resources(). 
+Surely there are paths to call reset control twice in such drivers.
+
+Identically, when the driver also handle their own clocks, they have same issue.
+
+> Given how this is one of the more hardware-specific bits, perhaps a
+> better way to do this is to move reset handling into a Uniphier driver
+> much like Tegra, Mediatek and ST?
+
+Since it's difficult to write the resets in general with ahci_platform, I can prepare
+hardware-specific driver for our SoCs.
+
+> That said, I don't see SATA support for any of the Socionext hardware
+> either in the DT bindings or drivers/ata, so perhaps it'd be best to
+> back this out again until we have something that's more well tested?
+
+I'm about to use the generic driver, and prepare our phy driver and
+DT bindings for our SoCs, but not yet.
+
+Then it's no problem that we can back this out.
+
+Thank you,
+
+---
+Best Regards,
+Kunihiko Hayashi
