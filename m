@@ -1,67 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751543AbeDEODn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:03:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55848 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751195AbeDEODm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:03:42 -0400
-Date: Thu, 5 Apr 2018 17:03:40 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: "Wang, Wei W" <wei.w.wang@intel.com>
-Cc: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
-Subject: Re: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Message-ID: <20180405170248-mutt-send-email-mst@kernel.org>
-References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
- <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
- <20180403214147-mutt-send-email-mst@kernel.org>
- <5AC43377.2070607@intel.com>
- <20180404155907-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
- <20180405040900-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7394A7F3B@shsmsx102.ccr.corp.intel.com>
+        id S1751410AbeDEOGB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:06:01 -0400
+Received: from nbd.name ([46.4.11.11]:33306 "EHLO nbd.name"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751179AbeDEOF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 10:05:59 -0400
+Subject: Re: [PATCH 00/12] Ethernet: Add and use ether_<type>_addr globals
+To: Joe Perches <joe@perches.com>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        bridge@lists.linux-foundation.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org
+Cc: linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com
+References: <cover.1522479607.git.joe@perches.com>
+ <e0ab9616-64fa-cdbc-7a77-7e25d70c1a52@nbd.name>
+ <1522936292.11185.15.camel@perches.com>
+From: Felix Fietkau <nbd@nbd.name>
+Openpgp: preference=signencrypt
+Message-ID: <999e4ee7-2e4e-6bf9-ac76-209e259c83e4@nbd.name>
+Date: Thu, 5 Apr 2018 16:05:51 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <286AC319A985734F985F78AFA26841F7394A7F3B@shsmsx102.ccr.corp.intel.com>
+In-Reply-To: <1522936292.11185.15.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 02:05:03AM +0000, Wang, Wei W wrote:
-> On Thursday, April 5, 2018 9:12 AM, Michael S. Tsirkin wrote:
-> > On Thu, Apr 05, 2018 at 12:30:27AM +0000, Wang, Wei W wrote:
-> > > On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
-> > > > On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
-> > > > > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
-> > > > > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
-> > > I'm afraid the driver couldn't be aware if the added hints are stale
-> > > or not,
-> > 
-> > 
-> > No - I mean that driver has code that compares two values and stops
-> > reporting. Can one of the values be stale?
+On 2018-04-05 15:51, Joe Perches wrote:
+>>  You have to factor in
+>> not just the .text size, but the fact that referencing an exported
+>> symbol needs a .reloc entry as well, which also eats up some space (at
+>> least when the code is being built as module).
 > 
-> The driver compares "vb->cmd_id_use != vb->cmd_id_received" to decide if it needs to stop reporting hints, and cmd_id_received is what the driver reads from host (host notifies the driver to read for the latest value). If host sends a new cmd id, it will notify the guest to read again. I'm not sure how that could be a stale cmd id (or maybe I misunderstood your point here?)
+> Thanks, the modules I built got smaller.
+Please post some numbers to show this. By the way, on other
+architectures the numbers will probably be different, especially on
+ARM/MIPS.
+>> In my opinion, your series probably causes more bloat in common
+>> configurations instead of reducing it.
+>> 
+>> You're also touching several places that could easily use
+>> eth_broadcast_addr and eth_zero_addr. I think making those changes would
+>> be more productive than what you did in this series.
 > 
-> Best,
-> Wei
+> Doubtful. AFAIK: possible unaligned addresses.
+Those two are just memset calls, alignment does not matter.
 
-The comparison is done in one thread, the update in another one.
-
--- 
-MST
+- Felix
