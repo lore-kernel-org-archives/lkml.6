@@ -1,75 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753180AbeDEUiQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 16:38:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48022 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751543AbeDEU3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 16:29:53 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 03/20] afs: Don't over-increment the cell usage count when
- pinning it
-From: David Howells <dhowells@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Thu, 05 Apr 2018 21:29:48 +0100
-Message-ID: <152296018868.31027.18115871123610925864.stgit@warthog.procyon.org.uk>
-In-Reply-To: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
-References: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
+        id S1751447AbeDEUky (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 16:40:54 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:52014 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751155AbeDEUkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 16:40:52 -0400
+Date: Thu, 5 Apr 2018 22:40:49 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Esben Haabendal <esben@haabendal.dk>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "open list:PTP HARDWARE CLOCK SUPPORT" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Subject: Re: [PATCH 2/2] net: phy: dp83640: Read strapped configuration
+ settings
+Message-ID: <20180405204049.GD17495@lunn.ch>
+References: <20180405114424.8519-1-esben.haabendal@gmail.com>
+ <20180405114424.8519-2-esben.haabendal@gmail.com>
+ <95678797-bd17-ba3f-8a70-a00b4792a258@gmail.com>
+ <87d0zdjszu.fsf@haabendal.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d0zdjszu.fsf@haabendal.dk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AFS cells that are added or set as the workstation cell through /proc are
-pinned against removal by setting the AFS_CELL_FL_NO_GC flag on them and
-taking a ref.  The ref should be only taken if the flag wasn't already set.
+On Thu, Apr 05, 2018 at 10:30:45PM +0200, Esben Haabendal wrote:
+> Florian Fainelli <f.fainelli@gmail.com> writes:
+> 
+> > On 04/05/2018 04:44 AM, esben.haabendal@gmail.com wrote:
+> >> From: Esben Haabendal <eha@deif.com>
+> >> 
+> >> Read configration settings, to allow automatic forced speed/duplex setup
+> >> by hardware strapping.
+> >
+> > OK but why? What problem is this solving for you?
+> 
+> It is ensuring that the PHY is configured according to the HW design.
+> If the HW design has set the strap configuration to fx. fixed 100 Mbit
+> full-duplex, this avoids Linux configuring it for auto-negotiation.
 
-Fix this by making it conditional.
+Hi Esben
 
-Without this an assertion failure will occur during module removal
-indicating that the refcount is too elevated.
+Are you sure it contains the HW strapping? Is the driver hitting the
+PHY with a hard reset to make it go back to the strapping defaults?
+Or could it still contain whatever state the last boot of Linux, or
+maybe the bootloader, left the PHY in?
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- fs/afs/cell.c |    4 ++--
- fs/afs/proc.c |    3 ++-
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index 69b95faacc5e..721425b98b31 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -334,8 +334,8 @@ int afs_cell_init(struct afs_net *net, const char *rootcell)
- 		return PTR_ERR(new_root);
- 	}
- 
--	set_bit(AFS_CELL_FL_NO_GC, &new_root->flags);
--	afs_get_cell(new_root);
-+	if (!test_and_set_bit(AFS_CELL_FL_NO_GC, &new_root->flags))
-+		afs_get_cell(new_root);
- 
- 	/* install the new cell */
- 	write_seqlock(&net->cells_lock);
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 1c95756335b7..2f04d37eeef0 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -284,7 +284,8 @@ static ssize_t afs_proc_cells_write(struct file *file, const char __user *buf,
- 			goto done;
- 		}
- 
--		set_bit(AFS_CELL_FL_NO_GC, &cell->flags);
-+		if (test_and_set_bit(AFS_CELL_FL_NO_GC, &cell->flags))
-+			afs_put_cell(net, cell);
- 		printk("kAFS: Added new cell '%s'\n", name);
- 	} else {
- 		goto inval;
+      Andrew
