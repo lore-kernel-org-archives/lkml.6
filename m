@@ -1,97 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751410AbeDEMTf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 08:19:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55884 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751038AbeDEMTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 08:19:33 -0400
-Subject: Re: [Qemu-devel] [RFC] qemu: Add virtio pmem device
-To: Pankaj Gupta <pagupta@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, kwolf@redhat.com,
-        haozhong zhang <haozhong.zhang@intel.com>, jack@suse.cz,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>, riel@surriel.com,
-        niteshnarayanlal@hotmail.com, mst@redhat.com,
-        ross zwisler <ross.zwisler@intel.com>, hch@infradead.org,
-        stefanha@redhat.com, imammedo@redhat.com, marcel@redhat.com,
-        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
-        nilal@redhat.com
-References: <20180405104834.10457-1-pagupta@redhat.com>
- <20180405104834.10457-4-pagupta@redhat.com>
- <ad08ca09-71ee-08d5-3479-8b3d06380a03@redhat.com>
- <416823501.16310251.1522930166070.JavaMail.zimbra@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <782ac7e2-b8d9-139d-6182-cb4e2d082458@redhat.com>
-Date: Thu, 5 Apr 2018 14:19:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751406AbeDEMUz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 08:20:55 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:43450 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751061AbeDEMUy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 08:20:54 -0400
+Date: Thu, 5 Apr 2018 15:20:52 +0300
+From: "Dmitry V. Levin" <ldv@altlinux.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] uapi: fix asm/bootparam.h userspace compilation errors
+Message-ID: <20180405122051.GA18727@altlinux.org>
+Mail-Followup-To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180405043210.GA13254@altlinux.org>
+ <32e449e9-5738-d347-20ad-50ee4a2257e2@siemens.com>
 MIME-Version: 1.0
-In-Reply-To: <416823501.16310251.1522930166070.JavaMail.zimbra@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Nq2Wo0NMKNjxTN9z"
+Content-Disposition: inline
+In-Reply-To: <32e449e9-5738-d347-20ad-50ee4a2257e2@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
->>
->> So right now you're just using some memdev for testing.
-> 
-> yes.
-> 
->>
->> I assume that the memory region we will provide to the guest will be a
->> simple memory mapped raw file. Dirty tracking (using the kvm slot) will
->> be used to detect which blocks actually changed and have to be flushed
->> to disk.
-> 
-> Not really, we will perform fsync on raw file. As this file is created
-> on regular storage and not nvdimm, so host page cache radix tree would have 
-> the dirty pages information which will be used for fsync.
+--Nq2Wo0NMKNjxTN9z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah right. That makes things a lot easier!
+On Thu, Apr 05, 2018 at 09:25:26AM +0200, Jan Kiszka wrote:
+> On 2018-04-05 06:32, Dmitry V. Levin wrote:
+> > Consistently use types provided by <linux/types.h> to fix the following
+> > asm/bootparam.h userspace compilation errors:
+> >=20
+> > /usr/include/asm/bootparam.h:140:2: error: unknown type name 'u16'
+> >   u16 version;
+> > /usr/include/asm/bootparam.h:141:2: error: unknown type name 'u16'
+> >   u16 compatible_version;
+> > /usr/include/asm/bootparam.h:142:2: error: unknown type name 'u16'
+> >   u16 pm_timer_address;
+> > /usr/include/asm/bootparam.h:143:2: error: unknown type name 'u16'
+> >   u16 num_cpus;
+> > /usr/include/asm/bootparam.h:144:2: error: unknown type name 'u64'
+> >   u64 pci_mmconfig_base;
+> > /usr/include/asm/bootparam.h:145:2: error: unknown type name 'u32'
+> >   u32 tsc_khz;
+> > /usr/include/asm/bootparam.h:146:2: error: unknown type name 'u32'
+> >   u32 apic_khz;
+> > /usr/include/asm/bootparam.h:147:2: error: unknown type name 'u8'
+> >   u8 standard_ioapic;
+> > /usr/include/asm/bootparam.h:148:2: error: unknown type name 'u8'
+> >   u8 cpu_ids[255];
+> >=20
+> > Fixes: 4a362601baa6 ("x86/jailhouse: Add infrastructure for running in =
+non-root cell")
+> > Cc: <stable@vger.kernel.org> # v4.16
+> > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> > ---
+> >  arch/x86/include/uapi/asm/bootparam.h | 18 +++++++++---------
+> >  1 file changed, 9 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/u=
+api/asm/bootparam.h
+> > index aebf60357758..a06cbf019744 100644
+> > --- a/arch/x86/include/uapi/asm/bootparam.h
+> > +++ b/arch/x86/include/uapi/asm/bootparam.h
+> > @@ -137,15 +137,15 @@ struct boot_e820_entry {
+> >   * setup data structure.
+> >   */
+> >  struct jailhouse_setup_data {
+> > -	u16	version;
+> > -	u16	compatible_version;
+> > -	u16	pm_timer_address;
+> > -	u16	num_cpus;
+> > -	u64	pci_mmconfig_base;
+> > -	u32	tsc_khz;
+> > -	u32	apic_khz;
+> > -	u8	standard_ioapic;
+> > -	u8	cpu_ids[255];
+> > +	__u16	version;
+> > +	__u16	compatible_version;
+> > +	__u16	pm_timer_address;
+> > +	__u16	num_cpus;
+> > +	__u64	pci_mmconfig_base;
+> > +	__u32	tsc_khz;
+> > +	__u32	apic_khz;
+> > +	__u8	standard_ioapic;
+> > +	__u8	cpu_ids[255];
+> >  } __attribute__((packed));
+> > =20
+> >  /* The so-called "zeropage" */
+> >=20
+>=20
+> Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
+>=20
+> But how did you trigger this?
 
->    
->>
->> Will this raw file already have the "disk information header" (no idea
->> how that stuff is called) encoded? Are there any plans/possible ways to
->>
->> a) automatically create the headers? (if that's even possible)
-> 
-> Its raw. Right now we are just supporting raw format.  
-> 
-> As this is direct mapping of memory into guest address space, I don't
-> think we can have an abstraction of headers for block specific features.
-> Or may be we can get opinion of others(Qemu block people) it is at all possible?
-> 
->> b) support anything but raw files?
->>
->> Please note that under x86, a KVM memory slot still has a (in my
->> opinion) fairly big overhead depending on the size of the slot (rmap,
->> page_track). We might have to optimize that.
-> 
-> I have not tried/observed this. Right now I just used single memory slot and cold add
-> few MB's of memory in Qemu. Can you please provide more details on this?
-> 
+Our equivalent of glibc-kernheaders package contains a test
+for regressions of this kind.
 
-You can have a look at kvm_arch_create_memslot() in arch/x86/kvm/x86.c.
 
-"npages" is used to allocate certain arrays (rmap for shadow page
-tables). Also kvm_page_track_create_memslot() allocates data for page_track.
+--=20
+ldv
 
-Having a big disk involves a lot of memory overhead due to the big kvm
-memory slot. This is already the case for NVDIMMs as of now.
+--Nq2Wo0NMKNjxTN9z
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Other architectures (e.g. s390x) don't have this "problem". They don't
-allocate any such data depending on the size of a memory slot.
+-----BEGIN PGP SIGNATURE-----
 
-This is certainly something to work on in the future.
+iQIcBAEBCAAGBQJaxhSjAAoJEAVFT+BVnCUIctMP/Aq1Y4r7ry5c187hv4HWZctI
+oRJTkhcms1PHDrTUNlq8T3Smhsr1Weq4ZU4Lr8frVHgX4UyPi3O8SN+7RT5u5+WE
+r13a8kQbo/iEUgy4Bd8C8HzBdPa8B6ZthUK0FGEY2Kddr/7kVtFn8mh1UB3cOpnM
+xR/sLND5uskYGXedNuu/NdvONiWGY3R/eAeb0K/L3D97QWMHwleKnMag98/JEweo
+0M+dmauZa5NInTgufmxXJy+qfHeHq9zyZ5j26T2cvxzeBg70d4AWg8rnI6OKqlJ/
+P9duX8+6KVkGPzf8Z2H+OoKivaQvxEXfmqmmPwMY6HbxVIBHvLLsUJv+NPnWcVnS
+I4xqaNsi4LXA9k0le5WPm7E4gDj2wjtbZWS3LTjz9A2nZMs4oA9vwTW9h7kV2xps
+mU65A1bi9LD9KktYYNxlBO+Xf5DKqaRKMQEJ9gzlanqhvQaj6XVc09/3CGad+Kcm
+wLCJJDAh79uPoq5DNI6V4hOvg32JATIjzIfNgR/WzYVWOpndFmfsCJ+1gsXtaLMA
+avZasoiURLFBp/qg8QjVxkWEFQwIzYuvKdrvonD42DLiYir8e+Q6BtD2URpXJgFE
+NxM4eFIOYNQDWoTEtIohC2lAADirjOdwpIdZSICG15PVLRXRgrfu+DipkgfORnAf
+D4U3tHKCOyQ2gyCxPMSp
+=xcvP
+-----END PGP SIGNATURE-----
 
--- 
-
-Thanks,
-
-David / dhildenb
+--Nq2Wo0NMKNjxTN9z--
