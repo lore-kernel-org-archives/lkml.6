@@ -1,151 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeDEAg5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 20:36:57 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:55183 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752582AbeDEAgz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 20:36:55 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Marian Marinov <kernel@kyup.com>
-Cc: linux-kernel@vger.kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>
-References: <1522408620-10578-1-git-send-email-kernel@kyup.com>
-        <87vad7hsdb.fsf@xmission.com>
-        <e6fe4cc7-eed0-fbe2-98af-31c95e35805a@kyup.com>
-Date: Wed, 04 Apr 2018 19:35:46 -0500
-In-Reply-To: <e6fe4cc7-eed0-fbe2-98af-31c95e35805a@kyup.com> (Marian Marinov's
-        message of "Thu, 5 Apr 2018 02:43:00 +0300")
-Message-ID: <876056bicd.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S1752641AbeDEAmW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 20:42:22 -0400
+Received: from ozlabs.org ([103.22.144.67]:46779 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752582AbeDEAmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 20:42:21 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 5 Apr 2018 10:41:24 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: David Miller <davem@davemloft.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>
+Subject: Re: linux-next: manual merge of the sparc-next tree with the arm64
+ tree
+Message-ID: <20180405104124.10695ee0@canb.auug.org.au>
+In-Reply-To: <20180321103408.49e62310@canb.auug.org.au>
+References: <20180321103408.49e62310@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1f3sta-0008Ua-5l;;;mid=<876056bicd.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19R/iUiPWB/nJ51aNLE2yc3Qdw3sJsFwRo=
-X-SA-Exim-Connect-IP: 67.3.145.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Marian Marinov <kernel@kyup.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 339 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.5 (1.0%), b_tie_ro: 2.5 (0.7%), parse: 1.18 (0.3%),
-        extract_message_metadata: 17 (5.0%), get_uri_detail_list: 4.2 (1.3%),
-        tests_pri_-1000: 9 (2.6%), tests_pri_-950: 1.59 (0.5%), tests_pri_-900: 1.25
-        (0.4%), tests_pri_-400: 30 (8.8%), check_bayes: 29 (8.4%), b_tokenize: 11
-        (3.3%), b_tok_get_all: 9 (2.6%), b_comp_prob: 3.6 (1.1%), b_tok_touch_all:
-        2.8 (0.8%), b_finish: 0.71 (0.2%), tests_pri_0: 264 (77.9%),
-        check_dkim_signature: 0.60 (0.2%), check_dkim_adsp: 3.9 (1.1%),
-        tests_pri_500: 7 (2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] uts_namespace: Move boot_id in uts namespace
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fKO8QIT9t/eUiBCb0sVSha6"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marian Marinov <kernel@kyup.com> writes:
+--Sig_/fKO8QIT9t/eUiBCb0sVSha6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On 04/04/2018 07:02 PM, Eric W. Biederman wrote:
->> Angel Shtilianov <kernel@kyup.com> writes:
->> 
->>> Currently the same boot_id is reported for all containers running
->>> on a host node, including the host node itself. Even after restarting
->>> a container it will still have the same persistent boot_id.
->>>
->>> This can cause troubles in cases where you have multiple containers
->>> from the same cluster on one host node. The software inside each
->>> container will get the same boot_id and thus fail to join the cluster,
->>> after the first container from the node has already joined.
->>>
->>> UTS namespace on other hand keeps the machine specific data, so it
->>> seems to be the correct place to move the boot_id and instantiate it,
->>> so each container will have unique id for its own boot lifetime, if
->>> it has its own uts namespace.
->> 
->> Technically this really needs to use the sysctl infrastructure that
->> allows you to register different files in different namespaces.  That
->> way the value you read from proc_do_uuid will be based on who opens the
->> file not on who is reading the file.
+Hi all,
+
+On Wed, 21 Mar 2018 10:34:08 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> Ok, so would you accept a patch that reimplements boot_id trough the sysctl infrastructure?
+> Today's linux-next merge of the sparc-next tree got a conflict in:
+>=20
+>   arch/x86/kernel/signal_compat.c
+>=20
+> between commit:
+>=20
+>   266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp exce=
+ptions")
+>=20
+> from the arm64 tree and commit:
+>=20
+>   d84bb709aa4a ("signals, sparc: Add signal codes for ADI violations")
+>=20
+> from the sparc-next tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc arch/x86/kernel/signal_compat.c
+> index d2884e951bb5,838a4dc90a6d..000000000000
+> --- a/arch/x86/kernel/signal_compat.c
+> +++ b/arch/x86/kernel/signal_compat.c
+> @@@ -26,8 -26,8 +26,8 @@@ static inline void signal_compat_build_
+>   	 * new fields are handled in copy_siginfo_to_user32()!
+>   	 */
+>   	BUILD_BUG_ON(NSIGILL  !=3D 11);
+>  -	BUILD_BUG_ON(NSIGFPE  !=3D 13);
+>  +	BUILD_BUG_ON(NSIGFPE  !=3D 14);
+> - 	BUILD_BUG_ON(NSIGSEGV !=3D 4);
+> + 	BUILD_BUG_ON(NSIGSEGV !=3D 7);
+>   	BUILD_BUG_ON(NSIGBUS  !=3D 5);
+>   	BUILD_BUG_ON(NSIGTRAP !=3D 4);
+>   	BUILD_BUG_ON(NSIGCHLD !=3D 6);
 
-Assuming I am convinced this makes sense to do on the semantic level.
+This is now a conflict between the adm64 tree and Linus' tree.
 
->> Practically why does a bind mount on top of boot_id work?  What makes
->> this a general problem worth solving in the kernel?  Why is hiding the
->> fact that you are running the same instance of the same kernel a useful
->> thing? That is the reality.
->
-> The problem is, that the distros do not know that they are in
-> container and don't know that they have to bind mount something on top
-> of boot_id.  You need to tell Docker, LXC/LXD and all other container
-> runtimes that they need to do this bind mount for boot_id.
+--=20
+Cheers,
+Stephen Rothwell
 
-Yes.  Anything like this is the responsibility of the container runtime
-one way or another.   Magic to get around fixing the small set of
-container runtimes you care about is a questionable activity.
+--Sig_/fKO8QIT9t/eUiBCb0sVSha6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> I consider this to be a general issue, that lacks good general
-> solution in userspace.  The kernel is providing this boot_id
-> interface, but it is giving wrong data in the context of containers.
+-----BEGIN PGP SIGNATURE-----
 
-I disagree.  Namespaces have never been about hiding that you are on a
-given machine or a single machine.  They are about encapsulating global
-identifers so that process migration can happen, and so that processes
-can be better isolated.  The boot_id is not an identify of an object in
-the kernel at all, and it is designed to be trully globally unique
-across time and space so I am not at all certain that it makes the least
-bit of sense to do anything with a boot_id.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrFcLQACgkQAVBC80lX
+0GxDYQf+NUSTrDps/TuobY2PK12cmfiZ6nsXKyZvmUsj56QwCydMkcGIpRLkqshh
+rc9ztvww9tVmeo3xamOBoe4Dnk167avnKtVJkkWqG+LhR0thZHnD2A/DYd5kvCz/
+sZm8rahBdklAlQ6wE8MfKCmH7Zdwm6ECatj0NDrjKy4Gxo37YtZ4yxU5/QAUeFIT
+fXyWi2JvToYNFggFLurqW8Iqz5PDSK9FJd3eRTqn9MwM8GCEJwfcXDI+YUn94YBZ
+0loYhW0/nLtuzaOnXyu6Eo9B6hgJPUctfWioP4/D+ClrEvQdZdCZKxeqCf+dC+1b
+Y/3Za/8gi4lcn7y+zKjB8XLjWRfGYA==
+=IeRE
+-----END PGP SIGNATURE-----
 
-
-That said my memory of boot_id is that was added so that emacs (and
-related programs) could create lock files on nfs and could tell if the
-current machine owns the file, and if so be able to tell if the owner
-of the lock file is alive.
-
-So there is an argument to be made that boot_id is to coarse.  That
-argument suggest that boot_id is a pid_namespace property.
-
-I have not looked at the users of boot_id, and I don't have a definition
-of boot_id that makes me think it is too coarse.
-
-If you can provide a clear description of what the semantics are and
-what they should be for boot_id showing how boot_id fits into a
-namespace, making it clear what should happen with checkpoint/restart.
-We can definitely look at changing how the kernel supports boot_id.
-
-The reason I suggested the bind mount is there are lots of cases where
-people want to lie to applications about the reality of what is going on
-for whatever reason, and we leave those lies to userspace.  Things
-like changing the contents of /proc/cpuinfo.
-
-> Proposing to fix this problem in userspace seams like ignoring the
-> issue.  You could have said to the Consul guys, that they should
-> simply stop using boot_id, because it doesn't work correctly on
-> containers.
-
-I don't know the Consul guys.   From a quick google search I see that
-Consul is an open source project that is aims to be distributed and
-highly available.  It seems a reasonable case to look at to motivate
-changes to boot_id.
-
-That said if I want to be highly available I would find every node
-having the same boot_id to be very worrying, and very useful.  It allows
-detecting if no hardware redundancy is present in a situation.  That
-certainly seems like a good thing.
-
-If you just want to test Consul then hacking boot_id with a bind mount
-seems the right thing.  If you really want to run Consul in production
-I am curious to know how removing the ability to detect if you are on
-the same kernel as another piece of Consul is a good thing.
-
-Eric
+--Sig_/fKO8QIT9t/eUiBCb0sVSha6--
