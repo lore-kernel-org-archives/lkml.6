@@ -1,195 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751950AbeDEQVX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 12:21:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41478 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751363AbeDEQSn (ORCPT
+        id S1751494AbeDEQXK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 12:23:10 -0400
+Received: from mail-it0-f48.google.com ([209.85.214.48]:53864 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750835AbeDEQXJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 12:18:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AD2C6081B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From: Lina Iyer <ilina@codeaurora.org>
-To: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v5 02/10] dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
-Date: Thu,  5 Apr 2018 10:18:26 -0600
-Message-Id: <20180405161834.3850-3-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180405161834.3850-1-ilina@codeaurora.org>
-References: <20180405161834.3850-1-ilina@codeaurora.org>
+        Thu, 5 Apr 2018 12:23:09 -0400
+X-Google-Smtp-Source: AIpwx49cco5jFyPajVFZEkdBGe+eNcAXTq4DLqvnh5aHfaCbxzg1HGDvvAZ89Rxrhoxnrc3Dmab8lG/qfD8CbsskJa0=
+MIME-Version: 1.0
+In-Reply-To: <20180405154630.GS4589@e105550-lin.cambridge.arm.com>
+References: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
+ <20180329125324.GR4589@e105550-lin.cambridge.arm.com> <CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com>
+ <74865492-d9a6-649d-d37c-a5a6a8c28f23@arm.com> <CAKfTPtDy2uUj4amA9MARUz9qS=+urwV2edyQn+fW70hkN+CgoQ@mail.gmail.com>
+ <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com> <CAKfTPtCQayuu5-84931ZxzXV1-roV_CfRd_5wXG1oxOEUZmZgw@mail.gmail.com>
+ <20180405154630.GS4589@e105550-lin.cambridge.arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 5 Apr 2018 18:22:48 +0200
+Message-ID: <CAKfTPtBv7BzAqZWTxU9HaCoNjQa2B8usk6dfO1qgofjGYG7S=w@mail.gmail.com>
+Subject: Re: [PATCH] sched: support dynamiQ cluster
+To: Morten Rasmussen <morten.rasmussen@arm.com>
+Cc: Valentin Schneider <valentin.schneider@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device binding documentation for Qualcomm Technology Inc's RPMH RSC
-driver. The driver is used for communicating resource state requests for
-shared resources.
+Hi Morten,
 
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
+On 5 April 2018 at 17:46, Morten Rasmussen <morten.rasmussen@arm.com> wrote:
+> On Wed, Apr 04, 2018 at 03:43:17PM +0200, Vincent Guittot wrote:
+>> On 4 April 2018 at 12:44, Valentin Schneider <valentin.schneider@arm.com> wrote:
+>> > Hi,
+>> >
+>> > On 03/04/18 13:17, Vincent Guittot wrote:
+>> >> Hi Valentin,
+>> >>
+>> > [...]
+>> >>>
+>> >>> I believe ASYM_PACKING behaves better here because the workload is only
+>> >>> sysbench threads. As stated above, since task utilization is disregarded, I
+>> >>
+>> >> It behaves better because it doesn't wait for the task's utilization
+>> >> to reach a level before assuming the task needs high compute capacity.
+>> >> The utilization gives an idea of the running time of the task not the
+>> >> performance level that is needed
+>> >>
+>> >
+>> > That's my point actually. ASYM_PACKING disregards utilization and moves those
+>> > threads to the big cores ASAP, which is good here because it's just sysbench
+>> > threads.
+>> >
+>> > What I meant was that if the task composition changes, IOW we mix "small"
+>> > tasks (e.g. periodic stuff) and "big" tasks (performance-sensitive stuff like
+>> > sysbench threads), we shouldn't assume all of those require to run on a big
+>> > CPU. The thing is, ASYM_PACKING can't make the difference between those, so
+>>
+>> That's the 1st point where I tend to disagree: why big cores are only
+>> for long running task and periodic stuff can't need to run on big
+>> cores to get max compute capacity ?
+>> You make the assumption that only long running tasks need high compute
+>> capacity. This patch wants to always provide max compute capacity to
+>> the system and not only long running task
+>
+> There is no way we can tell if a periodic or short-running tasks
+> requires the compute capacity of a big core or not based on utilization
+> alone. The utilization can only tell us if a task could potentially use
+> more compute capacity, i.e. the utilization approaches the compute
+> capacity of its current cpu.
+>
+> How we handle low utilization tasks comes down to how we define
+> "performance" and if we care about the cost of "performance" (e.g.
+> energy consumption).
+>
+> Placing a low utilization task on a little cpu should always be fine
+> from _throughput_ point of view. As long as the cpu has spare cycles it
 
-Changes in v3:
-	- Move to soc/qcom
-	- Amend text per Stephen's suggestions
+I disagree, throughput is not only a matter of spare cycle it's also a
+matter of how fast you compute the work like with IO activity as an
+example
 
-Changes in v2:
-	- Amend text to describe the registers in reg property
-	- Add reg-names for the registers
-	- Update examples to use GIC_SPI in interrupts instead of 0
-	- Rephrase incorrect description
+> means that work isn't piling up faster than it can be processed.
+> However, from a _latency_ (completion time) point of view it might be a
+> problem, and for latency sensitive tasks I can agree that going for max
+> capacity might be better choice.
+>
+> The misfit patches places tasks based on utilization to ensure that
+> tasks get the _throughput_ they need if possible. This is in line with
+> the placement policy we have in select_task_rq_fair() already.
+>
+> We shouldn't forget that what we are discussing here is the default
+> behaviour when we don't have sufficient knowledge about the tasks in the
+> scheduler. So we are looking a reasonable middle-of-the-road policy that
+> doesn't kill your performance or the battery. If user-space has its own
 
-Changes in v3:
-	- Fix unwanted capitalization
-	- Remove clients from the examples, this doc does not describe
-	  them
-	- Rephrase introductory paragraph
-	- Remove hardware specifics from DT bindings
----
- .../devicetree/bindings/soc/qcom/rpmh-rsc.txt      | 127 +++++++++++++++++++++
- 1 file changed, 127 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+But misfit task kills performance and might also kills your battery as
+it doesn't prevent small task to run on big cores
+The default behavior of the scheduler is to provide max _throughput_
+not middle performance and then side activity can mitigate the power
+impact like frequency scaling or like EAS which tries to optimize the
+usage of energy when system is not overloaded. With misfit task, you
+make the assumption that short task on little core is the best
+placement to do even for a performance PoV. It seems that you make
+some power/performance assumption without using an energy model which
+can make such decision. This is all the interest of EAS.
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-new file mode 100644
-index 000000000000..dcf71a5b302f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-@@ -0,0 +1,127 @@
-+RPMH RSC:
-+------------
-+
-+Resource Power Manager Hardened (RPMH) is the mechanism for communicating with
-+the hardened resource accelerators on Qualcomm SoCs. Requests to the resources
-+can be written to the Trigger Command Set (TCS)  registers and using a (addr,
-+val) pair and triggered. Messages in the TCS are then sent in sequence over an
-+internal bus.
-+
-+The hardware block (Direct Resource Voter or DRV) is a part of the h/w entity
-+(Resource State Coordinator a.k.a RSC) that can handle a multiple sleep and
-+active/wake resource requests. Multiple such DRVs can exist in a SoC and can
-+be written to from Linux. The structure of each DRV follows the same template
-+with a few variations that are captured by the properties here.
-+
-+A TCS may be triggered from Linux or triggered by the F/W after all the CPUs
-+have powered off to facilitate idle power saving. TCS could be classified as -
-+
-+	SLEEP,  /* Triggered by F/W */
-+	WAKE,   /* Triggered by F/W */
-+	ACTIVE, /* Triggered by Linux */
-+	CONTROL /* Triggered by F/W */
-+
-+The order in which they are described in the DT, should match the hardware
-+configuration.
-+
-+Requests can be made for the state of a resource, when the subsystem is active
-+or idle. When all subsystems like Modem, GPU, CPU are idle, the resource state
-+will be an aggregate of the sleep votes from each of those subsystems. Clients
-+may request a sleep value for their shared resources in addition to the active
-+mode requests.
-+
-+Properties:
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Should be "qcom,rpmh-rsc".
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: The first register specifies the base address of the DRV.
-+	            The second register specifies the start address of the
-+	            TCS.
-+
-+- reg-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Maps the register specified in the reg property. Must be
-+	            "drv" and "tcs".
-+
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-interrupt>
-+	Definition: The interrupt that trips when a message complete/response
-+	           is received for this DRV from the accelerators.
-+
-+- qcom,drv-id:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: the id of the DRV in the RSC block.
-+
-+- qcom,tcs-config:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: the tuple defining the configuration of TCS.
-+	            Must have 2 cells which describe each TCS type.
-+	            <type number_of_tcs>.
-+	            The order of the TCS must match the hardware
-+	            configuration.
-+	- Cell #1 (TCS Type): TCS types to be specified -
-+	            SLEEP_TCS
-+	            WAKE_TCS
-+	            ACTIVE_TCS
-+	            CONTROL_TCS
-+	- Cell #2 (Number of TCS): <u32>
-+
-+- label:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: Name for the RSC. The name would be used in trace logs.
-+
-+Drivers that want to use the RSC to communicate with RPMH must specify their
-+bindings as child of the RSC controllers they wish to communicate with.
-+
-+Example 1:
-+
-+For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
-+register offsets for DRV2 start at 0D00, the register calculations are like
-+this -
-+First tuple: 0x179C0000 + 0x10000 * 2 = 0x179E0000
-+Second tuple: 0x179E0000 + 0xD00 = 0x179E0D00
-+
-+	apps_rsc: rsc@179e000 {
-+		label = "apps_rsc";
-+		compatible = "qcom,rpmh-rsc";
-+		reg = <0x179e0000 0x10000>, <0x179e0d00 0x3000>;
-+		reg-names = "drv", "tcs";
-+		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+		qcom,drv-id = <2>;
-+		qcom,tcs-config = <SLEEP_TCS   3>,
-+				  <WAKE_TCS    3>,
-+				  <ACTIVE_TCS  2>,
-+				  <CONTROL_TCS 1>;
-+	};
-+
-+Example 2:
-+
-+For a TCS whose RSC base address is 0xAF20000 and is at DRV id of 0, the
-+register offsets for DRV0 start at 01C00, the register calculations are like
-+this -
-+First tuple: 0xAF20000
-+Second tuple: 0xAF20000 + 0x1C00 = 0xAF21C00
-+
-+	disp_rsc: rsc@af20000 {
-+		label = "disp_rsc";
-+		compatible = "qcom,rpmh-rsc";
-+		reg = <0xaf20000 0x10000>, <0xaf21c00 0x3000>;
-+		reg-names = "drv", "tcs";
-+		interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
-+		qcom,drv-id = <0>;
-+		qcom,tcs-config = <SLEEP_TCS   1>,
-+				  <WAKE_TCS    1>,
-+				  <ACTIVE_TCS  0>,
-+				  <CONTROL_TCS 0>;
-+	};
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> opinion about performance requirements it is free to use task affinity
+> to control which cpu the task end up on and ensure that the task gets
+> max capacity always. On top of that we have had interfaces in Android
+> for years to specify performance requirements for task (groups) to allow
+> small tasks to be placed on big cpus and big task to be placed on little
+> cpus depending on their requirements. It is even tied into cpufreq as
+> well. A lot of effort has gone into Android to get this balance right.
+> Patrick is working hard on upstreaming some of those features.
+>
+> In the bigger picture always going for max capacity is not desirable for
+> well-configured big.LITTLE system. You would never exploit the advantage
+> of the little cpus as you always use big first and only use little when
+> the bigs are overloaded at which point having little cpus at all makes
+
+If i'm not wrong misfit task patchset doesn't prevent little task to
+run on big core
+
+> little sense. Vendors build big.LITTLE systems because they want a
+> better performance/energy trade-off, if they wanted max capacity always,
+> they would just built big-only systems.
+
+And that's all the purpose of the EAS patchset. EAS patchset is there
+to put some energy awareness in the scheduler decision. There is 2
+running mode for EAS: one when there is spare cycles so tasks can be
+placed to optimize energy consumption. And one when the system or part
+of the system is overloaded and it goes back to default performance
+mode because there is no interest for energy efficiency and we just
+want to provide max performance. So the asym packing fits with this
+latter mode as it provide the max compute capacity to the default mode
+and doesn't break EAS as it uses the load balance which is disable by
+EAS in not overloaded mode
+
+Vincent
+>
+> If we would be that concerned about latency, DVFS would be a problem too
+> and we would use nothing but the performance governor. So seen in the
+> bigger picture I have to disagree that blindly going for max capacity is
+> the right default policy for big.LITTLE. As soon as we involve a energy
+> model in the task placement decisions, it definitely isn't.
+>
+> Morten
