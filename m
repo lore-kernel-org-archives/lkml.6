@@ -1,93 +1,112 @@
-Return-Path: <stern+5ad477ca@rowland.harvard.edu>
-X-Google-Smtp-Source: AIpwx4+RFeFjcIPzSusBjhJHYGUR2pEYywXBWQBYTa5RG96KqxvGQG5D1pm4bE2X2rEVnpdhu4Q1
-ARC-Seal: i=1; a=rsa-sha256; t=1523369707; cv=none;
-        d=google.com; s=arc-20160816;
-        b=s5PYzdM1OUYPz5OOY3fD//9+ONigOwc81//McWZTwByQ2xrC/3v5XPd11s3fVI0AQe
-         8ld5OBg7V9YxN5+b65c7NAf91LoWHKh73bCkMZ46FZl+KYGDcH9pH8BdSF284UeE0XHS
-         L7VX3SvC2Gc/EzmEb1GzXKuXvl76OHSEU4GB6x3DIe1oSe+J4Z9zsTdXqJ3+913q3A7I
-         VdSi6721axGP78oZBSSjrqmX+nCVzinE2+/KK+Igui1doKVAq5S4PEQ4iS+IjnJvydi1
-         3szBZ5aWRQRTdPUBf4ggt94UoEYKeHVv9ftJtIOx9Pcyuk2vol31ItOYNV3Q1hDKhGRt
-         MAeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:in-reply-to:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=tHXHwN5xD85qTb8A4/Ap9IGUUzA9KvlJCWnIqvUGpkY=;
-        b=Chr7m7MmbVw+HPr0+mndGJzQSsPWHmINhvUVNtoqKY2UA3TlrBj9TOrqORgmsEiVl4
-         Qs0tT6kRA9766Ite0DdUlTjhnDTt2BTxflKjXOE1U/AQb81MxlN4tE0RrfPiXiSaPI3Y
-         N1CSz8dyI0D+KbEzznI2WCMr8zYtpTmAWHu27h2uxf2oWDdRgLV24DTjNB/PWu963YFC
-         EbkdssjfVnTbD1ekpC31g7hGSZRGNgx7KQD5eRvXdPf9T/BUvcf/xcUb2wCYj/yA1mSX
-         MPq7FLaRTzi7/thBUuRhwDp30kS3eHK4PgEK2AJZMt+zsAbWTmHVBMRve/DM3/0w9JzF
-         xfLg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 192.131.102.54 is neither permitted nor denied by best guess record for domain of stern+5ad477ca@rowland.harvard.edu) smtp.mailfrom=stern+5ad477ca@rowland.harvard.edu
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 192.131.102.54 is neither permitted nor denied by best guess record for domain of stern+5ad477ca@rowland.harvard.edu) smtp.mailfrom=stern+5ad477ca@rowland.harvard.edu
-Date: Tue, 10 Apr 2018 10:15:06 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-cc: gregkh@linuxfoundation.org,  <linux-usb@vger.kernel.org>,
-     <usb-storage@lists.one-eyed-alien.net>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: storage: Replace mdelay with msleep in init_freecom
-In-Reply-To: <1523323748-28361-1-git-send-email-baijiaju1990@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1804101014460.3142-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3899735-1522967376-2-14117764907204740068
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522967375; b=p3Q7QGXGQOzsSiksAUlkxcXwA8KgY6celzZlRUeevC9SiCgwcl
+    yUU99E1G1MOuS4lf9rDjnsUFZWsVysur4olXNknEY3qTRpTZFhDJWYki1vf5uhej
+    uVh/P58Bkx4ssKCEVd+uUxt/yNaQaLtgiM8W46nEINN6nWXNUSkiVFghed4Xr3o7
+    TRBh0C1XYXUpENBX8UmdpfKI/D+bl7Hg4t27bxFP14sl3Ype2srxhcCb+fwYjscR
+    fUbzZarwIZ4uYf/ctZUYE8vt5KJhv+5nD8uQDV/EVNrkSXWryo5VjLVI2uZUmmeE
+    jMc6RN+yjOsFf+9EzsJF7Af15aDblVcMx5fA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1522967375; bh=vDytTWr123XOLBZeicwnjcqZdHHvyu
+    fEzTfNqEHrO2w=; b=eHRlHuILoHvDtekw321+ytnT2l1KCH7QAFZh87ZIxX9fpx
+    0+M+yQwIeAW3cA2lnUSsm8MoYu6SQJEZFqMPIQP/KIV79e3ARDDx9e7y7ox78Bu/
+    mGnYeeLwnzOumdPNtuIeZpVBx4ku9XghtTPQ6jOIjimYnhPChJ+rXAHZNybujQFP
+    TJ6CwDknh/pXUHlAmnAEvaYNiYy4Y+/XJdnUaGevOb94Cte4k7AXXRyGQvfmc2ua
+    XFnePybSI++xbBmGa2ux1HoO17TU1sFi6pv+dADKZW+ol5uD4kJTg4OBOiwogMJg
+    vDgghGWenN5nX5YTWC4ds+HIfhkzvm4tYG5zbkNw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNsiX7piUC2mhJ7jeLt7OLNK4kMK95BG+XLsMaUxdVaxaIEjx3AL+Fy8iMYaj1Rf+XNUp6NIxlty3k3klmLEziqzDgi5wIIQSvXMU6+EhdzqK+BWnqtc
+    qWt7jomYhRUsnuBHJlklO5J+VWZjaWH6JoVCTBtUtpoH7QCweM2AIplnCVWk9qknJON/ZfB9cDYYj6gGFrK5VA571RHDdiQ/q4aHOHdseVNrucIc+hRzPVhB
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=hD80L64hAAAA:8
+    a=VwQbUJbxAAAA:8 a=KVfWH9hK4CAa1KCswkwA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754108AbeDEW3a (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 5 Apr 2018 18:29:30 -0400
+Received: from osg.samsung.com ([64.30.133.232]:40965 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752666AbeDEW33 (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Thu, 5 Apr 2018 18:29:29 -0400
+From: Shuah Khan <shuahkh@osg.samsung.com>
+To: valentina.manea.m@gmail.com, shuah@kernel.org,
+        gregkh@linuxfoundation.org
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>
+Subject: [PATCH] usbip: usbip_host: fix to hold parent lock for device_attach() calls
+Date: Thu,  5 Apr 2018 16:29:04 -0600
+Message-Id: <20180405222904.24420-1-shuahkh@osg.samsung.com>
+X-Mailer: git-send-email 2.14.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597320730498100935?=
-X-GMAIL-MSGID: =?utf-8?q?1597368914094327808?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 10 Apr 2018, Jia-Ju Bai wrote:
+usbip_host calls device_attach() without holding dev->parent lock.
+Fix it.
 
-> init_freecom() is never called in atomic context.
-> 
-> init_freecom() is set as ".initFunction" through UNUSUAL_DEV().
-> And ->initFunction() is only called by usb_stor_acquire_resources(), 
-> which is only called by usb_stor_probe2().
-> usb_stor_probe2() is called by *_probe() functions (like alauda_probe()) 
-> for each USB driver.
-> *_probe() functions are set ".probe" in struct usb_driver.
-> These functions are not called in atomic context.
-> 
-> Despite never getting called from atomic context, init_freecom()
-> calls mdelay() to busily wait.
-> This is not necessary and can be replaced with msleep() to
-> avoid busy waiting.
-> 
-> This is found by a static analysis tool named DCNS written by myself.
-> And I also manually check it.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: stable <stable@vger.kernel.org>
+---
+ drivers/usb/usbip/stub_main.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+diff --git a/drivers/usb/usbip/stub_main.c b/drivers/usb/usbip/stub_main.c
+index c31c8402a0c5..d41d0cdeec0f 100644
+--- a/drivers/usb/usbip/stub_main.c
++++ b/drivers/usb/usbip/stub_main.c
+@@ -186,7 +186,12 @@ static ssize_t rebind_store(struct device_driver *dev, const char *buf,
+ 	if (!bid)
+ 		return -ENODEV;
+ 
++	/* device_attach() callers should hold parent lock for USB */
++	if (bid->udev->dev.parent)
++		device_lock(bid->udev->dev.parent);
+ 	ret = device_attach(&bid->udev->dev);
++	if (bid->udev->dev.parent)
++		device_unlock(bid->udev->dev.parent);
+ 	if (ret < 0) {
+ 		dev_err(&bid->udev->dev, "rebind failed\n");
+ 		return ret;
+-- 
+2.14.1
 
-
-> ---
->  drivers/usb/storage/freecom.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/storage/freecom.c b/drivers/usb/storage/freecom.c
-> index c0a5d95..c7f886d 100644
-> --- a/drivers/usb/storage/freecom.c
-> +++ b/drivers/usb/storage/freecom.c
-> @@ -477,7 +477,7 @@ static int init_freecom(struct us_data *us)
->  	usb_stor_dbg(us, "result from activate reset is %d\n", result);
->  
->  	/* wait 250ms */
-> -	mdelay(250);
-> +	msleep(250);
->  
->  	/* clear reset */
->  	result = usb_stor_control_msg(us, us->send_ctrl_pipe,
-> @@ -485,7 +485,7 @@ static int init_freecom(struct us_data *us)
->  	usb_stor_dbg(us, "result from clear reset is %d\n", result);
->  
->  	/* wait 3 seconds */
-> -	mdelay(3 * 1000);
-> +	msleep(3 * 1000);
->  
->  	return USB_STOR_TRANSPORT_GOOD;
->  }
-> 
