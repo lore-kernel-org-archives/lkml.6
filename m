@@ -1,40 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751469AbeDEOe1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:34:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37396 "EHLO mail.kernel.org"
+        id S1751528AbeDEOec (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:34:32 -0400
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:50646 "EHLO fuzix.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751179AbeDEOeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:34:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D50621720
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 5 Apr 2018 10:34:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180405103421.60bcf53c@gandalf.local.home>
-In-Reply-To: <20180405142749.GL6312@dhcp22.suse.cz>
-References: <20180403093245.43e7e77c@gandalf.local.home>
-        <20180403135607.GC5501@dhcp22.suse.cz>
-        <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com>
-        <20180404062340.GD6312@dhcp22.suse.cz>
-        <20180404101149.08f6f881@gandalf.local.home>
-        <20180404142329.GI6312@dhcp22.suse.cz>
-        <20180404114730.65118279@gandalf.local.home>
-        <20180405025841.GA9301@bombadil.infradead.org>
-        <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
-        <20180405142258.GA28128@bombadil.infradead.org>
-        <20180405142749.GL6312@dhcp22.suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751179AbeDEOe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 10:34:28 -0400
+Date: Thu, 5 Apr 2018 15:34:06 +0100
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To: Paul Menzel <pmenzel+linux-ide@molgen.mpg.de>
+Cc: Hans de Goede <hdegoede@redhat.com>, Tejun Heo <tj@kernel.org>,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Decrease boot time with AHCI drives?
+Message-ID: <20180405153343.7962a1f0@alans-desktop>
+In-Reply-To: <b0843e21-3e8d-0c00-b69b-16567dd3ee2a@molgen.mpg.de>
+References: <b0843e21-3e8d-0c00-b69b-16567dd3ee2a@molgen.mpg.de>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -42,16 +24,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Apr 2018 16:27:49 +0200
-Michal Hocko <mhocko@kernel.org> wrote:
+> But more importantly, it takes roughly half a second to set up the 
+> device. I understand, that the probing is part of AHCI(?), and in this 
+> case the Crucial m4 SSD drive/firmware is especially slow. So, I assume 
+> it will be hard to improve anything in the code to decrease the time.
 
-> > I understand you don't want GFP_NORETRY.  But why is it more important for
-> > this allocation to succeed than other normal GFP_KERNEL allocations?  
-> 
-> I guess they simply want a failure rather than OOM even when they can
-> shoot themselves into head by using oom_origin. It is still quite ugly
-> to see OOM report...
+Probably. The OS basically waits for the device to flag read. It's not
+that slow (spinning rust can take several seconds, and historically up to
+30)
 
-Exactly!
+> So, is there a way to avoid doing the probing twice or at all? That 
 
--- Steve
+You have to do it once. It's not probing that is slow. Your SSD is
+basically a single board computer pretending to be a disk. It's go to
+boot and load in and work out what the hell it's doing, what happened
+before it died and so on. Spinning rust is similar - in fact with a
+modern ATA disk plugged into a really old machine it's not uncommon that
+the disk has the most CPU power 8)
+
+Once you have completed the boot for that channel (so for SATA pretty
+much for that device) you could in theory pass the OS a flag saying 'is
+initialized, is present' and you'd be able to avoid a repeat reset/probe
+and just go on to re-issue identify and similar commands in order to
+re-obtain the configuration data of the drive. Those commands are fast on
+any hardware I've seen.
+
+This is known to work for straigt ATA - it's sort of what we do in the
+corner cases where we find an ATA class controller we don't support. AHCI
+is a bit more complex but the theory should hold.
+
+Alan
