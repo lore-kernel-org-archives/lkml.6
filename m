@@ -1,59 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751359AbeDEIko (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 04:40:44 -0400
-Received: from mout.gmx.net ([212.227.17.21]:60635 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751097AbeDEIkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 04:40:41 -0400
-Message-ID: <1522917620.5593.5.camel@gmx.de>
-Subject: Re: sched_rt_period_timer causing large latencies
-From: Mike Galbraith <efault@gmx.de>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Date: Thu, 05 Apr 2018 10:40:20 +0200
-In-Reply-To: <20180405082701.GL4082@hirez.programming.kicks-ass.net>
-References: <20180405091138.6ef14d15@roar.ozlabs.ibm.com>
-         <20180405082701.GL4082@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:I8fw30LbV454QAB9F7XmdJTpiCpxLBJhdlwX1LR6TdYMF4o55Hr
- q3k0SB0+ts3WjpBdcaWBzVMlJlBue+oeJr51PONk8g+P4EgKrucYpn8GrP03UZGYqzNXzAP
- kCr+vWzqwfxYGvaPmHYUedAF/edlE48lU+mhRBKhZSyKriBg5VtcVj3TZgIty6RDAwRvuxV
- nVyK+zQzNupamRuTZeuRA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:D+PTt5r+c6Q=:SPDk165sfyY4abIkreQR04
- e3JWX+LY7ba84IXEGdcysbslIfnR/+Zl9PHMrHKXaAryawhfc6rLGV23dpXU55tuMwSIFQtNc
- ZkbynIzgNM/MUnATTD4AijPs+27RMZBcQiyLQ5tos9Qv2CuM18LVRUXX4N+6r6bakoqZF5/Yu
- VnM4Zj/8N6DJsby6hhUOY2o9p3nxdTAu34MU97G2naujq41nX2wz5Xq45PRsL0DA89al3yPta
- GbcYRYmmkqDCnY5ziGIKa+p+60Yh8nyRd1qVTyT8DEYzv8xqemhQKBQEl7+tkg9vBn6BuGeaz
- bcp+E3hm9RwqUlRS7lKGrRv7xhdxVDRovRmdINB848v6oAHtxkE+hpsahgNorL6eA91WkbwdK
- /40yXMS9KGO/i7eilq1jFZHPX8DJagWho7rNaxvV47QQKtZgmKYNna3pllNLnq1+TydPy7lUK
- SPPppe0+ubcImcNVxWPG56yX3KHAqwPyLw1DnfNiQhxswMYybW2BOeJDs+Xzae7Uf5xb/cKEL
- 2tt3tsqq5ODRew8h7chnhkbnH1raw/e+0+55gKrieudtpyNgUQQ3KSk5CIPU2ROX3td5GvL/p
- OyRzW9XbMyadZinGSZhJQzqX2f2W+7TTxNM9eYcjCqPX8PTWD0QxrBU6s9wVHEMghfECyuKT9
- osJQ06f73Ibb7tKqOYPeODOT2Z2HFDBX+MqUOVGPgKOXZF5M5bNWV3hEoEZGtOdPV7Hq0zNRN
- Zn//SgQf0k4q2f7JGnr6NQzwmGFyX40K+qYZUSy9937u3W4hU6Wvvlz3WRj9RGguEVypFyorv
- UVti3d/y7luBszPT8RDkw7IYFyM88GWCpp+WvMn0F2FNMg6/NM=
+        id S1751353AbeDEIqo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 04:46:44 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:55225 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeDEIqm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 04:46:42 -0400
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH v2] Bluetooth: Remove VLA usage in aes_cmac
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <2af25866-4e8a-7f9c-9298-e45abfab20c7@embeddedor.com>
+Date: Thu, 5 Apr 2018 10:46:39 +0200
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <347FC7F5-4BB3-4477-9EF1-BAAA98F1D107@holtmann.org>
+References: <20180321010527.GA16616@embeddedor.com>
+ <3BD15121-532A-45E2-B62E-1008C0289500@holtmann.org>
+ <2af25866-4e8a-7f9c-9298-e45abfab20c7@embeddedor.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-04-05 at 10:27 +0200, Peter Zijlstra wrote:
-> On Thu, Apr 05, 2018 at 09:11:38AM +1000, Nicholas Piggin wrote:
-> > Hi,
-> > 
-> > I'm seeing some pretty big latencies on a ~idle system when a CPU wakes
-> > out of a nohz idle. Looks like it's due to the taking a lot of remote
-> > locks and cache lines. irqoff trace:
+Hi Gustavo,
+
+>> so I took this patch back out of bluetooth-next before sending the pull request. I think the discussion on how to fix SHASH_DESC_ON_STACK macro needs to complete first. Once that has concluded we can revisit if this patch is still needed or if another solution has been found. Same as with WiFi, these are not just one-shot calls where a memory allocation doesn’t matter. We need this for random address resolution and thus there can be many of the aes_cmac calls when seeing neighboring devices.
 > 
-> On RT I think we default RT_RUNTIME_SHARE to false, maybe we should do
-> the same for mainline.
+> Yeah. I agree.
+> 
+> Based on Herbert's response to the discussion about SHASH_DESC_ON_STACK https://lkml.org/lkml/2018/3/27/300
+> 
+> it seems it is feasible to fix that macro very easily. I will follow up on this.
+> 
+> By the way, what is you opinion on replacing crypto_shash_descsize(ctx) with PAGE_SIZE / 8 in SHASH_DESC_ON_STACK?
+> 
+> Does it work for you?
 
-Probably.  My very first enterprise encounter with the thing was it NOT
-saving a box from it's not so clever driver due to that.
+isn’t that just waste?
 
-	-Mike
+The macro itself is this.
+
+#define SHASH_DESC_ON_STACK(shash, ctx)                           \              
+        char __##shash##_desc[sizeof(struct shash_desc) +         \              
+                crypto_shash_descsize(ctx)] CRYPTO_MINALIGN_ATTR; \              
+        struct shash_desc *shash = (struct shash_desc *)__##shash##_desc
+
+For AES-CMAC, we could always do this with a manual macro that gives us the right size. However that is error prone if any internals change. I think what has to happened that crypto_shash_decsize becomes something the compiler can evaluate at compile time.
+
+Regards
+
+Marcel
