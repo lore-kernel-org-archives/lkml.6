@@ -1,57 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751469AbeDEIcm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 04:32:42 -0400
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:43034 "EHLO
-        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751329AbeDEIcj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 04:32:39 -0400
-X-Google-Smtp-Source: AIpwx4/qpiPuapnL9A+rcoIv+b82raYM2pGCTGJMSk4j47+y8ABNXVtdWNpZxf9QgTgdGyqgy9+RWJUm5J4NY4rP3fM=
-MIME-Version: 1.0
-In-Reply-To: <878ta24uyy.fsf@belgarion.home>
-References: <20180404114706.15856-1-brgl@bgdev.pl> <878ta24uyy.fsf@belgarion.home>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 5 Apr 2018 10:32:38 +0200
-Message-ID: <CAMRc=MfD659sqbwRJs2tti-VcSShLWU-yB8=SR7zhv8Pz6XQcA@mail.gmail.com>
-Subject: Re: [RESEND PATCH] ARM: pxa: stargate2: use device properties for
- at24 eeprom
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751359AbeDEIko (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 04:40:44 -0400
+Received: from mout.gmx.net ([212.227.17.21]:60635 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751097AbeDEIkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 04:40:41 -0400
+Message-ID: <1522917620.5593.5.camel@gmx.de>
+Subject: Re: sched_rt_period_timer causing large latencies
+From: Mike Galbraith <efault@gmx.de>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Date: Thu, 05 Apr 2018 10:40:20 +0200
+In-Reply-To: <20180405082701.GL4082@hirez.programming.kicks-ass.net>
+References: <20180405091138.6ef14d15@roar.ozlabs.ibm.com>
+         <20180405082701.GL4082@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:I8fw30LbV454QAB9F7XmdJTpiCpxLBJhdlwX1LR6TdYMF4o55Hr
+ q3k0SB0+ts3WjpBdcaWBzVMlJlBue+oeJr51PONk8g+P4EgKrucYpn8GrP03UZGYqzNXzAP
+ kCr+vWzqwfxYGvaPmHYUedAF/edlE48lU+mhRBKhZSyKriBg5VtcVj3TZgIty6RDAwRvuxV
+ nVyK+zQzNupamRuTZeuRA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:D+PTt5r+c6Q=:SPDk165sfyY4abIkreQR04
+ e3JWX+LY7ba84IXEGdcysbslIfnR/+Zl9PHMrHKXaAryawhfc6rLGV23dpXU55tuMwSIFQtNc
+ ZkbynIzgNM/MUnATTD4AijPs+27RMZBcQiyLQ5tos9Qv2CuM18LVRUXX4N+6r6bakoqZF5/Yu
+ VnM4Zj/8N6DJsby6hhUOY2o9p3nxdTAu34MU97G2naujq41nX2wz5Xq45PRsL0DA89al3yPta
+ GbcYRYmmkqDCnY5ziGIKa+p+60Yh8nyRd1qVTyT8DEYzv8xqemhQKBQEl7+tkg9vBn6BuGeaz
+ bcp+E3hm9RwqUlRS7lKGrRv7xhdxVDRovRmdINB848v6oAHtxkE+hpsahgNorL6eA91WkbwdK
+ /40yXMS9KGO/i7eilq1jFZHPX8DJagWho7rNaxvV47QQKtZgmKYNna3pllNLnq1+TydPy7lUK
+ SPPppe0+ubcImcNVxWPG56yX3KHAqwPyLw1DnfNiQhxswMYybW2BOeJDs+Xzae7Uf5xb/cKEL
+ 2tt3tsqq5ODRew8h7chnhkbnH1raw/e+0+55gKrieudtpyNgUQQ3KSk5CIPU2ROX3td5GvL/p
+ OyRzW9XbMyadZinGSZhJQzqX2f2W+7TTxNM9eYcjCqPX8PTWD0QxrBU6s9wVHEMghfECyuKT9
+ osJQ06f73Ibb7tKqOYPeODOT2Z2HFDBX+MqUOVGPgKOXZF5M5bNWV3hEoEZGtOdPV7Hq0zNRN
+ Zn//SgQf0k4q2f7JGnr6NQzwmGFyX40K+qYZUSy9937u3W4hU6Wvvlz3WRj9RGguEVypFyorv
+ UVti3d/y7luBszPT8RDkw7IYFyM88GWCpp+WvMn0F2FNMg6/NM=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-04 21:44 GMT+02:00 Robert Jarzmik <robert.jarzmik@free.fr>:
-> Bartosz Golaszewski <brgl@bgdev.pl> writes:
->
->> We want to work towards phasing out the at24_platform_data structure.
->> There are few users and its contents can be represented using generic
->> device properties. Using device properties only will allow us to
->> significantly simplify the at24 configuration code.
->>
->> Remove the at24_platform_data structure and replace it with an array
->> of property entries. Drop the byte_len/size property, as the model name
->> already implies the EEPROM's size.
-> Hi Bartosz,
->
-> I'd like a little explanation for the last sentence. Are you implying that
-> ac24.c is using the "type" field, and if so could you point me to the correct
-> line, because I was under the impression a property called "size" is used for
-> byte_len value ... ?
->
+On Thu, 2018-04-05 at 10:27 +0200, Peter Zijlstra wrote:
+> On Thu, Apr 05, 2018 at 09:11:38AM +1000, Nicholas Piggin wrote:
+> > Hi,
+> > 
+> > I'm seeing some pretty big latencies on a ~idle system when a CPU wakes
+> > out of a nohz idle. Looks like it's due to the taking a lot of remote
+> > locks and cache lines. irqoff trace:
+> 
+> On RT I think we default RT_RUNTIME_SHARE to false, maybe we should do
+> the same for mainline.
 
-Yes, it does use the type field from i2c_board_info implicitly over
-i2c-core. The type field is copied over to client->name and then is
-matched against the i2c ID table from which we get the associated chip
-data (unless the type is "at24") containing the size and flags.
+Probably.  My very first enterprise encounter with the thing was it NOT
+saving a box from it's not so clever driver due to that.
 
-Hope that helps.
-
-Bartosz
+	-Mike
