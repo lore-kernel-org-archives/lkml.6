@@ -1,90 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751413AbeDEOwC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:52:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48606 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750835AbeDEOwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:52:01 -0400
-Date: Thu, 5 Apr 2018 16:51:59 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Joel Fernandes <joelaf@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] ring-buffer: Add set/clear_current_oom_origin() during
- allocations
-Message-ID: <20180405145159.GM6312@dhcp22.suse.cz>
-References: <20180404115310.6c69e7b9@gandalf.local.home>
- <20180404120002.6561a5bc@gandalf.local.home>
- <CAJWu+orC-1JDYHDTQU+DFckGq5ZnXBCCq9wLG-gNK0Nc4-vo7w@mail.gmail.com>
- <20180404121326.6eca4fa3@gandalf.local.home>
- <CAJWu+op5-sr=2xWDYcd7FDBeMtrM9Zm96BgGzb4Q31UGBiU3ew@mail.gmail.com>
- <CAJWu+opM6RjK-Z1dr35XvQ5cLKaV=cLG5uMu-rLkoO=X03c+FA@mail.gmail.com>
+        id S1751353AbeDEOym (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:54:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57594 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751195AbeDEOyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 10:54:41 -0400
+Date: Thu, 5 Apr 2018 17:54:40 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, robh@kernel.org, aik@ozlabs.ru,
+        jasowang@redhat.com, joe@perches.com, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au
+Subject: Re: [RFC] virtio: Use DMA MAP API for devices without an IOMMU
+Message-ID: <20180405175326-mutt-send-email-mst@kernel.org>
+References: <20180405105631.9514-1-khandual@linux.vnet.ibm.com>
+ <3e1b113b-79ca-b700-5be9-10c66d74aabe@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJWu+opM6RjK-Z1dr35XvQ5cLKaV=cLG5uMu-rLkoO=X03c+FA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <3e1b113b-79ca-b700-5be9-10c66d74aabe@linux.vnet.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 04-04-18 16:59:18, Joel Fernandes wrote:
-> Hi Steve,
+On Thu, Apr 05, 2018 at 08:09:30PM +0530, Anshuman Khandual wrote:
+> On 04/05/2018 04:26 PM, Anshuman Khandual wrote:
+> > There are certian platforms which would like to use SWIOTLB based DMA API
+> > for bouncing purpose without actually requiring an IOMMU back end. But the
+> > virtio core does not allow such mechanism. Right now DMA MAP API is only
+> > selected for devices which have an IOMMU and then the QEMU/host back end
+> > will process all incoming SG buffer addresses as IOVA instead of simple
+> > GPA which is the case for simple bounce buffers after being processed with
+> > SWIOTLB API. To enable this usage, it introduces an architecture specific
+> > function which will just make virtio core front end select DMA operations
+> > structure.
+> > 
+> > Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 > 
-> On Wed, Apr 4, 2018 at 9:18 AM, Joel Fernandes <joelaf@google.com> wrote:
-> > On Wed, Apr 4, 2018 at 9:13 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> > [..]
-> >>>
-> >>> Also, I agree with the new patch and its nice idea to do that.
-> >>
-> >> Thanks, want to give it a test too?
-> 
-> With the latest tree and the below diff, I can still OOM-kill a victim
-> process doing a large buffer_size_kb write:
-> 
-> I pulled your ftrace/core and added this:
-> +       /*
->         i = si_mem_available();
->         if (i < nr_pages)
->                 return -ENOMEM;
-> +       */
-> 
-> Here's a run in Qemu with 4-cores 1GB total memory:
-> 
-> bash-4.3# ./m -m 1M &
-> [1] 1056
-> bash-4.3#
-> bash-4.3#
-> bash-4.3#
-> bash-4.3# echo 10000000 > /d/tracing/buffer_size_kb
-> [   33.213988] Out of memory: Kill process 1042 (bash) score
-> 1712050900 or sacrifice child
-> [   33.215349] Killed process 1056 (m) total-vm:9220kB,
-> anon-rss:7564kB, file-rss:4kB, shmem-rss:640kB
+> + "Michael S. Tsirkin" <mst@redhat.com>
 
-OK, so the reason your memory hog is triggered is that your echo is
-built-in and we properly select bask as an oom_origin but then another
-clever heuristic jumps in and tries to reduce the damage by sacrificing
-a child process. And your memory hog runs as a child from the same bash
-session.
+I'm confused by this.
 
-I cannot say I would love this heuristic. In fact I would really love to
-dig it deep under the ground. But this is a harder sell than it might
-seem. Anyway is your testing scenario really representative enough to
-care? Does the buffer_size_kb updater runs in the same process as any
-large memory process?
+static bool vring_use_dma_api(struct virtio_device *vdev)
+{
+        if (!virtio_has_iommu_quirk(vdev))
+                return true;
 
-> bash: echo: write error: Cannot allocate memory
-> [1]+  Killed                  ./m -m 1M
-> bash-4.3#
-> --
 
--- 
-Michal Hocko
-SUSE Labs
+Why doesn't setting VIRTIO_F_IOMMU_PLATFORM on the
+hypervisor side sufficient?
