@@ -1,120 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751483AbeDEJFB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:05:01 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41999 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDEJE7 (ORCPT
+        id S1751470AbeDEJHN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:07:13 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:40424 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751278AbeDEJHL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:04:59 -0400
-X-Google-Smtp-Source: AIpwx4/dD2QKSV0GXnDZ8/udp2HXjt79uUyEVtwxX9zytMkH0R9VZViYX3XveVNHWmjTp7T/uEzLzw==
-Subject: Re: [PATCH?] reiserfs: prevent panic: don't allow %-char in journal
- dev. name
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Mahoney <jeffm@suse.com>, Jan Kara <jack@suse.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        syzkaller-bugs@googlegroups.com,
-        syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com
-References: <d9b518a5-287a-72b3-05f1-ea89e25563ba@infradead.org>
- <20180404184517.9f2b91b856a56f71464f5f7f@linux-foundation.org>
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <6b575956-6498-43c8-dc2c-9e2a0d5564a9@rasmusvillemoes.dk>
-Date: Thu, 5 Apr 2018 11:04:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 5 Apr 2018 05:07:11 -0400
+X-Google-Smtp-Source: AIpwx49vQsWp3JHAwNzy67jYsfk/DhFFCn4/0eCpkulSNEoGxHV2kddxu4u7AHWqcY9WHw0MXJFrStGjm8+7GPA30UI=
 MIME-Version: 1.0
-In-Reply-To: <20180404184517.9f2b91b856a56f71464f5f7f@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180404171222.GH5700@atomide.com>
+References: <20180404102550.3692501-1-arnd@arndb.de> <20180404171222.GH5700@atomide.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 5 Apr 2018 11:07:09 +0200
+X-Google-Sender-Auth: gvlo9k48LOjyCGFbhXfQn-dIdXM
+Message-ID: <CAK8P3a113KzqRU7_qY96YGTz28+hMuyrMvJJVxOcL7cJogkpKQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: omap2: fix am43xx build without L2X0
+To: Tony Lindgren <tony@atomide.com>
+Cc: Russell King <linux@armlinux.org.uk>, Dave Gerlach <d-gerlach@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-05 03:45, Andrew Morton wrote:
-> On Wed, 4 Apr 2018 18:25:16 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> From: Randy Dunlap <rdunlap@infradead.org>
+On Wed, Apr 4, 2018 at 7:12 PM, Tony Lindgren <tony@atomide.com> wrote:
+> * Arnd Bergmann <arnd@arndb.de> [180404 10:27]:
+>> When CONFIG_CACHE_L2X0 is disabled, the am43xx specific suspend
+>> implemnentation fails to link:
 >>
->> If the reiserfs mount option's journal name contains a '%' character,
->> it can lead to a WARN_ONCE() in lib/vsprintf.c::format_decode(),
->> saying: "Please remove unsupported %/ in format string."
->> That's OK until panic_on_warn is set, at which point it's dead, Jim.
+>> arch/arm/mach-omap2/sleep43xx.o: In function `get_l2cache_base':
+>> (.text+0x180): undefined reference to `omap4_get_l2cache_base'
 >>
->> To placate this situation, check the journal name string for a '%'
->> character and return an error if one is found. Also print a warning
->> (one that won't panic the kernel) about the invalid journal name (e.g.):
+>> This adds an #ifdef protection around the code, like we do for am44xx.
 >>
->>   reiserfs: journal device name is invalid: %/file0
->>
->> (In this example, the caller app specified the journal device name as
->> "%/file0".)
->>
-> 
-> Well, that is a valid filename and we should support it...
-> 
-> Isn't the bug in journal_init_dev()?
+>> Fixes: 41d37e61372f ("ARM: OMAP2+: Introduce low-level suspend code for AM43XX")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Thanks, looks OK to me:
+>
+> Acked-by: Tony Lindgren <tony@atomide.com>
 
-Urgh. At first I was about to reply that the real bug was in reiserfs.h
-for failing to annotate __reiserfs_warning with __printf(). But digging
-into it, it turns out that it implements its own printf extensions, so
-that's obviously a non-starter. Now, one thing is that some of those
-extension clash with existing standard modifiers (%z and %h, so if
-someone adds a correct %zu thing to print a size_t in reiserfs things
-will break). But, and I hope I'm wrong about this and just hasn't had
-enough coffee, this seems completely broken:
+Applied to next/soc.
 
-        while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
-                *k = 0;
-
-                p += vsprintf(p, fmt1, args);
-
-                switch (what) {
-                case 'k':
-                        sprintf_le_key(p, va_arg(args, struct
-reiserfs_key *));
-                        break;
-
-On architectures where va_list is a typedef for a one-element array of
-some struct (x86-64), that works ok, because the vsprintf call can and
-does update the args metadata. But when args is just a pointer into the
-stack (i386), we don't know how much vsprintf consumed, and end up
-consuming the same arguments again - only this time we may interpret
-some random integer as a struct pointer...
-
-A minimal program showing the difference:
-
-#include <stdio.h>
-#include <stdarg.h>
-
-void f(const char *dummy, ...)
-{
-	va_list ap;
-	int i;
-
-	va_start(ap, dummy);
-	for (i = 0; i < 5; ++i) {
-		vprintf("%d\n", ap);
-		printf("%d\n", va_arg(ap, int));
-	}
-	va_end(ap);
-}
-
-int main(int argc, char *argv[])
-{
-	f("bla", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-	return 0;
-}
-
-Compiling for native (x86-64), this produces $(seq 10). But with -m32,
-one gets 1,1,2,2,3,3,4,4,5,5.
-
-Assuming reiserfs (at least its debugging infrastructure) isn't broken
-on a bunch of architectures, I'm obviously missing something
-fundamental. Please enlighten me.
-
-Rasmus
+     Arnd
