@@ -1,74 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752701AbeDEBZd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 21:25:33 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:47419 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752583AbeDEBZc (ORCPT
+        id S1752754AbeDEBZz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 21:25:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48790 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752583AbeDEBZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 21:25:32 -0400
-Subject: Re: [PATCH] ARM64: dts: meson-axg: enable the eMMC controller
-To: kbuild test robot <lkp@intel.com>
-References: <20180403102651.60340-1-yixun.lan@amlogic.com>
- <201804040211.7wh3FnSx%fengguang.wu@intel.com>
-CC: <yixun.lan@amlogic.com>, <kbuild-all@01.org>,
-        Kevin Hilman <khilman@baylibre.com>, Nan Li <nan.li@amlogic.com>,
-        Carlo Caione <carlo@caione.org>, Jerome Brunet <jbrunet@baylibre.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>, Rob Herring <robh@kernel.org>,
-        <linux-mmc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <05e90560-46a7-7e4f-c4cf-13d8d6e754b3@amlogic.com>
-Date: Thu, 5 Apr 2018 09:25:06 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Wed, 4 Apr 2018 21:25:53 -0400
+To: LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH?] reiserfs: prevent panic: don't allow %-char in journal dev.
+ name
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Mahoney <jeffm@suse.com>, Jan Kara <jack@suse.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzkaller-bugs@googlegroups.com,
+        syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com
+Message-ID: <d9b518a5-287a-72b3-05f1-ea89e25563ba@infradead.org>
+Date: Wed, 4 Apr 2018 18:25:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <201804040211.7wh3FnSx%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [61.173.93.211]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kevin
+From: Randy Dunlap <rdunlap@infradead.org>
 
-On 04/04/2018 02:26 AM, kbuild test robot wrote:
-> Hi Nan,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on next-20180403]
-> [cannot apply to robh/for-next v4.16 v4.16-rc7 v4.16-rc6 v4.16]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Yixun-Lan/ARM64-dts-meson-axg-enable-the-eMMC-controller/20180403-224314
-> config: arm64-allyesconfig (attached as .config)
-> compiler: aarch64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm64 
-> 
-> All errors (new ones prefixed by >>):
-> 
->>> Error: arch/arm64/boot/dts/amlogic/meson-axg-s400.dts:49.24-25 syntax error
->    FATAL ERROR: Unable to parse input tree
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+If the reiserfs mount option's journal name contains a '%' character,
+it can lead to a WARN_ONCE() in lib/vsprintf.c::format_decode(),
+saying: "Please remove unsupported %/ in format string."
+That's OK until panic_on_warn is set, at which point it's dead, Jim.
 
-oops, need to add this header (I fail to do a last check when rebase to
-the dt64 branch)
+To placate this situation, check the journal name string for a '%'
+character and return an error if one is found. Also print a warning
+(one that won't panic the kernel) about the invalid journal name (e.g.):
 
-+#include <dt-bindings/gpio/meson-axg-gpio.h>
+  reiserfs: journal device name is invalid: %/file0
 
-will send a patch v2
+(In this example, the caller app specified the journal device name as
+"%/file0".)
 
-Yixun
+Fixes: https://syzkaller.appspot.com/bug?id=0627d4551fdc39bf1ef5d82cd9eef587047f7718
+
+Reported-by: syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: stable@vger.kernel.org # many kernel versions
+Cc: reiserfs-devel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Jan Kara <jack@suse.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: Andrew Morton <akpm@linuxfoundation.org>
+---
+ fs/reiserfs/super.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+--- lnx-416.orig/fs/reiserfs/super.c
++++ lnx-416/fs/reiserfs/super.c
+@@ -1239,6 +1239,8 @@ static int reiserfs_parse_options(struct
+ 		}
+ 
+ 		if (c == 'j') {
++			char *badfmt;	// jdev_name (arg) cannot contain '%'
++
+ 			if (arg && *arg && jdev_name) {
+ 				/* Hm, already assigned? */
+ 				if (*jdev_name) {
+@@ -1248,6 +1250,15 @@ static int reiserfs_parse_options(struct
+ 							 "be %s", *jdev_name);
+ 					return 0;
+ 				}
++
++				badfmt = strchr(arg, '%');
++				if (badfmt) {
++					printk(KERN_WARNING "reiserfs: "
++						 "journal device name "
++						 "is invalid: %s",
++						 arg);
++					return 0;
++				}
+ 				*jdev_name = arg;
+ 			}
+ 		}
