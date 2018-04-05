@@ -1,163 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752660AbeDEBM2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 21:12:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36054 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752583AbeDEBM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 21:12:26 -0400
-Date: Thu, 5 Apr 2018 04:12:20 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: "Wang, Wei W" <wei.w.wang@intel.com>
-Cc: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
-Subject: Re: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Message-ID: <20180405040900-mutt-send-email-mst@kernel.org>
-References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
- <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
- <20180403214147-mutt-send-email-mst@kernel.org>
- <5AC43377.2070607@intel.com>
- <20180404155907-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
+        id S1752654AbeDEBXF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 21:23:05 -0400
+Received: from mail.siteground.com ([67.19.240.234]:38495 "EHLO
+        mail.siteground.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752583AbeDEBXE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 21:23:04 -0400
+Subject: Re: [PATCH] uts_namespace: Move boot_id in uts namespace
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-kernel@vger.kernel.org,
+        Linux Containers <containers@lists.linux-foundation.org>
+References: <1522408620-10578-1-git-send-email-kernel@kyup.com>
+ <87vad7hsdb.fsf@xmission.com> <e6fe4cc7-eed0-fbe2-98af-31c95e35805a@kyup.com>
+ <876056bicd.fsf@xmission.com>
+From: Marian Marinov <kernel@kyup.com>
+Openpgp: preference=signencrypt
+Organization: Kyup Ltd.
+Message-ID: <49d8b5b1-6f10-d9d8-9778-eb71556bc98d@kyup.com>
+Date: Thu, 5 Apr 2018 04:23:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
+In-Reply-To: <876056bicd.fsf@xmission.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - mail.siteground.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - kyup.com
+X-Get-Message-Sender-Via: mail.siteground.com: none
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 12:30:27AM +0000, Wang, Wei W wrote:
-> On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
-> > On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
-> > > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
-> > > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
-> > > > > +static int add_one_sg(struct virtqueue *vq, unsigned long pfn,
-> > > > > +uint32_t len) {
-> > > > > +	struct scatterlist sg;
-> > > > > +	unsigned int unused;
-> > > > > +
-> > > > > +	sg_init_table(&sg, 1);
-> > > > > +	sg_set_page(&sg, pfn_to_page(pfn), len, 0);
-> > > > > +
-> > > > > +	/* Detach all the used buffers from the vq */
-> > > > > +	while (virtqueue_get_buf(vq, &unused))
-> > > > > +		;
-> > > > > +
-> > > > > +	/*
-> > > > > +	 * Since this is an optimization feature, losing a couple of free
-> > > > > +	 * pages to report isn't important. We simply return without adding
-> > > > > +	 * the page hint if the vq is full.
-> > > > why not stop scanning of following pages though?
-> > >
-> > > Because continuing to send hints is a way to deliver the maximum
-> > > possible hints to host. For example, host may have a delay in taking
-> > > hints at some point, and then it resumes to take hints soon. If the
-> > > driver does not stop when the vq is full, it will be able to put more
-> > > hints to the vq once the vq has available entries to add.
-> > 
-> > What this appears to be is just lack of coordination between host and guest.
-> > 
-> > But meanwhile you are spending cycles walking the list uselessly.
-> > Instead of trying nilly-willy, the standard thing to do is to wait for host to
-> > consume an entry and proceed.
-> > 
-> > Coding it up might be tricky, so it's probably acceptable as is for now, but
-> > please replace the justification about with a TODO entry that we should
-> > synchronize with the host.
+On 04/05/2018 03:35 AM, Eric W. Biederman wrote:
+> Marian Marinov <kernel@kyup.com> writes:
 > 
-> Thanks. I plan to add
+>> On 04/04/2018 07:02 PM, Eric W. Biederman wrote:
+>>> Angel Shtilianov <kernel@kyup.com> writes:
+>>>
+>>>> Currently the same boot_id is reported for all containers running
+>>>> on a host node, including the host node itself. Even after restarting
+>>>> a container it will still have the same persistent boot_id.
+>>>>
+>>>> This can cause troubles in cases where you have multiple containers
+>>>> from the same cluster on one host node. The software inside each
+>>>> container will get the same boot_id and thus fail to join the cluster,
+>>>> after the first container from the node has already joined.
+>>>>
+>>>> UTS namespace on other hand keeps the machine specific data, so it
+>>>> seems to be the correct place to move the boot_id and instantiate it,
+>>>> so each container will have unique id for its own boot lifetime, if
+>>>> it has its own uts namespace.
+>>>
+>>> Technically this really needs to use the sysctl infrastructure that
+>>> allows you to register different files in different namespaces.  That
+>>> way the value you read from proc_do_uuid will be based on who opens the
+>>> file not on who is reading the file.
+>>
+>> Ok, so would you accept a patch that reimplements boot_id trough the sysctl infrastructure?
 > 
-> TODO: The current implementation could be further improved by stopping the reporting when the vq is full and continuing the reporting when host notifies that there are available entries for the driver to add.
+> Assuming I am convinced this makes sense to do on the semantic level.
+> 
+>>> Practically why does a bind mount on top of boot_id work?  What makes
+>>> this a general problem worth solving in the kernel?  Why is hiding the
+>>> fact that you are running the same instance of the same kernel a useful
+>>> thing? That is the reality.
+>>
+>> The problem is, that the distros do not know that they are in
+>> container and don't know that they have to bind mount something on top
+>> of boot_id.  You need to tell Docker, LXC/LXD and all other container
+>> runtimes that they need to do this bind mount for boot_id.
+> 
+> Yes.  Anything like this is the responsibility of the container runtime
+> one way or another.   Magic to get around fixing the small set of
+> container runtimes you care about is a questionable activity.
+> 
+>> I consider this to be a general issue, that lacks good general
+>> solution in userspace.  The kernel is providing this boot_id
+>> interface, but it is giving wrong data in the context of containers.
+> 
+> I disagree.  Namespaces have never been about hiding that you are on a
+> given machine or a single machine.  They are about encapsulating global
+> identifers so that process migration can happen, and so that processes
+> can be better isolated.  The boot_id is not an identify of an object in
+> the kernel at all, and it is designed to be trully globally unique
+> across time and space so I am not at all certain that it makes the least
+> bit of sense to do anything with a boot_id.
+> 
+> 
+> That said my memory of boot_id is that was added so that emacs (and
+> related programs) could create lock files on nfs and could tell if the
+> current machine owns the file, and if so be able to tell if the owner
+> of the lock file is alive.
+> 
+> So there is an argument to be made that boot_id is to coarse.  That
+> argument suggest that boot_id is a pid_namespace property.
+> 
+> I have not looked at the users of boot_id, and I don't have a definition
+> of boot_id that makes me think it is too coarse.
+> 
+> If you can provide a clear description of what the semantics are and
+> what they should be for boot_id showing how boot_id fits into a
+> namespace, making it clear what should happen with checkpoint/restart.
+> We can definitely look at changing how the kernel supports boot_id.
+> 
+> The reason I suggested the bind mount is there are lots of cases where
+> people want to lie to applications about the reality of what is going on
+> for whatever reason, and we leave those lies to userspace.  Things
+> like changing the contents of /proc/cpuinfo.
 
-... that entries have been used.
+Even thou previously we have sent patches that are supposed to lie to the software running inside a container, this one is not of this sort.
 
-> 
-> > 
-> > 
-> > >
-> > > >
-> > > > > +	 * We are adding one entry each time, which essentially results in no
-> > > > > +	 * memory allocation, so the GFP_KERNEL flag below can be ignored.
-> > > > > +	 * Host works by polling the free page vq for hints after sending the
-> > > > > +	 * starting cmd id, so the driver doesn't need to kick after filling
-> > > > > +	 * the vq.
-> > > > > +	 * Lastly, there is always one entry reserved for the cmd id to use.
-> > > > > +	 */
-> > > > > +	if (vq->num_free > 1)
-> > > > > +		return virtqueue_add_inbuf(vq, &sg, 1, vq, GFP_KERNEL);
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static int virtio_balloon_send_free_pages(void *opaque, unsigned long
-> > pfn,
-> > > > > +					   unsigned long nr_pages)
-> > > > > +{
-> > > > > +	struct virtio_balloon *vb = (struct virtio_balloon *)opaque;
-> > > > > +	uint32_t len = nr_pages << PAGE_SHIFT;
-> > > > > +
-> > > > > +	/*
-> > > > > +	 * If a stop id or a new cmd id was just received from host, stop
-> > > > > +	 * the reporting, and return 1 to indicate an active stop.
-> > > > > +	 */
-> > > > > +	if (virtio32_to_cpu(vb->vdev, vb->cmd_id_use) != vb-
-> > >cmd_id_received)
-> > > > > +		return 1;
-> > 
-> > functions returning int should return 0 or -errno on failure, positive return
-> > code should indicate progress.
-> > 
-> > If you want a boolean, use bool pls.
-> 
-> OK. I plan to change 1  to -EBUSY to indicate the case that host actively asks the driver to stop reporting (This makes the callback return value type consistent with walk_free_mem_block). 
-> 
+You are pointing to Emacs and I'm talking about Consul https://www.consul.io/
+Systemd is also using boot_id. "journalctl --list-boots" actually uses the boot_id to distinguish between different boots.
 
-something like EINTR might be a better fit.
+  -2 caf0524a1d394ce0bdbcff75b94444fe Tue 2015-02-03 21:48:52 UTC—Tue 2015-02-03 22:17:00 UTC
+  -1 13883d180dc0420db0abcb5fa26d6198 Tue 2015-02-03 22:17:03 UTC—Tue 2015-02-03 22:19:08 UTC
+   0 bed718b17a73415fade0e4e7f4bea609 Tue 2015-02-03 22:19:12 UTC—Tue 2015-02-03 23:01:01 UTC
 
-> 
-> > 
-> > 
-> > > > > +
-> > > > this access to cmd_id_use and cmd_id_received without locks bothers
-> > > > me. Pls document why it's safe.
-> > >
-> > > OK. Probably we could add below to the above comments:
-> > >
-> > > cmd_id_use and cmd_id_received don't need to be accessed under locks
-> > > because the reporting does not have to stop immediately before
-> > > cmd_id_received is changed (i.e. when host requests to stop). That is,
-> > > reporting more hints after host requests to stop isn't an issue for
-> > > this optimization feature, because host will simply drop the stale
-> > > hints next time when it needs a new reporting.
-> > 
-> > What about the other direction? Can this observe a stale value and exit
-> > erroneously?
-> 
-> I'm afraid the driver couldn't be aware if the added hints are stale or not,
+There may be a lot of other software, that we don't know about, that is using boot_id as a good mechanism to distinguish uniqueness of machines.
+
+In case of consul, it uses the boot_id as a unique ID for the node.
+On our systems, we have multiple containers residing on the same host node, that may be part of the same Consul setup.
+One option would be to tell each customer that installs consul, to setup bind mounts for the boot_id. However for the customer, finding out that boot_id is the actual problem, is non-trivial task.
+And also if the user is using systemd, setting up bind mount after the container has started is partly useless, since the log already has the wrong boot_id.
+
+Another option would be to generate unique ID before starting each container and bind mounting that on top of boot_id, during the boot of each container.
+But this means that each runtime should know that it has to do that, or at least the admin should be aware that such a problem may exists.
+
+Fixing this inside the kernel, at least how I see it, is a trivial job. I don't understand why the kernel would not cooperate with the userspace.
+
+I really don't care if it is inside the pid or the uts namespace, as long as it is per-namespace.
 
 
-No - I mean that driver has code that compares two values
-and stops reporting. Can one of the values be stale?
 
-> because host and guest actions happen asynchronously. That is, host side iothread stops taking hints as soon as the migration thread asks to stop, it doesn't wait for any ACK from the driver to stop (as we discussed before, host couldn't always assume that the driver is in a responsive state).
 > 
-> Btw, we also don't need to worry about any memory left in the vq, since only addresses are added to the vq, there is no real memory allocations.
+>> Proposing to fix this problem in userspace seams like ignoring the
+>> issue.  You could have said to the Consul guys, that they should
+>> simply stop using boot_id, because it doesn't work correctly on
+>> containers.
 > 
-> Best,
-> Wei
+> I don't know the Consul guys.   From a quick google search I see that
+> Consul is an open source project that is aims to be distributed and
+> highly available.  It seems a reasonable case to look at to motivate
+> changes to boot_id.
+> 
+> That said if I want to be highly available I would find every node
+> having the same boot_id to be very worrying, and very useful.  It allows
+> detecting if no hardware redundancy is present in a situation.  That
+> certainly seems like a good thing.
+> 
+> If you just want to test Consul then hacking boot_id with a bind mount
+> seems the right thing.  If you really want to run Consul in production
+> I am curious to know how removing the ability to detect if you are on
+> the same kernel as another piece of Consul is a good thing.
+> 
+> Eric
+> 
 
-When we support DMA API we will have to unmap things there.
+
+-- 
+Marian Marinov
+Co-founder & CTO of Kyup.com
+Jabber/GTalk: hackman@jabber.org
+IRQ: 7556201
+IRC: hackman @ irc.freenode.net
+Mobile: +359 886 660 270
