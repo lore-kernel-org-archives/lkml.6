@@ -1,73 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752919AbeDETpR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 15:45:17 -0400
-Received: from mail-yb0-f174.google.com ([209.85.213.174]:43674 "EHLO
-        mail-yb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752822AbeDETpP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 15:45:15 -0400
-X-Google-Smtp-Source: AIpwx48EYbtC1IXqn3ZhxWYvb8mPZHC/rlzRYLB2Xqmib+b6hIb798FtdiGJntJDsJkbKz0blPXqLg==
-Date: Thu, 5 Apr 2018 12:45:12 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>, vdavydov.dev@gmail.com, guro@fb.com,
-        riel@surriel.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        cgroups@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: memcg: make sure memory.events is uptodate when
- waking pollers
-Message-ID: <20180405194512.GD3126663@devbig577.frc2.facebook.com>
-References: <20180324160901.512135-1-tj@kernel.org>
- <20180324160901.512135-2-tj@kernel.org>
- <20180404140855.GA28966@cmpxchg.org>
- <20180404141850.GC28966@cmpxchg.org>
- <20180404143447.GJ6312@dhcp22.suse.cz>
- <20180404165829.GA3126663@devbig577.frc2.facebook.com>
- <20180405175507.GA24817@cmpxchg.org>
+        id S1752943AbeDETpg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 15:45:36 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:50226 "EHLO gum.cmpxchg.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752552AbeDETpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 15:45:34 -0400
+Date: Thu, 5 Apr 2018 15:45:26 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Roman Gushchin <guro@fb.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>,
+        kernel-team@fb.com, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] mm: treat memory.low value inclusive
+Message-ID: <20180405194526.GC27918@cmpxchg.org>
+References: <20180405185921.4942-1-guro@fb.com>
+ <20180405185921.4942-3-guro@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180405175507.GA24817@cmpxchg.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180405185921.4942-3-guro@fb.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 01:55:16PM -0400, Johannes Weiner wrote:
-> From 4369ce161a9085aa408f2eca54f9de72909ee1b1 Mon Sep 17 00:00:00 2001
-> From: Johannes Weiner <hannes@cmpxchg.org>
-> Date: Thu, 5 Apr 2018 11:53:55 -0400
-> Subject: [PATCH] mm: memcg: make sure memory.events is uptodate when waking
->  pollers
+On Thu, Apr 05, 2018 at 07:59:20PM +0100, Roman Gushchin wrote:
+> If memcg's usage is equal to the memory.low value, avoid reclaiming
+> from this cgroup while there is a surplus of reclaimable memory.
 > 
-> a983b5ebee57 ("mm: memcontrol: fix excessive complexity in memory.stat
-> reporting") added per-cpu drift to all memory cgroup stats and events
-> shown in memory.stat and memory.events.
-> 
-> For memory.stat this is acceptable. But memory.events issues file
-> notifications, and somebody polling the file for changes will be
-> confused when the counters in it are unchanged after a wakeup.
-> 
-> Luckily, the events in memory.events - MEMCG_LOW, MEMCG_HIGH,
-> MEMCG_MAX, MEMCG_OOM - are sufficiently rare and high-level that we
-> don't need per-cpu buffering for them: MEMCG_HIGH and MEMCG_MAX would
-> be the most frequent, but they're counting invocations of reclaim,
-> which is a complex operation that touches many shared cachelines.
-> 
-> This splits memory.events from the generic VM events and tracks them
-> in their own, unbuffered atomic counters. That's also cleaner, as it
-> eliminates the ugly enum nesting of VM and cgroup events.
-> 
-> Fixes: a983b5ebee57 ("mm: memcontrol: fix excessive complexity in memory.stat reporting")
-> Reported-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> This sounds more logical and also matches memory.high and memory.max
+> behavior: both are inclusive.
 
-Yeah, that works.  FWIW,
+I was trying to figure out why we did it this way in the first place
+and found this patch:
 
-Acked-by: Tejun Heo <tj@kernel.org>
+commit 4e54dede38b45052a941bcf709f7d29f2e18174d
+Author: Michal Hocko <mhocko@suse.cz>
+Date:   Fri Feb 27 15:51:46 2015 -0800
 
-Thanks.
+    memcg: fix low limit calculation
+    
+    A memcg is considered low limited even when the current usage is equal to
+    the low limit.  This leads to interesting side effects e.g.
+    groups/hierarchies with no memory accounted are considered protected and
+    so the reclaim will emit MEMCG_LOW event when encountering them.
+    
+    Another and much bigger issue was reported by Joonsoo Kim.  He has hit a
+    NULL ptr dereference with the legacy cgroup API which even doesn't have
+    low limit exposed.  The limit is 0 by default but the initial check fails
+    for memcg with 0 consumption and parent_mem_cgroup() would return NULL if
+    use_hierarchy is 0 and so page_counter_read would try to dereference NULL.
+    
+    I suppose that the current implementation is just an overlook because the
+    documentation in Documentation/cgroups/unified-hierarchy.txt says:
+    
+      "The memory.low boundary on the other hand is a top-down allocated
+      reserve.  A cgroup enjoys reclaim protection when it and all its
+      ancestors are below their low boundaries"
+    
+    Fix the usage and the low limit comparision in mem_cgroup_low accordingly.
+    
+> @@ -5709,7 +5709,7 @@ bool mem_cgroup_low(struct mem_cgroup *root, struct mem_cgroup *memcg)
+>  	elow = min(elow, parent_elow * low_usage / siblings_low_usage);
+>  exit:
+>  	memcg->memory.elow = elow;
+> -	return usage < elow;
+> +	return usage <= elow;
 
--- 
-tejun
+So I think this needs to be usage && usage <= elow to not emit
+MEMCG_LOW events in case usage == elow == 0.
