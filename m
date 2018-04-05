@@ -1,44 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751413AbeDEPHy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:07:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44034 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751038AbeDEPHx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:07:53 -0400
-Date: Thu, 5 Apr 2018 08:07:48 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Vadim Lomovtsev <Vadim.Lomovtsev@caviumnetworks.com>
-Cc: sgoutham@cavium.com, sunil.kovvuri@gmail.com,
-        robert.richter@kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        davem@davemloft.net, dnelson@redhat.com, gustavo@embeddedor.com,
-        Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
-Subject: Re: [PATCH] net: thunderx: rework mac addresses list to u64 array
-Message-ID: <20180405150748.GA5716@infradead.org>
-References: <20180405145756.12633-1-Vadim.Lomovtsev@caviumnetworks.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405145756.12633-1-Vadim.Lomovtsev@caviumnetworks.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S1751365AbeDEPKi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:10:38 -0400
+Received: from gate.crashing.org ([63.228.1.57]:50236 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751038AbeDEPKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:10:37 -0400
+Message-ID: <1522940983.21446.205.camel@kernel.crashing.org>
+Subject: Re: [RFC] virtio: Use DMA MAP API for devices without an IOMMU
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, robh@kernel.org, aik@ozlabs.ru,
+        jasowang@redhat.com, joe@perches.com, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au
+Date: Fri, 06 Apr 2018 01:09:43 +1000
+In-Reply-To: <20180405175326-mutt-send-email-mst@kernel.org>
+References: <20180405105631.9514-1-khandual@linux.vnet.ibm.com>
+         <3e1b113b-79ca-b700-5be9-10c66d74aabe@linux.vnet.ibm.com>
+         <20180405175326-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  struct xcast_addr_list {
-> -	struct list_head list;
->  	int              count;
-> +	u64              mc[0];
+On Thu, 2018-04-05 at 17:54 +0300, Michael S. Tsirkin wrote:
+> On Thu, Apr 05, 2018 at 08:09:30PM +0530, Anshuman Khandual wrote:
+> > On 04/05/2018 04:26 PM, Anshuman Khandual wrote:
+> > > There are certian platforms which would like to use SWIOTLB based DMA API
+> > > for bouncing purpose without actually requiring an IOMMU back end. But the
+> > > virtio core does not allow such mechanism. Right now DMA MAP API is only
+> > > selected for devices which have an IOMMU and then the QEMU/host back end
+> > > will process all incoming SG buffer addresses as IOVA instead of simple
+> > > GPA which is the case for simple bounce buffers after being processed with
+> > > SWIOTLB API. To enable this usage, it introduces an architecture specific
+> > > function which will just make virtio core front end select DMA operations
+> > > structure.
+> > > 
+> > > Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> > 
+> > + "Michael S. Tsirkin" <mst@redhat.com>
+> 
+> I'm confused by this.
+> 
+> static bool vring_use_dma_api(struct virtio_device *vdev)
+> {
+>         if (!virtio_has_iommu_quirk(vdev))
+>                 return true;
+> 
+> 
+> Why doesn't setting VIRTIO_F_IOMMU_PLATFORM on the
+> hypervisor side sufficient?
 
-Please use the standard C99 syntax here:
+In this specific case, because that would make qemu expect an iommu,
+and there isn't one.
 
-	u64              mc[];
+Anshuman, you need to provide more background here. I don't have time
+right now it's late, but explain about the fact that this is for a
+specific type of secure VM which has only a limited pool of (insecure)
+memory that can be shared with qemu, so all IOs need to bounce via that
+pool, which can be achieved by using swiotlb.
 
-> +				mc_list = kmalloc(sizeof(*mc_list) +
-> +						  sizeof(u64) * netdev_mc_count(netdev),
-> +						  GFP_ATOMIC);
+Note: this isn't urgent, we can discuss alternative approaches, this is
+just to start the conversation.
 
-kmalloc_array(), please.
+Cheers,
+Ben.
