@@ -1,102 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752291AbeDETEK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 15:04:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49450 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751655AbeDETEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 15:04:09 -0400
-Date: Thu, 5 Apr 2018 21:04:05 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Zi Yan <zi.yan@sent.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mm: consider non-anonymous thp as unmovable page
-Message-ID: <20180405190405.GS6312@dhcp22.suse.cz>
-References: <20180403083451.GG5501@dhcp22.suse.cz>
- <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
- <20180405085927.GC6312@dhcp22.suse.cz>
- <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
- <20180405124830.GJ6312@dhcp22.suse.cz>
- <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
- <20180405150547.GN6312@dhcp22.suse.cz>
- <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
- <20180405160317.GP6312@dhcp22.suse.cz>
- <7C2DE363-E113-4284-B94F-814F386743DF@sent.com>
+        id S1752356AbeDETEr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 15:04:47 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59174 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbeDETEp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 15:04:45 -0400
+Date: Thu, 5 Apr 2018 20:04:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] sound updates for 4.17-rc1
+Message-ID: <20180405190441.GC12349@sirena.org.uk>
+References: <s5hwoxmdpmu.wl-tiwai@suse.de>
+ <CA+55aFxuowsvQyq0+xeq=ganTHqw2uZ6kkZ8DBk0k01cJHUzjA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ncSAzJYg3Aa9+CRW"
 Content-Disposition: inline
-In-Reply-To: <7C2DE363-E113-4284-B94F-814F386743DF@sent.com>
+In-Reply-To: <CA+55aFxuowsvQyq0+xeq=ganTHqw2uZ6kkZ8DBk0k01cJHUzjA@mail.gmail.com>
+X-Cookie: Last week's pet, this week's special.
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 05-04-18 13:58:43, Zi Yan wrote:
-> On 5 Apr 2018, at 12:03, Michal Hocko wrote:
-> 
-> > On Thu 05-04-18 18:55:51, Kirill A. Shutemov wrote:
-> >> On Thu, Apr 05, 2018 at 05:05:47PM +0200, Michal Hocko wrote:
-> >>> On Thu 05-04-18 16:40:45, Kirill A. Shutemov wrote:
-> >>>> On Thu, Apr 05, 2018 at 02:48:30PM +0200, Michal Hocko wrote:
-> >>> [...]
-> >>>>> RIght, I confused the two. What is the proper layer to fix that then?
-> >>>>> rmap_walk_file?
-> >>>>
-> >>>> Maybe something like this? Totally untested.
-> >>>
-> >>> This looks way too complex. Why cannot we simply split THP page cache
-> >>> during migration?
-> >>
-> >> This way we unify the codepath for archictures that don't support THP
-> >> migration and shmem THP.
-> >
-> > But why? There shouldn't be really nothing to prevent THP (anon or
-> > shemem) to be migratable. If we cannot migrate it at once we can always
-> > split it. So why should we add another thp specific handling all over
-> > the place?
-> 
-> Then, it would be much easier if your "unclutter thp migration" patches is merged,
-> plus the patch below:
 
-Good point. Except I would prefer a less convoluted condition
+--ncSAzJYg3Aa9+CRW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 60531108021a..b4087aa890f5 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1138,7 +1138,9 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
->         int rc = MIGRATEPAGE_SUCCESS;
->         struct page *newpage;
-> 
-> -       if (!thp_migration_supported() && PageTransHuge(page))
-> +       if ((!thp_migration_supported() ||
-> +            (thp_migration_supported() && !PageAnon(page))) &&
-> +           PageTransHuge(page))
->                 return -ENOMEM;
+On Thu, Apr 05, 2018 at 10:50:26AM -0700, Linus Torvalds wrote:
 
-What about this?
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 5d0dc7b85f90..cd02e2bdf37c 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1138,7 +1138,11 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
- 	int rc = MIGRATEPAGE_SUCCESS;
- 	struct page *newpage;
- 
--	if (!thp_migration_supported() && PageTransHuge(page))
-+	/*
-+	 * THP pagecache or generally non-migrateable THP need to be split
-+	 * up before migration
-+	 */
-+	if (PageTransHuge(page) && (!thp_migration_supported() || !PageAnon(page)))
- 		return -ENOMEM;
- 
- 	newpage = get_new_page(page, private);
+> Mark, we talked about this already. YOU ARE DOING SOMETHING HORRIBLY
+> WRONG. You already admitted to automated merging, I already told you
+> not to do that.
 
+Ah, sorry - my impression was rather that the issue was the mess caused
+by the history being too complex for git to eliminate null merges.  IIRC
+you didn't say much when I explained what the automation is there for
+which I (apparently incorrectly) took as as being OK with the
+automation, just not the results it ended up doing in that particular
+pull request.
 
--- 
-Michal Hocko
-SUSE Labs
+> I'm attaching a screenshot of part of this to give as an example of
+> what I see when I pull.
+
+I agree it's not super lovely.
+
+I looked at the image and also rechecked the history I'm seeing in gitk
+and I didn't spot cases where one topic branch was merged more than once
+though it's possible I missed something.  I do see a couple of cases
+where I merged the fix branch up into the topic branch more than once in
+order to resolve some conflicts that'd otherwise have been painful for
+anyone working on things, and one case where I applied a fix twice for
+some reason.  There *are* a very large number of commits with very
+similar subject lines sitting in branches but I'm not seeing any
+instances of the previous problem, AFAICT it's that there's lots of
+branches since Morimoto-san ended up touching almost every driver and I
+put them on per-driver branches like I usually do.
+
+> STOP MERGING THE SAME BRANCHES OVER AND OVER AGAIN, DAMMIT!
+
+> If you have merged a branch once, don't do it again tomorrow.
+
+Just to be clear the merges I did one day get thrown away the next if
+they weren't included in a pull request, the scripts only try to merge
+anything once and are done this way mainly to try to avoid generating
+pull requests which have incremental merges of the same branch.
+
+I'm a little bit confused about what's best to do here.  The reason I'm
+throwing the merge away and redoing it is that you've previously said
+that you don't want to see main development branches that contain
+nothing but long strings of merges, if I keep the same set of branches
+and just do the merges incrementally every time a branch is added or
+changes then there'd be even more merges which I'm pretty sure you
+wouldn't be at all happy with either.
+
+I could also just stop doing topic branches but that makes any cross
+tree merges that need doing painfully big, this was why I started doing
+topics so much.  I could go half way to that and try to figure out in
+advance which things will end up needing cross tree merges but that
+never worked out that well in the past.  I suppose I could also just
+duplicate commits to make the topic branches if things need cross tree
+merges after the fact, that's not great either though it does make for a
+minimal number of branches while avoiding messy cross tree merges.
+
+In the absence of any other feedback I guess I should just stop using
+topic branches so much and go back to putting everything I don't
+explicitly know will need a cross tree merge on just one fixes and one
+-next branch and hope we don't need too many cross tree merges I didn't
+anticipate.  Or possibly keep the fixes branches since they do get
+individually used much more often and there's far fewer of them.
+
+--ncSAzJYg3Aa9+CRW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrGc0gACgkQJNaLcl1U
+h9CuPgf/Xv9MASyg1zGcWcnt1elkXnhcAjRilPds5r6DYxfCVQHfUF67P9oEJsz/
+1uaQ+JDktXTwLJQdj6aLAOwU1To8XEe38SbuR8vFMA5G9SQMUudRyoiNdGRaNA7b
+uHHfmgeiCtYC4WDFAS51wVOO9DBapJaDDtSzs3wxH2is+l1bvu4VbtBNOaNcvR3L
+fDrX5Jem2235j5TxGPwg12tAlTgmYrUyCGEzJEAFA7BtMJGNPmHX1C29iy2tr/Oe
+xBas6BF+M5s2UW3jtu1eRVfS7NicIr0Vn7VBxpJ7F6KkLzZHHVr/xz1I63ju6y21
+9L6ZHbE3cQkaENm5B8mZupdD0xFLcw==
+=OJ+f
+-----END PGP SIGNATURE-----
+
+--ncSAzJYg3Aa9+CRW--
