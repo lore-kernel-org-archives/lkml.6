@@ -1,54 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751359AbeDEXJ6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 19:09:58 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37904 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750786AbeDEXJ4 (ORCPT
+        id S1751387AbeDEXLb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 19:11:31 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.36]:44943 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751117AbeDEXLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 19:09:56 -0400
-X-Google-Smtp-Source: AIpwx49nN92/sfVimD6/UcEVrqMXJBKgswrbOPSTw/PU2TlEY1NPEXID8g0S1gK4H61Imzu6DmCAJg==
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Subject: [PATCH] hidraw: Fix crash on HIDIOCGFEATURE with a destroyed device
-Date: Fri,  6 Apr 2018 01:09:36 +0200
-Message-Id: <20180405230936.4572-1-rodrigorivascosta@gmail.com>
-X-Mailer: git-send-email 2.16.3
+        Thu, 5 Apr 2018 19:11:30 -0400
+Subject: Re: [PATCH] clk: samsung: s3c: Mark expected switch fall-through
+To: Stephen Boyd <sboyd@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180404010931.GA30291@embeddedor.com>
+ <152295987121.91052.16578276622043986934@swboyd.mtv.corp.google.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <4d52473e-019a-58da-c475-49bcd16c2ed4@embeddedor.com>
+Date: Thu, 5 Apr 2018 18:11:25 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <152295987121.91052.16578276622043986934@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1f4E2S-002WFy-VN
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.145.54.187]:60844
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Doing `ioctl(HIDIOCGFEATURE)` in a tight loop on a hidraw device
-and then disconnecting the device, or unloading the driver, can
-cause a NULL pointer dereference.
 
-When a hidraw device is destroyed it sets 0 to `dev->exist`.
-Most functions check 'dev->exist' before doing its work, but
-`hidraw_get_report()` was missing that check.
 
-Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
----
- drivers/hid/hidraw.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On 04/05/2018 03:24 PM, Stephen Boyd wrote:
+> Quoting Gustavo A. R. Silva (2018-04-03 18:09:31)
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Notice that in this particular case I replaced the comma wiht a dash,
+> 
+> s/wiht/with/
+> 
 
-diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
-index 5fbe0f81ab2e..01b5a9f01814 100644
---- a/drivers/hid/hidraw.c
-+++ b/drivers/hid/hidraw.c
-@@ -192,6 +192,11 @@ static ssize_t hidraw_get_report(struct file *file, char __user *buffer, size_t
- 	int ret = 0, len;
- 	unsigned char report_number;
- 
-+	if (!hidraw_table[minor] || !hidraw_table[minor]->exist) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
- 	dev = hidraw_table[minor]->hid;
- 
- 	if (!dev->ll_driver->raw_request) {
--- 
-2.16.3
+Thanks for this.
+
+>> which is what GCC is expecting to find when there are other comments
+>> in the same line in which "fall through" appears.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>> This code was compiled with GCC 7.3.0
+> 
+> What's the GCC warning? Please include in the commit text.
+> 
+
+drivers/clk/samsung/clk-s3c2443.c:430:3: warning: this statement may 
+fall through [-Wimplicit-fallthrough=]
+    samsung_clk_register_alias(ctx, s3c2450_aliases,
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      ARRAY_SIZE(s3c2450_aliases));
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/clk/samsung/clk-s3c2443.c:433:2: note: here
+   case S3C2416:
+   ^~~~
+
+
+> Also what's the implicit-fallthrough level you're using? 3? Can you file
+> a bug so GCC can update their regex to accept a comma in addition to
+> whitespace characters?
+> 
+
+Yeah, I can talk to the GCC guys about that.
+
+> And maybe we can change the level to 2 or 1 in the kernel's makefile so
+> we don't need to patch comments for this.
+> 
+
+Yeah, with level 2 I don't get that warning.
+
+Thanks
+--
+Gustavo
