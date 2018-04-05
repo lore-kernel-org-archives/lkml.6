@@ -1,52 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751359AbeDEPMt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:12:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751038AbeDEPMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:12:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1C5F21857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-X-Google-Smtp-Source: AIpwx48YLaMzhBVH/9i4RQV9yzmhjUWWbf0YhtaAabzBE+bZnDltXRKji/ELim33+K2NepFlGKkcWz4A2u9Iv5SXLaQ=
+        id S1751404AbeDEPOD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:14:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46222 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbeDEPOC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:14:02 -0400
+Date: Thu, 5 Apr 2018 08:13:59 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180405151359.GB28128@bombadil.infradead.org>
+References: <20180403135607.GC5501@dhcp22.suse.cz>
+ <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com>
+ <20180404062340.GD6312@dhcp22.suse.cz>
+ <20180404101149.08f6f881@gandalf.local.home>
+ <20180404142329.GI6312@dhcp22.suse.cz>
+ <20180404114730.65118279@gandalf.local.home>
+ <20180405025841.GA9301@bombadil.infradead.org>
+ <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
+ <20180405142258.GA28128@bombadil.infradead.org>
+ <20180405142749.GL6312@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <1522782152-27300-3-git-send-email-p.pisati@gmail.com>
-References: <1522782152-27300-1-git-send-email-p.pisati@gmail.com> <1522782152-27300-3-git-send-email-p.pisati@gmail.com>
-From: Alan Tull <atull@kernel.org>
-Date: Thu, 5 Apr 2018 10:12:05 -0500
-X-Gmail-Original-Message-ID: <CANk1AXTBNubsYm=psFRpL+q5oEckfyjdOfzmr-DOn69XCOCmbw@mail.gmail.com>
-Message-ID: <CANk1AXTBNubsYm=psFRpL+q5oEckfyjdOfzmr-DOn69XCOCmbw@mail.gmail.com>
-Subject: Re: [PATCH v10 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
-To: Paolo Pisati <p.pisati@gmail.com>
-Cc: Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-fpga@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405142749.GL6312@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 2:02 PM, Paolo Pisati <p.pisati@gmail.com> wrote:
+On Thu, Apr 05, 2018 at 04:27:49PM +0200, Michal Hocko wrote:
+> On Thu 05-04-18 07:22:58, Matthew Wilcox wrote:
+> > On Wed, Apr 04, 2018 at 09:12:52PM -0700, Joel Fernandes wrote:
+> > > On Wed, Apr 4, 2018 at 7:58 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> > > > I still don't get why you want RETRY_MAYFAIL.  You know that tries
+> > > > *harder* to allocate memory than plain GFP_KERNEL does, right?  And
+> > > > that seems like the exact opposite of what you want.
 
-Hi Paolo,
+Argh.  The comment confused me.  OK, now I've read the source and
+understand that GFP_KERNEL | __GFP_RETRY_MAYFAIL tries exactly as hard
+as GFP_KERNEL *except* that it won't cause OOM itself.  But any other
+simultaneous GFP_KERNEL allocation without __GFP_RETRY_MAYFAIL will
+cause an OOM.  (And that's why we're having a conversation)
 
-Looks good, except that I have to fix up the calls to
-fpga_mgr_register/unregister since my API changes didn't go in.  I've
-fixed those up and pushed to a branch on my kernel org git repo to let
-the robots do some testing.  I'll post (v11 with those fixes) after
-that is cleared.
+That's a problem because we have places in the kernel that call
+kv[zm]alloc(very_large_size, GFP_KERNEL), and that will turn into vmalloc,
+which will do the exact same thing, only it will trigger OOM all by itself
+(assuming the largest free chunk of address space in the vmalloc area
+is larger than the amount of free memory).
 
-We're too late for 4.17, expect it for 4.18.
+I considered an alloc_page_array(), but that doesn't fit well with the
+design of the ring buffer code.  We could have:
 
-Thanks,
-Alan
+struct page *alloc_page_list_node(int nid, gfp_t gfp_mask, unsigned long nr);
 
-> This patch adds support to the FPGA manager for programming
-> MachXO2 device’s internal flash memory, via slave SPI.
->
-> Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
-Acked-by: Alan Tull <atull@kernel.org>
+and link the allocated pages together through page->lru.
+
+We could also have a GFP flag that says to only succeed if we're further
+above the existing watermark than normal.  __GFP_LOW (==ALLOC_LOW),
+if you like.  That would give us the desired behaviour of trying all of
+the reclaim methods that GFP_KERNEL would, but not being able to exhaust
+all the memory that GFP_KERNEL allocations would take.
