@@ -1,67 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751679AbeDEKq3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 06:46:29 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:41503 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751251AbeDEKp4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 06:45:56 -0400
-X-Google-Smtp-Source: AIpwx49JahAJmmcQ04o26IR6F5HbQEriXrtZZj4zqLzxblezS1Ln1x8hSkYadN5pDrVWYwR2lri2vQ==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: ebiederm@xmission.com, torvalds@linux-foundation.o,
-        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 1/3] namei: add follow_up_bind()
-Date: Thu,  5 Apr 2018 12:45:47 +0200
-Message-Id: <20180405104549.12365-2-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180405104549.12365-1-christian.brauner@ubuntu.com>
-References: <20180405104549.12365-1-christian.brauner@ubuntu.com>
+        id S1751392AbeDEKtD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 06:49:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48278 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751038AbeDEKtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 06:49:01 -0400
+From: Pankaj Gupta <pagupta@redhat.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org
+Cc: jack@suse.cz, stefanha@redhat.com, dan.j.williams@intel.com,
+        riel@surriel.com, haozhong.zhang@intel.com, nilal@redhat.com,
+        kwolf@redhat.com, pbonzini@redhat.com, ross.zwisler@intel.com,
+        david@redhat.com, xiaoguangrong.eric@gmail.com, hch@infradead.org,
+        marcel@redhat.com, mst@redhat.com, niteshnarayanlal@hotmail.com,
+        imammedo@redhat.com, pagupta@redhat.com
+Subject: [RFC 0/2] kvm "fake DAX" device flushing
+Date: Thu,  5 Apr 2018 16:18:31 +0530
+Message-Id: <20180405104834.10457-1-pagupta@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a new helper for resolving bind-mounts.
+We are sharing RFC version of 'fake DAX' flushing
+interface for feedback. This is still work in progress
+and not yet ready for merging.
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/namei.c            | 10 ++++++++++
- include/linux/namei.h |  1 +
- 2 files changed, 11 insertions(+)
+Prototype implements two major parts:
 
-diff --git a/fs/namei.c b/fs/namei.c
-index a09419379f5d..4fa56ec78f63 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1085,6 +1085,16 @@ int follow_up(struct path *path)
- }
- EXPORT_SYMBOL(follow_up);
- 
-+/*
-+ * follow_up_bind - Resolve bind-mounts to mountpoint of path's vfsmount
-+ */
-+inline void follow_up_bind(struct path *path)
-+{
-+	while (path->mnt->mnt_root == path->dentry && follow_up(path))
-+		;
-+}
-+EXPORT_SYMBOL(follow_up_bind);
-+
- /*
-  * Perform an automount
-  * - return -EISDIR to tell follow_managed() to stop and return the path we
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index a982bb7cd480..ea93127be26c 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -87,6 +87,7 @@ extern struct dentry *lookup_one_len_unlocked(const char *, struct dentry *, int
- extern int follow_down_one(struct path *);
- extern int follow_down(struct path *);
- extern int follow_up(struct path *);
-+extern void follow_up_bind(struct path *path);
- 
- extern struct dentry *lock_rename(struct dentry *, struct dentry *);
- extern void unlock_rename(struct dentry *, struct dentry *);
--- 
-2.15.1
+- Qemu virtio-pmem device
+  It exposes a persistent memory range to KVM guest which at host side is file
+  backed memory and works as persistent memory device. In addition to this it
+  provides a virtio flushing interface for KVM guest to do a Qemu side sync for
+  guest DAX persistent memory range.  
+
+- Guest virtio-pmem driver
+  Reads persistent memory range from paravirt device and registers with 'nvdimm_bus'.
+  'nvdimm/pmem' driver uses this information to allocate persistent memory range. 
+  Also, we have implemented guest side of VIRTIO flushing interface.
+  
+Changes from previous RFC:
+
+- Reuse existing 'pmem' code instead of creating an entirely new block driver.
+- Use VIRTIO driver to register memory information with nvdimm_bus and create
+  region_type accordingly. 
+- Use VIRTIO flushing interface from existing pmem driver code based on
+  registered flushign mechanism.
+
+We have done the implementation based on suggestions here [1]. Previous RFC is
+shared here [2]. Details of project idea for 'fake DAX' flushing is shared 
+here [3] & [4].
+
+[1] https://marc.info/?l=linux-mm&m=150782346802290&w=2
+[2] https://marc.info/?l=kvm&m=151630416506527&w=2
+[3] https://www.spinics.net/lists/kvm/msg149761.html
+[4] https://www.spinics.net/lists/kvm/msg153095.html
+
+Work yet to be done:
+
+- Qemu RAM address handling independent of PC-DIMM so that memory
+  operations(get_free_address) can be used for VIRTIO device type as well. 
+  (David Hildenbrand CCed has a prototype for this).
+- Qemu device flush functionality trigger with guest fsync on file.
+- Qemu live migration work when host page cache is used.
+- Multiple virtio-pmem disks support.
+- Prepare virtio spec after we get feedback on current approach.
+
+ drivers/nvdimm/region_devs.c     |    7 ++
+ drivers/virtio/Kconfig           |   12 +++
+ drivers/virtio/Makefile          |    1 
+ drivers/virtio/virtio_pmem.c     |  122 +++++++++++++++++++++++++++++++++++++++
+ include/linux/libnvdimm.h        |    2 
+ include/uapi/linux/virtio_ids.h  |    1 
+ include/uapi/linux/virtio_pmem.h |   61 +++++++++++++++++++
+ 7 files changed, 206 insertions(+)
