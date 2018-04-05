@@ -1,77 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751540AbeDENoL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:44:11 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:34145 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751275AbeDENoH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:44:07 -0400
-X-Google-Smtp-Source: AIpwx48ATevR4LjvFdvBLCXWGpzeY5qKbGW9/sXVj4Fr4m38++J7FUBAR4nI9fo8bXFEd8BywcDSj7Du/JvoqezZ66A=
+        id S1751754AbeDENo1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:44:27 -0400
+Received: from smtp16.mail.ru ([94.100.176.153]:52454 "EHLO smtp16.mail.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751593AbeDENoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 09:44:23 -0400
+Subject: Re: [PATCH v3 3/6] spi: sun6i: restrict transfer length in PIO-mode
+To: Mark Brown <broonie@kernel.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+References: <20180403154449.2443-1-ssuloev@orpaltech.com>
+ <20180403154449.2443-4-ssuloev@orpaltech.com>
+ <20180404065048.n76r3ytuznd6fqsl@flea>
+ <a6044902-8977-3ce1-d7d5-c6797341a5d0@orpaltech.com>
+ <20180405091913.ky4dnmszoobn2xry@flea>
+ <ee4adb1e-caf6-32f6-33d6-d8dd94d232cf@orpaltech.com>
+ <20180405131735.GB12349@sirena.org.uk>
+From: Sergey Suloev <ssuloev@orpaltech.com>
+Message-ID: <8159c3a5-af74-9f13-aedb-7ecc708bdff6@orpaltech.com>
+Date: Thu, 5 Apr 2018 16:44:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com> <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
- <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com> <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 5 Apr 2018 15:44:06 +0200
-Message-ID: <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        David Lechner <david@lechnology.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180405131735.GB12349@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Authentication-Results: smtp16.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
+X-7FA49CB5: 0D63561A33F958A562424A6E3C855EC53453D82D03A234027AB98F46BDEDFE59725E5C173C3A84C3A1C30C8AFC676C8BA9E697674C83CBBDB58781B77DE60D36C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
+X-Mailru-Sender: C5364AD02485212F3ACDC11E67D8491773629529CE441DBAAF7FE6EBE53B8FEB069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
+X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-05 15:09 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
-> Hi Bartosz,
->
-> On Friday 09 February 2018 10:18 PM, Michael Turquette wrote:
->> On Fri, Feb 9, 2018 at 8:22 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>> 2018-01-08 3:17 GMT+01:00 David Lechner <david@lechnology.com>:
->
->>> Hi David,
->>>
->>> I've been working on moving the genpd code from its own driver to the
->>> psc one. I couldn't get the system to boot though and problems
->>> happened very early in the boot sequence. I struggled to figure out
->>> what's happening, but eventually I noticed that psc uses
->>> CLK_OF_DECLARE() to initialize clocks. The functions registered this
->>> way are called very early in the boot sequence, way before
->>> late_initcall() in which the genpd framework is initialized. This of
->
-> late_initcall() is too late for genpd to be initialized. As you may have
-> seen with the latest set of patches, we have problems with timer
-> initialization. After converting to platform devices, PSC and PLL clocks
-> get initialized post time_init(). We are working that around using
-> fixed-clocks, which hopefully will work (I still need to test many of
-> the affected platforms).
->
-> Can you please reply with the exact issue you faced with genpd framework
-> initialization so we do have that on record.
->
+On 04/05/2018 04:17 PM, Mark Brown wrote:
+> On Thu, Apr 05, 2018 at 12:59:35PM +0300, Sergey Suloev wrote:
+>> On 04/05/2018 12:19 PM, Maxime Ripard wrote:
+>>> The point of that patch was precisely to allow to send more data than
+>>> the FIFO. You're breaking that behaviour without any justification,
+>>> and this is not ok.
+>> I am sorry, but you can't. That's a hardware limitation.
+> Are you positive about that?  Normally you can add things to hardware
+> FIFOs while they're being drained so so long as you can keep data
+> flowing in at least as fast as it's being consumed.
 
-The exact issue manifested itself in a NULL-pointer dereference panic
-when I tried moving the genpd code I had initially implemented as a
-separate platform driver to what I believe was v6 or v7 of David's
-series (before the psc driver became a platform driver, when it was
-still using CLK_OF_DECLARE()). When I had tested a simple conversion
-of that version to a platform_driver, genpd worked fine.
-
-I don't have the stack traces from these panics, but I recall some
-debugfs functions being involved and the genpd late_initcalls are
-related to debugfs. Looking at it now I don't see how exactly it could
-fail though.
-
-Best regards,
-Bartosz
+Well, normally yes, but this is not the case with the hardware that I 
+own. My a20 (BPiM1+) and a31 (BPiM2) boards behaves differently. With a 
+transfer larger than FIFO then TC interrupt never happens.
