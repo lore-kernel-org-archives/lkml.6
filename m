@@ -1,144 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752628AbeDEANG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 20:13:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56016 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752353AbeDEANE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 20:13:04 -0400
-Date: Wed, 4 Apr 2018 17:13:58 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: rcu_process_callbacks irqsoff latency caused by taking spinlock
- with irqs disabled
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180405093414.2273203e@roar.ozlabs.ibm.com>
+        id S1752652AbeDEAad convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 20:30:33 -0400
+Received: from mga03.intel.com ([134.134.136.65]:37688 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752591AbeDEAab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 20:30:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,409,1517904000";
+   d="scan'208";a="43543274"
+From: "Wang, Wei W" <wei.w.wang@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
+Subject: RE: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Topic: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Index: AQHTyyXXTsdlmy3QmUiflW8thGbyQqPu3AAAgAB7EICAAMkagIABH5Eg
+Date: Thu, 5 Apr 2018 00:30:27 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
+References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
+ <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
+ <20180403214147-mutt-send-email-mst@kernel.org> <5AC43377.2070607@intel.com>
+ <20180404155907-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180404155907-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjQzMzUyMGUtNWE2Zi00ZmMwLWI4MDItNDgwODJjYTdiOTU5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlwvQ09ZaWFCa3JheVdkNVFGNktIMjlTUzFIZHJaTHBCU0FnQk11WXM4S2U4PSJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405093414.2273203e@roar.ozlabs.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040500-0036-0000-0000-000002DC009C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008803; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000256; SDB=6.01013211; UDB=6.00516442; IPR=6.00792477;
- MB=3.00020419; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-05 00:13:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040500-0037-0000-0000-000043DF0578
-Message-Id: <20180405001358.GK3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-04_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804050000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 09:34:14AM +1000, Nicholas Piggin wrote:
-> Hi Paul,
+On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
+> On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
+> > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
+> > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
+> > > > +static int add_one_sg(struct virtqueue *vq, unsigned long pfn,
+> > > > +uint32_t len) {
+> > > > +	struct scatterlist sg;
+> > > > +	unsigned int unused;
+> > > > +
+> > > > +	sg_init_table(&sg, 1);
+> > > > +	sg_set_page(&sg, pfn_to_page(pfn), len, 0);
+> > > > +
+> > > > +	/* Detach all the used buffers from the vq */
+> > > > +	while (virtqueue_get_buf(vq, &unused))
+> > > > +		;
+> > > > +
+> > > > +	/*
+> > > > +	 * Since this is an optimization feature, losing a couple of free
+> > > > +	 * pages to report isn't important. We simply return without adding
+> > > > +	 * the page hint if the vq is full.
+> > > why not stop scanning of following pages though?
+> >
+> > Because continuing to send hints is a way to deliver the maximum
+> > possible hints to host. For example, host may have a delay in taking
+> > hints at some point, and then it resumes to take hints soon. If the
+> > driver does not stop when the vq is full, it will be able to put more
+> > hints to the vq once the vq has available entries to add.
 > 
-> Just looking at latencies, and RCU showed up as one of the maximums.
-> This is a 2 socket system with (176 CPU threads). Just doing a
-> `make -j 352` kernel build. Got a max latency of 3ms. I don't think
-> that's anything to worry about really, but I wanted to check the
-> cause.
+> What this appears to be is just lack of coordination between host and guest.
+> 
+> But meanwhile you are spending cycles walking the list uselessly.
+> Instead of trying nilly-willy, the standard thing to do is to wait for host to
+> consume an entry and proceed.
+> 
+> Coding it up might be tricky, so it's probably acceptable as is for now, but
+> please replace the justification about with a TODO entry that we should
+> synchronize with the host.
 
-Well, that 3 milliseconds would cause serious problems for some workloads...
+Thanks. I plan to add
 
-> # tracer: irqsoff
-> #
-> # irqsoff latency trace v1.1.5 on 4.16.0-01530-g43d1859f0994
-> # --------------------------------------------------------------------
-> # latency: 3055 us, #19/19, CPU#135 | (M:server VP:0, KP:0, SP:0 HP:0 #P:176)
-> #    -----------------
-> #    | task: cc1-58689 (uid:1003 nice:0 policy:0 rt_prio:0)
-> #    -----------------
-> #  => started at: rcu_process_callbacks
-> #  => ended at:   _raw_spin_unlock_irqrestore
-> #
-> #
-> #                  _------=> CPU#            
-> #                 / _-----=> irqs-off        
-> #                | / _----=> need-resched    
-> #                || / _---=> hardirq/softirq 
-> #                ||| / _--=> preempt-depth   
-> #                |||| /     delay            
-> #  cmd     pid   ||||| time  |   caller      
-> #     \   /      |||||  \    |   /         
->    <...>-58689 135d.s.    0us : rcu_process_callbacks
->    <...>-58689 135d.s.    1us : cpu_needs_another_gp <-rcu_process_callbacks
->    <...>-58689 135d.s.    2us : rcu_segcblist_future_gp_needed <-cpu_needs_another_gp
->    <...>-58689 135d.s.    3us#: _raw_spin_lock <-rcu_process_callbacks
->    <...>-58689 135d.s. 3047us : rcu_start_gp <-rcu_process_callbacks
->    <...>-58689 135d.s. 3048us : rcu_advance_cbs <-rcu_start_gp
->    <...>-58689 135d.s. 3049us : rcu_segcblist_pend_cbs <-rcu_advance_cbs
->    <...>-58689 135d.s. 3049us : rcu_segcblist_advance <-rcu_advance_cbs
->    <...>-58689 135d.s. 3050us : rcu_accelerate_cbs <-rcu_start_gp
->    <...>-58689 135d.s. 3050us : rcu_segcblist_pend_cbs <-rcu_accelerate_cbs
->    <...>-58689 135d.s. 3051us : rcu_segcblist_accelerate <-rcu_accelerate_cbs
->    <...>-58689 135d.s. 3052us : trace_rcu_future_gp.isra.0 <-rcu_accelerate_cbs
->    <...>-58689 135d.s. 3052us : trace_rcu_future_gp.isra.0 <-rcu_accelerate_cbs
->    <...>-58689 135d.s. 3053us : rcu_start_gp_advanced.isra.35 <-rcu_start_gp
->    <...>-58689 135d.s. 3053us : cpu_needs_another_gp <-rcu_start_gp_advanced.isra.35
->    <...>-58689 135d.s. 3054us : _raw_spin_unlock_irqrestore <-rcu_process_callbacks
->    <...>-58689 135d.s. 3055us : _raw_spin_unlock_irqrestore
->    <...>-58689 135d.s. 3056us : trace_hardirqs_on <-_raw_spin_unlock_irqrestore
->    <...>-58689 135d.s. 3061us : <stack trace>
-> 
-> So it's taking a contende lock with interrupts disabled:
-> 
-> static void
-> __rcu_process_callbacks(struct rcu_state *rsp)
-> {
->         unsigned long flags;
->         bool needwake;
->         struct rcu_data *rdp = raw_cpu_ptr(rsp->rda);
-> 
->         WARN_ON_ONCE(!rdp->beenonline);
-> 
->         /* Update RCU state based on any recent quiescent states. */
->         rcu_check_quiescent_state(rsp, rdp);
-> 
->         /* Does this CPU require a not-yet-started grace period? */
->         local_irq_save(flags);
->         if (cpu_needs_another_gp(rsp, rdp)) {
->                 raw_spin_lock_rcu_node(rcu_get_root(rsp)); /* irqs disabled. */
->                 needwake = rcu_start_gp(rsp);
->                 raw_spin_unlock_irqrestore_rcu_node(rcu_get_root(rsp), flags);
->                 if (needwake)
->                         rcu_gp_kthread_wake(rsp);
->         } else {
->                 local_irq_restore(flags);
->         }
-> 
-> Because irqs are disabled before taking the lock, we can't spin with
-> interrupts enabled.
-> 
-> cpu_needs_another_gp needs interrupts off to prevent races with normal
-> callback registry, but that doesn't seem to be preventing any wider
-> races in this code, because we immediately re-enable interrupts anyway
-> if no gp is needed. So an interrupt can come in right after that and
-> queue something up.
-> 
-> So then the question is whether it's safe-albeit-racy to call with
-> interrupts ensabled? Would be nice to move it to a spin_lock_irqsave.
+TODO: The current implementation could be further improved by stopping the reporting when the vq is full and continuing the reporting when host notifies that there are available entries for the driver to add.
 
-If I recall correctly, the issue is that an unsynchronized (due to
-interrupts being enabled) check in the "if" statement can cause extra
-unneeded grace periods.
 
-I am guessing that the long latency is caused by lots of CPUs suddenly
-needing a new grace period at about the same time.  If so, this is
-a bottleneck that I have been expecting for some time, and one that
-I would resolve by introducing funnel locking, sort of like SRCU and
-expedited grace periods already use.
+> 
+> 
+> >
+> > >
+> > > > +	 * We are adding one entry each time, which essentially results in no
+> > > > +	 * memory allocation, so the GFP_KERNEL flag below can be ignored.
+> > > > +	 * Host works by polling the free page vq for hints after sending the
+> > > > +	 * starting cmd id, so the driver doesn't need to kick after filling
+> > > > +	 * the vq.
+> > > > +	 * Lastly, there is always one entry reserved for the cmd id to use.
+> > > > +	 */
+> > > > +	if (vq->num_free > 1)
+> > > > +		return virtqueue_add_inbuf(vq, &sg, 1, vq, GFP_KERNEL);
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static int virtio_balloon_send_free_pages(void *opaque, unsigned long
+> pfn,
+> > > > +					   unsigned long nr_pages)
+> > > > +{
+> > > > +	struct virtio_balloon *vb = (struct virtio_balloon *)opaque;
+> > > > +	uint32_t len = nr_pages << PAGE_SHIFT;
+> > > > +
+> > > > +	/*
+> > > > +	 * If a stop id or a new cmd id was just received from host, stop
+> > > > +	 * the reporting, and return 1 to indicate an active stop.
+> > > > +	 */
+> > > > +	if (virtio32_to_cpu(vb->vdev, vb->cmd_id_use) != vb-
+> >cmd_id_received)
+> > > > +		return 1;
+> 
+> functions returning int should return 0 or -errno on failure, positive return
+> code should indicate progress.
+> 
+> If you want a boolean, use bool pls.
 
-Or am I confused about the source of the contention?
+OK. I plan to change 1  to -EBUSY to indicate the case that host actively asks the driver to stop reporting (This makes the callback return value type consistent with walk_free_mem_block). 
 
-							Thanx, Paul
+
+
+> 
+> 
+> > > > +
+> > > this access to cmd_id_use and cmd_id_received without locks bothers
+> > > me. Pls document why it's safe.
+> >
+> > OK. Probably we could add below to the above comments:
+> >
+> > cmd_id_use and cmd_id_received don't need to be accessed under locks
+> > because the reporting does not have to stop immediately before
+> > cmd_id_received is changed (i.e. when host requests to stop). That is,
+> > reporting more hints after host requests to stop isn't an issue for
+> > this optimization feature, because host will simply drop the stale
+> > hints next time when it needs a new reporting.
+> 
+> What about the other direction? Can this observe a stale value and exit
+> erroneously?
+
+I'm afraid the driver couldn't be aware if the added hints are stale or not, because host and guest actions happen asynchronously. That is, host side iothread stops taking hints as soon as the migration thread asks to stop, it doesn't wait for any ACK from the driver to stop (as we discussed before, host couldn't always assume that the driver is in a responsive state).
+
+Btw, we also don't need to worry about any memory left in the vq, since only addresses are added to the vq, there is no real memory allocations.
+
+Best,
+Wei
