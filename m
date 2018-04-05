@@ -1,171 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeDEN3x (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:29:53 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:52695 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeDEN3v (ORCPT
+        id S1751470AbeDENaS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:30:18 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:54722 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751165AbeDENaQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:29:51 -0400
-X-Google-Smtp-Source: AIpwx4/oD9eIUxXU4p6nq18odDw1yagrOlc9V30iyE9ZFjx6ZrqQU3kJsba4mwnvXs7/USQiJBHdhjjv4cDihPc4rVI=
-MIME-Version: 1.0
-X-Originating-IP: [212.51.149.109]
-In-Reply-To: <CADnq5_PdM5MhXMdqnfbQqVgbRT=nKS_1hTvSfLBkp_1sPcErWw@mail.gmail.com>
-References: <20180404223251.28449-1-eric@anholt.net> <CAKMK7uGhm_ixQN3-WWmWK-mrdWRAfPZMuD-=fBEQxbtrMkdVFg@mail.gmail.com>
- <CADnq5_PdM5MhXMdqnfbQqVgbRT=nKS_1hTvSfLBkp_1sPcErWw@mail.gmail.com>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Thu, 5 Apr 2018 15:29:44 +0200
-X-Google-Sender-Auth: xUY5ZhPuOJjWDB35IIUoa8o8oi0
-Message-ID: <CAKMK7uGF81MDaCwxw+UKUUUGCLRqVzDdDQpMsJr2BC=4b7_5gA@mail.gmail.com>
-Subject: Re: [PATCH] drm/sched: Extend the documentation.
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Eric Anholt <eric@anholt.net>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Thu, 5 Apr 2018 09:30:16 -0400
+Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
+To: Rob Clark <robdclark@gmail.com>,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
         dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
+        Deepak Singh Rawat <drawat@vmware.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180403224225.26776-1-robdclark@gmail.com>
+ <CAKMK7uEH3Qu_Lkok60bOYkik6kyvDGtrS0kcQ=dFmCLRD-+1HA@mail.gmail.com>
+ <307adb15-412a-1fe2-f116-27fe5b4a657d@shipmail.org>
+ <20180404084320.GA3881@phenom.ffwll.local>
+ <fa4074c7-5469-a69f-e4aa-bdc84e1a919a@shipmail.org>
+ <20180404095604.GD3881@phenom.ffwll.local>
+From: Thomas Hellstrom <thomas@shipmail.org>
+Message-ID: <7616bf87-bd2e-5003-af35-bc95f0e2a912@shipmail.org>
+Date: Thu, 5 Apr 2018 15:30:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180404095604.GD3881@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 5, 2018 at 3:27 PM, Alex Deucher <alexdeucher@gmail.com> wrote:
-> On Thu, Apr 5, 2018 at 2:16 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
->> On Thu, Apr 5, 2018 at 12:32 AM, Eric Anholt <eric@anholt.net> wrote:
->>> These comments answer all the questions I had for myself when
->>> implementing a driver using the GPU scheduler.
+On 04/04/2018 11:56 AM, Daniel Vetter wrote:
+> On Wed, Apr 04, 2018 at 11:10:08AM +0200, Thomas Hellstrom wrote:
+>> On 04/04/2018 10:43 AM, Daniel Vetter wrote:
+>>> On Wed, Apr 04, 2018 at 10:22:21AM +0200, Thomas Hellstrom wrote:
+>>>> Hi,
+>>>>
+>>>> On 04/04/2018 08:58 AM, Daniel Vetter wrote:
+>>>>> On Wed, Apr 4, 2018 at 12:42 AM, Rob Clark <robdclark@gmail.com> wrote:
+>>>>>> Add an atomic helper to implement dirtyfb support.  This is needed to
+>>>>>> support DSI command-mode panels with x11 userspace (ie. when we can't
+>>>>>> rely on pageflips to trigger a flush to the panel).
+>>>>>>
+>>>>>> To signal to the driver that the async atomic update needs to
+>>>>>> synchronize with fences, even though the fb didn't change, the
+>>>>>> drm_atomic_state::dirty flag is added.
+>>>>>>
+>>>>>> Signed-off-by: Rob Clark <robdclark@gmail.com>
+>>>>>> ---
+>>>>>> Background: there are a number of different folks working on getting
+>>>>>> upstream kernel working on various different phones/tablets with qcom
+>>>>>> SoC's.. many of them have command mode panels, so we kind of need a
+>>>>>> way to support the legacy dirtyfb ioctl for x11 support.
+>>>>>>
+>>>>>> I know there is work on a proprer non-legacy atomic property for
+>>>>>> userspace to communicate dirty-rect(s) to the kernel, so this can
+>>>>>> be improved from triggering a full-frame flush once that is in
+>>>>>> place.  But we kinda needa a stop-gap solution.
+>>>>>>
+>>>>>> I had considered an in-driver solution for this, but things get a
+>>>>>> bit tricky if userspace ands up combining dirtyfb ioctls with page-
+>>>>>> flips, because we need to synchronize setting various CTL.FLUSH bits
+>>>>>> with setting the CTL.START bit.  (ie. really all we need to do for
+>>>>>> cmd mode panels is bang CTL.START, but is this ends up racing with
+>>>>>> pageflips setting FLUSH bits, then bad things.)  The easiest soln
+>>>>>> is to wrap this up as an atomic commit and rely on the worker to
+>>>>>> serialize things.  Hence adding an atomic dirtyfb helper.
+>>>>>>
+>>>>>> I guess at least the helper, with some small addition to translate
+>>>>>> and pass-thru the dirty rect(s) is useful to the final atomic dirty-
+>>>>>> rect property solution.  Depending on how far off that is, a stop-
+>>>>>> gap solution could be useful.
+>>>>> Adding Noralf, who iirc already posted the full dirty helpers already somewhere.
+>>>>> -Daniel
+>>>> I've asked Deepak to RFC the core changes suggested for the full dirty blob
+>>>> on dri-devel. It builds on DisplayLink's suggestion, with a simple helper to
+>>>> get to the desired coordinates.
+>>>>
+>>>> One thing to perhaps discuss is how we would like to fit this with
+>>>> front-buffer rendering and the dirty ioctl. In the page-flip context, the
+>>>> dirty rects, like egl's swapbuffer_with_damage is a hint to restrict the
+>>>> damage region that can be fully ignored by the driver, new content is
+>>>> indicated by a new framebuffer.
+>>>>
+>>>> We could do the same for frontbuffer rendering: Either set a dirty flag like
+>>>> you do here, or provide a content_age state member. Since we clear the dirty
+>>>> flag on state copies, I guess that would be sufficient. The blob rectangles
+>>>> would then become a hint to restrict the damage region.
+>>> I'm not entirely following here - I thought for frontbuffer rendering the
+>>> dirty rects have always just been a hint, and that the driver was always
+>>> free to re-upload the entire buffer to the screen.
 >>>
->>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>>> And through a helper like Rob's proposing here (and have floated around in
+>>> different versions already) we'd essentially map a frontbuffer dirtyfb
+>>> call to a fake flip with dirty rect. Manual upload drivers already need to
+>>> upload the entire screen if they get a flip, since some userspace uses
+>>> that to flush out frontbuffer rendering (instead of calling dirtyfb).
+>>>
+>>> So from that pov the new dirty flag is kinda not necessary imo.
+>>>
+>>>> Another approach would be to have the presence of dirty rects without
+>>>> framebuffer change to indicate frontbuffer rendering.
+>>>>
+>>>> I think I like the first approach best, although it may be tempting for
+>>>> user-space apps to just set the dirty bit instead of providing the full
+>>>> damage region.
+>>> Or I'm not following you here, because I don't quite see the difference
+>>> between dirtyfb and a flip.
+>>> -Daniel
+>> OK, let me rephrase:
 >>
->> Pulling all these comments into the generated kerneldoc would be
->> awesome, maybe as a new "GPU Scheduler" chapter at the end of
->> drm-mm.rst? Would mean a bit of busywork to convert the existing raw
->> comments into proper kerneldoc. Also has the benefit that 0day will
->> complain when you forget to update the comment when editing the
->> function prototype - kerneldoc which isn't included anywhere in .rst
->> won't be checked automatically.
+>>  From the driver's point-of-view, in the atomic world, new content and the
+>> need for manual upload is indicated by a change in fb attached to the plane.
+>>
+>> With Rob's patch here, (correct me if I'm wrong) in addition new content and
+>> the need for manual upload is identified by the dirty flag, (since the fb
+>> stays the same and the driver thus never identifies a page-flip).
+> Hm, I'm not entirely sure Rob's approach is correct. Imo a pageflip
+> (atomic or not) should result in the entire buffer getting uploaded. The
+> dirty flag is kinda redundant, a flip with the same buffer works the same
+> way as a dirtyfb with the entire buffer as the dirty rectangle.
 >
-> I was actually planning to do this myself, but Nayan wanted to do this
-> a prep work for his proposed GSoC project so I was going to see how
-> far he got first.
-
-Awesome. I'm also happy to help out with any kerneldoc questions and
-best practices. Technically ofc no clue about the scheduler :-)
-
-Cheers, Daniel
-> Alex
+>> In both these situations, clip rects can provide a hint to restrict the
+>> dirty region.
+>>
+>> Now I was thinking about the preferred way for user-space to communicate
+>> front buffer rendering through the atomic ioctl:
+>>
+>> 1) Expose a dirty (or content_age property)
+>> 2) Attach a clip-rect blob property.
+>> 3) Fake a page-flip by ping-ponging two frame-buffers pointing to the same
+>> underlying buffer object.
+>>
+>> Are you saying that people are already using 3) and we should keep using
+>> that?
+> I'm saying they're using 3b), flip the same buffer wrapped in the same
+> drm_framebuffer, and expect it to work.
 >
->> -Daniel
->>
->>> ---
->>>  include/drm/gpu_scheduler.h | 46 +++++++++++++++++++++++++++++++++----
->>>  1 file changed, 42 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
->>> index dfd54fb94e10..c053a32341bf 100644
->>> --- a/include/drm/gpu_scheduler.h
->>> +++ b/include/drm/gpu_scheduler.h
->>> @@ -43,10 +43,12 @@ enum drm_sched_priority {
->>>  };
->>>
->>>  /**
->>> - * A scheduler entity is a wrapper around a job queue or a group
->>> - * of other entities. Entities take turns emitting jobs from their
->>> - * job queues to corresponding hardware ring based on scheduling
->>> - * policy.
->>> + * drm_sched_entity - A wrapper around a job queue (typically attached
->>> + * to the DRM file_priv).
->>> + *
->>> + * Entities will emit jobs in order to their corresponding hardware
->>> + * ring, and the scheduler will alternate between entities based on
->>> + * scheduling policy.
->>>  */
->>>  struct drm_sched_entity {
->>>         struct list_head                list;
->>> @@ -78,7 +80,18 @@ struct drm_sched_rq {
->>>
->>>  struct drm_sched_fence {
->>>         struct dma_fence                scheduled;
->>> +
->>> +       /* This fence is what will be signaled by the scheduler when
->>> +        * the job is completed.
->>> +        *
->>> +        * When setting up an out fence for the job, you should use
->>> +        * this, since it's available immediately upon
->>> +        * drm_sched_job_init(), and the fence returned by the driver
->>> +        * from run_job() won't be created until the dependencies have
->>> +        * resolved.
->>> +        */
->>>         struct dma_fence                finished;
->>> +
->>>         struct dma_fence_cb             cb;
->>>         struct dma_fence                *parent;
->>>         struct drm_gpu_scheduler        *sched;
->>> @@ -88,6 +101,13 @@ struct drm_sched_fence {
->>>
->>>  struct drm_sched_fence *to_drm_sched_fence(struct dma_fence *f);
->>>
->>> +/**
->>> + * drm_sched_job - A job to be run by an entity.
->>> + *
->>> + * A job is created by the driver using drm_sched_job_init(), and
->>> + * should call drm_sched_entity_push_job() once it wants the scheduler
->>> + * to schedule the job.
->>> + */
->>>  struct drm_sched_job {
->>>         struct spsc_node                queue_node;
->>>         struct drm_gpu_scheduler        *sched;
->>> @@ -112,10 +132,28 @@ static inline bool drm_sched_invalidate_job(struct drm_sched_job *s_job,
->>>   * these functions should be implemented in driver side
->>>  */
->>>  struct drm_sched_backend_ops {
->>> +       /* Called when the scheduler is considering scheduling this
->>> +        * job next, to get another struct dma_fence for this job to
->>> +        * block on.  Once it returns NULL, run_job() may be called.
->>> +        */
->>>         struct dma_fence *(*dependency)(struct drm_sched_job *sched_job,
->>>                                         struct drm_sched_entity *s_entity);
->>> +
->>> +       /* Called to execute the job once all of the dependencies have
->>> +        * been resolved.  This may be called multiple times, if
->>> +        * timedout_job() has happened and drm_sched_job_recovery()
->>> +        * decides to try it again.
->>> +        */
->>>         struct dma_fence *(*run_job)(struct drm_sched_job *sched_job);
->>> +
->>> +       /* Called when a job has taken too long to execute, to trigger
->>> +        * GPU recovery.
->>> +        */
->>>         void (*timedout_job)(struct drm_sched_job *sched_job);
->>> +
->>> +       /* Called once the job's finished fence has been signaled and
->>> +        * it's time to clean it up.
->>> +        */
->>>         void (*free_job)(struct drm_sched_job *sched_job);
->>>  };
->>>
->>> --
->>> 2.17.0
->>>
->>> _______________________________________________
->>> dri-devel mailing list
->>> dri-devel@lists.freedesktop.org
->>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>
->>
->>
->> --
->> Daniel Vetter
->> Software Engineer, Intel Corporation
->> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> The only advantage dirtyfb has is that it allows you to supply the
+> optimized upload rectangles, but at the cost of a funny api (it's working
+> on the fb, not the plane/crtc you want to upload) and lack of drm_event to
+> confirm when exactly you uploaded your stuff. But imo they should be the
+> same underlying operation.
+>
 
+FWIW, vmwgfx has always treated a dirtyfb as a pure front-buffer like 
+rendering operation without any synchronization,
+We've guaranteed that only the rects that are present are uploaded, but 
+only xf86-video-vmware has taken advantage of this to keep
+CPU- and GPU rendered content apart.
+I think we've at some point run into problems with number of cliprects, 
+(Old KDE lock screen?) and use multiple dirtyfb for the same
+update...
 
+IIRC the reason for working with the fb, is that it's much easier for 
+user-space, which doesn't have to care where planes are scanning out and 
+why.
+"Present my new content on any screen that's affected".
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+/Thomas
