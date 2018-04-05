@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751874AbeDEPRI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:17:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34480 "EHLO mx1.redhat.com"
+        id S1752011AbeDEPRR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:17:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34520 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751624AbeDEPRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:17:05 -0400
+        id S1751936AbeDEPRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:17:14 -0400
 From: Jiri Olsa <jolsa@kernel.org>
 To: Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>
@@ -18,157 +18,255 @@ Cc: lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>, Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 5/9] bpf: Add CONFIG_BUILDID_H option
-Date: Thu,  5 Apr 2018 17:16:41 +0200
-Message-Id: <20180405151645.19130-6-jolsa@kernel.org>
+Subject: [PATCH 8/9] libbpf: Add support to attach buildid to program load
+Date: Thu,  5 Apr 2018 17:16:44 +0200
+Message-Id: <20180405151645.19130-9-jolsa@kernel.org>
 In-Reply-To: <20180405151645.19130-1-jolsa@kernel.org>
 References: <20180405151645.19130-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding CONFIG_BUILDID_H option that forces build to generate
-file with GNU build id value:
+Adding support to retrieve buildid from elf's "buildid"
+section and passing it through to the load_program
+function to kernel bpf syscall.
 
-  include/linux/buildid.h
+Fixing perf use of the bpf_load_program function and
+linking in the vsprintf.o into bpftool to have the
+scnprintf function in.
 
-It contains following macros:
-
-  #define LINUX_BUILDID_DATA "\x6c\x41\x0f\xea\xa9\x5d ...
-  #define LINUX_BUILDID_SIZE 20
-
-Those macros will be used in following patches to identify
-kernel in more precise way when loading eBPF program that
-can touch kernel internal structures.
-
-There's new build output for the check and update
-of the buildid.h:
-
-    $ make
-    ...
-    LD      vmlinux.o
-    MODPOST vmlinux.o
-    KSYM    .tmp_kallsyms1.o
-    KSYM    .tmp_kallsyms2.o
-    LD      vmlinux
-    SORTEX  vmlinux
-    SYSMAP  System.map
-    CHK     include/generated/uapi/linux/buildid.h
-    UPD     include/generated/uapi/linux/buildid.h
-    ...
-
+Link: http://lkml.kernel.org/n/tip-2pafwtzbyosmf9ftuf0udn54@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- Makefile                  | 12 ++++++++++++
- init/Kconfig              |  3 +++
- scripts/Makefile          |  1 +
- scripts/extract-buildid.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 58 insertions(+)
- create mode 100644 scripts/extract-buildid.c
+ tools/bpf/bpftool/Makefile |  5 ++++-
+ tools/lib/bpf/bpf.c        |  6 ++++--
+ tools/lib/bpf/bpf.h        |  5 +++--
+ tools/lib/bpf/libbpf.c     | 46 ++++++++++++++++++++++++++++++++++++++++------
+ tools/perf/tests/bpf.c     |  9 ++++++++-
+ 5 files changed, 59 insertions(+), 12 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index a65a3919c6ad..92b04d8f08bc 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1023,6 +1023,15 @@ endif
- include/generated/autoksyms.h: FORCE
- 	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh true
+diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
+index 4e69782c4a79..9ac11ea5de1c 100644
+--- a/tools/bpf/bpftool/Makefile
++++ b/tools/bpf/bpftool/Makefile
+@@ -75,11 +75,14 @@ include $(wildcard $(OUTPUT)*.d)
+ all: $(OUTPUT)bpftool
  
-+ifdef CONFIG_BUILDID_H
-+buildid_h := include/linux/buildid.h
+ SRCS = $(wildcard *.c)
+-OBJS = $(patsubst %.c,$(OUTPUT)%.o,$(SRCS)) $(OUTPUT)disasm.o
++OBJS = $(patsubst %.c,$(OUTPUT)%.o,$(SRCS)) $(OUTPUT)disasm.o $(OUTPUT)vsprintf.o
+ 
+ $(OUTPUT)disasm.o: $(srctree)/kernel/bpf/disasm.c
+ 	$(QUIET_CC)$(COMPILE.c) -MMD -o $@ $<
+ 
++$(OUTPUT)vsprintf.o: $(srctree)/tools/lib/vsprintf.c
++	$(QUIET_CC)$(COMPILE.c) -MMD -o $@ $<
 +
-+define filechk_buildid.h
-+	buildid=`readelf -n $@ | grep 'Build ID' | sed -e 's/^.*Build ID: \(.*\)$$/\1/'`; \
-+	scripts/extract-buildid $$buildid
-+endef
-+endif
-+
- ARCH_POSTLINK := $(wildcard $(srctree)/arch/$(SRCARCH)/Makefile.postlink)
+ $(OUTPUT)bpftool: $(OBJS) $(LIBBPF)
+ 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
  
- # Final link of vmlinux with optional arch pass after final link
-@@ -1032,6 +1041,9 @@ cmd_link-vmlinux =                                                 \
+diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+index acbb3f8b3bec..8e384db5bbbd 100644
+--- a/tools/lib/bpf/bpf.c
++++ b/tools/lib/bpf/bpf.c
+@@ -168,6 +168,7 @@ int bpf_load_program_xattr(const struct bpf_load_program_attr *load_attr,
+ 	attr.log_size = 0;
+ 	attr.log_level = 0;
+ 	attr.kern_version = load_attr->kern_version;
++	attr.kern_buildid = ptr_to_u64(load_attr->buildid);
+ 	memcpy(attr.prog_name, load_attr->name,
+ 	       min(name_len, BPF_OBJ_NAME_LEN - 1));
  
- vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE
- 	+$(call if_changed,link-vmlinux)
-+ifdef CONFIG_BUILDID_H
-+	+$(call filechk2,buildid.h,$(buildid_h))
-+endif
+@@ -185,8 +186,8 @@ int bpf_load_program_xattr(const struct bpf_load_program_attr *load_attr,
  
- # Build samples along the rest of the kernel
- ifdef CONFIG_SAMPLES
-diff --git a/init/Kconfig b/init/Kconfig
-index 2852692d7c9c..572df24dda9b 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1386,6 +1386,9 @@ config KALLSYMS_BASE_RELATIVE
+ int bpf_load_program(enum bpf_prog_type type, const struct bpf_insn *insns,
+ 		     size_t insns_cnt, const char *license,
+-		     __u32 kern_version, char *log_buf,
+-		     size_t log_buf_sz)
++		     __u32 kern_version, const char *buildid,
++		     char *log_buf, size_t log_buf_sz)
+ {
+ 	struct bpf_load_program_attr load_attr;
  
- # end of the "standard kernel features (expert users)" menu
+@@ -198,6 +199,7 @@ int bpf_load_program(enum bpf_prog_type type, const struct bpf_insn *insns,
+ 	load_attr.insns_cnt = insns_cnt;
+ 	load_attr.license = license;
+ 	load_attr.kern_version = kern_version;
++	load_attr.buildid = buildid;
  
-+config BUILDID_H
-+	bool
-+
- # syscall, maps, verifier
- config BPF_SYSCALL
- 	bool "Enable bpf() system call"
-diff --git a/scripts/Makefile b/scripts/Makefile
-index 25ab143cbe14..fa34eaed6c29 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -19,6 +19,7 @@ hostprogs-$(CONFIG_ASN1)	 += asn1_compiler
- hostprogs-$(CONFIG_MODULE_SIG)	 += sign-file
- hostprogs-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += extract-cert
- hostprogs-$(CONFIG_SYSTEM_EXTRA_CERTIFICATE) += insert-sys-cert
-+hostprogs-$(CONFIG_BUILDID_H)	 += extract-buildid
+ 	return bpf_load_program_xattr(&load_attr, log_buf, log_buf_sz);
+ }
+diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+index 39f6a0d64a3b..b5ffb178ebdd 100644
+--- a/tools/lib/bpf/bpf.h
++++ b/tools/lib/bpf/bpf.h
+@@ -49,6 +49,7 @@ struct bpf_load_program_attr {
+ 	size_t insns_cnt;
+ 	const char *license;
+ 	__u32 kern_version;
++	const char *buildid;
+ };
  
- HOSTCFLAGS_sortextable.o = -I$(srctree)/tools/include
- HOSTCFLAGS_asn1_compiler.o = -I$(srctree)/include
-diff --git a/scripts/extract-buildid.c b/scripts/extract-buildid.c
-new file mode 100644
-index 000000000000..a116723da3ad
---- /dev/null
-+++ b/scripts/extract-buildid.c
-@@ -0,0 +1,42 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Formats buildid into following macros:
-+ *
-+ * #define LINUX_BUILDID_DATA "\x6c\x41\x0f\xea\xa9\x5d\x46 ...
-+ * #define LINUX_BUILDID_SIZE 20
-+ *
-+ */
-+#include <string.h>
-+#include <stdio.h>
-+
-+int main(int argc, char **argv)
+ /* Recommend log buffer size */
+@@ -57,8 +58,8 @@ int bpf_load_program_xattr(const struct bpf_load_program_attr *load_attr,
+ 			   char *log_buf, size_t log_buf_sz);
+ int bpf_load_program(enum bpf_prog_type type, const struct bpf_insn *insns,
+ 		     size_t insns_cnt, const char *license,
+-		     __u32 kern_version, char *log_buf,
+-		     size_t log_buf_sz);
++		     __u32 kern_version, const char *buildid,
++		     char *log_buf, size_t log_buf_sz);
+ int bpf_verify_program(enum bpf_prog_type type, const struct bpf_insn *insns,
+ 		       size_t insns_cnt, int strict_alignment,
+ 		       const char *license, __u32 kern_version,
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 5922443063f0..421f2c2e0ebe 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -220,6 +220,7 @@ static LIST_HEAD(bpf_objects_list);
+ 
+ struct bpf_object {
+ 	char license[64];
++	char buildid[64];
+ 	u32 kern_version;
+ 
+ 	struct bpf_program *programs;
+@@ -599,6 +600,32 @@ bpf_object__init_kversion(struct bpf_object *obj,
+ 	return 0;
+ }
+ 
++static void buildid_scnprint(char *buf, int n, char *buildid, int size)
 +{
-+	char *id;
-+	int len, i;
++	int i, ret = 0;
 +
-+	if (argc != 2) {
-+		fprintf(stderr, "usage: %s buildid\n", argv[0]);
-+		return -1;
++	for (i = 0; i < size; i++) {
++		ret += scnprintf(buf + ret, n - ret, "%x",
++				 (unsigned char) buildid[i]);
 +	}
++}
 +
-+	id  = argv[1];
-+	len = strlen(id);
++static int
++bpf_object__init_buildid(struct bpf_object *obj,
++			 void *data, size_t size)
++{
++	char buf[64];
 +
-+	printf("#ifndef _LINUX_BUILDID_H\n");
-+	printf("#define _LINUX_BUILDID_H\n");
-+	printf("\n");
++	if (size > sizeof(obj->buildid))
++		return -LIBBPF_ERRNO__FORMAT;
 +
-+	printf("#define LINUX_BUILDID_DATA \"");
++	memcpy(&obj->buildid, data, size);
 +
-+	for (i = 0; i < len; i += 2)
-+		printf("\\x%c%c", id[i], id[i + 1]);
-+
-+	printf("\"\n");
-+
-+	printf("#define LINUX_BUILDID_SIZE %u\n", len / 2);
-+
-+	printf("\n");
-+	printf("#endif /* _LINUX_BUILDID_H */\n");
++	buildid_scnprint(buf, 64, obj->buildid, size);
++	pr_debug("kernel buildid of %s is: %s\n", obj->path, buf);
 +	return 0;
 +}
++
+ static int compare_bpf_map(const void *_a, const void *_b)
+ {
+ 	const struct bpf_map *a = _a;
+@@ -817,6 +844,10 @@ static int bpf_object__elf_collect(struct bpf_object *obj)
+ 			err = bpf_object__init_kversion(obj,
+ 							data->d_buf,
+ 							data->d_size);
++		else if (strcmp(name, "buildid") == 0)
++			err = bpf_object__init_buildid(obj,
++						       data->d_buf,
++						       data->d_size);
+ 		else if (strcmp(name, "maps") == 0)
+ 			obj->efile.maps_shndx = idx;
+ 		else if (sh.sh_type == SHT_SYMTAB) {
+@@ -1166,7 +1197,7 @@ static int bpf_object__collect_reloc(struct bpf_object *obj)
+ static int
+ load_program(enum bpf_prog_type type, enum bpf_attach_type expected_attach_type,
+ 	     const char *name, struct bpf_insn *insns, int insns_cnt,
+-	     char *license, u32 kern_version, int *pfd)
++	     char *license, u32 kern_version, const char *buildid, int *pfd)
+ {
+ 	struct bpf_load_program_attr load_attr;
+ 	char *log_buf;
+@@ -1180,6 +1211,7 @@ load_program(enum bpf_prog_type type, enum bpf_attach_type expected_attach_type,
+ 	load_attr.insns_cnt = insns_cnt;
+ 	load_attr.license = license;
+ 	load_attr.kern_version = kern_version;
++	load_attr.buildid = buildid;
+ 
+ 	if (!load_attr.insns || !load_attr.insns_cnt)
+ 		return -EINVAL;
+@@ -1189,7 +1221,6 @@ load_program(enum bpf_prog_type type, enum bpf_attach_type expected_attach_type,
+ 		pr_warning("Alloc log buffer for bpf loader error, continue without log\n");
+ 
+ 	ret = bpf_load_program_xattr(&load_attr, log_buf, BPF_LOG_BUF_SIZE);
+-
+ 	if (ret >= 0) {
+ 		*pfd = ret;
+ 		ret = 0;
+@@ -1234,7 +1265,8 @@ load_program(enum bpf_prog_type type, enum bpf_attach_type expected_attach_type,
+ 
+ static int
+ bpf_program__load(struct bpf_program *prog,
+-		  char *license, u32 kern_version)
++		  char *license, u32 kern_version,
++		  const char *buildid)
+ {
+ 	int err = 0, fd, i;
+ 
+@@ -1261,7 +1293,7 @@ bpf_program__load(struct bpf_program *prog,
+ 		}
+ 		err = load_program(prog->type, prog->expected_attach_type,
+ 				   prog->name, prog->insns, prog->insns_cnt,
+-				   license, kern_version, &fd);
++				   license, kern_version, buildid, &fd);
+ 		if (!err)
+ 			prog->instances.fds[0] = fd;
+ 		goto out;
+@@ -1292,7 +1324,8 @@ bpf_program__load(struct bpf_program *prog,
+ 		err = load_program(prog->type, prog->expected_attach_type,
+ 				   prog->name, result.new_insn_ptr,
+ 				   result.new_insn_cnt,
+-				   license, kern_version, &fd);
++				   license, kern_version,
++				   buildid, &fd);
+ 
+ 		if (err) {
+ 			pr_warning("Loading the %dth instance of program '%s' failed\n",
+@@ -1324,7 +1357,8 @@ bpf_object__load_progs(struct bpf_object *obj)
+ 			continue;
+ 		err = bpf_program__load(&obj->programs[i],
+ 					obj->license,
+-					obj->kern_version);
++					obj->kern_version,
++					obj->buildid);
+ 		if (err)
+ 			return err;
+ 	}
+diff --git a/tools/perf/tests/bpf.c b/tools/perf/tests/bpf.c
+index 79b54f8ddebf..2a738b7b743a 100644
+--- a/tools/perf/tests/bpf.c
++++ b/tools/perf/tests/bpf.c
+@@ -298,6 +298,7 @@ static int check_env(void)
+ 	int err;
+ 	unsigned int kver_int;
+ 	char license[] = "GPL";
++	char buildid[64];
+ 
+ 	struct bpf_insn insns[] = {
+ 		BPF_MOV64_IMM(BPF_REG_0, 1),
+@@ -310,9 +311,15 @@ static int check_env(void)
+ 		return err;
+ 	}
+ 
++	err = fetch_kernel_buildid(buildid, sizeof(buildid));
++	if (err) {
++		pr_debug("Unable to get kernel buildid\n");
++		return err;
++	}
++
+ 	err = bpf_load_program(BPF_PROG_TYPE_KPROBE, insns,
+ 			       sizeof(insns) / sizeof(insns[0]),
+-			       license, kver_int, NULL, 0);
++			       license, kver_int, buildid, NULL, 0);
+ 	if (err < 0) {
+ 		pr_err("Missing basic BPF support, skip this test: %s\n",
+ 		       strerror(errno));
 -- 
 2.13.6
