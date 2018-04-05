@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751359AbeDEJuQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:50:16 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60434 "EHLO
+        id S1751415AbeDEJuU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:50:20 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60486 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeDEJuN (ORCPT
+        with ESMTP id S1751097AbeDEJuR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:50:13 -0400
+        Thu, 5 Apr 2018 05:50:17 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -23,11 +23,14 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 00/30] DRM Rockchip rk3399 (Kevin)
-Date: Thu,  5 Apr 2018 11:49:30 +0200
-Message-Id: <20180405095000.9756-1-enric.balletbo@collabora.com>
+Subject: [PATCH v6 02/30] drm/bridge: analogix_dp: Check AUX_EN status when doing AUX transfer
+Date: Thu,  5 Apr 2018 11:49:32 +0200
+Message-Id: <20180405095000.9756-3-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
+References: <20180405095000.9756-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -35,127 +38,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Lin Huang <hl@rock-chips.com>
 
-This patchset includes cleanups, improvements, and bug fixes for
-Rockchip DRM driver and PSR support.
+We should check AUX_EN bit to confirm the AUX CH operation is completed.
 
-This new version is the same as before removing some of the patches
-already applied and fixing the Exynos issue due patch '[v4 15/38]
-drm/bridge: analogix_dp: Ensure edp is disabled when shutting down
-the panel' reported by Marek.
+Cc: Stéphane Marchesin <marcheu@chromium.org>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: zain wang <wzz@rock-chips.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Archit Taneja <architt@codeaurora.org>
+---
 
-Regards,
-Enric
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 25 +++++++++++++----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-Changes in v6:
-- Removed the following patches as are already applied.
-  [PATCH v5 01/36] drm/bridge: analogix_dp: detect Sink PSR state after
-  configuring the PSR
-  [PATCH v5 02/36] drm/rockchip: Remove analogix psr worker
-  [PATCH v5 03/36] drm/bridge: analogix_dp: Don't change psr while
-  bridge is disabled
-- Explain in the commit message why we need to increase
-  the delay in the timeout loop in
-  [PATCH v5 07/36] drm/bridge: analogix_dp: Move enable video into
-  config_video()
-- Add Reviewed-by: Archit Taneja <architt@codeaurora.org> for the
-  drm/bridge parts
-- Add Reviewed-by: Heiko Stuebner <heiko@sntech.de> for
-  [PATCH v5 19/36] drm/rockchip: Restore psr->state when enable/disable
-  psr failed
-
-Changes in v5:
-- Removed the following patches as are already applied.
-  [PATCH v4 01/38] drm/bridge: analogix_dp: set psr activate/deactivate
-  when enable/disable bridge
-  [PATCH v4 02/38] drm/rockchip: Don't use atomic constructs for psr
-- Add Mareks tested-tag and including the missing people.
-- [PATCH v4 15/38] move analogix_dp_set_analog_power_down() before
-  phy_power_off() to fix Exynos issue.
-
-Changes in v4:
-- Rebased all on top of drm-misc-next
-- Removed the following patches as are already applied.
-  [PATCH v3 01/43] drm/rockchip: Get rid of unnecessary struct fields
-  [PATCH v3 02/43] drm/rockchip: support prime import sg table
-  [PATCH v3 03/43] drm/rockchip: Respect page offset for PRIME mmap
-  calls
-- Removed the following patches as now are part of another patchset
-  [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in
-  analogix_dp_bind
-  [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
-
-Changes in v3:
-- Addressed some of the comments from Sean on the v2
-
-Changes in v2:
-- A few patches have been replaced by newer and cleaner versions from
-  the ChromeOS kernel gerrit, especially about disallowing PSR for the
-  whole atomic commit.
-
-
-Douglas Anderson (4):
-  drm/bridge: analogix_dp: Reorder plat_data->power_off to happen sooner
-  drm/bridge: analogix_dp: Properly log AUX CH errors
-  drm/bridge: analogix_dp: Properly disable aux chan retries on rockchip
-  drm/bridge: analogix_dp: Split the platform-specific poweron in two
-    parts
-
-Kristian H. Kristensen (1):
-  drm/rockchip: Disable PSR on input events
-
-Lin Huang (6):
-  drm/bridge: analogix_dp: Move enable video into config_video()
-  drm/bridge: analogix_dp: Check AUX_EN status when doing AUX transfer
-  drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the
-    panel
-  drm/bridge: analogix_dp: Extend hpd check time to 100ms
-  drm/bridge: analogix_dp: Check dpcd write/read status
-  drm/bridge: analogix_dp: Reset aux channel if an error occurred
-
-Mark Yao (1):
-  drm/rockchip: pre dither down when output bpc is 8bit
-
-Tomasz Figa (7):
-  drm/rockchip: analogix_dp: Do not call Analogix code before bind
-  drm/rockchip: Cancel PSR enable work before changing the state
-  drm/rockchip: psr: Avoid redundant calls to .set() callback
-  drm/rockchip: psr: Sanitize semantics of allow/disallow API
-  drm/rockchip: Disable PSR from reboot notifier
-  drm/rockchip: Disallow PSR for the whole atomic commit
-  drm/rockchip: psr: Remove flush by CRTC
-
-zain wang (11):
-  drm/bridge: analogix_dp: Don't use fast link training when panel just
-    powered up
-  drm/bridge: analogix_dp: Retry bridge enable when it failed
-  drm/bridge: analogix_dp: Wait for HPD signal before configuring link
-  drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
-  drm/bridge: analogix_dp: Fix incorrect usage of enhanced mode
-  drm/bridge: analogix_dp: Fix AUX_PD bit for Rockchip
-  drm/rockchip: Restore psr->state when enable/disable psr failed
-  drm/bridge: analogix_dp: Don't use ANALOGIX_DP_PLL_CTL to control pll
-  drm/bridge: analogix_dp: Fix timeout of video streamclk config
-  drm/bridge: analogix_dp: Fix incorrect operations with register
-    ANALOGIX_DP_FUNC_EN_1
-  drm/bridge: analogix_dp: Move fast link training detect to set_bridge
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 331 +++++++++++++++------
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |   5 +-
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 236 +++++++++------
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h  |   7 +
- drivers/gpu/drm/exynos/exynos_dp.c                 |   2 +-
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  37 ++-
- drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   1 +
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c         |  61 +++-
- drivers/gpu/drm/rockchip/rockchip_drm_psr.c        | 309 +++++++++++++------
- drivers/gpu/drm/rockchip/rockchip_drm_psr.h        |   7 +-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  13 +-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.h        |   1 +
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c        |   1 +
- include/drm/bridge/analogix_dp.h                   |   3 +-
- 14 files changed, 710 insertions(+), 304 deletions(-)
-
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 9df2f3ef000c..e78c861b9e06 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -1073,9 +1073,9 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ {
+ 	u32 reg;
+ 	u8 *buffer = msg->buffer;
+-	int timeout_loop = 0;
+ 	unsigned int i;
+ 	int num_transferred = 0;
++	int ret;
+ 
+ 	/* Buffer size of AUX CH is 16 bytes */
+ 	if (WARN_ON(msg->size > 16))
+@@ -1139,17 +1139,20 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ 
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_2);
+ 
+-	/* Is AUX CH command reply received? */
++	ret = readx_poll_timeout(readl, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_2,
++				 reg, !(reg & AUX_EN), 25, 500 * 1000);
++	if (ret) {
++		dev_err(dp->dev, "AUX CH enable timeout!\n");
++		return -ETIMEDOUT;
++	}
++
+ 	/* TODO: Wait for an interrupt instead of looping? */
+-	reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
+-	while (!(reg & RPLY_RECEIV)) {
+-		timeout_loop++;
+-		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
+-			dev_err(dp->dev, "AUX CH command reply failed!\n");
+-			return -ETIMEDOUT;
+-		}
+-		reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
+-		usleep_range(10, 11);
++	/* Is AUX CH command reply received? */
++	ret = readx_poll_timeout(readl, dp->reg_base + ANALOGIX_DP_INT_STA,
++				 reg, reg & RPLY_RECEIV, 10, 20 * 1000);
++	if (ret) {
++		dev_err(dp->dev, "AUX CH cmd reply timeout!\n");
++		return -ETIMEDOUT;
+ 	}
+ 
+ 	/* Clear interrupt source for AUX CH command reply */
 -- 
 2.16.3
