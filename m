@@ -1,71 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751503AbeDEMs1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 08:48:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56926 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeDEMsY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 08:48:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D5CF602BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Joe Perches <joe@perches.com>
-Cc: Christian Lamparter <chunkeey@googlemail.com>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Jussi Kivilinna <jussi.kivilinna@iki.fi>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b43-dev@lists.infradead.org
-Subject: Re: [PATCH 06/12] wireless: Convert simple uses of a static const Ethernet broadcast address
-References: <cover.1522479607.git.joe@perches.com>
-        <79196f134a513d50968e8e208a0e56b3c0236ee3.1522479607.git.joe@perches.com>
-        <87po3desix.fsf@kamboji.qca.qualcomm.com>
-Date: Thu, 05 Apr 2018 15:48:17 +0300
-In-Reply-To: <87po3desix.fsf@kamboji.qca.qualcomm.com> (Kalle Valo's message
-        of "Thu, 05 Apr 2018 15:39:50 +0300")
-Message-ID: <87zi2hlsz2.fsf@purkki.adurom.net>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        id S1751540AbeDEMsg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 08:48:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54076 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751097AbeDEMsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 08:48:33 -0400
+Date: Thu, 5 Apr 2018 14:48:30 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] mm: consider non-anonymous thp as unmovable page
+Message-ID: <20180405124830.GJ6312@dhcp22.suse.cz>
+References: <1522730788-24530-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <20180403075928.GC5501@dhcp22.suse.cz>
+ <20180403082405.GA23809@hori1.linux.bs1.fc.nec.co.jp>
+ <20180403083451.GG5501@dhcp22.suse.cz>
+ <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
+ <20180405085927.GC6312@dhcp22.suse.cz>
+ <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kalle Valo <kvalo@codeaurora.org> writes:
+On Thu 05-04-18 15:28:38, Kirill A. Shutemov wrote:
+> On Thu, Apr 05, 2018 at 10:59:27AM +0200, Michal Hocko wrote:
+> > On Tue 03-04-18 13:54:11, Kirill A. Shutemov wrote:
+> > > On Tue, Apr 03, 2018 at 10:34:51AM +0200, Michal Hocko wrote:
+> > > > On Tue 03-04-18 08:24:06, Naoya Horiguchi wrote:
+> > > > > On Tue, Apr 03, 2018 at 09:59:28AM +0200, Michal Hocko wrote:
+> > > > > > On Tue 03-04-18 13:46:28, Naoya Horiguchi wrote:
+> > > > > > > My testing for the latest kernel supporting thp migration found out an
+> > > > > > > infinite loop in offlining the memory block that is filled with shmem
+> > > > > > > thps.  We can get out of the loop with a signal, but kernel should
+> > > > > > > return with failure in this case.
+> > > > > > >
+> > > > > > > What happens in the loop is that scan_movable_pages() repeats returning
+> > > > > > > the same pfn without any progress. That's because page migration always
+> > > > > > > fails for shmem thps.
+> > > > > >
+> > > > > > Why does it fail? Shmem pages should be movable without any issues.
+> > > > > 
+> > > > > .. because try_to_unmap_one() explicitly skips unmapping for migration.
+> > > > > 
+> > > > >   #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> > > > >                   /* PMD-mapped THP migration entry */
+> > > > >                   if (!pvmw.pte && (flags & TTU_MIGRATION)) {
+> > > > >                           VM_BUG_ON_PAGE(PageHuge(page) || !PageTransCompound(page), page);
+> > > > >   
+> > > > >                           if (!PageAnon(page))
+> > > > >                                   continue;
+> > > > >   
+> > > > >                           set_pmd_migration_entry(&pvmw, page);
+> > > > >                           continue;
+> > > > >                   }
+> > > > >   #endif
+> > > > > 
+> > > > > When I implemented this code, I felt hard to work on both of anon thp
+> > > > > and shmem thp at one time, so I separated the proposal into smaller steps.
+> > > > > Shmem uses pagecache so we need some non-trivial effort (including testing)
+> > > > > to extend thp migration for shmem. But I think it's a reasonable next step.
+> > > > 
+> > > > OK, I see. I have forgot about this part. Please be explicit about that
+> > > > in the changelog. Also the proper fix is to not use movable zone for
+> > > > shmem page THP rather than hack around it in the hotplug specific code
+> > > > IMHO.
+> > > 
+> > > No. We should just split the page before running
+> > > try_to_unmap(TTU_MIGRATION) on the page.
+> > 
+> > Something like this or it is completely broken. I completely forgot the
+> > whole page_vma_mapped_walk business.
+> 
+> No, this wouldn't work. We need to split page, not pmd to make migration
+> work.
 
-> Joe Perches <joe@perches.com> writes:
->
->> Use the new ether_broadcast_addr global instead to save some object code.
->>
->> Signed-off-by: Joe Perches <joe@perches.com>
->> ---
->>  drivers/net/wireless/admtek/adm8211.c           | 3 +--
->>  drivers/net/wireless/ath/carl9170/mac.c         | 4 +---
->>  drivers/net/wireless/broadcom/b43/main.c        | 3 +--
->>  drivers/net/wireless/marvell/mwifiex/cfg80211.c | 3 +--
->>  drivers/net/wireless/realtek/rtlwifi/core.c     | 5 ++---
->>  drivers/net/wireless/rndis_wlan.c               | 6 +-----
->>  drivers/net/wireless/ti/wl1251/main.c           | 5 +----
->>  drivers/net/wireless/ti/wlcore/main.c           | 5 +----
->>  8 files changed, 9 insertions(+), 25 deletions(-)
->
-> It would be really helpful if you could CLEARLY document in the patches
-> (or in the cover letter but then you need to cc all parties) to what
-> tree the patches are meant for. Otherwise I, and other maintainers as
-> well, need to waste time trying to guess what's your plan.
-
-Forgot to mention that for me the best approach is to have the tree name
-in subject, just like Dave and Linus both recommend:
-
-[PATCH 06/12 wireless-drivers-next] wireless: Convert simple uses of a static const Ethernet broadcast address
-
-This way I can immeaditely see from patchwork to which tree the patch
-should go which helps tremendously. And if the tree name is too long you
-can always shorten it to w-d and w-d-next.
+RIght, I confused the two. What is the proper layer to fix that then?
+rmap_walk_file?
 
 -- 
-Kalle Valo
+Michal Hocko
+SUSE Labs
