@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751722AbeDENJs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:09:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38394 "EHLO
+        id S1751451AbeDENJW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:09:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38222 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751285AbeDENJX (ORCPT
+        with ESMTP id S1751285AbeDENJT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:09:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 19FBB60F61
+        Thu, 5 Apr 2018 09:09:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E4798602BA
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
@@ -15,63 +15,96 @@ To: arnd@arndb.de, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/5] io: change outX() to have their own IO barrier overrides
-Date: Thu,  5 Apr 2018 09:09:12 -0400
-Message-Id: <1522933753-19589-4-git-send-email-okaya@codeaurora.org>
+Subject: [PATCH v4 1/5] io: define several IO & PIO barrier types for the asm-generic version
+Date: Thu,  5 Apr 2018 09:09:09 -0400
+Message-Id: <1522933753-19589-1-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522933753-19589-1-git-send-email-okaya@codeaurora.org>
-References: <1522933753-19589-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Open code writeX() inside outX() so that outX() variants have their own
-overrideable Port IO barrier combinations as __io_pbw() and __io_paw() for
-actions to be taken before port IO and after port IO write.
+Getting ready to harden readX()/writeX() and inX()/outX() semantics for the
+generic implementation.
+
+Defining two set of macros as __io_br() and __io_ar() to indicate actions
+to be taken before and after MMIO read.
+
+Defining two set of macros as __io_bw() and __io_aw() to indicate actions
+to be taken before and after MMIO write.
+
+Defining two set of macros as __io_pbw() and __io_paw() to indicate actions
+to be taken before and after Port IO write.
+
+Defining two set of macros as __io_pbr() and __io_par() to indicate actions
+to be taken before and after Port IO read.
+
+If rmb() is available for the architecture, prefer rmb() as the default
+implementation of __io_ar()/__io_par().
+
+If wmb() is available for the architecture, prefer wmb() as the default
+implementation of __io_bw()/__io_pbw().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- include/asm-generic/io.h | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ include/asm-generic/io.h | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
 diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-index 964725e..53226d9 100644
+index b4531e3..570433b 100644
 --- a/include/asm-generic/io.h
 +++ b/include/asm-generic/io.h
-@@ -457,7 +457,9 @@ static inline u32 inl(unsigned long addr)
- #define outb outb
- static inline void outb(u8 value, unsigned long addr)
- {
--	writeb(value, PCI_IOBASE + addr);
-+	__io_pbw();
-+	__raw_writeb(value, PCI_IOBASE + addr);
-+	__io_paw();
- }
+@@ -25,6 +25,50 @@
+ #define mmiowb() do {} while (0)
  #endif
  
-@@ -465,7 +467,9 @@ static inline void outb(u8 value, unsigned long addr)
- #define outw outw
- static inline void outw(u16 value, unsigned long addr)
- {
--	writew(value, PCI_IOBASE + addr);
-+	__io_pbw();
-+	__raw_writew(cpu_to_le16(value), PCI_IOBASE + addr);
-+	__io_paw();
- }
- #endif
- 
-@@ -473,7 +477,9 @@ static inline void outw(u16 value, unsigned long addr)
- #define outl outl
- static inline void outl(u32 value, unsigned long addr)
- {
--	writel(value, PCI_IOBASE + addr);
-+	__io_pbw();
-+	__raw_writel(cpu_to_le32(value), PCI_IOBASE + addr);
-+	__io_paw();
- }
- #endif
- 
++#ifndef __io_br
++#define __io_br()      barrier()
++#endif
++
++/* prevent prefetching of coherent DMA data ahead of a dma-complete */
++#ifndef __io_ar
++#ifdef rmb
++#define __io_ar()      rmb()
++#else
++#define __io_ar()      barrier()
++#endif
++#endif
++
++/* flush writes to coherent DMA data before possibly triggering a DMA read */
++#ifndef __io_bw
++#ifdef wmb
++#define __io_bw()      wmb()
++#else
++#define __io_bw()      barrier()
++#endif
++#endif
++
++/* serialize device access against a spin_unlock, usually handled there. */
++#ifndef __io_aw
++#define __io_aw()      barrier()
++#endif
++
++#ifndef __io_pbw
++#define __io_pbw()     __io_bw()
++#endif
++
++#ifndef __io_paw
++#define __io_paw()     __io_aw()
++#endif
++
++#ifndef __io_pbr
++#define __io_pbr()     __io_br()
++#endif
++
++#ifndef __io_par
++#define __io_par()     __io_ar()
++#endif
++
++
+ /*
+  * __raw_{read,write}{b,w,l,q}() access memory in native endianness.
+  *
 -- 
 2.7.4
