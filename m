@@ -1,71 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752843AbeDEBqG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 21:46:06 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.77]:31084 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752642AbeDEBqF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 21:46:05 -0400
-Date: Wed, 4 Apr 2018 20:25:40 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Yan-Hsuan Chuang <yhchuang@realtek.com>,
-        Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [rtlwifi-btcoex] Suspicious code in halbtc8821a1ant driver
-Message-ID: <20180405012540.GA24241@embeddedor.com>
+        id S1752857AbeDEBtC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 21:49:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60964 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752642AbeDEBs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 21:48:57 -0400
+Subject: Re: [PATCH?] reiserfs: prevent panic: don't allow %-char in journal
+ dev. name
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        syzkaller-bugs@googlegroups.com,
+        syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com
+References: <d9b518a5-287a-72b3-05f1-ea89e25563ba@infradead.org>
+ <20180404184517.9f2b91b856a56f71464f5f7f@linux-foundation.org>
+From: Jeff Mahoney <jeffm@suse.com>
+Message-ID: <5e9ea36a-6a6a-921c-81b3-bc623a9e125a@suse.com>
+Date: Wed, 4 Apr 2018 21:48:53 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1f3teo-001Lpk-A4
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.145.54.187]:35834
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180404184517.9f2b91b856a56f71464f5f7f@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On 4/4/18 9:45 PM, Andrew Morton wrote:
+> On Wed, 4 Apr 2018 18:25:16 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>>
+>> If the reiserfs mount option's journal name contains a '%' character,
+>> it can lead to a WARN_ONCE() in lib/vsprintf.c::format_decode(),
+>> saying: "Please remove unsupported %/ in format string."
+>> That's OK until panic_on_warn is set, at which point it's dead, Jim.
+>>
+>> To placate this situation, check the journal name string for a '%'
+>> character and return an error if one is found. Also print a warning
+>> (one that won't panic the kernel) about the invalid journal name (e.g.):
+>>
+>>   reiserfs: journal device name is invalid: %/file0
+>>
+>> (In this example, the caller app specified the journal device name as
+>> "%/file0".)
+>>
+> 
+> Well, that is a valid filename and we should support it...
+> 
+> Isn't the bug in journal_init_dev()?
 
-While doing some static analysis I came across the following piece of code at drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a1ant.c:1581:
+Yep.  That's exactly it.
 
-1581 static void btc8821a1ant_act_bt_sco_hid_only_busy(struct btc_coexist *btcoexist,
-1582                                                   u8 wifi_status)
-1583 {
-1584         /* tdma and coex table */
-1585         btc8821a1ant_ps_tdma(btcoexist, NORMAL_EXEC, true, 5);
-1586 
-1587         if (BT_8821A_1ANT_WIFI_STATUS_NON_CONNECTED_ASSO_AUTH_SCAN ==
-1588             wifi_status)
-1589                 btc8821a1ant_coex_table_with_type(btcoexist, NORMAL_EXEC, 1);
-1590         else
-1591                 btc8821a1ant_coex_table_with_type(btcoexist, NORMAL_EXEC, 1);
-1592 }
+Acked-by: Jeff Mahoney <jeffm@suse.com>
 
-The issue here is that the code for both branches of the if-else statement is identical.
+Thanks,
 
-The if-else was introduced a year ago in this commit c6821613e653
+-Jeff
 
-I wonder if an argument should be changed in any of the calls to btc8821a1ant_coex_table_with_type?
+> --- a/fs/reiserfs/journal.c~a
+> +++ a/fs/reiserfs/journal.c
+> @@ -2643,7 +2643,7 @@ static int journal_init_dev(struct super
+>  	if (IS_ERR(journal->j_dev_bd)) {
+>  		result = PTR_ERR(journal->j_dev_bd);
+>  		journal->j_dev_bd = NULL;
+> -		reiserfs_warning(super,
+> +		reiserfs_warning(super, "sh-457",
+>  				 "journal_init_dev: Cannot open '%s': %i",
+>  				 jdev_name, result);
+>  		return result;
+> _
+> 
+> 
 
-What do you think?
 
-Thanks
---
-Gustavo
+-- 
+Jeff Mahoney
+SUSE Labs
