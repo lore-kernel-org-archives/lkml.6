@@ -1,173 +1,172 @@
-Return-Path: <3ThDBWgkbAE89FG1r22v8r66zu.x55x2vB9v8t54Av4A.t53@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522602062; cv=none;
+Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
+X-Google-Smtp-Source: AIpwx49xCGCJ/vefTfvST2oMOaGA4FbhEF3xKTHCZUZ/69qNIuGWYNrQAXCq+WORLmeH/HL6dj8N
+ARC-Seal: i=1; a=rsa-sha256; t=1522924310; cv=none;
         d=google.com; s=arc-20160816;
-        b=auAqW7PnydJiorBACCGn2dkzETHRSKIeoRoPEjlI9JijYV0F5iKNNzUHjCo5vRC/O9
-         wDJJxte1LzEYTpsl7paUZwE0SVS8nk9KxURMhSZCDzFdX3pjwba8ZO+VZJ5Qt/AV7jzp
-         D1cCnVuULSYcs2GffU75qgofWcyS5/QmAlWMhu1vQxtAALLZrctasCciBNZwnrRfa6N9
-         pYAhEuQivdk6Yenv2npzLRP0FV+chfwybQdohIwdtOerguxYWH/huRUh4X4g2UUFEmRv
-         BsF5iWL09m4F3N4ixECAVU0zrkU29GOeSYMODoFNaexzXMbDfatjdxRHj8yqbrzNT3ML
-         Bv4A==
+        b=p3p7389u69gRJyK6qd78JjyM17DROyR3cOmNJwqezhyGeU69dX5peEDf1gGEVPy5iu
+         hB6xN5GiX8VYqFkHhW0yJXWXKGuLAQe1LpH2LbxYLS4ZZttfUSFRHY9Nsf6ojcHQe0Uo
+         JULhDIVaJM2H8e05i1W5EjprNATYgcPCCz1TPf/jcTFAfGJaoti44VruVOJiNZLy67FC
+         3ZSDTFL/hnjp4LQe8vY93Rr/U7VCd9iEB6epdzSwnUmXEy722dCCPIzrWB2EoS6AVt4Q
+         MtJEGKnVwrt+pncrb7cki0/hZ7PXRgULmCxyohcZhZhPJKSpXPIF2DTWvEfdcBVHOiCe
+         tQMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:from:subject:message-id:date:mime-version
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:cc:from:references:to:subject
          :arc-authentication-results;
-        bh=jLfApwOHGgdRRpPHN7zg+OTw0noLBz2mV/Cgf0Q0RtU=;
-        b=YPIG7HV6kXxIgN/Hy1JL9bdRbkKFbXPMI8hIuurxWgnFazl2YIIXKkwOXzamoTjPMK
-         uCPMy8fxljaUbmPyw1bHhmIe7OyLgBozbMxFdNAXUJWi6dWcxOwrrZ+Ug48a3VueXf5Q
-         f5wMobM+EqDJmEpMe4P4CgHsNajIZkkOZtyl3FZBQlllxhMtubiir7Ke4yEwCMOvTrFw
-         FFKUGQ1OOayARj1QOfFKy4l4Xk1RsMZT3qrGcjvKkVlLL2DvHx6/GHqAdkfaQrZqp2Dg
-         hqjZNqT4a2ChWLLUeE2sBKbrbT3cLmbiZUBO1ufyCEarJpn5evrUu27N8MTTE2CYLi3r
-         mUgg==
+        bh=VBZgm9Cfd/Jxy4wJ6aJz6fRZiNI/gTYK7NcdSqisIdc=;
+        b=czdQb0zj1vVPkAYJSi3+CPkpdAvYvGuk2/jXxjiUh0Ny8fnYHuCdcK8BGrqpJRiNbR
+         HwO9nHusbbhxLW71wCTaaK318Fy/CaExPZrieVDgyT2S0OtingrNOhKFNYlGZnuyHwyV
+         XAroxo1b3b1OrgniNW03n1w1HNnBpxdH2dhFL13VVp01+0tBfK21+tUWWLKnnnKko2xn
+         jAfqwr2chLpDly+jAru5NtabeWyVxrwgAIDEd76d5a4cOdhzwCY8qGOabnqWQjqywswT
+         XQAc/KghPNUUMcmOtyGMk4duTr74Og9tJpoH8LzuSIgFhmCWjAKzzl0/9TRzxnP+gR+0
+         WCOw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of 3thdbwgkbae89fg1r22v8r66zu.x55x2vb9v8t54av4a.t53@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3ThDBWgkbAE89FG1r22v8r66zu.x55x2vB9v8t54Av4A.t53@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of 3thdbwgkbae89fg1r22v8r66zu.x55x2vb9v8t54av4a.t53@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3ThDBWgkbAE89FG1r22v8r66zu.x55x2vB9v8t54Av4A.t53@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-X-Google-Smtp-Source: AIpwx49QWQn6AFjNMERB+bQu3phR76L+CJ4uKYlPe6TLHy1ZqdgxUaqbQ3F8Ur3GlGVPVhwS93zkVF/MguGvX39pJjD0bNZOgXkz
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
+Subject: Re: KASAN: user-memory-access Write in n_tty_set_termios
+To: gregkh@linuxfoundation.org, jslaby@suse.com
+References: <001a113ed31a122ced0568cc6be1@google.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: syzbot <syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <db45a090-593d-23d2-e6b2-ede5b308f02f@I-love.SAKURA.ne.jp>
+Date: Thu, 5 Apr 2018 19:31:34 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Sun, 01 Apr 2018 10:01:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113ed31a122ced0568cc6be1@google.com>
-Subject: KASAN: user-memory-access Write in n_tty_set_termios
-From: syzbot <syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, jslaby@suse.com, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <001a113ed31a122ced0568cc6be1@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596563981043488445?=
-X-GMAIL-MSGID: =?utf-8?q?1596563981043488445?=
+X-GMAIL-MSGID: =?utf-8?q?1596901881682269226?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello,
+Hello.
 
-syzbot hit the following crash on upstream commit
-10b84daddbec72c6b440216a69de9a9605127f7a (Sat Mar 31 17:59:00 2018 +0000)
-Merge branch 'perf-urgent-for-linus' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=3aa9784721dfb90e984d
+I manually simplified the reproducer. Since the bug is timing dependent,
+this reproducer might fail to reproducer the bug. Anyway, I guess that
+there is a race condition between
 
-So far this crash happened 2 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5259401455730688
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5604984590696448
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6343571460325376
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
-compiler: gcc (GCC) 7.1.1 20170620
+	vfree(ldata);
+	tty->disc_data = NULL;
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+at n_tty_close() by something (ioctl(TIOCVHANGUP) ?) and
 
-==================================================================
-BUG: KASAN: user-memory-access in memset include/linux/string.h:330 [inline]
-BUG: KASAN: user-memory-access in bitmap_zero include/linux/bitmap.h:208  
-[inline]
-BUG: KASAN: user-memory-access in n_tty_set_termios+0xfc/0xcf0  
-drivers/tty/n_tty.c:1766
-Write of size 512 at addr 0000000000001060 by task syzkaller311122/4421
+	struct n_tty_data *ldata = tty->disc_data;
 
-CPU: 0 PID: 4421 Comm: syzkaller311122 Not tainted 4.16.0-rc7+ #9
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  kasan_report_error mm/kasan/report.c:352 [inline]
-  kasan_report+0x140/0x360 mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
-  memset+0x23/0x40 mm/kasan/kasan.c:285
-  memset include/linux/string.h:330 [inline]
-  bitmap_zero include/linux/bitmap.h:208 [inline]
-  n_tty_set_termios+0xfc/0xcf0 drivers/tty/n_tty.c:1766
-  tty_set_termios+0x750/0xa60 drivers/tty/tty_ioctl.c:341
-  set_termios+0x392/0x6d0 drivers/tty/tty_ioctl.c:414
-  tty_mode_ioctl+0x9fc/0xb30 drivers/tty/tty_ioctl.c:749
-  n_tty_ioctl_helper+0x40/0x360 drivers/tty/tty_ioctl.c:940
-  n_tty_ioctl+0x14d/0x2d0 drivers/tty/n_tty.c:2441
-  tty_ioctl+0x336/0x1610 drivers/tty/tty_io.c:2655
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-  SYSC_ioctl fs/ioctl.c:701 [inline]
-  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x445bf9
-RSP: 002b:00007fdf68f52d18 EFLAGS: 00000297 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445bf9
-RDX: 0000000020000040 RSI: 0000000000005402 RDI: 0000000000000021
-RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000297 R12: 6d74702f7665642f
-R13: 00007ffdda32610f R14: 00007fdf68f539c0 R15: 0000000000000007
-==================================================================
-Kernel panic - not syncing: panic_on_warn set ...
+	if (!old || (old->c_lflag ^ tty->termios.c_lflag) & (ICANON | EXTPROC)) {
+		bitmap_zero(ldata->read_flags, N_TTY_BUF_SIZE);
 
-CPU: 0 PID: 4421 Comm: syzkaller311122 Tainted: G    B             
-4.16.0-rc7+ #9
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  panic+0x1e4/0x41c kernel/panic.c:183
-  kasan_end_report+0x50/0x50 mm/kasan/report.c:180
-  kasan_report_error mm/kasan/report.c:359 [inline]
-  kasan_report+0x149/0x360 mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
-  memset+0x23/0x40 mm/kasan/kasan.c:285
-  memset include/linux/string.h:330 [inline]
-  bitmap_zero include/linux/bitmap.h:208 [inline]
-  n_tty_set_termios+0xfc/0xcf0 drivers/tty/n_tty.c:1766
-  tty_set_termios+0x750/0xa60 drivers/tty/tty_ioctl.c:341
-  set_termios+0x392/0x6d0 drivers/tty/tty_ioctl.c:414
-  tty_mode_ioctl+0x9fc/0xb30 drivers/tty/tty_ioctl.c:749
-  n_tty_ioctl_helper+0x40/0x360 drivers/tty/tty_ioctl.c:940
-  n_tty_ioctl+0x14d/0x2d0 drivers/tty/n_tty.c:2441
-  tty_ioctl+0x336/0x1610 drivers/tty/tty_io.c:2655
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-  SYSC_ioctl fs/ioctl.c:701 [inline]
-  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x445bf9
-RSP: 002b:00007fdf68f52d18 EFLAGS: 00000297 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445bf9
-RDX: 0000000020000040 RSI: 0000000000005402 RDI: 0000000000000021
-RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000297 R12: 6d74702f7665642f
-R13: 00007ffdda32610f R14: 00007fdf68f539c0 R15: 0000000000000007
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+at n_tty_set_termios() by ioctl(TCSETS), for the report says that ldata == NULL
+("Write of size 512 at addr 0000000000001060").
 
+----------------------------------------
+#include <fcntl.h>
+#include <linux/futex.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+#include <termios.h>
+#define TIOCGPTPEER     _IO('T', 0x41) 
 
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+static const int zero = 0;
+static int master_fd = EOF;
+static int slave_fd = EOF;
+static void execute_call(int call)
+{
+	struct termios term;
+	char buf[128];
+	int ptyno = 0;
+	switch (call) {
+	case 0:
+		master_fd = open("/dev/ptmx", O_RDONLY);
+		ioctl(master_fd, TIOCSPTLCK, &zero);
+		if (ioctl(master_fd, TIOCGPTN, &ptyno))
+			break;
+		sprintf(buf, "/dev/pts/%d", ptyno);
+		slave_fd = open(buf, O_RDONLY, 0);
+		usleep(5 * 1000);
+		ioctl(slave_fd, TIOCVHANGUP, 0);
+		break;
+	case 5:
+		memset(&term, 0, sizeof(term));
+		ioctl(master_fd, TCSETS, &term);
+		break;
+	case 6:
+		ioctl(master_fd, TIOCGPTPEER, 0);
+		break;
+	}
+}
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+struct thread_t {
+	int created, running, call;
+	pthread_t th;
+};
+
+static struct thread_t threads[16];
+static int running;
+static int collide;
+
+static void* thr(void* arg)
+{
+	struct thread_t* th = (struct thread_t*)arg;
+	for (;;) {
+		while (!__atomic_load_n(&th->running, __ATOMIC_ACQUIRE))
+			syscall(SYS_futex, &th->running, FUTEX_WAIT, 0, 0);
+		execute_call(th->call);
+		__atomic_fetch_sub(&running, 1, __ATOMIC_RELAXED);
+		__atomic_store_n(&th->running, 0, __ATOMIC_RELEASE);
+		syscall(SYS_futex, &th->running, FUTEX_WAKE);
+	}
+	return 0;
+}
+
+static void execute(int num_calls)
+{
+	int call, thread;
+	running = 0;
+	for (call = 0; call < num_calls; call++) {
+		for (thread = 0; thread < sizeof(threads) / sizeof(threads[0]); thread++) {
+			struct thread_t* th = &threads[thread];
+			if (!th->created) {
+				th->created = 1;
+				pthread_attr_t attr;
+				pthread_attr_init(&attr);
+				pthread_attr_setstacksize(&attr, 128 << 10);
+				pthread_create(&th->th, &attr, thr, th);
+			}
+			if (!__atomic_load_n(&th->running, __ATOMIC_ACQUIRE)) {
+				th->call = call;
+				__atomic_fetch_add(&running, 1, __ATOMIC_RELAXED);
+				__atomic_store_n(&th->running, 1, __ATOMIC_RELEASE);
+				syscall(SYS_futex, &th->running, FUTEX_WAKE);
+				if (collide && call % 2)
+					break;
+				struct timespec ts;
+				ts.tv_sec = 0;
+				ts.tv_nsec = 20 * 1000 * 1000;
+				syscall(SYS_futex, &th->running, FUTEX_WAIT, 1, &ts);
+				if (running)
+					usleep((call == num_calls - 1) ? 10000 : 1000);
+				break;
+			}
+		}
+	}
+}
+
+int main(int argc, char *argv[])
+{
+	while (1) {
+		execute(7);
+		collide = 1;
+		execute(7);
+	}
+	return 0;
+}
+----------------------------------------
