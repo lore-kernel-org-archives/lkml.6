@@ -1,59 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751368AbeDEOXC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:23:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56876 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDEOXB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:23:01 -0400
-Date: Thu, 5 Apr 2018 07:22:58 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Joel Fernandes <joelaf@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Michal Hocko <mhocko@kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180405142258.GA28128@bombadil.infradead.org>
-References: <20180403123514.GX5501@dhcp22.suse.cz>
- <20180403093245.43e7e77c@gandalf.local.home>
- <20180403135607.GC5501@dhcp22.suse.cz>
- <CAGWkznH-yfAu=fMo1YWU9zo-DomHY8YP=rw447rUTgzvVH4RpQ@mail.gmail.com>
- <20180404062340.GD6312@dhcp22.suse.cz>
- <20180404101149.08f6f881@gandalf.local.home>
- <20180404142329.GI6312@dhcp22.suse.cz>
- <20180404114730.65118279@gandalf.local.home>
- <20180405025841.GA9301@bombadil.infradead.org>
- <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
+        id S1751417AbeDEOXb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:23:31 -0400
+Received: from fieldses.org ([173.255.197.46]:45864 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751179AbeDEOXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 10:23:30 -0400
+Date: Thu, 5 Apr 2018 10:23:29 -0400
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] nfsd changes for 4.17
+Message-ID: <20180405142329.GR20297@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From: bfields@fieldses.org (J. Bruce Fields)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 09:12:52PM -0700, Joel Fernandes wrote:
-> On Wed, Apr 4, 2018 at 7:58 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> > On Wed, Apr 04, 2018 at 11:47:30AM -0400, Steven Rostedt wrote:
-> >> I originally was going to remove the RETRY_MAYFAIL, but adding this
-> >> check (at the end of the loop though) appears to have OOM consistently
-> >> kill this task.
-> >>
-> >> I still like to keep RETRY_MAYFAIL, because it wont trigger OOM if
-> >> nothing comes in and tries to do an allocation, but instead will fail
-> >> nicely with -ENOMEM.
-> >
-> > I still don't get why you want RETRY_MAYFAIL.  You know that tries
-> > *harder* to allocate memory than plain GFP_KERNEL does, right?  And
-> > that seems like the exact opposite of what you want.
-> 
-> No. We do want it to try harder but not if its already setup for failure.
+Please pull nfsd changes for 4.17 from:
 
-I understand you don't want GFP_NORETRY.  But why is it more important for
-this allocation to succeed than other normal GFP_KERNEL allocations?
+  git://linux-nfs.org/~bfields/linux.git tags/nfsd-4.17
+
+Chuck Lever did a bunch of work on nfsd tracepoints, on RDMA, and on
+server xdr decoding (with an eye towards eliminating a data copy in the
+RDMA case).
+
+I did some refactoring of the delegation code in preparation for
+eliminating some delegation self-conflicts and implementing write
+delegations.
+
+--b.
+
+Chuck Lever (21):
+      svcrdma: Use pr_err to report Receive errors
+      svcrdma: Consult max_qp_init_rd_atom when accepting connections
+      svcrdma: Clean up rdma_build_arg_xdr
+      sunrpc: Remove unneeded pointer dereference
+      svc: Simplify ->xpo_secure_port
+      sunrpc: Update show_svc_xprt_flags() to include recently added flags
+      sunrpc: Move trace_svc_xprt_dequeue()
+      sunrpc: Simplify do_enqueue tracing
+      sunrpc: Simplify trace_svc_recv
+      sunrpc: Save remote presentation address in svc_xprt for trace events
+      sunrpc: Re-purpose trace_svc_process
+      sunrpc: Report per-RPC execution stats
+      svc: Report xprt dequeue latency
+      nfsd: Fix NFSD trace points
+      nfsd: Record request byte count, not count of vectors
+      nfsd: Add "nfsd_" to trace point names
+      nfsd: Add I/O trace points in the NFSv4 write path
+      nfsd: Add I/O trace points in the NFSv4 read proc
+      nfsd: Trace NFSv4 COMPOUND execution
+      NFSD: Clean up legacy NFS WRITE argument XDR decoders
+      NFSD: Clean up legacy NFS SYMLINK argument XDR decoders
+
+Colin Ian King (1):
+      lockd: make nlm_ntf_refcnt and nlm_ntf_wq static
+
+Eric Biggers (1):
+      sunrpc: remove incorrect HMAC request initialization
+
+Fengguang Wu (1):
+      nfsd: fix boolreturn.cocci warnings
+
+J. Bruce Fields (11):
+      nfsd: remove unsused "cp_consecutive" field
+      nfsd: don't require low ports for gss requests
+      nfsd: simplify put of fi_deleg_file
+      nfsd: simplify nfs4_put_deleg_lease calls
+      nfsd4: set fl_owner to delegation, not file pointer
+      nfsd4: dp->dl_stid.sc_file doesn't need locking
+      nfsd: make nfs4_get_existing_delegation less confusing
+      nfsd: factor out common delegation-destruction code
+      nfsd: move sc_file assignment into alloc_init_deleg
+      nfsd: create a separate lease for each delegation
+      nfsd: fix incorrect umasks
+
+James Ettle (1):
+      sunrpc: Fix unaligned access on sparc64
+
+Jeff Layton (2):
+      nfsd4: send the special close_stateid in v4.0 replies as well
+      nfsd: move nfs4_client allocation to dedicated slabcache
+
+NeilBrown (1):
+      SUNRPC: cache: ignore timestamp written to 'flush' file.
+
+Stefan Agner (1):
+      nfsd: use correct enum type in decode_cb_op_status
+
+ fs/lockd/svc.c                           |   4 +-
+ fs/nfsd/nfs3proc.c                       |  18 +-
+ fs/nfsd/nfs3xdr.c                        |  67 ++------
+ fs/nfsd/nfs4callback.c                   |   4 +-
+ fs/nfsd/nfs4layouts.c                    |  16 +-
+ fs/nfsd/nfs4proc.c                       |  38 ++--
+ fs/nfsd/nfs4state.c                      | 286 ++++++++++++++-----------------
+ fs/nfsd/nfs4xdr.c                        |  22 +--
+ fs/nfsd/nfsfh.c                          |  12 +-
+ fs/nfsd/nfsproc.c                        |  23 ++-
+ fs/nfsd/nfsxdr.c                         |  63 ++++---
+ fs/nfsd/trace.h                          |  98 +++++++++--
+ fs/nfsd/vfs.c                            |  65 +++----
+ fs/nfsd/vfs.h                            |  11 +-
+ fs/nfsd/xdr.h                            |   3 +-
+ fs/nfsd/xdr3.h                           |   3 +-
+ fs/nfsd/xdr4.h                           |   5 +-
+ include/linux/sunrpc/svc.h               |   6 +
+ include/linux/sunrpc/svc_rdma.h          |   3 -
+ include/linux/sunrpc/svc_xprt.h          |   6 +-
+ include/trace/events/sunrpc.h            | 204 +++++++++++++---------
+ net/sunrpc/auth_gss/gss_krb5_crypto.c    |   3 -
+ net/sunrpc/auth_gss/gss_krb5_seal.c      |   5 +-
+ net/sunrpc/auth_gss/gss_krb5_unseal.c    |   4 +-
+ net/sunrpc/cache.c                       |  32 ++--
+ net/sunrpc/svc.c                         | 118 ++++++++++++-
+ net/sunrpc/svc_xprt.c                    |  34 ++--
+ net/sunrpc/svcsock.c                     |   8 +-
+ net/sunrpc/xprtrdma/svc_rdma.c           |   4 +-
+ net/sunrpc/xprtrdma/svc_rdma_recvfrom.c  |  33 ++--
+ net/sunrpc/xprtrdma/svc_rdma_transport.c |  38 ++--
+ 31 files changed, 721 insertions(+), 515 deletions(-)
