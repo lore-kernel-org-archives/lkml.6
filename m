@@ -1,61 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751434AbeDEKM1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 06:12:27 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:37126 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751278AbeDEKM0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 06:12:26 -0400
-Date: Thu, 5 Apr 2018 12:12:24 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Ming Lei <ming.lei@redhat.com>
-cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Laurence Oberman <loberman@redhat.com>
-Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-In-Reply-To: <20180404152018.GB24824@ming.t460p>
-Message-ID: <alpine.DEB.2.21.1804051206050.2204@nanos.tec.linutronix.de>
-References: <20180308105358.1506-1-ming.lei@redhat.com> <20180308105358.1506-5-ming.lei@redhat.com> <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de> <20180403160001.GA25255@ming.t460p> <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1804041317550.2056@nanos.tec.linutronix.de> <20180404152018.GB24824@ming.t460p>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1751535AbeDEKMh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 06:12:37 -0400
+Received: from mga02.intel.com ([134.134.136.20]:7322 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751278AbeDEKMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 06:12:35 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,410,1517904000";
+   d="scan'208";a="188860631"
+Date: Thu, 5 Apr 2018 13:12:10 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peterhuewe@gmx.de, tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com
+Subject: Re: [PATCH] tpm: moves the delay_msec increment after sleep in
+ tpm_transmit()
+Message-ID: <20180405101210.GA21636@linux.intel.com>
+References: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Apr 2018, Ming Lei wrote:
-> On Wed, Apr 04, 2018 at 02:45:18PM +0200, Thomas Gleixner wrote:
-> > Now the 4 offline CPUs are plugged in again. These CPUs won't ever get an
-> > interrupt as all interrupts stay on CPU 0-3 unless one of these CPUs is
-> > unplugged. Using cpu_present_mask the spread would be:
-> > 
-> >  	irq 39, cpu list 0,1
-> >  	irq 40, cpu list 2,3
-> >  	irq 41, cpu list 4,5
-> >  	irq 42, cpu list 6,7
+On Mon, Apr 02, 2018 at 09:50:06PM +0530, Nayna Jain wrote:
+> Commit e2fb992d82c6 ("tpm: add retry logic") introduced a new loop to
+> handle the TPM2_RC_RETRY error. The loop retries the command after
+> sleeping for the specified time, which is incremented exponentially in
+> every iteration. This patch fixes the initial sleep to be the default
+> sleep time.
+
+I think I understand the code change but do not understand what the
+long description.
+
 > 
-> Given physical CPU hotplug isn't common, this way will make only irq 39
-> and irq 40 active most of times, so performance regression is caused just
-> as Kashyap reported.
+> Fixes: commit e2fb992d82c6 ("tpm: add retry logic")
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index c43a9e28995e..6201aab374e6 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -587,7 +587,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  		 */
+>  		if (rc == TPM2_RC_TESTING && cc == TPM2_CC_SELF_TEST)
+>  			break;
+> -		delay_msec *= 2;
+> +
 
-That is only true, if CPU 4-7 are in the present mask at boot time. I
-seriously doubt that this is the case for Kashyaps scenario. Grrr, if you
-would have included him into the Reported-by: tags then I could have asked
-him myself.
+Extra whitespace
 
-In the physical hotplug case, the physcially (or virtually) not available
-CPUs are not in the present mask. They are solely in the possible mask.
+>  		if (delay_msec > TPM2_DURATION_LONG) {
+>  			if (rc == TPM2_RC_RETRY)
+>  				dev_err(&chip->dev, "in retry loop\n");
+> @@ -597,6 +597,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  			break;
+>  		}
+>  		tpm_msleep(delay_msec);
+> +		delay_msec *= 2;
+>  		memcpy(buf, save, save_size);
+>  	}
+>  	return ret;
+> -- 
+> 2.13.6
+> 
 
-The above is about soft hotplug where the CPUs are physically there and
-therefore in the present mask and can be onlined without interaction from
-the outside (mechanical or virt config).
-
-If nobody objects, I'll make that change and queue the stuff tomorrow
-morning so it can brew a few days in next before I send it off to Linus.
-
-Thanks,
-
-	tglx
+/Jarkko
