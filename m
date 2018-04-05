@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751910AbeDELdn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:33:43 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34008 "EHLO
+        id S1751956AbeDELd6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:33:58 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33966 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751708AbeDELd1 (ORCPT
+        with ESMTP id S1751603AbeDELdY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:33:27 -0400
+        Thu, 5 Apr 2018 07:33:24 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: lee.jones@linaro.org
 Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
         gwendal@chromium.org, linux-kernel@vger.kernel.org,
-        Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH v5 8/8] mfd: cros_ec_i2c: moving the system sleep pm ops to late
-Date: Thu,  5 Apr 2018 13:33:13 +0200
-Message-Id: <20180405113313.27340-9-enric.balletbo@collabora.com>
+        Daniel Hung-yu Wu <hywu@google.com>,
+        Daniel Hung-yu Wu <hywu@chromium.org>
+Subject: [PATCH v5 6/8] mfd: cros_ec_dev: register shutdown function for debugfs
+Date: Thu,  5 Apr 2018 13:33:11 +0200
+Message-Id: <20180405113313.27340-7-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405113313.27340-1-enric.balletbo@collabora.com>
 References: <20180405113313.27340-1-enric.balletbo@collabora.com>
@@ -22,17 +23,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joseph Lo <josephl@nvidia.com>
+From: Daniel Hung-yu Wu <hywu@google.com>
 
-The cros_ec_i2c driver is still active after it had suspended or before it
-resumes. Besides that, it also tried to transfer data even after the I2C
-host had been suspended. This will lead the system to crash.
+Reboot or shutdown during delayed works could corrupt communication with
+EC and certain I2C controller may not be able to recover from the error
+state.
 
-During the test, we also observe that the EC needs to be resumed earlier
-due to some status polling from the EC FW (e.g. battery status). So we
-move the PM ops to late stage to make it work normally.
+This patch registers a shutdown callback used to cancel the debugfs log
+worker thread.
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Signed-off-by: Daniel Hung-yu Wu <hywu@chromium.org>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Acked-by: Lee Jones <lee.jones@linaro.org>
@@ -40,33 +40,43 @@ Acked-by: Lee Jones <lee.jones@linaro.org>
 
 Changes in v5: None
 Changes in v4:
-- [8/8] Add Acked-by Lee Jones.
+- [6/8] Add Acked-by Lee Jones.
 
 Changes in v3:
-- [8/8] Add static to cros_ec_i2c_pm_ops.
-- [8/8] Add the Reviewed-by Andy Shevchenko.
+- [6/8] Add the Reviewed-by Andy Shevchenko.
 
 Changes in v2:
-- [8/8] This patch is new in this series replacing [5/6] of v1.
+- [6/8] This patch is new in this series.
 
- drivers/mfd/cros_ec_i2c.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/mfd/cros_ec_dev.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
-index 02a7bacdc056..ef9b4763356f 100644
---- a/drivers/mfd/cros_ec_i2c.c
-+++ b/drivers/mfd/cros_ec_i2c.c
-@@ -342,8 +342,9 @@ static int cros_ec_i2c_resume(struct device *dev)
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 535ffa3cf497..8f51b115f478 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -543,6 +543,14 @@ static int ec_device_remove(struct platform_device *pdev)
+ 	return 0;
  }
- #endif
  
--static SIMPLE_DEV_PM_OPS(cros_ec_i2c_pm_ops, cros_ec_i2c_suspend,
--			  cros_ec_i2c_resume);
-+static const struct dev_pm_ops cros_ec_i2c_pm_ops = {
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(cros_ec_i2c_suspend, cros_ec_i2c_resume)
-+};
++static void ec_device_shutdown(struct platform_device *pdev)
++{
++	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
++
++	/* Be sure to clear up debugfs delayed works */
++	cros_ec_debugfs_remove(ec);
++}
++
+ static const struct platform_device_id cros_ec_id[] = {
+ 	{ DRV_NAME, 0 },
+ 	{ /* sentinel */ },
+@@ -585,6 +593,7 @@ static struct platform_driver cros_ec_dev_driver = {
+ 	},
+ 	.probe = ec_device_probe,
+ 	.remove = ec_device_remove,
++	.shutdown = ec_device_shutdown,
+ };
  
- #ifdef CONFIG_OF
- static const struct of_device_id cros_ec_i2c_of_match[] = {
+ static int __init cros_ec_dev_init(void)
 -- 
 2.16.3
