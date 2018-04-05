@@ -1,106 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751696AbeDEVis (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 17:38:48 -0400
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:41841 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751365AbeDEViq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 17:38:46 -0400
-Date: Fri, 6 Apr 2018 07:38:44 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
-        darrick.wong@oracle.com, LKML <linux-kernel@vger.kernel.org>,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING: bad unlock balance in xfs_iunlock
-Message-ID: <20180405213844.GE23861@dastard>
-References: <f403043cbe8414177d0568e81405@google.com>
- <20180403043854.GL1150@dastard>
- <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
+        id S1752210AbeDEVm0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 17:42:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47992 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751356AbeDEVmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 17:42:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33384204EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Thu, 5 Apr 2018 22:42:19 +0100
+From: James Hogan <jhogan@kernel.org>
+To: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        Alban Bedel <albeu@free.fr>, Antony Pavlov <antonynpavlov@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: vmlinuz: Fix compiler intrinsics location and
+ build directly
+Message-ID: <20180405214219.GA31336@saruman>
+References: <20180403160728.GB3275@saruman>
+ <1522833502-28007-1-git-send-email-matt.redfearn@mips.com>
+ <b05a0ec9-d052-49c7-3e8f-2ba233d84f03@mips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <b05a0ec9-d052-49c7-3e8f-2ba233d84f03@mips.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 08:54:50PM +0200, Dmitry Vyukov wrote:
-> On Tue, Apr 3, 2018 at 6:38 AM, Dave Chinner <david@fromorbit.com> wrote:
-> > On Mon, Apr 02, 2018 at 07:01:02PM -0700, syzbot wrote:
-> >> Hello,
-> >>
-> >> syzbot hit the following crash on upstream commit
-> >> 86bbbebac1933e6e95e8234c4f7d220c5ddd38bc (Mon Apr 2 18:47:07 2018 +0000)
-> >> Merge branch 'ras-core-for-linus' of
-> >> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> >> syzbot dashboard link:
-> >> https://syzkaller.appspot.com/bug?extid=84a67953651a971809ba
-> >>
-> >> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5719304272084992
-> >> syzkaller reproducer:
-> >> https://syzkaller.appspot.com/x/repro.syz?id=5767783983874048
-> >
-> > What a mess. A hand built, hopelessly broken filesystem image made
-> > up of hex dumps, written into a mmap()d region of memory, then
-> > copied into a tmpfs file and mounted with the loop device.
-> >
-> > Engineers that can debug broken filesystems don't grow on trees.  If
-> > we are to have any hope of understanding what the hell this test is
-> > doing, the bot needs to supply us with a copy of the built
-> > filesystem image the test uses. We need to be able to point forensic
-> > tools at the image to decode all the structures into human readable
-> > format - if we are forced to do that by hand or jump through hoops
-> > to create our own filesystem image than I'm certainly not going to
-> > waste time looking at these reports...
-> 
-> Hi Dave,
-> 
-> Here is the image:
-> https://drive.google.com/file/d/1jzhGGe5SBJcqfsjxCLHoh4Kazke1oTfC/view
-> (took me about a minute to extract from test by replacing memfd_create
-> with open and running the program).
 
-Says the expert who knows exactly how it's all put together. It took
-me a couple of hours just to understand WTF the syzbot reproducer
-was actually doing....
+--7JfCtLOvnd9MIVvH
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Then do the following to trigger the bug:
-> losetup /dev/loop0 xfs.repro
-> mkdir xfs
-> mount -t xfs -o nouuid,prjquota,noikeep,quota /dev/loop0 xfs
-> 
-> To answer your more general question: syzbot is not a system to test
-> solely file systems, it finds bugs in hundreds of kernel subsystems.
-> Generating image for file systems, media files for sound and
-> FaceDancer programs that crash host when  FaceDancer device is plugged
-> into USB is not feasible. And in the end it's not even clear what
+On Thu, Apr 05, 2018 at 11:13:14AM +0100, Matt Redfearn wrote:
+> Actually, this patch would be better inserted as patch 3 in the series=20
+> since it can pull in the generic ashldi3 before the MIPS one is removed=
+=20
+> in the final patch. Here's an updated commit message:
 
-I don't care how syzbot generates the filesystem image it uses.
+Thanks Matt, applied.
 
-> kernel subsystem is at fault and even if it somehow figures out that
-> it's a filesystem, it's unclear that it's exactly an image that
-> provokes the bug. syzbot provides C reproducers which is a reasonable
+Cheers
+James
 
-It doesn't matter *what subsystem breaks*. If syzbot is generating a
-filesystem image and then mounting it, it needs to provide that
-filesystem image to to people who end up having to debug the
-problem. It's a basic "corrupt filesystem" bug triage step.
+--7JfCtLOvnd9MIVvH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> Some bugs are so involved that only an
-> expert in a particular subsystem can figure out what happens there.
+-----BEGIN PGP SIGNATURE-----
 
-And that's clearly the case here, whether you like it or not.
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlrGmDoACgkQbAtpk944
+dnpc4xAAoHemdzlAjARKsk/B0Bh7hUe9ZdFAnuN/ecqtHp0WXGJKrYq4sF5JgNqo
+yEGmmIJJ0E7lgvc1x5L6acJTaJmeEw59qiW8Ihit4zho7WNSZt0+N9Z7bN7TE96l
+Gi+VGM+HqAPeMqNoVISRpiqFy8gzsYJqq/7tzXmBLi7+wtJPJ2pxMWmNh5WZp7Sc
+tpgBgLJO78B1tcopDCQzwT6vijhj3SIW5cH2tc7YAXmS9KtZZ8SprjTETWUHcmtK
+6Nw5n7jeda4I/ZABMJh+EfXwlmDA0yETftNvl7VClXEoHiEyorY/ekZK0VeNyIwy
+eJEvPsFvMZlnPAEe2Dtr+Lr6V9RHlx4ZfvVWi6kzQtdChWxP6XE5yYi42LEBnp7o
+cfhwqP1KaW/179xMxI4qK7HlQ49dsLVTUk9/tfuVvQ4A4HmUe8YkuQVW/XBOOClE
+EcQC8dvOLJtVpkVD0gAB/McmP6S2tUxsYNRD0DyMlD/oUA9JuClxCwaLuaESFx7n
+F0jGd2rk4lTaDVYmty+y53EGj1VvJK2ySC6nopP+HEHWdpb+p1VLT68IiatLInPy
+S0sJY0OKjtwozVv6zRWPK0JTNgwwz3qPU5PiOkUTiiwQ+e66w49VdkeYJlsQ+Cfs
+sk3dXuBoNPN4qSFMZLeYgRr+si9cs2YVGJ70ICjn38lGbjfWz9g=
+=uUCf
+-----END PGP SIGNATURE-----
 
-You want us to do things that make syzbot more useful as a tool but
-you don't want to do things that make syzbot a useful tool for us.
-It's a two way street....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--7JfCtLOvnd9MIVvH--
