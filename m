@@ -1,135 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752314AbeDETJT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 15:09:19 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:34291 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751952AbeDETJQ (ORCPT
+        id S1752249AbeDETJS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 15:09:18 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:42105 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751813AbeDETJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 15:09:16 -0400
-X-ME-Sender: <xms:W3TGWpaQ169ZxfkpBRNSwV3qUU1kmbRKVnAIfN335K1nvxVzp-URWg>
-From: "Zi Yan" <zi.yan@sent.com>
-To: "Michal Hocko" <mhocko@kernel.org>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
-        "Naoya Horiguchi" <n-horiguchi@ah.jp.nec.com>, linux-mm@kvack.org,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Vlastimil Babka" <vbabka@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mm: consider non-anonymous thp as unmovable page
-Date: Thu, 05 Apr 2018 15:09:14 -0400
-X-Mailer: MailMate (2.0BETAr6106)
-Message-ID: <D2A2BB95-6D1D-487D-9CCA-FC66CE42B03D@sent.com>
-In-Reply-To: <20180405190405.GS6312@dhcp22.suse.cz>
-References: <20180403083451.GG5501@dhcp22.suse.cz>
- <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
- <20180405085927.GC6312@dhcp22.suse.cz>
- <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
- <20180405124830.GJ6312@dhcp22.suse.cz>
- <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
- <20180405150547.GN6312@dhcp22.suse.cz>
- <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
- <20180405160317.GP6312@dhcp22.suse.cz>
- <7C2DE363-E113-4284-B94F-814F386743DF@sent.com>
- <20180405190405.GS6312@dhcp22.suse.cz>
+        Thu, 5 Apr 2018 15:09:15 -0400
+X-Google-Smtp-Source: AIpwx499I80AAAP0vPWp9dpjM2Icry0wQnzH73/DK5f5kTqkPN5HP6b52nsCjy1M9M1vMGuNb7jnCiT3WyBL8zbfEKo=
 MIME-Version: 1.0
-Content-Type: multipart/signed;
- boundary="=_MailMate_1F40A8E4-9490-440F-838A-F266C1BA263E_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <87lge1er31.fsf@kamboji.qca.qualcomm.com>
+References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
+ <20180319014032.9394-3-alexey.roslyakov@gmail.com> <5AAF838D.2030105@broadcom.com>
+ <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
+ <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com> <5AB044C0.9060701@broadcom.com>
+ <87po3zxe9n.fsf@kamboji.qca.qualcomm.com> <CAPDyKFr2GVB0+UUpT3GgGBT17TMcrky6X4L_pw+ztTL6ejbCwQ@mail.gmail.com>
+ <87lge1er31.fsf@kamboji.qca.qualcomm.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 5 Apr 2018 21:09:14 +0200
+Message-ID: <CAPDyKFog7q2f7rHfm-FFRiGbRvd4NPQrYHP0==Xs-JAGGDKpYQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for brcmfmac
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexey Roslyakov <alexey.roslyakov@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 3156 and 4880).
-
---=_MailMate_1F40A8E4-9490-440F-838A-F266C1BA263E_=
-Content-Type: text/plain
-
-On 5 Apr 2018, at 15:04, Michal Hocko wrote:
-
-> On Thu 05-04-18 13:58:43, Zi Yan wrote:
->> On 5 Apr 2018, at 12:03, Michal Hocko wrote:
->>
->>> On Thu 05-04-18 18:55:51, Kirill A. Shutemov wrote:
->>>> On Thu, Apr 05, 2018 at 05:05:47PM +0200, Michal Hocko wrote:
->>>>> On Thu 05-04-18 16:40:45, Kirill A. Shutemov wrote:
->>>>>> On Thu, Apr 05, 2018 at 02:48:30PM +0200, Michal Hocko wrote:
->>>>> [...]
->>>>>>> RIght, I confused the two. What is the proper layer to fix that then?
->>>>>>> rmap_walk_file?
->>>>>>
->>>>>> Maybe something like this? Totally untested.
->>>>>
->>>>> This looks way too complex. Why cannot we simply split THP page cache
->>>>> during migration?
->>>>
->>>> This way we unify the codepath for archictures that don't support THP
->>>> migration and shmem THP.
+On 5 April 2018 at 15:10, Kalle Valo <kvalo@codeaurora.org> wrote:
+> Ulf Hansson <ulf.hansson@linaro.org> writes:
+>
+>> On 20 March 2018 at 10:55, Kalle Valo <kvalo@codeaurora.org> wrote:
+>>> Arend van Spriel <arend.vanspriel@broadcom.com> writes:
 >>>
->>> But why? There shouldn't be really nothing to prevent THP (anon or
->>> shemem) to be migratable. If we cannot migrate it at once we can always
->>> split it. So why should we add another thp specific handling all over
->>> the place?
+>>>>>> If I get it right, you mean something like this:
+>>>>>>
+>>>>>> mmc3: mmc@1c12000 {
+>>>>>> ...
+>>>>>>          broken-sg-support;
+>>>>>>          sd-head-align = 4;
+>>>>>>          sd-sgentry-align = 512;
+>>>>>>
+>>>>>>          brcmf: wifi@1 {
+>>>>>>                  ...
+>>>>>>          };
+>>>>>> };
+>>>>>>
+>>>>>> Where dt: bindings documentation for these entries should reside?
+>>>>>> In generic MMC bindings? Well, this is the very special case and
+>>>>>> mmc-linux maintainer will unlikely to accept these changes.
+>>>>>> Also, extra kernel code modification might be required. It could make
+>>>>>> quite trivial change much more complex.
+>>>>>
+>>>>> If the MMC maintainers are not copied on this patch series, it will
+>>>>> likely be hard for them to identify this patch series and chime in...
+>>>>
+>>>> The main question is whether this is indeed a "very special case" as
+>>>> Alexey claims it to be or that it is likely to be applicable to other
+>>>> device and host combinations as you are suggesting.
+>>>>
+>>>> If these properties are imposed by the host or host controller it
+>>>> would make sense to have these in the mmc bindings.
+>>>
+>>> BTW, last year we were discussing something similar (I mean related to
+>>> alignment requirements) with ath10k SDIO patches and at the time the
+>>> patch submitter was proposing to have a bounce buffer in ath10k to
+>>> workaround that. I don't remember the details anymore, they are on the
+>>> ath10k mailing list archive if anyone is curious to know, but I would
+>>> not be surprised if they are similar as here. So there might be a need
+>>> to solve this in a generic way (but not sure of course as I haven't
+>>> checked the details).
 >>
->> Then, it would be much easier if your "unclutter thp migration" patches is merged,
->> plus the patch below:
->
-> Good point. Except I would prefer a less convoluted condition
->
->> diff --git a/mm/migrate.c b/mm/migrate.c
->> index 60531108021a..b4087aa890f5 100644
->> --- a/mm/migrate.c
->> +++ b/mm/migrate.c
->> @@ -1138,7 +1138,9 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
->>         int rc = MIGRATEPAGE_SUCCESS;
->>         struct page *newpage;
+>> I re-call something about these as well, here are the patches. Perhaps
+>> I should pick some of them up...
 >>
->> -       if (!thp_migration_supported() && PageTransHuge(page))
->> +       if ((!thp_migration_supported() ||
->> +            (thp_migration_supported() && !PageAnon(page))) &&
->> +           PageTransHuge(page))
->>                 return -ENOMEM;
+>> https://patchwork.kernel.org/patch/10123137/
+>> https://patchwork.kernel.org/patch/10123139/
+>> https://patchwork.kernel.org/patch/10123141/
+>> https://patchwork.kernel.org/patch/10123143/
 >
-> What about this?
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 5d0dc7b85f90..cd02e2bdf37c 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1138,7 +1138,11 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
->  	int rc = MIGRATEPAGE_SUCCESS;
->  	struct page *newpage;
+> Actually I was talking about a different patch, found it now:
 >
-> -	if (!thp_migration_supported() && PageTransHuge(page))
-> +	/*
-> +	 * THP pagecache or generally non-migrateable THP need to be split
-> +	 * up before migration
-> +	 */
-> +	if (PageTransHuge(page) && (!thp_migration_supported() || !PageAnon(page)))
->  		return -ENOMEM;
+> ath10k_sdio: DMA bounce buffers for read write
 >
->  	newpage = get_new_page(page, private);
+> https://patchwork.kernel.org/patch/9979543/
 
-I think it works and is better than mine.
+Ah, yes. This is about buffer alignment, particularly when using DMA.
 
-Reviewed-by: Zi Yan <zi.yan@cs.rutgers.edu>
+Normally there should be no constraint on the alignment, if the
+mmc/sdio controller driver would implement a fallback mechanism from
+DMA to PIO mode, in case the buffer can't be used for DMA.
 
---
-Best Regards
-Yan Zi
+However, I know about cases where simply PIO doesn't work because of
+broken HW and in many cases the mmc drivers don't implement the
+fallback to PIO even if they could.
 
---=_MailMate_1F40A8E4-9490-440F-838A-F266C1BA263E_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
+Moreover, it seems reasonable to anyway have a way for mmc driver to
+inform upper layers about DMA buffer alignment constraints, as to be
+able to use DMA as long as possible.
 
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - https://gpgtools.org
+Thoughts?
 
-iQEcBAEBCgAGBQJaxnRaAAoJEEGLLxGcTqbMKggIAK5A4NcuMdLaR9QOIM3+j+JV
-BtnR6JiepqxpUkRuHcD3bTqv8noaY0lerQGgGsFhMI5+DG3jrLrKIbgpFAe7HmT/
-0pSLn5WW18RcxZaNtexobQqSB3TuK6HlFDAYBxfpBPcr8dx/6GcQDo77LKq35jB/
-gxVLIkaPvZBTWx/kJ+ELx5r7PGiuuAsKlaIh8tmF83NJReO0BvQn1q8ionWaSzAi
-xDZtB1sbzH5WIlZ58bCs5PHh3deblMR6b80BF/0Zc3pr/ws5rQ+d7jusjfi+m1p6
-5laRqesLHsDTbTlPzjcVgSVI84IVx4tV1YmAOhqHqvePr5C8qQPe1FMhl+WqG30=
-=dq+5
------END PGP SIGNATURE-----
-
---=_MailMate_1F40A8E4-9490-440F-838A-F266C1BA263E_=--
+Kind regards
+Uffe
