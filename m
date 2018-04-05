@@ -1,124 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751298AbeDEJhZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:37:25 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55396 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDEJhY (ORCPT
+        id S1751368AbeDEJif (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:38:35 -0400
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:51870 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeDEJid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:37:24 -0400
-Date: Thu, 5 Apr 2018 11:37:16 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Will Deacon <will.deacon@arm.com>, Ingo Molnar <mingo@kernel.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org
-Subject: [RFC] locking/mutex: Optimize __mutex_trylock_fast
-Message-ID: <20180405093716.GR4043@hirez.programming.kicks-ass.net>
+        Thu, 5 Apr 2018 05:38:33 -0400
+X-Google-Smtp-Source: AIpwx4+xRsJhS0v7zIn55s/OV35N28SV3l6qW5kcMu8waNVdCCz1ig6V9Wuur4DlO0fgYPUhl6PimV8j6Hx6krivyrQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1520852307-26659-3-git-send-email-fabien.dessenne@st.com>
+References: <1520852307-26659-1-git-send-email-fabien.dessenne@st.com> <1520852307-26659-3-git-send-email-fabien.dessenne@st.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Thu, 5 Apr 2018 15:08:31 +0530
+Message-ID: <CABb+yY1x7J_oEgU-LR5jPYCoCoUHng84E+CibTxLzdtxhENTBw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mailbox: add STMicroelectronics STM32 IPCC driver
+To: Fabien Dessenne <fabien.dessenne@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        ", linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subject: locking/mutex: Optimize __mutex_trylock_fast()
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Thu Apr  5 11:05:35 CEST 2018
+On Mon, Mar 12, 2018 at 4:28 PM, Fabien Dessenne <fabien.dessenne@st.com> wrote:
+....
+> +
+> +       /* irq */
+> +       for (i = 0; i < IPCC_IRQ_NUM; i++) {
+> +               ipcc->irqs[i] = of_irq_get_byname(dev->of_node, irq_name[i]);
+> +               if (ipcc->irqs[i] < 0) {
+> +                       dev_err(dev, "no IRQ specified %s\n", irq_name[i]);
+> +                       ret = ipcc->irqs[i];
+> +                       goto err_clk;
+> +               }
+> +
+> +               ret = devm_request_threaded_irq(dev, ipcc->irqs[i], NULL,
+> +                                               irq_thread[i], IRQF_ONESHOT,
+> +                                               dev_name(dev), ipcc);
+>
+In your interrupt handlers you don't do anything that could block.
+Threads only adds some delay to your message handling.
+So maybe use devm_request_irq() ?
 
-Use try_cmpxchg to avoid the pointless TEST instruction..
-And add the (missing) atomic_long_try_cmpxchg*() wrappery.
+.......
+> +
+> +static struct platform_driver stm32_ipcc_driver = {
+> +       .driver = {
+> +               .name = "stm32-ipcc",
+> +               .owner = THIS_MODULE,
+>
+No need of owner here these days.
+And also maybe use readl/writel, instead of _relaxed.
 
-On x86_64 this gives:
-
-0000000000000710 <mutex_lock>:						0000000000000710 <mutex_lock>:
- 710:   65 48 8b 14 25 00 00    mov    %gs:0x0,%rdx                      710:   65 48 8b 14 25 00 00    mov    %gs:0x0,%rdx
- 717:   00 00                                                            717:   00 00
-                        715: R_X86_64_32S       current_task                                    715: R_X86_64_32S       current_task
- 719:   31 c0                   xor    %eax,%eax                         719:   31 c0                   xor    %eax,%eax
- 71b:   f0 48 0f b1 17          lock cmpxchg %rdx,(%rdi)                 71b:   f0 48 0f b1 17          lock cmpxchg %rdx,(%rdi)
- 720:   48 85 c0                test   %rax,%rax                         720:   75 02                   jne    724 <mutex_lock+0x14>
- 723:   75 02                   jne    727 <mutex_lock+0x17>             722:   f3 c3                   repz retq
- 725:   f3 c3                   repz retq                                724:   eb da                   jmp    700 <__mutex_lock_slowpath>
- 727:   eb d7                   jmp    700 <__mutex_lock_slowpath>
-
-On ARM64 this gives:
-
-000000000000638 <mutex_lock>:						0000000000000638 <mutex_lock>:
-     638:       d5384101        mrs     x1, sp_el0                           638:       d5384101        mrs     x1, sp_el0
-     63c:       d2800002        mov     x2, #0x0                             63c:       d2800002        mov     x2, #0x0
-     640:       f9800011        prfm    pstl1strm, [x0]                      640:       f9800011        prfm    pstl1strm, [x0]
-     644:       c85ffc03        ldaxr   x3, [x0]                             644:       c85ffc03        ldaxr   x3, [x0]
-     648:       ca020064        eor     x4, x3, x2                           648:       ca020064        eor     x4, x3, x2
-     64c:       b5000064        cbnz    x4, 658 <mutex_lock+0x20>            64c:       b5000064        cbnz    x4, 658 <mutex_lock+0x20>
-     650:       c8047c01        stxr    w4, x1, [x0]                         650:       c8047c01        stxr    w4, x1, [x0]
-     654:       35ffff84        cbnz    w4, 644 <mutex_lock+0xc>             654:       35ffff84        cbnz    w4, 644 <mutex_lock+0xc>
-     658:       b40000c3        cbz     x3, 670 <mutex_lock+0x38>            658:       b5000043        cbnz    x3, 660 <mutex_lock+0x28>
-     65c:       a9bf7bfd        stp     x29, x30, [sp,#-16]!                 65c:       d65f03c0        ret
-     660:       910003fd        mov     x29, sp                              660:       a9bf7bfd        stp     x29, x30, [sp,#-16]!
-     664:       97ffffef        bl      620 <__mutex_lock_slowpath>          664:       910003fd        mov     x29, sp
-     668:       a8c17bfd        ldp     x29, x30, [sp],#16                   668:       97ffffee        bl      620 <__mutex_lock_slowpath>
-     66c:       d65f03c0        ret                                          66c:       a8c17bfd        ldp     x29, x30, [sp],#16
-     670:       d65f03c0        ret                                          670:       d65f03c0        ret
-
-Which to my untrained eye just looks different, not worse. Will?
-
-Reported-by: Matthew Wilcox <mawilcox@microsoft.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/asm-generic/atomic-long.h |   17 +++++++++++++++++
- kernel/locking/mutex.c            |    3 ++-
- 2 files changed, 19 insertions(+), 1 deletion(-)
-
---- a/include/asm-generic/atomic-long.h
-+++ b/include/asm-generic/atomic-long.h
-@@ -25,6 +25,7 @@ typedef atomic64_t atomic_long_t;
- 
- #define ATOMIC_LONG_INIT(i)	ATOMIC64_INIT(i)
- #define ATOMIC_LONG_PFX(x)	atomic64 ## x
-+#define ATOMIC_LONG_TYPE	s64
- 
- #else
- 
-@@ -32,6 +33,7 @@ typedef atomic_t atomic_long_t;
- 
- #define ATOMIC_LONG_INIT(i)	ATOMIC_INIT(i)
- #define ATOMIC_LONG_PFX(x)	atomic ## x
-+#define ATOMIC_LONG_TYPE	int
- 
- #endif
- 
-@@ -90,6 +92,21 @@ ATOMIC_LONG_ADD_SUB_OP(sub, _release)
- #define atomic_long_cmpxchg(l, old, new) \
- 	(ATOMIC_LONG_PFX(_cmpxchg)((ATOMIC_LONG_PFX(_t) *)(l), (old), (new)))
- 
-+
-+#define atomic_long_try_cmpxchg_relaxed(l, old, new) \
-+	(ATOMIC_LONG_PFX(_try_cmpxchg_relaxed)((ATOMIC_LONG_PFX(_t) *)(l), \
-+					   (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
-+#define atomic_long_try_cmpxchg_acquire(l, old, new) \
-+	(ATOMIC_LONG_PFX(_try_cmpxchg_acquire)((ATOMIC_LONG_PFX(_t) *)(l), \
-+					   (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
-+#define atomic_long_try_cmpxchg_release(l, old, new) \
-+	(ATOMIC_LONG_PFX(_try_cmpxchg_release)((ATOMIC_LONG_PFX(_t) *)(l), \
-+					   (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
-+#define atomic_long_try_cmpxchg(l, old, new) \
-+	(ATOMIC_LONG_PFX(_try_cmpxchg)((ATOMIC_LONG_PFX(_t) *)(l), \
-+				       (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
-+
-+
- #define atomic_long_xchg_relaxed(v, new) \
- 	(ATOMIC_LONG_PFX(_xchg_relaxed)((ATOMIC_LONG_PFX(_t) *)(v), (new)))
- #define atomic_long_xchg_acquire(v, new) \
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -139,8 +139,9 @@ static inline bool __mutex_trylock(struc
- static __always_inline bool __mutex_trylock_fast(struct mutex *lock)
- {
- 	unsigned long curr = (unsigned long)current;
-+	unsigned long zero = 0UL;
- 
--	if (!atomic_long_cmpxchg_acquire(&lock->owner, 0UL, curr))
-+	if (atomic_long_try_cmpxchg_acquire(&lock->owner, &zero, curr))
- 		return true;
- 
- 	return false;
+Cheers!
