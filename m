@@ -1,69 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751419AbeDEKvV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 06:51:21 -0400
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:37319 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeDEKvU (ORCPT
+        id S1751285AbeDEK4n (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 06:56:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40892 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750835AbeDEK4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 06:51:20 -0400
-X-Google-Smtp-Source: AIpwx48ksyuuoJRPI90nKFYWtJ15gottngtgM/p0i4BeeAlxQnma4X0lJ5Zo5SwVfIdORdltIKQ23A==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        ebiederm@xmission.com, linux-kernel@vger.kernel.org
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 0/3 RESEND] namei: add follow_up_bind()
-Date: Thu,  5 Apr 2018 12:51:00 +0200
-Message-Id: <20180405105103.21572-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.15.1
+        Thu, 5 Apr 2018 06:56:41 -0400
+From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+To: virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org, aik@ozlabs.ru, robh@kernel.org,
+        joe@perches.com, elfring@users.sourceforge.net,
+        david@gibson.dropbear.id.au, jasowang@redhat.com,
+        benh@kernel.crashing.org, mpe@ellerman.id.au
+Subject: [RFC] virtio: Use DMA MAP API for devices without an IOMMU
+Date: Thu,  5 Apr 2018 16:26:31 +0530
+X-Mailer: git-send-email 2.9.3
+X-TM-AS-GCONF: 00
+x-cbid: 18040510-0020-0000-0000-0000040E5E93
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040510-0021-0000-0000-000042A271CB
+Message-Id: <20180405105631.9514-1-khandual@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-05_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804050117
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi everyone,
+There are certian platforms which would like to use SWIOTLB based DMA API
+for bouncing purpose without actually requiring an IOMMU back end. But the
+virtio core does not allow such mechanism. Right now DMA MAP API is only
+selected for devices which have an IOMMU and then the QEMU/host back end
+will process all incoming SG buffer addresses as IOVA instead of simple
+GPA which is the case for simple bounce buffers after being processed with
+SWIOTLB API. To enable this usage, it introduces an architecture specific
+function which will just make virtio core front end select DMA operations
+structure.
 
-(Resending since Linus email got mangled on my terminal. Sorry.)
+Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+---
+This RFC is just to get some feedback. Please ignore the function call
+back into the architecture. It can be worked out properly later on. But
+the question is can we have virtio devices in the guest which would like
+to use SWIOTLB based (or any custom DMA API based) bounce buffering with
+out actually being an IOMMU devices emulated by QEMU/host as been with
+the current VIRTIO_F_IOMMU_PLATFORM virtio flag ?
 
-Back when we fixed TIOCGPTPEER again in
+ arch/powerpc/platforms/pseries/iommu.c | 6 ++++++
+ drivers/virtio/virtio_ring.c           | 4 ++++
+ include/linux/virtio.h                 | 2 ++
+ 3 files changed, 12 insertions(+)
 
-commit a319b01d9095 ("devpts: resolve devpts bind-mounts")
-
-we discovered [1] that the code for bind-mount resolution we needed to add
-in devpts_mtnget() was already duplicated in nfsd code. So we briefly
-discussed [2] adding a helper to namei.{c,h} that would resolve
-bind-mounts. The bind-mount resolution code is replicated in at least two
-places:
-- fs/nfsd/vfs.c:follow_to_parent()
-- fs/devpts/inode.c:devpts_mntget()
-
-This series adds:
-- follow_up_bind() to namei.{c,h}
-- switches fs/nfsd/vfs.c:follow_to_parent() to use follow_up_bind()
-- switches fs/devpts/inode.c:devpts_mntget() to use follow_up_bind()
-
-I just wanted to wait until the devpts patches I sent would make it into
-mainline. Seems to me that this helper might be worth having around. Not
-just because it avoids (granted rather trivial) code duplication but also
-because it makes the concept of resolving a bind-mount up to the origin
-mountpoint of the vfs's mount obvious (which at least to me wasn't
-obivous before).
-
-[1]: https://lkml.org/lkml/2018/3/11/219
-[2]: https://lkml.org/lkml/2018/3/12/486
-
-Thanks!
-Christian
-
-Christian Brauner (3):
-  namei: add follow_up_bind()
-  devpts: use follow_up_bind() helper
-  nfsd: use follow_up_bind() helper
-
- fs/devpts/inode.c     |  4 +---
- fs/namei.c            | 10 ++++++++++
- fs/nfsd/vfs.c         |  4 ++--
- include/linux/namei.h |  1 +
- 4 files changed, 14 insertions(+), 5 deletions(-)
-
+diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+index 06f02960b439..dd15fbddbe89 100644
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -1396,3 +1396,9 @@ static int __init disable_multitce(char *str)
+ __setup("multitce=", disable_multitce);
+ 
+ machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
++
++bool is_virtio_dma_platform(void)
++{
++	return true;
++}
++EXPORT_SYMBOL(is_virtio_dma_platform);
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index 71458f493cf8..9f205a79d378 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -144,6 +144,10 @@ struct vring_virtqueue {
+ 
+ static bool vring_use_dma_api(struct virtio_device *vdev)
+ {
++	/* Use DMA API even for virtio devices without an IOMMU */
++	if (is_virtio_dma_platform())
++		return true;
++
+ 	if (!virtio_has_iommu_quirk(vdev))
+ 		return true;
+ 
+diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+index 988c7355bc22..d8bb83d753ea 100644
+--- a/include/linux/virtio.h
++++ b/include/linux/virtio.h
+@@ -200,6 +200,8 @@ static inline struct virtio_driver *drv_to_virtio(struct device_driver *drv)
+ int register_virtio_driver(struct virtio_driver *drv);
+ void unregister_virtio_driver(struct virtio_driver *drv);
+ 
++extern bool is_virtio_dma_platform(void);
++
+ /* module_virtio_driver() - Helper macro for drivers that don't do
+  * anything special in module init/exit.  This eliminates a lot of
+  * boilerplate.  Each module may only use this macro once, and
 -- 
-2.15.1
+2.14.1
