@@ -1,96 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751532AbeDEPrf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:47:35 -0400
-Received: from mga06.intel.com ([134.134.136.31]:53747 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751356AbeDEPrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:47:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,411,1517904000";
-   d="scan'208";a="45188372"
-From: "Wang, Wei W" <wei.w.wang@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
-Subject: RE: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Thread-Topic: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Thread-Index: AQHTyyXXTsdlmy3QmUiflW8thGbyQqPu3AAAgAB7EICAAMkagIABH5Eg//+aJwCAAIzSsIAASrAAgACdZmA=
-Date: Thu, 5 Apr 2018 15:47:28 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F7394A889E@shsmsx102.ccr.corp.intel.com>
-References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
- <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
- <20180403214147-mutt-send-email-mst@kernel.org> <5AC43377.2070607@intel.com>
- <20180404155907-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
- <20180405040900-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7394A7F3B@shsmsx102.ccr.corp.intel.com>
- <20180405170248-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180405170248-mutt-send-email-mst@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGZjOGM4YjEtNjExMi00MjIzLWFiNWMtYmNlOTY4Zjc2NjZhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6InJhdjZzUEhzXC9Fa1ZoeTRCZFk1ZktpVVN4VGxaQXBHTHhzUm93bHNwdlwvST0ifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1751603AbeDEPtx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:49:53 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.231]:46966 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751278AbeDEPtw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:49:52 -0400
+Date: Thu, 5 Apr 2018 10:49:49 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Igor Mitsyanko <imitsyanko@quantenna.com>,
+        Avinash Patil <avinashp@quantenna.com>,
+        Sergey Matyukevich <smatyukevich@quantenna.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] qtnfmac: pearl: pcie: fix memory leak in qtnf_fw_work_handler
+Message-ID: <20180405154949.GA32223@embeddedor.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1f4794-004Mku-Sr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.145.54.187]:41644
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, April 5, 2018 10:04 PM, Michael S. Tsirkin wrote:
-> On Thu, Apr 05, 2018 at 02:05:03AM +0000, Wang, Wei W wrote:
-> > On Thursday, April 5, 2018 9:12 AM, Michael S. Tsirkin wrote:
-> > > On Thu, Apr 05, 2018 at 12:30:27AM +0000, Wang, Wei W wrote:
-> > > > On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
-> > > > > On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
-> > > > > > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
-> > > > > > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
-> > > > I'm afraid the driver couldn't be aware if the added hints are
-> > > > stale or not,
-> > >
-> > >
-> > > No - I mean that driver has code that compares two values and stops
-> > > reporting. Can one of the values be stale?
-> >
-> > The driver compares "vb->cmd_id_use != vb->cmd_id_received" to decide
-> > if it needs to stop reporting hints, and cmd_id_received is what the
-> > driver reads from host (host notifies the driver to read for the
-> > latest value). If host sends a new cmd id, it will notify the guest to
-> > read again. I'm not sure how that could be a stale cmd id (or maybe I
-> > misunderstood your point here?)
-> >
-> > Best,
-> > Wei
-> 
-> The comparison is done in one thread, the update in another one.
+In case memory resources for fw were succesfully allocated, release
+them before jumping to fw_load_fail.
 
-I think this isn't something that could be solved by adding a lock, unless host waits for the driver's ACK about finishing the update (this is not agreed in the QEMU part discussion).
+Addresses-Coverity-ID: 1466092 ("Resource leak")
+Fixes: c3b2f7ca4186 ("qtnfmac: implement asynchronous firmware loading")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/wireless/quantenna/qtnfmac/pearl/pcie.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Actually virtio_balloon has F_IOMMU_PLATFORM disabled, maybe we don't need to worry about that using DMA api case (we only have gpa added to the vq, and having some entries stay in the vq seems fine). For this feature, I think it would not work with F_IOMMU enabled either.
-
-If there is any further need (I couldn't think of a need so far), I think we could consider to let host inject a vq interrupt at some point, and then the driver handler can do the virtqueue_get_buf work.
-
-Best,
-Wei
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/pearl/pcie.c b/drivers/net/wireless/quantenna/qtnfmac/pearl/pcie.c
+index f117904..6c1e139 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/pearl/pcie.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/pearl/pcie.c
+@@ -1185,6 +1185,10 @@ static void qtnf_fw_work_handler(struct work_struct *work)
+ 	if (qtnf_poll_state(&priv->bda->bda_ep_state, QTN_EP_FW_LOADRDY,
+ 			    QTN_FW_DL_TIMEOUT_MS)) {
+ 		pr_err("card is not ready\n");
++
++		if (!flashboot)
++			release_firmware(fw);
++
+ 		goto fw_load_fail;
+ 	}
+ 
+-- 
+2.7.4
