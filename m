@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751779AbeDEJR5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:17:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56143 "EHLO
+        id S1751913AbeDEJS1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:18:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53659 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751406AbeDEJR4 (ORCPT
+        with ESMTP id S1751414AbeDEJSZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:17:56 -0400
-Date: Thu, 5 Apr 2018 02:17:29 -0700
-From: tip-bot for Davidlohr Bueso <tipbot@zytor.com>
-Message-ID: <tip-adcc8da8859bee9548bb6d323b1e8de8a7252acd@git.kernel.org>
-Cc: dave@stgolabs.net, dbueso@suse.de, torvalds@linux-foundation.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
-        efault@gmx.de, mingo@kernel.org, tglx@linutronix.de
-Reply-To: peterz@infradead.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        efault@gmx.de, tglx@linutronix.de, dave@stgolabs.net, dbueso@suse.de,
-        torvalds@linux-foundation.org, hpa@zytor.com
-In-Reply-To: <20180404161539.nhadkff2aats74jh@linux-n805>
-References: <20180404161539.nhadkff2aats74jh@linux-n805>
+        Thu, 5 Apr 2018 05:18:25 -0400
+Date: Thu, 5 Apr 2018 02:18:00 -0700
+From: tip-bot for Stephane Eranian <tipbot@zytor.com>
+Message-ID: <tip-d1e7e602cd64cf61f87dbf30df07c24df9eb1d99@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        tglx@linutronix.de, vincent.weaver@maine.edu, namhyung@kernel.org,
+        mingo@kernel.org, acme@redhat.com, peterz@infradead.org, hpa@zytor.com,
+        torvalds@linux-foundation.org, eranian@google.com, jolsa@redhat.com
+Reply-To: torvalds@linux-foundation.org, hpa@zytor.com, peterz@infradead.org,
+        jolsa@redhat.com, eranian@google.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        acme@redhat.com, mingo@kernel.org, namhyung@kernel.org,
+        vincent.weaver@maine.edu, tglx@linutronix.de
+In-Reply-To: <1522909791-32498-1-git-send-email-eranian@google.com>
+References: <1522909791-32498-1-git-send-email-eranian@google.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/core: Simplify helpers for rq clock update
- skip requests
-Git-Commit-ID: adcc8da8859bee9548bb6d323b1e8de8a7252acd
+Subject: [tip:perf/urgent] perf/x86/intel: Move regs->flags EXACT bit init
+Git-Commit-ID: d1e7e602cd64cf61f87dbf30df07c24df9eb1d99
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,124 +36,124 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  adcc8da8859bee9548bb6d323b1e8de8a7252acd
-Gitweb:     https://git.kernel.org/tip/adcc8da8859bee9548bb6d323b1e8de8a7252acd
-Author:     Davidlohr Bueso <dave@stgolabs.net>
-AuthorDate: Wed, 4 Apr 2018 09:15:39 -0700
+Commit-ID:  d1e7e602cd64cf61f87dbf30df07c24df9eb1d99
+Gitweb:     https://git.kernel.org/tip/d1e7e602cd64cf61f87dbf30df07c24df9eb1d99
+Author:     Stephane Eranian <eranian@google.com>
+AuthorDate: Wed, 4 Apr 2018 23:29:51 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 5 Apr 2018 09:20:46 +0200
+CommitDate: Thu, 5 Apr 2018 09:28:40 +0200
 
-sched/core: Simplify helpers for rq clock update skip requests
+perf/x86/intel: Move regs->flags EXACT bit init
 
-By renaming the functions we can get rid of the skip parameter
-and have better code redability. It makes zero sense to have
-things such as:
+This patch removes a redundant store on regs->flags introduced
+by commit:
 
-  rq_clock_skip_update(rq, false)
+  71eb9ee9596d ("perf/x86/intel: Fix linear IP of PEBS real_ip on Haswell and later CPUs")
 
-When the skip request is in fact not going to happen. Ever. Rename
-things such that we end up with:
+We were clearing the PERF_EFLAGS_EXACT but it was overwritten by
+regs->flags = pebs->flags later on.
 
-  rq_clock_skip_update(rq)
-  rq_clock_cancel_skipupdate(rq)
+The PERF_EFLAGS_EXACT is a software flag using bit 3 of regs->flags.
+X86 marks this bit as Reserved. To make sure this bit is zero before
+we do any IP processing, we clear it explicitly.
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Patch also removes the following assignment:
+
+	regs->flags = pebs->flags | (regs->flags & PERF_EFLAGS_VM);
+
+Because there is no regs->flags to preserve anymore because
+set_linear_ip() is not called until later.
+
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Cc: matt@codeblueprint.co.uk
-Cc: rostedt@goodmis.org
-Link: http://lkml.kernel.org/r/20180404161539.nhadkff2aats74jh@linux-n805
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: kan.liang@intel.com
+Link: http://lkml.kernel.org/r/1522909791-32498-1-git-send-email-eranian@google.com
+[ Improve capitalization, punctuation and clarity of comments. ]
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/core.c     |  2 +-
- kernel/sched/deadline.c |  2 +-
- kernel/sched/fair.c     |  2 +-
- kernel/sched/rt.c       |  2 +-
- kernel/sched/sched.h    | 17 ++++++++++++-----
- 5 files changed, 16 insertions(+), 9 deletions(-)
+ arch/x86/events/intel/ds.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 28b68995a417..550a07f648b6 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -874,7 +874,7 @@ void check_preempt_curr(struct rq *rq, struct task_struct *p, int flags)
- 	 * this case, we can save a useless back to back clock update.
- 	 */
- 	if (task_on_rq_queued(rq->curr) && test_tsk_need_resched(rq->curr))
--		rq_clock_skip_update(rq, true);
-+		rq_clock_skip_update(rq);
- }
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index da6780122786..8a10a045b57b 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1153,7 +1153,6 @@ static void setup_pebs_sample_data(struct perf_event *event,
+ 	if (pebs == NULL)
+ 		return;
  
- #ifdef CONFIG_SMP
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index d1c7bf7c7e5b..e7b3008b85bb 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1560,7 +1560,7 @@ static void yield_task_dl(struct rq *rq)
- 	 * so we don't do microscopic update in schedule()
- 	 * and double the fastpath cost.
- 	 */
--	rq_clock_skip_update(rq, true);
-+	rq_clock_skip_update(rq);
- }
+-	regs->flags &= ~PERF_EFLAGS_EXACT;
+ 	sample_type = event->attr.sample_type;
+ 	dsrc = sample_type & PERF_SAMPLE_DATA_SRC;
  
- #ifdef CONFIG_SMP
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 0951d1c58d2f..54dc31e7ab9b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7089,7 +7089,7 @@ static void yield_task_fair(struct rq *rq)
- 		 * so we don't do microscopic update in schedule()
- 		 * and double the fastpath cost.
- 		 */
--		rq_clock_skip_update(rq, true);
-+		rq_clock_skip_update(rq);
+@@ -1197,7 +1196,13 @@ static void setup_pebs_sample_data(struct perf_event *event,
+ 	 * and PMI.
+ 	 */
+ 	*regs = *iregs;
+-	regs->flags = pebs->flags;
++
++	/*
++	 * Initialize regs_>flags from PEBS,
++	 * Clear exact bit (which uses x86 EFLAGS Reserved bit 3),
++	 * i.e., do not rely on it being zero:
++	 */
++	regs->flags = pebs->flags & ~PERF_EFLAGS_EXACT;
+ 
+ 	if (sample_type & PERF_SAMPLE_REGS_INTR) {
+ 		regs->ax = pebs->ax;
+@@ -1217,10 +1222,6 @@ static void setup_pebs_sample_data(struct perf_event *event,
+ 			regs->sp = pebs->sp;
+ 		}
+ 
+-		/*
+-		 * Preserve PERF_EFLAGS_VM from set_linear_ip().
+-		 */
+-		regs->flags = pebs->flags | (regs->flags & PERF_EFLAGS_VM);
+ #ifndef CONFIG_X86_32
+ 		regs->r8 = pebs->r8;
+ 		regs->r9 = pebs->r9;
+@@ -1234,20 +1235,33 @@ static void setup_pebs_sample_data(struct perf_event *event,
  	}
  
- 	set_skip_buddy(se);
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index ad13e6242481..7aef6b4e885a 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -861,7 +861,7 @@ static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun)
- 				 * 'runtime'.
- 				 */
- 				if (rt_rq->rt_nr_running && rq->curr == rq->idle)
--					rq_clock_skip_update(rq, false);
-+					rq_clock_cancel_skipupdate(rq);
- 			}
- 			if (rt_rq->rt_time || rt_rq->rt_nr_running)
- 				idle = 0;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index c3deaee7a7a2..15750c222ca2 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -976,13 +976,20 @@ static inline u64 rq_clock_task(struct rq *rq)
- 	return rq->clock_task;
- }
+ 	if (event->attr.precise_ip > 1) {
+-		/* Haswell and later have the eventing IP, so use it: */
++		/*
++		 * Haswell and later processors have an 'eventing IP'
++		 * (real IP) which fixes the off-by-1 skid in hardware.
++		 * Use it when precise_ip >= 2 :
++		 */
+ 		if (x86_pmu.intel_cap.pebs_format >= 2) {
+ 			set_linear_ip(regs, pebs->real_ip);
+ 			regs->flags |= PERF_EFLAGS_EXACT;
+ 		} else {
+-			/* Otherwise use PEBS off-by-1 IP: */
++			/* Otherwise, use PEBS off-by-1 IP: */
+ 			set_linear_ip(regs, pebs->ip);
  
--static inline void rq_clock_skip_update(struct rq *rq, bool skip)
-+static inline void rq_clock_skip_update(struct rq *rq)
- {
- 	lockdep_assert_held(&rq->lock);
--	if (skip)
--		rq->clock_update_flags |= RQCF_REQ_SKIP;
--	else
--		rq->clock_update_flags &= ~RQCF_REQ_SKIP;
-+	rq->clock_update_flags |= RQCF_REQ_SKIP;
-+}
-+
-+/*
-+ * See rt task throttoling, which is the only time a skip
-+ * request is cancelled.
-+ */
-+static inline void rq_clock_cancel_skipupdate(struct rq *rq)
-+{
-+	lockdep_assert_held(&rq->lock);
-+	rq->clock_update_flags &= ~RQCF_REQ_SKIP;
- }
+-			/* ... and try to fix it up using the LBR entries: */
++			/*
++			 * With precise_ip >= 2, try to fix up the off-by-1 IP
++			 * using the LBR. If successful, the fixup function
++			 * corrects regs->ip and calls set_linear_ip() on regs:
++			 */
+ 			if (intel_pmu_pebs_fixup_ip(regs))
+ 				regs->flags |= PERF_EFLAGS_EXACT;
+ 		}
+-	} else
++	} else {
++		/*
++		 * When precise_ip == 1, return the PEBS off-by-1 IP,
++		 * no fixup attempted:
++		 */
+ 		set_linear_ip(regs, pebs->ip);
++	}
  
- struct rq_flags {
+ 
+ 	if ((sample_type & (PERF_SAMPLE_ADDR | PERF_SAMPLE_PHYS_ADDR)) &&
