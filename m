@@ -1,78 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752803AbeDEBwH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 4 Apr 2018 21:52:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60336 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752642AbeDEBwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Apr 2018 21:52:05 -0400
-Date: Thu, 5 Apr 2018 04:52:03 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bhe@redhat.com,
-        dyoung@redhat.com, marcandre.lureau@redhat.com, mst@redhat.com,
-        somlo@cmu.edu, sonnyrao@chromium.org
-Subject: [PULL] fwcfg, vhost: features and fixes
-Message-ID: <20180405045203-mutt-send-email-mst@kernel.org>
+        id S1752850AbeDECCF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 4 Apr 2018 22:02:05 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:39916 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752677AbeDECCC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Apr 2018 22:02:02 -0400
+X-Google-Smtp-Source: AIpwx4/H4gQoUFeAY9R8QzCMjARnh5fXICJpxOHdXDRskTFnCLq3yNaKhQIZPFWoVgOTzXZeWlgLU5MrlhPs1YfovjADJZN73zSh
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Mutt-Fcc: =sent
+Date: Wed, 04 Apr 2018 19:02:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <001a114467485371b605691053fc@google.com>
+Subject: general protection fault in mount_fs
+From: syzbot <syzbot+01ffaf5d9568dd1609f7@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 0c8efd610b58cb23cefdfa12015799079aef94ae:
+Hello,
 
-  Linux 4.16-rc5 (2018-03-11 17:25:09 -0700)
+syzbot hit the following crash on upstream commit
+3e968c9f1401088abc9a19ae6ff571644d37a355 (Wed Apr 4 21:19:24 2018 +0000)
+Merge tag 'ext4_for_linus' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=01ffaf5d9568dd1609f7
 
-are available in the Git repository at:
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6269272955289600
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5190169938362368
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5077254979715072
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=9118669095563550941
+compiler: gcc (GCC) 7.1.1 20170620
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+01ffaf5d9568dd1609f7@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-for you to fetch changes up to dc32bb678e103afbcfa4d814489af0566307f528:
+hfsplus: failed to load root directory
+hfsplus: failed to load root directory
+hfsplus: failed to load root directory
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 5704 Comm: syzkaller335224 Not tainted 4.16.0+ #15
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:mount_fs+0x92/0x2d0 fs/super.c:1227
+RSP: 0018:ffff8801acc9fad0 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81b2ddaa
+RDX: 0000000000000019 RSI: 0000000000000000 RDI: 00000000000000c8
+RBP: ffff8801acc9fb00 R08: 1ffff10035993e87 R09: ffffed0035993efc
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff886b29c0
+R13: ffff8801c6243000 R14: ffff8801ac942ac0 R15: 0000000000000000
+FS:  00007f8ca5272700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004c5198 CR3: 00000001af14e000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:2514 [inline]
+  do_new_mount fs/namespace.c:2517 [inline]
+  do_mount+0xea4/0x2b90 fs/namespace.c:2847
+  ksys_mount+0xab/0x120 fs/namespace.c:3063
+  SYSC_mount fs/namespace.c:3077 [inline]
+  SyS_mount+0x39/0x50 fs/namespace.c:3074
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x44a34a
+RSP: 002b:00007f8ca5271d38 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000318 RCX: 000000000044a34a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f8ca5271d50
+RBP: 00000000006e39c4 R08: 0000000020000140 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000003
+R13: 0000000000000004 R14: 00000000006e39c0 R15: 0073756c70736668
+Code: 3d 00 f0 ff ff 48 89 c3 0f 87 eb 01 00 00 e8 66 c6 be ff 48 8d bb c8  
+00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
+0f 85 08 02 00 00 4c 8b b3 c8 00 00 00 4d 85 f6 0f
+RIP: mount_fs+0x92/0x2d0 fs/super.c:1227 RSP: ffff8801acc9fad0
+---[ end trace 81f30bb7bca06fe8 ]---
+Kernel panic - not syncing: Fatal exception
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-  vhost: add vsock compat ioctl (2018-03-20 03:17:42 +0200)
 
-----------------------------------------------------------------
-fw_cfg, vhost: features fixes
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-This cleans up the qemu fw cfg device driver.
-On top of this, vmcore is dumped there on crash to
-help debugging witH kASLR enabled.
-Also included are some fixes in vhost.
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-----------------------------------------------------------------
-Marc-André Lureau (10):
-      fw_cfg: fix sparse warnings in fw_cfg_sel_endianness()
-      fw_cfg: fix sparse warnings with fw_cfg_file
-      fw_cfg: fix sparse warning reading FW_CFG_ID
-      fw_cfg: fix sparse warnings around FW_CFG_FILE_DIR read
-      fw_cfg: remove inline from fw_cfg_read_blob()
-      fw_cfg: handle fw_cfg_read_blob() error
-      fw_cfg: add a public uapi header
-      fw_cfg: add DMA register
-      crash: export paddr_vmcoreinfo_note()
-      fw_cfg: write vmcoreinfo details
-
-Michael S. Tsirkin (1):
-      ptr_ring: fix build
-
-Sonny Rao (2):
-      vhost: fix vhost ioctl signature to build with clang
-      vhost: add vsock compat ioctl
-
- MAINTAINERS                      |   1 +
- drivers/firmware/qemu_fw_cfg.c   | 291 +++++++++++++++++++++++++++++++--------
- drivers/vhost/vhost.c            |   2 +-
- drivers/vhost/vhost.h            |   4 +-
- drivers/vhost/vsock.c            |  11 ++
- include/uapi/linux/qemu_fw_cfg.h |  97 +++++++++++++
- kernel/crash_core.c              |   1 +
- tools/virtio/ringtest/ptr_ring.c |   5 +
- 8 files changed, 348 insertions(+), 64 deletions(-)
- create mode 100644 include/uapi/linux/qemu_fw_cfg.h
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
