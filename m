@@ -1,184 +1,202 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3756588-1522961485-2-9701440144403018878
+X-Cyrus-Session-Id: sloti22d1t05-3758934-1522961405-2-16014113643070885881
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='utf-8'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: cc='ISO-8859-1', plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522961485; b=MHZr2JQbBeKFA0uYef6vyiDt+BJVdslWgJ6fjs9cPIcKIOSPD9
-    8rdxQY/TjBo9CJogUUMjvzoluBBy6oeXBIOR3u3VkhPa5tIBkbiYICqrgBqw0qLC
-    3Mn5J1sldXlCEgbOaLvCWZL3YFDBAC6rAfbwnNLnV42T/8v4cDvOabzW4GPR1xYK
-    ZW2ds23vYjhKZkv/Uc/hFxPX7i9NB1Yyop3gje5t3WTBto3xXbmojSm8c+3AHMom
-    WhidhuJwgDUPoQd6mDxAiNAphsSu1L46H+5L/8RiKmmDu+rPQsUz7LJi3WS7Gf+p
-    zEN3yKhvH3JFEHHFZWDUfci1hZqcGWW1I+gA==
+    1522961404; b=SbqVybQ4PmXOYOaJkYY1fEQxiF0UH+Bs/gvc8R3IChRe9CvNyV
+    mNfqAF8fM4+5WOTrwkPjya1PXQJ+h//HbO3S5gdojJAQLjco1T9wlUQM799rU0pV
+    twzlWWOFPBZ10e66u4+BJhdmmeLTV+smMxZFKB8k5P2Y7ngqHdobfLIzqRIszFtU
+    WctYjvWEPtJJFDuyYi5m5KuPl/1k9ycVcVgwDi0+Z1G3St9tFUzUinBCV19YQQ+n
+    07phsy2pTUohOvVp2kTy+MHCLFy4pWC5UI7gpVErFNKqx2MC2p3OokBwnIWIBEcY
+    BiOX6tZYixphn0omxgM6c47gt93SU6AJmBPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
-    t=1522961485; bh=xkh9WbKy06JfqGdqfYLsAGUHI7snYQIoa9SNKhAZza8=; b=
-    pPu4sxIsvTWdatma+abmUTx4ztnCLUapMFINFj3LTcrJPvCdAyFInukH5WiMDdds
-    6jH9skQPFOphe4jzDlwraLMac/HZ2gqr7R9wxHE3vJynS0lrbnVP2Mm6KIgBMVvw
-    sAQYy7KmON6f7w5oTYfO93ZSEQKUPlPh/kpCaqV/+oqKvgK3gnl00qBUQOO8lnro
-    pnCaDOs6ktD1tOx4PzRF56ZWEtIBwg/d3o29snM+PDKPHZ4hND3cdwcBZKmgSYPY
-    XWahZieW1JRY36OAGp0WUervYcmU8v02fCtpH6N6APLSeuDfDSfidsx3t1pizLoF
-    oDPMBVbj+sy97MliSG4JOg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=message-id:subject:from:to:cc:date
+    :in-reply-to:references:content-type:mime-version
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1522961404;
+    bh=8iEx7hH3whAz9fQOUCOTut4Spjv6u3oiprCnhu1hFEk=; b=gaEA4lgJVWYi
+    mzIh6qwX5+bC3ZqZNbXGrgKaEtTbJ/0eerpMphjZozMM7aanbs8AONvrbJDmuHfe
+    Dxww9FU1b4x75NRw9Rk/QM3n5U3bRf0KPCexFOgV5nT7eWPaLjxgNgMOLq9PapKZ
+    Dj+iSZkyedQ+/7+4bIKQwgnejkidWYVZXttCmsaVIBCwe/MOD6+4Y26CeymL3mu/
+    r2S7c78I5RBZpZ4MLCW2fCRxFdaK1aPXY6xjqP0OWd4zfeFRTwAgh3rYQAgTWgPM
+    DA6lDYRLZ8OU9SChIHZd1AKyxiXBr3U6P7Vdi8VeF9gJrgQ9eWCki9d2ut0VITTk
+    IuQq5XnhLA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fOf2x/jI;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fOf2x/jI;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNJOrBmW9DnTfrQprBqdjhYqZNwbUHgM5ucmtkiLO4bKq09rpKmXC/5dtwIMWrHlTqBUHeya3pqgD0jZUPEsNhgKddoaWe6+V/xfCjxpVdKZ5ljz5cAk
-    b/YZjps2eQ+w9KVZvesnIqKFQzVMhzZHIHlGKu31i6yU/c/j4ZAnZfiutSiLDqPwSR4DpjVAOnAR7zs1vw/EZX/hVnAKTqhIP1J4K9vU7RBexYh98tIJ0N1L
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=J1NWn22cQj0A:10 a=IkcTkHD0fZMA:10
-    a=Kd1tUaAdevIA:10 a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8
-    a=NTfZxkeiJG3UAG_HXy8A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfG699Fuyl2JleOGySZcp/7ooSbxdb2L6MVwUzywcaUQm/vji3CU26MKjsN3U3bzGZjttTpPCPeiKiURMqEaYQ1JHK28IzGvs/O1UU50o1VudQn9s4uWj
+    2YrtknSRnM16B4mQFZnNfUT4uUOMLV0DTPRpO74y7bM1bzLt8Rcfgp44ezlBDuHSrnjqABaMj3RYriiWawSk9F9g3NwIA5+TeOIBJrIlGedYDEfqvx10oOzM
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=NTfZxkeiJG3UAG_HXy8A:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751277AbeDEUvW (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 5 Apr 2018 16:51:22 -0400
-Received: from mga09.intel.com ([134.134.136.24]:31072 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751155AbeDEUvV (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 5 Apr 2018 16:51:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,412,1517904000";
-   d="scan'208";a="214275950"
-From: "Pandiyan, Dhinakaran" <dhinakaran.pandiyan@intel.com>
-To: "lyude@redhat.com" <lyude@redhat.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "ville.syrjala@linux.intel.com" <ville.syrjala@linux.intel.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "labbott@redhat.com" <labbott@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>
+        id S1751262AbeDEUuB (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 5 Apr 2018 16:50:01 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42789 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751251AbeDEUuA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 5 Apr 2018 16:50:00 -0400
+X-Google-Smtp-Source: AIpwx4+oZyJ0XE27EakYP5Qbu3CzceOv7YC84+V0nuIrb/Pr/F8IStjh7f537FXl5il0e49oSw3vwQ==
+Message-ID: <1522961397.4019.0.camel@redhat.com>
 Subject: Re: [PATCH v2] drm/i915/dp: Send DPCD ON for MST before phy_up
-Thread-Topic: [PATCH v2] drm/i915/dp: Send DPCD ON for MST before phy_up
-Thread-Index: AQHTzR2+J4wyIPMXgE+y3+d6rvHWe6PzIZcA
-Date: Thu, 5 Apr 2018 20:51:20 +0000
-Message-ID: <1522962936.2418.21.camel@dk-H97M-D3H>
-References: <20180405203601.23242-1-lyude@redhat.com>
+From: Lyude Paul <lyude@redhat.com>
+To: intel-gfx@lists.freedesktop.org
+Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
+        Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
+        <ville.syrjala@linux.intel.com>, Laura Abbott <labbott@redhat.com>,
+        stable@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Thu, 05 Apr 2018 16:49:57 -0400
 In-Reply-To: <20180405203601.23242-1-lyude@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.17]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F0FF6FB3EC8FD147B4A3186C5E14E694@intel.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+References: <20180405203601.23242-1-lyude@redhat.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-DQoNCg0KT24gVGh1LCAyMDE4LTA0LTA1IGF0IDE2OjM2IC0wNDAwLCBMeXVkZSBQYXVsIHdyb3Rl
-Og0KPiBXaGVuIGRvaW5nIGEgbW9kZXNldCB3aGVyZSB0aGUgc2luayBpcyB0cmFuc2l0aW9uaW5n
-IGZyb20gRDMgdG8gRDAgLCBpdA0KPiB3b3VsZCBzb21ldGltZXMgYmUgcG9zc2libGUgZm9yIHRo
-ZSBpbml0aWFsIHBvd2VyX3VwX3BoeSgpIHRvIHN0YXJ0DQo+IHRpbWluZyBvdXQuIFRoaXMgd291
-bGQgb25seSBiZSBvYnNlcnZlZCBpbiB0aGUgbGFzdCBhY3Rpb24gYmVmb3JlIHRoZQ0KPiBzaW5r
-IHdlbnQgaW50byBEMyBtb2RlIHdhcyBpbnRlbF9kcF9zaW5rX2RwbXMoRFJNX01PREVfRFBNU19P
-RkYpLiBXZQ0KPiBvcmlnaW5hbGx5IHRob3VnaHQgdGhpcyBtaWdodCBiZSBhbiBpc3N1ZSB3aXRo
-IHVzIGFjY2lkZW50YWxseSBzaHV0dGluZw0KPiBvZmYgdGhlIGF1eCBibG9jayB3aGVuIHB1dHRp
-bmcgdGhlIHNpbmsgaW50byBEMywgYnV0IHNpbmNlIHRoZSBEUCBzcGVjDQo+IG1hbmRhdGVzIHRo
-YXQgc2lua3MgbXVzdCB3YWtlIHVwIHdpdGhpbiAxbXMgd2hpbGUgd2UgaGF2ZSAxMDBtcyB0bw0K
-PiByZXNwb25kIHRvIGFuIEVTSSBpcnEsIHRoaXMgZGlkbid0IHJlYWxseSBhZGQgdXAuIFR1cm5z
-IG91dCB0aGF0IHRoZQ0KPiBwcm9ibGVtIGlzIG1vcmUgc3VidGxlIHRoZW4gdGhhdDoNCj4gDQo+
-IEl0IHR1cm5zIG91dCB0aGF0IHRoZSB0aW1lb3V0IGlzIGZyb20gdXMgbm90IGVuYWJsaW5nIERQ
-TVMgb24gdGhlIE1TVA0KPiBodWIgYmVmb3JlIGFjdHVhbGx5IHRyeWluZyB0byBpbml0aWF0ZSBz
-aWRlYmFuZCBjb21tdW5pY2F0aW9ucy4gVGhpcw0KPiB3b3VsZCBjYXVzZSB0aGUgZmlyc3Qgc2lk
-ZWJhbmQgY29tbXVuaWNhdGlvbiAocG93ZXJfdXBfcGh5KCkpLCB0byBzdGFydA0KPiB0aW1pbmcg
-b3V0IGJlY2F1c2UgdGhlIHNpbmsgd2Fzbid0IHJlYWR5IHRvIHJlc3BvbmQuIEFmdGVyd2FyZHMs
-IHdlDQo+IHdvdWxkIGNhbGwgaW50ZWxfZHBfc2lua19kcG1zKERSTV9NT0RFX0RQTVNfT04pIGlu
-DQo+IGludGVsX2RkaV9wcmVfZW5hYmxlX2RwKCksIHdoaWNoIHdvdWxkIGFjdHVhbGx5IHJlc3Vs
-dCBpbiB3YWtpbmcgdXAgdGhlDQo+IHNpbmsgc28gdGhhdCBzaWRlYmFuZCByZXF1ZXN0cyB3b3Vs
-ZCB3b3JrIGFnYWluLg0KPiANCj4gU2luY2UgRFBNUyBpcyB3aGF0IGxldHMgdXMgYWN0dWFsbHkg
-YnJpbmcgdGhlIGh1YiB1cCBpbnRvIGEgc3RhdGUgd2hlcmUNCj4gc2lkZWJhbmQgY29tbXVuaWNh
-dGlvbnMgYmVjb21lIGZ1bmN0aW9uYWwgYWdhaW4sIHdlIGp1c3QgbmVlZCB0byBtYWtlDQo+IHN1
-cmUgdG8gZW5hYmxlIERQTVMgb24gdGhlIGRpc3BsYXkgYmVmb3JlIGF0dGVtcHRpbmcgdG8gcGVy
-Zm9ybSBzaWRlYmFuZA0KPiBjb21tdW5pY2F0aW9ucy4NCj4gDQo+IENoYW5nZXMgc2luY2UgdjE6
-DQo+IC0gUmVtb3ZlIGNvbW1lbnQgYWJvdmUgaWYgKCFpbnRlbF9kcC0+aXNfbXN0KSAtIHZzcnlq
-YWxhDQo+IC0gTW92ZSBpbnRlbF9kcF9zaW5rX2RwbXMoKSBmb3IgTVNUIGludG8gaW50ZWxfZHBf
-cG9zdF9kaXNhYmxlX21zdCgpIHRvDQo+ICAga2VlcCBlbmFibGUvZGlzYWJsZSBwYXRocyBzeW1t
-ZXRyaWNhbA0KPiAtIEltcHJvdmUgY29tbWl0IG1lc3NhZ2UgLSBkaG5rcm4NCj4gDQo+IFNpZ25l
-ZC1vZmYtYnk6IEx5dWRlIFBhdWwgPGx5dWRlQHJlZGhhdC5jb20+DQo+IENjOiBEaGluYWthcmFu
-IFBhbmRpeWFuIDxkaGluYWthcmFuLnBhbmRpeWFuQGludGVsLmNvbT4NCj4gQ2M6IFZpbGxlIFN5
-cmrDpGzDpCA8dmlsbGUuc3lyamFsYUBsaW51eC5pbnRlbC5jb20+DQo+IENjOiBMYXVyYSBBYmJv
-dHQgPGxhYmJvdHRAcmVkaGF0LmNvbT4NCj4gQ2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4g
-Rml4ZXM6IGFkMjYwYWIzMmE0ZDkgKCJkcm0vaTkxNS9kcDogV3JpdGUgdG8gU0VUX1BPV0VSIGRw
-Y2QgdG8gZW5hYmxlIE1TVCBodWIuIikNCj4gLS0tDQo+IFRoaXMgZW1haWwgc2hvdWxkIGhvcGVm
-dWxseSBhY3R1YWxseSBiZSBwaWNrZWQgdXAgYnkgcGF0Y2h3b3JrIHRoaXMNCj4gdGltZSwgaG9v
-cmF5IQ0KPiANCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2RkaS5jICAgIHwgNiArKysr
-LS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2RwX21zdC5jIHwgMiArKw0KPiAgMiBm
-aWxlcyBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGRpLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vaTkxNS9pbnRlbF9kZGkuYw0KPiBpbmRleCBhNjY3MmE5YWJkODUuLmMwYmY3NDE5ZTFjMSAx
-MDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGRpLmMNCj4gKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGRpLmMNCj4gQEAgLTIzMjQsNyArMjMyNCw4IEBA
-IHN0YXRpYyB2b2lkIGludGVsX2RkaV9wcmVfZW5hYmxlX2RwKHN0cnVjdCBpbnRlbF9lbmNvZGVy
-ICplbmNvZGVyLA0KPiAgCQlpbnRlbF9wcmVwYXJlX2RwX2RkaV9idWZmZXJzKGVuY29kZXIsIGNy
-dGNfc3RhdGUpOw0KPiAgDQo+ICAJaW50ZWxfZGRpX2luaXRfZHBfYnVmX3JlZyhlbmNvZGVyKTsN
-Cj4gLQlpbnRlbF9kcF9zaW5rX2RwbXMoaW50ZWxfZHAsIERSTV9NT0RFX0RQTVNfT04pOw0KPiAr
-CWlmICghaW50ZWxfZHAtPmlzX21zdCkNCj4gKwkJaW50ZWxfZHBfc2lua19kcG1zKGludGVsX2Rw
-LCBEUk1fTU9ERV9EUE1TX09OKTsNCj4gIAlpbnRlbF9kcF9zdGFydF9saW5rX3RyYWluKGludGVs
-X2RwKTsNCj4gIAlpZiAocG9ydCAhPSBQT1JUX0EgfHwgSU5URUxfR0VOKGRldl9wcml2KSA+PSA5
-KQ0KPiAgCQlpbnRlbF9kcF9zdG9wX2xpbmtfdHJhaW4oaW50ZWxfZHApOw0KPiBAQCAtMjQyNyw3
-ICsyNDI4LDggQEAgc3RhdGljIHZvaWQgaW50ZWxfZGRpX3Bvc3RfZGlzYWJsZV9kcChzdHJ1Y3Qg
-aW50ZWxfZW5jb2RlciAqZW5jb2RlciwNCj4gIAkgKiBQb3dlciBkb3duIHNpbmsgYmVmb3JlIGRp
-c2FibGluZyB0aGUgcG9ydCwgb3RoZXJ3aXNlIHdlIGVuZA0KPiAgCSAqIHVwIGdldHRpbmcgaW50
-ZXJydXB0cyBmcm9tIHRoZSBzaW5rIG9uIGRldGVjdGluZyBsaW5rIGxvc3MuDQo+ICAJICovDQo+
-IC0JaW50ZWxfZHBfc2lua19kcG1zKGludGVsX2RwLCBEUk1fTU9ERV9EUE1TX09GRik7DQo+ICsJ
-aWYgKCFpbnRlbF9kcC0+aXNfbXN0KQ0KPiArCQlpbnRlbF9kcF9zaW5rX2RwbXMoaW50ZWxfZHAs
-IERSTV9NT0RFX0RQTVNfT0ZGKTsNCj4gIA0KPiAgCWludGVsX2Rpc2FibGVfZGRpX2J1ZihlbmNv
-ZGVyKTsNCj4gIA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZHBf
-bXN0LmMgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kcF9tc3QuYw0KPiBpbmRleCBjM2Rl
-MDkxOGVlMTMuLjI0OTNiZDFlMGU1OSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5
-MTUvaW50ZWxfZHBfbXN0LmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZHBf
-bXN0LmMNCj4gQEAgLTE3Niw2ICsxNzYsNyBAQCBzdGF0aWMgdm9pZCBpbnRlbF9tc3RfcG9zdF9k
-aXNhYmxlX2RwKHN0cnVjdCBpbnRlbF9lbmNvZGVyICplbmNvZGVyLA0KPiAgCSAqLw0KPiAgCWRy
-bV9kcF9zZW5kX3Bvd2VyX3VwZG93bl9waHkoJmludGVsX2RwLT5tc3RfbWdyLCBjb25uZWN0b3It
-PnBvcnQsDQo+ICAJCQkJICAgICBmYWxzZSk7DQo+ICsJaW50ZWxfZHBfc2lua19kcG1zKGludGVs
-X2RwLCBEUk1fTU9ERV9EUE1TX09GRik7DQoNCk5lZWRlZCBvbmx5IHdoZW4gX2xpbmtzIGdvZXMg
-ZnJvbSAxIC0+IDANCj4gIA0KPiAgCWludGVsX2RwLT5hY3RpdmVfbXN0X2xpbmtzLS07DQo+ICAN
-Cj4gQEAgLTIyMyw2ICsyMjQsNyBAQCBzdGF0aWMgdm9pZCBpbnRlbF9tc3RfcHJlX2VuYWJsZV9k
-cChzdHJ1Y3QgaW50ZWxfZW5jb2RlciAqZW5jb2RlciwNCj4gIA0KPiAgCURSTV9ERUJVR19LTVMo
-ImFjdGl2ZSBsaW5rcyAlZFxuIiwgaW50ZWxfZHAtPmFjdGl2ZV9tc3RfbGlua3MpOw0KPiAgDQo+
-ICsJaW50ZWxfZHBfc2lua19kcG1zKGludGVsX2RwLCBEUk1fTU9ERV9EUE1TX09OKTsNCk5lZWRl
-ZCBvbmx5IHdoZW4gX2xpbmtzIGdvZXMgZnJvbSAwIC0+IDENCj4gIAlkcm1fZHBfc2VuZF9wb3dl
-cl91cGRvd25fcGh5KCZpbnRlbF9kcC0+bXN0X21nciwgY29ubmVjdG9yLT5wb3J0LCB0cnVlKTsN
-Cj4gIAlpZiAoaW50ZWxfZHAtPmFjdGl2ZV9tc3RfbGlua3MgPT0gMCkNCj4gIAkJaW50ZWxfZGln
-X3BvcnQtPmJhc2UucHJlX2VuYWJsZSgmaW50ZWxfZGlnX3BvcnQtPmJhc2UsDQo=
+Actually - ignore this patch, I'm going to do a v3 because i just noticed
+there is something very silly and broken I just introduced into the disable
+codepath
+
+On Thu, 2018-04-05 at 16:36 -0400, Lyude Paul wrote:
+> When doing a modeset where the sink is transitioning from D3 to D0 , it
+> would sometimes be possible for the initial power_up_phy() to start
+> timing out. This would only be observed in the last action before the
+> sink went into D3 mode was intel_dp_sink_dpms(DRM_MODE_DPMS_OFF). We
+> originally thought this might be an issue with us accidentally shutting
+> off the aux block when putting the sink into D3, but since the DP spec
+> mandates that sinks must wake up within 1ms while we have 100ms to
+> respond to an ESI irq, this didn't really add up. Turns out that the
+> problem is more subtle then that:
+> 
+> It turns out that the timeout is from us not enabling DPMS on the MST
+> hub before actually trying to initiate sideband communications. This
+> would cause the first sideband communication (power_up_phy()), to start
+> timing out because the sink wasn't ready to respond. Afterwards, we
+> would call intel_dp_sink_dpms(DRM_MODE_DPMS_ON) in
+> intel_ddi_pre_enable_dp(), which would actually result in waking up the
+> sink so that sideband requests would work again.
+> 
+> Since DPMS is what lets us actually bring the hub up into a state where
+> sideband communications become functional again, we just need to make
+> sure to enable DPMS on the display before attempting to perform sideband
+> communications.
+> 
+> Changes since v1:
+> - Remove comment above if (!intel_dp->is_mst) - vsryjala
+> - Move intel_dp_sink_dpms() for MST into intel_dp_post_disable_mst() to
+>   keep enable/disable paths symmetrical
+> - Improve commit message - dhnkrn
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Cc: Laura Abbott <labbott@redhat.com>
+> Cc: stable@vger.kernel.org
+> Fixes: ad260ab32a4d9 ("drm/i915/dp: Write to SET_POWER dpcd to enable MST
+> hub.")
+> ---
+> This email should hopefully actually be picked up by patchwork this
+> time, hooray!
+> 
+>  drivers/gpu/drm/i915/intel_ddi.c    | 6 ++++--
+>  drivers/gpu/drm/i915/intel_dp_mst.c | 2 ++
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_ddi.c
+> b/drivers/gpu/drm/i915/intel_ddi.c
+> index a6672a9abd85..c0bf7419e1c1 100644
+> --- a/drivers/gpu/drm/i915/intel_ddi.c
+> +++ b/drivers/gpu/drm/i915/intel_ddi.c
+> @@ -2324,7 +2324,8 @@ static void intel_ddi_pre_enable_dp(struct
+> intel_encoder *encoder,
+>  		intel_prepare_dp_ddi_buffers(encoder, crtc_state);
+>  
+>  	intel_ddi_init_dp_buf_reg(encoder);
+> -	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
+> +	if (!intel_dp->is_mst)
+> +		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
+>  	intel_dp_start_link_train(intel_dp);
+>  	if (port != PORT_A || INTEL_GEN(dev_priv) >= 9)
+>  		intel_dp_stop_link_train(intel_dp);
+> @@ -2427,7 +2428,8 @@ static void intel_ddi_post_disable_dp(struct
+> intel_encoder *encoder,
+>  	 * Power down sink before disabling the port, otherwise we end
+>  	 * up getting interrupts from the sink on detecting link loss.
+>  	 */
+> -	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
+> +	if (!intel_dp->is_mst)
+> +		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
+>  
+>  	intel_disable_ddi_buf(encoder);
+>  
+> diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c
+> b/drivers/gpu/drm/i915/intel_dp_mst.c
+> index c3de0918ee13..2493bd1e0e59 100644
+> --- a/drivers/gpu/drm/i915/intel_dp_mst.c
+> +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
+> @@ -176,6 +176,7 @@ static void intel_mst_post_disable_dp(struct
+> intel_encoder *encoder,
+>  	 */
+>  	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port,
+>  				     false);
+> +	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
+>  
+>  	intel_dp->active_mst_links--;
+>  
+> @@ -223,6 +224,7 @@ static void intel_mst_pre_enable_dp(struct intel_encoder
+> *encoder,
+>  
+>  	DRM_DEBUG_KMS("active links %d\n", intel_dp->active_mst_links);
+>  
+> +	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
+>  	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port,
+> true);
+>  	if (intel_dp->active_mst_links == 0)
+>  		intel_dig_port->base.pre_enable(&intel_dig_port->base,
+-- 
+Cheers,
+	Lyude Paul
