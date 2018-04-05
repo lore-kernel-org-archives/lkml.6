@@ -1,70 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751344AbeDELCW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:02:22 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:29606 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751178AbeDELCV (ORCPT
+        id S1751376AbeDELFY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:05:24 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:33395 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751233AbeDELFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:02:21 -0400
-Subject: Re: KASAN: global-out-of-bounds Write in string
-To: dhowells@redhat.com, reiserfs-devel@vger.kernel.org
-References: <000000000000b696800568f4a6c6@google.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: syzbot <syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Message-ID: <f1254802-d801-41d6-72ca-33f011e63253@I-love.SAKURA.ne.jp>
-Date: Thu, 5 Apr 2018 20:02:06 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+        Thu, 5 Apr 2018 07:05:22 -0400
+Subject: Re: regression: twl4030 audio/clock stopped working in v4.16
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+CC: Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+References: <2E644641-82D1-40AB-B878-06066C91AC7A@goldelico.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <3c615b51-f9f4-7267-cc2d-2a74184058a8@ti.com>
+Date: Thu, 5 Apr 2018 14:05:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <000000000000b696800568f4a6c6@google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <2E644641-82D1-40AB-B878-06066C91AC7A@goldelico.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/04/04 2:01, syzbot wrote:
-> BUG: KASAN: global-out-of-bounds in string+0x1cb/0x200 lib/vsprintf.c:598
-> Write of size 1 at addr ffffffff89e166a0 by task syz-executor0/4522
+Nikolaus,
+
+can you CC me also, I have almost missed this...
+
+On 2018-04-04 21:29, H. Nikolaus Schaller wrote:
+> Hi Peter,
+> I just noticed a problem in v4.16 kernels with twl4030 audio and vibra driver no longer working.
 > 
-> CPU: 1 PID: 4522 Comm: syz-executor0 Not tainted 4.16.0+ #12
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x1a7/0x27d lib/dump_stack.c:53
->  print_address_description+0x178/0x250 mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report+0x23c/0x360 mm/kasan/report.c:412
->  __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
->  string+0x1cb/0x200 lib/vsprintf.c:598
->  vsnprintf+0x863/0x1900 lib/vsprintf.c:2282
->  vsprintf+0x2a/0x40 lib/vsprintf.c:2462
->  prepare_error_buf+0x1d2/0x1820 fs/reiserfs/prints.c:240
->  __reiserfs_warning+0xc8/0x1a0 fs/reiserfs/prints.c:267
->  reiserfs_getopt fs/reiserfs/super.c:1044 [inline]
->  reiserfs_parse_options+0x11e5/0x24e0 fs/reiserfs/super.c:1194
->  reiserfs_fill_super+0x520/0x33a0 fs/reiserfs/super.c:1946
+> Tracing it back shows that it already did appear in v4.16-rc1 and wasn't fixed up to v4.16.0.
+> Kernel v4.15.9 (the latest one where I have a binary) works.
 
-> The buggy address belongs to the variable:
->  error_buf+0x400/0x420
+v4.16 works just fine on beagle-xm (including audio), omap2plus_defconfig.
 
-I guess this is a buffer overflow bug due to
+> The symptoms are:
+> 
+> [    1.557342] twl4030-audio 48070000.i2c:twl@48:audio: Invalid audio_mclk
+> [    1.564788] twl4030-audio: probe of 48070000.i2c:twl@48:audio failed with error -22
+> [    1.839141] TWL4030: HFCLK is not configured
 
-  static char error_buf[1024];
-  char *p = error_buf;
-  vsprintf(p, fmt1, args);
+Hrm, the order looks a bit weird, it should be
+TWL4030: HFCLK is not configured
+twl4030-audio 48070000.i2c:twl@48:audio: Invalid audio_mclk
+twl4030-audio: probe of 48070000.i2c:twl@48:audio failed with error -22
 
-at prepare_error_buf(). Need to check available bytes.
+In twl4030_audio_probe() we try to get the HFCLK rate via
+twl_get_hfclk_rate(), which is reading it with:
+twl_i2c_read_u8(TWL_MODULE_PM_MASTER, &ctrl, R_CFG_BOOT);
+
+> Those are not visible in v4.15.9. And I am not aware of any changes to the gta04 device tree.
+> 
+> Do you know about this issue and a fix, before I start to bisect?
+
+The CFG_BOOT register of twl4030 is not configured correctly for some
+reason?
+The TRM of twl4030 states that the SW should program the HFCLK_FREQ
+during boot sequence.
+
+If it is not done, MDAC and USB should not work either. And all sorts of
+other issues might happen.
+
+So the boot loader is not configuring the HFCLK_FREQ, for me it does as
+I have this line in the kernel log:
+[    1.472503] Skipping twl internal clock init and using bootloader
+value (unknown osc rate)
+
+In DT the twl should have the fck clock to not depend on the bootloader
+for the HFCLK_FREQ settings. We do not have that for beagle-xm for sure.
 
 > 
-> Memory state around the buggy address:
->  ffffffff89e16580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffffffff89e16600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> ffffffff89e16680: 00 00 00 00 fa fa fa fa 04 fa fa fa fa fa fa fa
->                                ^
->  ffffffff89e16700: 00 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
->  ffffffff89e16780: 00 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
-> ==================================================================
+> BR and thanks,
+> Nikolaus
+> 
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
