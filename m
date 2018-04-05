@@ -1,104 +1,504 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751483AbeDEPhl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 11:37:41 -0400
-Received: from vern.gendns.com ([206.190.152.46]:52792 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750835AbeDEPhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 11:37:39 -0400
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com>
- <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
- <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
- <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
- <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
- <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <366610a6-8983-d744-01e5-a00592bef479@lechnology.com>
-Date: Thu, 5 Apr 2018 10:37:35 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751368AbeDEPnB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 11:43:01 -0400
+Received: from smtp03.citrix.com ([162.221.156.55]:34156 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750835AbeDEPnA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 11:43:00 -0400
+X-IronPort-AV: E=Sophos;i="5.48,411,1517875200";
+   d="scan'208";a="50753413"
+From: Paul Durrant <paul.durrant@citrix.com>
+To: <x86@kernel.org>, <xen-devel@lists.xenproject.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Paul Durrant <paul.durrant@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH v2] xen/privcmd: add IOCTL_PRIVCMD_MMAP_RESOURCE
+Date: Thu, 5 Apr 2018 16:42:49 +0100
+Message-ID: <20180405154249.33929-1-paul.durrant@citrix.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/2018 09:36 AM, Sekhar Nori wrote:
-> On Thursday 05 April 2018 07:14 PM, Bartosz Golaszewski wrote:
->> 2018-04-05 15:09 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
->>> Hi Bartosz,
->>>
->>> On Friday 09 February 2018 10:18 PM, Michael Turquette wrote:
->>>> On Fri, Feb 9, 2018 at 8:22 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>>> 2018-01-08 3:17 GMT+01:00 David Lechner <david@lechnology.com>:
->>>
->>>>> Hi David,
->>>>>
->>>>> I've been working on moving the genpd code from its own driver to the
->>>>> psc one. I couldn't get the system to boot though and problems
->>>>> happened very early in the boot sequence. I struggled to figure out
->>>>> what's happening, but eventually I noticed that psc uses
->>>>> CLK_OF_DECLARE() to initialize clocks. The functions registered this
->>>>> way are called very early in the boot sequence, way before
->>>>> late_initcall() in which the genpd framework is initialized. This of
->>>
->>> late_initcall() is too late for genpd to be initialized. As you may have
->>> seen with the latest set of patches, we have problems with timer
->>> initialization. After converting to platform devices, PSC and PLL clocks
->>> get initialized post time_init(). We are working that around using
->>> fixed-clocks, which hopefully will work (I still need to test many of
->>> the affected platforms).
->>>
->>> Can you please reply with the exact issue you faced with genpd framework
->>> initialization so we do have that on record.
->>>
->>
->> The exact issue manifested itself in a NULL-pointer dereference panic
->> when I tried moving the genpd code I had initially implemented as a
->> separate platform driver to what I believe was v6 or v7 of David's
->> series (before the psc driver became a platform driver, when it was
->> still using CLK_OF_DECLARE()). When I had tested a simple conversion
->> of that version to a platform_driver, genpd worked fine.
->>
->> I don't have the stack traces from these panics, but I recall some
->> debugfs functions being involved and the genpd late_initcalls are
->> related to debugfs. Looking at it now I don't see how exactly it could
->> fail though.
-> 
-> Do you have the code where you faced the problem stashed somewhere? I am
-> not (yet) advocating going back to CLK_OF_DECLARE(). But there is a
-> definite issue with timer being ready when not using CLK_OF_DECLARE().
-> So, I want to make sure there the reason why we are going down the
-> platform device path is a amply clear.
-> 
-> Thanks,
-> Sekhar
-> 
-This is the thread that led to the conversion to platform devices:
+My recent Xen patch series introduces a new HYPERVISOR_memory_op to
+support direct priv-mapping of certain guest resources (such as ioreq
+pages, used by emulators) by a tools domain, rather than having to access
+such resources via the guest P2M.
 
-https://lkml.org/lkml/2018/2/9/541
+This patch adds the necessary infrastructure to the privcmd driver and
+Xen MMU code to support direct resource mapping.
+
+NOTE: The adjustment in the MMU code is partially cosmetic. Xen will now
+      allow a PV tools domain to map guest pages either by GFN or MFN, thus
+      the term 'mfn' has been swapped for 'pfn' in the lower layers of the
+      remap code.
+
+Signed-off-by: Paul Durrant <paul.durrant@citrix.com>
+---
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+
+v2:
+ - Fix bug when mapping multiple pages of a resource
+---
+ arch/x86/xen/mmu.c             |  50 +++++++++++-----
+ drivers/xen/privcmd.c          | 130 +++++++++++++++++++++++++++++++++++++++++
+ include/uapi/xen/privcmd.h     |  11 ++++
+ include/xen/interface/memory.h |  66 +++++++++++++++++++++
+ include/xen/interface/xen.h    |   7 ++-
+ include/xen/xen-ops.h          |  24 +++++++-
+ 6 files changed, 270 insertions(+), 18 deletions(-)
+
+diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
+index d33e7dbe3129..8453d7be415c 100644
+--- a/arch/x86/xen/mmu.c
++++ b/arch/x86/xen/mmu.c
+@@ -65,37 +65,42 @@ static void xen_flush_tlb_all(void)
+ #define REMAP_BATCH_SIZE 16
+ 
+ struct remap_data {
+-	xen_pfn_t *mfn;
++	xen_pfn_t *pfn;
+ 	bool contiguous;
++	bool no_translate;
+ 	pgprot_t prot;
+ 	struct mmu_update *mmu_update;
+ };
+ 
+-static int remap_area_mfn_pte_fn(pte_t *ptep, pgtable_t token,
++static int remap_area_pfn_pte_fn(pte_t *ptep, pgtable_t token,
+ 				 unsigned long addr, void *data)
+ {
+ 	struct remap_data *rmd = data;
+-	pte_t pte = pte_mkspecial(mfn_pte(*rmd->mfn, rmd->prot));
++	pte_t pte = pte_mkspecial(mfn_pte(*rmd->pfn, rmd->prot));
+ 
+ 	/* If we have a contiguous range, just update the mfn itself,
+ 	   else update pointer to be "next mfn". */
+ 	if (rmd->contiguous)
+-		(*rmd->mfn)++;
++		(*rmd->pfn)++;
+ 	else
+-		rmd->mfn++;
++		rmd->pfn++;
+ 
+-	rmd->mmu_update->ptr = virt_to_machine(ptep).maddr | MMU_NORMAL_PT_UPDATE;
++	rmd->mmu_update->ptr = virt_to_machine(ptep).maddr;
++	rmd->mmu_update->ptr |= rmd->no_translate ?
++		MMU_PT_UPDATE_NO_TRANSLATE :
++		MMU_NORMAL_PT_UPDATE;
+ 	rmd->mmu_update->val = pte_val_ma(pte);
+ 	rmd->mmu_update++;
+ 
+ 	return 0;
+ }
+ 
+-static int do_remap_gfn(struct vm_area_struct *vma,
++static int do_remap_pfn(struct vm_area_struct *vma,
+ 			unsigned long addr,
+-			xen_pfn_t *gfn, int nr,
++			xen_pfn_t *pfn, int nr,
+ 			int *err_ptr, pgprot_t prot,
+-			unsigned domid,
++			unsigned int domid,
++			bool no_translate,
+ 			struct page **pages)
+ {
+ 	int err = 0;
+@@ -106,11 +111,12 @@ static int do_remap_gfn(struct vm_area_struct *vma,
+ 
+ 	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
+ 
+-	rmd.mfn = gfn;
++	rmd.pfn = pfn;
+ 	rmd.prot = prot;
+ 	/* We use the err_ptr to indicate if there we are doing a contiguous
+ 	 * mapping or a discontigious mapping. */
+ 	rmd.contiguous = !err_ptr;
++	rmd.no_translate = no_translate;
+ 
+ 	while (nr) {
+ 		int index = 0;
+@@ -121,7 +127,7 @@ static int do_remap_gfn(struct vm_area_struct *vma,
+ 
+ 		rmd.mmu_update = mmu_update;
+ 		err = apply_to_page_range(vma->vm_mm, addr, range,
+-					  remap_area_mfn_pte_fn, &rmd);
++					  remap_area_pfn_pte_fn, &rmd);
+ 		if (err)
+ 			goto out;
+ 
+@@ -175,7 +181,8 @@ int xen_remap_domain_gfn_range(struct vm_area_struct *vma,
+ 	if (xen_feature(XENFEAT_auto_translated_physmap))
+ 		return -EOPNOTSUPP;
+ 
+-	return do_remap_gfn(vma, addr, &gfn, nr, NULL, prot, domid, pages);
++	return do_remap_pfn(vma, addr, &gfn, nr, NULL, prot, domid, false,
++			    pages);
+ }
+ EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_range);
+ 
+@@ -183,7 +190,7 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
+ 			       unsigned long addr,
+ 			       xen_pfn_t *gfn, int nr,
+ 			       int *err_ptr, pgprot_t prot,
+-			       unsigned domid, struct page **pages)
++			       unsigned int domid, struct page **pages)
+ {
+ 	if (xen_feature(XENFEAT_auto_translated_physmap))
+ 		return xen_xlate_remap_gfn_array(vma, addr, gfn, nr, err_ptr,
+@@ -194,10 +201,25 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
+ 	 * cause of "wrong memory was mapped in".
+ 	 */
+ 	BUG_ON(err_ptr == NULL);
+-	return do_remap_gfn(vma, addr, gfn, nr, err_ptr, prot, domid, pages);
++	return do_remap_pfn(vma, addr, gfn, nr, err_ptr, prot, domid,
++			    false, pages);
+ }
+ EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_array);
+ 
++int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
++			       unsigned long addr,
++			       xen_pfn_t *mfn, int nr,
++			       int *err_ptr, pgprot_t prot,
++			       unsigned int domid, struct page **pages)
++{
++	if (xen_feature(XENFEAT_auto_translated_physmap))
++		return -EOPNOTSUPP;
++
++	return do_remap_pfn(vma, addr, mfn, nr, err_ptr, prot, domid,
++			    true, pages);
++}
++EXPORT_SYMBOL_GPL(xen_remap_domain_mfn_array);
++
+ /* Returns: 0 success */
+ int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
+ 			       int nr, struct page **pages)
+diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+index 1c909183c42a..cca809a204ab 100644
+--- a/drivers/xen/privcmd.c
++++ b/drivers/xen/privcmd.c
+@@ -33,6 +33,7 @@
+ #include <xen/xen.h>
+ #include <xen/privcmd.h>
+ #include <xen/interface/xen.h>
++#include <xen/interface/memory.h>
+ #include <xen/interface/hvm/dm_op.h>
+ #include <xen/features.h>
+ #include <xen/page.h>
+@@ -722,6 +723,131 @@ static long privcmd_ioctl_restrict(struct file *file, void __user *udata)
+ 	return 0;
+ }
+ 
++struct remap_pfn {
++	struct mm_struct *mm;
++	struct page **pages;
++	pgprot_t prot;
++	unsigned long i;
++};
++
++static int remap_pfn(pte_t *ptep, pgtable_t token, unsigned long addr,
++		     void *data)
++{
++	struct remap_pfn *r = data;
++	struct page *page = r->pages[r->i];
++	pte_t pte = pte_mkspecial(pfn_pte(page_to_pfn(page), r->prot));
++
++	set_pte_at(r->mm, addr, ptep, pte);
++	r->i++;
++
++	return 0;
++}
++
++static long privcmd_ioctl_mmap_resource(struct file *file, void __user *udata)
++{
++	struct privcmd_data *data = file->private_data;
++	struct mm_struct *mm = current->mm;
++	struct vm_area_struct *vma;
++	struct privcmd_mmap_resource kdata;
++	xen_pfn_t *pfns = NULL;
++	struct xen_mem_acquire_resource xdata;
++	int rc;
++
++	if (copy_from_user(&kdata, udata, sizeof(kdata)))
++		return -EFAULT;
++
++	/* If restriction is in place, check the domid matches */
++	if (data->domid != DOMID_INVALID && data->domid != kdata.dom)
++		return -EPERM;
++
++	down_write(&mm->mmap_sem);
++
++	vma = find_vma(mm, kdata.addr);
++	if (!vma || vma->vm_ops != &privcmd_vm_ops) {
++		rc = -EINVAL;
++		goto out;
++	}
++
++	pfns = kcalloc(kdata.num, sizeof(*pfns), GFP_KERNEL);
++	if (!pfns) {
++		rc = -ENOMEM;
++		goto out;
++	}
++
++	if (xen_feature(XENFEAT_auto_translated_physmap)) {
++		struct page **pages;
++		unsigned int i;
++
++		rc = alloc_empty_pages(vma, kdata.num);
++		if (rc < 0)
++			goto out;
++
++		pages = vma->vm_private_data;
++		for (i = 0; i < kdata.num; i++) {
++			pfns[i] = page_to_pfn(pages[i]);
++			pr_info("pfn[%u] = %p\n", i, (void *)pfns[i]);
++		}
++	} else
++		vma->vm_private_data = PRIV_VMA_LOCKED;
++
++	memset(&xdata, 0, sizeof(xdata));
++	xdata.domid = kdata.dom;
++	xdata.type = kdata.type;
++	xdata.id = kdata.id;
++	xdata.frame = kdata.idx;
++	xdata.nr_frames = kdata.num;
++	set_xen_guest_handle(xdata.frame_list, pfns);
++
++	xen_preemptible_hcall_begin();
++	rc = HYPERVISOR_memory_op(XENMEM_acquire_resource, &xdata);
++	xen_preemptible_hcall_end();
++
++	if (rc)
++		goto out;
++
++	if (xen_feature(XENFEAT_auto_translated_physmap)) {
++		struct remap_pfn r = {
++			.mm = vma->vm_mm,
++			.pages = vma->vm_private_data,
++			.prot = vma->vm_page_prot,
++		};
++
++		rc = apply_to_page_range(r.mm, kdata.addr,
++					 kdata.num << PAGE_SHIFT,
++					 remap_pfn, &r);
++	} else {
++		unsigned int domid =
++			(xdata.flags & XENMEM_rsrc_acq_caller_owned) ?
++			DOMID_SELF : kdata.dom;
++		int num;
++
++		num = xen_remap_domain_mfn_array(vma,
++						 kdata.addr & PAGE_MASK,
++						 pfns, kdata.num, (int *)pfns,
++						 vma->vm_page_prot,
++						 domid,
++						 vma->vm_private_data);
++		if (num < 0)
++			rc = num;
++		else if (num != kdata.num) {
++			unsigned int i;
++
++			for (i = 0; i < num; i++) {
++				rc = pfns[i];
++				if (rc < 0)
++					break;
++			}
++		} else
++			rc = 0;
++	}
++
++out:
++	kfree(pfns);
++
++	up_write(&mm->mmap_sem);
++	return rc;
++}
++
+ static long privcmd_ioctl(struct file *file,
+ 			  unsigned int cmd, unsigned long data)
+ {
+@@ -753,6 +879,10 @@ static long privcmd_ioctl(struct file *file,
+ 		ret = privcmd_ioctl_restrict(file, udata);
+ 		break;
+ 
++	case IOCTL_PRIVCMD_MMAP_RESOURCE:
++		ret = privcmd_ioctl_mmap_resource(file, udata);
++		break;
++
+ 	default:
+ 		break;
+ 	}
+diff --git a/include/uapi/xen/privcmd.h b/include/uapi/xen/privcmd.h
+index 39d3e7b8e993..d2029556083e 100644
+--- a/include/uapi/xen/privcmd.h
++++ b/include/uapi/xen/privcmd.h
+@@ -89,6 +89,15 @@ struct privcmd_dm_op {
+ 	const struct privcmd_dm_op_buf __user *ubufs;
+ };
+ 
++struct privcmd_mmap_resource {
++	domid_t dom;
++	__u32 type;
++	__u32 id;
++	__u32 idx;
++	__u64 num;
++	__u64 addr;
++};
++
+ /*
+  * @cmd: IOCTL_PRIVCMD_HYPERCALL
+  * @arg: &privcmd_hypercall_t
+@@ -114,5 +123,7 @@ struct privcmd_dm_op {
+ 	_IOC(_IOC_NONE, 'P', 5, sizeof(struct privcmd_dm_op))
+ #define IOCTL_PRIVCMD_RESTRICT					\
+ 	_IOC(_IOC_NONE, 'P', 6, sizeof(domid_t))
++#define IOCTL_PRIVCMD_MMAP_RESOURCE				\
++	_IOC(_IOC_NONE, 'P', 7, sizeof(struct privcmd_mmap_resource))
+ 
+ #endif /* __LINUX_PUBLIC_PRIVCMD_H__ */
+diff --git a/include/xen/interface/memory.h b/include/xen/interface/memory.h
+index 583dd93b3016..4c5751c26f87 100644
+--- a/include/xen/interface/memory.h
++++ b/include/xen/interface/memory.h
+@@ -265,4 +265,70 @@ struct xen_remove_from_physmap {
+ };
+ DEFINE_GUEST_HANDLE_STRUCT(xen_remove_from_physmap);
+ 
++/*
++ * Get the pages for a particular guest resource, so that they can be
++ * mapped directly by a tools domain.
++ */
++#define XENMEM_acquire_resource 28
++struct xen_mem_acquire_resource {
++    /* IN - The domain whose resource is to be mapped */
++    domid_t domid;
++    /* IN - the type of resource */
++    uint16_t type;
++
++#define XENMEM_resource_ioreq_server 0
++#define XENMEM_resource_grant_table 1
++
++    /*
++     * IN - a type-specific resource identifier, which must be zero
++     *      unless stated otherwise.
++     *
++     * type == XENMEM_resource_ioreq_server -> id == ioreq server id
++     * type == XENMEM_resource_grant_table -> id defined below
++     */
++    uint32_t id;
++
++#define XENMEM_resource_grant_table_id_shared 0
++#define XENMEM_resource_grant_table_id_status 1
++
++    /* IN/OUT - As an IN parameter number of frames of the resource
++     *          to be mapped. However, if the specified value is 0 and
++     *          frame_list is NULL then this field will be set to the
++     *          maximum value supported by the implementation on return.
++     */
++    uint32_t nr_frames;
++    /*
++     * OUT - Must be zero on entry. On return this may contain a bitwise
++     *       OR of the following values.
++     */
++    uint32_t flags;
++
++    /* The resource pages have been assigned to the calling domain */
++#define _XENMEM_rsrc_acq_caller_owned 0
++#define XENMEM_rsrc_acq_caller_owned (1u << _XENMEM_rsrc_acq_caller_owned)
++
++    /*
++     * IN - the index of the initial frame to be mapped. This parameter
++     *      is ignored if nr_frames is 0.
++     */
++    uint64_t frame;
++
++#define XENMEM_resource_ioreq_server_frame_bufioreq 0
++#define XENMEM_resource_ioreq_server_frame_ioreq(n) (1 + (n))
++
++    /*
++     * IN/OUT - If the tools domain is PV then, upon return, frame_list
++     *          will be populated with the MFNs of the resource.
++     *          If the tools domain is HVM then it is expected that, on
++     *          entry, frame_list will be populated with a list of GFNs
++     *          that will be mapped to the MFNs of the resource.
++     *          If -EIO is returned then the frame_list has only been
++     *          partially mapped and it is up to the caller to unmap all
++     *          the GFNs.
++     *          This parameter may be NULL if nr_frames is 0.
++     */
++    GUEST_HANDLE(xen_pfn_t) frame_list;
++};
++DEFINE_GUEST_HANDLE_STRUCT(xen_mem_acquire_resource);
++
+ #endif /* __XEN_PUBLIC_MEMORY_H__ */
+diff --git a/include/xen/interface/xen.h b/include/xen/interface/xen.h
+index 4f4830ef8f93..8bfb242f433e 100644
+--- a/include/xen/interface/xen.h
++++ b/include/xen/interface/xen.h
+@@ -265,9 +265,10 @@
+  *
+  * PAT (bit 7 on) --> PWT (bit 3 on) and clear bit 7.
+  */
+-#define MMU_NORMAL_PT_UPDATE      0 /* checked '*ptr = val'. ptr is MA.       */
+-#define MMU_MACHPHYS_UPDATE       1 /* ptr = MA of frame to modify entry for  */
+-#define MMU_PT_UPDATE_PRESERVE_AD 2 /* atomically: *ptr = val | (*ptr&(A|D)) */
++#define MMU_NORMAL_PT_UPDATE       0 /* checked '*ptr = val'. ptr is MA.      */
++#define MMU_MACHPHYS_UPDATE        1 /* ptr = MA of frame to modify entry for */
++#define MMU_PT_UPDATE_PRESERVE_AD  2 /* atomically: *ptr = val | (*ptr&(A|D)) */
++#define MMU_PT_UPDATE_NO_TRANSLATE 3 /* checked '*ptr = val'. ptr is MA.      */
+ 
+ /*
+  * MMU EXTENDED OPERATIONS
+diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
+index fd23e42c6024..fd18c974a619 100644
+--- a/include/xen/xen-ops.h
++++ b/include/xen/xen-ops.h
+@@ -63,7 +63,7 @@ static inline void xen_destroy_contiguous_region(phys_addr_t pstart,
+ struct vm_area_struct;
+ 
+ /*
+- * xen_remap_domain_gfn_array() - map an array of foreign frames
++ * xen_remap_domain_gfn_array() - map an array of foreign frames by gfn
+  * @vma:     VMA to map the pages into
+  * @addr:    Address at which to map the pages
+  * @gfn:     Array of GFNs to map
+@@ -86,6 +86,28 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
+ 			       unsigned domid,
+ 			       struct page **pages);
+ 
++/*
++ * xen_remap_domain_mfn_array() - map an array of foreign frames by mfn
++ * @vma:     VMA to map the pages into
++ * @addr:    Address at which to map the pages
++ * @mfn:     Array of MFNs to map
++ * @nr:      Number entries in the MFN array
++ * @err_ptr: Returns per-MFN error status.
++ * @prot:    page protection mask
++ * @domid:   Domain owning the pages
++ * @pages:   Array of pages if this domain has an auto-translated physmap
++ *
++ * @mfn and @err_ptr may point to the same buffer, the MFNs will be
++ * overwritten by the error codes after they are mapped.
++ *
++ * Returns the number of successfully mapped frames, or a -ve error
++ * code.
++ */
++int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
++			       unsigned long addr, xen_pfn_t *mfn, int nr,
++			       int *err_ptr, pgprot_t prot,
++			       unsigned int domid, struct page **pages);
++
+ /* xen_remap_domain_gfn_range() - map a range of foreign frames
+  * @vma:     VMA to map the pages into
+  * @addr:    Address at which to map the pages
+-- 
+2.11.0
