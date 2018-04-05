@@ -1,55 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751389AbeDEOOo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:14:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41664 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751165AbeDEOOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:14:43 -0400
-Date: Thu, 5 Apr 2018 16:14:41 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/9] vsprintf: Factor out %p[iI] handler as
- ip_addr_string()
-Message-ID: <20180405141441.ocdzhuqezlkuitv4@pathway.suse.cz>
-References: <20180404085843.16050-1-pmladek@suse.com>
- <20180404085843.16050-6-pmladek@suse.com>
- <20180404235816.GD622@jagdpanzerIV>
+        id S1751346AbeDEOQr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:16:47 -0400
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:43860 "EHLO
+        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751165AbeDEOQp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 10:16:45 -0400
+X-Google-Smtp-Source: AIpwx4/uUe9yeY9hGALzslzE8CwcRGj6la6Bjdq6LGAtY+mnPnlIR5VXCGH4fds93+mGof8pjU20JUFgesYGixnGtfY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404235816.GD622@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180405070939.22245-1-lukma@denx.de>
+References: <20180405070939.22245-1-lukma@denx.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 5 Apr 2018 11:16:44 -0300
+Message-ID: <CAOMZO5DHtvX64oseDFsLGiYmQPcb3thUrGeLxX8dgp69vUNZMg@mail.gmail.com>
+Subject: Re: [PATCH v3] ARM: dts: tpc: Device tree description of the iMX6Q
+ TPC board
+To: Lukasz Majewski <lukma@denx.de>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-04-05 08:58:16, Sergey Senozhatsky wrote:
-> On (04/04/18 10:58), Petr Mladek wrote:
-> > 
-> > Also it is better to warn about unknown specifier instead of falling
-> > back to the %p behavior. It will help people to understand what is
-> > going wrong. They expect the IP address and not a pointer anyway
-> > in this situation.
-> >
-> 
-> May be. If one sees a hashed value where IP address/device name/etc
-> was meant to be then it's already a sign that something is wrong.
-> Those WARN_ONCE that you have added make things simpler, I agree.
-> A quick question, what happens on !CONFIG_BUG systems (where we have
-> no_printk() WARN)?
+Hi Lukasz,
 
-People with CONFIG_BUG disabled will miss much more important
-warnings. IMHO, an unreported typo in printk format will be
-one of their smallest problems.
+On Thu, Apr 5, 2018 at 4:09 AM, Lukasz Majewski <lukma@denx.de> wrote:
 
-Best Regards,
-Petr
+> +       reg_audio: regulator-audio {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "sgtl5000-supply";
+> +               gpio = <&gpio6 31 GPIO_ACTIVE_HIGH>;
+> +               enable-active-high;
+> +               regulator-always-on;
+> +       };
+
+sgtl5000 has 3 supplies: VDDD, VDDIO, VDDA.
+
+Which supply does this reg_audio supply to the chip?
+
+Can't you use any of the existing sgtl5000 regulator bindings to
+describe this supply?
