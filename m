@@ -1,80 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751570AbeDEOBB convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 10:01:01 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:13435 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751368AbeDEOA7 (ORCPT
+        id S1751495AbeDEOBA convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 10:01:00 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:62519 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751312AbeDEOA4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 10:00:59 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 05 Apr 2018 07:00:50 -0700
-From: Bhadram Varka <vbhadram@nvidia.com>
-To: Esben Haabendal <esben.haabendal@gmail.com>
-CC: Esben Haabendal <eha@deif.com>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [PATCH] net: phy: marvell: Enable interrupt function on LED2 pin
-Thread-Topic: [PATCH] net: phy: marvell: Enable interrupt function on LED2 pin
-Thread-Index: AQHTzOMZopkF1giP8Ue0qxO7VwjMg6PyMPug
-Date: Thu, 5 Apr 2018 14:00:53 +0000
-Message-ID: <4d9e0665abf7408988fc4ce20c26a08f@bgmail102.nvidia.com>
-References: <20180405133504.12257-1-esben.haabendal@gmail.com>
-In-Reply-To: <20180405133504.12257-1-esben.haabendal@gmail.com>
-Accept-Language: en-US
+        Thu, 5 Apr 2018 10:00:56 -0400
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Tejun Heo <tj@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org"
+        <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH] ata: ahci-platform: add reset control support
+Thread-Topic: [PATCH] ata: ahci-platform: add reset control support
+Thread-Index: AQHTzMQZUjD7lVbUeEu8qjF8anGqFaPyBeiAgAACmoCAAAlQgA==
+Date: Thu, 5 Apr 2018 14:00:23 +0000
+Message-ID: <aefa4c12-e976-3a0e-851c-0433a751521d@st.com>
+References: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <20180405095429.GA7506@ulmo> <e33f54ed-2848-9a4f-9669-7fada8c60326@st.com>
+ <1f7d0738-1963-21c5-c293-e46fb0214ecf@redhat.com>
+In-Reply-To: <1f7d0738-1963-21c5-c293-e46fb0214ecf@redhat.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.25.73.182]
-MIME-Version: 1.0
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
+x-originating-ip: [10.75.127.46]
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <6345CBF3E10ACD43A7A3A801FDDD0447@st.com>
 Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-05_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Esben,
+Hi Hans
 
------Original Message-----
-From: netdev-owner@vger.kernel.org <netdev-owner@vger.kernel.org> On Behalf Of Esben Haabendal
-Sent: Thursday, April 05, 2018 7:05 PM
-To: netdev@vger.kernel.org
-Cc: Esben Haabendal <eha@deif.com>; Rasmus Villemoes <rasmus.villemoes@prevas.dk>; Andrew Lunn <andrew@lunn.ch>; Florian Fainelli <f.fainelli@gmail.com>; open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH] net: phy: marvell: Enable interrupt function on LED2 pin
+On 04/05/2018 03:27 PM, Hans de Goede wrote:
+> Hi,
+> 
+> On 05-04-18 15:17, Patrice CHOTARD wrote:
+>> Hi Thierry
+>>
+>> On 04/05/2018 11:54 AM, Thierry Reding wrote:
+>>> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
+>>>> Add support to get and control a list of resets for the device
+>>>> as optional and shared. These resets must be kept de-asserted until
+>>>> the device is enabled.
+>>>>
+>>>> This is specified as shared because some SoCs like UniPhier series
+>>>> have common reset controls with all ahci controller instances.
+>>>>
+>>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+>>>> ---
+>>>>    .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
+>>>>    drivers/ata/ahci.h                                 |  1 +
+>>>>    drivers/ata/libahci_platform.c                     | 24 
+>>>> +++++++++++++++++++---
+>>>>    3 files changed, 23 insertions(+), 3 deletions(-)
+>>>
+>>> This causes a regression on Tegra because we explicitly request the
+>>> resets after the call to ahci_platform_get_resources().
+>>
+>> I confirm, we got exactly the same behavior on STi platform.
+>>
+>>>
+>>>   From a quick look, ahci_mtk and ahci_st are in the same boat, 
+>>> adding the
+>>> corresponding maintainers to Cc.
+>>>
+>>> Patrice, Matthias: does SATA still work for you after this patch? This
+>>> has been in linux-next since next-20180327.
+>>
+>> SATA is still working after this patch, but a kernel warning is
+>> triggered due to the fact that resets are both requested by
+>> libahci_platform and by ahci_st driver.
+> 
+> So in your case you might be able to remove the reset handling
+> from the ahci_st driver and rely on the new libahci_platform
+> handling instead? If that works that seems like a win to me.
 
-From: Esben Haabendal <eha@deif.com>
+Yes, I did a quick test, the reset handling can be removed from our driver.
 
-The LED2[2]/INTn pin on Marvell 88E1318S as well as 88E1510/12/14/18 needs to be configured to be usable as interrupt not only when WOL is enabled, but whenever we rely on interrupts from the PHY.
-
-Signed-off-by: Esben Haabendal <eha@deif.com>
-Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
----
- drivers/net/phy/marvell.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c index 0e0978d8a0eb..f03a510f1247 100644
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -457,6 +457,21 @@ static int marvell_of_reg_init(struct phy_device *phydev)  }  #endif /* CONFIG_OF_MDIO */
- 
-+static int m88e1318_config_intr(struct phy_device *phydev) {
-+	int err;
-+
-+	err = marvell_config_intr(phydev);
-+	if (err)
-+		return err;
-+
-+	/* Setup LED[2] as interrupt pin (active low) */
-+	return phy_modify(phydev, MII_88E1318S_PHY_LED_TCR,
-+			  MII_88E1318S_PHY_LED_TCR_FORCE_INT,
-+			  MII_88E1318S_PHY_LED_TCR_INTn_ENABLE |
-+			  MII_88E1318S_PHY_LED_TCR_INT_ACTIVE_LOW);
-
-Can we move this part of the code to m88e1121_config_init() ?
-
-Every time whether we disable or enable the interrupts this part of code will execute.
-
-Thanks!
+Patrice
+> 
+> As said elsewhere in this thread I think it makes sense to keep (or re-add
+> after a revert) the libahci_platform reset code, but make it conditional
+> on a flag passed to ahci_platform_get_resources(). This way we get
+> the shared code for most cases and platforms which need special handling
+> can opt-out.
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+>>
+>> Patrice
+>>
+>>>
+>>> Given how this is one of the more hardware-specific bits, perhaps a
+>>> better way to do this is to move reset handling into a Uniphier driver
+>>> much like Tegra, Mediatek and ST?
+>>>
+>>> That said, I don't see SATA support for any of the Socionext hardware
+>>> either in the DT bindings or drivers/ata, so perhaps it'd be best to
+>>> back this out again until we have something that's more well tested?
+>>>
+>>> Thierry
