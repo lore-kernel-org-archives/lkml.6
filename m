@@ -1,76 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751897AbeDENSs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 09:18:48 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:35389 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751251AbeDENSq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 09:18:46 -0400
-X-Google-Smtp-Source: AIpwx49DucoE9eoQpGJtd4WXtFERIukax65hMH6hebQPNcuKp56NRMpBmKFgap7j9JPf6R9CQNcX6w==
-Date: Thu, 5 Apr 2018 08:18:44 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        rjw@rjwysocki.net, viresh.kumar@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v4 04/14] clk: qcom: Add DT bindings for CPU clock driver
- for msm8996
-Message-ID: <20180405131844.sfhta7qjdsmxpa4d@rob-hp-laptop>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
- <1522358807-10413-5-git-send-email-ilialin@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522358807-10413-5-git-send-email-ilialin@codeaurora.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S1751367AbeDENZs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 09:25:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54170 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751298AbeDENZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 09:25:46 -0400
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kt.liao@emc.com.tw, Oliver Haessler <oliver@redhat.com>,
+        Benjamin Berg <bberg@redhat.com>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH 0/8] Input: support for latest Lenovo thinkpads (series 80)
+Date: Thu,  5 Apr 2018 15:25:29 +0200
+Message-Id: <20180405132537.3218-1-benjamin.tissoires@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 12:26:37AM +0300, Ilia Lin wrote:
+Hi Dmitry,
 
-Needs a commit message.
+well, this year, Lenovo gave us a surprise and decided to not use
+the same touchpad/trackstick in all its model. And by default, the
+support under Linux is less than ideal.
 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Please find a series that should fix those issues. Compared to the 60
+series, there do not seem to e BIOS table issues this time, and suspend/resume
+works fine thanks to your latest trackstick fixes.
 
-Add acks/reviewed-bys when posting new versions.
+The T480s is a different beast, as it uses an Elan touchpad.
+I have been carrying the patches 3-6 for a while and tested previous
+versions on various Elan PS/2 hardware without an issue as far as I
+could tell. I was lacking tests from users with SMBus as all the laptops
+I tried where puer PS/2.
 
-> ---
->  Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-> new file mode 100644
-> index 0000000..8458783
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-> @@ -0,0 +1,17 @@
-> +Qualcomm CPUSS clock controller for Kryo CPUs
-> +----------------------------------------------------
-> +
-> +Required properties :
-> +- compatible : shall contain only one of the following:
-> +
-> +			"qcom,msm8996-apcc"
-> +
-> +- reg : shall contain base register location and length
-> +- #clock-cells : shall contain 1
-> +
-> +Example:
-> +	kryocc: clock-controller@6400000 {
-> +		compatible = "qcom,msm8996-apcc";
-> +		reg = <0x6400000 0x90000>;
-> +		#clock-cells = <1>;
-> +	};
-> -- 
-> 1.9.1
-> 
+Anyway, it would be cool if you could have a look at the series.
+
+Cheers,
+Benjamin
+
+Benjamin Tissoires (8):
+  Input: synaptics - add Lenovo 80 series ids to SMBus
+  input: elan_i2c_smbus - fix corrupted stack
+  Input: elan_i2c - add trackstick report
+  Input: elantech - split device info into a separate structure
+  Input: elantech - query the resolution in query_info
+  Input: elantech - add support for SMBus devices
+  Input: elantech - detect new ICs and setup Host Notify for them
+  input: psmouse-smbus: allow to control psmouse_deactivate
+
+ drivers/input/mouse/Kconfig          |  12 +
+ drivers/input/mouse/elan_i2c.h       |  10 +
+ drivers/input/mouse/elan_i2c_core.c  |  91 ++++++-
+ drivers/input/mouse/elan_i2c_smbus.c |  22 +-
+ drivers/input/mouse/elantech.c       | 475 ++++++++++++++++++++++++++---------
+ drivers/input/mouse/elantech.h       |  69 ++++-
+ drivers/input/mouse/psmouse-base.c   |  21 +-
+ drivers/input/mouse/psmouse-smbus.c  |  13 +-
+ drivers/input/mouse/psmouse.h        |   2 +
+ drivers/input/mouse/synaptics.c      |   5 +-
+ 10 files changed, 564 insertions(+), 156 deletions(-)
+
+-- 
+2.14.3
