@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751579AbeDEJub (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:50:31 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60632 "EHLO
+        id S1752381AbeDEKCA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 06:02:00 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60596 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbeDEJu2 (ORCPT
+        with ESMTP id S1751443AbeDEJu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:50:28 -0400
+        Thu, 5 Apr 2018 05:50:26 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -25,9 +25,9 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         hshi@chromium.org,
         =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 07/30] drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the panel
-Date: Thu,  5 Apr 2018 11:49:37 +0200
-Message-Id: <20180405095000.9756-8-enric.balletbo@collabora.com>
+Subject: [PATCH v6 06/30] drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
+Date: Thu,  5 Apr 2018 11:49:36 +0200
+Message-Id: <20180405095000.9756-7-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
 References: <20180405095000.9756-1-enric.balletbo@collabora.com>
@@ -38,65 +38,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lin Huang <hl@rock-chips.com>
+From: zain wang <wzz@rock-chips.com>
 
-When panel is shut down, we should make sure edp can be disabled to avoid
-undefined behavior.
+Following the correct power up sequence:
+dp_pd=ff => dp_pd=7f => wait 10us => dp_pd=00
 
 Cc: Stéphane Marchesin <marcheu@chromium.org>
-Signed-off-by: Lin Huang <hl@rock-chips.com>
 Signed-off-by: zain wang <wzz@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 10 ++++++++--
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |  3 +++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 3269deec739d..5957e2338071 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1160,6 +1160,12 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 
- 	pm_runtime_get_sync(dp->dev);
- 
-+	ret = clk_prepare_enable(dp->clock);
-+	if (ret < 0) {
-+		DRM_ERROR("Failed to prepare_enable the clock clk [%d]\n", ret);
-+		goto out_dp_clk_pre;
-+	}
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index b47c5af43560..bb72f8b0e603 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -321,10 +321,16 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+ 		break;
+ 	case POWER_ALL:
+ 		if (enable) {
+-			reg = DP_PHY_PD | AUX_PD | CH3_PD | CH2_PD |
+-				CH1_PD | CH0_PD;
++			reg = DP_ALL_PD;
+ 			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
++			reg = DP_ALL_PD;
++			writel(reg, dp->reg_base + phy_pd_addr);
++			usleep_range(10, 15);
++			reg &= ~DP_INC_BG;
++			writel(reg, dp->reg_base + phy_pd_addr);
++			usleep_range(10, 15);
 +
- 	if (dp->plat_data->power_on)
- 		dp->plat_data->power_on(dp->plat_data);
+ 			writel(0x00, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+index 40200c652533..9602668669f4 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+@@ -342,12 +342,15 @@
+ #define DP_PLL_REF_BIT_1_2500V			(0x7 << 0)
  
-@@ -1191,6 +1197,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 	phy_power_off(dp->phy);
- 	if (dp->plat_data->power_off)
- 		dp->plat_data->power_off(dp->plat_data);
-+	clk_disable_unprepare(dp->clock);
-+out_dp_clk_pre:
- 	pm_runtime_put_sync(dp->dev);
+ /* ANALOGIX_DP_PHY_PD */
++#define DP_INC_BG				(0x1 << 7)
++#define DP_EXP_BG				(0x1 << 6)
+ #define DP_PHY_PD				(0x1 << 5)
+ #define AUX_PD					(0x1 << 4)
+ #define CH3_PD					(0x1 << 3)
+ #define CH2_PD					(0x1 << 2)
+ #define CH1_PD					(0x1 << 1)
+ #define CH0_PD					(0x1 << 0)
++#define DP_ALL_PD				(0xff)
  
- 	return ret;
-@@ -1233,11 +1241,14 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 	}
- 
- 	disable_irq(dp->irq);
-+	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
- 	phy_power_off(dp->phy);
- 
- 	if (dp->plat_data->power_off)
- 		dp->plat_data->power_off(dp->plat_data);
- 
-+	clk_disable_unprepare(dp->clock);
-+
- 	pm_runtime_put_sync(dp->dev);
- 
- 	ret = analogix_dp_prepare_panel(dp, false, true);
+ /* ANALOGIX_DP_PHY_TEST */
+ #define MACRO_RST				(0x1 << 5)
 -- 
 2.16.3
