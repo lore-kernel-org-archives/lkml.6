@@ -1,72 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751452AbeDERnE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 13:43:04 -0400
-Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:47326 "EHLO
-        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750786AbeDERnD (ORCPT
+        id S1751538AbeDERpU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 13:45:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55073 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750786AbeDERpS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 13:43:03 -0400
-From: Debabrata Banerjee <dbanerje@akamai.com>
-To: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>
-Cc: dbanerje@akamai.com, Daniel Lezcano <daniel.lezcano@free.fr>
-Subject: [PATCH] Fix /proc/[pid]/ns permissions
-Date: Thu,  5 Apr 2018 13:15:02 -0400
-Message-Id: <20180405171502.14347-1-dbanerje@akamai.com>
-X-Mailer: git-send-email 2.16.2
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-05_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=972
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804050177
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-05_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=939 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1804050177
+        Thu, 5 Apr 2018 13:45:18 -0400
+X-Google-Smtp-Source: AIpwx4/ylc/B4HjHbBccz1vYGSPYZdS7fGJJXBYYFoFcBmzDpTsy+ztqA29UmlyCTzXCoqHxokogZQ==
+From: Christian Brauner <christian.brauner@canonical.com>
+X-Google-Original-From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Thu, 5 Apr 2018 19:45:15 +0200
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3 RESEND] namei: add follow_up_bind()
+Message-ID: <20180405174455.GA27462@gmail.com>
+References: <20180405105103.21572-1-christian.brauner@ubuntu.com>
+ <CA+55aFzb7xzsOb=vfrwDFTX0SToOe1esgj2B1YNMPTDPUa8Nnw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+55aFzb7xzsOb=vfrwDFTX0SToOe1esgj2B1YNMPTDPUa8Nnw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This seems like a bug since the original commit 6b4e306aa3dc. Having ns
-directory be executable but not readable does not make sense. Further,
-it breaks userspace when it needs to know which namespace it belongs
-to. For example, setting a process to prctl(PR_SET_DUMPABLE, 0)
-immediately hides the namespace from that user, breaking the latest
-pgrep with namespace support.
+On Thu, Apr 05, 2018 at 09:28:56AM -0700, Linus Torvalds wrote:
+> On Thu, Apr 5, 2018 at 3:51 AM, Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > This series adds:
+> > - follow_up_bind() to namei.{c,h}
+> > - switches fs/nfsd/vfs.c:follow_to_parent() to use follow_up_bind()
+> > - switches fs/devpts/inode.c:devpts_mntget() to use follow_up_bind()
+> 
+> Hmm. Seems fair enough to me, although I wonder how much this really
+> helps. It does get rid of a duplicate code pattern, but:
+> 
+>  4 files changed, 14 insertions(+), 5 deletions(-)
+> 
+> and while some of that is just the new comment, some of it is just "overhead".
 
-The main problem here is that unlike other namespaces, pid namespaces
-appear flat as you follow the parents upwards in the heirarchy. It is
-important to be able to tell that a process is in your namespace, a
-child namespace, or an entirely different namespace. In the latter
-case, the pid is already hidden from you, thus these permission don't
-matter.
+Fwiw, it does get read of these while loops in two places but I
+personally see the biggest value in making it obvious what bind-mount
+resolution means.
 
-CC: Eric W. Biederman <ebiederm@xmission.com>
-CC: Daniel Lezcano <daniel.lezcano@free.fr>
+> 
+> It's also a bit odd how the new helper is marked "inline", but nobody
+> will inline it because it's not actually in the header file or any of
+> the isers in the same C file. So instead, it has to be exported. I
+> wonder if it should just be a trivial inline in <linux/namei.h>? Maybe
+> it originally was, and that's where the inline came from, and then
+> Christian decided to make it be by the regular "follow_up()" instead?
 
-Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
----
- fs/proc/base.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I head it inline first but it would have required to forward declare
+struct vfsmount in the head and I wasn't sure if that was going to fly.
+But I explicitly left the inline in there because I was following
+user_path_create() ([1], [2]) which does the same. But if that's an
+issue I can make it static inline in the header like I had, forward
+declare struct vfsmount and remove the unnecessary inline from
+user_path_create() in a separate patch unless there's a specific reason
+to leave it in there.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index d53246863cfb..2295ac0d8e1c 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2922,7 +2922,7 @@ static const struct pid_entry tgid_base_stuff[] = {
- 	DIR("fd",         S_IRUSR|S_IXUSR, proc_fd_inode_operations, proc_fd_operations),
- 	DIR("map_files",  S_IRUSR|S_IXUSR, proc_map_files_inode_operations, proc_map_files_operations),
- 	DIR("fdinfo",     S_IRUSR|S_IXUSR, proc_fdinfo_inode_operations, proc_fdinfo_operations),
--	DIR("ns",	  S_IRUSR|S_IXUGO, proc_ns_dir_inode_operations, proc_ns_dir_operations),
-+	DIR("ns",	  S_IRUGO|S_IXUGO, proc_ns_dir_inode_operations, proc_ns_dir_operations),
- #ifdef CONFIG_NET
- 	DIR("net",        S_IRUGO|S_IXUGO, proc_net_inode_operations, proc_net_operations),
- #endif
--- 
-2.16.2
+[1]: https://elixir.bootlin.com/linux/latest/source/include/linux/namei.h#L79
+[2]: https://elixir.bootlin.com/linux/latest/source/fs/namei.c#L3680
+
+> 
+> But with all that said, I certainly don't *mind* the patch series.
+
+Cool.
+
+Thanks!
+Christian
+
+> 
+> Al, I'm leaving this up to you, and expect to get it from your vfs
+> tree eventually. Or not.
+> 
+>                       Linus
