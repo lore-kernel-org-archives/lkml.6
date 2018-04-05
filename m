@@ -1,153 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752662AbeDEJxd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 05:53:33 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:32816 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752164AbeDEJvF (ORCPT
+        id S1752739AbeDEJxp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 05:53:45 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:44240 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752464AbeDEJxk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:51:05 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
-        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
-        tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
-        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
-        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
-        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
-        jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org, "Kristian H . Kristensen" <hoegsberg@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v6 22/30] drm/bridge: analogix_dp: Split the platform-specific poweron in two parts
-Date: Thu,  5 Apr 2018 11:49:52 +0200
-Message-Id: <20180405095000.9756-23-enric.balletbo@collabora.com>
+        Thu, 5 Apr 2018 05:53:40 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, mingo@kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 2/8] syscalls: introduce CONFIG_ARCH_HAS_SYSCALL_WRAPPER
+Date: Thu,  5 Apr 2018 11:53:01 +0200
+Message-Id: <20180405095307.3730-3-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180405095000.9756-1-enric.balletbo@collabora.com>
-References: <20180405095000.9756-1-enric.balletbo@collabora.com>
+In-Reply-To: <20180405095307.3730-1-linux@dominikbrodowski.net>
+References: <20180405095307.3730-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+It may be useful for an architecture to override the definitions of the
+SYSCALL_DEFINE0() and __SYSCALL_DEFINEx() macros in <linux/syscalls.h>,
+in particular to use a different calling convention for syscalls.
 
-Some of the platform-specific stuff in rockchip_dp_poweron() needs to
-happen before the generic code.  Some needs to happen after.  Let's
-split the callback in two.
+This patch provides a mechanism to do so: It introduces
+CONFIG_ARCH_HAS_SYSCALL_WRAPPER. If it is enabled, <asm/sycall_wrapper.h>
+is included in <linux/syscalls.h> and may be used to define the macros
+mentioned above. Moreover, as the syscall calling convention may be
+different if CONFIG_ARCH_HAS_SYSCALL_WRAPPER is set, the syscall function
+prototypes in <linux/syscalls.h> are #ifndef'd out in that case.
 
-Specifically we can't start doing PSR work until _after_ the whole
-controller is up, so don't set the enable until the end.
-
-Cc: Kristian H. Kristensen <hoegsberg@chromium.org>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-[seanpaul added exynos change]
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
+ include/linux/syscalls.h | 23 +++++++++++++++++++++++
+ init/Kconfig             |  7 +++++++
+ 2 files changed, 30 insertions(+)
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  7 +++++--
- drivers/gpu/drm/exynos/exynos_dp.c                 |  2 +-
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 12 ++++++++++--
- include/drm/bridge/analogix_dp.h                   |  3 ++-
- 4 files changed, 18 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index a260de4f0bd8..2bcbfadb6ac5 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1260,8 +1260,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 		goto out_dp_clk_pre;
- 	}
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index b961184f597a..503ab245d4ce 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -81,6 +81,17 @@ union bpf_attr;
+ #include <linux/key.h>
+ #include <trace/syscall.h>
  
--	if (dp->plat_data->power_on)
--		dp->plat_data->power_on(dp->plat_data);
-+	if (dp->plat_data->power_on_start)
-+		dp->plat_data->power_on_start(dp->plat_data);
- 
- 	phy_power_on(dp->phy);
- 
-@@ -1286,6 +1286,9 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 		goto out_dp_init;
- 	}
- 
-+	if (dp->plat_data->power_on_end)
-+		dp->plat_data->power_on_end(dp->plat_data);
++#ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
++/*
++ * It may be useful for an architecture to override the definitions of the
++ * SYSCALL_DEFINE0() and __SYSCALL_DEFINEx() macros, in particular to use a
++ * different calling convention for syscalls. To allow for that, the prototypes
++ * for the sys_*() functions below will *not* be included if
++ * CONFIG_ARCH_HAS_SYSCALL_WRAPPER is enabled.
++ */
++#include <asm/syscall_wrapper.h>
++#endif /* CONFIG_ARCH_HAS_SYSCALL_WRAPPER */
 +
- 	enable_irq(dp->irq);
- 	return 0;
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 964831dab102..86330f396784 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -162,7 +162,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	dp->drm_dev = drm_dev;
- 
- 	dp->plat_data.dev_type = EXYNOS_DP;
--	dp->plat_data.power_on = exynos_dp_poweron;
-+	dp->plat_data.power_on_start = exynos_dp_poweron;
- 	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.attach = exynos_dp_bridge_attach;
- 	dp->plat_data.get_modes = exynos_dp_get_modes;
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index b3f46ed24cdc..23317a2269e1 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -109,7 +109,7 @@ static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
- 	return 0;
+ /*
+  * __MAP - apply a macro to syscall arguments
+  * __MAP(n, m, t1, a1, t2, a2, ..., tn, an) will expand to
+@@ -189,11 +200,13 @@ static inline int is_syscall_trace_event(struct trace_event_call *tp_event)
  }
+ #endif
  
--static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
-+static int rockchip_dp_poweron_start(struct analogix_dp_plat_data *plat_data)
- {
- 	struct rockchip_dp_device *dp = to_dp(plat_data);
- 	int ret;
-@@ -127,6 +127,13 @@ static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
- 		return ret;
- 	}
++#ifndef SYSCALL_DEFINE0
+ #define SYSCALL_DEFINE0(sname)					\
+ 	SYSCALL_METADATA(_##sname, 0);				\
+ 	asmlinkage long sys_##sname(void);			\
+ 	ALLOW_ERROR_INJECTION(sys_##sname, ERRNO);		\
+ 	asmlinkage long sys_##sname(void)
++#endif /* SYSCALL_DEFINE0 */
  
-+	return ret;
-+}
+ #define SYSCALL_DEFINE1(name, ...) SYSCALL_DEFINEx(1, _##name, __VA_ARGS__)
+ #define SYSCALL_DEFINE2(name, ...) SYSCALL_DEFINEx(2, _##name, __VA_ARGS__)
+@@ -209,6 +222,8 @@ static inline int is_syscall_trace_event(struct trace_event_call *tp_event)
+ 	__SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
+ 
+ #define __PROTECT(...) asmlinkage_protect(__VA_ARGS__)
 +
-+static int rockchip_dp_poweron_end(struct analogix_dp_plat_data *plat_data)
-+{
-+	struct rockchip_dp_device *dp = to_dp(plat_data);
++#ifndef __SYSCALL_DEFINEx
+ #define __SYSCALL_DEFINEx(x, name, ...)					\
+ 	asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))	\
+ 		__attribute__((alias(__stringify(SyS##name))));		\
+@@ -223,6 +238,7 @@ static inline int is_syscall_trace_event(struct trace_event_call *tp_event)
+ 		return ret;						\
+ 	}								\
+ 	static inline long SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__))
++#endif /* __SYSCALL_DEFINEx */
+ 
+ /*
+  * Called before coming back to user-mode. Returning to user-mode with an
+@@ -252,7 +268,12 @@ static inline void addr_limit_user_check(void)
+  * Please note that these prototypes here are only provided for information
+  * purposes, for static analysis, and for linking from the syscall table.
+  * These functions should not be called elsewhere from kernel code.
++ *
++ * As the syscall calling convention may be different from the default
++ * for architectures overriding the syscall calling convention, do not
++ * include the prototypes if CONFIG_ARCH_HAS_SYSCALL_WRAPPER is enabled.
+  */
++#ifndef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
+ asmlinkage long sys_io_setup(unsigned nr_reqs, aio_context_t __user *ctx);
+ asmlinkage long sys_io_destroy(aio_context_t ctx);
+ asmlinkage long sys_io_submit(aio_context_t, long,
+@@ -1076,6 +1097,8 @@ asmlinkage long sys_old_mmap(struct mmap_arg_struct __user *arg);
+  */
+ asmlinkage long sys_ni_syscall(void);
+ 
++#endif /* CONFIG_ARCH_HAS_SYSCALL_WRAPPER */
 +
- 	return rockchip_drm_psr_activate(&dp->encoder);
- }
  
-@@ -330,7 +337,8 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 	dp->plat_data.encoder = &dp->encoder;
+ /*
+  * Kernel code should not call syscalls (i.e., sys_xyzyyz()) directly.
+diff --git a/init/Kconfig b/init/Kconfig
+index 2852692d7c9c..068eb6c3bbf7 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1923,3 +1923,10 @@ source "kernel/Kconfig.locks"
  
- 	dp->plat_data.dev_type = dp->data->chip_type;
--	dp->plat_data.power_on = rockchip_dp_poweron;
-+	dp->plat_data.power_on_start = rockchip_dp_poweron_start;
-+	dp->plat_data.power_on_end = rockchip_dp_poweron_end;
- 	dp->plat_data.power_off = rockchip_dp_powerdown;
- 	dp->plat_data.get_modes = rockchip_dp_get_modes;
- 
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index e9a1116d2f8e..475b706b49de 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -33,7 +33,8 @@ struct analogix_dp_plat_data {
- 	struct drm_connector *connector;
- 	bool skip_connector;
- 
--	int (*power_on)(struct analogix_dp_plat_data *);
-+	int (*power_on_start)(struct analogix_dp_plat_data *);
-+	int (*power_on_end)(struct analogix_dp_plat_data *);
- 	int (*power_off)(struct analogix_dp_plat_data *);
- 	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
- 		      struct drm_connector *);
+ config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+ 	bool
++
++# It may be useful for an architecture to override the definitions of the
++# SYSCALL_DEFINE() and __SYSCALL_DEFINEx() macros in <linux/syscalls.h>,
++# in particular to use a different calling convention for syscalls.
++config ARCH_HAS_SYSCALL_WRAPPER
++	def_bool n
++	depends on !COMPAT
 -- 
 2.16.3
