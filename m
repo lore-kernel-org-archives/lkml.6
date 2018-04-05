@@ -1,88 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751443AbeDELXw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 07:23:52 -0400
-Received: from mx.socionext.com ([202.248.49.38]:17274 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751038AbeDELXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 07:23:49 -0400
-Date: Thu, 05 Apr 2018 20:23:47 +0900
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ata: ahci-platform: add reset control support
-Cc: Tejun Heo <tj@kernel.org>, Patrice Chotard <patrice.chotard@st.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-ide@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-In-Reply-To: <20180405095429.GA7506@ulmo>
-References: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com> <20180405095429.GA7506@ulmo>
-Message-Id: <20180405202347.2803.4A936039@socionext.com>
+        id S1751465AbeDELYZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 07:24:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52798 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751178AbeDELYX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 07:24:23 -0400
+Date: Thu, 5 Apr 2018 04:23:57 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Jia He <hejianet@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Jia He <jia.he@hxt-semitech.com>
+Subject: Re: [PATCH v7 1/5] mm: page_alloc: remain memblock_next_valid_pfn()
+ on arm and arm64
+Message-ID: <20180405112357.GA2647@bombadil.infradead.org>
+References: <1522915478-5044-1-git-send-email-hejianet@gmail.com>
+ <1522915478-5044-2-git-send-email-hejianet@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522915478-5044-2-git-send-email-hejianet@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry,
+On Thu, Apr 05, 2018 at 01:04:34AM -0700, Jia He wrote:
+>  create mode 100644 include/linux/arm96_common.h
 
-On Thu, 5 Apr 2018 11:54:29 +0200
-Thierry Reding <thierry.reding@gmail.com> wrote:
+'arm96_common'?!  No.  Just no.
 
-> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
-> > Add support to get and control a list of resets for the device
-> > as optional and shared. These resets must be kept de-asserted until
-> > the device is enabled.
-> > 
-> > This is specified as shared because some SoCs like UniPhier series
-> > have common reset controls with all ahci controller instances.
-> > 
-> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > ---
-> >  .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
-> >  drivers/ata/ahci.h                                 |  1 +
-> >  drivers/ata/libahci_platform.c                     | 24 +++++++++++++++++++---
-> >  3 files changed, 23 insertions(+), 3 deletions(-)
-> 
-> This causes a regression on Tegra because we explicitly request the
-> resets after the call to ahci_platform_get_resources().
-> 
-> From a quick look, ahci_mtk and ahci_st are in the same boat, adding the
-> corresponding maintainers to Cc.
-> 
-> Patrice, Matthias: does SATA still work for you after this patch? This
-> has been in linux-next since next-20180327.
-
-I assume that I use "generic-ahci" driver directly, and this driver has
-no way to handle resets, so I sent this patch.
-
-However, also as far as I look, some hardware-specific drivers handle their 
-own resets, and call ahci_platform_{enable,disable}_resources(). 
-Surely there are paths to call reset control twice in such drivers.
-
-Identically, when the driver also handle their own clocks, they have same issue.
-
-> Given how this is one of the more hardware-specific bits, perhaps a
-> better way to do this is to move reset handling into a Uniphier driver
-> much like Tegra, Mediatek and ST?
-
-Since it's difficult to write the resets in general with ahci_platform, I can prepare
-hardware-specific driver for our SoCs.
-
-> That said, I don't see SATA support for any of the Socionext hardware
-> either in the DT bindings or drivers/ata, so perhaps it'd be best to
-> back this out again until we have something that's more well tested?
-
-I'm about to use the generic driver, and prepare our phy driver and
-DT bindings for our SoCs, but not yet.
-
-Then it's no problem that we can back this out.
-
-Thank you,
-
----
-Best Regards,
-Kunihiko Hayashi
+The right way to share common code is to create a header file (or use
+an existing one), either in asm-generic or linux, with a #ifdef CONFIG_foo
+block and then 'select foo' in the arm Kconfig files.  That allows this
+common code to be shared, maybe with powerpc or x86 or ... in the future.
