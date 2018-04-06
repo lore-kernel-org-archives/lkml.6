@@ -1,80 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756758AbeDFOXr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:23:47 -0400
-Received: from mga12.intel.com ([192.55.52.136]:38243 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755126AbeDFOXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:23:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,415,1517904000";
-   d="scan'208";a="44007843"
-Subject: Re: [PATCH v3 2/4] mm/sparsemem: Defer the ms->section_mem_map
- clearing
-To: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, pagupta@redhat.com
-References: <20180228032657.32385-1-bhe@redhat.com>
- <20180228032657.32385-3-bhe@redhat.com>
-Cc: linux-mm@kvack.org, kirill.shutemov@linux.intel.com
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <8e147320-50f5-f809-31d2-992c35ecc418@intel.com>
-Date: Fri, 6 Apr 2018 07:23:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180228032657.32385-3-bhe@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1756767AbeDFOX6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:23:58 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:40981 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752925AbeDFOX4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 10:23:56 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Hans Verkuil <hansverk@cisco.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] media: platform: fsl-viu: mark local functions 'static'
+Date: Fri,  6 Apr 2018 16:23:19 +0200
+Message-Id: <20180406142336.2079928-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180406142336.2079928-1-arnd@arndb.de>
+References: <20180406142336.2079928-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:eEWJ2Ampjg8wbaIO5ZaejpEw8rFHL5QW5/VWDA/bLt2PtFulIFl
+ fvVlkFLUdWU9iPkj4AgadiscqmJMUXIYJLF4ylAa2vh6j5oP7GXZgXSCy7Kk2MWbImhSTu1
+ Hzm8OSHA1j/vvlLJDvfnkLgltF9Huv1LEqsliWfneZbWSjM7TkJqIS9i8ZudlpQ7gxC2Ti8
+ LsHc51EHk2olkw5S89DVQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:hh2IsQZ3Fb8=:wV2FdKuHkbBAHQswqlZCb6
+ YRZ9nRejV1cDhhmX2EPS1ABR+PSLU790B/QvrdKcHAw3Lv4E2vezRPSsNGd0Dfef1TniUvcq3
+ BSD50ngjCdzm3kfTw6pJUvHdDaXMWa2/d+vpQUHpUPLoAJ8gkGucZWJTcuu+Bqyj2VjRADz39
+ SC+hda/GhiDMYhyl062TdvYJzFfmXSQcfLe0cWhI4NjMYw/SXW0gFoxrpxjZcYfhsiNFhL2J1
+ 8dK3y2csd5MGxxhrK2+T9hEwguaJkX4f3CVYGgNFVt0cAJiwpV/eSMIU/ZajGiej7SS8b69Wz
+ ipG3tAMP7cImzDfY3FS02ZY+qnEbxGnsXMTzOxWOFmMoV1WEZlKiVhgc0By5CgLuKwyk18Vla
+ F65ldu7949y/dl4NuX9REQ/JX/Q/N7b8wuOmQMNbzvSa0HqpuKIt+Jbhk7WzIyreqXa/G+B1M
+ yXeMU0NLvZdDjfMB+MdfYcM92v77uE5leoOOPijGV1gBW03d3mfzABuT/nGr1QcQMLzaVpsvi
+ 3gwB7PsfCBfSg1RpqYJns3x7fd6KbYa2n3th11aTyp3iOfbiHnpIILnj0Mo+buA6kPB2N2Qtb
+ bAsCSjbMyVUd20wriWucru9ClZLt4FQqCOTpPcZdCLe/wrmazwhxCra1s2VmJkS0V8N/z9zuT
+ J4AWPjLQjmCH3uudYg+PvGAntwV1E3DyMynfR1cHwAgWew+oRC58YnpnreP3XvnZjiGlGa8KL
+ S7uzUlnOKCXL/dZmJYeT7XV7xUrsjMcnyODrnQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/27/2018 07:26 PM, Baoquan He wrote:
-> In sparse_init(), if CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER=y, system
-> will allocate one continuous memory chunk for mem maps on one node and
-> populate the relevant page tables to map memory section one by one. If
-> fail to populate for a certain mem section, print warning and its
-> ->section_mem_map will be cleared to cancel the marking of being present.
-> Like this, the number of mem sections marked as present could become
-> less during sparse_init() execution.
-> 
-> Here just defer the ms->section_mem_map clearing if failed to populate
-> its page tables until the last for_each_present_section_nr() loop. This
-> is in preparation for later optimizing the mem map allocation.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  mm/sparse-vmemmap.c |  1 -
->  mm/sparse.c         | 12 ++++++++----
->  2 files changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> index bd0276d5f66b..640e68f8324b 100644
-> --- a/mm/sparse-vmemmap.c
-> +++ b/mm/sparse-vmemmap.c
-> @@ -303,7 +303,6 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
->  		ms = __nr_to_section(pnum);
->  		pr_err("%s: sparsemem memory map backing failed some memory will not be available\n",
->  		       __func__);
-> -		ms->section_mem_map = 0;
->  	}
+Both sparse and gcc (with 'make V=1') warn about non-static symbols that
+have not been declared:
 
-I think you might have been trying to say this in the description, but I
-was not able to parse it out of there.  What is in ms->section_mem_map
-that needs to get cleared?
+drivers/media/platform/fsl-viu.c:235:16: warning: symbol 'format_by_fourcc' was not declared. Should it be static?
+drivers/media/platform/fsl-viu.c:248:6: warning: symbol 'viu_start_dma' was not declared. Should it be static?
+drivers/media/platform/fsl-viu.c:259:6: warning: symbol 'viu_stop_dma' was not declared. Should it be static?
+drivers/media/platform/fsl-viu.c:808:5: warning: symbol 'vidioc_g_fbuf' was not declared. Should it be static?
+drivers/media/platform/fsl-viu.c:819:5: warning: symbol 'vidioc_s_fbuf' was not declared. Should it be static?
+drivers/media/platform/fsl-viu.c:1311:6: warning: symbol 'viu_reset' was not declared. Should it be static?
 
-It *looks* like memory_present() uses ms->section_mem_map to just mark
-which sections are online relatively early in boot.  We need this
-clearing to mark that they are effectively *not* present any longer.
-Correct?
+In this driver, all instance should indeed be static. This leads to better
+optimized code, and avoids potential namespace conflicts.
 
-I guess the concern here is that if you miss any of the error sites,
-we'll end up with a bogus, non-null ms->section_mem_map.  Do we handle
-that nicely?
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/media/platform/fsl-viu.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Should the " = 0" instead be clearing SECTION_MARKED_PRESENT or
-something?  That would make it easier to match the code up with the code
-that it is effectively undoing.
+diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
+index cc85620267f1..38c9be51f01f 100644
+--- a/drivers/media/platform/fsl-viu.c
++++ b/drivers/media/platform/fsl-viu.c
+@@ -229,7 +229,7 @@ enum status_config {
+ 
+ static irqreturn_t viu_intr(int irq, void *dev_id);
+ 
+-struct viu_fmt *format_by_fourcc(int fourcc)
++static struct viu_fmt *format_by_fourcc(int fourcc)
+ {
+ 	int i;
+ 
+@@ -242,7 +242,7 @@ struct viu_fmt *format_by_fourcc(int fourcc)
+ 	return NULL;
+ }
+ 
+-void viu_start_dma(struct viu_dev *dev)
++static void viu_start_dma(struct viu_dev *dev)
+ {
+ 	struct viu_reg __iomem *vr = dev->vr;
+ 
+@@ -253,7 +253,7 @@ void viu_start_dma(struct viu_dev *dev)
+ 	out_be32(&vr->status_cfg, INT_FIELD_EN);
+ }
+ 
+-void viu_stop_dma(struct viu_dev *dev)
++static void viu_stop_dma(struct viu_dev *dev)
+ {
+ 	struct viu_reg __iomem *vr = dev->vr;
+ 	int cnt = 100;
+@@ -802,7 +802,7 @@ static int vidioc_overlay(struct file *file, void *priv, unsigned int on)
+ 	return 0;
+ }
+ 
+-int vidioc_g_fbuf(struct file *file, void *priv, struct v4l2_framebuffer *arg)
++static int vidioc_g_fbuf(struct file *file, void *priv, struct v4l2_framebuffer *arg)
+ {
+ 	struct viu_fh  *fh = priv;
+ 	struct viu_dev *dev = fh->dev;
+@@ -813,7 +813,7 @@ int vidioc_g_fbuf(struct file *file, void *priv, struct v4l2_framebuffer *arg)
+ 	return 0;
+ }
+ 
+-int vidioc_s_fbuf(struct file *file, void *priv, const struct v4l2_framebuffer *arg)
++static int vidioc_s_fbuf(struct file *file, void *priv, const struct v4l2_framebuffer *arg)
+ {
+ 	struct viu_fh  *fh = priv;
+ 	struct viu_dev *dev = fh->dev;
+@@ -1305,7 +1305,7 @@ static int viu_release(struct file *file)
+ 	return 0;
+ }
+ 
+-void viu_reset(struct viu_reg __iomem *reg)
++static void viu_reset(struct viu_reg __iomem *reg)
+ {
+ 	out_be32(&reg->status_cfg, 0);
+ 	out_be32(&reg->luminance, 0x9512a254);
+-- 
+2.9.0
