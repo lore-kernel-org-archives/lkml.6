@@ -1,57 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752207AbeDFQIv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 12:08:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49784 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751575AbeDFQIs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 12:08:48 -0400
+        id S1752565AbeDFQI6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 12:08:58 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:50386 "EHLO gum.cmpxchg.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751730AbeDFQI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 12:08:56 -0400
+Date: Fri, 6 Apr 2018 12:10:19 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>, Tejun Heo <tj@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>, Shakeel Butt <shakeelb@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] mm/vmscan: remove redundant
+ current_may_throttle() check
+Message-ID: <20180406161019.GC20806@cmpxchg.org>
+References: <20180323152029.11084-1-aryabinin@virtuozzo.com>
+ <20180323152029.11084-3-aryabinin@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 06 Apr 2018 21:38:47 +0530
-From: sricharan@codeaurora.org
-To: Richard Cochran <richardcochran@gmail.com>
-Cc: Andy Gross <andy.gross@linaro.org>, robh+dt@kernel.org,
-        robh@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        sboyd@codeaurora.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, absahu@codeaurora.org, marc.zyngier@arm.com
-Subject: Re: [PATCH v3 04/13] ARM: dts: ipq4019: Update ipq4019-dk01.1 board
- data
-In-Reply-To: <20180406151312.ehx4qtxcylkw4uhi@localhost>
-References: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
- <1521518336-5467-5-git-send-email-sricharan@codeaurora.org>
- <20180320143131.4eenixtbhciq5fwc@localhost>
- <20180329143715.GA31757@hector.attlocal.net>
- <20180329163739.2fg5qxvb5j3fiy6r@localhost>
- <4073ec6b457cb369a83c710d0ae453b4@codeaurora.org>
- <20180406045511.hnzxe4nepl5sqmld@localhost>
- <7dc41c73f594918701c21075dde30870@codeaurora.org>
- <20180406151312.ehx4qtxcylkw4uhi@localhost>
-Message-ID: <82ba83a1a8ebb8a5ef2fa71356374be3@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180323152029.11084-3-aryabinin@virtuozzo.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-06 20:43, Richard Cochran wrote:
-> On Fri, Apr 06, 2018 at 06:35:49PM +0530, sricharan@codeaurora.org 
-> wrote:
->>  I tried booting mainline built with qcom_defconfig on ap148 and
->>  did boot. Not sure if your bootloader's bootarg is this,
->>   'console=ttyMSM0,115200n8' ?
+On Fri, Mar 23, 2018 at 06:20:27PM +0300, Andrey Ryabinin wrote:
+> Only kswapd can have non-zero nr_immediate, and current_may_throttle() is
+> always true for kswapd (PF_LESS_THROTTLE bit is never set) thus it's
+> enough to check stat.nr_immediate only.
 > 
-> Yes, I think so.  I'll double check it.
-> 
-> Do you have any out-of-tree patches or special jumper settings?
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-  No out of tree patches or special jumper settings. I am booting the
-  mainline kernel, ap148.dtb + ramfs.
-
-Regards,
-  Sricharan
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
