@@ -1,91 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752410AbeDFWC3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 18:02:29 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47569 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752000AbeDFWC1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 18:02:27 -0400
-Date: Sat, 7 Apr 2018 00:02:24 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Tony Lindgren <tony@atomide.com>, Dan Williams <dcbw@redhat.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
-Message-ID: <20180406220223.GA32064@amd>
-References: <20180401131852.GA11086@amd>
- <20180401153631.GA5700@atomide.com>
- <20180401173012.GB5700@atomide.com>
- <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
- <20180402155754.GD5700@atomide.com>
- <20180403150444.GE5700@atomide.com>
- <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
- <20180403194419.GG5700@atomide.com>
- <20180406120423.GA18691@amd>
- <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
+        id S1752414AbeDFWFd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 18:05:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60912 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751488AbeDFWFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 18:05:32 -0400
+Date: Fri, 6 Apr 2018 17:05:30 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/8] livepatch: Add atomic replace
+Message-ID: <20180406220530.snglx7m3quye34wp@treble>
+References: <20180323120028.31451-1-pmladek@suse.com>
+ <20180323120028.31451-4-pmladek@suse.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180323120028.31451-4-pmladek@suse.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 23, 2018 at 01:00:23PM +0100, Petr Mladek wrote:
+> @@ -687,7 +858,14 @@ static void klp_free_patch(struct klp_patch *patch)
+>  
+>  static int klp_init_func(struct klp_object *obj, struct klp_func *func)
+>  {
+> -	if (!func->old_name || !func->new_func)
+> +	if (!func->old_name)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * NOPs get the address later. The the patched module must be loaded,
 
---mYCpIKhGyMATD0i+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+"The the" -> "the"
 
-On Fri 2018-04-06 14:23:46, Merlijn Wajer wrote:
-> Hi,
->=20
-> On 06/04/18 14:04, Pavel Machek wrote:
-> > Hi!
-> >=20
-> >> OK that explains why the speaker keeps working then :)
-> >=20
-> > Ok, I pushed new version of unicsy_demo.
-> >=20
-> > It now sends & receives sms and you can call & receive call. Tone from
-> > linphone is used for incoming call. User interface and code is
-> > slightly weird, as ofono was -- and still is -- meant as a backend.
->=20
-> Great news, can't wait to try it.
+> +	 * see klp_init_object_loaded().
+> +	 */
+> +	if (!func->new_func && !func->nop)
+>  		return -EINVAL;
 
-Oh btw ... if you need any help just ask. unicsy_demo needs to be
-symlinked to /usr/share/unicsy.
+>  
+>  	INIT_LIST_HEAD(&func->stack_node);
+> @@ -742,6 +920,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
+>  			return -ENOENT;
+>  		}
+>  
+> +		if (func->nop)
+> +			func->new_func = (void *)func->old_addr;
+> +
 
-If you could make notes of any problems you encounter and any packages
-you'll need to install, that would be nice -- it would be good to
-create README with installation instructions.
+These changes make it more obvious that 'new_func' isn't quite the right
+name.  It should really be 'new_addr' IMO.
 
-Good luck,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---mYCpIKhGyMATD0i+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrH7m8ACgkQMOfwapXb+vJjswCfbZnDcnE8joUOeLmBhqfwh3+u
-rdoAoKjPe4yRv2yWBOQx9J0eCRxi/1my
-=/oPQ
------END PGP SIGNATURE-----
-
---mYCpIKhGyMATD0i+--
+-- 
+Josh
