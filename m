@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx487JBHAVLuYlJeARlTFlbputC8xV22d5eZuuDtpx6ntII7L+10M/L6rKqDS0d6+Y41S00td
+X-Google-Smtp-Source: AIpwx49RkFO2nQESLKNYOPiLBoUvzz1t6/dTfRwjrfMxUnhFEKb+o6NvyQPqICpfLv3rl3lI334Z
 ARC-Seal: i=1; a=rsa-sha256; t=1523021862; cv=none;
         d=google.com; s=arc-20160816;
-        b=FOLSWPxRMuNic6ws+rg9OvLVbjr3HnRAcqef2CQ9o/Ad36D2tlWF5GXGj3Tu6CND0R
-         1ne+Dr6gU8w8f7BGTRMTNeXYMKEQHGUDJr1MjUL3chlbQiopzLXQ8Nl/GcwCj7Yh/0e8
-         CqhOR9N6aIv/GcBg+aVLtmCpibpTezxtdm0HXEwe72At71YfRYjavu+iQDS2mE+d1dxp
-         fI86/UkzlSn25XHy5EIRCMyzEMmd0JGEBcwPGXFj66xUOuck7vxs4qibOw8fWO6Se7/z
-         g64mQe7uYlk9Wsh2FUU+l6tIncgSFvHaJ7Is/+a9212Q9rs8rno6thmoXIjteuC43sdy
-         D3rg==
+        b=RZHxs+SQzHUJZthTNImUwQrCDMP3iuoEX+7j+Z9rfy4FcTjrRyGZdplp36bh8GlGq8
+         0fRu40u9I+6TKHuUl0MHliy2/PRYVDtij8atuGYUJ77f3P2saM0p+GTIMM+v5kjB+dcH
+         XUITjl7HkvYhgQQo8dfAGwO5mWdYqZhEwvdARHX3RQD6YLOkCwwFlKDLF8GL75MWSZKA
+         0u6IQ/WsYD/DEQe5hZU0kGQomf+4A6P8aiqlf4KxAmOkLnCOjVjjaMlC8xOcjFwL7673
+         VcA1BmXWJ3BvfBgUqmbdg/EenkagkTlVzg1RuneysVrktb4wms0sPQuEPUON17oKK2b+
+         QURA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=M07uMXYrDhD/fMf1GMPKIDiAr9s3oEXdbKKIJbJIljg=;
-        b=JZpio5J6tKfToosuYXMBy1Hib/Gf5SpZcY177E8ualDUiXcKtDqDJMGYtY54GbPwpq
-         N1m2y/+x0hoAfjgsUYuAkHdl5qjnRvvZW4kWRdl/0holgTgjndTGz86rIBNCV13ZIkeB
-         Ko2pLBWTv42k1rK8QQvxCVpjDI60futi1Lq/dh/Bh2rtj5T/2ZDzoXRQVOq4DmSZZgwO
-         dGdQhgSfB6joH6ko4O7gby6Hebp6atRZ6+mG5JkxztP7vpWl29Z9j6XzmezJSAHQ/Bgq
-         h6imEVurNYgbWQrTYI/kISs1IQ6FTMmZQozTXLmRBgF66O/4r3W86V1L0B6mkH8AMHwm
-         BgpA==
+        bh=k1wJwr5cuM1NqXytwitgMQFdWybisSAm3QcuE0QbKUs=;
+        b=pD9NPmsZGR016IRB+Nb6oyvC27V8RGEVNGG6oeafxZIy4OptxDo+P0K16GB6Xy7qwA
+         Li4FyJeEqZep39fyBTonr8MRTaig/6QZHomm2pPSOGZMQhm5IfJwJ5cDZx6MGrDa7qJ0
+         /jCUqYjOldqQ33SXbgg24V5DmKBJWjLlvaJiJp/jCeMQBgZgRa/78ijYaHKas/u9fZrW
+         ine/KHyCS+aHVbvimVcxc1/M84Z+ZjfuGpfpoAuLWf2HRIuiPRGuORUHj/2ZncZkuul8
+         hPRQ+aS+knQbjvttaBGJDWd7VoXqRMRIPMDxlbmckLIHfWEazCVcMbVk3C81twO0u/5i
+         C/Gw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,26 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrew Banman <abanman@hpe.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mike Travis <mike.travis@hpe.com>,
-	Dimitri Sivanich <sivanich@hpe.com>,
-	Russ Anderson <rja@hpe.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 4.14 10/67] x86/platform/uv/BAU: Add APIC idt entry
-Date: Fri,  6 Apr 2018 15:23:40 +0200
-Message-Id: <20180406084342.695837991@linuxfoundation.org>
+	Dave Gerlach <d-gerlach@ti.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.14 01/67] ARM: OMAP: Fix SRAM W+X mapping
+Date: Fri,  6 Apr 2018 15:23:31 +0200
+Message-Id: <20180406084341.408171508@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004172509533841?=
-X-GMAIL-MSGID: =?utf-8?q?1597004172509533841?=
+X-GMAIL-THRID: =?utf-8?q?1597004172006406380?=
+X-GMAIL-MSGID: =?utf-8?q?1597004172006406380?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,64 +49,123 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrew Banman <abanman@hpe.com>
+From: Tony Lindgren <tony@atomide.com>
 
-commit 151ad17fbe5e56afa59709f41980508672c777ce upstream.
+commit eb85a355c3afd9379f5953cfe2df73632d14c884 upstream.
 
-BAU uses the old alloc_initr_gate90 method to setup its interrupt. This
-fails silently as the BAU vector is in the range of APIC vectors that are
-registered to the spurious interrupt handler. As a consequence BAU
-broadcasts are not handled, and the broadcast source CPU hangs.
+We are still using custom SRAM code for some SoCs and are not marking
+the PM code mapped to SRAM as read-only and executable after we're
+done. With CONFIG_DEBUG_WX=y, we will get "Found insecure W+X mapping
+at address" warning.
 
-Update BAU to use new idt structure.
+Let's fix this issue the same way as commit 728bbe75c82f ("misc: sram:
+Introduce support code for protect-exec sram type") is doing for
+drivers/misc/sram-exec.c.
 
-Fixes: dc20b2d52653 ("x86/idt: Move interrupt gate initialization to IDT code")
-Signed-off-by: Andrew Banman <abanman@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Mike Travis <mike.travis@hpe.com>
-Cc: Dimitri Sivanich <sivanich@hpe.com>
-Cc: Russ Anderson <rja@hpe.com>
-Cc: stable@vger.kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/1522188546-196177-1-git-send-email-abanman@hpe.com
+On omap3, we need to restore SRAM when returning from off mode after
+idle, so init time configuration is not enough.
+
+And as we no longer have users for omap_sram_push_address() we can
+make it static while at it.
+
+Note that eventually we should be using sram-exec.c for all SoCs.
+
+Cc: stable@vger.kernel.org	# v4.12+
+Cc: Dave Gerlach <d-gerlach@ti.com>
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/hw_irq.h |    1 +
- arch/x86/kernel/idt.c         |    3 +++
- arch/x86/platform/uv/tlb_uv.c |    2 --
- 3 files changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/plat-omap/include/plat/sram.h |   11 ----------
+ arch/arm/plat-omap/sram.c              |   36 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 36 insertions(+), 11 deletions(-)
 
---- a/arch/x86/include/asm/hw_irq.h
-+++ b/arch/x86/include/asm/hw_irq.h
-@@ -34,6 +34,7 @@ extern asmlinkage void kvm_posted_intr_w
- extern asmlinkage void kvm_posted_intr_nested_ipi(void);
- extern asmlinkage void error_interrupt(void);
- extern asmlinkage void irq_work_interrupt(void);
-+extern asmlinkage void uv_bau_message_intr1(void);
+--- a/arch/arm/plat-omap/include/plat/sram.h
++++ b/arch/arm/plat-omap/include/plat/sram.h
+@@ -5,13 +5,4 @@ void omap_map_sram(unsigned long start,
+ 			unsigned long skip, int cached);
+ void omap_sram_reset(void);
  
- extern asmlinkage void spurious_interrupt(void);
- extern asmlinkage void thermal_interrupt(void);
---- a/arch/x86/kernel/idt.c
-+++ b/arch/x86/kernel/idt.c
-@@ -140,6 +140,9 @@ static const __initconst struct idt_data
- # ifdef CONFIG_IRQ_WORK
- 	INTG(IRQ_WORK_VECTOR,		irq_work_interrupt),
- # endif
-+#ifdef CONFIG_X86_UV
-+	INTG(UV_BAU_MESSAGE,		uv_bau_message_intr1),
-+#endif
- 	INTG(SPURIOUS_APIC_VECTOR,	spurious_interrupt),
- 	INTG(ERROR_APIC_VECTOR,		error_interrupt),
- #endif
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -2254,8 +2254,6 @@ static int __init uv_bau_init(void)
- 			init_uvhub(uvhub, vector, uv_base_pnode);
- 	}
- 
--	alloc_intr_gate(vector, uv_bau_message_intr1);
+-extern void *omap_sram_push_address(unsigned long size);
 -
- 	for_each_possible_blade(uvhub) {
- 		if (uv_blade_nr_possible_cpus(uvhub)) {
- 			unsigned long val;
+-/* Macro to push a function to the internal SRAM, using the fncpy API */
+-#define omap_sram_push(funcp, size) ({				\
+-	typeof(&(funcp)) _res = NULL;				\
+-	void *_sram_address = omap_sram_push_address(size);	\
+-	if (_sram_address)					\
+-		_res = fncpy(_sram_address, &(funcp), size);	\
+-	_res;							\
+-})
++extern void *omap_sram_push(void *funcp, unsigned long size);
+--- a/arch/arm/plat-omap/sram.c
++++ b/arch/arm/plat-omap/sram.c
+@@ -23,6 +23,7 @@
+ #include <asm/fncpy.h>
+ #include <asm/tlb.h>
+ #include <asm/cacheflush.h>
++#include <asm/set_memory.h>
+ 
+ #include <asm/mach/map.h>
+ 
+@@ -42,7 +43,7 @@ static void __iomem *omap_sram_ceil;
+  * Note that fncpy requires the returned address to be aligned
+  * to an 8-byte boundary.
+  */
+-void *omap_sram_push_address(unsigned long size)
++static void *omap_sram_push_address(unsigned long size)
+ {
+ 	unsigned long available, new_ceil = (unsigned long)omap_sram_ceil;
+ 
+@@ -60,6 +61,30 @@ void *omap_sram_push_address(unsigned lo
+ 	return (void *)omap_sram_ceil;
+ }
+ 
++void *omap_sram_push(void *funcp, unsigned long size)
++{
++	void *sram;
++	unsigned long base;
++	int pages;
++	void *dst = NULL;
++
++	sram = omap_sram_push_address(size);
++	if (!sram)
++		return NULL;
++
++	base = (unsigned long)sram & PAGE_MASK;
++	pages = PAGE_ALIGN(size) / PAGE_SIZE;
++
++	set_memory_rw(base, pages);
++
++	dst = fncpy(sram, funcp, size);
++
++	set_memory_ro(base, pages);
++	set_memory_x(base, pages);
++
++	return dst;
++}
++
+ /*
+  * The SRAM context is lost during off-idle and stack
+  * needs to be reset.
+@@ -75,6 +100,9 @@ void omap_sram_reset(void)
+ void __init omap_map_sram(unsigned long start, unsigned long size,
+ 				 unsigned long skip, int cached)
+ {
++	unsigned long base;
++	int pages;
++
+ 	if (size == 0)
+ 		return;
+ 
+@@ -95,4 +123,10 @@ void __init omap_map_sram(unsigned long
+ 	 */
+ 	memset_io(omap_sram_base + omap_sram_skip, 0,
+ 		  omap_sram_size - omap_sram_skip);
++
++	base = (unsigned long)omap_sram_base;
++	pages = PAGE_ALIGN(omap_sram_size) / PAGE_SIZE;
++
++	set_memory_ro(base, pages);
++	set_memory_x(base, pages);
+ }
