@@ -1,81 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932294AbeDFO2k (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:28:40 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:56891 "EHLO
+        id S932306AbeDFO2s (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:28:48 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:34987 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752802AbeDFO2i (ORCPT
+        with ESMTP id S1756065AbeDFO2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:28:38 -0400
+        Fri, 6 Apr 2018 10:28:46 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: Richard Kuo <rkuo@codeaurora.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, linux-hexagon@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] hexagon: fix ffz/fls/ffs return type
-Date: Fri,  6 Apr 2018 16:28:21 +0200
-Message-Id: <20180406142832.2243021-1-arnd@arndb.de>
+Subject: [PATCH 2/3] hexagon: add memset_io() helper
+Date: Fri,  6 Apr 2018 16:28:22 +0200
+Message-Id: <20180406142832.2243021-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:sPYsZINIgbBBJhorGwFFBdtSAn9M6hmr/qN+/8IJ6as1F2rud+t
- 8MkX1M9zdH5LKJB1kyL6feysNEjhxJKcjsA/pn2HB67MfsmVyIV0QuVoeKDinyZH4zA0mbe
- +s3fa+7XtDzpGH7w8A4ZqtpdyXvXAzT59g+FNoMY2DT1Gx1mfIl48cXzS00tbnAsnKKyi6p
- voY7972ns/9+UDOA9+EVg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:xsRU8VXITB8=:cjM9VJrMR1MFrVjKN7hgtb
- Yogw/7M7ukvcWyQu/9m3+HbK02FpYi22hzBKV5Jn6f2pzS22ZCebLEfwpPvHyHE4Lv9r90zDt
- QKy4hJ0dnMXgmzQQM10ez9UZxeWvIpi4jZxaAkzaxfOPxfMH29o0ed1UIwBZOuDnk57pdDKbk
- FOliz4q5QsDHS/yPMoElTMGEZENiyYaXX1KZuVNToyyRMpS2mpyZmrBGUVRjfbhePs4P1S29U
- 0uz4UepCkb+HDcDeNAyCfwIwwQXHALBtIRYSnlom2MPUvg5HbWWBt0TqrWcOLAaaa+I0ZuBfF
- /NGVg8M5HohnRcUiseO8fJKPWU0UHWhO6nxxHk5d+NufKixXxe0+5dE4cbH2LoNU0hFo4Wt2X
- GdDf7hg7IgYuxjANp+lHOu9zRyBmmoSBXq6fFITr8Q7XDi+32OO2QoZqpHIjYfWXHnyEdH/kV
- IEJhtYavZFRlGzd5yWcMjYLxARdk+nLmiiMnp+Uo75FYmlZdezutqYsDvTuvUSqKGRl+43/G6
- 1oa2Str/o4zLnirHGKAas/N8+SStGrOXu7wD0l7LMF/V3O5VqLXnHiHoZ4nZNiLYNYJ2c2YDG
- OHF7YopC3xEdCTTPwa6uNIqWbkqCP2fG2gPLmEmbWHWG0430OV97q6iJYHkEO2AVbLi/C41IE
- rXZ/0smG/cf9keBwVYk4oqTwGLnolwMvBLsjkYXeuRp+Zrxf9+3b8j/8q22EIYIE/hSU8eqxt
- dgIYkZ5TiRPVEUO5q1/V9egIWzpA1jE27edHkA==
+In-Reply-To: <20180406142832.2243021-1-arnd@arndb.de>
+References: <20180406142832.2243021-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:s1MefovsIdd8pWGjCa6TN43HkaEmmf4A3xJeRZ3+U2oRPUtdGqp
+ gESTipH8oYfBi4fzMLaOtRToqtPFHleZPi69+2u6X8oVKd1b0WnEqeRvHsm51gymVzVIvpq
+ jtsAMH5Xo6Y9WQRyo6W0gNSi5f0OEe0VbjbtpAXMW1jD1Gil5FT8VTPcBdX9BzF+zN4cssG
+ iW9gQ5xM0gyws7KmvVXxw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5feViq3UTVY=:34EvZdnkSpNOrndEH9Pd2A
+ HXEziwzQjISEsAC7MsqZYvA8nhJ3oo3F7HPwlwQT8hH/We+JkV0Se3c2Jd0Ci/VXdZe+qveU0
+ rMG+LDW6+oImBaOZtzsRqVPylhdippkEYL04T4QSbEhHFPhrrndwaUJyq4xfiW+5BZt8TMdxd
+ SVdw12EHgUNXOryuy/WKipKquA/LfqOJZY85grA9bdSJyx8F5JVR3LwKwAqsTm923Eo67zh2C
+ QPFauevFksZxWa9qloz0czEXPGZO9oipFp6CWqTyehd+K6CDHuAAjwAeiKrip4jdUlRQuiJGm
+ +Y6dnxRm+dvj88jRTP4k2r+Mu4TqOK/NBvCqYifgMlzGJkB0xZi/W//e9LvSc0i8jAaBMqh47
+ wOTRclgK1I0DQ909vFQf7tEu+zTsgIGXgBpqzCf0z6CO/826zOUAh3fIWVNSdpfl0bKpc7r0P
+ hgmFFpgZV1Sh82U2NT3BWltrsf4PjjV1biha5KYUkUqfpDdOZsAljh6X/eSr95PpaYAw+/Mxz
+ 5l22iDTObURXQ54D4PrzA3VRBLWlwdePTUndt7/yBM1dGqa2/be5NoXeLV2Tsn9eF2+wDoP+X
+ t7j50HT6WWyGh+KTtjG7BUTKWjVxdNtjXfyDUTmqA57mrSkAy5KuVGYjcdzCa5Xs1j34RIuvQ
+ cmvRdSURvx3vzk8M4vkknvqlub4umV3fCOSZLOP5V0vqBxvxWkLCNsN05LtZO/MLC//ZHNgG5
+ uTZ93ky68RAfgGpkPUwZRsQz4i6L97uJQkGuOQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's use the same return type as the major architectures to
-avoid warnings like
+We already have memcpy_toio(), but not memset_io(), so let's
+add the obvious version to allow building an allmodconfig kernel
+without errors like
 
-drivers/ata/libahci_platform.c: In function 'ahci_platform_init_host':
-drivers/ata/libahci_platform.c:561:12: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+drivers/gpu/drm/ttm/ttm_bo_util.c: In function 'ttm_bo_move_memcpy':
+drivers/gpu/drm/ttm/ttm_bo_util.c:390:3: error: implicit declaration of function 'memset_io' [-Werror=implicit-function-declaration]
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/hexagon/include/asm/bitops.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/hexagon/include/asm/io.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/hexagon/include/asm/bitops.h b/arch/hexagon/include/asm/bitops.h
-index 5e4a59b3ec1b..8790a50b1f5e 100644
---- a/arch/hexagon/include/asm/bitops.h
-+++ b/arch/hexagon/include/asm/bitops.h
-@@ -194,7 +194,7 @@ static inline int __test_bit(int nr, const volatile unsigned long *addr)
-  *
-  * Undefined if no zero exists, so code should check against ~0UL first.
-  */
--static inline long ffz(int x)
-+static inline int ffz(int x)
- {
- 	int r;
+diff --git a/arch/hexagon/include/asm/io.h b/arch/hexagon/include/asm/io.h
+index 9e8621d94ee9..e17262ad125e 100644
+--- a/arch/hexagon/include/asm/io.h
++++ b/arch/hexagon/include/asm/io.h
+@@ -216,6 +216,12 @@ static inline void memcpy_toio(volatile void __iomem *dst, const void *src,
+ 	memcpy((void *) dst, src, count);
+ }
  
-@@ -211,7 +211,7 @@ static inline long ffz(int x)
-  * This is defined the same way as ffs.
-  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
-  */
--static inline long fls(int x)
-+static inline int fls(int x)
- {
- 	int r;
++static inline void memset_io(volatile void __iomem *addr, int value,
++			     size_t size)
++{
++	memset((void __force *)addr, value, size);
++}
++
+ #define PCI_IO_ADDR	(volatile void __iomem *)
  
-@@ -232,7 +232,7 @@ static inline long fls(int x)
-  * the libc and compiler builtin ffs routines, therefore
-  * differs in spirit from the above ffz (man ffs).
-  */
--static inline long ffs(int x)
-+static inline int ffs(int x)
- {
- 	int r;
- 
+ /*
 -- 
 2.9.0
