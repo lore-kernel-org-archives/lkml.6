@@ -1,56 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753021AbeDFNCa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:02:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60024 "EHLO mail.kernel.org"
+        id S1752975AbeDFNC1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:02:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752753AbeDFNBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752775AbeDFNBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 6 Apr 2018 09:01:15 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 961812183E
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EABA721720
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180406130113.532283895@goodmis.org>
+Message-Id: <20180406130113.884986123@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 06 Apr 2018 09:00:47 -0400
+Date: Fri, 06 Apr 2018 09:00:49 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 12/18] lockdep: Add print_irqtrace_events() to __warn
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: [for-next][PATCH 14/18] ring-buffer: Add set/clear_current_oom_origin() during allocations
 References: <20180406130035.400292196@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0012-lockdep-Add-print_irqtrace_events-to-__warn.patch
+Content-Disposition: inline; filename=0014-ring-buffer-Add-set-clear_current_oom_origin-during-.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Running a test on a x86_32 kernel I triggered a bug that an interrupt
-disable/enable isn't being catched by lockdep. At least knowing where the
-last one was found would be helpful, but the warnings that are produced do
-not show this information. Even without debugging lockdep, having the WARN()
-display the last place hard and soft irqs were enabled or disabled is
-valuable.
+As si_mem_available() can say there is enough memory even though the memory
+available is not useable by the ring buffer, it is best to not kill innocent
+applications because the ring buffer is taking up all the memory while it is
+trying to allocate a great deal of memory.
 
+If the allocator is user space (because kernel threads can also increase the
+size of the kernel ring buffer on boot up), then after si_mem_available()
+says there is enough memory, set the OOM killer to kill the current task if
+an OOM triggers during the allocation.
+
+Link: http://lkml.kernel.org/r/20180404062340.GD6312@dhcp22.suse.cz
+
+Suggested-by: Michal Hocko <mhocko@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/panic.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/trace/ring_buffer.c | 48 ++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 38 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 2cfef408fec9..fa8d4cc4956a 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -554,6 +554,8 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
- 	else
- 		dump_stack();
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 966128f02121..c9cb9767d49b 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -22,6 +22,7 @@
+ #include <linux/hash.h>
+ #include <linux/list.h>
+ #include <linux/cpu.h>
++#include <linux/oom.h>
  
-+	print_irqtrace_events(current);
+ #include <asm/local.h>
+ 
+@@ -1162,35 +1163,60 @@ static int rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
+ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
+ {
+ 	struct buffer_page *bpage, *tmp;
++	bool user_thread = current->mm != NULL;
++	gfp_t mflags;
+ 	long i;
+ 
+-	/* Check if the available memory is there first */
++	/*
++	 * Check if the available memory is there first.
++	 * Note, si_mem_available() only gives us a rough estimate of available
++	 * memory. It may not be accurate. But we don't care, we just want
++	 * to prevent doing any allocation when it is obvious that it is
++	 * not going to succeed.
++	 */
+ 	i = si_mem_available();
+ 	if (i < nr_pages)
+ 		return -ENOMEM;
+ 
++	/*
++	 * __GFP_RETRY_MAYFAIL flag makes sure that the allocation fails
++	 * gracefully without invoking oom-killer and the system is not
++	 * destabilized.
++	 */
++	mflags = GFP_KERNEL | __GFP_RETRY_MAYFAIL;
 +
- 	print_oops_end_marker();
++	/*
++	 * If a user thread allocates too much, and si_mem_available()
++	 * reports there's enough memory, even though there is not.
++	 * Make sure the OOM killer kills this thread. This can happen
++	 * even with RETRY_MAYFAIL because another task may be doing
++	 * an allocation after this task has taken all memory.
++	 * This is the task the OOM killer needs to take out during this
++	 * loop, even if it was triggered by an allocation somewhere else.
++	 */
++	if (user_thread)
++		set_current_oom_origin();
+ 	for (i = 0; i < nr_pages; i++) {
+ 		struct page *page;
+-		/*
+-		 * __GFP_RETRY_MAYFAIL flag makes sure that the allocation fails
+-		 * gracefully without invoking oom-killer and the system is not
+-		 * destabilized.
+-		 */
++
+ 		bpage = kzalloc_node(ALIGN(sizeof(*bpage), cache_line_size()),
+-				    GFP_KERNEL | __GFP_RETRY_MAYFAIL,
+-				    cpu_to_node(cpu));
++				    mflags, cpu_to_node(cpu));
+ 		if (!bpage)
+ 			goto free_pages;
  
- 	/* Just a warning, don't kill lockdep. */
+ 		list_add(&bpage->list, pages);
+ 
+-		page = alloc_pages_node(cpu_to_node(cpu),
+-					GFP_KERNEL | __GFP_RETRY_MAYFAIL, 0);
++		page = alloc_pages_node(cpu_to_node(cpu), mflags, 0);
+ 		if (!page)
+ 			goto free_pages;
+ 		bpage->page = page_address(page);
+ 		rb_init_page(bpage->page);
++
++		if (user_thread && fatal_signal_pending(current))
++			goto free_pages;
+ 	}
++	if (user_thread)
++		clear_current_oom_origin();
+ 
+ 	return 0;
+ 
+@@ -1199,6 +1225,8 @@ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
+ 		list_del_init(&bpage->list);
+ 		free_buffer_page(bpage);
+ 	}
++	if (user_thread)
++		clear_current_oom_origin();
+ 
+ 	return -ENOMEM;
+ }
 -- 
 2.15.1
