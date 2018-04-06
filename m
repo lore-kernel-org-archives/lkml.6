@@ -1,83 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1459510-1523021541-2-13471616553437931021
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523021540; b=pTJnLRxUDcFVIyGgdkc1b2Md9pAEObXhSpHXGnQDXf62ItfabR
-    KLX1CqdEW0m2RcuUepGPOqGjmW6HBP+rUAROoUPLiLYdc0HddETfgK4Y78DHBQff
-    eD7swiVFZdm+j/EEzVUi1ZJ3f7jThDjEo++wVKgxe4rc4Lj0Gc312xuHV6Olm9Sk
-    TrpPFbUVUsBFMfMQZQ/LDq8vSS7VjjjRGqZZOQUroIssvKDziYJ5GrxJyZgk3cKc
-    gh9iZLE8zj8my9GJtvLqadMS8nBryL01vqfCst9/mln82KfVBvzh/M5P8BHaC6sC
-    E4gMZB2uWgjBpVkyhHgA5K3a4d4mLicOprog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523021540; bh=RO0fnDaNZZfjBjrPJUcSTcpJdgUAg0
-    cDSYLXSSEFAxk=; b=LNtRzQKTXeZdZOg0irgpt7dUwbWEHUpjllZKpPKPQOTpKY
-    ZgkKU/qm9lRAH0XsDsZOzxp1NBaoM4JqPY0AZ+6sqUifjYDxprkS+gs0z4B0KuaF
-    PbdIRKnJuzOQThpvCwYDRAhdx9/UJ/F8Q34D9hcbwXMvFYripUsxpbQlZExRSin+
-    LYcFm8NlsWhB7tSUzE0Ev3qofzEkrnDxtf+MDtVmMmKwLgKAlB6dwuYFkZzKOs3V
-    RV6NYylAxBHXHb8glH3qalWuoGWbTOLf3rfyflhWEvuDjDHoYHRqUjvJQm9U36JE
-    ftb3ahOabYeOJscw/ImlycyfAXAitNL4azrtoIjA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBB3mUTV0Zvd/Ts+xLEDZkgA/bG1HR6nrGtDx+MqrFOS6I+qL7UqqxDFiHKNjtJQ7YbgYaIyRdGBbhC2nNwFPH2gR4KUnVtpbxgcp+slTlB0mMx9w2qs
-    v9jh/uEjLZX0qx11ttxlCMN8gEoniKEEIf4VQkE/ywi9UjK0QnF4PtJNQ2zzVr9WpTFXfOEUie6ZhJf1SxJKoLRfunx5kZC5E4oGtIbM3u6klVRsMGZYUy3x
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=ag1SF4gXAAAA:8 a=1EsaE_6oAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8
-    a=iC0j8UYkz9P5EM_vmR4A:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
-    a=3ZumFrijQQ-2J9H5h8ct:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755305AbeDFNcR (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 09:32:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57464 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755304AbeDFNcP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:32:15 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/lJuzaxpPF2LI0m/kx20a2VXhvv3m/nskLKyXyYg0KM8e/5FtHye4GUGnIOMlDoW7gr5xi
+ARC-Seal: i=1; a=rsa-sha256; t=1523021540; cv=none;
+        d=google.com; s=arc-20160816;
+        b=bqVOt7XwqFear+Ul85rfqI6fKgzm4rIpfLKwp3344HhF6mmvDA3cD3zbC4umStTn5Z
+         mQ3hC6USXbiMta512v3vsPogfrk5lkUsl/fUbjDgkwfb2ve/t/Bjr2OlRG19USesvE3H
+         CljR4mYF7B6nFWH8GCDopk2zxyBRVNiE4n6dnc2NSQFCvfYli67U/Jzaa/B22b8F/XWP
+         ghqZNe/cccI0xQ35jyLTb2UUxhT/5jW5eQ1nP+PSSM2a7jLx2b6/SRv9bkTT7TRXsBgl
+         5XV1FGEmlU15qsLG6hiCESZGCsY2EJFxK0oLrSo0oa8NNBCvtK/2/ZlPrO5ux0CTHUVe
+         Q8WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=LU8Lh3MMYd3K2I2PsBjBbI7NjJJYFYpZKAiALJx+DCM=;
+        b=clwLirAotuh4zybtyYVRWo838i7vrgJ7rGzibbiF98mNwFWGLukcKWV5KkNnNYBcPm
+         syik4sfu7JOWV5OKH45a10RSaJoqhFyt+M7C4QF9oNMWCwlTQ8f/klyRdloAntZdqsFP
+         piSIiPXKncS/rSGRqMRAH8eJ2AOayvvFteXAmcVQrNZq6zcM1+MLFzGUBmSHxm+nd8yA
+         vuBfigVxEYZaJWaFlnqONrbNOQTJOi97DAjGQmfbTRGqWkRZZ0ahWa47T2pzl5/MXkvv
+         y+oW5t4UhZrfyy4QWEtzLzyrPwfmQDP3S52kXDRXjtCl0xPzEHx9tB6A+m+iNVN2ydJ3
+         WFyQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH 4.4 71/72] net: cavium: liquidio: fix up "Avoid dma_unmap_single on uninitialized ndata"
-Date: Fri,  6 Apr 2018 15:24:12 +0200
-Message-Id: <20180406084311.816498986@linuxfoundation.org>
+	stable@vger.kernel.org,
+	"Yavuz, Tuba" <tuba@ece.ufl.edu>,
+	Oliver Neukum <oneukum@suse.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.4 49/72] media: usbtv: prevent double free in error case
+Date: Fri,  6 Apr 2018 15:23:50 +0200
+Message-Id: <20180406084309.317246829@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -85,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597003583168556365?=
+X-GMAIL-MSGID: =?utf-8?q?1597003835146480498?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -95,39 +51,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Oliver Neukum <oneukum@suse.com>
 
-This fixes up commit 1d1cb762524f05cfb37994e0d36b7b4b5e957134 which was
-commit 8e6ce7ebeb34f0992f56de078c3744fb383657fa upstream.
+commit 50e7044535537b2a54c7ab798cd34c7f6d900bd2 upstream.
 
-Ben writes:
-	This goto should not have been changed, as no DMA mapping has been
-	attempted at this point in the function.
+Quoting the original report:
 
-	This seems to have been fixed upstream by commit 6a885b60dad2 "liquidio:
-	Introduce new octeon2/3 header".  I leave it to you to work out how it
-	should be fixed in 4.4-stable.
+It looks like there is a double-free vulnerability in Linux usbtv driver
+on an error path of usbtv_probe function. When audio registration fails,
+usbtv_video_free function ends up freeing usbtv data structure, which
+gets freed the second time under usbtv_video_fail label.
 
-Fix this up by hand, as the referenced patch isn't worthy of being
-backported.
+usbtv_audio_fail:
 
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Julia Lawall <julia.lawall@lip6.fr>
+        usbtv_video_free(usbtv); =>
+
+           v4l2_device_put(&usbtv->v4l2_dev);
+
+              => v4l2_device_put
+
+                  => kref_put
+
+                      => v4l2_device_release
+
+  => usbtv_release (CALLBACK)
+
+                             => kfree(usbtv) (1st time)
+
+usbtv_video_fail:
+
+        usb_set_intfdata(intf, NULL);
+
+        usb_put_dev(usbtv->udev);
+
+        kfree(usbtv); (2nd time)
+
+So, as we have refcounting, use it
+
+Reported-by: Yavuz, Tuba <tuba@ece.ufl.edu>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+CC: stable@vger.kernel.org
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/cavium/liquidio/lio_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-@@ -2823,7 +2823,7 @@ static int liquidio_xmit(struct sk_buff
- 		if (!g) {
- 			netif_info(lio, tx_err, lio->netdev,
- 				   "Transmit scatter gather: glist null!\n");
--			goto lio_xmit_dma_failed;
-+			goto lio_xmit_failed;
- 		}
+---
+ drivers/media/usb/usbtv/usbtv-core.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/media/usb/usbtv/usbtv-core.c
++++ b/drivers/media/usb/usbtv/usbtv-core.c
+@@ -95,6 +95,8 @@ static int usbtv_probe(struct usb_interf
+ 	return 0;
  
- 		cmdsetup.s.gather = 1;
+ usbtv_audio_fail:
++	/* we must not free at this point */
++	usb_get_dev(usbtv->udev);
+ 	usbtv_video_free(usbtv);
+ 
+ usbtv_video_fail:
