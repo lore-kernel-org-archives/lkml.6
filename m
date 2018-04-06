@@ -1,185 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751705AbeDFJKI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 05:10:08 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39617 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751384AbeDFJKF (ORCPT
+        id S1751926AbeDFJK2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 05:10:28 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:47642 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751750AbeDFJK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 05:10:05 -0400
-X-Google-Smtp-Source: AIpwx49iqcnPIzh9FYm/z26KTV/BamVsjK60kz4PxTcJtLnQ+eFG0nECCfAsG/GqGPBGHnPtPPCBm48g2S3bd2IXxNc=
+        Fri, 6 Apr 2018 05:10:26 -0400
+Date: Fri, 6 Apr 2018 10:09:20 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jia He <hejianet@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Jia He <jia.he@hxt-semitech.com>
+Subject: Re: [PATCH v7 2/5] arm: arm64: page_alloc: reduce unnecessary binary
+ search in memblock_next_valid_pfn()
+Message-ID: <20180406090920.GM16141@n2100.armlinux.org.uk>
+References: <1522915478-5044-1-git-send-email-hejianet@gmail.com>
+ <1522915478-5044-3-git-send-email-hejianet@gmail.com>
+ <20180405113444.GB2647@bombadil.infradead.org>
+ <1f809296-e88d-1090-0027-890782b91d6e@gmail.com>
+ <20180405125054.GC2647@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <94eb2c05611408a11a056922c4cb@google.com>
-References: <94eb2c05611408a11a056922c4cb@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 6 Apr 2018 11:09:43 +0200
-Message-ID: <CACT4Y+ZHLgS-c6uuge7wL=2zNE2_0jymiHjgaU4HgENhemczPw@mail.gmail.com>
-Subject: Re: KASAN: alloca-out-of-bounds Read in unwind_next_frame
-To: syzbot <syzbot+9d1d9866b0b8ee6e0a8c@syzkaller.appspotmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs@googlegroups.com, Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405125054.GC2647@bombadil.infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 6, 2018 at 2:02 AM, syzbot
-<syzbot+9d1d9866b0b8ee6e0a8c@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot hit the following crash on upstream commit
-> 06dd3dfeea60e2a6457a6aedf97afc8e6d2ba497 (Thu Apr 5 03:07:20 2018 +0000)
-> Merge tag 'char-misc-4.17-rc1' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=9d1d9866b0b8ee6e0a8c
->
-> syzkaller reproducer:
-> https://syzkaller.appspot.com/x/repro.syz?id=6478299081474048
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=5324218015154176
-> Kernel config: https://syzkaller.appspot.com/x/.config?id=216543573824217049
-> compiler: gcc (GCC) 8.0.1 20180301 (experimental)
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9d1d9866b0b8ee6e0a8c@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
+On Thu, Apr 05, 2018 at 05:50:54AM -0700, Matthew Wilcox wrote:
+> On Thu, Apr 05, 2018 at 08:44:12PM +0800, Jia He wrote:
+> > 
+> > 
+> > On 4/5/2018 7:34 PM, Matthew Wilcox Wrote:
+> > > On Thu, Apr 05, 2018 at 01:04:35AM -0700, Jia He wrote:
+> > > > Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+> > > > where possible") optimized the loop in memmap_init_zone(). But there is
+> > > > still some room for improvement. E.g. if pfn and pfn+1 are in the same
+> > > > memblock region, we can simply pfn++ instead of doing the binary search
+> > > > in memblock_next_valid_pfn.
+> > > Sure, but I bet if we are >end_pfn, we're almost certainly going to the
+> > > start_pfn of the next block, so why not test that as well?
+> > > 
+> > > > +	/* fast path, return pfn+1 if next pfn is in the same region */
+> > > > +	if (early_region_idx != -1) {
+> > > > +		start_pfn = PFN_DOWN(regions[early_region_idx].base);
+> > > > +		end_pfn = PFN_DOWN(regions[early_region_idx].base +
+> > > > +				regions[early_region_idx].size);
+> > > > +
+> > > > +		if (pfn >= start_pfn && pfn < end_pfn)
+> > > > +			return pfn;
+> > > 		early_region_idx++;
+> > > 		start_pfn = PFN_DOWN(regions[early_region_idx].base);
+> > > 		if (pfn >= end_pfn && pfn <= start_pfn)
+> > > 			return start_pfn;
+> > Thanks, thus the binary search in next step can be discarded?
+> 
+> I don't know all the circumstances in which this is called.  Maybe a linear
+> search with memo is more appropriate than a binary search.
 
+That's been brought up before, and the reasoning appears to be
+something along the lines of...
 
-This looks like a false positives related to interactions between
-alloca, interrupts, KASAN and -mno-red-zones. I've filed gcc bug for
-this:
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85230
+Academics and published wisdom is that on cached architectures, binary
+searches are bad because it doesn't operate efficiently due to the
+overhead from having to load cache lines.  Consequently, there seems
+to be a knee-jerk reaction that "all binary searches are bad, we must
+eliminate them."
 
+What is failed to be grasped here, though, is that it is typical that
+the number of entries in this array tend to be small, so the entire
+array takes up one or two cache lines, maybe a maximum of four lines
+depending on your cache line length and number of entries.
 
-> ==================================================================
-> BUG: KASAN: alloca-out-of-bounds in __read_once_size
-> include/linux/compiler.h:188 [inline]
-> BUG: KASAN: alloca-out-of-bounds in unwind_next_frame.part.7+0x7ce/0x9c0
-> arch/x86/kernel/unwind_frame.c:326
-> Read of size 8 at addr ffff8801b05e67f8 by task syz-executor2/11326
->
-> CPU: 0 PID: 11326 Comm: syz-executor2 Not tainted 4.16.0+ #1
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x1b9/0x29f lib/dump_stack.c:53
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->  __read_once_size include/linux/compiler.h:188 [inline]
->  unwind_next_frame.part.7+0x7ce/0x9c0 arch/x86/kernel/unwind_frame.c:326
->  unwind_next_frame+0x3e/0x50 arch/x86/kernel/unwind_frame.c:287
->  __save_stack_trace+0x6e/0xd0 arch/x86/kernel/stacktrace.c:44
->  save_stack_trace+0x1a/0x20 arch/x86/kernel/stacktrace.c:60
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->  set_track mm/kasan/kasan.c:459 [inline]
->  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
->  __cache_free mm/slab.c:3486 [inline]
->  kmem_cache_free+0x86/0x2d0 mm/slab.c:3744
->  __d_free+0x20/0x30 fs/dcache.c:257
->  __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
->  rcu_do_batch kernel/rcu/tree.c:2675 [inline]
->  invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
->  __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
->  rcu_process_callbacks+0x941/0x15f0 kernel/rcu/tree.c:2914
->  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
->  invoke_softirq kernel/softirq.c:365 [inline]
->  irq_exit+0x1d1/0x200 kernel/softirq.c:405
->  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
->  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
->  </IRQ>
-> RIP: 0010:kasan_unpoison_shadow+0x1/0x50 mm/kasan/kasan.c:68
-> RSP: 0018:ffff8801b05e67e8 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
-> RAX: ffff8801c1b24100 RBX: 0000000000000000 RCX: ffffffff859d4219
-> RDX: 0000000000000000 RSI: 00000000000000a8 RDI: ffff8801b05e6760
-> RBP: ffff8801b05e67f8 R08: ffff8801c1b24100 R09: ffffed003b6046c2
-> R10: ffffed003b6046c2 R11: ffff8801db023613 R12: 0000000000000015
-> R13: 0000000000000001 R14: 0000000000000016 R15: dffffc0000000000
->  constrain_params_by_rules+0xbaa/0x1410 sound/core/pcm_param_trace.h:28
->  snd_pcm_hw_refine+0x8e9/0x1180 sound/core/pcm_native.c:502
->  snd_pcm_hw_param_mask sound/core/oss/pcm_oss.c:205 [inline]
->  snd_pcm_oss_change_params+0x8ce/0x3d10 sound/core/oss/pcm_oss.c:870
->  snd_pcm_oss_make_ready+0xe3/0x140 sound/core/oss/pcm_oss.c:1127
->  snd_pcm_oss_sync.isra.27+0x24b/0x850 sound/core/oss/pcm_oss.c:1651
->  snd_pcm_oss_release+0x214/0x290 sound/core/oss/pcm_oss.c:2446
->  __fput+0x34d/0x890 fs/file_table.c:209
->  ____fput+0x15/0x20 fs/file_table.c:243
->  task_work_run+0x1e4/0x290 kernel/task_work.c:113
->  exit_task_work include/linux/task_work.h:22 [inline]
->  do_exit+0x1aee/0x2730 kernel/exit.c:865
->  do_group_exit+0x16f/0x430 kernel/exit.c:968
->  get_signal+0x886/0x1960 kernel/signal.c:2469
->  do_signal+0x90/0x2020 arch/x86/kernel/signal.c:810
->  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
->  do_syscall_64+0x792/0x9d0 arch/x86/entry/common.c:292
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x4552d9
-> RSP: 002b:00007fd689eb5c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: 0000000000000000 RBX: 00007fd689eb66d4 RCX: 00000000004552d9
-> RDX: 0000000000000000 RSI: 0000000000004c81 RDI: 000000000000000f
-> RBP: 000000000072c010 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 000000000000027d R14: 00000000006f6c58 R15: 0000000000000002
->
-> The buggy address belongs to the page:
-> page:ffffea0006c17980 count:0 mapcount:0 mapping:0000000000000000
-> index:0xffff8801b05e69c0
-> flags: 0x2fffc0000000000()
-> raw: 02fffc0000000000 0000000000000000 ffff8801b05e69c0 00000000ffffffff
-> raw: dead000000000100 dead000000000200 ffff8801dad7f600 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801b05e6680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffff8801b05e6700: 00 00 00 00 00 00 00 00 00 00 00 00 ca ca ca ca
->>
->> ffff8801b05e6780: 00 00 00 00 00 00 00 00 00 00 04 cb cb cb cb cb
->
->                                                                 ^
->  ffff8801b05e6800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffff8801b05e6880: 00 00 00 00 00 f1 f1 f1 f1 00 f2 f2 f2 f2 f2 f2
-> ==================================================================
->
->
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/94eb2c05611408a11a056922c4cb%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+This means that the binary search expense is reduced, and is lower
+than a linear search for the majority of cases.
+
+What is key here as far as performance is concerned is whether the
+general usage of pfn_valid() by the kernel is optimal.  We should
+not optimise only for the boot case, which means evaluating the
+effect of these changes with _real_ workloads, not just "does my
+machine boot a milliseconds faster".
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
