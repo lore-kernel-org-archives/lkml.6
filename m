@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49g29cHUGFw7+GU4YEIfqAlUtmITZMbGyE3Ny2/fw5b2gwfLfND0Q05cmdG8R0tZ455C8j+
-ARC-Seal: i=1; a=rsa-sha256; t=1523021107; cv=none;
+X-Google-Smtp-Source: AIpwx48TIc0mAvFMDizFLdSuiZBIkklqX1v7WPp3yo10K6kqwRsXmQc+Y+BSunoVsaf1wTZ9lwDf
+ARC-Seal: i=1; a=rsa-sha256; t=1523021104; cv=none;
         d=google.com; s=arc-20160816;
-        b=jEj6sUehnUC6W5GvSZ3p34hBKF2zUnU30VwzNJv+BAOdjGDBylY4iSYwh9Gn1EVSLX
-         jJw5hjDai5rcFW1438tNLSenmjx3+XI38QjzHMO5irXjjVZhtRLYb3ET3AgOtxpgA+oL
-         hgj1WFVFd9llNQ8jSYAkA46NagyUwjLIKd3JiMBYLzCP1byo9lTzHXvGU098GXiANqcf
-         b/2CbzTuJo/4XxSMOUCgkpa5NFOPW/WMCflmdImCRSu+DZHAozep/04/FyZqSxJCIjx6
-         cVfaNBjHzao1JkStSifYxDJyYgFCyoIrNcVcCdQrDm9I/s9PV+sieDXIRaxh3sTAEInc
-         cJwg==
+        b=wSOprnr89/MMcuy5UEaMhriNxSZoLWnj0w2LEWQRFmTdQTNHSAcx1FjS8/0Cf3RXO+
+         yazSf3vm3N6pU4lJN/ghPQA56zyT7WWh6TbtyBP0rz9D7w4bPJQ4uCNGSgBW5Nkv6kle
+         LdVj/UtmgKT7EhfBDE+JYqwVEDsUaefW3bsKcs4ACCmmCm0pRNaT0gE+SaBxw1Vpa6kR
+         Z8pVfpFHKRpJpKwIcBY01WnoHYRWVeuICkF1pFrpHUjm6XEgTsjtJfJuR52ystuRUsNx
+         aZpICjWw2qMDFoZFN2+xlA7nWCQ0s7P6QoHpfXVJ82SCK3HZRmmGhW5zp7mg/erF7uV7
+         MR6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aABffA5D/OhxyzH1DewifJUpJZEIN0Cyc1lLHbB2MpM=;
-        b=PQo7+jKSR4dghtnGW5zIeOSttLOyV2m2xwSr/OhlXoMIKiaaxfrn9wUyHD+QJzEt93
-         zszR7GbeTlY4JjlxtEv/lzqj/t6Y8NJ85eJLIiTCbyypB+/2ePYKW6geDCp2TRIM8MvC
-         2jRGcHpZt0TZuu/Ot2Gjp0D8I60u9cv4f45RNlPjMiS7+drbOnrSM2ZphbQzd6VPTCFX
-         cIPu3xu2SO41qyxMJWihowfM56rIeMN51AaHw7yBFqNyZ2lL94ScwGVCgvTojWU9YaIh
-         Qk2lQ2HYHAhlPcz65vEuSIV4sVVLCYztFbIE5rhdVRGkKsJt922/g0a3H9JUBlkk/Skj
-         Rayw==
+        bh=w6doEwUz0e0tiMRE/sj2xjFIXDHN4n+lhXn5USPQ9b4=;
+        b=dcK9DrkCuP1UH3dJg2gVvbgbr2amUAjiHzaK8OuOXjt3IyfQsb63dN3EB6i7I9Tt2j
+         XzdjrVkekpiDk0QiHCMuAtRwVpFoOL5fTSY7gkYje2lEoRMW/dTL5ConaPKfuGd1Tdt/
+         7sV7htDBq7txTFeohQZoClFxcu6NHDpC8NkqeankV7coyjXRbZ86BLHV9/dNSzhLToH4
+         MJoCvLTN5KMawp4oPMDg/9732zWeh2vqW/QeEr7aOS+nyWxE/cCAnRPQF3BeQh0XL0c4
+         MXUs2Fq/BJ1GULiVhBPNivkjrsBJoPFXagaHw68bG8s37a0WnxEADwH8rEFlSqKVJmCE
+         qqWA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,23 +26,21 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 3.18 10/93] libata: Make Crucial BX100 500GB LPM quirk apply to all firmware versions
-Date: Fri,  6 Apr 2018 15:22:39 +0200
-Message-Id: <20180406084225.417170305@linuxfoundation.org>
+	Kirill Marinushkin <k.marinushkin@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 01/93] ALSA: usb-audio: Fix parsing descriptor of UAC2 processing unit
+Date: Fri,  6 Apr 2018 15:22:30 +0200
+Message-Id: <20180406084225.029537157@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003380261822311?=
-X-GMAIL-MSGID: =?utf-8?q?1597003380261822311?=
+X-GMAIL-THRID: =?utf-8?q?1597003377535296095?=
+X-GMAIL-MSGID: =?utf-8?q?1597003377535296095?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +48,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
 
-commit 3bf7b5d6d017c27e0d3b160aafb35a8e7cfeda1f upstream.
+commit a6618f4aedb2b60932d766bd82ae7ce866e842aa upstream.
 
-Commit b17e5729a630 ("libata: disable LPM for Crucial BX100 SSD 500GB
-drive"), introduced a ATA_HORKAGE_NOLPM quirk for Crucial BX100 500GB SSDs
-but limited this to the MU02 firmware version, according to:
-http://www.crucial.com/usa/en/support-ssd-firmware
+Currently, the offsets in the UAC2 processing unit descriptor are
+calculated incorrectly. It causes an issue when connecting the device which
+provides such a feature:
 
-MU02 is the last version, so there are no newer possibly fixed versions
-and if the MU02 version has broken LPM then the MU01 almost certainly
-also has broken LPM, so this commit changes the quirk to apply to all
-firmware versions.
+~~~~
+[84126.724420] usb 1-1.3.1: invalid Processing Unit descriptor (id 18)
+~~~~
 
-Fixes: b17e5729a630 ("libata: disable LPM for Crucial BX100 SSD 500GB...")
-Cc: stable@vger.kernel.org
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+After this patch is applied, the UAC2 processing unit inits w/o this error.
+
+Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/uapi/linux/usb/audio.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4226,7 +4226,7 @@ static const struct ata_blacklist_entry
- 	{ "PIONEER DVD-RW  DVR-216D",	NULL,	ATA_HORKAGE_NOSETXFER },
+--- a/include/uapi/linux/usb/audio.h
++++ b/include/uapi/linux/usb/audio.h
+@@ -369,7 +369,7 @@ static inline __u8 uac_processing_unit_b
+ {
+ 	return (protocol == UAC_VERSION_1) ?
+ 		desc->baSourceID[desc->bNrInPins + 4] :
+-		desc->baSourceID[desc->bNrInPins + 6];
++		2; /* in UAC2, this value is constant */
+ }
  
- 	/* Crucial BX100 SSD 500GB has broken LPM support */
--	{ "CT500BX100SSD1",		"MU02",	ATA_HORKAGE_NOLPM },
-+	{ "CT500BX100SSD1",		NULL,	ATA_HORKAGE_NOLPM },
+ static inline __u8 *uac_processing_unit_bmControls(struct uac_processing_unit_descriptor *desc,
+@@ -377,7 +377,7 @@ static inline __u8 *uac_processing_unit_
+ {
+ 	return (protocol == UAC_VERSION_1) ?
+ 		&desc->baSourceID[desc->bNrInPins + 5] :
+-		&desc->baSourceID[desc->bNrInPins + 7];
++		&desc->baSourceID[desc->bNrInPins + 6];
+ }
  
- 	/* The 512GB version of the MX100 has both queued TRIM and LPM issues */
- 	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ static inline __u8 uac_processing_unit_iProcessing(struct uac_processing_unit_descriptor *desc,
