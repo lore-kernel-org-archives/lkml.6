@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1965609-1523039578-2-3976188540150551381
+X-Cyrus-Session-Id: sloti22d1t05-1972233-1523039532-2-1018948039042538807
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523039578; b=uo9Cw2izd1/9v/h1hS4ThHS//lnRNaoIgOVP69tLIcW3hc/IAo
-    eI9VBkF8qK1X+FWd6DcGUOYLiikbrBYT5Agd4ggfiFK5o03XzgoijWwRFdmFk6xP
-    KEwvC8F69YUynTSuqRJIpnlMPiginUYkzoY2z2qOhGLz36qR2X++z21r4jmkC4fz
-    15p7Wc8vcY6/YVhF3BygIj5z9jH4wZRS98WDLF0Fkm6sHdaMdkVZUNY4/UWTY/YG
-    m1rEo5eI/s9i0QzfmUrdcTrZMRsYQ7LxWJNqvqNidP0+1fAAKpdysHCngiZ6a+bM
-    jlSr+zdcCmz9VC0uTmiftt1T2BEyuoyMOf4Q==
+    1523039531; b=Mxda7QWTVCiW0tLFR5lcGlZNTKYCf2ox1u0bK1W4eyfpImATkO
+    Pu4LP3r5lPRpSSBS1QGgXkh2Hfx0CuZdoo3NXRX7KGjIc/JZYGUKFfjYvdc9ENGf
+    ALUjc0HQc0crj35Fz9FYnpMxQ8xUa+oTrlzLchUD/Y725H89pM/yZQ8e9Rgm3uqj
+    1bP+DI4FZB3oh5xzPQ02286TrrrZAZlWPdHp6TRe7WdABRm6cGNj5KoKA9Z2k+xc
+    RvWS8JD7P2C6vqOF+qY2RB+MYIppvoeSybLoGRrSCHBeuVPaKP1nBrVQ5yoMK2H2
+    DL8by4Fj3ABA0dnn5/UwH3AdZyiUdb1b+LBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1523039578; bh=
-    slJ/uHTL0bFGJTDG/Dc9aOFBW0B55sftKeYb+o7aGo4=; b=EdQ+/Ik6JJwAAC26
-    FhUqVNdsDTBT9ncCpYSD1dXZgKiiIomX8S75VvgFrmMOCv00/JRyBmtIdyIK56HV
-    hv41ZL9Tob2U0DcT+X8GXNOJcqgtaFB5CSSeuJeivrMFNtphU2s6MsnMJ8ZD3XVY
-    IsxqNEQagdvosUul6ny4TI+/9tItLIigzh1oAlqSOqStcuc6q8YDRImDWL0dfwNK
-    7+KCrJA0yn+4GtV+6H5dyjtu3KA89b9EALUG8mTTbwSHiymPDXyzDDfQ1kr84+JS
-    CBeYhDoca57u3vQYtDbvbcjGSvaUHVHVDa5LYECjJc8CHPeMdhZRjoh8b1fXrnqR
-    bSZRLA==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523039531; bh=
+    skmzQZ+EPn0wgb89sL9ujnBv7t3vxfACiHQ++F9SBfg=; b=G+Az7yWjdE+6P+J3
+    mq6fa8QO+a1s1XJF0oCGBU2kQ9Kxcc58ogYjJSfhrtt1SobAKhDwilFOC9XerH7N
+    Heg+EcPx2RhsBwH2d2FpfeSYyRnkRKc2apEMmpBe9L+l6pboE5EZQb9o/0EBMfrU
+    ys05QgpBrgH/GK3CtC2ctGX5JhrNNk2UQYSwStCdclhJd1mBNH5Sxd2isiJK2/V1
+    riiQJ3Mu9tH07sBvYPrZL+vkinfhurAf5rrN1PU5qL2OH9aYX9BU6lXRVg6/08El
+    L6ajIHDN0G6qJEXIAlX/QgqAWF5pmsuVRuceJjDqLCCNeSqvMbCUUExczXKF/6Rf
+    C3/i5Q==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
@@ -49,37 +49,36 @@ Authentication-Results: mx1.messagingengine.com;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOZf0HNJESBUFgUaPmNG04tnP/O+laH8QK1PYo7BOBS20PBOjWTeQbGgYWquN05xl4SIh1yTFD0xZpgr5yl/4g6fKE3FwCulBdXp/SB5Ne+C7dTUuHhZ
-    v08RsH+J2yNsfiRWHlaSpRX3LoFHMcLHiUVi67nwpoN2IJyLh2nTH+q+CTrhdKax/z3ErbhZguhgpNeGTmaFhzaPTbFOw+LbvOS4sW7Ip5ziGw3qPrkuM0y+
+X-CM-Envelope: MS4wfBgdHMwpmZugn0/eQ+TebAcqRzjIDBBJ1fMQwDVt/mx3HElouLjYv0IgmZihnjFgOyfBwANHvdhGuVFQVfUi6qK0nFg6kP1q69GEtQK1KROThpxSM3W4
+    2xbk+H5+oE+3OJrijAq2HtcByRI9JE0jfDE2yQiB4JC2d2eC1l6WoN9GHnwxver7OWujeiyH7lpiMflqIZsfb34aGim1GVgvLtgwNoi/wBplNfSDEi3PgY1w
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=sfOm8-O8AAAA:8
-    a=QyXUC8HyAAAA:8 a=zd2uoN0lAAAA:8 a=VwQbUJbxAAAA:8 a=-Wj-2de5zPTN87RxXb8A:9
-    a=gGpx1yReQwvDXaq7:21 a=N6se2Jw1VkNqxpCV:21 a=TvTJqdcANYtsRzA46cdi:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=QyXUC8HyAAAA:8
+    a=zd2uoN0lAAAA:8 a=VwQbUJbxAAAA:8 a=PznF6Tp5mt6HC0nOptgA:9
+    a=rW0CPFNp2K12dI_Q:21 a=MDMtdyyDORfuzxDB:21 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751956AbeDFScM (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 14:32:12 -0400
-Received: from mga06.intel.com ([134.134.136.31]:38636 "EHLO mga06.intel.com"
+        id S1751534AbeDFSbw (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 14:31:52 -0400
+Received: from mga06.intel.com ([134.134.136.31]:38635 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751967AbeDFSac (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:30:32 -0400
+        id S1751976AbeDFSad (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:30:33 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,416,1517904000";
-   d="scan'208";a="31611471"
+   d="scan'208";a="31611464"
 From: Ashok Raj <ashok.raj@intel.com>
 To: gregkh@linuxfoundation.org, tglx@linutronix.de
-Cc: Borislav Petkov <bp@suse.de>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, thomas.lendacky@amd.com,
+Cc: Ashok Raj <ashok.raj@intel.com>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, bp@suse.de, thomas.lendacky@amd.com,
         arjan.van.de.ven@intel.com, asit.k.mallick@intel.com
-Subject: [4.15 & 4.14 stable 12/12] x86/microcode: Fix CPU synchronization routine
-Date: Fri,  6 Apr 2018 11:30:26 -0700
-Message-Id: <1523039426-3938-13-git-send-email-ashok.raj@intel.com>
+Subject: [4.15 & 4.14 stable 10/12] x86/microcode: Synchronize late microcode loading
+Date: Fri,  6 Apr 2018 11:30:24 -0700
+Message-Id: <1523039426-3938-11-git-send-email-ashok.raj@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523039426-3938-1-git-send-email-ashok.raj@intel.com>
 References: <1523039426-3938-1-git-send-email-ashok.raj@intel.com>
@@ -89,77 +88,124 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Borislav Petkov <bp@suse.de>
+commit a5321aec6412b20b5ad15db2d6b916c05349dbff upstream
 
-commit bb8c13d61a629276a162c1d2b1a20a815cbcfbb7 upstream
+Original idea by Ashok, completely rewritten by Borislav.
 
-Emanuel reported an issue with a hang during microcode update because my
-dumb idea to use one atomic synchronization variable for both rendezvous
-- before and after update - was simply bollocks:
+Before you read any further: the early loading method is still the
+preferred one and you should always do that. The following patch is
+improving the late loading mechanism for long running jobs and cloud use
+cases.
 
-  microcode: microcode_reload_late: late_cpus: 4
-  microcode: __reload_late: cpu 2 entered
-  microcode: __reload_late: cpu 1 entered
-  microcode: __reload_late: cpu 3 entered
-  microcode: __reload_late: cpu 0 entered
-  microcode: __reload_late: cpu 1 left
-  microcode: Timeout while waiting for CPUs rendezvous, remaining: 1
+Gather all cores and serialize the microcode update on them by doing it
+one-by-one to make the late update process as reliable as possible and
+avoid potential issues caused by the microcode update.
 
-CPU1 above would finish, leave and the others will still spin waiting for
-it to join.
+[ Borislav: Rewrite completely. ]
 
-So do two synchronization atomics instead, which makes the code a lot more
-straightforward.
-
-Also, since the update is serialized and it also takes quite some time per
-microcode engine, increase the exit timeout by the number of CPUs on the
-system.
-
-That's ok because the moment all CPUs are done, that timeout will be cut
-short.
-
-Furthermore, panic when some of the CPUs timeout when returning from a
-microcode update: we can't allow a system with not all cores updated.
-
-Also, as an optimization, do not do the exit sync if microcode wasn't
-updated.
-
-Reported-by: Emanuel Czirai <xftroxgpx@protonmail.com>
+Co-developed-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Emanuel Czirai <xftroxgpx@protonmail.com>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
 Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
 Cc: Asit K Mallick <asit.k.mallick@intel.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180314183615.17629-2-bp@alien8.de
+Link: https://lkml.kernel.org/r/20180228102846.13447-8-bp@alien8.de
 ---
- arch/x86/kernel/cpu/microcode/core.c | 68 ++++++++++++++++++++++--------------
- 1 file changed, 41 insertions(+), 27 deletions(-)
+ arch/x86/kernel/cpu/microcode/core.c | 118 +++++++++++++++++++++++++++--------
+ 1 file changed, 92 insertions(+), 26 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index e6d5caa..021c904 100644
+index 8adbf43..bde629e 100644
 --- a/arch/x86/kernel/cpu/microcode/core.c
 +++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -517,7 +517,29 @@ static int check_online_cpus(void)
+@@ -22,13 +22,16 @@
+ #define pr_fmt(fmt) "microcode: " fmt
+ 
+ #include <linux/platform_device.h>
++#include <linux/stop_machine.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/miscdevice.h>
+ #include <linux/capability.h>
+ #include <linux/firmware.h>
+ #include <linux/kernel.h>
++#include <linux/delay.h>
+ #include <linux/mutex.h>
+ #include <linux/cpu.h>
++#include <linux/nmi.h>
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ 
+@@ -64,6 +67,11 @@ LIST_HEAD(microcode_cache);
+  */
+ static DEFINE_MUTEX(microcode_mutex);
+ 
++/*
++ * Serialize late loading so that CPUs get updated one-by-one.
++ */
++static DEFINE_SPINLOCK(update_lock);
++
+ struct ucode_cpu_info		ucode_cpu_info[NR_CPUS];
+ 
+ struct cpu_info_ctx {
+@@ -486,6 +494,19 @@ static void __exit microcode_dev_exit(void)
+ /* fake device for request_firmware */
+ static struct platform_device	*microcode_pdev;
+ 
++/*
++ * Late loading dance. Why the heavy-handed stomp_machine effort?
++ *
++ * - HT siblings must be idle and not execute other code while the other sibling
++ *   is loading microcode in order to avoid any negative interactions caused by
++ *   the loading.
++ *
++ * - In addition, microcode update on the cores must be serialized until this
++ *   requirement can be relaxed in the future. Right now, this is conservative
++ *   and good.
++ */
++#define SPINUNIT 100 /* 100 nsec */
++
+ static int check_online_cpus(void)
+ {
+ 	if (num_online_cpus() == num_present_cpus())
+@@ -496,23 +517,85 @@ static int check_online_cpus(void)
  	return -EINVAL;
  }
  
--static atomic_t late_cpus;
-+static atomic_t late_cpus_in;
-+static atomic_t late_cpus_out;
+-static enum ucode_state reload_for_cpu(int cpu)
++static atomic_t late_cpus;
 +
-+static int __wait_for_cpus(atomic_t *t, long long timeout)
-+{
++/*
++ * Returns:
++ * < 0 - on error
++ *   0 - no update done
++ *   1 - microcode was updated
++ */
++static int __reload_late(void *info)
+ {
+-	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
++	unsigned int timeout = NSEC_PER_SEC;
 +	int all_cpus = num_online_cpus();
++	int cpu = smp_processor_id();
++	enum ucode_state err;
++	int ret = 0;
+ 
+-	if (!uci->valid)
+-		return UCODE_OK;
++	atomic_dec(&late_cpus);
 +
-+	atomic_inc(t);
-+
-+	while (atomic_read(t) < all_cpus) {
++	/*
++	 * Wait for all CPUs to arrive. A load will not be attempted unless all
++	 * CPUs show up.
++	 * */
++	while (atomic_read(&late_cpus)) {
 +		if (timeout < SPINUNIT) {
 +			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
-+				all_cpus - atomic_read(t));
-+			return 1;
++				atomic_read(&late_cpus));
++			return -1;
 +		}
 +
 +		ndelay(SPINUNIT);
@@ -167,87 +213,88 @@ index e6d5caa..021c904 100644
 +
 +		touch_nmi_watchdog();
 +	}
-+	return 0;
++
++	spin_lock(&update_lock);
++	apply_microcode_local(&err);
++	spin_unlock(&update_lock);
++
++	if (err > UCODE_NFOUND) {
++		pr_warn("Error reloading microcode on CPU %d\n", cpu);
++		ret = -1;
++	} else if (err == UCODE_UPDATED) {
++		ret = 1;
++	}
+ 
+-	return apply_microcode_on_target(cpu);
++	atomic_inc(&late_cpus);
++
++	while (atomic_read(&late_cpus) != all_cpus)
++		cpu_relax();
++
++	return ret;
 +}
++
++/*
++ * Reload microcode late on all CPUs. Wait for a sec until they
++ * all gather together.
++ */
++static int microcode_reload_late(void)
++{
++	int ret;
++
++	atomic_set(&late_cpus, num_online_cpus());
++
++	ret = stop_machine_cpuslocked(__reload_late, NULL, cpu_online_mask);
++	if (ret < 0)
++		return ret;
++	else if (ret > 0)
++		microcode_check();
++
++	return ret;
+ }
  
- /*
-  * Returns:
-@@ -527,30 +549,16 @@ static atomic_t late_cpus;
-  */
- static int __reload_late(void *info)
+ static ssize_t reload_store(struct device *dev,
+ 			    struct device_attribute *attr,
+ 			    const char *buf, size_t size)
  {
--	unsigned int timeout = NSEC_PER_SEC;
--	int all_cpus = num_online_cpus();
- 	int cpu = smp_processor_id();
- 	enum ucode_state err;
- 	int ret = 0;
+-	int cpu, bsp = boot_cpu_data.cpu_index;
+ 	enum ucode_state tmp_ret = UCODE_OK;
+-	bool do_callback = false;
++	int bsp = boot_cpu_data.cpu_index;
+ 	unsigned long val;
+ 	ssize_t ret = 0;
  
--	atomic_dec(&late_cpus);
+@@ -534,30 +617,13 @@ static ssize_t reload_store(struct device *dev,
+ 		goto put;
+ 
+ 	mutex_lock(&microcode_mutex);
 -
- 	/*
- 	 * Wait for all CPUs to arrive. A load will not be attempted unless all
- 	 * CPUs show up.
- 	 * */
--	while (atomic_read(&late_cpus)) {
--		if (timeout < SPINUNIT) {
--			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
--				atomic_read(&late_cpus));
--			return -1;
+-	for_each_online_cpu(cpu) {
+-		tmp_ret = reload_for_cpu(cpu);
+-		if (tmp_ret > UCODE_NFOUND) {
+-			pr_warn("Error reloading microcode on CPU %d\n", cpu);
+-
+-			/* set retval for the first encountered reload error */
+-			if (!ret)
+-				ret = -EINVAL;
 -		}
 -
--		ndelay(SPINUNIT);
--		timeout -= SPINUNIT;
--
--		touch_nmi_watchdog();
+-		if (tmp_ret == UCODE_UPDATED)
+-			do_callback = true;
 -	}
-+	if (__wait_for_cpus(&late_cpus_in, NSEC_PER_SEC))
-+		return -1;
- 
- 	spin_lock(&update_lock);
- 	apply_microcode_local(&err);
-@@ -558,15 +566,22 @@ static int __reload_late(void *info)
- 
- 	if (err > UCODE_NFOUND) {
- 		pr_warn("Error reloading microcode on CPU %d\n", cpu);
--		ret = -1;
--	} else if (err == UCODE_UPDATED) {
-+		return -1;
-+	/* siblings return UCODE_OK because their engine got updated already */
-+	} else if (err == UCODE_UPDATED || err == UCODE_OK) {
- 		ret = 1;
-+	} else {
-+		return ret;
- 	}
- 
--	atomic_inc(&late_cpus);
 -
--	while (atomic_read(&late_cpus) != all_cpus)
--		cpu_relax();
-+	/*
-+	 * Increase the wait timeout to a safe value here since we're
-+	 * serializing the microcode update and that could take a while on a
-+	 * large number of CPUs. And that is fine as the *actual* timeout will
-+	 * be determined by the last CPU finished updating and thus cut short.
-+	 */
-+	if (__wait_for_cpus(&late_cpus_out, NSEC_PER_SEC * num_online_cpus()))
-+		panic("Timeout during microcode update!\n");
+-	if (!ret && do_callback)
+-		microcode_check();
+-
++	ret = microcode_reload_late();
+ 	mutex_unlock(&microcode_mutex);
  
- 	return ret;
- }
-@@ -579,12 +594,11 @@ static int microcode_reload_late(void)
- {
- 	int ret;
+ put:
+ 	put_online_cpus();
  
--	atomic_set(&late_cpus, num_online_cpus());
-+	atomic_set(&late_cpus_in,  0);
-+	atomic_set(&late_cpus_out, 0);
- 
- 	ret = stop_machine_cpuslocked(__reload_late, NULL, cpu_online_mask);
--	if (ret < 0)
--		return ret;
--	else if (ret > 0)
-+	if (ret > 0)
- 		microcode_check();
+-	if (!ret)
++	if (ret >= 0)
+ 		ret = size;
  
  	return ret;
 -- 
