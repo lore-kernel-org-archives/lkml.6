@@ -1,80 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1459510-1523022373-2-1548778518670162189
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523022372; b=mN5gG55Hwc5NTNkwm8REAyiVQeQYjTWIyXjYRW4MGNZdgFFWg4
-    ZPAk+skZAw9T3JdeOJhXG4Z+5r1VeuhU9pQHhs535TyeeK0+EKYHFNJXQ4rAi5rX
-    ju3qAEX96O4NeCYXsbU01r7quMpXuO1lbYhhccWyGA4ZOPGr0UQA5a34q2YkhCXN
-    GF+ltYtKjC25pgtgU3UBNoMORE2sBzYvk7DqHSs1/rnj4w176BbJR97dn361Zxnh
-    oOiEB+CtWJbFRI/cQf0XnYPtynVsGu3jU9ISDw+2tVNB6tB0Ce3VlGLhE2eT+ong
-    AzpXsG+34DInp6pK3tRBQmhkhYBQ/CFiMfMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523022372; bh=q6kIA7RPosejz6vP+5pFwGfBXP7fPx
-    bzJVfe4kunqYk=; b=EsbIUBu4Tyr6NA4pIYzIC3e4scK1GMC2q9QjYH5VuPQGUe
-    MAuc8Na7Y/+1pZCzek+MwxoEk/ruueZlJYFKkLgj0CDZauIoem+UJnS9gm/WS+Rq
-    Fu2OLccpXUqraST2TUAC5UjZhjY5CA94b+/x3TqFqUz3JXyJvcDO5H9p9HpyXkJf
-    imLVBkp2YipewC7C/mF1PsUBEts+uO8mPA9gbWS+tpMQKPg+1jelh/cZOccxAW01
-    1y6+Wiz5Skl4Mk5JcnAZncrwpkxy60ZKY9hMB2c7X7rVix6x/8EP8QPLAN25OGFi
-    jaNoCVrlqF+JEhXNBRQd91JWCqWJhz+9YVYWwwHw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNvlPHXNeB159nedXW4haagyENN06d4sIqI+FwgyNoZn3WrK1Mnc2ON4E9UHfsYj3Ue2y30a2XOWh1kaWK6ykaLKmghlghZveyfBKdRRpsDorPi8yAoI
-    EPBj8Mx0Ax4QoBrmmlYt21eRltSv1vy54hgU7X9HVoYLgMMpnLM4Asp5mgWZNouOclQnIPjKNZQHi8X8furKxPe3YssdqFXvuRLpXsiwdCabOpsMO+JFVRRz
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=cm27Pg_UAAAA:8 a=XxtmG6sFAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
-    a=ow6l_K58c1a5c2hoUJEA:9 a=QEXdDO2ut3YA:10 a=xmb-EsYY8bH0VWELuYED:22
-    a=CYKbh7h7szYBv2aNwBbU:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933093AbeDFNph (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 09:45:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38126 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933065AbeDFNpb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:45:31 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+XMv/1ZvAZRC0v68V1uLHIBMUIgFwNySQ1AzOYxT7UZxQp5ygmAFLxoRrDMJxuquF2HLn2
+ARC-Seal: i=1; a=rsa-sha256; t=1523022304; cv=none;
+        d=google.com; s=arc-20160816;
+        b=lV0wXgDpqUfoDianDnuNCMKedwKl6LAyqK0kFFq3b/IDx83Q7ag8uZHxoLwRAriEpE
+         RwoDWLHm12vgNgI6Of4pOi1VEUnMfOgm808mff0czmx9DpXqDC1y0NbUdPMArDKdewh+
+         YI1pZTgqKd8b6iUMvUac9t6EHjR6g72IZg+drPIS2NbCIEmUuVJHQwTSKCumFGzSdLen
+         isUhYCRAZnzLorAjk3xOU7VoNE4lBs1SSstQqVIIC/vgNWoEp9Dg7UxqSVboA/0ESC3o
+         w5OSewfxd1HHFG2dx1F/TruwZw1lyjq/j8oBWK0980vlCMCsxz22ViFF8RcVXiGOWe8H
+         A1BQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=mdITQa2UTPx93AEvm5nBmsXst+Cu9/1BAWWpDMd8Nq8=;
+        b=g+M3dBkilJL7oU5J9PkHaoQY/T0J0l1TLIjfTv1RxEhqOWMNPJoBty4reBLHe+zWzQ
+         5sWJiM+HY9LGcbNUStbWwGx1Trz+di5inxrNZ8s0xUqMYTGuEJ6WUBbb78ARUfoS32wg
+         AdHvt4fC2UbV6WSvbj6yB+CyoWw9o+uoLFgpui/TgEJR5ALRwYww71madJWujOGT7MJP
+         R5k31Z2aa9pKp9o4Ar0i/x1eYbkKA3RMmTfNFoTShU9Q79M8FejTLnn9H3peQAILp0pX
+         KHrNs7iKMFbZDyBMVliCIThC5lrnQ5GXITKqWlUIpzYtCL+nkiatpply5ZnJseHze+Ue
+         374g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Spengler <spender@grsecurity.net>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.16 07/31] /dev/mem: Avoid overwriting "err" in read_mem()
-Date: Fri,  6 Apr 2018 15:24:32 +0200
-Message-Id: <20180406084342.044553170@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Masaki Ota <masaki.ota@jp.alps.com>,
+	Aaron Ma <aaron.ma@canonical.com>,
+	Jonathan Liu <net147@gmail.com>,
+	Jaak Ristioja <jaak@ristioja.ee>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.16 26/31] Input: ALPS - fix TrackStick detection on Thinkpad L570 and Latitude 7370
+Date: Fri,  6 Apr 2018 15:24:51 +0200
+Message-Id: <20180406084344.561731759@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084340.999820380@linuxfoundation.org>
 References: <20180406084340.999820380@linuxfoundation.org>
@@ -82,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597004080957265543?=
+X-GMAIL-MSGID: =?utf-8?q?1597004636037370598?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -92,43 +52,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Masaki Ota <masaki.ota@jp.alps.com>
 
-commit b5b38200ebe54879a7264cb6f33821f61c586a7e upstream.
+commit 567b9b549cfa1cbc202762ae97b5385c29ade1e3 upstream.
 
-Successes in probe_kernel_read() would mask failures in copy_to_user()
-during read_mem().
+The primary interface for the touchpad device in Thinkpad L570 is SMBus,
+so ALPS overlooked PS2 interface Firmware setting of TrackStick, and
+shipped with TrackStick otp bit is disabled.
 
-Reported-by: Brad Spengler <spender@grsecurity.net>
-Fixes: 22ec1a2aea73 ("/dev/mem: Add bounce buffer for copy-out")
+The address 0xD7 contains device number information, so we can identify
+the device by checking this value, but to access it we need to enable
+Command mode, and then re-enable the device. Devices shipped in Thinkpad
+L570 report either 0x0C or 0x1D as device numbers, if we see them we assume
+that the devices are DualPoints.
+
+The same issue exists on Dell Latitude 7370.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=196929
+Fixes: 646580f793 ("Input: ALPS - fix multi-touch decoding on SS4 plus touchpads")
+Signed-off-by: Masaki Ota <masaki.ota@jp.alps.com>
+Tested-by: Aaron Ma <aaron.ma@canonical.com>
+Tested-by: Jonathan Liu <net147@gmail.com>
+Tested-by: Jaak Ristioja <jaak@ristioja.ee>
 Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/mem.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/input/mouse/alps.c |   24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -137,7 +137,7 @@ static ssize_t read_mem(struct file *fil
+--- a/drivers/input/mouse/alps.c
++++ b/drivers/input/mouse/alps.c
+@@ -2544,13 +2544,31 @@ static int alps_update_btn_info_ss4_v2(u
+ }
  
- 	while (count > 0) {
- 		unsigned long remaining;
--		int allowed;
-+		int allowed, probe;
+ static int alps_update_dual_info_ss4_v2(unsigned char otp[][4],
+-				       struct alps_data *priv)
++					struct alps_data *priv,
++					struct psmouse *psmouse)
+ {
+ 	bool is_dual = false;
++	int reg_val = 0;
++	struct ps2dev *ps2dev = &psmouse->ps2dev;
  
- 		sz = size_inside_page(p, count);
+-	if (IS_SS4PLUS_DEV(priv->dev_id))
++	if (IS_SS4PLUS_DEV(priv->dev_id)) {
+ 		is_dual = (otp[0][0] >> 4) & 0x01;
  
-@@ -160,9 +160,9 @@ static ssize_t read_mem(struct file *fil
- 			if (!ptr)
- 				goto failed;
++		if (!is_dual) {
++			/* For support TrackStick of Thinkpad L/E series */
++			if (alps_exit_command_mode(psmouse) == 0 &&
++				alps_enter_command_mode(psmouse) == 0) {
++				reg_val = alps_command_mode_read_reg(psmouse,
++									0xD7);
++			}
++			alps_exit_command_mode(psmouse);
++			ps2_command(ps2dev, NULL, PSMOUSE_CMD_ENABLE);
++
++			if (reg_val == 0x0C || reg_val == 0x1D)
++				is_dual = true;
++		}
++	}
++
+ 	if (is_dual)
+ 		priv->flags |= ALPS_DUALPOINT |
+ 					ALPS_DUALPOINT_WITH_PRESSURE;
+@@ -2573,7 +2591,7 @@ static int alps_set_defaults_ss4_v2(stru
  
--			err = probe_kernel_read(bounce, ptr, sz);
-+			probe = probe_kernel_read(bounce, ptr, sz);
- 			unxlate_dev_mem_ptr(p, ptr);
--			if (err)
-+			if (probe)
- 				goto failed;
+ 	alps_update_btn_info_ss4_v2(otp, priv);
  
- 			remaining = copy_to_user(buf, bounce, sz);
+-	alps_update_dual_info_ss4_v2(otp, priv);
++	alps_update_dual_info_ss4_v2(otp, priv, psmouse);
+ 
+ 	return 0;
+ }
