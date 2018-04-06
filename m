@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeDFUpf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 16:45:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57164 "EHLO mail.kernel.org"
+        id S1751849AbeDFUoe convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 16:44:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751410AbeDFUok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 16:44:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6373D21834
+        id S1751410AbeDFUoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 16:44:32 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7B0420CAA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
 Content-Type: text/plain; charset="utf-8"
@@ -19,26 +19,26 @@ To: Alexandre Torgue <alexandre.torgue@st.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1522996773-24129-5-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1522996773-24129-2-git-send-email-gabriel.fernandez@st.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         gabriel.fernandez.st@gmail.com, olivier.bideau@st.com,
         Loic PALLARDY <loic.pallardy@st.com>,
         benjamin GAIGNARD <benjamin.gaignard@st.com>
 References: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
- <1522996773-24129-5-git-send-email-gabriel.fernandez@st.com>
-Message-ID: <152304747884.94378.14728254885215354508@swboyd.mtv.corp.google.com>
+ <1522996773-24129-2-git-send-email-gabriel.fernandez@st.com>
+Message-ID: <152304747115.94378.14106353541958461583@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 4/6] clk: stm32mp1: add missing tzc2 clock
-Date: Fri, 06 Apr 2018 13:44:38 -0700
+Subject: Re: [PATCH 1/6] clk: stm32mp1: add missing static
+Date: Fri, 06 Apr 2018 13:44:31 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting gabriel.fernandez@st.com (2018-04-05 23:39:31)
+Quoting gabriel.fernandez@st.com (2018-04-05 23:39:28)
 > From: Gabriel Fernandez <gabriel.fernandez@st.com>
 > 
-> This patch adds tzc2 clock and rename tzc clock into tzc1
+> Add missing static for const parent names and clock ops.
 > 
 > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 > ---
