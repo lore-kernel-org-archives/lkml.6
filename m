@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49IzQ6DwaQqIaQAoyDGy6UlsAt1QOL88apEMb7BVwZT9jJhYkTgsJ0H2bhOxvF6kPUUosAk
-ARC-Seal: i=1; a=rsa-sha256; t=1523021981; cv=none;
+X-Google-Smtp-Source: AIpwx4/M7HehaQ9IUu01si7T6MGRBlKtzAWvaC2LXYzfH8jNap7lvXgkD5KUVvqMr1YrYUVkeej5
+ARC-Seal: i=1; a=rsa-sha256; t=1523021978; cv=none;
         d=google.com; s=arc-20160816;
-        b=hieAEZ9pdqBJq4+IScPpZZ2wfJN0PCA8+qTxF+XgEKUuUjMxpeIECIPI9x8untfZPR
-         4Zg0baS0IY1e/FN1OV/ff8SrD3QQiOTFKG21HEo+ZGUkI63MVvUwCgBTOuVOsoH8sQ4G
-         /QRbkARRoFRnRy0miMOm3WT/EORjdmUUIBhf62Fyd/vGwcSZay46uIYGaHqxsHjvlY6M
-         HCK7VMxAeZFWUaFL6/YmlP4oRcKIGnAbmI8mhVF4AlZtxxKvkbjQzK7JvYnLT9hRyOQY
-         KYXu4+7iMO1uwVvM5aXPp85b2ZEcOWdozhSQplx7ACcpa+0TBKSyXEeIxZh8ShmeCBaC
-         L0BA==
+        b=eJo9dFjLIkschbRBcUXWpKgR+cUV+9DkjLSGzYT0JL1IHxIRQlnYd6iJ0LTtBiON4o
+         7oB5cFzdoaNeV2++6+ayX0UuwRV1Yrx6oJJUsrxcUgZdOW7fjzqpX4UZH4rA/CyWmVtX
+         tfQv8kAKPq2n4z7kuuJqMZaCQjYsJ9LIlZp2/M3rO7HFSXp5csmfDwt5Ytx2vUCdTPOn
+         yHNK2wkoqxxfgRgCYjqVcCAruIdSIHMe0fZ8w5llKtv6JEpCEA8mJ3kDvStUh5Dtxspy
+         3NDVnODGG/MdoIwwurinSMgoVxHQOXzG/fuChHjNubypG8AL8mxxF+9u5xQq7FjMNBpS
+         21uA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qkLR2N4ebugq+ngMQKSP8N/LTVlqIaPWV2ZZdYr/rzI=;
-        b=eoR2l7an8x5L57vsYZUty5bLtnWZ2W5e/n6X5IXrfvpYpOt6QNzU2SMJTjRAxOH6WY
-         JtSm8J/w7E4AMhvvH7ooxeLO3pg6v+nutHzU39g1BKacd7gak297A0fyCZslay7nB6WK
-         jICdA6nQHUyVR7FjaJTLJhhvhc+/ewHcrm3qP1IQHlMYcQ4fPvgD7z0KEzxfRUwfhwSZ
-         E3Hpz/casC4ZM7uUCMVAp+pqtaJfMCfBmXgwH3yqB0bIXx7XlMk1Lh7s30KVhMRNV0Fm
-         13wmR9VerLssrUZzIAKmkBz+jAXEX8S9Ae1IGmBYjPGkzWKCVQl8sYwlgv0pPEMb7zxC
-         wv5Q==
+        bh=DsP8SOmKF031kuIBqjX275AqRUZfifrUf0zBWllaxNM=;
+        b=wPNifM+eQSVfBt4M8ZEEdgn1PsWZ7T0Q//8ohEHPTxr5rmSgdkZYLv/Wldh/NBVRwe
+         H03E+TOwi3jvUzRjloso+/paqEPPfELFumpvO39cy/gsPzWJgXm9iWeTDb+Q+2VqzrMy
+         dburX12wsDWPKl4Atg2T+RIcJLiNoCxaePI+Wb+unNfUQXm3XhK+eO4L4ERVw+rcLOch
+         ICu+Wuh+H9eCbPiNGfJLfXcqk/ohkvhNMo+kgP7qj/B9H126grog1gNxqAKhR5K9o0l9
+         k7ub52ljI/87sZ2uO8Hn67cZAF1N75bFrbgwnH8MnHL71aCbjKcwzkJsnNkk8iZpmn/W
+         V/8w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Frank Mori Hess <fmh6jj@gmail.com>,
-	Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.14 55/67] staging: comedi: ni_mio_common: ack ai fifo error interrupts.
-Date: Fri,  6 Apr 2018 15:24:25 +0200
-Message-Id: <20180406084347.978784022@linuxfoundation.org>
+	Liu Bo <bo.li.liu@oracle.com>,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 54/67] Btrfs: fix unexpected cow in run_delalloc_nocow
+Date: Fri,  6 Apr 2018 15:24:24 +0200
+Message-Id: <20180406084347.892236354@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003849053166920?=
-X-GMAIL-MSGID: =?utf-8?q?1597004296982043445?=
+X-GMAIL-THRID: =?utf-8?q?1597004293765579483?=
+X-GMAIL-MSGID: =?utf-8?q?1597004293765579483?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,31 +49,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Frank Mori Hess <fmh6jj@gmail.com>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit e1d9fc04c41840a4688ef6ce90b6dcca157ea4d7 upstream.
+commit 5811375325420052fcadd944792a416a43072b7f upstream.
 
-Ack ai fifo error interrupts in interrupt handler to clear interrupt
-after fifo overflow.  It should prevent lock-ups after the ai fifo
-overflows.
+Fstests generic/475 provides a way to fail metadata reads while
+checking if checksum exists for the inode inside run_delalloc_nocow(),
+and csum_exist_in_range() interprets error (-EIO) as inode having
+checksum and makes its caller enter the cow path.
 
-Cc: <stable@vger.kernel.org> # v4.2+
-Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+In case of free space inode, this ends up with a warning in
+cow_file_range().
+
+The same problem applies to btrfs_cross_ref_exist() since it may also
+read metadata in between.
+
+With this, run_delalloc_nocow() bails out when errors occur at the two
+places.
+
+cc: <stable@vger.kernel.org> v2.6.28+
+Fixes: 17d217fe970d ("Btrfs: fix nodatasum handling in balancing code")
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/comedi/drivers/ni_mio_common.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/btrfs/inode.c |   37 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 32 insertions(+), 5 deletions(-)
 
---- a/drivers/staging/comedi/drivers/ni_mio_common.c
-+++ b/drivers/staging/comedi/drivers/ni_mio_common.c
-@@ -1284,6 +1284,8 @@ static void ack_a_interrupt(struct comed
- 		ack |= NISTC_INTA_ACK_AI_START;
- 	if (a_status & NISTC_AI_STATUS1_STOP)
- 		ack |= NISTC_INTA_ACK_AI_STOP;
-+	if (a_status & NISTC_AI_STATUS1_OVER)
-+		ack |= NISTC_INTA_ACK_AI_ERR;
- 	if (ack)
- 		ni_stc_writew(dev, ack, NISTC_INTA_ACK_REG);
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -1257,6 +1257,8 @@ static noinline int csum_exist_in_range(
+ 		list_del(&sums->list);
+ 		kfree(sums);
+ 	}
++	if (ret < 0)
++		return ret;
+ 	return 1;
  }
+ 
+@@ -1389,10 +1391,23 @@ next_slot:
+ 				goto out_check;
+ 			if (btrfs_extent_readonly(fs_info, disk_bytenr))
+ 				goto out_check;
+-			if (btrfs_cross_ref_exist(root, ino,
+-						  found_key.offset -
+-						  extent_offset, disk_bytenr))
++			ret = btrfs_cross_ref_exist(root, ino,
++						    found_key.offset -
++						    extent_offset, disk_bytenr);
++			if (ret) {
++				/*
++				 * ret could be -EIO if the above fails to read
++				 * metadata.
++				 */
++				if (ret < 0) {
++					if (cow_start != (u64)-1)
++						cur_offset = cow_start;
++					goto error;
++				}
++
++				WARN_ON_ONCE(nolock);
+ 				goto out_check;
++			}
+ 			disk_bytenr += extent_offset;
+ 			disk_bytenr += cur_offset - found_key.offset;
+ 			num_bytes = min(end + 1, extent_end) - cur_offset;
+@@ -1410,10 +1425,22 @@ next_slot:
+ 			 * this ensure that csum for a given extent are
+ 			 * either valid or do not exist.
+ 			 */
+-			if (csum_exist_in_range(fs_info, disk_bytenr,
+-						num_bytes)) {
++			ret = csum_exist_in_range(fs_info, disk_bytenr,
++						  num_bytes);
++			if (ret) {
+ 				if (!nolock)
+ 					btrfs_end_write_no_snapshotting(root);
++
++				/*
++				 * ret could be -EIO if the above fails to read
++				 * metadata.
++				 */
++				if (ret < 0) {
++					if (cow_start != (u64)-1)
++						cur_offset = cow_start;
++					goto error;
++				}
++				WARN_ON_ONCE(nolock);
+ 				goto out_check;
+ 			}
+ 			if (!btrfs_inc_nocow_writers(fs_info, disk_bytenr)) {
