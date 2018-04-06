@@ -1,51 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeDFSUo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 14:20:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40752 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751897AbeDFSUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:20:41 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA92F21834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1751974AbeDFSVf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 14:21:35 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33479 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751201AbeDFSVd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:21:33 -0400
+X-Google-Smtp-Source: AIpwx4+Wt7U2fjKNkLCZd5v0SJdwNafggxv84eNexmy8RvcFva37uuOD4B5B6djYn4bAOMoR/tKoFfNBD/l7gOcVkBU=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Abel Vesa <abel.vesa@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
-        Irina Tirdea <irina.tirdea@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Peter Chen <peter.chen@freescale.com>,
-        Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1522219599-10831-6-git-send-email-abel.vesa@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
-        Anson Huang <anson.huang@nxp.com>,
-        Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
-        Abel Vesa <abelvesa@linux.com>, Daniel Baluta <daniel.baluta@nxp.com>,
-        Dong Aisheng <b29396@freescale.com>, Abel Vesa <abel.vesa@nxp.com>
-References: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
- <1522219599-10831-6-git-send-email-abel.vesa@nxp.com>
-Message-ID: <152303884033.143116.14807011107162910724@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [RESEND 4/4] clk: imx7d: Move clks_init_on before any clock operations
-Date: Fri, 06 Apr 2018 11:20:40 -0700
+In-Reply-To: <4034.1523025880@warthog.procyon.org.uk>
+References: <152287959470.14760.10350886166577848180.stgit@warthog.procyon.org.uk>
+ <4034.1523025880@warthog.procyon.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 6 Apr 2018 11:21:31 -0700
+X-Google-Sender-Auth: swYru_ryjCqw2dR9m2_EGew-5Do
+Message-ID: <CA+55aFwKc1JzU6k=3R9n23HGXb5-BACT8pQ93rGTvgNjfa4ZHA@mail.gmail.com>
+Subject: Re: [PATCH net-next 00/12] fscache: Fixes, traces and development
+To: David Howells <dhowells@redhat.com>
+Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-cachefs@redhat.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-afs@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Abel Vesa (2018-03-27 23:46:39)
-> From: Dong Aisheng <b29396@freescale.com>
-> 
-> For init on clocks we should move it at the first place in imx7d_clocks_init()
-> before any clock operations, else the clock operation may fail in case the clock
-> is still not on.
-> 
-> Acked-by: Ranjani Vaidyanathan <Ranjani.Vaidyanathan@freescale.com>
-> Signed-off-by: Dong Aisheng <b29396@freescale.com>
-> Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
+On Fri, Apr 6, 2018 at 7:44 AM, David Howells <dhowells@redhat.com> wrote:
+> Hi Linus,
+>
+> I've fixed a bug in the final patch that was found by the kbuild test robot
+> and disabled a debugging statement in an earlier one.  This is now tagged as:
+>
+>         git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+>         tags/fscache-next-20180406
+>
+> Do you want me to repost the patchset?
 
-Applied to clk-next
+No, but if you can redo the pull request part so that the diffstat I
+get will match the diffstat I see in the pull request, that would be
+good.
+
+Thanks,
+
+                  Linus
