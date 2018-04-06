@@ -1,99 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751696AbeDFQmQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 12:42:16 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:38214 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751298AbeDFQmP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 12:42:15 -0400
-X-Google-Smtp-Source: AIpwx49m+6KFk3z1AyiwKviCXlH/4TWnqxFC+1vFts2hdyRJafj6F+xrdGmN/az7CW71+KW9sPqI2g==
-Subject: Re: AMD graphics performance regression in 4.15 and later
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        airlied@linux.ie, alexander.deucher@amd.com, Felix.Kuehling@amd.com,
-        labbott@redhat.com, akpm@linux-foundation.org, michel.daenzer@amd.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
- <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
- <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
- <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com>
-From: Jean-Marc Valin <jmvalin@mozilla.com>
-Message-ID: <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
-Date: Fri, 6 Apr 2018 12:42:11 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751613AbeDFQqZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 12:46:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751201AbeDFQqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 12:46:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CB8F217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        David Lechner <david@lechnology.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-13-git-send-email-david@lechnology.com>
+ <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
+ <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
+ <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
+ <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
+ <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
+ <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
+ <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
+Message-ID: <152303318048.143116.2883441215887455211@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI DA850 PSC
+Date: Fri, 06 Apr 2018 09:46:20 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christian,
-
-On 04/09/2018 07:48 AM, Christian König wrote:
-> Am 06.04.2018 um 17:30 schrieb Jean-Marc Valin:
->> Hi Christian,
->>
->> Is there a way to turn off these huge pages at boot-time/run-time?
+Quoting Sekhar Nori (2018-04-06 02:37:03)
 > 
-> Only at compile time by not setting CONFIG_TRANSPARENT_HUGEPAGE.
-
-Any reason why
-echo never > /sys/kernel/mm/transparent_hugepage/enabled
-doesn't solve the problem?
-
-Also, I assume that disabling CONFIG_TRANSPARENT_HUGEPAGE will disable
-them for everything and not just what your patch added, right?
-
->> I'm not sure what you mean by "We mitigated the problem by avoiding the
->> slow coherent DMA code path on almost all platforms on newer kernels". I
->> tested up to 4.16 and the performance regression is just as bad as it is
->> for 4.15.
+> Can you please check that and confirm there is no issue with genpd and 
+> using CLK_OF_DECLARE() to initialize clocks?
 > 
-> Indeed 4.16 still doesn't have that. You could use the
-> amd-staging-drm-next branch or wait for 4.17.
+> Unless you report an issue back, or Mike and Stephen have ideas about 
+> how to handle the dependency between PSC/PLL derived timer clock 
+> initialization and and timer_probe(), I think we need to move back to 
+> using CLK_OF_DECLARE(). 
 
-Is there a way to pull just that change or is there too much
-interactions with other changes?
-
-> That isn't related to the GFX hardware, but to your CPU/motherboard and
-> whatever else you have in the system.
-
-Well, I have an nvidia GPU in the same system (normally only used for
-CUDA) and if I use it instead of my RX 560 then I'm not seeing any
-performance issue with 4.15.
-
-> Some part of your system needs SWIOTLB and that makes allocating memory
-> much slower.
-
-What would that part be? FTR, I have a complete description of my system
-at https://jmvalin.dreamwidth.org/15583.html
-
-I don't know if it's related, but I can maybe see one thing in common
-between my machine and the Core 2 Quad from the other bug report and
-that's the "NUMA part". I have a dual-socket Xeon and (AFAIK) the Core 2
-Quad is made of two two-core CPUs glued together with little
-communication between them.
-
-> Intel doesn't use TTM because they don't have dedicated VRAM, but the
-> open source nvidia driver should be affected as well.
-
-I'm using the proprietary nvidia driver (because CUDA). Is that supposed
-to be affected as well?
-
-> We already mitigated that problem and I don't see any solution which
-> will arrive faster than 4.17.
-
-Is that supposed to make the slowdown unnoticeable or just slightly better?
-
-> The only quick workaround I can see is to avoid firefox, chrome for
-> example is reported to work perfectly fine.
-
-Or use an unaffected GPU/driver ;-)
-
-Cheers,
-
-	Jean-Marc
+In such a case, please use the hybrid approach where the clks required
+for the clockevent and/or clocksource are registered in the early
+CLK_OF_DECLARE path but the rest of the clks get registered with a
+proper platform device and driver. There are examples of this approach
+on other platforms already.
