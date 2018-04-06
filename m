@@ -1,139 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752926AbeDFNPk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:15:40 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34863 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752487AbeDFNPi (ORCPT
+        id S1752959AbeDFNRS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:17:18 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:60543 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752296AbeDFNRR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:15:38 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Fri, 6 Apr 2018 09:17:17 -0400
+X-Originating-IP: 2.224.242.101
+Date: Fri, 6 Apr 2018 15:17:10 +0200
+From: jacopo mondi <jacopo@jmondi.org>
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
-        vladimir_zapolskiy@mentor.com, horms@verge.net.au,
-        magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/2] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-Date: Fri, 06 Apr 2018 16:15:35 +0300
-Message-ID: <1664336.M7KDjLhzuK@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1523018517-24121-2-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523018517-24121-1-git-send-email-jacopo+renesas@jmondi.org> <1523018517-24121-2-git-send-email-jacopo+renesas@jmondi.org>
+Cc: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sergei.shtylyov@cogentembedded.com, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge
+Message-ID: <20180406131710.GM20945@w540>
+References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="L0TNCHh3fkwjpuuE"
+Content-Disposition: inline
+In-Reply-To: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w36DFjZY012036
 
-Hi Jacopo,
 
-Thank you for the patch.
+--L0TNCHh3fkwjpuuE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Friday, 6 April 2018 15:41:56 EEST Jacopo Mondi wrote:
-> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
->  .../bindings/display/bridge/thine,thc63lvd1024.txt | 60 +++++++++++++++++++
->  1 file changed, 60 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> new file mode 100644
-> index 0000000..1191f17
-> --- /dev/null
-> +++
-> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> @@ -0,0 +1,60 @@
-> +Thine Electronics THC63LVD1024 LVDS decoder
-> +-------------------------------------------
-> +
-> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS
-> streams
-> +to parallel data outputs. The chip supports single/dual input/output modes,
-> +handling up to two two input LVDS stream and up to two digital CMOS/TTL
+Sorry for the mess
 
-s/to two two/to two/
-s/stream/streams/
+subject should have been
 
-> outputs.
-> +
-> +Single or dual operation modes, output data mapping and DDR output modes
-> are
-> +configured through input signals and the chip does not expose any control
-> bus.
-> +
-> +Required properties:
-> +- compatible: Shall be "thine,thc63lvd1024"
-> +
-> +Optional properties:
-> +- vcc-supply: Power supply for TTL output, TTL CLOCKOUT signal, LVDS input,
-> +  PPL and digital circuitry
-> +- powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
-> +- enable-gpios: Output enable GPIO signal, pin name "OE". Active high
+   Subject: [PATCH 0/7] V3M-Eagle display enablement
 
-As Rob mentioned in a reply to v6, we currently use "enable" as the inverse of 
-"powerdown". I would call this one oe-gpios instead. Quoting Rob:
+I copied the wrong one from another cover letter...
 
-"Debating "oe" vs. "output-enable" is bikeshedding IMO. Anyone familiar with 
-h/w design should recognize OE."
+On Fri, Apr 06, 2018 at 03:08:05PM +0200, Jacopo Mondi wrote:
+> Hello,
+>    this series enables HDMI display on V3M Eagle board.
+>
+> The series is based on Geert's "renesas-drivers-2018-04-03-v4.16" with
+> THC63LVD1024 driver on top (cfr. my in review series:
+> "[PATCH v7 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge")
+>
+> This series includes some preliminary work from Sergei and Niklas. I have
+> reworked the two final patches from Niklas to enable DU first, add the LV=
+DS
+> decoder node, and finally add the ADV7511W chip and enable HDMI output.
+>
+> A branch for testing is available at:
+> git://jmondi.org/linux v3m/renesas-drivers-2018-04-03-v4.16/v7-eagle-dts
+>
+> Thanks
+>    j
+>
+> Jacopo Mondi (2):
+>   arm64: dts: renesas: eagle: Enable DU
+>   arm64: dts: renesas: eagle: Add LVDS decoder
+>
+> Niklas S=C3=B6derlund (2):
+>   arm64: dts: renesas: r8a77970: add the LVDS instance
+>   arm64: dts: renesas: eagle: Add ADV7511W and HDMI output
+>
+> Sergei Shtylyov (3):
+>   arm64: dts: renesas: r8a77970: add FCPVD support
+>   arm64: dts: renesas: r8a77970: add VSPD support
+>   arm64: dts: renesas: r8a77970: add DU support
+>
+>  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 89 ++++++++++++++++++++=
+++++++
+>  arch/arm64/boot/dts/renesas/r8a77970.dtsi      | 73 +++++++++++++++++++++
+>  2 files changed, 162 insertions(+)
+>
+> --
+> 2.7.4
+>
 
-> +
-> +The THC63LVD1024 video port connections are modeled according
-> +to OF graph bindings specified by Documentation/devicetree/bindings/
-> graph.txt
-> +
-> +Required video port nodes:
-> +- port@0: First LVDS input port
-> +- port@2: First digital CMOS/TTL parallel output
-> +
-> +Optional video port nodes:
-> +- port@1: Second LVDS input port
-> +- port@3: Second digital CMOS/TTL parallel output
-> +
-> +Example:
-> +--------
-> +
-> +	thc63lvd1024: lvds-decoder {
-> +		compatible = "thine,thc63lvd1024";
-> +
-> +		vcc-supply = <&reg_lvds_vcc>;
-> +		powerdown-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				lvds_dec_in_0: endpoint {
-> +					remote-endpoint = <&lvds_out>;
-> +				};
-> +			};
-> +
-> +			port@2{
-> +				reg = <2>;
-> +
-> +				lvds_dec_out_2: endpoint {
-> +					remote-endpoint = <&adv7511_in>;
-> +				};
-> +			};
-> +		};
-> +	};
+--L0TNCHh3fkwjpuuE
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Regards,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Laurent Pinchart
+iQIcBAEBAgAGBQJax3NWAAoJEHI0Bo8WoVY8+5IP/0I0zHdhOMVPJe30KKV5PHpJ
+SMSaZ8e2TGnueH8VjbxnM8DPsBIiXYe2L5VH58W1BObZHXJRyiBJ5CwNmdbpi1Xg
+j4L5dZ5FmmU4eHrgnsYgMKYJckU1QDzx3RwokP/fSaEhaaryCTjaj/+ecWfUsf9P
+8eSYaAMP5uAWM1dEp5an0XaIDEaEbq8BPnsVAeLmusihOF0Y4eh+3t0c5JYtXEPx
+R/t9SNxQc1RIxI7qa0ME1R0BIP9X3qm179ZPn5qmkM9IUTOAKZq9EaRgOFkxCghi
+VRZqeW/bvDToVMw5q09U2yPTMxKnB6s9ddyK0YotQoBnKI7tPH9dXYqEpZYqp94H
+DgXB/K05QdhXWHAD8AXzcVjAOitwG+P3Uj4EXQsnBkvA38Rq3svz2HfuImwBRRF2
+Rv759loGeVRu9dmU+jGdw33RtS7z+a6WxBa+etiTArpfrcx3Z6LZOk8S8KYx2Lbi
+CKvHojx/di8zNNgBzw35tfFMEf1v09041cKoouEznEcS1g2CoBLymrwza07aiP2S
+xseLUOIrO7vofVYXtC7MQyczS8f/DtbqxdIm6oXtBwlr32UA/b257hQO5e1TLD+P
+Xg5FqMYp1X+k8s2H+BXB6eqJQKdmJ/60iw2Jru3niXgH6Sz+wzOAfw4g3g1ZwG9T
+VZYoRSnFaf2/AB2hcNWg
+=YeR4
+-----END PGP SIGNATURE-----
+
+--L0TNCHh3fkwjpuuE--
