@@ -1,366 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeDFS1T (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 14:27:19 -0400
-Received: from foss.arm.com ([217.140.101.70]:40994 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751492AbeDFS1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:27:17 -0400
-Subject: Re: [RFC PATCH 3/4] acpi: apei: Do not panic() in NMI because of GHES
- messages
-To: "Alex G." <mr.nuke.me@gmail.com>
-Cc: linux-acpi@vger.kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
-        tony.luck@intel.com, bp@alien8.de, tbaicar@codeaurora.org,
-        will.deacon@arm.com, shiju.jose@huawei.com, zjzhang@codeaurora.org,
-        gengdongjiu@huawei.com, linux-kernel@vger.kernel.org,
-        alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com
-References: <20180403170830.29282-1-mr.nuke.me@gmail.com>
- <20180403170830.29282-4-mr.nuke.me@gmail.com>
- <338e9bb4-a837-69f9-36e5-5ee2ddcaaa38@arm.com>
- <d6492b41-612a-b256-44c9-4ff3b3d5ae4b@gmail.com>
- <e65986c8-55a1-14c4-5c06-f34fa25916d8@arm.com>
- <9e29e5c6-b942-617e-f92e-728627799506@gmail.com>
-From: James Morse <james.morse@arm.com>
-Message-ID: <cdea7af5-6c9b-10c5-a9a9-1481446c65a8@arm.com>
-Date: Fri, 6 Apr 2018 19:24:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751696AbeDFS3X (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 14:29:23 -0400
+Received: from mail-by2nam01on0084.outbound.protection.outlook.com ([104.47.34.84]:19477
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751276AbeDFS3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:29:21 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Vadim.Lomovtsev@cavium.com;
+Date: Fri, 6 Apr 2018 11:29:16 -0700
+From: Vadim Lomovtsev <Vadim.Lomovtsev@caviumnetworks.com>
+To: linux-kernel@vger.kernel.org
+Cc: vadim.lomovtsev@cavium.com
+Subject: [Question] patch posting process
+Message-ID: <20180406182916.GA15772@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <9e29e5c6-b942-617e-f92e-728627799506@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Originating-IP: [50.233.148.156]
+X-ClientProxiedBy: DM5PR20CA0019.namprd20.prod.outlook.com
+ (2603:10b6:3:93::29) To DM5PR07MB3002.namprd07.prod.outlook.com
+ (2603:10b6:3:e3::12)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 022c18d5-b957-46f9-2362-08d59bec4ff1
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR07MB3002;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3002;3:HGzA5YbFmbliTSJ/1Vr4MWfVvx9iVUgTcTKOhod8A6lfx5tmuA7CyljrFbqKOudaRLcVcXNaNI5I4dV+5PLSNP1dglwbDch4YsCYC3RWv/jANXen+WhLBIFXQPMkG3DmMrztxNUI5QNBhKTFGGBr6ihB0ZFVlZMNJ0+Np14JITQN2ww++qhrelKUQNm3IoJ0dh49ug06X8bvlWKLESttk5a0xMDNhsPZjmPTMxsS5l666LXusxyf3NVUe29feJKT;25:yWa729nJ0H7DpI7ndJAGznfjItM4Br/atzMC5j6ffT3n8wnvxbEA2zqAyVKVBi42VJn8vkE6KZs+QjcqXskhzFFxNwfYmtjHWwAtEwdX2jdEtPgixb3CsLLapF1jwrL9vT/pT0Laae55O9d8zCA1vxZCWBk40FIY1peBX7gHycKkGY+bmCnKo1bYg7AMuEjiVZjMFNK7RFg8uD0ly2Ee5MLAs1V6tY+PJ0r+WFR6fF13dbDLzXy80EKp3BICOw37tBHOX2FZjNHaFDX1r4LsMoW+5+v2mMJeO/ngvxbOGpAufi0vx+6tsTutlWNktlySFJymsp55CT1gkNwO/LKPMg==;31:R+5Zy+ov4xhN42caBS4mLsxO8bBN0+JJhvqlR+amCSsP77XJR39WQH3ugMmKdDWnv9P9O3CbrVfGAdEYCNVD+o8HuNPaDeYkvOjlwoOYL3pNWjxW9MnDmtCr7tP5uTAtj78AHoKLXAk0HMajD3eobwDRJYGvp9hm2+xiLeAvpm78GHKXYPZPHi8XUVA30DvO3DAbnrqBaZYAogsPLKr1B2qnOJgK5rFZoSBkaZWven0=
+X-MS-TrafficTypeDiagnostic: DM5PR07MB3002:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3002;20:0RWPg14GilSe8CRfyPo5dXCQtb5AKGDoBTT0JP9Vq49N18MWRJtp8/2ru2yIipl58HYg1aA22J6anqqb3uHLDmiLI7v1uwhPovYy/8kpH7BZOJCLVNQQmrYj++8d/+5endm6d50xnewJsXJAcYhwBLGQv1Pevb+Qwp2ptGwFAg4HUh4vga9XeEMTfIfW7MOwbs6QehbYVSsLkwhmkk635xmBrE5Sibr2BFngKxiq9WZyXbiSlRnzsynLiCEHo+5py2WnKNm5w6P9BlK4Yy9/dcsLhi1WUz4yC8Wafk55uHUvx2YxcvbBbu7I6GWu9o6baxZM0aOcgT6h44gAoCWNaHxOAfvEG3Ckn/3ym3/1gk3cpSOM2VUaKmmITke5QLGine3GaZkpp8SxDmcFmzx7g1IBXBjNojFeJ1ogmmo6cVnxYaTiWZW4xni4E7iZqqvuGJwyFZcE7513x1YkesUEu/5rkDT+QDBiiORlm59B1ZfRRM9a9DMT+ZmWAJ3LaicvMLnAB1v6Id7dYNtMbx0GIQxUjtvU74824MRVMJ3Yo4Q7kQJ94ItM0HC2aLvTR9JnneXtJyLtp91UFRuLRs3zR73uKlKAQ1GXNSGcAiiDYs8=;4:nzYe7H8+V/E4EzIms15fdmjQG3JovRPrHhc7JeGPCbBjhPrFILazSAt+C1buniy72mUXhdB97RJbHEM99bt9Kjn5gfbE3nkaViOJr32IMo/zO2pezlylGUaRTnY8U00LrTagdBUaLR/EiQT/z1NrY3YJFVDKWfJzHk/mwg1ExT1Xz72sOD2+0wct6066Gl/aTghSmJXuEd4K2A4dp2yc51HjLOpKn0fkaqJeCKIuC8jwYWNL7pIM73uNoasbXBHb1SinDF3ihi3YbHm71vnnLw==
+X-Microsoft-Antispam-PRVS: <DM5PR07MB300296A75881247BF7E5BA338ABA0@DM5PR07MB3002.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(3002001)(10201501046)(3231221)(944501327)(52105095)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR07MB3002;BCL:0;PCL:0;RULEID:;SRVR:DM5PR07MB3002;
+X-Forefront-PRVS: 0634F37BFF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39380400002)(39860400002)(346002)(376002)(366004)(396003)(53754006)(189003)(199004)(956004)(50466002)(16526019)(26005)(186003)(2906002)(486006)(476003)(6916009)(23726003)(6116002)(3846002)(6666003)(9686003)(58126008)(55016002)(316002)(68736007)(25786009)(1857600001)(1076002)(42882007)(53936002)(5660300001)(16586007)(33656002)(8676002)(72206003)(61506002)(305945005)(107886003)(66066001)(6506007)(478600001)(2351001)(33896004)(4326008)(8936002)(97736004)(386003)(7736002)(106356001)(81166006)(105586002)(2361001)(81156014)(47776003)(7696005)(52116002)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR07MB3002;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR07MB3002;23:8LyRios7tP1DbNZ4HMaFnlhetAjrNIkNiR/LDk8wm?=
+ =?us-ascii?Q?E0bJtW+BKh/k/NUliiDCKIOu9h8ZJRI1/eoFtT+GwK6+Y49dRnsY3VdawOyO?=
+ =?us-ascii?Q?XSTepGS0jUyRtSKwSs09cQs0pViVjvcDEBUaaa1c3Li/9Dk6HZmrHRA7aEm2?=
+ =?us-ascii?Q?govIsk1LxxXtovLPs0TDlJ59ZMNZoq0rWjlNeBwy2FcoSr/HNV23v9PJwx3p?=
+ =?us-ascii?Q?w8efrRNO9YlLvAagft8U9VLQfCEKDNgjNmgRy0ANH/zLV6TJlw4DvWwiHOKo?=
+ =?us-ascii?Q?5/dxxonQsVLBFwDP/BK3bKhUOWrR6XKxdjzQB2h/0umuFnNLYQTz5dWLQxVq?=
+ =?us-ascii?Q?9Bhqyc8TBbdmdgsgE+jGzjxl6uXy/6CMgpBl69T9ipaBWn03lVkCj00vBPM9?=
+ =?us-ascii?Q?AfkPhEVBfRsFFlJOQHYYH/lIqJgZWn+UvlzR+wbSQinMqKOd/Tx+qVWMg4Wx?=
+ =?us-ascii?Q?tM8dcKknzqQn3FVKjD92KfJQW9Lonj8rbBEbba+l7lRuWNfxOcC0+nJwPuSm?=
+ =?us-ascii?Q?WOMy/NPDgLsU4achZiilIxEKR0iZ/+6AxH91POye0oo6EJg26ipsh2bDeGCZ?=
+ =?us-ascii?Q?IU/c7/phrjFA7v/8cvFx+ogVi1gtSH0lUaCjAp0HpWD8cyJozNymO2LPWxjQ?=
+ =?us-ascii?Q?cRiHESjtUHNYbJ2N6+ZfXQiMty9UhnEV5CCY7gzn4SA/GPSuQ9h/NeRXKtGE?=
+ =?us-ascii?Q?CYDjdJlhzvutJYqdawE0Ar0EAaqjwJU/cQ5Z7NhAAKUZ0Gs24wAPEEPrOVer?=
+ =?us-ascii?Q?hQcL3JTNTR7Dt/ylzgg0Vs3YSvhNTiTA1PZltEia0tvPyNs+B84oYXmjJaoO?=
+ =?us-ascii?Q?IIzMV8V+1qEhtZNaLvBIQbGvszv5K1rhqPgEOM6xfcToRtoIZZKCXBLdarmB?=
+ =?us-ascii?Q?GS3y5MRYOJF8nKFfmGlfySnAy4SCS9ssMzpGQwZeKiyUq+vU42xsVZCewVQr?=
+ =?us-ascii?Q?j62AmtCTjivJHRwOCBeT80l4O86HZ1O863UnaG6AJwcnnDDbVVn0ROANglsO?=
+ =?us-ascii?Q?aoGu8w6xS0Eww8NNrSWsXTRJTxuFYc7wzJ66iJ5yYA9v4lbak7IfPZHQ7y25?=
+ =?us-ascii?Q?vFEnbK2dfgFf8Y0tLmhtI/47yXBhH1i1MkO0T4yLXUItNic2MxLLhr3SPXiA?=
+ =?us-ascii?Q?9rcUzpJaRgIX3Kp9Mpl4lDYfnT/qwZrpc7igKAGs7F0WJ30BZ2z25FlBRBVX?=
+ =?us-ascii?Q?z6rzcVeziBpFgsOCy8G2iLEwlrqe9NcN/96yv386RvSdCW0UFcLK3bZ1pB5L?=
+ =?us-ascii?Q?D8PZ9IlaRQeNIELI/IA02hT9pADUMoAbp5+X8LzubNjDcveT2jPp7ag7u2HA?=
+ =?us-ascii?Q?9I2DpF4I01quK+8Kg2r2QYULupL1cSKSIJAJk+3/USa?=
+X-Microsoft-Antispam-Message-Info: 4KMIerGsonYEjdTaOAlVZeYLPF7AJTRIcLmokES7gp8WV5wMlD/1Ulg7aeHDvGbkn5lPrbL9/gZBq/zCEDZEscm2JPnHC6HOc/ALVyEW/VA/OHnn51kyy3q+HOh5t4FVuzlKho/3HBi0qggDoK0TRbABompLsTiRH7BzysEoVt9Kx1RoQgWhbGVwiDFFUNc6
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3002;6:Bi7aftK5Ci0jWD2EK7Z8TcsqUPvVnhiBi9N/zSHLrz9goXj4n/9tGpjOdU2kQjToDb9FKnWbTh87Eii4mhY8QADGeWggbFg886QmIBrvYgJu2QbdKeuG2Yfsp+q43lAtWzTZxc28/zJ1ixyRw4wG+wfBEbb4NYgn7TZgmcLBxu3a1LO2AeWi/e/fXsCaV/ioKlYEMpdfotlwepT8/q7d/WvavpWd58m2FiokZkZBgeE6bht3EapjLiMGBinRno/uPYn28hMWo/5uURmCDzH//aC2T+94Wz4r2HxSUxpCaM4TavN2ro1i6/pd3XC36Sj9lwZJ/OWKJqG4EHiZ0Xv4sXIMipyDVPJk1xrGm1wm/b2gJvrzifCxe6qJHPCZxUpDHloF+w5tfc1rrB9llttDaCBdDiOxHZ9C6pp67UREpjAA5hw5AyW6QjETkvp3xXv53sQSY8+1UlW/0vlLAXT9hA==;5:Bk9dOanHTMeQh5FYHHX8Xq25lg0wy+/eWfRns1RyLjdcPxfhLbniT/SvdvwkEkLJjlwDbUdBwewL85AUNKwh3UmsneycUs1/El+Z22FcMVITaQwZaruL8ORPkmQBSkut6rNBW3BiPKtdsr7P19olU3gbkdHrA8ENpEmZz12Tago=;24:lpVRpsg56Oe5vW/bNfdQTPpYO9aIvwq3gdXlBh7B2MXkxLDplCiw2el5Rl2jjw1z0yDiyiVR3VMgmvJA5fJdEoF4JI36wUMfBzdP/jnr3Ng=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3002;7:iLKyX5Il+9VYeuPFK2eLVAzI76qlTVSlFF0SA5cTO05dOG8dplSkJip729432AQX4or9yKSzFuhYxzkTnotT1V7oXiym3nGYkMdZz7hBM0oIllpBQr+0lOWbXTHL2kzvgEjY/hZijMvQoDD1EKzVtt49W0g1yq9wyIhSY2+mh8ffjNb4NvcCN2FHjUtewJmUVzB+cHKjy50pIl417nNQzSbxKfey8huxwwAc9ZzMcFUI31/KI/VDtrY1BKFDIJ6L
+X-OriginatorOrg: caviumnetworks.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2018 18:29:19.6239 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 022c18d5-b957-46f9-2362-08d59bec4ff1
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR07MB3002
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+Hi all,
 
-On 04/04/18 20:49, Alex G. wrote:
-> On 04/04/2018 11:53 AM, James Morse wrote:
->>>> How do we know we will survive this trip?
->>>
->>> We don't.
->>
->> Isn't that even worse than panic()ing? (No output, followed by a watchdog reboot
->> if we're lucky)
+I bring my Apologise for wasting your time, but ..
 
-> On the contrary. No output, followed by a watchdog reboot is usually
-> what happens when the panic() is in NMI. One of the very few ways that
-> can be debugged is over a NULL modem cable.
+May I ask for some clarification.. When we're speaking of 'posting patches shortly'
+does it mean to send them in next few hours ?
+Or would it be more acceptable to post one version per day
+even for very small changes in between ?
 
-(IPMI-SOL?)
+Kernel posting guides says that one should wait for about a week for respond,
+but in my case I've got feedback rather quickly (thanks a lot for that!)
+and I'd assume that I can proceed with posting next version.
 
-Really? printk has NMI support, and panic()s call to bust_spinlocks() should
-unblank the screen before printk_safe_flush_on_panic() dumps the messages. (I'm
-assuming some BMC-VGA exists to capture the 'screen').
+So, what is the proper approach here - should one wait day or two
+before posting next version even if changes are very simple ?
 
-
->>>> On arm64 systems it may not be possible to return to the context we took the NMI
->>>> notification from: we may bounce back into firmware with the same "world is on
->>>> fire" error. Firmware can rightly assume the OS has made no attempt to handle
->>>> the error. 
->>>
->>> I'm not aware of the NMI path being used on arm64:
->>> $ git grep 'select HAVE_ACPI_APEI_NMI'
->>> arch/x86/Kconfig:       select HAVE_ACPI_APEI_NMI               if ACPI
->>> $
->>
->> (I agree its not obvious!), arm64 has NOTIFY_SEA, NOTIFY_SEI and NOTIFY_SDEI
->> that all behave like NOTIFY_NMI (in that they can interrupt IRQ-masked code).
->>
->> CONFIG_HAVE_ACPI_APEI_NMI has come to mean NOTIFY_NMI, which requires the arch
->> code to implement register_nmi_handler() and (from memory) behave as a notifier
->> chain, which doesn't fit with how these things behave.
->>
->> NOTIFY_SEA lives behind CONFIG_ACPI_APEI_SEA in driver/acpi/apei/Kconfig.
->> The series to add SDEI support is on the list here:
->> https://www.spinics.net/lists/arm-kernel/msg642946.html
->> (NOTIFY_SEI is very tricky for firmware to get right, I don't think we're there
->> yet.)
-
-> From my understanding, your patch series tries to use ghes_notify_nmi()
-> as a common entry point. 
-
-It abstracts the NMI-like notifications to use a common helper into the
-estatus-queue. ghes_notify_nmi() is the arch-code entry point for x86's
-NOTIFY_NMI. We  have ghes_notify_sea() and ghes_sdei_callback() on arm64. They
-are different as their registration requirements are different. They each call
-_in_nmi_notify_one() to do the in_nmi() ghes work.
-
-
-> But if on arm64, you can return to firmware,
-> then we have wildly different constraints.
-
-We can't return to firmware, but we can take the error again, causing another
-trap to firmware.
-
-e.g.: If a program accesses a value in the cache and the cache location is
-discovered to be corrupt/marked-as-poisoned. This causes an 'external abort'
-exception, which firmware has configured to trap to firmware. Once there, it
-generates CPER records and sets-up an external-abort-exception for Linux.
-If linux returns from this external-abort, we return to whatever program
-accessed the bad-cache-value in the first case, re-run the instruction that
-generates the external abort, and the same thing happens again, but to firmware
-it looks like a second fault at the same address.
-
-The same thing can happen for a processor error.
-
-
-> On x86, you can't return to SMM. You can have a new SMI triggered while
-> servicing the NMI, but you can't re-enter an SMI that you've returned
-> from. SMM holds all the cores, and they all leave SMM at roughly the
-> same time, so you don't deal with coexistence issues. This probably also
-> avoids the multiple notifications that you are trying to implement on arm.
-
-its the new SMI case.
-
-(We don't necessarily have all cores pulled into firmware, (although firmware
-could do that in software), so different CPUs taking NMI-like notifications is
-one of the things we have to handle.)
-
-
-> On quick thought, I think the best way to go for both series is to leave
-> the entry points arch-specific, and prevent hax86 and harm64 from
-> stepping on each other's toes. Thoughts?
-
-The behaviour should be driven from the standard. I agree there is some leeway,
-which linux should handle on all architectures that support GHES.
-
-The entry points from the arch code are already separate, as these have
-different notification types in the HEST->GHES entries and different
-registration requirements.
-Once in ghes.c all the NMI-like notifications get merged together as the only
-relevant thing about them is we have to use the estatus-queue, and can't call
-any of the sleepy recovery helpers.
-
-
-
-I don't think this is the issue though: An NMI notification could by any of the
-eleven CPER notification record types.
-Your argument is Linux probably can handle PCIe-AER errors, even if broken
-firmware thinks they are fatal.
-This is only one of the eleven notification record types. Returning to handle
-the error definitely doesn't work for some classes of fatal error, especially
-when interrupts are masked.
-
-I think its straightforward to test whether the CPER records contain only errors
-where we can do better: (not tested/built, I haven't checked whether this is nmi
-safe):
----------------------%<---------------------
-/*
- * Return true if only PCIe-AER CPER sections are present. We ignore the fatal
- * severity in this case as linux knows better. Called in_nmi().
- */
-static bool ghes_is_deferrable(struct ghes *ghes,
-       const struct acpi_hest_generic_status *estatus)
-{
-       guid_t *sec_type;
-       struct acpi_hest_generic_data *gdata;
-
-       apei_estatus_for_each_section(estatus, gdata) {
-               sec_type = (guid_t *)gdata->section_type;
-               if (!guid_equal(sec_type, &CPER_SEC_PCIE))
-                       return false;
-       }
-
-       return true;
-}
----------------------%<---------------------
-
-
->> Wouldn't reasonably-intelligent firmware be able to spot the same fault
->> repeatedly in a loop? (last-fault-address == this-fault-address,
->> last-fault-time==now)
-> 
-> I'm told that the BIOS on Dell machines will detect interrupt storms,
-> and disable the specific error source in such cases. On an x86 server.
-> 50us of SMM eats up several milliseconds-core of CPU time, so they try
-> to be a little careful.
-> 
->>>> Your 'not re-arming the error' example makes this worrying.
->>>
->>> Those are one class of bugs you get when you let firmware run the show.
->>> It's been an issue since day one of EFI. The best you can do in such
->>> cases is accept you may later lose the link to a device.
->>> Side-note: We have a BIOS defect filed with against this particular
->>> issue, and it only seems to affect PCIe SMIs.
->>
->> This sounds like policy applied too early
-> 
-> That's firmware-first in one sentence.
-> 
->> fixing the firmware to at least make this configurable would be preferable.
-> 
-> I can ask for "fixing the firmware" and we might even get the fix, but
-> the fact remains that there are machines in the field with the buggy
-> BIOSes, and there will continue to be such machines even after a fix is
-> released.
-> 
-> 
->> My point was there is a class of reported-as-fatal error that really is fatal,
->> and for these trying to defer the work to irq_work is worse than panic()ing as
->> we get less information about what happened.
-> 
-> How do we get less information? We save the GHES structure on the
-> estatus_queue, and use it as the error source in either case. Is there a
-> class of errors where we can reasonable expect things to be okay in NMI,
-> but go horribly wrong on return from NMI?
-
-Yes, (described above). This could happen if we see Arm64's 'SEA' CPER  records
-or x86's 'MCE' CPER records. I'm pretty sure it will happen on both
-architectures if you return to a context with interrupts masked.
-
-Things will go horribly wrong if you return from an imprecise exception notified
-via firmware first.
-
-
-> (snip)
->> Are all AER errors recoverable?  (is an OS:'fatal' AER error ever valid?)
-> 
-> PCIe "fatal" means that your link is gone and you might not get it back.
-> You lose all the downstream devices. You may be able to reset the link
-> and get it back. This sort of "fatal" has no impact on a machine's
-> ability to continue operation.
-> 
-> From ACPI, FFS should only send a "fatal" error if a machine needs reset
-> [1], so it's clearly a firmware bug to mark any PCIe error "fatal". This
-> won't stop BIOS vendors from taking shortcuts and deciding to crash an
-> OS by sending the error as "fatal".
-> 
-> [1]ACPI 6.2: 18.1Hardware Errors and Error Sources
-
-Great! Its never valid. So we can check the CPER records in the NMI handler, and
-for AER errors, clear the fatal bit printing a nasty message about the firmware.
-
-
->>> The alternative is to keep ghes_do_proc() and ghes_notify_nmi() in sync,
->>> duplicate code between the two. But we can also get ghes_proc_irq_work()
->>> as an entry point, and this easily turns in a maintenance nightmare.
->>
->> We can't call all the recovery-helpers from ghes_notify_nmi() as they sleep and
->> allocate memory. I think the trick would be to make the CPER parsing routines
->> NMI-safe so that we can check these 'fatal' records for cases where we're pretty
->> sure linux can do a better job.
-> 
-> can_i_handle_this_nonblocking(struct four_letter_acronum_err *err) ?
-
-Nothing so complicated. Just clearing the bit for AER-only CPER blocks should do.
-
-(we can probably assume that AER & Vendor-Specific are describing the same thing)
-
-
-> That's the approach I originally tried, but I didn't like it. The
-> parsing gets deeper and deeper, and, by the time you realize if the
-> error can be handled or not, you're already halfway through recovery.
-> 
-> This is a perfectly viable approach. However, is there a palpable
-> (non-theoretical) concern that warrants complicating things this way?
-
-For AER your text above says no, we can always handle an error, they are never
-fatal.
-
-For memory-errors, yes. An ECC error for a location on the kernel stack while
-the affected thread was preempt_disable()d. We can't kick the thread off the
-CPU, and we can't return from the handler as we can't stop accesses to the stack
-when we return.
-
-We can avoid it being complicated by just separating AER errors out when they
-come in. You've said they never mean the OS has to reboot.
-
-
->>>> For the PCI*/AER errors we should be able to try and handle it ... if we can get
->>>> back to process/IRQ context:
->>>> What happens if a PCIe driver has interrupts masked and is doing something to
->>>> cause this error? We can take the NMI and setup the irq-work, but it may never
->>>> run as we return to interrupts-masked context.
->>>
->>> The way the recovery from NMI is set up is confusing. On NMIs,
->>> ghes_proc_in_irq() is queued up to do further work. Despite the name, in
->>> this case it runs as a task. That further queues up AER work,
->>> Either way, PCIe endpoint interrupts are irrelevant here. AER recovery
->>> runs independent of drivers or interrupts:
->>
->> Hmm, we may be looking at different things, (and I'm not familiar with x86):
->> ghes_notify_nmi() uses irq_work_queue() to add the work to a percpu llist and
->> call arch_irq_work_raise(). arch_irq_work_raise() sends a self IPI, which, once
->> taken causes the arch code to call irq_work_run() to consume the llist.
-> 
-> I abstract things at irq_work_queue(): "queue this work and let me
-> return from this interrupt"
-
-('from this NMI', to come back later as an IRQ, from where we can call
-schedule_work_on(). This chaining is because the scheduler takes irqsave
-spin-locks to schedule the work.)
-
-
->> My badly made point is we could take the NMI that triggers all this from a
->> context that has interrupts masked. We can't take the self-IPI until we return
->> from the NMI, and we return to a context that still has interrupts masked. The
->> original context may cause the NMI to trigger again before it unmasks
->> interrupts. In this case we've livelocked, the recovery work never runs.
-
-> In order to get another NMI from firmware, you need SMM to be triggered
-> again. Remember, SMM has to exit before the NMI can be serviced.
-> 
-> I doubt the livelock is a concern in this place, because we're dealing
-> with NMIs invoked by firmware(SMM). NMIs for other reasons would be
-> handled elsewhere.
-
-(aha, this might be the difference in the way we see this)
-
-
-> In the event that FFS fails to prevent and SMI storm, and keeps spamming
-> the CPU with NMIs, that is a clear firmware bug. It's also the sort of
-> bug I haven't observed in the wild.
-
-Do these SMI ever occur synchronously with the CPUs execution? i.e. if I execute
-this instruction, I will get an SMI. (or are these your handled-elsewhere-NMI case?)
-
-On arm64 poisoned-cache locations triggering an external abort (leading to a
-NOTIFY_SEA NMI-like notification to APEI) in response to a load is synchronous,
-hence the live-lock problem.
-
-I agree AER is very likely to be different.
-
-
->> I think something like polling a status register over a broken-link would do
->> this. (has my config write been acknowledge?)
-
-> That would not be a valid reason to disable interrupts. Non-posted PCIe
-> requests can take hundreds of milliseconds (memory-mapped or otherwise).
-> I can't think of any sort of code that can cause errors to come in via
-> NMI which would be a suitable atomic context for disabling interrupts.
-> 
-> Maybe on arm it's normal to stuff in anything error-related via NMI? On
-> x86, most error sources have their own (maskable) interrupt vector.
-
-Maybe. On arm systems error sources might have their own interrupts that are
-taken to firmware, and firmware may be able to mask them. This is all hidden in
-firmware, which can use something like SDEI to push these onto linux as NMI-like
-notifications.
-
-
-> I am not concert about livelocking the system.
-
-This is what keeps me awake at night.
-
-
-I think your platform has NMI handled as MCE/kernel-first for synchronous CPU
-errors. SMI triggered by PCI-AER are notified by NMI too, but handled by
-firmware-first.
-This hybrid kernel/firmware first depending on the error-source isn't the only
-way of building things. Appendix-N of the UEFI spec lists CPER records for
-firmware-first handling of types of error that your platform must 'handle
-elsewhere'.
-
-We have arm systems where kernel-first isn't viable as the equivalent of the MCA
-registers is platform/integration/silicon-revision specific. These systems
-handle all their errors using firmware-first. These systems will generate CPER
-records where fatal means fatal, and returning from the NMI-like notification
-will either send us into the weeds, or trap us back into firmware.
-
-
-Thanks,
-
-James
+WBR,
+Vadim
