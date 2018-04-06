@@ -1,633 +1,380 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx4+qZzABH5o6tASnAkix5kz9mbbU8mya8LER3NAZw6ej6INuTXO/BiMDFGsWVF7RNF5YNWbf
-ARC-Seal: i=1; a=rsa-sha256; t=1523048794; cv=none;
-        d=google.com; s=arc-20160816;
-        b=KBuQ3M699reRmqeBsBhAYSbJA2/8xGLWOVkmatvmb3DFQno+9+1oO11EM6yyKrB+5I
-         cYACXY4IQWBWZFaZayZK/mKeqFqDZO2VLLfNLh58JTYiR3V25SuMD26ivTRp/jSGngKx
-         jMnpWL3dUbqq5DVhck+7ziiUId7eGOhfNHQu5AdFkRhTdRsEU7h/bUllu0+VzFV8fCRE
-         oemgcWjaYaTBb/e7oAZiyu2E7TGDrzmn3ZErIzpfAaCQ2tFK70Vg8FWJExwcwYVg13GN
-         jr9EVr8aO0pL9w0Rrl3r+jUJlBYc8ITdWZEDmo9PsUAz77lLcV2RdQdjExJFxStjoZyW
-         q19A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-language:mime-version:user-agent
-         :date:message-id:autocrypt:openpgp:subject:from:cc:to
-         :arc-authentication-results;
-        bh=o9TqbpdepjqKhJ9ZGgPYyEkGzP1wvHfChZHtwIediDg=;
-        b=SQDREpEFxHVrOu+06TqoMM0sRO00fihWQZAl10Hwvbw9bbKAmdzz43P4IXg+h4dwaf
-         50MbvNGwa3CFfQC2/ak/Wl2i52p8viSaUKAAy/i/SEwJTIIsq1S97QO84ZsKD+pAi1nj
-         kCbkN9APqBRjqoYgqm5UfkhKrTDNcygfcH+O0AgAfHUFyQzpbCEFOmCDFmYZ/LkccwAG
-         zqqU+K9QIdIJndUIYQCLK5HHFI/pNbzs5eUdzBcvS7eTddx6vKtD07AS+dGdb4VmWyx4
-         fZdhNvpmaPcccBV3P592WuSJdUk1hezlmrcYyoKUNjYVAMoPVFyfHFw4BSjT/Tq/6gDy
-         RRJQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751642AbeDFVGd (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 6 Apr 2018 17:06:33 -0400
-Received: from osg.samsung.com ([64.30.133.232]:34829 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751445AbeDFVGb (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 6 Apr 2018 17:06:31 -0400
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        Shuah Khan <shuah@kernel.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [GIT PULL] kselftest update for 4.17-rc1
-Openpgp: preference=signencrypt
-Autocrypt: addr=shuahkh@osg.samsung.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b5ad417c-e608-a6e3-6978-5691369c41c3@osg.samsung.com>
-Date: Fri, 6 Apr 2018 15:06:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2253037-1523048728-2-7849348361936625194
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES roen, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='nu', MailFrom='org'
+X-Spam-charsets: from='UTF-8', plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523048727; b=bsU6asrPmtghpo9gRHW7dgy0KqGoXxoR4QrGXeNEcyYhIBxJpv
+    3+/i0OuFM3nvFSVkAuvl0CCIW4xYR587bDzbUFI3cS/jPq9Mm20hP7R4q3e0bLBc
+    To7xwYXcHVeWKvhOZEncALwYj4ZHQ+dk0WhetiJLYGD48A2IxfD9pAG8zTVAQ6nx
+    QvoZlw2+Sk8cvYLcqiPAJwQ8xWQs3+XobK9Kb6IlZmzIcAf39o871Az6VK8Lr1LE
+    8VA3gGjehJ6ih54eDQ1Z/UcssJlPDss2L72uSzk5Zi6Yv2XR2gY3j+GL/0knG/nn
+    KkxKCVfl6zhiBYpmWX/m0V4F2OtllM5egHKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523048727; bh=0ZYPU
+    +kK59BWLHefPw9FXd1aZY3z9fgAwNuPYsyXteY=; b=XbgQcwC+o1u8VmzAJvXpB
+    FQynT9PJBgUt0E0X7FpW1+igB0sLE4XLAAmHZRZuUcDw8P/VRN7pbYQzBZ2/f+ru
+    RYd6UWFDTO1FjTL0qsD+baYNOu7FcI6/qiSyxIQINitNR9uZW6J1VK0sq6ZvwurZ
+    pqoyvse6ENAN0T25+h1++zRnH1JsgjkPqp9GZ6uET6Q4ynDWeum0cWGrXRmM5sB7
+    7J5op/9zUGgprbMeWLd8dupq34NdEsbahMnPxumJBhPQRDef6+gYe4FeqM5YKgvi
+    NLUBLPfPaOGZyQBYPeNuJLH75dbMMSdEaagHfGo/zHtaL55ASAmqFcPUeKWaOMnG
+    Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=nikanor-nu.20150623.gappssmtp.com header.i=@nikanor-nu.20150623.gappssmtp.com header.b=YKTr9znI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=nikanor.nu;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ErY4YJCV;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nikanor.nu header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=nikanor-nu.20150623.gappssmtp.com header.i=@nikanor-nu.20150623.gappssmtp.com header.b=YKTr9znI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=nikanor.nu;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ErY4YJCV;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nikanor.nu header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJ/6QPpfyeN1TAwx/0oqZ1CTYTvNYegG5nx+rK8ODaUJ36uu58GPfJLLXWUb2fNyK2rUl9AhQjduJd10mP1QfGaJZRBa1k512UQKQHxhXnyeFLqjpH5V
+    egxPTAwA8osx4Mr9uw8NqmTcGfyKqkhGQOragP8KwZMoCUzjqO67ofxWFZzT7+LsEe7dMbx4HoXTnJkK4eDD2/BfE9MCPfpFlat1VKTcLNmdAA8O4kNydF2a
+    5U385neANIjJUpaFiQKrwA==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=FCIBaCbJF8nySkKYKL8A:9
+    a=24OKv5rTnfKmMALa:21 a=2SuV9RlTUqkk817a:21 a=QEXdDO2ut3YA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx4+Eb0B45TFYs6faCnpDsA9WAX8hqzUxXbjCKbIMx1gDAcaruvEwzsV9hT/t+HGiF6eYtZ0K5A==
+From: =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
+To: gregkh@linuxfoundation.org
+Subject: [PATCH] staging: pi433: break long lines in rf69.c
+Date: Fri,  6 Apr 2018 23:05:15 +0200
+Message-Id: <20180406210515.8162-1-simon@nikanor.nu>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------29A3F05FDA5C1A83CDDF63F1"
-Content-Language: en-US
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, michael.panzlaff@fau.de,
+ Valentin.Vidic@CARNet.hr, linux-kernel@vger.kernel.org,
+ marcin.s.ciupak@gmail.com, linux@wolf-entwicklungen.de
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597032412487781997?=
-X-GMAIL-MSGID: =?utf-8?q?1597032412487781997?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------29A3F05FDA5C1A83CDDF63F1
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-
-Hi Linus,
-
-Please pull the following Kselftest update for 4.17-rc1
-
-This Kselftest update for 4.17-rc1 consists of:
-
-- Test build error fixes.
-- Fixes to prevent intel_pstate from building on non-x86 systems.
-- New test for ion with vgem driver.
-- Change to print the test name to /dev/kmsg to add context to kernel
-  failures if any uncovered from running the test.
-- Kselftest framework enhancements to add KSFT_TAP_LEVEL environment
-  variable to prevent nested TAP headers being printed in the Kselftest
-  output. Nested TAP13 headers could cause problems for some parsers.
-  This change suppresses the nested headers from test programs and test
-  shell scripts with changes to framework and Makefiles without changing
-  the tests.
-
-Diff for the update is attached.
-
-thanks,
--- Shuah
-
------------------------------------------------------------------------------------
-The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
-
-  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-4.17-rc1
-
-for you to fetch changes up to 6aa69043d9f3f4adc5b3817ccfcac1fddfe10ded:
-
-  selftests/intel_pstate: Fix build rule for x86 (2018-04-02 11:55:47 -0600)
-
-----------------------------------------------------------------
-linux-kselftest-4.17-rc1
-
-This Kselftest update for 4.17-rc1 consists of:
-
-- Test build error fixes.
-- Fixes to prevent intel_pstate from building on non-x86 systems.
-- New test for ion with vgem driver.
-- Change to print the test name to /dev/kmsg to add context to kernel
-  failures if any uncovered from running the test.
-- Kselftest framework enhancements to add KSFT_TAP_LEVEL environment
-  variable to prevent nested TAP headers being printed in the Kselftest
-  output. Nested TAP13 headers could cause problems for some parsers.
-  This change suppresses the nested headers from test programs and test
-  shell scripts with changes to framework and Makefiles without changing
-  the tests.
-
-----------------------------------------------------------------
-Anders Roxell (1):
-      selftests/android/ion: Makefile: fix build error
-
-Daniel Díaz (1):
-      selftests/intel_pstate: Fix build rule for x86
-
-Kees Cook (1):
-      selftests/seccomp: Allow get_metadata to XFAIL
-
-Laura Abbott (2):
-      selftests: ion: Remove some prints
-      selftests: ion: Add simple test with the vgem driver
-
-Michael Ellerman (1):
-      selftests: Print the test we're running to /dev/kmsg
-
-Shuah Khan (4):
-      selftests: kselftest framework: add handling for TAP header level
-      selftests: lib.mk set KSFT_TAP_LEVEL to prevent nested TAP headers
-      selftests: Makefile set KSFT_TAP_LEVEL to prevent nested TAP headers
-      selftests: futex Makefile add top level TAP header echo to RUN_TESTS
-
- tools/testing/selftests/Makefile                  |  11 +-
-tools/testing/selftests/android/ion/.gitignore    |   1 +
- tools/testing/selftests/android/ion/Makefile      |   5 +-
- tools/testing/selftests/android/ion/config        |   1 +
- tools/testing/selftests/android/ion/ionmap_test.c | 136 ++++++++++++++++++++++
- tools/testing/selftests/android/ion/ionutils.c    |   6 -
- tools/testing/selftests/futex/Makefile            |   4 +
- tools/testing/selftests/intel_pstate/Makefile     |   5 +-
- tools/testing/selftests/kselftest.h               |   3 +-
- tools/testing/selftests/kselftest_harness.h       |  26 ++++-
- tools/testing/selftests/lib.mk                    |   1 +
- tools/testing/selftests/seccomp/seccomp_bpf.c     |  15 ++-
- 12 files changed, 200 insertions(+), 14 deletions(-)
- create mode 100644 tools/testing/selftests/android/ion/ionmap_test.c
------------------------------------------------------------------------------------
-
---------------29A3F05FDA5C1A83CDDF63F1
-Content-Type: text/x-patch;
- name="linux-kselftest-4.17-rc1.diff"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="linux-kselftest-4.17-rc1.diff"
-
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/M=
-akefile
-index 7442dfb73b7f..f4dfee6ea8a4 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -66,6 +66,12 @@ ifndef BUILD
-   BUILD :=3D $(shell pwd)
- endif
-=20
-+# KSFT_TAP_LEVEL is used from KSFT framework to prevent nested TAP heade=
-r
-+# printing from tests. Applicable to run_tests case where run_tests adds=
-
-+# TAP header prior running tests and when a test program invokes another=
-
-+# with system() call. Export it here to cover override RUN_TESTS defines=
-=2E
-+export KSFT_TAP_LEVEL=3D`echo 1`
-+
- export BUILD
- all:
- 	@for TARGET in $(TARGETS); do		\
-@@ -125,11 +131,14 @@ ifdef INSTALL_PATH
- 	echo "else" >> $(ALL_SCRIPT)
- 	echo "  OUTPUT=3D/dev/stdout" >> $(ALL_SCRIPT)
- 	echo "fi" >> $(ALL_SCRIPT)
-+	echo "export KSFT_TAP_LEVEL=3D`echo 1`" >> $(ALL_SCRIPT)
-=20
- 	for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=3D$$BUILD/$$TARGET;	\
--		echo "echo ; echo Running tests in $$TARGET" >> $(ALL_SCRIPT); \
-+		echo "echo ; echo TAP version 13" >> $(ALL_SCRIPT);	\
-+		echo "echo Running tests in $$TARGET" >> $(ALL_SCRIPT); \
- 		echo "echo =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D" >> $(ALL_SC=
-RIPT); \
-+		echo "[ -w /dev/kmsg ] && echo \"kselftest: Running tests in $$TARGET\=
-" >> /dev/kmsg" >> $(ALL_SCRIPT); \
- 		echo "cd $$TARGET" >> $(ALL_SCRIPT); \
- 		make -s --no-print-directory OUTPUT=3D$$BUILD_TARGET -C $$TARGET emit_=
-tests >> $(ALL_SCRIPT); \
- 		echo "cd \$$ROOT" >> $(ALL_SCRIPT); \
-diff --git a/tools/testing/selftests/android/ion/.gitignore b/tools/testi=
-ng/selftests/android/ion/.gitignore
-index 67e6f391b2a9..95e8f4561474 100644
---- a/tools/testing/selftests/android/ion/.gitignore
-+++ b/tools/testing/selftests/android/ion/.gitignore
-@@ -1,2 +1,3 @@
- ionapp_export
- ionapp_import
-+ionmap_test
-diff --git a/tools/testing/selftests/android/ion/Makefile b/tools/testing=
-/selftests/android/ion/Makefile
-index 96e0c448b39d..e03695287f76 100644
---- a/tools/testing/selftests/android/ion/Makefile
-+++ b/tools/testing/selftests/android/ion/Makefile
-@@ -1,8 +1,8 @@
-=20
--INCLUDEDIR :=3D -I. -I../../../../../drivers/staging/android/uapi/
-+INCLUDEDIR :=3D -I. -I../../../../../drivers/staging/android/uapi/ -I../=
-=2E./../../../usr/include/
- CFLAGS :=3D $(CFLAGS) $(INCLUDEDIR) -Wall -O2 -g
-=20
--TEST_GEN_FILES :=3D ionapp_export ionapp_import
-+TEST_GEN_FILES :=3D ionapp_export ionapp_import ionmap_test
-=20
- all: $(TEST_GEN_FILES)
-=20
-@@ -14,3 +14,4 @@ include ../../lib.mk
-=20
- $(OUTPUT)/ionapp_export: ionapp_export.c ipcsocket.c ionutils.c
- $(OUTPUT)/ionapp_import: ionapp_import.c ipcsocket.c ionutils.c
-+$(OUTPUT)/ionmap_test: ionmap_test.c ionutils.c
-diff --git a/tools/testing/selftests/android/ion/config b/tools/testing/s=
-elftests/android/ion/config
-index 19db6ca9aa2b..b4ad748a9dd9 100644
---- a/tools/testing/selftests/android/ion/config
-+++ b/tools/testing/selftests/android/ion/config
-@@ -2,3 +2,4 @@ CONFIG_ANDROID=3Dy
- CONFIG_STAGING=3Dy
- CONFIG_ION=3Dy
- CONFIG_ION_SYSTEM_HEAP=3Dy
-+CONFIG_DRM_VGEM=3Dy
-diff --git a/tools/testing/selftests/android/ion/ionmap_test.c b/tools/te=
-sting/selftests/android/ion/ionmap_test.c
-new file mode 100644
-index 000000000000..dab36b06b37d
---- /dev/null
-+++ b/tools/testing/selftests/android/ion/ionmap_test.c
-@@ -0,0 +1,136 @@
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdint.h>
-+#include <string.h>
-+#include <unistd.h>
-+
-+#include <sys/ioctl.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+
-+#include <linux/dma-buf.h>
-+
-+#include <drm/drm.h>
-+
-+#include "ion.h"
-+#include "ionutils.h"
-+
-+int check_vgem(int fd)
-+{
-+	drm_version_t version =3D { 0 };
-+	char name[5];
-+	int ret;
-+
-+	version.name_len =3D 4;
-+	version.name =3D name;
-+
-+	ret =3D ioctl(fd, DRM_IOCTL_VERSION, &version);
-+	if (ret)
-+		return 1;
-+
-+	return strcmp(name, "vgem");
-+}
-+
-+int open_vgem(void)
-+{
-+	int i, fd;
-+	const char *drmstr =3D "/dev/dri/card";
-+
-+	fd =3D -1;
-+	for (i =3D 0; i < 16; i++) {
-+		char name[80];
-+
-+		sprintf(name, "%s%u", drmstr, i);
-+
-+		fd =3D open(name, O_RDWR);
-+		if (fd < 0)
-+			continue;
-+
-+		if (check_vgem(fd)) {
-+			close(fd);
-+			continue;
-+		} else {
-+			break;
-+		}
-+
-+	}
-+	return fd;
-+}
-+
-+int import_vgem_fd(int vgem_fd, int dma_buf_fd, uint32_t *handle)
-+{
-+	struct drm_prime_handle import_handle =3D { 0 };
-+	int ret;
-+
-+	import_handle.fd =3D dma_buf_fd;
-+	import_handle.flags =3D 0;
-+	import_handle.handle =3D 0;
-+
-+	ret =3D ioctl(vgem_fd, DRM_IOCTL_PRIME_FD_TO_HANDLE, &import_handle);
-+	if (ret =3D=3D 0)
-+		*handle =3D import_handle.handle;
-+	return ret;
-+}
-+
-+void close_handle(int vgem_fd, uint32_t handle)
-+{
-+	struct drm_gem_close close =3D { 0 };
-+
-+	close.handle =3D handle;
-+	ioctl(vgem_fd, DRM_IOCTL_GEM_CLOSE, &close);
-+}
-+
-+int main()
-+{
-+	int ret, vgem_fd;
-+	struct ion_buffer_info info;
-+	uint32_t handle =3D 0;
-+	struct dma_buf_sync sync =3D { 0 };
-+
-+	info.heap_type =3D ION_HEAP_TYPE_SYSTEM;
-+	info.heap_size =3D 4096;
-+	info.flag_type =3D ION_FLAG_CACHED;
-+
-+	ret =3D ion_export_buffer_fd(&info);
-+	if (ret < 0) {
-+		printf("ion buffer alloc failed\n");
-+		return -1;
-+	}
-+
-+	vgem_fd =3D open_vgem();
-+	if (vgem_fd < 0) {
-+		ret =3D vgem_fd;
-+		printf("Failed to open vgem\n");
-+		goto out_ion;
-+	}
-+
-+	ret =3D import_vgem_fd(vgem_fd, info.buffd, &handle);
-+
-+	if (ret < 0) {
-+		printf("Failed to import buffer\n");
-+		goto out_vgem;
-+	}
-+
-+	sync.flags =3D DMA_BUF_SYNC_START | DMA_BUF_SYNC_RW;
-+	ret =3D ioctl(info.buffd, DMA_BUF_IOCTL_SYNC, &sync);
-+	if (ret)
-+		printf("sync start failed %d\n", errno);
-+
-+	memset(info.buffer, 0xff, 4096);
-+
-+	sync.flags =3D DMA_BUF_SYNC_END | DMA_BUF_SYNC_RW;
-+	ret =3D ioctl(info.buffd, DMA_BUF_IOCTL_SYNC, &sync);
-+	if (ret)
-+		printf("sync end failed %d\n", errno);
-+
-+	close_handle(vgem_fd, handle);
-+	ret =3D 0;
-+
-+out_vgem:
-+	close(vgem_fd);
-+out_ion:
-+	ion_close_buffer_fd(&info);
-+	printf("done.\n");
-+	return ret;
-+}
-diff --git a/tools/testing/selftests/android/ion/ionutils.c b/tools/testi=
-ng/selftests/android/ion/ionutils.c
-index ce69c14f51fa..7d1d37c4ef6a 100644
---- a/tools/testing/selftests/android/ion/ionutils.c
-+++ b/tools/testing/selftests/android/ion/ionutils.c
-@@ -80,11 +80,6 @@ int ion_export_buffer_fd(struct ion_buffer_info *ion_i=
-nfo)
- 	heap_id =3D MAX_HEAP_COUNT + 1;
- 	for (i =3D 0; i < query.cnt; i++) {
- 		if (heap_data[i].type =3D=3D ion_info->heap_type) {
--			printf("--------------------------------------\n");
--			printf("heap type: %d\n", heap_data[i].type);
--			printf("  heap id: %d\n", heap_data[i].heap_id);
--			printf("heap name: %s\n", heap_data[i].name);
--			printf("--------------------------------------\n");
- 			heap_id =3D heap_data[i].heap_id;
- 			break;
- 		}
-@@ -204,7 +199,6 @@ void ion_close_buffer_fd(struct ion_buffer_info *ion_=
-info)
- 		/* Finally, close the client fd */
- 		if (ion_info->ionfd > 0)
- 			close(ion_info->ionfd);
--		printf("<%s>: buffer release successfully....\n", __func__);
- 	}
- }
-=20
-diff --git a/tools/testing/selftests/futex/Makefile b/tools/testing/selft=
-ests/futex/Makefile
-index a63e8453984d..8497a376ef9d 100644
---- a/tools/testing/selftests/futex/Makefile
-+++ b/tools/testing/selftests/futex/Makefile
-@@ -18,6 +18,10 @@ all:
- 	done
-=20
- override define RUN_TESTS
-+	@export KSFT_TAP_LEVEL=3D`echo 1`;
-+	@echo "TAP version 13";
-+	@echo "selftests: futex";
-+	@echo "=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D";
- 	@cd $(OUTPUT); ./run.sh
- endef
-=20
-diff --git a/tools/testing/selftests/intel_pstate/Makefile b/tools/testin=
-g/selftests/intel_pstate/Makefile
-index 5a3f7d37e912..7340fd6a9a9f 100644
---- a/tools/testing/selftests/intel_pstate/Makefile
-+++ b/tools/testing/selftests/intel_pstate/Makefile
-@@ -2,7 +2,10 @@
- CFLAGS :=3D $(CFLAGS) -Wall -D_GNU_SOURCE
- LDLIBS :=3D $(LDLIBS) -lm
-=20
--ifeq (,$(filter $(ARCH),x86))
-+uname_M :=3D $(shell uname -m 2>/dev/null || echo not)
-+ARCH ?=3D $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)=
-
-+
-+ifeq (x86,$(ARCH))
- TEST_GEN_FILES :=3D msr aperf
- endif
-=20
-diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftest=
-s/kselftest.h
-index 1a52b03962a3..1b9d8ecdebce 100644
---- a/tools/testing/selftests/kselftest.h
-+++ b/tools/testing/selftests/kselftest.h
-@@ -57,7 +57,8 @@ static inline int ksft_get_error_cnt(void) { return ksf=
-t_cnt.ksft_error; }
-=20
- static inline void ksft_print_header(void)
- {
--	printf("TAP version 13\n");
-+	if (!(getenv("KSFT_TAP_LEVEL")))
-+		printf("TAP version 13\n");
- }
-=20
- static inline void ksft_print_cnts(void)
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/=
-selftests/kselftest_harness.h
-index e81bd28bdd89..6ae3730c4ee3 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -106,6 +106,27 @@
- 		fprintf(TH_LOG_STREAM, "%s:%d:%s:" fmt "\n", \
- 			__FILE__, __LINE__, _metadata->name, ##__VA_ARGS__)
-=20
-+/**
-+ * XFAIL(statement, fmt, ...)
-+ *
-+ * @statement: statement to run after reporting XFAIL
-+ * @fmt: format string
-+ * @...: optional arguments
-+ *
-+ * This forces a "pass" after reporting a failure with an XFAIL prefix,
-+ * and runs "statement", which is usually "return" or "goto skip".
-+ */
-+#define XFAIL(statement, fmt, ...) do { \
-+	if (TH_LOG_ENABLED) { \
-+		fprintf(TH_LOG_STREAM, "[  XFAIL!  ] " fmt "\n", \
-+			##__VA_ARGS__); \
-+	} \
-+	/* TODO: find a way to pass xfail to test runner process. */ \
-+	_metadata->passed =3D 1; \
-+	_metadata->trigger =3D 0; \
-+	statement; \
-+} while (0)
-+
- /**
-  * TEST(test_name) - Defines the test function and creates the registrat=
-ion
-  * stub
-@@ -198,7 +219,7 @@
-=20
- /**
-  * FIXTURE_SETUP(fixture_name) - Prepares the setup function for the fix=
-ture.
-- * *_metadata* is included so that ASSERT_* work as a convenience
-+ * *_metadata* is included so that EXPECT_* and ASSERT_* work correctly.=
-
-  *
-  * @fixture_name: fixture name
-  *
-@@ -221,6 +242,7 @@
- 		FIXTURE_DATA(fixture_name) __attribute__((unused)) *self)
- /**
-  * FIXTURE_TEARDOWN(fixture_name)
-+ * *_metadata* is included so that EXPECT_* and ASSERT_* work correctly.=
-
-  *
-  * @fixture_name: fixture name
-  *
-@@ -253,6 +275,8 @@
-  * Defines a test that depends on a fixture (e.g., is part of a test cas=
-e).
-  * Very similar to TEST() except that *self* is the setup instance of fi=
-xture's
-  * datatype exposed for use by the implementation.
-+ *
-+ * Warning: use of ASSERT_* here will skip TEARDOWN.
-  */
- /* TODO(wad) register fixtures on dedicated test lists. */
- #define TEST_F(fixture_name, test_name) \
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib=
-=2Emk
-index 7de482a0519d..195e9d4739a9 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -20,6 +20,7 @@ all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TES=
-T_GEN_FILES)
-=20
- .ONESHELL:
- define RUN_TESTS
-+	@export KSFT_TAP_LEVEL=3D`echo 1`;
- 	@test_num=3D`echo 0`;
- 	@echo "TAP version 13";
- 	@for TEST in $(1); do				\
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testin=
-g/selftests/seccomp/seccomp_bpf.c
-index 5df609950a66..168c66d74fc5 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -2860,6 +2860,7 @@ TEST(get_metadata)
- 	int pipefd[2];
- 	char buf;
- 	struct seccomp_metadata md;
-+	long ret;
-=20
- 	ASSERT_EQ(0, pipe(pipefd));
-=20
-@@ -2893,16 +2894,26 @@ TEST(get_metadata)
- 	ASSERT_EQ(0, ptrace(PTRACE_ATTACH, pid));
- 	ASSERT_EQ(pid, waitpid(pid, NULL, 0));
-=20
-+	/* Past here must not use ASSERT or child process is never killed. */
-+
- 	md.filter_off =3D 0;
--	ASSERT_EQ(sizeof(md), ptrace(PTRACE_SECCOMP_GET_METADATA, pid, sizeof(m=
-d), &md));
-+	errno =3D 0;
-+	ret =3D ptrace(PTRACE_SECCOMP_GET_METADATA, pid, sizeof(md), &md);
-+	EXPECT_EQ(sizeof(md), ret) {
-+		if (errno =3D=3D EINVAL)
-+			XFAIL(goto skip, "Kernel does not support PTRACE_SECCOMP_GET_METADATA=
- (missing CONFIG_CHECKPOINT_RESTORE?)");
-+	}
-+
- 	EXPECT_EQ(md.flags, SECCOMP_FILTER_FLAG_LOG);
- 	EXPECT_EQ(md.filter_off, 0);
-=20
- 	md.filter_off =3D 1;
--	ASSERT_EQ(sizeof(md), ptrace(PTRACE_SECCOMP_GET_METADATA, pid, sizeof(m=
-d), &md));
-+	ret =3D ptrace(PTRACE_SECCOMP_GET_METADATA, pid, sizeof(md), &md);
-+	EXPECT_EQ(sizeof(md), ret);
- 	EXPECT_EQ(md.flags, 0);
- 	EXPECT_EQ(md.filter_off, 1);
-=20
-+skip:
- 	ASSERT_EQ(0, kill(pid, SIGKILL));
- }
-=20
-
---------------29A3F05FDA5C1A83CDDF63F1--
+QnJlYWtzIGxvbmcgbGluZXMgaW4gcmY2OS5jLCBmaXhpbmcgY2hlY2twYXRjaC5wbCB3YXJuaW5n
+czoKIldBUk5JTkc6IGxpbmUgb3ZlciA4MCBjaGFyYWN0ZXJzIgoKU2lnbmVkLW9mZi1ieTogU2lt
+b24gU2FuZHN0csO2bSA8c2ltb25AbmlrYW5vci5udT4KLS0tCiBkcml2ZXJzL3N0YWdpbmcvcGk0
+MzMvcmY2OS5jIHwgMTgyICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0t
+LS0KIDEgZmlsZSBjaGFuZ2VkLCAxMjkgaW5zZXJ0aW9ucygrKSwgNTMgZGVsZXRpb25zKC0pCgpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL3BpNDMzL3JmNjkuYyBiL2RyaXZlcnMvc3RhZ2lu
+Zy9waTQzMy9yZjY5LmMKaW5kZXggNWIwNTU0ODIzMjYzLi45MDI4MGU5YjAwNmQgMTAwNjQ0Ci0t
+LSBhL2RyaXZlcnMvc3RhZ2luZy9waTQzMy9yZjY5LmMKKysrIGIvZHJpdmVycy9zdGFnaW5nL3Bp
+NDMzL3JmNjkuYwpAQCAtOTcsNyArOTcsOCBAQCBzdGF0aWMgaW50IHJmNjlfY2xlYXJfYml0KHN0
+cnVjdCBzcGlfZGV2aWNlICpzcGksIHU4IHJlZywgdTggbWFzaykKIAlyZXR1cm4gcmY2OV93cml0
+ZV9yZWcoc3BpLCByZWcsIHRtcCk7CiB9CiAKLXN0YXRpYyBpbmxpbmUgaW50IHJmNjlfcmVhZF9t
+b2Rfd3JpdGUoc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwgdTggcmVnLCB1OCBtYXNrLCB1OCB2YWx1
+ZSkKK3N0YXRpYyBpbmxpbmUgaW50IHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3RydWN0IHNwaV9kZXZp
+Y2UgKnNwaSwgdTggcmVnLAorCQkJCSAgICAgIHU4IG1hc2ssIHU4IHZhbHVlKQogewogCXU4IHRt
+cDsKIApAQCAtMTEyLDE1ICsxMTMsMjAgQEAgaW50IHJmNjlfc2V0X21vZGUoc3RydWN0IHNwaV9k
+ZXZpY2UgKnNwaSwgZW51bSBtb2RlIG1vZGUpCiB7CiAJc3dpdGNoIChtb2RlKSB7CiAJY2FzZSB0
+cmFuc21pdDoKLQkJcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfT1BNT0RFLCBN
+QVNLX09QTU9ERV9NT0RFLCBPUE1PREVfTU9ERV9UUkFOU01JVCk7CisJCXJldHVybiByZjY5X3Jl
+YWRfbW9kX3dyaXRlKHNwaSwgUkVHX09QTU9ERSwgTUFTS19PUE1PREVfTU9ERSwKKwkJCQkJICAg
+T1BNT0RFX01PREVfVFJBTlNNSVQpOwogCWNhc2UgcmVjZWl2ZToKLQkJcmV0dXJuIHJmNjlfcmVh
+ZF9tb2Rfd3JpdGUoc3BpLCBSRUdfT1BNT0RFLCBNQVNLX09QTU9ERV9NT0RFLCBPUE1PREVfTU9E
+RV9SRUNFSVZFKTsKKwkJcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfT1BNT0RF
+LCBNQVNLX09QTU9ERV9NT0RFLAorCQkJCQkgICBPUE1PREVfTU9ERV9SRUNFSVZFKTsKIAljYXNl
+IHN5bnRoZXNpemVyOgotCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19PUE1P
+REUsIE1BU0tfT1BNT0RFX01PREUsIE9QTU9ERV9NT0RFX1NZTlRIRVNJWkVSKTsKKwkJcmV0dXJu
+IHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfT1BNT0RFLCBNQVNLX09QTU9ERV9NT0RFLAor
+CQkJCQkgICBPUE1PREVfTU9ERV9TWU5USEVTSVpFUik7CiAJY2FzZSBzdGFuZGJ5OgotCQlyZXR1
+cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19PUE1PREUsIE1BU0tfT1BNT0RFX01PREUs
+IE9QTU9ERV9NT0RFX1NUQU5EQlkpOworCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGks
+IFJFR19PUE1PREUsIE1BU0tfT1BNT0RFX01PREUsCisJCQkJCSAgIE9QTU9ERV9NT0RFX1NUQU5E
+QlkpOwogCWNhc2UgbW9kZV9zbGVlcDoKLQkJcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3Bp
+LCBSRUdfT1BNT0RFLCBNQVNLX09QTU9ERV9NT0RFLCBPUE1PREVfTU9ERV9TTEVFUCk7CisJCXJl
+dHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX09QTU9ERSwgTUFTS19PUE1PREVfTU9E
+RSwKKwkJCQkJICAgT1BNT0RFX01PREVfU0xFRVApOwogCWRlZmF1bHQ6CiAJCWRldl9kYmcoJnNw
+aS0+ZGV2LCAic2V0OiBpbGxlZ2FsIGlucHV0IHBhcmFtIik7CiAJCXJldHVybiAtRUlOVkFMOwpA
+QCAtMTMzLDE2ICsxMzksMjEgQEAgaW50IHJmNjlfc2V0X21vZGUoc3RydWN0IHNwaV9kZXZpY2Ug
+KnNwaSwgZW51bSBtb2RlIG1vZGUpCiAKIGludCByZjY5X3NldF9kYXRhX21vZGUoc3RydWN0IHNw
+aV9kZXZpY2UgKnNwaSwgdTggZGF0YV9tb2RlKQogewotCXJldHVybiByZjY5X3JlYWRfbW9kX3dy
+aXRlKHNwaSwgUkVHX0RBVEFNT0RVTCwgTUFTS19EQVRBTU9EVUxfTU9ERSwgZGF0YV9tb2RlKTsK
+KwlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19EQVRBTU9EVUwsIE1BU0tfREFU
+QU1PRFVMX01PREUsCisJCQkJICAgZGF0YV9tb2RlKTsKIH0KIAogaW50IHJmNjlfc2V0X21vZHVs
+YXRpb24oc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwgZW51bSBtb2R1bGF0aW9uIG1vZHVsYXRpb24p
+CiB7CiAJc3dpdGNoIChtb2R1bGF0aW9uKSB7CiAJY2FzZSBPT0s6Ci0JCXJldHVybiByZjY5X3Jl
+YWRfbW9kX3dyaXRlKHNwaSwgUkVHX0RBVEFNT0RVTCwgTUFTS19EQVRBTU9EVUxfTU9EVUxBVElP
+Tl9UWVBFLCBEQVRBTU9EVUxfTU9EVUxBVElPTl9UWVBFX09PSyk7CisJCXJldHVybiByZjY5X3Jl
+YWRfbW9kX3dyaXRlKHNwaSwgUkVHX0RBVEFNT0RVTCwKKwkJCQkJICAgTUFTS19EQVRBTU9EVUxf
+TU9EVUxBVElPTl9UWVBFLAorCQkJCQkgICBEQVRBTU9EVUxfTU9EVUxBVElPTl9UWVBFX09PSyk7
+CiAJY2FzZSBGU0s6Ci0JCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0RBVEFN
+T0RVTCwgTUFTS19EQVRBTU9EVUxfTU9EVUxBVElPTl9UWVBFLCBEQVRBTU9EVUxfTU9EVUxBVElP
+Tl9UWVBFX0ZTSyk7CisJCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0RBVEFN
+T0RVTCwKKwkJCQkJICAgTUFTS19EQVRBTU9EVUxfTU9EVUxBVElPTl9UWVBFLAorCQkJCQkgICBE
+QVRBTU9EVUxfTU9EVUxBVElPTl9UWVBFX0ZTSyk7CiAJZGVmYXVsdDoKIAkJZGV2X2RiZygmc3Bp
+LT5kZXYsICJzZXQ6IGlsbGVnYWwgaW5wdXQgcGFyYW0iKTsKIAkJcmV0dXJuIC1FSU5WQUw7CkBA
+IC0xNzIsMTMgKzE4MywyMSBAQCBpbnQgcmY2OV9zZXRfbW9kdWxhdGlvbl9zaGFwaW5nKHN0cnVj
+dCBzcGlfZGV2aWNlICpzcGksCiAJY2FzZSBGU0s6CiAJCXN3aXRjaCAobW9kX3NoYXBpbmcpIHsK
+IAkJY2FzZSBTSEFQSU5HX09GRjoKLQkJCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwg
+UkVHX0RBVEFNT0RVTCwgTUFTS19EQVRBTU9EVUxfTU9EVUxBVElPTl9TSEFQRSwgREFUQU1PRFVM
+X01PRFVMQVRJT05fU0hBUEVfTk9ORSk7CisJCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShz
+cGksIFJFR19EQVRBTU9EVUwsCisJCQkJCQkgICBNQVNLX0RBVEFNT0RVTF9NT0RVTEFUSU9OX1NI
+QVBFLAorCQkJCQkJICAgREFUQU1PRFVMX01PRFVMQVRJT05fU0hBUEVfTk9ORSk7CiAJCWNhc2Ug
+U0hBUElOR18xXzA6Ci0JCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19EQVRB
+TU9EVUwsIE1BU0tfREFUQU1PRFVMX01PRFVMQVRJT05fU0hBUEUsIERBVEFNT0RVTF9NT0RVTEFU
+SU9OX1NIQVBFXzFfMCk7CisJCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19E
+QVRBTU9EVUwsCisJCQkJCQkgICBNQVNLX0RBVEFNT0RVTF9NT0RVTEFUSU9OX1NIQVBFLAorCQkJ
+CQkJICAgREFUQU1PRFVMX01PRFVMQVRJT05fU0hBUEVfMV8wKTsKIAkJY2FzZSBTSEFQSU5HXzBf
+NToKLQkJCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0RBVEFNT0RVTCwgTUFT
+S19EQVRBTU9EVUxfTU9EVUxBVElPTl9TSEFQRSwgREFUQU1PRFVMX01PRFVMQVRJT05fU0hBUEVf
+MF81KTsKKwkJCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0RBVEFNT0RVTCwK
+KwkJCQkJCSAgIE1BU0tfREFUQU1PRFVMX01PRFVMQVRJT05fU0hBUEUsCisJCQkJCQkgICBEQVRB
+TU9EVUxfTU9EVUxBVElPTl9TSEFQRV8wXzUpOwogCQljYXNlIFNIQVBJTkdfMF8zOgotCQkJcmV0
+dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfREFUQU1PRFVMLCBNQVNLX0RBVEFNT0RV
+TF9NT0RVTEFUSU9OX1NIQVBFLCBEQVRBTU9EVUxfTU9EVUxBVElPTl9TSEFQRV8wXzMpOworCQkJ
+cmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfREFUQU1PRFVMLAorCQkJCQkJICAg
+TUFTS19EQVRBTU9EVUxfTU9EVUxBVElPTl9TSEFQRSwKKwkJCQkJCSAgIERBVEFNT0RVTF9NT0RV
+TEFUSU9OX1NIQVBFXzBfMyk7CiAJCWRlZmF1bHQ6CiAJCQlkZXZfZGJnKCZzcGktPmRldiwgInNl
+dDogaWxsZWdhbCBpbnB1dCBwYXJhbSIpOwogCQkJcmV0dXJuIC1FSU5WQUw7CkBAIC0xODYsMTEg
+KzIwNSwxNyBAQCBpbnQgcmY2OV9zZXRfbW9kdWxhdGlvbl9zaGFwaW5nKHN0cnVjdCBzcGlfZGV2
+aWNlICpzcGksCiAJY2FzZSBPT0s6CiAJCXN3aXRjaCAobW9kX3NoYXBpbmcpIHsKIAkJY2FzZSBT
+SEFQSU5HX09GRjoKLQkJCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0RBVEFN
+T0RVTCwgTUFTS19EQVRBTU9EVUxfTU9EVUxBVElPTl9TSEFQRSwgREFUQU1PRFVMX01PRFVMQVRJ
+T05fU0hBUEVfTk9ORSk7CisJCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19E
+QVRBTU9EVUwsCisJCQkJCQkgICBNQVNLX0RBVEFNT0RVTF9NT0RVTEFUSU9OX1NIQVBFLAorCQkJ
+CQkJICAgREFUQU1PRFVMX01PRFVMQVRJT05fU0hBUEVfTk9ORSk7CiAJCWNhc2UgU0hBUElOR19C
+UjoKLQkJCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0RBVEFNT0RVTCwgTUFT
+S19EQVRBTU9EVUxfTU9EVUxBVElPTl9TSEFQRSwgREFUQU1PRFVMX01PRFVMQVRJT05fU0hBUEVf
+QlIpOworCQkJcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfREFUQU1PRFVMLAor
+CQkJCQkJICAgTUFTS19EQVRBTU9EVUxfTU9EVUxBVElPTl9TSEFQRSwKKwkJCQkJCSAgIERBVEFN
+T0RVTF9NT0RVTEFUSU9OX1NIQVBFX0JSKTsKIAkJY2FzZSBTSEFQSU5HXzJCUjoKLQkJCXJldHVy
+biByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0RBVEFNT0RVTCwgTUFTS19EQVRBTU9EVUxf
+TU9EVUxBVElPTl9TSEFQRSwgREFUQU1PRFVMX01PRFVMQVRJT05fU0hBUEVfMkJSKTsKKwkJCXJl
+dHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0RBVEFNT0RVTCwKKwkJCQkJCSAgIE1B
+U0tfREFUQU1PRFVMX01PRFVMQVRJT05fU0hBUEUsCisJCQkJCQkgICBEQVRBTU9EVUxfTU9EVUxB
+VElPTl9TSEFQRV8yQlIpOwogCQlkZWZhdWx0OgogCQkJZGV2X2RiZygmc3BpLT5kZXYsICJzZXQ6
+IGlsbGVnYWwgaW5wdXQgcGFyYW0iKTsKIAkJCXJldHVybiAtRUlOVkFMOwpAQCAtMzQyLDcgKzM2
+Nyw4IEBAIGludCByZjY5X3NldF9vdXRwdXRfcG93ZXJfbGV2ZWwoc3RydWN0IHNwaV9kZXZpY2Ug
+KnNwaSwgdTggcG93ZXJfbGV2ZWwpCiAJfQogCiAJLy8gd3JpdGUgdmFsdWUKLQlyZXR1cm4gcmY2
+OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19QQUxFVkVMLCBNQVNLX1BBTEVWRUxfT1VUUFVUX1BP
+V0VSLCBwb3dlcl9sZXZlbCk7CisJcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdf
+UEFMRVZFTCwgTUFTS19QQUxFVkVMX09VVFBVVF9QT1dFUiwKKwkJCQkgICBwb3dlcl9sZXZlbCk7
+CiB9CiAKIGludCByZjY5X3NldF9wYV9yYW1wKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksIGVudW0g
+cGFfcmFtcCBwYV9yYW1wKQpAQCAtMzg2LDcgKzQxMiw4IEBAIGludCByZjY5X3NldF9wYV9yYW1w
+KHN0cnVjdCBzcGlfZGV2aWNlICpzcGksIGVudW0gcGFfcmFtcCBwYV9yYW1wKQogCX0KIH0KIAot
+aW50IHJmNjlfc2V0X2FudGVubmFfaW1wZWRhbmNlKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksIGVu
+dW0gYW50ZW5uYV9pbXBlZGFuY2UgYW50ZW5uYV9pbXBlZGFuY2UpCitpbnQgcmY2OV9zZXRfYW50
+ZW5uYV9pbXBlZGFuY2Uoc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwKKwkJCSAgICAgICBlbnVtIGFu
+dGVubmFfaW1wZWRhbmNlIGFudGVubmFfaW1wZWRhbmNlKQogewogCXN3aXRjaCAoYW50ZW5uYV9p
+bXBlZGFuY2UpIHsKIAljYXNlIGZpZnR5X29obToKQEAgLTQwMywxOSArNDMwLDI2IEBAIGludCBy
+ZjY5X3NldF9sbmFfZ2FpbihzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpLCBlbnVtIGxuYV9nYWluIGxu
+YV9nYWluKQogewogCXN3aXRjaCAobG5hX2dhaW4pIHsKIAljYXNlIGF1dG9tYXRpYzoKLQkJcmV0
+dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfTE5BLCBNQVNLX0xOQV9HQUlOLCBMTkFf
+R0FJTl9BVVRPKTsKKwkJcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfTE5BLCBN
+QVNLX0xOQV9HQUlOLAorCQkJCQkgICBMTkFfR0FJTl9BVVRPKTsKIAljYXNlIG1heDoKLQkJcmV0
+dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfTE5BLCBNQVNLX0xOQV9HQUlOLCBMTkFf
+R0FJTl9NQVgpOworCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19MTkEsIE1B
+U0tfTE5BX0dBSU4sCisJCQkJCSAgIExOQV9HQUlOX01BWCk7CiAJY2FzZSBtYXhfbWludXNfNjoK
+LQkJcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfTE5BLCBNQVNLX0xOQV9HQUlO
+LCBMTkFfR0FJTl9NQVhfTUlOVVNfNik7CisJCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNw
+aSwgUkVHX0xOQSwgTUFTS19MTkFfR0FJTiwKKwkJCQkJICAgTE5BX0dBSU5fTUFYX01JTlVTXzYp
+OwogCWNhc2UgbWF4X21pbnVzXzEyOgotCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGks
+IFJFR19MTkEsIE1BU0tfTE5BX0dBSU4sIExOQV9HQUlOX01BWF9NSU5VU18xMik7CisJCXJldHVy
+biByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0xOQSwgTUFTS19MTkFfR0FJTiwKKwkJCQkJ
+ICAgTE5BX0dBSU5fTUFYX01JTlVTXzEyKTsKIAljYXNlIG1heF9taW51c18yNDoKLQkJcmV0dXJu
+IHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfTE5BLCBNQVNLX0xOQV9HQUlOLCBMTkFfR0FJ
+Tl9NQVhfTUlOVVNfMjQpOworCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19M
+TkEsIE1BU0tfTE5BX0dBSU4sCisJCQkJCSAgIExOQV9HQUlOX01BWF9NSU5VU18yNCk7CiAJY2Fz
+ZSBtYXhfbWludXNfMzY6Ci0JCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0xO
+QSwgTUFTS19MTkFfR0FJTiwgTE5BX0dBSU5fTUFYX01JTlVTXzM2KTsKKwkJcmV0dXJuIHJmNjlf
+cmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfTE5BLCBNQVNLX0xOQV9HQUlOLAorCQkJCQkgICBMTkFf
+R0FJTl9NQVhfTUlOVVNfMzYpOwogCWNhc2UgbWF4X21pbnVzXzQ4OgotCQlyZXR1cm4gcmY2OV9y
+ZWFkX21vZF93cml0ZShzcGksIFJFR19MTkEsIE1BU0tfTE5BX0dBSU4sIExOQV9HQUlOX01BWF9N
+SU5VU180OCk7CisJCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX0xOQSwgTUFT
+S19MTkFfR0FJTiwKKwkJCQkJICAgTE5BX0dBSU5fTUFYX01JTlVTXzQ4KTsKIAlkZWZhdWx0Ogog
+CQlkZXZfZGJnKCZzcGktPmRldiwgInNldDogaWxsZWdhbCBpbnB1dCBwYXJhbSIpOwogCQlyZXR1
+cm4gLUVJTlZBTDsKQEAgLTQ2NiwzNSArNTAwLDU1IEBAIHN0YXRpYyBpbnQgcmY2OV9zZXRfYmFu
+ZHdpZHRoX2ludGVybihzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpLCB1OCByZWcsCiAJcmV0dXJuIHJm
+Njlfd3JpdGVfcmVnKHNwaSwgcmVnLCBiYW5kd2lkdGgpOwogfQogCi1pbnQgcmY2OV9zZXRfYmFu
+ZHdpZHRoKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksIGVudW0gbWFudGlzc2UgbWFudGlzc2UsIHU4
+IGV4cG9uZW50KQoraW50IHJmNjlfc2V0X2JhbmR3aWR0aChzdHJ1Y3Qgc3BpX2RldmljZSAqc3Bp
+LCBlbnVtIG1hbnRpc3NlIG1hbnRpc3NlLAorCQkgICAgICAgdTggZXhwb25lbnQpCiB7CiAJcmV0
+dXJuIHJmNjlfc2V0X2JhbmR3aWR0aF9pbnRlcm4oc3BpLCBSRUdfUlhCVywgbWFudGlzc2UsIGV4
+cG9uZW50KTsKIH0KIAotaW50IHJmNjlfc2V0X2JhbmR3aWR0aF9kdXJpbmdfYWZjKHN0cnVjdCBz
+cGlfZGV2aWNlICpzcGksIGVudW0gbWFudGlzc2UgbWFudGlzc2UsIHU4IGV4cG9uZW50KQoraW50
+IHJmNjlfc2V0X2JhbmR3aWR0aF9kdXJpbmdfYWZjKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksCisJ
+CQkJICBlbnVtIG1hbnRpc3NlIG1hbnRpc3NlLAorCQkJCSAgdTggZXhwb25lbnQpCiB7CiAJcmV0
+dXJuIHJmNjlfc2V0X2JhbmR3aWR0aF9pbnRlcm4oc3BpLCBSRUdfQUZDQlcsIG1hbnRpc3NlLCBl
+eHBvbmVudCk7CiB9CiAKLWludCByZjY5X3NldF9vb2tfdGhyZXNob2xkX2RlYyhzdHJ1Y3Qgc3Bp
+X2RldmljZSAqc3BpLCBlbnVtIHRocmVzaG9sZF9kZWNyZW1lbnQgdGhyZXNob2xkX2RlY3JlbWVu
+dCkKK2ludCByZjY5X3NldF9vb2tfdGhyZXNob2xkX2RlYyhzdHJ1Y3Qgc3BpX2RldmljZSAqc3Bp
+LAorCQkJICAgICAgIGVudW0gdGhyZXNob2xkX2RlY3JlbWVudCB0aHJlc2hvbGRfZGVjcmVtZW50
+KQogewogCXN3aXRjaCAodGhyZXNob2xkX2RlY3JlbWVudCkgewogCWNhc2UgZGVjX2V2ZXJ5OHRo
+OgotCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19PT0tQRUFLLCBNQVNLX09P
+S1BFQUtfVEhSRVNERUMsIE9PS1BFQUtfVEhSRVNIREVDX0VWRVJZXzhUSCk7CisJCXJldHVybiBy
+ZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX09PS1BFQUssCisJCQkJCSAgIE1BU0tfT09LUEVB
+S19USFJFU0RFQywKKwkJCQkJICAgT09LUEVBS19USFJFU0hERUNfRVZFUllfOFRIKTsKIAljYXNl
+IGRlY19ldmVyeTR0aDoKLQkJcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfT09L
+UEVBSywgTUFTS19PT0tQRUFLX1RIUkVTREVDLCBPT0tQRUFLX1RIUkVTSERFQ19FVkVSWV80VEgp
+OworCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19PT0tQRUFLLAorCQkJCQkg
+ICBNQVNLX09PS1BFQUtfVEhSRVNERUMsCisJCQkJCSAgIE9PS1BFQUtfVEhSRVNIREVDX0VWRVJZ
+XzRUSCk7CiAJY2FzZSBkZWNfZXZlcnkybmQ6Ci0JCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRl
+KHNwaSwgUkVHX09PS1BFQUssIE1BU0tfT09LUEVBS19USFJFU0RFQywgT09LUEVBS19USFJFU0hE
+RUNfRVZFUllfMk5EKTsKKwkJcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfT09L
+UEVBSywKKwkJCQkJICAgTUFTS19PT0tQRUFLX1RIUkVTREVDLAorCQkJCQkgICBPT0tQRUFLX1RI
+UkVTSERFQ19FVkVSWV8yTkQpOwogCWNhc2UgZGVjX29uY2U6Ci0JCXJldHVybiByZjY5X3JlYWRf
+bW9kX3dyaXRlKHNwaSwgUkVHX09PS1BFQUssIE1BU0tfT09LUEVBS19USFJFU0RFQywgT09LUEVB
+S19USFJFU0hERUNfT05DRSk7CisJCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVH
+X09PS1BFQUssCisJCQkJCSAgIE1BU0tfT09LUEVBS19USFJFU0RFQywKKwkJCQkJICAgT09LUEVB
+S19USFJFU0hERUNfT05DRSk7CiAJY2FzZSBkZWNfdHdpY2U6Ci0JCXJldHVybiByZjY5X3JlYWRf
+bW9kX3dyaXRlKHNwaSwgUkVHX09PS1BFQUssIE1BU0tfT09LUEVBS19USFJFU0RFQywgT09LUEVB
+S19USFJFU0hERUNfVFdJQ0UpOworCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJF
+R19PT0tQRUFLLAorCQkJCQkgICBNQVNLX09PS1BFQUtfVEhSRVNERUMsCisJCQkJCSAgIE9PS1BF
+QUtfVEhSRVNIREVDX1RXSUNFKTsKIAljYXNlIGRlY180dGltZXM6Ci0JCXJldHVybiByZjY5X3Jl
+YWRfbW9kX3dyaXRlKHNwaSwgUkVHX09PS1BFQUssIE1BU0tfT09LUEVBS19USFJFU0RFQywgT09L
+UEVBS19USFJFU0hERUNfNF9USU1FUyk7CisJCXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNw
+aSwgUkVHX09PS1BFQUssCisJCQkJCSAgIE1BU0tfT09LUEVBS19USFJFU0RFQywKKwkJCQkJICAg
+T09LUEVBS19USFJFU0hERUNfNF9USU1FUyk7CiAJY2FzZSBkZWNfOHRpbWVzOgotCQlyZXR1cm4g
+cmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19PT0tQRUFLLCBNQVNLX09PS1BFQUtfVEhSRVNE
+RUMsIE9PS1BFQUtfVEhSRVNIREVDXzhfVElNRVMpOworCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93
+cml0ZShzcGksIFJFR19PT0tQRUFLLAorCQkJCQkgICBNQVNLX09PS1BFQUtfVEhSRVNERUMsCisJ
+CQkJCSAgIE9PS1BFQUtfVEhSRVNIREVDXzhfVElNRVMpOwogCWNhc2UgZGVjXzE2dGltZXM6Ci0J
+CXJldHVybiByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX09PS1BFQUssIE1BU0tfT09LUEVB
+S19USFJFU0RFQywgT09LUEVBS19USFJFU0hERUNfMTZfVElNRVMpOworCQlyZXR1cm4gcmY2OV9y
+ZWFkX21vZF93cml0ZShzcGksIFJFR19PT0tQRUFLLAorCQkJCQkgICBNQVNLX09PS1BFQUtfVEhS
+RVNERUMsCisJCQkJCSAgIE9PS1BFQUtfVEhSRVNIREVDXzE2X1RJTUVTKTsKIAlkZWZhdWx0Ogog
+CQlkZXZfZGJnKCZzcGktPmRldiwgInNldDogaWxsZWdhbCBpbnB1dCBwYXJhbSIpOwogCQlyZXR1
+cm4gLUVJTlZBTDsKQEAgLTYyMCwxMyArNjc0LDE2IEBAIGludCByZjY5X2Rpc2FibGVfc3luYyhz
+dHJ1Y3Qgc3BpX2RldmljZSAqc3BpKQogCXJldHVybiByZjY5X2NsZWFyX2JpdChzcGksIFJFR19T
+WU5DX0NPTkZJRywgTUFTS19TWU5DX0NPTkZJR19TWU5DX09OKTsKIH0KIAotaW50IHJmNjlfc2V0
+X2ZpZm9fZmlsbF9jb25kaXRpb24oc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwgZW51bSBmaWZvX2Zp
+bGxfY29uZGl0aW9uIGZpZm9fZmlsbF9jb25kaXRpb24pCitpbnQgcmY2OV9zZXRfZmlmb19maWxs
+X2NvbmRpdGlvbihzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpLAorCQkJCSBlbnVtIGZpZm9fZmlsbF9j
+b25kaXRpb24gZmlmb19maWxsX2NvbmRpdGlvbikKIHsKIAlzd2l0Y2ggKGZpZm9fZmlsbF9jb25k
+aXRpb24pIHsKIAljYXNlIGFsd2F5czoKLQkJcmV0dXJuIHJmNjlfc2V0X2JpdChzcGksIFJFR19T
+WU5DX0NPTkZJRywgTUFTS19TWU5DX0NPTkZJR19GSUZPX0ZJTExfQ09ORElUSU9OKTsKKwkJcmV0
+dXJuIHJmNjlfc2V0X2JpdChzcGksIFJFR19TWU5DX0NPTkZJRywKKwkJCQkgICAgTUFTS19TWU5D
+X0NPTkZJR19GSUZPX0ZJTExfQ09ORElUSU9OKTsKIAljYXNlIGFmdGVyX3N5bmNfaW50ZXJydXB0
+OgotCQlyZXR1cm4gcmY2OV9jbGVhcl9iaXQoc3BpLCBSRUdfU1lOQ19DT05GSUcsIE1BU0tfU1lO
+Q19DT05GSUdfRklGT19GSUxMX0NPTkRJVElPTik7CisJCXJldHVybiByZjY5X2NsZWFyX2JpdChz
+cGksIFJFR19TWU5DX0NPTkZJRywKKwkJCQkgICAgICBNQVNLX1NZTkNfQ09ORklHX0ZJRk9fRklM
+TF9DT05ESVRJT04pOwogCWRlZmF1bHQ6CiAJCWRldl9kYmcoJnNwaS0+ZGV2LCAic2V0OiBpbGxl
+Z2FsIGlucHV0IHBhcmFtIik7CiAJCXJldHVybiAtRUlOVkFMOwpAQCAtNjQyLDcgKzY5OSw5IEBA
+IGludCByZjY5X3NldF9zeW5jX3NpemUoc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwgdTggc3luY19z
+aXplKQogCX0KIAogCS8vIHdyaXRlIHZhbHVlCi0JcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUo
+c3BpLCBSRUdfU1lOQ19DT05GSUcsIE1BU0tfU1lOQ19DT05GSUdfU1lOQ19TSVpFLCAoc3luY19z
+aXplIDw8IDMpKTsKKwlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19TWU5DX0NP
+TkZJRywKKwkJCQkgICBNQVNLX1NZTkNfQ09ORklHX1NZTkNfU0laRSwKKwkJCQkgICAoc3luY19z
+aXplIDw8IDMpKTsKIH0KIAogaW50IHJmNjlfc2V0X3N5bmNfdmFsdWVzKHN0cnVjdCBzcGlfZGV2
+aWNlICpzcGksIHU4IHN5bmNfdmFsdWVzWzhdKQpAQCAtNjYxLDEzICs3MjAsMTYgQEAgaW50IHJm
+Njlfc2V0X3N5bmNfdmFsdWVzKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksIHU4IHN5bmNfdmFsdWVz
+WzhdKQogCXJldHVybiByZXR2YWw7CiB9CiAKLWludCByZjY5X3NldF9wYWNrZXRfZm9ybWF0KHN0
+cnVjdCBzcGlfZGV2aWNlICpzcGksIGVudW0gcGFja2V0X2Zvcm1hdCBwYWNrZXRfZm9ybWF0KQor
+aW50IHJmNjlfc2V0X3BhY2tldF9mb3JtYXQoc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwKKwkJCSAg
+IGVudW0gcGFja2V0X2Zvcm1hdCBwYWNrZXRfZm9ybWF0KQogewogCXN3aXRjaCAocGFja2V0X2Zv
+cm1hdCkgewogCWNhc2UgcGFja2V0X2xlbmd0aF92YXI6Ci0JCXJldHVybiByZjY5X3NldF9iaXQo
+c3BpLCBSRUdfUEFDS0VUQ09ORklHMSwgTUFTS19QQUNLRVRDT05GSUcxX1BBS0VUX0ZPUk1BVF9W
+QVJJQUJMRSk7CisJCXJldHVybiByZjY5X3NldF9iaXQoc3BpLCBSRUdfUEFDS0VUQ09ORklHMSwK
+KwkJCQkgICAgTUFTS19QQUNLRVRDT05GSUcxX1BBS0VUX0ZPUk1BVF9WQVJJQUJMRSk7CiAJY2Fz
+ZSBwYWNrZXRfbGVuZ3RoX2ZpeDoKLQkJcmV0dXJuIHJmNjlfY2xlYXJfYml0KHNwaSwgUkVHX1BB
+Q0tFVENPTkZJRzEsIE1BU0tfUEFDS0VUQ09ORklHMV9QQUtFVF9GT1JNQVRfVkFSSUFCTEUpOwor
+CQlyZXR1cm4gcmY2OV9jbGVhcl9iaXQoc3BpLCBSRUdfUEFDS0VUQ09ORklHMSwKKwkJCQkgICAg
+ICBNQVNLX1BBQ0tFVENPTkZJRzFfUEFLRVRfRk9STUFUX1ZBUklBQkxFKTsKIAlkZWZhdWx0Ogog
+CQlkZXZfZGJnKCZzcGktPmRldiwgInNldDogaWxsZWdhbCBpbnB1dCBwYXJhbSIpOwogCQlyZXR1
+cm4gLUVJTlZBTDsKQEAgLTY4NCwxNSArNzQ2LDIyIEBAIGludCByZjY5X2Rpc2FibGVfY3JjKHN0
+cnVjdCBzcGlfZGV2aWNlICpzcGkpCiAJcmV0dXJuIHJmNjlfY2xlYXJfYml0KHNwaSwgUkVHX1BB
+Q0tFVENPTkZJRzEsIE1BU0tfUEFDS0VUQ09ORklHMV9DUkNfT04pOwogfQogCi1pbnQgcmY2OV9z
+ZXRfYWRkcmVzc19maWx0ZXJpbmcoc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwgZW51bSBhZGRyZXNz
+X2ZpbHRlcmluZyBhZGRyZXNzX2ZpbHRlcmluZykKK2ludCByZjY5X3NldF9hZGRyZXNzX2ZpbHRl
+cmluZyhzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpLAorCQkJICAgICAgIGVudW0gYWRkcmVzc19maWx0
+ZXJpbmcgYWRkcmVzc19maWx0ZXJpbmcpCiB7CiAJc3dpdGNoIChhZGRyZXNzX2ZpbHRlcmluZykg
+ewogCWNhc2UgZmlsdGVyaW5nX29mZjoKLQkJcmV0dXJuIHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3Bp
+LCBSRUdfUEFDS0VUQ09ORklHMSwgTUFTS19QQUNLRVRDT05GSUcxX0FERFJFU1NGSUxURVJJTkcs
+IFBBQ0tFVENPTkZJRzFfQUREUkVTU0ZJTFRFUklOR19PRkYpOworCQlyZXR1cm4gcmY2OV9yZWFk
+X21vZF93cml0ZShzcGksIFJFR19QQUNLRVRDT05GSUcxLAorCQkJCQkgICBNQVNLX1BBQ0tFVENP
+TkZJRzFfQUREUkVTU0ZJTFRFUklORywKKwkJCQkJICAgUEFDS0VUQ09ORklHMV9BRERSRVNTRklM
+VEVSSU5HX09GRik7CiAJY2FzZSBub2RlX2FkZHJlc3M6Ci0JCXJldHVybiByZjY5X3JlYWRfbW9k
+X3dyaXRlKHNwaSwgUkVHX1BBQ0tFVENPTkZJRzEsIE1BU0tfUEFDS0VUQ09ORklHMV9BRERSRVNT
+RklMVEVSSU5HLCBQQUNLRVRDT05GSUcxX0FERFJFU1NGSUxURVJJTkdfTk9ERSk7CisJCXJldHVy
+biByZjY5X3JlYWRfbW9kX3dyaXRlKHNwaSwgUkVHX1BBQ0tFVENPTkZJRzEsCisJCQkJCSAgIE1B
+U0tfUEFDS0VUQ09ORklHMV9BRERSRVNTRklMVEVSSU5HLAorCQkJCQkgICBQQUNLRVRDT05GSUcx
+X0FERFJFU1NGSUxURVJJTkdfTk9ERSk7CiAJY2FzZSBub2RlX29yX2Jyb2FkY2FzdF9hZGRyZXNz
+OgotCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShzcGksIFJFR19QQUNLRVRDT05GSUcxLCBN
+QVNLX1BBQ0tFVENPTkZJRzFfQUREUkVTU0ZJTFRFUklORywgUEFDS0VUQ09ORklHMV9BRERSRVNT
+RklMVEVSSU5HX05PREVCUk9BRENBU1QpOworCQlyZXR1cm4gcmY2OV9yZWFkX21vZF93cml0ZShz
+cGksIFJFR19QQUNLRVRDT05GSUcxLAorCQkJCQkgICBNQVNLX1BBQ0tFVENPTkZJRzFfQUREUkVT
+U0ZJTFRFUklORywKKwkJCQkJICAgUEFDS0VUQ09ORklHMV9BRERSRVNTRklMVEVSSU5HX05PREVC
+Uk9BRENBU1QpOwogCWRlZmF1bHQ6CiAJCWRldl9kYmcoJnNwaS0+ZGV2LCAic2V0OiBpbGxlZ2Fs
+IGlucHV0IHBhcmFtIik7CiAJCXJldHVybiAtRUlOVkFMOwpAQCAtNzE0LDEzICs3ODMsMTYgQEAg
+aW50IHJmNjlfc2V0X2Jyb2FkY2FzdF9hZGRyZXNzKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksIHU4
+IGJyb2FkY2FzdF9hZGRyZXNzKQogCXJldHVybiByZjY5X3dyaXRlX3JlZyhzcGksIFJFR19CUk9B
+RENBU1RBRFJTLCBicm9hZGNhc3RfYWRkcmVzcyk7CiB9CiAKLWludCByZjY5X3NldF90eF9zdGFy
+dF9jb25kaXRpb24oc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwgZW51bSB0eF9zdGFydF9jb25kaXRp
+b24gdHhfc3RhcnRfY29uZGl0aW9uKQoraW50IHJmNjlfc2V0X3R4X3N0YXJ0X2NvbmRpdGlvbihz
+dHJ1Y3Qgc3BpX2RldmljZSAqc3BpLAorCQkJCWVudW0gdHhfc3RhcnRfY29uZGl0aW9uIHR4X3N0
+YXJ0X2NvbmRpdGlvbikKIHsKIAlzd2l0Y2ggKHR4X3N0YXJ0X2NvbmRpdGlvbikgewogCWNhc2Ug
+Zmlmb19sZXZlbDoKLQkJcmV0dXJuIHJmNjlfY2xlYXJfYml0KHNwaSwgUkVHX0ZJRk9fVEhSRVNI
+LCBNQVNLX0ZJRk9fVEhSRVNIX1RYU1RBUlQpOworCQlyZXR1cm4gcmY2OV9jbGVhcl9iaXQoc3Bp
+LCBSRUdfRklGT19USFJFU0gsCisJCQkJICAgICAgTUFTS19GSUZPX1RIUkVTSF9UWFNUQVJUKTsK
+IAljYXNlIGZpZm9fbm90X2VtcHR5OgotCQlyZXR1cm4gcmY2OV9zZXRfYml0KHNwaSwgUkVHX0ZJ
+Rk9fVEhSRVNILCBNQVNLX0ZJRk9fVEhSRVNIX1RYU1RBUlQpOworCQlyZXR1cm4gcmY2OV9zZXRf
+Yml0KHNwaSwgUkVHX0ZJRk9fVEhSRVNILAorCQkJCSAgICBNQVNLX0ZJRk9fVEhSRVNIX1RYU1RB
+UlQpOwogCWRlZmF1bHQ6CiAJCWRldl9kYmcoJnNwaS0+ZGV2LCAic2V0OiBpbGxlZ2FsIGlucHV0
+IHBhcmFtIik7CiAJCXJldHVybiAtRUlOVkFMOwpAQCAtNzM4LDcgKzgxMCw5IEBAIGludCByZjY5
+X3NldF9maWZvX3RocmVzaG9sZChzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpLCB1OCB0aHJlc2hvbGQp
+CiAJfQogCiAJLyogd3JpdGUgdmFsdWUgKi8KLQlyZXR2YWwgPSByZjY5X3JlYWRfbW9kX3dyaXRl
+KHNwaSwgUkVHX0ZJRk9fVEhSRVNILCBNQVNLX0ZJRk9fVEhSRVNIX1ZBTFVFLCB0aHJlc2hvbGQp
+OworCXJldHZhbCA9IHJmNjlfcmVhZF9tb2Rfd3JpdGUoc3BpLCBSRUdfRklGT19USFJFU0gsCisJ
+CQkJICAgICBNQVNLX0ZJRk9fVEhSRVNIX1ZBTFVFLAorCQkJCSAgICAgdGhyZXNob2xkKTsKIAlp
+ZiAocmV0dmFsKQogCQlyZXR1cm4gcmV0dmFsOwogCkBAIC03NzUsNyArODQ5LDggQEAgaW50IHJm
+NjlfcmVhZF9maWZvKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksIHU4ICpidWZmZXIsIHVuc2lnbmVk
+IGludCBzaXplKQogCWludCByZXR2YWw7CiAKIAlpZiAoc2l6ZSA+IEZJRk9fU0laRSkgewotCQlk
+ZXZfZGJnKCZzcGktPmRldiwgInJlYWQgZmlmbzogcGFzc2VkIGluIGJ1ZmZlciBiaWdnZXIgdGhl
+biBpbnRlcm5hbCBidWZmZXJcbiIpOworCQlkZXZfZGJnKCZzcGktPmRldiwKKwkJCSJyZWFkIGZp
+Zm86IHBhc3NlZCBpbiBidWZmZXIgYmlnZ2VyIHRoZW4gaW50ZXJuYWwgYnVmZmVyXG4iKTsKIAkJ
+cmV0dXJuIC1FTVNHU0laRTsKIAl9CiAKQEAgLTgwNyw3ICs4ODIsOCBAQCBpbnQgcmY2OV93cml0
+ZV9maWZvKHN0cnVjdCBzcGlfZGV2aWNlICpzcGksIHU4ICpidWZmZXIsIHVuc2lnbmVkIGludCBz
+aXplKQogCXU4IGxvY2FsX2J1ZmZlcltGSUZPX1NJWkUgKyAxXTsKIAogCWlmIChzaXplID4gRklG
+T19TSVpFKSB7Ci0JCWRldl9kYmcoJnNwaS0+ZGV2LCAicmVhZCBmaWZvOiBwYXNzZWQgaW4gYnVm
+ZmVyIGJpZ2dlciB0aGVuIGludGVybmFsIGJ1ZmZlclxuIik7CisJCWRldl9kYmcoJnNwaS0+ZGV2
+LAorCQkJInJlYWQgZmlmbzogcGFzc2VkIGluIGJ1ZmZlciBiaWdnZXIgdGhlbiBpbnRlcm5hbCBi
+dWZmZXJcbiIpOwogCQlyZXR1cm4gLUVNU0dTSVpFOwogCX0KIAotLSAKMi4xMS4wCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxp
+c3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJp
+dmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
