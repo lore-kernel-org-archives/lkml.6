@@ -1,172 +1,105 @@
 Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
-X-Google-Smtp-Source: AIpwx49xCGCJ/vefTfvST2oMOaGA4FbhEF3xKTHCZUZ/69qNIuGWYNrQAXCq+WORLmeH/HL6dj8N
-ARC-Seal: i=1; a=rsa-sha256; t=1522924310; cv=none;
+X-Google-Smtp-Source: AIpwx49FC4q+cSJNhRXtFoFkIITOaT+Twb2dnl5UBFEI3/KeIYmuw+ReW1yk8mzFmCWsk1cDcJ+G
+ARC-Seal: i=1; a=rsa-sha256; t=1523009225; cv=none;
         d=google.com; s=arc-20160816;
-        b=p3p7389u69gRJyK6qd78JjyM17DROyR3cOmNJwqezhyGeU69dX5peEDf1gGEVPy5iu
-         hB6xN5GiX8VYqFkHhW0yJXWXKGuLAQe1LpH2LbxYLS4ZZttfUSFRHY9Nsf6ojcHQe0Uo
-         JULhDIVaJM2H8e05i1W5EjprNATYgcPCCz1TPf/jcTFAfGJaoti44VruVOJiNZLy67FC
-         3ZSDTFL/hnjp4LQe8vY93Rr/U7VCd9iEB6epdzSwnUmXEy722dCCPIzrWB2EoS6AVt4Q
-         MtJEGKnVwrt+pncrb7cki0/hZ7PXRgULmCxyohcZhZhPJKSpXPIF2DTWvEfdcBVHOiCe
-         tQMQ==
+        b=AzESGj5GuGbTvl/UG8jX6U+ZafSRpehsPmP8m+1JbuY8nDbgCF9nmXtMnzJ4TuZQ4I
+         Bnews+HUok26lfW0fN3QKeuxnSou/fQrfXTqYbNXTQSDmwMnHorfDNJgXB4HzZGLhJBB
+         6W6l9M3+mVpfXemjJoGrXzu8wthQI3m7GRoIoJ5K5xC+cBXNiXcZLpSxbkiV2Nm5lo+y
+         n2z1ISr07mutSqOlRJyq3nxrZHdaKcgSd3gFW758sfTyEOqVXk5AcZH5dT7uBaXLzCDb
+         XCTIpJp37JjDCy3H6USLtYn1pzzRAGUA/0kErSw0+7pH884c16DuDoSJEV0ossABGF/x
+         SLCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:cc:from:references:to:subject
+         :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=VBZgm9Cfd/Jxy4wJ6aJz6fRZiNI/gTYK7NcdSqisIdc=;
-        b=czdQb0zj1vVPkAYJSi3+CPkpdAvYvGuk2/jXxjiUh0Ny8fnYHuCdcK8BGrqpJRiNbR
-         HwO9nHusbbhxLW71wCTaaK318Fy/CaExPZrieVDgyT2S0OtingrNOhKFNYlGZnuyHwyV
-         XAroxo1b3b1OrgniNW03n1w1HNnBpxdH2dhFL13VVp01+0tBfK21+tUWWLKnnnKko2xn
-         jAfqwr2chLpDly+jAru5NtabeWyVxrwgAIDEd76d5a4cOdhzwCY8qGOabnqWQjqywswT
-         XQAc/KghPNUUMcmOtyGMk4duTr74Og9tJpoH8LzuSIgFhmCWjAKzzl0/9TRzxnP+gR+0
-         WCOw==
+        bh=DeG+IoBF5H0ZNXWDO9YHG2UT5t08If2xkjQyXOy+6lo=;
+        b=yQweCrAa5AsE797FCCAumzDhBwTNYLk4q9F3hZx8k75Cb3/Yo5v/k3FkBCuuMXYI2z
+         P9weekzg2HlvxvKZBW6A9kOJXN+UT+5kGjBON/AGdeg763QMtP2rb3hMzBbLb36eOHxV
+         Xx0TvKQR3VsSZ2SCXAFhBmD/Ky0zr2WCVD/R0NG2OGtra2fJBZjojdfjaOoLHmB9kZgp
+         69VHCTf5rPS0Pr1MAd8otTEnie4YsXri9ADxytLjb+aAG54335UDmcd2P/9W1FX27CVc
+         CRR/pI0tHbEUZxPTnuoJ9rOaygkMuuLGF4o27OMPHZ4WTHy6RrbchyoAVJdEQ8jZPJKK
+         LUAA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
 Subject: Re: KASAN: user-memory-access Write in n_tty_set_termios
 To: gregkh@linuxfoundation.org, jslaby@suse.com
-References: <001a113ed31a122ced0568cc6be1@google.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Cc: syzbot <syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com>,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Message-ID: <db45a090-593d-23d2-e6b2-ede5b308f02f@I-love.SAKURA.ne.jp>
-Date: Thu, 5 Apr 2018 19:31:34 +0900
+References: <001a113ed31a122ced0568cc6be1@google.com>
+ <db45a090-593d-23d2-e6b2-ede5b308f02f@I-love.SAKURA.ne.jp>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <35d649ce-0c22-f839-aa4d-19733bf31a9c@I-love.SAKURA.ne.jp>
+Date: Fri, 6 Apr 2018 19:06:47 +0900
 User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <001a113ed31a122ced0568cc6be1@google.com>
+In-Reply-To: <db45a090-593d-23d2-e6b2-ede5b308f02f@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596563981043488445?=
-X-GMAIL-MSGID: =?utf-8?q?1596901881682269226?=
+X-GMAIL-MSGID: =?utf-8?q?1596990920952013607?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello.
+On 2018/04/05 19:31, Tetsuo Handa wrote:
+> Hello.
+> 
+> I manually simplified the reproducer. Since the bug is timing dependent,
+> this reproducer might fail to reproducer the bug. Anyway, I guess that
+> there is a race condition between
+> 
+> 	vfree(ldata);
+> 	tty->disc_data = NULL;
+> 
+> at n_tty_close() by something (ioctl(TIOCVHANGUP) ?) and
+> 
+> 	struct n_tty_data *ldata = tty->disc_data;
+> 
+> 	if (!old || (old->c_lflag ^ tty->termios.c_lflag) & (ICANON | EXTPROC)) {
+> 		bitmap_zero(ldata->read_flags, N_TTY_BUF_SIZE);
+> 
+> at n_tty_set_termios() by ioctl(TCSETS), for the report says that ldata == NULL
+> ("Write of size 512 at addr 0000000000001060").
 
-I manually simplified the reproducer. Since the bug is timing dependent,
-this reproducer might fail to reproducer the bug. Anyway, I guess that
-there is a race condition between
+I confirmed that ioctl(TIOCVHANGUP) versus ioctl(TCSETS) can race.
+We need some lock for protecting tty->disc_data.
 
-	vfree(ldata);
-	tty->disc_data = NULL;
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -1861,6 +1861,7 @@ static void n_tty_close(struct tty_struct *tty)
 
-at n_tty_close() by something (ioctl(TIOCVHANGUP) ?) and
+        vfree(ldata);
+        tty->disc_data = NULL;
++       WARN_ON(1);
+ }
 
-	struct n_tty_data *ldata = tty->disc_data;
+ /**
 
-	if (!old || (old->c_lflag ^ tty->termios.c_lflag) & (ICANON | EXTPROC)) {
-		bitmap_zero(ldata->read_flags, N_TTY_BUF_SIZE);
+ioctl(TIOCVHANGUP):
+[   75.176171] RIP: 0010:n_tty_close+0x34/0x40   /* drivers/tty/n_tty.c:1863 */
+[   75.176193] Call Trace:
+[   75.176200]  tty_ldisc_kill+0x15/0x30         /* drivers/tty/tty_ldisc.c:641 */
+[   75.176204]  tty_ldisc_hangup+0xfa/0x1c0      /* drivers/tty/tty_ldisc.c:758 */
+[   75.176209]  __tty_hangup.part.26+0x16b/0x280 /* drivers/tty/tty_io.c:623 */
+[   75.176216]  tty_ioctl+0x61f/0x950            /* drivers/tty/tty_io.c:2585 */
+[   75.176244]  do_vfs_ioctl+0xa7/0x6d0          /* fs/ioctl.c:686 */
+[   75.176257]  ksys_ioctl+0x6b/0x80             /* fs/ioctl.c:701 */
+[   75.176266]  SyS_ioctl+0x5/0x10               /* fs/ioctl.c:706 */
+[   75.176268]  do_syscall_64+0x6e/0x270         /* arch/x86/entry/common.c:287 */
 
-at n_tty_set_termios() by ioctl(TCSETS), for the report says that ldata == NULL
-("Write of size 512 at addr 0000000000001060").
-
-----------------------------------------
-#include <fcntl.h>
-#include <linux/futex.h>
-#include <pthread.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <sys/syscall.h>
-#include <unistd.h>
-#include <termios.h>
-#define TIOCGPTPEER     _IO('T', 0x41) 
-
-static const int zero = 0;
-static int master_fd = EOF;
-static int slave_fd = EOF;
-static void execute_call(int call)
-{
-	struct termios term;
-	char buf[128];
-	int ptyno = 0;
-	switch (call) {
-	case 0:
-		master_fd = open("/dev/ptmx", O_RDONLY);
-		ioctl(master_fd, TIOCSPTLCK, &zero);
-		if (ioctl(master_fd, TIOCGPTN, &ptyno))
-			break;
-		sprintf(buf, "/dev/pts/%d", ptyno);
-		slave_fd = open(buf, O_RDONLY, 0);
-		usleep(5 * 1000);
-		ioctl(slave_fd, TIOCVHANGUP, 0);
-		break;
-	case 5:
-		memset(&term, 0, sizeof(term));
-		ioctl(master_fd, TCSETS, &term);
-		break;
-	case 6:
-		ioctl(master_fd, TIOCGPTPEER, 0);
-		break;
-	}
-}
-
-struct thread_t {
-	int created, running, call;
-	pthread_t th;
-};
-
-static struct thread_t threads[16];
-static int running;
-static int collide;
-
-static void* thr(void* arg)
-{
-	struct thread_t* th = (struct thread_t*)arg;
-	for (;;) {
-		while (!__atomic_load_n(&th->running, __ATOMIC_ACQUIRE))
-			syscall(SYS_futex, &th->running, FUTEX_WAIT, 0, 0);
-		execute_call(th->call);
-		__atomic_fetch_sub(&running, 1, __ATOMIC_RELAXED);
-		__atomic_store_n(&th->running, 0, __ATOMIC_RELEASE);
-		syscall(SYS_futex, &th->running, FUTEX_WAKE);
-	}
-	return 0;
-}
-
-static void execute(int num_calls)
-{
-	int call, thread;
-	running = 0;
-	for (call = 0; call < num_calls; call++) {
-		for (thread = 0; thread < sizeof(threads) / sizeof(threads[0]); thread++) {
-			struct thread_t* th = &threads[thread];
-			if (!th->created) {
-				th->created = 1;
-				pthread_attr_t attr;
-				pthread_attr_init(&attr);
-				pthread_attr_setstacksize(&attr, 128 << 10);
-				pthread_create(&th->th, &attr, thr, th);
-			}
-			if (!__atomic_load_n(&th->running, __ATOMIC_ACQUIRE)) {
-				th->call = call;
-				__atomic_fetch_add(&running, 1, __ATOMIC_RELAXED);
-				__atomic_store_n(&th->running, 1, __ATOMIC_RELEASE);
-				syscall(SYS_futex, &th->running, FUTEX_WAKE);
-				if (collide && call % 2)
-					break;
-				struct timespec ts;
-				ts.tv_sec = 0;
-				ts.tv_nsec = 20 * 1000 * 1000;
-				syscall(SYS_futex, &th->running, FUTEX_WAIT, 1, &ts);
-				if (running)
-					usleep((call == num_calls - 1) ? 10000 : 1000);
-				break;
-			}
-		}
-	}
-}
-
-int main(int argc, char *argv[])
-{
-	while (1) {
-		execute(7);
-		collide = 1;
-		execute(7);
-	}
-	return 0;
-}
-----------------------------------------
+ioctl(TCSETS):
+[   75.783367] BUG: unable to handle kernel paging request at 0000000000001060
+[   75.934024] RIP: 0010:n_tty_set_termios+0x17c/0x2a0 /* drivers/tty/n_tty.c:1766 */
+[   75.950549] Call Trace:
+[   75.952733]  tty_set_termios+0x18a/0x200            /* drivers/tty/tty_ioctl.c:342 */
+[   75.954915]  set_termios+0x14a/0x250                /* drivers/tty/tty_ioctl.c:414 */
+[   75.956823]  tty_mode_ioctl+0x42e/0x4f0             /* drivers/tty/tty_ioctl.c:749 */
+[   75.958632]  tty_ioctl+0x128/0x950                  /* drivers/tty/tty_io.c:2655 */
+[   75.968883]  do_vfs_ioctl+0xa7/0x6d0                /* fs/ioctl.c:686 */
+[   75.972892]  ksys_ioctl+0x6b/0x80                   /* fs/ioctl.c:701 */
+[   75.977031]  SyS_ioctl+0x5/0x10                     /* fs/ioctl.c:706 */
+[   75.977036]  do_syscall_64+0x6e/0x270               /* arch/x86/entry/common.c:287 */
