@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+C/g1NzFM/LPfXSDS3wcDvatVDjXQNLxGKddmH+s1R5YJ/fn5AHie835nJidTkYPn8u51C
-ARC-Seal: i=1; a=rsa-sha256; t=1523021723; cv=none;
+X-Google-Smtp-Source: AIpwx48h7BIABilH+s4hi3EzQAOIeW2+FmstuGMie6R7aZ1n2hqEttV0WlGayG25Fm/1fVKjRtQQ
+ARC-Seal: i=1; a=rsa-sha256; t=1523021721; cv=none;
         d=google.com; s=arc-20160816;
-        b=V/A+cEondAtZ90Ptlvyj4MsBR8FiVpkDPv7uV5aPDl4dAZ8nPDXM2Ydv/Cw6BpcXrB
-         Fg08n2k+Ap7hyynSv+PW9bE+X8ZDX4kCVhI59ZLfaqtIsCoXDHlmSHMDqnG5rgBjZp9D
-         UnZu8zHALeNdGxSzP1tZQDvukrx9zoG+Nd8+iPmjbiczMHdhaw5wX5VRPm8m5PzPURDw
-         PNhHspQ9HrYh2b/IyLIbF6Z2tmSkI4wNu4zwfT6QoNCDtLr7x4HANMsvvhcVe2FBYB/8
-         9X3LcKCjpYXm2miwrSdEuyFMxTzZLCtFqBt1QVYTdsLim8CHYitIQhMuFYvkqHvpcqP3
-         83bA==
+        b=oUHlN/UhCdrlR1xLa9wBTlTsHDUEhDBj/RK6dRta3zElHYdQFgo/7lV98NO5POYw8B
+         NMAiFxQO/uQ1E2hfn1idrVy/refHpb04xg5bASkfiod2xtmZzdGd34S0gM7FP9+nGJsj
+         9LXKODVl/3mC6Zur5+aL1+qvcuByy0sR82xiybSviUboFy9oibb5Qa5TO7B4cMEya+5U
+         AOADUcchK4p4BQRm9ETi0CC8z91bQZ8eCgD9Xnz/MkkzVxg5Yo/AZAVip5r112XoVOa7
+         g2zjm0STnGVHGhehVWryZtFhBBY+jvwWzjbdeNVrT7U/qsMTmPdEF+VgnNBYsncnAzv/
+         CSjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=eMFVMwGkm42c4ibdpRtJOCreDVNP5hAIjRh1PFnsRgA=;
-        b=LBd5DKOJLS5Ox6XHryqtOBNZDGbqU7xUsFts1a9UbwrUuMB/79WM1Imqkj6BnL+OWZ
-         emfdbmf5VbmQtTQT20PXqlcQz8Vonnwl7Em2YxlqyvM7+JtJCm9FqCXnJcZL2EKKIAyk
-         0dhbZRSfrK4XXv4epRnpvcA3ECTCygXIdwWOSKHWUToVzhxIHkVMjvSrzuEOcuG071FP
-         VBiL4XtvOdIlJCMHF6ZOoYOWzy5pLQUXygrCY0t8V15VxX6gz2YCtKG8rwg11+ONdx5v
-         qaPaoJT4NLpZChLLjY8EXPMW4qkghtNLPaW6v4V/EuZAHmgYGEVLPe5xga7Gw5MJLQGY
-         Jx9Q==
+        bh=y0OrqT6sb6zyh62v8Bw1rL0Mj4wnWbmO8/1oSx0FY04=;
+        b=Ra5pifV3bpYKmJTmaqlb6tOUjPpAR7bnRZGOhXzEbEHueUsNJgH3G+NI3XKh/u8mSt
+         sLrjlfGIKFYR6xVdq3Td2CUNgcpk+qsDHOpLapvaeGV3BQLvpMvou4H3ftMUVm8EvgEo
+         Yf8MBQnr++3TRNGI9rW/tRelrDt9+CqUrQg1kW245N0R4egRVHYKfX/RvFLGyc4KdpPs
+         /353dxYka1HQwuOMN5lnbhwIh3pG7pnjYRD/bChjXOW7elyl2qbLw0gey8RpoEsXhPqP
+         R8jQUyYr1JyVQTjBjZcdwHsrZ4lULj+7veaSzkuO8DoQ3NsnOGB/W7e82DejSiw5QZeF
+         Z1Zg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+0ab777c27d2bb7588f73@syzkaller.appspotmail.com,
-	Mathias Krause <minipli@googlemail.com>,
-	Florian Westphal <fw@strlen.de>,
-	Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.9 035/102] xfrm_user: uncoditionally validate esn replay attribute struct
-Date: Fri,  6 Apr 2018 15:23:16 +0200
-Message-Id: <20180406084336.548646527@linuxfoundation.org>
+	Nick Desaulniers <nick.desaulniers@gmail.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.9 034/102] mm/vmscan.c: fix unsequenced modification and access warning
+Date: Fri,  6 Apr 2018 15:23:15 +0200
+Message-Id: <20180406084336.435349772@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003589769714766?=
-X-GMAIL-MSGID: =?utf-8?q?1597004027392679606?=
+X-GMAIL-THRID: =?utf-8?q?1597004024515605999?=
+X-GMAIL-MSGID: =?utf-8?q?1597004024515605999?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,59 +52,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
 
-commit d97ca5d714a5334aecadadf696875da40f1fbf3e upstream.
+commit f2f43e566a02a3bdde0a65e6a2e88d707c212a29 upstream.
 
-The sanity test added in ecd7918745234 can be bypassed, validation
-only occurs if XFRM_STATE_ESN flag is set, but rest of code doesn't care
-and just checks if the attribute itself is present.
+Clang and its -Wunsequenced emits a warning
 
-So always validate.  Alternative is to reject if we have the attribute
-without the flag but that would change abi.
+  mm/vmscan.c:2961:25: error: unsequenced modification and access to 'gfp_mask' [-Wunsequenced]
+                  .gfp_mask = (gfp_mask = current_gfp_context(gfp_mask)),
+                                        ^
 
-Reported-by: syzbot+0ab777c27d2bb7588f73@syzkaller.appspotmail.com
-Cc: Mathias Krause <minipli@googlemail.com>
-Fixes: ecd7918745234 ("xfrm_user: ensure user supplied esn replay window is valid")
-Fixes: d8647b79c3b7e ("xfrm: Add user interface for esn and big anti-replay windows")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+While it is not clear to me whether the initialization code violates the
+specification (6.7.8 par 19 (ISO/IEC 9899) looks like it disagrees) the
+code is quite confusing and worth cleaning up anyway.  Fix this by
+reusing sc.gfp_mask rather than the updated input gfp_mask parameter.
+
+Link: http://lkml.kernel.org/r/20170510154030.10720-1-nick.desaulniers@gmail.com
+Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[natechancellor: Adjust context due to abscence of 7dea19f9ee63]
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/xfrm/xfrm_user.c |   21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+ mm/vmscan.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -121,22 +121,17 @@ static inline int verify_replay(struct x
- 	struct nlattr *rt = attrs[XFRMA_REPLAY_ESN_VAL];
- 	struct xfrm_replay_state_esn *rs;
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2966,7 +2966,7 @@ unsigned long try_to_free_pages(struct z
+ 	unsigned long nr_reclaimed;
+ 	struct scan_control sc = {
+ 		.nr_to_reclaim = SWAP_CLUSTER_MAX,
+-		.gfp_mask = (gfp_mask = memalloc_noio_flags(gfp_mask)),
++		.gfp_mask = memalloc_noio_flags(gfp_mask),
+ 		.reclaim_idx = gfp_zone(gfp_mask),
+ 		.order = order,
+ 		.nodemask = nodemask,
+@@ -2981,12 +2981,12 @@ unsigned long try_to_free_pages(struct z
+ 	 * 1 is returned so that the page allocator does not OOM kill at this
+ 	 * point.
+ 	 */
+-	if (throttle_direct_reclaim(gfp_mask, zonelist, nodemask))
++	if (throttle_direct_reclaim(sc.gfp_mask, zonelist, nodemask))
+ 		return 1;
  
--	if (p->flags & XFRM_STATE_ESN) {
--		if (!rt)
--			return -EINVAL;
--
--		rs = nla_data(rt);
-+	if (!rt)
-+		return (p->flags & XFRM_STATE_ESN) ? -EINVAL : 0;
+ 	trace_mm_vmscan_direct_reclaim_begin(order,
+ 				sc.may_writepage,
+-				gfp_mask,
++				sc.gfp_mask,
+ 				sc.reclaim_idx);
  
--		if (rs->bmp_len > XFRMA_REPLAY_ESN_MAX / sizeof(rs->bmp[0]) / 8)
--			return -EINVAL;
-+	rs = nla_data(rt);
+ 	nr_reclaimed = do_try_to_free_pages(zonelist, &sc);
+@@ -3749,16 +3749,15 @@ static int __node_reclaim(struct pglist_
+ 	const unsigned long nr_pages = 1 << order;
+ 	struct task_struct *p = current;
+ 	struct reclaim_state reclaim_state;
+-	int classzone_idx = gfp_zone(gfp_mask);
+ 	struct scan_control sc = {
+ 		.nr_to_reclaim = max(nr_pages, SWAP_CLUSTER_MAX),
+-		.gfp_mask = (gfp_mask = memalloc_noio_flags(gfp_mask)),
++		.gfp_mask = memalloc_noio_flags(gfp_mask),
+ 		.order = order,
+ 		.priority = NODE_RECLAIM_PRIORITY,
+ 		.may_writepage = !!(node_reclaim_mode & RECLAIM_WRITE),
+ 		.may_unmap = !!(node_reclaim_mode & RECLAIM_UNMAP),
+ 		.may_swap = 1,
+-		.reclaim_idx = classzone_idx,
++		.reclaim_idx = gfp_zone(gfp_mask),
+ 	};
  
--		if (nla_len(rt) < xfrm_replay_state_esn_len(rs) &&
--		    nla_len(rt) != sizeof(*rs))
--			return -EINVAL;
--	}
-+	if (rs->bmp_len > XFRMA_REPLAY_ESN_MAX / sizeof(rs->bmp[0]) / 8)
-+		return -EINVAL;
+ 	cond_resched();
+@@ -3768,7 +3767,7 @@ static int __node_reclaim(struct pglist_
+ 	 * and RECLAIM_UNMAP.
+ 	 */
+ 	p->flags |= PF_MEMALLOC | PF_SWAPWRITE;
+-	lockdep_set_current_reclaim_state(gfp_mask);
++	lockdep_set_current_reclaim_state(sc.gfp_mask);
+ 	reclaim_state.reclaimed_slab = 0;
+ 	p->reclaim_state = &reclaim_state;
  
--	if (!rt)
--		return 0;
-+	if (nla_len(rt) < xfrm_replay_state_esn_len(rs) &&
-+	    nla_len(rt) != sizeof(*rs))
-+		return -EINVAL;
- 
- 	/* As only ESP and AH support ESN feature. */
- 	if ((p->id.proto != IPPROTO_ESP) && (p->id.proto != IPPROTO_AH))
