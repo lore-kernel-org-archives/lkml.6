@@ -1,95 +1,173 @@
-Return-Path: <drdeimosnn@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524819284; cv=none;
+Return-Path: <a13xp0p0v88@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523024574; cv=none;
         d=google.com; s=arc-20160816;
-        b=Qx3xPJtlPkpx+SR+QY2jyoibJBD9yLLIfJEUxXwpIAWFvT/FLxjsbFVkbxT1Magyki
-         iGQU8NlAFmYYrxR3Mp4tohl2Yd5GEeBRQkeKTTSHSfVzKEVUvXXG2DM3petA4FIMFGFh
-         JLi7YZupiKlcjbdjkL9UTC+Kt2iekUSn9PKHgxauyhKACs7VbMx92zhOiZNG6sgXm+zA
-         2fhBppqwcnfRc74zYTezf4qIlLd3TcLxtYR8Ngm01qUvOyTaWvyfAdOkE8MUY87V+Lfb
-         Wn0khBWu0OVziRTGQiHQkyC6ySwV1TGzq4AkxcGgFR9A/EAjLy6xaBtt1y6ShbYQbIm0
-         idWw==
+        b=DwciUbC07GblIoy4RJXLtKB1ZgQHGRq0bzSAP3hws6YB+Z0gvGaI8LG5ZzuOnEbkCF
+         3sBZTuDwVPr9BilzREqFhlDJIKE3sI+mo1yxEJMM6YEUN4MInQnbV1lHQw0Ys5VGV885
+         eVMAcbD/SXTzGnFvRcnU579IK2ox3DCGfNDllAguUW6jh5WcTWoyHssRy/LDBfY0MIOP
+         eyD551AreWZ8JyWBVTN9JKm/zz+2cpX5saYYB8QMJxjd0zNA+OIX58S2Th57jHd2Bp1J
+         IkvB1U3NxHjXsliqzF5PfCBoYl77phMx9N3ZWu5IV+3K7YpvLeKwaI2bNVOvvfgkC6Lm
+         Oa/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=I+n2XkDc9kxbo4yrjb6/9t50CHeI+tOzZM+13hd9gbA=;
-        b=kC+S+dOwaOc0DRr4alQdsna8adNzoGf/RKwdp6uCTMClMvgzEu+EpEgnKRw2uc2UzV
-         ra0tmoRkHfTb8xzExy9+ZI5bW8uWux/2C8/ECoj2y8tS2HD1J+PUDE+ubMBlWYbWDOas
-         +8jaRxGRyNKcFPuBzEXt7iDJzVm3tz3czqj7uyLxWXxG/xAdSAEQYvZs7fPl/TazqTBA
-         OsJBaTd1GCOrOiB8dnoNvgr753zVUzxu2pA5mvbcEopP6x2DKgWjGxNXO1mKY9lqrGLv
-         gijChO3SkKwLR9PnqJWbaMXD+RBej6IIg9Y3nN68rnf67Z8mvRrpy+Tzf8wkNNkJKBIv
-         M8iw==
+        h=message-id:date:subject:to:from:arc-authentication-results;
+        bh=YgsuI70+8iNQcgm4CvG+KiYnwp1aQa3aNbnf6rQqrlQ=;
+        b=Aporh1fANtnmVsx2IY56U3ZJV9CbZLPoYc2SszbbGP4/YooPXjVWL8no1nDLXy71by
+         kRIUoIxHMd4QSD8lWSZXVgpXWaHLtEsbUZZ8uAqwzIlQGU1UuLgoe58ADwpNUi4pqaE/
+         dFxU3W/vwJmlEs5scnX8CyKz0VBeU5JThvRALp4275bn2BoH90Dgp8/rE6e4MqjsCNlL
+         DIfp8hxnGTHhvuoVuOlScqLnjU7PbpnR64IfBwCaADFElCho2qspeTaxOet++6XavEI/
+         8OIcv+8b4FCP9MN9wG2Fd0YoMPBaIvH6SjI/IaPCDz2qep/+t/XlymCupTyzFGvr/qQ4
+         yHXg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=dl7Q4H2I;
-       spf=pass (google.com: domain of drdeimosnn@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=drdeimosnn@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=dl7Q4H2I;
-       spf=pass (google.com: domain of drdeimosnn@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=drdeimosnn@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZohuTfRuHCVaW5uuZ0ZGGzVH1p6JUVz7xiEeyP++3ooCq3rmJbiu5N4rxsaC9ntpTQC9yl7tnDqwD/qLj7fsGc=
-MIME-Version: 1.0
-In-Reply-To: <20180427073004.GA12770@kroah.com>
-References: <d5e6a41a-2fb2-7f7c-5b8e-65dba4b8c356@infradead.org>
- <CA+MChEqqReWRVDELTqzOQe73sv_bCVtk5TQ9n=FqYjJwndDN7w@mail.gmail.com> <20180427073004.GA12770@kroah.com>
-From: =?UTF-8?B?0JzQuNGF0LDQuNC7INCd0L7RgdC+0LI=?= <drdeimosnn@gmail.com>
-Date: Fri, 27 Apr 2018 11:54:42 +0300
-Message-ID: <CA+MChEowy7zXtfU2Z9f2KgWegDELPVX-T_rAfEY7NquUHCVsqw@mail.gmail.com>
-Subject: Re: stable 4.16.5 hmm build error
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, LKML <linux-kernel@vger.kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
+X-Google-Smtp-Source: AIpwx4/5ZKPBr8FSEhIMIHRI8VKKJXtJJrspSL877cAZAjttAtwMnleJ1G6Gov3Iq6iLKOz7L5df4Q==
+From: Alexander Popov <alex.popov@linux.com>
+To: kernel-hardening@lists.openwall.com,
+	Kees Cook <keescook@chromium.org>,
+	PaX Team <pageexec@freemail.hu>,
+	Brad Spengler <spender@grsecurity.net>,
+	Ingo Molnar <mingo@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Tycho Andersen <tycho@tycho.ws>,
+	Laura Abbott <labbott@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Richard Sandiford <richard.sandiford@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <a.p.zijlstra@chello.nl>,
+	"Dmitry V . Levin" <ldv@altlinux.org>,
+	Emese Revfy <re.emese@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Thomas Garnier <thgarnie@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Josef Bacik <jbacik@fb.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Ding Tianhong <dingtianhong@huawei.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dominik Brodowski <linux@dominikbrodowski.net>,
+	Juergen Gross <jgross@suse.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Mathias Krause <minipli@googlemail.com>,
+	Vikas Shivappa <vikas.shivappa@linux.intel.com>,
+	Kyle Huey <me@kylehuey.com>,
+	Dmitry Safonov <dsafonov@virtuozzo.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Florian Weimer <fweimer@redhat.com>,
+	Boris Lukashev <blukashev@sempervictus.com>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	alex.popov@linux.com
+Subject: [PATCH v11 0/6] Introduce the STACKLEAK feature and a test for it
+Date: Fri,  6 Apr 2018 17:22:20 +0300
+Message-Id: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598847241183995427?=
-X-GMAIL-MSGID: =?utf-8?q?1598888905683696237?=
+X-GMAIL-THRID: =?utf-8?q?1597007016485998750?=
+X-GMAIL-MSGID: =?utf-8?q?1597007016485998750?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
->What .config is creating this?  I have not seen any kbuild reports of
-this in the past.
+This is the 11th version of the patch series introducing STACKLEAK to the
+mainline kernel. The 9th version raised a fervent discussion[0].
+The assembly code introduced by that version irritated the reviewers.
 
-.config - https://bugzilla.kernel.org/attachment.cgi?id=3D275579
-src - https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.16.5.tar.xz
+I've found the way to bypass the obstacles[1] of the C implementation.
+So I dare come again. Let me ask you to look at this code without
+preconception.
 
-2018-04-27 10:30 GMT+03:00 Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
-> On Fri, Apr 27, 2018 at 02:19:24AM +0300, =D0=9C=D0=B8=D1=85=D0=B0=D0=B8=
-=D0=BB =D0=9D=D0=BE=D1=81=D0=BE=D0=B2 wrote:
->> Oh. Yes. Tag v4.16.5 without commit
->> 9d8a463a7016e9e5578a561588a18acef139919c.
->> It's in v4.17-rc1/2.
->> Thank you.
->
-> That patch does not apply to the stable trees.  I'm also confused by the
-> lack of "real" git commit ids that are being referred to here, that
-> commit refers to one that is not valid.
->
->> 2018-04-27 0:52 GMT+03:00 Randy Dunlap <rdunlap@infradead.org>:
->>
->> > https://bugzilla.kernel.org/show_bug.cgi?id=3D199515
->> >
->> > kernel/fork.o: In function `__mmdrop':
->> > /kernel/build_kernel/linux-4.16.4/kernel/fork.c:600: undefined referen=
-ce
->> > to `hmm_mm_destroy'
->
-> What .config is creating this?  I have not seen any kbuild reports of
-> this in the past.
->
->> >
->> > "It is also reproduced in linux-4.16.5"
->> >
->> >
->> > There have been a few attempts to fix this build error.  The kernel
->> > mainline
->> > repo seems to have it fixed, but it looks to me like Arnd's latest pat=
-ch
->> > (9d8a463a7016e: "mm/hmm: fix header file if/else/endif maze, again")
->> > was mis-merged to 4.16.5 stable.
->> >
->> > Please take a look.  Do you already have a fixup for this?
->
-> thanks,
->
-> greg k-h
+Motivation
+==========
+
+STACKLEAK (initially developed by PaX Team):
+
+ 1. reduces the information that can be revealed through kernel stack leak bugs.
+    The idea of erasing the thread stack at the end of syscalls is similar to
+    CONFIG_PAGE_POISONING and memzero_explicit() in kernel crypto, which all
+    comply with FDP_RIP.2 (Full Residual Information Protection) of the
+    Common Criteria standard.
+
+ 2. blocks some uninitialized stack variable attacks (e.g. CVE-2017-17712,
+    CVE-2010-2963). That kind of bugs should be killed by improving C compilers
+    in future, which might take a long time.
+
+ 3. blocks stack depth overflow caused by alloca (aka Stack Clash attack).
+    That is orthogonal to the mainline kernel VLA cleanup and protects
+    un-upstreamed code.
+
+Performance impact
+==================
+
+Hardware: Intel Core i7-4770, 16 GB RAM
+
+Test #1: building the Linux kernel on a single core
+	0.91% slowdown
+
+Test #2: hackbench -s 4096 -l 2000 -g 15 -f 25 -P
+	4.2% slowdown
+
+So the STACKLEAK description in Kconfig includes:
+"The tradeoff is the performance impact: on a single CPU system kernel
+compilation sees a 1% slowdown, other systems and workloads may vary and you are
+advised to test this feature on your expected workload before deploying it".
+
+Links
+=====
+
+[0] http://www.openwall.com/lists/kernel-hardening/2018/03/03/7
+[1] http://www.openwall.com/lists/kernel-hardening/2018/03/21/4
+
+
+Alexander Popov (6):
+  gcc-plugins: Clean up the cgraph_create_edge* macros
+  x86/entry: Add STACKLEAK erasing the kernel stack at the end of
+    syscalls
+  gcc-plugins: Add STACKLEAK plugin for tracking the kernel stack
+  lkdtm: Add a test for STACKLEAK
+  fs/proc: Show STACKLEAK metrics in the /proc file system
+  doc: self-protection: Add information about STACKLEAK feature
+
+ Documentation/security/self-protection.rst |  23 +-
+ Documentation/x86/x86_64/mm.txt            |   2 +
+ arch/Kconfig                               |  53 ++++
+ arch/x86/Kconfig                           |   1 +
+ arch/x86/entry/Makefile                    |   3 +
+ arch/x86/entry/calling.h                   |  14 +
+ arch/x86/entry/entry_32.S                  |   7 +
+ arch/x86/entry/entry_64.S                  |   3 +
+ arch/x86/entry/entry_64_compat.S           |   5 +
+ arch/x86/entry/erase.c                     |  58 ++++
+ arch/x86/include/asm/processor.h           |   7 +
+ arch/x86/kernel/dumpstack.c                |  19 ++
+ arch/x86/kernel/process_32.c               |   8 +
+ arch/x86/kernel/process_64.c               |   8 +
+ drivers/misc/Makefile                      |   3 +
+ drivers/misc/lkdtm.h                       |   4 +
+ drivers/misc/lkdtm_core.c                  |   2 +
+ drivers/misc/lkdtm_stackleak.c             | 141 +++++++++
+ fs/proc/base.c                             |  18 ++
+ include/linux/compiler.h                   |   4 +
+ mm/util.c                                  |  33 ++
+ scripts/Makefile.gcc-plugins               |   3 +
+ scripts/gcc-plugins/gcc-common.h           |  26 +-
+ scripts/gcc-plugins/stackleak_plugin.c     | 470 +++++++++++++++++++++++++++++
+ 24 files changed, 896 insertions(+), 19 deletions(-)
+ create mode 100644 arch/x86/entry/erase.c
+ create mode 100644 drivers/misc/lkdtm_stackleak.c
+ create mode 100644 scripts/gcc-plugins/stackleak_plugin.c
+
+-- 
+2.7.4
