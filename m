@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752079AbeDFU6F (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 16:58:05 -0400
-Received: from mga05.intel.com ([192.55.52.43]:63493 "EHLO mga05.intel.com"
+        id S1752286AbeDFU6P (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 16:58:15 -0400
+Received: from mga05.intel.com ([192.55.52.43]:63503 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752012AbeDFU6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 16:58:03 -0400
+        id S1752185AbeDFU6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 16:58:11 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,416,1517904000";
-   d="scan'208";a="35005426"
-Subject: [PATCH 03/11] x86/mm: introduce "default" kernel PTE mask
+   d="scan'208";a="214554371"
+Subject: [PATCH 08/11] x86/mm: do not forbid _PAGE_RW before init for __ro_after_init
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
-        keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
-        namit@vmware.com
+        keescook@chromium.org, aarcange@redhat.com, luto@kernel.org,
+        torvalds@linux-foundation.org, hughd@google.com, jgross@suse.com,
+        x86@kernel.org, namit@vmware.com
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 06 Apr 2018 13:55:06 -0700
+Date: Fri, 06 Apr 2018 13:55:14 -0700
 References: <20180406205501.24A1A4E7@viggo.jf.intel.com>
 In-Reply-To: <20180406205501.24A1A4E7@viggo.jf.intel.com>
-Message-Id: <20180406205506.030DB6B6@viggo.jf.intel.com>
+Message-Id: <20180406205514.8D898241@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,138 +29,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-The __PAGE_KERNEL_* page permissions are "raw".  They contain bits
-that may or may not be supported on the current processor.  They need
-to be filtered by a mask (currently __supported_pte_mask) to turn them
-into a value that we can actually set in a PTE.
+__ro_after_init data gets stuck in the .rodata section.  That's normally
+fine because the kernel itself manages the R/W properties.
 
-These __PAGE_KERNEL_* values all contain _PAGE_GLOBAL.  But, with PTI,
-we want to be able to support _PAGE_GLOBAL (have the bit set in
-__supported_pte_mask) but not have it appear in any of these masks by
-default.
+But, if we run __change_page_attr() on an area which is __ro_after_init,
+the .rodata checks will trigger and force the area to be immediately
+read-only, even if it is early-ish in boot.  This caused problems when
+trying to clear the _PAGE_GLOBAL bit for these area in the PTI code:
+it cleared _PAGE_GLOBAL like I asked, but also took it up on itself
+to clear _PAGE_RW.  The kernel then oopses the next time it wrote to
+a __ro_after_init data structure.
 
-This patch creates a new mask, __default_kernel_pte_mask, and applies
-it when creating all of the PAGE_KERNEL_* masks.  This makes
-PAGE_KERNEL_* safe to use anywhere (they only contain supported bits).
-It also ensures that PAGE_KERNEL_* contains _PAGE_GLOBAL on PTI=n
-kernels but clears _PAGE_GLOBAL when PTI=y.
-
-We also make __default_kernel_pte_mask a non-GPL exported symbol
-because there are plenty of driver-available interfaces that take
-PAGE_KERNEL_* permissions.
+To fix this, add the kernel_set_to_readonly check, just like we have
+for kernel text, just a few lines below in this function.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Kees Cook <keescook@chromium.org>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@google.com>
 Cc: Hugh Dickins <hughd@google.com>
 Cc: Juergen Gross <jgross@suse.com>
 Cc: x86@kernel.org
 Cc: Nadav Amit <namit@vmware.com>
 ---
 
- b/arch/x86/include/asm/pgtable_types.h |   27 +++++++++++++++------------
- b/arch/x86/mm/init.c                   |    6 ++++++
- b/arch/x86/mm/init_32.c                |    8 +++++++-
- b/arch/x86/mm/init_64.c                |    5 +++++
- 4 files changed, 33 insertions(+), 13 deletions(-)
+ b/arch/x86/mm/pageattr.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff -puN arch/x86/include/asm/pgtable_types.h~KERN-pgprot-default arch/x86/include/asm/pgtable_types.h
---- a/arch/x86/include/asm/pgtable_types.h~KERN-pgprot-default	2018-04-06 10:47:54.732796127 -0700
-+++ b/arch/x86/include/asm/pgtable_types.h	2018-04-06 10:47:54.741796127 -0700
-@@ -196,19 +196,21 @@ enum page_cache_mode {
- #define __PAGE_KERNEL_NOENC	(__PAGE_KERNEL)
- #define __PAGE_KERNEL_NOENC_WP	(__PAGE_KERNEL_WP)
+diff -puN arch/x86/mm/pageattr.c~check-kernel_set_to_readonly arch/x86/mm/pageattr.c
+--- a/arch/x86/mm/pageattr.c~check-kernel_set_to_readonly	2018-04-06 10:47:57.711796120 -0700
++++ b/arch/x86/mm/pageattr.c	2018-04-06 10:47:57.714796120 -0700
+@@ -298,9 +298,11 @@ static inline pgprot_t static_protection
  
--#define PAGE_KERNEL		__pgprot(__PAGE_KERNEL | _PAGE_ENC)
--#define PAGE_KERNEL_NOENC	__pgprot(__PAGE_KERNEL)
--#define PAGE_KERNEL_RO		__pgprot(__PAGE_KERNEL_RO | _PAGE_ENC)
--#define PAGE_KERNEL_EXEC	__pgprot(__PAGE_KERNEL_EXEC | _PAGE_ENC)
--#define PAGE_KERNEL_EXEC_NOENC	__pgprot(__PAGE_KERNEL_EXEC)
--#define PAGE_KERNEL_RX		__pgprot(__PAGE_KERNEL_RX | _PAGE_ENC)
--#define PAGE_KERNEL_NOCACHE	__pgprot(__PAGE_KERNEL_NOCACHE | _PAGE_ENC)
--#define PAGE_KERNEL_LARGE	__pgprot(__PAGE_KERNEL_LARGE | _PAGE_ENC)
--#define PAGE_KERNEL_LARGE_EXEC	__pgprot(__PAGE_KERNEL_LARGE_EXEC | _PAGE_ENC)
--#define PAGE_KERNEL_VVAR	__pgprot(__PAGE_KERNEL_VVAR | _PAGE_ENC)
-+#define default_pgprot(x)	__pgprot((x) & __default_kernel_pte_mask)
+ 	/*
+ 	 * The .rodata section needs to be read-only. Using the pfn
+-	 * catches all aliases.
++	 * catches all aliases.  This also includes __ro_after_init,
++	 * so do not enforce until kernel_set_to_readonly is true.
+ 	 */
+-	if (within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
++	if (kernel_set_to_readonly &&
++	    within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
+ 		   __pa_symbol(__end_rodata) >> PAGE_SHIFT))
+ 		pgprot_val(forbidden) |= _PAGE_RW;
  
--#define PAGE_KERNEL_IO		__pgprot(__PAGE_KERNEL_IO)
--#define PAGE_KERNEL_IO_NOCACHE	__pgprot(__PAGE_KERNEL_IO_NOCACHE)
-+#define PAGE_KERNEL		default_pgprot(__PAGE_KERNEL | _PAGE_ENC)
-+#define PAGE_KERNEL_NOENC	default_pgprot(__PAGE_KERNEL)
-+#define PAGE_KERNEL_RO		default_pgprot(__PAGE_KERNEL_RO | _PAGE_ENC)
-+#define PAGE_KERNEL_EXEC	default_pgprot(__PAGE_KERNEL_EXEC | _PAGE_ENC)
-+#define PAGE_KERNEL_EXEC_NOENC	default_pgprot(__PAGE_KERNEL_EXEC)
-+#define PAGE_KERNEL_RX		default_pgprot(__PAGE_KERNEL_RX | _PAGE_ENC)
-+#define PAGE_KERNEL_NOCACHE	default_pgprot(__PAGE_KERNEL_NOCACHE | _PAGE_ENC)
-+#define PAGE_KERNEL_LARGE	default_pgprot(__PAGE_KERNEL_LARGE | _PAGE_ENC)
-+#define PAGE_KERNEL_LARGE_EXEC	default_pgprot(__PAGE_KERNEL_LARGE_EXEC | _PAGE_ENC)
-+#define PAGE_KERNEL_VVAR	default_pgprot(__PAGE_KERNEL_VVAR | _PAGE_ENC)
-+
-+#define PAGE_KERNEL_IO		default_pgprot(__PAGE_KERNEL_IO)
-+#define PAGE_KERNEL_IO_NOCACHE	default_pgprot(__PAGE_KERNEL_IO_NOCACHE)
- 
- #endif	/* __ASSEMBLY__ */
- 
-@@ -483,6 +485,7 @@ static inline pgprot_t pgprot_large_2_4k
- typedef struct page *pgtable_t;
- 
- extern pteval_t __supported_pte_mask;
-+extern pteval_t __default_kernel_pte_mask;
- extern void set_nx(void);
- extern int nx_enabled;
- 
-diff -puN arch/x86/mm/init_32.c~KERN-pgprot-default arch/x86/mm/init_32.c
---- a/arch/x86/mm/init_32.c~KERN-pgprot-default	2018-04-06 10:47:54.733796127 -0700
-+++ b/arch/x86/mm/init_32.c	2018-04-06 10:47:54.741796127 -0700
-@@ -558,8 +558,14 @@ static void __init pagetable_init(void)
- 	permanent_kmaps_init(pgd_base);
- }
- 
--pteval_t __supported_pte_mask __read_mostly = ~(_PAGE_NX | _PAGE_GLOBAL);
-+#define DEFAULT_PTE_MASK ~(_PAGE_NX | _PAGE_GLOBAL)
-+/* Bits supported by the hardware: */
-+pteval_t __supported_pte_mask __read_mostly = DEFAULT_PTE_MASK;
-+/* Bits allowed in normal kernel mappings: */
-+pteval_t __default_kernel_pte_mask __read_mostly = DEFAULT_PTE_MASK;
- EXPORT_SYMBOL_GPL(__supported_pte_mask);
-+/* Used in PAGE_KERNEL_* macros which are reasonably used out-of-tree: */
-+EXPORT_SYMBOL(__default_kernel_pte_mask);
- 
- /* user-defined highmem size */
- static unsigned int highmem_pages = -1;
-diff -puN arch/x86/mm/init_64.c~KERN-pgprot-default arch/x86/mm/init_64.c
---- a/arch/x86/mm/init_64.c~KERN-pgprot-default	2018-04-06 10:47:54.735796127 -0700
-+++ b/arch/x86/mm/init_64.c	2018-04-06 10:47:54.742796127 -0700
-@@ -65,8 +65,13 @@
-  * around without checking the pgd every time.
-  */
- 
-+/* Bits supported by the hardware: */
- pteval_t __supported_pte_mask __read_mostly = ~0;
-+/* Bits allowed in normal kernel mappings: */
-+pteval_t __default_kernel_pte_mask __read_mostly = ~0;
- EXPORT_SYMBOL_GPL(__supported_pte_mask);
-+/* Used in PAGE_KERNEL_* macros which are reasonably used out-of-tree: */
-+EXPORT_SYMBOL(__default_kernel_pte_mask);
- 
- int force_personality32;
- 
-diff -puN arch/x86/mm/init.c~KERN-pgprot-default arch/x86/mm/init.c
---- a/arch/x86/mm/init.c~KERN-pgprot-default	2018-04-06 10:47:54.737796127 -0700
-+++ b/arch/x86/mm/init.c	2018-04-06 10:47:54.742796127 -0700
-@@ -190,6 +190,12 @@ static void __init probe_page_size_mask(
- 		enable_global_pages();
- 	}
- 
-+	/* By the default is everything supported: */
-+	__default_kernel_pte_mask = __supported_pte_mask;
-+	/* Except when with PTI where the kernel is mostly non-Global: */
-+	if (cpu_feature_enabled(X86_FEATURE_PTI))
-+		__default_kernel_pte_mask &= ~_PAGE_GLOBAL;
-+
- 	/* Enable 1 GB linear kernel mappings if available: */
- 	if (direct_gbpages && boot_cpu_has(X86_FEATURE_GBPAGES)) {
- 		printk(KERN_INFO "Using GB pages for direct mapping\n");
 _
