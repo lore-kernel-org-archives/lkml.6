@@ -1,88 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755099AbeDFPB3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:01:29 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:50809 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754993AbeDFPBY (ORCPT
+        id S1755279AbeDFPBx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 11:01:53 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:46713 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755205AbeDFPBu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:01:24 -0400
-X-IronPort-AV: E=Sophos;i="5.48,415,1517846400";
-   d="scan'208";a="178452632"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "jthumshirn@suse.de" <jthumshirn@suse.de>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "himanshu.madhani@cavium.com" <himanshu.madhani@cavium.com>
-Subject: Re: [PATCH] qla2xxx: correctly shift host byte
-Thread-Topic: [PATCH] qla2xxx: correctly shift host byte
-Thread-Index: AQHTzXyPbbDeKVF6O0uGNlN9C1KesqPz1UOA
-Date: Fri, 6 Apr 2018 15:01:20 +0000
-Message-ID: <0753246e70d16062b87930b2b75eec31a4bb88eb.camel@wdc.com>
-References: <20180406075222.7358-1-jthumshirn@suse.de>
-In-Reply-To: <20180406075222.7358-1-jthumshirn@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [199.255.44.172]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0913;7:L/QmthVGqaKOTwCgToLABnPvL7mO8g9oAsGy9+GxcMr8rvAIyZpdj5hxcsluNvzIV5FAoYDHXIWLyLGw5AOMmlDyfnNYalnks3obUQ2ONeH2TxubyuRwKhytw61+Qr6dPPFhBmQyjIzYb6pZvbpLtCIkhLAit0S7ziJoCZcUCBREAsTsF5XHos1YpcoNgNanZXXd1N8kbYRA8olkNvpvYV8usk4dnUa5eEU7uCb7E+BtcOy6jQrhPEAAiW2pZq2L;20:E9t8USjNPKCmDUOPIyZnd1vf+sHTlEIElUBAWD7c3hQ0rTGi8cufvof7x28078eL18/vRjEBbhfZ9CQdukvWeB8G0yyLiT08vjTbLdb4JEgCWxSjCnT8AVFYe1FdOg0if/EsWMnI+ke4vngcp/Iifn9rgRuEP/1ph/AyfhOfXU0=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e5bda979-e2db-4c5c-2938-08d59bcf41f4
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0913;
-x-ms-traffictypediagnostic: MWHPR04MB0913:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0913FCAC35BAF968772D8B0A98BA0@MWHPR04MB0913.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:MWHPR04MB0913;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0913;
-x-forefront-prvs: 0634F37BFF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(396003)(39380400002)(376002)(39860400002)(189003)(377424004)(199004)(59450400001)(76176011)(106356001)(86362001)(2906002)(6246003)(66066001)(102836004)(118296001)(26005)(99286004)(4326008)(105586002)(6116002)(72206003)(8676002)(2616005)(229853002)(6506007)(11346002)(3846002)(3660700001)(186003)(446003)(81166006)(8936002)(476003)(14454004)(316002)(97736004)(110136005)(54906003)(68736007)(3280700002)(5660300001)(478600001)(2900100001)(81156014)(305945005)(7736002)(25786009)(6436002)(5250100002)(2501003)(486006)(6486002)(6512007)(36756003)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0913;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: B4Uiqv6e7qNVuFm3pfgBLURd9c4AKErA1bqrZTTkzwqVr09T1SXAPSSfJYnwS+WWqc+6uJ6FA7EOVs+PzbMeXa4cKZOriNhnlYF+rCx69fRDLCoB0nxWeE1YcstDWF/AerGuQbTeIURN+KBWek8IWmGdHlQPbwKUS62qYpygewVuYQssMuTg0rQALzebfwzd3cNaBYnjBwz+vUcB7JrVSBgvN/DSOnhtkCiqmmfaPGEjum7EGIJoYoDzwyObzuXBYhTMbCvjxq8pUE6bFWeqXU+kJVj+164mex/ypgBApi8Ti/K1SnwRviOiWoJbfP3VigjJauBTjatNN+a9ZbIWqFbxA7/56nuSsz1SPlKHM/Xkq2kFt34N9ZAQ0Wf3fhQkzwUNT3EjjhMgZiV5qi/jmxLeBV089AWAV47lIM+Bg6c=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BA62C0CAA3EFE342B049CA7E48FB72C1@namprd04.prod.outlook.com>
+        Fri, 6 Apr 2018 11:01:50 -0400
+X-Google-Smtp-Source: AIpwx48ATDl9wNWztPjtxTIAaFHFrT3xkEL9StbmvAG+TL9z7OFuLsyWGYClkhGT18fes7jr6gtORw==
+Subject: Re: WARNING: lock held when returning to user space!
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+31e8daa8b3fc129e75f2@syzkaller.appspotmail.com>,
+        linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, Omar Sandoval <osandov@osandov.com>
+References: <00000000000082922905692da9e1@google.com>
+ <0e998b77-14f0-aee0-8d32-bc1dd96fcc4c@kernel.dk>
+ <CACT4Y+Y0TVJLDA5-0RGq-a-A6KKLKHZtA4pwUH2rtvR0hkiZQQ@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <63121c85-f417-cde8-510d-f275dbe81c4d@kernel.dk>
+Date: Fri, 6 Apr 2018 09:01:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5bda979-e2db-4c5c-2938-08d59bcf41f4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Apr 2018 15:01:20.9067
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0913
+In-Reply-To: <CACT4Y+Y0TVJLDA5-0RGq-a-A6KKLKHZtA4pwUH2rtvR0hkiZQQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w36F1Znv022182
 
-On Fri, 2018-04-06 at 09:52 +0200, Johannes Thumshirn wrote:
-> The host byte has to be shifted by 16 not 6.
+On 4/6/18 8:57 AM, Dmitry Vyukov wrote:
+> On Fri, Apr 6, 2018 at 4:27 PM, Jens Axboe <axboe@kernel.dk> wrote:
+>> On 4/6/18 7:02 AM, syzbot wrote:
+>>> Hello,
+>>>
+>>> syzbot hit the following crash on upstream commit
+>>> 38c23685b273cfb4ccf31a199feccce3bdcb5d83 (Fri Apr 6 04:29:35 2018 +0000)
+>>> Merge tag 'armsoc-drivers' of
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
+>>> syzbot dashboard link:
+>>> https://syzkaller.appspot.com/bug?extid=31e8daa8b3fc129e75f2
+>>>
+>>> So far this crash happened 9 times on upstream.
+>>> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6407930337296384
+>>> syzkaller reproducer:
+>>> https://syzkaller.appspot.com/x/repro.syz?id=4942413340606464
+>>> Raw console output:
+>>> https://syzkaller.appspot.com/x/log.txt?id=4764483918495744
+>>> Kernel config:
+>>> https://syzkaller.appspot.com/x/.config?id=-5813481738265533882
+>>> compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+>>>
+>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>> Reported-by: syzbot+31e8daa8b3fc129e75f2@syzkaller.appspotmail.com
+>>> It will help syzbot understand when the bug is fixed. See footer for
+>>> details.
+>>> If you forward the report, please keep this part and the footer.
+>>>
+>>>
+>>> ================================================
+>>> WARNING: lock held when returning to user space!
+>>> 4.16.0+ #3 Not tainted
+>>> ------------------------------------------------
+>>> syzkaller433111/4462 is leaving the kernel with locks still held!
+>>> 1 lock held by syzkaller433111/4462:
+>>>   #0: 0000000003a06fae (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8d/0x1ec0
+>>> drivers/block/loop.c:1363
+>>
+>> Is this a new regression? Omar did just fiddle with the locking a bit,
+>> seems suspicious.
 > 
-> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-> ---
->  drivers/scsi/qla2xxx/qla_isr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/qla2xxx/qla_isr.c b/drivers/scsi/qla2xxx/qla_isr.c
-> index 89f93ebd819d..49d67e1d571f 100644
-> --- a/drivers/scsi/qla2xxx/qla_isr.c
-> +++ b/drivers/scsi/qla2xxx/qla_isr.c
-> @@ -2368,7 +2368,7 @@ qla25xx_process_bidir_status_iocb(scsi_qla_host_t *vha, void *pkt,
->  	bsg_job->reply_len = sizeof(struct fc_bsg_reply);
->  	/* Always return DID_OK, bsg will send the vendor specific response
->  	 * in this case only */
-> -	sp->done(sp, DID_OK << 6);
-> +	sp->done(sp, DID_OK << 16);
->  
->  }
+> Looking at:
+> https://syzkaller.appspot.com/bug?extid=31e8daa8b3fc129e75f2
+> It first happened 4 hours ago and 9 times since then, so probably a
+> just introduced regression.
 
-Please mention in the description of this patch that this patch does not
-change any functionality because DID_OK == 0. Anyway:
+After writing that, I saw the discussion in another
+thread ("INFO: task hung in lo_ioctl"), so I think we can definitely say
+that it's a recently introduced regression in loop due to the killable
+lock changes.
 
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+-- 
+Jens Axboe
