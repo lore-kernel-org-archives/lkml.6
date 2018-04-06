@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/r667JFm0gEIRU7voKVLywHnnmzlkfxqVyCmRs9wt00RVxYkREvt34B9KFF9U/RVjEXQIz
-ARC-Seal: i=1; a=rsa-sha256; t=1523022260; cv=none;
+X-Google-Smtp-Source: AIpwx4/ITqOkfFGbtg3qQ8TSsnB36HBRviKefGOy7ONMETP72AI6dSlBTonHr5jGJ3iYs2Oz2UXU
+ARC-Seal: i=1; a=rsa-sha256; t=1523022257; cv=none;
         d=google.com; s=arc-20160816;
-        b=KGwEL1EaOeomp+SxCNZXrb96nQ5tIFXQUnCoL8v8LLNcOMxgTBPHAzw5Df1bOxvJB+
-         nNSP2Hn07aNzFoH9u+JG0enYdzqNLOd6Ee57mcBiG1OI8TFXsAfRWzwMhLUipqst+Hj6
-         ty+LFjtKMHtXLKUqYdeOrGu84a/JMPJ6VQ4W8R+AZ7BH1/5efqtYzL2Cw/T91YDL+OXa
-         RhsJ6v2mDgJTJqFGZnY2jkdDWEniSUwS127vgj9MmrvQAwjdaD65kK6B1q2fGpMGgAZP
-         RZ9LGH2HD55GSOnwjELC0q0BfKeyKZjSqYar9G1vxo2/NPt//MLofOUzJ7IBPb3VIo1n
-         KKoA==
+        b=b//7DRRA4OSTlOy7wpOWQKmsxlGysRk40ipxgWdK4si+fGSHe+43Ck3WzfKpmnMBTs
+         fZb2yNTnEN8U+pioFy24EGVq7MB2IidKTn1MyQAtGEZVXORAcuUtg27/ywyltXV9ztNv
+         lEvFY/gAsIYloaW6KNfT+BA6ZG4IuZ8S/9wXqy4yBE35+f2iXVVanjfIQmtA2vsBMXDe
+         yuB77tUIbcSBx+ZF6xc4saZOFZEQ52LjXESzkQAtKC3aKy5I5FAskZpsK6BTfZ3tjHj2
+         8JWJ/H0T8mNwZFfqm/yAepiCPGXCIVml+TBOVg2yAabQko+AQDzsdAKYCNCbwIMHm4WD
+         yP2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=glKlSm8E70c+/4zYYwxHuoaDeMM1VycXQHqutQr+Pic=;
-        b=MZ/mhK2Ch5qQbrDytotheoAbn9ieYgqOi4DSqWIJRsBV0IWyU+UyRWHf5LRZlQhgKJ
-         W5pP0ZayWk1XSTrCfP6H1qDfnFcRhgc/KbqKtptXfXlIf1oDeVTKVDUShW3d0JzxWRqh
-         9Aop+qGuxJ7P/vpK2EapLvBe/b3JEX9tBa3tSU5zJK4E3nRamc97ioNWLIIL7aYzd/ls
-         o9I2kb68Qi4BQ17WAzj6SFi3ZKm7QTtUB8Gsma5TOeOsyWnp78QD7pSnHuiI28m7efio
-         XwLpD6UpqTUGzZkY1FLxmZqnkABN2Bx5Pb4pxRqncFPN+AgsYLMFE3vtqG23HKngrOAG
-         hd1A==
+        bh=j9Xfyy31P5u8yYHWJchKlOadTSyPQ9ktFThodAMCAT4=;
+        b=KTv+7806df2aR51VfX/uWTqPlCynFv+sJ3SFwR6vpu1tGt2Dcnd4DWdqVtcvc1+9KJ
+         hiXfOHe2riX2D6EXRE6sHkpUP6poXs6+CqZqfCQtp9IzP19ZCb7F1AU/Nty+qLyowBfq
+         fy4CKe3+sT3EcOIRkYUN9fLBuKMfBv3Dzouqfy2cJoWpH6UKflxCgqBiY6JgkuJh3THg
+         4hua9Jhgvm7fuGQP7HdSDAA+gd0SnDcp7E8Sx5nrJZkvGwu6DRi/lWRmGtitjqtbtBKY
+         xpIuYOtW1zcsiiZlj/yIOuMKmN2j9b3JP/ZCN5G8+yDHcGw9mhQxTiVBOJj2ywMwr9aZ
+         Y6LA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Gary R Hook <gary.hook@amd.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.16 11/31] crypto: ccp - Fill the result buffer only on digest, finup, and final ops
-Date: Fri,  6 Apr 2018 15:24:36 +0200
-Message-Id: <20180406084342.606416182@linuxfoundation.org>
+Subject: [PATCH 4.16 10/31] crypto: lrw - Free rctx->ext with kzfree
+Date: Fri,  6 Apr 2018 15:24:35 +0200
+Message-Id: <20180406084342.491101095@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084340.999820380@linuxfoundation.org>
 References: <20180406084340.999820380@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004590069891244?=
-X-GMAIL-MSGID: =?utf-8?q?1597004590069891244?=
+X-GMAIL-THRID: =?utf-8?q?1597004267731189000?=
+X-GMAIL-MSGID: =?utf-8?q?1597004587270077315?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +49,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gary R Hook <gary.hook@amd.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 0ee991be4cdd88587aedbf68cdacd1765f57236a upstream.
+commit 8c9bdab21289c211ca1ca6a5f9b7537b4a600a02 upstream.
 
-Any change to the result buffer should only happen on final, finup
-and digest operations. Changes to the buffer for update, import, export,
-etc, are not allowed.
+The buffer rctx->ext contains potentially sensitive data and should
+be freed with kzfree.
 
-Fixes: 66d7b9f6175e ("crypto: testmgr - test misuse of result in ahash")
-Signed-off-by: Gary R Hook <gary.hook@amd.com>
 Cc: <stable@vger.kernel.org>
+Fixes: 700cb3f5fe75 ("crypto: lrw - Convert to skcipher")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/ccp/ccp-crypto-aes-cmac.c |    2 +-
- drivers/crypto/ccp/ccp-crypto-sha.c      |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ crypto/lrw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/ccp/ccp-crypto-aes-cmac.c
-+++ b/drivers/crypto/ccp/ccp-crypto-aes-cmac.c
-@@ -46,7 +46,7 @@ static int ccp_aes_cmac_complete(struct
- 	}
+--- a/crypto/lrw.c
++++ b/crypto/lrw.c
+@@ -313,7 +313,7 @@ static void exit_crypt(struct skcipher_r
+ 	rctx->left = 0;
  
- 	/* Update result area if supplied */
--	if (req->result)
-+	if (req->result && rctx->final)
- 		memcpy(req->result, rctx->iv, digest_size);
+ 	if (rctx->ext)
+-		kfree(rctx->ext);
++		kzfree(rctx->ext);
+ }
  
- e_free:
---- a/drivers/crypto/ccp/ccp-crypto-sha.c
-+++ b/drivers/crypto/ccp/ccp-crypto-sha.c
-@@ -47,7 +47,7 @@ static int ccp_sha_complete(struct crypt
- 	}
- 
- 	/* Update result area if supplied */
--	if (req->result)
-+	if (req->result && rctx->final)
- 		memcpy(req->result, rctx->ctx, digest_size);
- 
- e_free:
+ static int do_encrypt(struct skcipher_request *req, int err)
