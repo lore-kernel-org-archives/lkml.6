@@ -1,149 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752020AbeDFTuw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 15:50:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39258 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751384AbeDFTuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 15:50:51 -0400
-Date: Fri, 6 Apr 2018 14:50:49 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
- patches.
-Message-ID: <20180406195049.dtfebzfdkbvv6yex@treble>
-References: <20180307082039.10196-1-pmladek@suse.com>
- <20180307082039.10196-6-pmladek@suse.com>
- <20180313224613.sdkdkcvhpqv54s6c@treble>
- <20180319150207.iz5ecbsogg5lpwac@pathway.suse.cz>
- <20180319214324.riyp233trtfxbeto@treble>
- <20180320122538.t75rplwhmhtap5q2@pathway.suse.cz>
- <20180320201502.2skkk3ld4zk2dxwg@treble>
- <20180323094507.smsqc5ft3yajnwqt@pathway.suse.cz>
- <20180323224410.vuq5cabfprqhd6ej@treble>
- <20180326101107.bbloeh5l276on7uz@pathway.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180326101107.bbloeh5l276on7uz@pathway.suse.cz>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+        id S1751696AbeDFTwz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 15:52:55 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39487 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750807AbeDFTwx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 15:52:53 -0400
+X-Google-Smtp-Source: AIpwx491IZVNBIBKG2jlOea9Q4yRm6i2RLlEO1R2mWvSFAIcL8RVEyhUzpE2FskOFmZxRwucA8kU5A==
+From: Mathieu Malaterre <malat@debian.org>
+To: tytso@mit.edu
+Cc: Milan Kupcevic <milan@debian.org>, Ben Hutchings <ben@decadent.org.uk>,
+        Mathieu Malaterre <malat@debian.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: Add MODULE_SOFTDEP declarations for hard-coded crypto drivers
+Date: Fri,  6 Apr 2018 21:52:31 +0200
+Message-Id: <20180406195231.14868-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 12:11:07PM +0200, Petr Mladek wrote:
-> On Fri 2018-03-23 17:44:10, Josh Poimboeuf wrote:
-> > On Fri, Mar 23, 2018 at 10:45:07AM +0100, Petr Mladek wrote:
-> > > On Tue 2018-03-20 15:15:02, Josh Poimboeuf wrote:
-> > > > On Tue, Mar 20, 2018 at 01:25:38PM +0100, Petr Mladek wrote:
-> > > > > On Mon 2018-03-19 16:43:24, Josh Poimboeuf wrote:
-> > > > > > On Mon, Mar 19, 2018 at 04:02:07PM +0100, Petr Mladek wrote:
-> > > > > > > > Along those lines, I'd also propose that we constrain our existing patch
-> > > > > > > > stacking even further.  Right now we allow a new patch to be registered
-> > > > > > > > on top of a disabled patch, though we don't allow the new patch to be
-> > > > > > > > enabled until the previous patch gets enabled.  I'd propose we no longer
-> > > > > > > > allow that condition.  We should instead enforce that all existing
-> > > > > > > > patches are *enabled* before allowing a new patch to be registered on
-> > > > > > > > top.  That way the patch stacking is even more sane, and there are less
-> > > > > > > > "unusual" conditions to worry about.  We have enough of those already.
-> > > > > > > > Each additional bit of flexibility has a maintenance cost, and this one
-> > > > > > > > isn't worth it IMO.
-> > > > > > > 
-> > > > > > > Again, this might make some things easier but it might also bring
-> > > > > > > problems.
-> > > > > > > 
-> > > > > > > For example, we would need to solve the situation when the last
-> > > > > > > patch is disabled and cannot be removed because the transition
-> > > > > > > was forced. This might be more common after removing the immediate
-> > > > > > > feature.
-> > > > > > 
-> > > > > > I would stop worrying about forced patches so much :-)
-> > > > > 
-> > > > > I have already seen blocked transition several times. It is true that
-> > > > > it was with kGraft. But we just do not have enough real life experience
-> > > > > with the upstream livepatch code.
-> > > > 
-> > > > But we're talking about patching on top of a *disabled* patch.  Forced
-> > > > or not, why would the patch be disabled in the first place?
-> > > 
-> > > For example, it might be disabled because the transition stalled for
-> > > too long and the user reverted it. Or just because it is possible
-> > > to disable it.
-> > 
-> > If they haven't previously forced any patches, and they reverted the
-> > topmost patch because it stalled, they can easily unload the patch.
-> > 
-> > If they *have* previously forced a patch, they can force enable the
-> > topmost patch as well, or if that's not safe they can reboot (that's
-> > what you get for forcing a patch...)
-> 
-> IMHO, the reboot is the very last option for people that are using
-> livepatching.
+This helps initramfs builders and other tools to find the full
+dependencies of a module.
 
-... but it may be a natural consequence of forcing a patch.
+Debian on powerpc (ppc32) still uses yaboot as default boot loader. Using a
+default installation (debian-installer) 64bit and metadata_csum feature are
+not setup in ext4. This is discussed in more details at:
 
-> > > > We were just recently discussing the possibility of not allowing the
-> > > > disabling of patches at all.  If we're not going that far, let's at
-> > > > least further restrict it, for the sanity of our code, so we don't have
-> > > > to worry about a nasty mismatched stack of enabled/disabled/enabled/etc,
-> > > > at least for the cases where 'replace' patches aren't used.
-> > > 
-> > > I am not completely sure where all these fears come from. From my
-> > > point of view, this change is pretty safe and trivial thanks to NOPs
-> > > and overall design. It would be a shame to do not have it. But I
-> > > might be blind after spending so much time with the feature.
-> > 
-> > I think you're missing my point.  This isn't about your patch set, per
-> > se.  It's really about our existing code.  Today, our patch stack
-> > doesn't follow real stack semantics, because patches in the middle might
-> > be disabled.  I see that as a problem.
-> 
-> This would be true if we keep the replaced patches on the stack. But
-> if we remove the replaced patches then there never will be disabled
-> patches in the middle.
-> 
-> OK, there might be disabled patches in the middle during the
-> transition. But this is the situation where we basically could
-> not manipulate the stack.
+https://bugs.debian.org/825110#81
 
-No, please read it again.  I wasn't talking about replaced patches.
+and implemented here:
 
-> > If 'replace' were the only mode, then we wouldn't even need a patch
-> > stack because it wouldn't really matter much whether the previous patch
-> > is enabled or disabled.  I think this is in agreement with the point
-> > you're making.
-> > 
-> > But we still support non-replace patches.  My feeling is that we should
-> > either do a true stack, or no stack at all.  The in-between thing is
-> > going to be confusing, not only for us, but for patch authors and end
-> > users.
-> 
-> I see it like two different modes. We either have a stack of patches
-> that depend on each other.
+https://anonscm.debian.org/cgit/d-i/partman-ext3.git/patch/?id=f87dc92157262de1ad8dd3f2343436f08271b4dc
 
-But if they depend on each other, they can use 'replace' and a stack
-isn't needed.
+This means that building the kernel as default debian package:
 
-And If they *don't* depend on each other, then the stack is overly
-restrictive, for no good reason.
+  make ARCH=powerpc XYZ_defconfig
+  make -j8 ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- bindeb-pkg
 
-Either way, why do we still need a stack?
+Will lead to the following boot failure (initramfs prompt):
 
-> Or we have replace patches that are
-> standalone and we allow a smooth transfer from one to another one.
-> 
-> Anyway, for us, it is much more important the removal of replaced
-> patches. We could probably live without the possibility to replace
-> disabled patches.
+  /dev/sda3: clean, 127679/305216 files, 11128559/1220703 blocks done.
+  [    5.592819] EXT4-fs (sda3): Cannot load crc32c driver.
+  mount: mounting /dev/sda3 on /root failed: No such file or directory
 
-I think replacing disabled patches is ok, *if* we get rid of the
-illusion of a stack.  The current stack isn't really a stack, it's just
-awkward.
+Link: https://bugs.debian.org/819725
+Link: https://salsa.debian.org/kernel-team/linux/blob/master/debian/patches/bugfix/all/fs-add-module_softdep-declarations-for-hard-coded-cr.patch
+Suggested-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: Milan Kupcevic <milan@debian.org>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ fs/ext4/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 185f7e61f4cf..10bda040e78f 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5886,5 +5886,6 @@ static void __exit ext4_exit_fs(void)
+ MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
+ MODULE_DESCRIPTION("Fourth Extended Filesystem");
+ MODULE_LICENSE("GPL");
++MODULE_SOFTDEP("pre: crypto-crc32c");
+ module_init(ext4_init_fs)
+ module_exit(ext4_exit_fs)
 -- 
-Josh
+2.11.0
