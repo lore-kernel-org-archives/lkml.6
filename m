@@ -1,215 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751404AbeDFALW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 20:11:22 -0400
-Received: from mga04.intel.com ([192.55.52.120]:29075 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751262AbeDFALU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 20:11:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,413,1517904000";
-   d="scan'208";a="29906701"
-Date: Thu, 5 Apr 2018 17:11:17 -0700
-From: Matt Roper <matthew.d.roper@intel.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Gerd Hoffmann <kraxel@redhat.com>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Dongwon Kim <dongwon.kim@intel.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Subject: Re: [RfC PATCH] Add udmabuf misc device
-Message-ID: <20180406001117.GD31612@mdroper-desk.amr.corp.intel.com>
-References: <20180313154826.20436-1-kraxel@redhat.com>
- <20180313161035.GL4788@phenom.ffwll.local>
- <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
- <CAKMK7uGG6Z6XLc6GuKv7-3grCNg+EK2Lh6XWpavjsbZWF_L5Wg@mail.gmail.com>
+        id S1751445AbeDFANb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 20:13:31 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34959 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbeDFAN3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 20:13:29 -0400
+X-Google-Smtp-Source: AIpwx4+s+5tF/j48gCklOvj4OYXHpJY/joMwn3TKUZVpiCQEuhK9jGZy6uxbJ7s5imKFeIiqkOS0Tg==
+Date: Thu, 5 Apr 2018 17:13:25 -0700
+From: Eric Biggers <ebiggers@google.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: WARNING in up_write
+Message-ID: <20180406001325.GA133204@google.com>
+References: <001a1148578c10e4700568e814eb@google.com>
+ <CACT4Y+bL_+3ZJLE_1KzGNrz4hi=Si-KKsKLCd09TMD1Ux2jpgg@mail.gmail.com>
+ <20180404193504.GA7715@bombadil.infradead.org>
+ <20180405032200.GC22358@thunk.org>
+ <20180405032454.GD9301@bombadil.infradead.org>
+ <20180405223226.GA729@dastard>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKMK7uGG6Z6XLc6GuKv7-3grCNg+EK2Lh6XWpavjsbZWF_L5Wg@mail.gmail.com>
+In-Reply-To: <20180405223226.GA729@dastard>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 10:32:04PM +0200, Daniel Vetter wrote:
-> Pulling this out of the shadows again.
+On Fri, Apr 06, 2018 at 08:32:26AM +1000, Dave Chinner wrote:
+> On Wed, Apr 04, 2018 at 08:24:54PM -0700, Matthew Wilcox wrote:
+> > On Wed, Apr 04, 2018 at 11:22:00PM -0400, Theodore Y. Ts'o wrote:
+> > > On Wed, Apr 04, 2018 at 12:35:04PM -0700, Matthew Wilcox wrote:
+> > > > On Wed, Apr 04, 2018 at 09:24:05PM +0200, Dmitry Vyukov wrote:
+> > > > > On Tue, Apr 3, 2018 at 4:01 AM, syzbot
+> > > > > <syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com> wrote:
+> > > > > > DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
+> > > > > > WARNING: CPU: 1 PID: 4441 at kernel/locking/rwsem.c:133 up_write+0x1cc/0x210
+> > > > > > kernel/locking/rwsem.c:133
+> > > > > > Kernel panic - not syncing: panic_on_warn set ...
+> > > > 
+> > > > Message-Id: <1522852646-2196-1-git-send-email-longman@redhat.com>
+> > > >
+> > > 
+> > > We were way ahead of syzbot in this case.  :-)
+> > 
+> > Not really ... syzbot caught it Monday evening ;-)
 > 
-> We now also have xen-zcopy from Oleksandr and the hyper dmabuf stuff
-> from Matt and Dongwong.
+> Rather than arguing over who reported it first, I think that time
+> would be better spent reflecting on why the syzbot report was
+> completely ignored until *after* Ted diagnosed the issue
+> independently and Waiman had already fixed it....
 > 
-> At least from the intel side there seems to be the idea to just have 1
-> special device that can handle cross-gues/host sharing for all kinds
-> of hypervisors, so I guess you all need to work together :-)
+> Clearly there is scope for improvement here.
 > 
-> Or we throw out the idea that hyper dmabuf will be cross-hypervisor
-> (not sure how useful/reasonable that is, someone please convince me
-> one way or the other).
+> Cheers,
 > 
-> Cheers, Daniel
 
-Dongwon (DW) is the one doing all the real work on hyper_dmabuf, but I'm
-familiar with the use cases he's trying to address, and I think there
-are a couple high-level goals of his work that are worth calling out as
-we discuss the various options for sharing buffers produced in one VM
-with a consumer running in another VM:
+Well, ultimately a human needed to investigate the syzbot bug report to figure
+out what was really going on.  In my view, the largest problem is that there are
+simply too many bugs, so many are getting ignored.  If there were only a few
+bugs, then Dmitry would investigate each one and send a "real" bug report of
+better quality than the automated system can provide, or even send a fix
+directly.  But in reality, on the same day this bug was reported, syzbot also
+found 10 other bugs, and in the previous 2 days it had found 38 more.  No single
+person can keep up with that.  You can see the current bug list, which has 172
+open bugs, on the dashboard at https://syzkaller.appspot.com/.  Yes, the kernel
+really is that broken.  Though, of course most bugs are in specific modules, not
+the core kernel.
 
- * We should try to keep the interface/usage separate from the
-   underlying hypervisor implementation details.  I.e., in DW's design
-   the sink/source drivers that handle the actual buffer passing in the
-   two VM's should provide a generic interface that does not depend on a
-   specific hypervisor.  Behind the scenes there could be various
-   implementations for specific hypervisors (Xen, KVM, ACRN, etc.), and
-   some of those backends may have additional restrictions, but it would
-   be best if userspace didn't have to know the specific hypervisor
-   running on the system and could just query the general capabilities
-   available to it.  We've already got projects in flight that are
-   wanting this functionality on Xen and ACRN today.
+And although quite a few of these bugs will end up to be duplicates or even
+already fixed, a human still has to look at each one to figure that out.
+(Though, I do think that syzbot should try to automatically detect when a
+reproducible bug was already fixed, via bisection.  It would cause a few bugs to
+be incorrectly considered fixed, but it may be a worthwhile tradeoff.)
 
- * The general interface should be able to express sharing from any
-   guest:guest, not just guest:host.  Arbitrary G:G sharing might be
-   something some hypervisors simply aren't able to support, but the
-   userspace API itself shouldn't make assumptions or restrict that.  I
-   think ideally the sharing API would include some kind of
-   query_targets interface that would return a list of VM's that your
-   current OS is allowed to share with; that list would be depend on the
-   policy established by the system integrator, but obviously wouldn't
-   include targets that the hypervisor itself wouldn't be capable of
-   handling.
-   
- * A lot of the initial use cases are in the realm of graphics, but this
-   shouldn't be a graphics-specific API.  Buffers might contain other
-   types of content as well (e.g., audio).  Really the content producer
-   could potentially be any driver (or userspace) running in the VM that
-   knows how to import/export dma_buf's (or maybe just import given
-   danvet's suggestion that we should make the sink driver do all the
-   actual memory allocation for any buffers that may be shared).
+These bugs are all over the kernel as well, so most developers don't see the big
+picture but rather just see a few bugs for "their" subsystem on "their"
+subsystem's mailing list and sometimes demand special attention.  Of course,
+it's great when people suggest ways to improve the process.  But it's not great
+when people just don't feel responsible for fixing bugs and wait for
+Someone Else to do it.
 
- * We need to be able to handle cross-VM coordination of buffer usage as
-   well, so I think we'd want to include fence forwarding support in the
-   API as well to signal back and forth about production/consumption
-   completion.  And of course document really well what should happen
-   if, for example, the entire VM you're sharing with/from dies.
+I'm hoping that in the future the syzbot "team", which seems to actually be just
+Dmitry now, can get more resources towards helping fix the bugs.  But either
+way, in the end Linux is a community effort.
 
- * The sharing API could be used to share multiple kinds of content in a
-   single system.  The sharing sink driver running in the content
-   producer's VM should accept some additional metadata that will be
-   passed over to the target VM as well.  The sharing source driver
-   running in the content consumer's VM would then be able to use this
-   metadata to determine the purpose of a new buffer that arrives and
-   filter/dispatch it to the appropriate consumer.
+Note also that syzbot wasn't super useful in this particular case because people
+running xfstests came across the same bug.  But, this is actually a rare case.
+Most syzbot bug reports have been for weird corner cases or races that no one
+ever thought of before, so there are no existing tests that find them.
 
+Thanks,
 
-For reference, the terminology I'm using is
-
- /----------\  dma_buf   /------\ HV /--------\  dma_buf   /----------\
- | Producer |----------->| Sink | HV | Source |----------->| Consumer |
- \----------/   ioctls   \------/ HV \--------/  uevents   \----------/
-
-
-
-In the realm of graphics, "Producer" could potentially be something like
-an EGL client that sends the buffer at context setup and then signals
-with fences on each SwapBuffers.  "Consumer" could be a Wayland client
-that proxies the buffers into surfaces or dispatches them to other
-userspace software that's waiting for buffers.
-
-With the hyper_dmabuf approach, there's a lot of ABI details that need
-to be worked out and really clearly documented before we worry too much
-about the backend hypervisor-specific stuff.
-
-I'm not super familiar with xen-zcopy and udmabuf, but it sounds like
-they're approaching similar problems from slightly different directions,
-so we should make sure we can come up with something that satisfies
-everyone's requirements. 
-
-
-Matt
-
-> 
-> On Wed, Mar 14, 2018 at 9:03 AM, Gerd Hoffmann <kraxel@redhat.com> wrote:
-> >   Hi,
-> >
-> >> Either mlock account (because it's mlocked defacto), and get_user_pages
-> >> won't do that for you.
-> >>
-> >> Or you write the full-blown userptr implementation, including mmu_notifier
-> >> support (see i915 or amdgpu), but that also requires Christian Königs
-> >> latest ->invalidate_mapping RFC for dma-buf (since atm exporting userptr
-> >> buffers is a no-go).
-> >
-> > I guess I'll look at mlock accounting for starters then.  Easier for
-> > now, and leaves the door open to switch to userptr later as this should
-> > be transparent to userspace.
-> >
-> >> > Known issue:  Driver API isn't complete yet.  Need add some flags, for
-> >> > example to support read-only buffers.
-> >>
-> >> dma-buf has no concept of read-only. I don't think we can even enforce
-> >> that (not many iommus can enforce this iirc), so pretty much need to
-> >> require r/w memory.
-> >
-> > Ah, ok.  Just saw the 'write' arg for get_user_pages_fast and figured we
-> > might support that, but if iommus can't handle that anyway it's
-> > pointless indeed.
-> >
-> >> > Cc: David Airlie <airlied@linux.ie>
-> >> > Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> >> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> >>
-> >> btw there's also the hyperdmabuf stuff from the xen folks, but imo their
-> >> solution of forwarding the entire dma-buf api is over the top. This here
-> >> looks _much_ better, pls cc all the hyperdmabuf people on your next
-> >> version.
-> >
-> > Fun fact: googling for "hyperdmabuf" found me your mail and nothing else :-o
-> > (Trying "hyper dmabuf" instead worked better then).
-> >
-> > Yes, will cc them on the next version.  Not sure it'll help much on xen
-> > though due to the memory management being very different.  Basically xen
-> > owns the memory, not the kernel of the control domain (dom0), so
-> > creating dmabufs for guest memory chunks isn't that simple ...
-> >
-> > Also it's not clear whenever they really need guest -> guest exports or
-> > guest -> dom0 exports.
-> >
-> >> Overall I like the idea, but too lazy to review.
-> >
-> > Cool.  General comments on the idea was all I was looking for for the
-> > moment.  Spare yor review cycles for the next version ;)
-> >
-> >> Oh, some kselftests for this stuff would be lovely.
-> >
-> > I'll look into it.
-> >
-> > thanks,
-> >   Gerd
-> >
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> 
-> 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-
--- 
-Matt Roper
-Graphics Software Engineer
-IoTG Platform Enabling & Development
-Intel Corporation
-(916) 356-2795
+Eric
