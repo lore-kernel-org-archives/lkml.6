@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48K8NBppyz6iUF1+J1K0fI8jH2pQ117otmDO0BO/gb5oiMu7wDqe/MEfPZo/sYiR8FRvLGo
-ARC-Seal: i=1; a=rsa-sha256; t=1523021189; cv=none;
+X-Google-Smtp-Source: AIpwx499IVo5kvhcAaAcaDCT4IrOTBEB3Um7yyhwX9+vGlhM4nwSK4oNtoG26+BwIaxsr5kK1thQ
+ARC-Seal: i=1; a=rsa-sha256; t=1523021186; cv=none;
         d=google.com; s=arc-20160816;
-        b=efqUpx8jgCz8yflBjenOmdRz6apHvv4IQgOBq6kEDCnsmC83sBpb2fBev2WT6mOM8c
-         JeKsRE682YxVQpUQFs3djbk5GaSU/GaFkA/SQ+720XU4NHGi2J1D0cRaQuHuwxDEPmnZ
-         p5qp7Zv4iSOYLpkA56tdQY/qVOTr5YEMm+4msPI1NT1syuQTZ4eKgwXGt03dhEwlndFf
-         x/S6Zk/Zj8GrZ9yc+QNIH7J9kTeeqTMf3Vv3uNnVRx8zGEBeFZ8d/0/UQKAvBhWLJEmK
-         mhuGj0JJhtl+vExpx3Fc/pTSion6LGX34uBVHiEeuPrOZWb9eFCSdFILX+vk1czbC4/t
-         0I/g==
+        b=NQnqbpj9KusUQRw7NZ9RznIOQJ7P0/x4zayLqntFIlJGWEjyHM8Gqp2I2O1HIDKCeC
+         LttFoPhGvhuIj4XijikJ4umhLbAkZ763gS4AKdCe7bd90shTi+TrbGZ4+nb3NbQT/JCN
+         DY7C8C6smEC2DuCJ2frAPOUZCqD5cYSGih4c9taY4VHPtmUN/XFO0+3Mmtj7x8rfJJXR
+         RVjjMNXWp/ojj5Sv3K05RhpywL6KIe0iGR9sRPjazqtv1p01gK5jM9jaNcU/X53Z+9eT
+         2OpNxlosaL4wxi3/B88i9ZvvHdaiEMTdrEw/27pKMa0L1517huASamV+SRDzfF1KvLMK
+         gb2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OozDWS29ufPqhE50wSHn2nPOoUnmtJHromVQl9vZSvE=;
-        b=abeKIWFLzTzIRJVSy+MfEjacyjjCz7HjClZGiPWIFhOUcHpkYBImXzCoQG617WIfc7
-         mI6wCGMV2fpLHtAuEQtSHCmHhEZIzhwx/Fci6DN4938tRLHnCTVWFUTmX54OZ9FlPHRg
-         mrGWSREWa6SeHTuxu5BhPvftKz4DU5pr7lJD+64X9NW6CTeCE4LBoGLKS8q3rvVHcSjz
-         K99ul8L77Cuys4YnNxFMXXr2WLDvg3H4F81EQGypCw1AWQzS3cJR1+u5tFT3GkM6HTD8
-         Q2Tw7sW+qOvlQ1qi32/YglfQCP3aOe9h/ey+AHWk1SkGU7owrAIarSlsVKAc97P4PYCT
-         tbaw==
+        bh=hNaYCU6TTFsNS46s2lFMfcsm/JOXKvxMNJETP0MGk9c=;
+        b=Iu+TOzoTVgD8KqfPYGYHruztxLmLBdXEYwl3HF00k8eSx6ULFQS313poXfY4MKvxaF
+         PWEIDzRzxptDsDRKLPCgR679PrQXYLeWu3/+yj55/DJHk2Pr8Aib4bsjciryYbRmgzpN
+         M/O231hHytgfFX/OiDarKLPLkzRqCzXtZj0otDPFlz6TzQsGJ+oeuCoo9Pdp0iqdk7Si
+         VlsW8OsqPK7/dXqyAAlwSCXloYdGkdgyKuCpLqlb4yLUg4m3a+ccliTz1lr5gfjKTWDj
+         TmJQhqbHnFpHYVNDUsUtLSWluJN4QOGjSL1ZMg5gFGwVCcEDgjDAnkIBByhYzcn0bQzG
+         aejQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
+	Stefan Roese <sr@denx.de>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 39/93] ALSA: pcm: potential uninitialized return values
-Date: Fri,  6 Apr 2018 15:23:08 +0200
-Message-Id: <20180406084226.657091187@linuxfoundation.org>
+Subject: [PATCH 3.18 38/93] ALSA: pcm: Use dma_bytes as size parameter in dma_mmap_coherent()
+Date: Fri,  6 Apr 2018 15:23:07 +0200
+Message-Id: <20180406084226.616251208@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003466645806298?=
-X-GMAIL-MSGID: =?utf-8?q?1597003466645806298?=
+X-GMAIL-THRID: =?utf-8?q?1597003463496739680?=
+X-GMAIL-MSGID: =?utf-8?q?1597003463496739680?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,40 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Stefan Roese <sr@denx.de>
 
-commit 5607dddbfca774fb38bffadcb077fe03aa4ac5c6 upstream.
+commit 9066ae7ff5d89c0b5daa271e2d573540097a94fa upstream.
 
-Smatch complains that "tmp" can be uninitialized if we do a zero size
-write.
+When trying to use the driver (e.g. aplay *.wav), the 4MiB DMA buffer
+will get mmapp'ed in 16KiB chunks. But this fails with the 2nd 16KiB
+area, as the page offset is outside of the VMA range (size), which is
+currently used as size parameter in snd_pcm_lib_default_mmap(). By
+using the DMA buffer size (dma_bytes) instead, the complete DMA buffer
+can be mmapp'ed and the issue is fixed.
 
-Fixes: 02a5d6925cd3 ("ALSA: pcm: Avoid potential races between OSS ioctls and read/write")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This issue was detected on an ARM platform (TI AM57xx) using the RME
+HDSP MADI PCIe soundcard.
+
+Fixes: 657b1989dacf ("ALSA: pcm - Use dma_mmap_coherent() if available")
+Signed-off-by: Stefan Roese <sr@denx.de>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_oss.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/core/pcm_native.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -1362,7 +1362,7 @@ static ssize_t snd_pcm_oss_write2(struct
- static ssize_t snd_pcm_oss_write1(struct snd_pcm_substream *substream, const char __user *buf, size_t bytes)
- {
- 	size_t xfer = 0;
--	ssize_t tmp;
-+	ssize_t tmp = 0;
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 
- 	if (atomic_read(&substream->mmap_count))
-@@ -1469,7 +1469,7 @@ static ssize_t snd_pcm_oss_read2(struct
- static ssize_t snd_pcm_oss_read1(struct snd_pcm_substream *substream, char __user *buf, size_t bytes)
- {
- 	size_t xfer = 0;
--	ssize_t tmp;
-+	ssize_t tmp = 0;
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 
- 	if (atomic_read(&substream->mmap_count))
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -3394,7 +3394,7 @@ int snd_pcm_lib_default_mmap(struct snd_
+ 					 area,
+ 					 substream->runtime->dma_area,
+ 					 substream->runtime->dma_addr,
+-					 area->vm_end - area->vm_start);
++					 substream->runtime->dma_bytes);
+ #elif defined(CONFIG_MIPS) && defined(CONFIG_DMA_NONCOHERENT)
+ 	if (substream->dma_buffer.dev.type == SNDRV_DMA_TYPE_DEV &&
+ 	    !plat_device_is_coherent(substream->dma_buffer.dev.dev))
