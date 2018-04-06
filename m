@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49DL4wSodATDFruYvdERYtf+62N2EAbEdMnJ30Th2wERa2zO11SA5WzqtJQifpVYOiyts2S
-ARC-Seal: i=1; a=rsa-sha256; t=1523021864; cv=none;
+X-Google-Smtp-Source: AIpwx4+MV3dAOtq2fLWpo+NhnblyJDXApug3Vexd4pyaXz42bXurqSDbvCkp/8Y25fYWnLOY14Iq
+ARC-Seal: i=1; a=rsa-sha256; t=1523021863; cv=none;
         d=google.com; s=arc-20160816;
-        b=KrUE81TJSaHxnZnKQ8OVnghO9Xu3Ja7XyISjJVOJnPbbtmf7NbAEBKOKMaPCPZgX9W
-         OkrVkTTd/ZP5oMWiBXu5WFWArc6z79SvPprf4/a8SZWZiEe1E1DQLMzUTyNclycH1PuD
-         gXqD8TcSHmw9tyWwEvWgEh7wyuNkUloAIuBBnV6P/OvWAHbnAu/WaPxEQDzIeeqUq5IH
-         mx0UpEURu2mf9E6xVQVvWV9MhWle9HLaNbqD1Jt6fBJLXkWZQBVzE7PZ/ZGDNdXlTM6d
-         V/Exeymi5jekZWEZmeZgAI1FIFGMsq7ULgV7MgdWbCbVbhoSv+9YaTRKdIDFaH2orUW2
-         nRyg==
+        b=yxG3Atp0hAciafl8Icp0G/VloCE9CZ/rG/UHYmpjRNLbhZcgLVgvDhSQ63uFqAFw2z
+         y47sbda7darp8Zq62bRm37nUBaYd6dFv9dpvjQgrcdAqFGpodSltop0IssUZWP16AA9Z
+         KzsYfGZ1pTogRBAhDHEqdPxQyXJqgZZ9BFVgrmEnZPC4tDIG6ehT0R3kTz4cTrL6iocC
+         GVPhqCoQxRcSg37poWw2Nyh1Qpd8VwQI82k6cC11azUVV10dO7AOkOzPpXiHA39n5Xxu
+         IWsHME5XWFfWIiG4ywh0VMH9WGWoexs1QgAcBFILoIMy4p9ufvKAx5ifhR2D0Wv0OqVk
+         n1iQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9H9t5L3ri4/7gAEyVpyz01qYJc3r25dI0Sd1bKCM0cs=;
-        b=FOgdD2jqfqX4P7ATeEBIvDOcw1VZqHzQL9/f1GsOxkGugt8/8wfCCNRntIL0WLCQHQ
-         y/47gu6cc3EVc0i0vNU727TEaC+GcH37YN9TUC641i9VEbiu9kiKtp93dXSpUuxdMf49
-         fhfm5ckv+Atc2XNQ5VmOLoFpGsJllpUOa810mXrsh3qyrElW46KGJM9CCY9bocDbFmu7
-         DNx8oNheVsFcZRZnLyoZLW9oCnTaa9l8HaAGkioXFvTuzKtgNx0CpcXsMb5YjWob221Z
-         eohubrwgc1B/4rWedM9gQwmzqSyTXRfPaXY5leiYlF/wggGmKow1gKRIUO+skkWtaZgB
-         KgAg==
+        bh=dXzLqWnx5I+I8zQZwF+TkHZuTcDCwSRcKwb7Gtio3jQ=;
+        b=pCbEREywnNwjacNdoJTIfAgEjpyiI3xwXvh+CQ7MNpf9cy4C6UwvN40Dp5mKub59uq
+         8q5S534dg3q0Mba39ThSFDQkIoFYslgJXx9WVpYsmZ1y0q3Cm6MS5ps4epZwD00zeO5J
+         5Hrl61zLuF/0B7SmqkHPiQfO0akMo6mYhtwB24bdOVhFLaF40xnZYSmiJG8B0rX/17jf
+         1M+4McvpnNNB1P9j2T9wvj8RlEj8rAMYx/T2/mN2XpH4qKfKU5iQT+y6exJ50l4eIm7U
+         sNXdRJHdtqGLyxBMKpTbE8CmOd8zdKGmriFvj8wkgn/VxorYIpT28F6IjgZkaBfOMRwS
+         YbWg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Carol L. Soto" <clsoto@us.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 15/67] powerpc/64s: Fix lost pending interrupt due to race causing lost update to irq_happened
-Date: Fri,  6 Apr 2018 15:23:45 +0200
-Message-Id: <20180406084343.313423886@linuxfoundation.org>
+	Mike Kravetz <mike.kravetz@oracle.com>,
+	Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Manfred Spraul <manfred@colorfullife.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 13/67] ipc/shm.c: add split function to shm_vm_ops
+Date: Fri,  6 Apr 2018 15:23:43 +0200
+Message-Id: <20180406084343.033503965@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -41,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003938140949663?=
-X-GMAIL-MSGID: =?utf-8?q?1597004175054700415?=
+X-GMAIL-THRID: =?utf-8?q?1597003934238227068?=
+X-GMAIL-MSGID: =?utf-8?q?1597004173641136270?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,54 +55,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
 
-commit ff6781fd1bb404d8a551c02c35c70cec1da17ff1 upstream.
+commit 3d942ee079b917b24e2a0c5f18d35ac8ec9fee48 upstream.
 
-force_external_irq_replay() can be called in the do_IRQ path with
-interrupts hard enabled and soft disabled if may_hard_irq_enable() set
-MSR[EE]=1. It updates local_paca->irq_happened with a load, modify,
-store sequence. If a maskable interrupt hits during this sequence, it
-will go to the masked handler to be marked pending in irq_happened.
-This update will be lost when the interrupt returns and the store
-instruction executes. This can result in unpredictable latencies,
-timeouts, lockups, etc.
+If System V shmget/shmat operations are used to create a hugetlbfs
+backed mapping, it is possible to munmap part of the mapping and split
+the underlying vma such that it is not huge page aligned.  This will
+untimately result in the following BUG:
 
-Fix this by ensuring hard interrupts are disabled before modifying
-irq_happened.
+  kernel BUG at /build/linux-jWa1Fv/linux-4.15.0/mm/hugetlb.c:3310!
+  Oops: Exception in kernel mode, sig: 5 [#1]
+  LE SMP NR_CPUS=2048 NUMA PowerNV
+  Modules linked in: kcm nfc af_alg caif_socket caif phonet fcrypt
+  CPU: 18 PID: 43243 Comm: trinity-subchil Tainted: G         C  E 4.15.0-10-generic #11-Ubuntu
+  NIP:  c00000000036e764 LR: c00000000036ee48 CTR: 0000000000000009
+  REGS: c000003fbcdcf810 TRAP: 0700   Tainted: G         C  E (4.15.0-10-generic)
+  MSR:  9000000000029033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 24002222  XER: 20040000
+  CFAR: c00000000036ee44 SOFTE: 1
+  NIP __unmap_hugepage_range+0xa4/0x760
+  LR __unmap_hugepage_range_final+0x28/0x50
+  Call Trace:
+    0x7115e4e00000 (unreliable)
+    __unmap_hugepage_range_final+0x28/0x50
+    unmap_single_vma+0x11c/0x190
+    unmap_vmas+0x94/0x140
+    exit_mmap+0x9c/0x1d0
+    mmput+0xa8/0x1d0
+    do_exit+0x360/0xc80
+    do_group_exit+0x60/0x100
+    SyS_exit_group+0x24/0x30
+    system_call+0x58/0x6c
+  ---[ end trace ee88f958a1c62605 ]---
 
-This could cause any maskable asynchronous interrupt to get lost, but
-it was noticed on P9 SMP system doing RDMA NVMe target over 100GbE,
-so very high external interrupt rate and high IPI rate. The hang was
-bisected down to enabling doorbell interrupts for IPIs. These provided
-an interrupt type that could run at high rates in the do_IRQ path,
-stressing the race.
+This bug was introduced by commit 31383c6865a5 ("mm, hugetlbfs:
+introduce ->split() to vm_operations_struct").  A split function was
+added to vm_operations_struct to determine if a mapping can be split.
+This was mostly for device-dax and hugetlbfs mappings which have
+specific alignment constraints.
 
-Fixes: 1d607bb3bd60 ("powerpc/irq: Add mechanism to force a replay of interrupts")
-Cc: stable@vger.kernel.org # v4.8+
-Reported-by: Carol L. Soto <clsoto@us.ibm.com>
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Mappings initiated via shmget/shmat have their original vm_ops
+overwritten with shm_vm_ops.  shm_vm_ops functions will call back to the
+original vm_ops if needed.  Add such a split function to shm_vm_ops.
+
+Link: http://lkml.kernel.org/r/20180321161314.7711-1-mike.kravetz@oracle.com
+Fixes: 31383c6865a5 ("mm, hugetlbfs: introduce ->split() to vm_operations_struct")
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Reported-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Tested-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Manfred Spraul <manfred@colorfullife.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/irq.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ ipc/shm.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/arch/powerpc/kernel/irq.c
-+++ b/arch/powerpc/kernel/irq.c
-@@ -430,6 +430,14 @@ void force_external_irq_replay(void)
- 	 */
- 	WARN_ON(!arch_irqs_disabled());
- 
-+	/*
-+	 * Interrupts must always be hard disabled before irq_happened is
-+	 * modified (to prevent lost update in case of interrupt between
-+	 * load and store).
-+	 */
-+	__hard_irq_disable();
-+	local_paca->irq_happened |= PACA_IRQ_HARD_DIS;
-+
- 	/* Indicate in the PACA that we have an interrupt to replay */
- 	local_paca->irq_happened |= PACA_IRQ_EE;
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -386,6 +386,17 @@ static int shm_fault(struct vm_fault *vm
+ 	return sfd->vm_ops->fault(vmf);
  }
+ 
++static int shm_split(struct vm_area_struct *vma, unsigned long addr)
++{
++	struct file *file = vma->vm_file;
++	struct shm_file_data *sfd = shm_file_data(file);
++
++	if (sfd->vm_ops && sfd->vm_ops->split)
++		return sfd->vm_ops->split(vma, addr);
++
++	return 0;
++}
++
+ #ifdef CONFIG_NUMA
+ static int shm_set_policy(struct vm_area_struct *vma, struct mempolicy *new)
+ {
+@@ -510,6 +521,7 @@ static const struct vm_operations_struct
+ 	.open	= shm_open,	/* callback for a new vm-area open */
+ 	.close	= shm_close,	/* callback for when the vm-area is released */
+ 	.fault	= shm_fault,
++	.split	= shm_split,
+ #if defined(CONFIG_NUMA)
+ 	.set_policy = shm_set_policy,
+ 	.get_policy = shm_get_policy,
