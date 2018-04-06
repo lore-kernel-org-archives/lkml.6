@@ -1,95 +1,103 @@
-Return-Path: <f.fainelli@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523030107; cv=none;
+Return-Path: <00moses.alexander00@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523027217; cv=none;
         d=google.com; s=arc-20160816;
-        b=zi/zoSM1uBZXwQxegqcIQ+qnZmauuV+f1HkZH8oGYLmGNG5x94ACcCgDTlegp4H5FE
-         h/kRAmGsPGoK9E03hSwDnYdP8yOefXv69Hf89Y5SY0WZmZkMCCOYQilLiDnKCi5mCAol
-         TAgoE2fKIXR9sAAraYtdqYznvm65P7MmJGZ5HTwlw8y2fD7U5wQpcBeA+6vhA7hXvbAN
-         syIpTfRsSkqMzlC1vHkEibsMfBhFTDKYfi18wfjmwx34Hm+t7R499IKUwiQzL7Fd8J+9
-         7cm0rdRR29dCFyWJF4LObYBE4lOdRiDZ6ixtxYdUa1Cr4tAfGSem0NqMKrY3ct7BCYvh
-         umEA==
+        b=OCQboJYWz3Nffy2ZnGvfvPV2SRYWNAHcG0dzOUr1RNwlHGtO32RuxJgHNU3BoVukxI
+         3p7qTIXlTFv4rV7nKmHoW0w1lkDFyiBi0O0wCc4Fc0D/0AyRj1s8AHZxwyxxJEMveRkQ
+         bnxxADdAA1spld1cfPxf7FdzWHmfhQhby257pm6BbhaUvkT6XD+LFtjhFP7PGLhX2R7f
+         3ZnEukDCO+uBT/9s0HhlMQzUUqDQ+ZH6n+YHqVJOOgrSLSVrxao+/EigSlw6PUvugLmY
+         7uzDDCcVc+rcUrOpWYNOhuPOWXHibK7X2RBhEvLEslsUnAIoHPpByx5bcda/OkYrHbnh
+         lQgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=knN048XaRrCQh+EkY0/eo1/Pq0FzvPkYAd2hyBAEYwo=;
-        b=E3zI12VjNv34QKuaqEbqBfpcYJbfaavZm1kv1sfJz7q3kj4bP6mYXMjmePC+2B8AZZ
-         fiqyl7p9vl6YxBRODbDrTZhya3p2VFHclv1YBbHvgAJf9TvDhKl+/uFw9CG4OSuTCqs/
-         Gm+c3v0N6EZehdIr3VxSvDEyXNvChgiL47hNFQzJhtYClJfUVGr39AbTyDCPA/fT7CM2
-         yyjcVfoKKpdOTHQFJwRRwIcIK1x1zpTzoYF0qKFck4/v97JJ6SnkDyY8n02MjUCJ/aMX
-         Af1ClxgsGIqic8JNhUiGIps2IEmYQc8FxI9rwJIJ712TZHA3GumIdAQqHc7w8JnuvHEj
-         h0Zw==
+        h=user-agent:content-disposition:mime-version:message-id:subject:to
+         :from:date:dkim-signature:arc-authentication-results;
+        bh=j41Ybz+SujReRFFrtA2hus3batPBhCeTThVsguqDTO8=;
+        b=B6Ek1hESkk/HSYFTYt1oT+5qjoxDPChdX8UbKEJr4wHE0efXyk/CU11jCMC1jtsrET
+         SBvk/1EVbwH8RFuOxAXMuYkNiyD3nBkcbDu3gSe1hiHBVRtKkrsc7XjIbCGX8M6o1sfm
+         j5t5Rql7L80jOCnhy+m7qfz55FLcMQ4U2cvamO9ijBX/uIOcxxGOn2OPusghXHZMKi86
+         E7jLNgiI3yY/natYEHzKAhCX7c6mhoOzg0mNAjBMFHIKELL62CmsVjTfQrynpziWONpX
+         HHPilk+JhmuxgO+z4hecJ01+rXFF9pZtrDFSr13WCaQ+i5nbR6MVlwGunE8qqJTRIBPp
+         LniQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=O/NTcbW2;
-       spf=pass (google.com: domain of f.fainelli@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=f.fainelli@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=WG2rFGZ1;
+       spf=pass (google.com: domain of 00moses.alexander00@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=00moses.alexander00@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=O/NTcbW2;
-       spf=pass (google.com: domain of f.fainelli@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=f.fainelli@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=WG2rFGZ1;
+       spf=pass (google.com: domain of 00moses.alexander00@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=00moses.alexander00@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+Sge0Wl/kR8CHF6joH17/7s3JQTcD15I9Vwhvz+Cz/AAmTGKpA3Jx9kmi766of/Bal6fttWw==
-Subject: Re: [4.9, 137/145] spi: bcm-qspi: shut up warning about cfi header
- inclusion
-To: Arnd Bergmann <arnd@arndb.de>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "# 3.4.x" <stable@vger.kernel.org>, Kamal Dasu <kdasu.kdev@gmail.com>
-References: <20180223170742.426320243@linuxfoundation.org>
- <b9046b98-acb6-c828-661f-ab67696ff1b8@gmail.com>
- <20180406070938.GE8416@kroah.com>
- <CAK8P3a0_rCMvcaxsi-XeOcdFxQk_FkJ7prOS1ySRAscXXROtnA@mail.gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <21fcc6ff-d3f8-a863-224c-a31746c2db0c@gmail.com>
-Date: Fri, 6 Apr 2018 08:55:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+X-Google-Smtp-Source: AIpwx4/49ENuP/tYNGnvHSogUcuoqpzpnuhP5FxrQ/vulThpcy6BPFy2FOMGQSJbHpC8DTLqbHJKeQ==
+Date: Fri, 6 Apr 2018 17:06:50 +0200
+From: Alexandru Moise <00moses.alexander00@gmail.com>
+To: axboe@kernel.dk, tj@kernel.org, shli@fb.com, pombredanne@nexb.com,
+	gregkh@linuxfoundation.org, joseph.qi@linux.alibaba.com,
+	nborisov@suse.com, arnd@arndb.de, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] blk-cgroup: remove entries in blkg_tree before queue release
+Message-ID: <20180406150648.GA6378@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0_rCMvcaxsi-XeOcdFxQk_FkJ7prOS1ySRAscXXROtnA@mail.gmail.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593218652822449350?=
-X-GMAIL-MSGID: =?utf-8?q?1597012818038370121?=
+X-GMAIL-THRID: =?utf-8?q?1597009788051642180?=
+X-GMAIL-MSGID: =?utf-8?q?1597009788051642180?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The q->id is used as an index within the blkg_tree radix tree.
 
+If the entry is not released before reclaiming the blk_queue_ida's id
+blkcg_init_queue() within a different driver from which this id
+was originally for can fail due to the entry at that index within
+the radix tree already existing.
 
-On 04/06/2018 12:22 AM, Arnd Bergmann wrote:
-> On Fri, Apr 6, 2018 at 9:09 AM, gregkh@linuxfoundation.org
-> <gregkh@linuxfoundation.org> wrote:
->> On Tue, Apr 03, 2018 at 10:46:07AM -0700, Florian Fainelli wrote:
->>> On 02/23/2018 10:27 AM, gregkh@linuxfoundation.org wrote:
->>>> 4.9-stable review patch.  If anyone has any objections, please let me know.
->>>>
->>>> ------------------
->>>>
->>>> From: Arnd Bergmann <arnd@arndb.de>
->>>>
->>>> When CONFIG_MTD_CFI is disabled, we get a warning for this spi driver:
->>>>
->>>> include/linux/mtd/cfi.h:76:2: #warning No CONFIG_MTD_CFI_Ix selected. No NOR chip support can work. [-Werror=cpp]
->>>>
->>>> The problem here is a layering violation that was fixed in mainline kernels with
->>>> a larger rework in commit 054e532f8f90 ("spi: bcm-qspi: Remove hardcoded settings
->>>> and spi-nor.h dependency"). We can't really backport that to stable kernels, so
->>>> this just adds a Kconfig dependency to make it either build cleanly or force it
->>>> to be disabled.
->>>
->>> Sorry for noticing so late, but this appears to be bogus, there is no
->>> MTD_NORFLASH symbol being defined in 4.9, in fact I can't find this
->>> Kconfig symbol in any kernel version, so this effectively results in the
->>> driver no longer being selectable, so this sure does silence the warning.
->>>
->>> Arnd, should we just send reverts of this patch for the affected kernel
->>> or should we be defining MTD_NORFLASH somehow? Am I missing something here?
->>
->> I'm going to revert this patch for now, thanks.
-> 
-> Yes, please do. Sorry for missing Florian's bug report. I looked at it again
-> and found that it was never intended for backports to 4.9, as the regression
-> addressed by the patch was originally merged into 4.14-rc1.
+Signed-off-by: Alexandru Moise <00moses.alexander00@gmail.com>
+---
+ block/blk-cgroup.c         | 2 +-
+ block/blk-sysfs.c          | 4 ++++
+ include/linux/blk-cgroup.h | 2 ++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-No worries, thanks both!
---
-Florian
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 1c16694ae145..224e937dbb59 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -369,7 +369,7 @@ static void blkg_destroy(struct blkcg_gq *blkg)
+  *
+  * Destroy all blkgs associated with @q.
+  */
+-static void blkg_destroy_all(struct request_queue *q)
++void blkg_destroy_all(struct request_queue *q)
+ {
+ 	struct blkcg_gq *blkg, *n;
+ 
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index d00d1b0ec109..a72866458f22 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -816,6 +816,10 @@ static void __blk_release_queue(struct work_struct *work)
+ 	if (q->bio_split)
+ 		bioset_free(q->bio_split);
+ 
++	spin_lock_irq(q->queue_lock);
++	blkg_destroy_all(q);
++	spin_unlock_irq(q->queue_lock);
++
+ 	ida_simple_remove(&blk_queue_ida, q->id);
+ 	call_rcu(&q->rcu_head, blk_free_queue_rcu);
+ }
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index 6c666fd7de3c..4470fdb6ea8f 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -179,6 +179,8 @@ struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
+ int blkcg_init_queue(struct request_queue *q);
+ void blkcg_drain_queue(struct request_queue *q);
+ void blkcg_exit_queue(struct request_queue *q);
++void blkg_destroy_all(struct request_queue *q);
++
+ 
+ /* Blkio controller policy registration */
+ int blkcg_policy_register(struct blkcg_policy *pol);
+-- 
+2.16.3
