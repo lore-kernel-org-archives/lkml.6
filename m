@@ -1,137 +1,140 @@
-Return-Path: <rdunlap@infradead.org>
-X-Google-Smtp-Source: AIpwx49dUcB1lUhTvMRGN9t2gygfRHlBXjMt53AZCXRqbFEmhpGRVkKV200XB1Uho5d1VEAK9Nks
-ARC-Seal: i=1; a=rsa-sha256; t=1523062814; cv=none;
+Return-Path: <kernel-hardening-return-12875-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+e4Z42PMD/HMXzbxf1POAmFAsXNDIh0DsLWhVuC8YHrUT14ydUJlqINhx+AxwfDMR5vZuH
+ARC-Seal: i=1; a=rsa-sha256; t=1523058982; cv=none;
         d=google.com; s=arc-20160816;
-        b=TqWLMJgq8wR2qflexOYT45XDedCS6AAGvvwfBlvd1brExLs+/JOD2EnP32Nr/6WdsS
-         AM2Uon+jTC15WdEHx+kxHue/esSNnSpxidzbuH6HVhuSz/N0ye/Pirl5Gjl0pfneks6D
-         2Ftj0EnroKKQNIlQvXn9A/lMoVsTZJGu9HbYuijjM7CCKZbbyMhfyflPtervS5/KKlE6
-         SnI76+T7x0ikFrhjHjCDiWuShOUHGJjehfZwIDB32D2bCVUhP632wTzGkxCtJNEE34i2
-         +DZ2J4zHTaLeue2G3WaJZSdZGBzuHsx6Bre4Yul5qX0Bp5wmTpv9baQfT0XvvTlM7jhB
-         yo0Q==
+        b=jD57z9MobaL0pAQXUW06WIBZbCWMPwv0qZlj5ifsIh/dICxjGa9c8QjbrbWTa5ub2L
+         Hh6lnqR/v+Wif5VLGhMJUeQ+O7icF+5GGnHdKM+MuaISOFnJbk7JrEolfCFKOSNn3ZhY
+         6NdnLrNvKT/THQ0tG8XTVcidD5qWmGpcVWPnUUIYLI0oFcq7YMv72MuSMu4zvRB111oY
+         QOLq/dUmD0oGSCIOja8RGl2Qtx6JXaElt5Cm9YzGd8bcZXxrND5Gg0axVNWFQOgNxcH5
+         tLmLjCgZaiIDXnDXzi4l8YvVb09UzZ0Qffg6irwSqwtvB/hjpRp4yAeIJ+62CoMJuJ79
+         kjTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=4Ez/rxmsvFilsi7MUvvVxusgt2bPEIgcIhthrxeuMlE=;
-        b=kiVNlu4IGcalQS61GzsDPe3CGDvQ2cMsEXwPh+hPU7PoOTuwH0Kln1N5VAHxQyfvyQ
-         tO/vDBY714DPAQoPLfclIt+g+UT4ShLYgrQzFQKOm9F4OVzFdA/i3xdJ75jkT/tUG6GA
-         dSYGuBz+TFim19wvbwM6xtkwqc42tXo9+qYorg7NpOxHWEbbExcr70nQmnQ2xdsR+WAF
-         akuJybu33wCroDa5W9OViTw4zIfV1/4e8QsA+rR+ReF0x5hoch/qlwua+aSf7milKCrd
-         PMGd140Q55O2AfMfBkwSvOc6eq/2jn7lsGTRmVxlJ+XdLNAnXuMXB6Ba7T7GDJnh4pyP
-         6WIw==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:dkim-signature:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=DSuC9db+Ir6wZh8C+Um1eLwiXxDPik2MCl2vWNljYX8=;
+        b=tjdH7diN5YubEQDhvzt9PxDPT8ugp1euUR5VI8ICv0SFe9rMrRQNyM4MtLir1/yVIr
+         nRZN2z83JCfWnq06hS3wzdiH37QD0OYy5Lc112JiI9zy7DyqTJyUK/m5dcCa0X/zzJnf
+         Rw6V1iRS2ztXzkBRvuDmQlnGa74/dFS67HYCbCfda4OkQMkmX9PYgFia2Fqju4ud6YAy
+         YLGLqaPiPii2+BNFRmH+Xcn1Vg1YruLxQE4cOoRp54MXb3Ky5qvFHP1cm1wIQfuX1ct6
+         2gJcrqCIRvMM/devb8G4B3stQ9n9nTZwQTZTcalOG/pALnFvgFtVAvXs5lcmZcg45W2O
+         nHJA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=WzWdPuAd;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=SNrMkXzb;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=aN8qIHsx;
+       spf=pass (google.com: domain of kernel-hardening-return-12875-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12875-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=WzWdPuAd;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-Subject: Re: Differences between builtins and modules
-To: Lucas De Marchi <lucas.de.marchi@gmail.com>
-Cc: Harish Jenny K N <harish_kandiga@mentor.com>,
- linux-modules <linux-modules@vger.kernel.org>,
- lkml <linux-kernel@vger.kernel.org>, greg KH <gregkh@linuxfoundation.org>,
- jason.vas.dias@gmail.com
-References: <CAKi4VA+1krn9rdBWE69DkhNZSrxJoeYzyPgvn-SUk8U0=CxFkw@mail.gmail.com>
- <54EB4C83.2000500@suse.cz>
- <CAKi4VAJwvtLaF1GTw1dg__CXHGjwOwJqUS=g5B0rbPNp1w8dDg@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4502a7e5-930f-15b6-fbef-929df29d5ef0@infradead.org>
-Date: Fri, 6 Apr 2018 18:00:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=SNrMkXzb;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=aN8qIHsx;
+       spf=pass (google.com: domain of kernel-hardening-return-12875-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12875-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+X-ME-Sender: <xms:EAnIWmX7v14Y3Y2f8Ef_JlAnH4ppGPAnY1Aygd8oG-vT7n02q_NVAQ>
+Date: Sat, 7 Apr 2018 09:55:56 +1000
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+	Tycho Andersen <tycho@tycho.ws>
+Subject: [GIT PULL] leaking_addresses: changes for 14.17-rc1
+Message-ID: <20180406235556.GA8365@eros>
 MIME-Version: 1.0
-In-Reply-To: <CAKi4VAJwvtLaF1GTw1dg__CXHGjwOwJqUS=g5B0rbPNp1w8dDg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1493908198172541119?=
-X-GMAIL-MSGID: =?utf-8?q?1597047112700755148?=
+X-GMAIL-THRID: =?utf-8?q?1597043095310414396?=
+X-GMAIL-MSGID: =?utf-8?q?1597043095310414396?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/24/2015 05:02 PM, Lucas De Marchi wrote:
-> On Mon, Feb 23, 2015 at 12:51 PM, Michal Marek <mmarek@suse.cz> wrote:
->> On 2015-02-23 15:30, Lucas De Marchi wrote:
->>> This could be particularly bad if in a kernel version an option was
->>> tristate and in a new version it changed to boolean. I'm not sure if
->>> this is common to happen in kernel. Any code that did "modprobe
->>> <module>" would start to fail.
->>
->> I think it's quite uncommon (*) and also the use case for loading
->> builtin modules is not that common. I can think of:
->> 1) building the initramfs, to determine which *.ko files need to be
->>    copied to it. Since such tools are often updated for other reasons,
->>    it's not a big deal.
->> 2) Hardcoded module names in things like softdep -- hopefully not that
->>    common either, plus the kernel-provided soft dependencies can be
->>    fixed together with the change.
->>
->> Until not so long ago, the kernel would return EINVAL if passed a
->> non-existent (renamed, removed) module option to init_module, yet there
->> were no attempts at preserving the module options for compatibility reasons.
->>
->> (*) I now did a quick search:
->> $ git log -p origin/master --no-merges -- '*/Kconfig*' | grep -C3 '^-
->> *tristate' | grep '^+ *bool'
->> +       bool "Intel P state control"
->> +       bool "Intel microcode patch loading support"
->> +       bool "AMD microcode patch loading support"
->> +        bool "STI text console"
->> +       bool "Enable DDC2 Support"
->> +       bool "Enable Console Acceleration"
->>
->> That's only 6 cases in the whole git history. Maybe there are a few more
->> hidden outside the three-line context as part of larger edits, but I'm
->> sure more modules have been *removed* entirely from the kernel over this
->> period.
-> 
-> thanks for looking in detail into this.
-> 
->>
->>
->>> My questions are:
->>> 1) should we put *all* the "modules" in the builtin index?
->>
->> You mean all *.o files that do not end up in some *.ko? That won't work,
->> because unlike module names, the names of object files are not global.
-> 
-> I was actually meaning anything that can have a directory under
-> /sys/module/. I figure we can't easily know this.
-> 
->> Plus, there was IIRC an idea to teach lsmod to print builtin modules --
->> listing all *.o would make it rather useless.
-> 
-> This was one of my ideas... to traverse /sys/module and give more
-> information than we actually output right now, including builtin
-> modules. However, given the fact that builtin modules only have an
-> entry in /sys/module if they have params and now that I'm aware of the
-> race between the creation of the directory and the initstate file, I'm
-> giving up on this idea for now.
-> 
->>> 2) should we actually check /sys/module/<modulename> to report a
->>> module as builtin or just stop doing that and rely solely in the
->>> index? Initially I'd like to do the opposite, but given the race in
->>> deciding this I'm favoring the index.
->>
->> If the race between the creation of /sys/module/<modulename> and
->> /sys/module/<modulename>/initstate is inevitable, then I'm afraid we
->> have to rely on the index.
-> 
-> So my current plan is to rely solely on modules.builtin to output to
-> modprobe that a module is builtin. So things like "modprobe vt" will
-> start to fail saying there's no vt module. Any objections here?
-> 
+Hi Linus,
 
-Hi,
-[sorry to resurrect such as old thread]
+This is your favourite noob maintainer requesting that you pretty please
+with sugar on top pull the leaking_addresses patch set.
 
+I have hopefully lifted my game after the abysmal effort last merge
+window.  The script now actually runs in an acceptable time, the tree is
+on kernel.org and I have convinced another (more experienced) kernel
+hacker to cast an eye over things.
 
-Would someone please answer/reply to this (related) kernel bugzilla entry:
-  https://bugzilla.kernel.org/show_bug.cgi?id=118661
-
-or I could just close it?
+All patches have been in linux-next since about half way through last
+dev cycle and testing was done on x86_64, ARM (32 bit), and PowerPC.
 
 thanks,
--- 
-~Randy
+Tobin.
+
+
+The following changes since commit 0adb32858b0bddf4ada5f364a84ed60b196dbcda:
+
+  Linux 4.16 (2018-04-01 14:20:27 -0700)
+
+are available in the git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tobin/leaks.git tags/leaks-4.17-rc1
+
+for you to fetch changes up to e875d33d7f06d1107c057d12bb5aaba84738e418:
+
+  MAINTAINERS: Update LEAKING_ADDRESSES (2018-04-07 09:35:37 +1000)
+
+----------------------------------------------------------------
+Leaking-addresses patches for 4.17-rc1
+
+Here is the patch set for the 4.17-rc1 merge window.  This set
+represents improvements to the scripts/leaking_addresses.pl script.  The
+major improvement is that with this set applied the script actually runs
+in a reasonable amount of time (less than a minute on a standard stock
+Ubuntu user desktop).  Also, we have a second maintainer now and a tree
+hosted on kernel.org
+
+We do a few code clean ups.  We fix the command help output.  Handling
+of the vsyscall address range is fixed to check the whole range instead
+of just the start/end addresses.  We add support for 5 page table levels
+(suggested on LKML).  We use a system command to get the machine
+architecture instead of using Perl.  Calling this command for every
+regex comparison is what previously choked the script, caching the
+result of this call gave the major speed improvement.  We add support
+for scanning 32-bit kernels using the user/kernel memory split.  Path
+skipping code refactored and simplified (meaning easier script
+configuration).  We remove version numbering.  We add a variable name to
+improve readability of a regex and finally we check filenames for
+leaking addresses.
+
+Currently script scans /proc/PID for all PID.  With this set applied we
+only scan for PID==1. It was observed that on an idle system files under
+/proc/PID are predominantly the same for all processes.  Also it was
+noted that the script does not scan _all_ the kernel since it only scans
+active processes.  Scanning only for PID==1 makes explicit the inherent
+flaw in the script that the scan is only partial and also speeds things up.
+
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+
+----------------------------------------------------------------
+Tobin C. Harding (19):
+      leaking_addresses: fix typo function not called
+      leaking_addresses: remove mention of kptr_restrict
+      leaking_addresses: remove command examples
+      leaking_addresses: indent dependant options
+      leaking_addresses: add range check for vsyscall memory
+      leaking_addresses: add support for kernel config file
+      leaking_addresses: add support for 5 page table levels
+      leaking_addresses: use system command to get arch
+      leaking_addresses: add is_arch() wrapper subroutine
+      leaking_addresses: add 32-bit support
+      leaking_addresses: do not parse binary files
+      leaking_addresses: simplify path skipping
+      leaking_addresses: cache architecture name
+      leaking_addresses: skip all /proc/PID except /proc/1
+      leaking_addresses: skip '/proc/1/syscall'
+      leaking_addresses: remove version number
+      leaking_addresses: explicitly name variable used in regex
+      leaking_addresses: check if file name contains address
+      MAINTAINERS: Update LEAKING_ADDRESSES
+
+ MAINTAINERS                  |   3 +
+ scripts/leaking_addresses.pl | 372 ++++++++++++++++++++++++++++++-------------
+ 2 files changed, 262 insertions(+), 113 deletions(-)
