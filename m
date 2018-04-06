@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48MN0y7BVkEJ1YZlpx5yBc8PaJbmKXpEKRA8mj2LGDdDkIzSrNvMPceQgDC5syHjfMYuJV4
-ARC-Seal: i=1; a=rsa-sha256; t=1523022110; cv=none;
+X-Google-Smtp-Source: AIpwx4/CBiKlNeD+0urnMVsF9ANgqDC526+peQS7juukzerbHj0yfqkqLIMoLR5XBktjEDSu0HZe
+ARC-Seal: i=1; a=rsa-sha256; t=1523022105; cv=none;
         d=google.com; s=arc-20160816;
-        b=Q7Zypaxd6JCNrBR8Icy0bBwqLPKbU3QRJB06VUN6QIqO10MSgAmys4Jaip1MgE+EpN
-         7T5b8wIxc60oyeE/NDzAtVNXRKyfNMB32zjLqX4O5teagXdXGvFoN5C6JQFDgxeAJg84
-         wlZHjQp1snA6Q2f7vYV5su8CCiKUGQYAwzSFie82Mf+2bIGygaZV/mWWD1Q3zq0XYanH
-         6n3+BBdnVhn1wYG6WulAEMrPyCkUPtgkFLQ0CMoU49mqFLI63Jayr/icPE0+dj25nIRI
-         yPjJHXacO9Sr1mrrIyq5kFWH9GUJAAIqHYBbZev4Q6x2AkJcNg2HDLd6U1yjfhcEshVi
-         03Hg==
+        b=axU9l9ZLRAoh7rx/wj5XHy0WwKoiu8y0Bi1VDbqJ5cUWdGYhv1LthFEa9GSUA+oW17
+         1qTzErj0YxvISqgdo4DRtqUVR2qNfnqriRt4MJ8Ia+CgcscenyFs6PEyU1WGizB8RSUo
+         WOLsfpKg/YzB+AlhESwmG7uKRnxY2YZUF6DwzVarVRVcxeGTu3pMlxmHwOcmYN183vV7
+         tCZMwR/R4BOVN2Na50RRfAC7NX1RIHxRFy1niudK/xfoTZQQR9w09fcoys4KYiFjLypk
+         asRvAiTky3fKkX0lYihUgLm1y/IUAYgv0HiF1qnfreUAFbDT835UsT/YYxXS16MvlUkc
+         hP3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hxHRyx2jdWtjXDS8QHVLV2w0yF/xY/gXL1Jls/nwgfM=;
-        b=QCH1EpQQs0lSqhtqNLKgQ4TK7e4L5CKqt8kF899SRrM8Hym21ZnwDC8h8iyzMQ8S4/
-         e7aPFDWoE7G8oO9FzojenlIN2Ys08BaKIteWfdIunQTK/qN0Y6W3nc+khgGIc41K7CRg
-         1AHkZXBlot5T3D3Ll34tL+JhJuVQVjtpI2aG7VoDe8dqq6tSQH3zsJj/OOCRq9ezJGSj
-         wXhKhntfLu2zZW2SyM/p9txqcOG5aFgIlqTcx1Ec9XNXoE5ILuhtTRH9DgudRonwtxJx
-         tLInjVVDRKT8tkekFGb94xvbYzp62RJvq6F8sza2tj13pLph5SQ6Ct9veOII3PFGqqRY
-         ECxw==
+        bh=k7wcjd5I1r21xUU1YRAytmrg9PK1hxACngYkSB1GvqA=;
+        b=sQB43Hi+qzbxPV6Gcg4HRtmU6kwLGCsEsPOBAtVrZrQj/xYMs2+ouDeI1g8esb91+l
+         z2QfBppwY1LQBx0jUBsuD8exmveJUiuG9GxBajGy52S1orF1WqnhagUsGxnXpR+441Ta
+         V0ubXyOQziFBZyxjpbj3aTKoZ+l76/L7t2zgR3q/IweohTMiMixk+uNIQgeVQsrqNmuD
+         mSltY9X8BiMluX9usFuAgt9HmqZcwsSApN8uEzZAWagTA2k5oMZ3Q1nc6g7VawnDlnqY
+         iRGpZr2flToB3Om7pHgrqQLO+6T6TTbvlaRHdbdtlqQrUS/baRogkWnIrHBCNjc6iAbs
+         1QNg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dennis Zhou <dennisszhou@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com,
-	Christoph Lameter <cl@linux.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.15 31/72] percpu: add __GFP_NORETRY semantics to the percpu balancing path
-Date: Fri,  6 Apr 2018 15:24:06 +0200
-Message-Id: <20180406084351.914889101@linuxfoundation.org>
+	Greg Hackmann <ghackmann@google.com>,
+	Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.15 29/72] net: xfrm: use preempt-safe this_cpu_read() in ipcomp_alloc_tfms()
+Date: Fri,  6 Apr 2018 15:24:04 +0200
+Message-Id: <20180406084351.789437640@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004218250549531?=
-X-GMAIL-MSGID: =?utf-8?q?1597004432768213842?=
+X-GMAIL-THRID: =?utf-8?q?1597003592797913514?=
+X-GMAIL-MSGID: =?utf-8?q?1597004426722820325?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,291 +49,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dennis Zhou <dennisszhou@gmail.com>
+From: Greg Hackmann <ghackmann@google.com>
 
-commit 47504ee04b9241548ae2c28be7d0b01cff3b7aa6 upstream.
+commit 0dcd7876029b58770f769cbb7b484e88e4a305e5 upstream.
 
-Percpu memory using the vmalloc area based chunk allocator lazily
-populates chunks by first requesting the full virtual address space
-required for the chunk and subsequently adding pages as allocations come
-through. To ensure atomic allocations can succeed, a workqueue item is
-used to maintain a minimum number of empty pages. In certain scenarios,
-such as reported in [1], it is possible that physical memory becomes
-quite scarce which can result in either a rather long time spent trying
-to find free pages or worse, a kernel panic.
+f7c83bcbfaf5 ("net: xfrm: use __this_cpu_read per-cpu helper") added a
+__this_cpu_read() call inside ipcomp_alloc_tfms().
 
-This patch adds support for __GFP_NORETRY and __GFP_NOWARN passing them
-through to the underlying allocators. This should prevent any
-unnecessary panics potentially caused by the workqueue item. The passing
-of gfp around is as additional flags rather than a full set of flags.
-The next patch will change these to caller passed semantics.
+At the time, __this_cpu_read() required the caller to either not care
+about races or to handle preemption/interrupt issues.  3.15 tightened
+the rules around some per-cpu operations, and now __this_cpu_read()
+should never be used in a preemptible context.  On 3.15 and later, we
+need to use this_cpu_read() instead.
 
-V2:
-Added const modifier to gfp flags in the balance path.
-Removed an extra whitespace.
+syzkaller reported this leading to the following kernel BUG while
+fuzzing sendmsg:
 
-[1] https://lkml.org/lkml/2018/2/12/551
+BUG: using __this_cpu_read() in preemptible [00000000] code: repro/3101
+caller is ipcomp_init_state+0x185/0x990
+CPU: 3 PID: 3101 Comm: repro Not tainted 4.16.0-rc4-00123-g86f84779d8e9 #154
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+Call Trace:
+ dump_stack+0xb9/0x115
+ check_preemption_disabled+0x1cb/0x1f0
+ ipcomp_init_state+0x185/0x990
+ ? __xfrm_init_state+0x876/0xc20
+ ? lock_downgrade+0x5e0/0x5e0
+ ipcomp4_init_state+0xaa/0x7c0
+ __xfrm_init_state+0x3eb/0xc20
+ xfrm_init_state+0x19/0x60
+ pfkey_add+0x20df/0x36f0
+ ? pfkey_broadcast+0x3dd/0x600
+ ? pfkey_sock_destruct+0x340/0x340
+ ? pfkey_seq_stop+0x80/0x80
+ ? __skb_clone+0x236/0x750
+ ? kmem_cache_alloc+0x1f6/0x260
+ ? pfkey_sock_destruct+0x340/0x340
+ ? pfkey_process+0x62a/0x6f0
+ pfkey_process+0x62a/0x6f0
+ ? pfkey_send_new_mapping+0x11c0/0x11c0
+ ? mutex_lock_io_nested+0x1390/0x1390
+ pfkey_sendmsg+0x383/0x750
+ ? dump_sp+0x430/0x430
+ sock_sendmsg+0xc0/0x100
+ ___sys_sendmsg+0x6c8/0x8b0
+ ? copy_msghdr_from_user+0x3b0/0x3b0
+ ? pagevec_lru_move_fn+0x144/0x1f0
+ ? find_held_lock+0x32/0x1c0
+ ? do_huge_pmd_anonymous_page+0xc43/0x11e0
+ ? lock_downgrade+0x5e0/0x5e0
+ ? get_kernel_page+0xb0/0xb0
+ ? _raw_spin_unlock+0x29/0x40
+ ? do_huge_pmd_anonymous_page+0x400/0x11e0
+ ? __handle_mm_fault+0x553/0x2460
+ ? __fget_light+0x163/0x1f0
+ ? __sys_sendmsg+0xc7/0x170
+ __sys_sendmsg+0xc7/0x170
+ ? SyS_shutdown+0x1a0/0x1a0
+ ? __do_page_fault+0x5a0/0xca0
+ ? lock_downgrade+0x5e0/0x5e0
+ SyS_sendmsg+0x27/0x40
+ ? __sys_sendmsg+0x170/0x170
+ do_syscall_64+0x19f/0x640
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x7f0ee73dfb79
+RSP: 002b:00007ffe14fc15a8 EFLAGS: 00000207 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0ee73dfb79
+RDX: 0000000000000000 RSI: 00000000208befc8 RDI: 0000000000000004
+RBP: 00007ffe14fc15b0 R08: 00007ffe14fc15c0 R09: 00007ffe14fc15c0
+R10: 0000000000000000 R11: 0000000000000207 R12: 0000000000400440
+R13: 00007ffe14fc16b0 R14: 0000000000000000 R15: 0000000000000000
 
-Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
-Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
-Reported-by: syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com
-Acked-by: Christoph Lameter <cl@linux.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/percpu-km.c |    8 ++++----
- mm/percpu-vm.c |   18 +++++++++++-------
- mm/percpu.c    |   45 ++++++++++++++++++++++++++++-----------------
- 3 files changed, 43 insertions(+), 28 deletions(-)
+ net/xfrm/xfrm_ipcomp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/percpu-km.c
-+++ b/mm/percpu-km.c
-@@ -34,7 +34,7 @@
- #include <linux/log2.h>
+--- a/net/xfrm/xfrm_ipcomp.c
++++ b/net/xfrm/xfrm_ipcomp.c
+@@ -283,7 +283,7 @@ static struct crypto_comp * __percpu *ip
+ 		struct crypto_comp *tfm;
  
- static int pcpu_populate_chunk(struct pcpu_chunk *chunk,
--			       int page_start, int page_end)
-+			       int page_start, int page_end, gfp_t gfp)
- {
- 	return 0;
- }
-@@ -45,18 +45,18 @@ static void pcpu_depopulate_chunk(struct
- 	/* nada */
- }
+ 		/* This can be any valid CPU ID so we don't need locking. */
+-		tfm = __this_cpu_read(*pos->tfms);
++		tfm = this_cpu_read(*pos->tfms);
  
--static struct pcpu_chunk *pcpu_create_chunk(void)
-+static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
- {
- 	const int nr_pages = pcpu_group_sizes[0] >> PAGE_SHIFT;
- 	struct pcpu_chunk *chunk;
- 	struct page *pages;
- 	int i;
- 
--	chunk = pcpu_alloc_chunk();
-+	chunk = pcpu_alloc_chunk(gfp);
- 	if (!chunk)
- 		return NULL;
- 
--	pages = alloc_pages(GFP_KERNEL, order_base_2(nr_pages));
-+	pages = alloc_pages(gfp | GFP_KERNEL, order_base_2(nr_pages));
- 	if (!pages) {
- 		pcpu_free_chunk(chunk);
- 		return NULL;
---- a/mm/percpu-vm.c
-+++ b/mm/percpu-vm.c
-@@ -37,7 +37,7 @@ static struct page **pcpu_get_pages(void
- 	lockdep_assert_held(&pcpu_alloc_mutex);
- 
- 	if (!pages)
--		pages = pcpu_mem_zalloc(pages_size);
-+		pages = pcpu_mem_zalloc(pages_size, 0);
- 	return pages;
- }
- 
-@@ -73,18 +73,21 @@ static void pcpu_free_pages(struct pcpu_
-  * @pages: array to put the allocated pages into, indexed by pcpu_page_idx()
-  * @page_start: page index of the first page to be allocated
-  * @page_end: page index of the last page to be allocated + 1
-+ * @gfp: allocation flags passed to the underlying allocator
-  *
-  * Allocate pages [@page_start,@page_end) into @pages for all units.
-  * The allocation is for @chunk.  Percpu core doesn't care about the
-  * content of @pages and will pass it verbatim to pcpu_map_pages().
-  */
- static int pcpu_alloc_pages(struct pcpu_chunk *chunk,
--			    struct page **pages, int page_start, int page_end)
-+			    struct page **pages, int page_start, int page_end,
-+			    gfp_t gfp)
- {
--	const gfp_t gfp = GFP_KERNEL | __GFP_HIGHMEM;
- 	unsigned int cpu, tcpu;
- 	int i;
- 
-+	gfp |= GFP_KERNEL | __GFP_HIGHMEM;
-+
- 	for_each_possible_cpu(cpu) {
- 		for (i = page_start; i < page_end; i++) {
- 			struct page **pagep = &pages[pcpu_page_idx(cpu, i)];
-@@ -262,6 +265,7 @@ static void pcpu_post_map_flush(struct p
-  * @chunk: chunk of interest
-  * @page_start: the start page
-  * @page_end: the end page
-+ * @gfp: allocation flags passed to the underlying memory allocator
-  *
-  * For each cpu, populate and map pages [@page_start,@page_end) into
-  * @chunk.
-@@ -270,7 +274,7 @@ static void pcpu_post_map_flush(struct p
-  * pcpu_alloc_mutex, does GFP_KERNEL allocation.
-  */
- static int pcpu_populate_chunk(struct pcpu_chunk *chunk,
--			       int page_start, int page_end)
-+			       int page_start, int page_end, gfp_t gfp)
- {
- 	struct page **pages;
- 
-@@ -278,7 +282,7 @@ static int pcpu_populate_chunk(struct pc
- 	if (!pages)
- 		return -ENOMEM;
- 
--	if (pcpu_alloc_pages(chunk, pages, page_start, page_end))
-+	if (pcpu_alloc_pages(chunk, pages, page_start, page_end, gfp))
- 		return -ENOMEM;
- 
- 	if (pcpu_map_pages(chunk, pages, page_start, page_end)) {
-@@ -325,12 +329,12 @@ static void pcpu_depopulate_chunk(struct
- 	pcpu_free_pages(chunk, pages, page_start, page_end);
- }
- 
--static struct pcpu_chunk *pcpu_create_chunk(void)
-+static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
- {
- 	struct pcpu_chunk *chunk;
- 	struct vm_struct **vms;
- 
--	chunk = pcpu_alloc_chunk();
-+	chunk = pcpu_alloc_chunk(gfp);
- 	if (!chunk)
- 		return NULL;
- 
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -447,10 +447,12 @@ static void pcpu_next_fit_region(struct
- /**
-  * pcpu_mem_zalloc - allocate memory
-  * @size: bytes to allocate
-+ * @gfp: allocation flags
-  *
-  * Allocate @size bytes.  If @size is smaller than PAGE_SIZE,
-- * kzalloc() is used; otherwise, vzalloc() is used.  The returned
-- * memory is always zeroed.
-+ * kzalloc() is used; otherwise, the equivalent of vzalloc() is used.
-+ * This is to facilitate passing through whitelisted flags.  The
-+ * returned memory is always zeroed.
-  *
-  * CONTEXT:
-  * Does GFP_KERNEL allocation.
-@@ -458,15 +460,16 @@ static void pcpu_next_fit_region(struct
-  * RETURNS:
-  * Pointer to the allocated area on success, NULL on failure.
-  */
--static void *pcpu_mem_zalloc(size_t size)
-+static void *pcpu_mem_zalloc(size_t size, gfp_t gfp)
- {
- 	if (WARN_ON_ONCE(!slab_is_available()))
- 		return NULL;
- 
- 	if (size <= PAGE_SIZE)
--		return kzalloc(size, GFP_KERNEL);
-+		return kzalloc(size, gfp | GFP_KERNEL);
- 	else
--		return vzalloc(size);
-+		return __vmalloc(size, gfp | GFP_KERNEL | __GFP_ZERO,
-+				 PAGE_KERNEL);
- }
- 
- /**
-@@ -1154,12 +1157,12 @@ static struct pcpu_chunk * __init pcpu_a
- 	return chunk;
- }
- 
--static struct pcpu_chunk *pcpu_alloc_chunk(void)
-+static struct pcpu_chunk *pcpu_alloc_chunk(gfp_t gfp)
- {
- 	struct pcpu_chunk *chunk;
- 	int region_bits;
- 
--	chunk = pcpu_mem_zalloc(pcpu_chunk_struct_size);
-+	chunk = pcpu_mem_zalloc(pcpu_chunk_struct_size, gfp);
- 	if (!chunk)
- 		return NULL;
- 
-@@ -1168,17 +1171,17 @@ static struct pcpu_chunk *pcpu_alloc_chu
- 	region_bits = pcpu_chunk_map_bits(chunk);
- 
- 	chunk->alloc_map = pcpu_mem_zalloc(BITS_TO_LONGS(region_bits) *
--					   sizeof(chunk->alloc_map[0]));
-+					   sizeof(chunk->alloc_map[0]), gfp);
- 	if (!chunk->alloc_map)
- 		goto alloc_map_fail;
- 
- 	chunk->bound_map = pcpu_mem_zalloc(BITS_TO_LONGS(region_bits + 1) *
--					   sizeof(chunk->bound_map[0]));
-+					   sizeof(chunk->bound_map[0]), gfp);
- 	if (!chunk->bound_map)
- 		goto bound_map_fail;
- 
- 	chunk->md_blocks = pcpu_mem_zalloc(pcpu_chunk_nr_blocks(chunk) *
--					   sizeof(chunk->md_blocks[0]));
-+					   sizeof(chunk->md_blocks[0]), gfp);
- 	if (!chunk->md_blocks)
- 		goto md_blocks_fail;
- 
-@@ -1277,9 +1280,10 @@ static void pcpu_chunk_depopulated(struc
-  * pcpu_addr_to_page		- translate address to physical address
-  * pcpu_verify_alloc_info	- check alloc_info is acceptable during init
-  */
--static int pcpu_populate_chunk(struct pcpu_chunk *chunk, int off, int size);
-+static int pcpu_populate_chunk(struct pcpu_chunk *chunk, int off, int size,
-+			       gfp_t gfp);
- static void pcpu_depopulate_chunk(struct pcpu_chunk *chunk, int off, int size);
--static struct pcpu_chunk *pcpu_create_chunk(void);
-+static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp);
- static void pcpu_destroy_chunk(struct pcpu_chunk *chunk);
- static struct page *pcpu_addr_to_page(void *addr);
- static int __init pcpu_verify_alloc_info(const struct pcpu_alloc_info *ai);
-@@ -1421,7 +1425,7 @@ restart:
- 	}
- 
- 	if (list_empty(&pcpu_slot[pcpu_nr_slots - 1])) {
--		chunk = pcpu_create_chunk();
-+		chunk = pcpu_create_chunk(0);
- 		if (!chunk) {
- 			err = "failed to allocate new chunk";
- 			goto fail;
-@@ -1450,7 +1454,7 @@ area_found:
- 					   page_start, page_end) {
- 			WARN_ON(chunk->immutable);
- 
--			ret = pcpu_populate_chunk(chunk, rs, re);
-+			ret = pcpu_populate_chunk(chunk, rs, re, 0);
- 
- 			spin_lock_irqsave(&pcpu_lock, flags);
- 			if (ret) {
-@@ -1561,10 +1565,17 @@ void __percpu *__alloc_reserved_percpu(s
-  * pcpu_balance_workfn - manage the amount of free chunks and populated pages
-  * @work: unused
-  *
-- * Reclaim all fully free chunks except for the first one.
-+ * Reclaim all fully free chunks except for the first one.  This is also
-+ * responsible for maintaining the pool of empty populated pages.  However,
-+ * it is possible that this is called when physical memory is scarce causing
-+ * OOM killer to be triggered.  We should avoid doing so until an actual
-+ * allocation causes the failure as it is possible that requests can be
-+ * serviced from already backed regions.
-  */
- static void pcpu_balance_workfn(struct work_struct *work)
- {
-+	/* gfp flags passed to underlying allocators */
-+	const gfp_t gfp = __GFP_NORETRY | __GFP_NOWARN;
- 	LIST_HEAD(to_free);
- 	struct list_head *free_head = &pcpu_slot[pcpu_nr_slots - 1];
- 	struct pcpu_chunk *chunk, *next;
-@@ -1645,7 +1656,7 @@ retry_pop:
- 					   chunk->nr_pages) {
- 			int nr = min(re - rs, nr_to_pop);
- 
--			ret = pcpu_populate_chunk(chunk, rs, rs + nr);
-+			ret = pcpu_populate_chunk(chunk, rs, rs + nr, gfp);
- 			if (!ret) {
- 				nr_to_pop -= nr;
- 				spin_lock_irq(&pcpu_lock);
-@@ -1662,7 +1673,7 @@ retry_pop:
- 
- 	if (nr_to_pop) {
- 		/* ran out of chunks to populate, create a new one and retry */
--		chunk = pcpu_create_chunk();
-+		chunk = pcpu_create_chunk(gfp);
- 		if (chunk) {
- 			spin_lock_irq(&pcpu_lock);
- 			pcpu_chunk_relocate(chunk, -1);
+ 		if (!strcmp(crypto_comp_name(tfm), alg_name)) {
+ 			pos->users++;
