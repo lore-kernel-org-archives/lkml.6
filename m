@@ -1,130 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeDFKXU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 06:23:20 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:46626 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751672AbeDFKXT (ORCPT
+        id S1752249AbeDFK1q (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 06:27:46 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:41059 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751874AbeDFK1p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:23:19 -0400
-X-Google-Smtp-Source: AIpwx4+5qetVFI++1nj4Vx3o8BmcxdYrYeJ/6RUEbXN1h8RT8uRxv3fwt8PSGHTt4QyYHhypf0PgKCW+O0AyN6purew=
+        Fri, 6 Apr 2018 06:27:45 -0400
+Date: Fri, 6 Apr 2018 12:27:39 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+cc: akpm@linux-foundation.org, mingo@kernel.org, keescook@chromium.org,
+        lauraa@codeaurora.org, viresh.kumar@linaro.org,
+        nicolas.pitre@linaro.org, thomas.lendacky@amd.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: A question of sleeping with interrupts are disabled in
+ start_kernel()
+In-Reply-To: <1eb16c24-ef3b-2962-d216-57f66321035e@gmail.com>
+Message-ID: <alpine.DEB.2.21.1804061223240.1982@nanos.tec.linutronix.de>
+References: <1eb16c24-ef3b-2962-d216-57f66321035e@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180406090920.GM16141@n2100.armlinux.org.uk>
-References: <1522915478-5044-1-git-send-email-hejianet@gmail.com>
- <1522915478-5044-3-git-send-email-hejianet@gmail.com> <20180405113444.GB2647@bombadil.infradead.org>
- <1f809296-e88d-1090-0027-890782b91d6e@gmail.com> <20180405125054.GC2647@bombadil.infradead.org>
- <20180406090920.GM16141@n2100.armlinux.org.uk>
-From: Daniel Vacek <neelx@redhat.com>
-Date: Fri, 6 Apr 2018 12:23:17 +0200
-Message-ID: <CACjP9X_pfM7pUCHVXvFk_5HQPufF0pF-wr1V92J+8AnS8qxePA@mail.gmail.com>
-Subject: Re: [PATCH v7 2/5] arm: arm64: page_alloc: reduce unnecessary binary
- search in memblock_next_valid_pfn()
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Matthew Wilcox <willy@infradead.org>, Jia He <hejianet@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 6, 2018 at 11:09 AM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
-> On Thu, Apr 05, 2018 at 05:50:54AM -0700, Matthew Wilcox wrote:
->> On Thu, Apr 05, 2018 at 08:44:12PM +0800, Jia He wrote:
->> >
->> >
->> > On 4/5/2018 7:34 PM, Matthew Wilcox Wrote:
->> > > On Thu, Apr 05, 2018 at 01:04:35AM -0700, Jia He wrote:
->> > > > Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
->> > > > where possible") optimized the loop in memmap_init_zone(). But there is
->> > > > still some room for improvement. E.g. if pfn and pfn+1 are in the same
->> > > > memblock region, we can simply pfn++ instead of doing the binary search
->> > > > in memblock_next_valid_pfn.
->> > > Sure, but I bet if we are >end_pfn, we're almost certainly going to the
->> > > start_pfn of the next block, so why not test that as well?
->> > >
->> > > > +       /* fast path, return pfn+1 if next pfn is in the same region */
->> > > > +       if (early_region_idx != -1) {
->> > > > +               start_pfn = PFN_DOWN(regions[early_region_idx].base);
->> > > > +               end_pfn = PFN_DOWN(regions[early_region_idx].base +
->> > > > +                               regions[early_region_idx].size);
->> > > > +
->> > > > +               if (pfn >= start_pfn && pfn < end_pfn)
->> > > > +                       return pfn;
->> > >           early_region_idx++;
->> > >           start_pfn = PFN_DOWN(regions[early_region_idx].base);
->> > >           if (pfn >= end_pfn && pfn <= start_pfn)
->> > >                   return start_pfn;
->> > Thanks, thus the binary search in next step can be discarded?
->>
->> I don't know all the circumstances in which this is called.  Maybe a linear
->> search with memo is more appropriate than a binary search.
+On Fri, 6 Apr 2018, Jia-Ju Bai wrote:
 
-This is actually a good point.
+> Hello,
+> 
+> I have a question of the call path init/main.c:
+> init/main.c: start_kernel() ->
+> kernel/events/core.c: perf_pmu_register() ->
+> kernel/events/core.c: perf_event_init() ->
+> kernel/events/core.c: pmu_dev_alloc()
+> 
+> In this call path, start_kernel() calls local_irq_disable() to disable the
+> interrupt;
+> perf_pmu_register() calls mutex_lock() and idr_alloc(GFP_KERNEL), and they can
+> sleep;
+> pmu_dev_alloc() calls kzalloc(GFP_KERNEL), and it can sleep.
+> 
+> In my opinion, this code may sleep with interrupts are disabled.
+> I wonder why this code is okay?
 
-> That's been brought up before, and the reasoning appears to be
-> something along the lines of...
->
-> Academics and published wisdom is that on cached architectures, binary
-> searches are bad because it doesn't operate efficiently due to the
-> overhead from having to load cache lines.  Consequently, there seems
-> to be a knee-jerk reaction that "all binary searches are bad, we must
-> eliminate them."
+Because this is the very early boot up stage where contention of the mutex
+cannot happen and the allocations are all implicitely converted to atomic
+allocations. If the mutex would be contended then the system would fail to
+boot anyway. If the allocations fail at that stage, it's unlikely that the
+machine will come up at all.
 
-a) This does not make sense. At least in general case.
-b) It is not the case here. Here it's really mostly called with
-sequentially incremented pfns, AFAICT.
+So yes, it looks odd, but we don't want to have duplicated code pathes just
+for the early boot up and the debugging mechanisms are aware of that
+situation and don't emit warnings. Once the scheduler is functional and the
+early boot stage is done, these 'magic' violations are not longer allowed.
 
-> What is failed to be grasped here, though, is that it is typical that
-> the number of entries in this array tend to be small, so the entire
-> array takes up one or two cache lines, maybe a maximum of four lines
-> depending on your cache line length and number of entries.
->
-> This means that the binary search expense is reduced, and is lower
-> than a linear search for the majority of cases.
+Hope that helps.
 
-In this case it hits mostly the last result or eventually the
-sequentially next one.
+Thanks,
 
-> What is key here as far as performance is concerned is whether the
-> general usage of pfn_valid() by the kernel is optimal.  We should
-> not optimise only for the boot case, which means evaluating the
-> effect of these changes with _real_ workloads, not just "does my
-> machine boot a milliseconds faster".
-
-IIUC, this is only used during early boot (and memory hotplug) and it
-does not influence regular runtime. Whether the general usage of
-pfn_valid() by the kernel is optimal is another good question, but
-that's totally unrelated to this series, IMHO.
-
-On the other hand I also wonder if this all really is worth the
-negligible boot time speedup.
-
---nX
-
-> --
-> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-> According to speedtest.net: 8.21Mbps down 510kbps up
+	tglx
