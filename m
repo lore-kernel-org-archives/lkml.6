@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/Fv5PnCNqINbd61ilakvLIEohPHmwRdXD4LRhunxaBmdgQoCMyYAD8ExQBRUZgzd6gJ1Ih
-ARC-Seal: i=1; a=rsa-sha256; t=1523021646; cv=none;
+X-Google-Smtp-Source: AIpwx4/d/aTkYGTkWzWzexFhFoC4tyT4VypKCBVwZyb4rFOqVX8yFoF2Ff5YvwPmpH+ikqwIHUkg
+ARC-Seal: i=1; a=rsa-sha256; t=1523021644; cv=none;
         d=google.com; s=arc-20160816;
-        b=M8GBzJ4THm085pdRP3xl4f/2/VsaWwGDY3qJwPgJNDR23bDheNnZGdmsOSaRzBxbAs
-         5pld4bsebw1AebwFy8GhqIsXAcYHiCkPWPCiZKQK2XWK2GPHIdSTHl74nBp+1iEJEDrT
-         j9wsWr62CJbqKbfk+x4hmCMcHtU8NoOyzgsnXcCIWl8T8rQzN5W2PCXAze7VBmwYgSBS
-         7uJnc11vvvdPOuL0z/pzYbyD75OSSGaf6eJurht8xwNP6FTHEKKqs/o+KdXfm/bIUVbf
-         iGJzsapwUrAkcR5Pptn320pWirfZMbNTYyvb1TDCj8as+JtnK7xioU4l2TzKoGYKozQB
-         slEQ==
+        b=dkbgbbmMlnFdUTsUzS74cPjwKNvMZCZiD6rxOcdfH2/CyGW/6bntAhimO50odwaw4v
+         xznzvMz3HROk67ekX8mUVFbRAt9ZV0Yk1csZhulwxm9yh2jdmQuAZL58aV95M1VBQgf1
+         bmKbuhGY7QQaR9p34yWkGRE8IFq7T8KH4MfIqlA4ecLZ/2rOHPgUwA4eiXOu7TtRwGRG
+         Mt+N2vjOyefI0XkDOAdX/hUWyTP/jd3Zl7mZLb+D/f77k9mapn7MjydRVBTSvgXI7ifE
+         4tTbuHXO9UOTvEaQBSE0DUoHXaCmV5dGdefQstqSjWwOYbWBnNiJeH//lEldDwnbleHG
+         jCOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=H+C8Azqyd7rrPUEQRzrjg8s5AIeJ9WFt0Jj8w5jk7nk=;
-        b=sCAoZ2fzywPkCcZv/S/HXVRSG/fMsAFUsrIwfhD0R8Wiw4+VQZVtGTNAJFoRrGNuNA
-         MSCEmT8JlG91cjTtAp17W2x/7gWYZT/bRqFFrWgX/hFQSIDfntF3wKwklu1NtItGJqov
-         J0AdzPenR6HYUwXOnkr4iZoskBg8kwlZ185S1chB5/dapyxnGCIibtXyt+5AYnydfnZA
-         0TSiJdAgI1NcX02XQmPHx58E66mAy0mmbaZlR0Za3H7GwOQQ0CP7qa+XSvzC/87tCGw/
-         q1Hlk21AOeKSYGYkBwXMIn2mTn8W5HRafpTTcQExkeEDNRAmtBLMzn8wqMjEyjSct1ZG
-         74aA==
+        bh=GayA/aGEEPHo92JaXZ5/hf0KI1npDTwDjILAV06DzZ8=;
+        b=WUX1tHHXsB8HNQP5ge5rzXWNx3+rqwfSZqEXCBDq+UjG6rzaS4Xy1Yv3kcGrchm4VE
+         q3wcjROtlioTVJS48KsNkNPg7S2jA2ZISuyFs5R2xQMP5vDwUsS0gJRBYLruCkB9AFyG
+         ZPbaOBF/nCSYDglzow5rJJwn48GLC9EDRK9aSCq/EsWTqW6LLj1JRxc7gt89GKEH120f
+         lUjym69DyjUdWcCMH0HoZxibuhr4+JRAWO/UlO5OscAO/TGEKqwxZoULbxwRfz6mMz1E
+         J212H/Ea3VeSYuzhUviJD0YdkSEKwh2Tm65KiAvJI4zCGmBLBW5hMm+60fDdM1Ptp7U3
+         +xeg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+71655d44855ac3e76366@syzkaller.appspotmail.com,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 040/102] RDMA/ucma: Check that device exists prior to accessing it
-Date: Fri,  6 Apr 2018 15:23:21 +0200
-Message-Id: <20180406084337.314603101@linuxfoundation.org>
+	Matthias Kaehlcke <mka@chromium.org>,
+	David Sterba <dsterba@suse.com>,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.9 031/102] btrfs: Remove extra parentheses from condition in copy_items()
+Date: Fri,  6 Apr 2018 15:23:12 +0200
+Message-Id: <20180406084336.040019697@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003722828039513?=
-X-GMAIL-MSGID: =?utf-8?q?1597003946279638807?=
+X-GMAIL-THRID: =?utf-8?q?1597003943312911705?=
+X-GMAIL-MSGID: =?utf-8?q?1597003943312911705?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,41 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-commit c8d3bcbfc5eab3f01cf373d039af725f3b488813 upstream.
+commit 0dde10bed2c44a4024eb446cc72fe4e0cb97ec06 upstream.
 
-Ensure that device exists prior to accessing its properties.
+There is no need for the extra pair of parentheses, remove it. This
+fixes the following warning when building with clang:
 
-Reported-by: <syzbot+71655d44855ac3e76366@syzkaller.appspotmail.com>
-Fixes: 75216638572f ("RDMA/cma: Export rdma cm interface to userspace")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+fs/btrfs/tree-log.c:3694:10: warning: equality comparison with extraneous
+  parentheses [-Wparentheses-equality]
+                if ((i == (nr - 1)))
+                     ~~^~~~~~~~~~~
+
+Also remove the unnecessary parentheses around the substraction.
+
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/btrfs/tree-log.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1317,7 +1317,7 @@ static ssize_t ucma_notify(struct ucma_f
- {
- 	struct rdma_ucm_notify cmd;
- 	struct ucma_context *ctx;
--	int ret;
-+	int ret = -EINVAL;
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3664,7 +3664,7 @@ static noinline int copy_items(struct bt
  
- 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
- 		return -EFAULT;
-@@ -1326,7 +1326,9 @@ static ssize_t ucma_notify(struct ucma_f
- 	if (IS_ERR(ctx))
- 		return PTR_ERR(ctx);
+ 		src_offset = btrfs_item_ptr_offset(src, start_slot + i);
  
--	ret = rdma_notify(ctx->cm_id, (enum ib_event_type) cmd.event);
-+	if (ctx->cm_id->device)
-+		ret = rdma_notify(ctx->cm_id, (enum ib_event_type)cmd.event);
-+
- 	ucma_put_ctx(ctx);
- 	return ret;
- }
+-		if ((i == (nr - 1)))
++		if (i == nr - 1)
+ 			last_key = ins_keys[i];
+ 
+ 		if (ins_keys[i].type == BTRFS_INODE_ITEM_KEY) {
