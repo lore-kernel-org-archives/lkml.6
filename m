@@ -1,112 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751704AbeDFTT1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 15:19:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48178 "EHLO mail.kernel.org"
+        id S1751730AbeDFTVz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 15:21:55 -0400
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:43386 "EHLO 1wt.eu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751312AbeDFTT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 15:19:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2E2020CAA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 6 Apr 2018 15:19:23 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Joel Fernandes (Google)" <joel.opensrc@gmail.com>,
-        Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-Subject: Re: [PATCH 0/4 v2] init, tracing: Add initcall trace events
-Message-ID: <20180406151923.292cb09f@gandalf.local.home>
-In-Reply-To: <20180406190854.875810797@goodmis.org>
-References: <20180406190854.875810797@goodmis.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751298AbeDFTVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 15:21:54 -0400
+Date: Fri, 6 Apr 2018 21:21:46 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Vadim Lomovtsev <Vadim.Lomovtsev@caviumnetworks.com>
+Cc: linux-kernel@vger.kernel.org, vadim.lomovtsev@cavium.com
+Subject: Re: [Question] patch posting process
+Message-ID: <20180406192146.GA384@1wt.eu>
+Reply-To: linux-kernel@vger.kernel.org
+References: <20180406182916.GA15772@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406182916.GA15772@localhost.localdomain>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Vadim,
 
-Peter, Andrew,
+On Fri, Apr 06, 2018 at 11:29:16AM -0700, Vadim Lomovtsev wrote:
+> Hi all,
+> 
+> I bring my Apologise for wasting your time, but ..
 
-This keeps initcall_debug printing printk()s, but adds the feature of
-those locations also being trace events. Are you OK if I add this?
+Questions about doing things right rarely are a waste of time if they save
+others from having to do useless work!
 
-Works with and without TRACEPOINTS enabled.
+> May I ask for some clarification.. When we're speaking of 'posting patches shortly'
+> does it mean to send them in next few hours ?
+> Or would it be more acceptable to post one version per day
+> even for very small changes in between ?
+> 
+> Kernel posting guides says that one should wait for about a week for respond,
+> but in my case I've got feedback rather quickly (thanks a lot for that!)
+> and I'd assume that I can proceed with posting next version.
+> 
+> So, what is the proper approach here - should one wait day or two
+> before posting next version even if changes are very simple ?
 
--- Steve
+Generally speaking, it's better to proceed ASAP. Reviewing patches requires
+some concentration and often some time to get into the context. Speaking for
+myself only, when I'm reviewing patches (I reserve time to do it), I prefer
+to get 3 round trips the same day than one per week and each time having to
+try to recall what it was about and what I proposed.
 
+Also some people may only do that on spare time, week-ends or dedicated day
+in the week. If you sit on their e-mail for no reason, you expose yourself
+to the risk of having to wait for the next feedback. This is where the week
+comes from. Another nice side effect of the week delay is that some people
+send a first version for reviewing and figure by themselves that this
+version is bogus, then send a fixed version. That reduces the number of
+required work for reviewers.
 
-On Fri, 06 Apr 2018 15:08:54 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On the other hand, it's not nice to rush quick updates without verifying
+that you properly addressed all reported points (addressed either in code
+or discussion). Thus my recommendation would be that if you can iterate
+one or two extra rounds the same day, that's generally much better. And
+in any case if the reviewer doesn't have more time to assign to you, he
+will switch to something else and you'll have to wait. Thus the good rule
+could be that ideally reviewers should not needlessly be waiting for you.
 
-> A while ago we had a boot tracer. But it was eventually removed:
->  commit 30dbb20e68e6f ("tracing: Remove boot tracer").
-> 
-> The rationale was because there is already a initcall_debug boot option
-> that causes printk()s of all the initcall functions.
-> 
-> The problem with the initcall_debug option is that printk() is awfully slow,
-> and makes it difficult to see the real impact of initcalls. Mainly because
-> a single printk() is usually slower than most initcall functions.
-> Yes the timings are done within the printks, but it slows down the
-> boot up tremendously. Tracing can do the same without needing to
-> slow down boot up.
-> 
-> Instead of bringing back the boot tracer, adding trace events around the
-> initcall functions, and even one to denote which level the initcall
-> functions are being called from, adds the necessary information to
-> analyze the initcalls without the high overhead of printk()s, that
-> can substantially slow down the boot process.
-> 
-> Another positive, is that the console initcall functions themselves
-> can also be traced. The timestamps are not operational at that time
-> but you can see which consoles are being registered. I saw this on
-> one of my test boxes:
-> 
-> <idle>-0     [000] ...1     0.000000: initcall_level: level=console
-> <idle>-0     [000] ...1     0.000000: initcall_start: func=con_init+0x0/0x224
-> <idle>-0     [000] ...1     0.000000: initcall_finish: func=con_init+0x0/0x224 ret=0
-> <idle>-0     [000] ...1     0.000000: initcall_start: func=hvc_console_init+0x0/0x19
-> <idle>-0     [000] ...1     0.000000: initcall_finish: func=hvc_console_init+0x0/0x19 ret=0
-> <idle>-0     [000] ...1     0.000000: initcall_start: func=xen_cons_init+0x0/0x60
-> <idle>-0     [000] ...1     0.000000: initcall_finish: func=xen_cons_init+0x0/0x60 ret=0
-> <idle>-0     [000] ...1     0.000000: initcall_start: func=univ8250_console_init+0x0/0x2d
-> <idle>-0     [000] ...1     0.000000: initcall_finish: func=univ8250_console_init+0x0/0x2d ret=0
-> 
-> I didn't even realize that I had some of those consoles configured.
-> 
-> Anyone have any issues with me adding this?
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-> ftrace/core
-> 
-> Head SHA1: 7af49b07cb525d36a916b841dc9329c187789e1f
-> 
-> 
-> Abderrahmane Benbachir (1):
->       init, tracing: instrument security and console initcall trace events
-> 
-> Steven Rostedt (VMware) (3):
->       init, tracing: Add initcall trace events
->       init, tracing: Have printk come through the trace events for initcall_debug
->       init: Have initcall_debug still work without CONFIG_TRACEPOINTS
-> 
-> ----
-> Changes since v1:
-> 
->   Added the last patch that makes initcall_debug work even when
->   TRACEPOINTS is not configured. It just goes back to the old
->   method (with if statements, instead of hooking into trace_events).
-> 
->  include/trace/events/initcall.h | 66 ++++++++++++++++++++++++++++++++++
->  init/main.c                     | 78 ++++++++++++++++++++++++++++++++---------
->  kernel/printk/printk.c          |  7 +++-
->  security/security.c             |  8 ++++-
->  4 files changed, 141 insertions(+), 18 deletions(-)
->  create mode 100644 include/trace/events/initcall.h
+One important point however is *not* to send multiple versions of the
+same series without waiting for a review. Someone might already be reading
+your patchset and be pissed off by discovering he's reading outdated
+code. Reserve this for the cases where you've let a huge bug slip
+through.
+
+Just my two cents, others will very likely have other advices.
+
+Willy
