@@ -1,140 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752588AbeDFMjR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 08:39:17 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35046 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeDFMjO (ORCPT
+        id S1752469AbeDFMlH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 08:41:07 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53402 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751579AbeDFMlF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 08:39:14 -0400
-X-Google-Smtp-Source: AIpwx4/qPFd4eD9ImQlqzpYOkbfKqMX7kpHiy59dLwmudJ1TXxzM53HmCLL46rUiSo2tteNMIcH2BQ==
-From: Esben Haabendal <esben.haabendal@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Esben Haabendal <eha@deif.com>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] net/fsl_pq_mdio: Allow explicit speficition of TBIPA address
-Date: Fri,  6 Apr 2018 14:38:34 +0200
-Message-Id: <20180406123836.12019-1-esben.haabendal@gmail.com>
-X-Mailer: git-send-email 2.16.3
+        Fri, 6 Apr 2018 08:41:05 -0400
+X-Google-Smtp-Source: AIpwx4+P6HH85fhbhnCb+HjsWlYHv1zEPyNwIa8QT5RgtQvrSCFxs/m/I8AjCMY9UEecAoJXslnGNQ==
+Date: Fri, 6 Apr 2018 14:41:01 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        David Ahern <dsahern@gmail.com>, Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Kan Liang <kan.liang@intel.com>,
+        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: Re: [GIT PULL 0/6] perf/urgent fixes
+Message-ID: <20180406124101.paxuoeueyycas5lw@gmail.com>
+References: <20180406112439.21685-1-acme@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406112439.21685-1-acme@kernel.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Esben Haabendal <eha@deif.com>
 
-This introduces a simpler and generic method for for finding (and mapping)
-the TBIPA register.
+* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-Instead of relying of complicated logic for finding the TBIPA register
-address based on the MDIO or MII register block base
-address, which even in some cases relies on undocumented shadow registers,
-a second "reg" entry for the mdio bus devicetree node specifies the TBIPA
-register.
+> Hi Ingo,
+> 
+> 	Please consider pulling,
+> 
+> - Arnaldo
+> 
+> Test results at the end of this message, as usual.
+> 
+> The following changes since commit d1e7e602cd64cf61f87dbf30df07c24df9eb1d99:
+> 
+>   perf/x86/intel: Move regs->flags EXACT bit init (2018-04-05 09:28:40 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.17-20180406
+> 
+> for you to fetch changes up to 01f97511f13cbf2ba3d23b2bffa06258dc81e283:
+> 
+>   tools headers uapi: Synchronize i915_drm.h (2018-04-05 14:48:51 -0300)
+> 
+> ----------------------------------------------------------------
+> perf/urgent fixes:
+> 
+> - Show group details on the title line in the annotate browser
+>   and 'perf annotate --stdio2' output, so that the per-event
+>   columns can have headers (Arnaldo Carvalho de Melo)
+> 
+> - Fixup vertical line separating metrics from instructions and
+>   cleaning unused lines at the bottom, both in the annotate TUI
+>   browser (Arnaldo Carvalho de Melo)
+> 
+> - Remove duplicated 'samples' in lost samples warning in
+>   'perf report' (Arnaldo Carvalho de Melo)
+> 
+> - Synchronize i915_drm.h, silencing the perf build process,
+>   automagically adding support for the new DRM_I915_QUERY
+>   ioctl (Arnaldo Carvalho de Melo)
+> 
+> - Make auxtrace_queues__add_buffer() allocate struct buffer,
+>   from a patchkit already applied (Adrian Hunter)
+> 
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> ----------------------------------------------------------------
+> Adrian Hunter (1):
+>       perf auxtrace: Make auxtrace_queues__add_buffer() allocate struct buffer
+> 
+> Arnaldo Carvalho de Melo (5):
+>       perf annotate: Show group details on the title line
+>       perf annotate browser: Fixup vertical line separating metrics from instructions
+>       perf ui browser: Fixup cleaning unused lines at the bottom
+>       perf report: Remove duplicated 'samples' in lost samples warning
+>       tools headers uapi: Synchronize i915_drm.h
+> 
+>  tools/include/uapi/drm/i915_drm.h | 112 ++++++++++++++++++++++++++++++++++++--
+>  tools/perf/ui/browser.c           |   4 +-
+>  tools/perf/ui/browsers/annotate.c |   2 +-
+>  tools/perf/util/annotate.c        |   7 ++-
+>  tools/perf/util/auxtrace.c        |  54 ++++++++----------
+>  tools/perf/util/session.c         |   2 +-
+>  6 files changed, 141 insertions(+), 40 deletions(-)
 
-Backwards compatibility is kept, as the existing logic is applied when
-only a single "reg" mapping is specified.
+Pulled, thanks a lot Arnaldo!
 
-Signed-off-by: Esben Haabendal <eha@deif.com>
----
- .../devicetree/bindings/net/fsl-tsec-phy.txt       |  6 ++-
- drivers/net/ethernet/freescale/fsl_pq_mdio.c       | 50 +++++++++++++++-------
- 2 files changed, 39 insertions(+), 17 deletions(-)
+Thanks,
 
-diff --git a/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt b/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt
-index 594982c6b9f9..79bf352e659c 100644
---- a/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt
-+++ b/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt
-@@ -6,7 +6,11 @@ the definition of the PHY node in booting-without-of.txt for an example
- of how to define a PHY.
- 
- Required properties:
--  - reg : Offset and length of the register set for the device
-+  - reg : Offset and length of the register set for the device, and optionally
-+          the offset and length of the TBIPA register (TBI PHY address
-+	  register).  If TBIPA register is not specified, the driver will
-+	  attempt to infer it from the register set specified (your mileage may
-+	  vary).
-   - compatible : Should define the compatible device type for the
-     mdio. Currently supported strings/devices are:
- 	- "fsl,gianfar-tbi"
-diff --git a/drivers/net/ethernet/freescale/fsl_pq_mdio.c b/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-index 80ad16acf0f1..ac2c3f6a12bc 100644
---- a/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-+++ b/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-@@ -377,6 +377,38 @@ static const struct of_device_id fsl_pq_mdio_match[] = {
- };
- MODULE_DEVICE_TABLE(of, fsl_pq_mdio_match);
- 
-+static void set_tbipa(const u32 tbipa_val, struct platform_device *pdev,
-+		      uint32_t __iomem * (*get_tbipa)(void __iomem *),
-+		      void __iomem *reg_map, struct resource *reg_res)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	uint32_t __iomem *tbipa;
-+	bool tbipa_mapped;
-+
-+	tbipa = of_iomap(np, 1);
-+	if (tbipa) {
-+		tbipa_mapped = true;
-+	} else {
-+		tbipa_mapped = false;
-+		tbipa = (*get_tbipa)(reg_map);
-+
-+		/*
-+		 * Add consistency check to make sure TBI is contained within
-+		 * the mapped range (not because we would get a segfault,
-+		 * rather to catch bugs in computing TBI address). Print error
-+		 * message but continue anyway.
-+		 */
-+		if ((void *)tbipa > reg_map + resource_size(reg_res) - 4)
-+			dev_err(&pdev->dev, "invalid register map (should be at least 0x%04zx to contain TBI address)\n",
-+				((void *)tbipa - reg_map) + 4);
-+	}
-+
-+	iowrite32be(be32_to_cpu(tbipa_val), tbipa);
-+
-+	if (tbipa_mapped)
-+		iounmap(tbipa);
-+}
-+
- static int fsl_pq_mdio_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *id =
-@@ -450,8 +482,6 @@ static int fsl_pq_mdio_probe(struct platform_device *pdev)
- 
- 		if (tbi) {
- 			const u32 *prop = of_get_property(tbi, "reg", NULL);
--			uint32_t __iomem *tbipa;
--
- 			if (!prop) {
- 				dev_err(&pdev->dev,
- 					"missing 'reg' property in node %pOF\n",
-@@ -459,20 +489,8 @@ static int fsl_pq_mdio_probe(struct platform_device *pdev)
- 				err = -EBUSY;
- 				goto error;
- 			}
--
--			tbipa = data->get_tbipa(priv->map);
--
--			/*
--			 * Add consistency check to make sure TBI is contained
--			 * within the mapped range (not because we would get a
--			 * segfault, rather to catch bugs in computing TBI
--			 * address). Print error message but continue anyway.
--			 */
--			if ((void *)tbipa > priv->map + resource_size(&res) - 4)
--				dev_err(&pdev->dev, "invalid register map (should be at least 0x%04zx to contain TBI address)\n",
--					((void *)tbipa - priv->map) + 4);
--
--			iowrite32be(be32_to_cpup(prop), tbipa);
-+			set_tbipa(*prop, pdev,
-+				  data->get_tbipa, priv->map, &res);
- 		}
- 	}
- 
--- 
-2.16.3
+	Ingo
