@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48kUbvyx6S0Xa9QCFM3Vx0bFXXmv+nioimlI7hVrQIg9NBZaltY+FsMzwkUB5ZgFVVxrTe1
-ARC-Seal: i=1; a=rsa-sha256; t=1523021161; cv=none;
+X-Google-Smtp-Source: AIpwx48c9dp+M+lcvGslbCFnHqYVbV/vib+JGr8anEXd635kGz5Hu0op9QldClkKfcniSKKA+5Bx
+ARC-Seal: i=1; a=rsa-sha256; t=1523021159; cv=none;
         d=google.com; s=arc-20160816;
-        b=kF4MIEjWW+rQRSOuTah87iOGDiM4Zr8n+DGSZUKPxpdZdVuI/U01HSWDMT9N9kmDI+
-         kKbdLkEEuMb23d8RlST2Zan1QG2VcIdXCVydxPdxHfHF9H4YuyJmPOxj2KNxUSXGg5Rx
-         N+e/O+u5WICrRNheVng3v5B4DTN4z/vl0MWKAzu5v/lN4kcNnBI70nQWaPp9g9SQsSHr
-         /srrMVe78U0ANdNqKy/BIcAmcuIXLHJWwQ+kf5nCYgTpbLgQHOPibTLHl5D6ob+A/bSh
-         5zk8Vwl+agSSF6iWEkoHF+8IxtyTJSutXXz7zofezaEdkn/RK6xJyIpEGvxPeHvyGuy9
-         0dxQ==
+        b=tJy7kt89ZUm87GmKtD2FqT5Sex6oGYFYDkl+E0dSxED4wQlMUEweszG783+dLucpUs
+         4KhLSx2I5v5rsLkFAGMLg+Hgnhfpse4oLX7FL7rwMvPoWyDJWbc41XUpSUlnMlNoFAHP
+         B6N2flSMqj8mrRLJzqTkReyuHq9dIicvjdkuXknnG1R4QXj0phQesWuxhonmR0VH0KOd
+         8wojajB9FILqhqKSiO5iPR/NpklYG54Bkshsy6iWMIRjy5yHnkPktGkm5ZmK7t5y+whD
+         Zr0pZSt4/m8Swd6MPbmcqZALMTAuEmkeAWWITIaiR1LmxNnw2Ij+OyWlL/9lwYeuuNGd
+         Bnvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=58FJLWE0c1hOctHuPHmbJFoJCuKjZAg/S8itUEc8PDo=;
-        b=ZmliE6EW/ZluPhYiVpDdUChqC19uii27RDSu/OogDdfKbqYZF1oRV7f1SBrufiTvwf
-         mzbTmTG1RHewvHzSflsrOk9SIoPatvdYxLVvTRjZqdD+cRpfUd5bwJLXsHmAKki3zv3c
-         CXrAxwbe6p5CI75Bia1s72vW8VbGVDGazX8Bce16hoNNx2wYOPYnoeYooEnDp+zjUO7V
-         5a3deqi/hcyIoh04Yo65wnUZETEetad8qW4OlTWH8/eLZ8bLjTh1FeWR+Q745udCDWin
-         uPs8/qq9Eht31oj6+/76NKyAUKzZmCrHHyc0lz36D3IK1nUnVdaoP6fZx2fpdpK77Tah
-         Y2Cg==
+        bh=2cWLHwLlmyQU5E1C2Uhe9hrp80ScVCdCgvOsRk3nVkg=;
+        b=ehdoch2VN5AR8xkqSoDkPGoicR7w+10/Q4p3i4b3z86nlqXK9NvFUBeltlnHYmCo8m
+         eojX7mEAy/Y96YJjM08dUD83KZ7UzWclTj02OR84yn3oHDjvCxwp5DQp3jgDhyXhOfWV
+         /wkiYvdRi4aDKPm9SadXmRMT+jqIuCUMR4qet7xx0O5IjD24ft1stvE/kFQXfcgVjKee
+         FwnrBNUhoPmUCZi5OeGpEJ22G6VMuTAXfj29GZgfUTXqD8+bp+5AwUqwMzRwZgV+NZij
+         i6Q/GFV1eom9Vy7oYNwanh+O0zGsDoow+A7D3dkQB9uvJXE/3t25TqOZWYTIg9RmZ5Rz
+         EZ1A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Randy E. Witt" <randy.e.witt@intel.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	David Ahern <dsahern@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 30/93] skbuff: Fix not waking applications when errors are enqueued
-Date: Fri,  6 Apr 2018 15:22:59 +0200
-Message-Id: <20180406084226.271456575@linuxfoundation.org>
+Subject: [PATCH 3.18 29/93] net: Only honor ifindex in IP_PKTINFO if non-0
+Date: Fri,  6 Apr 2018 15:22:58 +0200
+Message-Id: <20180406084226.223407130@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003437570211955?=
-X-GMAIL-MSGID: =?utf-8?q?1597003437570211955?=
+X-GMAIL-THRID: =?utf-8?q?1597003435085415956?=
+X-GMAIL-MSGID: =?utf-8?q?1597003435085415956?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +49,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+From: David Ahern <dsahern@gmail.com>
 
 
-[ Upstream commit 6e5d58fdc9bedd0255a8781b258f10bbdc63e975 ]
+[ Upstream commit 2cbb4ea7de167b02ffa63e9cdfdb07a7e7094615 ]
 
-When errors are enqueued to the error queue via sock_queue_err_skb()
-function, it is possible that the waiting application is not notified.
+Only allow ifindex from IP_PKTINFO to override SO_BINDTODEVICE settings
+if the index is actually set in the message.
 
-Calling 'sk->sk_data_ready()' would not notify applications that
-selected only POLLERR events in poll() (for example).
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Randy E. Witt <randy.e.witt@intel.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/ip_sockglue.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3527,7 +3527,7 @@ int sock_queue_err_skb(struct sock *sk,
- 
- 	skb_queue_tail(&sk->sk_error_queue, skb);
- 	if (!sock_flag(sk, SOCK_DEAD))
--		sk->sk_data_ready(sk);
-+		sk->sk_error_report(sk);
- 	return 0;
- }
- EXPORT_SYMBOL(sock_queue_err_skb);
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -206,7 +206,8 @@ int ip_cmsg_send(struct net *net, struct
+ 			src_info = (struct in6_pktinfo *)CMSG_DATA(cmsg);
+ 			if (!ipv6_addr_v4mapped(&src_info->ipi6_addr))
+ 				return -EINVAL;
+-			ipc->oif = src_info->ipi6_ifindex;
++			if (src_info->ipi6_ifindex)
++				ipc->oif = src_info->ipi6_ifindex;
+ 			ipc->addr = src_info->ipi6_addr.s6_addr32[3];
+ 			continue;
+ 		}
+@@ -227,7 +228,8 @@ int ip_cmsg_send(struct net *net, struct
+ 			if (cmsg->cmsg_len != CMSG_LEN(sizeof(struct in_pktinfo)))
+ 				return -EINVAL;
+ 			info = (struct in_pktinfo *)CMSG_DATA(cmsg);
+-			ipc->oif = info->ipi_ifindex;
++			if (info->ipi_ifindex)
++				ipc->oif = info->ipi_ifindex;
+ 			ipc->addr = info->ipi_spec_dst.s_addr;
+ 			break;
+ 		}
