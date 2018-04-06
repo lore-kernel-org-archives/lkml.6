@@ -1,149 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751976AbeDFJev (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 05:34:51 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37756 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751874AbeDFJet (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 05:34:49 -0400
-X-Google-Smtp-Source: AIpwx493rjOoVAbsT3nHb71cqkv+qWL25esJ7Bmx/d++icaUXlfWbZDB+FbfHy2mf4VqS4s1VZWslQ==
-Subject: Re: [RfC PATCH] Add udmabuf misc device
-To: Gerd Hoffmann <kraxel@redhat.com>,
-        Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
-Cc: Dongwon Kim <dongwon.kim@intel.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-References: <20180313154826.20436-1-kraxel@redhat.com>
- <20180313161035.GL4788@phenom.ffwll.local>
- <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
- <CAKMK7uGG6Z6XLc6GuKv7-3grCNg+EK2Lh6XWpavjsbZWF_L5Wg@mail.gmail.com>
- <20180406001117.GD31612@mdroper-desk.amr.corp.intel.com>
- <2411d2c1-33c0-2ba5-67ea-3bb9af5d5ec9@epam.com>
- <20180406090747.gwiegu22z4noj23i@sirius.home.kraxel.org>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <0351cf53-3e27-d0b4-a77b-8392c2b0a951@gmail.com>
-Date: Fri, 6 Apr 2018 12:34:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751741AbeDFJg3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 05:36:29 -0400
+Received: from mx.socionext.com ([202.248.49.38]:31742 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751361AbeDFJg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 05:36:26 -0400
+Date: Fri, 06 Apr 2018 18:36:23 +0900
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH] ata: ahci-platform: add reset control support
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Patrice CHOTARD <patrice.chotard@st.com>, Tejun Heo <tj@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org"
+        <linux-mediatek@lists.infradead.org>
+In-Reply-To: <22a2bcd7-eff5-c20f-e056-f5946e579d5e@redhat.com>
+References: <20180406134838.2ADC.4A936039@socionext.com> <22a2bcd7-eff5-c20f-e056-f5946e579d5e@redhat.com>
+Message-Id: <20180406183623.CA38.4A936039@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <20180406090747.gwiegu22z4noj23i@sirius.home.kraxel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/06/2018 12:07 PM, Gerd Hoffmann wrote:
->    Hi,
->
->>>    * The general interface should be able to express sharing from any
->>>      guest:guest, not just guest:host.  Arbitrary G:G sharing might be
->>>      something some hypervisors simply aren't able to support, but the
->>>      userspace API itself shouldn't make assumptions or restrict that.  I
->>>      think ideally the sharing API would include some kind of
->>>      query_targets interface that would return a list of VM's that your
->>>      current OS is allowed to share with; that list would be depend on the
->>>      policy established by the system integrator, but obviously wouldn't
->>>      include targets that the hypervisor itself wouldn't be capable of
->>>      handling.
->> Can you give a use-case for this? I mean that the system integrator
->> is the one who defines which guests/hosts talk to each other,
->> but querying means that it is possible that VMs have some sort
->> of discovery mechanism, so they can decide on their own whom
->> to connect to.
-> Note that vsock (created by vmware, these days also has a virtio
-> transport for kvm) started with support for both guest <=> host and
-> guest <=> guest support.  But later on guest <=> guest was dropped.
-> As far I know the reasons where (a) lack of use cases and (b) security.
->
-> So, I likewise would know more details on the use cases you have in mind
-> here.  Unless we have a compelling use case here I'd suggest to drop the
-> guest <=> guest requirement as it makes the whole thing alot more
-> complex.
-This is exactly the use-case we have: in our setup Dom0 doesn't
-own any HW at all and all the HW is passed into a dedicated
-driver domain (DomD) which is still a guest domain.
-Then, buffers are shared between two guests, for example,
-DomD and DomA (Android guest)
->>>    * The sharing API could be used to share multiple kinds of content in a
->>>      single system.  The sharing sink driver running in the content
->>>      producer's VM should accept some additional metadata that will be
->>>      passed over to the target VM as well.
-> Not sure this should be part of hyper-dmabuf.  A dma-buf is nothing but
-> a block of data, period.  Therefore protocols with dma-buf support
-> (wayland for example) typically already send over metadata describing
-> the content, so duplicating that in hyper-dmabuf looks pointless.
->
->> 1. We are targeting ARM and one of the major requirements for the buffer
->> sharing is the ability to allocate physically contiguous buffers, which gets
->> even more complicated for systems not backed with an IOMMU. So, for some
->> use-cases it is enough to make the buffers contiguous in terms of IPA and
->> sometimes those need to be contiguous in terms of PA.
-> Which pretty much implies the host must to the allocation.
->
->> 2. For Xen we would love to see UAPI to create a dma-buf from grant
->> references provided, so we can use this generic solution to implement
->> zero-copying without breaking the existing Xen protocols. This can
->> probably be extended to other hypervizors as well.
-> I'm not sure we can create something which works on both kvm and xen.
-> The memory management model is quite different ...
->
->
-> On xen the hypervisor manages all memory.  Guests can allow other guests
-> to access specific pages (using grant tables).  In theory any guest <=>
-> guest communication is possible.  In practice is mostly guest <=> dom0
-> because guests access their virtual hardware that way.  dom0 is the
-> priviledged guest which owns any hardware not managed by xen itself.
-Please see above for our setup with DomD and Dom0 being
-a generic ARMv8 domain, no HW
-> Xen guests can ask the hypervisor to update the mapping of guest
-> physical pages.  They can ballon down (unmap and free pages).  They can
-> ballon up (ask the hypervisor to map fresh pages).  They can map pages
-> exported by other guests using grant tables.  xen-zcopy makes heavy use
-> of this.  It balloons down, to make room in the guest physical address
-> space, then goes map the exported pages there, finally composes a
-> dma-buf.
-This is what it does
->
-> On kvm qemu manages all guest memory.  qemu also has all guest memory
-> mapped, so a grant-table like mechanism isn't needed to implement
-> virtual devices.  qemu can decide how it backs memory for the guest.
-> qemu propagates the guest memory map to the kvm driver in the linux
-> kernel.  kvm guests have some control over the guest memory map, for
-> example they can map pci bars wherever they want in their guest physical
-> address space by programming the base registers accordingly, but unlike
-> xen guests they can't ask the host to remap individual pages.
->
-> Due to qemu having all guest memory mapped virtual devices are typically
-> designed to have the guest allocate resources, then notify the host
-> where they are located.  This is where the udmabuf idea comes from:
-> Guest tells the host (qemu) where the gem object is, and qemu then can
-> create a dmabuf backed by those pages to pass it on to other processes
-> such as the wayland display server.  Possibly even without the guest
-> explicitly asking for it, i.e. export the framebuffer placed by the
-> guest in the (virtual) vga pci memory bar as dma-buf.  And I can imagine
-> that this is useful outsize virtualization too.
->
->
-> I fail to see any common ground for xen-zcopy and udmabuf ...
->
-> Beside that there is the problem that the udmabuf idea has its own share
-> of issues, for example the fork() issue pointed out by Christian
-> König[1].  So I still need to find something which can work for kvm ...
->
-> cheers,
->    Gerd
->
-> [1] https://www.spinics.net/lists/dri-devel/msg169442.html
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Hi Hans,
+
+On Fri, 6 Apr 2018 10:29:37 +0200
+Hans de Goede <hdegoede@redhat.com> wrote:
+
+> Hi,
+> 
+> On 06-04-18 06:48, Kunihiko Hayashi wrote:
+> > Hi Hans,
+> > > On Thu, 5 Apr 2018 16:08:24 +0200
+> > Hans de Goede <hdegoede@redhat.com> wrote:
+> > >> Hi,
+> >>
+> >> On 05-04-18 16:00, Hans de Goede wrote:
+> >>> Hi,
+> >>>> On 05-04-18 15:54, Thierry Reding wrote:
+> >>>> On Thu, Apr 05, 2018 at 03:27:03PM +0200, Hans de Goede wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> On 05-04-18 15:17, Patrice CHOTARD wrote:
+> >>>>>> Hi Thierry
+> >>>>>>
+> >>>>>> On 04/05/2018 11:54 AM, Thierry Reding wrote:
+> >>>>>>> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
+> >>>>>>>> Add support to get and control a list of resets for the device
+> >>>>>>>> as optional and shared. These resets must be kept de-asserted until
+> >>>>>>>> the device is enabled.
+> >>>>>>>>
+> >>>>>>>> This is specified as shared because some SoCs like UniPhier series
+> >>>>>>>> have common reset controls with all ahci controller instances.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> >>>>>>>> ---
+> >>>>>>>> ??? .../devicetree/bindings/ata/ahci-platform.txt????? |? 1 +
+> >>>>>>>> ??? drivers/ata/ahci.h???????????????????????????????? |? 1 +
+> >>>>>>>> ??? drivers/ata/libahci_platform.c???????????????????? | 24 +++++++++++++++++++---
+> >>>>>>>> ??? 3 files changed, 23 insertions(+), 3 deletions(-)
+> >>>>>>>
+> >>>>>>> This causes a regression on Tegra because we explicitly request the
+> >>>>>>> resets after the call to ahci_platform_get_resources().
+> >>>>>>
+> >>>>>> I confirm, we got exactly the same behavior on STi platform.
+> >>>>>>
+> >>>>>>>
+> >>>>>>> ?? From a quick look, ahci_mtk and ahci_st are in the same boat, adding the
+> >>>>>>> corresponding maintainers to Cc.
+> >>>>>>>
+> >>>>>>> Patrice, Matthias: does SATA still work for you after this patch? This
+> >>>>>>> has been in linux-next since next-20180327.
+> >>>>>>
+> >>>>>> SATA is still working after this patch, but a kernel warning is
+> >>>>>> triggered due to the fact that resets are both requested by
+> >>>>>> libahci_platform and by ahci_st driver.
+> >>>>>
+> >>>>> So in your case you might be able to remove the reset handling
+> >>>>> from the ahci_st driver and rely on the new libahci_platform
+> >>>>> handling instead? If that works that seems like a win to me.
+> >>>>>
+> >>>>> As said elsewhere in this thread I think it makes sense to keep (or re-add
+> >>>>> after a revert) the libahci_platform reset code, but make it conditional
+> >>>>> on a flag passed to ahci_platform_get_resources(). This way we get
+> >>>>> the shared code for most cases and platforms which need special handling
+> >>>>> can opt-out.
+> >>>>
+> >>>> Agreed, although I prefer such helpers to be opt-in, rather than
+> >>>> opt-out. In my experience that tends make the helpers more resilient to
+> >>>> this kind of regression. It also simplifies things because instead of
+> >>>> drivers saying "I want all the helpers except this one and that one",
+> >>>> they can simply say "I want these helpers and that one". In the former
+> >>>> case whenever you add some new (opt-out) feature, you have to update all
+> >>>> drivers and add the exception. In the latter you only need to extend the
+> >>>> drivers that want to make use of the new helper.
+> >>
+> >> Erm, the idea never was to make this opt-out but rather opt in, so
+> >> we add a flags parameter to ahci_platform_get_resources() and all
+> >> current users pass in 0 for that to keep the current behavior.
+> >>
+> >> And only the generic drivers/ata/ahci_platform.c driver will pass
+> >> in a the new AHCI_PLATFORM_GET_RESETS flag, which makes
+> >> ahci_platform_get_resources() (and the other functions) also deal
+> >> with resets.
+> >>
+> >>>> With that in mind, rather than adding a flag to the
+> >>>> ahci_platform_get_resources() function, it might be more flexible to
+> >>>> split the helpers into finer-grained functions. That way drivers can
+> >>>> pick whatever functionality they want from the helpers.
+> >>>> Good point, so lets:
+> >>>> 1) Revert the patch for now
+> >>> 2) Have a new version of the patch which adds a ahci_platform_get_resets() helper
+> >>> 3) Modify the generic drivers/ata/ahci_platform.c driver to call the new
+> >>>   ?? ahci_platform_get_resets() between its ahci_platform_get_resources()
+> >>>   ?? and ahci_platform_enable_resources() calls.
+> >>>   ?? I think that ahci_platform_enable_resources() should still automatically
+> >>>   ?? do the right thing wrt resets if ahci_platform_get_resets() was called
+> >>>   ?? (otherwise the resets array will be empty and should be skipped)
+> >>>> This should make the generic driver usable for the UniPhier SoCs and
+> >>> maybe some other drivers like the ahci_st driver can also switch to the
+> >>> new ahci_platform_get_resets() functionality to reduce their code a bit.
+> >>
+> >> So thinking slightly longer about this, with the opt-in variant
+> >> (which is what I intended all along) I do think that a flags parameter
+> >> is better, because the whole idea behind lib_ahci_platform is to avoid
+> >> having to do err = get_resource_a(), if (err) bail, err = get_resource_b()
+> >> if (err) bail, etc. in all the ahci (platform) drivers. And having fine
+> >> grained helpers re-introduces that.
+> > > In case of adding a flag instead of get_resource_a(),
+> > for example, we add the flag for use of resets,
+> > > -struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev)
+> > +struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+> > +                                                  bool use_reset)
+> > > and for now all the drivers using this function need to add the argument as false
+> > to the caller.
+> > > -       hpriv = ahci_platform_get_resources(pdev);
+> > +       hpriv = ahci_platform_get_resources(pdev, false);
+> > > Surely this can avoid adding functions such get_resource_a(). If we apply another
+> > feature later, we add its flag as one of the arguments instead. Is it right?
+> 
+> Yes, that is right, but instead of adding a "bool use_reset" please add
+> an "unsigned int flags" parameter instead and a:
+> 
+> #define AHCI_PLATFORM_GET_RESETS	0x01
+> 
+> And update all callers of ahci_platform_get_resources to pass 0 for flags
+> except for drivers/ata/ahci_platform.c. This way we only need to modify
+> all callers once, and if we want to add another optional resource in
+> the future we can add a:
+> 
+> #define AHCI_PLATFORM_GET_FOO		0x02
+> 
+> Without needing to change all callers again.
+
+Indeed. This is more flexible to add another resources.
+
+Although I'm about to prepare the candidate patch to fix this issue,
+I think we need to revert the previous patch first if some SoCs have
+issues because of it.
+
+Thank you,
+
+---
+Best Regards,
+Kunihiko Hayashi
