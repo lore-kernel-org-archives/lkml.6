@@ -1,225 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752110AbeDFXmo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 19:42:44 -0400
-Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:55810 "EHLO
-        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751417AbeDFXmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 19:42:42 -0400
-Date: Fri, 6 Apr 2018 19:42:38 -0400
-From: Wakko Warner <wakko@animx.eu.org>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: 4.15.14 crash with iscsi target and dvd
-Message-ID: <20180406234237.GA6043@animx.eu.org>
-References: <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
- <20180331221252.GA25573@animx.eu.org>
- <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
- <20180401113721.GA8471@animx.eu.org>
- <20180401163604.GB25011@animx.eu.org>
- <20180401182723.GA31755@animx.eu.org>
- <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
- <20180406014644.GA16112@animx.eu.org>
- <20180406020651.GB16112@animx.eu.org>
- <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
+        id S1751862AbeDFXs0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 19:48:26 -0400
+Received: from mail-it0-f54.google.com ([209.85.214.54]:51612 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751417AbeDFXsZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 19:48:25 -0400
+X-Google-Smtp-Source: AIpwx482a0zJ+4o3LnUf3ph4uNuc0jDOCx+1+UYNf3r4qvrY/Q0m6hNS2KaL/hWmuVIHKZ+DPkWjtKF59bgYeduV2Hc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180406172835.20078-1-patrick.bellasi@arm.com>
+References: <20180406172835.20078-1-patrick.bellasi@arm.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Fri, 6 Apr 2018 16:48:22 -0700
+Message-ID: <CAJWu+or7OeTELc=yUuTw=vRKvU6VaCyeHp5gA1UJsLSFonYz0w@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: schedutil: update only with all info available
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>, Steve Muckle <smuckle@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bart Van Assche wrote:
-> On Thu, 2018-04-05 at 22:06 -0400, Wakko Warner wrote:
-> > I know now why scsi_print_command isn't doing anything.  cmd->cmnd is null.
-> > I added a dev_printk in scsi_print_command where the 2 if statements return.
-> > Logs:
-> > [  29.866415] sr 3:0:0:0: cmd->cmnd is NULL
-> 
-> That's something that should never happen. As one can see in
-> scsi_setup_scsi_cmnd() and scsi_setup_fs_cmnd() both functions initialize
-> that pointer. Since I have not yet been able to reproduce myself what you
-> reported, would it be possible for you to bisect this issue? You will need
-> to follow something like the following procedure (see also
-> https://git-scm.com/docs/git-bisect):
+On Fri, Apr 6, 2018 at 10:28 AM, Patrick Bellasi
+<patrick.bellasi@arm.com> wrote:
+> Schedutil is not properly updated when the first FAIR task wakes up on a
+> CPU and when a RQ is (un)throttled. This is mainly due to the current
+> integration strategy, which relies on updates being triggered implicitly
+> each time a cfs_rq's utilization is updated.
 
-I don't know how relevent it is, but this machine boots nfs and exports it's
-dvd drives over iscsi with the target modules.  My scsi_target.lio is at the
-end.  I removed the iqn name.  The options are default except for a few. 
-Non default options I tabbed over.
-eth0 is the nfs/localnet nic and eth1 is the
-nic that iscsi goes over.
-eth0 is onboard pci 8086:1502 (subsystem 1028:05d3)
-eth1 is pci 8086:107d (subsystem 8086:1084)
-Both use the e1000e driver
+To me that's not implicit, but is explicitly done when the util is
+updated. It seems that's the logical place..
 
-The initiator is running 4.4.107.
-When running on the initiator, /dev/sr1 is the target /dev/sr0.  Therefor
-cat /dev/sr1 > /dev/null seems to work.
-mount /dev/sr1 /cdrom works
-find /cdrom -type f | xargs cat > /dev/null immediately crashes the target.
-Burning to /dev/sr1 seems to work.
+>
+> Those updates are currently provided (mainly) via
+>    cfs_rq_util_change()
+> which is used in:
+>  - update_cfs_rq_load_avg()
+>    when the utilization of a cfs_rq is updated
+>  - {attach,detach}_entity_load_avg()
+> This is done based on the idea that "we should callback schedutil
+> frequently enough" to properly update the CPU frequency at every
 
-I have another nic that uses igb instead, I'll see if that makes a
-difference.
+This also I didn't get, its not called "frequently enough" but at the
+right time (when the util is updated).
 
-> git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> git bisect start
-> git bisect bad v4.10
-> git bisect good v4.9
-> 
-> and then build the kernel, install it, boot the kernel and test it.
-> Depending on the result, run either git bisect bad or git bisect good and
-> keep going until git bisect comes to a conclusion. This can take an hour or
-> more.
+> utilization change.
+>
+> Since this recent schedutil update:
+>
+>   commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
+>
+> we use additional RQ information to properly account for FAIR tasks
+> utilization. Specifically, cfs_rq::h_nr_running has to be non-zero
+> in sugov_aggregate_util() to sum up the cfs_rq's utilization.
+>
+> However, cfs_rq::h_nr_running is usually updated as:
+>
+>     enqueue_entity()
+>        ...
+>        update_load_avg()
+>           ...
+>           cfs_rq_util_change ==> trigger schedutil update
+>     ...
+>     cfs_rq->h_nr_running += number_of_tasks
+>
+> both in enqueue_task_fair() as well as in unthrottle_cfs_rq().
+> A similar pattern is used also in dequeue_task_fair() and
+> throttle_cfs_rq() to remove tasks.
 
-I'll try this.
+Maybe this should be fixed then? It seems broken to begin with...
 
-Here's my scsi_target.lio:
-storage pscsi {
-	disk dvd0 {
-	path /dev/sr0 
-attribute {
-emulate_3pc yes 
-emulate_caw yes 
-emulate_dpo no 
-emulate_fua_read no 
-emulate_model_alias no 
-emulate_rest_reord no 
-emulate_tas yes 
-emulate_tpu no 
-emulate_tpws no 
-emulate_ua_intlck_ctrl no 
-emulate_write_cache no 
-enforce_pr_isids yes 
-fabric_max_sectors 8192 
-is_nonrot yes 
-max_unmap_block_desc_count 0 
-max_unmap_lba_count 0 
-max_write_same_len 65535 
-queue_depth 128 
-unmap_granularity 0 
-unmap_granularity_alignment 0 
-}
-}
-	disk dvd1 {
-	path /dev/sr1 
-attribute {
-emulate_3pc yes 
-emulate_caw yes 
-emulate_dpo no 
-emulate_fua_read no 
-emulate_model_alias no 
-emulate_rest_reord no 
-emulate_tas yes 
-emulate_tpu no 
-emulate_tpws no 
-emulate_ua_intlck_ctrl no 
-emulate_write_cache no 
-enforce_pr_isids yes 
-fabric_max_sectors 8192 
-is_nonrot yes 
-max_unmap_block_desc_count 0 
-max_unmap_lba_count 0 
-max_write_same_len 65535 
-queue_depth 128 
-unmap_granularity 0 
-unmap_granularity_alignment 0 
-}
-}
-	disk dvd2 {
-	path /dev/sr2 
-attribute {
-emulate_3pc yes 
-emulate_caw yes 
-emulate_dpo no 
-emulate_fua_read no 
-emulate_model_alias no 
-emulate_rest_reord no 
-emulate_tas yes 
-emulate_tpu no 
-emulate_tpws no 
-emulate_ua_intlck_ctrl no 
-emulate_write_cache no 
-enforce_pr_isids yes 
-fabric_max_sectors 8192 
-is_nonrot yes 
-max_unmap_block_desc_count 0 
-max_unmap_lba_count 0 
-max_write_same_len 65535 
-queue_depth 128 
-unmap_granularity 0 
-unmap_granularity_alignment 0 
-}
-}
-}
-fabric iscsi {
-discovery_auth {
-enable no 
-mutual_password "" 
-mutual_userid "" 
-password "" 
-userid "" 
-}
-	target iqn.<myiqn>:dvd tpgt 1 {
-enable yes 
-attribute {
-	authentication no 
-cache_dynamic_acls yes 
-default_cmdsn_depth 64 
-default_erl 0 
-demo_mode_discovery yes 
-	demo_mode_write_protect no 
-fabric_prot_type 0 
-	generate_node_acls yes 
-login_timeout 15 
-netif_timeout 2 
-prod_mode_write_protect no 
-t10_pi 0 
-tpg_enabled_sendtargets 1 
-}
-auth {
-password "" 
-password_mutual "" 
-userid "" 
-userid_mutual "" 
-}
-parameter {
-AuthMethod "CHAP,None" 
-DataDigest "CRC32C,None" 
-DataPDUInOrder yes 
-DataSequenceInOrder yes 
-DefaultTime2Retain 20 
-DefaultTime2Wait 2 
-ErrorRecoveryLevel no 
-FirstBurstLength 65536 
-HeaderDigest "CRC32C,None" 
-IFMarkInt Reject 
-IFMarker no 
-ImmediateData yes 
-InitialR2T yes 
-MaxBurstLength 262144 
-MaxConnections 1 
-MaxOutstandingR2T 1 
-MaxRecvDataSegmentLength 8192 
-MaxXmitDataSegmentLength 262144 
-OFMarkInt Reject 
-OFMarker no 
-TargetAlias "LIO Target" 
-}
-	lun 0 backend pscsi:dvd0 
-	lun 1 backend pscsi:dvd1 
-	lun 2 backend pscsi:dvd2 
-	portal 0.0.0.0:3260 
-}
-}
+>
+> This means that we are likely to see a zero cfs_rq utilization when we
+> enqueue a task on an empty CPU, or a non-zero cfs_rq utilization when
+> instead, for example, we are throttling all the FAIR tasks of a CPU.
+>
+> While the second issue is less important, since we are less likely to
 
+Actually I wanted behavior like the second issue, because that means
+frequency will not be dropped if CPU is about to idle which is similar
+to a patch I sent long time ago (skip freq update if CPU about to
+idle).
 
--- 
- Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
- million bugs.
+> reduce frequency when CPU utilization decreases, the first issue can
+> instead impact performance. Indeed, we potentially introduce a not desired
+
+This issue would be fixed by just fixing the h_nr_running bug right?
+
+> latency between a task enqueue on a CPU and its frequency increase.
+>
+> Another possible unwanted side effect is the iowait boosting of a CPU
+> when we enqueue a task into a throttled cfs_rq.
+
+Probably very very rare.
+
+> Moreover, the current schedutil integration has these other downsides:
+>
+>  - schedutil updates are triggered by RQ's load updates, which makes
+>    sense in general but it does not allow to know exactly which other RQ
+>    related information has been updated (e.g. h_nr_running).
+
+It seems broken that all information that schedutil needs isn't
+updated _before_ the cpufreq update request, so that should be fixed
+instead?
+
+>
+>  - increasing the chances to update schedutil does not always correspond
+>    to provide the most accurate information for a proper frequency
+>    selection, thus we can skip some updates.
+
+Again IMO its just updated at the right time already, not just
+frequently enough...
+
+>
+>  - we don't know exactly at which point a schedutil update is triggered,
+>    and thus potentially a frequency change started, and that's because
+>    the update is a side effect of cfs_rq_util_changed instead of an
+>    explicit call from the most suitable call path.
+>
+>  - cfs_rq_util_change() is mainly a wrapper function for an already
+>    existing "public API", cpufreq_update_util(), to ensure we actually
+>    update schedutil only when we are updating a root RQ. Thus, especially
+>    when task groups are in use, most of the calls to this wrapper
+>    function are really not required.
+>
+>  - the usage of a wrapper function is not completely consistent across
+>    fair.c, since we still need sometimes additional explicit calls to
+>    cpufreq_update_util(), for example to support the IOWAIT boot flag in
+>    the wakeup path
+>
+>  - it makes it hard to integrate new features since it could require to
+>    change other function prototypes just to pass in an additional flag,
+>    as it happened for example here:
+>
+>       commit ea14b57e8a18 ("sched/cpufreq: Provide migration hint")
+>
+> All the above considered, let's try to make schedutil updates more
+> explicit in fair.c by:
+>
+>  - removing the cfs_rq_util_change() wrapper function to use the
+>    cpufreq_update_util() public API only when root cfs_rq is updated
+>
+>  - remove indirect and side-effect (sometimes not required) schedutil
+>    updates when the cfs_rq utilization is updated
+>
+>  - call cpufreq_update_util() explicitly in the few call sites where it
+>    really makes sense and all the required information has been updated
+>
+> By doing so, this patch mainly removes code and adds explicit calls to
+> schedutil only when we:
+>  - {enqueue,dequeue}_task_fair() a task to/from the root cfs_rq
+>  - (un)throttle_cfs_rq() a set of tasks up to the root cfs_rq
+>  - task_tick_fair() to update the utilization of the root cfs_rq
+
+About the "update for root" thingy, we're already doing rq->cfs ==
+cfs_rq in cfs_rq_util_change so its already covered?
+
+Also, I feel if you can shorten the commit message a little and only
+include the best reasons for this patch that'll be nice so its easier
+to review.
+
+>
+> All the other code paths, currently _indirectly_ covered by a call to
+> update_load_avg(), are also covered by the above three calls.
+
+I would rather we do it in as few places as possible (when util is
+updated for root) than spreading it around and making it "explicit". I
+hope I didn't miss something but I feel its explicit enough already...
+
+thanks!
+
+- Joel
