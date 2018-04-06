@@ -1,58 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeDFNBP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:01:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59798 "EHLO mail.kernel.org"
+        id S1752822AbeDFNBQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:01:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752561AbeDFNBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752586AbeDFNBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 6 Apr 2018 09:01:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B92D6217D5
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A9F21720
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180406130111.738213668@goodmis.org>
+Message-Id: <20180406130035.400292196@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 06 Apr 2018 09:00:36 -0400
+Date: Fri, 06 Apr 2018 09:00:35 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [for-next][PATCH 01/18] tracing: Fix a potential NULL dereference
-References: <20180406130035.400292196@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0001-tracing-Fix-a-potential-NULL-dereference.patch
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 00/18] tracing: Last minute updates before pushing to Linus
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+for-next
 
-We forgot to set the error code on this path so we return ERR_PTR(0)
-which is NULL.  It results in a NULL dereference in the caller.
+Head SHA1: 8ec8405f081e1e0f800b20f683451c37e81e26c1
 
-Link: http://lkml.kernel.org/r/20180323113735.GC28518@mwanda
 
-Fixes: 100719dcef44 ("tracing: Add simple expression support to hist triggers")
-Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_events_hist.c | 1 +
- 1 file changed, 1 insertion(+)
+Chris Wilson (3):
+      tracing: Default to using trace_global_clock if sched_clock is unstable
+      tracing: Mention trace_clock=global when warning about unstable clocks
+      tracing: Fixup logic inversion on setting trace_global_clock defaults
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 4f027642ceef..a02bc09d765a 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -2776,6 +2776,7 @@ static struct hist_field *parse_expr(struct hist_trigger_data *hist_data,
- 		expr->fn = hist_field_plus;
- 		break;
- 	default:
-+		ret = -EINVAL;
- 		goto free;
- 	}
- 
--- 
-2.15.1
+Dan Carpenter (2):
+      tracing: Fix a potential NULL dereference
+      tracing: Uninitialized variable in create_tracing_map_fields()
+
+Salvatore Mesoraca (1):
+      ftrace: Drop a VLA in module_exists()
+
+Steven Rostedt (VMware) (8):
+      init: Fix initcall0 name as it is "pure" not "early"
+      vsprintf: Do not preprocess non-dereferenced pointers for bprintf (%px and %pK)
+      lockdep: Add print_irqtrace_events() to __warn
+      ring-buffer: Check if memory is available before allocation
+      ring-buffer: Add set/clear_current_oom_origin() during allocations
+      tracing: Hide global trace clock from lockdep
+      tracing: Add rcu dereference annotation for filter->prog
+      tracing: Add rcu dereference annotation for test func that touches filter->prog
+
+Tom Zanussi (4):
+      tracing: Fix display of hist trigger expressions containing timestamps
+      tracing: Don't add flag strings when displaying variable references
+      tracing: Add action comparisons when testing matching hist triggers
+      tracing: Make sure variable string fields are NULL-terminated
+
+----
+ init/main.c                        |  2 +-
+ kernel/panic.c                     |  2 +
+ kernel/trace/ftrace.c              |  7 ++--
+ kernel/trace/ring_buffer.c         | 54 +++++++++++++++++++++-----
+ kernel/trace/trace.c               | 19 ++++++++++
+ kernel/trace/trace_clock.c         |  4 +-
+ kernel/trace/trace_events_filter.c | 10 ++++-
+ kernel/trace/trace_events_hist.c   | 78 +++++++++++++++++++++++++++++---------
+ lib/vsprintf.c                     |  4 ++
+ 9 files changed, 143 insertions(+), 37 deletions(-)
