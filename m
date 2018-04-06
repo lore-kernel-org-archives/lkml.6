@@ -1,90 +1,51 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1459510-1523022049-2-8320570122806320999
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523022049; b=D0t8UukjZMD3iskza1eIJy7J1gGWl/g534jh3eb7kyEtrRXdgw
-    E1bSBTtsblH5Zs5dUJpQKw36oY+0oIDS8oxcGf9ezU8my3Nv+i4Y4Ih/a4UTc9VF
-    2iRAi2+IlZ8WqvaEfLsPc4WyOLfjRmixARpFgsgIIicjJLl8aX9O/gB115ckXpse
-    UGPUURq5o90K5w/2qVP/X4Lu2L1EwncuuPE7sAmjcu35BcbPgLs31iyqte7ERyB9
-    oKZA+p0gnAeI18hdwgBGRKucldd7knoekmUP/azI1BsWam1oCEhFrOnU3p9V+gcG
-    MPYdDG8Ij79co053uPVwRpBwbBLLfoJHFvUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523022049; bh=p7HPsa0thHQRwW/4cgud5jwfkBKlzj
-    OLTc0lyeWJG4Y=; b=hnGCJdMZSRx50JyFPh0AuXHcsBI2G+8/LFAk8JzDxK3fXM
-    Ii40H/VgYV8HGYmA4hHEPq79TMAG0x91kp/CXw1Vc6wkm3wQqPKQJ7slkBmvY/au
-    EbXNotASFIOOK63Xql4DASnJ0DmR063PxXsfYZGo+q0kzPTX2YPmzb1rFFgArTWt
-    he5iQ72zJuC3AFEMr5ddouEVF3EVBntsj3mE72T60cEE1GHejYqxJ+Pho6liY5Jd
-    DyIcJ2KX7Xqv+l9e227ItQBJ/K2kmGFvTeRRDXWqxGrD0ztkmDsn0W0ngwfZ/XZ0
-    mg9GMo/tHVRKzZCLaYCSS3eU78K2p4a1tbz36qZA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF3xFoFWZOwZB2VmWNZRBQ+rvxgmoRZ54ExhEXkH6SeRFNOGM5bfi6YROsv6oYh8PFEqxu1fHjrnmMckeVAXbi+dEWdLps2TGRyTQC7uNEsa2jAO0g67
-    DbKu86IEtNwB7tH4NOuZ3LFJp3I6FEBMd1vx0gG9mke2d3F+n17Tn6qzP2XpqrR02ow8Zrf6X7rAiFlryzFXG2hvDo31++wzEj+MsElZiYKFwA0F3vUJGD7u
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=2KMo9-giAAAA:8 a=VwQbUJbxAAAA:8 a=sozttTNsAAAA:8 a=ag1SF4gXAAAA:8
-    a=Wtz7PzlzdcFW-RrdzLIA:9 a=gVnYXrw_FYviVAWL:21 a=SZQ7LzIvdTYveJlX:21
-    a=QEXdDO2ut3YA:10 a=UeCTMeHK7YUBiLmz_SX7:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=aeg5Gbbo78KNqacMgKqU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932747AbeDFNkq (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 09:40:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35982 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932571AbeDFNkp (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:40:45 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+Aw2YjWU9A0W5gaQxxAq2iVjR6c8r3RwDiBg2ovEHv/lXtvbTBJtt6kI0I1zNBe7vX2inF
+ARC-Seal: i=1; a=rsa-sha256; t=1523022047; cv=none;
+        d=google.com; s=arc-20160816;
+        b=R+s4DpMStTmzGx1IDMS55JXI04VPHWE4Xj8BWn3Ucy6Qwwjhf+m19YnnraGx1L5ZHi
+         fq1a8bngnwnhVta81o+xaTB7IBFmWlQ7kMBtV7de1+mxNpp5vsuEhTsJpHIIhRUKAeIS
+         OiT6zMnrtJ5s9hZabRXM+XO/b1KJkQb0hOII42IXu2cHp9s81e4bV+8+7HEdRsSpdp7j
+         4mpc54dtb34oDr4BKxIvTWN136EhLnklzG4pp9/kZMFEeNOm94M688asZhzxaX0iTyoJ
+         m6vapofQRY9lYd51Mz8/EVRJfTs5XgXtAm9w4WiHHgrYuzAOlpqPixeFYanDpxwQGWLb
+         DbTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=EnFWIJ2v6MB+PinEkUJlXQ5MbgqXk0++4+K9gGiDYZQ=;
+        b=ZNd8S/hrqJIXx8xowiBzCMwS3iGdV11t8P4NfUMlJFoZBOgkXhZgrLA9uiwUugj6e1
+         LzQJ4Am6zF2KzQ2TvnKTaifGPyoZnogL2O6N61uwO985hoWPmKtxAUgZezlQD4OKd8EQ
+         aOFY7cRYSAJyC06xLxtFqdlrke+78qY4CDQJGdxR2XwIOFACFTT1ORZigwlsnzHgLcHr
+         lYF+3uUhgdzI7i30+A//L08Rnbw4SLUIfqxq+FGMLgPwbgUpkSf3GdoB1KhVJCSDQzpx
+         EeL086T+VO3JQr3wTNtqgKrpJZ8jJCl3ooBoTgwRCq9xjPm5WiPclsZsSESm4uJa+eJf
+         rUOg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
-        Pavel Machek <pavel@ucw.cz>, Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.15 01/72] ARM: OMAP: Fix SRAM W+X mapping
-Date: Fri,  6 Apr 2018 15:23:36 +0200
-Message-Id: <20180406084349.546848637@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Andrew Banman <abanman@hpe.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mike Travis <mike.travis@hpe.com>,
+	Dimitri Sivanich <sivanich@hpe.com>,
+	Russ Anderson <rja@hpe.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH 4.15 10/72] x86/platform/uv/BAU: Add APIC idt entry
+Date: Fri,  6 Apr 2018 15:23:45 +0200
+Message-Id: <20180406084350.344047752@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597004172509533841?=
+X-GMAIL-MSGID: =?utf-8?q?1597004367080792354?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -92,123 +53,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Andrew Banman <abanman@hpe.com>
 
-commit eb85a355c3afd9379f5953cfe2df73632d14c884 upstream.
+commit 151ad17fbe5e56afa59709f41980508672c777ce upstream.
 
-We are still using custom SRAM code for some SoCs and are not marking
-the PM code mapped to SRAM as read-only and executable after we're
-done. With CONFIG_DEBUG_WX=y, we will get "Found insecure W+X mapping
-at address" warning.
+BAU uses the old alloc_initr_gate90 method to setup its interrupt. This
+fails silently as the BAU vector is in the range of APIC vectors that are
+registered to the spurious interrupt handler. As a consequence BAU
+broadcasts are not handled, and the broadcast source CPU hangs.
 
-Let's fix this issue the same way as commit 728bbe75c82f ("misc: sram:
-Introduce support code for protect-exec sram type") is doing for
-drivers/misc/sram-exec.c.
+Update BAU to use new idt structure.
 
-On omap3, we need to restore SRAM when returning from off mode after
-idle, so init time configuration is not enough.
-
-And as we no longer have users for omap_sram_push_address() we can
-make it static while at it.
-
-Note that eventually we should be using sram-exec.c for all SoCs.
-
-Cc: stable@vger.kernel.org	# v4.12+
-Cc: Dave Gerlach <d-gerlach@ti.com>
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: dc20b2d52653 ("x86/idt: Move interrupt gate initialization to IDT code")
+Signed-off-by: Andrew Banman <abanman@hpe.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Mike Travis <mike.travis@hpe.com>
+Cc: Dimitri Sivanich <sivanich@hpe.com>
+Cc: Russ Anderson <rja@hpe.com>
+Cc: stable@vger.kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/1522188546-196177-1-git-send-email-abanman@hpe.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/plat-omap/include/plat/sram.h |   11 ----------
- arch/arm/plat-omap/sram.c              |   36 ++++++++++++++++++++++++++++++++-
- 2 files changed, 36 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/hw_irq.h |    1 +
+ arch/x86/kernel/idt.c         |    3 +++
+ arch/x86/platform/uv/tlb_uv.c |    2 --
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/arm/plat-omap/include/plat/sram.h
-+++ b/arch/arm/plat-omap/include/plat/sram.h
-@@ -5,13 +5,4 @@ void omap_map_sram(unsigned long start,
- 			unsigned long skip, int cached);
- void omap_sram_reset(void);
+--- a/arch/x86/include/asm/hw_irq.h
++++ b/arch/x86/include/asm/hw_irq.h
+@@ -36,6 +36,7 @@ extern asmlinkage void kvm_posted_intr_w
+ extern asmlinkage void kvm_posted_intr_nested_ipi(void);
+ extern asmlinkage void error_interrupt(void);
+ extern asmlinkage void irq_work_interrupt(void);
++extern asmlinkage void uv_bau_message_intr1(void);
  
--extern void *omap_sram_push_address(unsigned long size);
+ extern asmlinkage void spurious_interrupt(void);
+ extern asmlinkage void thermal_interrupt(void);
+--- a/arch/x86/kernel/idt.c
++++ b/arch/x86/kernel/idt.c
+@@ -140,6 +140,9 @@ static const __initconst struct idt_data
+ # ifdef CONFIG_IRQ_WORK
+ 	INTG(IRQ_WORK_VECTOR,		irq_work_interrupt),
+ # endif
++#ifdef CONFIG_X86_UV
++	INTG(UV_BAU_MESSAGE,		uv_bau_message_intr1),
++#endif
+ 	INTG(SPURIOUS_APIC_VECTOR,	spurious_interrupt),
+ 	INTG(ERROR_APIC_VECTOR,		error_interrupt),
+ #endif
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -2254,8 +2254,6 @@ static int __init uv_bau_init(void)
+ 			init_uvhub(uvhub, vector, uv_base_pnode);
+ 	}
+ 
+-	alloc_intr_gate(vector, uv_bau_message_intr1);
 -
--/* Macro to push a function to the internal SRAM, using the fncpy API */
--#define omap_sram_push(funcp, size) ({				\
--	typeof(&(funcp)) _res = NULL;				\
--	void *_sram_address = omap_sram_push_address(size);	\
--	if (_sram_address)					\
--		_res = fncpy(_sram_address, &(funcp), size);	\
--	_res;							\
--})
-+extern void *omap_sram_push(void *funcp, unsigned long size);
---- a/arch/arm/plat-omap/sram.c
-+++ b/arch/arm/plat-omap/sram.c
-@@ -23,6 +23,7 @@
- #include <asm/fncpy.h>
- #include <asm/tlb.h>
- #include <asm/cacheflush.h>
-+#include <asm/set_memory.h>
- 
- #include <asm/mach/map.h>
- 
-@@ -42,7 +43,7 @@ static void __iomem *omap_sram_ceil;
-  * Note that fncpy requires the returned address to be aligned
-  * to an 8-byte boundary.
-  */
--void *omap_sram_push_address(unsigned long size)
-+static void *omap_sram_push_address(unsigned long size)
- {
- 	unsigned long available, new_ceil = (unsigned long)omap_sram_ceil;
- 
-@@ -60,6 +61,30 @@ void *omap_sram_push_address(unsigned lo
- 	return (void *)omap_sram_ceil;
- }
- 
-+void *omap_sram_push(void *funcp, unsigned long size)
-+{
-+	void *sram;
-+	unsigned long base;
-+	int pages;
-+	void *dst = NULL;
-+
-+	sram = omap_sram_push_address(size);
-+	if (!sram)
-+		return NULL;
-+
-+	base = (unsigned long)sram & PAGE_MASK;
-+	pages = PAGE_ALIGN(size) / PAGE_SIZE;
-+
-+	set_memory_rw(base, pages);
-+
-+	dst = fncpy(sram, funcp, size);
-+
-+	set_memory_ro(base, pages);
-+	set_memory_x(base, pages);
-+
-+	return dst;
-+}
-+
- /*
-  * The SRAM context is lost during off-idle and stack
-  * needs to be reset.
-@@ -75,6 +100,9 @@ void omap_sram_reset(void)
- void __init omap_map_sram(unsigned long start, unsigned long size,
- 				 unsigned long skip, int cached)
- {
-+	unsigned long base;
-+	int pages;
-+
- 	if (size == 0)
- 		return;
- 
-@@ -95,4 +123,10 @@ void __init omap_map_sram(unsigned long
- 	 */
- 	memset_io(omap_sram_base + omap_sram_skip, 0,
- 		  omap_sram_size - omap_sram_skip);
-+
-+	base = (unsigned long)omap_sram_base;
-+	pages = PAGE_ALIGN(omap_sram_size) / PAGE_SIZE;
-+
-+	set_memory_ro(base, pages);
-+	set_memory_x(base, pages);
- }
+ 	for_each_possible_blade(uvhub) {
+ 		if (uv_blade_nr_possible_cpus(uvhub)) {
+ 			unsigned long val;
