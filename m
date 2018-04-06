@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49hyI2MhqXAn8oF8B6Ac1avFvnGaxhMoNIzRIXg5lX6ntM0R8sb81we8EIqrTy2ZioVPGjr
-ARC-Seal: i=1; a=rsa-sha256; t=1523021731; cv=none;
+X-Google-Smtp-Source: AIpwx490zl8esdOg9OPE6IvZQVJ34ApIgmAKOfAEYmMO8+ygpgS6g1DpRXQmWlnDdfAy3EqNU4pF
+ARC-Seal: i=1; a=rsa-sha256; t=1523021729; cv=none;
         d=google.com; s=arc-20160816;
-        b=SG6RC/L6rmJaIM0NonF7edpq8muIa5SXGt5jI3JtZmvPfufuJUX5kw/7pGfChCmQ1/
-         FHSoRxRLACJf4dyMo8Pi3FnxhkBrTnMmwuXJJlKDyW8a0/l2oqEEQ59QBPxeCv7H2DwM
-         J2DiHo2mTkV4JQmzq4a9lQDt4/09NgW0OiidRMRBTeTZW5mSO2NUP8rK/1sUN9XNcCbu
-         mESO4QuOak7D+m0iM7rI7wMxsnpZBtYKcGs2HiQc0V68USwWkCb/6RfiPes4+HeXjZ2T
-         e6TOa5rp01KAPpil2JUtipAvqS/4zaVDzGaeC0WbXzRZINxgOvrQnL1bqw3F+NE6MgET
-         Ofcg==
+        b=HSfhLhCJ1X6P/qyGy3ZLKb7WCZmE6g4j/1sBDl7sRGtx6qcPQQT6cj2a3aXQHWR4Iz
+         719XDrQdwQKP40YBbtxiawKL39pXaQpglUrPmXnzmvy8nMfMNCJITlPmbQj6cbIXhJCW
+         l8lxr6IjzCHuuYkXf7x1HfbWD62IWaDLyiM9WP7Z++RCXYYbSN8FUWA0QwHhIbUVCsFD
+         Xrvx4Jvt3ZXpJhMq3jkazn/FXmn8fciWETlVIaky4lQnkMWw5dUOOg3qD08MFFHMkpFZ
+         0YgtW3XgpW63mXYHJ47KxM0nSTOuVKaT4jWT7OUQjClytestgA/bXb8DARD8O8YXjXFU
+         1tAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UhKC47y06xmNV4xzFvNZXjx3AkgzCSgIOoS3JMZaW3I=;
-        b=duyciVxDZ+H7rJr4EcWviW2BQo8M6Z28Mp2s5d5aIEl2X6gHvIQSDlo/IeTPja2fw8
-         pzAwg3IA0Bew38XTgieUs8Gi9037ZX/I9LbWy8m/tj3oqEqezeKGBZVVxLlIJewKJ4Qk
-         yLJjz2ed8/R3nbSqk4npaSS/XKBl3UEdRlsY+lowIiYpIvsjT3l5UB1TRhs8u1lU+hDz
-         f7fz45NGyLeDIAqBojANt+36qUqJmUt6MDmAisWf4cBb+2oim5Edb3yX3VVdQbN41Zys
-         4kQXtgg7931rPtCF/picoLPREFnHpSl/cJQzGWnPDz8hz2b2mKQBSLgQ/vTMxISN0k7m
-         8slg==
+        bh=WdqFgtiBuzs0yJvg++lK3B3dh8pgcX/XmfX952L2ZWI=;
+        b=rbqKQpqs0ranN6yjdkdLSV6TQzkI2PKzIlDivQkY2BWVfVHY/a6IakI/XvnMQe8RpT
+         GF3PcJVOGdwzMbuMZsp/N0eAw7ljOyS8QW4JKQCdc39fcG/3wpR/mRMgHiNeWkP8YyhQ
+         yxuc/JBqHtAuFBftItJmV4GrHuLTM2vMimU+exUJB8bJv5str1zDbM/pEbzj2lQMjBoy
+         BgXLhgSGRFHGLxzYE/o+lKglOf6kWLD7ewW48VxDTS+0d1yg6NGi/7QjHO3Q//8PMBnY
+         UxhV0DBaj6yYqpcxuMFAT0WV5uD2yhQymZdTn/VRPGdGsgbaz5twH2drGx/Ne3EtMO7s
+         VN4A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+36712f50b0552615bf59@syzkaller.appspotmail.com,
+	syzbot+dcfd344365a56fbebd0f@syzkaller.appspotmail.com,
 	Leon Romanovsky <leonro@mellanox.com>,
+	Sean Hefty <sean.hefty@intel.com>,
 	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 038/102] RDMA/ucma: Ensure that CM_ID exists prior to access it
-Date: Fri,  6 Apr 2018 15:23:19 +0200
-Message-Id: <20180406084337.044063872@linuxfoundation.org>
+Subject: [PATCH 4.9 037/102] RDMA/ucma: Fix use-after-free access in ucma_close
+Date: Fri,  6 Apr 2018 15:23:18 +0200
+Message-Id: <20180406084336.901940201@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003717226558803?=
-X-GMAIL-MSGID: =?utf-8?q?1597004035033123973?=
+X-GMAIL-THRID: =?utf-8?q?1597003714922293729?=
+X-GMAIL-MSGID: =?utf-8?q?1597004032280083694?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,125 +53,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Leon Romanovsky <leonro@mellanox.com>
 
-commit e8980d67d6017c8eee8f9c35f782c4bd68e004c9 upstream.
+commit ed65a4dc22083e73bac599ded6a262318cad7baf upstream.
 
-Prior to access UCMA commands, the context should be initialized
-and connected to CM_ID with ucma_create_id(). In case user skips
-this step, he can provide non-valid ctx without CM_ID and cause
-to multiple NULL dereferences.
-
-Also there are situations where the create_id can be raced with
-other user access, ensure that the context is only shared to
-other threads once it is fully initialized to avoid the races.
-
-[  109.088108] BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
-[  109.090315] IP: ucma_connect+0x138/0x1d0
-[  109.092595] PGD 80000001dc02d067 P4D 80000001dc02d067 PUD 1da9ef067 PMD 0
-[  109.095384] Oops: 0000 [#1] SMP KASAN PTI
-[  109.097834] CPU: 0 PID: 663 Comm: uclose Tainted: G    B 4.16.0-rc1-00062-g2975d5de6428 #45
-[  109.100816] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
-[  109.105943] RIP: 0010:ucma_connect+0x138/0x1d0
-[  109.108850] RSP: 0018:ffff8801c8567a80 EFLAGS: 00010246
-[  109.111484] RAX: 0000000000000000 RBX: 1ffff100390acf50 RCX: ffffffff9d7812e2
-[  109.114496] RDX: 1ffffffff3f507a5 RSI: 0000000000000297 RDI: 0000000000000297
-[  109.117490] RBP: ffff8801daa15600 R08: 0000000000000000 R09: ffffed00390aceeb
-[  109.120429] R10: 0000000000000001 R11: ffffed00390aceea R12: 0000000000000000
-[  109.123318] R13: 0000000000000120 R14: ffff8801de6459c0 R15: 0000000000000118
-[  109.126221] FS:  00007fabb68d6700(0000) GS:ffff8801e5c00000(0000) knlGS:0000000000000000
-[  109.129468] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  109.132523] CR2: 0000000000000020 CR3: 00000001d45d8003 CR4: 00000000003606b0
-[  109.135573] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  109.138716] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  109.142057] Call Trace:
-[  109.144160]  ? ucma_listen+0x110/0x110
-[  109.146386]  ? wake_up_q+0x59/0x90
-[  109.148853]  ? futex_wake+0x10b/0x2a0
-[  109.151297]  ? save_stack+0x89/0xb0
-[  109.153489]  ? _copy_from_user+0x5e/0x90
-[  109.155500]  ucma_write+0x174/0x1f0
-[  109.157933]  ? ucma_resolve_route+0xf0/0xf0
-[  109.160389]  ? __mod_node_page_state+0x1d/0x80
-[  109.162706]  __vfs_write+0xc4/0x350
-[  109.164911]  ? kernel_read+0xa0/0xa0
-[  109.167121]  ? path_openat+0x1b10/0x1b10
-[  109.169355]  ? fsnotify+0x899/0x8f0
-[  109.171567]  ? fsnotify_unmount_inodes+0x170/0x170
-[  109.174145]  ? __fget+0xa8/0xf0
-[  109.177110]  vfs_write+0xf7/0x280
-[  109.179532]  SyS_write+0xa1/0x120
-[  109.181885]  ? SyS_read+0x120/0x120
-[  109.184482]  ? compat_start_thread+0x60/0x60
-[  109.187124]  ? SyS_read+0x120/0x120
-[  109.189548]  do_syscall_64+0xeb/0x250
-[  109.192178]  entry_SYSCALL_64_after_hwframe+0x21/0x86
-[  109.194725] RIP: 0033:0x7fabb61ebe99
-[  109.197040] RSP: 002b:00007fabb68d5e98 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-[  109.200294] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fabb61ebe99
-[  109.203399] RDX: 0000000000000120 RSI: 00000000200001c0 RDI: 0000000000000004
-[  109.206548] RBP: 00007fabb68d5ec0 R08: 0000000000000000 R09: 0000000000000000
-[  109.209902] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fabb68d5fc0
-[  109.213327] R13: 0000000000000000 R14: 00007fff40ab2430 R15: 00007fabb68d69c0
-[  109.216613] Code: 88 44 24 2c 0f b6 84 24 6e 01 00 00 88 44 24 2d 0f
-b6 84 24 69 01 00 00 88 44 24 2e 8b 44 24 60 89 44 24 30 e8 da f6 06 ff
-31 c0 <66> 41 83 7c 24 20 1b 75 04 8b 44 24 64 48 8d 74 24 20 4c 89 e7
-[  109.223602] RIP: ucma_connect+0x138/0x1d0 RSP: ffff8801c8567a80
-[  109.226256] CR2: 0000000000000020
+The error in ucma_create_id() left ctx in the list of contexts belong
+to ucma file descriptor. The attempt to close this file descriptor causes
+to use-after-free accesses while iterating over such list.
 
 Fixes: 75216638572f ("RDMA/cma: Export rdma cm interface to userspace")
-Reported-by: <syzbot+36712f50b0552615bf59@syzkaller.appspotmail.com>
+Reported-by: <syzbot+dcfd344365a56fbebd0f@syzkaller.appspotmail.com>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Sean Hefty <sean.hefty@intel.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/infiniband/core/ucma.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
 --- a/drivers/infiniband/core/ucma.c
 +++ b/drivers/infiniband/core/ucma.c
-@@ -132,7 +132,7 @@ static inline struct ucma_context *_ucma
- 	ctx = idr_find(&ctx_idr, id);
- 	if (!ctx)
- 		ctx = ERR_PTR(-ENOENT);
--	else if (ctx->file != file)
-+	else if (ctx->file != file || !ctx->cm_id)
- 		ctx = ERR_PTR(-EINVAL);
- 	return ctx;
- }
-@@ -454,6 +454,7 @@ static ssize_t ucma_create_id(struct ucm
- 	struct rdma_ucm_create_id cmd;
- 	struct rdma_ucm_create_id_resp resp;
- 	struct ucma_context *ctx;
-+	struct rdma_cm_id *cm_id;
- 	enum ib_qp_type qp_type;
- 	int ret;
- 
-@@ -474,10 +475,10 @@ static ssize_t ucma_create_id(struct ucm
- 		return -ENOMEM;
- 
- 	ctx->uid = cmd.uid;
--	ctx->cm_id = rdma_create_id(current->nsproxy->net_ns,
--				    ucma_event_handler, ctx, cmd.ps, qp_type);
--	if (IS_ERR(ctx->cm_id)) {
--		ret = PTR_ERR(ctx->cm_id);
-+	cm_id = rdma_create_id(current->nsproxy->net_ns,
-+			       ucma_event_handler, ctx, cmd.ps, qp_type);
-+	if (IS_ERR(cm_id)) {
-+		ret = PTR_ERR(cm_id);
- 		goto err1;
- 	}
- 
-@@ -487,10 +488,12 @@ static ssize_t ucma_create_id(struct ucm
- 		ret = -EFAULT;
- 		goto err2;
- 	}
-+
-+	ctx->cm_id = cm_id;
- 	return 0;
- 
- err2:
--	rdma_destroy_id(ctx->cm_id);
-+	rdma_destroy_id(cm_id);
- err1:
+@@ -495,6 +495,9 @@ err1:
  	mutex_lock(&mut);
  	idr_remove(&ctx_idr, ctx->id);
+ 	mutex_unlock(&mut);
++	mutex_lock(&file->mut);
++	list_del(&ctx->list);
++	mutex_unlock(&file->mut);
+ 	kfree(ctx);
+ 	return ret;
+ }
