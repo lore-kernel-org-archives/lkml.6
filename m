@@ -1,43 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752461AbeDFWR1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 18:17:27 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:59482 "EHLO
+        id S1752529AbeDFWRa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 18:17:30 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:59494 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751679AbeDFWR0 (ORCPT
+        with ESMTP id S1751679AbeDFWR2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 18:17:26 -0400
+        Fri, 6 Apr 2018 18:17:28 -0400
 From: Tim Tianyang Chen <tianyang.chen@oracle.com>
 To: rostedt@goodmis.org
 Cc: linux-kernel@vger.kernel.org, dhaval.giani@oracle.com,
         tim.tianyang.chen@alumni.upenn.edu,
         Tim Tianyang Chen <tianyang.chen@oracle.com>
-Subject: [PATCH v3 0/4] ktest: add email support
-Date: Fri,  6 Apr 2018 15:17:01 -0700
-Message-Id: <1523053025-12424-1-git-send-email-tianyang.chen@oracle.com>
+Subject: [PATCH v3 1/4] ktest: add email support
+Date: Fri,  6 Apr 2018 15:17:02 -0700
+Message-Id: <1523053025-12424-2-git-send-email-tianyang.chen@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1523053025-12424-1-git-send-email-tianyang.chen@oracle.com>
+References: <1523053025-12424-1-git-send-email-tianyang.chen@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8855 signatures=668698
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=655
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1804060222
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set will let users define a mailer, an email address and when to receive
-notifications during automated testings. Users need to setup the specified mailer
-prior to using this feature.
+Users can define optional variables to get email notifications.
+Ktest can send emails when the script:
+ * was started
+ * failed with fatal errors and called dodie()
+ * completed all testing
 
-Tim Tianyang Chen (4):
-  ktest: add email support
-  ktest: add SigInt handling
-  ktest: use dodie for critical falures
-  ktest: add email options to sample.config
+Users have to setup the mailer provided in config prior to using this script.
+Supported mailers: mailx, mail, sendmail
+mailer specific routines are _sendmail_send(), _mailx_send()
 
- tools/testing/ktest/ktest.pl    | 125 ++++++++++++++++++++++++++++++----------
- tools/testing/ktest/sample.conf |  22 +++++++
- 2 files changed, 117 insertions(+), 30 deletions(-)
+Suggested-by: Dhaval Giani <dhaval.giani@oracle.com>
+Signed-off-by: Tim Tianyang Chen <tianyang.chen@oracle.com>
+---
+ tools/testing/ktest/ktest.pl | 61 +++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 58 insertions(+), 3 deletions(-)
 
+diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
+index 8809f244bb7c..a9a6318b1395 100755
+--- a/tools/testing/ktest/ktest.pl
++++ b/tools/testing/ktest/ktest.pl
+@@ -22,6 +22,11 @@ my %evals;
+ 
+ #default opts
+ my %default = (
++    "MAILER"			=> "sendmail",  # default mailer
++    "EMAIL_ON_ERROR"		=> 1,
++    "EMAIL_WHEN_FINISHED"	=> 1,
++    "EMAIL_WHEN_CANCELED"	=> 0,
++    "EMAIL_WHEN_STARTED"	=> 0,
+     "NUM_TESTS"			=> 1,
+     "TEST_TYPE"			=> "build",
+     "BUILD_TYPE"		=> "randconfig",
+@@ -204,6 +209,15 @@ my $install_time;
+ my $reboot_time;
+ my $test_time;
+ 
++my $mailto;
++my $mailer;
++my $email_on_error;
++my $email_when_finished;
++my $email_when_started;
++my $email_when_canceled;
++
++my $script_start_time = localtime();
++
+ # set when a test is something other that just building or install
+ # which would require more options.
+ my $buildonly = 1;
+@@ -229,6 +243,12 @@ my $no_reboot = 1;
+ my $reboot_success = 0;
+ 
+ my %option_map = (
++    "MAILTO"			=> \$mailto,
++    "MAILER"			=> \$mailer,
++    "EMAIL_ON_ERROR"		=> \$email_on_error,
++    "EMAIL_WHEN_FINISHED"	=> \$email_when_finished,
++    "EMAIL_WHEN_STARTED"	=> \$email_when_started,
++    "EMAIL_WHEN_CANCELED"	=> \$email_when_canceled,
+     "MACHINE"			=> \$machine,
+     "SSH_USER"			=> \$ssh_user,
+     "TMP_DIR"			=> \$tmpdir,
+@@ -1426,6 +1446,11 @@ sub dodie {
+ 	print " See $opt{LOG_FILE} for more info.\n";
+     }
+ 
++    if ($email_on_error) {
++        send_email("KTEST: critical failure for your [$test_type] test",
++                "Your test started at $script_start_time has failed with:\n@_\n");
++    }
++
+     if ($monitor_cnt) {
+ 	    # restore terminal settings
+ 	    system("stty $stty_orig");
+@@ -4222,6 +4247,26 @@ sub set_test_option {
+     return eval_option($name, $option, $i);
+ }
+ 
++sub _mailx_send {
++    my ($subject, $message) = @_;
++    system("$mailer -s \'$subject\' $mailto <<< \'$message\'");
++}
++
++sub _sendmail_send {
++    my ($subject, $message) = @_;
++    system("echo -e \"Subject: $subject\n\n$message\" | sendmail -t $mailto");
++}
++
++sub send_email {
++    if (defined($mailto) && defined($mailer)) {
++        if ($mailer eq "mail" || $mailer eq "mailx"){ _mailx_send(@_);}
++        elsif ($mailer eq "sendmail" ) { _sendmail_send(@_);}
++        else { doprint "\nYour mailer: $mailer is not supported.\n" }
++    } else {
++        print "No email sent: email or mailer not specified in config.\n"
++    }
++}
++
+ # First we need to do is the builds
+ for (my $i = 1; $i <= $opt{"NUM_TESTS"}; $i++) {
+ 
+@@ -4262,9 +4307,15 @@ for (my $i = 1; $i <= $opt{"NUM_TESTS"}; $i++) {
+     $start_minconfig_defined = 1;
+ 
+     # The first test may override the PRE_KTEST option
+-    if (defined($pre_ktest) && $i == 1) {
+-	doprint "\n";
+-	run_command $pre_ktest;
++    if ($i == 1) {
++        if (defined($pre_ktest)) {
++            doprint "\n";
++            run_command $pre_ktest;
++        }
++        if ($email_when_started) {
++            send_email("KTEST: Your [$test_type] test was started",
++                "Your test was started on $script_start_time");
++        }
+     }
+ 
+     # Any test can override the POST_KTEST option
+@@ -4428,4 +4479,8 @@ if ($opt{"POWEROFF_ON_SUCCESS"}) {
+ 
+ doprint "\n    $successes of $opt{NUM_TESTS} tests were successful\n\n";
+ 
++if ($email_when_finished) {
++    send_email("KTEST: Your [$test_type] test has finished!",
++            "$successes of $opt{NUM_TESTS} tests started at $script_start_time were successful!");
++}
+ exit 0;
 -- 
 1.8.3.1
