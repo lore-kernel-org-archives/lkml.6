@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+snst8zZ7hS7Ybinv0gSoKkRL54C0T7SkOq0ukxrHjyBFP5ZNofzOZkIgzSu0iX4q1jobL
-ARC-Seal: i=1; a=rsa-sha256; t=1523022201; cv=none;
+X-Google-Smtp-Source: AIpwx49mVXflhwk5KBCHqtmcFKNre47/iPZhc/V9S7u1BFfLPQ06bHb804Yydgue/gpqlT70IxV2
+ARC-Seal: i=1; a=rsa-sha256; t=1523022198; cv=none;
         d=google.com; s=arc-20160816;
-        b=K26xtFSPjw7IxZ331B2i4uYReC1DFvcFvRhgoIVRvd0pC40Qwe1FajXZIHFT58BBo4
-         z3QzcPT+jxqwpwWV45W8qreDnQavwtioTeSZhXRReMneBd0Nt/Vxok+IP5E9uuhsa3tT
-         NulrPuTmAax/jqvDfS3F3k8zwIkyrIfyPjhOfQn/9HF4ncDC47bDxlFtDbGEbIKNtwEd
-         DJqcX6eAIH3cCHBEGOWIbYgOeOIrPppRmH1078/QBB4qNlKGFLMUs4peUTycszjj245z
-         wRUgz+oM8oR/ITIOKkZu/j5wf4EpcUSa8WYwcUwKkCpQisbEYorG8db25a4D7j+AJ3k3
-         dNzQ==
+        b=AdPWiGxrYaO5afVblFrlXZp0Q0DN/xPNUVVSg86TMakKTc8vTg72iJbwJxlbRr2R7f
+         d/jhtMn5uJ2mC5JjRUqf/oegP1SJW7itZbR9RNiEfVnV+kpWL3DXbaW8D3PdcXLYA0iY
+         4MqGoxN4QE347uaX4JXvs5usDQr1Sw8tkR9FfGBXGhZvk/XW2ML/yb7Wtg2F3/7CgiX8
+         rE2wyC/aqpz4ncIKH22qUNGFD29nWoe2GHt0KPenqbxuRZc15ahSPtYDY3wABwaOPMpp
+         ON6KJILY9ufetwvgK6vnMcWWiPL+dgqIj7KjPOsUJ7UfHttFFj13kbzA11fJ4GkZRkyS
+         8m6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+AWuee/C35A+jtYBWj9gS21PoNiPnar1VF6ilx0cDzo=;
-        b=wDZNsVWX+HfXst1/+FvtIYloCPu36QzYCvlvihHQ/xfkqOxdEWxa4UtSDXLz4GESSs
-         eaY5t+Hv80fQXfeR3Xc7Kbusb65e5xtwCMFpd7KTHgkSzAvJHY2sEbZZesaS7M6iKIPi
-         YDGlzjinidFLVt6kFco31Ktk4GRU0VkdD5gWro3G1y9NruXoIej07gnWBVBTAnrlLETJ
-         bLCb2oJe4QWzYEdJlmBQGFLOocHc8TDay4SzSt+nHaIWDO9lJNyW8y1JGdviY8nwh8vx
-         P/y9gkbUPZ5cv9+q/Y7bje+jsmQVs8Tviq1wXnLO4Oq3lwBEukTPgrgl4RJBj19hKSy9
-         b7lw==
+        bh=MU+zle1fkaGIo8j21jkAU2H3UYuNAsIDyQiN31BnY6A=;
+        b=BksrhCsZh/rBs6wqUlhctg7UZargjMH2+CQ+6gC5KdZlCmL79+Z2PqlZ5D17eQrs0v
+         9PL6yZn7bNI4yY6zYs9IKMu8R8jgmYC2SGHOo72s3lDtNoyFQJrjODeHkPKT5rg5xStP
+         NYhW2ACsrckMZLmvdD/DeaFTKJtGXhr54+n4WI1y6vSdeTZbDGGjY2xykUewHKvnJtaK
+         gZy0NGCUpyAwu74joOhWvzfs4rCUsbgeo0BqwQ7yF8lwzWfFd5k36FDt9vZnKmY+OiXP
+         BbDh0xS1BzmJp/p+jGqcmzpHYpGZOr1tQn3Q8Dda3D+nzxQiDge436Fa9fOHqm2J3ldI
+         0BzA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masaki Ota <masaki.ota@jp.alps.com>,
-	Aaron Ma <aaron.ma@canonical.com>,
-	Jonathan Liu <net147@gmail.com>,
-	Jaak Ristioja <jaak@ristioja.ee>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.15 62/72] Input: ALPS - fix TrackStick detection on Thinkpad L570 and Latitude 7370
-Date: Fri,  6 Apr 2018 15:24:37 +0200
-Message-Id: <20180406084353.621660056@linuxfoundation.org>
+	Gaku Inami <gaku.inami.xh@renesas.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH 4.15 61/72] Revert "base: arch_topology: fix section mismatch build warnings"
+Date: Fri,  6 Apr 2018 15:24:36 +0200
+Message-Id: <20180406084353.547602155@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004080957265543?=
-X-GMAIL-MSGID: =?utf-8?q?1597004527576773463?=
+X-GMAIL-THRID: =?utf-8?q?1597004300585915542?=
+X-GMAIL-MSGID: =?utf-8?q?1597004524591647055?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,78 +50,88 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masaki Ota <masaki.ota@jp.alps.com>
+From: Gaku Inami <gaku.inami.xh@renesas.com>
 
-commit 567b9b549cfa1cbc202762ae97b5385c29ade1e3 upstream.
+commit 9de9a449482677a75f1edd2049268a7efc40fc96 upstream.
 
-The primary interface for the touchpad device in Thinkpad L570 is SMBus,
-so ALPS overlooked PS2 interface Firmware setting of TrackStick, and
-shipped with TrackStick otp bit is disabled.
+This reverts commit 452562abb5b7 ("base: arch_topology: fix section
+mismatch build warnings"). It causes the notifier call hangs in some
+use-cases.
 
-The address 0xD7 contains device number information, so we can identify
-the device by checking this value, but to access it we need to enable
-Command mode, and then re-enable the device. Devices shipped in Thinkpad
-L570 report either 0x0C or 0x1D as device numbers, if we see them we assume
-that the devices are DualPoints.
+In some cases with using maxcpus, some of cpus are booted first and
+then the remaining cpus are booted. As an example, some users who want
+to realize fast boot up often use the following procedure.
 
-The same issue exists on Dell Latitude 7370.
+  1) Define all CPUs on device tree (CA57x4 + CA53x4)
+  2) Add "maxcpus=4" in bootargs
+  3) Kernel boot up with CA57x4
+  4) After kernel boot up, CA53x4 is booted from user
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=196929
-Fixes: 646580f793 ("Input: ALPS - fix multi-touch decoding on SS4 plus touchpads")
-Signed-off-by: Masaki Ota <masaki.ota@jp.alps.com>
-Tested-by: Aaron Ma <aaron.ma@canonical.com>
-Tested-by: Jonathan Liu <net147@gmail.com>
-Tested-by: Jaak Ristioja <jaak@ristioja.ee>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+When kernel init was finished, CPUFREQ_POLICY_NOTIFIER was not still
+unregisterd. This means that "__init init_cpu_capacity_callback()"
+will be called after kernel init sequence. To avoid this problem,
+it needs to remove __init{,data} annotations by reverting this commit.
+
+Also, this commit was needed to fix kernel compile issue below.
+However, this issue was also fixed by another patch: commit 82d8ba717ccb
+("arch_topology: Fix section miss match warning due to
+free_raw_capacity()") in v4.15 as well.
+Whereas commit 452562abb5b7 added all the missing __init annotations,
+commit 82d8ba717ccb removed it from free_raw_capacity().
+
+WARNING: vmlinux.o(.text+0x548f24): Section mismatch in reference
+from the function init_cpu_capacity_callback() to the variable
+.init.text:$x
+The function init_cpu_capacity_callback() references
+the variable __init $x.
+This is often because init_cpu_capacity_callback lacks a __init
+annotation or the annotation of $x is wrong.
+
+Fixes: 82d8ba717ccb ("arch_topology: Fix section miss match warning due to free_raw_capacity()")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
+Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/alps.c |   24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ drivers/base/arch_topology.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/input/mouse/alps.c
-+++ b/drivers/input/mouse/alps.c
-@@ -2544,13 +2544,31 @@ static int alps_update_btn_info_ss4_v2(u
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -175,11 +175,11 @@ bool __init topology_parse_cpu_capacity(
  }
  
- static int alps_update_dual_info_ss4_v2(unsigned char otp[][4],
--				       struct alps_data *priv)
-+					struct alps_data *priv,
-+					struct psmouse *psmouse)
- {
- 	bool is_dual = false;
-+	int reg_val = 0;
-+	struct ps2dev *ps2dev = &psmouse->ps2dev;
+ #ifdef CONFIG_CPU_FREQ
+-static cpumask_var_t cpus_to_visit __initdata;
+-static void __init parsing_done_workfn(struct work_struct *work);
+-static __initdata DECLARE_WORK(parsing_done_work, parsing_done_workfn);
++static cpumask_var_t cpus_to_visit;
++static void parsing_done_workfn(struct work_struct *work);
++static DECLARE_WORK(parsing_done_work, parsing_done_workfn);
  
--	if (IS_SS4PLUS_DEV(priv->dev_id))
-+	if (IS_SS4PLUS_DEV(priv->dev_id)) {
- 		is_dual = (otp[0][0] >> 4) & 0x01;
- 
-+		if (!is_dual) {
-+			/* For support TrackStick of Thinkpad L/E series */
-+			if (alps_exit_command_mode(psmouse) == 0 &&
-+				alps_enter_command_mode(psmouse) == 0) {
-+				reg_val = alps_command_mode_read_reg(psmouse,
-+									0xD7);
-+			}
-+			alps_exit_command_mode(psmouse);
-+			ps2_command(ps2dev, NULL, PSMOUSE_CMD_ENABLE);
-+
-+			if (reg_val == 0x0C || reg_val == 0x1D)
-+				is_dual = true;
-+		}
-+	}
-+
- 	if (is_dual)
- 		priv->flags |= ALPS_DUALPOINT |
- 					ALPS_DUALPOINT_WITH_PRESSURE;
-@@ -2573,7 +2591,7 @@ static int alps_set_defaults_ss4_v2(stru
- 
- 	alps_update_btn_info_ss4_v2(otp, priv);
- 
--	alps_update_dual_info_ss4_v2(otp, priv);
-+	alps_update_dual_info_ss4_v2(otp, priv, psmouse);
- 
+-static int __init
++static int
+ init_cpu_capacity_callback(struct notifier_block *nb,
+ 			   unsigned long val,
+ 			   void *data)
+@@ -215,7 +215,7 @@ init_cpu_capacity_callback(struct notifi
  	return 0;
  }
+ 
+-static struct notifier_block init_cpu_capacity_notifier __initdata = {
++static struct notifier_block init_cpu_capacity_notifier = {
+ 	.notifier_call = init_cpu_capacity_callback,
+ };
+ 
+@@ -248,7 +248,7 @@ static int __init register_cpufreq_notif
+ }
+ core_initcall(register_cpufreq_notifier);
+ 
+-static void __init parsing_done_workfn(struct work_struct *work)
++static void parsing_done_workfn(struct work_struct *work)
+ {
+ 	cpufreq_unregister_notifier(&init_cpu_capacity_notifier,
+ 					 CPUFREQ_POLICY_NOTIFIER);
