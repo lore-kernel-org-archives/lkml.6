@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752018AbeDFIbF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 04:31:05 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54540 "EHLO
+        id S1751543AbeDFIek (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 04:34:40 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:54692 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751361AbeDFIbC (ORCPT
+        with ESMTP id S1751201AbeDFIei (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 04:31:02 -0400
-Date: Fri, 6 Apr 2018 10:31:00 +0200
+        Fri, 6 Apr 2018 04:34:38 -0400
+Date: Fri, 6 Apr 2018 10:34:36 +0200
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
@@ -20,15 +20,14 @@ Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
 Subject: Re: [PATCH 0/8] use struct pt_regs based syscall calling for x86-64
-Message-ID: <20180406083100.GA11279@isilmar-4.linta.de>
+Message-ID: <20180406083436.GA17948@isilmar-4.linta.de>
 References: <20180405095307.3730-1-linux@dominikbrodowski.net>
  <20180405151933.egmt7ressx2ikdnr@gmail.com>
  <20180405203121.GA27104@light.dominikbrodowski.net>
  <20180406082322.ud37sj3b5ldm7xxd@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <20180406082322.ud37sj3b5ldm7xxd@gmail.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,33 +83,13 @@ On Fri, Apr 06, 2018 at 10:23:22AM +0200, Ingo Molnar wrote:
 > 
 > Now arguably we could use a __sys_ prefix instead of the grep-barrier __sys_x86 
 > prefix - but that too would be somewhat confusing I think.
-> 
-> I mean, the fact that we are passing in a ptregs pointer is a complexity of the 
-> x86 kernel that *exists*, why hide it and make it harder to discover what's 
-> happening, for something as important as system calls?
-> 
-> In terms of UML breakage, UML arguably is tightly coupled to its host 
-> architecture:
-> 
-> > Subject: [PATCH] syscalls/x86: fix UML syscall table
-> 
-> Even with your patch applied I still see build failures:
-> 
->   $ make ARCH=um defconfig
->   $ make ARCH=um linux
->   ...
->   arch/um/os-Linux/signal.c: In function ‘hard_handler’:
->   arch/um/os-Linux/signal.c:163:22: error: dereferencing pointer to incomplete type 
->   ‘struct ucontext’
->     mcontext_t *mc = &uc->uc_mcontext;
->                         ^~
->   scripts/Makefile.build:324: recipe for target 'arch/um/os-Linux/signal.o' failed
->   make[1]: *** [arch/um/os-Linux/signal.o] Error 1
 
-That build failure is already present in mainline as of 38c23685b273
-(when building on Arch / gcc-7.3.1; building on Debian oldstable / gcc-4.9
-works fine). And -- just checked -- this build failure also exists for
-plain v4.16.
+Well, if looking at the ARCH="um" kernel, you won't find the
+__sys_x86_mprotect there in its System.map -- so we either have to
+disentangle um and plain x86, or live with some cause for confusion.
+
+__sys_mprotect as prefix won't work by the way, as the double-underscore
+__sys_ variant is already used in net/* for internal syscall helpers.
 
 Thanks,
 	Dominik
