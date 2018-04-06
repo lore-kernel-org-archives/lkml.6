@@ -1,67 +1,110 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1523035330; cv=none;
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx48rfc24qjdwMDdnJqNd776BWnEh/pBhy5ZIldb9N+sMgAGJmL3JxBIUltlECh5oVOJPanGz
+ARC-Seal: i=1; a=rsa-sha256; t=1523022042; cv=none;
         d=google.com; s=arc-20160816;
-        b=CsMGqfNetXj5C0bCtKg+jnvsT9epuUrz46IRNRaCCu3kBqf72E6CpBZZCnq1SieZyz
-         5drneU0Hq4DsM+fgQr6q6dGWerPThsVTfJcmjSOtripBfAFl67WGjrUxC4B9L4ZetMc0
-         NS2qxwfk1PsMRpIjnzxsBWvpVjJGq5nJZ9MTkshYA/HwzSSiuxbTFRUjFwCuboflIN3X
-         PLL1hmDcnD+P9ymJ5sByC0jlntR4PQwZz4IZkSw/VzVF8UKgAjPCTueYiILt7wxearUI
-         K/7z6Y+gUN4v0BHDnlaFjnrIk2AA/SE8w1zmYEHq3S4P5tIks8ixAFZ9pemNRXLTjqX7
-         E4Mg==
+        b=y4qiKkEOahFdg5Pk10s8WQJd6fV9j9gOIdBjjOTvaU26fommM8fF53hg4hM5i8Olb9
+         SpkivEygUMIHM2HAShn4qcrGCcWWZA5KiT9Wnc5kgTQHdIaYJkRKxV82zrjSTXIaNDy/
+         lD51HLLftWIc1OE5VDx1IrlrAnCICEyHfOlyEPt5WiEwRuovolwUFzkrxHr3+5+Ttppr
+         ErMDfZqM8wJPCWvDqPFDe/UDLiwPVdbSTfQBsd3lPzqfrCkDEmrN6b9NmZhuIz/QOrjd
+         wYXg9DiEYR+HpLaFcc9drzkEUMiQclhSXnN5Y1xpGNoSWYM4J172XDp+xsD1Khw9SKJT
+         3Sjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=PwmRjhLD+w3+tf0uECUv0j9F8TcXirPe2mD3gYXrUt8=;
-        b=zL0SVIzPvsmHyiJOaHfozPi2Qc7+KHMkcVaXUufzU35Wnt9zqXsW7idaIq0c4uRXgg
-         T5Uebi88y68lHkHNipI7tdeN+MEUvxFtIDtwwnvKHrYKIC/K+kd1DVkd5OsgijLp5sJR
-         GkSOMQ85f5yISrxxlJAWOj1SMxULbQWdvM7PMgM9rIKrLkrDFkE0QOdneBrZUtbAV6Wf
-         6M5kYtgdhVqQG/URi9Bb86q32nBjbHnfAdtOMHPW09axjX12kIKriTqDZgLJPrg3ucCP
-         ireXqEVesocgkuuOcnOt2kpuPKSWo/cmxgcs1ZXDWe7Te8TYeQKEP2M08b35SiHouZ5L
-         A1kw==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=P9wKPI7eQgqtoR20lVMqpUTx6sGLgtmi8MgZcqq5Ces=;
+        b=f5YoK2QfdLjh+gNUd+d8YJUrJIcofgnQxrRk6K8PLVrPJaSdIPD+GFA8OB85avvUDu
+         9XKx9HA4h+rtabm7JgHco5Bldnn/AUN7rca0sX57TMblNqpcW1kttwWVQuChn+le0CT1
+         cA5SmspzP6Mk1qofwluQArrRYbOBpby7OPdAxuG0Ew3590qTS/bG2I3za+9cnlBgOar4
+         ZBcsGr/9j4LGVkzbDozOzZ8H0gQCGo9C7Cb9MZi3laK/C/3k64dLAHaDnmBCQXTWKSyp
+         wgnwaJovY+QVeOTAW80hRXTCqkEbsgbjfdwG0LS9ZdAhhPYJ8R/t5qHvpfhryGN4t+ux
+         HLxA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AIpwx4/+0t8O2GeohqLIxry7FMmhpFA/tkWBzQsonGBmF/3A8nZ5VVfvFu2m9ijoQNagvS0MASv7lw==
-Message-ID: <5ac7acc0.96451c0a.5afba.ffad@mx.google.com>
-Date: Fri, 06 Apr 2018 10:22:08 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.14.32-68-g78c25922bb37
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>,
+	Petr Vorel <pvorel@suse.cz>,
+	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Stefano Brivio <sbrivio@redhat.com>
+Subject: [PATCH 4.14 67/67] Revert "ip6_vti: adjust vti mtu according to mtu of lower device"
+Date: Fri,  6 Apr 2018 15:24:37 +0200
+Message-Id: <20180406084348.954911674@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/67] 4.14.33-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597004251418814512?=
-X-GMAIL-MSGID: =?utf-8?q?1597018295311636583?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597003832036889355?=
+X-GMAIL-MSGID: =?utf-8?q?1597004361000510724?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.14.y boot: 65 boots: 0 failed, 61 passed with 4 untried/u=
-nknown (v4.14.32-68-g78c25922bb37)
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.32-68-g78c25922bb37/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.32-68-g78c25922bb37/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.32-68-g78c25922bb37
-Git Commit: 78c25922bb37178a70c5fd4be7163760a1abb8e2
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 32 unique boards, 14 SoC families, 15 builds out of 185
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
+This reverts commit e6cfc525163ea3375113a9dcc234c2cdd8dbf643 which is
+commit 53c81e95df1793933f87748d36070a721f6cb287 upstream.
+
+Ben writes that there are a number of follow-on patches needed to fix
+this up, but they get complex to backport, and some custom fixes are
+needed, so let's just revert this and wait for a "real" set of patches
+to resolve this to be submitted if it is really needed.
+
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Petr Vorel <pvorel@suse.cz>
+Cc: Alexey Kodanev <alexey.kodanev@oracle.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ net/ipv6/ip6_vti.c |   20 --------------------
+ 1 file changed, 20 deletions(-)
+
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -626,7 +626,6 @@ static void vti6_link_config(struct ip6_
+ {
+ 	struct net_device *dev = t->dev;
+ 	struct __ip6_tnl_parm *p = &t->parms;
+-	struct net_device *tdev = NULL;
+ 
+ 	memcpy(dev->dev_addr, &p->laddr, sizeof(struct in6_addr));
+ 	memcpy(dev->broadcast, &p->raddr, sizeof(struct in6_addr));
+@@ -639,25 +638,6 @@ static void vti6_link_config(struct ip6_
+ 		dev->flags |= IFF_POINTOPOINT;
+ 	else
+ 		dev->flags &= ~IFF_POINTOPOINT;
+-
+-	if (p->flags & IP6_TNL_F_CAP_XMIT) {
+-		int strict = (ipv6_addr_type(&p->raddr) &
+-			      (IPV6_ADDR_MULTICAST | IPV6_ADDR_LINKLOCAL));
+-		struct rt6_info *rt = rt6_lookup(t->net,
+-						 &p->raddr, &p->laddr,
+-						 p->link, strict);
+-
+-		if (rt)
+-			tdev = rt->dst.dev;
+-		ip6_rt_put(rt);
+-	}
+-
+-	if (!tdev && p->link)
+-		tdev = __dev_get_by_index(t->net, p->link);
+-
+-	if (tdev)
+-		dev->mtu = max_t(int, tdev->mtu - dev->hard_header_len,
+-				 IPV6_MIN_MTU);
+ }
+ 
+ /**
