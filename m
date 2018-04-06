@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48DDXe9vPC8frXW3IejaVACB1pgmk2FHqhB/4M4Gwy943TqzXJ3+9xVl3bj5Wuq8IR+Uwnr
-ARC-Seal: i=1; a=rsa-sha256; t=1523021766; cv=none;
+X-Google-Smtp-Source: AIpwx4+PsXnxKoGzJ4Dc5ai6MPLbpjUl/aMYOu8ATvvniyXHWPOByr1a+Uzi2F7evQdpow+yHmiO
+ARC-Seal: i=1; a=rsa-sha256; t=1523021764; cv=none;
         d=google.com; s=arc-20160816;
-        b=p95rWIs6SsB7L/srphWBPpGX9B789AoDZNu4CJDRcpJeIIPUvTG1gSbYLwD+M225Jr
-         53uWMTcxHJCs7QYieqUeUpbVyracDmfgyh8QhX7XsacsSHPVMGLe3GKeZUsr5QjNHzsC
-         no33NsBii0SIm3cj6LGwypjmrcSnKZuyotrhhOy1prhHMCuQ2OnbZvgXwPOzFG5SHdcb
-         ca8nPsvXem4BnIihL30zN2Y9ZMoiDxbYrq6fnYRvsPfp2dMzXryt6BHZkBy9qBtoXq9A
-         xfY8gy4AfkabfmaCpbGBCQyx+sNgyScmEIHGDHuRTYnBEITU8302iSn5aZwIFy5i9/pG
-         ZncA==
+        b=sbh9cyaLxDCtCzBb/hGuSrX546DsRjxtbO6puaurs4QX3cOgLB+jmFv6ZMUnf8VmT8
+         g+++5lbPUMCFztkFXi91QTaLTwr5twPRUCsOv84yOEATnahrrEARKHehMkew76MEIdCS
+         x2bOHkxgx4ZR/dAXKtDexDJC/70PCjKrmrd66otSQx0G1/xayLIo4RWOgTnh27jNoceV
+         aM0jIzJLTQ4/gG+m6sAq5UaOFEnkeEzoGeuoC0jEDvk5YF5kGm1MX/P1WeM7T3v664G8
+         rH6Yca4NvyyQ+plIjof8GEbCQsmXI6B0IL30ijyhSbfsnfOGAtmSiT1flbVqx8jA7rNI
+         61/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kLJx2r0RFLG30UOJSAslwDWiYXBaa8alo/o5e5tsgXo=;
-        b=IhP/y/VkqscLpqoWp2L8TXxqyGKDKCs5DuXTBulHiFjhxcc7tLaQgjPhre/S5ImbWU
-         ULWZwMNJd5BBpFHLyXucn012hQ+zLoFhxnl/MEPPGk0Jg6mbHoms3SqOw2vDigMukmQq
-         VAq/W2/sgVR6LWQhW2ZX7fYdGvWnIfAYIZexlkmiV8VEdAds32sm7gntVp8j+gW5HOSW
-         fZqEA/bxWgiOQOR/UsYUkgBaFzyFsgu2GiCI/aBfrbSOuFeSKDi2FU4W87R9VCHkvY8s
-         3Ph8VRRMEdsXtk9uTfc2I0hzanetY4s9eiuQRvvP03rT5Vndp32pZOb+n3IpnLiO3iL1
-         1lIQ==
+        bh=LPPEhJhSWvLCytud4rARW1UJuvOaP8WRdGLOvCzXIJA=;
+        b=agejT0ZCcSHE8X/mEP+KswHq9wdB3UkctwgqoKU1Cs0zsft1fgsVPAROMeDmA6ME9T
+         NFzz/a77XpD/zrYNJYJegcpU87jqhUGOQXmgC69Yjjpbqvl+eiAKBjdFR5pLZWOWyxfu
+         Bk2/OSPBVzOzn0V8OWTIW/v40ai8UQHzegDW/AKWZgllBzMLQ/dZ/BxyARwRSuTLMCgz
+         kszv11+bxkeA/RMRgRaWj8WoUJ2lnHgl1Xy2L0/EXDPOSg9bz41jMCt4cqgyut/t/YPb
+         ZZSwqqTBbvL99nLZUfftCu1X8SiIHmxLYS4/dfZLMM3HfsysoJufy+pM6TJlsA6z6D4V
+         R9zA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Biggers <ebiggers@google.com>,
+	Eli Cooper <elicooper@gmx.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 084/102] crypto: x86/cast5-avx - fix ECB encryption when long sg follows short one
-Date: Fri,  6 Apr 2018 15:24:05 +0200
-Message-Id: <20180406084343.265931664@linuxfoundation.org>
+Subject: [PATCH 4.9 083/102] crypto: ahash - Fix early termination in hash walk
+Date: Fri,  6 Apr 2018 15:24:04 +0200
+Message-Id: <20180406084343.115461865@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003609405057187?=
-X-GMAIL-MSGID: =?utf-8?q?1597004072164318287?=
+X-GMAIL-THRID: =?utf-8?q?1597003644583899503?=
+X-GMAIL-MSGID: =?utf-8?q?1597004069559087579?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,41 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 8f461b1e02ed546fbd0f11611138da67fd85a30f upstream.
+commit 900a081f6912a8985dc15380ec912752cb66025a upstream.
 
-With ecb-cast5-avx, if a 128+ byte scatterlist element followed a
-shorter one, then the algorithm accidentally encrypted/decrypted only 8
-bytes instead of the expected 128 bytes.  Fix it by setting the
-encryption/decryption 'fn' correctly.
+When we have an unaligned SG list entry where there is no leftover
+aligned data, the hash walk code will incorrectly return zero as if
+the entire SG list has been processed.
 
-Fixes: c12ab20b162c ("crypto: cast5/avx - avoid using temporary stack buffers")
-Cc: <stable@vger.kernel.org> # v3.8+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+This patch fixes it by moving onto the next page instead.
+
+Reported-by: Eli Cooper <elicooper@gmx.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/crypto/cast5_avx_glue.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ crypto/ahash.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/arch/x86/crypto/cast5_avx_glue.c
-+++ b/arch/x86/crypto/cast5_avx_glue.c
-@@ -66,8 +66,6 @@ static int ecb_crypt(struct blkcipher_de
- 	void (*fn)(struct cast5_ctx *ctx, u8 *dst, const u8 *src);
- 	int err;
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -91,13 +91,14 @@ int crypto_hash_walk_done(struct crypto_
  
--	fn = (enc) ? cast5_ecb_enc_16way : cast5_ecb_dec_16way;
+ 	if (nbytes && walk->offset & alignmask && !err) {
+ 		walk->offset = ALIGN(walk->offset, alignmask + 1);
+-		walk->data += walk->offset;
 -
- 	err = blkcipher_walk_virt(desc, walk);
- 	desc->flags &= ~CRYPTO_TFM_REQ_MAY_SLEEP;
+ 		nbytes = min(nbytes,
+ 			     ((unsigned int)(PAGE_SIZE)) - walk->offset);
+ 		walk->entrylen -= nbytes;
  
-@@ -79,6 +77,7 @@ static int ecb_crypt(struct blkcipher_de
+-		return nbytes;
++		if (nbytes) {
++			walk->data += walk->offset;
++			return nbytes;
++		}
+ 	}
  
- 		/* Process multi-block batch */
- 		if (nbytes >= bsize * CAST5_PARALLEL_BLOCKS) {
-+			fn = (enc) ? cast5_ecb_enc_16way : cast5_ecb_dec_16way;
- 			do {
- 				fn(ctx, wdst, wsrc);
- 
+ 	if (walk->flags & CRYPTO_ALG_ASYNC)
