@@ -1,90 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755416AbeDFOyV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:54:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40926 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753046AbeDFOyS (ORCPT
+        id S1755263AbeDFO5h (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:57:37 -0400
+Received: from mail-pl0-f50.google.com ([209.85.160.50]:39813 "EHLO
+        mail-pl0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754275AbeDFO5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:54:18 -0400
-Date: Fri, 6 Apr 2018 07:54:15 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: akpm@linux-foundation.org
-Cc: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org
-Subject: Re: mmotm 2018-04-05-16-59 uploaded
-Message-ID: <20180406145415.GB20605@bombadil.infradead.org>
-References: <20180406000009.l1ebV%akpm@linux-foundation.org>
+        Fri, 6 Apr 2018 10:57:34 -0400
+X-Google-Smtp-Source: AIpwx4/E7b4mfY+xFOsaq38p+G8/NIT9X1cILkkKKa3G+mowBq0DFBqNp8eJonB+2Do3ASanq3XxJCsc0e3ySSzCwUQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406000009.l1ebV%akpm@linux-foundation.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <0e998b77-14f0-aee0-8d32-bc1dd96fcc4c@kernel.dk>
+References: <00000000000082922905692da9e1@google.com> <0e998b77-14f0-aee0-8d32-bc1dd96fcc4c@kernel.dk>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 6 Apr 2018 16:57:13 +0200
+Message-ID: <CACT4Y+Y0TVJLDA5-0RGq-a-A6KKLKHZtA4pwUH2rtvR0hkiZQQ@mail.gmail.com>
+Subject: Re: WARNING: lock held when returning to user space!
+To: Jens Axboe <axboe@kernel.dk>
+Cc: syzbot <syzbot+31e8daa8b3fc129e75f2@syzkaller.appspotmail.com>,
+        linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, Omar Sandoval <osandov@osandov.com>
+Content-Type: text/plain; charset="UTF-8"
+X-ccpol: medium
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 05:00:09PM -0700, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-04-05-16-59 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
+On Fri, Apr 6, 2018 at 4:27 PM, Jens Axboe <axboe@kernel.dk> wrote:
+> On 4/6/18 7:02 AM, syzbot wrote:
+>> Hello,
+>>
+>> syzbot hit the following crash on upstream commit
+>> 38c23685b273cfb4ccf31a199feccce3bdcb5d83 (Fri Apr 6 04:29:35 2018 +0000)
+>> Merge tag 'armsoc-drivers' of
+>> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
+>> syzbot dashboard link:
+>> https://syzkaller.appspot.com/bug?extid=31e8daa8b3fc129e75f2
+>>
+>> So far this crash happened 9 times on upstream.
+>> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6407930337296384
+>> syzkaller reproducer:
+>> https://syzkaller.appspot.com/x/repro.syz?id=4942413340606464
+>> Raw console output:
+>> https://syzkaller.appspot.com/x/log.txt?id=4764483918495744
+>> Kernel config:
+>> https://syzkaller.appspot.com/x/.config?id=-5813481738265533882
+>> compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+31e8daa8b3fc129e75f2@syzkaller.appspotmail.com
+>> It will help syzbot understand when the bug is fixed. See footer for
+>> details.
+>> If you forward the report, please keep this part and the footer.
+>>
+>>
+>> ================================================
+>> WARNING: lock held when returning to user space!
+>> 4.16.0+ #3 Not tainted
+>> ------------------------------------------------
+>> syzkaller433111/4462 is leaving the kernel with locks still held!
+>> 1 lock held by syzkaller433111/4462:
+>>   #0: 0000000003a06fae (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8d/0x1ec0
+>> drivers/block/loop.c:1363
+>
+> Is this a new regression? Omar did just fiddle with the locking a bit,
+> seems suspicious.
 
-> * page-cache-use-xa_lock.patch
+Looking at:
+https://syzkaller.appspot.com/bug?extid=31e8daa8b3fc129e75f2
+It first happened 4 hours ago and 9 times since then, so probably a
+just introduced regression.
 
-Hi Andrew.  Could I trouble you to add page-cache-use-xa_lock-fix.patch?
 
----
- arch/nds32/include/asm/cacheflush.h | 4 ++--
- fs/dax.c                            | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/nds32/include/asm/cacheflush.h b/arch/nds32/include/asm/cacheflush.h
-index 7b9b20a381cb..1240f148ec0f 100644
---- a/arch/nds32/include/asm/cacheflush.h
-+++ b/arch/nds32/include/asm/cacheflush.h
-@@ -34,8 +34,8 @@ void flush_anon_page(struct vm_area_struct *vma,
- void flush_kernel_dcache_page(struct page *page);
- void flush_icache_range(unsigned long start, unsigned long end);
- void flush_icache_page(struct vm_area_struct *vma, struct page *page);
--#define flush_dcache_mmap_lock(mapping)   spin_lock_irq(&(mapping)->tree_lock)
--#define flush_dcache_mmap_unlock(mapping) spin_unlock_irq(&(mapping)->tree_lock)
-+#define flush_dcache_mmap_lock(mapping)   xa_lock_irq(&(mapping)->i_pages)
-+#define flush_dcache_mmap_unlock(mapping) xa_unlock_irq(&(mapping)->i_pages)
- 
- #else
- #include <asm-generic/cacheflush.h>
-diff --git a/fs/dax.c b/fs/dax.c
-index fef7d458fd7d..aaec72ded1b6 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -499,7 +499,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
- 	void *entry;
- 	struct radix_tree_root *pages = &mapping->i_pages;
- 
--	xa_lock_irq(&mapping->i_pages);
-+	xa_lock_irq(pages);
- 	entry = get_unlocked_mapping_entry(mapping, index, NULL);
- 	if (!entry || WARN_ON_ONCE(!radix_tree_exceptional_entry(entry)))
- 		goto out;
-@@ -513,7 +513,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
- 	ret = 1;
- out:
- 	put_unlocked_mapping_entry(mapping, index, entry);
--	xa_unlock_irq(&mapping->i_pages);
-+	xa_unlock_irq(pages);
- 	return ret;
- }
- /*
-@@ -600,7 +600,7 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
- 			unmap_mapping_pages(mapping, vmf->pgoff, 1, false);
- 	}
- 
--	xa_lock_irq(&mapping->i_pages);
-+	xa_lock_irq(pages);
- 	new_entry = dax_radix_locked_entry(pfn, flags);
- 	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
- 		dax_disassociate_entry(entry, mapping, false);
--- 
-2.16.3
+> --
+> Jens Axboe
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0e998b77-14f0-aee0-8d32-bc1dd96fcc4c%40kernel.dk.
+> For more options, visit https://groups.google.com/d/optout.
