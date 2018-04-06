@@ -1,80 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1459510-1523021909-2-4843050099617164270
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523021909; b=KybdUW9sioKu6+kNaeGK6Q7SoJmbpNUhAtEXhWbGaxZnYIeEki
-    uzAm4AIPpPOF/9T3lBunPTkNqkVv/4T+HeHXg6Qaw+kB8jGWrug+VvN4Np1hfEje
-    pm2o+RX9X3IeviLU39cCG6AncqKLrIaFxOT6WIUm6WKfwrY5wg3OqYvpUtoY8OAJ
-    FVeM3haY2Ix6N9IGLFru8UiQiyGLq3cJlriVSASFb980hA5KB02NySoxEnD2cAlT
-    GmJy70kejBqNlxnjsCWP0K4x050o4ZWDjZBu3SyhOe508sQjNwQzzh97AYiTgbSf
-    ReXSxy5ArA6hxe68XXT5zfpl87RWi1WAHHAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523021909; bh=AWgawokpVpjLXUrXwn7aU/0CIEz3VH
-    eHb75ilvyFlwg=; b=agyPjFtLhj4VJZExsr00/H+Hn2pFYSPISiOOQ8UY+ghZE4
-    pTSb0Y34irJ5h1/ravNy8E5pKhVMjtskZ/EU7SALK1iFfipLBpAJAl/SntfE0Svx
-    Fpt2S1NVCw7wTx4e5Dqj5cGmjaYecKWJOge50ae5qDSJGA/QIXTPYw6PAC1ji83c
-    AdlG8g1jmFc7mHBAPuyX1PZ8YCuOcOQ1rX0Akl+W6zAxFp4frlER6zeM7w2Z8c3G
-    447bTDHE5FZrqtz9KEuUCTlekx7TO6Fji4TofpKagz+Wnpxy5pU1nGgu5iozAqOj
-    e69DTmHi1uM7Zt0Kui5j67bgfMPP7s4y49r1h3jg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOj0dKXXmNCYTlj297Z6vWn7ghclA+YSs67IiJo63/PyNJWnf8AylxB1VKTyNQTFtEJDhC3bKhwxDjIytXtBfMANwJ4jSpQCmhyzfaX2XiY/Mj0Y088a
-    zbr+BtXeBXghFo3Hp7DZC9h8SQSeqhJ8HX0wQ/LDD7RQvkK3PXL5DEP/+fuOCQJWUp8G/EfTXEV/QlwSJXfVHEXC4XK3WWokvrsPC1qXFskEJ9zp1v7/xOuD
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=7ZN4cI0QAAAA:8 a=hSkVLCK3AAAA:8 a=ag1SF4gXAAAA:8 a=1WA7wDV_nH3orW2v68gA:9
-    a=QEXdDO2ut3YA:10 a=Dl0WHwQvj8hGZljrFLtM:22 a=cQPPKAXgyycSBL8etih5:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932437AbeDFNiZ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 09:38:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33314 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932436AbeDFNiW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:38:22 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/097UCELywWQMkx1MIiAKvywyptZFtrp5+TlTe6eHAbJDmQJOeffzp6prUeQrV1b+PiWXz
+ARC-Seal: i=1; a=rsa-sha256; t=1523021906; cv=none;
+        d=google.com; s=arc-20160816;
+        b=uy4qoNMtbRWoYvCrsVdq+8hbJ1CbBYQq866SmNkM5OeNCxzphPu7QEaRz33ryS+n8N
+         i8/CgAEthAEZCmRMpXWwtqOlmDIE3lIIX1/tcAOuz+fRHI49jw8+RY3q5sgfTBXIlvhy
+         DEKB1e2/H7uFK4PI0D697TrQ2ugo6Dlpmst1gRsEMJwNRM3rqEjw44QHordpfgWdoxBf
+         Wy5stvVdVsZ3gQD2SXpHv5yyZMdFftSqoSnhHcp9whngg2rmg8Z5h7k/jyuyEylb9LL9
+         6VhZPkZgHDchDiiuqtr+DmaZJr7JQpa9+idb8WJjRrbSKK2OQ0UvMKaai5uhdjB2Wyqk
+         yiHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=kKdTyG760ZLcq9+rPnD2HtMExz/eXYXyxiaHILawAVc=;
+        b=dVYn1c+wZjiJ4YPB0zpe3p95lEp/+KtQ+ntGUPyytA/gKda+kgIdHG/AhavdXOIPoE
+         +A1LuU2T/FzfTu2tUEuQa7UPNDYOREfE0+BmQOMGV/lPW2Fp316wwLn0gijBWzHhNZco
+         nTprVRTZKB/6vStWQm1Sjr6kRsh1ZoBi6Ix0anw4oIqcKqD//kUciBEHZHeu91Urfvd7
+         yQsuO/CgNXDTuMmbgGgMyROLQSB3pJepfQ6EVdgXI+rZAkwKv7pEHidJ/3DkXIsgGkiA
+         dFVzprp9DIa9m8hT87mIZ5du1Svi0XbhBMpB1cSgG21VXyjs+R9bew0KrRy6wFChtrHh
+         BayA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.14 27/67] xfrm: Refuse to insert 32 bit userspace socket policies on 64 bit systems
-Date: Fri,  6 Apr 2018 15:23:57 +0200
-Message-Id: <20180406084344.948813357@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Dennis Zhou <dennisszhou@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com,
+	Christoph Lameter <cl@linux.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.14 28/67] percpu: add __GFP_NORETRY semantics to the percpu balancing path
+Date: Fri,  6 Apr 2018 15:23:58 +0200
+Message-Id: <20180406084345.018059259@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -82,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597004218250549531?=
+X-GMAIL-MSGID: =?utf-8?q?1597004218250549531?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -92,35 +52,291 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steffen Klassert <steffen.klassert@secunet.com>
+From: Dennis Zhou <dennisszhou@gmail.com>
 
-commit 19d7df69fdb2636856dc8919de72fc1bf8f79598 upstream.
+commit 47504ee04b9241548ae2c28be7d0b01cff3b7aa6 upstream.
 
-We don't have a compat layer for xfrm, so userspace and kernel
-structures have different sizes in this case. This results in
-a broken configuration, so refuse to configure socket policies
-when trying to insert from 32 bit userspace as we do it already
-with policies inserted via netlink.
+Percpu memory using the vmalloc area based chunk allocator lazily
+populates chunks by first requesting the full virtual address space
+required for the chunk and subsequently adding pages as allocations come
+through. To ensure atomic allocations can succeed, a workqueue item is
+used to maintain a minimum number of empty pages. In certain scenarios,
+such as reported in [1], it is possible that physical memory becomes
+quite scarce which can result in either a rather long time spent trying
+to find free pages or worse, a kernel panic.
 
-Reported-and-tested-by: syzbot+e1a1577ca8bcb47b769a@syzkaller.appspotmail.com
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+This patch adds support for __GFP_NORETRY and __GFP_NOWARN passing them
+through to the underlying allocators. This should prevent any
+unnecessary panics potentially caused by the workqueue item. The passing
+of gfp around is as additional flags rather than a full set of flags.
+The next patch will change these to caller passed semantics.
+
+V2:
+Added const modifier to gfp flags in the balance path.
+Removed an extra whitespace.
+
+[1] https://lkml.org/lkml/2018/2/12/551
+
+Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
+Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
+Reported-by: syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com
+Acked-by: Christoph Lameter <cl@linux.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_state.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ mm/percpu-km.c |    8 ++++----
+ mm/percpu-vm.c |   18 +++++++++++-------
+ mm/percpu.c    |   45 ++++++++++++++++++++++++++++-----------------
+ 3 files changed, 43 insertions(+), 28 deletions(-)
 
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -2050,6 +2050,11 @@ int xfrm_user_policy(struct sock *sk, in
- 	struct xfrm_mgr *km;
- 	struct xfrm_policy *pol = NULL;
+--- a/mm/percpu-km.c
++++ b/mm/percpu-km.c
+@@ -34,7 +34,7 @@
+ #include <linux/log2.h>
  
-+#ifdef CONFIG_COMPAT
-+	if (in_compat_syscall())
-+		return -EOPNOTSUPP;
-+#endif
+ static int pcpu_populate_chunk(struct pcpu_chunk *chunk,
+-			       int page_start, int page_end)
++			       int page_start, int page_end, gfp_t gfp)
+ {
+ 	return 0;
+ }
+@@ -45,18 +45,18 @@ static void pcpu_depopulate_chunk(struct
+ 	/* nada */
+ }
+ 
+-static struct pcpu_chunk *pcpu_create_chunk(void)
++static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ {
+ 	const int nr_pages = pcpu_group_sizes[0] >> PAGE_SHIFT;
+ 	struct pcpu_chunk *chunk;
+ 	struct page *pages;
+ 	int i;
+ 
+-	chunk = pcpu_alloc_chunk();
++	chunk = pcpu_alloc_chunk(gfp);
+ 	if (!chunk)
+ 		return NULL;
+ 
+-	pages = alloc_pages(GFP_KERNEL, order_base_2(nr_pages));
++	pages = alloc_pages(gfp | GFP_KERNEL, order_base_2(nr_pages));
+ 	if (!pages) {
+ 		pcpu_free_chunk(chunk);
+ 		return NULL;
+--- a/mm/percpu-vm.c
++++ b/mm/percpu-vm.c
+@@ -37,7 +37,7 @@ static struct page **pcpu_get_pages(void
+ 	lockdep_assert_held(&pcpu_alloc_mutex);
+ 
+ 	if (!pages)
+-		pages = pcpu_mem_zalloc(pages_size);
++		pages = pcpu_mem_zalloc(pages_size, 0);
+ 	return pages;
+ }
+ 
+@@ -73,18 +73,21 @@ static void pcpu_free_pages(struct pcpu_
+  * @pages: array to put the allocated pages into, indexed by pcpu_page_idx()
+  * @page_start: page index of the first page to be allocated
+  * @page_end: page index of the last page to be allocated + 1
++ * @gfp: allocation flags passed to the underlying allocator
+  *
+  * Allocate pages [@page_start,@page_end) into @pages for all units.
+  * The allocation is for @chunk.  Percpu core doesn't care about the
+  * content of @pages and will pass it verbatim to pcpu_map_pages().
+  */
+ static int pcpu_alloc_pages(struct pcpu_chunk *chunk,
+-			    struct page **pages, int page_start, int page_end)
++			    struct page **pages, int page_start, int page_end,
++			    gfp_t gfp)
+ {
+-	const gfp_t gfp = GFP_KERNEL | __GFP_HIGHMEM | __GFP_COLD;
+ 	unsigned int cpu, tcpu;
+ 	int i;
+ 
++	gfp |= GFP_KERNEL | __GFP_HIGHMEM | __GFP_COLD;
 +
- 	if (!optval && !optlen) {
- 		xfrm_sk_policy_insert(sk, XFRM_POLICY_IN, NULL);
- 		xfrm_sk_policy_insert(sk, XFRM_POLICY_OUT, NULL);
+ 	for_each_possible_cpu(cpu) {
+ 		for (i = page_start; i < page_end; i++) {
+ 			struct page **pagep = &pages[pcpu_page_idx(cpu, i)];
+@@ -262,6 +265,7 @@ static void pcpu_post_map_flush(struct p
+  * @chunk: chunk of interest
+  * @page_start: the start page
+  * @page_end: the end page
++ * @gfp: allocation flags passed to the underlying memory allocator
+  *
+  * For each cpu, populate and map pages [@page_start,@page_end) into
+  * @chunk.
+@@ -270,7 +274,7 @@ static void pcpu_post_map_flush(struct p
+  * pcpu_alloc_mutex, does GFP_KERNEL allocation.
+  */
+ static int pcpu_populate_chunk(struct pcpu_chunk *chunk,
+-			       int page_start, int page_end)
++			       int page_start, int page_end, gfp_t gfp)
+ {
+ 	struct page **pages;
+ 
+@@ -278,7 +282,7 @@ static int pcpu_populate_chunk(struct pc
+ 	if (!pages)
+ 		return -ENOMEM;
+ 
+-	if (pcpu_alloc_pages(chunk, pages, page_start, page_end))
++	if (pcpu_alloc_pages(chunk, pages, page_start, page_end, gfp))
+ 		return -ENOMEM;
+ 
+ 	if (pcpu_map_pages(chunk, pages, page_start, page_end)) {
+@@ -325,12 +329,12 @@ static void pcpu_depopulate_chunk(struct
+ 	pcpu_free_pages(chunk, pages, page_start, page_end);
+ }
+ 
+-static struct pcpu_chunk *pcpu_create_chunk(void)
++static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ {
+ 	struct pcpu_chunk *chunk;
+ 	struct vm_struct **vms;
+ 
+-	chunk = pcpu_alloc_chunk();
++	chunk = pcpu_alloc_chunk(gfp);
+ 	if (!chunk)
+ 		return NULL;
+ 
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -447,10 +447,12 @@ static void pcpu_next_fit_region(struct
+ /**
+  * pcpu_mem_zalloc - allocate memory
+  * @size: bytes to allocate
++ * @gfp: allocation flags
+  *
+  * Allocate @size bytes.  If @size is smaller than PAGE_SIZE,
+- * kzalloc() is used; otherwise, vzalloc() is used.  The returned
+- * memory is always zeroed.
++ * kzalloc() is used; otherwise, the equivalent of vzalloc() is used.
++ * This is to facilitate passing through whitelisted flags.  The
++ * returned memory is always zeroed.
+  *
+  * CONTEXT:
+  * Does GFP_KERNEL allocation.
+@@ -458,15 +460,16 @@ static void pcpu_next_fit_region(struct
+  * RETURNS:
+  * Pointer to the allocated area on success, NULL on failure.
+  */
+-static void *pcpu_mem_zalloc(size_t size)
++static void *pcpu_mem_zalloc(size_t size, gfp_t gfp)
+ {
+ 	if (WARN_ON_ONCE(!slab_is_available()))
+ 		return NULL;
+ 
+ 	if (size <= PAGE_SIZE)
+-		return kzalloc(size, GFP_KERNEL);
++		return kzalloc(size, gfp | GFP_KERNEL);
+ 	else
+-		return vzalloc(size);
++		return __vmalloc(size, gfp | GFP_KERNEL | __GFP_ZERO,
++				 PAGE_KERNEL);
+ }
+ 
+ /**
+@@ -1154,12 +1157,12 @@ static struct pcpu_chunk * __init pcpu_a
+ 	return chunk;
+ }
+ 
+-static struct pcpu_chunk *pcpu_alloc_chunk(void)
++static struct pcpu_chunk *pcpu_alloc_chunk(gfp_t gfp)
+ {
+ 	struct pcpu_chunk *chunk;
+ 	int region_bits;
+ 
+-	chunk = pcpu_mem_zalloc(pcpu_chunk_struct_size);
++	chunk = pcpu_mem_zalloc(pcpu_chunk_struct_size, gfp);
+ 	if (!chunk)
+ 		return NULL;
+ 
+@@ -1168,17 +1171,17 @@ static struct pcpu_chunk *pcpu_alloc_chu
+ 	region_bits = pcpu_chunk_map_bits(chunk);
+ 
+ 	chunk->alloc_map = pcpu_mem_zalloc(BITS_TO_LONGS(region_bits) *
+-					   sizeof(chunk->alloc_map[0]));
++					   sizeof(chunk->alloc_map[0]), gfp);
+ 	if (!chunk->alloc_map)
+ 		goto alloc_map_fail;
+ 
+ 	chunk->bound_map = pcpu_mem_zalloc(BITS_TO_LONGS(region_bits + 1) *
+-					   sizeof(chunk->bound_map[0]));
++					   sizeof(chunk->bound_map[0]), gfp);
+ 	if (!chunk->bound_map)
+ 		goto bound_map_fail;
+ 
+ 	chunk->md_blocks = pcpu_mem_zalloc(pcpu_chunk_nr_blocks(chunk) *
+-					   sizeof(chunk->md_blocks[0]));
++					   sizeof(chunk->md_blocks[0]), gfp);
+ 	if (!chunk->md_blocks)
+ 		goto md_blocks_fail;
+ 
+@@ -1277,9 +1280,10 @@ static void pcpu_chunk_depopulated(struc
+  * pcpu_addr_to_page		- translate address to physical address
+  * pcpu_verify_alloc_info	- check alloc_info is acceptable during init
+  */
+-static int pcpu_populate_chunk(struct pcpu_chunk *chunk, int off, int size);
++static int pcpu_populate_chunk(struct pcpu_chunk *chunk, int off, int size,
++			       gfp_t gfp);
+ static void pcpu_depopulate_chunk(struct pcpu_chunk *chunk, int off, int size);
+-static struct pcpu_chunk *pcpu_create_chunk(void);
++static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp);
+ static void pcpu_destroy_chunk(struct pcpu_chunk *chunk);
+ static struct page *pcpu_addr_to_page(void *addr);
+ static int __init pcpu_verify_alloc_info(const struct pcpu_alloc_info *ai);
+@@ -1421,7 +1425,7 @@ restart:
+ 	}
+ 
+ 	if (list_empty(&pcpu_slot[pcpu_nr_slots - 1])) {
+-		chunk = pcpu_create_chunk();
++		chunk = pcpu_create_chunk(0);
+ 		if (!chunk) {
+ 			err = "failed to allocate new chunk";
+ 			goto fail;
+@@ -1450,7 +1454,7 @@ area_found:
+ 					   page_start, page_end) {
+ 			WARN_ON(chunk->immutable);
+ 
+-			ret = pcpu_populate_chunk(chunk, rs, re);
++			ret = pcpu_populate_chunk(chunk, rs, re, 0);
+ 
+ 			spin_lock_irqsave(&pcpu_lock, flags);
+ 			if (ret) {
+@@ -1561,10 +1565,17 @@ void __percpu *__alloc_reserved_percpu(s
+  * pcpu_balance_workfn - manage the amount of free chunks and populated pages
+  * @work: unused
+  *
+- * Reclaim all fully free chunks except for the first one.
++ * Reclaim all fully free chunks except for the first one.  This is also
++ * responsible for maintaining the pool of empty populated pages.  However,
++ * it is possible that this is called when physical memory is scarce causing
++ * OOM killer to be triggered.  We should avoid doing so until an actual
++ * allocation causes the failure as it is possible that requests can be
++ * serviced from already backed regions.
+  */
+ static void pcpu_balance_workfn(struct work_struct *work)
+ {
++	/* gfp flags passed to underlying allocators */
++	const gfp_t gfp = __GFP_NORETRY | __GFP_NOWARN;
+ 	LIST_HEAD(to_free);
+ 	struct list_head *free_head = &pcpu_slot[pcpu_nr_slots - 1];
+ 	struct pcpu_chunk *chunk, *next;
+@@ -1645,7 +1656,7 @@ retry_pop:
+ 					   chunk->nr_pages) {
+ 			int nr = min(re - rs, nr_to_pop);
+ 
+-			ret = pcpu_populate_chunk(chunk, rs, rs + nr);
++			ret = pcpu_populate_chunk(chunk, rs, rs + nr, gfp);
+ 			if (!ret) {
+ 				nr_to_pop -= nr;
+ 				spin_lock_irq(&pcpu_lock);
+@@ -1662,7 +1673,7 @@ retry_pop:
+ 
+ 	if (nr_to_pop) {
+ 		/* ran out of chunks to populate, create a new one and retry */
+-		chunk = pcpu_create_chunk();
++		chunk = pcpu_create_chunk(gfp);
+ 		if (chunk) {
+ 			spin_lock_irq(&pcpu_lock);
+ 			pcpu_chunk_relocate(chunk, -1);
