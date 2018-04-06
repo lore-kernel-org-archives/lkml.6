@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752598AbeDFWRf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 18:17:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:35804 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752553AbeDFWRc (ORCPT
+        id S1752645AbeDFWRi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 18:17:38 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:47186 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752610AbeDFWRf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 18:17:32 -0400
+        Fri, 6 Apr 2018 18:17:35 -0400
 From: Tim Tianyang Chen <tianyang.chen@oracle.com>
 To: rostedt@goodmis.org
 Cc: linux-kernel@vger.kernel.org, dhaval.giani@oracle.com,
         tim.tianyang.chen@alumni.upenn.edu,
         Tim Tianyang Chen <tianyang.chen@oracle.com>
-Subject: [PATCH v3 3/4] ktest: use dodie for critical falures
-Date: Fri,  6 Apr 2018 15:17:04 -0700
-Message-Id: <1523053025-12424-4-git-send-email-tianyang.chen@oracle.com>
+Subject: [PATCH v3 4/4] ktest: add email options to sample.config
+Date: Fri,  6 Apr 2018 15:17:05 -0700
+Message-Id: <1523053025-12424-5-git-send-email-tianyang.chen@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1523053025-12424-1-git-send-email-tianyang.chen@oracle.com>
 References: <1523053025-12424-1-git-send-email-tianyang.chen@oracle.com>
@@ -27,242 +27,46 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Users should get emails when the script dies because of a critical failure. Critical
-failures are defined as any errors that could abnormally terminate the script.
-
-In order to add email support, this patch converts all die() to dodie() except:
- * when '-v' is used as an option to get the version of the script.
- * in Sig-Int handeler because it's not a fatal error to cancel the script.
- * errors happen during parsing config
+A block of email options is added under the optional config section.
 
 Suggested-by: Dhaval Giani <dhaval.giani@oracle.com>
 Signed-off-by: Tim Tianyang Chen <tianyang.chen@oracle.com>
 ---
- tools/testing/ktest/ktest.pl | 54 ++++++++++++++++++++++----------------------
- 1 file changed, 27 insertions(+), 27 deletions(-)
+ tools/testing/ktest/sample.conf | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
-index b0db4a6d3e97..21cdb8152ef6 100755
---- a/tools/testing/ktest/ktest.pl
-+++ b/tools/testing/ktest/ktest.pl
-@@ -1502,7 +1502,7 @@ sub exec_console {
-     close($pts);
+diff --git a/tools/testing/ktest/sample.conf b/tools/testing/ktest/sample.conf
+index 6c58cd8bbbae..ba3dd4a9c7fb 100644
+--- a/tools/testing/ktest/sample.conf
++++ b/tools/testing/ktest/sample.conf
+@@ -396,6 +396,28 @@
  
-     exec $console or
--	die "Can't open console $console";
-+	dodie "Can't open console $console";
- }
+ #### Optional Config Options (all have defaults) ####
  
- sub open_console {
-@@ -1650,7 +1650,7 @@ sub save_logs {
- 
- 	if (!-d $dir) {
- 	    mkpath($dir) or
--		die "can't create $dir";
-+		dodie "can't create $dir";
- 	}
- 
- 	my %files = (
-@@ -1663,7 +1663,7 @@ sub save_logs {
- 	while (my ($name, $source) = each(%files)) {
- 		if (-f "$source") {
- 			cp "$source", "$dir/$name" or
--				die "failed to copy $source";
-+				dodie "failed to copy $source";
- 		}
- 	}
- 
-@@ -1837,7 +1837,7 @@ sub get_grub2_index {
-     $ssh_grub =~ s,\$SSH_COMMAND,cat $grub_file,g;
- 
-     open(IN, "$ssh_grub |")
--	or die "unable to get $grub_file";
-+	or dodie "unable to get $grub_file";
- 
-     my $found = 0;
- 
-@@ -1852,7 +1852,7 @@ sub get_grub2_index {
-     }
-     close(IN);
- 
--    die "Could not find '$grub_menu' in $grub_file on $machine"
-+    dodie "Could not find '$grub_menu' in $grub_file on $machine"
- 	if (!$found);
-     doprint "$grub_number\n";
-     $last_grub_menu = $grub_menu;
-@@ -1880,7 +1880,7 @@ sub get_grub_index {
-     $ssh_grub =~ s,\$SSH_COMMAND,cat /boot/grub/menu.lst,g;
- 
-     open(IN, "$ssh_grub |")
--	or die "unable to get menu.lst";
-+	or dodie "unable to get menu.lst";
- 
-     my $found = 0;
- 
-@@ -1895,7 +1895,7 @@ sub get_grub_index {
-     }
-     close(IN);
- 
--    die "Could not find '$grub_menu' in /boot/grub/menu on $machine"
-+    dodie "Could not find '$grub_menu' in /boot/grub/menu on $machine"
- 	if (!$found);
-     doprint "$grub_number\n";
-     $last_grub_menu = $grub_menu;
-@@ -2008,7 +2008,7 @@ sub monitor {
-     my $full_line = "";
- 
-     open(DMESG, "> $dmesg") or
--	die "unable to write to $dmesg";
-+	dodie "unable to write to $dmesg";
- 
-     reboot_to;
- 
-@@ -2887,7 +2887,7 @@ sub run_bisect {
- sub update_bisect_replay {
-     my $tmp_log = "$tmpdir/ktest_bisect_log";
-     run_command "git bisect log > $tmp_log" or
--	die "can't create bisect log";
-+	dodie "can't create bisect log";
-     return $tmp_log;
- }
- 
-@@ -2896,9 +2896,9 @@ sub bisect {
- 
-     my $result;
- 
--    die "BISECT_GOOD[$i] not defined\n"	if (!defined($bisect_good));
--    die "BISECT_BAD[$i] not defined\n"	if (!defined($bisect_bad));
--    die "BISECT_TYPE[$i] not defined\n"	if (!defined($bisect_type));
-+    dodie "BISECT_GOOD[$i] not defined\n"	if (!defined($bisect_good));
-+    dodie "BISECT_BAD[$i] not defined\n"	if (!defined($bisect_bad));
-+    dodie "BISECT_TYPE[$i] not defined\n"	if (!defined($bisect_type));
- 
-     my $good = $bisect_good;
-     my $bad = $bisect_bad;
-@@ -2961,7 +2961,7 @@ sub bisect {
- 	if ($check ne "good") {
- 	    doprint "TESTING BISECT BAD [$bad]\n";
- 	    run_command "git checkout $bad" or
--		die "Failed to checkout $bad";
-+		dodie "Failed to checkout $bad";
- 
- 	    $result = run_bisect $type;
- 
-@@ -2973,7 +2973,7 @@ sub bisect {
- 	if ($check ne "bad") {
- 	    doprint "TESTING BISECT GOOD [$good]\n";
- 	    run_command "git checkout $good" or
--		die "Failed to checkout $good";
-+		dodie "Failed to checkout $good";
- 
- 	    $result = run_bisect $type;
- 
-@@ -2984,7 +2984,7 @@ sub bisect {
- 
- 	# checkout where we started
- 	run_command "git checkout $head" or
--	    die "Failed to checkout $head";
-+	    dodie "Failed to checkout $head";
-     }
- 
-     run_command "git bisect start$start_files" or
-@@ -3441,9 +3441,9 @@ sub patchcheck_reboot {
- sub patchcheck {
-     my ($i) = @_;
- 
--    die "PATCHCHECK_START[$i] not defined\n"
-+    dodie "PATCHCHECK_START[$i] not defined\n"
- 	if (!defined($patchcheck_start));
--    die "PATCHCHECK_TYPE[$i] not defined\n"
-+    dodie "PATCHCHECK_TYPE[$i] not defined\n"
- 	if (!defined($patchcheck_type));
- 
-     my $start = $patchcheck_start;
-@@ -3457,7 +3457,7 @@ sub patchcheck {
-     if (defined($patchcheck_end)) {
- 	$end = $patchcheck_end;
-     } elsif ($cherry) {
--	die "PATCHCHECK_END must be defined with PATCHCHECK_CHERRY\n";
-+	dodie "PATCHCHECK_END must be defined with PATCHCHECK_CHERRY\n";
-     }
- 
-     # Get the true sha1's since we can use things like HEAD~3
-@@ -3521,7 +3521,7 @@ sub patchcheck {
- 	doprint "\nProcessing commit \"$item\"\n\n";
- 
- 	run_command "git checkout $sha1" or
--	    die "Failed to checkout $sha1";
-+	    dodie "Failed to checkout $sha1";
- 
- 	# only clean on the first and last patch
- 	if ($item eq $list[0] ||
-@@ -3612,7 +3612,7 @@ sub read_kconfig {
-     }
- 
-     open(KIN, "$kconfig")
--	or die "Can't open $kconfig";
-+	or dodie "Can't open $kconfig";
-     while (<KIN>) {
- 	chomp;
- 
-@@ -3771,7 +3771,7 @@ sub get_depends {
- 
- 	    $dep =~ s/^[^$valid]*[$valid]+//;
- 	} else {
--	    die "this should never happen";
-+	    dodie "this should never happen";
- 	}
-     }
- 
-@@ -4032,7 +4032,7 @@ sub make_min_config {
- 	    # update new ignore configs
- 	    if (defined($ignore_config)) {
- 		open (OUT, ">$temp_config")
--		    or die "Can't write to $temp_config";
-+		    or dodie "Can't write to $temp_config";
- 		foreach my $config (keys %save_configs) {
- 		    print OUT "$save_configs{$config}\n";
- 		}
-@@ -4060,7 +4060,7 @@ sub make_min_config {
- 
- 	    # Save off all the current mandatory configs
- 	    open (OUT, ">$temp_config")
--		or die "Can't write to $temp_config";
-+		or dodie "Can't write to $temp_config";
- 	    foreach my $config (keys %keep_configs) {
- 		print OUT "$keep_configs{$config}\n";
- 	    }
-@@ -4300,11 +4300,11 @@ for (my $i = 1; $i <= $opt{"NUM_TESTS"}; $i++) {
-     $outputdir = set_test_option("OUTPUT_DIR", $i);
-     $builddir = set_test_option("BUILD_DIR", $i);
- 
--    chdir $builddir || die "can't change directory to $builddir";
-+    chdir $builddir || dodie "can't change directory to $builddir";
- 
-     if (!-d $outputdir) {
- 	mkpath($outputdir) or
--	    die "can't create $outputdir";
-+	    dodie "can't create $outputdir";
-     }
- 
-     $make = "$makecmd O=$outputdir";
-@@ -4341,7 +4341,7 @@ for (my $i = 1; $i <= $opt{"NUM_TESTS"}; $i++) {
- 
-     if (!-d $tmpdir) {
- 	mkpath($tmpdir) or
--	    die "can't create $tmpdir";
-+	    dodie "can't create $tmpdir";
-     }
- 
-     $ENV{"SSH_USER"} = $ssh_user;
-@@ -4414,7 +4414,7 @@ for (my $i = 1; $i <= $opt{"NUM_TESTS"}; $i++) {
- 
-     if (defined($checkout)) {
- 	run_command "git checkout $checkout" or
--	    die "failed to checkout $checkout";
-+	    dodie "failed to checkout $checkout";
-     }
- 
-     $no_reboot = 0;
++# Email options for receiving notifications. Users must setup
++# the specified mailer prior to using this feature.
++#
++# (default undefined)
++#MAILTO =
++#
++# Supported mailers: sendmail, mail, mailx
++# (default sendmail)
++#MAILER = sendmail
++#
++# Errors are defined as those would terminate the script
++# (default 1)
++#EMAIL_ON_ERROR = 1
++# (default 1)
++#EMAIL_WHEN_FINISHED = 1
++# (default 0)
++#EMAIL_WHEN_STARTED = 1
++#
++# Users can cancel the test by Ctrl^C
++# (default 0)
++#EMAIL_WHEN_CANCELED = 1
++
+ # Start a test setup. If you leave this off, all options
+ # will be default and the test will run once.
+ # This is a label and not really an option (it takes no value).
 -- 
 1.8.3.1
