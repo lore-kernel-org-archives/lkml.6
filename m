@@ -1,48 +1,52 @@
-Return-Path: <jack@suse.cz>
-X-Google-Smtp-Source: AIpwx48h0AOYiNeagF1Ku+BRKK4veKje4CWc5vAQi5L34maX6EphRP0eZdXFlanT00L7l63X5rDH
-ARC-Seal: i=1; a=rsa-sha256; t=1523357869; cv=none;
+Return-Path: <joe@perches.com>
+X-Google-Smtp-Source: AIpwx4/3sSvZLfGSQHqJ9/Onbqj4Nq41Bce4oBJHzHn/eTn5uOkaE82P4zLg8uqIo0i6pg6+dn9S
+ARC-Seal: i=1; a=rsa-sha256; t=1523048665; cv=none;
         d=google.com; s=arc-20160816;
-        b=v2J2IKTaog7InHEjVK9QuHgZ3prhwWaLRq7Pnb6+2lVSH2v0foRyPvwKxgXOOERvMl
-         jr/G9XE+zb2NCqJLqvNvteEvm8u+D1IflhB6+rLAyZNkPu58rbcS2Sh3qeixB3exn2Yr
-         GhvQgPp4i6SksLYFUrISi5qxm4dG8UL0o0LaQ7KGyvaGQw5td4uzFgwcOx3Z8IvQsE6V
-         zCKs9K1tk/yU9Ii0Aq+Lq1xIw8xXGxMsiCYCHzgQkEMmdUrXj2Z4r1Pv13waFHCtCp5B
-         783LplFc1/iXWA+x9rZNodHiOPCYPCMZN9wrNcSKQhTzIh5LwH4HG54g+kc18TCYrh+L
-         NYwg==
+        b=nOagJV//XEsQaYmyLXW0fiaAsFylAG1zLLp1MOHwprwmIEctok3j0bPdbANK0Mvund
+         FnRf8v0DQfrIwlUZH+a3AXMoEqo5Fy7k9zHn036FWLC0QG6r38ERDHm664LdAMGoOJly
+         vmBIeDHp3WeByLqSuH1QgIJ9Vn+E2dwMhBKqKwCs5LFvsVcfyyMq+tOCjj7QBOvS2VDW
+         yOYW7mV1Laq/ys+OaQDJf/XKBCu6hFc2itfWxKrYCBho7uu14w/zrPr6StGrti5QfuFw
+         yJLuXtrpSlVEqWVOvsY/pVGkQxR3lksZhrX7DWyg7ALJ3/3S3XJKCMRPRzQzdtdaoxuZ
+         do+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=hnk8zScfTjZXmEaa/vCqZ6db3exrz5FASbNCPcNSSZI=;
-        b=uI67zArxrZPN3cC84Dl4sGUiYjKcjaxAgpXhEl+PuFZfWnKEesWoCX8YGmXUKqlOef
-         TXyzdbhzhb8XgP1Rzqjd2328K5VtywOF7RSJt9W/xVr3Ohz0fzT/30zULGJelfc79aPt
-         jPyTCoqCZzxr86vYvnPt0gUchfrL73beaosuH38JPWMLDtxHbhV2SbFLwmzNPkC6dM2F
-         IjHWvE2Z1yDV8u3+har40WUWk3+laBaBVUkdsfwd8ajNqLUZaB3R6+Bf0Iag3VWnM65h
-         pogSpolzRzhanvotZQfHf7NMXHPcf7SMCKrUgHdAAYqThYrdhGoYDdwqJu4bbglseLYZ
-         qAHQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:arc-authentication-results;
+        bh=IgkqNerrJmbgc2HnJw++UZUbGX6HHOpqm3XvuIHewrA=;
+        b=BEa4pmSmLqJid0+g32AQ6/Mvaa7YY2EmL+NX4Tr8kOSAn+0xOLwCoDNSxZKKefltz7
+         vlWuNq/5Qr3jjVTJn/BQJbJqVpXrC9lzY8A4Ls8K8AqD1MANbxnnqf4Dwd1bM6MruRfV
+         feGdwHmb+EMrzanaAWQ7P9whYHYdb0amrauhiQuiWpRG63FirxYOHCvn64MbfkoaVV4F
+         WnznWmOk2bqckW5IKCTVH9boWDL8bPMM7SDsBROzqWxvZAGiwQhY8hdeth9EzxbW2L96
+         deBPaT0wgzHS9bbgTjDA7dGuyQCJqqP2clDQlBvZPjBmbZiUg5asna8LE0vh2gqI1Hn3
+         5wzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jack@suse.cz designates 195.135.220.15 as permitted sender) smtp.mailfrom=jack@suse.cz
+       spf=neutral (google.com: 216.40.44.93 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jack@suse.cz designates 195.135.220.15 as permitted sender) smtp.mailfrom=jack@suse.cz
-Date: Tue, 10 Apr 2018 12:57:44 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kyle Spiers <ksspiers@google.com>
-Cc: jack@suse.cz, arnd@arndb.de, dhowells@redhat.com,
-	viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-	keescook@chromium.org, linux-kernel@vger.kernel.org
+       spf=neutral (google.com: 216.40.44.93 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:967:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3871:3872:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6119:7903:9025:9389:10004:10400:10848:11026:11232:11658:11914:12043:12296:12438:12555:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21063:21080:21451:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: walk10_607cc9f798206
+X-Filterd-Recvd-Size: 2498
+Message-ID: <1523048661.6127.38.camel@perches.com>
 Subject: Re: [PATCH v2] isofs compress: Remove VLA usage
-Message-ID: <20180410105744.iwtcuevcfkmwyal4@quack2.suse.cz>
-References: <20180405181720.9659-1-ksspiers@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: Joe Perches <joe@perches.com>
+To: Kyle Spiers <ksspiers@google.com>, jack@suse.cz
+Cc: arnd@arndb.de, dhowells@redhat.com, viro@zeniv.linux.org.uk,
+ gregkh@linuxfoundation.org, keescook@chromium.org,
+ linux-kernel@vger.kernel.org
+Date: Fri, 06 Apr 2018 14:04:21 -0700
 In-Reply-To: <20180405181720.9659-1-ksspiers@google.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <20180405181720.9659-1-ksspiers@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596931173009580849?=
-X-GMAIL-MSGID: =?utf-8?q?1597356500763785577?=
+X-GMAIL-MSGID: =?utf-8?q?1597032277224572907?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu 05-04-18 11:17:20, Kyle Spiers wrote:
+On Thu, 2018-04-05 at 11:17 -0700, Kyle Spiers wrote:
 > As part of the effort to remove VLAs from the kernel[1], this changes
 > the allocation of the bhs and pages arrays from being on the stack to being
 > kcalloc()ed. This also allows for the removal of the explicit zeroing
@@ -51,9 +55,6 @@ On Thu 05-04-18 11:17:20, Kyle Spiers wrote:
 > https://lkml.org/lkml/2018/3/7/621
 > 
 > Signed-off-by: Kyle Spiers <ksspiers@google.com>
-
-This is a good cleanup but the error recovery is hosed. See below...
-
 > ---
 >  fs/isofs/compress.c | 15 ++++++++++++---
 >  1 file changed, 12 insertions(+), 3 deletions(-)
@@ -88,31 +89,11 @@ This is a good cleanup but the error recovery is hosed. See below...
 > +	if (!bhs)
 > +		return -ENOMEM;
 
-As Joe pointed out this needs to be:
+This direct return appears incorrect.
+
+It seems it should be:
 
 	if (!bhs) {
 		*errp = -ENOMEM;
 		return 0;
 	}
-
-> @@ -330,6 +334,10 @@ static int zisofs_readpage(struct file *file, struct page *page)
->  		full_page = 0;
->  		pcount = 1;
->  	}
-> +	pages = kcalloc(max_t(unsigned int, zisofs_pages_per_cblock, 1),
-> +					sizeof(*pages), GFP_KERNEL);
-> +	if (!pages)
-> +		return -ENOMEM;
-
-And this is wrong as well. You need to do:
-
-	if (!pages) {
-		unlock_page(page);
-		return -ENOMEM;
-	}
-
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
