@@ -1,32 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752275AbeDFRNT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 13:13:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38745 "EHLO
+        id S1752187AbeDFRNp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 13:13:45 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49943 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751413AbeDFRNQ (ORCPT
+        with ESMTP id S1751412AbeDFRNn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 13:13:16 -0400
-Date: Fri, 6 Apr 2018 10:12:25 -0700
+        Fri, 6 Apr 2018 13:13:43 -0400
+Date: Fri, 6 Apr 2018 10:12:54 -0700
 From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-ebeb8c82ffaf94435806ff0b686fffd41dd410b5@git.kernel.org>
-Cc: peterz@infradead.org, mingo@kernel.org, dvlasenk@redhat.com,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, luto@kernel.org,
-        hpa@zytor.com, bp@alien8.de, jpoimboe@redhat.com, tglx@linutronix.de,
-        akpm@linux-foundation.org, brgerst@gmail.com,
-        linux@dominikbrodowski.net, torvalds@linux-foundation.org
-Reply-To: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, dvlasenk@redhat.com, mingo@kernel.org,
-        hpa@zytor.com, luto@kernel.org, brgerst@gmail.com,
-        akpm@linux-foundation.org, tglx@linutronix.de, jpoimboe@redhat.com,
-        bp@alien8.de, torvalds@linux-foundation.org,
-        linux@dominikbrodowski.net
-In-Reply-To: <20180405095307.3730-6-linux@dominikbrodowski.net>
-References: <20180405095307.3730-6-linux@dominikbrodowski.net>
+Message-ID: <tip-f8781c4a226319fe60e652118b90cf094ccfe747@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        luto@kernel.org, bp@alien8.de, torvalds@linux-foundation.org,
+        tglx@linutronix.de, mingo@kernel.org, brgerst@gmail.com,
+        peterz@infradead.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, dvlasenk@redhat.com, jpoimboe@redhat.com,
+        hpa@zytor.com
+Reply-To: linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        luto@kernel.org, bp@alien8.de, torvalds@linux-foundation.org,
+        tglx@linutronix.de, mingo@kernel.org, brgerst@gmail.com,
+        peterz@infradead.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, dvlasenk@redhat.com, jpoimboe@redhat.com,
+        hpa@zytor.com
+In-Reply-To: <20180405095307.3730-7-linux@dominikbrodowski.net>
+References: <20180405095307.3730-7-linux@dominikbrodowski.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/asm] syscalls/x86: Use 'struct pt_regs' based syscall
- calling for IA32_EMULATION and x32
-Git-Commit-ID: ebeb8c82ffaf94435806ff0b686fffd41dd410b5
+Subject: [tip:x86/asm] syscalls/x86: Unconditionally enable 'struct pt_regs'
+ based syscalls on x86_64
+Git-Commit-ID: f8781c4a226319fe60e652118b90cf094ccfe747
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -39,53 +40,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ebeb8c82ffaf94435806ff0b686fffd41dd410b5
-Gitweb:     https://git.kernel.org/tip/ebeb8c82ffaf94435806ff0b686fffd41dd410b5
+Commit-ID:  f8781c4a226319fe60e652118b90cf094ccfe747
+Gitweb:     https://git.kernel.org/tip/f8781c4a226319fe60e652118b90cf094ccfe747
 Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Thu, 5 Apr 2018 11:53:04 +0200
+AuthorDate: Thu, 5 Apr 2018 11:53:05 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Thu, 5 Apr 2018 16:59:38 +0200
 
-syscalls/x86: Use 'struct pt_regs' based syscall calling for IA32_EMULATION and x32
+syscalls/x86: Unconditionally enable 'struct pt_regs' based syscalls on x86_64
 
-Extend ARCH_HAS_SYSCALL_WRAPPER for i386 emulation and for x32 on 64-bit
-x86.
-
-For x32, all we need to do is to create an additional stub for each
-compat syscall which decodes the parameters in x86-64 ordering, e.g.:
-
-	asmlinkage long __compat_sys_x32_xyzzy(struct pt_regs *regs)
-	{
-		return c_SyS_xyzzy(regs->di, regs->si, regs->dx);
-	}
-
-For i386 emulation, we need to teach compat_sys_*() to take struct
-pt_regs as its only argument, e.g.:
-
-	asmlinkage long __compat_sys_ia32_xyzzy(struct pt_regs *regs)
-	{
-		return c_SyS_xyzzy(regs->bx, regs->cx, regs->dx);
-	}
-
-In addition, we need to create additional stubs for common syscalls
-(that is, for syscalls which have the same parameters on 32-bit and
-64-bit), e.g.:
-
-	asmlinkage long __sys_ia32_xyzzy(struct pt_regs *regs)
-	{
-		return c_sys_xyzzy(regs->bx, regs->cx, regs->dx);
-	}
-
-This approach avoids leaking random user-provided register content down
-the call chain.
-
-This patch is based on an original proof-of-concept
-
- | From: Linus Torvalds <torvalds@linux-foundation.org>
- | Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-and was split up and heavily modified by me, in particular to base it on
-ARCH_HAS_SYSCALL_WRAPPER.
+Removing CONFIG_SYSCALL_PTREGS from arch/x86/Kconfig and simply selecting
+ARCH_HAS_SYSCALL_WRAPPER unconditionally on x86-64 allows us to simplify
+several codepaths.
 
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
@@ -99,1043 +65,233 @@ Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180405095307.3730-6-linux@dominikbrodowski.net
+Link: http://lkml.kernel.org/r/20180405095307.3730-7-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/Kconfig                       |   2 +-
- arch/x86/entry/common.c                |   4 +
- arch/x86/entry/syscall_32.c            |  15 +-
- arch/x86/entry/syscalls/syscall_32.tbl | 677 +++++++++++++++++----------------
- arch/x86/entry/syscalls/syscall_64.tbl |  74 ++--
- arch/x86/include/asm/syscall_wrapper.h | 117 +++++-
- 6 files changed, 509 insertions(+), 380 deletions(-)
+ arch/x86/Kconfig                      |  6 +-----
+ arch/x86/entry/common.c               | 10 ++--------
+ arch/x86/entry/syscall_32.c           |  6 +++---
+ arch/x86/entry/syscall_64.c           |  5 -----
+ arch/x86/entry/vsyscall/vsyscall_64.c | 18 ------------------
+ arch/x86/include/asm/syscall.h        |  4 ++--
+ arch/x86/include/asm/syscalls.h       | 20 ++++----------------
+ 7 files changed, 12 insertions(+), 57 deletions(-)
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 67348efc2540..7bbd6a174722 100644
+index 7bbd6a174722..bcdd3e0e2ef5 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -2957,5 +2957,5 @@ source "lib/Kconfig"
+@@ -29,6 +29,7 @@ config X86_64
+ 	select HAVE_ARCH_SOFT_DIRTY
+ 	select MODULES_USE_ELF_RELA
+ 	select X86_DEV_DMA_OPS
++	select ARCH_HAS_SYSCALL_WRAPPER
  
- config SYSCALL_PTREGS
- 	def_bool y
--	depends on X86_64 && !COMPAT
-+	depends on X86_64
- 	select ARCH_HAS_SYSCALL_WRAPPER
+ #
+ # Arch settings
+@@ -2954,8 +2955,3 @@ source "crypto/Kconfig"
+ source "arch/x86/kvm/Kconfig"
+ 
+ source "lib/Kconfig"
+-
+-config SYSCALL_PTREGS
+-	def_bool y
+-	depends on X86_64
+-	select ARCH_HAS_SYSCALL_WRAPPER
 diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index e1b91bffa988..425f798b39e3 100644
+index 425f798b39e3..fbf6a6c3fd2d 100644
 --- a/arch/x86/entry/common.c
 +++ b/arch/x86/entry/common.c
-@@ -325,6 +325,9 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
+@@ -284,13 +284,7 @@ __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
+ 	nr &= __SYSCALL_MASK;
+ 	if (likely(nr < NR_syscalls)) {
+ 		nr = array_index_nospec(nr, NR_syscalls);
+-#ifdef CONFIG_SYSCALL_PTREGS
+ 		regs->ax = sys_call_table[nr](regs);
+-#else
+-		regs->ax = sys_call_table[nr](
+-			regs->di, regs->si, regs->dx,
+-			regs->r10, regs->r8, regs->r9);
+-#endif
+ 	}
+ 
+ 	syscall_return_slowpath(regs);
+@@ -325,7 +319,7 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
  
  	if (likely(nr < IA32_NR_syscalls)) {
  		nr = array_index_nospec(nr, IA32_NR_syscalls);
-+#ifdef CONFIG_SYSCALL_PTREGS
-+		regs->ax = ia32_sys_call_table[nr](regs);
-+#else
+-#ifdef CONFIG_SYSCALL_PTREGS
++#ifdef CONFIG_IA32_EMULATION
+ 		regs->ax = ia32_sys_call_table[nr](regs);
+ #else
  		/*
- 		 * It's possible that a 32-bit syscall implementation
- 		 * takes a 64-bit parameter but nonetheless assumes that
-@@ -335,6 +338,7 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
+@@ -338,7 +332,7 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
  			(unsigned int)regs->bx, (unsigned int)regs->cx,
  			(unsigned int)regs->dx, (unsigned int)regs->si,
  			(unsigned int)regs->di, (unsigned int)regs->bp);
-+#endif /* CONFIG_SYSCALL_PTREGS */
+-#endif /* CONFIG_SYSCALL_PTREGS */
++#endif /* CONFIG_IA32_EMULATION */
  	}
  
  	syscall_return_slowpath(regs);
 diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
-index 95c294963612..47060dd8efb1 100644
+index 47060dd8efb1..aa3336a7cb15 100644
 --- a/arch/x86/entry/syscall_32.c
 +++ b/arch/x86/entry/syscall_32.c
-@@ -7,14 +7,23 @@
+@@ -7,17 +7,17 @@
  #include <asm/asm-offsets.h>
  #include <asm/syscall.h>
  
--#define __SYSCALL_I386(nr, sym, qual) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long) ;
-+#ifdef CONFIG_SYSCALL_PTREGS
-+/* On X86_64, we use struct pt_regs * to pass parameters to syscalls */
-+#define __SYSCALL_I386(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
-+
-+/* this is a lie, but it does not hurt as sys_ni_syscall just returns -EINVAL */
-+extern asmlinkage long sys_ni_syscall(const struct pt_regs *);
-+
-+#else /* CONFIG_SYSCALL_PTREGS */
-+#define __SYSCALL_I386(nr, sym, qual) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
-+extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
-+#endif /* CONFIG_SYSCALL_PTREGS */
-+
+-#ifdef CONFIG_SYSCALL_PTREGS
++#ifdef CONFIG_IA32_EMULATION
+ /* On X86_64, we use struct pt_regs * to pass parameters to syscalls */
+ #define __SYSCALL_I386(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
+ 
+ /* this is a lie, but it does not hurt as sys_ni_syscall just returns -EINVAL */
+ extern asmlinkage long sys_ni_syscall(const struct pt_regs *);
+ 
+-#else /* CONFIG_SYSCALL_PTREGS */
++#else /* CONFIG_IA32_EMULATION */
+ #define __SYSCALL_I386(nr, sym, qual) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
+ extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
+-#endif /* CONFIG_SYSCALL_PTREGS */
++#endif /* CONFIG_IA32_EMULATION */
+ 
  #include <asm/syscalls_32.h>
  #undef __SYSCALL_I386
+diff --git a/arch/x86/entry/syscall_64.c b/arch/x86/entry/syscall_64.c
+index 6197850adf91..d5252bc1e380 100644
+--- a/arch/x86/entry/syscall_64.c
++++ b/arch/x86/entry/syscall_64.c
+@@ -7,14 +7,9 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/syscall.h>
  
- #define __SYSCALL_I386(nr, sym, qual) [nr] = sym,
- 
+-#ifdef CONFIG_SYSCALL_PTREGS
+ /* this is a lie, but it does not hurt as sys_ni_syscall just returns -EINVAL */
+ extern asmlinkage long sys_ni_syscall(const struct pt_regs *);
+ #define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
+-#else /* CONFIG_SYSCALL_PTREGS */
 -extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
--
- __visible const sys_call_ptr_t ia32_sys_call_table[__NR_syscall_compat_max+1] = {
+-#define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
+-#endif /* CONFIG_SYSCALL_PTREGS */
+ #include <asm/syscalls_64.h>
+ #undef __SYSCALL_64
+ 
+diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
+index 05eebbf9b989..20b3d4a88ee4 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_64.c
++++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+@@ -127,9 +127,7 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
+ 	int vsyscall_nr, syscall_nr, tmp;
+ 	int prev_sig_on_uaccess_err;
+ 	long ret;
+-#ifdef CONFIG_SYSCALL_PTREGS
+ 	unsigned long orig_dx;
+-#endif
+ 
  	/*
- 	 * Smells like a compiler bug -- it doesn't work
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index c58f75b088c5..7f09a3da0b3d 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -4,390 +4,395 @@
- # The format is:
- # <number> <abi> <name> <entry point> <compat entry point>
- #
-+# The __sys_ia32 and __compat_sys_ia32 stubs are created on-the-fly for
-+# sys_*() system calls and compat_sys_*() compat system calls if
-+# IA32_EMULATION is defined, and expect struct pt_regs *regs as their only
-+# parameter.
-+#
- # The abi is always "i386" for this file.
- #
- 0	i386	restart_syscall		sys_restart_syscall
--1	i386	exit			sys_exit
-+1	i386	exit			sys_exit			__sys_ia32_exit
- 2	i386	fork			sys_fork
--3	i386	read			sys_read
--4	i386	write			sys_write
--5	i386	open			sys_open			compat_sys_open
--6	i386	close			sys_close
--7	i386	waitpid			sys_waitpid
--8	i386	creat			sys_creat
--9	i386	link			sys_link
--10	i386	unlink			sys_unlink
--11	i386	execve			sys_execve			compat_sys_execve
--12	i386	chdir			sys_chdir
--13	i386	time			sys_time			compat_sys_time
--14	i386	mknod			sys_mknod
--15	i386	chmod			sys_chmod
--16	i386	lchown			sys_lchown16
-+3	i386	read			sys_read			__sys_ia32_read
-+4	i386	write			sys_write			__sys_ia32_write
-+5	i386	open			sys_open			__compat_sys_ia32_open
-+6	i386	close			sys_close			__sys_ia32_close
-+7	i386	waitpid			sys_waitpid			__sys_ia32_waitpid
-+8	i386	creat			sys_creat			__sys_ia32_creat
-+9	i386	link			sys_link			__sys_ia32_link
-+10	i386	unlink			sys_unlink			__sys_ia32_unlink
-+11	i386	execve			sys_execve			__compat_sys_ia32_execve
-+12	i386	chdir			sys_chdir			__sys_ia32_chdir
-+13	i386	time			sys_time			__compat_sys_ia32_time
-+14	i386	mknod			sys_mknod			__sys_ia32_mknod
-+15	i386	chmod			sys_chmod			__sys_ia32_chmod
-+16	i386	lchown			sys_lchown16			__sys_ia32_lchown16
- 17	i386	break
--18	i386	oldstat			sys_stat
--19	i386	lseek			sys_lseek			compat_sys_lseek
-+18	i386	oldstat			sys_stat			__sys_ia32_stat
-+19	i386	lseek			sys_lseek			__compat_sys_ia32_lseek
- 20	i386	getpid			sys_getpid
--21	i386	mount			sys_mount			compat_sys_mount
--22	i386	umount			sys_oldumount
--23	i386	setuid			sys_setuid16
-+21	i386	mount			sys_mount			__compat_sys_ia32_mount
-+22	i386	umount			sys_oldumount			__sys_ia32_oldumount
-+23	i386	setuid			sys_setuid16			__sys_ia32_setuid16
- 24	i386	getuid			sys_getuid16
--25	i386	stime			sys_stime			compat_sys_stime
--26	i386	ptrace			sys_ptrace			compat_sys_ptrace
--27	i386	alarm			sys_alarm
--28	i386	oldfstat		sys_fstat
-+25	i386	stime			sys_stime			__compat_sys_ia32_stime
-+26	i386	ptrace			sys_ptrace			__compat_sys_ia32_ptrace
-+27	i386	alarm			sys_alarm			__sys_ia32_alarm
-+28	i386	oldfstat		sys_fstat			__sys_ia32_fstat
- 29	i386	pause			sys_pause
--30	i386	utime			sys_utime			compat_sys_utime
-+30	i386	utime			sys_utime			__compat_sys_ia32_utime
- 31	i386	stty
- 32	i386	gtty
--33	i386	access			sys_access
--34	i386	nice			sys_nice
-+33	i386	access			sys_access			__sys_ia32_access
-+34	i386	nice			sys_nice			__sys_ia32_nice
- 35	i386	ftime
- 36	i386	sync			sys_sync
--37	i386	kill			sys_kill
--38	i386	rename			sys_rename
--39	i386	mkdir			sys_mkdir
--40	i386	rmdir			sys_rmdir
--41	i386	dup			sys_dup
--42	i386	pipe			sys_pipe
--43	i386	times			sys_times			compat_sys_times
-+37	i386	kill			sys_kill			__sys_ia32_kill
-+38	i386	rename			sys_rename			__sys_ia32_rename
-+39	i386	mkdir			sys_mkdir			__sys_ia32_mkdir
-+40	i386	rmdir			sys_rmdir			__sys_ia32_rmdir
-+41	i386	dup			sys_dup				__sys_ia32_dup
-+42	i386	pipe			sys_pipe			__sys_ia32_pipe
-+43	i386	times			sys_times			__compat_sys_ia32_times
- 44	i386	prof
--45	i386	brk			sys_brk
--46	i386	setgid			sys_setgid16
-+45	i386	brk			sys_brk				__sys_ia32_brk
-+46	i386	setgid			sys_setgid16			__sys_ia32_setgid16
- 47	i386	getgid			sys_getgid16
--48	i386	signal			sys_signal
-+48	i386	signal			sys_signal			__sys_ia32_signal
- 49	i386	geteuid			sys_geteuid16
- 50	i386	getegid			sys_getegid16
--51	i386	acct			sys_acct
--52	i386	umount2			sys_umount
-+51	i386	acct			sys_acct			__sys_ia32_acct
-+52	i386	umount2			sys_umount			__sys_ia32_umount
- 53	i386	lock
--54	i386	ioctl			sys_ioctl			compat_sys_ioctl
--55	i386	fcntl			sys_fcntl			compat_sys_fcntl64
-+54	i386	ioctl			sys_ioctl			__compat_sys_ia32_ioctl
-+55	i386	fcntl			sys_fcntl			__compat_sys_ia32_fcntl64
- 56	i386	mpx
--57	i386	setpgid			sys_setpgid
-+57	i386	setpgid			sys_setpgid			__sys_ia32_setpgid
- 58	i386	ulimit
--59	i386	oldolduname		sys_olduname
--60	i386	umask			sys_umask
--61	i386	chroot			sys_chroot
--62	i386	ustat			sys_ustat			compat_sys_ustat
--63	i386	dup2			sys_dup2
-+59	i386	oldolduname		sys_olduname			__sys_ia32_olduname
-+60	i386	umask			sys_umask			__sys_ia32_umask
-+61	i386	chroot			sys_chroot			__sys_ia32_chroot
-+62	i386	ustat			sys_ustat			__compat_sys_ia32_ustat
-+63	i386	dup2			sys_dup2			__sys_ia32_dup2
- 64	i386	getppid			sys_getppid
- 65	i386	getpgrp			sys_getpgrp
- 66	i386	setsid			sys_setsid
--67	i386	sigaction		sys_sigaction			compat_sys_sigaction
-+67	i386	sigaction		sys_sigaction			__compat_sys_ia32_sigaction
- 68	i386	sgetmask		sys_sgetmask
--69	i386	ssetmask		sys_ssetmask
--70	i386	setreuid		sys_setreuid16
--71	i386	setregid		sys_setregid16
--72	i386	sigsuspend		sys_sigsuspend
--73	i386	sigpending		sys_sigpending			compat_sys_sigpending
--74	i386	sethostname		sys_sethostname
--75	i386	setrlimit		sys_setrlimit			compat_sys_setrlimit
--76	i386	getrlimit		sys_old_getrlimit		compat_sys_old_getrlimit
--77	i386	getrusage		sys_getrusage			compat_sys_getrusage
--78	i386	gettimeofday		sys_gettimeofday		compat_sys_gettimeofday
--79	i386	settimeofday		sys_settimeofday		compat_sys_settimeofday
--80	i386	getgroups		sys_getgroups16
--81	i386	setgroups		sys_setgroups16
--82	i386	select			sys_old_select			compat_sys_old_select
--83	i386	symlink			sys_symlink
--84	i386	oldlstat		sys_lstat
--85	i386	readlink		sys_readlink
--86	i386	uselib			sys_uselib
--87	i386	swapon			sys_swapon
--88	i386	reboot			sys_reboot
--89	i386	readdir			sys_old_readdir			compat_sys_old_readdir
--90	i386	mmap			sys_old_mmap			compat_sys_x86_mmap
--91	i386	munmap			sys_munmap
--92	i386	truncate		sys_truncate			compat_sys_truncate
--93	i386	ftruncate		sys_ftruncate			compat_sys_ftruncate
--94	i386	fchmod			sys_fchmod
--95	i386	fchown			sys_fchown16
--96	i386	getpriority		sys_getpriority
--97	i386	setpriority		sys_setpriority
-+69	i386	ssetmask		sys_ssetmask			__sys_ia32_ssetmask
-+70	i386	setreuid		sys_setreuid16			__sys_ia32_setreuid16
-+71	i386	setregid		sys_setregid16			__sys_ia32_setregid16
-+72	i386	sigsuspend		sys_sigsuspend			__sys_ia32_sigsuspend
-+73	i386	sigpending		sys_sigpending			__compat_sys_ia32_sigpending
-+74	i386	sethostname		sys_sethostname			__sys_ia32_sethostname
-+75	i386	setrlimit		sys_setrlimit			__compat_sys_ia32_setrlimit
-+76	i386	getrlimit		sys_old_getrlimit		__compat_sys_ia32_old_getrlimit
-+77	i386	getrusage		sys_getrusage			__compat_sys_ia32_getrusage
-+78	i386	gettimeofday		sys_gettimeofday		__compat_sys_ia32_gettimeofday
-+79	i386	settimeofday		sys_settimeofday		__compat_sys_ia32_settimeofday
-+80	i386	getgroups		sys_getgroups16			__sys_ia32_getgroups16
-+81	i386	setgroups		sys_setgroups16			__sys_ia32_setgroups16
-+82	i386	select			sys_old_select			__compat_sys_ia32_old_select
-+83	i386	symlink			sys_symlink			__sys_ia32_symlink
-+84	i386	oldlstat		sys_lstat			__sys_ia32_lstat
-+85	i386	readlink		sys_readlink			__sys_ia32_readlink
-+86	i386	uselib			sys_uselib			__sys_ia32_uselib
-+87	i386	swapon			sys_swapon			__sys_ia32_swapon
-+88	i386	reboot			sys_reboot			__sys_ia32_reboot
-+89	i386	readdir			sys_old_readdir			__compat_sys_ia32_old_readdir
-+90	i386	mmap			sys_old_mmap			__compat_sys_ia32_x86_mmap
-+91	i386	munmap			sys_munmap			__sys_ia32_munmap
-+92	i386	truncate		sys_truncate			__compat_sys_ia32_truncate
-+93	i386	ftruncate		sys_ftruncate			__compat_sys_ia32_ftruncate
-+94	i386	fchmod			sys_fchmod			__sys_ia32_fchmod
-+95	i386	fchown			sys_fchown16			__sys_ia32_fchown16
-+96	i386	getpriority		sys_getpriority			__sys_ia32_getpriority
-+97	i386	setpriority		sys_setpriority			__sys_ia32_setpriority
- 98	i386	profil
--99	i386	statfs			sys_statfs			compat_sys_statfs
--100	i386	fstatfs			sys_fstatfs			compat_sys_fstatfs
--101	i386	ioperm			sys_ioperm
--102	i386	socketcall		sys_socketcall			compat_sys_socketcall
--103	i386	syslog			sys_syslog
--104	i386	setitimer		sys_setitimer			compat_sys_setitimer
--105	i386	getitimer		sys_getitimer			compat_sys_getitimer
--106	i386	stat			sys_newstat			compat_sys_newstat
--107	i386	lstat			sys_newlstat			compat_sys_newlstat
--108	i386	fstat			sys_newfstat			compat_sys_newfstat
--109	i386	olduname		sys_uname
--110	i386	iopl			sys_iopl
-+99	i386	statfs			sys_statfs			__compat_sys_ia32_statfs
-+100	i386	fstatfs			sys_fstatfs			__compat_sys_ia32_fstatfs
-+101	i386	ioperm			sys_ioperm			__sys_ia32_ioperm
-+102	i386	socketcall		sys_socketcall			__compat_sys_ia32_socketcall
-+103	i386	syslog			sys_syslog			__sys_ia32_syslog
-+104	i386	setitimer		sys_setitimer			__compat_sys_ia32_setitimer
-+105	i386	getitimer		sys_getitimer			__compat_sys_ia32_getitimer
-+106	i386	stat			sys_newstat			__compat_sys_ia32_newstat
-+107	i386	lstat			sys_newlstat			__compat_sys_ia32_newlstat
-+108	i386	fstat			sys_newfstat			__compat_sys_ia32_newfstat
-+109	i386	olduname		sys_uname			__sys_ia32_uname
-+110	i386	iopl			sys_iopl			__sys_ia32_iopl
- 111	i386	vhangup			sys_vhangup
- 112	i386	idle
- 113	i386	vm86old			sys_vm86old			sys_ni_syscall
--114	i386	wait4			sys_wait4			compat_sys_wait4
--115	i386	swapoff			sys_swapoff
--116	i386	sysinfo			sys_sysinfo			compat_sys_sysinfo
--117	i386	ipc			sys_ipc				compat_sys_ipc
--118	i386	fsync			sys_fsync
-+114	i386	wait4			sys_wait4			__compat_sys_ia32_wait4
-+115	i386	swapoff			sys_swapoff			__sys_ia32_swapoff
-+116	i386	sysinfo			sys_sysinfo			__compat_sys_ia32_sysinfo
-+117	i386	ipc			sys_ipc				__compat_sys_ia32_ipc
-+118	i386	fsync			sys_fsync			__sys_ia32_fsync
- 119	i386	sigreturn		sys_sigreturn			sys32_sigreturn
--120	i386	clone			sys_clone			compat_sys_x86_clone
--121	i386	setdomainname		sys_setdomainname
--122	i386	uname			sys_newuname
--123	i386	modify_ldt		sys_modify_ldt
--124	i386	adjtimex		sys_adjtimex			compat_sys_adjtimex
--125	i386	mprotect		sys_mprotect
--126	i386	sigprocmask		sys_sigprocmask			compat_sys_sigprocmask
-+120	i386	clone			sys_clone			__compat_sys_ia32_x86_clone
-+121	i386	setdomainname		sys_setdomainname		__sys_ia32_setdomainname
-+122	i386	uname			sys_newuname			__sys_ia32_newuname
-+123	i386	modify_ldt		sys_modify_ldt			__sys_ia32_modify_ldt
-+124	i386	adjtimex		sys_adjtimex			__compat_sys_ia32_adjtimex
-+125	i386	mprotect		sys_mprotect			__sys_ia32_mprotect
-+126	i386	sigprocmask		sys_sigprocmask			__compat_sys_ia32_sigprocmask
- 127	i386	create_module
--128	i386	init_module		sys_init_module
--129	i386	delete_module		sys_delete_module
-+128	i386	init_module		sys_init_module			__sys_ia32_init_module
-+129	i386	delete_module		sys_delete_module		__sys_ia32_delete_module
- 130	i386	get_kernel_syms
--131	i386	quotactl		sys_quotactl			compat_sys_quotactl32
--132	i386	getpgid			sys_getpgid
--133	i386	fchdir			sys_fchdir
--134	i386	bdflush			sys_bdflush
--135	i386	sysfs			sys_sysfs
--136	i386	personality		sys_personality
-+131	i386	quotactl		sys_quotactl			__compat_sys_ia32_quotactl32
-+132	i386	getpgid			sys_getpgid			__sys_ia32_getpgid
-+133	i386	fchdir			sys_fchdir			__sys_ia32_fchdir
-+134	i386	bdflush			sys_bdflush			__sys_ia32_bdflush
-+135	i386	sysfs			sys_sysfs			__sys_ia32_sysfs
-+136	i386	personality		sys_personality			__sys_ia32_personality
- 137	i386	afs_syscall
--138	i386	setfsuid		sys_setfsuid16
--139	i386	setfsgid		sys_setfsgid16
--140	i386	_llseek			sys_llseek
--141	i386	getdents		sys_getdents			compat_sys_getdents
--142	i386	_newselect		sys_select			compat_sys_select
--143	i386	flock			sys_flock
--144	i386	msync			sys_msync
--145	i386	readv			sys_readv			compat_sys_readv
--146	i386	writev			sys_writev			compat_sys_writev
--147	i386	getsid			sys_getsid
--148	i386	fdatasync		sys_fdatasync
--149	i386	_sysctl			sys_sysctl			compat_sys_sysctl
--150	i386	mlock			sys_mlock
--151	i386	munlock			sys_munlock
--152	i386	mlockall		sys_mlockall
-+138	i386	setfsuid		sys_setfsuid16			__sys_ia32_setfsuid16
-+139	i386	setfsgid		sys_setfsgid16			__sys_ia32_setfsgid16
-+140	i386	_llseek			sys_llseek			__sys_ia32_llseek
-+141	i386	getdents		sys_getdents			__compat_sys_ia32_getdents
-+142	i386	_newselect		sys_select			__compat_sys_ia32_select
-+143	i386	flock			sys_flock			__sys_ia32_flock
-+144	i386	msync			sys_msync			__sys_ia32_msync
-+145	i386	readv			sys_readv			__compat_sys_ia32_readv
-+146	i386	writev			sys_writev			__compat_sys_ia32_writev
-+147	i386	getsid			sys_getsid			__sys_ia32_getsid
-+148	i386	fdatasync		sys_fdatasync			__sys_ia32_fdatasync
-+149	i386	_sysctl			sys_sysctl			__compat_sys_ia32_sysctl
-+150	i386	mlock			sys_mlock			__sys_ia32_mlock
-+151	i386	munlock			sys_munlock			__sys_ia32_munlock
-+152	i386	mlockall		sys_mlockall			__sys_ia32_mlockall
- 153	i386	munlockall		sys_munlockall
--154	i386	sched_setparam		sys_sched_setparam
--155	i386	sched_getparam		sys_sched_getparam
--156	i386	sched_setscheduler	sys_sched_setscheduler
--157	i386	sched_getscheduler	sys_sched_getscheduler
-+154	i386	sched_setparam		sys_sched_setparam		__sys_ia32_sched_setparam
-+155	i386	sched_getparam		sys_sched_getparam		__sys_ia32_sched_getparam
-+156	i386	sched_setscheduler	sys_sched_setscheduler		__sys_ia32_sched_setscheduler
-+157	i386	sched_getscheduler	sys_sched_getscheduler		__sys_ia32_sched_getscheduler
- 158	i386	sched_yield		sys_sched_yield
--159	i386	sched_get_priority_max	sys_sched_get_priority_max
--160	i386	sched_get_priority_min	sys_sched_get_priority_min
--161	i386	sched_rr_get_interval	sys_sched_rr_get_interval	compat_sys_sched_rr_get_interval
--162	i386	nanosleep		sys_nanosleep			compat_sys_nanosleep
--163	i386	mremap			sys_mremap
--164	i386	setresuid		sys_setresuid16
--165	i386	getresuid		sys_getresuid16
-+159	i386	sched_get_priority_max	sys_sched_get_priority_max	__sys_ia32_sched_get_priority_max
-+160	i386	sched_get_priority_min	sys_sched_get_priority_min	__sys_ia32_sched_get_priority_min
-+161	i386	sched_rr_get_interval	sys_sched_rr_get_interval	__compat_sys_ia32_sched_rr_get_interval
-+162	i386	nanosleep		sys_nanosleep			__compat_sys_ia32_nanosleep
-+163	i386	mremap			sys_mremap			__sys_ia32_mremap
-+164	i386	setresuid		sys_setresuid16			__sys_ia32_setresuid16
-+165	i386	getresuid		sys_getresuid16			__sys_ia32_getresuid16
- 166	i386	vm86			sys_vm86			sys_ni_syscall
- 167	i386	query_module
--168	i386	poll			sys_poll
-+168	i386	poll			sys_poll			__sys_ia32_poll
- 169	i386	nfsservctl
--170	i386	setresgid		sys_setresgid16
--171	i386	getresgid		sys_getresgid16
--172	i386	prctl			sys_prctl
-+170	i386	setresgid		sys_setresgid16			__sys_ia32_setresgid16
-+171	i386	getresgid		sys_getresgid16			__sys_ia32_getresgid16
-+172	i386	prctl			sys_prctl			__sys_ia32_prctl
- 173	i386	rt_sigreturn		sys_rt_sigreturn		sys32_rt_sigreturn
--174	i386	rt_sigaction		sys_rt_sigaction		compat_sys_rt_sigaction
--175	i386	rt_sigprocmask		sys_rt_sigprocmask
--176	i386	rt_sigpending		sys_rt_sigpending		compat_sys_rt_sigpending
--177	i386	rt_sigtimedwait		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait
--178	i386	rt_sigqueueinfo		sys_rt_sigqueueinfo		compat_sys_rt_sigqueueinfo
--179	i386	rt_sigsuspend		sys_rt_sigsuspend
--180	i386	pread64			sys_pread64			compat_sys_x86_pread
--181	i386	pwrite64		sys_pwrite64			compat_sys_x86_pwrite
--182	i386	chown			sys_chown16
--183	i386	getcwd			sys_getcwd
--184	i386	capget			sys_capget
--185	i386	capset			sys_capset
--186	i386	sigaltstack		sys_sigaltstack			compat_sys_sigaltstack
--187	i386	sendfile		sys_sendfile			compat_sys_sendfile
-+174	i386	rt_sigaction		sys_rt_sigaction		__compat_sys_ia32_rt_sigaction
-+175	i386	rt_sigprocmask		sys_rt_sigprocmask		__sys_ia32_rt_sigprocmask
-+176	i386	rt_sigpending		sys_rt_sigpending		__compat_sys_ia32_rt_sigpending
-+177	i386	rt_sigtimedwait		sys_rt_sigtimedwait		__compat_sys_ia32_rt_sigtimedwait
-+178	i386	rt_sigqueueinfo		sys_rt_sigqueueinfo		__compat_sys_ia32_rt_sigqueueinfo
-+179	i386	rt_sigsuspend		sys_rt_sigsuspend		__sys_ia32_rt_sigsuspend
-+180	i386	pread64			sys_pread64			__compat_sys_ia32_x86_pread
-+181	i386	pwrite64		sys_pwrite64			__compat_sys_ia32_x86_pwrite
-+182	i386	chown			sys_chown16			__sys_ia32_chown16
-+183	i386	getcwd			sys_getcwd			__sys_ia32_getcwd
-+184	i386	capget			sys_capget			__sys_ia32_capget
-+185	i386	capset			sys_capset			__sys_ia32_capset
-+186	i386	sigaltstack		sys_sigaltstack			__compat_sys_ia32_sigaltstack
-+187	i386	sendfile		sys_sendfile			__compat_sys_ia32_sendfile
- 188	i386	getpmsg
- 189	i386	putpmsg
- 190	i386	vfork			sys_vfork
--191	i386	ugetrlimit		sys_getrlimit			compat_sys_getrlimit
--192	i386	mmap2			sys_mmap_pgoff
--193	i386	truncate64		sys_truncate64			compat_sys_x86_truncate64
--194	i386	ftruncate64		sys_ftruncate64			compat_sys_x86_ftruncate64
--195	i386	stat64			sys_stat64			compat_sys_x86_stat64
--196	i386	lstat64			sys_lstat64			compat_sys_x86_lstat64
--197	i386	fstat64			sys_fstat64			compat_sys_x86_fstat64
--198	i386	lchown32		sys_lchown
-+191	i386	ugetrlimit		sys_getrlimit			__compat_sys_ia32_getrlimit
-+192	i386	mmap2			sys_mmap_pgoff			__sys_ia32_mmap_pgoff
-+193	i386	truncate64		sys_truncate64			__compat_sys_ia32_x86_truncate64
-+194	i386	ftruncate64		sys_ftruncate64			__compat_sys_ia32_x86_ftruncate64
-+195	i386	stat64			sys_stat64			__compat_sys_ia32_x86_stat64
-+196	i386	lstat64			sys_lstat64			__compat_sys_ia32_x86_lstat64
-+197	i386	fstat64			sys_fstat64			__compat_sys_ia32_x86_fstat64
-+198	i386	lchown32		sys_lchown			__sys_ia32_lchown
- 199	i386	getuid32		sys_getuid
- 200	i386	getgid32		sys_getgid
- 201	i386	geteuid32		sys_geteuid
- 202	i386	getegid32		sys_getegid
--203	i386	setreuid32		sys_setreuid
--204	i386	setregid32		sys_setregid
--205	i386	getgroups32		sys_getgroups
--206	i386	setgroups32		sys_setgroups
--207	i386	fchown32		sys_fchown
--208	i386	setresuid32		sys_setresuid
--209	i386	getresuid32		sys_getresuid
--210	i386	setresgid32		sys_setresgid
--211	i386	getresgid32		sys_getresgid
--212	i386	chown32			sys_chown
--213	i386	setuid32		sys_setuid
--214	i386	setgid32		sys_setgid
--215	i386	setfsuid32		sys_setfsuid
--216	i386	setfsgid32		sys_setfsgid
--217	i386	pivot_root		sys_pivot_root
--218	i386	mincore			sys_mincore
--219	i386	madvise			sys_madvise
--220	i386	getdents64		sys_getdents64
--221	i386	fcntl64			sys_fcntl64			compat_sys_fcntl64
-+203	i386	setreuid32		sys_setreuid			__sys_ia32_setreuid
-+204	i386	setregid32		sys_setregid			__sys_ia32_setregid
-+205	i386	getgroups32		sys_getgroups			__sys_ia32_getgroups
-+206	i386	setgroups32		sys_setgroups			__sys_ia32_setgroups
-+207	i386	fchown32		sys_fchown			__sys_ia32_fchown
-+208	i386	setresuid32		sys_setresuid			__sys_ia32_setresuid
-+209	i386	getresuid32		sys_getresuid			__sys_ia32_getresuid
-+210	i386	setresgid32		sys_setresgid			__sys_ia32_setresgid
-+211	i386	getresgid32		sys_getresgid			__sys_ia32_getresgid
-+212	i386	chown32			sys_chown			__sys_ia32_chown
-+213	i386	setuid32		sys_setuid			__sys_ia32_setuid
-+214	i386	setgid32		sys_setgid			__sys_ia32_setgid
-+215	i386	setfsuid32		sys_setfsuid			__sys_ia32_setfsuid
-+216	i386	setfsgid32		sys_setfsgid			__sys_ia32_setfsgid
-+217	i386	pivot_root		sys_pivot_root			__sys_ia32_pivot_root
-+218	i386	mincore			sys_mincore			__sys_ia32_mincore
-+219	i386	madvise			sys_madvise			__sys_ia32_madvise
-+220	i386	getdents64		sys_getdents64			__sys_ia32_getdents64
-+221	i386	fcntl64			sys_fcntl64			__compat_sys_ia32_fcntl64
- # 222 is unused
- # 223 is unused
- 224	i386	gettid			sys_gettid
--225	i386	readahead		sys_readahead			compat_sys_x86_readahead
--226	i386	setxattr		sys_setxattr
--227	i386	lsetxattr		sys_lsetxattr
--228	i386	fsetxattr		sys_fsetxattr
--229	i386	getxattr		sys_getxattr
--230	i386	lgetxattr		sys_lgetxattr
--231	i386	fgetxattr		sys_fgetxattr
--232	i386	listxattr		sys_listxattr
--233	i386	llistxattr		sys_llistxattr
--234	i386	flistxattr		sys_flistxattr
--235	i386	removexattr		sys_removexattr
--236	i386	lremovexattr		sys_lremovexattr
--237	i386	fremovexattr		sys_fremovexattr
--238	i386	tkill			sys_tkill
--239	i386	sendfile64		sys_sendfile64
--240	i386	futex			sys_futex			compat_sys_futex
--241	i386	sched_setaffinity	sys_sched_setaffinity		compat_sys_sched_setaffinity
--242	i386	sched_getaffinity	sys_sched_getaffinity		compat_sys_sched_getaffinity
--243	i386	set_thread_area		sys_set_thread_area
--244	i386	get_thread_area		sys_get_thread_area
--245	i386	io_setup		sys_io_setup			compat_sys_io_setup
--246	i386	io_destroy		sys_io_destroy
--247	i386	io_getevents		sys_io_getevents		compat_sys_io_getevents
--248	i386	io_submit		sys_io_submit			compat_sys_io_submit
--249	i386	io_cancel		sys_io_cancel
--250	i386	fadvise64		sys_fadvise64			compat_sys_x86_fadvise64
-+225	i386	readahead		sys_readahead			__compat_sys_ia32_x86_readahead
-+226	i386	setxattr		sys_setxattr			__sys_ia32_setxattr
-+227	i386	lsetxattr		sys_lsetxattr			__sys_ia32_lsetxattr
-+228	i386	fsetxattr		sys_fsetxattr			__sys_ia32_fsetxattr
-+229	i386	getxattr		sys_getxattr			__sys_ia32_getxattr
-+230	i386	lgetxattr		sys_lgetxattr			__sys_ia32_lgetxattr
-+231	i386	fgetxattr		sys_fgetxattr			__sys_ia32_fgetxattr
-+232	i386	listxattr		sys_listxattr			__sys_ia32_listxattr
-+233	i386	llistxattr		sys_llistxattr			__sys_ia32_llistxattr
-+234	i386	flistxattr		sys_flistxattr			__sys_ia32_flistxattr
-+235	i386	removexattr		sys_removexattr			__sys_ia32_removexattr
-+236	i386	lremovexattr		sys_lremovexattr		__sys_ia32_lremovexattr
-+237	i386	fremovexattr		sys_fremovexattr		__sys_ia32_fremovexattr
-+238	i386	tkill			sys_tkill			__sys_ia32_tkill
-+239	i386	sendfile64		sys_sendfile64			__sys_ia32_sendfile64
-+240	i386	futex			sys_futex			__compat_sys_ia32_futex
-+241	i386	sched_setaffinity	sys_sched_setaffinity		__compat_sys_ia32_sched_setaffinity
-+242	i386	sched_getaffinity	sys_sched_getaffinity		__compat_sys_ia32_sched_getaffinity
-+243	i386	set_thread_area		sys_set_thread_area		__sys_ia32_set_thread_area
-+244	i386	get_thread_area		sys_get_thread_area		__sys_ia32_get_thread_area
-+245	i386	io_setup		sys_io_setup			__compat_sys_ia32_io_setup
-+246	i386	io_destroy		sys_io_destroy			__sys_ia32_io_destroy
-+247	i386	io_getevents		sys_io_getevents		__compat_sys_ia32_io_getevents
-+248	i386	io_submit		sys_io_submit			__compat_sys_ia32_io_submit
-+249	i386	io_cancel		sys_io_cancel			__sys_ia32_io_cancel
-+250	i386	fadvise64		sys_fadvise64			__compat_sys_ia32_x86_fadvise64
- # 251 is available for reuse (was briefly sys_set_zone_reclaim)
--252	i386	exit_group		sys_exit_group
--253	i386	lookup_dcookie		sys_lookup_dcookie		compat_sys_lookup_dcookie
--254	i386	epoll_create		sys_epoll_create
--255	i386	epoll_ctl		sys_epoll_ctl
--256	i386	epoll_wait		sys_epoll_wait
--257	i386	remap_file_pages	sys_remap_file_pages
--258	i386	set_tid_address		sys_set_tid_address
--259	i386	timer_create		sys_timer_create		compat_sys_timer_create
--260	i386	timer_settime		sys_timer_settime		compat_sys_timer_settime
--261	i386	timer_gettime		sys_timer_gettime		compat_sys_timer_gettime
--262	i386	timer_getoverrun	sys_timer_getoverrun
--263	i386	timer_delete		sys_timer_delete
--264	i386	clock_settime		sys_clock_settime		compat_sys_clock_settime
--265	i386	clock_gettime		sys_clock_gettime		compat_sys_clock_gettime
--266	i386	clock_getres		sys_clock_getres		compat_sys_clock_getres
--267	i386	clock_nanosleep		sys_clock_nanosleep		compat_sys_clock_nanosleep
--268	i386	statfs64		sys_statfs64			compat_sys_statfs64
--269	i386	fstatfs64		sys_fstatfs64			compat_sys_fstatfs64
--270	i386	tgkill			sys_tgkill
--271	i386	utimes			sys_utimes			compat_sys_utimes
--272	i386	fadvise64_64		sys_fadvise64_64		compat_sys_x86_fadvise64_64
-+252	i386	exit_group		sys_exit_group			__sys_ia32_exit_group
-+253	i386	lookup_dcookie		sys_lookup_dcookie		__compat_sys_ia32_lookup_dcookie
-+254	i386	epoll_create		sys_epoll_create		__sys_ia32_epoll_create
-+255	i386	epoll_ctl		sys_epoll_ctl			__sys_ia32_epoll_ctl
-+256	i386	epoll_wait		sys_epoll_wait			__sys_ia32_epoll_wait
-+257	i386	remap_file_pages	sys_remap_file_pages		__sys_ia32_remap_file_pages
-+258	i386	set_tid_address		sys_set_tid_address		__sys_ia32_set_tid_address
-+259	i386	timer_create		sys_timer_create		__compat_sys_ia32_timer_create
-+260	i386	timer_settime		sys_timer_settime		__compat_sys_ia32_timer_settime
-+261	i386	timer_gettime		sys_timer_gettime		__compat_sys_ia32_timer_gettime
-+262	i386	timer_getoverrun	sys_timer_getoverrun		__sys_ia32_timer_getoverrun
-+263	i386	timer_delete		sys_timer_delete		__sys_ia32_timer_delete
-+264	i386	clock_settime		sys_clock_settime		__compat_sys_ia32_clock_settime
-+265	i386	clock_gettime		sys_clock_gettime		__compat_sys_ia32_clock_gettime
-+266	i386	clock_getres		sys_clock_getres		__compat_sys_ia32_clock_getres
-+267	i386	clock_nanosleep		sys_clock_nanosleep		__compat_sys_ia32_clock_nanosleep
-+268	i386	statfs64		sys_statfs64			__compat_sys_ia32_statfs64
-+269	i386	fstatfs64		sys_fstatfs64			__compat_sys_ia32_fstatfs64
-+270	i386	tgkill			sys_tgkill			__sys_ia32_tgkill
-+271	i386	utimes			sys_utimes			__compat_sys_ia32_utimes
-+272	i386	fadvise64_64		sys_fadvise64_64		__compat_sys_ia32_x86_fadvise64_64
- 273	i386	vserver
--274	i386	mbind			sys_mbind
--275	i386	get_mempolicy		sys_get_mempolicy		compat_sys_get_mempolicy
--276	i386	set_mempolicy		sys_set_mempolicy
--277	i386	mq_open			sys_mq_open			compat_sys_mq_open
--278	i386	mq_unlink		sys_mq_unlink
--279	i386	mq_timedsend		sys_mq_timedsend		compat_sys_mq_timedsend
--280	i386	mq_timedreceive		sys_mq_timedreceive		compat_sys_mq_timedreceive
--281	i386	mq_notify		sys_mq_notify			compat_sys_mq_notify
--282	i386	mq_getsetattr		sys_mq_getsetattr		compat_sys_mq_getsetattr
--283	i386	kexec_load		sys_kexec_load			compat_sys_kexec_load
--284	i386	waitid			sys_waitid			compat_sys_waitid
-+274	i386	mbind			sys_mbind			__sys_ia32_mbind
-+275	i386	get_mempolicy		sys_get_mempolicy		__compat_sys_ia32_get_mempolicy
-+276	i386	set_mempolicy		sys_set_mempolicy		__sys_ia32_set_mempolicy
-+277	i386	mq_open			sys_mq_open			__compat_sys_ia32_mq_open
-+278	i386	mq_unlink		sys_mq_unlink			__sys_ia32_mq_unlink
-+279	i386	mq_timedsend		sys_mq_timedsend		__compat_sys_ia32_mq_timedsend
-+280	i386	mq_timedreceive		sys_mq_timedreceive		__compat_sys_ia32_mq_timedreceive
-+281	i386	mq_notify		sys_mq_notify			__compat_sys_ia32_mq_notify
-+282	i386	mq_getsetattr		sys_mq_getsetattr		__compat_sys_ia32_mq_getsetattr
-+283	i386	kexec_load		sys_kexec_load			__compat_sys_ia32_kexec_load
-+284	i386	waitid			sys_waitid			__compat_sys_ia32_waitid
- # 285 sys_setaltroot
--286	i386	add_key			sys_add_key
--287	i386	request_key		sys_request_key
--288	i386	keyctl			sys_keyctl			compat_sys_keyctl
--289	i386	ioprio_set		sys_ioprio_set
--290	i386	ioprio_get		sys_ioprio_get
-+286	i386	add_key			sys_add_key			__sys_ia32_add_key
-+287	i386	request_key		sys_request_key			__sys_ia32_request_key
-+288	i386	keyctl			sys_keyctl			__compat_sys_ia32_keyctl
-+289	i386	ioprio_set		sys_ioprio_set			__sys_ia32_ioprio_set
-+290	i386	ioprio_get		sys_ioprio_get			__sys_ia32_ioprio_get
- 291	i386	inotify_init		sys_inotify_init
--292	i386	inotify_add_watch	sys_inotify_add_watch
--293	i386	inotify_rm_watch	sys_inotify_rm_watch
--294	i386	migrate_pages		sys_migrate_pages
--295	i386	openat			sys_openat			compat_sys_openat
--296	i386	mkdirat			sys_mkdirat
--297	i386	mknodat			sys_mknodat
--298	i386	fchownat		sys_fchownat
--299	i386	futimesat		sys_futimesat			compat_sys_futimesat
--300	i386	fstatat64		sys_fstatat64			compat_sys_x86_fstatat
--301	i386	unlinkat		sys_unlinkat
--302	i386	renameat		sys_renameat
--303	i386	linkat			sys_linkat
--304	i386	symlinkat		sys_symlinkat
--305	i386	readlinkat		sys_readlinkat
--306	i386	fchmodat		sys_fchmodat
--307	i386	faccessat		sys_faccessat
--308	i386	pselect6		sys_pselect6			compat_sys_pselect6
--309	i386	ppoll			sys_ppoll			compat_sys_ppoll
--310	i386	unshare			sys_unshare
--311	i386	set_robust_list		sys_set_robust_list		compat_sys_set_robust_list
--312	i386	get_robust_list		sys_get_robust_list		compat_sys_get_robust_list
--313	i386	splice			sys_splice
--314	i386	sync_file_range		sys_sync_file_range		compat_sys_x86_sync_file_range
--315	i386	tee			sys_tee
--316	i386	vmsplice		sys_vmsplice			compat_sys_vmsplice
--317	i386	move_pages		sys_move_pages			compat_sys_move_pages
--318	i386	getcpu			sys_getcpu
--319	i386	epoll_pwait		sys_epoll_pwait
--320	i386	utimensat		sys_utimensat			compat_sys_utimensat
--321	i386	signalfd		sys_signalfd			compat_sys_signalfd
--322	i386	timerfd_create		sys_timerfd_create
--323	i386	eventfd			sys_eventfd
--324	i386	fallocate		sys_fallocate			compat_sys_x86_fallocate
--325	i386	timerfd_settime		sys_timerfd_settime		compat_sys_timerfd_settime
--326	i386	timerfd_gettime		sys_timerfd_gettime		compat_sys_timerfd_gettime
--327	i386	signalfd4		sys_signalfd4			compat_sys_signalfd4
--328	i386	eventfd2		sys_eventfd2
--329	i386	epoll_create1		sys_epoll_create1
--330	i386	dup3			sys_dup3
--331	i386	pipe2			sys_pipe2
--332	i386	inotify_init1		sys_inotify_init1
--333	i386	preadv			sys_preadv			compat_sys_preadv
--334	i386	pwritev			sys_pwritev			compat_sys_pwritev
--335	i386	rt_tgsigqueueinfo	sys_rt_tgsigqueueinfo		compat_sys_rt_tgsigqueueinfo
--336	i386	perf_event_open		sys_perf_event_open
--337	i386	recvmmsg		sys_recvmmsg			compat_sys_recvmmsg
--338	i386	fanotify_init		sys_fanotify_init
--339	i386	fanotify_mark		sys_fanotify_mark		compat_sys_fanotify_mark
--340	i386	prlimit64		sys_prlimit64
--341	i386	name_to_handle_at	sys_name_to_handle_at
--342	i386	open_by_handle_at	sys_open_by_handle_at		compat_sys_open_by_handle_at
--343	i386	clock_adjtime		sys_clock_adjtime		compat_sys_clock_adjtime
--344	i386	syncfs			sys_syncfs
--345	i386	sendmmsg		sys_sendmmsg			compat_sys_sendmmsg
--346	i386	setns			sys_setns
--347	i386	process_vm_readv	sys_process_vm_readv		compat_sys_process_vm_readv
--348	i386	process_vm_writev	sys_process_vm_writev		compat_sys_process_vm_writev
--349	i386	kcmp			sys_kcmp
--350	i386	finit_module		sys_finit_module
--351	i386	sched_setattr		sys_sched_setattr
--352	i386	sched_getattr		sys_sched_getattr
--353	i386	renameat2		sys_renameat2
--354	i386	seccomp			sys_seccomp
--355	i386	getrandom		sys_getrandom
--356	i386	memfd_create		sys_memfd_create
--357	i386	bpf			sys_bpf
--358	i386	execveat		sys_execveat			compat_sys_execveat
--359	i386	socket			sys_socket
--360	i386	socketpair		sys_socketpair
--361	i386	bind			sys_bind
--362	i386	connect			sys_connect
--363	i386	listen			sys_listen
--364	i386	accept4			sys_accept4
--365	i386	getsockopt		sys_getsockopt			compat_sys_getsockopt
--366	i386	setsockopt		sys_setsockopt			compat_sys_setsockopt
--367	i386	getsockname		sys_getsockname
--368	i386	getpeername		sys_getpeername
--369	i386	sendto			sys_sendto
--370	i386	sendmsg			sys_sendmsg			compat_sys_sendmsg
--371	i386	recvfrom		sys_recvfrom			compat_sys_recvfrom
--372	i386	recvmsg			sys_recvmsg			compat_sys_recvmsg
--373	i386	shutdown		sys_shutdown
--374	i386	userfaultfd		sys_userfaultfd
--375	i386	membarrier		sys_membarrier
--376	i386	mlock2			sys_mlock2
--377	i386	copy_file_range		sys_copy_file_range
--378	i386	preadv2			sys_preadv2			compat_sys_preadv2
--379	i386	pwritev2		sys_pwritev2			compat_sys_pwritev2
--380	i386	pkey_mprotect		sys_pkey_mprotect
--381	i386	pkey_alloc		sys_pkey_alloc
--382	i386	pkey_free		sys_pkey_free
--383	i386	statx			sys_statx
--384	i386	arch_prctl		sys_arch_prctl			compat_sys_arch_prctl
-+292	i386	inotify_add_watch	sys_inotify_add_watch		__sys_ia32_inotify_add_watch
-+293	i386	inotify_rm_watch	sys_inotify_rm_watch		__sys_ia32_inotify_rm_watch
-+294	i386	migrate_pages		sys_migrate_pages		__sys_ia32_migrate_pages
-+295	i386	openat			sys_openat			__compat_sys_ia32_openat
-+296	i386	mkdirat			sys_mkdirat			__sys_ia32_mkdirat
-+297	i386	mknodat			sys_mknodat			__sys_ia32_mknodat
-+298	i386	fchownat		sys_fchownat			__sys_ia32_fchownat
-+299	i386	futimesat		sys_futimesat			__compat_sys_ia32_futimesat
-+300	i386	fstatat64		sys_fstatat64			__compat_sys_ia32_x86_fstatat
-+301	i386	unlinkat		sys_unlinkat			__sys_ia32_unlinkat
-+302	i386	renameat		sys_renameat			__sys_ia32_renameat
-+303	i386	linkat			sys_linkat			__sys_ia32_linkat
-+304	i386	symlinkat		sys_symlinkat			__sys_ia32_symlinkat
-+305	i386	readlinkat		sys_readlinkat			__sys_ia32_readlinkat
-+306	i386	fchmodat		sys_fchmodat			__sys_ia32_fchmodat
-+307	i386	faccessat		sys_faccessat			__sys_ia32_faccessat
-+308	i386	pselect6		sys_pselect6			__compat_sys_ia32_pselect6
-+309	i386	ppoll			sys_ppoll			__compat_sys_ia32_ppoll
-+310	i386	unshare			sys_unshare			__sys_ia32_unshare
-+311	i386	set_robust_list		sys_set_robust_list		__compat_sys_ia32_set_robust_list
-+312	i386	get_robust_list		sys_get_robust_list		__compat_sys_ia32_get_robust_list
-+313	i386	splice			sys_splice			__sys_ia32_splice
-+314	i386	sync_file_range		sys_sync_file_range		__compat_sys_ia32_x86_sync_file_range
-+315	i386	tee			sys_tee				__sys_ia32_tee
-+316	i386	vmsplice		sys_vmsplice			__compat_sys_ia32_vmsplice
-+317	i386	move_pages		sys_move_pages			__compat_sys_ia32_move_pages
-+318	i386	getcpu			sys_getcpu			__sys_ia32_getcpu
-+319	i386	epoll_pwait		sys_epoll_pwait			__sys_ia32_epoll_pwait
-+320	i386	utimensat		sys_utimensat			__compat_sys_ia32_utimensat
-+321	i386	signalfd		sys_signalfd			__compat_sys_ia32_signalfd
-+322	i386	timerfd_create		sys_timerfd_create		__sys_ia32_timerfd_create
-+323	i386	eventfd			sys_eventfd			__sys_ia32_eventfd
-+324	i386	fallocate		sys_fallocate			__compat_sys_ia32_x86_fallocate
-+325	i386	timerfd_settime		sys_timerfd_settime		__compat_sys_ia32_timerfd_settime
-+326	i386	timerfd_gettime		sys_timerfd_gettime		__compat_sys_ia32_timerfd_gettime
-+327	i386	signalfd4		sys_signalfd4			__compat_sys_ia32_signalfd4
-+328	i386	eventfd2		sys_eventfd2			__sys_ia32_eventfd2
-+329	i386	epoll_create1		sys_epoll_create1		__sys_ia32_epoll_create1
-+330	i386	dup3			sys_dup3			__sys_ia32_dup3
-+331	i386	pipe2			sys_pipe2			__sys_ia32_pipe2
-+332	i386	inotify_init1		sys_inotify_init1		__sys_ia32_inotify_init1
-+333	i386	preadv			sys_preadv			__compat_sys_ia32_preadv
-+334	i386	pwritev			sys_pwritev			__compat_sys_ia32_pwritev
-+335	i386	rt_tgsigqueueinfo	sys_rt_tgsigqueueinfo		__compat_sys_ia32_rt_tgsigqueueinfo
-+336	i386	perf_event_open		sys_perf_event_open		__sys_ia32_perf_event_open
-+337	i386	recvmmsg		sys_recvmmsg			__compat_sys_ia32_recvmmsg
-+338	i386	fanotify_init		sys_fanotify_init		__sys_ia32_fanotify_init
-+339	i386	fanotify_mark		sys_fanotify_mark		__compat_sys_ia32_fanotify_mark
-+340	i386	prlimit64		sys_prlimit64			__sys_ia32_prlimit64
-+341	i386	name_to_handle_at	sys_name_to_handle_at		__sys_ia32_name_to_handle_at
-+342	i386	open_by_handle_at	sys_open_by_handle_at		__compat_sys_ia32_open_by_handle_at
-+343	i386	clock_adjtime		sys_clock_adjtime		__compat_sys_ia32_clock_adjtime
-+344	i386	syncfs			sys_syncfs			__sys_ia32_syncfs
-+345	i386	sendmmsg		sys_sendmmsg			__compat_sys_ia32_sendmmsg
-+346	i386	setns			sys_setns			__sys_ia32_setns
-+347	i386	process_vm_readv	sys_process_vm_readv		__compat_sys_ia32_process_vm_readv
-+348	i386	process_vm_writev	sys_process_vm_writev		__compat_sys_ia32_process_vm_writev
-+349	i386	kcmp			sys_kcmp			__sys_ia32_kcmp
-+350	i386	finit_module		sys_finit_module		__sys_ia32_finit_module
-+351	i386	sched_setattr		sys_sched_setattr		__sys_ia32_sched_setattr
-+352	i386	sched_getattr		sys_sched_getattr		__sys_ia32_sched_getattr
-+353	i386	renameat2		sys_renameat2			__sys_ia32_renameat2
-+354	i386	seccomp			sys_seccomp			__sys_ia32_seccomp
-+355	i386	getrandom		sys_getrandom			__sys_ia32_getrandom
-+356	i386	memfd_create		sys_memfd_create		__sys_ia32_memfd_create
-+357	i386	bpf			sys_bpf				__sys_ia32_bpf
-+358	i386	execveat		sys_execveat			__compat_sys_ia32_execveat
-+359	i386	socket			sys_socket			__sys_ia32_socket
-+360	i386	socketpair		sys_socketpair			__sys_ia32_socketpair
-+361	i386	bind			sys_bind			__sys_ia32_bind
-+362	i386	connect			sys_connect			__sys_ia32_connect
-+363	i386	listen			sys_listen			__sys_ia32_listen
-+364	i386	accept4			sys_accept4			__sys_ia32_accept4
-+365	i386	getsockopt		sys_getsockopt			__compat_sys_ia32_getsockopt
-+366	i386	setsockopt		sys_setsockopt			__compat_sys_ia32_setsockopt
-+367	i386	getsockname		sys_getsockname			__sys_ia32_getsockname
-+368	i386	getpeername		sys_getpeername			__sys_ia32_getpeername
-+369	i386	sendto			sys_sendto			__sys_ia32_sendto
-+370	i386	sendmsg			sys_sendmsg			__compat_sys_ia32_sendmsg
-+371	i386	recvfrom		sys_recvfrom			__compat_sys_ia32_recvfrom
-+372	i386	recvmsg			sys_recvmsg			__compat_sys_ia32_recvmsg
-+373	i386	shutdown		sys_shutdown			__sys_ia32_shutdown
-+374	i386	userfaultfd		sys_userfaultfd			__sys_ia32_userfaultfd
-+375	i386	membarrier		sys_membarrier			__sys_ia32_membarrier
-+376	i386	mlock2			sys_mlock2			__sys_ia32_mlock2
-+377	i386	copy_file_range		sys_copy_file_range		__sys_ia32_copy_file_range
-+378	i386	preadv2			sys_preadv2			__compat_sys_ia32_preadv2
-+379	i386	pwritev2		sys_pwritev2			__compat_sys_ia32_pwritev2
-+380	i386	pkey_mprotect		sys_pkey_mprotect		__sys_ia32_pkey_mprotect
-+381	i386	pkey_alloc		sys_pkey_alloc			__sys_ia32_pkey_alloc
-+382	i386	pkey_free		sys_pkey_free			__sys_ia32_pkey_free
-+383	i386	statx			sys_statx			__sys_ia32_statx
-+384	i386	arch_prctl		sys_arch_prctl			__compat_sys_ia32_arch_prctl
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 5aef183e2f85..a83c0f7f462f 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -342,41 +342,43 @@
+ 	 * No point in checking CS -- the only way to get here is a user mode
+@@ -230,38 +228,22 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
+ 	ret = -EFAULT;
+ 	switch (vsyscall_nr) {
+ 	case 0:
+-#ifdef CONFIG_SYSCALL_PTREGS
+ 		/* this decodes regs->di and regs->si on its own */
+ 		ret = sys_gettimeofday(regs);
+-#else
+-		ret = sys_gettimeofday(
+-			(struct timeval __user *)regs->di,
+-			(struct timezone __user *)regs->si);
+-#endif /* CONFIG_SYSCALL_PTREGS */
+ 		break;
  
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
--# for native 64-bit operation.
-+# for native 64-bit operation. The __compat_sys_x32 stubs are created
-+# on-the-fly for compat_sys_*() compatibility system calls if X86_X32
-+# is defined.
- #
--512	x32	rt_sigaction		compat_sys_rt_sigaction
-+512	x32	rt_sigaction		__compat_sys_x32_rt_sigaction
- 513	x32	rt_sigreturn		sys32_x32_rt_sigreturn
--514	x32	ioctl			compat_sys_ioctl
--515	x32	readv			compat_sys_readv
--516	x32	writev			compat_sys_writev
--517	x32	recvfrom		compat_sys_recvfrom
--518	x32	sendmsg			compat_sys_sendmsg
--519	x32	recvmsg			compat_sys_recvmsg
--520	x32	execve			compat_sys_execve/ptregs
--521	x32	ptrace			compat_sys_ptrace
--522	x32	rt_sigpending		compat_sys_rt_sigpending
--523	x32	rt_sigtimedwait		compat_sys_rt_sigtimedwait
--524	x32	rt_sigqueueinfo		compat_sys_rt_sigqueueinfo
--525	x32	sigaltstack		compat_sys_sigaltstack
--526	x32	timer_create		compat_sys_timer_create
--527	x32	mq_notify		compat_sys_mq_notify
--528	x32	kexec_load		compat_sys_kexec_load
--529	x32	waitid			compat_sys_waitid
--530	x32	set_robust_list		compat_sys_set_robust_list
--531	x32	get_robust_list		compat_sys_get_robust_list
--532	x32	vmsplice		compat_sys_vmsplice
--533	x32	move_pages		compat_sys_move_pages
--534	x32	preadv			compat_sys_preadv64
--535	x32	pwritev			compat_sys_pwritev64
--536	x32	rt_tgsigqueueinfo	compat_sys_rt_tgsigqueueinfo
--537	x32	recvmmsg		compat_sys_recvmmsg
--538	x32	sendmmsg		compat_sys_sendmmsg
--539	x32	process_vm_readv	compat_sys_process_vm_readv
--540	x32	process_vm_writev	compat_sys_process_vm_writev
--541	x32	setsockopt		compat_sys_setsockopt
--542	x32	getsockopt		compat_sys_getsockopt
--543	x32	io_setup		compat_sys_io_setup
--544	x32	io_submit		compat_sys_io_submit
--545	x32	execveat		compat_sys_execveat/ptregs
--546	x32	preadv2			compat_sys_preadv64v2
--547	x32	pwritev2		compat_sys_pwritev64v2
-+514	x32	ioctl			__compat_sys_x32_ioctl
-+515	x32	readv			__compat_sys_x32_readv
-+516	x32	writev			__compat_sys_x32_writev
-+517	x32	recvfrom		__compat_sys_x32_recvfrom
-+518	x32	sendmsg			__compat_sys_x32_sendmsg
-+519	x32	recvmsg			__compat_sys_x32_recvmsg
-+520	x32	execve			__compat_sys_x32_execve/ptregs
-+521	x32	ptrace			__compat_sys_x32_ptrace
-+522	x32	rt_sigpending		__compat_sys_x32_rt_sigpending
-+523	x32	rt_sigtimedwait		__compat_sys_x32_rt_sigtimedwait
-+524	x32	rt_sigqueueinfo		__compat_sys_x32_rt_sigqueueinfo
-+525	x32	sigaltstack		__compat_sys_x32_sigaltstack
-+526	x32	timer_create		__compat_sys_x32_timer_create
-+527	x32	mq_notify		__compat_sys_x32_mq_notify
-+528	x32	kexec_load		__compat_sys_x32_kexec_load
-+529	x32	waitid			__compat_sys_x32_waitid
-+530	x32	set_robust_list		__compat_sys_x32_set_robust_list
-+531	x32	get_robust_list		__compat_sys_x32_get_robust_list
-+532	x32	vmsplice		__compat_sys_x32_vmsplice
-+533	x32	move_pages		__compat_sys_x32_move_pages
-+534	x32	preadv			__compat_sys_x32_preadv64
-+535	x32	pwritev			__compat_sys_x32_pwritev64
-+536	x32	rt_tgsigqueueinfo	__compat_sys_x32_rt_tgsigqueueinfo
-+537	x32	recvmmsg		__compat_sys_x32_recvmmsg
-+538	x32	sendmmsg		__compat_sys_x32_sendmmsg
-+539	x32	process_vm_readv	__compat_sys_x32_process_vm_readv
-+540	x32	process_vm_writev	__compat_sys_x32_process_vm_writev
-+541	x32	setsockopt		__compat_sys_x32_setsockopt
-+542	x32	getsockopt		__compat_sys_x32_getsockopt
-+543	x32	io_setup		__compat_sys_x32_io_setup
-+544	x32	io_submit		__compat_sys_x32_io_submit
-+545	x32	execveat		__compat_sys_x32_execveat/ptregs
-+546	x32	preadv2			__compat_sys_x32_preadv64v2
-+547	x32	pwritev2		__compat_sys_x32_pwritev64v2
-diff --git a/arch/x86/include/asm/syscall_wrapper.h b/arch/x86/include/asm/syscall_wrapper.h
-index 702bdee377af..49d7e4970110 100644
---- a/arch/x86/include/asm/syscall_wrapper.h
-+++ b/arch/x86/include/asm/syscall_wrapper.h
-@@ -6,6 +6,111 @@
- #ifndef _ASM_X86_SYSCALL_WRAPPER_H
- #define _ASM_X86_SYSCALL_WRAPPER_H
+ 	case 1:
+-#ifdef CONFIG_SYSCALL_PTREGS
+ 		/* this decodes regs->di on its own */
+ 		ret = sys_time(regs);
+-#else
+-		ret = sys_time((time_t __user *)regs->di);
+-#endif /* CONFIG_SYSCALL_PTREGS */
+ 		break;
  
-+/* Mapping of registers to parameters for syscalls on x86-64 and x32 */
-+#define SC_X86_64_REGS_TO_ARGS(x, ...)					\
-+	__MAP(x,__SC_ARGS						\
-+		,,regs->di,,regs->si,,regs->dx				\
-+		,,regs->r10,,regs->r8,,regs->r9)			\
-+
-+/* Mapping of registers to parameters for syscalls on i386 */
-+#define SC_IA32_REGS_TO_ARGS(x, ...)					\
-+	__MAP(x,__SC_ARGS						\
-+	      ,,(unsigned int)regs->bx,,(unsigned int)regs->cx		\
-+	      ,,(unsigned int)regs->dx,,(unsigned int)regs->si		\
-+	      ,,(unsigned int)regs->di,,(unsigned int)regs->bp)
-+
-+#ifdef CONFIG_IA32_EMULATION
-+/*
-+ * For IA32 emulation, we need to handle "compat" syscalls *and* create
-+ * additional wrappers (aptly named __sys_ia32_sys_xyzzy) which decode the
-+ * ia32 regs in the proper order for shared or "common" syscalls. As some
-+ * syscalls may not be implemented, we need to expand COND_SYSCALL in
-+ * kernel/sys_ni.c and SYS_NI in kernel/time/posix-stubs.c to cover this
-+ * case as well.
-+ */
-+#define COMPAT_SC_IA32_STUBx(x, name, ...)				\
-+	asmlinkage long __compat_sys_ia32##name(const struct pt_regs *regs);\
-+	ALLOW_ERROR_INJECTION(__compat_sys_ia32##name, ERRNO);		\
-+	asmlinkage long __compat_sys_ia32##name(const struct pt_regs *regs)\
-+	{								\
-+		return c_SyS##name(SC_IA32_REGS_TO_ARGS(x,__VA_ARGS__));\
-+	}								\
-+
-+#define SC_IA32_WRAPPERx(x, name, ...)					\
-+	asmlinkage long __sys_ia32##name(const struct pt_regs *regs);	\
-+	ALLOW_ERROR_INJECTION(__sys_ia32##name, ERRNO);			\
-+	asmlinkage long __sys_ia32##name(const struct pt_regs *regs)	\
-+	{								\
-+		return SyS##name(SC_IA32_REGS_TO_ARGS(x,__VA_ARGS__));	\
-+	}
-+
-+#define COND_SYSCALL(name)						\
-+	cond_syscall(sys_##name);					\
-+	cond_syscall(__sys_ia32_##name)
-+
-+#define SYS_NI(name)							\
-+	SYSCALL_ALIAS(sys_##name, sys_ni_posix_timers);			\
-+	SYSCALL_ALIAS(__sys_ia32_##name, sys_ni_posix_timers)
-+
-+#else /* CONFIG_IA32_EMULATION */
-+#define COMPAT_SC_IA32_STUBx(x, name, ...)
-+#define SC_IA32_WRAPPERx(x, fullname, name, ...)
-+#endif /* CONFIG_IA32_EMULATION */
-+
-+
-+#ifdef CONFIG_X86_X32
-+/*
-+ * For the x32 ABI, we need to create a stub for compat_sys_*() which is aware
-+ * of the x86-64-style parameter ordering of x32 syscalls. The syscalls common
-+ * with x86_64 obviously do not need such care.
-+ */
-+#define COMPAT_SC_X32_STUBx(x, name, ...)				\
-+	asmlinkage long __compat_sys_x32##name(const struct pt_regs *regs);\
-+	ALLOW_ERROR_INJECTION(__compat_sys_x32##name, ERRNO);		\
-+	asmlinkage long __compat_sys_x32##name(const struct pt_regs *regs)\
-+	{								\
-+		return c_SyS##name(SC_X86_64_REGS_TO_ARGS(x,__VA_ARGS__));\
-+	}								\
-+
-+#else /* CONFIG_X86_X32 */
-+#define COMPAT_SC_X32_STUBx(x, name, ...)
-+#endif /* CONFIG_X86_X32 */
-+
-+
-+#ifdef CONFIG_COMPAT
-+/*
-+ * Compat means IA32_EMULATION and/or X86_X32. As they use a different
-+ * mapping of registers to parameters, we need to generate stubs for each
-+ * of them. There is no need to implement COMPAT_SYSCALL_DEFINE0, as it is
-+ * unused on x86.
-+ */
-+#define COMPAT_SYSCALL_DEFINEx(x, name, ...)				\
-+	static long c_SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
-+	static inline long C_SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
-+	COMPAT_SC_IA32_STUBx(x, name, __VA_ARGS__)			\
-+	COMPAT_SC_X32_STUBx(x, name, __VA_ARGS__)			\
-+	static long c_SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__))		\
-+	{								\
-+		return C_SYSC##name(__MAP(x,__SC_DELOUSE,__VA_ARGS__));	\
-+	}								\
-+	static inline long C_SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__))
-+
-+/*
-+ * As some compat syscalls may not be implemented, we need to expand
-+ * COND_SYSCALL_COMPAT in kernel/sys_ni.c and COMPAT_SYS_NI in
-+ * kernel/time/posix-stubs.c to cover this case as well.
-+ */
-+#define COND_SYSCALL_COMPAT(name) 					\
-+	cond_syscall(__compat_sys_ia32_##name);				\
-+	cond_syscall(__compat_sys_x32_##name)
-+
-+#define COMPAT_SYS_NI(name)						\
-+	SYSCALL_ALIAS(__compat_sys_ia32_##name, sys_ni_posix_timers);	\
-+	SYSCALL_ALIAS(__compat_sys_x32_##name, sys_ni_posix_timers)
-+
-+#endif /* CONFIG_COMPAT */
-+
-+
- /*
-  * Instead of the generic __SYSCALL_DEFINEx() definition, this macro takes
-  * struct pt_regs *regs as the only argument of the syscall stub named
-@@ -34,9 +139,14 @@
-  * This approach avoids leaking random user-provided register content down
-  * the call chain.
-  *
-+ * If IA32_EMULATION is enabled, this macro generates an additional wrapper
-+ * named __sys_ia32_*() which decodes the struct pt_regs *regs according
-+ * to the i386 calling convention (bx, cx, dx, si, di, bp).
-+ *
-  * As the generic SYSCALL_DEFINE0() macro does not decode any parameters for
-  * obvious reasons, and passing struct pt_regs *regs to it in %rdi does not
-- * hurt, there is no need to override it.
-+ * hurt, there is no need to override it, or to define it differently for
-+ * IA32_EMULATION.
+ 	case 2:
+-#ifdef CONFIG_SYSCALL_PTREGS
+ 		/* while we could clobber regs->dx, we didn't in the past... */
+ 		orig_dx = regs->dx;
+ 		regs->dx = 0;
+ 		/* this decodes regs->di, regs->si and regs->dx on its own */
+ 		ret = sys_getcpu(regs);
+ 		regs->dx = orig_dx;
+-#else
+-		ret = sys_getcpu((unsigned __user *)regs->di,
+-				 (unsigned __user *)regs->si,
+-				 NULL);
+-#endif /* CONFIG_SYSCALL_PTREGS */
+ 		break;
+ 	}
+ 
+diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
+index 17c62373a6f9..d653139857af 100644
+--- a/arch/x86/include/asm/syscall.h
++++ b/arch/x86/include/asm/syscall.h
+@@ -20,13 +20,13 @@
+ #include <asm/thread_info.h>	/* for TS_COMPAT */
+ #include <asm/unistd.h>
+ 
+-#ifdef CONFIG_SYSCALL_PTREGS
++#ifdef CONFIG_X86_64
+ typedef asmlinkage long (*sys_call_ptr_t)(const struct pt_regs *);
+ #else
+ typedef asmlinkage long (*sys_call_ptr_t)(unsigned long, unsigned long,
+ 					  unsigned long, unsigned long,
+ 					  unsigned long, unsigned long);
+-#endif /* CONFIG_SYSCALL_PTREGS */
++#endif /* CONFIG_X86_64 */
+ extern const sys_call_ptr_t sys_call_table[];
+ 
+ #if defined(CONFIG_X86_32)
+diff --git a/arch/x86/include/asm/syscalls.h b/arch/x86/include/asm/syscalls.h
+index e4ad93c05f02..d4d18d94695c 100644
+--- a/arch/x86/include/asm/syscalls.h
++++ b/arch/x86/include/asm/syscalls.h
+@@ -19,10 +19,10 @@
+ /* kernel/ioport.c */
+ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on);
+ 
+-#ifndef CONFIG_SYSCALL_PTREGS
+-/*
+- * If CONFIG_SYSCALL_PTREGS is enabled, a different syscall calling convention
+- * is used. Do not include these -- invalid -- prototypes then
++#ifdef CONFIG_X86_32
++/* 
++ * These definitions are only valid on pure 32-bit systems; x86-64 uses a
++ * different syscall calling convention
   */
- #define __SYSCALL_DEFINEx(x, name, ...)					\
- 	asmlinkage long sys##name(const struct pt_regs *regs);		\
-@@ -45,10 +155,9 @@
- 	static inline long SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__));	\
- 	asmlinkage long sys##name(const struct pt_regs *regs)		\
- 	{								\
--		return SyS##name(__MAP(x,__SC_ARGS			\
--			,,regs->di,,regs->si,,regs->dx			\
--			,,regs->r10,,regs->r8,,regs->r9));		\
-+		return SyS##name(SC_X86_64_REGS_TO_ARGS(x,__VA_ARGS__));\
- 	}								\
-+	SC_IA32_WRAPPERx(x, name, __VA_ARGS__)				\
- 	static long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__))		\
- 	{								\
- 		long ret = SYSC##name(__MAP(x,__SC_CAST,__VA_ARGS__));	\
+ asmlinkage long sys_ioperm(unsigned long, unsigned long, int);
+ asmlinkage long sys_iopl(unsigned int);
+@@ -38,7 +38,6 @@ asmlinkage long sys_set_thread_area(struct user_desc __user *);
+ asmlinkage long sys_get_thread_area(struct user_desc __user *);
+ 
+ /* X86_32 only */
+-#ifdef CONFIG_X86_32
+ 
+ /* kernel/signal.c */
+ asmlinkage long sys_sigreturn(void);
+@@ -48,16 +47,5 @@ struct vm86_struct;
+ asmlinkage long sys_vm86old(struct vm86_struct __user *);
+ asmlinkage long sys_vm86(unsigned long, unsigned long);
+ 
+-#else /* CONFIG_X86_32 */
+-
+-/* X86_64 only */
+-/* kernel/process_64.c */
+-asmlinkage long sys_arch_prctl(int, unsigned long);
+-
+-/* kernel/sys_x86_64.c */
+-asmlinkage long sys_mmap(unsigned long, unsigned long, unsigned long,
+-			 unsigned long, unsigned long, unsigned long);
+-
+ #endif /* CONFIG_X86_32 */
+-#endif /* CONFIG_SYSCALL_PTREGS */
+ #endif /* _ASM_X86_SYSCALLS_H */
