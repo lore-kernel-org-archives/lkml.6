@@ -1,80 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751591AbeDFSQD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 14:16:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58638 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751201AbeDFSQB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:16:01 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 904B860C64
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
- readX()
-To: linux-mips@linux-mips.org, arnd@arndb.de, timur@codeaurora.org,
-        sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>, linux-kernel@vger.kernel.org
-References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
- <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
- <41e184ae-689e-93c9-7b15-0c68bd624130@codeaurora.org>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <b748fdcb-e09f-9fe3-dc74-30b6a7d40cbe@codeaurora.org>
-Date: Fri, 6 Apr 2018 14:15:57 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751579AbeDFSUX convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 14:20:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40564 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750807AbeDFSUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:20:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25D2120B80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <41e184ae-689e-93c9-7b15-0c68bd624130@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+To: Abel Vesa <abel.vesa@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
+        Irina Tirdea <irina.tirdea@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter Chen <peter.chen@freescale.com>,
+        Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1522219599-10831-2-git-send-email-abel.vesa@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        Anson Huang <anson.huang@nxp.com>,
+        Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
+        Abel Vesa <abelvesa@linux.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+References: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
+ <1522219599-10831-2-git-send-email-abel.vesa@nxp.com>
+Message-ID: <152303880853.143116.713341287544981271@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [RESEND 1/4] clk: imx7d: Add USB clock information
+Date: Fri, 06 Apr 2018 11:20:08 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/5/2018 9:34 PM, Sinan Kaya wrote:
-> On 4/3/2018 8:55 AM, Sinan Kaya wrote:
->> While a barrier is present in writeX() function before the register write,
->> a similar barrier is missing in the readX() function after the register
->> read. This could allow memory accesses following readX() to observe
->> stale data.
->>
->> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->> Reported-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>  arch/mips/include/asm/io.h | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
->> index fd00ddaf..6ac502f 100644
->> --- a/arch/mips/include/asm/io.h
->> +++ b/arch/mips/include/asm/io.h
->> @@ -377,6 +377,7 @@ static inline type pfx##read##bwlq(const volatile void __iomem *mem)	\
->>  		BUG();							\
->>  	}								\
->>  									\
->> +	rmb();								\
->>  	return pfx##ioswab##bwlq(__mem, __val);				\
->>  }
->>  
->>
+Quoting Abel Vesa (2018-03-27 23:46:35)
+> From: Peter Chen <peter.chen@freescale.com>
 > 
-> Can we get these merged to 4.17? 
+> Add USB clock information, the pll_usb_main_clk is USB_PLL at CCM
+> which is the output of USBOTG2 PHY.
 > 
-> There was a consensus to fix the architectures having API violation issues.
-> https://www.mail-archive.com/netdev@vger.kernel.org/msg225971.html
-> 
-> 
+> Signed-off-by: Peter Chen <peter.chen@freescale.com>
+> Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
 
-Any news on the MIPS front? Is this something that Arnd can merge? or does it have
-to go through the MIPS tree.
-
-It feels like the MIPS is dead since nobody replied to me in the last few weeks on
-a very important topic.
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Applied to clk-next
