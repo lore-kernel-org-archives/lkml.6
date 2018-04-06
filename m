@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+G2G2jdBczL7pKVbyUdG4OLTsUYOQXWUBob82PrG3PwW1AbR1aNUWpUseuwK+Va6daDfAQ
-ARC-Seal: i=1; a=rsa-sha256; t=1523021554; cv=none;
+X-Google-Smtp-Source: AIpwx48ph2MJ+ZIHLxzeaT/8v50OKatj4qm1vJ8TP+k/vAJwFu+3uRAfdw8cNvQtcbamwCGW3qbQ
+ARC-Seal: i=1; a=rsa-sha256; t=1523021551; cv=none;
         d=google.com; s=arc-20160816;
-        b=z4eiX+s5TlnOWTZ/Ut3JZlDDMwMMkHHjCvyi0n1/eeBcEU726/X8aNBUFPZe81ynHs
-         0oyQBshXA2y6VWOThOVVxL75JU7EC9ZbIkKByExgkNFxo4PJ1Sj+KrUAvTlmZRpkVAXe
-         SmsOiYBO9wbY94piDblgK7HXPg5j7WbQLCm+umovg4pyP2l+0NEdPvfP7wBeQJNfjYCB
-         E2FG97ylC2ORMqC9dichB7zMKHg5SGDyZEFXLtQHpMcyetHoV8z/cqkUZcc+Il73/0Tj
-         8bvfWp/FE8WdoEi+JJ+cIJhkqoOEF2xtBYDdUm2VVeYaLhgyf463oAgGq0cqXJPU/978
-         K3ew==
+        b=FP5KC81tVe/fte/Em9h4r8UCoNVTrU6cjIVfjrNiLF3SpzX7rfDXMOoDCwCNHJRiTt
+         ETUtSP10nPn9Asy/PwnOus6oZCEg6NDpH/82Eh/abiLlV89f2jYawvJDJrVFpO6i+w4V
+         1TG7ZYNngwdBSnZn1DQj4LiWHgXOlL1cFk2NCyqpzKYHK7iu/RqmXakLk7EbEOy6ueLL
+         g1WrZDt5RRbhbF/UNm4vPZFg/mqKqjrrv5rnT2edzGArdmgRtAX7rfk9r1qFwK2HpFQ0
+         3IJPtlPBAdCxIZZmT0ax304b5lZDhXlSpRJdZuSO1v61JRPC9P1w/h5BlNQ+k4La7ety
+         yocg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WPR0t3Y319y0Osk77ODrNQKLqXoitV/RDc0W4H/UqEs=;
-        b=D4sExH7KfezKuTaRon6FzJheQSlWBDvK4B7Ydnc5y6hzxwgCgkKxcqxS3sSmWI9b0L
-         CWCNtCufJDTp6mlVY3ExND/RQ8QBGykxFcpPA7Bv7aLLZKa5T+ZcmbQjrxSMKtxbMafR
-         dL+ZXjyodHML9C7xlCrJSxoED647CFSI3lb3J4wp01JaOM+rUVWZyxp0JpPeIIOmOfUj
-         rSKpDH8pCPiIXfgMz2J+qbyCGaEzD6kKCt+G/VzQKEWb5LwwSHPrIoM0c+4O+yMmRP+v
-         r62IS99r3+B3KP7ZvFj5E0zM1N6Q0dpu/1u5bspOpOvUqFn1xBLOjlBa9D661v4TY+UZ
-         THkA==
+        bh=WUz1t+xNHE6o8GRjYm2YmRK/PqPl2exd6S41euWGvbc=;
+        b=uMpP8A7h4U9qq9LdPdPsS8qVuEea4GB0CwAfY3lzwWLQH8JYAGLD8YjeydVcJ5Udh7
+         D2F/MHgNVpXMYPfzf0W+f9m931wSMrTCkbyh3jI4Hzyh+nZyZWp7/VowF3HAlxGCTaSv
+         ky9my5M85Toe+jCmbIZhqGKdvgVdpBxCeVbUhhlSuP/iFlkpayovJEwb2RVExmH5BqTg
+         oz0IRfnibSTa2q9GCi/4Zqgtfxu36S6EsWxf1CLGlqNbe/OrQYVUfQlIOOcoMVYuwiYb
+         Qy/+arTL/Zk4r3NeACVSJEnsiyH7iEAJq0jb+1zw+uEjf7zXaLUKSoXJGoXQo3f0ZCTp
+         89Ag==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,23 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Frank Mori Hess <fmh6jj@gmail.com>,
-	Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.4 54/72] staging: comedi: ni_mio_common: ack ai fifo error interrupts.
-Date: Fri,  6 Apr 2018 15:23:55 +0200
-Message-Id: <20180406084309.806259873@linuxfoundation.org>
+	Jann Horn <jann@thejh.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux API <linux-api@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tycho Andersen <tycho.andersen@canonical.com>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 53/72] fs/proc: Stop trying to report thread stacks
+Date: Fri,  6 Apr 2018 15:23:54 +0200
+Message-Id: <20180406084309.688792227@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -40,8 +52,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003849053166920?=
-X-GMAIL-MSGID: =?utf-8?q?1597003849053166920?=
+X-GMAIL-THRID: =?utf-8?q?1597003624226103418?=
+X-GMAIL-MSGID: =?utf-8?q?1597003846249965315?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,31 +61,188 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Frank Mori Hess <fmh6jj@gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit e1d9fc04c41840a4688ef6ce90b6dcca157ea4d7 upstream.
+commit b18cb64ead400c01bf1580eeba330ace51f8087d upstream.
 
-Ack ai fifo error interrupts in interrupt handler to clear interrupt
-after fifo overflow.  It should prevent lock-ups after the ai fifo
-overflows.
+This reverts more of:
 
-Cc: <stable@vger.kernel.org> # v4.2+
-Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+  b76437579d13 ("procfs: mark thread stack correctly in proc/<pid>/maps")
+
+... which was partially reverted by:
+
+  65376df58217 ("proc: revert /proc/<pid>/maps [stack:TID] annotation")
+
+Originally, /proc/PID/task/TID/maps was the same as /proc/TID/maps.
+
+In current kernels, /proc/PID/maps (or /proc/TID/maps even for
+threads) shows "[stack]" for VMAs in the mm's stack address range.
+
+In contrast, /proc/PID/task/TID/maps uses KSTK_ESP to guess the
+target thread's stack's VMA.  This is racy, probably returns garbage
+and, on arches with CONFIG_TASK_INFO_IN_THREAD=y, is also crash-prone:
+KSTK_ESP is not safe to use on tasks that aren't known to be running
+ordinary process-context kernel code.
+
+This patch removes the difference and just shows "[stack]" for VMAs
+in the mm's stack range.  This is IMO much more sensible -- the
+actual "stack" address really is treated specially by the VM code,
+and the current thread stack isn't even well-defined for programs
+that frequently switch stacks on their own.
+
+Reported-by: Jann Horn <jann@thejh.net>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux API <linux-api@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tycho Andersen <tycho.andersen@canonical.com>
+Link: http://lkml.kernel.org/r/3e678474ec14e0a0ec34c611016753eea2e1b8ba.1475257877.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/comedi/drivers/ni_mio_common.c |    2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/filesystems/proc.txt |   26 --------------------------
+ fs/proc/task_mmu.c                 |   29 ++++++++++-------------------
+ fs/proc/task_nommu.c               |   26 +++++++++-----------------
+ 3 files changed, 19 insertions(+), 62 deletions(-)
 
---- a/drivers/staging/comedi/drivers/ni_mio_common.c
-+++ b/drivers/staging/comedi/drivers/ni_mio_common.c
-@@ -1348,6 +1348,8 @@ static void ack_a_interrupt(struct comed
- 		ack |= NISTC_INTA_ACK_AI_START;
- 	if (a_status & NISTC_AI_STATUS1_STOP)
- 		ack |= NISTC_INTA_ACK_AI_STOP;
-+	if (a_status & NISTC_AI_STATUS1_OVER)
-+		ack |= NISTC_INTA_ACK_AI_ERR;
- 	if (ack)
- 		ni_stc_writew(dev, ack, NISTC_INTA_ACK_REG);
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -383,32 +383,6 @@ is not associated with a file:
+ 
+  or if empty, the mapping is anonymous.
+ 
+-The /proc/PID/task/TID/maps is a view of the virtual memory from the viewpoint
+-of the individual tasks of a process. In this file you will see a mapping marked
+-as [stack] if that task sees it as a stack. Hence, for the example above, the
+-task-level map, i.e. /proc/PID/task/TID/maps for thread 1001 will look like this:
+-
+-08048000-08049000 r-xp 00000000 03:00 8312       /opt/test
+-08049000-0804a000 rw-p 00001000 03:00 8312       /opt/test
+-0804a000-0806b000 rw-p 00000000 00:00 0          [heap]
+-a7cb1000-a7cb2000 ---p 00000000 00:00 0
+-a7cb2000-a7eb2000 rw-p 00000000 00:00 0
+-a7eb2000-a7eb3000 ---p 00000000 00:00 0
+-a7eb3000-a7ed5000 rw-p 00000000 00:00 0          [stack]
+-a7ed5000-a8008000 r-xp 00000000 03:00 4222       /lib/libc.so.6
+-a8008000-a800a000 r--p 00133000 03:00 4222       /lib/libc.so.6
+-a800a000-a800b000 rw-p 00135000 03:00 4222       /lib/libc.so.6
+-a800b000-a800e000 rw-p 00000000 00:00 0
+-a800e000-a8022000 r-xp 00000000 03:00 14462      /lib/libpthread.so.0
+-a8022000-a8023000 r--p 00013000 03:00 14462      /lib/libpthread.so.0
+-a8023000-a8024000 rw-p 00014000 03:00 14462      /lib/libpthread.so.0
+-a8024000-a8027000 rw-p 00000000 00:00 0
+-a8027000-a8043000 r-xp 00000000 03:00 8317       /lib/ld-linux.so.2
+-a8043000-a8044000 r--p 0001b000 03:00 8317       /lib/ld-linux.so.2
+-a8044000-a8045000 rw-p 0001c000 03:00 8317       /lib/ld-linux.so.2
+-aff35000-aff4a000 rw-p 00000000 00:00 0
+-ffffe000-fffff000 r-xp 00000000 00:00 0          [vdso]
+-
+ The /proc/PID/smaps is an extension based on maps, showing the memory
+ consumption for each of the process's mappings. For each of mappings there
+ is a series of lines such as the following:
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -253,24 +253,15 @@ static int do_maps_open(struct inode *in
+  * /proc/PID/maps that is the stack of the main task.
+  */
+ static int is_stack(struct proc_maps_private *priv,
+-		    struct vm_area_struct *vma, int is_pid)
++		    struct vm_area_struct *vma)
+ {
+-	int stack = 0;
+-
+-	if (is_pid) {
+-		stack = vma->vm_start <= vma->vm_mm->start_stack &&
+-			vma->vm_end >= vma->vm_mm->start_stack;
+-	} else {
+-		struct inode *inode = priv->inode;
+-		struct task_struct *task;
+-
+-		rcu_read_lock();
+-		task = pid_task(proc_pid(inode), PIDTYPE_PID);
+-		if (task)
+-			stack = vma_is_stack_for_task(vma, task);
+-		rcu_read_unlock();
+-	}
+-	return stack;
++	/*
++	 * We make no effort to guess what a given thread considers to be
++	 * its "stack".  It's not even well-defined for programs written
++	 * languages like Go.
++	 */
++	return vma->vm_start <= vma->vm_mm->start_stack &&
++		vma->vm_end >= vma->vm_mm->start_stack;
  }
+ 
+ static void
+@@ -337,7 +328,7 @@ show_map_vma(struct seq_file *m, struct
+ 			goto done;
+ 		}
+ 
+-		if (is_stack(priv, vma, is_pid))
++		if (is_stack(priv, vma))
+ 			name = "[stack]";
+ 	}
+ 
+@@ -1560,7 +1551,7 @@ static int show_numa_map(struct seq_file
+ 		seq_file_path(m, file, "\n\t= ");
+ 	} else if (vma->vm_start <= mm->brk && vma->vm_end >= mm->start_brk) {
+ 		seq_puts(m, " heap");
+-	} else if (is_stack(proc_priv, vma, is_pid)) {
++	} else if (is_stack(proc_priv, vma)) {
+ 		seq_puts(m, " stack");
+ 	}
+ 
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -124,25 +124,17 @@ unsigned long task_statm(struct mm_struc
+ }
+ 
+ static int is_stack(struct proc_maps_private *priv,
+-		    struct vm_area_struct *vma, int is_pid)
++		    struct vm_area_struct *vma)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+-	int stack = 0;
+ 
+-	if (is_pid) {
+-		stack = vma->vm_start <= mm->start_stack &&
+-			vma->vm_end >= mm->start_stack;
+-	} else {
+-		struct inode *inode = priv->inode;
+-		struct task_struct *task;
+-
+-		rcu_read_lock();
+-		task = pid_task(proc_pid(inode), PIDTYPE_PID);
+-		if (task)
+-			stack = vma_is_stack_for_task(vma, task);
+-		rcu_read_unlock();
+-	}
+-	return stack;
++	/*
++	 * We make no effort to guess what a given thread considers to be
++	 * its "stack".  It's not even well-defined for programs written
++	 * languages like Go.
++	 */
++	return vma->vm_start <= mm->start_stack &&
++		vma->vm_end >= mm->start_stack;
+ }
+ 
+ /*
+@@ -184,7 +176,7 @@ static int nommu_vma_show(struct seq_fil
+ 	if (file) {
+ 		seq_pad(m, ' ');
+ 		seq_file_path(m, file, "");
+-	} else if (mm && is_stack(priv, vma, is_pid)) {
++	} else if (mm && is_stack(priv, vma)) {
+ 		seq_pad(m, ' ');
+ 		seq_printf(m, "[stack]");
+ 	}
