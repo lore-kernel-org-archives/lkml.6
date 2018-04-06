@@ -1,184 +1,485 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeDFKMR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 06:12:17 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52973 "EHLO
+        id S1752132AbeDFKNh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 06:13:37 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52274 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752034AbeDFKMO (ORCPT
+        with ESMTP id S1751492AbeDFKNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:12:14 -0400
-X-Google-Smtp-Source: AIpwx48UK2SniaxPgHCOXFgjuVkU/YSnZ0sEp3ADc+VkTIfO7mkw+DZdamBwNuX+CcIMuo2hDjR0fA==
-Subject: Re: [PATCH] ata: ahci-platform: add reset control support
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Patrice CHOTARD <patrice.chotard@st.com>, Tejun Heo <tj@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org"
-        <linux-mediatek@lists.infradead.org>
-References: <20180406134838.2ADC.4A936039@socionext.com>
- <22a2bcd7-eff5-c20f-e056-f5946e579d5e@redhat.com>
- <20180406183623.CA38.4A936039@socionext.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <68d50624-d31b-09cf-210e-9fb7c73b5df0@redhat.com>
-Date: Fri, 6 Apr 2018 12:12:11 +0200
+        Fri, 6 Apr 2018 06:13:35 -0400
+X-Google-Smtp-Source: AIpwx49oMdGBl0y1ngVIbhmXsudwUDUEp4tnRGfsUTWS9Qn914PD3blE4Wfwq2TVl5CXyuFcTf3H7g==
+Subject: Re: [Xen-devel] [PATCH v1] xen-blkfront: dynamic configuration of
+ per-vbd resources
+To: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Somasundaram Krishnasamy <somasundaram.krishnasamy@oracle.com>,
+        Bob Liu <bob.liu@oracle.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xen.org
+References: <20180402174232.28642-1-konrad.wilk@oracle.com>
+ <20180402174232.28642-2-konrad.wilk@oracle.com>
+ <20180403112244.vlg7j7ynxwkxwhs7@MacBook-Pro-de-Roger.local>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <586dead3-7392-2873-e23a-1236ef14da3b@gmail.com>
+Date: Fri, 6 Apr 2018 13:13:32 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180406183623.CA38.4A936039@socionext.com>
+In-Reply-To: <20180403112244.vlg7j7ynxwkxwhs7@MacBook-Pro-de-Roger.local>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 06-04-18 11:36, Kunihiko Hayashi wrote:
-> Hi Hans,
-> 
-> On Fri, 6 Apr 2018 10:29:37 +0200
-> Hans de Goede <hdegoede@redhat.com> wrote:
-> 
->> Hi,
+On 04/03/2018 02:22 PM, Roger Pau Monné wrote:
+> On Mon, Apr 02, 2018 at 01:42:32PM -0400, Konrad Rzeszutek Wilk wrote:
+>> From: Bob Liu <bob.liu@oracle.com>
 >>
->> On 06-04-18 06:48, Kunihiko Hayashi wrote:
->>> Hi Hans,
->>>> On Thu, 5 Apr 2018 16:08:24 +0200
->>> Hans de Goede <hdegoede@redhat.com> wrote:
->>>>> Hi,
->>>>
->>>> On 05-04-18 16:00, Hans de Goede wrote:
->>>>> Hi,
->>>>>> On 05-04-18 15:54, Thierry Reding wrote:
->>>>>> On Thu, Apr 05, 2018 at 03:27:03PM +0200, Hans de Goede wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> On 05-04-18 15:17, Patrice CHOTARD wrote:
->>>>>>>> Hi Thierry
->>>>>>>>
->>>>>>>> On 04/05/2018 11:54 AM, Thierry Reding wrote:
->>>>>>>>> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
->>>>>>>>>> Add support to get and control a list of resets for the device
->>>>>>>>>> as optional and shared. These resets must be kept de-asserted until
->>>>>>>>>> the device is enabled.
->>>>>>>>>>
->>>>>>>>>> This is specified as shared because some SoCs like UniPhier series
->>>>>>>>>> have common reset controls with all ahci controller instances.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
->>>>>>>>>> ---
->>>>>>>>>> ??? .../devicetree/bindings/ata/ahci-platform.txt????? |? 1 +
->>>>>>>>>> ??? drivers/ata/ahci.h???????????????????????????????? |? 1 +
->>>>>>>>>> ??? drivers/ata/libahci_platform.c???????????????????? | 24 +++++++++++++++++++---
->>>>>>>>>> ??? 3 files changed, 23 insertions(+), 3 deletions(-)
->>>>>>>>>
->>>>>>>>> This causes a regression on Tegra because we explicitly request the
->>>>>>>>> resets after the call to ahci_platform_get_resources().
->>>>>>>>
->>>>>>>> I confirm, we got exactly the same behavior on STi platform.
->>>>>>>>
->>>>>>>>>
->>>>>>>>> ?? From a quick look, ahci_mtk and ahci_st are in the same boat, adding the
->>>>>>>>> corresponding maintainers to Cc.
->>>>>>>>>
->>>>>>>>> Patrice, Matthias: does SATA still work for you after this patch? This
->>>>>>>>> has been in linux-next since next-20180327.
->>>>>>>>
->>>>>>>> SATA is still working after this patch, but a kernel warning is
->>>>>>>> triggered due to the fact that resets are both requested by
->>>>>>>> libahci_platform and by ahci_st driver.
->>>>>>>
->>>>>>> So in your case you might be able to remove the reset handling
->>>>>>> from the ahci_st driver and rely on the new libahci_platform
->>>>>>> handling instead? If that works that seems like a win to me.
->>>>>>>
->>>>>>> As said elsewhere in this thread I think it makes sense to keep (or re-add
->>>>>>> after a revert) the libahci_platform reset code, but make it conditional
->>>>>>> on a flag passed to ahci_platform_get_resources(). This way we get
->>>>>>> the shared code for most cases and platforms which need special handling
->>>>>>> can opt-out.
->>>>>>
->>>>>> Agreed, although I prefer such helpers to be opt-in, rather than
->>>>>> opt-out. In my experience that tends make the helpers more resilient to
->>>>>> this kind of regression. It also simplifies things because instead of
->>>>>> drivers saying "I want all the helpers except this one and that one",
->>>>>> they can simply say "I want these helpers and that one". In the former
->>>>>> case whenever you add some new (opt-out) feature, you have to update all
->>>>>> drivers and add the exception. In the latter you only need to extend the
->>>>>> drivers that want to make use of the new helper.
->>>>
->>>> Erm, the idea never was to make this opt-out but rather opt in, so
->>>> we add a flags parameter to ahci_platform_get_resources() and all
->>>> current users pass in 0 for that to keep the current behavior.
->>>>
->>>> And only the generic drivers/ata/ahci_platform.c driver will pass
->>>> in a the new AHCI_PLATFORM_GET_RESETS flag, which makes
->>>> ahci_platform_get_resources() (and the other functions) also deal
->>>> with resets.
->>>>
->>>>>> With that in mind, rather than adding a flag to the
->>>>>> ahci_platform_get_resources() function, it might be more flexible to
->>>>>> split the helpers into finer-grained functions. That way drivers can
->>>>>> pick whatever functionality they want from the helpers.
->>>>>> Good point, so lets:
->>>>>> 1) Revert the patch for now
->>>>> 2) Have a new version of the patch which adds a ahci_platform_get_resets() helper
->>>>> 3) Modify the generic drivers/ata/ahci_platform.c driver to call the new
->>>>>    ?? ahci_platform_get_resets() between its ahci_platform_get_resources()
->>>>>    ?? and ahci_platform_enable_resources() calls.
->>>>>    ?? I think that ahci_platform_enable_resources() should still automatically
->>>>>    ?? do the right thing wrt resets if ahci_platform_get_resets() was called
->>>>>    ?? (otherwise the resets array will be empty and should be skipped)
->>>>>> This should make the generic driver usable for the UniPhier SoCs and
->>>>> maybe some other drivers like the ahci_st driver can also switch to the
->>>>> new ahci_platform_get_resets() functionality to reduce their code a bit.
->>>>
->>>> So thinking slightly longer about this, with the opt-in variant
->>>> (which is what I intended all along) I do think that a flags parameter
->>>> is better, because the whole idea behind lib_ahci_platform is to avoid
->>>> having to do err = get_resource_a(), if (err) bail, err = get_resource_b()
->>>> if (err) bail, etc. in all the ahci (platform) drivers. And having fine
->>>> grained helpers re-introduces that.
->>>> In case of adding a flag instead of get_resource_a(),
->>> for example, we add the flag for use of resets,
->>>> -struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev)
->>> +struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
->>> +                                                  bool use_reset)
->>>> and for now all the drivers using this function need to add the argument as false
->>> to the caller.
->>>> -       hpriv = ahci_platform_get_resources(pdev);
->>> +       hpriv = ahci_platform_get_resources(pdev, false);
->>>> Surely this can avoid adding functions such get_resource_a(). If we apply another
->>> feature later, we add its flag as one of the arguments instead. Is it right?
+>> The current VBD layer reserves buffer space for each attached device based on
+>> three statically configured settings which are read at boot time.
+>>   * max_indirect_segs: Maximum amount of segments.
+>>   * max_ring_page_order: Maximum order of pages to be used for the shared ring.
+>>   * max_queues: Maximum of queues(rings) to be used.
 >>
->> Yes, that is right, but instead of adding a "bool use_reset" please add
->> an "unsigned int flags" parameter instead and a:
+>> But the storage backend, workload, and guest memory result in very different
+>> tuning requirements. It's impossible to centrally predict application
+>> characteristics so it's best to leave allow the settings can be dynamiclly
+>> adjusted based on workload inside the Guest.
 >>
->> #define AHCI_PLATFORM_GET_RESETS	0x01
+>> Usage:
+>> Show current values:
+>> cat /sys/devices/vbd-xxx/max_indirect_segs
+>> cat /sys/devices/vbd-xxx/max_ring_page_order
+>> cat /sys/devices/vbd-xxx/max_queues
 >>
->> And update all callers of ahci_platform_get_resources to pass 0 for flags
->> except for drivers/ata/ahci_platform.c. This way we only need to modify
->> all callers once, and if we want to add another optional resource in
->> the future we can add a:
+>> Write new values:
+>> echo <new value> > /sys/devices/vbd-xxx/max_indirect_segs
+>> echo <new value> > /sys/devices/vbd-xxx/max_ring_page_order
+>> echo <new value> > /sys/devices/vbd-xxx/max_queues
 >>
->> #define AHCI_PLATFORM_GET_FOO		0x02
+>> Signed-off-by: Bob Liu <bob.liu@oracle.com>
+>> Signed-off-by: Somasundaram Krishnasamy <somasundaram.krishnasamy@oracle.com>
+>> Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>> ---
+>>   drivers/block/xen-blkfront.c | 320 ++++++++++++++++++++++++++++++++++++++++---
+>>   1 file changed, 304 insertions(+), 16 deletions(-)
 >>
->> Without needing to change all callers again.
-> 
-> Indeed. This is more flexible to add another resources.
-> 
-> Although I'm about to prepare the candidate patch to fix this issue,
-> I think we need to revert the previous patch first if some SoCs have
-> issues because of it.
-
-Ack. It is probably best if you do a "git revert f0f56716fc3e5d547fd7811eb218a30ed0695605"
-on a tree with that commit and then send a patch to Tejun for this.
-
-Regards,
-
-Hans
+>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+>> index 92ec1bbece51..4ebd368f4d1a 100644
+>> --- a/drivers/block/xen-blkfront.c
+>> +++ b/drivers/block/xen-blkfront.c
+>> @@ -46,6 +46,7 @@
+>>   #include <linux/scatterlist.h>
+>>   #include <linux/bitmap.h>
+>>   #include <linux/list.h>
+>> +#include <linux/delay.h>
+>>   
+>>   #include <xen/xen.h>
+>>   #include <xen/xenbus.h>
+>> @@ -217,6 +218,11 @@ struct blkfront_info
+>>   	/* Save uncomplete reqs and bios for migration. */
+>>   	struct list_head requests;
+>>   	struct bio_list bio_list;
+>> +	/* For dynamic configuration. */
+>> +	unsigned int reconfiguring:1;
+> bool reconfiguring:1 maybe?
+>
+> And I would likely place it together with the feature_ fields, so that
+> no more padding is added to the struct.
+>
+>> +	int new_max_indirect_segments;
+>> +	int new_max_ring_page_order;
+>> +	int new_max_queues;
+> All the ints should be unsigned ints AFAICT.
+>
+>>   };
+>>   
+>>   static unsigned int nr_minors;
+>> @@ -1355,6 +1361,31 @@ static void blkif_free(struct blkfront_info *info, int suspend)
+>>   	for (i = 0; i < info->nr_rings; i++)
+>>   		blkif_free_ring(&info->rinfo[i]);
+>>   
+>> +	/* Remove old xenstore nodes. */
+>> +	if (info->nr_ring_pages > 1)
+>> +		xenbus_rm(XBT_NIL, info->xbdev->nodename, "ring-page-order");
+>> +
+>> +	if (info->nr_rings == 1) {
+>> +		if (info->nr_ring_pages == 1) {
+>> +			xenbus_rm(XBT_NIL, info->xbdev->nodename, "ring-ref");
+>> +		} else {
+>> +			for (i = 0; i < info->nr_ring_pages; i++) {
+>> +				char ring_ref_name[RINGREF_NAME_LEN];
+>> +
+>> +				snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
+>> +				xenbus_rm(XBT_NIL, info->xbdev->nodename, ring_ref_name);
+>> +			}
+>> +		}
+>> +	} else {
+>> +		xenbus_rm(XBT_NIL, info->xbdev->nodename, "multi-queue-num-queues");
+>> +
+>> +		for (i = 0; i < info->nr_rings; i++) {
+>> +			char queuename[QUEUE_NAME_LEN];
+>> +
+>> +			snprintf(queuename, QUEUE_NAME_LEN, "queue-%u", i);
+>> +			xenbus_rm(XBT_NIL, info->xbdev->nodename, queuename);
+>> +		}
+>> +	}
+>>   	kfree(info->rinfo);
+>>   	info->rinfo = NULL;
+>>   	info->nr_rings = 0;
+>> @@ -1778,10 +1809,18 @@ static int talk_to_blkback(struct xenbus_device *dev,
+>>   	if (!info)
+>>   		return -ENODEV;
+>>   
+>> -	max_page_order = xenbus_read_unsigned(info->xbdev->otherend,
+>> -					      "max-ring-page-order", 0);
+>> -	ring_page_order = min(xen_blkif_max_ring_order, max_page_order);
+>> -	info->nr_ring_pages = 1 << ring_page_order;
+>> +	err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
+>> +			   "max-ring-page-order", "%u", &max_page_order);
+>> +	if (err != 1)
+>> +		info->nr_ring_pages = 1;
+>> +	else {
+>> +		ring_page_order = min(xen_blkif_max_ring_order, max_page_order);
+>> +		if (info->new_max_ring_page_order) {
+>> +			BUG_ON(info->new_max_ring_page_order > max_page_order);
+Do you really want to BUG_ON here? IMO, this is just a misconfiguration
+which can happen, but you will make the whole domain down with this...
+>> +			ring_page_order = info->new_max_ring_page_order;
+>> +		}
+>> +		info->nr_ring_pages = 1 << ring_page_order;
+>> +	}
+> You could likely simply this as:
+>
+> max_page_order = xenbus_read_unsigned(info->xbdev->otherend,
+> 				      "max-ring-page-order", 0);
+> if ((info->new_max_ring_page_order) {
+> 	BUG_ON(info->new_max_ring_page_order > max_page_order);
+> 	info->nr_ring_pages = 1 << info->new_max_ring_page_order;
+> } else
+> 	info->nr_ring_pages = 1 << min(xen_blkif_max_ring_order, max_page_order);
+>
+> I'm not sure of the benefit of switching the xenbus_read_unsigned to a
+> xenbus_scanf. IMO it seems to make the code more complex.
+>
+>>   
+>>   	err = negotiate_mq(info);
+>>   	if (err)
+>> @@ -1903,6 +1942,10 @@ static int negotiate_mq(struct blkfront_info *info)
+>>   	backend_max_queues = xenbus_read_unsigned(info->xbdev->otherend,
+>>   						  "multi-queue-max-queues", 1);
+>>   	info->nr_rings = min(backend_max_queues, xen_blkif_max_queues);
+>> +	if (info->new_max_queues) {
+>> +		BUG_ON(info->new_max_queues > backend_max_queues);
+Again, why BUG_ON?
+>> +		info->nr_rings = info->new_max_queues;
+>> +	}
+>>   	/* We need at least one ring. */
+>>   	if (!info->nr_rings)
+>>   		info->nr_rings = 1;
+>> @@ -2261,6 +2304,8 @@ static int blkfront_setup_indirect(struct blkfront_ring_info *rinfo)
+>>    */
+>>   static void blkfront_gather_backend_features(struct blkfront_info *info)
+>>   {
+>> +	int err;
+>> +	int persistent;
+> unsigned int. You use the '%u' format specifier below.
+>
+>>   	unsigned int indirect_segments;
+>>   
+>>   	info->feature_flush = 0;
+>> @@ -2291,19 +2336,241 @@ static void blkfront_gather_backend_features(struct blkfront_info *info)
+>>   	if (xenbus_read_unsigned(info->xbdev->otherend, "feature-discard", 0))
+>>   		blkfront_setup_discard(info);
+>>   
+>> -	info->feature_persistent =
+>> -		!!xenbus_read_unsigned(info->xbdev->otherend,
+>> -				       "feature-persistent", 0);
+>> +	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
+>> +			"feature-persistent", "%u", &persistent,
+>> +			NULL);
+>> +
+>> +	info->feature_persistent = err ? 0 : persistent;
+>> +
+>> +	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
+>> +			    "feature-max-indirect-segments", "%u", &indirect_segments,
+>> +			    NULL);
+>> +	if (err)
+>> +		info->max_indirect_segments = 0;
+>> +	else {
+>> +		info->max_indirect_segments = min(indirect_segments,
+>> +						  xen_blkif_max_segments);
+>> +		if (info->new_max_indirect_segments) {
+>> +			BUG_ON(info->new_max_indirect_segments > indirect_segments);
+And here
+>> +			info->max_indirect_segments = info->new_max_indirect_segments;
+>> +		}
+>> +	}
+> Again I think using xenbus_read_unsigned makes the code simpler, see
+> the suggestion regarding new_max_ring_page_order.
+>
+>> +}
+>> +
+>> +static ssize_t max_ring_page_order_show(struct device *dev,
+>> +					struct device_attribute *attr, char *page)
+>> +{
+>> +	struct blkfront_info *info = dev_get_drvdata(dev);
+>> +
+>> +	return sprintf(page, "%u\n", get_order(info->nr_ring_pages * XEN_PAGE_SIZE));
+get_order returns int? "%u" -> "%d"?
+>> +}
+>> +
+>> +static ssize_t max_indirect_segs_show(struct device *dev,
+>> +				      struct device_attribute *attr, char *page)
+>> +{
+>> +	struct blkfront_info *info = dev_get_drvdata(dev);
+>> +
+>> +	return sprintf(page, "%u\n", info->max_indirect_segments);
+new_max_indirect_segments is currently defined as int
+>> +}
+>> +
+>> +static ssize_t max_queues_show(struct device *dev,
+>> +			       struct device_attribute *attr, char *page)
+>> +{
+>> +	struct blkfront_info *info = dev_get_drvdata(dev);
+>> +
+>> +	return sprintf(page, "%u\n", info->nr_rings);
+>> +}
+>> +
+>> +static ssize_t dynamic_reconfig_device(struct blkfront_info *info, ssize_t count)
+> Not sure you need to pass 'count' here. dynamic_reconfig_device
+> doesn't care about count at all. This function should just return < 0
+> for error or 0 on success.
+and also why ssize_t, not size_t?
+>
+>> +{
+>> +	unsigned int i;
+>> +	int err = -EBUSY;
+>> +	unsigned int inflight;
+>> +
+>> +	/*
+>> +	 * Make sure no migration in parallel, device lock is actually a
+>> +	 * mutex.
+>> +	 */
+>> +	if (!device_trylock(&info->xbdev->dev)) {
+>> +		pr_err("Fail to acquire dev:%s lock, may be in migration.\n",
+>> +			dev_name(&info->xbdev->dev));
+>> +		return err;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Prevent new requests and guarantee no uncompleted reqs.
+>> +	 */
+>> +	blk_mq_freeze_queue(info->rq);
+>> +	inflight = atomic_read(&info->gd->part0.in_flight[0]) +
+>> +		   atomic_read(&info->gd->part0.in_flight[1]);
+>> +	if (inflight)
+>> +		goto out;
+> Er, I'm not sure I like this approach. Why not just switch the state
+> to closed, wait for the backend to also switch to closed, reconnect
+> and then requeue any pending requests on the shadow copy of the ring?
+>
+> Basically like what is currently done for migration.
+>
+>> +
+>> +	/*
+>> +	 * Front 				Backend
+>> +	 * Switch to XenbusStateClosed
+>> +	 *					frontend_changed():
+>> +	 *					 case XenbusStateClosed:
+>> +	 *						xen_blkif_disconnect()
+>> +	 *						Switch to XenbusStateClosed
+>> +	 * blkfront_resume():
+>> +	 *					frontend_changed():
+>> +	 *						reconnect
+>> +	 * Wait until XenbusStateConnected
+>> +	 */
+>> +	info->reconfiguring = true;
+Not sure if this is directly applicable, but can we finally make
+use of XenbusStateReconfiguring/XenbusStateReconfigured bus
+states? We have it somewhat implemented in PV DRM [1]
+>> +	xenbus_switch_state(info->xbdev, XenbusStateClosed);
+>> +
+>> +	/* Poll every 100ms, 1 minute timeout. */
+>> +	for (i = 0; i < 600; i++) {
+>> +		/*
+>> +		 * Wait backend enter XenbusStateClosed, blkback_changed()
+>> +		 * will clear reconfiguring.
+>> +		 */
+>> +		if (!info->reconfiguring)
+>> +			goto resume;
+>> +		schedule_timeout_interruptible(msecs_to_jiffies(100));
+>> +	}
+>> +	goto out;
+> This shouldn't be done with a busy loop. Why not do this in
+> blkback_changed instead?
+>
+>> +
+>> +resume:
+>> +	if (blkfront_resume(info->xbdev))
+>> +		goto out;
+>> +
+>> +	/* Poll every 100ms, 1 minute timeout. */
+>> +	for (i = 0; i < 600; i++) {
+>> +		/* Wait blkfront enter StateConnected which is done by blkif_recover(). */
+>> +		if (info->xbdev->state == XenbusStateConnected) {
+>> +			err = count;
+>> +			goto out;
+>> +		}
+>> +		schedule_timeout_interruptible(msecs_to_jiffies(100));
+>> +	}
+>> +
+>> +out:
+>> +	blk_mq_unfreeze_queue(info->rq);
+>> +	device_unlock(&info->xbdev->dev);
+>> +
+>> +	return err;
+>> +}
+>> +
+>> +static ssize_t max_indirect_segs_store(struct device *dev,
+>> +		struct device_attribute *attr, const char *buf, size_t count)
+>> +{
+>> +	ssize_t ret;
+>> +	unsigned int max_segs = 0, backend_max_segs = 0;
+>> +	struct blkfront_info *info = dev_get_drvdata(dev);
+>> +	int err;
+>> +
+>> +	ret = kstrtouint(buf, 10, &max_segs);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	if (max_segs == info->max_indirect_segments)
+>> +		return count;
+>> +
+>> +	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
+>> +			    "feature-max-indirect-segments", "%u", &backend_max_segs,
+> Having to read all the backend features every time the user writes to
+> the device nodes seems inefficient, although I assume this is not
+> supposed to happen frequently...
+>
+>> +			    NULL);
+>> +	if (err) {
+>> +		pr_err("Backend %s doesn't support feature-indirect-segments.\n",
+>> +			info->xbdev->otherend);
+>> +		return -EOPNOTSUPP;
+>> +	}
+>> +
+>> +	if (max_segs > backend_max_segs) {
+>> +		pr_err("Invalid max indirect segment (%u), backend-max: %u.\n",
+>> +			max_segs, backend_max_segs);
+>> +		return -EINVAL;
+>> +	}
+>>   
+>> -	indirect_segments = xenbus_read_unsigned(info->xbdev->otherend,
+>> -					"feature-max-indirect-segments", 0);
+>> -	if (indirect_segments > xen_blkif_max_segments)
+>> -		indirect_segments = xen_blkif_max_segments;
+>> -	if (indirect_segments <= BLKIF_MAX_SEGMENTS_PER_REQUEST)
+>> -		indirect_segments = 0;
+>> -	info->max_indirect_segments = indirect_segments;
+>> +	info->new_max_indirect_segments = max_segs;
+>> +
+>> +	return dynamic_reconfig_device(info, count);
+> No need to pass count, just use:
+>
+> return dynamic_reconfig_device(info) :? count;
+>
+> (same for all the cases below).
+>
+>>   }
+>>   
+>> +static ssize_t max_ring_page_order_store(struct device *dev,
+>> +				 struct device_attribute *attr,
+>> +				 const char *buf, size_t count)
+>> +{
+>> +	ssize_t ret;
+>> +	unsigned int max_order = 0, backend_max_order = 0;
+>> +	struct blkfront_info *info = dev_get_drvdata(dev);
+>> +	int err;
+>> +
+>> +	ret = kstrtouint(buf, 10, &max_order);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	if ((1 << max_order) == info->nr_ring_pages)
+>> +		return count;
+>> +
+>> +	if (max_order > XENBUS_MAX_RING_GRANT_ORDER) {
+>> +		pr_err("Invalid max_ring_page_order (%u), max: %u.\n",
+>> +			max_order, XENBUS_MAX_RING_GRANT_ORDER);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
+>> +			   "max-ring-page-order", "%u", &backend_max_order);
+>> +	if (err != 1) {
+>> +		pr_err("Backend %s doesn't support feature multi-page-ring.\n",
+>> +			info->xbdev->otherend);
+>> +		return -EOPNOTSUPP;
+>> +	}
+>> +	if (max_order > backend_max_order) {
+>> +		pr_err("Invalid max_ring_page_order (%u), backend supports max: %u.\n",
+>> +			max_order, backend_max_order);
+>> +		return -EINVAL;
+>> +	}
+>> +	info->new_max_ring_page_order = max_order;
+>> +
+>> +	return dynamic_reconfig_device(info, count);
+>> +}
+>> +
+>> +static ssize_t max_queues_store(struct device *dev,
+>> +				struct device_attribute *attr,
+>> +				const char *buf, size_t count)
+>> +{
+>> +	ssize_t ret;
+>> +	unsigned int max_queues = 0, backend_max_queues = 0;
+>> +	struct blkfront_info *info = dev_get_drvdata(dev);
+>> +	int err;
+>> +
+>> +	ret = kstrtouint(buf, 10, &max_queues);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	if (max_queues == info->nr_rings)
+>> +		return count;
+>> +
+>> +	if (max_queues > num_online_cpus()) {
+>> +		pr_err("Invalid max_queues (%u), can't bigger than online cpus: %u.\n",
+>> +			max_queues, num_online_cpus());
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
+>> +			   "multi-queue-max-queues", "%u", &backend_max_queues);
+>> +	if (err != 1) {
+>> +		pr_err("Backend %s doesn't support block multi queue.\n",
+>> +			info->xbdev->otherend);
+>> +		return -EOPNOTSUPP;
+>> +	}
+>> +	if (max_queues > backend_max_queues) {
+>> +		pr_err("Invalid max_queues (%u), backend supports max: %u.\n",
+>> +			max_queues, backend_max_queues);
+>> +		return -EINVAL;
+>> +	}
+>> +	info->new_max_queues = max_queues;
+>> +
+>> +	return dynamic_reconfig_device(info, count);
+>> +}
+>> +
+>> +static DEVICE_ATTR_RW(max_queues);
+>> +static DEVICE_ATTR_RW(max_ring_page_order);
+>> +static DEVICE_ATTR_RW(max_indirect_segs);
+> Can't you just use the same attribute for all the nodes? Also this
+> could be:
+>
+> const static DEVICE_ATTR_RW(node_attr);
+>
+> Thanks, Roger.
+>
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xenproject.org
+> https://lists.xenproject.org/mailman/listinfo/xen-devel
+[1] 
+https://cgit.freedesktop.org/drm-misc/commit/?id=c575b7eeb89f94356997abd62d6d5a0590e259b7
