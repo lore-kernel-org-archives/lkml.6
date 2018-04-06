@@ -1,40 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751534AbeDFT2d (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 15:28:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33904 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751276AbeDFT2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 15:28:32 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CA+55aFx_fs7C6JAX_ORJ9MoXEp25LcXS0CUnK4aO4p=hQw6xOg@mail.gmail.com>
-References: <CA+55aFx_fs7C6JAX_ORJ9MoXEp25LcXS0CUnK4aO4p=hQw6xOg@mail.gmail.com> <152287959470.14760.10350886166577848180.stgit@warthog.procyon.org.uk> <4034.1523025880@warthog.procyon.org.uk> <CA+55aFwKc1JzU6k=3R9n23HGXb5-BACT8pQ93rGTvgNjfa4ZHA@mail.gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dhowells@redhat.com,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-cachefs@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-afs@lists.infradead.org
-Subject: Re: [PATCH net-next 00/12] fscache: Fixes, traces and development
+        id S1751773AbeDFTeg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 15:34:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56388 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751389AbeDFTef (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 15:34:35 -0400
+Date: Fri, 6 Apr 2018 21:34:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Joel Fernandes (Google)" <joel.opensrc@gmail.com>,
+        Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
+Subject: Re: [PATCH 0/4 v2] init, tracing: Add initcall trace events
+Message-ID: <20180406193424.GM4082@hirez.programming.kicks-ass.net>
+References: <20180406190854.875810797@goodmis.org>
+ <20180406151923.292cb09f@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <12716.1523042907.1@warthog.procyon.org.uk>
-Date: Fri, 06 Apr 2018 20:28:28 +0100
-Message-ID: <12717.1523042908@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406151923.292cb09f@gandalf.local.home>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Fri, Apr 06, 2018 at 03:19:23PM -0400, Steven Rostedt wrote:
+> 
+> Peter, Andrew,
+> 
+> This keeps initcall_debug printing printk()s, but adds the feature of
+> those locations also being trace events. Are you OK if I add this?
 
-> So if you have that [GIT PULL] in the subject line, the pulls will
-> often be a bit timelier.
-
-That's okay with all the patches as follow up emails?
-
-David
+Yeah, I don't see any real problems with it.
