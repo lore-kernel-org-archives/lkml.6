@@ -1,98 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755305AbeDFOeV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:34:21 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34982 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752816AbeDFNgE (ORCPT
+        id S932078AbeDFOhP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:37:15 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37054 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755997AbeDFOhN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:36:04 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 3/7] arm64: dts: renesas: r8a77970: add DU support
-Date: Fri, 06 Apr 2018 16:36:02 +0300
-Message-ID: <1845227.lvyihNjCgv@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1523020092-25540-4-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org> <1523020092-25540-4-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 6 Apr 2018 10:37:13 -0400
+X-Google-Smtp-Source: AIpwx4/UzvaCYCcEkTLBg+7zw4R69MnMBPbQKhyfgT3PDOKgsIOJSIFRymVypOcUMa9PAqOG5QkfgS/k76xaipNlQnk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20180406135215.10057-1-aryabinin@virtuozzo.com>
+References: <CALvZod7P7cE38fDrWd=0caA2J6ZOmSzEuLGQH9VSaagCbo5O+A@mail.gmail.com>
+ <20180406135215.10057-1-aryabinin@virtuozzo.com>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Fri, 6 Apr 2018 07:37:10 -0700
+Message-ID: <CALvZod7bGjx-fUKZ15oVAkXkeneZjtoRFiUSpKSZ1U0DA_e1BA@mail.gmail.com>
+Subject: Re: [PATCH] mm-vmscan-dont-mess-with-pgdat-flags-in-memcg-reclaim-v2-fix
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w36EYRuk017968
 
-Hi Jacopo,
-
-Thank you for the patch.
-
-On Friday, 6 April 2018 16:08:08 EEST Jacopo Mondi wrote:
-> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> Define the generic R8A77970 part of the DU device node.
-> 
-> Based on the original (and large) patch by Daisuke Matsushita
-> <daisuke.matsushita.ns@hitachi.com>.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+On Fri, Apr 6, 2018 at 6:52 AM, Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+> On 04/06/2018 05:13 AM, Shakeel Butt wrote:
+>> Question: Should this 'flags' be per-node? Is it ok for a congested
+>> memcg to call wait_iff_congested for all nodes?
+>
+> Indeed, congestion state should be pre-node. If memcg on node A is
+> congested, there is no point is stalling memcg reclaim from node B.
+>
+> Make congestion state per-cgroup-per-node and record it in
+> 'struct mem_cgroup_per_node'.
+>
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
 > ---
->  arch/arm64/boot/dts/renesas/r8a77970.dtsi | 28 ++++++++++++++++++++++++++++
-> 1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a77970.dtsi index db06c94..e649e86 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> @@ -635,6 +635,34 @@
->  			resets = <&cpg 623>;
->  			renesas,fcp = <&fcpvd0>;
->  		};
+>  include/linux/memcontrol.h |  5 +++--
+>  mm/vmscan.c                | 39 +++++++++++++++++++++++++--------------
+>  2 files changed, 28 insertions(+), 16 deletions(-)
+>
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 8b394bbf1c86..af9eed2e3e04 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -120,6 +120,9 @@ struct mem_cgroup_per_node {
+>         unsigned long           usage_in_excess;/* Set to the value by which */
+>                                                 /* the soft limit is exceeded*/
+>         bool                    on_tree;
+> +       bool                    congested;      /* memcg has many dirty pages */
+> +                                               /* backed by a congested BDI */
 > +
-> +		du: display@feb00000 {
-> +			compatible = "renesas,du-r8a77970";
-> +			reg = <0 0xfeb00000 0 0x80000>;
-> +			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 724>;
-> +			clock-names = "du.0";
-> +			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-> +			vsps = <&vspd0>;
-> +			status = "disabled";
+>         struct mem_cgroup       *memcg;         /* Back pointer, we cannot */
+>                                                 /* use container_of        */
+>  };
+> @@ -189,8 +192,6 @@ struct mem_cgroup {
+>         /* vmpressure notifications */
+>         struct vmpressure vmpressure;
+>
+> -       unsigned long flags;
+> -
+>         /*
+>          * Should the accounting and control be hierarchical, per subtree?
+>          */
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 99688299eba8..78214c899710 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -200,16 +200,27 @@ static bool sane_reclaim(struct scan_control *sc)
+>         return false;
+>  }
+>
+> -static void set_memcg_bit(enum pgdat_flags flag,
+> -                       struct mem_cgroup *memcg)
+> +static void set_memcg_congestion(pg_data_t *pgdat,
+> +                               struct mem_cgroup *memcg,
+> +                               bool congested)
+>  {
+> -       set_bit(flag, &memcg->flags);
+> +       struct mem_cgroup_per_node *mz;
 > +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
+> +       if (!memcg)
+> +               return;
 > +
-> +				port@0 {
-> +					reg = <0>;
-> +					du_out_rgb: endpoint {
-> +					};
-> +				};
+> +       mz = mem_cgroup_nodeinfo(memcg, pgdat->node_id);
+> +       WRITE_ONCE(mz->congested, congested);
+>  }
+>
+> -static int test_memcg_bit(enum pgdat_flags flag,
+> +static bool memcg_congested(pg_data_t *pgdat,
+>                         struct mem_cgroup *memcg)
+>  {
+> -       return test_bit(flag, &memcg->flags);
+> +       struct mem_cgroup_per_node *mz;
 > +
-> +				port@1 {
-> +					reg = <1>;
-> +					du_out_lvds: endpoint {
-> +					};
-> +				};
-> +			};
-> +		};
->  	};
-> 
->  	timer {
+> +       mz = mem_cgroup_nodeinfo(memcg, pgdat->node_id);
+> +       return READ_ONCE(mz->congested);
+> +
+>  }
+>  #else
+>  static bool global_reclaim(struct scan_control *sc)
+> @@ -222,15 +233,16 @@ static bool sane_reclaim(struct scan_control *sc)
+>         return true;
+>  }
+>
+> -static inline void set_memcg_bit(enum pgdat_flags flag,
+> -                               struct mem_cgroup *memcg)
+> +static inline void set_memcg_congestion(struct pglist_data *pgdat,
+> +                               struct mem_cgroup *memcg, bool congested)
+>  {
+>  }
+>
+> -static inline int test_memcg_bit(enum pgdat_flags flag,
+> -                               struct mem_cgroup *memcg)
+> +static inline bool memcg_congested(struct pglist_data *pgdat,
+> +                       struct mem_cgroup *memcg)
+>  {
+> -       return 0;
+> +       return false;
+> +
+>  }
+>  #endif
+>
+> @@ -2482,7 +2494,7 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
+>  static bool pgdat_memcg_congested(pg_data_t *pgdat, struct mem_cgroup *memcg)
+>  {
+>         return test_bit(PGDAT_CONGESTED, &pgdat->flags) ||
+> -               (memcg && test_memcg_bit(PGDAT_CONGESTED, memcg));
+> +               (memcg && memcg_congested(pgdat, memcg));
 
--- 
-Regards,
+I am wondering if we should check all ancestors for congestion as
+well. Maybe a parallel memcg reclaimer might have set some ancestor of
+this memcg to congested.
 
-Laurent Pinchart
+>  }
+>
+>  static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+> @@ -2617,7 +2629,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>                  */
+>                 if (!global_reclaim(sc) && sane_reclaim(sc) &&
+>                     sc->nr.dirty && sc->nr.dirty == sc->nr.congested)
+> -                       set_memcg_bit(PGDAT_CONGESTED, root);
+> +                       set_memcg_congestion(pgdat, root, true);
+>
+>                 /*
+>                  * Stall direct reclaim for IO completions if underlying BDIs
+> @@ -2844,6 +2856,7 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
+>                         continue;
+>                 last_pgdat = zone->zone_pgdat;
+>                 snapshot_refaults(sc->target_mem_cgroup, zone->zone_pgdat);
+> +               set_memcg_congestion(last_pgdat, sc->target_mem_cgroup, false);
+>         }
+>
+>         delayacct_freepages_end();
+> @@ -3067,7 +3080,6 @@ unsigned long mem_cgroup_shrink_node(struct mem_cgroup *memcg,
+>          * the priority and make it zero.
+>          */
+>         shrink_node_memcg(pgdat, memcg, &sc, &lru_pages);
+> -       clear_bit(PGDAT_CONGESTED, &memcg->flags);
+>
+>         trace_mm_vmscan_memcg_softlimit_reclaim_end(sc.nr_reclaimed);
+>
+> @@ -3113,7 +3125,6 @@ unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
+>         noreclaim_flag = memalloc_noreclaim_save();
+>         nr_reclaimed = do_try_to_free_pages(zonelist, &sc);
+>         memalloc_noreclaim_restore(noreclaim_flag);
+> -       clear_bit(PGDAT_CONGESTED, &memcg->flags);
+>
+>         trace_mm_vmscan_memcg_reclaim_end(nr_reclaimed);
+>
+> --
+> 2.16.1
+>
