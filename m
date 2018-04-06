@@ -1,74 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751465AbeDFBKA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 21:10:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33534 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751298AbeDFBJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 21:09:59 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1581D217CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Fri, 6 Apr 2018 03:09:55 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
-Subject: Re: [PATCH v9 04/10] jiffies: Introduce USER_TICK_USEC and redefine
- TICK_USEC
-Message-ID: <20180406010954.GA4400@lerouge>
-References: <1736751.LdhZHb50jq@aspire.rjw.lan>
- <7620417.mBP1cQHt5D@aspire.rjw.lan>
+        id S1751558AbeDFBKM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:10:12 -0400
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:54746
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751482AbeDFBKK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 21:10:10 -0400
+X-ASG-Debug-ID: 1522977005-093b7e10b331920001-xx1T2L
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+From: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+To: "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
+ capabilities
+Thread-Topic: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
+ capabilities
+X-ASG-Orig-Subj: Re: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
+ capabilities
+Thread-Index: AQHTy/XJXfOHf7atGkaXAZEUhTEY6KPv42oAgAKGiwA=
+Date: Fri, 6 Apr 2018 01:10:07 +0000
+Message-ID: <1522977004.8366.11.camel@hxt-semitech.com>
+References: <1522833380-18438-1-git-send-email-shunyong.yang@hxt-semitech.com>
+         <20180404103600.GJ3572@vireshk-i7>
+In-Reply-To: <20180404103600.GJ3572@vireshk-i7>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.127.0.11]
+Content-Type: text/plain; charset="iso-8859-15"
+Content-ID: <DD0DEEB3AD2AD545BEC636038F947F1F@hxt-semitech.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7620417.mBP1cQHt5D@aspire.rjw.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Barracuda-Connect: localhost[10.128.0.15]
+X-Barracuda-Start-Time: 1522977005
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5020 1.0000 0.7500
+X-Barracuda-Spam-Score: 0.75
+X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49625
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 10:38:34AM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Since the subsequent changes will need a TICK_USEC definition
-> analogous to TICK_NSEC, rename the existing TICK_USEC as
-> USER_TICK_USEC, update its users and redefine TICK_USEC
-> accordingly.
-> 
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> v8 -> v9: No changes.
-> 
-> ---
->  drivers/net/ethernet/sfc/mcdi.c |    2 +-
->  include/linux/jiffies.h         |    7 +++++--
->  kernel/time/ntp.c               |    2 +-
->  3 files changed, 7 insertions(+), 4 deletions(-)
-> 
-> Index: linux-pm/include/linux/jiffies.h
-> ===================================================================
-> --- linux-pm.orig/include/linux/jiffies.h
-> +++ linux-pm/include/linux/jiffies.h
-> @@ -62,8 +62,11 @@ extern int register_refined_jiffies(long
->  /* TICK_NSEC is the time between ticks in nsec assuming SHIFTED_HZ */
->  #define TICK_NSEC ((NSEC_PER_SEC+HZ/2)/HZ)
->  
-> -/* TICK_USEC is the time between ticks in usec assuming fake USER_HZ */
-> -#define TICK_USEC ((1000000UL + USER_HZ/2) / USER_HZ)
-> +/* TICK_USEC is the time between ticks in usec assuming SHIFTED_HZ */
-> +#define TICK_USEC ((USEC_PER_SEC + HZ/2) / HZ)
+Hi, Kumar,
 
-Nit: SHIFTED_HZ doesn't seem to exist anymore.
+On Wed, 2018-04-04 at 16:06 +0530, Viresh Kumar wrote:
+> On 04-04-18, 17:16, Shunyong Yang wrote:
+> > 
+> > When multiple cpus are related in one cpufreq policy, the first
+> > online
+> > cpu will be chosen by default to handle cpufreq operations. Let's
+> > take
+> > cpu0 and cpu1 as an example.
+> > 
+> > When cpu0 is offline, policy->cpu will be shifted to cpu1. Cpu1's
+> > perf
+> > capabilities should be initialized. Otherwise, perf capabilities
+> > are 0s
+> > and speed change can not take effect.
+> > 
+> > This patch copies perf capabilities of the first online cpu to
+> > other
+> > shared cpus when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
+> > 
+> > Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+> > Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> > ---
+> > 
+> > Changes in v2:
+> >   -Add unlikely in cpu comparison per Kumar's comments.
+> >   -Fix coding style per Kumar's comments.
+> > 
+> > Changes in v1:
+> >   -Drop RFC tag,
+> >      The original RFC link,
+> >      https://patchwork.kernel.org/patch/10299055/.
+> > 
+> >      This patch solves same issue as RFC above.
+> > 
+> >      Patch name is changed as code is too much different with RFC
+> > above.
+> > 
+> >   -Remove extra init() per Viresh Kumar's comments and only handle
+> >    CPPC CPUFREQ_SHARED_TYPE_ANY case.
+> > 
+> > ---
+> >  drivers/cpufreq/cppc_cpufreq.c | 15 +++++++++++++--
+> >  1 file changed, 13 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/cpufreq/cppc_cpufreq.c
+> > b/drivers/cpufreq/cppc_cpufreq.c
+> > index 8f7b21a4d537..679e43b9c980 100644
+> > --- a/drivers/cpufreq/cppc_cpufreq.c
+> > +++ b/drivers/cpufreq/cppc_cpufreq.c
+> > @@ -164,9 +164,20 @@ static int cppc_cpufreq_cpu_init(struct
+> > cpufreq_policy *policy)
+> >  	policy->cpuinfo.transition_latency =
+> > cppc_get_transition_latency(cpu_num);
+> >  	policy->shared_type = cpu->shared_type;
+> >  
+> > -	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
+> > +	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
+> > +		int i;
+> > +
+> >  		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
+> > -	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
+> > +
+> > +		for_each_cpu(i, policy->cpus) {
+> > +			if (unlikely(i == policy->cpu))
+> > +				continue;
+> > +
+> > +			memcpy(&all_cpu_data[i]->perf_caps,
+> > +			       &cpu->perf_caps,
+> > +			       sizeof(cpu->perf_caps));
+> I think this can be written in two lines without violating the 80
+> columns rule.
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+The memcpy() is split in three lines (the three "+"). And I rechecked
+it by downloading from
+
+https://patchwork.kernel.org/patch/10322305/
+
+and apply to code. The maximum column number is 59. 
+And I re-run checkpatch.pl and it passed.
+I am not sure why it is over 80 columns in your tool. 
+
+> 
+> > 
+> > +		}
+> > +	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL)
+> > {
+> >  		/* Support only SW_ANY for now. */
+> >  		pr_debug("Unsupported CPU co-ord type\n");
+> >  		return -EFAULT;
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+Thanks for your ACK.
+
+Thanks.
+Shunyong.
+
+
+> 
