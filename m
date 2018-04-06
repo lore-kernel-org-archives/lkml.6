@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+SctkrwkeBKgc5wMJvqZ5YsnWmRmMhgSGG0cHyrreRHr5i/SdOV9QTsLuLXP6MaDIv7VPF
-ARC-Seal: i=1; a=rsa-sha256; t=1523021756; cv=none;
+X-Google-Smtp-Source: AIpwx4+GD6XpEc65/8el7UUsZD9qH+Xnep8Xi2IBOQ1IhRQ3+bZzFUtpBY8oMRJtFHNzR8IcIWA0
+ARC-Seal: i=1; a=rsa-sha256; t=1523021753; cv=none;
         d=google.com; s=arc-20160816;
-        b=znZ18mpk44X4MdbKaCI7xEX1ciwXaRM9eIPuZDtXEVXTwAbb5mY2wYmqwSWH9y7eaR
-         gNGmh4tAFHnHWxpMna+RZlCdiRaFT/kogilD/4OHWlWWYjw+M4hWd4ggDSH98M0Dfv/T
-         oFLRMjtzmXSvuM+EwaqW0y5lbylANPS58a1YMuylLwn7umyqmLLfxInkBYu8l5o+USBB
-         pj6PgWKJxrC//eUyJfef1B3C3/joq29apGI6LSZ1GbNlH5nUJNKNpZWrzPoOukl41FvK
-         XqJokMvk1meI9f6KzEfTesl+UhLaV9+8s2aRcoY26gJgR4JTZFX/OcDu7dydbFs33s7h
-         B+bw==
+        b=V3HGxhRG0ajqSE3n3Gs9I2ygDfqqQdZBdeLThT1WlNxIqVnyYqUmw//b0JuPxVYhge
+         23W4SyDO23YQhH5eoNut446inT1iyoBIWGjc2tVQuPIFJ7Hp8YUjOczDdPHiYYaveyKq
+         YGU6w0VyJf9qQgS7j+fbTec0XiPEvVt2rcKgvX10jlWlAK02AUcQdpHghvk7CEGvbqaa
+         11svuE2C8i9EzgHFD6n1ywuiOhvLZqN+MIIvJQ1AcTVk0NwSYMuCuNwbz6J2xFs68hTI
+         rizVvLpkosTRqct5QPwnnqToz5FxNnjTFXPsl2zKP79mPIBl7KN4hfGnCO8tBrb4Qe/j
+         DWmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2PvrT6SXtZ4oFEwUW1yGRV1/2ViYuzyEv7rktaNe5RY=;
-        b=NGLgJyRfpezSWOuvkL4l5tdSpDl7dp1u1lIwEAExvXvETGbOqMnVYtMw4dWNLsOW5o
-         gaBfaijGceAy7UqDnZnLivR00rW7B5NuwtG7GmzMkg8vVnCpZdQu+9yUieyfp9QVWOMu
-         Gs8K1q8WQUv2pzjOIn+XI2P6ahykRRy0DsGcAtR2b83RbvTEg/Dy2l0+YJDC7gShzxW2
-         j5RK3G4jmOMs/qQPLwY+beyGnm/2WohcjclE9WHG0lV9XOiRKw8E9TZQOv5g0JNwA/js
-         eOUxw6BKhZPrkg00akyD3yQOW6xjCX/bt/rIUewwicFds7H/Vfrc5inSWDgCmR0GkiNp
-         I+Lg==
+        bh=IsUysHCRvrffD/BkGM8m3I8NzppmlYKhax28NETrizI=;
+        b=jzeo2O/0FM56LAsWiCVAFNDQaO5nH+KyChv+EcCX2bUgC4JNaEaxES3Hv0VOfqG1pP
+         15vN/A2OlkaoelRiTCAfnJbYkqR6nK697IWtH5rCCO1B8sS+oAj4OLEWo0WJC4y0HiGb
+         z0QI8JtwbSps/txE1e82p8g1F2hOp8t2YVAk6khZ2rgDBuY60h0L5rIDAN5QDrAgPZ4W
+         CBIOfwZYgD7MKGpKWP/Tb7zuRIlKemilnxGbru8rtOgU6fSbNguTfPlyGRBGyEPSmpDL
+         ea7RvNNR5oVrpLW9B87pvCxL7j/EeaSi2fFH67X0xlAM/ujWhlK0nIYzvKfqWkALP/Hp
+         /tKw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>
-Subject: [PATCH 4.9 080/102] mei: remove dev_err message on an unsupported ioctl
-Date: Fri,  6 Apr 2018 15:24:01 +0200
-Message-Id: <20180406084342.741589643@linuxfoundation.org>
+	Jan Jansen <nattelip@hotmail.com>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 079/102] USB: serial: cp210x: add ELDAT Easywave RX09 id
+Date: Fri,  6 Apr 2018 15:24:00 +0200
+Message-Id: <20180406084342.664162841@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003580077452612?=
-X-GMAIL-MSGID: =?utf-8?q?1597004061230854548?=
+X-GMAIL-THRID: =?utf-8?q?1597003577185601362?=
+X-GMAIL-MSGID: =?utf-8?q?1597004058098145630?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,30 +49,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit bb0829a741792b56c908d7745bc0b2b540293bcc upstream.
+commit 1f1e82f74c0947e40144688c9e36abe4b3999f49 upstream.
 
-Currently the driver spams the kernel log on unsupported ioctls which is
-unnecessary as the ioctl returns -ENOIOCTLCMD to indicate this anyway.
-I suspect this was originally for debugging purposes but it really is not
-required so remove it.
+Add device id for ELDAT Easywave RX09 tranceiver.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reported-by: Jan Jansen <nattelip@hotmail.com>
 Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mei/main.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/usb/serial/cp210x.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/misc/mei/main.c
-+++ b/drivers/misc/mei/main.c
-@@ -551,7 +551,6 @@ static long mei_ioctl(struct file *file,
- 		break;
- 
- 	default:
--		dev_err(dev->dev, ": unsupported ioctl %d.\n", cmd);
- 		rets = -ENOIOCTLCMD;
- 	}
- 
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -152,6 +152,7 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(0x12B8, 0xEC62) }, /* Link G4+ ECU */
+ 	{ USB_DEVICE(0x13AD, 0x9999) }, /* Baltech card reader */
+ 	{ USB_DEVICE(0x1555, 0x0004) }, /* Owen AC4 USB-RS485 Converter */
++	{ USB_DEVICE(0x155A, 0x1006) },	/* ELDAT Easywave RX09 */
+ 	{ USB_DEVICE(0x166A, 0x0201) }, /* Clipsal 5500PACA C-Bus Pascal Automation Controller */
+ 	{ USB_DEVICE(0x166A, 0x0301) }, /* Clipsal 5800PC C-Bus Wireless PC Interface */
+ 	{ USB_DEVICE(0x166A, 0x0303) }, /* Clipsal 5500PCU C-Bus USB interface */
