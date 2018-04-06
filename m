@@ -1,108 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752469AbeDFMlH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 08:41:07 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53402 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeDFMlF (ORCPT
+        id S1752630AbeDFMm2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 08:42:28 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:37789 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752128AbeDFMm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 08:41:05 -0400
-X-Google-Smtp-Source: AIpwx4+P6HH85fhbhnCb+HjsWlYHv1zEPyNwIa8QT5RgtQvrSCFxs/m/I8AjCMY9UEecAoJXslnGNQ==
-Date: Fri, 6 Apr 2018 14:41:01 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        David Ahern <dsahern@gmail.com>, Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: Re: [GIT PULL 0/6] perf/urgent fixes
-Message-ID: <20180406124101.paxuoeueyycas5lw@gmail.com>
-References: <20180406112439.21685-1-acme@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406112439.21685-1-acme@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Fri, 6 Apr 2018 08:42:26 -0400
+X-Originating-IP: 2.224.242.101
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        vladimir_zapolskiy@mentor.com, horms@verge.net.au,
+        magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge
+Date: Fri,  6 Apr 2018 14:41:55 +0200
+Message-Id: <1523018517-24121-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+    this new version moves the driver and its bindings to use semi-standard
+names for powerdown and output enable GPIOs, as result of the discussion with
+Laurent, Vladimir and Rob. I kept the actual pin names in the bindings
+description for reference, even if there are no huge ambiguities on which
+chip pin is actually an enable and which one a power down.
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+I have reworked the regulator management, making the 'vcc' supply the only
+requested one, and all other optional supplies have been removed as suggested
+by Laurent. It is unlikely a dedicated regulator is to be installed for each
+power supply, and in case some HW design requires this, it's an easy add to be
+implemented in future.
 
-> Hi Ingo,
-> 
-> 	Please consider pulling,
-> 
-> - Arnaldo
-> 
-> Test results at the end of this message, as usual.
-> 
-> The following changes since commit d1e7e602cd64cf61f87dbf30df07c24df9eb1d99:
-> 
->   perf/x86/intel: Move regs->flags EXACT bit init (2018-04-05 09:28:40 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.17-20180406
-> 
-> for you to fetch changes up to 01f97511f13cbf2ba3d23b2bffa06258dc81e283:
-> 
->   tools headers uapi: Synchronize i915_drm.h (2018-04-05 14:48:51 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/urgent fixes:
-> 
-> - Show group details on the title line in the annotate browser
->   and 'perf annotate --stdio2' output, so that the per-event
->   columns can have headers (Arnaldo Carvalho de Melo)
-> 
-> - Fixup vertical line separating metrics from instructions and
->   cleaning unused lines at the bottom, both in the annotate TUI
->   browser (Arnaldo Carvalho de Melo)
-> 
-> - Remove duplicated 'samples' in lost samples warning in
->   'perf report' (Arnaldo Carvalho de Melo)
-> 
-> - Synchronize i915_drm.h, silencing the perf build process,
->   automagically adding support for the new DRM_I915_QUERY
->   ioctl (Arnaldo Carvalho de Melo)
-> 
-> - Make auxtrace_queues__add_buffer() allocate struct buffer,
->   from a patchkit already applied (Adrian Hunter)
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Adrian Hunter (1):
->       perf auxtrace: Make auxtrace_queues__add_buffer() allocate struct buffer
-> 
-> Arnaldo Carvalho de Melo (5):
->       perf annotate: Show group details on the title line
->       perf annotate browser: Fixup vertical line separating metrics from instructions
->       perf ui browser: Fixup cleaning unused lines at the bottom
->       perf report: Remove duplicated 'samples' in lost samples warning
->       tools headers uapi: Synchronize i915_drm.h
-> 
->  tools/include/uapi/drm/i915_drm.h | 112 ++++++++++++++++++++++++++++++++++++--
->  tools/perf/ui/browser.c           |   4 +-
->  tools/perf/ui/browsers/annotate.c |   2 +-
->  tools/perf/util/annotate.c        |   7 ++-
->  tools/perf/util/auxtrace.c        |  54 ++++++++----------
->  tools/perf/util/session.c         |   2 +-
->  6 files changed, 141 insertions(+), 40 deletions(-)
+Contrary to what discussed on v6, the 'vcc' supply is still described
+as optional in dt bindings, and the driver is now using
+'regulator_get(NORMAL_GET)' in place of the _optional() version that was used
+before. With the 'NORMAL_GET' version the regulator core provides a dummy
+regulator in case an actual one is not available. This simplifies integration
+in designs where the chip power supplies are directly connected to some power
+rail. At the same time it makes easier to forget to add a regulator if there's
+actually one there, and someone could find herself wondering why the chip does
+not work even if probe completes properly.
 
-Pulled, thanks a lot Arnaldo!
+I removed the Eagle display enablement patch from the series, I'll send it
+separately squashed on top of Niklas' series that addresses the issue.
 
-Thanks,
+Thanks
+   j
 
-	Ingo
+v6 -> v7:
+- Use semi-standard names for powerdown and output enable GPIOs as suggested
+  by Rob and Vladimir
+- Use 'regulator_get()' not the optional version, and list only 'vcc' as
+  requested supply
+- Addressed Laurent's review comments and removed Eagle display enablement patch
+  to be sent separately
+
+v5 -> v6:
+- Drop check for CONFIG_OF as it is a Kconfig dependency
+- Add Niklas Reviewed-by tags
+- List [3/3] depenencies below commit message to ease integration
+
+v4 -> v5:
+- Fix punctuation in bindings documentation
+- Add small statement to bindings document to clarify the chip has no
+  control bus
+- Print regulator name in enable/disable routines error path
+- Add Andrzej Reviewed-by tag
+
+v3 -> v4:
+- Rename permutations of "pdwn" to just "pdwn" everywhere in the series
+- Improve power enable/disable routines as suggested by Andrzej and Sergei
+- Change "pdwn" gpio initialization to use the logical output level
+- Change Kconfig description
+
+v2 -> v3:
+- Drop support for "lvds-decoder" and make the driver THC63LVD1024 specific
+-- Rework bindings to describe multiple input/output ports
+-- Rename driver and remove "lvds-decoder" references
+-- Rework Eagle DTS to use new bindings
+
+v1 -> v2:
+- Drop support for THC63LVD1024
+
+Jacopo Mondi (2):
+  dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
+  drm: bridge: Add thc63lvd1024 LVDS decoder driver
+
+ .../bindings/display/bridge/thine,thc63lvd1024.txt |  60 ++++++
+ drivers/gpu/drm/bridge/Kconfig                     |   6 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/thc63lvd1024.c              | 212 +++++++++++++++++++++
+ 4 files changed, 279 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+ create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+
+--
+2.7.4
