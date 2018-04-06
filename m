@@ -1,90 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeDFLRP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 07:17:15 -0400
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:36107 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751494AbeDFLRN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 07:17:13 -0400
-X-Google-Smtp-Source: AIpwx4+lseohSR9CV3m1mLQO0xTPJk5gihnh41WpiZBQhlSjL9h2QCX9Xs/Zw6rxOIoYpMm+Yzkcgw==
-Subject: Re: [RfC PATCH] Add udmabuf misc device
-To: Gerd Hoffmann <kraxel@redhat.com>,
-        Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
-Cc: Dongwon Kim <dongwon.kim@intel.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-References: <20180313154826.20436-1-kraxel@redhat.com>
- <20180313161035.GL4788@phenom.ffwll.local>
- <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
- <CAKMK7uGG6Z6XLc6GuKv7-3grCNg+EK2Lh6XWpavjsbZWF_L5Wg@mail.gmail.com>
- <20180406001117.GD31612@mdroper-desk.amr.corp.intel.com>
- <2411d2c1-33c0-2ba5-67ea-3bb9af5d5ec9@epam.com>
- <20180406090747.gwiegu22z4noj23i@sirius.home.kraxel.org>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <9a085854-3758-1500-9971-806c611cb54f@gmail.com>
-Date: Fri, 6 Apr 2018 14:17:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180406090747.gwiegu22z4noj23i@sirius.home.kraxel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1752236AbeDFLY4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 07:24:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49046 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752030AbeDFLYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 07:24:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D61CA217D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 1/6] perf auxtrace: Make auxtrace_queues__add_buffer() allocate struct buffer
+Date: Fri,  6 Apr 2018 08:24:34 -0300
+Message-Id: <20180406112439.21685-2-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180406112439.21685-1-acme@kernel.org>
+References: <20180406112439.21685-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/06/2018 12:07 PM, Gerd Hoffmann wrote:
-> I'm not sure we can create something which works on both kvm and xen.
-> The memory management model is quite different ...
->
->
-> On xen the hypervisor manages all memory.  Guests can allow other guests
-> to access specific pages (using grant tables).  In theory any guest <=>
-> guest communication is possible.  In practice is mostly guest <=> dom0
-> because guests access their virtual hardware that way.  dom0 is the
-> priviledged guest which owns any hardware not managed by xen itself.
->
-> Xen guests can ask the hypervisor to update the mapping of guest
-> physical pages.  They can ballon down (unmap and free pages).  They can
-> ballon up (ask the hypervisor to map fresh pages).  They can map pages
-> exported by other guests using grant tables.  xen-zcopy makes heavy use
-> of this.  It balloons down, to make room in the guest physical address
-> space, then goes map the exported pages there, finally composes a
-> dma-buf.
->
->
-> On kvm qemu manages all guest memory.  qemu also has all guest memory
-> mapped, so a grant-table like mechanism isn't needed to implement
-> virtual devices.  qemu can decide how it backs memory for the guest.
-> qemu propagates the guest memory map to the kvm driver in the linux
-> kernel.  kvm guests have some control over the guest memory map, for
-> example they can map pci bars wherever they want in their guest physical
-> address space by programming the base registers accordingly, but unlike
-> xen guests they can't ask the host to remap individual pages.
->
-> Due to qemu having all guest memory mapped virtual devices are typically
-> designed to have the guest allocate resources, then notify the host
-> where they are located.  This is where the udmabuf idea comes from:
-> Guest tells the host (qemu) where the gem object is, and qemu then can
-> create a dmabuf backed by those pages to pass it on to other processes
-> such as the wayland display server.  Possibly even without the guest
-> explicitly asking for it, i.e. export the framebuffer placed by the
-> guest in the (virtual) vga pci memory bar as dma-buf.  And I can imagine
-> that this is useful outsize virtualization too.
->
->
-> I fail to see any common ground for xen-zcopy and udmabuf ...
-Does the above mean you can assume that xen-zcopy and udmabuf
-can co-exist as two different solutions?
-And what about hyper-dmabuf?
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-Thank you,
-Oleksandr
+In preparation for supporting AUX area sampling buffers,
+auxtrace_queues__add_buffer() needs to be more generic. To that end,
+move memory allocation for struct buffer into it.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/1520327598-1317-7-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/auxtrace.c | 54 +++++++++++++++++++++-------------------------
+ 1 file changed, 24 insertions(+), 30 deletions(-)
+
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index fb357a00dd86..e1aff91c54a8 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -308,7 +308,11 @@ static int auxtrace_queues__add_buffer(struct auxtrace_queues *queues,
+ 				       struct auxtrace_buffer *buffer,
+ 				       struct auxtrace_buffer **buffer_ptr)
+ {
+-	int err;
++	int err = -ENOMEM;
++
++	buffer = memdup(buffer, sizeof(*buffer));
++	if (!buffer)
++		return -ENOMEM;
+ 
+ 	if (session->one_mmap) {
+ 		buffer->data = buffer->data_offset - session->one_mmap_offset +
+@@ -316,24 +320,28 @@ static int auxtrace_queues__add_buffer(struct auxtrace_queues *queues,
+ 	} else if (perf_data__is_pipe(session->data)) {
+ 		buffer->data = auxtrace_copy_data(buffer->size, session);
+ 		if (!buffer->data)
+-			return -ENOMEM;
++			goto out_free;
+ 		buffer->data_needs_freeing = true;
+ 	} else if (BITS_PER_LONG == 32 &&
+ 		   buffer->size > BUFFER_LIMIT_FOR_32_BIT) {
+ 		err = auxtrace_queues__split_buffer(queues, idx, buffer);
+ 		if (err)
+-			return err;
++			goto out_free;
+ 	}
+ 
+ 	err = auxtrace_queues__queue_buffer(queues, idx, buffer);
+ 	if (err)
+-		return err;
++		goto out_free;
+ 
+ 	/* FIXME: Doesn't work for split buffer */
+ 	if (buffer_ptr)
+ 		*buffer_ptr = buffer;
+ 
+ 	return 0;
++
++out_free:
++	auxtrace_buffer__free(buffer);
++	return err;
+ }
+ 
+ static bool filter_cpu(struct perf_session *session, int cpu)
+@@ -348,36 +356,22 @@ int auxtrace_queues__add_event(struct auxtrace_queues *queues,
+ 			       union perf_event *event, off_t data_offset,
+ 			       struct auxtrace_buffer **buffer_ptr)
+ {
+-	struct auxtrace_buffer *buffer;
+-	unsigned int idx;
+-	int err;
++	struct auxtrace_buffer buffer = {
++		.pid = -1,
++		.tid = event->auxtrace.tid,
++		.cpu = event->auxtrace.cpu,
++		.data_offset = data_offset,
++		.offset = event->auxtrace.offset,
++		.reference = event->auxtrace.reference,
++		.size = event->auxtrace.size,
++	};
++	unsigned int idx = event->auxtrace.idx;
+ 
+ 	if (filter_cpu(session, event->auxtrace.cpu))
+ 		return 0;
+ 
+-	buffer = zalloc(sizeof(struct auxtrace_buffer));
+-	if (!buffer)
+-		return -ENOMEM;
+-
+-	buffer->pid = -1;
+-	buffer->tid = event->auxtrace.tid;
+-	buffer->cpu = event->auxtrace.cpu;
+-	buffer->data_offset = data_offset;
+-	buffer->offset = event->auxtrace.offset;
+-	buffer->reference = event->auxtrace.reference;
+-	buffer->size = event->auxtrace.size;
+-	idx = event->auxtrace.idx;
+-
+-	err = auxtrace_queues__add_buffer(queues, session, idx, buffer,
+-					  buffer_ptr);
+-	if (err)
+-		goto out_err;
+-
+-	return 0;
+-
+-out_err:
+-	auxtrace_buffer__free(buffer);
+-	return err;
++	return auxtrace_queues__add_buffer(queues, session, idx, &buffer,
++					   buffer_ptr);
+ }
+ 
+ static int auxtrace_queues__add_indexed_event(struct auxtrace_queues *queues,
+-- 
+2.14.3
