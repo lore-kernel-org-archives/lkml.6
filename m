@@ -1,95 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751606AbeDFTsN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 15:48:13 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50681 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751329AbeDFTsL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 15:48:11 -0400
-X-Google-Smtp-Source: AIpwx49LafS4kL41jKSe6rbrW6BC9TspqOsQ3Yspc1sI4TO9kDTmuHd48vU8fs3oVbpvv4n8nF10Ng==
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: paulmck@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        David Howells <dhowells@redhat.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v4 1/3] locking: Document the semantics of spin_is_locked()
-Date: Fri,  6 Apr 2018 21:47:39 +0200
-Message-Id: <1523044060-5568-1-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
-References: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
+        id S1752020AbeDFTuw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 15:50:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39258 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751384AbeDFTuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 15:50:51 -0400
+Date: Fri, 6 Apr 2018 14:50:49 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
+ patches.
+Message-ID: <20180406195049.dtfebzfdkbvv6yex@treble>
+References: <20180307082039.10196-1-pmladek@suse.com>
+ <20180307082039.10196-6-pmladek@suse.com>
+ <20180313224613.sdkdkcvhpqv54s6c@treble>
+ <20180319150207.iz5ecbsogg5lpwac@pathway.suse.cz>
+ <20180319214324.riyp233trtfxbeto@treble>
+ <20180320122538.t75rplwhmhtap5q2@pathway.suse.cz>
+ <20180320201502.2skkk3ld4zk2dxwg@treble>
+ <20180323094507.smsqc5ft3yajnwqt@pathway.suse.cz>
+ <20180323224410.vuq5cabfprqhd6ej@treble>
+ <20180326101107.bbloeh5l276on7uz@pathway.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180326101107.bbloeh5l276on7uz@pathway.suse.cz>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There appeared to be a certain, recurrent uncertainty concerning the
-semantics of spin_is_locked(), likely a consequence of the fact that
-this semantics remains undocumented or that it has been historically
-linked to the (likewise unclear) semantics of spin_unlock_wait().
+On Mon, Mar 26, 2018 at 12:11:07PM +0200, Petr Mladek wrote:
+> On Fri 2018-03-23 17:44:10, Josh Poimboeuf wrote:
+> > On Fri, Mar 23, 2018 at 10:45:07AM +0100, Petr Mladek wrote:
+> > > On Tue 2018-03-20 15:15:02, Josh Poimboeuf wrote:
+> > > > On Tue, Mar 20, 2018 at 01:25:38PM +0100, Petr Mladek wrote:
+> > > > > On Mon 2018-03-19 16:43:24, Josh Poimboeuf wrote:
+> > > > > > On Mon, Mar 19, 2018 at 04:02:07PM +0100, Petr Mladek wrote:
+> > > > > > > > Along those lines, I'd also propose that we constrain our existing patch
+> > > > > > > > stacking even further.  Right now we allow a new patch to be registered
+> > > > > > > > on top of a disabled patch, though we don't allow the new patch to be
+> > > > > > > > enabled until the previous patch gets enabled.  I'd propose we no longer
+> > > > > > > > allow that condition.  We should instead enforce that all existing
+> > > > > > > > patches are *enabled* before allowing a new patch to be registered on
+> > > > > > > > top.  That way the patch stacking is even more sane, and there are less
+> > > > > > > > "unusual" conditions to worry about.  We have enough of those already.
+> > > > > > > > Each additional bit of flexibility has a maintenance cost, and this one
+> > > > > > > > isn't worth it IMO.
+> > > > > > > 
+> > > > > > > Again, this might make some things easier but it might also bring
+> > > > > > > problems.
+> > > > > > > 
+> > > > > > > For example, we would need to solve the situation when the last
+> > > > > > > patch is disabled and cannot be removed because the transition
+> > > > > > > was forced. This might be more common after removing the immediate
+> > > > > > > feature.
+> > > > > > 
+> > > > > > I would stop worrying about forced patches so much :-)
+> > > > > 
+> > > > > I have already seen blocked transition several times. It is true that
+> > > > > it was with kGraft. But we just do not have enough real life experience
+> > > > > with the upstream livepatch code.
+> > > > 
+> > > > But we're talking about patching on top of a *disabled* patch.  Forced
+> > > > or not, why would the patch be disabled in the first place?
+> > > 
+> > > For example, it might be disabled because the transition stalled for
+> > > too long and the user reverted it. Or just because it is possible
+> > > to disable it.
+> > 
+> > If they haven't previously forced any patches, and they reverted the
+> > topmost patch because it stalled, they can easily unload the patch.
+> > 
+> > If they *have* previously forced a patch, they can force enable the
+> > topmost patch as well, or if that's not safe they can reboot (that's
+> > what you get for forcing a patch...)
+> 
+> IMHO, the reboot is the very last option for people that are using
+> livepatching.
 
-A recent auditing [1] of the callers of the primitive confirmed that
-none of them are relying on particular ordering guarantees; document
-this semantics by adding a docbook header to spin_is_locked(). Also,
-describe behaviors specific to certain CONFIG_SMP=n builds.
+... but it may be a natural consequence of forcing a patch.
 
-[1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
-    https://marc.info/?l=linux-kernel&m=152042843808540&w=2
-    https://marc.info/?l=linux-kernel&m=152043346110262&w=2
+> > > > We were just recently discussing the possibility of not allowing the
+> > > > disabling of patches at all.  If we're not going that far, let's at
+> > > > least further restrict it, for the sanity of our code, so we don't have
+> > > > to worry about a nasty mismatched stack of enabled/disabled/enabled/etc,
+> > > > at least for the cases where 'replace' patches aren't used.
+> > > 
+> > > I am not completely sure where all these fears come from. From my
+> > > point of view, this change is pretty safe and trivial thanks to NOPs
+> > > and overall design. It would be a shame to do not have it. But I
+> > > might be blind after spending so much time with the feature.
+> > 
+> > I think you're missing my point.  This isn't about your patch set, per
+> > se.  It's really about our existing code.  Today, our patch stack
+> > doesn't follow real stack semantics, because patches in the middle might
+> > be disabled.  I see that as a problem.
+> 
+> This would be true if we keep the replaced patches on the stack. But
+> if we remove the replaced patches then there never will be disabled
+> patches in the middle.
+> 
+> OK, there might be disabled patches in the middle during the
+> transition. But this is the situation where we basically could
+> not manipulate the stack.
 
-Co-Developed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Co-Developed-by: Alan Stern <stern@rowland.harvard.edu>
-Co-Developed-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-Cc: Luc Maranget <luc.maranget@inria.fr>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Akira Yokosawa <akiyks@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
----
- include/linux/spinlock.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+No, please read it again.  I wasn't talking about replaced patches.
 
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index 4894d322d2584..1e8a464358384 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -380,6 +380,24 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
- 	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
- })
- 
-+/**
-+ * spin_is_locked() - Check whether a spinlock is locked.
-+ * @lock: Pointer to the spinlock.
-+ *
-+ * This function is NOT required to provide any memory ordering
-+ * guarantees; it could be used for debugging purposes or, when
-+ * additional synchronization is needed, accompanied with other
-+ * constructs (memory barriers) enforcing the synchronization.
-+ *
-+ * Returns: 1 if @lock is locked, 0 otherwise.
-+ *
-+ * Note that the function only tells you that the spinlock is
-+ * seen to be locked, not that it is locked on your CPU.
-+ *
-+ * Further, on CONFIG_SMP=n builds with CONFIG_DEBUG_SPINLOCK=n,
-+ * the return value is always 0 (see include/linux/spinlock_up.h).
-+ * Therefore you should not rely heavily on the return value.
-+ */
- static __always_inline int spin_is_locked(spinlock_t *lock)
- {
- 	return raw_spin_is_locked(&lock->rlock);
+> > If 'replace' were the only mode, then we wouldn't even need a patch
+> > stack because it wouldn't really matter much whether the previous patch
+> > is enabled or disabled.  I think this is in agreement with the point
+> > you're making.
+> > 
+> > But we still support non-replace patches.  My feeling is that we should
+> > either do a true stack, or no stack at all.  The in-between thing is
+> > going to be confusing, not only for us, but for patch authors and end
+> > users.
+> 
+> I see it like two different modes. We either have a stack of patches
+> that depend on each other.
+
+But if they depend on each other, they can use 'replace' and a stack
+isn't needed.
+
+And If they *don't* depend on each other, then the stack is overly
+restrictive, for no good reason.
+
+Either way, why do we still need a stack?
+
+> Or we have replace patches that are
+> standalone and we allow a smooth transfer from one to another one.
+> 
+> Anyway, for us, it is much more important the removal of replaced
+> patches. We could probably live without the possibility to replace
+> disabled patches.
+
+I think replacing disabled patches is ok, *if* we get rid of the
+illusion of a stack.  The current stack isn't really a stack, it's just
+awkward.
+
 -- 
-2.7.4
+Josh
