@@ -1,217 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752509AbeDFVyt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 17:54:49 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41785 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751679AbeDFVys (ORCPT
+        id S1752246AbeDFV6f (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 17:58:35 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43214 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751965AbeDFV6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 17:54:48 -0400
-Date: Fri, 6 Apr 2018 14:54:20 -0700
-From: tip-bot for Ming Lei <tipbot@zytor.com>
-Message-ID: <tip-d3056812e7dfe6bf4f8ad9e397a9116dd5d32d15@git.kernel.org>
-Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, hch@infradead.org,
-        mingo@kernel.org, tglx@linutronix.de, axboe@kernel.dk,
-        loberman@redhat.com, hch@lst.de, ming.lei@redhat.com
-Reply-To: ming.lei@redhat.com, loberman@redhat.com, hch@lst.de,
-        axboe@kernel.dk, tglx@linutronix.de, mingo@kernel.org,
-        hch@infradead.org, linux-kernel@vger.kernel.org, hpa@zytor.com
-In-Reply-To: <20180308105358.1506-5-ming.lei@redhat.com>
-References: <20180308105358.1506-5-ming.lei@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/affinity: Spread irq vectors among present
- CPUs as far as possible
-Git-Commit-ID: d3056812e7dfe6bf4f8ad9e397a9116dd5d32d15
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 6 Apr 2018 17:58:34 -0400
+X-Google-Smtp-Source: AIpwx4+DAy32pEZb/Q53EIyb7CZ51Jf4e9Z/KruxMcv06Au34r0ig/WoNBFvJYBv+UyYyvEyTBXLvA==
+Date: Fri, 6 Apr 2018 23:58:25 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        David Howells <dhowells@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v4 1/3] locking: Document the semantics of
+ spin_is_locked()
+Message-ID: <20180406215825.GA3646@andrea>
+References: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
+ <1523044060-5568-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <b0dbf383-6403-a408-047d-0dd0d2135a03@infradead.org>
+ <20180406210741.GF3948@linux.vnet.ibm.com>
+ <30d15756-1cb4-7123-b4d9-ce2e66861df3@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <30d15756-1cb4-7123-b4d9-ce2e66861df3@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d3056812e7dfe6bf4f8ad9e397a9116dd5d32d15
-Gitweb:     https://git.kernel.org/tip/d3056812e7dfe6bf4f8ad9e397a9116dd5d32d15
-Author:     Ming Lei <ming.lei@redhat.com>
-AuthorDate: Thu, 8 Mar 2018 18:53:58 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 6 Apr 2018 12:19:51 +0200
+On Fri, Apr 06, 2018 at 02:08:16PM -0700, Randy Dunlap wrote:
+> On 04/06/2018 02:07 PM, Paul E. McKenney wrote:
+> > On Fri, Apr 06, 2018 at 02:01:41PM -0700, Randy Dunlap wrote:
+> >> On 04/06/2018 12:47 PM, Andrea Parri wrote:
+> >>> There appeared to be a certain, recurrent uncertainty concerning the
+> >>> semantics of spin_is_locked(), likely a consequence of the fact that
+> >>> this semantics remains undocumented or that it has been historically
+> >>> linked to the (likewise unclear) semantics of spin_unlock_wait().
+> >>>
+> >>> A recent auditing [1] of the callers of the primitive confirmed that
+> >>> none of them are relying on particular ordering guarantees; document
+> >>> this semantics by adding a docbook header to spin_is_locked(). Also,
+> >>> describe behaviors specific to certain CONFIG_SMP=n builds.
+> >>>
+> >>> [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
+> >>>     https://marc.info/?l=linux-kernel&m=152042843808540&w=2
+> >>>     https://marc.info/?l=linux-kernel&m=152043346110262&w=2
+> >>>
+> >>> Co-Developed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> >>> Co-Developed-by: Alan Stern <stern@rowland.harvard.edu>
+> >>> Co-Developed-by: David Howells <dhowells@redhat.com>
+> >>> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> >>> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> >>> Signed-off-by: David Howells <dhowells@redhat.com>
+> >>> Cc: Will Deacon <will.deacon@arm.com>
+> >>> Cc: Peter Zijlstra <peterz@infradead.org>
+> >>> Cc: Boqun Feng <boqun.feng@gmail.com>
+> >>> Cc: Nicholas Piggin <npiggin@gmail.com>
+> >>> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> >>> Cc: Luc Maranget <luc.maranget@inria.fr>
+> >>> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> >>> Cc: Akira Yokosawa <akiyks@gmail.com>
+> >>> Cc: Ingo Molnar <mingo@kernel.org>
+> >>> ---
+> >>>  include/linux/spinlock.h | 18 ++++++++++++++++++
+> >>>  1 file changed, 18 insertions(+)
+> >>>
+> >>> diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+> >>> index 4894d322d2584..1e8a464358384 100644
+> >>> --- a/include/linux/spinlock.h
+> >>> +++ b/include/linux/spinlock.h
+> >>> @@ -380,6 +380,24 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
+> >>>  	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
+> >>>  })
+> >>>  
+> >>> +/**
+> >>> + * spin_is_locked() - Check whether a spinlock is locked.
+> >>> + * @lock: Pointer to the spinlock.
+> >>> + *
+> >>> + * This function is NOT required to provide any memory ordering
+> >>> + * guarantees; it could be used for debugging purposes or, when
+> >>> + * additional synchronization is needed, accompanied with other
+> >>> + * constructs (memory barriers) enforcing the synchronization.
+> >>> + *
+> >>> + * Returns: 1 if @lock is locked, 0 otherwise.
+> >>
+> >> Sorry, minor nit:
+> >> s/Returns:/Return:/
+> >> (according to kernel-doc.rst)
+> >>
+> >> although I agree that "Returns:" is better.
+> >> [I should have changed that years ago.]
+> > 
+> > Agreed, English grammar and templates often seem to conflict.
+> > 
+> > So should we change this comment, or are you instead proposing to add
+> > "Returns:" as valid kernel-doc?
+> 
+> Please change this patch to current doc syntax.
+> Any changes to kernel-doc syntax would come later.
 
-genirq/affinity: Spread irq vectors among present CPUs as far as possible
+Paul: I understand that you're going to do this change "in place"; please
+let me know if I'm wrong/if you need a new submission.
 
-Commit 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-tried to spread the interrupts accross all possible CPUs to make sure that
-in case of phsyical hotplug (e.g. virtualization) the CPUs which get
-plugged in after the device was initialized are targeted by a hardware
-queue and the corresponding interrupt.
+Thanks,
+  Andrea
 
-This has a downside in cases where the ACPI tables claim that there are
-more possible CPUs than present CPUs and the number of interrupts to spread
-out is smaller than the number of possible CPUs. These bogus ACPI tables
-are unfortunately not uncommon.
 
-In such a case the vector spreading algorithm assigns interrupts to CPUs
-which can never be utilized and as a consequence these interrupts are
-unused instead of being mapped to present CPUs. As a result the performance
-of the device is suboptimal.
-
-To fix this spread the interrupt vectors in two stages:
-
- 1) Spread as many interrupts as possible among the present CPUs
-
- 2) Spread the remaining vectors among non present CPUs
-
-On a 8 core system, where CPU 0-3 are present and CPU 4-7 are not present,
-for a device with 4 queues the resulting interrupt affinity is:
-
-  1) Before 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-	irq 39, cpu list 0
-	irq 40, cpu list 1
-	irq 41, cpu list 2
-	irq 42, cpu list 3
-
-  2) With 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-	irq 39, cpu list 0-2
-	irq 40, cpu list 3-4,6
-	irq 41, cpu list 5
-	irq 42, cpu list 7
-
-  3) With the refined vector spread applied:
-	irq 39, cpu list 0,4
-	irq 40, cpu list 1,6
-	irq 41, cpu list 2,5
-	irq 42, cpu list 3,7
-
-On a 8 core system, where all CPUs are present the resulting interrupt
-affinity for the 4 queues is:
-
-	irq 39, cpu list 0,1
-	irq 40, cpu list 2,3
-	irq 41, cpu list 4,5
-	irq 42, cpu list 6,7
-
-This is independent of the number of CPUs which are online at the point of
-initialization because in such a system the offline CPUs can be easily
-onlined afterwards, while in non-present CPUs need to be plugged physically
-or virtually which requires external interaction.
-
-The downside of this approach is that in case of physical hotplug the
-interrupt vector spreading might be suboptimal when CPUs 4-7 are physically
-plugged. Suboptimal from a NUMA point of view and due to the single target
-nature of interrupt affinities the later plugged CPUs might not be targeted
-by interrupts at all.
-
-Though, physical hotplug systems are not the common case while the broken
-ACPI table disease is wide spread. So it's preferred to have as many
-interrupts as possible utilized at the point where the device is
-initialized.
-
-Block multi-queue devices like NVME create a hardware queue per possible
-CPU, so the goal of commit 84676c1f21 to assign one interrupt vector per
-possible CPU is still achieved even with physical/virtual hotplug.
-
-[ tglx: Changed from online to present CPUs for the first spreading stage,
-  	renamed variables for readability sake, added comments and massaged
-  	changelog ]
-
-Reported-by: Laurence Oberman <loberman@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org
-Cc: Christoph Hellwig <hch@infradead.org>
-Link: https://lkml.kernel.org/r/20180308105358.1506-5-ming.lei@redhat.com
-
----
- kernel/irq/affinity.c | 43 +++++++++++++++++++++++++++++++++++++------
- 1 file changed, 37 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index 213695a27ddb..f4f29b9d90ee 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -106,6 +106,9 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
- 	int curvec = startvec;
- 	nodemask_t nodemsk = NODE_MASK_NONE;
- 
-+	if (!cpumask_weight(cpu_mask))
-+		return 0;
-+
- 	nodes = get_nodes_in_cpumask(node_to_cpumask, cpu_mask, &nodemsk);
- 
- 	/*
-@@ -173,8 +176,9 @@ out:
- struct cpumask *
- irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- {
--	int curvec, affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
--	cpumask_var_t nmsk, *node_to_cpumask;
-+	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
-+	int curvec, usedvecs;
-+	cpumask_var_t nmsk, npresmsk, *node_to_cpumask;
- 	struct cpumask *masks = NULL;
- 
- 	/*
-@@ -187,9 +191,12 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
- 		return NULL;
- 
-+	if (!zalloc_cpumask_var(&npresmsk, GFP_KERNEL))
-+		goto outcpumsk;
-+
- 	node_to_cpumask = alloc_node_to_cpumask();
- 	if (!node_to_cpumask)
--		goto outcpumsk;
-+		goto outnpresmsk;
- 
- 	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
- 	if (!masks)
-@@ -202,16 +209,40 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	/* Stabilize the cpumasks */
- 	get_online_cpus();
- 	build_node_to_cpumask(node_to_cpumask);
--	curvec += irq_build_affinity_masks(affd, curvec, affvecs,
--					   node_to_cpumask, cpu_possible_mask,
--					   nmsk, masks);
-+
-+	/* Spread on present CPUs starting from affd->pre_vectors */
-+	usedvecs = irq_build_affinity_masks(affd, curvec, affvecs,
-+					    node_to_cpumask, cpu_present_mask,
-+					    nmsk, masks);
-+
-+	/*
-+	 * Spread on non present CPUs starting from the next vector to be
-+	 * handled. If the spreading of present CPUs already exhausted the
-+	 * vector space, assign the non present CPUs to the already spread
-+	 * out vectors.
-+	 */
-+	if (usedvecs >= affvecs)
-+		curvec = affd->pre_vectors;
-+	else
-+		curvec = affd->pre_vectors + usedvecs;
-+	cpumask_andnot(npresmsk, cpu_possible_mask, cpu_present_mask);
-+	usedvecs += irq_build_affinity_masks(affd, curvec, affvecs,
-+					     node_to_cpumask, npresmsk,
-+					     nmsk, masks);
- 	put_online_cpus();
- 
- 	/* Fill out vectors at the end that don't need affinity */
-+	if (usedvecs >= affvecs)
-+		curvec = affd->pre_vectors + affvecs;
-+	else
-+		curvec = affd->pre_vectors + usedvecs;
- 	for (; curvec < nvecs; curvec++)
- 		cpumask_copy(masks + curvec, irq_default_affinity);
-+
- outnodemsk:
- 	free_node_to_cpumask(node_to_cpumask);
-+outnpresmsk:
-+	free_cpumask_var(npresmsk);
- outcpumsk:
- 	free_cpumask_var(nmsk);
- 	return masks;
+> 
+> Thanks.
+> 
+> > 							Thanx, Paul
+> > 
+> >>> + *
+> >>> + * Note that the function only tells you that the spinlock is
+> >>> + * seen to be locked, not that it is locked on your CPU.
+> >>> + *
+> >>> + * Further, on CONFIG_SMP=n builds with CONFIG_DEBUG_SPINLOCK=n,
+> >>> + * the return value is always 0 (see include/linux/spinlock_up.h).
+> >>> + * Therefore you should not rely heavily on the return value.
+> >>> + */
+> >>>  static __always_inline int spin_is_locked(spinlock_t *lock)
+> >>>  {
+> >>>  	return raw_spin_is_locked(&lock->rlock);
+> >>>
+> >>
+> >>
+> >> -- 
+> >> ~Randy
+> >>
+> > 
+> 
+> 
+> -- 
+> ~Randy
