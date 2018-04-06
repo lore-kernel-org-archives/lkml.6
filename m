@@ -1,131 +1,324 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752286AbeDFKdc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 06:33:32 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:42978 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751846AbeDFKd3 (ORCPT
+        id S1752045AbeDFKew (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 06:34:52 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:21772 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbeDFKev (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:33:29 -0400
-Date: Fri, 6 Apr 2018 11:32:56 +0100
-From: Roman Gushchin <guro@fb.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: Al Viro <viro@ZenIV.linux.org.uk>, <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-team@fb.com>
-Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
- reclaimable memory
-Message-ID: <20180406103250.GA3717@castle>
-References: <20180305133743.12746-1-guro@fb.com>
- <20180305133743.12746-5-guro@fb.com>
- <20180312211742.GR30522@ZenIV.linux.org.uk>
- <20180312223632.GA6124@castle>
- <20180313004532.GU30522@ZenIV.linux.org.uk>
- <20180405151123.df20d12168d8a38f7a6b02b5@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180405151123.df20d12168d8a38f7a6b02b5@linux-foundation.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-Originating-IP: [2620:10d:c092:180::1:20dc]
-X-ClientProxiedBy: HE1PR09CA0059.eurprd09.prod.outlook.com
- (2603:10a6:7:3c::27) To BL2PR15MB1074.namprd15.prod.outlook.com
- (2603:10b6:201:17::8)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 445420f5-87b5-47a0-5469-08d59ba9cc71
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BL2PR15MB1074;
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1074;3:41LU01q179FHZMAnOqkphW1LF9pc1RZy7Mh/1+gipo25opVefH2N7rBohFTrBsADcfhy439Ja3OtSdePhJzD8To/OfnSo2pXrdaLzNE2cqkr9Hn92AU8CrcUGysEkFN28wITnrgTHDLSSgpEgf4rFy6Sk+hmDULuOb7dVMHH1RPpTNXRvjpHYbnnIRnZ4D7mpYaRyfxS+HlIpw+WTPzfyspxziODKoB1B/u+1h92xg+zwSdGk+rkOiW71273Gr7l;25:INhkLlVHi5AgOmOwLYPO9pYkMzSc8AKW3h181oSf7pVhPiEVpoyoclDcLoM12V3FiLXtZRfdudHpSmbu2iz3w2amvWscnft/bj76SS3m18yNScTj41aAQqdRBz0jOpiN4eACmFveOa0M10nxvP0DpQQ9Vunumx0O9AW5ihGGHuB0CBVUPGa+OhOT3J+xoyaAi1zgtRNQI4A5jX+KqN6R867ZkzuDSIalOxXnC6PlzMpP1jqQsCE9eJtbl/4Ie6Q3nuwQAqTNHO4h9s2RLFQ/LfvRJdcZr0su8wxJiwa/knCFD+jF8f2gB6avrUT5S/pESCjLHyte+cpnEPoPolJP+Q==;31:51cCS9jI1DKMFCsCndDduwo/RRlG4mTNRhI5P5G71ma99GC1odt5CF1Am0HsLzbidm2VZ0plxWTdOIkvnTovyh8/2M3yqczfgSDtex5Se/r0ajj45GrblNzLnKIPjTHqLGBYLM53ue+2Kdpe5tJp/PPi8IpOre3NcGjkt0jPRAG9BKyVVdInJXo/QyPhvJuqK1ha3A3lPQcFByKqrpx1xI4VB2qaI1PWK9f/Q62YkbI=
-X-MS-TrafficTypeDiagnostic: BL2PR15MB1074:
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1074;20:nqFr+ZoETcGP/E8EbPQVpFErsbdhB1DkLuDfNPPS5+qY1+TU774fXdL0wwHjtc++luEa0kRXwIbSy8DyB9MXXp27bcnYV30jUKN0NDvuC8sfooRQoklw+/3lGGKOWDQlzFQObss/y83kb93++UnaMsJUIAVu/0AOUtyjUns7QNYhauygqvvMnyuQuGAK9s5J14AlnuzLPHxXcDZ7TmL2SFzJmVM2MXJMEAZh7XIH7y28s3fAJYMzDttDie9SI7KlrDQaYAZltpoQNd1oMJvZZBDhsYyVHc83Fa7zRFNoZWAoMWxiZSHtSkWanyIOpiWmcYXnYktqiYTlci8heDat6R2eI3IyQgmOY3kPaRyLLhvJsQN3MakuoBIkyC1m+RFIzKYAJ/mnYs7CCiK4eUIkU6hwaRMwnHUXoSdqPr9dhGjLDPIkyCtTIwBTVArcNNX4JH4QapqivLtFPza20IxZIedsLhSoZ0OJsy1GxA1qsceTHQmue38mizl49Byq04N1;4:MZCw17uURVG/Ax9kOt3doaeZVu9zhP3L70078K1l07EwDl24kn4VQ8rL2vsBLYd6cxeutHNtcMS0tf2tptg/+UHnqo3M/KM8DeVTebOcpsZ6n5TA8P6TIxY0YBwSmYGSlJkodGzMun/8RDyF+cLXqGa1Dk1URO9YPLkrTgYXw5yPaao5sl7SZqTRjgmw7LKVxBhs4F7iWrtNuTPav2VZF1ovfYFGaWHyHimlsAJvxNoHPM0/aE7xI1WTjEpsmOpDfWokEebWgxY3je1NJMV/Pw==
-X-Microsoft-Antispam-PRVS: <BL2PR15MB10741039B5E27A91B1240458BEBA0@BL2PR15MB1074.namprd15.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231221)(11241501184)(944501327)(52105095)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL2PR15MB1074;BCL:0;PCL:0;RULEID:;SRVR:BL2PR15MB1074;
-X-Forefront-PRVS: 0634F37BFF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(346002)(396003)(376002)(39860400002)(189003)(199004)(54906003)(52396003)(58126008)(53936002)(316002)(6116002)(16586007)(186003)(46003)(16526019)(23726003)(33656002)(7736002)(86362001)(93886005)(486006)(1076002)(15650500001)(47776003)(6496006)(305945005)(106356001)(5660300001)(476003)(81166006)(6246003)(229853002)(8936002)(9686003)(2906002)(11346002)(81156014)(8676002)(97736004)(6666003)(76176011)(68736007)(55016002)(478600001)(33716001)(50466002)(59450400001)(25786009)(33896004)(4326008)(52116002)(6916009)(105586002)(386003)(446003)(18370500001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BL2PR15MB1074;H:castle;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR15MB1074;23:uaQLQFaZJzYBqijSGdfFwBLzNjKFZ8akYFLaHuoKj?=
- =?us-ascii?Q?eIF8zh58vY8oMY6rY3DAsu+ONx0qUhH3pzkF/edZsTPa5BZ1SSU41rl6sfiR?=
- =?us-ascii?Q?kCqv5+F6662NmOEx4kQ7if+KJLsQ2/C+Jv2+xiQlcC80ynRTBZpSSXRoABNP?=
- =?us-ascii?Q?CoCFQkr0ehouT/AOKds8A1T7EONQ1wJwVhF4nrMkvzeSt4v6VgK2Cpf+j6xt?=
- =?us-ascii?Q?9EveL6W/zVykY9dF1UbsxzW3GvZ5W+mIiAQxnmp1KP9RYAZTTrOgAODeB27n?=
- =?us-ascii?Q?H8cKjNjkpVZX4aKWaBck1QTC3TGLDlRPa7bLnubTvy0GVGBdi541wPSvsX/b?=
- =?us-ascii?Q?mQV5W92R4pu6rXbhMqNpfYtcqgSecCB3erYBW8vD3YSUVsXcr1iUOt0OXz88?=
- =?us-ascii?Q?W35ukvmK6vqQNGvO6F+Wi75Miy6ry93BLQcqb8NtShoaeU+CcyvKoJFSCSYx?=
- =?us-ascii?Q?4D4lji1FRB4BCySbVHeVXB6SYBBQvL4Hw5S6DqQchpyWWV6bInC8+MADvw9o?=
- =?us-ascii?Q?CP3jihfCcg7HrktD/8zjMS9WKDn6pC4eOX+ICZRurUFedRk0jPk/BR9NqnkD?=
- =?us-ascii?Q?8BAvBrDk5UiyeLl+BN24KK77xmMgiN2iXj/9cc9C4hxzPECZPzbE80DxdBQx?=
- =?us-ascii?Q?GKgQkgZ7UphQWmDvIhnyrdnlcnZ4kvjxvSBoJpSgwmK7GEgpRd8eQlGD3OyS?=
- =?us-ascii?Q?dQraQKMIuIuKwZf1sqeBCJ6ArDBCIsYigqgs6tAOi7kqts8mEysoyobhDuu1?=
- =?us-ascii?Q?ueL11P6FBYr2WcFwwjAVWAznBfTeX0Ko98jasXT332rkxMJ7ZdRKnt7/OcF3?=
- =?us-ascii?Q?XVu+JAT4QqlZz8EywliVAInI8K8vN714YYYk4Il87Gqpnvsdn8foZLWbu/uy?=
- =?us-ascii?Q?6SNm7rnP8dfAsQAXTVDNF7q19q5dy0Zmc6lu0HDs//jMUKc1+RkcOQvk7MF5?=
- =?us-ascii?Q?RJYD27+l6P4/Tp+qgXnYxumIGvVJ5UvfqIssXyrB+b2pts1xsoUzFF3jjsjT?=
- =?us-ascii?Q?Iu0y78AdMJ9xVRghfX6rr4ecuVqJSx7QiPrBxEPLE7haKbZv0gp5f/mKri7x?=
- =?us-ascii?Q?NU43vH+/dvhn/xCLNFoVdS1hKvXEv66hB3rYwbIYxoB68RsYJhvnVgX8Rc85?=
- =?us-ascii?Q?BefDqlO3UxH65B/PbnhOShQLfEhekhlqmTT3hUPByLiEEMIUrLKI2A1qnOYK?=
- =?us-ascii?Q?wsPW1eKTUhyJISs72nRtpuVraeFp9IlcyU8CDeZUp39zUskBzT8bCuMZdO68?=
- =?us-ascii?Q?31/1vSUuBdipSvTu2V3YGk+KNGwKRfJ8O0PBKrrUwSYIqsb3Dmsm0nardiHl?=
- =?us-ascii?Q?QnN2vapD16stxP6GLW08LtTE+3/nYxPJIkxf3gjP+wg8M+TR+SikaxGmwh0N?=
- =?us-ascii?Q?xKQnw=3D=3D?=
-X-Microsoft-Antispam-Message-Info: UGK21CcLiSG4kf2T5jF5Ne8nwNMmvK+52w6FxzLxQsfvkPRPzkOCuQDvnCl0kgadFCIFzV/omOavmamVTP64HG6RPdTw08pPj9ibpk5I4StLxyJOxUq0T3i5ayzyDz2zeBYeobCAMD7iOkuyucvgOt+X1nI9gjOSnww6vXtLtvdBUb3jkr+iSSE92eitU4kL
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1074;6:ELo9LHrLR5kvH5z3F8nfWpVPm4WjX8A6H/twa+8BG5GDp8JSLngJGOZei/5k2A6gkocNO/pefHTGZ1OgqjcPtfown3BpTmnOdrn/hbA9he9TUSUv89dOsPmQjRWqnPzIGW8fhdGpG7TbOCxpA60H2ChlVUCcMgPO5HpVWKE0RezrhDoGFJajx28E5Xf2W1orE1sdsnPGqcG+KW47w/+1sYqiXICJ8rh3lNsOuuRLq3h3vZrFcnP7vKhyzFbCsPCM8wRyeYLTVDKZaVrWkfE16+xsDLUmAX7qV6PUHQhoBQnwuQXuscTYZ5BsfPRv14HB+1M0ZOOuligG9h72LJOymW17/Ok1NG6LTjVb9Z8leta0umshEX7pd0V5e7X/ne/T+xKJKFMSfIl4o6U9Hnk75WcKTkar7ONCzBiCq3OiwQinz0B+b+VXf9yQoEa/IwbCpo2Z42241nPp6TgoRDU7Hw==;5:m8INAeOSqJ+i5dBXVedR/xsbRtyp71M+d05QDJwxBdPoqst+D1qP+cjyu08MyLrwkhTLFLILBWlW6rz87Y6mNZepEbvyKF+RT0JJpDDFLf/pq8evofh+isXiaMBk2tUVmLP9fuujNzBsnb1252RKsD/6LSqzqu34q1dGMnz1+DA=;24:9ZmYUGkN2qqCFKXObp7k6xXItywjLvfTyKZy6cnlmcixKLupUTjDcO73f/ZT5gWVpUNn4tXsi/62nHXZyhivlzRjSsnmLwBMzrwUP1CueQ4=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1074;7:66vdErMtqR9L9dEAz3tjMgoKpaHIox09EFQLckklhZ5WDOrAG8lG9lWcrqRsyB7UMjiU65/rX9tSTiaWplnlMi3Kv9VpI8VpCscKRwGVe9GRaEmm51ZcgQWWjSAiWcfkFCdDjv9CodoL/q5CbL5Pa6MGKIHlulE+qwTDtEzWRvTfeHz9Z/TgGRlS7anJ3+jFtJOT+QmwEVXDYYNlaHG/kvfeBZv9kktq+XtU3dyWaCV5KP4efUm/iw0QqAEzgCfl;20:vx/0g6ihY26DQWHQZK4UZ0n8vTqNK0YBtsrsPO76YqMc5mO7s5xuDpzftr5jvWus4HmpW912j+RTj+NSmJlrFD93LIa62dsAgA+GK334jm4t80m2I9UvVtY9r4QqEQUXLn7bCkaxsSl7YKPrF30pdsWltJNzo0XSvdZT4aQKV6g=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2018 10:33:09.9639 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 445420f5-87b5-47a0-5469-08d59ba9cc71
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR15MB1074
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-06_06:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+        Fri, 6 Apr 2018 06:34:51 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180406103449epoutp02ba182832cc2eeb87c751324f01ff9ed5~i0lW7ThvN1700917009epoutp02t
+X-AuditID: b6c32a48-8d9ff70000000ff2-08-5ac74d492a38
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5AC74D48.4070604@samsung.com>
+Date: Fri, 06 Apr 2018 19:34:48 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: Andrzej Hajda <a.hajda@samsung.com>, kbuild test robot <lkp@intel.com>,
+        Maciej Purski <m.purski@samsung.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
+Subject: Re: drivers/gpu/drm/bridge/sil-sii8620.c:2405: undefined reference
+ to `extcon_unregister_notifier'
+In-reply-to: <3920d41a-01aa-70b4-6dfc-f495cd93d453@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFKsWRmVeSWpSXmKPExsWy7bCmua6n7/Eog6/72C1urTvHanHs+kRm
+        i8u75rBZvGp+xGax4OUtFgdWj/t72T0W73nJ5NG3ZRWjx+dNcgEsUak2GamJKalFCql5yfkp
+        mXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUBrlRTKEnNKgUIBicXFSvp2NkX5
+        pSWpChn5xSW2StGGhkZ6hgbmekZGRnomxrFWRqZAJQmpGY++PWQv6Pao+Dn7JmsDY5N5FyMn
+        h4SAicSh67uZuxi5OIQEdjBKfPi1mw3C+c4osW3ndVaYqj/rDzJBJHYzSpxdvokFJMErICjx
+        Y/I9IJuDg1lAXuLIpWyQMLOApsTW3evZIervMko0/e6HqteSeLR3NyOIzSKgKvFh7RY2EJsN
+        KL7/xQ0wm19AUeLqj8dgNaICERI7539jB5kvIlAkcfOzO8QqY4mHy0RAKoQFciXae38wg9ic
+        AvYS+3aATOcCOnkLm8T1xRcZIe53kXi3YzkbhC0s8er4FnYIW1ri2aqNUA3tjBLte+cxQzhT
+        GCXOXb/HBFFlLPFsYRcTxGd8Eh2H/4IdJCHAK9HRJgRhekhsXesEUe0ocf77E2ggHmaUaN42
+        hXkCo9wspOCahQiuWUjBtYCReRWjWGpBcW56arFRgYlecWJucWleul5yfu4mRnA60/LYwXjg
+        nM8hRgEORiUe3oyIY1FCrIllxZW5hxglOJiVRHh3/wEK8aYkVlalFuXHF5XmpBYfYjQFhvZE
+        ZinR5Hxgqs0riTc0sTQwMTMzMjezAKYvcd62AJcoIYH0xJLU7NTUgtQimD4mDk6pBsbd7WW7
+        Y/XqXm96KGdwd396zMTgPSHfDx/ldVDMfjgpUmqf966eHwp/ZM3ePSxqbFVNuHXz0zy/Tb8q
+        p159Ubpc497FGl2NL3YPpre7+/Jd3iJ+aso7XkWXhR+511fs/Fbn5sTU3sP37tiypq73Srwd
+        U65P/v83fZqfo7Pd3plh/a9esR2bdP+MEktxRqKhFnNRcSIARR87/30DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsVy+t9jAV0P3+NRBsemG1ncWneO1eLY9YnM
+        Fpd3zWGzeNX8iM1iwctbLA6sHvf3snss3vOSyaNvyypGj8+b5AJYorhsUlJzMstSi/TtErgy
+        Hn17yF7Q7VHxc/ZN1gbGJvMuRk4OCQETiT/rDzJ1MXJxCAnsZJRo376ZESTBKyAo8WPyPZYu
+        Rg4OZgF5iSOXskHCzALqEpPmLWIGsYUE7jNKTP2pClGuJfFo726wVhYBVYkPa7ewgdhsQPH9
+        L26A2fwCihJXfzxmBBkpKhAh0X2iEiQsIlAkcfBGO9QmY4mHy0RATGGBXIndU+IhDjvKKHGp
+        v5EdpJxTwF5i347djBMYBWYhuXMWwp2zkNy5gJF5FaNkakFxbnpusVGBUV5quV5xYm5xaV66
+        XnJ+7iZGYBBvO6zVv4Px8ZL4Q4wCHIxKPLwZEceihFgTy4orcw8xSnAwK4nw7v4DFOJNSays
+        Si3Kjy8qzUktPsQozcGiJM7Ln38sUkggPbEkNTs1tSC1CCbLxMEp1cAonOwjLtyfd0Caucep
+        4PM1nWkbt0+VTmbxs0+58r6WwUKshqdZ2EHM0qY15sDa2DWu61uijitMCLodaJP+oEM8+A7P
+        gTzT32lBrj1nIk9nh6/ceCDrQ5xTxYcPjUwT/D99OfZo4n7trm8Z+Q0qO+y+9mysbPys4rym
+        5aaf74wfTVly04OmuCqxFGckGmoxFxUnAgBTZ2ODXgIAAA==
+X-CMS-MailID: 20180406103448epcas2p171296c1eb11296bb502edd825b436356
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180406095349epcas2p22b69ac92909aeddc04a4e7a4f3c64c3f
+X-RootMTR: 20180406095349epcas2p22b69ac92909aeddc04a4e7a4f3c64c3f
+References: <CGME20180406095349epcas2p22b69ac92909aeddc04a4e7a4f3c64c3f@epcas2p2.samsung.com>
+        <201804061737.Ugx3LMCf%fengguang.wu@intel.com>
+        <3920d41a-01aa-70b4-6dfc-f495cd93d453@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 03:11:23PM -0700, Andrew Morton wrote:
-> On Tue, 13 Mar 2018 00:45:32 +0000 Al Viro <viro@ZenIV.linux.org.uk> wrote:
+Hi Andrzej,
+
+On 2018년 04월 06일 19:14, Andrzej Hajda wrote:
+> Hi Chanwoo,
 > 
-> > On Mon, Mar 12, 2018 at 10:36:38PM +0000, Roman Gushchin wrote:
-> > 
-> > > Ah, I see...
-> > > 
-> > > I think, it's better to account them when we're actually freeing,
-> > > otherwise we will have strange path:
-> > > (indirectly) reclaimable -> unreclaimable -> free
-> > > 
-> > > Do you agree?
-> > 
-> > > +static void __d_free_external_name(struct rcu_head *head)
-> > > +{
-> > > +	struct external_name *name;
-> > > +
-> > > +	name = container_of(head, struct external_name, u.head);
-> > > +
-> > > +	mod_node_page_state(page_pgdat(virt_to_page(name)),
-> > > +			    NR_INDIRECTLY_RECLAIMABLE_BYTES,
-> > > +			    -ksize(name));
-> > > +
-> > > +	kfree(name);
-> > > +}
-> > 
-> > Maybe, but then you want to call that from __d_free_external() and from
-> > failure path in __d_alloc() as well.  Duplicating something that convoluted
-> > and easy to get out of sync is just asking for trouble.
+> It looks like something went wrong, sii8620 patch was merged without
+> extcon dependencies.
+> Could you look at it?
+
+If add the 'select EXTCON' to sii8620's Kconfig, it will be solved.
+Is there other solution?
+
 > 
-> So.. where are we at with this issue?
+> Regards
+> Andrzej
+> 
+> On 06.04.2018 11:52, kbuild test robot wrote:
+>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>> head:   38c23685b273cfb4ccf31a199feccce3bdcb5d83
+>> commit: 688838442147d9dd94c2ef7c2c31a35cf150c5fa drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
+>> date:   4 weeks ago
+>> config: i386-randconfig-x0-04061534 (attached as .config)
+>> compiler: gcc-5 (Debian 5.5.0-3) 5.4.1 20171010
+>> reproduce:
+>>         git checkout 688838442147d9dd94c2ef7c2c31a35cf150c5fa
+>>         # save the attached .config to linux build tree
+>>         make ARCH=i386 
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>    drivers/gpu/drm/bridge/sil-sii8620.o: In function `sii8620_remove':
+>>>> drivers/gpu/drm/bridge/sil-sii8620.c:2405: undefined reference to `extcon_unregister_notifier'
+>>    drivers/gpu/drm/bridge/sil-sii8620.o: In function `sii8620_extcon_init':
+>>>> drivers/gpu/drm/bridge/sil-sii8620.c:2229: undefined reference to `extcon_find_edev_by_node'
+>>>> drivers/gpu/drm/bridge/sil-sii8620.c:2241: undefined reference to `extcon_register_notifier'
+>>    drivers/gpu/drm/bridge/sil-sii8620.o: In function `sii8620_extcon_work':
+>>>> drivers/gpu/drm/bridge/sil-sii8620.c:2189: undefined reference to `extcon_get_state'
+>> vim +2405 drivers/gpu/drm/bridge/sil-sii8620.c
+>>
+>>   2212	
+>>   2213	static int sii8620_extcon_init(struct sii8620 *ctx)
+>>   2214	{
+>>   2215		struct extcon_dev *edev;
+>>   2216		struct device_node *musb, *muic;
+>>   2217		int ret;
+>>   2218	
+>>   2219		/* get micro-USB connector node */
+>>   2220		musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
+>>   2221		/* next get micro-USB Interface Controller node */
+>>   2222		muic = of_get_next_parent(musb);
+>>   2223	
+>>   2224		if (!muic) {
+>>   2225			dev_info(ctx->dev, "no extcon found, switching to 'always on' mode\n");
+>>   2226			return 0;
+>>   2227		}
+>>   2228	
+>>> 2229		edev = extcon_find_edev_by_node(muic);
+>>   2230		of_node_put(muic);
+>>   2231		if (IS_ERR(edev)) {
+>>   2232			if (PTR_ERR(edev) == -EPROBE_DEFER)
+>>   2233				return -EPROBE_DEFER;
+>>   2234			dev_err(ctx->dev, "Invalid or missing extcon\n");
+>>   2235			return PTR_ERR(edev);
+>>   2236		}
+>>   2237	
+>>   2238		ctx->extcon = edev;
+>>   2239		ctx->extcon_nb.notifier_call = sii8620_extcon_notifier;
+>>   2240		INIT_WORK(&ctx->extcon_wq, sii8620_extcon_work);
+>>> 2241		ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
+>>   2242		if (ret) {
+>>   2243			dev_err(ctx->dev, "failed to register notifier for MHL\n");
+>>   2244			return ret;
+>>   2245		}
+>>   2246	
+>>   2247		return 0;
+>>   2248	}
+>>   2249	
+>>   2250	static inline struct sii8620 *bridge_to_sii8620(struct drm_bridge *bridge)
+>>   2251	{
+>>   2252		return container_of(bridge, struct sii8620, bridge);
+>>   2253	}
+>>   2254	
+>>   2255	static int sii8620_attach(struct drm_bridge *bridge)
+>>   2256	{
+>>   2257		struct sii8620 *ctx = bridge_to_sii8620(bridge);
+>>   2258	
+>>   2259		sii8620_init_rcp_input_dev(ctx);
+>>   2260	
+>>   2261		return sii8620_clear_error(ctx);
+>>   2262	}
+>>   2263	
+>>   2264	static void sii8620_detach(struct drm_bridge *bridge)
+>>   2265	{
+>>   2266		struct sii8620 *ctx = bridge_to_sii8620(bridge);
+>>   2267	
+>>   2268		rc_unregister_device(ctx->rc_dev);
+>>   2269	}
+>>   2270	
+>>   2271	static enum drm_mode_status sii8620_mode_valid(struct drm_bridge *bridge,
+>>   2272						 const struct drm_display_mode *mode)
+>>   2273	{
+>>   2274		struct sii8620 *ctx = bridge_to_sii8620(bridge);
+>>   2275		bool can_pack = ctx->devcap[MHL_DCAP_VID_LINK_MODE] &
+>>   2276				MHL_DCAP_VID_LINK_PPIXEL;
+>>   2277		unsigned int max_pclk = sii8620_is_mhl3(ctx) ? MHL3_MAX_LCLK :
+>>   2278							       MHL1_MAX_LCLK;
+>>   2279		max_pclk /= can_pack ? 2 : 3;
+>>   2280	
+>>   2281		return (mode->clock > max_pclk) ? MODE_CLOCK_HIGH : MODE_OK;
+>>   2282	}
+>>   2283	
+>>   2284	static bool sii8620_mode_fixup(struct drm_bridge *bridge,
+>>   2285				       const struct drm_display_mode *mode,
+>>   2286				       struct drm_display_mode *adjusted_mode)
+>>   2287	{
+>>   2288		struct sii8620 *ctx = bridge_to_sii8620(bridge);
+>>   2289		int max_lclk;
+>>   2290		bool ret = true;
+>>   2291	
+>>   2292		mutex_lock(&ctx->lock);
+>>   2293	
+>>   2294		max_lclk = sii8620_is_mhl3(ctx) ? MHL3_MAX_LCLK : MHL1_MAX_LCLK;
+>>   2295		if (max_lclk > 3 * adjusted_mode->clock) {
+>>   2296			ctx->use_packed_pixel = 0;
+>>   2297			goto end;
+>>   2298		}
+>>   2299		if ((ctx->devcap[MHL_DCAP_VID_LINK_MODE] & MHL_DCAP_VID_LINK_PPIXEL) &&
+>>   2300		    max_lclk > 2 * adjusted_mode->clock) {
+>>   2301			ctx->use_packed_pixel = 1;
+>>   2302			goto end;
+>>   2303		}
+>>   2304		ret = false;
+>>   2305	end:
+>>   2306		if (ret) {
+>>   2307			u8 vic = drm_match_cea_mode(adjusted_mode);
+>>   2308	
+>>   2309			if (!vic) {
+>>   2310				union hdmi_infoframe frm;
+>>   2311				u8 mhl_vic[] = { 0, 95, 94, 93, 98 };
+>>   2312	
+>>   2313				/* FIXME: We need the connector here */
+>>   2314				drm_hdmi_vendor_infoframe_from_display_mode(
+>>   2315					&frm.vendor.hdmi, NULL, adjusted_mode);
+>>   2316				vic = frm.vendor.hdmi.vic;
+>>   2317				if (vic >= ARRAY_SIZE(mhl_vic))
+>>   2318					vic = 0;
+>>   2319				vic = mhl_vic[vic];
+>>   2320			}
+>>   2321			ctx->video_code = vic;
+>>   2322			ctx->pixel_clock = adjusted_mode->clock;
+>>   2323		}
+>>   2324		mutex_unlock(&ctx->lock);
+>>   2325		return ret;
+>>   2326	}
+>>   2327	
+>>   2328	static const struct drm_bridge_funcs sii8620_bridge_funcs = {
+>>   2329		.attach = sii8620_attach,
+>>   2330		.detach = sii8620_detach,
+>>   2331		.mode_fixup = sii8620_mode_fixup,
+>>   2332		.mode_valid = sii8620_mode_valid,
+>>   2333	};
+>>   2334	
+>>   2335	static int sii8620_probe(struct i2c_client *client,
+>>   2336				 const struct i2c_device_id *id)
+>>   2337	{
+>>   2338		struct device *dev = &client->dev;
+>>   2339		struct sii8620 *ctx;
+>>   2340		int ret;
+>>   2341	
+>>   2342		ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+>>   2343		if (!ctx)
+>>   2344			return -ENOMEM;
+>>   2345	
+>>   2346		ctx->dev = dev;
+>>   2347		mutex_init(&ctx->lock);
+>>   2348		INIT_LIST_HEAD(&ctx->mt_queue);
+>>   2349	
+>>   2350		ctx->clk_xtal = devm_clk_get(dev, "xtal");
+>>   2351		if (IS_ERR(ctx->clk_xtal)) {
+>>   2352			dev_err(dev, "failed to get xtal clock from DT\n");
+>>   2353			return PTR_ERR(ctx->clk_xtal);
+>>   2354		}
+>>   2355	
+>>   2356		if (!client->irq) {
+>>   2357			dev_err(dev, "no irq provided\n");
+>>   2358			return -EINVAL;
+>>   2359		}
+>>   2360		irq_set_status_flags(client->irq, IRQ_NOAUTOEN);
+>>   2361		ret = devm_request_threaded_irq(dev, client->irq, NULL,
+>>   2362						sii8620_irq_thread,
+>>   2363						IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
+>>   2364						"sii8620", ctx);
+>>   2365		if (ret < 0) {
+>>   2366			dev_err(dev, "failed to install IRQ handler\n");
+>>   2367			return ret;
+>>   2368		}
+>>   2369	
+>>   2370		ctx->gpio_reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+>>   2371		if (IS_ERR(ctx->gpio_reset)) {
+>>   2372			dev_err(dev, "failed to get reset gpio from DT\n");
+>>   2373			return PTR_ERR(ctx->gpio_reset);
+>>   2374		}
+>>   2375	
+>>   2376		ctx->supplies[0].supply = "cvcc10";
+>>   2377		ctx->supplies[1].supply = "iovcc18";
+>>   2378		ret = devm_regulator_bulk_get(dev, 2, ctx->supplies);
+>>   2379		if (ret)
+>>   2380			return ret;
+>>   2381	
+>>   2382		ret = sii8620_extcon_init(ctx);
+>>   2383		if (ret < 0) {
+>>   2384			dev_err(ctx->dev, "failed to initialize EXTCON\n");
+>>   2385			return ret;
+>>   2386		}
+>>   2387	
+>>   2388		i2c_set_clientdata(client, ctx);
+>>   2389	
+>>   2390		ctx->bridge.funcs = &sii8620_bridge_funcs;
+>>   2391		ctx->bridge.of_node = dev->of_node;
+>>   2392		drm_bridge_add(&ctx->bridge);
+>>   2393	
+>>   2394		if (!ctx->extcon)
+>>   2395			sii8620_cable_in(ctx);
+>>   2396	
+>>   2397		return 0;
+>>   2398	}
+>>   2399	
+>>   2400	static int sii8620_remove(struct i2c_client *client)
+>>   2401	{
+>>   2402		struct sii8620 *ctx = i2c_get_clientdata(client);
+>>   2403	
+>>   2404		if (ctx->extcon) {
+>>> 2405			extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
+>>   2406						   &ctx->extcon_nb);
+>>   2407			flush_work(&ctx->extcon_wq);
+>>   2408			if (ctx->cable_state > 0)
+>>   2409				sii8620_cable_out(ctx);
+>>   2410		} else {
+>>   2411			sii8620_cable_out(ctx);
+>>   2412		}
+>>   2413		drm_bridge_remove(&ctx->bridge);
+>>   2414	
+>>   2415		return 0;
+>>   2416	}
+>>   2417	
+>>
+>> ---
+>> 0-DAY kernel test infrastructure                Open Source Technology Center
+>> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
+> 
+> 
+> 
 
-I assume that commit 0babe6fe1da3 ("dcache: fix indirectly reclaimable memory accounting")
-address the issue.
-
-__d_free_external_name() is now called from all release paths (including __d_free_external())
-and is the only place where NR_INDIRECTLY_RECLAIMABLE_BYTES is decremented.
-
-__d_alloc()'s error path is slightly different, because I bump NR_INDIRECTLY_RECLAIMABLE_BYTES
-in a very last moment, when it's already clear, that no errors did occur.
-So we don't need to increase and decrease the counter back and forth.
-
-Thank you!
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
