@@ -1,84 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1387311-1523021233-2-6930511035215617892
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523021232; b=Jc4IbJ8PtYNty13P0lznzUPXsAZTTmjRBiyCrTNJNjRuPXRtky
-    ECfJZXUfcFRQagIdnmh6UqH8gc+YHyWy3j+SFURuN4KKJWu2fpRNATxT1Rffr8Ny
-    0MxFLYy654k+VBWnhbB5aKJLxfCzERFB0kFBL7MRLxhdLQtrjrdV4XV350jYSok7
-    yYRGD854rLWx8LYFMjPcC0w0VsKWFGbW00EonmYFXY1vzPVN2puZr+RBNBFNDgug
-    evq2CDeFQoGS0XxJ2Y3UuXeJ5llnCpqlQ7MvRHfOozPKl1H7rm0/toZXyK8y1W5B
-    OxynVa8nPw46MNPmxOQwMlP5PpRuj487gIiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523021232; bh=xwzg4DOMkrKvH/RQn2pN4Qq6s2yC+U
-    R8n3MhJ9KQOzE=; b=izWl7Aprd77zRVU1bq3VL9Mi+IedxuBws0wwgPDIy6Jqgz
-    mVL1SbdV3pKUOStjWe/o6/74dDlZgvu2FkYTzxbFxd+xZA9d3/4NPWt6Gq0mwtWv
-    OmCx1Z2zs5ZPk7sA7RQrgFPrKs0Bje6AoIGsGL11F2LMrQ7EIszjBW+qFoKLOKpj
-    AQyygEVww7YTgVoSMiezQnRe+AcA6HP5y/5JYpfYwo1wlwWU+LVzVBPYUPesfHs+
-    pLR5d2rUNhiQ4LaCRKxe2wAFkdSf3z/L2AljMybALh07DhArXt9V1YH2PkIJQFoB
-    r+WsYfbVHgV12nvTMid7AGU9//nMfAbBiYqWuzKg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLhqjGqyuzLo7Noe6F7yy2vuUcS/ge6raK+gO+Ftv+4dUqz7WQWVvTVkHErlW71y3OaCXcFSdMRS7l+uh0DvSA9M4YwvE7DiM1aE37xOjRgZQqQDPqDJ
-    5deQC87Qp9q/dXG+2DH0o4rXgbqipxwGhS+8C3wuijCgAlwHUGLmzdzInh1gwTVSFTiPH8CqakcULdOVILIsBQ8dWBClS+mJ4xZGkcfbNW0Mv4/jGctYfte+
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=NCkSHYsgAAAA:8 a=yPCof4ZbAAAA:8 a=svO6gwnVAAAA:8
-    a=ag1SF4gXAAAA:8 a=GOGJVlkrU7N_rJJ1U5oA:9 a=QEXdDO2ut3YA:10
-    a=AnMw66Xr5OuzjdxB04dI:22 a=5awQwY9Y38-QVGG67zo_:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753314AbeDFN1G (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 09:27:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54834 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752822AbeDFN1E (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:27:04 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx48QvSzr73TNRBBXm+96rrlynsb6zGukqjpgcgkhgcWittz+8MF2ekZcM5++sPzzD/ZEPbTs
+ARC-Seal: i=1; a=rsa-sha256; t=1523021232; cv=none;
+        d=google.com; s=arc-20160816;
+        b=cXXEs57NiOLneyahKJVa3kUeLFTSyAS+fP96XpPjfLfZtRVmHYOydMK241uMcnFRdb
+         fxTEwAxrsRmiEIWGD95z8hyZDDeIxf4HtjSm753Z3f2ROs6/psOPDiyC8a0+8zqeqXwx
+         yupsNoZgX+xSzaCMpQABfwSHUJY3eYdWexhXeZlIjJtALye6AW5S40xEsJiGVCWJBRsR
+         osq8WYmSo7PR9nhTpxwnZWChi7oYuddOCzX8gffr+ZWK7S35FuqoIv3cmWmIRviggvas
+         +Eo++gUXaabSPzh2Grpc/Wi4dGx9VCX2hkYc5b+F0VpKmVPoBw8LiNTnC+w0oj2397cy
+         4B7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=yBBkGXUwVsmT1LVwOFK0YRA+xeGcE3gHcrcsWfEI9HM=;
+        b=HRUjv1yLGifeqwjXByGCnWjOofa7TdOyF467QLEszSVSacWLEroDzlnO1DHhe8fm0S
+         +igobJMyYkx0zr5y9YoWq4VrO/6eDiDl3SEBf05IXVfAjYhcnqj9hCNsQgQ1RkmXUyph
+         WQS1AhXSnFUcIqWUW3Ikozbbw8RNtphxR//a7is2VjO/ToATkeOsWpSm3s857HVUMdwT
+         R1fDC5R9Imi68SsSg4r4NHSqJYOVqwZeJ2QKg/3u4yYb3ZXNOnOTHs9dMMGZMH3I4ivh
+         T1iWkNuhEpAyBh1GbUJyoOlwv7WVpDQkaVgXzXviTtIQvf8OCe8Cb980jgHCqdAczv4r
+         yRjw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>,
-        Doug Gilbert <dgilbert@interlog.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Tony Battersby <tonyb@cybernetics.com>
-Subject: [PATCH 3.18 21/93] scsi: sg: dont return bogus Sg_requests
-Date: Fri,  6 Apr 2018 15:22:50 +0200
-Message-Id: <20180406084225.893303250@linuxfoundation.org>
+	stable@vger.kernel.org,
+	David Gibson <david@gibson.dropbear.id.au>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Fam Zheng <famz@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 3.18 56/93] scsi: virtio_scsi: always read VPD pages for multiqueue too
+Date: Fri,  6 Apr 2018 15:23:25 +0200
+Message-Id: <20180406084227.346162225@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -86,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597003512073897792?=
+X-GMAIL-MSGID: =?utf-8?q?1597003512073897792?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -96,46 +53,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 48ae8484e9fc324b4968d33c585e54bc98e44d61 upstream.
+commit a680f1d463aeaeb00d22af257a56e111967c2f18 upstream.
 
-If the list search in sg_get_rq_mark() fails to find a valid request, we
-return a bogus element. This then can later lead to a GPF in
-sg_remove_scat().
+Multi-queue virtio-scsi uses a different scsi_host_template struct.  Add
+the .device_alloc field there, too.
 
-So don't return bogus Sg_requests in sg_get_rq_mark() but NULL in case
-the list search doesn't find a valid request.
-
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Doug Gilbert <dgilbert@interlog.com>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Acked-by: Doug Gilbert <dgilbert@interlog.com>
+Fixes: 25d1d50e23275e141e3a3fe06c25a99f4c4bf4e0
+Cc: stable@vger.kernel.org
+Cc: David Gibson <david@gibson.dropbear.id.au>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Fam Zheng <famz@redhat.com>
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Tony Battersby <tonyb@cybernetics.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sg.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/virtio_scsi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -2121,11 +2121,12 @@ sg_get_rq_mark(Sg_fd * sfp, int pack_id)
- 		if ((1 == resp->done) && (!resp->sg_io_owned) &&
- 		    ((-1 == pack_id) || (resp->header.pack_id == pack_id))) {
- 			resp->done = 2;	/* guard against other readers */
--			break;
-+			write_unlock_irqrestore(&sfp->rq_list_lock, iflags);
-+			return resp;
- 		}
- 	}
- 	write_unlock_irqrestore(&sfp->rq_list_lock, iflags);
--	return resp;
-+	return NULL;
- }
+--- a/drivers/scsi/virtio_scsi.c
++++ b/drivers/scsi/virtio_scsi.c
+@@ -794,6 +794,7 @@ static struct scsi_host_template virtscs
+ 	.change_queue_depth = virtscsi_change_queue_depth,
+ 	.eh_abort_handler = virtscsi_abort,
+ 	.eh_device_reset_handler = virtscsi_device_reset,
++	.slave_alloc = virtscsi_device_alloc,
  
- /* always adds to end of list */
+ 	.can_queue = 1024,
+ 	.dma_boundary = UINT_MAX,
