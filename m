@@ -1,61 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752424AbeDFWH2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 18:07:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32882 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751488AbeDFWH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 18:07:27 -0400
-Date: Fri, 6 Apr 2018 17:07:23 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/8] livepatch: Remove Nop structures when unused
-Message-ID: <20180406220723.t3bsb6j7w4lf3wbb@treble>
-References: <20180323120028.31451-1-pmladek@suse.com>
- <20180323120028.31451-7-pmladek@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180323120028.31451-7-pmladek@suse.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+        id S1752628AbeDFWIS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 18:08:18 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:40700 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751643AbeDFWIR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 18:08:17 -0400
+X-Google-Smtp-Source: AIpwx48ITENKH2x4TwWhonxdgC6yM3vBTtORtHnrPEazBoSzpFJyJLeGVggTnbZTir+YkmtjRuVVLg==
+From: Daniel Kurtz <djkurtz@chromium.org>
+Cc: satyajit.sahu@amd.com, ssundark@amd.com, craigb@chromium.org,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] mmc: sdhci-pci: Only do AMD tuning for HS200
+Date: Fri,  6 Apr 2018 16:07:59 -0600
+Message-Id: <20180406220806.150534-1-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 01:00:26PM +0100, Petr Mladek wrote:
-> Replaced patches are removed from the stack when the transition is
-> finished. It means that Nop structures will never be needed again
-> and can be removed. Why should we care?
+Commit c31165d7400b ("mmc: sdhci-pci: Add support for HS200 tuning mode
+on AMD, eMMC-4.5.1") added a HS200 tuning method for use with AMD SDHCI
+controllers.  As described in the commit subject, this tuning is specific
+for HS200.  However, as implemented, this method is used for all host
+timings, because platform_execute_tuning, if it exists, is called
+unconditionally by sdhci_execute_tuning().  This breaks tuning when using
+the AMD controller with, for example, a DDR50 SD card.
 
-Warning, grammar pedantry ahead.
+Instead, we can implement an amd execute_tuning wrapper callback, and
+then conditionally do the HS200 specific tuning for HS200, and otherwise
+call back to the standard sdhci_execute_tuning().
 
-"Nop" isn't a proper noun, so it shouldn't be capitalized (here and in
-the patch subject).
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+---
+ drivers/mmc/host/sdhci-pci-core.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-Also, "NOP", used elsewhere, might be confused with x86 NOP
-instructions.  I would vote for "nop" everywhere.
-
-> @@ -146,6 +155,21 @@ static void klp_complete_transition(void)
->  	if (!klp_forced && klp_target_state == KLP_UNPATCHED)
->  		module_put(klp_transition_patch->mod);
->  
-> +	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED) {
-> +		/*
-> +		 * We do not need to wait until the objects are really freed.
-> +		 * We will never need them again because the patch must be on
-> +		 * the bottom of the stack now.
-> +		 */
-> +		klp_free_objects_dynamic(klp_transition_patch);
-> +		/*
-> +		 * Replace behavior will not longer be needed. Avoid the related
-> +		 * code when disabling and enabling again.
-
-"not longer" -> "no longer"
-
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 787434e5589d..78c25ad35fd2 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -1312,7 +1312,7 @@ static void amd_enable_manual_tuning(struct pci_dev *pdev)
+ 	pci_write_config_dword(pdev, AMD_SD_MISC_CONTROL, val);
+ }
+ 
+-static int amd_execute_tuning(struct sdhci_host *host, u32 opcode)
++static int amd_execute_tuning_hs200(struct sdhci_host *host, u32 opcode)
+ {
+ 	struct sdhci_pci_slot *slot = sdhci_priv(host);
+ 	struct pci_dev *pdev = slot->chip->pdev;
+@@ -1351,6 +1351,27 @@ static int amd_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 	return 0;
+ }
+ 
++static int amd_execute_tuning(struct mmc_host *mmc, u32 opcode)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++
++	/* AMD requires custom HS200 tuning */
++	if (host->timing == MMC_TIMING_MMC_HS200)
++		return amd_execute_tuning_hs200(host, opcode);
++
++	/* Otherwise perform standard SDHCI tuning */
++	return sdhci_execute_tuning(mmc, opcode);
++}
++
++static int amd_probe_slot(struct sdhci_pci_slot *slot)
++{
++	struct mmc_host_ops *ops = &slot->host->mmc_host_ops;
++
++	ops->execute_tuning = amd_execute_tuning;
++
++	return 0;
++}
++
+ static int amd_probe(struct sdhci_pci_chip *chip)
+ {
+ 	struct pci_dev	*smbus_dev;
+@@ -1385,12 +1406,12 @@ static const struct sdhci_ops amd_sdhci_pci_ops = {
+ 	.set_bus_width			= sdhci_set_bus_width,
+ 	.reset				= sdhci_reset,
+ 	.set_uhs_signaling		= sdhci_set_uhs_signaling,
+-	.platform_execute_tuning	= amd_execute_tuning,
+ };
+ 
+ static const struct sdhci_pci_fixes sdhci_amd = {
+ 	.probe		= amd_probe,
+ 	.ops		= &amd_sdhci_pci_ops,
++	.probe_slot	= amd_probe_slot,
+ };
+ 
+ static const struct pci_device_id pci_ids[] = {
 -- 
-Josh
+2.17.0.484.g0c8726318c-goog
