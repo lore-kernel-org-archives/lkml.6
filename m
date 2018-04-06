@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48w5SbtUVnq54FCeMLN01sZx0rDZIXqWTZDY/SFx5bdD2SmQRxInj6/abvA+3k2IUvx3Xu1
-ARC-Seal: i=1; a=rsa-sha256; t=1523021556; cv=none;
+X-Google-Smtp-Source: AIpwx4+G2G2jdBczL7pKVbyUdG4OLTsUYOQXWUBob82PrG3PwW1AbR1aNUWpUseuwK+Va6daDfAQ
+ARC-Seal: i=1; a=rsa-sha256; t=1523021554; cv=none;
         d=google.com; s=arc-20160816;
-        b=pKpuVlUaJ7+5YQcfZDps0CbZaVE+QM9XTKigQTyMKezFM9yqiTePQCxqrU79g5EcqY
-         m2osuD64sBw79U93zNLn4qGhvDNfEpVlGWuO8YQP0wkt+THHilwrr9dZvxD6Yl7pbudC
-         v60nK/NF3Xr2D+omxEEH9L37v4K6LoyvBa4drwd6cRNypJPltmDAtYAcBKa0hP8aqCJs
-         BIIObVhezxKej91+PuKgMUCIWqxYZk7pDNLpXVbDPpyozMTDV/n1SfFuvugQlk9Ol/s6
-         p1CRtNxLryCdXiYpcOgr1Qv7evOBdnMUlPTzui8aiMqzth8XeNp2JWVEBysmZC+xvpmm
-         7boA==
+        b=z4eiX+s5TlnOWTZ/Ut3JZlDDMwMMkHHjCvyi0n1/eeBcEU726/X8aNBUFPZe81ynHs
+         0oyQBshXA2y6VWOThOVVxL75JU7EC9ZbIkKByExgkNFxo4PJ1Sj+KrUAvTlmZRpkVAXe
+         SmsOiYBO9wbY94piDblgK7HXPg5j7WbQLCm+umovg4pyP2l+0NEdPvfP7wBeQJNfjYCB
+         E2FG97ylC2ORMqC9dichB7zMKHg5SGDyZEFXLtQHpMcyetHoV8z/cqkUZcc+Il73/0Tj
+         8bvfWp/FE8WdoEi+JJ+cIJhkqoOEF2xtBYDdUm2VVeYaLhgyf463oAgGq0cqXJPU/978
+         K3ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=J67orCTRZiCMyKGaLW8YDzILdjNAZPsBRLsa9jnUM2o=;
-        b=DjXhaIZ0t9iYgvJLjutdBslVOITu9PnCTVGXZuv3IJr1wcvimn6g3wq38UsT+AUfzI
-         NHA0SGncajwz5cEd5CUXlEHs6XtIoHlLTt755EfSAIGPfD3LTBj8KNZhVfkuEIfqEcqZ
-         55ks2UkEfoOSmHvmfqfCsIEVGJ9iaN69R+XaU2NBTucWUBDcWXXihJcXTdhqfRqJ033v
-         URi0Zvhxrjo4PHotdr8vs5JCqkPiR0hWXfZR/C1BQP9aYxJgol873AWdYmUw8rzmNlfS
-         uQb0YcL6NW7Co2Nolpb1UT+cZOtbYW5DTCBIysceCWZrnDY3+FZ6RviiEYOkGkzmu0pi
-         qIMA==
+        bh=WPR0t3Y319y0Osk77ODrNQKLqXoitV/RDc0W4H/UqEs=;
+        b=D4sExH7KfezKuTaRon6FzJheQSlWBDvK4B7Ydnc5y6hzxwgCgkKxcqxS3sSmWI9b0L
+         CWCNtCufJDTp6mlVY3ExND/RQ8QBGykxFcpPA7Bv7aLLZKa5T+ZcmbQjrxSMKtxbMafR
+         dL+ZXjyodHML9C7xlCrJSxoED647CFSI3lb3J4wp01JaOM+rUVWZyxp0JpPeIIOmOfUj
+         rSKpDH8pCPiIXfgMz2J+qbyCGaEzD6kKCt+G/VzQKEWb5LwwSHPrIoM0c+4O+yMmRP+v
+         r62IS99r3+B3KP7ZvFj5E0zM1N6Q0dpu/1u5bspOpOvUqFn1xBLOjlBa9D661v4TY+UZ
+         THkA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dennis Wassenberg <dennis.wassenberg@secunet.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.4 55/72] Input: i8042 - add Lenovo ThinkPad L460 to i8042 reset list
-Date: Fri,  6 Apr 2018 15:23:56 +0200
-Message-Id: <20180406084309.885524951@linuxfoundation.org>
+	Frank Mori Hess <fmh6jj@gmail.com>,
+	Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH 4.4 54/72] staging: comedi: ni_mio_common: ack ai fifo error interrupts.
+Date: Fri,  6 Apr 2018 15:23:55 +0200
+Message-Id: <20180406084309.806259873@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003626904788009?=
-X-GMAIL-MSGID: =?utf-8?q?1597003852244438534?=
+X-GMAIL-THRID: =?utf-8?q?1597003849053166920?=
+X-GMAIL-MSGID: =?utf-8?q?1597003849053166920?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +49,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+From: Frank Mori Hess <fmh6jj@gmail.com>
 
-commit b56af54ac78c54a519d82813836f305d7f76ef27 upstream.
+commit e1d9fc04c41840a4688ef6ce90b6dcca157ea4d7 upstream.
 
-Reset i8042 before probing because of insufficient BIOS initialisation of
-the i8042 serial controller. This makes Synaptics touchpad detection
-possible. Without resetting the Synaptics touchpad is not detected because
-there are always NACK messages from AUX port.
+Ack ai fifo error interrupts in interrupt handler to clear interrupt
+after fifo overflow.  It should prevent lock-ups after the ai fifo
+overflows.
 
-Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: <stable@vger.kernel.org> # v4.2+
+Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/serio/i8042-x86ia64io.h |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/staging/comedi/drivers/ni_mio_common.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/input/serio/i8042-x86ia64io.h
-+++ b/drivers/input/serio/i8042-x86ia64io.h
-@@ -693,6 +693,13 @@ static const struct dmi_system_id __init
- 		},
- 	},
- 	{
-+		/* Lenovo ThinkPad L460 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad L460"),
-+		},
-+	},
-+	{
- 		/* Clevo P650RS, 650RP6, Sager NP8152-S, and others */
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "Notebook"),
+--- a/drivers/staging/comedi/drivers/ni_mio_common.c
++++ b/drivers/staging/comedi/drivers/ni_mio_common.c
+@@ -1348,6 +1348,8 @@ static void ack_a_interrupt(struct comed
+ 		ack |= NISTC_INTA_ACK_AI_START;
+ 	if (a_status & NISTC_AI_STATUS1_STOP)
+ 		ack |= NISTC_INTA_ACK_AI_STOP;
++	if (a_status & NISTC_AI_STATUS1_OVER)
++		ack |= NISTC_INTA_ACK_AI_ERR;
+ 	if (ack)
+ 		ni_stc_writew(dev, ack, NISTC_INTA_ACK_REG);
+ }
