@@ -1,78 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752603AbeDFU7Y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 16:59:24 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36928 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752487AbeDFU66 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 16:58:58 -0400
-X-Google-Smtp-Source: AIpwx4+Spf1ZOQ8wgdZ+ISLXajHrFdDp4VmRnGVCMbsBg26AFDYRFG/Q6xB+OjSfsRC+I+MXGpYltQ==
-From: Stafford Horne <shorne@gmail.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Stafford Horne <shorne@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>, Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jan Henrik Weinstock <jan.weinstock@ice.rwth-aachen.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        openrisc@lists.librecores.org
-Subject: [PATCH] openrisc: define mb() as its mandatory
-Date: Sat,  7 Apr 2018 05:58:49 +0900
-Message-Id: <20180406205852.14821-1-shorne@gmail.com>
-X-Mailer: git-send-email 2.13.6
+        id S1752171AbeDFU6L (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 16:58:11 -0400
+Received: from mga02.intel.com ([134.134.136.20]:47870 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752093AbeDFU6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 16:58:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,416,1517904000";
+   d="scan'208";a="45626950"
+Subject: [PATCH 06/11] x86/mm: remove extra filtering in pageattr code
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
+        keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
+        namit@vmware.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Fri, 06 Apr 2018 13:55:11 -0700
+References: <20180406205501.24A1A4E7@viggo.jf.intel.com>
+In-Reply-To: <20180406205501.24A1A4E7@viggo.jf.intel.com>
+Message-Id: <20180406205511.BC072352@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Following Peter Z's patch ("asm-generic: Disallow no-op mb() for SMP
-systems") which makes mb() mandatory for SMP architectures we define it
-as l.msync.  On OpenRISC this will flush the current cores write buffer
-and trigger remote cores to invalidate their caches of the written
-memory.
 
-Signed-off-by: Stafford Horne <shorne@gmail.com>
-Link: https://lkml.org/lkml/2018/1/31/254
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will.deacon@arm.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+
+The pageattr code has a mode where it can set or clear PTE bits in
+existing PTEs, so the page protections of the *new* PTEs come from
+one of two places:
+1. The set/clear masks: cpa->mask_clr / cpa->mask_set
+2. The existing PTE
+
+We filter ->mask_set/clr for supported PTE bits at entry to
+__change_page_attr() so we never need to filter them again.
+
+The only other place permissions can come from is an existing PTE
+and those already presumably have good bits.  We do not need to filter
+them again.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@google.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: x86@kernel.org
+Cc: Nadav Amit <namit@vmware.com>
+
 ---
 
-Notes:
-  - Sorry, its been a while since we discussed this patch is the parent to this 
-    still going in Peter?
-  - I have not got around to updating our architecture spec for the TSO/PSO
-    notes we discussed.
+ b/arch/x86/mm/pageattr.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
- arch/openrisc/include/asm/Kbuild    | 1 -
- arch/openrisc/include/asm/barrier.h | 8 ++++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
- create mode 100644 arch/openrisc/include/asm/barrier.h
-
-diff --git a/arch/openrisc/include/asm/Kbuild b/arch/openrisc/include/asm/Kbuild
-index 6eb16719549e..fea95ee2fb84 100644
---- a/arch/openrisc/include/asm/Kbuild
-+++ b/arch/openrisc/include/asm/Kbuild
-@@ -1,4 +1,3 @@
--generic-y += barrier.h
- generic-y += bug.h
- generic-y += bugs.h
- generic-y += checksum.h
-diff --git a/arch/openrisc/include/asm/barrier.h b/arch/openrisc/include/asm/barrier.h
-new file mode 100644
-index 000000000000..77eaad9ba0c4
---- /dev/null
-+++ b/arch/openrisc/include/asm/barrier.h
-@@ -0,0 +1,8 @@
-+#ifndef _ASM_OPENRISC_BARRIER_H
-+#define _ASM_OPENRISC_BARRIER_H
-+
-+#define mb() asm volatile ("l.msync":::"memory")
-+
-+#include <asm-generic/barrier.h>
-+
-+#endif /* _ASM_OPENRISC_BARRIER_H */
--- 
-2.13.6
+diff -puN arch/x86/mm/pageattr.c~x86-pageattr-dont-filter-global arch/x86/mm/pageattr.c
+--- a/arch/x86/mm/pageattr.c~x86-pageattr-dont-filter-global	2018-04-06 10:47:56.635796122 -0700
++++ b/arch/x86/mm/pageattr.c	2018-04-06 10:47:56.639796122 -0700
+@@ -598,7 +598,6 @@ try_preserve_large_page(pte_t *kpte, uns
+ 	req_prot = pgprot_clear_protnone_bits(req_prot);
+ 	if (pgprot_val(req_prot) & _PAGE_PRESENT)
+ 		pgprot_val(req_prot) |= _PAGE_PSE;
+-	req_prot = canon_pgprot(req_prot);
+ 
+ 	/*
+ 	 * old_pfn points to the large page base pfn. So we need
+@@ -718,7 +717,7 @@ __split_large_page(struct cpa_data *cpa,
+ 	 */
+ 	pfn = ref_pfn;
+ 	for (i = 0; i < PTRS_PER_PTE; i++, pfn += pfninc)
+-		set_pte(&pbase[i], pfn_pte(pfn, canon_pgprot(ref_prot)));
++		set_pte(&pbase[i], pfn_pte(pfn, ref_prot));
+ 
+ 	if (virt_addr_valid(address)) {
+ 		unsigned long pfn = PFN_DOWN(__pa(address));
+@@ -935,7 +934,6 @@ static void populate_pte(struct cpa_data
+ 	pte = pte_offset_kernel(pmd, start);
+ 
+ 	pgprot = pgprot_clear_protnone_bits(pgprot);
+-	pgprot = canon_pgprot(pgprot);
+ 
+ 	while (num_pages-- && start < end) {
+ 		set_pte(pte, pfn_pte(cpa->pfn, pgprot));
+@@ -1234,7 +1232,7 @@ repeat:
+ 		 * after all we're only going to change it's attributes
+ 		 * not the memory it points to
+ 		 */
+-		new_pte = pfn_pte(pfn, canon_pgprot(new_prot));
++		new_pte = pfn_pte(pfn, new_prot);
+ 		cpa->pfn = pfn;
+ 		/*
+ 		 * Do we really change anything ?
+_
