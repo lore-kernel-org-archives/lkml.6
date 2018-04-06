@@ -1,79 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1459510-1523021660-2-17677458096343523728
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523021659; b=eLBN3k8fSUjMM78BaImDi+emk8Bjl5AOJfLnc9yu0wBtvoUZCN
-    EQBnx/pGHbq+AYQCLXKzFUSUJyuVWEk5RI+LAp6NxM7x2LU4wECvgXIqGaunnEoH
-    RlqEWtYH8mRbWAAvJpsWJtQfwh00abc5x3UwQlzzW4BCKlAHWOfDOscBO6d7fNA/
-    ArmfHZPocw9byyQd2hWAPOQHFx2xly3rkeazhXlO3+WVeTsQnfuv5POEL+O3TL0Q
-    mURloP6jMwJJYL8L//6IGkwUrrjU/Fh4zIqGpmlt+KK6HkemRWaBmNU1GlL8Z/Ae
-    l2ZhMiBuOGGMsCCKoOaFPjAV3hYvTrDLYgFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523021659; bh=O495A2h4rAUxMSkX4R0Bo+IM0kqCj9
-    4vZi3Wm5xx3+A=; b=FjDWwmf6QunOYVtHywbJqlkhhJ5wQgwdVfxUkM/XcUK8nE
-    ukKi2TCN7+YPf5zk98z8i2GlhlkqxFwb6rQfmCxsY9U2e53X6QY0fmuWhcdDl7EI
-    XinengW6vbo6usE4WAiN1y4n5VtHNH9VfMYfsUw0+GHNEz1rsTjLtdGcCRlkgn2q
-    x2paRBszHSMuUe1Xt+EPZ+0aJ/uYmIqjT0cvku1diVYysrNdJMH34wxt2xuDkIXW
-    0HeuDalxm34z/1pbMyD6agFAARK8xP37ho0WGv54zRUzu1F2peoaTFcFC3RUlUVn
-    /WQzuTC8MpBwNa5LDcGDvE5TYKQziJHR1F5wmiwQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKivSW6JSSJWsN3GFxmv0p0SGOfBnZq0Vws2HwgTsS/J9UpW09+qvGpHxIcjrbFuPw9Qc3cAtd2xS9vVyHXA1oTqkhycvnPoFDjCK9AOXyMvcY8bSA1H
-    MWu4cqXzlu5TgkELZviBpnHqUlP0kNdKIyVfiDymzz+iHAwNToRSyCph4FTytj0h9ug3Md83uO5XXtlCq6TkdsuyXZXUoivKp14FlFXWDgC2VVwWFY6oi6GU
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=7ZN4cI0QAAAA:8 a=ag1SF4gXAAAA:8 a=IQiBa5yE71Sq9Y6vsHgA:9
-    a=QEXdDO2ut3YA:10 a=Dl0WHwQvj8hGZljrFLtM:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755794AbeDFNeP (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 09:34:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58214 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755788AbeDFNeM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:34:12 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx48tYKHb06BMJ7e2RE+dqxPaZtEWa+9j7/jfAhRPWd+4WM17Ryq8TtnJQNkqPQPENF8TtwPk
+ARC-Seal: i=1; a=rsa-sha256; t=1523021657; cv=none;
+        d=google.com; s=arc-20160816;
+        b=nl+C3KWLWLdwAUX6093BN9RhXb6dCnkYSirrwYhNocv/6/RWIQ6/P358tWwU8lEAlq
+         mQgYUSmEEkPrD68tn/ojIdcOI+vXb6fNBlFnH0JuvcuCBTBV5XOO5EKp1gi08xvDO6Nv
+         PH6k5EB3TpSDFGyroN49I9s+Dt9CrEiu+gORD+F4LWkhShBr5tJR/zLf4aCymeY0LOSD
+         XwOmRSKhmAP9eGDvIIdG3XdXSPEId8DBoc+h/o9JPcYWebMb9tYPayJCVRdgezeDAnU6
+         UD1/TD7QIBzumgkOQ4xWsV6jUqhcgkh/3Tcok4FzCgyV4c7QmNxEKCRDd8uydeb0J369
+         XNJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=NHrMAlE0k9tatIecag6cU+eMXTkPsE4bFE0/slfP/Rg=;
+        b=vcoXMhT3YoJwb/n76qEThXEJTUP2Avouwu1fDhk2YHBHM2AGZplUSXeg64K9aJqyvx
+         Ij5V1iPSBXKB8r5vtyOW8BNN29A7lAziyjW6uoyT2hcJPrnx/LTdoqWfO6UtRjbldexD
+         cCyhqRjP8YL/Apgq/enQVbPYkPehNBOxLXuWiv+5r+8B1Vg3CKwRDe/RCZWJdGYPDwAP
+         PgovC756xaABuqmbrVqoFgAseZul+G3SWicUjud7tf+yTRInumOoJlJi/+H0tiJ9iTms
+         8tsPgr12iH9Oa+JET+cIFG9HjF+Aj4bABWKx1F7ZE5QYN9x9i80bfbT2D4HonGd/4t0P
+         l0lg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.9 042/102] net: xfrm: use preempt-safe this_cpu_read() in ipcomp_alloc_tfms()
-Date: Fri,  6 Apr 2018 15:23:23 +0200
-Message-Id: <20180406084337.589659794@linuxfoundation.org>
+	stable@vger.kernel.org,
+	syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com,
+	Florian Westphal <fw@strlen.de>,
+	Eric Dumazet <edumazet@google.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.9 044/102] netfilter: bridge: ebt_among: add more missing match size checks
+Date: Fri,  6 Apr 2018 15:23:25 +0200
+Message-Id: <20180406084337.802737122@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -81,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597003597962532229?=
+X-GMAIL-MSGID: =?utf-8?q?1597003957741688512?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -91,93 +51,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Hackmann <ghackmann@google.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit 0dcd7876029b58770f769cbb7b484e88e4a305e5 upstream.
+commit c8d70a700a5b486bfa8e5a7d33d805389f6e59f9 upstream.
 
-f7c83bcbfaf5 ("net: xfrm: use __this_cpu_read per-cpu helper") added a
-__this_cpu_read() call inside ipcomp_alloc_tfms().
+ebt_among is special, it has a dynamic match size and is exempt
+from the central size checks.
 
-At the time, __this_cpu_read() required the caller to either not care
-about races or to handle preemption/interrupt issues.  3.15 tightened
-the rules around some per-cpu operations, and now __this_cpu_read()
-should never be used in a preemptible context.  On 3.15 and later, we
-need to use this_cpu_read() instead.
+commit c4585a2823edf ("bridge: ebt_among: add missing match size checks")
+added validation for pool size, but missed fact that the macros
+ebt_among_wh_src/dst can already return out-of-bound result because
+they do not check value of wh_src/dst_ofs (an offset) vs. the size
+of the match that userspace gave to us.
 
-syzkaller reported this leading to the following kernel BUG while
-fuzzing sendmsg:
+v2:
+check that offset has correct alignment.
+Paolo Abeni points out that we should also check that src/dst
+wormhash arrays do not overlap, and src + length lines up with
+start of dst (or vice versa).
+v3: compact wormhash_sizes_valid() part
 
-BUG: using __this_cpu_read() in preemptible [00000000] code: repro/3101
-caller is ipcomp_init_state+0x185/0x990
-CPU: 3 PID: 3101 Comm: repro Not tainted 4.16.0-rc4-00123-g86f84779d8e9 #154
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-Call Trace:
- dump_stack+0xb9/0x115
- check_preemption_disabled+0x1cb/0x1f0
- ipcomp_init_state+0x185/0x990
- ? __xfrm_init_state+0x876/0xc20
- ? lock_downgrade+0x5e0/0x5e0
- ipcomp4_init_state+0xaa/0x7c0
- __xfrm_init_state+0x3eb/0xc20
- xfrm_init_state+0x19/0x60
- pfkey_add+0x20df/0x36f0
- ? pfkey_broadcast+0x3dd/0x600
- ? pfkey_sock_destruct+0x340/0x340
- ? pfkey_seq_stop+0x80/0x80
- ? __skb_clone+0x236/0x750
- ? kmem_cache_alloc+0x1f6/0x260
- ? pfkey_sock_destruct+0x340/0x340
- ? pfkey_process+0x62a/0x6f0
- pfkey_process+0x62a/0x6f0
- ? pfkey_send_new_mapping+0x11c0/0x11c0
- ? mutex_lock_io_nested+0x1390/0x1390
- pfkey_sendmsg+0x383/0x750
- ? dump_sp+0x430/0x430
- sock_sendmsg+0xc0/0x100
- ___sys_sendmsg+0x6c8/0x8b0
- ? copy_msghdr_from_user+0x3b0/0x3b0
- ? pagevec_lru_move_fn+0x144/0x1f0
- ? find_held_lock+0x32/0x1c0
- ? do_huge_pmd_anonymous_page+0xc43/0x11e0
- ? lock_downgrade+0x5e0/0x5e0
- ? get_kernel_page+0xb0/0xb0
- ? _raw_spin_unlock+0x29/0x40
- ? do_huge_pmd_anonymous_page+0x400/0x11e0
- ? __handle_mm_fault+0x553/0x2460
- ? __fget_light+0x163/0x1f0
- ? __sys_sendmsg+0xc7/0x170
- __sys_sendmsg+0xc7/0x170
- ? SyS_shutdown+0x1a0/0x1a0
- ? __do_page_fault+0x5a0/0xca0
- ? lock_downgrade+0x5e0/0x5e0
- SyS_sendmsg+0x27/0x40
- ? __sys_sendmsg+0x170/0x170
- do_syscall_64+0x19f/0x640
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x7f0ee73dfb79
-RSP: 002b:00007ffe14fc15a8 EFLAGS: 00000207 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0ee73dfb79
-RDX: 0000000000000000 RSI: 00000000208befc8 RDI: 0000000000000004
-RBP: 00007ffe14fc15b0 R08: 00007ffe14fc15c0 R09: 00007ffe14fc15c0
-R10: 0000000000000000 R11: 0000000000000207 R12: 0000000000400440
-R13: 00007ffe14fc16b0 R14: 0000000000000000 R15: 0000000000000000
+NB: Fixes tag is intentionally wrong, this bug exists from day
+one when match was added for 2.6 kernel. Tag is there so stable
+maintainers will notice this one too.
 
-Signed-off-by: Greg Hackmann <ghackmann@google.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Tested with same rules from the earlier patch.
+
+Fixes: c4585a2823edf ("bridge: ebt_among: add missing match size checks")
+Reported-by: <syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_ipcomp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/bridge/netfilter/ebt_among.c |   34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
---- a/net/xfrm/xfrm_ipcomp.c
-+++ b/net/xfrm/xfrm_ipcomp.c
-@@ -283,7 +283,7 @@ static struct crypto_comp * __percpu *ip
- 		struct crypto_comp *tfm;
+--- a/net/bridge/netfilter/ebt_among.c
++++ b/net/bridge/netfilter/ebt_among.c
+@@ -177,6 +177,28 @@ static bool poolsize_invalid(const struc
+ 	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
+ }
  
- 		/* This can be any valid CPU ID so we don't need locking. */
--		tfm = __this_cpu_read(*pos->tfms);
-+		tfm = this_cpu_read(*pos->tfms);
++static bool wormhash_offset_invalid(int off, unsigned int len)
++{
++	if (off == 0) /* not present */
++		return false;
++
++	if (off < (int)sizeof(struct ebt_among_info) ||
++	    off % __alignof__(struct ebt_mac_wormhash))
++		return true;
++
++	off += sizeof(struct ebt_mac_wormhash);
++
++	return off > len;
++}
++
++static bool wormhash_sizes_valid(const struct ebt_mac_wormhash *wh, int a, int b)
++{
++	if (a == 0)
++		a = sizeof(struct ebt_among_info);
++
++	return ebt_mac_wormhash_size(wh) + a == b;
++}
++
+ static int ebt_among_mt_check(const struct xt_mtchk_param *par)
+ {
+ 	const struct ebt_among_info *info = par->matchinfo;
+@@ -189,6 +211,10 @@ static int ebt_among_mt_check(const stru
+ 	if (expected_length > em->match_size)
+ 		return -EINVAL;
  
- 		if (!strcmp(crypto_comp_name(tfm), alg_name)) {
- 			pos->users++;
++	if (wormhash_offset_invalid(info->wh_dst_ofs, em->match_size) ||
++	    wormhash_offset_invalid(info->wh_src_ofs, em->match_size))
++		return -EINVAL;
++
+ 	wh_dst = ebt_among_wh_dst(info);
+ 	if (poolsize_invalid(wh_dst))
+ 		return -EINVAL;
+@@ -201,6 +227,14 @@ static int ebt_among_mt_check(const stru
+ 	if (poolsize_invalid(wh_src))
+ 		return -EINVAL;
+ 
++	if (info->wh_src_ofs < info->wh_dst_ofs) {
++		if (!wormhash_sizes_valid(wh_src, info->wh_src_ofs, info->wh_dst_ofs))
++			return -EINVAL;
++	} else {
++		if (!wormhash_sizes_valid(wh_dst, info->wh_dst_ofs, info->wh_src_ofs))
++			return -EINVAL;
++	}
++
+ 	expected_length += ebt_mac_wormhash_size(wh_src);
+ 
+ 	if (em->match_size != EBT_ALIGN(expected_length)) {
