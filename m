@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/YcfGVvaou34LLnaHnCvjjTUcnil9UVCwxTwsxNBpuvOQBMnYIJO7VhMIf1locQeKITP3O
-ARC-Seal: i=1; a=rsa-sha256; t=1523021710; cv=none;
+X-Google-Smtp-Source: AIpwx4+DkkXU5tyMws73M73/2SUNvm3upI+xD0w/Bz7ZnkUwPkCFZAxnUWTo17fPsyynyPgQe4L1
+ARC-Seal: i=1; a=rsa-sha256; t=1523021707; cv=none;
         d=google.com; s=arc-20160816;
-        b=PZ0PLonyxHS6v+QP1CNCOwIHerEnlAcqDgZisXDgfNEi0+yV3YipAcKIbTYFpiWoFk
-         vOueUYHvW6GKQhdolz0SgVnnDKnMwWDBY8GPJxAiuZLDzKPiDCmKvRXhG/V6oLg1/GPI
-         Leu0/0ETiujQQ+942qTib5K0R26JWWheZ90XB5TMBiRPN4/pRIDBvJbABlHg1BAXCcaj
-         Ol5h6AXyuWg1ob0+ZrAaOvK+j1/5PE9GAUr1Wr+DdFZrMPacSSVAv1b/jN5jIQTWl23t
-         U2Ems8Qub6Na3tP/u8unLzh6h0KkvZgrwZD/hOdrwOAHUA9MmYPi+8dIOyVYkJv3YZcY
-         z4zg==
+        b=ddOSt4kEclwceblDqUXHhvHGTEWRA1TZEjyFtyiEsmgdZiVAULrc+N/jkZCpZxY46d
+         QZM6ndHI08DlbqfFnPskSdG/gEeR2G3xbT+tRtVivYrFHq4O8hTZNTqNBcE6Xwx/WvNH
+         uHntDS9ptFNfbC79LLgMBuAol2tclxWPye1Oz4orx3GcwC4G5duZNJjLiaGQ0MHk6Rhw
+         fv2b4jr3scVcJMwwwbyHVuRS/9Ei9yCS7hRruoCPejollkby5Pv+Qts5gfWH7VMtClvR
+         2wxQtBx64uSgUtTdrIB1HzQb8HViwNfl7PUCQOrwhNve/M5yg3GgNPEZCQCicrRnn0mV
+         U8UQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=j87reN/DDdwrUMLNSJqL/TMSwRsPa5woUJ1KVf9YRNI=;
-        b=HobpgOyQ/8TzYu0SwFVDPiSR6yQKdmoRFbCP3A2FwECJQTaLEyHvnCwaiqZn7Biqxs
-         bNObKokMncKrErCU6evjai5Jvlqh91pONq0FSyUOnZeGL6hZ4sN7PTU1YvGtepkiXN4V
-         VdDNkq+pzVDlaNXmjOGEtSzZu4gF3YUWHJWAfDOZgvdhO0hDV1ljBvtTFETiFZp6IFHm
-         coy8CPagsXyXtEuZsJ8NBztrWeDIPt7DeE63IhBfPjrk22VBoY99zek4iK1FBg2GevHk
-         Ejs0UQYmzua8HCkT+8oiU4kOla9sh2bWLNTkXscFZv2b7LgwoiOErd46YeoK78TWfv8E
-         yVLA==
+        bh=XukNshtXclaBv8jW/sn9Q/GDvNS/WMqQ1pfD1gvb8T0=;
+        b=FfNBW/1BUKLdkKG8hUYJO8mZ9vH93zv6NeteF+agFZ3imcvtr1nlw7iOR8iMooCVku
+         FHtdLzVKN2ALj5dkf++AfwoImKoCz4WBQp/cQoxJXIpL7Nl4qN4KHPp69kZ5dP0zi088
+         7tbvT2XygxePCQye81HUrBmNJq3nvzveKXYQgOPqsbUec1W4LBIOZt5mbAu+540ppkOu
+         eFzzdHG+fB3W0ngYUzkEVLnthKTNWaMq21MnI9STTeFBc7ypEWPD85z1A1+mp0AvHK0H
+         aFjNdq3kkScpcIrJJuDKBsdmDnUp9/H+kecujNzHIDbFBFjCZCmBVYgaSFENjH9KBSFI
+         6lUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -32,9 +32,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Will Deacon <will.deacon@arm.com>,
 	Greg Hackmann <ghackmann@google.com>,
 	Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 4.9 061/102] arm64: tls: Avoid unconditional zeroing of tpidrro_el0 for native tasks
-Date: Fri,  6 Apr 2018 15:23:42 +0200
-Message-Id: <20180406084340.132540841@linuxfoundation.org>
+Subject: [PATCH 4.9 060/102] arm64: entry: Hook up entry trampoline to exception vectors
+Date: Fri,  6 Apr 2018 15:23:41 +0200
+Message-Id: <20180406084340.016494702@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004012545038833?=
-X-GMAIL-MSGID: =?utf-8?q?1597004012545038833?=
+X-GMAIL-THRID: =?utf-8?q?1597004010758387874?=
+X-GMAIL-MSGID: =?utf-8?q?1597004010758387874?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,12 +55,13 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Will Deacon <will.deacon@arm.com>
 
-commit 18011eac28c7 upstream.
+commit 4bf3286d29f3 upstream.
 
-When unmapping the kernel at EL0, we use tpidrro_el0 as a scratch register
-during exception entry from native tasks and subsequently zero it in
-the kernel_ventry macro. We can therefore avoid zeroing tpidrro_el0
-in the context-switch path for native tasks using the entry trampoline.
+Hook up the entry trampoline to our exception vectors so that all
+exceptions from and returns to EL0 go via the trampoline, which swizzles
+the vector base register accordingly. Transitioning to and from the
+kernel clobbers x30, so we use tpidrro_el0 and far_el1 as scratch
+registers for native tasks.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
@@ -72,32 +73,82 @@ Tested-by: Will Deacon <will.deacon@arm.com>
 Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/process.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm64/kernel/entry.S |   39 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 36 insertions(+), 3 deletions(-)
 
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -306,17 +306,17 @@ int copy_thread(unsigned long clone_flag
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -72,10 +72,26 @@
  
- static void tls_thread_switch(struct task_struct *next)
- {
--	unsigned long tpidr, tpidrro;
-+	unsigned long tpidr;
+ 	.macro kernel_ventry, el, label, regsize = 64
+ 	.align 7
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++	.if	\el == 0
++	.if	\regsize == 64
++	mrs	x30, tpidrro_el0
++	msr	tpidrro_el0, xzr
++	.else
++	mov	x30, xzr
++	.endif
++	.endif
++#endif
++
+ 	sub	sp, sp, #S_FRAME_SIZE
+ 	b	el\()\el\()_\label
+ 	.endm
  
- 	tpidr = read_sysreg(tpidr_el0);
- 	*task_user_tls(current) = tpidr;
++	.macro tramp_alias, dst, sym
++	mov_q	\dst, TRAMP_VALIAS
++	add	\dst, \dst, #(\sym - .entry.tramp.text)
++	.endm
++
+ 	.macro	kernel_entry, el, regsize = 64
+ 	.if	\regsize == 32
+ 	mov	w0, w0				// zero upper 32 bits of x0
+@@ -157,18 +173,20 @@
+ 	ct_user_enter
+ 	ldr	x23, [sp, #S_SP]		// load return stack pointer
+ 	msr	sp_el0, x23
++	tst	x22, #PSR_MODE32_BIT		// native task?
++	b.eq	3f
++
+ #ifdef CONFIG_ARM64_ERRATUM_845719
+ alternative_if ARM64_WORKAROUND_845719
+-	tbz	x22, #4, 1f
+ #ifdef CONFIG_PID_IN_CONTEXTIDR
+ 	mrs	x29, contextidr_el1
+ 	msr	contextidr_el1, x29
+ #else
+ 	msr contextidr_el1, xzr
+ #endif
+-1:
+ alternative_else_nop_endif
+ #endif
++3:
+ 	.endif
+ 	msr	elr_el1, x21			// set up the return data
+ 	msr	spsr_el1, x22
+@@ -189,7 +207,22 @@ alternative_else_nop_endif
+ 	ldp	x28, x29, [sp, #16 * 14]
+ 	ldr	lr, [sp, #S_LR]
+ 	add	sp, sp, #S_FRAME_SIZE		// restore sp
+-	eret					// return to kernel
++
++#ifndef CONFIG_UNMAP_KERNEL_AT_EL0
++	eret
++#else
++	.if	\el == 0
++	bne	4f
++	msr	far_el1, x30
++	tramp_alias	x30, tramp_exit_native
++	br	x30
++4:
++	tramp_alias	x30, tramp_exit_compat
++	br	x30
++	.else
++	eret
++	.endif
++#endif
+ 	.endm
  
--	tpidr = *task_user_tls(next);
--	tpidrro = is_compat_thread(task_thread_info(next)) ?
--		  next->thread.tp_value : 0;
-+	if (is_compat_thread(task_thread_info(next)))
-+		write_sysreg(next->thread.tp_value, tpidrro_el0);
-+	else if (!arm64_kernel_unmapped_at_el0())
-+		write_sysreg(0, tpidrro_el0);
- 
--	write_sysreg(tpidr, tpidr_el0);
--	write_sysreg(tpidrro, tpidrro_el0);
-+	write_sysreg(*task_user_tls(next), tpidr_el0);
- }
- 
- /* Restore the UAO state depending on next's addr_limit */
+ 	.macro	get_thread_info, rd
