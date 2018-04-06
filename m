@@ -1,72 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752314AbeDFUH5 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 16:07:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751494AbeDFUHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 16:07:54 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97CFC20CAA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Carlo Caione <carlo@caione.org>, Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Yixun Lan <yixun.lan@amlogic.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180328025050.221585-5-yixun.lan@amlogic.com>
-Cc: Qiufang Dai <qiufang.dai@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180328025050.221585-1-yixun.lan@amlogic.com>
- <20180328025050.221585-5-yixun.lan@amlogic.com>
-Message-ID: <152304527293.94378.2019634000949753214@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 4/6] clk: meson-axg: Add AO Clock and Reset controller driver
-Date: Fri, 06 Apr 2018 13:07:52 -0700
+        id S1752377AbeDFUIF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 16:08:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45986 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752334AbeDFUID (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 16:08:03 -0400
+Date: Fri, 6 Apr 2018 13:08:02 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Huang Ying <ying.huang@intel.com>, Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: Re: [PATCH v2 0/3] mm/get_user_pages_fast fixes, cleanups
+Message-Id: <20180406130802.d80742aeda85a595150b28cf@linux-foundation.org>
+In-Reply-To: <1522962072-182137-1-git-send-email-mst@redhat.com>
+References: <1522962072-182137-1-git-send-email-mst@redhat.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Yixun Lan (2018-03-27 19:50:48)
-> +       [CLKID_AO_SAR_ADC_CLK]  = &axg_saradc_gate,
-> +};
-> +
-> +static struct clk_hw_onecell_data axg_aoclk_onecell_data = {
+On Fri, 6 Apr 2018 00:03:48 +0300 "Michael S. Tsirkin" <mst@redhat.com> wrote:
 
-const?
+> Turns out get_user_pages_fast and __get_user_pages_fast return different
+> values on error when given a single page: __get_user_pages_fast returns
+> 0.  get_user_pages_fast returns either 0 or an error.
+> 
+> Callers of get_user_pages_fast expect an error so fix it up to return an
+> error consistently.
+> 
+> Stress the difference between get_user_pages_fast and __get_user_pages_fast
+> to make sure callers aren't confused.
+> 
 
-> +       .hws = {
-> +               [CLKID_AO_REMOTE]       = &remote_ao.hw,
-> +               [CLKID_AO_I2C_MASTER]   = &i2c_master_ao.hw,
-> +               [CLKID_AO_I2C_SLAVE]    = &i2c_slave_ao.hw,
-> +               [CLKID_AO_UART1]        = &uart1_ao.hw,
-> +               [CLKID_AO_UART2]        = &uart2_ao.hw,
-> +               [CLKID_AO_IR_BLASTER]   = &ir_blaster_ao.hw,
-> +               [CLKID_AO_SAR_ADC]      = &saradc_ao.hw,
-> +               [CLKID_AO_CLK81]        = &ao_clk81.hw,
-> +               [CLKID_AO_SAR_ADC_SEL]  = &axg_saradc_mux.hw,
-> +               [CLKID_AO_SAR_ADC_DIV]  = &axg_saradc_div.hw,
-> +               [CLKID_AO_SAR_ADC_CLK]  = &axg_saradc_gate.hw,
-> +       },
-> +       .num = NR_CLKS,
-> +};
-> +
-> +static struct meson_aoclk_data axg_aoclkc_data = {
+A term which is missing from all these changelogs is "vhost" :(
 
-const?
+This patchset fixes a user-affecting bug, does it not?  If so, please
+fully describe that bug so that we can decide which kernel version(s)
+need the patchset.
 
-> +       .reset_reg      = AO_RTI_GEN_CNTL_REG0,
-> +       .num_reset      = ARRAY_SIZE(axg_aoclk_reset),
-> +       .reset          = axg_aoclk_reset,
-> +       .num_clks       = ARRAY_SIZE(axg_aoclk_regmap),
-> +       .clks           = axg_aoclk_regmap,
-> +       .hw_data        = &axg_aoclk_onecell_data,
-> +};
+And yes, this return value asymmetry is sad.  Did you scope out what
+would be needed to fix up the callers so we can avoid this?
