@@ -1,66 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751956AbeDFH4x (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 03:56:53 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:37381 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751704AbeDFH4v (ORCPT
+        id S1752069AbeDFH5A (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 03:57:00 -0400
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:36654 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751704AbeDFH45 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 03:56:51 -0400
-X-Google-Smtp-Source: AIpwx4/oknOlmaaCNmTbh+ZZpBS79WGej9h/49ckmpyqELHHwmHvZhYUNARg7ILgPC53T+TcyjoEvQ==
-Date: Fri, 6 Apr 2018 13:26:48 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Quentin Schulz <quentin.schulz@bootlin.com>
-Cc: vireshk@kernel.org, shiraz.linux.kernel@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH 1/2] ARM: SPEAr600: add DT description of the watchdog
-Message-ID: <20180406075648.GW3572@vireshk-i7>
-References: <0635969b6ef0fe528a27a8b6493cc3df770e1f60.1523000725.git-series.quentin.schulz@bootlin.com>
+        Fri, 6 Apr 2018 03:56:57 -0400
+X-Google-Smtp-Source: AIpwx48v+uPCgFtAeX3s4J06iUpL38QJLoO+7+YpSFsj4cHGoNBXpKUVi5S4BLarAekTDZXvtAiAezObxQrkUvVoMMw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0635969b6ef0fe528a27a8b6493cc3df770e1f60.1523000725.git-series.quentin.schulz@bootlin.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180406072517.27709-1-tobias.regnery@gmail.com>
+References: <20180406072517.27709-1-tobias.regnery@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 6 Apr 2018 09:56:55 +0200
+X-Google-Sender-Auth: Qke7Apt2x4VgPzOhZeFPqFDdMwg
+Message-ID: <CAK8P3a0dnD48qGWL098_fvqC=BOCm5x6DfC9aQ8qv0JZ-EehYA@mail.gmail.com>
+Subject: Re: [PATCH v2] pstore: fix crypto dependencies without compression
+To: Tobias Regnery <tobias.regnery@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-04-18, 09:50, Quentin Schulz wrote:
-> The SPEAr600 has a built-in watchdog which already has a DT binding
-> described in Documentation/devicetree/bindings/watchdog/sp805-wdt.txt.
-> 
-> Let's add the description of the watchdog device in the SPEAr600 Device
-> Tree.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+On Fri, Apr 6, 2018 at 9:25 AM, Tobias Regnery <tobias.regnery@gmail.com> wrote:
+> Commit 58eb5b670747 ("pstore: fix crypto dependencies") fixed up the crypto
+> dependencies but missed the case when no compression is selected.
+>
+> With CONFIG_PSTORE=y, CONFIG_PSTORE_COMPRESS=n  and CONFIG_CRYPTO=m we see
+> the following link error:
+>
+> fs/pstore/platform.o: In function `pstore_register':
+> (.text+0x1b1): undefined reference to `crypto_has_alg'
+> (.text+0x205): undefined reference to `crypto_alloc_base'
+> fs/pstore/platform.o: In function `pstore_unregister':
+> (.text+0x3b0): undefined reference to `crypto_destroy_tfm'
+>
+> Fix this by checking at compile-time if CONFIG_PSTORE_COMPRESS is enabled.
+>
+> Fixes: 58eb5b670747 ("pstore: fix crypto dependencies")
+> Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
 > ---
->  arch/arm/boot/dts/spear600.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/spear600.dtsi b/arch/arm/boot/dts/spear600.dtsi
-> index 00166eb..d7c3096 100644
-> --- a/arch/arm/boot/dts/spear600.dtsi
-> +++ b/arch/arm/boot/dts/spear600.dtsi
-> @@ -213,6 +213,14 @@
->  				interrupts = <6>;
->  				status = "disabled";
->  			};
-> +
-> +			wdt: wdt@fc880000 {
-> +				compatible = "arm,sp805", "arm,primecell";
-> +				reg = <0xfc880000 0x1000>;
-> +				interrupt-parent = <&vic1>;
-> +				interrupts = <20>;
-> +				status = "disabled";
-> +			};
->  		};
->  	};
->  };
+> v2: check the config at compile-time rather than change the
+>     kconfig-dependency as suggested by Arnd.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Thanks!
 
--- 
-viresh
+Acked-by: Arnd Bergmann <arnd@arndb.de>
