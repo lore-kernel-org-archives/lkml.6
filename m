@@ -1,41 +1,36 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49+pJLmQ+hApFk5SCN7gakJAqMDoQawotcfoSBxP5FyqkRmAXRWBp/9kcNtRxp6hoKBUNBo
-ARC-Seal: i=1; a=rsa-sha256; t=1523021846; cv=none;
+X-Google-Smtp-Source: AIpwx48TOuKVZtNTWtG8a0zfClbQLDTTQg7NG354XZba4V3cGzHtU9ev7vCY+Ly/NbQFz4lulXT6
+ARC-Seal: i=1; a=rsa-sha256; t=1523021747; cv=none;
         d=google.com; s=arc-20160816;
-        b=N8vpwfiOWWZSp0QNHHKgBy/JmfbFYS8KljcFR+2RTj7+3l2J2SSDJ7y1nbT+YLnjgv
-         6eDrBBVv6cvV+xusIvjiV1GG1V7R+Ge+E5ShpEDLyloOAbnnhc985NFGt3yxji0MVPaH
-         wuAmN7yMP5EC110NcqCz7eil6M2q9BOjto41GbPkbx4oj1tjot3Hrxu4NE/PisUytDIN
-         2lI5oUw+S6zwKiP7ic/lgxb+RpGCiNPhdZFpD5fSLCdHEzTrRygDN7b6GdSrGE29JHXm
-         tZSGpl9HGwOQPWjsMwP9S9r0QsMLLMqOWjv6Z+xFtm1QsX2Z+3FICHovlq6o+7/4vs4n
-         EF3A==
+        b=UgJlyl0pC+QcbBdYhSiGaM0EgRSagn2pjMdA9/nFyAmWGCNA2pHUjlCeiPOxn5CQQe
+         ooVhiFZPIALi95g2+mY3IVWGAW8oWpRee1wmUS0YtCqFJhJWB1AygNm/ietGjA13pT/v
+         urzElewiNwv47qLovRkE8QK8nTrZLeMTFEbgfvv8iSAnI173frpNLkZRQyIv83L6yUtG
+         X7TTjojasQG9ZeEhbUSFZTCTk6hwDlF4atpxFJxYNfN7rlXDnh9VC35hDxloPFeHU5VN
+         pqY/mFV4kxgiZ7aqvWv+4Nfb9o/u5KNEq+PE9HkQn1W/pm1xmqezXPRsEgmGkTKykCI3
+         KDKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=S05Kn5wxplKNBpfWLIrEJ1yCNSoWR9l0+e3TgZL7DG8=;
-        b=Yt/245YWp/YVRzytR/k5Yz3OF3TtZBm6fpH2JJXgQ/ATQhbJW1Xf3v7m7jKI7LkitV
-         OmY9tXUuZBgnrxfgVE6xdL5qaEhgE1pAbHJJO3PzOq4DnL6EYfbXnztnv+hFvn4kziQP
-         vv8+n/7fH4LHbdsMMs+YMRkHgdxI2ls6m05ctOXooOpucieboZH8p1DZtnFKiQNmJCTI
-         ONMyt7WvIrCxFtxCt3eIiKoMwr7/HCEw0FqmfQ+5eXrWdO8Y4VfgN5j4uyUi0PDIpsFP
-         Vn0Uf2bfthnUK1RVL7FbXtH+tAbvJz1sDS8NNUIK9fZ1ALE+vnAm9NWD3oxWNoFetCf0
-         oO6Q==
+        bh=cPtrq4FBqCxfv699Lkck9ruEW0vtMRebdCAl19lrZp0=;
+        b=ix/sy8s6/EiqQ3F4veRfYwIkX/JNo8qc2nMbL6dkFr7zwxwyPfZwDmFnvClNTlbWMc
+         kjDGYSX3/AZNLCssFo5BjuFuRIBVIX7RKTn8VUVAJ3xT2GEOMku/N7iGeCYtpVAtuOgW
+         Su6WfEwHd7gquoAYCylJqQDESKsryeURW7UNfWF3EtVghkxgUNUdSDYIHxVKeHqJPTmv
+         VyaoO3gSpte8IKFbW8OQ9Wi76ERc6oR+V61hdVIvEkRqxku6rpSzCI4xDImm+UQE0KZi
+         mcUt7mV7muPWrvwZYEn9NT+YbGjKmChRiIwmN420J6rmYsp4uR85y76AGuJYQ1c6PwRz
+         hczg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Greg Hackmann <ghackmann@google.com>,
-	Alex Shi <alex.shi@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4.9 073/102] arm64: kpti: Add ->enable callback to remap swapper using nG mappings
-Date: Fri,  6 Apr 2018 15:23:54 +0200
-Message-Id: <20180406084341.778871714@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Major Hayden <major@mhtx.net>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 077/102] USB: serial: ftdi_sio: add RT Systems VX-8 cable
+Date: Fri,  6 Apr 2018 15:23:58 +0200
+Message-Id: <20180406084342.350704275@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -45,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004155883938112?=
-X-GMAIL-MSGID: =?utf-8?q?1597004155883938112?=
+X-GMAIL-THRID: =?utf-8?q?1597003568499355891?=
+X-GMAIL-MSGID: =?utf-8?q?1597004052425760468?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,316 +49,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Major Hayden <major@mhtx.net>
 
-commit f992b4dfd58b upstream.
+commit 9608e5c0f079390473b484ef92334dfd3431bb89 upstream.
 
-Defaulting to global mappings for kernel space is generally good for
-performance and appears to be necessary for Cavium ThunderX. If we
-subsequently decide that we need to enable kpti, then we need to rewrite
-our existing page table entries to be non-global. This is fiddly, and
-made worse by the possible use of contiguous mappings, which require
-a strict break-before-make sequence.
+This patch adds a device ID for the RT Systems cable used to
+program Yaesu VX-8R/VX-8DR handheld radios. It uses the main
+FTDI VID instead of the common RT Systems VID.
 
-Since the enable callback runs on each online CPU from stop_machine
-context, we can have all CPUs enter the idmap, where secondaries can
-wait for the primary CPU to rewrite swapper with its MMU off. It's all
-fairly horrible, but at least it only runs once.
-
-Nicolas Dechesne <nicolas.dechesne@linaro.org> found a bug on this commit
-which cause boot failure on db410c etc board. Ard Biesheuvel found it
-writting wrong contenct to ttbr1_el1 in __idmap_cpu_set_reserved_ttbr1
-macro and fixed it by give it the right content.
-
-Tested-by: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-[Alex: avoid dependency on 52-bit PA patches and TTBR/MMU erratum patches]
-Signed-off-by: Alex Shi <alex.shi@linaro.org> [v4.9 backport]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
-Tested-by: Will Deacon <will.deacon@arm.com>
-Tested-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Major Hayden <major@mhtx.net>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/assembler.h |    3 
- arch/arm64/kernel/cpufeature.c     |   25 ++++
- arch/arm64/mm/proc.S               |  201 +++++++++++++++++++++++++++++++++++--
- 3 files changed, 222 insertions(+), 7 deletions(-)
 
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -413,4 +413,7 @@ alternative_endif
- 	movk	\reg, :abs_g0_nc:\val
- 	.endm
- 
-+	.macro	pte_to_phys, phys, pte
-+	and	\phys, \pte, #(((1 << (48 - PAGE_SHIFT)) - 1) << PAGE_SHIFT)
-+	.endm
- #endif	/* __ASM_ASSEMBLER_H */
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -778,6 +778,30 @@ static bool unmap_kernel_at_el0(const st
- 						     ID_AA64PFR0_CSV3_SHIFT);
- }
- 
-+static int kpti_install_ng_mappings(void *__unused)
-+{
-+	typedef void (kpti_remap_fn)(int, int, phys_addr_t);
-+	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
-+	kpti_remap_fn *remap_fn;
-+
-+	static bool kpti_applied = false;
-+	int cpu = smp_processor_id();
-+
-+	if (kpti_applied)
-+		return 0;
-+
-+	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
-+
-+	cpu_install_idmap();
-+	remap_fn(cpu, num_online_cpus(), __pa_symbol(swapper_pg_dir));
-+	cpu_uninstall_idmap();
-+
-+	if (!cpu)
-+		kpti_applied = true;
-+
-+	return 0;
-+}
-+
- static int __init parse_kpti(char *str)
- {
- 	bool enabled;
-@@ -881,6 +905,7 @@ static const struct arm64_cpu_capabiliti
- 		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
- 		.def_scope = SCOPE_SYSTEM,
- 		.matches = unmap_kernel_at_el0,
-+		.enable = kpti_install_ng_mappings,
- 	},
- #endif
- 	{},
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -148,6 +148,16 @@ alternative_else_nop_endif
- ENDPROC(cpu_do_switch_mm)
- 
- 	.pushsection ".idmap.text", "ax"
-+
-+.macro	__idmap_cpu_set_reserved_ttbr1, tmp1, tmp2
-+	adrp	\tmp1, empty_zero_page
-+	msr	ttbr1_el1, \tmp1
-+	isb
-+	tlbi	vmalle1
-+	dsb	nsh
-+	isb
-+.endm
-+
+---
+ drivers/usb/serial/ftdi_sio.c     |    1 +
+ drivers/usb/serial/ftdi_sio_ids.h |    3 +++
+ 2 files changed, 4 insertions(+)
+
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -773,6 +773,7 @@ static const struct usb_device_id id_tab
+ 		.driver_info = (kernel_ulong_t)&ftdi_NDI_device_quirk },
+ 	{ USB_DEVICE(TELLDUS_VID, TELLDUS_TELLSTICK_PID) },
+ 	{ USB_DEVICE(NOVITUS_VID, NOVITUS_BONO_E_PID) },
++	{ USB_DEVICE(FTDI_VID, RTSYSTEMS_USB_VX8_PID) },
+ 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_S03_PID) },
+ 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_59_PID) },
+ 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_57A_PID) },
+--- a/drivers/usb/serial/ftdi_sio_ids.h
++++ b/drivers/usb/serial/ftdi_sio_ids.h
+@@ -922,6 +922,9 @@
  /*
-  * void idmap_cpu_replace_ttbr1(phys_addr_t new_pgd)
-  *
-@@ -158,13 +168,7 @@ ENTRY(idmap_cpu_replace_ttbr1)
- 	mrs	x2, daif
- 	msr	daifset, #0xf
- 
--	adrp	x1, empty_zero_page
--	msr	ttbr1_el1, x1
--	isb
--
--	tlbi	vmalle1
--	dsb	nsh
--	isb
-+	__idmap_cpu_set_reserved_ttbr1 x1, x3
- 
- 	msr	ttbr1_el1, x0
- 	isb
-@@ -175,6 +179,189 @@ ENTRY(idmap_cpu_replace_ttbr1)
- ENDPROC(idmap_cpu_replace_ttbr1)
- 	.popsection
- 
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+	.pushsection ".idmap.text", "ax"
+  * RT Systems programming cables for various ham radios
+  */
++/* This device uses the VID of FTDI */
++#define RTSYSTEMS_USB_VX8_PID   0x9e50  /* USB-VX8 USB to 7 pin modular plug for Yaesu VX-8 radio */
 +
-+	.macro	__idmap_kpti_get_pgtable_ent, type
-+	dc	cvac, cur_\()\type\()p		// Ensure any existing dirty
-+	dmb	sy				// lines are written back before
-+	ldr	\type, [cur_\()\type\()p]	// loading the entry
-+	tbz	\type, #0, next_\()\type	// Skip invalid entries
-+	.endm
-+
-+	.macro __idmap_kpti_put_pgtable_ent_ng, type
-+	orr	\type, \type, #PTE_NG		// Same bit for blocks and pages
-+	str	\type, [cur_\()\type\()p]	// Update the entry and ensure it
-+	dc	civac, cur_\()\type\()p		// is visible to all CPUs.
-+	.endm
-+
-+/*
-+ * void __kpti_install_ng_mappings(int cpu, int num_cpus, phys_addr_t swapper)
-+ *
-+ * Called exactly once from stop_machine context by each CPU found during boot.
-+ */
-+__idmap_kpti_flag:
-+	.long	1
-+ENTRY(idmap_kpti_install_ng_mappings)
-+	cpu		.req	w0
-+	num_cpus	.req	w1
-+	swapper_pa	.req	x2
-+	swapper_ttb	.req	x3
-+	flag_ptr	.req	x4
-+	cur_pgdp	.req	x5
-+	end_pgdp	.req	x6
-+	pgd		.req	x7
-+	cur_pudp	.req	x8
-+	end_pudp	.req	x9
-+	pud		.req	x10
-+	cur_pmdp	.req	x11
-+	end_pmdp	.req	x12
-+	pmd		.req	x13
-+	cur_ptep	.req	x14
-+	end_ptep	.req	x15
-+	pte		.req	x16
-+
-+	mrs	swapper_ttb, ttbr1_el1
-+	adr	flag_ptr, __idmap_kpti_flag
-+
-+	cbnz	cpu, __idmap_kpti_secondary
-+
-+	/* We're the boot CPU. Wait for the others to catch up */
-+	sevl
-+1:	wfe
-+	ldaxr	w18, [flag_ptr]
-+	eor	w18, w18, num_cpus
-+	cbnz	w18, 1b
-+
-+	/* We need to walk swapper, so turn off the MMU. */
-+	mrs	x18, sctlr_el1
-+	bic	x18, x18, #SCTLR_ELx_M
-+	msr	sctlr_el1, x18
-+	isb
-+
-+	/* Everybody is enjoying the idmap, so we can rewrite swapper. */
-+	/* PGD */
-+	mov	cur_pgdp, swapper_pa
-+	add	end_pgdp, cur_pgdp, #(PTRS_PER_PGD * 8)
-+do_pgd:	__idmap_kpti_get_pgtable_ent	pgd
-+	tbnz	pgd, #1, walk_puds
-+	__idmap_kpti_put_pgtable_ent_ng	pgd
-+next_pgd:
-+	add	cur_pgdp, cur_pgdp, #8
-+	cmp	cur_pgdp, end_pgdp
-+	b.ne	do_pgd
-+
-+	/* Publish the updated tables and nuke all the TLBs */
-+	dsb	sy
-+	tlbi	vmalle1is
-+	dsb	ish
-+	isb
-+
-+	/* We're done: fire up the MMU again */
-+	mrs	x18, sctlr_el1
-+	orr	x18, x18, #SCTLR_ELx_M
-+	msr	sctlr_el1, x18
-+	isb
-+
-+	/* Set the flag to zero to indicate that we're all done */
-+	str	wzr, [flag_ptr]
-+	ret
-+
-+	/* PUD */
-+walk_puds:
-+	.if CONFIG_PGTABLE_LEVELS > 3
-+	pte_to_phys	cur_pudp, pgd
-+	add	end_pudp, cur_pudp, #(PTRS_PER_PUD * 8)
-+do_pud:	__idmap_kpti_get_pgtable_ent	pud
-+	tbnz	pud, #1, walk_pmds
-+	__idmap_kpti_put_pgtable_ent_ng	pud
-+next_pud:
-+	add	cur_pudp, cur_pudp, 8
-+	cmp	cur_pudp, end_pudp
-+	b.ne	do_pud
-+	b	next_pgd
-+	.else /* CONFIG_PGTABLE_LEVELS <= 3 */
-+	mov	pud, pgd
-+	b	walk_pmds
-+next_pud:
-+	b	next_pgd
-+	.endif
-+
-+	/* PMD */
-+walk_pmds:
-+	.if CONFIG_PGTABLE_LEVELS > 2
-+	pte_to_phys	cur_pmdp, pud
-+	add	end_pmdp, cur_pmdp, #(PTRS_PER_PMD * 8)
-+do_pmd:	__idmap_kpti_get_pgtable_ent	pmd
-+	tbnz	pmd, #1, walk_ptes
-+	__idmap_kpti_put_pgtable_ent_ng	pmd
-+next_pmd:
-+	add	cur_pmdp, cur_pmdp, #8
-+	cmp	cur_pmdp, end_pmdp
-+	b.ne	do_pmd
-+	b	next_pud
-+	.else /* CONFIG_PGTABLE_LEVELS <= 2 */
-+	mov	pmd, pud
-+	b	walk_ptes
-+next_pmd:
-+	b	next_pud
-+	.endif
-+
-+	/* PTE */
-+walk_ptes:
-+	pte_to_phys	cur_ptep, pmd
-+	add	end_ptep, cur_ptep, #(PTRS_PER_PTE * 8)
-+do_pte:	__idmap_kpti_get_pgtable_ent	pte
-+	__idmap_kpti_put_pgtable_ent_ng	pte
-+next_pte:
-+	add	cur_ptep, cur_ptep, #8
-+	cmp	cur_ptep, end_ptep
-+	b.ne	do_pte
-+	b	next_pmd
-+
-+	/* Secondary CPUs end up here */
-+__idmap_kpti_secondary:
-+	/* Uninstall swapper before surgery begins */
-+	__idmap_cpu_set_reserved_ttbr1 x18, x17
-+
-+	/* Increment the flag to let the boot CPU we're ready */
-+1:	ldxr	w18, [flag_ptr]
-+	add	w18, w18, #1
-+	stxr	w17, w18, [flag_ptr]
-+	cbnz	w17, 1b
-+
-+	/* Wait for the boot CPU to finish messing around with swapper */
-+	sevl
-+1:	wfe
-+	ldxr	w18, [flag_ptr]
-+	cbnz	w18, 1b
-+
-+	/* All done, act like nothing happened */
-+	msr	ttbr1_el1, swapper_ttb
-+	isb
-+	ret
-+
-+	.unreq	cpu
-+	.unreq	num_cpus
-+	.unreq	swapper_pa
-+	.unreq	swapper_ttb
-+	.unreq	flag_ptr
-+	.unreq	cur_pgdp
-+	.unreq	end_pgdp
-+	.unreq	pgd
-+	.unreq	cur_pudp
-+	.unreq	end_pudp
-+	.unreq	pud
-+	.unreq	cur_pmdp
-+	.unreq	end_pmdp
-+	.unreq	pmd
-+	.unreq	cur_ptep
-+	.unreq	end_ptep
-+	.unreq	pte
-+ENDPROC(idmap_kpti_install_ng_mappings)
-+	.popsection
-+#endif
-+
- /*
-  *	__cpu_setup
-  *
+ #define RTSYSTEMS_VID		0x2100	/* Vendor ID */
+ #define RTSYSTEMS_USB_S03_PID	0x9001	/* RTS-03 USB to Serial Adapter */
+ #define RTSYSTEMS_USB_59_PID	0x9e50	/* USB-59 USB to 8 pin plug */
