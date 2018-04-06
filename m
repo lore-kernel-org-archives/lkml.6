@@ -1,109 +1,239 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751926AbeDFJK2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 05:10:28 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:47642 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbeDFJK0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 05:10:26 -0400
-Date: Fri, 6 Apr 2018 10:09:20 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jia He <hejianet@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Jia He <jia.he@hxt-semitech.com>
-Subject: Re: [PATCH v7 2/5] arm: arm64: page_alloc: reduce unnecessary binary
- search in memblock_next_valid_pfn()
-Message-ID: <20180406090920.GM16141@n2100.armlinux.org.uk>
-References: <1522915478-5044-1-git-send-email-hejianet@gmail.com>
- <1522915478-5044-3-git-send-email-hejianet@gmail.com>
- <20180405113444.GB2647@bombadil.infradead.org>
- <1f809296-e88d-1090-0027-890782b91d6e@gmail.com>
- <20180405125054.GC2647@bombadil.infradead.org>
+        id S1752006AbeDFJNc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 05:13:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40966 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751415AbeDFJNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 05:13:30 -0400
+Date: Fri, 6 Apr 2018 17:13:04 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+Message-ID: <20180406091257.GA9605@ming.t460p>
+References: <20180308105358.1506-1-ming.lei@redhat.com>
+ <20180308105358.1506-5-ming.lei@redhat.com>
+ <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de>
+ <20180403160001.GA25255@ming.t460p>
+ <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
+ <20180404150759.GA24824@ming.t460p>
+ <alpine.DEB.2.21.1804042027130.1492@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180405125054.GC2647@bombadil.infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <alpine.DEB.2.21.1804042027130.1492@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 05:50:54AM -0700, Matthew Wilcox wrote:
-> On Thu, Apr 05, 2018 at 08:44:12PM +0800, Jia He wrote:
-> > 
-> > 
-> > On 4/5/2018 7:34 PM, Matthew Wilcox Wrote:
-> > > On Thu, Apr 05, 2018 at 01:04:35AM -0700, Jia He wrote:
-> > > > Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
-> > > > where possible") optimized the loop in memmap_init_zone(). But there is
-> > > > still some room for improvement. E.g. if pfn and pfn+1 are in the same
-> > > > memblock region, we can simply pfn++ instead of doing the binary search
-> > > > in memblock_next_valid_pfn.
-> > > Sure, but I bet if we are >end_pfn, we're almost certainly going to the
-> > > start_pfn of the next block, so why not test that as well?
+Hi Thomas,
+
+On Wed, Apr 04, 2018 at 09:38:26PM +0200, Thomas Gleixner wrote:
+> On Wed, 4 Apr 2018, Ming Lei wrote:
+> > On Wed, Apr 04, 2018 at 10:25:16AM +0200, Thomas Gleixner wrote:
+> > > In the example above:
 > > > 
-> > > > +	/* fast path, return pfn+1 if next pfn is in the same region */
-> > > > +	if (early_region_idx != -1) {
-> > > > +		start_pfn = PFN_DOWN(regions[early_region_idx].base);
-> > > > +		end_pfn = PFN_DOWN(regions[early_region_idx].base +
-> > > > +				regions[early_region_idx].size);
-> > > > +
-> > > > +		if (pfn >= start_pfn && pfn < end_pfn)
-> > > > +			return pfn;
-> > > 		early_region_idx++;
-> > > 		start_pfn = PFN_DOWN(regions[early_region_idx].base);
-> > > 		if (pfn >= end_pfn && pfn <= start_pfn)
-> > > 			return start_pfn;
-> > Thanks, thus the binary search in next step can be discarded?
+> > > > > > 	irq 39, cpu list 0,4
+> > > > > > 	irq 40, cpu list 1,6
+> > > > > > 	irq 41, cpu list 2,5
+> > > > > > 	irq 42, cpu list 3,7
+> > > 
+> > > and assumed that at driver init time only CPU 0-3 are online then the
+> > > hotplug of CPU 4-7 will not result in any interrupt delivered to CPU 4-7.
+> > 
+> > Indeed, and I just tested this case, and found that no interrupts are
+> > delivered to CPU 4-7.
+> > 
+> > In theory, the affinity has been assigned to these irq vectors, and
+> > programmed to interrupt controller, I understand it should work.
+> > 
+> > Could you explain it a bit why interrupts aren't delivered to CPU 4-7?
 > 
-> I don't know all the circumstances in which this is called.  Maybe a linear
-> search with memo is more appropriate than a binary search.
+> As I explained before:
+> 
+> "If the device is already in use when the offline CPUs get hot plugged, then
+>  the interrupts still stay on cpu 0-3 because the effective affinity of
+>  interrupts on X86 (and other architectures) is always a single CPU."
+> 
+> IOW. If you set the affinity mask so it contains more than one CPU then the
+> kernel selects a single CPU as target. The selected CPU must be online and
+> if there is more than one online CPU in the mask then the kernel picks the
+> one which has the least number of interrupts targeted at it. This selected
+> CPU target is programmed into the corresponding interrupt chip
+> (IOAPIC/MSI/MSIX....) and it stays that way until the selected target CPU
+> goes offline or the affinity mask changes.
+> 
+> The reasons why we use single target delivery on X86 are:
+> 
+>    1) Not all X86 systems support multi target delivery
+> 
+>    2) If a system supports multi target delivery then the interrupt is
+>       preferrably delivered to the CPU with the lowest APIC ID (which
+>       usually corresponds to the lowest CPU number) due to hardware magic
+>       and only a very small percentage of interrupts are delivered to the
+>       other CPUs in the multi target set. So the benefit is rather dubious
+>       and extensive performance testing did not show any significant
+>       difference.
+> 
+>    3) The management of multi targets on the software side is painful as
+>       the same low level vector number has to be allocated on all possible
+>       target CPUs. That's making a lot of things including hotplug more
+>       complex for very little - if at all - benefit.
+> 
+> So at some point we ripped out the multi target support on X86 and moved
+> everything to single target delivery mode.
+> 
+> Other architectures never supported multi target delivery either due to
+> hardware restrictions or for similar reasons why X86 dropped it. There
+> might be a few architectures which support it, but I have no overview at
+> the moment.
+> 
+> The information is in procfs
+> 
+> # cat /proc/irq/9/smp_affinity_list 
+> 0-3
+> # cat /proc/irq/9/effective_affinity_list 
+> 1
+> 
+> # cat /proc/irq/10/smp_affinity_list 
+> 0-3
+> # cat /proc/irq/10/effective_affinity_list 
+> 2
+> 
+> smp_affinity[_list] is the affinity which is set either by the kernel or by
+> writing to /proc/irq/$N/smp_affinity[_list]
+> 
+> effective_affinity[_list] is the affinity which is effective, i.e. the
+> single target CPU to which the interrupt is affine at this point.
+> 
+> As you can see in the above examples the target CPU is selected from the
+> given possible target set and the internal spreading of the low level x86
+> vector allocation code picks a CPU which has the lowest number of
+> interrupts targeted at it.
+> 
+> Let's assume for the example below
+> 
+> # cat /proc/irq/10/smp_affinity_list 
+> 0-3
+> # cat /proc/irq/10/effective_affinity_list 
+> 2
+> 
+> that CPU 3 was offline when the device was initialized. So there was no way
+> to select it and when CPU 3 comes online there is no reason to change the
+> affinity of that interrupt, at least not from the kernel POV. Actually we
+> don't even have a mechanism to do so automagically.
+> 
+> If I offline CPU 2 after onlining CPU 3 then the kernel has to move the
+> interrupt away from CPU 2, so it selects CPU 3 as it's the one with the
+> lowest number of interrupts targeted at it.
+> 
+> Now this is a bit different if you use affinity managed interrupts like
+> NVME and other devices do.
+> 
+> Many of these devices create one queue per possible CPU, so the spreading
+> is simple; One interrupt per possible cpu. Pretty boring.
+> 
+> When the device has less queues than possible CPUs, then stuff gets more
+> interesting. The queues and therefore the interrupts must be targeted at
+> multiple CPUs. There is some logic which spreads them over the numa nodes
+> and takes siblings into account when Hyperthreading is enabled.
+> 
+> In both cases the managed interrupts are handled over CPU soft
+> hotplug/unplug:
+> 
+>   1) If a CPU is soft unplugged and an interrupt is targeted at the CPU
+>      then the interrupt is either moved to a still online CPU in the
+>      affinity mask or if the outgoing CPU is the last one in the affinity
+>      mask it is shut down.
+> 
+>   2) If a CPU is soft plugged then the interrupts are scanned and the ones
+>      which are managed and shutdown checked whether the affinity mask
+>      contains the upcoming CPU. If that's the case then the interrupt is
+>      started up and can deliver interrupts for the corresponding queue.
+> 
+>      If an interupt is managed and already started, then nothing happens
+>      and the effective affinity is untouched even if the upcoming CPU is in
+>      the affinity set.
+> 
+> Lets briefly talk about the 3 cpu masks:
+> 
+>   1) cpus_possible_mask:
+> 
+>      The CPUs which are possible on a system.
+> 
+>   2) cpus_present_mask:
+> 
+>      The CPUs which are present on a system. Present means phsyically
+>      present. Physical hotplug sets or removes CPUs from that mask,
+> 
+>      "Physical" hotplug is used in virtualization as well.
+> 
+>   3) cpus_online_mask:
+> 
+>      The CPUs which are soft onlined. If a present CPU is not soft onlined
+>      then its cleared in the online mask, but still set in the present
+>      mask.
 
-That's been brought up before, and the reasoning appears to be
-something along the lines of...
+Great thanks for your so detailed explanation.
 
-Academics and published wisdom is that on cached architectures, binary
-searches are bad because it doesn't operate efficiently due to the
-overhead from having to load cache lines.  Consequently, there seems
-to be a knee-jerk reaction that "all binary searches are bad, we must
-eliminate them."
+> 
+> Now back to my suggestion in the other end of this thread, that we should
+> use cpus_present_mask instead of cpus_online_mask.
+> 
+> The reason why I suggested this is that we have to differentiate between
+> soft plugging and phsycial plugging of CPUs.
+> 
+> If CPUs are in the present mask, i.e. phsyically available, but not in the
+> online mask, then it's trivial to plug them soft by writing to the
+> corresponding online file in sysfs. CPU soft plugging is used for power
+> management nowadays, so the scenario I described in the other mail is not
+> completely unrealistic.
 
-What is failed to be grasped here, though, is that it is typical that
-the number of entries in this array tend to be small, so the entire
-array takes up one or two cache lines, maybe a maximum of four lines
-depending on your cache line length and number of entries.
+OK, got it, and this scenario can be emulated easily by offlining CPU
+before loading device driver.
 
-This means that the binary search expense is reduced, and is lower
-than a linear search for the majority of cases.
+I will post V4 soon by using cpu_present_mask in the 1st stage irq spread.
+And it should work fine for Kashyap's case in normal cases.
 
-What is key here as far as performance is concerned is whether the
-general usage of pfn_valid() by the kernel is optimal.  We should
-not optimise only for the boot case, which means evaluating the
-effect of these changes with _real_ workloads, not just "does my
-machine boot a milliseconds faster".
+It might not work fine when there are lots of offline CPUs before device
+initialization, in which less active irq vectors will be assigned. But
+given driver is usually loaded during kernel booting, at that time generally
+all CPUs are online, so looks it shouldn't be one issue to consider.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+> 
+> In case of physical hotplug it's a different story. Neither the kernel nor
+> user space can plug a CPU phsyically. It needs interaction by the operator,
+> i.e. in the real world by inserting/removing hardware or in the
+> virtualization space by changing the current CPU allocation. So here the
+> present mask wont help when the number of queues is less than the number of
+> possible CPUs and an initially not present CPU gets 'physically' plugged
+> in.
+> 
+> To make things worse we have the unfortunate case of qualiteee BIOS/ACPI
+> tables which claim that there are more possible CPUs than present CPUs on
+> systems which cannot support phsyical hotplug due to lack of hardware
+> support. Unfortunately there is no simple way to figure out whether a
+> system supports physical hotplug or not, so we cannot make an informed
+> decision here. But we can look at the present mask which tells us how many
+> CPUs are physically available. In a regular boot up the present mask and
+> the online mask are identical, so there is no difference.
+> 
+> For the physical hotplug case - real or virtual - neither of the spreading
+> algorithms is ideal. Solving this needs more thought as it would require to
+> recalculate the spreading once the physically plugged CPUs become
+> available/online.
+
+I agree, that may be an another improvement in this field.
+
+> 
+> Hope that clarifies the internals.
+
+Sure, it does, thanks again for your clarification!
+
+Thanks,
+Ming
