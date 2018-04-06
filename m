@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49DZpzifgHf8nFr/rBV8IdlW0cyO8OHaY9dM6NlLtDDjpElSzKdqttJksxUJWiZjm2lIzmC
-ARC-Seal: i=1; a=rsa-sha256; t=1523021663; cv=none;
+X-Google-Smtp-Source: AIpwx48QVdzwlMNnsllaMAgBGqFG2p3R+57+7XM3TT7nLk5EbbEX5YRpY0dBoHG8J+fhhZkiiOwm
+ARC-Seal: i=1; a=rsa-sha256; t=1523021660; cv=none;
         d=google.com; s=arc-20160816;
-        b=pNvZq9RuZPTIROylp1YtmTfM+29q2U8yFtPvISeSpUKyxQAwzTRolEJDHECor9t5p/
-         r2xGnbaM7Dj07bLl478SjPJvJOiqvo5HjWOqEn25SgtnhyeLLukSnzaukr2V/ClAhoow
-         RKNsoeKWeKpzO77fx5Ws/YuOA9JUH2YxmaQsbqvcEl2RI04fHehiITUYOvrC1UYomSEZ
-         6ZBufmj+XDML1TZBTjX/IjN7/D4ebGjemroYZPex0lyzBJevocksFjoQxu4Na2ihmvG0
-         HaVrw+aEY/LZ0jvURlLdQJVtbxTIjagK/wKmof+ms2hMw4VC2PcNYzQryJ8MFnGnHffu
-         +a3g==
+        b=Ez0lWSgH/aiCTgyUroSLrhIFjnGeqaJSbjBp/Hjibj1LoXzVRj4GAqDAwCRaymef9t
+         hchAqlrB6/TmMuEesYWJOe6GJ2y/KXi6mYbfnp1n5l/x4/jeoM1R6MImMAZm2C+Xhkgy
+         9u0qbQ7jmdxM26QbQE9qapptKbAaFzUkvN9gF234ug4HiSGPZeHW7Vrxd9vS/Tmhvs2g
+         +DTKkwt1NdsvdrVSg/oZDKaW0OwNoS0hsStBpQi6L5aVGFYKnzwqSdXTgWGnNpIi5WKA
+         7MpmY44j6hDrScsv4gZ90QwydcuGBF3glATdcgcuCxkFJwv0Y62PIGTCAr9M0+aPR4y/
+         pE7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4de4PvGWpefIvPkgW9AwDUSybFFdHorXqgpnzSGRbkg=;
-        b=m2pHEWGkA6tgU8UsbMKONFg/fMO/kWpOi/1E6/LQmGKpU/GBQlB8VTMrr7Bw3lBGlC
-         fqwnMNNMlALhk2ts2Rxt7LS0SSoZZrb7itn3r9Dlh3/Khug4v882zKwNBQTYupEAkVZF
-         EPdm5RiIYzz/BR6UjufWXpn0SMg084EcvYo8xF7dGmyvHe+h6pSZAMORchqLa7Rpc9dh
-         +tn42T3QYn2kPPQFrNlFvO2nR0WIE+W/SNCpp6E8W/bO4ACpnmw151xQQM3kR9su089h
-         qktgAeIZdFIlCfJY9G7TlGFuWqTKDTnRT9v/Q3QGE5VSdtEVUrJ2KGIIbfUc0rcmdg02
-         n3zA==
+        bh=dhLOGvz1yAOKtiCieIXQL7CqyMgI4tDQomyBv+rRhBU=;
+        b=TxyxuCG5vokyBLTyBaTtV7/4ryyDP2bDVemVtMjcMw8TAw2Spj5F+HfgC1EeNfLcmh
+         OPaktWuI+hAIX0gLLpruy6SnLWw57BF8xpwbvgxbw+7No/fx5RWXUVhzlJC979M2jce1
+         yF6TQTmNZ41lartt0YYILHh4MJts3rZZjhUk/vqnCZyp5XNvuw5S275YND6F/W5Ldyus
+         K2PE2vR60IMX1NTqF1rkoo1BfYITqMT081VSzlEkp84MOy+69eKGzPdSckGnUFIrQLAO
+         S0TSnS9JGqemUBuPEhz9wBvqgER3Ufpb9rmi7F+c+G0Tu0nojZgXVcsUIARfkt+MY7rM
+         60hA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Szymon Janc <szymon.janc@codecoup.pl>,
-	Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.9 046/102] Bluetooth: Fix missing encryption refresh on Security Request
-Date: Fri,  6 Apr 2018 15:23:27 +0200
-Message-Id: <20180406084338.118675485@linuxfoundation.org>
+	Eric Dumazet <eric.dumazet@gmail.com>,
+	syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com,
+	Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.9 045/102] netfilter: x_tables: add and use xt_check_proc_name
+Date: Fri,  6 Apr 2018 15:23:26 +0200
+Message-Id: <20180406084337.954915386@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003604240794198?=
-X-GMAIL-MSGID: =?utf-8?q?1597003963140382314?=
+X-GMAIL-THRID: =?utf-8?q?1597003601518094155?=
+X-GMAIL-MSGID: =?utf-8?q?1597003960465570849?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,53 +51,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Szymon Janc <szymon.janc@codecoup.pl>
+From: Florian Westphal <fw@strlen.de>
 
-commit 64e759f58f128730b97a3c3a26d283c075ad7c86 upstream.
+commit b1d0a5d0cba4597c0394997b2d5fced3e3841b4e upstream.
 
-If Security Request is received on connection that is already encrypted
-with sufficient security master should perform encryption key refresh
-procedure instead of just ignoring Slave Security Request
-(Core Spec 5.0 Vol 3 Part H 2.4.6).
+recent and hashlimit both create /proc files, but only check that
+name is 0 terminated.
 
-> ACL Data RX: Handle 3585 flags 0x02 dlen 6
-      SMP: Security Request (0x0b) len 1
-        Authentication requirement: Bonding, No MITM, SC, No Keypresses (0x09)
-< HCI Command: LE Start Encryption (0x08|0x0019) plen 28
-        Handle: 3585
-        Random number: 0x0000000000000000
-        Encrypted diversifier: 0x0000
-        Long term key: 44264272a5c426a9e868f034cf0e69f3
-> HCI Event: Command Status (0x0f) plen 4
-      LE Start Encryption (0x08|0x0019) ncmd 1
-        Status: Success (0x00)
-> HCI Event: Encryption Key Refresh Complete (0x30) plen 3
-        Status: Success (0x00)
-        Handle: 3585
+This can trigger WARN() from procfs when name is "" or "/".
+Add helper for this and then use it for both.
 
-Signed-off-by: Szymon Janc <szymon.janc@codecoup.pl>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+Reported-by: <syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bluetooth/smp.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/linux/netfilter/x_tables.h |    2 ++
+ net/netfilter/x_tables.c           |   30 ++++++++++++++++++++++++++++++
+ net/netfilter/xt_hashlimit.c       |   11 +++++++----
+ net/netfilter/xt_recent.c          |    6 +++---
+ 4 files changed, 42 insertions(+), 7 deletions(-)
 
---- a/net/bluetooth/smp.c
-+++ b/net/bluetooth/smp.c
-@@ -2233,8 +2233,14 @@ static u8 smp_cmd_security_req(struct l2
- 	else
- 		sec_level = authreq_to_seclevel(auth);
+--- a/include/linux/netfilter/x_tables.h
++++ b/include/linux/netfilter/x_tables.h
+@@ -254,6 +254,8 @@ unsigned int *xt_alloc_entry_offsets(uns
+ bool xt_find_jump_offset(const unsigned int *offsets,
+ 			 unsigned int target, unsigned int size);
  
--	if (smp_sufficient_security(hcon, sec_level, SMP_USE_LTK))
-+	if (smp_sufficient_security(hcon, sec_level, SMP_USE_LTK)) {
-+		/* If link is already encrypted with sufficient security we
-+		 * still need refresh encryption as per Core Spec 5.0 Vol 3,
-+		 * Part H 2.4.6
-+		 */
-+		smp_ltk_encrypt(conn, hcon->sec_level);
- 		return 0;
-+	}
++int xt_check_proc_name(const char *name, unsigned int size);
++
+ int xt_check_match(struct xt_mtchk_param *, unsigned int size, u_int8_t proto,
+ 		   bool inv_proto);
+ int xt_check_target(struct xt_tgchk_param *, unsigned int size, u_int8_t proto,
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -367,6 +367,36 @@ textify_hooks(char *buf, size_t size, un
+ 	return buf;
+ }
  
- 	if (sec_level > hcon->pending_sec_level)
- 		hcon->pending_sec_level = sec_level;
++/**
++ * xt_check_proc_name - check that name is suitable for /proc file creation
++ *
++ * @name: file name candidate
++ * @size: length of buffer
++ *
++ * some x_tables modules wish to create a file in /proc.
++ * This function makes sure that the name is suitable for this
++ * purpose, it checks that name is NUL terminated and isn't a 'special'
++ * name, like "..".
++ *
++ * returns negative number on error or 0 if name is useable.
++ */
++int xt_check_proc_name(const char *name, unsigned int size)
++{
++	if (name[0] == '\0')
++		return -EINVAL;
++
++	if (strnlen(name, size) == size)
++		return -ENAMETOOLONG;
++
++	if (strcmp(name, ".") == 0 ||
++	    strcmp(name, "..") == 0 ||
++	    strchr(name, '/'))
++		return -EINVAL;
++
++	return 0;
++}
++EXPORT_SYMBOL(xt_check_proc_name);
++
+ int xt_check_match(struct xt_mtchk_param *par,
+ 		   unsigned int size, u_int8_t proto, bool inv_proto)
+ {
+--- a/net/netfilter/xt_hashlimit.c
++++ b/net/netfilter/xt_hashlimit.c
+@@ -794,8 +794,9 @@ static int hashlimit_mt_check_v1(const s
+ 	struct hashlimit_cfg2 cfg = {};
+ 	int ret;
+ 
+-	if (info->name[sizeof(info->name) - 1] != '\0')
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
+ 
+ 	ret = cfg_copy(&cfg, (void *)&info->cfg, 1);
+ 
+@@ -809,9 +810,11 @@ static int hashlimit_mt_check_v1(const s
+ static int hashlimit_mt_check(const struct xt_mtchk_param *par)
+ {
+ 	struct xt_hashlimit_mtinfo2 *info = par->matchinfo;
++	int ret;
+ 
+-	if (info->name[sizeof(info->name) - 1] != '\0')
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
+ 
+ 	return hashlimit_mt_check_common(par, &info->hinfo, &info->cfg,
+ 					 info->name, 2);
+--- a/net/netfilter/xt_recent.c
++++ b/net/netfilter/xt_recent.c
+@@ -361,9 +361,9 @@ static int recent_mt_check(const struct
+ 			info->hit_count, XT_RECENT_MAX_NSTAMPS - 1);
+ 		return -EINVAL;
+ 	}
+-	if (info->name[0] == '\0' ||
+-	    strnlen(info->name, XT_RECENT_NAME_LEN) == XT_RECENT_NAME_LEN)
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
+ 
+ 	if (ip_pkt_list_tot && info->hit_count < ip_pkt_list_tot)
+ 		nstamp_mask = roundup_pow_of_two(ip_pkt_list_tot) - 1;
