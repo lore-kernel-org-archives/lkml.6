@@ -1,55 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751897AbeDFTkX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 15:40:23 -0400
-Received: from mail-it0-f44.google.com ([209.85.214.44]:54662 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751570AbeDFTkV (ORCPT
+        id S1751591AbeDFTpX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 15:45:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35838 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751278AbeDFTpW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 15:40:21 -0400
-X-Google-Smtp-Source: AIpwx48LtGRfrisdL7sgUnt52Sj5k0lpmdemMc36QKEplklSp4IZJJ9LFnDtCLw+PmRN4aPf+PbWpOH0o0MM8v760sk=
-MIME-Version: 1.0
-In-Reply-To: <12717.1523042908@warthog.procyon.org.uk>
-References: <152287959470.14760.10350886166577848180.stgit@warthog.procyon.org.uk>
- <4034.1523025880@warthog.procyon.org.uk> <CA+55aFwKc1JzU6k=3R9n23HGXb5-BACT8pQ93rGTvgNjfa4ZHA@mail.gmail.com>
- <CA+55aFx_fs7C6JAX_ORJ9MoXEp25LcXS0CUnK4aO4p=hQw6xOg@mail.gmail.com> <12717.1523042908@warthog.procyon.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 6 Apr 2018 12:40:19 -0700
-X-Google-Sender-Auth: Iuhlr0Sh4nTrrbQXfUZmAsHpE9E
-Message-ID: <CA+55aFxtYFbrt8=5tv5O8Ac-8JTcJMxUTZsOBsXcpoU-FBRVNA@mail.gmail.com>
-Subject: Re: [PATCH net-next 00/12] fscache: Fixes, traces and development
-To: David Howells <dhowells@redhat.com>
-Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-cachefs@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-afs@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 6 Apr 2018 15:45:22 -0400
+Date: Fri, 6 Apr 2018 12:45:21 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Tom Abraham <tabraham@suse.com>, linux-kernel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>
+Subject: Re: [PATCH] swap: divide-by-zero when zero length swap file on ssd
+Message-Id: <20180406124521.410dbe99dcb4b5dea483f46a@linux-foundation.org>
+In-Reply-To: <fdca1f72-8e51-7727-d1a0-4ccd60e80bd0@infradead.org>
+References: <5AC747C1020000A7001FA82C@prv-mh.provo.novell.com>
+        <fdca1f72-8e51-7727-d1a0-4ccd60e80bd0@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 6, 2018 at 12:28 PM, David Howells <dhowells@redhat.com> wrote:
->
-> That's okay with all the patches as follow up emails?
+On Fri, 6 Apr 2018 09:52:50 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Actually, I generally just look at the git tree and don't need the
-individual patches at all, at least as long as they are only to a
-particular subsystem.
+> [adding linux-mm and akpm]
 
-So if your git tree only touches fs/afs/ and fs/fscache/, just the
-pull request email alone is sufficient.
+Thanks.
 
-It's only when people start touching core code or do cross-subsystem
-things that I appreciate actually seeing the patches separated out.
+> ...
 
-In fact, even then it's generally fine to just point to the git tree
-and just mention the patches that extend out of just the pure
-subsystem (and why they do so).
-
-Both your afs and fscache pulls looked fine to me, and didn't have
-that issue (ok, the fscache one touches 9p and afs too, but those are
-"afs and 9p use fscache", so it's not something that made me go
-"Hmm..".
-
-              Linus
+The patch is a huge mess, with leading and trailing whitespace.  I
+fixed all that up, but we'd like to receive Tom's signed-off-by:, please. 
+Documentation/process/submitting-patches.rst section 11 has the
+details.
