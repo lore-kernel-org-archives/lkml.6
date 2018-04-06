@@ -1,114 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeDFBxP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 21:53:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36314 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751275AbeDFBxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 21:53:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BE6C217CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Fri, 6 Apr 2018 10:53:09 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH 3/4] tracing: Add action comparisons when testing
- matching hist triggers
-Message-Id: <20180406105309.b50ea1a21d2cbd9b0e39dbfd@kernel.org>
-In-Reply-To: <1522971253.32118.47.camel@tzanussi-mobl.amr.corp.intel.com>
-References: <cover.1522256721.git.tom.zanussi@linux.intel.com>
-        <a7fd668b87ec10736c8f016ac4279c8480d50c2b.1522256721.git.tom.zanussi@linux.intel.com>
-        <20180403001025.6dfed9403d50d20104e54458@kernel.org>
-        <1522688973.3254.8.camel@tzanussi-mobl.amr.corp.intel.com>
-        <20180404213338.5bcd14994d8e0142b5bfefc6@kernel.org>
-        <1522855023.32118.14.camel@tzanussi-mobl.amr.corp.intel.com>
-        <20180405125016.6460a0ab372061ecf49f471a@kernel.org>
-        <1522971253.32118.47.camel@tzanussi-mobl.amr.corp.intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751367AbeDFB5j (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:57:39 -0400
+Received: from mail-ua0-f173.google.com ([209.85.217.173]:44106 "EHLO
+        mail-ua0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751275AbeDFB5i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 21:57:38 -0400
+X-Google-Smtp-Source: AIpwx48o3w0ocLGc5cV6fMxCla8nhE4X98QU4WGQMrzWjV21ki9FBR3Eb7FowW+yj9yH+DlAGzQcwNo3h0yP9DS0F4I=
+MIME-Version: 1.0
+In-Reply-To: <65E6BD75-FBA6-43AC-AC5A-B952DE409BC8@cs.rutgers.edu>
+References: <20180404032257.11422-1-ying.huang@intel.com> <65E6BD75-FBA6-43AC-AC5A-B952DE409BC8@cs.rutgers.edu>
+From: huang ying <huang.ying.caritas@gmail.com>
+Date: Fri, 6 Apr 2018 09:57:37 +0800
+Message-ID: <CAC=cRTOjybaa+nEBcagDebGWh9Ty49TkcJkWi+BcqVcu3at2vA@mail.gmail.com>
+Subject: Re: [PATCH -mm] mm, gup: prevent pmd checking race in follow_pmd_mask()
+To: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: "Huang, Ying" <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tom,
+On Wed, Apr 4, 2018 at 11:02 PM, Zi Yan <zi.yan@cs.rutgers.edu> wrote:
+> On 3 Apr 2018, at 23:22, Huang, Ying wrote:
+>
+>> From: Huang Ying <ying.huang@intel.com>
+>>
+>> mmap_sem will be read locked when calling follow_pmd_mask().  But this
+>> cannot prevent PMD from being changed for all cases when PTL is
+>> unlocked, for example, from pmd_trans_huge() to pmd_none() via
+>> MADV_DONTNEED.  So it is possible for the pmd_present() check in
+>> follow_pmd_mask() encounter a none PMD.  This may cause incorrect
+>> VM_BUG_ON() or infinite loop.  Fixed this via reading PMD entry again
+>> but only once and checking the local variable and pmd_none() in the
+>> retry loop.
+>>
+>> As Kirill pointed out, with PTL unlocked, the *pmd may be changed
+>> under us, so read it directly again and again may incur weird bugs.
+>> So although using *pmd directly other than pmd_present() checking may
+>> be safe, it is still better to replace them to read *pmd once and
+>> check the local variable for multiple times.
+>
+> I see you point there. The patch wants to provide a consistent value
+> for all race checks. Specifically, this patch is trying to avoid the inconsistent
+> reads of *pmd for if-statements, which causes problem when both if-condition reads *pmd and
+> the statements inside "if" reads *pmd again and two reads can give different values.
+> Am I right about this?
 
-On Thu, 05 Apr 2018 18:34:13 -0500
-Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
+Yes.
 
-> Hi Masami,
-> 
-> On Thu, 2018-04-05 at 12:50 +0900, Masami Hiramatsu wrote:
-> 
-> [...]
-> 
-> > Can you print out the error with which event we should see? e.g.
-> > 
-> >   ERROR: Variable already defined at sched_wakeup: ts0
-> > 
-> 
-> How about printing the event name along with the last command, for any
-> error? :
-> 
->   ERROR: Variable already defined: ts0
->     Last command: [sched:sched_wakeup] keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"
+> If yes, the problem can be solved by something like:
+>
+> if (!pmd_present(tmpval = *pmd)) {
+>     check tmpval instead of *pmd;
+> }
+>
+> Right?
 
-Hmm, is the Last command shows the last command on sched_wakeup ? or sched_switch??
+I think this isn't enough yet.  we need
 
-[...]
-> Before:
-> 
->   # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-> 
->   # echo '!hist:keys=next_pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-> 
-> And other commands making us think we cleared everything out so the
-> below error is a surprise
-> 
->   # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
->   -su: echo: write error: Invalid argument
+tmpval = READ_ONCE(*pmd);
 
-No, my senario is different.
+To prevent compiler to generate code to read *pmd again and again.
+Please check the comments of pmd_none_or_trans_huge_or_clear_bad()
+about barrier.
 
-Your senario tries
-1) define ts0 on sched_wakeup
-2) remove ts0 from sched_switch (but silently failed)
-3) re-define ts0 on sched_wakeup and get an error
+Best Regards,
+Huang, Ying
 
-In this case, user can dump sched_wakeup/trigger and see there is already ts0 defined.
-
-My senario is a bit different
-1) define ts0 on sched_wakeup
-2) remove ts0 from sched_switch (but silently failed)
-3) re-define ts0 on *sched_switch* and get an error
-
-The 3rd operation failed on "sched_switch" not on "sched_wakeup". In this case we will totally lost where the ts0 defined.
-That's why I have asked you to show "where the ts0 is defined" at error line.
-
-Anyway, I think it is a good chance to introduce <tracefs>/error_log file, since we have too many non-critical errors on operations. I feel that checking hist file by errors on trigger file is not a bit intuitive.
-
-# cat /sys/kernel/debug/tracing/error_log
-ERROR(events/sched/sched_switch/trigger): Variable already defined: ts0@sched:sched_wakeup
-  Command: keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"
-
-This can be used from probe events too :) 
-e.g.
-
-ERROR(kprobe_events): Unsupported type: uint8
-  Command: p vfs_read arg1=%di:uint8
-
-Any thought?
-
-Thank you,
-
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> I just wonder if we need some general code for all race checks.
+>
+> Thanks.
+>
+> --
+> Best Regards
+> Yan Zi
