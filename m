@@ -1,97 +1,161 @@
-Date: Thu, 12 Apr 2018 18:56:50 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thierry Escande <thierry.escande@linaro.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net,
-	shuahkh@osg.samsung.com, patches@kernelci.org,
-	ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-	stable@vger.kernel.org,
-	Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-	Anibal Limon <anibal.limon@linaro.org>,
-	Will Deacon <will.deacon@arm.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2329569-1523052847-2-10698789474981696245
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523052847; b=Bs6TWz0z0b3I7x3xs0w9AWRgqRkOzZ4Vg70b55m/wiEwyZPfOi
+    jrUoo1htLMEHJuUybpOcEefFDJodn5m+Q1WPX2cQL/X397QAB+ZhHcshxWY5Sy4O
+    h3GkM4icTIlyEWXYBZyoJ4iAXw+8OOHKiVx11v1im5TaZQCOl8q96qg2RtkVPHjb
+    /KAnnXShU/MOTXUrj6JPB7AQfDmRip1dJB1En8xViY044JJXL5MzwpNwG7oRzjad
+    X4PkF4paewL0yq6mXRCs2XMOKOq9ACrTIhyR5oYc5+1yHejw1bxRf6oQagbP3iZY
+    AeFsJlZTWGwx4ncQeSGZDhidnuMY42mTNWEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523052847;
+    bh=Cw6w08d0nzAlXfGLfKMV9Qq8kAXqmJVxVoMncwllL8M=; b=OX1qkewuznBE
+    iDDNzmM1Byl+GpsfGBdfOc9to2OWfa8hbCO/1XUmYgSZJtdX6fCzbsw43ZNu/fSv
+    LOH2od/+kWZ0mvgenNZkzHhvDHTAdteRxU62/xysqAwGHjE+B4Mzx59ZOJllCmRs
+    7Dj8bkhyXxi4Ao3jgMJ78MEVIB8QH37SI8h4XJ/yCIV80FwFt3CEEhHBsXOA7DGo
+    ft82lRU1bHQ/awPxcRces8GXPmY8Qes0+UP7rnuFta1AGnGh4Eat+Sfm5a7OaQHD
+    SOjp3B9/e6sIQdTNRI+YAtAUBQ6iIup6WkU+76PTlk0KAV9OudxYtapdoGGA7MNI
+    6zzfxNK5xw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHoRLZvp6gK8OPKpZiYnE16fuTVBoCqGDnffLpXocTe1lXxgV3FmkJAUWU/BuDF49v/5BP6foatk5ORDtZ0LJyOpOYnsODw7n1fwpg+vJABukPBcAQma
+    lrOoJcroLgYcJF3HqqWckYgnXv8cPd60vVCfRq1gwN9boFVRw/c4wSfqrkyOy0kYiM8H2jWV0+wiWEqZAtjcJoEm6b6014ULk3JD71CSciHewVKmDXY0N94e
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=zoehSAk54XIA:10
+    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751679AbeDFWOE (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 18:14:04 -0400
+Received: from osg.samsung.com ([64.30.133.232]:47691 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751442AbeDFWOD (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 6 Apr 2018 18:14:03 -0400
 Subject: Re: [PATCH 4.9 000/102] 4.9.93-stable review
-Message-ID: <20180412165650.GD23951@kroah.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 References: <20180406084331.507038179@linuxfoundation.org>
- <20180406222524.dzzyzh3su3ytgh3u@xps>
- <20180407061118.GF18744@kroah.com>
- <45305b36-b5fb-5016-4948-38a7465691af@linaro.org>
- <20180412122305.GA19236@kroah.com>
- <5195ccd4-1a9d-b1e5-3cb4-1b6b6243f3ed@linaro.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=shuahkh@osg.samsung.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1993b02e-e150-8536-f355-2967b8de8da1@osg.samsung.com>
+Date: Fri, 6 Apr 2018 16:14:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5195ccd4-1a9d-b1e5-3cb4-1b6b6243f3ed@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 12, 2018 at 02:32:09PM +0200, Thierry Escande wrote:
-> On 12/04/2018 14:23, Greg Kroah-Hartman wrote:
-> > On Thu, Apr 12, 2018 at 02:17:50PM +0200, Thierry Escande wrote:
-> > > Hi Greg,
-> > > 
-> > > On 07/04/2018 08:11, Greg Kroah-Hartman wrote:
-> > > > On Fri, Apr 06, 2018 at 05:25:24PM -0500, Dan Rue wrote:
-> > > > > On Fri, Apr 06, 2018 at 03:22:41PM +0200, Greg Kroah-Hartman wrote:
-> > > > > > This is the start of the stable review cycle for the 4.9.93 release.
-> > > > > > There are 102 patches in this series, all will be posted as a response
-> > > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > > let me know.
-> > > > > > 
-> > > > > > Responses should be made by Sun Apr  8 08:42:55 UTC 2018.
-> > > > > > Anything received after that time might be too late.
-> > > > > 
-> > > > > Results from Linaro’s test farm.
-> > > > > No regressions on arm64, arm and x86_64.
-> > > > > 
-> > > > > There is a new test failure on dragonboard 410c (arm64) in
-> > > > > kselftest/cpu-on-off-test. However, it looks like the test was failing
-> > > > > but giving a false "PASS" on previous versions of 4.9. This -RC seems to
-> > > > > have changed the behavior enough to cause the test to actually mark a
-> > > > > failure.
-> > > > > 
-> > > > > In any event, this looks like a db410c-specific pre-existing issue that we have
-> > > > > already escalated to our Qualcomm team. Details can be found at
-> > > > > https://bugs.linaro.org/show_bug.cgi?id=3723 for those interested.
-> > > > 
-> > > > Thanks for testing these and letting me know.
-> > > 
-> > > The test failure on dragonboard 410c comes from [1] to fix a possible
-> > > deadlock related to the hotplug rework. It's been reverted in v4.12 by [2]
-> > > because the cpu hotplug rework was not ready yet at that time. Since the
-> > > hotplug rework has not been backported to v4.9.y, the splat cannot be
-> > > reproduced and so [1] can be reverted or [2] applied on v4.9.y.
-> > > 
-> > > [1] https://lkml.org/lkml/2018/3/23/452
-> > > [2] https://lkml.org/lkml/2017/5/7/124
-> > 
-> > Hm, so I need to drop some patch, but what one?  lkml.org does not work
-> > for me, please be specific and use the git commit ids, or at the
-> > very-least, the subject of the patches.  Never make someone have to rely
-> > on the existance of a random web site not under kernel developer's
-> > control to figure out what to do...
+On 04/06/2018 07:22 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.93 release.
+> There are 102 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> So the commit to be reverted is [1], introduced in v4.9.90. Or you can apply
-> [2] from v4.12 that actually reverts [1].
+> Responses should be made by Sun Apr  8 08:42:55 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> [1] 18dd7b964c01ac44497471f4ea3f4c0c663eab55
-> [2] 51d638b1f56a0bfd9219800620994794a1a2b219
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.93-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-You do know about the "nice" way to display git ids, right:
-	$ alias gsr
-	alias gsr='git show -s --abbrev-commit --abbrev=12 --pretty=format:"%h (\"%s\")%n"'
-	$ gsr 18dd7b964c01ac44497471f4ea3f4c0c663eab55
-	18dd7b964c01 ("block/mq: Cure cpu hotplug lock inversion")
-	$ gsr 51d638b1f56a0bfd9219800620994794a1a2b219
-	51d638b1f56a ("block/mq: fix potential deadlock during cpu hotplug")
-
-It makes it easier to read, footnotes suck for something that you have
-to act on and not just want to read after-the-fact.
-
-Anyway, I'll revert this for the next round after these releases come
-out.
+Compiled and booted on my test system. No dmesg regressions.
 
 thanks,
-
-greg "everyone deserves a copy editor!" k-h
+-- Shuah
