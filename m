@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+dRJXV5elkWEepvr4Vj3PJPdrMYKP2XqZOa21GcQOrBnrHf+eR8as8J3W2+TASeQMGedGj
-ARC-Seal: i=1; a=rsa-sha256; t=1523021991; cv=none;
+X-Google-Smtp-Source: AIpwx4+vztVQ7L4q/mupO8V1mL7DZfRYUqGWF+w4R2ro58jKa/exNdDeVbJxpWXet16lF8N+hspl
+ARC-Seal: i=1; a=rsa-sha256; t=1523021988; cv=none;
         d=google.com; s=arc-20160816;
-        b=geavj6O9FY1QACjv/4GthM6GBiYY9NwFGfVLs6YfettEFa/ulI6Mq4cHsPOOk4zz1g
-         o4A1kS0LulJaWSFFCHkn+t4dnZai187gayOkIq6TCiwKdyD5md67jyntjfSjwVCBO8O1
-         vtJIXuc3/4/v3kT+1dIrIIwyJ9Bb2UmKMZmOAFIqqIGYxd4OVNqMVR1ZMpHH5IqAeCLi
-         WlAxhVyd4XZkeagFPlUs8fJpswI1g0te9zb54jlV+nf0bj3I6Vx20W3VRry7XW4owUrt
-         3T0S7zSI+63A0mgM3VJW/3fFEsZ30wj6IoPqV83fuLLiaiztfIe3I5sGRj3RUccwlck8
-         l1QA==
+        b=k2UoqsYXUQ37afX8KepUOsJ+JxVdmU6tNDl3nVCINNytAv2CRRg9SwoywHCF8ZMz9h
+         Jo9loHyn/JJWThYZyreg8uwKSNuYwHHkJZY7LGxwiHHqEW79e9M86SS0lCeJZMBwuQwc
+         Z2sB6krlRHHN4R8rB3DOrcHIVH8TQesbUiUKl9eLbf6+1lyDwg8ccXqdeyF3gDF19zbb
+         lJP2IyPjyUpHh6s3uLWhGrF8o7qpmpp3LawpHwSdYsvOo3Kxr7YTjyFiyqtwoO0it/82
+         xtWdgVy1pF3YzxcDmfsONZcXu1XGlmuaS+NVrbKCWJo30FTvcCMfMCSqKqczF2HzUo6x
+         4dqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Cf5LutxhstdE/rs44mQrVwdOZaEfnGp1hYJbITa/Sok=;
-        b=EMR2itbjoLZH0RQXqPi+PLbg6RNrwZh7Zip56VYi9AuSqLR4/uUygwfys0rJzf3CFu
-         9Vm8sUdfJdMZixaRU5PejTVT1ztE/J7EgKWbDgz6+62/bQVRTAIAyh+ILQZD0AKZZnLR
-         kRlgK6Ptbc0q4U4ZHvK5PzAchjHkxQILPSyY3sj62966pgB1wNMzTKsgdcpg7gEttcJQ
-         lrFFLivwXKncfysDqKuGByRvXg9zyg5lLFmr+t/nLhqElLgL1SbOs8ojBhSXIli8wZIo
-         59bx0McHKJ31Be+OfxfWerWSUGXr8T4Ubkp7mJ0Ggi+vUVRPC+2YANu3sSUyRw7Ertd8
-         /nKA==
+        bh=ZytaBJdZfWWzuGlvssH4bLjCBaQ4/cM9AH1aQJaIcIs=;
+        b=AmA/XRbQvUSKncQTwpqSdjbH5shiCKJ9xD6eiCjWbcqH0pxVPstYZdscy3YNhfqRI1
+         RYaT1KkU16hun2C6HNELtM9Oq/SDoknmLN74sdYxh/K7VA4kPv97trZa4M0lcSrV5jS9
+         VlO/OKKe4bt5usiXI2RleDVQeQKsEBmeWnXkaqSbWOyWRH1Sb3wm8xUxT+NFYwrwxwgy
+         4DL3ghGqDV+4WoFamzVxDsA+m6AQHRag9sho0+z0yz9DtVsAR2UbI+qfR65oePTiQHql
+         z+h2/747UwONWhOKhAim9zDnGtK41arANQTOTqAx6dv0hagj6Mvb18P8MJ8yOzwMOTKl
+         NYUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dennis Wassenberg <dennis.wassenberg@secunet.com>,
+	Masaki Ota <masaki.ota@jp.alps.com>,
+	Aaron Ma <aaron.ma@canonical.com>,
+	Jonathan Liu <net147@gmail.com>,
+	Jaak Ristioja <jaak@ristioja.ee>,
 	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 58/67] Input: i8042 - add Lenovo ThinkPad L460 to i8042 reset list
-Date: Fri,  6 Apr 2018 15:24:28 +0200
-Message-Id: <20180406084348.228109399@linuxfoundation.org>
+Subject: [PATCH 4.14 57/67] Input: ALPS - fix TrackStick detection on Thinkpad L570 and Latitude 7370
+Date: Fri,  6 Apr 2018 15:24:27 +0200
+Message-Id: <20180406084348.138924433@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003626904788009?=
-X-GMAIL-MSGID: =?utf-8?q?1597004307367862773?=
+X-GMAIL-THRID: =?utf-8?q?1597004080957265543?=
+X-GMAIL-MSGID: =?utf-8?q?1597004304018852188?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +52,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+From: Masaki Ota <masaki.ota@jp.alps.com>
 
-commit b56af54ac78c54a519d82813836f305d7f76ef27 upstream.
+commit 567b9b549cfa1cbc202762ae97b5385c29ade1e3 upstream.
 
-Reset i8042 before probing because of insufficient BIOS initialisation of
-the i8042 serial controller. This makes Synaptics touchpad detection
-possible. Without resetting the Synaptics touchpad is not detected because
-there are always NACK messages from AUX port.
+The primary interface for the touchpad device in Thinkpad L570 is SMBus,
+so ALPS overlooked PS2 interface Firmware setting of TrackStick, and
+shipped with TrackStick otp bit is disabled.
 
-Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+The address 0xD7 contains device number information, so we can identify
+the device by checking this value, but to access it we need to enable
+Command mode, and then re-enable the device. Devices shipped in Thinkpad
+L570 report either 0x0C or 0x1D as device numbers, if we see them we assume
+that the devices are DualPoints.
+
+The same issue exists on Dell Latitude 7370.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=196929
+Fixes: 646580f793 ("Input: ALPS - fix multi-touch decoding on SS4 plus touchpads")
+Signed-off-by: Masaki Ota <masaki.ota@jp.alps.com>
+Tested-by: Aaron Ma <aaron.ma@canonical.com>
+Tested-by: Jonathan Liu <net147@gmail.com>
+Tested-by: Jaak Ristioja <jaak@ristioja.ee>
 Cc: stable@vger.kernel.org
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/serio/i8042-x86ia64io.h |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/input/mouse/alps.c |   24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
---- a/drivers/input/serio/i8042-x86ia64io.h
-+++ b/drivers/input/serio/i8042-x86ia64io.h
-@@ -621,6 +621,13 @@ static const struct dmi_system_id __init
- 		},
- 	},
- 	{
-+		/* Lenovo ThinkPad L460 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad L460"),
-+		},
-+	},
-+	{
- 		/* Clevo P650RS, 650RP6, Sager NP8152-S, and others */
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "Notebook"),
+--- a/drivers/input/mouse/alps.c
++++ b/drivers/input/mouse/alps.c
+@@ -2544,13 +2544,31 @@ static int alps_update_btn_info_ss4_v2(u
+ }
+ 
+ static int alps_update_dual_info_ss4_v2(unsigned char otp[][4],
+-				       struct alps_data *priv)
++					struct alps_data *priv,
++					struct psmouse *psmouse)
+ {
+ 	bool is_dual = false;
++	int reg_val = 0;
++	struct ps2dev *ps2dev = &psmouse->ps2dev;
+ 
+-	if (IS_SS4PLUS_DEV(priv->dev_id))
++	if (IS_SS4PLUS_DEV(priv->dev_id)) {
+ 		is_dual = (otp[0][0] >> 4) & 0x01;
+ 
++		if (!is_dual) {
++			/* For support TrackStick of Thinkpad L/E series */
++			if (alps_exit_command_mode(psmouse) == 0 &&
++				alps_enter_command_mode(psmouse) == 0) {
++				reg_val = alps_command_mode_read_reg(psmouse,
++									0xD7);
++			}
++			alps_exit_command_mode(psmouse);
++			ps2_command(ps2dev, NULL, PSMOUSE_CMD_ENABLE);
++
++			if (reg_val == 0x0C || reg_val == 0x1D)
++				is_dual = true;
++		}
++	}
++
+ 	if (is_dual)
+ 		priv->flags |= ALPS_DUALPOINT |
+ 					ALPS_DUALPOINT_WITH_PRESSURE;
+@@ -2573,7 +2591,7 @@ static int alps_set_defaults_ss4_v2(stru
+ 
+ 	alps_update_btn_info_ss4_v2(otp, priv);
+ 
+-	alps_update_dual_info_ss4_v2(otp, priv);
++	alps_update_dual_info_ss4_v2(otp, priv, psmouse);
+ 
+ 	return 0;
+ }
