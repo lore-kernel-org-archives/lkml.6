@@ -1,143 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeDFV6f (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 17:58:35 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:43214 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751965AbeDFV6e (ORCPT
+        id S1752016AbeDFWBC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 18:01:02 -0400
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:38634 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751418AbeDFWBB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 17:58:34 -0400
-X-Google-Smtp-Source: AIpwx4+DAy32pEZb/Q53EIyb7CZ51Jf4e9Z/KruxMcv06Au34r0ig/WoNBFvJYBv+UyYyvEyTBXLvA==
-Date: Fri, 6 Apr 2018 23:58:25 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        David Howells <dhowells@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v4 1/3] locking: Document the semantics of
- spin_is_locked()
-Message-ID: <20180406215825.GA3646@andrea>
-References: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
- <1523044060-5568-1-git-send-email-andrea.parri@amarulasolutions.com>
- <b0dbf383-6403-a408-047d-0dd0d2135a03@infradead.org>
- <20180406210741.GF3948@linux.vnet.ibm.com>
- <30d15756-1cb4-7123-b4d9-ce2e66861df3@infradead.org>
+        Fri, 6 Apr 2018 18:01:01 -0400
+X-Google-Smtp-Source: AIpwx4/MzY11aASQGFP1wtqqnOp9zG/Xw3ks7sXY+hXpuLCXqNZ3O4RzmYlflFPCYGmBDN7tWouehA==
+Subject: Re: AMD graphics performance regression in 4.15 and later
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        airlied@linux.ie, alexander.deucher@amd.com, Felix.Kuehling@amd.com,
+        labbott@redhat.com, akpm@linux-foundation.org, michel.daenzer@amd.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
+ <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
+ <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
+ <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com>
+ <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
+ <d136f940-d807-d2f7-30a7-8617f130912d@amd.com>
+From: Jean-Marc Valin <jmvalin@mozilla.com>
+Message-ID: <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
+Date: Fri, 6 Apr 2018 18:00:58 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30d15756-1cb4-7123-b4d9-ce2e66861df3@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <d136f940-d807-d2f7-30a7-8617f130912d@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 02:08:16PM -0700, Randy Dunlap wrote:
-> On 04/06/2018 02:07 PM, Paul E. McKenney wrote:
-> > On Fri, Apr 06, 2018 at 02:01:41PM -0700, Randy Dunlap wrote:
-> >> On 04/06/2018 12:47 PM, Andrea Parri wrote:
-> >>> There appeared to be a certain, recurrent uncertainty concerning the
-> >>> semantics of spin_is_locked(), likely a consequence of the fact that
-> >>> this semantics remains undocumented or that it has been historically
-> >>> linked to the (likewise unclear) semantics of spin_unlock_wait().
-> >>>
-> >>> A recent auditing [1] of the callers of the primitive confirmed that
-> >>> none of them are relying on particular ordering guarantees; document
-> >>> this semantics by adding a docbook header to spin_is_locked(). Also,
-> >>> describe behaviors specific to certain CONFIG_SMP=n builds.
-> >>>
-> >>> [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
-> >>>     https://marc.info/?l=linux-kernel&m=152042843808540&w=2
-> >>>     https://marc.info/?l=linux-kernel&m=152043346110262&w=2
-> >>>
-> >>> Co-Developed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> >>> Co-Developed-by: Alan Stern <stern@rowland.harvard.edu>
-> >>> Co-Developed-by: David Howells <dhowells@redhat.com>
-> >>> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> >>> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> >>> Signed-off-by: David Howells <dhowells@redhat.com>
-> >>> Cc: Will Deacon <will.deacon@arm.com>
-> >>> Cc: Peter Zijlstra <peterz@infradead.org>
-> >>> Cc: Boqun Feng <boqun.feng@gmail.com>
-> >>> Cc: Nicholas Piggin <npiggin@gmail.com>
-> >>> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> >>> Cc: Luc Maranget <luc.maranget@inria.fr>
-> >>> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> >>> Cc: Akira Yokosawa <akiyks@gmail.com>
-> >>> Cc: Ingo Molnar <mingo@kernel.org>
-> >>> ---
-> >>>  include/linux/spinlock.h | 18 ++++++++++++++++++
-> >>>  1 file changed, 18 insertions(+)
-> >>>
-> >>> diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-> >>> index 4894d322d2584..1e8a464358384 100644
-> >>> --- a/include/linux/spinlock.h
-> >>> +++ b/include/linux/spinlock.h
-> >>> @@ -380,6 +380,24 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
-> >>>  	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
-> >>>  })
-> >>>  
-> >>> +/**
-> >>> + * spin_is_locked() - Check whether a spinlock is locked.
-> >>> + * @lock: Pointer to the spinlock.
-> >>> + *
-> >>> + * This function is NOT required to provide any memory ordering
-> >>> + * guarantees; it could be used for debugging purposes or, when
-> >>> + * additional synchronization is needed, accompanied with other
-> >>> + * constructs (memory barriers) enforcing the synchronization.
-> >>> + *
-> >>> + * Returns: 1 if @lock is locked, 0 otherwise.
-> >>
-> >> Sorry, minor nit:
-> >> s/Returns:/Return:/
-> >> (according to kernel-doc.rst)
-> >>
-> >> although I agree that "Returns:" is better.
-> >> [I should have changed that years ago.]
-> > 
-> > Agreed, English grammar and templates often seem to conflict.
-> > 
-> > So should we change this comment, or are you instead proposing to add
-> > "Returns:" as valid kernel-doc?
-> 
-> Please change this patch to current doc syntax.
-> Any changes to kernel-doc syntax would come later.
+Hi Christian,
 
-Paul: I understand that you're going to do this change "in place"; please
-let me know if I'm wrong/if you need a new submission.
+Thanks for the info. FYI, I've also opened a Firefox bug for that at:
+https://bugzilla.mozilla.org/show_bug.cgi?id=1448778
+Feel free to comment since you have a better understanding of what's
+going on.
 
-Thanks,
-  Andrea
+One last question: right now I'm running 4.15.0 with the "offending"
+patch reverted. Is that safe to run or are there possible bad
+interactions with other changes.
 
+Cheers,
 
+	Jean-Marc
+
+On 04/06/2018 01:20 PM, Christian König wrote:
+> Am 06.04.2018 um 18:42 schrieb Jean-Marc Valin:
+>> Hi Christian,
+>>
+>> On 04/09/2018 07:48 AM, Christian König wrote:
+>>> Am 06.04.2018 um 17:30 schrieb Jean-Marc Valin:
+>>>> Hi Christian,
+>>>>
+>>>> Is there a way to turn off these huge pages at boot-time/run-time?
+>>> Only at compile time by not setting CONFIG_TRANSPARENT_HUGEPAGE.
+>> Any reason why
+>> echo never > /sys/kernel/mm/transparent_hugepage/enabled
+>> doesn't solve the problem?
 > 
-> Thanks.
+> Because we unfortunately try to allocate huge pages anyway, we
+> unfortunately just fail in 100% of all cases.
 > 
-> > 							Thanx, Paul
-> > 
-> >>> + *
-> >>> + * Note that the function only tells you that the spinlock is
-> >>> + * seen to be locked, not that it is locked on your CPU.
-> >>> + *
-> >>> + * Further, on CONFIG_SMP=n builds with CONFIG_DEBUG_SPINLOCK=n,
-> >>> + * the return value is always 0 (see include/linux/spinlock_up.h).
-> >>> + * Therefore you should not rely heavily on the return value.
-> >>> + */
-> >>>  static __always_inline int spin_is_locked(spinlock_t *lock)
-> >>>  {
-> >>>  	return raw_spin_is_locked(&lock->rlock);
-> >>>
-> >>
-> >>
-> >> -- 
-> >> ~Randy
-> >>
-> > 
+> That basically gives you both, the extra allocation overhead and the
+> still bad throughput.
 > 
+>> Also, I assume that disabling CONFIG_TRANSPARENT_HUGEPAGE will disable
+>> them for everything and not just what your patch added, right?
 > 
-> -- 
-> ~Randy
+> Correct, that's why I wrote that disabling SWIOTLBs might be better.
+> 
+>>>> I'm not sure what you mean by "We mitigated the problem by avoiding the
+>>>> slow coherent DMA code path on almost all platforms on newer
+>>>> kernels". I
+>>>> tested up to 4.16 and the performance regression is just as bad as
+>>>> it is
+>>>> for 4.15.
+>>> Indeed 4.16 still doesn't have that. You could use the
+>>> amd-staging-drm-next branch or wait for 4.17.
+>> Is there a way to pull just that change or is there too much
+>> interactions with other changes?
+> 
+> It adds a new detection if memory allocation needs to be coherent or
+> not, that is not something you can easily pull into older versions.
+> 
+>>> That isn't related to the GFX hardware, but to your CPU/motherboard and
+>>> whatever else you have in the system.
+>> Well, I have an nvidia GPU in the same system (normally only used for
+>> CUDA) and if I use it instead of my RX 560 then I'm not seeing any
+>> performance issue with 4.15.
+> 
+> That's because you are probably using the Nvidia binary driver which has
+> a completely separate code base.
+> 
+>>> Some part of your system needs SWIOTLB and that makes allocating memory
+>>> much slower.
+>> What would that part be? FTR, I have a complete description of my system
+>> at https://jmvalin.dreamwidth.org/15583.html
+>>
+>> I don't know if it's related, but I can maybe see one thing in common
+>> between my machine and the Core 2 Quad from the other bug report and
+>> that's the "NUMA part". I have a dual-socket Xeon and (AFAIK) the Core 2
+>> Quad is made of two two-core CPUs glued together with little
+>> communication between them.
+> 
+> Yeah, that is probably the reason.
+> 
+>>> Intel doesn't use TTM because they don't have dedicated VRAM, but the
+>>> open source nvidia driver should be affected as well.
+>> I'm using the proprietary nvidia driver (because CUDA). Is that supposed
+>> to be affected as well?
+> 
+> No.
+> 
+>>> We already mitigated that problem and I don't see any solution which
+>>> will arrive faster than 4.17.
+>> Is that supposed to make the slowdown unnoticeable or just slightly
+>> better?
+> 
+> It completely goes away. The issue with the coherent path is that it
+> tries to always allocate the lowest possible memory to make sure that it
+> fits into the DMA constrains of all devices in the system.
+> 
+> But since AMD GPU can handle 40bits of addresses you would need at least
+> 1TB of memory in the system to trigger that (or a NUMA where some system
+> is low and some in a high area).
+> 
+> Christian.
+> 
+>>> The only quick workaround I can see is to avoid firefox, chrome for
+>>> example is reported to work perfectly fine.
+>> Or use an unaffected GPU/driver ;-)
+>>
+>> Cheers,
+>>
+>>     Jean-Marc
+>>
+> 
