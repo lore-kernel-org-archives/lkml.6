@@ -1,108 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751538AbeDFAiJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 20:38:09 -0400
-Received: from mga04.intel.com ([192.55.52.120]:30331 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751492AbeDFAiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 20:38:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,413,1517904000";
-   d="scan'208";a="43849265"
-From: "Wang, Wei W" <wei.w.wang@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
-Subject: RE: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Thread-Topic: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Thread-Index: AQHTyyXXTsdlmy3QmUiflW8thGbyQqPu3AAAgAB7EICAAMkagIABH5Eg//+aJwCAAIzSsIAASrAAgACdZmD//60YgIAA5Rcw
-Date: Fri, 6 Apr 2018 00:11:22 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F7394A9BC3@shsmsx102.ccr.corp.intel.com>
-References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
- <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
- <20180403214147-mutt-send-email-mst@kernel.org> <5AC43377.2070607@intel.com>
- <20180404155907-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
- <20180405040900-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7394A7F3B@shsmsx102.ccr.corp.intel.com>
- <20180405170248-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7394A889E@shsmsx102.ccr.corp.intel.com>
- <20180405212850-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180405212850-mutt-send-email-mst@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTZhOThjM2QtMDJiZC00ODdmLTg0MDAtNmU4ZmIwOWM4YzJiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6InJNT3JENCtzclEwM2NpQ0o1MGJtR0dxcjlcLytiRzJhOXlsWlo1cjJcL0F0QT0ifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S1751516AbeDFAxq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 20:53:46 -0400
+Received: from smtprelay0114.hostedemail.com ([216.40.44.114]:58903 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751435AbeDFAxp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 20:53:45 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:973:982:988:989:1260:1277:1311:1313:1314:1345:1373:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2197:2199:2393:2559:2562:2828:2895:3138:3139:3140:3141:3142:3351:3653:3867:3872:3874:5007:7901:7903:10004:10400:10848:11658:11914:12043:12050:12679:12760:13069:13311:13357:13439:14659:14721:21080:21221:21627:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
+X-HE-Tag: day61_393dc818325f
+X-Filterd-Recvd-Size: 1321
+Message-ID: <1522976022.11185.53.camel@perches.com>
+Subject: git source files with rw permissions
+From: Joe Perches <joe@perches.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date: Thu, 05 Apr 2018 17:53:42 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, April 6, 2018 2:30 AM, Michael S. Tsirkin wrote:
-> On Thu, Apr 05, 2018 at 03:47:28PM +0000, Wang, Wei W wrote:
-> > On Thursday, April 5, 2018 10:04 PM, Michael S. Tsirkin wrote:
-> > > On Thu, Apr 05, 2018 at 02:05:03AM +0000, Wang, Wei W wrote:
-> > > > On Thursday, April 5, 2018 9:12 AM, Michael S. Tsirkin wrote:
-> > > > > On Thu, Apr 05, 2018 at 12:30:27AM +0000, Wang, Wei W wrote:
-> > > > > > On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
-> > > > > > > On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
-> > > > > > > > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
-> > > > > > > > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
-> > > > > > I'm afraid the driver couldn't be aware if the added hints are
-> > > > > > stale or not,
-> > > > >
-> > > > >
-> > > > > No - I mean that driver has code that compares two values and
-> > > > > stops reporting. Can one of the values be stale?
-> > > >
-> > > > The driver compares "vb->cmd_id_use != vb->cmd_id_received" to
-> > > > decide if it needs to stop reporting hints, and cmd_id_received is
-> > > > what the driver reads from host (host notifies the driver to read
-> > > > for the latest value). If host sends a new cmd id, it will notify
-> > > > the guest to read again. I'm not sure how that could be a stale
-> > > > cmd id (or maybe I misunderstood your point here?)
-> > > >
-> > > > Best,
-> > > > Wei
-> > >
-> > > The comparison is done in one thread, the update in another one.
-> >
-> > I think this isn't something that could be solved by adding a lock,
-> > unless host waits for the driver's ACK about finishing the update
-> > (this is not agreed in the QEMU part discussion).
-> >
-> > Actually virtio_balloon has F_IOMMU_PLATFORM disabled, maybe we
-> don't
-> > need to worry about that using DMA api case (we only have gpa added to
-> > the vq, and having some entries stay in the vq seems fine). For this
-> > feature, I think it would not work with F_IOMMU enabled either.
-> 
-> Adding a code comment explaining all this might be a good idea.
+Some .c source files have r.x permissions (0755) that
+should be updated.
 
-Thanks, will do.
+A trivial script on a clean git tree like:
 
-Best,
-Wei
+$ git ls-files -- "*.[chsS]" | \
+  xargs ls -la | \
+  grep -P "^[^l](?:.{2,2}x|.{5,5}x|.{8,8}x)" | \
+  awk '{print $9}'
+
+today shows:
+
+drivers/gpu/drm/amd/amdgpu/vce_v4_0.c
+drivers/net/ethernet/cadence/macb_ptp.c
+
+It would be good to update those via some script like:
+
+$ git ls-files -- "*.[chsS]" | \
+  xargs ls -la | \
+  grep -P
+"^[^l](?:.{2,2}x|.{5,5}x|.{8,8}x)" | \
+  awk '{print $9}' | \
+  xargs
+chmod 644
+tmpfile=$(mktemp)
+echo "treewide: chmod executable source files
+to 0644" > $tmpfile
+git commit -s -a -F $tmpfile
+rm -f $tmpfile
