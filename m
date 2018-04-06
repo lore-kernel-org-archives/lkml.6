@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+iBZHr86AS0tHiRAbi444nu8UDUUk/bHCdrlzfBiu3B474Ozo0kiQFp3ooEXGYc+YF95Vb
-ARC-Seal: i=1; a=rsa-sha256; t=1523021635; cv=none;
+X-Google-Smtp-Source: AIpwx49CxtBQBIVC7SP4siFMU9Sy63iHleqiiElpV7L7vGtXRkbkn3R/2JAvEIF8x7Yu/dux2Vha
+ARC-Seal: i=1; a=rsa-sha256; t=1523021632; cv=none;
         d=google.com; s=arc-20160816;
-        b=w7pW3YfwAKt6RzRYYkJDhPMoBOHr+15y5tP7gQm0oD08kuZXc9m9BgMQuV6ZWfmYfb
-         BTkiiFuSTQeBqyWutPK5Q7rd3aV/7+q7wiFiT8mc79mPLJB/v4WBFtADJKtKM5AAZNN6
-         4Am2SSqGH4XBh5mEKf7NHlLTL1yRlO0k60NgwRAwI5MVkDotKRStCc6EH0ZmWWO2WvHo
-         FiL9ImwZ/OwINC+Mb3M6AgRJ8htQzWMVP1sN4xyunOIbGpbqyTvUG4EF0i/aySUyZqoj
-         N1T2s1/ROJ0IfRp4kQBX4kOLUuKfoInl1Pz1oeEjf5xm2QOG3cvuxVN6uLvxLwI8fRcl
-         kWxg==
+        b=iANEQLOfZrTzI2zLx2G40Zt3PJNZtJnxNstBhjJDMX13rGtJDtURxfVOfw6vdB83fl
+         voJNxY1OCrfHNNusJzBP8CW5qz1dkWCHlGyOhiagJ2JKrP4TMRCmGmXfsmnW0e4P2l+9
+         CaPPXh0VwDK8MvV+PgHTo47hvANMvIu+c2d8529niFWDibzTXm+KXtkDW5jO8XYJweCy
+         mvuvkdU4z4EJNzx3wGXwXDSwh89tfTDbxkub101poEtzufrEdemQhv9sOrySNr2k27qD
+         t7Nat3X59FCPjiFDFLvG524PUSs4Nt8L5rAxKtY9EvVcivIjuV8zOu0WUfXYNQDiDClA
+         Wblw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4Up6+U2L55+/O5gs0KCgUOLBZ4vH3e2vJEg5zQPlxlo=;
-        b=eVWGHHGwNsh5QufPw3Pwxz3HERGbAa4KA9jLPWTgy4HHzOy8yuJKuZN6ZLMJ2SwOM9
-         OI3IaTiX9vML/g7l06pjZONAAUplSMtDGR+kiFbu6YqkBUewjy2f6dtkRwstqcXJ6ke7
-         E1hggr3y6KEZUM3kqPXhhY0MQD9kaSH5TIAL/xX9t+3z+T3ijO19PQUd6WCF+2bbQcHf
-         aabMAGED5hE4lZd5PhwLPYAzlqXHqAOWGH9KL7NhnstSBM+Z5TP0iZ9McyJzbeez4MsV
-         T2GDFqpVZbRjrJvGhTl1PoROh2Mb2yrAV9dKp/ljUQw9D6DpiukBSSlPNb98iP3frKGD
-         Q14w==
+        bh=sY86L39RHWMGZ1NZtsx0vKANoUAZrfBvE4U8Jq+QZSg=;
+        b=HNnxc6iG4EhXHKJRd9w4sA6vpvM3F75GPsZaD/JGFI9BffU3BUOzE/5C5uBEPKVJ26
+         eh9Q8veFXCHlauYOkLkJSFo5y6ujEsyBiUzspY/4cIwmM0d5IDRSItViPJ4D2yWOkHQ6
+         ZFqkEAURvRs7qxuX/hTqb9TvChElT8uQt3/Zc5PYPSp5P0HajzyX23QOL6K6cER60Cy9
+         1/gzg/fHVq4pFHzFlw2rxw+pSIAn8abte6awVs1fMNWID2Q3zR7Qm75qiOo3vQsyK+5H
+         eIv4PnO3x1g/9OMsO1K4aeCCYfudgagvrvb1h8ygDpUZB+Fy4eIiozSi6qSxFd/OyJwN
+         grJA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 008/102] ipc/shm.c: add split function to shm_vm_ops
-Date: Fri,  6 Apr 2018 15:22:49 +0200
-Message-Id: <20180406084332.690189179@linuxfoundation.org>
+	stable@kernel.org,
+	"Yan, Zheng" <zyan@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.9 007/102] ceph: only dirty ITER_IOVEC pages for direct read
+Date: Fri,  6 Apr 2018 15:22:48 +0200
+Message-Id: <20180406084332.549269814@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -46,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003934238227068?=
-X-GMAIL-MSGID: =?utf-8?q?1597003934238227068?=
+X-GMAIL-THRID: =?utf-8?q?1597003931792516053?=
+X-GMAIL-MSGID: =?utf-8?q?1597003931792516053?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,93 +50,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Yan, Zheng <zyan@redhat.com>
 
-commit 3d942ee079b917b24e2a0c5f18d35ac8ec9fee48 upstream.
+commit 85784f9395987a422fa04263e7c0fb13da11eb5c upstream.
 
-If System V shmget/shmat operations are used to create a hugetlbfs
-backed mapping, it is possible to munmap part of the mapping and split
-the underlying vma such that it is not huge page aligned.  This will
-untimately result in the following BUG:
+If a page is already locked, attempting to dirty it leads to a deadlock
+in lock_page().  This is what currently happens to ITER_BVEC pages when
+a dio-enabled loop device is backed by ceph:
 
-  kernel BUG at /build/linux-jWa1Fv/linux-4.15.0/mm/hugetlb.c:3310!
-  Oops: Exception in kernel mode, sig: 5 [#1]
-  LE SMP NR_CPUS=2048 NUMA PowerNV
-  Modules linked in: kcm nfc af_alg caif_socket caif phonet fcrypt
-  CPU: 18 PID: 43243 Comm: trinity-subchil Tainted: G         C  E 4.15.0-10-generic #11-Ubuntu
-  NIP:  c00000000036e764 LR: c00000000036ee48 CTR: 0000000000000009
-  REGS: c000003fbcdcf810 TRAP: 0700   Tainted: G         C  E (4.15.0-10-generic)
-  MSR:  9000000000029033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 24002222  XER: 20040000
-  CFAR: c00000000036ee44 SOFTE: 1
-  NIP __unmap_hugepage_range+0xa4/0x760
-  LR __unmap_hugepage_range_final+0x28/0x50
-  Call Trace:
-    0x7115e4e00000 (unreliable)
-    __unmap_hugepage_range_final+0x28/0x50
-    unmap_single_vma+0x11c/0x190
-    unmap_vmas+0x94/0x140
-    exit_mmap+0x9c/0x1d0
-    mmput+0xa8/0x1d0
-    do_exit+0x360/0xc80
-    do_group_exit+0x60/0x100
-    SyS_exit_group+0x24/0x30
-    system_call+0x58/0x6c
-  ---[ end trace ee88f958a1c62605 ]---
+  $ losetup --direct-io /dev/loop0 /mnt/cephfs/img
+  $ xfs_io -c 'pread 0 4k' /dev/loop0
 
-This bug was introduced by commit 31383c6865a5 ("mm, hugetlbfs:
-introduce ->split() to vm_operations_struct").  A split function was
-added to vm_operations_struct to determine if a mapping can be split.
-This was mostly for device-dax and hugetlbfs mappings which have
-specific alignment constraints.
+Follow other file systems and only dirty ITER_IOVEC pages.
 
-Mappings initiated via shmget/shmat have their original vm_ops
-overwritten with shm_vm_ops.  shm_vm_ops functions will call back to the
-original vm_ops if needed.  Add such a split function to shm_vm_ops.
-
-Link: http://lkml.kernel.org/r/20180321161314.7711-1-mike.kravetz@oracle.com
-Fixes: 31383c6865a5 ("mm, hugetlbfs: introduce ->split() to vm_operations_struct")
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Reported-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Tested-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Manfred Spraul <manfred@colorfullife.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@kernel.org
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- ipc/shm.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/ceph/file.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -381,6 +381,17 @@ static int shm_fault(struct vm_area_stru
- 	return sfd->vm_ops->fault(vma, vmf);
- }
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -598,7 +598,8 @@ static ssize_t ceph_sync_read(struct kio
+ struct ceph_aio_request {
+ 	struct kiocb *iocb;
+ 	size_t total_len;
+-	int write;
++	bool write;
++	bool should_dirty;
+ 	int error;
+ 	struct list_head osd_reqs;
+ 	unsigned num_reqs;
+@@ -708,7 +709,7 @@ static void ceph_aio_complete_req(struct
+ 		}
+ 	}
  
-+static int shm_split(struct vm_area_struct *vma, unsigned long addr)
-+{
-+	struct file *file = vma->vm_file;
-+	struct shm_file_data *sfd = shm_file_data(file);
-+
-+	if (sfd->vm_ops && sfd->vm_ops->split)
-+		return sfd->vm_ops->split(vma, addr);
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_NUMA
- static int shm_set_policy(struct vm_area_struct *vma, struct mempolicy *new)
- {
-@@ -503,6 +514,7 @@ static const struct vm_operations_struct
- 	.open	= shm_open,	/* callback for a new vm-area open */
- 	.close	= shm_close,	/* callback for when the vm-area is released */
- 	.fault	= shm_fault,
-+	.split	= shm_split,
- #if defined(CONFIG_NUMA)
- 	.set_policy = shm_set_policy,
- 	.get_policy = shm_get_policy,
+-	ceph_put_page_vector(osd_data->pages, num_pages, !aio_req->write);
++	ceph_put_page_vector(osd_data->pages, num_pages, aio_req->should_dirty);
+ 	ceph_osdc_put_request(req);
+ 
+ 	if (rc < 0)
+@@ -890,6 +891,7 @@ ceph_direct_read_write(struct kiocb *ioc
+ 	size_t count = iov_iter_count(iter);
+ 	loff_t pos = iocb->ki_pos;
+ 	bool write = iov_iter_rw(iter) == WRITE;
++	bool should_dirty = !write && iter_is_iovec(iter);
+ 
+ 	if (write && ceph_snap(file_inode(file)) != CEPH_NOSNAP)
+ 		return -EROFS;
+@@ -954,6 +956,7 @@ ceph_direct_read_write(struct kiocb *ioc
+ 			if (aio_req) {
+ 				aio_req->iocb = iocb;
+ 				aio_req->write = write;
++				aio_req->should_dirty = should_dirty;
+ 				INIT_LIST_HEAD(&aio_req->osd_reqs);
+ 				if (write) {
+ 					aio_req->mtime = mtime;
+@@ -1012,7 +1015,7 @@ ceph_direct_read_write(struct kiocb *ioc
+ 				len = ret;
+ 		}
+ 
+-		ceph_put_page_vector(pages, num_pages, !write);
++		ceph_put_page_vector(pages, num_pages, should_dirty);
+ 
+ 		ceph_osdc_put_request(req);
+ 		if (ret < 0)
