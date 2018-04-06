@@ -1,105 +1,114 @@
-Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
-X-Google-Smtp-Source: AIpwx49FC4q+cSJNhRXtFoFkIITOaT+Twb2dnl5UBFEI3/KeIYmuw+ReW1yk8mzFmCWsk1cDcJ+G
-ARC-Seal: i=1; a=rsa-sha256; t=1523009225; cv=none;
-        d=google.com; s=arc-20160816;
-        b=AzESGj5GuGbTvl/UG8jX6U+ZafSRpehsPmP8m+1JbuY8nDbgCF9nmXtMnzJ4TuZQ4I
-         Bnews+HUok26lfW0fN3QKeuxnSou/fQrfXTqYbNXTQSDmwMnHorfDNJgXB4HzZGLhJBB
-         6W6l9M3+mVpfXemjJoGrXzu8wthQI3m7GRoIoJ5K5xC+cBXNiXcZLpSxbkiV2Nm5lo+y
-         n2z1ISr07mutSqOlRJyq3nxrZHdaKcgSd3gFW758sfTyEOqVXk5AcZH5dT7uBaXLzCDb
-         XCTIpJp37JjDCy3H6USLtYn1pzzRAGUA/0kErSw0+7pH884c16DuDoSJEV0ossABGF/x
-         SLCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=DeG+IoBF5H0ZNXWDO9YHG2UT5t08If2xkjQyXOy+6lo=;
-        b=yQweCrAa5AsE797FCCAumzDhBwTNYLk4q9F3hZx8k75Cb3/Yo5v/k3FkBCuuMXYI2z
-         P9weekzg2HlvxvKZBW6A9kOJXN+UT+5kGjBON/AGdeg763QMtP2rb3hMzBbLb36eOHxV
-         Xx0TvKQR3VsSZ2SCXAFhBmD/Ky0zr2WCVD/R0NG2OGtra2fJBZjojdfjaOoLHmB9kZgp
-         69VHCTf5rPS0Pr1MAd8otTEnie4YsXri9ADxytLjb+aAG54335UDmcd2P/9W1FX27CVc
-         CRR/pI0tHbEUZxPTnuoJ9rOaygkMuuLGF4o27OMPHZ4WTHy6RrbchyoAVJdEQ8jZPJKK
-         LUAA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
-Subject: Re: KASAN: user-memory-access Write in n_tty_set_termios
-To: gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: syzbot <syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <001a113ed31a122ced0568cc6be1@google.com>
- <db45a090-593d-23d2-e6b2-ede5b308f02f@I-love.SAKURA.ne.jp>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <35d649ce-0c22-f839-aa4d-19733bf31a9c@I-love.SAKURA.ne.jp>
-Date: Fri, 6 Apr 2018 19:06:47 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <db45a090-593d-23d2-e6b2-ede5b308f02f@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-878918-1523003007-2-11871965229103478367
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523003006; b=lwVFSRos9yRXHghZ7+2+Ih97cLUdizuAsoSEm+g/1KxG2v+Nta
+    26eRzw4CsdaJ0k/RrWDd3dHKS6DpMruztlQAWXmpm3tsSzURXpxeoERz0JGXbWNy
+    qJKY82yl+iDXTQcBCAzVZN82kDc7Rqmnbs1mBNIiZ3tv4tgePuJxyHtc5hc4BB9V
+    5KMy+aDSZrrlho5dfXWUTVqMiScFLWmoVllVeM1IsO1EFyc0W2roLJTMPtXdR8Md
+    Vfw9tCQ1gv4i71+XH6G+qh4kuPATjTJS2gmArEPbmBEB0VTVPiYJbx0e/wsS9ufM
+    8bDlolckhIxvgMG6O72igeQUXlCC9MIAuFJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1523003006; bh=Av13z372LLILNwuCPocV2WknaeB+j/
+    UaXmLBGpRapYM=; b=NUuXWy3LH382CA/leOrc+nGWezg6v2ODhA1LENxDP95CjK
+    B7ZG47766YzlTAhYppVwEVb+5neIXkywgCpIY08OYAJBNCQJW06CIKt1rPZOEQoi
+    TRtzAoy1gVEcwBkoUzJ9cOSkYNqHU0M1jGDJUsrE5kMSylk2//Axd1TRhfMuEeTQ
+    z4KxLHX2YwPFSeOSvd80vjSnCeL9y5z5CMA0jU6dJnqa2S4wzDl8ymibI1/xIlK7
+    gW4C/gUBmPNwwoR38sOdAItedERxQCpZLJz6PHw/c+Pjm0+xED///4kAJfYdKdjJ
+    z2Hg0O/xtDU4R8KuzthJIL/TVJ5pRN7DdkT0VI5Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfAKqFkgQk1kslRI+Qg9i2t4G3Te4LBpPk3qWjvUpe0GechJtWR6T9Faouhkx6X0Y8BltuYs7RvUpeuMVWS6jtaRdX6gj/6S4fxeM7CgEBc/5GfOsX7Ka
+    4G+6CTohBm7FQ+oR6dGhrf2xlamoHu5gI0nQgbax7VD4+jtziw6HsdPQtMQA0qmHzZZN6SeEpHJ8cq1qzXySSqeiqR6om0ZgRceyHHFSDy0hTPxfcXfKnPN5
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=pGLkceISAAAA:8
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=FILhe0E5uq0Vktr4X_UA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751425AbeDFIWe (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 04:22:34 -0400
+Received: from mga03.intel.com ([134.134.136.65]:49294 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751201AbeDFIWd (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Fri, 6 Apr 2018 04:22:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,414,1517904000";
+   d="scan'208";a="44584113"
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: Masanari Iida <standby24x7@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: [PATCH] Documentation: typec.rst: Mark ascii art as a comment
+Date: Fri,  6 Apr 2018 11:22:29 +0300
+Message-Id: <20180406082229.55375-1-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.16.3
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596563981043488445?=
-X-GMAIL-MSGID: =?utf-8?q?1596990920952013607?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018/04/05 19:31, Tetsuo Handa wrote:
-> Hello.
-> 
-> I manually simplified the reproducer. Since the bug is timing dependent,
-> this reproducer might fail to reproducer the bug. Anyway, I guess that
-> there is a race condition between
-> 
-> 	vfree(ldata);
-> 	tty->disc_data = NULL;
-> 
-> at n_tty_close() by something (ioctl(TIOCVHANGUP) ?) and
-> 
-> 	struct n_tty_data *ldata = tty->disc_data;
-> 
-> 	if (!old || (old->c_lflag ^ tty->termios.c_lflag) & (ICANON | EXTPROC)) {
-> 		bitmap_zero(ldata->read_flags, N_TTY_BUF_SIZE);
-> 
-> at n_tty_set_termios() by ioctl(TCSETS), for the report says that ldata == NULL
-> ("Write of size 512 at addr 0000000000001060").
+To prevent processing of ascii art as reStructuredText
+elements, marking it as a comment.
 
-I confirmed that ioctl(TIOCVHANGUP) versus ioctl(TCSETS) can race.
-We need some lock for protecting tty->disc_data.
+Reported-by: Masanari Iida <standby24x7@gmail.com>
+Fixes: bdecb33af34f ("usb: typec: API for controlling USB Type-C Multiplexers")
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+ Documentation/driver-api/usb/typec.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -1861,6 +1861,7 @@ static void n_tty_close(struct tty_struct *tty)
+diff --git a/Documentation/driver-api/usb/typec.rst b/Documentation/driver-api/usb/typec.rst
+index feb31946490b..972c11bf4141 100644
+--- a/Documentation/driver-api/usb/typec.rst
++++ b/Documentation/driver-api/usb/typec.rst
+@@ -212,7 +212,7 @@ port drivers can use USB Role Class API with those.
+ 
+ Illustration of the muxes behind a connector that supports an alternate mode:
+ 
+-                     ------------------------
++..                   ------------------------
+                      |       Connector      |
+                      ------------------------
+                             |         |
+-- 
+2.16.3
 
-        vfree(ldata);
-        tty->disc_data = NULL;
-+       WARN_ON(1);
- }
-
- /**
-
-ioctl(TIOCVHANGUP):
-[   75.176171] RIP: 0010:n_tty_close+0x34/0x40   /* drivers/tty/n_tty.c:1863 */
-[   75.176193] Call Trace:
-[   75.176200]  tty_ldisc_kill+0x15/0x30         /* drivers/tty/tty_ldisc.c:641 */
-[   75.176204]  tty_ldisc_hangup+0xfa/0x1c0      /* drivers/tty/tty_ldisc.c:758 */
-[   75.176209]  __tty_hangup.part.26+0x16b/0x280 /* drivers/tty/tty_io.c:623 */
-[   75.176216]  tty_ioctl+0x61f/0x950            /* drivers/tty/tty_io.c:2585 */
-[   75.176244]  do_vfs_ioctl+0xa7/0x6d0          /* fs/ioctl.c:686 */
-[   75.176257]  ksys_ioctl+0x6b/0x80             /* fs/ioctl.c:701 */
-[   75.176266]  SyS_ioctl+0x5/0x10               /* fs/ioctl.c:706 */
-[   75.176268]  do_syscall_64+0x6e/0x270         /* arch/x86/entry/common.c:287 */
-
-ioctl(TCSETS):
-[   75.783367] BUG: unable to handle kernel paging request at 0000000000001060
-[   75.934024] RIP: 0010:n_tty_set_termios+0x17c/0x2a0 /* drivers/tty/n_tty.c:1766 */
-[   75.950549] Call Trace:
-[   75.952733]  tty_set_termios+0x18a/0x200            /* drivers/tty/tty_ioctl.c:342 */
-[   75.954915]  set_termios+0x14a/0x250                /* drivers/tty/tty_ioctl.c:414 */
-[   75.956823]  tty_mode_ioctl+0x42e/0x4f0             /* drivers/tty/tty_ioctl.c:749 */
-[   75.958632]  tty_ioctl+0x128/0x950                  /* drivers/tty/tty_io.c:2655 */
-[   75.968883]  do_vfs_ioctl+0xa7/0x6d0                /* fs/ioctl.c:686 */
-[   75.972892]  ksys_ioctl+0x6b/0x80                   /* fs/ioctl.c:701 */
-[   75.977031]  SyS_ioctl+0x5/0x10                     /* fs/ioctl.c:706 */
-[   75.977036]  do_syscall_64+0x6e/0x270               /* arch/x86/entry/common.c:287 */
