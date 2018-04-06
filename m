@@ -1,81 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751862AbeDFP7K (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:59:10 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36607 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbeDFP7I (ORCPT
+        id S1751935AbeDFQD4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 12:03:56 -0400
+Received: from mail-io0-f177.google.com ([209.85.223.177]:42733 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751579AbeDFQDy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:59:08 -0400
-X-Google-Smtp-Source: AIpwx49YIdnNfgYYmAjKK7B2thpMWN32ZOJWc+QvXC4nX4m0ihOoc23k3WiBsgcvbHa3uuAnjaZ61g==
-Date: Fri, 6 Apr 2018 08:59:05 -0700
-From: Omar Sandoval <osandov@osandov.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        viro@zeniv.linux.org.uk, osandov@fb.com, dvyukov@google.com,
-        bot+abdba5bc6de135d7622f00756da97998425b6de5@syzkaller.appspotmail.com,
-        axboe@kernel.dk, tom.leiming@gmail.com, hare@suse.de, shli@fb.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        mingo@redhat.com, linux-fsdevel@vger.kernel.org, knikanth@suse.de
-Subject: Re: INFO: task hung in lo_ioctl
-Message-ID: <20180406155905.GA11697@vader>
-References: <94eb2c0810d04f5a46055ffc71aa@google.com>
- <CACT4Y+Y6UhNQOc7VUPgvXZ3yGPusjg2WJ9-OXMCRGM2Q1bx7ZQ@mail.gmail.com>
- <6012a726-069a-13a5-9c8d-6a11730d8414@I-love.SAKURA.ne.jp>
- <468f7418-a02d-79cc-3d94-91bbe146567e@I-love.SAKURA.ne.jp>
- <20180406121411.GJ4082@hirez.programming.kicks-ass.net>
- <201804062255.HEJ82361.FJOFHVtSLOMOQF@I-love.SAKURA.ne.jp>
- <20180406154343.GK4082@hirez.programming.kicks-ass.net>
+        Fri, 6 Apr 2018 12:03:54 -0400
+X-Google-Smtp-Source: AIpwx4+FLxJYb5tyxqDeQXOnq9+qsjB4T2fZg3cQpJJyQWmmL5ushRUyACGr0YKAQVAmtJ7JA5R5qyQ8KdCsS1MHXv4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406154343.GK4082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <95fe50be-cc8b-4345-7333-cdf656fad2a7@gmail.com>
+References: <e1da0be1-94d8-d5d0-8329-4507c51ddd64@gmail.com>
+ <20180324064627.GA10884@linaro.org> <c5daea3c-0834-1629-3e38-3db5130eb32f@gmail.com>
+ <6b151c56-9ead-7bbe-d1b7-b0e6d69c0d7f@arm.com> <CAKfTPtDigSEOmtxk7daTTBb3o6kVR8AgUVhu4X6YWutK9yWNwg@mail.gmail.com>
+ <CAKfTPtAisq0tQ_Kw3OptJYm=u7tSk6vyi3CFZJdhBxD=d=EN1g@mail.gmail.com>
+ <796bbd7b-8512-7370-28c9-0f082dc3f287@gmail.com> <CAKfTPtD17yUrp5G7gPN6ijB+C-TKJcK1UTCmP_JhMK5DvSDN_g@mail.gmail.com>
+ <95fe50be-cc8b-4345-7333-cdf656fad2a7@gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 6 Apr 2018 18:03:33 +0200
+Message-ID: <CAKfTPtAJCck6mpXhbMkZes2D6KMYsoB9WkCRL+6owJfMiNXq5w@mail.gmail.com>
+Subject: Re: Problem with commit 31e77c93e432 "sched/fair: Update blocked load
+ when newly idle"
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 05:43:43PM +0200, Peter Zijlstra wrote:
-> On Fri, Apr 06, 2018 at 10:55:03PM +0900, Tetsuo Handa wrote:
-> > Peter Zijlstra wrote:
-> > > On Fri, Apr 06, 2018 at 09:04:18PM +0900, Tetsuo Handa wrote:
-> > > > +	/* Temporary hack for handling lock imbalance. */
-> > > > +	if (__mutex_owner(&lo->lo_ctl_mutex) == current)
-> > > > +		mutex_unlock(&lo->lo_ctl_mutex);
-> > > 
-> > > ARGGH.. you didn't read the comment we put on that?
-> > > 
-> > 
-> > Commit 5b52330bbfe63b33 ("audit: fix auditd/kernel connection state tracking")
-> > is using __mutex_owner(). ;-)
-> 
-> That got removed and the warning added.
+Hi Heiner,
 
-Seems easy enough to fix without resorting to __mutex_owner() (untested):
+On 30 March 2018 at 10:37, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> Am 30.03.2018 um 08:50 schrieb Vincent Guittot:
+>> On 29 March 2018 at 19:40, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>> Am 29.03.2018 um 09:41 schrieb Vincent Guittot:
+>>
+>>>>
+>>>> I'm finally not so sure that i have the right set up to reproduce the
+>>>> problem as I haven't been able to reproduce it since.
+>>>>
+>>>> Heiner,
+>>>>
+>>>> How fast the problem happens on your board ?
+>>>> Are you doing anything specific on the console that trigger the problem ?
+>>>>
+>>> Hi Vincent,
+>>>
+>>> the lag when working on the console is constantly there, the "rcu_preempt
+>>> detected stalls" happens after several hours (so far always within 24h)
+>>> w/o any triggering event I would be aware of. It occured also when the
+>>> system was idle at that point in time.
+>>
+>> Ok, so I don't have the problem on my hikey as the console never lag
+>> on my setup.
+>>
+>> Can you send me the config of  your kernel ? I'd like to check if you
+>> have enable something that could trigger such problem
+>>
+> Sure, he we go. I also add a system log.
 
+Thanks for the config. I have used it for my setup but I can't
+reproduce your regression. My platforms stay stable so I probably
+missing something. Are you facing similar problem with other platforms
+or only this celeron based platform ?
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 264abaaff662..cee258d12a1e 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1300,12 +1300,13 @@ loop_get_status_old(struct loop_device *lo, struct loop_info __user *arg) {
- static int
- loop_get_status64(struct loop_device *lo, struct loop_info64 __user *arg) {
- 	struct loop_info64 info64;
--	int err = 0;
-+	int err;
- 
--	if (!arg)
--		err = -EINVAL;
--	if (!err)
--		err = loop_get_status(lo, &info64);
-+	if (!arg) {
-+		mutex_unlock(&lo->lo_ctl_mutex);
-+		return -EINVAL;
-+	}
-+	err = loop_get_status(lo, &info64);
- 	if (!err && copy_to_user(arg, &info64, sizeof(info64)))
- 		err = -EFAULT;
- 
+I have reviewed the code but don't see any obvious place in the patch
+that can generate the problem. Nevertheless, would you mind to try the
+patch below ? It's a blind test to try to narrow the problem.
 
-I'll test it and send it up when I get into the office.
+Thanks
+
+---
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0951d1c..e9835f2 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9794,9 +9794,9 @@ static int idle_balance(struct rq *this_rq,
+struct rq_flags *rf)
+  sd = rcu_dereference_check_sched_domain(this_rq->sd);
+  if (sd)
+  update_next_balance(sd, &next_balance);
+- rcu_read_unlock();
+
+  nohz_newidle_balance(this_rq);
++ rcu_read_unlock();
+
+  goto out;
+  }
+-- 
+2.7.4
+
+>
+> #
+> # Automatically generated file; DO NOT EDIT.
+> # Linux/x86 4.16.0-rc7 Kernel Configuration
+> #
+
+[snip]
