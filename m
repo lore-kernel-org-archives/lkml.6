@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48uyIYAqGeZeyeEvGRUwKT9kL/5VflayGlXb5TEAUnsWrDxsmfSmPlc2AEHBp56dsaPBnFy
-ARC-Seal: i=1; a=rsa-sha256; t=1523021578; cv=none;
+X-Google-Smtp-Source: AIpwx49NsfQGXIiSwnvg2n0Ol4lPKg2S8Lr5YNZolYbvsi9Oj9nQ0DH+xga8sfzdtX0FCLxWmxnJ
+ARC-Seal: i=1; a=rsa-sha256; t=1523021575; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bz7A1HSl/hFcJN4M4z42JGEax+7oqX5EMpioTkDHxB05C+hwtF46pCAhYpUviSILv1
-         q28Zj8WMU+FPyh6gHSbyQ/no/01V6F37MuhcO1J3Age6CKAzkUNVTS/K/IH0vMRMu6ss
-         HxAkegxFgiPxeSogmfGCIvJI8pGNrFvVdaXsJsOotsLOtJOyy4mY3w0IfLTUfzGw/B6b
-         WwVZp9d3fOFelFYrX8YK3cT3EF0SKtrAQZ225lj0Lm/r8JGyLKYzXwzFTnw23yZmIKqw
-         n4qKM7fsNiiy68JexVS8QwQYC2PpBFos5Y++Ct9zl1ZRIW2KhmqSlCd1daWZO0JaaExc
-         m+qA==
+        b=e+mpKTd70slNehWlidNFDwzP1ARUIaE7OroXsmE6D1aMfTjK1MwolHJr8LZ7D6Wj6M
+         tyN8CSRP6FviDwgEaH1TIp2HRJEFU9yzyw6dKdW8HhHYhXvz/wElbsRixe7wadht8XAB
+         BR4QoX91bgqBAH5QVjpLXx9xkdo8qOaAh9OJBqzgffgg08H2NbD4aZ+uTr+GeGi5Rft2
+         jr/dIj0r6znBWED996smd4DejfaZNapctuQLjdYazQksgGtvRRKB2Q1dn9c0591Aq2zm
+         XXXcSv7kq8FZAcsfRjzkeGAojHT9Mfu294Mh9/WP6FwB+IUHh3SCNJKIByKNBIRaR9do
+         pH4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aDDtri3WQzu/1cGnmk8zIC5r0ldRYZyIQPXqFHNC9Qs=;
-        b=UqYwD1umoTlE9JV8bXFgAADzA//alXPqJn0cRIv8JbEWcQogi+OfeaLc2gzem7qLeu
-         EcOwFgCEIXhe0ITarXjAy55Bb8EAMK0eCgsXu8MYvJd/5Pyic0uC7lo9+5VTzbXL28E8
-         kPgb77YsiT1r6pjU0XPTpSrCVs4mzAWPYwqMkpKiF4uXuxJREajVwS53OWDumaZ8f17n
-         2orDl6XCPlJkjjpIud/WKZG1VaQ3Yk3wHMiB29ADDNQIPQZXMTHpBmhehrMmZT1Ifu5k
-         Daa9G/gkE8lEJFdHEiGJHDpwCtM5AXJ73hhtqP5LjbHstxZ4v6jcp7Lb5ywdpRFKODZ9
-         YydA==
+        bh=dv0jBopd4ODG90GbyjbU6K8CMf9mX5sm+kCUjKIoyNs=;
+        b=iXqyTnNUyRtj2zBLxKbZR2Y2bS4eYR1XIWILaxi7wRv2DEWIspfrUfOJOZrtWbDuvX
+         n+xquY1mJaa1acLwKqe4DGv0Ph+0aDJ5FAn5n0XTOTbqiZ5n9Q7JV42lZnpWOL5rhCoY
+         jgC5EWKqMLuYEIc7g5cewRDUTP7rqUX18f4Ax/mWWAS+f4mFD9lqna4SvWk4SBCCQt/M
+         s49aQttYW9yPGlt6uohvxEY1ohIr1e/tQqd5lnwfiytnW48KACvPV+voynUps8O88HLG
+         CBgjYFzkmXiGrCHPTk4JzA9IQGE1b5DGrXk3OH0cexnnFatAGValmqd2+qzURBLPqmoh
+         qeEg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nick Desaulniers <nick.desaulniers@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	Mike Snitzer <snitzer@redhat.com>,
 	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 015/102] Input: mousedev - fix implicit conversion warning
-Date: Fri,  6 Apr 2018 15:22:56 +0200
-Message-Id: <20180406084333.798826650@linuxfoundation.org>
+Subject: [PATCH 4.9 014/102] dm ioctl: remove double parentheses
+Date: Fri,  6 Apr 2018 15:22:55 +0200
+Message-Id: <20180406084333.638740688@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003763722752102?=
-X-GMAIL-MSGID: =?utf-8?q?1597003874510238238?=
+X-GMAIL-THRID: =?utf-8?q?1597003760341389885?=
+X-GMAIL-MSGID: =?utf-8?q?1597003872260658028?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,142 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nick Desaulniers <nick.desaulniers@gmail.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-commit dae1a432ab1fe79ae53129ededeaece35a2dc14d upstream.
+commit e36215d87f301f9567c8c99fd34e6c3521a94ddf upstream.
 
-Clang warns:
+The extra pair of parantheses is not needed and causes clang to generate
+warnings about the DM_DEV_CREATE_CMD comparison in validate_params().
 
-drivers/input/mousedev.c:653:63: error: implicit conversion from 'int'
-to 'signed char' changes value from 200 to -56
-[-Wconstant-conversion]
-  client->ps2[1] = 0x60; client->ps2[2] = 3; client->ps2[3] = 200;
-                                                            ~ ^~~
-As the PS2 data is really a stream of bytes, let's switch to using u8 type
-for it, which silences this warning.
+Also remove another double parentheses that doesn't cause a warning.
 
-Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mousedev.c |   62 +++++++++++++++++++++++++----------------------
- 1 file changed, 34 insertions(+), 28 deletions(-)
+ drivers/md/dm-ioctl.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/input/mousedev.c
-+++ b/drivers/input/mousedev.c
-@@ -15,6 +15,7 @@
- #define MOUSEDEV_MINORS		31
- #define MOUSEDEV_MIX		63
+--- a/drivers/md/dm-ioctl.c
++++ b/drivers/md/dm-ioctl.c
+@@ -1777,12 +1777,12 @@ static int validate_params(uint cmd, str
+ 	    cmd == DM_LIST_VERSIONS_CMD)
+ 		return 0;
  
-+#include <linux/bitops.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/poll.h>
-@@ -103,7 +104,7 @@ struct mousedev_client {
- 	spinlock_t packet_lock;
- 	int pos_x, pos_y;
- 
--	signed char ps2[6];
-+	u8 ps2[6];
- 	unsigned char ready, buffer, bufsiz;
- 	unsigned char imexseq, impsseq;
- 	enum mousedev_emul mode;
-@@ -291,11 +292,10 @@ static void mousedev_notify_readers(stru
+-	if ((cmd == DM_DEV_CREATE_CMD)) {
++	if (cmd == DM_DEV_CREATE_CMD) {
+ 		if (!*param->name) {
+ 			DMWARN("name not supplied when creating device");
+ 			return -EINVAL;
  		}
- 
- 		client->pos_x += packet->dx;
--		client->pos_x = client->pos_x < 0 ?
--			0 : (client->pos_x >= xres ? xres : client->pos_x);
-+		client->pos_x = clamp_val(client->pos_x, 0, xres);
-+
- 		client->pos_y += packet->dy;
--		client->pos_y = client->pos_y < 0 ?
--			0 : (client->pos_y >= yres ? yres : client->pos_y);
-+		client->pos_y = clamp_val(client->pos_y, 0, yres);
- 
- 		p->dx += packet->dx;
- 		p->dy += packet->dy;
-@@ -571,44 +571,50 @@ static int mousedev_open(struct inode *i
- 	return error;
- }
- 
--static inline int mousedev_limit_delta(int delta, int limit)
--{
--	return delta > limit ? limit : (delta < -limit ? -limit : delta);
--}
--
--static void mousedev_packet(struct mousedev_client *client,
--			    signed char *ps2_data)
-+static void mousedev_packet(struct mousedev_client *client, u8 *ps2_data)
- {
- 	struct mousedev_motion *p = &client->packets[client->tail];
-+	s8 dx, dy, dz;
-+
-+	dx = clamp_val(p->dx, -127, 127);
-+	p->dx -= dx;
-+
-+	dy = clamp_val(p->dy, -127, 127);
-+	p->dy -= dy;
- 
--	ps2_data[0] = 0x08 |
--		((p->dx < 0) << 4) | ((p->dy < 0) << 5) | (p->buttons & 0x07);
--	ps2_data[1] = mousedev_limit_delta(p->dx, 127);
--	ps2_data[2] = mousedev_limit_delta(p->dy, 127);
--	p->dx -= ps2_data[1];
--	p->dy -= ps2_data[2];
-+	ps2_data[0] = BIT(3);
-+	ps2_data[0] |= ((dx & BIT(7)) >> 3) | ((dy & BIT(7)) >> 2);
-+	ps2_data[0] |= p->buttons & 0x07;
-+	ps2_data[1] = dx;
-+	ps2_data[2] = dy;
- 
- 	switch (client->mode) {
- 	case MOUSEDEV_EMUL_EXPS:
--		ps2_data[3] = mousedev_limit_delta(p->dz, 7);
--		p->dz -= ps2_data[3];
--		ps2_data[3] = (ps2_data[3] & 0x0f) | ((p->buttons & 0x18) << 1);
-+		dz = clamp_val(p->dz, -7, 7);
-+		p->dz -= dz;
-+
-+		ps2_data[3] = (dz & 0x0f) | ((p->buttons & 0x18) << 1);
- 		client->bufsiz = 4;
- 		break;
- 
- 	case MOUSEDEV_EMUL_IMPS:
--		ps2_data[0] |=
--			((p->buttons & 0x10) >> 3) | ((p->buttons & 0x08) >> 1);
--		ps2_data[3] = mousedev_limit_delta(p->dz, 127);
--		p->dz -= ps2_data[3];
-+		dz = clamp_val(p->dz, -127, 127);
-+		p->dz -= dz;
-+
-+		ps2_data[0] |= ((p->buttons & 0x10) >> 3) |
-+			       ((p->buttons & 0x08) >> 1);
-+		ps2_data[3] = dz;
-+
- 		client->bufsiz = 4;
- 		break;
- 
- 	case MOUSEDEV_EMUL_PS2:
- 	default:
--		ps2_data[0] |=
--			((p->buttons & 0x10) >> 3) | ((p->buttons & 0x08) >> 1);
- 		p->dz = 0;
-+
-+		ps2_data[0] |= ((p->buttons & 0x10) >> 3) |
-+			       ((p->buttons & 0x08) >> 1);
-+
- 		client->bufsiz = 3;
- 		break;
+-	} else if ((*param->uuid && *param->name)) {
++	} else if (*param->uuid && *param->name) {
+ 		DMWARN("only supply one of name or uuid, cmd(%u)", cmd);
+ 		return -EINVAL;
  	}
-@@ -714,7 +720,7 @@ static ssize_t mousedev_read(struct file
- {
- 	struct mousedev_client *client = file->private_data;
- 	struct mousedev *mousedev = client->mousedev;
--	signed char data[sizeof(client->ps2)];
-+	u8 data[sizeof(client->ps2)];
- 	int retval = 0;
- 
- 	if (!client->ready && !client->buffer && mousedev->exist &&
