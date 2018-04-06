@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/3siOcujMLd7FTenyDGTe4LkS8owJkEjy4zeq4ck2sFnYFiaGepDIPuNaCXz/FB6bImsZV
-ARC-Seal: i=1; a=rsa-sha256; t=1523022153; cv=none;
+X-Google-Smtp-Source: AIpwx485qXjLYn7rqOIWtu5m5KQKCZQ17Bn3EHf1hfvfIN5zr/ghJcX2BVYUX/oZDTosLqchPuYo
+ARC-Seal: i=1; a=rsa-sha256; t=1523022150; cv=none;
         d=google.com; s=arc-20160816;
-        b=M5hpp/7YCnb8M/AlATlx1mhXqQZNs6iUjx/BYmbFQlsyg3kB7i6k5cFcZuRRvbmHE3
-         cOSq6tZfQ9AW4YOlBZN/UH7INsNciXTKAO7WnqCrnvzmg/Bdr4Glc2I27Q5mZuzLTsyk
-         VjcFeDW/SrrPnt6M7s6Wt61wRwnLZfSZihEILAacaJRVgy4x+SGjsUcW6zJJr3HJ59gE
-         hiclg4BF9CMhzCEXRd8SBhlDVUnJSAYy526XooqrJr9//nhokx1AtC5XTsD3leFkZRef
-         0hgu4clYMX34AVQOVeEQsYar3qi/3cdTavHhZ2fM2nGquZeWSzW26iNgEzwqiHqzcfQ4
-         hXgQ==
+        b=1It7boUoGJUGrP7bJWu47sz5swUdFY/MT0PM8lb6yMidctwnjUPHjBAP66qqTGE+KR
+         qL2Xf+0uF3LMJZqCLnEcng7jGx54lFu9eMylGLxHVf5ssZ0Of1J30KM4KEMt7XPLCRIP
+         soKTiZY4MJQNoSiD6wm1ZzH6seiyN6ElTbE4IEqW0rmEeTZdOGwdcLM780sicRdP6FS/
+         N69iQaOHhP6ibjCmJq/RG03tUY7mLKJGETwUX573SBiRpfm4wHb63mCVWNREYDPwor7A
+         Q/VABYDm0udubyycI+eW6lokzJyfiFqxaVtRC/Qf0V7ba3PzTLj213R9rZi3ys7SwLNJ
+         eEmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LLb/3uOLtx9ddPwcJfApz5excuX/k2hhXSNwZnbUivs=;
-        b=k1DgQNZ5I2cO28v8aKu7OsnwEsmdU/DM6220z1L6M4y3gcgPj/FiGSUNXiGPI6AQ4r
-         w3PuULlZRqhEmff7lodhLndburVD6GtYf8xyO5ksA6oihmdpL6Rxe5CP/8pgm7FNBant
-         I0FqLXCXE9F9W1yYfSSC/92+v1vswiyH90ouMlIhSzO4cgCPZUnylHffQj9DXz3bmB2d
-         W+sXMx77TxYjekJyfGqj+BtdQlAMs05kMpawXUg3hgCR1V+m6BbmHEG5Ypg5aOwES7ES
-         h6rj6DzSUsZcijnIUUTt8sSHomck9xGbML9dA9pdtbkHsKZkbIugNuQjm1vwEC4gbHEp
-         kJUA==
+        bh=ia6k1I8n668hnHD3OTrUNhpku4FwYs4LbWEGE9oNcRA=;
+        b=JvVPyj/yC5ECXT30dqvRUu5zi0/HukhH6UCBhoJmZEUO5Fw0RRrfRMREHKotrwNJcb
+         q5j/gJUrVolZhyYUu2tgXIlZJndSYSbLUIb3n7DjoqbKPFDKCkeQKolZmMT8BiFwuvm6
+         uZwF1LzcEZ3byCR5yWcKyxbjfryG4nu76KP8hUHXFpG0B0LfGTpQnS3Te004W3QPxJTB
+         qexNdOnH2pF7UHu9uSGyDA50hWqHbAulUC1A/taqp9OmAa+kxTXb+EiEjuQ4nKqI26LW
+         XfpfFFY243phiPgTCBNuPcZ1i8ZGVWeU8XrOrZANfW/3MDyHmcpo4NoP44Qf6zeJeu/1
+         x0rA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>
-Subject: [PATCH 4.15 45/72] mei: remove dev_err message on an unsupported ioctl
-Date: Fri,  6 Apr 2018 15:24:20 +0200
-Message-Id: <20180406084352.750538432@linuxfoundation.org>
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.15 18/72] powerpc/64s: Fix i-side SLB miss bad address handler saving nonvolatile GPRs
+Date: Fri,  6 Apr 2018 15:23:53 +0200
+Message-Id: <20180406084350.948403208@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003580077452612?=
-X-GMAIL-MSGID: =?utf-8?q?1597004477537210612?=
+X-GMAIL-THRID: =?utf-8?q?1597003860218571411?=
+X-GMAIL-MSGID: =?utf-8?q?1597004475095929178?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,30 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit bb0829a741792b56c908d7745bc0b2b540293bcc upstream.
+commit 52396500f97c53860164debc7d4f759077853423 upstream.
 
-Currently the driver spams the kernel log on unsupported ioctls which is
-unnecessary as the ioctl returns -ENOIOCTLCMD to indicate this anyway.
-I suspect this was originally for debugging purposes but it really is not
-required so remove it.
+The SLB bad address handler's trap number fixup does not preserve the
+low bit that indicates nonvolatile GPRs have not been saved. This
+leads save_nvgprs to skip saving them, and subsequent functions and
+return from interrupt will think they are saved.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: stable <stable@vger.kernel.org>
+This causes kernel branch-to-garbage debugging to not have correct
+registers, can also cause userspace to have its registers clobbered
+after a segfault.
+
+Fixes: f0f558b131db ("powerpc/mm: Preserve CFAR value on SLB miss caused by access to bogus address")
+Cc: stable@vger.kernel.org # v4.9+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mei/main.c |    1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/kernel/exceptions-64s.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/mei/main.c
-+++ b/drivers/misc/mei/main.c
-@@ -507,7 +507,6 @@ static long mei_ioctl(struct file *file,
- 		break;
- 
- 	default:
--		dev_err(dev->dev, ": unsupported ioctl %d.\n", cmd);
- 		rets = -ENOIOCTLCMD;
- 	}
- 
+--- a/arch/powerpc/kernel/exceptions-64s.S
++++ b/arch/powerpc/kernel/exceptions-64s.S
+@@ -706,7 +706,7 @@ EXC_COMMON_BEGIN(bad_addr_slb)
+ 	ld	r3, PACA_EXSLB+EX_DAR(r13)
+ 	std	r3, _DAR(r1)
+ 	beq	cr6, 2f
+-	li	r10, 0x480		/* fix trap number for I-SLB miss */
++	li	r10, 0x481		/* fix trap number for I-SLB miss */
+ 	std	r10, _TRAP(r1)
+ 2:	bl	save_nvgprs
+ 	addi	r3, r1, STACK_FRAME_OVERHEAD
