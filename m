@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48/ZgaeeVZcbOoYhOTRfxnmnciD1TiOh+KKWqWjVg35apYK4/w4ceBlHXe2OIpZ44Sn9tye
-ARC-Seal: i=1; a=rsa-sha256; t=1523022092; cv=none;
+X-Google-Smtp-Source: AIpwx49ssPfYtsxvVxxqOn5HwAnVcaLhqhDM5+4g4pHWUc12/qt72Llup1sXH6iEd5q2GTpPLlcP
+ARC-Seal: i=1; a=rsa-sha256; t=1523022089; cv=none;
         d=google.com; s=arc-20160816;
-        b=U4ji49biiMsPEBiyKCm8QsSVO93sLTf/mcnBr/9qlLqd/5nIsB/WAcok/d3xVruElk
-         P591qu2ccBuxId/q7wYSfgTsYJAgmX9mcV6+reBL2PhhzLLPkEnAvxn5MG2H3IcAr7c1
-         NYgmYp+/T5IIhZ80/dRoHoukWizYjtaCZjRj1aJSaKvG8pM2xOCar6izzC5XnwfRqNZv
-         Qz6DnzC1aEPICc0alXMeTDlpQqP78EfC9tBRSUOutK3FZIbI2olH8fIz2JPF+DDi/3ah
-         sOL+uIQKl7iOSpIyJaaXHQ98lfg0G6tXmF4ekUNOptTC8dnBn7H/rVpwxQPA8xNmnqXq
-         yQ+Q==
+        b=fQzsFMcUTU9JK+kbzy5zi9hMyYcmJ4b4h4fbdN53vPN03vqiTkuod343cwbACO/yVR
+         6R70uSELeiVDj0UnFindLybkjiJMOak4cb8EnHs72GjhwQhozIBXGl5xe56cgXBDluLT
+         SCCxv4Fy6gXl4xjticXkzpoFD6/jS8q8P91bs07cvbmERi/nFUosG4YZkxLOzXkGUiLZ
+         U5UTUXM55sNoNlxhp3q6GkSJRUHk+Cxl3yo3GHdMSMBLztno3YH4+sImU/EkvZo53ayI
+         WeIWr+rQ4yg62HTIV2GbwkePklZC9tSh+D9VPNgh1feUFVWaQwNNiKxPSiwva0jJw7Y/
+         yfHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PmgFJLF4NPQEadQNlajMpfTYB63GMIYqj61X7j3XZIg=;
-        b=uXiYxaevpLXCwZcdLU9xeKRUfa9scjccZASNXHkXqCsT355Q9VSWUqmlY8BUU5Bd+a
-         izzXHLblV2116cFhZCI5pNZZ4i6aGoxsiu5XZImK5XFVB6OIg2XBIgl9xE9l57latoSH
-         O0Haqy5XCMZUXS4y+HKlaHfYRZKIn4a8BFZ3UsMiN3uA0SuR1dKVFOMqi8xrNFg5MMjz
-         +NSSLjTuddy0q9NYC51obHKdR2thDxMt2uhuHOXNQM2w+EbVXTJvk2ehlwN0Aza9F+XM
-         bew8MpHfpBcGWiIap3jSIpDQ2Qs2tMh0FVHV/R7yKAGTKVXh+mo0PkhdUG2mBrkx1UkA
-         ABTg==
+        bh=ki5hG4jSZc/xUhF00IgL28+l3isLRZdMtAx6w1eHw64=;
+        b=u2wsdnp8Cd682MxEpYvCUrUTRDBMVqIvb52qPl0jVV7BkCqQBOLZpt+zRV+CsYAl2M
+         g1Jpxl9ly7EBRAg/p4go/oxwl+Hg7CMHYdDQUAef3DHmOvwH+y2xTzB7FvFWgIkaPsGW
+         DryJRhj+em8GRMUGF9V7it2gwBJ/yV3jrs2MbZJbulkmkB/oW/9id80nKVcsk5R788ax
+         togipWH0CE83Ju0kedlkDxYUt8ZJWF5TrjiRfM7XSU4WZP5pEf6wUY3oOpBWsXtr0Mp9
+         6e8WBWx8bOu4u3Zpw3Ia84X2AeBAOc6pn1Fn0ty9Q0KdGTLwveDkYMZOLyjAsxTm4zNk
+         oQWw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+7b62c837c2516f8f38c8@syzkaller.appspotmail.com,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.15 25/72] RDMA/ucma: Check that device is connected prior to access it
-Date: Fri,  6 Apr 2018 15:24:00 +0200
-Message-Id: <20180406084351.473443148@linuxfoundation.org>
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Balbir Singh <bsingharora@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.15 16/72] powerpc/mm: Workaround Nest MMU bug with TLB invalidations
+Date: Fri,  6 Apr 2018 15:23:51 +0200
+Message-Id: <20180406084350.809452852@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003719848269654?=
-X-GMAIL-MSGID: =?utf-8?q?1597004414204260189?=
+X-GMAIL-THRID: =?utf-8?q?1597004411006847716?=
+X-GMAIL-MSGID: =?utf-8?q?1597004411006847716?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,87 +50,116 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit 4b658d1bbc16605330694bb3ef2570c465ef383d upstream.
+commit 80a4ae202f2d319eced8bbf612a4e8b0f11c21f5 upstream.
 
-Add missing check that device is connected prior to access it.
+On POWER9 the Nest MMU may fail to invalidate some translations when
+doing a tlbie "by PID" or "by LPID" that is targeted at the TLB only
+and not the page walk cache.
 
-[   55.358652] BUG: KASAN: null-ptr-deref in rdma_init_qp_attr+0x4a/0x2c0
-[   55.359389] Read of size 8 at addr 00000000000000b0 by task qp/618
-[   55.360255]
-[   55.360432] CPU: 1 PID: 618 Comm: qp Not tainted 4.16.0-rc1-00071-gcaf61b1b8b88 #91
-[   55.361693] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
-[   55.363264] Call Trace:
-[   55.363833]  dump_stack+0x5c/0x77
-[   55.364215]  kasan_report+0x163/0x380
-[   55.364610]  ? rdma_init_qp_attr+0x4a/0x2c0
-[   55.365238]  rdma_init_qp_attr+0x4a/0x2c0
-[   55.366410]  ucma_init_qp_attr+0x111/0x200
-[   55.366846]  ? ucma_notify+0xf0/0xf0
-[   55.367405]  ? _get_random_bytes+0xea/0x1b0
-[   55.367846]  ? urandom_read+0x2f0/0x2f0
-[   55.368436]  ? kmem_cache_alloc_trace+0xd2/0x1e0
-[   55.369104]  ? refcount_inc_not_zero+0x9/0x60
-[   55.369583]  ? refcount_inc+0x5/0x30
-[   55.370155]  ? rdma_create_id+0x215/0x240
-[   55.370937]  ? _copy_to_user+0x4f/0x60
-[   55.371620]  ? mem_cgroup_commit_charge+0x1f5/0x290
-[   55.372127]  ? _copy_from_user+0x5e/0x90
-[   55.372720]  ucma_write+0x174/0x1f0
-[   55.373090]  ? ucma_close_id+0x40/0x40
-[   55.373805]  ? __lru_cache_add+0xa8/0xd0
-[   55.374403]  __vfs_write+0xc4/0x350
-[   55.374774]  ? kernel_read+0xa0/0xa0
-[   55.375173]  ? fsnotify+0x899/0x8f0
-[   55.375544]  ? fsnotify_unmount_inodes+0x170/0x170
-[   55.376689]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
-[   55.377522]  ? handle_mm_fault+0x174/0x320
-[   55.378169]  vfs_write+0xf7/0x280
-[   55.378864]  SyS_write+0xa1/0x120
-[   55.379270]  ? SyS_read+0x120/0x120
-[   55.379643]  ? mm_fault_error+0x180/0x180
-[   55.380071]  ? task_work_run+0x7d/0xd0
-[   55.380910]  ? __task_pid_nr_ns+0x120/0x140
-[   55.381366]  ? SyS_read+0x120/0x120
-[   55.381739]  do_syscall_64+0xeb/0x250
-[   55.382143]  entry_SYSCALL_64_after_hwframe+0x21/0x86
-[   55.382841] RIP: 0033:0x7fc2ef803e99
-[   55.383227] RSP: 002b:00007fffcc5f3be8 EFLAGS: 00000217 ORIG_RAX: 0000000000000001
-[   55.384173] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fc2ef803e99
-[   55.386145] RDX: 0000000000000057 RSI: 0000000020000080 RDI: 0000000000000003
-[   55.388418] RBP: 00007fffcc5f3c00 R08: 0000000000000000 R09: 0000000000000000
-[   55.390542] R10: 0000000000000000 R11: 0000000000000217 R12: 0000000000400480
-[   55.392916] R13: 00007fffcc5f3cf0 R14: 0000000000000000 R15: 0000000000000000
-[   55.521088] Code: e5 4d 1e ff 48 89 df 44 0f b6 b3 b8 01 00 00 e8 65 50 1e ff 4c 8b 2b 49
-8d bd b0 00 00 00 e8 56 50 1e ff 41 0f b6 c6 48 c1 e0 04 <49> 03 85 b0 00 00 00 48 8d 78 08
-48 89 04 24 e8 3a 4f 1e ff 48
-[   55.525980] RIP: rdma_init_qp_attr+0x52/0x2c0 RSP: ffff8801e2c2f9d8
-[   55.532648] CR2: 00000000000000b0
-[   55.534396] ---[ end trace 70cee64090251c0b ]---
+This works around it by forcing such invalidations to escalate to
+RIC=2 (full invalidation of TLB *and* PWC) when a coprocessor is in
+use for the context.
 
-Fixes: 75216638572f ("RDMA/cma: Export rdma cm interface to userspace")
-Fixes: d541e45500bd ("IB/core: Convert ah_attr from OPA to IB when copying to user")
-Reported-by: <syzbot+7b62c837c2516f8f38c8@syzkaller.appspotmail.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 03b8abedf4f4 ("cxl: Enable global TLBIs for cxl contexts")
+Cc: stable@vger.kernel.org # v4.15+
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Balbir Singh <bsingharora@gmail.com>
+[balbirs: fixed spelling and coding style to quiesce checkpatch.pl]
+Tested-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/powerpc/mm/tlb-radix.c |   50 +++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 43 insertions(+), 7 deletions(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1165,6 +1165,11 @@ static ssize_t ucma_init_qp_attr(struct
- 	if (IS_ERR(ctx))
- 		return PTR_ERR(ctx);
- 
-+	if (!ctx->cm_id->device) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
+--- a/arch/powerpc/mm/tlb-radix.c
++++ b/arch/powerpc/mm/tlb-radix.c
+@@ -85,7 +85,23 @@ static inline void _tlbiel_pid(unsigned
+ static inline void _tlbie_pid(unsigned long pid, unsigned long ric)
+ {
+ 	asm volatile("ptesync": : :"memory");
+-	__tlbie_pid(pid, ric);
 +
- 	resp.qp_attr_mask = 0;
- 	memset(&qp_attr, 0, sizeof qp_attr);
- 	qp_attr.qp_state = cmd.qp_state;
++	/*
++	 * Workaround the fact that the "ric" argument to __tlbie_pid
++	 * must be a compile-time contraint to match the "i" constraint
++	 * in the asm statement.
++	 */
++	switch (ric) {
++	case RIC_FLUSH_TLB:
++		__tlbie_pid(pid, RIC_FLUSH_TLB);
++		break;
++	case RIC_FLUSH_PWC:
++		__tlbie_pid(pid, RIC_FLUSH_PWC);
++		break;
++	case RIC_FLUSH_ALL:
++	default:
++		__tlbie_pid(pid, RIC_FLUSH_ALL);
++	}
+ 	asm volatile("eieio; tlbsync; ptesync": : :"memory");
+ }
+ 
+@@ -245,6 +261,16 @@ void radix__local_flush_tlb_page(struct
+ }
+ EXPORT_SYMBOL(radix__local_flush_tlb_page);
+ 
++static bool mm_needs_flush_escalation(struct mm_struct *mm)
++{
++	/*
++	 * P9 nest MMU has issues with the page walk cache
++	 * caching PTEs and not flushing them properly when
++	 * RIC = 0 for a PID/LPID invalidate
++	 */
++	return atomic_read(&mm->context.copros) != 0;
++}
++
+ #ifdef CONFIG_SMP
+ void radix__flush_tlb_mm(struct mm_struct *mm)
+ {
+@@ -255,9 +281,12 @@ void radix__flush_tlb_mm(struct mm_struc
+ 		return;
+ 
+ 	preempt_disable();
+-	if (!mm_is_thread_local(mm))
+-		_tlbie_pid(pid, RIC_FLUSH_TLB);
+-	else
++	if (!mm_is_thread_local(mm)) {
++		if (mm_needs_flush_escalation(mm))
++			_tlbie_pid(pid, RIC_FLUSH_ALL);
++		else
++			_tlbie_pid(pid, RIC_FLUSH_TLB);
++	} else
+ 		_tlbiel_pid(pid, RIC_FLUSH_TLB);
+ 	preempt_enable();
+ }
+@@ -369,10 +398,14 @@ void radix__flush_tlb_range(struct vm_ar
+ 	}
+ 
+ 	if (full) {
+-		if (local)
++		if (local) {
+ 			_tlbiel_pid(pid, RIC_FLUSH_TLB);
+-		else
+-			_tlbie_pid(pid, RIC_FLUSH_TLB);
++		} else {
++			if (mm_needs_flush_escalation(mm))
++				_tlbie_pid(pid, RIC_FLUSH_ALL);
++			else
++				_tlbie_pid(pid, RIC_FLUSH_TLB);
++		}
+ 	} else {
+ 		bool hflush = false;
+ 		unsigned long hstart, hend;
+@@ -482,6 +515,9 @@ static inline void __radix__flush_tlb_ra
+ 	}
+ 
+ 	if (full) {
++		if (!local && mm_needs_flush_escalation(mm))
++			also_pwc = true;
++
+ 		if (local)
+ 			_tlbiel_pid(pid, also_pwc ? RIC_FLUSH_ALL : RIC_FLUSH_TLB);
+ 		else
