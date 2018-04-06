@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx490arHqzJd+2SUr67ugwl1HjX//wdxw62C9VmBP4doHZ56XF08/FDTyATtJLCmV8thD/AfJ
-ARC-Seal: i=1; a=rsa-sha256; t=1523021994; cv=none;
+X-Google-Smtp-Source: AIpwx4+dRJXV5elkWEepvr4Vj3PJPdrMYKP2XqZOa21GcQOrBnrHf+eR8as8J3W2+TASeQMGedGj
+ARC-Seal: i=1; a=rsa-sha256; t=1523021991; cv=none;
         d=google.com; s=arc-20160816;
-        b=Zjt+dwlCaxDWVq4+QZ0qp5rkzv+shoRVKYHPIVZtc7V6S8k8bectOADZPxjj3VQapY
-         zHFx+tRYH0c4K1kMgbvyn1j7+wyzT6YpuBKOd/X+JJV1qv0q9W9BF959liy/ffFpb97P
-         7ThO7zGQr9KokijAzoLjUgz41WUZh6L8lhNCiKb4xulBiyrVrw5RXhS+J1y3FMgJk3/f
-         63+QWpsSUyRR1KfpJqitXJKX7deMBZQjE8Dv+xJ7W/TZC95paHHF5ZLFKJHCkok0A92I
-         LLN2siqE31xpPCuB8xVORYp3Wc+LM4uJwY6bB09d5Xz5Nn26mko+chYZ8ZWl5FpE/xz7
-         SoCg==
+        b=geavj6O9FY1QACjv/4GthM6GBiYY9NwFGfVLs6YfettEFa/ulI6Mq4cHsPOOk4zz1g
+         o4A1kS0LulJaWSFFCHkn+t4dnZai187gayOkIq6TCiwKdyD5md67jyntjfSjwVCBO8O1
+         vtJIXuc3/4/v3kT+1dIrIIwyJ9Bb2UmKMZmOAFIqqIGYxd4OVNqMVR1ZMpHH5IqAeCLi
+         WlAxhVyd4XZkeagFPlUs8fJpswI1g0te9zb54jlV+nf0bj3I6Vx20W3VRry7XW4owUrt
+         3T0S7zSI+63A0mgM3VJW/3fFEsZ30wj6IoPqV83fuLLiaiztfIe3I5sGRj3RUccwlck8
+         l1QA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ve3wjmHCZFhkSK9BHwZ17VDPZqDicem5ktJFDjDEEL8=;
-        b=Ia3Amu5X3RG+IHfp+3YGh2kqei48g9OBod/bl+1Gb+TWA7gguUh9saPWp8BvMUXFYk
-         rZKFiH/0GAq9tNt0LQEAFho08rAGG3Cme9CJTuyyBI0IfbEJyrCLVVZF6RP/LLmWHbX+
-         xQ7uMIRiA+PBG+LxeZH+owaIulxBZlZ5h4S/VIvb671MEWTPJFCbwVwZZ8HW6knaNeMN
-         gihtvxE9JwcSNjXQ4Av2tx3liKYovHOQQelf1pNv3+RrexoktF1mfudI8RuFy/DlFEuI
-         hYXGnPmgxukgSi3OVbie3fTvGrnX7jsc+I8wMntUwhay63cfgnbKrR6Zh2j/k9n5l736
-         72sw==
+        bh=Cf5LutxhstdE/rs44mQrVwdOZaEfnGp1hYJbITa/Sok=;
+        b=EMR2itbjoLZH0RQXqPi+PLbg6RNrwZh7Zip56VYi9AuSqLR4/uUygwfys0rJzf3CFu
+         9Vm8sUdfJdMZixaRU5PejTVT1ztE/J7EgKWbDgz6+62/bQVRTAIAyh+ILQZD0AKZZnLR
+         kRlgK6Ptbc0q4U4ZHvK5PzAchjHkxQILPSyY3sj62966pgB1wNMzTKsgdcpg7gEttcJQ
+         lrFFLivwXKncfysDqKuGByRvXg9zyg5lLFmr+t/nLhqElLgL1SbOs8ojBhSXIli8wZIo
+         59bx0McHKJ31Be+OfxfWerWSUGXr8T4Ubkp7mJ0Ggi+vUVRPC+2YANu3sSUyRw7Ertd8
+         /nKA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ondrej Zary <linux@rainbow-software.org>,
+	Dennis Wassenberg <dennis.wassenberg@secunet.com>,
 	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 59/67] Input: i8042 - enable MUX on Sony VAIO VGN-CS series to fix touchpad
-Date: Fri,  6 Apr 2018 15:24:29 +0200
-Message-Id: <20180406084348.305394712@linuxfoundation.org>
+Subject: [PATCH 4.14 58/67] Input: i8042 - add Lenovo ThinkPad L460 to i8042 reset list
+Date: Fri,  6 Apr 2018 15:24:28 +0200
+Message-Id: <20180406084348.228109399@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003629992266331?=
-X-GMAIL-MSGID: =?utf-8?q?1597004311182122661?=
+X-GMAIL-THRID: =?utf-8?q?1597003626904788009?=
+X-GMAIL-MSGID: =?utf-8?q?1597004307367862773?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,69 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ondrej Zary <linux@rainbow-software.org>
+From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 
-commit 04bb1719c4de94700056241d4c0fe3c1413f5aff upstream.
+commit b56af54ac78c54a519d82813836f305d7f76ef27 upstream.
 
-The touch sensor buttons on Sony VAIO VGN-CS series laptops (e.g.
-VGN-CS31S) are a separate PS/2 device. As the MUX is disabled for all
-VAIO machines by the nomux blacklist, the data from touch sensor
-buttons and touchpad are combined. The protocol used by the buttons is
-probably similar to the touchpad protocol (both are Synaptics) so both
-devices get enabled. The controller combines the data, creating a mess
-which results in random button clicks, touchpad stopping working and
-lost sync error messages:
-psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 4
-psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
-psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
-psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
-psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
-psmouse serio1: issuing reconnect request
+Reset i8042 before probing because of insufficient BIOS initialisation of
+the i8042 serial controller. This makes Synaptics touchpad detection
+possible. Without resetting the Synaptics touchpad is not detected because
+there are always NACK messages from AUX port.
 
-Add a new i8042_dmi_forcemux_table whitelist with VGN-CS.
-With MUX enabled, touch sensor buttons are detected as separate device
-(and left disabled as there's currently no driver), fixing all touchpad
-problems.
-
-Signed-off-by: Ondrej Zary <linux@rainbow-software.org>
+Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/serio/i8042-x86ia64io.h |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/input/serio/i8042-x86ia64io.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
 --- a/drivers/input/serio/i8042-x86ia64io.h
 +++ b/drivers/input/serio/i8042-x86ia64io.h
-@@ -530,6 +530,20 @@ static const struct dmi_system_id __init
- 	{ }
- };
- 
-+static const struct dmi_system_id i8042_dmi_forcemux_table[] __initconst = {
-+	{
-+		/*
-+		 * Sony Vaio VGN-CS series require MUX or the touch sensor
-+		 * buttons will disturb touchpad operation
-+		 */
+@@ -621,6 +621,13 @@ static const struct dmi_system_id __init
+ 		},
+ 	},
+ 	{
++		/* Lenovo ThinkPad L460 */
 +		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "VGN-CS"),
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad L460"),
 +		},
 +	},
-+	{ }
-+};
-+
- /*
-  * On some Asus laptops, just running self tests cause problems.
-  */
-@@ -1170,6 +1184,9 @@ static int __init i8042_platform_init(vo
- 	if (dmi_check_system(i8042_dmi_nomux_table))
- 		i8042_nomux = true;
- 
-+	if (dmi_check_system(i8042_dmi_forcemux_table))
-+		i8042_nomux = false;
-+
- 	if (dmi_check_system(i8042_dmi_notimeout_table))
- 		i8042_notimeout = true;
- 
++	{
+ 		/* Clevo P650RS, 650RP6, Sager NP8152-S, and others */
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "Notebook"),
