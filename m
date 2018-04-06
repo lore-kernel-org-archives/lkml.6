@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49NsfQGXIiSwnvg2n0Ol4lPKg2S8Lr5YNZolYbvsi9Oj9nQ0DH+xga8sfzdtX0FCLxWmxnJ
-ARC-Seal: i=1; a=rsa-sha256; t=1523021575; cv=none;
+X-Google-Smtp-Source: AIpwx4+KVyluoSeIn46IGJ6tph/dIkuud2reThAZpuRykKWR2RvWntR1UBCFCgYewl9QpHzxdPG4
+ARC-Seal: i=1; a=rsa-sha256; t=1523021573; cv=none;
         d=google.com; s=arc-20160816;
-        b=e+mpKTd70slNehWlidNFDwzP1ARUIaE7OroXsmE6D1aMfTjK1MwolHJr8LZ7D6Wj6M
-         tyN8CSRP6FviDwgEaH1TIp2HRJEFU9yzyw6dKdW8HhHYhXvz/wElbsRixe7wadht8XAB
-         BR4QoX91bgqBAH5QVjpLXx9xkdo8qOaAh9OJBqzgffgg08H2NbD4aZ+uTr+GeGi5Rft2
-         jr/dIj0r6znBWED996smd4DejfaZNapctuQLjdYazQksgGtvRRKB2Q1dn9c0591Aq2zm
-         XXXcSv7kq8FZAcsfRjzkeGAojHT9Mfu294Mh9/WP6FwB+IUHh3SCNJKIByKNBIRaR9do
-         pH4A==
+        b=bKSmEglvhLmXakhynviFJXsijBwntihq5WRmzaHn79AdHNsAzpM2WKcnmw2jyZoxKb
+         /T47sOrlMLfiMfHQGMDzjl/iHj4NysKYQhqvrmGU+qJxrIcfFEcAfdrsjZr6iJIDKBb5
+         gMpjmaxfy4fZoYUDlgM9axaAmQj0F3IHMfy00oz/8Lqn+wLG0dY3YVMJZ1qrbIJY9L7M
+         vLJ844kKDjHVej6696kp+tOVKOxoHlaP0J1RKOi3yVNIzAJtI7RGA8DBEVBztGJQ4E6e
+         FKrDExXYJLtzG2fls5rDvZOEcLWfsROZOsYlX6x0TpNPeJw4eN3s0/MPjd77p51WRpra
+         72lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dv0jBopd4ODG90GbyjbU6K8CMf9mX5sm+kCUjKIoyNs=;
-        b=iXqyTnNUyRtj2zBLxKbZR2Y2bS4eYR1XIWILaxi7wRv2DEWIspfrUfOJOZrtWbDuvX
-         n+xquY1mJaa1acLwKqe4DGv0Ph+0aDJ5FAn5n0XTOTbqiZ5n9Q7JV42lZnpWOL5rhCoY
-         jgC5EWKqMLuYEIc7g5cewRDUTP7rqUX18f4Ax/mWWAS+f4mFD9lqna4SvWk4SBCCQt/M
-         s49aQttYW9yPGlt6uohvxEY1ohIr1e/tQqd5lnwfiytnW48KACvPV+voynUps8O88HLG
-         CBgjYFzkmXiGrCHPTk4JzA9IQGE1b5DGrXk3OH0cexnnFatAGValmqd2+qzURBLPqmoh
-         qeEg==
+        bh=TVEwuBiyTFjW/iduPe+5y+q0h18WMq2VVW2728aPwec=;
+        b=ewlNOHlz5M+3YrKIIM4iuioYxhoN08CXAQ9yKjwGHpqLaJ4LoJbpzMyZ6W9U850uBc
+         82919gD1zwXvsVci/+L+/ZY9LyWhJGPNRqBVFWi58uH72L/4MCK0DTOB/AxxNXr6HVHp
+         CHzP88UTZrcupy6kTB3qTlrsYDr855tL/QGZNe6Gl/m7JrFHTfIMfAYIhXlSpf+OCqU1
+         EWpS6vSX6QarUhkUciCQsvk4X97fWAIEgzh7m6R0Dverfgj6maw5aDqljAG7IKwvzkca
+         HWgw5WINgrGOp2tr/AKvU0TXHs0M4ko1IbZy+0e22s/Sb/nYeumENjkHYpHN0Du3LW+s
+         vidw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Matthias Kaehlcke <mka@chromium.org>,
-	Mike Snitzer <snitzer@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 014/102] dm ioctl: remove double parentheses
-Date: Fri,  6 Apr 2018 15:22:55 +0200
-Message-Id: <20180406084333.638740688@linuxfoundation.org>
+Subject: [PATCH 4.9 013/102] PCI: Make PCI_ROM_ADDRESS_MASK a 32-bit constant
+Date: Fri,  6 Apr 2018 15:22:54 +0200
+Message-Id: <20180406084333.495241476@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003760341389885?=
-X-GMAIL-MSGID: =?utf-8?q?1597003872260658028?=
+X-GMAIL-THRID: =?utf-8?q?1597003742924969692?=
+X-GMAIL-MSGID: =?utf-8?q?1597003869064916597?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,36 +52,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Matthias Kaehlcke <mka@chromium.org>
 
-commit e36215d87f301f9567c8c99fd34e6c3521a94ddf upstream.
+commit 76dc52684d0f72971d9f6cc7d5ae198061b715bd upstream.
 
-The extra pair of parantheses is not needed and causes clang to generate
-warnings about the DM_DEV_CREATE_CMD comparison in validate_params().
+A 64-bit value is not needed since a PCI ROM address consists in 32 bits.
+This fixes a clang warning about "implicit conversion from 'unsigned long'
+to 'u32'".
 
-Also remove another double parentheses that doesn't cause a warning.
+Also remove now unnecessary casts to u32 from __pci_read_base() and
+pci_std_update_resource().
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-ioctl.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/probe.c           |    2 +-
+ drivers/pci/setup-res.c       |    2 +-
+ include/uapi/linux/pci_regs.h |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -1777,12 +1777,12 @@ static int validate_params(uint cmd, str
- 	    cmd == DM_LIST_VERSIONS_CMD)
- 		return 0;
- 
--	if ((cmd == DM_DEV_CREATE_CMD)) {
-+	if (cmd == DM_DEV_CREATE_CMD) {
- 		if (!*param->name) {
- 			DMWARN("name not supplied when creating device");
- 			return -EINVAL;
- 		}
--	} else if ((*param->uuid && *param->name)) {
-+	} else if (*param->uuid && *param->name) {
- 		DMWARN("only supply one of name or uuid, cmd(%u)", cmd);
- 		return -EINVAL;
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -231,7 +231,7 @@ int __pci_read_base(struct pci_dev *dev,
+ 			res->flags |= IORESOURCE_ROM_ENABLE;
+ 		l64 = l & PCI_ROM_ADDRESS_MASK;
+ 		sz64 = sz & PCI_ROM_ADDRESS_MASK;
+-		mask64 = (u32)PCI_ROM_ADDRESS_MASK;
++		mask64 = PCI_ROM_ADDRESS_MASK;
  	}
+ 
+ 	if (res->flags & IORESOURCE_MEM_64) {
+--- a/drivers/pci/setup-res.c
++++ b/drivers/pci/setup-res.c
+@@ -63,7 +63,7 @@ static void pci_std_update_resource(stru
+ 		mask = (u32)PCI_BASE_ADDRESS_IO_MASK;
+ 		new |= res->flags & ~PCI_BASE_ADDRESS_IO_MASK;
+ 	} else if (resno == PCI_ROM_RESOURCE) {
+-		mask = (u32)PCI_ROM_ADDRESS_MASK;
++		mask = PCI_ROM_ADDRESS_MASK;
+ 	} else {
+ 		mask = (u32)PCI_BASE_ADDRESS_MEM_MASK;
+ 		new |= res->flags & ~PCI_BASE_ADDRESS_MEM_MASK;
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -106,7 +106,7 @@
+ #define PCI_SUBSYSTEM_ID	0x2e
+ #define PCI_ROM_ADDRESS		0x30	/* Bits 31..11 are address, 10..1 reserved */
+ #define  PCI_ROM_ADDRESS_ENABLE	0x01
+-#define PCI_ROM_ADDRESS_MASK	(~0x7ffUL)
++#define PCI_ROM_ADDRESS_MASK	(~0x7ffU)
+ 
+ #define PCI_CAPABILITY_LIST	0x34	/* Offset of first capability list entry */
+ 
