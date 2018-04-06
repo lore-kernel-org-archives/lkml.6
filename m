@@ -1,37 +1,83 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+jIRiopE00ytqCbNnCyCEInGCZXwVRMkJ9XCoGJMZF/Ztz6wLJZPUaGlwbIOti76Gnnbnz
-ARC-Seal: i=1; a=rsa-sha256; t=1523022233; cv=none;
-        d=google.com; s=arc-20160816;
-        b=anqTB3TGMverz9QSqiU3iHzBr1Sz+8WeUjOztGCUYfjOZcSp0ZIvDOHjjjTsU0kbRB
-         w5G6ff9elZTF0e9TawFHUPLIAXSaUSJ2FqQ93OO9JLqrqoCruqTv3weNArhkBd8wmek4
-         eF152p9NATgsSzStyV7LXajvYSn8nir+L5AMKuSRAuFsPQnWDlE2xlrVGkSnZo/SxMv9
-         /fCcRWXtVv8aIH7QgH2M4fyHkMyj4csqwfdwk7+YcSp/7NSzpWHYp1UkagyrFycxsmkX
-         f4k4fT9BITeOvzjumuy46qGLE34yODiMr6+2Pw79LR10EmeOi3/Hf2KV1aRDHL5LtrGH
-         PZ+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=cmPh83y+0/oggWvh9V5lBQjj5UgF7dpZJbSYFvp66J0=;
-        b=lF+ts5Qz5j7f0oyS0uZStmGD5qrMTqBIpCwGKniPbzeCDgYio2ABnugX7Xh9syWqlx
-         Yb/x9NlqUvhiyT1OYLx8PpbJfiqyC5E4S1RLM1aApSqlKKzUN6Cvazdrd620yR4AfR82
-         bJ6tPetpgDTHl1PAuo3gGDFucEdXrwI2vjFDUP2epOFM2rcuPpbvpgEbPnOMaqVlYlAE
-         EDx259qCKINWVeZq5I7aybSoJR4MhTEqyU+yYhWqTWNRfUzxcnH35glIZVwj03SqmmoR
-         Wj2JNhpiTvao3NIuLQ6nSeCqNRnx9436qSbpR0QOq+OMPwdxo+5Y1F1/c+PkjPtWzkk4
-         RcyQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1459510-1523022233-5-4145129092770116262
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523022233; b=HLi6D/2Krxke9o7s0raCukkZyxpMSn6M1+UrUA0MB/uptDQg/O
+    UL1BPvFMHI+iOrBCcwaDzVCR2NPawJsOG9pdz7M0fp5A/vdiDnp1p4lA015/lVha
+    qo3+ccdedscJYzrUvNgPN6NIwG87pm3P5RN0fYuemdaFDNHKhzPTMCK4q9nVoQyl
+    JZq0drPLqKKNVOzwFLxAJN9GoBBUYW2oZNyloXbae4rTAC7BtblkTiI2Vf25Bhju
+    iu30UlBwUNtIXNl9MvUMXu9+iLVrGG5Zq+QO+QTg1sVOtOE8J3gvxeXb6oEAHMCi
+    mhOTYZa5Xgq4fomL4gpoBOpwqqrJivpyBN/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523022233; bh=VmPE82swfQMfgEBXzzmg4KywVpJi45
+    YSQQkYHG/A7EI=; b=KQSTCxpc5Pt2pgTNFyIWEbecTUSRR+Yhr4wCfxG7eVqiMM
+    PHHimRRt0m5jC7rXpNb/EOA8KDaN8d1OaQIvTP2oFk/88Kko4htzIPsTYBZqeoJG
+    jlsC7jp7fPyMqA3cXoJKKZmDxf/PMApvQJG6fOQMw61TUG02CJNNqerO4cozOOGV
+    A0MNmjjIX+Efd1KFMXF4km11PYTteTts9kgemwH5NRb87IoNJ6mrBC/HzhVIF2o+
+    Jh8VLrP/Kci5o25iibOs4uK3PBxnbuAI6ZvlfPMeVcLrMsY7wF4QrH6FRXPf9LoX
+    5/V8xDIdvSy2jztxP4Cr4IfteoLN8hlv8uSvmgZg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfDwLyZ4v2uLi8ootrrVwxJoyX/+RnORgkS5TA+Bi2IHYu2lBHx1kTZ1NZmn27tuXazG1janwXN0vUelh5GR4fwgxYD3Hua9/HxQG6CcCF7JuT+EjsMLF
+    GBskaawkUpX0MwZa+iIWIHdZ3u5Qj9zm96E0k/U1hr9fDxsVHPB5H7ZMTy4zY+hX4kwD6UkOsiNRkuq0Y3yRkNe3ErANdbDv0MlI+7RtD/LVzZ2wAeU9P63c
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=ag1SF4gXAAAA:8 a=1EsaE_6oAAAA:8 a=QyXUC8HyAAAA:8 a=KKAkSRfTAAAA:8
+    a=yMhMjlubAAAA:8 a=zDgdGgVozOWF3o962G4A:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22 a=3ZumFrijQQ-2J9H5h8ct:22 a=cvBusfyB2V15izCimMoJ:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1756558AbeDFNnu (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 09:43:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37454 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756820AbeDFNns (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:43:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Christophe Leroy <christophe.leroy@c-s.fr>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.15 53/72] crypto: talitos - fix IPsec cipher in length
-Date: Fri,  6 Apr 2018 15:24:28 +0200
-Message-Id: <20180406084353.114510304@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 71/72] Revert "cpufreq: Fix governor module removal race"
+Date: Fri,  6 Apr 2018 15:24:46 +0200
+Message-Id: <20180406084354.127651972@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -39,10 +85,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004561260195768?=
-X-GMAIL-MSGID: =?utf-8?q?1597004561260195768?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,104 +95,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: LEROY Christophe <christophe.leroy@c-s.fr>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 2b1227301a8e4729409694e323b72c064c47cb6b upstream.
+This reverts commit a853301f77b5c4feb5e17aebfd92018269525523 which was
+commit a8b149d32b663c1a4105273295184b78f53d33cf upstream.
 
-For SEC 2.x+, cipher in length must contain only the ciphertext length.
-In case of using hardware ICV checking, the ICV length is provided via
-the "extent" field of the descriptor pointer.
+The backport was not correct, so just drop it entirely.
 
-Cc: <stable@vger.kernel.org> # 4.8+
-Fixes: 549bd8bc5987 ("crypto: talitos - Implement AEAD for SEC1 using HMAC_SNOOP_NO_AFEU")
-Reported-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Tested-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/crypto/talitos.c |   36 ++++++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 16 deletions(-)
+ drivers/cpufreq/cpufreq.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1128,10 +1128,10 @@ next:
- 	return count;
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -637,8 +637,6 @@ static int cpufreq_parse_governor(char *
+ 			*governor = t;
+ 			err = 0;
+ 		}
+-		if (t && !try_module_get(t->owner))
+-			t = NULL;
+ 
+ 		mutex_unlock(&cpufreq_governor_mutex);
+ 	}
+@@ -767,10 +765,6 @@ static ssize_t store_scaling_governor(st
+ 		return -EINVAL;
+ 
+ 	ret = cpufreq_set_policy(policy, &new_policy);
+-
+-	if (new_policy.governor)
+-		module_put(new_policy.governor->owner);
+-
+ 	return ret ? ret : count;
  }
  
--static int talitos_sg_map(struct device *dev, struct scatterlist *src,
--		   unsigned int len, struct talitos_edesc *edesc,
--		   struct talitos_ptr *ptr,
--		   int sg_count, unsigned int offset, int tbl_off)
-+static int talitos_sg_map_ext(struct device *dev, struct scatterlist *src,
-+			      unsigned int len, struct talitos_edesc *edesc,
-+			      struct talitos_ptr *ptr, int sg_count,
-+			      unsigned int offset, int tbl_off, int elen)
- {
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
-@@ -1140,6 +1140,7 @@ static int talitos_sg_map(struct device
- 		to_talitos_ptr(ptr, 0, 0, is_sec1);
- 		return 1;
- 	}
-+	to_talitos_ptr_ext_set(ptr, elen, is_sec1);
- 	if (sg_count == 1) {
- 		to_talitos_ptr(ptr, sg_dma_address(src) + offset, len, is_sec1);
- 		return sg_count;
-@@ -1148,7 +1149,7 @@ static int talitos_sg_map(struct device
- 		to_talitos_ptr(ptr, edesc->dma_link_tbl + offset, len, is_sec1);
- 		return sg_count;
- 	}
--	sg_count = sg_to_link_tbl_offset(src, sg_count, offset, len,
-+	sg_count = sg_to_link_tbl_offset(src, sg_count, offset, len + elen,
- 					 &edesc->link_tbl[tbl_off]);
- 	if (sg_count == 1) {
- 		/* Only one segment now, so no link tbl needed*/
-@@ -1162,6 +1163,15 @@ static int talitos_sg_map(struct device
- 	return sg_count;
- }
- 
-+static int talitos_sg_map(struct device *dev, struct scatterlist *src,
-+			  unsigned int len, struct talitos_edesc *edesc,
-+			  struct talitos_ptr *ptr, int sg_count,
-+			  unsigned int offset, int tbl_off)
-+{
-+	return talitos_sg_map_ext(dev, src, len, edesc, ptr, sg_count, offset,
-+				  tbl_off, 0);
-+}
-+
- /*
-  * fill in and submit ipsec_esp descriptor
-  */
-@@ -1179,7 +1189,7 @@ static int ipsec_esp(struct talitos_edes
- 	unsigned int ivsize = crypto_aead_ivsize(aead);
- 	int tbl_off = 0;
- 	int sg_count, ret;
--	int sg_link_tbl_len;
-+	int elen = 0;
- 	bool sync_needed = false;
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
-@@ -1221,17 +1231,11 @@ static int ipsec_esp(struct talitos_edes
- 	 * extent is bytes of HMAC postpended to ciphertext,
- 	 * typically 12 for ipsec
- 	 */
--	sg_link_tbl_len = cryptlen;
--
--	if (is_ipsec_esp) {
--		to_talitos_ptr_ext_set(&desc->ptr[4], authsize, is_sec1);
--
--		if (desc->hdr & DESC_HDR_MODE1_MDEU_CICV)
--			sg_link_tbl_len += authsize;
--	}
-+	if (is_ipsec_esp && (desc->hdr & DESC_HDR_MODE1_MDEU_CICV))
-+		elen = authsize;
- 
--	ret = talitos_sg_map(dev, areq->src, sg_link_tbl_len, edesc,
--			     &desc->ptr[4], sg_count, areq->assoclen, tbl_off);
-+	ret = talitos_sg_map_ext(dev, areq->src, cryptlen, edesc, &desc->ptr[4],
-+				 sg_count, areq->assoclen, tbl_off, elen);
- 
- 	if (ret > 1) {
- 		tbl_off += ret;
