@@ -1,241 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752502AbeDFXZD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 19:25:03 -0400
-Received: from mga02.intel.com ([134.134.136.20]:60186 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751445AbeDFXZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 19:25:01 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,417,1517904000";
-   d="gz'50?scan'50,208,50";a="41336092"
-Date: Sat, 7 Apr 2018 07:24:44 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Alexandru Moise <00moses.alexander00@gmail.com>
-Cc: kbuild-all@01.org, axboe@kernel.dk, tj@kernel.org, shli@fb.com,
-        pombredanne@nexb.com, gregkh@linuxfoundation.org,
-        joseph.qi@linux.alibaba.com, nborisov@suse.com, arnd@arndb.de,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] blk-cgroup: remove entries in blkg_tree before queue
- release
-Message-ID: <201804070510.11shEgxW%fengguang.wu@intel.com>
-References: <20180406150648.GA6378@gmail.com>
+        id S1752110AbeDFXmo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 19:42:44 -0400
+Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:55810 "EHLO
+        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751417AbeDFXmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 19:42:42 -0400
+Date: Fri, 6 Apr 2018 19:42:38 -0400
+From: Wakko Warner <wakko@animx.eu.org>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180406234237.GA6043@animx.eu.org>
+References: <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
+ <20180331221252.GA25573@animx.eu.org>
+ <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
+ <20180401113721.GA8471@animx.eu.org>
+ <20180401163604.GB25011@animx.eu.org>
+ <20180401182723.GA31755@animx.eu.org>
+ <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+ <20180406014644.GA16112@animx.eu.org>
+ <20180406020651.GB16112@animx.eu.org>
+ <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="0OAP2g/MAC+5xKAE"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180406150648.GA6378@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Bart Van Assche wrote:
+> On Thu, 2018-04-05 at 22:06 -0400, Wakko Warner wrote:
+> > I know now why scsi_print_command isn't doing anything.  cmd->cmnd is null.
+> > I added a dev_printk in scsi_print_command where the 2 if statements return.
+> > Logs:
+> > [  29.866415] sr 3:0:0:0: cmd->cmnd is NULL
+> 
+> That's something that should never happen. As one can see in
+> scsi_setup_scsi_cmnd() and scsi_setup_fs_cmnd() both functions initialize
+> that pointer. Since I have not yet been able to reproduce myself what you
+> reported, would it be possible for you to bisect this issue? You will need
+> to follow something like the following procedure (see also
+> https://git-scm.com/docs/git-bisect):
 
---0OAP2g/MAC+5xKAE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I don't know how relevent it is, but this machine boots nfs and exports it's
+dvd drives over iscsi with the target modules.  My scsi_target.lio is at the
+end.  I removed the iqn name.  The options are default except for a few. 
+Non default options I tabbed over.
+eth0 is the nfs/localnet nic and eth1 is the
+nic that iscsi goes over.
+eth0 is onboard pci 8086:1502 (subsystem 1028:05d3)
+eth1 is pci 8086:107d (subsystem 8086:1084)
+Both use the e1000e driver
 
-Hi Alexandru,
+The initiator is running 4.4.107.
+When running on the initiator, /dev/sr1 is the target /dev/sr0.  Therefor
+cat /dev/sr1 > /dev/null seems to work.
+mount /dev/sr1 /cdrom works
+find /cdrom -type f | xargs cat > /dev/null immediately crashes the target.
+Burning to /dev/sr1 seems to work.
 
-Thank you for the patch! Yet something to improve:
+I have another nic that uses igb instead, I'll see if that makes a
+difference.
 
-[auto build test ERROR on block/for-next]
-[also build test ERROR on v4.16 next-20180406]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> git bisect start
+> git bisect bad v4.10
+> git bisect good v4.9
+> 
+> and then build the kernel, install it, boot the kernel and test it.
+> Depending on the result, run either git bisect bad or git bisect good and
+> keep going until git bisect comes to a conclusion. This can take an hour or
+> more.
 
-url:    https://github.com/0day-ci/linux/commits/Alexandru-Moise/blk-cgroup-remove-entries-in-blkg_tree-before-queue-release/20180407-035957
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-config: c6x-evmc6678_defconfig (attached as .config)
-compiler: c6x-elf-gcc (GCC) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=c6x 
+I'll try this.
 
-All errors (new ones prefixed by >>):
+Here's my scsi_target.lio:
+storage pscsi {
+	disk dvd0 {
+	path /dev/sr0 
+attribute {
+emulate_3pc yes 
+emulate_caw yes 
+emulate_dpo no 
+emulate_fua_read no 
+emulate_model_alias no 
+emulate_rest_reord no 
+emulate_tas yes 
+emulate_tpu no 
+emulate_tpws no 
+emulate_ua_intlck_ctrl no 
+emulate_write_cache no 
+enforce_pr_isids yes 
+fabric_max_sectors 8192 
+is_nonrot yes 
+max_unmap_block_desc_count 0 
+max_unmap_lba_count 0 
+max_write_same_len 65535 
+queue_depth 128 
+unmap_granularity 0 
+unmap_granularity_alignment 0 
+}
+}
+	disk dvd1 {
+	path /dev/sr1 
+attribute {
+emulate_3pc yes 
+emulate_caw yes 
+emulate_dpo no 
+emulate_fua_read no 
+emulate_model_alias no 
+emulate_rest_reord no 
+emulate_tas yes 
+emulate_tpu no 
+emulate_tpws no 
+emulate_ua_intlck_ctrl no 
+emulate_write_cache no 
+enforce_pr_isids yes 
+fabric_max_sectors 8192 
+is_nonrot yes 
+max_unmap_block_desc_count 0 
+max_unmap_lba_count 0 
+max_write_same_len 65535 
+queue_depth 128 
+unmap_granularity 0 
+unmap_granularity_alignment 0 
+}
+}
+	disk dvd2 {
+	path /dev/sr2 
+attribute {
+emulate_3pc yes 
+emulate_caw yes 
+emulate_dpo no 
+emulate_fua_read no 
+emulate_model_alias no 
+emulate_rest_reord no 
+emulate_tas yes 
+emulate_tpu no 
+emulate_tpws no 
+emulate_ua_intlck_ctrl no 
+emulate_write_cache no 
+enforce_pr_isids yes 
+fabric_max_sectors 8192 
+is_nonrot yes 
+max_unmap_block_desc_count 0 
+max_unmap_lba_count 0 
+max_write_same_len 65535 
+queue_depth 128 
+unmap_granularity 0 
+unmap_granularity_alignment 0 
+}
+}
+}
+fabric iscsi {
+discovery_auth {
+enable no 
+mutual_password "" 
+mutual_userid "" 
+password "" 
+userid "" 
+}
+	target iqn.<myiqn>:dvd tpgt 1 {
+enable yes 
+attribute {
+	authentication no 
+cache_dynamic_acls yes 
+default_cmdsn_depth 64 
+default_erl 0 
+demo_mode_discovery yes 
+	demo_mode_write_protect no 
+fabric_prot_type 0 
+	generate_node_acls yes 
+login_timeout 15 
+netif_timeout 2 
+prod_mode_write_protect no 
+t10_pi 0 
+tpg_enabled_sendtargets 1 
+}
+auth {
+password "" 
+password_mutual "" 
+userid "" 
+userid_mutual "" 
+}
+parameter {
+AuthMethod "CHAP,None" 
+DataDigest "CRC32C,None" 
+DataPDUInOrder yes 
+DataSequenceInOrder yes 
+DefaultTime2Retain 20 
+DefaultTime2Wait 2 
+ErrorRecoveryLevel no 
+FirstBurstLength 65536 
+HeaderDigest "CRC32C,None" 
+IFMarkInt Reject 
+IFMarker no 
+ImmediateData yes 
+InitialR2T yes 
+MaxBurstLength 262144 
+MaxConnections 1 
+MaxOutstandingR2T 1 
+MaxRecvDataSegmentLength 8192 
+MaxXmitDataSegmentLength 262144 
+OFMarkInt Reject 
+OFMarker no 
+TargetAlias "LIO Target" 
+}
+	lun 0 backend pscsi:dvd0 
+	lun 1 backend pscsi:dvd1 
+	lun 2 backend pscsi:dvd2 
+	portal 0.0.0.0:3260 
+}
+}
 
-   block/blk-sysfs.c: In function '__blk_release_queue':
->> block/blk-sysfs.c:820:2: error: implicit declaration of function 'blkg_destroy_all'; did you mean 'irq_destroy_ipi'? [-Werror=implicit-function-declaration]
-     blkg_destroy_all(q);
-     ^~~~~~~~~~~~~~~~
-     irq_destroy_ipi
-   cc1: some warnings being treated as errors
 
-vim +820 block/blk-sysfs.c
-
-   770	
-   771	/**
-   772	 * __blk_release_queue - release a request queue when it is no longer needed
-   773	 * @work: pointer to the release_work member of the request queue to be released
-   774	 *
-   775	 * Description:
-   776	 *     blk_release_queue is the counterpart of blk_init_queue(). It should be
-   777	 *     called when a request queue is being released; typically when a block
-   778	 *     device is being de-registered. Its primary task it to free the queue
-   779	 *     itself.
-   780	 *
-   781	 * Notes:
-   782	 *     The low level driver must have finished any outstanding requests first
-   783	 *     via blk_cleanup_queue().
-   784	 *
-   785	 *     Although blk_release_queue() may be called with preemption disabled,
-   786	 *     __blk_release_queue() may sleep.
-   787	 */
-   788	static void __blk_release_queue(struct work_struct *work)
-   789	{
-   790		struct request_queue *q = container_of(work, typeof(*q), release_work);
-   791	
-   792		if (test_bit(QUEUE_FLAG_POLL_STATS, &q->queue_flags))
-   793			blk_stat_remove_callback(q, q->poll_cb);
-   794		blk_stat_free_callback(q->poll_cb);
-   795	
-   796		blk_free_queue_stats(q->stats);
-   797	
-   798		blk_exit_rl(q, &q->root_rl);
-   799	
-   800		if (q->queue_tags)
-   801			__blk_queue_free_tags(q);
-   802	
-   803		if (!q->mq_ops) {
-   804			if (q->exit_rq_fn)
-   805				q->exit_rq_fn(q, q->fq->flush_rq);
-   806			blk_free_flush_queue(q->fq);
-   807		} else {
-   808			blk_mq_release(q);
-   809		}
-   810	
-   811		blk_trace_shutdown(q);
-   812	
-   813		if (q->mq_ops)
-   814			blk_mq_debugfs_unregister(q);
-   815	
-   816		if (q->bio_split)
-   817			bioset_free(q->bio_split);
-   818	
-   819		spin_lock_irq(q->queue_lock);
- > 820		blkg_destroy_all(q);
-   821		spin_unlock_irq(q->queue_lock);
-   822	
-   823		ida_simple_remove(&blk_queue_ida, q->id);
-   824		call_rcu(&q->rcu_head, blk_free_queue_rcu);
-   825	}
-   826	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---0OAP2g/MAC+5xKAE
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-umKCE7L+P+1GtJvkSwAA
-
---0OAP2g/MAC+5xKAE--
+-- 
+ Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
+ million bugs.
