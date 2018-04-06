@@ -1,101 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752943AbeDFP1d (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:27:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:38848 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752278AbeDFP1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:27:31 -0400
-Date: Fri, 6 Apr 2018 16:27:45 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@kernel.org,
-        boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
-        catalin.marinas@arm.com, Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH 10/10] locking/qspinlock: Elide back-to-back RELEASE
- operations with smp_wmb()
-Message-ID: <20180406152744.GE10528@arm.com>
-References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
- <1522947547-24081-11-git-send-email-will.deacon@arm.com>
- <20180405172808.GG4082@hirez.programming.kicks-ass.net>
- <20180406113436.GC27619@arm.com>
- <20180406130512.GA6631@andrea>
+        id S1752963AbeDFP2r (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 11:28:47 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:47629 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752517AbeDFP2o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 11:28:44 -0400
+Subject: Re: [PATCH] PCI: endpoint: Create configfs entry for each
+ pci_epf_device_id table entry
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180402132935.32008-1-kishon@ti.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <29e8dcb0-32f9-a05a-4351-07845d43ee33@synopsys.com>
+Date: Fri, 6 Apr 2018 16:27:48 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406130512.GA6631@andrea>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180402132935.32008-1-kishon@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrea,
+Hi Kishon,
 
-On Fri, Apr 06, 2018 at 03:05:12PM +0200, Andrea Parri wrote:
-> On Fri, Apr 06, 2018 at 12:34:36PM +0100, Will Deacon wrote:
-> > I could say something like:
-> > 
-> >   "Pairs with dependency ordering from both xchg_tail and explicit
-> >    dereferences of node->next"
-> > 
-> > but it's a bit cryptic :(
+On 02/04/2018 14:29, Kishon Vijay Abraham I wrote:
+> In order to be able to provide correct driver_data for pci_epf device,
+> a separate configfs entry for each pci_epf_device_id table entry in
+> pci_epf_driver is required.
 > 
-> Agreed. ;)  It might be helpful to instead include a snippet to highlight
-> the interested memory accesses/dependencies; IIUC,
+> Add support to create configfs entry for each pci_epf_device_id
+> table entry here.
 > 
-> /*
->  * Pairs with dependency ordering from both xchg_tail and explicit/?
->  * dereferences of node->next:
->  *
->  *   CPU0
->  *
->  *   /* get node0, encode node0 in tail */
->  *   pv_init_node(node0);
->  *     ((struct pv_node *)node0)->cpu   = smp_processor_id();
->  *     ((struct pv_node *)node0)->state = vcpu_running;
-
-I'd probably ignore the PV case here and just focus on the native init
-of count/locked/next.
-
->  *   smp_wmb();
->  *   old = xchg_tail(lock, tail);
->  *
->  *   CPU1:
->  *
->  *   /* get node1, encode tail from node1 */
->  *   old = xchg_tail(lock, tail);   // = tail corresponding to node0
->  *                                  // head an addr. dependency
->  *   /* decode old in prev */
->  *   pv_wait_node(node1, prev);
-
-Similarly here -- the dependency is through decode_tail.
-
->  *     READ ((struct pv_node *)prev)->cpu   // addr. dependent read
->  *     READ ((struct pv_node *)prev)->state // addr. dependend read
->  *
->  * [More details for the case "following our own ->next pointer" you
->  *  mentioned dabove.]
->  */
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/pci/endpoint/pci-epf-core.c | 23 +++++++++++++++++++++--
+>  include/linux/pci-epf.h             |  4 ++--
+>  2 files changed, 23 insertions(+), 4 deletions(-)
 > 
-> CPU1 would also have:
+> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> index 59ed29e550e9..d6787f39fd41 100644
+> --- a/drivers/pci/endpoint/pci-epf-core.c
+> +++ b/drivers/pci/endpoint/pci-epf-core.c
+> @@ -15,6 +15,8 @@
+>  #include <linux/pci-epf.h>
+>  #include <linux/pci-ep-cfs.h>
+>  
+> +static DEFINE_MUTEX(pci_epf_mutex);
+> +
+>  static struct bus_type pci_epf_bus_type;
+>  static const struct device_type pci_epf_type;
+>  
+> @@ -139,7 +141,13 @@ EXPORT_SYMBOL_GPL(pci_epf_alloc_space);
+>   */
+>  void pci_epf_unregister_driver(struct pci_epf_driver *driver)
+>  {
+> -	pci_ep_cfs_remove_epf_group(driver->group);
+> +	struct config_group *group;
+> +
+> +	mutex_lock(&pci_epf_mutex);
+> +	list_for_each_entry(group, &driver->epf_group, group_entry)
+> +		pci_ep_cfs_remove_epf_group(group);
+> +	list_del(&driver->epf_group);
+> +	mutex_unlock(&pci_epf_mutex);
+>  	driver_unregister(&driver->driver);
+>  }
+>  EXPORT_SYMBOL_GPL(pci_epf_unregister_driver);
+> @@ -155,6 +163,8 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
+>  			      struct module *owner)
+>  {
+>  	int ret;
+> +	struct config_group *group;
+> +	const struct pci_epf_device_id *id;
+>  
+>  	if (!driver->ops)
+>  		return -EINVAL;
+> @@ -169,7 +179,16 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
+>  	if (ret)
+>  		return ret;
+>  
+> -	driver->group = pci_ep_cfs_add_epf_group(driver->driver.name);
+> +	INIT_LIST_HEAD(&driver->epf_group);
+> +
+> +	id = driver->id_table;
+> +	while (id->name[0]) {
+> +		group = pci_ep_cfs_add_epf_group(id->name);
+> +		mutex_lock(&pci_epf_mutex);
+> +		list_add_tail(&group->group_entry, &driver->epf_group);
+> +		mutex_unlock(&pci_epf_mutex);
+> +		id++;
+> +	}
+>  
+>  	return 0;
+>  }
+> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+> index e897bf076701..a30dcaafa6e8 100644
+> --- a/include/linux/pci-epf.h
+> +++ b/include/linux/pci-epf.h
+> @@ -72,7 +72,7 @@ struct pci_epf_ops {
+>   * @driver: PCI EPF driver
+>   * @ops: set of function pointers for performing EPF operations
+>   * @owner: the owner of the module that registers the PCI EPF driver
+> - * @group: configfs group corresponding to the PCI EPF driver
+> + * @epf_group: list of configfs group corresponding to the PCI EPF driver
+>   * @id_table: identifies EPF devices for probing
+>   */
+>  struct pci_epf_driver {
+> @@ -82,7 +82,7 @@ struct pci_epf_driver {
+>  	struct device_driver	driver;
+>  	struct pci_epf_ops	*ops;
+>  	struct module		*owner;
+> -	struct config_group	*group;
+> +	struct list_head	epf_group;
+>  	const struct pci_epf_device_id	*id_table;
+>  };
+>  
 > 
->    WRITE_ONCE(prev->next, node1); // addr. dependent write
-> 
-> but I'm not sure how this pairs: does this belong to the the second
-> case above? can you elaborate on that?
 
-This is dependent on the result of decode_tail, so it's still the first
-case. The second case is when we queued into an empty tail but somebody
-later queued behind us, so we don't find them until we're claiming the
-lock:
+Works like a charm. :)
 
-  if (!next)
-  	next = smp_cond_load_relaxed(&node->next, (VAL));
-
-  arch_mcs_spin_unlock_contended(&next->locked);
-
-here, this is all straightforward address dependencies rather than the
-arithmetic in decode_tail.
-
-Will
+Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
