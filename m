@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx493l9VuORS8EzKB78yZf+174fBKonUBw+YMiSXK5dZh+sZgbr/bPBgBeiCa1UhzoirHLvRp
-ARC-Seal: i=1; a=rsa-sha256; t=1523021167; cv=none;
+X-Google-Smtp-Source: AIpwx48kUbvyx6S0Xa9QCFM3Vx0bFXXmv+nioimlI7hVrQIg9NBZaltY+FsMzwkUB5ZgFVVxrTe1
+ARC-Seal: i=1; a=rsa-sha256; t=1523021161; cv=none;
         d=google.com; s=arc-20160816;
-        b=kW2urgT+wjzLQb/TAV4xOEmiSRde7i+Pc9vLMy5PDbjZO237BiYlLKIugP7x1+jFUt
-         d+JbzXW828TDiaEvqg7jRni2nhKiydjbyIZKlasrE80il0harbHeq5njN4hyZLNPM/rT
-         OGkNhmZ5EcRgMp/aYQ2+lV3WERjjb0ka65WV9Zvqp8GCSkZ4NNRni7rr7GVSYAJWCly8
-         te5LUtKkNdSQDaFCOUVE0SZm0snFY2Oqaj9ysOaL1qDDbQ3sq4kGI9UxUDAIWNaLN0Fx
-         O+A8WCTsmu8VbzLEhEu4DBOD5BX28oBmDuRZWlEWeQjA0uk3E3xpMCZKM4wLkjsWqpJI
-         dvmg==
+        b=kF4MIEjWW+rQRSOuTah87iOGDiM4Zr8n+DGSZUKPxpdZdVuI/U01HSWDMT9N9kmDI+
+         kKbdLkEEuMb23d8RlST2Zan1QG2VcIdXCVydxPdxHfHF9H4YuyJmPOxj2KNxUSXGg5Rx
+         N+e/O+u5WICrRNheVng3v5B4DTN4z/vl0MWKAzu5v/lN4kcNnBI70nQWaPp9g9SQsSHr
+         /srrMVe78U0ANdNqKy/BIcAmcuIXLHJWwQ+kf5nCYgTpbLgQHOPibTLHl5D6ob+A/bSh
+         5zk8Vwl+agSSF6iWEkoHF+8IxtyTJSutXXz7zofezaEdkn/RK6xJyIpEGvxPeHvyGuy9
+         0dxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7E7LhylHanCn+TuHAyaFVloouIUyYViiNh1DccXyndg=;
-        b=ZKo0TohAmidVXrLK+HoCxJcU19NHdIJw3s/fNPPAVbQPiSO4tw/ALF6f+0/bLCNFGN
-         tTAsWH2jbc5eW7ybK5kFpM7YrHUHt+BxQQYVmWptIt9Yicwst8nBqiwQvGLvvb/hf5Qj
-         e1xMVZE1ZQLS77NEIliMU1pyBiX+AdN8cZK8k7g88MpKY+aoE9JkHCKCOrI530h00fjp
-         MC6x16e2JYD1VHNWYwqsAh5DjAIKm2FP0f++a7YXnZGAlbd+GPG41qIiL+LMdKrMPXyF
-         ec5xNfjzrQY8EhUZN1UjC9o7IUrgJqyvTWrkzyr64wHsDJhUEXmln8sMx4UgDtq4JOsh
-         UL9Q==
+        bh=58FJLWE0c1hOctHuPHmbJFoJCuKjZAg/S8itUEc8PDo=;
+        b=ZmliE6EW/ZluPhYiVpDdUChqC19uii27RDSu/OogDdfKbqYZF1oRV7f1SBrufiTvwf
+         mzbTmTG1RHewvHzSflsrOk9SIoPatvdYxLVvTRjZqdD+cRpfUd5bwJLXsHmAKki3zv3c
+         CXrAxwbe6p5CI75Bia1s72vW8VbGVDGazX8Bce16hoNNx2wYOPYnoeYooEnDp+zjUO7V
+         5a3deqi/hcyIoh04Yo65wnUZETEetad8qW4OlTWH8/eLZ8bLjTh1FeWR+Q745udCDWin
+         uPs8/qq9Eht31oj6+/76NKyAUKzZmCrHHyc0lz36D3IK1nUnVdaoP6fZx2fpdpK77Tah
+         Y2Cg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 3.18 14/93] tracing: probeevent: Fix to support minus offset from symbol
-Date: Fri,  6 Apr 2018 15:22:43 +0200
-Message-Id: <20180406084225.588379342@linuxfoundation.org>
+	"Randy E. Witt" <randy.e.witt@intel.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 30/93] skbuff: Fix not waking applications when errors are enqueued
+Date: Fri,  6 Apr 2018 15:22:59 +0200
+Message-Id: <20180406084226.271456575@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -45,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003443827229770?=
-X-GMAIL-MSGID: =?utf-8?q?1597003443827229770?=
+X-GMAIL-THRID: =?utf-8?q?1597003437570211955?=
+X-GMAIL-MSGID: =?utf-8?q?1597003437570211955?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,97 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 
-commit c5d343b6b7badd1f5fe0873eff2e8d63a193e732 upstream.
 
-In Documentation/trace/kprobetrace.txt, it says
+[ Upstream commit 6e5d58fdc9bedd0255a8781b258f10bbdc63e975 ]
 
- @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
+When errors are enqueued to the error queue via sock_queue_err_skb()
+function, it is possible that the waiting application is not notified.
 
-However, the parser doesn't parse minus offset correctly, since
-commit 2fba0c8867af ("tracing/kprobes: Fix probe offset to be
-unsigned") drops minus ("-") offset support for kprobe probe
-address usage.
+Calling 'sk->sk_data_ready()' would not notify applications that
+selected only POLLERR events in poll() (for example).
 
-This fixes the traceprobe_split_symbol_offset() to parse minus
-offset again with checking the offset range, and add a minus
-offset check in kprobe probe address usage.
-
-Link: http://lkml.kernel.org/r/152129028983.31874.13419301530285775521.stgit@devbox
-
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: stable@vger.kernel.org
-Fixes: 2fba0c8867af ("tracing/kprobes: Fix probe offset to be unsigned")
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: Randy E. Witt <randy.e.witt@intel.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/trace/trace_kprobe.c |    4 ++--
- kernel/trace/trace_probe.c  |    8 +++-----
- kernel/trace/trace_probe.h  |    2 +-
- 3 files changed, 6 insertions(+), 8 deletions(-)
+ net/core/skbuff.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -611,7 +611,7 @@ static int create_trace_kprobe(int argc,
- 	bool is_return = false, is_delete = false;
- 	char *symbol = NULL, *event = NULL, *group = NULL;
- 	char *arg;
--	unsigned long offset = 0;
-+	long offset = 0;
- 	void *addr = NULL;
- 	char buf[MAX_EVENT_NAME_LEN];
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -3527,7 +3527,7 @@ int sock_queue_err_skb(struct sock *sk,
  
-@@ -679,7 +679,7 @@ static int create_trace_kprobe(int argc,
- 		symbol = argv[1];
- 		/* TODO: support .init module functions */
- 		ret = traceprobe_split_symbol_offset(symbol, &offset);
--		if (ret) {
-+		if (ret || offset < 0 || offset > UINT_MAX) {
- 			pr_info("Failed to parse either an address or a symbol.\n");
- 			return ret;
- 		}
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -291,7 +291,7 @@ static fetch_func_t get_fetch_size_funct
+ 	skb_queue_tail(&sk->sk_error_queue, skb);
+ 	if (!sock_flag(sk, SOCK_DEAD))
+-		sk->sk_data_ready(sk);
++		sk->sk_error_report(sk);
+ 	return 0;
  }
- 
- /* Split symbol and offset. */
--int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
-+int traceprobe_split_symbol_offset(char *symbol, long *offset)
- {
- 	char *tmp;
- 	int ret;
-@@ -299,13 +299,11 @@ int traceprobe_split_symbol_offset(char
- 	if (!offset)
- 		return -EINVAL;
- 
--	tmp = strchr(symbol, '+');
-+	tmp = strpbrk(symbol, "+-");
- 	if (tmp) {
--		/* skip sign because kstrtoul doesn't accept '+' */
--		ret = kstrtoul(tmp + 1, 0, offset);
-+		ret = kstrtol(tmp, 0, offset);
- 		if (ret)
- 			return ret;
--
- 		*tmp = '\0';
- 	} else
- 		*offset = 0;
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -341,7 +341,7 @@ extern int traceprobe_conflict_field_nam
- extern void traceprobe_update_arg(struct probe_arg *arg);
- extern void traceprobe_free_probe_arg(struct probe_arg *arg);
- 
--extern int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset);
-+extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
- 
- extern ssize_t traceprobe_probes_write(struct file *file,
- 		const char __user *buffer, size_t count, loff_t *ppos,
+ EXPORT_SYMBOL(sock_queue_err_skb);
