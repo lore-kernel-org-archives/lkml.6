@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+PSZ/q3xeZUlbqPEiD1a9idu/76T7srPOhO8Dyxl+1y5FnO+UD2EMLLU9wVmJzgRKE9TjH
-ARC-Seal: i=1; a=rsa-sha256; t=1523022129; cv=none;
+X-Google-Smtp-Source: AIpwx4+02h+PTz4afnc3VoOGVbHy40HGewgNTrMaR8aCAHDzu+9qqyMJerrLcjWM4NPqfNxKYWWo
+ARC-Seal: i=1; a=rsa-sha256; t=1523022126; cv=none;
         d=google.com; s=arc-20160816;
-        b=xukdRW9xGFIGUlW7Ec0x00k/Vxw7+dIBsibXiuLXHHAlD3huPELs4BcZghq22pDtWT
-         oJGZPmEm5qxD1r6++Ds7OyllhQbGGdQbUQCwH/YjwTeKaVki5/Q6hcpuXYrvXBG701uH
-         oi6syMzGqSmklvWYcljQnO7PiOzrMq8XmiRocne+XixwA/gXdxGpfYabbEazsoUDfA/S
-         Xr6AmCPly5K+dH3fvAh0Ii+E1psemBpOJ9hMvJk1igGJ7hP85QhntUQrhPe2izfQwnqA
-         nmznJhiqpfVJCIZZbSAKnzCCwSD6HSgA3xVYyEBcwts6WYru/lfn8gaZ8rC0+4yqZBZi
-         7lRA==
+        b=GbkLrRB+0+hktjLP4aYgigXEpsPsu3el6iF3EZq7WdvvxTkD37nbbz6KmX81U41vwG
+         /OgZwMRYmGNQY/BFrGmHf5YFfC/ETWHEuYtPQNUcZFRZHiW2D0Gouchygk8jtMy+Nqrm
+         AJ2EdhP+tcYANdopVF8yvd07dDH00daq+uqzgxS8lW4xFK6FYvlH4fmvfuWr0JMbiDxF
+         U+SZzZnmy064txkwrZGLZYpRQHo82dIyEIZ7r+cMJvv3TaAfiBuJZnE9DER8oDBqjstN
+         ewNXnd8z7I2EbiizepLT6YWgOPssON/wUkxKrew61gQbD0Fs723uwEljN/G21peNr9+b
+         qJ9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=INgCciu4DCjhZSGUgcp5GRiABI7zKeaIzK/+T7npQqE=;
-        b=csIhSgg0iluuMS0f0X/CRL8xKSin7Cto6jWJR052LBIK8k2yCrjkBe8QrgVJIjBaZ1
-         8uBzxPD/2aseloeQGriI8AmkCOIHVreFPIjz3Qe+iimmQMnPipmxFvf3LHA2Ua22aZlN
-         HG6lk8Fx797bXrBBXrwTxSzj/B4xoOww+z32nkS0bjBSoBjEjYv2OUQrSAWVhTwZM7/v
-         l3YeWMmAJsS2n21iyGmxSGSK2O5FLl9hhmPwVaq1HYAyDWEc8UmzIALOAu2Fq9HuUJX9
-         SVSyE0/dkRbCCO66wP05aH4pCHHj83CHtfuavx70N93uUD+QImBnvBlqIKmFanMRErm2
-         rhAw==
+        bh=MWqtlmkxr655Mo0LN76yJOTJHlpDOyJPlF+FUVCkOhg=;
+        b=ReM6+R5rXJ/gBSjZrjck12Gh8BU/SY2a4RCTofxyQBP3t66rW7uIvAs7FzrIjioaXw
+         iUpfBeiZYRudIxNQEB6/fSCqc/K5P3vGXKunVBdWiq6YBFSZODNbzr1ziHzT+3h4vTxi
+         LArAbTKIR7wt4sPgbxdRy8xGIhkUBPPMd6FtsCC3jXCW/zNvHYYdrbMH3leUAUwjm26c
+         BVtH0UgaK73ADCXiZPyzLNd0/aAnQpNhT89O1FDCshXAgOU81YxXgb4o8WDudaPbjGxX
+         HDiauJx2Rs2xCZZeFBDyjYESR1Qejr0/kaCCelX7C88bTq+tCHsd4VaWW2UMTY1ew+9W
+         KKfA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 4.15 37/72] phy: qcom-ufs: add MODULE_LICENSE tag
-Date: Fri,  6 Apr 2018 15:24:12 +0200
-Message-Id: <20180406084352.345488368@linuxfoundation.org>
+	Eric Dumazet <eric.dumazet@gmail.com>,
+	syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com,
+	Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.15 36/72] netfilter: x_tables: add and use xt_check_proc_name
+Date: Fri,  6 Apr 2018 15:24:11 +0200
+Message-Id: <20180406084352.292650554@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004285935237557?=
-X-GMAIL-MSGID: =?utf-8?q?1597004452441137341?=
+X-GMAIL-THRID: =?utf-8?q?1597003601518094155?=
+X-GMAIL-MSGID: =?utf-8?q?1597004449038209600?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +51,132 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Florian Westphal <fw@strlen.de>
 
-commit 59fba0869acae06ff594dd7e9808ed673f53538a upstream.
+commit b1d0a5d0cba4597c0394997b2d5fced3e3841b4e upstream.
 
-While the specific UFS PHY drivers (14nm and 20nm) have a module
-license, the common base module does not, leading to a Kbuild
-failure:
+recent and hashlimit both create /proc files, but only check that
+name is 0 terminated.
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/phy/qualcomm/phy-qcom-ufs.o
-FATAL: modpost: GPL-incompatible module phy-qcom-ufs.ko uses GPL-only symbol 'clk_enable'
+This can trigger WARN() from procfs when name is "" or "/".
+Add helper for this and then use it for both.
 
-This adds a module description and license tag to fix the build.
-I added both Yaniv and Vivek as authors here, as Yaniv sent the initial
-submission, while Vivek did most of the work since.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+Reported-by: <syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/phy/qualcomm/phy-qcom-ufs.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ include/linux/netfilter/x_tables.h |    2 ++
+ net/netfilter/x_tables.c           |   30 ++++++++++++++++++++++++++++++
+ net/netfilter/xt_hashlimit.c       |   16 ++++++++++------
+ net/netfilter/xt_recent.c          |    6 +++---
+ 4 files changed, 45 insertions(+), 9 deletions(-)
 
---- a/drivers/phy/qualcomm/phy-qcom-ufs.c
-+++ b/drivers/phy/qualcomm/phy-qcom-ufs.c
-@@ -675,3 +675,8 @@ int ufs_qcom_phy_power_off(struct phy *g
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(ufs_qcom_phy_power_off);
+--- a/include/linux/netfilter/x_tables.h
++++ b/include/linux/netfilter/x_tables.h
+@@ -285,6 +285,8 @@ unsigned int *xt_alloc_entry_offsets(uns
+ bool xt_find_jump_offset(const unsigned int *offsets,
+ 			 unsigned int target, unsigned int size);
+ 
++int xt_check_proc_name(const char *name, unsigned int size);
 +
-+MODULE_AUTHOR("Yaniv Gardi <ygardi@codeaurora.org>");
-+MODULE_AUTHOR("Vivek Gautam <vivek.gautam@codeaurora.org>");
-+MODULE_DESCRIPTION("Universal Flash Storage (UFS) QCOM PHY");
-+MODULE_LICENSE("GPL v2");
+ int xt_check_match(struct xt_mtchk_param *, unsigned int size, u_int8_t proto,
+ 		   bool inv_proto);
+ int xt_check_target(struct xt_tgchk_param *, unsigned int size, u_int8_t proto,
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -423,6 +423,36 @@ textify_hooks(char *buf, size_t size, un
+ 	return buf;
+ }
+ 
++/**
++ * xt_check_proc_name - check that name is suitable for /proc file creation
++ *
++ * @name: file name candidate
++ * @size: length of buffer
++ *
++ * some x_tables modules wish to create a file in /proc.
++ * This function makes sure that the name is suitable for this
++ * purpose, it checks that name is NUL terminated and isn't a 'special'
++ * name, like "..".
++ *
++ * returns negative number on error or 0 if name is useable.
++ */
++int xt_check_proc_name(const char *name, unsigned int size)
++{
++	if (name[0] == '\0')
++		return -EINVAL;
++
++	if (strnlen(name, size) == size)
++		return -ENAMETOOLONG;
++
++	if (strcmp(name, ".") == 0 ||
++	    strcmp(name, "..") == 0 ||
++	    strchr(name, '/'))
++		return -EINVAL;
++
++	return 0;
++}
++EXPORT_SYMBOL(xt_check_proc_name);
++
+ int xt_check_match(struct xt_mtchk_param *par,
+ 		   unsigned int size, u_int8_t proto, bool inv_proto)
+ {
+--- a/net/netfilter/xt_hashlimit.c
++++ b/net/netfilter/xt_hashlimit.c
+@@ -915,8 +915,9 @@ static int hashlimit_mt_check_v1(const s
+ 	struct hashlimit_cfg3 cfg = {};
+ 	int ret;
+ 
+-	if (info->name[sizeof(info->name) - 1] != '\0')
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
+ 
+ 	ret = cfg_copy(&cfg, (void *)&info->cfg, 1);
+ 
+@@ -933,8 +934,9 @@ static int hashlimit_mt_check_v2(const s
+ 	struct hashlimit_cfg3 cfg = {};
+ 	int ret;
+ 
+-	if (info->name[sizeof(info->name) - 1] != '\0')
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
+ 
+ 	ret = cfg_copy(&cfg, (void *)&info->cfg, 2);
+ 
+@@ -948,9 +950,11 @@ static int hashlimit_mt_check_v2(const s
+ static int hashlimit_mt_check(const struct xt_mtchk_param *par)
+ {
+ 	struct xt_hashlimit_mtinfo3 *info = par->matchinfo;
++	int ret;
+ 
+-	if (info->name[sizeof(info->name) - 1] != '\0')
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
+ 
+ 	return hashlimit_mt_check_common(par, &info->hinfo, &info->cfg,
+ 					 info->name, 3);
+--- a/net/netfilter/xt_recent.c
++++ b/net/netfilter/xt_recent.c
+@@ -361,9 +361,9 @@ static int recent_mt_check(const struct
+ 			info->hit_count, XT_RECENT_MAX_NSTAMPS - 1);
+ 		return -EINVAL;
+ 	}
+-	if (info->name[0] == '\0' ||
+-	    strnlen(info->name, XT_RECENT_NAME_LEN) == XT_RECENT_NAME_LEN)
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
+ 
+ 	if (ip_pkt_list_tot && info->hit_count < ip_pkt_list_tot)
+ 		nstamp_mask = roundup_pow_of_two(ip_pkt_list_tot) - 1;
