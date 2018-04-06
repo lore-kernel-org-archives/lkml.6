@@ -1,118 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752296AbeDFMbh convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 08:31:37 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54544 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751974AbeDFMbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 08:31:35 -0400
-Date: Fri, 6 Apr 2018 14:31:33 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
- parameter
-Message-ID: <20180406143133.67f33d33@xps13>
-In-Reply-To: <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
-        <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752412AbeDFMe1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 08:34:27 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33342 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751579AbeDFMeZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 08:34:25 -0400
+X-Google-Smtp-Source: AIpwx49Ekx1bgBl096hLPPjHonpaeZslmO0l7hy5cgBoMfEpEP8bB3edFVdphP1DxoFmVzdNTXi+ig==
+Date: Fri, 6 Apr 2018 14:34:20 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 0/8] use struct pt_regs based syscall calling for x86-64
+Message-ID: <20180406123420.kf74tgiahaugl35x@gmail.com>
+References: <20180405095307.3730-1-linux@dominikbrodowski.net>
+ <20180405151933.egmt7ressx2ikdnr@gmail.com>
+ <20180405203121.GA27104@light.dominikbrodowski.net>
+ <20180406082322.ud37sj3b5ldm7xxd@gmail.com>
+ <20180406083436.GA17948@isilmar-4.linta.de>
+ <20180406092046.2jqjdzvecmfm6sif@gmail.com>
+ <20180406093424.GA908@isilmar-4.linta.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406093424.GA908@isilmar-4.linta.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
 
-On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
+* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
 
-> Currently the driver uses the ECC strength specified in
-> device tree. The ONFI or JEDEC device parameter page
-> contains the ‘ECC correctability’ field which indicates the
-> number of bits that the host should be able to correct per
-> 512 bytes of data.
+> > > __sys_mprotect as prefix won't work by the way, as the double-underscore __sys_ 
+> > > variant is already used in net/* for internal syscall helpers.
+> > 
+> > Ok - then triple underscore - but overall I think it's more confusing.
+> > 
+> > Btw., what was the problem with calling the x86 ptregs wrapper sys_mprotect?
+> > 
+> > The only reason I suggested the __sys_x86_ prefix was because you originally 
+> > suggested that there's symbol name overlap, but I don't think that's the case 
+> > within the same kernel build, as the regular non-ptregs prototype:
+> 
+> Indeed, there's no symbol name overlap within the same kernel build, but
+> technically different stubs named the same. If that's fine, just drop patch
+> 8/8 (including the UML fixup) and things should be fine, with the stub and
+> the entry in the syscall table both named sys_mprotect.
 
-This is misleading. This field is not about the controller but rather
-the chip requirements in terms of minimal strength for nominal use.
+Ok, I've dropped patch #8.
 
-> The ecc correctability is assigned in
-> chip parameter during device probe time. QPIC/EBI2 NAND
-> supports 4/8-bit ecc correction. The Same kind of board
-> can have different NAND parts so use the ecc strength
-> from device parameter (if its non zero) instead of
-> device tree.
+> For IA32_EMULATION, we have __sys_ia32_mprotect as stub for the same
+> syscall, including this name as entry in syscall_32.tbl.
+> 
+> More problematic is the naming for the compat stubs for IA32_EMAULATION and
+> X32, where we have
+> 
+> 	__compat_sys_ia32_waitid
+> 	__compat_sys_x32_waitid
+> 
+> for example. We *could* rename one of those to compat_sys_waitid() and levae
+> the other as-is, but actually I prefer it now how it is.
 
-That is not what you do.
+yeah, this is more symmetric I think.
 
-What you do is forcing the strength to be 8-bit per ECC chunk if the
-NAND chip requires at least 8-bit/chunk strength.
+So right now we have these symbols:
 
-The DT property is here to force a strength. Otherwise, Linux will
-propose to the NAND controller to use the minimum strength required by
-the chip (from either the ONFI/JEDEC parameter page or from a static
-table).
+ triton:~/tip> grep waitid System.map 
 
-IMHO, you have two solutions:
-1/ Remove these properties from the board DT (breaks DT backward
-compatibility though);
-2/ Create another DT for the board.
+ ffffffff8105f1e0 t kernel_waitid               # common C function (64-bit kargs)
+ ffffffff8105f2b0 t SYSC_waitid                 # 64-bit uaddr args C function       352 bytes
+ ffffffff8105f410 T sys_waitid                  # 64-bit-ptregs -> C stub,            32 bytes
+ ffffffff8105f430 T __sys_ia32_waitid           # 32-bit-ptregs -> C stub,            32 bytes
+ ffffffff8105f450 t C_SYSC_waitid               # 32-bit uaddr args C function,      400 bytes
+ ffffffff8105f5e0 T __compat_sys_ia32_waitid    # 32-bit-ptregs -> C stub,            32 bytes
+ ffffffff8105f600 T __compat_sys_x32_waitid     # 64-bit-ptregs -> C stub,            32 bytes
 
-However, there is something to do in this driver: the strength chosen
-should be limited to the controller capabilities (8-bit/512B if I
-understand correctly). In this case you have two options: either you
-limit the strength like the size [1] if (ecc->strength > 8); or you
-just limit the maximum strength to 8 like this [2] and the core will
-spawn a warning in the dmesg telling that the ECC strength used is
-below the NAND chip requirements.
+BTW., what is the role of generating __sys_ia32_waitid()? It seems unused when a 
+syscall has a compat variant otherwise - like here.
+
+Naming wise the odd thumb out is sys_waitid :-/
+
+I'd argue that we should at minimum name it __sys_waitid:
+
+ ffffffff8105f1e0 t kernel_waitid               # common C function (64-bit kargs)
+ ffffffff8105f2b0 t SYSC_waitid                 # 64-bit uaddr args C function
+ ffffffff8105f410 T __sys_waitid                # 64-bit-ptregs -> C stub
+ ffffffff8105f430 T __sys_ia32_waitid           # 32-bit-ptregs -> C stub
+ ffffffff8105f450 t C_SYSC_waitid               # 32-bit uaddr args C function
+ ffffffff8105f5e0 T __compat_sys_ia32_waitid    # 32-bit-ptregs -> C stub
+ ffffffff8105f600 T __compat_sys_x32_waitid     # 64-bit-ptregs -> C stub
+
+because that makes it all organized based on the same principle:
+
+    {__compat|_}_sys{_ia32|_x32|}_waittid
+
+But arguably there are a whole lot more naming weirdnesses we could fix:
+
+ - I find it somewhat confusing that that 'C' in C_SYSC stands not for a C callign 
+   convention, but for 'COMPAT' - i.e. COMPAT_SYSC would be better.
+
+ - Another detail is that why is it called 'SYSC', if the other functions use the 
+   'sys' prefix? Wouldn't 'SYS' be more consistent?
+
+ - If we introduced a prefix for the regular 64-bit system call format as well,
+   we could have: x64, x32 and ia32.
+
+ - And finally, I think the argument format modifiers should be consistently
+   prefixes - right now they are a mixture of pre- and post-fixes.
+
+I.e. I'd generate the names like this:
+
+    __{x64,x32,ia32}[_compat]_sys_waittid()
+
+The fully consistent nomenclature would be someting like this:
+
+ ffffffff8105f1e0 t            kernel_waitid    # common C function (64-bit kargs)
+ ffffffff8105f2b0 t               SYS_waitid    # 64-bit uaddr args C function
+ ffffffff8105f410 T         __x64_sys_waitid    # 64-bit-ptregs -> C stub
+ ffffffff8105f430 T        __ia32_sys_waitid    # 32-bit-ptregs -> C stub
+ ffffffff8105f450 t        COMPAT_SYS_waitid    # 32-bit uaddr args C function
+ ffffffff8105f5e0 T __ia32_compat_sys_waitid    # 32-bit-ptregs -> C stub
+ ffffffff8105f600 T  __x32_compat_sys_waitid    # 64-bit-ptregs -> C stub
+
+Looks a lot tidier and a lot more logical, doesn't it?
+
+Makes grepping easier as well, because (case-insensitive) patterns like 
+'sys_waittid' would identify all the variants.
+
+Personally I'd also do a s/ia32/i32 rename:
+
+ ffffffff8105f1e0 t            kernel_waitid    # common C function (64-bit kargs)
+ ffffffff8105f2b0 t               SYS_waitid    # 64-bit uaddr args C function
+ ffffffff8105f410 T         __x64_sys_waitid    # 64-bit-ptregs -> C stub
+ ffffffff8105f430 T         __i32_sys_waitid    # 32-bit-ptregs -> C stub
+ ffffffff8105f450 t        COMPAT_SYS_waitid    # 32-bit uaddr args C function
+ ffffffff8105f5e0 T  __i32_compat_sys_waitid    # 32-bit-ptregs -> C stub
+ ffffffff8105f600 T  __x32_compat_sys_waitid    # 64-bit-ptregs -> C stub
+
+... but maybe that's too much ;-)
 
 Thanks,
-Miquèl
 
-[1] https://elixir.bootlin.com/linux/latest/source/drivers/mtd/nand/qcom_nandc.c#L2332
-[2] http://code.bulix.org/nyf63w-315268
-
-
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
->  drivers/mtd/nand/qcom_nandc.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
-> index 563b759..8dd40de 100644
-> --- a/drivers/mtd/nand/qcom_nandc.c
-> +++ b/drivers/mtd/nand/qcom_nandc.c
-> @@ -2334,6 +2334,14 @@ static int qcom_nand_host_setup(struct qcom_nand_host *host)
->  		return -EINVAL;
->  	}
->  
-> +	/*
-> +	 * Read the required ecc strength from NAND device and overwrite
-> +	 * the device tree ecc strength for devices which require
-> +	 * ecc correctability bits >= 8
-> +	 */
-> +	if (chip->ecc_strength_ds >= 8)
-> +		ecc->strength = 8;
-> +
->  	wide_bus = chip->options & NAND_BUSWIDTH_16 ? true : false;
->  
->  	if (ecc->strength >= 8) {
-
-
-
--- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+	Ingo
