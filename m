@@ -1,27 +1,27 @@
 Return-Path: <a13xp0p0v88@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523024593; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1523024590; cv=none;
         d=google.com; s=arc-20160816;
-        b=HlJiOLyEd8jzqlNli4HUc9Bh90vmJ3/eMEMQqCqC/1bJjI5G2ZFVgU+mil3Mc9b1I3
-         W7MjRNybP4hR+3RuupGg/4aZ2vceMoq1i9QYW9U2fBx6O9RcYtC7JD2smxI5Fnx9DP3K
-         I+P7Xz3N68v0hMChN7HwD3Zt5+Szwjecv2prsTOfOKHOwDa+kczR5YwwXohjcrEABP2p
-         zsbkH7sck6BPVtXMVnGQ+HytRuvkblqZ77AQuzIYI35ysLwZu49WOxmFTs846MA5pGqz
-         pEH4zKs0nRSjjD+EL1vXPWS6EYE06vrXOd5TiW6BHITxTAlyERBPSBLRZOEUT8wjB5hT
-         TYZw==
+        b=Hn289MAvKJESbPFjLjz4IJ+N/KZvTy+onaNvPl244Q4Wx1rJGRnNX+EMhNZNo/Fy/9
+         hI4pjR8VW7GnREKaTwca7RCIL8a1RGrbNP0QCS9Bcbn0Yhi6zIUUlSt0HGZpTX5TAxov
+         ioAVNfHcUp0vfmZCOaDCrQQyOh7awdx19d2Rz+ih581SsQUw18fEc0RLQ2fXr+aJYpgC
+         j9K0bXyoaePTNC+i1XbltNWMsoEpPeQrIjro2L/BEvXOjNHaBlVjEIxuis7X1IBpc4cl
+         Mvf2AgXk4seCbfIL41PsfLQrhFnCSpbj3q0feLtWQK4WCZmHvmumG0L0bxZ7jxzBmCm5
+         8uBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:to:from
          :arc-authentication-results;
-        bh=yG8WI64gesDH1VxIEInLOPqtrbP0jMf2nhukF0giWlE=;
-        b=VMgy3kEbdFREHKOTPOl6WJFZx8dBjQgh02b0yeXoQ69HXD5u/OXvcqMzE4scoQ0wMm
-         Kj5DTeQUMj7QRmEC5Mx0bFcrXet26O5CEYERi3G2gLr6BsXSgl1/23xihNN21HKNBKkr
-         4K4vGbpnSwEevpGQ9qnlON3QWAHSYKnBW+fay5xvXPuUUefe9QhJez9XtxgOfDdY+Isg
-         2NYCQrpESlgpn+1qfE5zflvjld17IVelcOk9kumv2uTp0e1PGxA72U8T42Kr9KP+Vt/k
-         00AIABwZo3pGwSZ6zVzFpaXiq09gL4ZMozzZCj4gMXax1pVSiCGMCYwDNpjXS8CGY0vv
-         FDBQ==
+        bh=Sn35T9eTXr+h9RyzAiLb9W4JKH6P7wHj47nG+gbXBTE=;
+        b=kCgNNiWjHjfo5lJtLF8vLdvWJSWymRASXnPPi8hQ/CvZUZ7UU2p57iZ4ysBy8365Rq
+         +Z0E8u15mmdqapzsPjbeeyXbqMf/o/CSKNbOKnbyHcivyCg5G3PjZVAEHm+xGESOGIB2
+         DGxuMQfNIx3zpE8QJUr1wAoMJsMdpqKLT71GcmYQMVX2w5x989dIqLjEJdio8n1y4c7r
+         r7trekJ0qSldf1BybTV0IWoAXjJZqZCUD/GOtnACZe06x2lMlRO+0Fjg1HiNTXOHyX+h
+         MaP28wrCAmiqfG9QNvlq4mUoz0/1c3UmukAkvLJY+ogikWhOMkRUVVt5gZlNRDDwAlP9
+         7Szw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
-X-Google-Smtp-Source: AIpwx4/wdgxzJdPIvclWnW0Uc7fZyy+EkPbnjEIlnft1e1gY112DLxAmpyykVQHwrEn3s+3lYekbAg==
+X-Google-Smtp-Source: AIpwx4//QS3OfcyBOCGyyw+Old2CxQDQeKxqMC2FHsQnJMWilCFak1EQw5Ee67n3fg4PU4brgnifSA==
 From: Alexander Popov <alex.popov@linux.com>
 To: kernel-hardening@lists.openwall.com,
 	Kees Cook <keescook@chromium.org>,
@@ -72,66 +72,149 @@ To: kernel-hardening@lists.openwall.com,
 	x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	alex.popov@linux.com
-Subject: [PATCH v11 6/6] doc: self-protection: Add information about STACKLEAK feature
-Date: Fri,  6 Apr 2018 17:22:26 +0300
-Message-Id: <1523024546-6150-7-git-send-email-alex.popov@linux.com>
+Subject: [PATCH v11 5/6] fs/proc: Show STACKLEAK metrics in the /proc file system
+Date: Fri,  6 Apr 2018 17:22:25 +0300
+Message-Id: <1523024546-6150-6-git-send-email-alex.popov@linux.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
 References: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597007036269066593?=
-X-GMAIL-MSGID: =?utf-8?q?1597007036269066593?=
+X-GMAIL-THRID: =?utf-8?q?1597007033165882264?=
+X-GMAIL-MSGID: =?utf-8?q?1597007033165882264?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add information about STACKLEAK feature to "Stack depth overflow" and
-"Memory poisoning" sections of self-protection.rst.
+Introduce CONFIG_STACKLEAK_METRICS providing STACKLEAK information about
+tasks via the /proc file system. In particular, /proc/<pid>/stack_depth
+shows the maximum kernel stack consumption for the current and previous
+syscalls. Although this information is not precise, it  can be useful for
+estimating the STACKLEAK performance impact for your workloads.
 
 Signed-off-by: Alexander Popov <alex.popov@linux.com>
 ---
- Documentation/security/self-protection.rst | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ arch/Kconfig                     | 12 ++++++++++++
+ arch/x86/entry/erase.c           |  4 ++++
+ arch/x86/include/asm/processor.h |  3 +++
+ arch/x86/kernel/process_32.c     |  3 +++
+ arch/x86/kernel/process_64.c     |  3 +++
+ fs/proc/base.c                   | 18 ++++++++++++++++++
+ 6 files changed, 43 insertions(+)
 
-diff --git a/Documentation/security/self-protection.rst b/Documentation/security/self-protection.rst
-index 0f53826..b685f18 100644
---- a/Documentation/security/self-protection.rst
-+++ b/Documentation/security/self-protection.rst
-@@ -165,10 +165,15 @@ Stack depth overflow
- A less well understood attack is using a bug that triggers the
- kernel to consume stack memory with deep function calls or large stack
- allocations. With this attack it is possible to write beyond the end of
--the kernel's preallocated stack space and into sensitive structures. Two
--important changes need to be made for better protections: moving the
--sensitive thread_info structure elsewhere, and adding a faulting memory
--hole at the bottom of the stack to catch these overflows.
-+the kernel's preallocated stack space and into sensitive structures.
-+The combination of the following measures gives better protection:
+diff --git a/arch/Kconfig b/arch/Kconfig
+index a4a8fba..42ebfb9 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -572,6 +572,18 @@ config STACKLEAK_TRACK_MIN_SIZE
+ 	  frame size greater than or equal to this parameter.
+ 	  If unsure, leave the default value 100.
+ 
++config STACKLEAK_METRICS
++	bool "Show STACKLEAK metrics in the /proc file system"
++	depends on GCC_PLUGIN_STACKLEAK
++	depends on PROC_FS
++	help
++	  If this is set, STACKLEAK metrics for every task are available in
++	  the /proc file system. In particular, /proc/<pid>/stack_depth
++	  shows the maximum kernel stack consumption for the current and
++	  previous syscalls. Although this information is not precise, it
++	  can be useful for estimating the STACKLEAK performance impact for
++	  your workloads.
 +
-+* moving the sensitive thread_info structure off the stack
-+  (``CONFIG_THREAD_INFO_IN_TASK``);
-+* adding a faulting memory hole at the bottom of the stack to catch
-+  these overflows (``CONFIG_VMAP_STACK``);
-+* runtime checking that alloca() calls don't overstep the stack boundary
-+  (``CONFIG_GCC_PLUGIN_STACKLEAK``).
+ config HAVE_CC_STACKPROTECTOR
+ 	bool
+ 	help
+diff --git a/arch/x86/entry/erase.c b/arch/x86/entry/erase.c
+index 4892335..be09cc6 100644
+--- a/arch/x86/entry/erase.c
++++ b/arch/x86/entry/erase.c
+@@ -32,6 +32,10 @@ asmlinkage void erase_kstack(void)
+ 	if (p == boundary)
+ 		p += sizeof(unsigned long);
  
- Heap memory integrity
- ---------------------
-@@ -302,11 +307,11 @@ sure structure holes are cleared.
- Memory poisoning
- ----------------
++#ifdef CONFIG_STACKLEAK_METRICS
++	current->thread.prev_lowest_stack = p;
++#endif
++
+ 	/*
+ 	 * So let's write the poison value to the kernel stack.
+ 	 * Start from the address in p and move up till the new boundary.
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 0c87813..bca1074 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -496,6 +496,9 @@ struct thread_struct {
  
--When releasing memory, it is best to poison the contents (clear stack on
--syscall return, wipe heap memory on a free), to avoid reuse attacks that
--rely on the old contents of memory. This frustrates many uninitialized
--variable attacks, stack content exposures, heap content exposures, and
--use-after-free attacks.
-+When releasing memory, it is best to poison the contents, to avoid reuse
-+attacks that rely on the old contents of memory. E.g., clear stack on a
-+syscall return (``CONFIG_GCC_PLUGIN_STACKLEAK``), wipe heap memory on a
-+free. This frustrates many uninitialized variable attacks, stack content
-+exposures, heap content exposures, and use-after-free attacks.
+ #ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+ 	unsigned long		lowest_stack;
++# ifdef CONFIG_STACKLEAK_METRICS
++	unsigned long		prev_lowest_stack;
++# endif
+ #endif
  
- Destination tracking
- --------------------
+ 	unsigned int		sig_on_uaccess_err:1;
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index 1b0892e..577c104 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -139,6 +139,9 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
+ #ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+ 	p->thread.lowest_stack = (unsigned long)task_stack_page(p) +
+ 						sizeof(unsigned long);
++# ifdef CONFIG_STACKLEAK_METRICS
++	p->thread.prev_lowest_stack = p->thread.lowest_stack;
++# endif
+ #endif
+ 
+ 	if (unlikely(p->flags & PF_KTHREAD)) {
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 82122af..7a82f0d 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -284,6 +284,9 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
+ #ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+ 	p->thread.lowest_stack = (unsigned long)task_stack_page(p) +
+ 						sizeof(unsigned long);
++# ifdef CONFIG_STACKLEAK_METRICS
++	p->thread.prev_lowest_stack = p->thread.lowest_stack;
++# endif
+ #endif
+ 
+ 	savesegment(gs, p->thread.gsindex);
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 9298324..6a7f9bd 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2914,6 +2914,21 @@ static int proc_pid_patch_state(struct seq_file *m, struct pid_namespace *ns,
+ }
+ #endif /* CONFIG_LIVEPATCH */
+ 
++#ifdef CONFIG_STACKLEAK_METRICS
++static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns,
++				struct pid *pid, struct task_struct *task)
++{
++	unsigned long prev_depth = THREAD_SIZE -
++			(task->thread.prev_lowest_stack & (THREAD_SIZE - 1));
++	unsigned long depth = THREAD_SIZE -
++			(task->thread.lowest_stack & (THREAD_SIZE - 1));
++
++	seq_printf(m, "previous stack depth: %lu\nstack depth: %lu\n",
++							prev_depth, depth);
++	return 0;
++}
++#endif /* CONFIG_STACKLEAK_METRICS */
++
+ /*
+  * Thread groups
+  */
+@@ -3018,6 +3033,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #ifdef CONFIG_LIVEPATCH
+ 	ONE("patch_state",  S_IRUSR, proc_pid_patch_state),
+ #endif
++#ifdef CONFIG_STACKLEAK_METRICS
++	ONE("stack_depth", S_IRUGO, proc_stack_depth),
++#endif
+ };
+ 
+ static int proc_tgid_base_readdir(struct file *file, struct dir_context *ctx)
 -- 
 2.7.4
