@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48Guuu523AIWHv568ncDW79/pDr89FNJ/zwb2z6gxBj2rA7FJzUhABTpSIhpuwk+nWwQGkV
-ARC-Seal: i=1; a=rsa-sha256; t=1523021712; cv=none;
+X-Google-Smtp-Source: AIpwx4/YcfGVvaou34LLnaHnCvjjTUcnil9UVCwxTwsxNBpuvOQBMnYIJO7VhMIf1locQeKITP3O
+ARC-Seal: i=1; a=rsa-sha256; t=1523021710; cv=none;
         d=google.com; s=arc-20160816;
-        b=kcbeTpr/p3E9+3m1JMpwBXBvDkwwtD23/11+VJGWO0nlx2yIM7/8uNaOcJLHROI/YC
-         FkF+DX3dxqWd+0ngMZXuSKZe73diAVpPvycHd9MibyeTKmYT5UwGCwFYBUibCP2MI2BC
-         ScXY0/8Ht3D1+PAXHk3Jw7bdYil2oBm7sh64sdHA2jLyO7oCCoG3GSAvU/7iPwwUriO6
-         e0o1NwbmHCWwWLoJVMvfO/9BTLBBd28BJ3dSR4cXCMavzjiBKv0bLoPL5dd7TT8Pk7vZ
-         u9iCJn7LIpuY9bVDaiiciXEOZmK2pzmUglIgXNGTFmKgd/gD3KRM886Gd1xKZPqixosN
-         lTCA==
+        b=PZ0PLonyxHS6v+QP1CNCOwIHerEnlAcqDgZisXDgfNEi0+yV3YipAcKIbTYFpiWoFk
+         vOueUYHvW6GKQhdolz0SgVnnDKnMwWDBY8GPJxAiuZLDzKPiDCmKvRXhG/V6oLg1/GPI
+         Leu0/0ETiujQQ+942qTib5K0R26JWWheZ90XB5TMBiRPN4/pRIDBvJbABlHg1BAXCcaj
+         Ol5h6AXyuWg1ob0+ZrAaOvK+j1/5PE9GAUr1Wr+DdFZrMPacSSVAv1b/jN5jIQTWl23t
+         U2Ems8Qub6Na3tP/u8unLzh6h0KkvZgrwZD/hOdrwOAHUA9MmYPi+8dIOyVYkJv3YZcY
+         z4zg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MiHc6sg8MSC/3KRj6KL7JP/WlYTVugo40LlCfJxGUco=;
-        b=l0BSDS8b62uCom9ZpwCZUFgf1hr+TWI1tH5g3up10xyufca6usxLn1gTi8N8DezFH3
-         OCjwdyp0fcSktFMXp5NuflAp7pFBFvrQOFz7hbfAF2vZzLofEtdKYZLqhv5Vnmq2l2Ip
-         luUj4I35hITiVJ+RIujTMOD7JvOknMqJLrJox/t76GL2P5yUI5FQ1AYNVX787etRORr4
-         cXNttikpA1jgPy0Z8t+hpc0lwAyeR4dEW0Gokkyx36XiBpD4e61cdIGEMDy/GqCdAc7j
-         WWDXGAUoPLNd+cDZgRHKq4ZU2iUJadJ0Vf0tbm0gLgHRg0smpxKzHw2hP4oNWUzvm/wr
-         WPCQ==
+        bh=j87reN/DDdwrUMLNSJqL/TMSwRsPa5woUJ1KVf9YRNI=;
+        b=HobpgOyQ/8TzYu0SwFVDPiSR6yQKdmoRFbCP3A2FwECJQTaLEyHvnCwaiqZn7Biqxs
+         bNObKokMncKrErCU6evjai5Jvlqh91pONq0FSyUOnZeGL6hZ4sN7PTU1YvGtepkiXN4V
+         VdDNkq+pzVDlaNXmjOGEtSzZu4gF3YUWHJWAfDOZgvdhO0hDV1ljBvtTFETiFZp6IFHm
+         coy8CPagsXyXtEuZsJ8NBztrWeDIPt7DeE63IhBfPjrk22VBoY99zek4iK1FBg2GevHk
+         Ejs0UQYmzua8HCkT+8oiU4kOla9sh2bWLNTkXscFZv2b7LgwoiOErd46YeoK78TWfv8E
+         yVLA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -32,9 +32,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Will Deacon <will.deacon@arm.com>,
 	Greg Hackmann <ghackmann@google.com>,
 	Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 4.9 062/102] arm64: entry: Add fake CPU feature for unmapping the kernel at EL0
-Date: Fri,  6 Apr 2018 15:23:43 +0200
-Message-Id: <20180406084340.290236378@linuxfoundation.org>
+Subject: [PATCH 4.9 061/102] arm64: tls: Avoid unconditional zeroing of tpidrro_el0 for native tasks
+Date: Fri,  6 Apr 2018 15:23:42 +0200
+Message-Id: <20180406084340.132540841@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004015892589296?=
-X-GMAIL-MSGID: =?utf-8?q?1597004015892589296?=
+X-GMAIL-THRID: =?utf-8?q?1597004012545038833?=
+X-GMAIL-MSGID: =?utf-8?q?1597004012545038833?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,152 +55,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Will Deacon <will.deacon@arm.com>
 
-commit ea1e3de85e94 upstream.
+commit 18011eac28c7 upstream.
 
-Allow explicit disabling of the entry trampoline on the kernel command
-line (kpti=off) by adding a fake CPU feature (ARM64_UNMAP_KERNEL_AT_EL0)
-that can be used to toggle the alternative sequences in our entry code and
-avoid use of the trampoline altogether if desired. This also allows us to
-make use of a static key in arm64_kernel_unmapped_at_el0().
+When unmapping the kernel at EL0, we use tpidrro_el0 as a scratch register
+during exception entry from native tasks and subsequently zero it in
+the kernel_ventry macro. We can therefore avoid zeroing tpidrro_el0
+in the context-switch path for native tasks using the entry trampoline.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
 Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
-[Alex: use first free cpucap number, use cpus_have_cap]
 Signed-off-by: Alex Shi <alex.shi@linaro.org> [v4.9 backport]
 Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
 Tested-by: Will Deacon <will.deacon@arm.com>
 Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/cpucaps.h |    3 +-
- arch/arm64/include/asm/mmu.h     |    3 +-
- arch/arm64/kernel/cpufeature.c   |   41 +++++++++++++++++++++++++++++++++++++++
- arch/arm64/kernel/entry.S        |    9 ++++----
- 4 files changed, 50 insertions(+), 6 deletions(-)
+ arch/arm64/kernel/process.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/arch/arm64/include/asm/cpucaps.h
-+++ b/arch/arm64/include/asm/cpucaps.h
-@@ -34,7 +34,8 @@
- #define ARM64_HAS_32BIT_EL0			13
- #define ARM64_HYP_OFFSET_LOW			14
- #define ARM64_MISMATCHED_CACHE_LINE_SIZE	15
-+#define ARM64_UNMAP_KERNEL_AT_EL0		16
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -306,17 +306,17 @@ int copy_thread(unsigned long clone_flag
  
--#define ARM64_NCAPS				16
-+#define ARM64_NCAPS				17
- 
- #endif /* __ASM_CPUCAPS_H */
---- a/arch/arm64/include/asm/mmu.h
-+++ b/arch/arm64/include/asm/mmu.h
-@@ -34,7 +34,8 @@ typedef struct {
- 
- static inline bool arm64_kernel_unmapped_at_el0(void)
+ static void tls_thread_switch(struct task_struct *next)
  {
--	return IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0);
-+	return IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0) &&
-+	       cpus_have_cap(ARM64_UNMAP_KERNEL_AT_EL0);
+-	unsigned long tpidr, tpidrro;
++	unsigned long tpidr;
+ 
+ 	tpidr = read_sysreg(tpidr_el0);
+ 	*task_user_tls(current) = tpidr;
+ 
+-	tpidr = *task_user_tls(next);
+-	tpidrro = is_compat_thread(task_thread_info(next)) ?
+-		  next->thread.tp_value : 0;
++	if (is_compat_thread(task_thread_info(next)))
++		write_sysreg(next->thread.tp_value, tpidrro_el0);
++	else if (!arm64_kernel_unmapped_at_el0())
++		write_sysreg(0, tpidrro_el0);
+ 
+-	write_sysreg(tpidr, tpidr_el0);
+-	write_sysreg(tpidrro, tpidrro_el0);
++	write_sysreg(*task_user_tls(next), tpidr_el0);
  }
  
- extern void paging_init(void);
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -746,6 +746,40 @@ static bool hyp_offset_low(const struct
- 	return idmap_addr > GENMASK(VA_BITS - 2, 0) && !is_kernel_in_hyp_mode();
- }
- 
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
-+
-+static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
-+				int __unused)
-+{
-+	/* Forced on command line? */
-+	if (__kpti_forced) {
-+		pr_info_once("kernel page table isolation forced %s by command line option\n",
-+			     __kpti_forced > 0 ? "ON" : "OFF");
-+		return __kpti_forced > 0;
-+	}
-+
-+	/* Useful for KASLR robustness */
-+	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
-+		return true;
-+
-+	return false;
-+}
-+
-+static int __init parse_kpti(char *str)
-+{
-+	bool enabled;
-+	int ret = strtobool(str, &enabled);
-+
-+	if (ret)
-+		return ret;
-+
-+	__kpti_forced = enabled ? 1 : -1;
-+	return 0;
-+}
-+__setup("kpti=", parse_kpti);
-+#endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
-+
- static const struct arm64_cpu_capabilities arm64_features[] = {
- 	{
- 		.desc = "GIC system register CPU interface",
-@@ -829,6 +863,13 @@ static const struct arm64_cpu_capabiliti
- 		.def_scope = SCOPE_SYSTEM,
- 		.matches = hyp_offset_low,
- 	},
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+	{
-+		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
-+		.def_scope = SCOPE_SYSTEM,
-+		.matches = unmap_kernel_at_el0,
-+	},
-+#endif
- 	{},
- };
- 
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -73,6 +73,7 @@
- 	.macro kernel_ventry, el, label, regsize = 64
- 	.align 7
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+alternative_if ARM64_UNMAP_KERNEL_AT_EL0
- 	.if	\el == 0
- 	.if	\regsize == 64
- 	mrs	x30, tpidrro_el0
-@@ -81,6 +82,7 @@
- 	mov	x30, xzr
- 	.endif
- 	.endif
-+alternative_else_nop_endif
- #endif
- 
- 	sub	sp, sp, #S_FRAME_SIZE
-@@ -208,10 +210,9 @@ alternative_else_nop_endif
- 	ldr	lr, [sp, #S_LR]
- 	add	sp, sp, #S_FRAME_SIZE		// restore sp
- 
--#ifndef CONFIG_UNMAP_KERNEL_AT_EL0
--	eret
--#else
- 	.if	\el == 0
-+alternative_insn eret, nop, ARM64_UNMAP_KERNEL_AT_EL0
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
- 	bne	4f
- 	msr	far_el1, x30
- 	tramp_alias	x30, tramp_exit_native
-@@ -219,10 +220,10 @@ alternative_else_nop_endif
- 4:
- 	tramp_alias	x30, tramp_exit_compat
- 	br	x30
-+#endif
- 	.else
- 	eret
- 	.endif
--#endif
- 	.endm
- 
- 	.macro	get_thread_info, rd
+ /* Restore the UAO state depending on next's addr_limit */
