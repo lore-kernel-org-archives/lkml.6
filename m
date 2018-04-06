@@ -1,42 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752068AbeDFKJ3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 06:09:29 -0400
-Received: from foss.arm.com ([217.140.101.70]:34654 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751938AbeDFKJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:09:27 -0400
-Subject: Re: [PATCH 3/5] arm64: early ISB at exit from extended quiescent
- state
-To: Yury Norov <ynorov@caviumnetworks.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Christopher Lameter <cl@linux.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexey Klimov <klimov.linux@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20180405171800.5648-1-ynorov@caviumnetworks.com>
- <20180405171800.5648-4-ynorov@caviumnetworks.com>
-From: James Morse <james.morse@arm.com>
-Message-ID: <c7e03021-4c55-8e5f-3480-6628d83d8cd9@arm.com>
-Date: Fri, 6 Apr 2018 11:06:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751949AbeDFKMI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 06:12:08 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:47383 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751415AbeDFKMH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 06:12:07 -0400
+Subject: Re: INFO: task hung in __blkdev_get
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Dmitry Vyukov <dvyukov@google.com>, Ming Lei <tom.leiming@gmail.com>,
+        Jens Axboe <axboe@fb.com>
+Cc: mingo@redhat.com, peterz@infradead.org,
+        syzbot
+        <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <f403043a9be410acd1055fe5f72e@google.com>
+ <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
+Message-ID: <2e093801-6d71-6747-42df-52f191811ad0@I-love.SAKURA.ne.jp>
+Date: Fri, 6 Apr 2018 19:12:02 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180405171800.5648-4-ynorov@caviumnetworks.com>
+In-Reply-To: <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -44,100 +30,132 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yury,
+>From fab524a1a8a67a8d6de1d486ff526ed2f18ee6fd Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Fri, 6 Apr 2018 10:03:17 +0900
+Subject: [PATCH] block/loop: fix deadlock after loop_set_status
 
-On 05/04/18 18:17, Yury Norov wrote:
-> This series enables delaying of kernel memory synchronization
-> for CPUs running in extended quiescent state (EQS) till the exit
-> of that state.
-> 
-> ARM64 uses IPI mechanism to notify all cores in  SMP system that
-> kernel text is changed; and IPI handler calls isb() to synchronize.
-> 
-> If we don't deliver IPI to EQS CPUs anymore, we should add ISB early
-> in EQS exit path.
-> 
-> There are 2 such paths. One starts in do_idle() loop, and other
-> in el0_svc entry. For do_idle(), isb() is added in
-> arch_cpu_idle_exit() hook. And for SVC handler, isb is called in
-> el0_svc_naked.
+syzbot is reporting deadlocks at __blkdev_get() [1].
 
-(I know nothing about this EQS stuff, but) there is a third path that might be
-relevant.
->From include/linux/context_tracking.h:guest_enter_irqoff():
-|	 * KVM does not hold any references to rcu protected data when it
-|	 * switches CPU into a guest mode. In fact switching to a guest mode
-|	 * is very similar to exiting to userspace from rcu point of view. In
-|	 * addition CPU may stay in a guest mode for quite a long time (up to
-|	 * one time slice). Lets treat guest mode as quiescent state, just like
-|	 * we do with user-mode execution.
+----------------------------------------
+[   92.493919] systemd-udevd   D12696   525      1 0x00000000
+[   92.495891] Call Trace:
+[   92.501560]  schedule+0x23/0x80
+[   92.502923]  schedule_preempt_disabled+0x5/0x10
+[   92.504645]  __mutex_lock+0x416/0x9e0
+[   92.510760]  __blkdev_get+0x73/0x4f0
+[   92.512220]  blkdev_get+0x12e/0x390
+[   92.518151]  do_dentry_open+0x1c3/0x2f0
+[   92.519815]  path_openat+0x5d9/0xdc0
+[   92.521437]  do_filp_open+0x7d/0xf0
+[   92.527365]  do_sys_open+0x1b8/0x250
+[   92.528831]  do_syscall_64+0x6e/0x270
+[   92.530341]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-For non-VHE systems guest_enter_irqoff()() is called just before we jump to EL2.
-Coming back gives us an exception-return, so we have a context-synchronisation
-event there, and I assume we will never patch the hyp-text on these systems.
+[   92.931922] 1 lock held by systemd-udevd/525:
+[   92.933642]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x73/0x4f0
+----------------------------------------
 
-But with VHE on the upcoming kernel version we still go on to run code at the
-same EL. Do we need an ISB on the path back from the guest once we've told RCU
-we've 'exited user-space'?
-If this code can be patched, do we have a problem here?
+The reason of deadlock turned out that wait_event_interruptible() in
+blk_queue_enter() got stuck with bdev->bd_mutex held at __blkdev_put()
+due to q->mq_freeze_depth == 1.
 
+----------------------------------------
+[   92.787172] a.out           S12584   634    633 0x80000002
+[   92.789120] Call Trace:
+[   92.796693]  schedule+0x23/0x80
+[   92.797994]  blk_queue_enter+0x3cb/0x540
+[   92.803272]  generic_make_request+0xf0/0x3d0
+[   92.807970]  submit_bio+0x67/0x130
+[   92.810928]  submit_bh_wbc+0x15e/0x190
+[   92.812461]  __block_write_full_page+0x218/0x460
+[   92.815792]  __writepage+0x11/0x50
+[   92.817209]  write_cache_pages+0x1ae/0x3d0
+[   92.825585]  generic_writepages+0x5a/0x90
+[   92.831865]  do_writepages+0x43/0xd0
+[   92.836972]  __filemap_fdatawrite_range+0xc1/0x100
+[   92.838788]  filemap_write_and_wait+0x24/0x70
+[   92.840491]  __blkdev_put+0x69/0x1e0
+[   92.841949]  blkdev_close+0x16/0x20
+[   92.843418]  __fput+0xda/0x1f0
+[   92.844740]  task_work_run+0x87/0xb0
+[   92.846215]  do_exit+0x2f5/0xba0
+[   92.850528]  do_group_exit+0x34/0xb0
+[   92.852018]  SyS_exit_group+0xb/0x10
+[   92.853449]  do_syscall_64+0x6e/0x270
+[   92.854944]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index c8d9ec363ddd..b1e1c19b4432 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -48,7 +48,7 @@
->  	.endm
->  
->  	.macro el0_svc_restore_syscall_args
-> -#if defined(CONFIG_CONTEXT_TRACKING)
-> +#if !defined(CONFIG_TINY_RCU) || defined(CONFIG_CONTEXT_TRACKING)
->  	restore_syscall_args
->  #endif
->  	.endm
-> @@ -483,6 +483,19 @@ __bad_stack:
->  	ASM_BUG()
->  	.endm
->  
-> +/*
-> + * If CPU is in extended quiescent state we need isb to ensure that
-> + * possible change of kernel text is visible by the core.
-> + */
-> +	.macro	isb_if_eqs
-> +#ifndef CONFIG_TINY_RCU
-> +	bl	rcu_is_watching
-> +	cbnz	x0, 1f
-> +	isb 					// pairs with aarch64_insn_patch_text
-> +1:
-> +#endif
-> +	.endm
-> +
->  el0_sync_invalid:
->  	inv_entry 0, BAD_SYNC
->  ENDPROC(el0_sync_invalid)
-> @@ -949,6 +962,7 @@ alternative_else_nop_endif
->  
->  el0_svc_naked:					// compat entry point
->  	stp	x0, xscno, [sp, #S_ORIG_X0]	// save the original x0 and syscall number
-> +	isb_if_eqs
->  	enable_daif
->  	ct_user_exit
->  	el0_svc_restore_syscall_args
+[   92.943530] 1 lock held by a.out/634:
+[   92.945105]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0x3c/0x1e0
+----------------------------------------
 
-Shouldn't this be at the point that RCU knows we've exited user-space? Otherwise
-there is a gap where RCU thinks we're in user-space, we're not, and we're about
-to tell it. Code-patching occurring in this gap would be missed.
+The reason of q->mq_freeze_depth == 1 turned out that loop_set_status()
+forgot to call blk_mq_unfreeze_queue() at error paths for
+info->lo_encrypt_type != NULL case.
 
-This gap only contains 'enable_daif', and any exception that occurs here is
-safe, but its going to give someone a nasty surprise...
+----------------------------------------
+[   37.509497] CPU: 2 PID: 634 Comm: a.out Tainted: G        W        4.16.0+ #457
+[   37.513608] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+[   37.518832] RIP: 0010:blk_freeze_queue_start+0x17/0x40
+[   37.521778] RSP: 0018:ffffb0c2013e7c60 EFLAGS: 00010246
+[   37.524078] RAX: 0000000000000000 RBX: ffff8b07b1519798 RCX: 0000000000000000
+[   37.527015] RDX: 0000000000000002 RSI: ffffb0c2013e7cc0 RDI: ffff8b07b1519798
+[   37.529934] RBP: ffffb0c2013e7cc0 R08: 0000000000000008 R09: 47a189966239b898
+[   37.532684] R10: dad78b99b278552f R11: 9332dca72259d5ef R12: ffff8b07acd73678
+[   37.535452] R13: 0000000000004c04 R14: 0000000000000000 R15: ffff8b07b841e940
+[   37.538186] FS:  00007fede33b9740(0000) GS:ffff8b07b8e80000(0000) knlGS:0000000000000000
+[   37.541168] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   37.543590] CR2: 00000000206fdf18 CR3: 0000000130b30006 CR4: 00000000000606e0
+[   37.546410] Call Trace:
+[   37.547902]  blk_freeze_queue+0x9/0x30
+[   37.549968]  loop_set_status+0x67/0x3c0 [loop]
+[   37.549975]  loop_set_status64+0x3b/0x70 [loop]
+[   37.549986]  lo_ioctl+0x223/0x810 [loop]
+[   37.549995]  blkdev_ioctl+0x572/0x980
+[   37.550003]  block_ioctl+0x34/0x40
+[   37.550006]  do_vfs_ioctl+0xa7/0x6d0
+[   37.550017]  ksys_ioctl+0x6b/0x80
+[   37.573076]  SyS_ioctl+0x5/0x10
+[   37.574831]  do_syscall_64+0x6e/0x270
+[   37.576769]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+----------------------------------------
 
-Mark points out this ISB needs to be after RCU knows we're not quiescent:
-https://lkml.org/lkml/2018/4/3/378
+[1] https://syzkaller.appspot.com/bug?id=cd662bc3f6022c0979d01a262c318fab2ee9b56f
 
-Can't this go in the rcu exit-quiescence code? Isn't this what your
-rcu_dynticks_eqs_exit_sync() hook does?
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>
+Fixes: ecdd09597a572513 ("block/loop: fix race between I/O and set_status")
+Cc: Ming Lei <tom.leiming@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: stable <stable@vger.kernel.org>
+Cc: Jens Axboe <axboe@fb.com>
+---
+ drivers/block/loop.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-
-Thanks,
-
-James
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 264abaa..e5fc020 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1103,11 +1103,15 @@ static int loop_clr_fd(struct loop_device *lo)
+ 	if (info->lo_encrypt_type) {
+ 		unsigned int type = info->lo_encrypt_type;
+ 
+-		if (type >= MAX_LO_CRYPT)
+-			return -EINVAL;
++		if (type >= MAX_LO_CRYPT) {
++			err = -EINVAL;
++			goto exit;
++		}
+ 		xfer = xfer_funcs[type];
+-		if (xfer == NULL)
+-			return -EINVAL;
++		if (xfer == NULL) {
++			err = -EINVAL;
++			goto exit;
++		}
+ 	} else
+ 		xfer = NULL;
+ 
+-- 
+1.8.3.1
