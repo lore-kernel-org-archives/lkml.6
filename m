@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49KEoSFDbYKnKPGmW+jzzZ6FtakU3UlMNTGQ3Zks/zNStOLPmtfDcHJtJ6XCL8KCZqyy5RZ
-ARC-Seal: i=1; a=rsa-sha256; t=1523021822; cv=none;
+X-Google-Smtp-Source: AIpwx49IE2FRkCOHwjrNg06rO7HlTbW+j6fk62mQD5OA/GJ2abLM8LK2iWmSwYabHhI6PfUCBSeb
+ARC-Seal: i=1; a=rsa-sha256; t=1523021821; cv=none;
         d=google.com; s=arc-20160816;
-        b=LlXNcrOl2A7Y7yXJ3BQib/jU0uLd3HNstgn6LJYIEZJBLGO0+DuCqBsH79bJvBZO6n
-         ldDSv8cJCKnXATDJZkRes4t0PbjYT6D6kw5/+Zdz5dOvVY4Y6oJmAfe2hTgacI9+wJiY
-         xHvS5mh0gDQFkWlx1PqhRD6Cx0AA07/3cQ1GERTS5Bws82fEbmIJueatDaWvv6zLxW3c
-         L/aILjgflO/7b0lKcDNiIaUzUuPfWNYVDinXrRVQXJrNBQgcJb3lGc+FMfXObECMfV3P
-         1jTuezQOMloXjQXeiDVbhhB4k2C1SnJZGJuql/aDqLZ1bFS6hL/C6dQ5+9SJmaPSiDj/
-         9jlQ==
+        b=iiHCcoTbNvlZeID5soCyDLmEd6nDFpSodUsdjSioKXp76ORJu/J+fs2VEp53e2TdJ3
+         6sd10jFdN8OdaWjzzP1Jj2laWM+9wkXgoPqhgjopMrHFAmQYyzqikNh58qKL1SBDXIv1
+         NnNyMAT+RVGNhmB8RDfsCDT2iKyacDwj7B/possXYAZkH/0+B+7WD29t7wEKWSyzhA01
+         z2HT64FPEBSsNoabqqlwShxE7hER4kJrRQVtRBVnFH+AkeCkZDxwFXDGSQphjE8gsTv9
+         7b78tOpJPCQ/qpmxl7/Ids3ca5lmSKAFDvJ8cBJY+X2eCfdyrp0EGJo/BqtOouAIbpOw
+         QfXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bijCXgo2SnSGPoeg/oRxiGfA97Sh1THg9/q5VSeBuFo=;
-        b=dC6wuXstTJLpE1G4mhZfAbfU3A2hI2OkIZah1d5kiIuXoCcD9+l+Mloy5p6UXuXkHQ
-         tTUZ4e51Q/YAayuYnRb2T5Ha02XVGKSf9/FcM9j4EMFRTwicKMwPZzZQq9++EZwaRhnu
-         +hviUP+CTKrvIx0rmvCZm/gcvijFMDOsQXPN9W7kEXxG10cHDf2uUSuoeL9CN8/qLt7Z
-         0p4o/rfSG8728V0+60hZ4KyjQ/xNny2XtPyUvBZgpQUbFdm5PhriZDHqEWuEEpBpWkRI
-         aE8fo+uFBYbCk+2kL0K1CdgxfAQWoxcJpxwdRencRPqE+QzDVF6UjZzPXJjHcqWX8wLd
-         hUPA==
+        bh=FJ4oY4SKVayKaEkQooPXfSsMrGvPhQgh52H5/VxXHhc=;
+        b=My4+lz1EfjHlHc5ZQPjMGvTfTfEcjYKscthxOx9bpLKad3rt1e1BjE/c4/wP/f0rpk
+         gmQ3KK7D3ASzLrMlxmbh7AQbxBtyqO5c2j4WCrKY+dd/oWIqTOU/lPv0pt4ztIddzweG
+         HBmpuOEf82KorTXPNtYQF0yv31FLO0bWw3PmKslstTVAcspF88+4c0IhIycNsIGQekXZ
+         k0WXoQYV6GZ1f4q9KQ8JXCdZXOglHkEkOIxSbK/Jk32/4SiN5EZJ5TfcJQhM9vVomA59
+         TwHc23VBDnIUEBcVr5x+Pa7jRh3wc1ma1NvP9YykUcDE97MsZQWM+DtgEZwcvAxdphjI
+         uxHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>,
-	"Andrew F. Davis" <afd@ti.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 098/102] Revert "ARM: dts: omap3-n900: Fix the audio CODECs reset pin"
-Date: Fri,  6 Apr 2018 15:24:19 +0200
-Message-Id: <20180406084345.176082075@linuxfoundation.org>
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.9 099/102] Revert "spi: bcm-qspi: shut up warning about cfi header inclusion"
+Date: Fri,  6 Apr 2018 15:24:20 +0200
+Message-Id: <20180406084345.286785658@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003615276485458?=
-X-GMAIL-MSGID: =?utf-8?q?1597004130677788446?=
+X-GMAIL-THRID: =?utf-8?q?1597004129852937028?=
+X-GMAIL-MSGID: =?utf-8?q?1597004129852937028?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,38 +51,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This reverts commit e5ca83f556925b86133af12ef7f17c1a52c39d7e which was
-commit 7be4b5dc7ffa9499ac6ef33a5ffa9ff43f9b7057 upstream.
+This reverts commit c30e6636ce101fd61331092c490b9d9c55b2d143.
 
-It requires a driver that was not merged until 4.16, so remove it from
-this stable tree as it is pointless.
+Florian writes:
+	Sorry for noticing so late, but this appears to be bogus, there
+	is no MTD_NORFLASH symbol being defined in 4.9, in fact I can't
+	find this Kconfig symbol in any kernel version, so this
+	effectively results in the driver no longer being selectable, so
+	this sure does silence the warning.
 
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Andrew F. Davis <afd@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Sasha Levin <alexander.levin@microsoft.com>
+It's not good to just disable a whole driver :(
+
+So let's revert the patch for now, Arnd can work on a better build
+fix...
+
+Reported-by: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/omap3-n900.dts |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/Kconfig |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/arch/arm/boot/dts/omap3-n900.dts
-+++ b/arch/arm/boot/dts/omap3-n900.dts
-@@ -510,7 +510,7 @@
- 	tlv320aic3x: tlv320aic3x@18 {
- 		compatible = "ti,tlv320aic3x";
- 		reg = <0x18>;
--		reset-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>; /* 60 */
-+		gpio-reset = <&gpio2 28 GPIO_ACTIVE_HIGH>; /* 60 */
- 		ai3x-gpio-func = <
- 			0 /* AIC3X_GPIO1_FUNC_DISABLED */
- 			5 /* AIC3X_GPIO2_FUNC_DIGITAL_MIC_INPUT */
-@@ -527,7 +527,7 @@
- 	tlv320aic3x_aux: tlv320aic3x@19 {
- 		compatible = "ti,tlv320aic3x";
- 		reg = <0x19>;
--		reset-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>; /* 60 */
-+		gpio-reset = <&gpio2 28 GPIO_ACTIVE_HIGH>; /* 60 */
- 
- 		AVDD-supply = <&vmmc2>;
- 		DRVDD-supply = <&vmmc2>;
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -156,7 +156,6 @@ config SPI_BCM63XX_HSSPI
+ config SPI_BCM_QSPI
+ 	tristate "Broadcom BSPI and MSPI controller support"
+ 	depends on ARCH_BRCMSTB || ARCH_BCM || ARCH_BCM_IPROC || COMPILE_TEST
+-	depends on MTD_NORFLASH
+ 	default ARCH_BCM_IPROC
+ 	help
+ 	  Enables support for the Broadcom SPI flash and MSPI controller.
