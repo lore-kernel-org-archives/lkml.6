@@ -1,132 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751989AbeDFQy1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 12:54:27 -0400
-Received: from mail-bl2nam02on0054.outbound.protection.outlook.com ([104.47.38.54]:21897
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751412AbeDFQyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 12:54:24 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Yuri.Norov@cavium.com;
-Date: Fri, 6 Apr 2018 19:54:02 +0300
-From: Yury Norov <ynorov@caviumnetworks.com>
-To: James Morse <james.morse@arm.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Christopher Lameter <cl@linux.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexey Klimov <klimov.linux@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] arm64: entry: isb in el1_irq
-Message-ID: <20180406165402.nq3sabeku2mp3hpb@yury-thinkpad>
-References: <20180405171800.5648-1-ynorov@caviumnetworks.com>
- <20180405171800.5648-2-ynorov@caviumnetworks.com>
- <5036b99a-9faa-c220-27dd-e0d73f8b3fc7@arm.com>
+        id S1752069AbeDFQyh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 12:54:37 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:51434 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751412AbeDFQye (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 12:54:34 -0400
+X-Google-Smtp-Source: AIpwx4+qfEjilMR+zX57ahxWCTiD/N738R8wHB2RGdyuwRg7wcfgSesUaJUf5GJfENoXolKJSHbQhIWWfWBKomQqXB4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5036b99a-9faa-c220-27dd-e0d73f8b3fc7@arm.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Originating-IP: [58.11.97.202]
-X-ClientProxiedBy: DB6PR1001CA0015.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:4:b7::25) To CY4PR07MB2901.namprd07.prod.outlook.com
- (2603:10b6:903:26::15)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cb10a94d-7924-4565-1100-08d59bdf092f
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY4PR07MB2901;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2901;3:18iU8ryWY9UVD+yWL3VR+TXWod3s9HXaljFDw29SY+GI8rih0kyusqhLTcnOVBgaGmnep9Zrxl/tecN6CLC+5M5sVb6BEBu0gtbcMmXA3UI/vMa02Lo4tI/UvCeth9Lc1+vCEjmRtS8vP63LhVjG4FqVXn5rIvVdb5/DrbDxqNhBYAQktrGYgZTqR+ayqfF/bQPT316N2D2B2dIkOnjaRsjVVmRRo82WqmiiUUu0+dwLfl1QGZvz1EFuDu9kLwQx;25:Zjdu7w4/pro1xuaupZx1C5uUZPONIXt4xLE3YZLCZcAobEXik2CNhDK1Xg5CQGmgTxkKes4e3p2QluD6p3niB1Kisjm81GNzf8HCeoSFjRsJtGqKRylVQbMDjTfxzcZzF+nIffhHkRworltqSSxNmR3svCtv6dZ0kgtLmQX0Q9iXMQY2akbFzkq3D1UXQuN03uxMeqn1BWBsjqaLbNpdFvRLNmeuvhhS/I2Cd4LoiSoXaVflZHZ0eQOL80JhSRQ2gkH+bVWocAYrWQMVmc8oEdKhMIbAWJv4yIxlORAW5fu/8RriDny8bE1TZ0kzpFsUgGnvOnhKsYKHFJ0Kz8Bbjw==;31:T0rxVGN9DUlbaQOpxPmL5mKkmhsZft7L29UNpmHjoNv+BqrVxxbygUej923lcWro00DLlohoy8Q2f9erbCHOvSJ9ENxEeE6aomdos4hRAfbxFWo5HVcxiZ5eQbMcDRwE7CU9sNrtFQ1DQD4Ah0Winqgq8NN2Yt2/Xws9r5oYK1yhrz1KdHYu5N5vgqEzP4M1p99J1sIZS7m6vwS4ofebq8La6qGe00HWF8coml3QdpQ=
-X-MS-TrafficTypeDiagnostic: CY4PR07MB2901:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2901;20:2SGzRrrIL4q1EXicik7pUKSByYe1fTCPU2imvRT0uDGCOMT7YSkWNb63QnDqXBXc2tbQ/drmymeZ+jPU7hm5DeiqipsVmNgNq9cnHqOaKNikg3Sqg5TpOEnv3HlJ8diyORbZcEHRQf9J6c4hR9C75L7mzcjNhcQ7mRbVyy8LCuaDealgQOv7I8fyCAp0ayQ69M6ZB9DLxDqNvrCvighifsB4tRvOiFTB2tEv/xqSpiawDFjwnZ4oCZgO5okjdDMnApUMuZxOsOEsWWqI2E++5no0/tzF2b/fywrsfpirrEmAQVp1OYI2X/CXxB+wRdbg2hhT6fPZuo5jEz5joh8tL/6R9zBvy2/Q6DDBZuDLPlDwMWLbbB1/aWLGNz0WGBcIdduus8x1CTw4I09llx6b4oRX+tLviaFKqvuLPkutLZPyRgD/2ApPO7p3F40kr2n89+wFkg+vwg/cS424Yov8YuXg5vO4mkxVLNdlu+IfRDQT/VphhhkiKoFHzq1TH8AKrruf/VXMRIk6fuBXjUowWo/OxAZdNd5mlamrfDG/6GkXyse6zaQkMrmKbpmHS2zb2VU10SsBctfk5gaKPoc6DWTsjV71hrKzk3vFoyQo7ws=;4:FG+qfryTpW/A4RRFbTPeS62S8Ao+FcV26XXsHD5KTXPwDTx5iecc5yTx2TVYMaEwDE8t3MvGJchJkmzR+4t26eDBHgxOS3/OODgGZhyCceDV50igZqZdJI12+PsWd2LaF3EUoU+POLihGfi3weFccYV0qIFcgacKwmO1Lbia8dFc6fCSxoSdkfGz082tWGr1vhOyAIAGuzkCSL2b775ltU5hvS0e//FCJfRzfmuQ2OeoOoD+2F1paN1wfREdHD5uoYCdiXqNNlgD82oo8W4t/w==
-X-Microsoft-Antispam-PRVS: <CY4PR07MB290106E70B84526CC129B658E3BA0@CY4PR07MB2901.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(10201501046)(93006095)(3002001)(6041310)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CY4PR07MB2901;BCL:0;PCL:0;RULEID:;SRVR:CY4PR07MB2901;
-X-Forefront-PRVS: 0634F37BFF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(7916004)(366004)(396003)(39380400002)(39860400002)(376002)(346002)(199004)(189003)(68736007)(23726003)(81156014)(3846002)(476003)(81166006)(97736004)(316002)(58126008)(6496006)(26005)(8936002)(42882007)(16586007)(76176011)(33716001)(33896004)(2906002)(6116002)(50466002)(1076002)(186003)(8676002)(52116002)(16526019)(39060400002)(7416002)(5660300001)(47776003)(6916009)(6666003)(4326008)(66066001)(106356001)(956004)(11346002)(229853002)(7736002)(478600001)(105586002)(54906003)(6246003)(53936002)(486006)(446003)(76506005)(386003)(6486002)(72206003)(25786009)(9686003)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR07MB2901;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR07MB2901;23:S5M2K9XB4AppWa9bRLyMyQQZ5rSyiN1swTEtPRwef?=
- =?us-ascii?Q?8oDMvDyabGob8M3ULpV081PimU9vcLTq2AJt+A4mqW1gdcudugyrECpWeSIx?=
- =?us-ascii?Q?yaFRPm03fO9lvigFws/hxwJfjWx6hr9lT7NmoxV4I57O7/Fz2eGDGu8QfnM5?=
- =?us-ascii?Q?jIWFJwhdHxXTvpuCL3zDJdl/RAxQ+qPpziSQhsYpqyN+2iFOA0vGFmVdDxHm?=
- =?us-ascii?Q?nkGNrhafJH27wOAeFZib6es0Lqj0QO5PHtvKR+TzoJTathp359ABjNmDfrZE?=
- =?us-ascii?Q?rurrSs3BOWqP8PFdzFPgio9SEHI+6W+zGfDwyS/N4uNH4CD5WZhkIOKj3BcC?=
- =?us-ascii?Q?Y9KOOvzjZ9DkYDyK/QR8CQvKXu2+4J0p0vXjkMIoE36jKRJgsI/XWOj3ljKJ?=
- =?us-ascii?Q?Jwbnu+zq5V0+jL3iqEYfKrjuj0V1GK70fA9Gho/nDrYqJYSuIV0vI5pn9gNk?=
- =?us-ascii?Q?09yBBBUrbyJArhSTBodg+XyC1zTE+ZbB2XREc2R8b/ac7w7pQ/BepciOWoLk?=
- =?us-ascii?Q?ANtSVnSTt6hPhsgBnDptbBOi6Qa6Jb2stRpzT4oX+oVDcS87g+XKweoX6kqR?=
- =?us-ascii?Q?nKOQ3yEFY2JxlbLNFQ0HkrNKZ23XGx+qMGlj1WpPnFMOBHmNwNQAKeIoRWJe?=
- =?us-ascii?Q?gv02TQqkoEJelILzkgPkzTKOmkfbQjS3XWKLv58zbYC5EERE+c9G0NvhFShk?=
- =?us-ascii?Q?m8E31/Vuzm3IG8aESEwxPVHO8m02DRLRzgKvNgQgHh1O3XqDp3pnWJcpsKdu?=
- =?us-ascii?Q?JJfa4SByYkFkhJvDdfKUZ+2s4gz7X+tDQQPSDnvASgJcG93nzRPjnOTVBiHg?=
- =?us-ascii?Q?g6oR32HWKhqdAcAvtSxl/nXU6YVUD1X+t7Pzd4d2Tf1O0MZlbsOa8ZAwutik?=
- =?us-ascii?Q?ydpNeagDTe2B2ncdOKioKMMKsc7W3Q+oEZoAyiTh38AoS4A2R0MDeun9y2Sx?=
- =?us-ascii?Q?Kei8BRQgOYlozciOtaGhEaS/X1D1CconzFrCfZVedfsFoyhkeaGAbcMlF5bF?=
- =?us-ascii?Q?TI4BMGeVgIjb0Y/l4B6vfSyphi7y83v+iq3eCkfbEVc4LuklQrz5jJTTk0lv?=
- =?us-ascii?Q?4n1zXCxXFErUciGhEDaQeAAp72jv8um884TUJ/EgRvSL0iOP5KgSws1LSccZ?=
- =?us-ascii?Q?sXA9m/fo4tXQAT/NG5+ilQ+DBtaNFI5xnaZgfKDxXR0ZlVyzs5J/K7Q3ppzX?=
- =?us-ascii?Q?KD3rAfwoHhB1n5taiEerwrOdBlOXBIJUv7ub6qzXvG3+/uy93thcy3F3BESQ?=
- =?us-ascii?Q?2JRpNRRgvfjQv9iEHmM2XOsq5JB1806MQ7JJAjSAIsSeZCoX9O/AlT86F4ck?=
- =?us-ascii?Q?WfY74V6kPDx+iTYptYfb4YwBahN/SId1Gg2W2OUswatxhCxop8VqipCKILUZ?=
- =?us-ascii?Q?eQNzw=3D=3D?=
-X-Microsoft-Antispam-Message-Info: 1FYINEXTtc7eFFm/mHVgxWYJ9bFuV3O19FEItHGVFAw9pye0ziAIrkQ/ztdLhM/KsTASgGqVMWoCkTNLGwV4m+dCSxthIu3JzhbP+EQvA5V9NWhjKptIweCz4Y8pKHIRFBrOoEulKE7Wfbh8FJQLAMP+KYqRAROjORzSklp9DpnjoChHsJsKtjYhuCSvNdqM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2901;6:sdU1blV2+TjX5xXq21UjURGfgW9axyKtfk/9S60j9a5R4e4A14DTSiA+WeQCulU3wwN9fr6zfhFFXBKi5zq5lCM5RGaQLUxUfiWMOYN07ok34FODSGPwah9RBtTtAySMoPxKypTOSpzH/gbxSACqmqIYNh3dOWegtVbsjm0lLf5H9XxW/4O3TGHv7eLi9M+w+zPKdn6ufYslMACSGt6mqP8qapg4qRSvlcrdYV3yRx74BGwKs+egALap06Ip5irYsPbiTKiS7nmGYjwYnb2SdTYXg8YhrOeN3+/eLZELN/ulGXayquCVvuQKbb9AqycZEWl0ejCH7tjaYecRt4viSRknqMKEOlO5HvfF15/4P6Wv1xvTPw+eJllbJQMlMxLlw2O9qE+J0XB6dO+Ii1UGjk3/FjQr32nfIPiyni24EGlfyIVQkopEm/v9nXMJizJGZWxg/uvuaFA6pgtcbgVsKA==;5:+wUlmu77CfWa3zbTXkDTDL3ld97uJ4PW7a73NU3cAxICX+YKHZk1+nwWnM6Ylcpx6Juvsd+EEpQki8yxRFZqyCzavELr+dDHrZVoavKe9mltRqC6qZE1cTYaT/NjUw1oVp2XMlzXiiOfpoqeTBOEBe8qm4SLYyD0PvNW5BDO5rU=;24:+zfBtFMtbaw2KNmQ7h3/PexqoDhDH+kbztDIb4WYjwTbZjiDjbHwY+JttCDDQjhOWcc8VajzHocn2a7ZgIQ3h6U9ZaBxbVogmPIJFQ5fQRQ=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2901;7:17pG8Rzbm+owSUv3YS88OCPjNMd+lx2f1y5t22MtqKMwVRCnqHMPKgHZ5AUX3Mjs2+6PmHg/UHWYp/UWq5ZdgDjmkV6Jk3xfMqSE9R7Tn89gyGHiJ3qiFzPvAfMQBU5OnPPW55u8+O7neOHNbXAPfeAWPMekWeULk2fflw3wJkRY38JFwb8DM5UbEufqtWG+FlVqdXJgoqakLzCrZf2Au7YHtJDdA5dQap4jL/mMWP371gje4DzDsMoNkPxhDrr6
-X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2018 16:54:16.7197 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb10a94d-7924-4565-1100-08d59bdf092f
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR07MB2901
+From: Damjan Georgievski <gdamjan@gmail.com>
+Date: Fri, 6 Apr 2018 18:54:31 +0200
+Message-ID: <CAEk1YH75md=-v++Q8_sS9Q_3FS6xt0RMdRy8eBG=0NsUnCmk7Q@mail.gmail.com>
+Subject: uvcvideo stopped working in 4.16
+To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 11:02:56AM +0100, James Morse wrote:
-> Hi Yury,
-> 
-> An ISB at the beginning of the vectors? This is odd, taking an IRQ to get in
-> here would be a context-synchronization-event too, so the ISB is superfluous.
-> 
-> The ARM-ARM  has a list of 'Context-Synchronization event's (Glossary on page
-> 6480 of DDI0487B.b), paraphrasing:
-> * ISB
-> * Taking an exception
-> * ERET
-> * (...loads of debug stuff...)
+Since the 4.16 kernel my uvcvideo webcam on Thinkpad X1 Carbon (5th
+gen) stopped working with gst-launch-1.0, kamoso (kde webcam app),
+Firefox and Chromium on sites like appear.in, talky.io, Google
+Hangouts and meet.jit.si.
 
-Hi James, Mark,
+It works fine in 4.15
 
-I completely forgot that taking an exception is the context synchronization
-event. Sorry for your time on reviewing this crap. It means that patches 1,
-2 and 3 are not needed except chunk that adds ISB in do_idle() path. 
+The camera is:
+Bus 001 Device 004: ID 04f2:b5ce Chicony Electronics Co., Ltd
 
-Also it means that for arm64 we are safe to mask IPI delivering to CPUs that
-run any userspace code, not only nohz_full.
+After further investigation, if I rmmod the uvcvideo module, and then
+load it again, the camera starts working normally. But I get this in
+dmesg:
 
-In general, kick_all_cpus_sync() is needed to switch contexts. But exit from
-userspace is anyway the switch of context. And while in userspace, we cannot
-do something wrong on kernel side. For me it means that we can safely drop
-IPI for all userspace modes - both normal and nohz_full. 
+[   63.399362] usbcore: deregistering interface driver uvcvideo
+[   63.495659] WARNING: CPU: 1 PID: 858 at
+drivers/media/v4l2-core/v4l2-dev.c:176 v4l2_device_release+0xe3/0x100
+[videodev]
+[   63.495662] Modules linked in: rfcomm joydev mousedev rmi_smbus
+rmi_core bnep snd_hda_codec_hdmi snd_soc_skl snd_soc_skl_ipc
+snd_hda_codec_conexant snd_hda_ext_core snd_hda_codec_generic
+snd_soc_sst_dsp snd_soc_sst_ipc snd_soc_acpi snd_soc_core snd_compress
+ac97_bus snd_pcm_dmaengine arc4 iTCO_wdt iTCO_vendor_support wmi_bmof
+intel_wmi_thunderbolt intel_rapl iwlmvm x86_pkg_temp_thermal
+intel_powerclamp coretemp kvm_intel snd_hda_intel mac80211
+snd_hda_codec kvm uvcvideo(-) btusb btrtl btbcm btintel snd_hda_core
+videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 iwlwifi
+videobuf2_common bluetooth snd_hwdep irqbypass e1000e intel_cstate
+snd_pcm videodev intel_uncore qcserial intel_rapl_perf cdc_mbim ptp
+usb_wwan psmouse pps_core snd_timer usbserial input_leds media pcspkr
+cdc_wdm cdc_ncm cfg80211 usbnet
+[   63.495758]  mii i2c_i801 rtsx_pci_ms memstick tpm_crb ecdh_generic
+mei_me mei shpchp intel_pch_thermal ucsi_acpi typec_ucsi thinkpad_acpi
+typec wmi nvram i2c_hid ac rfkill snd battery soundcore led_class
+tpm_tis rtc_cmos tpm_tis_core hid tpm evdev rng_core mac_hid
+usbip_host usbip_core sg scsi_mod crypto_user ip_tables x_tables ext4
+crc16 mbcache jbd2 fscrypto algif_skcipher af_alg dm_crypt dm_mod
+crct10dif_pclmul crc32_pclmul crc32c_intel rtsx_pci_sdmmc
+ghash_clmulni_intel pcbc serio_raw mmc_core atkbd libps2 xhci_pci
+aesni_intel aes_x86_64 xhci_hcd crypto_simd glue_helper cryptd usbcore
+rtsx_pci usb_common i8042 serio vfat fat i915 intel_gtt i2c_algo_bit
+drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm
+agpgart
+[   63.495882] CPU: 1 PID: 858 Comm: rmmod Not tainted 4.16.0+ #1
+[   63.495885] Hardware name: LENOVO 20HQS0LV00/20HQS0LV00, BIOS
+N1MET45W (1.30 ) 02/22/2018
+[   63.495899] RIP: 0010:v4l2_device_release+0xe3/0x100 [videodev]
+[   63.495903] RSP: 0018:ffff9c974505bd60 EFLAGS: 00010202
+[   63.495907] RAX: 0000000000000000 RBX: ffff97d00b84a1d0 RCX: 0000000000000000
+[   63.495910] RDX: ffff97d00b84a018 RSI: 0000000000000286 RDI: ffffffffc0c7f0e0
+[   63.495912] RBP: ffff97d008245ae0 R08: 0000000000000000 R09: 0000000000000000
+[   63.495915] R10: ffffc823d22a9a00 R11: 0000000000000000 R12: ffff97d00b84a019
+[   63.495917] R13: ffff97d008245b90 R14: ffff97d00cbaf8f8 R15: 0000000000000000
+[   63.495921] FS:  00007f3549e74b80(0000) GS:ffff97d01f480000(0000)
+knlGS:0000000000000000
+[   63.495924] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   63.495928] CR2: 0000000001bffe78 CR3: 000000047d4e2003 CR4: 00000000003606e0
+[   63.495930] Call Trace:
+[   63.495947]  device_release+0x30/0x90
+[   63.495958]  kobject_put+0x85/0x1a0
+[   63.495967]  uvc_unregister_video+0x49/0x90 [uvcvideo]
+[   63.495995]  usb_unbind_interface+0x85/0x280 [usbcore]
+[   63.496007]  device_release_driver_internal+0x15a/0x220
+[   63.496014]  driver_detach+0x37/0x70
+[   63.496021]  bus_remove_driver+0x51/0xd0
+[   63.496051]  usb_deregister+0x6a/0xd0 [usbcore]
+[   63.496065]  uvc_cleanup+0xc/0x36e [uvcvideo]
+[   63.496075]  SyS_delete_module+0x16a/0x2d0
+[   63.496088]  do_syscall_64+0x74/0x190
+[   63.496100]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+[   63.496105] RIP: 0033:0x7f35495975d7
+[   63.496108] RSP: 002b:00007ffcbf653b88 EFLAGS: 00000206 ORIG_RAX:
+00000000000000b0
+[   63.496112] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f35495975d7
+[   63.496115] RDX: 000000000000000a RSI: 0000000000000800 RDI: 0000000001bf57b8
+[   63.496117] RBP: 0000000001bf5750 R08: 00007ffcbf652b01 R09: 0000000000000000
+[   63.496119] R10: 00000000000008b2 R11: 0000000000000206 R12: 00007ffcbf655d95
+[   63.496123] R13: 0000000000000000 R14: 0000000001bf5750 R15: 0000000001bf5260
+[   63.496127] Code: da ce 48 85 ed 74 1f 5b 48 89 ef 5d 41 5c e9 f5
+6b 00 00 5b 5d 41 5c e9 6c 9c da ce 4c 89 e7 e8 04 80 f4 ff eb c6 5b
+5d 41 5c c3 <0f> 0b 5b 5d 41 5c 48 c7 c7 e0 f0 c7 c0 e9 cb e8 ac ce 90
+66 2e
+[   63.496214] ---[ end trace d2f4fd290ae1befc ]---
+[   68.700338] uvcvideo: Found UVC 1.00 device Integrated Camera (04f2:b5ce)
+[   68.707982] uvcvideo 1-8:1.0: Entity type for entity Extension 4
+was not initialized!
+[   68.707987] uvcvideo 1-8:1.0: Entity type for entity Extension 3
+was not initialized!
+[   68.707991] uvcvideo 1-8:1.0: Entity type for entity Processing 2
+was not initialized!
+[   68.707994] uvcvideo 1-8:1.0: Entity type for entity Camera 1 was
+not initialized!
+[   68.708160] input: Integrated Camera: Integrated C as
+/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input20
+[   68.708302] usbcore: registered new interface driver uvcvideo
+[   68.708304] USB Video Class driver (1.1.1)
 
-If it's correct, for v3 I would suggest:
- - in kick_all_cpus_sync() mask all is_idle_task() and user_mode() CPUs;
- - add isb() for arm64 in do_idle() path only - this path doesn't imply
-   context switch.
+Another thing I've noticed, before the rmmod there were /dev/video0
+and /dev/video1, after loading the module again, it's /dev/video1 and
+/dev/video2
 
-What do you think?
-
-Yury
+-- 
+damjan
