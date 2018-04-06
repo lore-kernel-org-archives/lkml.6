@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752639AbeDFMgU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 08:36:20 -0400
+        id S1752678AbeDFMgX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 08:36:23 -0400
 Received: from mga05.intel.com ([192.55.52.43]:38490 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752487AbeDFMgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 08:36:13 -0400
+        id S1752487AbeDFMgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 08:36:20 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,415,1517904000";
-   d="scan'208";a="218132558"
+   d="scan'208";a="218132591"
 From: Wei Wang <wei.w.wang@intel.com>
 To: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
         virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
@@ -20,129 +20,92 @@ Cc: pbonzini@redhat.com, wei.w.wang@intel.com,
         liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
         quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
         huangzhichao@huawei.com
-Subject: [PATCH v31 0/4] Virtio-balloon: support free page reporting
-Date: Fri,  6 Apr 2018 20:17:21 +0800
-Message-Id: <1523017045-18315-1-git-send-email-wei.w.wang@intel.com>
+Subject: [PATCH v31 4/4] virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
+Date: Fri,  6 Apr 2018 20:17:25 +0800
+Message-Id: <1523017045-18315-5-git-send-email-wei.w.wang@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523017045-18315-1-git-send-email-wei.w.wang@intel.com>
+References: <1523017045-18315-1-git-send-email-wei.w.wang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series is separated from the previous "Virtio-balloon
-Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,  
-implemented by this series enables the virtio-balloon driver to report
-hints of guest free pages to the host. It can be used to accelerate live
-migration of VMs. Here is an introduction of this usage:
+The VIRTIO_BALLOON_F_PAGE_POISON feature bit is used to indicate if the
+guest is using page poisoning. Guest writes to the poison_val config
+field to tell host about the page poisoning value in use.
 
-Live migration needs to transfer the VM's memory from the source machine
-to the destination round by round. For the 1st round, all the VM's memory
-is transferred. From the 2nd round, only the pieces of memory that were
-written by the guest (after the 1st round) are transferred. One method
-that is popularly used by the hypervisor to track which part of memory is
-written is to write-protect all the guest memory.
+Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+Suggested-by: Michael S. Tsirkin <mst@redhat.com>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ drivers/virtio/virtio_balloon.c     | 10 ++++++++++
+ include/uapi/linux/virtio_balloon.h |  3 +++
+ 2 files changed, 13 insertions(+)
 
-This feature enables the optimization by skipping the transfer of guest
-free pages during VM live migration. It is not concerned that the memory
-pages are used after they are given to the hypervisor as a hint of the
-free pages, because they will be tracked by the hypervisor and transferred
-in the subsequent round if they are used and written.
-
-* Tests
-- Test Environment
-    Host: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-    Guest: 8G RAM, 4 vCPU
-    Migration setup: migrate_set_speed 100G, migrate_set_downtime 2 second
-
-- Test Results
-    - Idle Guest Live Migration Time (results are averaged over 10 runs):
-        - Optimization v.s. Legacy = 271ms vs 1769ms --> ~86% reduction
-    - Guest with Linux Compilation Workload (make bzImage -j4):
-        - Live Migration Time (average)
-          Optimization v.s. Legacy = 1265ms v.s. 2634ms --> ~51% reduction
-        - Linux Compilation Time
-          Optimization v.s. Legacy = 4min56s v.s. 5min3s
-          --> no obvious difference
-
-ChangeLog:
-v30->v31:
-    - virtio_balloon:
-        - virtio_balloon_send_free_pages: return -EINTR rather than 1 to
-          indicate an active stop requested by host; and add more
-          comments to explain about access to cmd_id_received without
-          locks
-        -  add_one_sg: add TODO to comments about possible improvement.
-v29->v30:
-    - mm/walk_free_mem_block: add cond_sched() for each order
-v28->v29:
-    - mm/page_poison: only expose page_poison_enabled(), rather than more
-      changes did in v28, as we are not 100% confident about that for now.
-    - virtio-balloon: use a separate buffer for the stop cmd, instead of
-      having the start and stop cmd use the same buffer. This avoids the
-      corner case that the start cmd is overridden by the stop cmd when
-      the host has a delay in reading the start cmd.
-v27->v28:
-    - mm/page_poison: Move PAGE_POISON to page_poison.c and add a function
-      to expose page poison val to kernel modules.
-v26->v27:
-    - add a new patch to expose page_poisoning_enabled to kernel modules
-    - virtio-balloon: set poison_val to 0xaaaaaaaa, instead of 0xaa
-v25->v26: virtio-balloon changes only
-    - remove kicking free page vq since the host now polls the vq after
-      initiating the reporting
-    - report_free_page_func: detach all the used buffers after sending
-      the stop cmd id. This avoids leaving the detaching burden (i.e.
-      overhead) to the next cmd id. Detaching here isn't considered
-      overhead since the stop cmd id has been sent, and host has already
-      moved formard.
-v24->v25:
-    - mm: change walk_free_mem_block to return 0 (instead of true) on
-          completing the report, and return a non-zero value from the
-          callabck, which stops the reporting.
-    - virtio-balloon:
-        - use enum instead of define for VIRTIO_BALLOON_VQ_INFLATE etc.
-        - avoid __virtio_clear_bit when bailing out;
-        - a new method to avoid reporting the some cmd id to host twice
-        - destroy_workqueue can cancel free page work when the feature is
-          negotiated;
-        - fail probe when the free page vq size is less than 2.
-v23->v24:
-    - change feature name VIRTIO_BALLOON_F_FREE_PAGE_VQ to
-      VIRTIO_BALLOON_F_FREE_PAGE_HINT
-    - kick when vq->num_free < half full, instead of "= half full"
-    - replace BUG_ON with bailing out
-    - check vb->balloon_wq in probe(), if null, bail out
-    - add a new feature bit for page poisoning
-    - solve the corner case that one cmd id being sent to host twice
-v22->v23:
-    - change to kick the device when the vq is half-way full;
-    - open-code batch_free_page_sg into add_one_sg;
-    - change cmd_id from "uint32_t" to "__virtio32";
-    - reserver one entry in the vq for the driver to send cmd_id, instead
-      of busywaiting for an available entry;
-    - add "stop_update" check before queue_work for prudence purpose for
-      now, will have a separate patch to discuss this flag check later;
-    - init_vqs: change to put some variables on stack to have simpler
-      implementation;
-    - add destroy_workqueue(vb->balloon_wq);
-v21->v22:
-    - add_one_sg: some code and comment re-arrangement
-    - send_cmd_id: handle a cornercase
-
-For previous ChangeLog, please reference
-https://lwn.net/Articles/743660/
-
-Wei Wang (4):
-  mm: support reporting free page blocks
-  virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-  mm/page_poison: expose page_poisoning_enabled to kernel modules
-  virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
-
- drivers/virtio/virtio_balloon.c     | 282 +++++++++++++++++++++++++++++++-----
- include/linux/mm.h                  |   6 +
- include/uapi/linux/virtio_balloon.h |   7 +
- mm/page_alloc.c                     |  97 +++++++++++++
- mm/page_poison.c                    |   6 +
- 5 files changed, 362 insertions(+), 36 deletions(-)
-
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index aef73ee..47b02d5 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -714,6 +714,7 @@ static struct file_system_type balloon_fs = {
+ static int virtballoon_probe(struct virtio_device *vdev)
+ {
+ 	struct virtio_balloon *vb;
++	__u32 poison_val;
+ 	int err;
+ 
+ 	if (!vdev->config->get) {
+@@ -759,6 +760,11 @@ static int virtballoon_probe(struct virtio_device *vdev)
+ 		vb->stop_cmd_id = cpu_to_virtio32(vb->vdev,
+ 				VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID);
+ 		INIT_WORK(&vb->report_free_page_work, report_free_page_func);
++		if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON)) {
++			memset(&poison_val, PAGE_POISON, sizeof(poison_val));
++			virtio_cwrite(vb->vdev, struct virtio_balloon_config,
++				      poison_val, &poison_val);
++		}
+ 	}
+ 
+ 	vb->nb.notifier_call = virtballoon_oom_notify;
+@@ -877,6 +883,9 @@ static int virtballoon_restore(struct virtio_device *vdev)
+ 
+ static int virtballoon_validate(struct virtio_device *vdev)
+ {
++	if (!page_poisoning_enabled())
++		__virtio_clear_bit(vdev, VIRTIO_BALLOON_F_PAGE_POISON);
++
+ 	__virtio_clear_bit(vdev, VIRTIO_F_IOMMU_PLATFORM);
+ 	return 0;
+ }
+@@ -886,6 +895,7 @@ static unsigned int features[] = {
+ 	VIRTIO_BALLOON_F_STATS_VQ,
+ 	VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
+ 	VIRTIO_BALLOON_F_FREE_PAGE_HINT,
++	VIRTIO_BALLOON_F_PAGE_POISON,
+ };
+ 
+ static struct virtio_driver virtio_balloon_driver = {
+diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+index b2d86c2..8b93581 100644
+--- a/include/uapi/linux/virtio_balloon.h
++++ b/include/uapi/linux/virtio_balloon.h
+@@ -35,6 +35,7 @@
+ #define VIRTIO_BALLOON_F_STATS_VQ	1 /* Memory Stats virtqueue */
+ #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
+ #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
++#define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
+ 
+ /* Size of a PFN in the balloon interface. */
+ #define VIRTIO_BALLOON_PFN_SHIFT 12
+@@ -47,6 +48,8 @@ struct virtio_balloon_config {
+ 	__u32 actual;
+ 	/* Free page report command id, readonly by guest */
+ 	__u32 free_page_report_cmd_id;
++	/* Stores PAGE_POISON if page poisoning is in use */
++	__u32 poison_val;
+ };
+ 
+ #define VIRTIO_BALLOON_S_SWAP_IN  0   /* Amount of memory swapped in */
 -- 
 2.7.4
