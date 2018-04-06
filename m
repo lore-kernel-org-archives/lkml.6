@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752311AbeDFRKE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 13:10:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50295 "EHLO
+        id S1752080AbeDFRK7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 13:10:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50997 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752279AbeDFRKC (ORCPT
+        with ESMTP id S1751417AbeDFRK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 13:10:02 -0400
-Date: Fri, 6 Apr 2018 10:07:06 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-5kxuvruuzdbojvf90f8j2wat@git.kernel.org>
-Cc: lionel.g.landwerlin@intel.com, linux-kernel@vger.kernel.org,
-        joonas.lahtinen@linux.intel.com, hpa@zytor.com, namhyung@kernel.org,
-        mingo@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-        wangnan0@huawei.com, dsahern@gmail.com, tglx@linutronix.de,
-        chris@chris-wilson.co.uk, tvrtko.ursulin@intel.com, acme@redhat.com
-Reply-To: mingo@kernel.org, namhyung@kernel.org,
-        joonas.lahtinen@linux.intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, lionel.g.landwerlin@intel.com,
-        tvrtko.ursulin@intel.com, acme@redhat.com, chris@chris-wilson.co.uk,
-        wangnan0@huawei.com, dsahern@gmail.com, tglx@linutronix.de,
-        jolsa@kernel.org, adrian.hunter@intel.com
+        Fri, 6 Apr 2018 13:10:57 -0400
+Date: Fri, 6 Apr 2018 10:09:56 -0700
+From: tip-bot for Linus Torvalds <tipbot@zytor.com>
+Message-ID: <tip-dfe64506c01e57159a4c550fe537c13a317ff01b@git.kernel.org>
+Cc: tglx@linutronix.de, peterz@infradead.org, jpoimboe@redhat.com,
+        brgerst@gmail.com, luto@kernel.org, hpa@zytor.com, bp@alien8.de,
+        mingo@kernel.org, dvlasenk@redhat.com, linux@dominikbrodowski.net,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+Reply-To: bp@alien8.de, hpa@zytor.com, brgerst@gmail.com, luto@kernel.org,
+        jpoimboe@redhat.com, peterz@infradead.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        linux@dominikbrodowski.net, dvlasenk@redhat.com, mingo@kernel.org
+In-Reply-To: <20180405095307.3730-2-linux@dominikbrodowski.net>
+References: <20180405095307.3730-2-linux@dominikbrodowski.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools headers uapi: Synchronize i915_drm.h
-Git-Commit-ID: 01f97511f13cbf2ba3d23b2bffa06258dc81e283
+Subject: [tip:x86/asm] x86/syscalls: Don't pointlessly reload the system
+ call number
+Git-Commit-ID: dfe64506c01e57159a4c550fe537c13a317ff01b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,209 +36,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  01f97511f13cbf2ba3d23b2bffa06258dc81e283
-Gitweb:     https://git.kernel.org/tip/01f97511f13cbf2ba3d23b2bffa06258dc81e283
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 5 Apr 2018 14:40:44 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 5 Apr 2018 14:48:51 -0300
+Commit-ID:  dfe64506c01e57159a4c550fe537c13a317ff01b
+Gitweb:     https://git.kernel.org/tip/dfe64506c01e57159a4c550fe537c13a317ff01b
+Author:     Linus Torvalds <torvalds@linux-foundation.org>
+AuthorDate: Thu, 5 Apr 2018 11:53:00 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 5 Apr 2018 16:59:24 +0200
 
-tools headers uapi: Synchronize i915_drm.h
+x86/syscalls: Don't pointlessly reload the system call number
 
-To pick up the changes in:
+We have it in a register in the low-level asm, just pass it in as an
+argument rather than have do_syscall_64() load it back in from the
+ptregs pointer.
 
-  c822e0591855 drm/i915: expose rcs topology through query uAPI
-  a446ae2c6e65 drm/i915: add query uAPI
-
-This affects 'perf trace', that automagically gets the definition of the
-new I915_QUERY DRM ioctl:
-
-  --- /tmp/build/perf/trace/beauty/generated/ioctl/drm_ioctl_array.c.old 2018-04-05 14:38:33.660111995 -0300
-  +++ /tmp/build/perf/trace/beauty/generated/ioctl/drm_ioctl_array.c 2018-04-05 14:40:17.923283914 -0300
-  @@ -158,4 +158,5 @@
-          [DRM_COMMAND_BASE + 0x36] = "I915_PERF_OPEN",
-          [DRM_COMMAND_BASE + 0x37] = "I915_PERF_ADD_CONFIG",
-          [DRM_COMMAND_BASE + 0x38] = "I915_PERF_REMOVE_CONFIG",
-  +       [DRM_COMMAND_BASE + 0x39] = "I915_QUERY",
-   };
-
-I.e. on systems where this is used it will appear when, for instance,
-one does a system wide 'perf trace' session looking for ioctl calls,
-just like it does with the previously implemented DRM_I915 ioctls:
-
-  # perf trace -e ioctl --filter-pids 2190
-<SNIP>
-  4346.232 ( 0.012 ms): gnome-shell/1455 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_BUSY, arg: 0x7fff3b0cd910) = 0
-  4346.246 ( 0.002 ms): gnome-shell/1455 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_MADVISE, arg: 0x7fff3b0cd980) = 0
-  4346.252 ( 0.002 ms): gnome-shell/1455 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_BUSY, arg: 0x7fff3b0cdb00) = 0
-<SNIP>
-
-This silences this perf tools build warning:
-
-  Warning: Kernel ABI header at 'tools/include/uapi/drm/i915_drm.h' differs from latest version at 'include/uapi/drm/i915_drm.h'
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-5kxuvruuzdbojvf90f8j2wat@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180405095307.3730-2-linux@dominikbrodowski.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/include/uapi/drm/i915_drm.h | 112 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 108 insertions(+), 4 deletions(-)
+ arch/x86/entry/common.c   | 12 ++++++------
+ arch/x86/entry/entry_64.S |  3 ++-
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/tools/include/uapi/drm/i915_drm.h b/tools/include/uapi/drm/i915_drm.h
-index 536ee4febd74..7f5634ce8e88 100644
---- a/tools/include/uapi/drm/i915_drm.h
-+++ b/tools/include/uapi/drm/i915_drm.h
-@@ -318,6 +318,7 @@ typedef struct _drm_i915_sarea {
- #define DRM_I915_PERF_OPEN		0x36
- #define DRM_I915_PERF_ADD_CONFIG	0x37
- #define DRM_I915_PERF_REMOVE_CONFIG	0x38
-+#define DRM_I915_QUERY			0x39
- 
- #define DRM_IOCTL_I915_INIT		DRM_IOW( DRM_COMMAND_BASE + DRM_I915_INIT, drm_i915_init_t)
- #define DRM_IOCTL_I915_FLUSH		DRM_IO ( DRM_COMMAND_BASE + DRM_I915_FLUSH)
-@@ -375,6 +376,7 @@ typedef struct _drm_i915_sarea {
- #define DRM_IOCTL_I915_PERF_OPEN	DRM_IOW(DRM_COMMAND_BASE + DRM_I915_PERF_OPEN, struct drm_i915_perf_open_param)
- #define DRM_IOCTL_I915_PERF_ADD_CONFIG	DRM_IOW(DRM_COMMAND_BASE + DRM_I915_PERF_ADD_CONFIG, struct drm_i915_perf_oa_config)
- #define DRM_IOCTL_I915_PERF_REMOVE_CONFIG	DRM_IOW(DRM_COMMAND_BASE + DRM_I915_PERF_REMOVE_CONFIG, __u64)
-+#define DRM_IOCTL_I915_QUERY			DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_QUERY, struct drm_i915_query)
- 
- /* Allow drivers to submit batchbuffers directly to hardware, relying
-  * on the security mechanisms provided by hardware.
-@@ -1358,7 +1360,9 @@ struct drm_intel_overlay_attrs {
-  * active on a given plane.
-  */
- 
--#define I915_SET_COLORKEY_NONE		(1<<0) /* disable color key matching */
-+#define I915_SET_COLORKEY_NONE		(1<<0) /* Deprecated. Instead set
-+						* flags==0 to disable colorkeying.
-+						*/
- #define I915_SET_COLORKEY_DESTINATION	(1<<1)
- #define I915_SET_COLORKEY_SOURCE	(1<<2)
- struct drm_intel_sprite_colorkey {
-@@ -1604,15 +1608,115 @@ struct drm_i915_perf_oa_config {
- 	__u32 n_flex_regs;
- 
- 	/*
--	 * These fields are pointers to tuples of u32 values (register
--	 * address, value). For example the expected length of the buffer
--	 * pointed by mux_regs_ptr is (2 * sizeof(u32) * n_mux_regs).
-+	 * These fields are pointers to tuples of u32 values (register address,
-+	 * value). For example the expected length of the buffer pointed by
-+	 * mux_regs_ptr is (2 * sizeof(u32) * n_mux_regs).
- 	 */
- 	__u64 mux_regs_ptr;
- 	__u64 boolean_regs_ptr;
- 	__u64 flex_regs_ptr;
- };
- 
-+struct drm_i915_query_item {
-+	__u64 query_id;
-+#define DRM_I915_QUERY_TOPOLOGY_INFO    1
-+
-+	/*
-+	 * When set to zero by userspace, this is filled with the size of the
-+	 * data to be written at the data_ptr pointer. The kernel sets this
-+	 * value to a negative value to signal an error on a particular query
-+	 * item.
-+	 */
-+	__s32 length;
-+
-+	/*
-+	 * Unused for now. Must be cleared to zero.
-+	 */
-+	__u32 flags;
-+
-+	/*
-+	 * Data will be written at the location pointed by data_ptr when the
-+	 * value of length matches the length of the data to be written by the
-+	 * kernel.
-+	 */
-+	__u64 data_ptr;
-+};
-+
-+struct drm_i915_query {
-+	__u32 num_items;
-+
-+	/*
-+	 * Unused for now. Must be cleared to zero.
-+	 */
-+	__u32 flags;
-+
-+	/*
-+	 * This points to an array of num_items drm_i915_query_item structures.
-+	 */
-+	__u64 items_ptr;
-+};
-+
-+/*
-+ * Data written by the kernel with query DRM_I915_QUERY_TOPOLOGY_INFO :
-+ *
-+ * data: contains the 3 pieces of information :
-+ *
-+ * - the slice mask with one bit per slice telling whether a slice is
-+ *   available. The availability of slice X can be queried with the following
-+ *   formula :
-+ *
-+ *           (data[X / 8] >> (X % 8)) & 1
-+ *
-+ * - the subslice mask for each slice with one bit per subslice telling
-+ *   whether a subslice is available. The availability of subslice Y in slice
-+ *   X can be queried with the following formula :
-+ *
-+ *           (data[subslice_offset +
-+ *                 X * subslice_stride +
-+ *                 Y / 8] >> (Y % 8)) & 1
-+ *
-+ * - the EU mask for each subslice in each slice with one bit per EU telling
-+ *   whether an EU is available. The availability of EU Z in subslice Y in
-+ *   slice X can be queried with the following formula :
-+ *
-+ *           (data[eu_offset +
-+ *                 (X * max_subslices + Y) * eu_stride +
-+ *                 Z / 8] >> (Z % 8)) & 1
-+ */
-+struct drm_i915_query_topology_info {
-+	/*
-+	 * Unused for now. Must be cleared to zero.
-+	 */
-+	__u16 flags;
-+
-+	__u16 max_slices;
-+	__u16 max_subslices;
-+	__u16 max_eus_per_subslice;
-+
-+	/*
-+	 * Offset in data[] at which the subslice masks are stored.
-+	 */
-+	__u16 subslice_offset;
-+
-+	/*
-+	 * Stride at which each of the subslice masks for each slice are
-+	 * stored.
-+	 */
-+	__u16 subslice_stride;
-+
-+	/*
-+	 * Offset in data[] at which the EU masks are stored.
-+	 */
-+	__u16 eu_offset;
-+
-+	/*
-+	 * Stride at which each of the EU masks for each subslice are stored.
-+	 */
-+	__u16 eu_stride;
-+
-+	__u8 data[];
-+};
-+
- #if defined(__cplusplus)
+diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+index 74f6eee15179..a8b066dbbf48 100644
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -266,14 +266,13 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
  }
- #endif
+ 
+ #ifdef CONFIG_X86_64
+-__visible void do_syscall_64(struct pt_regs *regs)
++__visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
+ {
+-	struct thread_info *ti = current_thread_info();
+-	unsigned long nr = regs->orig_ax;
++	struct thread_info *ti;
+ 
+ 	enter_from_user_mode();
+ 	local_irq_enable();
+-
++	ti = current_thread_info();
+ 	if (READ_ONCE(ti->flags) & _TIF_WORK_SYSCALL_ENTRY)
+ 		nr = syscall_trace_enter(regs);
+ 
+@@ -282,8 +281,9 @@ __visible void do_syscall_64(struct pt_regs *regs)
+ 	 * table.  The only functional difference is the x32 bit in
+ 	 * regs->orig_ax, which changes the behavior of some syscalls.
+ 	 */
+-	if (likely((nr & __SYSCALL_MASK) < NR_syscalls)) {
+-		nr = array_index_nospec(nr & __SYSCALL_MASK, NR_syscalls);
++	nr &= __SYSCALL_MASK;
++	if (likely(nr < NR_syscalls)) {
++		nr = array_index_nospec(nr, NR_syscalls);
+ 		regs->ax = sys_call_table[nr](
+ 			regs->di, regs->si, regs->dx,
+ 			regs->r10, regs->r8, regs->r9);
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 936e19642eab..6cfe38665f3c 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -233,7 +233,8 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
+ 	TRACE_IRQS_OFF
+ 
+ 	/* IRQs are off. */
+-	movq	%rsp, %rdi
++	movq	%rax, %rdi
++	movq	%rsp, %rsi
+ 	call	do_syscall_64		/* returns with IRQs disabled */
+ 
+ 	TRACE_IRQS_IRETQ		/* we're about to change IF */
