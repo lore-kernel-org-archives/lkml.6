@@ -1,138 +1,474 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752307AbeDFPOi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:14:38 -0400
-Received: from mail-dm3nam03on0078.outbound.protection.outlook.com ([104.47.41.78]:43563
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751435AbeDFPOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:14:34 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Vadim.Lomovtsev@cavium.com;
-Date: Fri, 6 Apr 2018 08:14:25 -0700
-From: Vadim Lomovtsev <Vadim.Lomovtsev@caviumnetworks.com>
-To: David Miller <davem@davemloft.net>
-Cc: sgoutham@cavium.com, sunil.kovvuri@gmail.com, rric@kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dnelson@redhat.com,
-        gustavo@embeddedor.com, Vadim.Lomovtsev@cavium.com
-Subject: Re: [PATCH v2] net: thunderx: rework mac addresses list to u64 array
-Message-ID: <20180406151425.GA15317@localhost.localdomain>
-References: <20180405145756.12633-1-Vadim.Lomovtsev@caviumnetworks.com>
- <20180406111425.14636-1-Vadim.Lomovtsev@caviumnetworks.com>
- <20180406.110603.978796669734920248.davem@davemloft.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406.110603.978796669734920248.davem@davemloft.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-Originating-IP: [50.233.148.156]
-X-ClientProxiedBy: MWHPR15CA0051.namprd15.prod.outlook.com
- (2603:10b6:301:4c::13) To BN6PR07MB2993.namprd07.prod.outlook.com
- (2603:10b6:404:a7::11)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 884f6c47-ac61-4524-4d1e-08d59bd119c9
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN6PR07MB2993;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2993;3:x3JO7KD9FvaZY4XWM6P47CBCAxaHiWNURgE16oGNK52QHUYX1lZcEAPMwjoHoLY0pB4u3bcHKlwTEA7zGjVm54f14oqOkWR9qt/9SPq3BKVhV3GGZ7xRtMD6xp2yIvdZz1++EUs+b8LHxZIL8aZvorvOecXLvmTpsZfHp/rOiUe2VCjV3Fri2HIG7uRKubbEOu7zDXsSeX2lDetUpN5spe2m419+utPiKjgdxLLY3q8KD+wH9IigB78RTixcNu+U;25:qLLGqZ+kRx/BikE/ugAjDrQVn9asUobRuTkNrM6UTa50qDrNhnyPtIoYLXQwnlgoq9uHgIqL7ZZ/J5xopZUMHRG0+ZLNE7VkCngUv6rER//XDSc4Ru1IN3qfpRVvffT47E1jjRJAfCqdiXd5rbHoqxpAgg03Wn3HqFvhMB2KxOAb9hr2awL5TKtrEpHVna/o4nUy/Jl69jxbSj9Hph6TUN0sSudzSPQ/UgYBtv/3XiSFKO6PBN7ApP3bAiIvgQ85KYBYOzQSXKoSb1Hi43hZ3SwT/eSmCSwKW3mAImaDO805zF4zNQe5Hz+so3xDohs09Y6ieePHgJY1ayOOrBSsFQ==;31:wOSc0wv95mBmeWt+tQHojEUb8CDpBobFc/USoMRg0YZ3vejuYJkmiA6Dp0vW0AIUmJXX6BJP0n91mpfPGJhf/WzuiVaajtpQTSv2oIKmFGk6W/if4GH7eIuxsG4IHbceTZk7xFumaNYd/gsWdIBVZQg1wPohgxOzf91NuJt3pp7GXSw67jl69ask1Aq80+Bt+1LfXmuTnXMNu0mXhjeJIgk8mantNYNO9yVAbafDk1k=
-X-MS-TrafficTypeDiagnostic: BN6PR07MB2993:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2993;20:rxPx42UxJsQEEOBEWgKizaB+Vyc+ggr1UO6FqNlk5Mt3RnegIRmHSvB3o1Pqn/Dd4HIHhUqUw6WrxvjagY29i2rUvVIq99NIgo9nJtfzyBqh3slNHeQ0gTcgyCF3a3jETkU87pkz0xBwA9TKTWddSIu1LD9Or10KsbyRdo7mZU4KICnhAwlOozUmI1s608okGTKU6u1S/mmOyFELBI68Nb6yxN+GpxytirX/2Rf6xB3xUR/hc15RRpqYfO5e0vToAJ77ZkLhm2M6iGvRlHjH0LIdrfF43hzvLz558G4qFaPiCtL7dMjJSoVj/IEQfLgh7870/spuYTlBDFxEBfm3Vzh5uokCFw0G4OF1XzZDGmtfdtABHaOOj7xneB3j4zVdetal1PdFf06RQUj9My9oqy42/xt0oPPETVeDRehk6bMIqY+wN+8F9HJx5jlMwg+3n0BpBrXDBdWL/h5NtqcmiOJcjMrmyrViVBVW1hvb2ALzrCV/IE2FQH0wuHSyhfAZyKQWYOYGd3PKgMxq7LpEVOvi7G+gosg1aOJQc6ct5V0cD3S7e7cGbVBq8+Nhof5RRumqX3eG1RVJGpYagbtRJSkUl9hCzUaa52d9T6TNYBA=;4:LCNRGS0+SmkMzSMClGcyDVjt7xz13RXNV0WDW5ljTXpaIWFVX1lXO3nJiKoiJ599miRlPIcRaXkrrM+jSFLZaO9eKfHoFz5W5qi1C7LRl3AbDwiJ8YDuoykoMX6XqYf1S0+Q9vTpUhLQy1spOfMBgAAMvAL0bPMMrx9O5yZmwcBs4WMobMyI03jn72NDmkr7EeEzeEbsjGzccs4BwVhSBBkfD/Zi7cuyISU3TLGIRQc4GVrTcKMhdz203hQeJ04pauvRfJ23y9hn1Ivo5ELPjhrHa7ho6fGsjLVEiX77bJdiM3ywQgkltcL1s7wB5LeV
-X-Microsoft-Antispam-PRVS: <BN6PR07MB2993E3EEDA77E99A7813B4C08ABA0@BN6PR07MB2993.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(277106579953875);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(10201501046)(93006095)(3002001)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:BN6PR07MB2993;BCL:0;PCL:0;RULEID:;SRVR:BN6PR07MB2993;
-X-Forefront-PRVS: 0634F37BFF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39860400002)(39380400002)(376002)(396003)(366004)(346002)(189003)(199004)(25786009)(68736007)(8676002)(42882007)(47776003)(72206003)(81156014)(5660300001)(106356001)(7696005)(9686003)(61506002)(4326008)(107886003)(305945005)(7736002)(53936002)(105586002)(52116002)(6666003)(81166006)(3846002)(6916009)(186003)(16526019)(33896004)(8936002)(58126008)(66066001)(26005)(2906002)(23726003)(6246003)(97736004)(39060400002)(55016002)(50466002)(1076002)(6116002)(446003)(33656002)(956004)(478600001)(476003)(6506007)(486006)(229853002)(386003)(16586007)(316002)(11346002)(76176011)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR07MB2993;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR07MB2993;23:TU0z0lsy4UI4NY/hwOij2mB1aiKRxuYfV3cNlC6Tj?=
- =?us-ascii?Q?7eSeeSzmTdfGtKWlN3MAV5BouyrLMRkyNOl9B2pWdc3y1R2SU10N8ql9AGHq?=
- =?us-ascii?Q?Yw7c3KJrOn3107DD63ISsaBiV27dsPYSKgT01DXVSRUNJpO4FLHf0DEJdzsB?=
- =?us-ascii?Q?2ksrrhL8BJGIjnISkAv1KHeo7u5C6tDa/EdYH/65Q7vbZXlokTRmcRrAaxjC?=
- =?us-ascii?Q?BmNavgPsM2MPLGTDpFpuCK9A6LpIwLaYJeiSc/AAZMIJXdLIh2TlDGPSN3FT?=
- =?us-ascii?Q?y7RuPfhtjbSo5WM3aCEIcThKu6X2rUhPJ5wAmAoKVKUMeHTVushh4CCMMBJ+?=
- =?us-ascii?Q?HUaXOtDTDv1qEdDoSHPWuKR6VwWmnCqHigiIug1eqAF3wHb91uQh6qp+Z+gU?=
- =?us-ascii?Q?QEWtbq6az2POZkDp8+mduD+nPAtEy38b6vdyBZG76opkoXnStT5pnZyVxZtc?=
- =?us-ascii?Q?lCHZ9RJ7+6z1xqQfDJZYz+cPSNgyP7BjJGrItnaPkLVeSSEdR6BZcV/UFu0u?=
- =?us-ascii?Q?8/NajPieoF1Yqcow8FceojgQ9Vvg3v4/AGvLxa+6hRQtMuZAa0Cc05KhZjco?=
- =?us-ascii?Q?bBEaw/xy1zZwsyizlB78qP/Pq3L1ww29SuDOGpUwhnBmxkJxCUnx0SbAGqty?=
- =?us-ascii?Q?d6lEiT6L6wNTKnT7tLrhdfvehEhObUNeV6/dwjnzJnHkzIV6EMHeuOsyPdnw?=
- =?us-ascii?Q?mwKmmDaeorhBvSssvItNuPvP7fjPvoMVJwZW1Wn1rlIqXQfdQ1ouwISlqBB2?=
- =?us-ascii?Q?+pDMkKk6ajkr9EqPxhsXEnG+9OxiW7RbcP4qjXIk9OGRn8ncgQnfDAt3wpmJ?=
- =?us-ascii?Q?yV1IeCEnQzMp2/oWV4V/asE4QfR/86oKT0BLgvHnUQgPZYZWBsqnkqVg3oPd?=
- =?us-ascii?Q?LZ0AEJu7NXHdqg/IULgbnVxnKoaUhU0V+jAFv96m3zLbW6gJaUZuBiESZBsw?=
- =?us-ascii?Q?6w69nMGXRcigOV9laUxPbfyatyr+LWbQ6BNXdFDjTTr3KaAbqqjjUXHvYLdE?=
- =?us-ascii?Q?pAqXpWYGp4NWNEPqwCOSMbzr4UFFz+bE9xr0eihHqkdPaqQwfq1TJf97AU3F?=
- =?us-ascii?Q?QdtLervn43fR6z1wb8zbEOpjRWFZKG0ZF5o/IXKwAeuwWHFizWPbdIbCUsMa?=
- =?us-ascii?Q?zG8ABVseMrf+RctzXRA0ak8HGsPSCCYUGxuHmuUPbNfx6P6+9BEANzDvonRQ?=
- =?us-ascii?Q?V3Y2oveKCg/l/hpoiHMHGAWV622OaxepT6P8QC0vY2iYafUGRaoZoSyrKmWU?=
- =?us-ascii?Q?CvCJyQgsvYs/sWdiH8AQUNMmOZomL5YFtyXoATBtRaNh1rRtdHQ9cONtXonv?=
- =?us-ascii?Q?GnhF1wzNAE9VioFtwU9yd4eBTnylBpbf2RuyxP3/TwGMu2MNqVURg0vb//bL?=
- =?us-ascii?Q?RDGxU8zOa/g9443ULwbNtcYRwI=3D?=
-X-Microsoft-Antispam-Message-Info: FzzAglzysR4kqRwqsZLEMU9Z+yIfl6gGgIqo9H+adITGV1dVXSW9dACrMKLT7vXy4OOcqD8ZMkrEPzAC42Mdn8sWFNLBrqhVJ/coE/atzvD8G6I/gvR8wOQiiai4R0tchRu/wRqavsiebYXZHtLyRc+qt8mTxQjmWldK5A6JleBCWztTZFiDkdyOC1lEODHC
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2993;6:ZKKI4R22Nd1w0v4vkahuwMZNANTShwC8oqh+8NT2GOYd/gnxEbhoowuZ2Ksxjoai74HkMbrugVpQJTruhE74SZo18QMNzuPTx31xF21GRrZ4uUOJNmN2PZqN6qYm6aScd5RG3rdEVawSKKQCCPPf1tPeV5c54dtqsBVjDU3N+kSdMGRhgOyddenO+svGRZsJSAumUqvtTwLm5V/iGWxVttQCqlCQ1faWn+AZzswX0XfTSmTqP4n81IgX1DEiW0m2yoTBe5XTdh+PFvhVuIfgPM23tMIT5gV50ZvEsbmCkLnSkLvQ84kvb2vlpFSCXQjFqIW1z3Ak/DQ/tkJRIVLwgX02iMC6g4FbTVvAcMRek0XAM6iiA6kS/nWJxwLOFrKBWR5nsO0sNSXyI74CTWqG+QWYJtks9siqbJUgp3KOvIOyIFn/jdzzV2jdB9Y5s5mNPQ9xFVV0Nnm/vbg8QMA2oA==;5:hLAKZjXg1mv98h/ENu5cTBdwfE3wFTMWUFruyMqxKj+sWgv/5P8HRoJ7QBWFOfGUKk+u5Z+i0hZRg0ISNiq0lpC4B+WHoUne6WcYnITiW/6nW1wEUbmbUzBwQ8jxvQsuCBAnt4ENFLEC0863RXijs8ABo7oZHQpbJZxr8TAe6NY=;24:SqLDb2WF/Un20tq9jDAYsWciqSF7J4t12Pcw3I1bAuL6nYL0/fOJ4nJYWA4RweMQqGo0AuhuKD7l8a1CwEwavJGlbxgPZI0PJIoxgKOyP8M=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB2993;7:zX7mfQ/ju7L0XOKdwmqlU72BvasDUTFZQ1mGTljHfj6tkP7uyR3iJieom4vKkObLOUJJ36Z6zlmGcjkQn70SwK6TeeklYpU9nu1RYTDtibSP0oQEKHM8kbi41foUxS4IQ9cn5Rnf5ysSI7nUFzqSjbRXcUMw0I8uNzEZ62IlYRNQNLGg32OhkH+nVKCV2IfworZdaF2UJlKaVcQ47buKU/KXZmzdqORYpDF4d7bJrVK79wZZZZns5E61ZGb3OdWb
-X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2018 15:14:31.1023 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 884f6c47-ac61-4524-4d1e-08d59bd119c9
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR07MB2993
+        id S1752454AbeDFPOs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 11:14:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40180 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752093AbeDFPOm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 11:14:42 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 70FE460274
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From: Lina Iyer <ilina@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>
+Subject: [PATCH v7 [RESEND] 1/2] drivers: qcom: add command DB driver
+Date: Fri,  6 Apr 2018 09:13:55 -0600
+Message-Id: <20180406151356.7818-2-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180406151356.7818-1-ilina@codeaurora.org>
+References: <20180406151356.7818-1-ilina@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 11:06:03AM -0400, David Miller wrote:
-> From: Vadim Lomovtsev <Vadim.Lomovtsev@caviumnetworks.com>
-> Date: Fri,  6 Apr 2018 04:14:25 -0700
-> 
-> > diff --git a/drivers/net/ethernet/cavium/thunder/nic.h b/drivers/net/ethernet/cavium/thunder/nic.h
-> > index 5fc46c5a4f36..448d1fafc827 100644
-> > --- a/drivers/net/ethernet/cavium/thunder/nic.h
-> > +++ b/drivers/net/ethernet/cavium/thunder/nic.h
-> > @@ -265,14 +265,9 @@ struct nicvf_drv_stats {
-> >  
-> >  struct cavium_ptp;
-> >  
-> > -struct xcast_addr {
-> > -	struct list_head list;
-> > -	u64              addr;
-> > -};
-> > -
-> >  struct xcast_addr_list {
-> > -	struct list_head list;
-> >  	int              count;
-> > +	u64              mc[];
-> >  };
-> >  
-> >  struct nicvf_work {
-> > diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_main.c b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-> > index 1e9a31fef729..a26d8bc92e01 100644
-> > --- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-> > +++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-> > @@ -1929,7 +1929,7 @@ static void nicvf_set_rx_mode_task(struct work_struct *work_arg)
-> >  						  work.work);
-> >  	struct nicvf *nic = container_of(vf_work, struct nicvf, rx_mode_work);
-> >  	union nic_mbx mbx = {};
-> > -	struct xcast_addr *xaddr, *next;
-> > +	u8 idx = 0;
->         ^^^^^^^^^^^
-> 
-> >  
-> >  	if (!vf_work)
-> >  		return;
-> > @@ -1956,16 +1956,10 @@ static void nicvf_set_rx_mode_task(struct work_struct *work_arg)
-> >  	/* check if we have any specific MACs to be added to PF DMAC filter */
-> >  	if (vf_work->mc) {
-> >  		/* now go through kernel list of MACs and add them one by one */
-> > -		list_for_each_entry_safe(xaddr, next,
-> > -					 &vf_work->mc->list, list) {
-> > +		for (idx = 0; idx < vf_work->mc->count; idx++) {
-> 
-> vf_work->mx->count is an 'int' therefore 'idx' should be declared 'int' as well,
-> not a 'u8'.
+From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
 
-My bad, sorry.
-Will post v4 shortly then.
+Command DB is a simple database in the shared memory of QCOM SoCs, that
+provides information regarding shared resources. Some shared resources
+in the SoC have properties that are probed dynamically at boot by the
+remote processor. The information pertaining to the SoC and the platform
+are made available in the shared memory. Drivers can query this
+information using predefined strings.
 
+Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-WBR,
-Vadim
+Changes in v6:
+	- Remove indirection and use the actual command db memory in DT
+
+Changes in v5:
+	- Use strncmp
+	- Add check in probe to ensure the location at dictionary address
+	  is same as the one specified in reserved-memory
+	- Whitespace fixes
+	- Comments updated
+---
+ drivers/of/platform.c     |   1 +
+ drivers/soc/qcom/Kconfig  |   9 ++
+ drivers/soc/qcom/Makefile |   1 +
+ drivers/soc/qcom/cmd-db.c | 310 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/soc/qcom/cmd-db.h |  45 +++++++
+ 5 files changed, 366 insertions(+)
+ create mode 100644 drivers/soc/qcom/cmd-db.c
+ create mode 100644 include/soc/qcom/cmd-db.h
+
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index c00d81dfac0b..26fb43847f4b 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -494,6 +494,7 @@ EXPORT_SYMBOL_GPL(of_platform_default_populate);
+ #ifndef CONFIG_PPC
+ static const struct of_device_id reserved_mem_matches[] = {
+ 	{ .compatible = "qcom,rmtfs-mem" },
++	{ .compatible = "qcom,cmd-db" },
+ 	{ .compatible = "ramoops" },
+ 	{}
+ };
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index e050eb83341d..b12868a2b92d 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -3,6 +3,15 @@
+ #
+ menu "Qualcomm SoC drivers"
+ 
++config QCOM_COMMAND_DB
++	bool "Qualcomm Command DB"
++	depends on (ARCH_QCOM && OF) || COMPILE_TEST
++	help
++	  Command DB queries shared memory by key string for shared system
++	  resources. Platform drivers that require to set state of a shared
++	  resource on a RPM-hardened platform must use this database to get
++	  SoC specific identifier and information for the shared resources.
++
+ config QCOM_GLINK_SSR
+ 	tristate "Qualcomm Glink SSR driver"
+ 	depends on RPMSG
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index dcebf2814e6d..bbd1230fc441 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
+ obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
+ obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
+ obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
+diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
+new file mode 100644
+index 000000000000..b5172049f608
+--- /dev/null
++++ b/drivers/soc/qcom/cmd-db.c
+@@ -0,0 +1,310 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
++
++#include <linux/kernel.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/of_reserved_mem.h>
++#include <linux/platform_device.h>
++#include <linux/types.h>
++
++#include <soc/qcom/cmd-db.h>
++
++#define NUM_PRIORITY		2
++#define MAX_SLV_ID		8
++#define CMD_DB_MAGIC		0x0C0330DBUL
++#define SLAVE_ID_MASK		0x7
++#define SLAVE_ID_SHIFT		16
++
++#define ENTRY_HEADER(hdr)	((void *)cmd_db_header +	\
++				sizeof(*cmd_db_header) +	\
++				hdr->header_offset)
++
++#define RSC_OFFSET(hdr, ent)	((void *)cmd_db_header +	\
++				sizeof(*cmd_db_header) +	\
++				hdr.data_offset + ent.offset)
++
++/**
++ * struct entry_header: header for each entry in cmddb
++ *
++ * @id: resource's identifier
++ * @priority: unused
++ * @addr: the address of the resource
++ * @len: length of the data
++ * @offset: offset from :@data_offset, start of the data
++ */
++struct entry_header {
++	u64 id;
++	u32 priority[NUM_PRIORITY];
++	u32 addr;
++	u16 len;
++	u16 offset;
++};
++
++/**
++ * struct rsc_hdr: resource header information
++ *
++ * @slv_id: id for the resource
++ * @header_offset: entry's header at offset from the end of the cmd_db_header
++ * @data_offset: entry's data at offset from the end of the cmd_db_header
++ * @cnt: number of entries for HW type
++ * @version: MSB is major, LSB is minor
++ * @reserved: reserved for future use.
++ */
++struct rsc_hdr {
++	u16 slv_id;
++	u16 header_offset;
++	u16 data_offset;
++	u16 cnt;
++	u16 version;
++	u16 reserved[3];
++};
++
++/**
++ * struct cmd_db_header: The DB header information
++ *
++ * @version: The cmd db version
++ * @magic_number: constant expected in the database
++ * @header: array of resources
++ * @checksum: checksum for the header. Unused.
++ * @reserved: reserved memory
++ * @data: driver specific data
++ */
++struct cmd_db_header {
++	u32 version;
++	u32 magic_num;
++	struct rsc_hdr header[MAX_SLV_ID];
++	u32 checksum;
++	u32 reserved;
++	u8 data[];
++};
++
++/**
++ * DOC: Description of the Command DB database.
++ *
++ * At the start of the command DB memory is the cmd_db_header structure.
++ * The cmd_db_header holds the version, checksum, magic key as well as an
++ * array for header for each slave (depicted by the rsc_header). Each h/w
++ * based accelerator is a 'slave' (shared resource) and has slave id indicating
++ * the type of accelerator. The rsc_header is the header for such individual
++ * slaves of a given type. The entries for each of these slaves begin at the
++ * rsc_hdr.header_offset. In addition each slave could have auxiliary data
++ * that may be needed by the driver. The data for the slave starts at the
++ * entry_header.offset to the location pointed to by the rsc_hdr.data_offset.
++ *
++ * Drivers have a stringified key to a slave/resource. They can query the slave
++ * information and get the slave id and the auxiliary data and the length of the
++ * data. Using this information, they can format the request to be sent to the
++ * h/w accelerator and request a resource state.
++ */
++
++static struct cmd_db_header *cmd_db_header;
++
++/**
++ * cmd_db_ready - Indicates if command DB is available
++ *
++ * Return: 0 on success, errno otherwise
++ */
++int cmd_db_ready(void)
++{
++	if (cmd_db_header == NULL)
++		return -EPROBE_DEFER;
++	else if (cmd_db_header->magic_num != CMD_DB_MAGIC)
++		return -EINVAL;
++
++	return 0;
++}
++EXPORT_SYMBOL(cmd_db_ready);
++
++static u64 cmd_db_get_u64_id(const char *id)
++{
++	u64 rsc_id = 0;
++	u8 *ch = (u8 *)&rsc_id;
++
++	strncpy(ch, id, min(strlen(id), sizeof(rsc_id)));
++
++	return rsc_id;
++}
++
++static int cmd_db_get_header(u64 query, struct entry_header *eh,
++			     struct rsc_hdr *rh)
++{
++	struct rsc_hdr *rsc_hdr;
++	struct entry_header *ent;
++	int ret, i, j;
++
++	ret = cmd_db_ready();
++	if (ret)
++		return ret;
++
++	if (!eh || !rh)
++		return -EINVAL;
++
++	for (i = 0; i < MAX_SLV_ID; i++) {
++		rsc_hdr = &cmd_db_header->header[i];
++		if (!rsc_hdr->slv_id)
++			break;
++
++		ent = ENTRY_HEADER(rsc_hdr);
++		for (j = 0; j < rsc_hdr->cnt; j++, ent++) {
++			if (ent->id == query)
++				break;
++		}
++
++		if (j < rsc_hdr->cnt) {
++			memcpy(eh, ent, sizeof(*ent));
++			memcpy(rh, rsc_hdr, sizeof(*rh));
++			return 0;
++		}
++	}
++
++	return -ENODEV;
++}
++
++static int cmd_db_get_header_by_rsc_id(const char *id,
++				       struct entry_header *ent_hdr,
++				       struct rsc_hdr *rsc_hdr)
++{
++	u64 rsc_id = cmd_db_get_u64_id(id);
++
++	return cmd_db_get_header(rsc_id, ent_hdr, rsc_hdr);
++}
++
++/**
++ * cmd_db_read_addr() - Query command db for resource id address.
++ *
++ * @id: resource id to query for address
++ *
++ * Return: resource address on success, 0 on error
++ *
++ * This is used to retrieve resource address based on resource
++ * id.
++ */
++u32 cmd_db_read_addr(const char *id)
++{
++	int ret;
++	struct entry_header ent;
++	struct rsc_hdr rsc_hdr;
++
++	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
++
++	return ret < 0 ? 0 : ent.addr;
++}
++EXPORT_SYMBOL(cmd_db_read_addr);
++
++/**
++ * cmd_db_read_aux_data() - Query command db for aux data.
++ *
++ *  @id: Resource to retrieve AUX Data on.
++ *  @data: Data buffer to copy returned aux data to. Returns size on NULL
++ *  @len: Caller provides size of data buffer passed in.
++ *
++ *  Return: size of data on success, errno otherwise
++ */
++int cmd_db_read_aux_data(const char *id, u8 *data, size_t len)
++{
++	int ret;
++	struct entry_header ent;
++	struct rsc_hdr rsc_hdr;
++
++	if (!data)
++		return -EINVAL;
++
++	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
++	if (ret)
++		return ret;
++
++	if (len < ent.len)
++		return -EINVAL;
++
++	len = min_t(u16, ent.len, len);
++	memcpy(data, RSC_OFFSET(rsc_hdr, ent), len);
++
++	return len;
++}
++EXPORT_SYMBOL(cmd_db_read_aux_data);
++
++/**
++ * cmd_db_read_aux_data_len - Get the length of the auxiliary data stored in DB.
++ *
++ * @id: Resource to retrieve AUX Data.
++ *
++ * Return: size on success, 0 on error
++ */
++size_t cmd_db_read_aux_data_len(const char *id)
++{
++	int ret;
++	struct entry_header ent;
++	struct rsc_hdr rsc_hdr;
++
++	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
++
++	return ret < 0 ? 0 : ent.len;
++}
++EXPORT_SYMBOL(cmd_db_read_aux_data_len);
++
++/**
++ * cmd_db_read_slave_id - Get the slave ID for a given resource address
++ *
++ * @id: Resource id to query the DB for version
++ *
++ * Return: cmd_db_hw_type enum on success, CMD_DB_HW_INVALID on error
++ */
++enum cmd_db_hw_type cmd_db_read_slave_id(const char *id)
++{
++	int ret;
++	struct entry_header ent;
++	struct rsc_hdr rsc_hdr;
++
++	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
++
++	return ret < 0 ? CMD_DB_HW_INVALID :
++		       (ent.addr >> SLAVE_ID_SHIFT) & SLAVE_ID_MASK;
++}
++EXPORT_SYMBOL(cmd_db_read_slave_id);
++
++static int cmd_db_dev_probe(struct platform_device *pdev)
++{
++	struct reserved_mem *rmem;
++	int ret = 0;
++
++	rmem = of_reserved_mem_lookup(pdev->dev.of_node);
++	if (!rmem) {
++		dev_err(&pdev->dev, "failed to acquire memory region\n");
++		return -EINVAL;
++	}
++
++	cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WB);
++	if (IS_ERR_OR_NULL(cmd_db_header)) {
++		ret = PTR_ERR(cmd_db_header);
++		cmd_db_header = NULL;
++		return ret;
++	}
++
++	if (cmd_db_header->magic_num != CMD_DB_MAGIC) {
++		dev_err(&pdev->dev, "Invalid Command DB Magic\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id cmd_db_match_table[] = {
++	{ .compatible = "qcom,cmd-db" },
++	{ },
++};
++
++static struct platform_driver cmd_db_dev_driver = {
++	.probe  = cmd_db_dev_probe,
++	.driver = {
++		   .name = "cmd-db",
++		   .of_match_table = cmd_db_match_table,
++	},
++};
++
++static int __init cmd_db_device_init(void)
++{
++	return platform_driver_register(&cmd_db_dev_driver);
++}
++arch_initcall(cmd_db_device_init);
+diff --git a/include/soc/qcom/cmd-db.h b/include/soc/qcom/cmd-db.h
+new file mode 100644
+index 000000000000..578180cbc134
+--- /dev/null
++++ b/include/soc/qcom/cmd-db.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
++
++#ifndef __QCOM_COMMAND_DB_H__
++#define __QCOM_COMMAND_DB_H__
++
++
++enum cmd_db_hw_type {
++	CMD_DB_HW_INVALID = 0,
++	CMD_DB_HW_MIN     = 3,
++	CMD_DB_HW_ARC     = CMD_DB_HW_MIN,
++	CMD_DB_HW_VRM     = 4,
++	CMD_DB_HW_BCM     = 5,
++	CMD_DB_HW_MAX     = CMD_DB_HW_BCM,
++	CMD_DB_HW_ALL     = 0xff,
++};
++
++#if IS_ENABLED(CONFIG_QCOM_COMMAND_DB)
++u32 cmd_db_read_addr(const char *resource_id);
++
++int cmd_db_read_aux_data(const char *resource_id, u8 *data, size_t len);
++
++size_t cmd_db_read_aux_data_len(const char *resource_id);
++
++enum cmd_db_hw_type cmd_db_read_slave_id(const char *resource_id);
++
++int cmd_db_ready(void);
++#else
++static inline u32 cmd_db_read_addr(const char *resource_id)
++{ return 0; }
++
++static inline int cmd_db_read_aux_data(const char *resource_id, u8 *data,
++				       size_t len)
++{ return -ENODEV; }
++
++static inline size_t cmd_db_read_aux_data_len(const char *resource_id)
++{ return -ENODEV; }
++
++static inline enum cmd_db_hw_type cmd_db_read_slave_id(const char *resource_id)
++{ return -ENODEV; }
++
++static inline int cmd_db_ready(void)
++{ return -ENODEV; }
++#endif /* CONFIG_QCOM_COMMAND_DB */
++#endif /* __QCOM_COMMAND_DB_H__ */
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
