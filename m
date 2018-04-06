@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48GIZdbJP130k+O3K0wmpUV5GRGIL3JMzEiLia8CQc1Kp7oFwrlwq7AIXpwzILjGv+Pu29h
-ARC-Seal: i=1; a=rsa-sha256; t=1523021509; cv=none;
+X-Google-Smtp-Source: AIpwx4+YWekVRIt8P8QyLTi+L8vCy7KFn6nqlTS4BhEab7re8kEDoIYu33cQyhHrRlhgv7bcKOys
+ARC-Seal: i=1; a=rsa-sha256; t=1523021507; cv=none;
         d=google.com; s=arc-20160816;
-        b=cU9kANNob4SdfR/ugK/mzthMxcEwgTtmkz4BR2yMgfsXMuhpNMTcULqjrtHK5znYgj
-         slQRjITnLdQdSzqshe/F3RuV2YTSjd86vcMr89hP+RLCkqNk0GA5GOo1yw7NdvlVjb/k
-         f1PNKCQf/vKY+vWpBOnDHCmTsNivXKp2GyVsj2JJWYG4hJXPGQ/kcebiBQdn+Vdw9b2z
-         A0dwn3K3trZDX0ktnbaoZrLvdYx7OxvNMmqVHBlf43CZq90g87q2Xcos4Bz+nRFu9SlG
-         PA+VgCwz6bkfiBgl45RuBteItaUzt31sL6f1z3eJGN/nsGVtq7ap48Frh+fYkKQPSYZE
-         xn7A==
+        b=RP07pjAmn9JLy2yZ+QdOJHy48ylxE32T17jcmGtqWIicYhFqkquoonIHtlEPqjCpNC
+         Ir0Q6jw3KPusy4x+eneU71/7CYogcsG60zWnaWAbpAeiaSXlFJfu3KkOfsy0M5DANtG7
+         WIwSAUVrS5tpC0+2GOvQqU/E+yIqKDS44nubUU0WmbWrSrfTqGFtQaMhb2vwj8l8zvQ5
+         nDn2orrl45+lw5YpST+i9JhnfF43k/vc80M/UcX10joCnJqa4BZ9DromptKL4xlQSivf
+         eZBrliCKZyY11osIkQm2NmEOUC1u1IHuJB9zMtmZNz2tcJE1DU0ZFqST6z0XfM2a74d4
+         P+ow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IhM+Udd2W3LNd1j2SldlyRcijHKg9KhrYaOl4khzCNk=;
-        b=qIC/cbEsR3MA/oq6wyD0AE1J9j/EMUWKwi1dY34JGZOIjJ0FKFt3xzo9i64o/VQkok
-         C4g4Z3guf009yNg37SqHM+YMAD/0QIRagTZ9Nk4UxYbKTqvmnedgubBSX2hhsypKyVFi
-         2W6Evh23T6raWvLP1Eged8zRcWrQBaMTy+54LqeXmZBc4dptxyvcX2OBc6Hobv6eJLiG
-         kRESwYIy5W/T3/zCjVECsQcsA3KpMFYSYF6RHjMguHuUxEyUNWGnvEUCsQOFKbMN6iMT
-         5LS+0uabc8bEu8gFYIpTQ3m1XA3zpRMUqRqG9yG+x3AcJ1wIrbLfqEI6XEUUtsP5e6Jx
-         9gag==
+        bh=m6FYVrj+PWUqpbi5ciM5RIYLlbo03pE7qkk+9zYiCt8=;
+        b=UcucoesDyngUB4aJ92PdKjwnSLSuFfcyUZbBhMOOIIOe18zW8tRMc8vuuO9v24Jpmh
+         6vCnqMoE3NH6qn5pbh4bs66c/LjOKeIoM4+JFqCqz7CO6y/EmQY/w7F56cgk/oRWzdrY
+         TQH2BjYdT/bT8zCY6EaLEv6jBprgx8jlqbI2S9W11wmj3ir9rLh3T7dZJBVyZBclVpn6
+         upZ6mCUlObJi13fKd/dNRrIOcxfLP1FWEjIjGldeJPvq57q0CGMAMTRPzwqfCvZOtD0H
+         vnxNlnLm4Qw6BgjnqC0QZ1eG/ysVkQdWGZ+SGifJbHsk9Vch+QkC0dhykG7k3TdhXORV
+         ZMdw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
+	Matthias Brugger <mbrugger@suse.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 63/72] nospec: Move array_index_nospec() parameter checking into separate macro
-Date: Fri,  6 Apr 2018 15:24:04 +0200
-Message-Id: <20180406084310.714705931@linuxfoundation.org>
+Subject: [PATCH 4.4 62/72] net: hns: Fix ethtool private flags
+Date: Fri,  6 Apr 2018 15:24:03 +0200
+Message-Id: <20180406084310.646504452@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003802507858226?=
-X-GMAIL-MSGID: =?utf-8?q?1597003802507858226?=
+X-GMAIL-THRID: =?utf-8?q?1597003799411742003?=
+X-GMAIL-MSGID: =?utf-8?q?1597003799411742003?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,88 +50,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
 
-commit 8fa80c503b484ddc1abbd10c7cb2ab81f3824a50 upstream.
+commit d61d263c8d82db7c4404a29ebc29674b1c0c05c9 upstream.
 
-For architectures providing their own implementation of
-array_index_mask_nospec() in asm/barrier.h, attempting to use WARN_ONCE() to
-complain about out-of-range parameters using WARN_ON() results in a mess
-of mutually-dependent include files.
+The driver implementation returns support for private flags, while
+no private flags are present. When asked for the number of private
+flags it returns the number of statistic flag names.
 
-Rather than unpick the dependencies, simply have the core code in nospec.h
-perform the checking for us.
+Fix this by returning EOPNOTSUPP for not implemented ethtool flags.
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1517840166-15399-1-git-send-email-will.deacon@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/nospec.h |   36 +++++++++++++++++++++---------------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c |    2 +-
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c  |    2 +-
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c  |    2 +-
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c   |    4 +++-
+ 4 files changed, 6 insertions(+), 4 deletions(-)
 
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -21,20 +21,6 @@ static inline unsigned long array_index_
- 						    unsigned long size)
- {
- 	/*
--	 * Warn developers about inappropriate array_index_nospec() usage.
--	 *
--	 * Even if the CPU speculates past the WARN_ONCE branch, the
--	 * sign bit of @index is taken into account when generating the
--	 * mask.
--	 *
--	 * This warning is compiled out when the compiler can infer that
--	 * @index and @size are less than LONG_MAX.
--	 */
--	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
--			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
--		return 0;
--
--	/*
- 	 * Always calculate and emit the mask even if the compiler
- 	 * thinks the mask is not needed. The compiler does not take
- 	 * into account the value of @index under speculation.
-@@ -45,6 +31,26 @@ static inline unsigned long array_index_
- #endif
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+@@ -648,7 +648,7 @@ static void hns_gmac_get_strings(u32 str
  
- /*
-+ * Warn developers about inappropriate array_index_nospec() usage.
-+ *
-+ * Even if the CPU speculates past the WARN_ONCE branch, the
-+ * sign bit of @index is taken into account when generating the
-+ * mask.
-+ *
-+ * This warning is compiled out when the compiler can infer that
-+ * @index and @size are less than LONG_MAX.
-+ */
-+#define array_index_mask_nospec_check(index, size)				\
-+({										\
-+	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,			\
-+	    "array_index_nospec() limited to range of [0, LONG_MAX]\n"))	\
-+		_mask = 0;							\
-+	else									\
-+		_mask = array_index_mask_nospec(index, size);			\
-+	_mask;									\
-+})
-+
-+/*
-  * array_index_nospec - sanitize an array index after a bounds check
-  *
-  * For a code sequence like:
-@@ -62,7 +68,7 @@ static inline unsigned long array_index_
- ({									\
- 	typeof(index) _i = (index);					\
- 	typeof(size) _s = (size);					\
--	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
-+	unsigned long _mask = array_index_mask_nospec_check(_i, _s);	\
- 									\
- 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
- 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
+ static int hns_gmac_get_sset_count(int stringset)
+ {
+-	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
++	if (stringset == ETH_SS_STATS)
+ 		return ARRAY_SIZE(g_gmac_stats_string);
+ 
+ 	return 0;
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
+@@ -384,7 +384,7 @@ void hns_ppe_update_stats(struct hns_ppe
+ 
+ int hns_ppe_get_sset_count(int stringset)
+ {
+-	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
++	if (stringset == ETH_SS_STATS)
+ 		return ETH_PPE_STATIC_NUM;
+ 	return 0;
+ }
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
+@@ -807,7 +807,7 @@ void hns_rcb_get_stats(struct hnae_queue
+  */
+ int hns_rcb_get_ring_sset_count(int stringset)
+ {
+-	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
++	if (stringset == ETH_SS_STATS)
+ 		return HNS_RING_STATIC_REG_NUM;
+ 
+ 	return 0;
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -1000,8 +1000,10 @@ int hns_get_sset_count(struct net_device
+ 			cnt--;
+ 
+ 		return cnt;
+-	} else {
++	} else if (stringset == ETH_SS_STATS) {
+ 		return (HNS_NET_STATS_CNT + ops->get_sset_count(h, stringset));
++	} else {
++		return -EOPNOTSUPP;
+ 	}
+ }
+ 
