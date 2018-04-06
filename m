@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+nO7mSfj/qiD9Oj8CtplA9T8Fc3kam/1NlEoT5QXDzRYr62Pfg1iyJay/P/zovlSIqgybO
-ARC-Seal: i=1; a=rsa-sha256; t=1523021341; cv=none;
+X-Google-Smtp-Source: AIpwx4+2syyZ8YVFDwqCUR8xij7WAdTvSVuwxo8HSn1ge/i/0xDBd7NIJ1mYXiYctIBlvHATm30w
+ARC-Seal: i=1; a=rsa-sha256; t=1523021339; cv=none;
         d=google.com; s=arc-20160816;
-        b=ELUBCxGRddHZb5gX5NfgI0aK4NR+nSt1D9W+v9RShq0IW0qNrYeZyFGpxFrQ+L/TOF
-         JHUyNb2Pr72hl/l/bDb2st1f/O9x3kFK3z1LyusT5u/XxsypoxraMoMSUasaAsxkzr1R
-         srhbLh89qK3/pXzixUbGu25mL5oIrao+1W+ZzYII5hUFM/mDch70Ey89G/VzqTj8iGXb
-         Sva7W/eLdo1cb8baa81+Uort8gl/ak8FKcX3smCUpXA0UyVScAx9IMD5pFBFgeNtgKMH
-         tfoa+qxUfIvFXzt/bEjY+mMSKcTEvQPJRY9XD2D1Mq4R3tKSvEsY09HuEcY1FUIkVYtM
-         CvLA==
+        b=k9aKhAVCgaCcd3DAaB5/3sVW+7fhHQnppvLvu9BGh7826iScnjOJzBtXT/DOMMn2pk
+         NVvE3XdVUTeKSCdIwRdC+b9WD9bYNOTL4Q/BRWO99JkVL/9PBTIACM3bjIgdipwloKNI
+         du4jabB1+2DA+WSlVOFHPWZ9gpH32A5U+xYolOcB0Vyxa6yCOk6S3zCvUapter0ZZKBr
+         tnhw953YfO02WjqYbl2p58pzMOgMafO248wqTRKp1CjICv79j7WTZJm409DAqjfP9H8P
+         JkjkpJPPyo5Dbap6sxer7DuOibCUxaIe90QTttzQAUIbXtRObiFCYolfOwHe6RcTz4wy
+         /Inw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EGBnDKPNX/nG/RsI0+nL5dyNRnrKNHp1gRpj8mwq2bY=;
-        b=mLT4Fr8DYDHPwnBpW4o1BfEYOAPwPM550T0HSv0uVob/3LZ+MVDxSQVZIc9d1V6Kna
-         8JSmvHq56Uw+HF6J9ES2GNlbW/w/NSs14jCOZhYw3hfMHAR7fSQTMLkhKdw7eLocGiUu
-         WOdrNbcCC5qLmSO5QQMi8LCjF93jgAvtb+PKHdB+SZr0NYGfUen8nbGwYgnJA1HluDuB
-         fGtC6mIKq9Y1HY1Y1O6CDhSP6s2WvLaxhjMgw9u//0CpPGf1t2l/Exm4mW97zy4Nfc4c
-         B0zxxSdS0gCGSMOv6GtkEQD2F1xXhGWlOrS/OHgw1DGo1HpV+X+XMsEo+Rr33nJCLYdk
-         4htQ==
+        bh=6k3/UIhKC3eTFgxoHhGaT2pqFxgwZgSpnhC2k5PlfrU=;
+        b=fN9hxlu7pkGOEL+RzpUc0murCtEPI3AmHXJp7CKYDQ0XaDweMOQBiG7zZ/7XC9lYlI
+         qclpDpus1+lVTuf3CBLqBnV/ibVjaEewl91VC3Shz7aTX+43HFPkASfO1pGGRVwr5qaT
+         I+DVpxUD7d3fg7hQttJpmQ7LpnRCcG9B0FGc7nowtGwV01+Gq3XyYcl+8xK5asohtWyH
+         ORWV2EvdDG6qOIR9Zc+DxxslZ7z/pLz3S9K71exBv461SRzKj3+RolRri4BjrOTfxZ8j
+         cBJeF/yR8anoQi4rjHjnP5tV05t2bZ3YnMVxKPcIOpRMwxT8Zp5lnVx8X0gSiCOzUD8/
+         FP9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,23 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dennis Wassenberg <dennis.wassenberg@secunet.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 3.18 85/93] Input: i8042 - add Lenovo ThinkPad L460 to i8042 reset list
-Date: Fri,  6 Apr 2018 15:23:54 +0200
-Message-Id: <20180406084228.902828711@linuxfoundation.org>
+	Jann Horn <jann@thejh.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux API <linux-api@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tycho Andersen <tycho.andersen@canonical.com>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 3.18 84/93] fs/proc: Stop trying to report thread stacks
+Date: Fri,  6 Apr 2018 15:23:53 +0200
+Message-Id: <20180406084228.851219946@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -40,8 +52,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003626904788009?=
-X-GMAIL-MSGID: =?utf-8?q?1597003626904788009?=
+X-GMAIL-THRID: =?utf-8?q?1597003624226103418?=
+X-GMAIL-MSGID: =?utf-8?q?1597003624226103418?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +61,188 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit b56af54ac78c54a519d82813836f305d7f76ef27 upstream.
+commit b18cb64ead400c01bf1580eeba330ace51f8087d upstream.
 
-Reset i8042 before probing because of insufficient BIOS initialisation of
-the i8042 serial controller. This makes Synaptics touchpad detection
-possible. Without resetting the Synaptics touchpad is not detected because
-there are always NACK messages from AUX port.
+This reverts more of:
 
-Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+  b76437579d13 ("procfs: mark thread stack correctly in proc/<pid>/maps")
+
+... which was partially reverted by:
+
+  65376df58217 ("proc: revert /proc/<pid>/maps [stack:TID] annotation")
+
+Originally, /proc/PID/task/TID/maps was the same as /proc/TID/maps.
+
+In current kernels, /proc/PID/maps (or /proc/TID/maps even for
+threads) shows "[stack]" for VMAs in the mm's stack address range.
+
+In contrast, /proc/PID/task/TID/maps uses KSTK_ESP to guess the
+target thread's stack's VMA.  This is racy, probably returns garbage
+and, on arches with CONFIG_TASK_INFO_IN_THREAD=y, is also crash-prone:
+KSTK_ESP is not safe to use on tasks that aren't known to be running
+ordinary process-context kernel code.
+
+This patch removes the difference and just shows "[stack]" for VMAs
+in the mm's stack range.  This is IMO much more sensible -- the
+actual "stack" address really is treated specially by the VM code,
+and the current thread stack isn't even well-defined for programs
+that frequently switch stacks on their own.
+
+Reported-by: Jann Horn <jann@thejh.net>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux API <linux-api@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tycho Andersen <tycho.andersen@canonical.com>
+Link: http://lkml.kernel.org/r/3e678474ec14e0a0ec34c611016753eea2e1b8ba.1475257877.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/serio/i8042-x86ia64io.h |    7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/filesystems/proc.txt |   26 --------------------------
+ fs/proc/task_mmu.c                 |   29 ++++++++++-------------------
+ fs/proc/task_nommu.c               |   26 +++++++++-----------------
+ 3 files changed, 19 insertions(+), 62 deletions(-)
 
---- a/drivers/input/serio/i8042-x86ia64io.h
-+++ b/drivers/input/serio/i8042-x86ia64io.h
-@@ -603,6 +603,13 @@ static const struct dmi_system_id __init
- 		},
- 	},
- 	{
-+		/* Lenovo ThinkPad L460 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad L460"),
-+		},
-+	},
-+	{
- 		/* Clevo P650RS, 650RP6, Sager NP8152-S, and others */
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "Notebook"),
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -371,32 +371,6 @@ is not associated with a file:
+ 
+  or if empty, the mapping is anonymous.
+ 
+-The /proc/PID/task/TID/maps is a view of the virtual memory from the viewpoint
+-of the individual tasks of a process. In this file you will see a mapping marked
+-as [stack] if that task sees it as a stack. Hence, for the example above, the
+-task-level map, i.e. /proc/PID/task/TID/maps for thread 1001 will look like this:
+-
+-08048000-08049000 r-xp 00000000 03:00 8312       /opt/test
+-08049000-0804a000 rw-p 00001000 03:00 8312       /opt/test
+-0804a000-0806b000 rw-p 00000000 00:00 0          [heap]
+-a7cb1000-a7cb2000 ---p 00000000 00:00 0
+-a7cb2000-a7eb2000 rw-p 00000000 00:00 0
+-a7eb2000-a7eb3000 ---p 00000000 00:00 0
+-a7eb3000-a7ed5000 rw-p 00000000 00:00 0          [stack]
+-a7ed5000-a8008000 r-xp 00000000 03:00 4222       /lib/libc.so.6
+-a8008000-a800a000 r--p 00133000 03:00 4222       /lib/libc.so.6
+-a800a000-a800b000 rw-p 00135000 03:00 4222       /lib/libc.so.6
+-a800b000-a800e000 rw-p 00000000 00:00 0
+-a800e000-a8022000 r-xp 00000000 03:00 14462      /lib/libpthread.so.0
+-a8022000-a8023000 r--p 00013000 03:00 14462      /lib/libpthread.so.0
+-a8023000-a8024000 rw-p 00014000 03:00 14462      /lib/libpthread.so.0
+-a8024000-a8027000 rw-p 00000000 00:00 0
+-a8027000-a8043000 r-xp 00000000 03:00 8317       /lib/ld-linux.so.2
+-a8043000-a8044000 r--p 0001b000 03:00 8317       /lib/ld-linux.so.2
+-a8044000-a8045000 rw-p 0001c000 03:00 8317       /lib/ld-linux.so.2
+-aff35000-aff4a000 rw-p 00000000 00:00 0
+-ffffe000-fffff000 r-xp 00000000 00:00 0          [vdso]
+-
+ The /proc/PID/smaps is an extension based on maps, showing the memory
+ consumption for each of the process's mappings. For each of mappings there
+ is a series of lines such as the following:
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -248,24 +248,15 @@ static int do_maps_open(struct inode *in
+  * /proc/PID/maps that is the stack of the main task.
+  */
+ static int is_stack(struct proc_maps_private *priv,
+-		    struct vm_area_struct *vma, int is_pid)
++		    struct vm_area_struct *vma)
+ {
+-	int stack = 0;
+-
+-	if (is_pid) {
+-		stack = vma->vm_start <= vma->vm_mm->start_stack &&
+-			vma->vm_end >= vma->vm_mm->start_stack;
+-	} else {
+-		struct inode *inode = priv->inode;
+-		struct task_struct *task;
+-
+-		rcu_read_lock();
+-		task = pid_task(proc_pid(inode), PIDTYPE_PID);
+-		if (task)
+-			stack = vma_is_stack_for_task(vma, task);
+-		rcu_read_unlock();
+-	}
+-	return stack;
++	/*
++	 * We make no effort to guess what a given thread considers to be
++	 * its "stack".  It's not even well-defined for programs written
++	 * languages like Go.
++	 */
++	return vma->vm_start <= vma->vm_mm->start_stack &&
++		vma->vm_end >= vma->vm_mm->start_stack;
+ }
+ 
+ static void
+@@ -332,7 +323,7 @@ show_map_vma(struct seq_file *m, struct
+ 			goto done;
+ 		}
+ 
+-		if (is_stack(priv, vma, is_pid))
++		if (is_stack(priv, vma))
+ 			name = "[stack]";
+ 	}
+ 
+@@ -1501,7 +1492,7 @@ static int show_numa_map(struct seq_file
+ 		seq_path(m, &file->f_path, "\n\t= ");
+ 	} else if (vma->vm_start <= mm->brk && vma->vm_end >= mm->start_brk) {
+ 		seq_puts(m, " heap");
+-	} else if (is_stack(proc_priv, vma, is_pid)) {
++	} else if (is_stack(proc_priv, vma)) {
+ 		seq_puts(m, " stack");
+ 	}
+ 
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -124,25 +124,17 @@ unsigned long task_statm(struct mm_struc
+ }
+ 
+ static int is_stack(struct proc_maps_private *priv,
+-		    struct vm_area_struct *vma, int is_pid)
++		    struct vm_area_struct *vma)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+-	int stack = 0;
+ 
+-	if (is_pid) {
+-		stack = vma->vm_start <= mm->start_stack &&
+-			vma->vm_end >= mm->start_stack;
+-	} else {
+-		struct inode *inode = priv->inode;
+-		struct task_struct *task;
+-
+-		rcu_read_lock();
+-		task = pid_task(proc_pid(inode), PIDTYPE_PID);
+-		if (task)
+-			stack = vma_is_stack_for_task(vma, task);
+-		rcu_read_unlock();
+-	}
+-	return stack;
++	/*
++	 * We make no effort to guess what a given thread considers to be
++	 * its "stack".  It's not even well-defined for programs written
++	 * languages like Go.
++	 */
++	return vma->vm_start <= mm->start_stack &&
++		vma->vm_end >= mm->start_stack;
+ }
+ 
+ /*
+@@ -184,7 +176,7 @@ static int nommu_vma_show(struct seq_fil
+ 	if (file) {
+ 		seq_pad(m, ' ');
+ 		seq_path(m, &file->f_path, "");
+-	} else if (mm && is_stack(priv, vma, is_pid)) {
++	} else if (mm && is_stack(priv, vma)) {
+ 		seq_pad(m, ' ');
+ 		seq_printf(m, "[stack]");
+ 	}
