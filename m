@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48LceWbJtd+hZCaVr1j5QYTT7DM5grJkNQY5MWhOyAO9saqvA/H6Q5WdjAofBfG2FYjTaEd
-ARC-Seal: i=1; a=rsa-sha256; t=1523022102; cv=none;
+X-Google-Smtp-Source: AIpwx4+5912lOfz0MaowlqsuYWhE7zEJN8McWRsIg292vooUU+QXwpsrVYYvaYW8vXd73YbVBdlr
+ARC-Seal: i=1; a=rsa-sha256; t=1523022099; cv=none;
         d=google.com; s=arc-20160816;
-        b=bSkMI6zS3WTVZeUjCmUFbJF+eKxsxnebB881h9ayIEus5BLw3x/7VX0kJ6bX6nvmGx
-         mloiFqr6ZKmLkmlHxjsjvPgXjO8eHUqsKRa8+Q1/tu2cga85KXvmtebHAA4acjKNSCIZ
-         jwzygOzj/vaMD9uUkehx3U5ANXTTyTGwk94mjg1g6oS2ZLE463R8Dw6HO0xkYFOD38qV
-         IQJen2qXxwc9MrAob14fZKFtGXSVVZv3yE/FmPCoPyR6D5H1oAk3Il10yQd8UUDjSk5z
-         sOOCzFPyh6bMpfKZos31B707QEOrPnUl5uW0CHQ2/trNGtRPNp4FyzLfQBO9FfFsbOx1
-         bUGw==
+        b=dpuI/zisPprve98EpOJSU6N84uB+kuUsw8II13nGHegm2f8i8EZFcNSujyGVFVdBS5
+         GLrU40mYpb9NyClPLuoD+bo/CksuBQlmlL9Tq0CfKGoEpATUTxZRTOD/xrFaseCbtvPe
+         vOMHYrW6FZQDATKdM2wvVesi77qs3OUlZ4TEU0sgRV2jJe06Zv4WqdV7moozI8/Ifznd
+         CzuR/ttO/sTq4dIcdRsI617tjgVjEi3WPg35Q3MU2yjg6Y0F7XEiAjpJAMkolWY7nSxi
+         kuBiaBKmHwwFrkvC383cHQjJji+IAH4Ak5d6xtlehqCpsTjqw57Xs5jOGhHU2vAIPjfi
+         6hpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=czLojg2xHaDdKJT8ZQfPLKvueLjCXWnkAh7EU7vigcs=;
-        b=L6NAZ1PYOJW5lDs6jC1LDkowlMxDhtRIJj8Q18OIuT+FlhXlVh1d5p5Bq0ZEdRReox
-         S+eymKXBSa7f3zTZyFzOZl/RD/ZxKxr+WgF1JkOnq7TfOP+jT+YSFqZlC4/QBXRoitq9
-         O6Ok2h3q30w8LAD1I8bG5Va82DrT+HnSfgnYXMY1ElpeIU6H07mBvWp4mg6itjARQbhX
-         gj9ug3KgzJL01qE6AUE0wUPzxY5VTQlve+95xhnCNdn7CxlVIZvaEElI4LR1U4SQd9Vr
-         aLipkVHAZ1C39pf4uiP9Ia8GBUQJx9HbqeeiYP/tjoHL2djWlH0O8+6osDcHjJs0nfU9
-         mhGw==
+        bh=jl3GWYuDPISO3sGYoQu48FhGHtPUjdcJ5gWa3RjLdaI=;
+        b=k8vTC5M7fG/8JBdXEWFZwKMWa3z3HY4do/xQNK9wL3RXjko3iSLEYhyC02i7xLZskH
+         8ogvJKh0wABBPM8/bG2eb6j4tU14WuTQNq+HhL5kaLzrmIiQAtsIKXRK2cDeEQOUjIda
+         8v4++9cicO+wBIjSaWhnNmJ/q7U49MlDS/vXqbvHQ2nQw9kTVqPTi7SoljW6JP21DXWM
+         lQie7utBZmGAJe608M3QTBlrAwDFAqHCrd77sbOqr4i98WYpJZdOpgrxuK5dSUj5Vajz
+         3zcO3OgUCQgcWzBsLTbZzgEB3eUxxehlBvME9g6XKeH76GP4YANLK4BtJk4tzxYTAcWN
+         BpxA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Wei Wang <weiwan@google.com>,
-	Martin KaFai Lau <kafai@fb.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 28/72] ipv6: fix possible deadlock in rt6_age_examine_exception()
-Date: Fri,  6 Apr 2018 15:24:03 +0200
-Message-Id: <20180406084351.690409782@linuxfoundation.org>
+	syzbot+6800425d54ed3ed8135d@syzkaller.appspotmail.com,
+	Roland Dreier <roland@purestorage.com>,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.15 27/72] RDMA/ucma: Introduce safer rdma_addr_size() variants
+Date: Fri,  6 Apr 2018 15:24:02 +0200
+Message-Id: <20180406084351.618621527@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004423783667662?=
-X-GMAIL-MSGID: =?utf-8?q?1597004423783667662?=
+X-GMAIL-THRID: =?utf-8?q?1597003728839634146?=
+X-GMAIL-MSGID: =?utf-8?q?1597004420745396459?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,271 +50,184 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Roland Dreier <roland@purestorage.com>
 
-commit 1bfa26ff8c4b7512f4e4efa6df211239223033d4 upstream.
+commit 84652aefb347297aa08e91e283adf7b18f77c2d5 upstream.
 
-syzbot reported a LOCKDEP splat [1] in rt6_age_examine_exception()
+There are several places in the ucma ABI where userspace can pass in a
+sockaddr but set the address family to AF_IB.  When that happens,
+rdma_addr_size() will return a size bigger than sizeof struct sockaddr_in6,
+and the ucma kernel code might end up copying past the end of a buffer
+not sized for a struct sockaddr_ib.
 
-rt6_age_examine_exception() is called while rt6_exception_lock is held.
-This lock is the lower one in the lock hierarchy, thus we can not
-call dst_neigh_lookup() function, as it can fallback to neigh_create()
+Fix this by introducing new variants
 
-We should instead do a pure RCU lookup. As a bonus we avoid
-a pair of atomic operations on neigh refcount.
+    int rdma_addr_size_in6(struct sockaddr_in6 *addr);
+    int rdma_addr_size_kss(struct __kernel_sockaddr_storage *addr);
 
-[1]
+that are type-safe for the types used in the ucma ABI and return 0 if the
+size computed is bigger than the size of the type passed in.  We can use
+these new variants to check what size userspace has passed in before
+copying any addresses.
 
-WARNING: possible circular locking dependency detected
-4.16.0-rc4+ #277 Not tainted
-
-syz-executor7/4015 is trying to acquire lock:
- (&ndev->lock){++--}, at: [<00000000416dce19>] __ipv6_dev_mc_dec+0x45/0x350 net/ipv6/mcast.c:928
-
-but task is already holding lock:
- (&tbl->lock){++-.}, at: [<00000000b5cb1d65>] neigh_ifdown+0x3d/0x250 net/core/neighbour.c:292
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&tbl->lock){++-.}:
-       __raw_write_lock_bh include/linux/rwlock_api_smp.h:203 [inline]
-       _raw_write_lock_bh+0x31/0x40 kernel/locking/spinlock.c:312
-       __neigh_create+0x87e/0x1d90 net/core/neighbour.c:528
-       neigh_create include/net/neighbour.h:315 [inline]
-       ip6_neigh_lookup+0x9a7/0xba0 net/ipv6/route.c:228
-       dst_neigh_lookup include/net/dst.h:405 [inline]
-       rt6_age_examine_exception net/ipv6/route.c:1609 [inline]
-       rt6_age_exceptions+0x381/0x660 net/ipv6/route.c:1645
-       fib6_age+0xfb/0x140 net/ipv6/ip6_fib.c:2033
-       fib6_clean_node+0x389/0x580 net/ipv6/ip6_fib.c:1919
-       fib6_walk_continue+0x46c/0x8a0 net/ipv6/ip6_fib.c:1845
-       fib6_walk+0x91/0xf0 net/ipv6/ip6_fib.c:1893
-       fib6_clean_tree+0x1e6/0x340 net/ipv6/ip6_fib.c:1970
-       __fib6_clean_all+0x1f4/0x3a0 net/ipv6/ip6_fib.c:1986
-       fib6_clean_all net/ipv6/ip6_fib.c:1997 [inline]
-       fib6_run_gc+0x16b/0x3c0 net/ipv6/ip6_fib.c:2053
-       ndisc_netdev_event+0x3c2/0x4a0 net/ipv6/ndisc.c:1781
-       notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
-       __raw_notifier_call_chain kernel/notifier.c:394 [inline]
-       raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
-       call_netdevice_notifiers_info+0x32/0x70 net/core/dev.c:1707
-       call_netdevice_notifiers net/core/dev.c:1725 [inline]
-       __dev_notify_flags+0x262/0x430 net/core/dev.c:6960
-       dev_change_flags+0xf5/0x140 net/core/dev.c:6994
-       devinet_ioctl+0x126a/0x1ac0 net/ipv4/devinet.c:1080
-       inet_ioctl+0x184/0x310 net/ipv4/af_inet.c:919
-       sock_do_ioctl+0xef/0x390 net/socket.c:957
-       sock_ioctl+0x36b/0x610 net/socket.c:1081
-       vfs_ioctl fs/ioctl.c:46 [inline]
-       do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-       SYSC_ioctl fs/ioctl.c:701 [inline]
-       SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-       do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-       entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
--> #2 (rt6_exception_lock){+.-.}:
-       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
-       _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
-       spin_lock_bh include/linux/spinlock.h:315 [inline]
-       rt6_flush_exceptions+0x21/0x210 net/ipv6/route.c:1367
-       fib6_del_route net/ipv6/ip6_fib.c:1677 [inline]
-       fib6_del+0x624/0x12c0 net/ipv6/ip6_fib.c:1761
-       __ip6_del_rt+0xc7/0x120 net/ipv6/route.c:2980
-       ip6_del_rt+0x132/0x1a0 net/ipv6/route.c:2993
-       __ipv6_dev_ac_dec+0x3b1/0x600 net/ipv6/anycast.c:332
-       ipv6_dev_ac_dec net/ipv6/anycast.c:345 [inline]
-       ipv6_sock_ac_close+0x2b4/0x3e0 net/ipv6/anycast.c:200
-       inet6_release+0x48/0x70 net/ipv6/af_inet6.c:433
-       sock_release+0x8d/0x1e0 net/socket.c:594
-       sock_close+0x16/0x20 net/socket.c:1149
-       __fput+0x327/0x7e0 fs/file_table.c:209
-       ____fput+0x15/0x20 fs/file_table.c:243
-       task_work_run+0x199/0x270 kernel/task_work.c:113
-       exit_task_work include/linux/task_work.h:22 [inline]
-       do_exit+0x9bb/0x1ad0 kernel/exit.c:865
-       do_group_exit+0x149/0x400 kernel/exit.c:968
-       get_signal+0x73a/0x16d0 kernel/signal.c:2469
-       do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
-       exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
-       prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-       syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-       do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
-       entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
--> #1 (&(&tb->tb6_lock)->rlock){+.-.}:
-       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
-       _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
-       spin_lock_bh include/linux/spinlock.h:315 [inline]
-       __ip6_ins_rt+0x56/0x90 net/ipv6/route.c:1007
-       ip6_route_add+0x141/0x190 net/ipv6/route.c:2955
-       addrconf_prefix_route+0x44f/0x620 net/ipv6/addrconf.c:2359
-       fixup_permanent_addr net/ipv6/addrconf.c:3368 [inline]
-       addrconf_permanent_addr net/ipv6/addrconf.c:3391 [inline]
-       addrconf_notify+0x1ad2/0x2310 net/ipv6/addrconf.c:3460
-       notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
-       __raw_notifier_call_chain kernel/notifier.c:394 [inline]
-       raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
-       call_netdevice_notifiers_info+0x32/0x70 net/core/dev.c:1707
-       call_netdevice_notifiers net/core/dev.c:1725 [inline]
-       __dev_notify_flags+0x15d/0x430 net/core/dev.c:6958
-       dev_change_flags+0xf5/0x140 net/core/dev.c:6994
-       do_setlink+0xa22/0x3bb0 net/core/rtnetlink.c:2357
-       rtnl_newlink+0xf37/0x1a50 net/core/rtnetlink.c:2965
-       rtnetlink_rcv_msg+0x57f/0xb10 net/core/rtnetlink.c:4641
-       netlink_rcv_skb+0x14b/0x380 net/netlink/af_netlink.c:2444
-       rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4659
-       netlink_unicast_kernel net/netlink/af_netlink.c:1308 [inline]
-       netlink_unicast+0x4c4/0x6b0 net/netlink/af_netlink.c:1334
-       netlink_sendmsg+0xa4a/0xe60 net/netlink/af_netlink.c:1897
-       sock_sendmsg_nosec net/socket.c:629 [inline]
-       sock_sendmsg+0xca/0x110 net/socket.c:639
-       ___sys_sendmsg+0x767/0x8b0 net/socket.c:2047
-       __sys_sendmsg+0xe5/0x210 net/socket.c:2081
-       SYSC_sendmsg net/socket.c:2092 [inline]
-       SyS_sendmsg+0x2d/0x50 net/socket.c:2088
-       do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-       entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
--> #0 (&ndev->lock){++--}:
-       lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-       __raw_write_lock_bh include/linux/rwlock_api_smp.h:203 [inline]
-       _raw_write_lock_bh+0x31/0x40 kernel/locking/spinlock.c:312
-       __ipv6_dev_mc_dec+0x45/0x350 net/ipv6/mcast.c:928
-       ipv6_dev_mc_dec+0x110/0x1f0 net/ipv6/mcast.c:961
-       pndisc_destructor+0x21a/0x340 net/ipv6/ndisc.c:392
-       pneigh_ifdown net/core/neighbour.c:695 [inline]
-       neigh_ifdown+0x149/0x250 net/core/neighbour.c:294
-       rt6_disable_ip+0x537/0x700 net/ipv6/route.c:3874
-       addrconf_ifdown+0x14b/0x14f0 net/ipv6/addrconf.c:3633
-       addrconf_notify+0x5f8/0x2310 net/ipv6/addrconf.c:3557
-       notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
-       __raw_notifier_call_chain kernel/notifier.c:394 [inline]
-       raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
-       call_netdevice_notifiers_info+0x32/0x70 net/core/dev.c:1707
-       call_netdevice_notifiers net/core/dev.c:1725 [inline]
-       __dev_notify_flags+0x262/0x430 net/core/dev.c:6960
-       dev_change_flags+0xf5/0x140 net/core/dev.c:6994
-       devinet_ioctl+0x126a/0x1ac0 net/ipv4/devinet.c:1080
-       inet_ioctl+0x184/0x310 net/ipv4/af_inet.c:919
-       packet_ioctl+0x1ff/0x310 net/packet/af_packet.c:4066
-       sock_do_ioctl+0xef/0x390 net/socket.c:957
-       sock_ioctl+0x36b/0x610 net/socket.c:1081
-       vfs_ioctl fs/ioctl.c:46 [inline]
-       do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-       SYSC_ioctl fs/ioctl.c:701 [inline]
-       SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-       do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-       entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ndev->lock --> rt6_exception_lock --> &tbl->lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&tbl->lock);
-                               lock(rt6_exception_lock);
-                               lock(&tbl->lock);
-  lock(&ndev->lock);
-
- *** DEADLOCK ***
-
-2 locks held by syz-executor7/4015:
- #0:  (rtnl_mutex){+.+.}, at: [<00000000a2f16daa>] rtnl_lock+0x17/0x20 net/core/rtnetlink.c:74
- #1:  (&tbl->lock){++-.}, at: [<00000000b5cb1d65>] neigh_ifdown+0x3d/0x250 net/core/neighbour.c:292
-
-stack backtrace:
-CPU: 0 PID: 4015 Comm: syz-executor7 Not tainted 4.16.0-rc4+ #277
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x194/0x24d lib/dump_stack.c:53
- print_circular_bug.isra.38+0x2cd/0x2dc kernel/locking/lockdep.c:1223
- check_prev_add kernel/locking/lockdep.c:1863 [inline]
- check_prevs_add kernel/locking/lockdep.c:1976 [inline]
- validate_chain kernel/locking/lockdep.c:2417 [inline]
- __lock_acquire+0x30a8/0x3e00 kernel/locking/lockdep.c:3431
- lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
- __raw_write_lock_bh include/linux/rwlock_api_smp.h:203 [inline]
- _raw_write_lock_bh+0x31/0x40 kernel/locking/spinlock.c:312
- __ipv6_dev_mc_dec+0x45/0x350 net/ipv6/mcast.c:928
- ipv6_dev_mc_dec+0x110/0x1f0 net/ipv6/mcast.c:961
- pndisc_destructor+0x21a/0x340 net/ipv6/ndisc.c:392
- pneigh_ifdown net/core/neighbour.c:695 [inline]
- neigh_ifdown+0x149/0x250 net/core/neighbour.c:294
- rt6_disable_ip+0x537/0x700 net/ipv6/route.c:3874
- addrconf_ifdown+0x14b/0x14f0 net/ipv6/addrconf.c:3633
- addrconf_notify+0x5f8/0x2310 net/ipv6/addrconf.c:3557
- notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
- __raw_notifier_call_chain kernel/notifier.c:394 [inline]
- raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
- call_netdevice_notifiers_info+0x32/0x70 net/core/dev.c:1707
- call_netdevice_notifiers net/core/dev.c:1725 [inline]
- __dev_notify_flags+0x262/0x430 net/core/dev.c:6960
- dev_change_flags+0xf5/0x140 net/core/dev.c:6994
- devinet_ioctl+0x126a/0x1ac0 net/ipv4/devinet.c:1080
- inet_ioctl+0x184/0x310 net/ipv4/af_inet.c:919
- packet_ioctl+0x1ff/0x310 net/packet/af_packet.c:4066
- sock_do_ioctl+0xef/0x390 net/socket.c:957
- sock_ioctl+0x36b/0x610 net/socket.c:1081
- vfs_ioctl fs/ioctl.c:46 [inline]
- do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
- SYSC_ioctl fs/ioctl.c:701 [inline]
- SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Fixes: c757faa8bfa2 ("ipv6: prepare fib6_age() for exception table")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Wei Wang <weiwan@google.com>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Acked-by: Wei Wang <weiwan@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: <syzbot+6800425d54ed3ed8135d@syzkaller.appspotmail.com>
+Signed-off-by: Roland Dreier <roland@purestorage.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv6/route.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/infiniband/core/addr.c |   16 ++++++++++++++++
+ drivers/infiniband/core/ucma.c |   34 +++++++++++++++++-----------------
+ include/rdma/ib_addr.h         |    2 ++
+ 3 files changed, 35 insertions(+), 17 deletions(-)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -1627,11 +1627,10 @@ static void rt6_age_examine_exception(st
- 		struct neighbour *neigh;
- 		__u8 neigh_flags = 0;
- 
--		neigh = dst_neigh_lookup(&rt->dst, &rt->rt6i_gateway);
--		if (neigh) {
-+		neigh = __ipv6_neigh_lookup_noref(rt->dst.dev, &rt->rt6i_gateway);
-+		if (neigh)
- 			neigh_flags = neigh->flags;
--			neigh_release(neigh);
--		}
-+
- 		if (!(neigh_flags & NTF_ROUTER)) {
- 			RT6_TRACE("purging route %p via non-router but gateway\n",
- 				  rt);
-@@ -1655,7 +1654,8 @@ void rt6_age_exceptions(struct rt6_info
- 	if (!rcu_access_pointer(rt->rt6i_exception_bucket))
- 		return;
- 
--	spin_lock_bh(&rt6_exception_lock);
-+	rcu_read_lock_bh();
-+	spin_lock(&rt6_exception_lock);
- 	bucket = rcu_dereference_protected(rt->rt6i_exception_bucket,
- 				    lockdep_is_held(&rt6_exception_lock));
- 
-@@ -1669,7 +1669,8 @@ void rt6_age_exceptions(struct rt6_info
- 			bucket++;
- 		}
- 	}
--	spin_unlock_bh(&rt6_exception_lock);
-+	spin_unlock(&rt6_exception_lock);
-+	rcu_read_unlock_bh();
+--- a/drivers/infiniband/core/addr.c
++++ b/drivers/infiniband/core/addr.c
+@@ -207,6 +207,22 @@ int rdma_addr_size(struct sockaddr *addr
  }
+ EXPORT_SYMBOL(rdma_addr_size);
  
- struct rt6_info *ip6_pol_route(struct net *net, struct fib6_table *table,
++int rdma_addr_size_in6(struct sockaddr_in6 *addr)
++{
++	int ret = rdma_addr_size((struct sockaddr *) addr);
++
++	return ret <= sizeof(*addr) ? ret : 0;
++}
++EXPORT_SYMBOL(rdma_addr_size_in6);
++
++int rdma_addr_size_kss(struct __kernel_sockaddr_storage *addr)
++{
++	int ret = rdma_addr_size((struct sockaddr *) addr);
++
++	return ret <= sizeof(*addr) ? ret : 0;
++}
++EXPORT_SYMBOL(rdma_addr_size_kss);
++
+ static struct rdma_addr_client self;
+ 
+ void rdma_addr_register_client(struct rdma_addr_client *client)
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -632,6 +632,9 @@ static ssize_t ucma_bind_ip(struct ucma_
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
++	if (!rdma_addr_size_in6(&cmd.addr))
++		return -EINVAL;
++
+ 	ctx = ucma_get_ctx(file, cmd.id);
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+@@ -645,22 +648,21 @@ static ssize_t ucma_bind(struct ucma_fil
+ 			 int in_len, int out_len)
+ {
+ 	struct rdma_ucm_bind cmd;
+-	struct sockaddr *addr;
+ 	struct ucma_context *ctx;
+ 	int ret;
+ 
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
+-	addr = (struct sockaddr *) &cmd.addr;
+-	if (cmd.reserved || !cmd.addr_size || (cmd.addr_size != rdma_addr_size(addr)))
++	if (cmd.reserved || !cmd.addr_size ||
++	    cmd.addr_size != rdma_addr_size_kss(&cmd.addr))
+ 		return -EINVAL;
+ 
+ 	ctx = ucma_get_ctx(file, cmd.id);
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
+-	ret = rdma_bind_addr(ctx->cm_id, addr);
++	ret = rdma_bind_addr(ctx->cm_id, (struct sockaddr *) &cmd.addr);
+ 	ucma_put_ctx(ctx);
+ 	return ret;
+ }
+@@ -670,23 +672,22 @@ static ssize_t ucma_resolve_ip(struct uc
+ 			       int in_len, int out_len)
+ {
+ 	struct rdma_ucm_resolve_ip cmd;
+-	struct sockaddr *src, *dst;
+ 	struct ucma_context *ctx;
+ 	int ret;
+ 
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
+-	src = (struct sockaddr *) &cmd.src_addr;
+-	dst = (struct sockaddr *) &cmd.dst_addr;
+-	if (!rdma_addr_size(src) || !rdma_addr_size(dst))
++	if (!rdma_addr_size_in6(&cmd.src_addr) ||
++	    !rdma_addr_size_in6(&cmd.dst_addr))
+ 		return -EINVAL;
+ 
+ 	ctx = ucma_get_ctx(file, cmd.id);
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
+-	ret = rdma_resolve_addr(ctx->cm_id, src, dst, cmd.timeout_ms);
++	ret = rdma_resolve_addr(ctx->cm_id, (struct sockaddr *) &cmd.src_addr,
++				(struct sockaddr *) &cmd.dst_addr, cmd.timeout_ms);
+ 	ucma_put_ctx(ctx);
+ 	return ret;
+ }
+@@ -696,24 +697,23 @@ static ssize_t ucma_resolve_addr(struct
+ 				 int in_len, int out_len)
+ {
+ 	struct rdma_ucm_resolve_addr cmd;
+-	struct sockaddr *src, *dst;
+ 	struct ucma_context *ctx;
+ 	int ret;
+ 
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
+-	src = (struct sockaddr *) &cmd.src_addr;
+-	dst = (struct sockaddr *) &cmd.dst_addr;
+-	if (cmd.reserved || (cmd.src_size && (cmd.src_size != rdma_addr_size(src))) ||
+-	    !cmd.dst_size || (cmd.dst_size != rdma_addr_size(dst)))
++	if (cmd.reserved ||
++	    (cmd.src_size && (cmd.src_size != rdma_addr_size_kss(&cmd.src_addr))) ||
++	    !cmd.dst_size || (cmd.dst_size != rdma_addr_size_kss(&cmd.dst_addr)))
+ 		return -EINVAL;
+ 
+ 	ctx = ucma_get_ctx(file, cmd.id);
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
+-	ret = rdma_resolve_addr(ctx->cm_id, src, dst, cmd.timeout_ms);
++	ret = rdma_resolve_addr(ctx->cm_id, (struct sockaddr *) &cmd.src_addr,
++				(struct sockaddr *) &cmd.dst_addr, cmd.timeout_ms);
+ 	ucma_put_ctx(ctx);
+ 	return ret;
+ }
+@@ -1432,7 +1432,7 @@ static ssize_t ucma_join_ip_multicast(st
+ 	join_cmd.response = cmd.response;
+ 	join_cmd.uid = cmd.uid;
+ 	join_cmd.id = cmd.id;
+-	join_cmd.addr_size = rdma_addr_size((struct sockaddr *) &cmd.addr);
++	join_cmd.addr_size = rdma_addr_size_in6(&cmd.addr);
+ 	if (!join_cmd.addr_size)
+ 		return -EINVAL;
+ 
+@@ -1451,7 +1451,7 @@ static ssize_t ucma_join_multicast(struc
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
+-	if (!rdma_addr_size((struct sockaddr *)&cmd.addr))
++	if (!rdma_addr_size_kss(&cmd.addr))
+ 		return -EINVAL;
+ 
+ 	return ucma_process_join(file, &cmd, out_len);
+--- a/include/rdma/ib_addr.h
++++ b/include/rdma/ib_addr.h
+@@ -130,6 +130,8 @@ void rdma_copy_addr(struct rdma_dev_addr
+ 		    const unsigned char *dst_dev_addr);
+ 
+ int rdma_addr_size(struct sockaddr *addr);
++int rdma_addr_size_in6(struct sockaddr_in6 *addr);
++int rdma_addr_size_kss(struct __kernel_sockaddr_storage *addr);
+ 
+ int rdma_addr_find_smac_by_sgid(union ib_gid *sgid, u8 *smac, u16 *vlan_id);
+ int rdma_addr_find_l2_eth_by_grh(const union ib_gid *sgid,
