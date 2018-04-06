@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/FpvqR/9yNeuCY8GtihjgNLEVgumut4aRflykTCU0gcHUPbz1bVaN++yZcI9hfcdUPpCTb
-ARC-Seal: i=1; a=rsa-sha256; t=1523021336; cv=none;
+X-Google-Smtp-Source: AIpwx48Jg/ZKwc8ktVAtCe6jZKmgy4YbXx9NBoK4XnNmWPl9WXVgvOzStQ7vMT08btPc8dl6lu0k
+ARC-Seal: i=1; a=rsa-sha256; t=1523021333; cv=none;
         d=google.com; s=arc-20160816;
-        b=JHtxA/PF4ETHkv3BqxvHaYnKJ8xV5Yj3yeP4gnYPMLJh1EebFKV0jtZYJJkSU9JY2B
-         02Vo75RP4sBc/vDU3ldtNvr64dLQxVrjvg1MJFnwp65dovKm9A6/goRj+2AXwcPcy5Ng
-         GvqL7nt2o2fAx0E0RC4tAeJmg+Sta/XmmG+dNucDpEnQFdQ2kpW/TugJZxOjvVInaznU
-         2WmfB0VgSMZq5cUpyQg7yGOc5qgOUJF6VcN+WJNYYbX0b07D7QaOH7lW8eCK1RnMpwbG
-         qcMqN+jgkbUCzd+BqAKyLT7w4jwWCPs6ZeWbpdOWRYyfG8eZJMvsS1xQCQAo+tYch+4r
-         06ag==
+        b=FfJgVeutFhKVaN8g05wc+pj1K2bjoRF3OEoL2R+WtB1RS+xZgD5dLt5MAfkSmELZLh
+         1kwVyiQAVe3M/QQC1C38YsGYq+O8omx3hVvJOUHWDMtYq2zKLsqtdIbjFaG3dlQaugxC
+         UPxqbAUeLHZLU3TEj5VzDglnDCAEkmdjLxV2vCJP0zNn7HmOZzAR9dDgp4+EGZxnQ8a2
+         6w/QDccxuUWt3y0mFxkGE8OT96YS6OBb3Q8wCXWGwp8MteX6MmSh2MhkM2XQsU3FNMGI
+         A48XHaNmG9Bua59hvBlctubTCU/t7PKSq4GQ9/l/JsjnBGqDKfPM9AdSNJh+1Phus26k
+         6ujg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5BmEN6qh5v/+V4coXzW0dgWQdgsdOWPcXChQb9nMfqk=;
-        b=z/XfxHoSDPFyQwm94DvubQ+JLyDl1lCEJg5gGvIRFid/IxkM3qaRbQj6q4ifG5V0wj
-         FlEjVvEJ92+gu59O6skPopo5YM1Hd+ffiO3VzmQoD3seJqE3/toyVaSXXfc371r9pRz9
-         qIPwnH61H1ho8//Sa/dDDhqrGTxvcmDDo0K/YUAt4XpvhuZ/4+cFpyD7UqKyxms1QhAR
-         Nq8QW2FIsH8T8oSromUA+Xue0nXa1xt9NzBCyz03MOUAc41V7yvfMwBACti3rwbCIv6M
-         cuBe95/F4rO/PZzsf+D8dJgU10sQhiDVBvJEaLzIyS6EU5feIJWJ5VXLLJicfS8WZ7h4
-         oPEQ==
+        bh=ieuzd0/veiFe2LXgSgWxQiPFn2z5Wzds9kUydNyLrkI=;
+        b=dPjTo45xOuYJCYww40EMfO/Rbw00ehfWYZWXoY44Oc3sk2ubJnBOBeG9QjMZW/jZFV
+         FNzsk3p7IBt/ESNU/ON502Lln3161JliIbmcSdH449tg5tArWCUVXqQR6JrPQz08+VLZ
+         SKYBeectwOZ3CntHHysCqWJKvUHzrvYt0cmlU1AnJ5OsmdPwW0SIp1/5EToSWWu7QflL
+         6ZmxkcC7A0Cv0uvYm26YqsiUWT45RBqm0rFWu6G5Fq2p2vDr4+rbvtIUztGQjEgCdIrR
+         YyOajzgs5HCFhUhPWGu95PnMqZBA9HCAcM9EzTXRHe0PjJjK3P/st1v64FF0GfHCq/s/
+         J7BQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	"Kirill A. Shutemov" <kirill@shutemov.name>,
-	Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>,
-	Shaohua Li <shli@fb.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 3.18 83/93] proc: revert /proc/<pid>/maps [stack:TID] annotation
-Date: Fri,  6 Apr 2018 15:23:52 +0200
-Message-Id: <20180406084228.785826855@linuxfoundation.org>
+	Ben Hutchings <ben.hutchings@codethink.co.uk>,
+	"Andrew F. Davis" <afd@ti.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 93/93] Revert "ARM: dts: am335x-pepper: Fix the audio CODECs reset pin"
+Date: Fri,  6 Apr 2018 15:24:02 +0200
+Message-Id: <20180406084229.224869344@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -45,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003621301065823?=
-X-GMAIL-MSGID: =?utf-8?q?1597003621301065823?=
+X-GMAIL-THRID: =?utf-8?q?1597003618153570477?=
+X-GMAIL-MSGID: =?utf-8?q?1597003618153570477?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,303 +51,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Weiner <hannes@cmpxchg.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 65376df582174ffcec9e6471bf5b0dd79ba05e4a upstream.
+This reverts commit 2d8c5aa6dc436f6fc1c8b6c0feaee4b0f60cdf38 which was
+comit e153db03c6b7a035c797bcdf35262586f003ee93 upstream.
 
-Commit b76437579d13 ("procfs: mark thread stack correctly in
-proc/<pid>/maps") added [stack:TID] annotation to /proc/<pid>/maps.
+It requires a driver that was not merged until 4.16, so remove it from
+this stable tree as it is pointless.
 
-Finding the task of a stack VMA requires walking the entire thread list,
-turning this into quadratic behavior: a thousand threads means a
-thousand stacks, so the rendering of /proc/<pid>/maps needs to look at a
-million combinations.
-
-The cost is not in proportion to the usefulness as described in the
-patch.
-
-Drop the [stack:TID] annotation to make /proc/<pid>/maps (and
-/proc/<pid>/numa_maps) usable again for higher thread counts.
-
-The [stack] annotation inside /proc/<pid>/task/<tid>/maps is retained, as
-identifying the stack VMA there is an O(1) operation.
-
-Siddesh said:
- "The end users needed a way to identify thread stacks programmatically and
-  there wasn't a way to do that.  I'm afraid I no longer remember (or have
-  access to the resources that would aid my memory since I changed
-  employers) the details of their requirement.  However, I did do this on my
-  own time because I thought it was an interesting project for me and nobody
-  really gave any feedback then as to its utility, so as far as I am
-  concerned you could roll back the main thread maps information since the
-  information is available in the thread-specific files"
-
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-Cc: Shaohua Li <shli@fb.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Andrew F. Davis <afd@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- Documentation/filesystems/proc.txt |    9 +----
- fs/proc/task_mmu.c                 |   66 ++++++++++++-------------------------
- fs/proc/task_nommu.c               |   49 +++++++++++----------------
- include/linux/mm.h                 |    3 -
- mm/util.c                          |   27 ---------------
- 5 files changed, 48 insertions(+), 106 deletions(-)
+ arch/arm/boot/dts/am335x-pepper.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -334,7 +334,7 @@ address           perms offset  dev   in
- a7cb1000-a7cb2000 ---p 00000000 00:00 0
- a7cb2000-a7eb2000 rw-p 00000000 00:00 0
- a7eb2000-a7eb3000 ---p 00000000 00:00 0
--a7eb3000-a7ed5000 rw-p 00000000 00:00 0          [stack:1001]
-+a7eb3000-a7ed5000 rw-p 00000000 00:00 0
- a7ed5000-a8008000 r-xp 00000000 03:00 4222       /lib/libc.so.6
- a8008000-a800a000 r--p 00133000 03:00 4222       /lib/libc.so.6
- a800a000-a800b000 rw-p 00135000 03:00 4222       /lib/libc.so.6
-@@ -366,7 +366,6 @@ is not associated with a file:
+--- a/arch/arm/boot/dts/am335x-pepper.dts
++++ b/arch/arm/boot/dts/am335x-pepper.dts
+@@ -138,7 +138,7 @@
+ &audio_codec {
+ 	status = "okay";
  
-  [heap]                   = the heap of the program
-  [stack]                  = the stack of the main process
-- [stack:1001]             = the stack of the thread with tid 1001
-  [vdso]                   = the "virtual dynamic shared object",
-                             the kernel system call handler
- 
-@@ -374,10 +373,8 @@ is not associated with a file:
- 
- The /proc/PID/task/TID/maps is a view of the virtual memory from the viewpoint
- of the individual tasks of a process. In this file you will see a mapping marked
--as [stack] if that task sees it as a stack. This is a key difference from the
--content of /proc/PID/maps, where you will see all mappings that are being used
--as stack by all of those tasks. Hence, for the example above, the task-level
--map, i.e. /proc/PID/task/TID/maps for thread 1001 will look like this:
-+as [stack] if that task sees it as a stack. Hence, for the example above, the
-+task-level map, i.e. /proc/PID/task/TID/maps for thread 1001 will look like this:
- 
- 08048000-08049000 r-xp 00000000 03:00 8312       /opt/test
- 08049000-0804a000 rw-p 00001000 03:00 8312       /opt/test
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -243,23 +243,29 @@ static int do_maps_open(struct inode *in
- 				sizeof(struct proc_maps_private));
- }
- 
--static pid_t pid_of_stack(struct proc_maps_private *priv,
--				struct vm_area_struct *vma, bool is_pid)
-+/*
-+ * Indicate if the VMA is a stack for the given task; for
-+ * /proc/PID/maps that is the stack of the main task.
-+ */
-+static int is_stack(struct proc_maps_private *priv,
-+		    struct vm_area_struct *vma, int is_pid)
- {
--	struct inode *inode = priv->inode;
--	struct task_struct *task;
--	pid_t ret = 0;
-+	int stack = 0;
-+
-+	if (is_pid) {
-+		stack = vma->vm_start <= vma->vm_mm->start_stack &&
-+			vma->vm_end >= vma->vm_mm->start_stack;
-+	} else {
-+		struct inode *inode = priv->inode;
-+		struct task_struct *task;
- 
--	rcu_read_lock();
--	task = pid_task(proc_pid(inode), PIDTYPE_PID);
--	if (task) {
--		task = task_of_stack(task, vma, is_pid);
-+		rcu_read_lock();
-+		task = pid_task(proc_pid(inode), PIDTYPE_PID);
- 		if (task)
--			ret = task_pid_nr_ns(task, inode->i_sb->s_fs_info);
-+			stack = vma_is_stack_for_task(vma, task);
-+		rcu_read_unlock();
- 	}
--	rcu_read_unlock();
--
--	return ret;
-+	return stack;
- }
- 
- static void
-@@ -315,8 +321,6 @@ show_map_vma(struct seq_file *m, struct
- 
- 	name = arch_vma_name(vma);
- 	if (!name) {
--		pid_t tid;
--
- 		if (!mm) {
- 			name = "[vdso]";
- 			goto done;
-@@ -328,21 +332,8 @@ show_map_vma(struct seq_file *m, struct
- 			goto done;
- 		}
- 
--		tid = pid_of_stack(priv, vma, is_pid);
--		if (tid != 0) {
--			/*
--			 * Thread stack in /proc/PID/task/TID/maps or
--			 * the main process stack.
--			 */
--			if (!is_pid || (vma->vm_start <= mm->start_stack &&
--			    vma->vm_end >= mm->start_stack)) {
--				name = "[stack]";
--			} else {
--				/* Thread stack in /proc/PID/maps */
--				seq_pad(m, ' ');
--				seq_printf(m, "[stack:%d]", tid);
--			}
--		}
-+		if (is_stack(priv, vma, is_pid))
-+			name = "[stack]";
- 	}
- 
- done:
-@@ -1510,19 +1501,8 @@ static int show_numa_map(struct seq_file
- 		seq_path(m, &file->f_path, "\n\t= ");
- 	} else if (vma->vm_start <= mm->brk && vma->vm_end >= mm->start_brk) {
- 		seq_puts(m, " heap");
--	} else {
--		pid_t tid = pid_of_stack(proc_priv, vma, is_pid);
--		if (tid != 0) {
--			/*
--			 * Thread stack in /proc/PID/task/TID/maps or
--			 * the main process stack.
--			 */
--			if (!is_pid || (vma->vm_start <= mm->start_stack &&
--			    vma->vm_end >= mm->start_stack))
--				seq_puts(m, " stack");
--			else
--				seq_printf(m, " stack:%d", tid);
--		}
-+	} else if (is_stack(proc_priv, vma, is_pid)) {
-+		seq_puts(m, " stack");
- 	}
- 
- 	if (is_vm_hugetlb_page(vma))
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -123,23 +123,26 @@ unsigned long task_statm(struct mm_struc
- 	return size;
- }
- 
--static pid_t pid_of_stack(struct proc_maps_private *priv,
--				struct vm_area_struct *vma, bool is_pid)
-+static int is_stack(struct proc_maps_private *priv,
-+		    struct vm_area_struct *vma, int is_pid)
- {
--	struct inode *inode = priv->inode;
--	struct task_struct *task;
--	pid_t ret = 0;
--
--	rcu_read_lock();
--	task = pid_task(proc_pid(inode), PIDTYPE_PID);
--	if (task) {
--		task = task_of_stack(task, vma, is_pid);
-+	struct mm_struct *mm = vma->vm_mm;
-+	int stack = 0;
-+
-+	if (is_pid) {
-+		stack = vma->vm_start <= mm->start_stack &&
-+			vma->vm_end >= mm->start_stack;
-+	} else {
-+		struct inode *inode = priv->inode;
-+		struct task_struct *task;
-+
-+		rcu_read_lock();
-+		task = pid_task(proc_pid(inode), PIDTYPE_PID);
- 		if (task)
--			ret = task_pid_nr_ns(task, inode->i_sb->s_fs_info);
-+			stack = vma_is_stack_for_task(vma, task);
-+		rcu_read_unlock();
- 	}
--	rcu_read_unlock();
--
--	return ret;
-+	return stack;
- }
- 
- /*
-@@ -181,21 +184,9 @@ static int nommu_vma_show(struct seq_fil
- 	if (file) {
- 		seq_pad(m, ' ');
- 		seq_path(m, &file->f_path, "");
--	} else if (mm) {
--		pid_t tid = pid_of_stack(priv, vma, is_pid);
--
--		if (tid != 0) {
--			seq_pad(m, ' ');
--			/*
--			 * Thread stack in /proc/PID/task/TID/maps or
--			 * the main process stack.
--			 */
--			if (!is_pid || (vma->vm_start <= mm->start_stack &&
--			    vma->vm_end >= mm->start_stack))
--				seq_printf(m, "[stack]");
--			else
--				seq_printf(m, "[stack:%d]", tid);
--		}
-+	} else if (mm && is_stack(priv, vma, is_pid)) {
-+		seq_pad(m, ' ');
-+		seq_printf(m, "[stack]");
- 	}
- 
- 	seq_putc(m, '\n');
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1242,8 +1242,7 @@ int set_page_dirty_lock(struct page *pag
- int clear_page_dirty_for_io(struct page *page);
- int get_cmdline(struct task_struct *task, char *buffer, int buflen);
- 
--extern struct task_struct *task_of_stack(struct task_struct *task,
--				struct vm_area_struct *vma, bool in_group);
-+int vma_is_stack_for_task(struct vm_area_struct *vma, struct task_struct *t);
- 
- extern unsigned long move_page_tables(struct vm_area_struct *vma,
- 		unsigned long old_addr, struct vm_area_struct *new_vma,
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -185,36 +185,11 @@ void __vma_link_list(struct mm_struct *m
- }
- 
- /* Check if the vma is being used as a stack by this task */
--static int vm_is_stack_for_task(struct task_struct *t,
--				struct vm_area_struct *vma)
-+int vma_is_stack_for_task(struct vm_area_struct *vma, struct task_struct *t)
- {
- 	return (vma->vm_start <= KSTK_ESP(t) && vma->vm_end >= KSTK_ESP(t));
- }
- 
--/*
-- * Check if the vma is being used as a stack.
-- * If is_group is non-zero, check in the entire thread group or else
-- * just check in the current task. Returns the task_struct of the task
-- * that the vma is stack for. Must be called under rcu_read_lock().
-- */
--struct task_struct *task_of_stack(struct task_struct *task,
--				struct vm_area_struct *vma, bool in_group)
--{
--	if (vm_is_stack_for_task(task, vma))
--		return task;
--
--	if (in_group) {
--		struct task_struct *t;
--
--		for_each_thread(task, t) {
--			if (vm_is_stack_for_task(t, vma))
--				return t;
--		}
--	}
--
--	return NULL;
--}
--
- #if defined(CONFIG_MMU) && !defined(HAVE_ARCH_PICK_MMAP_LAYOUT)
- void arch_pick_mmap_layout(struct mm_struct *mm)
- {
+-	reset-gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
++	gpio-reset = <&gpio1 16 GPIO_ACTIVE_LOW>;
+ 	AVDD-supply = <&ldo3_reg>;
+ 	IOVDD-supply = <&ldo3_reg>;
+ 	DRVDD-supply = <&ldo3_reg>;
