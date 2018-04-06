@@ -1,113 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752358AbeDFM0i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 08:26:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48938 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752129AbeDFM0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 08:26:37 -0400
-Date: Fri, 6 Apr 2018 14:26:35 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 8/9] vsprintf: Prevent crash when dereferencing
- invalid pointers
-Message-ID: <20180406122635.7ow2e2dgo6lqjopp@pathway.suse.cz>
-References: <20180404085843.16050-1-pmladek@suse.com>
- <20180404085843.16050-9-pmladek@suse.com>
- <f5fd81ea-99ab-29ac-a176-87ca8c4a754d@rasmusvillemoes.dk>
+        id S1752505AbeDFM3a (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 08:29:30 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:3696 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752257AbeDFM32 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 08:29:28 -0400
+From: Fabien DESSENNE <fabien.dessenne@st.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        "Devicetree List" <devicetree@vger.kernel.org>,
+        "\", linux-arm-kernel\"@lists.infradead.org"
+        <", linux-arm-kernel"@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org"
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        "Arnaud POULIQUEN" <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH v2 2/2] mailbox: add STMicroelectronics STM32 IPCC driver
+Thread-Topic: [PATCH v2 2/2] mailbox: add STMicroelectronics STM32 IPCC driver
+Thread-Index: AQHTzMHdHpageEh13EG70mtSxYSG6qPziqSA
+Date: Fri, 6 Apr 2018 12:29:02 +0000
+Message-ID: <4a2170b7-e5e9-4f5c-8ff7-79e102a658c1@st.com>
+References: <1520852307-26659-1-git-send-email-fabien.dessenne@st.com>
+ <1520852307-26659-3-git-send-email-fabien.dessenne@st.com>
+ <CABb+yY1x7J_oEgU-LR5jPYCoCoUHng84E+CibTxLzdtxhENTBw@mail.gmail.com>
+In-Reply-To: <CABb+yY1x7J_oEgU-LR5jPYCoCoUHng84E+CibTxLzdtxhENTBw@mail.gmail.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <853A75F869AB854C902589DC856236A9@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f5fd81ea-99ab-29ac-a176-87ca8c4a754d@rasmusvillemoes.dk>
-User-Agent: NeoMutt/20170421 (1.8.2)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-06_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w36CTaap008281
 
-On Thu 2018-04-05 16:46:23, Rasmus Villemoes wrote:
-> On 2018-04-04 10:58, Petr Mladek wrote:
-> 
-> > diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> > index 3551b7957d9e..1a080a75a825 100644
-> > --- a/lib/vsprintf.c
-> > +++ b/lib/vsprintf.c
-> > @@ -599,12 +599,46 @@ char *__string(char *buf, char *end, const char *s, struct printf_spec spec)
-> >  	return widen_string(buf, len, end, spec);
-> >  }
-> >  
-> > + /*
-> > +  * This is not a fool-proof test. 99% of the time that this will fault is
-> > +  * due to a bad pointer, not one that crosses into bad memory. Just test
-> > +  * the address to make sure it doesn't fault due to a poorly added printk
-> > +  * during debugging.
-> > +  */
-> > +static const char *check_pointer_access(const void *ptr)
-> > +{
-> > +	char byte;
-> > +
-> > +	if (!ptr)
-> > +		return "(null)";
-> > +
-> > +	if (probe_kernel_address(ptr, byte))
-> > +		return "(efault)";
-> > +
-> > +	return NULL;
-> > +}
-> 
-> So while I think the WARNings are mostly pointless for the bad format
-> specifiers, I'm wondering why an averted crash is not worth a
-> WARN_ONCE?
-
-It is used to match the error with the code. It was more explained in
-the other mail.
+Hi
 
 
-> This means there's an actual bug somewhere, probably even exploitable,
-> but we're just silently producing some innocent string...
+On 05/04/18 11:38, Jassi Brar wrote:
+> On Mon, Mar 12, 2018 at 4:28 PM, Fabien Dessenne <fabien.dessenne@st.com> wrote:
+> ....
+>> +
+>> +       /* irq */
+>> +       for (i = 0; i < IPCC_IRQ_NUM; i++) {
+>> +               ipcc->irqs[i] = of_irq_get_byname(dev->of_node, irq_name[i]);
+>> +               if (ipcc->irqs[i] < 0) {
+>> +                       dev_err(dev, "no IRQ specified %s\n", irq_name[i]);
+>> +                       ret = ipcc->irqs[i];
+>> +                       goto err_clk;
+>> +               }
+>> +
+>> +               ret = devm_request_threaded_irq(dev, ipcc->irqs[i], NULL,
+>> +                                               irq_thread[i], IRQF_ONESHOT,
+>> +                                               dev_name(dev), ipcc);
+>>
+> In your interrupt handlers you don't do anything that could block.
+> Threads only adds some delay to your message handling.
+> So maybe use devm_request_irq() ?
 
-Good point! It would make sense in many situations, especially when
-we "silently" crashed so far.
-
-I just wonder if some code already relies on the fact that passing
-NULL is rather innocent, for example, in some timer- or networking-
-related debug output. This change might make it hard to read.
-
-Anyway, I still thing that it makes sense. But I would do it as
-a separate patch so that it can be reverted easily. In each case,
-it should spend some time in linux-next.
-
-
-> Also, I'd still prefer to insist on ptr being a kernel pointer. Sure,
-> for %ph userspace gets to print their own memory, but for a lot of the
-> others, we're chasing pointers another level, so if an attacker can feed
-> a user pointer to one of those, there's a trivial arbitrary read gadget.
-> We have lots of printks in untested error paths, and I find it quite
-> likely that one of those uses a garbage pointer.
-> 
-> I know you're mostly phrasing this in terms of preventing a crash, but
-> it seems silly not to close that when it only costs a pointer comparison.
-
-I thought that it was good idea but Steven was against, see
-https://lkml.kernel.org/r/20180315130612.4b4cd091@vmware.local.home
+The interrupt handlers call mbox_chan_received_data() / 
+mbox_chan_txdone(), which call in turn client's rx_callback() / 
+tx_done() / tx_prepare() which behavior may be unsafe. Hence, using a 
+threaded irq here seems to be a good choice.
 
 
-> You're also missing the %pD (struct file*) case, which is one of those
-> double-pointer chasing cases.
+>
+> .......
+>> +
+>> +static struct platform_driver stm32_ipcc_driver = {
+>> +       .driver = {
+>> +               .name = "stm32-ipcc",
+>> +               .owner = THIS_MODULE,
+>>
+> No need of owner here these days.
 
-I wanted to keep the initial code simple. Well, %pD is pretty
-straightforward, I could move the check to the cycle in v5.
+OK, I will suppress it.
 
-I just want to avoid a monster patchset that would add the check
-for every read byte. I am not persuaded that it is worth it.
+> And also maybe use readl/writel, instead of _relaxed.
 
-Best Regards,
-Petr
+The IPCC device is exclusively used on ARM. In ARM architecture, the 
+ioremap on devices are strictly ordered and uncached.
+In that case, using _relaxed avoids an unneeded cache flush, slightly 
+improving performance.
+
+>
+> Cheers!
