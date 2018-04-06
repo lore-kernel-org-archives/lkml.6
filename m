@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/ZkT5VADEw8IQmlztXjpHlodYyE10TIuppCBnnEh1NEKpgaLRhu7ZHscSG+N/c5tRDz7/b
-ARC-Seal: i=1; a=rsa-sha256; t=1523021899; cv=none;
+X-Google-Smtp-Source: AIpwx48HrTj88nL8IMpEwWxa+UssP+hQr+6ElSdnU2MQ7PAytJkHtFKtVftvcsRkV15QktiEoL7d
+ARC-Seal: i=1; a=rsa-sha256; t=1523021896; cv=none;
         d=google.com; s=arc-20160816;
-        b=bFW3muhygM3+DUz5s2FR9IaVhqJm/o6XiA4KdvR0jMX1iMyg35JtSWVhdniNDRrjJj
-         lQdw60OjM6fS8cEf5BKHA7+4qPb6l8T2r3hlzIBqIfEM7pHq47Av3WdDmS3KLu+jRr7e
-         78IiYRctmOJDv1mN+AKCI10vZVwTCOs5WVb2qx0oj/fqqajkOBQ6jApzu+IYrBzdpAwJ
-         gTAsFU41duNbNXVEsERJdbo8gtxHKZWb++AFF7YFkeQNATd+BYZFeOsxR64q3Gwlpx67
-         ZpErl4nlUdkHxGLBtjqdasjvfbma50zY2cGaXwFnmHkCCkuXIx3r+yCc95qhl862gdWG
-         yPKA==
+        b=EZlX/lVFBqdhNMUrcfmhWLXd6Hyj3/ZKbSXr7V8M6GQw2gIQcdAqw89/5QCNfqjzGM
+         G/INDxlbirxXSRuvWTq66SFQhCUyhpo+1BTBX9VtKnpqSw0wESn5Bx9QOJb7Xl074ZNO
+         BBoTF3FleLRT/Rar4SaY1zksVsI94/jqrGlbeBu05uTOe8Rq6BTCEIStpk5u489PaV4Y
+         Q1EA9nnSP9gY2urFQ234LpAih/PDdeo8eBKyOiKbrmpcwIbyGkFzwsmdWwOzJ5XfMNz0
+         J1AtDf5cfRSkG3H7GL0NUZc0dEH4v7LF3XqqGGimvxfdyYI7qyYlXm/0eJUMJqxfZ0bf
+         WHyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NfQGXjmAE8JumVG4a/VEUop0/gOVMNv3JuEnC4J+ZeE=;
-        b=BVHTh31hUveX5bAOiFuFghb1z5WxGxjFS7ncqxsHUw7a3049qCm1kxA7xScznRfy44
-         Ahjog5HOsrtRsJUqvdLhTDFbG+sF+xleCnyBD+ecjUZjC8MaGoKvjCzCUAdx4Rn03Esd
-         E7Gy1pvp/Bwjf145DSjR9jeMvyQVr4xGHoWQt8OlhgJbeDFIleXOxOqvE9A1wKSHXmkT
-         HnIZayP9ZhTphIwkp4hafljta33/DNWN5xS4g+6wiEWvVsIls4DGk72dnFfoSWGIERoX
-         pILJTNuqzMZ3/9S+F6uYZ2U4na31j2QAXSj/f0xuBnnKL2xxajoxX9mz0yl+ELE2nhZ0
-         DpPw==
+        bh=Bwuz0YUqJIVYIQo5VztymeElwdNZpnPDYlWiETXGBxE=;
+        b=zId2m/n5niYvkomQDewnZR7GVy/Vfr5CUt9aiozS/rGezdtNkj8Gw8ngkjfAgwg9qP
+         ztC8mx7kvg7y9WVoUwdcLrnjoXKVQp0eWSPy9ZSbAtZ+E/aJiJLMUkJ0gGE6jKBQT+cO
+         2j2HNUOVZKiHyuCrexCggWZm9KX/d93k4um7035D5ZyASLkavzde1HNww7qFu7GDz6v1
+         T50yt5JuMvRoiOiZ2BP+/uLx3q+wPW1we4l3pX9qp4KTHqu46f7BJd3F6DiQVeBkgRcR
+         J6HtWjm0L71T2GRX0r66wRX7LgTz08ZMMmkiz38Gl9Aqbhd+zihQnTreRiGodk6V7Hg8
+         +Bcg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Greg Hackmann <ghackmann@google.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.14 26/67] net: xfrm: use preempt-safe this_cpu_read() in ipcomp_alloc_tfms()
-Date: Fri,  6 Apr 2018 15:23:56 +0200
-Message-Id: <20180406084344.815282843@linuxfoundation.org>
+	syzbot+6800425d54ed3ed8135d@syzkaller.appspotmail.com,
+	Roland Dreier <roland@purestorage.com>,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 25/67] RDMA/ucma: Introduce safer rdma_addr_size() variants
+Date: Fri,  6 Apr 2018 15:23:55 +0200
+Message-Id: <20180406084344.707345781@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003592797913514?=
-X-GMAIL-MSGID: =?utf-8?q?1597004211520621537?=
+X-GMAIL-THRID: =?utf-8?q?1597003728839634146?=
+X-GMAIL-MSGID: =?utf-8?q?1597004208157940712?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,93 +50,184 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Hackmann <ghackmann@google.com>
+From: Roland Dreier <roland@purestorage.com>
 
-commit 0dcd7876029b58770f769cbb7b484e88e4a305e5 upstream.
+commit 84652aefb347297aa08e91e283adf7b18f77c2d5 upstream.
 
-f7c83bcbfaf5 ("net: xfrm: use __this_cpu_read per-cpu helper") added a
-__this_cpu_read() call inside ipcomp_alloc_tfms().
+There are several places in the ucma ABI where userspace can pass in a
+sockaddr but set the address family to AF_IB.  When that happens,
+rdma_addr_size() will return a size bigger than sizeof struct sockaddr_in6,
+and the ucma kernel code might end up copying past the end of a buffer
+not sized for a struct sockaddr_ib.
 
-At the time, __this_cpu_read() required the caller to either not care
-about races or to handle preemption/interrupt issues.  3.15 tightened
-the rules around some per-cpu operations, and now __this_cpu_read()
-should never be used in a preemptible context.  On 3.15 and later, we
-need to use this_cpu_read() instead.
+Fix this by introducing new variants
 
-syzkaller reported this leading to the following kernel BUG while
-fuzzing sendmsg:
+    int rdma_addr_size_in6(struct sockaddr_in6 *addr);
+    int rdma_addr_size_kss(struct __kernel_sockaddr_storage *addr);
 
-BUG: using __this_cpu_read() in preemptible [00000000] code: repro/3101
-caller is ipcomp_init_state+0x185/0x990
-CPU: 3 PID: 3101 Comm: repro Not tainted 4.16.0-rc4-00123-g86f84779d8e9 #154
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-Call Trace:
- dump_stack+0xb9/0x115
- check_preemption_disabled+0x1cb/0x1f0
- ipcomp_init_state+0x185/0x990
- ? __xfrm_init_state+0x876/0xc20
- ? lock_downgrade+0x5e0/0x5e0
- ipcomp4_init_state+0xaa/0x7c0
- __xfrm_init_state+0x3eb/0xc20
- xfrm_init_state+0x19/0x60
- pfkey_add+0x20df/0x36f0
- ? pfkey_broadcast+0x3dd/0x600
- ? pfkey_sock_destruct+0x340/0x340
- ? pfkey_seq_stop+0x80/0x80
- ? __skb_clone+0x236/0x750
- ? kmem_cache_alloc+0x1f6/0x260
- ? pfkey_sock_destruct+0x340/0x340
- ? pfkey_process+0x62a/0x6f0
- pfkey_process+0x62a/0x6f0
- ? pfkey_send_new_mapping+0x11c0/0x11c0
- ? mutex_lock_io_nested+0x1390/0x1390
- pfkey_sendmsg+0x383/0x750
- ? dump_sp+0x430/0x430
- sock_sendmsg+0xc0/0x100
- ___sys_sendmsg+0x6c8/0x8b0
- ? copy_msghdr_from_user+0x3b0/0x3b0
- ? pagevec_lru_move_fn+0x144/0x1f0
- ? find_held_lock+0x32/0x1c0
- ? do_huge_pmd_anonymous_page+0xc43/0x11e0
- ? lock_downgrade+0x5e0/0x5e0
- ? get_kernel_page+0xb0/0xb0
- ? _raw_spin_unlock+0x29/0x40
- ? do_huge_pmd_anonymous_page+0x400/0x11e0
- ? __handle_mm_fault+0x553/0x2460
- ? __fget_light+0x163/0x1f0
- ? __sys_sendmsg+0xc7/0x170
- __sys_sendmsg+0xc7/0x170
- ? SyS_shutdown+0x1a0/0x1a0
- ? __do_page_fault+0x5a0/0xca0
- ? lock_downgrade+0x5e0/0x5e0
- SyS_sendmsg+0x27/0x40
- ? __sys_sendmsg+0x170/0x170
- do_syscall_64+0x19f/0x640
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x7f0ee73dfb79
-RSP: 002b:00007ffe14fc15a8 EFLAGS: 00000207 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0ee73dfb79
-RDX: 0000000000000000 RSI: 00000000208befc8 RDI: 0000000000000004
-RBP: 00007ffe14fc15b0 R08: 00007ffe14fc15c0 R09: 00007ffe14fc15c0
-R10: 0000000000000000 R11: 0000000000000207 R12: 0000000000400440
-R13: 00007ffe14fc16b0 R14: 0000000000000000 R15: 0000000000000000
+that are type-safe for the types used in the ucma ABI and return 0 if the
+size computed is bigger than the size of the type passed in.  We can use
+these new variants to check what size userspace has passed in before
+copying any addresses.
 
-Signed-off-by: Greg Hackmann <ghackmann@google.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Reported-by: <syzbot+6800425d54ed3ed8135d@syzkaller.appspotmail.com>
+Signed-off-by: Roland Dreier <roland@purestorage.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_ipcomp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/addr.c |   16 ++++++++++++++++
+ drivers/infiniband/core/ucma.c |   34 +++++++++++++++++-----------------
+ include/rdma/ib_addr.h         |    2 ++
+ 3 files changed, 35 insertions(+), 17 deletions(-)
 
---- a/net/xfrm/xfrm_ipcomp.c
-+++ b/net/xfrm/xfrm_ipcomp.c
-@@ -283,7 +283,7 @@ static struct crypto_comp * __percpu *ip
- 		struct crypto_comp *tfm;
+--- a/drivers/infiniband/core/addr.c
++++ b/drivers/infiniband/core/addr.c
+@@ -207,6 +207,22 @@ int rdma_addr_size(struct sockaddr *addr
+ }
+ EXPORT_SYMBOL(rdma_addr_size);
  
- 		/* This can be any valid CPU ID so we don't need locking. */
--		tfm = __this_cpu_read(*pos->tfms);
-+		tfm = this_cpu_read(*pos->tfms);
++int rdma_addr_size_in6(struct sockaddr_in6 *addr)
++{
++	int ret = rdma_addr_size((struct sockaddr *) addr);
++
++	return ret <= sizeof(*addr) ? ret : 0;
++}
++EXPORT_SYMBOL(rdma_addr_size_in6);
++
++int rdma_addr_size_kss(struct __kernel_sockaddr_storage *addr)
++{
++	int ret = rdma_addr_size((struct sockaddr *) addr);
++
++	return ret <= sizeof(*addr) ? ret : 0;
++}
++EXPORT_SYMBOL(rdma_addr_size_kss);
++
+ static struct rdma_addr_client self;
  
- 		if (!strcmp(crypto_comp_name(tfm), alg_name)) {
- 			pos->users++;
+ void rdma_addr_register_client(struct rdma_addr_client *client)
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -632,6 +632,9 @@ static ssize_t ucma_bind_ip(struct ucma_
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
++	if (!rdma_addr_size_in6(&cmd.addr))
++		return -EINVAL;
++
+ 	ctx = ucma_get_ctx(file, cmd.id);
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+@@ -645,22 +648,21 @@ static ssize_t ucma_bind(struct ucma_fil
+ 			 int in_len, int out_len)
+ {
+ 	struct rdma_ucm_bind cmd;
+-	struct sockaddr *addr;
+ 	struct ucma_context *ctx;
+ 	int ret;
+ 
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
+-	addr = (struct sockaddr *) &cmd.addr;
+-	if (cmd.reserved || !cmd.addr_size || (cmd.addr_size != rdma_addr_size(addr)))
++	if (cmd.reserved || !cmd.addr_size ||
++	    cmd.addr_size != rdma_addr_size_kss(&cmd.addr))
+ 		return -EINVAL;
+ 
+ 	ctx = ucma_get_ctx(file, cmd.id);
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
+-	ret = rdma_bind_addr(ctx->cm_id, addr);
++	ret = rdma_bind_addr(ctx->cm_id, (struct sockaddr *) &cmd.addr);
+ 	ucma_put_ctx(ctx);
+ 	return ret;
+ }
+@@ -670,23 +672,22 @@ static ssize_t ucma_resolve_ip(struct uc
+ 			       int in_len, int out_len)
+ {
+ 	struct rdma_ucm_resolve_ip cmd;
+-	struct sockaddr *src, *dst;
+ 	struct ucma_context *ctx;
+ 	int ret;
+ 
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
+-	src = (struct sockaddr *) &cmd.src_addr;
+-	dst = (struct sockaddr *) &cmd.dst_addr;
+-	if (!rdma_addr_size(src) || !rdma_addr_size(dst))
++	if (!rdma_addr_size_in6(&cmd.src_addr) ||
++	    !rdma_addr_size_in6(&cmd.dst_addr))
+ 		return -EINVAL;
+ 
+ 	ctx = ucma_get_ctx(file, cmd.id);
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
+-	ret = rdma_resolve_addr(ctx->cm_id, src, dst, cmd.timeout_ms);
++	ret = rdma_resolve_addr(ctx->cm_id, (struct sockaddr *) &cmd.src_addr,
++				(struct sockaddr *) &cmd.dst_addr, cmd.timeout_ms);
+ 	ucma_put_ctx(ctx);
+ 	return ret;
+ }
+@@ -696,24 +697,23 @@ static ssize_t ucma_resolve_addr(struct
+ 				 int in_len, int out_len)
+ {
+ 	struct rdma_ucm_resolve_addr cmd;
+-	struct sockaddr *src, *dst;
+ 	struct ucma_context *ctx;
+ 	int ret;
+ 
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
+-	src = (struct sockaddr *) &cmd.src_addr;
+-	dst = (struct sockaddr *) &cmd.dst_addr;
+-	if (cmd.reserved || (cmd.src_size && (cmd.src_size != rdma_addr_size(src))) ||
+-	    !cmd.dst_size || (cmd.dst_size != rdma_addr_size(dst)))
++	if (cmd.reserved ||
++	    (cmd.src_size && (cmd.src_size != rdma_addr_size_kss(&cmd.src_addr))) ||
++	    !cmd.dst_size || (cmd.dst_size != rdma_addr_size_kss(&cmd.dst_addr)))
+ 		return -EINVAL;
+ 
+ 	ctx = ucma_get_ctx(file, cmd.id);
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
+-	ret = rdma_resolve_addr(ctx->cm_id, src, dst, cmd.timeout_ms);
++	ret = rdma_resolve_addr(ctx->cm_id, (struct sockaddr *) &cmd.src_addr,
++				(struct sockaddr *) &cmd.dst_addr, cmd.timeout_ms);
+ 	ucma_put_ctx(ctx);
+ 	return ret;
+ }
+@@ -1432,7 +1432,7 @@ static ssize_t ucma_join_ip_multicast(st
+ 	join_cmd.response = cmd.response;
+ 	join_cmd.uid = cmd.uid;
+ 	join_cmd.id = cmd.id;
+-	join_cmd.addr_size = rdma_addr_size((struct sockaddr *) &cmd.addr);
++	join_cmd.addr_size = rdma_addr_size_in6(&cmd.addr);
+ 	if (!join_cmd.addr_size)
+ 		return -EINVAL;
+ 
+@@ -1451,7 +1451,7 @@ static ssize_t ucma_join_multicast(struc
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
+-	if (!rdma_addr_size((struct sockaddr *)&cmd.addr))
++	if (!rdma_addr_size_kss(&cmd.addr))
+ 		return -EINVAL;
+ 
+ 	return ucma_process_join(file, &cmd, out_len);
+--- a/include/rdma/ib_addr.h
++++ b/include/rdma/ib_addr.h
+@@ -129,6 +129,8 @@ int rdma_copy_addr(struct rdma_dev_addr
+ 	      const unsigned char *dst_dev_addr);
+ 
+ int rdma_addr_size(struct sockaddr *addr);
++int rdma_addr_size_in6(struct sockaddr_in6 *addr);
++int rdma_addr_size_kss(struct __kernel_sockaddr_storage *addr);
+ 
+ int rdma_addr_find_smac_by_sgid(union ib_gid *sgid, u8 *smac, u16 *vlan_id);
+ int rdma_addr_find_l2_eth_by_grh(const union ib_gid *sgid,
