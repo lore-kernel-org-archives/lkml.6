@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx495gIEit/THPqH/6r5imYnV+59klSkeccMq+iSwhZ0ckx2bPuuLVbzBxQ+JGdzIKWCGG4Ol
-ARC-Seal: i=1; a=rsa-sha256; t=1523021469; cv=none;
+X-Google-Smtp-Source: AIpwx4/vextCK1w0GyHqE4Hn7g/uvSk5vcBJR+4Np8Ee51VXUxqwB/jp3pBODoq800AIMxqhk06h
+ARC-Seal: i=1; a=rsa-sha256; t=1523021466; cv=none;
         d=google.com; s=arc-20160816;
-        b=QDV8Uov8IUXCoIOl2zLd/oON20pWQcP5jZmtTFgUXQDnK2Z5cpPnRbAkk/HTknOaEG
-         vmNR+25xGdqfrQXuHHDdFsu4F+UGX3Qr4CwIJe10cgyWBQrJ+BmjPhFk5JPyEpE0dYxW
-         OiwUpKVcafE8jYp43P3HkRjoEbuvMVI/sJXpDDCQp1V+yhHtsH5epvHpPSWU7M0x93cy
-         RoVQKt6xxUcVvN8q7NDkSLcDa+WMt3kbSgpkPVFRFPg4VJGsBSAZzX9XypoQi00lbxuy
-         GL9mSzhIZI8WltOI0qpltUtw1OXERXUeh6A+k1S6l+5HBtWt1+293me1FHDJpoeEHtc8
-         vYvg==
+        b=gVn5TkhcQ/irqOGtiil6CWBwDV99eYiSnNDOzt/jvqr3t/BDSU7JdqfI+irzx/slU7
+         RTL4ZfaeHRuteQhhXety3yAx2cixVhhQh9SoYPJFwx02bvPCyYQzCpve2f1Yi3yyU9QT
+         FT99jhRgh9tLzTChQF1inWtrTT94LPg+zs6lZzvLFiYWPjiI5DIRqUJ8fBTGCbIvOibf
+         3oSzbAnfsW5OB7iTO2szwxJIYeGqWHt7N4k3OI+mPb3kkP5x5TtNQ6zRQNfHcdD1Bvr9
+         /McLgJti0nxQw87WpHGA/pi/4rBdEpld0oKCJNN1SH9hqtTHrbEtl39n9QJWqdupK1Xf
+         xs1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JQoUYrI6hP0j1h8xsq0kOA/3KeIGWCuUZHEYNSKXVho=;
-        b=TUD54GNo/nbAZEm9iXkKPVals9DIfwGmxx/f4CWCAI9K8s+4h2xCGA1U8RksNQoxb8
-         nb76wb02238BfSfUO7yevyiaz7NijGCMT90TBZcIlAmtbSqGB2FYqYHlyisKLhIs0r7q
-         iRCsocKVkVf23V+FM0WAwYY35KMAdODAAW1Uh0dP3EOq9W4iu50/Aai597vajc8AsOx9
-         SWbRow/toJ5EU3PMPQV7U9hCZqj469kEBZHG3Rcx6b696KXEP4uGP3y/e+I5lrGiHS0K
-         BIFqRTiqThrVCeeOGy2XXSXGZbIeJqgJ3mBKVsc2UuiPVUViCYanjl4IUdn3TDiEIfQe
-         RFfg==
+        bh=W+Yt//Kt30ND89ZN0MAQH+vb8rHUntiixQDuf0dvneE=;
+        b=yPAYAcQCKYEigPDsYkduVMluXm+ngYLwWAPsdaG5vNJr0HNxL0rDwngFyF0eCYXI+Z
+         UixAB9FVjGSzy51/Vl4Objnom9YSxcO5iqsIkb8ILwm+ZBJv46gL6v7U0kyQkjQePhSZ
+         hXW+M2RPAH1lEX7DFxirm0tz2nwAL1+M6WLcHDZLokCBd53ePHjSkAaGlsUfeQSK5Let
+         tDUO3hMgMlg3j0viSQhbH/XJxUr71JB8vNbCyfxnnxr2jIm4E+opdxTflCOBucdOe8Sh
+         rgRM5g7n0HKCwupShK5mhJQ4bxhklqt0pn+tRf6RyNNf0ojZBcPcc87C7wr9fT0JkJXl
+         ZhcA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Mike Snitzer <snitzer@redhat.com>,
-	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 15/72] dm ioctl: remove double parentheses
-Date: Fri,  6 Apr 2018 15:23:16 +0200
-Message-Id: <20180406084306.347751349@linuxfoundation.org>
+	Major Hayden <major@mhtx.net>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 45/72] USB: serial: ftdi_sio: add RT Systems VX-8 cable
+Date: Fri,  6 Apr 2018 15:23:46 +0200
+Message-Id: <20180406084309.007202941@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003760341389885?=
-X-GMAIL-MSGID: =?utf-8?q?1597003760341389885?=
+X-GMAIL-THRID: =?utf-8?q?1597003568499355891?=
+X-GMAIL-MSGID: =?utf-8?q?1597003757586522582?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +49,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Major Hayden <major@mhtx.net>
 
-commit e36215d87f301f9567c8c99fd34e6c3521a94ddf upstream.
+commit 9608e5c0f079390473b484ef92334dfd3431bb89 upstream.
 
-The extra pair of parantheses is not needed and causes clang to generate
-warnings about the DM_DEV_CREATE_CMD comparison in validate_params().
+This patch adds a device ID for the RT Systems cable used to
+program Yaesu VX-8R/VX-8DR handheld radios. It uses the main
+FTDI VID instead of the common RT Systems VID.
 
-Also remove another double parentheses that doesn't cause a warning.
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Major Hayden <major@mhtx.net>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-ioctl.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/serial/ftdi_sio.c     |    1 +
+ drivers/usb/serial/ftdi_sio_ids.h |    3 +++
+ 2 files changed, 4 insertions(+)
 
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -1773,12 +1773,12 @@ static int validate_params(uint cmd, str
- 	    cmd == DM_LIST_VERSIONS_CMD)
- 		return 0;
- 
--	if ((cmd == DM_DEV_CREATE_CMD)) {
-+	if (cmd == DM_DEV_CREATE_CMD) {
- 		if (!*param->name) {
- 			DMWARN("name not supplied when creating device");
- 			return -EINVAL;
- 		}
--	} else if ((*param->uuid && *param->name)) {
-+	} else if (*param->uuid && *param->name) {
- 		DMWARN("only supply one of name or uuid, cmd(%u)", cmd);
- 		return -EINVAL;
- 	}
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -773,6 +773,7 @@ static const struct usb_device_id id_tab
+ 		.driver_info = (kernel_ulong_t)&ftdi_NDI_device_quirk },
+ 	{ USB_DEVICE(TELLDUS_VID, TELLDUS_TELLSTICK_PID) },
+ 	{ USB_DEVICE(NOVITUS_VID, NOVITUS_BONO_E_PID) },
++	{ USB_DEVICE(FTDI_VID, RTSYSTEMS_USB_VX8_PID) },
+ 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_S03_PID) },
+ 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_59_PID) },
+ 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_57A_PID) },
+--- a/drivers/usb/serial/ftdi_sio_ids.h
++++ b/drivers/usb/serial/ftdi_sio_ids.h
+@@ -922,6 +922,9 @@
+ /*
+  * RT Systems programming cables for various ham radios
+  */
++/* This device uses the VID of FTDI */
++#define RTSYSTEMS_USB_VX8_PID   0x9e50  /* USB-VX8 USB to 7 pin modular plug for Yaesu VX-8 radio */
++
+ #define RTSYSTEMS_VID		0x2100	/* Vendor ID */
+ #define RTSYSTEMS_USB_S03_PID	0x9001	/* RTS-03 USB to Serial Adapter */
+ #define RTSYSTEMS_USB_59_PID	0x9e50	/* USB-59 USB to 8 pin plug */
