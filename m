@@ -1,214 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751447AbeDFAhA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 20:37:00 -0400
-Received: from mail-io0-f170.google.com ([209.85.223.170]:46461 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDFAg6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 20:36:58 -0400
-X-Google-Smtp-Source: AIpwx48nC50fg8usYOpvuRAD2Jlt5wJe/R7sFhoP3ISYt5Fsrd8MjTOe6LgqVw5nPFjcEuWgpdridp77sZ9Mrld24yY=
+        id S1751538AbeDFAiJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 20:38:09 -0400
+Received: from mga04.intel.com ([192.55.52.120]:30331 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751492AbeDFAiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 20:38:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,413,1517904000";
+   d="scan'208";a="43849265"
+From: "Wang, Wei W" <wei.w.wang@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
+Subject: RE: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Topic: [PATCH v30 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Index: AQHTyyXXTsdlmy3QmUiflW8thGbyQqPu3AAAgAB7EICAAMkagIABH5Eg//+aJwCAAIzSsIAASrAAgACdZmD//60YgIAA5Rcw
+Date: Fri, 6 Apr 2018 00:11:22 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7394A9BC3@shsmsx102.ccr.corp.intel.com>
+References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
+ <1522771805-78927-3-git-send-email-wei.w.wang@intel.com>
+ <20180403214147-mutt-send-email-mst@kernel.org> <5AC43377.2070607@intel.com>
+ <20180404155907-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A6E96@shsmsx102.ccr.corp.intel.com>
+ <20180405040900-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A7F3B@shsmsx102.ccr.corp.intel.com>
+ <20180405170248-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7394A889E@shsmsx102.ccr.corp.intel.com>
+ <20180405212850-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180405212850-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTZhOThjM2QtMDJiZC00ODdmLTg0MDAtNmU4ZmIwOWM4YzJiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6InJNT3JENCtzclEwM2NpQ0o1MGJtR0dxcjlcLytiRzJhOXlsWlo1cjJcL0F0QT0ifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <7616bf87-bd2e-5003-af35-bc95f0e2a912@shipmail.org>
-References: <20180403224225.26776-1-robdclark@gmail.com> <CAKMK7uEH3Qu_Lkok60bOYkik6kyvDGtrS0kcQ=dFmCLRD-+1HA@mail.gmail.com>
- <307adb15-412a-1fe2-f116-27fe5b4a657d@shipmail.org> <20180404084320.GA3881@phenom.ffwll.local>
- <fa4074c7-5469-a69f-e4aa-bdc84e1a919a@shipmail.org> <20180404095604.GD3881@phenom.ffwll.local>
- <7616bf87-bd2e-5003-af35-bc95f0e2a912@shipmail.org>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 5 Apr 2018 20:36:56 -0400
-Message-ID: <CAF6AEGubWxJ9oDL_Zd2vxrPtmHqsc-Tw+Df-7dQZ-NmuXjg-xQ@mail.gmail.com>
-Subject: Re: [RFC] drm/atomic+msm: add helper to implement legacy dirtyfb
-To: Thomas Hellstrom <thomas@shipmail.org>
-Cc: =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 5, 2018 at 9:30 AM, Thomas Hellstrom <thomas@shipmail.org> wrote:
-> On 04/04/2018 11:56 AM, Daniel Vetter wrote:
->>
->> On Wed, Apr 04, 2018 at 11:10:08AM +0200, Thomas Hellstrom wrote:
->>>
->>> On 04/04/2018 10:43 AM, Daniel Vetter wrote:
->>>>
->>>> On Wed, Apr 04, 2018 at 10:22:21AM +0200, Thomas Hellstrom wrote:
->>>>>
->>>>> Hi,
->>>>>
->>>>> On 04/04/2018 08:58 AM, Daniel Vetter wrote:
->>>>>>
->>>>>> On Wed, Apr 4, 2018 at 12:42 AM, Rob Clark <robdclark@gmail.com>
->>>>>> wrote:
->>>>>>>
->>>>>>> Add an atomic helper to implement dirtyfb support.  This is needed to
->>>>>>> support DSI command-mode panels with x11 userspace (ie. when we can't
->>>>>>> rely on pageflips to trigger a flush to the panel).
->>>>>>>
->>>>>>> To signal to the driver that the async atomic update needs to
->>>>>>> synchronize with fences, even though the fb didn't change, the
->>>>>>> drm_atomic_state::dirty flag is added.
->>>>>>>
->>>>>>> Signed-off-by: Rob Clark <robdclark@gmail.com>
->>>>>>> ---
->>>>>>> Background: there are a number of different folks working on getting
->>>>>>> upstream kernel working on various different phones/tablets with qcom
->>>>>>> SoC's.. many of them have command mode panels, so we kind of need a
->>>>>>> way to support the legacy dirtyfb ioctl for x11 support.
->>>>>>>
->>>>>>> I know there is work on a proprer non-legacy atomic property for
->>>>>>> userspace to communicate dirty-rect(s) to the kernel, so this can
->>>>>>> be improved from triggering a full-frame flush once that is in
->>>>>>> place.  But we kinda needa a stop-gap solution.
->>>>>>>
->>>>>>> I had considered an in-driver solution for this, but things get a
->>>>>>> bit tricky if userspace ands up combining dirtyfb ioctls with page-
->>>>>>> flips, because we need to synchronize setting various CTL.FLUSH bits
->>>>>>> with setting the CTL.START bit.  (ie. really all we need to do for
->>>>>>> cmd mode panels is bang CTL.START, but is this ends up racing with
->>>>>>> pageflips setting FLUSH bits, then bad things.)  The easiest soln
->>>>>>> is to wrap this up as an atomic commit and rely on the worker to
->>>>>>> serialize things.  Hence adding an atomic dirtyfb helper.
->>>>>>>
->>>>>>> I guess at least the helper, with some small addition to translate
->>>>>>> and pass-thru the dirty rect(s) is useful to the final atomic dirty-
->>>>>>> rect property solution.  Depending on how far off that is, a stop-
->>>>>>> gap solution could be useful.
->>>>>>
->>>>>> Adding Noralf, who iirc already posted the full dirty helpers already
->>>>>> somewhere.
->>>>>> -Daniel
->>>>>
->>>>> I've asked Deepak to RFC the core changes suggested for the full dirty
->>>>> blob
->>>>> on dri-devel. It builds on DisplayLink's suggestion, with a simple
->>>>> helper to
->>>>> get to the desired coordinates.
->>>>>
->>>>> One thing to perhaps discuss is how we would like to fit this with
->>>>> front-buffer rendering and the dirty ioctl. In the page-flip context,
->>>>> the
->>>>> dirty rects, like egl's swapbuffer_with_damage is a hint to restrict
->>>>> the
->>>>> damage region that can be fully ignored by the driver, new content is
->>>>> indicated by a new framebuffer.
->>>>>
->>>>> We could do the same for frontbuffer rendering: Either set a dirty flag
->>>>> like
->>>>> you do here, or provide a content_age state member. Since we clear the
->>>>> dirty
->>>>> flag on state copies, I guess that would be sufficient. The blob
->>>>> rectangles
->>>>> would then become a hint to restrict the damage region.
->>>>
->>>> I'm not entirely following here - I thought for frontbuffer rendering
->>>> the
->>>> dirty rects have always just been a hint, and that the driver was always
->>>> free to re-upload the entire buffer to the screen.
->>>>
->>>> And through a helper like Rob's proposing here (and have floated around
->>>> in
->>>> different versions already) we'd essentially map a frontbuffer dirtyfb
->>>> call to a fake flip with dirty rect. Manual upload drivers already need
->>>> to
->>>> upload the entire screen if they get a flip, since some userspace uses
->>>> that to flush out frontbuffer rendering (instead of calling dirtyfb).
->>>>
->>>> So from that pov the new dirty flag is kinda not necessary imo.
->>>>
->>>>> Another approach would be to have the presence of dirty rects without
->>>>> framebuffer change to indicate frontbuffer rendering.
->>>>>
->>>>> I think I like the first approach best, although it may be tempting for
->>>>> user-space apps to just set the dirty bit instead of providing the full
->>>>> damage region.
->>>>
->>>> Or I'm not following you here, because I don't quite see the difference
->>>> between dirtyfb and a flip.
->>>> -Daniel
->>>
->>> OK, let me rephrase:
->>>
->>>  From the driver's point-of-view, in the atomic world, new content and
->>> the
->>> need for manual upload is indicated by a change in fb attached to the
->>> plane.
->>>
->>> With Rob's patch here, (correct me if I'm wrong) in addition new content
->>> and
->>> the need for manual upload is identified by the dirty flag, (since the fb
->>> stays the same and the driver thus never identifies a page-flip).
->>
->> Hm, I'm not entirely sure Rob's approach is correct. Imo a pageflip
->> (atomic or not) should result in the entire buffer getting uploaded. The
->> dirty flag is kinda redundant, a flip with the same buffer works the same
->> way as a dirtyfb with the entire buffer as the dirty rectangle.
->>
->>> In both these situations, clip rects can provide a hint to restrict the
->>> dirty region.
->>>
->>> Now I was thinking about the preferred way for user-space to communicate
->>> front buffer rendering through the atomic ioctl:
->>>
->>> 1) Expose a dirty (or content_age property)
->>> 2) Attach a clip-rect blob property.
->>> 3) Fake a page-flip by ping-ponging two frame-buffers pointing to the
->>> same
->>> underlying buffer object.
->>>
->>> Are you saying that people are already using 3) and we should keep using
->>> that?
->>
->> I'm saying they're using 3b), flip the same buffer wrapped in the same
->> drm_framebuffer, and expect it to work.
->>
->> The only advantage dirtyfb has is that it allows you to supply the
->> optimized upload rectangles, but at the cost of a funny api (it's working
->> on the fb, not the plane/crtc you want to upload) and lack of drm_event to
->> confirm when exactly you uploaded your stuff. But imo they should be the
->> same underlying operation.
->>
->
-> FWIW, vmwgfx has always treated a dirtyfb as a pure front-buffer like
-> rendering operation without any synchronization,
+On Friday, April 6, 2018 2:30 AM, Michael S. Tsirkin wrote:
+> On Thu, Apr 05, 2018 at 03:47:28PM +0000, Wang, Wei W wrote:
+> > On Thursday, April 5, 2018 10:04 PM, Michael S. Tsirkin wrote:
+> > > On Thu, Apr 05, 2018 at 02:05:03AM +0000, Wang, Wei W wrote:
+> > > > On Thursday, April 5, 2018 9:12 AM, Michael S. Tsirkin wrote:
+> > > > > On Thu, Apr 05, 2018 at 12:30:27AM +0000, Wang, Wei W wrote:
+> > > > > > On Wednesday, April 4, 2018 10:08 PM, Michael S. Tsirkin wrote:
+> > > > > > > On Wed, Apr 04, 2018 at 10:07:51AM +0800, Wei Wang wrote:
+> > > > > > > > On 04/04/2018 02:47 AM, Michael S. Tsirkin wrote:
+> > > > > > > > > On Wed, Apr 04, 2018 at 12:10:03AM +0800, Wei Wang wrote:
+> > > > > > I'm afraid the driver couldn't be aware if the added hints are
+> > > > > > stale or not,
+> > > > >
+> > > > >
+> > > > > No - I mean that driver has code that compares two values and
+> > > > > stops reporting. Can one of the values be stale?
+> > > >
+> > > > The driver compares "vb->cmd_id_use != vb->cmd_id_received" to
+> > > > decide if it needs to stop reporting hints, and cmd_id_received is
+> > > > what the driver reads from host (host notifies the driver to read
+> > > > for the latest value). If host sends a new cmd id, it will notify
+> > > > the guest to read again. I'm not sure how that could be a stale
+> > > > cmd id (or maybe I misunderstood your point here?)
+> > > >
+> > > > Best,
+> > > > Wei
+> > >
+> > > The comparison is done in one thread, the update in another one.
+> >
+> > I think this isn't something that could be solved by adding a lock,
+> > unless host waits for the driver's ACK about finishing the update
+> > (this is not agreed in the QEMU part discussion).
+> >
+> > Actually virtio_balloon has F_IOMMU_PLATFORM disabled, maybe we
+> don't
+> > need to worry about that using DMA api case (we only have gpa added to
+> > the vq, and having some entries stay in the vq seems fine). For this
+> > feature, I think it would not work with F_IOMMU enabled either.
+> 
+> Adding a code comment explaining all this might be a good idea.
 
-I guess this works for you because dirtyfb msg to host and rendering
-msgs to host end up serialized?
+Thanks, will do.
 
-> We've guaranteed that only the rects that are present are uploaded, but only
-> xf86-video-vmware has taken advantage of this to keep
-> CPU- and GPU rendered content apart.
-> I think we've at some point run into problems with number of cliprects, (Old
-> KDE lock screen?) and use multiple dirtyfb for the same
-> update...
-
-fwiw, I haven't really looked at how it works on msm yet.. my memories
-from omap where that we could set a single clip-rect on tx to panel
-but we'd need to block tx of contents of next clip-rect until previous
-was finished, so we kinda have a limit of 1.. and I expect msm (or
-most other dsi drivers) are similar.. but I'm expecting that
-serializing everything on atomic commit worker helps here
-
-BR,
--R
-
-
->
-> IIRC the reason for working with the fb, is that it's much easier for
-> user-space, which doesn't have to care where planes are scanning out and
-> why.
-> "Present my new content on any screen that's affected".
->
-> /Thomas
->
->
+Best,
+Wei
