@@ -1,139 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753130AbeDFP2x (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:28:53 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:12283 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752858AbeDFP2s (ORCPT
+        id S1753928AbeDFPaI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 11:30:08 -0400
+Received: from mail-qk0-f180.google.com ([209.85.220.180]:37206 "EHLO
+        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753685AbeDFPaG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:28:48 -0400
-From: Philippe CORNU <philippe.cornu@st.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Benjamin Gaignard" <benjamin.gaignard@linaro.org>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>
-Subject: Re: [PATCH] drm: clarify adjusted_mode for a bridge connected to a
- crtc
-Thread-Topic: [PATCH] drm: clarify adjusted_mode for a bridge connected to a
- crtc
-Thread-Index: AQHTzbb6Xc81Ni58ZkqJDtQmzYCJWqPzutsA
-Date: Fri, 6 Apr 2018 15:28:27 +0000
-Message-ID: <a8c52302-2e70-ab55-54c0-dfde8b42e430@st.com>
-References: <20180226121605.12050-1-philippe.cornu@st.com>
- <1765089.gI5krnOhAB@avalon>
-In-Reply-To: <1765089.gI5krnOhAB@avalon>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Fri, 6 Apr 2018 11:30:06 -0400
+X-Google-Smtp-Source: AIpwx48kuQerftvVAOLRcx1KjD0fJYNXqgaj27YQ5ryXSxxIoIRZ6fGQua6hX93cwdn3Wvbd33eiBg==
+Subject: Re: AMD graphics performance regression in 4.15 and later
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        airlied@linux.ie, alexander.deucher@amd.com, Felix.Kuehling@amd.com,
+        labbott@redhat.com, akpm@linux-foundation.org, michel.daenzer@amd.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
+ <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
+From: Jean-Marc Valin <jmvalin@mozilla.com>
+Message-ID: <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
+Date: Fri, 6 Apr 2018 11:30:02 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D798F9157580CC4E9C19DB8E9E68F5A9@st.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-06_08:,,
- signatures=0
+In-Reply-To: <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w36FSxEf022992
 
-Hi Laurent,
+Hi Christian,
 
-On 04/06/2018 04:53 PM, Laurent Pinchart wrote:
-> Hi Philippe,
-> 
-> Thank you for the patch.
-> 
-> On Monday, 26 February 2018 14:16:04 EEST Philippe Cornu wrote:
->> This patch clarifies the adjusted_mode documentation
->> for a bridge directly connected to a crtc.
->>
->> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
->> ---
->> This patch is linked to the discussion https://lkml.org/lkml/2018/1/25/367
->>
->>   include/drm/drm_bridge.h | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
->> index 3270fec46979..b5f3c070467c 100644
->> --- a/include/drm/drm_bridge.h
->> +++ b/include/drm/drm_bridge.h
->> @@ -177,7 +177,8 @@ struct drm_bridge_funcs {
->>   	 * pipeline has been called already. If the bridge is the first element
->>   	 * then this would be &drm_encoder_helper_funcs.mode_set. The display
->>   	 * pipe (i.e.  clocks and timing signals) is off when this function is
->> -	 * called.
->> +	 * called. If the bridge is connected to the crtc, the adjusted_mode
->> +	 * parameter is the one defined in &drm_crtc_state.adjusted_mode.
-> 
-> Unless I'm mistaken this will always be the mode stored in
-> &drm_crtc_state.adjusted_mode (at least for atomic drivers), regardless of
-> whether the bridge is the first in the chain (connected to the CRTC) or not.
-> What is important to document is that we have a single adjusted_mode for the
-> whole chain of bridges, and that it corresponds to the mode output by the CRTC
-> for the first bridge. Bridges further in the chain can look at that mode,
-> although there will probably be nothing of interest to them there.
-> 
-> How about the following text ?
-> 
->      /**
->       * @mode_set:
->       *
->       * This callback should set the given mode on the bridge. It is called
->       * after the @mode_set callback for the preceding element in the display
->       * pipeline has been called already. If the bridge is the first element
->       * then this would be &drm_encoder_helper_funcs.mode_set. The display
->       * pipe (i.e.  clocks and timing signals) is off when this function is
->       * called.
->       *
->       * The adjusted_mode parameter corresponds to the mode output by the CRTC
->       * for the first bridge in the chain. It can be different from the mode
->       * parameter that contains the desired mode for the connector at the end
->       * of the bridges chain, for instance when the first bridge in the chain
->       * performs scaling. The adjusted mode is mostly useful for the first
->       * bridge in the chain and is likely irrelevant for the other bridges.
->       *
->       * For atomic drivers the adjusted_mode is the mode stored in
->       * &drm_crtc_state.adjusted_mode.
->       *
->       * NOTE:
->       *
->       * If a need arises to store and access modes adjusted for other locations
->       * than the connection between the CRTC and the first bridge, the DRM
->       * framework will have to be extended with DRM bridge states.
->     	 */
-> 
-> Then I think we should also update the documentation of
-> drm_crtc_state.adjusted_mode accordingly:
-> 
->      /*
->       * @adjusted_mode:
->       *
->       * Internal display timings which can be used by the driver to handle
->       * differences between the mode requested by userspace in @mode and what
->       * is actually programmed into the hardware.
->       *
->       * For drivers using drm_bridge, this store the hardware display timings
->       * used between the CRTC and the first bridge. For other drivers, the
->       * meaning of the adjusted_mode field is purely driver implementation
->       * defined information, and will usually be used to store the hardware
->       * display timings used between the CRTC and encoder blocks.
->       */
-> 
+Is there a way to turn off these huge pages at boot-time/run-time? Right
+now the recent kernels are making Firefox pretty much unusable for me.
+I've been able to revert the patch from 4.15 but it's not really a
+long-term solution.
 
-Your proposal is very clear and understandable. I will make a new patch 
-version based on it.
-Big thanks
-Philippe :-)
+You mention that the purpose of the patch is to improve performance, but
+I haven't actually noticed anything running faster on my system. Is
+there any particular test where I'm supposed to see an improvement
+compared to 4.14?
+
+I'm not sure what you mean by "We mitigated the problem by avoiding the
+slow coherent DMA code path on almost all platforms on newer kernels". I
+tested up to 4.16 and the performance regression is just as bad as it is
+for 4.15.
+
+Unlike the older hardware reported on kernel bug 198511, the hardware I
+have is quite recent (RX 560) and still being sold. I've also confirmed
+that neither nvidia (on the same machine) nor intel GPUs (on a less
+powerful machine) are affected, so it seems like there's a way to avoid
+that slow performance. I'm not saying that what Firefox is doing is
+ideal (I don't know what it does and why), but it still seems like
+something that should still be avoided in the kernel.
+
+Cheers,
+
+	Jean-Marc
+
+On 04/06/2018 04:03 AM, Christian König wrote:
+> Hi Jean,
+> 
+> yeah, that is a known problem. Using huge pages improves the performance
+> because of better TLB usage, but for the cost of higher allocation
+> overhead.
+> 
+> What we found is that firefox is doing something rather strange by
+> allocating large textures and then just trowing them away again
+> immediately.
+> 
+> We mitigated the problem by avoiding the slow coherent DMA code path on
+> almost all platforms on newer kernels, but essentially somebody needs to
+> figure out why firefox and/or the user space stack is doing this
+> constant allocation/freeing of memory.
+> 
+> There is also a bug tracker on bugs.kernel.org about this, but I can't
+> find it any more of hand.
+> 
+> Regards,
+> Christian.
+> 
+> Am 06.04.2018 um 02:30 schrieb Jean-Marc Valin:
+>> Hi,
+>>
+>> I noticed a serious graphics performance regression between 4.14 and
+>> 4.15. It is most noticeable with Firefox (tried FF57 through FF60) and
+>> causes scrolling to be really choppy/sluggish. I've confirmed that the
+>> problem is also there on 4.16, while 4.13 works fine.
+>>
+>> After a bisection, I've narrowed the regression down to this commit:
+>>
+>> commit 648bc3574716400acc06f99915815f80d9563783
+>> Author: Christian König <christian.koenig@amd.com>
+>> Date:   Thu Jul 6 09:59:43 2017 +0200
+>>
+>>      drm/ttm: add transparent huge page support for DMA allocations v2
+>>
+>>
+>> Some details about my system:
+>> Distro: Fedora 27 (up-to-date)
+>> Video: MSI Radeon RX 560 AERO
+>> CPU: Dual-socket Xeon E5-2640 v4 (20 cores total)
+>> RAM: 128 GB ECC
+>>
+>>
+>> As a comparison, when running Firefox with 4.15 on a Lenovo W540 laptop
+>> (with Intel graphics only) the responsiveness is much better then what
+>> I'm getting on the Xeon machine above with the Radeon card, so this
+>> really seems to be an AMD-only issue.
+>>
+>> Any way to fix the issue?
+>>
+>> Thanks,
+>>
+>>     Jean-Marc
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
