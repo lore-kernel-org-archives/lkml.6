@@ -1,174 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751616AbeDFI3p (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 04:29:45 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52366 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751442AbeDFI3k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 04:29:40 -0400
-X-Google-Smtp-Source: AIpwx49JZ3drreLn3RaHiueJ5/pAuDT9M2gRf06MJTHxfpqOC6C3EJztmYTTZEebJh4/JzY0xyWKIA==
-Subject: Re: [PATCH] ata: ahci-platform: add reset control support
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Patrice CHOTARD <patrice.chotard@st.com>, Tejun Heo <tj@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org"
-        <linux-mediatek@lists.infradead.org>
-References: <6ce60a0b-0409-016a-d29c-91b8b9e2ad07@redhat.com>
- <cd3bc161-9a38-1e58-b66f-3ef81e3ed220@redhat.com>
- <20180406134838.2ADC.4A936039@socionext.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <22a2bcd7-eff5-c20f-e056-f5946e579d5e@redhat.com>
-Date: Fri, 6 Apr 2018 10:29:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751977AbeDFIaZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 04:30:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46808 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751361AbeDFIaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 04:30:19 -0400
+Date: Fri, 6 Apr 2018 10:30:16 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: wen.yang99@zte.com.cn
+Cc: sergey.senozhatsky.work@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bart.VanAssche@wdc.com, tj@kernel.org,
+        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn, tan.hu@zte.com.cn
+Subject: Re: =?utf-8?B?562U5aSNOiBSZTogW1BBVENIIHYy?=
+ =?utf-8?Q?=5D_scsi=3A_Introduc?= =?utf-8?Q?e?= sdev_printk_ratelimited to
+ throttlefrequent printk
+Message-ID: <20180406083016.weuoemmcgvgxlcxy@pathway.suse.cz>
+References: <20180402021032.GE3795@jagdpanzerIV>
+ <201804031419435288297@zte.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <20180406134838.2ADC.4A936039@socionext.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <201804031419435288297@zte.com.cn>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 06-04-18 06:48, Kunihiko Hayashi wrote:
-> Hi Hans,
+On Tue 2018-04-03 14:19:43, wen.yang99@zte.com.cn wrote:
+> On the other hand，queue_lock is big, looping doing something under spinlock 
 > 
-> On Thu, 5 Apr 2018 16:08:24 +0200
-> Hans de Goede <hdegoede@redhat.com> wrote:
+> may locked many things and taking a long time, may cause some problems.
 > 
->> Hi,
->>
->> On 05-04-18 16:00, Hans de Goede wrote:
->>> Hi,
->>>> On 05-04-18 15:54, Thierry Reding wrote:
->>>> On Thu, Apr 05, 2018 at 03:27:03PM +0200, Hans de Goede wrote:
->>>>> Hi,
->>>>>
->>>>> On 05-04-18 15:17, Patrice CHOTARD wrote:
->>>>>> Hi Thierry
->>>>>>
->>>>>> On 04/05/2018 11:54 AM, Thierry Reding wrote:
->>>>>>> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
->>>>>>>> Add support to get and control a list of resets for the device
->>>>>>>> as optional and shared. These resets must be kept de-asserted until
->>>>>>>> the device is enabled.
->>>>>>>>
->>>>>>>> This is specified as shared because some SoCs like UniPhier series
->>>>>>>> have common reset controls with all ahci controller instances.
->>>>>>>>
->>>>>>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
->>>>>>>> ---
->>>>>>>> ??? .../devicetree/bindings/ata/ahci-platform.txt????? |? 1 +
->>>>>>>> ??? drivers/ata/ahci.h???????????????????????????????? |? 1 +
->>>>>>>> ??? drivers/ata/libahci_platform.c???????????????????? | 24 +++++++++++++++++++---
->>>>>>>> ??? 3 files changed, 23 insertions(+), 3 deletions(-)
->>>>>>>
->>>>>>> This causes a regression on Tegra because we explicitly request the
->>>>>>> resets after the call to ahci_platform_get_resources().
->>>>>>
->>>>>> I confirm, we got exactly the same behavior on STi platform.
->>>>>>
->>>>>>>
->>>>>>> ?? From a quick look, ahci_mtk and ahci_st are in the same boat, adding the
->>>>>>> corresponding maintainers to Cc.
->>>>>>>
->>>>>>> Patrice, Matthias: does SATA still work for you after this patch? This
->>>>>>> has been in linux-next since next-20180327.
->>>>>>
->>>>>> SATA is still working after this patch, but a kernel warning is
->>>>>> triggered due to the fact that resets are both requested by
->>>>>> libahci_platform and by ahci_st driver.
->>>>>
->>>>> So in your case you might be able to remove the reset handling
->>>>> from the ahci_st driver and rely on the new libahci_platform
->>>>> handling instead? If that works that seems like a win to me.
->>>>>
->>>>> As said elsewhere in this thread I think it makes sense to keep (or re-add
->>>>> after a revert) the libahci_platform reset code, but make it conditional
->>>>> on a flag passed to ahci_platform_get_resources(). This way we get
->>>>> the shared code for most cases and platforms which need special handling
->>>>> can opt-out.
->>>>
->>>> Agreed, although I prefer such helpers to be opt-in, rather than
->>>> opt-out. In my experience that tends make the helpers more resilient to
->>>> this kind of regression. It also simplifies things because instead of
->>>> drivers saying "I want all the helpers except this one and that one",
->>>> they can simply say "I want these helpers and that one". In the former
->>>> case whenever you add some new (opt-out) feature, you have to update all
->>>> drivers and add the exception. In the latter you only need to extend the
->>>> drivers that want to make use of the new helper.
->>
->> Erm, the idea never was to make this opt-out but rather opt in, so
->> we add a flags parameter to ahci_platform_get_resources() and all
->> current users pass in 0 for that to keep the current behavior.
->>
->> And only the generic drivers/ata/ahci_platform.c driver will pass
->> in a the new AHCI_PLATFORM_GET_RESETS flag, which makes
->> ahci_platform_get_resources() (and the other functions) also deal
->> with resets.
->>
->>>> With that in mind, rather than adding a flag to the
->>>> ahci_platform_get_resources() function, it might be more flexible to
->>>> split the helpers into finer-grained functions. That way drivers can
->>>> pick whatever functionality they want from the helpers.
->>>> Good point, so lets:
->>>> 1) Revert the patch for now
->>> 2) Have a new version of the patch which adds a ahci_platform_get_resets() helper
->>> 3) Modify the generic drivers/ata/ahci_platform.c driver to call the new
->>>   ?? ahci_platform_get_resets() between its ahci_platform_get_resources()
->>>   ?? and ahci_platform_enable_resources() calls.
->>>   ?? I think that ahci_platform_enable_resources() should still automatically
->>>   ?? do the right thing wrt resets if ahci_platform_get_resets() was called
->>>   ?? (otherwise the resets array will be empty and should be skipped)
->>>> This should make the generic driver usable for the UniPhier SoCs and
->>> maybe some other drivers like the ahci_st driver can also switch to the
->>> new ahci_platform_get_resets() functionality to reduce their code a bit.
->>
->> So thinking slightly longer about this, with the opt-in variant
->> (which is what I intended all along) I do think that a flags parameter
->> is better, because the whole idea behind lib_ahci_platform is to avoid
->> having to do err = get_resource_a(), if (err) bail, err = get_resource_b()
->> if (err) bail, etc. in all the ahci (platform) drivers. And having fine
->> grained helpers re-introduces that.
+> So This code needs to be optimized later:
 > 
-> In case of adding a flag instead of get_resource_a(),
-> for example, we add the flag for use of resets,
+> scsi_request_fn()
+> {
+> 	for (;;) {
+> 		int rtn;
+> 		/*
+> 		 * get next queueable request.  We do this early to make sure
+> 		 * that the request is fully prepared even if we cannot
+> 		 * accept it.
+> 		 */
 > 
-> -struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev)
-> +struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
-> +                                                  bool use_reset)
+> 		req = blk_peek_request(q);
 > 
-> and for now all the drivers using this function need to add the argument as false
-> to the caller.
+> 		if (!req)
+> 			break;
 > 
-> -       hpriv = ahci_platform_get_resources(pdev);
-> +       hpriv = ahci_platform_get_resources(pdev, false);
+> 		if (unlikely(!scsi_device_online(sdev))) {
+> 			sdev_printk(KERN_ERR, sdev,
+> 				    "rejected I/O to offline device\n");
+> 			scsi_kill_request(req, q);
+> 			continue;
 > 
-> Surely this can avoid adding functions such get_resource_a(). If we apply another
-> feature later, we add its flag as one of the arguments instead. Is it right?
+> 			^^^^^^^^^ still under spinlock
+> 		}
 
-Yes, that is right, but instead of adding a "bool use_reset" please add
-an "unsigned int flags" parameter instead and a:
+I wonder if the following might be the best solution after all:
 
-#define AHCI_PLATFORM_GET_RESETS	0x01
+		if (unlikely(!scsi_device_online(sdev))) {
+			scsi_kill_request(req, q);
 
-And update all callers of ahci_platform_get_resources to pass 0 for flags
-except for drivers/ata/ahci_platform.c. This way we only need to modify
-all callers once, and if we want to add another optional resource in
-the future we can add a:
+			/*
+			 * printk() might take a while on slow consoles.
+			 * Prevent solftlockups by releasing the lock.
+			 */
+			spin_unlock_irq(q->queue_lock);
+			sdev_printk(KERN_ERR, sdev,
+				    "rejecting I/O to offline device\n");
+			spin_lock_irq(q->queue_lock);
+			continue;
+		}
 
-#define AHCI_PLATFORM_GET_FOO		0x02
+I see that the lock is released also in several other situations.
+Therefore it looks safe. Also handling too many requests without
+releasing the lock seems to be a bad idea in general. I think
+that this solution was already suggested earlier.
 
-Without needing to change all callers again.
+Please, note that I moved scsi_kill_request() up. It looks natural
+to remove it from the queue before we release the queue lock.
 
-Regards,
+Best Regards,
+Petr
 
-Hans
+BTW: Your mail had strange formatting. Please, try to avoid using
+html.
