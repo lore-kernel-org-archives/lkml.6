@@ -1,78 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752796AbeDFWT6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 18:19:58 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46452 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752117AbeDFWT5 (ORCPT
+        id S1752490AbeDFWZN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 18:25:13 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45602 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751730AbeDFWZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 18:19:57 -0400
-Subject: Re: [PATCH v3 1/4] Ktest: add email support
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, dhaval.giani@oracle.com
-References: <1522094884-22718-1-git-send-email-tianyang.chen@oracle.com>
- <1522094884-22718-2-git-send-email-tianyang.chen@oracle.com>
- <20180406142409.6d98254b@gandalf.local.home>
-From: Tim Tianyang Chen <tianyang.chen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <e0646238-e991-61c6-c32f-eee07742073c@oracle.com>
-Date: Fri, 6 Apr 2018 15:19:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180406142409.6d98254b@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8855 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804060222
+        Fri, 6 Apr 2018 18:25:11 -0400
+X-Google-Smtp-Source: AIpwx4+bP14+2pL1PcLijI9lwy2R0zgP6m9XlmXzeQ23wMJM4/SIbgb5Qnt9+51/BdlX5Mz9u8TThQ==
+From: Khazhismel Kumykov <khazhy@google.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Khazhismel Kumykov <khazhy@google.com>
+Subject: [PATCH] block/compat_ioctl: fix range check in BLKGETSIZE
+Date: Fri,  6 Apr 2018 15:23:50 -0700
+Message-Id: <20180406222350.174104-1-khazhy@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="00000000000083185e056935872f"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--00000000000083185e056935872f
+
+kernel ulong and compat_ulong_t may not be same width. Use type directly
+to eliminate mismatches.
+
+This would result in truncation rather than EFBIG for 32bit mode for
+large disks.
+
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+---
+ block/compat_ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/compat_ioctl.c b/block/compat_ioctl.c
+index 6ca015f92766..3a2c77f07da8 100644
+--- a/block/compat_ioctl.c
++++ b/block/compat_ioctl.c
+@@ -388,7 +388,7 @@ long compat_blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg)
+ 		return 0;
+ 	case BLKGETSIZE:
+ 		size = i_size_read(bdev->bd_inode);
+-		if ((size >> 9) > ~0UL)
++		if ((size >> 9) > ~((compat_ulong_t)0UL))
+ 			return -EFBIG;
+ 		return compat_put_ulong(arg, size >> 9);
+ 
+-- 
+2.17.0.484.g0c8726318c-goog
 
 
-On 04/06/2018 11:24 AM, Steven Rostedt wrote:
-> On Mon, 26 Mar 2018 13:08:01 -0700
-> Tim Tianyang Chen <tianyang.chen@oracle.com> wrote:
->
->> Users can define optional variables to get email notifications.
->> Ktest can send emails when the script:
->>   * was started
->>   * failed with fatal errors and called dodie()
->>   * completed all testing
->>
->> Users have to setup the mailer provided in config prior to using this script.
->> Supported mailers: mailx, mail, sendmail
->> mailer specific routines are _sendmail_send(), _mailx_send()
->>
->> Suggested-by: Dhaval Giani <dhaval.giani@oracle.com>
->> Signed-off-by: Tim Tianyang Chen <tianyang.chen@oracle.com>
->>
->> ---
->>      changes since v2:
->>      coding style fix for option maps and if statements
->> 	moved sig int handeling to another patch
->>      changes since v1:
->>      added options for when to send emails to option_map
->> ---
->>   ktest.pl | 61 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
->>   1 file changed, 58 insertions(+), 3 deletions(-)
->>
->> diff --git a/ktest.pl b/ktest.pl
->> index 0c8b61f8398e..9469783bc6c1 100755
->> --- a/ktest.pl
->> +++ b/ktest.pl
-> If you can, please use git to make your diffs.
->
-> The full path name needs to be here.
->
->   tools/testing/ktest/ktest.pl
->
-Sorry I was working on my private folder, version tracked with other 
-stuff. Just re-sent them.
+--00000000000083185e056935872f
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Tim
+MIIS5wYJKoZIhvcNAQcCoIIS2DCCEtQCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghBNMIIEXDCCA0SgAwIBAgIOSBtqDm4P/739RPqw/wcwDQYJKoZIhvcNAQELBQAwZDELMAkGA1UE
+BhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExOjA4BgNVBAMTMUdsb2JhbFNpZ24gUGVy
+c29uYWxTaWduIFBhcnRuZXJzIENBIC0gU0hBMjU2IC0gRzIwHhcNMTYwNjE1MDAwMDAwWhcNMjEw
+NjE1MDAwMDAwWjBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEiMCAG
+A1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+AQoCggEBALR23lKtjlZW/17kthzYcMHHKFgywfc4vLIjfq42NmMWbXkNUabIgS8KX4PnIFsTlD6F
+GO2fqnsTygvYPFBSMX4OCFtJXoikP2CQlEvO7WooyE94tqmqD+w0YtyP2IB5j4KvOIeNv1Gbnnes
+BIUWLFxs1ERvYDhmk+OrvW7Vd8ZfpRJj71Rb+QQsUpkyTySaqALXnyztTDp1L5d1bABJN/bJbEU3
+Hf5FLrANmognIu+Npty6GrA6p3yKELzTsilOFmYNWg7L838NS2JbFOndl+ce89gM36CW7vyhszi6
+6LqqzJL8MsmkP53GGhf11YMP9EkmawYouMDP/PwQYhIiUO0CAwEAAaOCASIwggEeMA4GA1UdDwEB
+/wQEAwIBBjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwEgYDVR0TAQH/BAgwBgEB/wIB
+ADAdBgNVHQ4EFgQUyzgSsMeZwHiSjLMhleb0JmLA4D8wHwYDVR0jBBgwFoAUJiSSix/TRK+xsBtt
+r+500ox4AAMwSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9ncy9n
+c3BlcnNvbmFsc2lnbnB0bnJzc2hhMmcyLmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIG
+CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG
+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
+BQUHMAKGNGh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzaHZzbWltZWNhMS5j
+cnQwHQYDVR0OBBYEFDNntFDpJlP5hZfZPq3fmoQ/ClRPMB8GA1UdIwQYMBaAFMs4ErDHmcB4koyz
+IZXm9CZiwOA/MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8v
+d3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMDsGA1UdHwQ0MDIwMKAuoCyGKmh0dHA6Ly9j
+cmwuZ2xvYmFsc2lnbi5jb20vZ3NodnNtaW1lY2ExLmNybDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4IBAQCcYsdtDsMPCsiWtxWK
+v0I9QkCnTCRmIAxfU099lmAl6HJIb6EZAYXhG51MDl9iaGIuH+GO5oxO7mt6QXjZkJJRP2vReyw5
+vi5ViuNmepeIV0P683cromlJaDnnrTIV8cqxomNphwiRQiX+abmRlZ2+Har0cE2a0g47zpdg/Hby
+MERF/SR21AUHupZvBsu6329K3W2rg7YbCPX+MnvEgpZKqCyulTjxFyxJ8a8pjBtznVnMrRrTfYRz
+HfgjoeGEt0kUqvCtVFjEU1tpoYLSys6rl1qk+jX/YW09XZsd18ie8uWVRxG+9KtevbtWe5UPBQ37
+UMq8z8vtmD3G2k6o6TQMMYICXjCCAloCAQEwXDBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xv
+YmFsU2lnbiBudi1zYTEiMCAGA1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMQIMD/ndhZX/
+YOFoMzvgMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCAwlqit7S9IuE7j6L+45YGx
+ByGQkkVoOiDWX1Pxv2eh7zAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
+Fw0xODA0MDYyMjI1MTFaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQB
+FjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglg
+hkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEARQzhh/3ImQwIG2YldGqpPBaRnssLdGKAG/E0WuHo
+mYKyuG7P2PVhvfQyoaJzyX4/vW2njDI3atWUyOhUpcW9vexHsvhwqTuj8LZPpmbD20pi+uAkRajQ
+3L8IttkEVn5lar1+d9NMhCI9vaZCOybnRh6R6rC3CXdPDpzUq0+ebKWcHc29+64RE5Jk4mdihCBP
+2DssBdmSAZ7j8e9p7MUdV7MFZT5LyDNSZ7L4ZHJVAnQH8VA3U4e8dB63SEGmOn5E+1HNIKYVmnbd
+03Tw7A0rWXGYKh2/XI694Dsvrt96mGszKeuwI19cGuCwakdcbNASSUYjK6wi0RX3Ryl+5ODLog==
+--00000000000083185e056935872f--
