@@ -1,86 +1,83 @@
-Return-Path: <3DR3HWgkbAEAu01mcnngtcrrkf.iqqingwugteqpvgpv.eqo@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522998541; cv=none;
+Return-Path: <3GePHWgkbANoOUVG6HHAN6LLE9.CKKCHAQOAN8KJPAJP.8KI@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523049241; cv=none;
         d=google.com; s=arc-20160816;
-        b=wCp1KOfMewGyU5cpsjhPl62OkViSj7rq+zQepnoReSsWdAqCxyjVlJ7SFedvoi4UTE
-         9fchtHkRPM1Qc3/jRAtOgGa8AHYUDhU9x934pZhUO+FFwKOKkLRAgoiJrUEQvmtaSLyH
-         6LJdwut2FpR6F68eDpUMMq3p5y1GkgJOtNQztVJUFhW+xIu3RRnWJcgebcN5MYlzxWqs
-         cxor4nr9sDsvR9rmzVy/d/nPsun31t0cOFoJLx+Z3jQoaWpmqDCtvBFmMKZgDBGzTpuf
-         IJkkISsqqKWgik+RZ0IAC61qiLsxSzWCi3sEnzXCpS5pzOU/9c4vccmE3bpK4GCiOyAN
-         3pHA==
+        b=rHw09Ji1Y0KpRrKRZbysWv2ypFpgyGRjf+jBUmYlP6+sxKkV3fxO58OAjLojMJNhHb
+         CUuoy/AGAH0qo9qdHzDNvlBCAznqlmfOMAs2DCTe2FUFAlStLxFjyhHnCFZWoyfDnzgV
+         3BnQ6mmdHrCBgUhD35oAOzAKHVrk8viXNw2WDaclx6RAHl1MAXOIbH0b9BnEr3iru3Lm
+         FJigD1NOgjsxYyMxlsglxrjzCCkJDbTDSPo43811oL7+3HoFOPR7z2vqhe89KTN0GuGC
+         PI0Wrlho5vmyg7yuFRtyV04k6MAmqEPi0uOfSJmNF44orcla7ssXa29bMbieRRg7INjp
+         EWBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:from:subject:message-id:date:mime-version
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :arc-authentication-results;
-        bh=bZP5BP5xCh8hHOljD8tiNzreGFUPwkh3nTxfP+PjD2M=;
-        b=Z4Prf8ij4UXSPwj9pDY7GQmfaoPZ+u9qBo55Dnlu0HtsLtArWdaK4GDIWjjfWhXOA2
-         +QNRSfbLOc3xOQQgRQqjvOWH4cnB6riM1kBzItEWAlN24+iPVtPOdGxSmYdOfexrasQc
-         rWg0z7NVudJ3aqxvgJ3usdxMisfhGHEBjQvxKfuE8Rn32NSx3QGhV6dQYsn8g8jw0EXJ
-         i337h0WotXPX1BshnpvxNKrg8kMStBkCrqNFb6nl3LNXuP3/AdD1B61Xz6gNrCCUvbeI
-         bu1J97CrLJtEZT5UNjHxgG4hdGVYV2pr9u4oulQ3eTxD1ei25ODEbrBpqTn/Zph431UI
-         5P4Q==
+        bh=+PPElNL0xkdOI8yt626uh2Rz+4p1LhPznaLZV5df8ZE=;
+        b=So/jbnKtmfPAzbOj+UdyAM3bD1/aZ3BHxLn3kW5v3CxnzYlD5iakAwpBdDxNTnCGYF
+         QY8uY9zlR4x1pHXVkltLNERFGAO1KLUHNQDUJLj8iAkquXt3Tk3ZPzqH8sBn0c1Gtf3t
+         nR1ezhtLp+USqVzOeQY7M+V1cFCO6EJEvtT/CLSrBRgdIAkPpuOvJs4kJQ7YpYPVUMjY
+         aLlkO6vuI+arAn/pny4PFb6/+D9hDrt4iM8JkyISZxt9sATVYQnsm8sCFkLXRoM6jnWo
+         CsmzMQd5ulHq59G6ZIrccsl5s8rtYBBqogsfcZjcZ8DiIxmk1ib+XRbPf48BV1v0RR4v
+         9Btg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of 3dr3hwgkbaeau01mcnngtcrrkf.iqqingwugteqpvgpv.eqo@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3DR3HWgkbAEAu01mcnngtcrrkf.iqqingwugteqpvgpv.eqo@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       spf=pass (google.com: domain of 3gephwgkbanoouvg6hhan6lle9.ckkchaqoan8kjpajp.8ki@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3GePHWgkbANoOUVG6HHAN6LLE9.CKKCHAQOAN8KJPAJP.8KI@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of 3dr3hwgkbaeau01mcnngtcrrkf.iqqingwugteqpvgpv.eqo@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3DR3HWgkbAEAu01mcnngtcrrkf.iqqingwugteqpvgpv.eqo@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       spf=pass (google.com: domain of 3gephwgkbanoouvg6hhan6lle9.ckkchaqoan8kjpajp.8ki@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3GePHWgkbANoOUVG6HHAN6LLE9.CKKCHAQOAN8KJPAJP.8KI@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-X-Google-Smtp-Source: AIpwx4/8hiN90QUTvDPysFUTITm/EJ25zTyVp7NzMaEYMdCicYGcHdG00LX5aM0YA35R1yob6l56ao4K7WpEo+JNm4HI7J+JUjv+
+X-Google-Smtp-Source: AIpwx48SK0IiN1h01Ct/E/NXCrj5jIoq3AO9OB21HtOXiAqcK4UhtThtrkUXqNDbZ0PNAzMxQD7F2JcToTzUQqdqjuubOTz367YZ
 MIME-Version: 1.0
-Date: Fri, 06 Apr 2018 00:09:01 -0700
+Date: Fri, 06 Apr 2018 14:14:01 -0700
+In-Reply-To: <000000000000118a9a056928bbd9@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000118a9a056928bbd9@google.com>
-Subject: INFO: rcu detected stall in snd_pcm_oss_write3 (2)
+Message-ID: <00000000000004c1de05693489a8@google.com>
+Subject: Re: INFO: rcu detected stall in snd_pcm_oss_write3 (2)
 From: syzbot <syzbot+150189c103427d31a053@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, aryabinin@virtuozzo.com, dvyukov@google.com,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tchibo@google.com, tglx@linutronix.de
+To: akpm@linux-foundation.org, alsa-devel@alsa-project.org,
+	aryabinin@virtuozzo.com, dvyukov@google.com, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, o-takashi@sakamocchi.jp, perex@perex.cz,
+	syzkaller-bugs@googlegroups.com, tchibo@google.com, tglx@linutronix.de,
+	tiwai@suse.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596979719194785856?=
-X-GMAIL-MSGID: =?utf-8?q?1596979719194785856?=
+X-GMAIL-MSGID: =?utf-8?q?1597032881789317038?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello,
-
-syzbot hit the following crash on upstream commit
-e02d37bf55a9a36f22427fd6dd733fe104d817b6 (Thu Apr 5 17:42:07 2018 +0000)
-Merge tag 'sound-4.17-rc1' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+syzbot has found reproducer for the following crash on upstream commit
+38c23685b273cfb4ccf31a199feccce3bdcb5d83 (Fri Apr 6 04:29:35 2018 +0000)
+Merge tag 'armsoc-drivers' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
 syzbot dashboard link:  
 https://syzkaller.appspot.com/bug?extid=150189c103427d31a053
 
-So far this crash happened 3 times on upstream.
-Unfortunately, I don't have any reproducer for this crash yet.
+So far this crash happened 15 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5405588854931456
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5561439796330496
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6067392849379328
+https://syzkaller.appspot.com/x/log.txt?id=5697900571000832
 Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-4805825610197092128
+https://syzkaller.appspot.com/x/.config?id=-5813481738265533882
 compiler: gcc (GCC) 8.0.1 20180301 (experimental)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
 Reported-by: syzbot+150189c103427d31a053@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+It will help syzbot understand when the bug is fixed.
 
-Buffer I/O error on dev loop0, logical block 6, lost async page write
-Buffer I/O error on dev loop0, logical block 7, lost async page write
-Buffer I/O error on dev loop0, logical block 8, lost async page write
-Buffer I/O error on dev loop0, logical block 9, lost async page write
-Buffer I/O error on dev loop0, logical block 10, lost async page write
+IPVS: ftp: loaded support on port[0] = 21
 INFO: rcu_sched self-detected stall on CPU
-	1-....: (124998 ticks this GP) idle=9b2/1/4611686018427387906  
-softirq=22733/22733 fqs=31170
-	 (t=125000 jiffies g=11599 c=11598 q=1619)
+	1-....: (124999 ticks this GP) idle=622/1/4611686018427387906  
+softirq=10596/10596 fqs=31239
+	 (t=125000 jiffies g=4952 c=4951 q=20)
 NMI backtrace for cpu 1
-CPU: 1 PID: 7184 Comm: syz-executor3 Not tainted 4.16.0+ #2
+CPU: 1 PID: 4474 Comm: syzkaller631460 Not tainted 4.16.0+ #3
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   <IRQ>
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x1b9/0x29f lib/dump_stack.c:53
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
   nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
   nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
   arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
@@ -101,14 +98,14 @@ Call Trace:
   smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
   </IRQ>
-RIP: 0010:__sanitizer_cov_trace_pc+0x2b/0x50 kernel/kcov.c:101
-RSP: 0018:ffff8801cfe77710 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: ffff8801d0108080 RBX: 0000000000000004 RCX: ffffffff85a1f955
-RDX: 0000000000000002 RSI: ffffffff85a1f95f RDI: 0000000000000005
-RBP: ffff8801cfe77710 R08: ffff8801d0108080 R09: 0000000000000006
-R10: ffff8801d0108080 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff8801ceb2cd80 R14: ffff8801aaacec00 R15: ffffffffffffffe0
-  snd_pcm_oss_write3+0x16f/0x220 sound/core/oss/pcm_oss.c:1224
+RIP: 0010:__snd_pcm_lib_xfer+0x768/0x1d10 sound/core/pcm_lib.c:2111
+RSP: 0018:ffff8801b7b76ea8 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000000 RBX: ffffffffffffffe0 RCX: ffffed0036f6edec
+RDX: 0000000000000000 RSI: ffffffff859ff04e RDI: ffffed0036f6edf0
+RBP: ffff8801b7b77148 R08: ffff8801afeae9b8 R09: 0000000000000006
+R10: ffff8801afeae140 R11: 0000000000000000 R12: 0000000000000004
+R13: 00000000ffffffe0 R14: ffff8801af2165c0 R15: ffff8801ceaec000
+  snd_pcm_oss_write3+0xe9/0x220 sound/core/oss/pcm_oss.c:1236
   io_playback_transfer+0x274/0x310 sound/core/oss/io.c:47
   snd_pcm_plug_write_transfer+0x36c/0x470 sound/core/oss/pcm_plugin.c:619
   snd_pcm_oss_write2+0x25c/0x460 sound/core/oss/pcm_oss.c:1365
@@ -118,41 +115,17 @@ R13: ffff8801ceb2cd80 R14: ffff8801aaacec00 R15: ffffffffffffffe0
   __fput+0x34d/0x890 fs/file_table.c:209
   ____fput+0x15/0x20 fs/file_table.c:243
   task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
-  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x792/0x9d0 arch/x86/entry/common.c:292
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1aee/0x2730 kernel/exit.c:865
+  do_group_exit+0x16f/0x430 kernel/exit.c:968
+  SYSC_exit_group kernel/exit.c:979 [inline]
+  SyS_exit_group+0x1d/0x20 kernel/exit.c:977
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4552d9
-RSP: 002b:00007f4e5ffe6c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 00007f4e5ffe76d4 RCX: 00000000004552d9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000052 R14: 00000000006f3850 R15: 0000000000000000
-INFO: rcu_sched detected expedited stalls on CPUs/tasks: { 1-... } 127452  
-jiffies s: 2685 root: 0x2/.
-blocking rcu_node structures:
-Task dump for CPU 1:
-syz-executor3   R  running task    24120  7184   4559 0x0000000c
-Call Trace:
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+RIP: 0033:0x4446e9
+RSP: 002b:00007ffe29466408 EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 00000000004446e9
+RDX: 00000000004446e9 RSI: 0000000000000080 RDI: 0000000000000001
+RBP: 00000000006cf018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000401ff0
+R13: 0000000000402080 R14: 0000000000000000 R15: 0000000000000000
