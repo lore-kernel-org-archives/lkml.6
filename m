@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/KnfIuUcZr/dG4P37djYdZ0o49iXry8TGanRsIPsvCobZXMYGrUH9E2mRVtZgiJ6zBA0Or
-ARC-Seal: i=1; a=rsa-sha256; t=1523021142; cv=none;
+X-Google-Smtp-Source: AIpwx49X7heP0EF1fZM0+kDjvIiHSEzrG3zEIUuuyyhiDLMj927enWQ/fcrbTzCs0pKyGTkZ+bbU
+ARC-Seal: i=1; a=rsa-sha256; t=1523021140; cv=none;
         d=google.com; s=arc-20160816;
-        b=w3VUas3+t1kKXqEpg0l2vA1k7x5VQK/abQC/mgF0H7KO3B5cjUh5LcS+0HoJctKBsk
-         od9MIJEtQGEAXxPXNLvO0vHXYJ/oL7o7eYykF4t3pzeklPVgmyWxU40h0d8X8luby7Bh
-         1bFkxnohgrqMv+JY3RJtXod76yFlHqGUW8rK8VOklyQ0XtdsjCkUANb2zzquqZBXIsRR
-         YgEaKJUMvqAoPhRkVygGnu76QFI2EqpKHjYAAx2XsP2XEOAE4+uaYBAqBx3crq2OD85j
-         xe31n0/VEHvtKEx64dkxAGMzscf9u8P6Dq3llZ+E48q0SprTp068oxGJM5m236Yu3Krw
-         d9zA==
+        b=r2eZEKdAO7wiPygP4YsGbfr82VzwnZo+uEKeb12UmbV56Lpq7nqkyxxbTPUdRalAl/
+         a/3iulDynqRgy7vAINSpfbwugzP14/vhQ3ate+XvSUrMFi2BJejwecDPIvFyxAH3TPzf
+         I9/aZZnvnI/DH+TfMFUBAL7H+oTP9C+cQGjYHV18Ajx7ysuI58HfUjwfpGMG+AucJNjG
+         OkQkO2CDFPVd2Srb7WlIt+il5geL4zHmNUXu7vRfKDWS3POly7qblJu1Np0QTdg5Q/hL
+         9PfSj1MQJY2M9RBwVJSreKt4R0zvPRCMdOpUVoKgr+k3HVe9buNjHaiHqdUUvanUrG69
+         7iQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Mb0kGQV59F62kzWT2jjQyoPhjCXsSTRxyTu5uCChm1U=;
-        b=cSYb93TwHdrq7vQ5zekRZrQyD/jS26bRzYFX+PlGpEfrsgGEaCMEBAaH907hCAxoeH
-         xIuzr358yVM9cryTHd5GPH+gzz7wJzfxltWuZCX66k3Vdzz0gzMVcxB5/udGqXyyN3UO
-         qUWJBJEBSJ9znSyvk6qDuA7MwIJRgw+mQbKBOWvj68sxnhimjmQD7MJAbsa3Ok/8SeIy
-         MHaIqPUj41Dyv4FNpvv0hiLIM5BWbFk9DKt8AeNS5NYoIA/Zr05J6rqoZ2cLQYTjlyxr
-         7PO15/N79jhZqgu5ujNKk3tu+Q4uVGHWaoDWiI4+WQqiOiOdjVKFSkY7Md3OglzQ++b7
-         hIaA==
+        bh=02bN5jJuyOXtuvYPkRh+iznGQnqGjMMpdJT2IBMageg=;
+        b=kcV19kKuv+9K4arlaNQSP0U4b0PBktnini1nQgQcSfwraHo11DyXQYrdz129ONFc7o
+         ExO+JmGcbvrvecUaW+1k7AinH2iQPaFJVTkDWaCoQmjcMWm7ZmMmW/+c27/+mwuZk7w5
+         zoFigb+agWhUOTIFaH65gZxxEl+SXlPAl37AM6lgfDqRKYOMf7gbTlGf/krmVu+KCZPJ
+         RGLxpmgecyS7m/U8fTGK/myM4/ELNfUaMsyXZ3JAviO+ykhN/bY2MA7OFe3PpeR9qBK2
+         roVLXMNihFkizj5tgDN3MAm7SnepddLJduKgntS9JJfe1lf6PTafhRi3sPjObWGf/VOF
+         xv2w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+f99ab3887ab65d70f816@syzkaller.appspotmail.com,
-	Alexey Kodanev <alexey.kodanev@oracle.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 23/93] dccp: check sk for closed state in dccp_sendmsg()
-Date: Fri,  6 Apr 2018 15:22:52 +0200
-Message-Id: <20180406084225.977167807@linuxfoundation.org>
+	Guenter Roeck <linux@roeck-us.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 22/93] [PATCH] Revert "genirq: Use irqd_get_trigger_type to compare the trigger type for shared IRQs"
+Date: Fri,  6 Apr 2018 15:22:51 +0200
+Message-Id: <20180406084225.933236091@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003418083901287?=
-X-GMAIL-MSGID: =?utf-8?q?1597003418083901287?=
+X-GMAIL-THRID: =?utf-8?q?1597003415122776134?=
+X-GMAIL-MSGID: =?utf-8?q?1597003415122776134?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +52,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+This reverts commit 093c265afffb0a91a7611c3bb74d0883731a807b which is
+commit 382bd4de61827dbaaf5fb4fb7b1f4be4a86505e7 upstream.
 
+It causes too many problems with the stable tree, and would require too
+many other things to be backported, so just revert it.
 
-[ Upstream commit 67f93df79aeefc3add4e4b31a752600f834236e2 ]
-
-dccp_disconnect() sets 'dp->dccps_hc_tx_ccid' tx handler to NULL,
-therefore if DCCP socket is disconnected and dccp_sendmsg() is
-called after it, it will cause a NULL pointer dereference in
-dccp_write_xmit().
-
-This crash and the reproducer was reported by syzbot. Looks like
-it is reproduced if commit 69c64866ce07 ("dccp: CVE-2017-8824:
-use-after-free in DCCP code") is applied.
-
-Reported-by: syzbot+f99ab3887ab65d70f816@syzkaller.appspotmail.com
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/proto.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/irq/manage.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/net/dccp/proto.c
-+++ b/net/dccp/proto.c
-@@ -792,6 +792,11 @@ int dccp_sendmsg(struct kiocb *iocb, str
- 	if (skb == NULL)
- 		goto out_release;
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1058,10 +1058,8 @@ __setup_irq(unsigned int irq, struct irq
+ 		 * set the trigger type must match. Also all must
+ 		 * agree on ONESHOT.
+ 		 */
+-		unsigned int oldtype = irqd_get_trigger_type(&desc->irq_data);
+-
+ 		if (!((old->flags & new->flags) & IRQF_SHARED) ||
+-		    (oldtype != (new->flags & IRQF_TRIGGER_MASK)) ||
++		    ((old->flags ^ new->flags) & IRQF_TRIGGER_MASK) ||
+ 		    ((old->flags ^ new->flags) & IRQF_ONESHOT))
+ 			goto mismatch;
  
-+	if (sk->sk_state == DCCP_CLOSED) {
-+		rc = -ENOTCONN;
-+		goto out_discard;
-+	}
-+
- 	skb_reserve(skb, sk->sk_prot->max_header);
- 	rc = memcpy_fromiovec(skb_put(skb, len), msg->msg_iov, len);
- 	if (rc != 0)
