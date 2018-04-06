@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48/l7utYFpcYgP08fw2Q3Fl4iHC8/g6zZx5PzckVWn2kRwm9MheknTC6N9HqMHXN1uVtb0h
-ARC-Seal: i=1; a=rsa-sha256; t=1523022031; cv=none;
+X-Google-Smtp-Source: AIpwx4/aNMvncedh1Iy20KN/oFIEaalR6oZ7mWnVSlXeq0QCLCi2uyBVYXgM+eXitJeupBQJcHPz
+ARC-Seal: i=1; a=rsa-sha256; t=1523022028; cv=none;
         d=google.com; s=arc-20160816;
-        b=OvQF+iLAG6QRJB5Ywi+xhlcIthLghk6Jc0CGaLRVJIWMMHSdV4JjSKdpBMmV6P7Ojf
-         YE75TTvDSrZq2k06Go6gArunZHrKSDXqt2yeOFCc79wpVi6VRlByYTinv6uQmJTs7sj/
-         8PKDqQC4E0SzMoniyzPIHxAC97iqMe8pxWuJulU9NKXQLH+pTeLaix3EkDA3lPsCUjq7
-         19HDCGb5jWcLDNGat//n83KcXTDRIuRlZjHmYdfrsHWGZP26KTj7KqyAITfAI2W17GEb
-         o7dgE7bW8ILSReAwE8sZ2wRfawf+AX4/pARtgeCKbztITH0AMU2jTCImh6VGjwX1dMYJ
-         FLuQ==
+        b=U8IFoaZAI3wWTO3C11BPYN/yQ+oNjHgZhzqeHy4b31ehRpc0Z7zYxYKDJ9jeSRwMju
+         06Wj9nwBCpWdMWbgm8Zfjf+Jt7Gu/0QubzHUcojTgYPBboylK84ZluNMzOBGYeBNNroW
+         B5xfAN6zNlAVkcJAT7Yvt2q5BimEzCWw46CHhgQBbmpMNXO3EvVHn2UjVKfDRjbrvYlX
+         PVkN7FysDHa8/M0LBPEmndAyXjE9V7eMUmStT15paaZtZvQQh8PWAhUNajfgYuyW88YD
+         DhhpmkuIpdfRKkYMY9QWxdWHC53GKtcNqW6Cj/DEgSmxg/rAykV0jENmmOQKqNTbnvmf
+         suKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6ZZgwkaU6kJLHoqKbbFgy5OyOf9gsp5r5ErEn/mu8Ow=;
-        b=bv4zujk26H/7Ly6uf8Vtdp/e/bhK44qFFSYnlbmefjISk6LjwXV//qxL5wHBHHBPZA
-         C9SuB4axnya+1pqR3+Uxvmbdsr1NeJNcdPUFRvgJdNZ6iNzqevsSo5xb4oxlIRlbK/33
-         Cf2x4kzOGGgcGqxbMlRBioipmilw6xspGyyGn+t21o0m3+E5KgRZh0CR2W1TZUdPSp12
-         ILNMj0Hphm5I3asXf7JmcJNAWVOak0/BCobh7VM0/sLTynezCGMmioFZDRB4O82j0ujs
-         fc4FGwPr6AIbXYEDtQDGsCzHNS5y3iybF5KprfLofhfxN3Il2VeomMW2cRxlH2hDNiFY
-         rw1g==
+        bh=4yijZ7ZW6KXn7VVm9bLEp54kQKVogltmlivm0CDtu6U=;
+        b=LW161L010CJjxBiBt9FsunbNalvonAoQXs52u/yqTy3FcVoROFEjOv4adsuasii+zv
+         zlNC1Dxb1T2yvyyipxLqMcste2fTqZy3UbSkJuNiXvqi73J6p3FDqPUKHtcRD5+iuGVS
+         XL/z5qgR5Y+8N2mBraOTqqlY6Sceh6fhwwZ8c35+taEEn1D3TuRCd6xN+4X83RnwUPD3
+         B1dTGweSoix7lyaHbGlO6G+k9WH2FDz1mBCZP1zU/OO4+K10l74XTjb/CMU5WcVlEBjW
+         Rl5ZHsUOAFkhzJmbfmm7QXCx8OEbpm7y34NLNFQsmBdij0qijhgfRIusymtSXQAb+fLu
+         E+kQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Clemens Werther <clemens.werther@gmail.com>,
+	Major Hayden <major@mhtx.net>,
 	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 39/67] USB: serial: ftdi_sio: add support for Harman FirmwareHubEmulator
-Date: Fri,  6 Apr 2018 15:24:09 +0200
-Message-Id: <20180406084346.751004068@linuxfoundation.org>
+Subject: [PATCH 4.14 38/67] USB: serial: ftdi_sio: add RT Systems VX-8 cable
+Date: Fri,  6 Apr 2018 15:24:08 +0200
+Message-Id: <20180406084346.598426680@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003574666935694?=
-X-GMAIL-MSGID: =?utf-8?q?1597004350040934426?=
+X-GMAIL-THRID: =?utf-8?q?1597003568499355891?=
+X-GMAIL-MSGID: =?utf-8?q?1597004347045380792?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,45 +49,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Clemens Werther <clemens.werther@gmail.com>
+From: Major Hayden <major@mhtx.net>
 
-commit 6555ad13a01952c16485c82a52ad1f3e07e34b3a upstream.
+commit 9608e5c0f079390473b484ef92334dfd3431bb89 upstream.
 
-Add device id for Harman FirmwareHubEmulator to make the device
-auto-detectable by the driver.
+This patch adds a device ID for the RT Systems cable used to
+program Yaesu VX-8R/VX-8DR handheld radios. It uses the main
+FTDI VID instead of the common RT Systems VID.
 
-Signed-off-by: Clemens Werther <clemens.werther@gmail.com>
+Signed-off-by: Major Hayden <major@mhtx.net>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
  drivers/usb/serial/ftdi_sio.c     |    1 +
- drivers/usb/serial/ftdi_sio_ids.h |    6 ++++++
- 2 files changed, 7 insertions(+)
+ drivers/usb/serial/ftdi_sio_ids.h |    3 +++
+ 2 files changed, 4 insertions(+)
 
 --- a/drivers/usb/serial/ftdi_sio.c
 +++ b/drivers/usb/serial/ftdi_sio.c
-@@ -936,6 +936,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(FTDI_VID, FTDI_SCIENCESCOPE_LS_LOGBOOK_PID) },
- 	{ USB_DEVICE(FTDI_VID, FTDI_SCIENCESCOPE_HS_LOGBOOK_PID) },
- 	{ USB_DEVICE(FTDI_VID, FTDI_CINTERION_MC55I_PID) },
-+	{ USB_DEVICE(FTDI_VID, FTDI_FHE_PID) },
- 	{ USB_DEVICE(FTDI_VID, FTDI_DOTEC_PID) },
- 	{ USB_DEVICE(QIHARDWARE_VID, MILKYMISTONE_JTAGSERIAL_PID),
- 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+@@ -773,6 +773,7 @@ static const struct usb_device_id id_tab
+ 		.driver_info = (kernel_ulong_t)&ftdi_NDI_device_quirk },
+ 	{ USB_DEVICE(TELLDUS_VID, TELLDUS_TELLSTICK_PID) },
+ 	{ USB_DEVICE(NOVITUS_VID, NOVITUS_BONO_E_PID) },
++	{ USB_DEVICE(FTDI_VID, RTSYSTEMS_USB_VX8_PID) },
+ 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_S03_PID) },
+ 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_59_PID) },
+ 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_57A_PID) },
 --- a/drivers/usb/serial/ftdi_sio_ids.h
 +++ b/drivers/usb/serial/ftdi_sio_ids.h
-@@ -1445,6 +1445,12 @@
- #define FTDI_CINTERION_MC55I_PID	0xA951
- 
+@@ -923,6 +923,9 @@
  /*
-+ * Product: FirmwareHubEmulator
-+ * Manufacturer: Harman Becker Automotive Systems
-+ */
-+#define FTDI_FHE_PID		0xA9A0
-+
-+/*
-  * Product: Comet Caller ID decoder
-  * Manufacturer: Crucible Technologies
+  * RT Systems programming cables for various ham radios
   */
++/* This device uses the VID of FTDI */
++#define RTSYSTEMS_USB_VX8_PID   0x9e50  /* USB-VX8 USB to 7 pin modular plug for Yaesu VX-8 radio */
++
+ #define RTSYSTEMS_VID		0x2100	/* Vendor ID */
+ #define RTSYSTEMS_USB_S03_PID	0x9001	/* RTS-03 USB to Serial Adapter */
+ #define RTSYSTEMS_USB_59_PID	0x9e50	/* USB-59 USB to 8 pin plug */
