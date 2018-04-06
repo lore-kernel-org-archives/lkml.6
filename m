@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+XVLx7JV/Jhakq0xSGYQiJyhCcPZaaMGhySPU3mWi/F+S/ABweLoCxX0Feu3RKQnBJ2u75
-ARC-Seal: i=1; a=rsa-sha256; t=1523022189; cv=none;
+X-Google-Smtp-Source: AIpwx48bL/IMupZLzXDW6TpJO6nVDRFRJYPLcmo62ITUmRUq8CaUGcFHohvv6XCkp2C1LsV++zya
+ARC-Seal: i=1; a=rsa-sha256; t=1523022185; cv=none;
         d=google.com; s=arc-20160816;
-        b=tUwyDC1wIt0IU76kO220IpBgGxFGxrhay8y///NHgJW3YPqGszOXWwwobLDbbWu3ra
-         hW83QWLQYMxC0e7/ll9lrFTW1/k5nw1/Intdd9Z16xMzwr4WPF+yrFY4Db1vmJnz/vOk
-         TIcjOjRCALFeAuSfBxmvpsCYtxLf3/EQc3J7rS1p2RMFajlRLOo8tsWXtaTsT1opPpWI
-         IZuJhGkm/Oq9FdXMQZL/pgWqaKkwXM+hpDlwig+Ya1jvF8VvoWSL6NNxz30XgiF21obQ
-         De13TW1dkg8dpul66NX5pUBLHE3mCRdNz59ZkKEanA8mV3ea8dztr0mxX9doui+ybgYJ
-         phEw==
+        b=JlGBHws0Z8NowY9HZN8yyPLvFYZLoq1JGM5H7D+gcQ3EtlFGWmUhOQoH1DbqqMJPb4
+         Wwvw9YT8Ej/bYfb4Jdq4QCvZ4VVIO/uXXBxjFuqKYHv0IzoLPNs2TPV+maXd6z2Hyi9F
+         4bWYFv0Bx5lBhkXMJxYrT2GAPAcy7tGu0xL2jG1/Fk/mzw1nN5xpkgDJv2atEeXLxGn7
+         jzEWuwNnFHbXYYZ8cmL2m6d5tsVJyOCtDY8hwhM75HHFBGrbKUiGz7cHFGzGj7foltpV
+         GWGCD2+ykfH6ME1a3LX8VCL4YjzUHqUb2WfDjODKjoPj2PW0HmS5d55z75VBm3Ye+K3+
+         uHsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jYLBp0sA7Iouy2fFfg312c2YV9KKSSOWAPdKk71iJhY=;
-        b=LeTkqJyDryXPtaFj6liTPHeYLixWBN+DmYU2A2GdpMx90yu774uui6EMkOC025nkyE
-         VLAn037cZaaNLRa9xHfe0vj6yjDMyzp8Bvlz78qHK/fEFwkz4SZpKoeJbrdTZo0sVXso
-         nSj2NUz0QaMWkikyluYcv+RB5jU+rkhlbPePrX4BOCn7M+iIVVfzbGnA5PVOHA0c9PLP
-         m/i8JADI4s5RfaRW7RkBiXy41tryJCmNCZb+r+sggL7sw3YgYHiVWvIhFMl4mpPNEnfq
-         3DlYyH9dssBKF5dblTHVlTGNOhtIUAqH3ga8cWeZtYnGZOOzWxTxuk1azspyB3heimWB
-         dK4g==
+        bh=8gHpSrGMddC+tziVTjTF2+xBK6agi3c2k6tx4rnelQE=;
+        b=s+NgGHQ0qLMC0wd6j9Fjz11aldDmdm7fXvv3r/01z2SiawAgwLFBDn5UpOTbG+IA3B
+         Qa/mO/rxYVAemWa0teeGzuay5tMBKEcmTp+tFd0KO9frBbaQtBd4pnS/6oLILHgL6bGm
+         0zzutSHE0A4ZnTs+0ZWHWtstuELJj81nDSl8B5hfCHCdvu6T4+mJ8n08TC2kraEUgZ0g
+         6Tf3W64j7eJfYDX4a3YReqOlznmUpjeRyF5EJgfkQlDi95jPzl9StfbxTL2ozlAUGjCG
+         4vV4JpPCdQ81VaPLpCRaMglJk282HPXR138jpU3OS9LDRjGinwNQPzGOqLnswfvt5mc1
+         1MoA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Balbir Singh <bsingharora@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.15 15/72] powerpc/mm: Add tracking of the number of coprocessors using a context
-Date: Fri,  6 Apr 2018 15:23:50 +0200
-Message-Id: <20180406084350.742056111@linuxfoundation.org>
+	syzbot+3b4acab09b6463472d0a@syzkaller.appspotmail.com,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.15 24/72] RDMA/rdma_cm: Fix use after free race with process_one_req
+Date: Fri,  6 Apr 2018 15:23:59 +0200
+Message-Id: <20180406084351.400796443@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004515407689367?=
-X-GMAIL-MSGID: =?utf-8?q?1597004515407689367?=
+X-GMAIL-THRID: =?utf-8?q?1597004197547888637?=
+X-GMAIL-MSGID: =?utf-8?q?1597004511329512862?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,95 +49,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-commit aff6f8cb3e2170b9e58b0932bce7bfb492775e23 upstream.
+commit 9137108cc3d64ade13e753108ec611a0daed16a0 upstream.
 
-Currently, when using coprocessors (which use the Nest MMU), we
-simply increment the active_cpu count to force all TLB invalidations
-to be come broadcast.
+process_one_req() can race with rdma_addr_cancel():
 
-Unfortunately, due to an errata in POWER9, we will need to know
-more specifically that coprocessors are in use.
+           CPU0                                 CPU1
+           ====                                 ====
+ process_one_work()
+  debug_work_deactivate(work);
+  process_one_req()
+                                        rdma_addr_cancel()
+	                                  mutex_lock(&lock);
+ 			    	           set_timeout(&req->work,..);
+                                              __queue_work()
+				   	       debug_work_activate(work);
+	                                  mutex_unlock(&lock);
 
-This maintains a separate copros counter in the MMU context for
-that purpose.
+   mutex_lock(&lock);
+[..]
+	list_del(&req->list);
+   mutex_unlock(&lock);
+[..]
 
-NB. The commit mentioned in the fixes tag below is not at fault for
-the bug we're fixing in this commit and the next, but this fix applies
-on top the infrastructure it introduced.
+   // ODEBUG explodes since the work is still queued.
+   kfree(req);
 
-Fixes: 03b8abedf4f4 ("cxl: Enable global TLBIs for cxl contexts")
-Cc: stable@vger.kernel.org # v4.15+
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Tested-by: Balbir Singh <bsingharora@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Causing ODEBUG to detect the use after free:
+
+ODEBUG: free active (active state 0) object type: work_struct hint: process_one_req+0x0/0x6c0 include/net/dst.h:165
+WARNING: CPU: 0 PID: 79 at lib/debugobjects.c:291 debug_print_object+0x166/0x220 lib/debugobjects.c:288
+kvm: emulating exchange as write
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 79 Comm: kworker/u4:3 Not tainted 4.16.0-rc6+ #361
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: ib_addr process_one_req
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x194/0x24d lib/dump_stack.c:53
+ panic+0x1e4/0x41c kernel/panic.c:183
+ __warn+0x1dc/0x200 kernel/panic.c:547
+ report_bug+0x1f4/0x2b0 lib/bug.c:186
+ fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+ fixup_bug arch/x86/kernel/traps.c:247 [inline]
+ do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+ do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+ invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:debug_print_object+0x166/0x220 lib/debugobjects.c:288
+RSP: 0000:ffff8801d966f210 EFLAGS: 00010086
+RAX: dffffc0000000008 RBX: 0000000000000003 RCX: ffffffff815acd6e
+RDX: 0000000000000000 RSI: 1ffff1003b2cddf2 RDI: 0000000000000000
+RBP: ffff8801d966f250 R08: 0000000000000000 R09: 1ffff1003b2cddc8
+R10: ffffed003b2cde71 R11: ffffffff86f39a98 R12: 0000000000000001
+R13: ffffffff86f15540 R14: ffffffff86408700 R15: ffffffff8147c0a0
+ __debug_check_no_obj_freed lib/debugobjects.c:745 [inline]
+ debug_check_no_obj_freed+0x662/0xf1f lib/debugobjects.c:774
+ kfree+0xc7/0x260 mm/slab.c:3799
+ process_one_req+0x2e7/0x6c0 drivers/infiniband/core/addr.c:592
+ process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
+ worker_thread+0x223/0x1990 kernel/workqueue.c:2247
+ kthread+0x33c/0x400 kernel/kthread.c:238
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
+
+Fixes: 5fff41e1f89d ("IB/core: Fix race condition in resolving IP to MAC")
+Reported-by: <syzbot+3b4acab09b6463472d0a@syzkaller.appspotmail.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/book3s/64/mmu.h |    3 +++
- arch/powerpc/include/asm/mmu_context.h   |   18 +++++++++++++-----
- arch/powerpc/mm/mmu_context_book3s64.c   |    1 +
- 3 files changed, 17 insertions(+), 5 deletions(-)
+ drivers/infiniband/core/addr.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/powerpc/include/asm/book3s/64/mmu.h
-+++ b/arch/powerpc/include/asm/book3s/64/mmu.h
-@@ -87,6 +87,9 @@ typedef struct {
- 	/* Number of bits in the mm_cpumask */
- 	atomic_t active_cpus;
+--- a/drivers/infiniband/core/addr.c
++++ b/drivers/infiniband/core/addr.c
+@@ -598,6 +598,15 @@ static void process_one_req(struct work_
+ 	list_del(&req->list);
+ 	mutex_unlock(&lock);
  
-+	/* Number of users of the external (Nest) MMU */
-+	atomic_t copros;
++	/*
++	 * Although the work will normally have been canceled by the
++	 * workqueue, it can still be requeued as long as it is on the
++	 * req_list, so it could have been requeued before we grabbed &lock.
++	 * We need to cancel it after it is removed from req_list to really be
++	 * sure it is safe to free.
++	 */
++	cancel_delayed_work(&req->work);
 +
- 	/* NPU NMMU context */
- 	struct npu_context *npu_context;
- 
---- a/arch/powerpc/include/asm/mmu_context.h
-+++ b/arch/powerpc/include/asm/mmu_context.h
-@@ -92,15 +92,23 @@ static inline void dec_mm_active_cpus(st
- static inline void mm_context_add_copro(struct mm_struct *mm)
- {
- 	/*
--	 * On hash, should only be called once over the lifetime of
--	 * the context, as we can't decrement the active cpus count
--	 * and flush properly for the time being.
-+	 * If any copro is in use, increment the active CPU count
-+	 * in order to force TLB invalidations to be global as to
-+	 * propagate to the Nest MMU.
- 	 */
--	inc_mm_active_cpus(mm);
-+	if (atomic_inc_return(&mm->context.copros) == 1)
-+		inc_mm_active_cpus(mm);
- }
- 
- static inline void mm_context_remove_copro(struct mm_struct *mm)
- {
-+	int c;
-+
-+	c = atomic_dec_if_positive(&mm->context.copros);
-+
-+	/* Detect imbalance between add and remove */
-+	WARN_ON(c < 0);
-+
- 	/*
- 	 * Need to broadcast a global flush of the full mm before
- 	 * decrementing active_cpus count, as the next TLBI may be
-@@ -111,7 +119,7 @@ static inline void mm_context_remove_cop
- 	 * for the time being. Invalidations will remain global if
- 	 * used on hash.
- 	 */
--	if (radix_enabled()) {
-+	if (c == 0 && radix_enabled()) {
- 		flush_all_mm(mm);
- 		dec_mm_active_cpus(mm);
- 	}
---- a/arch/powerpc/mm/mmu_context_book3s64.c
-+++ b/arch/powerpc/mm/mmu_context_book3s64.c
-@@ -171,6 +171,7 @@ int init_new_context(struct task_struct
- 	mm_iommu_init(mm);
- #endif
- 	atomic_set(&mm->context.active_cpus, 0);
-+	atomic_set(&mm->context.copros, 0);
- 
- 	return 0;
- }
+ 	req->callback(req->status, (struct sockaddr *)&req->src_addr,
+ 		req->addr, req->context);
+ 	put_client(req->client);
