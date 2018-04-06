@@ -1,299 +1,241 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752463AbeDFXXT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 19:23:19 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:45297 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752398AbeDFXXR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 19:23:17 -0400
-X-Google-Smtp-Source: AIpwx49gZE9CTP5wgyT68bgc5rjT2udtWw+U2Z3fhE0QWVgEP8trZKqZJhWBJzezFl/7Z6XdqzCOzw==
-Content-Type: text/plain; charset="utf-8"
+        id S1752502AbeDFXZD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 19:25:03 -0400
+Received: from mga02.intel.com ([134.134.136.20]:60186 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751445AbeDFXZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 19:25:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,417,1517904000";
+   d="gz'50?scan'50,208,50";a="41336092"
+Date: Sat, 7 Apr 2018 07:24:44 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Alexandru Moise <00moses.alexander00@gmail.com>
+Cc: kbuild-all@01.org, axboe@kernel.dk, tj@kernel.org, shli@fb.com,
+        pombredanne@nexb.com, gregkh@linuxfoundation.org,
+        joseph.qi@linux.alibaba.com, nborisov@suse.com, arnd@arndb.de,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] blk-cgroup: remove entries in blkg_tree before queue
+ release
+Message-ID: <201804070510.11shEgxW%fengguang.wu@intel.com>
+References: <20180406150648.GA6378@gmail.com>
 MIME-Version: 1.0
-To: Lina Iyer <ilina@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-From: Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180406151356.7818-2-ilina@codeaurora.org>
-Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>
-References: <20180406151356.7818-1-ilina@codeaurora.org>
- <20180406151356.7818-2-ilina@codeaurora.org>
-Message-ID: <152305699547.94378.15462587304123828477@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v7 [RESEND] 1/2] drivers: qcom: add command DB driver
-Date: Fri, 06 Apr 2018 16:23:15 -0700
+Content-Type: multipart/mixed; boundary="0OAP2g/MAC+5xKAE"
+Content-Disposition: inline
+In-Reply-To: <20180406150648.GA6378@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w36NNPkT008750
 
-Quoting Lina Iyer (2018-04-06 08:13:55)
-> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> 
-> Command DB is a simple database in the shared memory of QCOM SoCs, that
-> provides information regarding shared resources. Some shared resources
-> in the SoC have properties that are probed dynamically at boot by the
-> remote processor. The information pertaining to the SoC and the platform
-> are made available in the shared memory. Drivers can query this
-> information using predefined strings.
-> 
-> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
 
-I have this patch on top to fix the endian stuff. Care to test it out
-and see if it still works?
+--0OAP2g/MAC+5xKAE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: soc: qcom: cmd-db: Make endian-agnostic
-    
-This driver deals with memory that is stored in little-endian format.
-Update the structures with the proper little-endian types and then
-do the proper conversions when reading the fields. Note that we compare
-the ids with a memcmp() because we already pad out the string 'id' field
-to exactly 8 bytes with the strncpy() onto the stack.
+Hi Alexandru,
 
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Thank you for the patch! Yet something to improve:
 
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-index b5172049f608..a56dc9edab82 100644
---- a/drivers/soc/qcom/cmd-db.c
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -13,18 +13,10 @@
- 
- #define NUM_PRIORITY		2
- #define MAX_SLV_ID		8
--#define CMD_DB_MAGIC		0x0C0330DBUL
-+static const char CMD_DB_MAGIC[] = { 0xdb, 0x33, 0x03, 0x0c };
- #define SLAVE_ID_MASK		0x7
- #define SLAVE_ID_SHIFT		16
- 
--#define ENTRY_HEADER(hdr)	((void *)cmd_db_header +	\
--				sizeof(*cmd_db_header) +	\
--				hdr->header_offset)
--
--#define RSC_OFFSET(hdr, ent)	((void *)cmd_db_header +	\
--				sizeof(*cmd_db_header) +	\
--				hdr.data_offset + ent.offset)
--
- /**
-  * struct entry_header: header for each entry in cmddb
-  *
-@@ -35,11 +27,11 @@
-  * @offset: offset from :@data_offset, start of the data
-  */
- struct entry_header {
--	u64 id;
--	u32 priority[NUM_PRIORITY];
--	u32 addr;
--	u16 len;
--	u16 offset;
-+	u8 id[8];
-+	__le32 priority[NUM_PRIORITY];
-+	__le32 addr;
-+	__le16 len;
-+	__le16 offset;
- };
- 
- /**
-@@ -53,12 +45,12 @@ struct entry_header {
-  * @reserved: reserved for future use.
-  */
- struct rsc_hdr {
--	u16 slv_id;
--	u16 header_offset;
--	u16 data_offset;
--	u16 cnt;
--	u16 version;
--	u16 reserved[3];
-+	__le16 slv_id;
-+	__le16 header_offset;
-+	__le16 data_offset;
-+	__le16 cnt;
-+	__le16 version;
-+	__le16 reserved[3];
- };
- 
- /**
-@@ -72,11 +64,11 @@ struct rsc_hdr {
-  * @data: driver specific data
-  */
- struct cmd_db_header {
--	u32 version;
--	u32 magic_num;
-+	__le32 version;
-+	__le32 magic_num;
- 	struct rsc_hdr header[MAX_SLV_ID];
--	u32 checksum;
--	u32 reserved;
-+	__le32 checksum;
-+	__le32 reserved;
- 	u8 data[];
- };
- 
-@@ -101,6 +93,22 @@ struct cmd_db_header {
- 
- static struct cmd_db_header *cmd_db_header;
- 
-+static inline void *rsc_to_entry_header(struct rsc_hdr *hdr)
-+{
-+	u16 offset = le16_to_cpu(hdr->header_offset);
-+
-+	return cmd_db_header->data + offset;
-+}
-+
-+static inline void *
-+rsc_offset(struct rsc_hdr *hdr, struct entry_header *ent)
-+{
-+	u16 offset = le16_to_cpu(hdr->header_offset);
-+	u16 loffset = le16_to_cpu(ent->offset);
-+
-+	return cmd_db_header->data + offset +  loffset;
-+}
-+
- /**
-  * cmd_db_ready - Indicates if command DB is available
-  *
-@@ -110,29 +118,20 @@ int cmd_db_ready(void)
- {
- 	if (cmd_db_header == NULL)
- 		return -EPROBE_DEFER;
--	else if (cmd_db_header->magic_num != CMD_DB_MAGIC)
-+	else if (memcmp(&cmd_db_header->magic_num, CMD_DB_MAGIC, sizeof(CMD_DB_MAGIC)))
- 		return -EINVAL;
- 
- 	return 0;
- }
- EXPORT_SYMBOL(cmd_db_ready);
- 
--static u64 cmd_db_get_u64_id(const char *id)
--{
--	u64 rsc_id = 0;
--	u8 *ch = (u8 *)&rsc_id;
--
--	strncpy(ch, id, min(strlen(id), sizeof(rsc_id)));
--
--	return rsc_id;
--}
--
--static int cmd_db_get_header(u64 query, struct entry_header *eh,
-+static int cmd_db_get_header(const char *id, struct entry_header *eh,
- 			     struct rsc_hdr *rh)
- {
- 	struct rsc_hdr *rsc_hdr;
- 	struct entry_header *ent;
- 	int ret, i, j;
-+	char query[8];
- 
- 	ret = cmd_db_ready();
- 	if (ret)
-@@ -141,18 +140,21 @@ static int cmd_db_get_header(u64 query, struct entry_header *eh,
- 	if (!eh || !rh)
- 		return -EINVAL;
- 
-+	/* Pad out query string to same length as in DB */
-+	strncpy(query, id, sizeof(query));
-+
- 	for (i = 0; i < MAX_SLV_ID; i++) {
- 		rsc_hdr = &cmd_db_header->header[i];
- 		if (!rsc_hdr->slv_id)
- 			break;
- 
--		ent = ENTRY_HEADER(rsc_hdr);
--		for (j = 0; j < rsc_hdr->cnt; j++, ent++) {
--			if (ent->id == query)
-+		ent = rsc_to_entry_header(rsc_hdr);
-+		for (j = 0; j < le16_to_cpu(rsc_hdr->cnt); j++, ent++) {
-+			if (memcmp(ent->id, query, sizeof(ent->id)))
- 				break;
- 		}
- 
--		if (j < rsc_hdr->cnt) {
-+		if (j < le16_to_cpu(rsc_hdr->cnt)) {
- 			memcpy(eh, ent, sizeof(*ent));
- 			memcpy(rh, rsc_hdr, sizeof(*rh));
- 			return 0;
-@@ -166,9 +168,7 @@ static int cmd_db_get_header_by_rsc_id(const char *id,
- 				       struct entry_header *ent_hdr,
- 				       struct rsc_hdr *rsc_hdr)
- {
--	u64 rsc_id = cmd_db_get_u64_id(id);
--
--	return cmd_db_get_header(rsc_id, ent_hdr, rsc_hdr);
-+	return cmd_db_get_header(id, ent_hdr, rsc_hdr);
- }
- 
- /**
-@@ -189,7 +189,7 @@ u32 cmd_db_read_addr(const char *id)
- 
- 	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
- 
--	return ret < 0 ? 0 : ent.addr;
-+	return ret < 0 ? 0 : le32_to_cpu(ent.addr);
- }
- EXPORT_SYMBOL(cmd_db_read_addr);
- 
-@@ -207,6 +207,7 @@ int cmd_db_read_aux_data(const char *id, u8 *data, size_t len)
- 	int ret;
- 	struct entry_header ent;
- 	struct rsc_hdr rsc_hdr;
-+	u16 ent_len;
- 
- 	if (!data)
- 		return -EINVAL;
-@@ -215,11 +216,12 @@ int cmd_db_read_aux_data(const char *id, u8 *data, size_t len)
- 	if (ret)
- 		return ret;
- 
--	if (len < ent.len)
-+	ent_len = le16_to_cpu(ent.len);
-+	if (len < ent_len)
- 		return -EINVAL;
- 
--	len = min_t(u16, ent.len, len);
--	memcpy(data, RSC_OFFSET(rsc_hdr, ent), len);
-+	len = min_t(u16, ent_len, len);
-+	memcpy(data, rsc_offset(&rsc_hdr, &ent), len);
- 
- 	return len;
- }
-@@ -240,7 +242,7 @@ size_t cmd_db_read_aux_data_len(const char *id)
- 
- 	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
- 
--	return ret < 0 ? 0 : ent.len;
-+	return ret < 0 ? 0 : le16_to_cpu(ent.len);
- }
- EXPORT_SYMBOL(cmd_db_read_aux_data_len);
- 
-@@ -256,11 +258,14 @@ enum cmd_db_hw_type cmd_db_read_slave_id(const char *id)
- 	int ret;
- 	struct entry_header ent;
- 	struct rsc_hdr rsc_hdr;
-+	u32 addr;
- 
- 	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+	if (ret < 0)
-+		return CMD_DB_HW_INVALID;
- 
--	return ret < 0 ? CMD_DB_HW_INVALID :
--		       (ent.addr >> SLAVE_ID_SHIFT) & SLAVE_ID_MASK;
-+	addr = le32_to_cpu(ent.addr);
-+	return (addr >> SLAVE_ID_SHIFT) & SLAVE_ID_MASK;
- }
- EXPORT_SYMBOL(cmd_db_read_slave_id);
- 
-@@ -282,7 +287,7 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	if (cmd_db_header->magic_num != CMD_DB_MAGIC) {
-+	if (memcmp(&cmd_db_header->magic_num, CMD_DB_MAGIC, sizeof(CMD_DB_MAGIC))) {
- 		dev_err(&pdev->dev, "Invalid Command DB Magic\n");
- 		return -EINVAL;
- 	}
+[auto build test ERROR on block/for-next]
+[also build test ERROR on v4.16 next-20180406]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Alexandru-Moise/blk-cgroup-remove-entries-in-blkg_tree-before-queue-release/20180407-035957
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+config: c6x-evmc6678_defconfig (attached as .config)
+compiler: c6x-elf-gcc (GCC) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=c6x 
+
+All errors (new ones prefixed by >>):
+
+   block/blk-sysfs.c: In function '__blk_release_queue':
+>> block/blk-sysfs.c:820:2: error: implicit declaration of function 'blkg_destroy_all'; did you mean 'irq_destroy_ipi'? [-Werror=implicit-function-declaration]
+     blkg_destroy_all(q);
+     ^~~~~~~~~~~~~~~~
+     irq_destroy_ipi
+   cc1: some warnings being treated as errors
+
+vim +820 block/blk-sysfs.c
+
+   770	
+   771	/**
+   772	 * __blk_release_queue - release a request queue when it is no longer needed
+   773	 * @work: pointer to the release_work member of the request queue to be released
+   774	 *
+   775	 * Description:
+   776	 *     blk_release_queue is the counterpart of blk_init_queue(). It should be
+   777	 *     called when a request queue is being released; typically when a block
+   778	 *     device is being de-registered. Its primary task it to free the queue
+   779	 *     itself.
+   780	 *
+   781	 * Notes:
+   782	 *     The low level driver must have finished any outstanding requests first
+   783	 *     via blk_cleanup_queue().
+   784	 *
+   785	 *     Although blk_release_queue() may be called with preemption disabled,
+   786	 *     __blk_release_queue() may sleep.
+   787	 */
+   788	static void __blk_release_queue(struct work_struct *work)
+   789	{
+   790		struct request_queue *q = container_of(work, typeof(*q), release_work);
+   791	
+   792		if (test_bit(QUEUE_FLAG_POLL_STATS, &q->queue_flags))
+   793			blk_stat_remove_callback(q, q->poll_cb);
+   794		blk_stat_free_callback(q->poll_cb);
+   795	
+   796		blk_free_queue_stats(q->stats);
+   797	
+   798		blk_exit_rl(q, &q->root_rl);
+   799	
+   800		if (q->queue_tags)
+   801			__blk_queue_free_tags(q);
+   802	
+   803		if (!q->mq_ops) {
+   804			if (q->exit_rq_fn)
+   805				q->exit_rq_fn(q, q->fq->flush_rq);
+   806			blk_free_flush_queue(q->fq);
+   807		} else {
+   808			blk_mq_release(q);
+   809		}
+   810	
+   811		blk_trace_shutdown(q);
+   812	
+   813		if (q->mq_ops)
+   814			blk_mq_debugfs_unregister(q);
+   815	
+   816		if (q->bio_split)
+   817			bioset_free(q->bio_split);
+   818	
+   819		spin_lock_irq(q->queue_lock);
+ > 820		blkg_destroy_all(q);
+   821		spin_unlock_irq(q->queue_lock);
+   822	
+   823		ida_simple_remove(&blk_queue_ida, q->id);
+   824		call_rcu(&q->rcu_head, blk_free_queue_rcu);
+   825	}
+   826	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--0OAP2g/MAC+5xKAE
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+umKCE7L+P+1GtJvkSwAA
+
+--0OAP2g/MAC+5xKAE--
