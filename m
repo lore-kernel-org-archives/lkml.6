@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/1fQgqjmfKnkSC87oqvGZyLWc+BmFx8AY4pj72Yqfj53aBOkl7vz+/Ia3cFdh4swEnHknU
-ARC-Seal: i=1; a=rsa-sha256; t=1523021175; cv=none;
+X-Google-Smtp-Source: AIpwx48HA/OKsKepqSoiB8IZi+p6xwDs7rO4onQn8Ko0Q1tXk9D98S0DHLXbN5J5y8sg05fYiXDD
+ARC-Seal: i=1; a=rsa-sha256; t=1523021170; cv=none;
         d=google.com; s=arc-20160816;
-        b=tSUMZbj8JCr9Uca54PF+9eBqdVINXH0Zwxy6IG6SuSbcQAxeUWnBxDjw/tqqQmsSTX
-         avsXbve/kfQsYBiOrkSX528jDaT0dZ46SIWy2JliFdyOqFuvPE9G+u/XuhDVxAzdNuZF
-         dF6W1WC6/JLSJFxLlKJI4J9cGYPow4+KzsHoUMmM8nFh3Bf44mm9zTT/WxrScEW1G2mx
-         nuBc4JhsdoXJN5FDQX+l9P0gpOCEY7K1z1uBAnpkl2Lkl33kbLn6BeWi2dqihnafl9ny
-         Q24J0iVUBJQ5IFz5+wL6L5HG3kJ2igsKTG3R5ovpLW3u5Dm2imQdkuTT3JOd+RdyH/Ms
-         n8vw==
+        b=IWJl/A7Yd8msxsF19Dp6TK6dIjZGWTTRtr05B0fTeo0izVGzelzkwF3tgU3Lin+Bg+
+         NUl5srTqh5o7/GN+iQHdo0uQVgvQttFmVyXAk4XhUUFwT8jhzbtmWSUkFRImiV4v3gAD
+         flvSIrvFYSxqNBKrV+1W17/xw5xnbPr4prqgVIRhfGqC4cqLuo9SLLE7Q8Htr/LVZGRK
+         7lbO7RpNtBaDJEb+RR9PPoFcjnyNLOYd8h4L4uQ4B20zK0Laufdj3WKOv3vQlw4tXAqU
+         iQ7/enanUd+O7SgsAGoxY/V8ppir2Prvx63mISEdV3t6zwoS0aA9iNrL1Xqat0xk7vxq
+         /JiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kf97MUoFN3oIVFznvFxW8AVcLHuBrJZ1l0pxEA8I9yk=;
-        b=Pbb6W9G5/HNIzI+R1ajXIFbbsU6jPdNBbifC8cb+Z5GjSJs1jM16FENjt50CI4+RYv
-         XxXXuASlong3d2eQblyJmixELBZOZLlRa3sf8SIjcVwD8qBNgPd/iJdfEHq7dLepk9Ee
-         yOx3Msmu56y3ugu7Z7yvfhfqwo2SnVwHCfqvyk+UoWoerWT2aafllJmNbcTLDMXadz7b
-         N5vrn8tc3HSL9DSfO9j5ObFDcjr8qhQeQuS5iXZ6JGGuQPjD721VhaZwawgXNhk60zFp
-         iHNLRYMzcaP53nqmkrI+2idHcNstAk7i9pQHbpUXyWYDVLlkEfp0p2pyAybdbLku3VLW
-         cymQ==
+        bh=vzxoKqMGhLnMR78IyBuHkm/JlqB443fQBq9Gf58zVQA=;
+        b=fN6jxl9uHlTX0wJry7NXM7jt6knsaT+ys+N36FbRVpiEVcFg2+awQ4XMlHyqF61f3/
+         74FX4vUKC2Q8bVJPsgRNFSZH8qqK5JANHJhh9pKzmX0LD2sfU75zBRMLxCOh3NxuED9z
+         K+6t7ALfNHG4vVoAGsRRdBaGhczflPYD8ryENxb38+q90K+V8Cg6tRrF9dcyVZxrhnSX
+         D8Oex8rde7pCicJOHP9K3q9KLq+CnnoAC18jmI9H6NjUtoyiurDk20vhPFlR59gqV29x
+         77Wz+SYgXpJQA8CkwuEdpKAuTjJSFx4aXPtvC5qHaYEr+SjEzRu1unoQNFgh/ls0i9PM
+         4Zzw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+	Ursula Braun <ubraun@linux.vnet.ibm.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 34/93] s390/qeth: lock read device while queueing next buffer
-Date: Fri,  6 Apr 2018 15:23:03 +0200
-Message-Id: <20180406084226.422048110@linuxfoundation.org>
+Subject: [PATCH 3.18 32/93] s390/qeth: free netdevice when removing a card
+Date: Fri,  6 Apr 2018 15:23:01 +0200
+Message-Id: <20180406084226.348541076@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003452882083165?=
-X-GMAIL-MSGID: =?utf-8?q?1597003452882083165?=
+X-GMAIL-THRID: =?utf-8?q?1597003446784680526?=
+X-GMAIL-MSGID: =?utf-8?q?1597003446784680526?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,57 +53,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit 17bf8c9b3d499d5168537c98b61eb7a1fcbca6c2 ]
+[ Upstream commit 6be687395b3124f002a653c1a50b3260222b3cd7 ]
 
-For calling ccw_device_start(), issue_next_read() needs to hold the
-device's ccwlock.
-This is satisfied for the IRQ handler path (where qeth_irq() gets called
-under the ccwlock), but we need explicit locking for the initial call by
-the MPC initialization.
+On removal, a qeth card's netdevice is currently not properly freed
+because the call chain looks as follows:
 
+qeth_core_remove_device(card)
+	lx_remove_device(card)
+		unregister_netdev(card->dev)
+		card->dev = NULL			!!!
+	qeth_core_free_card(card)
+		if (card->dev)				!!!
+			free_netdev(card->dev)
+
+Fix it by free'ing the netdev straight after unregistering. This also
+fixes the sysfs-driven layer switch case (qeth_dev_layer2_store()),
+where the need to free the current netdevice was not considered at all.
+
+Note that free_netdev() takes care of the netif_napi_del() for us too.
+
+Fixes: 4a71df50047f ("qeth: new qeth device driver")
 Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Reviewed-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core_main.c |   16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/s390/net/qeth_core_main.c |    2 --
+ drivers/s390/net/qeth_l2_main.c   |    2 +-
+ drivers/s390/net/qeth_l3_main.c   |    2 +-
+ 3 files changed, 2 insertions(+), 4 deletions(-)
 
 --- a/drivers/s390/net/qeth_core_main.c
 +++ b/drivers/s390/net/qeth_core_main.c
-@@ -517,8 +517,7 @@ static inline int qeth_is_cq(struct qeth
- 	    queue == card->qdio.no_in_queues - 1;
- }
+@@ -4937,8 +4937,6 @@ static void qeth_core_free_card(struct q
+ 	QETH_DBF_HEX(SETUP, 2, &card, sizeof(void *));
+ 	qeth_clean_channel(&card->read);
+ 	qeth_clean_channel(&card->write);
+-	if (card->dev)
+-		free_netdev(card->dev);
+ 	kfree(card->ip_tbd_list);
+ 	qeth_free_qdio_buffers(card);
+ 	unregister_service_level(&card->qeth_service_level);
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -922,8 +922,8 @@ static void qeth_l2_remove_device(struct
+ 		qeth_l2_set_offline(cgdev);
  
--
--static int qeth_issue_next_read(struct qeth_card *card)
-+static int __qeth_issue_next_read(struct qeth_card *card)
- {
- 	int rc;
- 	struct qeth_cmd_buffer *iob;
-@@ -549,6 +548,17 @@ static int qeth_issue_next_read(struct q
- 	return rc;
- }
+ 	if (card->dev) {
+-		netif_napi_del(&card->napi);
+ 		unregister_netdev(card->dev);
++		free_netdev(card->dev);
+ 		card->dev = NULL;
+ 	}
+ 	return;
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -3333,8 +3333,8 @@ static void qeth_l3_remove_device(struct
+ 		qeth_l3_set_offline(cgdev);
  
-+static int qeth_issue_next_read(struct qeth_card *card)
-+{
-+	int ret;
-+
-+	spin_lock_irq(get_ccwdev_lock(CARD_RDEV(card)));
-+	ret = __qeth_issue_next_read(card);
-+	spin_unlock_irq(get_ccwdev_lock(CARD_RDEV(card)));
-+
-+	return ret;
-+}
-+
- static struct qeth_reply *qeth_alloc_reply(struct qeth_card *card)
- {
- 	struct qeth_reply *reply;
-@@ -1166,7 +1176,7 @@ static void qeth_irq(struct ccw_device *
- 		return;
- 	if (channel == &card->read &&
- 	    channel->state == CH_STATE_UP)
--		qeth_issue_next_read(card);
-+		__qeth_issue_next_read(card);
+ 	if (card->dev) {
+-		netif_napi_del(&card->napi);
+ 		unregister_netdev(card->dev);
++		free_netdev(card->dev);
+ 		card->dev = NULL;
+ 	}
  
- 	iob = channel->iob;
- 	index = channel->buf_no;
