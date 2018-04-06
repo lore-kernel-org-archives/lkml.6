@@ -1,51 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751445AbeDFUkU convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 16:40:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56920 "EHLO mail.kernel.org"
+        id S1752006AbeDFUoh convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 16:44:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751488AbeDFUkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 16:40:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C906620CAA
+        id S1751410AbeDFUof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 16:44:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E68B21720
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>,
+        Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Sekhar Nori <nsekhar@ti.com>
+        Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180330152856.12297-9-brgl@bgdev.pl>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+In-Reply-To: <1522996773-24129-3-git-send-email-gabriel.fernandez@st.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180330152856.12297-1-brgl@bgdev.pl> <20180330152856.12297-9-brgl@bgdev.pl>
-Message-ID: <152304721717.94378.15508132666893079542@swboyd.mtv.corp.google.com>
+        gabriel.fernandez.st@gmail.com, olivier.bideau@st.com,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+References: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
+ <1522996773-24129-3-git-send-email-gabriel.fernandez@st.com>
+Message-ID: <152304747392.94378.14006865924710563496@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v5 8/8] clk: davinci: kill davinci_clk_reset_assert/deassert()
-Date: Fri, 06 Apr 2018 13:40:17 -0700
+Subject: Re: [PATCH 2/6] clk: stm32mp1: remove unused dfsdm_src[] const
+Date: Fri, 06 Apr 2018 13:44:33 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bartosz Golaszewski (2018-03-30 08:28:56)
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Quoting gabriel.fernandez@st.com (2018-04-05 23:39:29)
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
 > 
-> This code is no longer used. Remove it.
+> This patch remove unused constant.
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 > ---
 
-I'll try to remember, but please send this again if we need to apply it
-to the clk tree for 4.18.
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
