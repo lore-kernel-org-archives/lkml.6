@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/uCj0KvLYv3xa8hYZWwDQrqtv5A16tKPB3oa/XpLSM1U9w7FmHhYLCJrVL2CJB4oncelS/
-ARC-Seal: i=1; a=rsa-sha256; t=1523021447; cv=none;
+X-Google-Smtp-Source: AIpwx49Pjg38c8C8+lJ9cu+LK7C4LmtD1hZuaNUuA0CoSITZqcs/7EXqTMA/xV0oXKw+YydW8XrV
+ARC-Seal: i=1; a=rsa-sha256; t=1523021444; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z+ZOYdBgEAU+lGvia0hQrCUxZUgyPrHvQqMH8+VufHBOrav7HNyunUdmrQLlbf3jsA
-         8IPJvkgTEUYHyvwUCw6FCHKKum1yV1nNevInv7XidkJHyVfzHxt4EgCZe3J5wfAGIyhW
-         aorJZzdB/XuuG1j5WLT9GF5QD33knZZ1H+TsYTvSETWYKtotgB23urankJQUkhuKFLFz
-         WTkmNldy2AZy/bUkhY9jDL7mD20mFfhGRbiqYqZKyGi41b+BXhxgUOzmGxTmv0QM3Iy1
-         wvo8bzNkw4wrpmGn8hIfVV6QEsUCrDCSvWA1f+YWhuZab6REIkU83vkPCebhCHrhvF6a
-         5ZYw==
+        b=ipTwk0QajthAu3EpCmq9P2iOOelUtkdpnZ5qjYrIA/wDX4xbLQqC2znhXo+Pvj0JcN
+         HKYhiOUPknUpXWkIWvLHwRcgmkLN/L1E8jj2XpRdSS0zlkIYaOnQpC6zaQ3UFlsu0mHL
+         vL75cU6bTE0q1JB6v6OcE0Rae6wYuJKqJM6EgWm9kOFVF3tOGygwXVAcsmG1UzxFucyH
+         JiCpBnpWaEjSE3WqhcgxdU+WJ+tX1FqcQsdof7AaVDqOaNb3sQBBZNn5p/18P5iCZu6k
+         qOG5z9uYyxpD5n4BPzgX3iGaHyxAUEgoe2v8wMVCTuL5f6OyhnTNXxyHasW7CKIRjjFT
+         OGZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UMK+7xDn0S//kB43lZ+pzdkTKFEU2VVG7XmTpkDnEz4=;
-        b=iozV/q9QTvzpoftxE/DKwBLSvGjW8QbLmpLWGY3jaPHnZmVHNjSRM1nNdoA8lZeGrz
-         eoF6dnj853dVZoYL4xgGe7yBPz5D4J1vXHC/WuOyM836jv8fJaQerK+mtKm6CfILmgl6
-         iALkrVjtoGYrHVZ4Rv536pRwQwGuk/ggPz6kh5SnoYlsRLHqFKyDr3WPhf8YvDhRDzk8
-         EuPW9gCM6xXLL3yUYhDRTCF80OpFZqY0/Sta+ClamZ7sTxxWqaZ2Qetutuwo/aALJpMW
-         JBPtSmzYqa0AiE0hAfUGy9SO7DY4TjZV7qzciGV+/dpys0u84xhTKX4nspk8Al9MzHF0
-         +1dg==
+        bh=YFg5p5pI6/j6L52zm8IV5rxtEyTOzlUelDGcMyfEy1Y=;
+        b=Bjo1+RJJtxal/daZzF+IxunIXaBB+G9j2bbPJJLPrJco+NBO5FD5rnufw0ry1RmBLp
+         vLof9985+GxHnFmGrmWALFO2Q/Qu1ytHpD9YjDwTylorXpM29+Wvt4UG+u7xo9k6fj4y
+         7lH3qXzi2Qo1xfXXQpmxC5ZcycRRXBe6Et/n6aBxaQimZ4hwRoTzw4lBcRnIy2RMYYNT
+         Y6eIWHN+spNVOw++vGmtBRru9kFAVCPTm2lq8ckdNt9y87RAdsTXE4Cfh//LTum2GPDE
+         Ncp4czV53aYQpS0d7pwh31pRv8wTwEyqDYqCJ6Y589rqdVBullOkKTZ6yEqfdemx3qQ3
+         3v+g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com,
-	Florian Westphal <fw@strlen.de>,
-	Eric Dumazet <edumazet@google.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.4 39/72] netfilter: bridge: ebt_among: add more missing match size checks
-Date: Fri,  6 Apr 2018 15:23:40 +0200
-Message-Id: <20180406084308.406734744@linuxfoundation.org>
+	Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.4 38/72] xfrm: Refuse to insert 32 bit userspace socket policies on 64 bit systems
+Date: Fri,  6 Apr 2018 15:23:39 +0200
+Message-Id: <20180406084308.351558223@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -42,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003597962532229?=
-X-GMAIL-MSGID: =?utf-8?q?1597003737464297081?=
+X-GMAIL-THRID: =?utf-8?q?1597003595252777127?=
+X-GMAIL-MSGID: =?utf-8?q?1597003734471414547?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,97 +48,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Steffen Klassert <steffen.klassert@secunet.com>
 
-commit c8d70a700a5b486bfa8e5a7d33d805389f6e59f9 upstream.
+commit 19d7df69fdb2636856dc8919de72fc1bf8f79598 upstream.
 
-ebt_among is special, it has a dynamic match size and is exempt
-from the central size checks.
+We don't have a compat layer for xfrm, so userspace and kernel
+structures have different sizes in this case. This results in
+a broken configuration, so refuse to configure socket policies
+when trying to insert from 32 bit userspace as we do it already
+with policies inserted via netlink.
 
-commit c4585a2823edf ("bridge: ebt_among: add missing match size checks")
-added validation for pool size, but missed fact that the macros
-ebt_among_wh_src/dst can already return out-of-bound result because
-they do not check value of wh_src/dst_ofs (an offset) vs. the size
-of the match that userspace gave to us.
-
-v2:
-check that offset has correct alignment.
-Paolo Abeni points out that we should also check that src/dst
-wormhash arrays do not overlap, and src + length lines up with
-start of dst (or vice versa).
-v3: compact wormhash_sizes_valid() part
-
-NB: Fixes tag is intentionally wrong, this bug exists from day
-one when match was added for 2.6 kernel. Tag is there so stable
-maintainers will notice this one too.
-
-Tested with same rules from the earlier patch.
-
-Fixes: c4585a2823edf ("bridge: ebt_among: add missing match size checks")
-Reported-by: <syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reported-and-tested-by: syzbot+e1a1577ca8bcb47b769a@syzkaller.appspotmail.com
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+[use is_compat_task() - gregkh]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bridge/netfilter/ebt_among.c |   34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ net/xfrm/xfrm_state.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/bridge/netfilter/ebt_among.c
-+++ b/net/bridge/netfilter/ebt_among.c
-@@ -177,6 +177,28 @@ static bool poolsize_invalid(const struc
- 	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
- }
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -1845,6 +1845,11 @@ int xfrm_user_policy(struct sock *sk, in
+ 	struct xfrm_mgr *km;
+ 	struct xfrm_policy *pol = NULL;
  
-+static bool wormhash_offset_invalid(int off, unsigned int len)
-+{
-+	if (off == 0) /* not present */
-+		return false;
++#ifdef CONFIG_COMPAT
++	if (is_compat_task())
++		return -EOPNOTSUPP;
++#endif
 +
-+	if (off < (int)sizeof(struct ebt_among_info) ||
-+	    off % __alignof__(struct ebt_mac_wormhash))
-+		return true;
-+
-+	off += sizeof(struct ebt_mac_wormhash);
-+
-+	return off > len;
-+}
-+
-+static bool wormhash_sizes_valid(const struct ebt_mac_wormhash *wh, int a, int b)
-+{
-+	if (a == 0)
-+		a = sizeof(struct ebt_among_info);
-+
-+	return ebt_mac_wormhash_size(wh) + a == b;
-+}
-+
- static int ebt_among_mt_check(const struct xt_mtchk_param *par)
- {
- 	const struct ebt_among_info *info = par->matchinfo;
-@@ -189,6 +211,10 @@ static int ebt_among_mt_check(const stru
- 	if (expected_length > em->match_size)
- 		return -EINVAL;
- 
-+	if (wormhash_offset_invalid(info->wh_dst_ofs, em->match_size) ||
-+	    wormhash_offset_invalid(info->wh_src_ofs, em->match_size))
-+		return -EINVAL;
-+
- 	wh_dst = ebt_among_wh_dst(info);
- 	if (poolsize_invalid(wh_dst))
- 		return -EINVAL;
-@@ -201,6 +227,14 @@ static int ebt_among_mt_check(const stru
- 	if (poolsize_invalid(wh_src))
- 		return -EINVAL;
- 
-+	if (info->wh_src_ofs < info->wh_dst_ofs) {
-+		if (!wormhash_sizes_valid(wh_src, info->wh_src_ofs, info->wh_dst_ofs))
-+			return -EINVAL;
-+	} else {
-+		if (!wormhash_sizes_valid(wh_dst, info->wh_dst_ofs, info->wh_src_ofs))
-+			return -EINVAL;
-+	}
-+
- 	expected_length += ebt_mac_wormhash_size(wh_src);
- 
- 	if (em->match_size != EBT_ALIGN(expected_length)) {
+ 	if (!optval && !optlen) {
+ 		xfrm_sk_policy_insert(sk, XFRM_POLICY_IN, NULL);
+ 		xfrm_sk_policy_insert(sk, XFRM_POLICY_OUT, NULL);
