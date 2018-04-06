@@ -1,40 +1,38 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+DkkXU5tyMws73M73/2SUNvm3upI+xD0w/Bz7ZnkUwPkCFZAxnUWTo17fPsyynyPgQe4L1
-ARC-Seal: i=1; a=rsa-sha256; t=1523021707; cv=none;
+X-Google-Smtp-Source: AIpwx4+tkErMXSYvG4bFPkfXtglai3hWR8N2cZxNQ+GHhHKPioaEtRKLoQaRPk8e0ALOd1U1TJQk
+ARC-Seal: i=1; a=rsa-sha256; t=1523021704; cv=none;
         d=google.com; s=arc-20160816;
-        b=ddOSt4kEclwceblDqUXHhvHGTEWRA1TZEjyFtyiEsmgdZiVAULrc+N/jkZCpZxY46d
-         QZM6ndHI08DlbqfFnPskSdG/gEeR2G3xbT+tRtVivYrFHq4O8hTZNTqNBcE6Xwx/WvNH
-         uHntDS9ptFNfbC79LLgMBuAol2tclxWPye1Oz4orx3GcwC4G5duZNJjLiaGQ0MHk6Rhw
-         fv2b4jr3scVcJMwwwbyHVuRS/9Ei9yCS7hRruoCPejollkby5Pv+Qts5gfWH7VMtClvR
-         2wxQtBx64uSgUtTdrIB1HzQb8HViwNfl7PUCQOrwhNve/M5yg3GgNPEZCQCicrRnn0mV
-         U8UQ==
+        b=DRcrsvkdxmwAl7eaMr1FWRQv2PZYvOGLLENTJwdIbAy/33W6XGjYNauebQ/BwlcfZl
+         rMJyRgj7jI4V0ozFENbHJCM66d9jBP0pfIZmTl9zIuupIpc6C6f7pgDJl+R4/1gxBu2X
+         uBesoJ/ffG030kEXEiJ/ljhMeBcqmJiUVdJoYoVP9v9t4CmPiglDj7G22R647H3FyquO
+         faykf4JWnvdL/0gI9z5U/2mIwKarAJb+PauqndQTKk+zOowkooI4YHhqqlFPND75xdaP
+         iOs14+MCTZguSsBeAGM/LXHtjhpXlaOhqUSqQI1ygF6B3u6nLXaTZU22qWqonLMco5EW
+         /9zw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XukNshtXclaBv8jW/sn9Q/GDvNS/WMqQ1pfD1gvb8T0=;
-        b=FfNBW/1BUKLdkKG8hUYJO8mZ9vH93zv6NeteF+agFZ3imcvtr1nlw7iOR8iMooCVku
-         FHtdLzVKN2ALj5dkf++AfwoImKoCz4WBQp/cQoxJXIpL7Nl4qN4KHPp69kZ5dP0zi088
-         7tbvT2XygxePCQye81HUrBmNJq3nvzveKXYQgOPqsbUec1W4LBIOZt5mbAu+540ppkOu
-         eFzzdHG+fB3W0ngYUzkEVLnthKTNWaMq21MnI9STTeFBc7ypEWPD85z1A1+mp0AvHK0H
-         aFjNdq3kkScpcIrJJuDKBsdmDnUp9/H+kecujNzHIDbFBFjCZCmBVYgaSFENjH9KBSFI
-         6lUQ==
+        bh=ZY8u02iOOkjZMxToXNZJwgPWE4/F4TIKRvpU2YGuwC8=;
+        b=xQh/KH8JyWMNJSjY76r5lI+PsouwV14iYPQI0l4hRm/oT/XHdhY7YOMwHxwVAXhcjB
+         8K2JwNhZUGhCliUSYp2DP3OvfkkyUpSTz/SKDJbxYpupmCZP0AiyrslhsH0mJi3K9keD
+         UcuNm8fIRCf0jAt7jK6+FLpUj/spGzYAd7xvCwuP7l/ETkbwsT7BaPaa0XMIMs1cXgck
+         J7yAGVzGE/sDYc4WY+R/MHCHyFGOo9OyFHyXhcyieDLfn1/ztz46YgBTexbW7JhU92LJ
+         VlfkaqAu8XdY8WPWe5/ARsyzescyWOl4gD6/3xUrQHZd0XgzTkFxBKwpdF2kB/D5j5f1
+         5Iug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Laura Abbott <labbott@redhat.com>,
-	Shanker Donthineni <shankerd@codeaurora.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Greg Hackmann <ghackmann@google.com>,
-	Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 4.9 060/102] arm64: entry: Hook up entry trampoline to exception vectors
-Date: Fri,  6 Apr 2018 15:23:41 +0200
-Message-Id: <20180406084340.016494702@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Matthias Kaehlcke <mka@chromium.org>,
+	Stephen Smalley <sds@tycho.nsa.gov>,
+	Paul Moore <paul@paul-moore.com>,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.9 033/102] selinux: Remove redundant check for unknown labeling behavior
+Date: Fri,  6 Apr 2018 15:23:14 +0200
+Message-Id: <20180406084336.289708652@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004010758387874?=
-X-GMAIL-MSGID: =?utf-8?q?1597004010758387874?=
+X-GMAIL-THRID: =?utf-8?q?1597003700659162016?=
+X-GMAIL-MSGID: =?utf-8?q?1597004006564305363?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,102 +51,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-commit 4bf3286d29f3 upstream.
+commit 270e8573145a26de924e2dc644596332d400445b upstream.
 
-Hook up the entry trampoline to our exception vectors so that all
-exceptions from and returns to EL0 go via the trampoline, which swizzles
-the vector base register accordingly. Transitioning to and from the
-kernel clobbers x30, so we use tpidrro_el0 and far_el1 as scratch
-registers for native tasks.
+The check is already performed in ocontext_read() when the policy is
+loaded. Removing the array also fixes the following warning when
+building with clang:
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Laura Abbott <labbott@redhat.com>
-Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Alex Shi <alex.shi@linaro.org> [v4.9 backport]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
-Tested-by: Will Deacon <will.deacon@arm.com>
-Tested-by: Greg Hackmann <ghackmann@google.com>
+security/selinux/hooks.c:338:20: error: variable 'labeling_behaviors'
+    is not needed and will not be emitted
+    [-Werror,-Wunneeded-internal-declaration]
+
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/entry.S |   39 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 36 insertions(+), 3 deletions(-)
 
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -72,10 +72,26 @@
+---
+ security/selinux/hooks.c |   16 ----------------
+ 1 file changed, 16 deletions(-)
+
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -406,18 +406,6 @@ static void superblock_free_security(str
+ 	kfree(sbsec);
+ }
  
- 	.macro kernel_ventry, el, label, regsize = 64
- 	.align 7
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+	.if	\el == 0
-+	.if	\regsize == 64
-+	mrs	x30, tpidrro_el0
-+	msr	tpidrro_el0, xzr
-+	.else
-+	mov	x30, xzr
-+	.endif
-+	.endif
-+#endif
-+
- 	sub	sp, sp, #S_FRAME_SIZE
- 	b	el\()\el\()_\label
- 	.endm
+-/* The file system's label must be initialized prior to use. */
+-
+-static const char *labeling_behaviors[7] = {
+-	"uses xattr",
+-	"uses transition SIDs",
+-	"uses task SIDs",
+-	"uses genfs_contexts",
+-	"not configured for labeling",
+-	"uses mountpoint labeling",
+-	"uses native labeling",
+-};
+-
+ static inline int inode_doinit(struct inode *inode)
+ {
+ 	return inode_doinit_with_dentry(inode, NULL);
+@@ -528,10 +516,6 @@ static int sb_finish_set_opts(struct sup
+ 		}
+ 	}
  
-+	.macro tramp_alias, dst, sym
-+	mov_q	\dst, TRAMP_VALIAS
-+	add	\dst, \dst, #(\sym - .entry.tramp.text)
-+	.endm
-+
- 	.macro	kernel_entry, el, regsize = 64
- 	.if	\regsize == 32
- 	mov	w0, w0				// zero upper 32 bits of x0
-@@ -157,18 +173,20 @@
- 	ct_user_enter
- 	ldr	x23, [sp, #S_SP]		// load return stack pointer
- 	msr	sp_el0, x23
-+	tst	x22, #PSR_MODE32_BIT		// native task?
-+	b.eq	3f
-+
- #ifdef CONFIG_ARM64_ERRATUM_845719
- alternative_if ARM64_WORKAROUND_845719
--	tbz	x22, #4, 1f
- #ifdef CONFIG_PID_IN_CONTEXTIDR
- 	mrs	x29, contextidr_el1
- 	msr	contextidr_el1, x29
- #else
- 	msr contextidr_el1, xzr
- #endif
--1:
- alternative_else_nop_endif
- #endif
-+3:
- 	.endif
- 	msr	elr_el1, x21			// set up the return data
- 	msr	spsr_el1, x22
-@@ -189,7 +207,22 @@ alternative_else_nop_endif
- 	ldp	x28, x29, [sp, #16 * 14]
- 	ldr	lr, [sp, #S_LR]
- 	add	sp, sp, #S_FRAME_SIZE		// restore sp
--	eret					// return to kernel
-+
-+#ifndef CONFIG_UNMAP_KERNEL_AT_EL0
-+	eret
-+#else
-+	.if	\el == 0
-+	bne	4f
-+	msr	far_el1, x30
-+	tramp_alias	x30, tramp_exit_native
-+	br	x30
-+4:
-+	tramp_alias	x30, tramp_exit_compat
-+	br	x30
-+	.else
-+	eret
-+	.endif
-+#endif
- 	.endm
- 
- 	.macro	get_thread_info, rd
+-	if (sbsec->behavior > ARRAY_SIZE(labeling_behaviors))
+-		printk(KERN_ERR "SELinux: initialized (dev %s, type %s), unknown behavior\n",
+-		       sb->s_id, sb->s_type->name);
+-
+ 	sbsec->flags |= SE_SBINITIALIZED;
+ 	if (selinux_is_sblabel_mnt(sb))
+ 		sbsec->flags |= SBLABEL_MNT;
