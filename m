@@ -1,134 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751696AbeDFVIZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 17:08:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43520 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751312AbeDFVIY (ORCPT
+        id S1751971AbeDFVJA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 17:09:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57716 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751435AbeDFVI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 17:08:24 -0400
-Subject: Re: [PATCH v4 1/3] locking: Document the semantics of
- spin_is_locked()
-To: paulmck@linux.vnet.ibm.com
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        David Howells <dhowells@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>
-References: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
- <1523044060-5568-1-git-send-email-andrea.parri@amarulasolutions.com>
- <b0dbf383-6403-a408-047d-0dd0d2135a03@infradead.org>
- <20180406210741.GF3948@linux.vnet.ibm.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <30d15756-1cb4-7123-b4d9-ce2e66861df3@infradead.org>
-Date: Fri, 6 Apr 2018 14:08:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 6 Apr 2018 17:08:58 -0400
+Date: Fri, 6 Apr 2018 14:09:53 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, peterz@infradead.org,
+        mingo@kernel.org, boqun.feng@gmail.com, catalin.marinas@arm.com
+Subject: Re: [PATCH 02/10] locking/qspinlock: Remove unbounded cmpxchg loop
+ from locking slowpath
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
+ <1522947547-24081-3-git-send-email-will.deacon@arm.com>
+ <dc5f5e43-a60a-05f2-16fb-46960c40459e@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180406210741.GF3948@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc5f5e43-a60a-05f2-16fb-46960c40459e@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18040621-0024-0000-0000-0000034286FD
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008813; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000256; SDB=6.01014106; UDB=6.00516972; IPR=6.00793367;
+ MB=3.00020452; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-06 21:08:55
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040621-0025-0000-0000-000047921BB3
+Message-Id: <20180406210953.GA24165@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-06_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804060212
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/06/2018 02:07 PM, Paul E. McKenney wrote:
-> On Fri, Apr 06, 2018 at 02:01:41PM -0700, Randy Dunlap wrote:
->> On 04/06/2018 12:47 PM, Andrea Parri wrote:
->>> There appeared to be a certain, recurrent uncertainty concerning the
->>> semantics of spin_is_locked(), likely a consequence of the fact that
->>> this semantics remains undocumented or that it has been historically
->>> linked to the (likewise unclear) semantics of spin_unlock_wait().
->>>
->>> A recent auditing [1] of the callers of the primitive confirmed that
->>> none of them are relying on particular ordering guarantees; document
->>> this semantics by adding a docbook header to spin_is_locked(). Also,
->>> describe behaviors specific to certain CONFIG_SMP=n builds.
->>>
->>> [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
->>>     https://marc.info/?l=linux-kernel&m=152042843808540&w=2
->>>     https://marc.info/?l=linux-kernel&m=152043346110262&w=2
->>>
->>> Co-Developed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
->>> Co-Developed-by: Alan Stern <stern@rowland.harvard.edu>
->>> Co-Developed-by: David Howells <dhowells@redhat.com>
->>> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
->>> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
->>> Signed-off-by: David Howells <dhowells@redhat.com>
->>> Cc: Will Deacon <will.deacon@arm.com>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: Boqun Feng <boqun.feng@gmail.com>
->>> Cc: Nicholas Piggin <npiggin@gmail.com>
->>> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
->>> Cc: Luc Maranget <luc.maranget@inria.fr>
->>> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
->>> Cc: Akira Yokosawa <akiyks@gmail.com>
->>> Cc: Ingo Molnar <mingo@kernel.org>
->>> ---
->>>  include/linux/spinlock.h | 18 ++++++++++++++++++
->>>  1 file changed, 18 insertions(+)
->>>
->>> diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
->>> index 4894d322d2584..1e8a464358384 100644
->>> --- a/include/linux/spinlock.h
->>> +++ b/include/linux/spinlock.h
->>> @@ -380,6 +380,24 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
->>>  	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
->>>  })
->>>  
->>> +/**
->>> + * spin_is_locked() - Check whether a spinlock is locked.
->>> + * @lock: Pointer to the spinlock.
->>> + *
->>> + * This function is NOT required to provide any memory ordering
->>> + * guarantees; it could be used for debugging purposes or, when
->>> + * additional synchronization is needed, accompanied with other
->>> + * constructs (memory barriers) enforcing the synchronization.
->>> + *
->>> + * Returns: 1 if @lock is locked, 0 otherwise.
->>
->> Sorry, minor nit:
->> s/Returns:/Return:/
->> (according to kernel-doc.rst)
->>
->> although I agree that "Returns:" is better.
->> [I should have changed that years ago.]
+On Fri, Apr 06, 2018 at 04:50:19PM -0400, Waiman Long wrote:
+> On 04/05/2018 12:58 PM, Will Deacon wrote:
+> > The qspinlock locking slowpath utilises a "pending" bit as a simple form
+> > of an embedded test-and-set lock that can avoid the overhead of explicit
+> > queuing in cases where the lock is held but uncontended. This bit is
+> > managed using a cmpxchg loop which tries to transition the uncontended
+> > lock word from (0,0,0) -> (0,0,1) or (0,0,1) -> (0,1,1).
+> >
+> > Unfortunately, the cmpxchg loop is unbounded and lockers can be starved
+> > indefinitely if the lock word is seen to oscillate between unlocked
+> > (0,0,0) and locked (0,0,1). This could happen if concurrent lockers are
+> > able to take the lock in the cmpxchg loop without queuing and pass it
+> > around amongst themselves.
+> >
+> > This patch fixes the problem by unconditionally setting _Q_PENDING_VAL
+> > using atomic_fetch_or, and then inspecting the old value to see whether
+> > we need to spin on the current lock owner, or whether we now effectively
+> > hold the lock. The tricky scenario is when concurrent lockers end up
+> > queuing on the lock and the lock becomes available, causing us to see
+> > a lockword of (n,0,0). With pending now set, simply queuing could lead
+> > to deadlock as the head of the queue may not have observed the pending
+> > flag being cleared. Conversely, if the head of the queue did observe
+> > pending being cleared, then it could transition the lock from (n,0,0) ->
+> > (0,0,1) meaning that any attempt to "undo" our setting of the pending
+> > bit could race with a concurrent locker trying to set it.
+> >
+> > We handle this race by preserving the pending bit when taking the lock
+> > after reaching the head of the queue and leaving the tail entry intact
+> > if we saw pending set, because we know that the tail is going to be
+> > updated shortly.
+> >
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Signed-off-by: Will Deacon <will.deacon@arm.com>
+> > ---
 > 
-> Agreed, English grammar and templates often seem to conflict.
+> The pending bit was added to the qspinlock design to counter performance
+> degradation compared with ticket lock for workloads with light
+> spinlock contention. I run my spinlock stress test on a Intel Skylake
+> server running the vanilla 4.16 kernel vs a patched kernel with this
+> patchset. The locking rates with different number of locking threads
+> were as follows:
 > 
-> So should we change this comment, or are you instead proposing to add
-> "Returns:" as valid kernel-doc?
-
-Please change this patch to current doc syntax.
-Any changes to kernel-doc syntax would come later.
-
-Thanks.
-
-> 							Thanx, Paul
+>   # of threads  4.16 kernel     patched 4.16 kernel
+>   ------------  -----------     -------------------
+>         1       7,417 kop/s         7,408 kop/s
+>         2       5,755 kop/s         4,486 kop/s
+>         3       4,214 kop/s         4,169 kop/s
+>         4       4,396 kop/s         4,383 kop/s
+>        
+> The 2 contending threads case is the one that exercise the pending bit
+> code path the most. So it is obvious that this is the one that is most
+> impacted by this patchset. The differences in the other cases are mostly
+> noise or maybe just a little bit on the 3 contending threads case.
 > 
->>> + *
->>> + * Note that the function only tells you that the spinlock is
->>> + * seen to be locked, not that it is locked on your CPU.
->>> + *
->>> + * Further, on CONFIG_SMP=n builds with CONFIG_DEBUG_SPINLOCK=n,
->>> + * the return value is always 0 (see include/linux/spinlock_up.h).
->>> + * Therefore you should not rely heavily on the return value.
->>> + */
->>>  static __always_inline int spin_is_locked(spinlock_t *lock)
->>>  {
->>>  	return raw_spin_is_locked(&lock->rlock);
->>>
->>
->>
->> -- 
->> ~Randy
->>
-> 
+> I am not against this patch, but we certainly need to find out a way to
+> bring the performance number up closer to what it is before applying
+> the patch.
 
+It would indeed be good to not be in the position of having to trade off
+forward-progress guarantees against performance, but that does appear to
+be where we are at the moment.
 
--- 
-~Randy
+							Thanx, Paul
