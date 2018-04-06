@@ -1,46 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751949AbeDFRhc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 13:37:32 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:45272 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750807AbeDFRhb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 13:37:31 -0400
-Date: Fri, 06 Apr 2018 13:37:24 -0400 (EDT)
-Message-Id: <20180406.133724.732891873487338396.davem@davemloft.net>
-To: andrew@lunn.ch
-Cc: esben.haabendal@gmail.com, netdev@vger.kernel.org, eha@deif.com,
-        rasmus.villemoes@prevas.dk, f.fainelli@gmail.com,
+        id S1751417AbeDFRuf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 13:50:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40570 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750815AbeDFRue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 13:50:34 -0400
+Date: Fri, 6 Apr 2018 18:50:27 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Yury Norov <ynorov@caviumnetworks.com>
+Cc: James Morse <james.morse@arm.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Christopher Lameter <cl@linux.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alexey Klimov <klimov.linux@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: phy: marvell: Enable interrupt function on
- LED2 pin
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180406172928.GS17495@lunn.ch>
-References: <20180405133504.12257-1-esben.haabendal@gmail.com>
-        <20180405204029.665-1-esben.haabendal@gmail.com>
-        <20180406172928.GS17495@lunn.ch>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/5] arm64: entry: isb in el1_irq
+Message-ID: <20180406175027.oxaru6r3zptct7vb@lakrids.cambridge.arm.com>
+References: <20180405171800.5648-1-ynorov@caviumnetworks.com>
+ <20180405171800.5648-2-ynorov@caviumnetworks.com>
+ <5036b99a-9faa-c220-27dd-e0d73f8b3fc7@arm.com>
+ <20180406165402.nq3sabeku2mp3hpb@yury-thinkpad>
+ <20180406172211.r42reit2bnpocab2@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406172211.r42reit2bnpocab2@lakrids.cambridge.arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Fri, 6 Apr 2018 19:29:28 +0200
-
-> On Thu, Apr 05, 2018 at 10:40:29PM +0200, Esben Haabendal wrote:
->> From: Esben Haabendal <eha@deif.com>
->> 
->> The LED2[2]/INTn pin on Marvell 88E1318S as well as 88E1510/12/14/18 needs
->> to be configured to be usable as interrupt not only when WOL is enabled,
->> but whenever we rely on interrupts from the PHY.
->> 
->> Signed-off-by: Esben Haabendal <eha@deif.com>
->> Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+On Fri, Apr 06, 2018 at 06:22:11PM +0100, Mark Rutland wrote:
+> Digging a bit, I also thing that our ct_user_exit and ct_user_enter
+> usage is on dodgy ground today.
 > 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> For example, in el0_dbg we call do_debug_exception() *before* calling
+> ct_user_exit. Which I believe means we'd use RCU while supposedly in an
+> extended quiescent period, which would be bad.
 
-Applied, thanks everyone.
+It seems this is the case. I can trigger the following by having GDB
+place a SW breakpoint:
+
+[   51.217947] =============================
+[   51.217953] WARNING: suspicious RCU usage
+[   51.217961] 4.16.0 #4 Not tainted
+[   51.217966] -----------------------------
+[   51.217974] ./include/linux/rcupdate.h:632 rcu_read_lock() used illegally while idle!
+[   51.217980]
+[   51.217980] other info that might help us debug this:
+[   51.217980]
+[   51.217987]
+[   51.217987] RCU used illegally from idle CPU!
+[   51.217987] rcu_scheduler_active = 2, debug_locks = 1
+[   51.217992] RCU used illegally from extended quiescent state!
+[   51.217999] 1 lock held by ls/2412:
+[   51.218004]  #0:  (rcu_read_lock){....}, at: [<0000000092efbdd5>] brk_handler+0x0/0x198
+[   51.218041]
+[   51.218041] stack backtrace:
+[   51.218049] CPU: 2 PID: 2412 Comm: ls Not tainted 4.16.0 #4
+[   51.218055] Hardware name: ARM Juno development board (r1) (DT)
+[   51.218061] Call trace:
+[   51.218070]  dump_backtrace+0x0/0x1c8
+[   51.218078]  show_stack+0x14/0x20
+[   51.218087]  dump_stack+0xac/0xe4
+[   51.218096]  lockdep_rcu_suspicious+0xcc/0x110
+[   51.218103]  brk_handler+0x144/0x198
+[   51.218110]  do_debug_exception+0x9c/0x190
+[   51.218116]  el0_dbg+0x14/0x20
+
+We will need to fix this before we can fiddle with kick_all_cpus_sync().
+
+Thanks,
+Mark.
