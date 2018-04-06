@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49EX/TLg/V66A4d2Q+nsQCjxTFSpgpjqDfdnXWFPHsJhJ1aCSMn3QInghGxuv4lOzFayJ4N
-ARC-Seal: i=1; a=rsa-sha256; t=1523021971; cv=none;
+X-Google-Smtp-Source: AIpwx481TaDIMInAl4LjPYKX7wPF2yA4/u+5c8bY7tDPTxFDl0eALFcCPndr6n7nrUuum6kQzGaa
+ARC-Seal: i=1; a=rsa-sha256; t=1523021970; cv=none;
         d=google.com; s=arc-20160816;
-        b=kC2+V+UQryrru+iWMtkjkm9+ZwjwZbmb2cvaYnUXooJeImtirArv4rkeGVvc7Ifqwi
-         7hCkAEbVKMtQksx4AyOcwcaBtTMDIKl0iEko8AM0WX0moBhn9slhgm3qFWTsrlOhwEie
-         QEc9aPeDJZxWMfFS9vi0TNk6lhboIbSfQoVBAFXeERki6iU9jVxIVbQ8r79RXzLIrlpE
-         eyVmzDtUFquALwEzBhDlWctmcMITkUtiGAyp0+CA43ALL2cQHQjbMAOLL4A2/R2vorta
-         T7A8BlAQ/OfjLwuT8ZcAdXf6Aonm/2wdm1PlU6rXBl/iBcqR3GND65mBOoEGYduEY5th
-         83Rw==
+        b=FR72h2SjH+7M1dFlHxgfrHWcBWoTGIWTZKJLj3KdbWuaCRkqT7eUkzD/rj4iGO4I3p
+         DVdRnlqBFO8lntMQBBrU34tb/9J47iJxeKUZyrGGOlr57y1mLPL4yJjIvxAAWC7iGjvm
+         VLkwOoE3zF2e9sTabK2lxzKY81Ct9ackaJzpDjtwvCoa0xqjOWxqKLcYg1lpBvlSZxPU
+         YejT2o7a83HgEau62WeePBT+2zZWNs/VsUJ5NNGTCq/cancn8kX5GUIqTLTygu/TFrdk
+         1cfRANIWEHVtgcCmHlKyFkWbPL1+Rdvmzbq4OyxHYxQ4oyBUnyexyq2xzRE4lEXmPltM
+         i2rQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WEPl3P1qsgBeEbLgrMOk3XS7Pe7JAV3Ltm7KkJjq5Xk=;
-        b=BVMAbSDZ4HpJA3ObtK6YZVEq8m/wmy5HkxIzarP8RHwJs+78+CZDk5Xn8VAFHvc2ur
-         3XKbBx6dwZXXt4FTBs3V9KC4GhTuFCeVSVIJgIV5ZifI8nx+CXR7XqozQZTvxjs/zW+S
-         nM+t2suXmtQdJFpgY3Mq4PhhqXGwrW9tbgP7rbRnLHvxATEsZ9Xvf3VjorbNt5zoWWlx
-         60jD5xilbLI/op5ly855fmw4feKko4A/zihEiuZDkp8G03xEdntYv2xdMH2FsASX5jaG
-         5A3i+rJZg98EoS1sLsA2PBLSFZxVSea+wONsEn+BRs7h/nnWAbSXvlC4CpYWq18kCVlK
-         qjJQ==
+        bh=YHvNSNGXCF04ndhE5RcQ19LWxyj8Y5QDBefptQDXXV4=;
+        b=N05MbABw0je7TUJ9kwqq7+/8XAHsibQbcCxCVpmYxiAT+Rd1wCybIIuf8pdNbjObL6
+         OB7cSSsr4OtZIGeMgurwmyHQsEkjkJ6dQzL/FeYTkn81RdMVI+wS0dd09uRIJE1BhU45
+         H/cNBVsO0jR8De5hWopEUoXZPW2N0h5GCwEqT3fFwWjZ0pDnfnnaxJHV9PqjmcyklAtU
+         OQQkPKD63anP2j1r7xOGjMhe++RTNRQkuxxJG5fypDjEmeaC+kuQn1iB3Y2A1oE7Mpu/
+         PBSX4LKOnbm1hykFM9bm7a8rsxfTW1n8qJB65+1vmaFtBCfHxpV7YrijTzYK4Xa55/xQ
+         BSzw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 52/67] crypto: arm,arm64 - Fix random regeneration of S_shipped
-Date: Fri,  6 Apr 2018 15:24:22 +0200
-Message-Id: <20180406084347.775630194@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 4.14 34/67] phy: qcom-ufs: add MODULE_LICENSE tag
+Date: Fri,  6 Apr 2018 15:24:04 +0200
+Message-Id: <20180406084345.846193640@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004287599299415?=
-X-GMAIL-MSGID: =?utf-8?q?1597004287599299415?=
+X-GMAIL-THRID: =?utf-8?q?1597004285935237557?=
+X-GMAIL-MSGID: =?utf-8?q?1597004285935237557?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,67 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 6aaf49b495b446ff6eec0ac983f781ca0dc56a73 upstream.
+commit 59fba0869acae06ff594dd7e9808ed673f53538a upstream.
 
-The decision to rebuild .S_shipped is made based on the relative
-timestamps of .S_shipped and .pl files but git makes this essentially
-random. This means that the perl script might run anyway (usually at
-most once per checkout), defeating the whole purpose of _shipped.
+While the specific UFS PHY drivers (14nm and 20nm) have a module
+license, the common base module does not, leading to a Kbuild
+failure:
 
-Fix by skipping the rule unless explicit make variables are provided:
-REGENERATE_ARM_CRYPTO or REGENERATE_ARM64_CRYPTO.
+WARNING: modpost: missing MODULE_LICENSE() in drivers/phy/qualcomm/phy-qcom-ufs.o
+FATAL: modpost: GPL-incompatible module phy-qcom-ufs.ko uses GPL-only symbol 'clk_enable'
 
-This can produce nasty occasional build failures downstream, for example
-for toolchains with broken perl. The solution is minimally intrusive to
-make it easier to push into stable.
+This adds a module description and license tag to fix the build.
+I added both Yaniv and Vivek as authors here, as Yaniv sent the initial
+submission, while Vivek did most of the work since.
 
-Another report on a similar issue here: https://lkml.org/lkml/2018/3/8/1379
-
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/crypto/Makefile   |    2 ++
- arch/arm64/crypto/Makefile |    2 ++
- 2 files changed, 4 insertions(+)
+ drivers/phy/qualcomm/phy-qcom-ufs.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/arm/crypto/Makefile
-+++ b/arch/arm/crypto/Makefile
-@@ -54,6 +54,7 @@ crct10dif-arm-ce-y	:= crct10dif-ce-core.
- crc32-arm-ce-y:= crc32-ce-core.o crc32-ce-glue.o
- chacha20-neon-y := chacha20-neon-core.o chacha20-neon-glue.o
- 
-+ifdef REGENERATE_ARM_CRYPTO
- quiet_cmd_perl = PERL    $@
-       cmd_perl = $(PERL) $(<) > $(@)
- 
-@@ -62,5 +63,6 @@ $(src)/sha256-core.S_shipped: $(src)/sha
- 
- $(src)/sha512-core.S_shipped: $(src)/sha512-armv4.pl
- 	$(call cmd,perl)
-+endif
- 
- .PRECIOUS: $(obj)/sha256-core.S $(obj)/sha512-core.S
---- a/arch/arm64/crypto/Makefile
-+++ b/arch/arm64/crypto/Makefile
-@@ -58,6 +58,7 @@ CFLAGS_aes-glue-ce.o	:= -DUSE_V8_CRYPTO_
- $(obj)/aes-glue-%.o: $(src)/aes-glue.c FORCE
- 	$(call if_changed_rule,cc_o_c)
- 
-+ifdef REGENERATE_ARM64_CRYPTO
- quiet_cmd_perlasm = PERLASM $@
-       cmd_perlasm = $(PERL) $(<) void $(@)
- 
-@@ -66,5 +67,6 @@ $(src)/sha256-core.S_shipped: $(src)/sha
- 
- $(src)/sha512-core.S_shipped: $(src)/sha512-armv8.pl
- 	$(call cmd,perlasm)
-+endif
- 
- .PRECIOUS: $(obj)/sha256-core.S $(obj)/sha512-core.S
+--- a/drivers/phy/qualcomm/phy-qcom-ufs.c
++++ b/drivers/phy/qualcomm/phy-qcom-ufs.c
+@@ -689,3 +689,8 @@ int ufs_qcom_phy_power_off(struct phy *g
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(ufs_qcom_phy_power_off);
++
++MODULE_AUTHOR("Yaniv Gardi <ygardi@codeaurora.org>");
++MODULE_AUTHOR("Vivek Gautam <vivek.gautam@codeaurora.org>");
++MODULE_DESCRIPTION("Universal Flash Storage (UFS) QCOM PHY");
++MODULE_LICENSE("GPL v2");
