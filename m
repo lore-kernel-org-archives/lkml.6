@@ -1,285 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751606AbeDFS4E (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 14:56:04 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:45633 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750815AbeDFS4C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:56:02 -0400
-X-Google-Smtp-Source: AIpwx49Vhn+Ld5tfN2Yv50D4T0WNTws8ompawL/l8gIcJmCQCuKHPMuLjZGygJU8hu5q+QbYnYHPuQ==
-From: Greg Thelen <gthelen@google.com>
-To: Wang Long <wanglong19@meituan.com>, Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>
-Cc: npiggin@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Greg Thelen <gthelen@google.com>
-Subject: [PATCH v2] writeback: safer lock nesting
-Date: Fri,  6 Apr 2018 11:55:46 -0700
-Message-Id: <20180406185546.189305-1-gthelen@google.com>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
-In-Reply-To: <CAHH2K0YyAK2jBaLv0r7B5wfyyq0OZFpRyqcW92_H_hpLrU_A-A@mail.gmail.com>
-References: <CAHH2K0YyAK2jBaLv0r7B5wfyyq0OZFpRyqcW92_H_hpLrU_A-A@mail.gmail.com>
+        id S1751730AbeDFS5n (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 14:57:43 -0400
+Received: from mga14.intel.com ([192.55.52.115]:27569 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750807AbeDFS5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:57:42 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,416,1517904000";
+   d="scan'208";a="30696915"
+Date: Fri, 6 Apr 2018 11:57:46 -0700
+From: Dongwon Kim <dongwon.kim@intel.com>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: Gerd Hoffmann <kraxel@redhat.com>,
+        Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, qemu-devel@nongnu.org,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [RfC PATCH] Add udmabuf misc device
+Message-ID: <20180406185746.GA4983@downor-Z87X-UD5H>
+References: <20180313154826.20436-1-kraxel@redhat.com>
+ <20180313161035.GL4788@phenom.ffwll.local>
+ <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
+ <CAKMK7uGG6Z6XLc6GuKv7-3grCNg+EK2Lh6XWpavjsbZWF_L5Wg@mail.gmail.com>
+ <20180406001117.GD31612@mdroper-desk.amr.corp.intel.com>
+ <2411d2c1-33c0-2ba5-67ea-3bb9af5d5ec9@epam.com>
+ <20180406090747.gwiegu22z4noj23i@sirius.home.kraxel.org>
+ <9a085854-3758-1500-9971-806c611cb54f@gmail.com>
+ <20180406115730.jtwcbz5okrphlxli@sirius.home.kraxel.org>
+ <7ef89a29-6584-d23c-efd1-f30d9b767a24@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7ef89a29-6584-d23c-efd1-f30d9b767a24@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lock_page_memcg()/unlock_page_memcg() use spin_lock_irqsave/restore() if
-the page's memcg is undergoing move accounting, which occurs when a
-process leaves its memcg for a new one that has
-memory.move_charge_at_immigrate set.
+On Fri, Apr 06, 2018 at 03:36:03PM +0300, Oleksandr Andrushchenko wrote:
+> On 04/06/2018 02:57 PM, Gerd Hoffmann wrote:
+> >   Hi,
+> >
+> >>>I fail to see any common ground for xen-zcopy and udmabuf ...
+> >>Does the above mean you can assume that xen-zcopy and udmabuf
+> >>can co-exist as two different solutions?
+> >Well, udmabuf route isn't fully clear yet, but yes.
+> >
+> >See also gvt (intel vgpu), where the hypervisor interface is abstracted
+> >away into a separate kernel modules even though most of the actual vgpu
+> >emulation code is common.
+> Thank you for your input, I'm just trying to figure out
+> which of the three z-copy solutions intersect and how much
+> >>And what about hyper-dmabuf?
 
-unlocked_inode_to_wb_begin,end() use spin_lock_irq/spin_unlock_irq() if the
-given inode is switching writeback domains.  Swithces occur when enough
-writes are issued from a new domain.
+xen z-copy solution is pretty similar fundamentally to hyper_dmabuf
+in terms of these core sharing feature:
 
-This existing pattern is thus suspicious:
-    lock_page_memcg(page);
-    unlocked_inode_to_wb_begin(inode, &locked);
-    ...
-    unlocked_inode_to_wb_end(inode, locked);
-    unlock_page_memcg(page);
+1. the sharing process - import prime/dmabuf from the producer -> extract
+underlying pages and get those shared -> return references for shared pages
 
-If both inode switch and process memcg migration are both in-flight then
-unlocked_inode_to_wb_end() will unconditionally enable interrupts while
-still holding the lock_page_memcg() irq spinlock.  This suggests the
-possibility of deadlock if an interrupt occurs before
-unlock_page_memcg().
+2. the page sharing mechanism - it uses Xen-grant-table.
 
-    truncate
-    __cancel_dirty_page
-    lock_page_memcg
-    unlocked_inode_to_wb_begin
-    unlocked_inode_to_wb_end
-    <interrupts mistakenly enabled>
-                                    <interrupt>
-                                    end_page_writeback
-                                    test_clear_page_writeback
-                                    lock_page_memcg
-                                    <deadlock>
-    unlock_page_memcg
+And to give you a quick summary of differences as far as I understand
+between two implementations (please correct me if I am wrong, Oleksandr.)
 
-Due to configuration limitations this deadlock is not currently possible
-because we don't mix cgroup writeback (a cgroupv2 feature) and
-memory.move_charge_at_immigrate (a cgroupv1 feature).
+1. xen-zcopy is DRM specific - can import only DRM prime buffer
+while hyper_dmabuf can export any dmabuf regardless of originator
 
-If the kernel is hacked to always claim inode switching and memcg
-moving_account, then this script triggers lockup in less than a minute:
-  cd /mnt/cgroup/memory
-  mkdir a b
-  echo 1 > a/memory.move_charge_at_immigrate
-  echo 1 > b/memory.move_charge_at_immigrate
-  (
-    echo $BASHPID > a/cgroup.procs
-    while true; do
-      dd if=/dev/zero of=/mnt/big bs=1M count=256
-    done
-  ) &
-  while true; do
-    sync
-  done &
-  sleep 1h &
-  SLEEP=$!
-  while true; do
-    echo $SLEEP > a/cgroup.procs
-    echo $SLEEP > b/cgroup.procs
-  done
+2. xen-zcopy doesn't seem to have dma-buf synchronization between two VMs
+while (as danvet called it as remote dmabuf api sharing) hyper_dmabuf sends
+out synchronization message to the exporting VM for synchronization.
 
-Given the deadlock is not currently possible, it's debatable if there's
-any reason to modify the kernel.  I suggest we should to prevent future
-surprises.
+3. 1-level references - when using grant-table for sharing pages, there will
+be same # of refs (each 8 byte) as # of shared pages, which is passed to
+the userspace to be shared with importing VM in case of xen-zcopy. Compared
+to this, hyper_dmabuf does multiple level addressing to generate only one
+reference id that represents all shared pages.
 
-Reported-by: Wang Long <wanglong19@meituan.com>
-Signed-off-by: Greg Thelen <gthelen@google.com>
----
-Changelog since v1:
-- add wb_lock_cookie to record lock context.
+4. inter VM messaging (hype_dmabuf only) - hyper_dmabuf has inter-vm msg
+communication defined for dmabuf synchronization and private data (meta
+info that Matt Roper mentioned) exchange.
 
- fs/fs-writeback.c                |  7 ++++---
- include/linux/backing-dev-defs.h |  5 +++++
- include/linux/backing-dev.h      | 30 ++++++++++++++++--------------
- mm/page-writeback.c              | 18 +++++++++---------
- 4 files changed, 34 insertions(+), 26 deletions(-)
+5. driver-to-driver notification (hyper_dmabuf only) - importing VM gets
+notified when newdmabuf is exported from other VM - uevent can be optionally
+generated when this happens.
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index d4d04fee568a..518f72754a77 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -745,11 +745,12 @@ int inode_congested(struct inode *inode, int cong_bits)
- 	 */
- 	if (inode && inode_to_wb_is_valid(inode)) {
- 		struct bdi_writeback *wb;
--		bool locked, congested;
-+		struct wb_lock_cookie lock_cookie;
-+		bool congested;
- 
--		wb = unlocked_inode_to_wb_begin(inode, &locked);
-+		wb = unlocked_inode_to_wb_begin(inode, &lock_cookie);
- 		congested = wb_congested(wb, cong_bits);
--		unlocked_inode_to_wb_end(inode, locked);
-+		unlocked_inode_to_wb_end(inode, &lock_cookie);
- 		return congested;
- 	}
- 
-diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
-index bfe86b54f6c1..0bd432a4d7bd 100644
---- a/include/linux/backing-dev-defs.h
-+++ b/include/linux/backing-dev-defs.h
-@@ -223,6 +223,11 @@ static inline void set_bdi_congested(struct backing_dev_info *bdi, int sync)
- 	set_wb_congested(bdi->wb.congested, sync);
- }
- 
-+struct wb_lock_cookie {
-+	bool locked;
-+	unsigned long flags;
-+};
-+
- #ifdef CONFIG_CGROUP_WRITEBACK
- 
- /**
-diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-index 3e4ce54d84ab..1d744c61d996 100644
---- a/include/linux/backing-dev.h
-+++ b/include/linux/backing-dev.h
-@@ -346,7 +346,7 @@ static inline struct bdi_writeback *inode_to_wb(const struct inode *inode)
- /**
-  * unlocked_inode_to_wb_begin - begin unlocked inode wb access transaction
-  * @inode: target inode
-- * @lockedp: temp bool output param, to be passed to the end function
-+ * @cookie: output param, to be passed to the end function
-  *
-  * The caller wants to access the wb associated with @inode but isn't
-  * holding inode->i_lock, mapping->tree_lock or wb->list_lock.  This
-@@ -354,12 +354,11 @@ static inline struct bdi_writeback *inode_to_wb(const struct inode *inode)
-  * association doesn't change until the transaction is finished with
-  * unlocked_inode_to_wb_end().
-  *
-- * The caller must call unlocked_inode_to_wb_end() with *@lockdep
-- * afterwards and can't sleep during transaction.  IRQ may or may not be
-- * disabled on return.
-+ * The caller must call unlocked_inode_to_wb_end() with *@cookie afterwards and
-+ * can't sleep during transaction.  IRQ may or may not be disabled on return.
-  */
- static inline struct bdi_writeback *
--unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
-+unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
- {
- 	rcu_read_lock();
- 
-@@ -367,10 +366,10 @@ unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
- 	 * Paired with store_release in inode_switch_wb_work_fn() and
- 	 * ensures that we see the new wb if we see cleared I_WB_SWITCH.
- 	 */
--	*lockedp = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
-+	cookie->locked = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
- 
--	if (unlikely(*lockedp))
--		spin_lock_irq(&inode->i_mapping->tree_lock);
-+	if (unlikely(cookie->locked))
-+		spin_lock_irqsave(&inode->i_mapping->tree_lock, cookie->flags);
- 
- 	/*
- 	 * Protected by either !I_WB_SWITCH + rcu_read_lock() or tree_lock.
-@@ -382,12 +381,14 @@ unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
- /**
-  * unlocked_inode_to_wb_end - end inode wb access transaction
-  * @inode: target inode
-- * @locked: *@lockedp from unlocked_inode_to_wb_begin()
-+ * @cookie: @cookie from unlocked_inode_to_wb_begin()
-  */
--static inline void unlocked_inode_to_wb_end(struct inode *inode, bool locked)
-+static inline void unlocked_inode_to_wb_end(struct inode *inode,
-+					    struct wb_lock_cookie *cookie)
- {
--	if (unlikely(locked))
--		spin_unlock_irq(&inode->i_mapping->tree_lock);
-+	if (unlikely(cookie->locked))
-+		spin_unlock_irqrestore(&inode->i_mapping->tree_lock,
-+				       cookie->flags);
- 
- 	rcu_read_unlock();
- }
-@@ -434,12 +435,13 @@ static inline struct bdi_writeback *inode_to_wb(struct inode *inode)
- }
- 
- static inline struct bdi_writeback *
--unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
-+unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
- {
- 	return inode_to_wb(inode);
- }
- 
--static inline void unlocked_inode_to_wb_end(struct inode *inode, bool locked)
-+static inline void unlocked_inode_to_wb_end(struct inode *inode,
-+					    struct wb_lock_cookie *cookie)
- {
- }
- 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 586f31261c83..0e82c2fa78df 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2501,13 +2501,13 @@ void account_page_redirty(struct page *page)
- 	if (mapping && mapping_cap_account_dirty(mapping)) {
- 		struct inode *inode = mapping->host;
- 		struct bdi_writeback *wb;
--		bool locked;
-+		struct wb_lock_cookie cookie;
- 
--		wb = unlocked_inode_to_wb_begin(inode, &locked);
-+		wb = unlocked_inode_to_wb_begin(inode, &cookie);
- 		current->nr_dirtied--;
- 		dec_node_page_state(page, NR_DIRTIED);
- 		dec_wb_stat(wb, WB_DIRTIED);
--		unlocked_inode_to_wb_end(inode, locked);
-+		unlocked_inode_to_wb_end(inode, &cookie);
- 	}
- }
- EXPORT_SYMBOL(account_page_redirty);
-@@ -2613,15 +2613,15 @@ void __cancel_dirty_page(struct page *page)
- 	if (mapping_cap_account_dirty(mapping)) {
- 		struct inode *inode = mapping->host;
- 		struct bdi_writeback *wb;
--		bool locked;
-+		struct wb_lock_cookie cookie;
- 
- 		lock_page_memcg(page);
--		wb = unlocked_inode_to_wb_begin(inode, &locked);
-+		wb = unlocked_inode_to_wb_begin(inode, &cookie);
- 
- 		if (TestClearPageDirty(page))
- 			account_page_cleaned(page, mapping, wb);
- 
--		unlocked_inode_to_wb_end(inode, locked);
-+		unlocked_inode_to_wb_end(inode, &cookie);
- 		unlock_page_memcg(page);
- 	} else {
- 		ClearPageDirty(page);
-@@ -2653,7 +2653,7 @@ int clear_page_dirty_for_io(struct page *page)
- 	if (mapping && mapping_cap_account_dirty(mapping)) {
- 		struct inode *inode = mapping->host;
- 		struct bdi_writeback *wb;
--		bool locked;
-+		struct wb_lock_cookie cookie;
- 
- 		/*
- 		 * Yes, Virginia, this is indeed insane.
-@@ -2690,14 +2690,14 @@ int clear_page_dirty_for_io(struct page *page)
- 		 * always locked coming in here, so we get the desired
- 		 * exclusion.
- 		 */
--		wb = unlocked_inode_to_wb_begin(inode, &locked);
-+		wb = unlocked_inode_to_wb_begin(inode, &cookie);
- 		if (TestClearPageDirty(page)) {
- 			dec_lruvec_page_state(page, NR_FILE_DIRTY);
- 			dec_zone_page_state(page, NR_ZONE_WRITE_PENDING);
- 			dec_wb_stat(wb, WB_RECLAIMABLE);
- 			ret = 1;
- 		}
--		unlocked_inode_to_wb_end(inode, locked);
-+		unlocked_inode_to_wb_end(inode, &cookie);
- 		return ret;
- 	}
- 	return TestClearPageDirty(page);
--- 
-2.17.0.484.g0c8726318c-goog
+6. structure - hyper_dmabuf is targetting to provide a generic solution for
+inter-domain dmabuf sharing for most hypervisors, which is why it has two
+layers as mattrope mentioned, front-end that contains standard API and backend
+that is specific to hypervisor.
+
+> >No idea, didn't look at it in detail.
+> >
+> >Looks pretty complex from a distant view.  Maybe because it tries to
+> >build a communication framework using dma-bufs instead of a simple
+> >dma-buf passing mechanism.
+
+we started with simple dma-buf sharing but realized there are many
+things we need to consider in real use-case, so we added communication
+, notification and dma-buf synchronization then re-structured it to 
+front-end and back-end (this made things more compicated..) since Xen
+was not our only target. Also, we thought passing the reference for the
+buffer (hyper_dmabuf_id) is not secure so added uvent mechanism later.
+
+> Yes, I am looking at it now, trying to figure out the full story
+> and its implementation. BTW, Intel guys were about to share some
+> test application for hyper-dmabuf, maybe I have missed one.
+> It could probably better explain the use-cases and the complexity
+> they have in hyper-dmabuf.
+
+One example is actually in github. If you want take a look at it, please
+visit:
+
+https://github.com/downor/linux_hyper_dmabuf_test/tree/xen/simple_export
+
+> >
+> >Like xen-zcopy it seems to depend on the idea that the hypervisor
+> >manages all memory it is easy for guests to share pages with the help of
+> >the hypervisor.
+> So, for xen-zcopy we were not trying to make it generic,
+> it just solves display (dumb) zero-copying use-cases for Xen.
+> We implemented it as a DRM helper driver because we can't see any
+> other use-cases as of now.
+> For example, we also have Xen para-virtualized sound driver, but
+> its buffer memory usage is not comparable to what display wants
+> and it works somewhat differently (e.g. there is no "frame done"
+> event, so one can't tell when the sound buffer can be "flipped").
+> At the same time, we do not use virtio-gpu, so this could probably
+> be one more candidate for shared dma-bufs some day.
+> >   Which simply isn't the case on kvm.
+> >
+> >hyper-dmabuf and xen-zcopy could maybe share code, or hyper-dmabuf build
+> >on top of xen-zcopy.
+> Hm, I can imagine that: xen-zcopy could be a library code for hyper-dmabuf
+> in terms of implementing all that page sharing fun in multiple directions,
+> e.g. Host->Guest, Guest->Host, Guest<->Guest.
+> But I'll let Matt and Dongwon to comment on that.
+
+I think we can definitely collaborate. Especially, maybe we are using some
+outdated sharing mechanism/grant-table mechanism in our Xen backend (thanks
+for bringing that up Oleksandr). However, the question is once we collaborate
+somehow, can xen-zcopy's usecase use the standard API that hyper_dmabuf
+provides? I don't think we need different IOCTLs that do the same in the final
+solution.
+
+> 
+> >
+> >cheers,
+> >   Gerd
+> >
+> Thank you,
+> Oleksandr
+> 
+> P.S. Sorry for making your original mail thread to discuss things much
+> broader than your RFC...
+> 
