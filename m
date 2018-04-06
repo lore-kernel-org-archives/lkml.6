@@ -1,72 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756621AbeDFOBL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:01:11 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:44040 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752852AbeDFOBJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:01:09 -0400
-X-Google-Smtp-Source: AIpwx49OWFpCuq+GDCBfpHtb2LBtu2oGJE/QFL2GgvX4osVlzY/slyHbmp5XmqOfvyBJ3Fo4mk+KUWIVMMatnL7ngiM=
+        id S1756587AbeDFOCv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:02:51 -0400
+Received: from mga03.intel.com ([134.134.136.65]:62677 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752489AbeDFOCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 10:02:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,415,1517904000";
+   d="scan'208";a="30630502"
+Subject: Re: x86/dma conversion for v4.17-rc1 breaks sound / sst-acpi (commit
+ 6e4bf5867783)
+To: Mark Brown <broonie@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: hch@lst.de, thomas.lendacky@amd.com, tglx@linutronix.de,
+        dwmw2@infradead.org, joro@8bytes.org, jdmason@kudzu.us,
+        konrad.wilk@oracle.com, torvalds@linux-foundation.org, mulix@mulix.org,
+        peterz@infradead.org, iommu@lists.linux-foundation.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+        perex@perex.cz, tiwai@suse.com, Vinod Koul <vinod.koul@intel.com>
+References: <20180405205657.GA1788@light.dominikbrodowski.net>
+ <20180406011418.GE12349@sirena.org.uk>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <700ea637-3c58-5cbf-a7ac-fc242172acd9@linux.intel.com>
+Date: Fri, 6 Apr 2018 09:02:44 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180403170016.w3scjt57ssvk6zyi@linaro.org>
-References: <20180328174703.19778-1-manivannan.sadhasivam@linaro.org>
- <20180328174703.19778-4-manivannan.sadhasivam@linaro.org> <CAHp75VeRh9hORs=4nPqc=rUOCRzAfp0z2_1_xpJUScAeE07yqw@mail.gmail.com>
- <20180403170016.w3scjt57ssvk6zyi@linaro.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 6 Apr 2018 17:01:07 +0300
-Message-ID: <CAHp75Vd3otEntMseY0pq7ZyUhk1irs9Xt02R5c061FSDT0jXDA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/9] pinctrl: actions: Add Actions S900 pinctrl driver
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        Mani Sadhasivam <manivannanece23@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180406011418.GE12349@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 8:00 PM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
 
->> > +static const struct pinconf_ops owl_pinconf_ops = {
->> > +       .is_generic = true,
->> > +       .pin_config_get = owl_pin_config_get,
->> > +       .pin_config_set = owl_pin_config_set,
->> > +       .pin_config_group_get = owl_group_config_get,
->> > +       .pin_config_group_set = owl_group_config_set
+
+On 04/05/2018 08:14 PM, Mark Brown wrote:
+> On Thu, Apr 05, 2018 at 10:56:57PM +0200, Dominik Brodowski wrote:
+>> Christoph,
 >>
->> It's still good idea to leave comma here...
+>> unfortunately, commit 6e4bf5867783 breaks sound on my Dell XPS13, see the
+>> dmesg diff between fec777c385b6 and 6e4bf5867783:
+> Adding Vinod and Pierre from Intel in case they have any ideas here.
+> Which model of XPS13 is this (2015?)?
+No clear idea, but this patch is odd. It claims to replace a dma_ops 
+structure by an equivalent one but the
+callbacks for alloc/free are different.
 
-> I'm confused. What is the criteria for removing/keeping comma for last member
-> of struct? I followed your gpio driver suggestion.
+-void *x86_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+-                    dma_addr_t *dma_handle, gfp_t flags,
+-                    unsigned long attrs)
+-{
+-    void *vaddr;
+-
+-    /*
+-     * Don't print a warning when the first allocation attempt fails.
+-     * swiotlb_alloc_coherent() will print a warning when the DMA
+-     * memory allocation ultimately failed.
+-     */
+-    flags |= __GFP_NOWARN;
+-
+-    vaddr = dma_direct_alloc(hwdev, size, dma_handle, flags, attrs);
+-    if (vaddr)
+-        return vaddr;
+-
+-    return swiotlb_alloc_coherent(hwdev, size, dma_handle, flags);
+-}
+-
+-void x86_swiotlb_free_coherent(struct device *dev, size_t size,
+-                      void *vaddr, dma_addr_t dma_addr,
+-                      unsigned long attrs)
+-{
+-    if (is_swiotlb_buffer(dma_to_phys(dev, dma_addr)))
+-        swiotlb_free_coherent(dev, size, vaddr, dma_addr);
+-    else
+-        dma_direct_free(dev, size, vaddr, dma_addr, attrs);
+-}
 
-Just a common sense and experience are talking here: from time to time
-some structures are being expanded and in some cases it requires to
-update users. The comma just reduces a possible burden on this
-expansion.
-This is common pattern used in kernel.
-
->> > +};
->> > +
->> > +static struct pinctrl_desc owl_pinctrl_desc = {
->> > +       .pctlops = &owl_pinctrl_ops,
->> > +       .pmxops = &owl_pinmux_ops,
->> > +       .confops = &owl_pinconf_ops,
->> > +       .owner = THIS_MODULE
->>
->> ...and here, and in all similar places.
->>
->> > +};
-
--- 
-With Best Regards,
-Andy Shevchenko
+>
+>> -sst-acpi INT3438:00: DesignWare DMA Controller, 8 channels
+>> -haswell-pcm-audio haswell-pcm-audio: Direct firmware load for intel/IntcPP01.bin failed with error -2
+>> -haswell-pcm-audio haswell-pcm-audio: fw image intel/IntcPP01.bin not available(-2)
+>> -haswell-pcm-audio haswell-pcm-audio: FW loaded, mailbox readback FW info: type 01, - version: 00.00, build 77, source commit id: 876ac6906f31a43b6772b23c7c983ce9dcb18a19
+>> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> System Pin mapping ok
+>> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload0 Pin mapping ok
+>> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload1 Pin mapping ok
+>> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Loopback Pin mapping ok
+>> -broadwell-audio broadwell-audio: rt286-aif1 <-> snd-soc-dummy-dai mapping ok
+>> -input: broadwell-rt286 Headset as /devices/pci0000:00/INT3438:00/broadwell-audio/sound/card1/input15
+>> +broadwell-audio broadwell-audio: ASoC: CPU DAI System Pin not registered
+>> So it seems that sst-acpi is unhappy with this patch. Any ideas?
+>> Thanks,
+>> 	Dominik
