@@ -1,196 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751746AbeDFDPK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 23:15:10 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:45956 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751623AbeDFDPJ (ORCPT
+        id S1751642AbeDFDyB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 23:54:01 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:23815 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751523AbeDFDx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 23:15:09 -0400
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To: Michal Hocko <mhocko@kernel.org>
-CC: "Kirill A. Shutemov" <kirill@shutemov.name>, Zi Yan <zi.yan@sent.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
- consider non-anonymous thp as unmovable page)
-Thread-Topic: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
- consider non-anonymous thp as unmovable page)
-Thread-Index: AQHTzVRbJLbJcuvidESXEazGlmX3mA==
-Date: Fri, 6 Apr 2018 03:07:11 +0000
-Message-ID: <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
-References: <20180403082405.GA23809@hori1.linux.bs1.fc.nec.co.jp>
- <20180403083451.GG5501@dhcp22.suse.cz>
- <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
- <20180405085927.GC6312@dhcp22.suse.cz>
- <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
- <20180405124830.GJ6312@dhcp22.suse.cz>
- <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
- <20180405150547.GN6312@dhcp22.suse.cz>
- <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
- <20180405160317.GP6312@dhcp22.suse.cz>
-In-Reply-To: <20180405160317.GP6312@dhcp22.suse.cz>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.128.101.16]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <096B8D5FD15CDE4E9704754401AD7653@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Thu, 5 Apr 2018 23:53:59 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w363rfnl029517
+X-Nifty-SrcIP: [209.85.217.179]
+X-Google-Smtp-Source: AIpwx48NiITB2R5x0kAdzWK1XmXy15ArMIL5IVtm5fENI4Cb8hkQVhnZh2fWtwnMUuVvrBzf3XLI9sOMILBxTv4AqyU=
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+In-Reply-To: <1d69b982-ac3b-af0d-ae1f-16387a8be095@rasmusvillemoes.dk>
+References: <20180325223239.14778-1-linux@rasmusvillemoes.dk>
+ <20180325230918.23161-1-linux@rasmusvillemoes.dk> <CAK7LNASRP4nmKcTsF0QRvCOrX40MMO=FafOs+xG+UNA-b_61Dw@mail.gmail.com>
+ <1d69b982-ac3b-af0d-ae1f-16387a8be095@rasmusvillemoes.dk>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 6 Apr 2018 12:53:00 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARvTJJR=fa9_NyvwfX9z+f51Ha9XQzLrmVakVWUV4eAQw@mail.gmail.com>
+Message-ID: <CAK7LNARvTJJR=fa9_NyvwfX9z+f51Ha9XQzLrmVakVWUV4eAQw@mail.gmail.com>
+Subject: Re: [PATCH 2/1] Kbuild: fix # escaping in .cmd files for future Make
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi everyone,
+2018-04-06 6:43 GMT+09:00 Rasmus Villemoes <linux@rasmusvillemoes.dk>:
+> On 2018-03-26 13:48, Masahiro Yamada wrote:
+>> 2018-03-26 8:09 GMT+09:00 Rasmus Villemoes <linux@rasmusvillemoes.dk>:
+>>> The latest official Make release is 4.2.1 from mid-2016, but the current
+>>> git release has this relevant note in the NEWS file:
+>>>
+>>>   * WARNING: Backward-incompatibility!
+>>>     Number signs (#) appearing inside a macro reference or function invocation
+>>>     no longer introduce comments and should not be escaped with backslashes:
+>>>     thus a call such as:
+>>>       foo := $(shell echo '#')
+>>>     is legal.  Previously the number sign needed to be escaped, for example:
+>>>       foo := $(shell echo '\#')
+>>>     Now this latter will resolve to "\#".  If you want to write makefiles
+>>>     portable to both versions, assign the number sign to a variable:
+>>>       C := \#
+>>>       foo := $(shell echo '$C')
+>>>     This was claimed to be fixed in 3.81, but wasn't, for some reason.
+>>>     To detect this change search for 'nocomment' in the .FEATURES variable.
+>>>
+>>> Prepare for whatever future Make release contains that change by fixing
+>>> up the .cmd file escaping - without this, make always thinks the command
+>>> string has changed and hence rebuilds everything.
+>>>
+>>> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>>> ---
+>>> So the previous patch made everything build, but building again
+>>> revealed that this central place very much also needed fixing.
+>>>
+>>>  scripts/Kbuild.include | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+>>> index 065324a8046f..7a926e4688f4 100644
+>>> --- a/scripts/Kbuild.include
+>>> +++ b/scripts/Kbuild.include
+>>> @@ -10,6 +10,7 @@ space   := $(empty) $(empty)
+>>>  space_escape := _-_SPACE_-_
+>>>  right_paren := )
+>>>  left_paren := (
+>>> +pound := \#
+>>>
+>>>  ###
+>>>  # Name of target with a '.' as filename prefix. foo/bar.o => foo/.bar.o
+>>> @@ -328,7 +329,7 @@ endif
+>>>  # (needed for make)
+>>>  # Replace >'< with >'\''< to be able to enclose the whole string in '...'
+>>>  # (needed for the shell)
+>>> -make-cmd = $(call escsq,$(subst \#,\\\#,$(subst $$,$$$$,$(cmd_$(1)))))
+>>> +make-cmd = $(call escsq,$(subst $(pound),\\$(pound),$(subst $$,$$$$,$(cmd_$(1)))))
+>>>
+>>
+>> Thanks for the patch, but this changes the behavior.
+>> With '#' replaced with $(pound), '\\' does not escape anything,
+>> so it is treated as '\\'.
+>>
+>>
+>> The following keeps the current behavior:
+>>
+>> make-cmd = $(call escsq,$(subst $(pound),\$(pound),$(subst
+>> $$,$$$$,$(cmd_$(1)))))
+>>
+>>
+>>
+>> But, I think the following is an even better fix:
+>>
+>> make-cmd = $(call escsq,$(subst $(pound),$$(pound),$(subst
+>> $$,$$$$,$(cmd_$(1)))))
+>
+> Makefile quoting has never been my strong suit. I actually thought I
+> tested my change by looking at some .o.cmd files containing \# before
+> and after, but I was fooled by tools/ containing and using their own
+> copy of make-cmd - so tools/build/Build.include will also need fixing.
+>
+> Yes, writing $(pound) to the .cmd file seems like the safest choice. Do
+> you want me to respin or can/will you do the patch(es) yourself?
+>
 
-On Thu, Apr 05, 2018 at 06:03:17PM +0200, Michal Hocko wrote:
-> On Thu 05-04-18 18:55:51, Kirill A. Shutemov wrote:
-> > On Thu, Apr 05, 2018 at 05:05:47PM +0200, Michal Hocko wrote:
-> > > On Thu 05-04-18 16:40:45, Kirill A. Shutemov wrote:
-> > > > On Thu, Apr 05, 2018 at 02:48:30PM +0200, Michal Hocko wrote:
-> > > [...]
-> > > > > RIght, I confused the two. What is the proper layer to fix that then?
-> > > > > rmap_walk_file?
-> > > > 
-> > > > Maybe something like this? Totally untested.
-> > > 
-> > > This looks way too complex. Why cannot we simply split THP page cache
-> > > during migration?
-> > 
-> > This way we unify the codepath for archictures that don't support THP
-> > migration and shmem THP.
-> 
-> But why? There shouldn't be really nothing to prevent THP (anon or
-> shemem) to be migratable. If we cannot migrate it at once we can always
-> split it. So why should we add another thp specific handling all over
-> the place?
+Can you send v2 please?
 
-If thp migration works fine for shmem, we can keep anon/shmem thp to
-be migratable and we don't need any ad-hoc workaround.
-So I wrote a patch to enable it.
-This patch does not change any shmem specific code, so I think that
-it works for file thp (not only shmem,) but I don't test it yet.
+I will pick it up shortly.
 
-Thanks,
-Naoya Horiguchi
------
->From e31ec037701d1cc76b26226e4b66d8c783d40889 Mon Sep 17 00:00:00 2001
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Date: Fri, 6 Apr 2018 10:58:35 +0900
-Subject: [PATCH] mm: enable thp migration for shmem thp
 
-My testing for the latest kernel supporting thp migration showed an
-infinite loop in offlining the memory block that is filled with shmem
-thps.  We can get out of the loop with a signal, but kernel should
-return with failure in this case.
 
-What happens in the loop is that scan_movable_pages() repeats returning
-the same pfn without any progress. That's because page migration always
-fails for shmem thps.
-
-In memory offline code, memory blocks containing unmovable pages should
-be prevented from being offline targets by has_unmovable_pages() inside
-start_isolate_page_range(). So it's possible to change migratability
-for non-anonymous thps to avoid the issue, but it introduces more complex
-and thp-specific handling in migration code, so it might not good.
-
-So this patch is suggesting to fix the issue by enabling thp migration
-for shmem thp. Both of anon/shmem thp are migratable so we don't need
-precheck about the type of thps.
-
-Fixes: commit 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: stable@vger.kernel.org # v4.15+
----
- mm/huge_memory.c |  5 ++++-
- mm/migrate.c     | 19 ++++++++++++++++---
- mm/rmap.c        |  3 ---
- 3 files changed, 20 insertions(+), 7 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2aff58624886..933c1bbd3464 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2926,7 +2926,10 @@ void remove_migration_pmd(struct page_vma_mapped_walk *pvmw, struct page *new)
- 		pmde = maybe_pmd_mkwrite(pmde, vma);
- 
- 	flush_cache_range(vma, mmun_start, mmun_start + HPAGE_PMD_SIZE);
--	page_add_anon_rmap(new, vma, mmun_start, true);
-+	if (PageAnon(new))
-+		page_add_anon_rmap(new, vma, mmun_start, true);
-+	else
-+		page_add_file_rmap(new, true);
- 	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
- 	if (vma->vm_flags & VM_LOCKED)
- 		mlock_vma_page(new);
-diff --git a/mm/migrate.c b/mm/migrate.c
-index bdef905b1737..f92dd9f50981 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -472,7 +472,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	pslot = radix_tree_lookup_slot(&mapping->i_pages,
-  					page_index(page));
- 
--	expected_count += 1 + page_has_private(page);
-+	expected_count += hpage_nr_pages(page) + page_has_private(page);
- 	if (page_count(page) != expected_count ||
- 		radix_tree_deref_slot_protected(pslot,
- 					&mapping->i_pages.xa_lock) != page) {
-@@ -505,7 +505,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	 */
- 	newpage->index = page->index;
- 	newpage->mapping = page->mapping;
--	get_page(newpage);	/* add cache reference */
-+	page_ref_add(newpage, hpage_nr_pages(page)); /* add cache reference */
- 	if (PageSwapBacked(page)) {
- 		__SetPageSwapBacked(newpage);
- 		if (PageSwapCache(page)) {
-@@ -524,13 +524,26 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	}
- 
- 	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-+	if (PageTransHuge(page)) {
-+		int i;
-+		int index = page_index(page);
-+
-+		for (i = 0; i < HPAGE_PMD_NR; i++) {
-+			pslot = radix_tree_lookup_slot(&mapping->i_pages,
-+						       index + i);
-+			radix_tree_replace_slot(&mapping->i_pages, pslot,
-+						newpage + i);
-+		}
-+	} else {
-+		radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-+	}
- 
- 	/*
- 	 * Drop cache reference from old page by unfreezing
- 	 * to one less reference.
- 	 * We know this isn't the last reference.
- 	 */
--	page_ref_unfreeze(page, expected_count - 1);
-+	page_ref_unfreeze(page, expected_count - hpage_nr_pages(page));
- 
- 	xa_unlock(&mapping->i_pages);
- 	/* Leave irq disabled to prevent preemption while updating stats */
-diff --git a/mm/rmap.c b/mm/rmap.c
-index f0dd4e4565bc..8d5337fed37b 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1374,9 +1374,6 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 		if (!pvmw.pte && (flags & TTU_MIGRATION)) {
- 			VM_BUG_ON_PAGE(PageHuge(page) || !PageTransCompound(page), page);
- 
--			if (!PageAnon(page))
--				continue;
--
- 			set_pmd_migration_entry(&pvmw, page);
- 			continue;
- 		}
 -- 
-2.7.4
+Best Regards
+Masahiro Yamada
