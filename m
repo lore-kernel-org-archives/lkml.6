@@ -1,105 +1,738 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751935AbeDFQD4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 12:03:56 -0400
-Received: from mail-io0-f177.google.com ([209.85.223.177]:42733 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeDFQDy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 12:03:54 -0400
-X-Google-Smtp-Source: AIpwx4+FLxJYb5tyxqDeQXOnq9+qsjB4T2fZg3cQpJJyQWmmL5ushRUyACGr0YKAQVAmtJ7JA5R5qyQ8KdCsS1MHXv4=
+        id S1752235AbeDFQGI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 12:06:08 -0400
+Received: from mail-eopbgr40069.outbound.protection.outlook.com ([40.107.4.69]:51840
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751735AbeDFQGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 12:06:05 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com;
+Date: Fri, 6 Apr 2018 10:05:41 -0600
+From: Jason Gunthorpe <jgg@mellanox.com>
+To: Linux Torvalds <torvalds@linux-foundation.org>,
+        Doug Ledford <dledford@redhat.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Please pull RDMA subsystem changes
+Message-ID: <20180406160541.GA28094@ziepe.ca>
 MIME-Version: 1.0
-In-Reply-To: <95fe50be-cc8b-4345-7333-cdf656fad2a7@gmail.com>
-References: <e1da0be1-94d8-d5d0-8329-4507c51ddd64@gmail.com>
- <20180324064627.GA10884@linaro.org> <c5daea3c-0834-1629-3e38-3db5130eb32f@gmail.com>
- <6b151c56-9ead-7bbe-d1b7-b0e6d69c0d7f@arm.com> <CAKfTPtDigSEOmtxk7daTTBb3o6kVR8AgUVhu4X6YWutK9yWNwg@mail.gmail.com>
- <CAKfTPtAisq0tQ_Kw3OptJYm=u7tSk6vyi3CFZJdhBxD=d=EN1g@mail.gmail.com>
- <796bbd7b-8512-7370-28c9-0f082dc3f287@gmail.com> <CAKfTPtD17yUrp5G7gPN6ijB+C-TKJcK1UTCmP_JhMK5DvSDN_g@mail.gmail.com>
- <95fe50be-cc8b-4345-7333-cdf656fad2a7@gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 6 Apr 2018 18:03:33 +0200
-Message-ID: <CAKfTPtAJCck6mpXhbMkZes2D6KMYsoB9WkCRL+6owJfMiNXq5w@mail.gmail.com>
-Subject: Re: Problem with commit 31e77c93e432 "sched/fair: Update blocked load
- when newly idle"
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [174.3.196.123]
+X-ClientProxiedBy: MWHPR0201CA0053.namprd02.prod.outlook.com
+ (2603:10b6:301:73::30) To DB7PR05MB4457.eurprd05.prod.outlook.com
+ (2603:10a6:5:1b::22)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: cfcb09c3-187c-4c20-5012-08d59bd84a46
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB7PR05MB4457;
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR05MB4457;3:rJoh4n8/SyChSW9IQ7n0A0AWKCEMyfHtUQ3ePrETzX8mmu39JdPVko2+p+dXuxkaA8Gfre4syudxT8+3J43kIC0zUf/Fl0tTjVSs/nAxGJnZ00wKC3BJoqElBzu/PGINZO924uUakT/aTJcEigRPKmJ9QwAcFrbN6AFu1h0LN7VmB2FC/bIHCTRRbS846y4mPsck6XsZum9Sj7p0nEhBNQ0i9U51GDciJ4Xiv/KI0nQ6LeaWPMK6xxh5VGW9HJL0;25:Uq7wZJdQ9lA1f4WKWmGRaM+S4DCpv/7NP8NAhbM2e5SP27bSlNQ/TkFMiksMgYYqOWsNp+VePkv8tQiUCA3hD3+uBSfI3ydGnfgvs7UOBs71UzXGoqqP9OSrULzH3HXD2ZkYYjkRhZwHktFZOo+FPLX7HjQr6ocTdFC+mUg9Iar9N3YJo+86i1vcE74n3zW5EkDsjYS70s2RucnHI+GvsnIm4iUncdwQ+rSjHrfbLAdg/APp48MssVqPQMZbaWIUjK1lWd5GsdS9sZXrioFvFTBnc9Tyw3JBCq6mwTaAJvYIYRVBqBI9w+X4gIt/Jx32eEwhZm+SatXhRNeTqw6+lw==;31:FDQXP9MZBf6TrMdciQ/QAQjcxotbcKsqr4G/+PIYmMk4Pp/+E7cS+NV4YNoTR0C62G1Lrl78UP56yp1pUFgdCcvGBK4m8Dm3eO2pIX8oyXPu5InIp0kMayiF88q+N7DB+HZ6A8UreDblDGe7yltpcLyG9sZfe8mMT8o5o7u9amhExkefeXpo8y9CWsWEbM8aV/clnw7j7oaDVoHgxdwfNZtWORcJ+jQ1rtv+RPUvqQs=
+X-MS-TrafficTypeDiagnostic: DB7PR05MB4457:
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR05MB4457;20:tXqlP/eejH3g7hAF85iio3WWP3VG3gKJ4L5Z7jTxYdlEdqfwfkOS0J4MzagyEMrfmQi2C+xVUYbkyNWBx9LGDaGZ7/vKQjP+yfCu462YKHqfmUouCMwRvoxcsiMFmEogHS4/psj9I8qNe2Bg5WTR5hUGDpho3AqxuBdv9EmMvns2zzSK/bKsFU2sqzxAuzC86IzZjSubClolwjZk7DAxxLHC+KDb0FdxxB2UGscCaxckCNcATXIPo/Z27QSEnlaH8nJlG202L+BeACGnhOo+7047kyntmDggC4Q0QI+AujiHJdd3YuML+c0hOYODQqNKLKiLJ3rczqK84VcjhbiYT2gbnpFDOvgIyyM4avH26Kza8WEoD5Jlr1Log/irvctpenh5aWHALaCEKUZl/GJLR7waaUHJmlhxls7REJqUNCYMDqalYgeoqsgwdeILPBBmVowOggjAsVvfUUkz3lrDhw+QAs9Zzn/pS4hNXarEPXXoyYE9L+6abp4z+4OjLLzL;4:P2nLTUMxrg4stP9zSdAXvcW6k0QxCCIhTunCygiHmBar8UE0K0GQ8rU9Wws40XPmRSHXAQm+AkAttLlkmQ+EnpGXWnlIetkwEhF2EuQaG497T4ADlJwk4aQbXn0VuT7ArOAjB1acTbsLIPOAPn+PwB8o7LseiWouAF2QFNSAB6/KcFlOqvoNTauMOYya4a1GaE/s8JjS6eVb3tYXo/BayCHSXEWwDt2iUGNvocGmB63fgfnzRB0nQzAjVZRN2x7vD4lY38IvuhD4eZ4e1niYPijMnsSN75HKQeZCUW+RBmnxoHTyPgiUiNoaL9fCutMRavscEAOHNPIh6UvwuinaLt3WIm2RX7w+dHIm0tCvWY6CT32tQIpxGqu4XiACkjr7
+X-Microsoft-Antispam-PRVS: <DB7PR05MB4457CFE098AC47395B8256B4CFBA0@DB7PR05MB4457.eurprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(788757137089)(84791874153150)(211171220733660);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:DB7PR05MB4457;BCL:0;PCL:0;RULEID:;SRVR:DB7PR05MB4457;
+X-Forefront-PRVS: 0634F37BFF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(346002)(39380400002)(39860400002)(366004)(376002)(377424004)(189003)(199004)(2906002)(97736004)(9686003)(69596002)(7736002)(4326008)(66066001)(6116002)(46656002)(57986006)(53946003)(478600001)(33656002)(305945005)(3846002)(1076002)(5660300001)(53936002)(83796002)(386003)(33896004)(81166006)(33964004)(122856001)(44144004)(84326002)(8676002)(58126008)(16586007)(105586002)(36756003)(21480400003)(5890100001)(110136005)(316002)(86362001)(68736007)(106356001)(486006)(26005)(81156014)(52116002)(59450400001)(9786002)(8936002)(476003)(9746002)(186003)(18370500001)(24400500001)(42262002)(2700100001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR05MB4457;H:mlx.ziepe.ca;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB7PR05MB4457;23:etH9lbWPqPzNtfOVozElOysbO8ADK+xfd/SCSODOi?=
+ =?us-ascii?Q?NtvOjXjv7r1DRH65iYP8lrVYrYb9tJEVDGZcoaRtaDYst1rPbPTBWibgq78b?=
+ =?us-ascii?Q?M5aNUCb+HjxNajZE1DvKqc558c3eQY1HMsIbV+j2iPSLfy5ROgJRXs2gllQm?=
+ =?us-ascii?Q?m7IiDQIL+ul7W7kibq7Q+xxPVlUorTIIV7cJgUgdgOjEDsKBQoQOJto/Ynje?=
+ =?us-ascii?Q?Nd02sIrlnBnIQlq6w3G1tj16NfBMrj1RkgeYZWcek2+r1kthkJAe/IyomPsz?=
+ =?us-ascii?Q?kNCM0/XtcsgPWtWQs9k0+/wOMiljWXLs3TA1uzlN0w0LcsdJJbRJxkmsCVsP?=
+ =?us-ascii?Q?K1b9UtLSEmN50ByRtr5/8n4yje92wj7ZucdAZmbQ20cXB162Hxe6Ag6YdG9a?=
+ =?us-ascii?Q?sa7G/tMtvWlVAOgfJCRezJTXvowA9FmDyOGoalqL+J26BWO2AJFHlzWAqASf?=
+ =?us-ascii?Q?NYDz4qSkHMRLmU22CILAfdpspuI1b8Xu3jJFRsWeIXnL9WMzONWZ6GIxFZe+?=
+ =?us-ascii?Q?Xh2sZjtW8ipBPazl/GKgykV5dcQgI0CsNfcyHfWK0KglUJvbflS5PHc3uTay?=
+ =?us-ascii?Q?bGYKP3xzr3KawZftS1QLgeWxQwSBeB5Z1a+euGVWm58W746Bgn3Egos/xqDz?=
+ =?us-ascii?Q?8UGs6Bg1b5//SPVraguSLe+EK9W08AyswXAxgo0a52XN49TzuLI204BMYWk8?=
+ =?us-ascii?Q?Az/okBEmpmKeXOduZsMV0OJFXYVqczOtgZhUWAiV5KyJWKKnjA53A9UbgDlR?=
+ =?us-ascii?Q?ZCIBFO8nuBRfVlM3fVebFnZIplS91woxfl+fPDXOWEsIXTpFwy+UCTA9QOpM?=
+ =?us-ascii?Q?0xED1yfRz/+U1ECFKxwUTbVzfZbrH0U9XUewPeP+mvEFrAx4BwRzufpZbV7Q?=
+ =?us-ascii?Q?Nj5CTlBKJOxdScHOxGMcQwQVZiWgzegOz41k8d+oARmP7wedQUa3snsbO/Zp?=
+ =?us-ascii?Q?gnZExCd2lSWXdv5uyebYLyV+3iW7uzOc/AOtG96ZhSAPTQ8JNTSPV3McxFaP?=
+ =?us-ascii?Q?BiVjO2Zya5gv26Scr1IPluRWjDUN/9ZaehJfaTB3BncMl5lBTE83RLfXAj2J?=
+ =?us-ascii?Q?rlLhKQpsfxbYWQEncCfeu5OvCkpphf9b6SPcD5UB9ou2Oh+83ZDBAFcMJkWS?=
+ =?us-ascii?Q?VRbMGBQZe3LdLj+x8/u5eTvlR4QGJdQq2p6iB8KsdniP+gbiuo6XqbUcJrCY?=
+ =?us-ascii?Q?sDxQAQuE0CKW0pql884glWA/24MeT2IMDBcun/66OF8ubBI0KcClrJ/55HBP?=
+ =?us-ascii?Q?jh5eC79R00etwrbaKcTDWkXek1BgiQhrU0yDTqKyX+EQGIdAcTsCyvsbibBX?=
+ =?us-ascii?Q?3/FkQFFYKhO63jEZK78p+sAvIbwXHPOUbU07fwUzDHfFj2UZiuzOf4TYyM2z?=
+ =?us-ascii?Q?77jtzxSd58lPsE0CIKduztEeZtvef9Bep7o/wCxJXOzNDUi?=
+X-Microsoft-Antispam-Message-Info: v+hJzEfxzHDM9nNovgiujodL0SGGJsH6DtVzlJLrjZO3iWlu11URUbooXgj6aw+FYrcfs5xjL1X+9e8+lxM+HWMsD1Zm9EatRQvlPQFX3DBe0udIbjg3CCjO9xmh4yNDkwmJvDfj0G+j6ymKssD/dqaTOp6zy7h41kWXCQEnHMirtjUdMzR89bRE7IpX4aw7
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR05MB4457;6:ccc95GySLxWAGvYEKdL4UOuTF7uim0StClVb9BccnzThXXP4c+zTQ0bdbIZ051Hoz6183Q0HNzPfX8d+RSPyVeiOefQI8p6Dvp3VZFERrcWTuRjeEdgRkuc8d4GTCw5uf6cL/JHStLmEb+CL6PQhy/wud1CyJremxisHT0Z6+AzC1htfCPPxFlyF/ST4J0GLfQen7PmoWtka4F1StWOWqVz2+gXa9uSZrPx5K8c+tmoNcU9uZtzRiFHSL4wjzjXOBhSmQCB63nZ73x+XZsiFbNkLVTaeqwihDCkQoyNvDroRKevOHQF5SGla/Mh3OzNQRDS+drDePVNydDhcNV0siAn3UzJiY8UL++FRDr29OWWqwU320GdXLrLZNuMQXGRs7BzXwzMSAdXfdZ6jduyr474Mz5qOML6aZFu/O6jcpMp4G5kswjJdtgiKG142HJvOS7AubhD+niTgML5HWkFAew==;5:MU/sKsNhS4oQufi9wHzY+gtfJIJCvCs+1dMugPe2LzYKoFYakv9q426sY9T/DvjEH4QLmH0jEyGgGFyVAta0KOO04CVjCfY0Y5amo2/t0ALS5NCbnvFpP1X26LpEtTFCPwcrFVee+EhSvrsxjYsK/4VH/r1LXEQQEE8UqP8fNmo=;24:SNuQeipeW2FeVerKD6Fe2OpYySEwDhzhGetqR/lC+bs03XwVy52gMS8iRl+gQE3V3MjfPjB7ZwDyKfgeKPU6RAOvPg/Dp/yP/GYurbV+F1I=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR05MB4457;7:kYy1iXSSmJ7AZJOqw+8ZQhdZzULA0A+B27lwVyfNL5zw863yqGbbrmffOwyEIBVUGhnyaUhXIsjD29BS/GJ8HgI01OWGsOQVbQa/9oQRVCzNSx6ApR9ZUIY+nk79tOL5/z8wqck+plFHllY/uZgbZKP8s6tGHCcVDbiSZpxosCCjTMlzr748AamWHbNMCoOzSB5BtxyCZ9Pz74EIdd6a6PNZ+lN0JWnM/Qrax9Y0Gm+lCiKns3BaO9JapPVmGi9R
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2018 16:06:00.2437 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfcb09c3-187c-4c20-5012-08d59bd84a46
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR05MB4457
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heiner,
 
-On 30 March 2018 at 10:37, Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> Am 30.03.2018 um 08:50 schrieb Vincent Guittot:
->> On 29 March 2018 at 19:40, Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>> Am 29.03.2018 um 09:41 schrieb Vincent Guittot:
->>
->>>>
->>>> I'm finally not so sure that i have the right set up to reproduce the
->>>> problem as I haven't been able to reproduce it since.
->>>>
->>>> Heiner,
->>>>
->>>> How fast the problem happens on your board ?
->>>> Are you doing anything specific on the console that trigger the problem ?
->>>>
->>> Hi Vincent,
->>>
->>> the lag when working on the console is constantly there, the "rcu_preempt
->>> detected stalls" happens after several hours (so far always within 24h)
->>> w/o any triggering event I would be aware of. It occured also when the
->>> system was idle at that point in time.
->>
->> Ok, so I don't have the problem on my hikey as the console never lag
->> on my setup.
->>
->> Can you send me the config of  your kernel ? I'd like to check if you
->> have enable something that could trigger such problem
->>
-> Sure, he we go. I also add a system log.
+--a8Wt8u1KmwUX3Y2C
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the config. I have used it for my setup but I can't
-reproduce your regression. My platforms stay stable so I probably
-missing something. Are you facing similar problem with other platforms
-or only this celeron based platform ?
+Hi Linus,
 
-I have reviewed the code but don't see any obvious place in the patch
-that can generate the problem. Nevertheless, would you mind to try the
-patch below ? It's a blind test to try to narrow the problem.
+Here are the RDMA patches for for 4.17.
 
-Thanks
+This cycle we have some interesting conflicts, a syzkaller related bug fix =
+in
+rc clashed very badly with the Mellanox shared pull request. Doug made the
+resolution in the RDMA tree for-next tree and DaveM refered to it when he
+pulled in the same patches. This turned out to create two commits to the sa=
+me
+file which then also creates an unexpected conflict here. In retrospect
+perhaps we should have tried to push the conflict resolution as a shared pa=
+tch
+as well.
 
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So at this point we have conflicts between net-next, RDMA for-rc and RDMA
+for-next. As before I've resolved them in the top commit, but this couldn't
+be done against a nice tag. I choose to use your merge of net-next, which
+has all the necessary patches.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 0951d1c..e9835f2 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9794,9 +9794,9 @@ static int idle_balance(struct rq *this_rq,
-struct rq_flags *rf)
-  sd = rcu_dereference_check_sched_domain(this_rq->sd);
-  if (sd)
-  update_next_balance(sd, &next_balance);
-- rcu_read_unlock();
+The for-linus-unmerged tag is the same PR without this resolution. In this
+case the conflicts are easy to resolve by hand. Just deleting the conflict
+markers is correct in every case execpt umca.c which requires this:
 
-  nohz_newidle_balance(this_rq);
-+ rcu_read_unlock();
+-       ctx->cm_id =3D __rdma_create_id(current->nsproxy->net_ns,
+-                             ucma_event_handler, ctx, cmd.ps, qp_type, NUL=
+L);
+-       if (IS_ERR(ctx->cm_id)) {
+-               ret =3D PTR_ERR(ctx->cm_id);
+ -      cm_id =3D rdma_create_id(current->nsproxy->net_ns,
+ -                             ucma_event_handler, ctx, cmd.ps, qp_type);
+++      cm_id =3D __rdma_create_id(current->nsproxy->net_ns,
+++                             ucma_event_handler, ctx, cmd.ps, qp_type, NU=
+LL);
++       if (IS_ERR(cm_id)) {
++               ret =3D PTR_ERR(cm_id);
 
-  goto out;
-  }
--- 
-2.7.4
+Doug and I are at a conference next week so if another PR is sent I expect =
+it
+to only be bug fixes. Parav noted yesterday that there are some fringe case
+behavior changes in his work that he would like to fix, and I see that Intel
+has a number of rc looking patches for HFI1 they posted yesterday.
 
->
-> #
-> # Automatically generated file; DO NOT EDIT.
-> # Linux/x86 4.16.0-rc7 Kernel Configuration
-> #
+Parav is again the biggest contributor by patch count with his ongoing work=
+ to
+enable container support in the RDMA stack, followed by Leon doing syzkaller
+inspired cleanups, though most of the actual fixing went to RC.
 
-[snip]
+There is one uncomfortable series here fixing the user ABI to actually work=
+ as
+intended in 32 bit mode. There are lots of notes in the commit messages, but
+the basic summary is we don't think there is an actual 32 bit kernel user of
+drivers/infiniband for several good reasons. However we are seeing people w=
+ant
+to use a 32 bit user space with 64 bit kernel, which didn't completely work
+today. So in fixing it we required a 32 bit rxe user to upgrade their
+userspace. rxe users are still already quite rare and we think a 32 bit one=
+ is
+non-existing.
+
+Thanks,
+Jason
+
+The following changes since commit 5bb053bef82523a8fd78d650bca81c9f114fa276:
+
+  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next (2018-=
+04-03 14:04:18 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+
+for you to fetch changes up to 423009d1cbb77b67f6eba65efd116874e6b6b69d:
+
+  Merge net-next of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/=
+linux-2.6.git (2018-04-05 20:57:10 -0600)
+
+----------------------------------------------------------------
+Merge candidates for 4.17 merge window
+
+- Fix RDMA uapi headers to actually compile in userspace and be more
+  complete
+
+- Three shared with netdev pull requests from Mellanox:
+
+   * 7 patches, mostly to net with 1 IB related one at the back). This
+     series addresses an IRQ performance issue (patch 1), cleanups related =
+to
+     the fix for the IRQ performance problem (patches 2-6), and then extends
+     the fragmented completion queue support that already exists in the net
+     side of the driver to the ib side of the driver (patch 7).
+
+   * Mostly IB, with 5 patches to net that are needed to support the remain=
+ing
+     10 patches to the IB subsystem. This series extends the current
+     'representor' framework when the mlx5 driver is in switchdev mode from
+     being a netdev only construct to being a netdev/IB dev construct. The =
+IB
+     dev is limited to raw Eth queue pairs only, but by having an IB dev of
+     this type attached to the representor for a switchdev port, it enables
+     DPDK to work on the switchdev device.
+
+   * All net related, but needed as infrastructure for the rdma driver
+
+- Updates for the hns, i40iw, bnxt_re, cxgb3, cxgb4, hns drivers
+
+- SRP performance updates
+
+- IB uverbs write path cleanup patch series from Leon
+
+- Add RDMA_CM support to ib_srpt. This is disabled by default.  Users need =
+to
+  set the port for ib_srpt to listen on in configfs in order for it to be
+  enabled (/sys/kernel/config/target/srpt/discovery_auth/rdma_cm_port)
+
+- TSO and Scatter FCS support in mlx4
+
+- Refactor of modify_qp routine to resolve problems seen while working on n=
+ew
+  code that is forthcoming
+
+- More refactoring and updates of RDMA CM for containers support from Parav
+
+- mlx5 'fine grained packet pacing', 'ipsec offload' and 'device memory'
+  user API features
+
+- Infrastructure updates for the new IOCTL interface, based on increased us=
+age
+
+- ABI compatibility bug fixes to fully support 32 bit userspace on 64 bit
+  kernel as was originally intended. See the commit messages for
+  extensive details
+
+- Syzkaller bugs and code cleanups motivated by them
+
+----------------------------------------------------------------
+Andrew Morton (2):
+      drivers/infiniband/core/verbs.c: fix build with gcc-4.4.4
+      drivers/infiniband/ulp/srpt/ib_srpt.c: fix build with gcc-4.4.4
+
+Andy Shevchenko (1):
+      RDMA/hns: Replace __raw_write*(cpu_to_le*()) with LE write*()
+
+Ariel Levkovich (8):
+      IB/uverbs: Expose device memory capabilities to user
+      IB/uverbs: Add device memory capabilities reporting
+      IB/uverbs: Add alloc/free dm uverbs ioctl support
+      IB/uverbs: Add device memory registration ioctl support
+      net/mlx5: Query device memory capabilities
+      IB/mlx5: Device memory support in mlx5_ib
+      net/mlx5: Mkey creation command adjustments
+      IB/mlx5: Device memory mr registration support
+
+Arnd Bergmann (3):
+      infiniband: qplib_fp: fix pointer cast
+      infiniband: bnxt_re: use BIT_ULL() for 64-bit bit masks
+      RDMA/i40iw: include linux/irq.h
+
+Arushi (1):
+      infiniband: hw: Drop unnecessary continue
+
+Aviad Yehezkel (3):
+      IB/mlx5: Add implementation for create and destroy action_xfrm
+      {net,IB}/mlx5: Add ipsec helper
+      IB/mlx5: Add IPsec support for egress and ingress
+
+Bart Van Assche (13):
+      IB/srp: Fix completion vector assignment algorithm
+      IB/srp: Fix srp_abort()
+      Revert "IB/srp: Avoid that a cable pull can trigger a kernel crash"
+      IB/srp: Use %pIS instead of inet_ntop()
+      RDMA/core: Avoid that ib_drain_qp() triggers an out-of-bounds stack a=
+ccess
+      RDMA/rxe: Fix an out-of-bounds read
+      IB/srpt: Fix an out-of-bounds stack access in srpt_zerolength_write()
+      IB/hfi1: Add a missing rcu_read_unlock()
+      IB/srpt: Add RDMA/CM support
+      IB/hfi1: Fix a kernel-doc warning
+      RDMA/bnxt_re: Remove an unused variable
+      IB/srp: Fix IPv6 address parsing
+      IB/srp: Disallow duplicate RDMA/CM connections
+
+Bharat Potnuri (1):
+      iw_cxgb4: print mapped ports correctly
+
+Bodong Wang (2):
+      net/mlx5: Packet pacing enhancement
+      IB/mlx5: Packet packing enhancement for RAW QP
+
+Boris Pismenny (2):
+      IB/mlx4: Check for egress flow steering
+      IB/uverbs: Introduce egress flow steering
+
+Colin Ian King (2):
+      infiniband: remove redundant assignment to pointer 'rdi'
+      qedr: Fix spelling mistake: "hanlde" -> "handle"
+
+Corentin Labbe (1):
+      IB/cxgb3: remove cxio_dbg.c
+
+Daniel Jurgens (1):
+      IB/mlx5: Only synchronize RCU once when removing mkeys
+
+Doug Ledford (6):
+      Merge tag 'mlx5-updates-2018-02-21' of git://git.kernel.org/.../mella=
+nox/linux into k.o/wip/dl-for-next
+      Merge branch 'k.o/for-rc' into k.o/wip/dl-for-next
+      Merge tag 'mlx5-updates-2018-02-23' of git://git.kernel.org/.../mella=
+nox/linux into k.o/wip/dl-for-next
+      Merge tag 'mlx5-updates-2018-02-28-1' of git://git.kernel.org/.../mel=
+lanox/linux into k.o/wip/dl-for-next
+      Merge tag 'mlx5-updates-2018-02-28-2' of git://git.kernel.org/.../mel=
+lanox/linux into k.o/wip/dl-for-next
+      Merge branch 'k.o/wip/dl-for-rc' into k.o/wip/dl-for-next
+
+Gustavo A. R. Silva (2):
+      RDMA/bnxt_re/qplib_sp: Use true and false for boolean values
+      IB/ocrdma_hw: Remove redundant checks and goto labels
+
+Guy Levi (1):
+      IB/mlx4: Add Scatter FCS support over WQ creation
+
+Henry Orosco (2):
+      i40iw: Refactor of driver generated AEs
+      i40iw: Tear-down connection after CQP Modify QP failure
+
+Hern=C3=A1n Gonzalez (3):
+      IB/qib: Remove unused variable (char *qib_sdma_event_names[])
+      IB/qib: Move char *qib_sdma_state_names[] and constify while there.
+      IB/rxe: Remove unused variable (char *rxe_qp_state_name[])
+
+Honggang Li (2):
+      IB/core: Set speed string to SDR for invalid active rates
+      IB/mlx5: Set the default active rate and width to QDR and 4X
+
+Ilya Lesokhin (1):
+      IB/mlx5: Maintain a single emergency page
+
+Jason Gunthorpe (23):
+      RDMA: Do not used __packed in uapi headers
+      rxe: Do not use 'struct sockaddr' in a uapi header
+      IB/uverbs: Tidy uverbs_uobject_add
+      RDMA/rxe: Get rid of confusing udata parameter to rxe_cq_chk_attr
+      RDMA/rxe: Use structs to describe the uABI instead of opencoding
+      RDMA/mlx4: Move flag constants to uapi header
+      RDMA/i40iw: Move uapi header to include/uapi
+      RDMA/hns: Use structs to describe the uABI instead of opencoding
+      RDMA/cxgb4: Use structs to describe the uABI instead of opencoding
+      RDMA/bnxt: Fix structure layout for bnxt_re_pd_resp
+      RDMA/cxgb3: Use structs to describe the uABI instead of opencoding
+      RDMA/ocrdma: Fix structure layout for ocrdma_alloc_pd
+      RDMA: Remove minor pahole differences between 32/64
+      RDMA/ucma: Fix uABI structure layouts for 32/64 compat
+      RDMA/qedr: Fix uABI structure layouts for 32/64 compat
+      RDMA/mlx4: Fix uABI structure layouts for 32/64 compat
+      RDMA/rxe: Fix uABI structure layouts for 32/64 compat
+      RDMA: Change all uapi headers to use __aligned_u64 instead of __u64
+      Merge branch '32compat'
+      RDMA: Use u64_to_user_ptr everywhere
+      RDMA/mlx5: Fix definition of mlx5_ib_create_qp_resp
+      RDMA/qedr: Zero stack memory before copying to user space
+      Merge net-next of git://git.kernel.org/.../torvalds/linux-2.6.git
+
+Kalderon, Michal (1):
+      RDMA/qedr: Fix wmb usage in qedr
+
+Leon Romanovsky (28):
+      RDMA/uverbs: Convert command mask validity check function to be bool
+      RDMA/uverbs: Update sizeof users
+      RDMA/uverbs: Refactor flags checks and update return value
+      RDMA/uverbs: Fail as early as possible if not enough header data was =
+provided
+      RDMA/uverbs: Return not supported error code for unsupported commands
+      RDMA/uverbs: Unify return values of not supported command
+      RDMA/uverbs: Refactor command header processing
+      RDMA/uverbs: Properly check command supported mask
+      RDMA/uverbs: Move uncontext check before SRCU read lock
+      RDMa/uverbs: Copy ex_hdr outside of SRCU read lock
+      RDMA/uverbs: Refactor the header validation logic
+      RDMA/uverbs: Replace user's types with kernel's types
+      RDMA/uverbs: Reduce number of command header flags checks
+      RDMA/verbs: Return proper error code for not supported system call
+      mailmap: Map Leon Romanovsky's emails
+      RDMA/mlx5: Refactor QP type check to be as early as possible
+      RDMA/mlx5: Fix NULL dereference while accessing XRC_TGT QPs
+      RDMA/uverbs: Ensure validity of current QP state value
+      RDMA/pvrdma: Properly annotate QP states
+      RDMA/verbs: Simplify modify QP check
+      RDMA/mlx5: Protect from NULL pointer derefence
+      RDMA/mlx5: Return proper value for not-supported command
+      RDMA/mlx5: Unify error flows in rereg MR failure paths
+      RDMA/mlx5: Guard ODP specific assignments with specific CONFIG
+      RDMA/mlx5: Simplify clean and destroy MR calls
+      RDMA/restrack: Don't rely on uninitialized variable in restrack_add f=
+low
+      RDMA/restrack: Remove ambiguity in resource track clean logic
+      RDMA/nldev: Provide netdevice name and index
+
+Majd Dibbiny (2):
+      IB/mlx5: Enable ECN capable bits for UD RoCE v2 QPs
+      IB/mlx5: Respect new UMR capabilities
+
+Mark Bloch (2):
+      IB/mlx5: Expose more priorities for bypass namespace
+      IB/core: Protect against concurrent access to hardware stats
+
+Markus Elfring (2):
+      IB/usnic: Delete an error message for a failed memory allocation in u=
+snic_transport_init()
+      RDMA/iwpm: Delete an error message for a failed memory allocation in =
+iwpm_create_nlmsg()
+
+Martin Wilck (1):
+      rdma_rxe: make rxe work over 802.1q VLAN devices
+
+Matan Barak (19):
+      IB/uverbs: Move to new headers and make naming consistent
+      IB/uverbs: Extend uverbs_ioctl header with driver_id
+      IB/uverbs: Enable compact representation of uverbs_attr_spec
+      IB/uverbs: Safely extend existing attributes
+      IB/uverbs: Expose parsing tree of all common objects to providers
+      IB/uverbs: Move ioctl path of create_cq and destroy_cq to a new file
+      IB/uverbs: Add macros to simplify adding driver specific attributes
+      IB/uverbs: Enable ioctl() uAPI by default for new verbs
+      IB/uverbs: UAPI pointers should use __aligned_u64 type
+      IB/mlx5: Initialize the parsing tree root without the help of uverbs
+      IB/uverbs: Add enum attribute type to ioctl() interface
+      IB/uverbs: Refactor kern_spec_to_ib_spec_filter
+      IB/uverbs: Add flow_action create and destroy verbs
+      IB/uverbs: Add action_handle flow steering specification
+      IB/uverbs: Add modify ESP flow_action
+      IB/uverbs: Introduce ESP steering match filter
+      IB/mlx5: Add modify_flow_action_esp verb
+      IB/mlx5: Add information for querying IPsec capabilities
+      IB/mlx5: Add ability to hash by IPSEC_SPI when creating a TIR
+
+Mikhail Malygin (1):
+      IB/rxe: Fix for oops in rxe_register_device on ppc64le arch
+
+Mustafa Ismail (1):
+      i40iw: Refactor handling of txpend list
+
+Parav Pandit (31):
+      IB/core: Fix comments of GID query functions
+      IB/{core, ipoib}: Simplify ib_find_gid() for unused ndev
+      IB/core: Honor return status of ib_init_ah_from_mcmember()
+      IB/core: Honor port_num while resolving GID for IB link layer
+      IB/cma: Use rdma_protocol_roce() and remove cma_protocol_roce_dev_por=
+t()
+      IB/core: Remove rdma_resolve_ip_route() as exported symbol
+      IB/ocrdma: Removed GID add/del null routines
+      IB/cm: Add and use a helper function to add cm_id's to the port list
+      IB/core: Refactor ib_init_ah_attr_from_path() for RoCE
+      IB/cm: Introduce and use helper function to get cm_port from path
+      IB/core: Move rdma_addr_find_l2_eth_by_grh to core_priv.h
+      IB/core: Use rdma_is_port_valid()
+      IB/core: Remove unimplemented ib_peek_cq
+      IB/core: Refer to RoCE port property instead of GID table property
+      IB/cma: Resolve route only while receiving CM requests
+      IB/cm: Block processing alternate path handling RoCE Rx cm messages
+      IB/core: Generate GID change event regardless of RoCE GID table prope=
+rty
+      IB/core: Refer to RoCE port property instead of GID table property
+      IB/core: Search GID only for IB link layer
+      IB/core: Refer to RoCE port property to decide building cache
+      IB/addr: Constify dst_entry pointer
+      RDMA/cma: Move rdma_cm_state to cma_priv.h
+      IB/qedr: Remove GID add/del dummy routines
+      RDMA/core: Update query_gid documentation for HCA drivers
+      RDMA/providers: Simplify query_gid callback of RoCE providers
+      IB/core: Simplify ib_query_gid to always refer to cache
+      IB/core: Refactor GID modify code for RoCE
+      IB/providers: Avoid zero GID check for RoCE
+      IB/providers: Avoid null netdev check for RoCE
+      RDMA: Use ib_gid_attr during GID modification
+      IB/rxe: Removed GID add/del dummy routines
+
+Roland Dreier (1):
+      RDMA/ucma: Don't allow setting RDMA_OPTION_IB_PATH without an RDMA de=
+vice
+
+Sergey Gorenko (1):
+      IB/srp: Use the IB_DEVICE_SG_GAPS_REG HCA feature if supported
+
+Shiraz Saleem (3):
+      i40iw: Improve CM node lookup time on connection setup
+      i40iw: Implement get_vector_affinity API
+      i40iw: Remove pre-production workaround for resource profile 1
+
+Sinan Kaya (2):
+      RDMA/qedr: eliminate duplicate barriers on weakly-ordered archs
+      IB/mlx4: Eliminate duplicate barriers on weakly-ordered archs
+
+Steve Wise (13):
+      RDMA/restrack: clean up res_to_dev()
+      RDMA/nldev: common resource dumpit function
+      RDMA/CM: move rdma_id_private to cma_priv.h
+      RDMA/nldev: provide detailed CM_ID information
+      RDMA/nldev: provide detailed CQ information
+      iw_cxgb4: initialize ib_mr fields for user mrs
+      mlx4_ib: set user mr attributes in struct ib_mr
+      RDMA/nldev: provide detailed MR information
+      mlx4_ib: zero out struct ib_pd when allocating
+      RDMA/nldev: provide detailed PD information
+      iw_cxgb4: Add ib_device->get_netdev support
+      RDMA/CMA: remove RDMA_PS_SDP
+      RDMA/CMA: Add rdma_port_space to UAPI
+
+Tejun Heo (1):
+      RDMAVT: Fix synchronization around percpu_ref
+
+Yishai Hadas (2):
+      IB/mlx4: Move mlx4_uverbs_ex_query_device_resp to include/uapi/
+      IB/mlx4: Report TSO capabilities
+
+Yixian Liu (8):
+      RDMA/hns: Fix QP state judgement before receiving work requests
+      RDMA/hns: Support rq record doorbell for the user space
+      RDMA/hns: Support cq record doorbell for the user space
+      RDMA/hns: Support rq record doorbell for kernel space
+      RDMA/hns: Support cq record doorbell for kernel space
+      RDMA/hns: Fix cqn type and init resp
+      RDMA/hns: Fix init resp when alloc ucontext
+      RDMA/hns: Fix cq record doorbell enable in kernel
+
+Yuval Shaia (1):
+      IB/ipoib: Delete unused struct
+
+Zhu Yanjun (5):
+      IB/rxe: remove unnecessary skb_clone
+      IB/rxe: remove unnecessary rxe in rxe_send
+      IB/rxe: change the function rxe_init_device_param type
+      IB: remove duplicate header files
+      IB/rxe: optimize mcast recv process
+
+oulijun (2):
+      RDMA/hns: Fix a bug with modifying mac address
+      RDMA/hns: Use free_pages function instead of free_page
+
+ .mailmap                                           |   2 +
+ MAINTAINERS                                        |   1 +
+ drivers/infiniband/Kconfig                         |  11 +-
+ drivers/infiniband/core/Makefile                   |   4 +-
+ drivers/infiniband/core/addr.c                     |  13 +-
+ drivers/infiniband/core/cache.c                    | 533 ++++++++++-------=
+--
+ drivers/infiniband/core/cm.c                       |  67 ++-
+ drivers/infiniband/core/cma.c                      | 160 +++---
+ drivers/infiniband/core/cma_priv.h                 |  97 ++++
+ drivers/infiniband/core/core_priv.h                |  11 +
+ drivers/infiniband/core/device.c                   |  18 +-
+ drivers/infiniband/core/iwpm_util.c                |   5 +-
+ drivers/infiniband/core/multicast.c                |  26 +-
+ drivers/infiniband/core/nldev.c                    | 364 +++++++++++--
+ drivers/infiniband/core/rdma_core.c                |  13 +-
+ drivers/infiniband/core/restrack.c                 | 121 +++--
+ drivers/infiniband/core/sa_query.c                 | 202 ++++----
+ drivers/infiniband/core/sysfs.c                    |  53 +-
+ drivers/infiniband/core/ucm.c                      |  18 +-
+ drivers/infiniband/core/ucma.c                     |  40 +-
+ drivers/infiniband/core/uverbs.h                   |  41 ++
+ drivers/infiniband/core/uverbs_cmd.c               | 279 +++++++---
+ drivers/infiniband/core/uverbs_ioctl.c             |  60 ++-
+ drivers/infiniband/core/uverbs_ioctl_merge.c       |   2 +-
+ drivers/infiniband/core/uverbs_main.c              | 218 ++++----
+ drivers/infiniband/core/uverbs_std_types.c         | 326 ++++--------
+ drivers/infiniband/core/uverbs_std_types_cq.c      | 210 ++++++++
+ drivers/infiniband/core/uverbs_std_types_dm.c      | 108 ++++
+ .../infiniband/core/uverbs_std_types_flow_action.c | 435 ++++++++++++++++
+ drivers/infiniband/core/uverbs_std_types_mr.c      | 147 ++++++
+ drivers/infiniband/core/verbs.c                    |  87 ++--
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c           |  20 +-
+ drivers/infiniband/hw/bnxt_re/ib_verbs.h           |   6 +-
+ drivers/infiniband/hw/bnxt_re/main.c               |   2 +-
+ drivers/infiniband/hw/bnxt_re/qplib_sp.c           |   2 +-
+ drivers/infiniband/hw/cxgb3/Kconfig                |   9 -
+ drivers/infiniband/hw/cxgb3/Makefile               |   2 -
+ drivers/infiniband/hw/cxgb3/cxio_dbg.c             | 206 --------
+ drivers/infiniband/hw/cxgb3/cxio_hal.h             |   9 -
+ drivers/infiniband/hw/cxgb3/iwch_cq.c              |   6 -
+ drivers/infiniband/hw/cxgb3/iwch_provider.c        |   5 +-
+ drivers/infiniband/hw/cxgb4/device.c               |  24 +-
+ drivers/infiniband/hw/cxgb4/mem.c                  |   3 +
+ drivers/infiniband/hw/cxgb4/provider.c             |  24 +-
+ drivers/infiniband/hw/hfi1/driver.c                |   1 +
+ drivers/infiniband/hw/hfi1/hfi.h                   |   1 -
+ drivers/infiniband/hw/hfi1/qp.c                    |   1 -
+ drivers/infiniband/hw/hfi1/user_exp_rcv.c          |   4 +-
+ drivers/infiniband/hw/hfi1/verbs.c                 |   2 +-
+ drivers/infiniband/hw/hns/Makefile                 |   2 +-
+ drivers/infiniband/hw/hns/hns_roce_ah.c            |   8 +-
+ drivers/infiniband/hw/hns/hns_roce_cq.c            |  54 +-
+ drivers/infiniband/hw/hns/hns_roce_db.c            | 180 +++++++
+ drivers/infiniband/hw/hns/hns_roce_device.h        |  59 ++-
+ drivers/infiniband/hw/hns/hns_roce_hw_v1.c         |   8 +-
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c         |  80 +--
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.h         |   3 +
+ drivers/infiniband/hw/hns/hns_roce_main.c          |  41 +-
+ drivers/infiniband/hw/hns/hns_roce_mr.c            |   2 +-
+ drivers/infiniband/hw/hns/hns_roce_pd.c            |   5 +-
+ drivers/infiniband/hw/hns/hns_roce_qp.c            |  70 ++-
+ drivers/infiniband/hw/i40iw/i40iw.h                |  11 +-
+ drivers/infiniband/hw/i40iw/i40iw_cm.c             | 129 +++--
+ drivers/infiniband/hw/i40iw/i40iw_cm.h             |   5 +-
+ drivers/infiniband/hw/i40iw/i40iw_ctrl.c           |  56 +-
+ drivers/infiniband/hw/i40iw/i40iw_d.h              |   5 +-
+ drivers/infiniband/hw/i40iw/i40iw_hw.c             |  35 ++
+ drivers/infiniband/hw/i40iw/i40iw_main.c           |   2 -
+ drivers/infiniband/hw/i40iw/i40iw_puda.c           |   8 +-
+ drivers/infiniband/hw/i40iw/i40iw_type.h           |  11 +
+ drivers/infiniband/hw/i40iw/i40iw_utils.c          |  10 +-
+ drivers/infiniband/hw/i40iw/i40iw_verbs.c          |  57 +-
+ drivers/infiniband/hw/mlx4/ah.c                    |  10 +-
+ drivers/infiniband/hw/mlx4/main.c                  | 102 ++--
+ drivers/infiniband/hw/mlx4/mlx4_ib.h               |  19 +-
+ drivers/infiniband/hw/mlx4/mr.c                    |   3 +
+ drivers/infiniband/hw/mlx4/qp.c                    |  27 +-
+ drivers/infiniband/hw/mlx5/ah.c                    |  12 +
+ drivers/infiniband/hw/mlx5/cmd.c                   | 104 ++++
+ drivers/infiniband/hw/mlx5/cmd.h                   |   4 +
+ drivers/infiniband/hw/mlx5/main.c                  | 572 +++++++++++++++++=
+++--
+ drivers/infiniband/hw/mlx5/mlx5_ib.h               |  71 ++-
+ drivers/infiniband/hw/mlx5/mr.c                    | 257 ++++++---
+ drivers/infiniband/hw/mlx5/qp.c                    | 156 ++++--
+ drivers/infiniband/hw/mthca/mthca_provider.c       |   1 +
+ drivers/infiniband/hw/nes/nes_verbs.c              |   1 +
+ drivers/infiniband/hw/ocrdma/ocrdma_ah.c           |   8 +-
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c           |  22 +-
+ drivers/infiniband/hw/ocrdma/ocrdma_main.c         |   4 +-
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c        |  34 --
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.h        |  12 -
+ drivers/infiniband/hw/qedr/main.c                  |   9 +-
+ drivers/infiniband/hw/qedr/qedr_roce_cm.c          |  16 +-
+ drivers/infiniband/hw/qedr/verbs.c                 | 155 ++----
+ drivers/infiniband/hw/qedr/verbs.h                 |   6 -
+ drivers/infiniband/hw/qib/qib.h                    |   3 -
+ drivers/infiniband/hw/qib/qib_diag.c               |   2 +-
+ drivers/infiniband/hw/qib/qib_file_ops.c           |   8 +-
+ drivers/infiniband/hw/qib/qib_iba7322.c            |  10 +
+ drivers/infiniband/hw/qib/qib_init.c               |   4 +-
+ drivers/infiniband/hw/qib/qib_sdma.c               |  24 -
+ drivers/infiniband/hw/qib/qib_verbs.c              |   2 +-
+ drivers/infiniband/hw/usnic/usnic_ib_main.c        |   1 +
+ drivers/infiniband/hw/usnic/usnic_transport.c      |   4 +-
+ drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c     |  32 +-
+ drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c       |   2 +-
+ drivers/infiniband/sw/rdmavt/vt.c                  |   5 +-
+ drivers/infiniband/sw/rdmavt/vt.h                  |   1 -
+ drivers/infiniband/sw/rxe/rxe.c                    |   4 +-
+ drivers/infiniband/sw/rxe/rxe.h                    |   6 +-
+ drivers/infiniband/sw/rxe/rxe_av.c                 |   5 +-
+ drivers/infiniband/sw/rxe/rxe_cq.c                 |  15 +-
+ drivers/infiniband/sw/rxe/rxe_loc.h                |  20 +-
+ drivers/infiniband/sw/rxe/rxe_net.c                |  56 +-
+ drivers/infiniband/sw/rxe/rxe_qp.c                 |  35 +-
+ drivers/infiniband/sw/rxe/rxe_queue.c              |  24 +-
+ drivers/infiniband/sw/rxe/rxe_queue.h              |   5 +-
+ drivers/infiniband/sw/rxe/rxe_recv.c               |  16 +-
+ drivers/infiniband/sw/rxe/rxe_resp.c               |  15 +-
+ drivers/infiniband/sw/rxe/rxe_srq.c                |  44 +-
+ drivers/infiniband/sw/rxe/rxe_verbs.c              | 101 ++--
+ drivers/infiniband/sw/rxe/rxe_verbs.h              |   2 -
+ drivers/infiniband/ulp/ipoib/ipoib.h               |   5 -
+ drivers/infiniband/ulp/ipoib/ipoib_ib.c            |   2 +-
+ drivers/infiniband/ulp/srp/ib_srp.c                | 181 +++----
+ drivers/infiniband/ulp/srpt/ib_srpt.c              | 396 +++++++++++---
+ drivers/infiniband/ulp/srpt/ib_srpt.h              |   8 +-
+ drivers/net/ethernet/mellanox/mlx4/fw.c            |   1 +
+ drivers/net/ethernet/mellanox/mlx4/main.c          |   1 +
+ .../net/ethernet/mellanox/mlx5/core/en_common.c    |   2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |  21 +-
+ .../net/ethernet/mellanox/mlx5/core/fpga/conn.c    |   2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/fw.c       |   6 +
+ drivers/net/ethernet/mellanox/mlx5/core/rl.c       |  63 ++-
+ include/linux/mlx4/device.h                        |   4 -
+ include/linux/mlx5/device.h                        |  12 +-
+ include/linux/mlx5/driver.h                        |  15 +-
+ include/linux/mlx5/fs_helpers.h                    |   8 +
+ include/linux/mlx5/mlx5_ifc.h                      | 102 +++-
+ include/rdma/ib_addr.h                             |   9 -
+ include/rdma/ib_cache.h                            |  29 --
+ include/rdma/ib_sa.h                               |  13 +
+ include/rdma/ib_verbs.h                            | 212 ++++++--
+ include/rdma/rdma_cm.h                             |  44 +-
+ include/rdma/rdma_vt.h                             |   2 +-
+ include/rdma/restrack.h                            |  26 +-
+ include/rdma/uverbs_ioctl.h                        | 153 +++++-
+ include/rdma/uverbs_named_ioctl.h                  |  90 ++++
+ include/rdma/uverbs_std_types.h                    |  34 +-
+ include/uapi/rdma/bnxt_re-abi.h                    |  21 +-
+ include/uapi/rdma/cxgb3-abi.h                      |  17 +-
+ include/uapi/rdma/cxgb4-abi.h                      |  29 +-
+ include/uapi/rdma/hfi/hfi1_ioctl.h                 |  32 +-
+ include/uapi/rdma/hfi/hfi1_user.h                  |  10 +-
+ include/uapi/rdma/hns-abi.h                        |  22 +-
+ .../uapi/rdma/i40iw-abi.h                          |  16 +-
+ include/uapi/rdma/ib_user_cm.h                     |  48 +-
+ include/uapi/rdma/ib_user_ioctl_cmds.h             | 134 +++++
+ include/uapi/rdma/ib_user_ioctl_verbs.h            |  96 ++--
+ include/uapi/rdma/ib_user_mad.h                    |   4 +-
+ include/uapi/rdma/ib_user_verbs.h                  | 195 ++++---
+ include/uapi/rdma/mlx4-abi.h                       |  52 +-
+ include/uapi/rdma/mlx5-abi.h                       |  72 ++-
+ include/uapi/rdma/mlx5_user_ioctl_cmds.h           |  48 ++
+ include/uapi/rdma/mlx5_user_ioctl_verbs.h          |  43 ++
+ include/uapi/rdma/mthca-abi.h                      |  10 +-
+ include/uapi/rdma/nes-abi.h                        |   6 +-
+ include/uapi/rdma/ocrdma-abi.h                     |  36 +-
+ include/uapi/rdma/qedr-abi.h                       |  20 +-
+ include/uapi/rdma/rdma_netlink.h                   |  51 ++
+ include/uapi/rdma/rdma_user_cm.h                   |  49 +-
+ include/uapi/rdma/rdma_user_ioctl.h                |  38 +-
+ include/uapi/rdma/rdma_user_ioctl_cmds.h           |  99 ++++
+ include/uapi/rdma/rdma_user_rxe.h                  |  58 ++-
+ include/uapi/rdma/vmw_pvrdma-abi.h                 |  49 +-
+ 175 files changed, 6672 insertions(+), 2915 deletions(-)
+ create mode 100644 drivers/infiniband/core/cma_priv.h
+ create mode 100644 drivers/infiniband/core/uverbs_std_types_cq.c
+ create mode 100644 drivers/infiniband/core/uverbs_std_types_dm.c
+ create mode 100644 drivers/infiniband/core/uverbs_std_types_flow_action.c
+ create mode 100644 drivers/infiniband/core/uverbs_std_types_mr.c
+ delete mode 100644 drivers/infiniband/hw/cxgb3/cxio_dbg.c
+ create mode 100644 drivers/infiniband/hw/hns/hns_roce_db.c
+ create mode 100644 include/rdma/uverbs_named_ioctl.h
+ rename drivers/infiniband/hw/i40iw/i40iw_ucontext.h =3D> include/uapi/rdma=
+/i40iw-abi.h (90%)
+ create mode 100644 include/uapi/rdma/ib_user_ioctl_cmds.h
+ create mode 100644 include/uapi/rdma/mlx5_user_ioctl_cmds.h
+ create mode 100644 include/uapi/rdma/mlx5_user_ioctl_verbs.h
+ create mode 100644 include/uapi/rdma/rdma_user_ioctl_cmds.h
+
+--a8Wt8u1KmwUX3Y2C
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCgAGBQJax5rSAAoJEDht9xV+IJsawQUP/2AOvsUjyDYt0NiIGIFwvnYY
+b9pks6aZlA4dTEATakAw37r1i/fcjUmPUFMFQVwAJrzqK/CSXr9GVnYWNgEXXkEa
+MuaSMsi0HIY/guFR0N8F8LZ6xvA49LvCvpYKVnCB+T10plZOAReW+UzBUUuofKV1
+cr2Kak8WrR0pPyXlLk0lKHpmYzxDwehIEBHjvweN6fMypO4HNoYAHoXxq4ucsaAQ
+85kiUyXiIEqZxVwRG6e8XTkO9Uy+fUR3WN6NRfmccMsN7Yn9D8thctjfhBJKr3we
+Zc2sVIeriSd2Y7MfJaDMX1G2QsOvogii/Sj6OND0wK6MVUQEXO1lszbXe6eqeIpZ
+zoPDqk8t86jMzSl5Q8D8EqMW5n3e3izVqDIFLo+GoC+/y9SuBalnadmrWbaMLJAf
+DHJtds4r3v+YTI586w5xAzX4Npj44I9xIQpYPPVL2MsAfcCYPKMj4RoX8bXzhJ37
+dle5kz6aHQWjrfk4z0SzRd5rIO+g/tec/MZrdchIm+6kOx+jK5lsNfW2oMUZN+FZ
+wvshlEvCJ0bfbT3If/LycPUec1e1wVkglKVAX+rJVYbinUVZ08aXRubb9Fn0zDMV
+inBYT1xszLXQxrfSYspJs/4e+YSY1euILFnDtyI89dV7k9klUWPNdKeBD3779VWy
+ICP1yH2yQUstFIpjpZTc
+=xE5l
+-----END PGP SIGNATURE-----
+
+--a8Wt8u1KmwUX3Y2C--
