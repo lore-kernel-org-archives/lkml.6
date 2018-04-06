@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48ICdr6CZTdDHc8zg4CpXNhzVBqRxIphzSXabeIQSOnGhzGnyrzxIEYd0V3fzHTpxioNhdR
-ARC-Seal: i=1; a=rsa-sha256; t=1523022192; cv=none;
+X-Google-Smtp-Source: AIpwx4+XVLx7JV/Jhakq0xSGYQiJyhCcPZaaMGhySPU3mWi/F+S/ABweLoCxX0Feu3RKQnBJ2u75
+ARC-Seal: i=1; a=rsa-sha256; t=1523022189; cv=none;
         d=google.com; s=arc-20160816;
-        b=QqgZqMUlYuaTnTz0V+BT21R5VfdodyiBjAk7fQQbkRq/WUiXkO9SQHH5pw+nf1s0IQ
-         TMC2dSWi7ul3GYhaZU0RpYnbvAN8mnClSb60/rYEoIYHnWeP27jJwYprNdAof6sPVz/n
-         R6elOr7zmbPN0njw+LIANt1nI4EQZS9kVXuzXiYz5KcmCcbxegMgAnXltHJbo1Dsx3Pi
-         ne7e4BqrKIeE2+xIWyt3mG/56fkjtv6Q9vGGB3cQmXRjgmrygSG1FYRCdJSne82Tcsg2
-         sOPwoUvdyvR4C6hjTsw067EWY1eehmcE+Xw6lNtjuZLzUPqYT5Cmd1zrlpDERrTEqM7p
-         wLyg==
+        b=tUwyDC1wIt0IU76kO220IpBgGxFGxrhay8y///NHgJW3YPqGszOXWwwobLDbbWu3ra
+         hW83QWLQYMxC0e7/ll9lrFTW1/k5nw1/Intdd9Z16xMzwr4WPF+yrFY4Db1vmJnz/vOk
+         TIcjOjRCALFeAuSfBxmvpsCYtxLf3/EQc3J7rS1p2RMFajlRLOo8tsWXtaTsT1opPpWI
+         IZuJhGkm/Oq9FdXMQZL/pgWqaKkwXM+hpDlwig+Ya1jvF8VvoWSL6NNxz30XgiF21obQ
+         De13TW1dkg8dpul66NX5pUBLHE3mCRdNz59ZkKEanA8mV3ea8dztr0mxX9doui+ybgYJ
+         phEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iICVaNRA/ocvaLRfXhE8yiCMA3dEJ0ZEoVKMydcncOo=;
-        b=fjGhX3s9bTsioDNrR5tFpr0L8PZJ0ANXGnRtOIozgobmcZrGFlKtYJmlIZrs/2QFgI
-         uXEh2/KBQz1WKl5NjlYmGklREwLa27pQZCKjo0OcU8xSYrT0U6RHAp6muzd7AD2jqVIe
-         rYUseqeVWWvSI2uwZ2jDyyIYiNMiXKXUkzt3UorLqsziaKzfgbhVfRK3YTwdeFtr/S1Q
-         g8S2vmTGQyOKjLl1Erte5LqJTlTLOLY9NNM17aMjjduKp8dSz15/eub9QkGHdDR9Nhnm
-         liT3bCdMDqPkQBKWpT+Zpn1WqST4PKrz9pO8gTgNDoIj/iOnHikiqf0e4zhnKcx3GHwG
-         Uv3g==
+        bh=jYLBp0sA7Iouy2fFfg312c2YV9KKSSOWAPdKk71iJhY=;
+        b=LeTkqJyDryXPtaFj6liTPHeYLixWBN+DmYU2A2GdpMx90yu774uui6EMkOC025nkyE
+         VLAn037cZaaNLRa9xHfe0vj6yjDMyzp8Bvlz78qHK/fEFwkz4SZpKoeJbrdTZo0sVXso
+         nSj2NUz0QaMWkikyluYcv+RB5jU+rkhlbPePrX4BOCn7M+iIVVfzbGnA5PVOHA0c9PLP
+         m/i8JADI4s5RfaRW7RkBiXy41tryJCmNCZb+r+sggL7sw3YgYHiVWvIhFMl4mpPNEnfq
+         3DlYyH9dssBKF5dblTHVlTGNOhtIUAqH3ga8cWeZtYnGZOOzWxTxuk1azspyB3heimWB
+         dK4g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.15 51/72] crypto: inside-secure - fix clock management
-Date: Fri,  6 Apr 2018 15:24:26 +0200
-Message-Id: <20180406084353.029795884@linuxfoundation.org>
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Balbir Singh <bsingharora@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.15 15/72] powerpc/mm: Add tracking of the number of coprocessors using a context
+Date: Fri,  6 Apr 2018 15:23:50 +0200
+Message-Id: <20180406084350.742056111@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004270588720627?=
-X-GMAIL-MSGID: =?utf-8?q?1597004518537308455?=
+X-GMAIL-THRID: =?utf-8?q?1597004515407689367?=
+X-GMAIL-MSGID: =?utf-8?q?1597004515407689367?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,35 +50,95 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit f962eb46e7a9b98a58d2483f5eb216e738fec732 upstream.
+commit aff6f8cb3e2170b9e58b0932bce7bfb492775e23 upstream.
 
-In this driver the clock is got but never put when the driver is removed
-or if there is an error in the probe.
+Currently, when using coprocessors (which use the Nest MMU), we
+simply increment the active_cpu count to force all TLB invalidations
+to be come broadcast.
 
-Using the managed version of clk_get() allows to let the kernel take care
-of it.
+Unfortunately, due to an errata in POWER9, we will need to know
+more specifically that coprocessors are in use.
 
-Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto
-engine driver")
-cc: stable@vger.kernel.org
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+This maintains a separate copros counter in the MMU context for
+that purpose.
+
+NB. The commit mentioned in the fixes tag below is not at fault for
+the bug we're fixing in this commit and the next, but this fix applies
+on top the infrastructure it introduced.
+
+Fixes: 03b8abedf4f4 ("cxl: Enable global TLBIs for cxl contexts")
+Cc: stable@vger.kernel.org # v4.15+
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Tested-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/inside-secure/safexcel.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/include/asm/book3s/64/mmu.h |    3 +++
+ arch/powerpc/include/asm/mmu_context.h   |   18 +++++++++++++-----
+ arch/powerpc/mm/mmu_context_book3s64.c   |    1 +
+ 3 files changed, 17 insertions(+), 5 deletions(-)
 
---- a/drivers/crypto/inside-secure/safexcel.c
-+++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -789,7 +789,7 @@ static int safexcel_probe(struct platfor
- 		return PTR_ERR(priv->base);
- 	}
+--- a/arch/powerpc/include/asm/book3s/64/mmu.h
++++ b/arch/powerpc/include/asm/book3s/64/mmu.h
+@@ -87,6 +87,9 @@ typedef struct {
+ 	/* Number of bits in the mm_cpumask */
+ 	atomic_t active_cpus;
  
--	priv->clk = of_clk_get(dev->of_node, 0);
-+	priv->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (!IS_ERR(priv->clk)) {
- 		ret = clk_prepare_enable(priv->clk);
- 		if (ret) {
++	/* Number of users of the external (Nest) MMU */
++	atomic_t copros;
++
+ 	/* NPU NMMU context */
+ 	struct npu_context *npu_context;
+ 
+--- a/arch/powerpc/include/asm/mmu_context.h
++++ b/arch/powerpc/include/asm/mmu_context.h
+@@ -92,15 +92,23 @@ static inline void dec_mm_active_cpus(st
+ static inline void mm_context_add_copro(struct mm_struct *mm)
+ {
+ 	/*
+-	 * On hash, should only be called once over the lifetime of
+-	 * the context, as we can't decrement the active cpus count
+-	 * and flush properly for the time being.
++	 * If any copro is in use, increment the active CPU count
++	 * in order to force TLB invalidations to be global as to
++	 * propagate to the Nest MMU.
+ 	 */
+-	inc_mm_active_cpus(mm);
++	if (atomic_inc_return(&mm->context.copros) == 1)
++		inc_mm_active_cpus(mm);
+ }
+ 
+ static inline void mm_context_remove_copro(struct mm_struct *mm)
+ {
++	int c;
++
++	c = atomic_dec_if_positive(&mm->context.copros);
++
++	/* Detect imbalance between add and remove */
++	WARN_ON(c < 0);
++
+ 	/*
+ 	 * Need to broadcast a global flush of the full mm before
+ 	 * decrementing active_cpus count, as the next TLBI may be
+@@ -111,7 +119,7 @@ static inline void mm_context_remove_cop
+ 	 * for the time being. Invalidations will remain global if
+ 	 * used on hash.
+ 	 */
+-	if (radix_enabled()) {
++	if (c == 0 && radix_enabled()) {
+ 		flush_all_mm(mm);
+ 		dec_mm_active_cpus(mm);
+ 	}
+--- a/arch/powerpc/mm/mmu_context_book3s64.c
++++ b/arch/powerpc/mm/mmu_context_book3s64.c
+@@ -171,6 +171,7 @@ int init_new_context(struct task_struct
+ 	mm_iommu_init(mm);
+ #endif
+ 	atomic_set(&mm->context.active_cpus, 0);
++	atomic_set(&mm->context.copros, 0);
+ 
+ 	return 0;
+ }
