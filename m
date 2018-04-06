@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751910AbeDFREl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 13:04:41 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57957 "EHLO
+        id S1752014AbeDFRFO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 13:05:14 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40483 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeDFREj (ORCPT
+        with ESMTP id S1751598AbeDFRFM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 13:04:39 -0400
-Date: Fri, 6 Apr 2018 10:04:24 -0700
-From: tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-0d75f123a6dcdacb3550b0c3c44a283f7259289e@git.kernel.org>
-Cc: jolsa@redhat.com, hpa@zytor.com, adrian.hunter@intel.com,
-        tglx@linutronix.de, acme@redhat.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        acme@redhat.com, hpa@zytor.com, adrian.hunter@intel.com,
-        jolsa@redhat.com
-In-Reply-To: <1520327598-1317-7-git-send-email-adrian.hunter@intel.com>
-References: <1520327598-1317-7-git-send-email-adrian.hunter@intel.com>
+        Fri, 6 Apr 2018 13:05:12 -0400
+Date: Fri, 6 Apr 2018 10:04:59 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-i41tqh17c2dabnyzjh99r1oz@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, wangnan0@huawei.com,
+        yao.jin@linux.intel.com, hpa@zytor.com, ak@linux.intel.com,
+        acme@redhat.com, mingo@kernel.org, jolsa@kernel.org,
+        tglx@linutronix.de, namhyung@kernel.org, adrian.hunter@intel.com,
+        dsahern@gmail.com
+Reply-To: namhyung@kernel.org, acme@redhat.com, mingo@kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, dsahern@gmail.com,
+        adrian.hunter@intel.com, yao.jin@linux.intel.com,
+        linux-kernel@vger.kernel.org, wangnan0@huawei.com, hpa@zytor.com,
+        ak@linux.intel.com
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf auxtrace: Make auxtrace_queues__add_buffer()
- allocate struct buffer
-Git-Commit-ID: 0d75f123a6dcdacb3550b0c3c44a283f7259289e
+Subject: [tip:perf/urgent] perf annotate: Show group details on the title
+ line
+Git-Commit-ID: c0459a092509f9c2ff91cc070cd2645d38e7cf7b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,122 +36,73 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0d75f123a6dcdacb3550b0c3c44a283f7259289e
-Gitweb:     https://git.kernel.org/tip/0d75f123a6dcdacb3550b0c3c44a283f7259289e
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Tue, 6 Mar 2018 11:13:17 +0200
+Commit-ID:  c0459a092509f9c2ff91cc070cd2645d38e7cf7b
+Gitweb:     https://git.kernel.org/tip/c0459a092509f9c2ff91cc070cd2645d38e7cf7b
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 5 Apr 2018 11:13:24 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 5 Apr 2018 11:03:33 -0300
+CommitDate: Thu, 5 Apr 2018 11:18:39 -0300
 
-perf auxtrace: Make auxtrace_queues__add_buffer() allocate struct buffer
+perf annotate: Show group details on the title line
 
-In preparation for supporting AUX area sampling buffers,
-auxtrace_queues__add_buffer() needs to be more generic. To that end,
-move memory allocation for struct buffer into it.
+To match what is shown in the main 'perf report/top' title lines, i.e.
+if a group is being shown, either a real group (recorded with "-e
+'{a,b,c}') or a forced group (using 'perf report --group' for a
+perf.data file recorded without {}) we will show multiple columns,
+one per event, but we were failing to show the group details, so, for:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/1520327598-1317-7-git-send-email-adrian.hunter@intel.com
+ # perf report --header-only | grep cmdline
+ # cmdline : /home/acme/bin/perf record -e {cycles,instructions,cache-misses}
+ # perf report --group
+
+The first line was showing just "cycles", now it shows the correct line,
+which is:
+
+  Samples: 578  of events 'anon group { cycles, instructions, cache-misses }', 4000 Hz, Event count (approx.): 487421794
+  syscall_return_via_sysret  /lib/modules/4.16.0-rc7/build/vmlinux
+    0.22   2.97   0.00 │    ↓ jmp    6c
+                       │      mov    %cr3,%rdi
+    1.33  10.89   4.00 │    ↓ jmp    62
+                       │      mov    %rdi,%rax
+<SNIP>
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Fixes: 6920e2854e9a ("perf annotate browser: Show extra title line with event information")
+Link: https://lkml.kernel.org/n/tip-i41tqh17c2dabnyzjh99r1oz@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/auxtrace.c | 54 +++++++++++++++++++++-------------------------
- 1 file changed, 24 insertions(+), 30 deletions(-)
+ tools/perf/util/annotate.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index fb357a00dd86..e1aff91c54a8 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -308,7 +308,11 @@ static int auxtrace_queues__add_buffer(struct auxtrace_queues *queues,
- 				       struct auxtrace_buffer *buffer,
- 				       struct auxtrace_buffer **buffer_ptr)
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index fffe16af9797..fbad8dfbb186 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -2600,7 +2600,7 @@ int __annotation__scnprintf_samples_period(struct annotation *notes,
+ 					   bool show_freq)
  {
--	int err;
-+	int err = -ENOMEM;
-+
-+	buffer = memdup(buffer, sizeof(*buffer));
-+	if (!buffer)
-+		return -ENOMEM;
+ 	const char *ev_name = perf_evsel__name(evsel);
+-	char ref[30] = " show reference callgraph, ";
++	char buf[1024], ref[30] = " show reference callgraph, ";
+ 	char sample_freq_str[64] = "";
+ 	unsigned long nr_samples = 0;
+ 	int nr_members = 1;
+@@ -2609,8 +2609,11 @@ int __annotation__scnprintf_samples_period(struct annotation *notes,
+ 	char unit;
+ 	int i;
  
- 	if (session->one_mmap) {
- 		buffer->data = buffer->data_offset - session->one_mmap_offset +
-@@ -316,24 +320,28 @@ static int auxtrace_queues__add_buffer(struct auxtrace_queues *queues,
- 	} else if (perf_data__is_pipe(session->data)) {
- 		buffer->data = auxtrace_copy_data(buffer->size, session);
- 		if (!buffer->data)
--			return -ENOMEM;
-+			goto out_free;
- 		buffer->data_needs_freeing = true;
- 	} else if (BITS_PER_LONG == 32 &&
- 		   buffer->size > BUFFER_LIMIT_FOR_32_BIT) {
- 		err = auxtrace_queues__split_buffer(queues, idx, buffer);
- 		if (err)
--			return err;
-+			goto out_free;
- 	}
+-	if (perf_evsel__is_group_event(evsel))
++	if (perf_evsel__is_group_event(evsel)) {
++		perf_evsel__group_desc(evsel, buf, sizeof(buf));
++		ev_name = buf;
+                 nr_members = evsel->nr_members;
++	}
  
- 	err = auxtrace_queues__queue_buffer(queues, idx, buffer);
- 	if (err)
--		return err;
-+		goto out_free;
- 
- 	/* FIXME: Doesn't work for split buffer */
- 	if (buffer_ptr)
- 		*buffer_ptr = buffer;
- 
- 	return 0;
-+
-+out_free:
-+	auxtrace_buffer__free(buffer);
-+	return err;
- }
- 
- static bool filter_cpu(struct perf_session *session, int cpu)
-@@ -348,36 +356,22 @@ int auxtrace_queues__add_event(struct auxtrace_queues *queues,
- 			       union perf_event *event, off_t data_offset,
- 			       struct auxtrace_buffer **buffer_ptr)
- {
--	struct auxtrace_buffer *buffer;
--	unsigned int idx;
--	int err;
-+	struct auxtrace_buffer buffer = {
-+		.pid = -1,
-+		.tid = event->auxtrace.tid,
-+		.cpu = event->auxtrace.cpu,
-+		.data_offset = data_offset,
-+		.offset = event->auxtrace.offset,
-+		.reference = event->auxtrace.reference,
-+		.size = event->auxtrace.size,
-+	};
-+	unsigned int idx = event->auxtrace.idx;
- 
- 	if (filter_cpu(session, event->auxtrace.cpu))
- 		return 0;
- 
--	buffer = zalloc(sizeof(struct auxtrace_buffer));
--	if (!buffer)
--		return -ENOMEM;
--
--	buffer->pid = -1;
--	buffer->tid = event->auxtrace.tid;
--	buffer->cpu = event->auxtrace.cpu;
--	buffer->data_offset = data_offset;
--	buffer->offset = event->auxtrace.offset;
--	buffer->reference = event->auxtrace.reference;
--	buffer->size = event->auxtrace.size;
--	idx = event->auxtrace.idx;
--
--	err = auxtrace_queues__add_buffer(queues, session, idx, buffer,
--					  buffer_ptr);
--	if (err)
--		goto out_err;
--
--	return 0;
--
--out_err:
--	auxtrace_buffer__free(buffer);
--	return err;
-+	return auxtrace_queues__add_buffer(queues, session, idx, &buffer,
-+					   buffer_ptr);
- }
- 
- static int auxtrace_queues__add_indexed_event(struct auxtrace_queues *queues,
+ 	for (i = 0; i < nr_members; i++) {
+ 		struct sym_hist *ah = annotation__histogram(notes, evsel->idx + i);
