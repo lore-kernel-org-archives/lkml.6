@@ -1,29 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751404AbeDFBL5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 21:11:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54294 "EHLO
+        id S1751418AbeDFBOq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:14:46 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59052 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751315AbeDFBL4 (ORCPT
+        with ESMTP id S1751298AbeDFBOp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 21:11:56 -0400
-Date: Fri, 6 Apr 2018 02:11:47 +0100
+        Thu, 5 Apr 2018 21:14:45 -0400
+Date: Fri, 6 Apr 2018 02:14:18 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] sound updates for 4.17-rc1
-Message-ID: <20180406011147.GD12349@sirena.org.uk>
-References: <s5hwoxmdpmu.wl-tiwai@suse.de>
- <CA+55aFxuowsvQyq0+xeq=ganTHqw2uZ6kkZ8DBk0k01cJHUzjA@mail.gmail.com>
- <20180405190441.GC12349@sirena.org.uk>
- <CA+55aFw3B=2NjM2dapxFRU=GYtMJ+Mm=MBVDEp8PNqp9LGz_7Q@mail.gmail.com>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: hch@lst.de, thomas.lendacky@amd.com, tglx@linutronix.de,
+        dwmw2@infradead.org, joro@8bytes.org, jdmason@kudzu.us,
+        konrad.wilk@oracle.com, torvalds@linux-foundation.org, mulix@mulix.org,
+        peterz@infradead.org, iommu@lists.linux-foundation.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+        perex@perex.cz, tiwai@suse.com, Vinod Koul <vinod.koul@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: x86/dma conversion for v4.17-rc1 breaks sound / sst-acpi (commit
+ 6e4bf5867783)
+Message-ID: <20180406011418.GE12349@sirena.org.uk>
+References: <20180405205657.GA1788@light.dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Hf61M2y+wYpnELGG"
+        protocol="application/pgp-signature"; boundary="2qXFWqzzG3v1+95a"
 Content-Disposition: inline
-In-Reply-To: <CA+55aFw3B=2NjM2dapxFRU=GYtMJ+Mm=MBVDEp8PNqp9LGz_7Q@mail.gmail.com>
+In-Reply-To: <20180405205657.GA1788@light.dominikbrodowski.net>
 X-Cookie: Last week's pet, this week's special.
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -31,149 +33,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Hf61M2y+wYpnELGG
+--2qXFWqzzG3v1+95a
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 05, 2018 at 12:32:52PM -0700, Linus Torvalds wrote:
-
-> The whole idea with a topic branch is that it's a topic branch. You do
-> the development on that branch, and then at the END of development you
-> merge it once and that branch is now *dead*. If you continue using
-> that branch, you shouldn't be merging it.
-
-Right, so even with things that aren't just "all the development on
-driver X" stuff I do fairly often get cases where there's ongoing
-development, for example where things have been split up for ease of
-review but each series is still useful in itself.  If I'm creating topic
-branches less aggressively it'd usually be either for cross tree merges
-or because I expect further development in that area it'd be useful to
-group together for posterity.  You seem to be saying don't do the latter
-which is fine so long as I know it.
-
-> So nobody ever sees empty merges, because by definition they never
-> happen.  You only merge a branch once, and obviously only when it
-> actually had real changes in it.
-
-Like I say I'm pretty sure all the merges there now are bringing some
-content in so that at least shouldn't have been an issue.
-
-> And if you do daily merges for testing, then do them into a *testing*
-> branch. Those daily merges have nothing what-so-ever to do with what
-> you should send upstream, they are for testing.
-
-> In short: do not do any automated merges for upstreaming AT ALL.
-> Automated merging for that is WRONG. Don't do it.
-
-OK.  The way I've been thinking about this has been that I'm doing the
-daily merges for testing and then what I have for upstream is a snapshot
-of something that had successful testing, I try to avoid modifying
-whatever the last thing in -next was. =20
-
->  (1) testing (daily, weekly, hourly, "on demand", "when I feel like
-> it", or for linux-next, or whatever).
-
-=2E..
-
->      The more of this kind of automation you do the better. Do it
-> daily. Do it every hour. Have a test-farm that does a build every
-> single time any branch changes at all. Whatever floats your boat.
+On Thu, Apr 05, 2018 at 10:56:57PM +0200, Dominik Brodowski wrote:
+> Christoph,
 >=20
->      And nobody will ever complain, because nobody will ever even
-> *see* it. Except perhaps in the sense of "Wow, Mark really does a
-> great job, and all his branches just always work", because all the
-> daily testing you do means that you see any problems long before
-> anybody else sees it.
+> unfortunately, commit 6e4bf5867783 breaks sound on my Dell XPS13, see the
+> dmesg diff between fec777c385b6 and 6e4bf5867783:
 
-Some of the test automation people occasionally complain about the load
-I put on their systems already.
+Adding Vinod and Pierre from Intel in case they have any ideas here.
+Which model of XPS13 is this (2015?)?
 
->  (2) if you have an EXPLICIT REASON to merge
+> -sst-acpi INT3438:00: DesignWare DMA Controller, 8 channels
+> -haswell-pcm-audio haswell-pcm-audio: Direct firmware load for intel/Intc=
+PP01.bin failed with error -2
+> -haswell-pcm-audio haswell-pcm-audio: fw image intel/IntcPP01.bin not ava=
+ilable(-2)
+> -haswell-pcm-audio haswell-pcm-audio: FW loaded, mailbox readback FW info=
+: type 01, - version: 00.00, build 77, source commit id: 876ac6906f31a43b67=
+72b23c7c983ce9dcb18a19
+> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> System Pin mappin=
+g ok
+> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload0 Pin mapp=
+ing ok
+> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload1 Pin mapp=
+ing ok
+> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Loopback Pin mapp=
+ing ok
+> -broadwell-audio broadwell-audio: rt286-aif1 <-> snd-soc-dummy-dai mappin=
+g ok
+> -input: broadwell-rt286 Headset as /devices/pci0000:00/INT3438:00/broadwe=
+ll-audio/sound/card1/input15
+> +broadwell-audio broadwell-audio: ASoC: CPU DAI System Pin not registered
 
->      You have two branches that have an actual dependency, or some
-> other interaction, and you want to merge them together.
+> So it seems that sst-acpi is unhappy with this patch. Any ideas?
 
->      THIS IS NEVER EVER AUTOMATED!
+> Thanks,
+> 	Dominik
 
->      It shouldn't even be scripted, because this shouldn't be about
-> tens of branches anyway, and it certainly shouldn't be something all
-> that common, or something is seriously wrong.
-
->      And btw, in this case the merge commit message should talk about
-> what the dependency was, which is another reason why this shouldn't be
-> scripted or automated.
-
-Indeed, I'm doing this already except I rarely manually write a commit
-message (90% of them are relatively obvious "pull in X API so we can use
-it" or "merge up the fixes branch" stuff but yeah, could do better).
-The merges are only ever generated by hand.
-
->  (3) if you are done and ready with a branch, and it's time to just
-> say "the development on this branch is all done, now I will ask
-> upstream to pull it, and I'll merge this into my upstream branch"
-
->      THIS IS NEVER AUTOMATED!
-
->      Sure, you might script it ("I have 35+ branches that I will send
-> out, I use a script to merge them all together"), but the act of
-> running that script is not something daily, it's something like "I am
-> now ready to ask Takashi to take this", so you do it before you do the
-> pull request to upstream.
-
-Hrm, OK.  This I find unclear in that if you're saying it's OK to script
-the merge of lots of branches I'm having trouble seeing the distinction
-between that and the test merges you're talking about.  Any verbiage in
-the individual merge commits if they're done en masse is going to at
-best be very formulaic unless I do something like use git notes to store
-a brief blurb about the topic of the branch (and even then it's likely
-to get quite repetitive).  I'm seeing merge commits from other people
-that look rather like that may be happening, and others that look like
-they're pretty much just using git shortlog as the merge message.
-
-I've been approaching things from the point of view that I merge
-everything and then I write a signed tag explaining what that was all
-about, I'd really like to be able to roll up the entire transaction but
-the way to do that is a cthulhu merge which has other issues.
-
-> You have a lot of merges that have no actual merge commit message at
-> all. They say what they do, but they don't explain it. That should be
-> a big warning sign to you.
-
-It really doesn't set off alarm bells for me when reading logs, perhaps
-as a result of having worked on things outside upstream (and outside the
-kernel) where there were a lot of pretty routine and mechanical process
-merges going on. =20
-
-> That's ok for automated testing (like pushing to linux-next or 0day
-> build-bot or whatever). But those things have *nothing* to do with
-> upstreaming, except in the indirect sense ("I've done a lot of testing
-> on these changes, so now I'm happy to merge them for upstreaming").
-
-> See the difference?
-
-Honestly what I'm getting from this is that I should try to minimize the
-number of topic branches I create since anything that generates a
-non-trivial number of them is going to want automation which seems like
-it's going to cause problems one way or another.  I appreciate that
-you're talking mainly about commit messages on the merges in this mail
-but the issues there are partly a product of volume and you have been
-complaining about what the gitk looks like too which is definitely a
-product of volume.
-
---Hf61M2y+wYpnELGG
+--2qXFWqzzG3v1+95a
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrGyVMACgkQJNaLcl1U
-h9DRhAf+PsEmjQQMxpCcF/piIyaI6AJ0Y0pRyqdoS9TiN39d5OFCUcx47weMwyv8
-UU4/JDpgGi58Ygy5QRNnFzYr5TU9AlvSqvBEB0WE/gumsdHHKts+WsonSE6V/xWc
-iz8seFsfNtufJPwAKmNsABJUjwQWZJACHjvxSuP9peQmxz0vFkpzfOofBfcFrYel
-cYa30njNkJHZNRsa02fUsdxtkVlE6oE9A85l18qzul+JGCktn9nZpuNCVRNr/GOH
-39lgJwaVSQOA2gbheJoB39+IzNCW3pdYzW5oZ052URHkaLj6tcKz7HZHvCgaBej2
-rQ8mCvxaws004cBtCMVhLOaZiL/TOg==
-=x1fI
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrGyekACgkQJNaLcl1U
+h9CJoAf/TS90luzysqHpT36oUysr/MHhMQwatcObYyEFVwhYzJfWy3B0HlpFmh6A
+nNsqRFbXDA8K6s7e4vewIKkke/v9lezzsuTFn5UYemwZinJzl5+LUSHWC6bmXHwt
+4TKdW36F8BSD2s4nXaxxo1U+bqrtoR6h1UtvRJao4lLhbJ8pY08dK9m8BJx4ozzu
+3rwb2RcZsoV+5aTJmYW3Iq4S9i5cbhBpsMo4EfKM8fM3Rf/vsHhp8o/ZErvyt8py
+TSw8MoyUPwNqLxswlV5tZf6wFZ92/YI8vbMOJoeRmJEFi3xOX1AV3HQQXw62jbe5
+U6I1OT9IpZcE+/kSgiEX7/CgJ6L0Lw==
+=6dLs
 -----END PGP SIGNATURE-----
 
---Hf61M2y+wYpnELGG--
+--2qXFWqzzG3v1+95a--
