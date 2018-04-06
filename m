@@ -1,166 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751563AbeDFDOx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 23:14:53 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36349 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751363AbeDFDOv (ORCPT
+        id S1751746AbeDFDPK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 23:15:10 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:45956 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751623AbeDFDPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 23:14:51 -0400
-X-Google-Smtp-Source: AIpwx4/2yq64DFfOcsehW4JDQSDgsEor+8QPm48n4Y6aGxmCOMMJ2ZZ4hFzemAGL/FMQXbdT1Jdbhg==
-Date: Thu, 5 Apr 2018 20:15:24 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Tianyu Lan <lantianyu1986@gmail.com>
-Cc: "Lan, Tianyu" <tianyu.lan@intel.com>,
-        syzbot
-        <bot+7ad82526b98c64c90062275162dacfa48c20dbd3@syzkaller.appspotmail.com>,
-        borntraeger@de.ibm.com, cornelia.huck@de.ibm.com, david@redhat.com,
-        Dmitry Vyukov <dvyukov@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        jschoenh@amazon.de, kvm <kvm@vger.kernel.org>,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>, syzkaller-bugs@googlegroups.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: KASAN: use-after-free Write in irq_bypass_register_consumer
-Message-ID: <20180406031524.GB21382@sol.localdomain>
-References: <001a1143e716efd3a9055cc8696b@google.com>
- <001a1146f1146fe0b505605e42c1@google.com>
- <CAOLK0pxR1qJC3sT2QoHgj-ys7FgFqY8724Xo9CLjWxi439ZrTw@mail.gmail.com>
- <91a32ec1-64e7-8b6b-9464-6599dd6735ad@intel.com>
- <20180126232755.z3gtqrm2oz6sp2t6@gmail.com>
- <d630a4c9-04ba-9e41-1f7b-11c59b2cd8e4@gmail.com>
+        Thu, 5 Apr 2018 23:15:09 -0400
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To: Michal Hocko <mhocko@kernel.org>
+CC: "Kirill A. Shutemov" <kirill@shutemov.name>, Zi Yan <zi.yan@sent.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
+ consider non-anonymous thp as unmovable page)
+Thread-Topic: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
+ consider non-anonymous thp as unmovable page)
+Thread-Index: AQHTzVRbJLbJcuvidESXEazGlmX3mA==
+Date: Fri, 6 Apr 2018 03:07:11 +0000
+Message-ID: <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180403082405.GA23809@hori1.linux.bs1.fc.nec.co.jp>
+ <20180403083451.GG5501@dhcp22.suse.cz>
+ <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
+ <20180405085927.GC6312@dhcp22.suse.cz>
+ <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
+ <20180405124830.GJ6312@dhcp22.suse.cz>
+ <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
+ <20180405150547.GN6312@dhcp22.suse.cz>
+ <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
+ <20180405160317.GP6312@dhcp22.suse.cz>
+In-Reply-To: <20180405160317.GP6312@dhcp22.suse.cz>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.128.101.16]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <096B8D5FD15CDE4E9704754401AD7653@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d630a4c9-04ba-9e41-1f7b-11c59b2cd8e4@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 29, 2018 at 01:29:48PM +0800, Tianyu Lan wrote:
-> 
-> 
-> On 1/27/2018 7:27 AM, Eric Biggers wrote:
-> > On Sat, Dec 16, 2017 at 04:37:02PM +0800, Lan, Tianyu wrote:
-> > > The root cause is that kvm_irqfd_assign() and kvm_irqfd_deassign() can't
-> > > be run in parallel. Some data structure(e.g, irqfd->consumer) will be
-> > > crashed because irqfd may be freed in deassign path before they are used
-> > > in assign path. The other data maybe used in deassign path before
-> > > initialization. Syzbot test hit such case. Add mutx between
-> > > kvm_irqfd_assign() and kvm_irqfd_deassign() can fix such issue. Will
-> > > send patch to fix it.
-> > > 
-> > > On 12/16/2017 12:53 PM, Tianyu Lan wrote:
-> > > > I reproduced the issue. Will have a look.
+Hi everyone,
+
+On Thu, Apr 05, 2018 at 06:03:17PM +0200, Michal Hocko wrote:
+> On Thu 05-04-18 18:55:51, Kirill A. Shutemov wrote:
+> > On Thu, Apr 05, 2018 at 05:05:47PM +0200, Michal Hocko wrote:
+> > > On Thu 05-04-18 16:40:45, Kirill A. Shutemov wrote:
+> > > > On Thu, Apr 05, 2018 at 02:48:30PM +0200, Michal Hocko wrote:
+> > > [...]
+> > > > > RIght, I confused the two. What is the proper layer to fix that then?
+> > > > > rmap_walk_file?
 > > > > 
-> > > > -- Best regards Tianyu Lan 2017-12-15 18:14 GMT+08:00 syzbot
-> > > > <bot+7ad82526b98c64c90062275162dacfa48c20dbd3@syzkaller.appspotmail.com>:
-> > > > > syzkaller has found reproducer for the following crash on
-> > > > > 82bcf1def3b5f1251177ad47c44f7e17af039b4b
-> > > > > git://git.cmpxchg.org/linux-mmots.git/master
-> > > > > compiler: gcc (GCC) 7.1.1 20170620
-> > > > > .config is attached
-> > > > > Raw console output is attached.
-> > > > > C reproducer is attached
-> > > > > syzkaller reproducer is attached. Seehttps://goo.gl/kgGztJ
-> > > > > for information about syzkaller reproducers
-> > > > > 
-> > > > > 
-> > > > > ==================================================================
-> > > > > BUG: KASAN: use-after-free in __list_add include/linux/list.h:64 [inline]
-> > > > > BUG: KASAN: use-after-free in list_add include/linux/list.h:79 [inline]
-> > > > > BUG: KASAN: use-after-free in irq_bypass_register_consumer+0x4b4/0x500
-> > > > > virt/lib/irqbypass.c:217
-> > > > > Write of size 8 at addr ffff8801cdf51180 by task syzkaller436086/15031
-> > > > > 
-> > > > > CPU: 1 PID: 15031 Comm: syzkaller436086 Not tainted 4.15.0-rc2-mm1+ #39
-> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > > > > Google 01/01/2011
-> > > > > Call Trace:
-> > > > >    __dump_stack lib/dump_stack.c:17 [inline]
-> > > > >    dump_stack+0x194/0x257 lib/dump_stack.c:53
-> > > > >    print_address_description+0x73/0x250 mm/kasan/report.c:252
-> > > > >    kasan_report_error mm/kasan/report.c:351 [inline]
-> > > > >    kasan_report+0x25b/0x340 mm/kasan/report.c:409
-> > > > >    __asan_report_store8_noabort+0x17/0x20 mm/kasan/report.c:435
-> > > > >    __list_add include/linux/list.h:64 [inline]
-> > > > >    list_add include/linux/list.h:79 [inline]
-> > > > >    irq_bypass_register_consumer+0x4b4/0x500 virt/lib/irqbypass.c:217
-> > > > >    kvm_irqfd_assign arch/x86/kvm/../../../virt/kvm/eventfd.c:417 [inline]
-> > > > >    kvm_irqfd+0x137f/0x1d50 arch/x86/kvm/../../../virt/kvm/eventfd.c:572
-> > > > >    kvm_vm_ioctl+0x1079/0x1c40 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2992
-> > > > >    vfs_ioctl fs/ioctl.c:46 [inline]
-> > > > >    do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:686
-> > > > >    SYSC_ioctl fs/ioctl.c:701 [inline]
-> > > > >    SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-> > > > >    entry_SYSCALL_64_fastpath+0x1f/0x96
-> > > > > RIP: 0033:0x44d379
-> > > > > RSP: 002b:00007fc5ff9a9d08 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > > > > RAX: ffffffffffffffda RBX: 00007fc5ff9aa700 RCX: 000000000044d379
-> > > > > RDX: 0000000020080fe0 RSI: 000000004020ae76 RDI: 0000000000000005
-> > > > > RBP: 00000000007ff900 R08: 00007fc5ff9aa700 R09: 00007fc5ff9aa700
-> > > > > R10: 00007fc5ff9aa700 R11: 0000000000000246 R12: 0000000000000000
-> > > > > R13: 00000000007ff8ff R14: 00007fc5ff9aa9c0 R15: 0000000000000000
-> > > > > 
-> > > > > Allocated by task 15031:
-> > > > >    save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-> > > > >    set_track mm/kasan/kasan.c:459 [inline]
-> > > > >    kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
-> > > > >    kmem_cache_alloc_trace+0x136/0x750 mm/slab.c:3614
-> > > > >    kmalloc include/linux/slab.h:516 [inline]
-> > > > >    kzalloc include/linux/slab.h:705 [inline]
-> > > > >    kvm_irqfd_assign arch/x86/kvm/../../../virt/kvm/eventfd.c:296 [inline]
-> > > > >    kvm_irqfd+0x16c/0x1d50 arch/x86/kvm/../../../virt/kvm/eventfd.c:572
-> > > > >    kvm_vm_ioctl+0x1079/0x1c40 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2992
-> > > > >    vfs_ioctl fs/ioctl.c:46 [inline]
-> > > > >    do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:686
-> > > > >    SYSC_ioctl fs/ioctl.c:701 [inline]
-> > > > >    SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-> > > > >    entry_SYSCALL_64_fastpath+0x1f/0x96
-> > > > > 
-> > > > > Freed by task 1402:
-> > > > >    save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-> > > > >    set_track mm/kasan/kasan.c:459 [inline]
-> > > > >    kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
-> > > > >    __cache_free mm/slab.c:3492 [inline]
-> > > > >    kfree+0xca/0x250 mm/slab.c:3807
-> > > > >    irqfd_shutdown+0x13c/0x1a0 arch/x86/kvm/../../../virt/kvm/eventfd.c:148
-> > > > >    process_one_work+0xbfd/0x1bc0 kernel/workqueue.c:2113
-> > > > >    worker_thread+0x223/0x1990 kernel/workqueue.c:2247
-> > > > >    kthread+0x37a/0x440 kernel/kthread.c:238
-> > > > >    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
-> > > > > 
-> > > > > The buggy address belongs to the object at ffff8801cdf51000
-> > > > >    which belongs to the cache kmalloc-512 of size 512
-> > > > > The buggy address is located 384 bytes inside of
-> > > > >    512-byte region [ffff8801cdf51000, ffff8801cdf51200)
-> > > > > The buggy address belongs to the page:
-> > > > > page:00000000d08a0d63 count:1 mapcount:0 mapping:00000000d54c7be6 index:0x0
-> > > > > flags: 0x2fffc0000000100(slab)
-> > > > > raw: 02fffc0000000100 ffff8801cdf51000 0000000000000000 0000000100000006
-> > > > > raw: ffffea00073a7660 ffffea000737f3a0 ffff8801dac00940 0000000000000000
-> > > > > page dumped because: kasan: bad access detected
-> > > > > 
-> > > > > Memory state around the buggy address:
-> > > > >    ffff8801cdf51080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > > > >    ffff8801cdf51100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > > > > > ffff8801cdf51180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > > > >                      ^
-> > > > >    ffff8801cdf51200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > > > >    ffff8801cdf51280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > > > > ==================================================================
-> > > > > 
-> > Tianyu, are you still planning to send a patch for this?  This is still
-> > happening.
+> > > > Maybe something like this? Totally untested.
+> > > 
+> > > This looks way too complex. Why cannot we simply split THP page cache
+> > > during migration?
 > > 
-> > - Eric
-> Yes, I sent out fix patch and wait for review.
->  https://patchwork.kernel.org/patch/10128925/
+> > This way we unify the codepath for archictures that don't support THP
+> > migration and shmem THP.
 > 
+> But why? There shouldn't be really nothing to prevent THP (anon or
+> shemem) to be migratable. If we cannot migrate it at once we can always
+> split it. So why should we add another thp specific handling all over
+> the place?
 
-This is still happening.  Can you please resend your patch?
+If thp migration works fine for shmem, we can keep anon/shmem thp to
+be migratable and we don't need any ad-hoc workaround.
+So I wrote a patch to enable it.
+This patch does not change any shmem specific code, so I think that
+it works for file thp (not only shmem,) but I don't test it yet.
 
-Eric
+Thanks,
+Naoya Horiguchi
+-----
+>From e31ec037701d1cc76b26226e4b66d8c783d40889 Mon Sep 17 00:00:00 2001
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Date: Fri, 6 Apr 2018 10:58:35 +0900
+Subject: [PATCH] mm: enable thp migration for shmem thp
+
+My testing for the latest kernel supporting thp migration showed an
+infinite loop in offlining the memory block that is filled with shmem
+thps.  We can get out of the loop with a signal, but kernel should
+return with failure in this case.
+
+What happens in the loop is that scan_movable_pages() repeats returning
+the same pfn without any progress. That's because page migration always
+fails for shmem thps.
+
+In memory offline code, memory blocks containing unmovable pages should
+be prevented from being offline targets by has_unmovable_pages() inside
+start_isolate_page_range(). So it's possible to change migratability
+for non-anonymous thps to avoid the issue, but it introduces more complex
+and thp-specific handling in migration code, so it might not good.
+
+So this patch is suggesting to fix the issue by enabling thp migration
+for shmem thp. Both of anon/shmem thp are migratable so we don't need
+precheck about the type of thps.
+
+Fixes: commit 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: stable@vger.kernel.org # v4.15+
+---
+ mm/huge_memory.c |  5 ++++-
+ mm/migrate.c     | 19 ++++++++++++++++---
+ mm/rmap.c        |  3 ---
+ 3 files changed, 20 insertions(+), 7 deletions(-)
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2aff58624886..933c1bbd3464 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2926,7 +2926,10 @@ void remove_migration_pmd(struct page_vma_mapped_walk *pvmw, struct page *new)
+ 		pmde = maybe_pmd_mkwrite(pmde, vma);
+ 
+ 	flush_cache_range(vma, mmun_start, mmun_start + HPAGE_PMD_SIZE);
+-	page_add_anon_rmap(new, vma, mmun_start, true);
++	if (PageAnon(new))
++		page_add_anon_rmap(new, vma, mmun_start, true);
++	else
++		page_add_file_rmap(new, true);
+ 	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
+ 	if (vma->vm_flags & VM_LOCKED)
+ 		mlock_vma_page(new);
+diff --git a/mm/migrate.c b/mm/migrate.c
+index bdef905b1737..f92dd9f50981 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -472,7 +472,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	pslot = radix_tree_lookup_slot(&mapping->i_pages,
+  					page_index(page));
+ 
+-	expected_count += 1 + page_has_private(page);
++	expected_count += hpage_nr_pages(page) + page_has_private(page);
+ 	if (page_count(page) != expected_count ||
+ 		radix_tree_deref_slot_protected(pslot,
+ 					&mapping->i_pages.xa_lock) != page) {
+@@ -505,7 +505,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	 */
+ 	newpage->index = page->index;
+ 	newpage->mapping = page->mapping;
+-	get_page(newpage);	/* add cache reference */
++	page_ref_add(newpage, hpage_nr_pages(page)); /* add cache reference */
+ 	if (PageSwapBacked(page)) {
+ 		__SetPageSwapBacked(newpage);
+ 		if (PageSwapCache(page)) {
+@@ -524,13 +524,26 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	}
+ 
+ 	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
++	if (PageTransHuge(page)) {
++		int i;
++		int index = page_index(page);
++
++		for (i = 0; i < HPAGE_PMD_NR; i++) {
++			pslot = radix_tree_lookup_slot(&mapping->i_pages,
++						       index + i);
++			radix_tree_replace_slot(&mapping->i_pages, pslot,
++						newpage + i);
++		}
++	} else {
++		radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
++	}
+ 
+ 	/*
+ 	 * Drop cache reference from old page by unfreezing
+ 	 * to one less reference.
+ 	 * We know this isn't the last reference.
+ 	 */
+-	page_ref_unfreeze(page, expected_count - 1);
++	page_ref_unfreeze(page, expected_count - hpage_nr_pages(page));
+ 
+ 	xa_unlock(&mapping->i_pages);
+ 	/* Leave irq disabled to prevent preemption while updating stats */
+diff --git a/mm/rmap.c b/mm/rmap.c
+index f0dd4e4565bc..8d5337fed37b 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1374,9 +1374,6 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 		if (!pvmw.pte && (flags & TTU_MIGRATION)) {
+ 			VM_BUG_ON_PAGE(PageHuge(page) || !PageTransCompound(page), page);
+ 
+-			if (!PageAnon(page))
+-				continue;
+-
+ 			set_pmd_migration_entry(&pvmw, page);
+ 			continue;
+ 		}
+-- 
+2.7.4
