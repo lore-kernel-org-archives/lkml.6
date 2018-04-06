@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49OQP2ybcuVzdngsAonn6kZ/KN5mnfEXyijCi/xH8IiFlk66dfWMeVnwJKm8WvVrpJEXE23
-ARC-Seal: i=1; a=rsa-sha256; t=1523021118; cv=none;
+X-Google-Smtp-Source: AIpwx49IVvqImGL8zx6OrZx6RyikXKffwJ6U/104fAli5CN/sLfSOyM2BdGunS3B50et6BYnOCwN
+ARC-Seal: i=1; a=rsa-sha256; t=1523021115; cv=none;
         d=google.com; s=arc-20160816;
-        b=yy5v80D2OvE1sStz6q0lxMzUhQNCQCRD1eUZIv1ilV4VUZO9fGF215jDpI2HMzHoQq
-         SpUzvGt0gETGWlv2zZoPWkJoPN2NpbrkuAvXzi/5HlLPEAW1ppsK7TWNGv2t8q12vIyz
-         98PeIIC3PR64BT36k75DUM8+qGJVk6SEL68tBIMYfZuzsyv/T6JTyjjBS6u5UPu8haKw
-         xiQkJL6WLwasv0znyEwydMKPjRT9Ww6y8CzIf3+48Bw0ahYXF7p7vGOMPsDns59NUJTh
-         UBG0fpDN1zdGhhegcwaG8kLmabueHuDB97+Atoehzo/pPK/hA9tdbWc2KFf4Mh7/aOyA
-         +6YQ==
+        b=IQq8KhxPyLPIzfTaBMgNn4KKHfvV8rg3mr9uGWUhqiF7ZOvsl6Rs+9Jhzmdy9feOky
+         cbLucgAcWoEeFAcksKR/njpPVFOK6dNb/KGg+/rkvrr878j7D3EDh8+c7o2gWCq3eYUI
+         uHfZEM/D+VvRXmUGpvZ+C00B7hnFQIHDzOxf20X9PxbsuTsU9GieVXBRXtpeo/73a7D6
+         9KtQuPydkLm0asnUvE3Orhqp0jiOmEWuEEyJV20URVk1lWMyuOUCJsmx9294fvzzPWrh
+         MwFnBPB4tgfEPhalniKnF0vPjbr64ykPg+F/72REiBTQICGKvLBI+lCuwFYFE6XYFZnZ
+         b+rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MJgS9ZbuNnZLw9cQL+ujABj3TIfaXZwD+AIlN8N3y70=;
-        b=GZPICK3GozHK1KPX6a5p4hDPJrEgIxSR6SVVxhSfx9QwMD//jYG3X2d7Ud6SJRNPmT
-         ZaUo1zNPts9ak/4KP+J5oRk+O63daZS1FsMjeYXSvo2t3f/H3kEj7iswI+MvygphFpEz
-         YaQGuuDwuUhSFyL1jmv7jXacHUHj02BZHer5JNHRC8PFhSIzK4wOTv3anNR5dhJsg+KO
-         oajYOdrPMHOPuVOGrEFv5SkNRsI+zJa/t9ja24FayWJCZ4Ejv1X1RpHrJMe8J4ZgjQfk
-         jAWArcIdw/5kMr5MFN898b49//YaUJgHiRkGRR5Mb/AuKP7ouIU3Map23kkl6q6+VgN2
-         95jg==
+        bh=xclvzu+614zQuYz/sR+cO0c5oA4M5xlRIy4ph92NZ5w=;
+        b=XpBkjBLgdae/JIKiJLsodTOBwYHIHxa2LBn5VkFGLj95eWUGD9zI4tOXRK633aX3L9
+         fe6VK2G9qecYsGgRtvcocXagxjfF34lb22MfgWUrVezNc0BlHjeHLh0dtZHlPWHW6aVA
+         rDbtc321YLOOEbtZuwKPdwTqd76jFANbPuNxTekK00I3QbIktsqfWTcyxjvHwv+rC1Bo
+         aNvvAw9r1cSFNGoeyLUSS0pWO6Xtw0I75YKcjRuTJzL8NpgatyuFci6m8oxruOKkwIFj
+         Q7iH6SLtj2s58vR0+W+8txEYMy6SvvF94uxp7E92pnXaw5+hp96gDJ/q5TEue18PquLy
+         JkTw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+1ff6f9fcc3c35f1c72a95e26528c8e7e3276e4da@syzkaller.appspotmail.com,
-	Eric Biggers <ebiggers@google.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 3.18 04/93] libata: fix length validation of ATAPI-relayed SCSI commands
-Date: Fri,  6 Apr 2018 15:22:33 +0200
-Message-Id: <20180406084225.161489894@linuxfoundation.org>
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 03/93] ALSA: aloop: Fix access to not-yet-ready substream via cable
+Date: Fri,  6 Apr 2018 15:22:32 +0200
+Message-Id: <20180406084225.112487482@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -41,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003392089338348?=
-X-GMAIL-MSGID: =?utf-8?q?1597003392089338348?=
+X-GMAIL-THRID: =?utf-8?q?1597003389336109965?=
+X-GMAIL-MSGID: =?utf-8?q?1597003389336109965?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,100 +48,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 058f58e235cbe03e923b30ea7c49995a46a8725f upstream.
+commit 8e6b1a72a75bb5067ccb6b56d8ca4aa3a300a64e upstream.
 
-syzkaller reported a crash in ata_bmdma_fill_sg() when writing to
-/dev/sg1.  The immediate cause was that the ATA command's scatterlist
-was not DMA-mapped, which causes 'pi - 1' to underflow, resulting in a
-write to 'qc->ap->bmdma_prd[0xffffffff]'.
+In loopback_open() and loopback_close(), we assign and release the
+substream object to the corresponding cable in a racy way.  It's
+neither locked nor done in the right position.  The open callback
+assigns the substream before its preparation finishes, hence the other
+side of the cable may pick it up, which may lead to the invalid memory
+access.
 
-Strangely though, the flag ATA_QCFLAG_DMAMAP was set in qc->flags.  The
-root cause is that when __ata_scsi_queuecmd() is preparing to relay a
-SCSI command to an ATAPI device, it doesn't correctly validate the CDB
-length before copying it into the 16-byte buffer 'cdb' in 'struct
-ata_queued_cmd'.  Namely, it validates the fixed CDB length expected
-based on the SCSI opcode but not the actual CDB length, which can be
-larger due to the use of the SG_NEXT_CMD_LEN ioctl.  Since 'flags' is
-the next member in ata_queued_cmd, a buffer overflow corrupts it.
+This patch addresses these: move the assignment to the end of the open
+callback, and wrap with cable->lock for avoiding concurrent accesses.
 
-Fix it by requiring that the actual CDB length be <= 16 (ATAPI_CDB_LEN).
-
-[Really it seems the length should be required to be <= dev->cdb_len,
-but the current behavior seems to have been intentionally introduced by
-commit 607126c2a21c ("libata-scsi: be tolerant of 12-byte ATAPI commands
-in 16-byte CDBs") to work around a userspace bug in mplayer.  Probably
-the workaround is no longer needed (mplayer was fixed in 2007), but
-continuing to allow lengths to up 16 appears harmless for now.]
-
-Here's a reproducer that works in QEMU when /dev/sg1 refers to the
-CD-ROM drive that qemu-system-x86_64 creates by default:
-
-    #include <fcntl.h>
-    #include <sys/ioctl.h>
-    #include <unistd.h>
-
-    #define SG_NEXT_CMD_LEN 0x2283
-
-    int main()
-    {
-	    char buf[53] = { [36] = 0x7e, [52] = 0x02 };
-	    int fd = open("/dev/sg1", O_RDWR);
-	    ioctl(fd, SG_NEXT_CMD_LEN, &(int){ 17 });
-	    write(fd, buf, sizeof(buf));
-    }
-
-The crash was:
-
-    BUG: unable to handle kernel paging request at ffff8cb97db37ffc
-    IP: ata_bmdma_fill_sg drivers/ata/libata-sff.c:2623 [inline]
-    IP: ata_bmdma_qc_prep+0xa4/0xc0 drivers/ata/libata-sff.c:2727
-    PGD fb6c067 P4D fb6c067 PUD 0
-    Oops: 0002 [#1] SMP
-    CPU: 1 PID: 150 Comm: syz_ata_bmdma_q Not tainted 4.15.0-next-20180202 #99
-    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-    [...]
-    Call Trace:
-     ata_qc_issue+0x100/0x1d0 drivers/ata/libata-core.c:5421
-     ata_scsi_translate+0xc9/0x1a0 drivers/ata/libata-scsi.c:2024
-     __ata_scsi_queuecmd drivers/ata/libata-scsi.c:4326 [inline]
-     ata_scsi_queuecmd+0x8c/0x210 drivers/ata/libata-scsi.c:4375
-     scsi_dispatch_cmd+0xa2/0xe0 drivers/scsi/scsi_lib.c:1727
-     scsi_request_fn+0x24c/0x530 drivers/scsi/scsi_lib.c:1865
-     __blk_run_queue_uncond block/blk-core.c:412 [inline]
-     __blk_run_queue+0x3a/0x60 block/blk-core.c:432
-     blk_execute_rq_nowait+0x93/0xc0 block/blk-exec.c:78
-     sg_common_write.isra.7+0x272/0x5a0 drivers/scsi/sg.c:806
-     sg_write+0x1ef/0x340 drivers/scsi/sg.c:677
-     __vfs_write+0x31/0x160 fs/read_write.c:480
-     vfs_write+0xa7/0x160 fs/read_write.c:544
-     SYSC_write fs/read_write.c:589 [inline]
-     SyS_write+0x4d/0xc0 fs/read_write.c:581
-     do_syscall_64+0x5e/0x110 arch/x86/entry/common.c:287
-     entry_SYSCALL_64_after_hwframe+0x21/0x86
-
-Fixes: 607126c2a21c ("libata-scsi: be tolerant of 12-byte ATAPI commands in 16-byte CDBs")
-Reported-by: syzbot+1ff6f9fcc3c35f1c72a95e26528c8e7e3276e4da@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org> # v2.6.24+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-scsi.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/drivers/aloop.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -3429,7 +3429,9 @@ static inline int __ata_scsi_queuecmd(st
- 		if (likely((scsi_op != ATA_16) || !atapi_passthru16)) {
- 			/* relay SCSI command to ATAPI device */
- 			int len = COMMAND_SIZE(scsi_op);
--			if (unlikely(len > scmd->cmd_len || len > dev->cdb_len))
-+			if (unlikely(len > scmd->cmd_len ||
-+				     len > dev->cdb_len ||
-+				     scmd->cmd_len > ATAPI_CDB_LEN))
- 				goto bad_cdb_len;
+--- a/sound/drivers/aloop.c
++++ b/sound/drivers/aloop.c
+@@ -667,7 +667,9 @@ static void free_cable(struct snd_pcm_su
+ 		return;
+ 	if (cable->streams[!substream->stream]) {
+ 		/* other stream is still alive */
++		spin_lock_irq(&cable->lock);
+ 		cable->streams[substream->stream] = NULL;
++		spin_unlock_irq(&cable->lock);
+ 	} else {
+ 		/* free the cable */
+ 		loopback->cables[substream->number][dev] = NULL;
+@@ -707,7 +709,6 @@ static int loopback_open(struct snd_pcm_
+ 		loopback->cables[substream->number][dev] = cable;
+ 	}
+ 	dpcm->cable = cable;
+-	cable->streams[substream->stream] = dpcm;
  
- 			xlat_func = atapi_xlat;
+ 	snd_pcm_hw_constraint_integer(runtime, SNDRV_PCM_HW_PARAM_PERIODS);
+ 
+@@ -739,6 +740,11 @@ static int loopback_open(struct snd_pcm_
+ 		runtime->hw = loopback_pcm_hardware;
+ 	else
+ 		runtime->hw = cable->hw;
++
++	spin_lock_irq(&cable->lock);
++	cable->streams[substream->stream] = dpcm;
++	spin_unlock_irq(&cable->lock);
++
+  unlock:
+ 	if (err < 0) {
+ 		free_cable(substream);
