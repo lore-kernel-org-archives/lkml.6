@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48nld67a+knbzOEoXwIsxLIhH2YplZdPVvZXbGxeBG+H7hherYQjdXKMhKnaqU4KRJJUZfB
-ARC-Seal: i=1; a=rsa-sha256; t=1523022241; cv=none;
+X-Google-Smtp-Source: AIpwx48W+UQS45x04zv8sCIUKfxM8ffaigpvzsA9R7l3hUnfrp5C2otYh+U4UB4PgOw4KSPi1F+2
+ARC-Seal: i=1; a=rsa-sha256; t=1523022238; cv=none;
         d=google.com; s=arc-20160816;
-        b=K83EPTb51mv+JnytHpOourxLybs/2+qTnOFoYUkZMKFXNHZaIXZI31dZy87LAQnjm9
-         g5iDu0CY9PpGvSZ5xj3pbdKSP+K1dlPfcA0AS5xEl36PhYKH8KYXalRGCGhiGIBGPp/D
-         4Tz4Oe753OE6mmKj/1fb8MhwS2LED7Gctn+fQJnsTfR9EHpoCMkNI+3ys0dvxW8ZoTp5
-         AIbb5tz56eYnZKTi1S5sf4I92rhiAUE04ix3j/0t0/L5hWaf2REPZ330dRUVhdeISwcJ
-         IsQy+q+EN+9EmrLEdU3/mSu7zIIJKynBndqu2n4ist4oX8+mD8wmZgp6HAo/Zubp99Yw
-         kidw==
+        b=kS8tSsulp2sMfpC8wWF1DxH+vXkUn6ZuNZAyxmwLdaRQaSEtuuri8evAQT7DkF7ANi
+         Gt3lDciuigVhtTzD1vMjf1uLDdPCplnBQf4ZnbshEXRHLVtkXE3OHgduVbOwHcG8hGoF
+         E6/5Vw7oBBJkJZB5vn3VQrQh8ZpcT2Zzb9AFVkQFeZSN3DHdtVz2ykHqOJuHP09j6YgL
+         N11SnwoEt7lXelNr8I+wEydrE/9MSndg5LFNGQHpp/zHDCB1FF+ZemZDrIGhqobQZ106
+         z7TC2PReUMfTF71zGk0AJQQFqExMrPTLTVSp8e1fvn+V4/Z/tVxQ8LOq/1x4UCdjeUyI
+         ma3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=H26ZFI7/ZqoZBtWZ7mvV0gvxONhBRteOW90j5NE5w+U=;
-        b=VjirOatmRa474OCA9yo1p4pq36MR7AA5Vmmlz+1MSNPnK0zuxzCs85S7PwvHesvl2c
-         rkl4mEg8Un3bEn/0Kp5a6JLokA4Jcmn5zSGKOvsWyt+UI772yCrw2aettrg6XUPEhLhZ
-         HGaTBWg13OwAJQwZPQWjB2jW1HhCHaw1x1bYf+5QVJX1rZcheYLr8W7u/cTCv+ax6xZK
-         2vy/OKPqstiMsq1a4bQIEW63p23Q6tXjp3lqU5hfLEJW0ve5gPb+f3masftNotOplnbl
-         cjoapf3q4l5zH8If30yvdA5lmMiiYhkEYuM86BXk/GbWTUDIxUZLovT8a0zKq6oPPnTN
-         9TMA==
+        bh=s/8J1edhvrFUxmgm9xrJzRdPlO+JBrrbrPY/qh9/qQw=;
+        b=jvj44Oz1IGCk97NcZRBwF6WQBP7WSLua2krUjnkHxyyWzUxT2zJARMnB8QcBfYMNSn
+         Mm5tkvwkVX/LOFPavFaepI0+EV1N5tLuhAaWoOGw3LZ15C6a6DzeonrDc4vHri+0/Kf4
+         qaeG86RZQ1raqXouko7amM3OEeF4Ac8oLeXinFDsbp/AXK6u5I+GP7Wmdfd/8LrlGyCH
+         KS1tqEP1UkuBPWUd91hKc73p6VCbYzjxW1fgxR15fnmxXiFZjb+30HIOk+2PnPpY+rOZ
+         3LpeAgxuue/zrBVoxgzIVffg/Sin3XeF/jBBNzefUeRjPvjX8xReGhgTC9h7D7JPj5Td
+         JPRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-	Gary R Hook <gary.hook@amd.com>,
+	Ryan Harkin <ryan.harkin@linaro.org>,
+	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+	Aymen Sghaier <aymen.sghaier@nxp.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Lukas Auer <lukas.auer@aisec.fraunhofer.de>,
+	Rui Miguel Silva <rui.silva@linaro.org>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.15 56/72] crypto: ccp - return an actual key size from RSA max_size callback
-Date: Fri,  6 Apr 2018 15:24:31 +0200
-Message-Id: <20180406084353.247534053@linuxfoundation.org>
+Subject: [PATCH 4.15 55/72] crypto: caam - Fix null dereference at error path
+Date: Fri,  6 Apr 2018 15:24:30 +0200
+Message-Id: <20180406084353.209635383@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -41,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004281875020882?=
-X-GMAIL-MSGID: =?utf-8?q?1597004570628242792?=
+X-GMAIL-THRID: =?utf-8?q?1597004279167623961?=
+X-GMAIL-MSGID: =?utf-8?q?1597004566486390828?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,50 +56,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+From: Rui Miguel Silva <rui.silva@linaro.org>
 
-commit 0a9eb80e643064266868bd2fb2cd608e669309b0 upstream.
+commit b85149f6f5d5a9279f29a73b2e95342f4d465e73 upstream.
 
-rsa-pkcs1pad uses a value returned from a RSA implementation max_size
-callback as a size of an input buffer passed to the RSA implementation for
-encrypt and sign operations.
+caam_remove already removes the debugfs entry, so we need to remove the one
+immediately before calling caam_remove.
 
-CCP RSA implementation uses a hardware input buffer which size depends only
-on the current RSA key length, so it should return this key length in
-the max_size callback, too.
-This also matches what the kernel software RSA implementation does.
+This fix a NULL dereference at error paths is caam_probe fail.
 
-Previously, the value returned from this callback was always the maximum
-RSA key size the CCP hardware supports.
-This resulted in this huge buffer being passed by rsa-pkcs1pad to CCP even
-for smaller key sizes and then in a buffer overflow when ccp_run_rsa_cmd()
-tried to copy this large input buffer into a RSA key length-sized hardware
-input buffer.
+Fixes: 67c2315def06 ("crypto: caam - add Queue Interface (QI) backend support")
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: ceeec0afd684 ("crypto: ccp - Add support for RSA on the CCP")
-Cc: stable@vger.kernel.org
-Acked-by: Gary R Hook <gary.hook@amd.com>
+Tested-by: Ryan Harkin <ryan.harkin@linaro.org>
+Cc: "Horia Geantă" <horia.geanta@nxp.com>
+Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Lukas Auer <lukas.auer@aisec.fraunhofer.de>
+Cc: <stable@vger.kernel.org> # 4.12+
+Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/ccp/ccp-crypto-rsa.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/crypto/caam/ctrl.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/crypto/ccp/ccp-crypto-rsa.c
-+++ b/drivers/crypto/ccp/ccp-crypto-rsa.c
-@@ -60,10 +60,9 @@ static int ccp_rsa_complete(struct crypt
+--- a/drivers/crypto/caam/ctrl.c
++++ b/drivers/crypto/caam/ctrl.c
+@@ -813,9 +813,6 @@ static int caam_probe(struct platform_de
+ 	return 0;
  
- static unsigned int ccp_rsa_maxsize(struct crypto_akcipher *tfm)
- {
--	if (ccp_version() > CCP_VERSION(3, 0))
--		return CCP5_RSA_MAXMOD;
--	else
--		return CCP_RSA_MAXMOD;
-+	struct ccp_ctx *ctx = akcipher_tfm_ctx(tfm);
-+
-+	return ctx->u.rsa.n_len;
- }
+ caam_remove:
+-#ifdef CONFIG_DEBUG_FS
+-	debugfs_remove_recursive(ctrlpriv->dfs_root);
+-#endif
+ 	caam_remove(pdev);
+ 	return ret;
  
- static int ccp_rsa_crypt(struct akcipher_request *req, bool encrypt)
