@@ -1,42 +1,38 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48HqdGtOOTqTHPyGyZwrzyUGwJCHCAMfct2wOKEYAMFjrn7kpamQbstP5msBxoz2LoGabV/
-ARC-Seal: i=1; a=rsa-sha256; t=1523021809; cv=none;
+X-Google-Smtp-Source: AIpwx48OGo6ftimbn3zmriYGseIM/SQl8RrBADI/3BcdeompSRwwe5Bor10YrQ8uI8Dvo7ukB2VU
+ARC-Seal: i=1; a=rsa-sha256; t=1523021807; cv=none;
         d=google.com; s=arc-20160816;
-        b=SAk0bgyuWfVDcchPelJ0vPYDRBzHUP3AWMHWG3+YC7M+A/A+sGRW3Npc1KfEgeoZar
-         qYsXvpUQ9tzZt7WAWALhCnqVfRbh1kFOe5a5diXoR3e8cQaDS0CEFKVnYGEo/QAd6CAh
-         mR6DB1BKLZAic6398nq+XSgbKvOPNbPPOYawhsYNdl7RIGXc8sZuc7aNIqUcCUZ5SfiG
-         OQVb6Rlq+CtyuLtmcDIHsLtcTV+djdxGsM1ZRzw53lpQ4ZjUxukxLe7PXz+0lO1SR4Xg
-         xBxmnam6fuzctw+EmmHRtUp/F9kfW4a/ImzQQELCUMuvkw8mG6IljQ9E0Uuib9IRYhml
-         FY2g==
+        b=P/rElAAdTG1d7H8KY5ZVykzCmRSqlWERfjAaSEvdRDNps2sc+FhObWn8jDQtVCbduA
+         S5nkioK5dU9/ArROxVRjQkWWY5E0y1vxmMLJUs+Sn6MV4lMrUSOH9u6/5EsGz+kzlDGS
+         o4Fs9BUZLPjRkH6/RR844VavYeoEKeXngsF7PZjkiFNGxqm6VHZqrCWaNHNBGF9H5Oua
+         4M+pyDLUAtwXBQwUKwzxYm7/urS1CDuawswfgIkpO0NBbD69yDpwp+UfhHvjLme+SAjs
+         lYRTHe7vz4WpzT0nN1GlKVkk28kJTh1z2JYEgUlNvJrWj1XJScPPgGiog7Qkmr5z8Smq
+         eEtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ykIfCMUvyfXK1gfuQSMHOhvX4IYpYsI2WELUKFZKTVk=;
-        b=OtKpWpjK3lowucN0Lns6NwZmBWPS7YUuhLg2aTiQzNyYBsBbHAm/JbeEadpbg4xk6M
-         bTtEg1OI1UmRFuazKpote1mnDOBNe3cYiNrpUQdLyMF2Vi8YB8SGDseOI0JpE4brZxsm
-         ua9yCx0+jmfwxiNf/ryIF71PcrWXVOsbX1DCU/A8P+U4jjXupwt8yEKzKlkyQDDIvr+P
-         a24mAda0AWVb7gY6CukL6b84FU2SMQbS07vz/xj/xdMOSxnF2vZpml4snZj5Ve1KSJqD
-         24vEw6FawPURF4/JeR6d9ovSIqykkIQZYk67+IpB8L5muKuMQwtC6eElEkUJ3n+ly5G8
-         itYg==
+        bh=tAqK9NU8PBHPtf0ahUM6t8gpy/qw2u0ylIzwRyjVjg0=;
+        b=RVJzdB3s3eJQklEw1qDMUHjN4f2rB/6rP3brsamXZH+VjokNPK/dKLEykUclM9IApb
+         fhw7MBaOxbdr2xwYU3y2yxnn8EXaArBA5qtVfUg84QC3D9VUe3z18d76f5wcTCw1xpjc
+         5qMFEtjzghqCQfHpsMqEJFaO3juiLAjfFWKM9KgGEJAGgCUBu+h9pCLP+r25MW7UaMcP
+         D23NhXgqyK9ND2nWUTA1xc0x4Q1GTJwzozJUAxtGTeB1t0PgST/i832g+pDS5zRIW19/
+         wW2xn6644ZxmbhIv6naaBCOjfIi5XJtwWiaLz732GrjCoyJT9aupchvAoZZmwnXmT6LS
+         7C4Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Greg Hackmann <ghackmann@google.com>,
-	Alex Shi <alex.shi@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4.9 068/102] arm64: Allow checking of a CPU-local erratum
-Date: Fri,  6 Apr 2018 15:23:49 +0200
-Message-Id: <20180406084341.058538653@linuxfoundation.org>
+	stable@vger.kernel.org,
+	NeilBrown <neilb@suse.com>,
+	Guoqing Jiang <gqjiang@suse.com>,
+	Shaohua Li <shli@fb.com>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 094/102] md/raid10: reset the first at the end of loop
+Date: Fri,  6 Apr 2018 15:24:15 +0200
+Message-Id: <20180406084344.705659568@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004116470406440?=
-X-GMAIL-MSGID: =?utf-8?q?1597004116470406440?=
+X-GMAIL-THRID: =?utf-8?q?1597003641922069555?=
+X-GMAIL-MSGID: =?utf-8?q?1597004114015466329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,61 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Guoqing Jiang <gqjiang@suse.com>
 
-commit 8f4137588261d7504f4aa022dc9d1a1fd1940e8e upstream.
+commit 6f287ca6046edd34ed83aafb7f9033c9c2e809e2 upstream.
 
-this_cpu_has_cap() only checks the feature array, and not the errata
-one. In order to be able to check for a CPU-local erratum, allow it
-to inspect the latter as well.
+We need to set "first = 0' at the end of rdev_for_each
+loop, so we can get the array's min_offset_diff correctly
+otherwise min_offset_diff just means the last rdev's
+offset diff.
 
-This is consistent with cpus_have_cap()'s behaviour, which includes
-errata already.
+[only the first chunk, due to b506335e5d2b ("md/raid10: skip spare disk as
+'first' disk") being already applied - gregkh]
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Alex Shi <alex.shi@linaro.org> [v4.9 backport]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
-Tested-by: Will Deacon <will.deacon@arm.com>
-Tested-by: Greg Hackmann <ghackmann@google.com>
+Suggested-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/cpufeature.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1103,20 +1103,29 @@ static void __init setup_feature_capabil
-  * Check if the current CPU has a given feature capability.
-  * Should be called from non-preemptible context.
-  */
--bool this_cpu_has_cap(unsigned int cap)
-+static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
-+			       unsigned int cap)
- {
- 	const struct arm64_cpu_capabilities *caps;
+---
+ drivers/md/raid10.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -3681,6 +3681,7 @@ static int raid10_run(struct mddev *mdde
  
- 	if (WARN_ON(preemptible()))
- 		return false;
+ 		if (blk_queue_discard(bdev_get_queue(rdev->bdev)))
+ 			discard_supported = true;
++		first = 0;
+ 	}
  
--	for (caps = arm64_features; caps->desc; caps++)
-+	for (caps = cap_array; caps->desc; caps++)
- 		if (caps->capability == cap && caps->matches)
- 			return caps->matches(caps, SCOPE_LOCAL_CPU);
- 
- 	return false;
- }
- 
-+extern const struct arm64_cpu_capabilities arm64_errata[];
-+
-+bool this_cpu_has_cap(unsigned int cap)
-+{
-+	return (__this_cpu_has_cap(arm64_features, cap) ||
-+		__this_cpu_has_cap(arm64_errata, cap));
-+}
-+
- void __init setup_cpu_features(void)
- {
- 	u32 cwg;
+ 	if (mddev->queue) {
