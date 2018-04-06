@@ -1,116 +1,74 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3142383-1523081376-2-14301727501594291923
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523081376; b=drjZCEk3P4Fo8UbCZCNdgmK0CXJMHkKWUmnSrZlTPUeRngws3u
-    LjXHew1Txl7ndae/aa2Nq22yyeMd1rWargUmxsOLX6WGpX1w+SlRLC0zb4n4+oBa
-    epdBRlr3qzY331VOGlOp34SwizvBrzP5UoEmG97gyxMiKx2aZObR8M2MTh0tlDqE
-    aoaD7D8Rv+/M75/IsHRetrJucltEfLfytv7Xi3vhJR/aA3S/g9cywz1MrP0lWH1W
-    0MyWy2wV7Esgw3eRB3WzokgyULDQkf/+jY/UfIJ1mQBPsvqLbOPc2wx97yM8n2Ib
-    rQiLU3JBGB3Qb7QjrZcoq6N/Zkqpj+uUD7aQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523081376; bh=8r8e9rhMPCR0EH/gremYH9feMMaByn
-    WENIec+mZ78P8=; b=VmmmQs5McI5oIoWPOUD8szMman+v4aQlUOQiAJDNezFeeQ
-    JO68k9mIdoG5ra7tgHP7yFcQij0wrBJNciTNoNl1J8AfmiJp+MdqFuTdrmgE+vJ+
-    jrKCE725vaBUAjxh88Fzpu4OsJu6/IOjtZDQzgTXsgP16NC5eQEek9unEh129OkH
-    wQdDukvOn18w2K0U8xndf5w82O6+hy/+P2JptgjKCkJSuAlUzSFct1D/f5VRAAd9
-    zy5cQfk8UVwa4gGQTrZoqqGmvafvR3n/7TjMvqligFLZXFw7sxB6EIHu4ru/yR1R
-    8W0Bsa73/dJ0qZbTuO3RVj5hO6VHuWiquJEnCO9w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJKeHZM1JQvzY0QSkQU33qiwhKeS9PW/Wapg+oAExJfPr5rzP/okWb6+gzQvF/nPA63n71OgnRGwFTc6ynMedoUSEOTUUZngnSQ9pKrvXKlKOSSQ23Ru
-    T0t6SliYOCZB5VBisJL8M8ZnFm+HGs0ibiMDMa8hoz4LSOTY9HxAw/5zKNnq+3cgenwk1Zidu+nX4/3L5viL5jYc4i+woWf7SO494ZKLRY+GBtQRlhiUn+d/
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=wslChEY2J8gA:10
-    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=QwK3zxdBwoPrVwGfhKIA:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751334AbeDGGJe (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 7 Apr 2018 02:09:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44242 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751330AbeDGGJd (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 7 Apr 2018 02:09:33 -0400
-Date: Sat, 7 Apr 2018 08:09:31 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.16 00/31] 4.16.1-stable review
-Message-ID: <20180407060931.GB18744@kroah.com>
-References: <20180406084340.999820380@linuxfoundation.org>
- <021efe57-f186-df63-f2d4-efb548d13907@osg.samsung.com>
+Return-Path: <bot@kernelci.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1523040130; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Tm88hHmVHW6aP93x95UUQBuSA2TA31EXxGMfh97qqQRsNhAxdMC6G63R3lF82XRv3B
+         ZM2A286pBovQV2/4iQkx/URlhCopul/Fu5ooZoVHg6droKrVwbaiUYtb1hvRcqXVqZ6a
+         RWxkyEmJrSl5+cfjql4gtoXoF3YcbRqr4fQcTZwKN+HP3SPDOMos3bU8ek3YTWZ1w1Bo
+         NPpnRr/Ha45SN24usXPXEw7OnOGdcTEjjyWJywGyonleSs6l9pgo1C6t9WMScHe5lCmG
+         CuZ0Xk7fo0JOMrAbcmNUBifeCQaks8R8KG3SOxgPKbAocg6trcJ9vjgASFl5uE7GzxcK
+         UdXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
+         :mime-version:date:message-id:arc-authentication-results;
+        bh=vyGSyZws81ws7eGjcEad1Uph57ryqk3ot66BMu1wVhI=;
+        b=FtgJeB6F7Nca3vEBJH0l6obbn94zvR+9T0Ui4uTqtwwSaW4wbMdmJtlXCyEmGv1V6k
+         ZkCXWs/+2OC1YAAmccfUxWg2cRVLLB1pc3l8megLS1dZOk9RDgwHUxWJlruxqws5xra2
+         CTKJb5faX7wLndw2R/neDy2pVLvMqkyh8NFpRbJcfmC8fhy/YQRQdY8wN/j+lht6NT1h
+         SkTXxUoZT4yAobdtqAwv2hiaE7BejsDcoyr6rF44tCYOOs19U5qC1NhqRTHsywKEOqhK
+         X5yTik0KXalhmkFoCof75obm5oL0ExydL7MwUhaeT7yACVepGEEGCWEEcy9qTpBgC1v8
+         +hUA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+X-Google-Smtp-Source: AIpwx4+JS92IOdUPcPtj8P8Cq2SPWzpwCGS3FsTSeoHSJ6KkXt3Iytr8p+XdpfrdKfsNI01iIzUrLA==
+Message-ID: <5ac7bf81.91acdf0a.c9f24.716b@mx.google.com>
+Date: Fri, 06 Apr 2018 11:42:09 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <021efe57-f186-df63-f2d4-efb548d13907@osg.samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-4.16.y
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.16-32-g30380aa57922
+In-Reply-To: <20180406084340.999820380@linuxfoundation.org>
+References: <20180406084340.999820380@linuxfoundation.org>
+Subject: Re: [PATCH 4.16 00/31] 4.16.1-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org
+From: kernelci.org bot <bot@kernelci.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
+ shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
+ lkft-triage@lists.linaro.org, stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597004673616987143?=
+X-GMAIL-MSGID: =?utf-8?q?1597023328107822062?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 06, 2018 at 04:07:38PM -0600, Shuah Khan wrote:
-> On 04/06/2018 07:24 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.16.1 release.
-> > There are 31 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun Apr  8 08:43:15 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.1-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Compiled and booted on my test system. No dmesg regressions.
+stable-rc/linux-4.16.y boot: 65 boots: 1 failed, 62 passed with 2 untried/u=
+nknown (v4.16-32-g30380aa57922)
 
-Thanks for testing all of these (there were a lot), and letting me know.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.16.y/kernel/v4.16-32-g30380aa57922/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.16.=
+y/kernel/v4.16-32-g30380aa57922/
 
-greg k-h
+Tree: stable-rc
+Branch: linux-4.16.y
+Git Describe: v4.16-32-g30380aa57922
+Git Commit: 30380aa579224caf6a737160802151f466fe3953
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 32 unique boards, 14 SoC families, 15 builds out of 186
+
+Boot Failure Detected:
+
+arm:
+
+    mvebu_v7_defconfig
+        armada-375-db: 1 failed lab
+
+---
+For more info write to <info@kernelci.org>
