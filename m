@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/UIJGOU/iIvrvusizrsBHQcRF1BnfcJMzjP3cNR2PeiDemYGbbDVQHMhyoJKqsxqWUfbuX
-ARC-Seal: i=1; a=rsa-sha256; t=1523021528; cv=none;
+X-Google-Smtp-Source: AIpwx4+F8wL2+34OoAw4wWdgtjVe9HkI0cXIlXtAH0R+H6BRCxcBx3+XjN1+58cJRaDEIA3oagx1
+ARC-Seal: i=1; a=rsa-sha256; t=1523021518; cv=none;
         d=google.com; s=arc-20160816;
-        b=rhL0Pkeq7zKu2k8rhWtRK1mfjtxw6t829+Kj//btJ0N7x18V2rhat3htHSwP3ncdwH
-         A2OFQZl7+XOsVf9PPYr014lqti7tLwwmi2npYFOyziAVki2EZbxkTOViLS21Hysy59oO
-         YfreCtISRoGND3xyr2F94NEiB3yPRSXRmlLlgR3rnKdY9IF8rwRTTNzFDXyuuxFD2xtN
-         5Z0GS7iL6Q2EfrkJK9AkT10zehHvfnLfHZlajXbwsnKVvgla3X2Q2Hqo6Umsc1E7JJ+S
-         fO1pDcHiY1SsW4aXabzuPiCJ5ojlFYCf7kxaZEpX9ASiwGbDe564SZcBNqKfCcadf/W6
-         0nXg==
+        b=GhmuoPXjYoR5p/OamLKDG9/TKVueCCvzagMYf4oRbW+AsPf/U268j/2zAcE8jUC1ka
+         p7jgMA3/x/GGcuG5kG6z6v0rlokYZ/lD/4PJz7Y/d69vJhlKjsAbntGhcwDxQ1rm9GYV
+         7GSIGH2yWJWY6IgmYw9jW8Gk74xJpSwgl53n39Ib2Mo6iK9CMVBQd675vCSSQMtsMiyb
+         YNG1CUIVd7TLPhQdXGEMlCYWJm/U6xwA2tUgGZp1PFTxhimDo6Va26COSDGrwEBHBSAz
+         NaoY6Wjfa5vLn1eXRRYdftJfN7/9EhhVbjE9gUFTVQ2HuxH7+rQDjq51AEAVR3b4/Nst
+         luog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WadymtlzgWs1wJqcvukbPaxGce6BRGmxRO05l21V5Ag=;
-        b=FeSuG7+/xeinNKV5YHaGE+ffUD72ul5cUaIudkqUOLSMfIUlKLM3WqIUggsjoTrdkO
-         j0srs9OdYKDtGZnybuFN2OffgYKVZ3a8Zzrt8O7bSdVqeOthr1xSm1ZJjxWbsc+FPyz6
-         S2ooWRA409ojNZwFUuU8+IfN/1J6JSUIQfHB8275T/ingmjqvXMSsd8ovgg5GDtB1Oak
-         df/QqGGq9/TkPHuOn2mvAealrDqqttsl+lE5lnDOm5Wu4H3c+meRcBgstOKohGfYCHtw
-         h27CEOQgh86BfQIeMwz9sNmL7lp63BWEwTMeooBWR6KsRUQiH02sbrVycA2sWoOMGTkq
-         19WA==
+        bh=1JWWXAzlo5V7npX/tyV6dOJoBb7Yj92QNFCqFu3FSYg=;
+        b=BH3v7vMlt87D6C8lLiIzTacpACG0B0cTSDCNw3ukyilfM3Fu2FdMz8bp19yZk/949B
+         LpMAmQmAbo8QZzd1+y5sjOC4Kv7Jq/MkDjWmW5leKfh1YmvfOgzKJgrmMD77+hfBxpRu
+         gJkeEoYoeBHYwPJGZTlK6zsD/UDUBRVUtZgVlNeUmyPL16LUFaQ7MM9lfZWiBQDEhLbx
+         QHEnJ4L64hvk4mnKv6bc+Vc+u6fhVkDpDFLEu4664Poxg6PBdxYzl/7PFAqyokBoWXgc
+         ZxjDkF7ELeQL4fbF0xrGuohFih3MyKp7I4DMgvNzCAq6kA0+DZbCjI8YdkNINBz7nZvM
+         Y92Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 68/72] Revert "cpufreq: Fix governor module removal race"
-Date: Fri,  6 Apr 2018 15:24:09 +0200
-Message-Id: <20180406084311.302591634@linuxfoundation.org>
+	Colin Ian King <colin.king@canonical.com>
+Subject: [PATCH 4.4 48/72] mei: remove dev_err message on an unsupported ioctl
+Date: Fri,  6 Apr 2018 15:23:49 +0200
+Message-Id: <20180406084309.201096802@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -42,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003822271079165?=
-X-GMAIL-MSGID: =?utf-8?q?1597003822271079165?=
+X-GMAIL-THRID: =?utf-8?q?1597003580077452612?=
+X-GMAIL-MSGID: =?utf-8?q?1597003811738625560?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,41 +48,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-This reverts commit 3f7dfb7fcf98a7e73dee018c4a68537ce7fec646 which was
-commit a8b149d32b663c1a4105273295184b78f53d33cf upstream.
+commit bb0829a741792b56c908d7745bc0b2b540293bcc upstream.
 
-The backport was not correct, so just drop it entirely.
+Currently the driver spams the kernel log on unsupported ioctls which is
+unnecessary as the ioctl returns -ENOIOCTLCMD to indicate this anyway.
+I suspect this was originally for debugging purposes but it really is not
+required so remove it.
 
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/cpufreq/cpufreq.c |    6 ------
- 1 file changed, 6 deletions(-)
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -551,8 +551,6 @@ static int cpufreq_parse_governor(char *
- 			*governor = t;
- 			err = 0;
- 		}
--		if (t && !try_module_get(t->owner))
--			t = NULL;
+---
+ drivers/misc/mei/main.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/drivers/misc/mei/main.c
++++ b/drivers/misc/mei/main.c
+@@ -571,7 +571,6 @@ static long mei_ioctl(struct file *file,
+ 		break;
  
- 		mutex_unlock(&cpufreq_governor_mutex);
+ 	default:
+-		dev_err(dev->dev, ": unsupported ioctl %d.\n", cmd);
+ 		rets = -ENOIOCTLCMD;
  	}
-@@ -671,10 +669,6 @@ static ssize_t store_scaling_governor(st
- 		return -EINVAL;
- 
- 	ret = cpufreq_set_policy(policy, &new_policy);
--
--	if (new_policy.governor)
--		module_put(new_policy.governor->owner);
--
- 	return ret ? ret : count;
- }
  
