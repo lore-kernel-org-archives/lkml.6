@@ -1,118 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752529AbeDFU67 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 16:58:59 -0400
-Received: from mga07.intel.com ([134.134.136.100]:32372 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752205AbeDFU6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 16:58:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,416,1517904000";
-   d="scan'208";a="32220631"
-Subject: [PATCH 09/11] x86/pti: enable global pages for shared areas
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
-        keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
-        namit@vmware.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 06 Apr 2018 13:55:15 -0700
-References: <20180406205501.24A1A4E7@viggo.jf.intel.com>
-In-Reply-To: <20180406205501.24A1A4E7@viggo.jf.intel.com>
-Message-Id: <20180406205515.2977EE7D@viggo.jf.intel.com>
+        id S1752572AbeDFU7K (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 16:59:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52068 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752488AbeDFU7I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 16:59:08 -0400
+Date: Fri, 6 Apr 2018 14:00:02 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        David Howells <dhowells@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v4 1/3] locking: Document the semantics of
+ spin_is_locked()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
+ <1523044060-5568-1-git-send-email-andrea.parri@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523044060-5568-1-git-send-email-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18040620-0024-0000-0000-000003428583
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008813; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000256; SDB=6.01014103; UDB=6.00516970; IPR=6.00793364;
+ MB=3.00020452; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-06 20:59:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040620-0025-0000-0000-000047921479
+Message-Id: <20180406210002.GC3948@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-06_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804060211
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Apr 06, 2018 at 09:47:39PM +0200, Andrea Parri wrote:
+> There appeared to be a certain, recurrent uncertainty concerning the
+> semantics of spin_is_locked(), likely a consequence of the fact that
+> this semantics remains undocumented or that it has been historically
+> linked to the (likewise unclear) semantics of spin_unlock_wait().
+> 
+> A recent auditing [1] of the callers of the primitive confirmed that
+> none of them are relying on particular ordering guarantees; document
+> this semantics by adding a docbook header to spin_is_locked(). Also,
+> describe behaviors specific to certain CONFIG_SMP=n builds.
+> 
+> [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
+>     https://marc.info/?l=linux-kernel&m=152042843808540&w=2
+>     https://marc.info/?l=linux-kernel&m=152043346110262&w=2
+> 
+> Co-Developed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Co-Developed-by: Alan Stern <stern@rowland.harvard.edu>
+> Co-Developed-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> Cc: Luc Maranget <luc.maranget@inria.fr>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: Akira Yokosawa <akiyks@gmail.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+Queued in place of its predecessor, thank you all!
 
-The entry/exit text and cpu_entry_area are mapped into userspace and
-the kernel.  But, they are not _PAGE_GLOBAL.  This creates unnecessary
-TLB misses.
+							Thanx, Paul
 
-Add the _PAGE_GLOBAL flag for these areas.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@google.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: x86@kernel.org
-Cc: Nadav Amit <namit@vmware.com>
----
-
- b/arch/x86/mm/cpu_entry_area.c |   14 +++++++++++++-
- b/arch/x86/mm/pti.c            |   23 ++++++++++++++++++++++-
- 2 files changed, 35 insertions(+), 2 deletions(-)
-
-diff -puN arch/x86/mm/cpu_entry_area.c~kpti-why-no-global arch/x86/mm/cpu_entry_area.c
---- a/arch/x86/mm/cpu_entry_area.c~kpti-why-no-global	2018-04-06 10:47:58.246796118 -0700
-+++ b/arch/x86/mm/cpu_entry_area.c	2018-04-06 10:47:58.252796118 -0700
-@@ -27,8 +27,20 @@ EXPORT_SYMBOL(get_cpu_entry_area);
- void cea_set_pte(void *cea_vaddr, phys_addr_t pa, pgprot_t flags)
- {
- 	unsigned long va = (unsigned long) cea_vaddr;
-+	pte_t pte = pfn_pte(pa >> PAGE_SHIFT, flags);
- 
--	set_pte_vaddr(va, pfn_pte(pa >> PAGE_SHIFT, flags));
-+	/*
-+	 * The cpu_entry_area is shared between the user and kernel
-+	 * page tables.  All of its ptes can safely be global.
-+	 * _PAGE_GLOBAL gets reused to help indicate PROT_NONE for
-+	 * non-present PTEs, so be careful not to set it in that
-+	 * case to avoid confusion.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_PGE) &&
-+	    (pgprot_val(flags) & _PAGE_PRESENT))
-+		pte = pte_set_flags(pte, _PAGE_GLOBAL);
-+
-+	set_pte_vaddr(va, pte);
- }
- 
- static void __init
-diff -puN arch/x86/mm/pti.c~kpti-why-no-global arch/x86/mm/pti.c
---- a/arch/x86/mm/pti.c~kpti-why-no-global	2018-04-06 10:47:58.248796118 -0700
-+++ b/arch/x86/mm/pti.c	2018-04-06 10:47:58.252796118 -0700
-@@ -300,6 +300,27 @@ pti_clone_pmds(unsigned long start, unsi
- 			return;
- 
- 		/*
-+		 * Only clone present PMDs.  This ensures only setting
-+		 * _PAGE_GLOBAL on present PMDs.  This should only be
-+		 * called on well-known addresses anyway, so a non-
-+		 * present PMD would be a surprise.
-+		 */
-+		if (WARN_ON(!(pmd_flags(*pmd) & _PAGE_PRESENT)))
-+			return;
-+
-+		/*
-+		 * Setting 'target_pmd' below creates a mapping in both
-+		 * the user and kernel page tables.  It is effectively
-+		 * global, so set it as global in both copies.  Note:
-+		 * the X86_FEATURE_PGE check is not _required_ because
-+		 * the CPU ignores _PAGE_GLOBAL when PGE is not
-+		 * supported.  The check keeps consistentency with
-+		 * code that only set this bit when supported.
-+		 */
-+		if (boot_cpu_has(X86_FEATURE_PGE))
-+			*pmd = pmd_set_flags(*pmd, _PAGE_GLOBAL);
-+
-+		/*
- 		 * Copy the PMD.  That is, the kernelmode and usermode
- 		 * tables will share the last-level page tables of this
- 		 * address range
-@@ -348,7 +369,7 @@ static void __init pti_clone_entry_text(
- {
- 	pti_clone_pmds((unsigned long) __entry_text_start,
- 			(unsigned long) __irqentry_text_end,
--		       _PAGE_RW | _PAGE_GLOBAL);
-+		       _PAGE_RW);
- }
- 
- /*
-_
+> ---
+>  include/linux/spinlock.h | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+> index 4894d322d2584..1e8a464358384 100644
+> --- a/include/linux/spinlock.h
+> +++ b/include/linux/spinlock.h
+> @@ -380,6 +380,24 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
+>  	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
+>  })
+> 
+> +/**
+> + * spin_is_locked() - Check whether a spinlock is locked.
+> + * @lock: Pointer to the spinlock.
+> + *
+> + * This function is NOT required to provide any memory ordering
+> + * guarantees; it could be used for debugging purposes or, when
+> + * additional synchronization is needed, accompanied with other
+> + * constructs (memory barriers) enforcing the synchronization.
+> + *
+> + * Returns: 1 if @lock is locked, 0 otherwise.
+> + *
+> + * Note that the function only tells you that the spinlock is
+> + * seen to be locked, not that it is locked on your CPU.
+> + *
+> + * Further, on CONFIG_SMP=n builds with CONFIG_DEBUG_SPINLOCK=n,
+> + * the return value is always 0 (see include/linux/spinlock_up.h).
+> + * Therefore you should not rely heavily on the return value.
+> + */
+>  static __always_inline int spin_is_locked(spinlock_t *lock)
+>  {
+>  	return raw_spin_is_locked(&lock->rlock);
+> -- 
+> 2.7.4
+> 
