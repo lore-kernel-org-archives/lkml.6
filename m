@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49FUZK35G3CIdbxcTjNfZB6SYD4X/V7AGjZdpT9kRjP/uMQcz8TJgPaEm23ju3YvBXRp2OU
-ARC-Seal: i=1; a=rsa-sha256; t=1523021998; cv=none;
+X-Google-Smtp-Source: AIpwx490arHqzJd+2SUr67ugwl1HjX//wdxw62C9VmBP4doHZ56XF08/FDTyATtJLCmV8thD/AfJ
+ARC-Seal: i=1; a=rsa-sha256; t=1523021994; cv=none;
         d=google.com; s=arc-20160816;
-        b=i5k/aBQ+/3sHzB8fq4RgfKMfwf5Azxtm+ki458EOUacTGAj8VsPhmEzkd7Tno8dogL
-         kPgpnawibqtPXcm31Pw6DvRQuAA0OaBokI8KL37biGZ5ba5WrWvEuUOH98VBflTM3sHD
-         aP+Hn1iARNgbKd1hR0gczG6LlLKAn4/X6JVpQE6Fe+O6BAGUrpIwdTu3ZmXd7jYKng+a
-         a1E0ckHziz3u7359HjiRWm42zf0vA+38HtBJyGo2J/RKCULfWRbgdGz5CdbrUcIPLue6
-         GlAR+PhBewa7b12wisyGtHminHNteuH6XwkZavC+3g8RvwA1nOTfTSrnGjsumyrNy5ik
-         ReXA==
+        b=Zjt+dwlCaxDWVq4+QZ0qp5rkzv+shoRVKYHPIVZtc7V6S8k8bectOADZPxjj3VQapY
+         zHFx+tRYH0c4K1kMgbvyn1j7+wyzT6YpuBKOd/X+JJV1qv0q9W9BF959liy/ffFpb97P
+         7ThO7zGQr9KokijAzoLjUgz41WUZh6L8lhNCiKb4xulBiyrVrw5RXhS+J1y3FMgJk3/f
+         63+QWpsSUyRR1KfpJqitXJKX7deMBZQjE8Dv+xJ7W/TZC95paHHF5ZLFKJHCkok0A92I
+         LLN2siqE31xpPCuB8xVORYp3Wc+LM4uJwY6bB09d5Xz5Nn26mko+chYZ8ZWl5FpE/xz7
+         SoCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bNLReJ9QNpBYN1xYOtLIf/Y/qVKLKLss5I/GjsIcr3M=;
-        b=MMOlzaM3hEXM2qjE9GqN4Oz2nTWJcYdoLId/ej1jB8mbLIx1lBnXx6g7UNFYj79n6O
-         IPsIdMmAntoImhqAU5q5Kc60DI6jmu+MJJV55lazV/CZ9SiAnAayndx57UJIrWSpuuYk
-         +s7kFKLYg73czNEy62tvwhTmqlZrMti+Yvr6VBsIcuE0KNLaFdkD+7dploCaoN+lEIWX
-         Pd0e7+LUYhDnpUyIzER3366Nzoo4QNNW/UcIOBg+Y43mhB29N/QCdXufV5sCjeNbsxt2
-         BGK5fTyIU6Pr3CFbRtHNZ7l5Iud8PHoL3h8GfLVyNRtPjwUBaVBXOATEubYTd1p99x9F
-         tQJw==
+        bh=Ve3wjmHCZFhkSK9BHwZ17VDPZqDicem5ktJFDjDEEL8=;
+        b=Ia3Amu5X3RG+IHfp+3YGh2kqei48g9OBod/bl+1Gb+TWA7gguUh9saPWp8BvMUXFYk
+         rZKFiH/0GAq9tNt0LQEAFho08rAGG3Cme9CJTuyyBI0IfbEJyrCLVVZF6RP/LLmWHbX+
+         xQ7uMIRiA+PBG+LxeZH+owaIulxBZlZ5h4S/VIvb671MEWTPJFCbwVwZZ8HW6knaNeMN
+         gihtvxE9JwcSNjXQ4Av2tx3liKYovHOQQelf1pNv3+RrexoktF1mfudI8RuFy/DlFEuI
+         hYXGnPmgxukgSi3OVbie3fTvGrnX7jsc+I8wMntUwhay63cfgnbKrR6Zh2j/k9n5l736
+         72sw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mike Frysinger <vapier@chromium.org>
-Subject: [PATCH 4.14 60/67] vt: change SGR 21 to follow the standards
-Date: Fri,  6 Apr 2018 15:24:30 +0200
-Message-Id: <20180406084348.373849213@linuxfoundation.org>
+	Ondrej Zary <linux@rainbow-software.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 59/67] Input: i8042 - enable MUX on Sony VAIO VGN-CS series to fix touchpad
+Date: Fri,  6 Apr 2018 15:24:29 +0200
+Message-Id: <20180406084348.305394712@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003632944142177?=
-X-GMAIL-MSGID: =?utf-8?q?1597004315039109970?=
+X-GMAIL-THRID: =?utf-8?q?1597003629992266331?=
+X-GMAIL-MSGID: =?utf-8?q?1597004311182122661?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,63 +49,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Frysinger <vapier@chromium.org>
+From: Ondrej Zary <linux@rainbow-software.org>
 
-commit 65d9982d7e523a1a8e7c9af012da0d166f72fc56 upstream.
+commit 04bb1719c4de94700056241d4c0fe3c1413f5aff upstream.
 
-ECMA-48 [1] (aka ISO 6429) has defined SGR 21 as "doubly underlined"
-since at least March 1984.  The Linux kernel has treated it as SGR 22
-"normal intensity" since it was added in Linux-0.96b in June 1992.
-Before that, it was simply ignored.  Other terminal emulators have
-either ignored it, or treat it as double underline now.  xterm for
-example added support in its 304 release (May 2014) [2] where it was
-previously ignoring it.
+The touch sensor buttons on Sony VAIO VGN-CS series laptops (e.g.
+VGN-CS31S) are a separate PS/2 device. As the MUX is disabled for all
+VAIO machines by the nomux blacklist, the data from touch sensor
+buttons and touchpad are combined. The protocol used by the buttons is
+probably similar to the touchpad protocol (both are Synaptics) so both
+devices get enabled. The controller combines the data, creating a mess
+which results in random button clicks, touchpad stopping working and
+lost sync error messages:
+psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 4
+psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
+psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
+psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
+psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
+psmouse serio1: issuing reconnect request
 
-Changing this behavior shouldn't be an issue:
-- It isn't a named capability in ncurses's terminfo database, so no
-  script is using libtinfo/libcurses to look this up, or using tput
-  to query & output the right sequence.
-- Any script assuming SGR 21 will reset intensity in all terminals
-  already do not work correctly on non-Linux VTs (including running
-  under screen/tmux/etc...).
-- If someone has written a script that only runs in the Linux VT, and
-  they're using SGR 21 (instead of SGR 22), the output should still
-  be readable.
+Add a new i8042_dmi_forcemux_table whitelist with VGN-CS.
+With MUX enabled, touch sensor buttons are detected as separate device
+(and left disabled as there's currently no driver), fixing all touchpad
+problems.
 
-imo it's important to change this as the Linux VT's non-conformance
-is sometimes used as an argument for other terminal emulators to not
-implement SGR 21 at all, or do so incorrectly.
-
-[1]: https://www.ecma-international.org/publications/standards/Ecma-048.htm
-[2]: https://github.com/ThomasDickey/xterm-snapshots/commit/2fd29cb98d214cb536bcafbee00bc73b3f1eeb9d
-
-Signed-off-by: Mike Frysinger <vapier@chromium.org>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Ondrej Zary <linux@rainbow-software.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/input/serio/i8042-x86ia64io.h |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -1352,6 +1352,11 @@ static void csi_m(struct vc_data *vc)
- 		case 3:
- 			vc->vc_italic = 1;
- 			break;
-+		case 21:
-+			/*
-+			 * No console drivers support double underline, so
-+			 * convert it to a single underline.
-+			 */
- 		case 4:
- 			vc->vc_underline = 1;
- 			break;
-@@ -1387,7 +1392,6 @@ static void csi_m(struct vc_data *vc)
- 			vc->vc_disp_ctrl = 1;
- 			vc->vc_toggle_meta = 1;
- 			break;
--		case 21:
- 		case 22:
- 			vc->vc_intensity = 1;
- 			break;
+--- a/drivers/input/serio/i8042-x86ia64io.h
++++ b/drivers/input/serio/i8042-x86ia64io.h
+@@ -530,6 +530,20 @@ static const struct dmi_system_id __init
+ 	{ }
+ };
+ 
++static const struct dmi_system_id i8042_dmi_forcemux_table[] __initconst = {
++	{
++		/*
++		 * Sony Vaio VGN-CS series require MUX or the touch sensor
++		 * buttons will disturb touchpad operation
++		 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "VGN-CS"),
++		},
++	},
++	{ }
++};
++
+ /*
+  * On some Asus laptops, just running self tests cause problems.
+  */
+@@ -1170,6 +1184,9 @@ static int __init i8042_platform_init(vo
+ 	if (dmi_check_system(i8042_dmi_nomux_table))
+ 		i8042_nomux = true;
+ 
++	if (dmi_check_system(i8042_dmi_forcemux_table))
++		i8042_nomux = false;
++
+ 	if (dmi_check_system(i8042_dmi_notimeout_table))
+ 		i8042_notimeout = true;
+ 
