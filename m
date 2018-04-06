@@ -1,89 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751417AbeDFRuf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 13:50:35 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40570 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750815AbeDFRue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 13:50:34 -0400
-Date: Fri, 6 Apr 2018 18:50:27 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Yury Norov <ynorov@caviumnetworks.com>
-Cc: James Morse <james.morse@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Christopher Lameter <cl@linux.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexey Klimov <klimov.linux@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] arm64: entry: isb in el1_irq
-Message-ID: <20180406175027.oxaru6r3zptct7vb@lakrids.cambridge.arm.com>
-References: <20180405171800.5648-1-ynorov@caviumnetworks.com>
- <20180405171800.5648-2-ynorov@caviumnetworks.com>
- <5036b99a-9faa-c220-27dd-e0d73f8b3fc7@arm.com>
- <20180406165402.nq3sabeku2mp3hpb@yury-thinkpad>
- <20180406172211.r42reit2bnpocab2@lakrids.cambridge.arm.com>
+        id S1751494AbeDFRy5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 13:54:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54044 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751278AbeDFRy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 13:54:56 -0400
+Subject: Re: [PATCH 05/20] afs: Implement @sys substitution handling
+To: David Howells <dhowells@redhat.com>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180406065118.GZ30522@ZenIV.linux.org.uk>
+ <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
+ <152296020457.31027.11109314533967989357.stgit@warthog.procyon.org.uk>
+ <22389.1523002383@warthog.procyon.org.uk>
+From: Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b7e489f8-c17f-5deb-9a87-2d4bac880ba7@suse.com>
+Date: Fri, 6 Apr 2018 20:54:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406172211.r42reit2bnpocab2@lakrids.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <22389.1523002383@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 06:22:11PM +0100, Mark Rutland wrote:
-> Digging a bit, I also thing that our ct_user_exit and ct_user_enter
-> usage is on dodgy ground today.
+
+
+On  6.04.2018 11:13, David Howells wrote:
+> Al Viro <viro@ZenIV.linux.org.uk> wrote:
 > 
-> For example, in el0_dbg we call do_debug_exception() *before* calling
-> ct_user_exit. Which I believe means we'd use RCU while supposedly in an
-> extended quiescent period, which would be bad.
+>> lookup_one_len() seriously depends upon exclusive lock
+> 
+> In the code it says:
+> 
+> 	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
+> 
+> which checks i_rwsem, but in the banner comment it says:
+> 
+> 	* The caller must hold base->i_mutex.
+> 
+> is one of these wrong?
 
-It seems this is the case. I can trigger the following by having GDB
-place a SW breakpoint:
+Before the switch to i_rwsem, inodes had only i_mutex, so in fact the
+comment is likely stale.
 
-[   51.217947] =============================
-[   51.217953] WARNING: suspicious RCU usage
-[   51.217961] 4.16.0 #4 Not tainted
-[   51.217966] -----------------------------
-[   51.217974] ./include/linux/rcupdate.h:632 rcu_read_lock() used illegally while idle!
-[   51.217980]
-[   51.217980] other info that might help us debug this:
-[   51.217980]
-[   51.217987]
-[   51.217987] RCU used illegally from idle CPU!
-[   51.217987] rcu_scheduler_active = 2, debug_locks = 1
-[   51.217992] RCU used illegally from extended quiescent state!
-[   51.217999] 1 lock held by ls/2412:
-[   51.218004]  #0:  (rcu_read_lock){....}, at: [<0000000092efbdd5>] brk_handler+0x0/0x198
-[   51.218041]
-[   51.218041] stack backtrace:
-[   51.218049] CPU: 2 PID: 2412 Comm: ls Not tainted 4.16.0 #4
-[   51.218055] Hardware name: ARM Juno development board (r1) (DT)
-[   51.218061] Call trace:
-[   51.218070]  dump_backtrace+0x0/0x1c8
-[   51.218078]  show_stack+0x14/0x20
-[   51.218087]  dump_stack+0xac/0xe4
-[   51.218096]  lockdep_rcu_suspicious+0xcc/0x110
-[   51.218103]  brk_handler+0x144/0x198
-[   51.218110]  do_debug_exception+0x9c/0x190
-[   51.218116]  el0_dbg+0x14/0x20
-
-We will need to fix this before we can fiddle with kick_all_cpus_sync().
-
-Thanks,
-Mark.
+> 
+> David
+> 
