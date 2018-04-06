@@ -1,107 +1,122 @@
-Return-Path: <ji_hun.kim@samsung.com>
-X-Google-Smtp-Source: AIpwx49ZjwsCQlyMPh887exuhFQdZKGX4oRc1PCWsKEI2DCY8xrEx2sTBQowwQsG6NAyyVku5Hqp
-ARC-Seal: i=1; a=rsa-sha256; t=1522990664; cv=none;
-        d=google.com; s=arc-20160816;
-        b=l3RxIE+gnlXmaGjeLlW5c16WQMoTRU7g1Gigxx6S9amq3osUcxEgwecuCCPkM7bv7u
-         Ko10Jq50qx5SKxnCaXyNdZJsBBFNW8uLWMJO9Ywpepq+rFyibXbO2Yx/bjD1azmxYFbW
-         dKS6lkuLtUDWZkkuyhMTzANpTIHMunBkSfe3slgTrfKPNd9OS8KlvP2REcP37jQqK9Dw
-         MfZjQZ0O3vzEZzxe9GToN8jdXIiCsT11aymVDEaVDcqDOs7v+Sgpw8ZinM7dkIqbxM6Q
-         rF1pelmV+3dhi1yDNvUlyPu2wm+Stz2k0Iw2GNlNdQaZXMpYK/NLkpflH7tZAVQS8Cos
-         AzkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:dlp-filter:cms-type:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=umVPonmx8hCPX1LF2yA9AChn87h2q0zhKcxt8oIyUCM=;
-        b=latwC94Axr0NkGCmXZP8kVnQGV6n5spoO3WtTRundgyIqKBpayRxD4Cd6NpNzn/wlM
-         uQpV3TQkd/VPGi1hKtcnprWPXh5BPDceAdeZyjassxqVlo+VHW904EJ/aS/MwQDVjvse
-         G2BjbllpXjYg/pw+tAXQmwjk6zxfUN/IQITw7fn4gRPqpbP6HVMV/uRMPQlNeUWhMEDq
-         sQVoizetNUii9CthncDKCosmCxOqax2zg1z169xcf4vCSbmbqmYLN4a3DMh8kKg8AiyH
-         BCKVByBvcK7xiCzjtOwPoJk1942UY3T0DqZuCGYjFD2JtaK4rQUvQwZOW0Zereb9dQqR
-         DW3A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=VmxKYAhn;
-       spf=pass (google.com: domain of ji_hun.kim@samsung.com designates 203.254.224.34 as permitted sender) smtp.mailfrom=ji_hun.kim@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=VmxKYAhn;
-       spf=pass (google.com: domain of ji_hun.kim@samsung.com designates 203.254.224.34 as permitted sender) smtp.mailfrom=ji_hun.kim@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180406045743epoutp04e1c7bf3d7be956b8f5dc1d9e27bb4dbc~iv-BdFavl0707107071epoutp04E
-X-AuditID: b6c32a38-d5bff70000001082-eb-5ac6fe46b322
-From: Ji-Hun Kim <ji_hun.kim@samsung.com>
-To: gregkh@linuxfoundation.org
-Cc: me@tobin.cc, sergio.paracuellos@gmail.com, quytelda@tamalin.org,
-	dan.carpenter@oracle.com, y.k.oh@samsung.com, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ji-Hun Kim
-	<ji_hun.kim@samsung.com>
-Subject: [PATCH] staging: ks7010: replace kmalloc() + memcpy() with
- kmemdup()
-Date: Fri, 06 Apr 2018 13:57:20 +0900
-Message-id: <1522990640-30706-1-git-send-email-ji_hun.kim@samsung.com>
-X-Mailer: git-send-email 1.9.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7bCmvq7bv2NRBmdPKlq8/jedxWLPmV/s
-	Fs2L17NZ9J/ezmix9Za0xeVdc9gsbrcdY7V4dHYWk8WlNf4WW7p+sDpwedzbd5jFY+esu+we
-	++euYff4+PQWi0ffllWMHv9OMXl8uf6a0ePzJrkAjqhUm4zUxJTUIoXUvOT8lMy8dFsl7+B4
-	53hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygC5UUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUl
-	tkrRhoZGeoYG5npGRkZ6JuaxVkamQCUJqRlX7l1iLPjIVrFr63/2BsbXrF2MnBwSAiYSDV9W
-	MXUxcnEICexglJhx4DOU851RYsGphSwwVV/XrQfrEBLYwCgxu0EFwv7BKHHwnTeIzSagKbGx
-	+xojiC0iICfx5PYfZhCbGWTQ3fcmILawgL/En6032EBsFgFVieWnf4DV8Aq4Scy4ch1ql5zE
-	yWOTWUGOkBCYwSbR/GAmE0TCRWL+9wtQtrDEq+Nb2LsYOYBsaYlLR20hwtUSC67sgJpTI3Hz
-	/1KocmOJ3p4LUPfwSbz72sMK0cor0dEmBFHiIXFk0XtmCNtRYuvO6cwQL8ZKTDp9lX0Co+QC
-	RoZVjGKpBcW56anFhgUmesWJucWleel6yfm5mxjBKUbLYgfjnnM+hxgFOBiVeHgzIo5FCbEm
-	lhVX5h5ilOBgVhLh3f0HKMSbklhZlVqUH19UmpNafIjRFBgaE5mlRJPzgekvryTe0MTSwMTM
-	yNTU0MDCREmcNyDAJUpIID2xJDU7NbUgtQimj4mDU6qB0W3Ts4df1iSXvd0taHtm4d83Jgau
-	Bj+C3+m8+ZHxb/6Eypubcmp8VwtPbDG6nFzffubysctzzmVNU5+a8fuoqsKbCZJ934VrP68/
-	dTSn5Ly2f++qvQ5sl3iqXQLn6a1pkzCsL4g5f+aaf7bIbN93H7/vmr563ez8wkPzpZhtw3dt
-	evGT7QD3HTclluKMREMt5qLiRACEzSDRRwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnluLIzCtJLcpLzFFi42I5/e+xoK7bv2NRBk97OS1e/5vOYrHnzC92
-	i+bF69ks+k9vZ7TYekva4vKuOWwWt9uOsVo8OjuLyeLSGn+LLV0/WB24PO7tO8zisXPWXXaP
-	/XPXsHt8fHqLxaNvyypGj3+nmDy+XH/N6PF5k1wARxSXTUpqTmZZapG+XQJXxpV7lxgLPrJV
-	7Nr6n72B8TVrFyMnh4SAicTXdeuBbC4OIYF1jBJz391khnB+MEpM2r2CBaSKTUBTYmP3NUYQ
-	W0RATuLJ7T/MIDazwHdGiferweLCAr4SE05MA5vKIqAqsfz0D7AaXgE3iRlXrrNAbJOTOHls
-	MusERq4FjAyrGCVTC4pz03OLjQoM81LL9YoTc4tL89L1kvNzNzECg2nbYa2+HYz3l8QfYhTg
-	YFTi4c2IOBYlxJpYVlyZe4hRgoNZSYR39x+gEG9KYmVValF+fFFpTmrxIUZpDhYlcd7becci
-	hQTSE0tSs1NTC1KLYLJMHJxSDYzmL7rXTj1UdvSajrSR9bFzd49/NNaf+eLjxd0uwk/zTJbM
-	MO64MOuk81y7mZqvlkavzLMovrE6sjDi3vmdB73LH+moaMY5tV9zOP38T/Leguk78o4GPlp5
-	UsJhVZHPlQafQ3s9LU1mbLY1tq2P4uwRSNpSr5k8898G1ekW9VbsL0oy2PParkYosRRnJBpq
-	MRcVJwIArfqvFiICAAA=
-X-CMS-MailID: 20180406045742epcas1p22ad1bad680b9526a81c7371b75ac1f1e
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180406045742epcas1p22ad1bad680b9526a81c7371b75ac1f1e
-X-RootMTR: 20180406045742epcas1p22ad1bad680b9526a81c7371b75ac1f1e
-References: <CGME20180406045742epcas1p22ad1bad680b9526a81c7371b75ac1f1e@epcas1p2.samsung.com>
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-402127-1522990719-2-2398262828294141953
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522990718; b=vqCBCssflqceOSTFplaQ5uqHT5dKIS92LuL5btaB/c+wvxpY3R
+    S8lxGl/6WP67mruEKgCFSr3n3uu3XlCRhGfFFi3IDsLayOnhDR38o+PpAoKPndNu
+    COjNLJFzdnPLjTT27v0GsmDqBbIveVl2BfAXQkg20DU/ExmJJgkb64ICMfjQ/NHb
+    1YzPRFJRQUz9xIq8vx3URZUM7sDIhVmMcz9BukQUA0AyQXcqi1jxpBXIM2dmZNAW
+    +ykcvPUIvc8+KJ9dcFonNbLIrMmVsILPPFId9TFzYyha5FalN3nS6W+v34DwHxAp
+    f6h0dWbwZFQrTMoLZsjL6Uuqt6EMKM/1YldQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1522990718; bh=Dh4hwgu6pHWgf5GFvkjsDJaVyWwLXn
+    pBTz7wZyAMNUI=; b=r1NWEgNVJufwz3NLK1vw1+iOAJv/QaxplZ9u4p25esrfSq
+    GiVeC/iDGUkh6TDUW22APyvc5R8RCjx1fQifzBsDayPEXHWxSgfnKRVqDWoIy97X
+    vOFaE4yEkP7ds35zPomJdi2P6VGmBp1FAK85+2a5sTrHt395e63ub1rDvUsw96qI
+    iffSvCfc6AOOabkwqYpi3J4Ep+AZAhnobbBEzwI/YHU/Ble3JcYZlW3G8GngojZ2
+    ayGCp5rUKFPY/P3yUkssTrRtjT1Uxxx61LrZ55XtVGRyXuWb1kOtzzPv/qrAjLlW
+    cwZ46Et80JfppQSTnegHL3a3fNU6rNX2gmavkSTw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=zeniv.linux.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=zeniv.linux.org.uk header.mx.error=NOERROR header.result=warn header_org.domain=linux.org.uk header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=zeniv.linux.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=zeniv.linux.org.uk header.mx.error=NOERROR header.result=warn header_org.domain=linux.org.uk header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMtvQrWJvGN/pWr/j2T6+y+7+BRjk59okdYdf5KXOn8QQw0OR4ieYS843g5sHNP6vN5/AhVaGoEHeyXCkiG4YOIUYcZyzTTGLUIaxmkz7Kl7egq2c7ZO
+    rbpzfGGqP22OC50xrZxsdobRtnVVGEKWdWQ3JYgWUfOIjRhKAXn5fy/YXS80bJ2wWGuwnKpj+pryGl3emTYPkNTL40HIde/K+aHbnGi9MUGq1q2eqa/aPuRK
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=Newdxa483icPIVLupAoA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751415AbeDFE6h (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 00:58:37 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48582 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751280AbeDFE6g (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Fri, 6 Apr 2018 00:58:36 -0400
+Date: Fri, 6 Apr 2018 05:58:33 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/32] fs: introduce new ->get_poll_head and ->poll_mask
+ methods
+Message-ID: <20180406045833.GW30522@ZenIV.linux.org.uk>
+References: <20180330150809.28094-1-hch@lst.de>
+ <20180330150809.28094-6-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180330150809.28094-6-hch@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596971458949990552?=
-X-GMAIL-MSGID: =?utf-8?q?1596971458949990552?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use kmemdup rather than duplicating its implementation.
+On Fri, Mar 30, 2018 at 05:07:42PM +0200, Christoph Hellwig wrote:
 
-Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
----
- drivers/staging/ks7010/ks7010_sdio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> +  get_poll_head: Returns the struct wait_queue_head that poll, select,
+> +  epoll or aio poll should wait on in case this instance only has single
+> +  waitqueue.  Can return NULL to indicate polling is not supported,
+> +  or a POLL* value using the POLL_TO_PTR helper in case a grave error
+> +  occured and ->poll_mask shall not be called.
 
-diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
-index b8f55a1..c8eb55b 100644
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -589,11 +589,10 @@ static int ks7010_sdio_update_index(struct ks_wlan_private *priv, u32 index)
- 	int ret;
- 	unsigned char *data_buf;
- 
--	data_buf = kmalloc(sizeof(u32), GFP_KERNEL);
-+	data_buf = kmemdup(&index, sizeof(u32), GFP_KERNEL);
- 	if (!data_buf)
- 		return -ENOMEM;
- 
--	memcpy(data_buf, &index, sizeof(index));
- 	ret = ks7010_sdio_write(priv, WRITE_INDEX, data_buf, sizeof(index));
- 	if (ret)
- 		goto err_free_data_buf;
--- 
-1.9.1
+> +		if (IS_ERR(head))
+> +			return PTR_TO_POLL(head);
+
+> + * ->get_poll_head can return a __poll_t in the PTR_ERR, use these macros
+> + * to return the value and recover it.  It takes care of the negation as
+> + * well as off the annotations.
+> + */
+> +#define POLL_TO_PTR(mask)	(ERR_PTR(-(__force int)(mask)))
+
+Uh-oh...
+static inline bool __must_check IS_ERR(__force const void *ptr)
+{
+        return IS_ERR_VALUE((unsigned long)ptr);
+}
+#define IS_ERR_VALUE(x) unlikely((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
+#define MAX_ERRNO       4095
+
+IOW, your trick relies upon arguments of PTR_TO_POLL being no greater
+than 4095.  Now, consider
+#define EPOLLRDHUP      (__force __poll_t)0x00002000
+which is to say, 8192...
+
+So anything that tries e.g. POLL_TO_PTR(EPOLLRDHUP | EPOLLERR) will be in
+for a quiet unpleasant surprise...
