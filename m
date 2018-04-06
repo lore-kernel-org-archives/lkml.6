@@ -1,80 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1459510-1523022118-2-14706242041947346744
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523022118; b=mqzjwys5O4uyTqry7BCpYNhDok1O5oLH+nK5zg9gWGRJ3MoW2X
-    XnnLk3QWeuIXo9hp1MSKDh5ifqZS4V/GxACFYJtQkeSxbFZe2RXBPMwNAGV122Y9
-    NPj4ADHL+nSHC3PBD/74DPKo8+xrEICeIVIKeUUlzEUlwsWCGJMb0pil98ME5V/I
-    6kgk/YkudMo0X62pJ1/lpIMi/43VfiOsKFRnKeRWd8lY60oCnaUOMJw9w9aIcdD6
-    HGEUB7qhskwiN05YVV3oyprxWQJFiH2rAqEZu2+dJWLyBvdnDTcI5kZvSzpAQdbX
-    C+9HzpSNfY1xNWmPk/nqLQdwWFkB8uQGSpfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523022118; bh=lyAPvxR/qzwek4OdU/ygvEyt50S27r
-    5zJTsAxJlF5XA=; b=OPZp1BlJC4lLyPPHlDW0qeoMZeVDJ5jhTWLdcVoxEcHsZx
-    3+/KOvWNzpMCJJwtf6Pvv+rQ7g46x7MpkR0znM78bRY/Cdph1aBZSEwbTt5EHbJm
-    Yx78u9UkttiC2nvGf7GnZqyeMMq3n3wOv9QiGykVFrNeVSPJppfbz60Zt8/BaWuC
-    H68ld+LBl3YymlvoyrZTweN0B4s5R0T+FErkunVc43GTmz8xtB9DLeNYTBZpOf9b
-    BDsnH1dkXRZ8h1EIevfFvjhsl714V+aSqfdwepX4LK1Playz0XruiCdIPyVfipaM
-    wFWiPKzgaEVc/JVrqgCkdJ45/vqLEqORPVdJH9lw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHaypNE9ucTkjmnjkHwPnOrj1ADfOR14ZL56BlAJnoie3yb2N9tpVIdzeTyQrsWMB0BG2Q/E3SQVxQXPvKBYkdNl61BU/si9nVPJwg5BZHZYOpIvk1gG
-    78VlaXCkDCULMOT80LH50SORTvsDQYVDK4Gjj4++IBjUP5hZSRQRYHmUL8cxMJBRPYtKMoazi5Desam8tJLkE0d0zayWZi/Wp0mknpcyJym0YPxO1rlm060K
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=7ZN4cI0QAAAA:8 a=hSkVLCK3AAAA:8 a=ag1SF4gXAAAA:8 a=1WA7wDV_nH3orW2v68gA:9
-    a=QEXdDO2ut3YA:10 a=Dl0WHwQvj8hGZljrFLtM:22 a=cQPPKAXgyycSBL8etih5:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756392AbeDFNly (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 09:41:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36622 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756461AbeDFNlr (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:41:47 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49XvzpwAfhYDUZ85U0xicbf07PIeljAdsXcUGnc1i/2WXHr/k+6kAP4RozoOENseMruUU2Z
+ARC-Seal: i=1; a=rsa-sha256; t=1523022115; cv=none;
+        d=google.com; s=arc-20160816;
+        b=LJLnCmhEp6eZZyG3aEuBMydlRdmxSbz8w+OQ8ql6Lkp5xheTb3kh74BhKEfpWAhdi5
+         ReVD/13N5npzEJsqYPsflnWWFBQ2Y67JQ0jVbiFj6VlwHfkk5PjWRbRbD4dNPNtAXzBH
+         eU4WHS5S4TyM+OThUgC/c7KpoidhPRSv1mYLcUMOHZ0me7gvOpeYCGImrPDjjpIA04po
+         /dMYq3+IGJYssIy+CoV9QMJ/SE/FowWZka5r5ipxIcok+aBtY2sn+x3aiPnUAXZJI+Pa
+         0OOaTLuuudoHrmN2Q64VaS1rjet09/mlQuR7Fvsk4//skX/TmvGePyrbpOymKs4UXhAW
+         NtrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=gLMfE0SR9/ontPGtpRqTVtMv3X8RK04QJxo7cvqXzPQ=;
+        b=vhp5DlhljlrE6A7DhnmDxdR8jPJzWPCNIss46TddTQRVpqQaJhmhOWRAu/gBmy8/Vz
+         7k7PeiKgYqftkdqb4KtlNRhmColJZCFbqa7LuqkMignTUxZLZJzERhQWtxH96Y7VTrxh
+         +/7C3LDvX/f0w1a4jDOw/eCjEFqDDkZwfvj5T7UicXnl1zttGbUzhVm8Z0ZNMrZxI1OV
+         PyUVNJ1ofws/jgxaj5cMkfMZ2wUdo974tzygxIN0YMzBkEqd61ZGxuA9BzANWyUu9NEw
+         3L9kS4IEMCMth8U7FIgUixKumwcBJxXAQBq22WfyMD8erBJT0LhOHyC6Ngu8Z1+Agq4D
+         MqaA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.15 30/72] xfrm: Refuse to insert 32 bit userspace socket policies on 64 bit systems
-Date: Fri,  6 Apr 2018 15:24:05 +0200
-Message-Id: <20180406084351.843360642@linuxfoundation.org>
+	stable@vger.kernel.org,
+	syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com,
+	Florian Westphal <fw@strlen.de>,
+	Eric Dumazet <edumazet@google.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.15 33/72] netfilter: bridge: ebt_among: add more missing match size checks
+Date: Fri,  6 Apr 2018 15:24:08 +0200
+Message-Id: <20180406084352.132774410@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -82,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597003597962532229?=
+X-GMAIL-MSGID: =?utf-8?q?1597004437710429214?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -92,35 +51,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steffen Klassert <steffen.klassert@secunet.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit 19d7df69fdb2636856dc8919de72fc1bf8f79598 upstream.
+commit c8d70a700a5b486bfa8e5a7d33d805389f6e59f9 upstream.
 
-We don't have a compat layer for xfrm, so userspace and kernel
-structures have different sizes in this case. This results in
-a broken configuration, so refuse to configure socket policies
-when trying to insert from 32 bit userspace as we do it already
-with policies inserted via netlink.
+ebt_among is special, it has a dynamic match size and is exempt
+from the central size checks.
 
-Reported-and-tested-by: syzbot+e1a1577ca8bcb47b769a@syzkaller.appspotmail.com
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+commit c4585a2823edf ("bridge: ebt_among: add missing match size checks")
+added validation for pool size, but missed fact that the macros
+ebt_among_wh_src/dst can already return out-of-bound result because
+they do not check value of wh_src/dst_ofs (an offset) vs. the size
+of the match that userspace gave to us.
+
+v2:
+check that offset has correct alignment.
+Paolo Abeni points out that we should also check that src/dst
+wormhash arrays do not overlap, and src + length lines up with
+start of dst (or vice versa).
+v3: compact wormhash_sizes_valid() part
+
+NB: Fixes tag is intentionally wrong, this bug exists from day
+one when match was added for 2.6 kernel. Tag is there so stable
+maintainers will notice this one too.
+
+Tested with same rules from the earlier patch.
+
+Fixes: c4585a2823edf ("bridge: ebt_among: add missing match size checks")
+Reported-by: <syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_state.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/bridge/netfilter/ebt_among.c |   34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -2056,6 +2056,11 @@ int xfrm_user_policy(struct sock *sk, in
- 	struct xfrm_mgr *km;
- 	struct xfrm_policy *pol = NULL;
+--- a/net/bridge/netfilter/ebt_among.c
++++ b/net/bridge/netfilter/ebt_among.c
+@@ -177,6 +177,28 @@ static bool poolsize_invalid(const struc
+ 	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
+ }
  
-+#ifdef CONFIG_COMPAT
-+	if (in_compat_syscall())
-+		return -EOPNOTSUPP;
-+#endif
++static bool wormhash_offset_invalid(int off, unsigned int len)
++{
++	if (off == 0) /* not present */
++		return false;
 +
- 	if (!optval && !optlen) {
- 		xfrm_sk_policy_insert(sk, XFRM_POLICY_IN, NULL);
- 		xfrm_sk_policy_insert(sk, XFRM_POLICY_OUT, NULL);
++	if (off < (int)sizeof(struct ebt_among_info) ||
++	    off % __alignof__(struct ebt_mac_wormhash))
++		return true;
++
++	off += sizeof(struct ebt_mac_wormhash);
++
++	return off > len;
++}
++
++static bool wormhash_sizes_valid(const struct ebt_mac_wormhash *wh, int a, int b)
++{
++	if (a == 0)
++		a = sizeof(struct ebt_among_info);
++
++	return ebt_mac_wormhash_size(wh) + a == b;
++}
++
+ static int ebt_among_mt_check(const struct xt_mtchk_param *par)
+ {
+ 	const struct ebt_among_info *info = par->matchinfo;
+@@ -189,6 +211,10 @@ static int ebt_among_mt_check(const stru
+ 	if (expected_length > em->match_size)
+ 		return -EINVAL;
+ 
++	if (wormhash_offset_invalid(info->wh_dst_ofs, em->match_size) ||
++	    wormhash_offset_invalid(info->wh_src_ofs, em->match_size))
++		return -EINVAL;
++
+ 	wh_dst = ebt_among_wh_dst(info);
+ 	if (poolsize_invalid(wh_dst))
+ 		return -EINVAL;
+@@ -201,6 +227,14 @@ static int ebt_among_mt_check(const stru
+ 	if (poolsize_invalid(wh_src))
+ 		return -EINVAL;
+ 
++	if (info->wh_src_ofs < info->wh_dst_ofs) {
++		if (!wormhash_sizes_valid(wh_src, info->wh_src_ofs, info->wh_dst_ofs))
++			return -EINVAL;
++	} else {
++		if (!wormhash_sizes_valid(wh_dst, info->wh_dst_ofs, info->wh_src_ofs))
++			return -EINVAL;
++	}
++
+ 	expected_length += ebt_mac_wormhash_size(wh_src);
+ 
+ 	if (em->match_size != EBT_ALIGN(expected_length)) {
