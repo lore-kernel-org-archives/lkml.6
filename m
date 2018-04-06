@@ -1,97 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752054AbeDFK5R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 06:57:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35098 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751579AbeDFK5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:57:16 -0400
-Date: Fri, 6 Apr 2018 11:57:09 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Yury Norov <ynorov@caviumnetworks.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Christopher Lameter <cl@linux.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexey Klimov <klimov.linux@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] arm64: entry: isb in el1_irq
-Message-ID: <20180406105709.kd3uumwustwnzcd4@lakrids.cambridge.arm.com>
-References: <20180405171800.5648-1-ynorov@caviumnetworks.com>
- <20180405171800.5648-2-ynorov@caviumnetworks.com>
+        id S1752033AbeDFLFQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 07:05:16 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:37153 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbeDFLFO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 07:05:14 -0400
+X-Google-Smtp-Source: AIpwx4/PaUboWx9mYy9oCdADMxswDRfFCpcxXN99xlEBV6mnHSe/nO1Dr2+FAey1JhJeM2ZgFcOVZw==
+From: Esben Haabendal <esben.haabendal@gmail.com>
+To: David Miller <davem@davemloft.net>
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, richardcochran@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rasmus.villemoes@prevas.dk
+Subject: Re: [PATCH 2/2] net: phy: dp83640: Read strapped configuration settings
+References: <95678797-bd17-ba3f-8a70-a00b4792a258@gmail.com>
+        <87d0zdjszu.fsf@haabendal.dk> <20180405204049.GD17495@lunn.ch>
+        <20180405.222437.1573582680811455269.davem@davemloft.net>
+Date: Fri, 06 Apr 2018 13:05:06 +0200
+In-Reply-To: <20180405.222437.1573582680811455269.davem@davemloft.net> (David
+        Miller's message of "Thu, 05 Apr 2018 22:24:37 -0400 (EDT)")
+Message-ID: <87h8oo61el.fsf@gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405171800.5648-2-ynorov@caviumnetworks.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 08:17:56PM +0300, Yury Norov wrote:
-> Kernel text patching framework relies on IPI to ensure that other
-> SMP cores observe the change. Target core calls isb() in IPI handler
-> path, but not at the beginning of el1_irq entry. There's a chance
-> that modified instruction will appear prior isb(), and so will not be
-> observed.
-> 
-> This patch inserts isb early at el1_irq entry to avoid that chance.
+David Miller <davem@davemloft.net> writes:
 
-As James pointed out, taking an exception is context synchronizing, so
-this looks unnecessary.
+> From: Andrew Lunn <andrew@lunn.ch>
+> Date: Thu, 5 Apr 2018 22:40:49 +0200
+>
+>> Or could it still contain whatever state the last boot of Linux, or
+>> maybe the bootloader, left the PHY in?
+>
+> Right, this is my concern as well.
 
-Also, it's important to realise that the exception entry is not tied to a
-specific interrupt. We might take an EL1 IRQ because of a timer interrupt,
-then an IPI could be taken before we get to gic_handle_irq().
+I don't think that should happen.
+With config_init() being called (in phy_init_hw()) after soft_reset(),
+any state set by software should be cleared.
 
-This means that we can race:
+>From DP83620 datasheet description of what happens when BMCR_RESET is
+set:
 
-	CPU0				CPU1
-	<take IRQ>
-	ISB
-					<patch text>
-					<send IPI>
-	<discover IPI pending>
+    The software reset will reset the device such that all registers
+    will be reset to default values and the hardware configuration
+    values will be maintained.
 
-... and thus the ISB is too early.
+But something else that could be a concern is the risk that there is
+boards out there with wrong hardware configuration, which works with
+current Linux (because it ignores hardware configuration).  Such designs
+could break with this patch.
 
-Only once we're in the interrupt handler can we pair an ISB with the IPI, and
-any code executed before that is not guaranteed to be up-to-date.
+If we need to safeguard against that, maybe we could just keep the
+genphy_read_config() function in the kernel, and let board specific code
+use it as a phy_fixup where hardware configuration is to be respected.
 
-Thanks,
-Mark.
+Would that be a better approach?
 
-> 
-> Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
-> ---
->  arch/arm64/kernel/entry.S | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index ec2ee720e33e..9c06b4b80060 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -593,6 +593,7 @@ ENDPROC(el1_sync)
->  
->  	.align	6
->  el1_irq:
-> +	isb					// pairs with aarch64_insn_patch_text
->  	kernel_entry 1
->  	enable_da_f
->  #ifdef CONFIG_TRACE_IRQFLAGS
-> -- 
-> 2.14.1
-> 
+/Esben
