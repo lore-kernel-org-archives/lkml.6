@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49jYmrlpd88kCq3BaYCcV55VImuklRgtAR0ztAyld7qJoEvbBwBhOaa3t7gi5JFd1ty9n9b
-ARC-Seal: i=1; a=rsa-sha256; t=1523021616; cv=none;
+X-Google-Smtp-Source: AIpwx4/9ol3BXlBE1Aqe+Zz7R09gZILAcwDEYWiy1uc4/2TttKPlC5Bx34B4XgIHboD9XXrjpGG/
+ARC-Seal: i=1; a=rsa-sha256; t=1523021614; cv=none;
         d=google.com; s=arc-20160816;
-        b=iI8j61QVs8AVhp0d7gF8z8VrJ03JpVMqRR30TPxuH2YRJfRm1IR116FE1eKjMsHXiH
-         AYIiwB0DiJXZrW/rvsBxDc16XqLVVaoRUi7sld2qFLTXu02jngRTUj4rwHvrUt/TOUaT
-         q21PyWfxM/MBnGBcqYDt2flK4/TtUdBLXcn51sztsRcOL/WS9G4NvAg6DyA6tbXpwJTT
-         xt/6Jc6uq/hVdhnLeFF43LK40UeemJ3DQ1Yxw5KWv9XoJuNy/JsdRRtKlQEoFLbvHlEv
-         q+UVGKQwXzRCvocAwYaHBhV8frAnuFWaGzu1+v8Ah6XiPYVi+mv/WJoXulfYP7r7q+wD
-         /rpg==
+        b=aO7g4YpcuG5nb2ojgYXW7LvgtYosutFpyeoCYsW38wZtdbGpVgHCphvkE13hUKFahD
+         sUJBhM19ppn5y0DiDqePWM6QDEshxy4i+JXkO59Oh7wTP6cWZsV5PiTNe5IUz4CJqy64
+         mr33/kEKRvnOcshYNGbtNfYvbWSjL3o2R6c3ymQb2tsFl6o5a6QIdd0ip15CWmFQ3F+F
+         JifU65INq0kUkyThlWWJgWtIVBk9OOgB7v2GSSgDdO+4Ly/8PL08j9n1ET4pAj8cGh2w
+         snSdDbyeX8FW01QS6gj4A7c7D4gJZlLzWdiGR93EoxPTii35uwVCtZhdmN/Xex1+W7Zb
+         yTWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=r5j04Q/EBllHx4ys5TaUJ2Dgxzx68q5uQ6lyPnIcFhA=;
-        b=sfD+6tbEBevO/62rQ3XKe+VViZmyztbRNI9mebpBZoKt0dCbywYAXE8bce/v5QsdLj
-         it1HvKq5bN1/7l5oexcd9FQshgrYmC0Eq/YLX3kdomFj4MbICbtP9NHLII5recURCars
-         9ige6svumemAxb8oagModALRO01JnsCR7VdIcJ2xcRl6xGW2Q+SXlgyjDJC0AbbIpNPh
-         v8k40mtjZfg3ZNpieSN3LxW/JH5kgvXQFJZ/GjIhpv3xCFY7kIAqklWJUTdgS20+6GRd
-         TA4V/byd2FGy7BH4CBAp5gUFLGmyEIOGGobmz3n7fLuqAWnqmfGkMBWglRtEFXkhoAMu
-         aIsg==
+        bh=zDly7uu1XpIlGYd0aQ0F+mo9LOFZTgvcgpuraeXMmfE=;
+        b=Vg6OSVOABGIpTFhvDIbDb7KE4QRf049/wvLQqqi3F8qPBKcvYJXFhMMPsCJUCNHqQf
+         J5HBgrQ1GWSj3bd1cg+l5XbmaQc6sJqRrJXVCDuC7EL/PI2BYlpzeLtMC1TvRVuVspLf
+         I9U+dzh6M5SmTcn8AqpH+bjhJ3Wn+/ppRxkmCBMjwh7z4OeJCtW20zoS4zvGMi9vUNuD
+         uYW1J5mYknJzGP2e4gnoJTP/CPF60+F2G+Bi+dOk0rpEBKCBM1I2GhkIDX4eHUD/ZTbC
+         MxE/+LJMy3HHZFaFMhBFwbnxljZ0HHOKsNggWuiDvTae0q9Anre77cVyRIdnGtIbFIMl
+         yWCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Frank Praznik <frank.praznik@gmail.com>,
+	Jiri Kosina <jkosina@suse.cz>,
 	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 028/102] netfilter: ctnetlink: Make some parameters integer to avoid enum mismatch
-Date: Fri,  6 Apr 2018 15:23:09 +0200
-Message-Id: <20180406084335.617782490@linuxfoundation.org>
+Subject: [PATCH 4.9 027/102] HID: sony: Use LED_CORE_SUSPENDRESUME
+Date: Fri,  6 Apr 2018 15:23:08 +0200
+Message-Id: <20180406084335.460135496@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003697537524572?=
-X-GMAIL-MSGID: =?utf-8?q?1597003914715190861?=
+X-GMAIL-THRID: =?utf-8?q?1597003911938399334?=
+X-GMAIL-MSGID: =?utf-8?q?1597003911938399334?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,44 +50,101 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Frank Praznik <frank.praznik@gmail.com>
 
-commit a2b7cbdd2559aff06cebc28a7150f81c307a90d3 upstream.
+commit 765a1077c85e5f2efcc43582f80caf43a052e903 upstream.
 
-Not all parameters passed to ctnetlink_parse_tuple() and
-ctnetlink_exp_dump_tuple() match the enum type in the signatures of these
-functions. Since this is intended change the argument type of to be an
-unsigned integer value.
+The LED subsystem provides the LED_CORE_SUSPENDRESUME flag to handle
+automatically turning off and restoring the state of device LEDs during
+suspend/resume.  Use this flag instead of saving and restoring the state
+locally.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Frank Praznik <frank.praznik@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_conntrack_netlink.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/hid/hid-sony.c |   45 +++++++++++++++------------------------------
+ 1 file changed, 15 insertions(+), 30 deletions(-)
 
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -1008,9 +1008,8 @@ static const struct nla_policy tuple_nla
+--- a/drivers/hid/hid-sony.c
++++ b/drivers/hid/hid-sony.c
+@@ -1056,7 +1056,6 @@ struct sony_sc {
+ 	u8 battery_charging;
+ 	u8 battery_capacity;
+ 	u8 led_state[MAX_LEDS];
+-	u8 resume_led_state[MAX_LEDS];
+ 	u8 led_delay_on[MAX_LEDS];
+ 	u8 led_delay_off[MAX_LEDS];
+ 	u8 led_count;
+@@ -1793,6 +1792,7 @@ static int sony_leds_init(struct sony_sc
+ 		led->name = name;
+ 		led->brightness = sc->led_state[n];
+ 		led->max_brightness = max_brightness[n];
++		led->flags = LED_CORE_SUSPENDRESUME;
+ 		led->brightness_get = sony_led_get_brightness;
+ 		led->brightness_set = sony_led_set_brightness;
  
- static int
- ctnetlink_parse_tuple(const struct nlattr * const cda[],
--		      struct nf_conntrack_tuple *tuple,
--		      enum ctattr_type type, u_int8_t l3num,
--		      struct nf_conntrack_zone *zone)
-+		      struct nf_conntrack_tuple *tuple, u32 type,
-+		      u_int8_t l3num, struct nf_conntrack_zone *zone)
+@@ -2509,47 +2509,32 @@ static void sony_remove(struct hid_devic
+ 
+ static int sony_suspend(struct hid_device *hdev, pm_message_t message)
  {
- 	struct nlattr *tb[CTA_TUPLE_MAX+1];
- 	int err;
-@@ -2409,7 +2408,7 @@ static struct nfnl_ct_hook ctnetlink_glu
+-	/*
+-	 * On suspend save the current LED state,
+-	 * stop running force-feedback and blank the LEDS.
+-	 */
+-	if (SONY_LED_SUPPORT || SONY_FF_SUPPORT) {
+-		struct sony_sc *sc = hid_get_drvdata(hdev);
+-
+ #ifdef CONFIG_SONY_FF
+-		sc->left = sc->right = 0;
+-#endif
  
- static int ctnetlink_exp_dump_tuple(struct sk_buff *skb,
- 				    const struct nf_conntrack_tuple *tuple,
--				    enum ctattr_expect type)
-+				    u32 type)
+-		memcpy(sc->resume_led_state, sc->led_state,
+-			sizeof(sc->resume_led_state));
+-		memset(sc->led_state, 0, sizeof(sc->led_state));
++	/* On suspend stop any running force-feedback events */
++	if (SONY_FF_SUPPORT) {
++		struct sony_sc *sc = hid_get_drvdata(hdev);
+ 
++		sc->left = sc->right = 0;
+ 		sony_send_output_report(sc);
+ 	}
+ 
++#endif
+ 	return 0;
+ }
+ 
+ static int sony_resume(struct hid_device *hdev)
  {
- 	struct nlattr *nest_parms;
+-	/* Restore the state of controller LEDs on resume */
+-	if (SONY_LED_SUPPORT) {
+-		struct sony_sc *sc = hid_get_drvdata(hdev);
+-
+-		memcpy(sc->led_state, sc->resume_led_state,
+-			sizeof(sc->led_state));
+-
+-		/*
+-		 * The Sixaxis and navigation controllers on USB need to be
+-		 * reinitialized on resume or they won't behave properly.
+-		 */
+-		if ((sc->quirks & SIXAXIS_CONTROLLER_USB) ||
+-			(sc->quirks & NAVIGATION_CONTROLLER_USB)) {
+-			sixaxis_set_operational_usb(sc->hdev);
+-			sc->defer_initialization = 1;
+-		}
++	struct sony_sc *sc = hid_get_drvdata(hdev);
  
+-		sony_set_leds(sc);
++	/*
++	 * The Sixaxis and navigation controllers on USB need to be
++	 * reinitialized on resume or they won't behave properly.
++	 */
++	if ((sc->quirks & SIXAXIS_CONTROLLER_USB) ||
++		(sc->quirks & NAVIGATION_CONTROLLER_USB)) {
++		sixaxis_set_operational_usb(sc->hdev);
++		sc->defer_initialization = 1;
+ 	}
+ 
+ 	return 0;
