@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/pO+ZG3xcyWP1ypILr1QbtLZZpOIu/TCcyRv+WvS9R6nzuvkvRtI1tlU96WeAuLu1+wN5H
-ARC-Seal: i=1; a=rsa-sha256; t=1523021794; cv=none;
+X-Google-Smtp-Source: AIpwx48tr4Ek0Q9qcRWacUsH98dbgyOThnyyPLmEr4k57ORudzJjaVH42GPcwRpckRbf/6JBR8Jq
+ARC-Seal: i=1; a=rsa-sha256; t=1523021791; cv=none;
         d=google.com; s=arc-20160816;
-        b=uZ9FaYHCBR/caxIpGSPhs25FXRpIGGJFkZ68QB1kdP+D1gTOh3lV6LoAlCVko2oPpn
-         b2cxiEeCcZB8R3lK7DxlgoB7wCHnYUOuvuAqSsoa5su1N4pjKXJHcTNIRZ7PrXDTeiKF
-         LM+3b9wETrmbQseOXaH9uQ9o3XdboXUQiccpl43pXn2Mi10S8w2m5hVAfy9XDeTNFEk7
-         kbnC+8ZSlXwFpqjmEgDJ0vv0hxarWLV9JEiyL/34gJPXwrGpABUpw7fnQ7OMofrraEAW
-         An/WGJixCyR9lHrTYT0JnWKtNuu915z19DGq1EqzxQyz7/0vPpKtUN7XnqImGpJcN7lk
-         3ZRg==
+        b=npsMGftm2AB0tk0cvPwFV4lBUqV8IJ9bi5Eo9eTJoKZpTAaJCuDfFVsaMeG1vOUSEu
+         BObW21WBmkWU3RAX5+s/2KjU6vvDdNDx6u7fuquto+6FSDumsAYpBCWsdfsoWt7MrlL5
+         P/z1oXcF1P1PiUhUmAD3bMPiMHXUiCFTeXtWlS5iHB/Dvtj64gKivZqg0m2thf9663Ur
+         LUCkjlERAxptepSvgTPuz/h6ts8DgjQyw0eXIdmODVk76+o5o61cQzbAucoBzQgZ5OwI
+         NhVvR3XCcAi7E8b00bTBVGlky+Yrdv9y94c5ZAD7j5ItuszpiizCrd6PfuEwquGYtZlM
+         ZD7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5tdiELTXjO7CcoabX2dYk11rbrDrq4Xirq4ouVougY0=;
-        b=A9gs/CX2FPaaJpbhPNzJmRTZbtaMsSNPfARn+BNHu4HBiNYJBHbZyN5fwOKO3X4fGH
-         G1HRgu+Rv6xLOtRNXDNOipjXHF2ZREcN3FU1c9Ub/1C7etjACuYKDOP+JIHVKpW1DDPr
-         px5dvtD9QPq9n0UvOyjFaRJ1psHoWAiXVkkRcnk543TZ3MOpu1Xz3WZ8c6rCmv8TsNA1
-         sjKeM2NoutLPJ7yaT4cpeg8Rwau9aHx1Ir+YLGLLT4hLpT0aLWKwzN2Qil0RTAA5su+t
-         CUU3LsiwRgHlmBMFiJfsUWKjO1dcaGoUZfl5wOEwZosV/iq8qVWf3JHLZy8Er5NBn14f
-         ILCw==
+        bh=SonQedz1RQdFIJYa1QcKngWhobPxmJeK9e/gdDR1wkQ=;
+        b=COfIyg6M5FS772BdTEJCqn+rqoPBURdWIRebnR8FCsVL3lXvWOAWKxY8ysXGpn3Ana
+         VBTjtlBLK0UVQHb2WDhNynQl+/xy7BVdeXuuWtR1aBBkeHHWKAskA4V6ctrM3Ru5Zo3T
+         Iac6jdsMAlfu2uS+zcQvFmsLWxB3C66afVddjmh+JD+ZkyC6ZroAv1iAMAaLm6nSFU1b
+         Aoo105mL0lILpjebKrOevOEhWijJ01yKk9dZV9/DRGQ7fl9Xc6tq3xvEQJSsb1ckMDUR
+         6Amaj5Zjv2bRF0h1i/eDAfepjFomMGWqcBXRZRIs4V/+xt69CYivT/27PHuUttDC93RC
+         Ii4A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Keerthy <j-keerthy@ti.com>,
 	Tony Lindgren <tony@atomide.com>,
 	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 093/102] ARM: dts: am57xx-idk-common: Add overide powerhold property
-Date: Fri,  6 Apr 2018 15:24:14 +0200
-Message-Id: <20180406084344.588915872@linuxfoundation.org>
+Subject: [PATCH 4.9 092/102] ARM: dts: am57xx-beagle-x15-common: Add overide powerhold property
+Date: Fri,  6 Apr 2018 15:24:13 +0200
+Message-Id: <20180406084344.451562692@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004100685242312?=
-X-GMAIL-MSGID: =?utf-8?q?1597004100685242312?=
+X-GMAIL-THRID: =?utf-8?q?1597003794128655610?=
+X-GMAIL-MSGID: =?utf-8?q?1597004097895678742?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,7 +52,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Keerthy <j-keerthy@ti.com>
 
-commit 8804755bfb1f3cbc003e4ebe99eac491672f354c upstream.
+commit 1f166499ce006b3770a3166122eda64e160736ab upstream.
 
 The PMICs have POWERHOLD set by default which prevents PMIC shutdown
 even on DEV_CTRL On bit set to 0 as the Powerhold has higher priority.
@@ -65,14 +65,14 @@ Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/am57xx-idk-common.dtsi |    1 +
+ arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi |    1 +
  1 file changed, 1 insertion(+)
 
---- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
-+++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
-@@ -57,6 +57,7 @@
- 		#interrupt-cells = <2>;
+--- a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
++++ b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
+@@ -204,6 +204,7 @@
  		interrupt-controller;
+ 
  		ti,system-power-controller;
 +		ti,palmas-override-powerhold;
  
