@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+Ht3/HUT9mGUHdzOg4kHHCF0oxe4JIFM9hM3CErE/UudKg6Z3s58g7jJOnX7QbSt2OGaNb
-ARC-Seal: i=1; a=rsa-sha256; t=1523021112; cv=none;
+X-Google-Smtp-Source: AIpwx48TJyloSAvsZ1WtcBCz0dB3O4DD/S+KUaSbCSAs2YQaJmi0mAawCsjqVFZa/8x5ESm41h4K
+ARC-Seal: i=1; a=rsa-sha256; t=1523021109; cv=none;
         d=google.com; s=arc-20160816;
-        b=nX3uGb3qkPr+QXVCvzNuqh9AVvN8upVuRHOeX6EnTf0rDMABoZ+QflyQ4aMar2z7e9
-         dOtOR2Sv/Ag9DaAdwhtowpXVFcDhrKamLlZDNrqsRpMITv41VUt6hJCFm9G76NdDcLEO
-         7FNnsb1hypoqX8BpOfnhdWYOR+xc2mYEOutTNpIAJLOVDgEBQgpMMLwZ88TMeLTwz7/5
-         vd+JgACKCSgqPourk9//6nCVgA8WvErBPrqdcBRcdeXmGd22y90vSb+adbw2ljIIM+/d
-         E+AWywAXzboj8ZNrzRDBvyTH0crbJiKxzwecd74fmExDDOVyyPN/kgJ/swrA2xk8+/GM
-         xJnw==
+        b=k/j8w+bJyfDtSRBPfe9ZKMP+lQWnUupqfTnG/Fp2X6HWN3zBp/jCbMhpe1WRRFlD+W
+         1y5XbAAuMpZdovj2eOkhi1PyMlJeIJmlhtEyvvyl4YtiN3kwkAcZ0SumdUzNjWzyWSs+
+         4/L/HKZ5YMSPhMjq8eK7AWrpa4A339Ut44bCmU7Mi2BprM56oOMs6jJwph82Z6N19Ajx
+         K2c9dfMHBCe1j/WQ/G05iGNZWoY93bpgjjhO+fCI/huxTZ8UtxreTYNGsGPNEN+TLAeN
+         LuOu2v2OPT1XmGEYfU6SbMGD5ICBINO8QQIW3AG9bEwPbVSynKLaP2EWawzhXEIOnCe5
+         FKWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RyLNTA8uFu9Pq45+lg5y3I31JbaDNI8pcvYpShz/T4c=;
-        b=inukjwc7lf1pMOwbJKi5gYIbhnrnnX8uhKgZT+w3ezxEci3iuef/yU4Gk5jhrgnfVv
-         9D0sLOA7J/b5fKFB2SC+lI297XKTLWYZvesggojiL8TbLeYB3/8tpY1yWYO+d9sgb+fJ
-         yQHr9qO1QfU32s7jSU2fBY9LwOSCiD/YaKd1mpsK+ie4g9Kks0LAlgziNqgUEKjelKeP
-         Y5XYmSebL+BcZLo3Iigo/rh05qRByORoQD6mG1Crwuku41OmavVJ8V3dZKDijFZ85uvS
-         jUT0xWHsHNeAq0athP86zOYDtRtANrCyPlnaW0DfIn2BX6Zndv4xUaaEjBR3awlj0yAU
-         uXHw==
+        bh=TTzWabWgop/KIv2p1KF9F3Z7zZN+wKIG+aB9bXLKrxY=;
+        b=lUbr/gJhrsw73n4JF33fJmUunWXqjoGWcuBFaWVus3MNfaGfLAt9up3wxbJ08j6LHe
+         ABSp9jdkBlf9Zv8Q6bZVkfWxeQYPSpOjPERzNr+DGEKJqs6DHFDzJT1owvj73ns7p0tS
+         Ood5tbE0lyf6UTvbl5A2Gw93mCyilpznGEhG0yge+krweXxx7hQcg3LvRe+pIJ14Bc41
+         AXB+ouTfyIQ1diuF9URCGdFK+qQDk7m4yy1JksbsV+G6YF5KWiGWirW/9yb58oBjdfOf
+         n7VQ5kYqgdpX7tRujWvh6XNJwrGukCmss7YjqmaI4eH8TP7Ny2qGecZUXwHohWkTA4ZX
+         2CAg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 02/93] ALSA: aloop: Sync stale timer before release
-Date: Fri,  6 Apr 2018 15:22:31 +0200
-Message-Id: <20180406084225.074898637@linuxfoundation.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 3.18 11/93] libata: Modify quirks for MX100 to limit NCQ_TRIM quirk to MU01 version
+Date: Fri,  6 Apr 2018 15:22:40 +0200
+Message-Id: <20180406084225.464014653@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003386169480341?=
-X-GMAIL-MSGID: =?utf-8?q?1597003386169480341?=
+X-GMAIL-THRID: =?utf-8?q?1597003383593649606?=
+X-GMAIL-MSGID: =?utf-8?q?1597003383593649606?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,67 +49,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 67a01afaf3d34893cf7d2ea19b34555d6abb7cb0 upstream.
+commit d418ff56b8f2d2b296daafa8da151fe27689b757 upstream.
 
-The aloop driver tries to stop the pending timer via timer_del() in
-the trigger callback and in the close callback.  The former is
-correct, as it's an atomic operation, while the latter expects that
-the timer gets really removed and proceeds the resource releases after
-that.  But timer_del() doesn't synchronize, hence the running timer
-may still access the released resources.
+When commit 9c7be59fc519af ("libata: Apply NOLPM quirk to Crucial MX100
+512GB SSDs") was added it inherited the ATA_HORKAGE_NO_NCQ_TRIM quirk
+from the existing "Crucial_CT*MX100*" entry, but that entry sets model_rev
+to "MU01", where as the entry adding the NOLPM quirk sets it to NULL.
 
-A similar situation can be also seen in the prepare callback after
-trigger(STOP) where the prepare tries to re-initialize the things
-while a timer is still running.
+This means that after this commit we no apply the NO_NCQ_TRIM quirk to
+all "Crucial_CT512MX100*" SSDs even if they have the fixed "MU02"
+firmware. This commit splits the "Crucial_CT512MX100*" quirk into 2
+quirks, one for the "MU01" firmware and one for all other firmware
+versions, so that we once again only apply the NO_NCQ_TRIM quirk to the
+"MU01" firmware version.
 
-The problems like the above are seen indirectly in some syzkaller
-reports (although it's not 100% clear whether this is the only cause,
-as the race condition is quite narrow and not always easy to
-trigger).
-
-For addressing these issues, this patch adds the explicit alls of
-timer_del_sync() in some places, so that the pending timer is properly
-killed / synced.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 9c7be59fc519af ("libata: Apply NOLPM quirk to ... MX100 512GB SSDs")
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/drivers/aloop.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/ata/libata-core.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/drivers/aloop.c
-+++ b/sound/drivers/aloop.c
-@@ -193,6 +193,11 @@ static inline void loopback_timer_stop(s
- 	dpcm->timer.expires = 0;
- }
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4228,10 +4228,13 @@ static const struct ata_blacklist_entry
+ 	/* Crucial BX100 SSD 500GB has broken LPM support */
+ 	{ "CT500BX100SSD1",		NULL,	ATA_HORKAGE_NOLPM },
  
-+static inline void loopback_timer_stop_sync(struct loopback_pcm *dpcm)
-+{
-+	del_timer_sync(&dpcm->timer);
-+}
-+
- #define CABLE_VALID_PLAYBACK	(1 << SNDRV_PCM_STREAM_PLAYBACK)
- #define CABLE_VALID_CAPTURE	(1 << SNDRV_PCM_STREAM_CAPTURE)
- #define CABLE_VALID_BOTH	(CABLE_VALID_PLAYBACK|CABLE_VALID_CAPTURE)
-@@ -327,6 +332,8 @@ static int loopback_prepare(struct snd_p
- 	struct loopback_cable *cable = dpcm->cable;
- 	int bps, salign;
+-	/* The 512GB version of the MX100 has both queued TRIM and LPM issues */
+-	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
++	/* 512GB MX100 with MU01 firmware has both queued TRIM and LPM issues */
++	{ "Crucial_CT512MX100*",	"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
++	/* 512GB MX100 with newer firmware has only LPM issues */
++	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM |
++						ATA_HORKAGE_NOLPM, },
  
-+	loopback_timer_stop_sync(dpcm);
-+
- 	salign = (snd_pcm_format_width(runtime->format) *
- 						runtime->channels) / 8;
- 	bps = salign * runtime->rate;
-@@ -746,7 +753,7 @@ static int loopback_close(struct snd_pcm
- 	struct loopback *loopback = substream->private_data;
- 	struct loopback_pcm *dpcm = substream->runtime->private_data;
- 
--	loopback_timer_stop(dpcm);
-+	loopback_timer_stop_sync(dpcm);
- 	mutex_lock(&loopback->cable_lock);
- 	free_cable(substream);
- 	mutex_unlock(&loopback->cable_lock);
+ 	/* 480GB+ M500 SSDs have both queued TRIM and LPM issues */
+ 	{ "Crucial_CT480M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
