@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+iCEjmQnnLoBHyfoUwCKOh5iWH0Jm6PWvQCHtfZ0j7hZjKTNMRJc7twBazr0Y0xW1g4fr0
-ARC-Seal: i=1; a=rsa-sha256; t=1523021485; cv=none;
+X-Google-Smtp-Source: AIpwx48B1hKlaUi8F/j39fRJ0PELdOvFWDtwwBqJYdy6CiKj94vyotoy0U5GLq9I7QUPKpyfxS8k
+ARC-Seal: i=1; a=rsa-sha256; t=1523021483; cv=none;
         d=google.com; s=arc-20160816;
-        b=sJHq2QQUHKno7UNS/igquJ+Y/rmozRISNcCAwFnxgGmczVNt+uRq+ZS5aLcVIXtVVa
-         CBs8Yo8GqtoKWds6CqBadtC4JwsVNeXtt9RSktRsaiislYWRJp9s6LZT3x+PA5zRIaR3
-         pG/AqGoHDS43FT35exU5oIs8GHVQwrDzNJIwxIMfF0E+6zaq07x6wfmAcKAfNpC0AhgP
-         VPE9tnzftEH+FQpLxDfASlnVDg6G8jmybzZm2qVTVGb2ZujgDDAMiCQ7s0FGLEplCtYn
-         CS3R2KtG3JPZk6Au5iMB8CEbA/pKlosvsUJ7UVS+Wm6+yEyKCHeR2KSi/opmggakS/xM
-         1kmg==
+        b=o+s1qH9hAPkQFaET10hbsYsYn37R6FXP2zaW19KgfzZIwW8kTdgVRsWvC1ifzLtgiw
+         LIorp8W9AJWm8ayA6G/NkMTJNt2O/RXp8hT8xJu/Tr5cqZtLIddbTOggVuXibe76wYTI
+         aqJGhfh9QpX8+0kvyuDORqUiStYEoUJCQAXEkI5jxEvT3o00gu+HLVNt4h4HYdjxIbMp
+         Y1KoG8LMCXbVPY2nGrXDMtBNauN0HVAXpEhxxga6hy9sMIkJ9OFQaUXxIXYjsNY9S+Fa
+         xVWp1AHxqoWknB1RaxAPBKtSZz4cPYtnUJ9SNUgZgzEYA8WJgi1H7pacQQRZPW4TGDQ1
+         Jz9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wtMYfwA80O6ciTfvO63952xRHRZ2JcpWT2gO1PGpvwk=;
-        b=nrMom3HjAfX+jHroQqUbik8mXV6jtciHkqFrqpSB5jUW8s9GJDP/4VvWIflkINaae1
-         cWSbbMCtDZMIdY3+xhN7dKrFHZngFFu8pT4MyHWzihH7RU1vNl0I8x1J+V768nxvJscn
-         b1aDyh4Zo3bIeQCg5/TjMw2tpppVvFgJtDUFz3j6LHASZ4GHEirIyQaoeg8PEW56UiwF
-         XVl3oJeqy5FHA1H8c8w4bFK9aBa5uVNu4WWQtvxGWiUaSlLOmbaRqlA4QtUA26Bhybl6
-         iYykGgTpGrA60SCFa2XUcLlnW9ckJZK9d7sY6by3DONVxgfGim9tAuUr3yMK3OfbB8ac
-         e84w==
+        bh=QAhfuiF5D13iEOvO7W26BjEcJKB6uKg7ZbFzzLgTz4g=;
+        b=Vse8PlOYp04C3aK7P+L7siD4JDzc6NO4LAk5SUWlAM9pUPesGBpT2Yg2w/2Ejqu6s1
+         nsLqXh3Fx3j/Jha1iFPPLDmL8cNJOiwnAHPMkhbMbSRPDkTKRrQ3qxUMOgnLAn2ayJZh
+         dqw7K+EBL7VqHinCpxz1oqubTbXx+3RvQzVwjzejNXzEqMIjq27vOLg6QmWdwSYKK/59
+         5lmbojKLbLVWcas3EgRIIPaUOEw0jJX+3bdWDgflhxqrOQIpmRz/sMuJntzgRi5fSz/I
+         HPtYzj2JJbC7n5+1g7Q0lnnh8JRKtTuAA1k0SJA6A8zzsqYG9dsS2P8jaKIjPsMTfund
+         dVaQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 11/72] kprobes/x86: Fix to set RWX bits correctly before releasing trampoline
-Date: Fri,  6 Apr 2018 15:23:12 +0200
-Message-Id: <20180406084306.028363826@linuxfoundation.org>
+	Matthias Kaehlcke <mka@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.4 20/72] selinux: Remove unnecessary check of array base in selinux_set_mapping()
+Date: Fri,  6 Apr 2018 15:23:21 +0200
+Message-Id: <20180406084306.801783028@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003572131830119?=
-X-GMAIL-MSGID: =?utf-8?q?1597003777272357973?=
+X-GMAIL-THRID: =?utf-8?q?1597003774688884357?=
+X-GMAIL-MSGID: =?utf-8?q?1597003774688884357?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,64 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-commit c93f5cf571e7795f97d49ef51b766cf25e328545 upstream.
+commit 342e91578eb6909529bc7095964cd44b9c057c4e upstream.
 
-Fix kprobes to set(recover) RWX bits correctly on trampoline
-buffer before releasing it. Releasing readonly page to
-module_memfree() crash the kernel.
+'perms' will never be NULL since it isn't a plain pointer but an array
+of u32 values.
 
-Without this fix, if kprobes user register a bunch of kprobes
-in function body (since kprobes on function entry usually
-use ftrace) and unregister it, kernel hits a BUG and crash.
+This fixes the following warning when building with clang:
 
-Link: http://lkml.kernel.org/r/149570868652.3518.14120169373590420503.stgit@devbox
+security/selinux/ss/services.c:158:16: error: address of array
+'p_in->perms' will always evaluate to 'true'
+[-Werror,-Wpointer-bool-conversion]
+                while (p_in->perms && p_in->perms[k]) {
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Fixes: d0381c81c2f7 ("kprobes/x86: Set kprobes pages read-only")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/kprobes/core.c |    9 +++++++++
- kernel/kprobes.c               |    2 +-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ security/selinux/ss/services.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -49,6 +49,7 @@
- #include <linux/kdebug.h>
- #include <linux/kallsyms.h>
- #include <linux/ftrace.h>
-+#include <linux/moduleloader.h>
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -155,7 +155,7 @@ static int selinux_set_mapping(struct po
+ 		}
  
- #include <asm/cacheflush.h>
- #include <asm/desc.h>
-@@ -402,6 +403,14 @@ int __copy_instruction(u8 *dest, u8 *src
- 	return length;
- }
- 
-+/* Recover page to RW mode before releasing it */
-+void free_insn_page(void *page)
-+{
-+	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
-+	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
-+	module_memfree(page);
-+}
-+
- static int arch_copy_kprobe(struct kprobe *p)
- {
- 	int ret;
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -125,7 +125,7 @@ static void *alloc_insn_page(void)
- 	return module_alloc(PAGE_SIZE);
- }
- 
--static void free_insn_page(void *page)
-+void __weak free_insn_page(void *page)
- {
- 	module_memfree(page);
- }
+ 		k = 0;
+-		while (p_in->perms && p_in->perms[k]) {
++		while (p_in->perms[k]) {
+ 			/* An empty permission string skips ahead */
+ 			if (!*p_in->perms[k]) {
+ 				k++;
