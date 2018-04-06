@@ -1,52 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751928AbeDFUiS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 16:38:18 -0400
-Received: from mga02.intel.com ([134.134.136.20]:46004 "EHLO mga02.intel.com"
+        id S1752023AbeDFUij convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 16:38:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751410AbeDFUiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 16:38:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,416,1517904000";
-   d="scan'208";a="214550726"
-From: Andi Kleen <andi@firstfloor.org>
-To: acme@kernel.org
-Cc: jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH 2/4] perf, tools: Clarify browser help
-Date: Fri,  6 Apr 2018 13:38:10 -0700
-Message-Id: <20180406203812.3087-3-andi@firstfloor.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180406203812.3087-1-andi@firstfloor.org>
-References: <20180406203812.3087-1-andi@firstfloor.org>
+        id S1751442AbeDFUih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 16:38:37 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9371521720
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        Sekhar Nori <nsekhar@ti.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180330152856.12297-4-brgl@bgdev.pl>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180330152856.12297-1-brgl@bgdev.pl> <20180330152856.12297-4-brgl@bgdev.pl>
+Message-ID: <152304711592.94378.4448268823064394140@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v5 3/8] clk: davinci: add a reset lookup table for psc0
+Date: Fri, 06 Apr 2018 13:38:35 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+Quoting Bartosz Golaszewski (2018-03-30 08:28:51)
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> In order to be able to use the reset framework in legacy boot mode as
+> well, add the reset lookup table to the psc driver for da850 variant.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-Clarify in the browser help that ESC in tui mode may go back to the
-previous screen instead of just exiting (was not clear to me)
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- tools/perf/ui/browsers/hists.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 8b4e82548f8e..0abbc0048a8e 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2788,7 +2788,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
- 	"h/?/F1        Show this window\n"				\
- 	"UP/DOWN/PGUP\n"						\
- 	"PGDN/SPACE    Navigate\n"					\
--	"q/ESC/CTRL+C  Exit browser\n\n"				\
-+	"q/ESC/CTRL+C  Exit browser or go back to previous screen\n\n"	\
- 	"For multiple event sessions:\n\n"				\
- 	"TAB/UNTAB     Switch events\n\n"				\
- 	"For symbolic views (--sort has sym):\n\n"			\
--- 
-2.14.3
+Applied to clk-next
