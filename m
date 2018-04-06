@@ -1,91 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752065AbeDFUuW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 16:50:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50340 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751579AbeDFUuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 16:50:20 -0400
-Subject: Re: [PATCH 02/10] locking/qspinlock: Remove unbounded cmpxchg loop
- from locking slowpath
-To: Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, peterz@infradead.org,
-        mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
-        catalin.marinas@arm.com
-References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
- <1522947547-24081-3-git-send-email-will.deacon@arm.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <dc5f5e43-a60a-05f2-16fb-46960c40459e@redhat.com>
-Date: Fri, 6 Apr 2018 16:50:19 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <1522947547-24081-3-git-send-email-will.deacon@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+        id S1751897AbeDFU6B (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 16:58:01 -0400
+Received: from mga09.intel.com ([134.134.136.24]:6145 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751447AbeDFU57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 16:57:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,416,1517904000";
+   d="scan'208";a="189308031"
+Subject: [PATCH 01/11] x86/mm: factor out pageattr _PAGE_GLOBAL setting
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
+        keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
+        namit@vmware.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Fri, 06 Apr 2018 13:55:02 -0700
+References: <20180406205501.24A1A4E7@viggo.jf.intel.com>
+In-Reply-To: <20180406205501.24A1A4E7@viggo.jf.intel.com>
+Message-Id: <20180406205502.86E199DA@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/2018 12:58 PM, Will Deacon wrote:
-> The qspinlock locking slowpath utilises a "pending" bit as a simple form
-> of an embedded test-and-set lock that can avoid the overhead of explicit
-> queuing in cases where the lock is held but uncontended. This bit is
-> managed using a cmpxchg loop which tries to transition the uncontended
-> lock word from (0,0,0) -> (0,0,1) or (0,0,1) -> (0,1,1).
->
-> Unfortunately, the cmpxchg loop is unbounded and lockers can be starved
-> indefinitely if the lock word is seen to oscillate between unlocked
-> (0,0,0) and locked (0,0,1). This could happen if concurrent lockers are
-> able to take the lock in the cmpxchg loop without queuing and pass it
-> around amongst themselves.
->
-> This patch fixes the problem by unconditionally setting _Q_PENDING_VAL
-> using atomic_fetch_or, and then inspecting the old value to see whether
-> we need to spin on the current lock owner, or whether we now effectively
-> hold the lock. The tricky scenario is when concurrent lockers end up
-> queuing on the lock and the lock becomes available, causing us to see
-> a lockword of (n,0,0). With pending now set, simply queuing could lead
-> to deadlock as the head of the queue may not have observed the pending
-> flag being cleared. Conversely, if the head of the queue did observe
-> pending being cleared, then it could transition the lock from (n,0,0) ->
-> (0,0,1) meaning that any attempt to "undo" our setting of the pending
-> bit could race with a concurrent locker trying to set it.
->
-> We handle this race by preserving the pending bit when taking the lock
-> after reaching the head of the queue and leaving the tail entry intact
-> if we saw pending set, because we know that the tail is going to be
-> updated shortly.
->
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
-> ---
 
-The pending bit was added to the qspinlock design to counter performance
-degradation compared with ticket lock for workloads with light
-spinlock contention. I run my spinlock stress test on a Intel Skylake
-server running the vanilla 4.16 kernel vs a patched kernel with this
-patchset. The locking rates with different number of locking threads
-were as follows:
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-  # of threads  4.16 kernel     patched 4.16 kernel
-  ------------  -----------     -------------------
-        1       7,417 kop/s         7,408 kop/s
-        2       5,755 kop/s         4,486 kop/s
-        3       4,214 kop/s         4,169 kop/s
-        4       4,396 kop/s         4,383 kop/s
-       
-The 2 contending threads case is the one that exercise the pending bit
-code path the most. So it is obvious that this is the one that is most
-impacted by this patchset. The differences in the other cases are mostly
-noise or maybe just a little bit on the 3 contending threads case.
+The pageattr code has a pattern repeated where it sets _PAGE_GLOBAL
+for present PTEs but clears it for non-present PTEs.  The intention
+is to keep _PAGE_GLOBAL from getting confused with _PAGE_PROTNONE
+since _PAGE_GLOBAL is for present PTEs and _PAGE_PROTNONE is for
+non-present
 
-I am not against this patch, but we certainly need to find out a way to
-bring the performance number up closer to what it is before applying
-the patch.
+But, this pattern makes no sense.  Effectively, it says, if you use
+the pageattr code, always set _PAGE_GLOBAL when _PAGE_PRESENT.
+canon_pgprot() will clear it if unsupported (because it masks the
+value with __supported_pte_mask) but we *always* set it. Even if
+canon_pgprot() did not filter _PAGE_GLOBAL, it would be OK. 
+_PAGE_GLOBAL is ignored when CR4.PGE=0 by the hardware.
 
-Cheers,
-Longman
+This unconditional setting of _PAGE_GLOBAL is a problem when we have
+PTI and non-PTI and we want some areas to have _PAGE_GLOBAL and some
+not.
+
+This updated version of the code says:
+1. Clear _PAGE_GLOBAL when !_PAGE_PRESENT
+2. Never set _PAGE_GLOBAL implicitly
+3. Allow _PAGE_GLOBAL to be in cpa.set_mask
+4. Allow _PAGE_GLOBAL to be inherited from previous PTE
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@google.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: x86@kernel.org
+Cc: Nadav Amit <namit@vmware.com>
+---
+
+ b/arch/x86/mm/pageattr.c |   66 ++++++++++++++++-------------------------------
+ 1 file changed, 23 insertions(+), 43 deletions(-)
+
+diff -puN arch/x86/mm/pageattr.c~kpti-centralize-global-setting arch/x86/mm/pageattr.c
+--- a/arch/x86/mm/pageattr.c~kpti-centralize-global-setting	2018-04-06 10:47:53.651796130 -0700
++++ b/arch/x86/mm/pageattr.c	2018-04-06 10:47:53.655796130 -0700
+@@ -512,6 +512,23 @@ static void __set_pmd_pte(pte_t *kpte, u
+ #endif
+ }
+ 
++static pgprot_t pgprot_clear_protnone_bits(pgprot_t prot)
++{
++	/*
++	 * _PAGE_GLOBAL means "global page" for present PTEs.
++	 * But, it is also used to indicate _PAGE_PROTNONE
++	 * for non-present PTEs.
++	 *
++	 * This ensures that a _PAGE_GLOBAL PTE going from
++	 * present to non-present is not confused as
++	 * _PAGE_PROTNONE.
++	 */
++	if (!(pgprot_val(prot) & _PAGE_PRESENT))
++		pgprot_val(prot) &= ~_PAGE_GLOBAL;
++
++	return prot;
++}
++
+ static int
+ try_preserve_large_page(pte_t *kpte, unsigned long address,
+ 			struct cpa_data *cpa)
+@@ -577,18 +594,11 @@ try_preserve_large_page(pte_t *kpte, uns
+ 	 * different bit positions in the two formats.
+ 	 */
+ 	req_prot = pgprot_4k_2_large(req_prot);
+-
+-	/*
+-	 * Set the PSE and GLOBAL flags only if the PRESENT flag is
+-	 * set otherwise pmd_present/pmd_huge will return true even on
+-	 * a non present pmd. The canon_pgprot will clear _PAGE_GLOBAL
+-	 * for the ancient hardware that doesn't support it.
+-	 */
++	req_prot = pgprot_clear_protnone_bits(req_prot);
+ 	if (pgprot_val(req_prot) & _PAGE_PRESENT)
+-		pgprot_val(req_prot) |= _PAGE_PSE | _PAGE_GLOBAL;
++		pgprot_val(req_prot) |= _PAGE_PSE;
+ 	else
+-		pgprot_val(req_prot) &= ~(_PAGE_PSE | _PAGE_GLOBAL);
+-
++		pgprot_val(req_prot) &= ~_PAGE_PSE;
+ 	req_prot = canon_pgprot(req_prot);
+ 
+ 	/*
+@@ -698,16 +708,7 @@ __split_large_page(struct cpa_data *cpa,
+ 		return 1;
+ 	}
+ 
+-	/*
+-	 * Set the GLOBAL flags only if the PRESENT flag is set
+-	 * otherwise pmd/pte_present will return true even on a non
+-	 * present pmd/pte. The canon_pgprot will clear _PAGE_GLOBAL
+-	 * for the ancient hardware that doesn't support it.
+-	 */
+-	if (pgprot_val(ref_prot) & _PAGE_PRESENT)
+-		pgprot_val(ref_prot) |= _PAGE_GLOBAL;
+-	else
+-		pgprot_val(ref_prot) &= ~_PAGE_GLOBAL;
++	ref_prot = pgprot_clear_protnone_bits(ref_prot);
+ 
+ 	/*
+ 	 * Get the target pfn from the original entry:
+@@ -930,18 +931,7 @@ static void populate_pte(struct cpa_data
+ 
+ 	pte = pte_offset_kernel(pmd, start);
+ 
+-	/*
+-	 * Set the GLOBAL flags only if the PRESENT flag is
+-	 * set otherwise pte_present will return true even on
+-	 * a non present pte. The canon_pgprot will clear
+-	 * _PAGE_GLOBAL for the ancient hardware that doesn't
+-	 * support it.
+-	 */
+-	if (pgprot_val(pgprot) & _PAGE_PRESENT)
+-		pgprot_val(pgprot) |= _PAGE_GLOBAL;
+-	else
+-		pgprot_val(pgprot) &= ~_PAGE_GLOBAL;
+-
++	pgprot = pgprot_clear_protnone_bits(pgprot);
+ 	pgprot = canon_pgprot(pgprot);
+ 
+ 	while (num_pages-- && start < end) {
+@@ -1234,17 +1224,7 @@ repeat:
+ 
+ 		new_prot = static_protections(new_prot, address, pfn);
+ 
+-		/*
+-		 * Set the GLOBAL flags only if the PRESENT flag is
+-		 * set otherwise pte_present will return true even on
+-		 * a non present pte. The canon_pgprot will clear
+-		 * _PAGE_GLOBAL for the ancient hardware that doesn't
+-		 * support it.
+-		 */
+-		if (pgprot_val(new_prot) & _PAGE_PRESENT)
+-			pgprot_val(new_prot) |= _PAGE_GLOBAL;
+-		else
+-			pgprot_val(new_prot) &= ~_PAGE_GLOBAL;
++		new_prot = pgprot_clear_protnone_bits(new_prot);
+ 
+ 		/*
+ 		 * We need to keep the pfn from the existing PTE,
+_
