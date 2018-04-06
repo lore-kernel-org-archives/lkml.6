@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49MZggagcDX4yHIO9U2WBVST3YrWRYVtEbDJSYTbkA2mdgODxgZHBfo6TrTYb3XMpDdi8Ro
+X-Google-Smtp-Source: AIpwx49DL4wSodATDFruYvdERYtf+62N2EAbEdMnJ30Th2wERa2zO11SA5WzqtJQifpVYOiyts2S
 ARC-Seal: i=1; a=rsa-sha256; t=1523021864; cv=none;
         d=google.com; s=arc-20160816;
-        b=gzms0yFCty6heCRvW8z8+QyQp3UH+xaKQak5+MWh6RcgaMCvBVsSUcLrWOfvCUQB61
-         UzoPpoMNRONd7cUw2SctskTvzrqXBOhz8hOEEqw1ZBF6LOfkFhxZjejjDlLbf3pOxaur
-         1lcl1iCcl9AQLTsXsPmW1/YNmHaA3Ydq2aEyK46G+ebdCxp71NK976Ib4tgYHCo76zu0
-         x+3PC7e10vpR3zs7m7Xw1ednYAvdp/feawQSL2snFwBLME75Z5yec6wl9Y+76LacTXqy
-         z0g3FKc0tdDUaAd7CHKqQMi7nIzPZVmiGK1MuLvmnvd+w9cHbj10UC5UNwwuRLwVkHJ+
-         eEMQ==
+        b=KrUE81TJSaHxnZnKQ8OVnghO9Xu3Ja7XyISjJVOJnPbbtmf7NbAEBKOKMaPCPZgX9W
+         OkrVkTTd/ZP5oMWiBXu5WFWArc6z79SvPprf4/a8SZWZiEe1E1DQLMzUTyNclycH1PuD
+         gXqD8TcSHmw9tyWwEvWgEh7wyuNkUloAIuBBnV6P/OvWAHbnAu/WaPxEQDzIeeqUq5IH
+         mx0UpEURu2mf9E6xVQVvWV9MhWle9HLaNbqD1Jt6fBJLXkWZQBVzE7PZ/ZGDNdXlTM6d
+         V/Exeymi5jekZWEZmeZgAI1FIFGMsq7ULgV7MgdWbCbVbhoSv+9YaTRKdIDFaH2orUW2
+         nRyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=joMytKz1UVEL9vfejkeFCSU+pWbR5OXcLCnax47YIX0=;
-        b=RIQ0uSKPVMDpyAPzCan/FSNKTnw0NnbhZ+BZx/gCcp5czFVNRuflOurF/tjqSbkwYP
-         14p6RjBQAhrD+HhK6cN9x8CRlqM2itVOPy41oPkCVi9zl04YhXBYEyggVHBmQUzYjbNB
-         1L9qt4LkO13YSFWcKJ75T6K9Gzr5tLcQ7qwnfEiwcBGjP9oLpadeYXM6uKuFDOIb5cpr
-         6Go+Y3kTqGFtM+oX2gs79hmSmKfEk1fCDmfNSzOoE7Xu2URpnAeiiziPQc5KXwZmdt9Q
-         yAl7ilkqi0DmyhuEz5NC0jTjy7PFphDyWXg+r9T5l+COYq148FwHGBDD8z5TbE5s+4mh
-         I2ag==
+        bh=9H9t5L3ri4/7gAEyVpyz01qYJc3r25dI0Sd1bKCM0cs=;
+        b=FOgdD2jqfqX4P7ATeEBIvDOcw1VZqHzQL9/f1GsOxkGugt8/8wfCCNRntIL0WLCQHQ
+         y/47gu6cc3EVc0i0vNU727TEaC+GcH37YN9TUC641i9VEbiu9kiKtp93dXSpUuxdMf49
+         fhfm5ckv+Atc2XNQ5VmOLoFpGsJllpUOa810mXrsh3qyrElW46KGJM9CCY9bocDbFmu7
+         DNx8oNheVsFcZRZnLyoZLW9oCnTaa9l8HaAGkioXFvTuzKtgNx0CpcXsMb5YjWob221Z
+         eohubrwgc1B/4rWedM9gQwmzqSyTXRfPaXY5leiYlF/wggGmKow1gKRIUO+skkWtaZgB
+         KgAg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-	Alexandre TORGUE <alexandre.torgue@st.com>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	stable@kernel.org
-Subject: [PATCH 4.14 14/67] i2c: i2c-stm32f7: fix no check on returned setup
-Date: Fri,  6 Apr 2018 15:23:44 +0200
-Message-Id: <20180406084343.175222182@linuxfoundation.org>
+	"Carol L. Soto" <clsoto@us.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 15/67] powerpc/64s: Fix lost pending interrupt due to race causing lost update to irq_happened
+Date: Fri,  6 Apr 2018 15:23:45 +0200
+Message-Id: <20180406084343.313423886@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004174064141518?=
-X-GMAIL-MSGID: =?utf-8?q?1597004174064141518?=
+X-GMAIL-THRID: =?utf-8?q?1597003938140949663?=
+X-GMAIL-MSGID: =?utf-8?q?1597004175054700415?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,34 +50,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 771b7bf05339081019d22452ebcab6929372e13e upstream.
+commit ff6781fd1bb404d8a551c02c35c70cec1da17ff1 upstream.
 
-Before assigning returned setup structure check if not null
+force_external_irq_replay() can be called in the do_IRQ path with
+interrupts hard enabled and soft disabled if may_hard_irq_enable() set
+MSR[EE]=1. It updates local_paca->irq_happened with a load, modify,
+store sequence. If a maskable interrupt hits during this sequence, it
+will go to the masked handler to be marked pending in irq_happened.
+This update will be lost when the interrupt returns and the store
+instruction executes. This can result in unpredictable latencies,
+timeouts, lockups, etc.
 
-Fixes: 463a9215f3ca7600b5ff ("i2c: stm32f7: fix setup structure")
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
+Fix this by ensuring hard interrupts are disabled before modifying
+irq_happened.
+
+This could cause any maskable asynchronous interrupt to get lost, but
+it was noticed on P9 SMP system doing RDMA NVMe target over 100GbE,
+so very high external interrupt rate and high IPI rate. The hang was
+bisected down to enabling doorbell interrupts for IPIs. These provided
+an interrupt type that could run at high rates in the do_IRQ path,
+stressing the race.
+
+Fixes: 1d607bb3bd60 ("powerpc/irq: Add mechanism to force a replay of interrupts")
+Cc: stable@vger.kernel.org # v4.8+
+Reported-by: Carol L. Soto <clsoto@us.ibm.com>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-stm32f7.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/powerpc/kernel/irq.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/i2c/busses/i2c-stm32f7.c
-+++ b/drivers/i2c/busses/i2c-stm32f7.c
-@@ -887,6 +887,11 @@ static int stm32f7_i2c_probe(struct plat
- 	}
+--- a/arch/powerpc/kernel/irq.c
++++ b/arch/powerpc/kernel/irq.c
+@@ -430,6 +430,14 @@ void force_external_irq_replay(void)
+ 	 */
+ 	WARN_ON(!arch_irqs_disabled());
  
- 	setup = of_device_get_match_data(&pdev->dev);
-+	if (!setup) {
-+		dev_err(&pdev->dev, "Can't get device data\n");
-+		ret = -ENODEV;
-+		goto clk_free;
-+	}
- 	i2c_dev->setup = *setup;
- 
- 	ret = device_property_read_u32(i2c_dev->dev, "i2c-scl-rising-time-ns",
++	/*
++	 * Interrupts must always be hard disabled before irq_happened is
++	 * modified (to prevent lost update in case of interrupt between
++	 * load and store).
++	 */
++	__hard_irq_disable();
++	local_paca->irq_happened |= PACA_IRQ_HARD_DIS;
++
+ 	/* Indicate in the PACA that we have an interrupt to replay */
+ 	local_paca->irq_happened |= PACA_IRQ_EE;
+ }
