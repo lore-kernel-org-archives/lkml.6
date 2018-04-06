@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/MpHhMk9ylWgmqDvkpr4KEHJVdAw7z7ea+44SiNb2GtXuXosb9xRbmj8XtYdj/dKTe8/H5
-ARC-Seal: i=1; a=rsa-sha256; t=1523021953; cv=none;
+X-Google-Smtp-Source: AIpwx4+YBlN7T9OiC6d2drmU25TkqFzAwpzn8uJA8mHb8t7+0fgGZG/M9lNaSPubyFIRjPnLujQJ
+ARC-Seal: i=1; a=rsa-sha256; t=1523021950; cv=none;
         d=google.com; s=arc-20160816;
-        b=o6oZyFEJfaGo4G3rGuM3QTwW3BdePFZLGmxSXfue84PDmwa0K0olNp5k8xBEPqVxTf
-         XqeKkB54xN36p6QdM2os2jFvDdCKRlxn4j0GmHHHV0auchZG+OTGW0aj9GkgrKgSIMtM
-         071/Osyp8OKh6g2m54D22Y40VCC2SseH9Dg4ECkwkzQN4b35xivLfIAx09FoNhWR7Elq
-         Kx7Iq7emu/jfgyw4dJRCB4vms7B+/DMt0znx59lDHqXcfhlV7fCp5qBDx+Qg7SwO3DI3
-         KcQ6jEKHVWK5PQmAbXcRO5VbxTYaDTCtWLARnEndepN7UEGQRqtE0uUaPcMW3aWt7E+C
-         zL9w==
+        b=ck2N9WzV/yFTY4Ue7yuJAO+zl6Y8H7VfBdF99mMOum2hlMW8oYJyJ6uaoEr6sX/nEL
+         zTT9hce8GhEAqbuDbgj3NPgwvyfRSEvS+RMhecl4Tj7AEFu2Kg/ZFn4XUNXL8QXzQdJ3
+         mAfFPJofgHJT+Yphr2S3XGCk1H7NZthsYAepvJzIDikhAQjVxky1x+VBxZwiacr1Ua+C
+         ++FTJOhTx5SSwzH3KW1vv1i/SRjLj39ueiBfsykXjWxgjJztKPDMnK18PiscIo+OCL/p
+         lVycfXJI3fWollVATNB4NWCpgbwbUJ0aK6NqXba9YATm6bgkEGa2XYma/pNMCW3Hy6IB
+         RCNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FOPixltBH659ldpt61albG65uQnQzTKBY5mUE5TuKsk=;
-        b=CbCHUib2PQBUbIiq461qP0FjTpZryiIG16GHzSNYB/v/AT+vt8MEqBJOfL4MqMhyrr
-         97kfQkHqCQAma85Cw63j/awY30PPQ2/C9O5X9w7wFQM/0aWS1/ukByMJQ3/IlJAffeb1
-         K44gHqc9kMFSZj/oQHcoG8G2JDdCoFCjfAFHRojrTVgFWwCvFLNZAq3N2BIBPkw/6V9l
-         +Nl++bQWnAUjA6KDXyYEwJTucXxmwaGhyD0aj/XVANwCQ0yvkSAXsrC0aQJvWXbiYlQb
-         Tjjjx8Y9Vu5mYsJkaOBATVzGbaAMWMhEMip6h6sXTE1lXXNsGdeTZMBYjxzKkKpmqgoh
-         wedA==
+        bh=upQfXN34d1/dAQoCOZBFqoqGl2cjLGogh0JJxAYaznM=;
+        b=0StEtO5avlcPuurFfspuBr35GvyhsxPPs3+lr/pxbqQyJ21LSAQiAhm4B3vfvyQ4vC
+         DQTCvrtDygrSCLreu/ngUmkIb/t/lUvz6+ms1ul3pSMdiPDgaOS0TH3U1GY+fzdKopm6
+         abaYBMvNNB2/jIcV89mAHonfCG70DZaZ+OXb6VvJz+saOp/tCjxGtgsOAhPHCCdYOjWg
+         N/35TiHhnZ7i2GjO/3QQmpYmeU16nXjP7S3JUpYh6BE1l0hM6vsw2pFhisGd+4u/LlP0
+         3UE2YobLBqw4x6aU40g0HCMOggxjohbrQ4khDIwDhk7R58LCfx4V+scYmH8AdHhPdFKQ
+         xO5A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 46/67] crypto: lrw - Free rctx->ext with kzfree
-Date: Fri,  6 Apr 2018 15:24:16 +0200
-Message-Id: <20180406084347.373431668@linuxfoundation.org>
+	Alexander Gerasiov <gq@redlab-i.ru>
+Subject: [PATCH 4.14 45/67] parport_pc: Add support for WCH CH382L PCI-E single parallel port card.
+Date: Fri,  6 Apr 2018 15:24:15 +0200
+Message-Id: <20180406084347.305379910@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004267731189000?=
-X-GMAIL-MSGID: =?utf-8?q?1597004267731189000?=
+X-GMAIL-THRID: =?utf-8?q?1597003586402493539?=
+X-GMAIL-MSGID: =?utf-8?q?1597004264991732092?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,31 +48,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Alexander Gerasiov <gq@redlab-i.ru>
 
-commit 8c9bdab21289c211ca1ca6a5f9b7537b4a600a02 upstream.
+commit 823f7923833c6cc2b16e601546d607dcfb368004 upstream.
 
-The buffer rctx->ext contains potentially sensitive data and should
-be freed with kzfree.
+WCH CH382L is a PCI-E adapter with 1 parallel port. It is similair to CH382
+but serial ports are not soldered on board. Detected as
+Serial controller: Device 1c00:3050 (rev 10) (prog-if 05 [16850])
 
-Cc: <stable@vger.kernel.org>
-Fixes: 700cb3f5fe75 ("crypto: lrw - Convert to skcipher")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Alexander Gerasiov <gq@redlab-i.ru>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/lrw.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/parport/parport_pc.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/crypto/lrw.c
-+++ b/crypto/lrw.c
-@@ -313,7 +313,7 @@ static void exit_crypt(struct skcipher_r
- 	rctx->left = 0;
+--- a/drivers/parport/parport_pc.c
++++ b/drivers/parport/parport_pc.c
+@@ -2646,6 +2646,7 @@ enum parport_pc_pci_cards {
+ 	netmos_9901,
+ 	netmos_9865,
+ 	quatech_sppxp100,
++	wch_ch382l,
+ };
  
- 	if (rctx->ext)
--		kfree(rctx->ext);
-+		kzfree(rctx->ext);
- }
  
- static int do_encrypt(struct skcipher_request *req, int err)
+@@ -2708,6 +2709,7 @@ static struct parport_pc_pci {
+ 	/* netmos_9901 */               { 1, { { 0, -1 }, } },
+ 	/* netmos_9865 */               { 1, { { 0, -1 }, } },
+ 	/* quatech_sppxp100 */		{ 1, { { 0, 1 }, } },
++	/* wch_ch382l */		{ 1, { { 2, -1 }, } },
+ };
+ 
+ static const struct pci_device_id parport_pc_pci_tbl[] = {
+@@ -2797,6 +2799,8 @@ static const struct pci_device_id parpor
+ 	/* Quatech SPPXP-100 Parallel port PCI ExpressCard */
+ 	{ PCI_VENDOR_ID_QUATECH, PCI_DEVICE_ID_QUATECH_SPPXP_100,
+ 	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, quatech_sppxp100 },
++	/* WCH CH382L PCI-E single parallel port card */
++	{ 0x1c00, 0x3050, 0x1c00, 0x3050, 0, 0, wch_ch382l },
+ 	{ 0, } /* terminate list */
+ };
+ MODULE_DEVICE_TABLE(pci, parport_pc_pci_tbl);
