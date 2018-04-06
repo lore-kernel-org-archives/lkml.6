@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48yNLr8QaE3HbiiVklKR7mv0ydGtHrIaL3asp8ms9a1sqwXSecZ6r9spkUfb8wcsgU6inPo
-ARC-Seal: i=1; a=rsa-sha256; t=1523021457; cv=none;
+X-Google-Smtp-Source: AIpwx49H4oN3vnrTRZD+Ov6kAbnYpX4xhPCF0382+rpBiPh53S3ktUn/PnDW202ak7YqKdCVI8gB
+ARC-Seal: i=1; a=rsa-sha256; t=1523021452; cv=none;
         d=google.com; s=arc-20160816;
-        b=NkOkxbbU98eouNeA22qxdnCGUDps+W9dkHpHcBpzmzgG9htZokLVbdUgpw7cUGwzga
-         +7EhRRnBJedpLq50PiwgVqeSOb/wYnA4uF5OmrqB+R921xCxksK3YGibdU3V+LA1qYD3
-         4KVX0ZguIRQ2fLx7serh/fUT7pRPgLhZVn5QQ7FWIN3ECrvZNAo5vnqZi5+dCjeC+Nm2
-         6wSMEvFQAjT3SDSQISLOCXtoN+XzgHslXbyFnWOx2St+6Wu6zdlJX9ZRN1tu/OTJblZb
-         wBUclQ/CQgG3URPZ8UH+JkeUZqqkXHp9Ifd+PcatkGmv7Gf7SRtKBmnnJunkoem/XYsL
-         PgaA==
+        b=YTprHkyjuuoFT4zJIgjQO3fEVc5uXWa7qwrJub/pn0WoIwgPSbvNJ/OOvAPnBzNRqf
+         E/Px8jDy8GCRuT6BE9nHo26Jcd+4JSJ9QjKc/8IygHdufqBkRnG6Vk456DS38kyZFSqL
+         ovTO5BDyn6ErXYLz1AZcLZjVbdqmFUKawHuykBh2ox9jE+kXGNV8TdWmWNRA/asFtzPx
+         4XkmAVYh/dcVVlSQvmbqJXuG5Ju3rLgkY8v0klPb/VtaTYD/okm79D3wxOlKVnLXDy0S
+         i2+6ytSpx8eZ/w7HSaO2Qw7uE3Bn6U6ItauW6CPn2zICn5im+Xqrd4xyvBcjGr7wXuth
+         hMPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UI/x/QzAeeKqKXXHDeBZVsfIfajThh/7QL58bMPJWH0=;
-        b=c1qgTIZdtATIAZtG3Y4vJ2s6wPbwpShxyyItshFNiPkHejcdca84uCTohEJ0z6pHR7
-         7ePmSdJegRqT0tVydktihtKTY5idzRaDI7oXUA6ABdfjo5WA6YMniQ5a0+Q557Q08DAl
-         n5Q6JkbQJ7pXqyWO317jUEp6Ua8t8atwjGoFxXTXEiX407WbBckeqvrZMAD5E9t9XI45
-         55OFZGkViVNypJgbFpySuTsS/DbT0vQIgpapxfz5m54doNwGuFz0Fz0ixl11dFsV/SaX
-         9FmXBuGxQchjQ0jMMFQojBFg2e5sA+HFKIJ82rMK3dca7OFUPSM9cqvOHdQD6xN0pcD4
-         GfQQ==
+        bh=lgZzbGmQXg0NBPv0gi5SrOUg6FsvP9pgiFOeEze2DeU=;
+        b=KzRAacx3EZ5q7isWxKK8DmDSg9IEUdccvtrykkdb3DTxvyDP0K2m/kByu/Qm5RICx3
+         Zy1UPTQzWzWa/RUq4D/5+8SFES7eZJOafiYEvRJUrI5qi5X+hdY6llKGsyjpF/JvIqNr
+         8a0vnSvD1Tftt2qGYEwtEB6QHUSyhJN60zLT+P3ot6fI5n9Wv4e3nIC+cWwWCQAXVBwZ
+         FtEeDDCqmVliLWLSJOInKOA3HOkS+KTfbbUhIsedcBBnNv6jCTV3YBvEdhZzU/PxQS6W
+         /g6hw0VvUwHdg5nWWuev7RofQLXPeAb6M+b8dlDLtr6HkBtFaysVIickBLljsj4VNppI
+         7cIA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Szymon Janc <szymon.janc@codecoup.pl>,
-	Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.4 41/72] Bluetooth: Fix missing encryption refresh on Security Request
-Date: Fri,  6 Apr 2018 15:23:42 +0200
-Message-Id: <20180406084308.607718398@linuxfoundation.org>
+	Matthias Kaehlcke <mka@chromium.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.4 14/72] PCI: Make PCI_ROM_ADDRESS_MASK a 32-bit constant
+Date: Fri,  6 Apr 2018 15:23:15 +0200
+Message-Id: <20180406084306.245175830@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003604240794198?=
-X-GMAIL-MSGID: =?utf-8?q?1597003747703259506?=
+X-GMAIL-THRID: =?utf-8?q?1597003742924969692?=
+X-GMAIL-MSGID: =?utf-8?q?1597003742924969692?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,53 +50,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Szymon Janc <szymon.janc@codecoup.pl>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-commit 64e759f58f128730b97a3c3a26d283c075ad7c86 upstream.
+commit 76dc52684d0f72971d9f6cc7d5ae198061b715bd upstream.
 
-If Security Request is received on connection that is already encrypted
-with sufficient security master should perform encryption key refresh
-procedure instead of just ignoring Slave Security Request
-(Core Spec 5.0 Vol 3 Part H 2.4.6).
+A 64-bit value is not needed since a PCI ROM address consists in 32 bits.
+This fixes a clang warning about "implicit conversion from 'unsigned long'
+to 'u32'".
 
-> ACL Data RX: Handle 3585 flags 0x02 dlen 6
-      SMP: Security Request (0x0b) len 1
-        Authentication requirement: Bonding, No MITM, SC, No Keypresses (0x09)
-< HCI Command: LE Start Encryption (0x08|0x0019) plen 28
-        Handle: 3585
-        Random number: 0x0000000000000000
-        Encrypted diversifier: 0x0000
-        Long term key: 44264272a5c426a9e868f034cf0e69f3
-> HCI Event: Command Status (0x0f) plen 4
-      LE Start Encryption (0x08|0x0019) ncmd 1
-        Status: Success (0x00)
-> HCI Event: Encryption Key Refresh Complete (0x30) plen 3
-        Status: Success (0x00)
-        Handle: 3585
+Also remove now unnecessary casts to u32 from __pci_read_base() and
+pci_std_update_resource().
 
-Signed-off-by: Szymon Janc <szymon.janc@codecoup.pl>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bluetooth/smp.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/pci/probe.c           |    2 +-
+ drivers/pci/setup-res.c       |    2 +-
+ include/uapi/linux/pci_regs.h |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/bluetooth/smp.c
-+++ b/net/bluetooth/smp.c
-@@ -2251,8 +2251,14 @@ static u8 smp_cmd_security_req(struct l2
- 	else
- 		sec_level = authreq_to_seclevel(auth);
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -230,7 +230,7 @@ int __pci_read_base(struct pci_dev *dev,
+ 			res->flags |= IORESOURCE_ROM_ENABLE;
+ 		l64 = l & PCI_ROM_ADDRESS_MASK;
+ 		sz64 = sz & PCI_ROM_ADDRESS_MASK;
+-		mask64 = (u32)PCI_ROM_ADDRESS_MASK;
++		mask64 = PCI_ROM_ADDRESS_MASK;
+ 	}
  
--	if (smp_sufficient_security(hcon, sec_level, SMP_USE_LTK))
-+	if (smp_sufficient_security(hcon, sec_level, SMP_USE_LTK)) {
-+		/* If link is already encrypted with sufficient security we
-+		 * still need refresh encryption as per Core Spec 5.0 Vol 3,
-+		 * Part H 2.4.6
-+		 */
-+		smp_ltk_encrypt(conn, hcon->sec_level);
- 		return 0;
-+	}
+ 	if (res->flags & IORESOURCE_MEM_64) {
+--- a/drivers/pci/setup-res.c
++++ b/drivers/pci/setup-res.c
+@@ -63,7 +63,7 @@ static void pci_std_update_resource(stru
+ 		mask = (u32)PCI_BASE_ADDRESS_IO_MASK;
+ 		new |= res->flags & ~PCI_BASE_ADDRESS_IO_MASK;
+ 	} else if (resno == PCI_ROM_RESOURCE) {
+-		mask = (u32)PCI_ROM_ADDRESS_MASK;
++		mask = PCI_ROM_ADDRESS_MASK;
+ 	} else {
+ 		mask = (u32)PCI_BASE_ADDRESS_MEM_MASK;
+ 		new |= res->flags & ~PCI_BASE_ADDRESS_MEM_MASK;
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -106,7 +106,7 @@
+ #define PCI_SUBSYSTEM_ID	0x2e
+ #define PCI_ROM_ADDRESS		0x30	/* Bits 31..11 are address, 10..1 reserved */
+ #define  PCI_ROM_ADDRESS_ENABLE	0x01
+-#define PCI_ROM_ADDRESS_MASK	(~0x7ffUL)
++#define PCI_ROM_ADDRESS_MASK	(~0x7ffU)
  
- 	if (sec_level > hcon->pending_sec_level)
- 		hcon->pending_sec_level = sec_level;
+ #define PCI_CAPABILITY_LIST	0x34	/* Offset of first capability list entry */
+ 
