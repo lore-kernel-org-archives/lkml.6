@@ -1,117 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756767AbeDFOX6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:23:58 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:40981 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752925AbeDFOX4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:23:56 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Hans Verkuil <hansverk@cisco.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] media: platform: fsl-viu: mark local functions 'static'
-Date: Fri,  6 Apr 2018 16:23:19 +0200
-Message-Id: <20180406142336.2079928-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180406142336.2079928-1-arnd@arndb.de>
-References: <20180406142336.2079928-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:eEWJ2Ampjg8wbaIO5ZaejpEw8rFHL5QW5/VWDA/bLt2PtFulIFl
- fvVlkFLUdWU9iPkj4AgadiscqmJMUXIYJLF4ylAa2vh6j5oP7GXZgXSCy7Kk2MWbImhSTu1
- Hzm8OSHA1j/vvlLJDvfnkLgltF9Huv1LEqsliWfneZbWSjM7TkJqIS9i8ZudlpQ7gxC2Ti8
- LsHc51EHk2olkw5S89DVQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:hh2IsQZ3Fb8=:wV2FdKuHkbBAHQswqlZCb6
- YRZ9nRejV1cDhhmX2EPS1ABR+PSLU790B/QvrdKcHAw3Lv4E2vezRPSsNGd0Dfef1TniUvcq3
- BSD50ngjCdzm3kfTw6pJUvHdDaXMWa2/d+vpQUHpUPLoAJ8gkGucZWJTcuu+Bqyj2VjRADz39
- SC+hda/GhiDMYhyl062TdvYJzFfmXSQcfLe0cWhI4NjMYw/SXW0gFoxrpxjZcYfhsiNFhL2J1
- 8dK3y2csd5MGxxhrK2+T9hEwguaJkX4f3CVYGgNFVt0cAJiwpV/eSMIU/ZajGiej7SS8b69Wz
- ipG3tAMP7cImzDfY3FS02ZY+qnEbxGnsXMTzOxWOFmMoV1WEZlKiVhgc0By5CgLuKwyk18Vla
- F65ldu7949y/dl4NuX9REQ/JX/Q/N7b8wuOmQMNbzvSa0HqpuKIt+Jbhk7WzIyreqXa/G+B1M
- yXeMU0NLvZdDjfMB+MdfYcM92v77uE5leoOOPijGV1gBW03d3mfzABuT/nGr1QcQMLzaVpsvi
- 3gwB7PsfCBfSg1RpqYJns3x7fd6KbYa2n3th11aTyp3iOfbiHnpIILnj0Mo+buA6kPB2N2Qtb
- bAsCSjbMyVUd20wriWucru9ClZLt4FQqCOTpPcZdCLe/wrmazwhxCra1s2VmJkS0V8N/z9zuT
- J4AWPjLQjmCH3uudYg+PvGAntwV1E3DyMynfR1cHwAgWew+oRC58YnpnreP3XvnZjiGlGa8KL
- S7uzUlnOKCXL/dZmJYeT7XV7xUrsjMcnyODrnQ==
+        id S1756771AbeDFOYD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:24:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752925AbeDFOX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 10:23:59 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA92217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Fri, 6 Apr 2018 16:23:56 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH v9 05/10] cpuidle: Return nohz hint from cpuidle_select()
+Message-ID: <20180406142355.GD4400@lerouge>
+References: <1736751.LdhZHb50jq@aspire.rjw.lan>
+ <5818594.T4StF86Hkt@aspire.rjw.lan>
+ <20180406024413.GB4400@lerouge>
+ <20180406075837.GH4082@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406075837.GH4082@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both sparse and gcc (with 'make V=1') warn about non-static symbols that
-have not been declared:
+On Fri, Apr 06, 2018 at 09:58:37AM +0200, Peter Zijlstra wrote:
+> On Fri, Apr 06, 2018 at 04:44:14AM +0200, Frederic Weisbecker wrote:
+> > You can move that to tick_sched_do_timer() to avoid code duplication.
+> 
+> I expect the reason I didn't was that it didn't have @ts, but that's
+> easily fixable.
+> 
+> > Also these constants are very opaque. And even with proper symbols it wouldn't look
+> > right to extend ts->inidle that way.
+> > 
+> > Perhaps you should add a field such as ts->got_idle_tick under the boolean fields
+> > after the below patch:
+> 
+> > @@ -45,14 +45,17 @@ struct tick_sched {
+> >  	struct hrtimer			sched_timer;
+> >  	unsigned long			check_clocks;
+> >  	enum tick_nohz_mode		nohz_mode;
+> > +
+> > +	unsigned int			inidle		: 1;
+> > +	unsigned int			tick_stopped	: 1;
+> > +	unsigned int			idle_active	: 1;
+> > +	unsigned int			do_timer_last	: 1;
+> 
+> That would generate worse code, but yes, the C might be prettier.
 
-drivers/media/platform/fsl-viu.c:235:16: warning: symbol 'format_by_fourcc' was not declared. Should it be static?
-drivers/media/platform/fsl-viu.c:248:6: warning: symbol 'viu_start_dma' was not declared. Should it be static?
-drivers/media/platform/fsl-viu.c:259:6: warning: symbol 'viu_stop_dma' was not declared. Should it be static?
-drivers/media/platform/fsl-viu.c:808:5: warning: symbol 'vidioc_g_fbuf' was not declared. Should it be static?
-drivers/media/platform/fsl-viu.c:819:5: warning: symbol 'vidioc_s_fbuf' was not declared. Should it be static?
-drivers/media/platform/fsl-viu.c:1311:6: warning: symbol 'viu_reset' was not declared. Should it be static?
-
-In this driver, all instance should indeed be static. This leads to better
-optimized code, and avoids potential namespace conflicts.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/media/platform/fsl-viu.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
-index cc85620267f1..38c9be51f01f 100644
---- a/drivers/media/platform/fsl-viu.c
-+++ b/drivers/media/platform/fsl-viu.c
-@@ -229,7 +229,7 @@ enum status_config {
- 
- static irqreturn_t viu_intr(int irq, void *dev_id);
- 
--struct viu_fmt *format_by_fourcc(int fourcc)
-+static struct viu_fmt *format_by_fourcc(int fourcc)
- {
- 	int i;
- 
-@@ -242,7 +242,7 @@ struct viu_fmt *format_by_fourcc(int fourcc)
- 	return NULL;
- }
- 
--void viu_start_dma(struct viu_dev *dev)
-+static void viu_start_dma(struct viu_dev *dev)
- {
- 	struct viu_reg __iomem *vr = dev->vr;
- 
-@@ -253,7 +253,7 @@ void viu_start_dma(struct viu_dev *dev)
- 	out_be32(&vr->status_cfg, INT_FIELD_EN);
- }
- 
--void viu_stop_dma(struct viu_dev *dev)
-+static void viu_stop_dma(struct viu_dev *dev)
- {
- 	struct viu_reg __iomem *vr = dev->vr;
- 	int cnt = 100;
-@@ -802,7 +802,7 @@ static int vidioc_overlay(struct file *file, void *priv, unsigned int on)
- 	return 0;
- }
- 
--int vidioc_g_fbuf(struct file *file, void *priv, struct v4l2_framebuffer *arg)
-+static int vidioc_g_fbuf(struct file *file, void *priv, struct v4l2_framebuffer *arg)
- {
- 	struct viu_fh  *fh = priv;
- 	struct viu_dev *dev = fh->dev;
-@@ -813,7 +813,7 @@ int vidioc_g_fbuf(struct file *file, void *priv, struct v4l2_framebuffer *arg)
- 	return 0;
- }
- 
--int vidioc_s_fbuf(struct file *file, void *priv, const struct v4l2_framebuffer *arg)
-+static int vidioc_s_fbuf(struct file *file, void *priv, const struct v4l2_framebuffer *arg)
- {
- 	struct viu_fh  *fh = priv;
- 	struct viu_dev *dev = fh->dev;
-@@ -1305,7 +1305,7 @@ static int viu_release(struct file *file)
- 	return 0;
- }
- 
--void viu_reset(struct viu_reg __iomem *reg)
-+static void viu_reset(struct viu_reg __iomem *reg)
- {
- 	out_be32(&reg->status_cfg, 0);
- 	out_be32(&reg->luminance, 0x9512a254);
--- 
-2.9.0
+Well, not too bad I think. MOV become OR/AND, the rest is just
+TESTs...
