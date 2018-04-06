@@ -1,109 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751494AbeDFBAt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 21:00:49 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:39620 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeDFBAr (ORCPT
+        id S1751439AbeDFBEz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:04:55 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37212 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751298AbeDFBEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 21:00:47 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w3610elG018017
-X-Nifty-SrcIP: [209.85.217.171]
-X-Google-Smtp-Source: AIpwx48LKZ6Yk4LUwVUIm0QmOcwcGDPIrL+YiX4qD9Lp8gbwS2EMrT/jrrhd77JTRdWYztTjSe0teib/cjnQgl7AuwI=
+        Thu, 5 Apr 2018 21:04:53 -0400
+X-Google-Smtp-Source: AIpwx49P4HIy4y6XHpv5cADbfJDZT+AMuCARBq59ENRWPvmHwmNNBa+7qILp4XGeNFDcyh40Fbb6dy62SP+7tezlBqc=
 MIME-Version: 1.0
-In-Reply-To: <20180405185950.GA3668@krava>
-References: <20180405151645.19130-1-jolsa@kernel.org> <20180405151645.19130-4-jolsa@kernel.org>
- <CAK7LNAQHEWAk_J8uZ4_ETR=JzBU9szDCVNxmUvY447uMj1XLVA@mail.gmail.com> <20180405185950.GA3668@krava>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 6 Apr 2018 09:59:59 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATU9_zBH9DpayNOCGsFVL0K+Y8Np0z7wxFuwO3Cf1K_tg@mail.gmail.com>
-Message-ID: <CAK7LNATU9_zBH9DpayNOCGsFVL0K+Y8Np0z7wxFuwO3Cf1K_tg@mail.gmail.com>
-Subject: Re: [PATCH 3/9] kbuild: Do not pass arguments to link-vmlinux.sh
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>, Jiri Benc <jbenc@redhat.com>,
-        Stanislav Kozina <skozina@redhat.com>,
-        Jerome Marchand <jmarchan@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Michal Marek <michal.lkml@markovi.net>, Jiri Kosina <jkosina@suse.cz>
+In-Reply-To: <20180323152029.11084-4-aryabinin@virtuozzo.com>
+References: <20180323152029.11084-1-aryabinin@virtuozzo.com> <20180323152029.11084-4-aryabinin@virtuozzo.com>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Thu, 5 Apr 2018 18:04:50 -0700
+Message-ID: <CALvZod6bRRdq4gWbSxWXaT8OSEsp+O5YwrjfLdzMx3gQVZei-Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] mm/vmscan: Don't change pgdat state on base of a
+ single LRU list state.
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, Cgroups <cgroups@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-06 3:59 GMT+09:00 Jiri Olsa <jolsa@redhat.com>:
-> On Fri, Apr 06, 2018 at 12:50:00AM +0900, Masahiro Yamada wrote:
->> 2018-04-06 0:16 GMT+09:00 Jiri Olsa <jolsa@kernel.org>:
->> > There's no need to pass LD* arguments to link-vmlinux.sh,
->> > because they are passed as variables. The only argument
->> > the link-vmlinux.sh supports is the 'clean' argument.
->> >
->> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
->> > ---
->>
->> Wrong.
->>
->> $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux)
->> exist here so that any change in them
->> invokes scripts/linkk-vmlinux.sh
+On Fri, Mar 23, 2018 at 8:20 AM, Andrey Ryabinin
+<aryabinin@virtuozzo.com> wrote:
+> We have separate LRU list for each memory cgroup. Memory reclaim iterates
+> over cgroups and calls shrink_inactive_list() every inactive LRU list.
+> Based on the state of a single LRU shrink_inactive_list() may flag
+> the whole node as dirty,congested or under writeback. This is obviously
+> wrong and hurtful. It's especially hurtful when we have possibly
+> small congested cgroup in system. Than *all* direct reclaims waste time
+> by sleeping in wait_iff_congested(). And the more memcgs in the system
+> we have the longer memory allocation stall is, because
+> wait_iff_congested() called on each lru-list scan.
 >
-> sry, I can't see that.. but it's just a side fix,
-> which is actually not needed for the rest
+> Sum reclaim stats across all visited LRUs on node and flag node as dirty,
+> congested or under writeback based on that sum. Also call
+> congestion_wait(), wait_iff_congested() once per pgdat scan, instead of
+> once per lru-list scan.
 >
-> I'll check on more and address this separately
-
-
-The link command is recorded in .vmlinux.cmd
-then, it is checked by if_changed in the next rebuild
-because link-vmlinux is invoked by $(call if_changed,...)
-
-     +$(call if_changed,link-vmlinux)
-
-
-
-> thanks,
-> jirka
+> This only fixes the problem for global reclaim case. Per-cgroup reclaim
+> may alter global pgdat flags too, which is wrong. But that is separate
+> issue and will be addressed in the next patch.
 >
->>
->>
->>
->>
->> >  Makefile | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/Makefile b/Makefile
->> > index d3300e46f925..a65a3919c6ad 100644
->> > --- a/Makefile
->> > +++ b/Makefile
->> > @@ -1027,7 +1027,7 @@ ARCH_POSTLINK := $(wildcard $(srctree)/arch/$(SRCARCH)/Makefile.postlink)
->> >
->> >  # Final link of vmlinux with optional arch pass after final link
->> >  cmd_link-vmlinux =                                                 \
->> > -       $(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux) ;    \
->> > +       $(CONFIG_SHELL) $< ;                                       \
->> >         $(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
->> >
->> >  vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE
->>
->>
->>
->>
->>
->>
->> --
->> Best Regards
->> Masahiro Yamada
+> This change will not have any effect on a systems with all workload
+> concentrated in a single cgroup.
+>
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+
+Seems reasonable.
+
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+
+> ---
+>  mm/vmscan.c | 124 +++++++++++++++++++++++++++++++++++-------------------------
+>  1 file changed, 73 insertions(+), 51 deletions(-)
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 403f59edd53e..2134b3ac8fa0 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -116,6 +116,15 @@ struct scan_control {
+>
+>         /* Number of pages freed so far during a call to shrink_zones() */
+>         unsigned long nr_reclaimed;
+> +
+> +       struct {
+> +               unsigned int dirty;
+> +               unsigned int unqueued_dirty;
+> +               unsigned int congested;
+> +               unsigned int writeback;
+> +               unsigned int immediate;
+> +               unsigned int file_taken;
+> +       } nr;
+>  };
+>
+>  #ifdef ARCH_HAS_PREFETCH
+> @@ -1754,23 +1763,6 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
+>         mem_cgroup_uncharge_list(&page_list);
+>         free_unref_page_list(&page_list);
+>
+> -       /*
+> -        * If reclaim is isolating dirty pages under writeback, it implies
+> -        * that the long-lived page allocation rate is exceeding the page
+> -        * laundering rate. Either the global limits are not being effective
+> -        * at throttling processes due to the page distribution throughout
+> -        * zones or there is heavy usage of a slow backing device. The
+> -        * only option is to throttle from reclaim context which is not ideal
+> -        * as there is no guarantee the dirtying process is throttled in the
+> -        * same way balance_dirty_pages() manages.
+> -        *
+> -        * Once a node is flagged PGDAT_WRITEBACK, kswapd will count the number
+> -        * of pages under pages flagged for immediate reclaim and stall if any
+> -        * are encountered in the nr_immediate check below.
+> -        */
+> -       if (stat.nr_writeback && stat.nr_writeback == nr_taken)
+> -               set_bit(PGDAT_WRITEBACK, &pgdat->flags);
+> -
+>         /*
+>          * If dirty pages are scanned that are not queued for IO, it
+>          * implies that flushers are not doing their job. This can
+> @@ -1785,40 +1777,13 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
+>         if (stat.nr_unqueued_dirty == nr_taken)
+>                 wakeup_flusher_threads(WB_REASON_VMSCAN);
+>
+> -       /*
+> -        * Legacy memcg will stall in page writeback so avoid forcibly
+> -        * stalling here.
+> -        */
+> -       if (sane_reclaim(sc)) {
+> -               /*
+> -                * Tag a node as congested if all the dirty pages scanned were
+> -                * backed by a congested BDI and wait_iff_congested will stall.
+> -                */
+> -               if (stat.nr_dirty && stat.nr_dirty == stat.nr_congested)
+> -                       set_bit(PGDAT_CONGESTED, &pgdat->flags);
+> -
+> -               /* Allow kswapd to start writing pages during reclaim. */
+> -               if (stat.nr_unqueued_dirty == nr_taken)
+> -                       set_bit(PGDAT_DIRTY, &pgdat->flags);
+> -
+> -               /*
+> -                * If kswapd scans pages marked marked for immediate
+> -                * reclaim and under writeback (nr_immediate), it implies
+> -                * that pages are cycling through the LRU faster than
+> -                * they are written so also forcibly stall.
+> -                */
+> -               if (stat.nr_immediate)
+> -                       congestion_wait(BLK_RW_ASYNC, HZ/10);
+> -       }
+> -
+> -       /*
+> -        * Stall direct reclaim for IO completions if underlying BDIs and node
+> -        * is congested. Allow kswapd to continue until it starts encountering
+> -        * unqueued dirty pages or cycling through the LRU too quickly.
+> -        */
+> -       if (!sc->hibernation_mode && !current_is_kswapd() &&
+> -           current_may_throttle())
+> -               wait_iff_congested(pgdat, BLK_RW_ASYNC, HZ/10);
+> +       sc->nr.dirty += stat.nr_dirty;
+> +       sc->nr.congested += stat.nr_congested;
+> +       sc->nr.unqueued_dirty += stat.nr_unqueued_dirty;
+> +       sc->nr.writeback += stat.nr_writeback;
+> +       sc->nr.immediate += stat.nr_immediate;
+> +       if (file)
+> +               sc->nr.file_taken += nr_taken;
+>
+>         trace_mm_vmscan_lru_shrink_inactive(pgdat->node_id,
+>                         nr_scanned, nr_reclaimed,
+> @@ -2522,6 +2487,8 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>                 unsigned long node_lru_pages = 0;
+>                 struct mem_cgroup *memcg;
+>
+> +               memset(&sc->nr, 0, sizeof(sc->nr));
+> +
+>                 nr_reclaimed = sc->nr_reclaimed;
+>                 nr_scanned = sc->nr_scanned;
+>
+> @@ -2587,6 +2554,61 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>                 if (sc->nr_reclaimed - nr_reclaimed)
+>                         reclaimable = true;
+>
+> +               /*
+> +                * If reclaim is isolating dirty pages under writeback, it
+> +                * implies that the long-lived page allocation rate is exceeding
+> +                * the page laundering rate. Either the global limits are not
+> +                * being effective at throttling processes due to the page
+> +                * distribution throughout zones or there is heavy usage of a
+> +                * slow backing device. The only option is to throttle from
+> +                * reclaim context which is not ideal as there is no guarantee
+> +                * the dirtying process is throttled in the same way
+> +                * balance_dirty_pages() manages.
+> +                *
+> +                * Once a node is flagged PGDAT_WRITEBACK, kswapd will count the
+> +                * number of pages under pages flagged for immediate reclaim and
+> +                * stall if any are encountered in the nr_immediate check below.
+> +                */
+> +               if (sc->nr.writeback && sc->nr.writeback == sc->nr.file_taken)
+> +                       set_bit(PGDAT_WRITEBACK, &pgdat->flags);
+> +
+> +               /*
+> +                * Legacy memcg will stall in page writeback so avoid forcibly
+> +                * stalling here.
+> +                */
+> +               if (sane_reclaim(sc)) {
+> +                       /*
+> +                        * Tag a node as congested if all the dirty pages
+> +                        * scanned were backed by a congested BDI and
+> +                        * wait_iff_congested will stall.
+> +                        */
+> +                       if (sc->nr.dirty && sc->nr.dirty == sc->nr.congested)
+> +                               set_bit(PGDAT_CONGESTED, &pgdat->flags);
+> +
+> +                       /* Allow kswapd to start writing pages during reclaim.*/
+> +                       if (sc->nr.unqueued_dirty == sc->nr.file_taken)
+> +                               set_bit(PGDAT_DIRTY, &pgdat->flags);
+> +
+> +                       /*
+> +                        * If kswapd scans pages marked marked for immediate
+> +                        * reclaim and under writeback (nr_immediate), it
+> +                        * implies that pages are cycling through the LRU
+> +                        * faster than they are written so also forcibly stall.
+> +                        */
+> +                       if (sc->nr.immediate)
+> +                               congestion_wait(BLK_RW_ASYNC, HZ/10);
+> +               }
+> +
+> +               /*
+> +                * Stall direct reclaim for IO completions if underlying BDIs
+> +                * and node is congested. Allow kswapd to continue until it
+> +                * starts encountering unqueued dirty pages or cycling through
+> +                * the LRU too quickly.
+> +                */
+> +               if (!sc->hibernation_mode && !current_is_kswapd() &&
+> +                   current_may_throttle())
+> +                       wait_iff_congested(pgdat, BLK_RW_ASYNC, HZ/10);
+> +
+>         } while (should_continue_reclaim(pgdat, sc->nr_reclaimed - nr_reclaimed,
+>                                          sc->nr_scanned - nr_scanned, sc));
+>
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+> 2.16.1
+>
