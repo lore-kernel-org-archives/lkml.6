@@ -1,75 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752234AbeDFRHL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 13:07:11 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53693 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751532AbeDFRHI (ORCPT
+        id S1752012AbeDFRIy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 13:08:54 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39235 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751412AbeDFRIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 13:07:08 -0400
-Date: Fri, 6 Apr 2018 10:06:36 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-oev1469y02hmfere6r2kkxp6@git.kernel.org>
-Cc: kan.liang@intel.com, wangnan0@huawei.com, adrian.hunter@intel.com,
-        tglx@linutronix.de, dsahern@gmail.com, acme@redhat.com,
-        jolsa@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        mingo@kernel.org, namhyung@kernel.org
-Reply-To: dsahern@gmail.com, wangnan0@huawei.com, adrian.hunter@intel.com,
-        tglx@linutronix.de, kan.liang@intel.com, namhyung@kernel.org,
-        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, acme@redhat.com
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf report: Remove duplicated 'samples' in lost
- samples warning
-Git-Commit-ID: 41a43dacecdbc9aec9d307bd9f6aa5ec16d65832
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Fri, 6 Apr 2018 13:08:53 -0400
+X-Google-Smtp-Source: AIpwx4/ukcEJz59X3oyfMMvka9ud+ZpYif1MW0MjbNCP8ft1EbNLEk14xNKm0iGEgdJSIDuJyvbQ6A==
+From: Esben Haabendal <esben.haabendal@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch, richardcochran@gmail.com, f.fainelli@gmail.com,
+        linux-kernel@vger.kernel.org, Esben Haabendal <eha@deif.com>
+Subject: [PATCH v2] dp83640: Ensure against premature access to PHY registers after reset
+Date: Fri,  6 Apr 2018 19:08:44 +0200
+Message-Id: <20180406170844.4248-1-esben.haabendal@gmail.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180406140540.13511-1-esben.haabendal@gmail.com>
+References: <20180406140540.13511-1-esben.haabendal@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  41a43dacecdbc9aec9d307bd9f6aa5ec16d65832
-Gitweb:     https://git.kernel.org/tip/41a43dacecdbc9aec9d307bd9f6aa5ec16d65832
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 5 Apr 2018 14:34:09 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 5 Apr 2018 14:34:09 -0300
+From: Esben Haabendal <eha@deif.com>
 
-perf report: Remove duplicated 'samples' in lost samples warning
-
-The following message, emitted when samples are lost due to system
-overload, had one 'samples' too many, ditch it:
-
-   Processed 25333 samples and lost 20.88% samples!
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Kan Liang <kan.liang@intel.com>
-Link: https://lkml.kernel.org/n/tip-oev1469y02hmfere6r2kkxp6@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Esben Haabendal <eha@deif.com>
 ---
- tools/perf/util/session.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/phy/dp83640.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index c71ced7db152..f4a7a437ee87 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1591,7 +1591,7 @@ static void perf_session__warn_about_errors(const struct perf_session *session)
- 		drop_rate = (double)stats->total_lost_samples /
- 			    (double) (stats->nr_events[PERF_RECORD_SAMPLE] + stats->total_lost_samples);
- 		if (drop_rate > 0.05) {
--			ui__warning("Processed %" PRIu64 " samples and lost %3.2f%% samples!\n\n",
-+			ui__warning("Processed %" PRIu64 " samples and lost %3.2f%%!\n\n",
- 				    stats->nr_events[PERF_RECORD_SAMPLE] + stats->total_lost_samples,
- 				    drop_rate * 100.0);
- 		}
+diff --git a/drivers/net/phy/dp83640.c b/drivers/net/phy/dp83640.c
+index 654f42d00092..a6c87793d899 100644
+--- a/drivers/net/phy/dp83640.c
++++ b/drivers/net/phy/dp83640.c
+@@ -1207,6 +1207,23 @@ static void dp83640_remove(struct phy_device *phydev)
+ 	kfree(dp83640);
+ }
+ 
++static int dp83640_soft_reset(struct phy_device *phydev)
++{
++	int ret;
++
++	ret = genphy_soft_reset(phydev);
++	if (ret < 0)
++		return ret;
++
++	/* From DP83640 datasheet: "Software driver code must wait 3 us
++	 * following a software reset before allowing further serial MII
++	 * operations with the DP83640."
++	 */
++	udelay(10);		/* Taking udelay inaccuracy into account */
++
++	return 0;
++}
++
+ static int dp83640_config_init(struct phy_device *phydev)
+ {
+ 	struct dp83640_private *dp83640 = phydev->priv;
+@@ -1501,6 +1518,7 @@ static struct phy_driver dp83640_driver = {
+ 	.flags		= PHY_HAS_INTERRUPT,
+ 	.probe		= dp83640_probe,
+ 	.remove		= dp83640_remove,
++	.soft_reset	= dp83640_soft_reset,
+ 	.config_init	= dp83640_config_init,
+ 	.ack_interrupt  = dp83640_ack_interrupt,
+ 	.config_intr    = dp83640_config_intr,
+-- 
+2.16.3
