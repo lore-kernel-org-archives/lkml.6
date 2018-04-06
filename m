@@ -1,104 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752134AbeDFKyb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 06:54:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51822 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751434AbeDFKy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:54:29 -0400
-Date: Fri, 6 Apr 2018 12:54:22 +0200
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Subject: Re: [RfC PATCH] Add udmabuf misc device
-Message-ID: <20180406105422.6tewkkciwerud3tm@sirius.home.kraxel.org>
-References: <20180313154826.20436-1-kraxel@redhat.com>
- <20180313161035.GL4788@phenom.ffwll.local>
- <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
- <CAPj87rPKtuQ4SZePYDUesWY9VSSGR=1p-LO=yByY_6Q8=BfoyA@mail.gmail.com>
+        id S1752207AbeDFKzW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 06:55:22 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35056 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751494AbeDFKzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 06:55:21 -0400
+Date: Fri, 6 Apr 2018 11:55:34 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
+        catalin.marinas@arm.com, Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 06/10] barriers: Introduce smp_cond_load_relaxed and
+ atomic_cond_read_relaxed
+Message-ID: <20180406105534.GB27619@arm.com>
+References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
+ <1522947547-24081-7-git-send-email-will.deacon@arm.com>
+ <20180405172226.GF4082@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPj87rPKtuQ4SZePYDUesWY9VSSGR=1p-LO=yByY_6Q8=BfoyA@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180405172226.GF4082@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 10:52:21AM +0100, Daniel Stone wrote:
-> Hi Gerd,
+On Thu, Apr 05, 2018 at 07:22:26PM +0200, Peter Zijlstra wrote:
+> On Thu, Apr 05, 2018 at 05:59:03PM +0100, Will Deacon wrote:
+> > diff --git a/include/linux/atomic.h b/include/linux/atomic.h
+> > index 8b276fd9a127..01ce3997cb42 100644
+> > --- a/include/linux/atomic.h
+> > +++ b/include/linux/atomic.h
+> > @@ -654,6 +654,7 @@ static inline int atomic_dec_if_positive(atomic_t *v)
+> >  }
+> >  #endif
+> >  
+> > +#define atomic_cond_read_relaxed(v, c)	smp_cond_load_relaxed(&(v)->counter, (c))
+> >  #define atomic_cond_read_acquire(v, c)	smp_cond_load_acquire(&(v)->counter, (c))
+> >  
+> >  #ifdef CONFIG_GENERIC_ATOMIC64
+> > @@ -1075,6 +1076,7 @@ static inline long long atomic64_fetch_andnot_release(long long i, atomic64_t *v
+> >  }
+> >  #endif
+> >  
+> > +#define atomic64_cond_read_relaxed(v, c)	smp_cond_load_relaxed(&(v)->counter, (c))
+> >  #define atomic64_cond_read_acquire(v, c)	smp_cond_load_acquire(&(v)->counter, (c))
+> >  
+> >  #include <asm-generic/atomic-long.h>
 > 
-> On 14 March 2018 at 08:03, Gerd Hoffmann <kraxel@redhat.com> wrote:
-> >> Either mlock account (because it's mlocked defacto), and get_user_pages
-> >> won't do that for you.
-> >>
-> >> Or you write the full-blown userptr implementation, including mmu_notifier
-> >> support (see i915 or amdgpu), but that also requires Christian Königs
-> >> latest ->invalidate_mapping RFC for dma-buf (since atm exporting userptr
-> >> buffers is a no-go).
-> >
-> > I guess I'll look at mlock accounting for starters then.  Easier for
-> > now, and leaves the door open to switch to userptr later as this should
-> > be transparent to userspace.
-> 
-> Out of interest, do you have usecases for full userptr support? Maybe
-> another way would be to allow creation of dmabufs from memfds.
+> Did we again forget atomic_long glue ? ;-)
 
-I have two things in mind.
+Bah! I'll add it for v2, thanks.
 
-One is vga emulation.  I have virtual pci memory bar for the virtual
-vga.  qemu backs vga memory with anonymous pages right now, switching
-that to shmem should be easy though if that makes things easier.  Guest
-places the framebuffer somewhere in the pci bar, and I want export the
-chunk which represents the framebuffer as dma-buf to display it on the
-host without copying around data.  Framebuffer is linear in guest
-physical memory, so a single block only.  That is the simpler case.
-
-The more difficuilt one is virtio-gpu ressources.  virtio-gpu resources
-live in host memory (guest has no direct access).  The guest can
-optionally specify guest memory pages as backing storage for the
-resource.  Guest backing storage is allowed to be scattered.  Commands
-exist to copy both ways between host storage and guest backing.
-
-With virgl (opengl acceleration) enabled the guest will send rendering
-commands to fill the framebuffer ressource, so there is no need to copy
-content to the framebuffer ressource.  The guest may fill other
-resources such as textures used for rendering with copy commands.
-
-Without acceleration the guest does software-rendering to the backing
-storage, then sends a command to copy the framebuffer content from guest
-backing storage to host ressource.
-
-Now it would be useful to allow a shared mapping, so no copying between
-guest backing storage and host resource is needed, especially for the
-software rendering case (i.e. dumb gem buffers).  Being able to export
-guest dumb buffers to other host processes would be useful too, for
-example to display guest windows seamlessly on the host wayland server.
-
-So getting a dma-buf for the guest backing storage via udmabuf looked
-like a useful approach.  We can export the guest gem buffers to other
-host processes that way.  qemu itself could map it too, to get a linear
-representation of the scattered guest backing storage.
-
-The other obvious approach would be to do it the other way around and
-allow the guest map the host resource somehow.  On the host side qemu
-could use vgem to allocate resource memory, so it'll be a gem object
-already.  Mapping that into the guest isn't that straight-forward
-though.  The guest manages its physical address space, so the guest
-would need to find a free spot and ask the host to place the resource
-there.  Then the guest needs page structs covering the mapped resource,
-so it can work with it.  Didn't investigate how difficuilt that is.  Use
-memory hotplug maybe?  Can we easily unmap the resource then?  Also I
-think updating the guests physical memory layout (which we would need to
-do on every resource map/unmap) isn't an exactly cheap operation ...
-
-cheers,
-  Gerd
+Will
