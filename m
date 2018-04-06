@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+zy84bplfukc9v8g8a19DwezxAj3DSHtvV3i+Oad8ICbWSF5bBITa8fY9Y4ptl+7AciwjY
-ARC-Seal: i=1; a=rsa-sha256; t=1523022170; cv=none;
+X-Google-Smtp-Source: AIpwx4/BgWaPY7VCNsUpMhYCUbWKoWhCUggHPKfinc4aD1NMBcAniQ4V0DNriurazOWs7rS0H5XM
+ARC-Seal: i=1; a=rsa-sha256; t=1523022167; cv=none;
         d=google.com; s=arc-20160816;
-        b=yCTMUrM0Dd3SQmXpA108geJTl+C0ZvemYUre7FjUtKhoKizKoUbR1jkjwUcwEEXbbc
-         FzwcFGlRtV2T/Pxmn8Jjixo/n/LtccE7KwkVUoT0BQRmSO+uxSClyj5rZ1lWcKvKGzXH
-         G91iYjVRJp0+IiQo7r01XNPQTRFhvcyrFNbG0Z7HwCdyHM7BzOHapmm/ESUiC3cEMtit
-         TwE9Pnq3F8XLVEjScAmsGl5Ip83OtyN4Dy7RUlbmD3GGAbI3OR3zsy4wQZ2WFcEq78H0
-         fNTqo4lNQdtvXkxfLIXzHVBlHlyyz0DcZw76HM5t0SrvIZimYdQa1Y7lkNMUiw/0fBhw
-         RN2w==
+        b=GxMEH/8sigkF0eZKbfn6jUFaposIZI5FsmxVmLxnVl+5/+rmyEgSiKazl77fIVNUo3
+         IK8qdJz+KqZDaAhkcSlvMRtkvGkt56cvNvtJgi+Wv+w0gCWcFeFZ9hD5No2JBIe23zBo
+         ZmO/+Z35Raxhl8oQcvjnFPa6sh1KJY5veSJ0FkxKMq883wAtpF+F3S5eCfNcAmqCBtzC
+         26F/TrLMQMw/Sqgw+soHjdRLBLBNe4eXsOrlXyGxsoFOpInZh5GRVIo38eM01NtGXmn9
+         SGzEkFAVi70CofvbiBZCa8RtfuTI01urWKR5igBM1xfxiP+AepYpd1rqYOtfhB4WK9bu
+         ZLww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SleOJK9YIeauy/WSJ3N5taT8jgQna/eYzxVdshtuAwk=;
-        b=nLrYCELwc4iOj852sRgmrcEoO6sPXJQE4ITiDqXJetgRDvbX2MQCSqjThkO7xb20rM
-         2UXFyAy1nurcmtVJ4VDDVi0lT9bveNv0yhrhIW02mKAepefzHw9oEJ8qOZsUkmVRyq/7
-         nzO048MBZXVZuJQKsR7JIz6csZwnwdTseYAUQXMQJfxvSSeb6ZLII0SdoSSiPr1GSF0Y
-         Qycg80xKgoIcTbnhAf88j5+7aGW4EQmPO1DvrDzsIRfXopNFHIDlLxusHA1j8VbjCviR
-         eI4QQBe5wLeFJ1w9oaRvr1CR5Vp2/YSXBng9wnYtc9SM+r9WcQQZo+7nW24xlA1YvUt9
-         Eznw==
+        bh=i81y95SphwIA0xta0fWnf+JQjM62Zeir/WJJ6JkMTYw=;
+        b=ini/a4f93WSu6t0541waSBeMz/LkHgShb10U+G4sbstzp1tQwmwsH0sJXT4+YvfahM
+         PuPsoZ+njGMMvXsOfWVTUfKg7XSOJ1Ygd+eyX0Tc0XV5igGYMG2rHlDJWPT8DFSKBG71
+         dSv/tgWsTEwr47+1Ns/sMuIaBEW4+0S+6kPDs0yQwVc7DId83oUqJddsvq20jbXbzsnW
+         VQ6KeU0quWgeF8bLZAPxIsP3vAOJuniR2MIaViMaHiSAIaJi1prkJkEJXdMUwjVpv1oL
+         TXyTBoeL3Mf07SEJynETvxoHZCyjajzjWjxdN0zDuDvJiTsyfzS8mS7pzIJ+dYVsupv6
+         JNQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+0ab777c27d2bb7588f73@syzkaller.appspotmail.com,
-	Mathias Krause <minipli@googlemail.com>,
-	Florian Westphal <fw@strlen.de>,
-	Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.15 20/72] xfrm_user: uncoditionally validate esn replay attribute struct
-Date: Fri,  6 Apr 2018 15:23:55 +0200
-Message-Id: <20180406084351.106100049@linuxfoundation.org>
+	Richard Narron <comet.berkeley@gmail.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.15 19/72] partitions/msdos: Unable to mount UFS 44bsd partitions
+Date: Fri,  6 Apr 2018 15:23:54 +0200
+Message-Id: <20180406084351.037692464@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003589769714766?=
-X-GMAIL-MSGID: =?utf-8?q?1597004496046098918?=
+X-GMAIL-THRID: =?utf-8?q?1597003471959644591?=
+X-GMAIL-MSGID: =?utf-8?q?1597004492409715360?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,59 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Richard Narron <comet.berkeley@gmail.com>
 
-commit d97ca5d714a5334aecadadf696875da40f1fbf3e upstream.
+commit 5f15684bd5e5ef39d4337988864fec8012471dda upstream.
 
-The sanity test added in ecd7918745234 can be bypassed, validation
-only occurs if XFRM_STATE_ESN flag is set, but rest of code doesn't care
-and just checks if the attribute itself is present.
+UFS partitions from newer versions of FreeBSD 10 and 11 use relative
+addressing for their subpartitions. But older versions of FreeBSD still
+use absolute addressing just like OpenBSD and NetBSD.
 
-So always validate.  Alternative is to reject if we have the attribute
-without the flag but that would change abi.
+Instead of simply testing for a FreeBSD partition, the code needs to
+also test if the starting offset of the C subpartition is zero.
 
-Reported-by: syzbot+0ab777c27d2bb7588f73@syzkaller.appspotmail.com
-Cc: Mathias Krause <minipli@googlemail.com>
-Fixes: ecd7918745234 ("xfrm_user: ensure user supplied esn replay window is valid")
-Fixes: d8647b79c3b7e ("xfrm: Add user interface for esn and big anti-replay windows")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=197733
+
+Signed-off-by: Richard Narron <comet.berkeley@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_user.c |   21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+ block/partitions/msdos.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -121,22 +121,17 @@ static inline int verify_replay(struct x
- 	struct nlattr *rt = attrs[XFRMA_REPLAY_ESN_VAL];
- 	struct xfrm_replay_state_esn *rs;
- 
--	if (p->flags & XFRM_STATE_ESN) {
--		if (!rt)
--			return -EINVAL;
--
--		rs = nla_data(rt);
-+	if (!rt)
-+		return (p->flags & XFRM_STATE_ESN) ? -EINVAL : 0;
- 
--		if (rs->bmp_len > XFRMA_REPLAY_ESN_MAX / sizeof(rs->bmp[0]) / 8)
--			return -EINVAL;
-+	rs = nla_data(rt);
- 
--		if (nla_len(rt) < (int)xfrm_replay_state_esn_len(rs) &&
--		    nla_len(rt) != sizeof(*rs))
--			return -EINVAL;
--	}
-+	if (rs->bmp_len > XFRMA_REPLAY_ESN_MAX / sizeof(rs->bmp[0]) / 8)
-+		return -EINVAL;
- 
--	if (!rt)
--		return 0;
-+	if (nla_len(rt) < (int)xfrm_replay_state_esn_len(rs) &&
-+	    nla_len(rt) != sizeof(*rs))
-+		return -EINVAL;
- 
- 	/* As only ESP and AH support ESN feature. */
- 	if ((p->id.proto != IPPROTO_ESP) && (p->id.proto != IPPROTO_AH))
+--- a/block/partitions/msdos.c
++++ b/block/partitions/msdos.c
+@@ -301,7 +301,9 @@ static void parse_bsd(struct parsed_part
+ 			continue;
+ 		bsd_start = le32_to_cpu(p->p_offset);
+ 		bsd_size = le32_to_cpu(p->p_size);
+-		if (memcmp(flavour, "bsd\0", 4) == 0)
++		/* FreeBSD has relative offset if C partition offset is zero */
++		if (memcmp(flavour, "bsd\0", 4) == 0 &&
++		    le32_to_cpu(l->d_partitions[2].p_offset) == 0)
+ 			bsd_start += offset;
+ 		if (offset == bsd_start && size == bsd_size)
+ 			/* full parent partition, we have it already */
