@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48mmQQfbhMA3wPBWqL/iV9Aj7KPyQlgVuTCsblOw5C/VtwFSKkrJRPSq1wHR1Z+HDSTjjV1
-ARC-Seal: i=1; a=rsa-sha256; t=1523021320; cv=none;
+X-Google-Smtp-Source: AIpwx49AA3QCULG9E3kaIw1fQp8ajg63bhq3ui+msKVRSQIwgWKw63yelqiV3FQlcLY21bx8UWV+
+ARC-Seal: i=1; a=rsa-sha256; t=1523021315; cv=none;
         d=google.com; s=arc-20160816;
-        b=i0BOQdB9argQUiYv/SDlC0sKH08ZcDgfiihwdebFgk+T1TV7S/00F4m/PeRSU6OKPo
-         k85OEX4VEf4Hrm6KhRCVlruhuSMbzoEsy1NaFgCqpCQJwlIykKPXF0S2tZ+esWg9o+/7
-         Npp/OmG0r4JuOybPmvZ1SC4cauK1b1Lxejw4T52eTn4rXhtxcr10WOjYMBVuRI6ni+ho
-         SZG3xLcyag2dExEh26ZYIw6GXTmGPgoJi9p+o2d5tMi6dNUnwIZgMKLOOASgdu75ms2n
-         4z56D6l0M4QXWNu+mB7gmakkDpIZToT/uVchHWbPUrGms+oXXbK7wn3BTWMKTju4vnHj
-         XeKg==
+        b=kOAPK4OcwAq3JzAhtVEqHMOh0nttD9M/6xSmCAQD3AG8/z3RctIUyx1hdVuLYdAgUw
+         +uXanZbsdDNilHT87W0xUsl7sKWTgzUCtZSgKDFj7isPOD/OtVLlyA9NlfYrDbObJBnk
+         P5XLYKVv/oV4C6NBtYGdSs1dkJ9rJ9iS6j3rJqTc32ZAoyBqvrDDCP619bMPnlePJBcA
+         QcAixOyPeshG+DTHUBquKs4Q29NjKGC6vhfSIVRG/YCNzlZ51yA3KT1XHjznXsboUH3z
+         4znGiaJX19dYhi5PwLF6nHENSi0/V0ydFEXnJZlgTcqAR+GWcGyUiv/pG/t0viUCrbqU
+         BkwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ftOp224C/EFcUi/cNoHoqxwiSwqSmi6LE/eTn4QnWoY=;
-        b=R13GwKO/S3OxdrssoxPRCDj654Azgzws2zdYhZREEc+IGoAUVqyzXIdDUAPAoP5JDF
-         wxmGAZ6vwNxVxjlOeVK0zIXCpyiwTlVyowPtEXFpy1E+bWm57B/lZfMDFKQhMhPGNxeq
-         DOVVs2aef9qIiR4kTDN9Kxu1T1+n7UbOkexlLqDdgp1UyI9xpLiyCfCDQUvtvScpVT5K
-         pf4zfg2n7kW80wWDPhokwVJ2/nVbZv2m+TXNlxQ/Qbp/yv/qrArZbi56XwuTPepydJGz
-         BXtg1RoSIvk6N8/mlaFZA/gCoNW6Jpb2qvotlBRWo+qh9chzPED+0DvBP83PMNSKif+6
-         HIwA==
+        bh=FFmsxfm9IbfvBR4tsiDYzcfguPDOOkcMoGBPkPUcm4k=;
+        b=XPwnboX/zyj0MqhlvQKNv1UCj9IUSJBh3063Ouz/wQkCxOvxPxnJqwqp9psztLqm5B
+         uPlV9J9jMG6j+XRdKWF/8Nk2ttNrIy+32dUyMPNmdWpydEzf/szRhFLG0re6BE6D1TRc
+         3plQjz8UBQVKezjeN7N/KrDn/Rug3HWKWShb8ydG1l2NCIDedEhMHLDp/Li3GoWbT+5b
+         4z2arQpQqaYPiV8UiPqpy5neoX/CiPgX+72qaUcbaeT7lu8er1lHA3e5GCaqQD5oxnT+
+         DGQ1B5WpqohF3nuiweufij2eYDPYHErSnZbLvh4itVRptyw0YMq21c12XhkyTxNNMWbp
+         k9Fw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Szymon Janc <szymon.janc@codecoup.pl>,
-	Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 3.18 55/93] Bluetooth: Fix missing encryption refresh on Security Request
-Date: Fri,  6 Apr 2018 15:23:24 +0200
-Message-Id: <20180406084227.307581569@linuxfoundation.org>
+	syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com,
+	Florian Westphal <fw@strlen.de>,
+	Eric Dumazet <edumazet@google.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 3.18 53/93] netfilter: bridge: ebt_among: add more missing match size checks
+Date: Fri,  6 Apr 2018 15:23:22 +0200
+Message-Id: <20180406084227.230330044@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003604240794198?=
-X-GMAIL-MSGID: =?utf-8?q?1597003604240794198?=
+X-GMAIL-THRID: =?utf-8?q?1597003597962532229?=
+X-GMAIL-MSGID: =?utf-8?q?1597003597962532229?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,53 +51,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Szymon Janc <szymon.janc@codecoup.pl>
+From: Florian Westphal <fw@strlen.de>
 
-commit 64e759f58f128730b97a3c3a26d283c075ad7c86 upstream.
+commit c8d70a700a5b486bfa8e5a7d33d805389f6e59f9 upstream.
 
-If Security Request is received on connection that is already encrypted
-with sufficient security master should perform encryption key refresh
-procedure instead of just ignoring Slave Security Request
-(Core Spec 5.0 Vol 3 Part H 2.4.6).
+ebt_among is special, it has a dynamic match size and is exempt
+from the central size checks.
 
-> ACL Data RX: Handle 3585 flags 0x02 dlen 6
-      SMP: Security Request (0x0b) len 1
-        Authentication requirement: Bonding, No MITM, SC, No Keypresses (0x09)
-< HCI Command: LE Start Encryption (0x08|0x0019) plen 28
-        Handle: 3585
-        Random number: 0x0000000000000000
-        Encrypted diversifier: 0x0000
-        Long term key: 44264272a5c426a9e868f034cf0e69f3
-> HCI Event: Command Status (0x0f) plen 4
-      LE Start Encryption (0x08|0x0019) ncmd 1
-        Status: Success (0x00)
-> HCI Event: Encryption Key Refresh Complete (0x30) plen 3
-        Status: Success (0x00)
-        Handle: 3585
+commit c4585a2823edf ("bridge: ebt_among: add missing match size checks")
+added validation for pool size, but missed fact that the macros
+ebt_among_wh_src/dst can already return out-of-bound result because
+they do not check value of wh_src/dst_ofs (an offset) vs. the size
+of the match that userspace gave to us.
 
-Signed-off-by: Szymon Janc <szymon.janc@codecoup.pl>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+v2:
+check that offset has correct alignment.
+Paolo Abeni points out that we should also check that src/dst
+wormhash arrays do not overlap, and src + length lines up with
+start of dst (or vice versa).
+v3: compact wormhash_sizes_valid() part
+
+NB: Fixes tag is intentionally wrong, this bug exists from day
+one when match was added for 2.6 kernel. Tag is there so stable
+maintainers will notice this one too.
+
+Tested with same rules from the earlier patch.
+
+Fixes: c4585a2823edf ("bridge: ebt_among: add missing match size checks")
+Reported-by: <syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bluetooth/smp.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ net/bridge/netfilter/ebt_among.c |   34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
---- a/net/bluetooth/smp.c
-+++ b/net/bluetooth/smp.c
-@@ -1178,8 +1178,14 @@ static u8 smp_cmd_security_req(struct l2
- 	else
- 		sec_level = authreq_to_seclevel(auth);
+--- a/net/bridge/netfilter/ebt_among.c
++++ b/net/bridge/netfilter/ebt_among.c
+@@ -177,6 +177,28 @@ static bool poolsize_invalid(const struc
+ 	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
+ }
  
--	if (smp_sufficient_security(hcon, sec_level))
-+	if (smp_sufficient_security(hcon, sec_level)) {
-+		/* If link is already encrypted with sufficient security we
-+		 * still need refresh encryption as per Core Spec 5.0 Vol 3,
-+		 * Part H 2.4.6
-+		 */
-+		smp_ltk_encrypt(conn, hcon->sec_level);
- 		return 0;
++static bool wormhash_offset_invalid(int off, unsigned int len)
++{
++	if (off == 0) /* not present */
++		return false;
++
++	if (off < (int)sizeof(struct ebt_among_info) ||
++	    off % __alignof__(struct ebt_mac_wormhash))
++		return true;
++
++	off += sizeof(struct ebt_mac_wormhash);
++
++	return off > len;
++}
++
++static bool wormhash_sizes_valid(const struct ebt_mac_wormhash *wh, int a, int b)
++{
++	if (a == 0)
++		a = sizeof(struct ebt_among_info);
++
++	return ebt_mac_wormhash_size(wh) + a == b;
++}
++
+ static int ebt_among_mt_check(const struct xt_mtchk_param *par)
+ {
+ 	const struct ebt_among_info *info = par->matchinfo;
+@@ -189,6 +211,10 @@ static int ebt_among_mt_check(const stru
+ 	if (expected_length > em->match_size)
+ 		return -EINVAL;
+ 
++	if (wormhash_offset_invalid(info->wh_dst_ofs, em->match_size) ||
++	    wormhash_offset_invalid(info->wh_src_ofs, em->match_size))
++		return -EINVAL;
++
+ 	wh_dst = ebt_among_wh_dst(info);
+ 	if (poolsize_invalid(wh_dst))
+ 		return -EINVAL;
+@@ -201,6 +227,14 @@ static int ebt_among_mt_check(const stru
+ 	if (poolsize_invalid(wh_src))
+ 		return -EINVAL;
+ 
++	if (info->wh_src_ofs < info->wh_dst_ofs) {
++		if (!wormhash_sizes_valid(wh_src, info->wh_src_ofs, info->wh_dst_ofs))
++			return -EINVAL;
++	} else {
++		if (!wormhash_sizes_valid(wh_dst, info->wh_dst_ofs, info->wh_src_ofs))
++			return -EINVAL;
 +	}
++
+ 	expected_length += ebt_mac_wormhash_size(wh_src);
  
- 	if (sec_level > hcon->pending_sec_level)
- 		hcon->pending_sec_level = sec_level;
+ 	if (em->match_size != EBT_ALIGN(expected_length)) {
