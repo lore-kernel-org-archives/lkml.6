@@ -1,42 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752309AbeDFMOW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 08:14:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48758 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752054AbeDFMOU (ORCPT
+        id S1752275AbeDFMSI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 08:18:08 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53623 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751809AbeDFMSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 08:14:20 -0400
-Date: Fri, 6 Apr 2018 14:14:11 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@fb.com>, Dmitry Vyukov <dvyukov@google.com>,
-        syzbot
-        <bot+abdba5bc6de135d7622f00756da97998425b6de5@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Ming Lei <tom.leiming@gmail.com>,
-        Hannes Reinecke <hare@suse.de>, shli@fb.com,
-        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
-        Ingo Molnar <mingo@redhat.com>, linux-fsdevel@vger.kernel.org,
-        Nikanth Karthikesan <knikanth@suse.de>
-Subject: Re: INFO: task hung in lo_ioctl
-Message-ID: <20180406121411.GJ4082@hirez.programming.kicks-ass.net>
-References: <94eb2c0810d04f5a46055ffc71aa@google.com>
- <CACT4Y+Y6UhNQOc7VUPgvXZ3yGPusjg2WJ9-OXMCRGM2Q1bx7ZQ@mail.gmail.com>
- <6012a726-069a-13a5-9c8d-6a11730d8414@I-love.SAKURA.ne.jp>
- <468f7418-a02d-79cc-3d94-91bbe146567e@I-love.SAKURA.ne.jp>
+        Fri, 6 Apr 2018 08:18:07 -0400
+Date: Fri, 6 Apr 2018 14:17:55 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] ARM: imx: use device properties for at24 eeprom
+Message-ID: <20180406121755.n3kqdmissybounio@pengutronix.de>
+References: <20180404131627.9135-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <468f7418-a02d-79cc-3d94-91bbe146567e@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180404131627.9135-1-brgl@bgdev.pl>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-IRC: #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 14:17:25 up 105 days, 20:35, 77 users,  load average: 0.19, 0.21,
+ 0.18
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 09:04:18PM +0900, Tetsuo Handa wrote:
-> +	/* Temporary hack for handling lock imbalance. */
-> +	if (__mutex_owner(&lo->lo_ctl_mutex) == current)
-> +		mutex_unlock(&lo->lo_ctl_mutex);
+On Wed, Apr 04, 2018 at 03:16:23PM +0200, Bartosz Golaszewski wrote:
+> We want to work towards phasing out the at24_platform_data structure.
+> There are few users and its contents can be represented using generic
+> device properties. Using device properties only will allow us to
+> significantly simplify the at24 configuration code.
+> 
+> This series converts all users of at24_platform_data to using generic
+> device properties or - as is the case with PATCH 1/4 - drops the
+> platform data entirely since it's not needed.
+> 
+> Bartosz Golaszewski (4):
+>   ARM: imx: vpr200: drop at24_platform_data
+>   ARM: imx: pcm043: use device properties for at24 eeprom
+>   ARM: imx: pca100: use device properties for at24 eeprom
+>   ARM: imx: pcm037: use device properties for at24 eeprom
 
-ARGGH.. you didn't read the comment we put on that?
+For what it's worth:
+
+Acked-by: Sascha Hauer <s.hauer@pengutronix.de>
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
