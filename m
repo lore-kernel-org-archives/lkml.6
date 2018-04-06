@@ -1,108 +1,198 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3899735-1522967416-2-12371172436397339682
+X-Cyrus-Session-Id: sloti22d1t05-1965609-1523040782-2-8342074784328365123
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+X-Spam-charsets: cc='UTF-8', plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522967416; b=gZHcKBRtCThHV6yZLSkPKO/O2K4FzqDoQlSqylm7Y66QhBS4bL
-    6TBF3jeDEKemd1DTAoY2m1iEgZunlOvqai/9hX8JIM8VgaMxqy+XX4B2gloweD1J
-    +VJ3WIb9cRubCBaRYg1EHIgkMHa1cmpY9UlLaJeo/iqiU1X2phuOhWhHBu2mJoql
-    Chm6d4RkwvEzDbfT8u0yLY5MKFNqZdR7SWcITouuGygfzOrr/a1agLWvC1ukLEd7
-    f7A9t6unPjQomGR8UNnyJUG/iEo6jXBNxh9CJvg8f0fv5ZvjwH3lBYlCjSHGYRm8
-    zvxuTVpNQYu5naHS8Zf3kHlLBspq3m4SD1Vw==
+    1523040782; b=g2Bj3hYl/mCOLNpY/WU6ItZV2U0aNV3dJrxj+qMH/Uee7W81nj
+    7pQOmxAjTf2VLAEkiYBP1wwhSdVb+aC7PIvMx371WrJKmeXd0ltDlc2fH6JtpOTV
+    gKhJ2Il651y0K9BWxexrLSFbfNMb7zo1wkil2YzTMFlBz3rygNwwQ1IyyAo7omlH
+    du25t5DSdthKpWiWtRTNNXkvNX/N3Fmz+2gm9K7HMNbeKPeKr52Iq4I7tog5tGWH
+    FxTNPiiy4k4XTTRzr3llW9jO1AmbnDk4AaPEnex8BhpHKjnPckSJnTvSPUgB6Lev
+    3RfpNeiEhO9drtbCe7wLwk+SV5Cs2irrCEuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1522967416; bh=4NSnhJqX1YSCB+/hAUGP+vhpfs3yqq
-    LJUV5KRjsvBuY=; b=WAtBnL1pEK/2+SqlcC2lOgAJ1aYjLYkWMs5BLc8UtuygHf
-    xaisw7pwTSIQwzkC6FqHN/krAIl4TbAe5hSLjEmIhOjB1zYnn2eggqwe1tpl6RlS
-    jZA/cj3ybzhnAamYrOhbblhd0wQkkgfc3M/LTl1mLOyjrIEn8KMs6t7t6wEFhHHf
-    z3zX9Lsc2gdfzfAw5seShj8q9DCIQKYdDiWmLC+/t9vPnPk95/ZyawH6lJlT2M91
-    r6gNX6j44qcfq/H38BN/CUcGNS6WFSa3vgw9irK1/uXNKoh6NXfGg4/LewvKmwXB
-    A49jd8fyLnE8LCKax/z4C7SShlDmVawJ5PS9WG0g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1523040782; bh=pY7zDxLXfaiN+A9oeY8feLydpa6wwD
+    GL3e6WK4SP+Gk=; b=i+zs0okocfFJCA0JSWaDBug2Umc0tXkJzbNGwguPymEWJo
+    y/VWsPC8BUjWBBywD2b3fgZfaSd91uGSqumI+8bxzxjBmb0umzfKh+/c71QipoIj
+    e4SCqSuWjwsTqJSEntIawgI4mBwJYuytg4U+Bi9hyEYKe2+Z/U/hWtxWvfydDZKK
+    qUowF+o61Bt6tDA6lMhB/keST8KblI0TKCmmOnhSyVPAtpL5ffhpZwqLBpTKVZ6T
+    eUG2ULG5aTNjA9EO00piMO8M83qf7ptFY8QC/YiG/VXBzGYNDPxAxTH/+Namf4e6
+    g4DoDof1c+rWxKwbkhBzOrvGVCi5PXlullLR9KXg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=0 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJgq7CkouveUP8HTtGcRXECSuUtXG0KNHMMjgEpUeT/SoOc38JgKrxdJfPpNlvM/+WttO/kMbKQSDmYLnrh2l6ap8BVpJloRYQi4h/7nTJm+OXZ9NiZM
-    TjlmdXvW/0Vl0sI3kU1ieQ2DcE7Yd/x/cUXIPnhlJCpHyCc51xewExdwvaRIMwm5c9xEo325mqQL+mV7ICY9kzqtsPJB4s4OxzDaT60eFGukOkelRRUjL+QM
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=hD80L64hAAAA:8
-    a=VwQbUJbxAAAA:8 a=oDtfaQmIDhV1PU5KHfMA:9 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfP0OL1cU7KbUatdi07fMWfgbbvdzSh91VwcLvcha1aMHOgAeM4dwRya+Zk2fCWamZF4IDJnVfCVJkNzM09WDgQG5Ru+fmNj3GXt3RnDGals79aJl0Bhg
+    bcjbRH0KNTzQ0slWf1X5eeSj8NSRsjUm2oujIOtiGlLpNz+1lccTccwCy4UVUfLajyQh0A5hv3MGa2f1XyFIX3G3a84RJCqsJSyxP59kb5DLgj/eCTv2HqmA
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=3F37EuN9M9Y0tdts9r8A:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754135AbeDEWaO (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 5 Apr 2018 18:30:14 -0400
-Received: from osg.samsung.com ([64.30.133.232]:51951 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752666AbeDEWaN (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 5 Apr 2018 18:30:13 -0400
-From: Shuah Khan <shuahkh@osg.samsung.com>
-To: valentina.manea.m@gmail.com, shuah@kernel.org,
-        gregkh@linuxfoundation.org
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>
-Subject: [PATCH] usbip: usbip_event: fix to not print kernel pointer address
-Date: Thu,  5 Apr 2018 16:29:50 -0600
-Message-Id: <20180405222950.24495-1-shuahkh@osg.samsung.com>
-X-Mailer: git-send-email 2.14.1
+        id S1751312AbeDFSxA (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 14:53:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37058 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751278AbeDFSw7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:52:59 -0400
+From: Lyude Paul <lyude@redhat.com>
+To: intel-gfx@lists.freedesktop.org
+Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+        <ville.syrjala@linux.intel.com>, Laura Abbott <labbott@redhat.com>,
+        stable@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] drm/i915/dp: Send DPCD ON for MST before phy_up
+Date: Fri,  6 Apr 2018 14:52:49 -0400
+Message-Id: <20180406185249.22952-1-lyude@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix it to not print kernel pointer address. Remove the conditional
-and debug message as it isn't very useful.
+When doing a modeset where the sink is transitioning from D3 to D0 , it
+would sometimes be possible for the initial power_up_phy() to start
+timing out. This would only be observed in the last action before the
+sink went into D3 mode was intel_dp_sink_dpms(DRM_MODE_DPMS_OFF). We
+originally thought this might be an issue with us accidentally shutting
+off the aux block when putting the sink into D3, but since the DP spec
+mandates that sinks must wake up within 1ms while we have 100ms to
+respond to an ESI irq, this didn't really add up. Turns out that the
+problem is more subtle then that:
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: stable <stable@vger.kernel.org>
+It turns out that the timeout is from us not enabling DPMS on the MST
+hub before actually trying to initiate sideband communications. This
+would cause the first sideband communication (power_up_phy()), to start
+timing out because the sink wasn't ready to respond. Afterwards, we
+would call intel_dp_sink_dpms(DRM_MODE_DPMS_ON) in
+intel_ddi_pre_enable_dp(), which would actually result in waking up the
+sink so that sideband requests would work again.
+
+Since DPMS is what lets us actually bring the hub up into a state where
+sideband communications become functional again, we just need to make
+sure to enable DPMS on the display before attempting to perform sideband
+communications.
+
+Changes since v1:
+- Remove comment above if (!intel_dp->is_mst) - vsryjala
+- Move intel_dp_sink_dpms() for MST into intel_dp_post_disable_mst() to
+  keep enable/disable paths symmetrical
+- Improve commit message - dhnkrn
+Changes since v2:
+- Only send DPMS off when we're disabling the last sink, and only send
+  DPMS on when we're enabling the first sink - dhnkrn
+Changes since v3:
+- Check against is_mst, not intel_dp->is_mst - dhnkrn/vsyrjala
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: ad260ab32a4d9 ("drm/i915/dp: Write to SET_POWER dpcd to enable MST hub.")
 ---
- drivers/usb/usbip/usbip_event.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/gpu/drm/i915/intel_ddi.c    | 8 ++++++--
+ drivers/gpu/drm/i915/intel_dp_mst.c | 8 +++++++-
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/usbip/usbip_event.c b/drivers/usb/usbip/usbip_event.c
-index 5b4c0864ad92..5d88917c9631 100644
---- a/drivers/usb/usbip/usbip_event.c
-+++ b/drivers/usb/usbip/usbip_event.c
-@@ -91,10 +91,6 @@ static void event_handler(struct work_struct *work)
- 			unset_event(ud, USBIP_EH_UNUSABLE);
- 		}
+diff --git a/drivers/gpu/drm/i915/intel_ddi.c b/drivers/gpu/drm/i915/intel_ddi.c
+index a6672a9abd85..92cb26b18a9b 100644
+--- a/drivers/gpu/drm/i915/intel_ddi.c
++++ b/drivers/gpu/drm/i915/intel_ddi.c
+@@ -2324,7 +2324,8 @@ static void intel_ddi_pre_enable_dp(struct intel_encoder *encoder,
+ 		intel_prepare_dp_ddi_buffers(encoder, crtc_state);
  
--		/* Stop the error handler. */
--		if (ud->event & USBIP_EH_BYE)
--			usbip_dbg_eh("removed %p\n", ud);
--
- 		wake_up(&ud->eh_waitq);
- 	}
+ 	intel_ddi_init_dp_buf_reg(encoder);
+-	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
++	if (!is_mst)
++		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
+ 	intel_dp_start_link_train(intel_dp);
+ 	if (port != PORT_A || INTEL_GEN(dev_priv) >= 9)
+ 		intel_dp_stop_link_train(intel_dp);
+@@ -2422,12 +2423,15 @@ static void intel_ddi_post_disable_dp(struct intel_encoder *encoder,
+ 	struct drm_i915_private *dev_priv = to_i915(encoder->base.dev);
+ 	struct intel_digital_port *dig_port = enc_to_dig_port(&encoder->base);
+ 	struct intel_dp *intel_dp = &dig_port->dp;
++	bool is_mst = intel_crtc_has_type(old_crtc_state,
++					  INTEL_OUTPUT_DP_MST);
+ 
+ 	/*
+ 	 * Power down sink before disabling the port, otherwise we end
+ 	 * up getting interrupts from the sink on detecting link loss.
+ 	 */
+-	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
++	if (!is_mst)
++		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
+ 
+ 	intel_disable_ddi_buf(encoder);
+ 
+diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
+index c3de0918ee13..9e6956c08688 100644
+--- a/drivers/gpu/drm/i915/intel_dp_mst.c
++++ b/drivers/gpu/drm/i915/intel_dp_mst.c
+@@ -180,9 +180,11 @@ static void intel_mst_post_disable_dp(struct intel_encoder *encoder,
+ 	intel_dp->active_mst_links--;
+ 
+ 	intel_mst->connector = NULL;
+-	if (intel_dp->active_mst_links == 0)
++	if (intel_dp->active_mst_links == 0) {
++		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
+ 		intel_dig_port->base.post_disable(&intel_dig_port->base,
+ 						  old_crtc_state, NULL);
++	}
+ 
+ 	DRM_DEBUG_KMS("active links %d\n", intel_dp->active_mst_links);
  }
+@@ -223,7 +225,11 @@ static void intel_mst_pre_enable_dp(struct intel_encoder *encoder,
+ 
+ 	DRM_DEBUG_KMS("active links %d\n", intel_dp->active_mst_links);
+ 
++	if (intel_dp->active_mst_links == 0)
++		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
++
+ 	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port, true);
++
+ 	if (intel_dp->active_mst_links == 0)
+ 		intel_dig_port->base.pre_enable(&intel_dig_port->base,
+ 						pipe_config, NULL);
 -- 
-2.14.1
+2.14.3
