@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49NXUvM9WAd85Uo8RGGkz/UPkuTjqhqk4ApcUchWtn45x02m8jmPF7QLsL7DIvg/xCyTWcZ
-ARC-Seal: i=1; a=rsa-sha256; t=1523021230; cv=none;
+X-Google-Smtp-Source: AIpwx4++oM52Ewaw7eLxdPzFtdETPwf4N12HeFzKV2+YSA8a7wck3rtT+w58RfFU+e4nnw2IQFzL
+ARC-Seal: i=1; a=rsa-sha256; t=1523021227; cv=none;
         d=google.com; s=arc-20160816;
-        b=H6KKkxAqp9iAEltg+s+FHBYrwpAOXpve5k8M9swD5z7EYbLV1UvFtJwNMu4oh3PZMt
-         LPX0titKl6JodrgwpCXdqqczkjgaxW8cF5PtQEKy0jD+ADPZWuC7nkbKaQjefRqzAAtT
-         8ZMFLOJpko5ZWi74Snhz0fQqu45OCzBejNKvTRfK8BeNFlDBL/LCCvuzaRenkCFwLqKB
-         06R1sk1R4UNOsv1/QIFeRNWa9lvMSoC7fv+nJgtRIgrd+LB8Dl4D/oGi5OSqxF0oH1qE
-         1qkgcC4pENBLKlCx00PFnLWl1oF3cmeYxTbBfXoAg5e23DuLgtd8SENm8rluQz16gd/2
-         sQmw==
+        b=JID1sHsDmfhsv+8IqvmboliRBvLP19Q9a2yHebOV0VgrApWigdSfqLuT3WLxP0D9E8
+         p7INlvNiuTvEy+GeyDtlEGCL9K2acfIuVAKhistmheKDWnzlHCym9/OU11xE/LomGG+U
+         vZ81Jld5ZReGrr69WxXMGMeHUJBjNe8c6Wo3qThFXlDITaY7xDNfBAK55byjULZEzUtH
+         V2wEe9FvSBqqENFzbJJPzGNeNJyFT2WOy6UtlsrIYPRBLAqQ/2k8+kd7trfc2LVcRTqW
+         /91MCZ9SKAegeK7cBSgeebzGhkhaBmFt1ZcnxZ3rR7CYD6I3l8CL5bRzVEZS8Z/kPUOF
+         LqEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PCPecIYJqIcva8Tacfrk1ZwC8YGMz0+R0H9uwu5OJso=;
-        b=K7YJ3Bjpr+oJvNVwFCl0+iyyl5Nf/Ogfr3rbtN5vLjvw5SVtobTTWcUga2zieBYQOu
-         siK7QanFyqxh3WbWm89I2NRHLSG7fdvGeknpaM/WDhmJBs0gjI8Q8nibxZhYT8KgARGu
-         WZO1Za40vNHxEYoU4BPKao45pc4ARnaznhCpt1w6orV89xm7ENOq7Bozae2f9D4CMp7B
-         PpaYeVwVVQQD9ZILwrAEIhunzD8Gli7JP029XZky86Fhl65TYrwckXa2y2I5imKwVSZt
-         h/E0RU4b1zx/9PQaeyy3DOIKNSmS12JMIGt3qbhQDVYv58TcGTX+RflwnyeovfC6ZML2
-         uTuQ==
+        bh=mE2z0BNCg9V0Pr6r09h+tN+ZHBAo6YgfJHVMbvOT+Xc=;
+        b=jMDRFrhvyRVr+sDBYQq+caoAIF5n9NP71715s++PrXIjMPrbJzRg5ObA27paYj6I4d
+         OtD9XEllwXrj5L88bLPSQtnMc5qN9bklyVlj5GAt6shOdG7lfdCPytfOSzoMt7sJUhFR
+         JnOaZgUJU00Drihu0J7N6ZHnkNkPniahZr/gOT301Oc3kewhwnV8fXg+jzB9p7DlJUzN
+         R5/gawxjbOtt6igN0w1UJalA6dUFoll/+yjK3yfNrwQAtnUbKbzgRF0EvbzNrlYTQkLv
+         +IV94sNh/1zwVj3AYFMZMPvLfdd/tHwb2D/sPJbT64ALMq9URTaz3z6BvA5l+8LHVYkB
+         Y4cw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Matthieu CASTET <matthieu.castet@parrot.com>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>,
-	Wang Han <wanghan1995315@gmail.com>
-Subject: [PATCH 3.18 47/93] Revert "led: core: Fix brightness setting when setting delay_off=0"
-Date: Fri,  6 Apr 2018 15:23:16 +0200
-Message-Id: <20180406084226.975987221@linuxfoundation.org>
+	Eyal Itkin <eyalit@checkpoint.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 3.18 12/93] drm: udl: Properly check framebuffer mmap offsets
+Date: Fri,  6 Apr 2018 15:22:41 +0200
+Message-Id: <20180406084225.501275097@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003509765091710?=
-X-GMAIL-MSGID: =?utf-8?q?1597003509765091710?=
+X-GMAIL-THRID: =?utf-8?q?1597003506606174512?=
+X-GMAIL-MSGID: =?utf-8?q?1597003506606174512?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,31 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This reverts commit 20f6d9c2af33da892a0e03ffd6249c7ab81edfb7, which
-was commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c upstream.
-The bug that it should fix was only introduced in Linux 4.7, and
-in 4.4 it causes a regression.
+commit 3b82a4db8eaccce735dffd50b4d4e1578099b8e8 upstream.
 
-Reported-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Matthieu CASTET <matthieu.castet@parrot.com>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Wang Han <wanghan1995315@gmail.com>
+The memmap options sent to the udl framebuffer driver were not being
+checked for all sets of possible crazy values.  Fix this up by properly
+bounding the allowed values.
+
+Reported-by: Eyal Itkin <eyalit@checkpoint.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180321154553.GA18454@kroah.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/leds/led-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/udl/udl_fb.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -76,7 +76,7 @@ void led_blink_set(struct led_classdev *
- 		   unsigned long *delay_on,
- 		   unsigned long *delay_off)
+--- a/drivers/gpu/drm/udl/udl_fb.c
++++ b/drivers/gpu/drm/udl/udl_fb.c
+@@ -256,10 +256,15 @@ static int udl_fb_mmap(struct fb_info *i
  {
--	led_stop_software_blink(led_cdev);
-+	del_timer_sync(&led_cdev->blink_timer);
+ 	unsigned long start = vma->vm_start;
+ 	unsigned long size = vma->vm_end - vma->vm_start;
+-	unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
++	unsigned long offset;
+ 	unsigned long page, pos;
  
- 	led_cdev->flags &= ~LED_BLINK_ONESHOT;
- 	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
+-	if (offset + size > info->fix.smem_len)
++	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT))
++		return -EINVAL;
++
++	offset = vma->vm_pgoff << PAGE_SHIFT;
++
++	if (offset > info->fix.smem_len || size > info->fix.smem_len - offset)
+ 		return -EINVAL;
+ 
+ 	pos = (unsigned long)info->fix.smem_start + offset;
