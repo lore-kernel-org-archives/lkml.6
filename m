@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48NwnEABYI91jGI+dt9uA7zL5/bj7XqhbXnedyDD07W4b4JY9l/VS7yLckK36K8kY9UqxUX
-ARC-Seal: i=1; a=rsa-sha256; t=1523022156; cv=none;
+X-Google-Smtp-Source: AIpwx4/3siOcujMLd7FTenyDGTe4LkS8owJkEjy4zeq4ck2sFnYFiaGepDIPuNaCXz/FB6bImsZV
+ARC-Seal: i=1; a=rsa-sha256; t=1523022153; cv=none;
         d=google.com; s=arc-20160816;
-        b=tV95L/ENDYMNNlSTxGyHihunlZWo4dKUtB7ok93SrhL/Pi7gJ9mtGLabd29Y5It/Fl
-         bdC+O4uC1w5RU+61ZN3W5Gd6LQIrtHIyO/Zx9ImtRU1BWYRhUf9kiLCos/19sQQTGTdD
-         +VYgVpyvce4kcCkflXeX2WMhY+fLJeIjSy118czxBKUrB6Fu1u0AFmDvT9lEM1eWd4zA
-         4XYlZbpgCY4V9yge6+2I7WrywQp+8yudcOGBc4UI5W+69c2Q5I8y3YRK93VlLjM6Yx53
-         tzG+ZeWX1d6GLLEY+s8HNDhDNp+Vb5gEhn0kuISquyPXRI/7SSvHKvtwcgh7t0GDNY1h
-         PXJQ==
+        b=M5hpp/7YCnb8M/AlATlx1mhXqQZNs6iUjx/BYmbFQlsyg3kB7i6k5cFcZuRRvbmHE3
+         cOSq6tZfQ9AW4YOlBZN/UH7INsNciXTKAO7WnqCrnvzmg/Bdr4Glc2I27Q5mZuzLTsyk
+         VjcFeDW/SrrPnt6M7s6Wt61wRwnLZfSZihEILAacaJRVgy4x+SGjsUcW6zJJr3HJ59gE
+         hiclg4BF9CMhzCEXRd8SBhlDVUnJSAYy526XooqrJr9//nhokx1AtC5XTsD3leFkZRef
+         0hgu4clYMX34AVQOVeEQsYar3qi/3cdTavHhZ2fM2nGquZeWSzW26iNgEzwqiHqzcfQ4
+         hXgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XpDSt3CbGPInFfScktXiOSHqNzqYejyq+MJzJLisuBs=;
-        b=m0giIspSGtMlR+VRo/xMOmmrH+S8XKFcJlqSZUWBiyoaPCn1Z9wJ1CPEhFr3C2Y8rb
-         USR53VcaPGY0+iCQjDOVxXD15m0C6PkDOufVPWjo/1AvwRRL33YJXzpMGOKxJIOx4OzH
-         xR5Q1AoKW0Ci05pKBrJv13+K08Lq8olFW410gqX6iPV+nIR3hQGUqFx9WUU0zti+UZFV
-         gwcPfrvJOo+McNAJWHDGiewYMOunrYB83+5XfuQ61oeKKZY6U45bcxkwAFF/dIqCYc/D
-         16sbmC3dVzMQk+SZQ7FKp6vtuCwmTfxyNsR0p1JBpZzB0oeHt0iz62JUoPNjm21sw8eO
-         kzPw==
+        bh=LLb/3uOLtx9ddPwcJfApz5excuX/k2hhXSNwZnbUivs=;
+        b=k1DgQNZ5I2cO28v8aKu7OsnwEsmdU/DM6220z1L6M4y3gcgPj/FiGSUNXiGPI6AQ4r
+         w3PuULlZRqhEmff7lodhLndburVD6GtYf8xyO5ksA6oihmdpL6Rxe5CP/8pgm7FNBant
+         I0FqLXCXE9F9W1yYfSSC/92+v1vswiyH90ouMlIhSzO4cgCPZUnylHffQj9DXz3bmB2d
+         W+sXMx77TxYjekJyfGqj+BtdQlAMs05kMpawXUg3hgCR1V+m6BbmHEG5Ypg5aOwES7ES
+         h6rj6DzSUsZcijnIUUTt8sSHomck9xGbML9dA9pdtbkHsKZkbIugNuQjm1vwEC4gbHEp
+         kJUA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Brad Spengler <spender@grsecurity.net>,
-	Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.15 46/72] /dev/mem: Avoid overwriting "err" in read_mem()
-Date: Fri,  6 Apr 2018 15:24:21 +0200
-Message-Id: <20180406084352.803320780@linuxfoundation.org>
+	Colin Ian King <colin.king@canonical.com>
+Subject: [PATCH 4.15 45/72] mei: remove dev_err message on an unsupported ioctl
+Date: Fri,  6 Apr 2018 15:24:20 +0200
+Message-Id: <20180406084352.750538432@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004262523663859?=
-X-GMAIL-MSGID: =?utf-8?q?1597004480145094056?=
+X-GMAIL-THRID: =?utf-8?q?1597003580077452612?=
+X-GMAIL-MSGID: =?utf-8?q?1597004477537210612?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,43 +48,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit b5b38200ebe54879a7264cb6f33821f61c586a7e upstream.
+commit bb0829a741792b56c908d7745bc0b2b540293bcc upstream.
 
-Successes in probe_kernel_read() would mask failures in copy_to_user()
-during read_mem().
+Currently the driver spams the kernel log on unsupported ioctls which is
+unnecessary as the ioctl returns -ENOIOCTLCMD to indicate this anyway.
+I suspect this was originally for debugging purposes but it really is not
+required so remove it.
 
-Reported-by: Brad Spengler <spender@grsecurity.net>
-Fixes: 22ec1a2aea73 ("/dev/mem: Add bounce buffer for copy-out")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/mem.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/misc/mei/main.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -137,7 +137,7 @@ static ssize_t read_mem(struct file *fil
+--- a/drivers/misc/mei/main.c
++++ b/drivers/misc/mei/main.c
+@@ -507,7 +507,6 @@ static long mei_ioctl(struct file *file,
+ 		break;
  
- 	while (count > 0) {
- 		unsigned long remaining;
--		int allowed;
-+		int allowed, probe;
+ 	default:
+-		dev_err(dev->dev, ": unsupported ioctl %d.\n", cmd);
+ 		rets = -ENOIOCTLCMD;
+ 	}
  
- 		sz = size_inside_page(p, count);
- 
-@@ -160,9 +160,9 @@ static ssize_t read_mem(struct file *fil
- 			if (!ptr)
- 				goto failed;
- 
--			err = probe_kernel_read(bounce, ptr, sz);
-+			probe = probe_kernel_read(bounce, ptr, sz);
- 			unxlate_dev_mem_ptr(p, ptr);
--			if (err)
-+			if (probe)
- 				goto failed;
- 
- 			remaining = copy_to_user(buf, bounce, sz);
