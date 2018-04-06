@@ -1,89 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751678AbeDFRWT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 13:22:19 -0400
-Received: from foss.arm.com ([217.140.101.70]:40206 "EHLO foss.arm.com"
+        id S1751846AbeDFRXk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 13:23:40 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:52592 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751278AbeDFRWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 13:22:18 -0400
-Date: Fri, 6 Apr 2018 18:22:11 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Yury Norov <ynorov@caviumnetworks.com>
-Cc: James Morse <james.morse@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Christopher Lameter <cl@linux.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexey Klimov <klimov.linux@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] arm64: entry: isb in el1_irq
-Message-ID: <20180406172211.r42reit2bnpocab2@lakrids.cambridge.arm.com>
-References: <20180405171800.5648-1-ynorov@caviumnetworks.com>
- <20180405171800.5648-2-ynorov@caviumnetworks.com>
- <5036b99a-9faa-c220-27dd-e0d73f8b3fc7@arm.com>
- <20180406165402.nq3sabeku2mp3hpb@yury-thinkpad>
+        id S1751298AbeDFRXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 13:23:39 -0400
+Date: Fri, 6 Apr 2018 19:23:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Esben Haabendal <esben.haabendal@gmail.com>
+Cc: netdev@vger.kernel.org, richardcochran@gmail.com, f.fainelli@gmail.com,
+        linux-kernel@vger.kernel.org, Esben Haabendal <eha@deif.com>
+Subject: Re: [PATCH v2] dp83640: Ensure against premature access to PHY
+ registers after reset
+Message-ID: <20180406172337.GR17495@lunn.ch>
+References: <20180406140540.13511-1-esben.haabendal@gmail.com>
+ <20180406170844.4248-1-esben.haabendal@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180406165402.nq3sabeku2mp3hpb@yury-thinkpad>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180406170844.4248-1-esben.haabendal@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 07:54:02PM +0300, Yury Norov wrote:
-> In general, kick_all_cpus_sync() is needed to switch contexts. But exit from
-> userspace is anyway the switch of context. And while in userspace, we cannot
-> do something wrong on kernel side. For me it means that we can safely drop
-> IPI for all userspace modes - both normal and nohz_full. 
+On Fri, Apr 06, 2018 at 07:08:44PM +0200, Esben Haabendal wrote:
+> From: Esben Haabendal <eha@deif.com>
+ 
+Hi Esben
 
-This *may* be true, but only if we never have to patch text in the
-windows:
+It it good to have some form of commit message. Something like:
 
-* between exception entry and eqs_exit()
+The datasheet specifies a 3uS pause after performing a software
+reset. The default implementation of genphy_soft_reset() does not
+provide this, so implement soft_reset with the needed pause.
 
-* between eqs_enter() and exception return
 
-* between eqs_enter() and eqs_exit() in the idle loop.
+With that, or something similar added:
 
-If it's possible that we need to execute patched text in any of those
-paths, we must IPI all CPUs in order to correctly serialize things.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Digging a bit, I also thing that our ct_user_exit and ct_user_enter
-usage is on dodgy ground today.
-
-For example, in el0_dbg we call do_debug_exception() *before* calling
-ct_user_exit. Which I believe means we'd use RCU while supposedly in an
-extended quiescent period, which would be bad.
-
-In other paths, we unmask all DAIF bits before calling ct_user_exit, so
-we could similarly take an EL1 debug exception without having exited the
-extended quiescent period.
-
-I think similar applies to SDEI; we don't negotiate with RCU prior to
-invoking handlers, which might need RCU.
-
-> If it's correct, for v3 I would suggest:
->  - in kick_all_cpus_sync() mask all is_idle_task() and user_mode() CPUs;
->  - add isb() for arm64 in do_idle() path only - this path doesn't imply
->    context switch.
-
-As mentioned in my other reply, I don't think the ISB in do_idle()
-makes sense, unless that occurs *after* we exit the extended quiescent
-state.
-
-Thanks,
-Mark.
+    Andrew
