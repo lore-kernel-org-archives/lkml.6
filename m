@@ -1,162 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751465AbeDFACQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 20:02:16 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:43384 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751262AbeDFACC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 20:02:02 -0400
-X-Google-Smtp-Source: AIpwx49J1MQ9UnUyHNFMfYMqEeaMuAWi/wXjI3/M3l0JmgyoEqRj2S90+1kHkkg0oqcit0o2x6Wekpd0uusc15R30Q3WvqbPBJsl
+        id S1751404AbeDFALW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 20:11:22 -0400
+Received: from mga04.intel.com ([192.55.52.120]:29075 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751262AbeDFALU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 20:11:20 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,413,1517904000";
+   d="scan'208";a="29906701"
+Date: Thu, 5 Apr 2018 17:11:17 -0700
+From: Matt Roper <matthew.d.roper@intel.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Gerd Hoffmann <kraxel@redhat.com>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>, qemu-devel@nongnu.org,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>
+Subject: Re: [RfC PATCH] Add udmabuf misc device
+Message-ID: <20180406001117.GD31612@mdroper-desk.amr.corp.intel.com>
+References: <20180313154826.20436-1-kraxel@redhat.com>
+ <20180313161035.GL4788@phenom.ffwll.local>
+ <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
+ <CAKMK7uGG6Z6XLc6GuKv7-3grCNg+EK2Lh6XWpavjsbZWF_L5Wg@mail.gmail.com>
 MIME-Version: 1.0
-Date: Thu, 05 Apr 2018 17:02:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <94eb2c05611408a11a056922c4cb@google.com>
-Subject: KASAN: alloca-out-of-bounds Read in unwind_next_frame
-From: syzbot <syzbot+9d1d9866b0b8ee6e0a8c@syzkaller.appspotmail.com>
-To: hpa@zytor.com, jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
-        mhiramat@kernel.org, mingo@redhat.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKMK7uGG6Z6XLc6GuKv7-3grCNg+EK2Lh6XWpavjsbZWF_L5Wg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Apr 05, 2018 at 10:32:04PM +0200, Daniel Vetter wrote:
+> Pulling this out of the shadows again.
+> 
+> We now also have xen-zcopy from Oleksandr and the hyper dmabuf stuff
+> from Matt and Dongwong.
+> 
+> At least from the intel side there seems to be the idea to just have 1
+> special device that can handle cross-gues/host sharing for all kinds
+> of hypervisors, so I guess you all need to work together :-)
+> 
+> Or we throw out the idea that hyper dmabuf will be cross-hypervisor
+> (not sure how useful/reasonable that is, someone please convince me
+> one way or the other).
+> 
+> Cheers, Daniel
 
-syzbot hit the following crash on upstream commit
-06dd3dfeea60e2a6457a6aedf97afc8e6d2ba497 (Thu Apr 5 03:07:20 2018 +0000)
-Merge tag 'char-misc-4.17-rc1' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=9d1d9866b0b8ee6e0a8c
+Dongwon (DW) is the one doing all the real work on hyper_dmabuf, but I'm
+familiar with the use cases he's trying to address, and I think there
+are a couple high-level goals of his work that are worth calling out as
+we discuss the various options for sharing buffers produced in one VM
+with a consumer running in another VM:
 
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6478299081474048
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5324218015154176
-Kernel config: https://syzkaller.appspot.com/x/.config?id=216543573824217049
-compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+ * We should try to keep the interface/usage separate from the
+   underlying hypervisor implementation details.  I.e., in DW's design
+   the sink/source drivers that handle the actual buffer passing in the
+   two VM's should provide a generic interface that does not depend on a
+   specific hypervisor.  Behind the scenes there could be various
+   implementations for specific hypervisors (Xen, KVM, ACRN, etc.), and
+   some of those backends may have additional restrictions, but it would
+   be best if userspace didn't have to know the specific hypervisor
+   running on the system and could just query the general capabilities
+   available to it.  We've already got projects in flight that are
+   wanting this functionality on Xen and ACRN today.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9d1d9866b0b8ee6e0a8c@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+ * The general interface should be able to express sharing from any
+   guest:guest, not just guest:host.  Arbitrary G:G sharing might be
+   something some hypervisors simply aren't able to support, but the
+   userspace API itself shouldn't make assumptions or restrict that.  I
+   think ideally the sharing API would include some kind of
+   query_targets interface that would return a list of VM's that your
+   current OS is allowed to share with; that list would be depend on the
+   policy established by the system integrator, but obviously wouldn't
+   include targets that the hypervisor itself wouldn't be capable of
+   handling.
+   
+ * A lot of the initial use cases are in the realm of graphics, but this
+   shouldn't be a graphics-specific API.  Buffers might contain other
+   types of content as well (e.g., audio).  Really the content producer
+   could potentially be any driver (or userspace) running in the VM that
+   knows how to import/export dma_buf's (or maybe just import given
+   danvet's suggestion that we should make the sink driver do all the
+   actual memory allocation for any buffers that may be shared).
 
-==================================================================
-BUG: KASAN: alloca-out-of-bounds in __read_once_size  
-include/linux/compiler.h:188 [inline]
-BUG: KASAN: alloca-out-of-bounds in unwind_next_frame.part.7+0x7ce/0x9c0  
-arch/x86/kernel/unwind_frame.c:326
-Read of size 8 at addr ffff8801b05e67f8 by task syz-executor2/11326
+ * We need to be able to handle cross-VM coordination of buffer usage as
+   well, so I think we'd want to include fence forwarding support in the
+   API as well to signal back and forth about production/consumption
+   completion.  And of course document really well what should happen
+   if, for example, the entire VM you're sharing with/from dies.
 
-CPU: 0 PID: 11326 Comm: syz-executor2 Not tainted 4.16.0+ #1
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x1b9/0x29f lib/dump_stack.c:53
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __read_once_size include/linux/compiler.h:188 [inline]
-  unwind_next_frame.part.7+0x7ce/0x9c0 arch/x86/kernel/unwind_frame.c:326
-  unwind_next_frame+0x3e/0x50 arch/x86/kernel/unwind_frame.c:287
-  __save_stack_trace+0x6e/0xd0 arch/x86/kernel/stacktrace.c:44
-  save_stack_trace+0x1a/0x20 arch/x86/kernel/stacktrace.c:60
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
-  __cache_free mm/slab.c:3486 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3744
-  __d_free+0x20/0x30 fs/dcache.c:257
-  __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2675 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
-  __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
-  rcu_process_callbacks+0x941/0x15f0 kernel/rcu/tree.c:2914
-  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
-  invoke_softirq kernel/softirq.c:365 [inline]
-  irq_exit+0x1d1/0x200 kernel/softirq.c:405
-  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
-  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
-  </IRQ>
-RIP: 0010:kasan_unpoison_shadow+0x1/0x50 mm/kasan/kasan.c:68
-RSP: 0018:ffff8801b05e67e8 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
-RAX: ffff8801c1b24100 RBX: 0000000000000000 RCX: ffffffff859d4219
-RDX: 0000000000000000 RSI: 00000000000000a8 RDI: ffff8801b05e6760
-RBP: ffff8801b05e67f8 R08: ffff8801c1b24100 R09: ffffed003b6046c2
-R10: ffffed003b6046c2 R11: ffff8801db023613 R12: 0000000000000015
-R13: 0000000000000001 R14: 0000000000000016 R15: dffffc0000000000
-  constrain_params_by_rules+0xbaa/0x1410 sound/core/pcm_param_trace.h:28
-  snd_pcm_hw_refine+0x8e9/0x1180 sound/core/pcm_native.c:502
-  snd_pcm_hw_param_mask sound/core/oss/pcm_oss.c:205 [inline]
-  snd_pcm_oss_change_params+0x8ce/0x3d10 sound/core/oss/pcm_oss.c:870
-  snd_pcm_oss_make_ready+0xe3/0x140 sound/core/oss/pcm_oss.c:1127
-  snd_pcm_oss_sync.isra.27+0x24b/0x850 sound/core/oss/pcm_oss.c:1651
-  snd_pcm_oss_release+0x214/0x290 sound/core/oss/pcm_oss.c:2446
-  __fput+0x34d/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1aee/0x2730 kernel/exit.c:865
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  get_signal+0x886/0x1960 kernel/signal.c:2469
-  do_signal+0x90/0x2020 arch/x86/kernel/signal.c:810
-  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x792/0x9d0 arch/x86/entry/common.c:292
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4552d9
-RSP: 002b:00007fd689eb5c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: 0000000000000000 RBX: 00007fd689eb66d4 RCX: 00000000004552d9
-RDX: 0000000000000000 RSI: 0000000000004c81 RDI: 000000000000000f
-RBP: 000000000072c010 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 000000000000027d R14: 00000000006f6c58 R15: 0000000000000002
-
-The buggy address belongs to the page:
-page:ffffea0006c17980 count:0 mapcount:0 mapping:0000000000000000  
-index:0xffff8801b05e69c0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 ffff8801b05e69c0 00000000ffffffff
-raw: dead000000000100 dead000000000200 ffff8801dad7f600 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b05e6680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8801b05e6700: 00 00 00 00 00 00 00 00 00 00 00 00 ca ca ca ca
-> ffff8801b05e6780: 00 00 00 00 00 00 00 00 00 00 04 cb cb cb cb cb
-                                                                 ^
-  ffff8801b05e6800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8801b05e6880: 00 00 00 00 00 f1 f1 f1 f1 00 f2 f2 f2 f2 f2 f2
-==================================================================
+ * The sharing API could be used to share multiple kinds of content in a
+   single system.  The sharing sink driver running in the content
+   producer's VM should accept some additional metadata that will be
+   passed over to the target VM as well.  The sharing source driver
+   running in the content consumer's VM would then be able to use this
+   metadata to determine the purpose of a new buffer that arrives and
+   filter/dispatch it to the appropriate consumer.
 
 
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+For reference, the terminology I'm using is
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+ /----------\  dma_buf   /------\ HV /--------\  dma_buf   /----------\
+ | Producer |----------->| Sink | HV | Source |----------->| Consumer |
+ \----------/   ioctls   \------/ HV \--------/  uevents   \----------/
+
+
+
+In the realm of graphics, "Producer" could potentially be something like
+an EGL client that sends the buffer at context setup and then signals
+with fences on each SwapBuffers.  "Consumer" could be a Wayland client
+that proxies the buffers into surfaces or dispatches them to other
+userspace software that's waiting for buffers.
+
+With the hyper_dmabuf approach, there's a lot of ABI details that need
+to be worked out and really clearly documented before we worry too much
+about the backend hypervisor-specific stuff.
+
+I'm not super familiar with xen-zcopy and udmabuf, but it sounds like
+they're approaching similar problems from slightly different directions,
+so we should make sure we can come up with something that satisfies
+everyone's requirements. 
+
+
+Matt
+
+> 
+> On Wed, Mar 14, 2018 at 9:03 AM, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> >   Hi,
+> >
+> >> Either mlock account (because it's mlocked defacto), and get_user_pages
+> >> won't do that for you.
+> >>
+> >> Or you write the full-blown userptr implementation, including mmu_notifier
+> >> support (see i915 or amdgpu), but that also requires Christian Königs
+> >> latest ->invalidate_mapping RFC for dma-buf (since atm exporting userptr
+> >> buffers is a no-go).
+> >
+> > I guess I'll look at mlock accounting for starters then.  Easier for
+> > now, and leaves the door open to switch to userptr later as this should
+> > be transparent to userspace.
+> >
+> >> > Known issue:  Driver API isn't complete yet.  Need add some flags, for
+> >> > example to support read-only buffers.
+> >>
+> >> dma-buf has no concept of read-only. I don't think we can even enforce
+> >> that (not many iommus can enforce this iirc), so pretty much need to
+> >> require r/w memory.
+> >
+> > Ah, ok.  Just saw the 'write' arg for get_user_pages_fast and figured we
+> > might support that, but if iommus can't handle that anyway it's
+> > pointless indeed.
+> >
+> >> > Cc: David Airlie <airlied@linux.ie>
+> >> > Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> >> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> >>
+> >> btw there's also the hyperdmabuf stuff from the xen folks, but imo their
+> >> solution of forwarding the entire dma-buf api is over the top. This here
+> >> looks _much_ better, pls cc all the hyperdmabuf people on your next
+> >> version.
+> >
+> > Fun fact: googling for "hyperdmabuf" found me your mail and nothing else :-o
+> > (Trying "hyper dmabuf" instead worked better then).
+> >
+> > Yes, will cc them on the next version.  Not sure it'll help much on xen
+> > though due to the memory management being very different.  Basically xen
+> > owns the memory, not the kernel of the control domain (dom0), so
+> > creating dmabufs for guest memory chunks isn't that simple ...
+> >
+> > Also it's not clear whenever they really need guest -> guest exports or
+> > guest -> dom0 exports.
+> >
+> >> Overall I like the idea, but too lazy to review.
+> >
+> > Cool.  General comments on the idea was all I was looking for for the
+> > moment.  Spare yor review cycles for the next version ;)
+> >
+> >> Oh, some kselftests for this stuff would be lovely.
+> >
+> > I'll look into it.
+> >
+> > thanks,
+> >   Gerd
+> >
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> 
+> 
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+
+-- 
+Matt Roper
+Graphics Software Engineer
+IoTG Platform Enabling & Development
+Intel Corporation
+(916) 356-2795
