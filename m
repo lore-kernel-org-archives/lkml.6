@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751935AbeDFBSV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 21:18:21 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:33151 "EHLO
+        id S1751773AbeDFBSS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:18:18 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:53859 "EHLO
         out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751298AbeDFBRi (ORCPT
+        by vger.kernel.org with ESMTP id S1751361AbeDFBRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Apr 2018 21:17:38 -0400
-X-ME-Sender: <xms:scrGWngw3Kj814pPqlDYhZACa0z3ng1NkWHRkpg_xVuSrqG4G7iaQg>
+X-ME-Sender: <xms:ssrGWsrac6tNPTLMDCv4CE17v2U_eGVLBUkRZ1XsqWyq82wEuA50nw>
 From: Mark Greer <mgreer@animalcreek.com>
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -15,9 +15,9 @@ To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc: Remi Machet <rmachet@nvidia.com>,
         Dale Farnsworth <dale@farnsworth.org>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, Mark Greer <mgreer@animalcreek.com>
-Subject: [PATCH 1/5] powerpc/embedded6xx: Remove C2K board support
-Date: Thu,  5 Apr 2018 18:17:16 -0700
-Message-Id: <20180406011720.7728-2-mgreer@animalcreek.com>
+Subject: [PATCH 4/5] powerpc/boot: Remove core support for Marvell mv64x60 hostbridges
+Date: Thu,  5 Apr 2018 18:17:19 -0700
+Message-Id: <20180406011720.7728-5-mgreer@animalcreek.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180406011720.7728-1-mgreer@animalcreek.com>
 References: <20180406011720.7728-1-mgreer@animalcreek.com>
@@ -26,1196 +26,693 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The C2K platform appears to be orphaned so remove code supporting it.
+There are no longer any platforms that use Marvell's mv64x60
+hostbridges so remove the supporting boot code.
 
-CC: Remi Machet <rmachet@nvidia.com>
 Signed-off-by: Mark Greer <mgreer@animalcreek.com>
 ---
- arch/powerpc/boot/Makefile                  |   5 +-
- arch/powerpc/boot/cuboot-c2k.c              | 189 --------------
- arch/powerpc/boot/dts/c2k.dts               | 366 --------------------------
- arch/powerpc/configs/c2k_defconfig          | 390 ----------------------------
- arch/powerpc/platforms/embedded6xx/Kconfig  |  10 -
- arch/powerpc/platforms/embedded6xx/Makefile |   1 -
- arch/powerpc/platforms/embedded6xx/c2k.c    | 148 -----------
- 7 files changed, 2 insertions(+), 1107 deletions(-)
- delete mode 100644 arch/powerpc/boot/cuboot-c2k.c
- delete mode 100644 arch/powerpc/boot/dts/c2k.dts
- delete mode 100644 arch/powerpc/configs/c2k_defconfig
- delete mode 100644 arch/powerpc/platforms/embedded6xx/c2k.c
+ arch/powerpc/boot/Makefile  |   2 +-
+ arch/powerpc/boot/mv64x60.c | 581 --------------------------------------------
+ arch/powerpc/boot/mv64x60.h |  70 ------
+ 3 files changed, 1 insertion(+), 652 deletions(-)
+ delete mode 100644 arch/powerpc/boot/mv64x60.c
+ delete mode 100644 arch/powerpc/boot/mv64x60.h
 
 diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
-index 26d5d2a5b8e9..70bf9b409fae 100644
+index bf6a46055ba7..fa16626849f4 100644
 --- a/arch/powerpc/boot/Makefile
 +++ b/arch/powerpc/boot/Makefile
-@@ -143,8 +143,8 @@ src-plat-$(CONFIG_PPC_82xx) += cuboot-pq2.c fixed-head.S ep8248e.c cuboot-824x.c
- src-plat-$(CONFIG_PPC_83xx) += cuboot-83xx.c fixed-head.S redboot-83xx.c
- src-plat-$(CONFIG_FSL_SOC_BOOKE) += cuboot-85xx.c cuboot-85xx-cpm2.c
- src-plat-$(CONFIG_EMBEDDED6xx) += cuboot-pq2.c cuboot-mpc7448hpc2.c \
--					cuboot-c2k.c gamecube-head.S \
--					gamecube.c wii-head.S wii.c holly.c \
-+					gamecube-head.S gamecube.c \
-+					wii-head.S wii.c holly.c \
- 					fixed-head.S mvme5100.c
- src-plat-$(CONFIG_AMIGAONE) += cuboot-amigaone.c
- src-plat-$(CONFIG_PPC_PS3) += ps3-head.S ps3-hvcall.S ps3.c
-@@ -339,7 +339,6 @@ image-$(CONFIG_MVME7100)                += dtbImage.mvme7100
- # Board ports in arch/powerpc/platform/embedded6xx/Kconfig
- image-$(CONFIG_STORCENTER)		+= cuImage.storcenter
- image-$(CONFIG_MPC7448HPC2)		+= cuImage.mpc7448hpc2
--image-$(CONFIG_PPC_C2K)			+= cuImage.c2k
- image-$(CONFIG_GAMECUBE)		+= dtbImage.gamecube
- image-$(CONFIG_WII)			+= dtbImage.wii
- image-$(CONFIG_MVME5100)		+= dtbImage.mvme5100
-diff --git a/arch/powerpc/boot/cuboot-c2k.c b/arch/powerpc/boot/cuboot-c2k.c
+@@ -120,7 +120,7 @@ src-wlib-$(CONFIG_40x) += 4xx.c planetcore.c
+ src-wlib-$(CONFIG_44x) += 4xx.c ebony.c bamboo.c
+ src-wlib-$(CONFIG_PPC_8xx) += mpc8xx.c planetcore.c fsl-soc.c
+ src-wlib-$(CONFIG_PPC_82xx) += pq2.c fsl-soc.c planetcore.c
+-src-wlib-$(CONFIG_EMBEDDED6xx) += mv64x60.c ugecon.c fsl-soc.c
++src-wlib-$(CONFIG_EMBEDDED6xx) += ugecon.c fsl-soc.c
+ src-wlib-$(CONFIG_XILINX_VIRTEX) += uartlite.c
+ src-wlib-$(CONFIG_CPM) += cpm-serial.c
+ 
+diff --git a/arch/powerpc/boot/mv64x60.c b/arch/powerpc/boot/mv64x60.c
 deleted file mode 100644
-index 9309c51f1d65..000000000000
---- a/arch/powerpc/boot/cuboot-c2k.c
+index d9bb302b91d2..000000000000
+--- a/arch/powerpc/boot/mv64x60.c
 +++ /dev/null
-@@ -1,189 +0,0 @@
+@@ -1,581 +0,0 @@
 -/*
-- * GEFanuc C2K platform code.
+- * Marvell hostbridge routines
 - *
-- * Author: Remi Machet <rmachet@slac.stanford.edu>
+- * Author: Mark A. Greer <source@mvista.com>
 - *
-- * Originated from prpmc2800.c
-- *
-- * 2008 (c) Stanford University
-- * 2007 (c) MontaVista, Software, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published
-- * by the Free Software Foundation.
+- * 2004, 2005, 2007 (c) MontaVista Software, Inc. This file is licensed under
+- * the terms of the GNU General Public License version 2. This program
+- * is licensed "as is" without any warranty of any kind, whether express
+- * or implied.
 - */
 -
+-#include <stdarg.h>
+-#include <stddef.h>
 -#include "types.h"
+-#include "elf.h"
+-#include "page.h"
+-#include "string.h"
 -#include "stdio.h"
 -#include "io.h"
 -#include "ops.h"
--#include "elf.h"
 -#include "mv64x60.h"
--#include "cuboot.h"
--#include "ppcboot.h"
 -
--static u8 *bridge_base;
+-#define PCI_DEVFN(slot,func)	((((slot) & 0x1f) << 3) | ((func) & 0x07))
 -
--static void c2k_bridge_setup(u32 mem_size)
+-#define MV64x60_CPU2MEM_WINDOWS			4
+-#define MV64x60_CPU2MEM_0_BASE			0x0008
+-#define MV64x60_CPU2MEM_0_SIZE			0x0010
+-#define MV64x60_CPU2MEM_1_BASE			0x0208
+-#define MV64x60_CPU2MEM_1_SIZE			0x0210
+-#define MV64x60_CPU2MEM_2_BASE			0x0018
+-#define MV64x60_CPU2MEM_2_SIZE			0x0020
+-#define MV64x60_CPU2MEM_3_BASE			0x0218
+-#define MV64x60_CPU2MEM_3_SIZE			0x0220
+-
+-#define MV64x60_ENET2MEM_BAR_ENABLE		0x2290
+-#define MV64x60_ENET2MEM_0_BASE			0x2200
+-#define MV64x60_ENET2MEM_0_SIZE			0x2204
+-#define MV64x60_ENET2MEM_1_BASE			0x2208
+-#define MV64x60_ENET2MEM_1_SIZE			0x220c
+-#define MV64x60_ENET2MEM_2_BASE			0x2210
+-#define MV64x60_ENET2MEM_2_SIZE			0x2214
+-#define MV64x60_ENET2MEM_3_BASE			0x2218
+-#define MV64x60_ENET2MEM_3_SIZE			0x221c
+-#define MV64x60_ENET2MEM_4_BASE			0x2220
+-#define MV64x60_ENET2MEM_4_SIZE			0x2224
+-#define MV64x60_ENET2MEM_5_BASE			0x2228
+-#define MV64x60_ENET2MEM_5_SIZE			0x222c
+-#define MV64x60_ENET2MEM_ACC_PROT_0		0x2294
+-#define MV64x60_ENET2MEM_ACC_PROT_1		0x2298
+-#define MV64x60_ENET2MEM_ACC_PROT_2		0x229c
+-
+-#define MV64x60_MPSC2MEM_BAR_ENABLE		0xf250
+-#define MV64x60_MPSC2MEM_0_BASE			0xf200
+-#define MV64x60_MPSC2MEM_0_SIZE			0xf204
+-#define MV64x60_MPSC2MEM_1_BASE			0xf208
+-#define MV64x60_MPSC2MEM_1_SIZE			0xf20c
+-#define MV64x60_MPSC2MEM_2_BASE			0xf210
+-#define MV64x60_MPSC2MEM_2_SIZE			0xf214
+-#define MV64x60_MPSC2MEM_3_BASE			0xf218
+-#define MV64x60_MPSC2MEM_3_SIZE			0xf21c
+-#define MV64x60_MPSC_0_REMAP			0xf240
+-#define MV64x60_MPSC_1_REMAP			0xf244
+-#define MV64x60_MPSC2MEM_ACC_PROT_0		0xf254
+-#define MV64x60_MPSC2MEM_ACC_PROT_1		0xf258
+-#define MV64x60_MPSC2REGS_BASE			0xf25c
+-
+-#define MV64x60_IDMA2MEM_BAR_ENABLE		0x0a80
+-#define MV64x60_IDMA2MEM_0_BASE			0x0a00
+-#define MV64x60_IDMA2MEM_0_SIZE			0x0a04
+-#define MV64x60_IDMA2MEM_1_BASE			0x0a08
+-#define MV64x60_IDMA2MEM_1_SIZE			0x0a0c
+-#define MV64x60_IDMA2MEM_2_BASE			0x0a10
+-#define MV64x60_IDMA2MEM_2_SIZE			0x0a14
+-#define MV64x60_IDMA2MEM_3_BASE			0x0a18
+-#define MV64x60_IDMA2MEM_3_SIZE			0x0a1c
+-#define MV64x60_IDMA2MEM_4_BASE			0x0a20
+-#define MV64x60_IDMA2MEM_4_SIZE			0x0a24
+-#define MV64x60_IDMA2MEM_5_BASE			0x0a28
+-#define MV64x60_IDMA2MEM_5_SIZE			0x0a2c
+-#define MV64x60_IDMA2MEM_6_BASE			0x0a30
+-#define MV64x60_IDMA2MEM_6_SIZE			0x0a34
+-#define MV64x60_IDMA2MEM_7_BASE			0x0a38
+-#define MV64x60_IDMA2MEM_7_SIZE			0x0a3c
+-#define MV64x60_IDMA2MEM_ACC_PROT_0		0x0a70
+-#define MV64x60_IDMA2MEM_ACC_PROT_1		0x0a74
+-#define MV64x60_IDMA2MEM_ACC_PROT_2		0x0a78
+-#define MV64x60_IDMA2MEM_ACC_PROT_3		0x0a7c
+-
+-#define MV64x60_PCI_ACC_CNTL_WINDOWS		6
+-#define MV64x60_PCI0_PCI_DECODE_CNTL		0x0d3c
+-#define MV64x60_PCI1_PCI_DECODE_CNTL		0x0dbc
+-
+-#define MV64x60_PCI0_BAR_ENABLE			0x0c3c
+-#define MV64x60_PCI02MEM_0_SIZE			0x0c08
+-#define MV64x60_PCI0_ACC_CNTL_0_BASE_LO		0x1e00
+-#define MV64x60_PCI0_ACC_CNTL_0_BASE_HI		0x1e04
+-#define MV64x60_PCI0_ACC_CNTL_0_SIZE		0x1e08
+-#define MV64x60_PCI0_ACC_CNTL_1_BASE_LO		0x1e10
+-#define MV64x60_PCI0_ACC_CNTL_1_BASE_HI		0x1e14
+-#define MV64x60_PCI0_ACC_CNTL_1_SIZE		0x1e18
+-#define MV64x60_PCI0_ACC_CNTL_2_BASE_LO		0x1e20
+-#define MV64x60_PCI0_ACC_CNTL_2_BASE_HI		0x1e24
+-#define MV64x60_PCI0_ACC_CNTL_2_SIZE		0x1e28
+-#define MV64x60_PCI0_ACC_CNTL_3_BASE_LO		0x1e30
+-#define MV64x60_PCI0_ACC_CNTL_3_BASE_HI		0x1e34
+-#define MV64x60_PCI0_ACC_CNTL_3_SIZE		0x1e38
+-#define MV64x60_PCI0_ACC_CNTL_4_BASE_LO		0x1e40
+-#define MV64x60_PCI0_ACC_CNTL_4_BASE_HI		0x1e44
+-#define MV64x60_PCI0_ACC_CNTL_4_SIZE		0x1e48
+-#define MV64x60_PCI0_ACC_CNTL_5_BASE_LO		0x1e50
+-#define MV64x60_PCI0_ACC_CNTL_5_BASE_HI		0x1e54
+-#define MV64x60_PCI0_ACC_CNTL_5_SIZE		0x1e58
+-
+-#define MV64x60_PCI1_BAR_ENABLE			0x0cbc
+-#define MV64x60_PCI12MEM_0_SIZE			0x0c88
+-#define MV64x60_PCI1_ACC_CNTL_0_BASE_LO		0x1e80
+-#define MV64x60_PCI1_ACC_CNTL_0_BASE_HI		0x1e84
+-#define MV64x60_PCI1_ACC_CNTL_0_SIZE		0x1e88
+-#define MV64x60_PCI1_ACC_CNTL_1_BASE_LO		0x1e90
+-#define MV64x60_PCI1_ACC_CNTL_1_BASE_HI		0x1e94
+-#define MV64x60_PCI1_ACC_CNTL_1_SIZE		0x1e98
+-#define MV64x60_PCI1_ACC_CNTL_2_BASE_LO		0x1ea0
+-#define MV64x60_PCI1_ACC_CNTL_2_BASE_HI		0x1ea4
+-#define MV64x60_PCI1_ACC_CNTL_2_SIZE		0x1ea8
+-#define MV64x60_PCI1_ACC_CNTL_3_BASE_LO		0x1eb0
+-#define MV64x60_PCI1_ACC_CNTL_3_BASE_HI		0x1eb4
+-#define MV64x60_PCI1_ACC_CNTL_3_SIZE		0x1eb8
+-#define MV64x60_PCI1_ACC_CNTL_4_BASE_LO		0x1ec0
+-#define MV64x60_PCI1_ACC_CNTL_4_BASE_HI		0x1ec4
+-#define MV64x60_PCI1_ACC_CNTL_4_SIZE		0x1ec8
+-#define MV64x60_PCI1_ACC_CNTL_5_BASE_LO		0x1ed0
+-#define MV64x60_PCI1_ACC_CNTL_5_BASE_HI		0x1ed4
+-#define MV64x60_PCI1_ACC_CNTL_5_SIZE		0x1ed8
+-
+-#define MV64x60_CPU2PCI_SWAP_NONE		0x01000000
+-
+-#define MV64x60_CPU2PCI0_IO_BASE		0x0048
+-#define MV64x60_CPU2PCI0_IO_SIZE		0x0050
+-#define MV64x60_CPU2PCI0_IO_REMAP		0x00f0
+-#define MV64x60_CPU2PCI0_MEM_0_BASE		0x0058
+-#define MV64x60_CPU2PCI0_MEM_0_SIZE		0x0060
+-#define MV64x60_CPU2PCI0_MEM_0_REMAP_LO		0x00f8
+-#define MV64x60_CPU2PCI0_MEM_0_REMAP_HI		0x0320
+-
+-#define MV64x60_CPU2PCI1_IO_BASE		0x0090
+-#define MV64x60_CPU2PCI1_IO_SIZE		0x0098
+-#define MV64x60_CPU2PCI1_IO_REMAP		0x0108
+-#define MV64x60_CPU2PCI1_MEM_0_BASE		0x00a0
+-#define MV64x60_CPU2PCI1_MEM_0_SIZE		0x00a8
+-#define MV64x60_CPU2PCI1_MEM_0_REMAP_LO		0x0110
+-#define MV64x60_CPU2PCI1_MEM_0_REMAP_HI		0x0340
+-
+-struct mv64x60_mem_win {
+-	u32 hi;
+-	u32 lo;
+-	u32 size;
+-};
+-
+-struct mv64x60_pci_win {
+-	u32 fcn;
+-	u32 hi;
+-	u32 lo;
+-	u32 size;
+-};
+-
+-/* PCI config access routines */
+-struct {
+-	u32 addr;
+-	u32 data;
+-} static mv64x60_pci_cfgio[2] = {
+-	{ /* hose 0 */
+-		.addr	= 0xcf8,
+-		.data	= 0xcfc,
+-	},
+-	{ /* hose 1 */
+-		.addr	= 0xc78,
+-		.data	= 0xc7c,
+-	}
+-};
+-
+-u32 mv64x60_cfg_read(u8 *bridge_base, u8 hose, u8 bus, u8 devfn, u8 offset)
 -{
--	u32 i, v[30], enables, acc_bits;
--	u32 pci_base_hi, pci_base_lo, size, buf[2];
--	unsigned long cpu_base;
--	int rc;
--	void *devp, *mv64x60_devp;
--	u8 *bridge_pbase, is_coherent;
--	struct mv64x60_cpu2pci_win *tbl;
--	int bus;
+-	out_le32((u32 *)(bridge_base + mv64x60_pci_cfgio[hose].addr),
+-			(1 << 31) | (bus << 16) | (devfn << 8) | offset);
+-	return in_le32((u32 *)(bridge_base + mv64x60_pci_cfgio[hose].data));
+-}
 -
--	bridge_pbase = mv64x60_get_bridge_pbase();
--	is_coherent = mv64x60_is_coherent();
+-void mv64x60_cfg_write(u8 *bridge_base, u8 hose, u8 bus, u8 devfn, u8 offset,
+-		u32 val)
+-{
+-	out_le32((u32 *)(bridge_base + mv64x60_pci_cfgio[hose].addr),
+-			(1 << 31) | (bus << 16) | (devfn << 8) | offset);
+-	out_le32((u32 *)(bridge_base + mv64x60_pci_cfgio[hose].data), val);
+-}
+-
+-/* I/O ctlr -> system memory setup */
+-static struct mv64x60_mem_win mv64x60_cpu2mem[MV64x60_CPU2MEM_WINDOWS] = {
+-	{
+-		.lo	= MV64x60_CPU2MEM_0_BASE,
+-		.size	= MV64x60_CPU2MEM_0_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_CPU2MEM_1_BASE,
+-		.size	= MV64x60_CPU2MEM_1_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_CPU2MEM_2_BASE,
+-		.size	= MV64x60_CPU2MEM_2_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_CPU2MEM_3_BASE,
+-		.size	= MV64x60_CPU2MEM_3_SIZE,
+-	},
+-};
+-
+-static struct mv64x60_mem_win mv64x60_enet2mem[MV64x60_CPU2MEM_WINDOWS] = {
+-	{
+-		.lo	= MV64x60_ENET2MEM_0_BASE,
+-		.size	= MV64x60_ENET2MEM_0_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_ENET2MEM_1_BASE,
+-		.size	= MV64x60_ENET2MEM_1_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_ENET2MEM_2_BASE,
+-		.size	= MV64x60_ENET2MEM_2_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_ENET2MEM_3_BASE,
+-		.size	= MV64x60_ENET2MEM_3_SIZE,
+-	},
+-};
+-
+-static struct mv64x60_mem_win mv64x60_mpsc2mem[MV64x60_CPU2MEM_WINDOWS] = {
+-	{
+-		.lo	= MV64x60_MPSC2MEM_0_BASE,
+-		.size	= MV64x60_MPSC2MEM_0_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_MPSC2MEM_1_BASE,
+-		.size	= MV64x60_MPSC2MEM_1_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_MPSC2MEM_2_BASE,
+-		.size	= MV64x60_MPSC2MEM_2_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_MPSC2MEM_3_BASE,
+-		.size	= MV64x60_MPSC2MEM_3_SIZE,
+-	},
+-};
+-
+-static struct mv64x60_mem_win mv64x60_idma2mem[MV64x60_CPU2MEM_WINDOWS] = {
+-	{
+-		.lo	= MV64x60_IDMA2MEM_0_BASE,
+-		.size	= MV64x60_IDMA2MEM_0_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_IDMA2MEM_1_BASE,
+-		.size	= MV64x60_IDMA2MEM_1_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_IDMA2MEM_2_BASE,
+-		.size	= MV64x60_IDMA2MEM_2_SIZE,
+-	},
+-	{
+-		.lo	= MV64x60_IDMA2MEM_3_BASE,
+-		.size	= MV64x60_IDMA2MEM_3_SIZE,
+-	},
+-};
+-
+-static u32 mv64x60_dram_selects[MV64x60_CPU2MEM_WINDOWS] = {0xe,0xd,0xb,0x7};
+-
+-/*
+- * ENET, MPSC, and IDMA ctlrs on the MV64x60 have separate windows that
+- * must be set up so that the respective ctlr can access system memory.
+- * Configure them to be same as cpu->memory windows.
+- */
+-void mv64x60_config_ctlr_windows(u8 *bridge_base, u8 *bridge_pbase,
+-		u8 is_coherent)
+-{
+-	u32 i, base, size, enables, prot = 0, snoop_bits = 0;
+-
+-	/* Disable ctlr->mem windows */
+-	out_le32((u32 *)(bridge_base + MV64x60_ENET2MEM_BAR_ENABLE), 0x3f);
+-	out_le32((u32 *)(bridge_base + MV64x60_MPSC2MEM_BAR_ENABLE), 0xf);
+-	out_le32((u32 *)(bridge_base + MV64x60_ENET2MEM_BAR_ENABLE), 0xff);
 -
 -	if (is_coherent)
--		acc_bits = MV64x60_PCI_ACC_CNTL_SNOOP_WB
--			| MV64x60_PCI_ACC_CNTL_SWAP_NONE
--			| MV64x60_PCI_ACC_CNTL_MBURST_32_BYTES
--			| MV64x60_PCI_ACC_CNTL_RDSIZE_32_BYTES;
--	else
--		acc_bits = MV64x60_PCI_ACC_CNTL_SNOOP_NONE
--			| MV64x60_PCI_ACC_CNTL_SWAP_NONE
--			| MV64x60_PCI_ACC_CNTL_MBURST_128_BYTES
--			| MV64x60_PCI_ACC_CNTL_RDSIZE_256_BYTES;
+-		snoop_bits = 0x2 << 12; /* Writeback */
 -
--	mv64x60_config_ctlr_windows(bridge_base, bridge_pbase, is_coherent);
--	mv64x60_devp = find_node_by_compatible(NULL, "marvell,mv64360");
--	if (mv64x60_devp == NULL)
--		fatal("Error: Missing marvell,mv64360 device tree node\n\r");
+-	enables = in_le32((u32 *)(bridge_base + MV64x60_CPU_BAR_ENABLE)) & 0xf;
 -
--	enables = in_le32((u32 *)(bridge_base + MV64x60_CPU_BAR_ENABLE));
--	enables |= 0x007ffe00; /* Disable all cpu->pci windows */
--	out_le32((u32 *)(bridge_base + MV64x60_CPU_BAR_ENABLE), enables);
+-	for (i=0; i<MV64x60_CPU2MEM_WINDOWS; i++) {
+-		if (enables & (1 << i)) /* Set means disabled */
+-			continue;
 -
--	/* Get the cpu -> pci i/o & mem mappings from the device tree */
--	devp = NULL;
--	for (bus = 0; ; bus++) {
--		char name[] = "pci ";
+-		base = in_le32((u32 *)(bridge_base + mv64x60_cpu2mem[i].lo))
+-			<< 16;
+-		base |= snoop_bits | (mv64x60_dram_selects[i] << 8);
+-		size = in_le32((u32 *)(bridge_base + mv64x60_cpu2mem[i].size))
+-			<< 16;
+-		prot |= (0x3 << (i << 1)); /* RW access */
 -
--		name[strlen(name)-1] = bus+'0';
--
--		devp = find_node_by_alias(name);
--		if (devp == NULL)
--			break;
--
--		if (bus >= 2)
--			fatal("Error: Only 2 PCI controllers are supported at" \
--				" this time.\n");
--
--		mv64x60_config_pci_windows(bridge_base, bridge_pbase, bus, 0,
--				mem_size, acc_bits);
--
--		rc = getprop(devp, "ranges", v, sizeof(v));
--		if (rc == 0)
--			fatal("Error: Can't find marvell,mv64360-pci ranges"
--				" property\n\r");
--
--		/* Get the cpu -> pci i/o & mem mappings from the device tree */
--
--		for (i = 0; i < rc; i += 6) {
--			switch (v[i] & 0xff000000) {
--			case 0x01000000: /* PCI I/O Space */
--				tbl = mv64x60_cpu2pci_io;
--				break;
--			case 0x02000000: /* PCI MEM Space */
--				tbl = mv64x60_cpu2pci_mem;
--				break;
--			default:
--				continue;
--			}
--
--			pci_base_hi = v[i+1];
--			pci_base_lo = v[i+2];
--			cpu_base = v[i+3];
--			size = v[i+5];
--
--			buf[0] = cpu_base;
--			buf[1] = size;
--
--			if (!dt_xlate_addr(devp, buf, sizeof(buf), &cpu_base))
--				fatal("Error: Can't translate PCI address " \
--						"0x%x\n\r", (u32)cpu_base);
--
--			mv64x60_config_cpu2pci_window(bridge_base, bus,
--				pci_base_hi, pci_base_lo, cpu_base, size, tbl);
--		}
--
--		enables &= ~(3<<(9+bus*5)); /* Enable cpu->pci<bus> i/o,
--						cpu->pci<bus> mem0 */
--		out_le32((u32 *)(bridge_base + MV64x60_CPU_BAR_ENABLE),
--			enables);
--	};
--}
--
--static void c2k_fixups(void)
--{
--	u32 mem_size;
--
--	mem_size = mv64x60_get_mem_size(bridge_base);
--	c2k_bridge_setup(mem_size); /* Do necessary bridge setup */
--}
--
--#define MV64x60_MPP_CNTL_0	0xf000
--#define MV64x60_MPP_CNTL_2	0xf008
--#define MV64x60_GPP_IO_CNTL	0xf100
--#define MV64x60_GPP_LEVEL_CNTL	0xf110
--#define MV64x60_GPP_VALUE_SET	0xf118
--
--static void c2k_reset(void)
--{
--	u32 temp;
--
--	udelay(5000000);
--
--	if (bridge_base != 0) {
--		temp = in_le32((u32 *)(bridge_base + MV64x60_MPP_CNTL_0));
--		temp &= 0xFFFF0FFF;
--		out_le32((u32 *)(bridge_base + MV64x60_MPP_CNTL_0), temp);
--
--		temp = in_le32((u32 *)(bridge_base + MV64x60_GPP_LEVEL_CNTL));
--		temp |= 0x00000004;
--		out_le32((u32 *)(bridge_base + MV64x60_GPP_LEVEL_CNTL), temp);
--
--		temp = in_le32((u32 *)(bridge_base + MV64x60_GPP_IO_CNTL));
--		temp |= 0x00000004;
--		out_le32((u32 *)(bridge_base + MV64x60_GPP_IO_CNTL), temp);
--
--		temp = in_le32((u32 *)(bridge_base + MV64x60_MPP_CNTL_2));
--		temp &= 0xFFFF0FFF;
--		out_le32((u32 *)(bridge_base + MV64x60_MPP_CNTL_2), temp);
--
--		temp = in_le32((u32 *)(bridge_base + MV64x60_GPP_LEVEL_CNTL));
--		temp |= 0x00080000;
--		out_le32((u32 *)(bridge_base + MV64x60_GPP_LEVEL_CNTL), temp);
--
--		temp = in_le32((u32 *)(bridge_base + MV64x60_GPP_IO_CNTL));
--		temp |= 0x00080000;
--		out_le32((u32 *)(bridge_base + MV64x60_GPP_IO_CNTL), temp);
--
--		out_le32((u32 *)(bridge_base + MV64x60_GPP_VALUE_SET),
--				0x00080004);
+-		out_le32((u32 *)(bridge_base + mv64x60_enet2mem[i].lo), base);
+-		out_le32((u32 *)(bridge_base + mv64x60_enet2mem[i].size), size);
+-		out_le32((u32 *)(bridge_base + mv64x60_mpsc2mem[i].lo), base);
+-		out_le32((u32 *)(bridge_base + mv64x60_mpsc2mem[i].size), size);
+-		out_le32((u32 *)(bridge_base + mv64x60_idma2mem[i].lo), base);
+-		out_le32((u32 *)(bridge_base + mv64x60_idma2mem[i].size), size);
 -	}
 -
--	for (;;);
+-	out_le32((u32 *)(bridge_base + MV64x60_ENET2MEM_ACC_PROT_0), prot);
+-	out_le32((u32 *)(bridge_base + MV64x60_ENET2MEM_ACC_PROT_1), prot);
+-	out_le32((u32 *)(bridge_base + MV64x60_ENET2MEM_ACC_PROT_2), prot);
+-	out_le32((u32 *)(bridge_base + MV64x60_MPSC2MEM_ACC_PROT_0), prot);
+-	out_le32((u32 *)(bridge_base + MV64x60_MPSC2MEM_ACC_PROT_1), prot);
+-	out_le32((u32 *)(bridge_base + MV64x60_IDMA2MEM_ACC_PROT_0), prot);
+-	out_le32((u32 *)(bridge_base + MV64x60_IDMA2MEM_ACC_PROT_1), prot);
+-	out_le32((u32 *)(bridge_base + MV64x60_IDMA2MEM_ACC_PROT_2), prot);
+-	out_le32((u32 *)(bridge_base + MV64x60_IDMA2MEM_ACC_PROT_3), prot);
+-
+-	/* Set mpsc->bridge's reg window to the bridge's internal registers. */
+-	out_le32((u32 *)(bridge_base + MV64x60_MPSC2REGS_BASE),
+-			(u32)bridge_pbase);
+-
+-	out_le32((u32 *)(bridge_base + MV64x60_ENET2MEM_BAR_ENABLE), enables);
+-	out_le32((u32 *)(bridge_base + MV64x60_MPSC2MEM_BAR_ENABLE), enables);
+-	out_le32((u32 *)(bridge_base + MV64x60_IDMA2MEM_BAR_ENABLE), enables);
 -}
 -
--static bd_t bd;
--
--void platform_init(unsigned long r3, unsigned long r4, unsigned long r5,
--			unsigned long r6, unsigned long r7)
--{
--	CUBOOT_INIT();
--
--	fdt_init(_dtb_start);
--
--	bridge_base = mv64x60_get_bridge_base();
--
--	platform_ops.fixups = c2k_fixups;
--	platform_ops.exit = c2k_reset;
--
--	if (serial_console_init() < 0)
--		exit();
--}
-diff --git a/arch/powerpc/boot/dts/c2k.dts b/arch/powerpc/boot/dts/c2k.dts
-deleted file mode 100644
-index c5beb72d18b7..000000000000
---- a/arch/powerpc/boot/dts/c2k.dts
-+++ /dev/null
-@@ -1,366 +0,0 @@
--/* Device Tree Source for GEFanuc C2K
-- *
-- * Author: Remi Machet <rmachet@slac.stanford.edu>
-- *
-- * Originated from prpmc2800.dts
-- *
-- * 2008 (c) Stanford University
-- * 2007 (c) MontaVista, Software, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published
-- * by the Free Software Foundation.
-- */
--
--/dts-v1/;
--
--/ {
--	#address-cells = <1>;
--	#size-cells = <1>;
--	model = "C2K";
--	compatible = "GEFanuc,C2K";
--	coherency-off;
--
--	aliases {
--		pci0 = &PCI0;
--		pci1 = &PCI1;
--	};
--
--	cpus {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		cpu@0 {
--			device_type = "cpu";
--			compatible = "PowerPC,7447";
--			reg = <0>;
--			clock-frequency = <996000000>;	/* 996 MHz */
--			bus-frequency = <166666667>;	/* 166.6666 MHz */
--			timebase-frequency = <41666667>;	/* 166.6666/4 MHz */
--			i-cache-line-size = <32>;
--			d-cache-line-size = <32>;
--			i-cache-size = <32768>;
--			d-cache-size = <32768>;
--		};
--	};
--
--	memory {
--		device_type = "memory";
--		reg = <0x00000000 0x40000000>;	/* 1GB */
--	};
--
--	system-controller@d8000000 { /* Marvell Discovery */
--		#address-cells = <1>;
--		#size-cells = <1>;
--		model = "mv64460";
--		compatible = "marvell,mv64360";
--		clock-frequency = <166666667>;		/* 166.66... MHz */
--		reg = <0xd8000000 0x00010000>;
--		virtual-reg = <0xd8000000>;
--		ranges = <0xd4000000 0xd4000000 0x01000000	/* PCI 0 I/O Space */
--			  0x80000000 0x80000000 0x08000000	/* PCI 0 MEM Space */
--			  0xd0000000 0xd0000000 0x01000000	/* PCI 1 I/O Space */
--			  0xa0000000 0xa0000000 0x08000000	/* PCI 1 MEM Space */
--			  0xd8100000 0xd8100000 0x00010000	/* FPGA */
--			  0xd8110000 0xd8110000 0x00010000	/* FPGA USARTs */
--			  0xf8000000 0xf8000000 0x08000000	/* User FLASH */
--			  0x00000000 0xd8000000 0x00010000	/* Bridge's regs */
--			  0xd8140000 0xd8140000 0x00040000>;	/* Integrated SRAM */
--
--		mdio@2000 {
--			#address-cells = <1>;
--			#size-cells = <0>;
--			compatible = "marvell,mv64360-mdio";
--			reg = <0x2000 4>;
--			PHY0: ethernet-phy@0 {
--				interrupts = <76>;	/* GPP 12 */
--				interrupt-parent = <&PIC>;
--				reg = <0>;
--			};
--			PHY1: ethernet-phy@1 {
--				interrupts = <76>;	/* GPP 12 */
--				interrupt-parent = <&PIC>;
--				reg = <1>;
--			};
--			PHY2: ethernet-phy@2 {
--				interrupts = <76>;	/* GPP 12 */
--				interrupt-parent = <&PIC>;
--				reg = <2>;
--			};
--		};
--
--		ethernet-group@2000 {
--			#address-cells = <1>;
--			#size-cells = <0>;
--			compatible = "marvell,mv64360-eth-group";
--			reg = <0x2000 0x2000>;
--			ethernet@0 {
--				device_type = "network";
--				compatible = "marvell,mv64360-eth";
--				reg = <0>;
--				interrupts = <32>;
--				interrupt-parent = <&PIC>;
--				phy = <&PHY0>;
--				local-mac-address = [ 00 00 00 00 00 00 ];
--			};
--			ethernet@1 {
--				device_type = "network";
--				compatible = "marvell,mv64360-eth";
--				reg = <1>;
--				interrupts = <33>;
--				interrupt-parent = <&PIC>;
--				phy = <&PHY1>;
--				local-mac-address = [ 00 00 00 00 00 00 ];
--			};
--			ethernet@2 {
--				device_type = "network";
--				compatible = "marvell,mv64360-eth";
--				reg = <2>;
--				interrupts = <34>;
--				interrupt-parent = <&PIC>;
--				phy = <&PHY2>;
--				local-mac-address = [ 00 00 00 00 00 00 ];
--			};
--		};
--
--		SDMA0: sdma@4000 {
--			compatible = "marvell,mv64360-sdma";
--			reg = <0x4000 0xc18>;
--			virtual-reg = <0xd8004000>;
--			interrupt-base = <0>;
--			interrupts = <36>;
--			interrupt-parent = <&PIC>;
--		};
--
--		SDMA1: sdma@6000 {
--			compatible = "marvell,mv64360-sdma";
--			reg = <0x6000 0xc18>;
--			virtual-reg = <0xd8006000>;
--			interrupt-base = <0>;
--			interrupts = <38>;
--			interrupt-parent = <&PIC>;
--		};
--
--		BRG0: brg@b200 {
--			compatible = "marvell,mv64360-brg";
--			reg = <0xb200 0x8>;
--			clock-src = <8>;
--			clock-frequency = <133333333>;
--			current-speed = <115200>;
--		};
--
--		BRG1: brg@b208 {
--			compatible = "marvell,mv64360-brg";
--			reg = <0xb208 0x8>;
--			clock-src = <8>;
--			clock-frequency = <133333333>;
--			current-speed = <115200>;
--		};
--
--		CUNIT: cunit@f200 {
--			reg = <0xf200 0x200>;
--		};
--
--		MPSCROUTING: mpscrouting@b400 {
--			reg = <0xb400 0xc>;
--		};
--
--		MPSCINTR: mpscintr@b800 {
--			reg = <0xb800 0x100>;
--			virtual-reg = <0xd800b800>;
--		};
--
--		MPSC0: mpsc@8000 {
--			compatible = "marvell,mv64360-mpsc";
--			reg = <0x8000 0x38>;
--			virtual-reg = <0xd8008000>;
--			sdma = <&SDMA0>;
--			brg = <&BRG0>;
--			cunit = <&CUNIT>;
--			mpscrouting = <&MPSCROUTING>;
--			mpscintr = <&MPSCINTR>;
--			cell-index = <0>;
--			interrupts = <40>;
--			interrupt-parent = <&PIC>;
--		};
--
--		MPSC1: mpsc@9000 {
--			compatible = "marvell,mv64360-mpsc";
--			reg = <0x9000 0x38>;
--			virtual-reg = <0xd8009000>;
--			sdma = <&SDMA1>;
--			brg = <&BRG1>;
--			cunit = <&CUNIT>;
--			mpscrouting = <&MPSCROUTING>;
--			mpscintr = <&MPSCINTR>;
--			cell-index = <1>;
--			interrupts = <42>;
--			interrupt-parent = <&PIC>;
--		};
--
--		wdt@b410 {			/* watchdog timer */
--			compatible = "marvell,mv64360-wdt";
--			reg = <0xb410 0x8>;
--		};
--
--		i2c@c000 {
--			compatible = "marvell,mv64360-i2c";
--			reg = <0xc000 0x20>;
--			virtual-reg = <0xd800c000>;
--			interrupts = <37>;
--			interrupt-parent = <&PIC>;
--		};
--
--		PIC: pic {
--			#interrupt-cells = <1>;
--			#address-cells = <0>;
--			compatible = "marvell,mv64360-pic";
--			reg = <0x0000 0x88>;
--			interrupt-controller;
--		};
--
--		mpp@f000 {
--			compatible = "marvell,mv64360-mpp";
--			reg = <0xf000 0x10>;
--		};
--
--		gpp@f100 {
--			compatible = "marvell,mv64360-gpp";
--			reg = <0xf100 0x20>;
--		};
--
--		PCI0: pci@80000000 {
--			#address-cells = <3>;
--			#size-cells = <2>;
--			#interrupt-cells = <1>;
--			device_type = "pci";
--			compatible = "marvell,mv64360-pci";
--			reg = <0x0cf8 0x8>;
--			ranges = <0x01000000 0x0 0x00000000 0xd4000000 0x0 0x01000000
--				  0x02000000 0x0 0x80000000 0x80000000 0x0 0x08000000>;
--			bus-range = <0 255>;
--			clock-frequency = <66000000>;
--			interrupt-pci-iack = <0x0c34>;
--			interrupt-parent = <&PIC>;
--			interrupt-map-mask = <0x0000 0x0 0x0 0x7>;
--			interrupt-map = <
--				/* Only one interrupt line for PMC0 slot (INTA) */
--				0x0000 0 0 1 &PIC 88
--			>;
--		};
--
--
--		PCI1: pci@a0000000 {
--			#address-cells = <3>;
--			#size-cells = <2>;
--			#interrupt-cells = <1>;
--			device_type = "pci";
--			compatible = "marvell,mv64360-pci";
--			reg = <0x0c78 0x8>;
--			ranges = <0x01000000 0x0 0x00000000 0xd0000000 0x0 0x01000000
--				  0x02000000 0x0 0x80000000 0xa0000000 0x0 0x08000000>;
--			bus-range = <0 255>;
--			clock-frequency = <66000000>;
--			interrupt-pci-iack = <0x0cb4>;
--			interrupt-parent = <&PIC>;
--			interrupt-map-mask = <0xf800 0x00 0x00 0x7>;
--			interrupt-map = <
--				/* IDSEL 0x01: PMC1 ? */
--				0x0800 0 0 1 &PIC 88
--				/* IDSEL 0x02: cPCI bridge */
--				0x1000 0 0 1 &PIC 88
--				/* IDSEL 0x03: USB controller */
--				0x1800 0 0 1 &PIC 91
--				/* IDSEL 0x04: SATA controller */
--				0x2000 0 0 1 &PIC 95
--			>;
--		};
--
--		cpu-error@70 {
--			compatible = "marvell,mv64360-cpu-error";
--			reg = <0x0070 0x10 0x0128 0x28>;
--			interrupts = <3>;
--			interrupt-parent = <&PIC>;
--		};
--
--		sram-ctrl@380 {
--			compatible = "marvell,mv64360-sram-ctrl";
--			reg = <0x0380 0x80>;
--			interrupts = <13>;
--			interrupt-parent = <&PIC>;
--		};
--
--		pci-error@1d40 {
--			compatible = "marvell,mv64360-pci-error";
--			reg = <0x1d40 0x40 0x0c28 0x4>;
--			interrupts = <12>;
--			interrupt-parent = <&PIC>;
--		};
--
--		pci-error@1dc0 {
--			compatible = "marvell,mv64360-pci-error";
--			reg = <0x1dc0 0x40 0x0ca8 0x4>;
--			interrupts = <16>;
--			interrupt-parent = <&PIC>;
--		};
--
--		mem-ctrl@1400 {
--			compatible = "marvell,mv64360-mem-ctrl";
--			reg = <0x1400 0x60>;
--			interrupts = <17>;
--			interrupt-parent = <&PIC>;
--		};
--		/* Devices attached to the device controller */
--		devicebus@45c {
--			#address-cells = <2>;
--			#size-cells = <1>;
--			compatible = "marvell,mv64306-devctrl";
--			reg = <0x45C 0x88>;
--			interrupts = <1>;
--			interrupt-parent = <&PIC>;
--			ranges = 	<0 0 0xd8100000 0x10000
--					 2 0 0xd8110000 0x10000
--					 4 0 0xf8000000 0x8000000>;
--			fpga@0,0 {
--				compatible = "sbs,fpga-c2k";
--				reg = <0 0 0x10000>;
--			};
--			fpga_usart@2,0 {
--				compatible = "sbs,fpga_usart-c2k";
--				reg = <2 0 0x10000>;
--			};
--			nor_flash@4,0 {
--				compatible = "cfi-flash";
--				reg = <4 0 0x8000000>; /* 128MB */
--				bank-width = <4>;
--				device-width = <1>;
--				#address-cells = <1>;
--				#size-cells = <1>;
--				partition@0 {
--					label = "boot";
--					reg = <0x00000000 0x00080000>;
--				};
--				partition@40000 {
--					label = "kernel";
--					reg = <0x00080000 0x00400000>;
--				};
--				partition@440000 {
--					label = "initrd";
--					reg = <0x00480000 0x00B80000>;
--				};
--				partition@1000000 {
--					label = "rootfs";
--					reg = <0x01000000 0x06800000>;
--				};
--				partition@7800000 {
--					label = "recovery";
--					reg = <0x07800000 0x00800000>;
--					read-only;
--				};
--			};
--		};
--	};
--	chosen {
--		stdout-path = &MPSC0;
--	};
+-/* PCI MEM -> system memory, et. al. setup */
+-static struct mv64x60_pci_win mv64x60_pci2mem[2] = {
+-	{ /* hose 0 */
+-		.fcn	= 0,
+-		.hi	= 0x14,
+-		.lo	= 0x10,
+-		.size	= MV64x60_PCI02MEM_0_SIZE,
+-	},
+-	{ /* hose 1 */
+-		.fcn	= 0,
+-		.hi	= 0x94,
+-		.lo	= 0x90,
+-		.size	= MV64x60_PCI12MEM_0_SIZE,
+-	},
 -};
-diff --git a/arch/powerpc/configs/c2k_defconfig b/arch/powerpc/configs/c2k_defconfig
-deleted file mode 100644
-index 4bb832a41d55..000000000000
---- a/arch/powerpc/configs/c2k_defconfig
-+++ /dev/null
-@@ -1,390 +0,0 @@
--CONFIG_SYSVIPC=y
--CONFIG_POSIX_MQUEUE=y
--CONFIG_AUDIT=y
--CONFIG_BSD_PROCESS_ACCT=y
--CONFIG_BLK_DEV_INITRD=y
--CONFIG_PROFILING=y
--CONFIG_OPROFILE=m
--CONFIG_KPROBES=y
--CONFIG_MODULES=y
--CONFIG_MODULE_UNLOAD=y
--CONFIG_MODVERSIONS=y
--CONFIG_PARTITION_ADVANCED=y
--CONFIG_OSF_PARTITION=y
--CONFIG_MAC_PARTITION=y
--CONFIG_BSD_DISKLABEL=y
--CONFIG_MINIX_SUBPARTITION=y
--CONFIG_SOLARIS_X86_PARTITION=y
--CONFIG_UNIXWARE_DISKLABEL=y
--CONFIG_SGI_PARTITION=y
--CONFIG_SUN_PARTITION=y
--# CONFIG_PPC_CHRP is not set
--# CONFIG_PPC_PMAC is not set
--CONFIG_EMBEDDED6xx=y
--CONFIG_PPC_C2K=y
--CONFIG_CPU_FREQ=y
--CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
--CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
--CONFIG_CPU_FREQ_GOV_POWERSAVE=m
--CONFIG_CPU_FREQ_GOV_ONDEMAND=m
--CONFIG_GEN_RTC=y
--CONFIG_HIGHMEM=y
--CONFIG_PREEMPT_VOLUNTARY=y
--CONFIG_BINFMT_MISC=y
--CONFIG_PM=y
--CONFIG_PCI_MSI=y
--CONFIG_HOTPLUG_PCI=y
--CONFIG_HOTPLUG_PCI_SHPC=m
--CONFIG_NET=y
--CONFIG_PACKET=y
--CONFIG_UNIX=y
--CONFIG_XFRM_USER=y
--CONFIG_NET_KEY=m
--CONFIG_INET=y
--CONFIG_IP_MULTICAST=y
--CONFIG_IP_ADVANCED_ROUTER=y
--CONFIG_IP_MULTIPLE_TABLES=y
--CONFIG_IP_ROUTE_MULTIPATH=y
--CONFIG_IP_ROUTE_VERBOSE=y
--CONFIG_IP_PNP=y
--CONFIG_IP_PNP_DHCP=y
--CONFIG_NET_IPIP=m
--CONFIG_IP_MROUTE=y
--CONFIG_IP_PIMSM_V1=y
--CONFIG_IP_PIMSM_V2=y
--CONFIG_SYN_COOKIES=y
--CONFIG_INET_AH=m
--CONFIG_INET_ESP=m
--CONFIG_INET_IPCOMP=m
--CONFIG_INET6_AH=m
--CONFIG_INET6_ESP=m
--CONFIG_INET6_IPCOMP=m
--CONFIG_IPV6_TUNNEL=m
--CONFIG_NETFILTER=y
--# CONFIG_NETFILTER_XT_MATCH_SCTP is not set
--CONFIG_IP_NF_IPTABLES=m
--CONFIG_IP_NF_MATCH_ECN=m
--CONFIG_IP_NF_MATCH_TTL=m
--CONFIG_IP_NF_FILTER=m
--CONFIG_IP_NF_TARGET_REJECT=m
--CONFIG_IP_NF_MANGLE=m
--CONFIG_IP_NF_TARGET_ECN=m
--CONFIG_IP_NF_RAW=m
--CONFIG_IP_NF_ARPTABLES=m
--CONFIG_IP_NF_ARPFILTER=m
--CONFIG_IP_NF_ARP_MANGLE=m
--CONFIG_IP6_NF_IPTABLES=m
--CONFIG_IP6_NF_MATCH_EUI64=m
--CONFIG_IP6_NF_MATCH_FRAG=m
--CONFIG_IP6_NF_MATCH_OPTS=m
--CONFIG_IP6_NF_MATCH_HL=m
--CONFIG_IP6_NF_MATCH_IPV6HEADER=m
--CONFIG_IP6_NF_MATCH_RT=m
--CONFIG_IP6_NF_FILTER=m
--CONFIG_IP6_NF_MANGLE=m
--CONFIG_IP6_NF_RAW=m
--CONFIG_BRIDGE_NF_EBTABLES=m
--CONFIG_BRIDGE_EBT_BROUTE=m
--CONFIG_BRIDGE_EBT_T_FILTER=m
--CONFIG_BRIDGE_EBT_T_NAT=m
--CONFIG_BRIDGE_EBT_802_3=m
--CONFIG_BRIDGE_EBT_AMONG=m
--CONFIG_BRIDGE_EBT_ARP=m
--CONFIG_BRIDGE_EBT_IP=m
--CONFIG_BRIDGE_EBT_LIMIT=m
--CONFIG_BRIDGE_EBT_MARK=m
--CONFIG_BRIDGE_EBT_PKTTYPE=m
--CONFIG_BRIDGE_EBT_STP=m
--CONFIG_BRIDGE_EBT_VLAN=m
--CONFIG_BRIDGE_EBT_ARPREPLY=m
--CONFIG_BRIDGE_EBT_DNAT=m
--CONFIG_BRIDGE_EBT_MARK_T=m
--CONFIG_BRIDGE_EBT_REDIRECT=m
--CONFIG_BRIDGE_EBT_SNAT=m
--CONFIG_BRIDGE_EBT_LOG=m
--CONFIG_IP_SCTP=m
--CONFIG_ATM=m
--CONFIG_ATM_CLIP=m
--CONFIG_ATM_LANE=m
--CONFIG_ATM_BR2684=m
--CONFIG_BRIDGE=m
--CONFIG_VLAN_8021Q=m
--CONFIG_NET_SCHED=y
--CONFIG_NET_SCH_CBQ=m
--CONFIG_NET_SCH_HTB=m
--CONFIG_NET_SCH_HFSC=m
--CONFIG_NET_SCH_ATM=m
--CONFIG_NET_SCH_PRIO=m
--CONFIG_NET_SCH_RED=m
--CONFIG_NET_SCH_SFQ=m
--CONFIG_NET_SCH_TEQL=m
--CONFIG_NET_SCH_TBF=m
--CONFIG_NET_SCH_GRED=m
--CONFIG_NET_SCH_DSMARK=m
--CONFIG_NET_SCH_NETEM=m
--CONFIG_NET_CLS_TCINDEX=m
--CONFIG_NET_CLS_ROUTE4=m
--CONFIG_NET_CLS_FW=m
--CONFIG_NET_CLS_U32=m
--CONFIG_CLS_U32_PERF=y
--CONFIG_NET_CLS_RSVP=m
--CONFIG_NET_CLS_RSVP6=m
--CONFIG_NET_CLS_IND=y
--CONFIG_BT=m
--CONFIG_BT_RFCOMM=m
--CONFIG_BT_RFCOMM_TTY=y
--CONFIG_BT_BNEP=m
--CONFIG_BT_BNEP_MC_FILTER=y
--CONFIG_BT_BNEP_PROTO_FILTER=y
--CONFIG_BT_HIDP=m
--CONFIG_BT_HCIUART=m
--CONFIG_BT_HCIUART_H4=y
--CONFIG_BT_HCIUART_BCSP=y
--CONFIG_BT_HCIBCM203X=m
--CONFIG_BT_HCIBFUSB=m
--CONFIG_BT_HCIVHCI=m
--CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
--CONFIG_MTD=y
--CONFIG_MTD_BLOCK=y
--CONFIG_MTD_CFI=y
--CONFIG_MTD_CFI_AMDSTD=y
--CONFIG_MTD_COMPLEX_MAPPINGS=y
--CONFIG_MTD_PHYSMAP_OF=y
--CONFIG_BLK_DEV_LOOP=m
--CONFIG_BLK_DEV_CRYPTOLOOP=m
--CONFIG_BLK_DEV_NBD=m
--CONFIG_BLK_DEV_RAM=y
--CONFIG_BLK_DEV_RAM_SIZE=16384
--CONFIG_SCSI=m
--CONFIG_BLK_DEV_SD=m
--CONFIG_CHR_DEV_ST=m
--CONFIG_CHR_DEV_OSST=m
--CONFIG_BLK_DEV_SR=m
--CONFIG_BLK_DEV_SR_VENDOR=y
--CONFIG_CHR_DEV_SG=m
--CONFIG_SCSI_CONSTANTS=y
--CONFIG_SCSI_LOGGING=y
--CONFIG_SCSI_ISCSI_ATTRS=m
--CONFIG_BLK_DEV_3W_XXXX_RAID=m
--CONFIG_SCSI_3W_9XXX=m
--CONFIG_SCSI_ACARD=m
--CONFIG_SCSI_AACRAID=m
--CONFIG_SCSI_AIC7XXX=m
--CONFIG_AIC7XXX_CMDS_PER_DEVICE=4
--CONFIG_AIC7XXX_RESET_DELAY_MS=15000
--# CONFIG_AIC7XXX_DEBUG_ENABLE is not set
--# CONFIG_AIC7XXX_REG_PRETTY_PRINT is not set
--CONFIG_SCSI_AIC79XX=m
--CONFIG_AIC79XX_CMDS_PER_DEVICE=4
--CONFIG_AIC79XX_RESET_DELAY_MS=15000
--# CONFIG_AIC79XX_DEBUG_ENABLE is not set
--# CONFIG_AIC79XX_REG_PRETTY_PRINT is not set
--CONFIG_SCSI_ARCMSR=m
--CONFIG_MEGARAID_NEWGEN=y
--CONFIG_MEGARAID_MM=m
--CONFIG_MEGARAID_MAILBOX=m
--CONFIG_MEGARAID_SAS=m
--CONFIG_SCSI_FUTURE_DOMAIN=m
--CONFIG_SCSI_GDTH=m
--CONFIG_SCSI_IPS=m
--CONFIG_SCSI_INITIO=m
--CONFIG_SCSI_SYM53C8XX_2=m
--CONFIG_SCSI_QLOGIC_1280=m
--CONFIG_NETDEVICES=y
--CONFIG_BONDING=m
--CONFIG_DUMMY=m
--CONFIG_NETCONSOLE=m
--CONFIG_TUN=m
--# CONFIG_ATM_DRIVERS is not set
--CONFIG_MV643XX_ETH=y
--CONFIG_VITESSE_PHY=y
--CONFIG_INPUT_EVDEV=y
--# CONFIG_INPUT_KEYBOARD is not set
--# CONFIG_INPUT_MOUSE is not set
--CONFIG_INPUT_MISC=y
--CONFIG_INPUT_UINPUT=m
--# CONFIG_SERIO is not set
--# CONFIG_LEGACY_PTYS is not set
--CONFIG_SERIAL_NONSTANDARD=y
--CONFIG_SERIAL_MPSC=y
--CONFIG_SERIAL_MPSC_CONSOLE=y
--CONFIG_NVRAM=m
--CONFIG_RAW_DRIVER=y
--CONFIG_MAX_RAW_DEVS=8192
--CONFIG_I2C=m
--CONFIG_I2C_CHARDEV=m
--CONFIG_I2C_MV64XXX=m
--CONFIG_HWMON=m
--CONFIG_SENSORS_ADM1021=m
--CONFIG_SENSORS_ADM1025=m
--CONFIG_SENSORS_ADM1026=m
--CONFIG_SENSORS_ADM1031=m
--CONFIG_SENSORS_DS1621=m
--CONFIG_SENSORS_GL518SM=m
--CONFIG_SENSORS_MAX1619=m
--CONFIG_SENSORS_LM75=m
--CONFIG_SENSORS_LM77=m
--CONFIG_SENSORS_LM78=m
--CONFIG_SENSORS_LM80=m
--CONFIG_SENSORS_LM83=m
--CONFIG_SENSORS_LM85=m
--CONFIG_SENSORS_LM87=m
--CONFIG_SENSORS_LM90=m
--CONFIG_SENSORS_PCF8591=m
--CONFIG_SENSORS_VIA686A=m
--CONFIG_SENSORS_W83781D=m
--CONFIG_SENSORS_W83L785TS=m
--CONFIG_WATCHDOG=y
--CONFIG_SOFT_WATCHDOG=m
--CONFIG_PCIPCWATCHDOG=m
--CONFIG_WDTPCI=m
--CONFIG_USBPCWATCHDOG=m
--# CONFIG_VGA_CONSOLE is not set
--CONFIG_USB=m
--CONFIG_USB_MON=m
--CONFIG_USB_EHCI_HCD=m
--CONFIG_USB_EHCI_ROOT_HUB_TT=y
--CONFIG_USB_OHCI_HCD=m
--CONFIG_USB_OHCI_HCD_PPC_OF_BE=y
--CONFIG_USB_UHCI_HCD=m
--CONFIG_USB_ACM=m
--CONFIG_USB_PRINTER=m
--CONFIG_USB_STORAGE=m
--CONFIG_USB_STORAGE_DATAFAB=m
--CONFIG_USB_STORAGE_FREECOM=m
--CONFIG_USB_STORAGE_ISD200=m
--CONFIG_USB_STORAGE_SDDR09=m
--CONFIG_USB_STORAGE_SDDR55=m
--CONFIG_USB_STORAGE_JUMPSHOT=m
--CONFIG_USB_MDC800=m
--CONFIG_USB_MICROTEK=m
--CONFIG_USB_SERIAL=m
--CONFIG_USB_SERIAL_GENERIC=y
--CONFIG_USB_SERIAL_BELKIN=m
--CONFIG_USB_SERIAL_WHITEHEAT=m
--CONFIG_USB_SERIAL_DIGI_ACCELEPORT=m
--CONFIG_USB_SERIAL_EMPEG=m
--CONFIG_USB_SERIAL_FTDI_SIO=m
--CONFIG_USB_SERIAL_VISOR=m
--CONFIG_USB_SERIAL_IPAQ=m
--CONFIG_USB_SERIAL_IR=m
--CONFIG_USB_SERIAL_EDGEPORT=m
--CONFIG_USB_SERIAL_EDGEPORT_TI=m
--CONFIG_USB_SERIAL_KEYSPAN_PDA=m
--CONFIG_USB_SERIAL_KEYSPAN=m
--CONFIG_USB_SERIAL_KLSI=m
--CONFIG_USB_SERIAL_KOBIL_SCT=m
--CONFIG_USB_SERIAL_MCT_U232=m
--CONFIG_USB_SERIAL_PL2303=m
--CONFIG_USB_SERIAL_SAFE=m
--CONFIG_USB_SERIAL_SAFE_PADDED=y
--CONFIG_USB_SERIAL_CYBERJACK=m
--CONFIG_USB_SERIAL_XIRCOM=m
--CONFIG_USB_SERIAL_OMNINET=m
--CONFIG_USB_EMI62=m
--CONFIG_USB_RIO500=m
--CONFIG_USB_LEGOTOWER=m
--CONFIG_USB_LCD=m
--CONFIG_USB_LED=m
--CONFIG_USB_TEST=m
--CONFIG_USB_ATM=m
--CONFIG_USB_SPEEDTOUCH=m
--CONFIG_INFINIBAND=m
--CONFIG_INFINIBAND_USER_MAD=m
--CONFIG_INFINIBAND_USER_ACCESS=m
--CONFIG_INFINIBAND_MTHCA=m
--CONFIG_INFINIBAND_IPOIB=m
--CONFIG_INFINIBAND_IPOIB_CM=y
--CONFIG_INFINIBAND_SRP=m
--CONFIG_DMADEVICES=y
--CONFIG_EXT4_FS=m
--CONFIG_EXT4_FS_POSIX_ACL=y
--CONFIG_EXT4_FS_SECURITY=y
--CONFIG_QUOTA=y
--CONFIG_QFMT_V2=y
--CONFIG_AUTOFS4_FS=m
--CONFIG_UDF_FS=m
--CONFIG_MSDOS_FS=m
--CONFIG_VFAT_FS=m
--CONFIG_FAT_DEFAULT_IOCHARSET="ascii"
--CONFIG_PROC_KCORE=y
--CONFIG_TMPFS=y
--CONFIG_HFS_FS=m
--CONFIG_HFSPLUS_FS=m
--CONFIG_JFFS2_FS=y
--CONFIG_CRAMFS=m
--CONFIG_VXFS_FS=m
--CONFIG_NFS_FS=y
--CONFIG_NFS_V3_ACL=y
--CONFIG_NFS_V4=y
--CONFIG_ROOT_NFS=y
--CONFIG_CIFS=m
--CONFIG_CIFS_XATTR=y
--CONFIG_CIFS_POSIX=y
--CONFIG_NLS=y
--CONFIG_NLS_DEFAULT="utf8"
--CONFIG_NLS_CODEPAGE_437=y
--CONFIG_NLS_CODEPAGE_737=m
--CONFIG_NLS_CODEPAGE_775=m
--CONFIG_NLS_CODEPAGE_850=m
--CONFIG_NLS_CODEPAGE_852=m
--CONFIG_NLS_CODEPAGE_855=m
--CONFIG_NLS_CODEPAGE_857=m
--CONFIG_NLS_CODEPAGE_860=m
--CONFIG_NLS_CODEPAGE_861=m
--CONFIG_NLS_CODEPAGE_862=m
--CONFIG_NLS_CODEPAGE_863=m
--CONFIG_NLS_CODEPAGE_864=m
--CONFIG_NLS_CODEPAGE_865=m
--CONFIG_NLS_CODEPAGE_866=m
--CONFIG_NLS_CODEPAGE_869=m
--CONFIG_NLS_CODEPAGE_936=m
--CONFIG_NLS_CODEPAGE_950=m
--CONFIG_NLS_CODEPAGE_932=m
--CONFIG_NLS_CODEPAGE_949=m
--CONFIG_NLS_CODEPAGE_874=m
--CONFIG_NLS_ISO8859_8=m
--CONFIG_NLS_CODEPAGE_1250=m
--CONFIG_NLS_CODEPAGE_1251=m
--CONFIG_NLS_ASCII=y
--CONFIG_NLS_ISO8859_1=m
--CONFIG_NLS_ISO8859_2=m
--CONFIG_NLS_ISO8859_3=m
--CONFIG_NLS_ISO8859_4=m
--CONFIG_NLS_ISO8859_5=m
--CONFIG_NLS_ISO8859_6=m
--CONFIG_NLS_ISO8859_7=m
--CONFIG_NLS_ISO8859_9=m
--CONFIG_NLS_ISO8859_13=m
--CONFIG_NLS_ISO8859_14=m
--CONFIG_NLS_ISO8859_15=m
--CONFIG_NLS_KOI8_R=m
--CONFIG_NLS_KOI8_U=m
--CONFIG_CRC_CCITT=m
--CONFIG_CRC_T10DIF=m
--CONFIG_DEBUG_INFO=y
--CONFIG_MAGIC_SYSRQ=y
--CONFIG_DEBUG_KERNEL=y
--CONFIG_DEBUG_STACK_USAGE=y
--CONFIG_DEBUG_HIGHMEM=y
--CONFIG_DEBUG_STACKOVERFLOW=y
--CONFIG_DETECT_HUNG_TASK=y
--CONFIG_DEBUG_SPINLOCK=y
--CONFIG_BOOTX_TEXT=y
--CONFIG_PPC_EARLY_DEBUG=y
--CONFIG_SECURITY=y
--CONFIG_SECURITY_NETWORK=y
--CONFIG_SECURITY_SELINUX=y
--CONFIG_SECURITY_SELINUX_BOOTPARAM=y
--CONFIG_SECURITY_SELINUX_DISABLE=y
--CONFIG_CRYPTO_HMAC=y
--CONFIG_CRYPTO_MICHAEL_MIC=m
--CONFIG_CRYPTO_SHA1=y
--CONFIG_CRYPTO_SHA512=m
--CONFIG_CRYPTO_WP512=m
--CONFIG_CRYPTO_BLOWFISH=m
--CONFIG_CRYPTO_CAST6=m
--CONFIG_CRYPTO_KHAZAD=m
--CONFIG_CRYPTO_SERPENT=m
--CONFIG_CRYPTO_TEA=m
--CONFIG_CRYPTO_TWOFISH=m
-diff --git a/arch/powerpc/platforms/embedded6xx/Kconfig b/arch/powerpc/platforms/embedded6xx/Kconfig
-index 9fb2d5912c5a..8ea16db5ff48 100644
---- a/arch/powerpc/platforms/embedded6xx/Kconfig
-+++ b/arch/powerpc/platforms/embedded6xx/Kconfig
-@@ -48,16 +48,6 @@ config PPC_HOLLY
- 	  Select PPC_HOLLY if configuring for an IBM 750GX/CL Eval
- 	  Board with TSI108/9 bridge (Hickory/Holly)
- 
--config PPC_C2K
--	bool "SBS/GEFanuc C2K board"
--	depends on EMBEDDED6xx
--	select MV64X60
--	select NOT_COHERENT_CACHE
--	select MTD_CFI_I4
--	help
--	  This option enables support for the GE Fanuc C2K board (formerly
--	  an SBS board).
 -
- config MVME5100
- 	bool "Motorola/Emerson MVME5100"
- 	depends on EMBEDDED6xx
-diff --git a/arch/powerpc/platforms/embedded6xx/Makefile b/arch/powerpc/platforms/embedded6xx/Makefile
-index 12154e3257ad..e656ae9f23c6 100644
---- a/arch/powerpc/platforms/embedded6xx/Makefile
-+++ b/arch/powerpc/platforms/embedded6xx/Makefile
-@@ -6,7 +6,6 @@ obj-$(CONFIG_MPC7448HPC2)	+= mpc7448_hpc2.o
- obj-$(CONFIG_LINKSTATION)	+= linkstation.o ls_uart.o
- obj-$(CONFIG_STORCENTER)	+= storcenter.o
- obj-$(CONFIG_PPC_HOLLY)		+= holly.o
--obj-$(CONFIG_PPC_C2K)		+= c2k.o
- obj-$(CONFIG_USBGECKO_UDBG)	+= usbgecko_udbg.o
- obj-$(CONFIG_GAMECUBE_COMMON)	+= flipper-pic.o
- obj-$(CONFIG_GAMECUBE)		+= gamecube.o
-diff --git a/arch/powerpc/platforms/embedded6xx/c2k.c b/arch/powerpc/platforms/embedded6xx/c2k.c
-deleted file mode 100644
-index d19e4e759597..000000000000
---- a/arch/powerpc/platforms/embedded6xx/c2k.c
-+++ /dev/null
-@@ -1,148 +0,0 @@
--/*
-- * Board setup routines for the GEFanuc C2K board
-- *
-- * Author: Remi Machet <rmachet@slac.stanford.edu>
-- *
-- * Originated from prpmc2800.c
-- *
-- * 2008 (c) Stanford University
-- * 2007 (c) MontaVista, Software, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published
-- * by the Free Software Foundation.
-- */
+-static struct
+-mv64x60_mem_win mv64x60_pci_acc[2][MV64x60_PCI_ACC_CNTL_WINDOWS] = {
+-	{ /* hose 0 */
+-		{
+-			.hi	= MV64x60_PCI0_ACC_CNTL_0_BASE_HI,
+-			.lo	= MV64x60_PCI0_ACC_CNTL_0_BASE_LO,
+-			.size	= MV64x60_PCI0_ACC_CNTL_0_SIZE,
+-		},
+-		{
+-			.hi	= MV64x60_PCI0_ACC_CNTL_1_BASE_HI,
+-			.lo	= MV64x60_PCI0_ACC_CNTL_1_BASE_LO,
+-			.size	= MV64x60_PCI0_ACC_CNTL_1_SIZE,
+-		},
+-		{
+-			.hi	= MV64x60_PCI0_ACC_CNTL_2_BASE_HI,
+-			.lo	= MV64x60_PCI0_ACC_CNTL_2_BASE_LO,
+-			.size	= MV64x60_PCI0_ACC_CNTL_2_SIZE,
+-		},
+-		{
+-			.hi	= MV64x60_PCI0_ACC_CNTL_3_BASE_HI,
+-			.lo	= MV64x60_PCI0_ACC_CNTL_3_BASE_LO,
+-			.size	= MV64x60_PCI0_ACC_CNTL_3_SIZE,
+-		},
+-	},
+-	{ /* hose 1 */
+-		{
+-			.hi	= MV64x60_PCI1_ACC_CNTL_0_BASE_HI,
+-			.lo	= MV64x60_PCI1_ACC_CNTL_0_BASE_LO,
+-			.size	= MV64x60_PCI1_ACC_CNTL_0_SIZE,
+-		},
+-		{
+-			.hi	= MV64x60_PCI1_ACC_CNTL_1_BASE_HI,
+-			.lo	= MV64x60_PCI1_ACC_CNTL_1_BASE_LO,
+-			.size	= MV64x60_PCI1_ACC_CNTL_1_SIZE,
+-		},
+-		{
+-			.hi	= MV64x60_PCI1_ACC_CNTL_2_BASE_HI,
+-			.lo	= MV64x60_PCI1_ACC_CNTL_2_BASE_LO,
+-			.size	= MV64x60_PCI1_ACC_CNTL_2_SIZE,
+-		},
+-		{
+-			.hi	= MV64x60_PCI1_ACC_CNTL_3_BASE_HI,
+-			.lo	= MV64x60_PCI1_ACC_CNTL_3_BASE_LO,
+-			.size	= MV64x60_PCI1_ACC_CNTL_3_SIZE,
+-		},
+-	},
+-};
 -
--#include <linux/stddef.h>
--#include <linux/kernel.h>
--#include <linux/delay.h>
--#include <linux/interrupt.h>
--#include <linux/seq_file.h>
--#include <linux/time.h>
--#include <linux/of.h>
+-static struct mv64x60_mem_win mv64x60_pci2reg[2] = {
+-	{
+-		.hi	= 0x24,
+-		.lo	= 0x20,
+-		.size	= 0,
+-	},
+-	{
+-		.hi	= 0xa4,
+-		.lo	= 0xa0,
+-		.size	= 0,
+-	},
+-};
 -
--#include <asm/machdep.h>
--#include <asm/prom.h>
--#include <asm/time.h>
--
--#include <mm/mmu_decl.h>
--
--#include <sysdev/mv64x60.h>
--
--#define MV64x60_MPP_CNTL_0	0x0000
--#define MV64x60_MPP_CNTL_2	0x0008
--
--#define MV64x60_GPP_IO_CNTL	0x0000
--#define MV64x60_GPP_LEVEL_CNTL	0x0010
--#define MV64x60_GPP_VALUE_SET	0x0018
--
--static void __iomem *mv64x60_mpp_reg_base;
--static void __iomem *mv64x60_gpp_reg_base;
--
--static void __init c2k_setup_arch(void)
+-/* Only need to use 1 window (per hose) to get access to all of system memory */
+-void mv64x60_config_pci_windows(u8 *bridge_base, u8 *bridge_pbase, u8 hose,
+-		u8 bus, u32 mem_size, u32 acc_bits)
 -{
--	struct device_node *np;
--	phys_addr_t paddr;
--	const unsigned int *reg;
+-	u32 i, offset, bar_enable, enables;
 -
--	/*
--	 * ioremap mpp and gpp registers in case they are later
--	 * needed by c2k_reset_board().
--	 */
--	np = of_find_compatible_node(NULL, NULL, "marvell,mv64360-mpp");
--	reg = of_get_property(np, "reg", NULL);
--	paddr = of_translate_address(np, reg);
--	of_node_put(np);
--	mv64x60_mpp_reg_base = ioremap(paddr, reg[1]);
+-	/* Disable all windows but PCI MEM -> Bridge's regs window */
+-	enables = ~(1 << 9);
+-	bar_enable = hose ? MV64x60_PCI1_BAR_ENABLE : MV64x60_PCI0_BAR_ENABLE;
+-	out_le32((u32 *)(bridge_base + bar_enable), enables);
 -
--	np = of_find_compatible_node(NULL, NULL, "marvell,mv64360-gpp");
--	reg = of_get_property(np, "reg", NULL);
--	paddr = of_translate_address(np, reg);
--	of_node_put(np);
--	mv64x60_gpp_reg_base = ioremap(paddr, reg[1]);
+-	for (i=0; i<MV64x60_PCI_ACC_CNTL_WINDOWS; i++)
+-		out_le32((u32 *)(bridge_base + mv64x60_pci_acc[hose][i].lo), 0);
 -
--#ifdef CONFIG_PCI
--	mv64x60_pci_init();
--#endif
+-	/* If mem_size is 0, leave windows disabled */
+-	if (mem_size == 0)
+-		return;
+-
+-	/* Cause automatic updates of PCI remap regs */
+-	offset = hose ?
+-		MV64x60_PCI1_PCI_DECODE_CNTL : MV64x60_PCI0_PCI_DECODE_CNTL;
+-	i = in_le32((u32 *)(bridge_base + offset));
+-	out_le32((u32 *)(bridge_base + offset), i & ~0x1);
+-
+-	mem_size = (mem_size - 1) & 0xfffff000;
+-
+-	/* Map PCI MEM addr 0 -> System Mem addr 0 */
+-	mv64x60_cfg_write(bridge_base, hose, bus,
+-			PCI_DEVFN(0, mv64x60_pci2mem[hose].fcn),
+-			mv64x60_pci2mem[hose].hi, 0);
+-	mv64x60_cfg_write(bridge_base, hose, bus,
+-			PCI_DEVFN(0, mv64x60_pci2mem[hose].fcn),
+-			mv64x60_pci2mem[hose].lo, 0);
+-	out_le32((u32 *)(bridge_base + mv64x60_pci2mem[hose].size),mem_size);
+-
+-	acc_bits |= MV64x60_PCI_ACC_CNTL_ENABLE;
+-	out_le32((u32 *)(bridge_base + mv64x60_pci_acc[hose][0].hi), 0);
+-	out_le32((u32 *)(bridge_base + mv64x60_pci_acc[hose][0].lo), acc_bits);
+-	out_le32((u32 *)(bridge_base + mv64x60_pci_acc[hose][0].size),mem_size);
+-
+-	/* Set PCI MEM->bridge's reg window to where they are in CPU mem map */
+-	i = (u32)bridge_base;
+-	i &= 0xffff0000;
+-	i |= (0x2 << 1);
+-	mv64x60_cfg_write(bridge_base, hose, bus, PCI_DEVFN(0,0),
+-			mv64x60_pci2reg[hose].hi, 0);
+-	mv64x60_cfg_write(bridge_base, hose, bus, PCI_DEVFN(0,0),
+-			mv64x60_pci2reg[hose].lo, i);
+-
+-	enables &= ~0x1; /* Enable PCI MEM -> System Mem window 0 */
+-	out_le32((u32 *)(bridge_base + bar_enable), enables);
 -}
 -
--static void c2k_reset_board(void)
+-/* CPU -> PCI I/O & MEM setup */
+-struct mv64x60_cpu2pci_win mv64x60_cpu2pci_io[2] = {
+-	{ /* hose 0 */
+-		.lo		= MV64x60_CPU2PCI0_IO_BASE,
+-		.size		= MV64x60_CPU2PCI0_IO_SIZE,
+-		.remap_hi	= 0,
+-		.remap_lo	= MV64x60_CPU2PCI0_IO_REMAP,
+-	},
+-	{ /* hose 1 */
+-		.lo		= MV64x60_CPU2PCI1_IO_BASE,
+-		.size		= MV64x60_CPU2PCI1_IO_SIZE,
+-		.remap_hi	= 0,
+-		.remap_lo	= MV64x60_CPU2PCI1_IO_REMAP,
+-	},
+-};
+-
+-struct mv64x60_cpu2pci_win mv64x60_cpu2pci_mem[2] = {
+-	{ /* hose 0 */
+-		.lo		= MV64x60_CPU2PCI0_MEM_0_BASE,
+-		.size		= MV64x60_CPU2PCI0_MEM_0_SIZE,
+-		.remap_hi	= MV64x60_CPU2PCI0_MEM_0_REMAP_HI,
+-		.remap_lo	= MV64x60_CPU2PCI0_MEM_0_REMAP_LO,
+-	},
+-	{ /* hose 1 */
+-		.lo		= MV64x60_CPU2PCI1_MEM_0_BASE,
+-		.size		= MV64x60_CPU2PCI1_MEM_0_SIZE,
+-		.remap_hi	= MV64x60_CPU2PCI1_MEM_0_REMAP_HI,
+-		.remap_lo	= MV64x60_CPU2PCI1_MEM_0_REMAP_LO,
+-	},
+-};
+-
+-/* Only need to set up 1 window to pci mem space */
+-void mv64x60_config_cpu2pci_window(u8 *bridge_base, u8 hose, u32 pci_base_hi,
+-		u32 pci_base_lo, u32 cpu_base, u32 size,
+-		struct mv64x60_cpu2pci_win *offset_tbl)
 -{
--	u32 temp;
+-	cpu_base >>= 16;
+-	cpu_base |= MV64x60_CPU2PCI_SWAP_NONE;
+-	out_le32((u32 *)(bridge_base + offset_tbl[hose].lo), cpu_base);
 -
--	local_irq_disable();
+-	if (offset_tbl[hose].remap_hi != 0)
+-		out_le32((u32 *)(bridge_base + offset_tbl[hose].remap_hi),
+-				pci_base_hi);
+-	out_le32((u32 *)(bridge_base + offset_tbl[hose].remap_lo),
+-			pci_base_lo >> 16);
 -
--	temp = in_le32(mv64x60_mpp_reg_base + MV64x60_MPP_CNTL_0);
--	temp &= 0xFFFF0FFF;
--	out_le32(mv64x60_mpp_reg_base + MV64x60_MPP_CNTL_0, temp);
--
--	temp = in_le32(mv64x60_gpp_reg_base + MV64x60_GPP_LEVEL_CNTL);
--	temp |= 0x00000004;
--	out_le32(mv64x60_gpp_reg_base + MV64x60_GPP_LEVEL_CNTL, temp);
--
--	temp = in_le32(mv64x60_gpp_reg_base + MV64x60_GPP_IO_CNTL);
--	temp |= 0x00000004;
--	out_le32(mv64x60_gpp_reg_base + MV64x60_GPP_IO_CNTL, temp);
--
--	temp = in_le32(mv64x60_mpp_reg_base + MV64x60_MPP_CNTL_2);
--	temp &= 0xFFFF0FFF;
--	out_le32(mv64x60_mpp_reg_base + MV64x60_MPP_CNTL_2, temp);
--
--	temp = in_le32(mv64x60_gpp_reg_base + MV64x60_GPP_LEVEL_CNTL);
--	temp |= 0x00080000;
--	out_le32(mv64x60_gpp_reg_base + MV64x60_GPP_LEVEL_CNTL, temp);
--
--	temp = in_le32(mv64x60_gpp_reg_base + MV64x60_GPP_IO_CNTL);
--	temp |= 0x00080000;
--	out_le32(mv64x60_gpp_reg_base + MV64x60_GPP_IO_CNTL, temp);
--
--	out_le32(mv64x60_gpp_reg_base + MV64x60_GPP_VALUE_SET, 0x00080004);
+-	size = (size - 1) >> 16;
+-	out_le32((u32 *)(bridge_base + offset_tbl[hose].size), size);
 -}
 -
--static void __noreturn c2k_restart(char *cmd)
+-/* Read mem ctlr to get the amount of mem in system */
+-u32 mv64x60_get_mem_size(u8 *bridge_base)
 -{
--	c2k_reset_board();
--	msleep(100);
--	panic("restart failed\n");
+-	u32 enables, i, v;
+-	u32 mem = 0;
+-
+-	enables = in_le32((u32 *)(bridge_base + MV64x60_CPU_BAR_ENABLE)) & 0xf;
+-
+-	for (i=0; i<MV64x60_CPU2MEM_WINDOWS; i++)
+-		if (!(enables & (1<<i))) {
+-			v = in_le32((u32*)(bridge_base
+-						+ mv64x60_cpu2mem[i].size));
+-			v = ((v & 0xffff) + 1) << 16;
+-			mem += v;
+-		}
+-
+-	return mem;
 -}
 -
--#ifdef CONFIG_NOT_COHERENT_CACHE
--#define COHERENCY_SETTING "off"
--#else
--#define COHERENCY_SETTING "on"
--#endif
--
--void c2k_show_cpuinfo(struct seq_file *m)
+-/* Get physical address of bridge's registers */
+-u8 *mv64x60_get_bridge_pbase(void)
 -{
--	seq_printf(m, "Vendor\t\t: GEFanuc\n");
--	seq_printf(m, "coherency\t: %s\n", COHERENCY_SETTING);
+-	u32 v[2];
+-	void *devp;
+-
+-	devp = find_node_by_compatible(NULL, "marvell,mv64360");
+-	if (devp == NULL)
+-		goto err_out;
+-	if (getprop(devp, "reg", v, sizeof(v)) != sizeof(v))
+-		goto err_out;
+-
+-	return (u8 *)v[0];
+-
+-err_out:
+-	return 0;
 -}
 -
--/*
-- * Called very early, device-tree isn't unflattened
-- */
--static int __init c2k_probe(void)
+-/* Get virtual address of bridge's registers */
+-u8 *mv64x60_get_bridge_base(void)
 -{
--	if (!of_machine_is_compatible("GEFanuc,C2K"))
+-	u32 v;
+-	void *devp;
+-
+-	devp = find_node_by_compatible(NULL, "marvell,mv64360");
+-	if (devp == NULL)
+-		goto err_out;
+-	if (getprop(devp, "virtual-reg", &v, sizeof(v)) != sizeof(v))
+-		goto err_out;
+-
+-	return (u8 *)v;
+-
+-err_out:
+-	return 0;
+-}
+-
+-u8 mv64x60_is_coherent(void)
+-{
+-	u32 v;
+-	void *devp;
+-
+-	devp = finddevice("/");
+-	if (devp == NULL)
+-		return 1; /* Assume coherency on */
+-
+-	if (getprop(devp, "coherency-off", &v, sizeof(v)) < 0)
+-		return 1; /* Coherency on */
+-	else
 -		return 0;
--
--	printk(KERN_INFO "Detected a GEFanuc C2K board\n");
--
--	_set_L2CR(0);
--	_set_L2CR(L2CR_L2E | L2CR_L2PE | L2CR_L2I);
--
--	mv64x60_init_early();
--
--	return 1;
 -}
+diff --git a/arch/powerpc/boot/mv64x60.h b/arch/powerpc/boot/mv64x60.h
+deleted file mode 100644
+index b827105e6e54..000000000000
+--- a/arch/powerpc/boot/mv64x60.h
++++ /dev/null
+@@ -1,70 +0,0 @@
+-/*
+- * Author: Mark A. Greer <source@mvista.com>
+- *
+- * 2007 (c) MontaVista Software, Inc. This file is licensed under
+- * the terms of the GNU General Public License version 2. This program
+- * is licensed "as is" without any warranty of any kind, whether express
+- * or implied.
+- */
 -
--define_machine(c2k) {
--	.name			= "C2K",
--	.probe			= c2k_probe,
--	.setup_arch		= c2k_setup_arch,
--	.show_cpuinfo		= c2k_show_cpuinfo,
--	.init_IRQ		= mv64x60_init_irq,
--	.get_irq		= mv64x60_get_irq,
--	.restart		= c2k_restart,
--	.calibrate_decr		= generic_calibrate_decr,
+-#ifndef _PPC_BOOT_MV64x60_H_
+-#define _PPC_BOOT_MV64x60_H_
+-
+-#define MV64x60_CPU_BAR_ENABLE			0x0278
+-
+-#define MV64x60_PCI_ACC_CNTL_ENABLE		(1<<0)
+-#define MV64x60_PCI_ACC_CNTL_REQ64		(1<<1)
+-#define MV64x60_PCI_ACC_CNTL_SNOOP_NONE		0x00000000
+-#define MV64x60_PCI_ACC_CNTL_SNOOP_WT		0x00000004
+-#define MV64x60_PCI_ACC_CNTL_SNOOP_WB		0x00000008
+-#define MV64x60_PCI_ACC_CNTL_SNOOP_MASK		0x0000000c
+-#define MV64x60_PCI_ACC_CNTL_ACCPROT		(1<<4)
+-#define MV64x60_PCI_ACC_CNTL_WRPROT		(1<<5)
+-#define MV64x60_PCI_ACC_CNTL_SWAP_BYTE		0x00000000
+-#define MV64x60_PCI_ACC_CNTL_SWAP_NONE		0x00000040
+-#define MV64x60_PCI_ACC_CNTL_SWAP_BYTE_WORD	0x00000080
+-#define MV64x60_PCI_ACC_CNTL_SWAP_WORD		0x000000c0
+-#define MV64x60_PCI_ACC_CNTL_SWAP_MASK		0x000000c0
+-#define MV64x60_PCI_ACC_CNTL_MBURST_32_BYTES	0x00000000
+-#define MV64x60_PCI_ACC_CNTL_MBURST_64_BYTES	0x00000100
+-#define MV64x60_PCI_ACC_CNTL_MBURST_128_BYTES	0x00000200
+-#define MV64x60_PCI_ACC_CNTL_MBURST_MASK	0x00000300
+-#define MV64x60_PCI_ACC_CNTL_RDSIZE_32_BYTES	0x00000000
+-#define MV64x60_PCI_ACC_CNTL_RDSIZE_64_BYTES	0x00000400
+-#define MV64x60_PCI_ACC_CNTL_RDSIZE_128_BYTES	0x00000800
+-#define MV64x60_PCI_ACC_CNTL_RDSIZE_256_BYTES	0x00000c00
+-#define MV64x60_PCI_ACC_CNTL_RDSIZE_MASK	0x00000c00
+-
+-struct mv64x60_cpu2pci_win {
+-	u32 lo;
+-	u32 size;
+-	u32 remap_hi;
+-	u32 remap_lo;
 -};
+-
+-extern struct mv64x60_cpu2pci_win mv64x60_cpu2pci_io[2];
+-extern struct mv64x60_cpu2pci_win mv64x60_cpu2pci_mem[2];
+-
+-u32 mv64x60_cfg_read(u8 *bridge_base, u8 hose, u8 bus, u8 devfn,
+-		u8 offset);
+-void mv64x60_cfg_write(u8 *bridge_base, u8 hose, u8 bus, u8 devfn,
+-		u8 offset, u32 val);
+-
+-void mv64x60_config_ctlr_windows(u8 *bridge_base, u8 *bridge_pbase,
+-		u8 is_coherent);
+-void mv64x60_config_pci_windows(u8 *bridge_base, u8 *bridge_pbase, u8 hose,
+-		u8 bus, u32 mem_size, u32 acc_bits);
+-void mv64x60_config_cpu2pci_window(u8 *bridge_base, u8 hose, u32 pci_base_hi,
+-		u32 pci_base_lo, u32 cpu_base, u32 size,
+-		struct mv64x60_cpu2pci_win *offset_tbl);
+-u32 mv64x60_get_mem_size(u8 *bridge_base);
+-u8 *mv64x60_get_bridge_pbase(void);
+-u8 *mv64x60_get_bridge_base(void);
+-u8 mv64x60_is_coherent(void);
+-
+-int mv64x60_i2c_open(void);
+-int mv64x60_i2c_read(u32 devaddr, u8 *buf, u32 offset, u32 offset_size,
+-		u32 count);
+-void mv64x60_i2c_close(void);
+-
+-#endif /* _PPC_BOOT_MV64x60_H_ */
 -- 
 2.16.2
