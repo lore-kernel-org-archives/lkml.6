@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49XvzpwAfhYDUZ85U0xicbf07PIeljAdsXcUGnc1i/2WXHr/k+6kAP4RozoOENseMruUU2Z
-ARC-Seal: i=1; a=rsa-sha256; t=1523022115; cv=none;
+X-Google-Smtp-Source: AIpwx488pAeFywEBz3zVcOjonUh4taUjOlDEBiIMZlxxucuTWuaG7yJmTNhwaUVpZO3nWCPaG0z3
+ARC-Seal: i=1; a=rsa-sha256; t=1523022113; cv=none;
         d=google.com; s=arc-20160816;
-        b=LJLnCmhEp6eZZyG3aEuBMydlRdmxSbz8w+OQ8ql6Lkp5xheTb3kh74BhKEfpWAhdi5
-         ReVD/13N5npzEJsqYPsflnWWFBQ2Y67JQ0jVbiFj6VlwHfkk5PjWRbRbD4dNPNtAXzBH
-         eU4WHS5S4TyM+OThUgC/c7KpoidhPRSv1mYLcUMOHZ0me7gvOpeYCGImrPDjjpIA04po
-         /dMYq3+IGJYssIy+CoV9QMJ/SE/FowWZka5r5ipxIcok+aBtY2sn+x3aiPnUAXZJI+Pa
-         0OOaTLuuudoHrmN2Q64VaS1rjet09/mlQuR7Fvsk4//skX/TmvGePyrbpOymKs4UXhAW
-         NtrQ==
+        b=EkchW3bI8a4j/v2UXnhR6OqPSGe9QmZ8WAy/jaCXh2zIAUIjiGkbFBa2+RPuTSVuGj
+         Pd+rzg+O036e53hz40MDO+JtcoBEXwmCPKYd4QUdKuBuDyQxQElydqEOj5VfF/1ZpQKM
+         +nSADflSsZYMEGdCqxLIAXLZahau/irABjOwz0qCXP3MRWbmQKlBANjZVDxB/xtTOZpT
+         R7tVGtdVl06rn3j3pEHy+uWON7+EET958S/FvfHdQwM0WO+NxRpqmn3/c+4vKDDoanjH
+         W9t0q98NE3vRJYCWsDNePrdmB2Jbua+fPConKA/TtRrKzd4CxmSMPPlVtaK7bHkC2/R4
+         kywA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gLMfE0SR9/ontPGtpRqTVtMv3X8RK04QJxo7cvqXzPQ=;
-        b=vhp5DlhljlrE6A7DhnmDxdR8jPJzWPCNIss46TddTQRVpqQaJhmhOWRAu/gBmy8/Vz
-         7k7PeiKgYqftkdqb4KtlNRhmColJZCFbqa7LuqkMignTUxZLZJzERhQWtxH96Y7VTrxh
-         +/7C3LDvX/f0w1a4jDOw/eCjEFqDDkZwfvj5T7UicXnl1zttGbUzhVm8Z0ZNMrZxI1OV
-         PyUVNJ1ofws/jgxaj5cMkfMZ2wUdo974tzygxIN0YMzBkEqd61ZGxuA9BzANWyUu9NEw
-         3L9kS4IEMCMth8U7FIgUixKumwcBJxXAQBq22WfyMD8erBJT0LhOHyC6Ngu8Z1+Agq4D
-         MqaA==
+        bh=xLMXAwnc+FfHhvxShpU/FBWyAIJuoga6REeqBwjf48M=;
+        b=Gj1NwIIjfd4gNOb8DSuxMrMSetQdv9FOwWcvWvl2XKZYG530QEeaCTO3E4v6kKLZGO
+         zHwK952Xihnme1O1NapRl9sMLixxY2SpNnODysWbDrgxVYD1hc3ZewdQnAt6WedD559T
+         pGSV8b9+PuDIetcwWa8TRV7oDxbN1gIR+ajDkkA9Yc+WLitsPfOVqygLWy9ss3sgNbXs
+         Qp26BNIe1jdHbQ+w6A1Tdv+4tA070Uz0bC/OKdrVIx3n5EnBL0PqlqwPl1XawAYvw4Fn
+         KPoSbCzpJtoDP/SM10jFZR1b/7tb/sVtADqOL/KNXQD+sUFucDaZf+YnmQPojJh7Rb1s
+         JYQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com,
+	Michal Hocko <mhocko@suse.com>,
 	Florian Westphal <fw@strlen.de>,
-	Eric Dumazet <edumazet@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
 	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.15 33/72] netfilter: bridge: ebt_among: add more missing match size checks
-Date: Fri,  6 Apr 2018 15:24:08 +0200
-Message-Id: <20180406084352.132774410@linuxfoundation.org>
+Subject: [PATCH 4.15 32/72] netfilter: x_tables: make allocation less aggressive
+Date: Fri,  6 Apr 2018 15:24:07 +0200
+Message-Id: <20180406084352.045366378@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003597962532229?=
-X-GMAIL-MSGID: =?utf-8?q?1597004437710429214?=
+X-GMAIL-THRID: =?utf-8?q?1597004221950095682?=
+X-GMAIL-MSGID: =?utf-8?q?1597004435191399767?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,97 +52,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Michal Hocko <mhocko@kernel.org>
 
-commit c8d70a700a5b486bfa8e5a7d33d805389f6e59f9 upstream.
+commit 0537250fdc6c876ed4cbbe874c739aebef493ee2 upstream.
 
-ebt_among is special, it has a dynamic match size and is exempt
-from the central size checks.
+syzbot has noticed that xt_alloc_table_info can allocate a lot of memory.
+This is an admin only interface but an admin in a namespace is sufficient
+as well.  eacd86ca3b03 ("net/netfilter/x_tables.c: use kvmalloc() in
+xt_alloc_table_info()") has changed the opencoded kmalloc->vmalloc
+fallback into kvmalloc.  It has dropped __GFP_NORETRY on the way because
+vmalloc has simply never fully supported __GFP_NORETRY semantic.  This is
+still the case because e.g.  page tables backing the vmalloc area are
+hardcoded GFP_KERNEL.
 
-commit c4585a2823edf ("bridge: ebt_among: add missing match size checks")
-added validation for pool size, but missed fact that the macros
-ebt_among_wh_src/dst can already return out-of-bound result because
-they do not check value of wh_src/dst_ofs (an offset) vs. the size
-of the match that userspace gave to us.
+Revert back to __GFP_NORETRY as a poors man defence against excessively
+large allocation request here.  We will not rule out the OOM killer
+completely but __GFP_NORETRY should at least stop the large request in
+most cases.
 
-v2:
-check that offset has correct alignment.
-Paolo Abeni points out that we should also check that src/dst
-wormhash arrays do not overlap, and src + length lines up with
-start of dst (or vice versa).
-v3: compact wormhash_sizes_valid() part
-
-NB: Fixes tag is intentionally wrong, this bug exists from day
-one when match was added for 2.6 kernel. Tag is there so stable
-maintainers will notice this one too.
-
-Tested with same rules from the earlier patch.
-
-Fixes: c4585a2823edf ("bridge: ebt_among: add missing match size checks")
-Reported-by: <syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+[akpm@linux-foundation.org: coding-style fixes]
+Fixes: eacd86ca3b03 ("net/netfilter/x_tables.c: use kvmalloc() in xt_alloc_tableLink: http://lkml.kernel.org/r/20180130140104.GE21609@dhcp22.suse.cz
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: David S. Miller <davem@davemloft.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bridge/netfilter/ebt_among.c |   34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ net/netfilter/x_tables.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/bridge/netfilter/ebt_among.c
-+++ b/net/bridge/netfilter/ebt_among.c
-@@ -177,6 +177,28 @@ static bool poolsize_invalid(const struc
- 	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
- }
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -1008,7 +1008,12 @@ struct xt_table_info *xt_alloc_table_inf
+ 	if ((size >> PAGE_SHIFT) + 2 > totalram_pages)
+ 		return NULL;
  
-+static bool wormhash_offset_invalid(int off, unsigned int len)
-+{
-+	if (off == 0) /* not present */
-+		return false;
-+
-+	if (off < (int)sizeof(struct ebt_among_info) ||
-+	    off % __alignof__(struct ebt_mac_wormhash))
-+		return true;
-+
-+	off += sizeof(struct ebt_mac_wormhash);
-+
-+	return off > len;
-+}
-+
-+static bool wormhash_sizes_valid(const struct ebt_mac_wormhash *wh, int a, int b)
-+{
-+	if (a == 0)
-+		a = sizeof(struct ebt_among_info);
-+
-+	return ebt_mac_wormhash_size(wh) + a == b;
-+}
-+
- static int ebt_among_mt_check(const struct xt_mtchk_param *par)
- {
- 	const struct ebt_among_info *info = par->matchinfo;
-@@ -189,6 +211,10 @@ static int ebt_among_mt_check(const stru
- 	if (expected_length > em->match_size)
- 		return -EINVAL;
+-	info = kvmalloc(sz, GFP_KERNEL);
++	/* __GFP_NORETRY is not fully supported by kvmalloc but it should
++	 * work reasonably well if sz is too large and bail out rather
++	 * than shoot all processes down before realizing there is nothing
++	 * more to reclaim.
++	 */
++	info = kvmalloc(sz, GFP_KERNEL | __GFP_NORETRY);
+ 	if (!info)
+ 		return NULL;
  
-+	if (wormhash_offset_invalid(info->wh_dst_ofs, em->match_size) ||
-+	    wormhash_offset_invalid(info->wh_src_ofs, em->match_size))
-+		return -EINVAL;
-+
- 	wh_dst = ebt_among_wh_dst(info);
- 	if (poolsize_invalid(wh_dst))
- 		return -EINVAL;
-@@ -201,6 +227,14 @@ static int ebt_among_mt_check(const stru
- 	if (poolsize_invalid(wh_src))
- 		return -EINVAL;
- 
-+	if (info->wh_src_ofs < info->wh_dst_ofs) {
-+		if (!wormhash_sizes_valid(wh_src, info->wh_src_ofs, info->wh_dst_ofs))
-+			return -EINVAL;
-+	} else {
-+		if (!wormhash_sizes_valid(wh_dst, info->wh_dst_ofs, info->wh_src_ofs))
-+			return -EINVAL;
-+	}
-+
- 	expected_length += ebt_mac_wormhash_size(wh_src);
- 
- 	if (em->match_size != EBT_ALIGN(expected_length)) {
