@@ -1,92 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeDFGVj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 02:21:39 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:42734 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751780AbeDFGVi (ORCPT
+        id S1752750AbeDFGYB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 02:24:01 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:10896 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751482AbeDFGX7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 02:21:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name A16CE332FE4
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        Fri, 6 Apr 2018 02:23:59 -0400
+Subject: Re: [PATCH 1/8] bindings: PCI: designware: Example update
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+ <33aa86ee667e8b435db080b8c683cb5df1bd6544.1522235224.git.gustavo.pimentel@synopsys.com>
+ <fa001440-0dfe-b84a-e5ef-9285043b5ede@ti.com>
+ <36a36857-2d79-2c2d-198d-a3b65cafc768@synopsys.com>
+ <c5ffa7d6-40b1-1702-c0fd-9ebb1b4197f8@ti.com>
+ <170b150d-d2c6-fee8-17f7-12a3107c13ff@ti.com>
+ <342e7438-ef13-e297-cc51-3df3a43a45d4@synopsys.com>
+CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <ed26b2df-64fc-4f12-5097-35070eb2c7db@ti.com>
+Date: Fri, 6 Apr 2018 11:53:47 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <342e7438-ef13-e297-cc51-3df3a43a45d4@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Date: Fri, 06 Apr 2018 08:21:35 +0200
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Kees Cook <keescook@chromium.org>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        keescook@google.com
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-In-Reply-To: <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
-References: <10360653.ov98egbaqx@natalenko.name>
- <CAGXu5jLwyot++C2EXs+032Lz5WdG65GsEJ-Q55rfhSbkG1Nh+A@mail.gmail.com>
- <3265889.eu5sbW8aRz@natalenko.name>
- <CAGXu5jL++CEmLzFtGMVMhGWBzHpsRNJPTsEoc7Pw1dP--=azCA@mail.gmail.com>
- <7fc01f67a561ce1fad676fc34c2249e7@natalenko.name>
- <CAGXu5jKhiE512yQXp90M+Wie=8RkpMZT-Yi_9BgjfKwibP433g@mail.gmail.com>
- <dee9721a530576e667881d86bbec351b@natalenko.name>
- <08e06234c81fac30ccff5a2695d02f2a@natalenko.name>
- <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
- <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
-Message-ID: <1e9fb351f60a9bfe36d2f0974e5237eb@natalenko.name>
-User-Agent: Roundcube Webmail/1.3.5
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1522995695;
-        h=from:sender:reply-to:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:in-reply-to:references:list-id:list-owner:list-unsubscribe:list-subscribe:list-post;
-        bh=DQQDEPRUEbGIfgNlX7dHoMtjf2+BuLSwLUD7JDZfapg=;
-        b=0SIpNg7K1HSNCV9CR36aclHlNAyO3SqxyedRENHsT2WMPJzmr8f+/hUyuvrFqRFsJN0aI6
-        z+YM7unegt75evFuovXvehkDS8OZi33V4IyFrvKCaMgEex36cgrh05xv4GJXQ0IzmzNSCz
-        6J1zfCb5JXW4CjyNzvVGyXcbf+5q6hM=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1522995695; a=rsa-sha256;
-        cv=none;
-        b=ICTNeROY1QFkKZhP1G/bFOnLD3V2IbHmpE/4uG0+6i4Fx3Gb/SGR14kyk+mKgU0V3NdhCpCH9zypeLi0S3XAcrdjvbT0TJ3WfraFta2x6iBaEl5uwfmmnEt8l6NXOVJ5IB6HVZJAfgUz+IDLfD9w5zPfeGBt3PSycxWPR/7usbU=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+Hi,
 
-05.04.2018 20:52, Kees Cook wrote:
-> Okay. My qemu gets mad about that and wants the format=raw argument,
-> so I'm using:
+On Tuesday 03 April 2018 06:43 PM, Gustavo Pimentel wrote:
+> Hi Kishon,
 > 
-> -drive file=sda.img,format=raw \
-> -drive file=sdb.img,format=raw \
+> On 03/04/2018 11:53, Kishon Vijay Abraham I wrote:
+>> Hi,
+>>
+>> On Tuesday 03 April 2018 04:22 PM, Kishon Vijay Abraham I wrote:
+>>>
+>>>
+>>> On Tuesday 03 April 2018 04:03 PM, Gustavo Pimentel wrote:
+>>>> Hi Kishon,
+>>>>
+>>>> On 02/04/2018 06:23, Kishon Vijay Abraham I wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
+>>>>>> Changes the IP registers size to accommodate the ATU unroll space.
+>>>>>>
+>>>>>> Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers.
+>>>>>>
+>>>>>> Replaces the pcie base address example by a real pcie base address in use.
+>>>>>>
+>>>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>>>> ---
+>>>>>>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
+>>>>>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>>>>> index 1da7ade..6300762 100644
+>>>>>> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>>>>> @@ -1,7 +1,8 @@
+>>>>>>  * Synopsys DesignWare PCIe interface
+>>>>>>  
+>>>>>>  Required properties:
+>>>>>> -- compatible: should contain "snps,dw-pcie" to identify the core.
+>>>>>> +- compatible:
+>>>>>> +	"snps,dw-pcie" for RC mode;
+>>>>>
+>>>>> I think irrespective of RC mode or EP mode, "snps,dw-pcie" can be used to
+>>>>> identify the pcie core?
+>>>>
+>>>> I guess so. What you suggest? I was just folling the same guideline present
+>>>> here: https://urldefense.proofpoint.com/v2/url?u=https-3A__lkml.org_lkml_2017_11_3_310&d=DwIC-g&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=G1MqB_DY6ZwWtvS60L9PZMHnMe6rClMnrakAyQT_hDc&s=BhQYkrcp6y3QkD23qn1I6lU882BDUfLiXjBVWQ91cmg&e=
+>>>
+>>> Okay, I think you should have
+>>> "snps,dw-pcie-rc", "snps,dw-pcie" for RC mode;
+>>>
+>>> and in the later patch
+>>> "snps,dw-pcie-ep", "snps,dw-pcie" for EP mode;
+>>>
 > 
-> How are you running your smartctl? I'm doing this now:
+> Ok, I'll change it.
 > 
-> [1]   Running                 while :; do
->     ( smartctl -a /dev/sda; smartctl -a /dev/sdb ) > /dev/null;
-> done &
+>>>>
+>>>>>>  - reg: Should contain the configuration address space.
+>>>>>>  - reg-names: Must be "config" for the PCIe configuration space.
+>>>>>>      (The old way of getting the configuration address space from "ranges"
+>>>>>> @@ -41,11 +42,11 @@ EP mode:
+>>>>>>  
+>>>>>>  Example configuration:
+>>>>>>  
+>>>>>> -	pcie: pcie@dffff000 {
+>>>>>> +	pcie: pcie@dfc00000 {
+>>>>>>  		compatible = "snps,dw-pcie";
+>>>>>> -		reg = <0xdffff000 0x1000>, /* Controller registers */
+>>>>>> -		      <0xd0000000 0x2000>; /* PCI config space */
+>>>>>> -		reg-names = "ctrlreg", "config";
+>>>>>> +		reg = <0xdfc00000 0x302000>, /* IP registers */
+>>>>>
+>>>>> which version of synopsys IP is this. I think the ideal thing to do here is to
+>>>>> have a separate register space for iATU.
+>>>>
+>>>> I also agree with that. The unroll iATU was introduced on Synopsys IP version
+>>>> 4.80 and the kernel patch was release on 2016-08-10
+>>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__patchwork.ozlabs.org_patch_657796_&d=DwIC-g&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=G1MqB_DY6ZwWtvS60L9PZMHnMe6rClMnrakAyQT_hDc&s=EgKKDbg4ywCxu4-lG_scYAgPMnxirsjS0uSS7SzBTeM&e=
+>>>> However a separate register space for iATU implies some extra code do handle it
+>>>> (and of course some tests) that don't fit into this patch series, in my point of
+>>>> view. Can this task enter in the backlog in order to be done in another patch
+>>>> series?
+>>>
+>>> Yes sure. I think we should also make sure existing binding doesn't break.
+> 
+> I'll remove the any iATU unroll reference or change from this patch to avoid any
+> confusion.
 
-Yes, so do I.
+No, I think it's fine to have iATU unroll reference (since kernel also seems to
+support iATU unroll).
 
-> I assume I'm missing something from your .config, but since I don't
-> boot with an initramfs, I had to tweak it a bit. I'll try again...
+What I meant is, we should add more flexibility on defining iATU address space
+(while making sure it doesn't break existing binding).
 
-Let me, maybe, describe, what both the VM and the server have in common:
+I'm okay with this patch once you fix the compatible comment but in general
+this is what I'd like to have (in a future patch)
 
-1. have 4 CPUs
-2. are EFI-based
-3. use blk-mq with BFQ scheduler (it is set up via udev rule during 
-boot)
-4. have zswap enabled
-5. have 2 SATA disks with RAID10 on top of it (layout f2)
-6. have LUKS on top of the RAID, and LVM on top of the LUKS
+*)  Add a new compatible "snps,dw-pcie-4.80";
+*) In the kernel "iatu_unroll_enabled" should be set based on the above compatible
+*) Define the a new reg space for iATU in 4.80
 
-VM has machine type "q35", BTW.
+And these have to be done in a way it doesn't break existing binding.
 
-Do you think something of what's mentioned above is relevant for the 
-code path in question?
-
-Thanks.
-
-Regards,
-   Oleksandr
+Thanks
+Kishon
