@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+bNjd/TajcRZx/4L/EtgCUP1J5ZqjwPtd4/gS6pqvPm7XRyc+Zn81UcK6B8PfRGkC6LnJs
-ARC-Seal: i=1; a=rsa-sha256; t=1523021348; cv=none;
+X-Google-Smtp-Source: AIpwx4+4mL5GLtmvA+hvVod70uRfpFIfSuv4HgVhO1VIxUuQGy7ruaDbvwz80ZwOv7n5rdEjl4lU
+ARC-Seal: i=1; a=rsa-sha256; t=1523021344; cv=none;
         d=google.com; s=arc-20160816;
-        b=k+VmjIWRixvz3xugjiRzjWSdGSKyqcg4bbZssLwYu0HxKhpuuv0txkfxgvpH8YXhky
-         fShUYKiCEXO2vRemKR76ogEQ9BfmTz2UkHbiMRv69DSEy/cRFO6oWMDd8h56pQJ483IN
-         h01kyUx0I/jrQLqx2JhYBxUtAfrtTVnGn33SCLhfjFePWGKMV8As56W+mrvCF5ICCSma
-         QkjjvRtmc+lzV/5Vl79kngXptVGY1bAi79OD2AIpXGiLDnzts84oNgSmJ/s6MRu3JRYU
-         LdE2Ny7Sl4bylzIsmMzcY+gprMgRHr75guOcZrZFVoywTu5T9DvnaFGG8ICkj4dnKk9s
-         qrkQ==
+        b=PtfvR8BeP4meCVJw1glaUp94gnz+VTEVkrGEvwIcwKJ4BuaHbJOj3XBLhVoCgPydsH
+         yg/8ZBdToCrblSJerlAjFq7TcjvuwGl1oN0alFnaCu5AMjFBXR2tGuTERX4WsNkIGI47
+         D6Wl731WkNDDjqCgZcrYl9wqGnTuIGLDk6n5NbUP6DqEUMmhBCvBA1WdhYOPlSJIGKGb
+         OGZAkn/sbHYf4tVNJYVo86O/sfKf5j1XGWqyq8WGhq2mbPyhrdi0oftNcDeKs7r4gZTE
+         b7OUlHvh/vN/m9fMYb45sFA+EyJytzkmjLQsudplA/5YX5zwP/JMnI+zrg2s14JSE1fc
+         qDKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DDX/krr6ubyBt+3k2m56vwoL6YeiZjHpQ9SvOmWsWX4=;
-        b=Zg2L63R/8kZGjc3iTxm57PcOpJjTJW0wLYYEYgZj4aFRlpJQ0CkD3uGd1pCtWC/IZr
-         9af0gO3Yxn/Nf/sXFLTVWjmjIcZA8WJN7TZRSggC5HQi59Kce46uDybWXswXXb74ouBA
-         hYp3eQS283cOLi1/1DssTozqk7y1cqUSk+zdFKW0IZc7CQEkPydwqr6Stb8wVACtbfE1
-         HG5ipfL1vlkrRUf2Z9KvdbsgTznv6x1hSMp6OdnK+t+skxhtGF8TNJyETP1WIFzjBB4M
-         IB18R1DFOjBXXT53VPAwUuT2OK2AXWdZm0NjXcLrXDJW5lDcjZlEiuUGx7CP89maLoh8
-         7M1w==
+        bh=86/IeWjXUaNB2eWuEVnvh2Prhb5ENQeJ5oVih7doVEs=;
+        b=OraLYpq4q9L5/Y5/flayibxpnCW6whPJdJCpKWo1GPeTgqjuCTJ0thVwVRo+ufv+Je
+         Jp2PvnBrIj+8NlSG5TNYFshAU95Mhov6xYgOnrM7OIYa0NYNQiOPpdNQJ6m5uhWLAOqw
+         6n7LALQZ+Hile2VsknvAptIehQcgcaAE65gMASlNP+Z5EYfvp7uawmFzi536CmP1XPiL
+         CUhVrBmRTmClcFsHM6RWVW5rEftal7QFHvFJs7KfoQSva3H+tfZM2Agta9Q8383j13Ib
+         IiFFJIW8drGF3Qy2DHMsqNlmB5YwQNpQeHnT9n6LwtVYByV7NWR9HpdnSE/GSWyzlmAC
+         YHQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mike Frysinger <vapier@chromium.org>
-Subject: [PATCH 3.18 87/93] vt: change SGR 21 to follow the standards
-Date: Fri,  6 Apr 2018 15:23:56 +0200
-Message-Id: <20180406084228.982462269@linuxfoundation.org>
+	Ondrej Zary <linux@rainbow-software.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 3.18 86/93] Input: i8042 - enable MUX on Sony VAIO VGN-CS series to fix touchpad
+Date: Fri,  6 Apr 2018 15:23:55 +0200
+Message-Id: <20180406084228.943644700@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003632944142177?=
-X-GMAIL-MSGID: =?utf-8?q?1597003632944142177?=
+X-GMAIL-THRID: =?utf-8?q?1597003629992266331?=
+X-GMAIL-MSGID: =?utf-8?q?1597003629992266331?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,64 +49,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Frysinger <vapier@chromium.org>
+From: Ondrej Zary <linux@rainbow-software.org>
 
-commit 65d9982d7e523a1a8e7c9af012da0d166f72fc56 upstream.
+commit 04bb1719c4de94700056241d4c0fe3c1413f5aff upstream.
 
-ECMA-48 [1] (aka ISO 6429) has defined SGR 21 as "doubly underlined"
-since at least March 1984.  The Linux kernel has treated it as SGR 22
-"normal intensity" since it was added in Linux-0.96b in June 1992.
-Before that, it was simply ignored.  Other terminal emulators have
-either ignored it, or treat it as double underline now.  xterm for
-example added support in its 304 release (May 2014) [2] where it was
-previously ignoring it.
+The touch sensor buttons on Sony VAIO VGN-CS series laptops (e.g.
+VGN-CS31S) are a separate PS/2 device. As the MUX is disabled for all
+VAIO machines by the nomux blacklist, the data from touch sensor
+buttons and touchpad are combined. The protocol used by the buttons is
+probably similar to the touchpad protocol (both are Synaptics) so both
+devices get enabled. The controller combines the data, creating a mess
+which results in random button clicks, touchpad stopping working and
+lost sync error messages:
+psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 4
+psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
+psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
+psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
+psmouse serio1: TouchPad at isa0060/serio1/input0 lost sync at byte 1
+psmouse serio1: issuing reconnect request
 
-Changing this behavior shouldn't be an issue:
-- It isn't a named capability in ncurses's terminfo database, so no
-  script is using libtinfo/libcurses to look this up, or using tput
-  to query & output the right sequence.
-- Any script assuming SGR 21 will reset intensity in all terminals
-  already do not work correctly on non-Linux VTs (including running
-  under screen/tmux/etc...).
-- If someone has written a script that only runs in the Linux VT, and
-  they're using SGR 21 (instead of SGR 22), the output should still
-  be readable.
+Add a new i8042_dmi_forcemux_table whitelist with VGN-CS.
+With MUX enabled, touch sensor buttons are detected as separate device
+(and left disabled as there's currently no driver), fixing all touchpad
+problems.
 
-imo it's important to change this as the Linux VT's non-conformance
-is sometimes used as an argument for other terminal emulators to not
-implement SGR 21 at all, or do so incorrectly.
-
-[1]: https://www.ecma-international.org/publications/standards/Ecma-048.htm
-[2]: https://github.com/ThomasDickey/xterm-snapshots/commit/2fd29cb98d214cb536bcafbee00bc73b3f1eeb9d
-
-Signed-off-by: Mike Frysinger <vapier@chromium.org>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ondrej Zary <linux@rainbow-software.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/input/serio/i8042-x86ia64io.h |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -1303,6 +1303,11 @@ static void csi_m(struct vc_data *vc)
- 			case 3:
- 				vc->vc_italic = 1;
- 				break;
-+			case 21:
-+				/*
-+				 * No console drivers support double underline, so
-+				 * convert it to a single underline.
-+				 */
- 			case 4:
- 				vc->vc_underline = 1;
- 				break;
-@@ -1339,7 +1344,6 @@ static void csi_m(struct vc_data *vc)
- 				vc->vc_disp_ctrl = 1;
- 				vc->vc_toggle_meta = 1;
- 				break;
--			case 21:
- 			case 22:
- 				vc->vc_intensity = 1;
- 				break;
+--- a/drivers/input/serio/i8042-x86ia64io.h
++++ b/drivers/input/serio/i8042-x86ia64io.h
+@@ -712,6 +712,20 @@ static const struct dmi_system_id __init
+ 	{ }
+ };
+ 
++static const struct dmi_system_id i8042_dmi_forcemux_table[] __initconst = {
++	{
++		/*
++		 * Sony Vaio VGN-CS series require MUX or the touch sensor
++		 * buttons will disturb touchpad operation
++		 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "VGN-CS"),
++		},
++	},
++	{ }
++};
++
+ /*
+  * Some Wistron based laptops need us to explicitly enable the 'Dritek
+  * keyboard extension' to make their extra keys start generating scancodes.
+@@ -1124,6 +1138,9 @@ static int __init i8042_platform_init(vo
+ 	if (dmi_check_system(i8042_dmi_nomux_table))
+ 		i8042_nomux = true;
+ 
++	if (dmi_check_system(i8042_dmi_forcemux_table))
++		i8042_nomux = false;
++
+ 	if (dmi_check_system(i8042_dmi_notimeout_table))
+ 		i8042_notimeout = true;
+ 
