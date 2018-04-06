@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+TQ/Gk/6vL+Gcl464qM4qFvDzhdyxFqcIydcAgVj8nuj+5SAVdb/3h/ZC/FBn5dVXOmKfo
-ARC-Seal: i=1; a=rsa-sha256; t=1523022293; cv=none;
+X-Google-Smtp-Source: AIpwx48xsWrlrj9uuGIK5X2UdboUjW8ZDJZ0j1Ea3oCKIdzKT9HWqrnHkzUaEBMHzy10NoKUPLwS
+ARC-Seal: i=1; a=rsa-sha256; t=1523022290; cv=none;
         d=google.com; s=arc-20160816;
-        b=cOZWFBrzFImFUFXLqK0SqSql8I9OEAvVGp7dEFAGTc3GC/DMKXKNMZLHkRQCwLf1C3
-         kf1LpjhY7c+/0INsHtrHxzQHMq6TyEe6MAk891FJoI+Z3bK3/EJt7Ynb/Tv9ssq5szh+
-         eISAyVaoK6Iza57fkBtIfrIzpX94Z7/cdvOvaATzkyTlNVvOXFAIUB9drV92ucLdVMVR
-         kzqv33v5WthfCvo8FMMw5YZ6y7kn4HS20sCOmeytHYawF1YdH/xHahClJ2SVy4gci/+D
-         CTc7XnMZE7FniTbHlq+TzPQbAYU9krBvbW0Sq0VoktidV4sn6TP70IHcEoI3VnlBuFM6
-         8Qog==
+        b=OzHghGuKOsvUJEtjlWOhMRzTZHhAMyM1P5fWnjGj1fFkhTAsQPiIzknx6HXNFcDL25
+         x7lIjHWkSImjd5NWr8EGosVakRv90UOO1v6mF1Eev2LMDmE4tttS60WhJcGXu5gO4UPL
+         oRBVl6TMgvanvhkGScelNk8scMB/NzHmKuzy9Mk39G3bh2rgnm8EXK1ru1eA+dfUf1rq
+         XjeY1dTgLGWYG7AQ2YHvEhQ9aYvb+LoGbonEGPdyPd50UiqICzB69AqR48I6onBvBHdp
+         cT3hEFfAfkflb2Gt7BPdxOqd18aNe7jJaFglfGDM8fO3vghEBJZaiFZZpldBRnmZ+9pY
+         cplQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DA7ONM31sqcCfXCKrLjrCC8VgZZX7zXejxj9SPtth2Y=;
-        b=KXXUWExWvEaStz3j1EcQioupfvfnelyI7hkc+EQKyfTjzxEdUjN9HslQEMSXDGpZET
-         +zrH9NbhEje0zHXuMJ0q3yU05qyIib7cRxIJ+hNA7eSdbmyUa9KS9i59Gq3Dvepmxy40
-         Ok3gsIS1d8cmfFl5cOPUqxGe4yX9HVV8VydAg0vDSWwVys30cpZrDVYnEgrDbmfamtDQ
-         nNahmvOi8rBlZFGODYgOHicfyaxAkR/PpJFDNkHSl7V/Bjq6OHx6BTrNJSjH2GqluF6I
-         VrLcYSB61omDRs2JVuOFskLNo+6euR9+WZ1pcXG75Nf/4qDeo9Lyx3aPVXdhpsqJvCm3
-         /hYQ==
+        bh=jMZhnPVr12RnM6N8LSlDXV0Vuest2miX7HRWdr25gOM=;
+        b=qOATkbjih5ZQg5BCX2so8L/+ylKl1Gc+lgFCkU1JsNp0eS3hCQn/S69gPkhdhmReSP
+         Su1fkUbLRTL1Cgrv4gnQwKy7k5lSEExThooi1CbXwjJb1ualJSwCzjNVGef92BEU+4wr
+         AceX+wJmomZj0YHWybyUL5bA1dfUb2ibisUh1+R0NpURpXpzQzLejYS2xuAtN0L/cCrs
+         /oFvYV4aewzSWvOxGlnmuTtPMVZnxpV5K50nNQ9cReb3mjh+sfooNxgmWetUWec5JcRX
+         v65hGGqzYHuBzHq5n5hLiS9FTsS8QLSQjM83PHJzl9xBA2K+jZL25Q30hU8rBqOWTlcz
+         w1eQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liu Bo <bo.li.liu@oracle.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.16 22/31] Btrfs: fix unexpected cow in run_delalloc_nocow
-Date: Fri,  6 Apr 2018 15:24:47 +0200
-Message-Id: <20180406084344.022961066@linuxfoundation.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.16 21/31] Bluetooth: hci_bcm: Add 6 new ACPI HIDs
+Date: Fri,  6 Apr 2018 15:24:46 +0200
+Message-Id: <20180406084343.878948158@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084340.999820380@linuxfoundation.org>
 References: <20180406084340.999820380@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004293765579483?=
-X-GMAIL-MSGID: =?utf-8?q?1597004624267607836?=
+X-GMAIL-THRID: =?utf-8?q?1597004621037727450?=
+X-GMAIL-MSGID: =?utf-8?q?1597004621037727450?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,94 +49,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 5811375325420052fcadd944792a416a43072b7f upstream.
+commit 4063cafa3b24ff04635bdedc97cd3e4320415065 upstream.
 
-Fstests generic/475 provides a way to fail metadata reads while
-checking if checksum exists for the inode inside run_delalloc_nocow(),
-and csum_exist_in_range() interprets error (-EIO) as inode having
-checksum and makes its caller enter the cow path.
+Add 6 new ACPI HIDs to enable bluetooth on devices using these HIDs,
+I've tested the following HIDs / devices:
 
-In case of free space inode, this ends up with a warning in
-cow_file_range().
+BCM2E74: Jumper ezPad mini 3
+BCM2E83: Acer Iconia Tab8 w1-810
+BCM2E90: Meegopad T08
+BCM2EAA: Chuwi Vi8 plus (CWI519)
 
-The same problem applies to btrfs_cross_ref_exist() since it may also
-read metadata in between.
+The reporter of Red Hat bugzilla 1554835 has tested:
+BCM2E84: Lenovo Yoga2
 
-With this, run_delalloc_nocow() bails out when errors occur at the two
-places.
+The reporter of kernel bugzilla 274481 has tested:
+BCM2E38: Toshiba Encore
 
-cc: <stable@vger.kernel.org> v2.6.28+
-Fixes: 17d217fe970d ("Btrfs: fix nodatasum handling in balancing code")
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Note the Lenovo Yoga2 and Toshiba Encore also needs the earlier patch to
+treat all Interrupt ACPI resources as active low.
+
+Cc: stable@vger.kernel.org
+Buglink: https://bugzilla.kernel.org/attachment.cgi?id=274481
+Buglink: https://bugzilla.redhat.com/show_bug.cgi?id=1554835
+Reported-and-tested-by: Robert R. Howell <rhowell@uwyo.edu>
+Reported-and-tested-by: Christian Herzog <daduke@daduke.org>
+Tested-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |   37 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 32 insertions(+), 5 deletions(-)
+ drivers/bluetooth/hci_bcm.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1262,6 +1262,8 @@ static noinline int csum_exist_in_range(
- 		list_del(&sums->list);
- 		kfree(sums);
- 	}
-+	if (ret < 0)
-+		return ret;
- 	return 1;
- }
- 
-@@ -1394,10 +1396,23 @@ next_slot:
- 				goto out_check;
- 			if (btrfs_extent_readonly(fs_info, disk_bytenr))
- 				goto out_check;
--			if (btrfs_cross_ref_exist(root, ino,
--						  found_key.offset -
--						  extent_offset, disk_bytenr))
-+			ret = btrfs_cross_ref_exist(root, ino,
-+						    found_key.offset -
-+						    extent_offset, disk_bytenr);
-+			if (ret) {
-+				/*
-+				 * ret could be -EIO if the above fails to read
-+				 * metadata.
-+				 */
-+				if (ret < 0) {
-+					if (cow_start != (u64)-1)
-+						cur_offset = cow_start;
-+					goto error;
-+				}
-+
-+				WARN_ON_ONCE(nolock);
- 				goto out_check;
-+			}
- 			disk_bytenr += extent_offset;
- 			disk_bytenr += cur_offset - found_key.offset;
- 			num_bytes = min(end + 1, extent_end) - cur_offset;
-@@ -1415,10 +1430,22 @@ next_slot:
- 			 * this ensure that csum for a given extent are
- 			 * either valid or do not exist.
- 			 */
--			if (csum_exist_in_range(fs_info, disk_bytenr,
--						num_bytes)) {
-+			ret = csum_exist_in_range(fs_info, disk_bytenr,
-+						  num_bytes);
-+			if (ret) {
- 				if (!nolock)
- 					btrfs_end_write_no_snapshotting(root);
-+
-+				/*
-+				 * ret could be -EIO if the above fails to read
-+				 * metadata.
-+				 */
-+				if (ret < 0) {
-+					if (cow_start != (u64)-1)
-+						cur_offset = cow_start;
-+					goto error;
-+				}
-+				WARN_ON_ONCE(nolock);
- 				goto out_check;
- 			}
- 			if (!btrfs_inc_nocow_writers(fs_info, disk_bytenr)) {
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -1080,6 +1080,7 @@ static const struct hci_uart_proto bcm_p
+ #ifdef CONFIG_ACPI
+ static const struct acpi_device_id bcm_acpi_match[] = {
+ 	{ "BCM2E1A", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
++	{ "BCM2E38", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
+ 	{ "BCM2E39", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
+ 	{ "BCM2E3A", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
+ 	{ "BCM2E3D", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
+@@ -1092,12 +1093,17 @@ static const struct acpi_device_id bcm_a
+ 	{ "BCM2E67", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
+ 	{ "BCM2E71", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
+ 	{ "BCM2E72", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
++	{ "BCM2E74", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
+ 	{ "BCM2E7B", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
+ 	{ "BCM2E7C", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
+ 	{ "BCM2E7E", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
++	{ "BCM2E83", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
++	{ "BCM2E84", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
++	{ "BCM2E90", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
+ 	{ "BCM2E95", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
+ 	{ "BCM2E96", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
+ 	{ "BCM2EA4", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
++	{ "BCM2EAA", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(acpi, bcm_acpi_match);
