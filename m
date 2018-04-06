@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48+O/ckLpA30X5V+KofPO3yNC5sWcbmrPcdAP4eg7vPaqtXFQe98puX+I/4pRx7w9QRTwJE
-ARC-Seal: i=1; a=rsa-sha256; t=1523022301; cv=none;
+X-Google-Smtp-Source: AIpwx49TbjbHE6bbRojXi34j8xUEgCOhvQAzhjCupoc3LqWo3WO0G4r7p4+VfkHOUjmoxa0+GPmR
+ARC-Seal: i=1; a=rsa-sha256; t=1523022299; cv=none;
         d=google.com; s=arc-20160816;
-        b=xiQy4dw9gEJcUehTJP+7JLrY9UFMwEagkpQYVqvjTz9g1eAZ9dz7MrCYr8F+lERz72
-         jtyVBn+grcQggpOgmRsKWmd7uxVdC15xEygy7/o8jDPi1Y+ZU0sRHrWJD5BDIvkIupcD
-         hF7Gp5AWC6RNUdqusyINvu/tVu0PiUSGrdgUswVZWfVovNqwcb/sTEhfA0WjoXIwW2Nv
-         Z/Bfr2U09OUdT2pr4pJRAyvZrtikbuZLBQl7vjU6+Yah0xbLfuuCai7FS0VvkfuaBEvI
-         IbMpyt+OQo+ssd2YcVPdCVEX7winAlq1rzdeEz1ZagJ/WXe+9ATIPIYxmMnQ9dmYwqjN
-         8F8A==
+        b=RpPC/l3uVvTt8r3LM0/ipZ6L3OacYNua3+zpPTONOA2EiYqQvtvJ6dhC8lbNfPqdXW
+         BuvWxwdEJ6hMS47K/9T9VjAhaGsMZ4wwnIBHzrXa8GST+puW5Isgg8aGHiuhPqwQyC+d
+         099zsOK6NdNc2pk3m5+Su2jkRuftDqRgFbvaT9gDlRnwCSxlNUi9BUHreGC6CBudVuJf
+         SR3fZgr7r56N/tEghQdVF+t44yeKK54qeG9Xa2ehmo56ebMAcCwIOjhvKRBAnzJ/qMSp
+         ltQ4vsUZwZvHEbtfT3bvXxNqPRxu3J8Q5MlfdV6vnDIM9byXCH2HrEOyF+2mk0Uo5468
+         OtFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=p2Z6DG5TVkPFJtgwuvkpWubTW+hwvqGZT0l6SB9wEGY=;
-        b=D/2TkV7sI/nCSTmt5Y4ccqrE/VwFJXgbQdVIL1ARzuoWBaTlbLLP5PHMWDx2loAITJ
-         5cAm4wE29inham2+BLjh2sd5VmrJ+0/q01/HRpaYtXuY1MkUb1Yp6KOWqwhmlYEJK1cM
-         cKe/cxBLQ3uMgaBKYGI0IkTbE2HeQ4OQUjUNKEHT4QlKtR0EP2IHEWKMjNssb8ShXBWW
-         J2cVXgOGuLbux+6VRw4VWBOqE8G7owRSOMnQsgsNR3qtPxe1Ot4QfjSb7DP2/EikPrco
-         dSJv9UfnuOmYOROeweiTP0JGbQovVQi0XEW0ZX8VsBF+Ry0ipxs0MkZHxAybvwPYUmkL
-         bxNA==
+        bh=nu5qP71RM0oQTiGCA1S6+gcu5DHYa3toFm8q9FdnkJs=;
+        b=HjVzkQq1vB/4RKaRtwJurpZ4AfQPucT+EFfOZDn5wWMhfiZHdtmrTsD02aWDlEUwrn
+         WluUXE3Tzt++8SVDidsdcIHl0gy6SgSKkZFWxJ2uo83K/pX183giRuDXzXptXjIbKuOr
+         2GnFd6TrlXFlUI1Pcv5dMXzOjBB1m3jgqx7clDLO9li8ttsAMv+aXcH3mtYkaIb4hU0f
+         GwpamvWD33RZlE9LUJdkSAeiz5+MqgcOe3QUpHjx3hF6Br18HSXovbQb9Ego7lLPU5gf
+         ir13LROhNNm8HqQNaGSoKAa0zlsNy31GDwf09qh4w9DnnPH1dsGxmgB8FLAXp+gV0dKs
+         Hsqw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Gaku Inami <gaku.inami.xh@renesas.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH 4.16 25/31] Revert "base: arch_topology: fix section mismatch build warnings"
-Date: Fri,  6 Apr 2018 15:24:50 +0200
-Message-Id: <20180406084344.454929769@linuxfoundation.org>
+	Frank Mori Hess <fmh6jj@gmail.com>,
+	Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH 4.16 24/31] staging: comedi: ni_mio_common: ack ai fifo error interrupts.
+Date: Fri,  6 Apr 2018 15:24:49 +0200
+Message-Id: <20180406084344.289281094@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084340.999820380@linuxfoundation.org>
 References: <20180406084340.999820380@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004300585915542?=
-X-GMAIL-MSGID: =?utf-8?q?1597004633556013239?=
+X-GMAIL-THRID: =?utf-8?q?1597003849053166920?=
+X-GMAIL-MSGID: =?utf-8?q?1597004629874652763?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,88 +49,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gaku Inami <gaku.inami.xh@renesas.com>
+From: Frank Mori Hess <fmh6jj@gmail.com>
 
-commit 9de9a449482677a75f1edd2049268a7efc40fc96 upstream.
+commit e1d9fc04c41840a4688ef6ce90b6dcca157ea4d7 upstream.
 
-This reverts commit 452562abb5b7 ("base: arch_topology: fix section
-mismatch build warnings"). It causes the notifier call hangs in some
-use-cases.
+Ack ai fifo error interrupts in interrupt handler to clear interrupt
+after fifo overflow.  It should prevent lock-ups after the ai fifo
+overflows.
 
-In some cases with using maxcpus, some of cpus are booted first and
-then the remaining cpus are booted. As an example, some users who want
-to realize fast boot up often use the following procedure.
-
-  1) Define all CPUs on device tree (CA57x4 + CA53x4)
-  2) Add "maxcpus=4" in bootargs
-  3) Kernel boot up with CA57x4
-  4) After kernel boot up, CA53x4 is booted from user
-
-When kernel init was finished, CPUFREQ_POLICY_NOTIFIER was not still
-unregisterd. This means that "__init init_cpu_capacity_callback()"
-will be called after kernel init sequence. To avoid this problem,
-it needs to remove __init{,data} annotations by reverting this commit.
-
-Also, this commit was needed to fix kernel compile issue below.
-However, this issue was also fixed by another patch: commit 82d8ba717ccb
-("arch_topology: Fix section miss match warning due to
-free_raw_capacity()") in v4.15 as well.
-Whereas commit 452562abb5b7 added all the missing __init annotations,
-commit 82d8ba717ccb removed it from free_raw_capacity().
-
-WARNING: vmlinux.o(.text+0x548f24): Section mismatch in reference
-from the function init_cpu_capacity_callback() to the variable
-.init.text:$x
-The function init_cpu_capacity_callback() references
-the variable __init $x.
-This is often because init_cpu_capacity_callback lacks a __init
-annotation or the annotation of $x is wrong.
-
-Fixes: 82d8ba717ccb ("arch_topology: Fix section miss match warning due to free_raw_capacity()")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Cc: <stable@vger.kernel.org> # v4.2+
+Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/arch_topology.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/comedi/drivers/ni_mio_common.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -169,11 +169,11 @@ bool __init topology_parse_cpu_capacity(
+--- a/drivers/staging/comedi/drivers/ni_mio_common.c
++++ b/drivers/staging/comedi/drivers/ni_mio_common.c
+@@ -1275,6 +1275,8 @@ static void ack_a_interrupt(struct comed
+ 		ack |= NISTC_INTA_ACK_AI_START;
+ 	if (a_status & NISTC_AI_STATUS1_STOP)
+ 		ack |= NISTC_INTA_ACK_AI_STOP;
++	if (a_status & NISTC_AI_STATUS1_OVER)
++		ack |= NISTC_INTA_ACK_AI_ERR;
+ 	if (ack)
+ 		ni_stc_writew(dev, ack, NISTC_INTA_ACK_REG);
  }
- 
- #ifdef CONFIG_CPU_FREQ
--static cpumask_var_t cpus_to_visit __initdata;
--static void __init parsing_done_workfn(struct work_struct *work);
--static __initdata DECLARE_WORK(parsing_done_work, parsing_done_workfn);
-+static cpumask_var_t cpus_to_visit;
-+static void parsing_done_workfn(struct work_struct *work);
-+static DECLARE_WORK(parsing_done_work, parsing_done_workfn);
- 
--static int __init
-+static int
- init_cpu_capacity_callback(struct notifier_block *nb,
- 			   unsigned long val,
- 			   void *data)
-@@ -209,7 +209,7 @@ init_cpu_capacity_callback(struct notifi
- 	return 0;
- }
- 
--static struct notifier_block init_cpu_capacity_notifier __initdata = {
-+static struct notifier_block init_cpu_capacity_notifier = {
- 	.notifier_call = init_cpu_capacity_callback,
- };
- 
-@@ -242,7 +242,7 @@ static int __init register_cpufreq_notif
- }
- core_initcall(register_cpufreq_notifier);
- 
--static void __init parsing_done_workfn(struct work_struct *work)
-+static void parsing_done_workfn(struct work_struct *work)
- {
- 	cpufreq_unregister_notifier(&init_cpu_capacity_notifier,
- 					 CPUFREQ_POLICY_NOTIFIER);
