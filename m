@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/3EXxQ2GtC982pV6T9a2iyyOx0kQ0sEGbuJ37w/Imq4elBP8ds6kLmTckvLbJZQVVW720v
-ARC-Seal: i=1; a=rsa-sha256; t=1523021665; cv=none;
+X-Google-Smtp-Source: AIpwx49DZpzifgHf8nFr/rBV8IdlW0cyO8OHaY9dM6NlLtDDjpElSzKdqttJksxUJWiZjm2lIzmC
+ARC-Seal: i=1; a=rsa-sha256; t=1523021663; cv=none;
         d=google.com; s=arc-20160816;
-        b=f4z5UQqWej2AKqAvvMEZwXPmOp3FWLsX/cFeh9iJirx3yDvZPAgcIbVkOIHX5ltT/r
-         63bBSQFJISNfX6OxigNtz3z4jD3Tw6lHXXqi7+grfVRpGn1FvxkT1KrDX96hR3fzEsZY
-         eZqG02MFCNPnjAqaeJZNIDcUjrs+Y7XDGCuXMax/YmRgmZX5MkdWSzoGgjbfv8IN1OGL
-         ZLvjUZt5AzzY5RkRWweNfwJMfUSscAkiMKh1C49LMQV5a6Btdk9iFShECE71IWup70xy
-         syKospXT9nMT8R/mmBnJWt60yLGlNi+7iJvJRP+qzcXejon8d9cwlo+MlmG3z/a0NOiE
-         PutA==
+        b=pNvZq9RuZPTIROylp1YtmTfM+29q2U8yFtPvISeSpUKyxQAwzTRolEJDHECor9t5p/
+         r2xGnbaM7Dj07bLl478SjPJvJOiqvo5HjWOqEn25SgtnhyeLLukSnzaukr2V/ClAhoow
+         RKNsoeKWeKpzO77fx5Ws/YuOA9JUH2YxmaQsbqvcEl2RI04fHehiITUYOvrC1UYomSEZ
+         6ZBufmj+XDML1TZBTjX/IjN7/D4ebGjemroYZPex0lyzBJevocksFjoQxu4Na2ihmvG0
+         HaVrw+aEY/LZ0jvURlLdQJVtbxTIjagK/wKmof+ms2hMw4VC2PcNYzQryJ8MFnGnHffu
+         +a3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Z0fSiGuNtO7VL71JN5K5o+93B0iOdNz7qOFW+3eXBY8=;
-        b=DWgdsVWOdR1iJPS04xazZNMQ/Jlf+YMqsgRjD9P+qtE0zBTk2y9WiK85fFOWFpCgzs
-         NwFmyw1bf0DBqFbuHvlVZ7xx5HOdk7uaGjZFC7LAlLdMuFYMP4tqN6l9bjCS3sxV9JHd
-         OFdEAvqNxzq1nwn63fxcgYVqFlDRlxL/6p/HmCHArxK4GNy/5ExVpWipJWovLktIGfTK
-         Qbht9gaVc55vmB0oJcVHt3cIe971fKhTeNxHfV5VxWdT37qSitt4J4zK2LQmh+z3CHvJ
-         m8wHDiiWuhBYd4X5wsuw6PxZ5dXwGQHhlA6U3SXOQHiXO6RCeY9WZY9cg8kjaQKI9Sa6
-         2atw==
+        bh=4de4PvGWpefIvPkgW9AwDUSybFFdHorXqgpnzSGRbkg=;
+        b=m2pHEWGkA6tgU8UsbMKONFg/fMO/kWpOi/1E6/LQmGKpU/GBQlB8VTMrr7Bw3lBGlC
+         fqwnMNNMlALhk2ts2Rxt7LS0SSoZZrb7itn3r9Dlh3/Khug4v882zKwNBQTYupEAkVZF
+         EPdm5RiIYzz/BR6UjufWXpn0SMg084EcvYo8xF7dGmyvHe+h6pSZAMORchqLa7Rpc9dh
+         +tn42T3QYn2kPPQFrNlFvO2nR0WIE+W/SNCpp6E8W/bO4ACpnmw151xQQM3kR9su089h
+         qktgAeIZdFIlCfJY9G7TlGFuWqTKDTnRT9v/Q3QGE5VSdtEVUrJ2KGIIbfUc0rcmdg02
+         n3zA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Sodagudi Prasad <psodagud@codeaurora.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 047/102] llist: clang: introduce member_address_is_nonnull()
-Date: Fri,  6 Apr 2018 15:23:28 +0200
-Message-Id: <20180406084338.255456847@linuxfoundation.org>
+	Szymon Janc <szymon.janc@codecoup.pl>,
+	Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.9 046/102] Bluetooth: Fix missing encryption refresh on Security Request
+Date: Fri,  6 Apr 2018 15:23:27 +0200
+Message-Id: <20180406084338.118675485@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003748394981081?=
-X-GMAIL-MSGID: =?utf-8?q?1597003966747022977?=
+X-GMAIL-THRID: =?utf-8?q?1597003604240794198?=
+X-GMAIL-MSGID: =?utf-8?q?1597003963140382314?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,71 +49,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Potapenko <glider@google.com>
+From: Szymon Janc <szymon.janc@codecoup.pl>
 
-commit beaec533fc2701a28a4d667f67c9f59c6e4e0d13 upstream.
+commit 64e759f58f128730b97a3c3a26d283c075ad7c86 upstream.
 
-Currently llist_for_each_entry() and llist_for_each_entry_safe() iterate
-until &pos->member != NULL.  But when building the kernel with Clang,
-the compiler assumes &pos->member cannot be NULL if the member's offset
-is greater than 0 (which would be equivalent to the object being
-non-contiguous in memory).  Therefore the loop condition is always true,
-and the loops become infinite.
+If Security Request is received on connection that is already encrypted
+with sufficient security master should perform encryption key refresh
+procedure instead of just ignoring Slave Security Request
+(Core Spec 5.0 Vol 3 Part H 2.4.6).
 
-To work around this, introduce the member_address_is_nonnull() macro,
-which casts object pointer to uintptr_t, thus letting the member pointer
-to be NULL.
+> ACL Data RX: Handle 3585 flags 0x02 dlen 6
+      SMP: Security Request (0x0b) len 1
+        Authentication requirement: Bonding, No MITM, SC, No Keypresses (0x09)
+< HCI Command: LE Start Encryption (0x08|0x0019) plen 28
+        Handle: 3585
+        Random number: 0x0000000000000000
+        Encrypted diversifier: 0x0000
+        Long term key: 44264272a5c426a9e868f034cf0e69f3
+> HCI Event: Command Status (0x0f) plen 4
+      LE Start Encryption (0x08|0x0019) ncmd 1
+        Status: Success (0x00)
+> HCI Event: Encryption Key Refresh Complete (0x30) plen 3
+        Status: Success (0x00)
+        Handle: 3585
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Tested-by: Sodagudi Prasad <psodagud@codeaurora.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Szymon Janc <szymon.janc@codecoup.pl>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/llist.h |   21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ net/bluetooth/smp.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/include/linux/llist.h
-+++ b/include/linux/llist.h
-@@ -88,6 +88,23 @@ static inline void init_llist_head(struc
- 	container_of(ptr, type, member)
+--- a/net/bluetooth/smp.c
++++ b/net/bluetooth/smp.c
+@@ -2233,8 +2233,14 @@ static u8 smp_cmd_security_req(struct l2
+ 	else
+ 		sec_level = authreq_to_seclevel(auth);
  
- /**
-+ * member_address_is_nonnull - check whether the member address is not NULL
-+ * @ptr:	the object pointer (struct type * that contains the llist_node)
-+ * @member:	the name of the llist_node within the struct.
-+ *
-+ * This macro is conceptually the same as
-+ *	&ptr->member != NULL
-+ * but it works around the fact that compilers can decide that taking a member
-+ * address is never a NULL pointer.
-+ *
-+ * Real objects that start at a high address and have a member at NULL are
-+ * unlikely to exist, but such pointers may be returned e.g. by the
-+ * container_of() macro.
-+ */
-+#define member_address_is_nonnull(ptr, member)	\
-+	((uintptr_t)(ptr) + offsetof(typeof(*(ptr)), member) != 0)
-+
-+/**
-  * llist_for_each - iterate over some deleted entries of a lock-less list
-  * @pos:	the &struct llist_node to use as a loop cursor
-  * @node:	the first entry of deleted list entries
-@@ -121,7 +138,7 @@ static inline void init_llist_head(struc
-  */
- #define llist_for_each_entry(pos, node, member)				\
- 	for ((pos) = llist_entry((node), typeof(*(pos)), member);	\
--	     &(pos)->member != NULL;					\
-+	     member_address_is_nonnull(pos, member);			\
- 	     (pos) = llist_entry((pos)->member.next, typeof(*(pos)), member))
+-	if (smp_sufficient_security(hcon, sec_level, SMP_USE_LTK))
++	if (smp_sufficient_security(hcon, sec_level, SMP_USE_LTK)) {
++		/* If link is already encrypted with sufficient security we
++		 * still need refresh encryption as per Core Spec 5.0 Vol 3,
++		 * Part H 2.4.6
++		 */
++		smp_ltk_encrypt(conn, hcon->sec_level);
+ 		return 0;
++	}
  
- /**
-@@ -143,7 +160,7 @@ static inline void init_llist_head(struc
-  */
- #define llist_for_each_entry_safe(pos, n, node, member)			       \
- 	for (pos = llist_entry((node), typeof(*pos), member);		       \
--	     &pos->member != NULL &&					       \
-+	     member_address_is_nonnull(pos, member) &&			       \
- 	        (n = llist_entry(pos->member.next, typeof(*n), member), true); \
- 	     pos = n)
- 
+ 	if (sec_level > hcon->pending_sec_level)
+ 		hcon->pending_sec_level = sec_level;
