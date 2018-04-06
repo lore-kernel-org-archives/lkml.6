@@ -1,69 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753057AbeDFPYX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:24:23 -0400
-Received: from orion.archlinux.org ([88.198.91.70]:40220 "EHLO
-        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752641AbeDFPYV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:24:21 -0400
-X-Spam-BL-Results: 
-Date: Fri, 6 Apr 2018 17:23:42 +0200
-From: Andreas Radke <andyrtr@archlinux.org>
-To: Jason Andryuk <jandryuk@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>,
-        benjamin.tissoires@redhat.com, aduggan@synaptics.com,
-        linux-i2c@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] i2c: i801: blacklist Host Notify on HP EliteBook G3
- 850
-Message-ID: <20180406172342.4a2a3f15@laptop64.home>
-In-Reply-To: <CAKf6xpu4=kLuqZqFsxqFCzLMyLBZyi3C9W_yyssEt=56dhF6RA@mail.gmail.com>
-References: <20180402122536.5083-1-jandryuk@gmail.com>
-        <20180402123435.5587-1-jandryuk@gmail.com>
-        <20180403211326.4907f1bc@laptop64.home>
-        <CAKf6xpu4=kLuqZqFsxqFCzLMyLBZyi3C9W_yyssEt=56dhF6RA@mail.gmail.com>
-Organization: ArchLinux
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752943AbeDFP1d (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 11:27:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:38848 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752278AbeDFP1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 11:27:31 -0400
+Date: Fri, 6 Apr 2018 16:27:45 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mingo@kernel.org,
+        boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
+        catalin.marinas@arm.com, Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 10/10] locking/qspinlock: Elide back-to-back RELEASE
+ operations with smp_wmb()
+Message-ID: <20180406152744.GE10528@arm.com>
+References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
+ <1522947547-24081-11-git-send-email-will.deacon@arm.com>
+ <20180405172808.GG4082@hirez.programming.kicks-ass.net>
+ <20180406113436.GC27619@arm.com>
+ <20180406130512.GA6631@andrea>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fi_D3D4OqpIVx+/SseD5T6."; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406130512.GA6631@andrea>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/fi_D3D4OqpIVx+/SseD5T6.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Andrea,
 
-My boot issue happens right after the BIOS when the initrd should be
-loaded and then no grub (v2.0) menu appears.
+On Fri, Apr 06, 2018 at 03:05:12PM +0200, Andrea Parri wrote:
+> On Fri, Apr 06, 2018 at 12:34:36PM +0100, Will Deacon wrote:
+> > I could say something like:
+> > 
+> >   "Pairs with dependency ordering from both xchg_tail and explicit
+> >    dereferences of node->next"
+> > 
+> > but it's a bit cryptic :(
+> 
+> Agreed. ;)  It might be helpful to instead include a snippet to highlight
+> the interested memory accesses/dependencies; IIUC,
+> 
+> /*
+>  * Pairs with dependency ordering from both xchg_tail and explicit/?
+>  * dereferences of node->next:
+>  *
+>  *   CPU0
+>  *
+>  *   /* get node0, encode node0 in tail */
+>  *   pv_init_node(node0);
+>  *     ((struct pv_node *)node0)->cpu   = smp_processor_id();
+>  *     ((struct pv_node *)node0)->state = vcpu_running;
 
-It seems I could fix it for me disabling  Host Notify + Interrupts with
-options i2c_i801 disable_features=3D0x30 and then rebuilding initrd.
-The touchpad is still working. Still testing more days if it will hang
-again.
+I'd probably ignore the PV case here and just focus on the native init
+of count/locked/next.
 
-Is there anything further I can do to help? I can't tell when this hang
-was introduced. When I received the HP Arch was running 4.9 lts kernel
-and it already hung there.
+>  *   smp_wmb();
+>  *   old = xchg_tail(lock, tail);
+>  *
+>  *   CPU1:
+>  *
+>  *   /* get node1, encode tail from node1 */
+>  *   old = xchg_tail(lock, tail);   // = tail corresponding to node0
+>  *                                  // head an addr. dependency
+>  *   /* decode old in prev */
+>  *   pv_wait_node(node1, prev);
 
--Andy
-Arch linux
+Similarly here -- the dependency is through decode_tail.
 
---Sig_/fi_D3D4OqpIVx+/SseD5T6.
-Content-Type: application/pgp-signature
-Content-Description: Digitale Signatur von OpenPGP
+>  *     READ ((struct pv_node *)prev)->cpu   // addr. dependent read
+>  *     READ ((struct pv_node *)prev)->state // addr. dependend read
+>  *
+>  * [More details for the case "following our own ->next pointer" you
+>  *  mentioned dabove.]
+>  */
+> 
+> CPU1 would also have:
+> 
+>    WRITE_ONCE(prev->next, node1); // addr. dependent write
+> 
+> but I'm not sure how this pairs: does this belong to the the second
+> case above? can you elaborate on that?
 
------BEGIN PGP SIGNATURE-----
+This is dependent on the result of decode_tail, so it's still the first
+case. The second case is when we queued into an empty tail but somebody
+later queued behind us, so we don't find them until we're claiming the
+lock:
 
-iQEzBAEBCAAdFiEErcih/MFeAdRTEEGelGV6sg8qCSsFAlrHkP4ACgkQlGV6sg8q
-CSsIXQgAnnpv888Kyxh5T47Tb/5TqjrmL/yqssN9AgfmKtZgOgl6O66OhwwKRNnN
-8iDT1OFw/kDHMwcElbq3yw1cxF2PUOsaaAwliATaNhJhg9ilqs5WNqiYcqqVluIa
-QrP6cealS03I99a/N1KMNKjE9K52xjCSXi1xQjYYigARyXpzEP7vKsFB0zjm8EeM
-wvjlSYY5zsrwbS9Q7Y7Io8pz37lBj+VIU9M1efz0kjKdcoLo1B4JthhGS6fGAwhm
-/hlUZUcINs9N959aaCx/2/OUtC+vNYxtPgh0f61YcQhXAs4rZZgF2Sl9SPG59uYj
-Sv34OUzq89u5kGVzHNtwpPNXe+LUjg==
-=DiOx
------END PGP SIGNATURE-----
+  if (!next)
+  	next = smp_cond_load_relaxed(&node->next, (VAL));
 
---Sig_/fi_D3D4OqpIVx+/SseD5T6.--
+  arch_mcs_spin_unlock_contended(&next->locked);
+
+here, this is all straightforward address dependencies rather than the
+arithmetic in decode_tail.
+
+Will
