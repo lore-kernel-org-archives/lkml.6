@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49zyKCcuoWwFyr+wwaZz4+PNI+cy47JLZkg9NkIUlP/UwfipzPZalbZuS8B9akFJ6XpgwXx
-ARC-Seal: i=1; a=rsa-sha256; t=1523022006; cv=none;
+X-Google-Smtp-Source: AIpwx4+4+te8VoZfWVCjChcxaaEqIudBf4Jize1mocVuczhYHgT+d2yDTYQUizA4XOwAzjUkCRup
+ARC-Seal: i=1; a=rsa-sha256; t=1523022001; cv=none;
         d=google.com; s=arc-20160816;
-        b=B5kBSBF4ZgK6Xw9nRUmAem7ToTlaYkLZyI+LL/EFIjEU6pw+p0PJf63+r+8m5ifh5h
-         sj5Q4zhmg7gdzYiCORrJr605h6FviTpYvkWbcdS7NsmTsvfk2VDBPmrwiK1vfky6Xijr
-         K/nh3KbWtVfdyxUVNfwXo8iafUlrb2xHf0VUb7vnVm7Uln/7IEGGLIoC8FEzFT+dZpSy
-         Zoc8IUqDS+06JzkwCdZop6/Entv7iSZ5T41eAU7MFaBli0F6Rz+zZ4bmtzLDb/rf35uc
-         b4I3Nox2rtsCX4FIJ3LiTv8GAVWhFiseRwhp3f6vo+Kbit6/xSQiyRhwQpJDveQ0z4Vj
-         csGA==
+        b=RR93bDhv0cNNwbXeTd4GzRCpTrYixuzRVk7nB2LhbSQyO7hbhyGjoXV2obnfer+neQ
+         ULP4/sMvlSy074YHdwwcBUM0qMJxAKAJxUdyoiDcbRqjRngfYQf3TmvJPnnuLeiFL/LA
+         1AE69L/kVy+7bOvpUFcodELRDwcfwliMTKPtR1BpIhfXFCqR7no0xK0yrfL7r0lTDf8d
+         dd897VlY7NUCVppAM5OZn5YoN0jEMWIEY1Kne2Zv2TwJ/jOEkmi7HMUxhqNAZbT5eSMp
+         9zUzhON/vPmxDKK+E8F2WUhMaoErSqjJNZ+MYwC96U1nOiSwkdRfn6bv4TdTgQw6xKMt
+         wlYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=H0bacA8JIkUWbsolRiJM7Zch/cwL2romVHcnNP0U4qA=;
-        b=tQ3UqWhb/fpeAMA5vN+t6/tirmCoGSQTmK+C3klhRBTMPwBciM+t+RdPnQoZw5FDi7
-         SepQApaNCMZk2zcGDkBft4ho7oy+0T/W+R56oVaWkv1tthr8fF2bxID7XJZvdwcQrzG3
-         VbvjRjCuOcpIflZl/6xOgGX+kMqL2vJEN0x2FiB9H1s+tkvHz/Zq89L6KVtnzkA/RhiH
-         gYIfS+nngJKMX9+HxJAl+uxJmu+AYwrG+XwfZr0PVDJDop9gFN8eq8tizURDuvaAtAmG
-         EtLE4UClwoDM/mJ0uQ0rKSY5altolStzFoeCpbYwOGGU3KfH5xaQqrIoKaR2OD6+BmbR
-         hFCA==
+        bh=wOITMwB6OsCcdytwl7kKYzqZchP6wt2omJUsXB+KWB0=;
+        b=GaDppSoOuzaCs8qlIeRZRP7YyPweD2QqXa25ekNKfpSa3fUSFBfaQ7EliWXaCmBU99
+         t8ylRGMQKboUHEdLDLPZ04weyA9OrwZomIRszQR7zflfHNWBZKGrXc5pS3TdU5hd6oQk
+         fGA80dybGyKBmDMguNjuNBwLbxPvdcHQxvy4MeatieONFQY150atvsqU4R5RdZ3fhp4O
+         QF0zMt/fCAsM/RCvoAjGIsM9yE6/k3oQks8eTDaAObTRxC29LdjgDYjonMJK+wygysKu
+         r5egWs7Fjs5cJThMexInxT1ul7fbrOwtQJacnno8XDzBlenxh+Ey+GedbXvw+ipZ10ye
+         hUJw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Szymon Janc <szymon.janc@codecoup.pl>,
-	Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.14 35/67] Bluetooth: Fix missing encryption refresh on Security Request
-Date: Fri,  6 Apr 2018 15:24:05 +0200
-Message-Id: <20180406084346.018312203@linuxfoundation.org>
+	Keerthy <j-keerthy@ti.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 61/67] ARM: dts: DRA76-EVM: Set powerhold property for tps65917
+Date: Fri,  6 Apr 2018 15:24:31 +0200
+Message-Id: <20180406084348.455878065@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003604240794198?=
-X-GMAIL-MSGID: =?utf-8?q?1597004323422754472?=
+X-GMAIL-THRID: =?utf-8?q?1597004318066186412?=
+X-GMAIL-MSGID: =?utf-8?q?1597004318066186412?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,53 +50,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Szymon Janc <szymon.janc@codecoup.pl>
+From: Keerthy <j-keerthy@ti.com>
 
-commit 64e759f58f128730b97a3c3a26d283c075ad7c86 upstream.
+commit aac4619d028e2c444ac1217fc2d05b0322079dff upstream.
 
-If Security Request is received on connection that is already encrypted
-with sufficient security master should perform encryption key refresh
-procedure instead of just ignoring Slave Security Request
-(Core Spec 5.0 Vol 3 Part H 2.4.6).
+Set powerhold property for tps65917
 
-> ACL Data RX: Handle 3585 flags 0x02 dlen 6
-      SMP: Security Request (0x0b) len 1
-        Authentication requirement: Bonding, No MITM, SC, No Keypresses (0x09)
-< HCI Command: LE Start Encryption (0x08|0x0019) plen 28
-        Handle: 3585
-        Random number: 0x0000000000000000
-        Encrypted diversifier: 0x0000
-        Long term key: 44264272a5c426a9e868f034cf0e69f3
-> HCI Event: Command Status (0x0f) plen 4
-      LE Start Encryption (0x08|0x0019) ncmd 1
-        Status: Success (0x00)
-> HCI Event: Encryption Key Refresh Complete (0x30) plen 3
-        Status: Success (0x00)
-        Handle: 3585
-
-Signed-off-by: Szymon Janc <szymon.janc@codecoup.pl>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bluetooth/smp.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/dra76-evm.dts |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/bluetooth/smp.c
-+++ b/net/bluetooth/smp.c
-@@ -2287,8 +2287,14 @@ static u8 smp_cmd_security_req(struct l2
- 	else
- 		sec_level = authreq_to_seclevel(auth);
+--- a/arch/arm/boot/dts/dra76-evm.dts
++++ b/arch/arm/boot/dts/dra76-evm.dts
+@@ -148,6 +148,7 @@
+ 		compatible = "ti,tps65917";
+ 		reg = <0x58>;
+ 		ti,system-power-controller;
++		ti,palmas-override-powerhold;
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
  
--	if (smp_sufficient_security(hcon, sec_level, SMP_USE_LTK))
-+	if (smp_sufficient_security(hcon, sec_level, SMP_USE_LTK)) {
-+		/* If link is already encrypted with sufficient security we
-+		 * still need refresh encryption as per Core Spec 5.0 Vol 3,
-+		 * Part H 2.4.6
-+		 */
-+		smp_ltk_encrypt(conn, hcon->sec_level);
- 		return 0;
-+	}
- 
- 	if (sec_level > hcon->pending_sec_level)
- 		hcon->pending_sec_level = sec_level;
