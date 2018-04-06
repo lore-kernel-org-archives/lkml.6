@@ -1,185 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751591AbeDFDMO (ORCPT <rfc822;w@1wt.eu>);
+        id S1751525AbeDFDMO (ORCPT <rfc822;w@1wt.eu>);
         Thu, 5 Apr 2018 23:12:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39574 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751315AbeDFDML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41324 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751363AbeDFDML (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Apr 2018 23:12:11 -0400
-From: NeilBrown <neilb@suse.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 06 Apr 2018 13:11:56 +1000
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: [PATCH 5/6] rhashtable: support guaranteed successful insertion.
-In-Reply-To: <20180329052231.GA21028@gondor.apana.org.au>
-References: <152210688405.11435.13010923693146415942.stgit@noble> <152210718434.11435.6551477417902631683.stgit@noble> <20180327155610.GD14001@gondor.apana.org.au> <87y3id42zo.fsf@notabene.neil.brown.name> <20180328060432.GA16291@gondor.apana.org.au> <87d0zo4r5j.fsf@notabene.neil.brown.name> <20180328072727.GA17306@gondor.apana.org.au> <87370j51tu.fsf@notabene.neil.brown.name> <20180329052231.GA21028@gondor.apana.org.au>
-Message-ID: <87y3i1vxj7.fsf@notabene.neil.brown.name>
+X-Google-Smtp-Source: AIpwx49lDXALnWLuye90zvYA0qoHtAoWmZQz1pJpQ9TsLqCjOMLdpWH0LQqYRAzFCZL0IPe7oVHazQ==
+Date: Thu, 5 Apr 2018 20:12:44 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot
+        <bot+bdfa5a20d5d091fffa3d4e8d37ec24962970ebd0@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, dvyukov@google.com, ebiggers@google.com,
+        jiangshanlai@gmail.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org,
+        tklauser@distanz.ch, tom@quantonium.net, xiyou.wangcong@gmail.com
+Subject: Re: KASAN: use-after-free Read in worker_thread (2)
+Message-ID: <20180406031244.GA21382@sol.localdomain>
+References: <001a114a7bc08e95e7055d783ea5@google.com>
+ <001a1140ccfee824f8055db71210@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <001a1140ccfee824f8055db71210@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Sat, Nov 11, 2017 at 07:56:01AM -0800, syzbot wrote:
+> syzkaller has found reproducer for the following crash on
+> d9e0e63d9a6f88440eb201e1491fcf730272c706
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> 
+> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> for information about syzkaller reproducers
+> 
+> 
+> BUG: KASAN: use-after-free in worker_thread+0x15bb/0x1990
+> kernel/workqueue.c:2244
+> Read of size 8 at addr ffff88002d0e3de0 by task kworker/u8:1/1209
+> 
+> CPU: 0 PID: 1209 Comm: kworker/u8:1 Not tainted 4.14.0-rc8-next-20171110+
+> #12
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  print_address_description+0x73/0x250 mm/kasan/report.c:252
+>  kasan_report_error mm/kasan/report.c:351 [inline]
+>  kasan_report+0x25b/0x340 mm/kasan/report.c:409
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
+>  worker_thread+0x15bb/0x1990 kernel/workqueue.c:2244
+>  kthread+0x37a/0x440 kernel/kthread.c:238
+>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:437
+> 
+> Allocated by task 11866:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
+>  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
+>  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3548
+>  kmem_cache_zalloc include/linux/slab.h:693 [inline]
+>  kcm_attach net/kcm/kcmsock.c:1394 [inline]
+>  kcm_attach_ioctl net/kcm/kcmsock.c:1460 [inline]
+>  kcm_ioctl+0x2d1/0x1610 net/kcm/kcmsock.c:1695
+>  sock_do_ioctl+0x65/0xb0 net/socket.c:960
+>  sock_ioctl+0x2c2/0x440 net/socket.c:1057
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:686
+>  SYSC_ioctl fs/ioctl.c:701 [inline]
+>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> 
+> Freed by task 11867:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
+>  __cache_free mm/slab.c:3492 [inline]
+>  kmem_cache_free+0x77/0x280 mm/slab.c:3750
+>  kcm_unattach+0xe50/0x1510 net/kcm/kcmsock.c:1563
+>  kcm_unattach_ioctl net/kcm/kcmsock.c:1608 [inline]
+>  kcm_ioctl+0xdf0/0x1610 net/kcm/kcmsock.c:1705
+>  sock_do_ioctl+0x65/0xb0 net/socket.c:960
+>  sock_ioctl+0x2c2/0x440 net/socket.c:1057
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:686
+>  SYSC_ioctl fs/ioctl.c:701 [inline]
+>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> 
+> The buggy address belongs to the object at ffff88002d0e3d00
+>  which belongs to the cache kcm_psock_cache of size 576
+> The buggy address is located 224 bytes inside of
+>  576-byte region [ffff88002d0e3d00, ffff88002d0e3f40)
+> The buggy address belongs to the page:
+> page:ffffea0000b43880 count:1 mapcount:0 mapping:ffff88002d0e2180 index:0x0
+> compound_mapcount: 0
+> flags: 0x100000000008100(slab|head)
+> raw: 0100000000008100 ffff88002d0e2180 0000000000000000 000000010000000b
+> raw: ffffea0000b14920 ffffea0000b27e20 ffff88002b0089c0 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>  ffff88002d0e3c80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff88002d0e3d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ffff88002d0e3d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                                        ^
+>  ffff88002d0e3e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff88002d0e3e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
 
-On Thu, Mar 29 2018, Herbert Xu wrote:
+No longer occurring, the fix seems to have been commit 7e9964574ee97:
 
-> On Thu, Mar 29, 2018 at 08:26:21AM +1100, NeilBrown wrote:
->>
->> I say "astronomically unlikely", you say "probability .. is extremely
->> low".  I think we are in agreement here.
->>=20
->> The point remains that if an error *can* be returned then I have to
->> write code to handle it and test that code.  I'd rather not.
->
-> You have be able to handle errors anyway because of memory allocation
-> failures.  Ultimately if you keep inserting you will eventually
-> fail with ENOMEM.  So I don't see the issue with an additional
-> error value.
+#syz fix: kcm: Only allow TCP sockets to be attached to a KCM mux
 
-You don't need to handle memory allocation failures at the point where
-you insert into the table - adding to a linked list requires no new
-memory.
-
-If you are running out of memory, you will fail to allocate new objects,
-so you won't be able to add them to the rhashtable.  Obviously you have
-to handle that failure, and that is likely to save rhashtable from
-getting many mem-alloc failures.
-
-But once you have allocated a new object, rhashtable should just accept
-it.  It doesn't help anyone to have the insertion fail.
-The insertion can currently fail even when allocating a new object would
-succeed, as assertion can require a GFP_ATOMIC allocation to succeed,
-while allocating a new object might only need a GFP_KERNEL allocation to
-succeed.=20
-
->
->> > Even if it does happen we won't fail because we will perform
->> > an immediate rehash.  We only fail if it happens right away
->> > after the rehash (that is, at least another 16 elements have
->> > been inserted and you're trying to insert a 17th element, all
->> > while the new hash table has not been completely populated),
->> > which means that somebody has figured out our hash secret and
->> > failing in that case makes sense.
->
-> BTW, you didn't acknowledge this bit which I think is crucial to
-> how likely such an error is.
-
-The likelihood of the error isn't really the issue - it either can
-happen or it cannot.  If it can, it requires code to handle it.
-
->
->> I never suggested retrying, but I would have to handle it somehow.  I'd
->> rather not.
->
-> ...
->
->> While I have no doubt that there are hashtables where someone could try
->> to attack the hash, I am quite sure there are others where is such an
->> attack is meaningless - any code which could generate the required range=
- of
->> keys, could do far worse things more easily.
->
-> Our network hashtable has to be secure against adversaries.  I
-> understand that this may not be important to your use-case.  However,
-> given the fact that the failure would only occur if an adversary
-> is present and actively attacking your hash table, I don't think
-> it has that much of a negative effect on your use-case either.
-
-I certainly accept that there are circumstances where it is a real
-possibility that an adversary might succeed in attacking the hash
-function, and changing the seed for each table is an excellent idea.
-It isn't clear to me that failing insertions is needed - it is done
-rather late and so doesn't throttle much, and could give the attacker
-feedback that they had succeeded (?).
-
-Not all hash tables are susceptible to attack.  It would be nice if
-developers working in less exposed areas could use rhashtable without ever
-having to check for errors.
-
-Error codes are messages from the implementation to the caller.
-They should be chosen to help the caller make useful choices, not to
-allow the implementation to avoid awkward situations.
-
->
-> Of course if you can reproduce the EBUSY error without your
-> disable_count patch or even after you have fixed the issue I
-> have pointed out in your disable_count patch you can still reproduce
-> it then that would suggest a real bug and we would need to fix it,
-> for everyone.
-
-I suspect that I cannot.  However experience tells me that customers do
-things that I cannot and would never expect - they can often trigger
-errors that I cannot.  It is best if the error cannot be returned.
-
->
->> Yes, storing a sharded count in the spinlock table does seem like an
->> appropriate granularity.  However that leads me to ask: why do we have
->> the spinlock table?  Why not bit spinlocks in the hashchain head like
->> include/linux/list_bl uses?
->
-> The spinlock table predates rhashtable.  Perhaps Thomas/Eric/Dave
-> can elucidate this.
-
-Maybe I'll submit an RFC patch to change it - if I can make it work.
-
->
->> I don't understand how it can ever be "too late", though I appreciate
->> that in some cases "sooner" is better than "later"
->> If we give up on the single atomic_t counter, then we must accept that
->> the number of elements could exceed any given value.  The only promise
->> we can provide is that it wont exceed N% of the table size for more than
->> T seconds.
->
-> Sure.  However, assuming we use an estimate that is hash-based,
-> that *should* be fairly accurate assuming that your hash function
-> is working in the first place.  It's completely different vs.
-> estimating based on a per-cpu count which could be wildly inaccurate.
-
-Ahhh... I see what you are thinking now.  You aren't suggestion a
-sharded count that is summed periodically.  Rather you are suggesting that
-we divide the hash space into N regions each with their own independent
-counter, and resize the table if any one region reaches 70% occupancy -
-on the assumption that the other regions are likely to be close.  Is
-that right?
-It would probably be dangerous to allow automatic shrinking (when just
-one drops below 30%) in that case, but it might be OK for growing.
-
-I'm not sure I like the idea, but it is worth thinking about.
-
-Thanks,
-NeilBrown
-
-
->
-> Cheers,
-> --=20
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrG5X0ACgkQOeye3VZi
-gbk7SRAAs9/tvaBH4cKwT682PAJUmLRablqzBT95VyCdaK8NP76AS4u504ExhGzU
-R5DLr3txoF2k5onS9gAfLk9XD1N0441oCN6o/+41wUtVu320NtiIiYsGADiPHL+9
-zpibW3oQzZOwtVBuu/Q6TVtHAR744Tu/3EKp9/Qk5bILf/wJVGc92d9ptYwSSidC
-USAJQosBciifC+vvD8L/XAhp/ctEGO0Jo/9GPGk2lID+gv9cRhyas8vnWSO5MYe5
-CZJT2LVPaGG44WxKFaJSbwlU50kclIPXlZ4KFVEr2f+90OiepLUbkcOJxNtg/XPR
-VYiXNTUchz8vetNXjzE+QqYoQJ+oDCABJ2OrAuvOFICb+tSsvmd9U7/BR3029iN/
-+oz5+tYSf7xTYKt3xd9mu51XsEV4v2KetX8zg64mQba1BLYYTWyZxCFemy1rrsY3
-5JKSH+yMYsHNeIEBYHlan77fCNdP9UzdHsXl+BZnVdf8kGc2wsCct0meU0BTwvbF
-Dp4vqVIT6e4o/VPhPdZfXmcXWdN3eu/JHj7RE/LIN6tHPZhfKubaEb+As/CAz3/E
-2TDfRwK2mtUqN+0gDVKpDIdThvlSZTKH+EV04FExeIs0O9CG+AQ1Obw/8vX52b5w
-6jPfxkK+Ptwfxtr8BUhcDxX43ieyx40nDBKRdDns99xMi2e3CZU=
-=wy1+
------END PGP SIGNATURE-----
---=-=-=--
+- Eric
