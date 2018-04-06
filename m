@@ -1,71 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751494AbeDFBei (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 21:34:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58590 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751275AbeDFBef (ORCPT
+        id S1751417AbeDFBh3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:37:29 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:46557 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751275AbeDFBh0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 21:34:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B79DA60274
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
- readX()
-To: linux-mips@linux-mips.org, arnd@arndb.de, timur@codeaurora.org,
-        sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>, linux-kernel@vger.kernel.org
-References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
- <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <41e184ae-689e-93c9-7b15-0c68bd624130@codeaurora.org>
-Date: Thu, 5 Apr 2018 21:34:31 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 5 Apr 2018 21:37:26 -0400
+X-Google-Smtp-Source: AIpwx4+wDhlOt33QeS2F26CYu1shS/6ZMFEW3W+AYBVDmWMqI+qjoDqect6SLWmNKOff7lH1KEgSqQ==
+Date: Thu, 5 Apr 2018 18:37:23 -0700
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        linux-kbuild@vger.kernel.org,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>, Jiri Benc <jbenc@redhat.com>,
+        Stanislav Kozina <skozina@redhat.com>,
+        Jerome Marchand <jmarchan@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>, Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [RFC 0/9] bpf: Add buildid check support
+Message-ID: <20180406013719.ekptkxbwzpjeaanu@ast-mbp.dhcp.thefacebook.com>
+References: <20180405151645.19130-1-jolsa@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405151645.19130-1-jolsa@kernel.org>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/3/2018 8:55 AM, Sinan Kaya wrote:
-> While a barrier is present in writeX() function before the register write,
-> a similar barrier is missing in the readX() function after the register
-> read. This could allow memory accesses following readX() to observe
-> stale data.
+On Thu, Apr 05, 2018 at 05:16:36PM +0200, Jiri Olsa wrote:
+> hi,
+> eBPF programs loaded for kprobes are allowed to read kernel
+> internal structures. We check the provided kernel version
+> to ensure that the program is loaded for the proper kernel. 
 > 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/mips/include/asm/io.h | 1 +
->  1 file changed, 1 insertion(+)
+> The problem is that the version check is not enough, because
+> it only follows the version setup from kernel's Makefile.
+> However, the internal kernel structures change based on the
+> .config data, so in practise we have different kernels with
+> same version.
 > 
-> diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
-> index fd00ddaf..6ac502f 100644
-> --- a/arch/mips/include/asm/io.h
-> +++ b/arch/mips/include/asm/io.h
-> @@ -377,6 +377,7 @@ static inline type pfx##read##bwlq(const volatile void __iomem *mem)	\
->  		BUG();							\
->  	}								\
->  									\
-> +	rmb();								\
->  	return pfx##ioswab##bwlq(__mem, __val);				\
->  }
->  
+> The eBPF kprobe program thus then get loaded for different
+> kernel than it's been built for, get wrong data (silently)
+> and provide misleading output.
 > 
+> This patchset implements additional check in eBPF loading code
+> on provided build ID (from kernel's elf image, .notes section
+> GNU build ID) to ensure we load the eBPF program on correct
+> kernel.
+> 
+> Also available in here (based on bpf-next/master):
+>   https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+>   bpf/checksum
+> 
+> This patchset consists of several changes:
+> 
+> - adding CONFIG_BUILDID_H option that instructs the build
+>   to generate uapi header file with build ID data, that
+>   will be included by eBPF program
+> 
+> - adding CONFIG_BPF_BUILDID_CHECK option and new bpf_attr
+>   field to allow build ID checking when loading the eBPF
+>   program
+> 
+> - changing libbpf to read and pass build ID to the kernel
+> 
+> - several small side fixes
+> 
+> - example perf eBPF code in bpf-samples/bpf-stdout-example.c
+>   to show the build ID support/usage.
+> 
+>     # perf record -vv  -e ./bpf-samples/bpf-stdout-example.c kill 2>&1 | grep buildid
+>     libbpf: section(7) buildid, size 21, link 0, flags 3, type=1
+>     libbpf: kernel buildid of ./bpf-samples/bpf-stdout-example.c is: 6e25edeb408513184e2753bebad25d42314501a0
+> 
+>   The buildid is provided the same way we provide kernel
+>   version, in a special "buildid" section:
+> 
+>     # cat ./bpf-samples/bpf-stdout-example.c
+>     ...
+>     #include <linux/buildid.h>
+> 
+>     char _buildid[] SEC("buildid") = LINUX_BUILDID_DATA;
+>     ...
+> 
+>   where LINUX_BUILDID_DATA is defined in the generated buildid.h.
+> 
+> please note it's an RFC ;-) any comments and suggestions are welcome
 
-Can we get these merged to 4.17? 
+I think this is overkill.
 
-There was a consensus to fix the architectures having API violation issues.
-https://www.mail-archive.com/netdev@vger.kernel.org/msg225971.html
+We're very heavy users of kprobe+bpf. It's used for lots
+of different cases and usage is constantly growing,
+but I haven't seen a single case of :
 
+> The eBPF kprobe program thus then get loaded for different
+> kernel than it's been built for, get wrong data (silently)
+> and provide misleading output.
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+but I saw plenty of the opposite. People pre-compile the program
+and hack kernel version when they load, since they know in advance
+that kprobe+bpf doesn't use any kernel specific things.
+The existing kernel version check for kprobe+bpf is already annoying
+to them.
+This buildid check they can easily bypass the same way.
+imo the whole thing just adds complexity and doesn't solve anything.
+Sorry, this is a Nack.
