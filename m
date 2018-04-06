@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48ph2MJ+ZIHLxzeaT/8v50OKatj4qm1vJ8TP+k/vAJwFu+3uRAfdw8cNvQtcbamwCGW3qbQ
-ARC-Seal: i=1; a=rsa-sha256; t=1523021551; cv=none;
+X-Google-Smtp-Source: AIpwx4/N5CCxT0RiWkbhVegYNpnd8/4XWg61dNMwtR4UdMnBSP2nSAOlbaBpDgIIz+dkYg9zMtOK
+ARC-Seal: i=1; a=rsa-sha256; t=1523021548; cv=none;
         d=google.com; s=arc-20160816;
-        b=FP5KC81tVe/fte/Em9h4r8UCoNVTrU6cjIVfjrNiLF3SpzX7rfDXMOoDCwCNHJRiTt
-         ETUtSP10nPn9Asy/PwnOus6oZCEg6NDpH/82Eh/abiLlV89f2jYawvJDJrVFpO6i+w4V
-         1TG7ZYNngwdBSnZn1DQj4LiWHgXOlL1cFk2NCyqpzKYHK7iu/RqmXakLk7EbEOy6ueLL
-         g1WrZDt5RRbhbF/UNm4vPZFg/mqKqjrrv5rnT2edzGArdmgRtAX7rfk9r1qFwK2HpFQ0
-         3IJPtlPBAdCxIZZmT0ax304b5lZDhXlSpRJdZuSO1v61JRPC9P1w/h5BlNQ+k4La7ety
-         yocg==
+        b=tiI3/grdsp+coF0VKdHW/7wfBpl56faQoCcmdZwLgPK1hgioEUbNYtHbsp6ro3tqM8
+         5EPgtbc8tCxtPtFhHGItsRjrf9togvjpY3Cwky+y9rrAKZu2RMX92MOBXIpa/UI+LypZ
+         Yg36s5/sPefDzjnCITpQp0TYKsJFEFFzrtrPGj3Nxc71ultuKKgFMyLpthkZYzTqx6kO
+         5niKxWvBenkQegj4oN6mVqdK0+RzHuHn80mf0KdtaN/FHZcZoevW4KoWgS7zPpVkWFhA
+         NQm5LlHepGLipLIBdg3LnUPdZq2keMMMTuZyRKrX/priyyIK4UXnUbxTuFe0oSdmkGCt
+         ZY0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WUz1t+xNHE6o8GRjYm2YmRK/PqPl2exd6S41euWGvbc=;
-        b=uMpP8A7h4U9qq9LdPdPsS8qVuEea4GB0CwAfY3lzwWLQH8JYAGLD8YjeydVcJ5Udh7
-         D2F/MHgNVpXMYPfzf0W+f9m931wSMrTCkbyh3jI4Hzyh+nZyZWp7/VowF3HAlxGCTaSv
-         ky9my5M85Toe+jCmbIZhqGKdvgVdpBxCeVbUhhlSuP/iFlkpayovJEwb2RVExmH5BqTg
-         oz0IRfnibSTa2q9GCi/4Zqgtfxu36S6EsWxf1CLGlqNbe/OrQYVUfQlIOOcoMVYuwiYb
-         Qy/+arTL/Zk4r3NeACVSJEnsiyH7iEAJq0jb+1zw+uEjf7zXaLUKSoXJGoXQo3f0ZCTp
-         89Ag==
+        bh=oDP6FuvO/NvwNTR93l8WolbFrHsPPbOpxbM6VXxO/Bc=;
+        b=Xz/APnTzrRszhm2aH6bEHwr+g0wr7RzmGuJn3wgfUX3BjScCzf/dBsD18RB7R8r5wL
+         SS7PE4PJ6mKCfbWZVvrGfUztuc/bmeXKIZt032bmuqV0rFvL3HXOBUbI3sBfDLrrSpsb
+         AOtl8+PSLPU6JJEptTv3nky9oSF3aigQVtgzw4TlqECCDO8qc2GX1zMMsBYs8nsycmp9
+         q5iAf/FWcN3jAK7cHo4FxM6zlXMR08EAfp3MZW9ak9fLzPuVoOoRDqPxoN33HNCc/VKD
+         Rqq3ipmCuFalfnANSLbHuZleqGosFm52r7wh1IQDXbQZEKe64KDLAsV6Azzo2H88OMsP
+         n1rA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,23 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jann Horn <jann@thejh.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux API <linux-api@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tycho Andersen <tycho.andersen@canonical.com>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 53/72] fs/proc: Stop trying to report thread stacks
-Date: Fri,  6 Apr 2018 15:23:54 +0200
-Message-Id: <20180406084309.688792227@linuxfoundation.org>
+	Eric Biggers <ebiggers@google.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.4 52/72] crypto: x86/cast5-avx - fix ECB encryption when long sg follows short one
+Date: Fri,  6 Apr 2018 15:23:53 +0200
+Message-Id: <20180406084309.628555327@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -52,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003624226103418?=
-X-GMAIL-MSGID: =?utf-8?q?1597003846249965315?=
+X-GMAIL-THRID: =?utf-8?q?1597003609405057187?=
+X-GMAIL-MSGID: =?utf-8?q?1597003843417144585?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,188 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Eric Biggers <ebiggers@google.com>
 
-commit b18cb64ead400c01bf1580eeba330ace51f8087d upstream.
+commit 8f461b1e02ed546fbd0f11611138da67fd85a30f upstream.
 
-This reverts more of:
+With ecb-cast5-avx, if a 128+ byte scatterlist element followed a
+shorter one, then the algorithm accidentally encrypted/decrypted only 8
+bytes instead of the expected 128 bytes.  Fix it by setting the
+encryption/decryption 'fn' correctly.
 
-  b76437579d13 ("procfs: mark thread stack correctly in proc/<pid>/maps")
-
-... which was partially reverted by:
-
-  65376df58217 ("proc: revert /proc/<pid>/maps [stack:TID] annotation")
-
-Originally, /proc/PID/task/TID/maps was the same as /proc/TID/maps.
-
-In current kernels, /proc/PID/maps (or /proc/TID/maps even for
-threads) shows "[stack]" for VMAs in the mm's stack address range.
-
-In contrast, /proc/PID/task/TID/maps uses KSTK_ESP to guess the
-target thread's stack's VMA.  This is racy, probably returns garbage
-and, on arches with CONFIG_TASK_INFO_IN_THREAD=y, is also crash-prone:
-KSTK_ESP is not safe to use on tasks that aren't known to be running
-ordinary process-context kernel code.
-
-This patch removes the difference and just shows "[stack]" for VMAs
-in the mm's stack range.  This is IMO much more sensible -- the
-actual "stack" address really is treated specially by the VM code,
-and the current thread stack isn't even well-defined for programs
-that frequently switch stacks on their own.
-
-Reported-by: Jann Horn <jann@thejh.net>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux API <linux-api@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tycho Andersen <tycho.andersen@canonical.com>
-Link: http://lkml.kernel.org/r/3e678474ec14e0a0ec34c611016753eea2e1b8ba.1475257877.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: c12ab20b162c ("crypto: cast5/avx - avoid using temporary stack buffers")
+Cc: <stable@vger.kernel.org> # v3.8+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/filesystems/proc.txt |   26 --------------------------
- fs/proc/task_mmu.c                 |   29 ++++++++++-------------------
- fs/proc/task_nommu.c               |   26 +++++++++-----------------
- 3 files changed, 19 insertions(+), 62 deletions(-)
+ arch/x86/crypto/cast5_avx_glue.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -383,32 +383,6 @@ is not associated with a file:
+--- a/arch/x86/crypto/cast5_avx_glue.c
++++ b/arch/x86/crypto/cast5_avx_glue.c
+@@ -66,8 +66,6 @@ static int ecb_crypt(struct blkcipher_de
+ 	void (*fn)(struct cast5_ctx *ctx, u8 *dst, const u8 *src);
+ 	int err;
  
-  or if empty, the mapping is anonymous.
- 
--The /proc/PID/task/TID/maps is a view of the virtual memory from the viewpoint
--of the individual tasks of a process. In this file you will see a mapping marked
--as [stack] if that task sees it as a stack. Hence, for the example above, the
--task-level map, i.e. /proc/PID/task/TID/maps for thread 1001 will look like this:
+-	fn = (enc) ? cast5_ecb_enc_16way : cast5_ecb_dec_16way;
 -
--08048000-08049000 r-xp 00000000 03:00 8312       /opt/test
--08049000-0804a000 rw-p 00001000 03:00 8312       /opt/test
--0804a000-0806b000 rw-p 00000000 00:00 0          [heap]
--a7cb1000-a7cb2000 ---p 00000000 00:00 0
--a7cb2000-a7eb2000 rw-p 00000000 00:00 0
--a7eb2000-a7eb3000 ---p 00000000 00:00 0
--a7eb3000-a7ed5000 rw-p 00000000 00:00 0          [stack]
--a7ed5000-a8008000 r-xp 00000000 03:00 4222       /lib/libc.so.6
--a8008000-a800a000 r--p 00133000 03:00 4222       /lib/libc.so.6
--a800a000-a800b000 rw-p 00135000 03:00 4222       /lib/libc.so.6
--a800b000-a800e000 rw-p 00000000 00:00 0
--a800e000-a8022000 r-xp 00000000 03:00 14462      /lib/libpthread.so.0
--a8022000-a8023000 r--p 00013000 03:00 14462      /lib/libpthread.so.0
--a8023000-a8024000 rw-p 00014000 03:00 14462      /lib/libpthread.so.0
--a8024000-a8027000 rw-p 00000000 00:00 0
--a8027000-a8043000 r-xp 00000000 03:00 8317       /lib/ld-linux.so.2
--a8043000-a8044000 r--p 0001b000 03:00 8317       /lib/ld-linux.so.2
--a8044000-a8045000 rw-p 0001c000 03:00 8317       /lib/ld-linux.so.2
--aff35000-aff4a000 rw-p 00000000 00:00 0
--ffffe000-fffff000 r-xp 00000000 00:00 0          [vdso]
--
- The /proc/PID/smaps is an extension based on maps, showing the memory
- consumption for each of the process's mappings. For each of mappings there
- is a series of lines such as the following:
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -253,24 +253,15 @@ static int do_maps_open(struct inode *in
-  * /proc/PID/maps that is the stack of the main task.
-  */
- static int is_stack(struct proc_maps_private *priv,
--		    struct vm_area_struct *vma, int is_pid)
-+		    struct vm_area_struct *vma)
- {
--	int stack = 0;
--
--	if (is_pid) {
--		stack = vma->vm_start <= vma->vm_mm->start_stack &&
--			vma->vm_end >= vma->vm_mm->start_stack;
--	} else {
--		struct inode *inode = priv->inode;
--		struct task_struct *task;
--
--		rcu_read_lock();
--		task = pid_task(proc_pid(inode), PIDTYPE_PID);
--		if (task)
--			stack = vma_is_stack_for_task(vma, task);
--		rcu_read_unlock();
--	}
--	return stack;
-+	/*
-+	 * We make no effort to guess what a given thread considers to be
-+	 * its "stack".  It's not even well-defined for programs written
-+	 * languages like Go.
-+	 */
-+	return vma->vm_start <= vma->vm_mm->start_stack &&
-+		vma->vm_end >= vma->vm_mm->start_stack;
- }
+ 	err = blkcipher_walk_virt(desc, walk);
+ 	desc->flags &= ~CRYPTO_TFM_REQ_MAY_SLEEP;
  
- static void
-@@ -337,7 +328,7 @@ show_map_vma(struct seq_file *m, struct
- 			goto done;
- 		}
+@@ -79,6 +77,7 @@ static int ecb_crypt(struct blkcipher_de
  
--		if (is_stack(priv, vma, is_pid))
-+		if (is_stack(priv, vma))
- 			name = "[stack]";
- 	}
+ 		/* Process multi-block batch */
+ 		if (nbytes >= bsize * CAST5_PARALLEL_BLOCKS) {
++			fn = (enc) ? cast5_ecb_enc_16way : cast5_ecb_dec_16way;
+ 			do {
+ 				fn(ctx, wdst, wsrc);
  
-@@ -1560,7 +1551,7 @@ static int show_numa_map(struct seq_file
- 		seq_file_path(m, file, "\n\t= ");
- 	} else if (vma->vm_start <= mm->brk && vma->vm_end >= mm->start_brk) {
- 		seq_puts(m, " heap");
--	} else if (is_stack(proc_priv, vma, is_pid)) {
-+	} else if (is_stack(proc_priv, vma)) {
- 		seq_puts(m, " stack");
- 	}
- 
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -124,25 +124,17 @@ unsigned long task_statm(struct mm_struc
- }
- 
- static int is_stack(struct proc_maps_private *priv,
--		    struct vm_area_struct *vma, int is_pid)
-+		    struct vm_area_struct *vma)
- {
- 	struct mm_struct *mm = vma->vm_mm;
--	int stack = 0;
- 
--	if (is_pid) {
--		stack = vma->vm_start <= mm->start_stack &&
--			vma->vm_end >= mm->start_stack;
--	} else {
--		struct inode *inode = priv->inode;
--		struct task_struct *task;
--
--		rcu_read_lock();
--		task = pid_task(proc_pid(inode), PIDTYPE_PID);
--		if (task)
--			stack = vma_is_stack_for_task(vma, task);
--		rcu_read_unlock();
--	}
--	return stack;
-+	/*
-+	 * We make no effort to guess what a given thread considers to be
-+	 * its "stack".  It's not even well-defined for programs written
-+	 * languages like Go.
-+	 */
-+	return vma->vm_start <= mm->start_stack &&
-+		vma->vm_end >= mm->start_stack;
- }
- 
- /*
-@@ -184,7 +176,7 @@ static int nommu_vma_show(struct seq_fil
- 	if (file) {
- 		seq_pad(m, ' ');
- 		seq_file_path(m, file, "");
--	} else if (mm && is_stack(priv, vma, is_pid)) {
-+	} else if (mm && is_stack(priv, vma)) {
- 		seq_pad(m, ' ');
- 		seq_printf(m, "[stack]");
- 	}
