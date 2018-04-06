@@ -1,41 +1,38 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48EFr2b3SKPBRdFyqKhEMXzoEE0ApBz08jlRVpqJg3avzrhKK/6izyZShOYs0GNTGEXjIU8
-ARC-Seal: i=1; a=rsa-sha256; t=1523021832; cv=none;
+X-Google-Smtp-Source: AIpwx480YikiRWFuatCs8pnOdxElKzZs86F5h52Bl1QGuObhNKojb3+nacwhMAx3ULPzsJUlDSWW
+ARC-Seal: i=1; a=rsa-sha256; t=1523021826; cv=none;
         d=google.com; s=arc-20160816;
-        b=poYUcPEvDLdXQxIDsGWwEXu55zeBt85mn67R5vDPSy2KZ9uzZOwyKuxScUbexKjEy7
-         PU8gHbLFgMXKMdSd408jugaHn2f76JhPF6l8AYT0xLwG2SKCjjlrAFXyMxVYeoVq7hSK
-         yhicaqgdbDMSF4BzE+GbibsBEyKZO/l/LbtSvop3CElnPgAnrGJuAFi8OqM0tcBHLT4Q
-         zHdCjce/QJO/cWI9Hp3RL4yfA8dJ9zVGEaNnhR8zeNtC6KrBWOrKyQxltygWQ0CBtRSK
-         wrquEU0qRwIF5tQ6sHXlf8jPLt+Al85w8z+cGr5Mj9NimTfkQ9GTQ49NqmGpkqlweuR6
-         GpKw==
+        b=pOCT7aLV8vVWPBUynYswPE9WISS2vD0ZJcL2qrLOCbQwQHH4/mxKdXRk0McQkXJ5t/
+         DvNVwmKUxF7BZwnRKoKKTdhTA/iPi7vC/hXEMdVz1/BQziYnYYjRURvFJ1NrGKYoln61
+         eP9mIh/XddqnKr+S/Oq4Klzw4/rZRRIfO+ImuXBpi8lsrltSLUt0i9ExYBjre8+fALWb
+         0QaFVm1kwP2JJGaJH1pdqtElqcZ9UdEiz+ce23Th50LP3pMeU0FtL5dzwt5S/X5OHJu1
+         LN9yVbCwu/sPDliiMMciqQEW8Q6SAHjOeQaX0qEMmZtNt4fbTCy6dmL/Px00YEXXKq2/
+         io5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mDzLJi7GjLM7nUkyH2I3Lp9zn7ahVKjEG68ld7dwTMI=;
-        b=whYuNCCNW2+rs8G2hg1LJ9Iy0aQaMXcikNW3yKYLHxM64hmuT1BC0ZrqyJChM99AbB
-         8wAl45dvzwrq7SGDwu2IPbFfxDxSmfpTK30IThHHqZXdPIWn1t08ppQ43tej8zFWv1/K
-         a93GCvdLLP/RE8PwiX9SW7rgbg6e2My06sghiVBxLgzxR7nPDBDKcJhdKVLBos+vdsrA
-         pEOwpDCI4OEbly2Ixkuq+5YXMGzVwUVkHLZ5C/texoWC4J0P0BM2JJ4ojLYkQZ2H6DVN
-         bblsXlAHfe/uaajBDAl6ospKZR0bLXoTLe7Q3pXtMbT4zzWRIDEskX/c0WI1zUK5gHsA
-         7gjQ==
+        bh=B1IG4IfjeqQU4ywP05fatB7S0s0SCx/5mKswlztk7QI=;
+        b=c1Ar0PmIn2x202F62ixZvVv6YZKTr3Bs1JM7CeuvV98KuPk95frV4d/M92bQjOeZtP
+         IUyUTX6oXLi4+JitTZv2TluoCbTBKCnVAsg/AB+qOs4ow3U5cItTFzE5ENNXeJCXF4pT
+         oe5Pe9/kazjL5A6Lp4Zv5FgXrx0jVtujOOOBXW7pu4CbQ1EeAXhRl8PmEyR47/AriJIZ
+         Ro5lrvZNSEIc6dh4RB1gyBpYNUGGZBJnXgqdePGHB1cRYXdJSA9QGVj5pgsqwhXFCPmA
+         F7+yLcG3g3NecdOf2Mgl4uZusuhnd/r7cfOXINv13PNjCHQX+JQxPUL1UnXtWp47Ek6F
+         Ln+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Greg Hackmann <ghackmann@google.com>,
-	Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 4.9 069/102] arm64: capabilities: Handle duplicate entries for a capability
-Date: Fri,  6 Apr 2018 15:23:50 +0200
-Message-Id: <20180406084341.167811426@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>,
+	Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@fb.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 100/102] Revert "mtip32xx: use runtime tag to initialize command header"
+Date: Fri,  6 Apr 2018 15:24:21 +0200
+Message-Id: <20180406084345.447939757@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -45,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004140451466226?=
-X-GMAIL-MSGID: =?utf-8?q?1597004140451466226?=
+X-GMAIL-THRID: =?utf-8?q?1597003823692363057?=
+X-GMAIL-MSGID: =?utf-8?q?1597004135268428321?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,107 +51,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 67948af41f2e upstream.
+This reverts commit db54facd56a40e7766bf7f7cda1ae138e72a691c which was
+commit a4e84aae8139aca9fbfbced1f45c51ca81b57488 upstream.
 
-Sometimes a single capability could be listed multiple times with
-differing matches(), e.g, CPU errata for different MIDR versions.
-This breaks verify_local_cpu_feature() and this_cpu_has_cap() as
-we stop checking for a capability on a CPU with the first
-entry in the given table, which is not sufficient. Make sure we
-run the checks for all entries of the same capability. We do
-this by fixing __this_cpu_has_cap() to run through all the
-entries in the given table for a match and reuse it for
-verify_local_cpu_feature().
+Ben writes:
+    MQ IO schedulers were introduced in 4.11, so this shouldn't be
+    needed in older branches.  It also causes a performance
+    regression (fixed upstream).  Please revert this for 4.4 and
+    4.9.
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Alex Shi <alex.shi@linaro.org> [v4.9 backport]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
-Tested-by: Will Deacon <will.deacon@arm.com>
-Tested-by: Greg Hackmann <ghackmann@google.com>
+So let's revert it!
+
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@fb.com>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpufeature.c |   44 +++++++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
+ drivers/block/mtip32xx/mtip32xx.c |   36 ++++++++++++------------------------
+ 1 file changed, 12 insertions(+), 24 deletions(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -969,6 +969,26 @@ static void __init setup_elf_hwcaps(cons
- 			cap_set_elf_hwcap(hwcaps);
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -169,25 +169,6 @@ static bool mtip_check_surprise_removal(
+ 	return false; /* device present */
  }
  
-+/*
-+ * Check if the current CPU has a given feature capability.
-+ * Should be called from non-preemptible context.
-+ */
-+static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
-+			       unsigned int cap)
-+{
-+	const struct arm64_cpu_capabilities *caps;
-+
-+	if (WARN_ON(preemptible()))
-+		return false;
-+
-+	for (caps = cap_array; caps->desc; caps++)
-+		if (caps->capability == cap &&
-+		    caps->matches &&
-+		    caps->matches(caps, SCOPE_LOCAL_CPU))
-+			return true;
-+	return false;
-+}
-+
- void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
- 			    const char *info)
- {
-@@ -1037,8 +1057,9 @@ verify_local_elf_hwcaps(const struct arm
- }
- 
- static void
--verify_local_cpu_features(const struct arm64_cpu_capabilities *caps)
-+verify_local_cpu_features(const struct arm64_cpu_capabilities *caps_list)
- {
-+	const struct arm64_cpu_capabilities *caps = caps_list;
- 	for (; caps->matches; caps++) {
- 		if (!cpus_have_cap(caps->capability))
- 			continue;
-@@ -1046,7 +1067,7 @@ verify_local_cpu_features(const struct a
- 		 * If the new CPU misses an advertised feature, we cannot proceed
- 		 * further, park the cpu.
- 		 */
--		if (!caps->matches(caps, SCOPE_LOCAL_CPU)) {
-+		if (!__this_cpu_has_cap(caps_list, caps->capability)) {
- 			pr_crit("CPU%d: missing feature: %s\n",
- 					smp_processor_id(), caps->desc);
- 			cpu_die_early();
-@@ -1099,25 +1120,6 @@ static void __init setup_feature_capabil
- 	enable_cpu_capabilities(arm64_features);
- }
- 
--/*
-- * Check if the current CPU has a given feature capability.
-- * Should be called from non-preemptible context.
-- */
--static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
--			       unsigned int cap)
+-/* we have to use runtime tag to setup command header */
+-static void mtip_init_cmd_header(struct request *rq)
 -{
--	const struct arm64_cpu_capabilities *caps;
+-	struct driver_data *dd = rq->q->queuedata;
+-	struct mtip_cmd *cmd = blk_mq_rq_to_pdu(rq);
+-	u32 host_cap_64 = readl(dd->mmio + HOST_CAP) & HOST_CAP_64;
 -
--	if (WARN_ON(preemptible()))
--		return false;
+-	/* Point the command headers at the command tables. */
+-	cmd->command_header = dd->port->command_list +
+-				(sizeof(struct mtip_cmd_hdr) * rq->tag);
+-	cmd->command_header_dma = dd->port->command_list_dma +
+-				(sizeof(struct mtip_cmd_hdr) * rq->tag);
 -
--	for (caps = cap_array; caps->desc; caps++)
--		if (caps->capability == cap && caps->matches)
--			return caps->matches(caps, SCOPE_LOCAL_CPU);
+-	if (host_cap_64)
+-		cmd->command_header->ctbau = __force_bit2int cpu_to_le32((cmd->command_dma >> 16) >> 16);
 -
--	return false;
+-	cmd->command_header->ctba = __force_bit2int cpu_to_le32(cmd->command_dma & 0xFFFFFFFF);
 -}
 -
- extern const struct arm64_cpu_capabilities arm64_errata[];
+ static struct mtip_cmd *mtip_get_int_command(struct driver_data *dd)
+ {
+ 	struct request *rq;
+@@ -199,9 +180,6 @@ static struct mtip_cmd *mtip_get_int_com
+ 	if (IS_ERR(rq))
+ 		return NULL;
  
- bool this_cpu_has_cap(unsigned int cap)
+-	/* Internal cmd isn't submitted via .queue_rq */
+-	mtip_init_cmd_header(rq);
+-
+ 	return blk_mq_rq_to_pdu(rq);
+ }
+ 
+@@ -3833,8 +3811,6 @@ static int mtip_queue_rq(struct blk_mq_h
+ 	struct request *rq = bd->rq;
+ 	int ret;
+ 
+-	mtip_init_cmd_header(rq);
+-
+ 	if (unlikely(mtip_check_unal_depth(hctx, rq)))
+ 		return BLK_MQ_RQ_QUEUE_BUSY;
+ 
+@@ -3866,6 +3842,7 @@ static int mtip_init_cmd(void *data, str
+ {
+ 	struct driver_data *dd = data;
+ 	struct mtip_cmd *cmd = blk_mq_rq_to_pdu(rq);
++	u32 host_cap_64 = readl(dd->mmio + HOST_CAP) & HOST_CAP_64;
+ 
+ 	/*
+ 	 * For flush requests, request_idx starts at the end of the
+@@ -3882,6 +3859,17 @@ static int mtip_init_cmd(void *data, str
+ 
+ 	memset(cmd->command, 0, CMD_DMA_ALLOC_SZ);
+ 
++	/* Point the command headers at the command tables. */
++	cmd->command_header = dd->port->command_list +
++				(sizeof(struct mtip_cmd_hdr) * request_idx);
++	cmd->command_header_dma = dd->port->command_list_dma +
++				(sizeof(struct mtip_cmd_hdr) * request_idx);
++
++	if (host_cap_64)
++		cmd->command_header->ctbau = __force_bit2int cpu_to_le32((cmd->command_dma >> 16) >> 16);
++
++	cmd->command_header->ctba = __force_bit2int cpu_to_le32(cmd->command_dma & 0xFFFFFFFF);
++
+ 	sg_init_table(cmd->sg, MTIP_MAX_SG);
+ 	return 0;
+ }
