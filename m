@@ -1,148 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751417AbeDFBVV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 21:21:21 -0400
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:54875
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751280AbeDFBVT (ORCPT
+        id S1751361AbeDFBbl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:31:41 -0400
+Received: from mail-it0-f43.google.com ([209.85.214.43]:52121 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbeDFBbj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 21:21:19 -0400
-X-ASG-Debug-ID: 1522977675-093b7e10b3319e0001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
-To: "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
- capabilities
-Thread-Topic: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
- capabilities
-X-ASG-Orig-Subj: Re: [PATCH v2] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
- capabilities
-Thread-Index: AQHTy/XJXfOHf7atGkaXAZEUhTEY6KPv42oAgAKJmwA=
-Date: Fri, 6 Apr 2018 01:21:05 +0000
-Message-ID: <1522977662.9269.2.camel@hxt-semitech.com>
-References: <1522833380-18438-1-git-send-email-shunyong.yang@hxt-semitech.com>
-         <20180404103600.GJ3572@vireshk-i7>
-In-Reply-To: <20180404103600.GJ3572@vireshk-i7>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.127.0.11]
-Content-Type: text/plain; charset="iso-8859-15"
-Content-ID: <F506D0A0E171724EAF0F80231DBE0920@hxt-semitech.com>
-Content-Transfer-Encoding: 8BIT
+        Thu, 5 Apr 2018 21:31:39 -0400
+X-Google-Smtp-Source: AIpwx4/mJchMdkvwgckD/c3cMamWCBe9mGdiOszQTNLqox6bD8n70pocWvGDLlB+wtSSQUJqP0dqMk0dh8kt3TW3ELQ=
 MIME-Version: 1.0
-X-Barracuda-Connect: localhost[10.128.0.15]
-X-Barracuda-Start-Time: 1522977675
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5598 1.0000 0.7500
-X-Barracuda-Spam-Score: 0.75
-X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49625
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+In-Reply-To: <20180406011147.GD12349@sirena.org.uk>
+References: <s5hwoxmdpmu.wl-tiwai@suse.de> <CA+55aFxuowsvQyq0+xeq=ganTHqw2uZ6kkZ8DBk0k01cJHUzjA@mail.gmail.com>
+ <20180405190441.GC12349@sirena.org.uk> <CA+55aFw3B=2NjM2dapxFRU=GYtMJ+Mm=MBVDEp8PNqp9LGz_7Q@mail.gmail.com>
+ <20180406011147.GD12349@sirena.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 5 Apr 2018 18:31:37 -0700
+X-Google-Sender-Auth: hriAZ_0Gk2FQ8KBPuq9aqFKzhic
+Message-ID: <CA+55aFwZ=GeDXh2Q5LnFD6Kor=e2+ZNChKX=5Mf3Oebw06J9QA@mail.gmail.com>
+Subject: Re: [GIT PULL] sound updates for 4.17-rc1
+To: Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Kumar,
+On Thu, Apr 5, 2018 at 6:11 PM, Mark Brown <broonie@kernel.org> wrote:
+>
+>>  (3) if you are done and ready with a branch, and it's time to just
+>> say "the development on this branch is all done, now I will ask
+>> upstream to pull it, and I'll merge this into my upstream branch"
+>
+>>      THIS IS NEVER AUTOMATED!
+>
+>>      Sure, you might script it ("I have 35+ branches that I will send
+>> out, I use a script to merge them all together"), but the act of
+>> running that script is not something daily, it's something like "I am
+>> now ready to ask Takashi to take this", so you do it before you do the
+>> pull request to upstream.
+>
+> Hrm, OK.  This I find unclear in that if you're saying it's OK to script
+> the merge of lots of branches I'm having trouble seeing the distinction
+> between that and the test merges you're talking about.
 
-On Wed, 2018-04-04 at 16:06 +0530, Viresh Kumar wrote:
-> On 04-04-18, 17:16, Shunyong Yang wrote:
-> > 
-> > When multiple cpus are related in one cpufreq policy, the first
-> > online
-> > cpu will be chosen by default to handle cpufreq operations. Let's
-> > take
-> > cpu0 and cpu1 as an example.
-> > 
-> > When cpu0 is offline, policy->cpu will be shifted to cpu1. Cpu1's
-> > perf
-> > capabilities should be initialized. Otherwise, perf capabilities
-> > are 0s
-> > and speed change can not take effect.
-> > 
-> > This patch copies perf capabilities of the first online cpu to
-> > other
-> > shared cpus when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
-> > 
-> > Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-> > Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-> > ---
-> > 
-> > Changes in v2:
-> >   -Add unlikely in cpu comparison per Kumar's comments.
-> >   -Fix coding style per Kumar's comments.
-> > 
-> > Changes in v1:
-> >   -Drop RFC tag,
-> >      The original RFC link,
-> >      https://patchwork.kernel.org/patch/10299055/.
-> > 
-> >      This patch solves same issue as RFC above.
-> > 
-> >      Patch name is changed as code is too much different with RFC
-> > above.
-> > 
-> >   -Remove extra init() per Viresh Kumar's comments and only handle
-> >    CPPC CPUFREQ_SHARED_TYPE_ANY case.
-> > 
-> > ---
-> >  drivers/cpufreq/cppc_cpufreq.c | 15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/cpufreq/cppc_cpufreq.c
-> > b/drivers/cpufreq/cppc_cpufreq.c
-> > index 8f7b21a4d537..679e43b9c980 100644
-> > --- a/drivers/cpufreq/cppc_cpufreq.c
-> > +++ b/drivers/cpufreq/cppc_cpufreq.c
-> > @@ -164,9 +164,20 @@ static int cppc_cpufreq_cpu_init(struct
-> > cpufreq_policy *policy)
-> >  	policy->cpuinfo.transition_latency =
-> > cppc_get_transition_latency(cpu_num);
-> >  	policy->shared_type = cpu->shared_type;
-> >  
-> > -	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
-> > +	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
-> > +		int i;
-> > +
-> >  		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
-> > -	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
-> > +
-> > +		for_each_cpu(i, policy->cpus) {
-> > +			if (unlikely(i == policy->cpu))
-> > +				continue;
-> > +
-> > +			memcpy(&all_cpu_data[i]->perf_caps,
-> > +			       &cpu->perf_caps,
-> > +			       sizeof(cpu->perf_caps));
-> I think this can be written in two lines without violating the 80
-> columns rule.
+The distinction is in intent and timing - and resulting history.
 
-I think you mean change like following?
+The "merge for release" happens once - when you are ready to send it
+out. The end result is a single merge that brings in the changes to
+the code, and a history that is legible and understandable.
 
-     memcpy(&all_cpu_data[i]->perf_caps, &cpu->perf_caps,
-            sizeof(cpu->perf_caps));
+So if you have 50 branches with new code, and they all have the
+changes you were working on, maybe there's a lot of merges (not
+necessarily 50 of them, since you use octopus merges, but easily ten).
 
-I will send v3 to change this.
+But the merges they are are the *only* thing that brings in the new
+code, and when you look at history, the code development within one
+topic branch is nice and linear and there aren't odd other merges in
+the middle.
 
-Thanks.
-Shunyong.
+That makes it a *lot* easier to follow a certain strand of development
+(namely the strand of your topic branch). There aren't five other
+random merges that pull in the changes part-way through.
 
-> 
-> > 
-> > +		}
-> > +	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL)
-> > {
-> >  		/* Support only SW_ANY for now. */
-> >  		pr_debug("Unsupported CPU co-ord type\n");
-> >  		return -EFAULT;
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
+So the "merge for release" is something that has been THOUGHT about.
+Maybe there was scripting simply because there were lots of branches,
+but it was all ready and intentional, and none of it should have been
+merged in some half-way ready state. By definition, the branches you
+merged were *ready*.
+
+Otherwise you shouldn't have been merging them for an upstream pull
+request at all!
+
+See?
+
+In contrast, the "merge for testing" happens at random times and
+happens multiple times. There is no *thought* behind the merge that
+brings in the code, it's literally just "I'm testing everything I
+have". It's not necessarily just scripted in the sense of "I have 50
+branches", but it is scripted and automated in a much bigger sense -
+you don't even care if things are ready, you just want to run build
+tests and maybe boot tests on whatever you happen to have at the time.
+
+See how completely different such a merge is?
+
+So what I'm trying to explain is that upstream does not want to see
+those "whatever you happen to have at the time" merges. They are
+*WRONG*. They actively make it harder to see the history of the code.
+
+         Linus
