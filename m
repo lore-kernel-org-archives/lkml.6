@@ -1,92 +1,263 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751418AbeDFBOq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 21:14:46 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59052 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751298AbeDFBOp (ORCPT
+        id S1751530AbeDFBRl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:17:41 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:43477 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751315AbeDFBRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 21:14:45 -0400
-Date: Fri, 6 Apr 2018 02:14:18 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: hch@lst.de, thomas.lendacky@amd.com, tglx@linutronix.de,
-        dwmw2@infradead.org, joro@8bytes.org, jdmason@kudzu.us,
-        konrad.wilk@oracle.com, torvalds@linux-foundation.org, mulix@mulix.org,
-        peterz@infradead.org, iommu@lists.linux-foundation.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
-        perex@perex.cz, tiwai@suse.com, Vinod Koul <vinod.koul@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: Re: x86/dma conversion for v4.17-rc1 breaks sound / sst-acpi (commit
- 6e4bf5867783)
-Message-ID: <20180406011418.GE12349@sirena.org.uk>
-References: <20180405205657.GA1788@light.dominikbrodowski.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2qXFWqzzG3v1+95a"
-Content-Disposition: inline
-In-Reply-To: <20180405205657.GA1788@light.dominikbrodowski.net>
-X-Cookie: Last week's pet, this week's special.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 5 Apr 2018 21:17:38 -0400
+X-ME-Sender: <xms:scrGWtt-nuiEwgbydMKxiPniysVO9EY7DBhyJ1QTaPcLLb8rknH-gg>
+From: Mark Greer <mgreer@animalcreek.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: Remi Machet <rmachet@nvidia.com>,
+        Dale Farnsworth <dale@farnsworth.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Mark Greer <mgreer@animalcreek.com>
+Subject: [PATCH 3/5] powerpc/boot: Remove support for Marvell mv64x60 i2c controller
+Date: Thu,  5 Apr 2018 18:17:18 -0700
+Message-Id: <20180406011720.7728-4-mgreer@animalcreek.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180406011720.7728-1-mgreer@animalcreek.com>
+References: <20180406011720.7728-1-mgreer@animalcreek.com>
+Organization: Animal Creek Technologies, Inc.
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There are no longer any platforms that use Marvell's mv64x60's i2c
+controller so remove its driver.
 
---2qXFWqzzG3v1+95a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Mark Greer <mgreer@animalcreek.com>
+---
+ arch/powerpc/boot/Makefile      |   2 +-
+ arch/powerpc/boot/mv64x60_i2c.c | 204 ----------------------------------------
+ 2 files changed, 1 insertion(+), 205 deletions(-)
+ delete mode 100644 arch/powerpc/boot/mv64x60_i2c.c
 
-On Thu, Apr 05, 2018 at 10:56:57PM +0200, Dominik Brodowski wrote:
-> Christoph,
->=20
-> unfortunately, commit 6e4bf5867783 breaks sound on my Dell XPS13, see the
-> dmesg diff between fec777c385b6 and 6e4bf5867783:
-
-Adding Vinod and Pierre from Intel in case they have any ideas here.
-Which model of XPS13 is this (2015?)?
-
-> -sst-acpi INT3438:00: DesignWare DMA Controller, 8 channels
-> -haswell-pcm-audio haswell-pcm-audio: Direct firmware load for intel/Intc=
-PP01.bin failed with error -2
-> -haswell-pcm-audio haswell-pcm-audio: fw image intel/IntcPP01.bin not ava=
-ilable(-2)
-> -haswell-pcm-audio haswell-pcm-audio: FW loaded, mailbox readback FW info=
-: type 01, - version: 00.00, build 77, source commit id: 876ac6906f31a43b67=
-72b23c7c983ce9dcb18a19
-> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> System Pin mappin=
-g ok
-> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload0 Pin mapp=
-ing ok
-> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload1 Pin mapp=
-ing ok
-> -broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Loopback Pin mapp=
-ing ok
-> -broadwell-audio broadwell-audio: rt286-aif1 <-> snd-soc-dummy-dai mappin=
-g ok
-> -input: broadwell-rt286 Headset as /devices/pci0000:00/INT3438:00/broadwe=
-ll-audio/sound/card1/input15
-> +broadwell-audio broadwell-audio: ASoC: CPU DAI System Pin not registered
-
-> So it seems that sst-acpi is unhappy with this patch. Any ideas?
-
-> Thanks,
-> 	Dominik
-
---2qXFWqzzG3v1+95a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrGyekACgkQJNaLcl1U
-h9CJoAf/TS90luzysqHpT36oUysr/MHhMQwatcObYyEFVwhYzJfWy3B0HlpFmh6A
-nNsqRFbXDA8K6s7e4vewIKkke/v9lezzsuTFn5UYemwZinJzl5+LUSHWC6bmXHwt
-4TKdW36F8BSD2s4nXaxxo1U+bqrtoR6h1UtvRJao4lLhbJ8pY08dK9m8BJx4ozzu
-3rwb2RcZsoV+5aTJmYW3Iq4S9i5cbhBpsMo4EfKM8fM3Rf/vsHhp8o/ZErvyt8py
-TSw8MoyUPwNqLxswlV5tZf6wFZ92/YI8vbMOJoeRmJEFi3xOX1AV3HQQXw62jbe5
-U6I1OT9IpZcE+/kSgiEX7/CgJ6L0Lw==
-=6dLs
------END PGP SIGNATURE-----
-
---2qXFWqzzG3v1+95a--
+diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
+index 58f2dbfba275..bf6a46055ba7 100644
+--- a/arch/powerpc/boot/Makefile
++++ b/arch/powerpc/boot/Makefile
+@@ -120,7 +120,7 @@ src-wlib-$(CONFIG_40x) += 4xx.c planetcore.c
+ src-wlib-$(CONFIG_44x) += 4xx.c ebony.c bamboo.c
+ src-wlib-$(CONFIG_PPC_8xx) += mpc8xx.c planetcore.c fsl-soc.c
+ src-wlib-$(CONFIG_PPC_82xx) += pq2.c fsl-soc.c planetcore.c
+-src-wlib-$(CONFIG_EMBEDDED6xx) += mv64x60.c mv64x60_i2c.c ugecon.c fsl-soc.c
++src-wlib-$(CONFIG_EMBEDDED6xx) += mv64x60.c ugecon.c fsl-soc.c
+ src-wlib-$(CONFIG_XILINX_VIRTEX) += uartlite.c
+ src-wlib-$(CONFIG_CPM) += cpm-serial.c
+ 
+diff --git a/arch/powerpc/boot/mv64x60_i2c.c b/arch/powerpc/boot/mv64x60_i2c.c
+deleted file mode 100644
+index 52a3212b6638..000000000000
+--- a/arch/powerpc/boot/mv64x60_i2c.c
++++ /dev/null
+@@ -1,204 +0,0 @@
+-/*
+- * Bootloader version of the i2c driver for the MV64x60.
+- *
+- * Author: Dale Farnsworth <dfarnsworth@mvista.com>
+- * Maintained by: Mark A. Greer <mgreer@mvista.com>
+- *
+- * 2003, 2007 (c) MontaVista, Software, Inc.  This file is licensed under
+- * the terms of the GNU General Public License version 2.  This program is
+- * licensed "as is" without any warranty of any kind, whether express or
+- * implied.
+- */
+-
+-#include <stdarg.h>
+-#include <stddef.h>
+-#include "types.h"
+-#include "elf.h"
+-#include "page.h"
+-#include "string.h"
+-#include "stdio.h"
+-#include "io.h"
+-#include "ops.h"
+-#include "mv64x60.h"
+-
+-/* Register defines */
+-#define MV64x60_I2C_REG_SLAVE_ADDR			0x00
+-#define MV64x60_I2C_REG_DATA				0x04
+-#define MV64x60_I2C_REG_CONTROL				0x08
+-#define MV64x60_I2C_REG_STATUS				0x0c
+-#define MV64x60_I2C_REG_BAUD				0x0c
+-#define MV64x60_I2C_REG_EXT_SLAVE_ADDR			0x10
+-#define MV64x60_I2C_REG_SOFT_RESET			0x1c
+-
+-#define MV64x60_I2C_CONTROL_ACK				0x04
+-#define MV64x60_I2C_CONTROL_IFLG			0x08
+-#define MV64x60_I2C_CONTROL_STOP			0x10
+-#define MV64x60_I2C_CONTROL_START			0x20
+-#define MV64x60_I2C_CONTROL_TWSIEN			0x40
+-#define MV64x60_I2C_CONTROL_INTEN			0x80
+-
+-#define MV64x60_I2C_STATUS_BUS_ERR			0x00
+-#define MV64x60_I2C_STATUS_MAST_START			0x08
+-#define MV64x60_I2C_STATUS_MAST_REPEAT_START		0x10
+-#define MV64x60_I2C_STATUS_MAST_WR_ADDR_ACK		0x18
+-#define MV64x60_I2C_STATUS_MAST_WR_ADDR_NO_ACK		0x20
+-#define MV64x60_I2C_STATUS_MAST_WR_ACK			0x28
+-#define MV64x60_I2C_STATUS_MAST_WR_NO_ACK		0x30
+-#define MV64x60_I2C_STATUS_MAST_LOST_ARB		0x38
+-#define MV64x60_I2C_STATUS_MAST_RD_ADDR_ACK		0x40
+-#define MV64x60_I2C_STATUS_MAST_RD_ADDR_NO_ACK		0x48
+-#define MV64x60_I2C_STATUS_MAST_RD_DATA_ACK		0x50
+-#define MV64x60_I2C_STATUS_MAST_RD_DATA_NO_ACK		0x58
+-#define MV64x60_I2C_STATUS_MAST_WR_ADDR_2_ACK		0xd0
+-#define MV64x60_I2C_STATUS_MAST_WR_ADDR_2_NO_ACK	0xd8
+-#define MV64x60_I2C_STATUS_MAST_RD_ADDR_2_ACK		0xe0
+-#define MV64x60_I2C_STATUS_MAST_RD_ADDR_2_NO_ACK	0xe8
+-#define MV64x60_I2C_STATUS_NO_STATUS			0xf8
+-
+-static u8 *ctlr_base;
+-
+-static int mv64x60_i2c_wait_for_status(int wanted)
+-{
+-	int i;
+-	int status;
+-
+-	for (i=0; i<1000; i++) {
+-		udelay(10);
+-		status = in_le32((u32 *)(ctlr_base + MV64x60_I2C_REG_STATUS))
+-			& 0xff;
+-		if (status == wanted)
+-			return status;
+-	}
+-	return -status;
+-}
+-
+-static int mv64x60_i2c_control(int control, int status)
+-{
+-	out_le32((u32 *)(ctlr_base + MV64x60_I2C_REG_CONTROL), control & 0xff);
+-	return mv64x60_i2c_wait_for_status(status);
+-}
+-
+-static int mv64x60_i2c_read_byte(int control, int status)
+-{
+-	out_le32((u32 *)(ctlr_base + MV64x60_I2C_REG_CONTROL), control & 0xff);
+-	if (mv64x60_i2c_wait_for_status(status) < 0)
+-		return -1;
+-	return in_le32((u32 *)(ctlr_base + MV64x60_I2C_REG_DATA)) & 0xff;
+-}
+-
+-static int mv64x60_i2c_write_byte(int data, int control, int status)
+-{
+-	out_le32((u32 *)(ctlr_base + MV64x60_I2C_REG_DATA), data & 0xff);
+-	out_le32((u32 *)(ctlr_base + MV64x60_I2C_REG_CONTROL), control & 0xff);
+-	return mv64x60_i2c_wait_for_status(status);
+-}
+-
+-int mv64x60_i2c_read(u32 devaddr, u8 *buf, u32 offset, u32 offset_size,
+-		 u32 count)
+-{
+-	int i;
+-	int data;
+-	int control;
+-	int status;
+-
+-	if (ctlr_base == NULL)
+-		return -1;
+-
+-	/* send reset */
+-	out_le32((u32 *)(ctlr_base + MV64x60_I2C_REG_SOFT_RESET), 0);
+-	out_le32((u32 *)(ctlr_base + MV64x60_I2C_REG_SLAVE_ADDR), 0);
+-	out_le32((u32 *)(ctlr_base + MV64x60_I2C_REG_EXT_SLAVE_ADDR), 0);
+-	out_le32((u32 *)(ctlr_base + MV64x60_I2C_REG_BAUD), (4 << 3) | 0x4);
+-
+-	if (mv64x60_i2c_control(MV64x60_I2C_CONTROL_TWSIEN,
+-				MV64x60_I2C_STATUS_NO_STATUS) < 0)
+-		return -1;
+-
+-	/* send start */
+-	control = MV64x60_I2C_CONTROL_START | MV64x60_I2C_CONTROL_TWSIEN;
+-	status = MV64x60_I2C_STATUS_MAST_START;
+-	if (mv64x60_i2c_control(control, status) < 0)
+-		return -1;
+-
+-	/* select device for writing */
+-	data = devaddr & ~0x1;
+-	control = MV64x60_I2C_CONTROL_TWSIEN;
+-	status = MV64x60_I2C_STATUS_MAST_WR_ADDR_ACK;
+-	if (mv64x60_i2c_write_byte(data, control, status) < 0)
+-		return -1;
+-
+-	/* send offset of data */
+-	control = MV64x60_I2C_CONTROL_TWSIEN;
+-	status = MV64x60_I2C_STATUS_MAST_WR_ACK;
+-	if (offset_size > 1) {
+-		if (mv64x60_i2c_write_byte(offset >> 8, control, status) < 0)
+-			return -1;
+-	}
+-	if (mv64x60_i2c_write_byte(offset, control, status) < 0)
+-		return -1;
+-
+-	/* resend start */
+-	control = MV64x60_I2C_CONTROL_START | MV64x60_I2C_CONTROL_TWSIEN;
+-	status = MV64x60_I2C_STATUS_MAST_REPEAT_START;
+-	if (mv64x60_i2c_control(control, status) < 0)
+-		return -1;
+-
+-	/* select device for reading */
+-	data = devaddr | 0x1;
+-	control = MV64x60_I2C_CONTROL_TWSIEN;
+-	status = MV64x60_I2C_STATUS_MAST_RD_ADDR_ACK;
+-	if (mv64x60_i2c_write_byte(data, control, status) < 0)
+-		return -1;
+-
+-	/* read all but last byte of data */
+-	control = MV64x60_I2C_CONTROL_ACK | MV64x60_I2C_CONTROL_TWSIEN;
+-	status = MV64x60_I2C_STATUS_MAST_RD_DATA_ACK;
+-
+-	for (i=1; i<count; i++) {
+-		data = mv64x60_i2c_read_byte(control, status);
+-		if (data < 0) {
+-			printf("errors on iteration %d\n", i);
+-			return -1;
+-		}
+-		*buf++ = data;
+-	}
+-
+-	/* read last byte of data */
+-	control = MV64x60_I2C_CONTROL_TWSIEN;
+-	status = MV64x60_I2C_STATUS_MAST_RD_DATA_NO_ACK;
+-	data = mv64x60_i2c_read_byte(control, status);
+-	if (data < 0)
+-		return -1;
+-	*buf++ = data;
+-
+-	/* send stop */
+-	control = MV64x60_I2C_CONTROL_STOP | MV64x60_I2C_CONTROL_TWSIEN;
+-	status = MV64x60_I2C_STATUS_NO_STATUS;
+-	if (mv64x60_i2c_control(control, status) < 0)
+-		return -1;
+-
+-	return count;
+-}
+-
+-int mv64x60_i2c_open(void)
+-{
+-	u32 v;
+-	void *devp;
+-
+-	devp = find_node_by_compatible(NULL, "marvell,mv64360-i2c");
+-	if (devp == NULL)
+-		goto err_out;
+-	if (getprop(devp, "virtual-reg", &v, sizeof(v)) != sizeof(v))
+-		goto err_out;
+-
+-	ctlr_base = (u8 *)v;
+-	return 0;
+-
+-err_out:
+-	return -1;
+-}
+-
+-void mv64x60_i2c_close(void)
+-{
+-	ctlr_base = NULL;
+-}
+-- 
+2.16.2
