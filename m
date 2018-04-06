@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/kyBbjKViFfamrtt9Ft9V1tHLYszlnm4s6xLZ8jeZl5SgsY0sz3eqKRWeUDNwID5vh2EVc
-ARC-Seal: i=1; a=rsa-sha256; t=1523022061; cv=none;
+X-Google-Smtp-Source: AIpwx49TXAIIspQJj5AyopJig0IaZiTUHCtRmfqtZeeXen+NOZfUw3R4hL/tSPQCivz7QSZZq5x2
+ARC-Seal: i=1; a=rsa-sha256; t=1523022058; cv=none;
         d=google.com; s=arc-20160816;
-        b=Jv+VL2jPqmIs5w6SvrcF+Qbo8uzr50cU3oj747ExvUMuFwaz9v3SBKnXUFVF4yzr/Z
-         Zqti5RRYbCl6ko6/YUtr+UAFFHNaDYb7lYKmhhGZuvMNF7T2iHmpmw5ezNwuvRKFHT/F
-         AOwXGnnxKYSY/dVRPho8pMU2APIKhPSxYt+0WWbf7xaRytHIdWlhk0upcSD8yNBDdX1A
-         rw9/SNO/X8bS3vJ/sHDSpg8srp6xT1FNExdJhjuaRe/OfFdEykgviDkN1n92/nqyTx21
-         7aPPlkJ0Hdrtj5r0ra75p5OvaNvZJSHaFOadJhWYTRluvIv7lRpwdLwzvOkt6ZeSNRFg
-         A3tA==
+        b=HjTNmOnCbc/sfba6boXxvWsifpP8963ZrljHI7bCtyYjBq2iHoYBTzXlw0CvaNW3cs
+         aTiqReSw+/XKm0POlNYhpEnt+dTYvDo/xnuYl6JIIuW0EV6KeD9jNOb7qAIIz6dSIXjO
+         sr3IvVOtfwLcPtFDf0HHZzpXhiX3GzgXc3SC2llz/G37Cjii9Gl6i6VaYQTkuQCF1cQY
+         SjP+xMrjY0EkmxLW7Z5QVhofxSxWrZjTMoEwGwhKmquv7H4RHvCgBj8s2RP0CEvI0yf+
+         wkx4kBolIwS+JFr5Y9xfXtkkgpmbO+eAtC/Xa261bCNBpXARqwLoUKgDBIsrj4XhG5Yx
+         sG0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7A3PSD7KLaf4sagn266ZmICS2LqVRtGjgxi2iWymNgY=;
-        b=b9l2FgJBNPkOMB172QlvUGiNiRxGwxqf2No12Tt0ltLU2leFBbcU88D6GsYuRKTj8C
-         z/8wreQvxKtROdkXzus5d4oWcvLROtmnd2VCgguHP5qSlESp0DrKgeT/tiw4VrqrkGYt
-         P/yJozY9F+rLELCV5KzpusC6EcOY2jrKp4tP05bW3jC5nT/WWBb+CV/am2u4fy3DcPcR
-         OIqbjKNtei2gwjirL4/BdJt//CdDQqc7ZGMlRR3rV2ZvBMMG8HgphII65v5BD4SXAWDs
-         izMaEgaJ2oHWNrIhkBkcZ1+iG8wVQHKb6wFMrZr4P1jV2aZ8012qP0nEOrgdRMLeV8rZ
-         8qhQ==
+        bh=7CccnfwMYlK66WN8GR9mdNLAP/fcrsK+Y3dcEXznVpM=;
+        b=DNGNR1P9tzR0A2oNV6wbz3+2zVXBqmg/LarPA9bxUIc0HbBAeNOps25HE7c+0OIxaV
+         Me7lo/wU6Wr347pP0+pb3dmq1Wfwkh1yQsy4fzldQIlesQesfRYpFG8rL6LvU+exUuPs
+         yS0gUCWVeWHg0sWhMWtR7Hm/TyrpLln+fM6cQCnGHu/Pp3mqv5CwuYlqciaFI7e4A163
+         /IG7YRSPYJw9HY/v9JQw1hmoV1sKUkDURUJGIrmAwQ0blY6MFNp4XYdfpwuwEDFOUlOb
+         v4gyXjmULCMDhZAtXHMKFrQTyjDsapUt0a0scExVM59ZhOKtqcl+cZknqPWmiNGw/SfC
+         0bYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kohji Okuno <okuno.kohji@jp.panasonic.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.15 02/72] ARM: 8746/1: vfp: Go back to clearing vfp_current_hw_state[]
-Date: Fri,  6 Apr 2018 15:23:37 +0200
-Message-Id: <20180406084349.639625285@linuxfoundation.org>
+	Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+	Alexandre TORGUE <alexandre.torgue@st.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	stable@kernel.org
+Subject: [PATCH 4.15 14/72] i2c: i2c-stm32f7: fix no check on returned setup
+Date: Fri,  6 Apr 2018 15:23:49 +0200
+Message-Id: <20180406084350.661098580@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003857748716449?=
-X-GMAIL-MSGID: =?utf-8?q?1597004380806101171?=
+X-GMAIL-THRID: =?utf-8?q?1597004174064141518?=
+X-GMAIL-MSGID: =?utf-8?q?1597004378540178623?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +51,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabio Estevam <festevam@gmail.com>
+From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 
-commit 1328f02005bbbaed15b9d5b7f3ab5ec9d4d5268a upstream.
+commit 771b7bf05339081019d22452ebcab6929372e13e upstream.
 
-Commit 384b38b66947 ("ARM: 7873/1: vfp: clear vfp_current_hw_state
-for dying cpu") fixed the cpu dying notifier by clearing
-vfp_current_hw_state[]. However commit e5b61bafe704 ("arm: Convert VFP
-hotplug notifiers to state machine") incorrectly used the original
-vfp_force_reload() function in the cpu dying notifier.
+Before assigning returned setup structure check if not null
 
-Fix it by going back to clearing vfp_current_hw_state[].
-
-Fixes: e5b61bafe704 ("arm: Convert VFP hotplug notifiers to state machine")
-Cc: linux-stable <stable@vger.kernel.org>
-Reported-by: Kohji Okuno <okuno.kohji@jp.panasonic.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 463a9215f3ca7600b5ff ("i2c: stm32f7: fix setup structure")
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/vfp/vfpmodule.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-stm32f7.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/arm/vfp/vfpmodule.c
-+++ b/arch/arm/vfp/vfpmodule.c
-@@ -648,7 +648,7 @@ int vfp_restore_user_hwstate(struct user
-  */
- static int vfp_dying_cpu(unsigned int cpu)
- {
--	vfp_force_reload(cpu, current_thread_info());
-+	vfp_current_hw_state[cpu] = NULL;
- 	return 0;
- }
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -888,6 +888,11 @@ static int stm32f7_i2c_probe(struct plat
+ 	}
  
+ 	setup = of_device_get_match_data(&pdev->dev);
++	if (!setup) {
++		dev_err(&pdev->dev, "Can't get device data\n");
++		ret = -ENODEV;
++		goto clk_free;
++	}
+ 	i2c_dev->setup = *setup;
+ 
+ 	ret = device_property_read_u32(i2c_dev->dev, "i2c-scl-rising-time-ns",
