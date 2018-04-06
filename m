@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49TbjbHE6bbRojXi34j8xUEgCOhvQAzhjCupoc3LqWo3WO0G4r7p4+VfkHOUjmoxa0+GPmR
-ARC-Seal: i=1; a=rsa-sha256; t=1523022299; cv=none;
+X-Google-Smtp-Source: AIpwx4/bqysVcQJcUeW/lWhR9I2GsA/pPjphrJ/MHQEIUNqZSuW66FgtetVjzc01i+vOVHvbASl6
+ARC-Seal: i=1; a=rsa-sha256; t=1523022296; cv=none;
         d=google.com; s=arc-20160816;
-        b=RpPC/l3uVvTt8r3LM0/ipZ6L3OacYNua3+zpPTONOA2EiYqQvtvJ6dhC8lbNfPqdXW
-         BuvWxwdEJ6hMS47K/9T9VjAhaGsMZ4wwnIBHzrXa8GST+puW5Isgg8aGHiuhPqwQyC+d
-         099zsOK6NdNc2pk3m5+Su2jkRuftDqRgFbvaT9gDlRnwCSxlNUi9BUHreGC6CBudVuJf
-         SR3fZgr7r56N/tEghQdVF+t44yeKK54qeG9Xa2ehmo56ebMAcCwIOjhvKRBAnzJ/qMSp
-         ltQ4vsUZwZvHEbtfT3bvXxNqPRxu3J8Q5MlfdV6vnDIM9byXCH2HrEOyF+2mk0Uo5468
-         OtFQ==
+        b=ZylKjUWnhza617z2f1ff+qNiPxKeqdD78+X7H43Ael09OEVZwWRxYzwiVbizv5XDh9
+         lBT8e3HHWw7HunyHZGuZCtNDh7hCknoGyY1DVBvrupSZ4uYyUn/9DtoK3MM0e7G9b2qR
+         Q6lb+VBONwXwvwND9qpIbkB/nGp8ZWer7RkIIuHmq4+LmyIT4KfkPjNOQKXte+8NdLCO
+         X+u9YkMIgJY0hjbtZfm9bUL1y5nVS2UcZEGzy7T+rhOMmUr4RxfMjvxMfw+dGvTlYqbj
+         24V1I2mdWjb9ZlzoJ4KPbWuYhd0HImmY6/yYRw1PBvZ5lG+bfD8czbMsoT83HK8ZPWPm
+         sAjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nu5qP71RM0oQTiGCA1S6+gcu5DHYa3toFm8q9FdnkJs=;
-        b=HjVzkQq1vB/4RKaRtwJurpZ4AfQPucT+EFfOZDn5wWMhfiZHdtmrTsD02aWDlEUwrn
-         WluUXE3Tzt++8SVDidsdcIHl0gy6SgSKkZFWxJ2uo83K/pX183giRuDXzXptXjIbKuOr
-         2GnFd6TrlXFlUI1Pcv5dMXzOjBB1m3jgqx7clDLO9li8ttsAMv+aXcH3mtYkaIb4hU0f
-         GwpamvWD33RZlE9LUJdkSAeiz5+MqgcOe3QUpHjx3hF6Br18HSXovbQb9Ego7lLPU5gf
-         ir13LROhNNm8HqQNaGSoKAa0zlsNy31GDwf09qh4w9DnnPH1dsGxmgB8FLAXp+gV0dKs
-         Hsqw==
+        bh=qPktD6SuMxHeLHuzMKL50goTMZV4viyI/O7mOl01tOk=;
+        b=hAPQmNfA8WmyvV7jMLkqdgukQPtfmAj0Er/TdQvZYdffgQJS0DBvUekRLlI3lI4Cjc
+         OW3Kqq2hsHND+dKso0/zmXEFWgr5yNVeNqhT0WTAlh4TXOSIapAA41SvzKYatoeATORz
+         0JEjX828KFV61iN8VTfoKwnsasVbSytxxcPJRn8oQC6+8I2/x7Ykfh8rRG6Z5TSRd/5Q
+         9jSgNoAqyoQevhJflVcrx5AQHxVR+nuS9OVIqG+gjb45b2gUHe0lUfMuXBHejv8PzqDz
+         +syUxPv9tR3kwXWOvRsuhp65PDUknpzVztVBLeHZXol63lHoHurt+t58fyKT2KKtw58f
+         +UFw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Frank Mori Hess <fmh6jj@gmail.com>,
-	Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.16 24/31] staging: comedi: ni_mio_common: ack ai fifo error interrupts.
-Date: Fri,  6 Apr 2018 15:24:49 +0200
-Message-Id: <20180406084344.289281094@linuxfoundation.org>
+	David Binderman <dcb314@hotmail.com>,
+	Gavin Schenk <g.schenk@eckelmann.de>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 4.16 23/31] siox: fix possible buffer overflow in device_add_store
+Date: Fri,  6 Apr 2018 15:24:48 +0200
+Message-Id: <20180406084344.136309882@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084340.999820380@linuxfoundation.org>
 References: <20180406084340.999820380@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003849053166920?=
-X-GMAIL-MSGID: =?utf-8?q?1597004629874652763?=
+X-GMAIL-THRID: =?utf-8?q?1597004627369683163?=
+X-GMAIL-MSGID: =?utf-8?q?1597004627369683163?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,31 +50,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Frank Mori Hess <fmh6jj@gmail.com>
+From: Gavin Schenk <g.schenk@eckelmann.de>
 
-commit e1d9fc04c41840a4688ef6ce90b6dcca157ea4d7 upstream.
+commit f87deada80fe483e2286e29cd866dc66ddc2b6bc upstream.
 
-Ack ai fifo error interrupts in interrupt handler to clear interrupt
-after fifo overflow.  It should prevent lock-ups after the ai fifo
-overflows.
+Width 20 given in format string is larger than destination
+buffer 'type[20]', use %19s to prevent overflowing it.
 
-Cc: <stable@vger.kernel.org> # v4.2+
-Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Fixes: bbecb07fa0af ("siox: new driver framework for eckelmann SIOX")
+Cc: stable <stable@vger.kernel.org>
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Gavin Schenk <g.schenk@eckelmann.de>
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/comedi/drivers/ni_mio_common.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/siox/siox-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/comedi/drivers/ni_mio_common.c
-+++ b/drivers/staging/comedi/drivers/ni_mio_common.c
-@@ -1275,6 +1275,8 @@ static void ack_a_interrupt(struct comed
- 		ack |= NISTC_INTA_ACK_AI_START;
- 	if (a_status & NISTC_AI_STATUS1_STOP)
- 		ack |= NISTC_INTA_ACK_AI_STOP;
-+	if (a_status & NISTC_AI_STATUS1_OVER)
-+		ack |= NISTC_INTA_ACK_AI_ERR;
- 	if (ack)
- 		ni_stc_writew(dev, ack, NISTC_INTA_ACK_REG);
- }
+--- a/drivers/siox/siox-core.c
++++ b/drivers/siox/siox-core.c
+@@ -594,7 +594,7 @@ static ssize_t device_add_store(struct d
+ 	size_t inbytes = 0, outbytes = 0;
+ 	u8 statustype = 0;
+ 
+-	ret = sscanf(buf, "%20s %zu %zu %hhu", type, &inbytes,
++	ret = sscanf(buf, "%19s %zu %zu %hhu", type, &inbytes,
+ 		     &outbytes, &statustype);
+ 	if (ret != 3 && ret != 4)
+ 		return -EINVAL;
