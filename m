@@ -1,39 +1,39 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48h7BIABilH+s4hi3EzQAOIeW2+FmstuGMie6R7aZ1n2hqEttV0WlGayG25Fm/1fVKjRtQQ
-ARC-Seal: i=1; a=rsa-sha256; t=1523021721; cv=none;
+X-Google-Smtp-Source: AIpwx48OS7RyPGb2YT004Z419m3t23apgovUJlY/W08rMX3pWajWAg+63sEdKRAUAQ7zlgnTLurE
+ARC-Seal: i=1; a=rsa-sha256; t=1523021718; cv=none;
         d=google.com; s=arc-20160816;
-        b=oUHlN/UhCdrlR1xLa9wBTlTsHDUEhDBj/RK6dRta3zElHYdQFgo/7lV98NO5POYw8B
-         NMAiFxQO/uQ1E2hfn1idrVy/refHpb04xg5bASkfiod2xtmZzdGd34S0gM7FP9+nGJsj
-         9LXKODVl/3mC6Zur5+aL1+qvcuByy0sR82xiybSviUboFy9oibb5Qa5TO7B4cMEya+5U
-         AOADUcchK4p4BQRm9ETi0CC8z91bQZ8eCgD9Xnz/MkkzVxg5Yo/AZAVip5r112XoVOa7
-         g2zjm0STnGVHGhehVWryZtFhBBY+jvwWzjbdeNVrT7U/qsMTmPdEF+VgnNBYsncnAzv/
-         CSjw==
+        b=BJ6acznhE8KktaBpmyjBQYLOcnu7VGW8a8hPmPqNyZ2/FoqKcN0auqMvHL3ORMzoDK
+         4RiiYsZl7nANCTLOtXKESEXLMMlWDPdCJGszM7U9K6UiEBxgFVr2DN+Nzmn3e17qSGcr
+         EB9gvEJzOOh6SLxMNLFBeq+jPjg4zvEwfDEqQIUWhS0rbrDySoSyK9DLHZJZWdu1RmXO
+         j+d0bC0gj3T6Z4ZGSmoFqKPJUlNcNXqqLc8LM575WfeMzH6Ru8i8m3ziBWJ/7uWpyQXS
+         yWez1Csdq+SIa1o0zvrREV77tK/1Pyi5JVV5RAfsZ/vc8+jNAG1gLdya8GxkibuwdZDI
+         poxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=y0OrqT6sb6zyh62v8Bw1rL0Mj4wnWbmO8/1oSx0FY04=;
-        b=Ra5pifV3bpYKmJTmaqlb6tOUjPpAR7bnRZGOhXzEbEHueUsNJgH3G+NI3XKh/u8mSt
-         sLrjlfGIKFYR6xVdq3Td2CUNgcpk+qsDHOpLapvaeGV3BQLvpMvou4H3ftMUVm8EvgEo
-         Yf8MBQnr++3TRNGI9rW/tRelrDt9+CqUrQg1kW245N0R4egRVHYKfX/RvFLGyc4KdpPs
-         /353dxYka1HQwuOMN5lnbhwIh3pG7pnjYRD/bChjXOW7elyl2qbLw0gey8RpoEsXhPqP
-         R8jQUyYr1JyVQTjBjZcdwHsrZ4lULj+7veaSzkuO8DoQ3NsnOGB/W7e82DejSiw5QZeF
-         Z1Zg==
+        bh=aPhHGnB1uci2pEc6+P2WqnZLPedDrNVRvgnv7s/030M=;
+        b=w7EP7lEpBjNaVUbTYSarxGXCxnE+af1jmetsEMdRrTP1uhJOAZ+g6MOglRmiiD8CHV
+         XADYtX9jfKYaOgGdXHCs+HU512uuJv7/KSFKw2YfT7Mp3UK0Lgxt31B/kt96Bmp3Fcy6
+         t6ZCJdNp6DJOTDFyWRZc2kCiYMOKDy74tFKeumnYA/y2ovODMCddzDBXX0R/joZMsoub
+         gYTVgDCCNWV/IXBJXGjG3oJIiIFa3s6RxEO9VB7xLpm/bl2caW7K8HwHuPnmXTubp03o
+         cHIUoyZO+V6ACxLG6gfQUNFuMSCHRYX2Pw/DKoL9SwZoPVQv2kUVzgiVDIhWBW9iUWZA
+         vv7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Nick Desaulniers <nick.desaulniers@gmail.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 034/102] mm/vmscan.c: fix unsequenced modification and access warning
-Date: Fri,  6 Apr 2018 15:23:15 +0200
-Message-Id: <20180406084336.435349772@linuxfoundation.org>
+	Will Deacon <will.deacon@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Greg Hackmann <ghackmann@google.com>,
+	Alex Shi <alex.shi@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 4.9 064/102] arm64: use RET instruction for exiting the trampoline
+Date: Fri,  6 Apr 2018 15:23:45 +0200
+Message-Id: <20180406084340.553370699@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004024515605999?=
-X-GMAIL-MSGID: =?utf-8?q?1597004024515605999?=
+X-GMAIL-THRID: =?utf-8?q?1597004021234023782?=
+X-GMAIL-MSGID: =?utf-8?q?1597004021234023782?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,84 +52,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nick Desaulniers <nick.desaulniers@gmail.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit f2f43e566a02a3bdde0a65e6a2e88d707c212a29 upstream.
+commit be04a6d1126b upstream.
 
-Clang and its -Wunsequenced emits a warning
+Speculation attacks against the entry trampoline can potentially resteer
+the speculative instruction stream through the indirect branch and into
+arbitrary gadgets within the kernel.
 
-  mm/vmscan.c:2961:25: error: unsequenced modification and access to 'gfp_mask' [-Wunsequenced]
-                  .gfp_mask = (gfp_mask = current_gfp_context(gfp_mask)),
-                                        ^
+This patch defends against these attacks by forcing a misprediction
+through the return stack: a dummy BL instruction loads an entry into
+the stack, so that the predicted program flow of the subsequent RET
+instruction is to a branch-to-self instruction which is finally resolved
+as a branch to the kernel vectors with speculation suppressed.
 
-While it is not clear to me whether the initialization code violates the
-specification (6.7.8 par 19 (ISO/IEC 9899) looks like it disagrees) the
-code is quite confusing and worth cleaning up anyway.  Fix this by
-reusing sc.gfp_mask rather than the updated input gfp_mask parameter.
-
-Link: http://lkml.kernel.org/r/20170510154030.10720-1-nick.desaulniers@gmail.com
-Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[natechancellor: Adjust context due to abscence of 7dea19f9ee63]
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Alex Shi <alex.shi@linaro.org> [v4.9 backport]
+Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
+Tested-by: Will Deacon <will.deacon@arm.com>
+Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/vmscan.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ arch/arm64/kernel/entry.S |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2966,7 +2966,7 @@ unsigned long try_to_free_pages(struct z
- 	unsigned long nr_reclaimed;
- 	struct scan_control sc = {
- 		.nr_to_reclaim = SWAP_CLUSTER_MAX,
--		.gfp_mask = (gfp_mask = memalloc_noio_flags(gfp_mask)),
-+		.gfp_mask = memalloc_noio_flags(gfp_mask),
- 		.reclaim_idx = gfp_zone(gfp_mask),
- 		.order = order,
- 		.nodemask = nodemask,
-@@ -2981,12 +2981,12 @@ unsigned long try_to_free_pages(struct z
- 	 * 1 is returned so that the page allocator does not OOM kill at this
- 	 * point.
- 	 */
--	if (throttle_direct_reclaim(gfp_mask, zonelist, nodemask))
-+	if (throttle_direct_reclaim(sc.gfp_mask, zonelist, nodemask))
- 		return 1;
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -880,6 +880,14 @@ __ni_sys_trace:
+ 	.if	\regsize == 64
+ 	msr	tpidrro_el0, x30	// Restored in kernel_ventry
+ 	.endif
++	/*
++	 * Defend against branch aliasing attacks by pushing a dummy
++	 * entry onto the return stack and using a RET instruction to
++	 * enter the full-fat kernel vectors.
++	 */
++	bl	2f
++	b	.
++2:
+ 	tramp_map_kernel	x30
+ #ifdef CONFIG_RANDOMIZE_BASE
+ 	adr	x30, tramp_vectors + PAGE_SIZE
+@@ -892,7 +900,7 @@ __ni_sys_trace:
+ 	msr	vbar_el1, x30
+ 	add	x30, x30, #(1b - tramp_vectors)
+ 	isb
+-	br	x30
++	ret
+ 	.endm
  
- 	trace_mm_vmscan_direct_reclaim_begin(order,
- 				sc.may_writepage,
--				gfp_mask,
-+				sc.gfp_mask,
- 				sc.reclaim_idx);
- 
- 	nr_reclaimed = do_try_to_free_pages(zonelist, &sc);
-@@ -3749,16 +3749,15 @@ static int __node_reclaim(struct pglist_
- 	const unsigned long nr_pages = 1 << order;
- 	struct task_struct *p = current;
- 	struct reclaim_state reclaim_state;
--	int classzone_idx = gfp_zone(gfp_mask);
- 	struct scan_control sc = {
- 		.nr_to_reclaim = max(nr_pages, SWAP_CLUSTER_MAX),
--		.gfp_mask = (gfp_mask = memalloc_noio_flags(gfp_mask)),
-+		.gfp_mask = memalloc_noio_flags(gfp_mask),
- 		.order = order,
- 		.priority = NODE_RECLAIM_PRIORITY,
- 		.may_writepage = !!(node_reclaim_mode & RECLAIM_WRITE),
- 		.may_unmap = !!(node_reclaim_mode & RECLAIM_UNMAP),
- 		.may_swap = 1,
--		.reclaim_idx = classzone_idx,
-+		.reclaim_idx = gfp_zone(gfp_mask),
- 	};
- 
- 	cond_resched();
-@@ -3768,7 +3767,7 @@ static int __node_reclaim(struct pglist_
- 	 * and RECLAIM_UNMAP.
- 	 */
- 	p->flags |= PF_MEMALLOC | PF_SWAPWRITE;
--	lockdep_set_current_reclaim_state(gfp_mask);
-+	lockdep_set_current_reclaim_state(sc.gfp_mask);
- 	reclaim_state.reclaimed_slab = 0;
- 	p->reclaim_state = &reclaim_state;
- 
+ 	.macro tramp_exit, regsize = 64
