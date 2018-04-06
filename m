@@ -1,99 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751735AbeDFFHG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 01:07:06 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:36689 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751367AbeDFFHE (ORCPT
+        id S1751530AbeDFFPm convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 01:15:42 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:38722 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbeDFFPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 01:07:04 -0400
-X-Google-Smtp-Source: AIpwx4+fFbEgdMv0cuCNuP4nI2Dl2i0Wxhc1So26M3ZT5GPMEaZtGq0dsdwf5Z05ElITgqwhw/pSUQ==
-Date: Fri, 6 Apr 2018 10:37:00 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-Cc: rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: Re: [PATCH v3] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
- capabilities
-Message-ID: <20180406050700.GR3572@vireshk-i7>
-References: <1522982629-7557-1-git-send-email-shunyong.yang@hxt-semitech.com>
+        Fri, 6 Apr 2018 01:15:41 -0400
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To: Michal Hocko <mhocko@kernel.org>
+CC: "Kirill A. Shutemov" <kirill@shutemov.name>, Zi Yan <zi.yan@sent.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
+ consider non-anonymous thp as unmovable page)
+Thread-Topic: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
+ consider non-anonymous thp as unmovable page)
+Thread-Index: AQHTzVRbJLbJcuvidESXEazGlmX3mKPymtkA
+Date: Fri, 6 Apr 2018 05:14:53 +0000
+Message-ID: <20180406051452.GB23467@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180403083451.GG5501@dhcp22.suse.cz>
+ <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
+ <20180405085927.GC6312@dhcp22.suse.cz>
+ <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
+ <20180405124830.GJ6312@dhcp22.suse.cz>
+ <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
+ <20180405150547.GN6312@dhcp22.suse.cz>
+ <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
+ <20180405160317.GP6312@dhcp22.suse.cz>
+ <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
+In-Reply-To: <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.128.101.16]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <4B18407D8E0EC54F85B336EEEC256530@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522982629-7557-1-git-send-email-shunyong.yang@hxt-semitech.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-04-18, 10:43, Shunyong Yang wrote:
-> When multiple cpus are related in one cpufreq policy, the first online
-> cpu will be chosen by default to handle cpufreq operations. Let's take
-> cpu0 and cpu1 as an example.
+On Fri, Apr 06, 2018 at 03:07:11AM +0000, Horiguchi Naoya(堀口 直也) wrote:
+...
+> -----
+> From e31ec037701d1cc76b26226e4b66d8c783d40889 Mon Sep 17 00:00:00 2001
+> From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Date: Fri, 6 Apr 2018 10:58:35 +0900
+> Subject: [PATCH] mm: enable thp migration for shmem thp
 > 
-> When cpu0 is offline, policy->cpu will be shifted to cpu1. Cpu1's perf
-> capabilities should be initialized. Otherwise, perf capabilities are 0s
-> and speed change can not take effect.
+> My testing for the latest kernel supporting thp migration showed an
+> infinite loop in offlining the memory block that is filled with shmem
+> thps.  We can get out of the loop with a signal, but kernel should
+> return with failure in this case.
 > 
-> This patch copies perf capabilities of the first online cpu to other
-> shared cpus when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
+> What happens in the loop is that scan_movable_pages() repeats returning
+> the same pfn without any progress. That's because page migration always
+> fails for shmem thps.
 > 
-> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> In memory offline code, memory blocks containing unmovable pages should
+> be prevented from being offline targets by has_unmovable_pages() inside
+> start_isolate_page_range(). So it's possible to change migratability
+> for non-anonymous thps to avoid the issue, but it introduces more complex
+> and thp-specific handling in migration code, so it might not good.
+> 
+> So this patch is suggesting to fix the issue by enabling thp migration
+> for shmem thp. Both of anon/shmem thp are migratable so we don't need
+> precheck about the type of thps.
+> 
+> Fixes: commit 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
+> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Cc: stable@vger.kernel.org # v4.15+
+
+... oh, I don't think this is suitable for stable.
+Michal's fix in another email can come first with "CC: stable",
+then this one.
+Anyway I want to get some feedback on the change of this patch.
+
+Thanks,
+Naoya Horiguchi
+
 > ---
+>  mm/huge_memory.c |  5 ++++-
+>  mm/migrate.c     | 19 ++++++++++++++++---
+>  mm/rmap.c        |  3 ---
+>  3 files changed, 20 insertions(+), 7 deletions(-)
 > 
-> Changes in v3:
->   -Remove unnecessary wrap per Kumar's comments.
-> 
-> Changes in v2:
->   -Add unlikely in cpu comparison per Kumar's comments.
->   -Fix coding style per Kumar's comments.
-> 
-> Changes in v1:
->   -Drop RFC tag,
->      The original RFC link,
->      https://patchwork.kernel.org/patch/10299055/.
-> 
->      This patch solves same issue as RFC above.
-> 
->      Patch name is changed as code is too much different with RFC above.
-> 
->   -Remove extra init() per Viresh Kumar's comments and only handle
->    CPPC CPUFREQ_SHARED_TYPE_ANY case.
-> 
-> ---
->  drivers/cpufreq/cppc_cpufreq.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index 8300a9fcb80c..8b432d6e846d 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -167,9 +167,19 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
->  		NSEC_PER_USEC;
->  	policy->shared_type = cpu->shared_type;
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 2aff58624886..933c1bbd3464 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2926,7 +2926,10 @@ void remove_migration_pmd(struct page_vma_mapped_walk *pvmw, struct page *new)
+>  		pmde = maybe_pmd_mkwrite(pmde, vma);
 >  
-> -	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
-> +	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
+>  	flush_cache_range(vma, mmun_start, mmun_start + HPAGE_PMD_SIZE);
+> -	page_add_anon_rmap(new, vma, mmun_start, true);
+> +	if (PageAnon(new))
+> +		page_add_anon_rmap(new, vma, mmun_start, true);
+> +	else
+> +		page_add_file_rmap(new, true);
+>  	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
+>  	if (vma->vm_flags & VM_LOCKED)
+>  		mlock_vma_page(new);
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index bdef905b1737..f92dd9f50981 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -472,7 +472,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+>  	pslot = radix_tree_lookup_slot(&mapping->i_pages,
+>   					page_index(page));
+>  
+> -	expected_count += 1 + page_has_private(page);
+> +	expected_count += hpage_nr_pages(page) + page_has_private(page);
+>  	if (page_count(page) != expected_count ||
+>  		radix_tree_deref_slot_protected(pslot,
+>  					&mapping->i_pages.xa_lock) != page) {
+> @@ -505,7 +505,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+>  	 */
+>  	newpage->index = page->index;
+>  	newpage->mapping = page->mapping;
+> -	get_page(newpage);	/* add cache reference */
+> +	page_ref_add(newpage, hpage_nr_pages(page)); /* add cache reference */
+>  	if (PageSwapBacked(page)) {
+>  		__SetPageSwapBacked(newpage);
+>  		if (PageSwapCache(page)) {
+> @@ -524,13 +524,26 @@ int migrate_page_move_mapping(struct address_space *mapping,
+>  	}
+>  
+>  	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
+> +	if (PageTransHuge(page)) {
 > +		int i;
+> +		int index = page_index(page);
 > +
->  		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
-> -	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
-> +
-> +		for_each_cpu(i, policy->cpus) {
-> +			if (unlikely(i == policy->cpu))
-> +				continue;
-> +
-> +			memcpy(&all_cpu_data[i]->perf_caps, &cpu->perf_caps,
-> +			       sizeof(cpu->perf_caps));
+> +		for (i = 0; i < HPAGE_PMD_NR; i++) {
+> +			pslot = radix_tree_lookup_slot(&mapping->i_pages,
+> +						       index + i);
+> +			radix_tree_replace_slot(&mapping->i_pages, pslot,
+> +						newpage + i);
 > +		}
-> +	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
->  		/* Support only SW_ANY for now. */
->  		pr_debug("Unsupported CPU co-ord type\n");
->  		return -EFAULT;
-
-LGTM. Thanks.
-
--- 
-viresh
+> +	} else {
+> +		radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
+> +	}
+>  
+>  	/*
+>  	 * Drop cache reference from old page by unfreezing
+>  	 * to one less reference.
+>  	 * We know this isn't the last reference.
+>  	 */
+> -	page_ref_unfreeze(page, expected_count - 1);
+> +	page_ref_unfreeze(page, expected_count - hpage_nr_pages(page));
+>  
+>  	xa_unlock(&mapping->i_pages);
+>  	/* Leave irq disabled to prevent preemption while updating stats */
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index f0dd4e4565bc..8d5337fed37b 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1374,9 +1374,6 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+>  		if (!pvmw.pte && (flags & TTU_MIGRATION)) {
+>  			VM_BUG_ON_PAGE(PageHuge(page) || !PageTransCompound(page), page);
+>  
+> -			if (!PageAnon(page))
+> -				continue;
+> -
+>  			set_pmd_migration_entry(&pvmw, page);
+>  			continue;
+>  		}
+> -- 
+> 2.7.4
+> 
