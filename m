@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+jeTDioIaa3HcptfNKH/yuVixDityXtFX0K/Ofah6k/r3neudDrtZr2y9w/4sxhQOeV6Jd
-ARC-Seal: i=1; a=rsa-sha256; t=1523021153; cv=none;
+X-Google-Smtp-Source: AIpwx4/kE1kpOg1No7yMDVfmJhsUEuahvda4avy26bM0GZZDkqhym63oRCEcKWeLtGs5LxdJWSmZ
+ARC-Seal: i=1; a=rsa-sha256; t=1523021151; cv=none;
         d=google.com; s=arc-20160816;
-        b=qwuTc1KQsBjpZ8Ukj4o2DPrvtkAtn9+5hjyqEAXV2WFBxob4c8q9JSQ6087CxGg9oy
-         JBwit1te7EEoplHMVcmdgXNifeHSVycVFj2xOxmh2uB3dKb3bQIadzI49b9IfcG2cLRN
-         zoUJ9YsqlW0siF/zc/XR3IYvYZooqcZy15tuFUsl+RI17i6rMCSuBhNDUNT+hSgy4bdN
-         Qfy+4HGSZb7GwqA7WCsXWKOJr+fWSWoZJdihydvBcwMYCl3qK7S5PmLlB1rTJ3DcsELw
-         egELgDsy4liBEyVTspiMVi5oZeeOFsAqIuOZIPa8h4HWrN60uaZwPyNHj5I02qz8aiiM
-         sZ5g==
+        b=URXvC1YcNNW8q45ZyHnJ4i3myrvFkiVmXLRF9yCtfYnSZWS9plJq2SFPKf+p7C0kcS
+         bPGrnyb2h1VA25zM8cMRRja6j9ed8sqBN7c1Ly1O7qg96QEeUVeHbiPQRDexdR9Umf/U
+         6SdqYrQqDlb/9nhuq1dEdMNr+85cmXG0iSlUcWzogI884CNV1U/zrWBkuAY9lEPTn3rL
+         61rOLavZm1OPPb6RTitCsfKgc/qRtdg5OhISsV/0NmubK3SsZOGafa4/zqAOmZzxDP4r
+         KiCBvsaSt5YvlNoAdIgLYE4XD+/YrD8Y6eGOyBtjSMpDnDsn//sxvGiRaRzGTdrQ95jn
+         uu4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LNd5Me8FbR9koSLbwUwjNipJxnUvx+MiDy4W7WmST/4=;
-        b=bl3yvDruKoSXbZnZV8WyeyGtQ2841D1V4u2N1BRu6AsxCYJY9+rn3Dr2gRNnbSnBQ/
-         ZloWB6Rr1QgKmrJYzz8DHKLqiPJetICyLuGiLcYwCbdgg7HGnzxWxSXn6hZzw+FyxOMB
-         Cag99JOk2BC3WfvVVdLQCSvrSeLfQiHqqOE8pzjlEpQRjBYGAQJ/qJWBJepbwppgpimx
-         C8vK0fLXx5NzWeLDQbDjqS1/PM2qZeGKigUu6kQrkE8qUPTSUWbqorCJgQKcaF6AEB+U
-         JORbtqbcOGHIDikCVmvif+ILUBOlw3pYlxeW0msz0MNjyZgGN8JyE6dbGC2FXSBL2T7x
-         OJpg==
+        bh=tBBfd8tvpWguKgQRWpI5e9kvWBY618u223riWJFRcMU=;
+        b=SM1sqboGWkMRef9vdpNyH9sJfozHWRcRYLJmIKUQmYJlylKsiVqAgY7IiAMsa7oS2t
+         nK1lX+JWMaR4IVWwDgQ4JBoQj6jPq013VNhNWCiTtSZaIBodbCZkXNtitFDWxJ99UT+4
+         OuOzQUIqKDBnRuahV7P71In7rjBqdmXqd0/Q+Lqp2seu4fmgEKu8yetNDvgCfdmBCgN2
+         yEvROVdQdKvR2ToaYNx+6hi0pWv4QJGP85iZPYKXqYgfPEb436bikpfcJlZor3Mk9H24
+         ZxanyKILoMSx3aqhvu7rZXyTLC2rvZ4lh5j9xPn0DdRy26zrtv2fx0DAH4gHoX1RLfVB
+         o/zA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Ursula Braun <ursula.braun@de.ibm.com>,
-	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 27/93] net/iucv: Free memory obtained by kzalloc
-Date: Fri,  6 Apr 2018 15:22:56 +0200
-Message-Id: <20180406084226.140435325@linuxfoundation.org>
+Subject: [PATCH 3.18 26/93] net: ethernet: arc: Fix a potential memory leak if an optional regulator is deferred
+Date: Fri,  6 Apr 2018 15:22:55 +0200
+Message-Id: <20180406084226.098291136@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003428977377855?=
-X-GMAIL-MSGID: =?utf-8?q?1597003428977377855?=
+X-GMAIL-THRID: =?utf-8?q?1597003426639463379?=
+X-GMAIL-MSGID: =?utf-8?q?1597003426639463379?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,36 +49,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit fa6a91e9b907231d2e38ea5ed89c537b3525df3d ]
+[ Upstream commit 00777fac28ba3e126b9e63e789a613e8bd2cab25 ]
 
-Free memory by calling put_device(), if afiucv_iucv_init is not
-successful.
+If the optional regulator is deferred, we must release some resources.
+They will be re-allocated when the probe function will be called again.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Ursula Braun <ursula.braun@de.ibm.com>
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Fixes: 6eacf31139bf ("ethernet: arc: Add support for Rockchip SoC layer device tree bindings")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/iucv/af_iucv.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/arc/emac_rockchip.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -2383,9 +2383,11 @@ static int afiucv_iucv_init(void)
- 	af_iucv_dev->driver = &af_iucv_driver;
- 	err = device_register(af_iucv_dev);
- 	if (err)
--		goto out_driver;
-+		goto out_iucv_dev;
- 	return 0;
- 
-+out_iucv_dev:
-+	put_device(af_iucv_dev);
- out_driver:
- 	driver_unregister(&af_iucv_driver);
- out_iucv:
+--- a/drivers/net/ethernet/arc/emac_rockchip.c
++++ b/drivers/net/ethernet/arc/emac_rockchip.c
+@@ -150,8 +150,10 @@ static int emac_rockchip_probe(struct pl
+ 	/* Optional regulator for PHY */
+ 	priv->regulator = devm_regulator_get_optional(dev, "phy");
+ 	if (IS_ERR(priv->regulator)) {
+-		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
++		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER) {
++			err = -EPROBE_DEFER;
++			goto out_clk_disable;
++		}
+ 		dev_err(dev, "no regulator found\n");
+ 		priv->regulator = NULL;
+ 	}
