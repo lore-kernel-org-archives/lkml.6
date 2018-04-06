@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49M+9q2tkCL60alaL68is7Xvs8/8Y0G2sG+3qzepUpre2VS1CYM4shSDa/s1gys8BSUOaMl
-ARC-Seal: i=1; a=rsa-sha256; t=1523021868; cv=none;
+X-Google-Smtp-Source: AIpwx4/JbY7T95W0TiXrKjrVmZ93vu/s7AtsOR9fq1phNQT7JJgjX/EYVy7g4Wl1u3BwWEvSZ1MC
+ARC-Seal: i=1; a=rsa-sha256; t=1523021865; cv=none;
         d=google.com; s=arc-20160816;
-        b=hA4FgGKDGKRadTUu7iVHVnakpLNJO3+tWljLdotP/Q5aFm4P0eYSFM5H6FIHBwqSLe
-         RdOmbr5tMHQ3ZGdTP2wNY7VyM4TifZVCukRt7K9anTeVut/aKUbYs4qxJLbOJ5N+fqGL
-         ju31fZHAeoI6IuGTm2q9VTHAG8GLGB3v9ttqjLwMy7ZL+qWgQF1CALACXFdIeGbAWWkD
-         YCiTrTNhsuOC1gmqGFk2Rq8o2kUGUq7XeBcE4A89eRzmfJOsaxo1kWYTRC5gMi0wvsyf
-         iwuFe9ez4KCjsbqRURLAUZOubMwF/A42ae8FVC74HyyilmsvHg0bqN5O6BXR35h8SAr/
-         PA3A==
+        b=QBwJprQsEvMLq/YFtsB6UOwPVJa58ha+BKwXbhWywkaVJlfxFNx8x8JmwqwSifm18C
+         Qo4hLZo276Bv1p9uREHQuMHZHxFerTqNCSa6IG8uXaId8BxCJJvDDkqj4u3lmJ1QmcTy
+         zcM9aoaUHGptOLTRY9fLgDYY5ZrABGqgWBTOhm+mu45594HPLyy0eESsb2ze2qqiJrUD
+         hsQM+gt0w+3Fq4JaGSRhhZ+9C6zj8pc026nS9p6BE0JppnwD4s4t/Mc7K6OkHnWpU92Z
+         xbZ0qT6T/RaBoMQROiEnUcEIcI3rk/RmU3R0HERdkAyw5y7X5/F/CNGe+qgyr2ANBGXn
+         LfOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=D2lHHchk3LmwELJf3DYBpTe5SdBfwOJ63GTdsRGDC5M=;
-        b=nC5b3+rjJGOILdcTTRTaGWC5n4j4suqiWs4GtT0CipZvVvRyonJUIGboInpgSdM8MG
-         373KMlcb+v2y1JzReSEhJ2O1xFB5uf5MPlR9UZsiewHL/M5aHjNMd12Xv0ztcnKCXcVx
-         6WLiN5aXQB0p4FSX7Xsb7L+Yib33HTv4d4dyotcQcqVHXq5jy8AYJ03VIXvuxR9XaY97
-         StCgI9cVp6QZ5f51eLDGkRi4G13vJvrLVhw2Zvjyz4p44J7R98UjJNz+xoAyk4o6Zov9
-         exDaGaDYyejey1lW2/dUHjyvHUFm77RjvLwg45w575YSCmnHzu8z4AX2jjitjYlv/Xpt
-         /ofw==
+        bh=12UodKDCVl5J0MGmsevoAOTi+rmGPm2Dg127a7tau2w=;
+        b=VzyoAu7Gfe21a3Fe7cBPVmPz8TGhy/gm8JLmdik3mn9/405gz5Kw6ZO6lpYWCfQ6am
+         BH2nFsGGS9M0Xpy/wU6gtIOehs1jpJFC7FB6Y8Tywc1gKuUEVLJv3ENmD/OzTu6iwlW7
+         zAtsj4ito1SjStmNXf5PJ+wbXW/jb5BCaYPuuR2lBqHQtiqbMm2HRBEgh7IX0PMK1Rz7
+         hm2anwUsVKZYfO3uPtYOwoKIN97l9BX85X4yVhbOJob8PE54NO/8x5IHEQZ9HUazJIja
+         rUA+nFVWM2zuDKVFFo7rPBHHnFBTo97+5chRx5cXYlyVdmh3meHKMYPtZxp/GhXay0PQ
+         yvDg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Richard Narron <comet.berkeley@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 17/67] partitions/msdos: Unable to mount UFS 44bsd partitions
-Date: Fri,  6 Apr 2018 15:23:47 +0200
-Message-Id: <20180406084343.621695172@linuxfoundation.org>
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 16/67] powerpc/64s: Fix i-side SLB miss bad address handler saving nonvolatile GPRs
+Date: Fri,  6 Apr 2018 15:23:46 +0200
+Message-Id: <20180406084343.451696008@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003471959644591?=
-X-GMAIL-MSGID: =?utf-8?q?1597004178646549497?=
+X-GMAIL-THRID: =?utf-8?q?1597003860218571411?=
+X-GMAIL-MSGID: =?utf-8?q?1597004175681554122?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Richard Narron <comet.berkeley@gmail.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 5f15684bd5e5ef39d4337988864fec8012471dda upstream.
+commit 52396500f97c53860164debc7d4f759077853423 upstream.
 
-UFS partitions from newer versions of FreeBSD 10 and 11 use relative
-addressing for their subpartitions. But older versions of FreeBSD still
-use absolute addressing just like OpenBSD and NetBSD.
+The SLB bad address handler's trap number fixup does not preserve the
+low bit that indicates nonvolatile GPRs have not been saved. This
+leads save_nvgprs to skip saving them, and subsequent functions and
+return from interrupt will think they are saved.
 
-Instead of simply testing for a FreeBSD partition, the code needs to
-also test if the starting offset of the C subpartition is zero.
+This causes kernel branch-to-garbage debugging to not have correct
+registers, can also cause userspace to have its registers clobbered
+after a segfault.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=197733
-
-Signed-off-by: Richard Narron <comet.berkeley@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: f0f558b131db ("powerpc/mm: Preserve CFAR value on SLB miss caused by access to bogus address")
+Cc: stable@vger.kernel.org # v4.9+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/partitions/msdos.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/exceptions-64s.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/block/partitions/msdos.c
-+++ b/block/partitions/msdos.c
-@@ -301,7 +301,9 @@ static void parse_bsd(struct parsed_part
- 			continue;
- 		bsd_start = le32_to_cpu(p->p_offset);
- 		bsd_size = le32_to_cpu(p->p_size);
--		if (memcmp(flavour, "bsd\0", 4) == 0)
-+		/* FreeBSD has relative offset if C partition offset is zero */
-+		if (memcmp(flavour, "bsd\0", 4) == 0 &&
-+		    le32_to_cpu(l->d_partitions[2].p_offset) == 0)
- 			bsd_start += offset;
- 		if (offset == bsd_start && size == bsd_size)
- 			/* full parent partition, we have it already */
+--- a/arch/powerpc/kernel/exceptions-64s.S
++++ b/arch/powerpc/kernel/exceptions-64s.S
+@@ -704,7 +704,7 @@ EXC_COMMON_BEGIN(bad_addr_slb)
+ 	ld	r3, PACA_EXSLB+EX_DAR(r13)
+ 	std	r3, _DAR(r1)
+ 	beq	cr6, 2f
+-	li	r10, 0x480		/* fix trap number for I-SLB miss */
++	li	r10, 0x481		/* fix trap number for I-SLB miss */
+ 	std	r10, _TRAP(r1)
+ 2:	bl	save_nvgprs
+ 	addi	r3, r1, STACK_FRAME_OVERHEAD
