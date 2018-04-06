@@ -1,74 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751413AbeDFSLM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 14:11:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51652 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750807AbeDFSLK (ORCPT
+        id S1751543AbeDFSMr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 14:12:47 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:32891 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750807AbeDFSMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:11:10 -0400
-Date: Fri, 6 Apr 2018 20:10:57 +0200 (CEST)
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
-X-X-Sender: sebott@schleppi
-To: Kees Cook <keescook@chromium.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: Re: [bisected] 3c8ba0d61d04ced9f8d9ff93977995a9e4e96e91 oopses on
- s390
-In-Reply-To: <CAGXu5jKLsdfHEySg1w5EKO3Tt3=nWh7txWVsU6V65i3vS=Z2xw@mail.gmail.com>
-References: <alpine.LFD.2.21.1804061125390.1819@schleppi> <CAGXu5jKTtU3fvqP-ygV51WcOAmTkm=y5fysKNv+k0crhJACtVg@mail.gmail.com>  <CAGXu5jKLsdfHEySg1w5EKO3Tt3=nWh7txWVsU6V65i3vS=Z2xw@mail.gmail.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
- =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
- =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
- =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
- =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
- =?ISO-8859-15?Q?94=22?=
+        Fri, 6 Apr 2018 14:12:45 -0400
+X-Google-Smtp-Source: AIpwx4/9TUtn+KnH7Xy/NQXuSw14WKoFZG5KfLUT0UImBSxtLUVxUKujKiGk0hUcSHU8x1e8iaRpmw==
+Date: Fri, 6 Apr 2018 11:12:42 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Tasos Sahanidis <tasos@tasossah.com>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>
+Subject: [PATCH] Input: leds - fix out of bound access
+Message-ID: <20180406181242.GA225849@dtor-ws>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-TM-AS-GCONF: 00
-x-cbid: 18040618-0044-0000-0000-00000544580A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040618-0045-0000-0000-000028847B56
-Message-Id: <alpine.LFD.2.21.1804062009040.1819@schleppi>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-06_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804060182
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 6 Apr 2018, Kees Cook wrote:
-> On Fri, Apr 6, 2018 at 9:47 AM, Kees Cook <keescook@chromium.org> wrote:
-> > On Fri, Apr 6, 2018 at 2:47 AM, Sebastian Ott <sebott@linux.vnet.ibm.com> wrote:
-> >> Today's kernel oopsed on s390. Bisect points to:
-> >> 3c8ba0d61d04 ("kernel.h: Retain constant expression output for max()/min()")
-> >>
-> >> [    1.898277] dasd-eckd 0.0.3304: DASD with 4 KB/block, 21636720 KB total size, 48 KB/track, compatible disk layout
-> >> [    1.898308] ------------[ cut here ]------------
-> >> [    1.898310] kernel BUG at block/bio.c:1798!
-> >
-> > Well that's extremely bad. :(
-> >
-> >> Bisect log and config attached. I'll look at min/max users in the affected
-> >> areas later today.
-> >
-> > Seems like a comparison of objdump output with/without the patch may
-> > be needed. And why is this s390 only? Ugh.
-> 
-> I did a objdump diff with your .config and it's rather large -- mostly
-> seems to be register swaps, so it's not easy to browse.
+UI_SET_LEDBIT ioctl() causes the following KASAN splat when used with
+led > LED_CHARGING:
 
-Yes, I'm looking at that too.
+[ 1274.663418] BUG: KASAN: slab-out-of-bounds in input_leds_connect+0x611/0x730 [input_leds]
+[ 1274.663426] Write of size 8 at addr ffff88003377b2c0 by task ckb-next-daemon/5128
 
-> BTW, what version of gcc did you use? I built using:
+This happens because we were writing to the led structure before making
+sure that it exists.
 
-gcc version 7.2.0 (GCC)
+Reported-by: Tasos Sahanidis <tasos@tasossah.com>
+Tested-by: Tasos Sahanidis <tasos@tasossah.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/input/input-leds.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/input/input-leds.c b/drivers/input/input-leds.c
+index 766bf26601163..5f04b2d946350 100644
+--- a/drivers/input/input-leds.c
++++ b/drivers/input/input-leds.c
+@@ -88,6 +88,7 @@ static int input_leds_connect(struct input_handler *handler,
+ 			      const struct input_device_id *id)
+ {
+ 	struct input_leds *leds;
++	struct input_led *led;
+ 	unsigned int num_leds;
+ 	unsigned int led_code;
+ 	int led_no;
+@@ -119,14 +120,13 @@ static int input_leds_connect(struct input_handler *handler,
+ 
+ 	led_no = 0;
+ 	for_each_set_bit(led_code, dev->ledbit, LED_CNT) {
+-		struct input_led *led = &leds->leds[led_no];
++		if (!input_led_info[led_code].name)
++			continue;
+ 
++		led = &leds->leds[led_no];
+ 		led->handle = &leds->handle;
+ 		led->code = led_code;
+ 
+-		if (!input_led_info[led_code].name)
+-			continue;
+-
+ 		led->cdev.name = kasprintf(GFP_KERNEL, "%s::%s",
+ 					   dev_name(&dev->dev),
+ 					   input_led_info[led_code].name);
+-- 
+2.17.0.484.g0c8726318c-goog
+
+
+-- 
+Dmitry
