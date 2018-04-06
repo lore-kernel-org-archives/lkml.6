@@ -1,161 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751949AbeDFKMI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 06:12:08 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:47383 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751415AbeDFKMH (ORCPT
+        id S1752147AbeDFKMR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 06:12:17 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52973 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752034AbeDFKMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:12:07 -0400
-Subject: Re: INFO: task hung in __blkdev_get
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Dmitry Vyukov <dvyukov@google.com>, Ming Lei <tom.leiming@gmail.com>,
-        Jens Axboe <axboe@fb.com>
-Cc: mingo@redhat.com, peterz@infradead.org,
-        syzbot
-        <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <f403043a9be410acd1055fe5f72e@google.com>
- <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
-Message-ID: <2e093801-6d71-6747-42df-52f191811ad0@I-love.SAKURA.ne.jp>
-Date: Fri, 6 Apr 2018 19:12:02 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+        Fri, 6 Apr 2018 06:12:14 -0400
+X-Google-Smtp-Source: AIpwx48UK2SniaxPgHCOXFgjuVkU/YSnZ0sEp3ADc+VkTIfO7mkw+DZdamBwNuX+CcIMuo2hDjR0fA==
+Subject: Re: [PATCH] ata: ahci-platform: add reset control support
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Patrice CHOTARD <patrice.chotard@st.com>, Tejun Heo <tj@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org"
+        <linux-mediatek@lists.infradead.org>
+References: <20180406134838.2ADC.4A936039@socionext.com>
+ <22a2bcd7-eff5-c20f-e056-f5946e579d5e@redhat.com>
+ <20180406183623.CA38.4A936039@socionext.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <68d50624-d31b-09cf-210e-9fb7c73b5df0@redhat.com>
+Date: Fri, 6 Apr 2018 12:12:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180406183623.CA38.4A936039@socionext.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From fab524a1a8a67a8d6de1d486ff526ed2f18ee6fd Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Fri, 6 Apr 2018 10:03:17 +0900
-Subject: [PATCH] block/loop: fix deadlock after loop_set_status
+Hi,
 
-syzbot is reporting deadlocks at __blkdev_get() [1].
+On 06-04-18 11:36, Kunihiko Hayashi wrote:
+> Hi Hans,
+> 
+> On Fri, 6 Apr 2018 10:29:37 +0200
+> Hans de Goede <hdegoede@redhat.com> wrote:
+> 
+>> Hi,
+>>
+>> On 06-04-18 06:48, Kunihiko Hayashi wrote:
+>>> Hi Hans,
+>>>> On Thu, 5 Apr 2018 16:08:24 +0200
+>>> Hans de Goede <hdegoede@redhat.com> wrote:
+>>>>> Hi,
+>>>>
+>>>> On 05-04-18 16:00, Hans de Goede wrote:
+>>>>> Hi,
+>>>>>> On 05-04-18 15:54, Thierry Reding wrote:
+>>>>>> On Thu, Apr 05, 2018 at 03:27:03PM +0200, Hans de Goede wrote:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> On 05-04-18 15:17, Patrice CHOTARD wrote:
+>>>>>>>> Hi Thierry
+>>>>>>>>
+>>>>>>>> On 04/05/2018 11:54 AM, Thierry Reding wrote:
+>>>>>>>>> On Fri, Mar 23, 2018 at 10:30:53AM +0900, Kunihiko Hayashi wrote:
+>>>>>>>>>> Add support to get and control a list of resets for the device
+>>>>>>>>>> as optional and shared. These resets must be kept de-asserted until
+>>>>>>>>>> the device is enabled.
+>>>>>>>>>>
+>>>>>>>>>> This is specified as shared because some SoCs like UniPhier series
+>>>>>>>>>> have common reset controls with all ahci controller instances.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+>>>>>>>>>> ---
+>>>>>>>>>> ??? .../devicetree/bindings/ata/ahci-platform.txt????? |? 1 +
+>>>>>>>>>> ??? drivers/ata/ahci.h???????????????????????????????? |? 1 +
+>>>>>>>>>> ??? drivers/ata/libahci_platform.c???????????????????? | 24 +++++++++++++++++++---
+>>>>>>>>>> ??? 3 files changed, 23 insertions(+), 3 deletions(-)
+>>>>>>>>>
+>>>>>>>>> This causes a regression on Tegra because we explicitly request the
+>>>>>>>>> resets after the call to ahci_platform_get_resources().
+>>>>>>>>
+>>>>>>>> I confirm, we got exactly the same behavior on STi platform.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> ?? From a quick look, ahci_mtk and ahci_st are in the same boat, adding the
+>>>>>>>>> corresponding maintainers to Cc.
+>>>>>>>>>
+>>>>>>>>> Patrice, Matthias: does SATA still work for you after this patch? This
+>>>>>>>>> has been in linux-next since next-20180327.
+>>>>>>>>
+>>>>>>>> SATA is still working after this patch, but a kernel warning is
+>>>>>>>> triggered due to the fact that resets are both requested by
+>>>>>>>> libahci_platform and by ahci_st driver.
+>>>>>>>
+>>>>>>> So in your case you might be able to remove the reset handling
+>>>>>>> from the ahci_st driver and rely on the new libahci_platform
+>>>>>>> handling instead? If that works that seems like a win to me.
+>>>>>>>
+>>>>>>> As said elsewhere in this thread I think it makes sense to keep (or re-add
+>>>>>>> after a revert) the libahci_platform reset code, but make it conditional
+>>>>>>> on a flag passed to ahci_platform_get_resources(). This way we get
+>>>>>>> the shared code for most cases and platforms which need special handling
+>>>>>>> can opt-out.
+>>>>>>
+>>>>>> Agreed, although I prefer such helpers to be opt-in, rather than
+>>>>>> opt-out. In my experience that tends make the helpers more resilient to
+>>>>>> this kind of regression. It also simplifies things because instead of
+>>>>>> drivers saying "I want all the helpers except this one and that one",
+>>>>>> they can simply say "I want these helpers and that one". In the former
+>>>>>> case whenever you add some new (opt-out) feature, you have to update all
+>>>>>> drivers and add the exception. In the latter you only need to extend the
+>>>>>> drivers that want to make use of the new helper.
+>>>>
+>>>> Erm, the idea never was to make this opt-out but rather opt in, so
+>>>> we add a flags parameter to ahci_platform_get_resources() and all
+>>>> current users pass in 0 for that to keep the current behavior.
+>>>>
+>>>> And only the generic drivers/ata/ahci_platform.c driver will pass
+>>>> in a the new AHCI_PLATFORM_GET_RESETS flag, which makes
+>>>> ahci_platform_get_resources() (and the other functions) also deal
+>>>> with resets.
+>>>>
+>>>>>> With that in mind, rather than adding a flag to the
+>>>>>> ahci_platform_get_resources() function, it might be more flexible to
+>>>>>> split the helpers into finer-grained functions. That way drivers can
+>>>>>> pick whatever functionality they want from the helpers.
+>>>>>> Good point, so lets:
+>>>>>> 1) Revert the patch for now
+>>>>> 2) Have a new version of the patch which adds a ahci_platform_get_resets() helper
+>>>>> 3) Modify the generic drivers/ata/ahci_platform.c driver to call the new
+>>>>>    ?? ahci_platform_get_resets() between its ahci_platform_get_resources()
+>>>>>    ?? and ahci_platform_enable_resources() calls.
+>>>>>    ?? I think that ahci_platform_enable_resources() should still automatically
+>>>>>    ?? do the right thing wrt resets if ahci_platform_get_resets() was called
+>>>>>    ?? (otherwise the resets array will be empty and should be skipped)
+>>>>>> This should make the generic driver usable for the UniPhier SoCs and
+>>>>> maybe some other drivers like the ahci_st driver can also switch to the
+>>>>> new ahci_platform_get_resets() functionality to reduce their code a bit.
+>>>>
+>>>> So thinking slightly longer about this, with the opt-in variant
+>>>> (which is what I intended all along) I do think that a flags parameter
+>>>> is better, because the whole idea behind lib_ahci_platform is to avoid
+>>>> having to do err = get_resource_a(), if (err) bail, err = get_resource_b()
+>>>> if (err) bail, etc. in all the ahci (platform) drivers. And having fine
+>>>> grained helpers re-introduces that.
+>>>> In case of adding a flag instead of get_resource_a(),
+>>> for example, we add the flag for use of resets,
+>>>> -struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev)
+>>> +struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+>>> +                                                  bool use_reset)
+>>>> and for now all the drivers using this function need to add the argument as false
+>>> to the caller.
+>>>> -       hpriv = ahci_platform_get_resources(pdev);
+>>> +       hpriv = ahci_platform_get_resources(pdev, false);
+>>>> Surely this can avoid adding functions such get_resource_a(). If we apply another
+>>> feature later, we add its flag as one of the arguments instead. Is it right?
+>>
+>> Yes, that is right, but instead of adding a "bool use_reset" please add
+>> an "unsigned int flags" parameter instead and a:
+>>
+>> #define AHCI_PLATFORM_GET_RESETS	0x01
+>>
+>> And update all callers of ahci_platform_get_resources to pass 0 for flags
+>> except for drivers/ata/ahci_platform.c. This way we only need to modify
+>> all callers once, and if we want to add another optional resource in
+>> the future we can add a:
+>>
+>> #define AHCI_PLATFORM_GET_FOO		0x02
+>>
+>> Without needing to change all callers again.
+> 
+> Indeed. This is more flexible to add another resources.
+> 
+> Although I'm about to prepare the candidate patch to fix this issue,
+> I think we need to revert the previous patch first if some SoCs have
+> issues because of it.
 
-----------------------------------------
-[   92.493919] systemd-udevd   D12696   525      1 0x00000000
-[   92.495891] Call Trace:
-[   92.501560]  schedule+0x23/0x80
-[   92.502923]  schedule_preempt_disabled+0x5/0x10
-[   92.504645]  __mutex_lock+0x416/0x9e0
-[   92.510760]  __blkdev_get+0x73/0x4f0
-[   92.512220]  blkdev_get+0x12e/0x390
-[   92.518151]  do_dentry_open+0x1c3/0x2f0
-[   92.519815]  path_openat+0x5d9/0xdc0
-[   92.521437]  do_filp_open+0x7d/0xf0
-[   92.527365]  do_sys_open+0x1b8/0x250
-[   92.528831]  do_syscall_64+0x6e/0x270
-[   92.530341]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+Ack. It is probably best if you do a "git revert f0f56716fc3e5d547fd7811eb218a30ed0695605"
+on a tree with that commit and then send a patch to Tejun for this.
 
-[   92.931922] 1 lock held by systemd-udevd/525:
-[   92.933642]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x73/0x4f0
-----------------------------------------
+Regards,
 
-The reason of deadlock turned out that wait_event_interruptible() in
-blk_queue_enter() got stuck with bdev->bd_mutex held at __blkdev_put()
-due to q->mq_freeze_depth == 1.
-
-----------------------------------------
-[   92.787172] a.out           S12584   634    633 0x80000002
-[   92.789120] Call Trace:
-[   92.796693]  schedule+0x23/0x80
-[   92.797994]  blk_queue_enter+0x3cb/0x540
-[   92.803272]  generic_make_request+0xf0/0x3d0
-[   92.807970]  submit_bio+0x67/0x130
-[   92.810928]  submit_bh_wbc+0x15e/0x190
-[   92.812461]  __block_write_full_page+0x218/0x460
-[   92.815792]  __writepage+0x11/0x50
-[   92.817209]  write_cache_pages+0x1ae/0x3d0
-[   92.825585]  generic_writepages+0x5a/0x90
-[   92.831865]  do_writepages+0x43/0xd0
-[   92.836972]  __filemap_fdatawrite_range+0xc1/0x100
-[   92.838788]  filemap_write_and_wait+0x24/0x70
-[   92.840491]  __blkdev_put+0x69/0x1e0
-[   92.841949]  blkdev_close+0x16/0x20
-[   92.843418]  __fput+0xda/0x1f0
-[   92.844740]  task_work_run+0x87/0xb0
-[   92.846215]  do_exit+0x2f5/0xba0
-[   92.850528]  do_group_exit+0x34/0xb0
-[   92.852018]  SyS_exit_group+0xb/0x10
-[   92.853449]  do_syscall_64+0x6e/0x270
-[   92.854944]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-[   92.943530] 1 lock held by a.out/634:
-[   92.945105]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0x3c/0x1e0
-----------------------------------------
-
-The reason of q->mq_freeze_depth == 1 turned out that loop_set_status()
-forgot to call blk_mq_unfreeze_queue() at error paths for
-info->lo_encrypt_type != NULL case.
-
-----------------------------------------
-[   37.509497] CPU: 2 PID: 634 Comm: a.out Tainted: G        W        4.16.0+ #457
-[   37.513608] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[   37.518832] RIP: 0010:blk_freeze_queue_start+0x17/0x40
-[   37.521778] RSP: 0018:ffffb0c2013e7c60 EFLAGS: 00010246
-[   37.524078] RAX: 0000000000000000 RBX: ffff8b07b1519798 RCX: 0000000000000000
-[   37.527015] RDX: 0000000000000002 RSI: ffffb0c2013e7cc0 RDI: ffff8b07b1519798
-[   37.529934] RBP: ffffb0c2013e7cc0 R08: 0000000000000008 R09: 47a189966239b898
-[   37.532684] R10: dad78b99b278552f R11: 9332dca72259d5ef R12: ffff8b07acd73678
-[   37.535452] R13: 0000000000004c04 R14: 0000000000000000 R15: ffff8b07b841e940
-[   37.538186] FS:  00007fede33b9740(0000) GS:ffff8b07b8e80000(0000) knlGS:0000000000000000
-[   37.541168] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   37.543590] CR2: 00000000206fdf18 CR3: 0000000130b30006 CR4: 00000000000606e0
-[   37.546410] Call Trace:
-[   37.547902]  blk_freeze_queue+0x9/0x30
-[   37.549968]  loop_set_status+0x67/0x3c0 [loop]
-[   37.549975]  loop_set_status64+0x3b/0x70 [loop]
-[   37.549986]  lo_ioctl+0x223/0x810 [loop]
-[   37.549995]  blkdev_ioctl+0x572/0x980
-[   37.550003]  block_ioctl+0x34/0x40
-[   37.550006]  do_vfs_ioctl+0xa7/0x6d0
-[   37.550017]  ksys_ioctl+0x6b/0x80
-[   37.573076]  SyS_ioctl+0x5/0x10
-[   37.574831]  do_syscall_64+0x6e/0x270
-[   37.576769]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-----------------------------------------
-
-[1] https://syzkaller.appspot.com/bug?id=cd662bc3f6022c0979d01a262c318fab2ee9b56f
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>
-Fixes: ecdd09597a572513 ("block/loop: fix race between I/O and set_status")
-Cc: Ming Lei <tom.leiming@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: Jens Axboe <axboe@fb.com>
----
- drivers/block/loop.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 264abaa..e5fc020 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1103,11 +1103,15 @@ static int loop_clr_fd(struct loop_device *lo)
- 	if (info->lo_encrypt_type) {
- 		unsigned int type = info->lo_encrypt_type;
- 
--		if (type >= MAX_LO_CRYPT)
--			return -EINVAL;
-+		if (type >= MAX_LO_CRYPT) {
-+			err = -EINVAL;
-+			goto exit;
-+		}
- 		xfer = xfer_funcs[type];
--		if (xfer == NULL)
--			return -EINVAL;
-+		if (xfer == NULL) {
-+			err = -EINVAL;
-+			goto exit;
-+		}
- 	} else
- 		xfer = NULL;
- 
--- 
-1.8.3.1
+Hans
