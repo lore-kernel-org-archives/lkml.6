@@ -1,71 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752196AbeDFRHE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 13:07:04 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44472 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751543AbeDFRHC (ORCPT
+        id S1752234AbeDFRHL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 13:07:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53693 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751532AbeDFRHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 13:07:02 -0400
-X-Google-Smtp-Source: AIpwx4+/aPMV3S9LlsMyhAfwQQqg18cl6cpbLnfvepljAxynGESOhjPdFZAMPuYXbiSN82NlxYppmw==
-From: Esben Haabendal <esben.haabendal@gmail.com>
-To: David Miller <davem@davemloft.net>
-Cc: andrew@lunn.ch, netdev@vger.kernel.org, richardcochran@gmail.com,
-        f.fainelli@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dp83640: Ensure against premature access to PHY registers after reset
-References: <20180406140540.13511-1-esben.haabendal@gmail.com>
-        <20180406141410.GI17495@lunn.ch>
-        <20180406.111337.1908168293065420432.davem@davemloft.net>
-Date: Fri, 06 Apr 2018 19:06:59 +0200
-In-Reply-To: <20180406.111337.1908168293065420432.davem@davemloft.net> (David
-        Miller's message of "Fri, 06 Apr 2018 11:13:37 -0400 (EDT)")
-Message-ID: <8760541cy4.fsf@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 6 Apr 2018 13:07:08 -0400
+Date: Fri, 6 Apr 2018 10:06:36 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-oev1469y02hmfere6r2kkxp6@git.kernel.org>
+Cc: kan.liang@intel.com, wangnan0@huawei.com, adrian.hunter@intel.com,
+        tglx@linutronix.de, dsahern@gmail.com, acme@redhat.com,
+        jolsa@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        mingo@kernel.org, namhyung@kernel.org
+Reply-To: dsahern@gmail.com, wangnan0@huawei.com, adrian.hunter@intel.com,
+        tglx@linutronix.de, kan.liang@intel.com, namhyung@kernel.org,
+        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, acme@redhat.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf report: Remove duplicated 'samples' in lost
+ samples warning
+Git-Commit-ID: 41a43dacecdbc9aec9d307bd9f6aa5ec16d65832
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Miller <davem@davemloft.net> writes:
+Commit-ID:  41a43dacecdbc9aec9d307bd9f6aa5ec16d65832
+Gitweb:     https://git.kernel.org/tip/41a43dacecdbc9aec9d307bd9f6aa5ec16d65832
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 5 Apr 2018 14:34:09 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 5 Apr 2018 14:34:09 -0300
 
-> From: Andrew Lunn <andrew@lunn.ch>
-> Date: Fri, 6 Apr 2018 16:14:10 +0200
->
->> On Fri, Apr 06, 2018 at 04:05:40PM +0200, Esben Haabendal wrote:
->>> From: Esben Haabendal <eha@deif.com>
->>> 
->>> Signed-off-by: Esben Haabendal <eha@deif.com>
->>> ---
->>>  drivers/net/phy/dp83640.c | 17 +++++++++++++++++
->>>  1 file changed, 17 insertions(+)
->>> 
->>> diff --git a/drivers/net/phy/dp83640.c b/drivers/net/phy/dp83640.c
->>> index 654f42d00092..48403170096a 100644
->>> --- a/drivers/net/phy/dp83640.c
->>> +++ b/drivers/net/phy/dp83640.c
->>> @@ -1207,6 +1207,22 @@ static void dp83640_remove(struct phy_device *phydev)
->>>  	kfree(dp83640);
->>>  }
->>>  
->>> +static int dp83640_soft_reset(struct phy_device *phydev)
->>> +{
->>> +	int ret;
->>> +
->>> +	ret = genphy_soft_reset(phydev);
->>> +	if (ret < 0)
->>> +		return ret;
->>> +
->>> +	/* From DP83640 datasheet: "Software driver code must wait 3 us
->>> +	 * following a software reset before allowing further serial MII
->>> +	 * operations with the DP83640." */
->>> +	udelay(3);
->> 
->> Hi Esben
->> 
->> The accuracy of udelay() is not guaranteed. So you probably want to be
->> a bit pessimistic, and use 10.
+perf report: Remove duplicated 'samples' in lost samples warning
 
-Ok, will do.
+The following message, emitted when samples are lost due to system
+overload, had one 'samples' too many, ditch it:
 
-/Esben
+   Processed 25333 samples and lost 20.88% samples!
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: Kan Liang <kan.liang@intel.com>
+Link: https://lkml.kernel.org/n/tip-oev1469y02hmfere6r2kkxp6@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/session.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index c71ced7db152..f4a7a437ee87 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1591,7 +1591,7 @@ static void perf_session__warn_about_errors(const struct perf_session *session)
+ 		drop_rate = (double)stats->total_lost_samples /
+ 			    (double) (stats->nr_events[PERF_RECORD_SAMPLE] + stats->total_lost_samples);
+ 		if (drop_rate > 0.05) {
+-			ui__warning("Processed %" PRIu64 " samples and lost %3.2f%% samples!\n\n",
++			ui__warning("Processed %" PRIu64 " samples and lost %3.2f%%!\n\n",
+ 				    stats->nr_events[PERF_RECORD_SAMPLE] + stats->total_lost_samples,
+ 				    drop_rate * 100.0);
+ 		}
