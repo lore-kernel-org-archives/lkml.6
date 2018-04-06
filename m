@@ -1,150 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751802AbeDFIWt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 04:22:49 -0400
-Received: from mail2.tencent.com ([163.177.67.195]:40061 "EHLO
-        mail2.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751643AbeDFIWm (ORCPT
+        id S1751900AbeDFIXa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 04:23:30 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55484 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbeDFIX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 04:22:42 -0400
-From: =?gb2312?B?aGFpYmluemhhbmco1cW6o7HzKQ==?= <haibinzhang@tencent.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: =?gb2312?B?bGlkb25nY2hlbiizwsGitqsp?= <lidongchen@tencent.com>,
-        =?gb2312?B?eXVuZmFuZ3RhaSjMqNTLt70p?= <yunfangtai@tencent.com>
-Subject: [PATCH] vhost-net: set packet weight of tx polling to 2 * vq size
-Thread-Topic: [PATCH] vhost-net: set packet weight of tx polling to 2 * vq
- size
-Thread-Index: AdPNf/HduLuAdDkwRDmJdfV2Q0QaBQ==
-Date: Fri, 6 Apr 2018 08:22:37 +0000
-Message-ID: <88D661ADF6AFBF42B2AB88D8E7682B0901FC47D3@EXMBX-SZMAIL011.tencent.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.19.90.75]
-Content-Type: text/plain; charset="gb2312"
+        Fri, 6 Apr 2018 04:23:27 -0400
+X-Google-Smtp-Source: AIpwx48jKw6XSmfh6j0pK5+BWYayUNMHPktANE4JiKPh8+kWm7OyUKNz6B6bftsYekQWUsFbxz+ZOg==
+Date: Fri, 6 Apr 2018 10:23:22 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Subject: Re: [PATCH 0/8] use struct pt_regs based syscall calling for x86-64
+Message-ID: <20180406082322.ud37sj3b5ldm7xxd@gmail.com>
+References: <20180405095307.3730-1-linux@dominikbrodowski.net>
+ <20180405151933.egmt7ressx2ikdnr@gmail.com>
+ <20180405203121.GA27104@light.dominikbrodowski.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180405203121.GA27104@light.dominikbrodowski.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w368MwZl026171
 
-handle_tx will delay rx for tens or even hundreds of milliseconds when tx busy
-polling udp packets with small length(e.g. 1byte udp payload), because setting
-VHOST_NET_WEIGHT takes into account only sent-bytes but no single packet length.
 
-Ping-Latencies shown below were tested between two Virtual Machines using
-netperf (UDP_STREAM, len=1), and then another machine pinged the client:
+* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
 
-Packet-Weight      Ping-Latencies(millisecond)
-                   min      avg       max
-Origin           3.319   18.489    57.303
-64               1.643    2.021     2.552
-128              1.825    2.600     3.224
-256              1.997    2.710     4.295
-512              1.860    3.171     4.631
-1024             2.002    4.173     9.056
-2048             2.257    5.650     9.688
-4096             2.093    8.508    15.943
+> On Thu, Apr 05, 2018 at 05:19:33PM +0200, Ingo Molnar wrote:
+> > Ok, this series looks mostly good to me, but AFAICS this breaks the UML build:
+> > 
+> >  make[2]: *** No rule to make target 'archheaders'.  Stop.
+> >  arch/um/Makefile:119: recipe for target 'archheaders' failed
+> >  make[1]: *** [archheaders] Error 2
+> >  make[1]: *** Waiting for unfinished jobs....
+> 
+> Ah, that's caused by patch 8/8 which I did and do not like all that much
+> anyway: UML re-uses syscall_64.tbl which now has x86-specific entries like
+> __sys_x86_pread64, but expects the generic syscall stub sys_pread64
+> referenced there. Fixup patch below; could be folded with patch 8/8. Or
+> patch 8/8 could simply be dropped from the series altogether...
 
-Ring size is a hint from device about a burst size it can tolerate. Based on
-benchmarks, set the weight to 2 * vq size.
+I still like the 'truth in advertising' aspect. For example if I see this in the 
+syscall table:
 
-To evaluate this change, another tests were done using netperf(RR, TX) between
-two machines with Intel(R) Xeon(R) Gold 6133 CPU @ 2.50GHz, and vq size was
-tweaked through qemu. Results shown below does not show obvious changes.
+ 10      common  mprotect                __sys_x86_mprotect
 
-vq size=256 TCP_RR                vq size=512 TCP_RR
-size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
-   1/       1/  -7%/        -2%      1/       1/   0%/        -2%
-   1/       4/  +1%/         0%      1/       4/  +1%/         0%
-   1/       8/  +1%/        -2%      1/       8/   0%/        +1%
-  64/       1/  -6%/         0%     64/       1/  +7%/        +3%
-  64/       4/   0%/        +2%     64/       4/  -1%/        +1%
-  64/       8/   0%/         0%     64/       8/  -1%/        -2%
- 256/       1/  -3%/        -4%    256/       1/  -4%/        -2%
- 256/       4/  +3%/        +4%    256/       4/  +1%/        +2%
- 256/       8/  +2%/         0%    256/       8/  +1%/        -1%
+I can immediately find the _real_ syscall entry point:
 
-vq size=256 UDP_RR                vq size=512 UDP_RR
-size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
-   1/       1/  -5%/        +1%      1/       1/  -3%/        -2%
-   1/       4/  +4%/        +1%      1/       4/  -2%/        +2%
-   1/       8/  -1%/        -1%      1/       8/  -1%/         0%
-  64/       1/  -2%/        -3%     64/       1/  +1%/        +1%
-  64/       4/  -5%/        -1%     64/       4/  +2%/         0%
-  64/       8/   0%/        -1%     64/       8/  -2%/        +1%
- 256/       1/  +7%/        +1%    256/       1/  -7%/         0%
- 256/       4/  +1%/        +1%    256/       4/  -3%/        -4%
- 256/       8/  +2%/        +2%    256/       8/  +1%/        +1%
+ffffffff81180a10 <__sys_x86_mprotect>:
+ffffffff81180a10:       48 8b 57 60             mov    0x60(%rdi),%rdx
+ffffffff81180a14:       48 8b 77 68             mov    0x68(%rdi),%rsi
+ffffffff81180a18:       b9 ff ff ff ff          mov    $0xffffffff,%ecx
+ffffffff81180a1d:       48 8b 7f 70             mov    0x70(%rdi),%rdi
+ffffffff81180a21:       e8 fa fc ff ff          callq  ffffffff81180720 <do_mprotect_pkey>
+ffffffff81180a26:       48 98                   cltq   
+ffffffff81180a28:       c3                      retq   
+ffffffff81180a29:       0f 1f 80 00 00 00 00    nopl   0x0(%rax)
 
-vq size=256 TCP_STREAM            vq size=512 TCP_STREAM
-size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
-  64/       1/   0%/        -3%     64/       1/   0%/         0%
-  64/       4/  +3%/        -1%     64/       4/  -2%/        +4%
-  64/       8/  +9%/        -4%     64/       8/  -1%/        +2%
- 256/       1/  +1%/        -4%    256/       1/  +1%/        +1%
- 256/       4/  -1%/        -1%    256/       4/  -3%/         0%
- 256/       8/  +7%/        +5%    256/       8/  -3%/         0%
- 512/       1/  +1%/         0%    512/       1/  -1%/        -1%
- 512/       4/  +1%/        -1%    512/       4/   0%/         0%
- 512/       8/  +7%/        -5%    512/       8/  +6%/        -1%
-1024/       1/   0%/        -1%   1024/       1/   0%/        +1%
-1024/       4/  +3%/         0%   1024/       4/  +1%/         0%
-1024/       8/  +8%/        +5%   1024/       8/  -1%/         0%
-2048/       1/  +2%/        +2%   2048/       1/  -1%/         0%
-2048/       4/  +1%/         0%   2048/       4/   0%/        -1%
-2048/       8/  -2%/         0%   2048/       8/   5%/        -1%
-4096/       1/  -2%/         0%   4096/       1/  -2%/         0%
-4096/       4/  +2%/         0%   4096/       4/   0%/         0%
-4096/       8/  +9%/        -2%   4096/       8/  -5%/        -1%
+If, on the other hand, I see this entry:
 
-Signed-off-by: Haibin Zhang <haibinzhang@tencent.com>
-Signed-off-by: Yunfang Tai <yunfangtai@tencent.com>
-Signed-off-by: Lidong Chen <lidongchen@tencent.com>
----
- drivers/vhost/net.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ 10     common  mprotect                sys_mprotect
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 8139bc70ad7d..3563a305cc0a 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -44,6 +44,10 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
-  * Using this limit prevents one virtqueue from starving others. */
- #define VHOST_NET_WEIGHT 0x80000
- 
-+/* Max number of packets transferred before requeueing the job.
-+ * Using this limit prevents one virtqueue from starving rx. */
-+#define VHOST_NET_PKT_WEIGHT(vq) ((vq)->num * 2)
-+
- /* MAX number of TX used buffers for outstanding zerocopy */
- #define VHOST_MAX_PEND 128
- #define VHOST_GOODCOPY_LEN 256
-@@ -473,6 +477,7 @@ static void handle_tx(struct vhost_net *net)
- 	struct socket *sock;
- 	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
- 	bool zcopy, zcopy_used;
-+	int sent_pkts = 0;
- 
- 	mutex_lock(&vq->mutex);
- 	sock = vq->private_data;
-@@ -580,7 +585,8 @@ static void handle_tx(struct vhost_net *net)
- 		else
- 			vhost_zerocopy_signal_used(net, vq);
- 		vhost_net_tx_packet(net);
--		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
-+		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
-+		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT(vq))) {
- 			vhost_poll_queue(&vq->poll);
- 			break;
- 		}
--- 
-2.12.3
+Then, as a first step, no symbol anywhere matches with this:
+
+ triton:~/tip> grep sys_mprotect System.map 
+ triton:~/tip> 
+
+"sys_mprotect" does not exist in any easily discoverable sense. You have to *know* 
+to replace the sys_ prefix with __sys_x86_ to find it.
+
+Now arguably we could use a __sys_ prefix instead of the grep-barrier __sys_x86 
+prefix - but that too would be somewhat confusing I think.
+
+I mean, the fact that we are passing in a ptregs pointer is a complexity of the 
+x86 kernel that *exists*, why hide it and make it harder to discover what's 
+happening, for something as important as system calls?
+
+In terms of UML breakage, UML arguably is tightly coupled to its host 
+architecture:
+
+> Subject: [PATCH] syscalls/x86: fix UML syscall table
+
+Even with your patch applied I still see build failures:
+
+  $ make ARCH=um defconfig
+  $ make ARCH=um linux
+  ...
+  arch/um/os-Linux/signal.c: In function ‘hard_handler’:
+  arch/um/os-Linux/signal.c:163:22: error: dereferencing pointer to incomplete type 
+  ‘struct ucontext’
+    mcontext_t *mc = &uc->uc_mcontext;
+                        ^~
+  scripts/Makefile.build:324: recipe for target 'arch/um/os-Linux/signal.o' failed
+  make[1]: *** [arch/um/os-Linux/signal.o] Error 1
+
+Thanks,
+
+	Ingo
