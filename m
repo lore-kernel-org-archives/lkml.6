@@ -1,134 +1,82 @@
-Return-Path: <rohitkr@codeaurora.org>
-X-Google-Smtp-Source: AIpwx49e1PwqP4VpMmN5ZMWV8DMi4v2yVAAGfLj8JL7FaKDDlTJcHYlZxuqqdkcngFNZO0wXvQsP
-ARC-Seal: i=1; a=rsa-sha256; t=1523274863; cv=none;
+Return-Path: <colin.king@canonical.com>
+X-Google-Smtp-Source: AIpwx4+CwT1BdmCo412t5alavUddAQrsE3s3ZkQIX9pPzzxAQbwgkCVWm0vhvcdbY6qSGm0XH74A
+ARC-Seal: i=1; a=rsa-sha256; t=1523031706; cv=none;
         d=google.com; s=arc-20160816;
-        b=MB8NAZFhDLzCE8FLhJsrCBqb5IkvT+YU4HH3t+wnDsYuBzISIwywbMMy0bLjC7T/0C
-         BlNlFKLQ3LixiKnZCNzzqKHdErLghyYIPdY8HFkxnvp7NjeFPFa0DKks9ByiRx8jEWf3
-         uxqIEl/xhs8hFCwX7J9EcYYFJZzfyK6YosMVZCH0LhYHabAgPbONxPmDK1zBZqKhHvCn
-         pxk3oXiak5LrWjcpP/6eDQ7f8ps0uas47bLSzZyjj4oN7XKhW6Y5mHzdgH1AwnyaHuRO
-         E2refUpBKgPiNTgq+i1/D3ECl9YZp5x78Bva1gf24n5n/NpO4wc6CI/0sD5sXErNdXIE
-         4C4A==
+        b=L+MYrLRpxPB+ZleLog6jScATBRnObTjbpnVHR7RJW0EG4AXR3SHPHC0pp+f9n4/ua8
+         fksTCjbaSuQPvUBZrEux0tn4gIcgUoE0tAEu/cWMTX1NDnfBwQfdV25X02oEH6l5Alft
+         EFMjPmwoQUF3zvCLxtU/+E3qK8B74mqeIuWOre3e96JJPIymI0ZFQ3efknuxCpQORMAC
+         PXdje1v68zctY84wXANO6T4/6oBLrkfUvvWWyBjTilSRqKAmKApwmbEADBSqnD/q3Ass
+         vVHdOg7ErMCTJCXaV3XHf9ZQ2S9mLfRdv2As05CIdU2u4slDLzzw9xo+x1+riEsAP9P8
+         aXRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=roLR/07Qsen+JC9CJghK4W/Pt7bLJvijztsDObqzli8=;
-        b=NPMEW5wNxHqG9u3qhEsXPduRwl8nLMoM1+NQDP+zNpQYQaHhnsOkORKUMG6bx8dbzj
-         HteVCXH9EmAN5zt0Scqt5AHiFLA6PQccgWvETwatApmLQwPmIHdNMOHeNi9TXKIRWG2g
-         +2IQoHLTi9k7UxP5uI4EtbD/7DzRaQ+43AKfqXAIltXJCKUnbbT9R/2p9JIoclWBbRlF
-         Muk+QAI2fcyOb3T+IPCf2WfelSakgfTDypZdEAf+CfgSmF3B+UKhNag0qxl6GPqsm3GL
-         UwKfZHDmn1GDOHB/alUNAYKxfdrQtDSdRqOIlFNkuvqdiPu/FPMOoVfKoWMSTVVFuW1W
-         at0g==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:arc-authentication-results;
+        bh=u/SQU1lkYzVGbf8K7TxLHT8P/TmCLdKNjtuVDN2HLsk=;
+        b=g5eCIgrxBjzUELXjIBi+dGp2HytYSDTRZJaY+0bx+QXQarB1i9mTtgk1l+VdlgMa09
+         1zOuRhPp8ES3gmGjNbAFq9mJFEh/boptHruJ1QXV4flmu+Z4+ASBAXT1FJHP32wU3W3R
+         ejImnIshkeZqDHxmmyU+XFYaQM1+/0NEltbf1VlUvxjd9pRgkXfPfzzetnvgqA/0Hs84
+         /HTTlXEzjD7Km3FuQc9J7xZTsMO5T+y5LTPqVp1bNBbXSBMVK9F+XPIGvydoEmGf+bOr
+         /aNLBW5hYWDaPvX+ZNNRtVNyx2f32tHh/CmQj6x3SU0L4lxjlJ7iDM1dDDgjXdhUHTnZ
+         C5UQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=dU6hyE7c;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=nPdA+qVt;
-       spf=pass (google.com: domain of rohitkr@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=rohitkr@codeaurora.org
+       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=dU6hyE7c;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=nPdA+qVt;
-       spf=pass (google.com: domain of rohitkr@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=rohitkr@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 720F66076A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [alsa-devel] [PATCH v4 14/24] ASoC: qdsp6: q6asm: Add support to
- audio stream apis
-To: srinivas.kandagatla@linaro.org, andy.gross@linaro.org,
- broonie@kernel.org, linux-arm-msm@vger.kernel.org,
- alsa-devel@alsa-project.org, robh+dt@kernel.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- bgoswami@codeaurora.org, rohkumar@qti.qualcomm.com,
- gregkh@linuxfoundation.org, plai@codeaurora.org, lgirdwood@gmail.com,
- tiwai@suse.com, david.brown@linaro.org,
- linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com,
- linux-kernel@vger.kernel.org
-References: <20180310022456.26739-1-srinivas.kandagatla@linaro.org>
- <20180310022456.26739-15-srinivas.kandagatla@linaro.org>
-From: Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <3661b4c5-c79d-d73e-5e95-57e849775517@codeaurora.org>
-Date: Mon, 9 Apr 2018 17:23:58 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+From: Colin King <colin.king@canonical.com>
+To: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-integrity@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm: st33zp24: remove redundant null check on chip
+Date: Fri,  6 Apr 2018 17:21:44 +0100
+Message-Id: <20180406162144.14717-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <20180310022456.26739-15-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594515920555563949?=
-X-GMAIL-MSGID: =?utf-8?q?1597269462522330313?=
+X-GMAIL-THRID: =?utf-8?q?1597014495178816118?=
+X-GMAIL-MSGID: =?utf-8?q?1597014495178816118?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently chip is being dereferenced by the call to dev_get_drvdata
+before it is being null checked, however, chip can never be null, so
+this check is misleading and redundant. Remove it.
 
-On 3/10/2018 7:54 AM, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->
-> This patch adds support to open, write and media format commands
-> in the q6asm module.
->
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-and-Tested-by: Rohit kumar <rohitkr@codeaurora.org>
-> ---
->   sound/soc/qcom/qdsp6/q6asm.c | 744 ++++++++++++++++++++++++++++++++++++++++++-
->   sound/soc/qcom/qdsp6/q6asm.h |  49 +++
->   2 files changed, 792 insertions(+), 1 deletion(-)
->
-> diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
-> index 8a2ca2ff9ce8..ddbf526358bd 100644
-> --- a/sound/soc/qcom/qdsp6/q6asm.c
-> +++ b/sound/soc/qcom/qdsp6/q6asm.c
-> @@ -9,6 +9,8 @@
->   #include <linux/device.h>
->   #include <linux/spinlock.h>
->   #include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <uapi/sound/asound.h>
->   #include <linux/delay.h>
->   #include <linux/slab.h>
->   #include <linux/mm.h>
-> @@ -17,10 +19,36 @@
->   #include "q6dsp-errno.h"
->   #include "q6dsp-common.h"
->   
-> +#define ASM_STREAM_CMD_CLOSE			0x00010BCD
-> +#define ASM_STREAM_CMD_FLUSH			0x00010BCE
-> +#define ASM_SESSION_CMD_PAUSE			0x00010BD3
-> +#define ASM_DATA_CMD_EOS			0x00010BDB
-> +#define ASM_DEFAULT_POPP_TOPOLOGY		0x00010BE4
-Use NULL topology instead of default topology.
-#define ASM_NULL_POPP_TOPOLOGY                     0x00010C68
-> +#define ASM_STREAM_CMD_FLUSH_READBUFS		0x00010C09
-> +#define ASM_STREAM_CMD_SET_ENCDEC_PARAM		0x00010C10
-[..]
-> +	q6asm_add_hdr(ac, &open.hdr, sizeof(open), true, ac->stream_id);
-> +
-> +	open.hdr.opcode = ASM_STREAM_CMD_OPEN_WRITE_V3;
-> +	open.mode_flags = 0x00;
-> +	open.mode_flags |= ASM_LEGACY_STREAM_SESSION;
-> +
-> +	/* source endpoint : matrix */
-> +	open.sink_endpointype = ASM_END_POINT_DEVICE_MATRIX;
-> +	open.bits_per_sample = bits_per_sample;
-> +	open.postprocopo_id = ASM_DEFAULT_POPP_TOPOLOGY;
-  open.postprocopo_id = ASM_NULL_POPP_TOPOLOGY;
-> +
-> +	switch (format) {
-> +	case FORMAT_LINEAR_PCM:
-> +		open.dec_fmt_id = ASM_MEDIA_FMT_MULTI_CHANNEL_PCM_V2;
-> +		break;
-> +	default:
-> +		dev_err(ac->dev, "Invalid format 0x%x\n", format);
-> +		return -EINVAL;
-> +	}
-> +
-> +	rc = q6asm_ac_send_cmd_sync(ac, &open);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	ac->io_mode |= ASM_TUN_WRITE_IO_MODE;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(q6asm_open_write);
+Detected by CoverityScan, CID#1357806 ("Dereference before null check")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+---
+
+V2: don't check for null, just remove redundant null check,
+    thanks to Jason Gunthorpe for spotting that.
+
+---
+ drivers/char/tpm/st33zp24/st33zp24.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+index f95b9c75175b..abd675bec88c 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -373,8 +373,6 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
+ 	int ret;
+ 	u8 data;
+ 
+-	if (!chip)
+-		return -EBUSY;
+ 	if (len < TPM_HEADER_SIZE)
+ 		return -EBUSY;
+ 
+-- 
+2.15.1
