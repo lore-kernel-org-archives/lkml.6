@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49RJh5FmR81ZUlCib0EqIkEqSFInDXUBDM2vcFJ+w0kVqqayLCCgPYLAtBNjvlkqh6mv7Br
-ARC-Seal: i=1; a=rsa-sha256; t=1523021358; cv=none;
+X-Google-Smtp-Source: AIpwx489mIWgrlUHamkS4R94hZ9X/XaRi92lU5R6X1ai5mTKkyvYE3GYRwz5qYWfsQioWMGEMPjI
+ARC-Seal: i=1; a=rsa-sha256; t=1523021356; cv=none;
         d=google.com; s=arc-20160816;
-        b=pkF0/TrV0bTjRLV7qkJ2ma6C+RUS9TJCagNuP1a2whpLvFCIcH6fpvJLe04DN9Iiz7
-         v6ofN2uBepWK139pBs2t/BLQcj5QX2MjCDpntvGfQtj9I0VMENJM9vbZLL0YiG45SyQk
-         +JYPoXF4+i8XdsdxYuAvGLIw4PVZooHUZ7xAY2yvSoivIwS0GEOmOvl/Ov27+WrpUEnZ
-         5o0vfB7Ky6DiWk/COmV1J+5xHhnbODqrEsCegO3rM7JP02ybNBOLud42RDv4Uy9Ybpi0
-         1Nh3kd26lyfDWWvf49GZ+CPkAWovvJ4qoLOT9gE7nxF2+03XUtHc1q1eStBMY4Iu8I27
-         i+iQ==
+        b=L0/Dm+OySH2yU23H3Ogiqw0zEwwZ/NM9up7gKWbGlVU18Z9ND43K8QDtNEkzsKJSDR
+         zZUhOjT/S0LHGmqefVIrafHAnHbHgrY4seDSGdLqPf4n93eHkhxGNpt1oifAeJritDcP
+         JlHkEWz0qkSoR0AStY8KotJL6lFWtGyvsdYIAz8tHCSjZndxgbkXC5XInxQlDbV0+90M
+         sHY8XwaxzPLkxWJAhBbWz76HARvqy2WyTBTHlPXATDACEQPCMO3+2kydxR7o5gGqsNMG
+         SIoqQcDf8fkn5b6Usny4045wvhY4eKKebwpTcus5Vpuprvi1zwk4k7YbqYPc86+7emp1
+         2Nig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=vhvkFuhGYSfQKCV92RN5vC0o6kptA0ynbsgZYMpP7+0=;
-        b=bSuScNuZ101t3+sC5SckcRvsyuJa9z1AaBPC8qnvcSilhw3g+2cxnjKVEeW8i+DZFv
-         tDRkxbR4loETFvIX2nG8BHEht9CxbBIds1p/N/IDJQJ0PlTc8aMoTAJV4J3pVVxtTAM8
-         wCs7idSH0kJgIjLNTMyR+03a6J3oN0oIoaAI0v2XGQP/5uE+8mUszQ+IT+k7/xn7+OPQ
-         WcEC+ZAlPD2XOlGmn+8U+qOOjkRSsoaFOhrrz2oyYo2nA9xL/TjQaX6iuETocizPDmoU
-         KjVtoM+je8avn9djQ+Gozgx9/6LQGeZKdiZw2zN64CKjrsJQcXeqLQcZrgmeoGcGuHOb
-         yLDw==
+        bh=WnVMHKXufe2wcstGLTuOtIUeDK20DEv3dQ8jt/XiMn0=;
+        b=p8yuSbQa2Q1ISwXdQcocj6uzcFIleSv4Ms8G8zB3j4LqM/OCK5GX3BISRZiz/xJzYk
+         w4t10By3VZA9gZImCMvL055kUSZGbpRembYocXlbC/OGkdzTn9BOtuomKuFbl4fjUHlZ
+         8ze1Hvlgf0MpoOGcEBWsyxiD44hfUcdD6cQbV4nMFAXLSIelStVs318DgN6m+cDsE8a6
+         9oNcinJO6Lv30flq0E/PS6aSEfr6GRxzxPMjeCj6bkhv82iSQ6plo87OHIzOw7oke38w
+         utFZfRIKHxiwnQeT35RXI3eA2dQicd4KgEhfa+i2ffYeUCSq8OSdW9trXoO/Vd/DHdoC
+         cCmw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eli Cooper <elicooper@gmx.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 3.18 81/93] crypto: ahash - Fix early termination in hash walk
-Date: Fri,  6 Apr 2018 15:23:50 +0200
-Message-Id: <20180406084228.698842439@linuxfoundation.org>
+	NeilBrown <neilb@suse.com>,
+	Guoqing Jiang <gqjiang@suse.com>,
+	Shaohua Li <shli@fb.com>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 3.18 90/93] md/raid10: reset the first at the end of loop
+Date: Fri,  6 Apr 2018 15:23:59 +0200
+Message-Id: <20180406084229.103773273@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003644583899503?=
-X-GMAIL-MSGID: =?utf-8?q?1597003644583899503?=
+X-GMAIL-THRID: =?utf-8?q?1597003641922069555?=
+X-GMAIL-MSGID: =?utf-8?q?1597003641922069555?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Guoqing Jiang <gqjiang@suse.com>
 
-commit 900a081f6912a8985dc15380ec912752cb66025a upstream.
+commit 6f287ca6046edd34ed83aafb7f9033c9c2e809e2 upstream.
 
-When we have an unaligned SG list entry where there is no leftover
-aligned data, the hash walk code will incorrectly return zero as if
-the entire SG list has been processed.
+We need to set "first = 0' at the end of rdev_for_each
+loop, so we can get the array's min_offset_diff correctly
+otherwise min_offset_diff just means the last rdev's
+offset diff.
 
-This patch fixes it by moving onto the next page instead.
+[only the first chunk, due to b506335e5d2b ("md/raid10: skip spare disk as
+'first' disk") being already applied - gregkh]
 
-Reported-by: Eli Cooper <elicooper@gmx.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Suggested-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/ahash.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/md/raid10.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -90,13 +90,14 @@ int crypto_hash_walk_done(struct crypto_
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -3717,6 +3717,7 @@ static int run(struct mddev *mddev)
  
- 	if (nbytes && walk->offset & alignmask && !err) {
- 		walk->offset = ALIGN(walk->offset, alignmask + 1);
--		walk->data += walk->offset;
--
- 		nbytes = min(nbytes,
- 			     ((unsigned int)(PAGE_SIZE)) - walk->offset);
- 		walk->entrylen -= nbytes;
- 
--		return nbytes;
-+		if (nbytes) {
-+			walk->data += walk->offset;
-+			return nbytes;
-+		}
+ 		if (blk_queue_discard(bdev_get_queue(rdev->bdev)))
+ 			discard_supported = true;
++		first = 0;
  	}
  
- 	if (walk->flags & CRYPTO_ALG_ASYNC)
+ 	if (mddev->queue) {
