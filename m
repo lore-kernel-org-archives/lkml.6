@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752713AbeDFMg4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 08:36:56 -0400
+        id S1752576AbeDFMgS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 08:36:18 -0400
 Received: from mga05.intel.com ([192.55.52.43]:38490 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752472AbeDFMgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 08:36:18 -0400
+        id S1752272AbeDFMgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 08:36:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,415,1517904000";
-   d="scan'208";a="218132583"
+   d="scan'208";a="218132561"
 From: Wei Wang <wei.w.wang@intel.com>
 To: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
         virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
@@ -20,9 +20,9 @@ Cc: pbonzini@redhat.com, wei.w.wang@intel.com,
         liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
         quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
         huangzhichao@huawei.com
-Subject: [PATCH v31 3/4] mm/page_poison: expose page_poisoning_enabled to kernel modules
-Date: Fri,  6 Apr 2018 20:17:24 +0800
-Message-Id: <1523017045-18315-4-git-send-email-wei.w.wang@intel.com>
+Subject: [PATCH v31 1/4] mm: support reporting free page blocks
+Date: Fri,  6 Apr 2018 20:17:22 +0800
+Message-Id: <1523017045-18315-2-git-send-email-wei.w.wang@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523017045-18315-1-git-send-email-wei.w.wang@intel.com>
 References: <1523017045-18315-1-git-send-email-wei.w.wang@intel.com>
@@ -30,42 +30,154 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some usages, e.g. virtio-balloon, a kernel module needs to know if
-page poisoning is in use. This patch exposes the page_poisoning_enabled
-function to kernel modules.
+This patch adds support to walk through the free page blocks in the
+system and report them via a callback function. Some page blocks may
+leave the free list after zone->lock is released, so it is the caller's
+responsibility to either detect or prevent the use of such pages.
+
+One use example of this patch is to accelerate live migration by skipping
+the transfer of free pages reported from the guest. A popular method used
+by the hypervisor to track which part of memory is written during live
+migration is to write-protect all the guest memory. So, those pages that
+are reported as free pages but are written after the report function
+returns will be captured by the hypervisor, and they will be added to the
+next round of memory transfer.
 
 Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Liang Li <liang.z.li@intel.com>
 Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Michal Hocko <mhocko@kernel.org>
 ---
- mm/page_poison.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ include/linux/mm.h |  6 ++++
+ mm/page_alloc.c    | 97 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 103 insertions(+)
 
-diff --git a/mm/page_poison.c b/mm/page_poison.c
-index e83fd44..762b472 100644
---- a/mm/page_poison.c
-+++ b/mm/page_poison.c
-@@ -17,6 +17,11 @@ static int early_page_poison_param(char *buf)
- }
- early_param("page_poison", early_page_poison_param);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index f945dff..4698df1 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1951,6 +1951,12 @@ extern void free_area_init_node(int nid, unsigned long * zones_size,
+ 		unsigned long zone_start_pfn, unsigned long *zholes_size);
+ extern void free_initmem(void);
  
-+/**
-+ * page_poisoning_enabled - check if page poisoning is enabled
++extern int walk_free_mem_block(void *opaque,
++			       int min_order,
++			       int (*report_pfn_range)(void *opaque,
++						       unsigned long pfn,
++						       unsigned long num));
++
+ /*
+  * Free reserved pages within range [PAGE_ALIGN(start), end & PAGE_MASK)
+  * into the buddy system. The freed pages will be poisoned with pattern
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 4ea0182..83e50fd 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4912,6 +4912,103 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
+ 	show_swap_cache_info();
+ }
+ 
++/*
++ * Walk through a free page list and report the found pfn range via the
++ * callback.
 + *
-+ * Return true if page poisoning is enabled, or false if not.
++ * Return 0 if it completes the reporting. Otherwise, return the non-zero
++ * value returned from the callback.
 + */
- bool page_poisoning_enabled(void)
++static int walk_free_page_list(void *opaque,
++			       struct zone *zone,
++			       int order,
++			       enum migratetype mt,
++			       int (*report_pfn_range)(void *,
++						       unsigned long,
++						       unsigned long))
++{
++	struct page *page;
++	struct list_head *list;
++	unsigned long pfn, flags;
++	int ret = 0;
++
++	spin_lock_irqsave(&zone->lock, flags);
++	list = &zone->free_area[order].free_list[mt];
++	list_for_each_entry(page, list, lru) {
++		pfn = page_to_pfn(page);
++		ret = report_pfn_range(opaque, pfn, 1 << order);
++		if (ret)
++			break;
++	}
++	spin_unlock_irqrestore(&zone->lock, flags);
++
++	return ret;
++}
++
++/**
++ * walk_free_mem_block - Walk through the free page blocks in the system
++ * @opaque: the context passed from the caller
++ * @min_order: the minimum order of free lists to check
++ * @report_pfn_range: the callback to report the pfn range of the free pages
++ *
++ * If the callback returns a non-zero value, stop iterating the list of free
++ * page blocks. Otherwise, continue to report.
++ *
++ * Please note that there are no locking guarantees for the callback and
++ * that the reported pfn range might be freed or disappear after the
++ * callback returns so the caller has to be very careful how it is used.
++ *
++ * The callback itself must not sleep or perform any operations which would
++ * require any memory allocations directly (not even GFP_NOWAIT/GFP_ATOMIC)
++ * or via any lock dependency. It is generally advisable to implement
++ * the callback as simple as possible and defer any heavy lifting to a
++ * different context.
++ *
++ * There is no guarantee that each free range will be reported only once
++ * during one walk_free_mem_block invocation.
++ *
++ * pfn_to_page on the given range is strongly discouraged and if there is
++ * an absolute need for that make sure to contact MM people to discuss
++ * potential problems.
++ *
++ * The function itself might sleep so it cannot be called from atomic
++ * contexts.
++ *
++ * In general low orders tend to be very volatile and so it makes more
++ * sense to query larger ones first for various optimizations which like
++ * ballooning etc... This will reduce the overhead as well.
++ *
++ * Return 0 if it completes the reporting. Otherwise, return the non-zero
++ * value returned from the callback.
++ */
++int walk_free_mem_block(void *opaque,
++			int min_order,
++			int (*report_pfn_range)(void *opaque,
++			unsigned long pfn,
++			unsigned long num))
++{
++	struct zone *zone;
++	int order;
++	enum migratetype mt;
++	int ret;
++
++	for_each_populated_zone(zone) {
++		for (order = MAX_ORDER - 1; order >= min_order; order--) {
++			for (mt = 0; mt < MIGRATE_TYPES; mt++) {
++				ret = walk_free_page_list(opaque, zone,
++							  order, mt,
++							  report_pfn_range);
++				if (ret)
++					return ret;
++			}
++			cond_resched();
++		}
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(walk_free_mem_block);
++
+ static void zoneref_set_zone(struct zone *zone, struct zoneref *zoneref)
  {
- 	/*
-@@ -29,6 +34,7 @@ bool page_poisoning_enabled(void)
- 		(!IS_ENABLED(CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC) &&
- 		debug_pagealloc_enabled()));
- }
-+EXPORT_SYMBOL_GPL(page_poisoning_enabled);
- 
- static void poison_page(struct page *page)
- {
+ 	zoneref->zone = zone;
 -- 
 2.7.4
