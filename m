@@ -1,155 +1,158 @@
-Return-Path: <dvyukov@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523021549; cv=none;
-        d=google.com; s=arc-20160816;
-        b=bag5Y0O78R4HfP+Rp0ymikMcmjmkMxGiAX+geB8qUhFLEOLbE49Y/4z+rkVIZCZXmC
-         bY36B9a7WraWms9gpNOTLJpAnr2eMnBR5YUKCFQ4v2F3gLZTTaAUq5OHjyvG8KU4KppS
-         8V4dvhd82scUC3v6suBSmOFEKarGtfHYfz45TxnG7MLiJBALsfaP8K2urt2SWeYH+DPM
-         y0Ay/frNJPNh8Y3lkjvsx+4cAD3mG4rbJ3Ck/iYNtnfVDEkAOfTDuE38NanWqu9zR0XN
-         Gr08jwFaukDQIeRcDmvOm1IoPgnk6jVtPVJahyNq/czE14x8eLNfuU9efPQJj2YBgWGX
-         6SxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=Q1xUZazQqfw2QI/Mj7mlp1OpYSJEf4qt3vxpL4biEkc=;
-        b=p5GsaxKBBMOeyxVsSx1SJnL4yFnSa3LbwU7LVdUbBpp9aHvxD/M5ESl/lS2tEgBsqM
-         O8ifr618yq3msCUpAkK4PtUKTrafGghVOghol4jU1fclioZ3UH1PKJefGLPasTLPBBq+
-         13GJlSQKYIOM5yzhLYiDAfwALuyIeMF96H7Kb0a+E5dGQ/n7kRISuw2kySuBF9a1B6cy
-         BEXx8yJT1AVOKC/UpdAvBnM/Du/Vd10j9LKDPh/YF3q2vSQKvXLgOhCp7TvmoQUlg8WB
-         ckUkabFp9k+0jP0XQxJOcYKVI1nIRUb7W5Qx2xEplutfV/4qr98/j3i4IVMMSrc7jYZW
-         qBbA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=dMdI3Wat;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=dMdI3Wat;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx4+zZWdrVEJtHv4jwMVYV4XLxMCP6nPqJwN+X/if0Mu8yJLY0EemACYJIMRclDJjpP16Eut8Noo7wUoHW5da8NE=
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1387311-1523019821-2-17452615798461417042
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='ISO-8859-15'
+X-Attached: 0013-ring-buffer-Check-if-memory-is-available-before-allo.patch
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523019820; b=N9kAjgoGm1YwkZHoLo6FzIhx9lJikPQH44wgkOHQ150IgiDItJ
+    Djv/V4R6Grj1w5n9GJpNAyzNvA71uPH9lSQ/OK2wFSFsxvszu/En0VfimZkfgAQ4
+    YCxNZnUIV0kHnO9pgcj8uaTMQF/2UuDT3+s3gOO6qgp2o23bxY+mbm0M+T5Qohdh
+    ECpYjM/9qsx+T+QT6uf9OQzw2OQ5x5K9A6RuhE9XE3y6Oi2cb/1TEnsNbRxzXBEd
+    3x83mHXt+G/IAI4Xgf9ZLbxxW43KKGYYRjTaG4YBRzFdOeGy+7ocr/XaxTJr7PrN
+    f5zsLddE0enzHKBLOJVdznaX8JAgll2Jz72g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=message-id:date:from:to:cc:subject
+    :references:mime-version:content-type:sender:list-id; s=fm2; t=
+    1523019820; bh=kMxqMMLR972mYGYun2ldBMm1D5r1xMBSW1jU72zU6Zw=; b=E
+    2QhAIGQBduO/F6OajPJigOYSj43LH0bfsYFnM5N/1nku0SgAPLHEGHIbvIu6Ty6X
+    b97y7zeBKv2FXmzsLyW0zhbTqQgQbvkm8bkMI+Xiz2SSgDuXvgMGZ23oJ6Dn/4KJ
+    JWRgxTJWTP+JvKw68D82is7lCpoPgTF87tBXk0kr5cnNvsqJ0LOIt7iXp38Ef/10
+    4Ywo7hbkLtcJGvwIl6eUmReBRRYsSSJRYKbIoDL0UqH2lagvLnFOEmxFb7HZ7/F5
+    5Ib2/m+q4JZsHY7vGbq9mh+ZJCAbJgkqTSOFWIZOH1D7Ax+5PrZxJ5gyk1gFjPCV
+    J/f85kVKLHdV6tsq+Pa3w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBfanN8wdZ6HgpUDls7ZlHqQXv4ZskLR16+dhiYQHEsb5hraVUfRrLGhKkA/+qIMMKhvrmDdeWOnunaGL+L7kchKu6c6Z04gtSxJOdZcoflDzyAZc4TD
+    getzLulkKyvwFAG4voN1vUCBoHS8ndCLFxgk43lW5G4+55wpSUZU0vtSnTPW3cA0HXG86j/8iWRoGneZ8IscLNT5C5aCDP7YCAkSXsV2PWVnjyEH7ZqL/ZTP
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Q9fys5e9bTEA:10 a=Kd1tUaAdevIA:10
+    a=meVymXHHAAAA:8 a=VwQbUJbxAAAA:8 a=oQLfJTBTAAAA:8 a=37rDS-QxAAAA:8
+    a=pGLkceISAAAA:8 a=1XWaLZrsAAAA:8 a=CMs9CivKKxHkvO-iVasA:9 a=PUjeQqilurYA:10
+    a=HUqATDVKn4QA:10 a=2JgSa4NbpEOStq-L5dxp:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=RgvzH8KC66dk9vUkDcCj:22 a=k1Nq6YrhK2t884LQW06G:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752928AbeDFNCY (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 09:02:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60040 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752765AbeDFNBP (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 6 Apr 2018 09:01:15 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9CA22183C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Message-Id: <20180406130113.687518198@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Fri, 06 Apr 2018 09:00:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, linux-mm@kvack.org,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Subject: [for-next][PATCH 13/18] ring-buffer: Check if memory is available before allocation
+References: <20180406130035.400292196@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <001a11425bc430af6c05692df8c8@google.com>
-References: <001a11425bc430af6c05692df8c8@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 6 Apr 2018 15:32:08 +0200
-Message-ID: <CACT4Y+YcThq8FhX9myF+nE3iC1NZ7odDS=+DPGO0r0x_f_kKGg@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in snd_pcm_stream_lock_irq
-To: syzbot <syzbot+74e011b2046f4322d178@syzkaller.appspotmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, alsa-devel@alsa-project.org
-Cc: LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Bcc: gregkh@linuxfoundation.org
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0013-ring-buffer-Check-if-memory-is-available-before-allo.patch
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597003312361546038?=
-X-GMAIL-MSGID: =?utf-8?q?1597003844646422257?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 6, 2018 at 3:24 PM, syzbot
-<syzbot+74e011b2046f4322d178@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot hit the following crash on upstream commit
-> 38c23685b273cfb4ccf31a199feccce3bdcb5d83 (Fri Apr 6 04:29:35 2018 +0000)
-> Merge tag 'armsoc-drivers' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=74e011b2046f4322d178
->
-> Unfortunately, I don't have any reproducer for this crash yet.
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=4582053840420864
-> Kernel config:
-> https://syzkaller.appspot.com/x/.config?id=-5813481738265533882
-> compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-+ALSA maintainers
-This was misattributed to kcov.c, I will fix it.
+The ring buffer is made up of a link list of pages. When making the ring
+buffer bigger, it will allocate all the pages it needs before adding to the
+ring buffer, and if it fails, it frees them and returns an error. This makes
+increasing the ring buffer size an all or nothing action. When this was
+first created, the pages were allocated with "NORETRY". This was to not
+cause any Out-Of-Memory (OOM) actions from allocating the ring buffer. But
+NORETRY was too strict, as the ring buffer would fail to expand even when
+there's memory available, but was taken up in the page cache.
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+74e011b2046f4322d178@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
->
-> syz-executor1 (6140) used greatest stack depth: 11720 bytes left
-> INFO: rcu_sched self-detected stall on CPU
->         1-....: (124998 ticks this GP) idle=0b2/1/4611686018427387906
-> softirq=15730/15730 fqs=31205
->          (t=125000 jiffies g=8316 c=8315 q=1529)
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 6087 Comm: syz-executor0 Not tainted 4.16.0+ #3
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
->  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
->  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
->  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
->  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
->  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
->  __rcu_pending kernel/rcu/tree.c:3356 [inline]
->  rcu_pending kernel/rcu/tree.c:3401 [inline]
->  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
->  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
->  tick_sched_handle+0xa0/0x180 kernel/time/tick-sched.c:171
->  tick_sched_timer+0x42/0x130 kernel/time/tick-sched.c:1179
->  __run_hrtimer kernel/time/hrtimer.c:1337 [inline]
->  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1399
->  hrtimer_interrupt+0x286/0x650 kernel/time/hrtimer.c:1457
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
->  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
->  </IRQ>
-> RIP: 0010:__sanitizer_cov_trace_pc+0x3f/0x50 kernel/kcov.c:106
-> RSP: 0018:ffff8801920cf4d0 EFLAGS: 00000216 ORIG_RAX: ffffffffffffff13
-> RAX: 0000000000040000 RBX: ffff8801ceb61200 RCX: ffffc90001eb0000
-> RDX: 0000000000040000 RSI: ffffffff859d760f RDI: ffff8801ceb61200
-> RBP: ffff8801920cf4d0 R08: ffff8801b4946540 R09: 0000000000000006
-> R10: ffff8801b4946540 R11: 0000000000000000 R12: ffffffff8826fa20
-> R13: 0000000000000020 R14: ffff8801d3008c00 R15: ffff8801ceb61200
->  snd_pcm_stream_lock_irq+0xf/0xf0 sound/core/pcm_native.c:150
->  __snd_pcm_lib_xfer+0x345/0x1d10 sound/core/pcm_lib.c:2162
->  snd_pcm_oss_write3+0xe9/0x220 sound/core/oss/pcm_oss.c:1236
->  io_playback_transfer+0x274/0x310 sound/core/oss/io.c:47
->  snd_pcm_plug_write_transfer+0x36c/0x470 sound/core/oss/pcm_plugin.c:619
->  snd_pcm_oss_write2+0x25c/0x460 sound/core/oss/pcm_oss.c:1365
->  snd_pcm_oss_write1 sound/core/oss/pcm_oss.c:1431 [inline]
->  snd_pcm_oss_write+0x55f/0xa20 sound/core/oss/pcm_oss.c:2774
->  do_loop_readv_writev fs/read_write.c:703 [inline]
->  do_iter_write+0x491/0x5f0 fs/read_write.c:961
->  vfs_writev+0x1c7/0x330 fs/read_write.c:1004
->  do_writev+0x112/0x2f0 fs/read_write.c:1039
->  SYSC_writev fs/read_write.c:1112 [inline]
->  SyS_writev+0x27/0x30 fs/read_write.c:1109
->  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x4552d9
-> RSP: 002b:00007f82ef52cc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-> RAX: ffffffffffffffda RBX: 00007f82ef52d6d4 RCX: 00000000004552d9
-> RDX: 0000000000000001 RSI: 0000000020000180 RDI: 0000000000000015
-> RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 00000000000006cc R14: 00000000006fd3c0 R15: 0000000000000000
->
->
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
+Commit 848618857d253 ("tracing/ring_buffer: Try harder to allocate") changed
+the allocating from NORETRY to RETRY_MAYFAIL. The RETRY_MAYFAIL would
+allocate from the page cache, but if there was no memory available, it would
+simple fail the allocation and not trigger an OOM.
+
+This worked fine, but had one problem. As the ring buffer would allocate one
+page at a time, it could take up all memory in the system before it failed
+to allocate and free that memory. If the allocation is happening and the
+ring buffer allocates all memory and then tries to take more than available,
+its allocation will not trigger an OOM, but if there's any allocation that
+happens someplace else, that could trigger an OOM, even though once the ring
+buffer's allocation fails, it would free up all the previous memory it tried
+to allocate, and allow other memory allocations to succeed.
+
+Commit d02bd27bd33dd ("mm/page_alloc.c: calculate 'available' memory in a
+separate function") separated out si_mem_availble() as a separate function
+that could be used to see how much memory is available in the system. Using
+this function to make sure that the ring buffer could be allocated before it
+tries to allocate pages we can avoid allocating all memory in the system and
+making it vulnerable to OOMs if other allocations are taking place.
+
+Link: http://lkml.kernel.org/r/1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com
+
+CC: stable@vger.kernel.org
+Cc: linux-mm@kvack.org
+Fixes: 848618857d253 ("tracing/ring_buffer: Try harder to allocate")
+Requires: d02bd27bd33dd ("mm/page_alloc.c: calculate 'available' memory in a separate function")
+Reported-by: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Tested-by: Joel Fernandes <joelaf@google.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/ring_buffer.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 515be03e3009..966128f02121 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -1164,6 +1164,11 @@ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
+ 	struct buffer_page *bpage, *tmp;
+ 	long i;
+ 
++	/* Check if the available memory is there first */
++	i = si_mem_available();
++	if (i < nr_pages)
++		return -ENOMEM;
++
+ 	for (i = 0; i < nr_pages; i++) {
+ 		struct page *page;
+ 		/*
+-- 
+2.15.1
