@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+3HeQ8etGiu27H+P1wskiYufgt3o3fvJUG1pRoiVFYsMh3bGb9jJBWd8k998o6c0En+K7Z
-ARC-Seal: i=1; a=rsa-sha256; t=1523021581; cv=none;
+X-Google-Smtp-Source: AIpwx48uyIYAqGeZeyeEvGRUwKT9kL/5VflayGlXb5TEAUnsWrDxsmfSmPlc2AEHBp56dsaPBnFy
+ARC-Seal: i=1; a=rsa-sha256; t=1523021578; cv=none;
         d=google.com; s=arc-20160816;
-        b=IWefIAufi++U1T8SINi08vK5xpa6j346UYPg57S6mNugioG9/wPBiP2af0qWwQvSnJ
-         ON5aL2b3gN2X9Grctc15yr/3IlWM6Cc+/dC60f1RUeAdBj+OCLjUoWhUz2bOgJ5G9TQ2
-         B8UqED3mkVQx4qyYTvg4AFOeRYt4kXdAbFPadQZqveV+mBMhH8bpNtpbG3tC6w9r+ffL
-         bbG2PKLi15L6lMroNt/5i3QMhlK7JMExSOOeLR/hK/9wnR8w4fF2xU6SmByF0ddD7Bqp
-         i83nLIckps8BHbK/Qh/enHSb/EShnsMEKL47mviz+aKMOFTAx+KDPXATi4zVKjX5MakG
-         Yfng==
+        b=Bz7A1HSl/hFcJN4M4z42JGEax+7oqX5EMpioTkDHxB05C+hwtF46pCAhYpUviSILv1
+         q28Zj8WMU+FPyh6gHSbyQ/no/01V6F37MuhcO1J3Age6CKAzkUNVTS/K/IH0vMRMu6ss
+         HxAkegxFgiPxeSogmfGCIvJI8pGNrFvVdaXsJsOotsLOtJOyy4mY3w0IfLTUfzGw/B6b
+         WwVZp9d3fOFelFYrX8YK3cT3EF0SKtrAQZ225lj0Lm/r8JGyLKYzXwzFTnw23yZmIKqw
+         n4qKM7fsNiiy68JexVS8QwQYC2PpBFos5Y++Ct9zl1ZRIW2KhmqSlCd1daWZO0JaaExc
+         m+qA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HAZv0gP9NWmvT4D2NURExX4uVE3vFnqM0JliS1YsRJs=;
-        b=pwTDG6bRLzL3RNHAM2SMoXsEXn1SmtzGRCMnG8n9lW0kUobnDOQxkpra4TKhKnxAHW
-         DXpM4v3DxXoB1X7Yyu53IYk1dwkMsfYImKPnujGT00aL82VITfg/I/wZuo7Ta/b6S0XK
-         KIirRi3j35E81BWbhpz/ST38RJTkv+MpcTXSNKQhoer7T+nTXSLJMXBkb42cGH3iPabU
-         mFGaLRz1spiMy6F5iNkoX0OLRGmNjwMOZKFpcq8jBtcNkF6YmGcDEyQ5m9Z2GD2QO2kR
-         rQxWzjEOKxawSzjPJGKCEMZoCpPS2S+vcnLR9RjHzt6h4bdUcUSvr+Ctu0o2viRWDlcx
-         sv9A==
+        bh=aDDtri3WQzu/1cGnmk8zIC5r0ldRYZyIQPXqFHNC9Qs=;
+        b=UqYwD1umoTlE9JV8bXFgAADzA//alXPqJn0cRIv8JbEWcQogi+OfeaLc2gzem7qLeu
+         EcOwFgCEIXhe0ITarXjAy55Bb8EAMK0eCgsXu8MYvJd/5Pyic0uC7lo9+5VTzbXL28E8
+         kPgb77YsiT1r6pjU0XPTpSrCVs4mzAWPYwqMkpKiF4uXuxJREajVwS53OWDumaZ8f17n
+         2orDl6XCPlJkjjpIud/WKZG1VaQ3Yk3wHMiB29ADDNQIPQZXMTHpBmhehrMmZT1Ifu5k
+         Daa9G/gkE8lEJFdHEiGJHDpwCtM5AXJ73hhtqP5LjbHstxZ4v6jcp7Lb5ywdpRFKODZ9
+         YydA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Nick Desaulniers <nick.desaulniers@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 016/102] netfilter: nf_nat_h323: fix logical-not-parentheses warning
-Date: Fri,  6 Apr 2018 15:22:57 +0200
-Message-Id: <20180406084333.901636538@linuxfoundation.org>
+Subject: [PATCH 4.9 015/102] Input: mousedev - fix implicit conversion warning
+Date: Fri,  6 Apr 2018 15:22:56 +0200
+Message-Id: <20180406084333.798826650@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003766451728726?=
-X-GMAIL-MSGID: =?utf-8?q?1597003878103838420?=
+X-GMAIL-THRID: =?utf-8?q?1597003763722752102?=
+X-GMAIL-MSGID: =?utf-8?q?1597003874510238238?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,143 +50,142 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
 
-commit eee6ebbac18a189ef33d25ea9b8bcae176515e49 upstream.
+commit dae1a432ab1fe79ae53129ededeaece35a2dc14d upstream.
 
-Clang produces the following warning:
+Clang warns:
 
-net/ipv4/netfilter/nf_nat_h323.c:553:6: error:
-logical not is only applied to the left hand side of this comparison
-  [-Werror,-Wlogical-not-parentheses]
-if (!set_h225_addr(skb, protoff, data, dataoff, taddr,
-    ^
-add parentheses after the '!' to evaluate the comparison first
-add parentheses around left hand side expression to silence this warning
+drivers/input/mousedev.c:653:63: error: implicit conversion from 'int'
+to 'signed char' changes value from 200 to -56
+[-Wconstant-conversion]
+  client->ps2[1] = 0x60; client->ps2[2] = 3; client->ps2[3] = 200;
+                                                            ~ ^~~
+As the PS2 data is really a stream of bytes, let's switch to using u8 type
+for it, which silences this warning.
 
-There's not necessarily a bug here, but it's cleaner to return early,
-ex:
-
-if (x)
-  return
-...
-
-rather than:
-
-if (x == 0)
-  ...
-else
-  return
-
-Also added a return code check that seemed to be missing in one
-instance.
-
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/netfilter/nf_nat_h323.c |   57 ++++++++++++++++++++-------------------
- 1 file changed, 30 insertions(+), 27 deletions(-)
+ drivers/input/mousedev.c |   62 +++++++++++++++++++++++++----------------------
+ 1 file changed, 34 insertions(+), 28 deletions(-)
 
---- a/net/ipv4/netfilter/nf_nat_h323.c
-+++ b/net/ipv4/netfilter/nf_nat_h323.c
-@@ -252,16 +252,16 @@ static int nat_rtp_rtcp(struct sk_buff *
- 	if (set_h245_addr(skb, protoff, data, dataoff, taddr,
- 			  &ct->tuplehash[!dir].tuple.dst.u3,
- 			  htons((port & htons(1)) ? nated_port + 1 :
--						    nated_port)) == 0) {
--		/* Save ports */
--		info->rtp_port[i][dir] = rtp_port;
--		info->rtp_port[i][!dir] = htons(nated_port);
--	} else {
-+						    nated_port))) {
- 		nf_ct_unexpect_related(rtp_exp);
- 		nf_ct_unexpect_related(rtcp_exp);
- 		return -1;
- 	}
+--- a/drivers/input/mousedev.c
++++ b/drivers/input/mousedev.c
+@@ -15,6 +15,7 @@
+ #define MOUSEDEV_MINORS		31
+ #define MOUSEDEV_MIX		63
  
-+	/* Save ports */
-+	info->rtp_port[i][dir] = rtp_port;
-+	info->rtp_port[i][!dir] = htons(nated_port);
-+
- 	/* Success */
- 	pr_debug("nf_nat_h323: expect RTP %pI4:%hu->%pI4:%hu\n",
- 		 &rtp_exp->tuple.src.u3.ip,
-@@ -370,15 +370,15 @@ static int nat_h245(struct sk_buff *skb,
- 	/* Modify signal */
- 	if (set_h225_addr(skb, protoff, data, dataoff, taddr,
- 			  &ct->tuplehash[!dir].tuple.dst.u3,
--			  htons(nated_port)) == 0) {
--		/* Save ports */
--		info->sig_port[dir] = port;
--		info->sig_port[!dir] = htons(nated_port);
--	} else {
-+			  htons(nated_port))) {
- 		nf_ct_unexpect_related(exp);
- 		return -1;
- 	}
++#include <linux/bitops.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/poll.h>
+@@ -103,7 +104,7 @@ struct mousedev_client {
+ 	spinlock_t packet_lock;
+ 	int pos_x, pos_y;
  
-+	/* Save ports */
-+	info->sig_port[dir] = port;
-+	info->sig_port[!dir] = htons(nated_port);
+-	signed char ps2[6];
++	u8 ps2[6];
+ 	unsigned char ready, buffer, bufsiz;
+ 	unsigned char imexseq, impsseq;
+ 	enum mousedev_emul mode;
+@@ -291,11 +292,10 @@ static void mousedev_notify_readers(stru
+ 		}
+ 
+ 		client->pos_x += packet->dx;
+-		client->pos_x = client->pos_x < 0 ?
+-			0 : (client->pos_x >= xres ? xres : client->pos_x);
++		client->pos_x = clamp_val(client->pos_x, 0, xres);
 +
- 	pr_debug("nf_nat_q931: expect H.245 %pI4:%hu->%pI4:%hu\n",
- 		 &exp->tuple.src.u3.ip,
- 		 ntohs(exp->tuple.src.u.tcp.port),
-@@ -462,24 +462,27 @@ static int nat_q931(struct sk_buff *skb,
- 	/* Modify signal */
- 	if (set_h225_addr(skb, protoff, data, 0, &taddr[idx],
- 			  &ct->tuplehash[!dir].tuple.dst.u3,
--			  htons(nated_port)) == 0) {
--		/* Save ports */
--		info->sig_port[dir] = port;
--		info->sig_port[!dir] = htons(nated_port);
+ 		client->pos_y += packet->dy;
+-		client->pos_y = client->pos_y < 0 ?
+-			0 : (client->pos_y >= yres ? yres : client->pos_y);
++		client->pos_y = clamp_val(client->pos_y, 0, yres);
+ 
+ 		p->dx += packet->dx;
+ 		p->dy += packet->dy;
+@@ -571,44 +571,50 @@ static int mousedev_open(struct inode *i
+ 	return error;
+ }
+ 
+-static inline int mousedev_limit_delta(int delta, int limit)
+-{
+-	return delta > limit ? limit : (delta < -limit ? -limit : delta);
+-}
 -
--		/* Fix for Gnomemeeting */
--		if (idx > 0 &&
--		    get_h225_addr(ct, *data, &taddr[0], &addr, &port) &&
--		    (ntohl(addr.ip) & 0xff000000) == 0x7f000000) {
--			set_h225_addr(skb, protoff, data, 0, &taddr[0],
--				      &ct->tuplehash[!dir].tuple.dst.u3,
--				      info->sig_port[!dir]);
--		}
--	} else {
-+			  htons(nated_port))) {
- 		nf_ct_unexpect_related(exp);
- 		return -1;
- 	}
- 
-+	/* Save ports */
-+	info->sig_port[dir] = port;
-+	info->sig_port[!dir] = htons(nated_port);
+-static void mousedev_packet(struct mousedev_client *client,
+-			    signed char *ps2_data)
++static void mousedev_packet(struct mousedev_client *client, u8 *ps2_data)
+ {
+ 	struct mousedev_motion *p = &client->packets[client->tail];
++	s8 dx, dy, dz;
 +
-+	/* Fix for Gnomemeeting */
-+	if (idx > 0 &&
-+	    get_h225_addr(ct, *data, &taddr[0], &addr, &port) &&
-+	    (ntohl(addr.ip) & 0xff000000) == 0x7f000000) {
-+		if (set_h225_addr(skb, protoff, data, 0, &taddr[0],
-+				  &ct->tuplehash[!dir].tuple.dst.u3,
-+				  info->sig_port[!dir])) {
-+			nf_ct_unexpect_related(exp);
-+			return -1;
-+		}
-+	}
++	dx = clamp_val(p->dx, -127, 127);
++	p->dx -= dx;
 +
- 	/* Success */
- 	pr_debug("nf_nat_ras: expect Q.931 %pI4:%hu->%pI4:%hu\n",
- 		 &exp->tuple.src.u3.ip,
-@@ -550,9 +553,9 @@ static int nat_callforwarding(struct sk_
- 	}
++	dy = clamp_val(p->dy, -127, 127);
++	p->dy -= dy;
  
- 	/* Modify signal */
--	if (!set_h225_addr(skb, protoff, data, dataoff, taddr,
--			   &ct->tuplehash[!dir].tuple.dst.u3,
--			   htons(nated_port)) == 0) {
-+	if (set_h225_addr(skb, protoff, data, dataoff, taddr,
-+			  &ct->tuplehash[!dir].tuple.dst.u3,
-+			  htons(nated_port))) {
- 		nf_ct_unexpect_related(exp);
- 		return -1;
+-	ps2_data[0] = 0x08 |
+-		((p->dx < 0) << 4) | ((p->dy < 0) << 5) | (p->buttons & 0x07);
+-	ps2_data[1] = mousedev_limit_delta(p->dx, 127);
+-	ps2_data[2] = mousedev_limit_delta(p->dy, 127);
+-	p->dx -= ps2_data[1];
+-	p->dy -= ps2_data[2];
++	ps2_data[0] = BIT(3);
++	ps2_data[0] |= ((dx & BIT(7)) >> 3) | ((dy & BIT(7)) >> 2);
++	ps2_data[0] |= p->buttons & 0x07;
++	ps2_data[1] = dx;
++	ps2_data[2] = dy;
+ 
+ 	switch (client->mode) {
+ 	case MOUSEDEV_EMUL_EXPS:
+-		ps2_data[3] = mousedev_limit_delta(p->dz, 7);
+-		p->dz -= ps2_data[3];
+-		ps2_data[3] = (ps2_data[3] & 0x0f) | ((p->buttons & 0x18) << 1);
++		dz = clamp_val(p->dz, -7, 7);
++		p->dz -= dz;
++
++		ps2_data[3] = (dz & 0x0f) | ((p->buttons & 0x18) << 1);
+ 		client->bufsiz = 4;
+ 		break;
+ 
+ 	case MOUSEDEV_EMUL_IMPS:
+-		ps2_data[0] |=
+-			((p->buttons & 0x10) >> 3) | ((p->buttons & 0x08) >> 1);
+-		ps2_data[3] = mousedev_limit_delta(p->dz, 127);
+-		p->dz -= ps2_data[3];
++		dz = clamp_val(p->dz, -127, 127);
++		p->dz -= dz;
++
++		ps2_data[0] |= ((p->buttons & 0x10) >> 3) |
++			       ((p->buttons & 0x08) >> 1);
++		ps2_data[3] = dz;
++
+ 		client->bufsiz = 4;
+ 		break;
+ 
+ 	case MOUSEDEV_EMUL_PS2:
+ 	default:
+-		ps2_data[0] |=
+-			((p->buttons & 0x10) >> 3) | ((p->buttons & 0x08) >> 1);
+ 		p->dz = 0;
++
++		ps2_data[0] |= ((p->buttons & 0x10) >> 3) |
++			       ((p->buttons & 0x08) >> 1);
++
+ 		client->bufsiz = 3;
+ 		break;
  	}
+@@ -714,7 +720,7 @@ static ssize_t mousedev_read(struct file
+ {
+ 	struct mousedev_client *client = file->private_data;
+ 	struct mousedev *mousedev = client->mousedev;
+-	signed char data[sizeof(client->ps2)];
++	u8 data[sizeof(client->ps2)];
+ 	int retval = 0;
+ 
+ 	if (!client->ready && !client->buffer && mousedev->exist &&
