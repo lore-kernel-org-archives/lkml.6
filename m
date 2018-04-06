@@ -1,88 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751443AbeDFH2E (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 03:28:04 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34603 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750815AbeDFH2D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 03:28:03 -0400
-X-Google-Smtp-Source: AIpwx4/UO7VC630AqBE2Fo1xcSOa7abTnR4T3swmzJd82IqlOtzyVplsKrsZjan20BXxmraXlSp9YA==
-Date: Fri, 6 Apr 2018 09:18:39 +0200
-From: Tobias Regnery <tobias.regnery@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pstore: fix crypto dependencies without compression
-Message-ID: <20180406071839.GA3685@builder>
-References: <20180406063804.30510-1-tobias.regnery@gmail.com>
- <CAK8P3a2R1R0Ag=7rQ+pHH5fXz7LqVnJug+upx3t_PmbCkg+t2g@mail.gmail.com>
+        id S1751573AbeDFHdt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 03:33:49 -0400
+Received: from mga01.intel.com ([192.55.52.88]:48150 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750882AbeDFHdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 03:33:47 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,414,1517904000";
+   d="scan'208";a="43927702"
+Date: Fri, 6 Apr 2018 15:33:28 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: kbuild-all@01.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        kt.liao@emc.com.tw, Oliver Haessler <oliver@redhat.com>,
+        Benjamin Berg <bberg@redhat.com>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: Re: [PATCH 4/8] Input: elantech - split device info into a separate
+ structure
+Message-ID: <201804061445.qVN8iyNr%fengguang.wu@intel.com>
+References: <20180405132537.3218-5-benjamin.tissoires@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a2R1R0Ag=7rQ+pHH5fXz7LqVnJug+upx3t_PmbCkg+t2g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180405132537.3218-5-benjamin.tissoires@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06.04.18, Arnd Bergmann wrote:
-> On Fri, Apr 6, 2018 at 8:38 AM, Tobias Regnery <tobias.regnery@gmail.com> wrote:
-> > Commit 58eb5b670747 ("pstore: fix crypto dependencies") fixed up the crypto
-> > dependencies but missed the case when no compression is selected.
-> >
-> > With CONFIG_PSTORE=y, CONFIG_PSTORE_COMPRESS=n  and CONFIG_CRYPTO=m we see
-> > the following link error:
-> >
-> > fs/pstore/platform.o: In function `pstore_register':
-> > (.text+0x1b1): undefined reference to `crypto_has_alg'
-> > (.text+0x205): undefined reference to `crypto_alloc_base'
-> > fs/pstore/platform.o: In function `pstore_unregister':
-> > (.text+0x3b0): undefined reference to `crypto_destroy_tfm'
-> >
-> > Fix this by selecting CONFIG_CRYPTO unconditionally.
-> >
-> > Fixes: 58eb5b670747 ("pstore: fix crypto dependencies")
-> > Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
-> 
-> Thanks, I wonder how I missed this one. Thanks for fixing it up.
-> It's a bit unfortunate that it now disallows the otherwise valid
-> CONFIG_PSTORE=y, CONFIG_PSTORE_COMPRESS=n
-> and CONFIG_CRYPTO=n configuration, though.
-> 
-> Could we do this by making the calls compile-time configured
-> in the pstore code instead? Please try the untested version
-> below.
-> 
->         Arnd
-> 
-> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-> index 1143ef351c58..dc720573fd53 100644
-> --- a/fs/pstore/platform.c
-> +++ b/fs/pstore/platform.c
-> @@ -258,7 +258,7 @@ static int pstore_decompress(void *in, void *out,
-> 
->  static void allocate_buf_for_compression(void)
->  {
-> -       if (!zbackend)
-> +       if (!IS_ENABLED(CONFIG_PSTORE_COMPRESS) || !zbackend)
->                 return;
-> 
->         if (!crypto_has_comp(zbackend->name, 0, 0)) {
-> @@ -287,7 +287,7 @@ static void allocate_buf_for_compression(void)
-> 
->  static void free_buf_for_compression(void)
->  {
-> -       if (!IS_ERR_OR_NULL(tfm))
-> +       if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && !IS_ERR_OR_NULL(tfm))
->                 crypto_free_comp(tfm);
->         kfree(big_oops_buf);
->         big_oops_buf = NULL;
+Hi Benjamin,
 
-Hi Arnd,
+I love your patch! Perhaps something to improve:
 
-this seems to be the better fix, the link error goes away with this change.
-Thanks for the suggestion, I will send an updated patch.
+[auto build test WARNING on next-20180405]
+[cannot apply to input/next v4.16 v4.16-rc7 v4.16-rc6 v4.16]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
---
-Tobias
+url:    https://github.com/0day-ci/linux/commits/Benjamin-Tissoires/Input-support-for-latest-Lenovo-thinkpads-series-80/20180406-110729
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/input/mouse/elantech.c:1665:5: sparse: symbol 'elantech_query_info' was not declared. Should it be static?
+   drivers/input/mouse/elantech.c: In function 'elantech_init':
+   drivers/input/mouse/elantech.c:1839:9: warning: 'error' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     return error;
+            ^~~~~
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
