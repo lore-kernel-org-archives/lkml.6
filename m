@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+gTV16g3jA/YA9bu44DhGeLaGSsUqcrQIIThPJG5Q6ru823Ml+YuN33XkEUDYdeuOwyLDh
-ARC-Seal: i=1; a=rsa-sha256; t=1523021137; cv=none;
+X-Google-Smtp-Source: AIpwx4/MJZ/ul4FYBMTLyERABIS1lO1aYSCj/8mv5JnqYEpfIzXkFfPgjUS4AQkhHoc73BEEwTVl
+ARC-Seal: i=1; a=rsa-sha256; t=1523021132; cv=none;
         d=google.com; s=arc-20160816;
-        b=oTzUu3mJH8QW4reBZDy/7t+7McKnm8wAndkgfsstDUDTIyJbKLy/QtLzbHzejZmsk9
-         wJCyt4psaDdhPrfF0uFhKQiZvQQDnBcqth+17TTBtPHc0XS5LZaIWqAn3QDSzdUrFKn8
-         4Y05sMXwR4FyPXjPmZ11dlzYq8O6Bf9WP8+Zp5W8qtqesqPmRrR8tw2EN6bJPMSq99BL
-         aYGnNTB4nZHrV57diuFfFOdZVPABDj42sSzi26yieZg/RBTZnjmgGsvTojuqNrqQ6jAr
-         nx8ScD9B6X3BVeh0+Fj07ErGJ2FbrsR+g/i5cBzIgRC/pUVXJVdM3pHHKcqjCQREk61f
-         qGxg==
+        b=SfDIFMx+2tId4yFY3eAWgaGV9iRBX3iHVrGqnsVegCAAanM7ZUkn3yI9lrJ1+POTNb
+         UfhRWRGbkro9IwE9kH1RZ6DfH+ep7g+IlwjfzXgxcMqImUpR98xNhfyEZxdb7VaZHqPq
+         EyL2ufoFD7LovYJlJmohg75NhuECUFRbIdDWkZ7BFm+RiP3GNStUbhY32d0JuqwRAOxy
+         RXqqdVgF2pw3m/avv4wDkUCh4DYTeFsnNhnRH4JOIs1kIQ/3djgWT7VwSVSdgrG0of2H
+         OIb7Ian9KQ9vF6pk6+75PsfNvK5gxoklL1/zmpci++o9DXJgaIa1Wn+H/QHgoPZfcU2O
+         e4cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kTzAeU2vnNezdBLs/65R3ihpOVh9BhYW7aClZ6MLkuY=;
-        b=oK9dKsOPMbJY37CDTaBRjd6o0jeYvJaAiE+QLn8cK3IsiSDs9rwCbzzfUCmdiatPQA
-         vluJxvDR9mPK1iAptNbDCxzwofb3uKKe+jm9M5pB2PtJEHODcrE6NaUsI1gaBfpQmi9y
-         q3/pHR7pE+/fgfKbzwxDqwfU/FPNAFiwbuvQspgdBVa8mmscAftzzGLqWw3k4xH3LARR
-         jFs22O2xAIVIacsqq36TuV0LfCcirRWpEcqdc3oDm6CTuojPprhMGY3vKvjPgx7/rCC/
-         XHfyQ4KX3KMTN2A4iIsz0uAQi4emB0TVQYugq9uV1kBna4qwfj6w85Wa9MM+eyHftXiK
-         KirA==
+        bh=5MMQlE7I51XP+8DF/2TvAx5VspOQ2Jr2uVtLXKhT08I=;
+        b=S1kbjgpE7EGEwNUz+d+PYay73O2J9YVQP/KYSmxUYGP/2INNCyayJ31rLseo3FjTCl
+         OXsdC2prSYoLl8o6PwWUvYqOb6yOEokXGH1GbhcPclCxEw/LRoKlPTze6LBV3us0yuay
+         p31Q8CKuSeBC0uvwEo4ouW9fGvpab2pB3tOO/CmriwXbWoE5IbX12l0A3MaxegY8WYjB
+         allof78p9wyY8OMf8oyU0EqOpVPEP8xeQGqKTbUOmhSuKT7hCkzk9kBkywEraezZEhlA
+         HOa9qkJrqk6Enk1myPhgMqzBCiqgl5xk+uykF4DjVGEeu4cLMR4JrrS+lToSHU8wbjCF
+         YDLg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,14 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Hans de Goede <hdegoede@redhat.com>,
-	Hante Meuleman <hante.meuleman@broadcom.com>,
-	Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-	Franky Lin <franky.lin@broadcom.com>,
-	Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 3.18 13/93] brcmfmac: fix P2P_DEVICE ethernet address generation
-Date: Fri,  6 Apr 2018 15:22:42 +0200
-Message-Id: <20180406084225.537702624@linuxfoundation.org>
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 3.18 09/93] libata: Apply NOLPM quirk to Crucial M500 480 and 960GB SSDs
+Date: Fri,  6 Apr 2018 15:22:38 +0200
+Message-Id: <20180406084225.379874153@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -44,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003412315746769?=
-X-GMAIL-MSGID: =?utf-8?q?1597003412315746769?=
+X-GMAIL-THRID: =?utf-8?q?1597003406747217001?=
+X-GMAIL-MSGID: =?utf-8?q?1597003406747217001?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,68 +49,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 455f3e76cfc0d893585a5f358b9ddbe9c1e1e53b upstream.
+commit 62ac3f7305470e3f52f159de448bc1a771717e88 upstream.
 
-The firmware has a requirement that the P2P_DEVICE address should
-be different from the address of the primary interface. When not
-specified by user-space, the driver generates the MAC address for
-the P2P_DEVICE interface using the MAC address of the primary
-interface and setting the locally administered bit. However, the MAC
-address of the primary interface may already have that bit set causing
-the creation of the P2P_DEVICE interface to fail with -EBUSY. Fix this
-by using a random address instead to determine the P2P_DEVICE address.
+There have been reports of the Crucial M500 480GB model not working
+with LPM set to min_power / med_power_with_dipm level.
 
-Cc: stable@vger.kernel.org # 3.10.y
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
-Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
-Reviewed-by: Franky Lin <franky.lin@broadcom.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+It has not been tested with medium_power, but that typically has no
+measurable power-savings.
+
+Note the reporters Crucial_CT480M500SSD3 has a firmware version of MU03
+and there is a MU05 update available, but that update does not mention any
+LPM fixes in its changelog, so the quirk matches all firmware versions.
+
+In my experience the LPM problems with (older) Crucial SSDs seem to be
+limited to higher capacity versions of the SSDs (different firmware?),
+so this commit adds a NOLPM quirk for the 480 and 960GB versions of the
+M500, to avoid LPM causing issues with these SSDs.
+
+Cc: stable@vger.kernel.org
+Reported-and-tested-by: Martin Steigerwald <martin@lichtvoll.de>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/brcm80211/brcmfmac/p2p.c |   24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ drivers/ata/libata-core.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
-@@ -460,25 +460,23 @@ static int brcmf_p2p_set_firmware(struct
-  * @dev_addr: optional device address.
-  *
-  * P2P needs mac addresses for P2P device and interface. If no device
-- * address it specified, these are derived from the primary net device, ie.
-- * the permanent ethernet address of the device.
-+ * address it specified, these are derived from a random ethernet
-+ * address.
-  */
- static void brcmf_p2p_generate_bss_mac(struct brcmf_p2p_info *p2p, u8 *dev_addr)
- {
--	struct brcmf_if *pri_ifp = p2p->bss_idx[P2PAPI_BSSCFG_PRIMARY].vif->ifp;
--	bool local_admin = false;
-+	bool random_addr = false;
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4233,6 +4233,14 @@ static const struct ata_blacklist_entry
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
  
--	if (!dev_addr || is_zero_ether_addr(dev_addr)) {
--		dev_addr = pri_ifp->mac_addr;
--		local_admin = true;
--	}
-+	if (!dev_addr || is_zero_ether_addr(dev_addr))
-+		random_addr = true;
- 
--	/* Generate the P2P Device Address.  This consists of the device's
--	 * primary MAC address with the locally administered bit set.
-+	/* Generate the P2P Device Address obtaining a random ethernet
-+	 * address with the locally administered bit set.
- 	 */
--	memcpy(p2p->dev_addr, dev_addr, ETH_ALEN);
--	if (local_admin)
--		p2p->dev_addr[0] |= 0x02;
-+	if (random_addr)
-+		eth_random_addr(p2p->dev_addr);
-+	else
-+		memcpy(p2p->dev_addr, dev_addr, ETH_ALEN);
- 
- 	/* Generate the P2P Interface Address.  If the discovery and connection
- 	 * BSSCFGs need to simultaneously co-exist, then this address must be
++	/* 480GB+ M500 SSDs have both queued TRIM and LPM issues */
++	{ "Crucial_CT480M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
++						ATA_HORKAGE_ZERO_AFTER_TRIM |
++						ATA_HORKAGE_NOLPM, },
++	{ "Crucial_CT960M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
++						ATA_HORKAGE_ZERO_AFTER_TRIM |
++						ATA_HORKAGE_NOLPM, },
++
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
