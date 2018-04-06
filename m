@@ -1,79 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1404550-1523021291-2-5552906281080387304
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523021290; b=VbaTOJMumpzJEDFCMnoo4dBrJfvKOexg+neL17FuWm0U7nxoXb
-    r2WP1pbJH1LrqUonEQCRqj6l6TUxW4cslmwJaU2c8BsJ7ILICUEocwveSDDp/Swa
-    5+KytGH1n1oX73nFxEIRU6iRlQXqkCFw317QAl/N29JQeDYVci87gRLe1QVHyFel
-    bwu2bNK34m6dGIDOctEns8cyIdVIzCII76MLoCLrtR4iq5yHNvbdTqWUgYm0TrJI
-    NqXYe6JGv/o3x08eSJ5YzZzsfHbrE/AkBhZbVhkhNIrpBlRPBYoDy0H/LMeichHc
-    34oyYMBY07a0fD/ZceMtPdnGUwfHc/fYfD/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523021290; bh=pt/H61kbHV39mVQHLPupr3Gab0wXSi
-    RrlFBTwgxR+Kw=; b=DI+twJYrVa9VMJ5rvZdN4b8mz5c1XXOvHX1W1whhqD0Dm0
-    kW80I1ZEfhyIQ1kDYSEjv3QxjdvpTbW52zUQzhp8s1II685xbnPt4JGYvpb2j6PP
-    sJmR3vAScBIFzWo+cXe9ArmCRRiOkQkoQ26YkT19xDs+f6EO33Mdy/HBIj8G7Sqq
-    pVK8eFF5ZNdgi0U2j4u/EvYsW7c/66qofCbcqfC9r2X9v1M4WLrMdlFopWjL5B79
-    MlDlIvPXjqTtdJSIC0axe/AGrbhskw9AerrFUC3lO7VdDXjFQ6BspKQN7pBBnOeH
-    MW45WPykwB2wQe/0JfuX/5w/nVunuKEgzKpbB6Xg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFXPrloSSrb2lTG/lCXZ/Y1U0hFpK2VgGNDVm1TjHwDqcpo3AL6XZDt6yDefdivOa9F4X5LfaH4aBWS1Sy8qB9NN5pu5oQtSePra4T7FuxfZPinxsI/Q
-    Po9HqS9ibhAhvv1ah3l/6DACrdDi2M3UdL0DNQ1H16ywSBUIiijYTxiM98XzmG6He+x1LCUSvlet3iOUSJvdlBj3DSL0+J0cqOk7nPouTrSKKP2bJbKRJxxq
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=vQBBkBfzAAAA:8 a=ag1SF4gXAAAA:8 a=Jh8bM-ib2ic79ZFQoF0A:9 a=QEXdDO2ut3YA:10
-    a=NGXS0kB0m_rannUenejW:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753048AbeDFN2E (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 09:28:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55266 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754287AbeDFN2E (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:28:04 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+zaQ4B+WXH6yC1luYG/ODb1qGDAIVzzejqo+tPjND4/BWmpd2DDGmgJAaxjUIDiHrHua9Y
+ARC-Seal: i=1; a=rsa-sha256; t=1523021289; cv=none;
+        d=google.com; s=arc-20160816;
+        b=DEjIrlA9WlNCZgKMflWMD4wajJSVk9fKh/2oERt9X8wZZ8dmP1dZ2+9B7etGRsoZh2
+         Zv8tLyNOIUJlB4Ssv01PFNH5Y5g8NONrHA0YndqRIraHrO6eugPYZARgMuyaMdCTULH3
+         F3TflQqWJkCHiy0LygXAQ06DRLKgxP2rhQPXxNPesJL9n3qlz6sJobU9MzBbk1TXyJ8+
+         DLy6H/TiDxmqWipla6ZSrNNWMI6zIGh4ylukH328IEAW8NcKP8YTdgBFDVfZ6J8OVASx
+         H4TWYUdA8O97PbrkqZlaRC9EWzEhC6bKLxpD5MmSLu+OuXAWOhmXZKDl+ptzV/DjXphO
+         6rvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=33KV6FZ5MFWUHAakCNm83YHPzvWDNHY9CuZaX97+zzo=;
+        b=thrxGOZA6K3+vP4LxD9bzgKImuHf3UbkX7D521dNcwmzZP+mWaCJI8bUXjHYZ6RKbW
+         4aU55nrucjS6/YwVMnodDconPynKu6wPSsZGwdpsNLgHI9l35K8ydZ21oduMBVLoWnJX
+         KSjvEwrQhYpeQy9TwxlLBs5QKKf+HoiKRyuoMRzTwbrA5EWP+r2/5DrHm9/CB1uCUS90
+         DbmugKUEsr17K51asV21f0mpud5GD+0ZCDM3H52UbcX3hzFtsXurS2POS3nh1khC62IG
+         aTfKRV808NWPdONK3Vfm6l+7u1gT4Er+oUYmcSoUM0pClQ1xwyYp9x5sgGS+WECBTPON
+         vcRw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 3.18 74/93] media: v4l2-compat-ioctl32: initialize a reserved field
-Date: Fri,  6 Apr 2018 15:23:43 +0200
-Message-Id: <20180406084228.313537673@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 3.18 49/93] kprobes/x86: Fix to set RWX bits correctly before releasing trampoline
+Date: Fri,  6 Apr 2018 15:23:18 +0200
+Message-Id: <20180406084227.057494571@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -81,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597003572131830119?=
+X-GMAIL-MSGID: =?utf-8?q?1597003572131830119?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -91,31 +50,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-The get_v4l2_create32() function is missing a logic with
-would be cleaning a reserved field, causing v4l2-compliance
-to complain:
+commit c93f5cf571e7795f97d49ef51b766cf25e328545 upstream.
 
- Buffer ioctls (Input 0):
-		fail: v4l2-test-buffers.cpp(506): check_0(crbufs.reserved, sizeof(crbufs.reserved))
-	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: FAIL
+Fix kprobes to set(recover) RWX bits correctly on trampoline
+buffer before releasing it. Releasing readonly page to
+module_memfree() crash the kernel.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Without this fix, if kprobes user register a bunch of kprobes
+in function body (since kprobes on function entry usually
+use ftrace) and unregister it, kernel hits a BUG and crash.
+
+Link: http://lkml.kernel.org/r/149570868652.3518.14120169373590420503.stgit@devbox
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: d0381c81c2f7 ("kprobes/x86: Set kprobes pages read-only")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -247,7 +247,8 @@ static int get_v4l2_create32(struct v4l2
+---
+ arch/x86/kernel/kprobes/core.c |    9 +++++++++
+ kernel/kprobes.c               |    2 +-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -49,6 +49,7 @@
+ #include <linux/kdebug.h>
+ #include <linux/kallsyms.h>
+ #include <linux/ftrace.h>
++#include <linux/moduleloader.h>
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/desc.h>
+@@ -374,6 +375,14 @@ int __copy_instruction(u8 *dest, u8 *src
+ 	return length;
+ }
+ 
++/* Recover page to RW mode before releasing it */
++void free_insn_page(void *page)
++{
++	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
++	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
++	vfree(page);
++}
++
+ static int arch_copy_kprobe(struct kprobe *p)
  {
- 	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
- 	    copy_in_user(kp, up,
--			 offsetof(struct v4l2_create_buffers32, format)))
-+			 offsetof(struct v4l2_create_buffers32, format)) ||
-+	    copy_in_user(kp->reserved, up->reserved, sizeof(kp->reserved)))
- 		return -EFAULT;
- 	return __get_v4l2_format32(&kp->format, &up->format,
- 				   aux_buf, aux_space);
+ 	int ret;
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -125,7 +125,7 @@ static void *alloc_insn_page(void)
+ 	return module_alloc(PAGE_SIZE);
+ }
+ 
+-static void free_insn_page(void *page)
++void __weak free_insn_page(void *page)
+ {
+ 	module_free(NULL, page);
+ }
