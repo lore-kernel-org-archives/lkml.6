@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751417AbeDFACE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 20:02:04 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:41000 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDFACC (ORCPT
+        id S1751465AbeDFACQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 20:02:16 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:43384 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbeDFACC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Apr 2018 20:02:02 -0400
-X-Google-Smtp-Source: AIpwx48QjswaffNIP08nWRQYaNNf988FCagu+erJHBX9tdQc4etYwBVzj6XDAF+48qw5zwyQSretxYdxth6p7RMyOK2cY+K4XfGE
+X-Google-Smtp-Source: AIpwx49J1MQ9UnUyHNFMfYMqEeaMuAWi/wXjI3/M3l0JmgyoEqRj2S90+1kHkkg0oqcit0o2x6Wekpd0uusc15R30Q3WvqbPBJsl
 MIME-Version: 1.0
 Date: Thu, 05 Apr 2018 17:02:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113fe6c005d8ac056922c4c3@google.com>
-Subject: WARNING in snd_pcm_hw_params
-From: syzbot <syzbot+803e0047ac3a3096bb4f@syzkaller.appspotmail.com>
-To: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        o-takashi@sakamocchi.jp, perex@perex.cz,
-        syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Message-ID: <94eb2c05611408a11a056922c4cb@google.com>
+Subject: KASAN: alloca-out-of-bounds Read in unwind_next_frame
+From: syzbot <syzbot+9d1d9866b0b8ee6e0a8c@syzkaller.appspotmail.com>
+To: hpa@zytor.com, jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+        mhiramat@kernel.org, mingo@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -26,82 +26,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hello,
 
 syzbot hit the following crash on upstream commit
-3c8ba0d61d04ced9f8d9ff93977995a9e4e96e91 (Sat Mar 31 01:52:36 2018 +0000)
-kernel.h: Retain constant expression output for max()/min()
+06dd3dfeea60e2a6457a6aedf97afc8e6d2ba497 (Thu Apr 5 03:07:20 2018 +0000)
+Merge tag 'char-misc-4.17-rc1' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=803e0047ac3a3096bb4f
+https://syzkaller.appspot.com/bug?extid=9d1d9866b0b8ee6e0a8c
 
-So far this crash happened 6 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5886672973594624
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4913841943085056
+https://syzkaller.appspot.com/x/repro.syz?id=6478299081474048
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6314122077536256
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-1647968177339044852
+https://syzkaller.appspot.com/x/log.txt?id=5324218015154176
+Kernel config: https://syzkaller.appspot.com/x/.config?id=216543573824217049
 compiler: gcc (GCC) 8.0.1 20180301 (experimental)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+803e0047ac3a3096bb4f@syzkaller.appspotmail.com
+Reported-by: syzbot+9d1d9866b0b8ee6e0a8c@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441939
-RDX: 0000000000000001 RSI: 0000000020000180 RDI: 0000000000000003
-RBP: 00007ffe8c3569b0 R08: 0000000000000002 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000005
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-WARNING: CPU: 0 PID: 4468 at sound/core/pcm_native.c:620  
-snd_pcm_hw_params_choose sound/core/pcm_native.c:620 [inline]
-WARNING: CPU: 0 PID: 4468 at sound/core/pcm_native.c:620  
-snd_pcm_hw_params+0x65a/0x1e20 sound/core/pcm_native.c:672
-Kernel panic - not syncing: panic_on_warn set ...
+==================================================================
+BUG: KASAN: alloca-out-of-bounds in __read_once_size  
+include/linux/compiler.h:188 [inline]
+BUG: KASAN: alloca-out-of-bounds in unwind_next_frame.part.7+0x7ce/0x9c0  
+arch/x86/kernel/unwind_frame.c:326
+Read of size 8 at addr ffff8801b05e67f8 by task syz-executor2/11326
 
-CPU: 0 PID: 4468 Comm: syzkaller371267 Not tainted 4.16.0+ #2
+CPU: 0 PID: 11326 Comm: syz-executor2 Not tainted 4.16.0+ #1
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
+  <IRQ>
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x1b9/0x29f lib/dump_stack.c:53
-  panic+0x22f/0x4de kernel/panic.c:183
-  __warn.cold.8+0x163/0x1a3 kernel/panic.c:547
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1bc/0x470 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:991
-RIP: 0010:snd_pcm_hw_params_choose sound/core/pcm_native.c:620 [inline]
-RIP: 0010:snd_pcm_hw_params+0x65a/0x1e20 sound/core/pcm_native.c:672
-RSP: 0018:ffff8801ac66f498 EFLAGS: 00010293
-RAX: ffff8801acb86580 RBX: 00000000fffffff4 RCX: ffffffff859d7220
-RDX: 0000000000000000 RSI: ffffffff859d752a RDI: 0000000000000005
-RBP: ffff8801ac66f6e8 R08: ffff8801acb86580 R09: ffffed003b6046c2
-R10: ffffed003b6046c2 R11: ffff8801db023613 R12: ffffffff8826309c
-R13: ffff8801ceab6940 R14: ffff8801d9509200 R15: dffffc0000000000
-  snd_pcm_kernel_ioctl+0x6c/0x240 sound/core/pcm_native.c:2999
-  snd_pcm_oss_change_params_locked+0x1be8/0x3ce0 sound/core/oss/pcm_oss.c:993
-  snd_pcm_oss_make_ready_locked+0xbc/0x130 sound/core/oss/pcm_oss.c:1182
-  snd_pcm_oss_write1 sound/core/oss/pcm_oss.c:1396 [inline]
-  snd_pcm_oss_write+0x516/0xa20 sound/core/oss/pcm_oss.c:2774
-  __vfs_write+0x10b/0x880 fs/read_write.c:485
-  vfs_write+0x1f8/0x560 fs/read_write.c:549
-  ksys_write+0xf9/0x250 fs/read_write.c:598
-  SYSC_write fs/read_write.c:610 [inline]
-  SyS_write+0x24/0x30 fs/read_write.c:607
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __read_once_size include/linux/compiler.h:188 [inline]
+  unwind_next_frame.part.7+0x7ce/0x9c0 arch/x86/kernel/unwind_frame.c:326
+  unwind_next_frame+0x3e/0x50 arch/x86/kernel/unwind_frame.c:287
+  __save_stack_trace+0x6e/0xd0 arch/x86/kernel/stacktrace.c:44
+  save_stack_trace+0x1a/0x20 arch/x86/kernel/stacktrace.c:60
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+  __cache_free mm/slab.c:3486 [inline]
+  kmem_cache_free+0x86/0x2d0 mm/slab.c:3744
+  __d_free+0x20/0x30 fs/dcache.c:257
+  __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2675 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
+  __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
+  rcu_process_callbacks+0x941/0x15f0 kernel/rcu/tree.c:2914
+  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+  invoke_softirq kernel/softirq.c:365 [inline]
+  irq_exit+0x1d1/0x200 kernel/softirq.c:405
+  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
+  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
+  </IRQ>
+RIP: 0010:kasan_unpoison_shadow+0x1/0x50 mm/kasan/kasan.c:68
+RSP: 0018:ffff8801b05e67e8 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
+RAX: ffff8801c1b24100 RBX: 0000000000000000 RCX: ffffffff859d4219
+RDX: 0000000000000000 RSI: 00000000000000a8 RDI: ffff8801b05e6760
+RBP: ffff8801b05e67f8 R08: ffff8801c1b24100 R09: ffffed003b6046c2
+R10: ffffed003b6046c2 R11: ffff8801db023613 R12: 0000000000000015
+R13: 0000000000000001 R14: 0000000000000016 R15: dffffc0000000000
+  constrain_params_by_rules+0xbaa/0x1410 sound/core/pcm_param_trace.h:28
+  snd_pcm_hw_refine+0x8e9/0x1180 sound/core/pcm_native.c:502
+  snd_pcm_hw_param_mask sound/core/oss/pcm_oss.c:205 [inline]
+  snd_pcm_oss_change_params+0x8ce/0x3d10 sound/core/oss/pcm_oss.c:870
+  snd_pcm_oss_make_ready+0xe3/0x140 sound/core/oss/pcm_oss.c:1127
+  snd_pcm_oss_sync.isra.27+0x24b/0x850 sound/core/oss/pcm_oss.c:1651
+  snd_pcm_oss_release+0x214/0x290 sound/core/oss/pcm_oss.c:2446
+  __fput+0x34d/0x890 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1aee/0x2730 kernel/exit.c:865
+  do_group_exit+0x16f/0x430 kernel/exit.c:968
+  get_signal+0x886/0x1960 kernel/signal.c:2469
+  do_signal+0x90/0x2020 arch/x86/kernel/signal.c:810
+  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x792/0x9d0 arch/x86/entry/common.c:292
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x441939
-RSP: 002b:00007ffe8c3568e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441939
-RDX: 0000000000000001 RSI: 0000000020000180 RDI: 0000000000000003
-RBP: 00007ffe8c3569b0 R08: 0000000000000002 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000005
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+RIP: 0033:0x4552d9
+RSP: 002b:00007fd689eb5c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: 0000000000000000 RBX: 00007fd689eb66d4 RCX: 00000000004552d9
+RDX: 0000000000000000 RSI: 0000000000004c81 RDI: 000000000000000f
+RBP: 000000000072c010 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 000000000000027d R14: 00000000006f6c58 R15: 0000000000000002
+
+The buggy address belongs to the page:
+page:ffffea0006c17980 count:0 mapcount:0 mapping:0000000000000000  
+index:0xffff8801b05e69c0
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 ffff8801b05e69c0 00000000ffffffff
+raw: dead000000000100 dead000000000200 ffff8801dad7f600 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801b05e6680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801b05e6700: 00 00 00 00 00 00 00 00 00 00 00 00 ca ca ca ca
+> ffff8801b05e6780: 00 00 00 00 00 00 00 00 00 00 04 cb cb cb cb cb
+                                                                 ^
+  ffff8801b05e6800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801b05e6880: 00 00 00 00 00 f1 f1 f1 f1 00 f2 f2 f2 f2 f2 f2
+==================================================================
 
 
 ---
