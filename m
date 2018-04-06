@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx484DBwjTO0hWyqrOj7s0OFtZr0d9ZxKJjordeghSStnPGTP3sMMnL1AD3GwFpZh+VWj/Fcv
-ARC-Seal: i=1; a=rsa-sha256; t=1523022027; cv=none;
+X-Google-Smtp-Source: AIpwx49hTzD/EmBnLwbJCa0QlzHOmER6DbqvjX8pv+HLhktXNBfO0M09eeqFIMzuhfdi74BahVZs
+ARC-Seal: i=1; a=rsa-sha256; t=1523022026; cv=none;
         d=google.com; s=arc-20160816;
-        b=wmyRIwzbJAX8aXxelZdC6aOtFKLvE8nyBploxO4DsV7NTFrEJWKm66H7AF2O/DByUQ
-         hk/YC7YCTweuY6y0EHOlDRUxMu0yZOCfSe3Gk7GL8FP6Er5v6qVZPKL+R2+i4StuRYSJ
-         KXxBh5VWeF6rzeyKnlq1lDOspXDrzHwHVEojl6YYNR8Y1R3gTgpAmveku/gqzeYSauB7
-         fCD9lFRlzbl2YBuYQa1sCPvh2QStS+t1vZ76e0OIZQqTK07+J1pZrh/s4cbkY8Iv45Wp
-         7puG0dg9FLoxm8uZ9jO9NK23fEqROwyyFIb1M3MMCA6R1YEIHCPYV59mRtiUC4ixUjEn
-         0hyg==
+        b=e1E2gVB/gNxideFwWg5VbB90MqR/6BrdD/Z2LoTtAtpBaanxbyblN7lfdtXbbp4uDV
+         dsUKS0ulIP0+B/sT7B+hXep2M9vn0dME+TfFq7bBAxWqy4He8QBeLGuMWNEdBbfeyqaA
+         6Eh969vtiZHJbynVQH61IRvbHpNdUi6vd6UUr8lhyNwBzef/CH21Wsmn5tl0VrEyB3dS
+         2FFdZadrwUZ3kwl//UxVp5GmlXREZrQG1OlJSFFg5zfyzLmanR/HuHTQ79zAtuJAXfiQ
+         0P1J2oaWqZVzM9su0qrsAkvcIZwvWn+F8Y0GXYvE8bhHSINippsH+57TRpuw0RsY5akX
+         Qx3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FmELmOwZ4n+X9Eqf9cPPGm8aCNR03FkNXkeaRKKYaCU=;
-        b=IgAs7IN5ssyyo+dCYjy4pqzjSOwX6nDllFMLOCul5z2zionyuUCvmH9mph5l20lPKz
-         O45iLjIYarm3zAsgte0p0SwM+gGs1cXGu1JoM4pC9ajI71gUxmczmYdAPz+oOiYgeAAo
-         +PnAwboBt0ZVpDRwChVKGWY6p8UPTRT7wGxWodCD7NXaP8422E3KS70IzXmwqOFf2xpG
-         91kCqnEEt1FOyz9L7OjDouny3Ksfd5V1qOUNQYd0GQBYDJ8XkdLP3XgxEDvfaHWHb1J6
-         B15MhbQv7Yh9Po/qmeaV3evRssfaQLYyOV8zWrAGJccNhL1z0DRF6474AzhKv82B8TZL
-         AN9g==
+        bh=OosutoFPDTgB65kXxAgXT2dwNIg744EsHOEZjz4/H6o=;
+        b=c+hGnaxAofVg6G+TJTOKVOjqmGUa+Do+mr/UGVB0bfsUHQlNnnKbvOS5pANUDmgm7I
+         An2SVh6pMx9DwqjwOZeo5PawVBHlPMqViG0qwywvnxD8/eiGQ3ZFr2EbkZcSr4s1qMsw
+         OcHarlNRmxsnJ3vo5YRHYTUIKj0Qi/bJ3+MLMWc5Q7R8swDhdJDh0qfoT9D0/TeDKGOy
+         0zkv7twdkwlTeQybWPtyTK/dwSXQjqFLKElBFhFTMfBdiHU2e3j6OFMuVDtHNGAKd8Wt
+         j64wIaCa5m74EDN4Rp7UPz24NYuRAf9/ugfPigxPNnjm7MWDRWgUQa/PuzGQchVzG8gw
+         ngig==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	stable@kernel.org,
-	"Erhard F." <erhard_f@mailbox.org>,
-	Matthew Wilcox <mawilcox@microsoft.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Omar Sandoval <osandov@fb.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 37/67] bitmap: fix memset optimization on big-endian systems
-Date: Fri,  6 Apr 2018 15:24:07 +0200
-Message-Id: <20180406084346.396942853@linuxfoundation.org>
+	Wei Xu <xuwei5@hisilicon.com>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Amit Pundir <amit.pundir@linaro.org>,
+	YongQin Liu <yongqin.liu@linaro.org>,
+	John Youn <johnyoun@synopsys.com>,
+	Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Chen Yu <chenyu56@huawei.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
+	linux-usb@vger.kernel.org,
+	Minas Harutyunyan <hminas@synopsys.com>,
+	John Stultz <john.stultz@linaro.org>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 36/67] usb: dwc2: Improve gadget state disconnection handling
+Date: Fri,  6 Apr 2018 15:24:06 +0200
+Message-Id: <20180406084346.173607297@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -46,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004345240253782?=
-X-GMAIL-MSGID: =?utf-8?q?1597004345240253782?=
+X-GMAIL-THRID: =?utf-8?q?1597003755017723426?=
+X-GMAIL-MSGID: =?utf-8?q?1597004344458391246?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,87 +60,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: John Stultz <john.stultz@linaro.org>
 
-commit 21035965f60b0502fc6537b232839389bb4ce664 upstream.
+commit d2471d4a24dfbff5e463d382e2c6fec7d7e25a09 upstream.
 
-Commit 2a98dc028f91 ("include/linux/bitmap.h: turn bitmap_set and
-bitmap_clear into memset when possible") introduced an optimization to
-bitmap_{set,clear}() which uses memset() when the start and length are
-constants aligned to a byte.
+In the earlier commit dad3f793f20f ("usb: dwc2: Make sure we
+disconnect the gadget state"), I was trying to fix up the
+fact that we somehow weren't disconnecting the gadget state,
+so that when the OTG port was plugged in the second time we
+would get warnings about the state tracking being wrong.
 
-This is wrong on big-endian systems; our bitmaps are arrays of unsigned
-long, so bit n is not at byte n / 8 in memory.  This was caught by the
-Btrfs selftests, but the bitmap selftests also fail when run on a
-big-endian machine.
+(This seems to be due to a quirk of the HiKey board where
+we do not ever get any otg interrupts, particularly the session
+end detected signal. Instead we only see status change
+interrupt.)
 
-We can still use memset if the start and length are aligned to an
-unsigned long, so do that on big-endian.  The same problem applies to
-the memcmp in bitmap_equal(), so fix it there, too.
+The fix there was somewhat simple, as it just made sure to
+call dwc2_hsotg_disconnect() before we connected things up
+in OTG mode, ensuring the state handling didn't throw errors.
 
-Fixes: 2a98dc028f91 ("include/linux/bitmap.h: turn bitmap_set and bitmap_clear into memset when possible")
-Fixes: 2c6deb01525a ("bitmap: use memcmp optimisation in more situations")
-Cc: stable@kernel.org
-Reported-by: "Erhard F." <erhard_f@mailbox.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+But in looking at a different issue I was seeing with UDC
+state handling, I realized that it would be much better
+to call dwc2_hsotg_disconnect when we get the state change
+signal moving to host mode.
+
+Thus, this patch removes the earlier disconnect call I added
+and moves it (and the needed locking) to the host mode
+transition.
+
+Cc: Wei Xu <xuwei5@hisilicon.com>
+Cc: Guodong Xu <guodong.xu@linaro.org>
+Cc: Amit Pundir <amit.pundir@linaro.org>
+Cc: YongQin Liu <yongqin.liu@linaro.org>
+Cc: John Youn <johnyoun@synopsys.com>
+Cc: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Chen Yu <chenyu56@huawei.com>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Tested-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/bitmap.h |   22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/usb/dwc2/hcd.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -262,12 +262,20 @@ static inline void bitmap_complement(uns
- 		__bitmap_complement(dst, src, nbits);
- }
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -3277,7 +3277,6 @@ static void dwc2_conn_id_status_change(s
+ 		dwc2_core_init(hsotg, false);
+ 		dwc2_enable_global_interrupts(hsotg);
+ 		spin_lock_irqsave(&hsotg->lock, flags);
+-		dwc2_hsotg_disconnect(hsotg);
+ 		dwc2_hsotg_core_init_disconnected(hsotg, false);
+ 		spin_unlock_irqrestore(&hsotg->lock, flags);
+ 		dwc2_hsotg_core_connect(hsotg);
+@@ -3296,8 +3295,12 @@ host:
+ 		if (count > 250)
+ 			dev_err(hsotg->dev,
+ 				"Connection id status change timed out\n");
+-		hsotg->op_state = OTG_STATE_A_HOST;
  
-+#ifdef __LITTLE_ENDIAN
-+#define BITMAP_MEM_ALIGNMENT 8
-+#else
-+#define BITMAP_MEM_ALIGNMENT (8 * sizeof(unsigned long))
-+#endif
-+#define BITMAP_MEM_MASK (BITMAP_MEM_ALIGNMENT - 1)
++		spin_lock_irqsave(&hsotg->lock, flags);
++		dwc2_hsotg_disconnect(hsotg);
++		spin_unlock_irqrestore(&hsotg->lock, flags);
 +
- static inline int bitmap_equal(const unsigned long *src1,
- 			const unsigned long *src2, unsigned int nbits)
- {
- 	if (small_const_nbits(nbits))
- 		return !((*src1 ^ *src2) & BITMAP_LAST_WORD_MASK(nbits));
--	if (__builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
-+	if (__builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-+	    IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
- 		return !memcmp(src1, src2, nbits / 8);
- 	return __bitmap_equal(src1, src2, nbits);
- }
-@@ -318,8 +326,10 @@ static __always_inline void bitmap_set(u
- {
- 	if (__builtin_constant_p(nbits) && nbits == 1)
- 		__set_bit(start, map);
--	else if (__builtin_constant_p(start & 7) && IS_ALIGNED(start, 8) &&
--		 __builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
-+	else if (__builtin_constant_p(start & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(start, BITMAP_MEM_ALIGNMENT) &&
-+		 __builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
- 		memset((char *)map + start / 8, 0xff, nbits / 8);
- 	else
- 		__bitmap_set(map, start, nbits);
-@@ -330,8 +340,10 @@ static __always_inline void bitmap_clear
- {
- 	if (__builtin_constant_p(nbits) && nbits == 1)
- 		__clear_bit(start, map);
--	else if (__builtin_constant_p(start & 7) && IS_ALIGNED(start, 8) &&
--		 __builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
-+	else if (__builtin_constant_p(start & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(start, BITMAP_MEM_ALIGNMENT) &&
-+		 __builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
- 		memset((char *)map + start / 8, 0, nbits / 8);
- 	else
- 		__bitmap_clear(map, start, nbits);
++		hsotg->op_state = OTG_STATE_A_HOST;
+ 		/* Initialize the Core for Host mode */
+ 		dwc2_core_init(hsotg, false);
+ 		dwc2_enable_global_interrupts(hsotg);
