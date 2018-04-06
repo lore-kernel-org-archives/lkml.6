@@ -1,158 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756328AbeDFOY3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:24:29 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:47253 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756739AbeDFOXp (ORCPT
+        id S1756688AbeDFOZD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:25:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34322 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1756730AbeDFOXc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:23:45 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Hans Verkuil <hansverk@cisco.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] media: platform: fsl-viu: add __iomem annotations
-Date: Fri,  6 Apr 2018 16:23:18 +0200
-Message-Id: <20180406142336.2079928-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:Sn/uNmomkBRdXYc/WRofuyZ0iAk7yWvJ1MTmHu3qywFsN9WEULa
- UxCv470AxDxsjnZUsjrGljCm2wwEPtD8E2iA03FLGJJtIgYfA/UGAhl6oR0Ds7LUbSSzkgi
- tuqcMlgGoLFk4BxXEJ6uLTa3wVWvwYuFX8ml9XMgC1xo1OcvIV9exeME/qshluw6bjmZ4dt
- hhLnBaGi6lbSRL9Hd5IPw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:gBuwMhB8lxo=:0Ktoq8v7RBk+ZsabkOnYeR
- +oa81rOUIY8PHX2p56OGRHMF16to1xQsgl7E+oCOwfQt5qp4+57EKd5FKJ2E/IGcVGkzp9Z/o
- 1WUmbnU4aGOt+97mE6JHYlXrENUb335a6btwWEw9SzvH9fzv5TKNnoLmL9Xl+laxWasdBb+md
- zSkjAt51GvGYMFtncPGVJf5BxTzkEIR5tA3ZYVYB7XTdLQHIWliv8N2zoyl4FAhqg7b3luc2m
- dbch6pDYMhpqBw7tGjo2mjGoE2c/vPDAWXeq/eUjhxjLzkxWhbix7LjkdRENj90TzSy9Wxtsv
- XwbUPhqCEPy6wXSS4FuG7kR7hu9E5URtni5wyBP1dB9MYIoMyeh8n4RlB96OEX793UKAmybKQ
- nQ9qLLpvH2Lzx4SkjuRd8gsTWtfkwHYf15HuL3POF5fwPpRNswCs+UTsFTMpjR6XUlhhzYhK8
- 9MuCAa1fFirRYbbSq6u0hJVBjZLJh8ozsW4JRhM3tLHKIuwDHM5zCizXigRGGWK9vW8tINJwW
- /MrbYXnUEoAnzhD5eHiXUV86HW1eYVGmpBlXTM1M2Qj2t9k3D0c4fepJwO9dK57Auxn8gM1e3
- QmczNcgQDJVKMVD4jroVOvkUWxcK1IjggNcB4sw7X4x9MnjMpqFW1wamN5EkZ+gh+r/0RoB76
- 6bvol3InyrPtBjxjDl2rNtPDTWVmh9948eSMxydR2u0V2HslWyefAONXg9KgMbgjqXY+84eiZ
- SoFEcU5OQ/0ZCXNoc0VhLfwgOOnhu6JDtHRVmQ==
+        Fri, 6 Apr 2018 10:23:32 -0400
+Subject: Re: [PATCH v9 17/24] mm: Protect mm_rb tree with a rwlock
+To: David Rientjes <rientjes@google.com>
+Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1520963994-28477-18-git-send-email-ldufour@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1804021711090.34466@chino.kir.corp.google.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Fri, 6 Apr 2018 16:23:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.20.1804021711090.34466@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18040614-0044-0000-0000-00000544474A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040614-0045-0000-0000-0000288469DD
+Message-Id: <dd22fde2-ea3d-5492-9f1d-4f39c72b2a68@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-06_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804060147
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This avoids countless sparse warnings like
 
-   drivers/media/platform/fsl-viu.c:1081:25: sparse: incorrect type in argument 2 (different address spaces)
-   drivers/media/platform/fsl-viu.c:1082:25: sparse: incorrect type in argument 2 (different address spaces)
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/media/platform/fsl-viu.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+On 03/04/2018 02:11, David Rientjes wrote:
+> On Tue, 13 Mar 2018, Laurent Dufour wrote:
+> 
+>> This change is inspired by the Peter's proposal patch [1] which was
+>> protecting the VMA using SRCU. Unfortunately, SRCU is not scaling well in
+>> that particular case, and it is introducing major performance degradation
+>> due to excessive scheduling operations.
+>>
+>> To allow access to the mm_rb tree without grabbing the mmap_sem, this patch
+>> is protecting it access using a rwlock.  As the mm_rb tree is a O(log n)
+>> search it is safe to protect it using such a lock.  The VMA cache is not
+>> protected by the new rwlock and it should not be used without holding the
+>> mmap_sem.
+>>
+>> To allow the picked VMA structure to be used once the rwlock is released, a
+>> use count is added to the VMA structure. When the VMA is allocated it is
+>> set to 1.  Each time the VMA is picked with the rwlock held its use count
+>> is incremented. Each time the VMA is released it is decremented. When the
+>> use count hits zero, this means that the VMA is no more used and should be
+>> freed.
+>>
+>> This patch is preparing for 2 kind of VMA access :
+>>  - as usual, under the control of the mmap_sem,
+>>  - without holding the mmap_sem for the speculative page fault handler.
+>>
+>> Access done under the control the mmap_sem doesn't require to grab the
+>> rwlock to protect read access to the mm_rb tree, but access in write must
+>> be done under the protection of the rwlock too. This affects inserting and
+>> removing of elements in the RB tree.
+>>
+>> The patch is introducing 2 new functions:
+>>  - vma_get() to find a VMA based on an address by holding the new rwlock.
+>>  - vma_put() to release the VMA when its no more used.
+>> These services are designed to be used when access are made to the RB tree
+>> without holding the mmap_sem.
+>>
+>> When a VMA is removed from the RB tree, its vma->vm_rb field is cleared and
+>> we rely on the WMB done when releasing the rwlock to serialize the write
+>> with the RMB done in a later patch to check for the VMA's validity.
+>>
+>> When free_vma is called, the file associated with the VMA is closed
+>> immediately, but the policy and the file structure remained in used until
+>> the VMA's use count reach 0, which may happens later when exiting an
+>> in progress speculative page fault.
+>>
+>> [1] https://patchwork.kernel.org/patch/5108281/
+>>
+>> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> 
+> Can __free_vma() be generalized for mm/nommu.c's delete_vma() and 
+> do_mmap()?
 
-diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
-index 200c47c69a75..cc85620267f1 100644
---- a/drivers/media/platform/fsl-viu.c
-+++ b/drivers/media/platform/fsl-viu.c
-@@ -128,7 +128,7 @@ struct viu_dev {
- 	int			dma_done;
- 
- 	/* Hardware register area */
--	struct viu_reg		*vr;
-+	struct viu_reg __iomem	*vr;
- 
- 	/* Interrupt vector */
- 	int			irq;
-@@ -244,7 +244,7 @@ struct viu_fmt *format_by_fourcc(int fourcc)
- 
- void viu_start_dma(struct viu_dev *dev)
- {
--	struct viu_reg *vr = dev->vr;
-+	struct viu_reg __iomem *vr = dev->vr;
- 
- 	dev->field = 0;
- 
-@@ -255,7 +255,7 @@ void viu_start_dma(struct viu_dev *dev)
- 
- void viu_stop_dma(struct viu_dev *dev)
- {
--	struct viu_reg *vr = dev->vr;
-+	struct viu_reg __iomem *vr = dev->vr;
- 	int cnt = 100;
- 	u32 status_cfg;
- 
-@@ -395,7 +395,7 @@ static void free_buffer(struct videobuf_queue *vq, struct viu_buf *buf)
- 
- inline int buffer_activate(struct viu_dev *dev, struct viu_buf *buf)
- {
--	struct viu_reg *vr = dev->vr;
-+	struct viu_reg __iomem *vr = dev->vr;
- 	int bpp;
- 
- 	/* setup the DMA base address */
-@@ -703,9 +703,9 @@ static int verify_preview(struct viu_dev *dev, struct v4l2_window *win)
- 	return 0;
- }
- 
--inline void viu_activate_overlay(struct viu_reg *viu_reg)
-+inline void viu_activate_overlay(struct viu_reg __iomem *viu_reg)
- {
--	struct viu_reg *vr = viu_reg;
-+	struct viu_reg __iomem *vr = viu_reg;
- 
- 	out_be32(&vr->field_base_addr, reg_val.field_base_addr);
- 	out_be32(&vr->dma_inc, reg_val.dma_inc);
-@@ -985,9 +985,9 @@ inline void viu_activate_next_buf(struct viu_dev *dev,
- 	}
- }
- 
--inline void viu_default_settings(struct viu_reg *viu_reg)
-+inline void viu_default_settings(struct viu_reg __iomem *viu_reg)
- {
--	struct viu_reg *vr = viu_reg;
-+	struct viu_reg __iomem *vr = viu_reg;
- 
- 	out_be32(&vr->luminance, 0x9512A254);
- 	out_be32(&vr->chroma_r, 0x03310000);
-@@ -1001,7 +1001,7 @@ inline void viu_default_settings(struct viu_reg *viu_reg)
- 
- static void viu_overlay_intr(struct viu_dev *dev, u32 status)
- {
--	struct viu_reg *vr = dev->vr;
-+	struct viu_reg __iomem *vr = dev->vr;
- 
- 	if (status & INT_DMA_END_STATUS)
- 		dev->dma_done = 1;
-@@ -1032,7 +1032,7 @@ static void viu_overlay_intr(struct viu_dev *dev, u32 status)
- static void viu_capture_intr(struct viu_dev *dev, u32 status)
- {
- 	struct viu_dmaqueue *vidq = &dev->vidq;
--	struct viu_reg *vr = dev->vr;
-+	struct viu_reg __iomem *vr = dev->vr;
- 	struct viu_buf *buf;
- 	int field_num;
- 	int need_two;
-@@ -1104,7 +1104,7 @@ static void viu_capture_intr(struct viu_dev *dev, u32 status)
- static irqreturn_t viu_intr(int irq, void *dev_id)
- {
- 	struct viu_dev *dev  = (struct viu_dev *)dev_id;
--	struct viu_reg *vr = dev->vr;
-+	struct viu_reg __iomem *vr = dev->vr;
- 	u32 status;
- 	u32 error;
- 
-@@ -1169,7 +1169,7 @@ static int viu_open(struct file *file)
- 	struct video_device *vdev = video_devdata(file);
- 	struct viu_dev *dev = video_get_drvdata(vdev);
- 	struct viu_fh *fh;
--	struct viu_reg *vr;
-+	struct viu_reg __iomem *vr;
- 	int minor = vdev->minor;
- 	u32 status_cfg;
- 
-@@ -1305,7 +1305,7 @@ static int viu_release(struct file *file)
- 	return 0;
- }
- 
--void viu_reset(struct viu_reg *reg)
-+void viu_reset(struct viu_reg __iomem *reg)
- {
- 	out_be32(&reg->status_cfg, 0);
- 	out_be32(&reg->luminance, 0x9512a254);
--- 
-2.9.0
+To be honest I didn't look at mm/nommu.c assuming that such architecture would
+probably be monothreaded. Am I wrong ?
