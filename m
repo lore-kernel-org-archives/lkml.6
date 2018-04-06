@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/QCBSN5KdnockTxtEOLco72D22kVdPt5sq1DrWqteLbpnetd6A38QsQGUEYfcAtqcAuquo
-ARC-Seal: i=1; a=rsa-sha256; t=1523021532; cv=none;
+X-Google-Smtp-Source: AIpwx4/zJ1WQvG4iBg0RlZ3c96SMALekxnAAztJQnp3ubAyuZrj+w+OH4/8KHQrq/vaXz827FgeO
+ARC-Seal: i=1; a=rsa-sha256; t=1523021529; cv=none;
         d=google.com; s=arc-20160816;
-        b=k7a4yA+vHT4a9mY5qhTQb0eCNtW7ZHVtAhPABuNXIg6hMYd0NlXFunIR2cxkvyyTUy
-         J9/tXvot6BQLPScsXTjHn8BuxLvQlgmzr6/2yxMSWrw9FFMlN2iYoP4jaGTxR8g++oaH
-         9okA6FMhho7YsC5shovw8X24uP9tjU7FjSBOXVOJwS3nHig1UURn+fBtMwIp8NpMVdka
-         1Sdpm3hvjnuZ4NmzzJWH9E4VeTWQxByLY0oowX9p3ovpifmazloF9yoH05g2EIAsmHir
-         s/jP5OLetMGnoXXlT1R6I3OtEteu1yZRfcvcXw7V1fLAcuTm+LHWQgwksDzKCp2bQ0J4
-         NVlQ==
+        b=dfO5k5ineyvBkMx1/qWed74Lb7gipMULwjdaeIcYqhsgqM5NIZBTDqmlZk559Ksy00
+         BODpip/acPmUYDvfRG7Gw6vOWG1LOlMKkIJFY6dA7YY7DMDzFZSH6Mks/fS2RTBTPI7z
+         +Pu+XhsQ7iaR6poZiKWu/MyzgPvxLVvm81GbD9oQz9TI2I6t9/07P1ZQWiYhk7286gFR
+         yPiGqF4FH6ObQP6MfLk81QoZTBWPar4jxydPNJCSk2lcWDTItN07LHYL7v7MSo5ronIk
+         NBKN1XCh3atj1nNaLZc2tuodvgyPjei8TZOc6241FRM8aUUzG/AZ5USC/k+smArTYROV
+         6eVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=B/2SnQ6JlItL4d6qxtJdwa6LJ5IB8OLod7kGUJA8Iks=;
-        b=ba6fn0FxV2J6fVv91TI5U0UwzY+W53ywc0qcZPHPokveu8Wd7xlcCUR65XTW7e3/aw
-         osAEpkqbF7DKIdyMzzI/6z5h95BqPQYB1KfSy4k04QVST7D6Pt8Cl0ElnfTedP/WeU0L
-         IVC15ulyHaWjm2qi5gYgII4vvv1NB//ZvaCLK59NaDH9ZFrkD/qE/z16/eelu0NhBttY
-         Hy1d6DZJ1MHewqz+B7pDkj5oxrBKjY9/Gi+1gPE+zEY9oih6Rf7GJOYI4LB93xl6b6am
-         MKS34l7bNPH1ugEVNPjAdU77a8Q1V+FFDZEo4pUoaYl5ArNfqIPJHxlG8ghj9Px9sX4r
-         f+6A==
+        bh=UoDvtIoBkU6sVjPmjd2aVW1aX4wIHODguASIqR6RlKQ=;
+        b=vrdfBp8QOf/z62jDN5eySQiTDwVs+f8J90UMG2YYZO0bdnOl8foH0G+FAoAVHnMzAH
+         rraWv3NXlS+REmL7c7sGuK+2jhyxu8aL9/wM9bgHoexTLdY4ilX+m+Lf1I+43CwWg6Hr
+         0XWSe7SgQvUy0KAC2irzH9jdts9QQohswH8B/ikKDt2moLnlLCYZj2v2g0JxOSAv6A8I
+         nLpTBtMPhp2DGDI/ZjLArHbMZ5BEFqaSOt72qUuAHiaLi6ypjo87rHG3Yy3waxmQKnYZ
+         ai5fwGdhl/cdXCaSo622uSu6yF/uzcFVawRkm3oLRgEVSBtKq0sxBfznq66qZLxAj69F
+         EMQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,12 +27,12 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Ben Hutchings <ben.hutchings@codethink.co.uk>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.4 70/72] spi: davinci: fix up dma_mapping_error() incorrect patch
-Date: Fri,  6 Apr 2018 15:24:11 +0200
-Message-Id: <20180406084311.645523815@linuxfoundation.org>
+	Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@fb.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 69/72] Revert "mtip32xx: use runtime tag to initialize command header"
+Date: Fri,  6 Apr 2018 15:24:10 +0200
+Message-Id: <20180406084311.455222269@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003827159127567?=
-X-GMAIL-MSGID: =?utf-8?q?1597003827159127567?=
+X-GMAIL-THRID: =?utf-8?q?1597003823692363057?=
+X-GMAIL-MSGID: =?utf-8?q?1597003823692363057?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,40 +53,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 11dd9e2c480324b46118ff708ea2ca8d7022539b, which is commit
-c5a2a394835f473ae23931eda5066d3771d7b2f8 upstream had an error in it.
+This reverts commit 9bf9e352ed51d4cdee107675609ba12b42d00c5b which was
+commit a4e84aae8139aca9fbfbced1f45c51ca81b57488 upstream.
 
 Ben writes:
-    The '!' needs to be deleted.  This appears to have been fixed upstream
-    by:
+	MQ IO schedulers were introduced in 4.11, so this shouldn't be
+	needed in older branches.  It also causes a performance
+	regression (fixed upstream).  Please revert this for 4.4 and
+	4.9.
 
-    commit 8aedbf580d21121d2a032e4c8ea12d8d2d85e275
-    Author: Fabien Parent <fparent@baylibre.com>
-    Date:   Thu Feb 23 19:01:56 2017 +0100
-
-	spi: davinci: Use SPI framework to handle DMA mapping
-
-    which is not suitable for stable.
-
-So I'm just fixing this up directly.
+So let's revert it!
 
 Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Sasha Levin <alexander.levin@verizon.com>
+Cc: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@fb.com>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-davinci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/mtip32xx/mtip32xx.c |   36 ++++++++++++------------------------
+ 1 file changed, 12 insertions(+), 24 deletions(-)
 
---- a/drivers/spi/spi-davinci.c
-+++ b/drivers/spi/spi-davinci.c
-@@ -651,7 +651,7 @@ static int davinci_spi_bufs(struct spi_d
- 			buf = t->rx_buf;
- 		t->rx_dma = dma_map_single(&spi->dev, buf,
- 				t->len, DMA_FROM_DEVICE);
--		if (dma_mapping_error(&spi->dev, !t->rx_dma)) {
-+		if (dma_mapping_error(&spi->dev, t->rx_dma)) {
- 			ret = -EFAULT;
- 			goto err_rx_map;
- 		}
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -169,25 +169,6 @@ static bool mtip_check_surprise_removal(
+ 	return false; /* device present */
+ }
+ 
+-/* we have to use runtime tag to setup command header */
+-static void mtip_init_cmd_header(struct request *rq)
+-{
+-	struct driver_data *dd = rq->q->queuedata;
+-	struct mtip_cmd *cmd = blk_mq_rq_to_pdu(rq);
+-	u32 host_cap_64 = readl(dd->mmio + HOST_CAP) & HOST_CAP_64;
+-
+-	/* Point the command headers at the command tables. */
+-	cmd->command_header = dd->port->command_list +
+-				(sizeof(struct mtip_cmd_hdr) * rq->tag);
+-	cmd->command_header_dma = dd->port->command_list_dma +
+-				(sizeof(struct mtip_cmd_hdr) * rq->tag);
+-
+-	if (host_cap_64)
+-		cmd->command_header->ctbau = __force_bit2int cpu_to_le32((cmd->command_dma >> 16) >> 16);
+-
+-	cmd->command_header->ctba = __force_bit2int cpu_to_le32(cmd->command_dma & 0xFFFFFFFF);
+-}
+-
+ static struct mtip_cmd *mtip_get_int_command(struct driver_data *dd)
+ {
+ 	struct request *rq;
+@@ -199,9 +180,6 @@ static struct mtip_cmd *mtip_get_int_com
+ 	if (IS_ERR(rq))
+ 		return NULL;
+ 
+-	/* Internal cmd isn't submitted via .queue_rq */
+-	mtip_init_cmd_header(rq);
+-
+ 	return blk_mq_rq_to_pdu(rq);
+ }
+ 
+@@ -3840,8 +3818,6 @@ static int mtip_queue_rq(struct blk_mq_h
+ 	struct request *rq = bd->rq;
+ 	int ret;
+ 
+-	mtip_init_cmd_header(rq);
+-
+ 	if (unlikely(mtip_check_unal_depth(hctx, rq)))
+ 		return BLK_MQ_RQ_QUEUE_BUSY;
+ 
+@@ -3873,6 +3849,7 @@ static int mtip_init_cmd(void *data, str
+ {
+ 	struct driver_data *dd = data;
+ 	struct mtip_cmd *cmd = blk_mq_rq_to_pdu(rq);
++	u32 host_cap_64 = readl(dd->mmio + HOST_CAP) & HOST_CAP_64;
+ 
+ 	/*
+ 	 * For flush requests, request_idx starts at the end of the
+@@ -3889,6 +3866,17 @@ static int mtip_init_cmd(void *data, str
+ 
+ 	memset(cmd->command, 0, CMD_DMA_ALLOC_SZ);
+ 
++	/* Point the command headers at the command tables. */
++	cmd->command_header = dd->port->command_list +
++				(sizeof(struct mtip_cmd_hdr) * request_idx);
++	cmd->command_header_dma = dd->port->command_list_dma +
++				(sizeof(struct mtip_cmd_hdr) * request_idx);
++
++	if (host_cap_64)
++		cmd->command_header->ctbau = __force_bit2int cpu_to_le32((cmd->command_dma >> 16) >> 16);
++
++	cmd->command_header->ctba = __force_bit2int cpu_to_le32(cmd->command_dma & 0xFFFFFFFF);
++
+ 	sg_init_table(cmd->sg, MTIP_MAX_SG);
+ 	return 0;
+ }
