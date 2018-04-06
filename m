@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/rhYXxQMSzF6MAYmAJRRQKImBg/Ypz2wcSyr7QrqCDuRj2tbRsR2OV8QWO5OhS3Cf5BwYE
-ARC-Seal: i=1; a=rsa-sha256; t=1523021328; cv=none;
+X-Google-Smtp-Source: AIpwx4/CjqNSHtBqqFyCi4gZ0Mpj+cQaPW95mxaOp2CpDYO+yZD1BxkzmFe2uqdmwsFZENgvez2Z
+ARC-Seal: i=1; a=rsa-sha256; t=1523021325; cv=none;
         d=google.com; s=arc-20160816;
-        b=OA1WsomO+VKnHqrf+KfqXCMy5aVqsHBj1fjlYaJ8+q71VfB5ToaupqHI2LnXG2nUJk
-         jCXs5B3IR70YWlf/hHunmwwHL4vInu9Uu+Ke851KJzotw/VKFdjPO9sfXRUBHUG4oOm1
-         bDgc58TJkHzfSmURCVfalqKQRp9bEROeje4iyYwo1MLnLW0/rrLU+DVyZcrEuurh+p2B
-         3/PpJGozfF18Zmbu+YPRaYwQa6Hg/ermzz099wbRfw+AIToxU2I0+h2TBxdj5uWRmBm3
-         ZrFBB4ZnMwXbmpC0P84OL0r32dOtNJZbYlPl8ug/oHqT1UbgfHupegmaUJ80R2l3NAi/
-         WyXw==
+        b=s0gSeY7ZFQxon3WaxaoYpICeTFtc08RT0oQIsywqHSMRn72ZHbaxqnNYGonDT/O5WK
+         uwfT+Vlbjj5tb0MNTATnvUW4hIX0UOk79h8JoOCGYG42CElU+XEjfyXa9XiF81Zrw2IQ
+         e6uu6SA4byfPt5RRwpok/T3KnuyuTx+bmD1gXcTzcub+EYwf8pdhJzLNf+dcPJ0igUR7
+         ssdRNSIppucODokZ2/oKK7u9lyecRHKszNS8Gq3Q1nYih9xUZy2NHHrnJTG9Gcr2+dWx
+         eZhL2akfOjE43y4CeAp3hUZNwJNTxjNXjJH2ds1IYuBhvJ4wpBnl8MBYh5fkWxnhwDDR
+         7S9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4zHCXkIvNibqO64503+1cjfh7BWF6NAQxJvy7qOeAh8=;
-        b=V3cBOP6Vrgra2v6buQMDLDLawBuY+Csb85M7DI+mNCIleepCxw656sSGfxRPijSPXl
-         WkgA7qFaVgDjaxJNohIA3U72qpmATOYJWEKyYUJMFS7GSSEU4fphYoRf4qR9+qypJ1ZZ
-         L/aOjYot4Ly5oxtYpyEs5c3vCzJwT1qCkU4CCEKSI9WXon4F6+Tgg7KVLXxypsod/cTn
-         u3705jYB5CkxBLoWAGQzvHuht92BIweTOAiRpx1V2F1ySESiJPbb3LZOgm8c256KlASm
-         SrvwpDtmPG6mf0T/HwWokZ4BNwF64Vq4/ESG5RjhTYphkgYfZHTF+CYL7Ti9Y2ENt32T
-         IoWg==
+        bh=sjvrUzgeN6O+OFPd6WCNYXeHo1t2LN2qufkHVnvNyB4=;
+        b=09Qfx+7PJjUVq4QwKC7gAztDOFa7uwSJuIg+U3tYco8hiPoHpLN4u0M+gFjRXRlZHW
+         NebgDDdlqVZ3WE2q96lS8+qBZ2G7pWCrEPZ2ISU31a4UiMnFQ8c6yFCDoJrnW3wqGuOK
+         pWI/eoWWSYnHaj9wJLAiVK/hsG4lBxdaOvhWJlAR0B3MslPGWrc7KlMVsU+graIAP/yO
+         CLJL1ep4OiHQX3a3fL0MezWoZvpgfhvJZUTIYPwFNf5djBuHFsCxXL8gqKG9oCN3eyG5
+         KfIWogu0XTyIIHCPhVI9XR0jZzfz6v60a7iU5C3fz7qDUvbrE0mZvQsTHQ1WYJ6JFwe4
+         19XA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>,
-	Prarit Bhargava <prarit@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	David Arcari <darcari@redhat.com>,
-	Myron Stowe <mstowe@redhat.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Keith Busch <keith.busch@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 91/93] Revert "PCI/MSI: Stop disabling MSI/MSI-X in pci_device_shutdown()"
-Date: Fri,  6 Apr 2018 15:24:00 +0200
-Message-Id: <20180406084229.148221698@linuxfoundation.org>
+	Eric Biggers <ebiggers@google.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 3.18 82/93] crypto: x86/cast5-avx - fix ECB encryption when long sg follows short one
+Date: Fri,  6 Apr 2018 15:23:51 +0200
+Message-Id: <20180406084228.748511934@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -48,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003612609521485?=
-X-GMAIL-MSGID: =?utf-8?q?1597003612609521485?=
+X-GMAIL-THRID: =?utf-8?q?1597003609405057187?=
+X-GMAIL-MSGID: =?utf-8?q?1597003609405057187?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,37 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Eric Biggers <ebiggers@google.com>
 
-This reverts commit 058645e2f0647c85f2bfd577771546d198739fd2 which was
-commit fda78d7a0ead144f4b2cdb582dcba47911f4952c upstream.
+commit 8f461b1e02ed546fbd0f11611138da67fd85a30f upstream.
 
-The dependancy tree is just too messy here, just drop it from this
-kernel as it's not really needed here.
+With ecb-cast5-avx, if a 128+ byte scatterlist element followed a
+shorter one, then the algorithm accidentally encrypted/decrypted only 8
+bytes instead of the expected 128 bytes.  Fix it by setting the
+encryption/decryption 'fn' correctly.
 
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Prarit Bhargava <prarit@redhat.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: David Arcari <darcari@redhat.com>
-Cc: Myron Stowe <mstowe@redhat.com>
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: c12ab20b162c ("crypto: cast5/avx - avoid using temporary stack buffers")
+Cc: <stable@vger.kernel.org> # v3.8+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pci/pci-driver.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -450,6 +450,8 @@ static void pci_device_shutdown(struct d
+---
+ arch/x86/crypto/cast5_avx_glue.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/arch/x86/crypto/cast5_avx_glue.c
++++ b/arch/x86/crypto/cast5_avx_glue.c
+@@ -67,8 +67,6 @@ static int ecb_crypt(struct blkcipher_de
+ 	void (*fn)(struct cast5_ctx *ctx, u8 *dst, const u8 *src);
+ 	int err;
  
- 	if (drv && drv->shutdown)
- 		drv->shutdown(pci_dev);
-+	pci_msi_shutdown(pci_dev);
-+	pci_msix_shutdown(pci_dev);
+-	fn = (enc) ? cast5_ecb_enc_16way : cast5_ecb_dec_16way;
+-
+ 	err = blkcipher_walk_virt(desc, walk);
+ 	desc->flags &= ~CRYPTO_TFM_REQ_MAY_SLEEP;
  
- #ifdef CONFIG_KEXEC
- 	/*
+@@ -80,6 +78,7 @@ static int ecb_crypt(struct blkcipher_de
+ 
+ 		/* Process multi-block batch */
+ 		if (nbytes >= bsize * CAST5_PARALLEL_BLOCKS) {
++			fn = (enc) ? cast5_ecb_enc_16way : cast5_ecb_dec_16way;
+ 			do {
+ 				fn(ctx, wdst, wsrc);
+ 
