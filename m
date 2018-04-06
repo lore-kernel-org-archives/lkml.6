@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48cR8wrrkyFzVp1r6F6bqwBwx4LVmsbkVzF2Y8GVxEzNoV90MhBBRAP45lrpZ3NQZKzYOlE
-ARC-Seal: i=1; a=rsa-sha256; t=1523021129; cv=none;
+X-Google-Smtp-Source: AIpwx48YZsdpijkAx2oPhXVjHrHW6IMhDkDiC6CNKbE4PizKS1ZzT19KDUWWzIzbinL9fCyTorWG
+ARC-Seal: i=1; a=rsa-sha256; t=1523021126; cv=none;
         d=google.com; s=arc-20160816;
-        b=bunjyESYJ8m+hV34M2Q3dwJxmaTPPZzky03J0zFeSBT90x/Y+jFj5ab3Yat6yJ1iA4
-         NmGiadukaPrA8wwyn8TrJUzXF0AQws4WvcBIYngrT/9AanigcPg9XFcb4tBHMlsf60WD
-         WAcAdy0vmXHGGkzOtWhlXkveb6vbQgO4xXm0+eF8X43vxjba7HNnLJcpDdFq1Xfikpo8
-         wvP0LU0Xu+r7Y2e6U4hV6i+y8gJyQZSa7/RDX2dS1ToK7Z7TFX/MQVVQfCtQR83PIwEn
-         WypcNfA1DmBetnyG7Z0qCnoZLsraNNtD53P+MCCkT6IhzafjegryhSIDEtmQqeuiPJ4O
-         ycrw==
+        b=GOEwRP+g6S1k6Q/1yCOCR4QY3fJ/J4D4uaIWZ2KCPP/e11Cy046A2FQI7nElk76CET
+         /u1AdsFXCTakk5UH02ANiaxOdRZQ27Do//5Sksu4jK6pfbTypw52quyYJ0oPqmgCHKVw
+         GRWyHprtXAlLTZfPmMm0xPurW17OsLuLs27BwtEjc53cegYxcC6bdKwPgOU3VZ+TvPkR
+         f5BQp6t3uz1tfvWJK6Kz0aWYFSxeTfqolpym/F/XvBaa6w2So91kYs7wx9DeCUjirYD+
+         Rrm0x8HBWpYjhLcvUyya8qLTwWaSWrGoW6GJQEBSLMtS+KVg2Fcpoo0qKZgiVUo6SOIX
+         fBxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hDImhPfLl+pwwN4XsJcZLIhT/H15QS01tTKRDf8dLe4=;
-        b=zwcHd9PTJxuRB05lbUsxg8OfaY3Hu3NTmzJu/FErc3AQ2jhlreJ2rxy2dN/oGsOjTe
-         nPG3YETHZCusGHBaFdkvEOnBFUdwva7Edu3zPqjhByzV18SAEvigZSgs3yr3tVxtcu36
-         zyhgWX/c96GwK/WcvXXT15NzYbUSA+cYZWXu8mUiUn8dv9qEv15ZGwxzXZWC/CJ0HQvU
-         c++yHuohRw19kyT3ujiO9ijYB2u9FTgy4xpSZ2haxn54hM6z1LzANuIGYpDZ8sGUJMQq
-         V1QpQ60qtRjRFMq14jtMsjJYDonX4S+6vLTf5cZIw16btzHyxs2DL7H024NTp7KD7xXy
-         0rPw==
+        bh=0tlfDAuZwec4KyzPBbkX70m/ebe1Zyp89k/HJl1IFeU=;
+        b=Cob3baEdG5IkCvYFitmhf4IOCsNOMH08Wa1ROGA2qXJsffml/h4a95vUml/PGsSoXm
+         AHXuk+dnHmxW+LFyibKKBvIrNLsP3y0dIWkX7wUbuQ8x6T5WhBelX0hAKhM/9FBgLOfC
+         7ruSIIYGBUijzvxI/0FI0hgZSWaYEGGqED4EBZfxq9Ccx7HJpJrExGQUHmXqsl7fsw5X
+         PrMaP0hUNJ42iVTSgE6ze8/Tuz83tV0kZ/O9zuUcayBeAGkzoTp+UG+ykUY8lqIHKsxg
+         qxHRFc0y/JnRidQfNru5LYSqQ89DRAoV4YF55mrHYFPmgDhb7OUcwiBRYhhjGGN6qezC
+         ensA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Park Ju Hyung <qkrwngud825@gmail.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 3.18 08/93] libata: Enable queued TRIM for Samsung SSD 860
-Date: Fri,  6 Apr 2018 15:22:37 +0200
-Message-Id: <20180406084225.338254186@linuxfoundation.org>
+Subject: [PATCH 3.18 07/93] libata: disable LPM for Crucial BX100 SSD 500GB drive
+Date: Fri,  6 Apr 2018 15:22:36 +0200
+Message-Id: <20180406084225.300910940@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003403143044560?=
-X-GMAIL-MSGID: =?utf-8?q?1597003403143044560?=
+X-GMAIL-THRID: =?utf-8?q?1597003400405899639?=
+X-GMAIL-MSGID: =?utf-8?q?1597003400405899639?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ju Hyung Park <qkrwngud825@gmail.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit ca6bfcb2f6d9deab3924bf901e73622a94900473 upstream.
+commit b17e5729a630d8326a48ec34ef02e6b4464a6aef upstream.
 
-Samsung explicitly states that queued TRIM is supported for Linux with
-860 PRO and 860 EVO.
+After Laptop Mode Tools starts to use min_power for LPM, a user found
+out Crucial BX100 SSD can't get mounted.
 
-Make the previous blacklist to cover only 840 and 850 series.
+Crucial BX100 SSD 500GB drive don't work well with min_power. This also
+happens to med_power_with_dipm.
 
-Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+So let's disable LPM for Crucial BX100 SSD 500GB drive.
+
+BugLink: https://bugs.launchpad.net/bugs/1726930
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/ata/libata-core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
 --- a/drivers/ata/libata-core.c
 +++ b/drivers/ata/libata-core.c
-@@ -4244,7 +4244,9 @@ static const struct ata_blacklist_entry
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
- 	{ "Crucial_CT*MX100*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
--	{ "Samsung SSD 8*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
-+	{ "Samsung SSD 840*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
-+						ATA_HORKAGE_ZERO_AFTER_TRIM, },
-+	{ "Samsung SSD 850*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
- 	{ "FCCT*M500*",			NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+@@ -4225,6 +4225,9 @@ static const struct ata_blacklist_entry
+ 	{ "PIONEER DVD-RW  DVR-212D",	NULL,	ATA_HORKAGE_NOSETXFER },
+ 	{ "PIONEER DVD-RW  DVR-216D",	NULL,	ATA_HORKAGE_NOSETXFER },
+ 
++	/* Crucial BX100 SSD 500GB has broken LPM support */
++	{ "CT500BX100SSD1",		"MU02",	ATA_HORKAGE_NOLPM },
++
+ 	/* The 512GB version of the MX100 has both queued TRIM and LPM issues */
+ 	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
