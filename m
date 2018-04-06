@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/QXK5E6/5/sWGpggHZZAu54PNQWPWSjllRGEtrwmtBGcseKSf5rQkx9jrNKDkHGF+4gOZi
-ARC-Seal: i=1; a=rsa-sha256; t=1523021945; cv=none;
+X-Google-Smtp-Source: AIpwx4/JZw00iVKwrVY+YrwRMRUB2UrlAUaL2kHJRz5u1l7tiA4I1vgXXOyGVCAIi5kB8auTqHOB
+ARC-Seal: i=1; a=rsa-sha256; t=1523021943; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bfi8IuRkumk6he1alLhLFrRSua0GxgoDieD35RqxnlNszd+xtD3tMhdFgMsTA2nUmA
-         FlGuR8fVRB2Gau2MvAIowPvPbeMAKvHhXskKg6j1mq3hJD+rVAv/R9evEzUV/5oukYI0
-         h1Ie5u1fYOVOXu2tdniZ2NR9WrOygsUX6musW5N3TFdGosaYlqdK7S7YQ2G6Db9cL0Cy
-         rHzXW6zAs1CBmupLYtEsvXPCZ1UZcnMOsvT1ETkXIzH+OnTJqb9XOVlU4ZbSn1lGCFnr
-         wuKzmKMoybCjkYp5pmfw+D8VbP4Ul6maqiSeWzDZyt3AuMfzauh5rFNTl3L5DEEXAxa8
-         qqJg==
+        b=C1/1tT26Br6sgmtKbjctSv8oxzVOwQbnr2h9hQ1/fEIPWq2LTcvQCgyFE1Xk3EpM7V
+         stwu8Nqfqp3jSNIsnLi64O+yKt4modOLlHsMuFhdOr2fVgLP3n5gmiM8LgPk9eSp2Itd
+         2/ZZHowL4ApfwnuR/PPgVk+nhDTaNC75BF3vIiNwLfUbeIkMEGLMO1x0Ay17yvfnr2Mw
+         DFrJ9kxzr6zzysOdZpiKBTwQmccDGDb/On/nVqBJSTqfhHgb1ZB1SXg4owei8pf8msU4
+         ODsgQgVqhqzUL1Af4qeZV3ztihpiJ7EB51jOxMugalX+5VIeZ5yB5/U7a1JZ7qOZuAsr
+         BwcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ydX14m9p0/84dVPbDgd1pEcQeAFvnqnLy3yA/eOjlBI=;
-        b=wec47UP8uJhUJlBrSq9YuEA0r19Hyl+DMkmManifr+HDsJwN8gITu4Rqm1F7JP9RDk
-         KwFHhADQRxWUOj63hwwbV+Cms663BsjYXTdPjH43iA3KTJ9pHUQtC06cyQGa7CGyK8ea
-         okoQDEY7w+yMCwmIIacLkff1btkw5oP/MJt5PMu1/8S6zG5qzpLTXgQB5H9C7i1lsb2r
-         ZiJ2m5bMAu/6DltodvmXppUYAqsiwE5pnteuxLV615GmZyXawVvzRPkq/DlhOM/AANGL
-         /C/RKeTkb6YpSdo2rHfVpNWVZ060LCoMGnF7/xEqRuZzHpDtI9UBdF22+g05GdJ//x9/
-         oZZg==
+        bh=K1/1vim7ljSoEEN5xjAXJUovQZNaKBXuUbHyCk0zy1s=;
+        b=qmYKVUTNE1+CiLp+9T27cdsU5Ew01j+q6J3HWGwQQVh9ov9X4h/Olkn+thwwd3cwRB
+         9LcoxtsxC9v07xovWbX1ka+2D3BOxQl0wSvHZ5YCqzFOhDp3UcGOUOYCqdhfUHHKk8+X
+         ktTfZbwCDh/xsnZCWcXHnr7tZjF/kkeon6QjDupH9OJ57CeC51yd+MHHh+k8IOp1vS3/
+         22A6zEjhcxcK1mri0z87iKyaRqdE2jrOLATUXqewnf8WMrfBxmQn+1zN8p2LeRpl71qW
+         65ZCBi7WBWm9HKwmgKGyFgHxIjM/UcGQEYy8WRSwakP50lHQ5Z2MQZYRJzJWWcqap4wc
+         iOWQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>
-Subject: [PATCH 4.14 42/67] mei: remove dev_err message on an unsupported ioctl
-Date: Fri,  6 Apr 2018 15:24:12 +0200
-Message-Id: <20180406084347.079689948@linuxfoundation.org>
+	Eric Dumazet <eric.dumazet@gmail.com>,
+	syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com,
+	Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 33/67] netfilter: x_tables: add and use xt_check_proc_name
+Date: Fri,  6 Apr 2018 15:24:03 +0200
+Message-Id: <20180406084345.762337018@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003580077452612?=
-X-GMAIL-MSGID: =?utf-8?q?1597004260072753200?=
+X-GMAIL-THRID: =?utf-8?q?1597003601518094155?=
+X-GMAIL-MSGID: =?utf-8?q?1597004256795060475?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,30 +51,132 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit bb0829a741792b56c908d7745bc0b2b540293bcc upstream.
+commit b1d0a5d0cba4597c0394997b2d5fced3e3841b4e upstream.
 
-Currently the driver spams the kernel log on unsupported ioctls which is
-unnecessary as the ioctl returns -ENOIOCTLCMD to indicate this anyway.
-I suspect this was originally for debugging purposes but it really is not
-required so remove it.
+recent and hashlimit both create /proc files, but only check that
+name is 0 terminated.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: stable <stable@vger.kernel.org>
+This can trigger WARN() from procfs when name is "" or "/".
+Add helper for this and then use it for both.
+
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+Reported-by: <syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mei/main.c |    1 -
- 1 file changed, 1 deletion(-)
+ include/linux/netfilter/x_tables.h |    2 ++
+ net/netfilter/x_tables.c           |   30 ++++++++++++++++++++++++++++++
+ net/netfilter/xt_hashlimit.c       |   16 ++++++++++------
+ net/netfilter/xt_recent.c          |    6 +++---
+ 4 files changed, 45 insertions(+), 9 deletions(-)
 
---- a/drivers/misc/mei/main.c
-+++ b/drivers/misc/mei/main.c
-@@ -507,7 +507,6 @@ static long mei_ioctl(struct file *file,
- 		break;
+--- a/include/linux/netfilter/x_tables.h
++++ b/include/linux/netfilter/x_tables.h
+@@ -285,6 +285,8 @@ unsigned int *xt_alloc_entry_offsets(uns
+ bool xt_find_jump_offset(const unsigned int *offsets,
+ 			 unsigned int target, unsigned int size);
  
- 	default:
--		dev_err(dev->dev, ": unsupported ioctl %d.\n", cmd);
- 		rets = -ENOIOCTLCMD;
++int xt_check_proc_name(const char *name, unsigned int size);
++
+ int xt_check_match(struct xt_mtchk_param *, unsigned int size, u_int8_t proto,
+ 		   bool inv_proto);
+ int xt_check_target(struct xt_tgchk_param *, unsigned int size, u_int8_t proto,
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -423,6 +423,36 @@ textify_hooks(char *buf, size_t size, un
+ 	return buf;
+ }
+ 
++/**
++ * xt_check_proc_name - check that name is suitable for /proc file creation
++ *
++ * @name: file name candidate
++ * @size: length of buffer
++ *
++ * some x_tables modules wish to create a file in /proc.
++ * This function makes sure that the name is suitable for this
++ * purpose, it checks that name is NUL terminated and isn't a 'special'
++ * name, like "..".
++ *
++ * returns negative number on error or 0 if name is useable.
++ */
++int xt_check_proc_name(const char *name, unsigned int size)
++{
++	if (name[0] == '\0')
++		return -EINVAL;
++
++	if (strnlen(name, size) == size)
++		return -ENAMETOOLONG;
++
++	if (strcmp(name, ".") == 0 ||
++	    strcmp(name, "..") == 0 ||
++	    strchr(name, '/'))
++		return -EINVAL;
++
++	return 0;
++}
++EXPORT_SYMBOL(xt_check_proc_name);
++
+ int xt_check_match(struct xt_mtchk_param *par,
+ 		   unsigned int size, u_int8_t proto, bool inv_proto)
+ {
+--- a/net/netfilter/xt_hashlimit.c
++++ b/net/netfilter/xt_hashlimit.c
+@@ -915,8 +915,9 @@ static int hashlimit_mt_check_v1(const s
+ 	struct hashlimit_cfg3 cfg = {};
+ 	int ret;
+ 
+-	if (info->name[sizeof(info->name) - 1] != '\0')
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
+ 
+ 	ret = cfg_copy(&cfg, (void *)&info->cfg, 1);
+ 
+@@ -933,8 +934,9 @@ static int hashlimit_mt_check_v2(const s
+ 	struct hashlimit_cfg3 cfg = {};
+ 	int ret;
+ 
+-	if (info->name[sizeof(info->name) - 1] != '\0')
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
+ 
+ 	ret = cfg_copy(&cfg, (void *)&info->cfg, 2);
+ 
+@@ -948,9 +950,11 @@ static int hashlimit_mt_check_v2(const s
+ static int hashlimit_mt_check(const struct xt_mtchk_param *par)
+ {
+ 	struct xt_hashlimit_mtinfo3 *info = par->matchinfo;
++	int ret;
+ 
+-	if (info->name[sizeof(info->name) - 1] != '\0')
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
+ 
+ 	return hashlimit_mt_check_common(par, &info->hinfo, &info->cfg,
+ 					 info->name, 3);
+--- a/net/netfilter/xt_recent.c
++++ b/net/netfilter/xt_recent.c
+@@ -361,9 +361,9 @@ static int recent_mt_check(const struct
+ 			info->hit_count, XT_RECENT_MAX_NSTAMPS - 1);
+ 		return -EINVAL;
  	}
+-	if (info->name[0] == '\0' ||
+-	    strnlen(info->name, XT_RECENT_NAME_LEN) == XT_RECENT_NAME_LEN)
+-		return -EINVAL;
++	ret = xt_check_proc_name(info->name, sizeof(info->name));
++	if (ret)
++		return ret;
  
+ 	if (ip_pkt_list_tot && info->hit_count < ip_pkt_list_tot)
+ 		nstamp_mask = roundup_pow_of_two(ip_pkt_list_tot) - 1;
