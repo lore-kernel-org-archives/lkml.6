@@ -1,37 +1,83 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx485FxgYf/AohSgR+pfcvfLF3LvQCr3tUkSMu8/iA5xSIfnBfQqGSEeCEavP2B+aVRj+RNxr
-ARC-Seal: i=1; a=rsa-sha256; t=1523022279; cv=none;
-        d=google.com; s=arc-20160816;
-        b=yg05NBvqv/gs70Xf3LgiMDwqvVreY9lJEQVKlGAhQF2/3nlE8TnnapcSEfAlt0lFLi
-         o9/xpIMmSImMpJ3NFSRxz9MNrBqrJ9FZkznIEMgSQ8gZb9KiLKTR0luLTiICMg7Vrud9
-         p36S9zQB1WGQQ97FJt5E8ad+bt9wm1hYNbW/QlhqOMNgWk2VDaq1zL08PaSVppgkAFZp
-         fUGscorrzGkOy+vuiPY9hOSZAH5Eeuc0boVqDGrdNJK1mIZAV3nL1EBwgZkaJ9TQm6AO
-         1bUJxwZxarsKob6Tg1tKaStAUftoGzn/it9GxzzTxF4y7UE9JbFMvGDB7zWTvtbtqfOe
-         1sjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=xt21BsbpyXeY6XFv68ChrN/x87LGf3yqH5RDfy8frAU=;
-        b=rxW2t5KLqj4ENQV5N4fKKv0bbLo1o15RyFqIRtZZvaruCNnwLYtnUqgPhmb32kpX9K
-         tA2p2dYU8WzQZSTioIZ76tJkA1Qd0JILrjDsecJvV5nqI3iSN1/P7JKG2+2toPUgn7k9
-         MTUOZPRJ7Ua/1E1UsjALaAyjLl0igU2JfP8mBRoUOfU9acYaOogfEbS4OPB/TQ53CkGl
-         BeS5+h/tZ7URDF3f8ZvrX2e9si+exHAnPeYDL5pFUBuywkuws0lHBVUNAqfomvbiYi8e
-         G8X/jOygkknJbMn3dozh0Auyb0JyDXE0Qd4iJ/1ZL6JrIOYHwtL9LL3RWMJGske/Cxr2
-         Ds9Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1459510-1523022279-2-16225185577084801663
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523022278; b=NJ1i9Kc4TknOh2J/wnuq6A4rC3rpStAmmly8alzhGcvKjvoK5H
+    1WeIJFRx7N7uQLbT269t9FA4znutW4lJEe97y+qkGi650CIJZpp/SGx05RX2Amxt
+    Vj4HysFl1eUqmvqRpI8hamy6lu1SI7t8fINvAczFX39SxOfAlClcdv9Lszu97s+f
+    d/+HYKuU61C/2xi8v3NT3bn//5L0Yo5Nv4l5RcSmwsWx4iZWqQFpXqmtELl1fYKn
+    3KRJlNoZlR/YJYmZLWbvpNtwamdkzjY/HziXNd0suZe+Z0is55rdk+Wq5V6eZhxE
+    0hProNlrKEVD8ZGOEgj5O3Ggh4PwMrYXy8Ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523022278; bh=iU5oSJoP9nu54PwRgDI6VbmhGmW9wT
+    uRfpTKWNsc0WM=; b=cQbniylfokb19eaOxtAhFGuU8yDSrqCjGgbXc9lo/oFu6Q
+    5r+56JytP1Ys1ISePx3R38TJHzfCaZHinazG4xDOj/oPtdA4CObBnxa2Wrr9/vXM
+    O6VsmCu4i3/Vp7PkHD21mO6Y0yoykpWFy/bh05wb1+JjAxXGB+gwAqdBALGX77Qk
+    KgnZRRe5U80tEo/VtbH+0BVY7FEHIqwJ4pRrEFbUmoZxiZJ0zcoWAO8j2g3MV2H6
+    HY3xBE2Eaa8Bu+nJOg+fh0JKAj0/OjrnCuEpox1gfZwLC5gQBwhsWj2GJUn7dpeA
+    yODakMk2f39efVjJRZUwEwoFkUpxVN7U7csLKaaA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFxQMdCbTGw6JPZJrmIbNX1+M4vSWzPuYdH21rXl+tWuehlKFzCnPaPm1kwQvzhjlT/lipWxd/xmENqvW3WyYGWJ+7hQHJjX8uKHPw3eCzXrErpGMIxm
+    9Nnn55/JIX9cQA4YXdaAB3yzN/tuOQWhjtrjxQluVOldch4m3J/LMbhnzQHg6abDd9c5DB8CyiqolhFKwX3fpbHsaTQ1foH2TDtSSc2arONo0EZMl0diTa70
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=FNyBlpCuAAAA:8 a=ag1SF4gXAAAA:8
+    a=WkbNqe7Jen_D_RCmz68A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=RlW-AWeGUCXs_Nkyno-6:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1756932AbeDFNoe (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 09:44:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37740 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756922AbeDFNo2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:44:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-	Gary R Hook <gary.hook@amd.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.16 18/31] crypto: ccp - return an actual key size from RSA max_size callback
-Date: Fri,  6 Apr 2018 15:24:43 +0200
-Message-Id: <20180406084343.491606651@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Conor McLoughlin <conor.mcloughlin@intel.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.16 14/31] crypto: testmgr - Fix incorrect values in PKCS#1 test vector
+Date: Fri,  6 Apr 2018 15:24:39 +0200
+Message-Id: <20180406084342.962663282@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084340.999820380@linuxfoundation.org>
 References: <20180406084340.999820380@linuxfoundation.org>
@@ -39,10 +85,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004281875020882?=
-X-GMAIL-MSGID: =?utf-8?q?1597004609801276563?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,50 +95,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+From: Conor McLoughlin <conor.mcloughlin@intel.com>
 
-commit 0a9eb80e643064266868bd2fb2cd608e669309b0 upstream.
+commit 333e18c5cc74438f8940c7f3a8b3573748a371f9 upstream.
 
-rsa-pkcs1pad uses a value returned from a RSA implementation max_size
-callback as a size of an input buffer passed to the RSA implementation for
-encrypt and sign operations.
+The RSA private key for the first form should have
+version, prime1, prime2, exponent1, exponent2, coefficient
+values 0.
+With non-zero values for prime1,2, exponent 1,2 and coefficient
+the Intel QAT driver will assume that values are provided for the
+private key second form. This will result in signature verification
+failures for modules where QAT device is present and the modules
+are signed with rsa,sha256.
 
-CCP RSA implementation uses a hardware input buffer which size depends only
-on the current RSA key length, so it should return this key length in
-the max_size callback, too.
-This also matches what the kernel software RSA implementation does.
-
-Previously, the value returned from this callback was always the maximum
-RSA key size the CCP hardware supports.
-This resulted in this huge buffer being passed by rsa-pkcs1pad to CCP even
-for smaller key sizes and then in a buffer overflow when ccp_run_rsa_cmd()
-tried to copy this large input buffer into a RSA key length-sized hardware
-input buffer.
-
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: ceeec0afd684 ("crypto: ccp - Add support for RSA on the CCP")
-Cc: stable@vger.kernel.org
-Acked-by: Gary R Hook <gary.hook@amd.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+Signed-off-by: Conor McLoughlin <conor.mcloughlin@intel.com>
+Reviewed-by: Stephan Mueller <smueller@chronox.de>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/ccp/ccp-crypto-rsa.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ crypto/testmgr.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/crypto/ccp/ccp-crypto-rsa.c
-+++ b/drivers/crypto/ccp/ccp-crypto-rsa.c
-@@ -60,10 +60,9 @@ static int ccp_rsa_complete(struct crypt
- 
- static unsigned int ccp_rsa_maxsize(struct crypto_akcipher *tfm)
- {
--	if (ccp_version() > CCP_VERSION(3, 0))
--		return CCP5_RSA_MAXMOD;
--	else
--		return CCP_RSA_MAXMOD;
-+	struct ccp_ctx *ctx = akcipher_tfm_ctx(tfm);
-+
-+	return ctx->u.rsa.n_len;
- }
- 
- static int ccp_rsa_crypt(struct akcipher_request *req, bool encrypt)
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -548,7 +548,7 @@ static const struct akcipher_testvec rsa
+ static const struct akcipher_testvec pkcs1pad_rsa_tv_template[] = {
+ 	{
+ 	.key =
+-	"\x30\x82\x03\x1f\x02\x01\x10\x02\x82\x01\x01\x00\xd7\x1e\x77\x82"
++	"\x30\x82\x03\x1f\x02\x01\x00\x02\x82\x01\x01\x00\xd7\x1e\x77\x82"
+ 	"\x8c\x92\x31\xe7\x69\x02\xa2\xd5\x5c\x78\xde\xa2\x0c\x8f\xfe\x28"
+ 	"\x59\x31\xdf\x40\x9c\x60\x61\x06\xb9\x2f\x62\x40\x80\x76\xcb\x67"
+ 	"\x4a\xb5\x59\x56\x69\x17\x07\xfa\xf9\x4c\xbd\x6c\x37\x7a\x46\x7d"
+@@ -597,8 +597,8 @@ static const struct akcipher_testvec pkc
+ 	"\xfe\xf8\x27\x1b\xd6\x55\x60\x5e\x48\xb7\x6d\x9a\xa8\x37\xf9\x7a"
+ 	"\xde\x1b\xcd\x5d\x1a\x30\xd4\xe9\x9e\x5b\x3c\x15\xf8\x9c\x1f\xda"
+ 	"\xd1\x86\x48\x55\xce\x83\xee\x8e\x51\xc7\xde\x32\x12\x47\x7d\x46"
+-	"\xb8\x35\xdf\x41\x02\x01\x30\x02\x01\x30\x02\x01\x30\x02\x01\x30"
+-	"\x02\x01\x30",
++	"\xb8\x35\xdf\x41\x02\x01\x00\x02\x01\x00\x02\x01\x00\x02\x01\x00"
++	"\x02\x01\x00",
+ 	.key_len = 804,
+ 	/*
+ 	 * m is SHA256 hash of following message:
