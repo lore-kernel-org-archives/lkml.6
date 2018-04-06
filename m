@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49ncb8BQAB/Krfwu0nsAmNyvQX41rxNL2H+7OT97bU86rEbn4zYZ5Wu9BYlNdeXQ7RZw3eJ
-ARC-Seal: i=1; a=rsa-sha256; t=1523021961; cv=none;
+X-Google-Smtp-Source: AIpwx4+bto+mHFSqoX15Q3062U1rCiwpsYU+zf0HXOYiycpEY5nd/wSnlQxi7VbIz19Pmcx8fWrA
+ARC-Seal: i=1; a=rsa-sha256; t=1523021958; cv=none;
         d=google.com; s=arc-20160816;
-        b=sPTBe/oRkoPff4dQcswwgOkCBbsZIROfcrMNAa33IjHe/2V4+94WtgZLXZv6ttZQ76
-         7HBJqA2IMeJ8W7EVXriup42usGJO3FQk/4cQrOT08VWfQJuZnSHOSDn6X2wz19DFKWVZ
-         uiQxKbJSL2RKrijtY31yfyyq+fem93DVK+DDIygXBf73M7XlCVpGii8bD3RCX8b9QeIg
-         v1jbBSoaW6B+suWHlsum6zbH+o3IsafY3pxRqA9zrf8lLwc1M0tFZKCTTuRtfVvH3moR
-         iG6lWjsKUPpXrTOdeGGJGHcVxON7IHGwX2uwQeoRf/93GUtu01DQcDy6lyvNaKnVklUY
-         ghlw==
+        b=BYmDHciSLhI23HEYO2ehD57edhF6kNU4S6UKZqYKa3Xco39q6QTOpt1KEXNxMWXux6
+         BXkhbRbdRe5+2o864U7U0FpgYe5gDX0gS3LjPpRV1b1lRy36opLs0BCk94Cla5sPOL3Y
+         uW3jbb38mTTUpNGlJ7ixCT0/eUQ1I9YcpoYuoSFG5FXHygc9llRpWS5QHc+YDPFg6wwd
+         Ps63Y9+MSNuEbVUKdfKaIIu7mP4RrU8gdN+LdDDODJLjxCHp2FqG3B3Huj1MGAOg3RMk
+         FHUo3WVIThdFLSHV7uawz3toLC+mAuJOOSNEgdeLaJl8CSKOOBRe6+FObEsPwL2sxDLD
+         H+KA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7n3QOIkNX2r6d6/enTJNZUSjlLuGPrXWdGbdYoKh828=;
-        b=Ph3S9+0tUqHfHCFwb5t2yHWdnbXX9vZfBZaVAQENCGnVe6jPBYNMix3505WaGwpeht
-         AEeAHqAoUlvjHxYJOjC0DeN9hk6ANLwaBP8TrysGh8x9odoqq5J1aAToy47Qo55iOq5K
-         hInYFZnXcHZHHc4eKsl1X4iJMYwfERCeh+d0DN6rpLNNZT2odsT22I1YKYON+KP9sWuR
-         5hWeOpM98j9EoBO15c+fsbGmSFQmr3OhtQl6FOMx8mt0hwumoL0iwfC/DU/676PaUzFH
-         srgFbPOUte/jnNSEMBEXqmEf+c8izkBJ4HDk0bNLQLklvcf1PqPRmjMxRemBatG3eq9w
-         u9Jw==
+        bh=rDId82/83FaeLvGWRD9TCGyfXJXdQYp6yX9Zowpv2Lk=;
+        b=m3Zp5S3w0DJoW5OAW6M0vSDYJSaKtPJce4yJkxWyVXkJpsHxkUAyGZJQemwuqah9vJ
+         XYdCQduFGY5GyJnffSneo5BADfJup1dFITF+8NXeyd5msaCDrvHrB/ULawfG7xuR9xUm
+         px8AZTXVoe3M1+f2U2/8lJDBc18WTt7WqezY19mgwXKBRuhqsBDPbiIOR+RNG9M10i8w
+         lwTNQxAyG5ola8TEY8pMYuifVa37OPWuMdgX13oX/kQ8VcfcYH6NvMvX16lIbDGrDQzI
+         s3Mn0Vm9L4jWmSq6aEQkvaXGO2r3guKwQKeze78pCyck0mz2x/XvOdpm2qhk8a6DRuWu
+         JqNg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eli Cooper <elicooper@gmx.com>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Conor McLoughlin <conor.mcloughlin@intel.com>,
+	Stephan Mueller <smueller@chronox.de>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 49/67] crypto: ahash - Fix early termination in hash walk
-Date: Fri,  6 Apr 2018 15:24:19 +0200
-Message-Id: <20180406084347.586903877@linuxfoundation.org>
+Subject: [PATCH 4.14 48/67] crypto: testmgr - Fix incorrect values in PKCS#1 test vector
+Date: Fri,  6 Apr 2018 15:24:18 +0200
+Message-Id: <20180406084347.519579611@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003644583899503?=
-X-GMAIL-MSGID: =?utf-8?q?1597004276230059341?=
+X-GMAIL-THRID: =?utf-8?q?1597004273438642213?=
+X-GMAIL-MSGID: =?utf-8?q?1597004273438642213?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +51,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Conor McLoughlin <conor.mcloughlin@intel.com>
 
-commit 900a081f6912a8985dc15380ec912752cb66025a upstream.
+commit 333e18c5cc74438f8940c7f3a8b3573748a371f9 upstream.
 
-When we have an unaligned SG list entry where there is no leftover
-aligned data, the hash walk code will incorrectly return zero as if
-the entire SG list has been processed.
+The RSA private key for the first form should have
+version, prime1, prime2, exponent1, exponent2, coefficient
+values 0.
+With non-zero values for prime1,2, exponent 1,2 and coefficient
+the Intel QAT driver will assume that values are provided for the
+private key second form. This will result in signature verification
+failures for modules where QAT device is present and the modules
+are signed with rsa,sha256.
 
-This patch fixes it by moving onto the next page instead.
-
-Reported-by: Eli Cooper <elicooper@gmx.com>
 Cc: <stable@vger.kernel.org>
+Signed-off-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+Signed-off-by: Conor McLoughlin <conor.mcloughlin@intel.com>
+Reviewed-by: Stephan Mueller <smueller@chronox.de>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/ahash.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ crypto/testmgr.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -92,13 +92,14 @@ int crypto_hash_walk_done(struct crypto_
- 
- 	if (nbytes && walk->offset & alignmask && !err) {
- 		walk->offset = ALIGN(walk->offset, alignmask + 1);
--		walk->data += walk->offset;
--
- 		nbytes = min(nbytes,
- 			     ((unsigned int)(PAGE_SIZE)) - walk->offset);
- 		walk->entrylen -= nbytes;
- 
--		return nbytes;
-+		if (nbytes) {
-+			walk->data += walk->offset;
-+			return nbytes;
-+		}
- 	}
- 
- 	if (walk->flags & CRYPTO_ALG_ASYNC)
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -548,7 +548,7 @@ static const struct akcipher_testvec rsa
+ static const struct akcipher_testvec pkcs1pad_rsa_tv_template[] = {
+ 	{
+ 	.key =
+-	"\x30\x82\x03\x1f\x02\x01\x10\x02\x82\x01\x01\x00\xd7\x1e\x77\x82"
++	"\x30\x82\x03\x1f\x02\x01\x00\x02\x82\x01\x01\x00\xd7\x1e\x77\x82"
+ 	"\x8c\x92\x31\xe7\x69\x02\xa2\xd5\x5c\x78\xde\xa2\x0c\x8f\xfe\x28"
+ 	"\x59\x31\xdf\x40\x9c\x60\x61\x06\xb9\x2f\x62\x40\x80\x76\xcb\x67"
+ 	"\x4a\xb5\x59\x56\x69\x17\x07\xfa\xf9\x4c\xbd\x6c\x37\x7a\x46\x7d"
+@@ -597,8 +597,8 @@ static const struct akcipher_testvec pkc
+ 	"\xfe\xf8\x27\x1b\xd6\x55\x60\x5e\x48\xb7\x6d\x9a\xa8\x37\xf9\x7a"
+ 	"\xde\x1b\xcd\x5d\x1a\x30\xd4\xe9\x9e\x5b\x3c\x15\xf8\x9c\x1f\xda"
+ 	"\xd1\x86\x48\x55\xce\x83\xee\x8e\x51\xc7\xde\x32\x12\x47\x7d\x46"
+-	"\xb8\x35\xdf\x41\x02\x01\x30\x02\x01\x30\x02\x01\x30\x02\x01\x30"
+-	"\x02\x01\x30",
++	"\xb8\x35\xdf\x41\x02\x01\x00\x02\x01\x00\x02\x01\x00\x02\x01\x00"
++	"\x02\x01\x00",
+ 	.key_len = 804,
+ 	/*
+ 	 * m is SHA256 hash of following message:
