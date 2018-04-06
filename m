@@ -1,78 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752239AbeDFPgg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:36:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48802 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751606AbeDFPgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:36:35 -0400
-Date: Fri, 6 Apr 2018 10:36:33 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: syzbot <syzbot+9d1d9866b0b8ee6e0a8c@syzkaller.appspotmail.com>
-Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        mingo@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        x86@kernel.org, syzkaller@googlegroups.com
-Subject: Re: KASAN: alloca-out-of-bounds Read in unwind_next_frame
-Message-ID: <20180406153633.lex32dujz747ycm5@treble>
-References: <94eb2c05611408a11a056922c4cb@google.com>
+        id S1751946AbeDFPkT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 11:40:19 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35356 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbeDFPkR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 11:40:17 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        a.hajda@samsung.com, airlied@linux.ie, vladimir_zapolskiy@mentor.com,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v7 1/2] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
+Date: Fri, 06 Apr 2018 18:40:14 +0300
+Message-ID: <2441543.5xTHaLXzZ0@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180406142558.GP20945@w540>
+References: <1523018517-24121-1-git-send-email-jacopo+renesas@jmondi.org> <1664336.M7KDjLhzuK@avalon> <20180406142558.GP20945@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <94eb2c05611408a11a056922c4cb@google.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w36FeQjD023226
 
-On Thu, Apr 05, 2018 at 05:02:02PM -0700, syzbot wrote:
-> Hello,
+Hi Jacopo,
+
+(CC'ing Mark Brown)
+
+On Friday, 6 April 2018 17:25:58 EEST jacopo mondi wrote:
+> On Fri, Apr 06, 2018 at 04:15:35PM +0300, Laurent Pinchart wrote:
+> > On Friday, 6 April 2018 15:41:56 EEST Jacopo Mondi wrote:
+> >> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+> >> 
+> >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> >> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> >> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >> ---
+> >> 
+> >>  .../bindings/display/bridge/thine,thc63lvd1024.txt | 60
+> >>  +++++++++++++++++++
+> >>  1 file changed, 60 insertions(+)
+> >>  create mode 100644
+> >> 
+> >> Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> >> 
+> >> diff --git
+> >> a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.tx
+> >> t
+> >> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.tx
+> >> t
+> >> new file mode 100644
+> >> index 0000000..1191f17
+> >> --- /dev/null
+> >> +++
+> >> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.tx
+> >> t
+> >> @@ -0,0 +1,60 @@
+> >> +Thine Electronics THC63LVD1024 LVDS decoder
+> >> +-------------------------------------------
+> >> +
+> >> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS
+> >> streams
+> >> +to parallel data outputs. The chip supports single/dual input/output
+> >> modes,
+> >> +handling up to two two input LVDS stream and up to two digital CMOS/TTL
+> > 
+> > s/to two two/to two/
+> > s/stream/streams/
+> > 
+> >> outputs.
+> >> +
+> >> +Single or dual operation modes, output data mapping and DDR output
+> >> modes are
+> >> +configured through input signals and the chip does not expose any
+> >> control bus.
+> >> +
+> >> +Required properties:
+> >> +- compatible: Shall be "thine,thc63lvd1024"
+> >> +
+> >> +Optional properties:
+> >> +- vcc-supply: Power supply for TTL output, TTL CLOCKOUT signal, LVDS
+> >> input,
+> >> +  PPL and digital circuitry
+> >> +- powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
+> >> +- enable-gpios: Output enable GPIO signal, pin name "OE". Active high
+> > 
+> > As Rob mentioned in a reply to v6, we currently use "enable" as the
+> > inverse of "powerdown". I would call this one oe-gpios instead. Quoting
+> > Rob:
+> > 
+> > "Debating "oe" vs. "output-enable" is bikeshedding IMO. Anyone familiar
+> > with h/w design should recognize OE."
 > 
-> syzbot hit the following crash on upstream commit
-> 06dd3dfeea60e2a6457a6aedf97afc8e6d2ba497 (Thu Apr 5 03:07:20 2018 +0000)
-> Merge tag 'char-misc-4.17-rc1' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=9d1d9866b0b8ee6e0a8c
+> I got a different understanding of what Rob meant. I thought "anyone
+> familiar with h/w design should recognize OE" as that nobody would get
+> confused if a pin named OE in the chip manual is descibed by an
+> 'enable' property.
 > 
-> syzkaller reproducer:
-> https://syzkaller.appspot.com/x/repro.syz?id=6478299081474048
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=5324218015154176
-> Kernel config: https://syzkaller.appspot.com/x/.config?id=216543573824217049
-> compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+> But as discussed offline, enable has probably to be used as the
+> opposite of powerdown for complete chip sleep, not just for output
+> pad.
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9d1d9866b0b8ee6e0a8c@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
+> Anyway, we spent enough time on naming issues, starting from my first
+> stupid 'pdwn' permutations then on this semi-standard names.
 > 
-> ==================================================================
-> BUG: KASAN: alloca-out-of-bounds in __read_once_size
-> include/linux/compiler.h:188 [inline]
-> BUG: KASAN: alloca-out-of-bounds in unwind_next_frame.part.7+0x7ce/0x9c0
-> arch/x86/kernel/unwind_frame.c:326
-> Read of size 8 at addr ffff8801b05e67f8 by task syz-executor2/11326
+> I'll send next version with 'powerdown-gpios' and 'oe-gpios'
+> properties hoping that would be finally accepted by everyone.
 
-This looks like a KASAN bug.
+I certainly won't complain (as long as you write pwdn instead of pdwn in the 
+driver :-)).
 
-The FP unwinder was unwinding from an interrupt which hit while running
-in kasan_unpoison_shadow():
+> Same on the mandatory/optional VCC supply thing. Let's try to make
+> next version the final one. If the optional property with the dummy
+> regulator doesn't satisfy you and it is preferred to have a fixed-regulator
+> anyhow in DT I'll do in next version, othewise let's try not to change
+> it again. I'll just remark here that in the current Eagle design vcc is
+> connected to a power rail with no regulator at all :)
 
-> RIP: 0010:kasan_unpoison_shadow+0x1/0x50 mm/kasan/kasan.c:68
-> RSP: 0018:ffff8801b05e67e8 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
-> RAX: ffff8801c1b24100 RBX: 0000000000000000 RCX: ffffffff859d4219
-> RDX: 0000000000000000 RSI: 00000000000000a8 RDI: ffff8801b05e6760
-> RBP: ffff8801b05e67f8 R08: ffff8801c1b24100 R09: ffffed003b6046c2
-> R10: ffffed003b6046c2 R11: ffff8801db023613 R12: 0000000000000015
-> R13: 0000000000000001 R14: 0000000000000016 R15: dffffc0000000000
+I don't like the dummy regulator much, as it generates a dev_warn(), which 
+makes me believe that it's a hack rather than a proper solution. You might 
+want to ask Mark Brown for his opinion.
 
-So at first glance it seemed like a race condition.  However, the
-unwinder was only trying to dereference the frame pointer (RBP:
-ffff8801b05e67f8), which should have never been poisoned in the first
-place.
-
-So it looks like a bug in the KASAN alloca poisoning.
+> >> +
+> >> +The THC63LVD1024 video port connections are modeled according
+> >> +to OF graph bindings specified by Documentation/devicetree/bindings/
+> >> graph.txt
+> >> +
+> >> +Required video port nodes:
+> >> +- port@0: First LVDS input port
+> >> +- port@2: First digital CMOS/TTL parallel output
+> >> +
+> >> +Optional video port nodes:
+> >> +- port@1: Second LVDS input port
+> >> +- port@3: Second digital CMOS/TTL parallel output
+> >> +
+> >> +Example:
+> >> +--------
+> >> +
+> >> +	thc63lvd1024: lvds-decoder {
+> >> +		compatible = "thine,thc63lvd1024";
+> >> +
+> >> +		vcc-supply = <&reg_lvds_vcc>;
+> >> +		powerdown-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
+> >> +
+> >> +		ports {
+> >> +			#address-cells = <1>;
+> >> +			#size-cells = <0>;
+> >> +
+> >> +			port@0 {
+> >> +				reg = <0>;
+> >> +
+> >> +				lvds_dec_in_0: endpoint {
+> >> +					remote-endpoint = <&lvds_out>;
+> >> +				};
+> >> +			};
+> >> +
+> >> +			port@2{
+> >> +				reg = <2>;
+> >> +
+> >> +				lvds_dec_out_2: endpoint {
+> >> +					remote-endpoint = <&adv7511_in>;
+> >> +				};
+> >> +			};
+> >> +		};
+> >> +	};
 
 -- 
-Josh
+Regards,
+
+Laurent Pinchart
