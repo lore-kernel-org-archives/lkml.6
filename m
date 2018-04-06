@@ -1,166 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752555AbeDFScb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 14:32:31 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:44293 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752454AbeDFSc3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:32:29 -0400
-X-Google-Smtp-Source: AIpwx49QZPJejNoyvgd/AABJfNv1Jf/98UTiH6ri7BbRKnLsa9qr+d0RYPmMxsx8m3/BvVOzYFqPcv1EwyHrHNnwibU=
+        id S1751613AbeDFSjZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 14:39:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42728 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750815AbeDFSjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:39:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69903217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180406173335.Horde.Qgml03BtHOxSl6SzIPgQLA9@messagerie.si.c-s.fr>
-References: <20180322202007.23088-4-malat@debian.org> <20180405202648.2836-1-malat@debian.org>
- <20180406173335.Horde.Qgml03BtHOxSl6SzIPgQLA9@messagerie.si.c-s.fr>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Fri, 6 Apr 2018 20:32:08 +0200
-X-Google-Sender-Auth: lOt1o4CN70_d710soptom7mBh5I
-Message-ID: <CA+7wUswhZHNabB6kAcX8Cu8zMai15RzGn9euwdKau8kY48i-CA@mail.gmail.com>
-Subject: Re: [PATCH v4 03/19] powerpc: Mark variable `l` as unused, remove `path`
-To: LEROY Christophe <christophe.leroy@c-s.fr>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+To: Carlo Caione <carlo@caione.org>, Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Yixun Lan <yixun.lan@amlogic.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180328025050.221585-2-yixun.lan@amlogic.com>
+Cc: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180328025050.221585-1-yixun.lan@amlogic.com>
+ <20180328025050.221585-2-yixun.lan@amlogic.com>
+Message-ID: <152303996277.94378.9360089743935547432@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 1/6] clk: meson: aoclk: refactor common code into dedicated
+ file
+Date: Fri, 06 Apr 2018 11:39:22 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w36IWbT8021633
 
-On Fri, Apr 6, 2018 at 5:33 PM, LEROY Christophe
-<christophe.leroy@c-s.fr> wrote:
-> Mathieu Malaterre <malat@debian.org> a écrit :
->
->> Add gcc attribute unused for `l` variable, replace `path` variable
->> directly
->> with prom_scratch. Fix warnings treated as errors with W=1:
->>
->>   arch/powerpc/kernel/prom_init.c:607:6: error: variable ‘l’ set but not
->> used [-Werror=unused-but-set-variable]
->>   arch/powerpc/kernel/prom_init.c:1388:8: error: variable ‘path’ set but
->> not used [-Werror=unused-but-set-variable]
->>
->> Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
->> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->> ---
->> v4: redo v3 since path variable can be avoided
->> v3: really move path within ifdef DEBUG_PROM
->> v2: move path within ifdef DEBUG_PROM
->>
->>  arch/powerpc/kernel/prom_init.c | 11 +++++------
->>  1 file changed, 5 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/powerpc/kernel/prom_init.c
->> b/arch/powerpc/kernel/prom_init.c
->> index f8a9a50ff9b5..4b223a9470be 100644
->> --- a/arch/powerpc/kernel/prom_init.c
->> +++ b/arch/powerpc/kernel/prom_init.c
->> @@ -604,7 +604,7 @@ static void __init early_cmdline_parse(void)
->>         const char *opt;
->>
->>         char *p;
->> -       int l = 0;
->> +       int l __maybe_unused = 0;
->
->
-> Instead of hiding the problem with __maybe_unused, I think we could replace
-> the
-> #ifdef CONFIG_CMDLINE
-> by a
-> if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
->
-> This is recommanded by Linux codying style
+Quoting Yixun Lan (2018-03-27 19:50:45)
+> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+> index 9ec23ae9a219..5a922639a264 100644
+> --- a/drivers/clk/meson/gxbb-aoclk.c
+> +++ b/drivers/clk/meson/gxbb-aoclk.c
+> @@ -165,38 +135,39 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
+>                 return -ENODEV;
+>         }
+>  
+> -       /* Reset Controller */
+> -       rstc->regmap = regmap;
+> -       rstc->data = gxbb_aoclk_reset;
+> -       rstc->reset.ops = &gxbb_aoclk_reset_ops;
+> -       rstc->reset.nr_resets = ARRAY_SIZE(gxbb_aoclk_reset);
+> -       rstc->reset.of_node = dev->of_node;
+> -       ret = devm_reset_controller_register(dev, &rstc->reset);
+> -
+> -       /*
+> -        * Populate regmap and register all clks
+> -        */
+> -       for (clkid = 0; clkid < ARRAY_SIZE(gxbb_aoclk_gate); clkid++) {
+> -               gxbb_aoclk_gate[clkid]->map = regmap;
+> -
+> -               ret = devm_clk_hw_register(dev,
+> -                                          gxbb_aoclk_onecell_data.hws[clkid]);
+> -               if (ret)
+> -                       return ret;
+> -       }
+> -
+>         /* Specific clocks */
+>         cec_32k_ao.regmap = regmap;
+>         ret = devm_clk_hw_register(dev, &cec_32k_ao.hw);
+> -       if (ret)
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "clk cec_32k_ao register failed.\n");
+>                 return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static struct meson_aoclk_data gxbb_aoclkc_data = {
 
-Neat. I was not aware of this trick. Does not work in this case though:
+Can this be const?
 
-diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-index 7925f64fefde..19634739b279 100644
---- a/arch/powerpc/kernel/prom_init.c
-+++ b/arch/powerpc/kernel/prom_init.c
-@@ -604,17 +604,16 @@ static void __init early_cmdline_parse(void)
-        const char *opt;
+> +       .reset_reg      = AO_RTI_GEN_CNTL_REG0,
+> +       .num_reset      = ARRAY_SIZE(gxbb_aoclk_reset),
+> +       .reset          = gxbb_aoclk_reset,
+> +       .num_clks       = ARRAY_SIZE(gxbb_aoclk_gate),
+> +       .clks           = gxbb_aoclk_gate,
+> +       .hw_data        = &gxbb_aoclk_onecell_data,
+> +};
+> +
+> diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+> new file mode 100644
+> index 000000000000..36067c801f7b
+> --- /dev/null
+> +++ b/drivers/clk/meson/meson-aoclk.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Amlogic Meson-AXG Clock Controller Driver
+> + *
+> + * Copyright (c) 2016 BayLibre, SAS.
+> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+> + *
+> + * Copyright (c) 2018 Amlogic, inc.
+> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
+> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> + */
+> +
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/init.h>
+> +#include <linux/of_device.h>
+> +#include "clk-regmap.h"
+> +#include "meson-aoclk.h"
+> +
+> +static int meson_aoclk_do_reset(struct reset_controller_dev *rcdev,
+> +                              unsigned long id)
+> +{
+> +       struct meson_aoclk_reset_controller *rstc =
+> +               container_of(rcdev, struct meson_aoclk_reset_controller, reset);
+> +
+> +       return regmap_write(rstc->regmap, rstc->data->reset_reg,
+> +                           BIT(rstc->data->reset[id]));
+> +}
+> +
+> +static const struct reset_control_ops meson_aoclk_reset_ops = {
+> +       .reset = meson_aoclk_do_reset,
+> +};
+> +
+> +int meson_aoclkc_probe(struct platform_device *pdev)
+> +{
+> +       struct meson_aoclk_reset_controller *rstc;
+> +       struct meson_aoclk_data *data;
+> +       struct device *dev = &pdev->dev;
+> +       struct regmap *regmap;
+> +       int ret, clkid;
+> +
+> +       data = (struct meson_aoclk_data *)
+> +               of_device_get_match_data(dev);
+> +       if (!data)
+> +               return -ENODEV;
+> +
+> +       rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
+> +       if (!rstc)
+> +               return -ENOMEM;
+> +
+> +       regmap = syscon_node_to_regmap(of_get_parent(dev->of_node));
+> +       if (IS_ERR(regmap)) {
+> +               dev_err(dev, "failed to get regmap\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       /* Reset Controller */
+> +       rstc->data = data;
+> +       rstc->regmap = regmap;
+> +       rstc->reset.ops = &meson_aoclk_reset_ops;
+> +       rstc->reset.nr_resets = data->num_reset,
+> +       rstc->reset.of_node = dev->of_node;
+> +       ret = devm_reset_controller_register(dev, &rstc->reset);
 
-        char *p;
--       int l __maybe_unused = 0;
-+       int l = 0;
+Please check the return value here.
 
-        prom_cmd_line[0] = 0;
-        p = prom_cmd_line;
-        if ((long)prom.chosen > 0)
-                l = prom_getprop(prom.chosen, "bootargs", p,
-COMMAND_LINE_SIZE-1);
--#ifdef CONFIG_CMDLINE
--       if (l <= 0 || p[0] == '\0') /* dbl check */
--               strlcpy(prom_cmd_line,
--                       CONFIG_CMDLINE, sizeof(prom_cmd_line));
--#endif /* CONFIG_CMDLINE */
-+       if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
-+               if (l <= 0 || p[0] == '\0') /* dbl check */
-+                       strlcpy(prom_cmd_line,
-+                               CONFIG_CMDLINE, sizeof(prom_cmd_line));
-        prom_printf("command line: %s\n", prom_cmd_line);
+> +
+> +       /*
+> +        * Populate regmap and register all clks
+> +        */
+> +       for (clkid = 0; clkid < data->num_clks; clkid++) {
+> +               data->clks[clkid]->map = regmap;
+> +
+> +               ret = devm_clk_hw_register(dev, data->hw_data->hws[clkid]);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+> +               data->hw_data);
 
- #ifdef CONFIG_PPC64
+Use devm_ variant?
 
-
-leads to:
-
-  CC      arch/powerpc/kernel/prom_init.o
-../arch/powerpc/kernel/prom_init.c: In function ‘early_cmdline_parse’:
-../arch/powerpc/kernel/prom_init.c:616:5: error: ‘CONFIG_CMDLINE’
-undeclared (first use in this function)
-     CONFIG_CMDLINE, sizeof(prom_cmd_line));
-     ^~~~~~~~~~~~~~
-../arch/powerpc/kernel/prom_init.c:616:5: note: each undeclared
-identifier is reported only once for each function it appears in
-../scripts/Makefile.build:312: recipe for target
-'arch/powerpc/kernel/prom_init.o' failed
-make[6]: *** [arch/powerpc/kernel/prom_init.o] Error 1
-
-
-> Christophe
->
->
->>
->>         prom_cmd_line[0] = 0;
->>         p = prom_cmd_line;
->> @@ -1386,7 +1386,7 @@ static void __init reserve_mem(u64 base, u64 size)
->>  static void __init prom_init_mem(void)
->>  {
->>         phandle node;
->> -       char *path, type[64];
->> +       char type[64];
->>         unsigned int plen;
->>         cell_t *p, *endp;
->>         __be32 val;
->> @@ -1407,7 +1407,6 @@ static void __init prom_init_mem(void)
->>         prom_debug("root_size_cells: %x\n", rsc);
->>
->>         prom_debug("scanning memory:\n");
->> -       path = prom_scratch;
->>
->>         for (node = 0; prom_next_node(&node); ) {
->>                 type[0] = 0;
->> @@ -1432,9 +1431,9 @@ static void __init prom_init_mem(void)
->>                 endp = p + (plen / sizeof(cell_t));
->>
->>  #ifdef DEBUG_PROM
->> -               memset(path, 0, PROM_SCRATCH_SIZE);
->> -               call_prom("package-to-path", 3, 1, node, path,
->> PROM_SCRATCH_SIZE-1);
->> -               prom_debug("  node %s :\n", path);
->> +               memset(prom_scratch, 0, PROM_SCRATCH_SIZE);
->> +               call_prom("package-to-path", 3, 1, node, prom_scratch,
->> PROM_SCRATCH_SIZE - 1);
->> +               prom_debug("  node %s :\n", prom_scratch);
->>  #endif /* DEBUG_PROM */
->>
->>                 while ((endp - p) >= (rac + rsc)) {
->> --
->> 2.11.0
->
->
->
+I suppose because code is moving in this patch that it would be better
+to make improvements in another patch so that this patch is a pure code
+movement change instead of a movement + improvement change.
