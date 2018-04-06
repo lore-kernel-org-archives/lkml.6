@@ -1,59 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752737AbeDFWoU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 18:44:20 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:34470 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752171AbeDFWoT (ORCPT
+        id S1753029AbeDFXHF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 19:07:05 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35182 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752989AbeDFXHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 18:44:19 -0400
-X-Google-Smtp-Source: AIpwx4/y7itQbNkXZbawZgKnF1qvYsv6zMsIIr6eNq7R8YYMjTSKwAB+Yw1rvWNLTHYR+fHhsW2HV32fsrPVCMCoSNk=
+        Fri, 6 Apr 2018 19:07:04 -0400
+X-Google-Smtp-Source: AIpwx4+Q7wI1jAXPBM6vXDvloq6Tpu+BYLK5aMbFabzcxdTGIgPeUVpoY6TgbXI98BAqExoMBVjljw6HQu3re9DoRfs=
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0dnD48qGWL098_fvqC=BOCm5x6DfC9aQ8qv0JZ-EehYA@mail.gmail.com>
-References: <20180406072517.27709-1-tobias.regnery@gmail.com> <CAK8P3a0dnD48qGWL098_fvqC=BOCm5x6DfC9aQ8qv0JZ-EehYA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 6 Apr 2018 15:44:17 -0700
-X-Google-Sender-Auth: sGSrJdOk3zPZREDNJKlloKIfxMw
-Message-ID: <CAGXu5jK40MDiPT6Ks-ZnvSdd8s++36KVR9D_E7XNYxi_-dc+NQ@mail.gmail.com>
-Subject: Re: [PATCH v2] pstore: fix crypto dependencies without compression
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Tobias Regnery <tobias.regnery@gmail.com>,
+In-Reply-To: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
+References: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 6 Apr 2018 16:07:02 -0700
+X-Google-Sender-Auth: k5nY5oTl2yKS5td1_RnLVZ74QGs
+Message-ID: <CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux patches for v4.17
+To: Paul Moore <paul@paul-moore.com>, Xin Long <lucien.xin@gmail.com>
+Cc: selinux@tycho.nsa.gov,
+        LSM List <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 6, 2018 at 12:56 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, Apr 6, 2018 at 9:25 AM, Tobias Regnery <tobias.regnery@gmail.com> wrote:
->> Commit 58eb5b670747 ("pstore: fix crypto dependencies") fixed up the crypto
->> dependencies but missed the case when no compression is selected.
->>
->> With CONFIG_PSTORE=y, CONFIG_PSTORE_COMPRESS=n  and CONFIG_CRYPTO=m we see
->> the following link error:
->>
->> fs/pstore/platform.o: In function `pstore_register':
->> (.text+0x1b1): undefined reference to `crypto_has_alg'
->> (.text+0x205): undefined reference to `crypto_alloc_base'
->> fs/pstore/platform.o: In function `pstore_unregister':
->> (.text+0x3b0): undefined reference to `crypto_destroy_tfm'
->>
->> Fix this by checking at compile-time if CONFIG_PSTORE_COMPRESS is enabled.
->>
->> Fixes: 58eb5b670747 ("pstore: fix crypto dependencies")
->> Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
->> ---
->> v2: check the config at compile-time rather than change the
->>     kconfig-dependency as suggested by Arnd.
+On Tue, Apr 3, 2018 at 6:37 PM, Paul Moore <paul@paul-moore.com> wrote:
 >
-> Thanks!
->
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Everything passes the selinux-testsuite, but there are a few known
+> merge conflicts.  The first is with the netdev tree and is in
+> net/sctp/socket.c.  Unfortunately it is a bit ugly, thankfully Stephen
+> Rothwell has already done the heavy lifting in resolving the merge for
+> you, and the SCTP folks have given his merge patch a thumbs-up.
 
-Thanks! I'll apply this.
+I ended up re-doing the merge, and it looks like some more sctp
+changes happened after Stephen's merge anyway, so mine didn't end up
+quite like his.
 
--Kees
+Adding Xin Long to see if he can verify it again, but it all *looks* sane.
 
--- 
-Kees Cook
-Pixel Security
+While looking at it, it struck me that the new security hooks don't
+seem to hook into __sctp_connect(), which also does that
+
+                        scope = sctp_scope(&to);
+                        asoc = sctp_association_new(ep, sk, scope, GFP_KERNEL);
+
+thing. Is that intentional? The sendmsg case does that
+security_sctp_bind_connect, the actual __sctp_connect() does not.
+
+This is not because I screwed up the merge - it's that way in the
+SELinux tree too. And I obviously _left_ it that way, but while doing
+the merge and trying to understand what was going on, this struck me.
+
+I'm probably missing something really obvious why the connect case
+doesn't want to do it thgere.
+
+NOTE! I do see it being done in __sctp_setsockopt_connectx(). But
+__sctp_connect() has another caller (in sctp_connect()) which doesn't
+have that security_sctp_bind_connect() call.
+
+So please check my resolution, but also somebody should tell me
+"Linus, you're a cretin, sctp_connect() doesn't want that
+security_sctp_bind_connect() at all because it was already done by
+XYZ"
+
+                 Linus
