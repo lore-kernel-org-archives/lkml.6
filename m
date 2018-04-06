@@ -1,63 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932374AbeDFOTU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:19:20 -0400
-Received: from smtprelay0086.hostedemail.com ([216.40.44.86]:57899 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932225AbeDFOTT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1756507AbeDFOTg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:19:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55844 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932261AbeDFOTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 6 Apr 2018 10:19:19 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2553:2559:2562:2693:2828:2901:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3871:3872:3874:4321:5007:8603:10004:10400:10848:11232:11658:11914:12296:12663:12740:12760:12895:13069:13146:13230:13311:13357:13439:14096:14097:14659:14721:21080:21627:30012:30036:30054:30070:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: sea86_33dd93a3cc15f
-X-Filterd-Recvd-Size: 2112
-Message-ID: <1523024355.6127.3.camel@perches.com>
-Subject: Re: [PATCH v4 6/9] vsprintf: Factor out %pV handler as va_format()
-From: Joe Perches <joe@perches.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org
-Date: Fri, 06 Apr 2018 07:19:15 -0700
-In-Reply-To: <20180406131242.mnxutlobi7r6qi6u@pathway.suse.cz>
-References: <20180404085843.16050-1-pmladek@suse.com>
-         <20180404085843.16050-7-pmladek@suse.com>
-         <1522851967.11185.1.camel@perches.com>
-         <20180406131242.mnxutlobi7r6qi6u@pathway.suse.cz>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79EA620B80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Fri, 6 Apr 2018 16:19:16 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH v9 05/10] cpuidle: Return nohz hint from cpuidle_select()
+Message-ID: <20180406141915.GC4400@lerouge>
+References: <1736751.LdhZHb50jq@aspire.rjw.lan>
+ <5818594.T4StF86Hkt@aspire.rjw.lan>
+ <20180406024413.GB4400@lerouge>
+ <1694033.ykrRIB27yN@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1694033.ykrRIB27yN@aspire.rjw.lan>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-04-06 at 15:12 +0200, Petr Mladek wrote:
-> On Wed 2018-04-04 07:26:07, Joe Perches wrote:
-> > On Wed, 2018-04-04 at 10:58 +0200, Petr Mladek wrote:
-> > > Move the code from the long pointer() function. We are going to add a check
-> > > for the access to the address that will make it even more complicated.
-> > > 
-> > > This patch does not change the existing behavior.
+On Fri, Apr 06, 2018 at 09:24:42AM +0200, Rafael J. Wysocki wrote:
+> On Friday, April 6, 2018 4:44:14 AM CEST Frederic Weisbecker wrote:
+> > On Wed, Apr 04, 2018 at 10:39:50AM +0200, Rafael J. Wysocki wrote:
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > Index: linux-pm/kernel/time/tick-sched.c
+> > > ===================================================================
+> > > --- linux-pm.orig/kernel/time/tick-sched.c
+> > > +++ linux-pm/kernel/time/tick-sched.c
+> > > @@ -991,6 +991,20 @@ void tick_nohz_irq_exit(void)
+> > >  }
+> > >  
+> > >  /**
+> > > + * tick_nohz_idle_got_tick - Check whether or not the tick handler has run
+> > > + */
+> > > +bool tick_nohz_idle_got_tick(void)
+> > > +{
+> > > +	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+> > > +
+> > > +	if (ts->inidle > 1) {
+> > > +		ts->inidle = 1;
+> > > +		return true;
+> > > +	}
+> > > +	return false;
+> > > +}
+> > > +
+> > > +/**
+> > >   * tick_nohz_get_sleep_length - return the length of the current sleep
+> > >   *
+> > >   * Called from power state control code with interrupts disabled
+> > > @@ -1101,6 +1115,9 @@ static void tick_nohz_handler(struct clo
+> > >  	struct pt_regs *regs = get_irq_regs();
+> > >  	ktime_t now = ktime_get();
+> > >  
+> > > +	if (ts->inidle)
+> > > +		ts->inidle = 2;
+> > > +
 > > 
-> > But it might increase stack consumption.
-> > 
-> > As the %pV is recursive, this is may not be a good thing.
+> > You can move that to tick_sched_do_timer() to avoid code duplication.
 > 
-> It seems to be safe to pass just a pointer to struct printf_spec.
-> In fact, it would make sense to use this also in string() and
-> __string() calls. Copying 64 bytes many times look useless.
+> Right.
+> 
+> > Also these constants are very opaque. And even with proper symbols it wouldn't look
+> > right to extend ts->inidle that way.
+> 
+> Well, this was a Peter's idea. :-)
+> 
+> > Perhaps you should add a field such as ts->got_idle_tick under the boolean fields
+> > after the below patch:
+> 
+> OK, but at this point I'd prefer to make such changes on top of the existing
+> set, because that's got quite some testing coverage already and honestly this
+> is cosmetics in my view (albeit important).
 
-huh?
+Sure!
 
-struct printf_spec is 64 bits, the same size as a
-pointer on 64 bit systems.
-
-I'm dubious about this entire patch series.
+Thanks.
