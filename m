@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49CxtBQBIVC7SP4siFMU9Sy63iHleqiiElpV7L7vGtXRkbkn3R/2JAvEIF8x7Yu/dux2Vha
-ARC-Seal: i=1; a=rsa-sha256; t=1523021632; cv=none;
+X-Google-Smtp-Source: AIpwx492vgvf0d6PlfJB14e3xPaDbrO3yQGt8nsC7cMmFCbfTUFoXGNMf34tp2MXxN3YxZnoGNc7
+ARC-Seal: i=1; a=rsa-sha256; t=1523021630; cv=none;
         d=google.com; s=arc-20160816;
-        b=iANEQLOfZrTzI2zLx2G40Zt3PJNZtJnxNstBhjJDMX13rGtJDtURxfVOfw6vdB83fl
-         voJNxY1OCrfHNNusJzBP8CW5qz1dkWCHlGyOhiagJ2JKrP4TMRCmGmXfsmnW0e4P2l+9
-         CaPPXh0VwDK8MvV+PgHTo47hvANMvIu+c2d8529niFWDibzTXm+KXtkDW5jO8XYJweCy
-         mvuvkdU4z4EJNzx3wGXwXDSwh89tfTDbxkub101poEtzufrEdemQhv9sOrySNr2k27qD
-         t7Nat3X59FCPjiFDFLvG524PUSs4Nt8L5rAxKtY9EvVcivIjuV8zOu0WUfXYNQDiDClA
-         Wblw==
+        b=bJyC/XKaGhJWiw6n3qab/ax5jQWEXRcmNiAFKdeWuwW0TRvVj0Xe3g+eW6hK/F8Jb/
+         tkxTv8WEO3fCAQIbGyzabiPqde7tMrVAIgVQM4w0riCs6JguJ0srdO7/HUC0QdV4xXOO
+         XLJjQTcRh8KNWKO+1oEv9MJWQgTAsaohtudaOSOtwxwMqsKIVeXJQxCqXj7Nj3tYxun2
+         /6nUqLlE9n9rqV47ZVAOQ1gfm3naX9nqMxtb6pclbOhwWdEzvCMUzs1X/GF4sF1tXCQ+
+         gnB5F4pOdAmiMTc6KowrK/bbOighEHBK6btOF4TXw7dQFrBGDaX16YMlOYUJA4pxdAwP
+         CPxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sY86L39RHWMGZ1NZtsx0vKANoUAZrfBvE4U8Jq+QZSg=;
-        b=HNnxc6iG4EhXHKJRd9w4sA6vpvM3F75GPsZaD/JGFI9BffU3BUOzE/5C5uBEPKVJ26
-         eh9Q8veFXCHlauYOkLkJSFo5y6ujEsyBiUzspY/4cIwmM0d5IDRSItViPJ4D2yWOkHQ6
-         ZFqkEAURvRs7qxuX/hTqb9TvChElT8uQt3/Zc5PYPSp5P0HajzyX23QOL6K6cER60Cy9
-         1/gzg/fHVq4pFHzFlw2rxw+pSIAn8abte6awVs1fMNWID2Q3zR7Qm75qiOo3vQsyK+5H
-         eIv4PnO3x1g/9OMsO1K4aeCCYfudgagvrvb1h8ygDpUZB+Fy4eIiozSi6qSxFd/OyJwN
-         grJA==
+        bh=4r3stDIja+htVwlVY9mCT32KeJnGEU7klHyVyJMFOM4=;
+        b=l16nQ+JNs+pcs14zCYRamgBzq7/sYL0s6d/Y+/04i2QCpdPrX4fZOu3DKgneBQ4FfS
+         IUWruO1UbH1JMAUD+rpzaY3UNipIRc9HqmSl/mL3+veyqAM/2XB6gy9jRINytLwbdaMl
+         Is4TwAtyn1/CHVFLVbbH2cORcSF1vt13MlSmi0/ogxglztUp5/R7TnyWVa215I7GbwNT
+         778VpiTx4Ilx6U2idjksA7ju+qUgigk02lYaZkUcDnByLwkRAAGTurJ3UwJDTJXV/1Y7
+         4tN7YFEdVLS6uo7A7UaiGY6K5efzxPSw05J5PC5LUBTD+kgsoa1F5oPWIqTyNE6GGRsk
+         EiWw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	stable@kernel.org,
-	"Yan, Zheng" <zyan@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.9 007/102] ceph: only dirty ITER_IOVEC pages for direct read
-Date: Fri,  6 Apr 2018 15:22:48 +0200
-Message-Id: <20180406084332.549269814@linuxfoundation.org>
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Frederic Weisbecker <fweisbec@gmail.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Stephane Eranian <eranian@google.com>,
+	Vince Weaver <vincent.weaver@maine.edu>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 006/102] perf/hwbp: Simplify the perf-hwbp code, fix documentation
+Date: Fri,  6 Apr 2018 15:22:47 +0200
+Message-Id: <20180406084332.434692680@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003931792516053?=
-X-GMAIL-MSGID: =?utf-8?q?1597003931792516053?=
+X-GMAIL-THRID: =?utf-8?q?1597003469119697595?=
+X-GMAIL-MSGID: =?utf-8?q?1597003928833757216?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,72 +58,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yan, Zheng <zyan@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 85784f9395987a422fa04263e7c0fb13da11eb5c upstream.
+commit f67b15037a7a50c57f72e69a6d59941ad90a0f0f upstream.
 
-If a page is already locked, attempting to dirty it leads to a deadlock
-in lock_page().  This is what currently happens to ITER_BVEC pages when
-a dio-enabled loop device is backed by ceph:
+Annoyingly, modify_user_hw_breakpoint() unnecessarily complicates the
+modification of a breakpoint - simplify it and remove the pointless
+local variables.
 
-  $ losetup --direct-io /dev/loop0 /mnt/cephfs/img
-  $ xfs_io -c 'pread 0 4k' /dev/loop0
+Also update the stale Docbook while at it.
 
-Follow other file systems and only dirty ITER_IOVEC pages.
-
-Cc: stable@kernel.org
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/file.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ kernel/events/hw_breakpoint.c |   30 +++++++-----------------------
+ 1 file changed, 7 insertions(+), 23 deletions(-)
 
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -598,7 +598,8 @@ static ssize_t ceph_sync_read(struct kio
- struct ceph_aio_request {
- 	struct kiocb *iocb;
- 	size_t total_len;
--	int write;
-+	bool write;
-+	bool should_dirty;
- 	int error;
- 	struct list_head osd_reqs;
- 	unsigned num_reqs;
-@@ -708,7 +709,7 @@ static void ceph_aio_complete_req(struct
- 		}
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -427,16 +427,9 @@ EXPORT_SYMBOL_GPL(register_user_hw_break
+  * modify_user_hw_breakpoint - modify a user-space hardware breakpoint
+  * @bp: the breakpoint structure to modify
+  * @attr: new breakpoint attributes
+- * @triggered: callback to trigger when we hit the breakpoint
+- * @tsk: pointer to 'task_struct' of the process to which the address belongs
+  */
+ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
+ {
+-	u64 old_addr = bp->attr.bp_addr;
+-	u64 old_len = bp->attr.bp_len;
+-	int old_type = bp->attr.bp_type;
+-	int err = 0;
+-
+ 	/*
+ 	 * modify_user_hw_breakpoint can be invoked with IRQs disabled and hence it
+ 	 * will not be possible to raise IPIs that invoke __perf_event_disable.
+@@ -451,27 +444,18 @@ int modify_user_hw_breakpoint(struct per
+ 	bp->attr.bp_addr = attr->bp_addr;
+ 	bp->attr.bp_type = attr->bp_type;
+ 	bp->attr.bp_len = attr->bp_len;
++	bp->attr.disabled = 1;
+ 
+-	if (attr->disabled)
+-		goto end;
+-
+-	err = validate_hw_breakpoint(bp);
+-	if (!err)
+-		perf_event_enable(bp);
++	if (!attr->disabled) {
++		int err = validate_hw_breakpoint(bp);
+ 
+-	if (err) {
+-		bp->attr.bp_addr = old_addr;
+-		bp->attr.bp_type = old_type;
+-		bp->attr.bp_len = old_len;
+-		if (!bp->attr.disabled)
+-			perf_event_enable(bp);
++		if (err)
++			return err;
+ 
+-		return err;
++		perf_event_enable(bp);
++		bp->attr.disabled = 0;
  	}
  
--	ceph_put_page_vector(osd_data->pages, num_pages, !aio_req->write);
-+	ceph_put_page_vector(osd_data->pages, num_pages, aio_req->should_dirty);
- 	ceph_osdc_put_request(req);
- 
- 	if (rc < 0)
-@@ -890,6 +891,7 @@ ceph_direct_read_write(struct kiocb *ioc
- 	size_t count = iov_iter_count(iter);
- 	loff_t pos = iocb->ki_pos;
- 	bool write = iov_iter_rw(iter) == WRITE;
-+	bool should_dirty = !write && iter_is_iovec(iter);
- 
- 	if (write && ceph_snap(file_inode(file)) != CEPH_NOSNAP)
- 		return -EROFS;
-@@ -954,6 +956,7 @@ ceph_direct_read_write(struct kiocb *ioc
- 			if (aio_req) {
- 				aio_req->iocb = iocb;
- 				aio_req->write = write;
-+				aio_req->should_dirty = should_dirty;
- 				INIT_LIST_HEAD(&aio_req->osd_reqs);
- 				if (write) {
- 					aio_req->mtime = mtime;
-@@ -1012,7 +1015,7 @@ ceph_direct_read_write(struct kiocb *ioc
- 				len = ret;
- 		}
- 
--		ceph_put_page_vector(pages, num_pages, !write);
-+		ceph_put_page_vector(pages, num_pages, should_dirty);
- 
- 		ceph_osdc_put_request(req);
- 		if (ret < 0)
+-end:
+-	bp->attr.disabled = attr->disabled;
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(modify_user_hw_breakpoint);
