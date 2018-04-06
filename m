@@ -1,57 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751516AbeDFAxq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 20:53:46 -0400
-Received: from smtprelay0114.hostedemail.com ([216.40.44.114]:58903 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751435AbeDFAxp (ORCPT
+        id S1751494AbeDFBAt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:00:49 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:39620 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbeDFBAr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 20:53:45 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:973:982:988:989:1260:1277:1311:1313:1314:1345:1373:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2197:2199:2393:2559:2562:2828:2895:3138:3139:3140:3141:3142:3351:3653:3867:3872:3874:5007:7901:7903:10004:10400:10848:11658:11914:12043:12050:12679:12760:13069:13311:13357:13439:14659:14721:21080:21221:21627:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
-X-HE-Tag: day61_393dc818325f
-X-Filterd-Recvd-Size: 1321
-Message-ID: <1522976022.11185.53.camel@perches.com>
-Subject: git source files with rw permissions
-From: Joe Perches <joe@perches.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date: Thu, 05 Apr 2018 17:53:42 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 5 Apr 2018 21:00:47 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w3610elG018017
+X-Nifty-SrcIP: [209.85.217.171]
+X-Google-Smtp-Source: AIpwx48LKZ6Yk4LUwVUIm0QmOcwcGDPIrL+YiX4qD9Lp8gbwS2EMrT/jrrhd77JTRdWYztTjSe0teib/cjnQgl7AuwI=
+MIME-Version: 1.0
+In-Reply-To: <20180405185950.GA3668@krava>
+References: <20180405151645.19130-1-jolsa@kernel.org> <20180405151645.19130-4-jolsa@kernel.org>
+ <CAK7LNAQHEWAk_J8uZ4_ETR=JzBU9szDCVNxmUvY447uMj1XLVA@mail.gmail.com> <20180405185950.GA3668@krava>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 6 Apr 2018 09:59:59 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATU9_zBH9DpayNOCGsFVL0K+Y8Np0z7wxFuwO3Cf1K_tg@mail.gmail.com>
+Message-ID: <CAK7LNATU9_zBH9DpayNOCGsFVL0K+Y8Np0z7wxFuwO3Cf1K_tg@mail.gmail.com>
+Subject: Re: [PATCH 3/9] kbuild: Do not pass arguments to link-vmlinux.sh
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>, Jiri Benc <jbenc@redhat.com>,
+        Stanislav Kozina <skozina@redhat.com>,
+        Jerome Marchand <jmarchan@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Michal Marek <michal.lkml@markovi.net>, Jiri Kosina <jkosina@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some .c source files have r.x permissions (0755) that
-should be updated.
+2018-04-06 3:59 GMT+09:00 Jiri Olsa <jolsa@redhat.com>:
+> On Fri, Apr 06, 2018 at 12:50:00AM +0900, Masahiro Yamada wrote:
+>> 2018-04-06 0:16 GMT+09:00 Jiri Olsa <jolsa@kernel.org>:
+>> > There's no need to pass LD* arguments to link-vmlinux.sh,
+>> > because they are passed as variables. The only argument
+>> > the link-vmlinux.sh supports is the 'clean' argument.
+>> >
+>> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+>> > ---
+>>
+>> Wrong.
+>>
+>> $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux)
+>> exist here so that any change in them
+>> invokes scripts/linkk-vmlinux.sh
+>
+> sry, I can't see that.. but it's just a side fix,
+> which is actually not needed for the rest
+>
+> I'll check on more and address this separately
 
-A trivial script on a clean git tree like:
 
-$ git ls-files -- "*.[chsS]" | \
-  xargs ls -la | \
-  grep -P "^[^l](?:.{2,2}x|.{5,5}x|.{8,8}x)" | \
-  awk '{print $9}'
+The link command is recorded in .vmlinux.cmd
+then, it is checked by if_changed in the next rebuild
+because link-vmlinux is invoked by $(call if_changed,...)
 
-today shows:
+     +$(call if_changed,link-vmlinux)
 
-drivers/gpu/drm/amd/amdgpu/vce_v4_0.c
-drivers/net/ethernet/cadence/macb_ptp.c
 
-It would be good to update those via some script like:
 
-$ git ls-files -- "*.[chsS]" | \
-  xargs ls -la | \
-  grep -P
-"^[^l](?:.{2,2}x|.{5,5}x|.{8,8}x)" | \
-  awk '{print $9}' | \
-  xargs
-chmod 644
-tmpfile=$(mktemp)
-echo "treewide: chmod executable source files
-to 0644" > $tmpfile
-git commit -s -a -F $tmpfile
-rm -f $tmpfile
+> thanks,
+> jirka
+>
+>>
+>>
+>>
+>>
+>> >  Makefile | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> > diff --git a/Makefile b/Makefile
+>> > index d3300e46f925..a65a3919c6ad 100644
+>> > --- a/Makefile
+>> > +++ b/Makefile
+>> > @@ -1027,7 +1027,7 @@ ARCH_POSTLINK := $(wildcard $(srctree)/arch/$(SRCARCH)/Makefile.postlink)
+>> >
+>> >  # Final link of vmlinux with optional arch pass after final link
+>> >  cmd_link-vmlinux =                                                 \
+>> > -       $(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux) ;    \
+>> > +       $(CONFIG_SHELL) $< ;                                       \
+>> >         $(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
+>> >
+>> >  vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE
+>>
+>>
+>>
+>>
+>>
+>>
+>> --
+>> Best Regards
+>> Masahiro Yamada
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
