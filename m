@@ -1,155 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752412AbeDFMe1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 08:34:27 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33342 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeDFMeZ (ORCPT
+        id S1752484AbeDFMgJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 08:36:09 -0400
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:33792 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752021AbeDFMgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 08:34:25 -0400
-X-Google-Smtp-Source: AIpwx49Ekx1bgBl096hLPPjHonpaeZslmO0l7hy5cgBoMfEpEP8bB3edFVdphP1DxoFmVzdNTXi+ig==
-Date: Fri, 6 Apr 2018 14:34:20 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 0/8] use struct pt_regs based syscall calling for x86-64
-Message-ID: <20180406123420.kf74tgiahaugl35x@gmail.com>
-References: <20180405095307.3730-1-linux@dominikbrodowski.net>
- <20180405151933.egmt7ressx2ikdnr@gmail.com>
- <20180405203121.GA27104@light.dominikbrodowski.net>
- <20180406082322.ud37sj3b5ldm7xxd@gmail.com>
- <20180406083436.GA17948@isilmar-4.linta.de>
- <20180406092046.2jqjdzvecmfm6sif@gmail.com>
- <20180406093424.GA908@isilmar-4.linta.de>
+        Fri, 6 Apr 2018 08:36:07 -0400
+X-Google-Smtp-Source: AIpwx49fZBayzppUB7HrPqJMlq0HdrqLKuyRkj52Tf76S4fMUsI6dh1c5v8D1hEsL8Z0L8Er0FPAGw==
+Subject: Re: [RfC PATCH] Add udmabuf misc device
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, qemu-devel@nongnu.org,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        Matt Roper <matthew.d.roper@intel.com>
+References: <20180313154826.20436-1-kraxel@redhat.com>
+ <20180313161035.GL4788@phenom.ffwll.local>
+ <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
+ <CAKMK7uGG6Z6XLc6GuKv7-3grCNg+EK2Lh6XWpavjsbZWF_L5Wg@mail.gmail.com>
+ <20180406001117.GD31612@mdroper-desk.amr.corp.intel.com>
+ <2411d2c1-33c0-2ba5-67ea-3bb9af5d5ec9@epam.com>
+ <20180406090747.gwiegu22z4noj23i@sirius.home.kraxel.org>
+ <9a085854-3758-1500-9971-806c611cb54f@gmail.com>
+ <20180406115730.jtwcbz5okrphlxli@sirius.home.kraxel.org>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <7ef89a29-6584-d23c-efd1-f30d9b767a24@gmail.com>
+Date: Fri, 6 Apr 2018 15:36:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406093424.GA908@isilmar-4.linta.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180406115730.jtwcbz5okrphlxli@sirius.home.kraxel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 04/06/2018 02:57 PM, Gerd Hoffmann wrote:
+>    Hi,
+>
+>>> I fail to see any common ground for xen-zcopy and udmabuf ...
+>> Does the above mean you can assume that xen-zcopy and udmabuf
+>> can co-exist as two different solutions?
+> Well, udmabuf route isn't fully clear yet, but yes.
+>
+> See also gvt (intel vgpu), where the hypervisor interface is abstracted
+> away into a separate kernel modules even though most of the actual vgpu
+> emulation code is common.
+Thank you for your input, I'm just trying to figure out
+which of the three z-copy solutions intersect and how much
+>> And what about hyper-dmabuf?
+> No idea, didn't look at it in detail.
+>
+> Looks pretty complex from a distant view.  Maybe because it tries to
+> build a communication framework using dma-bufs instead of a simple
+> dma-buf passing mechanism.
+Yes, I am looking at it now, trying to figure out the full story
+and its implementation. BTW, Intel guys were about to share some
+test application for hyper-dmabuf, maybe I have missed one.
+It could probably better explain the use-cases and the complexity
+they have in hyper-dmabuf.
+>
+> Like xen-zcopy it seems to depend on the idea that the hypervisor
+> manages all memory it is easy for guests to share pages with the help of
+> the hypervisor.
+So, for xen-zcopy we were not trying to make it generic,
+it just solves display (dumb) zero-copying use-cases for Xen.
+We implemented it as a DRM helper driver because we can't see any
+other use-cases as of now.
+For example, we also have Xen para-virtualized sound driver, but
+its buffer memory usage is not comparable to what display wants
+and it works somewhat differently (e.g. there is no "frame done"
+event, so one can't tell when the sound buffer can be "flipped").
+At the same time, we do not use virtio-gpu, so this could probably
+be one more candidate for shared dma-bufs some day.
+>    Which simply isn't the case on kvm.
+>
+> hyper-dmabuf and xen-zcopy could maybe share code, or hyper-dmabuf build
+> on top of xen-zcopy.
+Hm, I can imagine that: xen-zcopy could be a library code for hyper-dmabuf
+in terms of implementing all that page sharing fun in multiple directions,
+e.g. Host->Guest, Guest->Host, Guest<->Guest.
+But I'll let Matt and Dongwon to comment on that.
 
-* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+>
+> cheers,
+>    Gerd
+>
+Thank you,
+Oleksandr
 
-> > > __sys_mprotect as prefix won't work by the way, as the double-underscore __sys_ 
-> > > variant is already used in net/* for internal syscall helpers.
-> > 
-> > Ok - then triple underscore - but overall I think it's more confusing.
-> > 
-> > Btw., what was the problem with calling the x86 ptregs wrapper sys_mprotect?
-> > 
-> > The only reason I suggested the __sys_x86_ prefix was because you originally 
-> > suggested that there's symbol name overlap, but I don't think that's the case 
-> > within the same kernel build, as the regular non-ptregs prototype:
-> 
-> Indeed, there's no symbol name overlap within the same kernel build, but
-> technically different stubs named the same. If that's fine, just drop patch
-> 8/8 (including the UML fixup) and things should be fine, with the stub and
-> the entry in the syscall table both named sys_mprotect.
-
-Ok, I've dropped patch #8.
-
-> For IA32_EMULATION, we have __sys_ia32_mprotect as stub for the same
-> syscall, including this name as entry in syscall_32.tbl.
-> 
-> More problematic is the naming for the compat stubs for IA32_EMAULATION and
-> X32, where we have
-> 
-> 	__compat_sys_ia32_waitid
-> 	__compat_sys_x32_waitid
-> 
-> for example. We *could* rename one of those to compat_sys_waitid() and levae
-> the other as-is, but actually I prefer it now how it is.
-
-yeah, this is more symmetric I think.
-
-So right now we have these symbols:
-
- triton:~/tip> grep waitid System.map 
-
- ffffffff8105f1e0 t kernel_waitid               # common C function (64-bit kargs)
- ffffffff8105f2b0 t SYSC_waitid                 # 64-bit uaddr args C function       352 bytes
- ffffffff8105f410 T sys_waitid                  # 64-bit-ptregs -> C stub,            32 bytes
- ffffffff8105f430 T __sys_ia32_waitid           # 32-bit-ptregs -> C stub,            32 bytes
- ffffffff8105f450 t C_SYSC_waitid               # 32-bit uaddr args C function,      400 bytes
- ffffffff8105f5e0 T __compat_sys_ia32_waitid    # 32-bit-ptregs -> C stub,            32 bytes
- ffffffff8105f600 T __compat_sys_x32_waitid     # 64-bit-ptregs -> C stub,            32 bytes
-
-BTW., what is the role of generating __sys_ia32_waitid()? It seems unused when a 
-syscall has a compat variant otherwise - like here.
-
-Naming wise the odd thumb out is sys_waitid :-/
-
-I'd argue that we should at minimum name it __sys_waitid:
-
- ffffffff8105f1e0 t kernel_waitid               # common C function (64-bit kargs)
- ffffffff8105f2b0 t SYSC_waitid                 # 64-bit uaddr args C function
- ffffffff8105f410 T __sys_waitid                # 64-bit-ptregs -> C stub
- ffffffff8105f430 T __sys_ia32_waitid           # 32-bit-ptregs -> C stub
- ffffffff8105f450 t C_SYSC_waitid               # 32-bit uaddr args C function
- ffffffff8105f5e0 T __compat_sys_ia32_waitid    # 32-bit-ptregs -> C stub
- ffffffff8105f600 T __compat_sys_x32_waitid     # 64-bit-ptregs -> C stub
-
-because that makes it all organized based on the same principle:
-
-    {__compat|_}_sys{_ia32|_x32|}_waittid
-
-But arguably there are a whole lot more naming weirdnesses we could fix:
-
- - I find it somewhat confusing that that 'C' in C_SYSC stands not for a C callign 
-   convention, but for 'COMPAT' - i.e. COMPAT_SYSC would be better.
-
- - Another detail is that why is it called 'SYSC', if the other functions use the 
-   'sys' prefix? Wouldn't 'SYS' be more consistent?
-
- - If we introduced a prefix for the regular 64-bit system call format as well,
-   we could have: x64, x32 and ia32.
-
- - And finally, I think the argument format modifiers should be consistently
-   prefixes - right now they are a mixture of pre- and post-fixes.
-
-I.e. I'd generate the names like this:
-
-    __{x64,x32,ia32}[_compat]_sys_waittid()
-
-The fully consistent nomenclature would be someting like this:
-
- ffffffff8105f1e0 t            kernel_waitid    # common C function (64-bit kargs)
- ffffffff8105f2b0 t               SYS_waitid    # 64-bit uaddr args C function
- ffffffff8105f410 T         __x64_sys_waitid    # 64-bit-ptregs -> C stub
- ffffffff8105f430 T        __ia32_sys_waitid    # 32-bit-ptregs -> C stub
- ffffffff8105f450 t        COMPAT_SYS_waitid    # 32-bit uaddr args C function
- ffffffff8105f5e0 T __ia32_compat_sys_waitid    # 32-bit-ptregs -> C stub
- ffffffff8105f600 T  __x32_compat_sys_waitid    # 64-bit-ptregs -> C stub
-
-Looks a lot tidier and a lot more logical, doesn't it?
-
-Makes grepping easier as well, because (case-insensitive) patterns like 
-'sys_waittid' would identify all the variants.
-
-Personally I'd also do a s/ia32/i32 rename:
-
- ffffffff8105f1e0 t            kernel_waitid    # common C function (64-bit kargs)
- ffffffff8105f2b0 t               SYS_waitid    # 64-bit uaddr args C function
- ffffffff8105f410 T         __x64_sys_waitid    # 64-bit-ptregs -> C stub
- ffffffff8105f430 T         __i32_sys_waitid    # 32-bit-ptregs -> C stub
- ffffffff8105f450 t        COMPAT_SYS_waitid    # 32-bit uaddr args C function
- ffffffff8105f5e0 T  __i32_compat_sys_waitid    # 32-bit-ptregs -> C stub
- ffffffff8105f600 T  __x32_compat_sys_waitid    # 64-bit-ptregs -> C stub
-
-... but maybe that's too much ;-)
-
-Thanks,
-
-	Ingo
+P.S. Sorry for making your original mail thread to discuss things much
+broader than your RFC...
