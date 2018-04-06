@@ -1,68 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752822AbeDFNBQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:01:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59804 "EHLO mail.kernel.org"
+        id S1752877AbeDFNBW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:01:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752586AbeDFNBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:01:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A9F21720
+        id S1752791AbeDFNBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 09:01:16 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD4EF21840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180406130035.400292196@goodmis.org>
+Message-Id: <20180406130114.583922292@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 06 Apr 2018 09:00:35 -0400
+Date: Fri, 06 Apr 2018 09:00:51 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 00/18] tracing: Last minute updates before pushing to Linus
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Subject: [for-next][PATCH 16/18] tracing: Fixup logic inversion on setting trace_global_clock defaults
+References: <20180406130035.400292196@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0016-tracing-Fixup-logic-inversion-on-setting-trace_globa.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-for-next
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-Head SHA1: 8ec8405f081e1e0f800b20f683451c37e81e26c1
+In commit 932066a15335 ("tracing: Default to using trace_global_clock if
+sched_clock is unstable"), the logic for deciding to override the
+default clock if unstable was reversed from the earlier posting. I was
+trying to reduce the width of the message by using an early return
+rather than a if-block, but reverted back to using the if-block and
+accidentally left the predicate inverted.
 
+Link: http://lkml.kernel.org/r/20180404212450.26646-1-chris@chris-wilson.co.uk
 
-Chris Wilson (3):
-      tracing: Default to using trace_global_clock if sched_clock is unstable
-      tracing: Mention trace_clock=global when warning about unstable clocks
-      tracing: Fixup logic inversion on setting trace_global_clock defaults
+Fixes: 932066a15335 ("tracing: Default to using trace_global_clock if sched_clock is unstable")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Dan Carpenter (2):
-      tracing: Fix a potential NULL dereference
-      tracing: Uninitialized variable in create_tracing_map_fields()
-
-Salvatore Mesoraca (1):
-      ftrace: Drop a VLA in module_exists()
-
-Steven Rostedt (VMware) (8):
-      init: Fix initcall0 name as it is "pure" not "early"
-      vsprintf: Do not preprocess non-dereferenced pointers for bprintf (%px and %pK)
-      lockdep: Add print_irqtrace_events() to __warn
-      ring-buffer: Check if memory is available before allocation
-      ring-buffer: Add set/clear_current_oom_origin() during allocations
-      tracing: Hide global trace clock from lockdep
-      tracing: Add rcu dereference annotation for filter->prog
-      tracing: Add rcu dereference annotation for test func that touches filter->prog
-
-Tom Zanussi (4):
-      tracing: Fix display of hist trigger expressions containing timestamps
-      tracing: Don't add flag strings when displaying variable references
-      tracing: Add action comparisons when testing matching hist triggers
-      tracing: Make sure variable string fields are NULL-terminated
-
-----
- init/main.c                        |  2 +-
- kernel/panic.c                     |  2 +
- kernel/trace/ftrace.c              |  7 ++--
- kernel/trace/ring_buffer.c         | 54 +++++++++++++++++++++-----
- kernel/trace/trace.c               | 19 ++++++++++
- kernel/trace/trace_clock.c         |  4 +-
- kernel/trace/trace_events_filter.c | 10 ++++-
- kernel/trace/trace_events_hist.c   | 78 +++++++++++++++++++++++++++++---------
- lib/vsprintf.c                     |  4 ++
- 9 files changed, 143 insertions(+), 37 deletions(-)
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 0f47e653ffd8..e18e69183c9a 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -8602,7 +8602,7 @@ late_initcall_sync(clear_boot_tracer);
+ __init static int tracing_set_default_clock(void)
+ {
+ 	/* sched_clock_stable() is determined in late_initcall */
+-	if (trace_boot_clock || sched_clock_stable()) {
++	if (!trace_boot_clock && !sched_clock_stable()) {
+ 		printk(KERN_WARNING
+ 		       "Unstable clock detected, switching default tracing clock to \"global\"\n"
+ 		       "If you want to keep using the local clock, then add:\n"
+-- 
+2.15.1
