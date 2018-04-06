@@ -1,167 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751730AbeDFS5n (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 14:57:43 -0400
-Received: from mga14.intel.com ([192.55.52.115]:27569 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750807AbeDFS5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:57:42 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,416,1517904000";
-   d="scan'208";a="30696915"
-Date: Fri, 6 Apr 2018 11:57:46 -0700
-From: Dongwon Kim <dongwon.kim@intel.com>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: Gerd Hoffmann <kraxel@redhat.com>,
-        Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        Matt Roper <matthew.d.roper@intel.com>
-Subject: Re: [RfC PATCH] Add udmabuf misc device
-Message-ID: <20180406185746.GA4983@downor-Z87X-UD5H>
-References: <20180313154826.20436-1-kraxel@redhat.com>
- <20180313161035.GL4788@phenom.ffwll.local>
- <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
- <CAKMK7uGG6Z6XLc6GuKv7-3grCNg+EK2Lh6XWpavjsbZWF_L5Wg@mail.gmail.com>
- <20180406001117.GD31612@mdroper-desk.amr.corp.intel.com>
- <2411d2c1-33c0-2ba5-67ea-3bb9af5d5ec9@epam.com>
- <20180406090747.gwiegu22z4noj23i@sirius.home.kraxel.org>
- <9a085854-3758-1500-9971-806c611cb54f@gmail.com>
- <20180406115730.jtwcbz5okrphlxli@sirius.home.kraxel.org>
- <7ef89a29-6584-d23c-efd1-f30d9b767a24@gmail.com>
+        id S1751926AbeDFS63 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 14:58:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45624 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751276AbeDFS61 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:58:27 -0400
+To: David Howells <dhowells@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] uapi/linux/keyctl.h: don't use C++ reserved keyword as a
+ struct member name
+Message-ID: <1735b3a4-2792-0ce4-3bf4-94fee5b50ff6@infradead.org>
+Date: Fri, 6 Apr 2018 11:58:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7ef89a29-6584-d23c-efd1-f30d9b767a24@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 03:36:03PM +0300, Oleksandr Andrushchenko wrote:
-> On 04/06/2018 02:57 PM, Gerd Hoffmann wrote:
-> >   Hi,
-> >
-> >>>I fail to see any common ground for xen-zcopy and udmabuf ...
-> >>Does the above mean you can assume that xen-zcopy and udmabuf
-> >>can co-exist as two different solutions?
-> >Well, udmabuf route isn't fully clear yet, but yes.
-> >
-> >See also gvt (intel vgpu), where the hypervisor interface is abstracted
-> >away into a separate kernel modules even though most of the actual vgpu
-> >emulation code is common.
-> Thank you for your input, I'm just trying to figure out
-> which of the three z-copy solutions intersect and how much
-> >>And what about hyper-dmabuf?
+From: Randy Dunlap <rdunlap@infradead.org>
 
-xen z-copy solution is pretty similar fundamentally to hyper_dmabuf
-in terms of these core sharing feature:
+Since this header is in "include/uapi/linux/", apparently people
+want to use it in userspace programs -- even in C++ ones.
+However, the header uses a C++ reserved keyword ("private"),
+so change that to "dh_private" instead to allow the header file
+to be used in C++ userspace.
 
-1. the sharing process - import prime/dmabuf from the producer -> extract
-underlying pages and get those shared -> return references for shared pages
+Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=191051
 
-2. the page sharing mechanism - it uses Xen-grant-table.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: keyrings@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+---
+ include/uapi/linux/keyctl.h |    2 +-
+ security/keys/dh.c          |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-And to give you a quick summary of differences as far as I understand
-between two implementations (please correct me if I am wrong, Oleksandr.)
-
-1. xen-zcopy is DRM specific - can import only DRM prime buffer
-while hyper_dmabuf can export any dmabuf regardless of originator
-
-2. xen-zcopy doesn't seem to have dma-buf synchronization between two VMs
-while (as danvet called it as remote dmabuf api sharing) hyper_dmabuf sends
-out synchronization message to the exporting VM for synchronization.
-
-3. 1-level references - when using grant-table for sharing pages, there will
-be same # of refs (each 8 byte) as # of shared pages, which is passed to
-the userspace to be shared with importing VM in case of xen-zcopy. Compared
-to this, hyper_dmabuf does multiple level addressing to generate only one
-reference id that represents all shared pages.
-
-4. inter VM messaging (hype_dmabuf only) - hyper_dmabuf has inter-vm msg
-communication defined for dmabuf synchronization and private data (meta
-info that Matt Roper mentioned) exchange.
-
-5. driver-to-driver notification (hyper_dmabuf only) - importing VM gets
-notified when newdmabuf is exported from other VM - uevent can be optionally
-generated when this happens.
-
-6. structure - hyper_dmabuf is targetting to provide a generic solution for
-inter-domain dmabuf sharing for most hypervisors, which is why it has two
-layers as mattrope mentioned, front-end that contains standard API and backend
-that is specific to hypervisor.
-
-> >No idea, didn't look at it in detail.
-> >
-> >Looks pretty complex from a distant view.  Maybe because it tries to
-> >build a communication framework using dma-bufs instead of a simple
-> >dma-buf passing mechanism.
-
-we started with simple dma-buf sharing but realized there are many
-things we need to consider in real use-case, so we added communication
-, notification and dma-buf synchronization then re-structured it to 
-front-end and back-end (this made things more compicated..) since Xen
-was not our only target. Also, we thought passing the reference for the
-buffer (hyper_dmabuf_id) is not secure so added uvent mechanism later.
-
-> Yes, I am looking at it now, trying to figure out the full story
-> and its implementation. BTW, Intel guys were about to share some
-> test application for hyper-dmabuf, maybe I have missed one.
-> It could probably better explain the use-cases and the complexity
-> they have in hyper-dmabuf.
-
-One example is actually in github. If you want take a look at it, please
-visit:
-
-https://github.com/downor/linux_hyper_dmabuf_test/tree/xen/simple_export
-
-> >
-> >Like xen-zcopy it seems to depend on the idea that the hypervisor
-> >manages all memory it is easy for guests to share pages with the help of
-> >the hypervisor.
-> So, for xen-zcopy we were not trying to make it generic,
-> it just solves display (dumb) zero-copying use-cases for Xen.
-> We implemented it as a DRM helper driver because we can't see any
-> other use-cases as of now.
-> For example, we also have Xen para-virtualized sound driver, but
-> its buffer memory usage is not comparable to what display wants
-> and it works somewhat differently (e.g. there is no "frame done"
-> event, so one can't tell when the sound buffer can be "flipped").
-> At the same time, we do not use virtio-gpu, so this could probably
-> be one more candidate for shared dma-bufs some day.
-> >   Which simply isn't the case on kvm.
-> >
-> >hyper-dmabuf and xen-zcopy could maybe share code, or hyper-dmabuf build
-> >on top of xen-zcopy.
-> Hm, I can imagine that: xen-zcopy could be a library code for hyper-dmabuf
-> in terms of implementing all that page sharing fun in multiple directions,
-> e.g. Host->Guest, Guest->Host, Guest<->Guest.
-> But I'll let Matt and Dongwon to comment on that.
-
-I think we can definitely collaborate. Especially, maybe we are using some
-outdated sharing mechanism/grant-table mechanism in our Xen backend (thanks
-for bringing that up Oleksandr). However, the question is once we collaborate
-somehow, can xen-zcopy's usecase use the standard API that hyper_dmabuf
-provides? I don't think we need different IOCTLs that do the same in the final
-solution.
-
-> 
-> >
-> >cheers,
-> >   Gerd
-> >
-> Thank you,
-> Oleksandr
-> 
-> P.S. Sorry for making your original mail thread to discuss things much
-> broader than your RFC...
-> 
+--- lnx-416.orig/include/uapi/linux/keyctl.h
++++ lnx-416/include/uapi/linux/keyctl.h
+@@ -65,7 +65,7 @@
+ 
+ /* keyctl structures */
+ struct keyctl_dh_params {
+-	__s32 private;
++	__s32 dh_private;
+ 	__s32 prime;
+ 	__s32 base;
+ };
+--- lnx-416.orig/security/keys/dh.c
++++ lnx-416/security/keys/dh.c
+@@ -307,7 +307,7 @@ long __keyctl_dh_compute(struct keyctl_d
+ 	}
+ 	dh_inputs.g_size = dlen;
+ 
+-	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
++	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
+ 	if (dlen < 0) {
+ 		ret = dlen;
+ 		goto out2;
