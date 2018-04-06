@@ -1,117 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755479AbeDFOxQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:53:16 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35290 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755415AbeDFOxM (ORCPT
+        id S1755416AbeDFOyV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:54:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40926 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753046AbeDFOyS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:53:12 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Philippe Cornu <philippe.cornu@st.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Vincent Abriou <vincent.abriou@st.com>
-Subject: Re: [PATCH] drm: clarify adjusted_mode for a bridge connected to a crtc
-Date: Fri, 06 Apr 2018 17:53:09 +0300
-Message-ID: <1765089.gI5krnOhAB@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180226121605.12050-1-philippe.cornu@st.com>
-References: <20180226121605.12050-1-philippe.cornu@st.com>
+        Fri, 6 Apr 2018 10:54:18 -0400
+Date: Fri, 6 Apr 2018 07:54:15 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: akpm@linux-foundation.org
+Cc: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject: Re: mmotm 2018-04-05-16-59 uploaded
+Message-ID: <20180406145415.GB20605@bombadil.infradead.org>
+References: <20180406000009.l1ebV%akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406000009.l1ebV%akpm@linux-foundation.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philippe,
-
-Thank you for the patch.
-
-On Monday, 26 February 2018 14:16:04 EEST Philippe Cornu wrote:
-> This patch clarifies the adjusted_mode documentation
-> for a bridge directly connected to a crtc.
+On Thu, Apr 05, 2018 at 05:00:09PM -0700, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2018-04-05-16-59 has been uploaded to
 > 
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
-> ---
-> This patch is linked to the discussion https://lkml.org/lkml/2018/1/25/367
-> 
->  include/drm/drm_bridge.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index 3270fec46979..b5f3c070467c 100644
-> --- a/include/drm/drm_bridge.h
-> +++ b/include/drm/drm_bridge.h
-> @@ -177,7 +177,8 @@ struct drm_bridge_funcs {
->  	 * pipeline has been called already. If the bridge is the first element
->  	 * then this would be &drm_encoder_helper_funcs.mode_set. The display
->  	 * pipe (i.e.  clocks and timing signals) is off when this function is
-> -	 * called.
-> +	 * called. If the bridge is connected to the crtc, the adjusted_mode
-> +	 * parameter is the one defined in &drm_crtc_state.adjusted_mode.
+>    http://www.ozlabs.org/~akpm/mmotm/
 
-Unless I'm mistaken this will always be the mode stored in 
-&drm_crtc_state.adjusted_mode (at least for atomic drivers), regardless of 
-whether the bridge is the first in the chain (connected to the CRTC) or not. 
-What is important to document is that we have a single adjusted_mode for the 
-whole chain of bridges, and that it corresponds to the mode output by the CRTC 
-for the first bridge. Bridges further in the chain can look at that mode, 
-although there will probably be nothing of interest to them there.
+> * page-cache-use-xa_lock.patch
 
-How about the following text ?
+Hi Andrew.  Could I trouble you to add page-cache-use-xa_lock-fix.patch?
 
-    /**
-     * @mode_set:
-     *
-     * This callback should set the given mode on the bridge. It is called
-     * after the @mode_set callback for the preceding element in the display
-     * pipeline has been called already. If the bridge is the first element
-     * then this would be &drm_encoder_helper_funcs.mode_set. The display
-     * pipe (i.e.  clocks and timing signals) is off when this function is
-     * called.
-     *
-     * The adjusted_mode parameter corresponds to the mode output by the CRTC
-     * for the first bridge in the chain. It can be different from the mode
-     * parameter that contains the desired mode for the connector at the end
-     * of the bridges chain, for instance when the first bridge in the chain
-     * performs scaling. The adjusted mode is mostly useful for the first
-     * bridge in the chain and is likely irrelevant for the other bridges.
-     *
-     * For atomic drivers the adjusted_mode is the mode stored in
-     * &drm_crtc_state.adjusted_mode.
-     *
-     * NOTE:
-     *
-     * If a need arises to store and access modes adjusted for other locations
-     * than the connection between the CRTC and the first bridge, the DRM
-     * framework will have to be extended with DRM bridge states.
-   	 */
+---
+ arch/nds32/include/asm/cacheflush.h | 4 ++--
+ fs/dax.c                            | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Then I think we should also update the documentation of 
-drm_crtc_state.adjusted_mode accordingly:
-
-    /*
-     * @adjusted_mode:
-     *
-     * Internal display timings which can be used by the driver to handle
-     * differences between the mode requested by userspace in @mode and what
-     * is actually programmed into the hardware.
-     *
-     * For drivers using drm_bridge, this store the hardware display timings
-     * used between the CRTC and the first bridge. For other drivers, the
-     * meaning of the adjusted_mode field is purely driver implementation
-     * defined information, and will usually be used to store the hardware
-     * display timings used between the CRTC and encoder blocks.
-     */
-
+diff --git a/arch/nds32/include/asm/cacheflush.h b/arch/nds32/include/asm/cacheflush.h
+index 7b9b20a381cb..1240f148ec0f 100644
+--- a/arch/nds32/include/asm/cacheflush.h
++++ b/arch/nds32/include/asm/cacheflush.h
+@@ -34,8 +34,8 @@ void flush_anon_page(struct vm_area_struct *vma,
+ void flush_kernel_dcache_page(struct page *page);
+ void flush_icache_range(unsigned long start, unsigned long end);
+ void flush_icache_page(struct vm_area_struct *vma, struct page *page);
+-#define flush_dcache_mmap_lock(mapping)   spin_lock_irq(&(mapping)->tree_lock)
+-#define flush_dcache_mmap_unlock(mapping) spin_unlock_irq(&(mapping)->tree_lock)
++#define flush_dcache_mmap_lock(mapping)   xa_lock_irq(&(mapping)->i_pages)
++#define flush_dcache_mmap_unlock(mapping) xa_unlock_irq(&(mapping)->i_pages)
+ 
+ #else
+ #include <asm-generic/cacheflush.h>
+diff --git a/fs/dax.c b/fs/dax.c
+index fef7d458fd7d..aaec72ded1b6 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -499,7 +499,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
+ 	void *entry;
+ 	struct radix_tree_root *pages = &mapping->i_pages;
+ 
+-	xa_lock_irq(&mapping->i_pages);
++	xa_lock_irq(pages);
+ 	entry = get_unlocked_mapping_entry(mapping, index, NULL);
+ 	if (!entry || WARN_ON_ONCE(!radix_tree_exceptional_entry(entry)))
+ 		goto out;
+@@ -513,7 +513,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
+ 	ret = 1;
+ out:
+ 	put_unlocked_mapping_entry(mapping, index, entry);
+-	xa_unlock_irq(&mapping->i_pages);
++	xa_unlock_irq(pages);
+ 	return ret;
+ }
+ /*
+@@ -600,7 +600,7 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
+ 			unmap_mapping_pages(mapping, vmf->pgoff, 1, false);
+ 	}
+ 
+-	xa_lock_irq(&mapping->i_pages);
++	xa_lock_irq(pages);
+ 	new_entry = dax_radix_locked_entry(pfn, flags);
+ 	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
+ 		dax_disassociate_entry(entry, mapping, false);
 -- 
-Regards,
-
-Laurent Pinchart
+2.16.3
