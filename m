@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49g3GBYDe4+hvkWxg0oZ9yZkZn4x5UsIo1iSk5KafDopxyNBEBli+rqI4Yr3iuQzdEZV48a
-ARC-Seal: i=1; a=rsa-sha256; t=1523021715; cv=none;
+X-Google-Smtp-Source: AIpwx48Guuu523AIWHv568ncDW79/pDr89FNJ/zwb2z6gxBj2rA7FJzUhABTpSIhpuwk+nWwQGkV
+ARC-Seal: i=1; a=rsa-sha256; t=1523021712; cv=none;
         d=google.com; s=arc-20160816;
-        b=XCMi1YjzaIindGdKgVqd2/+taSolwHUUnC5q8dOZ4eD0m5VD9Ey40bH01DCQNemZ8n
-         1f6cxmPtg83SEQNJg1O/tDHHXah3Hv+ocxHPCp+9jIKL3l5ucGuxh9ITVXxw094+dE9a
-         qgo/+glb/tYZk6AMFzzhuML1AzpS/jzKs22PqBDmvpmtS/4mLJT2zcr2G84XuEqiV6MM
-         V73qDzMbR+bH3ggfSwMfgvSB1D0KqIaxSrcfCNeVpCSyug6Xvc8DtOKmzXdHKeHHxtAm
-         BQFLF1DVexRF7iH+gbiWsKArLlQXMOUiK/pQ2RCH5o2iAgoTwpUb3djXClXqygUkVpRo
-         Snjw==
+        b=kcbeTpr/p3E9+3m1JMpwBXBvDkwwtD23/11+VJGWO0nlx2yIM7/8uNaOcJLHROI/YC
+         FkF+DX3dxqWd+0ngMZXuSKZe73diAVpPvycHd9MibyeTKmYT5UwGCwFYBUibCP2MI2BC
+         ScXY0/8Ht3D1+PAXHk3Jw7bdYil2oBm7sh64sdHA2jLyO7oCCoG3GSAvU/7iPwwUriO6
+         e0o1NwbmHCWwWLoJVMvfO/9BTLBBd28BJ3dSR4cXCMavzjiBKv0bLoPL5dd7TT8Pk7vZ
+         u9iCJn7LIpuY9bVDaiiciXEOZmK2pzmUglIgXNGTFmKgd/gD3KRM886Gd1xKZPqixosN
+         lTCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=lSraJohI5wQCRbV8LH1JtziLZXV40zo7Oh87UdoqmDc=;
-        b=XhsNT6KmRkb6KRlvSDrqUljttoiWeGKhL5+KpmAVX0CNXIqVV3r7Zhq9ZMUEeGzdH2
-         PF3T8BQpAmMr4OJzwk+9IhivZp12Oycc4pRlVke0SIDO5rVPLH+Wl2Mfr31G+2wlvXom
-         ztazKe1Yk6tceP7/CzTSzaOlqFNNDjnfHgLnhOXfBlh6j1oMznkGgOV95HEgl8UjP2Py
-         rRS7o+hwYBDiC7tNZOLbJkqMNgE8HELMlFhPSyls2fiPpkjUCAX8U0opY1R9jG3/iyZp
-         nibY7UGDVADmmeU7jixa5wYmAnbNs4WlgDQkMtiEpouhNeJcK9S5hueqQgquxhV50Jm8
-         T48g==
+        bh=MiHc6sg8MSC/3KRj6KL7JP/WlYTVugo40LlCfJxGUco=;
+        b=l0BSDS8b62uCom9ZpwCZUFgf1hr+TWI1tH5g3up10xyufca6usxLn1gTi8N8DezFH3
+         OCjwdyp0fcSktFMXp5NuflAp7pFBFvrQOFz7hbfAF2vZzLofEtdKYZLqhv5Vnmq2l2Ip
+         luUj4I35hITiVJ+RIujTMOD7JvOknMqJLrJox/t76GL2P5yUI5FQ1AYNVX787etRORr4
+         cXNttikpA1jgPy0Z8t+hpc0lwAyeR4dEW0Gokkyx36XiBpD4e61cdIGEMDy/GqCdAc7j
+         WWDXGAUoPLNd+cDZgRHKq4ZU2iUJadJ0Vf0tbm0gLgHRg0smpxKzHw2hP4oNWUzvm/wr
+         WPCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Laura Abbott <labbott@redhat.com>,
 	Shanker Donthineni <shankerd@codeaurora.org>,
 	Will Deacon <will.deacon@arm.com>,
 	Greg Hackmann <ghackmann@google.com>,
-	Alex Shi <alex.shi@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4.9 063/102] arm64: kaslr: Put kernel vectors address in separate data page
-Date: Fri,  6 Apr 2018 15:23:44 +0200
-Message-Id: <20180406084340.398994234@linuxfoundation.org>
+	Alex Shi <alex.shi@linaro.org>
+Subject: [PATCH 4.9 062/102] arm64: entry: Add fake CPU feature for unmapping the kernel at EL0
+Date: Fri,  6 Apr 2018 15:23:43 +0200
+Message-Id: <20180406084340.290236378@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004018372044681?=
-X-GMAIL-MSGID: =?utf-8?q?1597004018372044681?=
+X-GMAIL-THRID: =?utf-8?q?1597004015892589296?=
+X-GMAIL-MSGID: =?utf-8?q?1597004015892589296?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,106 +55,152 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Will Deacon <will.deacon@arm.com>
 
-commit 6c27c4082f4f upstream.
+commit ea1e3de85e94 upstream.
 
-The literal pool entry for identifying the vectors base is the only piece
-of information in the trampoline page that identifies the true location
-of the kernel.
+Allow explicit disabling of the entry trampoline on the kernel command
+line (kpti=off) by adding a fake CPU feature (ARM64_UNMAP_KERNEL_AT_EL0)
+that can be used to toggle the alternative sequences in our entry code and
+avoid use of the trampoline altogether if desired. This also allows us to
+make use of a static key in arm64_kernel_unmapped_at_el0().
 
-This patch moves it into a page-aligned region of the .rodata section
-and maps this adjacent to the trampoline text via an additional fixmap
-entry, which protects against any accidental leakage of the trampoline
-contents.
-
-Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
 Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
-[Alex: avoid ARM64_WORKAROUND_QCOM_FALKOR_E1003 dependency]
+[Alex: use first free cpucap number, use cpus_have_cap]
 Signed-off-by: Alex Shi <alex.shi@linaro.org> [v4.9 backport]
 Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
 Tested-by: Will Deacon <will.deacon@arm.com>
 Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/fixmap.h |    1 +
- arch/arm64/kernel/entry.S       |   14 ++++++++++++++
- arch/arm64/kernel/vmlinux.lds.S |    5 ++++-
- arch/arm64/mm/mmu.c             |   10 +++++++++-
- 4 files changed, 28 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/cpucaps.h |    3 +-
+ arch/arm64/include/asm/mmu.h     |    3 +-
+ arch/arm64/kernel/cpufeature.c   |   41 +++++++++++++++++++++++++++++++++++++++
+ arch/arm64/kernel/entry.S        |    9 ++++----
+ 4 files changed, 50 insertions(+), 6 deletions(-)
 
---- a/arch/arm64/include/asm/fixmap.h
-+++ b/arch/arm64/include/asm/fixmap.h
-@@ -53,6 +53,7 @@ enum fixed_addresses {
- 	FIX_TEXT_POKE0,
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -34,7 +34,8 @@
+ #define ARM64_HAS_32BIT_EL0			13
+ #define ARM64_HYP_OFFSET_LOW			14
+ #define ARM64_MISMATCHED_CACHE_LINE_SIZE	15
++#define ARM64_UNMAP_KERNEL_AT_EL0		16
  
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+	FIX_ENTRY_TRAMP_DATA,
- 	FIX_ENTRY_TRAMP_TEXT,
- #define TRAMP_VALIAS		(__fix_to_virt(FIX_ENTRY_TRAMP_TEXT))
- #endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -881,7 +881,13 @@ __ni_sys_trace:
- 	msr	tpidrro_el0, x30	// Restored in kernel_ventry
- 	.endif
- 	tramp_map_kernel	x30
-+#ifdef CONFIG_RANDOMIZE_BASE
-+	adr	x30, tramp_vectors + PAGE_SIZE
-+	isb
-+	ldr	x30, [x30]
-+#else
- 	ldr	x30, =vectors
-+#endif
- 	prfm	plil1strm, [x30, #(1b - tramp_vectors)]
- 	msr	vbar_el1, x30
- 	add	x30, x30, #(1b - tramp_vectors)
-@@ -924,6 +930,14 @@ END(tramp_exit_compat)
+-#define ARM64_NCAPS				16
++#define ARM64_NCAPS				17
  
- 	.ltorg
- 	.popsection				// .entry.tramp.text
-+#ifdef CONFIG_RANDOMIZE_BASE
-+	.pushsection ".rodata", "a"
-+	.align PAGE_SHIFT
-+	.globl	__entry_tramp_data_start
-+__entry_tramp_data_start:
-+	.quad	vectors
-+	.popsection				// .rodata
-+#endif /* CONFIG_RANDOMIZE_BASE */
- #endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
+ #endif /* __ASM_CPUCAPS_H */
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -34,7 +34,8 @@ typedef struct {
  
- /*
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -252,7 +252,10 @@ ASSERT(__idmap_text_end - (__idmap_text_
- ASSERT(__hibernate_exit_text_end - (__hibernate_exit_text_start & ~(SZ_4K - 1))
- 	<= SZ_4K, "Hibernate exit text too big or misaligned")
- #endif
--
+ static inline bool arm64_kernel_unmapped_at_el0(void)
+ {
+-	return IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0);
++	return IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0) &&
++	       cpus_have_cap(ARM64_UNMAP_KERNEL_AT_EL0);
+ }
+ 
+ extern void paging_init(void);
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -746,6 +746,40 @@ static bool hyp_offset_low(const struct
+ 	return idmap_addr > GENMASK(VA_BITS - 2, 0) && !is_kernel_in_hyp_mode();
+ }
+ 
 +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+ASSERT((__entry_tramp_text_end - __entry_tramp_text_start) == PAGE_SIZE,
-+	"Entry trampoline text too big")
-+#endif
- /*
-  * If padding is applied before .head.text, virt<->phys conversions will fail.
-  */
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -435,8 +435,16 @@ static int __init map_entry_trampoline(v
- 	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
- 			     prot, pgd_pgtable_alloc, 0);
- 
--	/* ...as well as the kernel page table */
-+	/* Map both the text and data into the kernel page table */
- 	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
-+	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
-+		extern char __entry_tramp_data_start[];
++static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
 +
-+		__set_fixmap(FIX_ENTRY_TRAMP_DATA,
-+			     __pa_symbol(__entry_tramp_data_start),
-+			     PAGE_KERNEL_RO);
++static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
++				int __unused)
++{
++	/* Forced on command line? */
++	if (__kpti_forced) {
++		pr_info_once("kernel page table isolation forced %s by command line option\n",
++			     __kpti_forced > 0 ? "ON" : "OFF");
++		return __kpti_forced > 0;
 +	}
 +
- 	return 0;
- }
- core_initcall(map_entry_trampoline);
++	/* Useful for KASLR robustness */
++	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
++		return true;
++
++	return false;
++}
++
++static int __init parse_kpti(char *str)
++{
++	bool enabled;
++	int ret = strtobool(str, &enabled);
++
++	if (ret)
++		return ret;
++
++	__kpti_forced = enabled ? 1 : -1;
++	return 0;
++}
++__setup("kpti=", parse_kpti);
++#endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
++
+ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 	{
+ 		.desc = "GIC system register CPU interface",
+@@ -829,6 +863,13 @@ static const struct arm64_cpu_capabiliti
+ 		.def_scope = SCOPE_SYSTEM,
+ 		.matches = hyp_offset_low,
+ 	},
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++	{
++		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
++		.def_scope = SCOPE_SYSTEM,
++		.matches = unmap_kernel_at_el0,
++	},
++#endif
+ 	{},
+ };
+ 
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -73,6 +73,7 @@
+ 	.macro kernel_ventry, el, label, regsize = 64
+ 	.align 7
+ #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++alternative_if ARM64_UNMAP_KERNEL_AT_EL0
+ 	.if	\el == 0
+ 	.if	\regsize == 64
+ 	mrs	x30, tpidrro_el0
+@@ -81,6 +82,7 @@
+ 	mov	x30, xzr
+ 	.endif
+ 	.endif
++alternative_else_nop_endif
+ #endif
+ 
+ 	sub	sp, sp, #S_FRAME_SIZE
+@@ -208,10 +210,9 @@ alternative_else_nop_endif
+ 	ldr	lr, [sp, #S_LR]
+ 	add	sp, sp, #S_FRAME_SIZE		// restore sp
+ 
+-#ifndef CONFIG_UNMAP_KERNEL_AT_EL0
+-	eret
+-#else
+ 	.if	\el == 0
++alternative_insn eret, nop, ARM64_UNMAP_KERNEL_AT_EL0
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+ 	bne	4f
+ 	msr	far_el1, x30
+ 	tramp_alias	x30, tramp_exit_native
+@@ -219,10 +220,10 @@ alternative_else_nop_endif
+ 4:
+ 	tramp_alias	x30, tramp_exit_compat
+ 	br	x30
++#endif
+ 	.else
+ 	eret
+ 	.endif
+-#endif
+ 	.endm
+ 
+ 	.macro	get_thread_info, rd
