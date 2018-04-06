@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49iC0wYCvyl4WfaIUp8T2ZzfoU2cP25/oYFOMga9G3BdkzDKKZBkkqEHNZFc651ttoIA7pw
-ARC-Seal: i=1; a=rsa-sha256; t=1523021619; cv=none;
+X-Google-Smtp-Source: AIpwx49jYmrlpd88kCq3BaYCcV55VImuklRgtAR0ztAyld7qJoEvbBwBhOaa3t7gi5JFd1ty9n9b
+ARC-Seal: i=1; a=rsa-sha256; t=1523021616; cv=none;
         d=google.com; s=arc-20160816;
-        b=K1pHWA9ut9SQ/qdCbfnzEHKciigEcUGbT8Up6XaN0unvlkoVrDR0kRd3uv4GT+jbNq
-         MnOS6zDdzjj61lmeYeyVGFgOH7mT5wf69CHVWjB9P7f/LxwQc0fSwkTaRvXlI1pHfyY3
-         NJv1H2M24niwfpqPZkN/pX2fNiiLRYMuPmMy3cmyBrfb2DVNsXVWKHlj4szxZ8W7VhrS
-         IAbifEkInIWO4kuTCOq2y188cG5tUUKFSkA1FPcBWFBUMnX0a0veV30NYtubPilNw1go
-         zBEumoCvUYDFMIEbyfcAzyxs+zpUvrcU+eoq/2BCC1TRWKMnDnQOG4KMX5aKkKNZPp/W
-         hEhw==
+        b=iI8j61QVs8AVhp0d7gF8z8VrJ03JpVMqRR30TPxuH2YRJfRm1IR116FE1eKjMsHXiH
+         AYIiwB0DiJXZrW/rvsBxDc16XqLVVaoRUi7sld2qFLTXu02jngRTUj4rwHvrUt/TOUaT
+         q21PyWfxM/MBnGBcqYDt2flK4/TtUdBLXcn51sztsRcOL/WS9G4NvAg6DyA6tbXpwJTT
+         xt/6Jc6uq/hVdhnLeFF43LK40UeemJ3DQ1Yxw5KWv9XoJuNy/JsdRRtKlQEoFLbvHlEv
+         q+UVGKQwXzRCvocAwYaHBhV8frAnuFWaGzu1+v8Ah6XiPYVi+mv/WJoXulfYP7r7q+wD
+         /rpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ouT+S3CznIqnBaDlN/1zTXjTjhguu2LEZNGyzfnng3c=;
-        b=Y4jfQx2yMnd0KL/6nOeADqcbhT/j/+e8uTOMXW+gy9EXvgNQCqKQC1dsGtqC0It3R7
-         l4d5Xpvl7NNkvz4/vevRHPyYpqHrdx+jA23HaLJynQ/aG1Hyw9Ek3kttgRT9vWw6h7Sk
-         GIr89mGAksCaBSdmrfhvHxMIbSHwadfg7Tw/BwsMHEl0F55ub9rR747noK+z1Es7x1S2
-         78T9RfkbA5iyf2oxP/U7sBVUc5aQjtgLBtGX4Gj9py/OgCHI+CDuHoAMTjRv/xqO5dhT
-         7RIlxjx7kkhEVAYbOXYj3lrHb/2z0t/20sPHoqFaxYiCwpfiXIqAwZAtk4zHzVRgoslN
-         eXYA==
+        bh=r5j04Q/EBllHx4ys5TaUJ2Dgxzx68q5uQ6lyPnIcFhA=;
+        b=sfD+6tbEBevO/62rQ3XKe+VViZmyztbRNI9mebpBZoKt0dCbywYAXE8bce/v5QsdLj
+         it1HvKq5bN1/7l5oexcd9FQshgrYmC0Eq/YLX3kdomFj4MbICbtP9NHLII5recURCars
+         9ige6svumemAxb8oagModALRO01JnsCR7VdIcJ2xcRl6xGW2Q+SXlgyjDJC0AbbIpNPh
+         v8k40mtjZfg3ZNpieSN3LxW/JH5kgvXQFJZ/GjIhpv3xCFY7kIAqklWJUTdgS20+6GRd
+         TA4V/byd2FGy7BH4CBAp5gUFLGmyEIOGGobmz3n7fLuqAWnqmfGkMBWglRtEFXkhoAMu
+         aIsg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Matthias Kaehlcke <mka@chromium.org>,
-	Johannes Berg <johannes.berg@intel.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
 	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 029/102] mac80211: Fix clang warning about constant operand in logical operation
-Date: Fri,  6 Apr 2018 15:23:10 +0200
-Message-Id: <20180406084335.741649547@linuxfoundation.org>
+Subject: [PATCH 4.9 028/102] netfilter: ctnetlink: Make some parameters integer to avoid enum mismatch
+Date: Fri,  6 Apr 2018 15:23:09 +0200
+Message-Id: <20180406084335.617782490@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003917438569471?=
-X-GMAIL-MSGID: =?utf-8?q?1597003917438569471?=
+X-GMAIL-THRID: =?utf-8?q?1597003697537524572?=
+X-GMAIL-MSGID: =?utf-8?q?1597003914715190861?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,40 +52,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Matthias Kaehlcke <mka@chromium.org>
 
-commit 93f56de259376d7e4fff2b2d104082e1fa66e237 upstream.
+commit a2b7cbdd2559aff06cebc28a7150f81c307a90d3 upstream.
 
-When clang detects a non-boolean constant in a logical operation it
-generates a 'constant-logical-operand' warning. In
-ieee80211_try_rate_control_ops_get() the result of strlen(<const str>)
-is used in a logical operation, clang resolves the expression to an
-(integer) constant at compile time when clang's builtin strlen function
-is used.
-
-Change the condition to check for strlen() > 0 to make the constant
-operand boolean and thus avoid the warning.
+Not all parameters passed to ctnetlink_parse_tuple() and
+ctnetlink_exp_dump_tuple() match the enum type in the signatures of these
+functions. Since this is intended change the argument type of to be an
+unsigned integer value.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/rate.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/netfilter/nf_conntrack_netlink.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/net/mac80211/rate.c
-+++ b/net/mac80211/rate.c
-@@ -173,9 +173,11 @@ ieee80211_rate_control_ops_get(const cha
- 		/* try default if specific alg requested but not found */
- 		ops = ieee80211_try_rate_control_ops_get(ieee80211_default_rc_algo);
+--- a/net/netfilter/nf_conntrack_netlink.c
++++ b/net/netfilter/nf_conntrack_netlink.c
+@@ -1008,9 +1008,8 @@ static const struct nla_policy tuple_nla
  
--	/* try built-in one if specific alg requested but not found */
--	if (!ops && strlen(CONFIG_MAC80211_RC_DEFAULT))
-+	/* Note: check for > 0 is intentional to avoid clang warning */
-+	if (!ops && (strlen(CONFIG_MAC80211_RC_DEFAULT) > 0))
-+		/* try built-in one if specific alg requested but not found */
- 		ops = ieee80211_try_rate_control_ops_get(CONFIG_MAC80211_RC_DEFAULT);
-+
- 	kernel_param_unlock(THIS_MODULE);
+ static int
+ ctnetlink_parse_tuple(const struct nlattr * const cda[],
+-		      struct nf_conntrack_tuple *tuple,
+-		      enum ctattr_type type, u_int8_t l3num,
+-		      struct nf_conntrack_zone *zone)
++		      struct nf_conntrack_tuple *tuple, u32 type,
++		      u_int8_t l3num, struct nf_conntrack_zone *zone)
+ {
+ 	struct nlattr *tb[CTA_TUPLE_MAX+1];
+ 	int err;
+@@ -2409,7 +2408,7 @@ static struct nfnl_ct_hook ctnetlink_glu
  
- 	return ops;
+ static int ctnetlink_exp_dump_tuple(struct sk_buff *skb,
+ 				    const struct nf_conntrack_tuple *tuple,
+-				    enum ctattr_expect type)
++				    u32 type)
+ {
+ 	struct nlattr *nest_parms;
+ 
