@@ -1,134 +1,107 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1190338-1522751263-2-13277117037636312592
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522751262; b=BYG5OmLWlESrlCyfGHbtJfqDflXe9q42bL8cmrtoE3UibUpuUp
-    8ZjysWa2i/19SUan+a6xnlhtgZuAVKFnS/xeRf8wC4oyLMqJjgMvnZGJAaHLT6BL
-    cOpv/dbQaPNfmoa+Hx5j/XAWiJUAXKncQfOCXMw6Sdz5ZWDnsTDDeRJBgPlFBNxF
-    uo4SAxChC7sFNLQGhOHk/hsIwVAd4MjZt1iCiI5X34feGTtfGuLrgHdfLSMk9QiM
-    sOl3z0EtO9mru57KsKOYQA+vFnVs98WOrzdZLCk2pGYWzn10/jktqcaBi+enTpY2
-    wdljoUIzKHzsnDuyydvP1HTWFADCe3B2YSyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1522751262; bh=Oo2d62jVdXt
-    toR7zqNdtUrVWKKAolpYBdwK0PGYxvqY=; b=XWgllCxPo/J2fOfrPDX4ITBRcKA
-    btijGukcbmScaDqmI/oRdexH3xy3NDHsqlL+3qBZ1d/yP7AKdT6dpUOxGBv5C6d2
-    wczHfs+0aUMttePKh7Hhahpj4e7nhzUE+easq4iF67rL1rqw35GDQNi/+O75sstM
-    AZDI/PoMk7K2XrppPiogBokOm2sNsfTdDqELv4ghnjCqyaSRGEZK30aBHsDc1Bt8
-    BfrzB4ncud+7RPXYD/KjQHFEQfnSS/xpdcPTtVgN4XVeBTWwoAGgTg6DoajtfMBa
-    fVrzP4K7U1YJji7vBa8EXIntmlZLbovL0M8CDJlzImUhpJHrtJ6YJ6W50HA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJVZJdKnzb7M5QHqNChoKuF6K/ap5iZnupGXAqfSf0zU9x7fPrPIDFgumoGrswEeFqas4uUui4+4I59kMLv/Bgf4sDR9G7g1LVdcGtc3RrRUi0RJcFqT
-    XzTktObFid0PtvhhGlpWcMrJqrz+I6ZMTdg5jitcHJ7+YoTLOd+qzFVIZseO/nFxo+hiSuBpXYS5hioir26yYvtT/U6Qh/t6XWcAesqJ1BOSkGH8s1yfY3JY
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=Kd1tUaAdevIA:10
-    a=1EsaE_6oAAAA:8 a=VwQbUJbxAAAA:8 a=CVGTnWRxnZ6q_qCLuKwA:9 a=wPNLvfGTeEIA:10
-    a=3ZumFrijQQ-2J9H5h8ct:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754957AbeDCK13 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 3 Apr 2018 06:27:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48626 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754927AbeDCK11 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 3 Apr 2018 06:27:27 -0400
-Date: Tue, 3 Apr 2018 12:27:26 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ye Xiaolong <xiaolong.ye@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.4 076/134] kprobes/x86: Set kprobes pages read-only
-Message-ID: <20180403102726.GB17259@kroah.com>
-References: <20180319171849.024066323@linuxfoundation.org>
- <20180319171900.247219741@linuxfoundation.org>
- <1522599630.2654.59.camel@codethink.co.uk>
- <20180402154557.361168f8f4139bbd2689dc99@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180402154557.361168f8f4139bbd2689dc99@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <ji_hun.kim@samsung.com>
+X-Google-Smtp-Source: AIpwx49ZjwsCQlyMPh887exuhFQdZKGX4oRc1PCWsKEI2DCY8xrEx2sTBQowwQsG6NAyyVku5Hqp
+ARC-Seal: i=1; a=rsa-sha256; t=1522990664; cv=none;
+        d=google.com; s=arc-20160816;
+        b=l3RxIE+gnlXmaGjeLlW5c16WQMoTRU7g1Gigxx6S9amq3osUcxEgwecuCCPkM7bv7u
+         Ko10Jq50qx5SKxnCaXyNdZJsBBFNW8uLWMJO9Ywpepq+rFyibXbO2Yx/bjD1azmxYFbW
+         dKS6lkuLtUDWZkkuyhMTzANpTIHMunBkSfe3slgTrfKPNd9OS8KlvP2REcP37jQqK9Dw
+         MfZjQZ0O3vzEZzxe9GToN8jdXIiCsT11aymVDEaVDcqDOs7v+Sgpw8ZinM7dkIqbxM6Q
+         rF1pelmV+3dhi1yDNvUlyPu2wm+Stz2k0Iw2GNlNdQaZXMpYK/NLkpflH7tZAVQS8Cos
+         AzkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:dlp-filter:cms-type:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=umVPonmx8hCPX1LF2yA9AChn87h2q0zhKcxt8oIyUCM=;
+        b=latwC94Axr0NkGCmXZP8kVnQGV6n5spoO3WtTRundgyIqKBpayRxD4Cd6NpNzn/wlM
+         uQpV3TQkd/VPGi1hKtcnprWPXh5BPDceAdeZyjassxqVlo+VHW904EJ/aS/MwQDVjvse
+         G2BjbllpXjYg/pw+tAXQmwjk6zxfUN/IQITw7fn4gRPqpbP6HVMV/uRMPQlNeUWhMEDq
+         sQVoizetNUii9CthncDKCosmCxOqax2zg1z169xcf4vCSbmbqmYLN4a3DMh8kKg8AiyH
+         BCKVByBvcK7xiCzjtOwPoJk1942UY3T0DqZuCGYjFD2JtaK4rQUvQwZOW0Zereb9dQqR
+         DW3A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=VmxKYAhn;
+       spf=pass (google.com: domain of ji_hun.kim@samsung.com designates 203.254.224.34 as permitted sender) smtp.mailfrom=ji_hun.kim@samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=VmxKYAhn;
+       spf=pass (google.com: domain of ji_hun.kim@samsung.com designates 203.254.224.34 as permitted sender) smtp.mailfrom=ji_hun.kim@samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180406045743epoutp04e1c7bf3d7be956b8f5dc1d9e27bb4dbc~iv-BdFavl0707107071epoutp04E
+X-AuditID: b6c32a38-d5bff70000001082-eb-5ac6fe46b322
+From: Ji-Hun Kim <ji_hun.kim@samsung.com>
+To: gregkh@linuxfoundation.org
+Cc: me@tobin.cc, sergio.paracuellos@gmail.com, quytelda@tamalin.org,
+	dan.carpenter@oracle.com, y.k.oh@samsung.com, devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ji-Hun Kim
+	<ji_hun.kim@samsung.com>
+Subject: [PATCH] staging: ks7010: replace kmalloc() + memcpy() with
+ kmemdup()
+Date: Fri, 06 Apr 2018 13:57:20 +0900
+Message-id: <1522990640-30706-1-git-send-email-ji_hun.kim@samsung.com>
+X-Mailer: git-send-email 1.9.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7bCmvq7bv2NRBmdPKlq8/jedxWLPmV/s
+	Fs2L17NZ9J/ezmix9Za0xeVdc9gsbrcdY7V4dHYWk8WlNf4WW7p+sDpwedzbd5jFY+esu+we
+	++euYff4+PQWi0ffllWMHv9OMXl8uf6a0ePzJrkAjqhUm4zUxJTUIoXUvOT8lMy8dFsl7+B4
+	53hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygC5UUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUl
+	tkrRhoZGeoYG5npGRkZ6JuaxVkamQCUJqRlX7l1iLPjIVrFr63/2BsbXrF2MnBwSAiYSDV9W
+	MXUxcnEICexglJhx4DOU851RYsGphSwwVV/XrQfrEBLYwCgxu0EFwv7BKHHwnTeIzSagKbGx
+	+xojiC0iICfx5PYfZhCbGWTQ3fcmILawgL/En6032EBsFgFVieWnf4DV8Aq4Scy4ch1ql5zE
+	yWOTWUGOkBCYwSbR/GAmE0TCRWL+9wtQtrDEq+Nb2LsYOYBsaYlLR20hwtUSC67sgJpTI3Hz
+	/1KocmOJ3p4LUPfwSbz72sMK0cor0dEmBFHiIXFk0XtmCNtRYuvO6cwQL8ZKTDp9lX0Co+QC
+	RoZVjGKpBcW56anFhgUmesWJucWleel6yfm5mxjBKUbLYgfjnnM+hxgFOBiVeHgzIo5FCbEm
+	lhVX5h5ilOBgVhLh3f0HKMSbklhZlVqUH19UmpNafIjRFBgaE5mlRJPzgekvryTe0MTSwMTM
+	yNTU0MDCREmcNyDAJUpIID2xJDU7NbUgtQimj4mDU6qB0W3Ts4df1iSXvd0taHtm4d83Jgau
+	Bj+C3+m8+ZHxb/6Eypubcmp8VwtPbDG6nFzffubysctzzmVNU5+a8fuoqsKbCZJ934VrP68/
+	dTSn5Ly2f++qvQ5sl3iqXQLn6a1pkzCsL4g5f+aaf7bIbN93H7/vmr563ez8wkPzpZhtw3dt
+	evGT7QD3HTclluKMREMt5qLiRACEzSDRRwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnluLIzCtJLcpLzFFi42I5/e+xoK7bv2NRBk97OS1e/5vOYrHnzC92
+	i+bF69ks+k9vZ7TYekva4vKuOWwWt9uOsVo8OjuLyeLSGn+LLV0/WB24PO7tO8zisXPWXXaP
+	/XPXsHt8fHqLxaNvyypGj3+nmDy+XH/N6PF5k1wARxSXTUpqTmZZapG+XQJXxpV7lxgLPrJV
+	7Nr6n72B8TVrFyMnh4SAicTXdeuBbC4OIYF1jBJz391khnB+MEpM2r2CBaSKTUBTYmP3NUYQ
+	W0RATuLJ7T/MIDazwHdGiferweLCAr4SE05MA5vKIqAqsfz0D7AaXgE3iRlXrrNAbJOTOHls
+	MusERq4FjAyrGCVTC4pz03OLjQoM81LL9YoTc4tL89L1kvNzNzECg2nbYa2+HYz3l8QfYhTg
+	YFTi4c2IOBYlxJpYVlyZe4hRgoNZSYR39x+gEG9KYmVValF+fFFpTmrxIUZpDhYlcd7becci
+	hQTSE0tSs1NTC1KLYLJMHJxSDYzmL7rXTj1UdvSajrSR9bFzd49/NNaf+eLjxd0uwk/zTJbM
+	MO64MOuk81y7mZqvlkavzLMovrE6sjDi3vmdB73LH+moaMY5tV9zOP38T/Leguk78o4GPlp5
+	UsJhVZHPlQafQ3s9LU1mbLY1tq2P4uwRSNpSr5k8898G1ekW9VbsL0oy2PParkYosRRnJBpq
+	MRcVJwIArfqvFiICAAA=
+X-CMS-MailID: 20180406045742epcas1p22ad1bad680b9526a81c7371b75ac1f1e
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180406045742epcas1p22ad1bad680b9526a81c7371b75ac1f1e
+X-RootMTR: 20180406045742epcas1p22ad1bad680b9526a81c7371b75ac1f1e
+References: <CGME20180406045742epcas1p22ad1bad680b9526a81c7371b75ac1f1e@epcas1p2.samsung.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596971458949990552?=
+X-GMAIL-MSGID: =?utf-8?q?1596971458949990552?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 02, 2018 at 03:45:57PM +0900, Masami Hiramatsu wrote:
-> On Sun, 01 Apr 2018 17:20:30 +0100
-> Ben Hutchings <ben.hutchings@codethink.co.uk> wrote:
-> 
-> > On Mon, 2018-03-19 at 19:05 +0100, Greg Kroah-Hartman wrote:
-> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > > 
-> > > ------------------
-> > > 
-> > > From: Masami Hiramatsu <mhiramat@kernel.org>
-> > > 
-> > > 
-> > > [ Upstream commit d0381c81c2f782fa2131178d11e0cfb23d50d631 ]
-> > 
-> > This caused a regression in mainline, fixed by:
-> > 
-> > commit c93f5cf571e7795f97d49ef51b766cf25e328545
-> > Author: Masami Hiramatsu <mhiramat@kernel.org>
-> > Date:   Thu May 25 19:38:17 2017 +0900
-> > 
-> >     kprobes/x86: Fix to set RWX bits correctly before releasing trampoline
-> 
-> Thanks Ben,
-> Greg, could you please pick above patch too?
+Use kmemdup rather than duplicating its implementation.
 
-Now picked up, thanks.
+Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
+---
+ drivers/staging/ks7010/ks7010_sdio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-greg k-h
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index b8f55a1..c8eb55b 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -589,11 +589,10 @@ static int ks7010_sdio_update_index(struct ks_wlan_private *priv, u32 index)
+ 	int ret;
+ 	unsigned char *data_buf;
+ 
+-	data_buf = kmalloc(sizeof(u32), GFP_KERNEL);
++	data_buf = kmemdup(&index, sizeof(u32), GFP_KERNEL);
+ 	if (!data_buf)
+ 		return -ENOMEM;
+ 
+-	memcpy(data_buf, &index, sizeof(index));
+ 	ret = ks7010_sdio_write(priv, WRITE_INDEX, data_buf, sizeof(index));
+ 	if (ret)
+ 		goto err_free_data_buf;
+-- 
+1.9.1
