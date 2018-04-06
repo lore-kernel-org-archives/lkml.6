@@ -1,63 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753075AbeDFNF4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:05:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56486 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752755AbeDFNFv (ORCPT
+        id S1752832AbeDFNIE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:08:04 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:38758 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752281AbeDFNID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:05:51 -0400
+        Fri, 6 Apr 2018 09:08:03 -0400
+Date: Fri, 6 Apr 2018 15:07:41 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 0/8] use struct pt_regs based syscall calling for x86-64
+Message-ID: <20180406130741.GA6087@light.dominikbrodowski.net>
+References: <20180405095307.3730-1-linux@dominikbrodowski.net>
+ <20180405151933.egmt7ressx2ikdnr@gmail.com>
+ <20180405203121.GA27104@light.dominikbrodowski.net>
+ <20180406082322.ud37sj3b5ldm7xxd@gmail.com>
+ <20180406083436.GA17948@isilmar-4.linta.de>
+ <20180406092046.2jqjdzvecmfm6sif@gmail.com>
+ <20180406093424.GA908@isilmar-4.linta.de>
+ <20180406123420.kf74tgiahaugl35x@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 06 Apr 2018 18:35:49 +0530
-From: sricharan@codeaurora.org
-To: Richard Cochran <richardcochran@gmail.com>
-Cc: Andy Gross <andy.gross@linaro.org>, robh+dt@kernel.org,
-        robh@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        sboyd@codeaurora.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, absahu@codeaurora.org, marc.zyngier@arm.com
-Subject: Re: [PATCH v3 04/13] ARM: dts: ipq4019: Update ipq4019-dk01.1 board
- data
-In-Reply-To: <20180406045511.hnzxe4nepl5sqmld@localhost>
-References: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
- <1521518336-5467-5-git-send-email-sricharan@codeaurora.org>
- <20180320143131.4eenixtbhciq5fwc@localhost>
- <20180329143715.GA31757@hector.attlocal.net>
- <20180329163739.2fg5qxvb5j3fiy6r@localhost>
- <4073ec6b457cb369a83c710d0ae453b4@codeaurora.org>
- <20180406045511.hnzxe4nepl5sqmld@localhost>
-Message-ID: <7dc41c73f594918701c21075dde30870@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406123420.kf74tgiahaugl35x@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-06 10:25, Richard Cochran wrote:
-> On Mon, Apr 02, 2018 at 03:28:47PM +0530, sricharan@codeaurora.org 
-> wrote:
->>   Yes, i will post another series for ipq806[2/4] updates and the
->> corresponding
->>   boards after this.
+On Fri, Apr 06, 2018 at 02:34:20PM +0200, Ingo Molnar wrote:
 > 
-> I tried mainline on the ap148 using qcom_defconfig and the
-> qcom-ipq8064-ap148.dtb, and it doesn't boot FYI.
+> * Dominik Brodowski <linux@dominikbrodowski.net> wrote:
 > 
+> > > > __sys_mprotect as prefix won't work by the way, as the double-underscore __sys_ 
+> > > > variant is already used in net/* for internal syscall helpers.
+> > > 
+> > > Ok - then triple underscore - but overall I think it's more confusing.
+> > > 
+> > > Btw., what was the problem with calling the x86 ptregs wrapper sys_mprotect?
+> > > 
+> > > The only reason I suggested the __sys_x86_ prefix was because you originally 
+> > > suggested that there's symbol name overlap, but I don't think that's the case 
+> > > within the same kernel build, as the regular non-ptregs prototype:
+> > 
+> > Indeed, there's no symbol name overlap within the same kernel build, but
+> > technically different stubs named the same. If that's fine, just drop patch
+> > 8/8 (including the UML fixup) and things should be fine, with the stub and
+> > the entry in the syscall table both named sys_mprotect.
+> 
+> Ok, I've dropped patch #8.
 
-  I tried booting mainline built with qcom_defconfig on ap148 and
-  did boot. Not sure if your bootloader's bootarg is this,
-   'console=ttyMSM0,115200n8' ?
+Thanks!
 
+> > For IA32_EMULATION, we have __sys_ia32_mprotect as stub for the same
+> > syscall, including this name as entry in syscall_32.tbl.
+> > 
+> > More problematic is the naming for the compat stubs for IA32_EMAULATION and
+> > X32, where we have
+> > 
+> > 	__compat_sys_ia32_waitid
+> > 	__compat_sys_x32_waitid
+> > 
+> > for example. We *could* rename one of those to compat_sys_waitid() and levae
+> > the other as-is, but actually I prefer it now how it is.
+> 
+> yeah, this is more symmetric I think.
+> 
+> So right now we have these symbols:
+> 
+>  triton:~/tip> grep waitid System.map 
+> 
+>  ffffffff8105f1e0 t kernel_waitid               # common C function (64-bit kargs)
+>  ffffffff8105f2b0 t SYSC_waitid                 # 64-bit uaddr args C function       352 bytes
+>  ffffffff8105f410 T sys_waitid                  # 64-bit-ptregs -> C stub,            32 bytes
+>  ffffffff8105f430 T __sys_ia32_waitid           # 32-bit-ptregs -> C stub,            32 bytes
+>  ffffffff8105f450 t C_SYSC_waitid               # 32-bit uaddr args C function,      400 bytes
+>  ffffffff8105f5e0 T __compat_sys_ia32_waitid    # 32-bit-ptregs -> C stub,            32 bytes
+>  ffffffff8105f600 T __compat_sys_x32_waitid     # 64-bit-ptregs -> C stub,            32 bytes
+> 
+> BTW., what is the role of generating __sys_ia32_waitid()? It seems unused when a 
+> syscall has a compat variant otherwise - like here.
 
-  root@(none):/# cat /proc/version
-  Linux version 4.16.0 (srichara@srichara-linux) (gcc version 6.3.1 
-20170109 (Linaro GCC 6.3-2017.02)) #1691 SMP PREEMPT Fri Apr 6 15:30:45 
-IST 2018
-  root@(none):/#
+Indeed it is unused -- but when compiling
 
-Regards,
-  Sricharan
+	SYSCALL_DEFINE5(waitid, ...)
+
+we don't know yet that somewhere else in the kernel there is
+
+	COMPAT_SYSCALL_DEFINE5(waitid, ...)
+
+So if we want to compile the __sys_ia32_ stub only iff it is used, we'd 
+need to have different macros for syscalls which have compat variants and
+for those which do not. Or do you have an idea how we could trick the
+compiler to do the right thing?
+
+> Naming wise the odd thumb out is sys_waitid :-/
+> 
+> I'd argue that we should at minimum name it __sys_waitid:
+
+Can't do, as that namespace is already taken.
+
+>  ffffffff8105f1e0 t kernel_waitid               # common C function (64-bit kargs)
+>  ffffffff8105f2b0 t SYSC_waitid                 # 64-bit uaddr args C function
+>  ffffffff8105f410 T __sys_waitid                # 64-bit-ptregs -> C stub
+>  ffffffff8105f430 T __sys_ia32_waitid           # 32-bit-ptregs -> C stub
+>  ffffffff8105f450 t C_SYSC_waitid               # 32-bit uaddr args C function
+>  ffffffff8105f5e0 T __compat_sys_ia32_waitid    # 32-bit-ptregs -> C stub
+>  ffffffff8105f600 T __compat_sys_x32_waitid     # 64-bit-ptregs -> C stub
+> 
+> because that makes it all organized based on the same principle:
+> 
+>     {__compat|_}_sys{_ia32|_x32|}_waittid
+> 
+> But arguably there are a whole lot more naming weirdnesses we could fix:
+> 
+>  - I find it somewhat confusing that that 'C' in C_SYSC stands not for a C callign 
+>    convention, but for 'COMPAT' - i.e. COMPAT_SYSC would be better.
+> 
+>  - Another detail is that why is it called 'SYSC', if the other functions use the 
+>    'sys' prefix? Wouldn't 'SYS' be more consistent?
+
+It sounds totally reasonable to re-name those, but we should do it not only
+for the x86 case, but in include/linux/syscalls.h as well.
+
+>  - If we introduced a prefix for the regular 64-bit system call format as well,
+>    we could have: x64, x32 and ia32.
+> 
+>  - And finally, I think the argument format modifiers should be consistently
+>    prefixes - right now they are a mixture of pre- and post-fixes.
+> 
+> I.e. I'd generate the names like this:
+> 
+>     __{x64,x32,ia32}[_compat]_sys_waittid()
+> 
+> The fully consistent nomenclature would be someting like this:
+> 
+>  ffffffff8105f1e0 t            kernel_waitid    # common C function (64-bit kargs)
+>  ffffffff8105f2b0 t               SYS_waitid    # 64-bit uaddr args C function
+>  ffffffff8105f410 T         __x64_sys_waitid    # 64-bit-ptregs -> C stub
+>  ffffffff8105f430 T        __ia32_sys_waitid    # 32-bit-ptregs -> C stub
+>  ffffffff8105f450 t        COMPAT_SYS_waitid    # 32-bit uaddr args C function
+>  ffffffff8105f5e0 T __ia32_compat_sys_waitid    # 32-bit-ptregs -> C stub
+>  ffffffff8105f600 T  __x32_compat_sys_waitid    # 64-bit-ptregs -> C stub
+> 
+> Looks a lot tidier and a lot more logical, doesn't it?
+
+Indeed. Want me to prepare a new patch 8/8 on top which does the renaming
+(for x86 and for the generic case), or will you do the re-naming while
+merging my patches yourself?
+
+> Personally I'd also do a s/ia32/i32 rename:
+
+Uh, no, please. It makes things align more beautifully, yes, but the
+32-bit sub-architecture commonly is referred to as either i386 or ia32...
+
+Thanks,
+	Dominik
