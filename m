@@ -1,54 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751759AbeDFJwZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 05:52:25 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38616 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751415AbeDFJwX (ORCPT
+        id S1752049AbeDFJxl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 05:53:41 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:50303 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751754AbeDFJxj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 05:52:23 -0400
-X-Google-Smtp-Source: AIpwx49wXXdvbXSHqNXic0xcEKwUJjYu44QrQPSUoZI8vcdLEgURmqNbq8ter7YefNHdDSd1F4yUGdCHNSH88hZTv/0=
+        Fri, 6 Apr 2018 05:53:39 -0400
+X-Google-Smtp-Source: AIpwx4+bdneCKzuByWckOjjl7t/hbXGmYbv6gZFtyTfKObvUO13rnc16uPYLogkfyp4gCFICIVNbaQ==
+To: akpm@linux-foundation.org, tglx@linutronix.de, mingo@kernel.org,
+        keescook@chromium.org, lauraa@codeaurora.org, viresh.kumar@linaro.org,
+        nicolas.pitre@linaro.org, thomas.lendacky@amd.com
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: A question of sleeping with interrupts are disabled in start_kernel()
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <1eb16c24-ef3b-2962-d216-57f66321035e@gmail.com>
+Date: Fri, 6 Apr 2018 17:53:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
-References: <20180313154826.20436-1-kraxel@redhat.com> <20180313161035.GL4788@phenom.ffwll.local>
- <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Fri, 6 Apr 2018 10:52:21 +0100
-Message-ID: <CAPj87rPKtuQ4SZePYDUesWY9VSSGR=1p-LO=yByY_6Q8=BfoyA@mail.gmail.com>
-Subject: Re: [RfC PATCH] Add udmabuf misc device
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w369qUK4000828
 
-Hi Gerd,
+Hello,
 
-On 14 March 2018 at 08:03, Gerd Hoffmann <kraxel@redhat.com> wrote:
->> Either mlock account (because it's mlocked defacto), and get_user_pages
->> won't do that for you.
->>
->> Or you write the full-blown userptr implementation, including mmu_notifier
->> support (see i915 or amdgpu), but that also requires Christian Königs
->> latest ->invalidate_mapping RFC for dma-buf (since atm exporting userptr
->> buffers is a no-go).
->
-> I guess I'll look at mlock accounting for starters then.  Easier for
-> now, and leaves the door open to switch to userptr later as this should
-> be transparent to userspace.
+I have a question of the call path init/main.c:
+init/main.c: start_kernel() ->
+kernel/events/core.c: perf_pmu_register() ->
+kernel/events/core.c: perf_event_init() ->
+kernel/events/core.c: pmu_dev_alloc()
 
-Out of interest, do you have usecases for full userptr support? Maybe
-another way would be to allow creation of dmabufs from memfds.
+In this call path, start_kernel() calls local_irq_disable() to disable 
+the interrupt;
+perf_pmu_register() calls mutex_lock() and idr_alloc(GFP_KERNEL), and 
+they can sleep;
+pmu_dev_alloc() calls kzalloc(GFP_KERNEL), and it can sleep.
 
-Cheers,
-Daniel
+In my opinion, this code may sleep with interrupts are disabled.
+I wonder why this code is okay?
+
+
+Best wishes,
+Jia-Ju Bai
