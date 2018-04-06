@@ -1,105 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752505AbeDFM3a (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 08:29:30 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:3696 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752257AbeDFM32 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 08:29:28 -0400
-From: Fabien DESSENNE <fabien.dessenne@st.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Ludovic BARRE <ludovic.barre@st.com>,
-        "Devicetree List" <devicetree@vger.kernel.org>,
-        "\", linux-arm-kernel\"@lists.infradead.org"
-        <", linux-arm-kernel"@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org"
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        "Arnaud POULIQUEN" <arnaud.pouliquen@st.com>
-Subject: Re: [PATCH v2 2/2] mailbox: add STMicroelectronics STM32 IPCC driver
-Thread-Topic: [PATCH v2 2/2] mailbox: add STMicroelectronics STM32 IPCC driver
-Thread-Index: AQHTzMHdHpageEh13EG70mtSxYSG6qPziqSA
-Date: Fri, 6 Apr 2018 12:29:02 +0000
-Message-ID: <4a2170b7-e5e9-4f5c-8ff7-79e102a658c1@st.com>
-References: <1520852307-26659-1-git-send-email-fabien.dessenne@st.com>
- <1520852307-26659-3-git-send-email-fabien.dessenne@st.com>
- <CABb+yY1x7J_oEgU-LR5jPYCoCoUHng84E+CibTxLzdtxhENTBw@mail.gmail.com>
-In-Reply-To: <CABb+yY1x7J_oEgU-LR5jPYCoCoUHng84E+CibTxLzdtxhENTBw@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.45]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <853A75F869AB854C902589DC856236A9@st.com>
+        id S1752296AbeDFMbh convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 08:31:37 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54544 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751974AbeDFMbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 08:31:35 -0400
+Date: Fri, 6 Apr 2018 14:31:33 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
+ parameter
+Message-ID: <20180406143133.67f33d33@xps13>
+In-Reply-To: <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+        <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-06_06:,,
- signatures=0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w36CTaap008281
 
-Hi
+Hi Abhishek,
+
+On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
+
+> Currently the driver uses the ECC strength specified in
+> device tree. The ONFI or JEDEC device parameter page
+> contains the ‘ECC correctability’ field which indicates the
+> number of bits that the host should be able to correct per
+> 512 bytes of data.
+
+This is misleading. This field is not about the controller but rather
+the chip requirements in terms of minimal strength for nominal use.
+
+> The ecc correctability is assigned in
+> chip parameter during device probe time. QPIC/EBI2 NAND
+> supports 4/8-bit ecc correction. The Same kind of board
+> can have different NAND parts so use the ecc strength
+> from device parameter (if its non zero) instead of
+> device tree.
+
+That is not what you do.
+
+What you do is forcing the strength to be 8-bit per ECC chunk if the
+NAND chip requires at least 8-bit/chunk strength.
+
+The DT property is here to force a strength. Otherwise, Linux will
+propose to the NAND controller to use the minimum strength required by
+the chip (from either the ONFI/JEDEC parameter page or from a static
+table).
+
+IMHO, you have two solutions:
+1/ Remove these properties from the board DT (breaks DT backward
+compatibility though);
+2/ Create another DT for the board.
+
+However, there is something to do in this driver: the strength chosen
+should be limited to the controller capabilities (8-bit/512B if I
+understand correctly). In this case you have two options: either you
+limit the strength like the size [1] if (ecc->strength > 8); or you
+just limit the maximum strength to 8 like this [2] and the core will
+spawn a warning in the dmesg telling that the ECC strength used is
+below the NAND chip requirements.
+
+Thanks,
+Miquèl
+
+[1] https://elixir.bootlin.com/linux/latest/source/drivers/mtd/nand/qcom_nandc.c#L2332
+[2] http://code.bulix.org/nyf63w-315268
 
 
-On 05/04/18 11:38, Jassi Brar wrote:
-> On Mon, Mar 12, 2018 at 4:28 PM, Fabien Dessenne <fabien.dessenne@st.com> wrote:
-> ....
->> +
->> +       /* irq */
->> +       for (i = 0; i < IPCC_IRQ_NUM; i++) {
->> +               ipcc->irqs[i] = of_irq_get_byname(dev->of_node, irq_name[i]);
->> +               if (ipcc->irqs[i] < 0) {
->> +                       dev_err(dev, "no IRQ specified %s\n", irq_name[i]);
->> +                       ret = ipcc->irqs[i];
->> +                       goto err_clk;
->> +               }
->> +
->> +               ret = devm_request_threaded_irq(dev, ipcc->irqs[i], NULL,
->> +                                               irq_thread[i], IRQF_ONESHOT,
->> +                                               dev_name(dev), ipcc);
->>
-> In your interrupt handlers you don't do anything that could block.
-> Threads only adds some delay to your message handling.
-> So maybe use devm_request_irq() ?
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+>  drivers/mtd/nand/qcom_nandc.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
+> index 563b759..8dd40de 100644
+> --- a/drivers/mtd/nand/qcom_nandc.c
+> +++ b/drivers/mtd/nand/qcom_nandc.c
+> @@ -2334,6 +2334,14 @@ static int qcom_nand_host_setup(struct qcom_nand_host *host)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/*
+> +	 * Read the required ecc strength from NAND device and overwrite
+> +	 * the device tree ecc strength for devices which require
+> +	 * ecc correctability bits >= 8
+> +	 */
+> +	if (chip->ecc_strength_ds >= 8)
+> +		ecc->strength = 8;
+> +
+>  	wide_bus = chip->options & NAND_BUSWIDTH_16 ? true : false;
+>  
+>  	if (ecc->strength >= 8) {
 
-The interrupt handlers call mbox_chan_received_data() / 
-mbox_chan_txdone(), which call in turn client's rx_callback() / 
-tx_done() / tx_prepare() which behavior may be unsafe. Hence, using a 
-threaded irq here seems to be a good choice.
 
 
->
-> .......
->> +
->> +static struct platform_driver stm32_ipcc_driver = {
->> +       .driver = {
->> +               .name = "stm32-ipcc",
->> +               .owner = THIS_MODULE,
->>
-> No need of owner here these days.
-
-OK, I will suppress it.
-
-> And also maybe use readl/writel, instead of _relaxed.
-
-The IPCC device is exclusively used on ARM. In ARM architecture, the 
-ioremap on devices are strictly ordered and uncached.
-In that case, using _relaxed avoids an unneeded cache flush, slightly 
-improving performance.
-
->
-> Cheers!
+-- 
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
