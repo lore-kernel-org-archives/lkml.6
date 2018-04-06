@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753148AbeDFNJT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:09:19 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35723 "EHLO
+        id S1752972AbeDFNIk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:08:40 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:51073 "EHLO
         relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753008AbeDFNIp (ORCPT
+        with ESMTP id S1752740AbeDFNIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:08:45 -0400
+        Fri, 6 Apr 2018 09:08:36 -0400
 X-Originating-IP: 2.224.242.101
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
@@ -15,11 +15,12 @@ To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 7/7] arm64: dts: renesas: eagle: Add ADV7511W and HDMI output
-Date: Fri,  6 Apr 2018 15:08:12 +0200
-Message-Id: <1523020092-25540-8-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH 3/7] arm64: dts: renesas: r8a77970: add DU support
+Date: Fri,  6 Apr 2018 15:08:08 +0200
+Message-Id: <1523020092-25540-4-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -30,96 +31,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Enable HDMI output adding the HDMI connector and the ADV7511W, connected
-to THC63LVD1024 LVDS decoder output.
+Define the generic R8A77970 part of the DU device node.
 
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 51 +++++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index 9d0e65d..e9f7b83 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -32,6 +32,17 @@
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
- 
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
- 	thc63lvd1024: lvds-decoder {
- 		compatible = "thine,thc63lvd1024";
- 
-@@ -41,11 +52,17 @@
- 
- 			port@0 {
- 				reg = <0>;
--
- 				thc63lvd1024_in: endpoint {
- 					remote-endpoint = <&lvds0_out>;
- 				};
- 			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index db06c94..e649e86 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -635,6 +635,34 @@
+ 			resets = <&cpg 623>;
+ 			renesas,fcp = <&fcpvd0>;
  		};
- 	};
- };
-@@ -85,6 +102,38 @@
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 	};
 +
-+	hdmi@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
++		du: display@feb00000 {
++			compatible = "renesas,du-r8a77970";
++			reg = <0 0xfeb00000 0 0x80000>;
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>;
++			clock-names = "du.0";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			vsps = <&vspd0>;
++			status = "disabled";
 +
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
 +				};
-+			};
 +
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
++				port@1 {
++					reg = <1>;
++					du_out_lvds: endpoint {
++					};
 +				};
 +			};
 +		};
-+	};
- };
+ 	};
  
- &pfc {
+ 	timer {
 -- 
 2.7.4
