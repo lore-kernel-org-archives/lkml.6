@@ -1,83 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755592AbeDFNdZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:33:25 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34962 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755538AbeDFNdX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:33:23 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 2/7] arm64: dts: renesas: r8a77970: add VSPD support
-Date: Fri, 06 Apr 2018 16:33:21 +0300
-Message-ID: <3172265.bfWcyC1uqx@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1523020092-25540-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org> <1523020092-25540-3-git-send-email-jacopo+renesas@jmondi.org>
+        id S1755566AbeDFOuX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:50:23 -0400
+Received: from mga03.intel.com ([134.134.136.65]:65189 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753056AbeDFOuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 10:50:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,415,1517904000";
+   d="scan'208";a="44012063"
+Subject: Re: [PATCH v3 4/4] mm/sparse: Optimize memmap allocation during
+ sparse_init()
+To: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, pagupta@redhat.com
+References: <20180228032657.32385-1-bhe@redhat.com>
+ <20180228032657.32385-5-bhe@redhat.com>
+Cc: linux-mm@kvack.org, kirill.shutemov@linux.intel.com
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <5dd3942a-cf66-f749-b1c6-217b0c3c94dc@intel.com>
+Date: Fri, 6 Apr 2018 07:50:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20180228032657.32385-5-bhe@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w36EmRep021754
 
-On Friday, 6 April 2018 16:08:07 EEST Jacopo Mondi wrote:
-> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I'm having a really hard time tying all the pieces back together.  Let
+me give it a shot and you can tell me where I go wrong.
+
+On 02/27/2018 07:26 PM, Baoquan He wrote:
+> In sparse_init(), two temporary pointer arrays, usemap_map and map_map
+> are allocated with the size of NR_MEM_SECTIONS.
+
+In sparse_init(), two temporary pointer arrays, usemap_map and map_map
+are allocated to hold the maps for every possible memory section
+(NR_MEM_SECTIONS).  However, we obviously only need the array sized for
+nr_present_sections (introduced in patch 1).
+
+The reason this is a problem is that, with 5-level paging,
+NR_MEM_SECTIONS (8M->512M) went up dramatically and these temporary
+arrays can eat all of memory, like on kdump kernels.
+
+This patch does two things: it makes sure to give usemap_map/mem_map a
+less gluttonous size on small systems, and it changes the map allocation
+and handling to handle the now more compact, less sparse arrays.
+
+---
+
+The code looks fine to me.  It's a bit of a shame that there's no
+verification to ensure that idx_present never goes beyond the shiny new
+nr_present_sections.
+
+
+> @@ -583,6 +592,7 @@ void __init sparse_init(void)
+>  	unsigned long *usemap;
+>  	unsigned long **usemap_map;
+>  	int size;
+> +	int idx_present = 0;
+
+I wonder whether idx_present is a good name.  Isn't it the number of
+consumed mem_map[]s or usemaps?
+
 > 
-> Describe VSPD0 in the R8A77970 device tree; it will be used by DU in
-> the next patch...
-> 
-> Based on the original (and large) patch by Daisuke Matsushita
-> <daisuke.matsushita.ns@hitachi.com>.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a77970.dtsi index 71f466d..db06c94 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> @@ -625,6 +625,16 @@
->  			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
->  			resets = <&cpg 603>;
->  		};
-> +
-> +		vspd0: vsp@fea20000 {
-> +			compatible = "renesas,vsp2";
-> +			reg = <0 0xfea20000 0 0x4000>;
+>  		if (!map) {
+>  			ms->section_mem_map = 0;
+> +			idx_present++;
+>  			continue;
+>  		}
+>  
 
-You need to extend the memory region to include the V6_CLUTn_TBL* registers. I 
-would recommend simply extending it to 0x8000 as all other VSP instances, even 
-if the registers at 0x7000-0x7fff are not implemented.
 
-Apart from that,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 623>;
-> +			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-> +			resets = <&cpg 623>;
-> +			renesas,fcp = <&fcpvd0>;
-> +		};
->  	};
-> 
->  	timer {
-
--- 
-Regards,
-
-Laurent Pinchart
+This hunk seems logically odd to me.  I would expect a non-used section
+to *not* consume an entry from the temporary array.  Why does it?  The
+error and success paths seem to do the same thing.
