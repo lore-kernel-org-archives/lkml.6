@@ -1,48 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752023AbeDFUij convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 16:38:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56742 "EHLO mail.kernel.org"
+        id S1751808AbeDFUiR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 16:38:17 -0400
+Received: from mga18.intel.com ([134.134.136.126]:44017 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751442AbeDFUih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 16:38:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9371521720
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Sekhar Nori <nsekhar@ti.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180330152856.12297-4-brgl@bgdev.pl>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180330152856.12297-1-brgl@bgdev.pl> <20180330152856.12297-4-brgl@bgdev.pl>
-Message-ID: <152304711592.94378.4448268823064394140@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 3/8] clk: davinci: add a reset lookup table for psc0
-Date: Fri, 06 Apr 2018 13:38:35 -0700
+        id S1751425AbeDFUiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 16:38:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,416,1517904000";
+   d="scan'208";a="32212354"
+From: Andi Kleen <andi@firstfloor.org>
+To: acme@kernel.org
+Cc: jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH 3/4] perf, tools, record: Remove misleading error suggestion
+Date: Fri,  6 Apr 2018 13:38:11 -0700
+Message-Id: <20180406203812.3087-4-andi@firstfloor.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180406203812.3087-1-andi@firstfloor.org>
+References: <20180406203812.3087-1-andi@firstfloor.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bartosz Golaszewski (2018-03-30 08:28:51)
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> In order to be able to use the reset framework in legacy boot mode as
-> well, add the reset lookup table to the psc driver for da850 variant.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
+From: Andi Kleen <ak@linux.intel.com>
 
-Applied to clk-next
+When perf record encounters an error setting up an event it suggests
+to enable CONFIG_PERF_EVENTS. This is misleading because:
+- Usually it is enabled (it is really hard to disable on x86)
+- The problem is usually somewhere else, e.g. the CPU is not supported
+or an invalid configuration has been used.
+
+Remove the misleading suggestion.
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ tools/perf/util/evsel.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 1ac8d9236efd..66b62570c855 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2894,8 +2894,7 @@ int perf_evsel__open_strerror(struct perf_evsel *evsel, struct target *target,
+ 
+ 	return scnprintf(msg, size,
+ 	"The sys_perf_event_open() syscall returned with %d (%s) for event (%s).\n"
+-	"/bin/dmesg may provide additional information.\n"
+-	"No CONFIG_PERF_EVENTS=y kernel support configured?",
++	"/bin/dmesg | grep -i perf may provide additional information.\n",
+ 			 err, str_error_r(err, sbuf, sizeof(sbuf)),
+ 			 perf_evsel__name(evsel));
+ }
+-- 
+2.14.3
