@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/H+OYCIsxJNcI6cit08JSUTrqo/Ueo8V4cS0GDh/LCAFEzPaIaiBo3oFVHLqmGTLUVL/xx
-ARC-Seal: i=1; a=rsa-sha256; t=1523021815; cv=none;
+X-Google-Smtp-Source: AIpwx4+KirXJsCGmSMX18ipG1tGObGBBrU2MIqCd4E35gyqa7Mq+QCVf43FSPJckiz0BEXFmfH0J
+ARC-Seal: i=1; a=rsa-sha256; t=1523021814; cv=none;
         d=google.com; s=arc-20160816;
-        b=OfdUXQ0K2aBGJVALLLYz4b2mQOFVCkEL9bgnZyMaP0SFAIGM0C4YM/fKaoZs2hFryq
-         zVO7qTReVuQ5YwWUkfV2UIgotsRNZxyEodjkv0MLzll2kpVib2kiqHbBOPl90WcGw1Tk
-         FcIUFkZISrvO1jO+nA/Pnjhb1XqtDmbkPLWuq564t0sW90lc4Cf1x+Xy7UcbcWMqYBe7
-         I2VLFn86Mh/EJL5O7vPUw96nNKBsw8S8wIGZ5y2pqI7nEaNLe1Qerm3t2vID99KMZzo+
-         NbcJNFxwXj84Eh2erAoF8YsyxTSIXV+3c+X/VUglstZ+CPre8QSuLE0aTpSkis2R0VzW
-         uFeA==
+        b=w+mOaMgnKkUroobusRPVhuMOWuBrYccVW7tNMaDq1sjuUN27HR/wLKGTOmXXThx/Ao
+         jKH4G9wSXS4vssGKoUMEvp1hYw+x1VCMtgXjiw58N8WuJAEQltprPDf2DIUBmjigDP+5
+         yoz8t333P+BUt+efc3c6wHStSRHFylMMw0+scZPPGhTyyPYWC1QcdyrcmC1NSH86xohF
+         kO24N1IYXgQk7MJSOU7V+OMrnWCKSSfewELw10MoC9moDgIqLrjW3Yq3TqCbSrQZMXip
+         TjOGIghKKldLm9yUd5pySjGZhi6+9+f+6MKau+A7bah1DzlVHjL2G3w8T5Dsmjf5GqsQ
+         L1Ow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EnWJnhg1gSL85ZYtjP6BAeW/WqdBldzTBK/sADetxqY=;
-        b=p7ImhPTGTVi8KG9cVqsO2+3HJzaZaNnl5rA+UyyZTdBl/kurBjsj8A5R0cTVJJBDBR
-         nj89MiosPQufCLX9p7CXo1OorJStlsuDdinzI3jEVZynAjXHJfCGa3yH1lcpFDBUZ3aC
-         sJVziNnh6AAinytwUiJUzrn2pzsfhOeH6cr7u3nphOyMYKnysAFHtEbOA7/fKw+loMxY
-         Qfuj/Ez/zUpvH9PuLYQaMpy56hAjSPEcKpKXvunpq+QnSsl9LohkCO4x8wHtzzeTWCVB
-         3vkUa6pqTWr7e2SNLBRP6Qbf8+axWnRz7t38M8B7lorFcFI8pkJSu3rskSloFgHkG8jg
-         VAyg==
+        bh=bJizX2qP/6MScIQ14/aZ3THU5kZdg7Xob0ldKe+0naI=;
+        b=tZCHB5lKB/aMss4FUQ1ZIbZJeoHJp3PMR4HoD+R3bfyRumrM3wTBFCphQqIIy+huGS
+         TNQVwGf0IBqZ1By4Lo9P19mboiH9LBhhM9Lb0Wymt3j07NtxRKZz6fccvb1hb9O9/jpN
+         K7SRSbMWNmDjP6l6gqRtgVjx3C1lw+9z41Acp+xwV8qFvU++iMdabVyLFX/qNOZQgLLK
+         9NrAT3hO7GBOXwV/j70BfsFnQPtNF3h9RzUZlFuUJ99CHcipSngUPKupMgkhJQXGknRJ
+         6wzuRrzEbseUl12EnUDJcVvcpkLnae3QqTL6KABG2FSENYBR7X1XEU2jA7H6YP7C1OHu
+         rnKg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>,
-	"Andrew F. Davis" <afd@ti.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 097/102] Revert "ARM: dts: am335x-pepper: Fix the audio CODECs reset pin"
-Date: Fri,  6 Apr 2018 15:24:18 +0200
-Message-Id: <20180406084345.033645683@linuxfoundation.org>
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 096/102] Fix slab name "biovec-(1<<(21-12))"
+Date: Fri,  6 Apr 2018 15:24:17 +0200
+Message-Id: <20180406084344.917815233@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003618153570477?=
-X-GMAIL-MSGID: =?utf-8?q?1597004123767660341?=
+X-GMAIL-THRID: =?utf-8?q?1597004122031445123?=
+X-GMAIL-MSGID: =?utf-8?q?1597004122031445123?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,31 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-This reverts commit 272b5eef085c23cd71eec30fe040fb1592682508 which was
-comit e153db03c6b7a035c797bcdf35262586f003ee93 upstream.
+commit bd5c4facf59648581d2f1692dad7b107bf429954 upstream.
 
-It requires a driver that was not merged until 4.16, so remove it from
-this stable tree as it is pointless.
+I'm getting a slab named "biovec-(1<<(21-12))". It is caused by unintended
+expansion of the macro BIO_MAX_PAGES. This patch renames it to biovec-max.
 
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Andrew F. Davis <afd@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org	# v4.14+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/boot/dts/am335x-pepper.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/am335x-pepper.dts
-+++ b/arch/arm/boot/dts/am335x-pepper.dts
-@@ -139,7 +139,7 @@
- &audio_codec {
- 	status = "okay";
+---
+ block/bio.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -42,9 +42,9 @@
+  * break badly! cannot be bigger than what you can fit into an
+  * unsigned short
+  */
+-#define BV(x) { .nr_vecs = x, .name = "biovec-"__stringify(x) }
++#define BV(x, n) { .nr_vecs = x, .name = "biovec-"#n }
+ static struct biovec_slab bvec_slabs[BVEC_POOL_NR] __read_mostly = {
+-	BV(1), BV(4), BV(16), BV(64), BV(128), BV(BIO_MAX_PAGES),
++	BV(1, 1), BV(4, 4), BV(16, 16), BV(64, 64), BV(128, 128), BV(BIO_MAX_PAGES, max),
+ };
+ #undef BV
  
--	reset-gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
-+	gpio-reset = <&gpio1 16 GPIO_ACTIVE_LOW>;
- 	AVDD-supply = <&ldo3_reg>;
- 	IOVDD-supply = <&ldo3_reg>;
- 	DRVDD-supply = <&ldo3_reg>;
