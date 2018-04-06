@@ -1,158 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932261AbeDFO2R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:28:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57646 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932090AbeDFO2M (ORCPT
+        id S932294AbeDFO2k (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:28:40 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:56891 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752802AbeDFO2i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:28:12 -0400
-Date: Fri, 6 Apr 2018 11:28:06 -0300
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org,
+        Fri, 6 Apr 2018 10:28:38 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Richard Kuo <rkuo@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-hexagon@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: platform: fsl-viu: add __iomem annotations
-Message-ID: <20180406112806.3b52e5d8@vento.lan>
-In-Reply-To: <20180406142336.2079928-1-arnd@arndb.de>
-References: <20180406142336.2079928-1-arnd@arndb.de>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/3] hexagon: fix ffz/fls/ffs return type
+Date: Fri,  6 Apr 2018 16:28:21 +0200
+Message-Id: <20180406142832.2243021-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:sPYsZINIgbBBJhorGwFFBdtSAn9M6hmr/qN+/8IJ6as1F2rud+t
+ 8MkX1M9zdH5LKJB1kyL6feysNEjhxJKcjsA/pn2HB67MfsmVyIV0QuVoeKDinyZH4zA0mbe
+ +s3fa+7XtDzpGH7w8A4ZqtpdyXvXAzT59g+FNoMY2DT1Gx1mfIl48cXzS00tbnAsnKKyi6p
+ voY7972ns/9+UDOA9+EVg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:xsRU8VXITB8=:cjM9VJrMR1MFrVjKN7hgtb
+ Yogw/7M7ukvcWyQu/9m3+HbK02FpYi22hzBKV5Jn6f2pzS22ZCebLEfwpPvHyHE4Lv9r90zDt
+ QKy4hJ0dnMXgmzQQM10ez9UZxeWvIpi4jZxaAkzaxfOPxfMH29o0ed1UIwBZOuDnk57pdDKbk
+ FOliz4q5QsDHS/yPMoElTMGEZENiyYaXX1KZuVNToyyRMpS2mpyZmrBGUVRjfbhePs4P1S29U
+ 0uz4UepCkb+HDcDeNAyCfwIwwQXHALBtIRYSnlom2MPUvg5HbWWBt0TqrWcOLAaaa+I0ZuBfF
+ /NGVg8M5HohnRcUiseO8fJKPWU0UHWhO6nxxHk5d+NufKixXxe0+5dE4cbH2LoNU0hFo4Wt2X
+ GdDf7hg7IgYuxjANp+lHOu9zRyBmmoSBXq6fFITr8Q7XDi+32OO2QoZqpHIjYfWXHnyEdH/kV
+ IEJhtYavZFRlGzd5yWcMjYLxARdk+nLmiiMnp+Uo75FYmlZdezutqYsDvTuvUSqKGRl+43/G6
+ 1oa2Str/o4zLnirHGKAas/N8+SStGrOXu7wD0l7LMF/V3O5VqLXnHiHoZ4nZNiLYNYJ2c2YDG
+ OHF7YopC3xEdCTTPwa6uNIqWbkqCP2fG2gPLmEmbWHWG0430OV97q6iJYHkEO2AVbLi/C41IE
+ rXZ/0smG/cf9keBwVYk4oqTwGLnolwMvBLsjkYXeuRp+Zrxf9+3b8j/8q22EIYIE/hSU8eqxt
+ dgIYkZ5TiRPVEUO5q1/V9egIWzpA1jE27edHkA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri,  6 Apr 2018 16:23:18 +0200
-Arnd Bergmann <arnd@arndb.de> escreveu:
+Let's use the same return type as the major architectures to
+avoid warnings like
 
-> This avoids countless sparse warnings like
-> 
->    drivers/media/platform/fsl-viu.c:1081:25: sparse: incorrect type in argument 2 (different address spaces)
->    drivers/media/platform/fsl-viu.c:1082:25: sparse: incorrect type in argument 2 (different address spaces)
+drivers/ata/libahci_platform.c: In function 'ahci_platform_init_host':
+drivers/ata/libahci_platform.c:561:12: warning: comparison of distinct pointer types lacks a cast [enabled by default]
 
-Heh, that's almost identical to this one:
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/hexagon/include/asm/bitops.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-	https://git.linuxtv.org/mchehab/experimental.git/commit/?h=compile_test&id=457312e30430e83f9dc4bf1804acb15b91e5dfc1
-
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/media/platform/fsl-viu.c | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
-> index 200c47c69a75..cc85620267f1 100644
-> --- a/drivers/media/platform/fsl-viu.c
-> +++ b/drivers/media/platform/fsl-viu.c
-> @@ -128,7 +128,7 @@ struct viu_dev {
->  	int			dma_done;
->  
->  	/* Hardware register area */
-> -	struct viu_reg		*vr;
-> +	struct viu_reg __iomem	*vr;
->  
->  	/* Interrupt vector */
->  	int			irq;
-> @@ -244,7 +244,7 @@ struct viu_fmt *format_by_fourcc(int fourcc)
->  
->  void viu_start_dma(struct viu_dev *dev)
->  {
-> -	struct viu_reg *vr = dev->vr;
-> +	struct viu_reg __iomem *vr = dev->vr;
->  
->  	dev->field = 0;
->  
-> @@ -255,7 +255,7 @@ void viu_start_dma(struct viu_dev *dev)
->  
->  void viu_stop_dma(struct viu_dev *dev)
->  {
-> -	struct viu_reg *vr = dev->vr;
-> +	struct viu_reg __iomem *vr = dev->vr;
->  	int cnt = 100;
->  	u32 status_cfg;
->  
-> @@ -395,7 +395,7 @@ static void free_buffer(struct videobuf_queue *vq, struct viu_buf *buf)
->  
->  inline int buffer_activate(struct viu_dev *dev, struct viu_buf *buf)
->  {
-> -	struct viu_reg *vr = dev->vr;
-> +	struct viu_reg __iomem *vr = dev->vr;
->  	int bpp;
->  
->  	/* setup the DMA base address */
-> @@ -703,9 +703,9 @@ static int verify_preview(struct viu_dev *dev, struct v4l2_window *win)
->  	return 0;
->  }
->  
-> -inline void viu_activate_overlay(struct viu_reg *viu_reg)
-> +inline void viu_activate_overlay(struct viu_reg __iomem *viu_reg)
->  {
-> -	struct viu_reg *vr = viu_reg;
-> +	struct viu_reg __iomem *vr = viu_reg;
->  
->  	out_be32(&vr->field_base_addr, reg_val.field_base_addr);
->  	out_be32(&vr->dma_inc, reg_val.dma_inc);
-> @@ -985,9 +985,9 @@ inline void viu_activate_next_buf(struct viu_dev *dev,
->  	}
->  }
->  
-> -inline void viu_default_settings(struct viu_reg *viu_reg)
-> +inline void viu_default_settings(struct viu_reg __iomem *viu_reg)
->  {
-> -	struct viu_reg *vr = viu_reg;
-> +	struct viu_reg __iomem *vr = viu_reg;
->  
->  	out_be32(&vr->luminance, 0x9512A254);
->  	out_be32(&vr->chroma_r, 0x03310000);
-> @@ -1001,7 +1001,7 @@ inline void viu_default_settings(struct viu_reg *viu_reg)
->  
->  static void viu_overlay_intr(struct viu_dev *dev, u32 status)
->  {
-> -	struct viu_reg *vr = dev->vr;
-> +	struct viu_reg __iomem *vr = dev->vr;
->  
->  	if (status & INT_DMA_END_STATUS)
->  		dev->dma_done = 1;
-> @@ -1032,7 +1032,7 @@ static void viu_overlay_intr(struct viu_dev *dev, u32 status)
->  static void viu_capture_intr(struct viu_dev *dev, u32 status)
->  {
->  	struct viu_dmaqueue *vidq = &dev->vidq;
-> -	struct viu_reg *vr = dev->vr;
-> +	struct viu_reg __iomem *vr = dev->vr;
->  	struct viu_buf *buf;
->  	int field_num;
->  	int need_two;
-> @@ -1104,7 +1104,7 @@ static void viu_capture_intr(struct viu_dev *dev, u32 status)
->  static irqreturn_t viu_intr(int irq, void *dev_id)
->  {
->  	struct viu_dev *dev  = (struct viu_dev *)dev_id;
-> -	struct viu_reg *vr = dev->vr;
-> +	struct viu_reg __iomem *vr = dev->vr;
->  	u32 status;
->  	u32 error;
->  
-> @@ -1169,7 +1169,7 @@ static int viu_open(struct file *file)
->  	struct video_device *vdev = video_devdata(file);
->  	struct viu_dev *dev = video_get_drvdata(vdev);
->  	struct viu_fh *fh;
-> -	struct viu_reg *vr;
-> +	struct viu_reg __iomem *vr;
->  	int minor = vdev->minor;
->  	u32 status_cfg;
->  
-> @@ -1305,7 +1305,7 @@ static int viu_release(struct file *file)
->  	return 0;
->  }
->  
-> -void viu_reset(struct viu_reg *reg)
-> +void viu_reset(struct viu_reg __iomem *reg)
->  {
->  	out_be32(&reg->status_cfg, 0);
->  	out_be32(&reg->luminance, 0x9512a254);
-
-
-
-Thanks,
-Mauro
+diff --git a/arch/hexagon/include/asm/bitops.h b/arch/hexagon/include/asm/bitops.h
+index 5e4a59b3ec1b..8790a50b1f5e 100644
+--- a/arch/hexagon/include/asm/bitops.h
++++ b/arch/hexagon/include/asm/bitops.h
+@@ -194,7 +194,7 @@ static inline int __test_bit(int nr, const volatile unsigned long *addr)
+  *
+  * Undefined if no zero exists, so code should check against ~0UL first.
+  */
+-static inline long ffz(int x)
++static inline int ffz(int x)
+ {
+ 	int r;
+ 
+@@ -211,7 +211,7 @@ static inline long ffz(int x)
+  * This is defined the same way as ffs.
+  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+  */
+-static inline long fls(int x)
++static inline int fls(int x)
+ {
+ 	int r;
+ 
+@@ -232,7 +232,7 @@ static inline long fls(int x)
+  * the libc and compiler builtin ffs routines, therefore
+  * differs in spirit from the above ffz (man ffs).
+  */
+-static inline long ffs(int x)
++static inline int ffs(int x)
+ {
+ 	int r;
+ 
+-- 
+2.9.0
