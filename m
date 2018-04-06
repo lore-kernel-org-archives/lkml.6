@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx492jwQQLZqahw7tjWl4p6cDmImrhYMhQxNqDA8kdAZMWaXWoukzKIJPXP2fQIsL+1SQSzYR
-ARC-Seal: i=1; a=rsa-sha256; t=1523021460; cv=none;
+X-Google-Smtp-Source: AIpwx4+zzTTkxQODxgYZMW3zovlduM/Bd+5/CctdhRq0F/nmbnxziTMZr0iRQ4S5NDwxl9VscD2G
+ARC-Seal: i=1; a=rsa-sha256; t=1523021458; cv=none;
         d=google.com; s=arc-20160816;
-        b=R5BMKlKvtF0QCpx9L2adK1LlM3xAQwxIrDB5VA5UadIyY0MPf9i0tDKdN9jlTUCXoZ
-         pbXUDtwzSlJaIPb8exgqjY7TQ8p9LknjIXpOZRolxmAnwBYIeOHztJxSaJ91oIv/4cYE
-         JUE86S9YliwtxlOZ+eyu7h86RAGDOKA2HIHaiBg7f0eM31UTHnfUpovl+a/sJ3rKQtNp
-         SaTpz+/IhZ+g6aysF7wpL7svf9MzP2zlv/qIJFH7eayeMhl1iOYG4X5IQEG8a0U856Wd
-         pXerlMdELYh/ZfprD01FDH52Z5l8wu6tMpD5HLFfNb2Tq/YqymYxhD2FdNE7tusig/bj
-         Qnsw==
+        b=h0Jd9zchw9WqUbzrd+6v91jQT/jA1/bwaGggARNrnSplPuXMBD+/6hYA4MYmGqgJAv
+         ayOVLrtWnRkFB9MAtxgLCNPswFPiefNYMX/Adz1+unrEz3Z5qDFto8ZVQfESblm6Y/r3
+         nEQReKy+QzATON9Dca1apr/wlTsfwn6uPK52EZIyjgQ0E3dTEA9WOT3PgEIdQMDXEpgn
+         zkMYN+0jROM+8e9wZSB5Ju91HNjHWmV8aYjKSkFFpI6M+1tCAjyqZ4TaWoCZhiIDz11Z
+         wp1KB6y1nsQSTg70RQKkijOAqt+18s4XnsYvxQKCH51D7SUxIA99Y5Yv5lNbR7zNjsJq
+         oM6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZA9p+ySX7xugJ9jFDYQj4VcHfFkPv/1cWeDlUX8cpug=;
-        b=mlIo8TbtPLzEdca4y89wUoE0985nZSAUttkfiZalM2I4a9g3nJHu5V0HiwdrcmcCVy
-         NCK0L9BVAzKZYJl6yI8I6o5mlKYyyrz83lfG3SrqHvKNeaRswin1TSgVs0QgEvCvRu0t
-         m/Ui0ECmkm+imCSQd70jNIU71+jlTjurkc9Nj2blUXUdyvy8r4v8q4exsEIlR1hX5E38
-         GvXk0o5/Dkhar/ZxryuzNf27BHrbLlNx09fv64ZbQqFpu2l4sj8DPei0wKEeIi89EP1j
-         SUSrUKF5TQWorQop7iP09PXbsdWJjkY7Bi2iVrDD8TxhShIsbK4RKBo8tF2/rIvou3a2
-         CeJw==
+        bh=RaUitviGQM8jZQK/2qXdASisZMpi/xy7ZSSG4S25g4M=;
+        b=HsJZdEH9URfWDcBL3MpYQHw7dAWAs65Mvh+acNkugLXZGSQ9Cj1OFIyQaigg+f4HOv
+         POq1Bwvkj+GEZkwF8iuagYN7TF7ve/yzRioXciND12uNoxg8jvph7BuspcMJfyh2fco4
+         +WpbAJT+7P8fH26u7DYCKCyss1CsSL4TNvRhS1Y8tyRifRhwTjw/SEd2IYMs1nPPGVLO
+         VIrYMM3CG+8ND4XgA04/Baif4/OD1HtSSvA54ULpnY6Z+7n2yrGiRlCE14ij3dVJT7BQ
+         DY0FJjsSgXnwLTXXVXwvQT4xwPCtuJ7vlm24H6T7quZjZFR+8KY5DtCUNW9/RAEeWcmq
+         L80Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Gibson <david@gibson.dropbear.id.au>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Fam Zheng <famz@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 43/72] scsi: virtio_scsi: always read VPD pages for multiqueue too
-Date: Fri,  6 Apr 2018 15:23:44 +0200
-Message-Id: <20180406084308.793860189@linuxfoundation.org>
+	Alexander Potapenko <glider@google.com>,
+	Sodagudi Prasad <psodagud@codeaurora.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 42/72] llist: clang: introduce member_address_is_nonnull()
+Date: Fri,  6 Apr 2018 15:23:43 +0200
+Message-Id: <20180406084308.659254226@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084305.210085169@linuxfoundation.org>
 References: <20180406084305.210085169@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003512073897792?=
-X-GMAIL-MSGID: =?utf-8?q?1597003751348003112?=
+X-GMAIL-THRID: =?utf-8?q?1597003748394981081?=
+X-GMAIL-MSGID: =?utf-8?q?1597003748394981081?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,34 +50,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Alexander Potapenko <glider@google.com>
 
-commit a680f1d463aeaeb00d22af257a56e111967c2f18 upstream.
+commit beaec533fc2701a28a4d667f67c9f59c6e4e0d13 upstream.
 
-Multi-queue virtio-scsi uses a different scsi_host_template struct.  Add
-the .device_alloc field there, too.
+Currently llist_for_each_entry() and llist_for_each_entry_safe() iterate
+until &pos->member != NULL.  But when building the kernel with Clang,
+the compiler assumes &pos->member cannot be NULL if the member's offset
+is greater than 0 (which would be equivalent to the object being
+non-contiguous in memory).  Therefore the loop condition is always true,
+and the loops become infinite.
 
-Fixes: 25d1d50e23275e141e3a3fe06c25a99f4c4bf4e0
-Cc: stable@vger.kernel.org
-Cc: David Gibson <david@gibson.dropbear.id.au>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Reviewed-by: Fam Zheng <famz@redhat.com>
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To work around this, introduce the member_address_is_nonnull() macro,
+which casts object pointer to uintptr_t, thus letting the member pointer
+to be NULL.
+
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Tested-by: Sodagudi Prasad <psodagud@codeaurora.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/virtio_scsi.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/linux/llist.h |   21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/virtio_scsi.c
-+++ b/drivers/scsi/virtio_scsi.c
-@@ -819,6 +819,7 @@ static struct scsi_host_template virtscs
- 	.eh_abort_handler = virtscsi_abort,
- 	.eh_device_reset_handler = virtscsi_device_reset,
+--- a/include/linux/llist.h
++++ b/include/linux/llist.h
+@@ -88,6 +88,23 @@ static inline void init_llist_head(struc
+ 	container_of(ptr, type, member)
  
-+	.slave_alloc = virtscsi_device_alloc,
- 	.can_queue = 1024,
- 	.dma_boundary = UINT_MAX,
- 	.use_clustering = ENABLE_CLUSTERING,
+ /**
++ * member_address_is_nonnull - check whether the member address is not NULL
++ * @ptr:	the object pointer (struct type * that contains the llist_node)
++ * @member:	the name of the llist_node within the struct.
++ *
++ * This macro is conceptually the same as
++ *	&ptr->member != NULL
++ * but it works around the fact that compilers can decide that taking a member
++ * address is never a NULL pointer.
++ *
++ * Real objects that start at a high address and have a member at NULL are
++ * unlikely to exist, but such pointers may be returned e.g. by the
++ * container_of() macro.
++ */
++#define member_address_is_nonnull(ptr, member)	\
++	((uintptr_t)(ptr) + offsetof(typeof(*(ptr)), member) != 0)
++
++/**
+  * llist_for_each - iterate over some deleted entries of a lock-less list
+  * @pos:	the &struct llist_node to use as a loop cursor
+  * @node:	the first entry of deleted list entries
+@@ -121,7 +138,7 @@ static inline void init_llist_head(struc
+  */
+ #define llist_for_each_entry(pos, node, member)				\
+ 	for ((pos) = llist_entry((node), typeof(*(pos)), member);	\
+-	     &(pos)->member != NULL;					\
++	     member_address_is_nonnull(pos, member);			\
+ 	     (pos) = llist_entry((pos)->member.next, typeof(*(pos)), member))
+ 
+ /**
+@@ -143,7 +160,7 @@ static inline void init_llist_head(struc
+  */
+ #define llist_for_each_entry_safe(pos, n, node, member)			       \
+ 	for (pos = llist_entry((node), typeof(*pos), member);		       \
+-	     &pos->member != NULL &&					       \
++	     member_address_is_nonnull(pos, member) &&			       \
+ 	        (n = llist_entry(pos->member.next, typeof(*n), member), true); \
+ 	     pos = n)
+ 
