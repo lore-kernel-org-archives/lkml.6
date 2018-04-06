@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752934AbeDFNIf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:08:35 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:59469 "EHLO
+        id S1753103AbeDFNIr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:08:47 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:57647 "EHLO
         relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752829AbeDFNIc (ORCPT
+        with ESMTP id S1752961AbeDFNIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:08:32 -0400
+        Fri, 6 Apr 2018 09:08:42 -0400
 X-Originating-IP: 2.224.242.101
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
@@ -14,56 +14,74 @@ To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
         sergei.shtylyov@cogentembedded.com
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/7] arm64: dts: renesas: r8a77970: add FCPVD support
-Date: Fri,  6 Apr 2018 15:08:06 +0200
-Message-Id: <1523020092-25540-2-git-send-email-jacopo+renesas@jmondi.org>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/7] arm64: dts: renesas: eagle: Add LVDS decoder
+Date: Fri,  6 Apr 2018 15:08:11 +0200
+Message-Id: <1523020092-25540-7-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
+decoder, connected to the on-chip LVDS encoder output on one side
+and to the not-yet-described HDMI encoder ADV7511W on the other one.
 
-Describe FCPVD0 in the R8A77970 device tree; it will be used by VSPD0 in
-the next patch...
+As the decoder does not need any configuration it has been so-far
+omitted from DTS. Now that a driver is available, describe it in DT
+as well.
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 29 ++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index e8358d9..71f466d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -617,6 +617,14 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 603>;
-+		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+index 144b847..9d0e65d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -31,6 +31,23 @@
+ 		/* first 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
  	};
++
++	thc63lvd1024: lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				thc63lvd1024_in: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++		};
++	};
+ };
  
- 	timer {
+ &avb {
+@@ -104,3 +121,15 @@
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ };
++
++&lvds0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			lvds0_out: endpoint {
++				remote-endpoint = <&thc63lvd1024_in>;
++			};
++		};
++	};
++};
 -- 
 2.7.4
