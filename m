@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-402127-1522990719-2-2398262828294141953
+X-Cyrus-Session-Id: sloti22d1t05-93447-1522980961-2-13172352158255932331
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522990718; b=vqCBCssflqceOSTFplaQ5uqHT5dKIS92LuL5btaB/c+wvxpY3R
-    S8lxGl/6WP67mruEKgCFSr3n3uu3XlCRhGfFFi3IDsLayOnhDR38o+PpAoKPndNu
-    COjNLJFzdnPLjTT27v0GsmDqBbIveVl2BfAXQkg20DU/ExmJJgkb64ICMfjQ/NHb
-    1YzPRFJRQUz9xIq8vx3URZUM7sDIhVmMcz9BukQUA0AyQXcqi1jxpBXIM2dmZNAW
-    +ykcvPUIvc8+KJ9dcFonNbLIrMmVsILPPFId9TFzYyha5FalN3nS6W+v34DwHxAp
-    f6h0dWbwZFQrTMoLZsjL6Uuqt6EMKM/1YldQ==
+    1522980960; b=EK0WuZbxseAwHjghexT9Coa4jB68tSPheejmgvlMh26KCXYiHa
+    glsaA7ma4UBLKxv6XGHfzcK5nu2FTn0C0icOHApaLa2WfMb2rXFIFDyGSOhKwWft
+    TJt0xr+PJXrP+xrG1C4uj0/h3OQe0ihfws3u+dzvwPPEB3W36rkmYSoERwwJpN7i
+    SB4XMKxJCF5KMG3G9uRXUu+KmsVmo41FU6QNEL4E6EpHSFNcbTBNT9/NHdHuaW22
+    A4Wk7OvfMKHRbc5IdQc/VA1lxBhLx7dvU//OW38AMBVhE4II+0OxZtIi8pEgx7J1
+    FuXrlw5s0M2C77xsWbnTWxzaMQyTibOz4pRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1522990718; bh=Dh4hwgu6pHWgf5GFvkjsDJaVyWwLXn
-    pBTz7wZyAMNUI=; b=r1NWEgNVJufwz3NLK1vw1+iOAJv/QaxplZ9u4p25esrfSq
-    GiVeC/iDGUkh6TDUW22APyvc5R8RCjx1fQifzBsDayPEXHWxSgfnKRVqDWoIy97X
-    vOFaE4yEkP7ds35zPomJdi2P6VGmBp1FAK85+2a5sTrHt395e63ub1rDvUsw96qI
-    iffSvCfc6AOOabkwqYpi3J4Ep+AZAhnobbBEzwI/YHU/Ble3JcYZlW3G8GngojZ2
-    ayGCp5rUKFPY/P3yUkssTrRtjT1Uxxx61LrZ55XtVGRyXuWb1kOtzzPv/qrAjLlW
-    cwZ46Et80JfppQSTnegHL3a3fNU6rNX2gmavkSTw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1522980960; bh=XFQKx+SlBp0aPJuPLl5eY/HEVHh0MS
+    wodkgQWOlxlio=; b=SzxBL8h9ZIQX/EXHJFBUH3cNwYFU76zC4uQwR1mxG8Viel
+    yv4iYHJsXunBBAGWZt5nCtwcrfzRTZY+AJ4yHlrmiDGqJyibnSCa+95JIksjggO2
+    k3j0MyJvdxMtGocWniiZmft/kmOtiGMfVBYC866KaluK6X/FfcXrX4NjHxPOQ3cj
+    UTy3qIUX8vt+PPvSxaiMjQi041OHrCPpavF2aw1OsVE90NAdk04pIUql3XvKoujO
+    Uvju75JOyq3q4YiHVbYAZXEnwPlYLRBxemzQiY4SZuTpTOcpRMC4kB/7/u8eVMFu
+    OFj5rdgbkPUHwOn/66ct4yODwih7mjS3VxpiH93g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=zeniv.linux.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=zeniv.linux.org.uk header.mx.error=NOERROR header.result=warn header_org.domain=linux.org.uk header_org.result=pass header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=zeniv.linux.org.uk;
@@ -51,36 +51,36 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=zeniv.linux.org.uk header.mx.error=NOERROR header.result=warn header_org.domain=linux.org.uk header_org.result=pass header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMtvQrWJvGN/pWr/j2T6+y+7+BRjk59okdYdf5KXOn8QQw0OR4ieYS843g5sHNP6vN5/AhVaGoEHeyXCkiG4YOIUYcZyzTTGLUIaxmkz7Kl7egq2c7ZO
-    rbpzfGGqP22OC50xrZxsdobRtnVVGEKWdWQ3JYgWUfOIjRhKAXn5fy/YXS80bJ2wWGuwnKpj+pryGl3emTYPkNTL40HIde/K+aHbnGi9MUGq1q2eqa/aPuRK
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFNza5zcBryVihsVCVC/NYCkNWvAXkp6hM7becb0W22AX+m9KiVcSCsOFhQsW5ZEXjx9FrtBBlP8HKKqbmFQdAfPsbUQQOfzWmQYkGmqrQ9DzNQcTEII
+    28FuhevxBo6a/WxL8noOV353em4cBJUmNNguWKZQ7XxuiudMMZiFxj9vZRaIGuu3pZ9ZjC7w2sAPjAt/JaxkLJaxNVBSkEjuhJLGux/F1+OVlWjdQ1GsErCD
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=Newdxa483icPIVLupAoA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=VwQbUJbxAAAA:8 a=ITQxPpdZUBjbnp3qPPUA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751415AbeDFE6h (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 00:58:37 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48582 "EHLO
+        id S1751401AbeDFCP6 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 5 Apr 2018 22:15:58 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:46242 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeDFE6g (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 6 Apr 2018 00:58:36 -0400
-Date: Fri, 6 Apr 2018 05:58:33 +0100
+        with ESMTP id S1751363AbeDFCP5 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 5 Apr 2018 22:15:57 -0400
+Date: Fri, 6 Apr 2018 03:15:53 +0100
 From: Al Viro <viro@ZenIV.linux.org.uk>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/32] fs: introduce new ->get_poll_head and ->poll_mask
- methods
-Message-ID: <20180406045833.GW30522@ZenIV.linux.org.uk>
+Subject: Re: [PATCH 08/32] aio: replace kiocb_set_cancel_fn with a
+ cancel_kiocb file operation
+Message-ID: <20180406021553.GS30522@ZenIV.linux.org.uk>
 References: <20180330150809.28094-1-hch@lst.de>
- <20180330150809.28094-6-hch@lst.de>
+ <20180330150809.28094-9-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180330150809.28094-6-hch@lst.de>
+In-Reply-To: <20180330150809.28094-9-hch@lst.de>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
@@ -88,35 +88,28 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 30, 2018 at 05:07:42PM +0200, Christoph Hellwig wrote:
+On Fri, Mar 30, 2018 at 05:07:45PM +0200, Christoph Hellwig wrote:
+> The current kiocb_set_cancel_fn implementation assumes the kiocb is
+> embedded into an aio_kiocb, which is fundamentally unsafe as it might
+> have been submitted by non-aio callers.  Instead add a cancel_kiocb
+> file operation that replaced the ki_cancel function pointer set by
+> kiocb_set_cancel_fn, and only adds iocbs to the active list when
+> the read/write_iter methods return -EIOCBQUEUED and the file has
+> a cancel_kiocb method.
 
-> +  get_poll_head: Returns the struct wait_queue_head that poll, select,
-> +  epoll or aio poll should wait on in case this instance only has single
-> +  waitqueue.  Can return NULL to indicate polling is not supported,
-> +  or a POLL* value using the POLL_TO_PTR helper in case a grave error
-> +  occured and ->poll_mask shall not be called.
+> @@ -1440,6 +1423,16 @@ static inline ssize_t aio_rw_ret(struct kiocb *req, ssize_t ret)
+>  {
+>  	switch (ret) {
+>  	case -EIOCBQUEUED:
+> +		if (req->ki_filp->f_op->cancel_kiocb) {
 
-> +		if (IS_ERR(head))
-> +			return PTR_TO_POLL(head);
+... and by that point req might've been already freed by IO completion on
+another CPU.
+> +			struct aio_kiocb *iocb =
+> +				container_of(req, struct aio_kiocb, rw);
+> +			struct kioctx *ctx = iocb->ki_ctx;
+> +			unsigned long flags;
+> +
+> +			spin_lock_irqsave(&ctx->ctx_lock, flags);
+> +			list_add_tail(&iocb->ki_list, &ctx->active_reqs);
 
-> + * ->get_poll_head can return a __poll_t in the PTR_ERR, use these macros
-> + * to return the value and recover it.  It takes care of the negation as
-> + * well as off the annotations.
-> + */
-> +#define POLL_TO_PTR(mask)	(ERR_PTR(-(__force int)(mask)))
-
-Uh-oh...
-static inline bool __must_check IS_ERR(__force const void *ptr)
-{
-        return IS_ERR_VALUE((unsigned long)ptr);
-}
-#define IS_ERR_VALUE(x) unlikely((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
-#define MAX_ERRNO       4095
-
-IOW, your trick relies upon arguments of PTR_TO_POLL being no greater
-than 4095.  Now, consider
-#define EPOLLRDHUP      (__force __poll_t)0x00002000
-which is to say, 8192...
-
-So anything that tries e.g. POLL_TO_PTR(EPOLLRDHUP | EPOLLERR) will be in
-for a quiet unpleasant surprise...
