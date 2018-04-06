@@ -1,38 +1,40 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+tkErMXSYvG4bFPkfXtglai3hWR8N2cZxNQ+GHhHKPioaEtRKLoQaRPk8e0ALOd1U1TJQk
-ARC-Seal: i=1; a=rsa-sha256; t=1523021704; cv=none;
+X-Google-Smtp-Source: AIpwx49e85cgIcv8V7Qt4my07y8dfnpOJrf2aC/7GnrjMt0TSEBgN0G4+Ewby1uoa48qNir3V+DX
+ARC-Seal: i=1; a=rsa-sha256; t=1523021701; cv=none;
         d=google.com; s=arc-20160816;
-        b=DRcrsvkdxmwAl7eaMr1FWRQv2PZYvOGLLENTJwdIbAy/33W6XGjYNauebQ/BwlcfZl
-         rMJyRgj7jI4V0ozFENbHJCM66d9jBP0pfIZmTl9zIuupIpc6C6f7pgDJl+R4/1gxBu2X
-         uBesoJ/ffG030kEXEiJ/ljhMeBcqmJiUVdJoYoVP9v9t4CmPiglDj7G22R647H3FyquO
-         faykf4JWnvdL/0gI9z5U/2mIwKarAJb+PauqndQTKk+zOowkooI4YHhqqlFPND75xdaP
-         iOs14+MCTZguSsBeAGM/LXHtjhpXlaOhqUSqQI1ygF6B3u6nLXaTZU22qWqonLMco5EW
-         /9zw==
+        b=Pilo2lKkaiXO40X3E++/4F1kPr80LnvFJPi1XT9qaIkg8NQqRr48BIEVx11/6mS/58
+         VJRoG3y6l3eM7GeLylj2m0TZV7uTvZK1JNw2XCBYHgEB3pBUYENiN45Po0lqmnCMSjj7
+         wr6Nb47rYB+Q/8uQT64xSX4Zv/7eZb+aVhHhn1BKWF/QEUSPGrIHLmq9fjMNj7hiLAtu
+         n9v9/kKpH+nLmRs8QTH7lo6f3D76CDURIFUBsvHcmJvEv4eOX6kTwHfLghg+yiaGqeDa
+         bPgih8Zy/C8zrxKVeddUVvL7HksI3fxs4nX3c71XsEUdZMZQHb6OfFcTuPP5hBF71R6J
+         Qbfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZY8u02iOOkjZMxToXNZJwgPWE4/F4TIKRvpU2YGuwC8=;
-        b=xQh/KH8JyWMNJSjY76r5lI+PsouwV14iYPQI0l4hRm/oT/XHdhY7YOMwHxwVAXhcjB
-         8K2JwNhZUGhCliUSYp2DP3OvfkkyUpSTz/SKDJbxYpupmCZP0AiyrslhsH0mJi3K9keD
-         UcuNm8fIRCf0jAt7jK6+FLpUj/spGzYAd7xvCwuP7l/ETkbwsT7BaPaa0XMIMs1cXgck
-         J7yAGVzGE/sDYc4WY+R/MHCHyFGOo9OyFHyXhcyieDLfn1/ztz46YgBTexbW7JhU92LJ
-         VlfkaqAu8XdY8WPWe5/ARsyzescyWOl4gD6/3xUrQHZd0XgzTkFxBKwpdF2kB/D5j5f1
-         5Iug==
+        bh=S2orbjwKU+aI9mFCOxcmgmWbcnzK9lypiy3jiJe89Wc=;
+        b=iZmgRqD/y/994eqRXk7w5ABpoh+fYHLmGDjBB/66K10bKGm5GarIstRpfQA8By8eZ5
+         8IDRekDCh0F6uw//nhIbodM1fMdr7F4vlX01tBotO/V/BLPMmYzpN/A4OEUGW87dGDCM
+         21AvfzCN20zPSuSecO0Ibbp7q+XvLGBZ8itLrlwW3+sGpyJ6CmUM54XzVc6FsNLS3/3H
+         R9WW1x/IDS4dgktxJuW1ifklumE6Xp2RkL48GBTsDFkeC16vFvFkfg8nTMZcxZgLIK1I
+         d51aTNwV23sqpEHwUxZv0dwD67dUq8EEuswg6RN7Sx6vkhTuqZ5NoenXVg3q9VsjNrp2
+         AaqA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Stephen Smalley <sds@tycho.nsa.gov>,
-	Paul Moore <paul@paul-moore.com>,
-	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 033/102] selinux: Remove redundant check for unknown labeling behavior
-Date: Fri,  6 Apr 2018 15:23:14 +0200
-Message-Id: <20180406084336.289708652@linuxfoundation.org>
+	Mark Rutland <mark.rutland@arm.com>,
+	Laura Abbott <labbott@redhat.com>,
+	Shanker Donthineni <shankerd@codeaurora.org>,
+	Will Deacon <will.deacon@arm.com>,
+	Greg Hackmann <ghackmann@google.com>,
+	Alex Shi <alex.shi@linaro.org>
+Subject: [PATCH 4.9 059/102] arm64: entry: Explicitly pass exception level to kernel_ventry macro
+Date: Fri,  6 Apr 2018 15:23:40 +0200
+Message-Id: <20180406084339.887782436@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003700659162016?=
-X-GMAIL-MSGID: =?utf-8?q?1597004006564305363?=
+X-GMAIL-THRID: =?utf-8?q?1597004003369745565?=
+X-GMAIL-MSGID: =?utf-8?q?1597004003369745565?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,57 +53,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 270e8573145a26de924e2dc644596332d400445b upstream.
+commit 5b1f7fe41909 upstream.
 
-The check is already performed in ocontext_read() when the policy is
-loaded. Removing the array also fixes the following warning when
-building with clang:
+We will need to treat exceptions from EL0 differently in kernel_ventry,
+so rework the macro to take the exception level as an argument and
+construct the branch target using that.
 
-security/selinux/hooks.c:338:20: error: variable 'labeling_behaviors'
-    is not needed and will not be emitted
-    [-Werror,-Wunneeded-internal-declaration]
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Alex Shi <alex.shi@linaro.org> [v4.9 backport]
+[Mark: avoid dependency on C error handler backport]
+Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
+Tested-by: Will Deacon <will.deacon@arm.com>
+Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- security/selinux/hooks.c |   16 ----------------
- 1 file changed, 16 deletions(-)
+ arch/arm64/kernel/entry.S |   48 +++++++++++++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -406,18 +406,6 @@ static void superblock_free_security(str
- 	kfree(sbsec);
- }
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -70,10 +70,10 @@
+ #define BAD_FIQ		2
+ #define BAD_ERROR	3
  
--/* The file system's label must be initialized prior to use. */
--
--static const char *labeling_behaviors[7] = {
--	"uses xattr",
--	"uses transition SIDs",
--	"uses task SIDs",
--	"uses genfs_contexts",
--	"not configured for labeling",
--	"uses mountpoint labeling",
--	"uses native labeling",
--};
--
- static inline int inode_doinit(struct inode *inode)
- {
- 	return inode_doinit_with_dentry(inode, NULL);
-@@ -528,10 +516,6 @@ static int sb_finish_set_opts(struct sup
- 		}
- 	}
+-	.macro kernel_ventry	label
++	.macro kernel_ventry, el, label, regsize = 64
+ 	.align 7
+ 	sub	sp, sp, #S_FRAME_SIZE
+-	b	\label
++	b	el\()\el\()_\label
+ 	.endm
  
--	if (sbsec->behavior > ARRAY_SIZE(labeling_behaviors))
--		printk(KERN_ERR "SELinux: initialized (dev %s, type %s), unknown behavior\n",
--		       sb->s_id, sb->s_type->name);
+ 	.macro	kernel_entry, el, regsize = 64
+@@ -264,31 +264,31 @@ tsk	.req	x28		// current thread_info
+ 
+ 	.align	11
+ ENTRY(vectors)
+-	kernel_ventry	el1_sync_invalid		// Synchronous EL1t
+-	kernel_ventry	el1_irq_invalid			// IRQ EL1t
+-	kernel_ventry	el1_fiq_invalid			// FIQ EL1t
+-	kernel_ventry	el1_error_invalid		// Error EL1t
 -
- 	sbsec->flags |= SE_SBINITIALIZED;
- 	if (selinux_is_sblabel_mnt(sb))
- 		sbsec->flags |= SBLABEL_MNT;
+-	kernel_ventry	el1_sync			// Synchronous EL1h
+-	kernel_ventry	el1_irq				// IRQ EL1h
+-	kernel_ventry	el1_fiq_invalid			// FIQ EL1h
+-	kernel_ventry	el1_error_invalid		// Error EL1h
+-
+-	kernel_ventry	el0_sync			// Synchronous 64-bit EL0
+-	kernel_ventry	el0_irq				// IRQ 64-bit EL0
+-	kernel_ventry	el0_fiq_invalid			// FIQ 64-bit EL0
+-	kernel_ventry	el0_error_invalid		// Error 64-bit EL0
++	kernel_ventry	1, sync_invalid			// Synchronous EL1t
++	kernel_ventry	1, irq_invalid			// IRQ EL1t
++	kernel_ventry	1, fiq_invalid			// FIQ EL1t
++	kernel_ventry	1, error_invalid		// Error EL1t
++
++	kernel_ventry	1, sync				// Synchronous EL1h
++	kernel_ventry	1, irq				// IRQ EL1h
++	kernel_ventry	1, fiq_invalid			// FIQ EL1h
++	kernel_ventry	1, error_invalid		// Error EL1h
++
++	kernel_ventry	0, sync				// Synchronous 64-bit EL0
++	kernel_ventry	0, irq				// IRQ 64-bit EL0
++	kernel_ventry	0, fiq_invalid			// FIQ 64-bit EL0
++	kernel_ventry	0, error_invalid		// Error 64-bit EL0
+ 
+ #ifdef CONFIG_COMPAT
+-	kernel_ventry	el0_sync_compat			// Synchronous 32-bit EL0
+-	kernel_ventry	el0_irq_compat			// IRQ 32-bit EL0
+-	kernel_ventry	el0_fiq_invalid_compat		// FIQ 32-bit EL0
+-	kernel_ventry	el0_error_invalid_compat	// Error 32-bit EL0
++	kernel_ventry	0, sync_compat, 32		// Synchronous 32-bit EL0
++	kernel_ventry	0, irq_compat, 32		// IRQ 32-bit EL0
++	kernel_ventry	0, fiq_invalid_compat, 32	// FIQ 32-bit EL0
++	kernel_ventry	0, error_invalid_compat, 32	// Error 32-bit EL0
+ #else
+-	kernel_ventry	el0_sync_invalid		// Synchronous 32-bit EL0
+-	kernel_ventry	el0_irq_invalid			// IRQ 32-bit EL0
+-	kernel_ventry	el0_fiq_invalid			// FIQ 32-bit EL0
+-	kernel_ventry	el0_error_invalid		// Error 32-bit EL0
++	kernel_ventry	0, sync_invalid, 32		// Synchronous 32-bit EL0
++	kernel_ventry	0, irq_invalid, 32		// IRQ 32-bit EL0
++	kernel_ventry	0, fiq_invalid, 32		// FIQ 32-bit EL0
++	kernel_ventry	0, error_invalid, 32		// Error 32-bit EL0
+ #endif
+ END(vectors)
+ 
