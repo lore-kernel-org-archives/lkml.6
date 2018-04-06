@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1459510-1523022414-2-2914537355015868903
+X-Cyrus-Session-Id: sloti22d1t05-1459510-1523022410-3-1441447087076726721
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523022413; b=Nf4hqIwaUS+ZVKTMIvRYfCtveOgUZJJUSv/xrSqUuc0/H3XGeI
-    gh1C3AF4HRmKk681fAKkLxikaOQOkHn/ocjvsRSPPpwFGptKf6cNLYtHauo5zcT8
-    +WIo7PS2a0KD4CZsvbP38IXrt/N+q8uzfJeA+fuw00r/s1jkFm1uHCC9+dFauCqk
-    JqrAznVAlOvtg4zq3R6iiQ+ipD41O7oAHDMxtfa2N2r5UVbbqAp9MNUlZcEAgSwC
-    UWWo0K8vPJqzRF9AP6BSW5gurzfjFWFrBH7iuzfPejFV3WEEHOXuQRLtvQOUc+Om
-    4Z7guvk9nVGpZ6B1kLEnNuXBu5CVUCjcIgtQ==
+    1523022410; b=tfKbXxCingeDKukdzJBnz1gQm6tGTnFaAwsi3UvU3AOJvm/4R6
+    P/LbZ2hagKAi5gh0WHmuAF448PY9Yz/bro6W+oOFFdPUcQbxwqC7YFvvIBM608j+
+    M9qDwWXJTxWA3NA8Ybwsy2WgT8q4uR+D4TPMmWACJzoTye5p0eHXkUdLZ+cbdhqa
+    vaM6P/ylnfkSfJcTOoCtlP5QINaOVhwpb7jDbwlMM8B6Z0EzUWoKArIfodRmCOl3
+    Y1GxND4xjxMg9Cox0xl2oc5fbSvgSCURCAkTeLg0kugRn2YcNvdhAsOS0/3tuG6S
+    Ppi7Jczk/7V5q+WrirmMwG0mcqpDm2iMvoew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523022413; bh=yi9PEvzDOwcDy6HFEy5CXpwHHlzD+Q
-    OlvQ3q3J9Xx4o=; b=H5/SDHx6n7lXWU7RWpu2hSfFONqqOV8yuWNOuyEo+FxjnZ
-    qMWnz7w7ExLuoLHmVXC2q+rdpve6RseFim6nNgfSNj+mDmbq8d9flywCBYUsbJk+
-    Jp20dMwbsDCS6X/IdlESQDuXscfD+StZX1bkXtkLsl/KZfQ72kNNMTwHKY2oxfbl
-    FkiOPZ0s97CAeLQBOKtDRcgbyxvITGTT2nn2QyTsz3hzxhhxRLoNtRHTAhMYKFMv
-    qx0V2GsDs3oIYFJsp316lbzGJw/UVIspDo88KPgjmaTX+KLs6MHpWVRas5dLF4go
-    lPOgjEuAiltLlUOOMlDFjwnGfClmmBbV7lEKxSsQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523022410; bh=M3s/wJ8NI5pfuhbFhm5QwzMVAogIcz
+    vrh4B3WqOy4N0=; b=musaABE9MGL4cG0CvjskJmJ4os/c/6oGRZ4k2rWiZiY4tk
+    qV0Act3GU8bpLnGW7bXvxLWC2QDW1lqWfCMIRjk6BRr29wvDDEwfgH8nu0t0OtfY
+    uws3nSPpqu146oaaGhDJm6/aeWt1B5mQtJyyKsud4vuqcgtdri25+uwvxwRb7uv2
+    KRLEi/dxQmgCengKghBd+elzdfPTGBlQ3DF4+mnfa8McJ/IRVZucSe2+ezYsfIlN
+    W0qxa47Qfulw3Bxoobr6DmL+zEt1Bjk0vrpiYHbWvX31pjDf3erzRIoV60Iv3Tju
+    NlAOX++FElY1NmTQcMAPcf7BHCQgE79jNyKcpe0w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,29 +51,29 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMSVheKISrTi80dZ64zqKW0eB8PUXHL+GIZ+SK7m7EGPxtGjeNdPrmB2+Mv+fRkP0q4wJ4Gj/4uLf1Ot2lENDDOLy85xjy7Bau8umUrSlBMDJ+Mgm6U1
-    7z6KF1KaeDMbZlhYTEBtYSpzVRUTfo/CGkM/LdahfgzZH64RG6ftNTGAQ2uAdGQoXf+PDxomElql5vU+2bqtFXLH5SQ5pEsMAvckp38kMmvApKErL6WjZDRe
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNuI2T/MYyX1UyRnwh1Os7JTzAOglNM0IunjixwvzU70m/IBf6cruwnaP/Eg6sHcU7T67Jr4RASzKVWrOLFjT4pjoY55UbEqPraeVZFnbRR4iSadIe3O
+    ptPrmPOQbRJ5YcAXuJrDHDo6onXGhk8ppBsozvi6KQACxdC20yAv20W0If1BJ6Ag4UqspVy/XPdgMmQ5ZSMTtvHqMq5S3PJKZhDTFMTmLOp+nsgt0yDxHU8u
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=KPUIpJtXZpBGrTvkhY0A:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=DfNHnWVPAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=KUxnxfl8UcLBcMteF0IA:9
+    a=QEXdDO2ut3YA:10 a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933049AbeDFNp2 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 09:45:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38084 "EHLO
+        id S1756984AbeDFNqe (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 09:46:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933065AbeDFNp0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:45:26 -0400
+        with ESMTP id S933070AbeDFNp3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:45:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Joel Stanley <joel@jms.id.au>
-Subject: [PATCH 4.16 05/31] serial: 8250: Add Nuvoton NPCM UART
-Date: Fri,  6 Apr 2018 15:24:30 +0200
-Message-Id: <20180406084341.756365710@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>
+Subject: [PATCH 4.16 06/31] mei: remove dev_err message on an unsupported ioctl
+Date: Fri,  6 Apr 2018 15:24:31 +0200
+Message-Id: <20180406084341.906336344@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084340.999820380@linuxfoundation.org>
 References: <20180406084340.999820380@linuxfoundation.org>
@@ -91,125 +91,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Joel Stanley <joel@jms.id.au>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit f597fbce38d230af95384f4a04e0a13a1d0ad45d upstream.
+commit bb0829a741792b56c908d7745bc0b2b540293bcc upstream.
 
-The Nuvoton UART is almost compatible with the 8250 driver when probed
-via the 8250_of driver, however it requires some extra configuration
-at startup.
+Currently the driver spams the kernel log on unsupported ioctls which is
+unnecessary as the ioctl returns -ENOIOCTLCMD to indicate this anyway.
+I suspect this was originally for debugging purposes but it really is not
+required so remove it.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/devicetree/bindings/serial/8250.txt |    1 
- drivers/tty/serial/8250/8250_of.c                 |    1 
- drivers/tty/serial/8250/8250_port.c               |   33 ++++++++++++++++++++++
- include/uapi/linux/serial_core.h                  |    3 ++
- 4 files changed, 38 insertions(+)
+ drivers/misc/mei/main.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/Documentation/devicetree/bindings/serial/8250.txt
-+++ b/Documentation/devicetree/bindings/serial/8250.txt
-@@ -24,6 +24,7 @@ Required properties:
- 	- "ti,da830-uart"
- 	- "aspeed,ast2400-vuart"
- 	- "aspeed,ast2500-vuart"
-+	- "nuvoton,npcm750-uart"
- 	- "serial" if the port type is unknown.
- - reg : offset and length of the register set for the device.
- - interrupts : should contain uart interrupt.
---- a/drivers/tty/serial/8250/8250_of.c
-+++ b/drivers/tty/serial/8250/8250_of.c
-@@ -316,6 +316,7 @@ static const struct of_device_id of_plat
- 	{ .compatible = "mrvl,mmp-uart",
- 		.data = (void *)PORT_XSCALE, },
- 	{ .compatible = "ti,da830-uart", .data = (void *)PORT_DA830, },
-+	{ .compatible = "nuvoton,npcm750-uart", .data = (void *)PORT_NPCM, },
- 	{ /* end of list */ },
- };
- MODULE_DEVICE_TABLE(of, of_platform_serial_table);
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -47,6 +47,10 @@
- #define UART_EXAR_SLEEP		0x8b	/* Sleep mode */
- #define UART_EXAR_DVID		0x8d	/* Device identification */
+--- a/drivers/misc/mei/main.c
++++ b/drivers/misc/mei/main.c
+@@ -507,7 +507,6 @@ static long mei_ioctl(struct file *file,
+ 		break;
  
-+/* Nuvoton NPCM timeout register */
-+#define UART_NPCM_TOR          7
-+#define UART_NPCM_TOIE         BIT(7)  /* Timeout Interrupt Enable */
-+
- /*
-  * Debugging.
-  */
-@@ -293,6 +297,15 @@ static const struct serial8250_config ua
- 				  UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
- 		.flags		= UART_CAP_FIFO,
- 	},
-+	[PORT_NPCM] = {
-+		.name		= "Nuvoton 16550",
-+		.fifo_size	= 16,
-+		.tx_loadsz	= 16,
-+		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10 |
-+				  UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
-+		.rxtrig_bytes	= {1, 4, 8, 14},
-+		.flags		= UART_CAP_FIFO,
-+	},
- };
- 
- /* Uart divisor latch read */
-@@ -2140,6 +2153,15 @@ int serial8250_do_startup(struct uart_po
- 				UART_DA830_PWREMU_MGMT_FREE);
+ 	default:
+-		dev_err(dev->dev, ": unsupported ioctl %d.\n", cmd);
+ 		rets = -ENOIOCTLCMD;
  	}
  
-+	if (port->type == PORT_NPCM) {
-+		/*
-+		 * Nuvoton calls the scratch register 'UART_TOR' (timeout
-+		 * register). Enable it, and set TIOC (timeout interrupt
-+		 * comparator) to be 0x20 for correct operation.
-+		 */
-+		serial_port_out(port, UART_NPCM_TOR, UART_NPCM_TOIE | 0x20);
-+	}
-+
- #ifdef CONFIG_SERIAL_8250_RSA
- 	/*
- 	 * If this is an RSA port, see if we can kick it up to the
-@@ -2462,6 +2484,15 @@ static unsigned int xr17v35x_get_divisor
- 	return quot_16 >> 4;
- }
- 
-+/* Nuvoton NPCM UARTs have a custom divisor calculation */
-+static unsigned int npcm_get_divisor(struct uart_8250_port *up,
-+		unsigned int baud)
-+{
-+	struct uart_port *port = &up->port;
-+
-+	return DIV_ROUND_CLOSEST(port->uartclk, 16 * baud + 2) - 2;
-+}
-+
- static unsigned int serial8250_get_divisor(struct uart_8250_port *up,
- 					   unsigned int baud,
- 					   unsigned int *frac)
-@@ -2482,6 +2513,8 @@ static unsigned int serial8250_get_divis
- 		quot = 0x8002;
- 	else if (up->port.type == PORT_XR17V35X)
- 		quot = xr17v35x_get_divisor(up, baud, frac);
-+	else if (up->port.type == PORT_NPCM)
-+		quot = npcm_get_divisor(up, baud);
- 	else
- 		quot = uart_get_divisor(port, baud);
- 
---- a/include/uapi/linux/serial_core.h
-+++ b/include/uapi/linux/serial_core.h
-@@ -76,6 +76,9 @@
- #define PORT_SUNZILOG	38
- #define PORT_SUNSAB	39
- 
-+/* Nuvoton UART */
-+#define PORT_NPCM	40
-+
- /* Intel EG20 */
- #define PORT_PCH_8LINE	44
- #define PORT_PCH_2LINE	45
