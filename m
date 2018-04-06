@@ -1,314 +1,260 @@
-Return-Path: <liuwenliang@huawei.com>
-X-Google-Smtp-Source: AIpwx4/WoJh5OHoz5awXyyBgfwNZ+uQ9g0pxJ0aOO0pelGwmxq08jHAJeJcqKozWDhu+FBfDkvSo
-ARC-Seal: i=1; a=rsa-sha256; t=1522671902; cv=none;
-        d=google.com; s=arc-20160816;
-        b=V32TYqWwAebLf9G3UT0yrbvHS27COkmNExe7TFsalhHX+4lPPGypZTZAJsKdIgIJjt
-         uQzasnboZpi7jcS61EIozyxh07e3BcyS24Ysr5v0rj5MDS0KIk476YhbeE5TLftzgpQa
-         51/RmbG5tePsz25KdFrAxtLTooIGjjuZ8kV6dWvYic+68xfGMLU2BzGPVmPV/Mb7qJDN
-         6zHj+U85zRsCyOcOCRzvShNOnGQsMqmY0oGcWzoJVYq6UNqC6F5gISQk10DKZ4+F0h5f
-         U3WM0ryqPNRW/2mx+DVVjqBtoMTglID9UyZ0YoJUjhPqQHKVXJ9FFMk1Qi15WO5kZPgl
-         djYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:to:from
-         :arc-authentication-results;
-        bh=cn9vgHPtOMy2OeET63McuZD+tA5Iq2hNz9evrHEXsbk=;
-        b=K+F7YTI1yHIZ9Cs2uW79TkKEbDah+ZfqA27FkWVp4GpjTELmu63a4TDM43lPKLhH4T
-         8Coz87zArS+fSbcx+MFzY7Zg58MXLnlXUBu3xAPEUYGacSDM29aN5YrKPN/JsALG7IkT
-         M7CAWM3hPSI9aK39zl8Zl6supR03jowDYyBQZJCgSxKtiD/Gg0BaRqOaHWfLHiF5oWzP
-         GRoW9Hbg4pBAtwhf6qFeRMWw5zYqkfAzMxS7yI5RSm0HIUzM2079CLMRzNUxYws3IZ+o
-         asGZJNfk4sXTah2esNsR+hWNb9u7bZYQojEIFUUv+w1Q/zrUFCBhb0JOTSX9uAQC9cgv
-         Rkrw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
-From: Abbott Liu <liuwenliang@huawei.com>
-To: <aryabinin@virtuozzo.com>, <dvyukov@google.com>, <corbet@lwn.net>,
-	<linux@armlinux.org.uk>, <christoffer.dall@linaro.org>,
-	<marc.zyngier@arm.com>, <kstewart@linuxfoundation.org>,
-	<gregkh@linuxfoundation.org>, <f.fainelli@gmail.com>,
-	<liuwenliang@huawei.com>, <akpm@linux-foundation.org>,
-	<linux@rasmusvillemoes.dk>, <mawilcox@microsoft.com>, <pombredanne@nexb.com>,
-	<ard.biesheuvel@linaro.org>, <vladimir.murzin@arm.com>,
-	<alexander.levin@verizon.com>, <nicolas.pitre@linaro.org>,
-	<tglx@linutronix.de>, <thgarnie@google.com>, <dhowells@redhat.com>,
-	<keescook@chromium.org>, <arnd@arndb.de>, <geert@linux-m68k.org>,
-	<tixy@linaro.org>, <julien.thierry@arm.com>, <mark.rutland@arm.com>,
-	<james.morse@arm.com>, <zhichao.huang@linaro.org>, <jinb.park7@gmail.com>,
-	<labbott@redhat.com>, <philip@cog.systems>, <grygorii.strashko@linaro.org>,
-	<catalin.marinas@arm.com>, <opendmb@gmail.com>,
-	<kirill.shutemov@linux.intel.com>, <kasan-dev@googlegroups.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.cs.columbia.edu>,
-	<linux-mm@kvack.org>
-Subject: [PATCH v3 4/6] Define the virtual space of KASan's shadow region
-Date: Mon, 2 Apr 2018 20:04:38 +0800
-Message-ID: <20180402120440.31900-5-liuwenliang@huawei.com>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180402120440.31900-1-liuwenliang@huawei.com>
-References: <20180402120440.31900-1-liuwenliang@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.187.223]
-X-CFilter-Loop: Reflected
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1459510-1523022357-2-5584737725794321681
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523022356; b=gt2zqj3ZIkfm/fSOYqB4ExDHWXcvTMplsnjeOXykTRI1h8YBYu
+    iKAAQfQDiIuOb7+5PYYOaacWH08N4hvQwCOXguNTrQzxAdDQsN05rIS591gCgd1R
+    wSWDqTKLywKdnESMeSqFmOWG7lG1SVfV049koOBMmKUcLNxE0kGFRqtIk6ZAPDSu
+    Vj0GZGMVVEBcX3VRiL4StZUdq1bfWmdTlJSY3PE0TJKuyTQyHGrQElhxup/6+bH6
+    yO7LT/hZ0n+Q8TNWx2vPr9Oz1CvBdMNRlJUG5w9kWdCHACD5N0tvpO4Ei/20yrZ3
+    01V/HJXqPVdgouf2M6hTSm36O1rdTaoFucYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1523022356; bh=Wf/YdSloDpHq7X25c9sDvlQgbktSzP
+    yNRIvloN90bFk=; b=v2qAqqH0jPac03tStCFB+oUEE0OfGMuc1pvhh9ystEkGOS
+    UkGb4uzJe43Zn7J80iL8PKo5HJrTfadIL9Z2Gt9QVuHs4d0ks0qCEH9r9hhcBggH
+    NRXwoLLJcSX+Zikxn3Se7ceccOM3sv9Dgu/A4CvfcK/eTcIUFJQrIPvp0zjIrcsI
+    sVsYIaHpDpd8aApygbHe5o4yxFXGq/mZahGFnWMsGuFxZAyK4WvTbbXlzH7IwAnM
+    xIv8nU4jrp79b5WdrghcyvcmVeYOzNSeNFc+HjhS6QbOUTaAwcCuraBY3YI3/mpM
+    E+6Ev5iEEyC4ywNWttV+Rx0z+zgpiKUBAcQg5EhQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBM9GHDpmwQnuUcLVPfxc4NDsrdhPe+Pp5z2UlnxY/YnAFOIwPFRSGcYeg6ExAC50FUBkhhwL8nVFlA9RQb28/WCiRi69nFM+8Plvn78GbzbJcjZ1hh0
+    pRvETLmmAbYaVBScn4s4W8KInbhq7+E7pomcauhsUARDTFx0zje3+lIzcPppHxHyZE7a9rLvkR9AV2/nFJX/xgF5pR+NmCO5H/cNR4oSK+yw4QlFLE2L58G0
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wslChEY2J8gA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=PtDNVHqPAAAA:8 a=20KFwNOVAAAA:8
+    a=cm27Pg_UAAAA:8 a=AgaioDkCAAAA:8 a=7ZN4cI0QAAAA:8 a=CEwII1yZAAAA:8
+    a=yC-0_ovQAAAA:8 a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=1XWaLZrsAAAA:8
+    a=8AirrxEcAAAA:8 a=KKAkSRfTAAAA:8 a=FNyBlpCuAAAA:8 a=QyXUC8HyAAAA:8
+    a=P-IC7800AAAA:8 a=zd2uoN0lAAAA:8 a=ttLlOQO2AAAA:8 a=iox4zFpeAAAA:8
+    a=DfNHnWVPAAAA:8 a=xLcVsCfpAAAA:8 a=FOH2dFAWAAAA:8 a=vrzYbc16d37QTyYcqsQA:9
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=BpimnaHY1jUKGyF_4-AF:22
+    a=xmb-EsYY8bH0VWELuYED:22 a=eNS--96rZ24oWIaEtn_1:22 a=Dl0WHwQvj8hGZljrFLtM:22
+    a=4LuAaoAPjBjBTe8K2uIj:22 a=QsnFDINu91a9xkgZirup:22 a=ST-jHhOKWsTCqRlWije3:22
+    a=cvBusfyB2V15izCimMoJ:22 a=RlW-AWeGUCXs_Nkyno-6:22 a=d3PnA9EDa4IxuAV0gXij:22
+    a=1BJeXTq6bvZE9X1NrNaC:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=rjTVMONInIDnV1a_A2c_:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753985AbeDFNpk (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 09:45:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38180 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933110AbeDFNpk (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 09:45:40 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuahkh@osg.samsung.com, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.16 00/31] 4.16.1-stable review
+Date: Fri,  6 Apr 2018 15:24:25 +0200
+Message-Id: <20180406084340.999820380@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.1-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.16.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.16.1-rc1
+X-KernelTest-Deadline: 2018-04-08T08:43+00:00
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596637213555378969?=
-X-GMAIL-MSGID: =?utf-8?q?1596637213555378969?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Define KASAN_SHADOW_OFFSET,KASAN_SHADOW_START and KASAN_SHADOW_END for arm
-kernel address sanitizer.
+This is the start of the stable review cycle for the 4.16.1 release.
+There are 31 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-     +----+ 0xffffffff
-     |    |
-     |    |
-     |    |
-     +----+ CONFIG_PAGE_OFFSET
-     |    |     |    | |->  module virtual address space area.
-     |    |/
-     +----+ MODULE_VADDR = KASAN_SHADOW_END
-     |    |     |    | |-> the shadow area of kernel virtual address.
-     |    |/
-     +----+ TASK_SIZE(start of kernel space) = KASAN_SHADOW_START  the
-     |    |\  shadow address of MODULE_VADDR
-     |    | ---------------------+
-     |    |                      |
-     +    + KASAN_SHADOW_OFFSET  |-> the user space area. Kernel address
-     |    |                      |    sanitizer do not use this space.
-     |    | ---------------------+
-     |    |/
-     ------ 0
+Responses should be made by Sun Apr  8 08:43:15 UTC 2018.
+Anything received after that time might be too late.
 
-1)KASAN_SHADOW_OFFSET:
-  This value is used to map an address to the corresponding shadow
-address by the following formula:
-shadow_addr = (address >> 3) + KASAN_SHADOW_OFFSET;
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.1-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
+and the diffstat can be found below.
 
-2)KASAN_SHADOW_START
-  This value is the MODULE_VADDR's shadow address. It is the start
-of kernel virtual space.
+thanks,
 
-3)KASAN_SHADOW_END
-  This value is the 0x100000000's shadow address. It is the end of
-kernel addresssanitizer's shadow area. It is also the start of the
-module area.
+greg k-h
 
-When enable kasan, the definition of TASK_SIZE is not an an 8-bit
-rotated constant, so we need to modify the TASK_SIZE access code
-in the *.s file.
+-------------
+Pseudo-Shortlog of commits:
 
-Cc: Andrey Ryabinin <a.ryabinin@samsung.com>
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Russell King - ARM Linux <linux@armlinux.org.uk>
-Tested-by: Joel Stanley <joel@jms.id.au>
-Tested-by: Florian Fainelli <f.fainelli@gmail.com>
-Tested-by: Abbott Liu <liuwenliang@huawei.com>
-Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
----
- arch/arm/include/asm/kasan_def.h | 64 ++++++++++++++++++++++++++++++++++++++++
- arch/arm/include/asm/memory.h    |  5 ++++
- arch/arm/kernel/entry-armv.S     |  5 ++--
- arch/arm/kernel/entry-common.S   |  9 ++++--
- arch/arm/mm/init.c               |  6 ++++
- arch/arm/mm/mmu.c                |  7 ++++-
- 6 files changed, 90 insertions(+), 6 deletions(-)
- create mode 100644 arch/arm/include/asm/kasan_def.h
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.16.1-rc1
 
-diff --git a/arch/arm/include/asm/kasan_def.h b/arch/arm/include/asm/kasan_def.h
-new file mode 100644
-index 0000000..7b7f424
---- /dev/null
-+++ b/arch/arm/include/asm/kasan_def.h
-@@ -0,0 +1,64 @@
-+/*
-+ *  arch/arm/include/asm/kasan_def.h
-+ *
-+ *  Copyright (c) 2018 Huawei Technologies Co., Ltd.
-+ *
-+ *  Author: Abbott Liu <liuwenliang@huawei.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __ASM_KASAN_DEF_H
-+#define __ASM_KASAN_DEF_H
-+
-+#ifdef CONFIG_KASAN
-+
-+/*
-+ *    +----+ 0xffffffff
-+ *    |    |
-+ *    |    |
-+ *    |    |
-+ *    +----+ CONFIG_PAGE_OFFSET
-+ *    |    |\
-+ *    |    | |->  module virtual address space area.
-+ *    |    |/
-+ *    +----+ MODULE_VADDR = KASAN_SHADOW_END
-+ *    |    |\
-+ *    |    | |-> the shadow area of kernel virtual address.
-+ *    |    |/
-+ *    +----+ TASK_SIZE(start of kernel space) = KASAN_SHADOW_START  the
-+ *    |    |\  shadow address of MODULE_VADDR
-+ *    |    | ---------------------+
-+ *    |    |                      |
-+ *    +    + KASAN_SHADOW_OFFSET  |-> the user space area. Kernel address
-+ *    |    |                      |    sanitizer do not use this space.
-+ *    |    | ---------------------+
-+ *    |    |/
-+ *    ------ 0
-+ *
-+ *1)KASAN_SHADOW_OFFSET:
-+ *    This value is used to map an address to the corresponding shadow
-+ * address by the following formula:
-+ * shadow_addr = (address >> 3) + KASAN_SHADOW_OFFSET;
-+ *
-+ * 2)KASAN_SHADOW_START
-+ *     This value is the MODULE_VADDR's shadow address. It is the start
-+ * of kernel virtual space.
-+ *
-+ * 3) KASAN_SHADOW_END
-+ *   This value is the 0x100000000's shadow address. It is the end of
-+ * kernel addresssanitizer's shadow area. It is also the start of the
-+ * module area.
-+ *
-+ */
-+
-+#define KASAN_SHADOW_OFFSET     (KASAN_SHADOW_END - (1<<29))
-+
-+#define KASAN_SHADOW_START      ((KASAN_SHADOW_END >> 3) + KASAN_SHADOW_OFFSET)
-+
-+#define KASAN_SHADOW_END        (UL(CONFIG_PAGE_OFFSET) - UL(SZ_16M))
-+
-+#endif
-+#endif
-diff --git a/arch/arm/include/asm/memory.h b/arch/arm/include/asm/memory.h
-index 4966677..3ce1a9a 100644
---- a/arch/arm/include/asm/memory.h
-+++ b/arch/arm/include/asm/memory.h
-@@ -21,6 +21,7 @@
- #ifdef CONFIG_NEED_MACH_MEMORY_H
- #include <mach/memory.h>
- #endif
-+#include <asm/kasan_def.h>
- 
- /*
-  * Allow for constants defined here to be used from assembly code
-@@ -37,7 +38,11 @@
-  * TASK_SIZE - the maximum size of a user space task.
-  * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area
-  */
-+#ifndef CONFIG_KASAN
- #define TASK_SIZE		(UL(CONFIG_PAGE_OFFSET) - UL(SZ_16M))
-+#else
-+#define TASK_SIZE		(KASAN_SHADOW_START)
-+#endif
- #define TASK_UNMAPPED_BASE	ALIGN(TASK_SIZE / 3, SZ_16M)
- 
- /*
-diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
-index 1752033..b4de9e4 100644
---- a/arch/arm/kernel/entry-armv.S
-+++ b/arch/arm/kernel/entry-armv.S
-@@ -183,7 +183,7 @@ ENDPROC(__und_invalid)
- 
- 	get_thread_info tsk
- 	ldr	r0, [tsk, #TI_ADDR_LIMIT]
--	mov	r1, #TASK_SIZE
-+	ldr	r1, =TASK_SIZE
- 	str	r1, [tsk, #TI_ADDR_LIMIT]
- 	str	r0, [sp, #SVC_ADDR_LIMIT]
- 
-@@ -437,7 +437,8 @@ ENDPROC(__fiq_abt)
- 	@ if it was interrupted in a critical region.  Here we
- 	@ perform a quick test inline since it should be false
- 	@ 99.9999% of the time.  The rest is done out of line.
--	cmp	r4, #TASK_SIZE
-+	ldr	r0, =TASK_SIZE
-+	cmp	r4, r0
- 	blhs	kuser_cmpxchg64_fixup
- #endif
- #endif
-diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
-index 3c4f887..78046de 100644
---- a/arch/arm/kernel/entry-common.S
-+++ b/arch/arm/kernel/entry-common.S
-@@ -51,7 +51,8 @@ ret_fast_syscall:
-  UNWIND(.cantunwind	)
- 	disable_irq_notrace			@ disable interrupts
- 	ldr	r2, [tsk, #TI_ADDR_LIMIT]
--	cmp	r2, #TASK_SIZE
-+	ldr	r1, =TASK_SIZE
-+	cmp	r2, r1
- 	blne	addr_limit_check_failed
- 	ldr	r1, [tsk, #TI_FLAGS]		@ re-check for syscall tracing
- 	tst	r1, #_TIF_SYSCALL_WORK | _TIF_WORK_MASK
-@@ -81,7 +82,8 @@ ret_fast_syscall:
- 	str	r0, [sp, #S_R0 + S_OFF]!	@ save returned r0
- 	disable_irq_notrace			@ disable interrupts
- 	ldr	r2, [tsk, #TI_ADDR_LIMIT]
--	cmp	r2, #TASK_SIZE
-+	ldr     r1, =TASK_SIZE
-+	cmp     r2, r1
- 	blne	addr_limit_check_failed
- 	ldr	r1, [tsk, #TI_FLAGS]		@ re-check for syscall tracing
- 	tst	r1, #_TIF_SYSCALL_WORK | _TIF_WORK_MASK
-@@ -116,7 +118,8 @@ ret_slow_syscall:
- 	disable_irq_notrace			@ disable interrupts
- ENTRY(ret_to_user_from_irq)
- 	ldr	r2, [tsk, #TI_ADDR_LIMIT]
--	cmp	r2, #TASK_SIZE
-+	ldr     r1, =TASK_SIZE
-+	cmp	r2, r1
- 	blne	addr_limit_check_failed
- 	ldr	r1, [tsk, #TI_FLAGS]
- 	tst	r1, #_TIF_WORK_MASK
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index bd6f451..da11f61 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -538,6 +538,9 @@ void __init mem_init(void)
- #ifdef CONFIG_MODULES
- 			"    modules : 0x%08lx - 0x%08lx   (%4ld MB)\n"
- #endif
-+#ifdef CONFIG_KASAN
-+			"    kasan   : 0x%08lx - 0x%08lx   (%4ld MB)\n"
-+#endif
- 			"      .text : 0x%p" " - 0x%p" "   (%4td kB)\n"
- 			"      .init : 0x%p" " - 0x%p" "   (%4td kB)\n"
- 			"      .data : 0x%p" " - 0x%p" "   (%4td kB)\n"
-@@ -558,6 +561,9 @@ void __init mem_init(void)
- #ifdef CONFIG_MODULES
- 			MLM(MODULES_VADDR, MODULES_END),
- #endif
-+#ifdef CONFIG_KASAN
-+			MLM(KASAN_SHADOW_START, KASAN_SHADOW_END),
-+#endif
- 
- 			MLK_ROUNDUP(_text, _etext),
- 			MLK_ROUNDUP(__init_begin, __init_end),
-diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-index e46a6a4..f5aa1de 100644
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -1251,9 +1251,14 @@ static inline void prepare_page_table(void)
- 	/*
- 	 * Clear out all the mappings below the kernel image.
- 	 */
--	for (addr = 0; addr < MODULES_VADDR; addr += PMD_SIZE)
-+	for (addr = 0; addr < TASK_SIZE; addr += PMD_SIZE)
- 		pmd_clear(pmd_off_k(addr));
- 
-+#ifdef CONFIG_KASAN
-+	/*TASK_SIZE ~ MODULES_VADDR is the KASAN's shadow area -- skip over it*/
-+	addr = MODULES_VADDR;
-+#endif
-+
- #ifdef CONFIG_XIP_KERNEL
- 	/* The XIP kernel is mapped in the module area -- skip over it */
- 	addr = ((unsigned long)_exiprom + PMD_SIZE - 1) & PMD_MASK;
--- 
-2.9.0
+Eric W. Biederman <ebiederm@xmission.com>
+    signal: Correct the offset of si_pkey and si_lower in struct siginfo on m68k
+
+Mikulas Patocka <mpatocka@redhat.com>
+    Fix slab name "biovec-(1<<(21-12))"
+
+Mike Frysinger <vapier@chromium.org>
+    vt: change SGR 21 to follow the standards
+
+Ondrej Zary <linux@rainbow-software.org>
+    Input: i8042 - enable MUX on Sony VAIO VGN-CS series to fix touchpad
+
+Dennis Wassenberg <dennis.wassenberg@secunet.com>
+    Input: i8042 - add Lenovo ThinkPad L460 to i8042 reset list
+
+Masaki Ota <masaki.ota@jp.alps.com>
+    Input: ALPS - fix TrackStick detection on Thinkpad L570 and Latitude 7370
+
+Gaku Inami <gaku.inami.xh@renesas.com>
+    Revert "base: arch_topology: fix section mismatch build warnings"
+
+Frank Mori Hess <fmh6jj@gmail.com>
+    staging: comedi: ni_mio_common: ack ai fifo error interrupts.
+
+Gavin Schenk <g.schenk@eckelmann.de>
+    siox: fix possible buffer overflow in device_add_store
+
+Liu Bo <bo.li.liu@oracle.com>
+    Btrfs: fix unexpected cow in run_delalloc_nocow
+
+Hans de Goede <hdegoede@redhat.com>
+    Bluetooth: hci_bcm: Add 6 new ACPI HIDs
+
+Eric Biggers <ebiggers@google.com>
+    crypto: x86/cast5-avx - fix ECB encryption when long sg follows short one
+
+Leonard Crestez <leonard.crestez@nxp.com>
+    crypto: arm,arm64 - Fix random regeneration of S_shipped
+
+Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+    crypto: ccp - return an actual key size from RSA max_size callback
+
+Rui Miguel Silva <rui.silva@linaro.org>
+    crypto: caam - Fix null dereference at error path
+
+Herbert Xu <herbert@gondor.apana.org.au>
+    crypto: ahash - Fix early termination in hash walk
+
+LEROY Christophe <christophe.leroy@c-s.fr>
+    crypto: talitos - fix IPsec cipher in length
+
+Conor McLoughlin <conor.mcloughlin@intel.com>
+    crypto: testmgr - Fix incorrect values in PKCS#1 test vector
+
+Gregory CLEMENT <gregory.clement@bootlin.com>
+    crypto: inside-secure - fix clock management
+
+LEROY Christophe <christophe.leroy@c-s.fr>
+    crypto: talitos - don't persistently map req_ctx->hw_context and req_ctx->buf
+
+Gary R Hook <gary.hook@amd.com>
+    crypto: ccp - Fill the result buffer only on digest, finup, and final ops
+
+Herbert Xu <herbert@gondor.apana.org.au>
+    crypto: lrw - Free rctx->ext with kzfree
+
+Alexander Gerasiov <gq@redlab-i.ru>
+    parport_pc: Add support for WCH CH382L PCI-E single parallel port card.
+
+Oliver Neukum <oneukum@suse.com>
+    media: usbtv: prevent double free in error case
+
+Kees Cook <keescook@chromium.org>
+    /dev/mem: Avoid overwriting "err" in read_mem()
+
+Colin Ian King <colin.king@canonical.com>
+    mei: remove dev_err message on an unsupported ioctl
+
+Joel Stanley <joel@jms.id.au>
+    serial: 8250: Add Nuvoton NPCM UART
+
+Johan Hovold <johan@kernel.org>
+    USB: serial: cp210x: add ELDAT Easywave RX09 id
+
+Clemens Werther <clemens.werther@gmail.com>
+    USB: serial: ftdi_sio: add support for Harman FirmwareHubEmulator
+
+Major Hayden <major@mhtx.net>
+    USB: serial: ftdi_sio: add RT Systems VX-8 cable
+
+Omar Sandoval <osandov@fb.com>
+    bitmap: fix memset optimization on big-endian systems
+
+
+-------------
+
+Diffstat:
+
+ Documentation/devicetree/bindings/serial/8250.txt |   1 +
+ Makefile                                          |   4 +-
+ arch/arm/crypto/Makefile                          |   2 +
+ arch/arm64/crypto/Makefile                        |   2 +
+ arch/x86/crypto/cast5_avx_glue.c                  |   3 +-
+ block/bio.c                                       |   4 +-
+ crypto/ahash.c                                    |   7 +-
+ crypto/lrw.c                                      |   2 +-
+ crypto/testmgr.h                                  |   6 +-
+ drivers/base/arch_topology.c                      |  12 +-
+ drivers/bluetooth/hci_bcm.c                       |   6 +
+ drivers/char/mem.c                                |   6 +-
+ drivers/crypto/caam/ctrl.c                        |   3 -
+ drivers/crypto/ccp/ccp-crypto-aes-cmac.c          |   2 +-
+ drivers/crypto/ccp/ccp-crypto-rsa.c               |   7 +-
+ drivers/crypto/ccp/ccp-crypto-sha.c               |   2 +-
+ drivers/crypto/inside-secure/safexcel.c           |   2 +-
+ drivers/crypto/talitos.c                          | 168 +++++++++-------------
+ drivers/input/mouse/alps.c                        |  24 +++-
+ drivers/input/serio/i8042-x86ia64io.h             |  24 ++++
+ drivers/media/usb/usbtv/usbtv-core.c              |   2 +
+ drivers/misc/mei/main.c                           |   1 -
+ drivers/parport/parport_pc.c                      |   4 +
+ drivers/siox/siox-core.c                          |   2 +-
+ drivers/staging/comedi/drivers/ni_mio_common.c    |   2 +
+ drivers/tty/serial/8250/8250_of.c                 |   1 +
+ drivers/tty/serial/8250/8250_port.c               |  33 +++++
+ drivers/tty/vt/vt.c                               |   6 +-
+ drivers/usb/serial/cp210x.c                       |   1 +
+ drivers/usb/serial/ftdi_sio.c                     |   2 +
+ drivers/usb/serial/ftdi_sio_ids.h                 |   9 ++
+ fs/btrfs/inode.c                                  |  37 ++++-
+ include/linux/bitmap.h                            |  22 ++-
+ include/linux/compat.h                            |   6 +-
+ include/uapi/asm-generic/siginfo.h                |   7 +-
+ include/uapi/linux/serial_core.h                  |   3 +
+ 36 files changed, 269 insertions(+), 156 deletions(-)
