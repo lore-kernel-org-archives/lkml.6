@@ -1,71 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751874AbeDFKJP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 06:09:15 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45824 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751415AbeDFKJO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:09:14 -0400
-X-Google-Smtp-Source: AIpwx4/Hzb3jAHUPBWak8ymV42Kg4A3xLm5Y2qaZ3zOR4pAlh/xS7gCCNItYQPSSPKKXU5zwaSyN7w==
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-        syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] memcg: fix per_node_info cleanup
-Date: Fri,  6 Apr 2018 12:09:06 +0200
-Message-Id: <20180406100906.17790-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.16.3
+        id S1752068AbeDFKJ3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 06:09:29 -0400
+Received: from foss.arm.com ([217.140.101.70]:34654 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751938AbeDFKJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 06:09:27 -0400
+Subject: Re: [PATCH 3/5] arm64: early ISB at exit from extended quiescent
+ state
+To: Yury Norov <ynorov@caviumnetworks.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Christopher Lameter <cl@linux.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alexey Klimov <klimov.linux@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20180405171800.5648-1-ynorov@caviumnetworks.com>
+ <20180405171800.5648-4-ynorov@caviumnetworks.com>
+From: James Morse <james.morse@arm.com>
+Message-ID: <c7e03021-4c55-8e5f-3480-6628d83d8cd9@arm.com>
+Date: Fri, 6 Apr 2018 11:06:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180405171800.5648-4-ynorov@caviumnetworks.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+Hi Yury,
 
-syzbot has triggered a NULL ptr dereference when allocation fault
-injection enforces a failure and alloc_mem_cgroup_per_node_info
-initializes memcg->nodeinfo only half way through. __mem_cgroup_free
-still tries to free all per-node data and dereferences pn->lruvec_stat_cpu
-unconditioanlly even if the specific per-node data hasn't been
-initialized.
+On 05/04/18 18:17, Yury Norov wrote:
+> This series enables delaying of kernel memory synchronization
+> for CPUs running in extended quiescent state (EQS) till the exit
+> of that state.
+> 
+> ARM64 uses IPI mechanism to notify all cores in  SMP system that
+> kernel text is changed; and IPI handler calls isb() to synchronize.
+> 
+> If we don't deliver IPI to EQS CPUs anymore, we should add ISB early
+> in EQS exit path.
+> 
+> There are 2 such paths. One starts in do_idle() loop, and other
+> in el0_svc entry. For do_idle(), isb() is added in
+> arch_cpu_idle_exit() hook. And for SVC handler, isb is called in
+> el0_svc_naked.
 
-The bug is quite unlikely to hit because small allocations do not fail
-and we would need quite some numa nodes to make struct mem_cgroup_per_node
-large enough to cross the costly order.
+(I know nothing about this EQS stuff, but) there is a third path that might be
+relevant.
+>From include/linux/context_tracking.h:guest_enter_irqoff():
+|	 * KVM does not hold any references to rcu protected data when it
+|	 * switches CPU into a guest mode. In fact switching to a guest mode
+|	 * is very similar to exiting to userspace from rcu point of view. In
+|	 * addition CPU may stay in a guest mode for quite a long time (up to
+|	 * one time slice). Lets treat guest mode as quiescent state, just like
+|	 * we do with user-mode execution.
 
-Reported-by: syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com
-Fixes: 00f3ca2c2d66 ("mm: memcontrol: per-lruvec stats infrastructure")
-Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
+For non-VHE systems guest_enter_irqoff()() is called just before we jump to EL2.
+Coming back gives us an exception-return, so we have a context-synchronisation
+event there, and I assume we will never patch the hyp-text on these systems.
 
-Hi!
-Previously posted [1] based on the syzkaller report [2]. I haven't heard
-back from syzkaller but this seems like the right fix. Andrew could you
-add this to the pile?
+But with VHE on the upcoming kernel version we still go on to run code at the
+same EL. Do we need an ISB on the path back from the guest once we've told RCU
+we've 'exited user-space'?
+If this code can be patched, do we have a problem here?
 
-[1] http://lkml.kernel.org/r/20180403105048.GK5501@dhcp22.suse.cz
-[2] http://lkml.kernel.org/r/001a113fe4c0a623b10568bb75ea@google.com
 
- mm/memcontrol.c | 3 +++
- 1 file changed, 3 insertions(+)
+> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> index c8d9ec363ddd..b1e1c19b4432 100644
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@ -48,7 +48,7 @@
+>  	.endm
+>  
+>  	.macro el0_svc_restore_syscall_args
+> -#if defined(CONFIG_CONTEXT_TRACKING)
+> +#if !defined(CONFIG_TINY_RCU) || defined(CONFIG_CONTEXT_TRACKING)
+>  	restore_syscall_args
+>  #endif
+>  	.endm
+> @@ -483,6 +483,19 @@ __bad_stack:
+>  	ASM_BUG()
+>  	.endm
+>  
+> +/*
+> + * If CPU is in extended quiescent state we need isb to ensure that
+> + * possible change of kernel text is visible by the core.
+> + */
+> +	.macro	isb_if_eqs
+> +#ifndef CONFIG_TINY_RCU
+> +	bl	rcu_is_watching
+> +	cbnz	x0, 1f
+> +	isb 					// pairs with aarch64_insn_patch_text
+> +1:
+> +#endif
+> +	.endm
+> +
+>  el0_sync_invalid:
+>  	inv_entry 0, BAD_SYNC
+>  ENDPROC(el0_sync_invalid)
+> @@ -949,6 +962,7 @@ alternative_else_nop_endif
+>  
+>  el0_svc_naked:					// compat entry point
+>  	stp	x0, xscno, [sp, #S_ORIG_X0]	// save the original x0 and syscall number
+> +	isb_if_eqs
+>  	enable_daif
+>  	ct_user_exit
+>  	el0_svc_restore_syscall_args
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 7667ea9daf4f..8c2ed1c2b72c 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4340,6 +4340,9 @@ static void free_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
- {
- 	struct mem_cgroup_per_node *pn = memcg->nodeinfo[node];
- 
-+	if (!pn)
-+		return;
-+
- 	free_percpu(pn->lruvec_stat_cpu);
- 	kfree(pn);
- }
--- 
-2.16.3
+Shouldn't this be at the point that RCU knows we've exited user-space? Otherwise
+there is a gap where RCU thinks we're in user-space, we're not, and we're about
+to tell it. Code-patching occurring in this gap would be missed.
+
+This gap only contains 'enable_daif', and any exception that occurs here is
+safe, but its going to give someone a nasty surprise...
+
+Mark points out this ISB needs to be after RCU knows we're not quiescent:
+https://lkml.org/lkml/2018/4/3/378
+
+Can't this go in the rcu exit-quiescence code? Isn't this what your
+rcu_dynticks_eqs_exit_sync() hook does?
+
+
+Thanks,
+
+James
