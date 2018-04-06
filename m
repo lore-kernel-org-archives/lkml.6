@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49hTzD/EmBnLwbJCa0QlzHOmER6DbqvjX8pv+HLhktXNBfO0M09eeqFIMzuhfdi74BahVZs
-ARC-Seal: i=1; a=rsa-sha256; t=1523022026; cv=none;
+X-Google-Smtp-Source: AIpwx4/2c4ynoYWrCO82wk/znuXANxNPOViU1xwgR80ZhZEIS0chPcZTKFm3ZZzsQDgVQ/RKLAd7
+ARC-Seal: i=1; a=rsa-sha256; t=1523022025; cv=none;
         d=google.com; s=arc-20160816;
-        b=e1E2gVB/gNxideFwWg5VbB90MqR/6BrdD/Z2LoTtAtpBaanxbyblN7lfdtXbbp4uDV
-         dsUKS0ulIP0+B/sT7B+hXep2M9vn0dME+TfFq7bBAxWqy4He8QBeLGuMWNEdBbfeyqaA
-         6Eh969vtiZHJbynVQH61IRvbHpNdUi6vd6UUr8lhyNwBzef/CH21Wsmn5tl0VrEyB3dS
-         2FFdZadrwUZ3kwl//UxVp5GmlXREZrQG1OlJSFFg5zfyzLmanR/HuHTQ79zAtuJAXfiQ
-         0P1J2oaWqZVzM9su0qrsAkvcIZwvWn+F8Y0GXYvE8bhHSINippsH+57TRpuw0RsY5akX
-         Qx3A==
+        b=v6NAORExCj+3w2/YiVFJhyDcX2duvaT2FSm0eUkdcm3EsQb+LK7DqWaHZ7F3bhj7P1
+         qlJAeCOmH7jA+pzg+++8kPTOi1WvOAQaKnNYCQOI+X5rtKy+cqCuXAOCM8tB2e89lCwe
+         ixRZ1jmGuUaStywgr3h465dX6YfCbdGS0XNS5OHFZMFRd2Iz4b86lDPlmnFg12Lr3yHY
+         fyfCVud2VWMovrtopv5lk7bRHKLdGTlfUkB8C1s9lXzh0/7R9PXGb42h9bK5lUHzj5pY
+         GXpev6LTdTPyJyn9V+L0GgQDRPvllDzHMFCg5jYx0vr/iLUpbIl/O/SnS4gtVHW8fwWW
+         /AhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OosutoFPDTgB65kXxAgXT2dwNIg744EsHOEZjz4/H6o=;
-        b=c+hGnaxAofVg6G+TJTOKVOjqmGUa+Do+mr/UGVB0bfsUHQlNnnKbvOS5pANUDmgm7I
-         An2SVh6pMx9DwqjwOZeo5PawVBHlPMqViG0qwywvnxD8/eiGQ3ZFr2EbkZcSr4s1qMsw
-         OcHarlNRmxsnJ3vo5YRHYTUIKj0Qi/bJ3+MLMWc5Q7R8swDhdJDh0qfoT9D0/TeDKGOy
-         0zkv7twdkwlTeQybWPtyTK/dwSXQjqFLKElBFhFTMfBdiHU2e3j6OFMuVDtHNGAKd8Wt
-         j64wIaCa5m74EDN4Rp7UPz24NYuRAf9/ugfPigxPNnjm7MWDRWgUQa/PuzGQchVzG8gw
-         ngig==
+        bh=2CNvXDI367Ke9O0XVDY7VGTWjDSP30W19g64zELI4DU=;
+        b=Bok2TgOSORWkk6n8WIBHUNK+BwC4uo+thrHb7+z6r8T+TauryqVqCSAz/ZWjVvC1dn
+         +fAlVfywADTEVZuq0nSVcvb28hEN1c+zrpf64Tu8k+MTm2/GgEM2+I2Y4jEWm2rDygqm
+         KpS6big7n9d5jnSKWlbTApSRgWnPuG/g6hR7okOIGzaowELjKCpNupmW78uD2dMz/qFx
+         x7UgLztelHvjA8wjVi4ifPS3mtFEjj9I9bOjMcNO7lPnuwqMarPo09v/XGogRl+UMlLS
+         QBCUMQPHXOVYmAZTzEZR8CKNw77uGoHSsAP8u2WW9fiSTOneneI1mXt4XGGFgL5N0Lxh
+         /m9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Amit Pundir <amit.pundir@linaro.org>,
-	YongQin Liu <yongqin.liu@linaro.org>,
-	John Youn <johnyoun@synopsys.com>,
-	Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Chen Yu <chenyu56@huawei.com>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>,
-	linux-usb@vger.kernel.org,
-	Minas Harutyunyan <hminas@synopsys.com>,
-	John Stultz <john.stultz@linaro.org>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.14 36/67] usb: dwc2: Improve gadget state disconnection handling
-Date: Fri,  6 Apr 2018 15:24:06 +0200
-Message-Id: <20180406084346.173607297@linuxfoundation.org>
+	Ben Hutchings <ben.hutchings@codethink.co.uk>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 66/67] Revert "cpufreq: Fix governor module removal race"
+Date: Fri,  6 Apr 2018 15:24:36 +0200
+Message-Id: <20180406084348.875487593@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -51,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003755017723426?=
-X-GMAIL-MSGID: =?utf-8?q?1597004344458391246?=
+X-GMAIL-THRID: =?utf-8?q?1597003822271079165?=
+X-GMAIL-MSGID: =?utf-8?q?1597004344046797812?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,77 +51,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Stultz <john.stultz@linaro.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit d2471d4a24dfbff5e463d382e2c6fec7d7e25a09 upstream.
+This reverts commit 0049457bfde661cf47410eaacad65845c9a2bb45 which was
+commit a8b149d32b663c1a4105273295184b78f53d33cf upstream.
 
-In the earlier commit dad3f793f20f ("usb: dwc2: Make sure we
-disconnect the gadget state"), I was trying to fix up the
-fact that we somehow weren't disconnecting the gadget state,
-so that when the OTG port was plugged in the second time we
-would get warnings about the state tracking being wrong.
+The backport was not correct, so just drop it entirely.
 
-(This seems to be due to a quirk of the HiKey board where
-we do not ever get any otg interrupts, particularly the session
-end detected signal. Instead we only see status change
-interrupt.)
-
-The fix there was somewhat simple, as it just made sure to
-call dwc2_hsotg_disconnect() before we connected things up
-in OTG mode, ensuring the state handling didn't throw errors.
-
-But in looking at a different issue I was seeing with UDC
-state handling, I realized that it would be much better
-to call dwc2_hsotg_disconnect when we get the state change
-signal moving to host mode.
-
-Thus, this patch removes the earlier disconnect call I added
-and moves it (and the needed locking) to the host mode
-transition.
-
-Cc: Wei Xu <xuwei5@hisilicon.com>
-Cc: Guodong Xu <guodong.xu@linaro.org>
-Cc: Amit Pundir <amit.pundir@linaro.org>
-Cc: YongQin Liu <yongqin.liu@linaro.org>
-Cc: John Youn <johnyoun@synopsys.com>
-Cc: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-Cc: Douglas Anderson <dianders@chromium.org>
-Cc: Chen Yu <chenyu56@huawei.com>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>
-Tested-by: Minas Harutyunyan <hminas@synopsys.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/dwc2/hcd.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/cpufreq/cpufreq.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/drivers/usb/dwc2/hcd.c
-+++ b/drivers/usb/dwc2/hcd.c
-@@ -3277,7 +3277,6 @@ static void dwc2_conn_id_status_change(s
- 		dwc2_core_init(hsotg, false);
- 		dwc2_enable_global_interrupts(hsotg);
- 		spin_lock_irqsave(&hsotg->lock, flags);
--		dwc2_hsotg_disconnect(hsotg);
- 		dwc2_hsotg_core_init_disconnected(hsotg, false);
- 		spin_unlock_irqrestore(&hsotg->lock, flags);
- 		dwc2_hsotg_core_connect(hsotg);
-@@ -3296,8 +3295,12 @@ host:
- 		if (count > 250)
- 			dev_err(hsotg->dev,
- 				"Connection id status change timed out\n");
--		hsotg->op_state = OTG_STATE_A_HOST;
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -631,8 +631,6 @@ static int cpufreq_parse_governor(char *
+ 			*governor = t;
+ 			err = 0;
+ 		}
+-		if (t && !try_module_get(t->owner))
+-			t = NULL;
  
-+		spin_lock_irqsave(&hsotg->lock, flags);
-+		dwc2_hsotg_disconnect(hsotg);
-+		spin_unlock_irqrestore(&hsotg->lock, flags);
-+
-+		hsotg->op_state = OTG_STATE_A_HOST;
- 		/* Initialize the Core for Host mode */
- 		dwc2_core_init(hsotg, false);
- 		dwc2_enable_global_interrupts(hsotg);
+ 		mutex_unlock(&cpufreq_governor_mutex);
+ 	}
+@@ -761,10 +759,6 @@ static ssize_t store_scaling_governor(st
+ 		return -EINVAL;
+ 
+ 	ret = cpufreq_set_policy(policy, &new_policy);
+-
+-	if (new_policy.governor)
+-		module_put(new_policy.governor->owner);
+-
+ 	return ret ? ret : count;
+ }
+ 
