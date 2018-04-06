@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48WSf+Y8By5cHfVs+JZSIQcKOKMqYvLpjXChy9Y5/oU8NNIauqWvVmPf89LjSbKxxb8uyym
-ARC-Seal: i=1; a=rsa-sha256; t=1523022034; cv=none;
+X-Google-Smtp-Source: AIpwx48/l7utYFpcYgP08fw2Q3Fl4iHC8/g6zZx5PzckVWn2kRwm9MheknTC6N9HqMHXN1uVtb0h
+ARC-Seal: i=1; a=rsa-sha256; t=1523022031; cv=none;
         d=google.com; s=arc-20160816;
-        b=gho4NBBKSiVFKfa0F5cAeGOWd5L/vqwocNz1QOrqoXtS60/MaGoxzzWcvjYswbMIdv
-         aYG6THlasjLsvYpYulonL2ZA3SnreCXYSQw49LMzULd1Nfg7xkgyQYsj+Dd1/xbR5gK+
-         K/jdssMJfTjy/Uq/fbqKBvqTp79w3C04SnFW9AUmrc4Q0Scn+5E3UR32ibZoJWp4AJ5D
-         GtyAnOLnjtJHQL6M+B1seHzWLAux+l7I3/eDb9KRjlv8txlIZz60sR8Q+JkiFLnmGLIS
-         Dq0h/GcRTsmpsezqgJRouVkDEXWrim6tCQUP8ct/cCjDM6BK9XMQiT2+0bPN4WXV+Rou
-         X2XQ==
+        b=OvQF+iLAG6QRJB5Ywi+xhlcIthLghk6Jc0CGaLRVJIWMMHSdV4JjSKdpBMmV6P7Ojf
+         YE75TTvDSrZq2k06Go6gArunZHrKSDXqt2yeOFCc79wpVi6VRlByYTinv6uQmJTs7sj/
+         8PKDqQC4E0SzMoniyzPIHxAC97iqMe8pxWuJulU9NKXQLH+pTeLaix3EkDA3lPsCUjq7
+         19HDCGb5jWcLDNGat//n83KcXTDRIuRlZjHmYdfrsHWGZP26KTj7KqyAITfAI2W17GEb
+         o7dgE7bW8ILSReAwE8sZ2wRfawf+AX4/pARtgeCKbztITH0AMU2jTCImh6VGjwX1dMYJ
+         FLuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fU+i2YSI8fyYGQUvhP1t94ljbzIuDi8ou6kd9T3QdMk=;
-        b=h2BgWuy1XP1XWiyqhijnlWAFWYO3T4tLn/QM41hJnvHuG/sCjbPJr2+L8HG2OiuUB3
-         59z82k6jM3ADS0DKGgbvnkbMv1gBBibp5Ykc+x8bSx0hdnnFoYcM1VEs6g0vfnzRg6/g
-         oQQ2sDGMz6hN5elGQAQHrCQV8QyDBJI+eKhsB2Pt/iqJ8t4luy9nemS5hCUA9d7mh7IH
-         5O7cnuHCt/ihepK46EU2h3rYdHOCene6+RWzwGKyM/9lXHy1n+BwONraK1CN8wbDCzS8
-         m1ugpSPaiiyIMU2NEEqrY3JLYMzdEQH7rYFadV0YGkOCC14SP4szlkykESQDEGAQtab5
-         IATw==
+        bh=6ZZgwkaU6kJLHoqKbbFgy5OyOf9gsp5r5ErEn/mu8Ow=;
+        b=bv4zujk26H/7Ly6uf8Vtdp/e/bhK44qFFSYnlbmefjISk6LjwXV//qxL5wHBHHBPZA
+         C9SuB4axnya+1pqR3+Uxvmbdsr1NeJNcdPUFRvgJdNZ6iNzqevsSo5xb4oxlIRlbK/33
+         Cf2x4kzOGGgcGqxbMlRBioipmilw6xspGyyGn+t21o0m3+E5KgRZh0CR2W1TZUdPSp12
+         ILNMj0Hphm5I3asXf7JmcJNAWVOak0/BCobh7VM0/sLTynezCGMmioFZDRB4O82j0ujs
+         fc4FGwPr6AIbXYEDtQDGsCzHNS5y3iybF5KprfLofhfxN3Il2VeomMW2cRxlH2hDNiFY
+         rw1g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jan Jansen <nattelip@hotmail.com>,
+	Clemens Werther <clemens.werther@gmail.com>,
 	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 40/67] USB: serial: cp210x: add ELDAT Easywave RX09 id
-Date: Fri,  6 Apr 2018 15:24:10 +0200
-Message-Id: <20180406084346.883555658@linuxfoundation.org>
+Subject: [PATCH 4.14 39/67] USB: serial: ftdi_sio: add support for Harman FirmwareHubEmulator
+Date: Fri,  6 Apr 2018 15:24:09 +0200
+Message-Id: <20180406084346.751004068@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003577185601362?=
-X-GMAIL-MSGID: =?utf-8?q?1597004352305183715?=
+X-GMAIL-THRID: =?utf-8?q?1597003574666935694?=
+X-GMAIL-MSGID: =?utf-8?q?1597004350040934426?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,28 +49,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Clemens Werther <clemens.werther@gmail.com>
 
-commit 1f1e82f74c0947e40144688c9e36abe4b3999f49 upstream.
+commit 6555ad13a01952c16485c82a52ad1f3e07e34b3a upstream.
 
-Add device id for ELDAT Easywave RX09 tranceiver.
+Add device id for Harman FirmwareHubEmulator to make the device
+auto-detectable by the driver.
 
-Reported-by: Jan Jansen <nattelip@hotmail.com>
+Signed-off-by: Clemens Werther <clemens.werther@gmail.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/cp210x.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/serial/ftdi_sio.c     |    1 +
+ drivers/usb/serial/ftdi_sio_ids.h |    6 ++++++
+ 2 files changed, 7 insertions(+)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -158,6 +158,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x12B8, 0xEC62) }, /* Link G4+ ECU */
- 	{ USB_DEVICE(0x13AD, 0x9999) }, /* Baltech card reader */
- 	{ USB_DEVICE(0x1555, 0x0004) }, /* Owen AC4 USB-RS485 Converter */
-+	{ USB_DEVICE(0x155A, 0x1006) },	/* ELDAT Easywave RX09 */
- 	{ USB_DEVICE(0x166A, 0x0201) }, /* Clipsal 5500PACA C-Bus Pascal Automation Controller */
- 	{ USB_DEVICE(0x166A, 0x0301) }, /* Clipsal 5800PC C-Bus Wireless PC Interface */
- 	{ USB_DEVICE(0x166A, 0x0303) }, /* Clipsal 5500PCU C-Bus USB interface */
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -936,6 +936,7 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(FTDI_VID, FTDI_SCIENCESCOPE_LS_LOGBOOK_PID) },
+ 	{ USB_DEVICE(FTDI_VID, FTDI_SCIENCESCOPE_HS_LOGBOOK_PID) },
+ 	{ USB_DEVICE(FTDI_VID, FTDI_CINTERION_MC55I_PID) },
++	{ USB_DEVICE(FTDI_VID, FTDI_FHE_PID) },
+ 	{ USB_DEVICE(FTDI_VID, FTDI_DOTEC_PID) },
+ 	{ USB_DEVICE(QIHARDWARE_VID, MILKYMISTONE_JTAGSERIAL_PID),
+ 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+--- a/drivers/usb/serial/ftdi_sio_ids.h
++++ b/drivers/usb/serial/ftdi_sio_ids.h
+@@ -1445,6 +1445,12 @@
+ #define FTDI_CINTERION_MC55I_PID	0xA951
+ 
+ /*
++ * Product: FirmwareHubEmulator
++ * Manufacturer: Harman Becker Automotive Systems
++ */
++#define FTDI_FHE_PID		0xA9A0
++
++/*
+  * Product: Comet Caller ID decoder
+  * Manufacturer: Crucible Technologies
+  */
