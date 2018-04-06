@@ -1,60 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752171AbeDFH5M (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 03:57:12 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43009 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751746AbeDFH5K (ORCPT
+        id S1752006AbeDFH7N (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 03:59:13 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34922 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751461AbeDFH7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 03:57:10 -0400
-X-Google-Smtp-Source: AIpwx4+C09PUjsgv5YQOACXgGcH3aEoDX/jCgKiT+uw8qV1sFGRZL5tNaZ397M7XdUyTJmwjyt0Gtw==
-Date: Fri, 6 Apr 2018 13:27:07 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Quentin Schulz <quentin.schulz@bootlin.com>
-Cc: vireshk@kernel.org, shiraz.linux.kernel@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH 2/2] clk: spear: fix WDT clock definition on SPEAr600
-Message-ID: <20180406075707.GX3572@vireshk-i7>
-References: <0635969b6ef0fe528a27a8b6493cc3df770e1f60.1523000725.git-series.quentin.schulz@bootlin.com>
- <c7240072ab53d5d34a9756389729343243028eb3.1523000725.git-series.quentin.schulz@bootlin.com>
+        Fri, 6 Apr 2018 03:59:11 -0400
+Date: Fri, 6 Apr 2018 09:58:37 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH v9 05/10] cpuidle: Return nohz hint from cpuidle_select()
+Message-ID: <20180406075837.GH4082@hirez.programming.kicks-ass.net>
+References: <1736751.LdhZHb50jq@aspire.rjw.lan>
+ <5818594.T4StF86Hkt@aspire.rjw.lan>
+ <20180406024413.GB4400@lerouge>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c7240072ab53d5d34a9756389729343243028eb3.1523000725.git-series.quentin.schulz@bootlin.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180406024413.GB4400@lerouge>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-04-18, 09:50, Quentin Schulz wrote:
-> There is no SPEAr600 device named "wdt". Instead, the description of the
-> WDT (watchdog) was recently added to the Device Tree, and the device
-> name is "fc880000.wdt", so we should associate the WDT fixed rate clock
-> to this device name.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> ---
->  drivers/clk/spear/spear6xx_clock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
-> index f911d9f..47810be 100644
-> --- a/drivers/clk/spear/spear6xx_clock.c
-> +++ b/drivers/clk/spear/spear6xx_clock.c
-> @@ -147,7 +147,7 @@ void __init spear6xx_clk_init(void __iomem *misc_base)
->  
->  	clk = clk_register_fixed_factor(NULL, "wdt_clk", "osc_30m_clk", 0, 1,
->  			1);
-> -	clk_register_clkdev(clk, NULL, "wdt");
-> +	clk_register_clkdev(clk, NULL, "fc880000.wdt");
->  
->  	/* clock derived from pll1 clk */
->  	clk = clk_register_fixed_factor(NULL, "cpu_clk", "pll1_clk",
+On Fri, Apr 06, 2018 at 04:44:14AM +0200, Frederic Weisbecker wrote:
+> You can move that to tick_sched_do_timer() to avoid code duplication.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+I expect the reason I didn't was that it didn't have @ts, but that's
+easily fixable.
 
--- 
-viresh
+> Also these constants are very opaque. And even with proper symbols it wouldn't look
+> right to extend ts->inidle that way.
+> 
+> Perhaps you should add a field such as ts->got_idle_tick under the boolean fields
+> after the below patch:
+
+> @@ -45,14 +45,17 @@ struct tick_sched {
+>  	struct hrtimer			sched_timer;
+>  	unsigned long			check_clocks;
+>  	enum tick_nohz_mode		nohz_mode;
+> +
+> +	unsigned int			inidle		: 1;
+> +	unsigned int			tick_stopped	: 1;
+> +	unsigned int			idle_active	: 1;
+> +	unsigned int			do_timer_last	: 1;
+
+That would generate worse code, but yes, the C might be prettier.
