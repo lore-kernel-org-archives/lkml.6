@@ -1,96 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751494AbeDFRy5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 13:54:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54044 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751278AbeDFRy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 13:54:56 -0400
-Subject: Re: [PATCH 05/20] afs: Implement @sys substitution handling
-To: David Howells <dhowells@redhat.com>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180406065118.GZ30522@ZenIV.linux.org.uk>
- <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
- <152296020457.31027.11109314533967989357.stgit@warthog.procyon.org.uk>
- <22389.1523002383@warthog.procyon.org.uk>
-From: Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b7e489f8-c17f-5deb-9a87-2d4bac880ba7@suse.com>
-Date: Fri, 6 Apr 2018 20:54:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751425AbeDFSBm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 14:01:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57336 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750807AbeDFSBk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:01:40 -0400
+Date: Fri, 6 Apr 2018 11:01:27 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Cc: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org,
+        fweimer@redhat.com, shuah@kernel.org, msuchanek@suse.com,
+        linux-kernel@vger.kernel.org, mhocko@kernel.org, dave.hansen@intel.com,
+        paulus@samba.org, aneesh.kumar@linux.vnet.ibm.com, tglx@linutronix.de,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2] powerpc, pkey: make protection key 0 less special
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <1522112702-27853-1-git-send-email-linuxram@us.ibm.com>
+ <876056645u.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <22389.1523002383@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <876056645u.fsf@morokweng.localdomain>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18040618-0040-0000-0000-0000044A9AE9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040618-0041-0000-0000-000020EEB71F
+Message-Id: <20180406180126.GJ5743@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-06_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804060181
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 04, 2018 at 06:41:01PM -0300, Thiago Jung Bauermann wrote:
+> 
+> Hello Ram,
+> 
+> Ram Pai <linuxram@us.ibm.com> writes:
+> 
+> > Applications need the ability to associate an address-range with some
+> > key and latter revert to its initial default key. Pkey-0 comes close to
+> > providing this function but falls short, because the current
+> > implementation disallows applications to explicitly associate pkey-0 to
+> > the address range.
+> >
+> > Lets make pkey-0 less special and treat it almost like any other key.
+> > Thus it can be explicitly associated with any address range, and can be
+> > freed. This gives the application more flexibility and power.  The
+> > ability to free pkey-0 must be used responsibily, since pkey-0 is
+> > associated with almost all address-range by default.
+> >
+> > Even with this change pkey-0 continues to be slightly more special
+> > from the following point of view.
+> > (a) it is implicitly allocated.
+> > (b) it is the default key assigned to any address-range.
+> 
+> It's also special in more ways (and if intentional, these should be part
+> of the commit message as well):
+> 
+> (c) it's not possible to change permissions for key 0
+> 
+>   This has two causes: this patch explicitly forbids it in
+>   arch_set_user_pkey_access(), and also because even if it's allocated,
+>   the bits for key 0 in AMOR and UAMOR aren't set.
+
+Yes. will have to capture that one aswell.
+
+we cannot let userspace change permissions on key 0 because
+doing so will hurt the kernel too. Unlike x86 where keys are effective
+only in userspace, powerpc keys are effective even in the kernel.
+So if the kernel tries to access something, it will get stuck forever.
+Almost everything in the kernel is associated with key-0.
+
+I ran a small test program which disabled access on key 0 from
+userspace, and as expected ran into softlockups. It certainly
+can lead to denial-of-service-attack. We can let apps
+shoot-itself-in-its-foot but if the shot hurts someone else, we will
+have to stop it.
+
+The key-semantics discussed with the x86 folks did not 
+explicitly say anything about changing permissions on key-0. We will
+have to keep that part of the semantics open-ended.
+
+> 
+> (d) it can be freed, but can't be allocated again later.
+> 
+>   This is because mm_pkey_alloc() only calls __arch_activate_pkey(ret)
+>   if ret > 0.
+> 
+> It looks like (d) is a bug. Either mm_pkey_free() should fail with key
+> 0, or mm_pkey_alloc() should work with it.
+
+Well, it can be allocated, just that we do not let userspace change the
+permissions on the key.  __arch_activate_pkey(ret) does not get called
+for pkey-0.
 
 
-On  6.04.2018 11:13, David Howells wrote:
-> Al Viro <viro@ZenIV.linux.org.uk> wrote:
 > 
->> lookup_one_len() seriously depends upon exclusive lock
+> (c) could be a measure to prevent users from shooting themselves in
+> their feet. But if that is the case, then mm_pkey_free() should forbid
+> freeing key 0 too.
 > 
-> In the code it says:
+> > Tested on powerpc.
+> >
+> > cc: Thomas Gleixner <tglx@linutronix.de>
+> > cc: Dave Hansen <dave.hansen@intel.com>
+> > cc: Michael Ellermen <mpe@ellerman.id.au>
+> > cc: Ingo Molnar <mingo@kernel.org>
+> > cc: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+> > ---
+> > History:
+> > 	v2: mm_pkey_is_allocated() continued to treat pkey-0 special.
+> > 	    fixed it.
+> >
+> >  arch/powerpc/include/asm/pkeys.h | 20 ++++++++++++++++----
+> >  arch/powerpc/mm/pkeys.c          | 20 ++++++++++++--------
+> >  2 files changed, 28 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/arch/powerpc/include/asm/pkeys.h b/arch/powerpc/include/asm/pkeys.h
+> > index 0409c80..b598fa9 100644
+> > --- a/arch/powerpc/include/asm/pkeys.h
+> > +++ b/arch/powerpc/include/asm/pkeys.h
+> > @@ -101,10 +101,14 @@ static inline u16 pte_to_pkey_bits(u64 pteflags)
+> >
+> >  static inline bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
+> >  {
+> > -	/* A reserved key is never considered as 'explicitly allocated' */
+> > -	return ((pkey < arch_max_pkey()) &&
+> > -		!__mm_pkey_is_reserved(pkey) &&
+> > -		__mm_pkey_is_allocated(mm, pkey));
+> > +	if (pkey < 0 || pkey >= arch_max_pkey())
+> > +		return false;
+> > +
+> > +	/* Reserved keys are never allocated. */
+> > +	if (__mm_pkey_is_reserved(pkey))
+> > +		return false;
+> > +
+> > +	return __mm_pkey_is_allocated(mm, pkey);
+> >  }
+> >
+> >  extern void __arch_activate_pkey(int pkey);
+> > @@ -200,6 +204,14 @@ static inline int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+> >  {
+> >  	if (static_branch_likely(&pkey_disabled))
+> >  		return -EINVAL;
+> > +
+> > +	/*
+> > +	 * userspace is discouraged from changing permissions of
+> > +	 * pkey-0.
 > 
-> 	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
-> 
-> which checks i_rwsem, but in the banner comment it says:
-> 
-> 	* The caller must hold base->i_mutex.
-> 
-> is one of these wrong?
+> They're not discouraged. They're not allowed to. :-)
 
-Before the switch to i_rwsem, inodes had only i_mutex, so in fact the
-comment is likely stale.
+ok :-)
 
 > 
-> David
+> > +	 * powerpc hardware does not support it anyway.
 > 
+> It doesn't? I don't get that impression from reading the ISA, but
+> perhaps I'm missing something.
+
+Good Catch. I am wrongly blaming it on powerpc hardware.
+Its a semantics enforced by our pkey code to block DOS attacks.
+
+> 
+> > +	 */
+> > +	if (!pkey)
+> > +		return init_val ? -EINVAL : 0;
+> > +
+> >  	return __arch_set_user_pkey_access(tsk, pkey, init_val);
+> >  }
+> >
+> > diff --git a/arch/powerpc/mm/pkeys.c b/arch/powerpc/mm/pkeys.c
+> > index ba71c54..e7a9e34 100644
+> > --- a/arch/powerpc/mm/pkeys.c
+> > +++ b/arch/powerpc/mm/pkeys.c
+> > @@ -119,19 +119,21 @@ int pkey_initialize(void)
+> >  #else
+> >  	os_reserved = 0;
+> >  #endif
+> > -	/*
+> > -	 * Bits are in LE format. NOTE: 1, 0 are reserved.
+> > -	 * key 0 is the default key, which allows read/write/execute.
+> > -	 * key 1 is recommended not to be used. PowerISA(3.0) page 1015,
+> > -	 * programming note.
+> > -	 */
+> > +	/* Bits are in LE format. */
+> >  	initial_allocation_mask = ~0x0;
+> >
+> >  	/* register mask is in BE format */
+> >  	pkey_amr_uamor_mask = ~0x0ul;
+> >  	pkey_iamr_mask = ~0x0ul;
+> >
+> > -	for (i = 2; i < (pkeys_total - os_reserved); i++) {
+> > +	for (i = 0; i < (pkeys_total - os_reserved); i++) {
+> > +	 	/*
+> 
+> There's a space between the tabs here.
+
+ok. will fix.
+
+> 
+> > +		 * key 1 is recommended not to be used.
+> > +		 * PowerISA(3.0) page 1015,
+> > +		 */
+> > +		if (i == 1)
+> > +			continue;
+> > +
+> >  		initial_allocation_mask &= ~(0x1 << i);
+> >  		pkey_amr_uamor_mask &= ~(0x3ul << pkeyshift(i));
+> >  		pkey_iamr_mask &= ~(0x1ul << pkeyshift(i));
+> > @@ -145,7 +147,9 @@ void pkey_mm_init(struct mm_struct *mm)
+> >  {
+> >  	if (static_branch_likely(&pkey_disabled))
+> >  		return;
+> > -	mm_pkey_allocation_map(mm) = initial_allocation_mask;
+> > +
+> > +	/* allocate key-0 by default */
+> > +	mm_pkey_allocation_map(mm) = initial_allocation_mask | 0x1;
+> >  	/* -1 means unallocated or invalid */
+> >  	mm->context.execute_only_pkey = -1;
+> >  }
+> 
+> I think we should also set the AMOR and UAMOR bits for key 0. Otherwise,
+> key 0 will be in allocated-but-not-enabled state which is yet another
+> subtle way in which it will be special.
+
+No. as explained above, it will hurt to let userspace modify
+permissions on key-0.
+
+> 
+> Also, pkey_access_permitted() has a special case for key 0. Should it?
+
+we can delete that check. though it does not hurt to leave it in place.
+Access/Write/Execute on pkey-0 is always permitted.
+
+RP
