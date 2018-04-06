@@ -1,123 +1,111 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3892947-1523367159-2-5304865363594300203
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523367158; b=S07XNbbuZcAF/mYPhP4/drdau78kkDsso0ZjwTBjY8PfthIPIV
-    ESJ/i55gQf+9bs4Td+Sb73KNtT43IsHr3kWob36vfe6VOx2nDs/fVotlMK5LgDzK
-    C1MFKjq5BBTrrM9P16ezzEIMrhJaIBihxQif37fIV7nyq1L6ItwrczrhJyCv72HX
-    oF2SkdOdVTNnsfStXKt+XJzVnkw+93/+bHIsYz5EWstW+jB1o9leFDvLmFO1B8im
-    sor4m55S702bqwmCscPuya1Fw+1PZCSjExZL0LBqkwZeuiSn+BNT7vBrwFnfkt9k
-    y1vWiIG2zDodiupDhh7j/qBsTAVj74Ra1zrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1523367158; bh=yKmBnpXvLviWgUKKevAnxASUXNC3P2
-    d9kw6wKwDde0k=; b=QbP26P/GR9j9elzXWKS3UBlFaFDwbykcOkexhAF2/wCCnj
-    EgID9M0770eKISuC3i2yNAtyTkH/gcdOxK5w5c9TxtMarwxqTOUZXSq+sYXuSysY
-    SB6xvs9AhoqDWKCISVGKCrjpcH88DtrTwg0LlEB+O+LrhdZ3mBh9uAbuwUH6/ECj
-    PZCbhesnhL28GwGqMSMu4/tYMv3hDDzzRQzQP/VJu+toQBlWHEmQ9KRBymrFXRT6
-    An7JLqf2S5ftNaUQnkKJUTlVZHzKJ+UeI6pBKX6x2EdLlu+jF3nsPYwYq4TqaFY0
-    BmOO7RBjwdbLqz2IwWoFLLelVzYHQoaLr4I8j/JQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b=W6gMVB7v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xilinx.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lEYC4R6n;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xilinx.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b=W6gMVB7v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xilinx.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lEYC4R6n;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xilinx.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP1j5vXS8Iat3acsN1iaeYaFQsMt+oLMKHL2WL8pA8O6a6UQzeBD98kgieLiB34RByXyjo9uuSbvnE/PKm/gbzMp6Wsd6CGfuSZgI6Tc8GnCdWl/0LcS
-    bHniJTcAgAslRao68Zgc/uKLnkvED8MerVTqG/5Cfz6Bsow61IE7fBxIkK8rKwtxSEPZnYei8y48TIFjCtFRnNPjwT/x5qgy6wZxOy556v58+yN+wf+/WNG0
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=Am4ss40yAAAA:8
-    a=VwQbUJbxAAAA:8 a=KcbSYToX-2gqoFQQYpEA:9 a=x8gzFH9gYPwA:10
-    a=lf-hbUz_c89dky27wAWH:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753021AbeDJNcf (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 09:32:35 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55680 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752751AbeDJNce (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:32:34 -0400
-X-Google-Smtp-Source: AIpwx4946wpJlTOyc02uZwaU4S5BawsqQW2OpRWaX1jMW67fLAyqICPV8lz1H5173smEk59QaopRlQ==
-From: Michal Simek <michal.simek@xilinx.com>
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        devicetree@vger.kernel.org, Rob Herring <robherring2@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH] earlycon: Initialize port->uartclk based on clock-frequency property
-Date: Tue, 10 Apr 2018 15:32:28 +0200
-Message-Id: <f483181cd3a234c2eae7e11b91a1767a0cbb88ed.1523367143.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 1.9.1
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Return-Path: <gyedo.park@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522982836; cv=none;
+        d=google.com; s=arc-20160816;
+        b=CyLmBvaWAEEV+W/m/iTyQWNgi5POtey0PK17mTv4hfWZigKKoFSdsoQ3Yqxf7C7zck
+         CHjuttblJcSuDEnh6d2PFzyEf1m6KbVRb1dQwgk0qvCxq5TCtvGRSW0whsG26ghmWOgf
+         b0VXCVwltx2TD03p75VbHpZBSjJD3sVENBJ6fcLMT69A+4CKmiFqthjhLmcMzhV/7i9r
+         QPVmdIGJlmEQ4QYtxU3cPN1sGhjS2dDrbpqUB4+Y8g8hzO6meNyrFJLx782ISqs3VIKO
+         4BnNmy1nXPpyB2332F+/pUcQW07lD20qUGFCeH3q8OgPgT7Yrgn4u/yUdZhtGGYkoO5L
+         D+Ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:date:from:dkim-signature:arc-authentication-results;
+        bh=h1xokyP2l7m8tXkAeOxgZj8B3JXtisMaTnKGLJZutcE=;
+        b=ucPHJU48aFqlCLqfOAl3MPawecLjLFfZsCNRE23zj5057UiJ/Gxaw+5+QoFYqlYhhE
+         YUgb+s7EXFi3mfTljuPjEbyrR2GoOAJXBUSKkKJP4iKBWkdzM7SFAoxVt4GBjrMOOGho
+         k1euukbgXZ7JCo6OfJ7SoOmuFwkVMlgxbpi4C3ELEDMb262ICTegxiGjBGmkQreTuUzX
+         +mu2ZRfR0hw5CcXtU78sTJYdzeLizQAAvYxU2crq92LBk/n7xh8zatMf8qFo39UU3EN/
+         YXWB/3jcZe4FPUsPXGXfwdlAhJ8N3ARjaAGTRRQjJ9dkBNvVBuxqbXYyCg0TR9Jezjiy
+         C+pQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hnDvGiHp;
+       spf=pass (google.com: domain of gyedo.park@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=gyedo.park@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hnDvGiHp;
+       spf=pass (google.com: domain of gyedo.park@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=gyedo.park@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx4+hp9zGq0avSQI7OeOyvUtNBxQGT+S+qmt9EeyR+j75j/gCc8uyjTMPRTa+IRPbKY3cCKvIcA==
+From: GyeDo Park <gyedo.park@gmail.com>
+X-Google-Original-From: GyeDo Park <pkdf1030@gmail.com>
+Date: Fri, 6 Apr 2018 11:47:23 +0900
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitor@vger.kernel.org
+Subject: [PATCH] staging:rtl8712: required line 80 over and multiple line
+Message-ID: <20180406024723.GA20534@h00ker192.168.219.101>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596963250005512225?=
+X-GMAIL-MSGID: =?utf-8?q?1596963250005512225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On DT based platforms when current-speed property is present baudrate
-is setup. Also port->uartclk is initialized to bogus BASE_BAUD * 16
-value. Drivers like uartps/ns16550 contain logic when baudrate and
-uartclk is used for baudrate calculation.
+clean up checkpatch warning:
+Warning: line over 80 characters
+Warning: Avoid multiple line dereference
 
-The patch is reading optional clock-frequency property to replace bogus
-BASE_BAUD * 16 calculation to have proper baudrate calculation.
-
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: GyeDo Park <pkdf1030@gmail.com>
 ---
+ drivers/staging/rtl8712/rtl871x_mlme.c | 92 +++++++++++++---------------------
+ 1 file changed, 36 insertions(+), 56 deletions(-)
 
-We should add documentation for current-speed, reg-offset, reg-shift,
-big-endian, native-endian, reg-io-width and clock-frequency to any
-generic location because they are all optional properties for all DT
-earlycon drivers through of_setup_earlycon.
+diff --git a/drivers/staging/rtl8712/rtl871x_mlme.c b/drivers/staging/rtl8712/rtl871x_mlme.c
+index 7824508..db50677 100644
+--- a/drivers/staging/rtl8712/rtl871x_mlme.c
++++ b/drivers/staging/rtl8712/rtl871x_mlme.c
+@@ -469,9 +469,8 @@ static int is_desired_network(struct _adapter *adapter,
+ 		bselected = false;
+ 	if (check_fwstate(&adapter->mlmepriv, WIFI_ADHOC_STATE)) {
+ 		if (pnetwork->network.InfrastructureMode !=
+-			adapter->mlmepriv.cur_network.network.
+-			InfrastructureMode)
+-			bselected = false;
++		adapter->mlmepriv.cur_network.network.InfrastructureMode)
++		bselected = false;
+ 	}
+ 	return bselected;
+ }
 
----
- drivers/tty/serial/earlycon.c | 4 ++++
- 1 file changed, 4 insertions(+)
+@@ -721,27 +720,25 @@ void r8712_joinbss_event_callback(struct _adapter *adapter, u8 *pbuf)
+ 	pnetwork->network.Privacy = le32_to_cpu(pnetwork->network.Privacy);
+ 	pnetwork->network.Rssi = le32_to_cpu(pnetwork->network.Rssi);
+ 	pnetwork->network.NetworkTypeInUse =
+-		 le32_to_cpu(pnetwork->network.NetworkTypeInUse);
++	      le32_to_cpu(pnetwork->network.NetworkTypeInUse);
+ 	pnetwork->network.Configuration.ATIMWindow =
+-		 le32_to_cpu(pnetwork->network.Configuration.ATIMWindow);
++	      le32_to_cpu(pnetwork->network.Configuration.ATIMWindow);
+ 	pnetwork->network.Configuration.BeaconPeriod =
+-		 le32_to_cpu(pnetwork->network.Configuration.BeaconPeriod);
++	      le32_to_cpu(pnetwork->network.Configuration.BeaconPeriod);
+ 	pnetwork->network.Configuration.DSConfig =
+-		 le32_to_cpu(pnetwork->network.Configuration.DSConfig);
++	      le32_to_cpu(pnetwork->network.Configuration.DSConfig);
+ 	pnetwork->network.Configuration.FHConfig.DwellTime =
+-		 le32_to_cpu(pnetwork->network.Configuration.FHConfig.
+-			     DwellTime);
++	      le32_to_cpu(pnetwork->network.Configuration.FHConfig.DwellTime);
+ 	pnetwork->network.Configuration.FHConfig.HopPattern =
+-		 le32_to_cpu(pnetwork->network.Configuration.
+-			     FHConfig.HopPattern);
++	      le32_to_cpu(pnetwork->network.Configuration.FHConfig.HopPattern);
+ 	pnetwork->network.Configuration.FHConfig.HopSet =
+-		 le32_to_cpu(pnetwork->network.Configuration.FHConfig.HopSet);
++	      le32_to_cpu(pnetwork->network.Configuration.FHConfig.HopSet);
+ 	pnetwork->network.Configuration.FHConfig.Length =
+-		 le32_to_cpu(pnetwork->network.Configuration.FHConfig.Length);
++	      le32_to_cpu(pnetwork->network.Configuration.FHConfig.Length);
+ 	pnetwork->network.Configuration.Length =
+-		 le32_to_cpu(pnetwork->network.Configuration.Length);
++	      le32_to_cpu(pnetwork->network.Configuration.Length);
+ 	pnetwork->network.InfrastructureMode =
+-		 le32_to_cpu(pnetwork->network.InfrastructureMode);
++	      le32_to_cpu(pnetwork->network.InfrastructureMode);
+ 	pnetwork->network.IELength = le32_to_cpu(pnetwork->network.IELength);
+ #endif
 
-diff --git a/drivers/tty/serial/earlycon.c b/drivers/tty/serial/earlycon.c
-index a24278380fec..eb1f84258c44 100644
---- a/drivers/tty/serial/earlycon.c
-+++ b/drivers/tty/serial/earlycon.c
-@@ -279,6 +279,10 @@ int __init of_setup_earlycon(const struct earlycon_id *match,
- 	if (val)
- 		early_console_dev.baud = be32_to_cpu(*val);
- 
-+	val = of_get_flat_dt_prop(node, "clock-frequency", NULL);
-+	if (val)
-+		port->uartclk = be32_to_cpu(*val);
-+
- 	if (options) {
- 		early_console_dev.baud = simple_strtoul(options, NULL, 0);
- 		strlcpy(early_console_dev.options, options,
 -- 
-1.9.1
-
+2.7.4
