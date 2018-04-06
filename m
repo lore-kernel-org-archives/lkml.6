@@ -1,63 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752033AbeDFLFQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 07:05:16 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:37153 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeDFLFO (ORCPT
+        id S1752092AbeDFLGo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 07:06:44 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36532 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751492AbeDFLGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 07:05:14 -0400
-X-Google-Smtp-Source: AIpwx4/PaUboWx9mYy9oCdADMxswDRfFCpcxXN99xlEBV6mnHSe/nO1Dr2+FAey1JhJeM2ZgFcOVZw==
-From: Esben Haabendal <esben.haabendal@gmail.com>
-To: David Miller <davem@davemloft.net>
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, richardcochran@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rasmus.villemoes@prevas.dk
-Subject: Re: [PATCH 2/2] net: phy: dp83640: Read strapped configuration settings
-References: <95678797-bd17-ba3f-8a70-a00b4792a258@gmail.com>
-        <87d0zdjszu.fsf@haabendal.dk> <20180405204049.GD17495@lunn.ch>
-        <20180405.222437.1573582680811455269.davem@davemloft.net>
-Date: Fri, 06 Apr 2018 13:05:06 +0200
-In-Reply-To: <20180405.222437.1573582680811455269.davem@davemloft.net> (David
-        Miller's message of "Thu, 05 Apr 2018 22:24:37 -0400 (EDT)")
-Message-ID: <87h8oo61el.fsf@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 6 Apr 2018 07:06:43 -0400
+X-Google-Smtp-Source: AIpwx4+VuJxI26EkjlIMJ3tbLNDDxn/m55DfWh1BgIQ563w7iwX4RT4Os8W0u/+WD0F/L43d6igFxw==
+Date: Fri, 6 Apr 2018 14:05:57 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Andrew Morton <akpm@linux-foundation.org>, dave.hansen@intel.com
+Cc: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
+        pagupta@redhat.com, linux-mm@kvack.org,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v3 0/4] mm/sparse: Optimize memmap allocation during
+ sparse_init()
+Message-ID: <20180406110557.xg2edtjgzmsdksry@node.shutemov.name>
+References: <20180228032657.32385-1-bhe@redhat.com>
+ <20180405150842.350e4febc06a813138f00416@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405150842.350e4febc06a813138f00416@linux-foundation.org>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Miller <davem@davemloft.net> writes:
+On Thu, Apr 05, 2018 at 03:08:42PM -0700, Andrew Morton wrote:
+> On Wed, 28 Feb 2018 11:26:53 +0800 Baoquan He <bhe@redhat.com> wrote:
+> 
+> > This is v3 post. V1 can be found here:
+> > https://www.spinics.net/lists/linux-mm/msg144486.html
+> > 
+> > In sparse_init(), two temporary pointer arrays, usemap_map and map_map
+> > are allocated with the size of NR_MEM_SECTIONS. They are used to store
+> > each memory section's usemap and mem map if marked as present. In
+> > 5-level paging mode, this will cost 512M memory though they will be
+> > released at the end of sparse_init(). System with few memory, like
+> > kdump kernel which usually only has about 256M, will fail to boot
+> > because of allocation failure if CONFIG_X86_5LEVEL=y.
+> > 
+> > In this patchset, optimize the memmap allocation code to only use
+> > usemap_map and map_map with the size of nr_present_sections. This
+> > makes kdump kernel boot up with normal crashkernel='' setting when
+> > CONFIG_X86_5LEVEL=y.
+> 
+> This patchset could do with some more review, please?
 
-> From: Andrew Lunn <andrew@lunn.ch>
-> Date: Thu, 5 Apr 2018 22:40:49 +0200
->
->> Or could it still contain whatever state the last boot of Linux, or
->> maybe the bootloader, left the PHY in?
->
-> Right, this is my concern as well.
+I don't really understand sparsemem good enough to comment on the
+patchset.
 
-I don't think that should happen.
-With config_init() being called (in phy_init_hw()) after soft_reset(),
-any state set by software should be cleared.
+Dave, could you review this?
 
->From DP83620 datasheet description of what happens when BMCR_RESET is
-set:
-
-    The software reset will reset the device such that all registers
-    will be reset to default values and the hardware configuration
-    values will be maintained.
-
-But something else that could be a concern is the risk that there is
-boards out there with wrong hardware configuration, which works with
-current Linux (because it ignores hardware configuration).  Such designs
-could break with this patch.
-
-If we need to safeguard against that, maybe we could just keep the
-genphy_read_config() function in the kernel, and let board specific code
-use it as a phy_fixup where hardware configuration is to be respected.
-
-Would that be a better approach?
-
-/Esben
+-- 
+ Kirill A. Shutemov
