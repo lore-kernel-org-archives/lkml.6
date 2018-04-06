@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49Fo0FEdOxbd5SekoPiG4gpdEMt4XhIJ6TA6/OfXplarM7OC7UfE5uA4yb4j/9DEIUnROt7
-ARC-Seal: i=1; a=rsa-sha256; t=1523022037; cv=none;
+X-Google-Smtp-Source: AIpwx48WSf+Y8By5cHfVs+JZSIQcKOKMqYvLpjXChy9Y5/oU8NNIauqWvVmPf89LjSbKxxb8uyym
+ARC-Seal: i=1; a=rsa-sha256; t=1523022034; cv=none;
         d=google.com; s=arc-20160816;
-        b=PhdKQzsjIlG/rDfsoEDFko1QdVC7HRKzRVezmWFILD8f+AsAJ2zgdpohhQulGK9lDe
-         FNAEg2V71VmasUy3YuRFyHGgMSu6I/zLTc2AZInI8Q4UgAaNGNHDcvUfYLqb4VsnIF80
-         nKsqlAE6RkG6g/VtzIMOcJkF0SKEBuL8afTpphQTpQWD9+8HMaET45QahFFqjhy56pEm
-         w2oqYhyrLFzJDxDlfb7X8H7w6MvH+T3VtuKiSg2BkGT2aJH9HpnCJJ7Z6z2CW1epEUFW
-         +BmUA+EYy6ffBHSyolW2jfpl0JeQFIWcw19naTijhj1CGLx5G2h4e0wfqYyZffYmwJ4T
-         BGLQ==
+        b=gho4NBBKSiVFKfa0F5cAeGOWd5L/vqwocNz1QOrqoXtS60/MaGoxzzWcvjYswbMIdv
+         aYG6THlasjLsvYpYulonL2ZA3SnreCXYSQw49LMzULd1Nfg7xkgyQYsj+Dd1/xbR5gK+
+         K/jdssMJfTjy/Uq/fbqKBvqTp79w3C04SnFW9AUmrc4Q0Scn+5E3UR32ibZoJWp4AJ5D
+         GtyAnOLnjtJHQL6M+B1seHzWLAux+l7I3/eDb9KRjlv8txlIZz60sR8Q+JkiFLnmGLIS
+         Dq0h/GcRTsmpsezqgJRouVkDEXWrim6tCQUP8ct/cCjDM6BK9XMQiT2+0bPN4WXV+Rou
+         X2XQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=f55zHVDhrm4PsDJak5irGZDj8NJxJiaSwYkCKOhZmUs=;
-        b=CWf5nZSjr1ezfYtHH8eNBhNjMXr3gW8ueORH6+ru3JykIB5H+UTWvblAAkjB171KI6
-         axrVBhPK3esyQoMeCW5DHEhM1JxklAbzsUh/Vs0bc9UKd/m7V7Cj3Jll9n57RFKlWZHk
-         5pTREqnp2/mJO/HaOsX9vQLSe3bVEBbIVryCquw+OoK5C/O2rKL99DHQPI7BlIFmA9sV
-         J6R2g2T0YPDUEQruLRGIVs1QCP3PrWyVEHN3qnLHiuo9QQ9h/YI2tSGLB8mS4Hi1WPsn
-         nAx8fbNk48LuwpaxiCN9M9LYRbl97n8QnDjYO7MlVYJbAgRIqj/q9pP9Y9iqqhX3GHCa
-         5RQQ==
+        bh=fU+i2YSI8fyYGQUvhP1t94ljbzIuDi8ou6kd9T3QdMk=;
+        b=h2BgWuy1XP1XWiyqhijnlWAFWYO3T4tLn/QM41hJnvHuG/sCjbPJr2+L8HG2OiuUB3
+         59z82k6jM3ADS0DKGgbvnkbMv1gBBibp5Ykc+x8bSx0hdnnFoYcM1VEs6g0vfnzRg6/g
+         oQQ2sDGMz6hN5elGQAQHrCQV8QyDBJI+eKhsB2Pt/iqJ8t4luy9nemS5hCUA9d7mh7IH
+         5O7cnuHCt/ihepK46EU2h3rYdHOCene6+RWzwGKyM/9lXHy1n+BwONraK1CN8wbDCzS8
+         m1ugpSPaiiyIMU2NEEqrY3JLYMzdEQH7rYFadV0YGkOCC14SP4szlkykESQDEGAQtab5
+         IATw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Joel Stanley <joel@jms.id.au>
-Subject: [PATCH 4.14 41/67] serial: 8250: Add Nuvoton NPCM UART
-Date: Fri,  6 Apr 2018 15:24:11 +0200
-Message-Id: <20180406084346.988322037@linuxfoundation.org>
+	Jan Jansen <nattelip@hotmail.com>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 40/67] USB: serial: cp210x: add ELDAT Easywave RX09 id
+Date: Fri,  6 Apr 2018 15:24:10 +0200
+Message-Id: <20180406084346.883555658@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004355640744843?=
-X-GMAIL-MSGID: =?utf-8?q?1597004355640744843?=
+X-GMAIL-THRID: =?utf-8?q?1597003577185601362?=
+X-GMAIL-MSGID: =?utf-8?q?1597004352305183715?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,125 +49,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Joel Stanley <joel@jms.id.au>
+From: Johan Hovold <johan@kernel.org>
 
-commit f597fbce38d230af95384f4a04e0a13a1d0ad45d upstream.
+commit 1f1e82f74c0947e40144688c9e36abe4b3999f49 upstream.
 
-The Nuvoton UART is almost compatible with the 8250 driver when probed
-via the 8250_of driver, however it requires some extra configuration
-at startup.
+Add device id for ELDAT Easywave RX09 tranceiver.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Reported-by: Jan Jansen <nattelip@hotmail.com>
 Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/devicetree/bindings/serial/8250.txt |    1 
- drivers/tty/serial/8250/8250_of.c                 |    1 
- drivers/tty/serial/8250/8250_port.c               |   33 ++++++++++++++++++++++
- include/uapi/linux/serial_core.h                  |    3 ++
- 4 files changed, 38 insertions(+)
+ drivers/usb/serial/cp210x.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/Documentation/devicetree/bindings/serial/8250.txt
-+++ b/Documentation/devicetree/bindings/serial/8250.txt
-@@ -24,6 +24,7 @@ Required properties:
- 	- "ti,da830-uart"
- 	- "aspeed,ast2400-vuart"
- 	- "aspeed,ast2500-vuart"
-+	- "nuvoton,npcm750-uart"
- 	- "serial" if the port type is unknown.
- - reg : offset and length of the register set for the device.
- - interrupts : should contain uart interrupt.
---- a/drivers/tty/serial/8250/8250_of.c
-+++ b/drivers/tty/serial/8250/8250_of.c
-@@ -321,6 +321,7 @@ static const struct of_device_id of_plat
- 	{ .compatible = "mrvl,mmp-uart",
- 		.data = (void *)PORT_XSCALE, },
- 	{ .compatible = "ti,da830-uart", .data = (void *)PORT_DA830, },
-+	{ .compatible = "nuvoton,npcm750-uart", .data = (void *)PORT_NPCM, },
- 	{ /* end of list */ },
- };
- MODULE_DEVICE_TABLE(of, of_platform_serial_table);
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -51,6 +51,10 @@
- #define UART_EXAR_SLEEP		0x8b	/* Sleep mode */
- #define UART_EXAR_DVID		0x8d	/* Device identification */
- 
-+/* Nuvoton NPCM timeout register */
-+#define UART_NPCM_TOR          7
-+#define UART_NPCM_TOIE         BIT(7)  /* Timeout Interrupt Enable */
-+
- /*
-  * Debugging.
-  */
-@@ -297,6 +301,15 @@ static const struct serial8250_config ua
- 				  UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
- 		.flags		= UART_CAP_FIFO,
- 	},
-+	[PORT_NPCM] = {
-+		.name		= "Nuvoton 16550",
-+		.fifo_size	= 16,
-+		.tx_loadsz	= 16,
-+		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10 |
-+				  UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
-+		.rxtrig_bytes	= {1, 4, 8, 14},
-+		.flags		= UART_CAP_FIFO,
-+	},
- };
- 
- /* Uart divisor latch read */
-@@ -2168,6 +2181,15 @@ int serial8250_do_startup(struct uart_po
- 				UART_DA830_PWREMU_MGMT_FREE);
- 	}
- 
-+	if (port->type == PORT_NPCM) {
-+		/*
-+		 * Nuvoton calls the scratch register 'UART_TOR' (timeout
-+		 * register). Enable it, and set TIOC (timeout interrupt
-+		 * comparator) to be 0x20 for correct operation.
-+		 */
-+		serial_port_out(port, UART_NPCM_TOR, UART_NPCM_TOIE | 0x20);
-+	}
-+
- #ifdef CONFIG_SERIAL_8250_RSA
- 	/*
- 	 * If this is an RSA port, see if we can kick it up to the
-@@ -2490,6 +2512,15 @@ static unsigned int xr17v35x_get_divisor
- 	return quot_16 >> 4;
- }
- 
-+/* Nuvoton NPCM UARTs have a custom divisor calculation */
-+static unsigned int npcm_get_divisor(struct uart_8250_port *up,
-+		unsigned int baud)
-+{
-+	struct uart_port *port = &up->port;
-+
-+	return DIV_ROUND_CLOSEST(port->uartclk, 16 * baud + 2) - 2;
-+}
-+
- static unsigned int serial8250_get_divisor(struct uart_8250_port *up,
- 					   unsigned int baud,
- 					   unsigned int *frac)
-@@ -2510,6 +2541,8 @@ static unsigned int serial8250_get_divis
- 		quot = 0x8002;
- 	else if (up->port.type == PORT_XR17V35X)
- 		quot = xr17v35x_get_divisor(up, baud, frac);
-+	else if (up->port.type == PORT_NPCM)
-+		quot = npcm_get_divisor(up, baud);
- 	else
- 		quot = uart_get_divisor(port, baud);
- 
---- a/include/uapi/linux/serial_core.h
-+++ b/include/uapi/linux/serial_core.h
-@@ -76,6 +76,9 @@
- #define PORT_SUNZILOG	38
- #define PORT_SUNSAB	39
- 
-+/* Nuvoton UART */
-+#define PORT_NPCM	40
-+
- /* Intel EG20 */
- #define PORT_PCH_8LINE	44
- #define PORT_PCH_2LINE	45
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -158,6 +158,7 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(0x12B8, 0xEC62) }, /* Link G4+ ECU */
+ 	{ USB_DEVICE(0x13AD, 0x9999) }, /* Baltech card reader */
+ 	{ USB_DEVICE(0x1555, 0x0004) }, /* Owen AC4 USB-RS485 Converter */
++	{ USB_DEVICE(0x155A, 0x1006) },	/* ELDAT Easywave RX09 */
+ 	{ USB_DEVICE(0x166A, 0x0201) }, /* Clipsal 5500PACA C-Bus Pascal Automation Controller */
+ 	{ USB_DEVICE(0x166A, 0x0301) }, /* Clipsal 5800PC C-Bus Wireless PC Interface */
+ 	{ USB_DEVICE(0x166A, 0x0303) }, /* Clipsal 5500PCU C-Bus USB interface */
