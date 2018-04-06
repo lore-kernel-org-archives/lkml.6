@@ -1,229 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751935AbeDFQrf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 12:47:35 -0400
-Received: from mga17.intel.com ([192.55.52.151]:49168 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751780AbeDFQre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 12:47:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,415,1517904000";
-   d="scan'208";a="218230876"
-Message-ID: <1523033249.32118.85.camel@tzanussi-mobl.amr.corp.intel.com>
-Subject: Re: [PATCH 3/4] tracing: Add action comparisons when testing
- matching hist triggers
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Date: Fri, 06 Apr 2018 11:47:29 -0500
-In-Reply-To: <20180406105309.b50ea1a21d2cbd9b0e39dbfd@kernel.org>
-References: <cover.1522256721.git.tom.zanussi@linux.intel.com>
-         <a7fd668b87ec10736c8f016ac4279c8480d50c2b.1522256721.git.tom.zanussi@linux.intel.com>
-         <20180403001025.6dfed9403d50d20104e54458@kernel.org>
-         <1522688973.3254.8.camel@tzanussi-mobl.amr.corp.intel.com>
-         <20180404213338.5bcd14994d8e0142b5bfefc6@kernel.org>
-         <1522855023.32118.14.camel@tzanussi-mobl.amr.corp.intel.com>
-         <20180405125016.6460a0ab372061ecf49f471a@kernel.org>
-         <1522971253.32118.47.camel@tzanussi-mobl.amr.corp.intel.com>
-         <20180406105309.b50ea1a21d2cbd9b0e39dbfd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4 (3.10.4-4.fc20) 
-Mime-Version: 1.0
+        id S1751772AbeDFQw6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 12:52:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58296 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751389AbeDFQw5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 12:52:57 -0400
+Subject: Re: [PATCH] swap: divide-by-zero when zero length swap file on ssd
+To: Tom Abraham <tabraham@suse.com>, linux-kernel@vger.kernel.org
+References: <5AC747C1020000A7001FA82C@prv-mh.provo.novell.com>
+Cc: Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <fdca1f72-8e51-7727-d1a0-4ccd60e80bd0@infradead.org>
+Date: Fri, 6 Apr 2018 09:52:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <5AC747C1020000A7001FA82C@prv-mh.provo.novell.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
+[adding linux-mm and akpm]
 
-On Fri, 2018-04-06 at 10:53 +0900, Masami Hiramatsu wrote:
-> Hi Tom,
-> 
-> On Thu, 05 Apr 2018 18:34:13 -0500
-> Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
-> 
-> > Hi Masami,
-> > 
-> > On Thu, 2018-04-05 at 12:50 +0900, Masami Hiramatsu wrote:
-> > 
-> > [...]
-> > 
-> > > Can you print out the error with which event we should see? e.g.
-> > > 
-> > >   ERROR: Variable already defined at sched_wakeup: ts0
-> > > 
-> > 
-> > How about printing the event name along with the last command, for any
-> > error? :
-> > 
-> >   ERROR: Variable already defined: ts0
-> >     Last command: [sched:sched_wakeup] keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"
-> 
-> Hmm, is the Last command shows the last command on sched_wakeup ? or sched_switch??
-> 
-
-Just the last command that executed with an error - it's a global set by
-the last command that failed, kind of like errno.
-
-In this case, the last error was for the command listed, on the
-sched_wakeup event.  Even if you see it by reading a different hist
-file, the last error is still the same - we don't keep a last error for
-each event.
-
-> [...]
-> > Before:
-> > 
-> >   # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-> > 
-> >   # echo '!hist:keys=next_pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-> > 
-> > And other commands making us think we cleared everything out so the
-> > below error is a surprise
-> > 
-> >   # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-> >   -su: echo: write error: Invalid argument
-> 
-> No, my senario is different.
-> 
-> Your senario tries
-> 1) define ts0 on sched_wakeup
-> 2) remove ts0 from sched_switch (but silently failed)
-> 3) re-define ts0 on sched_wakeup and get an error
-> 
-> In this case, user can dump sched_wakeup/trigger and see there is already ts0 defined.
-> 
-> My senario is a bit different
-> 1) define ts0 on sched_wakeup
-> 2) remove ts0 from sched_switch (but silently failed)
-> 3) re-define ts0 on *sched_switch* and get an error
-> 
-> The 3rd operation failed on "sched_switch" not on "sched_wakeup". In this case we will totally lost where the ts0 defined.
-> That's why I have asked you to show "where the ts0 is defined" at error line.
+On 04/06/2018 07:11 AM, Tom Abraham wrote:
+>                                                                                 
+> Calling swapon() on a zero length swap file on SSD can lead to a                
+> divide-by-zero.                                                                 
+>                                                                                 
+> Although creating such files isn't possible with mkswap and they woud be        
+> considered invalid, it would be better for the swapon code to be more robust    
+> and handle this condition gracefully (return -EINVAL). Especially since the fix 
+> is small and straight-forward.                                                  
+>                                                                                 
+> To help with wear leveling on SSD, the swapon syscall calculates a random       
+> position in the swap file using modulo p->highest_bit, which is set to          
+> maxpages - 1 in read_swap_header.                                               
+>                                                                                 
+> If the swap file is zero length, read_swap_header sets maxpages=1 and           
+> last_page=0, resulting in p->highest_bit=0 and we divide-by-zero when we modulo 
+> p->highest_bit in swapon syscall.                                               
+>                                                                                 
+> This can be prevented by having read_swap_header return zero if last_page is    
+> zero.                                                                           
+>                                                                                 
+> diff --git a/mm/swapfile.c b/mm/swapfile.c                                      
+> index c7a33717d079..d6b7bd9f365d 100644                                         
+> --- a/mm/swapfile.c                                                             
+> +++ b/mm/swapfile.c                                                             
+> @@ -2961,6 +2961,10 @@ static unsigned long read_swap_header(struct swap_info_struct *p,
+>         maxpages = swp_offset(pte_to_swp_entry(                                 
+>                         swp_entry_to_pte(swp_entry(0, ~0UL)))) + 1;             
+>         last_page = swap_header->info.last_page;                                
+> +       if(!last_page) {                                                        
+> +               pr_warn("Empty swap-file\n");                                   
+> +               return 0;                                                       
+> +       }                                                                       
+>         if (last_page > maxpages) {                                             
+>                 pr_warn("Truncating oversized swap area, only using %luk out of %luk\n",
+>                         maxpages << (PAGE_SHIFT - 10),
 > 
 
-Your scenario should work, which is why I assumed my scenario.  Anyway,
-this I think corresponds to your scenario, which works for me:
 
-  # echo 'wakeup_latency u64 lat; pid_t pid' >> /sys/kernel/debug/tracing/synthetic_events
-  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  # echo '!hist:keys=next_pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-  # echo 'hist:keys=next_pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-
-I also tried this, which works too:
-
-  # echo '!wakeup_latency u64 lat; pid_t pid' >> /sys/kernel/debug/tracing/synthetic_events
-  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  # echo 'hist:keys=next_pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-  # echo '!hist:keys=next_pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-  # echo '!hist:keys=next_pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-  # echo 'hist:keys=next_pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-
-When I looked at the details of what you did in your script, it
-corresponded to my scenario - the error you saw was because you didn't
-remove the sched_wakeup trigger though you apparently thought you did,
-and then tried to do it again (according to your script, the command
-that failed was to sched_wakeup, and then you looked at sched_switch and
-saw the error).
-
-Anyway, here's the corresponding version that works if you add the
-trigger to sched_switch instead of twice to sched_wakeup:
-
-Try adding to sched_wakeup, fails:
-
-  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-    -su: echo: 
-    write error: Invalid argument
-
-Look at sched_switch instead of sched_wakeup, shows error was on sched_wakeup:
-
-  # cat /sys/kernel/debug/tracing/events/sched/sched_switch/hist
-    ERROR: Variable already defined: ts0
-    Last command: [sched:sched_wakeup] keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"
-
-Look at sched_wakeup, sched_wakeup trigger exists and has the ts0 defined:
-
-  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-    hist:keys=pid:vals=hitcount:ts0=common_timestamp.usecs:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
-
-Let's add a trigger with ts0 to sched_switch:
-
-  # echo 'hist:keys=next_pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-
-No error seen, and now we can see that both sched_switch and sched_wakeup have triggers with ts0:
-
-  # cat /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-    hist:keys=next_pid:vals=hitcount:ts0=common_timestamp.usecs:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
-  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-    hist:keys=pid:vals=hitcount:ts0=common_timestamp.usecs:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
- 
-Now at this point, we have two triggers with the same variable name, ts0
-- if we try to use an unqualified ts0 in another trigger, we get an
-error:
-
-  # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0 if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-    -su: echo: write error: Invalid argument
-  # cat /sys/kernel/debug/tracing/events/sched/sched_switch/hist
-  # event histogram
-  #
-  # trigger info: 
-    hist:keys=next_pid:vals=hitcount:ts0=common_timestamp.usecs:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
-  #
-
-
-  Totals:
-       Hits: 0
-       Entries: 0
-       Dropped: 0
-
-  ERROR: Variable name not unique, need to use fully qualified name (subsys.event.var) for variable: ts0
-   Last command: [sched:sched_switch] keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0 if next_comm=="cyclictest"
-
-
-So in order to set the trigger, we need to explicitly specify which ts0 to use:
-
-# echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-sched.sched_wakeup.$ts0 if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-
-So we use the explicit sched.sched_wakeup.$ts0 to specify that we want
-to use the ts0 on sched_wakeup for the calculation.
-
-Note that the most common use case is to put the
-wakeup_lat=common_timestamp.usecs-$ts0 expression on a trigger with an
-onmatch() action, and onmatch() specifies the matching event, so there's
-no need to explicitly use the fully qualified sched.sched_wakeup.$ts0 in
-that case.  The above doesn't have onmatch(), and therefore has no way
-to disambiguate the name without specifying which event explicitly.
-
-> Anyway, I think it is a good chance to introduce <tracefs>/error_log file, since we have too many non-critical errors on operations. I feel that checking hist file by errors on trigger file is not a bit intuitive.
-> 
-> # cat /sys/kernel/debug/tracing/error_log
-> ERROR(events/sched/sched_switch/trigger): Variable already defined: ts0@sched:sched_wakeup
->   Command: keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"
-> 
-> This can be used from probe events too :) 
-> e.g.
-> 
-> ERROR(kprobe_events): Unsupported type: uint8
->   Command: p vfs_read arg1=%di:uint8
-> 
-> Any thought?
-> 
-
-I agree - I think that would make more sense than using the hist files
-for that purpose.  I'll work on adding this and getting rid of the hist
-file error mechanism.
-
-Thanks,
-
-Tom
-
-> Thank you,
-> 
-> 
-> 
+-- 
+~Randy
