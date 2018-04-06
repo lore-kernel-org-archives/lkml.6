@@ -1,58 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753066AbeDFNDD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:03:03 -0400
-Received: from mail-ot0-f182.google.com ([74.125.82.182]:36711 "EHLO
-        mail-ot0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753050AbeDFNDB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:03:01 -0400
-X-Google-Smtp-Source: AIpwx4+4a/B176lqUrkPCn9R9slHTXgG6gOEiXY3o2XTFOO+0EQiyp0+VG6+TyLufNYFv5WkDByD3w==
-Subject: Re: [PATCH v3] dell_rbu: make firmware payload memory uncachable
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-kernel@vger.kernel.org, Douglas_Warzecha@Dell.com
-References: <26829bed-39e5-c35d-8800-7116adaea603@gmail.com>
- <s5hsh8ayasq.wl-tiwai@suse.de>
-From: Stuart Hayes <stuart.w.hayes@gmail.com>
-Message-ID: <e94e085f-6b66-5a2f-9654-0ba47d13249b@gmail.com>
-Date: Fri, 6 Apr 2018 08:02:56 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752939AbeDFNCZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:02:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752786AbeDFNBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 09:01:15 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DB402183B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Message-Id: <20180406130114.031019648@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Fri, 06 Apr 2018 09:00:50 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 15/18] tracing: Hide global trace clock from lockdep
+References: <20180406130035.400292196@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <s5hsh8ayasq.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0015-tracing-Hide-global-trace-clock-from-lockdep.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-On 4/4/2018 3:30 PM, Takashi Iwai wrote:
-> On Wed, 28 Mar 2018 17:07:47 +0200,
-> Stuart Hayes wrote:
->>
->> @@ -180,6 +181,12 @@ static int create_packet(void *data, size_t length)
->>  			invalid_addr_packet_array[idx++] = packet_data_temp_buf;
->>  			packet_data_temp_buf = NULL;
->>  		}
->> +		/*
->> +		 * set to uncachable or it may never get written back before
->> +		 * reboot
->> +		 */
->> +		set_memory_uc((unsigned long)packet_data_temp_buf,
->> +			1 << ordernum);
-> 
-> Won't this cause Oops when the if-condition above meets?
-> Namely packet_data_temp_buf is set to NULL there.
-> 
-> Maybe better to try a fault injection to check the error handling.
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
+Function tracing can trace in NMIs and such. If the TSC is determined
+to be unstable, the tracing clock will switch to the global clock on
+boot up, unless "trace_clock" is specified on the kernel command line.
 
-Yes, thank you for catching my mistake.
-Stuart
+The global clock disables interrupts to access sched_clock_cpu(), and in
+doing so can be done within lockdep internals (because of function
+tracing and NMIs). This can trigger false lockdep splats.
+
+The trace_clock_global() is special, best not to trace the irq logic
+within it.
+
+Link: http://lkml.kernel.org/r/20180404145015.77bde42d@gandalf.local.home
+
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_clock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/trace_clock.c b/kernel/trace/trace_clock.c
+index 5fdc779f411d..d8a188e0418a 100644
+--- a/kernel/trace/trace_clock.c
++++ b/kernel/trace/trace_clock.c
+@@ -96,7 +96,7 @@ u64 notrace trace_clock_global(void)
+ 	int this_cpu;
+ 	u64 now;
+ 
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 
+ 	this_cpu = raw_smp_processor_id();
+ 	now = sched_clock_cpu(this_cpu);
+@@ -122,7 +122,7 @@ u64 notrace trace_clock_global(void)
+ 	arch_spin_unlock(&trace_clock_struct.lock);
+ 
+  out:
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ 
+ 	return now;
+ }
+-- 
+2.15.1
