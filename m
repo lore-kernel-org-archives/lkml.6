@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/3XCpeQOJ08ykyMWejoUJMpLoQxSPo36b9kIdwcj/VfCM/2cMMiszHPUWC8uIvo6+7BuC+
-ARC-Seal: i=1; a=rsa-sha256; t=1523021281; cv=none;
+X-Google-Smtp-Source: AIpwx49O/VlHhvlfneXlvNN44gY5RA3L6odGX/wNWTNobm3KBkiLkml7jhtTvKHFztcV53m0mVcS
+ARC-Seal: i=1; a=rsa-sha256; t=1523021278; cv=none;
         d=google.com; s=arc-20160816;
-        b=eqwf5mBkk9lYnM8MMUmNuRF20nzOgqJUMUd10pnHhtV4aBtWbLYAizgBUUMQqV2MCh
-         2C+59k5BdQrpYJyxyQIShddnOTLlS0Gva8iMr+4Jy3xlblH6FBP6XMdiqOPFQkvYbZC+
-         qx2FMpoSdt0MFEL4se59NXaTQZlevcv4A3ZmZgwlRwYx4eO6R8PFOXVk9+9H+C9nerS+
-         at4GZ/45YHRI/FluX3XyP9rY0/E8H2MjOFF2G/jotJm1paHLe+UEtl6vrxBG/0M0yltI
-         6eXSuup81JSOx67JJxeXJSgyU9BH2rBTX2GxsIPK71JANWl0ZvrzxNgM19L6Fp6yR63r
-         u39w==
+        b=O747htjEes1UpXIOgz7ExwsNo8gIlQZHCNUzHsnnEasLX+WG6RoIRRhTJrLKN5KhHP
+         6olGv0kfLov6LPu+7dJRMTiDPWRbZyifStD9cZIKqif4an7e3epoInwJTLEx3i1vCaIo
+         3JbkJXZM/oTUvHnXsABDUuobbltQJZ7uSG2CcF1E1cmrV5QtZ9NAVrK6nu2CIY9hKu0X
+         UyytV1ytgGVZ0lWA4nMSn8osp+7tvrI3urGbhzHO9nCpBCv4Dp8a9huAy6D7W69w5vSv
+         uOrpRVP3d3H/YxT5bd3f15puEsPsfglwc8+S2ZlUbVYA0vWW6j4Hm/1p4I+dgVSDeUxW
+         wHpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YE/GpTWe2Lr8juEP255+W+YZTQmqFuz6SF7zDKojg8I=;
-        b=SClHLiCAI2H7u/qcdCpNlWBxdklCLL+MIRPXF52709UvfQWyfQGGRmSy8ZyInpyrQt
-         GCEaGkLE5Razfy1maJePlRyg9B03akIw5I4eihIcskS0WxgBkvcBvcwg25/eLsUfVpue
-         wcR7R96ErVywRqb8aXJMEgkq92O16ddNiAGwitJc59uSdfsSU2AlnQWu0h6oul+XJOGe
-         HIPMUboWtnAPA3pCuQoeMiewoUiJFeAH1Oi5VzpNbABilTyKXWlJzWOHio9mHaYH6/8R
-         nNHMOWKxivCSX+G/zuquEMA3zetwjYmASUI5h3V9deMj7gJHeRPkylT7rRC1o6qmZENF
-         LjiA==
+        bh=Z90ApyRSTwN/XNGGP7bPpBpAUKbw0pHEfy0wP/PBIQ0=;
+        b=o3y8oGX9fIBX/cmXlg5lfVLeKpJHxjS3f4Cl36xvMkE54hpdbz/zv3pB0XPhBkSmB2
+         pn21DwuQCwlsDdumm4xMzl3ApiBTjtu7d6AAr8HJgjiXi2XWWNadWgykQJgiuvbLoUgi
+         NtXNdk2MSYf007mWzfzXgTSbEo4vPe1qyfaVFJoEcWRkuhHSYCTnVUM4exCIIp+gd5HI
+         VK/zsQFNpxyap2/3YElpAbFS5Xbew8ma6HmQePGQVcttoTjFtunLQZ9UWPbBRnJuniwX
+         EYAxkyAZCsIFxsbcNjLNtDNQCqvZTtsUGtXaqgjHrZnd62w/yV3e3/E2TbRfk3aZWbXc
+         TfwA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
 	Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 3.18 73/93] media: v4l2-compat-ioctl32: use compat_u64 for video standard
-Date: Fri,  6 Apr 2018 15:23:42 +0200
-Message-Id: <20180406084228.264324948@linuxfoundation.org>
+Subject: [PATCH 3.18 72/93] media: media/v4l2-ctrls: volatiles should not generate CH_VALUE
+Date: Fri,  6 Apr 2018 15:23:41 +0200
+Message-Id: <20180406084228.210045845@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003563316207696?=
-X-GMAIL-MSGID: =?utf-8?q?1597003563316207696?=
+X-GMAIL-THRID: =?utf-8?q?1597003560634497713?=
+X-GMAIL-MSGID: =?utf-8?q?1597003560634497713?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,25 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Ricardo Ribalda <ricardo.ribalda@gmail.com>
 
-Instead of using the "v4l2_std_id" typedef, use compat_u64,
-as otherwise it fails to properly handle some ioctls.
+Volatile controls should not generate CH_VALUE events.
 
+Set has_changed to false to prevent this happening.
+
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/v4l2-core/v4l2-ctrls.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -686,7 +686,7 @@ struct v4l2_input32 {
- 	__u32	     type;		/*  Type of input */
- 	__u32	     audioset;		/*  Associated audios (bitfield) */
- 	__u32        tuner;             /*  Associated tuner */
--	v4l2_std_id  std;
-+	compat_u64   std;
- 	__u32	     status;
- 	__u32	     capabilities;
- 	__u32	     reserved[3];
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -1619,6 +1619,15 @@ static int cluster_changed(struct v4l2_c
+ 
+ 		if (ctrl == NULL)
+ 			continue;
++		/*
++		 * Set has_changed to false to avoid generating
++		 * the event V4L2_EVENT_CTRL_CH_VALUE
++		 */
++		if (ctrl->flags & V4L2_CTRL_FLAG_VOLATILE) {
++			ctrl->has_changed = false;
++			continue;
++		}
++
+ 		for (idx = 0; !ctrl_changed && idx < ctrl->elems; idx++)
+ 			ctrl_changed = !ctrl->type_ops->equal(ctrl, idx,
+ 				ctrl->p_cur, ctrl->p_new);
