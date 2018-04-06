@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48pl3AFsWFaHrcsUEzAf395Ax9hJZP71qelLlA/t7i9xnjB2jd2M/QEaCrIaMcz7a7/N6/8
-ARC-Seal: i=1; a=rsa-sha256; t=1523021695; cv=none;
+X-Google-Smtp-Source: AIpwx498P/gUGv0xPMGxl/rHx2Ep47M4/jaS8/2hSoMeW0LLf/PHtR3QcltigCDQVuv0ZaPKFjH5
+ARC-Seal: i=1; a=rsa-sha256; t=1523021693; cv=none;
         d=google.com; s=arc-20160816;
-        b=oLRNhdHjyq4dVAR92VIV7TJ/6BzcLxrwbDUjnR2LLkeRptPubi+1CingvQG5e2EB74
-         /r2l9reZu3cuavMTGI0eFFbP+OSU/Oos2xfbaitqHSKRM/8Ag1cGcd3dKWOq1AeFGcIU
-         CsVKqgSwZW+SHUX31vKlBNBIfPlRLaPF2XhzWXnaw8ENSxf3Pn6IQbU1mUdmbbIR+3Ps
-         MA0+2ZGCCcgwh1s/h5+RsREFjjRm+6lnb9nz+PxJloI1QtCpr8WIGJ23H2LasEpoJ7UY
-         PUlYuuRjnef4D+NTZtzmkSQq0FduTxZRYz1jlZFMhWMOCdcV2IRWNKES34C3cqpew2jV
-         JJmA==
+        b=JBdBGizd6b3npAHl/o3UP7amXtBN5mO0XHYNwWiLTofSvt/gKtOfsLuhaziSBlW0RL
+         pDgEdG2U+inFDIZQoudTrBf8PvcC1FXui/TlCGUQJhRY0E1fWoyDeSKZXmwTmmECiFQb
+         jJdt6EBrM8H1PQDKfDbDa9uGmV0/Ty/m0rZ264YUQOjXgi2YSk/3olIa2Eb9ewh7ZgvT
+         zt7QTyXT/z6GXedctMj0zI9WymmS8bgLyFQ7Wuh3DLno2VMGskPve6OEgFNo0xaaP9bl
+         eMXSdW59MKEPV8sxJuTI/Gydh8VHYaPH3Et0Kdi0aOkP0HA9PJ0kWxpwLWqICb5ngjOA
+         YoGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qhVsLXoSJ0ABwSv9uwVXIxEEEqRGpYC7+GLcDG57cSg=;
-        b=RGvg/hv/G/Ngr04GTI8ED8okVFT6eDfkNhsnOLYTP3+wQYhwdoyEDLrv+mwO+6vNjx
-         T/IYFsufpiImFp7QqFX43G4ZZQ9bt6WMbebNdr79zXXBFTIKECRS0vn7N/sTmrvY/vGP
-         TAX9USfVFZlfKFwPrh+ByqRd+vxnm1A8Qqx7SJohdXji4Pu+KI/voWraiMyF49MIhgKN
-         +DTnw/uypzH0Cza/GHU60fyJNwL15l0m/adOk6DK52JmMt2JWTtaT358rB/50gtv198j
-         JjZQZR1TlaLIWZuMEWDQQdgdcmeDhHiYHQ4pWS2JsvACdMUyR1xvQwz/VRwchIAfXxdK
-         s1ZA==
+        bh=VOTBAD94XvamumPSPxiRicatM2xNDlaZjtR0lhWIgi8=;
+        b=RR5qRh1IOURTFStz8EN7BDh0e148ecDbWQwPRQZdjfQ2mcwhDv31FL/6dYuuMX5r42
+         mBHREYj7PYBxaXoGkfWSvt+zFhsqfbFrnnvOIZ8mUInkWVgMgQCH7yFaPqEKAtoAOuBf
+         6XUzexKoSzikBCwVrjHoPs1ZNOucwc3+6UtOaNkjlgYsxaziPEKsuG/drxZ9wYE3C6Pf
+         g8IwXG3z9Xrsmc/B0O1AfeamfoPjYvpOXKjSA5wYaW0aQ6P5QN4CJ6X32niGW6rrqefD
+         +nAxzb0CGz+K8TFtrLFOu+hNOwEPhuh5QE65TzC8gizgr4rPei4YE6HFVjx1JnoJG1WN
+         4ISw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Laura Abbott <labbott@redhat.com>,
-	Shanker Donthineni <shankerd@codeaurora.org>,
+	"and Acked-by: Mark Rutland" <mark.rutland@arm.com>,
+	AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	Kees Cook <keescook@chromium.org>,
+	Rusty Russell <rusty@rustcorp.com.au>,
+	Jessica Yu <jeyu@redhat.com>,
 	Will Deacon <will.deacon@arm.com>,
 	Greg Hackmann <ghackmann@google.com>,
 	Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 4.9 057/102] arm64: entry: Add exception trampoline page for exceptions from EL0
-Date: Fri,  6 Apr 2018 15:23:38 +0200
-Message-Id: <20180406084339.657969938@linuxfoundation.org>
+Subject: [PATCH 4.9 056/102] module: extend rodata=off boot cmdline parameter to module mappings
+Date: Fri,  6 Apr 2018 15:23:37 +0200
+Message-Id: <20180406084339.504156219@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -44,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003997399302878?=
-X-GMAIL-MSGID: =?utf-8?q?1597003997399302878?=
+X-GMAIL-THRID: =?utf-8?q?1597003994999812012?=
+X-GMAIL-MSGID: =?utf-8?q?1597003994999812012?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,175 +55,136 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
 
-commit c7b9adaf85f8 upstream.
+commit 39290b389ea upstream.
 
-To allow unmapping of the kernel whilst running at EL0, we need to
-point the exception vectors at an entry trampoline that can map/unmap
-the kernel on entry/exit respectively.
+The current "rodata=off" parameter disables read-only kernel mappings
+under CONFIG_DEBUG_RODATA:
+    commit d2aa1acad22f ("mm/init: Add 'rodata=off' boot cmdline parameter
+    to disable read-only kernel mappings")
 
-This patch adds the trampoline page, although it is not yet plugged
-into the vector table and is therefore unused.
+This patch is a logical extension to module mappings ie. read-only mappings
+at module loading can be disabled even if CONFIG_DEBUG_SET_MODULE_RONX
+(mainly for debug use). Please note, however, that it only affects RO/RW
+permissions, keeping NX set.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Laura Abbott <labbott@redhat.com>
-Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-[Alex: avoid dependency on SW PAN patches]
+This is the first step to make CONFIG_DEBUG_SET_MODULE_RONX mandatory
+(always-on) in the future as CONFIG_DEBUG_RODATA on x86 and arm64.
+
+Suggested-by: and Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Acked-by: Rusty Russell <rusty@rustcorp.com.au>
+Link: http://lkml.kernel.org/r/20161114061505.15238-1-takahiro.akashi@linaro.org
+Signed-off-by: Jessica Yu <jeyu@redhat.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org> [v4.9 backport]
-[Mark: remove dummy SW PAN definitions]
 Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
 Tested-by: Will Deacon <will.deacon@arm.com>
 Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/entry.S       |   86 ++++++++++++++++++++++++++++++++++++++++
- arch/arm64/kernel/vmlinux.lds.S |   17 +++++++
- 2 files changed, 103 insertions(+)
+ include/linux/init.h |    3 +++
+ init/main.c          |    7 +++++--
+ kernel/module.c      |   20 +++++++++++++++++---
+ 3 files changed, 25 insertions(+), 5 deletions(-)
 
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -29,9 +29,11 @@
- #include <asm/esr.h>
- #include <asm/irq.h>
- #include <asm/memory.h>
-+#include <asm/mmu.h>
- #include <asm/thread_info.h>
- #include <asm/asm-uaccess.h>
- #include <asm/unistd.h>
-+#include <asm/kernel-pgtable.h>
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -133,6 +133,9 @@ void prepare_namespace(void);
+ void __init load_default_modules(void);
+ int __init init_rootfs(void);
  
- /*
-  * Context tracking subsystem.  Used to instrument transitions
-@@ -806,6 +808,90 @@ __ni_sys_trace:
- 
- 	.popsection				// .entry.text
- 
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+/*
-+ * Exception vectors trampoline.
-+ */
-+	.pushsection ".entry.tramp.text", "ax"
-+
-+	.macro tramp_map_kernel, tmp
-+	mrs	\tmp, ttbr1_el1
-+	sub	\tmp, \tmp, #SWAPPER_DIR_SIZE
-+	bic	\tmp, \tmp, #USER_ASID_FLAG
-+	msr	ttbr1_el1, \tmp
-+	.endm
-+
-+	.macro tramp_unmap_kernel, tmp
-+	mrs	\tmp, ttbr1_el1
-+	add	\tmp, \tmp, #SWAPPER_DIR_SIZE
-+	orr	\tmp, \tmp, #USER_ASID_FLAG
-+	msr	ttbr1_el1, \tmp
-+	/*
-+	 * We avoid running the post_ttbr_update_workaround here because the
-+	 * user and kernel ASIDs don't have conflicting mappings, so any
-+	 * "blessing" as described in:
-+	 *
-+	 *   http://lkml.kernel.org/r/56BB848A.6060603@caviumnetworks.com
-+	 *
-+	 * will not hurt correctness. Whilst this may partially defeat the
-+	 * point of using split ASIDs in the first place, it avoids
-+	 * the hit of invalidating the entire I-cache on every return to
-+	 * userspace.
-+	 */
-+	.endm
-+
-+	.macro tramp_ventry, regsize = 64
-+	.align	7
-+1:
-+	.if	\regsize == 64
-+	msr	tpidrro_el0, x30	// Restored in kernel_ventry
-+	.endif
-+	tramp_map_kernel	x30
-+	ldr	x30, =vectors
-+	prfm	plil1strm, [x30, #(1b - tramp_vectors)]
-+	msr	vbar_el1, x30
-+	add	x30, x30, #(1b - tramp_vectors)
-+	isb
-+	br	x30
-+	.endm
-+
-+	.macro tramp_exit, regsize = 64
-+	adr	x30, tramp_vectors
-+	msr	vbar_el1, x30
-+	tramp_unmap_kernel	x30
-+	.if	\regsize == 64
-+	mrs	x30, far_el1
-+	.endif
-+	eret
-+	.endm
-+
-+	.align	11
-+ENTRY(tramp_vectors)
-+	.space	0x400
-+
-+	tramp_ventry
-+	tramp_ventry
-+	tramp_ventry
-+	tramp_ventry
-+
-+	tramp_ventry	32
-+	tramp_ventry	32
-+	tramp_ventry	32
-+	tramp_ventry	32
-+END(tramp_vectors)
-+
-+ENTRY(tramp_exit_native)
-+	tramp_exit
-+END(tramp_exit_native)
-+
-+ENTRY(tramp_exit_compat)
-+	tramp_exit	32
-+END(tramp_exit_compat)
-+
-+	.ltorg
-+	.popsection				// .entry.tramp.text
-+#endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
-+
- /*
-  * Special system call wrappers.
-  */
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -56,6 +56,17 @@ jiffies = jiffies_64;
- #define HIBERNATE_TEXT
++#if defined(CONFIG_DEBUG_RODATA) || defined(CONFIG_DEBUG_SET_MODULE_RONX)
++extern bool rodata_enabled;
++#endif
+ #ifdef CONFIG_DEBUG_RODATA
+ void mark_rodata_ro(void);
  #endif
+--- a/init/main.c
++++ b/init/main.c
+@@ -81,6 +81,7 @@
+ #include <linux/proc_ns.h>
+ #include <linux/io.h>
+ #include <linux/kaiser.h>
++#include <linux/cache.h>
  
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+#define TRAMP_TEXT					\
-+	. = ALIGN(PAGE_SIZE);				\
-+	VMLINUX_SYMBOL(__entry_tramp_text_start) = .;	\
-+	*(.entry.tramp.text)				\
-+	. = ALIGN(PAGE_SIZE);				\
-+	VMLINUX_SYMBOL(__entry_tramp_text_end) = .;
-+#else
-+#define TRAMP_TEXT
+ #include <asm/io.h>
+ #include <asm/bugs.h>
+@@ -914,14 +915,16 @@ static int try_to_run_init_process(const
+ 
+ static noinline void __init kernel_init_freeable(void);
+ 
+-#ifdef CONFIG_DEBUG_RODATA
+-static bool rodata_enabled = true;
++#if defined(CONFIG_DEBUG_RODATA) || defined(CONFIG_SET_MODULE_RONX)
++bool rodata_enabled __ro_after_init = true;
+ static int __init set_debug_rodata(char *str)
+ {
+ 	return strtobool(str, &rodata_enabled);
+ }
+ __setup("rodata=", set_debug_rodata);
 +#endif
-+
- /*
-  * The size of the PE/COFF section that covers the kernel image, which
-  * runs from stext to _edata, must be a round multiple of the PE/COFF
-@@ -128,6 +139,7 @@ SECTIONS
- 			HYPERVISOR_TEXT
- 			IDMAP_TEXT
- 			HIBERNATE_TEXT
-+			TRAMP_TEXT
- 			*(.fixup)
- 			*(.gnu.warning)
- 		. = ALIGN(16);
-@@ -216,6 +228,11 @@ SECTIONS
- 	swapper_pg_dir = .;
- 	. += SWAPPER_DIR_SIZE;
  
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+	tramp_pg_dir = .;
-+	. += PAGE_SIZE;
-+#endif
++#ifdef CONFIG_DEBUG_RODATA
+ static void mark_readonly(void)
+ {
+ 	if (rodata_enabled)
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1911,6 +1911,9 @@ static void frob_writable_data(const str
+ /* livepatching wants to disable read-only so it can frob module. */
+ void module_disable_ro(const struct module *mod)
+ {
++	if (!rodata_enabled)
++		return;
 +
- 	_end = .;
+ 	frob_text(&mod->core_layout, set_memory_rw);
+ 	frob_rodata(&mod->core_layout, set_memory_rw);
+ 	frob_ro_after_init(&mod->core_layout, set_memory_rw);
+@@ -1920,6 +1923,9 @@ void module_disable_ro(const struct modu
  
- 	STABS_DEBUG
+ void module_enable_ro(const struct module *mod, bool after_init)
+ {
++	if (!rodata_enabled)
++		return;
++
+ 	frob_text(&mod->core_layout, set_memory_ro);
+ 	frob_rodata(&mod->core_layout, set_memory_ro);
+ 	frob_text(&mod->init_layout, set_memory_ro);
+@@ -1952,6 +1958,9 @@ void set_all_modules_text_rw(void)
+ {
+ 	struct module *mod;
+ 
++	if (!rodata_enabled)
++		return;
++
+ 	mutex_lock(&module_mutex);
+ 	list_for_each_entry_rcu(mod, &modules, list) {
+ 		if (mod->state == MODULE_STATE_UNFORMED)
+@@ -1968,6 +1977,9 @@ void set_all_modules_text_ro(void)
+ {
+ 	struct module *mod;
+ 
++	if (!rodata_enabled)
++		return;
++
+ 	mutex_lock(&module_mutex);
+ 	list_for_each_entry_rcu(mod, &modules, list) {
+ 		if (mod->state == MODULE_STATE_UNFORMED)
+@@ -1981,10 +1993,12 @@ void set_all_modules_text_ro(void)
+ 
+ static void disable_ro_nx(const struct module_layout *layout)
+ {
+-	frob_text(layout, set_memory_rw);
+-	frob_rodata(layout, set_memory_rw);
++	if (rodata_enabled) {
++		frob_text(layout, set_memory_rw);
++		frob_rodata(layout, set_memory_rw);
++		frob_ro_after_init(layout, set_memory_rw);
++	}
+ 	frob_rodata(layout, set_memory_x);
+-	frob_ro_after_init(layout, set_memory_rw);
+ 	frob_ro_after_init(layout, set_memory_x);
+ 	frob_writable_data(layout, set_memory_x);
+ }
