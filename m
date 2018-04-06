@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49i8Fmmd6Lexpmqe81A4JtyZHw5TvCmr5an7L8dcREbYUDC7Vl1KTLTbKsZby0XcyRNf4CB
-ARC-Seal: i=1; a=rsa-sha256; t=1523022161; cv=none;
+X-Google-Smtp-Source: AIpwx48YlHkP/vWZDBB3I2Bx+8CcSxgd434vHGFVfHlNxFn66c0O2zK5g78Znwi800sAdwxplxaQ
+ARC-Seal: i=1; a=rsa-sha256; t=1523022158; cv=none;
         d=google.com; s=arc-20160816;
-        b=NGn9Qu5HNDsV5xT+p1qmcwDEDDWFOfuconVlm6VXtl7Vro9XgDFrfILx5mjqJlJfS3
-         qA6GnN8VUGP51lvNyDwkJ4+wGKvQzWzMEP6MLKZA/Nvi57H5rGKLWaHRPKqsvz9zr6Ed
-         IcZQKPGR5w/1so67oithuDBWFM5vnd/fdaTyxPlzCr6NKQlObevs1yC8MEvNh75J//vM
-         vlDhLDufMWsR6915utqWfbVduVFT9zxu0q+5qdoenst90ZgCw/lOGwHEFA0fOyZcYJsq
-         qR+F4Z3dJzoQEpbL2wCzjom8fpkwU4DUVE/TVpx/g5W+TTbsf6DYWHSK81IKA+X8cgKc
-         gbDQ==
+        b=smn/Z6BoahlFctEdCAVVirbX6Gm7k9SHn5X5v5g0IroEsslAI9U+GnM4DVvkuJ9nVl
+         zCr8pW73njs3oDLXYXjC++1dSShvkWTcjpbQWfn/qtghIF8MoqXuGRKtglOkrrz4RCbe
+         LSzhA6QEBAxWkKkAUoKhdZgM4xpFBDXBGZ0NLbjHWCGIyvRYxTAWa3PABdGYcm/n0PnF
+         0anuv29U+sXGIcROzBNQ/2QbopII7sm4oLRSW2E010xaWR7BSvhNIgOcG2xXcQBACCKW
+         DDOYW7Xxe1WBmlo/r3v4FSPr8W5VxTgssf/ehXYuzeBkZcbg2ZFb9ZaIqA33c02v+HXP
+         1Hew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0MCQfrydVdbgcIZEJp775jW9rAclsrYInmH5SLCRIqY=;
-        b=JKva0XGsVBKNhMmv2RqkHzkKd+tAFuiGskC/QxWW5kL0jRsGypMGQqOKVPKpEMQr4u
-         8IZJOaz+RqS9pStiNjNTb1HqRDFQ4omfMlsWeKm0CAvK17g7J3DHgmo4mMqKx/hZzCZk
-         4im+78qCF5Jj0cIj7oKaYHiQ7eV25+jVZW7xb0NwhniZaLf6JOoIZGL3kMYVSpgeqpjm
-         PA44O3oNTenrY3OEFZcH4BahC91I89aAtFqobS1dpFjIIgfPUwdK56JqJqqdk12qIwCc
-         QJ/x/1Yyu+bCNMiX5gokQnBvCFpvo97WzB7DVQ0M0kPH4bcxxuUt26RPLmdSaWq5C/4u
-         a/Wg==
+        bh=dPWEFRWw/iST29T6ryeYzoYL8mU3X6dUuTys2avpZjM=;
+        b=dwDPKiE7EljTKeQG8iDLobLvVfGlhYWtgOTochllVCH4ln9ZYKmfefNuFT2ZzRodff
+         R870sCk5STV/ViuoApA8qKtc6iX2UhDnmPSJofW7ZBmIolbMA04swEvOZPHkWyeXV2dq
+         DbzdslbBZVxdJPJ87rZ9NP1Sbii2vppKs/avchSHnuR+nIMpijwDG2KRmD7/bIqgkKCr
+         i5tRSmPiKmv3+CBAX1cr2KGDxejTldKW9Dy7reNMm+BAfF9anVqk8rtgPJhds1KFwgMK
+         RgHusbXSRkculBFAhlj9y1JSnuQBlWqoubOk8B1VZ2eshUy/Oebo4RnFjt4SVK4AwLru
+         IzRg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Gerasiov <gq@redlab-i.ru>
-Subject: [PATCH 4.15 48/72] parport_pc: Add support for WCH CH382L PCI-E single parallel port card.
-Date: Fri,  6 Apr 2018 15:24:23 +0200
-Message-Id: <20180406084352.896375970@linuxfoundation.org>
+	"Yavuz, Tuba" <tuba@ece.ufl.edu>,
+	Oliver Neukum <oneukum@suse.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.15 47/72] media: usbtv: prevent double free in error case
+Date: Fri,  6 Apr 2018 15:24:22 +0200
+Message-Id: <20180406084352.843302321@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003586402493539?=
-X-GMAIL-MSGID: =?utf-8?q?1597004486102360669?=
+X-GMAIL-THRID: =?utf-8?q?1597003583168556365?=
+X-GMAIL-MSGID: =?utf-8?q?1597004483075302909?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,46 +51,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Gerasiov <gq@redlab-i.ru>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 823f7923833c6cc2b16e601546d607dcfb368004 upstream.
+commit 50e7044535537b2a54c7ab798cd34c7f6d900bd2 upstream.
 
-WCH CH382L is a PCI-E adapter with 1 parallel port. It is similair to CH382
-but serial ports are not soldered on board. Detected as
-Serial controller: Device 1c00:3050 (rev 10) (prog-if 05 [16850])
+Quoting the original report:
 
-Signed-off-by: Alexander Gerasiov <gq@redlab-i.ru>
-Cc: stable <stable@vger.kernel.org>
+It looks like there is a double-free vulnerability in Linux usbtv driver
+on an error path of usbtv_probe function. When audio registration fails,
+usbtv_video_free function ends up freeing usbtv data structure, which
+gets freed the second time under usbtv_video_fail label.
+
+usbtv_audio_fail:
+
+        usbtv_video_free(usbtv); =>
+
+           v4l2_device_put(&usbtv->v4l2_dev);
+
+              => v4l2_device_put
+
+                  => kref_put
+
+                      => v4l2_device_release
+
+  => usbtv_release (CALLBACK)
+
+                             => kfree(usbtv) (1st time)
+
+usbtv_video_fail:
+
+        usb_set_intfdata(intf, NULL);
+
+        usb_put_dev(usbtv->udev);
+
+        kfree(usbtv); (2nd time)
+
+So, as we have refcounting, use it
+
+Reported-by: Yavuz, Tuba <tuba@ece.ufl.edu>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+CC: stable@vger.kernel.org
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/parport/parport_pc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/usb/usbtv/usbtv-core.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/parport/parport_pc.c
-+++ b/drivers/parport/parport_pc.c
-@@ -2646,6 +2646,7 @@ enum parport_pc_pci_cards {
- 	netmos_9901,
- 	netmos_9865,
- 	quatech_sppxp100,
-+	wch_ch382l,
- };
+--- a/drivers/media/usb/usbtv/usbtv-core.c
++++ b/drivers/media/usb/usbtv/usbtv-core.c
+@@ -112,6 +112,8 @@ static int usbtv_probe(struct usb_interf
+ 	return 0;
  
+ usbtv_audio_fail:
++	/* we must not free at this point */
++	usb_get_dev(usbtv->udev);
+ 	usbtv_video_free(usbtv);
  
-@@ -2708,6 +2709,7 @@ static struct parport_pc_pci {
- 	/* netmos_9901 */               { 1, { { 0, -1 }, } },
- 	/* netmos_9865 */               { 1, { { 0, -1 }, } },
- 	/* quatech_sppxp100 */		{ 1, { { 0, 1 }, } },
-+	/* wch_ch382l */		{ 1, { { 2, -1 }, } },
- };
- 
- static const struct pci_device_id parport_pc_pci_tbl[] = {
-@@ -2797,6 +2799,8 @@ static const struct pci_device_id parpor
- 	/* Quatech SPPXP-100 Parallel port PCI ExpressCard */
- 	{ PCI_VENDOR_ID_QUATECH, PCI_DEVICE_ID_QUATECH_SPPXP_100,
- 	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, quatech_sppxp100 },
-+	/* WCH CH382L PCI-E single parallel port card */
-+	{ 0x1c00, 0x3050, 0x1c00, 0x3050, 0, 0, wch_ch382l },
- 	{ 0, } /* terminate list */
- };
- MODULE_DEVICE_TABLE(pci, parport_pc_pci_tbl);
+ usbtv_video_fail:
