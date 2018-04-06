@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+KVyluoSeIn46IGJ6tph/dIkuud2reThAZpuRykKWR2RvWntR1UBCFCgYewl9QpHzxdPG4
-ARC-Seal: i=1; a=rsa-sha256; t=1523021573; cv=none;
+X-Google-Smtp-Source: AIpwx4+NhFAy4Dsc9Lu8+Ingzx9kEn8XWunLj/bYD4NKP4rR18mIKEVCjT4hhApWlvwOXZFe1SSZ
+ARC-Seal: i=1; a=rsa-sha256; t=1523021570; cv=none;
         d=google.com; s=arc-20160816;
-        b=bKSmEglvhLmXakhynviFJXsijBwntihq5WRmzaHn79AdHNsAzpM2WKcnmw2jyZoxKb
-         /T47sOrlMLfiMfHQGMDzjl/iHj4NysKYQhqvrmGU+qJxrIcfFEcAfdrsjZr6iJIDKBb5
-         gMpjmaxfy4fZoYUDlgM9axaAmQj0F3IHMfy00oz/8Lqn+wLG0dY3YVMJZ1qrbIJY9L7M
-         vLJ844kKDjHVej6696kp+tOVKOxoHlaP0J1RKOi3yVNIzAJtI7RGA8DBEVBztGJQ4E6e
-         FKrDExXYJLtzG2fls5rDvZOEcLWfsROZOsYlX6x0TpNPeJw4eN3s0/MPjd77p51WRpra
-         72lw==
+        b=efy89sB7FYAmB+e2LyOBhnSTbS1ymel0LIXsHgVKQC/JyUrS+5995pTyQLVSedvxLm
+         vw72QnJF88bmTthOhzZOM8qnWW/DlzTtFeIn6QmsnJLG6HE+fEmetAwzqFcVffe4tTzX
+         7UbnUSxuogyCeersYcJbRidtUrwAIyHrjzOSSobZzTKFyQxTWtsS9Fc/oNmca7RtOLwj
+         BSmgiQeJ52p5E8Rto7UgYOBRkTY71agd9nWiEFp5J6T0oLrNoi8XDzKFTRkn3bg0fE9e
+         KTUIVwbij3DKomr3GWC7wYcpgUNqhXwz2x5HLJ3KpW+670aMukBIj7ktnZWvNskgPpGX
+         U7Aw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TVEwuBiyTFjW/iduPe+5y+q0h18WMq2VVW2728aPwec=;
-        b=ewlNOHlz5M+3YrKIIM4iuioYxhoN08CXAQ9yKjwGHpqLaJ4LoJbpzMyZ6W9U850uBc
-         82919gD1zwXvsVci/+L+/ZY9LyWhJGPNRqBVFWi58uH72L/4MCK0DTOB/AxxNXr6HVHp
-         CHzP88UTZrcupy6kTB3qTlrsYDr855tL/QGZNe6Gl/m7JrFHTfIMfAYIhXlSpf+OCqU1
-         EWpS6vSX6QarUhkUciCQsvk4X97fWAIEgzh7m6R0Dverfgj6maw5aDqljAG7IKwvzkca
-         HWgw5WINgrGOp2tr/AKvU0TXHs0M4ko1IbZy+0e22s/Sb/nYeumENjkHYpHN0Du3LW+s
-         vidw==
+        bh=iYQmafe4lMDyyC+VtKJ8jXKLTjLwk4Ezbl8KAU49PgQ=;
+        b=iY0cRG2J849olpDh/ip+0vxPcvlZvZkGEiuGTorjcRyZ4pIO+Z7JqDIfawL46yxoQC
+         t9YQZOkmWIiSw/Gj6hNycnV8AScMjkoI1Yyep9IpP3XqNj8/xaT53Mz1PA1tmPiAiTJ5
+         gk7oLuvwfWogkhfSnigpg9qR36NIZta2t5od+u1H14hkvPQdKpFgB16NJ6IHgGX/zC6u
+         0C1zd+WZDvoYEUv0siZfaA17K11RGiTnmrAs+jfscICsfI2DEzPDLVRzUgCJFaDJPcSM
+         j64d7s3HY7R4WDuTp9tHO84BzrIfnhQ+AFaBSh3Rba3Nic9raDWPMg3m8tOA9/T/fA94
+         u3ag==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 013/102] PCI: Make PCI_ROM_ADDRESS_MASK a 32-bit constant
-Date: Fri,  6 Apr 2018 15:22:54 +0200
-Message-Id: <20180406084333.495241476@linuxfoundation.org>
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 012/102] kprobes/x86: Fix to set RWX bits correctly before releasing trampoline
+Date: Fri,  6 Apr 2018 15:22:53 +0200
+Message-Id: <20180406084333.316876044@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003742924969692?=
-X-GMAIL-MSGID: =?utf-8?q?1597003869064916597?=
+X-GMAIL-THRID: =?utf-8?q?1597003572131830119?=
+X-GMAIL-MSGID: =?utf-8?q?1597003866305805855?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,58 +50,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 76dc52684d0f72971d9f6cc7d5ae198061b715bd upstream.
+commit c93f5cf571e7795f97d49ef51b766cf25e328545 upstream.
 
-A 64-bit value is not needed since a PCI ROM address consists in 32 bits.
-This fixes a clang warning about "implicit conversion from 'unsigned long'
-to 'u32'".
+Fix kprobes to set(recover) RWX bits correctly on trampoline
+buffer before releasing it. Releasing readonly page to
+module_memfree() crash the kernel.
 
-Also remove now unnecessary casts to u32 from __pci_read_base() and
-pci_std_update_resource().
+Without this fix, if kprobes user register a bunch of kprobes
+in function body (since kprobes on function entry usually
+use ftrace) and unregister it, kernel hits a BUG and crash.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
+Link: http://lkml.kernel.org/r/149570868652.3518.14120169373590420503.stgit@devbox
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: d0381c81c2f7 ("kprobes/x86: Set kprobes pages read-only")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/probe.c           |    2 +-
- drivers/pci/setup-res.c       |    2 +-
- include/uapi/linux/pci_regs.h |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/kprobes/core.c |    9 +++++++++
+ kernel/kprobes.c               |    2 +-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -231,7 +231,7 @@ int __pci_read_base(struct pci_dev *dev,
- 			res->flags |= IORESOURCE_ROM_ENABLE;
- 		l64 = l & PCI_ROM_ADDRESS_MASK;
- 		sz64 = sz & PCI_ROM_ADDRESS_MASK;
--		mask64 = (u32)PCI_ROM_ADDRESS_MASK;
-+		mask64 = PCI_ROM_ADDRESS_MASK;
- 	}
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -51,6 +51,7 @@
+ #include <linux/ftrace.h>
+ #include <linux/frame.h>
+ #include <linux/kasan.h>
++#include <linux/moduleloader.h>
  
- 	if (res->flags & IORESOURCE_MEM_64) {
---- a/drivers/pci/setup-res.c
-+++ b/drivers/pci/setup-res.c
-@@ -63,7 +63,7 @@ static void pci_std_update_resource(stru
- 		mask = (u32)PCI_BASE_ADDRESS_IO_MASK;
- 		new |= res->flags & ~PCI_BASE_ADDRESS_IO_MASK;
- 	} else if (resno == PCI_ROM_RESOURCE) {
--		mask = (u32)PCI_ROM_ADDRESS_MASK;
-+		mask = PCI_ROM_ADDRESS_MASK;
- 	} else {
- 		mask = (u32)PCI_BASE_ADDRESS_MEM_MASK;
- 		new |= res->flags & ~PCI_BASE_ADDRESS_MEM_MASK;
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -106,7 +106,7 @@
- #define PCI_SUBSYSTEM_ID	0x2e
- #define PCI_ROM_ADDRESS		0x30	/* Bits 31..11 are address, 10..1 reserved */
- #define  PCI_ROM_ADDRESS_ENABLE	0x01
--#define PCI_ROM_ADDRESS_MASK	(~0x7ffUL)
-+#define PCI_ROM_ADDRESS_MASK	(~0x7ffU)
+ #include <asm/text-patching.h>
+ #include <asm/cacheflush.h>
+@@ -405,6 +406,14 @@ int __copy_instruction(u8 *dest, u8 *src
+ 	return length;
+ }
  
- #define PCI_CAPABILITY_LIST	0x34	/* Offset of first capability list entry */
++/* Recover page to RW mode before releasing it */
++void free_insn_page(void *page)
++{
++	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
++	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
++	module_memfree(page);
++}
++
+ static int arch_copy_kprobe(struct kprobe *p)
+ {
+ 	int ret;
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -125,7 +125,7 @@ static void *alloc_insn_page(void)
+ 	return module_alloc(PAGE_SIZE);
+ }
  
+-static void free_insn_page(void *page)
++void __weak free_insn_page(void *page)
+ {
+ 	module_memfree(page);
+ }
