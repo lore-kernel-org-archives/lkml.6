@@ -1,48 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751469AbeDFIJB convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 04:09:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33636 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750815AbeDFII5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 04:08:57 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180406065118.GZ30522@ZenIV.linux.org.uk>
-References: <20180406065118.GZ30522@ZenIV.linux.org.uk> <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk> <152296020457.31027.11109314533967989357.stgit@warthog.procyon.org.uk>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: dhowells@redhat.com, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/20] afs: Implement @sys substitution handling
+        id S1751624AbeDFIJ0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 04:09:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43834 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750815AbeDFIJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 04:09:24 -0400
+Date: Fri, 6 Apr 2018 10:09:22 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: viro@zeniv.linux.org.uk,
+        syzbot <syzbot+5a170e19c963a2e0df79@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, linux-mm <linux-mm@kvack.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: WARNING in kill_block_super
+Message-ID: <20180406080922.GH8286@dhcp22.suse.cz>
+References: <001a114043bcfab6ab05689518f9@google.com>
+ <6c95e826-4b9f-fb21-b311-830411e58480@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <22232.1523002135.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date: Fri, 06 Apr 2018 09:08:55 +0100
-Message-ID: <22233.1523002135@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6c95e826-4b9f-fb21-b311-830411e58480@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Al Viro <viro@ZenIV.linux.org.uk> wrote:
+On Wed 04-04-18 19:53:07, Tetsuo Handa wrote:
+> Al and Michal, are you OK with this patch?
 
-> > +static struct dentry *afs_lookup_atsys(struct inode *dir, struct dentry *dentry,
-> > +				       struct key *key)
-> > +{
-> 
-> > +		ret = lookup_one_len(buf, parent, len);
-> 
-> Er...  Parent is locked only shared here and lookup_one_len() seriously
-> depends upon exclusive lock.  As it is, race with lookup of the full name
-> will mess the things up very badly.
+Maybe I've misunderstood, but hasn't Al explained [1] that the
+appropriate fix is in the fs code?
 
-How should it be done?  Do I have to use d_alloc_parallel(), analogous to
-lookup_slow() without taking the rwsem again?
-
-David
-
-PS: Can you stick a banner comment on d_alloc_parallel() describing it?
+[1] http://lkml.kernel.org/r/20180402143415.GC30522@ZenIV.linux.org.uk
+-- 
+Michal Hocko
+SUSE Labs
