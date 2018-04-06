@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48OGo6ftimbn3zmriYGseIM/SQl8RrBADI/3BcdeompSRwwe5Bor10YrQ8uI8Dvo7ukB2VU
-ARC-Seal: i=1; a=rsa-sha256; t=1523021807; cv=none;
+X-Google-Smtp-Source: AIpwx4/pO+ZG3xcyWP1ypILr1QbtLZZpOIu/TCcyRv+WvS9R6nzuvkvRtI1tlU96WeAuLu1+wN5H
+ARC-Seal: i=1; a=rsa-sha256; t=1523021794; cv=none;
         d=google.com; s=arc-20160816;
-        b=P/rElAAdTG1d7H8KY5ZVykzCmRSqlWERfjAaSEvdRDNps2sc+FhObWn8jDQtVCbduA
-         S5nkioK5dU9/ArROxVRjQkWWY5E0y1vxmMLJUs+Sn6MV4lMrUSOH9u6/5EsGz+kzlDGS
-         o4Fs9BUZLPjRkH6/RR844VavYeoEKeXngsF7PZjkiFNGxqm6VHZqrCWaNHNBGF9H5Oua
-         4M+pyDLUAtwXBQwUKwzxYm7/urS1CDuawswfgIkpO0NBbD69yDpwp+UfhHvjLme+SAjs
-         lYRTHe7vz4WpzT0nN1GlKVkk28kJTh1z2JYEgUlNvJrWj1XJScPPgGiog7Qkmr5z8Smq
-         eEtA==
+        b=uZ9FaYHCBR/caxIpGSPhs25FXRpIGGJFkZ68QB1kdP+D1gTOh3lV6LoAlCVko2oPpn
+         b2cxiEeCcZB8R3lK7DxlgoB7wCHnYUOuvuAqSsoa5su1N4pjKXJHcTNIRZ7PrXDTeiKF
+         LM+3b9wETrmbQseOXaH9uQ9o3XdboXUQiccpl43pXn2Mi10S8w2m5hVAfy9XDeTNFEk7
+         kbnC+8ZSlXwFpqjmEgDJ0vv0hxarWLV9JEiyL/34gJPXwrGpABUpw7fnQ7OMofrraEAW
+         An/WGJixCyR9lHrTYT0JnWKtNuu915z19DGq1EqzxQyz7/0vPpKtUN7XnqImGpJcN7lk
+         3ZRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tAqK9NU8PBHPtf0ahUM6t8gpy/qw2u0ylIzwRyjVjg0=;
-        b=RVJzdB3s3eJQklEw1qDMUHjN4f2rB/6rP3brsamXZH+VjokNPK/dKLEykUclM9IApb
-         fhw7MBaOxbdr2xwYU3y2yxnn8EXaArBA5qtVfUg84QC3D9VUe3z18d76f5wcTCw1xpjc
-         5qMFEtjzghqCQfHpsMqEJFaO3juiLAjfFWKM9KgGEJAGgCUBu+h9pCLP+r25MW7UaMcP
-         D23NhXgqyK9ND2nWUTA1xc0x4Q1GTJwzozJUAxtGTeB1t0PgST/i832g+pDS5zRIW19/
-         wW2xn6644ZxmbhIv6naaBCOjfIi5XJtwWiaLz732GrjCoyJT9aupchvAoZZmwnXmT6LS
-         7C4Q==
+        bh=5tdiELTXjO7CcoabX2dYk11rbrDrq4Xirq4ouVougY0=;
+        b=A9gs/CX2FPaaJpbhPNzJmRTZbtaMsSNPfARn+BNHu4HBiNYJBHbZyN5fwOKO3X4fGH
+         G1HRgu+Rv6xLOtRNXDNOipjXHF2ZREcN3FU1c9Ub/1C7etjACuYKDOP+JIHVKpW1DDPr
+         px5dvtD9QPq9n0UvOyjFaRJ1psHoWAiXVkkRcnk543TZ3MOpu1Xz3WZ8c6rCmv8TsNA1
+         sjKeM2NoutLPJ7yaT4cpeg8Rwau9aHx1Ir+YLGLLT4hLpT0aLWKwzN2Qil0RTAA5su+t
+         CUU3LsiwRgHlmBMFiJfsUWKjO1dcaGoUZfl5wOEwZosV/iq8qVWf3JHLZy8Er5NBn14f
+         ILCw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	NeilBrown <neilb@suse.com>,
-	Guoqing Jiang <gqjiang@suse.com>,
-	Shaohua Li <shli@fb.com>,
+	Keerthy <j-keerthy@ti.com>,
+	Tony Lindgren <tony@atomide.com>,
 	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 094/102] md/raid10: reset the first at the end of loop
-Date: Fri,  6 Apr 2018 15:24:15 +0200
-Message-Id: <20180406084344.705659568@linuxfoundation.org>
+Subject: [PATCH 4.9 093/102] ARM: dts: am57xx-idk-common: Add overide powerhold property
+Date: Fri,  6 Apr 2018 15:24:14 +0200
+Message-Id: <20180406084344.588915872@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003641922069555?=
-X-GMAIL-MSGID: =?utf-8?q?1597004114015466329?=
+X-GMAIL-THRID: =?utf-8?q?1597004100685242312?=
+X-GMAIL-MSGID: =?utf-8?q?1597004100685242312?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guoqing Jiang <gqjiang@suse.com>
+From: Keerthy <j-keerthy@ti.com>
 
-commit 6f287ca6046edd34ed83aafb7f9033c9c2e809e2 upstream.
+commit 8804755bfb1f3cbc003e4ebe99eac491672f354c upstream.
 
-We need to set "first = 0' at the end of rdev_for_each
-loop, so we can get the array's min_offset_diff correctly
-otherwise min_offset_diff just means the last rdev's
-offset diff.
+The PMICs have POWERHOLD set by default which prevents PMIC shutdown
+even on DEV_CTRL On bit set to 0 as the Powerhold has higher priority.
+So to enable pmic power off this property lets one over ride the default
+value and enable pmic power off.
 
-[only the first chunk, due to b506335e5d2b ("md/raid10: skip spare disk as
-'first' disk") being already applied - gregkh]
-
-Suggested-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/raid10.c |    1 +
+ arch/arm/boot/dts/am57xx-idk-common.dtsi |    1 +
  1 file changed, 1 insertion(+)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -3681,6 +3681,7 @@ static int raid10_run(struct mddev *mdde
+--- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
++++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+@@ -57,6 +57,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		ti,system-power-controller;
++		ti,palmas-override-powerhold;
  
- 		if (blk_queue_discard(bdev_get_queue(rdev->bdev)))
- 			discard_supported = true;
-+		first = 0;
- 	}
- 
- 	if (mddev->queue) {
+ 		tps659038_pmic {
+ 			compatible = "ti,tps659038-pmic";
