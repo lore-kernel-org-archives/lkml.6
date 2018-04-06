@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeDFGky (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 02:40:54 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6717 "EHLO
+        id S1751982AbeDFGlZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 02:41:25 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57767 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751849AbeDFGkY (ORCPT
+        by vger.kernel.org with ESMTP id S1751389AbeDFGkY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 6 Apr 2018 02:40:24 -0400
 From: <gabriel.fernandez@st.com>
@@ -20,14 +20,16 @@ CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
         Loic PALLARDY <loic.pallardy@st.com>,
         benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: [PATCH 0/6] stm32mp1 clock update
-Date: Fri, 6 Apr 2018 08:39:27 +0200
-Message-ID: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
+Subject: [PATCH 2/6] clk: stm32mp1: remove unused dfsdm_src[] const
+Date: Fri, 6 Apr 2018 08:39:29 +0200
+Message-ID: <1522996773-24129-3-git-send-email-gabriel.fernandez@st.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
+References: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG4NODE2.st.com
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG4NODE2.st.com
  (10.75.127.11)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-06_04:,,
  signatures=0
@@ -37,25 +39,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-This patch-set adds minor corrections
-- sparse corections
-- add tzc2 missing clock
-- remove unused constant
-- fix SAI3 & SAI4 clocks
-- set stgen_k clock as critical
-- remove not useful ck_apb_dbg clock
+This patch remove unused constant.
 
-Gabriel Fernandez (6):
-  clk: stm32mp1: add missing static
-  clk: stm32mp1: remove unused dfsdm_src[] const
-  clk: stm32mp1: fix SAI3 & SAI4 clocks
-  clk: stm32mp1: add missing tzc2 clock
-  clk: stm32mp1: set stgen_k clock as critical
-  clk: stm32mp1: remove unuseless ck_apb_dbg clock
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32mp1.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
- drivers/clk/clk-stm32mp1.c                | 54 +++++++++++++------------------
- include/dt-bindings/clock/stm32mp1-clks.h |  4 +--
- 2 files changed, 25 insertions(+), 33 deletions(-)
-
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 62f172c..9a67b1c 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -224,10 +224,6 @@
+ 	"pclk2", "pll4_q", "ck_hsi", "ck_csi", "ck_hse"
+ };
+ 
+-static const char * const dfsdm_src[] = {
+-	"pclk2", "ck_mcu"
+-};
+-
+ static const char * const fdcan_src[] = {
+ 	"ck_hse", "pll3_q", "pll4_q"
+ };
 -- 
 1.9.1
