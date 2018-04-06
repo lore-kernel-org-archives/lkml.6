@@ -1,69 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751606AbeDFHQG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 03:16:06 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:38649 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbeDFHQE (ORCPT
+        id S1751705AbeDFHQl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 03:16:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39472 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbeDFHQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 03:16:04 -0400
-X-Google-Smtp-Source: AIpwx4+OfVxMgjBmdNRTy8/9HFLHRi/u7Vhy/kRqDrxHgDG0GejvB+HDKNjDiELZ9nc2eVvOkLHYFyLAK9sWNwjb1Co=
+        Fri, 6 Apr 2018 03:16:40 -0400
+Date: Fri, 6 Apr 2018 00:16:34 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>, robh@kernel.org, aik@ozlabs.ru,
+        jasowang@redhat.com, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, joe@perches.com,
+        david@gibson.dropbear.id.au, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net
+Subject: Re: [RFC] virtio: Use DMA MAP API for devices without an IOMMU
+Message-ID: <20180406071634.GA31108@infradead.org>
+References: <20180405105631.9514-1-khandual@linux.vnet.ibm.com>
+ <3e1b113b-79ca-b700-5be9-10c66d74aabe@linux.vnet.ibm.com>
+ <20180405175326-mutt-send-email-mst@kernel.org>
+ <1522940983.21446.205.camel@kernel.crashing.org>
+ <20180405213042-mutt-send-email-mst@kernel.org>
+ <1522963113.21446.211.camel@kernel.crashing.org>
+ <70cb433f-a8f7-5199-3c96-a760c7624804@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJWu+ooTV+VYib6aDXc9V2As6Nzz5DddBttaxYxyMJd0ZrcwDA@mail.gmail.com>
-References: <20180404115310.6c69e7b9@gandalf.local.home> <20180404120002.6561a5bc@gandalf.local.home>
- <CAJWu+orC-1JDYHDTQU+DFckGq5ZnXBCCq9wLG-gNK0Nc4-vo7w@mail.gmail.com>
- <20180404121326.6eca4fa3@gandalf.local.home> <CAJWu+op5-sr=2xWDYcd7FDBeMtrM9Zm96BgGzb4Q31UGBiU3ew@mail.gmail.com>
- <CAJWu+opM6RjK-Z1dr35XvQ5cLKaV=cLG5uMu-rLkoO=X03c+FA@mail.gmail.com>
- <20180405094346.104cf288@gandalf.local.home> <CAJWu+oqT0oPrEL4mPnWvF3Zt-psg2DWGj9Nrr+fda2JYFzRmqg@mail.gmail.com>
- <CAJWu+ooTV+VYib6aDXc9V2As6Nzz5DddBttaxYxyMJd0ZrcwDA@mail.gmail.com>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Fri, 6 Apr 2018 15:16:03 +0800
-Message-ID: <CAGWkznGDGPmOZpNgNCZrQrwn9+5=_dKz+_tPyC9i-aYq0xwf2g@mail.gmail.com>
-Subject: Re: [PATCH] ring-buffer: Add set/clear_current_oom_origin() during allocations
-To: Joel Fernandes <joelaf@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <70cb433f-a8f7-5199-3c96-a760c7624804@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 6, 2018 at 7:36 AM, Joel Fernandes <joelaf@google.com> wrote:
-> Hi Steve,
->
-> On Thu, Apr 5, 2018 at 12:57 PM, Joel Fernandes <joelaf@google.com> wrote:
->> On Thu, Apr 5, 2018 at 6:43 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
->>> On Wed, 4 Apr 2018 16:59:18 -0700
->>> Joel Fernandes <joelaf@google.com> wrote:
->>>
->>>> Happy to try anything else, BTW when the si_mem_available check
->>>> enabled, this doesn't happen and the buffer_size_kb write fails
->>>> normally without hurting anything else.
->>>
->>> Can you remove the RETRY_MAYFAIL and see if you can try again? It may
->>> be that we just remove that, and if si_mem_available() is wrong, it
->>> will kill the process :-/ My original code would only add MAYFAIL if it
->>> was a kernel thread (which is why I created the mflags variable).
->>
->> Tried this. Dropping RETRY_MAYFAIL and the si_mem_available check
->> destabilized the system and brought it down (along with OOM killing
->> the victim).
->>
->> System hung for several seconds and then both the memory hog and bash
->> got killed.
->
-> I think its still Ok to keep the OOM patch as a safe guard even though
-> its hard to test, and the si_mem_available on its own seem sufficient.
-> What do you think?
->
-> thanks,
->
->
-> - Joel
-I also test the patch on my system, which works fine for the previous script.
+On Fri, Apr 06, 2018 at 08:23:10AM +0530, Anshuman Khandual wrote:
+> On 04/06/2018 02:48 AM, Benjamin Herrenschmidt wrote:
+> > On Thu, 2018-04-05 at 21:34 +0300, Michael S. Tsirkin wrote:
+> >>> In this specific case, because that would make qemu expect an iommu,
+> >>> and there isn't one.
+> >>
+> >>
+> >> I think that you can set iommu_platform in qemu without an iommu.
+> > 
+> > No I mean the platform has one but it's not desirable for it to be used
+> > due to the performance hit.
+> 
+> Also the only requirement is to bounce the I/O buffers through SWIOTLB
+> implemented as DMA API which the virtio core understands. There is no
+> need for an IOMMU to be involved for the device representation in this
+> case IMHO.
 
-PS: The script I mentioned is the cts test case POC 16_12 on android8.1
+This whole virtio translation issue is a mess.  I think we need to
+switch it to the dma API, and then quirk the legacy case to always
+use the direct mapping inside the dma API.
