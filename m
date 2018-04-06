@@ -1,368 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeDFKcS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 06:32:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37844 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751434AbeDFKcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:32:16 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <19688.1523005463@warthog.procyon.org.uk>
-References: <19688.1523005463@warthog.procyon.org.uk> <20180406065118.GZ30522@ZenIV.linux.org.uk> <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk> <152296020457.31027.11109314533967989357.stgit@warthog.procyon.org.uk>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: dhowells@redhat.com, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/20] afs: Implement @sys substitution handling
+        id S1752286AbeDFKdc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 06:33:32 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:42978 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751846AbeDFKd3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 06:33:29 -0400
+Date: Fri, 6 Apr 2018 11:32:56 +0100
+From: Roman Gushchin <guro@fb.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: Al Viro <viro@ZenIV.linux.org.uk>, <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-team@fb.com>
+Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
+ reclaimable memory
+Message-ID: <20180406103250.GA3717@castle>
+References: <20180305133743.12746-1-guro@fb.com>
+ <20180305133743.12746-5-guro@fb.com>
+ <20180312211742.GR30522@ZenIV.linux.org.uk>
+ <20180312223632.GA6124@castle>
+ <20180313004532.GU30522@ZenIV.linux.org.uk>
+ <20180405151123.df20d12168d8a38f7a6b02b5@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <13154.1523010734.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date: Fri, 06 Apr 2018 11:32:14 +0100
-Message-ID: <13155.1523010734@warthog.procyon.org.uk>
+Content-Disposition: inline
+In-Reply-To: <20180405151123.df20d12168d8a38f7a6b02b5@linux-foundation.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Originating-IP: [2620:10d:c092:180::1:20dc]
+X-ClientProxiedBy: HE1PR09CA0059.eurprd09.prod.outlook.com
+ (2603:10a6:7:3c::27) To BL2PR15MB1074.namprd15.prod.outlook.com
+ (2603:10b6:201:17::8)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 445420f5-87b5-47a0-5469-08d59ba9cc71
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BL2PR15MB1074;
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1074;3:41LU01q179FHZMAnOqkphW1LF9pc1RZy7Mh/1+gipo25opVefH2N7rBohFTrBsADcfhy439Ja3OtSdePhJzD8To/OfnSo2pXrdaLzNE2cqkr9Hn92AU8CrcUGysEkFN28wITnrgTHDLSSgpEgf4rFy6Sk+hmDULuOb7dVMHH1RPpTNXRvjpHYbnnIRnZ4D7mpYaRyfxS+HlIpw+WTPzfyspxziODKoB1B/u+1h92xg+zwSdGk+rkOiW71273Gr7l;25:INhkLlVHi5AgOmOwLYPO9pYkMzSc8AKW3h181oSf7pVhPiEVpoyoclDcLoM12V3FiLXtZRfdudHpSmbu2iz3w2amvWscnft/bj76SS3m18yNScTj41aAQqdRBz0jOpiN4eACmFveOa0M10nxvP0DpQQ9Vunumx0O9AW5ihGGHuB0CBVUPGa+OhOT3J+xoyaAi1zgtRNQI4A5jX+KqN6R867ZkzuDSIalOxXnC6PlzMpP1jqQsCE9eJtbl/4Ie6Q3nuwQAqTNHO4h9s2RLFQ/LfvRJdcZr0su8wxJiwa/knCFD+jF8f2gB6avrUT5S/pESCjLHyte+cpnEPoPolJP+Q==;31:51cCS9jI1DKMFCsCndDduwo/RRlG4mTNRhI5P5G71ma99GC1odt5CF1Am0HsLzbidm2VZ0plxWTdOIkvnTovyh8/2M3yqczfgSDtex5Se/r0ajj45GrblNzLnKIPjTHqLGBYLM53ue+2Kdpe5tJp/PPi8IpOre3NcGjkt0jPRAG9BKyVVdInJXo/QyPhvJuqK1ha3A3lPQcFByKqrpx1xI4VB2qaI1PWK9f/Q62YkbI=
+X-MS-TrafficTypeDiagnostic: BL2PR15MB1074:
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1074;20:nqFr+ZoETcGP/E8EbPQVpFErsbdhB1DkLuDfNPPS5+qY1+TU774fXdL0wwHjtc++luEa0kRXwIbSy8DyB9MXXp27bcnYV30jUKN0NDvuC8sfooRQoklw+/3lGGKOWDQlzFQObss/y83kb93++UnaMsJUIAVu/0AOUtyjUns7QNYhauygqvvMnyuQuGAK9s5J14AlnuzLPHxXcDZ7TmL2SFzJmVM2MXJMEAZh7XIH7y28s3fAJYMzDttDie9SI7KlrDQaYAZltpoQNd1oMJvZZBDhsYyVHc83Fa7zRFNoZWAoMWxiZSHtSkWanyIOpiWmcYXnYktqiYTlci8heDat6R2eI3IyQgmOY3kPaRyLLhvJsQN3MakuoBIkyC1m+RFIzKYAJ/mnYs7CCiK4eUIkU6hwaRMwnHUXoSdqPr9dhGjLDPIkyCtTIwBTVArcNNX4JH4QapqivLtFPza20IxZIedsLhSoZ0OJsy1GxA1qsceTHQmue38mizl49Byq04N1;4:MZCw17uURVG/Ax9kOt3doaeZVu9zhP3L70078K1l07EwDl24kn4VQ8rL2vsBLYd6cxeutHNtcMS0tf2tptg/+UHnqo3M/KM8DeVTebOcpsZ6n5TA8P6TIxY0YBwSmYGSlJkodGzMun/8RDyF+cLXqGa1Dk1URO9YPLkrTgYXw5yPaao5sl7SZqTRjgmw7LKVxBhs4F7iWrtNuTPav2VZF1ovfYFGaWHyHimlsAJvxNoHPM0/aE7xI1WTjEpsmOpDfWokEebWgxY3je1NJMV/Pw==
+X-Microsoft-Antispam-PRVS: <BL2PR15MB10741039B5E27A91B1240458BEBA0@BL2PR15MB1074.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231221)(11241501184)(944501327)(52105095)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BL2PR15MB1074;BCL:0;PCL:0;RULEID:;SRVR:BL2PR15MB1074;
+X-Forefront-PRVS: 0634F37BFF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(346002)(396003)(376002)(39860400002)(189003)(199004)(54906003)(52396003)(58126008)(53936002)(316002)(6116002)(16586007)(186003)(46003)(16526019)(23726003)(33656002)(7736002)(86362001)(93886005)(486006)(1076002)(15650500001)(47776003)(6496006)(305945005)(106356001)(5660300001)(476003)(81166006)(6246003)(229853002)(8936002)(9686003)(2906002)(11346002)(81156014)(8676002)(97736004)(6666003)(76176011)(68736007)(55016002)(478600001)(33716001)(50466002)(59450400001)(25786009)(33896004)(4326008)(52116002)(6916009)(105586002)(386003)(446003)(18370500001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BL2PR15MB1074;H:castle;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR15MB1074;23:uaQLQFaZJzYBqijSGdfFwBLzNjKFZ8akYFLaHuoKj?=
+ =?us-ascii?Q?eIF8zh58vY8oMY6rY3DAsu+ONx0qUhH3pzkF/edZsTPa5BZ1SSU41rl6sfiR?=
+ =?us-ascii?Q?kCqv5+F6662NmOEx4kQ7if+KJLsQ2/C+Jv2+xiQlcC80ynRTBZpSSXRoABNP?=
+ =?us-ascii?Q?CoCFQkr0ehouT/AOKds8A1T7EONQ1wJwVhF4nrMkvzeSt4v6VgK2Cpf+j6xt?=
+ =?us-ascii?Q?9EveL6W/zVykY9dF1UbsxzW3GvZ5W+mIiAQxnmp1KP9RYAZTTrOgAODeB27n?=
+ =?us-ascii?Q?H8cKjNjkpVZX4aKWaBck1QTC3TGLDlRPa7bLnubTvy0GVGBdi541wPSvsX/b?=
+ =?us-ascii?Q?mQV5W92R4pu6rXbhMqNpfYtcqgSecCB3erYBW8vD3YSUVsXcr1iUOt0OXz88?=
+ =?us-ascii?Q?W35ukvmK6vqQNGvO6F+Wi75Miy6ry93BLQcqb8NtShoaeU+CcyvKoJFSCSYx?=
+ =?us-ascii?Q?4D4lji1FRB4BCySbVHeVXB6SYBBQvL4Hw5S6DqQchpyWWV6bInC8+MADvw9o?=
+ =?us-ascii?Q?CP3jihfCcg7HrktD/8zjMS9WKDn6pC4eOX+ICZRurUFedRk0jPk/BR9NqnkD?=
+ =?us-ascii?Q?8BAvBrDk5UiyeLl+BN24KK77xmMgiN2iXj/9cc9C4hxzPECZPzbE80DxdBQx?=
+ =?us-ascii?Q?GKgQkgZ7UphQWmDvIhnyrdnlcnZ4kvjxvSBoJpSgwmK7GEgpRd8eQlGD3OyS?=
+ =?us-ascii?Q?dQraQKMIuIuKwZf1sqeBCJ6ArDBCIsYigqgs6tAOi7kqts8mEysoyobhDuu1?=
+ =?us-ascii?Q?ueL11P6FBYr2WcFwwjAVWAznBfTeX0Ko98jasXT332rkxMJ7ZdRKnt7/OcF3?=
+ =?us-ascii?Q?XVu+JAT4QqlZz8EywliVAInI8K8vN714YYYk4Il87Gqpnvsdn8foZLWbu/uy?=
+ =?us-ascii?Q?6SNm7rnP8dfAsQAXTVDNF7q19q5dy0Zmc6lu0HDs//jMUKc1+RkcOQvk7MF5?=
+ =?us-ascii?Q?RJYD27+l6P4/Tp+qgXnYxumIGvVJ5UvfqIssXyrB+b2pts1xsoUzFF3jjsjT?=
+ =?us-ascii?Q?Iu0y78AdMJ9xVRghfX6rr4ecuVqJSx7QiPrBxEPLE7haKbZv0gp5f/mKri7x?=
+ =?us-ascii?Q?NU43vH+/dvhn/xCLNFoVdS1hKvXEv66hB3rYwbIYxoB68RsYJhvnVgX8Rc85?=
+ =?us-ascii?Q?BefDqlO3UxH65B/PbnhOShQLfEhekhlqmTT3hUPByLiEEMIUrLKI2A1qnOYK?=
+ =?us-ascii?Q?wsPW1eKTUhyJISs72nRtpuVraeFp9IlcyU8CDeZUp39zUskBzT8bCuMZdO68?=
+ =?us-ascii?Q?31/1vSUuBdipSvTu2V3YGk+KNGwKRfJ8O0PBKrrUwSYIqsb3Dmsm0nardiHl?=
+ =?us-ascii?Q?QnN2vapD16stxP6GLW08LtTE+3/nYxPJIkxf3gjP+wg8M+TR+SikaxGmwh0N?=
+ =?us-ascii?Q?xKQnw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: UGK21CcLiSG4kf2T5jF5Ne8nwNMmvK+52w6FxzLxQsfvkPRPzkOCuQDvnCl0kgadFCIFzV/omOavmamVTP64HG6RPdTw08pPj9ibpk5I4StLxyJOxUq0T3i5ayzyDz2zeBYeobCAMD7iOkuyucvgOt+X1nI9gjOSnww6vXtLtvdBUb3jkr+iSSE92eitU4kL
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1074;6:ELo9LHrLR5kvH5z3F8nfWpVPm4WjX8A6H/twa+8BG5GDp8JSLngJGOZei/5k2A6gkocNO/pefHTGZ1OgqjcPtfown3BpTmnOdrn/hbA9he9TUSUv89dOsPmQjRWqnPzIGW8fhdGpG7TbOCxpA60H2ChlVUCcMgPO5HpVWKE0RezrhDoGFJajx28E5Xf2W1orE1sdsnPGqcG+KW47w/+1sYqiXICJ8rh3lNsOuuRLq3h3vZrFcnP7vKhyzFbCsPCM8wRyeYLTVDKZaVrWkfE16+xsDLUmAX7qV6PUHQhoBQnwuQXuscTYZ5BsfPRv14HB+1M0ZOOuligG9h72LJOymW17/Ok1NG6LTjVb9Z8leta0umshEX7pd0V5e7X/ne/T+xKJKFMSfIl4o6U9Hnk75WcKTkar7ONCzBiCq3OiwQinz0B+b+VXf9yQoEa/IwbCpo2Z42241nPp6TgoRDU7Hw==;5:m8INAeOSqJ+i5dBXVedR/xsbRtyp71M+d05QDJwxBdPoqst+D1qP+cjyu08MyLrwkhTLFLILBWlW6rz87Y6mNZepEbvyKF+RT0JJpDDFLf/pq8evofh+isXiaMBk2tUVmLP9fuujNzBsnb1252RKsD/6LSqzqu34q1dGMnz1+DA=;24:9ZmYUGkN2qqCFKXObp7k6xXItywjLvfTyKZy6cnlmcixKLupUTjDcO73f/ZT5gWVpUNn4tXsi/62nHXZyhivlzRjSsnmLwBMzrwUP1CueQ4=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1074;7:66vdErMtqR9L9dEAz3tjMgoKpaHIox09EFQLckklhZ5WDOrAG8lG9lWcrqRsyB7UMjiU65/rX9tSTiaWplnlMi3Kv9VpI8VpCscKRwGVe9GRaEmm51ZcgQWWjSAiWcfkFCdDjv9CodoL/q5CbL5Pa6MGKIHlulE+qwTDtEzWRvTfeHz9Z/TgGRlS7anJ3+jFtJOT+QmwEVXDYYNlaHG/kvfeBZv9kktq+XtU3dyWaCV5KP4efUm/iw0QqAEzgCfl;20:vx/0g6ihY26DQWHQZK4UZ0n8vTqNK0YBtsrsPO76YqMc5mO7s5xuDpzftr5jvWus4HmpW912j+RTj+NSmJlrFD93LIa62dsAgA+GK334jm4t80m2I9UvVtY9r4QqEQUXLn7bCkaxsSl7YKPrF30pdsWltJNzo0XSvdZT4aQKV6g=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2018 10:33:09.9639 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 445420f5-87b5-47a0-5469-08d59ba9cc71
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR15MB1074
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-06_06:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Al,
+On Thu, Apr 05, 2018 at 03:11:23PM -0700, Andrew Morton wrote:
+> On Tue, 13 Mar 2018 00:45:32 +0000 Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> 
+> > On Mon, Mar 12, 2018 at 10:36:38PM +0000, Roman Gushchin wrote:
+> > 
+> > > Ah, I see...
+> > > 
+> > > I think, it's better to account them when we're actually freeing,
+> > > otherwise we will have strange path:
+> > > (indirectly) reclaimable -> unreclaimable -> free
+> > > 
+> > > Do you agree?
+> > 
+> > > +static void __d_free_external_name(struct rcu_head *head)
+> > > +{
+> > > +	struct external_name *name;
+> > > +
+> > > +	name = container_of(head, struct external_name, u.head);
+> > > +
+> > > +	mod_node_page_state(page_pgdat(virt_to_page(name)),
+> > > +			    NR_INDIRECTLY_RECLAIMABLE_BYTES,
+> > > +			    -ksize(name));
+> > > +
+> > > +	kfree(name);
+> > > +}
+> > 
+> > Maybe, but then you want to call that from __d_free_external() and from
+> > failure path in __d_alloc() as well.  Duplicating something that convoluted
+> > and easy to get out of sync is just asking for trouble.
+> 
+> So.. where are we at with this issue?
 
-Here's an updated set of changes.
+I assume that commit 0babe6fe1da3 ("dcache: fix indirectly reclaimable memory accounting")
+address the issue.
 
-I've improved the sysnames list handling and made it install a list consisting
-of a blank name if the names are cleared (I'm told this is what should
-happen).
+__d_free_external_name() is now called from all release paths (including __d_free_external())
+and is the only place where NR_INDIRECTLY_RECLAIMABLE_BYTES is decremented.
 
-I've also reinstated the "."  and ".." checks in afs_lookup_rec() to catch
-substitution creating them by substituting a blank name.
+__d_alloc()'s error path is slightly different, because I bump NR_INDIRECTLY_RECLAIMABLE_BYTES
+in a very last moment, when it's already clear, that no errors did occur.
+So we don't need to increase and decrease the counter back and forth.
 
-David
----
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index a14ea4280590..45a472f3d368 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -760,6 +760,60 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry,
- 	return inode;
- }
- 
-+/*
-+ * Do a parallel recursive lookup.
-+ *
-+ * Ideally, we'd call lookup_one_len(), but we can't because we'd need to be
-+ * holding i_mutex but we only hold i_rwsem for read.
-+ */
-+struct dentry *afs_lookup_rec(struct dentry *dir, const char *name, int len)
-+{
-+	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
-+	struct dentry *dentry, *old;
-+	struct inode *inode = dir->d_inode;
-+	struct qstr this;
-+	int ret;
-+
-+	if (len <= 0)
-+		return ERR_PTR(-EINVAL);
-+	if (name[0] == '.' &&
-+	    (len < 2 || (len == 2 && name[1] == '.')))
-+		return ERR_PTR(-EINVAL);
-+	if (unlikely(IS_DEADDIR(inode)))
-+		return ERR_PTR(-ESTALE);
-+
-+	this.name = name;
-+	this.len = len;
-+	this.hash = full_name_hash(dir, name, len);
-+
-+again:
-+	dentry = d_alloc_parallel(dir, &this, &wq);
-+	if (IS_ERR(dentry))
-+		return ERR_CAST(dentry);
-+
-+	if (unlikely(!d_in_lookup(dentry))) {
-+		ret = dentry->d_op->d_revalidate(dentry, 0);
-+		if (unlikely(ret <= 0)) {
-+			if (!ret) {
-+				d_invalidate(dentry);
-+				dput(dentry);
-+				goto again;
-+			}
-+			dput(dentry);
-+			dentry = ERR_PTR(ret);
-+		}
-+	} else {
-+		old = inode->i_op->lookup(inode, dentry, 0);
-+		d_lookup_done(dentry); /* Clean up wq */
-+		if (unlikely(old)) {
-+			dput(dentry);
-+			dentry = old;
-+		}
-+	}
-+
-+	return dentry;
-+}
-+
- /*
-  * Look up an entry in a directory with @sys substitution.
-  */
-@@ -785,43 +839,33 @@ static struct dentry *afs_lookup_atsys(struct inode *dir, struct dentry *dentry,
- 		p += dentry->d_name.len - 4;
- 	}
- 
--	/* There is an ordered list of substitutes that we have to try */
--	for (i = 0; i < AFS_NR_SYSNAME; i++) {
--		read_lock(&net->sysnames_lock);
--		subs = net->sysnames;
--		if (!subs || i >= subs->nr) {
--			read_unlock(&net->sysnames_lock);
--			goto noent;
--		}
-+	/* There is an ordered list of substitutes that we have to try. */
-+	read_lock(&net->sysnames_lock);
-+	subs = net->sysnames;
-+	refcount_inc(&subs->usage);
-+	read_unlock(&net->sysnames_lock);
- 
-+	for (i = 0; i < subs->nr; i++) {
- 		name = subs->subs[i];
--		if (!name) {
--			read_unlock(&net->sysnames_lock);
--			goto noent;
--		}
--
- 		len = dentry->d_name.len - 4 + strlen(name);
- 		if (len >= AFSNAMEMAX) {
--			read_unlock(&net->sysnames_lock);
- 			ret = ERR_PTR(-ENAMETOOLONG);
--			goto out_b;
-+			goto out_s;
- 		}
- 
- 		strcpy(p, name);
--		read_unlock(&net->sysnames_lock);
--
--		ret = lookup_one_len(buf, parent, len);
-+		ret = afs_lookup_rec(parent, buf, len);
- 		if (IS_ERR(ret) || d_is_positive(ret))
--			goto out_b;
-+			goto out_s;
- 		dput(ret);
- 	}
- 
--noent:
- 	/* We don't want to d_add() the @sys dentry here as we don't want to
- 	 * the cached dentry to hide changes to the sysnames list.
- 	 */
- 	ret = NULL;
--out_b:
-+out_s:
-+	afs_put_sysnames(subs);
- 	kfree(buf);
- out_p:
- 	dput(parent);
-diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
-index b70380e5d0e3..42d03a80310d 100644
---- a/fs/afs/dynroot.c
-+++ b/fs/afs/dynroot.c
-@@ -125,7 +125,7 @@ static struct dentry *afs_lookup_atcell(struct dentry *dentry)
- 	if (!cell)
- 		goto out_n;
- 
--	ret = lookup_one_len(name, parent, len);
-+	ret = afs_lookup_rec(parent, name, len);
- 	if (IS_ERR(ret) || d_is_positive(ret))
- 		goto out_n;
- 
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 70dd41e06363..6e98acc1b43f 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -207,9 +207,11 @@ extern struct file_system_type afs_fs_type;
-  */
- struct afs_sysnames {
- #define AFS_NR_SYSNAME 16
--	char		*subs[AFS_NR_SYSNAME];
--	unsigned short	nr;
--	short		error;
-+	char			*subs[AFS_NR_SYSNAME];
-+	refcount_t		usage;
-+	unsigned short		nr;
-+	short			error;
-+	char			blank[1];
- };
- 
- /*
-@@ -682,6 +684,7 @@ extern const struct inode_operations afs_dir_inode_operations;
- extern const struct address_space_operations afs_dir_aops;
- extern const struct dentry_operations afs_fs_dentry_operations;
- 
-+extern struct dentry *afs_lookup_rec(struct dentry *, const char *, int);
- extern void afs_d_release(struct dentry *);
- 
- /*
-@@ -849,6 +852,7 @@ extern int __net_init afs_proc_init(struct afs_net *);
- extern void __net_exit afs_proc_cleanup(struct afs_net *);
- extern int afs_proc_cell_setup(struct afs_net *, struct afs_cell *);
- extern void afs_proc_cell_remove(struct afs_net *, struct afs_cell *);
-+extern void afs_put_sysnames(struct afs_sysnames *);
- 
- /*
-  * rotate.c
-diff --git a/fs/afs/main.c b/fs/afs/main.c
-index 01a55d25d064..d7560168b3bf 100644
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@ -104,6 +104,7 @@ static int __net_init afs_net_init(struct afs_net *net)
- 		goto error_sysnames;
- 	sysnames->subs[0] = (char *)&afs_init_sysname;
- 	sysnames->nr = 1;
-+	refcount_set(&sysnames->usage, 1);
- 	net->sysnames = sysnames;
- 	rwlock_init(&net->sysnames_lock);
- 
-@@ -132,7 +133,7 @@ static int __net_init afs_net_init(struct afs_net *net)
- 	net->live = false;
- 	afs_proc_cleanup(net);
- error_proc:
--	kfree(net->sysnames);
-+	afs_put_sysnames(net->sysnames);
- error_sysnames:
- 	net->live = false;
- 	return ret;
-@@ -148,6 +149,7 @@ static void __net_exit afs_net_exit(struct afs_net *net)
- 	afs_purge_servers(net);
- 	afs_close_socket(net);
- 	afs_proc_cleanup(net);
-+	afs_put_sysnames(net->sysnames);
- }
- 
- /*
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 870b0bad03d0..839a22280606 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -393,6 +393,12 @@ static ssize_t afs_proc_rootcell_write(struct file *file,
- 	if (IS_ERR(kbuf))
- 		return PTR_ERR(kbuf);
- 
-+	ret = -EINVAL;
-+	if (kbuf[0] == '.')
-+		goto out;
-+	if (memchr(kbuf, '/', size))
-+		goto out;
-+
- 	/* trim to first NL */
- 	s = memchr(kbuf, '\n', size);
- 	if (s)
-@@ -405,6 +411,7 @@ static ssize_t afs_proc_rootcell_write(struct file *file,
- 	if (ret >= 0)
- 		ret = size;	/* consume everything, always */
- 
-+out:
- 	kfree(kbuf);
- 	_leave(" = %d", ret);
- 	return ret;
-@@ -699,13 +706,14 @@ static int afs_proc_servers_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static void afs_sysnames_free(struct afs_sysnames *sysnames)
-+void afs_put_sysnames(struct afs_sysnames *sysnames)
- {
- 	int i;
- 
--	if (sysnames) {
-+	if (sysnames && refcount_dec_and_test(&sysnames->usage)) {
- 		for (i = 0; i < sysnames->nr; i++)
--			if (sysnames->subs[i] != afs_init_sysname)
-+			if (sysnames->subs[i] != afs_init_sysname &&
-+			    sysnames->subs[i] != sysnames->blank)
- 				kfree(sysnames->subs[i]);
- 	}
- }
-@@ -732,6 +740,7 @@ static int afs_proc_sysname_open(struct inode *inode, struct file *file)
- 			return -ENOMEM;
- 		}
- 
-+		refcount_set(&sysnames->usage, 1);
- 		m = file->private_data;
- 		m->private = sysnames;
- 	}
-@@ -775,27 +784,28 @@ static ssize_t afs_proc_sysname_write(struct file *file,
- 		len = strlen(s);
- 		if (len == 0)
- 			continue;
--		if (len >= AFSNAMEMAX) {
--			sysnames->error = -ENAMETOOLONG;
--			ret = -ENAMETOOLONG;
--			goto out;
--		}
-+		ret = -ENAMETOOLONG;
-+		if (len >= AFSNAMEMAX)
-+			goto error;
-+
- 		if (len >= 4 &&
- 		    s[len - 4] == '@' &&
- 		    s[len - 3] == 's' &&
- 		    s[len - 2] == 'y' &&
--		    s[len - 1] == 's') {
-+		    s[len - 1] == 's')
- 			/* Protect against recursion */
--			sysnames->error = -EINVAL;
--			ret = -EINVAL;
--			goto out;
--		}
-+			goto invalid;
-+
-+		if (s[0] == '.' &&
-+		    (len < 2 || (len == 2 && s[1] == '.')))
-+			goto invalid;
-+
-+		if (memchr(s, '/', len))
-+			goto invalid;
- 
--		if (sysnames->nr >= AFS_NR_SYSNAME) {
--			sysnames->error = -EFBIG;
--			ret = -EFBIG;
-+		ret = -EFBIG;
-+		if (sysnames->nr >= AFS_NR_SYSNAME)
- 			goto out;
--		}
- 
- 		if (strcmp(s, afs_init_sysname) == 0) {
- 			sub = (char *)afs_init_sysname;
-@@ -815,6 +825,12 @@ static ssize_t afs_proc_sysname_write(struct file *file,
- 	inode_unlock(file_inode(file));
- 	kfree(kbuf);
- 	return ret;
-+
-+invalid:
-+	ret = -EINVAL;
-+error:
-+	sysnames->error = ret;
-+	goto out;
- }
- 
- static int afs_proc_sysname_release(struct inode *inode, struct file *file)
-@@ -825,14 +841,18 @@ static int afs_proc_sysname_release(struct inode *inode, struct file *file)
- 
- 	sysnames = m->private;
- 	if (sysnames) {
--		kill = sysnames;
- 		if (!sysnames->error) {
-+			kill = sysnames;
-+			if (sysnames->nr == 0) {
-+				sysnames->subs[0] = sysnames->blank;
-+				sysnames->nr++;
-+			}
- 			write_lock(&net->sysnames_lock);
- 			kill = net->sysnames;
- 			net->sysnames = sysnames;
- 			write_unlock(&net->sysnames_lock);
- 		}
--		afs_sysnames_free(kill);
-+		afs_put_sysnames(kill);
- 	}
- 
- 	return seq_release(inode, file);
+Thank you!
