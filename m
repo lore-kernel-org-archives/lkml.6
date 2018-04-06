@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/MngSw1lVLHhzUc3qMB58pBszC5JexykpW/p+OPFVrZeG+6NOv6ZFZMmWFaeSj/1YVZWgy
-ARC-Seal: i=1; a=rsa-sha256; t=1523022123; cv=none;
+X-Google-Smtp-Source: AIpwx4+dNQOz3HmW6ZR5j05a+eQigPFl49hYFWwDyXBavEZrH/M9CM0vHNkcKA/s74rPNoW1pyT5
+ARC-Seal: i=1; a=rsa-sha256; t=1523022121; cv=none;
         d=google.com; s=arc-20160816;
-        b=V2VbOLVb7fYq+8tusOS6QctZ5qL6v92uLF9+Ey3yPWLuj1fTygwFguumMBpTFm0O1V
-         TguK9IUZnzeMg9RfBZw+izALgiZhxxCDOVWQq1zr2NcU7EnSp30oHw4hYii49e3+AOfT
-         hCasCd3P0kHmYguO/Jkb4ArvvPIwmQhLNtv/agUhyrxfJwjTB12iXSL1lVnHFJDlXp3Q
-         3iEZT5EqstP4MS+9h8aF3UjMtV9+a+DYjrbg84a4W9iQm0zXshrzLKw/BkY1OPYrAC39
-         lfLMZS1u5vr4l6j7X6W0zXT85ni70s83nIo4mlMzTlBBZtg2CbfN2bjkD/XgX7bhBG+Q
-         AQQQ==
+        b=SzOy5OSosh9bhbflpjx9PBZUHgaOQPVsr0zCmLMnRnci2UTVgWwa3MwQjxFx8lWqjG
+         8hP4GEMDIJQkTUjXTB0Y29K9Sn0Zz3VfbZG99TtM5Eo8r8CHLMavSYN6oZvDvY38svhR
+         dUpN+JrvidJlpt4Zbuk3WQ38sJQkNNTucK8BpSfhxKiErN8fkZFyJA3JcTIcsjdCiA8k
+         na55MM+JCS0pSen+148Ak5VPALTR0tNUap282AYZvZxY7sSo4rjEgdXgPw7icq2HiG44
+         yJz8M0r6aDT5Jq7w6ht20kBkGsgxcGLGlIp67dtAdJUCr9yYW/ptoVTQly0ZVxvWQvhh
+         2PMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2pGIpKB4XpqgDHJYAJu0jJcFBuv//ezD9fH7zHtUdwY=;
-        b=r1Qe/CU4prM/URJsFQ3+oFwnBCvmtmNBYpgVG4kUzueSr9QlTnfdUsfAKyGL2RFPSX
-         EPA52Gitod6GCNVS9R4Ltwcp2vub44HkYWmbWjOp31KEK+NKGY+PASVMLuhCD6fBjkrD
-         8GKLld12LWhYm3lGioPmuewhiD7zM+FYlDBl+161qdYPYlfy3c1wA6v6v1jiVTSqkNVk
-         /sZ3W81mK/46R7RifQDhdHZ8DWvHjYW5foUeZoGmiF2lXJUe7oP3E0RDaIpZuH9cK33V
-         L7WN/aEdq5DK+hmu5NaYadI3bxuRhTYg8bTLqNQ2agVBx5Lx8I3bUvbTIN6bmsM+tix8
-         Ym1A==
+        bh=JK+K9ev3BsSGHCfKs27YDgYvF3sT+kbBRKJ45NF9dX0=;
+        b=ijxk2V8TUbUjPTxKGXqg/xSuglFEa6jC3scF93u4tuI8rmZDg2LluFXt0FE9ne7jU0
+         5HEJLmN5aqotWEbgyqqs+0/QaLb7jppF6zVeTekZ3ToZNSQRm/aYpIOvrsqrkx39vki0
+         sq/B7/AESmpBvQmWqR+KT4cEXQpfmuAhXWkd3MMIpCxhDGpwoA9b6NBrNcobPtl6J3gv
+         ZEHpk3xtNrMbfX68Kwysiha3zkPG/ptF6d6t746AjyIhekv2WhuHVf9kgM5Mis8K3dy/
+         t2b2t+wv1IjABYBGKH40MTq3l7Sl+rxkCUznshFhQ+1ifMreIJtzrVPjXIhSenfp+qJR
+         gSzA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>,
-	Florian Westphal <fw@strlen.de>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.15 35/72] netfilter: drop template ct when conntrack is skipped.
-Date: Fri,  6 Apr 2018 15:24:10 +0200
-Message-Id: <20180406084352.243999505@linuxfoundation.org>
+	"Carol L. Soto" <clsoto@us.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.15 17/72] powerpc/64s: Fix lost pending interrupt due to race causing lost update to irq_happened
+Date: Fri,  6 Apr 2018 15:23:52 +0200
+Message-Id: <20180406084350.872940110@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004358237408018?=
-X-GMAIL-MSGID: =?utf-8?q?1597004446626360382?=
+X-GMAIL-THRID: =?utf-8?q?1597003938140949663?=
+X-GMAIL-MSGID: =?utf-8?q?1597004443654304470?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,106 +50,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit aebfa52a925d701114afd6af0def35bab16d4f47 upstream.
+commit ff6781fd1bb404d8a551c02c35c70cec1da17ff1 upstream.
 
-The ipv4 nf_ct code currently skips the nf_conntrak_in() call
-for fragmented packets. As a results later matches/target can end
-up manipulating template ct entry instead of 'real' ones.
+force_external_irq_replay() can be called in the do_IRQ path with
+interrupts hard enabled and soft disabled if may_hard_irq_enable() set
+MSR[EE]=1. It updates local_paca->irq_happened with a load, modify,
+store sequence. If a maskable interrupt hits during this sequence, it
+will go to the masked handler to be marked pending in irq_happened.
+This update will be lost when the interrupt returns and the store
+instruction executes. This can result in unpredictable latencies,
+timeouts, lockups, etc.
 
-Exploiting the above, syzbot found a way to trigger the following
-splat:
+Fix this by ensuring hard interrupts are disabled before modifying
+irq_happened.
 
-WARNING: CPU: 1 PID: 4242 at net/netfilter/xt_cluster.c:55
-xt_cluster_mt+0x6c1/0x840 net/netfilter/xt_cluster.c:127
-Kernel panic - not syncing: panic_on_warn set ...
+This could cause any maskable asynchronous interrupt to get lost, but
+it was noticed on P9 SMP system doing RDMA NVMe target over 100GbE,
+so very high external interrupt rate and high IPI rate. The hang was
+bisected down to enabling doorbell interrupts for IPIs. These provided
+an interrupt type that could run at high rates in the do_IRQ path,
+stressing the race.
 
-CPU: 1 PID: 4242 Comm: syzkaller027971 Not tainted 4.16.0-rc2+ #243
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  panic+0x1e4/0x41c kernel/panic.c:183
-  __warn+0x1dc/0x200 kernel/panic.c:547
-  report_bug+0x211/0x2d0 lib/bug.c:184
-  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
-  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x58/0x80 arch/x86/entry/entry_64.S:957
-RIP: 0010:xt_cluster_hash net/netfilter/xt_cluster.c:55 [inline]
-RIP: 0010:xt_cluster_mt+0x6c1/0x840 net/netfilter/xt_cluster.c:127
-RSP: 0018:ffff8801d2f6f2d0 EFLAGS: 00010293
-RAX: ffff8801af700540 RBX: 0000000000000000 RCX: ffffffff84a2d1e1
-RDX: 0000000000000000 RSI: ffff8801d2f6f478 RDI: ffff8801cafd336a
-RBP: ffff8801d2f6f2e8 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801b03b3d18
-R13: ffff8801cafd3300 R14: dffffc0000000000 R15: ffff8801d2f6f478
-  ipt_do_table+0xa91/0x19b0 net/ipv4/netfilter/ip_tables.c:296
-  iptable_filter_hook+0x65/0x80 net/ipv4/netfilter/iptable_filter.c:41
-  nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
-  nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
-  nf_hook include/linux/netfilter.h:243 [inline]
-  NF_HOOK include/linux/netfilter.h:286 [inline]
-  raw_send_hdrinc.isra.17+0xf39/0x1880 net/ipv4/raw.c:432
-  raw_sendmsg+0x14cd/0x26b0 net/ipv4/raw.c:669
-  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
-  sock_sendmsg_nosec net/socket.c:629 [inline]
-  sock_sendmsg+0xca/0x110 net/socket.c:639
-  SYSC_sendto+0x361/0x5c0 net/socket.c:1748
-  SyS_sendto+0x40/0x50 net/socket.c:1716
-  do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x441b49
-RSP: 002b:00007ffff5ca8b18 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000441b49
-RDX: 0000000000000030 RSI: 0000000020ff7000 RDI: 0000000000000003
-RBP: 00000000006cc018 R08: 000000002066354c R09: 0000000000000010
-R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000403470
-R13: 0000000000403500 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-Instead of adding checks for template ct on every target/match
-manipulating skb->_nfct, simply drop the template ct when skipping
-nf_conntrack_in().
-
-Fixes: 7b4fdf77a450ec ("netfilter: don't track fragmented packets")
-Reported-and-tested-by: syzbot+0346441ae0545cfcea3a@syzkaller.appspotmail.com
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 1d607bb3bd60 ("powerpc/irq: Add mechanism to force a replay of interrupts")
+Cc: stable@vger.kernel.org # v4.8+
+Reported-by: Carol L. Soto <clsoto@us.ibm.com>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/irq.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c
-+++ b/net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c
-@@ -159,8 +159,20 @@ static unsigned int ipv4_conntrack_local
- 	    ip_hdrlen(skb) < sizeof(struct iphdr))
- 		return NF_ACCEPT;
+--- a/arch/powerpc/kernel/irq.c
++++ b/arch/powerpc/kernel/irq.c
+@@ -475,6 +475,14 @@ void force_external_irq_replay(void)
+ 	 */
+ 	WARN_ON(!arch_irqs_disabled());
  
--	if (ip_is_fragment(ip_hdr(skb))) /* IP_NODEFRAG setsockopt set */
-+	if (ip_is_fragment(ip_hdr(skb))) { /* IP_NODEFRAG setsockopt set */
-+		enum ip_conntrack_info ctinfo;
-+		struct nf_conn *tmpl;
++	/*
++	 * Interrupts must always be hard disabled before irq_happened is
++	 * modified (to prevent lost update in case of interrupt between
++	 * load and store).
++	 */
++	__hard_irq_disable();
++	local_paca->irq_happened |= PACA_IRQ_HARD_DIS;
 +
-+		tmpl = nf_ct_get(skb, &ctinfo);
-+		if (tmpl && nf_ct_is_template(tmpl)) {
-+			/* when skipping ct, clear templates to avoid fooling
-+			 * later targets/matches
-+			 */
-+			skb->_nfct = 0;
-+			nf_ct_put(tmpl);
-+		}
- 		return NF_ACCEPT;
-+	}
- 
- 	return nf_conntrack_in(state->net, PF_INET, state->hook, skb);
+ 	/* Indicate in the PACA that we have an interrupt to replay */
+ 	local_paca->irq_happened |= PACA_IRQ_EE;
  }
