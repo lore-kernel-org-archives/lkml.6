@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49rt31dwvCoBEw/OJn0SiX4eMeCPIamYlmqxDDAW/XEgK1T+BdMZD1Dl8TwiA32xvJffivr
-ARC-Seal: i=1; a=rsa-sha256; t=1523021194; cv=none;
+X-Google-Smtp-Source: AIpwx481w5z4a0k2tiOwWid+3ufqeanQJeuiacShPXpr9/zEYKZYBqqbs9wmcSQyT3vDuonjWg+r
+ARC-Seal: i=1; a=rsa-sha256; t=1523021191; cv=none;
         d=google.com; s=arc-20160816;
-        b=Hi66EPfkHa1yX9QRaQVrmGEHLvRoJAHYVPSMAzk/wabe7uNynU4f6sLHyVki0B2td8
-         RutxVXADuZjBEgW0gIB80CHJLIfTvM/0YODwnhFOjxgdxZw4OW0b26lvsQ/B6V+II3wo
-         OUSoYZ7jphNJBEr3XhegzRmOzFVPJEXPzOZQYyrVaT5ZjROjD1CRX/TOlRB+eFCX5VCb
-         Fx2E6ows0CwocaOdg16GHfK0D0BLAdU0BRSQhpxhh1PdcuJbaIps1CiNoebr3wDCiOEz
-         NUbZlJWxLwwLAXiu46Tka3I7nXJwrDoTiTNESmURPnOQTgcsoUb/5TBwGbwg7P+I4/ku
-         E6Dg==
+        b=a23NSNxlhDwmtCWS1yjSH5thOwirTUd0OHhrWUOH4pdQO+S9SZOTHqreERUr/9D1//
+         EhwkY6e6Fe6+N09puuBWK8BLpGxCjEdtuPRTZjYqvUwa3vj9TjePHPyHx+pTO9qhoTzl
+         VZAE1K/MTGR72iXOewlQjIE6TOuwoiX0AsAfRJEvnCVrlNRnt/E7BfprNT1TR57KIZFb
+         2mgf6DIQW2A+sTGc5SH9fpDhcmycXUHhMwNohqbqcZel2jti71SBBg1doPC+rXsK5SCt
+         TsI+xvs/Nsqet+337Nkul6N8xlz46qqRQ0LJiiTu/RVhTyWtvfd80+Hd8PAdWH/IbzC8
+         Zgdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=D6Zo0T5xxe1lDb7sXw1MsVfY7YGxzbaEKx+DEY7HtPo=;
-        b=D2gNnonBN1BGWtTSNqDqZJxQ0a6kKcbiNqZwpt5tc02AkFIIoLrVZVaaw0M20wCl4I
-         l5HgcRzG5DEBr8E1QlFhE2TGg1Mn3QRgf+5Iu2jm5lVdvGI7IbMQfxWRTPpNFgGOxmOR
-         q8zUrlxuv2aQPVswxjGGlYh+pRpk0GlTJ7cARBaE3NEmejgkR7ofg9ouUg2N40bjRW3j
-         LT0cITf7bosvRcNCp11XFcfEe3gKad1WrWzTADNswTpwbUdwS+XcL85Fuo21RZqDoltD
-         KtrKoVKdvhWLtJ65IgpGs5Kv3q5h+PjdOuumvEGiDSD0evX4IIxeSbVmNUAp5eZAclKQ
-         M8lg==
+        bh=tQxTueVnXwTqk3HPhf/OMcN3ZmjaVg6fvdGrwfWffdI=;
+        b=Duo3updAkEDHyts5+ShJl8Kn+b4hR0x73H03icyVWzfN9ea7YIEg1FY3wuxTj874Li
+         nPEWCjBF+dIJepymwRrXsuMQdhXe7ateuKaUFLRfdRSlCMZrSzYBB6lxIiiw3D6i+gAR
+         JRm7SXzNAxUnDzuDXezEV/yFXDq7xVDgmLf1xBKcUYIZiQ/HE3itgAoyYym8PoZA+zq4
+         d4GHuTKQhYsQNJHR1azlBhIrLC1n/EAYkn/h4jVufFeOTOng9+I0G9FKBuqC2is4Fvs7
+         62HZzTH63EDzP00f9kx9fB6Ue8Zb6AZVDpf6sIUh8V8ywL/Zgy4S8A2sXr6g99stIA8S
+         lInQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Richard Narron <comet.berkeley@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3.18 41/93] partitions/msdos: Unable to mount UFS 44bsd partitions
-Date: Fri,  6 Apr 2018 15:23:10 +0200
-Message-Id: <20180406084226.735573501@linuxfoundation.org>
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Frederic Weisbecker <fweisbec@gmail.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Stephane Eranian <eranian@google.com>,
+	Vince Weaver <vincent.weaver@maine.edu>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 3.18 40/93] perf/hwbp: Simplify the perf-hwbp code, fix documentation
+Date: Fri,  6 Apr 2018 15:23:09 +0200
+Message-Id: <20180406084226.698673519@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -40,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003471959644591?=
-X-GMAIL-MSGID: =?utf-8?q?1597003471959644591?=
+X-GMAIL-THRID: =?utf-8?q?1597003469119697595?=
+X-GMAIL-MSGID: =?utf-8?q?1597003469119697595?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +58,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Richard Narron <comet.berkeley@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 5f15684bd5e5ef39d4337988864fec8012471dda upstream.
+commit f67b15037a7a50c57f72e69a6d59941ad90a0f0f upstream.
 
-UFS partitions from newer versions of FreeBSD 10 and 11 use relative
-addressing for their subpartitions. But older versions of FreeBSD still
-use absolute addressing just like OpenBSD and NetBSD.
+Annoyingly, modify_user_hw_breakpoint() unnecessarily complicates the
+modification of a breakpoint - simplify it and remove the pointless
+local variables.
 
-Instead of simply testing for a FreeBSD partition, the code needs to
-also test if the starting offset of the C subpartition is zero.
+Also update the stale Docbook while at it.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=197733
-
-Signed-off-by: Richard Narron <comet.berkeley@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/partitions/msdos.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/events/hw_breakpoint.c |   30 +++++++-----------------------
+ 1 file changed, 7 insertions(+), 23 deletions(-)
 
---- a/block/partitions/msdos.c
-+++ b/block/partitions/msdos.c
-@@ -300,7 +300,9 @@ static void parse_bsd(struct parsed_part
- 			continue;
- 		bsd_start = le32_to_cpu(p->p_offset);
- 		bsd_size = le32_to_cpu(p->p_size);
--		if (memcmp(flavour, "bsd\0", 4) == 0)
-+		/* FreeBSD has relative offset if C partition offset is zero */
-+		if (memcmp(flavour, "bsd\0", 4) == 0 &&
-+		    le32_to_cpu(l->d_partitions[2].p_offset) == 0)
- 			bsd_start += offset;
- 		if (offset == bsd_start && size == bsd_size)
- 			/* full parent partition, we have it already */
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -427,16 +427,9 @@ EXPORT_SYMBOL_GPL(register_user_hw_break
+  * modify_user_hw_breakpoint - modify a user-space hardware breakpoint
+  * @bp: the breakpoint structure to modify
+  * @attr: new breakpoint attributes
+- * @triggered: callback to trigger when we hit the breakpoint
+- * @tsk: pointer to 'task_struct' of the process to which the address belongs
+  */
+ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
+ {
+-	u64 old_addr = bp->attr.bp_addr;
+-	u64 old_len = bp->attr.bp_len;
+-	int old_type = bp->attr.bp_type;
+-	int err = 0;
+-
+ 	/*
+ 	 * modify_user_hw_breakpoint can be invoked with IRQs disabled and hence it
+ 	 * will not be possible to raise IPIs that invoke __perf_event_disable.
+@@ -451,27 +444,18 @@ int modify_user_hw_breakpoint(struct per
+ 	bp->attr.bp_addr = attr->bp_addr;
+ 	bp->attr.bp_type = attr->bp_type;
+ 	bp->attr.bp_len = attr->bp_len;
++	bp->attr.disabled = 1;
+ 
+-	if (attr->disabled)
+-		goto end;
+-
+-	err = validate_hw_breakpoint(bp);
+-	if (!err)
+-		perf_event_enable(bp);
++	if (!attr->disabled) {
++		int err = validate_hw_breakpoint(bp);
+ 
+-	if (err) {
+-		bp->attr.bp_addr = old_addr;
+-		bp->attr.bp_type = old_type;
+-		bp->attr.bp_len = old_len;
+-		if (!bp->attr.disabled)
+-			perf_event_enable(bp);
++		if (err)
++			return err;
+ 
+-		return err;
++		perf_event_enable(bp);
++		bp->attr.disabled = 0;
+ 	}
+ 
+-end:
+-	bp->attr.disabled = attr->disabled;
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(modify_user_hw_breakpoint);
