@@ -1,36 +1,42 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+KirXJsCGmSMX18ipG1tGObGBBrU2MIqCd4E35gyqa7Mq+QCVf43FSPJckiz0BEXFmfH0J
-ARC-Seal: i=1; a=rsa-sha256; t=1523021814; cv=none;
+X-Google-Smtp-Source: AIpwx48HqdGtOOTqTHPyGyZwrzyUGwJCHCAMfct2wOKEYAMFjrn7kpamQbstP5msBxoz2LoGabV/
+ARC-Seal: i=1; a=rsa-sha256; t=1523021809; cv=none;
         d=google.com; s=arc-20160816;
-        b=w+mOaMgnKkUroobusRPVhuMOWuBrYccVW7tNMaDq1sjuUN27HR/wLKGTOmXXThx/Ao
-         jKH4G9wSXS4vssGKoUMEvp1hYw+x1VCMtgXjiw58N8WuJAEQltprPDf2DIUBmjigDP+5
-         yoz8t333P+BUt+efc3c6wHStSRHFylMMw0+scZPPGhTyyPYWC1QcdyrcmC1NSH86xohF
-         kO24N1IYXgQk7MJSOU7V+OMrnWCKSSfewELw10MoC9moDgIqLrjW3Yq3TqCbSrQZMXip
-         TjOGIghKKldLm9yUd5pySjGZhi6+9+f+6MKau+A7bah1DzlVHjL2G3w8T5Dsmjf5GqsQ
-         L1Ow==
+        b=SAk0bgyuWfVDcchPelJ0vPYDRBzHUP3AWMHWG3+YC7M+A/A+sGRW3Npc1KfEgeoZar
+         qYsXvpUQ9tzZt7WAWALhCnqVfRbh1kFOe5a5diXoR3e8cQaDS0CEFKVnYGEo/QAd6CAh
+         mR6DB1BKLZAic6398nq+XSgbKvOPNbPPOYawhsYNdl7RIGXc8sZuc7aNIqUcCUZ5SfiG
+         OQVb6Rlq+CtyuLtmcDIHsLtcTV+djdxGsM1ZRzw53lpQ4ZjUxukxLe7PXz+0lO1SR4Xg
+         xBxmnam6fuzctw+EmmHRtUp/F9kfW4a/ImzQQELCUMuvkw8mG6IljQ9E0Uuib9IRYhml
+         FY2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bJizX2qP/6MScIQ14/aZ3THU5kZdg7Xob0ldKe+0naI=;
-        b=tZCHB5lKB/aMss4FUQ1ZIbZJeoHJp3PMR4HoD+R3bfyRumrM3wTBFCphQqIIy+huGS
-         TNQVwGf0IBqZ1By4Lo9P19mboiH9LBhhM9Lb0Wymt3j07NtxRKZz6fccvb1hb9O9/jpN
-         K7SRSbMWNmDjP6l6gqRtgVjx3C1lw+9z41Acp+xwV8qFvU++iMdabVyLFX/qNOZQgLLK
-         9NrAT3hO7GBOXwV/j70BfsFnQPtNF3h9RzUZlFuUJ99CHcipSngUPKupMgkhJQXGknRJ
-         6wzuRrzEbseUl12EnUDJcVvcpkLnae3QqTL6KABG2FSENYBR7X1XEU2jA7H6YP7C1OHu
-         rnKg==
+        bh=ykIfCMUvyfXK1gfuQSMHOhvX4IYpYsI2WELUKFZKTVk=;
+        b=OtKpWpjK3lowucN0Lns6NwZmBWPS7YUuhLg2aTiQzNyYBsBbHAm/JbeEadpbg4xk6M
+         bTtEg1OI1UmRFuazKpote1mnDOBNe3cYiNrpUQdLyMF2Vi8YB8SGDseOI0JpE4brZxsm
+         ua9yCx0+jmfwxiNf/ryIF71PcrWXVOsbX1DCU/A8P+U4jjXupwt8yEKzKlkyQDDIvr+P
+         a24mAda0AWVb7gY6CukL6b84FU2SMQbS07vz/xj/xdMOSxnF2vZpml4snZj5Ve1KSJqD
+         24vEw6FawPURF4/JeR6d9ovSIqykkIQZYk67+IpB8L5muKuMQwtC6eElEkUJ3n+ly5G8
+         itYg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 096/102] Fix slab name "biovec-(1<<(21-12))"
-Date: Fri,  6 Apr 2018 15:24:17 +0200
-Message-Id: <20180406084344.917815233@linuxfoundation.org>
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Greg Hackmann <ghackmann@google.com>,
+	Alex Shi <alex.shi@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 4.9 068/102] arm64: Allow checking of a CPU-local erratum
+Date: Fri,  6 Apr 2018 15:23:49 +0200
+Message-Id: <20180406084341.058538653@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084331.507038179@linuxfoundation.org>
 References: <20180406084331.507038179@linuxfoundation.org>
@@ -40,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004122031445123?=
-X-GMAIL-MSGID: =?utf-8?q?1597004122031445123?=
+X-GMAIL-THRID: =?utf-8?q?1597004116470406440?=
+X-GMAIL-MSGID: =?utf-8?q?1597004116470406440?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,33 +55,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit bd5c4facf59648581d2f1692dad7b107bf429954 upstream.
+commit 8f4137588261d7504f4aa022dc9d1a1fd1940e8e upstream.
 
-I'm getting a slab named "biovec-(1<<(21-12))". It is caused by unintended
-expansion of the macro BIO_MAX_PAGES. This patch renames it to biovec-max.
+this_cpu_has_cap() only checks the feature array, and not the errata
+one. In order to be able to check for a CPU-local erratum, allow it
+to inspect the latter as well.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org	# v4.14+
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This is consistent with cpus_have_cap()'s behaviour, which includes
+errata already.
+
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Alex Shi <alex.shi@linaro.org> [v4.9 backport]
+Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
+Tested-by: Will Deacon <will.deacon@arm.com>
+Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/bio.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/cpufeature.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -42,9 +42,9 @@
-  * break badly! cannot be bigger than what you can fit into an
-  * unsigned short
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1103,20 +1103,29 @@ static void __init setup_feature_capabil
+  * Check if the current CPU has a given feature capability.
+  * Should be called from non-preemptible context.
   */
--#define BV(x) { .nr_vecs = x, .name = "biovec-"__stringify(x) }
-+#define BV(x, n) { .nr_vecs = x, .name = "biovec-"#n }
- static struct biovec_slab bvec_slabs[BVEC_POOL_NR] __read_mostly = {
--	BV(1), BV(4), BV(16), BV(64), BV(128), BV(BIO_MAX_PAGES),
-+	BV(1, 1), BV(4, 4), BV(16, 16), BV(64, 64), BV(128, 128), BV(BIO_MAX_PAGES, max),
- };
- #undef BV
+-bool this_cpu_has_cap(unsigned int cap)
++static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
++			       unsigned int cap)
+ {
+ 	const struct arm64_cpu_capabilities *caps;
  
+ 	if (WARN_ON(preemptible()))
+ 		return false;
+ 
+-	for (caps = arm64_features; caps->desc; caps++)
++	for (caps = cap_array; caps->desc; caps++)
+ 		if (caps->capability == cap && caps->matches)
+ 			return caps->matches(caps, SCOPE_LOCAL_CPU);
+ 
+ 	return false;
+ }
+ 
++extern const struct arm64_cpu_capabilities arm64_errata[];
++
++bool this_cpu_has_cap(unsigned int cap)
++{
++	return (__this_cpu_has_cap(arm64_features, cap) ||
++		__this_cpu_has_cap(arm64_errata, cap));
++}
++
+ void __init setup_cpu_features(void)
+ {
+ 	u32 cwg;
