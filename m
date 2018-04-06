@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751573AbeDFPIQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:08:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60374 "EHLO
+        id S1751696AbeDFPIU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 11:08:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60954 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751362AbeDFPIN (ORCPT
+        with ESMTP id S1751362AbeDFPIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:08:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7F65D60274
+        Fri, 6 Apr 2018 11:08:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E3DF860C65
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
@@ -15,62 +15,89 @@ To: andy.gross@linaro.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v7 0/2] drivers/qcom: add Command DB support
-Date: Fri,  6 Apr 2018 09:08:03 -0600
-Message-Id: <20180406150805.6394-1-ilina@codeaurora.org>
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>,
+        devicetree@vger.kernel.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>
+Subject: [PATCH v7 2/2] dt-bindings: introduce Command DB for QCOM SoCs
+Date: Fri,  6 Apr 2018 09:08:05 -0600
+Message-Id: <20180406150805.6394-3-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180406150805.6394-1-ilina@codeaurora.org>
+References: <20180406150805.6394-1-ilina@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v6:
-	- Fix 'reg' property
-	- Add reviewed-by tags
+From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
 
-Changes since v5:
-        - Remove indirection of command db start address
-        - Rebase on top of 4.16
+Command DB provides information on shared resources like clocks,
+regulators etc., probed at boot by the remote subsytem and made
+available in shared memory.
 
-Changes since v4:
-        - Address comments from Stephen and Bjorn
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-These patches add support for reading a shared memory database in the newer
-QCOM SoCs called Command DB. With the new architecture on SDM845, shared
-resources like clocks, regulators etc., have dynamic properties. These
-properties may change based on external components, board configurations or
-available feature set. A remote processor detects these parameters and fills up
-the database with the resource and available state information. Platform
-drivers that need these shared resources will need to query this database to
-get the address and properties and vote for the state.
+Changes in v7:
+	- Fix description of 'reg' property
 
-The information in the database is static.  The database is read-only memory
-location that is available for Linux. A pre-defined string is used as a key into
-an entry in the database. Generally, platform drivers query the database only
-at init to get the information they need.
+Changes in v6:
+	- Move to bindings/reserved-memory
+	- Remove indirection address and use only the actual reserved
+	  memory
 
-[v1]: https://www.spinics.net/lists/linux-arm-msm/msg32462.html
-[v2]: https://lkml.org/lkml/2018/2/8/588
-[v3]: https://lkml.org/lkml/2018/2/16/842
-[v4]: https://patchwork.kernel.org/patch/10242935/
-[v5]: https://lkml.org/lkml/2018/3/14/787
-[v6]: https://lkml.org/lkml/2018/4/5/451
-
-Lina Iyer (2):
-  drivers: qcom: add command DB driver
-  dt-bindings: introduce Command DB for QCOM SoCs
-
- .../bindings/reserved-memory/qcom,cmd-db.txt       |  36 +++
- drivers/of/platform.c                              |   1 +
- drivers/soc/qcom/Kconfig                           |   9 +
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/cmd-db.c                          | 310 +++++++++++++++++++++
- include/soc/qcom/cmd-db.h                          |  45 +++
- 6 files changed, 402 insertions(+)
+Changes in v4:
+	- Fix unwanted capitalization
+	- Add reg property
+---
+ .../bindings/reserved-memory/qcom,cmd-db.txt       | 36 ++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.txt
- create mode 100644 drivers/soc/qcom/cmd-db.c
- create mode 100644 include/soc/qcom/cmd-db.h
 
---
+diff --git a/Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.txt b/Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.txt
+new file mode 100644
+index 000000000000..02e7d729bd77
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.txt
+@@ -0,0 +1,36 @@
++Command DB
++---------
++
++Command DB is a database that provides a mapping between resource key and the
++resource address for a system resource managed by a remote processor. The data
++is stored in a shared memory region and is loaded by the remote processor.
++
++Some of the Qualcomm Technologies Inc SoC's have hardware accelerators for
++controlling shared resources. Depending on the board configuration the shared
++resource properties may change. These properties are dynamically probed by the
++remote processor and made available in the shared memory.
++
++The bindings for Command DB is specified in the reserved-memory section in
++devicetree. The devicetree representation of the command DB driver should be:
++
++Properties:
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: Should be "qcom,cmd-db"
++
++- reg:
++	Usage: required
++	Value type: <prop encoded array>
++	Definition: The register address that points to the location of the
++		    actual Command DB in memory.
++
++Example:
++
++	reserved-memory {
++		[...]
++		qcom,cmd-db@85fe0000 {
++			reg = <0x0 0x85fe0000 0x0 0x20000>;
++			compatible = "qcom,cmd-db";
++		};
++	};
+-- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
