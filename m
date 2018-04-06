@@ -1,95 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756507AbeDFOTg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:19:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932261AbeDFOTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:19:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79EA620B80
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Fri, 6 Apr 2018 16:19:16 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
-Subject: Re: [PATCH v9 05/10] cpuidle: Return nohz hint from cpuidle_select()
-Message-ID: <20180406141915.GC4400@lerouge>
-References: <1736751.LdhZHb50jq@aspire.rjw.lan>
- <5818594.T4StF86Hkt@aspire.rjw.lan>
- <20180406024413.GB4400@lerouge>
- <1694033.ykrRIB27yN@aspire.rjw.lan>
+        id S1756532AbeDFOVO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:21:14 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:34999 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932384AbeDFNiS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 09:38:18 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH 4/7] arm64: dts: renesas: r8a77970: add the LVDS instance
+Date: Fri, 06 Apr 2018 16:38:17 +0300
+Message-ID: <3587638.6pi5kZKTO5@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1523020092-25540-5-git-send-email-jacopo+renesas@jmondi.org>
+References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org> <1523020092-25540-5-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1694033.ykrRIB27yN@aspire.rjw.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w36ELKGq017619
 
-On Fri, Apr 06, 2018 at 09:24:42AM +0200, Rafael J. Wysocki wrote:
-> On Friday, April 6, 2018 4:44:14 AM CEST Frederic Weisbecker wrote:
-> > On Wed, Apr 04, 2018 at 10:39:50AM +0200, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > Index: linux-pm/kernel/time/tick-sched.c
-> > > ===================================================================
-> > > --- linux-pm.orig/kernel/time/tick-sched.c
-> > > +++ linux-pm/kernel/time/tick-sched.c
-> > > @@ -991,6 +991,20 @@ void tick_nohz_irq_exit(void)
-> > >  }
-> > >  
-> > >  /**
-> > > + * tick_nohz_idle_got_tick - Check whether or not the tick handler has run
-> > > + */
-> > > +bool tick_nohz_idle_got_tick(void)
-> > > +{
-> > > +	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
-> > > +
-> > > +	if (ts->inidle > 1) {
-> > > +		ts->inidle = 1;
-> > > +		return true;
-> > > +	}
-> > > +	return false;
-> > > +}
-> > > +
-> > > +/**
-> > >   * tick_nohz_get_sleep_length - return the length of the current sleep
-> > >   *
-> > >   * Called from power state control code with interrupts disabled
-> > > @@ -1101,6 +1115,9 @@ static void tick_nohz_handler(struct clo
-> > >  	struct pt_regs *regs = get_irq_regs();
-> > >  	ktime_t now = ktime_get();
-> > >  
-> > > +	if (ts->inidle)
-> > > +		ts->inidle = 2;
-> > > +
-> > 
-> > You can move that to tick_sched_do_timer() to avoid code duplication.
-> 
-> Right.
-> 
-> > Also these constants are very opaque. And even with proper symbols it wouldn't look
-> > right to extend ts->inidle that way.
-> 
-> Well, this was a Peter's idea. :-)
-> 
-> > Perhaps you should add a field such as ts->got_idle_tick under the boolean fields
-> > after the below patch:
-> 
-> OK, but at this point I'd prefer to make such changes on top of the existing
-> set, because that's got quite some testing coverage already and honestly this
-> is cosmetics in my view (albeit important).
+Hi Jacopo,
 
-Sure!
+Thank you for the patch.
 
-Thanks.
+On Friday, 6 April 2018 16:08:09 EEST Jacopo Mondi wrote:
+> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
+> the it to the LVDS output of the DU. While at it align the endpoint name
+> of the du to du_out_lvds0 which is used in other Renesas DTS files to
+> describe this link.
+
+The endpoint could be renamed in patch 3/7, but it's not a big deal.
+
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77970.dtsi | 29 +++++++++++++++++++++++++++-
+>  1 file changed, 28 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a77970.dtsi index e649e86..b48d62c 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> @@ -658,7 +658,34 @@
+> 
+>  				port@1 {
+>  					reg = <1>;
+> -					du_out_lvds: endpoint {
+> +					du_out_lvds0: endpoint {
+> +						remote-endpoint = <&lvds0_in>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		lvds0: lvds@feb90000 {
+> +			compatible = "renesas,r8a77970-lvds";
+> +			reg = <0 0xfeb90000 0 0x14>;
+> +			clocks = <&cpg CPG_MOD 727>;
+> +			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+> +			resets = <&cpg 727>;
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +					lvds0_in: endpoint {
+> +						remote-endpoint = <&du_out_lvds0>;
+> +					};
+> +				};
+> +				port@1 {
+> +					reg = <1>;
+> +					lvds0_out: endpoint {
+>  					};
+>  				};
+>  			};
+
+-- 
+Regards,
+
+Laurent Pinchart
