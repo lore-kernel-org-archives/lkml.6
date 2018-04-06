@@ -1,100 +1,112 @@
-Return-Path: <paulmcquad@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523126875; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ZcCwcmHyEDqqAfvEKK6xS0gd9/DRM6U5+XvTeN0DsRTv/2hSB6BjDhM+ysSYyMJ31F
-         mGI21Jl4OB1MkbAz2PhUkH48Nq7ypid3/2XsuXOU+LyPnyRlOzBOeTg0jKFoDYsrN2t2
-         fv3Ayz3n4x7v99e4eZQ3s3yklKjyuMiQ0VkxkAtX39HpZG1mtvM1aLl450+qNsIRrJVp
-         NnWX7++6/2EOTKK0YaiFQDXCauW4yjtB9kp/MLXCCe+hhsURanHhklpGrCffrCqkWCLs
-         h22BOvYqE+hCLy0d9ARS2Dwdt3HAIJdq70JiZk2i3U564CjfTE7LTeeOLAHdoZhCSQyE
-         Polg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=P1bz2I9qVb4OLF+hgVpIKrX8dBHZrfBjDMZm900DfoA=;
-        b=PQ0/IEzVNYcSDQNCz2irpM+6DGH88iLJA0JxQgXphjlarXPmsc1Vv75GfM23M99uOp
-         2/eNWsKtQ4lyKx0eHZ68PYD7ebTvW0mOBUAhvTp+O3XEti6OLiqXHP03k2q8S5ghE0Ef
-         SLCr82tx/nlMzrI8UHHwBW0pqtZlH0Y66GSh5k7Iw2ijDBLUmC59SkJbfRT/MmPPrAMU
-         E9QriJeheMXmNkj+X5xb0/bvgRrYBiR4pMjsZtIHrvg4AeK3PGgRsiSdGisj2/Gdiwaw
-         4GbRjcHwtDanQhX/1BFezJL9Vh8AWNzKGA7HXIBcAZFekEgmEMKWkt4JHaZVUwJ8sxBs
-         qNjw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vB/Syt1j;
-       spf=pass (google.com: domain of paulmcquad@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=paulmcquad@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vB/Syt1j;
-       spf=pass (google.com: domain of paulmcquad@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=paulmcquad@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx49lItrYLL2zVGPfYHEafHQH9iJu1vPo8xXvc6l0W39T4/tg/cS5iu4XrGPZPAXqzXIUBid6DQ==
-From: Paul McQuade <paulmcquad@gmail.com>
-To: paulmcquad@gmail.com
-Cc: konrad.wilk@oracle.com,
-	labbott@redhat.com,
-	gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org,
-	guptap@codeaurora.org,
-	vbabka@suse.cz,
-	mgorman@techsingularity.net,
-	hannes@cmpxchg.org,
-	rientjes@google.com,
-	mhocko@suse.com,
-	rppt@linux.vnet.ibm.com,
-	dave@stgolabs.net,
-	hmclauchlan@fb.com,
-	tglx@linutronix.de,
-	pombredanne@nexb.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 2/3] mm: Replace S_IWUSR with 0200
-Date: Sat,  7 Apr 2018 19:47:25 +0100
-Message-Id: <20180407184726.8634-2-paulmcquad@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180407184726.8634-1-paulmcquad@gmail.com>
-References: <20180407184726.8634-1-paulmcquad@gmail.com>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-219634-1522985933-5-9629950210775528558
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enda, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522985933; b=cxyYEG2ZxzgoS43g+ZJOcfWH8ufNlg3GnKsbSl1jygksy3ljAe
+    4rvnBetHKKrtGPTFNq/U7cCp5+03ClZ/hZCDJFeve+gdJb77vBuWmcLylNNJ8mov
+    ha3QWS2B/jlHaQcOvKCaq/POPvuLaV/Q23lGh82eZwHC6Jc43NDBVg23FOPX71x7
+    mR7j7D61qz3Qbz8ueVjUFi1VmsVw6mIE8LFrq5OiHotat8CnalDizj7g1U8hK/iK
+    UailnOAe/YGVTKszNS5vGhmZjdFZv2+D0ennABkpIDUxBugLla6qRKn5PRBqLqgI
+    /9L8teC6CziDdgms+vkgOANYuRX88mJzGJsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:from:date:message-id:subject
+    :to:content-type:sender:list-id; s=fm2; t=1522985933; bh=xykLN/G
+    7uRm+8uElHCi3UtrTvEjIlXuVFU1hFIWli5o=; b=BTrasNp7QVDQG97MTGR3h+J
+    OcTW5ojvsRi00wmjSm3U790Sx1V3Eg3bI+cQT1H1thuyzM2xfBjNEw36LDMBv5K3
+    ZbWMWSimC6Tr5RZEjavlbkEKvn8Cj50/POPCpKObiaXH53zRaeXczd/40eT6a70m
+    lh5Zny50nx3cZRf53uYcm+vKkB0ApmonPc0Eley6QSJaXzboUoTZptt4lxG4mkKI
+    yZ+nxFYj5zF7JobtuOWw/EEe4pX+0IH0UzRUjSDPssf5EpdkRT0RezdS2Dz0a87v
+    PfCq4ychngeoSV8jwPGHW9/o8A16eFRSynNdxU0C8qfpB+k0e8kCStD/OOu3TOg=
+    =
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=qF6y4pG9 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SWxVkEoF;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=qF6y4pG9 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SWxVkEoF;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKP8faC9d79j7/mFJstkN51EA7XpQZOfe83q7VvW+YtdXSr8mdOpW13UzxSsjEfUTcftHw4CjM1u4byDyZBd87D/iawtMOQggeH0V96d6MVYWdvHyWRR
+    5HHG1Ayc3F5TfFG/Ql/cFOWtyjrN9HWOMagi6TXbW1Bgw/tZEguc2tU/sdcyxygarpyIwW0OqsSeKJMAt3NW5+Ee5i/P6jXEPlufGuvCY7xcnWdrlgw7nghl
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+    a=m8xMgMeX2tgA:10 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=bhyhgwdzVtYS8JTV71oA:9
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751447AbeDFDip (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 5 Apr 2018 23:38:45 -0400
+Received: from mail-pl0-f54.google.com ([209.85.160.54]:33039 "EHLO
+        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbeDFDio (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 5 Apr 2018 23:38:44 -0400
+X-Google-Smtp-Source: AIpwx4/kcvllegs4sgeptGAfoR1NCh6JAVUeAs+7/WQU0xc3bYRs66CsVM33tNpbBnvC520s0lR052dKNoNZZJ4EIUs=
+MIME-Version: 1.0
+From: Masanari Iida <standby24x7@gmail.com>
+Date: Fri, 6 Apr 2018 12:38:42 +0900
+Message-ID: <CALLJCT0MFg6b+dG50cqe_hv6hxmQDj-ZM066BOtQt_wOiC8ENA@mail.gmail.com>
+Subject: make xmldocs failed with error after 4.17 merge period
+To: linux-kernel@vger.kernel.org,
+        linux-doc <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        heikki.krogerus@linux.intel.com,
+        Greg KH <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597114287199366253?=
-X-GMAIL-MSGID: =?utf-8?q?1597114287199366253?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix checkpatch warnings about S_IWUSR being less readable than
-providing the permissions octal as '0200'.
+After merge following patch during 4.17 merger period,
+make xmldocs start to fail with error.
 
-Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
----
- mm/cma_debug.c  | 4 ++--
- mm/compaction.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ [bdecb33af34f79cbfbb656661210f77c8b8b5b5f]
+usb: typec: API for controlling USB Type-C Multiplexers
 
-diff --git a/mm/cma_debug.c b/mm/cma_debug.c
-index 6494c7a7d257..f0af3f93d1e4 100644
---- a/mm/cma_debug.c
-+++ b/mm/cma_debug.c
-@@ -172,10 +172,10 @@ static void cma_debugfs_add_one(struct cma *cma, int idx)
- 
- 	tmp = debugfs_create_dir(name, cma_debugfs_root);
- 
--	debugfs_create_file("alloc", S_IWUSR, tmp, cma,
-+	debugfs_create_file("alloc", 0200, tmp, cma,
- 				&cma_alloc_fops);
- 
--	debugfs_create_file("free", S_IWUSR, tmp, cma,
-+	debugfs_create_file("free", 0200, tmp, cma,
- 				&cma_free_fops);
- 
- 	debugfs_create_file("base_pfn", 0444, tmp,
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 88d01a50a015..50d0000a6afd 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1900,7 +1900,7 @@ static ssize_t sysfs_compact_node(struct device *dev,
- 
- 	return count;
- }
--static DEVICE_ATTR(compact, S_IWUSR, NULL, sysfs_compact_node);
-+static DEVICE_ATTR(compact, 0200, NULL, sysfs_compact_node);
- 
- int compaction_register_node(struct node *node)
- {
--- 
-2.16.2
+Error messages.
+reST markup error:
+/home/iida/Repo/linux-2.6/Documentation/driver-api/usb/typec.rst:215:
+(SEVERE/4) Unexpected section title or transition.
+
+------------------------
+Documentation/Makefile:93: recipe for target 'xmldocs' failed
+make[1]: *** [xmldocs] Error 1
+Makefile:1527: recipe for target 'xmldocs' failed
+make: *** [xmldocs] Error 2
+
+$
+
+An ascii graphic in typec.rst cause the error.
+
+Masanari Iida
