@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/EacF5+Uv4BSurEqL7oCTqj5wHiw+b7MSQt2/ADqxfU9aUK6xeeAetS+mEUzGJ6dyGLcio
-ARC-Seal: i=1; a=rsa-sha256; t=1523022252; cv=none;
+X-Google-Smtp-Source: AIpwx4+RdEvGnCY2gvL7JNPUsc2pVGbFbQKbjjZz/vx5K1VQZqnZlE6/i60r8o6pMxVv3+U5TLFl
+ARC-Seal: i=1; a=rsa-sha256; t=1523022249; cv=none;
         d=google.com; s=arc-20160816;
-        b=iGBSwWC0x67mT6h9ikhlPAjVFNsF46TrJ8jvDeOCSi1GOFGvgXtHr5sdXXHg1IvMew
-         7WdkJCJronrR1iH5RDQFvdQnlK34zGdRixmEOt34SD4HwooB8I5+6TrPRqhzIEuQB2ix
-         665cQfkjHhHZm/t3o5tVWg/09R8q8Xy6XVVfNnpDPsuy78sYe7gANMDL9ai57IVMtDFC
-         KbVnWq70kZZzV0unbPx2A5fI6/+q66IeIKxqFDom/c9+cP4XCN088CkuBXxEw3S+npad
-         I0WlqFNKPO150gmjBD3Nd3LsPA7KctxZ2uOkyegCmJyImU2EzJnrMteFOBbL0/9aefc7
-         KGRA==
+        b=zDt9VmIA2tGeQPdxuBnmAVeYiqx75F5iVsqZRAARZ26Z2NcG7PNf2wV2NQfpvAmrJq
+         XUQzDnhSSzYADII/zjdY+mqpwyu4tzuD9rbjq8FpVbr/9JGX3BKCyyHcEKLB/Z/ppdnO
+         5JlBTpLlweq95h+iPcuXV2aLAha99vZEkUkvDKjbJopCyBzjZT8n0ijCVz2N2aKaUzFx
+         9FiSkhdKwoiiqxpWNzk8wa6iMRqz5CI4wKho9KpcKvYMKdLWXp1RSfRIc90DpyJz2+TW
+         XoQ0CEp10/m49lz/j0QBlYocJLpGnhyPzUtakXqOIvte/vgbI9EFb6I+BOTmK0xSH/2a
+         k5AQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GnYvD6ouYT89gxK7ZZOllr1f2APnuiZTSr9oV3Ck4J8=;
-        b=pOH0VTV2DtNKesIho4XWhLZnG1sRaP3U63edJ49/A2yp3JwAdG/qJJcD3jxmkTIuHi
-         +jKOUiIBChVQo0Kj1hLkbTm2WM9H1gRa6yOjoBfnZkPgxyWXGMTI034iYWqQj2tFhsgz
-         LSFCA1YcjjaW1usK4k+kK89EgothHUKo7lmxPRQ4SFtqFTKQvdJIcZT4LtK054G8/sKc
-         XgmCCctlQZRDDzPil0wNRSB/UvInZM3R2pO+kmrH+O/7yn8Msw2NYqyZSmZMB0tmJ4G8
-         MxOEdJcQDYbeIh3+9KqAD3iYCQGNSfzA2h+d0KNlPm8fK6OR7I3cPjGauV9rvgXXFagG
-         Zpxw==
+        bh=vMUulpLTVMIyhEToy4hSGIVX6HfDu6NSW2hpYpY8H3M=;
+        b=SD0JFmQ6Xy7DebZDI7OmAM+ssFPNfVfwarZLEtk6kexZz6/lrY0DR/0qCqI4SA4aSk
+         +WK6+KUCVfOrL5FGUQdmwicSbP/3P2jfsFcekEFWmTGeVnzxSXbNyxNtz/Vs7vVGyskQ
+         TOZZa7TXsS0osR7AcsyZ4l1YYfUSgUrRiLBFYetWrUIuiuXTn5PkdT+jJPGtGHF2IMtR
+         s5xELb630tjVSFaQYusEsZT6rJBnsV+J1ml2NWw59wndhCzI9WROHfpJ9O1YWuFF2323
+         CXu5kXQdNDB9RuxIvqnv5g5kAtZezvIpFcx6Higw13rbuR+l3bWsp7jr5IZTN3CXB7ic
+         RcUA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Horia Geanta <horia.geanta@nxp.com>,
-	Christophe Leroy <christophe.leroy@c-s.fr>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.15 50/72] crypto: talitos - dont persistently map req_ctx->hw_context and req_ctx->buf
-Date: Fri,  6 Apr 2018 15:24:25 +0200
-Message-Id: <20180406084352.986223149@linuxfoundation.org>
+	Liu Bo <bo.li.liu@oracle.com>,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.15 59/72] Btrfs: fix unexpected cow in run_delalloc_nocow
+Date: Fri,  6 Apr 2018 15:24:34 +0200
+Message-Id: <20180406084353.408086466@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004581237170212?=
-X-GMAIL-MSGID: =?utf-8?q?1597004581237170212?=
+X-GMAIL-THRID: =?utf-8?q?1597004293765579483?=
+X-GMAIL-MSGID: =?utf-8?q?1597004578274782117?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,292 +49,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: LEROY Christophe <christophe.leroy@c-s.fr>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit ad4cd51fb8375109edb377712b5f9c0c31ece33e upstream.
+commit 5811375325420052fcadd944792a416a43072b7f upstream.
 
-Commit 49f9783b0cea ("crypto: talitos - do hw_context DMA mapping
-outside the requests") introduced a persistent dma mapping of
-req_ctx->hw_context
-Commit 37b5e8897eb5 ("crypto: talitos - chain in buffered data for ahash
-on SEC1") introduced a persistent dma mapping of req_ctx->buf
+Fstests generic/475 provides a way to fail metadata reads while
+checking if checksum exists for the inode inside run_delalloc_nocow(),
+and csum_exist_in_range() interprets error (-EIO) as inode having
+checksum and makes its caller enter the cow path.
 
-As there is no destructor for req_ctx (the request context), the
-associated dma handlers where set in ctx (the tfm context). This is
-wrong as several hash operations can run with the same ctx.
+In case of free space inode, this ends up with a warning in
+cow_file_range().
 
-This patch removes this persistent mapping.
+The same problem applies to btrfs_cross_ref_exist() since it may also
+read metadata in between.
 
-Reported-by: Horia Geanta <horia.geanta@nxp.com>
-Cc: <stable@vger.kernel.org>
-Fixes: 49f9783b0cea ("crypto: talitos - do hw_context DMA mapping outside the requests")
-Fixes: 37b5e8897eb5 ("crypto: talitos - chain in buffered data for ahash on SEC1")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Tested-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+With this, run_delalloc_nocow() bails out when errors occur at the two
+places.
+
+cc: <stable@vger.kernel.org> v2.6.28+
+Fixes: 17d217fe970d ("Btrfs: fix nodatasum handling in balancing code")
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |  132 +++++++++++++++--------------------------------
- 1 file changed, 44 insertions(+), 88 deletions(-)
+ fs/btrfs/inode.c |   37 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 32 insertions(+), 5 deletions(-)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -832,8 +832,6 @@ struct talitos_ctx {
- 	unsigned int keylen;
- 	unsigned int enckeylen;
- 	unsigned int authkeylen;
--	dma_addr_t dma_buf;
--	dma_addr_t dma_hw_context;
- };
- 
- #define HASH_MAX_BLOCK_SIZE		SHA512_BLOCK_SIZE
-@@ -1690,9 +1688,30 @@ static void common_nonsnoop_hash_unmap(s
- 				       struct ahash_request *areq)
- {
- 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
-+	struct talitos_private *priv = dev_get_drvdata(dev);
-+	bool is_sec1 = has_ftr_sec1(priv);
-+	struct talitos_desc *desc = &edesc->desc;
-+	struct talitos_desc *desc2 = desc + 1;
-+
-+	unmap_single_talitos_ptr(dev, &edesc->desc.ptr[5], DMA_FROM_DEVICE);
-+	if (desc->next_desc &&
-+	    desc->ptr[5].ptr != desc2->ptr[5].ptr)
-+		unmap_single_talitos_ptr(dev, &desc2->ptr[5], DMA_FROM_DEVICE);
- 
- 	talitos_sg_unmap(dev, edesc, req_ctx->psrc, NULL, 0, 0);
- 
-+	/* When using hashctx-in, must unmap it. */
-+	if (from_talitos_ptr_len(&edesc->desc.ptr[1], is_sec1))
-+		unmap_single_talitos_ptr(dev, &edesc->desc.ptr[1],
-+					 DMA_TO_DEVICE);
-+	else if (desc->next_desc)
-+		unmap_single_talitos_ptr(dev, &desc2->ptr[1],
-+					 DMA_TO_DEVICE);
-+
-+	if (is_sec1 && req_ctx->nbuf)
-+		unmap_single_talitos_ptr(dev, &desc->ptr[3],
-+					 DMA_TO_DEVICE);
-+
- 	if (edesc->dma_len)
- 		dma_unmap_single(dev, edesc->dma_link_tbl, edesc->dma_len,
- 				 DMA_BIDIRECTIONAL);
-@@ -1766,8 +1785,10 @@ static int common_nonsnoop_hash(struct t
- 
- 	/* hash context in */
- 	if (!req_ctx->first || req_ctx->swinit) {
--		to_talitos_ptr(&desc->ptr[1], ctx->dma_hw_context,
--			       req_ctx->hw_context_size, is_sec1);
-+		map_single_talitos_ptr(dev, &desc->ptr[1],
-+				       req_ctx->hw_context_size,
-+				       (char *)req_ctx->hw_context,
-+				       DMA_TO_DEVICE);
- 		req_ctx->swinit = 0;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -1257,6 +1257,8 @@ static noinline int csum_exist_in_range(
+ 		list_del(&sums->list);
+ 		kfree(sums);
  	}
- 	/* Indicate next op is not the first. */
-@@ -1793,10 +1814,9 @@ static int common_nonsnoop_hash(struct t
- 	 * data in
- 	 */
- 	if (is_sec1 && req_ctx->nbuf) {
--		dma_addr_t dma_buf = ctx->dma_buf + req_ctx->buf_idx *
--						    HASH_MAX_BLOCK_SIZE;
--
--		to_talitos_ptr(&desc->ptr[3], dma_buf, req_ctx->nbuf, is_sec1);
-+		map_single_talitos_ptr(dev, &desc->ptr[3], req_ctx->nbuf,
-+				       req_ctx->buf[req_ctx->buf_idx],
-+				       DMA_TO_DEVICE);
- 	} else {
- 		sg_count = talitos_sg_map(dev, req_ctx->psrc, length, edesc,
- 					  &desc->ptr[3], sg_count, offset, 0);
-@@ -1812,8 +1832,9 @@ static int common_nonsnoop_hash(struct t
- 				       crypto_ahash_digestsize(tfm),
- 				       areq->result, DMA_FROM_DEVICE);
- 	else
--		to_talitos_ptr(&desc->ptr[5], ctx->dma_hw_context,
--			       req_ctx->hw_context_size, is_sec1);
-+		map_single_talitos_ptr(dev, &desc->ptr[5],
-+				       req_ctx->hw_context_size,
-+				       req_ctx->hw_context, DMA_FROM_DEVICE);
- 
- 	/* last DWORD empty */
- 
-@@ -1832,9 +1853,14 @@ static int common_nonsnoop_hash(struct t
- 		desc->hdr |= DESC_HDR_MODE0_MDEU_CONT;
- 		desc->hdr &= ~DESC_HDR_DONE_NOTIFY;
- 
--		to_talitos_ptr(&desc2->ptr[1], ctx->dma_hw_context,
--			       req_ctx->hw_context_size, is_sec1);
--
-+		if (desc->ptr[1].ptr)
-+			copy_talitos_ptr(&desc2->ptr[1], &desc->ptr[1],
-+					 is_sec1);
-+		else
-+			map_single_talitos_ptr(dev, &desc2->ptr[1],
-+					       req_ctx->hw_context_size,
-+					       req_ctx->hw_context,
-+					       DMA_TO_DEVICE);
- 		copy_talitos_ptr(&desc2->ptr[2], &desc->ptr[2], is_sec1);
- 		sg_count = talitos_sg_map(dev, req_ctx->psrc, length, edesc,
- 					  &desc2->ptr[3], sg_count, offset, 0);
-@@ -1842,8 +1868,10 @@ static int common_nonsnoop_hash(struct t
- 			sync_needed = true;
- 		copy_talitos_ptr(&desc2->ptr[5], &desc->ptr[5], is_sec1);
- 		if (req_ctx->last)
--			to_talitos_ptr(&desc->ptr[5], ctx->dma_hw_context,
--				       req_ctx->hw_context_size, is_sec1);
-+			map_single_talitos_ptr(dev, &desc->ptr[5],
-+					       req_ctx->hw_context_size,
-+					       req_ctx->hw_context,
-+					       DMA_FROM_DEVICE);
- 
- 		next_desc = dma_map_single(dev, &desc2->hdr1, TALITOS_DESC_SIZE,
- 					   DMA_BIDIRECTIONAL);
-@@ -1881,12 +1909,8 @@ static struct talitos_edesc *ahash_edesc
- static int ahash_init(struct ahash_request *areq)
- {
- 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
--	struct talitos_ctx *ctx = crypto_ahash_ctx(tfm);
--	struct device *dev = ctx->dev;
- 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
- 	unsigned int size;
--	struct talitos_private *priv = dev_get_drvdata(dev);
--	bool is_sec1 = has_ftr_sec1(priv);
- 
- 	/* Initialize the context */
- 	req_ctx->buf_idx = 0;
-@@ -1898,18 +1922,6 @@ static int ahash_init(struct ahash_reque
- 			: TALITOS_MDEU_CONTEXT_SIZE_SHA384_SHA512;
- 	req_ctx->hw_context_size = size;
- 
--	if (ctx->dma_hw_context)
--		dma_unmap_single(dev, ctx->dma_hw_context, size,
--				 DMA_BIDIRECTIONAL);
--	ctx->dma_hw_context = dma_map_single(dev, req_ctx->hw_context, size,
--					     DMA_BIDIRECTIONAL);
--	if (ctx->dma_buf)
--		dma_unmap_single(dev, ctx->dma_buf, sizeof(req_ctx->buf),
--				 DMA_TO_DEVICE);
--	if (is_sec1)
--		ctx->dma_buf = dma_map_single(dev, req_ctx->buf,
--					      sizeof(req_ctx->buf),
--					      DMA_TO_DEVICE);
- 	return 0;
++	if (ret < 0)
++		return ret;
+ 	return 1;
  }
  
-@@ -1920,9 +1932,6 @@ static int ahash_init(struct ahash_reque
- static int ahash_init_sha224_swinit(struct ahash_request *areq)
- {
- 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
--	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
--	struct talitos_ctx *ctx = crypto_ahash_ctx(tfm);
--	struct device *dev = ctx->dev;
- 
- 	ahash_init(areq);
- 	req_ctx->swinit = 1;/* prevent h/w initting context with sha256 values*/
-@@ -1940,9 +1949,6 @@ static int ahash_init_sha224_swinit(stru
- 	req_ctx->hw_context[8] = 0;
- 	req_ctx->hw_context[9] = 0;
- 
--	dma_sync_single_for_device(dev, ctx->dma_hw_context,
--				   req_ctx->hw_context_size, DMA_TO_DEVICE);
--
- 	return 0;
- }
- 
-@@ -2046,13 +2052,6 @@ static int ahash_process_req(struct ahas
- 	/* request SEC to INIT hash. */
- 	if (req_ctx->first && !req_ctx->swinit)
- 		edesc->desc.hdr |= DESC_HDR_MODE0_MDEU_INIT;
--	if (is_sec1) {
--		dma_addr_t dma_buf = ctx->dma_buf + req_ctx->buf_idx *
--						    HASH_MAX_BLOCK_SIZE;
--
--		dma_sync_single_for_device(dev, dma_buf,
--					   req_ctx->nbuf, DMA_TO_DEVICE);
--	}
- 
- 	/* When the tfm context has a keylen, it's an HMAC.
- 	 * A first or last (ie. not middle) descriptor must request HMAC.
-@@ -2106,12 +2105,7 @@ static int ahash_export(struct ahash_req
- {
- 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
- 	struct talitos_export_state *export = out;
--	struct crypto_ahash *ahash = crypto_ahash_reqtfm(areq);
--	struct talitos_ctx *ctx = crypto_ahash_ctx(ahash);
--	struct device *dev = ctx->dev;
- 
--	dma_sync_single_for_cpu(dev, ctx->dma_hw_context,
--				req_ctx->hw_context_size, DMA_FROM_DEVICE);
- 	memcpy(export->hw_context, req_ctx->hw_context,
- 	       req_ctx->hw_context_size);
- 	memcpy(export->buf, req_ctx->buf[req_ctx->buf_idx], req_ctx->nbuf);
-@@ -2130,31 +2124,14 @@ static int ahash_import(struct ahash_req
- 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
- 	const struct talitos_export_state *export = in;
- 	unsigned int size;
--	struct talitos_ctx *ctx = crypto_ahash_ctx(tfm);
--	struct device *dev = ctx->dev;
--	struct talitos_private *priv = dev_get_drvdata(dev);
--	bool is_sec1 = has_ftr_sec1(priv);
- 
- 	memset(req_ctx, 0, sizeof(*req_ctx));
- 	size = (crypto_ahash_digestsize(tfm) <= SHA256_DIGEST_SIZE)
- 			? TALITOS_MDEU_CONTEXT_SIZE_MD5_SHA1_SHA256
- 			: TALITOS_MDEU_CONTEXT_SIZE_SHA384_SHA512;
- 	req_ctx->hw_context_size = size;
--	if (ctx->dma_hw_context)
--		dma_unmap_single(dev, ctx->dma_hw_context, size,
--				 DMA_BIDIRECTIONAL);
--
- 	memcpy(req_ctx->hw_context, export->hw_context, size);
--	ctx->dma_hw_context = dma_map_single(dev, req_ctx->hw_context, size,
--					     DMA_BIDIRECTIONAL);
--	if (ctx->dma_buf)
--		dma_unmap_single(dev, ctx->dma_buf, sizeof(req_ctx->buf),
--				 DMA_TO_DEVICE);
- 	memcpy(req_ctx->buf[0], export->buf, export->nbuf);
--	if (is_sec1)
--		ctx->dma_buf = dma_map_single(dev, req_ctx->buf,
--					      sizeof(req_ctx->buf),
--					      DMA_TO_DEVICE);
- 	req_ctx->swinit = export->swinit;
- 	req_ctx->first = export->first;
- 	req_ctx->last = export->last;
-@@ -3064,27 +3041,6 @@ static void talitos_cra_exit(struct cryp
- 		dma_unmap_single(dev, ctx->dma_key, ctx->keylen, DMA_TO_DEVICE);
- }
- 
--static void talitos_cra_exit_ahash(struct crypto_tfm *tfm)
--{
--	struct talitos_ctx *ctx = crypto_tfm_ctx(tfm);
--	struct device *dev = ctx->dev;
--	unsigned int size;
--
--	talitos_cra_exit(tfm);
--
--	size = (crypto_ahash_digestsize(__crypto_ahash_cast(tfm)) <=
--		SHA256_DIGEST_SIZE)
--	       ? TALITOS_MDEU_CONTEXT_SIZE_MD5_SHA1_SHA256
--	       : TALITOS_MDEU_CONTEXT_SIZE_SHA384_SHA512;
--
--	if (ctx->dma_hw_context)
--		dma_unmap_single(dev, ctx->dma_hw_context, size,
--				 DMA_BIDIRECTIONAL);
--	if (ctx->dma_buf)
--		dma_unmap_single(dev, ctx->dma_buf, HASH_MAX_BLOCK_SIZE * 2,
--				 DMA_TO_DEVICE);
--}
--
- /*
-  * given the alg's descriptor header template, determine whether descriptor
-  * type and primary/secondary execution units required match the hw
-@@ -3183,7 +3139,7 @@ static struct talitos_crypto_alg *talito
- 	case CRYPTO_ALG_TYPE_AHASH:
- 		alg = &t_alg->algt.alg.hash.halg.base;
- 		alg->cra_init = talitos_cra_init_ahash;
--		alg->cra_exit = talitos_cra_exit_ahash;
-+		alg->cra_exit = talitos_cra_exit;
- 		alg->cra_type = &crypto_ahash_type;
- 		t_alg->algt.alg.hash.init = ahash_init;
- 		t_alg->algt.alg.hash.update = ahash_update;
+@@ -1389,10 +1391,23 @@ next_slot:
+ 				goto out_check;
+ 			if (btrfs_extent_readonly(fs_info, disk_bytenr))
+ 				goto out_check;
+-			if (btrfs_cross_ref_exist(root, ino,
+-						  found_key.offset -
+-						  extent_offset, disk_bytenr))
++			ret = btrfs_cross_ref_exist(root, ino,
++						    found_key.offset -
++						    extent_offset, disk_bytenr);
++			if (ret) {
++				/*
++				 * ret could be -EIO if the above fails to read
++				 * metadata.
++				 */
++				if (ret < 0) {
++					if (cow_start != (u64)-1)
++						cur_offset = cow_start;
++					goto error;
++				}
++
++				WARN_ON_ONCE(nolock);
+ 				goto out_check;
++			}
+ 			disk_bytenr += extent_offset;
+ 			disk_bytenr += cur_offset - found_key.offset;
+ 			num_bytes = min(end + 1, extent_end) - cur_offset;
+@@ -1410,10 +1425,22 @@ next_slot:
+ 			 * this ensure that csum for a given extent are
+ 			 * either valid or do not exist.
+ 			 */
+-			if (csum_exist_in_range(fs_info, disk_bytenr,
+-						num_bytes)) {
++			ret = csum_exist_in_range(fs_info, disk_bytenr,
++						  num_bytes);
++			if (ret) {
+ 				if (!nolock)
+ 					btrfs_end_write_no_snapshotting(root);
++
++				/*
++				 * ret could be -EIO if the above fails to read
++				 * metadata.
++				 */
++				if (ret < 0) {
++					if (cow_start != (u64)-1)
++						cur_offset = cow_start;
++					goto error;
++				}
++				WARN_ON_ONCE(nolock);
+ 				goto out_check;
+ 			}
+ 			if (!btrfs_inc_nocow_writers(fs_info, disk_bytenr)) {
