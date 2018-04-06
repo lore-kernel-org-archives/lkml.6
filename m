@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48uYKRP0BJUUTa2R/zkr0SspnKmRDvk/KMxlnYPmkOqfx4mJpzqGvOp09mKYtTth0oj5nHN
-ARC-Seal: i=1; a=rsa-sha256; t=1523021964; cv=none;
+X-Google-Smtp-Source: AIpwx49ncb8BQAB/Krfwu0nsAmNyvQX41rxNL2H+7OT97bU86rEbn4zYZ5Wu9BYlNdeXQ7RZw3eJ
+ARC-Seal: i=1; a=rsa-sha256; t=1523021961; cv=none;
         d=google.com; s=arc-20160816;
-        b=mvFEqBeTAftw5WNHODB4GdBvlkouGV7W5TvlTqk3xz3aPdExwZhxWTnXdO1jad93/N
-         XJ2eJ/gyuYvQEYUGxnzS02j9Egqm0gMh4jH5nweeOyhLHsIxx5q5bWE6ieuYyG9fBcvQ
-         JjUJ2+2eevbZx1DQKDB4aotML0PpKCbohnsJOCQf2Cka8epydRJGGiuQwGJnruth+gas
-         BXnLR5AfOORTES7sS7QCNTV/SHoRHiA/n3Wc/r8uVb1hGULDUgk+P14L445j0DVnZcOi
-         t8CoO8Hrng7l7hnpuSuF7TkB9BRf5OWItpHBMn+IkuYjAPQtevsynfustCBpipIHzNjx
-         S2zQ==
+        b=sPTBe/oRkoPff4dQcswwgOkCBbsZIROfcrMNAa33IjHe/2V4+94WtgZLXZv6ttZQ76
+         7HBJqA2IMeJ8W7EVXriup42usGJO3FQk/4cQrOT08VWfQJuZnSHOSDn6X2wz19DFKWVZ
+         uiQxKbJSL2RKrijtY31yfyyq+fem93DVK+DDIygXBf73M7XlCVpGii8bD3RCX8b9QeIg
+         v1jbBSoaW6B+suWHlsum6zbH+o3IsafY3pxRqA9zrf8lLwc1M0tFZKCTTuRtfVvH3moR
+         iG6lWjsKUPpXrTOdeGGJGHcVxON7IHGwX2uwQeoRf/93GUtu01DQcDy6lyvNaKnVklUY
+         ghlw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=noum1gDHzmNoipDzMaQwjAHxgspK02Z9ZsiY1vL+8gY=;
-        b=WiYgVW6p5YmhfJ1fapi1dEV+H0GzhymvsXYBm3fWFop6PihZpRxQvEDeDcLqcnFrxN
-         GA7btTGINH+SjmngWwigpHg79WHrthnRgrkP9OlYeW4TR9c8P0O5bLUdVtqqFEHqmEsU
-         +svG7093dbVIRNsmJYoS5WS8nZvExq124IgyKE2o3phChCnwKoH70QleRxkmkoxZ8bX+
-         5d1oRmRXpTGZTVAlRfvF/HDY9Ziut+xYVa5HmnyiXACurz2r46tXY0mvcJcHeXXb8nr6
-         17+rvkL0x6VMy+3U3ymIPkUyJC0Sm2OXKlZTjEYySyaB1jS57Ym5xU3OhN9wGUw3z2IY
-         oLZw==
+        bh=7n3QOIkNX2r6d6/enTJNZUSjlLuGPrXWdGbdYoKh828=;
+        b=Ph3S9+0tUqHfHCFwb5t2yHWdnbXX9vZfBZaVAQENCGnVe6jPBYNMix3505WaGwpeht
+         AEeAHqAoUlvjHxYJOjC0DeN9hk6ANLwaBP8TrysGh8x9odoqq5J1aAToy47Qo55iOq5K
+         hInYFZnXcHZHHc4eKsl1X4iJMYwfERCeh+d0DN6rpLNNZT2odsT22I1YKYON+KP9sWuR
+         5hWeOpM98j9EoBO15c+fsbGmSFQmr3OhtQl6FOMx8mt0hwumoL0iwfC/DU/676PaUzFH
+         srgFbPOUte/jnNSEMBEXqmEf+c8izkBJ4HDk0bNLQLklvcf1PqPRmjMxRemBatG3eq9w
+         u9Jw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ryan Harkin <ryan.harkin@linaro.org>,
-	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Aymen Sghaier <aymen.sghaier@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Lukas Auer <lukas.auer@aisec.fraunhofer.de>,
-	Rui Miguel Silva <rui.silva@linaro.org>,
+	Eli Cooper <elicooper@gmx.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 50/67] crypto: caam - Fix null dereference at error path
-Date: Fri,  6 Apr 2018 15:24:20 +0200
-Message-Id: <20180406084347.671555937@linuxfoundation.org>
+Subject: [PATCH 4.14 49/67] crypto: ahash - Fix early termination in hash walk
+Date: Fri,  6 Apr 2018 15:24:19 +0200
+Message-Id: <20180406084347.586903877@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -47,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597004279167623961?=
-X-GMAIL-MSGID: =?utf-8?q?1597004279167623961?=
+X-GMAIL-THRID: =?utf-8?q?1597003644583899503?=
+X-GMAIL-MSGID: =?utf-8?q?1597004276230059341?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,43 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rui Miguel Silva <rui.silva@linaro.org>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit b85149f6f5d5a9279f29a73b2e95342f4d465e73 upstream.
+commit 900a081f6912a8985dc15380ec912752cb66025a upstream.
 
-caam_remove already removes the debugfs entry, so we need to remove the one
-immediately before calling caam_remove.
+When we have an unaligned SG list entry where there is no leftover
+aligned data, the hash walk code will incorrectly return zero as if
+the entire SG list has been processed.
 
-This fix a NULL dereference at error paths is caam_probe fail.
+This patch fixes it by moving onto the next page instead.
 
-Fixes: 67c2315def06 ("crypto: caam - add Queue Interface (QI) backend support")
-
-Tested-by: Ryan Harkin <ryan.harkin@linaro.org>
-Cc: "Horia Geantă" <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Lukas Auer <lukas.auer@aisec.fraunhofer.de>
-Cc: <stable@vger.kernel.org> # 4.12+
-Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+Reported-by: Eli Cooper <elicooper@gmx.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/caam/ctrl.c |    3 ---
- 1 file changed, 3 deletions(-)
+ crypto/ahash.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -813,9 +813,6 @@ static int caam_probe(struct platform_de
- 	return 0;
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -92,13 +92,14 @@ int crypto_hash_walk_done(struct crypto_
  
- caam_remove:
--#ifdef CONFIG_DEBUG_FS
--	debugfs_remove_recursive(ctrlpriv->dfs_root);
--#endif
- 	caam_remove(pdev);
- 	return ret;
+ 	if (nbytes && walk->offset & alignmask && !err) {
+ 		walk->offset = ALIGN(walk->offset, alignmask + 1);
+-		walk->data += walk->offset;
+-
+ 		nbytes = min(nbytes,
+ 			     ((unsigned int)(PAGE_SIZE)) - walk->offset);
+ 		walk->entrylen -= nbytes;
  
+-		return nbytes;
++		if (nbytes) {
++			walk->data += walk->offset;
++			return nbytes;
++		}
+ 	}
+ 
+ 	if (walk->flags & CRYPTO_ALG_ASYNC)
