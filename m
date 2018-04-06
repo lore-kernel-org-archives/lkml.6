@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49b7Qy+P7x475gXO98SSoZWAawFR/HL48DLjQkvnj0FQKO44P39MxCnp1brxy61CR0BXw5W
-ARC-Seal: i=1; a=rsa-sha256; t=1523022177; cv=none;
+X-Google-Smtp-Source: AIpwx49BVoufwtSWwZnuRhc95o/VcMjcwqGLuMysxRJq3Fk9iBqnFqlc2UMpQBF4xA7czyyqvDKF
+ARC-Seal: i=1; a=rsa-sha256; t=1523022173; cv=none;
         d=google.com; s=arc-20160816;
-        b=F6ZTRIyGS1rj+h45KurnBI17FpFvmJvLdM/xnGhtZEiE6OzWboUl5yo+Ec+H71RiKK
-         rjvk8k7y8fQPLTGrHSAIp6lN0dD8ZOFC02TXRTVBZUpVZpcCNZgH5YGaFmhdyqCm07An
-         hZgIB/nJEaTWpWEl9LbRPMAtq6qUwBVD/BKurp9+2vOcZedZ/Avs9z2u7rNiJ9Lcr974
-         JlBCHioelOCc5RP5u3KnfQMUKZI5uB2QEPYknGjyBz7W7RCwMjXUOdi2KRWQY0oBQQC2
-         sx9pOTMMpcimOjVXJbvM8eEKi9gceeV1yUJv/doKUxwbtso1g0j1egkGx3R/PJ6mUd7C
-         yNfg==
+        b=q9mnSyBXrD+milsl3lQuWV22QbmvMwDyc/0J/fammkCWrwNA3uNJFlf1b2B+jIm8NG
+         GbP6cqI7dAqSUj7dxEbMqXJsbV7IiVJrZWJVF3DC5rVxB7PNSZdaULcXhxqmd2zi6EuP
+         PCWoq1444LxK20TsZnRKEKFR0zicMSrYPIBhd0edYMQo4BSrPYWvWh2Hj2pbEdgIvSgJ
+         pHSeKU4xCWgWtxMtNsWXZYKylooZ7/llLhTPAY3CG+nlsCTOxtxS+xjgRQF+fouavVfc
+         3ra2Wo5yfds+0yq/Pfi7wffom7VLAq3N0T4Itm0sHYKgzt7FsGS7lhO7zxKMSPC9YZyU
+         uevQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=A7Za5o36EPILp1TBw6DNj+8lXz5oexTE4dV07vMncSs=;
-        b=FY7bGhsEQGgK7uMi9Q2kFIcNbQlojYaNgBIQjhB949AYIjzkwX9jPkLliFvSyCQqRI
-         ZGhO0Rw8JExEkDGY61CDe2M7L58zGwiGqs8XQMfpSGRddj056ilYKnnNuyaxGOzGdVq5
-         +QABrLMreF8kXLs6sb8FwhhqG15AL2vT8aBDB5Pz9wTTx1QRHUEppiJQSCQbx9zPzGzK
-         5XHq8v3YtKp+C/jzscxkL+ZMykCHM/uxuxEjzRGKr9RFRxeIcFNloKsJs+lgcfyuihHx
-         KEyomWTEXdr2gtOnH5r1UjcVvtCG+G0zvrl9kRNL40qLgfxzgwenLdqEUCCSgYk/Qsoj
-         As+Q==
+        bh=2LXOvg1rqUR6iIAB1C8q1YbAWAB0V8yqyWBpUkBZRDo=;
+        b=Xpzpvu4HbzsbjQINhvGt8vGSL2IyaDPqJNL7Gnn/Uu1hSE72HdV4QqZfzLBug6pBFA
+         HZBQQ3CzD6zYn/9jBCZNQ7umw8Ew12r59TbMQCxoL0OemP9GT00RFot8JRKo/hQhruAi
+         5DoM0B7JmCcE17Ls+VPzzS7oEOi8qK4XQkw6hx7vrPLtDV26NycmfGVH/sKMv/tR6kV8
+         /mK0rFU5XvXH/M2luHnT3AhP47n4XzjfewHgTK41SCjOYjU/B+TSuw2LUWnWuzYoczrh
+         XMoEC5J0ZNn1qW1OhHUcXdzVYIua2PThT6AKKeYRcrJn1TIJmO/H5BXxoiZTLrf3YEGd
+         5jJg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+dcfd344365a56fbebd0f@syzkaller.appspotmail.com,
+	syzbot+1d8c43206853b369d00c@syzkaller.appspotmail.com,
 	Leon Romanovsky <leonro@mellanox.com>,
 	Sean Hefty <sean.hefty@intel.com>,
 	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.15 22/72] RDMA/ucma: Fix use-after-free access in ucma_close
-Date: Fri,  6 Apr 2018 15:23:57 +0200
-Message-Id: <20180406084351.232272204@linuxfoundation.org>
+Subject: [PATCH 4.15 21/72] RDMA/ucma: Check AF family prior resolving address
+Date: Fri,  6 Apr 2018 15:23:56 +0200
+Message-Id: <20180406084351.178260733@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003714922293729?=
-X-GMAIL-MSGID: =?utf-8?q?1597004502495814089?=
+X-GMAIL-THRID: =?utf-8?q?1597003708810773703?=
+X-GMAIL-MSGID: =?utf-8?q?1597004499027003095?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,32 +53,167 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Leon Romanovsky <leonro@mellanox.com>
 
-commit ed65a4dc22083e73bac599ded6a262318cad7baf upstream.
+commit 2975d5de6428ff6d9317e9948f0968f7d42e5d74 upstream.
 
-The error in ucma_create_id() left ctx in the list of contexts belong
-to ucma file descriptor. The attempt to close this file descriptor causes
-to use-after-free accesses while iterating over such list.
+Garbage supplied by user will cause to UCMA module provide zero
+memory size for memcpy(), because it wasn't checked, it will
+produce unpredictable results in rdma_resolve_addr().
 
+[   42.873814] BUG: KASAN: null-ptr-deref in rdma_resolve_addr+0xc8/0xfb0
+[   42.874816] Write of size 28 at addr 00000000000000a0 by task resaddr/1044
+[   42.876765]
+[   42.876960] CPU: 1 PID: 1044 Comm: resaddr Not tainted 4.16.0-rc1-00057-gaa56a5293d7e #34
+[   42.877840] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
+[   42.879691] Call Trace:
+[   42.880236]  dump_stack+0x5c/0x77
+[   42.880664]  kasan_report+0x163/0x380
+[   42.881354]  ? rdma_resolve_addr+0xc8/0xfb0
+[   42.881864]  memcpy+0x34/0x50
+[   42.882692]  rdma_resolve_addr+0xc8/0xfb0
+[   42.883366]  ? deref_stack_reg+0x88/0xd0
+[   42.883856]  ? vsnprintf+0x31a/0x770
+[   42.884686]  ? rdma_bind_addr+0xc40/0xc40
+[   42.885327]  ? num_to_str+0x130/0x130
+[   42.885773]  ? deref_stack_reg+0x88/0xd0
+[   42.886217]  ? __read_once_size_nocheck.constprop.6+0x10/0x10
+[   42.887698]  ? unwind_get_return_address_ptr+0x50/0x50
+[   42.888302]  ? replace_slot+0x147/0x170
+[   42.889176]  ? delete_node+0x12c/0x340
+[   42.890223]  ? __radix_tree_lookup+0xa9/0x160
+[   42.891196]  ? ucma_resolve_ip+0xb7/0x110
+[   42.891917]  ucma_resolve_ip+0xb7/0x110
+[   42.893003]  ? ucma_resolve_addr+0x190/0x190
+[   42.893531]  ? _copy_from_user+0x5e/0x90
+[   42.894204]  ucma_write+0x174/0x1f0
+[   42.895162]  ? ucma_resolve_route+0xf0/0xf0
+[   42.896309]  ? dequeue_task_fair+0x67e/0xd90
+[   42.897192]  ? put_prev_entity+0x7d/0x170
+[   42.897870]  ? ring_buffer_record_is_on+0xd/0x20
+[   42.898439]  ? tracing_record_taskinfo_skip+0x20/0x50
+[   42.899686]  __vfs_write+0xc4/0x350
+[   42.900142]  ? kernel_read+0xa0/0xa0
+[   42.900602]  ? firmware_map_remove+0xdf/0xdf
+[   42.901135]  ? do_task_dead+0x5d/0x60
+[   42.901598]  ? do_exit+0xcc6/0x1220
+[   42.902789]  ? __fget+0xa8/0xf0
+[   42.903190]  vfs_write+0xf7/0x280
+[   42.903600]  SyS_write+0xa1/0x120
+[   42.904206]  ? SyS_read+0x120/0x120
+[   42.905710]  ? compat_start_thread+0x60/0x60
+[   42.906423]  ? SyS_read+0x120/0x120
+[   42.908716]  do_syscall_64+0xeb/0x250
+[   42.910760]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[   42.912735] RIP: 0033:0x7f138b0afe99
+[   42.914734] RSP: 002b:00007f138b799e98 EFLAGS: 00000287 ORIG_RAX: 0000000000000001
+[   42.917134] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f138b0afe99
+[   42.919487] RDX: 000000000000002e RSI: 0000000020000c40 RDI: 0000000000000004
+[   42.922393] RBP: 00007f138b799ec0 R08: 00007f138b79a700 R09: 0000000000000000
+[   42.925266] R10: 00007f138b79a700 R11: 0000000000000287 R12: 00007f138b799fc0
+[   42.927570] R13: 0000000000000000 R14: 00007ffdbae757c0 R15: 00007f138b79a9c0
+[   42.930047]
+[   42.932681] Disabling lock debugging due to kernel taint
+[   42.934795] BUG: unable to handle kernel NULL pointer dereference at 00000000000000a0
+[   42.936939] IP: memcpy_erms+0x6/0x10
+[   42.938864] PGD 80000001bea92067 P4D 80000001bea92067 PUD 1bea96067 PMD 0
+[   42.941576] Oops: 0002 [#1] SMP KASAN PTI
+[   42.943952] CPU: 1 PID: 1044 Comm: resaddr Tainted: G    B 4.16.0-rc1-00057-gaa56a5293d7e #34
+[   42.946964] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
+[   42.952336] RIP: 0010:memcpy_erms+0x6/0x10
+[   42.954707] RSP: 0018:ffff8801c8b479c8 EFLAGS: 00010286
+[   42.957227] RAX: 00000000000000a0 RBX: ffff8801c8b47ba0 RCX: 000000000000001c
+[   42.960543] RDX: 000000000000001c RSI: ffff8801c8b47bbc RDI: 00000000000000a0
+[   42.963867] RBP: ffff8801c8b47b60 R08: 0000000000000000 R09: ffffed0039168ed1
+[   42.967303] R10: 0000000000000001 R11: ffffed0039168ed0 R12: ffff8801c8b47bbc
+[   42.970685] R13: 00000000000000a0 R14: 1ffff10039168f4a R15: 0000000000000000
+[   42.973631] FS:  00007f138b79a700(0000) GS:ffff8801e5d00000(0000) knlGS:0000000000000000
+[   42.976831] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   42.979239] CR2: 00000000000000a0 CR3: 00000001be908002 CR4: 00000000003606a0
+[   42.982060] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   42.984877] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   42.988033] Call Trace:
+[   42.990487]  rdma_resolve_addr+0xc8/0xfb0
+[   42.993202]  ? deref_stack_reg+0x88/0xd0
+[   42.996055]  ? vsnprintf+0x31a/0x770
+[   42.998707]  ? rdma_bind_addr+0xc40/0xc40
+[   43.000985]  ? num_to_str+0x130/0x130
+[   43.003410]  ? deref_stack_reg+0x88/0xd0
+[   43.006302]  ? __read_once_size_nocheck.constprop.6+0x10/0x10
+[   43.008780]  ? unwind_get_return_address_ptr+0x50/0x50
+[   43.011178]  ? replace_slot+0x147/0x170
+[   43.013517]  ? delete_node+0x12c/0x340
+[   43.016019]  ? __radix_tree_lookup+0xa9/0x160
+[   43.018755]  ? ucma_resolve_ip+0xb7/0x110
+[   43.021270]  ucma_resolve_ip+0xb7/0x110
+[   43.023968]  ? ucma_resolve_addr+0x190/0x190
+[   43.026312]  ? _copy_from_user+0x5e/0x90
+[   43.029384]  ucma_write+0x174/0x1f0
+[   43.031861]  ? ucma_resolve_route+0xf0/0xf0
+[   43.034782]  ? dequeue_task_fair+0x67e/0xd90
+[   43.037483]  ? put_prev_entity+0x7d/0x170
+[   43.040215]  ? ring_buffer_record_is_on+0xd/0x20
+[   43.042990]  ? tracing_record_taskinfo_skip+0x20/0x50
+[   43.045595]  __vfs_write+0xc4/0x350
+[   43.048624]  ? kernel_read+0xa0/0xa0
+[   43.051604]  ? firmware_map_remove+0xdf/0xdf
+[   43.055379]  ? do_task_dead+0x5d/0x60
+[   43.058000]  ? do_exit+0xcc6/0x1220
+[   43.060783]  ? __fget+0xa8/0xf0
+[   43.063133]  vfs_write+0xf7/0x280
+[   43.065677]  SyS_write+0xa1/0x120
+[   43.068647]  ? SyS_read+0x120/0x120
+[   43.071179]  ? compat_start_thread+0x60/0x60
+[   43.074025]  ? SyS_read+0x120/0x120
+[   43.076705]  do_syscall_64+0xeb/0x250
+[   43.079006]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[   43.081606] RIP: 0033:0x7f138b0afe99
+[   43.083679] RSP: 002b:00007f138b799e98 EFLAGS: 00000287 ORIG_RAX: 0000000000000001
+[   43.086802] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f138b0afe99
+[   43.089989] RDX: 000000000000002e RSI: 0000000020000c40 RDI: 0000000000000004
+[   43.092866] RBP: 00007f138b799ec0 R08: 00007f138b79a700 R09: 0000000000000000
+[   43.096233] R10: 00007f138b79a700 R11: 0000000000000287 R12: 00007f138b799fc0
+[   43.098913] R13: 0000000000000000 R14: 00007ffdbae757c0 R15: 00007f138b79a9c0
+[   43.101809] Code: 90 90 90 90 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48
+c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48
+89 d1 <f3> a4 c3 0f 1f 80 00 00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38
+[   43.107950] RIP: memcpy_erms+0x6/0x10 RSP: ffff8801c8b479c8
+
+Reported-by: <syzbot+1d8c43206853b369d00c@syzkaller.appspotmail.com>
 Fixes: 75216638572f ("RDMA/cma: Export rdma cm interface to userspace")
-Reported-by: <syzbot+dcfd344365a56fbebd0f@syzkaller.appspotmail.com>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Reviewed-by: Sean Hefty <sean.hefty@intel.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/infiniband/core/ucma.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 --- a/drivers/infiniband/core/ucma.c
 +++ b/drivers/infiniband/core/ucma.c
-@@ -497,6 +497,9 @@ err1:
- 	mutex_lock(&mut);
- 	idr_remove(&ctx_idr, ctx->id);
- 	mutex_unlock(&mut);
-+	mutex_lock(&file->mut);
-+	list_del(&ctx->list);
-+	mutex_unlock(&file->mut);
- 	kfree(ctx);
+@@ -664,19 +664,23 @@ static ssize_t ucma_resolve_ip(struct uc
+ 			       int in_len, int out_len)
+ {
+ 	struct rdma_ucm_resolve_ip cmd;
++	struct sockaddr *src, *dst;
+ 	struct ucma_context *ctx;
+ 	int ret;
+ 
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
+ 
++	src = (struct sockaddr *) &cmd.src_addr;
++	dst = (struct sockaddr *) &cmd.dst_addr;
++	if (!rdma_addr_size(src) || !rdma_addr_size(dst))
++		return -EINVAL;
++
+ 	ctx = ucma_get_ctx(file, cmd.id);
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
+-	ret = rdma_resolve_addr(ctx->cm_id, (struct sockaddr *) &cmd.src_addr,
+-				(struct sockaddr *) &cmd.dst_addr,
+-				cmd.timeout_ms);
++	ret = rdma_resolve_addr(ctx->cm_id, src, dst, cmd.timeout_ms);
+ 	ucma_put_ctx(ctx);
  	return ret;
  }
