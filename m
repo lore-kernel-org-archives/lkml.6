@@ -1,57 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752207AbeDFKzW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 06:55:22 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35056 "EHLO
+        id S1752054AbeDFK5R (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 06:57:17 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35098 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751494AbeDFKzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:55:21 -0400
-Date: Fri, 6 Apr 2018 11:55:34 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
-        catalin.marinas@arm.com, Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH 06/10] barriers: Introduce smp_cond_load_relaxed and
- atomic_cond_read_relaxed
-Message-ID: <20180406105534.GB27619@arm.com>
-References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
- <1522947547-24081-7-git-send-email-will.deacon@arm.com>
- <20180405172226.GF4082@hirez.programming.kicks-ass.net>
+        id S1751579AbeDFK5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 06:57:16 -0400
+Date: Fri, 6 Apr 2018 11:57:09 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Yury Norov <ynorov@caviumnetworks.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Christopher Lameter <cl@linux.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alexey Klimov <klimov.linux@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] arm64: entry: isb in el1_irq
+Message-ID: <20180406105709.kd3uumwustwnzcd4@lakrids.cambridge.arm.com>
+References: <20180405171800.5648-1-ynorov@caviumnetworks.com>
+ <20180405171800.5648-2-ynorov@caviumnetworks.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180405172226.GF4082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180405171800.5648-2-ynorov@caviumnetworks.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 07:22:26PM +0200, Peter Zijlstra wrote:
-> On Thu, Apr 05, 2018 at 05:59:03PM +0100, Will Deacon wrote:
-> > diff --git a/include/linux/atomic.h b/include/linux/atomic.h
-> > index 8b276fd9a127..01ce3997cb42 100644
-> > --- a/include/linux/atomic.h
-> > +++ b/include/linux/atomic.h
-> > @@ -654,6 +654,7 @@ static inline int atomic_dec_if_positive(atomic_t *v)
-> >  }
-> >  #endif
-> >  
-> > +#define atomic_cond_read_relaxed(v, c)	smp_cond_load_relaxed(&(v)->counter, (c))
-> >  #define atomic_cond_read_acquire(v, c)	smp_cond_load_acquire(&(v)->counter, (c))
-> >  
-> >  #ifdef CONFIG_GENERIC_ATOMIC64
-> > @@ -1075,6 +1076,7 @@ static inline long long atomic64_fetch_andnot_release(long long i, atomic64_t *v
-> >  }
-> >  #endif
-> >  
-> > +#define atomic64_cond_read_relaxed(v, c)	smp_cond_load_relaxed(&(v)->counter, (c))
-> >  #define atomic64_cond_read_acquire(v, c)	smp_cond_load_acquire(&(v)->counter, (c))
-> >  
-> >  #include <asm-generic/atomic-long.h>
+On Thu, Apr 05, 2018 at 08:17:56PM +0300, Yury Norov wrote:
+> Kernel text patching framework relies on IPI to ensure that other
+> SMP cores observe the change. Target core calls isb() in IPI handler
+> path, but not at the beginning of el1_irq entry. There's a chance
+> that modified instruction will appear prior isb(), and so will not be
+> observed.
 > 
-> Did we again forget atomic_long glue ? ;-)
+> This patch inserts isb early at el1_irq entry to avoid that chance.
 
-Bah! I'll add it for v2, thanks.
+As James pointed out, taking an exception is context synchronizing, so
+this looks unnecessary.
 
-Will
+Also, it's important to realise that the exception entry is not tied to a
+specific interrupt. We might take an EL1 IRQ because of a timer interrupt,
+then an IPI could be taken before we get to gic_handle_irq().
+
+This means that we can race:
+
+	CPU0				CPU1
+	<take IRQ>
+	ISB
+					<patch text>
+					<send IPI>
+	<discover IPI pending>
+
+... and thus the ISB is too early.
+
+Only once we're in the interrupt handler can we pair an ISB with the IPI, and
+any code executed before that is not guaranteed to be up-to-date.
+
+Thanks,
+Mark.
+
+> 
+> Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
+> ---
+>  arch/arm64/kernel/entry.S | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> index ec2ee720e33e..9c06b4b80060 100644
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@ -593,6 +593,7 @@ ENDPROC(el1_sync)
+>  
+>  	.align	6
+>  el1_irq:
+> +	isb					// pairs with aarch64_insn_patch_text
+>  	kernel_entry 1
+>  	enable_da_f
+>  #ifdef CONFIG_TRACE_IRQFLAGS
+> -- 
+> 2.14.1
+> 
