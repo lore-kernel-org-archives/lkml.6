@@ -1,285 +1,341 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1575513-1523025559-2-15165927302026921704
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523025558; b=MuRK/Lg4XFaAhR1wki9symz6m+pAaYLsvPoYjB4vUbXQuvT8VM
-    Tow/4sK2se6QjJSshoCUYBGn+6BcdhQpc9Vlxf50H3b/Jypd4Z11ECifNRk4jq5d
-    k/tsPS9105UEbBGMhPZZDAKm19OKxCD4JuIDTHYGmNkOR7Z2YSK9AYvL/0P3Nt9i
-    PzMZFj6G1Zf73E6vnkssAm1X8AWYHgEr/Qgk/Ic7C89qy/icskKkqI8PHJFIxi+r
-    UDGL2SY7SuubrUuYL9P4ypOHVgBVBIiHiKDa3jmvnbbmsukndrdlaN2mgo86QKxk
-    flL2UG/6ELVz0DzMDgPKd0ZySjgnoqdtaUDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523025558;
-    bh=X4A1O0ohLE3ZU2s98BZYWav9yLp6fwSDUGqUZ50Aomc=; b=Q9tvZ75LxWxn
-    CkMjfmn0aVxERscIQXrpVmJUDuJ0PmfRd2sj+THi94VqbvB3fLIH4NZYDZVfgz4J
-    TtcgiLFNj/UOQ/P5+a7PgHakOIj0EReY/N9G/6Y1wZcLc8USbLlLu36Lqu80JZ2l
-    FVyI5Xls6AGK42c58gc/4HBhfs/BmSke7BVIyecEHGjF4xj/Of+eSmSGwmFMHrWK
-    QlOlopbn2VOHp8BrKifIeTUf5iTbFWciElGT/Ae8STr1W163OxxIuKMu969LT7t+
-    SypcTjn0ROt6De1BeNzlIn2O+Ki8t5FmfWdmiGEHlmYGV2Nru/dKNSU4HzUtMJTm
-    3xQ9wheGZQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Ya+lneHT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=E1l9kGRr;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Ya+lneHT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=E1l9kGRr;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDgHKNMSoeZsny/Ut/l5EyAZmSQRL+m0z7oE1n7V6npKBrSlMD0IQAEhJu6XgIT9Y1PXPi3UwPDeJ3EvkP3sbr6i8eYb0ZhLUnZ4XPutBm6+0aGgdbQw
-    VsL2uiKZPV+HkZDHV4zjRMSs7IX0cxYTp4exXSc9+Jmg/SYK95akrfAV/B+y60tZGou2CDGBCg1fTufCFiSDikpZJVaIDLhMA4E4KCb8C9DR19SSMt5jd/1s
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=n7nexZTBlz8A:10
-    a=Kd1tUaAdevIA:10 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
-    a=MZHqBOpTA_u3xqdbZK4A:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755994AbeDFOjD (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 10:39:03 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:38456 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755888AbeDFOjB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 6 Apr 2018 10:39:01 -0400
-X-Google-Smtp-Source: AIpwx48rZaasp/jqri+FHd6RvtrlJuWBb57J1YUlQLOIzrTgeOMiBzuEPAXhSo7D5JsjA7SSHcFe032sruI8/+Phvuk=
-MIME-Version: 1.0
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/EacF5+Uv4BSurEqL7oCTqj5wHiw+b7MSQt2/ADqxfU9aUK6xeeAetS+mEUzGJ6dyGLcio
+ARC-Seal: i=1; a=rsa-sha256; t=1523022252; cv=none;
+        d=google.com; s=arc-20160816;
+        b=iGBSwWC0x67mT6h9ikhlPAjVFNsF46TrJ8jvDeOCSi1GOFGvgXtHr5sdXXHg1IvMew
+         7WdkJCJronrR1iH5RDQFvdQnlK34zGdRixmEOt34SD4HwooB8I5+6TrPRqhzIEuQB2ix
+         665cQfkjHhHZm/t3o5tVWg/09R8q8Xy6XVVfNnpDPsuy78sYe7gANMDL9ai57IVMtDFC
+         KbVnWq70kZZzV0unbPx2A5fI6/+q66IeIKxqFDom/c9+cP4XCN088CkuBXxEw3S+npad
+         I0WlqFNKPO150gmjBD3Nd3LsPA7KctxZ2uOkyegCmJyImU2EzJnrMteFOBbL0/9aefc7
+         KGRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=GnYvD6ouYT89gxK7ZZOllr1f2APnuiZTSr9oV3Ck4J8=;
+        b=pOH0VTV2DtNKesIho4XWhLZnG1sRaP3U63edJ49/A2yp3JwAdG/qJJcD3jxmkTIuHi
+         +jKOUiIBChVQo0Kj1hLkbTm2WM9H1gRa6yOjoBfnZkPgxyWXGMTI034iYWqQj2tFhsgz
+         LSFCA1YcjjaW1usK4k+kK89EgothHUKo7lmxPRQ4SFtqFTKQvdJIcZT4LtK054G8/sKc
+         XgmCCctlQZRDDzPil0wNRSB/UvInZM3R2pO+kmrH+O/7yn8Msw2NYqyZSmZMB0tmJ4G8
+         MxOEdJcQDYbeIh3+9KqAD3iYCQGNSfzA2h+d0KNlPm8fK6OR7I3cPjGauV9rvgXXFagG
+         Zpxw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Horia Geanta <horia.geanta@nxp.com>,
+	Christophe Leroy <christophe.leroy@c-s.fr>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.15 50/72] crypto: talitos - dont persistently map req_ctx->hw_context and req_ctx->buf
+Date: Fri,  6 Apr 2018 15:24:25 +0200
+Message-Id: <20180406084352.986223149@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 6 Apr 2018 20:08:58 +0530
-Message-ID: <CA+G9fYsDeZEKcDnnaHgo5XWf+psPsir8NCpxx696ozVeBzynPg@mail.gmail.com>
-Subject: Re: [PATCH 4.15 00/72] 4.15.16-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuahkh@osg.samsung.com>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597004581237170212?=
+X-GMAIL-MSGID: =?utf-8?q?1597004581237170212?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 6 April 2018 at 18:53, Greg Kroah-Hartman <gregkh@linuxfoundation.org> w=
-rote:
-> This is the start of the stable review cycle for the 4.15.16 release.
-> There are 72 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun Apr  8 08:43:10 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.15.16-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+4.15-stable review patch.  If anyone has any objections, please let me know.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+------------------
 
-Summary
-------------------------------------------------------------------------
+From: LEROY Christophe <christophe.leroy@c-s.fr>
 
-kernel: 4.15.16-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.15.y
-git commit: 1abb272b72b7242da1c7b6bb5a57bfe7d6ac15e1
-git describe: v4.15.15-73-g1abb272b72b7
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.15-oe/bu=
-ild/v4.15.15-73-g1abb272b72b7
+commit ad4cd51fb8375109edb377712b5f9c0c31ece33e upstream.
 
+Commit 49f9783b0cea ("crypto: talitos - do hw_context DMA mapping
+outside the requests") introduced a persistent dma mapping of
+req_ctx->hw_context
+Commit 37b5e8897eb5 ("crypto: talitos - chain in buffered data for ahash
+on SEC1") introduced a persistent dma mapping of req_ctx->buf
 
-No regressions (compared to build v4.15.15-59-g1c8d09b1ac26)
+As there is no destructor for req_ctx (the request context), the
+associated dma handlers where set in ctx (the tfm context). This is
+wrong as several hash operations can run with the same ctx.
 
-Boards, architectures and test suites:
--------------------------------------
+This patch removes this persistent mapping.
 
-dragonboard-410c - arm64
-* boot - fail: 2, pass: 20
-* kselftest - skip: 20, pass: 45
-* libhugetlbfs - skip: 1, pass: 90
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 2, pass: 61
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - skip: 1, pass: 21
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - pass: 14
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 148, pass: 1002
-* ltp-timers-tests - skip: 1, pass: 12
+Reported-by: Horia Geanta <horia.geanta@nxp.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 49f9783b0cea ("crypto: talitos - do hw_context DMA mapping outside the requests")
+Fixes: 37b5e8897eb5 ("crypto: talitos - chain in buffered data for ahash on SEC1")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Tested-by: Horia Geantă <horia.geanta@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-hi6220-hikey - arm64
-* boot - pass: 20
-* kselftest - skip: 17, pass: 48
-* libhugetlbfs - skip: 1, pass: 90
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 2, pass: 61
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - skip: 1, pass: 21
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 4, pass: 10
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 151, pass: 999
-* ltp-timers-tests - skip: 1, pass: 12
+---
+ drivers/crypto/talitos.c |  132 +++++++++++++++--------------------------------
+ 1 file changed, 44 insertions(+), 88 deletions(-)
 
-juno-r2 - arm64
-* boot - pass: 20
-* kselftest - skip: 17, pass: 48
-* libhugetlbfs - skip: 1, pass: 90
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 2, pass: 61
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - pass: 22
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 4, pass: 10
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 149, pass: 1001
-* ltp-timers-tests - skip: 1, pass: 12
-
-qemu_x86_64
-* boot - pass: 22
-* kselftest - skip: 23, pass: 57
-* kselftest-vsyscall-mode-native - skip: 23, pass: 57
-* kselftest-vsyscall-mode-none - skip: 23, pass: 57
-* libhugetlbfs - skip: 1, pass: 90
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 6, pass: 57
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - pass: 22
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 1, pass: 13
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 148, pass: 1002
-* ltp-timers-tests - skip: 1, pass: 12
-
-x15 - arm
-* boot - pass: 20
-* kselftest - skip: 21, pass: 41
-* libhugetlbfs - skip: 1, fail: 1, pass: 86
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 18, pass: 63
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 2, pass: 61
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - skip: 2, pass: 20
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 1, pass: 13
-* ltp-securebits-tests - pass: 4
-* ltp-syscalls-tests - skip: 97, pass: 1053
-* ltp-timers-tests - skip: 1, pass: 12
-
-x86_64
-* boot - pass: 22
-* kselftest - skip: 19, pass: 61
-* kselftest-vsyscall-mode-native - skip: 19, pass: 61
-* kselftest-vsyscall-mode-none - skip: 19, fail: 1, pass: 60
-* libhugetlbfs - skip: 1, pass: 89
-* ltp-cap_bounds-tests - pass: 2
-* ltp-containers-tests - skip: 17, pass: 64
-* ltp-fcntl-locktests-tests - pass: 2
-* ltp-filecaps-tests - pass: 2
-* ltp-fs-tests - skip: 1, pass: 62
-* ltp-fs_bind-tests - pass: 2
-* ltp-fs_perms_simple-tests - pass: 19
-* ltp-fsx-tests - pass: 2
-* ltp-hugetlb-tests - pass: 22
-* ltp-io-tests - pass: 3
-* ltp-ipc-tests - pass: 9
-* ltp-math-tests - pass: 11
-* ltp-nptl-tests - pass: 2
-* ltp-pty-tests - pass: 4
-* ltp-sched-tests - skip: 5, pass: 9
-* ltp-securebits-tests - pass: 3
-* ltp-syscalls-tests - skip: 119, pass: 1031
-* ltp-timers-tests - skip: 1, pass: 12
-
---
-Linaro QA (beta)
-https://qa-reports.linaro.org
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -832,8 +832,6 @@ struct talitos_ctx {
+ 	unsigned int keylen;
+ 	unsigned int enckeylen;
+ 	unsigned int authkeylen;
+-	dma_addr_t dma_buf;
+-	dma_addr_t dma_hw_context;
+ };
+ 
+ #define HASH_MAX_BLOCK_SIZE		SHA512_BLOCK_SIZE
+@@ -1690,9 +1688,30 @@ static void common_nonsnoop_hash_unmap(s
+ 				       struct ahash_request *areq)
+ {
+ 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
++	struct talitos_private *priv = dev_get_drvdata(dev);
++	bool is_sec1 = has_ftr_sec1(priv);
++	struct talitos_desc *desc = &edesc->desc;
++	struct talitos_desc *desc2 = desc + 1;
++
++	unmap_single_talitos_ptr(dev, &edesc->desc.ptr[5], DMA_FROM_DEVICE);
++	if (desc->next_desc &&
++	    desc->ptr[5].ptr != desc2->ptr[5].ptr)
++		unmap_single_talitos_ptr(dev, &desc2->ptr[5], DMA_FROM_DEVICE);
+ 
+ 	talitos_sg_unmap(dev, edesc, req_ctx->psrc, NULL, 0, 0);
+ 
++	/* When using hashctx-in, must unmap it. */
++	if (from_talitos_ptr_len(&edesc->desc.ptr[1], is_sec1))
++		unmap_single_talitos_ptr(dev, &edesc->desc.ptr[1],
++					 DMA_TO_DEVICE);
++	else if (desc->next_desc)
++		unmap_single_talitos_ptr(dev, &desc2->ptr[1],
++					 DMA_TO_DEVICE);
++
++	if (is_sec1 && req_ctx->nbuf)
++		unmap_single_talitos_ptr(dev, &desc->ptr[3],
++					 DMA_TO_DEVICE);
++
+ 	if (edesc->dma_len)
+ 		dma_unmap_single(dev, edesc->dma_link_tbl, edesc->dma_len,
+ 				 DMA_BIDIRECTIONAL);
+@@ -1766,8 +1785,10 @@ static int common_nonsnoop_hash(struct t
+ 
+ 	/* hash context in */
+ 	if (!req_ctx->first || req_ctx->swinit) {
+-		to_talitos_ptr(&desc->ptr[1], ctx->dma_hw_context,
+-			       req_ctx->hw_context_size, is_sec1);
++		map_single_talitos_ptr(dev, &desc->ptr[1],
++				       req_ctx->hw_context_size,
++				       (char *)req_ctx->hw_context,
++				       DMA_TO_DEVICE);
+ 		req_ctx->swinit = 0;
+ 	}
+ 	/* Indicate next op is not the first. */
+@@ -1793,10 +1814,9 @@ static int common_nonsnoop_hash(struct t
+ 	 * data in
+ 	 */
+ 	if (is_sec1 && req_ctx->nbuf) {
+-		dma_addr_t dma_buf = ctx->dma_buf + req_ctx->buf_idx *
+-						    HASH_MAX_BLOCK_SIZE;
+-
+-		to_talitos_ptr(&desc->ptr[3], dma_buf, req_ctx->nbuf, is_sec1);
++		map_single_talitos_ptr(dev, &desc->ptr[3], req_ctx->nbuf,
++				       req_ctx->buf[req_ctx->buf_idx],
++				       DMA_TO_DEVICE);
+ 	} else {
+ 		sg_count = talitos_sg_map(dev, req_ctx->psrc, length, edesc,
+ 					  &desc->ptr[3], sg_count, offset, 0);
+@@ -1812,8 +1832,9 @@ static int common_nonsnoop_hash(struct t
+ 				       crypto_ahash_digestsize(tfm),
+ 				       areq->result, DMA_FROM_DEVICE);
+ 	else
+-		to_talitos_ptr(&desc->ptr[5], ctx->dma_hw_context,
+-			       req_ctx->hw_context_size, is_sec1);
++		map_single_talitos_ptr(dev, &desc->ptr[5],
++				       req_ctx->hw_context_size,
++				       req_ctx->hw_context, DMA_FROM_DEVICE);
+ 
+ 	/* last DWORD empty */
+ 
+@@ -1832,9 +1853,14 @@ static int common_nonsnoop_hash(struct t
+ 		desc->hdr |= DESC_HDR_MODE0_MDEU_CONT;
+ 		desc->hdr &= ~DESC_HDR_DONE_NOTIFY;
+ 
+-		to_talitos_ptr(&desc2->ptr[1], ctx->dma_hw_context,
+-			       req_ctx->hw_context_size, is_sec1);
+-
++		if (desc->ptr[1].ptr)
++			copy_talitos_ptr(&desc2->ptr[1], &desc->ptr[1],
++					 is_sec1);
++		else
++			map_single_talitos_ptr(dev, &desc2->ptr[1],
++					       req_ctx->hw_context_size,
++					       req_ctx->hw_context,
++					       DMA_TO_DEVICE);
+ 		copy_talitos_ptr(&desc2->ptr[2], &desc->ptr[2], is_sec1);
+ 		sg_count = talitos_sg_map(dev, req_ctx->psrc, length, edesc,
+ 					  &desc2->ptr[3], sg_count, offset, 0);
+@@ -1842,8 +1868,10 @@ static int common_nonsnoop_hash(struct t
+ 			sync_needed = true;
+ 		copy_talitos_ptr(&desc2->ptr[5], &desc->ptr[5], is_sec1);
+ 		if (req_ctx->last)
+-			to_talitos_ptr(&desc->ptr[5], ctx->dma_hw_context,
+-				       req_ctx->hw_context_size, is_sec1);
++			map_single_talitos_ptr(dev, &desc->ptr[5],
++					       req_ctx->hw_context_size,
++					       req_ctx->hw_context,
++					       DMA_FROM_DEVICE);
+ 
+ 		next_desc = dma_map_single(dev, &desc2->hdr1, TALITOS_DESC_SIZE,
+ 					   DMA_BIDIRECTIONAL);
+@@ -1881,12 +1909,8 @@ static struct talitos_edesc *ahash_edesc
+ static int ahash_init(struct ahash_request *areq)
+ {
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
+-	struct talitos_ctx *ctx = crypto_ahash_ctx(tfm);
+-	struct device *dev = ctx->dev;
+ 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
+ 	unsigned int size;
+-	struct talitos_private *priv = dev_get_drvdata(dev);
+-	bool is_sec1 = has_ftr_sec1(priv);
+ 
+ 	/* Initialize the context */
+ 	req_ctx->buf_idx = 0;
+@@ -1898,18 +1922,6 @@ static int ahash_init(struct ahash_reque
+ 			: TALITOS_MDEU_CONTEXT_SIZE_SHA384_SHA512;
+ 	req_ctx->hw_context_size = size;
+ 
+-	if (ctx->dma_hw_context)
+-		dma_unmap_single(dev, ctx->dma_hw_context, size,
+-				 DMA_BIDIRECTIONAL);
+-	ctx->dma_hw_context = dma_map_single(dev, req_ctx->hw_context, size,
+-					     DMA_BIDIRECTIONAL);
+-	if (ctx->dma_buf)
+-		dma_unmap_single(dev, ctx->dma_buf, sizeof(req_ctx->buf),
+-				 DMA_TO_DEVICE);
+-	if (is_sec1)
+-		ctx->dma_buf = dma_map_single(dev, req_ctx->buf,
+-					      sizeof(req_ctx->buf),
+-					      DMA_TO_DEVICE);
+ 	return 0;
+ }
+ 
+@@ -1920,9 +1932,6 @@ static int ahash_init(struct ahash_reque
+ static int ahash_init_sha224_swinit(struct ahash_request *areq)
+ {
+ 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
+-	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
+-	struct talitos_ctx *ctx = crypto_ahash_ctx(tfm);
+-	struct device *dev = ctx->dev;
+ 
+ 	ahash_init(areq);
+ 	req_ctx->swinit = 1;/* prevent h/w initting context with sha256 values*/
+@@ -1940,9 +1949,6 @@ static int ahash_init_sha224_swinit(stru
+ 	req_ctx->hw_context[8] = 0;
+ 	req_ctx->hw_context[9] = 0;
+ 
+-	dma_sync_single_for_device(dev, ctx->dma_hw_context,
+-				   req_ctx->hw_context_size, DMA_TO_DEVICE);
+-
+ 	return 0;
+ }
+ 
+@@ -2046,13 +2052,6 @@ static int ahash_process_req(struct ahas
+ 	/* request SEC to INIT hash. */
+ 	if (req_ctx->first && !req_ctx->swinit)
+ 		edesc->desc.hdr |= DESC_HDR_MODE0_MDEU_INIT;
+-	if (is_sec1) {
+-		dma_addr_t dma_buf = ctx->dma_buf + req_ctx->buf_idx *
+-						    HASH_MAX_BLOCK_SIZE;
+-
+-		dma_sync_single_for_device(dev, dma_buf,
+-					   req_ctx->nbuf, DMA_TO_DEVICE);
+-	}
+ 
+ 	/* When the tfm context has a keylen, it's an HMAC.
+ 	 * A first or last (ie. not middle) descriptor must request HMAC.
+@@ -2106,12 +2105,7 @@ static int ahash_export(struct ahash_req
+ {
+ 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
+ 	struct talitos_export_state *export = out;
+-	struct crypto_ahash *ahash = crypto_ahash_reqtfm(areq);
+-	struct talitos_ctx *ctx = crypto_ahash_ctx(ahash);
+-	struct device *dev = ctx->dev;
+ 
+-	dma_sync_single_for_cpu(dev, ctx->dma_hw_context,
+-				req_ctx->hw_context_size, DMA_FROM_DEVICE);
+ 	memcpy(export->hw_context, req_ctx->hw_context,
+ 	       req_ctx->hw_context_size);
+ 	memcpy(export->buf, req_ctx->buf[req_ctx->buf_idx], req_ctx->nbuf);
+@@ -2130,31 +2124,14 @@ static int ahash_import(struct ahash_req
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
+ 	const struct talitos_export_state *export = in;
+ 	unsigned int size;
+-	struct talitos_ctx *ctx = crypto_ahash_ctx(tfm);
+-	struct device *dev = ctx->dev;
+-	struct talitos_private *priv = dev_get_drvdata(dev);
+-	bool is_sec1 = has_ftr_sec1(priv);
+ 
+ 	memset(req_ctx, 0, sizeof(*req_ctx));
+ 	size = (crypto_ahash_digestsize(tfm) <= SHA256_DIGEST_SIZE)
+ 			? TALITOS_MDEU_CONTEXT_SIZE_MD5_SHA1_SHA256
+ 			: TALITOS_MDEU_CONTEXT_SIZE_SHA384_SHA512;
+ 	req_ctx->hw_context_size = size;
+-	if (ctx->dma_hw_context)
+-		dma_unmap_single(dev, ctx->dma_hw_context, size,
+-				 DMA_BIDIRECTIONAL);
+-
+ 	memcpy(req_ctx->hw_context, export->hw_context, size);
+-	ctx->dma_hw_context = dma_map_single(dev, req_ctx->hw_context, size,
+-					     DMA_BIDIRECTIONAL);
+-	if (ctx->dma_buf)
+-		dma_unmap_single(dev, ctx->dma_buf, sizeof(req_ctx->buf),
+-				 DMA_TO_DEVICE);
+ 	memcpy(req_ctx->buf[0], export->buf, export->nbuf);
+-	if (is_sec1)
+-		ctx->dma_buf = dma_map_single(dev, req_ctx->buf,
+-					      sizeof(req_ctx->buf),
+-					      DMA_TO_DEVICE);
+ 	req_ctx->swinit = export->swinit;
+ 	req_ctx->first = export->first;
+ 	req_ctx->last = export->last;
+@@ -3064,27 +3041,6 @@ static void talitos_cra_exit(struct cryp
+ 		dma_unmap_single(dev, ctx->dma_key, ctx->keylen, DMA_TO_DEVICE);
+ }
+ 
+-static void talitos_cra_exit_ahash(struct crypto_tfm *tfm)
+-{
+-	struct talitos_ctx *ctx = crypto_tfm_ctx(tfm);
+-	struct device *dev = ctx->dev;
+-	unsigned int size;
+-
+-	talitos_cra_exit(tfm);
+-
+-	size = (crypto_ahash_digestsize(__crypto_ahash_cast(tfm)) <=
+-		SHA256_DIGEST_SIZE)
+-	       ? TALITOS_MDEU_CONTEXT_SIZE_MD5_SHA1_SHA256
+-	       : TALITOS_MDEU_CONTEXT_SIZE_SHA384_SHA512;
+-
+-	if (ctx->dma_hw_context)
+-		dma_unmap_single(dev, ctx->dma_hw_context, size,
+-				 DMA_BIDIRECTIONAL);
+-	if (ctx->dma_buf)
+-		dma_unmap_single(dev, ctx->dma_buf, HASH_MAX_BLOCK_SIZE * 2,
+-				 DMA_TO_DEVICE);
+-}
+-
+ /*
+  * given the alg's descriptor header template, determine whether descriptor
+  * type and primary/secondary execution units required match the hw
+@@ -3183,7 +3139,7 @@ static struct talitos_crypto_alg *talito
+ 	case CRYPTO_ALG_TYPE_AHASH:
+ 		alg = &t_alg->algt.alg.hash.halg.base;
+ 		alg->cra_init = talitos_cra_init_ahash;
+-		alg->cra_exit = talitos_cra_exit_ahash;
++		alg->cra_exit = talitos_cra_exit;
+ 		alg->cra_type = &crypto_ahash_type;
+ 		t_alg->algt.alg.hash.init = ahash_init;
+ 		t_alg->algt.alg.hash.update = ahash_update;
