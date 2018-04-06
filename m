@@ -1,67 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeDFPNl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:13:41 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:43424 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751344AbeDFPNj (ORCPT
+        id S1752250AbeDFPOI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 11:14:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38506 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751886AbeDFPOF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:13:39 -0400
-Date: Fri, 06 Apr 2018 11:13:37 -0400 (EDT)
-Message-Id: <20180406.111337.1908168293065420432.davem@davemloft.net>
-To: andrew@lunn.ch
-Cc: esben.haabendal@gmail.com, netdev@vger.kernel.org, eha@deif.com,
-        richardcochran@gmail.com, f.fainelli@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dp83640: Ensure against premature access to PHY
- registers after reset
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180406141410.GI17495@lunn.ch>
-References: <20180406140540.13511-1-esben.haabendal@gmail.com>
-        <20180406141410.GI17495@lunn.ch>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Fri, 6 Apr 2018 11:14:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9170F60316
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From: Lina Iyer <ilina@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v7 [RESEND] 0/2] drivers/qcom: add Command DB support
+Date: Fri,  6 Apr 2018 09:13:54 -0600
+Message-Id: <20180406151356.7818-1-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Fri, 6 Apr 2018 16:14:10 +0200
+Resending with minor rephrase of 'reg' property description.
 
-> On Fri, Apr 06, 2018 at 04:05:40PM +0200, Esben Haabendal wrote:
->> From: Esben Haabendal <eha@deif.com>
->> 
->> Signed-off-by: Esben Haabendal <eha@deif.com>
->> ---
->>  drivers/net/phy/dp83640.c | 17 +++++++++++++++++
->>  1 file changed, 17 insertions(+)
->> 
->> diff --git a/drivers/net/phy/dp83640.c b/drivers/net/phy/dp83640.c
->> index 654f42d00092..48403170096a 100644
->> --- a/drivers/net/phy/dp83640.c
->> +++ b/drivers/net/phy/dp83640.c
->> @@ -1207,6 +1207,22 @@ static void dp83640_remove(struct phy_device *phydev)
->>  	kfree(dp83640);
->>  }
->>  
->> +static int dp83640_soft_reset(struct phy_device *phydev)
->> +{
->> +	int ret;
->> +
->> +	ret = genphy_soft_reset(phydev);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	/* From DP83640 datasheet: "Software driver code must wait 3 us
->> +	 * following a software reset before allowing further serial MII
->> +	 * operations with the DP83640." */
->> +	udelay(3);
-> 
-> Hi Esben
-> 
-> The accuracy of udelay() is not guaranteed. So you probably want to be
-> a bit pessimistic, and use 10.
+Changes since v6:
+	- Fix 'reg' property
+	- Add reviewed-by tags
 
-Agreed.
+Changes since v5:
+        - Remove indirection of command db start address
+        - Rebase on top of 4.16
+
+Changes since v4:
+        - Address comments from Stephen and Bjorn
+
+These patches add support for reading a shared memory database in the newer
+QCOM SoCs called Command DB. With the new architecture on SDM845, shared
+resources like clocks, regulators etc., have dynamic properties. These
+properties may change based on external components, board configurations or
+available feature set. A remote processor detects these parameters and fills up
+the database with the resource and available state information. Platform
+drivers that need these shared resources will need to query this database to
+get the address and properties and vote for the state.
+
+The information in the database is static. The database is read-only memory
+location that is available for Linux. A pre-defined string is used as a key into
+an entry in the database. Generally, platform drivers query the database only
+at init to get the information they need.
+
+[v1]: https://www.spinics.net/lists/linux-arm-msm/msg32462.html
+[v2]: https://lkml.org/lkml/2018/2/8/588
+[v3]: https://lkml.org/lkml/2018/2/16/842
+[v4]: https://patchwork.kernel.org/patch/10242935/
+[v5]: https://lkml.org/lkml/2018/3/14/787
+[v6]: https://lkml.org/lkml/2018/4/5/451
+
+Lina Iyer (2):
+  drivers: qcom: add command DB driver
+  dt-bindings: introduce Command DB for QCOM SoCs
+
+ .../bindings/reserved-memory/qcom,cmd-db.txt       |  36 +++
+ drivers/of/platform.c                              |   1 +
+ drivers/soc/qcom/Kconfig                           |   9 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/cmd-db.c                          | 310 +++++++++++++++++++++
+ include/soc/qcom/cmd-db.h                          |  45 +++
+ 6 files changed, 402 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.txt
+ create mode 100644 drivers/soc/qcom/cmd-db.c
+ create mode 100644 include/soc/qcom/cmd-db.h
+
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
