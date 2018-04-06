@@ -1,61 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752877AbeDFNBW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:01:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59934 "EHLO mail.kernel.org"
+        id S1752858AbeDFNBU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:01:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752791AbeDFNBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752796AbeDFNBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 6 Apr 2018 09:01:16 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD4EF21840
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F9321842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180406130114.583922292@goodmis.org>
+Message-Id: <20180406130114.856301626@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 06 Apr 2018 09:00:51 -0400
+Date: Fri, 06 Apr 2018 09:00:52 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: [for-next][PATCH 16/18] tracing: Fixup logic inversion on setting trace_global_clock defaults
+        kbuild test robot <fengguang.wu@intel.com>
+Subject: [for-next][PATCH 17/18] tracing: Add rcu dereference annotation for filter->prog
 References: <20180406130035.400292196@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0016-tracing-Fixup-logic-inversion-on-setting-trace_globa.patch
+Content-Disposition: inline; filename=0017-tracing-Add-rcu-dereference-annotation-for-filter-pr.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-In commit 932066a15335 ("tracing: Default to using trace_global_clock if
-sched_clock is unstable"), the logic for deciding to override the
-default clock if unstable was reversed from the earlier posting. I was
-trying to reduce the width of the message by using an early return
-rather than a if-block, but reverted back to using the if-block and
-accidentally left the predicate inverted.
+ftrace_function_set_filter() referenences filter->prog without annotation
+and sparse complains about it. It needs a rcu_dereference_protected()
+wrapper.
 
-Link: http://lkml.kernel.org/r/20180404212450.26646-1-chris@chris-wilson.co.uk
-
-Fixes: 932066a15335 ("tracing: Default to using trace_global_clock if sched_clock is unstable")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Fixes: 80765597bc587 ("tracing: Rewrite filter logic to be simpler and faster")
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_events_filter.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 0f47e653ffd8..e18e69183c9a 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8602,7 +8602,7 @@ late_initcall_sync(clear_boot_tracer);
- __init static int tracing_set_default_clock(void)
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 703a416aa5c2..cf8460caa95c 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1992,7 +1992,8 @@ static bool is_or(struct prog_entry *prog, int i)
+ static int ftrace_function_set_filter(struct perf_event *event,
+ 				      struct event_filter *filter)
  {
- 	/* sched_clock_stable() is determined in late_initcall */
--	if (trace_boot_clock || sched_clock_stable()) {
-+	if (!trace_boot_clock && !sched_clock_stable()) {
- 		printk(KERN_WARNING
- 		       "Unstable clock detected, switching default tracing clock to \"global\"\n"
- 		       "If you want to keep using the local clock, then add:\n"
+-	struct prog_entry *prog = filter->prog;
++	struct prog_entry *prog = rcu_dereference_protected(filter->prog,
++						lockdep_is_held(&event_mutex));
+ 	struct function_filter_data data = {
+ 		.first_filter  = 1,
+ 		.first_notrace = 1,
 -- 
 2.15.1
