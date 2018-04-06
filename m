@@ -1,141 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757039AbeDFNvQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:51:16 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35089 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752775AbeDFNvM (ORCPT
+        id S1757047AbeDFNve (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:51:34 -0400
+Received: from nov-007-i637.relay.mailchannels.net ([46.232.183.191]:8906 "EHLO
+        nov-007-i637.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752966AbeDFNvc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:51:12 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 7/7] arm64: dts: renesas: eagle: Add ADV7511W and HDMI output
-Date: Fri, 06 Apr 2018 16:51:11 +0300
-Message-ID: <2235860.8H9ojNphtF@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1523020092-25540-8-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org> <1523020092-25540-8-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 6 Apr 2018 09:51:32 -0400
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
+X-MailChannels-Auth-Id: novatrend
+X-Lettuce-Troubled: 59e5f4e1514ba4d3_1523022685831_541741685
+X-MC-Loop-Signature: 1523022685830:186766683
+X-MC-Ingress-Time: 1523022685830
+From: =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
+To: mtk.manpages@gmail.com
+Cc: linux-man@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
+Subject: [PATCH v2] readv.2, io_submit.2: Document RWF_APPEND added in Linux 4.16
+Date: Fri,  6 Apr 2018 15:51:06 +0200
+Message-Id: <20180406135106.30342-1-j@bitron.ch>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <1f559be3-93df-ccdd-02dc-39c83c83a8c9@gmail.com>
+References: <1f559be3-93df-ccdd-02dc-39c83c83a8c9@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-AuthUser: juerg@bitron.ch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w36DpMPZ016677
 
-Hi Jacopo,
+Signed-off-by: JÃ¼rg Billeter <j@bitron.ch>
+---
+Changes since version 1:
+- Explain offset handling
 
-Thank you for the patch.
+ man2/io_submit.2 | 13 +++++++++++++
+ man2/readv.2     | 17 +++++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-On Friday, 6 April 2018 16:08:12 EEST Jacopo Mondi wrote:
-> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> Enable HDMI output adding the HDMI connector and the ADV7511W, connected
-> to THC63LVD1024 LVDS decoder output.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 51 ++++++++++++++++++++++-
->  1 file changed, 50 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts index 9d0e65d..e9f7b83
-> 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> @@ -32,6 +32,17 @@
->  		reg = <0x0 0x48000000 0x0 0x38000000>;
->  	};
-> 
-> +	hdmi-out {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_con_out: endpoint {
-> +				remote-endpoint = <&adv7511_out>;
-> +			};
-> +		};
-> +	};
-> +
->  	thc63lvd1024: lvds-decoder {
->  		compatible = "thine,thc63lvd1024";
-> 
-> @@ -41,11 +52,17 @@
-> 
->  			port@0 {
->  				reg = <0>;
-> -
-
-This is unrelated, if you don't want a blank line here remove it from patch 
-6/7 :-)
-
->  				thc63lvd1024_in: endpoint {
->  					remote-endpoint = <&lvds0_out>;
->  				};
->  			};
-> +
-> +			port@2 {
-> +				reg = <2>;
-> +				thc63lvd1024_out: endpoint {
-> +					remote-endpoint = <&adv7511_in>;
-> +				};
-> +			};
->  		};
->  	};
->  };
-> @@ -85,6 +102,38 @@
->  		gpio-controller;
->  		#gpio-cells = <2>;
->  	};
-> +
-> +	hdmi@39 {
-> +		compatible = "adi,adv7511w";
-> +		reg = <0x39>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-> +
-> +		adi,input-depth = <8>;
-> +		adi,input-colorspace = "rgb";
-> +		adi,input-clock = "1x";
-> +		adi,input-style = <1>;
-> +		adi,input-justification = "evenly";
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				adv7511_in: endpoint {
-> +					remote-endpoint = <&thc63lvd1024_out>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +				adv7511_out: endpoint {
-> +					remote-endpoint = <&hdmi_con_out>;
-> +				};
-> +			};
-> +		};
-> +	};
->  };
-> 
->  &pfc {
-
-With patches 5/7, 6/7 and 7/7 merged together and the pinmux removed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+diff --git a/man2/io_submit.2 b/man2/io_submit.2
+index 397fd0b75..25961138a 100644
+--- a/man2/io_submit.2
++++ b/man2/io_submit.2
+@@ -111,6 +111,19 @@ field of the
+ .I io_event
+ structure (see
+ .BR io_getevents (2)).
++.TP
++.BR RWF_APPEND " (since Linux 4.16)"
++.\" commit e1fc742e14e01d84d9693c4aca4ab23da65811fb
++Append data to the end of the file.
++See the description of the flag of the same name in
++.BR pwritev2 (2)
++as well as the description of
++.B O_APPEND
++in
++.BR open (2).
++The
++.I aio_offset
++field is ignored. The file offset is not changed.
+ .RE
+ .TP
+ .I aio_lio_opcode
+diff --git a/man2/readv.2 b/man2/readv.2
+index b3b7b9658..9ef250e11 100644
+--- a/man2/readv.2
++++ b/man2/readv.2
+@@ -248,6 +248,23 @@ to
+ .BR EAGAIN .
+ Currently, this flag is meaningful only for
+ .BR preadv2 ().
++.TP
++.BR RWF_APPEND " (since Linux 4.16)"
++.\" commit e1fc742e14e01d84d9693c4aca4ab23da65811fb
++Provide a per-write equivalent of the
++.B O_APPEND
++.BR open (2)
++flag.
++This flag is meaningful only for
++.BR pwritev2 (),
++and its effect applies only to the data range written by the system call.
++The
++.I offset
++argument does not affect the write operation, the data is always appended
++to the end of the file. However, if the
++.I offset
++argument is \-1, the current file offset is updated.
++This matches the behavior when the file is opened in append mode.
+ .SH RETURN VALUE
+ On success,
+ .BR readv (),
 -- 
-Regards,
-
-Laurent Pinchart
+2.16.3
