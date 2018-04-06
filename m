@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48Og4KNgmFeJvV5nmdNzW84ou2oUHEzhPTtvHO7/wjHE7C00y2n3C2VCvrg2A3OhtGrjcyg
-ARC-Seal: i=1; a=rsa-sha256; t=1523021915; cv=none;
+X-Google-Smtp-Source: AIpwx48Ls63pNyY1Sc2ukTkXBLtdYOgz5JfMYyda5msnufeieLm2kqPFxB0iokm4XjURoeeWUw88
+ARC-Seal: i=1; a=rsa-sha256; t=1523021912; cv=none;
         d=google.com; s=arc-20160816;
-        b=av8ijSML+6jfQ6N6E4Okjo9YeieOAxkTRLkGg+bvopGHr0g9yl8q/HFgmWK7H62l2G
-         bNhic7VqY5F8232XoYb2t558POo6U8kJsb614l4VFRSBi4icUIego5LyJouWX1BGINwX
-         ErMWoEjt795Q9QDCbTilXVM+9LGel8JTrBaoiobOMRCfZpxXwzE1QviJKMmoa9mYgQei
-         +9Z1ov8QMczp1JIpTdTiCRDLjEl6HmAYxbYeioN5plrfWUEugsmyABrsB44iHfEnKPf3
-         YS/TJpLkujcFT9ma0TR51TxEZ0oe2ToQG3M65C2qlhTdxjpvEkkYQ0cnrx8RreCmyBs8
-         Hkdw==
+        b=hmzAFPL4SyGC0UVvCf4LdJg2rRTCHx/vMXigttIdcTkhYxILrhYum7fc1YTeTh2I4F
+         eKu/RbIAVKs9+dNcrvstzTq3K53OK0+KaNjzuB+oOy5lRzbx1vajfFtsZysHNzKrmuQK
+         ut8I8TABq3W4dQVHRfJtV3CAm2nnQKaFgscuH/OyOMQH1pMjHJ7w76CjNpjcNTLeuWmM
+         n/9BL98PXsjs0jHAORRs9SXW+MoQ4ux/ekb/k4aCQ2g2W8ZYYB4iUuoL15LPNegEoy22
+         y5XptKagR7m4N9Mr+8PtLz6X5VBcE6VzpiCSaNGUKSElgEMA/hqsE5zPI257WSC9ViQm
+         X3nw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wcnaCqnhgDorOj/ID7V4ebe195AcK9Cztn2H5G3bog8=;
-        b=NkRZHoYYCnA6yQgj9MKDCz8sBfA0u5Hqf4fp3U7/WW6U9Oo/4bbObblmQG9G6eRVqz
-         Dn4IQpatBGaBtdbRODCkG9tj27n1mRcx0DW5ErKTy4RJV2DKn/7pZaoj4nun7GCS+LxH
-         yhTjQwz+UUvY2cBDJFMLLq+d6w8M9v/78h//+Vdyuq8EUa5dcbXrT7FOqRoPrR2UypyG
-         d7PsWwAds3FcecChZHtlsjv0vyu5ghMT20iSHYwEeHov56hJpUbQ8R9LSCXcLXBt6af+
-         tX3fh5RZGrl9O861Xa4tM3+obtbO8zMmBtowfZsEOskEzSe2aow1IaH5k9syR/QG0hb7
-         PBAQ==
+        bh=9616sPMVXbm/V0SbHvSvndTFMsEqbLakL6dLbmzLR9o=;
+        b=bbi0vwQ4ouRhkiRvQTuTdejX8T7g1k1Ck/MysvKBSd82Rm4kVd7tBATkwI1F6axSRD
+         da0xB9AipCZFUgPKtfT+x2fRpRsZ0FWxpaNb3FP9CtM4mCCyaypfr+AonKdc7Zou0Xmv
+         f2sj2lKxr6LGYCSrX4GF5hVkBbIo2Nx182ODxfswZ2SX994JLFAJXMsMzT1oQa+4IJwh
+         3DVUAMocmxk1huOZ5MN6rolyfUA1DsL2QqD3MWHWaeSJdpfxCqdnjfihKBeEBYvYtrGR
+         77GJ3vIjT8Tf/E/gGMV10o3PSqmMa9gCAT6QMu2Zb18Hw+/IoASihW30YDpetBQ9Zgat
+         eTuw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com,
-	Florian Westphal <fw@strlen.de>,
-	Eric Dumazet <edumazet@google.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 30/67] netfilter: bridge: ebt_among: add more missing match size checks
-Date: Fri,  6 Apr 2018 15:24:00 +0200
-Message-Id: <20180406084345.281062474@linuxfoundation.org>
+	Philipp Rossak <embed3d@gmail.com>,
+	Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH 4.14 03/67] ARM: dts: sun6i: a31s: bpi-m2: improve pmic properties
+Date: Fri,  6 Apr 2018 15:23:33 +0200
+Message-Id: <20180406084341.696740711@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084341.225558262@linuxfoundation.org>
 References: <20180406084341.225558262@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003597962532229?=
-X-GMAIL-MSGID: =?utf-8?q?1597004228042385134?=
+X-GMAIL-THRID: =?utf-8?q?1597004224780600587?=
+X-GMAIL-MSGID: =?utf-8?q?1597004224780600587?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,97 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Philipp Rossak <embed3d@gmail.com>
 
-commit c8d70a700a5b486bfa8e5a7d33d805389f6e59f9 upstream.
+commit b23af6ad8d2f708c4c3f92dd8f82c233247ba8bf upstream.
 
-ebt_among is special, it has a dynamic match size and is exempt
-from the central size checks.
+The eldoin is supplied from the dcdc1 regulator. The N_VBUSEN pin is
+connected to an external power regulator (SY6280AAC).
+With this commit we update the pmic binding properties to support
+those features.
 
-commit c4585a2823edf ("bridge: ebt_among: add missing match size checks")
-added validation for pool size, but missed fact that the macros
-ebt_among_wh_src/dst can already return out-of-bound result because
-they do not check value of wh_src/dst_ofs (an offset) vs. the size
-of the match that userspace gave to us.
-
-v2:
-check that offset has correct alignment.
-Paolo Abeni points out that we should also check that src/dst
-wormhash arrays do not overlap, and src + length lines up with
-start of dst (or vice versa).
-v3: compact wormhash_sizes_valid() part
-
-NB: Fixes tag is intentionally wrong, this bug exists from day
-one when match was added for 2.6 kernel. Tag is there so stable
-maintainers will notice this one too.
-
-Tested with same rules from the earlier patch.
-
-Fixes: c4585a2823edf ("bridge: ebt_among: add missing match size checks")
-Reported-by: <syzbot+bdabab6f1983a03fc009@syzkaller.appspotmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 7daa21370075 ("ARM: dts: sunxi: Add regulators for Sinovoip BPI-M2")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bridge/netfilter/ebt_among.c |   34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/bridge/netfilter/ebt_among.c
-+++ b/net/bridge/netfilter/ebt_among.c
-@@ -177,6 +177,28 @@ static bool poolsize_invalid(const struc
- 	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
- }
+--- a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
++++ b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+@@ -163,6 +163,8 @@
+ 		reg = <0x68>;
+ 		interrupt-parent = <&nmi_intc>;
+ 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		eldoin-supply = <&reg_dcdc1>;
++		x-powers,drive-vbus-en;
+ 	};
+ };
  
-+static bool wormhash_offset_invalid(int off, unsigned int len)
-+{
-+	if (off == 0) /* not present */
-+		return false;
-+
-+	if (off < (int)sizeof(struct ebt_among_info) ||
-+	    off % __alignof__(struct ebt_mac_wormhash))
-+		return true;
-+
-+	off += sizeof(struct ebt_mac_wormhash);
-+
-+	return off > len;
-+}
-+
-+static bool wormhash_sizes_valid(const struct ebt_mac_wormhash *wh, int a, int b)
-+{
-+	if (a == 0)
-+		a = sizeof(struct ebt_among_info);
-+
-+	return ebt_mac_wormhash_size(wh) + a == b;
-+}
-+
- static int ebt_among_mt_check(const struct xt_mtchk_param *par)
- {
- 	const struct ebt_among_info *info = par->matchinfo;
-@@ -189,6 +211,10 @@ static int ebt_among_mt_check(const stru
- 	if (expected_length > em->match_size)
- 		return -EINVAL;
- 
-+	if (wormhash_offset_invalid(info->wh_dst_ofs, em->match_size) ||
-+	    wormhash_offset_invalid(info->wh_src_ofs, em->match_size))
-+		return -EINVAL;
-+
- 	wh_dst = ebt_among_wh_dst(info);
- 	if (poolsize_invalid(wh_dst))
- 		return -EINVAL;
-@@ -201,6 +227,14 @@ static int ebt_among_mt_check(const stru
- 	if (poolsize_invalid(wh_src))
- 		return -EINVAL;
- 
-+	if (info->wh_src_ofs < info->wh_dst_ofs) {
-+		if (!wormhash_sizes_valid(wh_src, info->wh_src_ofs, info->wh_dst_ofs))
-+			return -EINVAL;
-+	} else {
-+		if (!wormhash_sizes_valid(wh_dst, info->wh_dst_ofs, info->wh_src_ofs))
-+			return -EINVAL;
-+	}
-+
- 	expected_length += ebt_mac_wormhash_size(wh_src);
- 
- 	if (em->match_size != EBT_ALIGN(expected_length)) {
