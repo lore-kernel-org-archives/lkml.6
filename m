@@ -1,132 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751722AbeDFHYd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 03:24:33 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49461 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751367AbeDFHYc (ORCPT
+        id S1751443AbeDFH2E (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 03:28:04 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34603 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbeDFH2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 03:24:32 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
-Subject: Re: [PATCH v9 05/10] cpuidle: Return nohz hint from cpuidle_select()
-Date: Fri, 06 Apr 2018 09:24:42 +0200
-Message-ID: <1694033.ykrRIB27yN@aspire.rjw.lan>
-In-Reply-To: <20180406024413.GB4400@lerouge>
-References: <1736751.LdhZHb50jq@aspire.rjw.lan> <5818594.T4StF86Hkt@aspire.rjw.lan> <20180406024413.GB4400@lerouge>
+        Fri, 6 Apr 2018 03:28:03 -0400
+X-Google-Smtp-Source: AIpwx4/UO7VC630AqBE2Fo1xcSOa7abTnR4T3swmzJd82IqlOtzyVplsKrsZjan20BXxmraXlSp9YA==
+Date: Fri, 6 Apr 2018 09:18:39 +0200
+From: Tobias Regnery <tobias.regnery@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pstore: fix crypto dependencies without compression
+Message-ID: <20180406071839.GA3685@builder>
+References: <20180406063804.30510-1-tobias.regnery@gmail.com>
+ <CAK8P3a2R1R0Ag=7rQ+pHH5fXz7LqVnJug+upx3t_PmbCkg+t2g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2R1R0Ag=7rQ+pHH5fXz7LqVnJug+upx3t_PmbCkg+t2g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, April 6, 2018 4:44:14 AM CEST Frederic Weisbecker wrote:
-> On Wed, Apr 04, 2018 at 10:39:50AM +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Index: linux-pm/kernel/time/tick-sched.c
-> > ===================================================================
-> > --- linux-pm.orig/kernel/time/tick-sched.c
-> > +++ linux-pm/kernel/time/tick-sched.c
-> > @@ -991,6 +991,20 @@ void tick_nohz_irq_exit(void)
-> >  }
-> >  
-> >  /**
-> > + * tick_nohz_idle_got_tick - Check whether or not the tick handler has run
-> > + */
-> > +bool tick_nohz_idle_got_tick(void)
-> > +{
-> > +	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
-> > +
-> > +	if (ts->inidle > 1) {
-> > +		ts->inidle = 1;
-> > +		return true;
-> > +	}
-> > +	return false;
-> > +}
-> > +
-> > +/**
-> >   * tick_nohz_get_sleep_length - return the length of the current sleep
-> >   *
-> >   * Called from power state control code with interrupts disabled
-> > @@ -1101,6 +1115,9 @@ static void tick_nohz_handler(struct clo
-> >  	struct pt_regs *regs = get_irq_regs();
-> >  	ktime_t now = ktime_get();
-> >  
-> > +	if (ts->inidle)
-> > +		ts->inidle = 2;
-> > +
+On 06.04.18, Arnd Bergmann wrote:
+> On Fri, Apr 6, 2018 at 8:38 AM, Tobias Regnery <tobias.regnery@gmail.com> wrote:
+> > Commit 58eb5b670747 ("pstore: fix crypto dependencies") fixed up the crypto
+> > dependencies but missed the case when no compression is selected.
+> >
+> > With CONFIG_PSTORE=y, CONFIG_PSTORE_COMPRESS=n  and CONFIG_CRYPTO=m we see
+> > the following link error:
+> >
+> > fs/pstore/platform.o: In function `pstore_register':
+> > (.text+0x1b1): undefined reference to `crypto_has_alg'
+> > (.text+0x205): undefined reference to `crypto_alloc_base'
+> > fs/pstore/platform.o: In function `pstore_unregister':
+> > (.text+0x3b0): undefined reference to `crypto_destroy_tfm'
+> >
+> > Fix this by selecting CONFIG_CRYPTO unconditionally.
+> >
+> > Fixes: 58eb5b670747 ("pstore: fix crypto dependencies")
+> > Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
 > 
-> You can move that to tick_sched_do_timer() to avoid code duplication.
-
-Right.
-
-> Also these constants are very opaque. And even with proper symbols it wouldn't look
-> right to extend ts->inidle that way.
-
-Well, this was a Peter's idea. :-)
-
-> Perhaps you should add a field such as ts->got_idle_tick under the boolean fields
-> after the below patch:
-
-OK, but at this point I'd prefer to make such changes on top of the existing
-set, because that's got quite some testing coverage already and honestly this
-is cosmetics in my view (albeit important).
-
-> --
-> From c7b2ca5a4c512517ddfeb9f922d5999f82542ced Mon Sep 17 00:00:00 2001
-> From: Frederic Weisbecker <frederic@kernel.org>
-> Date: Fri, 6 Apr 2018 04:32:37 +0200
-> Subject: [PATCH] nohz: Gather tick_sched booleans under a common flag field
+> Thanks, I wonder how I missed this one. Thanks for fixing it up.
+> It's a bit unfortunate that it now disallows the otherwise valid
+> CONFIG_PSTORE=y, CONFIG_PSTORE_COMPRESS=n
+> and CONFIG_CRYPTO=n configuration, though.
 > 
-> This optimize the space and leave plenty of room for further flags.
+> Could we do this by making the calls compile-time configured
+> in the pstore code instead? Please try the untested version
+> below.
 > 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->  kernel/time/tick-sched.h | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+>         Arnd
 > 
-> diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
-> index 954b43d..38f24dc 100644
-> --- a/kernel/time/tick-sched.h
-> +++ b/kernel/time/tick-sched.h
-> @@ -45,14 +45,17 @@ struct tick_sched {
->  	struct hrtimer			sched_timer;
->  	unsigned long			check_clocks;
->  	enum tick_nohz_mode		nohz_mode;
-> +
-> +	unsigned int			inidle		: 1;
-> +	unsigned int			tick_stopped	: 1;
-> +	unsigned int			idle_active	: 1;
-> +	unsigned int			do_timer_last	: 1;
-> +
->  	ktime_t				last_tick;
->  	ktime_t				next_tick;
-> -	int				inidle;
-> -	int				tick_stopped;
->  	unsigned long			idle_jiffies;
->  	unsigned long			idle_calls;
->  	unsigned long			idle_sleeps;
-> -	int				idle_active;
->  	ktime_t				idle_entrytime;
->  	ktime_t				idle_waketime;
->  	ktime_t				idle_exittime;
-> @@ -62,7 +65,6 @@ struct tick_sched {
->  	unsigned long			last_jiffies;
->  	u64				next_timer;
->  	ktime_t				idle_expires;
-> -	int				do_timer_last;
->  	atomic_t			tick_dep_mask;
->  };
->  
+> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+> index 1143ef351c58..dc720573fd53 100644
+> --- a/fs/pstore/platform.c
+> +++ b/fs/pstore/platform.c
+> @@ -258,7 +258,7 @@ static int pstore_decompress(void *in, void *out,
 > 
+>  static void allocate_buf_for_compression(void)
+>  {
+> -       if (!zbackend)
+> +       if (!IS_ENABLED(CONFIG_PSTORE_COMPRESS) || !zbackend)
+>                 return;
+> 
+>         if (!crypto_has_comp(zbackend->name, 0, 0)) {
+> @@ -287,7 +287,7 @@ static void allocate_buf_for_compression(void)
+> 
+>  static void free_buf_for_compression(void)
+>  {
+> -       if (!IS_ERR_OR_NULL(tfm))
+> +       if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && !IS_ERR_OR_NULL(tfm))
+>                 crypto_free_comp(tfm);
+>         kfree(big_oops_buf);
+>         big_oops_buf = NULL;
+
+Hi Arnd,
+
+this seems to be the better fix, the link error goes away with this change.
+Thanks for the suggestion, I will send an updated patch.
+
+--
+Tobias
