@@ -1,114 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751435AbeDFBeR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 21:34:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58944 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751275AbeDFBeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 21:34:15 -0400
-From: NeilBrown <neilb@suse.com>
-To: Andreas =?utf-8?Q?Gr=C3=BCnbacher?=
-        <andreas.gruenbacher@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 06 Apr 2018 11:33:58 +1000
-Cc: Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>, Thomas Graf <tgraf@suug.ch>,
-        Tom Herbert <tom@quantonium.net>, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [Cluster-devel] [PATCH v2 0/2] gfs2: Stop using rhashtable_walk_peek
-In-Reply-To: <CAHpGcMKxDNOkMMKB1_9H0ob-502cD89E-94a18prp91y_a52GA@mail.gmail.com>
-References: <20180329120612.6104-1-agruenba@redhat.com> <1366548861.16037365.1522856788263.JavaMail.zimbra@redhat.com> <20180404154859.GA12104@gondor.apana.org.au> <CAHpGcMKxDNOkMMKB1_9H0ob-502cD89E-94a18prp91y_a52GA@mail.gmail.com>
-Message-ID: <871sftxgmx.fsf@notabene.neil.brown.name>
+        id S1751494AbeDFBei (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:34:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58590 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751275AbeDFBef (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 21:34:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B79DA60274
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
+ readX()
+To: linux-mips@linux-mips.org, arnd@arndb.de, timur@codeaurora.org,
+        sulrich@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>, linux-kernel@vger.kernel.org
+References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
+ <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <41e184ae-689e-93c9-7b15-0c68bd624130@codeaurora.org>
+Date: Thu, 5 Apr 2018 21:34:31 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On 4/3/2018 8:55 AM, Sinan Kaya wrote:
+> While a barrier is present in writeX() function before the register write,
+> a similar barrier is missing in the readX() function after the register
+> read. This could allow memory accesses following readX() to observe
+> stale data.
+> 
+> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/mips/include/asm/io.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
+> index fd00ddaf..6ac502f 100644
+> --- a/arch/mips/include/asm/io.h
+> +++ b/arch/mips/include/asm/io.h
+> @@ -377,6 +377,7 @@ static inline type pfx##read##bwlq(const volatile void __iomem *mem)	\
+>  		BUG();							\
+>  	}								\
+>  									\
+> +	rmb();								\
+>  	return pfx##ioswab##bwlq(__mem, __val);				\
+>  }
+>  
+> 
 
-On Wed, Apr 04 2018, Andreas Gr=C3=BCnbacher wrote:
+Can we get these merged to 4.17? 
 
-> Herbert Xu <herbert@gondor.apana.org.au> schrieb am Mi. 4. Apr. 2018 um
-> 17:51:
->
->> On Wed, Apr 04, 2018 at 11:46:28AM -0400, Bob Peterson wrote:
->> >
->> > The patches look good. The big question is whether to add them to this
->> > merge window while it's still open. Opinions?
->>
->> We're still hashing out the rhashtable interface so I don't think now is
->> the time to rush things.
->
->
-> Fair enough. No matter how rhashtable_walk_peek changes, we=E2=80=98ll st=
-ill need
-> these two patches to fix the glock dump though.
+There was a consensus to fix the architectures having API violation issues.
+https://www.mail-archive.com/netdev@vger.kernel.org/msg225971.html
 
-Those two patches look fine to me and don't depend on changes to
-rhashtable, so it is up to you when they go upstream.
 
-However, I think the code can be substantially simplified, particularly
-once we make rhashtable a little cleverer.
-So this is what I'll probably be doing for a similar situation in
-lustre....
-
-Having examined seqfile closely, it is apparent that if ->start never
-changes *ppos, and if ->next always increments it (except maybe on error)
-then
-
-1/ ->next is only ever given a 'pos' that was returned by the previous
-   call to ->start or ->next.  So it should *always* return the next
-   object, after the one previously returned by ->start or ->next.  It
-   never needs to 'seek'. The 'traverse()' function in seq_file.c does
-   any seeking needed.  ->next needs to increase 'pos' and when walking
-   a dynamic list, it is easiest if it just increments it.
-
-2/ ->start is only called with a pos of:
-    0 - in this case it should rewind to the start
-    the last pos passed to ->start of ->next
-         In this case it should return the same thing that was
-         returned last time.  If it no longer exists, then
-         the following one should be returned.
-    one more than the last pos passed to ->start or ->next
-         In this case it should return the object after the
-         last one returned.
-
-The proposed enhancement to rhashtable_walk* is to add a
-rhashtable_walk_prev() which returns the previously returned object,
-if it is still in the table, or NULL. It also enhances
-rhashtable_walk_start() so that if the previously returned object is
-still in the table, it is preserved as the current cursor.
-This means that if you take some action to ensure that the
-previously returned object remains in the table until the next ->start,
-then you can reliably walk the table with no duplicates or omissions
-(unless a concurrent rehash causes duplicates)
-If you don't keep the object in the table and it gets removed, then
-the 'skip' counter is used to find your place, and you might get
-duplicates or omissions.
-
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrGzogACgkQOeye3VZi
-gblBuA/9FSMWwFf+WbZ0Jb8VBoyP3mumk037eDjUE+CjHkhswmRbMPi/9CRDl6Nf
-oIrMMlderVB3Q7ze1pIDZGPr1iOD6tI9RdHz2bWB41xWXZJqlabvgc30nbsNW84T
-rPGdZfMQKx1OAPrV7+JXq9kFiQqyefPiSvBLxO4yciROh0dXJ5XvLAuIFTnwrH6k
-8InQmX17Verhtn/d13npQ4qMIaUroui74yi3b2nvSPpA5elwJVHgHgv1WWMMl7wQ
-JNaDiHPJc3jQKsk7zdyMv/f3nvy4JD+sNpm3C9eAey44aObXdx93mgouTgdA9XXQ
-3FKlIlbTo1UPI07vf1lgXugPNpNF0PTsUrSRae06iI+F91g0UIfCd/grpuR2BwKY
-i7Bch9rv6b+uPCin3Jv6aPJuWV4PcrpRVcRJQWtsKjlUbppLiFeA2FvQjOA/V8cT
-8DJh4KKUEFJsUZBEIs2L7T9EJrqsb71V2JDF+1CpG47lrVkP1H7BPjOC2rj/PyFW
-exNsfmY4LU9pavoN9zOQz4NWBWo8klkHjNzirK8WNy0PtZakt6XhaxEH7FSXN4AS
-nfbXX7sTmKhjAjTbOCCq5xpuK61PbMWFmv4H78CDT2pNFqV1IpmTOajOyR0K/xUM
-zQKnPaNZSRgFqs49RrphroQxXpbjqEQpJ9jjoKFzm4WS69LLEX8=
-=u53V
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
