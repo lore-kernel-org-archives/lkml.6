@@ -1,69 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752121AbeDFPy2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:54:28 -0400
-Received: from smtp60.i.mail.ru ([217.69.128.40]:44608 "EHLO smtp60.i.mail.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750962AbeDFPy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:54:27 -0400
-Subject: Re: [PATCH v3 3/6] spi: sun6i: restrict transfer length in PIO-mode
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-spi@vger.kernel.org
-References: <20180403154449.2443-1-ssuloev@orpaltech.com>
- <20180403154449.2443-4-ssuloev@orpaltech.com>
- <20180404065048.n76r3ytuznd6fqsl@flea>
- <a6044902-8977-3ce1-d7d5-c6797341a5d0@orpaltech.com>
- <20180405091913.ky4dnmszoobn2xry@flea>
- <ee4adb1e-caf6-32f6-33d6-d8dd94d232cf@orpaltech.com>
- <20180405131735.GB12349@sirena.org.uk>
- <8159c3a5-af74-9f13-aedb-7ecc708bdff6@orpaltech.com>
- <20180406073441.xesojvzc3deljhoy@flea>
-From: Sergey Suloev <ssuloev@orpaltech.com>
-Message-ID: <46df9f95-a93f-57af-b7d9-dfd5db046622@orpaltech.com>
-Date: Fri, 6 Apr 2018 18:54:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752250AbeDFPyq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 11:54:46 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52808 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751780AbeDFPyn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 11:54:43 -0400
+X-Google-Smtp-Source: AIpwx49NmrRwI077hE8ETX8CM41V6Vsd6lC9golta4lC/cd/RbdgIwWFEcEqrZfB9OT7awgKQwX8gw==
+Date: Fri, 6 Apr 2018 16:54:39 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Brian Norris <briannorris@google.com>,
+        Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>,
+        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
+Subject: Re: [PATCH v3 0/4] backlight: pwm_bl: support linear interpolation
+ and brightness to human eye
+Message-ID: <20180406155439.u7mm2jb3sizphumu@holly.lan>
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+ <CAFqH_52bXq76TnQLfnD0mohgr0d5iAcrHBcPefwnRB8gdbaYFQ@mail.gmail.com>
+ <20180320112212.2mwthxug3pu7uqgg@holly.lan>
+ <CAFqH_51E+9L2fuTY7Zo3=B2fUmL=pJtg7wz3GdN5wxhpqV8p0g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180406073441.xesojvzc3deljhoy@flea>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-Authentication-Results: smtp60.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
-X-7FA49CB5: 0D63561A33F958A5E42134B4FCCBF9A2FECD081630875D8E08403B7F31821B75725E5C173C3A84C3A1C30C8AFC676C8B4A628EF8AAF77906C6C49853BF2B2AEEC4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
-X-Mailru-Sender: C5364AD02485212F3ACDC11E67D8491768DA1BE0602F42875B935239C30F4989069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
-X-Mras: OK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqH_51E+9L2fuTY7Zo3=B2fUmL=pJtg7wz3GdN5wxhpqV8p0g@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/06/2018 10:34 AM, Maxime Ripard wrote:
-> On Thu, Apr 05, 2018 at 04:44:16PM +0300, Sergey Suloev wrote:
->> On 04/05/2018 04:17 PM, Mark Brown wrote:
->>> On Thu, Apr 05, 2018 at 12:59:35PM +0300, Sergey Suloev wrote:
->>>> On 04/05/2018 12:19 PM, Maxime Ripard wrote:
->>>>> The point of that patch was precisely to allow to send more data than
->>>>> the FIFO. You're breaking that behaviour without any justification,
->>>>> and this is not ok.
->>>> I am sorry, but you can't. That's a hardware limitation.
->>> Are you positive about that?  Normally you can add things to hardware
->>> FIFOs while they're being drained so so long as you can keep data
->>> flowing in at least as fast as it's being consumed.
->> Well, normally yes, but this is not the case with the hardware that I own.
->> My a20 (BPiM1+) and a31 (BPiM2) boards behaves differently. With a transfer
->> larger than FIFO then TC interrupt never happens.
-> Because you're not supposed to have a transfer larger than the FIFO,
-> but to have to setup at first a transfer the size of the FIFO, and
-> then when it's (or starts to be) depleted, fill it up again.
-According to what you said the driver must implement 
-"transfer_one_message" instead of "transfer_one",
-because the maximum transfer length is 64 bytes (for sun4i) and we 
-shouldn't allow "transfer_one" handle
-more than 64 bytes. Otherwise it breaks the concept.
->
-> That's the point of the patch you're reverting, and if it doesn't
-> work, you should make it work and not simply revert it.
->
-> Maxime
->
+On Tue, Mar 20, 2018 at 01:13:20PM +0100, Enric Balletbo Serra wrote:
+> Hi Daniel,
+> 
+> 
+> 2018-03-20 12:22 GMT+01:00 Daniel Thompson <daniel.thompson@linaro.org>:
+> > On Mon, Mar 19, 2018 at 05:04:31PM +0100, Enric Balletbo Serra wrote:
+> >> Hi Daniel,
+> >>
+> >> Gentle ping for this series, there is any possibility you have a
+> >> chance to review it? Let me know if you want I change something.
+> >
+> > I haven't got it in my TODO backlog... which means either I mistakenly
+> > deleted it when it went through originally or that I deliberately deleted
+> > it because I thought a v4 was coming along soon.
+> >
+> > I could go diving through the archives if I need to but were there other
+> > pending changes for this patchset?
+> >
+> 
+> Unless I am missing something there isn't pending changes requested.
+> 
+> 1/4 I addressed your latest comments in this version.
+> 2/4 Has been acked by Rob Herring
+> 3/4 I did not receive feedback but iirc we agreed to use a pre-computed table.
+> 4/4 Is already acked by you.
+
+You weren't missing anything... and I've just dived through my mail
+history and retrieved the patchset so I can review it.
+
+You should now have an ack from me on every patch. Sorry it has taken 
+so long.
+
+
+Daniel.
+
+
+> 
+> Regards,
+>  Enric
+> 
+> >
+> > Daniel.
+> >
+> >
+> >>
+> >> Thanks,
+> >>   Enric
+> >>
+> >> 2018-02-08 12:30 GMT+01:00 Enric Balletbo i Serra
+> >> <enric.balletbo@collabora.com>:
+> >> > Dear all,
+> >> >
+> >> > This series is a third patchset integrating the requested changes.
+> >> >
+> >> > The first and second patch what tries to solve is the problem of
+> >> > granularity for high resolution PWMs. The idea is simple interpolate
+> >> > between 2 brightness values so we can have a high PWM duty cycle (a
+> >> > 16 bits PWM is up to 65535 possible steps) without having to list
+> >> > out every possible value in the dts. I think that this patch is
+> >> > required to not break backward compability, to be more flexible and
+> >> > also extend the functionality to be able to use high resolution PWM
+> >> > with enough steps to have a good UI experience in userspace.
+> >> >
+> >> > The thirth and fourth patch is a bit more ambicious, the idea is let
+> >> > decide the driver the brightness-levels required in function of the PWM
+> >> > resolution. To do this create a brightness-levels table filled with the
+> >> > CIE 1931 algorithm values to convert brightness to PWM duty cycle.
+> >> >
+> >> > More detailed info is available in the commit message of every patch.
+> >> >
+> >> > Both functionalities were tested on a Samsung Chromebook Plus (that has
+> >> > a 16 bits PWM) and a SL50 device (with a 8 bits PWM)
+> >> >
+> >> > Waiting for your feedback.
+> >> >
+> >> > Best regards,
+> >> >
+> >> > Enric Balletbo i Serra (4):
+> >> >   backlight: pwm_bl: linear interpolation between brightness-levels
+> >> >   dt-bindings: pwm-backlight: add a num-interpolation-steps property.
+> >> >   backlight: pwm_bl: compute brightness of LED linearly to human eye.
+> >> >   dt-bindings: pwm-backlight: move brightness-levels to optional.
+> >> >
+> >> >  .../bindings/leds/backlight/pwm-backlight.txt      |  34 ++-
+> >> >  drivers/video/backlight/pwm_bl.c                   | 232 +++++++++++++++++++--
+> >> >  2 files changed, 246 insertions(+), 20 deletions(-)
+> >> >
+> >> > --
+> >> > 2.15.1
+> >> >
