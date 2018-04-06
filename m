@@ -1,83 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753070AbeDFXJb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 19:09:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753051AbeDFXJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 19:09:30 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B61F120B80
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Sat, 7 Apr 2018 00:09:25 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        Alban Bedel <albeu@free.fr>, Antony Pavlov <antonynpavlov@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: vmlinuz: Fix compiler intrinsics location and
- build directly
-Message-ID: <20180406230924.GB1730@saruman>
-References: <20180403160728.GB3275@saruman>
- <1522833502-28007-1-git-send-email-matt.redfearn@mips.com>
- <b05a0ec9-d052-49c7-3e8f-2ba233d84f03@mips.com>
- <20180405214219.GA31336@saruman>
+        id S1753088AbeDFXMb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 19:12:31 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:49598 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751982AbeDFXMa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 19:12:30 -0400
+Subject: Re: [PATCH v3 1/4] Ktest: add email support
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, dhaval.giani@oracle.com
+References: <1522094884-22718-1-git-send-email-tianyang.chen@oracle.com>
+ <1522094884-22718-2-git-send-email-tianyang.chen@oracle.com>
+ <20180406142409.6d98254b@gandalf.local.home>
+ <e0646238-e991-61c6-c32f-eee07742073c@oracle.com>
+ <20180406184130.6809805c@gandalf.local.home>
+From: Tim Tianyang Chen <tianyang.chen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <81730b00-fcd9-3ccc-bb84-51f69e7364c9@oracle.com>
+Date: Fri, 6 Apr 2018 16:12:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
-Content-Disposition: inline
-In-Reply-To: <20180405214219.GA31336@saruman>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180406184130.6809805c@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8855 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804060229
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> I just fixed them up and pulled them in myself. ;-)
+>
+> I also added the following on top of them (and testing this, live while
+> testing ftrace patches and other builds).
+Thanks Steve!
+> diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
+> index 30a4c053f98b..837fa75cbb47 100755
+> --- a/tools/testing/ktest/ktest.pl
+> +++ b/tools/testing/ktest/ktest.pl
+> @@ -23,7 +23,7 @@ my %evals;
+>   
+>   #default opts
+>   my %default = (
+> -    "MAILER"				=> "sendmail",  # default mailer
+> +    "MAILER"			=> "sendmail",  # default mailer
+Noticed this when I sent the new version.
 
---jho1yZJdad60DJr+
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>       "EMAIL_ON_ERROR"		=> 1,
+>       "EMAIL_WHEN_FINISHED"	=> 1,
+>       "EMAIL_WHEN_CANCELED"	=> 0,
+> @@ -218,6 +218,7 @@ my $dirname = $FindBin::Bin;
+>   
+>   my $mailto;
+>   my $mailer;
+> +my $mail_exec;
+>   my $email_on_error;
+>   my $email_when_finished;
+>   my $email_when_started;
+> @@ -1431,7 +1433,14 @@ sub do_not_reboot {
+>   	($test_type eq "config_bisect" && $opt{"CONFIG_BISECT_TYPE[$i]"} eq "build");
+>   }
+>   
+> +my $in_die = 0;
+> +
+>   sub dodie {
+> +
+> +    # avoid recusion
+> +    return if ($in_die);
+> +    $in_die = 1;
+> +
+>       doprint "CRITICAL FAILURE... ", @_, "\n";
+Good idea.
+>   
+>       my $i = $iteration;
+> @@ -4126,21 +4135,31 @@ sub set_test_option {
+>   
+>   sub _mailx_send {
+>       my ($subject, $message) = @_;
+> -    system("$mailer -s \'$subject\' $mailto <<< \'$message\'");
+> +
+> +    if (!defined($mail_exec)) {
+> +	$mail_exec = $mailer;
+> +    }
+> +    run_command "$mail_exec -s \'$subject\' $mailto <<< \'$message\'";
+>   }
+>   
+>   sub _sendmail_send {
+>       my ($subject, $message) = @_;
+> -    system("echo -e \"Subject: $subject\n\n$message\" | sendmail -t $mailto");
+> +
+> +    if (!defined($mail_exec)) {
+> +	$mail_exec = "/usr/sbin/sendmail";
+> +    }
+> +    run_command "echo \'Subject: $subject\n\n$message\' | $mail_exec -t $mailto";
+>   }
+>   
+Not sure if I understand why $mail_exec is necessary. Doesn't $mailer 
+already have a default? Wouldn't people just use $mailer to define the 
+executable they want to use? What if the $mailx_exec specified doesn't 
+use '-t' option?
 
-On Thu, Apr 05, 2018 at 10:42:19PM +0100, James Hogan wrote:
-> On Thu, Apr 05, 2018 at 11:13:14AM +0100, Matt Redfearn wrote:
-> > Actually, this patch would be better inserted as patch 3 in the series=
-=20
-> > since it can pull in the generic ashldi3 before the MIPS one is removed=
-=20
-> > in the final patch. Here's an updated commit message:
->=20
-> Thanks Matt, applied.
-
-Loongson1b/c defconfigs are still broken unfortunately. The .o files
-aren't getting generated, apparently due to a different cmd_cc_o_c
-definition when CONFIG_MODVERSIONS=3Dy.
-
-I'm gonna drop this patchset from 4.17. Hopefully an updated version can
-be applied for 4.18 after the merge window.
-
-Thanks
-James
-
---jho1yZJdad60DJr+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlrH/h4ACgkQbAtpk944
-dnpWAg/9HQbxFOZwOg2DY/r+KJC19kVdrzAkbkneRQhGKBAVNA2QoZjnwPzn8zVF
-/Tm03zXyHDI4m7TLXXWnGjLFI5lMMQ5TFOLpQXpXgp33/zimTHo33PStNQT2v9Dv
-3+AokX7BSPlYnlgmCtXXdreuD2bBKlED3hzcDbQ7ZHcJOXpXpgrkZwYJF4q3kAgg
-HaQx2o415CE6n/Hyc5BBjRir6BeoHHKnADt3pM7/9oTKl6YtrXbBDTiDCsUtg5R2
-fj0ye52jFVhGUgGAWANtclk/1T20riZNb+YQ2/XjuQ2+4tLFlSpoMdJNp0BLFlYu
-JdlpO23wZeDqIixDcHXDAli3oqhqWF84e9vkw02n0pwhKha1316MaEu0RVpzoXeO
-k64crb7AKqMPjOxq7KYuOdMDeXsBsTz1YwqkmdpicGU+qade+jIGS86hqSjHxThM
-AdkjUZM77Gza5N4XgAa31oJc2bhqtpja9T8Pg6K6xx1Z/uWrP7ay3+ReYjiv59UW
-e+vS/Zn3ICBZxM0nhYQYAWe0FSjZJh07DLLPi+fShomVEwkCGXqZ6xXF9IUWv4DZ
-Ht0g7uKm2kST8oqq9+fTUPurEevneqIdHYqM5gCPsxhcSvO1Xy7tVpu4d4W3pmAB
-QWQwovtDVcm8gHkGy/cEvBPLDvyk8clqLVMN/JXAwfrPk0xsukA=
-=qaZb
------END PGP SIGNATURE-----
-
---jho1yZJdad60DJr+--
+Thanks,
+Tim
