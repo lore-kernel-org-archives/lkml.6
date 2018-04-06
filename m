@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48XTdRZq4syZEdlJhf4THRwXpScDFHnhD1heDktJju4rJn5XXtZas3fz/6/8bHZDxgVl3S7
-ARC-Seal: i=1; a=rsa-sha256; t=1523021252; cv=none;
+X-Google-Smtp-Source: AIpwx4/LiSLt6LQrThSngFC39VhniYBuTyr0yDRJFgPOXVlmEHvUxVf3LjsK2DHPJW6uAF8/NV/w
+ARC-Seal: i=1; a=rsa-sha256; t=1523021246; cv=none;
         d=google.com; s=arc-20160816;
-        b=EKXSCWaGQ+AjYKepsbZxl45oRpuSDr7JKdekfQOgKLIQeRHXhtijHQf08JDvz3KSFu
-         io5kSkSh2AaB2fYh7MLgTDm1hE4gYIHURdlT97gK63BCpBOHjKaBDFMcCugzKHNtxDgX
-         zJp2N85UndTHxxyDcFK2fdFzb28aQf8JADYWPINak/9ANHJSwg74S5QYuj4C3zNkET3q
-         qGIn9PlLdZ2F0zSoXMoxo7F1VcBG+1t5Lv3t3zqvDL2u0VsI8LDmMli8w66vN9M5KjgZ
-         9QJHrcOFLP6vd0PMPSCByCta+FIJFMHLeKWEScSaDI3GxmmJOMoGkeXSbUvm7ctxea3Q
-         DHhw==
+        b=CELitXLMhUfunDpI0ti7mNmfrPz32C1N6pEQ2CRY0N2qsCjhhCgD/kA4+99xtrscuU
+         k9v5ItJ1YLO5DzcNHFO1ZnsKP3D41z8Ebj79HKy0vydW2UUvHjzcq7MiKMiHby8q6Ano
+         eTOcuCFMCCoRRLFSDhGK61WjQTNxgUCGwPWsesEzW2zCsHM4VY+UCnVupOMajbANnWlK
+         B0X3IO/1t1oz7PGNE5Pjdd9nqe44yZExjFOyIE8YjVrP/YxS6g1fvyoB6gJUYt1OwTb0
+         Krm97TfVIhjuaJZ7E3/B0lAa7hmOrTSrC/0PZe+B6xfj84qMERqOuA014mChTO/LJIgS
+         dCLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=03Nq9UcJTbphqTQAistVhGb39he+KC6nKt2NJokdfoo=;
-        b=qdPPXtynAtRGb2yBIUzIeQdJ/Z4NEVF7Lvl8BDmrcg5+BE4RCldWrsTkb5is/bOfl6
-         hOoevdubHKslVdMH1JQsAoHWVV9vbtfcW+VJoX42WMsqJOyi/M35NzKwin6eD8p0Wev4
-         69+ImJZGFP7W7E5DjF91r9Lyumt2VKg9jP1KiXyC2bW5fblFXMlVT9tOLJiNx1bRtrnl
-         /Sr5RDD63AttMsEAJA+IhY3V6Pxy8TnVEHboX3WOU7oLLvs1qwfCtH7RwQV8F46HYoNB
-         ipeMwSKGc75eONr7SWXbgfrawlZzDJXqyVq1nCd42+Eb5F2KrIE0TyQ7n6+N639RVvwT
-         7hmw==
+        bh=u3FKIyY6KNhbSYrwyf4Xr2wHzypU1AzeJeuMBdf1KEQ=;
+        b=mbq/U6PCaOMzuZQgfInST6gSi72GwI8bTObAUH3gmozkgRgfV+S1BYTXhtkH1X8etj
+         TCs8qoJPuu3W6XNicNXux3q4gm8P9vAlf8+rRvC/RdtOpLE+UAPCKKszstAvsS5okwBI
+         b3k4IHtfjfXVI9cHxoDnZgzX3nHUQbGDj+tD0YgHkf27K2ubEhMtWBtE0lK3XFTjmsKM
+         CATFgDtIGH2IockY2Q8+lf2wwH58cbp2TQNb8FaZZ+gz7a6lZJr4986qn3Z4Wu90Dw2U
+         TU1RJYNtcrIawTOk88NNuC3uACIXuz8Vuf9YydTh2LyVDZGzKjnx1qj5igAzm6RUuVFf
+         IISQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 63/93] media: v4l2-compat-ioctl32.c: copy m.userptr in put_v4l2_plane32
-Date: Fri,  6 Apr 2018 15:23:32 +0200
-Message-Id: <20180406084227.687803957@linuxfoundation.org>
+Subject: [PATCH 3.18 61/93] media: v4l2-compat-ioctl32.c: move helper functions to __get/put_v4l2_format32
+Date: Fri,  6 Apr 2018 15:23:30 +0200
+Message-Id: <20180406084227.564756514@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003532008046130?=
-X-GMAIL-MSGID: =?utf-8?q?1597003532008046130?=
+X-GMAIL-THRID: =?utf-8?q?1597003526939645932?=
+X-GMAIL-MSGID: =?utf-8?q?1597003526939645932?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,126 +53,143 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 8ed5a59dcb47a6f76034ee760b36e089f3e82529 upstream.
+commit 486c521510c44a04cd756a9267e7d1e271c8a4ba upstream.
 
-The struct v4l2_plane32 should set m.userptr as well. The same
-happens in v4l2_buffer32 and v4l2-compliance tests for this.
+These helper functions do not really help. Move the code to the
+__get/put_v4l2_format32 functions.
 
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   47 +++++++++++++++-----------
- 1 file changed, 28 insertions(+), 19 deletions(-)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   84 ++++----------------------
+ 1 file changed, 16 insertions(+), 68 deletions(-)
 
 --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
 +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -287,19 +287,24 @@ static int get_v4l2_plane32(struct v4l2_
- 			 sizeof(up->data_offset)))
- 		return -EFAULT;
- 
--	if (memory == V4L2_MEMORY_USERPTR) {
-+	switch (memory) {
-+	case V4L2_MEMORY_MMAP:
-+	case V4L2_MEMORY_OVERLAY:
-+		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
-+				 sizeof(up32->m.mem_offset)))
-+			return -EFAULT;
-+		break;
-+	case V4L2_MEMORY_USERPTR:
- 		if (get_user(p, &up32->m.userptr))
- 			return -EFAULT;
- 		up_pln = compat_ptr(p);
- 		if (put_user((unsigned long)up_pln, &up->m.userptr))
- 			return -EFAULT;
--	} else if (memory == V4L2_MEMORY_DMABUF) {
-+		break;
-+	case V4L2_MEMORY_DMABUF:
- 		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(up32->m.fd)))
- 			return -EFAULT;
--	} else {
--		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
--				 sizeof(up32->m.mem_offset)))
--			return -EFAULT;
-+		break;
- 	}
- 
- 	return 0;
-@@ -308,22 +313,32 @@ static int get_v4l2_plane32(struct v4l2_
- static int put_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __user *up32,
- 			    enum v4l2_memory memory)
- {
-+	unsigned long p;
-+
- 	if (copy_in_user(up32, up, 2 * sizeof(__u32)) ||
- 	    copy_in_user(&up32->data_offset, &up->data_offset,
- 			 sizeof(up->data_offset)))
- 		return -EFAULT;
- 
--	/* For MMAP, driver might've set up the offset, so copy it back.
--	 * USERPTR stays the same (was userspace-provided), so no copying. */
--	if (memory == V4L2_MEMORY_MMAP)
-+	switch (memory) {
-+	case V4L2_MEMORY_MMAP:
-+	case V4L2_MEMORY_OVERLAY:
- 		if (copy_in_user(&up32->m.mem_offset, &up->m.mem_offset,
- 				 sizeof(up->m.mem_offset)))
- 			return -EFAULT;
--	/* For DMABUF, driver might've set up the fd, so copy it back. */
--	if (memory == V4L2_MEMORY_DMABUF)
-+		break;
-+	case V4L2_MEMORY_USERPTR:
-+		if (get_user(p, &up->m.userptr) ||
-+		    put_user((compat_ulong_t)ptr_to_compat((__force void *)p),
-+			     &up32->m.userptr))
-+			return -EFAULT;
-+		break;
-+	case V4L2_MEMORY_DMABUF:
- 		if (copy_in_user(&up32->m.fd, &up->m.fd,
- 				 sizeof(up->m.fd)))
- 			return -EFAULT;
-+		break;
-+	}
- 
+@@ -89,64 +89,6 @@ static int put_v4l2_window32(struct v4l2
  	return 0;
  }
-@@ -383,6 +398,7 @@ static int get_v4l2_buffer32(struct v4l2
- 	} else {
- 		switch (kp->memory) {
- 		case V4L2_MEMORY_MMAP:
-+		case V4L2_MEMORY_OVERLAY:
- 			if (get_user(kp->m.offset, &up->m.offset))
- 				return -EFAULT;
- 			break;
-@@ -396,10 +412,6 @@ static int get_v4l2_buffer32(struct v4l2
- 				kp->m.userptr = (unsigned long)compat_ptr(tmp);
- 			}
- 			break;
--		case V4L2_MEMORY_OVERLAY:
--			if (get_user(kp->m.offset, &up->m.offset))
--				return -EFAULT;
--			break;
- 		case V4L2_MEMORY_DMABUF:
- 			if (get_user(kp->m.fd, &up->m.fd))
- 				return -EFAULT;
-@@ -456,6 +468,7 @@ static int put_v4l2_buffer32(struct v4l2
- 	} else {
- 		switch (kp->memory) {
- 		case V4L2_MEMORY_MMAP:
-+		case V4L2_MEMORY_OVERLAY:
- 			if (put_user(kp->m.offset, &up->m.offset))
- 				return -EFAULT;
- 			break;
-@@ -463,10 +476,6 @@ static int put_v4l2_buffer32(struct v4l2
- 			if (put_user(kp->m.userptr, &up->m.userptr))
- 				return -EFAULT;
- 			break;
--		case V4L2_MEMORY_OVERLAY:
--			if (put_user(kp->m.offset, &up->m.offset))
--				return -EFAULT;
--			break;
- 		case V4L2_MEMORY_DMABUF:
- 			if (put_user(kp->m.fd, &up->m.fd))
- 				return -EFAULT;
+ 
+-static inline int get_v4l2_pix_format(struct v4l2_pix_format *kp, struct v4l2_pix_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_pix_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_pix_format_mplane(struct v4l2_pix_format_mplane *kp,
+-					     struct v4l2_pix_format_mplane __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_pix_format_mplane)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_pix_format(struct v4l2_pix_format *kp, struct v4l2_pix_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_pix_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_pix_format_mplane(struct v4l2_pix_format_mplane *kp,
+-					     struct v4l2_pix_format_mplane __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_pix_format_mplane)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_vbi_format(struct v4l2_vbi_format *kp, struct v4l2_vbi_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_vbi_format(struct v4l2_vbi_format *kp, struct v4l2_vbi_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_sliced_vbi_format(struct v4l2_sliced_vbi_format *kp, struct v4l2_sliced_vbi_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_sliced_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_sliced_vbi_format(struct v4l2_sliced_vbi_format *kp, struct v4l2_sliced_vbi_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_sliced_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+ struct v4l2_format32 {
+ 	__u32	type;	/* enum v4l2_buf_type */
+ 	union {
+@@ -184,20 +126,23 @@ static int __get_v4l2_format32(struct v4
+ 	switch (kp->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+-		return get_v4l2_pix_format(&kp->fmt.pix, &up->fmt.pix);
++		return copy_from_user(&kp->fmt.pix, &up->fmt.pix,
++				      sizeof(kp->fmt.pix)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+-		return get_v4l2_pix_format_mplane(&kp->fmt.pix_mp,
+-						  &up->fmt.pix_mp);
++		return copy_from_user(&kp->fmt.pix_mp, &up->fmt.pix_mp,
++				      sizeof(kp->fmt.pix_mp)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
+ 		return get_v4l2_window32(&kp->fmt.win, &up->fmt.win);
+ 	case V4L2_BUF_TYPE_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_VBI_OUTPUT:
+-		return get_v4l2_vbi_format(&kp->fmt.vbi, &up->fmt.vbi);
++		return copy_from_user(&kp->fmt.vbi, &up->fmt.vbi,
++				      sizeof(kp->fmt.vbi)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
+-		return get_v4l2_sliced_vbi_format(&kp->fmt.sliced, &up->fmt.sliced);
++		return copy_from_user(&kp->fmt.sliced, &up->fmt.sliced,
++				      sizeof(kp->fmt.sliced)) ? -EFAULT : 0;
+ 	default:
+ 		printk(KERN_INFO "compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
+ 		       kp->type);
+@@ -225,20 +170,23 @@ static int __put_v4l2_format32(struct v4
+ 	switch (kp->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+-		return put_v4l2_pix_format(&kp->fmt.pix, &up->fmt.pix);
++		return copy_to_user(&up->fmt.pix, &kp->fmt.pix,
++				    sizeof(kp->fmt.pix)) ?  -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+-		return put_v4l2_pix_format_mplane(&kp->fmt.pix_mp,
+-						  &up->fmt.pix_mp);
++		return copy_to_user(&up->fmt.pix_mp, &kp->fmt.pix_mp,
++				    sizeof(kp->fmt.pix_mp)) ?  -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
+ 		return put_v4l2_window32(&kp->fmt.win, &up->fmt.win);
+ 	case V4L2_BUF_TYPE_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_VBI_OUTPUT:
+-		return put_v4l2_vbi_format(&kp->fmt.vbi, &up->fmt.vbi);
++		return copy_to_user(&up->fmt.vbi, &kp->fmt.vbi,
++				    sizeof(kp->fmt.vbi)) ?  -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
+-		return put_v4l2_sliced_vbi_format(&kp->fmt.sliced, &up->fmt.sliced);
++		return copy_to_user(&up->fmt.sliced, &kp->fmt.sliced,
++				    sizeof(kp->fmt.sliced)) ?  -EFAULT : 0;
+ 	default:
+ 		printk(KERN_INFO "compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
+ 		       kp->type);
