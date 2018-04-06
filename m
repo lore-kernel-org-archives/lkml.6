@@ -1,108 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751404AbeDFBqw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 5 Apr 2018 21:46:52 -0400
-Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:55636 "EHLO
-        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751275AbeDFBqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Apr 2018 21:46:49 -0400
-Date: Thu, 5 Apr 2018 21:46:45 -0400
-From: Wakko Warner <wakko@animx.eu.org>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: 4.15.14 crash with iscsi target and dvd
-Message-ID: <20180406014644.GA16112@animx.eu.org>
-References: <20180331015903.GA29398@animx.eu.org>
- <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
- <20180331221252.GA25573@animx.eu.org>
- <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
- <20180401113721.GA8471@animx.eu.org>
- <20180401163604.GB25011@animx.eu.org>
- <20180401182723.GA31755@animx.eu.org>
- <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+        id S1751389AbeDFBu6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 5 Apr 2018 21:50:58 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:39195 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751275AbeDFBu4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Apr 2018 21:50:56 -0400
+X-Google-Smtp-Source: AIpwx489a6pTm728JJSFuXHNCH9AuEfZHhAToYk1cDuZsCs+YV6JHOO9POlOo5I/ZToVAxufzD+B6xGYqtqKiEL2o44=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <130851a6-1801-1917-b3df-5af89d2c421b@schaufler-ca.com>
+References: <cover.1522560550.git.sargun@sargun.me> <911d9855-cd45-26f0-90eb-563db899d5ee@huawei.com>
+ <CANA3KFX_sVhqvV7C0kR1nkLijiwWc286KcPBfY94LOe=YKGBwg@mail.gmail.com> <130851a6-1801-1917-b3df-5af89d2c421b@schaufler-ca.com>
+From: Sargun Dhillon <sargun@sargun.me>
+Date: Thu, 5 Apr 2018 18:50:14 -0700
+Message-ID: <CAMp4zn9W1-28tnEC-SH0wH2y5HLNWmb8TB7kBAy75JGHhH1=bA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/1] Safe LSM (un)loading, and immutable hooks
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Peter Dolding <oiaohm@gmail.com>, Igor Stoppa <igor.stoppa@huawei.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Paul Moore <paul@paul-moore.com>,
+        plautrba@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bart Van Assche wrote:
-> On Sun, 2018-04-01 at 14:27 -0400, Wakko Warner wrote:
-> > Wakko Warner wrote:
-> > > Wakko Warner wrote:
-> > > > I tested 4.14.32 last night with the same oops.  4.9.91 works fine.
-> > > > From the initiator, if I do cat /dev/sr1 > /dev/null it works.  If I mount
-> > > > /dev/sr1 and then do find -type f | xargs cat > /dev/null the target
-> > > > crashes.  I'm using the builtin iscsi target with pscsi.  I can burn from
-> > > > the initiator with out problems.  I'll test other kernels between 4.9 and
-> > > > 4.14.
-> > > 
-> > > So I've tested 4.x.y where x one of 10 11 12 14 15 and y is the latest patch
-> > > (except for 4.15 which was 1 behind)
-> > > Each of these kernels crash within seconds or immediate of doing find -type
-> > > f | xargs cat > /dev/null from the initiator.
-> > 
-> > I tried 4.10.0.  It doesn't completely lockup the system, but the device
-> > that was used hangs.  So from the initiator, it's /dev/sr1 and from the
-> > target it's /dev/sr0.  Attempting to read /dev/sr0 after the oops causes the
-> > process to hang in D state.
-> 
-> Hello Wakko,
-> 
-> Thank you for having narrowed down this further. I think that you encountered
-> a regression either in the block layer core or in the SCSI core. Unfortunately
-> the number of changes between kernel versions v4.9 and v4.10 in these two
-> subsystems is huge. I see two possible ways forward:
-> - Either that you perform a bisect to identify the patch that introduced this
->   regression. However, I'm not sure whether you are familiar with the bisect
->   process.
-> - Or that you identify the command that triggers this crash such that others
->   can reproduce this issue without needing access to your setup.
-> 
-> How about reproducing this crash with the below patch applied on top of
-> kernel v4.15.x? The additional output sent by this patch to the system log
-> should allow us to reproduce this issue by submitting the same SCSI command
-> with sg_raw.
+On Thu, Apr 5, 2018 at 9:29 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> On 4/5/2018 3:31 AM, Peter Dolding wrote:
+> > On Thu, Apr 5, 2018 at 7:55 PM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
+> >> On 01/04/18 08:41, Sargun Dhillon wrote:
+> >>> The biggest security benefit of this patchset is the introduction of
+> >>> read-only hooks, even if some security modules have mutable hooks.
+> >>> Currently, if you have any LSMs with mutable hooks it will render all heads, and
+> >>> list nodes mutable. These are a prime place to attack, because being able to
+> >>> manipulate those hooks is a way to bypass all LSMs easily, and to create a
+> >>> persistent, covert channel to intercept nearly all calls.
+> >>>
+> >>>
+> >>> If LSMs have a model to be unloaded, or are compled as modules, they should mark
+> >>> themselves mutable at compile time, and use the LSM_HOOK_INIT_MUTABLE macro
+> >>> instead of the LSM_HOOK_INIT macro, so their hooks are on the mutable
+> >>> chain.
+> >>
+> >> I'd rather consider these types of hooks:
+> >>
+> >> A) hooks that are either const or marked as RO after init
+> >>
+> >> B) hooks that are writable for a short time, long enough to load
+> >> additional, non built-in modules, but then get locked down
+> >> I provided an example some time ago [1]
+> >>
+> >> C) hooks that are unloadable (and therefore always attackable?)
+> >>
+> >> Maybe type-A could be dropped and used only as type-B, if it's
+> >> acceptable that type-A hooks are vulnerable before lock-down of type-B
+> >> hooks.
+> >>
+> >> I have some doubts about the usefulness of type-C, though.
+> >> The benefit I see htat it brings is that it avoids having to reboot when
+> >> a mutable LSM is changed, at the price of leaving it attackable.
+> >>
+> >> Do you have any specific case in mind where this trade-off would be
+> >> acceptable?
+> >>
+> > A useful case for loadable/unloadable LSM is development automate QA.
+> >
+> > So you have built a new program and you you want to test it against a
+> > list of different LSM configurations without having to reboot the
+> > system.  So a run testsuite with LSM off  then enabled LSM1 run
+> > testsuite again disable LSM1 enable LSM2. run testsuite disable
+> > LSM2... Basically repeating process.
+> >
+> > I would say normal production machines being able to swap LSM like
+> > this does not have much use.
+> >
+> > Sometimes for productivity it makes sense to be able to breach
+> > security.   The fact you need to test with LSM disabled to know if any
+> > of the defects you are seeing is LSM configuration related that
+> > instance is already in the camp of non secure anyhow..
+> >
+> > There is a shade of grey between something being a security hazard and
+> > something being a useful feature.
+>
+> If the only value of a feature is development I strongly
+> advocate against it. The number of times I've seen things
+> completely messed up because it makes development easier
+> is astonishing. If you have to enable something dangerous
+> just for testing you have to wonder about the testing.
+>
+>
+[Sorry for the double post]
+So, first, this gives us a security benefit for LSMs which do not have
+unloadable hooks. For those, they will always be able to load at
+boot-time, and get protected hooks. Given that we can't really remove
+security_delete_hooks until this SELinux removes their dependency on
+it, I'm not sure we that this happy accident of safe (un)loading
+should be sacrificed.
 
-Ok, so I tried this, but scsi_print_command doesn't print anything.  I added
-a check for !rq and the same thing that blk_rq_nr_phys_segments does in an
-if statement above this thinking it might have crashed during WARN_ON_ONCE.
-It still didn't print anything.  My printk shows this:
-[  36.263193] sr 3:0:0:0: cmd->request->nr_phys_segments is 0
+I think having LSMs that are loadable after boot is extremely
+valuable. In our specific use case, we've wanted to implement specific
+security policies which are not capable of being implemented on the
+traditional LSMs. We have the capability of deploying a Linux Kernel
+Module throughout our fleet. Recent examples include issues with
+specific networking address families, IPTables (over netlink API).
+It's not easy to block out RDS across the system while it's running,
+even if seccomp can do it.
 
-I also had scsi_print_command in the same if block which again didn't print
-anything.  Is there some debug option I need to turn on to make it print?  I
-tried looking through the code for this and following some of the function
-calls but didn't see any config options.
+We have other use cases -- like being able to run systemd in
+unprivileged user namespaces. This comes at the cost of giving the
+container CAP_SYS_ADMIN. We want to be able to give PID 1 in the user
+namespace CAP_SYS_ADMIN, but we want to revoke these capbilities
+across execve, without having to control the user's installation of
+systemd in their container.
 
-> Subject: [PATCH] Report commands with no physical segments in the system log
-> 
-> ---
->  drivers/scsi/scsi_lib.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-> index 6b6a6705f6e5..74a39db57d49 100644
-> --- a/drivers/scsi/scsi_lib.c
-> +++ b/drivers/scsi/scsi_lib.c
-> @@ -1093,8 +1093,10 @@ int scsi_init_io(struct scsi_cmnd *cmd)
->  	bool is_mq = (rq->mq_ctx != NULL);
->  	int error = BLKPREP_KILL;
->  
-> -	if (WARN_ON_ONCE(!blk_rq_nr_phys_segments(rq)))
-> +	if (WARN_ON_ONCE(!blk_rq_nr_phys_segments(rq))) {
-> +		scsi_print_command(cmd);
->  		goto err_exit;
-> +	}
->  
->  	error = scsi_init_sgtable(rq, &cmd->sdb);
->  	if (error)
--- 
- Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
- million bugs.
+Other times, it's about performance. There is a measureable overhead
+with seccomp, and apparmor. LSMs fit better for doing some of the
+filtering we're forced to do in seccomp, or apparmor for containers.
+The performance gain by implementing purpose-built policies in custom
+LSMs is significant.
+
+My suggestion is to change security_delete_hooks() to return -EPERM by
+default. Hook unloading can then be disabled by a Kconfig feature. If
+we need to get "more secure", we can disable unloading via cmdline, or
+proc / securityfs at boot time.
