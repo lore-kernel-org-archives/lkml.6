@@ -1,169 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752832AbeDFNIE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 09:08:04 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:38758 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752281AbeDFNID (ORCPT
+        id S1752894AbeDFNIb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 09:08:31 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:33361 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752296AbeDFNIa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:08:03 -0400
-Date: Fri, 6 Apr 2018 15:07:41 +0200
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 0/8] use struct pt_regs based syscall calling for x86-64
-Message-ID: <20180406130741.GA6087@light.dominikbrodowski.net>
-References: <20180405095307.3730-1-linux@dominikbrodowski.net>
- <20180405151933.egmt7ressx2ikdnr@gmail.com>
- <20180405203121.GA27104@light.dominikbrodowski.net>
- <20180406082322.ud37sj3b5ldm7xxd@gmail.com>
- <20180406083436.GA17948@isilmar-4.linta.de>
- <20180406092046.2jqjdzvecmfm6sif@gmail.com>
- <20180406093424.GA908@isilmar-4.linta.de>
- <20180406123420.kf74tgiahaugl35x@gmail.com>
+        Fri, 6 Apr 2018 09:08:30 -0400
+X-Originating-IP: 2.224.242.101
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sergei.shtylyov@cogentembedded.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge
+Date: Fri,  6 Apr 2018 15:08:05 +0200
+Message-Id: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406123420.kf74tgiahaugl35x@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 02:34:20PM +0200, Ingo Molnar wrote:
-> 
-> * Dominik Brodowski <linux@dominikbrodowski.net> wrote:
-> 
-> > > > __sys_mprotect as prefix won't work by the way, as the double-underscore __sys_ 
-> > > > variant is already used in net/* for internal syscall helpers.
-> > > 
-> > > Ok - then triple underscore - but overall I think it's more confusing.
-> > > 
-> > > Btw., what was the problem with calling the x86 ptregs wrapper sys_mprotect?
-> > > 
-> > > The only reason I suggested the __sys_x86_ prefix was because you originally 
-> > > suggested that there's symbol name overlap, but I don't think that's the case 
-> > > within the same kernel build, as the regular non-ptregs prototype:
-> > 
-> > Indeed, there's no symbol name overlap within the same kernel build, but
-> > technically different stubs named the same. If that's fine, just drop patch
-> > 8/8 (including the UML fixup) and things should be fine, with the stub and
-> > the entry in the syscall table both named sys_mprotect.
-> 
-> Ok, I've dropped patch #8.
+Hello,
+   this series enables HDMI display on V3M Eagle board.
 
-Thanks!
+The series is based on Geert's "renesas-drivers-2018-04-03-v4.16" with
+THC63LVD1024 driver on top (cfr. my in review series:
+"[PATCH v7 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge")
 
-> > For IA32_EMULATION, we have __sys_ia32_mprotect as stub for the same
-> > syscall, including this name as entry in syscall_32.tbl.
-> > 
-> > More problematic is the naming for the compat stubs for IA32_EMAULATION and
-> > X32, where we have
-> > 
-> > 	__compat_sys_ia32_waitid
-> > 	__compat_sys_x32_waitid
-> > 
-> > for example. We *could* rename one of those to compat_sys_waitid() and levae
-> > the other as-is, but actually I prefer it now how it is.
-> 
-> yeah, this is more symmetric I think.
-> 
-> So right now we have these symbols:
-> 
->  triton:~/tip> grep waitid System.map 
-> 
->  ffffffff8105f1e0 t kernel_waitid               # common C function (64-bit kargs)
->  ffffffff8105f2b0 t SYSC_waitid                 # 64-bit uaddr args C function       352 bytes
->  ffffffff8105f410 T sys_waitid                  # 64-bit-ptregs -> C stub,            32 bytes
->  ffffffff8105f430 T __sys_ia32_waitid           # 32-bit-ptregs -> C stub,            32 bytes
->  ffffffff8105f450 t C_SYSC_waitid               # 32-bit uaddr args C function,      400 bytes
->  ffffffff8105f5e0 T __compat_sys_ia32_waitid    # 32-bit-ptregs -> C stub,            32 bytes
->  ffffffff8105f600 T __compat_sys_x32_waitid     # 64-bit-ptregs -> C stub,            32 bytes
-> 
-> BTW., what is the role of generating __sys_ia32_waitid()? It seems unused when a 
-> syscall has a compat variant otherwise - like here.
+This series includes some preliminary work from Sergei and Niklas. I have
+reworked the two final patches from Niklas to enable DU first, add the LVDS
+decoder node, and finally add the ADV7511W chip and enable HDMI output.
 
-Indeed it is unused -- but when compiling
+A branch for testing is available at:
+git://jmondi.org/linux v3m/renesas-drivers-2018-04-03-v4.16/v7-eagle-dts
 
-	SYSCALL_DEFINE5(waitid, ...)
+Thanks
+   j
 
-we don't know yet that somewhere else in the kernel there is
+Jacopo Mondi (2):
+  arm64: dts: renesas: eagle: Enable DU
+  arm64: dts: renesas: eagle: Add LVDS decoder
 
-	COMPAT_SYSCALL_DEFINE5(waitid, ...)
+Niklas Söderlund (2):
+  arm64: dts: renesas: r8a77970: add the LVDS instance
+  arm64: dts: renesas: eagle: Add ADV7511W and HDMI output
 
-So if we want to compile the __sys_ia32_ stub only iff it is used, we'd 
-need to have different macros for syscalls which have compat variants and
-for those which do not. Or do you have an idea how we could trick the
-compiler to do the right thing?
+Sergei Shtylyov (3):
+  arm64: dts: renesas: r8a77970: add FCPVD support
+  arm64: dts: renesas: r8a77970: add VSPD support
+  arm64: dts: renesas: r8a77970: add DU support
 
-> Naming wise the odd thumb out is sys_waitid :-/
-> 
-> I'd argue that we should at minimum name it __sys_waitid:
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 89 ++++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi      | 73 +++++++++++++++++++++
+ 2 files changed, 162 insertions(+)
 
-Can't do, as that namespace is already taken.
-
->  ffffffff8105f1e0 t kernel_waitid               # common C function (64-bit kargs)
->  ffffffff8105f2b0 t SYSC_waitid                 # 64-bit uaddr args C function
->  ffffffff8105f410 T __sys_waitid                # 64-bit-ptregs -> C stub
->  ffffffff8105f430 T __sys_ia32_waitid           # 32-bit-ptregs -> C stub
->  ffffffff8105f450 t C_SYSC_waitid               # 32-bit uaddr args C function
->  ffffffff8105f5e0 T __compat_sys_ia32_waitid    # 32-bit-ptregs -> C stub
->  ffffffff8105f600 T __compat_sys_x32_waitid     # 64-bit-ptregs -> C stub
-> 
-> because that makes it all organized based on the same principle:
-> 
->     {__compat|_}_sys{_ia32|_x32|}_waittid
-> 
-> But arguably there are a whole lot more naming weirdnesses we could fix:
-> 
->  - I find it somewhat confusing that that 'C' in C_SYSC stands not for a C callign 
->    convention, but for 'COMPAT' - i.e. COMPAT_SYSC would be better.
-> 
->  - Another detail is that why is it called 'SYSC', if the other functions use the 
->    'sys' prefix? Wouldn't 'SYS' be more consistent?
-
-It sounds totally reasonable to re-name those, but we should do it not only
-for the x86 case, but in include/linux/syscalls.h as well.
-
->  - If we introduced a prefix for the regular 64-bit system call format as well,
->    we could have: x64, x32 and ia32.
-> 
->  - And finally, I think the argument format modifiers should be consistently
->    prefixes - right now they are a mixture of pre- and post-fixes.
-> 
-> I.e. I'd generate the names like this:
-> 
->     __{x64,x32,ia32}[_compat]_sys_waittid()
-> 
-> The fully consistent nomenclature would be someting like this:
-> 
->  ffffffff8105f1e0 t            kernel_waitid    # common C function (64-bit kargs)
->  ffffffff8105f2b0 t               SYS_waitid    # 64-bit uaddr args C function
->  ffffffff8105f410 T         __x64_sys_waitid    # 64-bit-ptregs -> C stub
->  ffffffff8105f430 T        __ia32_sys_waitid    # 32-bit-ptregs -> C stub
->  ffffffff8105f450 t        COMPAT_SYS_waitid    # 32-bit uaddr args C function
->  ffffffff8105f5e0 T __ia32_compat_sys_waitid    # 32-bit-ptregs -> C stub
->  ffffffff8105f600 T  __x32_compat_sys_waitid    # 64-bit-ptregs -> C stub
-> 
-> Looks a lot tidier and a lot more logical, doesn't it?
-
-Indeed. Want me to prepare a new patch 8/8 on top which does the renaming
-(for x86 and for the generic case), or will you do the re-naming while
-merging my patches yourself?
-
-> Personally I'd also do a s/ia32/i32 rename:
-
-Uh, no, please. It makes things align more beautifully, yes, but the
-32-bit sub-architecture commonly is referred to as either i386 or ia32...
-
-Thanks,
-	Dominik
+--
+2.7.4
