@@ -1,68 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753644AbeDFOFw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 10:05:52 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:41776 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752565AbeDFOFs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:05:48 -0400
-X-Google-Smtp-Source: AIpwx483zy0fMVoQPQ6TFu9i3jJDskMYKW7aLDu8UP5wccv9ILfi4esZ4Rj3QiwiyfwyqtqixjUKtg==
-From: Esben Haabendal <esben.haabendal@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Esben Haabendal <eha@deif.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] dp83640: Ensure against premature access to PHY registers after reset
-Date: Fri,  6 Apr 2018 16:05:40 +0200
-Message-Id: <20180406140540.13511-1-esben.haabendal@gmail.com>
-X-Mailer: git-send-email 2.16.3
+        id S1756493AbeDFOGD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 10:06:03 -0400
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:56084 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753084AbeDFOGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 10:06:02 -0400
+Date: Fri, 6 Apr 2018 13:01:46 +0100
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To: Simon Que <sque@chromium.org>
+Cc: linux-kernel@vger.kernel.org, frankhu@chromium.org,
+        John Joseph <jnjoseph@google.com>, Rob Springer <rspringer@google.com>
+Subject: Re: Looking for way to program external MMU from userspace (or
+ viable alternative)
+Message-ID: <20180406130146.5a9c7ff3@alans-desktop>
+In-Reply-To: <CANV8Hs0XsCnLRwOdC=r4sot+iKkivofMzEg-kA_b5UjRw9Xmng@mail.gmail.com>
+References: <CANV8Hs0XsCnLRwOdC=r4sot+iKkivofMzEg-kA_b5UjRw9Xmng@mail.gmail.com>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Esben Haabendal <eha@deif.com>
+> The current kernel driver code looks up the physical address of a page of
+> user-allocated memory by traversing the page table, and then writing the
+> physical address to the external MMU. If we were to move the driver to
+> userspace, this procedure would require exposing the physical address to
+> user space, which insecure and thus a no-go.
+> 
+> What possibilities are there for programming the MMU from a userspace
+> driver?
 
-Signed-off-by: Esben Haabendal <eha@deif.com>
----
- drivers/net/phy/dp83640.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+If you want to be secure none.
 
-diff --git a/drivers/net/phy/dp83640.c b/drivers/net/phy/dp83640.c
-index 654f42d00092..48403170096a 100644
---- a/drivers/net/phy/dp83640.c
-+++ b/drivers/net/phy/dp83640.c
-@@ -1207,6 +1207,22 @@ static void dp83640_remove(struct phy_device *phydev)
- 	kfree(dp83640);
- }
- 
-+static int dp83640_soft_reset(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = genphy_soft_reset(phydev);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* From DP83640 datasheet: "Software driver code must wait 3 us
-+	 * following a software reset before allowing further serial MII
-+	 * operations with the DP83640." */
-+	udelay(3);
-+
-+	return 0;
-+}
-+
- static int dp83640_config_init(struct phy_device *phydev)
- {
- 	struct dp83640_private *dp83640 = phydev->priv;
-@@ -1501,6 +1517,7 @@ static struct phy_driver dp83640_driver = {
- 	.flags		= PHY_HAS_INTERRUPT,
- 	.probe		= dp83640_probe,
- 	.remove		= dp83640_remove,
-+	.soft_reset	= dp83640_soft_reset,
- 	.config_init	= dp83640_config_init,
- 	.ack_interrupt  = dp83640_ack_interrupt,
- 	.config_intr    = dp83640_config_intr,
--- 
-2.16.3
+That's not to say you can't keep most of the code in user space but
+you'll need the DMA and MMU manager to be kernel side because you have to
+trust it.
+
+Even if you use something like VT-D, you've then got to program the IOMMU
+and that has to be done in kernel for the same obvious reasons. Look at
+VFIO.. maybe that helps.
+
+Alan
