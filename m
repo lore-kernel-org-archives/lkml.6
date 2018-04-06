@@ -1,304 +1,846 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752049AbeDFLYx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 07:24:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49022 "EHLO mail.kernel.org"
+        id S1752230AbeDFLac (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 07:30:32 -0400
+Received: from m50-135.163.com ([123.125.50.135]:46250 "EHLO m50-135.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751492AbeDFLYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 07:24:50 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5005C20B80
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        David Ahern <dsahern@gmail.com>, Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [GIT PULL 0/6] perf/urgent fixes
-Date: Fri,  6 Apr 2018 08:24:33 -0300
-Message-Id: <20180406112439.21685-1-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
+        id S1751750AbeDFLa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 07:30:29 -0400
+From: yuan linyu <cugyly@163.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        uclinux-h8-devel@lists.sourceforge.jp, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@vger.kernel.org,
+        Michal Simek <monstr@monstr.eu>, linux-mips@linux-mips.org,
+        Greentime Hu <green.hu@gmail.com>, nios2-dev@lists.rocketboards.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org,
+        user-mode-linux-devel@lists.sourceforge.net,
+        user-mode-linux-user@lists.sourceforge.net,
+        Guan Xuetao <gxt@pku.edu.cn>, linux-xtensa@linux-xtensa.org,
+        yuan linyu <Linyu.Yuan@alcatel-sbell.com.cn>
+Subject: [RFC linux] init: make all setup_arch() output string to boot_command_line[]
+Date: Fri,  6 Apr 2018 19:11:59 +0800
+Message-Id: <20180406111159.5385-1-cugyly@163.com>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: D9GowAB3nBkbVsdaVm9DCw--.6381S2
+X-Coremail-Antispam: 1Uf129KBjvAXoWftF4kJFW5Xr1kWw4kuw4xXrb_yoW5GryxWo
+        Z8GF1jkr4rWrnayrn8CF1YgFWrXrZIkws0vaykJFWFgr17AF1UAr40gay7uFy5t34rKF9r
+        u3Zrua9rC34kJan5n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+        AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU-VbyDUUUU
+X-Originating-IP: [180.157.30.106]
+X-CM-SenderInfo: pfxj5zr16rljoofrz/1tbiRR0g41l9jhviOAAAsw
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
+From: yuan linyu <Linyu.Yuan@alcatel-sbell.com.cn>
 
-	Please consider pulling,
+then all arch boot parameter handled in the same way in start_kernel()
 
-- Arnaldo
+Signed-off-by: yuan linyu <Linyu.Yuan@alcatel-sbell.com.cn>
+---
+ arch/alpha/kernel/setup.c          |  4 +---
+ arch/arc/kernel/setup.c            |  5 +----
+ arch/arm/kernel/setup.c            |  7 +------
+ arch/arm64/kernel/setup.c          |  4 +---
+ arch/c6x/kernel/setup.c            |  5 +----
+ arch/h8300/kernel/setup.c          |  3 +--
+ arch/hexagon/kernel/setup.c        | 16 +---------------
+ arch/ia64/kernel/setup.c           | 15 ++++++++-------
+ arch/m68k/kernel/setup_mm.c        |  5 ++---
+ arch/m68k/kernel/setup_no.c        |  3 +--
+ arch/microblaze/kernel/setup.c     |  4 +---
+ arch/mips/kernel/setup.c           | 11 +++--------
+ arch/nds32/kernel/setup.c          |  3 +--
+ arch/nios2/kernel/setup.c          |  5 +----
+ arch/openrisc/kernel/setup.c       |  4 +---
+ arch/parisc/kernel/setup.c         |  9 ++-------
+ arch/powerpc/kernel/setup-common.c |  4 +---
+ arch/riscv/kernel/setup.c          |  4 +---
+ arch/s390/kernel/setup.c           |  6 +-----
+ arch/sh/kernel/setup.c             |  7 ++++---
+ arch/sparc/kernel/setup_32.c       |  9 +++++----
+ arch/sparc/kernel/setup_64.c       |  8 ++++----
+ arch/um/kernel/um_arch.c           |  3 +--
+ arch/unicore32/kernel/setup.c      |  8 +-------
+ arch/x86/kernel/setup.c            |  6 +-----
+ arch/xtensa/kernel/setup.c         |  9 +++++----
+ include/linux/init.h               |  2 +-
+ init/main.c                        | 14 +++++++-------
+ 28 files changed, 59 insertions(+), 124 deletions(-)
 
-Test results at the end of this message, as usual.
-
-The following changes since commit d1e7e602cd64cf61f87dbf30df07c24df9eb1d99:
-
-  perf/x86/intel: Move regs->flags EXACT bit init (2018-04-05 09:28:40 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.17-20180406
-
-for you to fetch changes up to 01f97511f13cbf2ba3d23b2bffa06258dc81e283:
-
-  tools headers uapi: Synchronize i915_drm.h (2018-04-05 14:48:51 -0300)
-
-----------------------------------------------------------------
-perf/urgent fixes:
-
-- Show group details on the title line in the annotate browser
-  and 'perf annotate --stdio2' output, so that the per-event
-  columns can have headers (Arnaldo Carvalho de Melo)
-
-- Fixup vertical line separating metrics from instructions and
-  cleaning unused lines at the bottom, both in the annotate TUI
-  browser (Arnaldo Carvalho de Melo)
-
-- Remove duplicated 'samples' in lost samples warning in
-  'perf report' (Arnaldo Carvalho de Melo)
-
-- Synchronize i915_drm.h, silencing the perf build process,
-  automagically adding support for the new DRM_I915_QUERY
-  ioctl (Arnaldo Carvalho de Melo)
-
-- Make auxtrace_queues__add_buffer() allocate struct buffer,
-  from a patchkit already applied (Adrian Hunter)
-
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-----------------------------------------------------------------
-Adrian Hunter (1):
-      perf auxtrace: Make auxtrace_queues__add_buffer() allocate struct buffer
-
-Arnaldo Carvalho de Melo (5):
-      perf annotate: Show group details on the title line
-      perf annotate browser: Fixup vertical line separating metrics from instructions
-      perf ui browser: Fixup cleaning unused lines at the bottom
-      perf report: Remove duplicated 'samples' in lost samples warning
-      tools headers uapi: Synchronize i915_drm.h
-
- tools/include/uapi/drm/i915_drm.h | 112 ++++++++++++++++++++++++++++++++++++--
- tools/perf/ui/browser.c           |   4 +-
- tools/perf/ui/browsers/annotate.c |   2 +-
- tools/perf/util/annotate.c        |   7 ++-
- tools/perf/util/auxtrace.c        |  54 ++++++++----------
- tools/perf/util/session.c         |   2 +-
- 6 files changed, 141 insertions(+), 40 deletions(-)
-
-Test results:
-
-The first ones are container (docker) based builds of tools/perf with and
-without libelf support.  Where clang is available, it is also used to build
-perf with/without libelf.
-
-The objtool and samples/bpf/ builds are disabled now that I'm switching from
-using the sources in a local volume to fetching them from a http server to
-build it inside the container, to make it easier to build in a container cluster.
-Those will come back later.
-
-Several are cross builds, the ones with -x-ARCH and the android one, and those
-may not have all the features built, due to lack of multi-arch devel packages,
-available and being used so far on just a few, like
-debian:experimental-x-{arm64,mipsel}.
-
-The 'perf test' one will perform a variety of tests exercising
-tools/perf/util/, tools/lib/{bpf,traceevent,etc}, as well as run perf commands
-with a variety of command line event specifications to then intercept the
-sys_perf_event syscall to check that the perf_event_attr fields are set up as
-expected, among a variety of other unit tests.
-
-Then there is the 'make -C tools/perf build-test' ones, that build tools/perf/
-with a variety of feature sets, exercising the build with an incomplete set of
-features as well as with a complete one. It is planned to have it run on each
-of the containers mentioned above, using some container orchestration
-infrastructure. Get in contact if interested in helping having this in place.
-
-  # dm
-   1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
-   2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
-   3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
-   4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
-   5 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
-   6 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-11)
-   7 amazonlinux:2                 : Ok   gcc (GCC) 7.2.1 20170915 (Red Hat 7.2.1-2)
-   8 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
-   9 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
-  10 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
-  11 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
-  12 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)
-  13 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
-  14 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u1) 4.9.2
-  15 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
-  16 debian:experimental           : Ok   gcc (Debian 7.3.0-14) 7.3.0
-  17 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 7.3.0-12) 7.3.0
-  18 debian:experimental-x-mips    : Ok   mips-linux-gnu-gcc (Debian 7.3.0-12) 7.3.0
-  19 debian:experimental-x-mips64  : Ok   mips64-linux-gnuabi64-gcc (Debian 7.3.0-12) 7.3.0
-  20 debian:experimental-x-mipsel  : Ok   mipsel-linux-gnu-gcc (Debian 7.3.0-12) 7.3.0
-  21 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
-  22 fedora:21                     : Ok   gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
-  23 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
-  24 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
-  25 fedora:24                     : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
-  26 fedora:24-x-ARC-uClibc        : Ok   arc-linux-gcc (ARCompact ISA Linux uClibc toolchain 2017.09-rc2) 7.1.1 20170710
-  27 fedora:25                     : Ok   gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
-  28 fedora:26                     : Ok   gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
-  29 fedora:27                     : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
-  30 fedora:28                     : Ok   gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
-  31 fedora:rawhide                : Ok   gcc (GCC) 8.0.1 20180222 (Red Hat 8.0.1-0.16)
-  32 gentoo-stage3-amd64:latest    : Ok   gcc (Gentoo 6.4.0-r1 p1.3) 6.4.0
-  33 mageia:5                      : Ok   gcc (GCC) 4.9.2
-  34 mageia:6                      : Ok   gcc (Mageia 5.5.0-1.mga6) 5.5.0
-  35 opensuse:42.1                 : Ok   gcc (SUSE Linux) 4.8.5
-  36 opensuse:42.2                 : Ok   gcc (SUSE Linux) 4.8.5
-  37 opensuse:42.3                 : Ok   gcc (SUSE Linux) 4.8.5
-  38 opensuse:tumbleweed           : Ok   gcc (SUSE Linux) 7.3.0
-  39 oraclelinux:6                 : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
-  40 oraclelinux:7                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16.0.3)
-  41 ubuntu:12.04.5                : Ok   gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
-  42 ubuntu:14.04.4                : Ok   gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
-  43 ubuntu:14.04.4-x-linaro-arm64 : Ok   aarch64-linux-gnu-gcc (Linaro GCC 5.4-2017.05) 5.4.1 20170404
-  44 ubuntu:15.04                  : Ok   gcc (Ubuntu 4.9.2-10ubuntu13) 4.9.2
-  45 ubuntu:16.04                  : Ok   gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  46 ubuntu:16.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  47 ubuntu:16.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  48 ubuntu:16.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  49 ubuntu:16.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  50 ubuntu:16.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  51 ubuntu:16.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  52 ubuntu:16.10                  : Ok   gcc (Ubuntu 6.2.0-5ubuntu12) 6.2.0 20161005
-  53 ubuntu:17.04                  : Ok   gcc (Ubuntu 6.3.0-12ubuntu2) 6.3.0 20170406
-  54 ubuntu:17.10                  : Ok   gcc (Ubuntu 7.2.0-8ubuntu3) 7.2.0
-  55 ubuntu:18.04                  : Ok   gcc (Ubuntu 7.2.0-16ubuntu1) 7.2.0
-
-  # uname -a
-  Linux jouet 4.16.0-rc7 #3 SMP Mon Mar 26 14:35:30 -03 2018 x86_64 x86_64 x86_64 GNU/Linux
-  # perf test
-   1: vmlinux symtab matches kallsyms                       : Ok
-   2: Detect openat syscall event                           : Ok
-   3: Detect openat syscall event on all cpus               : Ok
-   4: Read samples using the mmap interface                 : Ok
-   5: Test data source output                               : Ok
-   6: Parse event definition strings                        : Ok
-   7: Simple expression parser                              : Ok
-   8: PERF_RECORD_* events & perf_sample fields             : Ok
-   9: Parse perf pmu format                                 : Ok
-  10: DSO data read                                         : Ok
-  11: DSO data cache                                        : Ok
-  12: DSO data reopen                                       : Ok
-  13: Roundtrip evsel->name                                 : Ok
-  14: Parse sched tracepoints fields                        : Ok
-  15: syscalls:sys_enter_openat event fields                : Ok
-  16: Setup struct perf_event_attr                          : Ok
-  17: Match and link multiple hists                         : Ok
-  18: 'import perf' in python                               : Ok
-  19: Breakpoint overflow signal handler                    : Ok
-  20: Breakpoint overflow sampling                          : Ok
-  21: Breakpoint accounting                                 : Skip
-  22: Number of exit events of a simple workload            : Ok
-  23: Software clock events period values                   : Ok
-  24: Object code reading                                   : Ok
-  25: Sample parsing                                        : Ok
-  26: Use a dummy software event to keep tracking           : Ok
-  27: Parse with no sample_id_all bit set                   : Ok
-  28: Filter hist entries                                   : Ok
-  29: Lookup mmap thread                                    : Ok
-  30: Share thread mg                                       : Ok
-  31: Sort output of hist entries                           : Ok
-  32: Cumulate child hist entries                           : Ok
-  33: Track with sched_switch                               : Ok
-  34: Filter fds with revents mask in a fdarray             : Ok
-  35: Add fd to a fdarray, making it autogrow               : Ok
-  36: kmod_path__parse                                      : Ok
-  37: Thread map                                            : Ok
-  38: LLVM search and compile                               :
-  38.1: Basic BPF llvm compile                              : Ok
-  38.2: kbuild searching                                    : Ok
-  38.3: Compile source for BPF prologue generation          : Ok
-  38.4: Compile source for BPF relocation                   : Ok
-  39: Session topology                                      : Ok
-  40: BPF filter                                            :
-  40.1: Basic BPF filtering                                 : Ok
-  40.2: BPF pinning                                         : Ok
-  40.3: BPF prologue generation                             : Ok
-  40.4: BPF relocation checker                              : Ok
-  41: Synthesize thread map                                 : Ok
-  42: Remove thread map                                     : Ok
-  43: Synthesize cpu map                                    : Ok
-  44: Synthesize stat config                                : Ok
-  45: Synthesize stat                                       : Ok
-  46: Synthesize stat round                                 : Ok
-  47: Synthesize attr update                                : Ok
-  48: Event times                                           : Ok
-  49: Read backward ring buffer                             : Ok
-  50: Print cpu map                                         : Ok
-  51: Probe SDT events                                      : Ok
-  52: is_printable_array                                    : Ok
-  53: Print bitmap                                          : Ok
-  54: perf hooks                                            : Ok
-  55: builtin clang support                                 : Skip (not compiled in)
-  56: unit_number__scnprintf                                : Ok
-  57: mem2node                                              : Ok
-  58: x86 rdpmc                                             : Ok
-  59: Convert perf time to TSC                              : Ok
-  60: DWARF unwind                                          : Ok
-  61: x86 instruction decoder - new instructions            : Ok
-  62: Use vfs_getname probe to get syscall args filenames   : Ok
-  63: probe libc's inet_pton & backtrace it with ping       : Ok
-  64: Check open filename arg using perf trace + vfs_getname: Ok
-  65: probe libc's inet_pton & backtrace it with ping       : Ok
-  66: Add vfs_getname probe to get syscall args filenames   : Ok
-  #
-
-  $ make -C tools/perf build-test
-  make: Entering directory '/home/acme/git/perf/tools/perf'
-  - tarpkg: ./tests/perf-targz-src-pkg .
-            make_no_auxtrace_O: make NO_AUXTRACE=1
-             make_util_map_o_O: make util/map.o
-                  make_no_ui_O: make NO_NEWT=1 NO_SLANG=1 NO_GTK2=1
-                make_install_O: make install
-                   make_pure_O: make
-              make_no_libelf_O: make NO_LIBELF=1
-               make_no_slang_O: make NO_SLANG=1
-         make_with_clangllvm_O: make LIBCLANGLLVM=1
-                make_no_gtk2_O: make NO_GTK2=1
-            make_install_bin_O: make install-bin
-             make_no_libperl_O: make NO_LIBPERL=1
-                make_no_newt_O: make NO_NEWT=1
-           make_no_libpython_O: make NO_LIBPYTHON=1
-              make_no_libbpf_O: make NO_LIBBPF=1
-                make_minimal_O: make NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1 NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1 NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1 NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1 NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1
-            make_no_demangle_O: make NO_DEMANGLE=1
-                  make_debug_O: make DEBUG=1
-                   make_help_O: make help
-        make_with_babeltrace_O: make LIBBABELTRACE=1
-             make_no_scripts_O: make NO_LIBPYTHON=1 NO_LIBPERL=1
-                 make_static_O: make LDFLAGS=-static
-           make_no_libbionic_O: make NO_LIBBIONIC=1
-                   make_tags_O: make tags
-         make_install_prefix_O: make install prefix=/tmp/krava
-             make_no_libnuma_O: make NO_LIBNUMA=1
-              make_clean_all_O: make clean all
-                 make_perf_o_O: make perf.o
-           make_no_libunwind_O: make NO_LIBUNWIND=1
-            make_no_libaudit_O: make NO_LIBAUDIT=1
-  make_no_libdw_dwarf_unwind_O: make NO_LIBDW_DWARF_UNWIND=1
-   make_install_prefix_slash_O: make install prefix=/tmp/krava/
-           make_no_backtrace_O: make NO_BACKTRACE=1
-       make_util_pmu_bison_o_O: make util/pmu-bison.o
-                    make_doc_O: make doc
-  OK
-  make: Leaving directory '/home/acme/git/perf/tools/perf'
-  $
+diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+index 5576f7646fb6..c74675cf7129 100644
+--- a/arch/alpha/kernel/setup.c
++++ b/arch/alpha/kernel/setup.c
+@@ -505,8 +505,7 @@ register_cpus(void)
+ 
+ arch_initcall(register_cpus);
+ 
+-void __init
+-setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	extern char _end[];
+ 
+@@ -566,7 +565,6 @@ setup_arch(char **cmdline_p)
+ 		strlcpy(command_line, COMMAND_LINE, sizeof command_line);
+ 	}
+ 	strcpy(boot_command_line, command_line);
+-	*cmdline_p = command_line;
+ 
+ 	/* 
+ 	 * Process command-line arguments.
+diff --git a/arch/arc/kernel/setup.c b/arch/arc/kernel/setup.c
+index b2cae79a25d7..9cfdcf42bf28 100644
+--- a/arch/arc/kernel/setup.c
++++ b/arch/arc/kernel/setup.c
+@@ -456,7 +456,7 @@ static inline int is_kernel(unsigned long addr)
+ 	return 0;
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ #ifdef CONFIG_ARC_UBOOT_SUPPORT
+ 	/* make sure that uboot passed pointer to cmdline/dtb is valid */
+@@ -487,9 +487,6 @@ void __init setup_arch(char **cmdline_p)
+ 		}
+ 	}
+ 
+-	/* Save unparsed command line copy for /proc/cmdline */
+-	*cmdline_p = boot_command_line;
+-
+ 	/* To force early parsing of things like mem=xxx */
+ 	parse_early_param();
+ 
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index fc40a2b40595..1025e3a37689 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -153,7 +153,6 @@ EXPORT_SYMBOL(elf_platform);
+ 
+ static const char *cpu_name;
+ static const char *machine_name;
+-static char __initdata cmd_line[COMMAND_LINE_SIZE];
+ const struct machine_desc *machine_desc __initdata;
+ 
+ static union { char c[4]; unsigned long l; } endian_test __initdata = { { 'l', '?', '?', 'b' } };
+@@ -1061,7 +1060,7 @@ void __init hyp_mode_check(void)
+ #endif
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	const struct machine_desc *mdesc;
+ 
+@@ -1091,10 +1090,6 @@ void __init setup_arch(char **cmdline_p)
+ 	init_mm.end_data   = (unsigned long) _edata;
+ 	init_mm.brk	   = (unsigned long) _end;
+ 
+-	/* populate cmd_line too for later use, preserving boot_command_line */
+-	strlcpy(cmd_line, boot_command_line, COMMAND_LINE_SIZE);
+-	*cmdline_p = cmd_line;
+-
+ 	early_fixmap_init();
+ 	early_ioremap_init();
+ 
+diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+index 30ad2f085d1f..c7ba4d32e7f7 100644
+--- a/arch/arm64/kernel/setup.c
++++ b/arch/arm64/kernel/setup.c
+@@ -243,15 +243,13 @@ static void __init request_standard_resources(void)
+ 
+ u64 __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HWID };
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	init_mm.start_code = (unsigned long) _text;
+ 	init_mm.end_code   = (unsigned long) _etext;
+ 	init_mm.end_data   = (unsigned long) _edata;
+ 	init_mm.brk	   = (unsigned long) _end;
+ 
+-	*cmdline_p = boot_command_line;
+-
+ 	early_fixmap_init();
+ 	early_ioremap_init();
+ 
+diff --git a/arch/c6x/kernel/setup.c b/arch/c6x/kernel/setup.c
+index 786e36e2f61d..012c8e746889 100644
+--- a/arch/c6x/kernel/setup.c
++++ b/arch/c6x/kernel/setup.c
+@@ -294,16 +294,13 @@ notrace void __init machine_init(unsigned long dt_ptr)
+ 	parse_early_param();
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	int bootmap_size;
+ 	struct memblock_region *reg;
+ 
+ 	printk(KERN_INFO "Initializing kernel\n");
+ 
+-	/* Initialize command line */
+-	*cmdline_p = boot_command_line;
+-
+ 	memory_end = ram_end;
+ 	memory_end &= ~(PAGE_SIZE - 1);
+ 
+diff --git a/arch/h8300/kernel/setup.c b/arch/h8300/kernel/setup.c
+index a4d0470c10a9..bb54c2087f13 100644
+--- a/arch/h8300/kernel/setup.c
++++ b/arch/h8300/kernel/setup.c
+@@ -117,7 +117,7 @@ static void __init bootmem_init(void)
+ 	}
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	unflatten_and_copy_device_tree();
+ 
+@@ -131,7 +131,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	if (*command_line)
+ 		strcpy(boot_command_line, command_line);
+-	*cmdline_p = boot_command_line;
+ 
+ 	parse_early_param();
+ 
+diff --git a/arch/hexagon/kernel/setup.c b/arch/hexagon/kernel/setup.c
+index 6981949f5df3..a0348dfad265 100644
+--- a/arch/hexagon/kernel/setup.c
++++ b/arch/hexagon/kernel/setup.c
+@@ -34,7 +34,6 @@
+ #include <asm/vm_mmu.h>
+ #include <asm/time.h>
+ 
+-char cmd_line[COMMAND_LINE_SIZE];
+ static char default_command_line[COMMAND_LINE_SIZE] __initdata = CONFIG_CMDLINE;
+ 
+ int on_simulator;
+@@ -44,12 +43,7 @@ void calibrate_delay(void)
+ 	loops_per_jiffy = thread_freq_mhz * 1000000 / HZ;
+ }
+ 
+-/*
+- * setup_arch -  high level architectural setup routine
+- * @cmdline_p: pointer to pointer to command-line arguments
+- */
+-
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	char *p = &external_cmdline_buffer;
+ 
+@@ -84,14 +78,6 @@ void __init setup_arch(char **cmdline_p)
+ 		strlcpy(boot_command_line, default_command_line,
+ 			COMMAND_LINE_SIZE);
+ 
+-	/*
+-	 * boot_command_line and the value set up by setup_arch
+-	 * are both picked up by the init code. If no reason to
+-	 * make them different, pass the same pointer back.
+-	 */
+-	strlcpy(cmd_line, boot_command_line, COMMAND_LINE_SIZE);
+-	*cmdline_p = cmd_line;
+-
+ 	parse_early_param();
+ 
+ 	setup_arch_memory();
+diff --git a/arch/ia64/kernel/setup.c b/arch/ia64/kernel/setup.c
+index dee56bcb993d..75196264dd4e 100644
+--- a/arch/ia64/kernel/setup.c
++++ b/arch/ia64/kernel/setup.c
+@@ -527,15 +527,16 @@ int __init reserve_elfcorehdr(u64 *start, u64 *end)
+ 
+ #endif /* CONFIG_PROC_VMCORE */
+ 
+-void __init
+-setup_arch (char **cmdline_p)
++void __init setup_arch (void)
+ {
++	char *cmdline_p;
++
+ 	unw_init();
+ 
+ 	ia64_patch_vtop((u64) __start___vtop_patchlist, (u64) __end___vtop_patchlist);
+ 
+-	*cmdline_p = __va(ia64_boot_param->command_line);
+-	strlcpy(boot_command_line, *cmdline_p, COMMAND_LINE_SIZE);
++	cmdline_p = __va(ia64_boot_param->command_line);
++	strlcpy(boot_command_line, cmdline_p, COMMAND_LINE_SIZE);
+ 
+ 	efi_init();
+ 	io_port_init();
+@@ -546,12 +547,12 @@ setup_arch (char **cmdline_p)
+ 	 * that ia64_mv is initialised before any command line
+ 	 * settings may cause console setup to occur
+ 	 */
+-	machvec_init_from_cmdline(*cmdline_p);
++	machvec_init_from_cmdline(cmdline_p);
+ #endif
+ 
+ 	parse_early_param();
+ 
+-	if (early_console_setup(*cmdline_p) == 0)
++	if (early_console_setup(cmdline_p) == 0)
+ 		mark_bsp_online();
+ 
+ #ifdef CONFIG_ACPI
+@@ -618,7 +619,7 @@ setup_arch (char **cmdline_p)
+ 	if (!nomca)
+ 		ia64_mca_init();
+ 
+-	platform_setup(cmdline_p);
++	platform_setup(&cmdline_p);
+ #ifndef CONFIG_IA64_HP_SIM
+ 	check_sal_cache_flush();
+ #endif
+diff --git a/arch/m68k/kernel/setup_mm.c b/arch/m68k/kernel/setup_mm.c
+index dd25bfc22fb4..38ccaf3e0274 100644
+--- a/arch/m68k/kernel/setup_mm.c
++++ b/arch/m68k/kernel/setup_mm.c
+@@ -222,7 +222,7 @@ static void __init m68k_parse_bootinfo(const struct bi_record *record)
+ #endif
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ #ifndef CONFIG_SUN3
+ 	int i;
+@@ -272,8 +272,7 @@ void __init setup_arch(char **cmdline_p)
+ 	m68k_command_line[CL_SIZE - 1] = 0;
+ #endif /* CONFIG_BOOTPARAM */
+ 	process_uboot_commandline(&m68k_command_line[0], CL_SIZE);
+-	*cmdline_p = m68k_command_line;
+-	memcpy(boot_command_line, *cmdline_p, CL_SIZE);
++	memcpy(boot_command_line, m68k_command_line, CL_SIZE);
+ 
+ 	parse_early_param();
+ 
+diff --git a/arch/m68k/kernel/setup_no.c b/arch/m68k/kernel/setup_no.c
+index a98af1018201..8b244d4ea603 100644
+--- a/arch/m68k/kernel/setup_no.c
++++ b/arch/m68k/kernel/setup_no.c
+@@ -84,7 +84,7 @@ void (*mach_power_off)(void);
+ #define	CPU_INSTR_PER_JIFFY	16
+ #endif
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	int bootmap_size;
+ 
+@@ -143,7 +143,6 @@ void __init setup_arch(char **cmdline_p)
+ 		 __bss_stop, memory_start, memory_start, memory_end);
+ 
+ 	/* Keep a copy of command line */
+-	*cmdline_p = &command_line[0];
+ 	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
+ 	boot_command_line[COMMAND_LINE_SIZE-1] = 0;
+ 
+diff --git a/arch/microblaze/kernel/setup.c b/arch/microblaze/kernel/setup.c
+index be98ffe28ca8..632b7546effc 100644
+--- a/arch/microblaze/kernel/setup.c
++++ b/arch/microblaze/kernel/setup.c
+@@ -50,10 +50,8 @@ unsigned int boot_cpuid;
+  */
+ char cmd_line[COMMAND_LINE_SIZE] __attribute__ ((section(".data")));
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+-	*cmdline_p = boot_command_line;
+-
+ 	console_verbose();
+ 
+ 	unflatten_device_tree();
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 5f8b0a9e30b3..2bff67be95d6 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -64,7 +64,6 @@ EXPORT_SYMBOL(mips_machtype);
+ 
+ struct boot_mem_map boot_mem_map;
+ 
+-static char __initdata command_line[COMMAND_LINE_SIZE];
+ char __initdata arcs_cmdline[COMMAND_LINE_SIZE];
+ 
+ #ifdef CONFIG_CMDLINE_BOOL
+@@ -829,7 +828,7 @@ static void __init request_crashkernel(struct resource *res)
+ #define BUILTIN_EXTEND_WITH_PROM	\
+ 	IS_ENABLED(CONFIG_MIPS_CMDLINE_BUILTIN_EXTEND)
+ 
+-static void __init arch_mem_init(char **cmdline_p)
++static void __init arch_mem_init(void)
+ {
+ 	struct memblock_region *reg;
+ 	extern void plat_mem_setup(void);
+@@ -881,10 +880,6 @@ static void __init arch_mem_init(char **cmdline_p)
+ 	pr_info("Determined physical RAM map:\n");
+ 	print_memory_map();
+ 
+-	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
+-
+-	*cmdline_p = command_line;
+-
+ 	parse_early_param();
+ 
+ 	if (usermem) {
+@@ -1002,7 +997,7 @@ static void __init prefill_possible_map(void)
+ static inline void prefill_possible_map(void) {}
+ #endif
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	cpu_probe();
+ 	mips_cm_probe();
+@@ -1023,7 +1018,7 @@ void __init setup_arch(char **cmdline_p)
+ #endif
+ #endif
+ 
+-	arch_mem_init(cmdline_p);
++	arch_mem_init();
+ 
+ 	resource_init();
+ 	plat_smp_setup();
+diff --git a/arch/nds32/kernel/setup.c b/arch/nds32/kernel/setup.c
+index ba910e9e4ecb..7df72753dd9a 100644
+--- a/arch/nds32/kernel/setup.c
++++ b/arch/nds32/kernel/setup.c
+@@ -276,7 +276,7 @@ static void __init setup_memory(void)
+ 	memblock_dump_all();
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	early_init_devtree( __dtb_start);
+ 
+@@ -303,7 +303,6 @@ void __init setup_arch(char **cmdline_p)
+ 			conswitchp = &dummy_con;
+ 	}
+ 
+-	*cmdline_p = boot_command_line;
+ 	early_trap_init();
+ }
+ 
+diff --git a/arch/nios2/kernel/setup.c b/arch/nios2/kernel/setup.c
+index 926a02b17b31..e8d140f1d40c 100644
+--- a/arch/nios2/kernel/setup.c
++++ b/arch/nios2/kernel/setup.c
+@@ -141,7 +141,7 @@ asmlinkage void __init nios2_boot_init(unsigned r4, unsigned r5, unsigned r6,
+ 	parse_early_param();
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	int bootmap_size;
+ 
+@@ -156,9 +156,6 @@ void __init setup_arch(char **cmdline_p)
+ 	init_mm.brk = (unsigned long) _end;
+ 	init_task.thread.kregs = &fake_regs;
+ 
+-	/* Keep a copy of command line */
+-	*cmdline_p = boot_command_line;
+-
+ 	min_low_pfn = PFN_UP(memory_start);
+ 	max_low_pfn = PFN_DOWN(memory_end);
+ 	max_mapnr = max_low_pfn;
+diff --git a/arch/openrisc/kernel/setup.c b/arch/openrisc/kernel/setup.c
+index 9d28ab14d139..d73e1faa88d1 100644
+--- a/arch/openrisc/kernel/setup.c
++++ b/arch/openrisc/kernel/setup.c
+@@ -283,7 +283,7 @@ void calibrate_delay(void)
+ 		(loops_per_jiffy / (5000 / HZ)) % 100, loops_per_jiffy);
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	unflatten_and_copy_device_tree();
+ 
+@@ -320,8 +320,6 @@ void __init setup_arch(char **cmdline_p)
+ 		conswitchp = &dummy_con;
+ #endif
+ 
+-	*cmdline_p = boot_command_line;
+-
+ 	printk(KERN_INFO "OpenRISC Linux -- http://openrisc.io\n");
+ }
+ 
+diff --git a/arch/parisc/kernel/setup.c b/arch/parisc/kernel/setup.c
+index 0e9675f857a5..7756a6110b83 100644
+--- a/arch/parisc/kernel/setup.c
++++ b/arch/parisc/kernel/setup.c
+@@ -51,8 +51,6 @@
+ #include <asm/unwind.h>
+ #include <asm/smp.h>
+ 
+-static char __initdata command_line[COMMAND_LINE_SIZE];
+-
+ /* Intended for ccio/sba/cpu statistics under /proc/bus/{runway|gsc} */
+ struct proc_dir_entry * proc_runway_root __read_mostly = NULL;
+ struct proc_dir_entry * proc_gsc_root __read_mostly = NULL;
+@@ -63,7 +61,7 @@ int parisc_bus_is_phys __read_mostly = 1;	/* Assume no IOMMU is present */
+ EXPORT_SYMBOL(parisc_bus_is_phys);
+ #endif
+ 
+-void __init setup_cmdline(char **cmdline_p)
++void __init setup_cmdline(void)
+ {
+ 	extern unsigned int boot_args[];
+ 
+@@ -85,9 +83,6 @@ void __init setup_cmdline(char **cmdline_p)
+ 		}
+ #endif
+ 	}
+-
+-	strcpy(command_line, boot_command_line);
+-	*cmdline_p = command_line;
+ }
+ 
+ #ifdef CONFIG_PA11
+@@ -119,7 +114,7 @@ void __init dma_ops_init(void)
+ 
+ extern void collect_boot_cpu_data(void);
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ #ifdef CONFIG_64BIT
+ 	extern int parisc_narrow_firmware;
+diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+index d73ec518ef80..b88ce4afaafd 100644
+--- a/arch/powerpc/kernel/setup-common.c
++++ b/arch/powerpc/kernel/setup-common.c
+@@ -839,10 +839,8 @@ static __init void print_system_info(void)
+  * Called into from start_kernel this initializes memblock, which is used
+  * to manage page allocation until mem_init is called.
+  */
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+-	*cmdline_p = boot_command_line;
+-
+ 	/* Set a half-reasonable default so udelay does something sensible */
+ 	loops_per_jiffy = 500000000 / HZ;
+ 
+diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+index c11f40c1b2a8..dee21fd2f5c2 100644
+--- a/arch/riscv/kernel/setup.c
++++ b/arch/riscv/kernel/setup.c
+@@ -192,10 +192,8 @@ static void __init setup_bootmem(void)
+ 	}
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+-	*cmdline_p = boot_command_line;
+-
+ 	parse_early_param();
+ 
+ 	init_mm.start_code = (unsigned long) _stext;
+diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
+index a6a91f01a17a..6addb5afc59e 100644
+--- a/arch/s390/kernel/setup.c
++++ b/arch/s390/kernel/setup.c
+@@ -867,7 +867,7 @@ static void __init setup_task_size(void)
+  * was printed.
+  */
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+         /*
+          * print what head.S has found out about the machine
+@@ -880,10 +880,6 @@ void __init setup_arch(char **cmdline_p)
+ 	else if (MACHINE_IS_LPAR)
+ 		pr_info("Linux is running natively in 64-bit mode\n");
+ 
+-	/* Have one command line that is parsed and saved in /proc/cmdline */
+-	/* boot_command_line has been already set up in early.c */
+-	*cmdline_p = boot_command_line;
+-
+         ROOT_DEV = Root_RAM0;
+ 
+ 	/* Is init_mm really needed? */
+diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
+index b95c411d0333..c46646f0c3c5 100644
+--- a/arch/sh/kernel/setup.c
++++ b/arch/sh/kernel/setup.c
+@@ -270,8 +270,10 @@ void __ref sh_fdt_init(phys_addr_t dt_phys)
+ }
+ #endif
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
++	char *cmdline_p = command_line;
++
+ 	enable_mmu();
+ 
+ 	ROOT_DEV = old_decode_dev(ORIG_ROOT_DEV);
+@@ -319,7 +321,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	/* Save unparsed command line copy for /proc/cmdline */
+ 	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
+-	*cmdline_p = command_line;
+ 
+ 	parse_early_param();
+ 
+@@ -338,7 +339,7 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	/* Perform the machine specific initialisation */
+ 	if (likely(sh_mv.mv_setup))
+-		sh_mv.mv_setup(cmdline_p);
++		sh_mv.mv_setup(&cmdline_p);
+ 
+ 	plat_smp_setup();
+ }
+diff --git a/arch/sparc/kernel/setup_32.c b/arch/sparc/kernel/setup_32.c
+index 13664c377196..5bced97cc5f8 100644
+--- a/arch/sparc/kernel/setup_32.c
++++ b/arch/sparc/kernel/setup_32.c
+@@ -294,19 +294,20 @@ void __init sparc32_start_kernel(struct linux_romvec *rp)
+ 	start_kernel();
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	int i;
++	char *cmdline_p;
+ 	unsigned long highest_paddr;
+ 
+ 	sparc_ttable = &trapbase;
+ 
+ 	/* Initialize PROM console and command line. */
+-	*cmdline_p = prom_getbootargs();
+-	strlcpy(boot_command_line, *cmdline_p, COMMAND_LINE_SIZE);
++	cmdline_p = prom_getbootargs();
++	strlcpy(boot_command_line, cmdline_p, COMMAND_LINE_SIZE);
+ 	parse_early_param();
+ 
+-	boot_flags_init(*cmdline_p);
++	boot_flags_init(cmdline_p);
+ 
+ 	register_console(&prom_early_console);
+ 
+diff --git a/arch/sparc/kernel/setup_64.c b/arch/sparc/kernel/setup_64.c
+index 7944b3ca216a..9f6edffa6a4b 100644
+--- a/arch/sparc/kernel/setup_64.c
++++ b/arch/sparc/kernel/setup_64.c
+@@ -630,14 +630,14 @@ void __init alloc_irqstack_bootmem(void)
+ 	}
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	/* Initialize PROM console and command line. */
+-	*cmdline_p = prom_getbootargs();
+-	strlcpy(boot_command_line, *cmdline_p, COMMAND_LINE_SIZE);
++	char *cmdline_p = prom_getbootargs();
++	strlcpy(boot_command_line, cmdline_p, COMMAND_LINE_SIZE);
+ 	parse_early_param();
+ 
+-	boot_flags_init(*cmdline_p);
++	boot_flags_init(cmdline_p);
+ #ifdef CONFIG_EARLYFB
+ 	if (btext_find_display())
+ #endif
+diff --git a/arch/um/kernel/um_arch.c b/arch/um/kernel/um_arch.c
+index a818ccef30ca..73d62cf96149 100644
+--- a/arch/um/kernel/um_arch.c
++++ b/arch/um/kernel/um_arch.c
+@@ -339,7 +339,7 @@ int __init __weak read_initrd(void)
+ 	return 0;
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	stack_protections((unsigned long) &init_thread_info);
+ 	setup_physmem(uml_physmem, uml_reserved, physmem_size, highmem);
+@@ -348,7 +348,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	paging_init();
+ 	strlcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
+-	*cmdline_p = command_line;
+ 	setup_hostinfo(host_info, sizeof host_info);
+ }
+ 
+diff --git a/arch/unicore32/kernel/setup.c b/arch/unicore32/kernel/setup.c
+index c2bffa5614a4..c13a07eeed0b 100644
+--- a/arch/unicore32/kernel/setup.c
++++ b/arch/unicore32/kernel/setup.c
+@@ -60,8 +60,6 @@ struct screen_info screen_info;
+ char elf_platform[ELF_PLATFORM_SIZE];
+ EXPORT_SYMBOL(elf_platform);
+ 
+-static char __initdata cmd_line[COMMAND_LINE_SIZE];
+-
+ static char default_command_line[COMMAND_LINE_SIZE] __initdata = CONFIG_CMDLINE;
+ 
+ /*
+@@ -235,7 +233,7 @@ static int __init customize_machine(void)
+ }
+ arch_initcall(customize_machine);
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	char *from = default_command_line;
+ 
+@@ -249,10 +247,6 @@ void __init setup_arch(char **cmdline_p)
+ 	/* parse_early_param needs a boot_command_line */
+ 	strlcpy(boot_command_line, from, COMMAND_LINE_SIZE);
+ 
+-	/* populate cmd_line too for later use, preserving boot_command_line */
+-	strlcpy(cmd_line, boot_command_line, COMMAND_LINE_SIZE);
+-	*cmdline_p = cmd_line;
+-
+ 	parse_early_param();
+ 
+ 	uc32_memblock_init(&meminfo);
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 6285697b6e56..6e3347dde550 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -219,7 +219,6 @@ unsigned long saved_video_mode;
+ #define RAMDISK_PROMPT_FLAG		0x8000
+ #define RAMDISK_LOAD_FLAG		0x4000
+ 
+-static char __initdata command_line[COMMAND_LINE_SIZE];
+ #ifdef CONFIG_CMDLINE_BOOL
+ static char __initdata builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
+ #endif
+@@ -812,7 +811,7 @@ dump_kernel_offset(struct notifier_block *self, unsigned long v, void *p)
+  * Note: On x86_64, fixmaps are ready for use even before this is called.
+  */
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
+ 	memblock_reserve(__pa_symbol(_text),
+ 			 (unsigned long)__bss_stop - (unsigned long)_text);
+@@ -933,9 +932,6 @@ void __init setup_arch(char **cmdline_p)
+ #endif
+ #endif
+ 
+-	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
+-	*cmdline_p = command_line;
+-
+ 	/*
+ 	 * x86_configure_nx() is called before parse_early_param() to detect
+ 	 * whether hardware doesn't support NX (so that the early EHCI debug
+diff --git a/arch/xtensa/kernel/setup.c b/arch/xtensa/kernel/setup.c
+index 686a27444bba..0409fa85bfdd 100644
+--- a/arch/xtensa/kernel/setup.c
++++ b/arch/xtensa/kernel/setup.c
+@@ -309,8 +309,10 @@ static inline int mem_reserve(unsigned long start, unsigned long end)
+ 	return memblock_reserve(start, end - start);
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++void __init setup_arch(void)
+ {
++	char *cmdline_p = command_line;
++
+ 	pr_info("config ID: %08x:%08x\n",
+ 		get_sr(SREG_EPC), get_sr(SREG_EXCSAVE));
+ 	if (get_sr(SREG_EPC) != XCHAL_HW_CONFIGID0 ||
+@@ -318,9 +320,8 @@ void __init setup_arch(char **cmdline_p)
+ 		pr_info("built for config ID: %08x:%08x\n",
+ 			XCHAL_HW_CONFIGID0, XCHAL_HW_CONFIGID1);
+ 
+-	*cmdline_p = command_line;
+-	platform_setup(cmdline_p);
+-	strlcpy(boot_command_line, *cmdline_p, COMMAND_LINE_SIZE);
++	platform_setup(&cmdline_p);
++	strlcpy(boot_command_line, cmdline_p, COMMAND_LINE_SIZE);
+ 
+ 	/* Reserve some memory regions */
+ 
+diff --git a/include/linux/init.h b/include/linux/init.h
+index bc27cf03c41e..206b98d77cb4 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -129,7 +129,7 @@ extern char *saved_command_line;
+ extern unsigned int reset_devices;
+ 
+ /* used by init/main.c */
+-void setup_arch(char **);
++void setup_arch(void);
+ void prepare_namespace(void);
+ void __init load_default_modules(void);
+ int __init init_rootfs(void);
+diff --git a/init/main.c b/init/main.c
+index e4a3160991ea..8df5917867b1 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -367,15 +367,16 @@ static inline void smp_prepare_cpus(unsigned int maxcpus) { }
+  * parsing is performed in place, and we should allow a component to
+  * store reference of name/value for future reference.
+  */
+-static void __init setup_command_line(char *command_line)
++static void __init setup_command_line(void)
+ {
+ 	saved_command_line =
+ 		memblock_virt_alloc(strlen(boot_command_line) + 1, 0);
+ 	initcall_command_line =
+ 		memblock_virt_alloc(strlen(boot_command_line) + 1, 0);
+-	static_command_line = memblock_virt_alloc(strlen(command_line) + 1, 0);
++	static_command_line =
++		memblock_virt_alloc(strlen(boot_command_line) + 1, 0);
+ 	strcpy(saved_command_line, boot_command_line);
+-	strcpy(static_command_line, command_line);
++	strcpy(static_command_line, boot_command_line);
+ }
+ 
+ /*
+@@ -514,7 +515,6 @@ static void __init mm_init(void)
+ 
+ asmlinkage __visible void __init start_kernel(void)
+ {
+-	char *command_line;
+ 	char *after_dashes;
+ 
+ 	set_task_stack_end_magic(&init_task);
+@@ -533,16 +533,16 @@ asmlinkage __visible void __init start_kernel(void)
+ 	boot_cpu_init();
+ 	page_address_init();
+ 	pr_notice("%s", linux_banner);
+-	setup_arch(&command_line);
++	setup_arch();
+ 	/*
+ 	 * Set up the the initial canary and entropy after arch
+ 	 * and after adding latent and command line entropy.
+ 	 */
+ 	add_latent_entropy();
+-	add_device_randomness(command_line, strlen(command_line));
++	add_device_randomness(boot_command_line, strlen(boot_command_line));
+ 	boot_init_stack_canary();
+ 	mm_init_cpumask(&init_mm);
+-	setup_command_line(command_line);
++	setup_command_line();
+ 	setup_nr_cpu_ids();
+ 	setup_per_cpu_areas();
+ 	boot_cpu_state_init();
+-- 
+2.14.1
