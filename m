@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+29VjklS55D1EANIyJ4PLOSUNw8V0kGvF6Tlyb9DjFJhI210L6WeK8C15LleeuzpMgFVBx
-ARC-Seal: i=1; a=rsa-sha256; t=1523022236; cv=none;
+X-Google-Smtp-Source: AIpwx4+jIRiopE00ytqCbNnCyCEInGCZXwVRMkJ9XCoGJMZF/Ztz6wLJZPUaGlwbIOti76Gnnbnz
+ARC-Seal: i=1; a=rsa-sha256; t=1523022233; cv=none;
         d=google.com; s=arc-20160816;
-        b=j/PBqO8fnB5+sgn6c3xD1/iVUcXvKpbGg8PfC/TTWuPlFcrh5Sl6v7BrLRpIpWEz4m
-         3y6pi5d9H69mlhAjqeRE6y+BHvOkZzLudNM4DWOYD2soDyfjW5NF2KlYUWaPyS9Z22KE
-         GFildCM3toZQ95iQwqvQaQq+V+gv4WvbxUpha4GDjXRU0gP7N5TnCXyvSYyI4GFoNqWM
-         EriXf88A0WxPf9ePFdjdbXL1hKTdN9t4Uo4OlIeBH86F0gBBNaDqZS5wEfIgT32bQu7r
-         vj3lxjVPBjsKmlZOSeknoqP2F8hWT6OfhSkLIyR03KJh7CXij/M6vq/34dcjSbj9n+Gr
-         IGpw==
+        b=anqTB3TGMverz9QSqiU3iHzBr1Sz+8WeUjOztGCUYfjOZcSp0ZIvDOHjjjTsU0kbRB
+         w5G6ff9elZTF0e9TawFHUPLIAXSaUSJ2FqQ93OO9JLqrqoCruqTv3weNArhkBd8wmek4
+         eF152p9NATgsSzStyV7LXajvYSn8nir+L5AMKuSRAuFsPQnWDlE2xlrVGkSnZo/SxMv9
+         /fCcRWXtVv8aIH7QgH2M4fyHkMyj4csqwfdwk7+YcSp/7NSzpWHYp1UkagyrFycxsmkX
+         f4k4fT9BITeOvzjumuy46qGLE34yODiMr6+2Pw79LR10EmeOi3/Hf2KV1aRDHL5LtrGH
+         PZ+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qdaw3l1PSr33HEJk+Gar4qR217PAys11tUAROn2onV4=;
-        b=DQ6THbbnkq7LLAiO8RM4E3LhWYCgH2WbLd9HLW3NAQ53LuzyBCyBFBpdp8xtEiVwCP
-         LOdwtn1vrXtCcZwvCoUx890tJKztwkElKegiACOwrhoYGJUy1hGw4QJ6Zs+JZC+3nESC
-         6KqtXrhdNGYSubtRfsoxaG3pCP2PXfKOzqaNw1KimlIYwkhbcNhhY02v6+8y0bsc4Rs3
-         H/HxmnYjDqNuOUveKs2WrYyp44EXMmsI/ZjQccnThhHXvFuo2g5ahx3+ulFLv2deFG/Q
-         UOUPuEwvZHY3YRJlLu8mjAS2CbD7YSQmWhcDxM7Po/chKcUZKXrzd716Ah/ey9VXTnPS
-         N9sg==
+        bh=cmPh83y+0/oggWvh9V5lBQjj5UgF7dpZJbSYFvp66J0=;
+        b=lF+ts5Qz5j7f0oyS0uZStmGD5qrMTqBIpCwGKniPbzeCDgYio2ABnugX7Xh9syWqlx
+         Yb/x9NlqUvhiyT1OYLx8PpbJfiqyC5E4S1RLM1aApSqlKKzUN6Cvazdrd620yR4AfR82
+         bJ6tPetpgDTHl1PAuo3gGDFucEdXrwI2vjFDUP2epOFM2rcuPpbvpgEbPnOMaqVlYlAE
+         EDx259qCKINWVeZq5I7aybSoJR4MhTEqyU+yYhWqTWNRfUzxcnH35glIZVwj03SqmmoR
+         Wj2JNhpiTvao3NIuLQ6nSeCqNRnx9436qSbpR0QOq+OMPwdxo+5Y1F1/c+PkjPtWzkk4
+         RcyQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eli Cooper <elicooper@gmx.com>,
+	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+	Christophe Leroy <christophe.leroy@c-s.fr>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.15 54/72] crypto: ahash - Fix early termination in hash walk
-Date: Fri,  6 Apr 2018 15:24:29 +0200
-Message-Id: <20180406084353.157641229@linuxfoundation.org>
+Subject: [PATCH 4.15 53/72] crypto: talitos - fix IPsec cipher in length
+Date: Fri,  6 Apr 2018 15:24:28 +0200
+Message-Id: <20180406084353.114510304@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003644583899503?=
-X-GMAIL-MSGID: =?utf-8?q?1597004563829219545?=
+X-GMAIL-THRID: =?utf-8?q?1597004561260195768?=
+X-GMAIL-MSGID: =?utf-8?q?1597004561260195768?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +50,104 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: LEROY Christophe <christophe.leroy@c-s.fr>
 
-commit 900a081f6912a8985dc15380ec912752cb66025a upstream.
+commit 2b1227301a8e4729409694e323b72c064c47cb6b upstream.
 
-When we have an unaligned SG list entry where there is no leftover
-aligned data, the hash walk code will incorrectly return zero as if
-the entire SG list has been processed.
+For SEC 2.x+, cipher in length must contain only the ciphertext length.
+In case of using hardware ICV checking, the ICV length is provided via
+the "extent" field of the descriptor pointer.
 
-This patch fixes it by moving onto the next page instead.
-
-Reported-by: Eli Cooper <elicooper@gmx.com>
-Cc: <stable@vger.kernel.org>
+Cc: <stable@vger.kernel.org> # 4.8+
+Fixes: 549bd8bc5987 ("crypto: talitos - Implement AEAD for SEC1 using HMAC_SNOOP_NO_AFEU")
+Reported-by: Horia Geantă <horia.geanta@nxp.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Tested-by: Horia Geantă <horia.geanta@nxp.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/ahash.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/crypto/talitos.c |   36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
 
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -92,13 +92,14 @@ int crypto_hash_walk_done(struct crypto_
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1128,10 +1128,10 @@ next:
+ 	return count;
+ }
  
- 	if (nbytes && walk->offset & alignmask && !err) {
- 		walk->offset = ALIGN(walk->offset, alignmask + 1);
--		walk->data += walk->offset;
--
- 		nbytes = min(nbytes,
- 			     ((unsigned int)(PAGE_SIZE)) - walk->offset);
- 		walk->entrylen -= nbytes;
- 
--		return nbytes;
-+		if (nbytes) {
-+			walk->data += walk->offset;
-+			return nbytes;
-+		}
+-static int talitos_sg_map(struct device *dev, struct scatterlist *src,
+-		   unsigned int len, struct talitos_edesc *edesc,
+-		   struct talitos_ptr *ptr,
+-		   int sg_count, unsigned int offset, int tbl_off)
++static int talitos_sg_map_ext(struct device *dev, struct scatterlist *src,
++			      unsigned int len, struct talitos_edesc *edesc,
++			      struct talitos_ptr *ptr, int sg_count,
++			      unsigned int offset, int tbl_off, int elen)
+ {
+ 	struct talitos_private *priv = dev_get_drvdata(dev);
+ 	bool is_sec1 = has_ftr_sec1(priv);
+@@ -1140,6 +1140,7 @@ static int talitos_sg_map(struct device
+ 		to_talitos_ptr(ptr, 0, 0, is_sec1);
+ 		return 1;
  	}
++	to_talitos_ptr_ext_set(ptr, elen, is_sec1);
+ 	if (sg_count == 1) {
+ 		to_talitos_ptr(ptr, sg_dma_address(src) + offset, len, is_sec1);
+ 		return sg_count;
+@@ -1148,7 +1149,7 @@ static int talitos_sg_map(struct device
+ 		to_talitos_ptr(ptr, edesc->dma_link_tbl + offset, len, is_sec1);
+ 		return sg_count;
+ 	}
+-	sg_count = sg_to_link_tbl_offset(src, sg_count, offset, len,
++	sg_count = sg_to_link_tbl_offset(src, sg_count, offset, len + elen,
+ 					 &edesc->link_tbl[tbl_off]);
+ 	if (sg_count == 1) {
+ 		/* Only one segment now, so no link tbl needed*/
+@@ -1162,6 +1163,15 @@ static int talitos_sg_map(struct device
+ 	return sg_count;
+ }
  
- 	if (walk->flags & CRYPTO_ALG_ASYNC)
++static int talitos_sg_map(struct device *dev, struct scatterlist *src,
++			  unsigned int len, struct talitos_edesc *edesc,
++			  struct talitos_ptr *ptr, int sg_count,
++			  unsigned int offset, int tbl_off)
++{
++	return talitos_sg_map_ext(dev, src, len, edesc, ptr, sg_count, offset,
++				  tbl_off, 0);
++}
++
+ /*
+  * fill in and submit ipsec_esp descriptor
+  */
+@@ -1179,7 +1189,7 @@ static int ipsec_esp(struct talitos_edes
+ 	unsigned int ivsize = crypto_aead_ivsize(aead);
+ 	int tbl_off = 0;
+ 	int sg_count, ret;
+-	int sg_link_tbl_len;
++	int elen = 0;
+ 	bool sync_needed = false;
+ 	struct talitos_private *priv = dev_get_drvdata(dev);
+ 	bool is_sec1 = has_ftr_sec1(priv);
+@@ -1221,17 +1231,11 @@ static int ipsec_esp(struct talitos_edes
+ 	 * extent is bytes of HMAC postpended to ciphertext,
+ 	 * typically 12 for ipsec
+ 	 */
+-	sg_link_tbl_len = cryptlen;
+-
+-	if (is_ipsec_esp) {
+-		to_talitos_ptr_ext_set(&desc->ptr[4], authsize, is_sec1);
+-
+-		if (desc->hdr & DESC_HDR_MODE1_MDEU_CICV)
+-			sg_link_tbl_len += authsize;
+-	}
++	if (is_ipsec_esp && (desc->hdr & DESC_HDR_MODE1_MDEU_CICV))
++		elen = authsize;
+ 
+-	ret = talitos_sg_map(dev, areq->src, sg_link_tbl_len, edesc,
+-			     &desc->ptr[4], sg_count, areq->assoclen, tbl_off);
++	ret = talitos_sg_map_ext(dev, areq->src, cryptlen, edesc, &desc->ptr[4],
++				 sg_count, areq->assoclen, tbl_off, elen);
+ 
+ 	if (ret > 1) {
+ 		tbl_off += ret;
