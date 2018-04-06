@@ -1,77 +1,120 @@
-Return-Path: <fengguang.wu@intel.com>
-X-Google-Smtp-Source: AIpwx4/BXVphUK9O8N9+injJQ8lGuXfvtAPruygAeKjtv2SbhHguJqpTQ3orFaNpi5cQWyEJVGQt
-ARC-Seal: i=1; a=rsa-sha256; t=1522541539; cv=none;
+Return-Path: <aspriel@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523009620; cv=none;
         d=google.com; s=arc-20160816;
-        b=FgO65BmGI7WqdkAiTeqnY5cNz7yOrMm5nZJIOKUjf1EvBpkybm8WmT2tF9IGcJjBoJ
-         +cdaR1BkNk84X/5+rpHWJo0OV/TtoAVhkf/v8Glv8LdWHzu/PvHJVtC39YHV1mqlyF85
-         7fubVKZiEEg+sExq3jve68swSwfKZ/J35M9yHjIdZM/sCi9OBiEjPgJttPpym/DZSMIa
-         9wvy8/Muh2wlJk+Sd2bPySEdVcODoN0l0kv9iI1Cyuh1QWTuVMAfhxfWTQoTG0f76urk
-         ecacPZzOrtsHABTMQagruNwJJ+YFbx1i/hcRlv0nSg7l9DKMLARAHoVTXJRZvJCIlFe8
-         sipw==
+        b=YUt0N0vGinL7N7C3XHb4afP6cuaSq9p8Nh9tzHZJwsD9RKqrGtnRdIW8XSHn1Q/XfL
+         ShzeTYEJ4n/Ux5eAITmZE0Q/IjdwEDw1nBc3iUqOMJABW75BJjKUHd/2DR7vENcZY+2S
+         ujWmqgiBs2n3pVlCwTXUDxwFDoiR57xko+7Eau0prEWwHMvYAI5UMq8y2RSt9uA+fala
+         usSNGoWhkUHQkBpQ33cddthVgZNUOkJDgXaAGdxfTK1B3EVBHbCI+CWNYIHa3KnLqkq8
+         INqs49lCd+9mzod3N7t36XBOD7/d6K6BM1/aH+u7F+OlgQhQFgab+s0E6qCZsu2UwMUa
+         3W3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=RwLQ9FHWo5JhY66CzyFPdtnOg27tXGEABj6J+zgbBZg=;
-        b=fBQgTnbgtFRis6HxZlpOi0zGmM547gAGxQhPV04C0v6UZ85udbv4fnDXIt8P2a/To7
-         JwLSK53836tTBh1z5ZNlO9AVPaMBvko7D7PvZaV0p31CHsDLrUXCA5yVw6aLR/n/ruqu
-         kwN+MJxJVP3d/d43M+Lz5nSuFL+Ou8+p/kSD7zrKvIOcJvDLWWRrC9BaMkjxaPOwL3QV
-         6bkTu4ZXpgwnMVSlHKZzVqcz6yG7zCD00hkw+n6aCTXnaGo2k6xd/AgBKEmJ+JsdFiwV
-         mXw2UNlFOLENJHrNyzTqWffPRzLnhujV6g9YQXrY2/qpt4ug1LNs0Mzup5D1iwWtaOqb
-         5KUg==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=pwASrJ9A/NrbfI+h3gksgI4mLo8aULbqpMnP1VVR9u0=;
+        b=rDKmOEmpDto2NP728c2WqGZDqIQFqmCTZt+ReGonC0dPcQ0VWUFX8yMe6pk9J1c8A5
+         eYp0FsXGrGwrSP+AsaULsgUhn7tkoGKhrdHffkPHt5v1lhZg7DscSf1u47V+4YxemSBH
+         boILi6EvTurwMbhY/ImeHQU/4Xo/O+pSc8TdmYdU15xxNvwcZFQWJbiWLqnFOvbrJa+V
+         Iy6AMhXz2czadw9OtWKsm01XbWjLUFFBnvxJJR7SO0KF/VL2LlLNakYjljS3AwAqlHHS
+         NiNao0840Y1SI0tbGDETVCgEvi86zg10vBrvGC7oTOTvCy/YgGWmkcZBChYqdTn6tu67
+         3mCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of fengguang.wu@intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=r4wa4kZP;
+       spf=pass (google.com: domain of aspriel@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aspriel@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of fengguang.wu@intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,389,1517904000";
-   d="scan'208";a="216445919"
-Date: Sun, 1 Apr 2018 08:12:05 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: kbuild-all@01.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-	Peter Jones <pjones@redhat.com>, Dave Olsthoorn <dave@bewaar.me>,
-	x86@kernel.org, linux-efi@vger.kernel.org
-Subject: [RFC PATCH] efi: debugfs_blob[] can be static
-Message-ID: <20180401001205.GA24604@lkp-wsm-ep2>
-References: <20180331121944.8618-1-hdegoede@redhat.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=r4wa4kZP;
+       spf=pass (google.com: domain of aspriel@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aspriel@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx49qZ1Godli3thqA2KcevHqGT9+Ggzwoc28vXLfsaOij2jKx1PBUwz2SVrvwmz88H51yk+Pi5gRi3bWjRsdFbEo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180331121944.8618-1-hdegoede@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180324090446.GA863@kroah.com>
+References: <1521107725-25027-1-git-send-email-aspriel@gmail.com>
+ <1521107725-25027-3-git-send-email-aspriel@gmail.com> <20180323165543.GA21833@kroah.com>
+ <CAJ65rDy1UjJ7tEu4f3m8BwnA1qai1iRU3yWfU4qvEE9uLrr5pg@mail.gmail.com> <20180324090446.GA863@kroah.com>
+From: Arend van Spriel <aspriel@gmail.com>
+Date: Fri, 6 Apr 2018 12:13:38 +0200
+Message-ID: <CAJ65rDw-gQKdsokwoC7+NskzTpLq=RLVbLQMh7CDisNFY3o8Uw@mail.gmail.com>
+Subject: Re: [PATCH for-4.16 2/3] drivers: change struct device_driver::coredump()
+ return type to void
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596500517007832501?=
-X-GMAIL-MSGID: =?utf-8?q?1596500517007832501?=
+X-GMAIL-THRID: =?utf-8?q?1594997067781625897?=
+X-GMAIL-MSGID: =?utf-8?q?1596991335966359488?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Sat, Mar 24, 2018 at 10:04 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Sat, Mar 24, 2018 at 09:50:05AM +0100, Arend van Spriel wrote:
+>> On Fri, Mar 23, 2018 at 5:55 PM, Greg Kroah-Hartman
+>> <gregkh@linuxfoundation.org> wrote:
+>> > On Thu, Mar 15, 2018 at 10:55:24AM +0100, Arend van Spriel wrote:
+>> >> Upon submitting a patch for mwifiex [1] it was discussed whether this
+>> >> callback function could fail. To keep things simple there is no need
+>> >> for the error code so the driver can do the task synchronous or not
+>> >> without worries. Currently the device driver core already ignores the
+>> >> return value so changing it to void.
+>> >>
+>> >> [1] https://patchwork.kernel.org/patch/10231933/
+>> >>
+>> >> Signed-off-by: Arend van Spriel <aspriel@gmail.com>
+>> >> ---
+>> >>  include/linux/device.h | 5 ++++-
+>> >>  1 file changed, 4 insertions(+), 1 deletion(-)
+>> >>
+>> >> diff --git a/include/linux/device.h b/include/linux/device.h
+>> >> index b093405..f08c25b 100644
+>> >> --- a/include/linux/device.h
+>> >> +++ b/include/linux/device.h
+>> >> @@ -256,6 +256,9 @@ enum probe_type {
+>> >>   *           automatically.
+>> >>   * @pm:              Power management operations of the device which matched
+>> >>   *           this driver.
+>> >> + * @coredump:        Called when sysfs entry is written to. The device driver
+>> >> + *           is expected to call the dev_coredump API resulting in a
+>> >> + *           uevent.
+>> >>   * @p:               Driver core's private data, no one other than the driver
+>> >>   *           core can touch this.
+>> >>   *
+>> >> @@ -287,7 +290,7 @@ struct device_driver {
+>> >>       const struct attribute_group **groups;
+>> >>
+>> >>       const struct dev_pm_ops *pm;
+>> >> -     int (*coredump) (struct device *dev);
+>> >> +     void (*coredump) (struct device *dev);
+>> >
+>> > Isn't this going to cause build warnings now?  Are there no users of
+>> > this callback function yet?
+>>
+>> Hi Greg,
+>>
+>> I submitted driver patches for the 4.17 kernel and from that
+>> discussion we concluded it would be good to change to void return
+>> type. So those driver patches were dropped. The caller of the callback
+>> in drivers/base/dd.c does not use the return value so from that side
+>> there is no issue. So my motivation for asking to consider this for
+>> 4.16 is so I can resubmit the driver patches for 4.17 if there is
+>> still time before the merge window.
+>
+> It's too late for 4.16 for this, and I would queue it up in my tree now
+> but I don't want to cause any build warnings in linux-next from it.  So
+> how about I submit something like this right after 4.17-rc1 is out,
+> where the function signature is changed _and_ all definitions of that
+> function are changed at the same time to keep everything sane at once?
+>
+> Can you send me such a patch right before -rc1 is out base on Linus's
+> tree?  That should give everyone enough time to get the things merged,
+> right?
+>
+> Or is there no in-flight patches to use this yet, and I can queue it up
+> now for -rc1 as no build warnings will happen?
 
-Fixes: ac46fdb7891f ("efi: Export boot-services code and data as debugfs-blobs")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- efi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Greg,
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index fddc5f7..9f1b8e6 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -321,7 +321,7 @@ static inline int efivar_ssdt_load(void) { return 0; }
- 
- #define EFI_DEBUGFS_MAX_BLOBS 32
- 
--struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
-+static struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
- 
- static void __init efi_debugfs_init(void)
- {
+Are we good regarding this patch. I have assured there are not
+in-flight patches.
+
+Regards,
+Arend
