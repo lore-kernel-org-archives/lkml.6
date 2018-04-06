@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/P0Wqh5U1lYCjiyNIyaCW3fJTaA35n7TWCCp9N9lqoFenXIaCuDvnqM+799dc81o9MLTbg
-ARC-Seal: i=1; a=rsa-sha256; t=1523021205; cv=none;
+X-Google-Smtp-Source: AIpwx4/oFZ83e8Kco8iMI2kV9/yAMhWVDkp8Mn9I36u1bIF8bKp2rfjvTzrvctkPJyN59yMKBNhD
+ARC-Seal: i=1; a=rsa-sha256; t=1523021202; cv=none;
         d=google.com; s=arc-20160816;
-        b=KIzcJ2rnSy/n6LCJafkFtBLzCQ6lBD1Gfii4IfEChF8NtN/vBJ0OzyrNq7whLDOZXc
-         V7J4jiUAOIBJUMuLcQIa+Z7fvz9WBVTGWiUP+ZxED1YA2L+r4+Q823nDangqkmpmDrYs
-         WjHSHovS1GfNTytVeEBx1AhVWupyIWx57nZDj9/EC/p3gmBI8V8oSTso9Lc5+b8YjoxB
-         ln8/RsBGdVrGHIuwzAXkV1RFPxGk7R0YDBR+okWkRMRZSJGGmk7hkakZmrfbsshPPDCK
-         70TwatRY8k24ycDrgKqwiinAgLHPVlIkK2/tU8uWY76Vu9qLJiMlKnrlSyc/rT+AmZ03
-         L7mw==
+        b=Z4hXW2Mg3KW5u0nwSYOyuTpH3ju3x5zMthujUIJ+2ZYkSbIRAzv9Npl3iIMx+yAw2A
+         H94kbBAW4MoOT0E3SAhrjeS1cnzRtvlf+h5kyccSQZaObPfJa44+CaAQuc3vo/w5S8ys
+         LTi6vt7fgTK1YnETL2eO0JlJ4xJ8TYzQ3+cssWguZ5PFi4KikWUALOJFXw6xAjadw14v
+         M0r/iyWK+0TaYyVue+O4QTnn9lrDvf72AgWBgnD+MVqoIaoj3URaZTGqp+qC+JWv8T+6
+         3QMqRNO6C0+a+a29jCRx1vqOjXZatLJ1cEYy0HxPLtm7COz/p3woS6WCh2f62ISi1H01
+         bNSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tJ3TGUCsJTAsFYZx716Zj2WBnVO18xgE8LBiw1NUIzM=;
-        b=Xdd6QO0wHRpC310r6a0X6XDsG164tHxyxVY5Jx5Mgqa1+jFcXjWMZLPeIkl83IGT5a
-         CBNPUgTyHOyq/xZanCVi/dG/rmf0xpmDm8S2nLJcY7u1yVxKBneNrUohxv+VeqfSKtfq
-         5S6cKH1RPFPBNKWa9YR5q9+o3e3W5m27/LQKxqISYjyGOppzSMvKc14XjBP5b96Okhyn
-         HPevTmuFemDPTAXUtgZuionIbn83Q1BVdi82kQ0yfb0mW9z7o0ODiCkM+4ACBMaNuv5L
-         j/e2fApjJgh0jIXMAObTDrFSSIMZRnAtcpHTyX9Fi716Ho+cItDYzmjiVt2T1Wd/+IB2
-         /jng==
+        bh=538xN5/lgzMvClT6k91+i13dxKTND2ora+8UG45YKKQ=;
+        b=s4gnE6aUI6Wzm/CFuzYI1zgTUNae9f20/6Z5U6Kc3O6j3JhQK76gbdWFDIxOzqk/Oo
+         H49UFlKfpd4L1GId+AUnKw2sFElAYi08RcGdvgIode0CRCjZZ/cHE0kx2M5jrCUHuVRg
+         gy8tzVn8x2CPRK6o6C2BSk9yWZcf+3E/5hj/n+9yUG4I9tgdjPRZYNaRylW4q0Dho1fs
+         5AZigyZlJ/ZvhzCV57FZGxinDUfaq2ApikPYHluCwp+t0It9LP4DRCwnugrmO07B3t9q
+         CMX9kFSmBdHXTTA01eI1xgdAx480cXV7uNjyVjxDrcpBUgEhUFQ8kdHvyWM8J40i+YLh
+         nabQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	"Felipe F. Tonello" <eu@felipetonello.com>,
 	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 3.18 44/93] usb: gadget: fix usb_ep_align_maybe endianness and new usb_ep_align
-Date: Fri,  6 Apr 2018 15:23:13 +0200
-Message-Id: <20180406084226.848881058@linuxfoundation.org>
+Subject: [PATCH 3.18 43/93] usb: gadget: change len to size_t on alloc_ep_req()
+Date: Fri,  6 Apr 2018 15:23:12 +0200
+Message-Id: <20180406084226.811970457@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
 References: <20180406084224.918716300@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003483960260193?=
-X-GMAIL-MSGID: =?utf-8?q?1597003483960260193?=
+X-GMAIL-THRID: =?utf-8?q?1597003480390303292?=
+X-GMAIL-MSGID: =?utf-8?q?1597003480390303292?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,55 +51,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Felipe F. Tonello <eu@felipetonello.com>
 
-commit 16b114a6d7973cf027e4c2b23eae1076eaf98c25 upstream.
+commit 69bb99738b5c6d56d2b1a75db9cbb4d187453c1a upstream.
 
-USB spec specifies wMaxPacketSize to be little endian (as other properties),
-so when using this variable in the driver we should convert to the current
-CPU endianness if necessary.
-
-This patch also introduces usb_ep_align() which does always returns the
-aligned buffer size for an endpoint. This is useful to be used by USB requests
-allocator functions.
+Length of buffers should be of type size_t whenever possible. Altough
+recommended, this change has no real practical change, unless a driver has a
+uses a huge or negative buffer size - it might help find these bugs.
 
 Signed-off-by: Felipe F. Tonello <eu@felipetonello.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/usb/gadget.h |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/u_f.c |    2 +-
+ drivers/usb/gadget/u_f.h |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/linux/usb/gadget.h
-+++ b/include/linux/usb/gadget.h
-@@ -582,8 +582,20 @@ static inline struct usb_gadget *dev_to_
+--- a/drivers/usb/gadget/u_f.c
++++ b/drivers/usb/gadget/u_f.c
+@@ -13,7 +13,7 @@
  
+ #include "u_f.h"
  
- /**
-+ * usb_ep_align - returns @len aligned to ep's maxpacketsize.
-+ * @ep: the endpoint whose maxpacketsize is used to align @len
-+ * @len: buffer size's length to align to @ep's maxpacketsize
-+ *
-+ * This helper is used to align buffer's size to an ep's maxpacketsize.
-+ */
-+static inline size_t usb_ep_align(struct usb_ep *ep, size_t len)
-+{
-+	return round_up(len, (size_t)le16_to_cpu(ep->desc->wMaxPacketSize));
-+}
-+
-+/**
-  * usb_ep_align_maybe - returns @len aligned to ep's maxpacketsize if gadget
-- *	requires quirk_ep_out_aligned_size, otherwise reguens len.
-+ *	requires quirk_ep_out_aligned_size, otherwise returns len.
-  * @g: controller to check for quirk
-  * @ep: the endpoint whose maxpacketsize is used to align @len
-  * @len: buffer size's length to align to @ep's maxpacketsize
-@@ -594,8 +606,7 @@ static inline struct usb_gadget *dev_to_
- static inline size_t
- usb_ep_align_maybe(struct usb_gadget *g, struct usb_ep *ep, size_t len)
+-struct usb_request *alloc_ep_req(struct usb_ep *ep, int len, int default_len)
++struct usb_request *alloc_ep_req(struct usb_ep *ep, size_t len, int default_len)
  {
--	return !g->quirk_ep_out_aligned_size ? len :
--			round_up(len, (size_t)ep->desc->wMaxPacketSize);
-+	return g->quirk_ep_out_aligned_size ? usb_ep_align(ep, len) : len;
- }
+ 	struct usb_request      *req;
  
- /**
+--- a/drivers/usb/gadget/u_f.h
++++ b/drivers/usb/gadget/u_f.h
+@@ -48,7 +48,7 @@ struct usb_ep;
+ struct usb_request;
+ 
+ /* Requests allocated via alloc_ep_req() must be freed by free_ep_req(). */
+-struct usb_request *alloc_ep_req(struct usb_ep *ep, int len, int default_len);
++struct usb_request *alloc_ep_req(struct usb_ep *ep, size_t len, int default_len);
+ static inline void free_ep_req(struct usb_ep *ep, struct usb_request *req)
+ {
+ 	kfree(req->buf);
