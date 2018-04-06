@@ -1,61 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751956AbeDFPxS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 11:53:18 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:50350 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751278AbeDFPxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 11:53:17 -0400
-Date: Fri, 6 Apr 2018 11:54:41 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [patch] mm: memcg: make sure memory.events is uptodate when waking
- pollers fix
-Message-ID: <20180406155441.GA20806@cmpxchg.org>
-References: <20180406145330.4d166464@canb.auug.org.au>
+        id S1752196AbeDFPxt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 11:53:49 -0400
+Received: from mail-ua0-f182.google.com ([209.85.217.182]:34734 "EHLO
+        mail-ua0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751989AbeDFPxs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 11:53:48 -0400
+X-Google-Smtp-Source: AIpwx4/n9b84QQiibasyyYHsIvajyo8ABd/dt7AYeQqLo2+ZqDFulhyuiZ2mSHnLtCdDty2GkZyY9Q==
+Subject: Re: INFO: task hung in __blkdev_get
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Dmitry Vyukov <dvyukov@google.com>, Ming Lei <tom.leiming@gmail.com>
+Cc: mingo@redhat.com, peterz@infradead.org,
+        syzbot
+        <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <f403043a9be410acd1055fe5f72e@google.com>
+ <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
+ <2e093801-6d71-6747-42df-52f191811ad0@I-love.SAKURA.ne.jp>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <87bdec75-3c59-6587-2436-1470263ab11f@kernel.dk>
+Date: Fri, 6 Apr 2018 09:53:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406145330.4d166464@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <2e093801-6d71-6747-42df-52f191811ad0@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 02:53:30PM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
+On 4/6/18 4:12 AM, Tetsuo Handa wrote:
+> ----------------------------------------
 > 
-> After merging the akpm-current tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> mm/memcontrol.c: In function 'memory_events_show':
-> mm/memcontrol.c:5453:23: warning: array subscript is above array bounds [-Warray-bounds]
->       atomic_long_read(&memcg->memory_events[OOM_KILL]));
->                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Introduced by commit
-> 
->   725844c87a0d ("mm: memcg: make sure memory.events is uptodate when waking pollers")
+> The reason of q->mq_freeze_depth == 1 turned out that loop_set_status()
+> forgot to call blk_mq_unfreeze_queue() at error paths for
+> info->lo_encrypt_type != NULL case.
 
-Ah, silly, I missed that warning. The below fixes it.
+Thanks for finding this, applied.
 
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 04ea2b104ee2..9bac6dc26e09 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5199,8 +5199,7 @@ static int memory_events_show(struct seq_file *m, void *v)
- 		   atomic_long_read(&memcg->memory_events[MEMCG_MAX]));
- 	seq_printf(m, "oom %lu\n",
- 		   atomic_long_read(&memcg->memory_events[MEMCG_OOM]));
--	seq_printf(m, "oom_kill %lu\n",
--		   atomic_long_read(&memcg->memory_events[OOM_KILL]));
-+	seq_printf(m, "oom_kill %lu\n", memcg_sum_events(memcg, OOM_KILL));
- 
- 	return 0;
- }
+-- 
+Jens Axboe
