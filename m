@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+02h+PTz4afnc3VoOGVbHy40HGewgNTrMaR8aCAHDzu+9qqyMJerrLcjWM4NPqfNxKYWWo
-ARC-Seal: i=1; a=rsa-sha256; t=1523022126; cv=none;
+X-Google-Smtp-Source: AIpwx4/MngSw1lVLHhzUc3qMB58pBszC5JexykpW/p+OPFVrZeG+6NOv6ZFZMmWFaeSj/1YVZWgy
+ARC-Seal: i=1; a=rsa-sha256; t=1523022123; cv=none;
         d=google.com; s=arc-20160816;
-        b=GbkLrRB+0+hktjLP4aYgigXEpsPsu3el6iF3EZq7WdvvxTkD37nbbz6KmX81U41vwG
-         /OgZwMRYmGNQY/BFrGmHf5YFfC/ETWHEuYtPQNUcZFRZHiW2D0Gouchygk8jtMy+Nqrm
-         AJ2EdhP+tcYANdopVF8yvd07dDH00daq+uqzgxS8lW4xFK6FYvlH4fmvfuWr0JMbiDxF
-         U+SZzZnmy064txkwrZGLZYpRQHo82dIyEIZ7r+cMJvv3TaAfiBuJZnE9DER8oDBqjstN
-         ewNXnd8z7I2EbiizepLT6YWgOPssON/wUkxKrew61gQbD0Fs723uwEljN/G21peNr9+b
-         qJ9A==
+        b=V2VbOLVb7fYq+8tusOS6QctZ5qL6v92uLF9+Ey3yPWLuj1fTygwFguumMBpTFm0O1V
+         TguK9IUZnzeMg9RfBZw+izALgiZhxxCDOVWQq1zr2NcU7EnSp30oHw4hYii49e3+AOfT
+         hCasCd3P0kHmYguO/Jkb4ArvvPIwmQhLNtv/agUhyrxfJwjTB12iXSL1lVnHFJDlXp3Q
+         3iEZT5EqstP4MS+9h8aF3UjMtV9+a+DYjrbg84a4W9iQm0zXshrzLKw/BkY1OPYrAC39
+         lfLMZS1u5vr4l6j7X6W0zXT85ni70s83nIo4mlMzTlBBZtg2CbfN2bjkD/XgX7bhBG+Q
+         AQQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MWqtlmkxr655Mo0LN76yJOTJHlpDOyJPlF+FUVCkOhg=;
-        b=ReM6+R5rXJ/gBSjZrjck12Gh8BU/SY2a4RCTofxyQBP3t66rW7uIvAs7FzrIjioaXw
-         iUpfBeiZYRudIxNQEB6/fSCqc/K5P3vGXKunVBdWiq6YBFSZODNbzr1ziHzT+3h4vTxi
-         LArAbTKIR7wt4sPgbxdRy8xGIhkUBPPMd6FtsCC3jXCW/zNvHYYdrbMH3leUAUwjm26c
-         BVtH0UgaK73ADCXiZPyzLNd0/aAnQpNhT89O1FDCshXAgOU81YxXgb4o8WDudaPbjGxX
-         HDiauJx2Rs2xCZZeFBDyjYESR1Qejr0/kaCCelX7C88bTq+tCHsd4VaWW2UMTY1ew+9W
-         KKfA==
+        bh=2pGIpKB4XpqgDHJYAJu0jJcFBuv//ezD9fH7zHtUdwY=;
+        b=r1Qe/CU4prM/URJsFQ3+oFwnBCvmtmNBYpgVG4kUzueSr9QlTnfdUsfAKyGL2RFPSX
+         EPA52Gitod6GCNVS9R4Ltwcp2vub44HkYWmbWjOp31KEK+NKGY+PASVMLuhCD6fBjkrD
+         8GKLld12LWhYm3lGioPmuewhiD7zM+FYlDBl+161qdYPYlfy3c1wA6v6v1jiVTSqkNVk
+         /sZ3W81mK/46R7RifQDhdHZ8DWvHjYW5foUeZoGmiF2lXJUe7oP3E0RDaIpZuH9cK33V
+         L7WN/aEdq5DK+hmu5NaYadI3bxuRhTYg8bTLqNQ2agVBx5Lx8I3bUvbTIN6bmsM+tix8
+         Ym1A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <eric.dumazet@gmail.com>,
-	syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com,
+	Paolo Abeni <pabeni@redhat.com>,
 	Florian Westphal <fw@strlen.de>,
 	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.15 36/72] netfilter: x_tables: add and use xt_check_proc_name
-Date: Fri,  6 Apr 2018 15:24:11 +0200
-Message-Id: <20180406084352.292650554@linuxfoundation.org>
+Subject: [PATCH 4.15 35/72] netfilter: drop template ct when conntrack is skipped.
+Date: Fri,  6 Apr 2018 15:24:10 +0200
+Message-Id: <20180406084352.243999505@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180406084349.367583460@linuxfoundation.org>
 References: <20180406084349.367583460@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003601518094155?=
-X-GMAIL-MSGID: =?utf-8?q?1597004449038209600?=
+X-GMAIL-THRID: =?utf-8?q?1597004358237408018?=
+X-GMAIL-MSGID: =?utf-8?q?1597004446626360382?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,132 +50,106 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit b1d0a5d0cba4597c0394997b2d5fced3e3841b4e upstream.
+commit aebfa52a925d701114afd6af0def35bab16d4f47 upstream.
 
-recent and hashlimit both create /proc files, but only check that
-name is 0 terminated.
+The ipv4 nf_ct code currently skips the nf_conntrak_in() call
+for fragmented packets. As a results later matches/target can end
+up manipulating template ct entry instead of 'real' ones.
 
-This can trigger WARN() from procfs when name is "" or "/".
-Add helper for this and then use it for both.
+Exploiting the above, syzbot found a way to trigger the following
+splat:
 
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Reported-by: <syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
+WARNING: CPU: 1 PID: 4242 at net/netfilter/xt_cluster.c:55
+xt_cluster_mt+0x6c1/0x840 net/netfilter/xt_cluster.c:127
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 4242 Comm: syzkaller027971 Not tainted 4.16.0-rc2+ #243
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x211/0x2d0 lib/bug.c:184
+  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x58/0x80 arch/x86/entry/entry_64.S:957
+RIP: 0010:xt_cluster_hash net/netfilter/xt_cluster.c:55 [inline]
+RIP: 0010:xt_cluster_mt+0x6c1/0x840 net/netfilter/xt_cluster.c:127
+RSP: 0018:ffff8801d2f6f2d0 EFLAGS: 00010293
+RAX: ffff8801af700540 RBX: 0000000000000000 RCX: ffffffff84a2d1e1
+RDX: 0000000000000000 RSI: ffff8801d2f6f478 RDI: ffff8801cafd336a
+RBP: ffff8801d2f6f2e8 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801b03b3d18
+R13: ffff8801cafd3300 R14: dffffc0000000000 R15: ffff8801d2f6f478
+  ipt_do_table+0xa91/0x19b0 net/ipv4/netfilter/ip_tables.c:296
+  iptable_filter_hook+0x65/0x80 net/ipv4/netfilter/iptable_filter.c:41
+  nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
+  nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
+  nf_hook include/linux/netfilter.h:243 [inline]
+  NF_HOOK include/linux/netfilter.h:286 [inline]
+  raw_send_hdrinc.isra.17+0xf39/0x1880 net/ipv4/raw.c:432
+  raw_sendmsg+0x14cd/0x26b0 net/ipv4/raw.c:669
+  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
+  sock_sendmsg_nosec net/socket.c:629 [inline]
+  sock_sendmsg+0xca/0x110 net/socket.c:639
+  SYSC_sendto+0x361/0x5c0 net/socket.c:1748
+  SyS_sendto+0x40/0x50 net/socket.c:1716
+  do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x441b49
+RSP: 002b:00007ffff5ca8b18 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000441b49
+RDX: 0000000000000030 RSI: 0000000020ff7000 RDI: 0000000000000003
+RBP: 00000000006cc018 R08: 000000002066354c R09: 0000000000000010
+R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000403470
+R13: 0000000000403500 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+Instead of adding checks for template ct on every target/match
+manipulating skb->_nfct, simply drop the template ct when skipping
+nf_conntrack_in().
+
+Fixes: 7b4fdf77a450ec ("netfilter: don't track fragmented packets")
+Reported-and-tested-by: syzbot+0346441ae0545cfcea3a@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/netfilter/x_tables.h |    2 ++
- net/netfilter/x_tables.c           |   30 ++++++++++++++++++++++++++++++
- net/netfilter/xt_hashlimit.c       |   16 ++++++++++------
- net/netfilter/xt_recent.c          |    6 +++---
- 4 files changed, 45 insertions(+), 9 deletions(-)
+ net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
---- a/include/linux/netfilter/x_tables.h
-+++ b/include/linux/netfilter/x_tables.h
-@@ -285,6 +285,8 @@ unsigned int *xt_alloc_entry_offsets(uns
- bool xt_find_jump_offset(const unsigned int *offsets,
- 			 unsigned int target, unsigned int size);
+--- a/net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c
++++ b/net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c
+@@ -159,8 +159,20 @@ static unsigned int ipv4_conntrack_local
+ 	    ip_hdrlen(skb) < sizeof(struct iphdr))
+ 		return NF_ACCEPT;
  
-+int xt_check_proc_name(const char *name, unsigned int size);
+-	if (ip_is_fragment(ip_hdr(skb))) /* IP_NODEFRAG setsockopt set */
++	if (ip_is_fragment(ip_hdr(skb))) { /* IP_NODEFRAG setsockopt set */
++		enum ip_conntrack_info ctinfo;
++		struct nf_conn *tmpl;
 +
- int xt_check_match(struct xt_mtchk_param *, unsigned int size, u_int8_t proto,
- 		   bool inv_proto);
- int xt_check_target(struct xt_tgchk_param *, unsigned int size, u_int8_t proto,
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -423,6 +423,36 @@ textify_hooks(char *buf, size_t size, un
- 	return buf;
++		tmpl = nf_ct_get(skb, &ctinfo);
++		if (tmpl && nf_ct_is_template(tmpl)) {
++			/* when skipping ct, clear templates to avoid fooling
++			 * later targets/matches
++			 */
++			skb->_nfct = 0;
++			nf_ct_put(tmpl);
++		}
+ 		return NF_ACCEPT;
++	}
+ 
+ 	return nf_conntrack_in(state->net, PF_INET, state->hook, skb);
  }
- 
-+/**
-+ * xt_check_proc_name - check that name is suitable for /proc file creation
-+ *
-+ * @name: file name candidate
-+ * @size: length of buffer
-+ *
-+ * some x_tables modules wish to create a file in /proc.
-+ * This function makes sure that the name is suitable for this
-+ * purpose, it checks that name is NUL terminated and isn't a 'special'
-+ * name, like "..".
-+ *
-+ * returns negative number on error or 0 if name is useable.
-+ */
-+int xt_check_proc_name(const char *name, unsigned int size)
-+{
-+	if (name[0] == '\0')
-+		return -EINVAL;
-+
-+	if (strnlen(name, size) == size)
-+		return -ENAMETOOLONG;
-+
-+	if (strcmp(name, ".") == 0 ||
-+	    strcmp(name, "..") == 0 ||
-+	    strchr(name, '/'))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(xt_check_proc_name);
-+
- int xt_check_match(struct xt_mtchk_param *par,
- 		   unsigned int size, u_int8_t proto, bool inv_proto)
- {
---- a/net/netfilter/xt_hashlimit.c
-+++ b/net/netfilter/xt_hashlimit.c
-@@ -915,8 +915,9 @@ static int hashlimit_mt_check_v1(const s
- 	struct hashlimit_cfg3 cfg = {};
- 	int ret;
- 
--	if (info->name[sizeof(info->name) - 1] != '\0')
--		return -EINVAL;
-+	ret = xt_check_proc_name(info->name, sizeof(info->name));
-+	if (ret)
-+		return ret;
- 
- 	ret = cfg_copy(&cfg, (void *)&info->cfg, 1);
- 
-@@ -933,8 +934,9 @@ static int hashlimit_mt_check_v2(const s
- 	struct hashlimit_cfg3 cfg = {};
- 	int ret;
- 
--	if (info->name[sizeof(info->name) - 1] != '\0')
--		return -EINVAL;
-+	ret = xt_check_proc_name(info->name, sizeof(info->name));
-+	if (ret)
-+		return ret;
- 
- 	ret = cfg_copy(&cfg, (void *)&info->cfg, 2);
- 
-@@ -948,9 +950,11 @@ static int hashlimit_mt_check_v2(const s
- static int hashlimit_mt_check(const struct xt_mtchk_param *par)
- {
- 	struct xt_hashlimit_mtinfo3 *info = par->matchinfo;
-+	int ret;
- 
--	if (info->name[sizeof(info->name) - 1] != '\0')
--		return -EINVAL;
-+	ret = xt_check_proc_name(info->name, sizeof(info->name));
-+	if (ret)
-+		return ret;
- 
- 	return hashlimit_mt_check_common(par, &info->hinfo, &info->cfg,
- 					 info->name, 3);
---- a/net/netfilter/xt_recent.c
-+++ b/net/netfilter/xt_recent.c
-@@ -361,9 +361,9 @@ static int recent_mt_check(const struct
- 			info->hit_count, XT_RECENT_MAX_NSTAMPS - 1);
- 		return -EINVAL;
- 	}
--	if (info->name[0] == '\0' ||
--	    strnlen(info->name, XT_RECENT_NAME_LEN) == XT_RECENT_NAME_LEN)
--		return -EINVAL;
-+	ret = xt_check_proc_name(info->name, sizeof(info->name));
-+	if (ret)
-+		return ret;
- 
- 	if (ip_pkt_list_tot && info->hit_count < ip_pkt_list_tot)
- 		nstamp_mask = roundup_pow_of_two(ip_pkt_list_tot) - 1;
