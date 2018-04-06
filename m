@@ -1,59 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751759AbeDFSCu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 14:02:50 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:40409 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751678AbeDFSCs (ORCPT
+        id S1751887AbeDFSC4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 14:02:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50722 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751773AbeDFSCw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:02:48 -0400
-X-Google-Smtp-Source: AIpwx4/kW/b0NeUQBmDZTK3BdBu2Ggo1Qt3/0DYxPTVUH6+Xnc9wZpUWlaFcM3lGy7hAkEvIMqnJXoUf/ND4f0RdfNY=
+        Fri, 6 Apr 2018 14:02:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 745AA601C4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: arnd@arndb.de, timur@codeaurora.org, sulrich@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] io: change readX_relaxed() to remove barriers
+Date: Fri,  6 Apr 2018 14:02:45 -0400
+Message-Id: <1523037766-14518-1-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKTtU3fvqP-ygV51WcOAmTkm=y5fysKNv+k0crhJACtVg@mail.gmail.com>
-References: <alpine.LFD.2.21.1804061125390.1819@schleppi> <CAGXu5jKTtU3fvqP-ygV51WcOAmTkm=y5fysKNv+k0crhJACtVg@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 6 Apr 2018 11:02:46 -0700
-X-Google-Sender-Auth: tIowI0lA2_H6oDVUsfqzXKx9Wpk
-Message-ID: <CAGXu5jKLsdfHEySg1w5EKO3Tt3=nWh7txWVsU6V65i3vS=Z2xw@mail.gmail.com>
-Subject: Re: [bisected] 3c8ba0d61d04ced9f8d9ff93977995a9e4e96e91 oopses on s390
-To: Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 6, 2018 at 9:47 AM, Kees Cook <keescook@chromium.org> wrote:
-> On Fri, Apr 6, 2018 at 2:47 AM, Sebastian Ott <sebott@linux.vnet.ibm.com> wrote:
->> Today's kernel oopsed on s390. Bisect points to:
->> 3c8ba0d61d04 ("kernel.h: Retain constant expression output for max()/min()")
->>
->> [    1.898277] dasd-eckd 0.0.3304: DASD with 4 KB/block, 21636720 KB total size, 48 KB/track, compatible disk layout
->> [    1.898308] ------------[ cut here ]------------
->> [    1.898310] kernel BUG at block/bio.c:1798!
->
-> Well that's extremely bad. :(
->
->> Bisect log and config attached. I'll look at min/max users in the affected
->> areas later today.
->
-> Seems like a comparison of objdump output with/without the patch may
-> be needed. And why is this s390 only? Ugh.
+Now that we hardened readX() API in asm-generic version, readX_relaxed()
+API is violating the rules when readX_relaxed() == readX() in the default
+implementation.
 
-I did a objdump diff with your .config and it's rather large -- mostly
-seems to be register swaps, so it's not easy to browse.
+The relaxed API shouldn't have any barriers in it and it doesn't provide
+any ordering with respect to the memory transactions. The only requirement
+is for reads to be ordered with respect to each other. This is achieved
+by the volatile in the __raw_readX() API.
 
-BTW, what version of gcc did you use? I built using:
+Open code the relaxed API and remove any barriers in it.
 
-s390x-linux-gnu-gcc (Ubuntu 7.3.0-13ubuntu1) 7.3.0
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+---
+ include/asm-generic/io.h | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
--Kees
-
+diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
+index 578b688..fa0975d 100644
+--- a/include/asm-generic/io.h
++++ b/include/asm-generic/io.h
+@@ -252,19 +252,35 @@ static inline void writeq(u64 value, volatile void __iomem *addr)
+  * accesses.
+  */
+ #ifndef readb_relaxed
+-#define readb_relaxed readb
++#define readb_relaxed readb_relaxed
++static inline u8 readb_relaxed(const volatile void __iomem *addr)
++{
++	return __raw_readb(addr);
++}
+ #endif
+ 
+ #ifndef readw_relaxed
+-#define readw_relaxed readw
++#define readw_relaxed readw_relaxed
++static inline u16 readw_relaxed(const volatile void __iomem *addr)
++{
++	return __le16_to_cpu(__raw_readw(addr));
++}
+ #endif
+ 
+ #ifndef readl_relaxed
+-#define readl_relaxed readl
++#define readl_relaxed readl_relaxed
++static inline u32 readl_relaxed(const volatile void __iomem *addr)
++{
++	return __le32_to_cpu(__raw_readl(addr));
++}
+ #endif
+ 
+ #if defined(readq) && !defined(readq_relaxed)
+-#define readq_relaxed readq
++#define readq_relaxed readq_relaxed
++static inline u64 readq_relaxed(const volatile void __iomem *addr)
++{
++	return __le64_to_cpu(__raw_readq(addr));
++}
+ #endif
+ 
+ #ifndef writeb_relaxed
 -- 
-Kees Cook
-Pixel Security
+2.7.4
