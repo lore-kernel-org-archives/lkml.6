@@ -1,116 +1,137 @@
-Return-Path: <simon@nikanor.nu>
-ARC-Seal: i=1; a=rsa-sha256; t=1523046787; cv=none;
+Return-Path: <rdunlap@infradead.org>
+X-Google-Smtp-Source: AIpwx49dUcB1lUhTvMRGN9t2gygfRHlBXjMt53AZCXRqbFEmhpGRVkKV200XB1Uho5d1VEAK9Nks
+ARC-Seal: i=1; a=rsa-sha256; t=1523062814; cv=none;
         d=google.com; s=arc-20160816;
-        b=NLisyKc9OMxBsEx5JA2pF5Fi39vcicf1+l/NgBfsHtZWFBDYdA1bT2oArLi7SyhABU
-         aYU+XUKAR2LviuGXbSamYD4Q2f9s735Vi7kP5KC3hxEPD8ncCE0xEriLr2t7XVaqnvz4
-         kvNcecrxYXAhiNWB5hxqLHe8Q4UQHfiOtpTbjnUnRmhn7ym+VlgmeC00/4I/jGqSTeDM
-         Bff/4iuQSEdC1zcmvpzedRJOHh4BwR6Pl52XYckPPjelcXIpOQObWqWHfdJk09eUYIXJ
-         jy4AN52AOhT3zd9w+XZlRQJ9AYbP/Ng/EoTFy75AGbphNV8FWtY9jzlHNJtjA5VOdYCM
-         yL9Q==
+        b=TqWLMJgq8wR2qflexOYT45XDedCS6AAGvvwfBlvd1brExLs+/JOD2EnP32Nr/6WdsS
+         AM2Uon+jTC15WdEHx+kxHue/esSNnSpxidzbuH6HVhuSz/N0ye/Pirl5Gjl0pfneks6D
+         2Ftj0EnroKKQNIlQvXn9A/lMoVsTZJGu9HbYuijjM7CCKZbbyMhfyflPtervS5/KKlE6
+         SnI76+T7x0ikFrhjHjCDiWuShOUHGJjehfZwIDB32D2bCVUhP632wTzGkxCtJNEE34i2
+         +DZ2J4zHTaLeue2G3WaJZSdZGBzuHsx6Bre4Yul5qX0Bp5wmTpv9baQfT0XvvTlM7jhB
+         yo0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dkim-signature:arc-authentication-results;
-        bh=wmdjvA1j2AxKgLOBCuQodCX2lnRSc2kqmMJLIxhSmcg=;
-        b=JrxtPtBGpoNVRrFsAEtt6Dqvz37xCjRdmjESd5dI+HecR9ZtY+7vxsYYZq4PV7nkif
-         qYBehgFhJIGojqcWhHs1Bqe2fLwGAqs5LTaGV3w24ZmY3F9toA2yalFvKpS9tjOWueks
-         iWnCAJZnqQhxtuMJPQZPfML5cx97IsoOai0hkx9nn9hW3EcIslpWqvZhw6fPyitnzbcc
-         DEPcViu2ECML96siBFbENbr0MNU0/SlaVIL03fBCu6mCDSlFts7S1nkbNdwlKFw5IPYt
-         lQQ/4HrQ+UnDMfE570zx2K9dzTfzAErYRBpnYGOVWru/zJ07m4kYqesRYQIUrvwW2XZ4
-         ZLhw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=4Ez/rxmsvFilsi7MUvvVxusgt2bPEIgcIhthrxeuMlE=;
+        b=kiVNlu4IGcalQS61GzsDPe3CGDvQ2cMsEXwPh+hPU7PoOTuwH0Kln1N5VAHxQyfvyQ
+         tO/vDBY714DPAQoPLfclIt+g+UT4ShLYgrQzFQKOm9F4OVzFdA/i3xdJ75jkT/tUG6GA
+         dSYGuBz+TFim19wvbwM6xtkwqc42tXo9+qYorg7NpOxHWEbbExcr70nQmnQ2xdsR+WAF
+         akuJybu33wCroDa5W9OViTw4zIfV1/4e8QsA+rR+ReF0x5hoch/qlwua+aSf7milKCrd
+         PMGd140Q55O2AfMfBkwSvOc6eq/2jn7lsGTRmVxlJ+XdLNAnXuMXB6Ba7T7GDJnh4pyP
+         6WIw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nikanor-nu.20150623.gappssmtp.com header.s=20150623 header.b=ojG2+EQd;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of simon@nikanor.nu) smtp.mailfrom=simon@nikanor.nu
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=WzWdPuAd;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nikanor-nu.20150623.gappssmtp.com header.s=20150623 header.b=ojG2+EQd;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of simon@nikanor.nu) smtp.mailfrom=simon@nikanor.nu
-X-Google-Smtp-Source: AIpwx49jTaYXlQzDrWIKv5tJWITQlVhVNh25W67NOFu2dg0dTZX/BOL9HV3hb0TeXw7QB0VXMLHkMg==
-From: =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-To: gregkh@linuxfoundation.org
-Cc: Valentin.Vidic@CARNet.hr,
-	marcin.s.ciupak@gmail.com,
-	linux@Wolf-Entwicklungen.de,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: pi433: break long lines
-Date: Fri,  6 Apr 2018 22:33:05 +0200
-Message-Id: <20180406203305.6686-1-simon@nikanor.nu>
-X-Mailer: git-send-email 2.11.0
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=WzWdPuAd;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+Subject: Re: Differences between builtins and modules
+To: Lucas De Marchi <lucas.de.marchi@gmail.com>
+Cc: Harish Jenny K N <harish_kandiga@mentor.com>,
+ linux-modules <linux-modules@vger.kernel.org>,
+ lkml <linux-kernel@vger.kernel.org>, greg KH <gregkh@linuxfoundation.org>,
+ jason.vas.dias@gmail.com
+References: <CAKi4VA+1krn9rdBWE69DkhNZSrxJoeYzyPgvn-SUk8U0=CxFkw@mail.gmail.com>
+ <54EB4C83.2000500@suse.cz>
+ <CAKi4VAJwvtLaF1GTw1dg__CXHGjwOwJqUS=g5B0rbPNp1w8dDg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <4502a7e5-930f-15b6-fbef-929df29d5ef0@infradead.org>
+Date: Fri, 6 Apr 2018 18:00:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKi4VAJwvtLaF1GTw1dg__CXHGjwOwJqUS=g5B0rbPNp1w8dDg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597030308671594565?=
-X-GMAIL-MSGID: =?utf-8?q?1597030308671594565?=
+X-GMAIL-THRID: =?utf-8?q?1493908198172541119?=
+X-GMAIL-MSGID: =?utf-8?q?1597047112700755148?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Breaks long lines in rf69.h, fixing checkpatch.pl warnings:
-"WARNING: line over 80 characters"
+On 02/24/2015 05:02 PM, Lucas De Marchi wrote:
+> On Mon, Feb 23, 2015 at 12:51 PM, Michal Marek <mmarek@suse.cz> wrote:
+>> On 2015-02-23 15:30, Lucas De Marchi wrote:
+>>> This could be particularly bad if in a kernel version an option was
+>>> tristate and in a new version it changed to boolean. I'm not sure if
+>>> this is common to happen in kernel. Any code that did "modprobe
+>>> <module>" would start to fail.
+>>
+>> I think it's quite uncommon (*) and also the use case for loading
+>> builtin modules is not that common. I can think of:
+>> 1) building the initramfs, to determine which *.ko files need to be
+>>    copied to it. Since such tools are often updated for other reasons,
+>>    it's not a big deal.
+>> 2) Hardcoded module names in things like softdep -- hopefully not that
+>>    common either, plus the kernel-provided soft dependencies can be
+>>    fixed together with the change.
+>>
+>> Until not so long ago, the kernel would return EINVAL if passed a
+>> non-existent (renamed, removed) module option to init_module, yet there
+>> were no attempts at preserving the module options for compatibility reasons.
+>>
+>> (*) I now did a quick search:
+>> $ git log -p origin/master --no-merges -- '*/Kconfig*' | grep -C3 '^-
+>> *tristate' | grep '^+ *bool'
+>> +       bool "Intel P state control"
+>> +       bool "Intel microcode patch loading support"
+>> +       bool "AMD microcode patch loading support"
+>> +        bool "STI text console"
+>> +       bool "Enable DDC2 Support"
+>> +       bool "Enable Console Acceleration"
+>>
+>> That's only 6 cases in the whole git history. Maybe there are a few more
+>> hidden outside the three-line context as part of larger edits, but I'm
+>> sure more modules have been *removed* entirely from the kernel over this
+>> period.
+> 
+> thanks for looking in detail into this.
+> 
+>>
+>>
+>>> My questions are:
+>>> 1) should we put *all* the "modules" in the builtin index?
+>>
+>> You mean all *.o files that do not end up in some *.ko? That won't work,
+>> because unlike module names, the names of object files are not global.
+> 
+> I was actually meaning anything that can have a directory under
+> /sys/module/. I figure we can't easily know this.
+> 
+>> Plus, there was IIRC an idea to teach lsmod to print builtin modules --
+>> listing all *.o would make it rather useless.
+> 
+> This was one of my ideas... to traverse /sys/module and give more
+> information than we actually output right now, including builtin
+> modules. However, given the fact that builtin modules only have an
+> entry in /sys/module if they have params and now that I'm aware of the
+> race between the creation of the directory and the initstate file, I'm
+> giving up on this idea for now.
+> 
+>>> 2) should we actually check /sys/module/<modulename> to report a
+>>> module as builtin or just stop doing that and rely solely in the
+>>> index? Initially I'd like to do the opposite, but given the race in
+>>> deciding this I'm favoring the index.
+>>
+>> If the race between the creation of /sys/module/<modulename> and
+>> /sys/module/<modulename>/initstate is inevitable, then I'm afraid we
+>> have to rely on the index.
+> 
+> So my current plan is to rely solely on modules.builtin to output to
+> modprobe that a module is builtin. So things like "modprobe vt" will
+> start to fail saying there's no vt module. Any objections here?
+> 
 
-Signed-off-by: Simon Sandström <simon@nikanor.nu>
----
- drivers/staging/pi433/rf69.h | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+Hi,
+[sorry to resurrect such as old thread]
 
-diff --git a/drivers/staging/pi433/rf69.h b/drivers/staging/pi433/rf69.h
-index b9f6850e3316..c131ffbdc2db 100644
---- a/drivers/staging/pi433/rf69.h
-+++ b/drivers/staging/pi433/rf69.h
-@@ -28,7 +28,8 @@
- int rf69_set_mode(struct spi_device *spi, enum mode mode);
- int rf69_set_data_mode(struct spi_device *spi, u8 data_mode);
- int rf69_set_modulation(struct spi_device *spi, enum modulation modulation);
--int rf69_set_modulation_shaping(struct spi_device *spi, enum mod_shaping mod_shaping);
-+int rf69_set_modulation_shaping(struct spi_device *spi,
-+				enum mod_shaping mod_shaping);
- int rf69_set_bit_rate(struct spi_device *spi, u16 bit_rate);
- int rf69_set_deviation(struct spi_device *spi, u32 deviation);
- int rf69_set_frequency(struct spi_device *spi, u32 frequency);
-@@ -36,28 +37,37 @@ int rf69_enable_amplifier(struct spi_device *spi, u8 amplifier_mask);
- int rf69_disable_amplifier(struct spi_device *spi, u8 amplifier_mask);
- int rf69_set_output_power_level(struct spi_device *spi, u8 power_level);
- int rf69_set_pa_ramp(struct spi_device *spi, enum pa_ramp pa_ramp);
--int rf69_set_antenna_impedance(struct spi_device *spi, enum antenna_impedance antenna_impedance);
-+int rf69_set_antenna_impedance(struct spi_device *spi,
-+			       enum antenna_impedance antenna_impedance);
- int rf69_set_lna_gain(struct spi_device *spi, enum lna_gain lna_gain);
--int rf69_set_bandwidth(struct spi_device *spi, enum mantisse mantisse, u8 exponent);
--int rf69_set_bandwidth_during_afc(struct spi_device *spi, enum mantisse mantisse, u8 exponent);
--int rf69_set_ook_threshold_dec(struct spi_device *spi, enum threshold_decrement threshold_decrement);
-+int rf69_set_bandwidth(struct spi_device *spi, enum mantisse mantisse,
-+		       u8 exponent);
-+int rf69_set_bandwidth_during_afc(struct spi_device *spi,
-+				  enum mantisse mantisse,
-+				  u8 exponent);
-+int rf69_set_ook_threshold_dec(struct spi_device *spi,
-+			       enum threshold_decrement threshold_decrement);
- int rf69_set_dio_mapping(struct spi_device *spi, u8 dio_number, u8 value);
- bool rf69_get_flag(struct spi_device *spi, enum flag flag);
- int rf69_set_rssi_threshold(struct spi_device *spi, u8 threshold);
- int rf69_set_preamble_length(struct spi_device *spi, u16 preamble_length);
- int rf69_enable_sync(struct spi_device *spi);
- int rf69_disable_sync(struct spi_device *spi);
--int rf69_set_fifo_fill_condition(struct spi_device *spi, enum fifo_fill_condition fifo_fill_condition);
-+int rf69_set_fifo_fill_condition(struct spi_device *spi,
-+				 enum fifo_fill_condition fifo_fill_condition);
- int rf69_set_sync_size(struct spi_device *spi, u8 sync_size);
- int rf69_set_sync_values(struct spi_device *spi, u8 sync_values[8]);
--int rf69_set_packet_format(struct spi_device *spi, enum packet_format packet_format);
-+int rf69_set_packet_format(struct spi_device *spi,
-+			   enum packet_format packet_format);
- int rf69_enable_crc(struct spi_device *spi);
- int rf69_disable_crc(struct spi_device *spi);
--int rf69_set_address_filtering(struct spi_device *spi, enum address_filtering address_filtering);
-+int rf69_set_address_filtering(struct spi_device *spi,
-+			       enum address_filtering address_filtering);
- int rf69_set_payload_length(struct spi_device *spi, u8 payload_length);
- int rf69_set_node_address(struct spi_device *spi, u8 node_address);
- int rf69_set_broadcast_address(struct spi_device *spi, u8 broadcast_address);
--int rf69_set_tx_start_condition(struct spi_device *spi, enum tx_start_condition tx_start_condition);
-+int rf69_set_tx_start_condition(struct spi_device *spi,
-+				enum tx_start_condition tx_start_condition);
- int rf69_set_fifo_threshold(struct spi_device *spi, u8 threshold);
- int rf69_set_dagc(struct spi_device *spi, enum dagc dagc);
- 
+
+Would someone please answer/reply to this (related) kernel bugzilla entry:
+  https://bugzilla.kernel.org/show_bug.cgi?id=118661
+
+or I could just close it?
+
+thanks,
 -- 
-2.11.0
+~Randy
