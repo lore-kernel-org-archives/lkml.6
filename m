@@ -1,108 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751578AbeDGMWg (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 08:22:36 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36665 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751447AbeDGMWf (ORCPT
+        id S1751749AbeDGMbV (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 08:31:21 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:40100 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751578AbeDGMbU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 08:22:35 -0400
-Date: Sat, 7 Apr 2018 14:22:33 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Tony Lindgren <tony@atomide.com>, Dan Williams <dcbw@redhat.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: simultaneous voice/data works (was Re: call/normal switch was
- Re: omap4-droid4: voice call support was)
-Message-ID: <20180407122233.GA11302@amd>
-References: <20180401153631.GA5700@atomide.com>
- <20180401173012.GB5700@atomide.com>
- <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
- <20180402155754.GD5700@atomide.com>
- <20180403150444.GE5700@atomide.com>
- <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
- <20180403194419.GG5700@atomide.com>
- <20180406120423.GA18691@amd>
- <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
- <20180407081000.GB7818@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
-Content-Disposition: inline
-In-Reply-To: <20180407081000.GB7818@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 7 Apr 2018 08:31:20 -0400
+To: peterz@infradead.org, mingo@kernel.org
+Cc: akpm@linux-foundation.org, dvyukov@google.com,
+        paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, msb@chromium.org, tglx@linutronix.de,
+        vegard.nossum@oracle.com
+Subject: Re: [PATCH v2] locking/hung_task: Show all hung tasks before panic
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1522678324-4855-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+        <20180402153530.GN3948@linux.vnet.ibm.com>
+        <CACT4Y+Yk0hEDj2EcXTJ5BcTHE0m1Sn0e9RfY=6KC4nWhWOHPmw@mail.gmail.com>
+        <201804050705.BHE57833.HVFOFtSOMQJFOL@I-love.SAKURA.ne.jp>
+In-Reply-To: <201804050705.BHE57833.HVFOFtSOMQJFOL@I-love.SAKURA.ne.jp>
+Message-Id: <201804072131.AEF86988.OFOQLJMVFFtOSH@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Sat, 7 Apr 2018 21:31:19 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello.
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Can we add lockdep functions which print trace of threads with locks held?
 
-On Sat 2018-04-07 10:10:00, Pavel Machek wrote:
-> Hi!
->=20
-> It seems qmicli can be used while unicsy_demo/ofone talks to the modem
-> using the AT commands.
->=20
-> So I could do:
->=20
-> qmicli -d /dev/cdc-wdm0 --wds-follow-network --wds-start-network=3Dapn=3D=
-internet.t-mobile.cz
-> route del default
-> sudo ifconfig wwan0 up
-> dhclient wwan0
->=20
-> to get GPRS/UMTS connection. AT commands still work.
->=20
-> Does anyone have any idea what to do to get the GPS to work?
+For example,
 
-Got that to work.
+void debug_show_map_users(struct lockdep_map *map)
+{
+	struct task_struct *g, *p;
+	struct held_lock *hlock;
+	int i, depth;
 
-I installed modemmanager -- unfortunately that claims ttyUSB4 so it
-breaks voice/sms -- but then
+	rcu_read_lock();
+	for_each_process_thread(g, p) {
+		depth = p->lockdep_depth;
+		hlock = p->held_locks;
+		for (i = 0; i < depth; i++)
+			if (map == hlock[i]->instance) {
+				touch_nmi_watchdog();
+				touch_all_softlockup_watchdogs();
+				sched_show_task(p);
+				lockdep_print_held_locks(p);
+				break;
+			}
+	}
+	rcu_read_unlock();
+}
 
-mmcli -m 0 --enable
-mmcli -m 0  --location-enable-gps-nmea
-watch -n .3 sudo mmcli -m 0  --location-get-gps-nmea
+is for replacing debug_show_all_locks() in oom_reap_task() because
+we are interested in only threads holding specific mm->mmap_sem.
 
-=2E..can be used to get GPS data. Droid4 seems to have rather bad GPS,
-so you should probably put it near window for testing.
+For example
 
-Is there way to grab data from modemmanager and feed it to gpsd, so
-that normal applications can access gps? I don't see easy way.
+void debug_show_relevant_tasks(struct task_struct *origin)
+{
+	struct task_struct *g, *p;
+	struct held_lock *i_hlock, *j_hlock;
+	int i, j, i_depth, j_depth;
 
-I tried --location-enable-gps-unmanaged , but that did not work for
-me.
+	rcu_read_lock();
+	i_depth = origin->lockdep_depth;
+	i_hlock = origin->held_locks;
+	for_each_process_thread(g, p) {
+		j_depth = p->lockdep_depth;
+		j_hlock = p->held_locks;
+		for (i = 0; i < i_depth; i++)
+			for (j = 0; j < j_depth; j++)
+				if (i_hlock[i]->instance == j_hlock[j]->instance)
+					goto hit;
+		continue;
+hit:
+		touch_nmi_watchdog();
+		touch_all_softlockup_watchdogs();
+		sched_show_task(p);
+		lockdep_print_held_locks(p);
+	}
+	rcu_read_unlock();
+}
 
-Is modemmanager enabling GPS, or is it talking to libqmi to do that?
-The code is quite confusing to me...
+or
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+void debug_show_all_locked_tasks(void)
+{
+	struct task_struct *g, *p;
 
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+	rcu_read_lock();
+	for_each_process_thread(g, p) {
+		if (p->lockdep_depth == 0)
+			continue;
+		touch_nmi_watchdog();
+		touch_all_softlockup_watchdogs();
+		sched_show_task(p);
+		lockdep_print_held_locks(p);
+	}
+	rcu_read_unlock();
+}
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+are for replacing debug_show_all_locks() in check_hung_task() for cases like
+https://syzkaller.appspot.com/bug?id=26aa22915f5e3b7ca2cfca76a939f12c25d624db
+because we are interested in only threads holding locks.
 
-iEYEARECAAYFAlrIuAgACgkQMOfwapXb+vKwNgCgnpkGp1ZCvHY6YIGdLkLNZj2B
-bF4An2dCSDEPgPDJVe6bZ9cpT1Ob5zoX
-=4HlO
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
+SysRq-t is too much but SysRq-w is useless for killable/interruptible threads...
