@@ -1,393 +1,166 @@
 Return-Path: <ctatlor97@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525111597; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1523123945; cv=none;
         d=google.com; s=arc-20160816;
-        b=L3PkOeKWcYGcw3jI360SqdUDb5HY2MW/X5u+d31ixnjsANoaTjG/0YKj3kU9OqsQyX
-         w12NyvBeBg/3VEU/1BkEx+nkc1fhbI7qrb9+yDQvB6cwIDeySFnW5HUwI2vy/d57g/x6
-         Z5/i861/srqYT4bxs1SQDp6OAo2QoNVpDe14xyrV5g/TQrm+9OO1Nc4axqZFp6tFL61S
-         z5HAhj8MYjdSTHaS6TmflvWHtA+XL+Lyb1W+2VDLCxy/G1RHf2auy/2P7+iyfIwTJEyB
-         hfPGGQEgv8cBhC/54pVOuFzQg8JZyshGucvUQxFrCvBqnQ6mTpU/MXGJ99aYsHkFfkt1
-         qbww==
+        b=UeTn7acucfJQmFml2bienaH/1UFKkVivfTQ7djSxRF0Q6Tt77/cE2QeN9oUYZnfzRl
+         2/LLPPeR8iZ3R/M65l2UceH3OWb4jRnuPpUf2b67KI5mLTm01vJunqc4/vazsDlSgnEl
+         ggVexES15gMWNCz4uTsmnEWbH6qaiHO2OVGaok6JYfeCLMQJ8peZ5KVFYFB+tvKr1N9b
+         t3RNmDeQ/DsBHxn9dlWiNbB96imzbZorHQU6IvG5DWqcdNokfSwE5gUF7gX0gLzSkxY6
+         DrXaFqOLoBuBs9Gr0my9bxCZiX+B/kqrxYq1nrNBUqn08oH83UMhzkDOvN8rWwCICDQ2
+         6CWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=BkU+4XMk3JF1FsAAJuLXzgNfAJlQoT3MtUk8B+Eth+A=;
-        b=q1lJh85dyP3F9H8C+WVIbd2g4+VI3bBqK1QiII6g7lbwsF8AA5SIPvNG1jjKphfNTP
-         CnV7hQ7MYZQ5SuyBncosAHtKbVto1napvHk2QiPf9rkqe9MbAMs5Qwcpr0WAKG8lxgSI
-         l8cclq4jynmBvoCVtCOTUi7J+hADhWvqmabuIphOUra+O5W9O/KEazdKsy3r9v/KdmUI
-         MJiglWAMU27vxNcHS7tLTf61a6461h501FOGNSFw1ZbFwc3OlQ3kGtir/QyJpCDpclkn
-         5MI9PvgCTVFrVB9XHfuCgYVGHKwH5cRJNKVlbrE/LrPo94uRXe0LhF8uHP36fpBPq4DP
-         P75A==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=yZmxzOIBiHi1qC+Qn/37m/M9pZawE0RbZYAJS0N6Jgs=;
+        b=zMKZryH3797tlG8R162jaft4Oq0xGGtHv5m4d1DiG7p2T9n+YNzZeabt8iVIF4YfWP
+         zH8L1EI8BL0zHbl9BzZDbNBq6/mS5nsxoUM2r2k5tYlgY5GFLL68xQ0O4xyFYXg5y8WL
+         06WFJrXLymPFrtBGOwPCZ1yXlfsEoOrvxYPLqvdHH9IxzpZC1WhSVNoLU46JRPaSffDj
+         McNoVICzZMbJi9oendjlCr+/8hRBtFggIS2S3DitnkfG/njw/zAF5fkjqu1H35dpDMAw
+         L6Lz920+Wwa5+AFOl0SVMbVsYQ9QTXbWDeb+HEpxPcHQhnIY4odAmBZaCXBCrqMQf8t+
+         zbEw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=K5+720CL;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=WfL/bWio;
        spf=pass (google.com: domain of ctatlor97@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ctatlor97@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=K5+720CL;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=WfL/bWio;
        spf=pass (google.com: domain of ctatlor97@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ctatlor97@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZqGe7b0kYIoVzyRVdRuskLU6SZZnEMxfpG5iSZ3KYQYjEiZRHf0G8GMjE6afYIOjd/eXnj93A==
-Date: Mon, 30 Apr 2018 19:06:20 +0100
+X-Google-Smtp-Source: AIpwx4+6VOcIVMqipCPyH936oCk+B1+/CYLr7hHs26NR41jAbT+4WeqRqq46OI48CkQYRD53zyZGNA==
 From: Craig Tatlor <ctatlor97@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Antonio Ospite <ospite@studenti.unina.it>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Jonathan Cameron <jic23@kernel.org>, linux-arm-msm@vger.kernel.org,
+To: 
+Cc: ctatlor97@gmail.com,
+	linux-arm-msm@vger.kernel.org,
 	Sebastian Reichel <sre@kernel.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	"David S. Miller" <davem@davemloft.net>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Randy Dunlap <rdunlap@infradead.org>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/3] power: supply: Add support for the Qualcomm
- Battery Monitoring System
-Message-ID: <20180430180620.GA4411@arch>
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 2/3] dt-bindings: power: supply: qcom_bms: Add bindings
+Date: Sat,  7 Apr 2018 18:57:45 +0100
+Message-Id: <20180407175802.29444-2-ctatlor97@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180407175802.29444-1-ctatlor97@gmail.com>
 References: <20180407135934.26122-1-ctatlor97@gmail.com>
  <20180407175802.29444-1-ctatlor97@gmail.com>
- <CACRpkdZGtD4dP9UzVsb_peRGjdB6nfzUy79Ep-Su6ZEeWKw=ig@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZGtD4dP9UzVsb_peRGjdB6nfzUy79Ep-Su6ZEeWKw=ig@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597095374964030475?=
-X-GMAIL-MSGID: =?utf-8?q?1599195418043261880?=
+X-GMAIL-THRID: =?utf-8?q?1597095394982255487?=
+X-GMAIL-MSGID: =?utf-8?q?1597111214746446020?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Thanks for review, replies inline.
+Add bindings for the Qualcomm Battery Monitoring system.
 
-On Thu, Apr 26, 2018 at 01:34:00PM +0200, Linus Walleij wrote:
-> On Sat, Apr 7, 2018 at 7:57 PM, Craig Tatlor <ctatlor97@gmail.com> wrote:
-> 
-> Hi Craig! Thanks for your patch!
-> 
-> > This patch adds a driver for the BMS (Battery Monitoring System)
-> > block of the PM8941 PMIC, it uses a lookup table defined in the
-> > device tree to generate a capacity from the BMS supplied OCV, it
-> > then ammends the coulomb counter to that to increase the accuracy
-> > of the estimated capacity.
-> >
-> > Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
-> 
-> Just some minor remarks.
-> 
-> NB: I see that you are writing from a private email address
-> so if you're working as a hobbyist on your precious sparetime
-> I have lower expectation on how much work you will put into
-> this, so see it more as suggestions than demands.
-Yeah, I am a just hobbyist :)
-> 
-> My overall feedback is that for algorithmic charger what
-> we need is infrastructure. What is currently piling up in
-> drivers/power/supply scares me a bit in it's lack of
-> framework and code reuse.
-> 
-> It also scares me because this is vital technology dealing
-> with physical devices and as such really need to have
-> modularized reusable reviewed code with several users
-> and deployments.
-> 
-> Code reuse would include:
-> 
-> - Mathematical helpers such as interpolation of
->   values from absolute values or tables
->   Suggestions below!
-> - State machines and transitions
-> - CC/CV alorithms (using the above)
-> - Many other things
-> 
-> Not that *I* can make the situation much better, I'm just
-> sharing my fears,
-> 
-> > +static s64 sign_extend_s36(uint64_t raw)
-> > +{
-> > +       raw = raw & CC_36_BIT_MASK;
-> > +
-> > +       return (raw >> 35) == 0LL ?
-> > +               raw : (SIGN_EXTEND_36_TO_64_MASK | raw);
-> > +}
-> 
-> #include <linux/bitops.h>
-> 
-> Use sign_extend32()
-Right.
-> 
-> > +static unsigned int interpolate(int y0, int x0, int y1, int x1, int x)
-> > +{
-> > +       if (y0 == y1 || x == x0)
-> > +               return y0;
-> > +       if (x1 == x0 || x == x1)
-> > +               return y1;
-> > +
-> > +       return y0 + ((y1 - y0) * (x - x0) / (x1 - x0));
-> > +}
-> > +
-> > +static unsigned int between(int left, int right, int val)
-> > +{
-> > +       if (left <= val && val <= right)
-> > +               return 1;
-> > +
-> > +       return 0;
-> > +}
-> 
-> How are these things not library functions?
-> 
-> Every cell of my brain says this code should be reusable.
-> 
-> Can you put this in <linux/fixp-arith.h>?
-> 
-> I bet a million to one that the video people will sooner or later
-> need linear interpolation and there are more users in the kernel
-> than drivers/power/, certainly drivers/iio as well.
-> 
-> If noone else says anything I vote to put at least the linear
-> interpolation into <linux/fixp-arith.h> with a bonus if you
-> move some of the current users in drivers/power over
-> while you're at it.
-I was pretty surprised there wasn't a library function for it
-aswell, i will add it there. 
-> 
-> > +static unsigned int interpolate_capacity(int temp, u16 ocv,
-> > +                               struct bms_ocv_lut ocv_lut)
-> > +{
-> > +       unsigned int pcj_minus_one = 0, pcj = 0;
-> > +       int i, j;
-> > +
-> > +       for (j = 0; j < TEMPERATURE_COLS; j++)
-> > +               if (temp <= ocv_lut.temp_legend[j])
-> > +                       break;
-> > +
-> > +       if (ocv >= ocv_lut.lut[0][j])
-> > +               return ocv_lut.capacity_legend[0];
-> > +
-> > +       if (ocv <= ocv_lut.lut[ocv_lut.rows - 1][j - 1])
-> > +               return ocv_lut.capacity_legend[ocv_lut.rows - 1];
-> > +
-> > +       for (i = 0; i < ocv_lut.rows - 1; i++) {
-> > +               if (pcj == 0 && between(ocv_lut.lut[i][j],
-> > +                                       ocv_lut.lut[i+1][j], ocv))
-> > +                       pcj = interpolate(ocv_lut.capacity_legend[i],
-> > +                                         ocv_lut.lut[i][j],
-> > +                                         ocv_lut.capacity_legend[i + 1],
-> > +                                         ocv_lut.lut[i+1][j],
-> > +                                         ocv);
-> > +
-> > +               if (pcj_minus_one == 0 && between(ocv_lut.lut[i][j-1],
-> > +                                                 ocv_lut.lut[i+1][j-1], ocv))
-> > +                       pcj_minus_one = interpolate(ocv_lut.capacity_legend[i],
-> > +                                                   ocv_lut.lut[i][j-1],
-> > +                                                   ocv_lut.capacity_legend[i + 1],
-> > +                                                   ocv_lut.lut[i+1][j-1],
-> > +                                                   ocv);
-> > +
-> > +               if (pcj && pcj_minus_one)
-> > +                       return interpolate(pcj_minus_one,
-> > +                                          ocv_lut.temp_legend[j-1],
-> > +                                          pcj,
-> > +                                          ocv_lut.temp_legend[j],
-> > +                                          temp);
-> > +       }
-> 
-> This code really needs some comments to tell what is going on
-> here. Also I sense that you can break out a smaller function
-> for interpolation based on table values, such as a function
-> that would take a standard format of tables, look up where we
-> are in that table and interpolate from the neighboring values.
-Yeah, ill add some comments.
-Tbh i'm not really sure how that would work as I interpolate from
-values at several different indecies, can you expand ont this?
-> 
-> People can then later go in and refine the algorithms if they
-> e.g. want to introduce spline or RMS interpolation instead
-> and we can get better interpolation for everybody.
-> 
-> > +static unsigned long interpolate_fcc(int temp, struct bms_fcc_lut fcc_lut)
-> > +{
-> > +       int i, fcc_mv;
-> > +
-> > +       for (i = 0; i < TEMPERATURE_COLS; i++)
-> > +               if (temp <= fcc_lut.temp_legend[i])
-> > +                       break;
-> > +
-> > +       fcc_mv = interpolate(fcc_lut.lut[i - 1],
-> > +                            fcc_lut.temp_legend[i - 1],
-> > +                            fcc_lut.lut[i],
-> > +                            fcc_lut.temp_legend[i],
-> > +                            temp);
-> > +
-> > +       return fcc_mv * 10000;
-> > +}
-> 
-> So then only this would really remain: pass a table and interpolate.
-> 
-> > +static int bms_lock_output_data(struct bms_device_info *di)
-> > +{
-> > +       int ret;
-> > +
-> > +       ret = regmap_update_bits(di->regmap, di->base_addr +
-> > +                                REG_BMS_CC_DATA_CTL,
-> > +                                BMS_HOLD_OREG_DATA, BMS_HOLD_OREG_DATA);
-> > +       if (ret < 0) {
-> > +               dev_err(di->dev, "failed to lock bms output: %d", ret);
-> > +               return ret;
-> > +       }
-> 
-> Reuse of regmap is very nice, thanks for doing it this way.
-> 
-> > +static int bms_read_cc(struct bms_device_info *di, s64 *cc_uah)
-> > +static void bms_reset_cc(struct bms_device_info *di)
-> 
-> These indeed need to be mostly hardware-specific so they
-> are fine.
-> 
-Thanks :)
-> > +static int bms_calculate_capacity(struct bms_device_info *di, int *capacity)
-> > +{
-> > +       unsigned long ocv_capacity, fcc;
-> > +       int ret, temp, temp_degc;
-> > +       s64 cc, capacity_nodiv;
-> > +
-> > +       ret = iio_read_channel_raw(di->adc, &temp);
-> > +       if (ret < 0) {
-> > +               dev_err(di->dev, "failed to read temperature: %d", ret);
-> > +               return ret;
-> > +       }
-> 
-> Very nice that you use IIO ADC as a back-end.
-> 
-> > +       temp_degc = (temp + 500) / 1000;
-> 
-> That deserves a comment I think. Like what the manual
-> says about this and why the raw temperature is given
-> like this.
-> 
-> Maybe you want to use DIV_ROUND_CLOSEST()
-> or DIV_ROUND_UP() from <linux/kernel.h> instead
-> of just "/"?
-> 
-> Maybe you want to use that in other places too like
-> the below divisions.
-That was just converting it to celcius, adding 500 to round it. 
-I'll skip that and make bindings use millicelcius.
-> 
-> > +       ret = bms_read_cc(di, &cc);
-> > +       if (ret < 0) {
-> > +               dev_err(di->dev, "failed to read coulomb counter: %d", ret);
-> > +               return ret;
-> > +       }
-> > +
-> > +       ocv_capacity = interpolate_capacity(temp_degc, (di->ocv + 5) / 10,
-> > +                                           di->ocv_lut);
-> > +       fcc = interpolate_fcc(temp_degc, di->fcc_lut);
-> > +
-> > +       capacity_nodiv = ((fcc * ocv_capacity) / 100 - cc) * 100;
-> > +       *capacity = div64_ul(capacity_nodiv, fcc);
-> 
-> So I guess you fit the capacity between 0..100, please
-> add some comment on what's going on here.
-Basically,
-1. Read coulomb counter delta since last ocv update
-2. Interpolate open circuit voltage (ocv) and full charge capacity (fcc)
-3. Math just ammends the coulomb counter delta to the last taken ocv
-reading, Used the nodiv variable to make it a bit more but i could
-probably just take that out.
+Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
+---
+ .../bindings/power/supply/qcom_bms.txt        | 93 +++++++++++++++++++
+ 1 file changed, 93 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/qcom_bms.txt
 
-Will add something like this in code.
-> 
-> > +static irqreturn_t bms_ocv_thr_irq_handler(int irq, void *dev_id)
-> > +{
-> > +       struct bms_device_info *di = dev_id;
-> > +
-> > +       if (bms_read_ocv(di, &di->ocv) < 0)
-> > +               return IRQ_HANDLED;
-> > +
-> > +       bms_reset_cc(di);
-> > +       return IRQ_HANDLED;
-> > +}
-> 
-> So that is a coloumb counter interrupt? Please add some
-> comment on when this gets called. Is it called whenever
-> a coloumb is added/removed from the battery?
-Its called whenever a new open circuit voltage reading happens, which
-only occurs when device us using very little power (probably below 10mA).
-The coulomb counter is reset because its kept as a delta.
-> 
-> > +       ret = of_property_read_u8_array(di->dev->of_node,
-> > +                                                "qcom,ocv-temp-legend",
-> > +                                                (u8 *)di->ocv_lut.temp_legend,
-> > +                                                TEMPERATURE_COLS);
-> > +       if (ret < 0) {
-> > +               dev_err(di->dev, "no ocv temperature legend found");
-> > +               return ret;
-> > +       }
-> > +
-> > +       di->ocv_lut.rows = of_property_read_variable_u8_array(di->dev->of_node,
-> > +                                                "qcom,ocv-capacity-legend",
-> > +                                                di->ocv_lut.capacity_legend, 0,
-> > +                                                MAX_CAPACITY_ROWS);
-> > +       if (di->ocv_lut.rows < 0) {
-> > +               dev_err(di->dev, "no ocv capacity legend found");
-> > +               return ret;
-> > +       }
-> > +
-> > +       ret = of_property_read_variable_u16_array(di->dev->of_node,
-> > +                                                 "qcom,ocv-lut",
-> > +                                                 (u16 *)di->ocv_lut.lut,
-> > +                                                 TEMPERATURE_COLS,
-> > +                                                 TEMPERATURE_COLS *
-> > +                                                 MAX_CAPACITY_ROWS);
-> > +       if (ret < 0) {
-> > +               dev_err(di->dev, "no ocv lut array found");
-> > +               return ret;
-> > +       }
-> > +
-> > +       ret = of_property_read_u8_array(di->dev->of_node,
-> > +                                                "qcom,fcc-temp-legend",
-> > +                                                (u8 *)di->fcc_lut.temp_legend,
-> > +                                                TEMPERATURE_COLS);
-> > +       if (ret < 0) {
-> > +               dev_err(di->dev, "no fcc temperature legend found");
-> > +               return ret;
-> > +       }
-> > +
-> > +       ret = of_property_read_u16_array(di->dev->of_node,
-> > +                                                 "qcom,fcc-lut",
-> > +                                                 di->fcc_lut.lut,
-> > +                                                 TEMPERATURE_COLS);
-> > +       if (ret < 0) {
-> > +               dev_err(di->dev, "no fcc lut array found");
-> > +               return ret;
-> > +       }
-> 
-> These tables (that I also suggest to use libraries to parse)
-> should probably have standardized DT names so other
-> battery drivers can use the same properties and we can
-> use the same DT parsing code for all.
-Okay, any recommendations on names?
-> 
-> > +       ret = bms_read_ocv(di, &di->ocv);
-> > +       if (ret < 0) {
-> > +               dev_err(di->dev, "failed to read initial ocv: %d", ret);
-> > +               return ret;
-> > +       }
-> 
-> OCV = original coloumb counter value?
-Nope, open circuit voltage.
-> 
-> Please expand the acronym somewhere because I get
-> a bit lost.
-Will do.
-> 
-> Overall it is a very nicely coded driver. My worries are
-> all about code reuse, not code quality per se.
-Thanks!
-> 
-> Yours,
-> Linus Walleij
+diff --git a/Documentation/devicetree/bindings/power/supply/qcom_bms.txt b/Documentation/devicetree/bindings/power/supply/qcom_bms.txt
+new file mode 100644
+index 000000000000..6296399edc09
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/supply/qcom_bms.txt
+@@ -0,0 +1,93 @@
++Qualcomm Battery Measurement System
++
++The Qualcomm Battery Measurement System is found inside of Qualcomm PM8941
++PMICs. It provides OCV and coulomb counter registers that allow the kernel
++to infer a capacity level.
++
++Required properties:
++- compatible:               Should contain "qcom,pm8941-bms".
++- reg:                      Specifies the SPMI address and length of the
++			    controller's registers.
++- interrupts:               OCV threshold interrupt.
++- io-channels:              Should contain IIO channel specifier for the
++			    ADC channel that reports battery temperature.
++- io-channel-names:         Should contain "temp".
++- qcom,fcc-temp-legend:     An array containing the temperature, in degC,
++			    for each column of the FCC lookup table.
++- qcom,fcc-lut:             An array of FCC values in mah, one entry for each
++			    temperature defined in in qcom,fcc-temp-legend.
++- qcom,ocv-temp-legend:     An array containing the temperature, in degC,
++			    for each column of the OCV lookup table.
++- qcom,ocv-capacity-legend: An array containing the capacity for each
++			    row of the OCV lookup table.
++- qcom,ocv-lut:             An array of OCV values in mV, one entry for each
++			    capacity defined in qcom,ocv-capacity-legend.
++
++Example:
++
++		pm8941_vadc: vadc@3100 {
++			compatible = "qcom,spmi-vadc";
++			reg = <0x3100>;
++			interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#io-channel-cells = <1>;
++
++			bat_temp {
++				reg = <VADC_LR_MUX1_BAT_THERM>;
++			};
++		};
++
++		bms@4000 {
++			compatible = "qcom,pm8941-bms";
++			reg = <0x4000>;
++			interrupts = <0x0 0x40 0x4 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "ocv_thr";
++
++			io-channels = <&pm8941_vadc VADC_LR_MUX1_BAT_THERM>;
++			io-channel-names = "temp";
++
++			qcom,fcc-temp-legend = /bits/ 8 <(-10) 0 25 50 65>;
++			qcom,fcc-lut = /bits/ 16 <6010 6070 6680 6780 6670>;
++
++			qcom,ocv-capacity-legend = /bits/ 8 <100 95 90 85
++							     80 75 70 65
++							     60 55 50 45
++							     40 35 30 25
++							     20 15 10 9
++							     8 7 6 5 4
++							     3 2 1 0>;
++
++			qcom,ocv-temp-legend = /bits/ 8 <(-10) 0 25 50 65>;
++			qcom,ocv-lut = /bits/ 16 <4288 4288 4306 4315 4315
++						  4261 4241 4259 4266 4246
++						  4201 4181 4201 4207 4187
++						  4153 4133 4150 4155 4135
++						  4105 4085 4100 4104 4084
++						  4058 4038 4052 4058 4038
++						  4012 3992 4004 4014 3994
++						  3970 3950 3959 3971 3951
++						  3931 3911 3915 3927 3907
++						  3899 3879 3880 3884 3864
++						  3873 3853 3851 3853 3833
++						  3848 3828 3827 3829 3809
++						  3829 3809 3808 3809 3789
++						  3815 3795 3791 3791 3771
++						  3801 3781 3775 3772 3752
++						  3785 3765 3751 3746 3726
++						  3767 3747 3727 3719 3699
++						  3750 3730 3702 3692 3672
++						  3728 3708 3680 3672 3652
++						  3720 3700 3676 3665 3645
++						  3712 3692 3670 3660 3645
++						  3695 3675 3658 3648 3633
++						  3662 3647 3629 3620 3610
++						  3620 3605 3589 3580 3570
++						  3562 3552 3538 3529 3519
++						  3490 3480 3474 3470 3465
++						  3403 3398 3388 3380 3375
++						  3320 3300 3255 3221 3206
++						  3000 3000 3000 3000 3000>;
++		};
++	};
++};
+-- 
+2.17.0
