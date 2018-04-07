@@ -1,73 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752205AbeDGBJc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 21:09:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55842 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751528AbeDGBJb (ORCPT
+        id S1751530AbeDGBOp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 21:14:45 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35290 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751298AbeDGBOm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 21:09:31 -0400
-Date: Fri, 6 Apr 2018 18:09:19 -0700
-From: Ram Pai <linuxram@us.ibm.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, shakeelb@google.com,
-        stable@kernel.org, tglx@linutronix.de, mpe@ellerman.id.au,
-        mingo@kernel.org, akpm@linux-foundation.org, shuah@kernel.org
-Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from
- PROT_EXEC
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <20180326172721.D5B2CBB4@viggo.jf.intel.com>
- <20180326172727.025EBF16@viggo.jf.intel.com>
- <20180407000943.GA15890@ram.oc3035372033.ibm.com>
- <6e3f8e1c-afed-64de-9815-8478e18532aa@intel.com>
+        Fri, 6 Apr 2018 21:14:42 -0400
+X-Google-Smtp-Source: AIpwx4+Jlf0nqD9lkl5DAHJ4rQ8rzRdo6TwOSmKkzCwQJ8/UdWgDWT5NoRj4bkzYs9yF8v2mHw2Rbg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e3f8e1c-afed-64de-9815-8478e18532aa@intel.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-TM-AS-GCONF: 00
-x-cbid: 18040701-0012-0000-0000-000005C802CA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040701-0013-0000-0000-00001944221F
-Message-Id: <20180407010919.GB15890@ram.oc3035372033.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-06_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804070011
+To: Lina Iyer <ilina@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+From: Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180405161834.3850-3-ilina@codeaurora.org>
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>,
+        devicetree@vger.kernel.org
+References: <20180405161834.3850-1-ilina@codeaurora.org>
+ <20180405161834.3850-3-ilina@codeaurora.org>
+Message-ID: <152306368031.94378.14957212064809086345@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v5 02/10] dt-bindings: introduce RPMH RSC bindings for Qualcomm
+ SoCs
+Date: Fri, 06 Apr 2018 18:14:40 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w371En1R015660
 
-On Fri, Apr 06, 2018 at 05:47:29PM -0700, Dave Hansen wrote:
-> On 04/06/2018 05:09 PM, Ram Pai wrote:
-> >> -	/*
-> >> -	 * Look for a protection-key-drive execute-only mapping
-> >> -	 * which is now being given permissions that are not
-> >> -	 * execute-only.  Move it back to the default pkey.
-> >> -	 */
-> >> -	if (vma_is_pkey_exec_only(vma) &&
-> >> -	    (prot & (PROT_READ|PROT_WRITE))) {
-> >> -		return 0;
-> >> -	}
-> >> +
-> > Dave,
-> > 	this can be simply:
-> > 
-> > 	if ((vma_is_pkey_exec_only(vma) && (prot != PROT_EXEC))
-> > 		return ARCH_DEFAULT_PKEY;
-> 
-> Yes, but we're removing that code entirely. :)
+Quoting Lina Iyer (2018-04-05 09:18:26)
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+> new file mode 100644
+> index 000000000000..dcf71a5b302f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+> @@ -0,0 +1,127 @@
+> +RPMH RSC:
+> +------------
+> +
+> +Resource Power Manager Hardened (RPMH) is the mechanism for communicating with
+> +the hardened resource accelerators on Qualcomm SoCs. Requests to the resources
+> +can be written to the Trigger Command Set (TCS)  registers and using a (addr,
+> +val) pair and triggered. Messages in the TCS are then sent in sequence over an
+> +internal bus.
+> +
+> +The hardware block (Direct Resource Voter or DRV) is a part of the h/w entity
+> +(Resource State Coordinator a.k.a RSC) that can handle a multiple sleep and
 
-Well :). my point is add this code and delete the other
-code that you add later in that function.
+s/ a / /
 
-RP
+> +active/wake resource requests. Multiple such DRVs can exist in a SoC and can
+> +be written to from Linux. The structure of each DRV follows the same template
+> +with a few variations that are captured by the properties here.
+> +
+> +A TCS may be triggered from Linux or triggered by the F/W after all the CPUs
+> +have powered off to facilitate idle power saving. TCS could be classified as -
+
+s/ -/:/
+
+> +
+> +       SLEEP,  /* Triggered by F/W */
+> +       WAKE,   /* Triggered by F/W */
+> +       ACTIVE, /* Triggered by Linux */
+> +       CONTROL /* Triggered by F/W */
+
+Drop the commas?
+
+> +
+> +The order in which they are described in the DT, should match the hardware
+> +configuration.
+> +
+> +Requests can be made for the state of a resource, when the subsystem is active
+> +or idle. When all subsystems like Modem, GPU, CPU are idle, the resource state
+> +will be an aggregate of the sleep votes from each of those subsystems. Clients
+> +may request a sleep value for their shared resources in addition to the active
+> +mode requests.
+> +
+> +Properties:
+> +
+> +- compatible:
+> +       Usage: required
+> +       Value type: <string>
+> +       Definition: Should be "qcom,rpmh-rsc".
+> +
+> +- reg:
+> +       Usage: required
+> +       Value type: <prop-encoded-array>
+> +       Definition: The first register specifies the base address of the DRV.
+> +                   The second register specifies the start address of the
+> +                   TCS.
+> +
+> +- reg-names:
+> +       Usage: required
+> +       Value type: <string>
+> +       Definition: Maps the register specified in the reg property. Must be
+> +                   "drv" and "tcs".
+> +
+> +- interrupts:
+> +       Usage: required
+> +       Value type: <prop-encoded-interrupt>
+> +       Definition: The interrupt that trips when a message complete/response
+> +                  is received for this DRV from the accelerators.
+> +
+> +- qcom,drv-id:
+> +       Usage: required
+> +       Value type: <u32>
+> +       Definition: the id of the DRV in the RSC block.
+> +
+> +- qcom,tcs-config:
+> +       Usage: required
+> +       Value type: <prop-encoded-array>
+> +       Definition: the tuple defining the configuration of TCS.
+> +                   Must have 2 cells which describe each TCS type.
+> +                   <type number_of_tcs>.
+> +                   The order of the TCS must match the hardware
+> +                   configuration.
+> +       - Cell #1 (TCS Type): TCS types to be specified -
+> +                   SLEEP_TCS
+> +                   WAKE_TCS
+> +                   ACTIVE_TCS
+> +                   CONTROL_TCS
+> +       - Cell #2 (Number of TCS): <u32>
+> +
+> +- label:
+> +       Usage: optional
+> +       Value type: <string>
+> +       Definition: Name for the RSC. The name would be used in trace logs.
+> +
+> +Drivers that want to use the RSC to communicate with RPMH must specify their
+> +bindings as child of the RSC controllers they wish to communicate with.
+
+s/child/child nodes/
 
 
+> +
+> +Example 1:
+> +
+> +For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
+> +register offsets for DRV2 start at 0D00, the register calculations are like
+> +this -
+> +First tuple: 0x179C0000 + 0x10000 * 2 = 0x179E0000
+> +Second tuple: 0x179E0000 + 0xD00 = 0x179E0D00
+> +
+> +       apps_rsc: rsc@179e000 {
+> +               label = "apps_rsc";
+> +               compatible = "qcom,rpmh-rsc";
+> +               reg = <0x179e0000 0x10000>, <0x179e0d00 0x3000>;
 
--- 
-Ram Pai
+The first reg property overlaps the second one. Does this second one
+ever move around? I would hardcode it in the driver to be 0xd00 away
+from the drv base instead of specifying it in DT if it's the same all
+the time.
+
+Also, the example shows 0x179c0000 which I guess is the actual beginning
+of the RSC block. So the binding seems to be for one DRV inside of an
+RSC. Can we get the full description of the RSC in the binding instead?
+I imagine that means there's a DRV0,1,2 and those probably have an
+interrupt per each DRV and then a different TCS config per each one too?
+If the binding can describe all of the RSC then we can use different
+DRVs by changing the qcom,drv-id property.
+
+	rsc@179c0000 {
+		compatible = "qcom,rpmh-rsc";
+		reg = <0x179c0000 0x10000>,
+		      <0x179d0000 0x10000>,
+		      <0x179e0000 0x10000>;
+		qcom,tcs-offset = <0xd00>;
+		qcom,drv-id = <0/1/2>;
+		interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+	}
+
+This is sort of what I imagine it would look like. I have no idea how
+the tcs config would work unless each DRV has the same TCS config
+though. Otherwise, if each node is for a drv, then I would expect the
+node would be called 'drv' and we wouldn't need the drv-id property and
+the compatible string would say drv instead of rsc?
+
+BTW, what are the other DRVs used for in the apps RSC?
+
+> +               reg-names = "drv", "tcs";
+> +               interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+> +               qcom,drv-id = <2>;
+> +               qcom,tcs-config = <SLEEP_TCS   3>,
+> +                                 <WAKE_TCS    3>,
+> +                                 <ACTIVE_TCS  2>,
+> +                                 <CONTROL_TCS 1>;
+> +       };
+> +
+> +Example 2:
+> +
+> +For a TCS whose RSC base address is 0xAF20000 and is at DRV id of 0, the
+> +register offsets for DRV0 start at 01C00, the register calculations are like
+> +this -
+> +First tuple: 0xAF20000
+> +Second tuple: 0xAF20000 + 0x1C00 = 0xAF21C00
+> +
+> +       disp_rsc: rsc@af20000 {
+> +               label = "disp_rsc";
+> +               compatible = "qcom,rpmh-rsc";
+> +               reg = <0xaf20000 0x10000>, <0xaf21c00 0x3000>;
+
+Ok. The TCS offset seems totally random now.
+
+> +               reg-names = "drv", "tcs";
+> +               interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
+> +               qcom,drv-id = <0>;
+> +               qcom,tcs-config = <SLEEP_TCS   1>,
+> +                                 <WAKE_TCS    1>,
+> +                                 <ACTIVE_TCS  0>,
+> +                                 <CONTROL_TCS 0>;
+> +       };
