@@ -1,32 +1,32 @@
-Return-Path: <kernel-hardening-return-12882-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/k13Z0Yf/GP5T3EfH0GHBDglO/NZgsL2vqHUsbjd7hAKh6V9Cwqdj3QM7ni4nthJ8WdsAm
-ARC-Seal: i=1; a=rsa-sha256; t=1523126418; cv=none;
+Return-Path: <kernel-hardening-return-12880-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49yXcG9PFfZA5aOrleFox5Cnp6XhvMBia7fouuPMcc3TsM3gP6Iv21M7/KBFxvNlCvbPBk1
+ARC-Seal: i=1; a=rsa-sha256; t=1523126399; cv=none;
         d=google.com; s=arc-20160816;
-        b=FcI0IrtOoKhIL+Bmk13Jh4Fj8WrY7k+KDISLQg43bFPURVC4CtiCGTQBZxMK307Man
-         X8kSO42w5ypgc6j6GRRdSzhc3yi3uoENInaknaHOIhlf4nQSWgz5oAoHWWfX4jCMaoEI
-         OZT5nYgBH25+hCGMRCJpray73d5068HwPt3Tc+5xv6qrZWYedhIUYmLTs0FMg1YbfAOa
-         TQO0U0aQREatOetROGDxdOAb0bJx/cM+xzaM8pwn7LCd0C4J95SyNAdyMKUnHtKKYCo7
-         MmQ8+0KFGJqTfc9/VF2vNTnOB8px8FtZqFaMgWeHbPsPYrjz7z+ecC4JBQ71uoQiegUQ
-         aV2Q==
+        b=NZHlK+L/uOeQlZp5F9l6m6b2Q3+vYj5XucQ6Gyr1fSeydCFjME8O3hX6NVUi7ArB/i
+         3P4LA4Q0wOgWZIc5mcqPFJERt3vOuF7iEKPFSYD9JaorB0v/7r+iRHKqUQ0EO6gw9z7j
+         vDxi5Vib4GqlpTY9lLwWUvQFFlq/IB1upVbpG1GZ46oRkiZNIQmApRmr9zj8xfufk9pl
+         1JIj1ipJT0WZaNu0HzD4ObYo55Z/eEQXotSOpFKm73C2KP2FJoCd6y5UYwrU0WAxOlvT
+         5wAutrZ+Xb5siWIvqbc+Vq702cgeBzuaG9DkY4EDK7tCXJQut+KYLDecEZ+gJJ+jkoFY
+         V3CA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
          :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=bvfZVgukrG4Uz/3K/kgiuiCeoBiYKZFn3z8Tr50BqHA=;
-        b=g9GGSF3k1Nqz9/lcIpkg2RXstKDmwFthvSV9TJyV1dcN0ZtahfcyGhbvCvE33zLOx0
-         At7BDZzTPKiECEYTh1AolslXVpQJFc4SEnnRQu0Z09tbBu+mnvV26yY9hUEKDWZgVnD3
-         OCqS2rO7beF9Y0nRUAnlmXT1IzDzi9gsMqAFUCI423pzdYobkBGAB5iXcQMcTr1hyzsg
-         TZqrj3IaiXzX/WzfFv0YxWealDI0cpDI2PKvdsayFnBa8++fzgpF/f/+Nvd4tnWNFUoK
-         PYMkGJiap3eQ97DwMNMSVcsJ2RF64RJhZCkcvjsoGOH7F7Lw3UOcNOGYyUjp69EEb5mk
-         1+qw==
+        bh=otcFk/LhYCI6+Eka1h1DNCCDW9Ubad/bpWI6UKakoZM=;
+        b=DbSDX4c9yXxbDWWkt9kzgI3BK1iIgQc3bFdqx3nkwOTyJr/LMhmphYWMpjpNHPi0YL
+         TE8LskKiT+BK7GCzB6fWblGDFXE2iKJs4v0THei6BFHvoRMYsBqz7/HJVBgMW1ErFncx
+         GXSrZRL/f9HdqmXa/2V7Ssy3gj3MpnQaMBjzdpaFp8iBP+cLtca0NHk7A/R6ehdFwdKn
+         6fOYRRXWPEWbCryAUclGIV0dMARPiqD9aV5bwImTWynXCVEPJHPHP1NwQvvVOPTFhfic
+         BUuw482eyESr6lxb5899ZK1YaJPNAYfwcStB79ii2KHLWroS7K5bomfkULW+X4j+YfCQ
+         4cJw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=CkE8ofFR;
-       spf=pass (google.com: domain of kernel-hardening-return-12882-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12882-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IF08NNkU;
+       spf=pass (google.com: domain of kernel-hardening-return-12880-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12880-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=CkE8ofFR;
-       spf=pass (google.com: domain of kernel-hardening-return-12882-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12882-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IF08NNkU;
+       spf=pass (google.com: domain of kernel-hardening-return-12880-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12880-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
@@ -43,19 +43,19 @@ Cc: kernel-hardening@lists.openwall.com,
 	Salvatore Mesoraca <s.mesoraca16@gmail.com>,
 	Eric Biggers <ebiggers3@gmail.com>,
 	Laura Abbott <labbott@redhat.com>
-Subject: [PATCH 5/6] crypto: cts - avoid VLA use
-Date: Sat,  7 Apr 2018 20:38:22 +0200
-Message-Id: <1523126303-23205-6-git-send-email-s.mesoraca16@gmail.com>
+Subject: [PATCH 4/6] crypto: pcbc - avoid VLA use
+Date: Sat,  7 Apr 2018 20:38:21 +0200
+Message-Id: <1523126303-23205-5-git-send-email-s.mesoraca16@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1523126303-23205-1-git-send-email-s.mesoraca16@gmail.com>
 References: <1523126303-23205-1-git-send-email-s.mesoraca16@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597113807116019745?=
-X-GMAIL-MSGID: =?utf-8?q?1597113807116019745?=
+X-GMAIL-THRID: =?utf-8?q?1597113787790138764?=
+X-GMAIL-MSGID: =?utf-8?q?1597113787790138764?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We avoid 2 VLAs[1] by always allocating MAX_BLOCKSIZE*2 bytes.
+We avoid 2 VLAs[1] by always allocating MAX_BLOCKSIZE bytes.
 We also check the selected cipher at instance creation time, if
 it doesn't comply with these limits, the creation will fail.
 
@@ -63,48 +63,49 @@ it doesn't comply with these limits, the creation will fail.
 
 Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 ---
- crypto/cts.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ crypto/pcbc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/crypto/cts.c b/crypto/cts.c
-index 4773c18..12e6bd3 100644
---- a/crypto/cts.c
-+++ b/crypto/cts.c
-@@ -50,6 +50,7 @@
- #include <crypto/scatterwalk.h>
+diff --git a/crypto/pcbc.c b/crypto/pcbc.c
+index d9e45a9..797da2f 100644
+--- a/crypto/pcbc.c
++++ b/crypto/pcbc.c
+@@ -21,6 +21,7 @@
+ #include <linux/module.h>
  #include <linux/slab.h>
  #include <linux/compiler.h>
 +#include "internal.h"
  
- struct crypto_cts_ctx {
- 	struct crypto_skcipher *child;
-@@ -104,7 +105,7 @@ static int cts_cbc_encrypt(struct skcipher_request *req)
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
- 	struct skcipher_request *subreq = &rctx->subreq;
- 	int bsize = crypto_skcipher_blocksize(tfm);
--	u8 d[bsize * 2] __aligned(__alignof__(u32));
-+	u8 d[MAX_BLOCKSIZE * 2] __aligned(__alignof__(u32));
- 	struct scatterlist *sg;
- 	unsigned int offset;
- 	int lastn;
-@@ -183,7 +184,7 @@ static int cts_cbc_decrypt(struct skcipher_request *req)
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
- 	struct skcipher_request *subreq = &rctx->subreq;
- 	int bsize = crypto_skcipher_blocksize(tfm);
--	u8 d[bsize * 2] __aligned(__alignof__(u32));
-+	u8 d[MAX_BLOCKSIZE * 2] __aligned(__alignof__(u32));
- 	struct scatterlist *sg;
- 	unsigned int offset;
- 	u8 *space;
-@@ -359,6 +360,9 @@ static int crypto_cts_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	if (crypto_skcipher_alg_ivsize(alg) != alg->base.cra_blocksize)
+ struct crypto_pcbc_ctx {
+ 	struct crypto_cipher *child;
+@@ -72,7 +73,7 @@ static int crypto_pcbc_encrypt_inplace(struct skcipher_request *req,
+ 	unsigned int nbytes = walk->nbytes;
+ 	u8 *src = walk->src.virt.addr;
+ 	u8 *iv = walk->iv;
+-	u8 tmpbuf[bsize];
++	u8 tmpbuf[MAX_BLOCKSIZE];
+ 
+ 	do {
+ 		memcpy(tmpbuf, src, bsize);
+@@ -144,7 +145,7 @@ static int crypto_pcbc_decrypt_inplace(struct skcipher_request *req,
+ 	unsigned int nbytes = walk->nbytes;
+ 	u8 *src = walk->src.virt.addr;
+ 	u8 *iv = walk->iv;
+-	u8 tmpbuf[bsize] __aligned(__alignof__(u32));
++	u8 tmpbuf[MAX_BLOCKSIZE] __aligned(__alignof__(u32));
+ 
+ 	do {
+ 		memcpy(tmpbuf, src, bsize);
+@@ -251,6 +252,10 @@ static int crypto_pcbc_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 	if (err)
  		goto err_drop_spawn;
  
-+	if (alg->base.cra_blocksize > MAX_BLOCKSIZE)
++	err = -EINVAL;
++	if (alg->cra_blocksize > MAX_BLOCKSIZE)
 +		goto err_drop_spawn;
 +
- 	if (strncmp(alg->base.cra_name, "cbc(", 4))
- 		goto err_drop_spawn;
- 
+ 	inst->alg.base.cra_flags = alg->cra_flags & CRYPTO_ALG_INTERNAL;
+ 	inst->alg.base.cra_priority = alg->cra_priority;
+ 	inst->alg.base.cra_blocksize = alg->cra_blocksize;
 -- 
 1.9.1
