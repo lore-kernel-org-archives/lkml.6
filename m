@@ -1,289 +1,608 @@
-Return-Path: <3vlvnWgkbAO8jpqbRccViRggZU.XffXcVljViTfekVek.Tfd@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525111742; cv=none;
+Return-Path: <ctatlor97@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523109589; cv=none;
         d=google.com; s=arc-20160816;
-        b=J0Lc4K/Kl5so0XuBGAClM2wJGPuUqR2YplBGRETt/bzrgc+9qx0T3iQYsE5XGn0tff
-         TwsPAXAK/Hr0FV6H7v5d/zUr33kiXLaIi3QOKSk0WoElSuCxGQzgISzJIHMrTmPG/L5k
-         rzXlDiPRy1xC+2q8CwEsYWE+3Xar5XnTZZhfVHb4nBZgZXW28elUNQBBv5ASWhus9d/W
-         KqxpxGylUsXU2sXruI/YuYWck+P0MvB94W1XhU/ypcLiGkdI3E9FQVMl0rv6C9EjQxRf
-         hSf1a2dQXR+oRbKegOJDtGtlLBv80n25qYG45r3HEm+rCQX1xu1jRj/K6EG0zvQy8uwT
-         6rZw==
+        b=L0ahb7C5OTbgj+kqK0pW1m/x63tyEFHVNJey9ITzJVQgo7Ua/Ze/6i7aZLFpJduSpl
+         N7ub3tx82qmtZrakJOP55XjJc31k1Iqzf7dCRIpyRMhrG1TzTEeHIG0JItzFOPMKjJNA
+         K6BjNwiDUbVzfJngqzll119mjaMSjA0Hhm5DgPfbq/p1+pO5/5ogJ3O/+CPdTu1nvTsj
+         AaxDiBCI16oM1tpen1uaMfY/sIPPJhGfpqOtTX8TwXT9lteDRJ0uE8esG+AfE7FXLq/k
+         +orM7hu+MYV5pc2Tu4BO7vDjs9Vimq+NJ6N+iVk72pWIq4KMmvl+lNV8fRQMbIDm7nEv
+         bEgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:from:subject:message-id:date:mime-version
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=SvGO1dWLVmY6h5vu8gTfvZiYXEQpawG8fyOlNRx+UnY=;
-        b=GzF1kCCHxscF1+4V55DMl+n91+JE36Kz/YIi4najKQAqHsTmqSvwkkCxVVex00h7qs
-         BhznJDOexYXRXgxMIzSfO1M3o+xUAuDtzKzko2RlgudVW4r60XvizYVWtoKQ26qA+DnT
-         izU6EmlQJXfzVeYJzKZ9cGQWSP617l5VE+x33OxYFdOxg6ORAYpr4FH8u/+EsGfFWBRc
-         sIYM3t9DgKVydp60/uVSaUh2VNXxH0GPWQ30SxR/ttiozEFm0IuMgfyzq3DHG0Tcc49L
-         mgpI9V+H4Bm3VOIFe0g3seAVyLHGilqXxi+Yun02+I4cvJaIYR+V6TrGpu38DDgbp8GO
-         v+dA==
+        bh=80/5tlLDQ0JO8vlYLH/hPAyCmPHTnoqSyrD1WZ7pvRU=;
+        b=JDjgnfq1pEE4eie3S8ILqQjT95a5n9uXCxE6H/grwJxAmQV06OodmJCSUcXwfB2LkG
+         FpKgEXQ/aFts7DlCL50sbSi7pHVMFjmlBAHx8IguzuWlvICD2YQ66jH1jkUc90lqtfXK
+         r7ONTRHBuKi91fsw/KkhPVu2oazmVc0cgX8elYpDSxIvvp1JmLz+80LmRI4gY5ZjbAyY
+         wZItd7kjCbgnuTUs/A65OtVAzyVi2Yna6RMPKKFeYlgXFlcplMvRP4TLM8dY80jWFtX7
+         S3la3ECh1d4ArNtFnvWxKc0X/6r9BPSmvQcHCwYk/ETzwvng0WijFxCrwJQIQ6ymXNqp
+         OxgA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of 3vlvnwgkbao8jpqbrccvirggzu.xffxcvljvitfekvek.tfd@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3vlvnWgkbAO8jpqbRccViRggZU.XffXcVljViTfekVek.Tfd@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QwTKydc0;
+       spf=pass (google.com: domain of ctatlor97@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ctatlor97@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of 3vlvnwgkbao8jpqbrccvirggzu.xffxcvljvitfekvek.tfd@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3vlvnWgkbAO8jpqbRccViRggZU.XffXcVljViTfekVek.Tfd@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-X-Google-Smtp-Source: AB8JxZoCvLqERNCzCoRY/VSD5UUJhlhTvHn3LnM9h+tMZJI4mKVFw4IAZi9ISQ83pAtoHrfg2QBBPLFMBrW6yYW9xdFPBI0IVdON
-MIME-Version: 1.0
-Date: Mon, 30 Apr 2018 11:09:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a6d200056b14bfd4@google.com>
-Subject: INFO: task hung in collapse_huge_page
-From: syzbot <syzbot+e65df5e4d866512cd91d@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, gregkh@linuxfoundation.org, hannes@cmpxchg.org,
-	kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, mhocko@suse.com, rientjes@google.com, shli@fb.com,
-	sj38.park@gmail.com, syzkaller-bugs@googlegroups.com, willy@infradead.org,
-	yang.s@alibaba-inc.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QwTKydc0;
+       spf=pass (google.com: domain of ctatlor97@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ctatlor97@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx48WcaqrU68+6M6YshiUSpmt5iuLIrhzG4vwl+NmIyiM/Cy5iu7j57mnGSDdI4YXS3o9sa/1uQ==
+From: Craig Tatlor <ctatlor97@gmail.com>
+To: 
+Cc: ctatlor97@gmail.com,
+	linux-arm-msm@vger.kernel.org,
+	Sebastian Reichel <sre@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/3] power: supply: Add support for the Qualcomm Battery Monitoring System
+Date: Sat,  7 Apr 2018 14:59:19 +0100
+Message-Id: <20180407135934.26122-1-ctatlor97@gmail.com>
+X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599195570957601413?=
-X-GMAIL-MSGID: =?utf-8?q?1599195570957601413?=
+X-GMAIL-THRID: =?utf-8?q?1597095374964030475?=
+X-GMAIL-MSGID: =?utf-8?q?1597096160485123312?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello,
+This patch adds a driver for the BMS (Battery Monitoring System)
+block of the PM8941 PMIC, it uses a lookup table defined in the
+device tree to generate a capacity from the BMS supplied OCV, it
+then ammends the coulomb counter to that to increase the accuracy
+of the estimated capacity.
 
-syzbot found the following crash on:
-
-HEAD commit:    fd40ffc72e2f selinux: fix missing dput() before selinuxfs  
-u...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?id=5175701267283968
-kernel config:   
-https://syzkaller.appspot.com/x/.config?id=-771321277174894814
-dashboard link: https://syzkaller.appspot.com/bug?extid=e65df5e4d866512cd91d
-compiler:       gcc (GCC) 8.0.1 20180301 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e65df5e4d866512cd91d@syzkaller.appspotmail.com
-
-RAX: ffffffffffffffda RBX: 00007f3f474226d4 RCX: 0000000000455259
-RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000000000013
-RBP: 000000000072bf58 R08: 00000000200002c0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000014
-R13: 0000000000000402 R14: 00000000006f90d0 R15: 0000000000000000
-INFO: task khugepaged:893 blocked for more than 120 seconds.
-       Not tainted 4.16.0+ #14
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-khugepaged      D22696   893      2 0x80000000
-Call Trace:
-  context_switch kernel/sched/core.c:2848 [inline]
-  __schedule+0x807/0x1e40 kernel/sched/core.c:3490
-  schedule+0xef/0x430 kernel/sched/core.c:3549
-  __rwsem_down_write_failed_common+0x919/0x15d0  
-kernel/locking/rwsem-xadd.c:566
-  rwsem_down_write_failed+0xe/0x10 kernel/locking/rwsem-xadd.c:595
-  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
-  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
-  down_write+0xa2/0x120 kernel/locking/rwsem.c:72
-  collapse_huge_page+0x2cf/0x20a0 mm/khugepaged.c:1008
-  khugepaged_scan_pmd mm/khugepaged.c:1217 [inline]
-  khugepaged_scan_mm_slot+0x2082/0x3320 mm/khugepaged.c:1741
-  khugepaged_do_scan mm/khugepaged.c:1822 [inline]
-  khugepaged+0x99c/0xcc0 mm/khugepaged.c:1867
-  kthread+0x345/0x410 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
-
-Showing all locks held in the system:
-2 locks held by khungtaskd/887:
-  #0: 00000000da18574b (rcu_read_lock){....}, at:  
-check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
-  #0: 00000000da18574b (rcu_read_lock){....}, at: watchdog+0x1ff/0xf60  
-kernel/hung_task.c:249
-  #1: 00000000b2d19eff (tasklist_lock){.+.+}, at:  
-debug_show_all_locks+0xde/0x34a kernel/locking/lockdep.c:4470
-1 lock held by khugepaged/893:
-  #0: 000000005e9ebf28 (&mm->mmap_sem){++++}, at:  
-collapse_huge_page+0x2cf/0x20a0 mm/khugepaged.c:1008
-2 locks held by rs:main Q:Reg/4355:
-  #0: 00000000fbbe3e1f (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1a9/0x1e0  
-fs/file.c:766
-  #1: 0000000017101d2e (sb_writers#4){++++}, at: file_start_write  
-include/linux/fs.h:2712 [inline]
-  #1: 0000000017101d2e (sb_writers#4){++++}, at: vfs_write+0x452/0x560  
-fs/read_write.c:548
-2 locks held by getty/4447:
-  #0: 00000000eef31803 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 000000008462dcad (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
-2 locks held by getty/4448:
-  #0: 0000000088b6b0e6 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 000000001ac62533 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
-2 locks held by getty/4449:
-  #0: 00000000bb91f0f8 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 0000000057fc7078 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
-2 locks held by getty/4450:
-  #0: 000000009dae2019 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 000000000e9ac784 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
-2 locks held by getty/4451:
-  #0: 00000000347d58b3 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 000000004529ab2b (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
-2 locks held by getty/4452:
-  #0: 000000001f202914 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 00000000a9aa7ea8 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
-2 locks held by getty/4453:
-  #0: 000000004b0529c9 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1: 0000000069ad55c2 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
-2 locks held by syz-fuzzer/4473:
-  #0: 000000005e9ebf28 (&mm->mmap_sem){++++}, at:  
-__do_page_fault+0x381/0xe40 arch/x86/mm/fault.c:1328
-  #1: 00000000259e49a0 (sb_pagefaults){++++}, at: sb_start_pagefault  
-include/linux/fs.h:1579 [inline]
-  #1: 00000000259e49a0 (sb_pagefaults){++++}, at:  
-ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6074
-2 locks held by syz-fuzzer/4477:
-  #0: 000000005e9ebf28 (&mm->mmap_sem){++++}, at:  
-__do_page_fault+0x381/0xe40 arch/x86/mm/fault.c:1328
-  #1: 00000000259e49a0 (sb_pagefaults){++++}, at: sb_start_pagefault  
-include/linux/fs.h:1579 [inline]
-  #1: 00000000259e49a0 (sb_pagefaults){++++}, at:  
-ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6074
-1 lock held by syz-executor7/4525:
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
-include/linux/fs.h:1550 [inline]
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-1 lock held by syz-executor3/4526:
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
-include/linux/fs.h:1550 [inline]
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-1 lock held by syz-executor1/4528:
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
-include/linux/fs.h:1550 [inline]
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-1 lock held by syz-executor6/4529:
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
-include/linux/fs.h:1550 [inline]
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-1 lock held by syz-executor4/6088:
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
-include/linux/fs.h:1550 [inline]
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-1 lock held by syz-executor5/9599:
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: file_start_write  
-include/linux/fs.h:2712 [inline]
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: vfs_fallocate+0x5be/0x8d0  
-fs/open.c:318
-1 lock held by syz-executor5/9601:
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
-include/linux/fs.h:1550 [inline]
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-1 lock held by syz-executor0/9580:
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
-include/linux/fs.h:1550 [inline]
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-1 lock held by syz-executor2/9605:
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
-include/linux/fs.h:1550 [inline]
-  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
-fs/namespace.c:386
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 887 Comm: khungtaskd Not tainted 4.16.0+ #14
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
-  check_hung_task kernel/hung_task.c:132 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
-  watchdog+0xc10/0xf60 kernel/hung_task.c:249
-  kthread+0x345/0x410 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.16.0+ #14
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:get_current arch/x86/include/asm/current.h:15 [inline]
-RIP: 0010:lockdep_softirq_start kernel/softirq.c:225 [inline]
-RIP: 0010:__do_softirq+0x1fc/0xaf5 kernel/softirq.c:263
-RSP: 0018:ffff8801db007af0 EFLAGS: 00000046
-RAX: 0000000000000007 RBX: ffffffff88a752c0 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: 0000000080000001 RDI: ffffffff88a75b04
-RBP: ffff8801db007cc8 R08: 0000000000000000 R09: 0000000000000001
-R10: ffffed003b6046c2 R11: ffff8801db023613 R12: ffff8801db02c500
-R13: ffffffff88a752c0 R14: ffff8801db007e68 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000001d9bea000 CR4: 00000000001406f0
-DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  <IRQ>
-  invoke_softirq kernel/softirq.c:365 [inline]
-  irq_exit+0x1d1/0x200 kernel/softirq.c:405
-  scheduler_ipi+0x52b/0xa30 kernel/sched/core.c:1778
-  smp_reschedule_interrupt+0xed/0x660 arch/x86/kernel/smp.c:277
-  reschedule_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:886
-  </IRQ>
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
-RSP: 0018:ffffffff88a07c38 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff02
-RAX: dffffc0000000000 RBX: 1ffffffff1140f8a RCX: 0000000000000000
-RDX: 1ffffffff1162f80 RSI: 0000000000000001 RDI: ffffffff88b17c00
-RBP: ffffffff88a07c38 R08: ffffffff88a752c0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffffffff88a07cf0 R14: ffffffff88b17bf0 R15: 0000000000000000
-  arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
-  default_idle+0xc2/0x440 arch/x86/kernel/process.c:354
-  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:345
-  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
-  cpuidle_idle_call kernel/sched/idle.c:151 [inline]
-  do_idle+0x2f4/0x3c0 kernel/sched/idle.c:241
-  cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:346
-  rest_init+0xe1/0xe4 init/main.c:437
-  start_kernel+0x887/0x8ae init/main.c:717
-  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:443
-  x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:424
-  secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
-Code: 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 81 08 00 00 83 ab 44  
-08 00 00 01 c6 85 37 fe ff ff 01 65 48 8b 1c 25 c0 ed 01 00 <48> 8d bb 64  
-08 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48
-
-
+Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/power/supply/Kconfig    |   9 +
+ drivers/power/supply/Makefile   |   1 +
+ drivers/power/supply/qcom_bms.c | 500 ++++++++++++++++++++++++++++++++
+ 3 files changed, 510 insertions(+)
+ create mode 100644 drivers/power/supply/qcom_bms.c
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+index 428b426842f4..6c354c37bc55 100644
+--- a/drivers/power/supply/Kconfig
++++ b/drivers/power/supply/Kconfig
+@@ -82,6 +82,15 @@ config BATTERY_ACT8945A
+ 	  Say Y here to enable support for power supply provided by
+ 	  Active-semi ActivePath ACT8945A charger.
+ 
++config BATTERY_BMS
++	tristate "Qualcomm Battery Monitoring System driver"
++	depends on MFD_SPMI_PMIC || COMPILE_TEST
++	depends on OF
++	depends on REGMAP_SPMI
++	help
++	  Say Y to include support for the Battery Monitoring hardware
++	  found in some Qualcomm PM series PMICs.
++
+ config BATTERY_CPCAP
+ 	tristate "Motorola CPCAP PMIC battery driver"
+ 	depends on MFD_CPCAP && IIO
+diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
+index e83aa843bcc6..04204174b047 100644
+--- a/drivers/power/supply/Makefile
++++ b/drivers/power/supply/Makefile
+@@ -21,6 +21,7 @@ obj-$(CONFIG_BATTERY_88PM860X)	+= 88pm860x_battery.o
+ obj-$(CONFIG_BATTERY_ACT8945A)	+= act8945a_charger.o
+ obj-$(CONFIG_BATTERY_AXP20X)	+= axp20x_battery.o
+ obj-$(CONFIG_CHARGER_AXP20X)	+= axp20x_ac_power.o
++obj-$(CONFIG_BATTERY_BMS)	+= qcom_bms.o
+ obj-$(CONFIG_BATTERY_CPCAP)	+= cpcap-battery.o
+ obj-$(CONFIG_BATTERY_DS2760)	+= ds2760_battery.o
+ obj-$(CONFIG_BATTERY_DS2780)	+= ds2780_battery.o
+diff --git a/drivers/power/supply/qcom_bms.c b/drivers/power/supply/qcom_bms.c
+new file mode 100644
+index 000000000000..5aa6e906d1b9
+--- /dev/null
++++ b/drivers/power/supply/qcom_bms.c
+@@ -0,0 +1,500 @@
++// SPDX-License-Identifier: GPL
++
++/*
++ * Qualcomm Battery Monitoring System driver
++ *
++ * Copyright (C) 2018 Craig Tatlor <ctatlor97@gmail.com>
++ */
++
++#include <linux/module.h>
++#include <linux/param.h>
++#include <linux/platform_device.h>
++#include <linux/power_supply.h>
++#include <linux/slab.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/regmap.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/iio/consumer.h>
++
++#define REG_BMS_OCV_FOR_SOC_DATA0	0x90
++#define REG_BMS_SHDW_CC_DATA0		0xA8
++#define REG_BMS_CC_DATA_CTL		0x42
++#define REG_BMS_CC_CLEAR_CTL		0x4
++
++#define BMS_HOLD_OREG_DATA		BIT(0)
++#define BMS_CLEAR_SHDW_CC		BIT(6)
++
++#define CC_36_BIT_MASK			0xFFFFFFFFFLL
++#define SIGN_EXTEND_36_TO_64_MASK	(-1LL ^ CC_36_BIT_MASK)
++
++#define BMS_CC_READING_RESOLUTION_N	542535
++#define BMS_CC_READING_RESOLUTION_D	10000
++#define BMS_CC_READING_TICKS		56
++#define BMS_SLEEP_CLK_HZ		32764
++
++#define SECONDS_PER_HOUR		3600
++#define TEMPERATURE_COLS		5
++#define MAX_CAPACITY_ROWS		50
++
++/* lookup table for ocv -> capacity conversion */
++struct bms_ocv_lut {
++	int rows;
++	s8 temp_legend[TEMPERATURE_COLS];
++	u8 capacity_legend[MAX_CAPACITY_ROWS];
++	u16 lut[MAX_CAPACITY_ROWS][TEMPERATURE_COLS];
++};
++
++/* lookup table for battery temperature -> fcc conversion */
++struct bms_fcc_lut {
++	s8 temp_legend[TEMPERATURE_COLS];
++	u16 lut[TEMPERATURE_COLS];
++};
++
++struct bms_device_info {
++	struct device *dev;
++	struct regmap *regmap;
++	struct power_supply *bat;
++	struct power_supply_desc bat_desc;
++	struct bms_ocv_lut ocv_lut;
++	struct bms_fcc_lut fcc_lut;
++	struct iio_channel *adc;
++	spinlock_t bms_output_lock;
++	int base_addr;
++
++	int ocv_thr_irq;
++	int ocv;
++};
++
++static s64 sign_extend_s36(uint64_t raw)
++{
++	raw = raw & CC_36_BIT_MASK;
++
++	return (raw >> 35) == 0LL ?
++		raw : (SIGN_EXTEND_36_TO_64_MASK | raw);
++}
++
++static unsigned int interpolate(int y0, int x0, int y1, int x1, int x)
++{
++	if (y0 == y1 || x == x0)
++		return y0;
++	if (x1 == x0 || x == x1)
++		return y1;
++
++	return y0 + ((y1 - y0) * (x - x0) / (x1 - x0));
++}
++
++static unsigned int between(int left, int right, int val)
++{
++	if (left <= val && val >= right)
++		return 1;
++
++	return 0;
++}
++
++static unsigned int interpolate_capacity(int temp, u16 ocv,
++				struct bms_ocv_lut ocv_lut)
++{
++	unsigned int pcj_minus_one = 0, pcj = 0;
++	int i, j;
++
++	for (j = 0; j < TEMPERATURE_COLS; j++)
++		if (temp <= ocv_lut.temp_legend[j])
++			break;
++
++	if (ocv >= ocv_lut.lut[0][j])
++		return ocv_lut.capacity_legend[0];
++
++	if (ocv <= ocv_lut.lut[ocv_lut.rows - 1][j - 1])
++		return ocv_lut.capacity_legend[ocv_lut.rows - 1];
++
++	for (i = 0; i < ocv_lut.rows - 1; i++) {
++		if (pcj == 0 && between(ocv_lut.lut[i][j],
++					ocv_lut.lut[i+1][j], ocv))
++			pcj = interpolate(ocv_lut.capacity_legend[i],
++					  ocv_lut.lut[i][j],
++					  ocv_lut.capacity_legend[i + 1],
++					  ocv_lut.lut[i+1][j],
++					  ocv);
++
++		if (pcj_minus_one == 0 && between(ocv_lut.lut[i][j-1],
++						  ocv_lut.lut[i+1][j-1], ocv))
++			pcj_minus_one = interpolate(ocv_lut.capacity_legend[i],
++						    ocv_lut.lut[i][j-1],
++						    ocv_lut.capacity_legend[i + 1],
++						    ocv_lut.lut[i+1][j-1],
++						    ocv);
++
++		if (pcj && pcj_minus_one)
++			return interpolate(pcj_minus_one,
++					   ocv_lut.temp_legend[j-1],
++					   pcj,
++					   ocv_lut.temp_legend[j],
++					   temp);
++	}
++
++	if (pcj)
++		return pcj;
++
++	if (pcj_minus_one)
++		return pcj_minus_one;
++
++	return 100;
++}
++
++static unsigned long interpolate_fcc(int temp, struct bms_fcc_lut fcc_lut)
++{
++	int i, fcc_mv;
++
++	for (i = 0; i < TEMPERATURE_COLS; i++)
++		if (temp <= fcc_lut.temp_legend[i])
++			break;
++
++	fcc_mv = interpolate(fcc_lut.lut[i - 1],
++			     fcc_lut.temp_legend[i - 1],
++			     fcc_lut.lut[i],
++			     fcc_lut.temp_legend[i],
++			     temp);
++
++	return fcc_mv * 10000;
++}
++
++static int bms_lock_output_data(struct bms_device_info *di)
++{
++	int ret;
++
++	ret = regmap_update_bits(di->regmap, di->base_addr +
++				 REG_BMS_CC_DATA_CTL,
++				 BMS_HOLD_OREG_DATA, BMS_HOLD_OREG_DATA);
++	if (ret < 0) {
++		dev_err(di->dev, "failed to lock bms output: %d", ret);
++		return ret;
++	}
++
++	/*
++	 * Sleep for 100 microseconds here to make sure there has
++	 * been at least three cycles of the sleep clock so that 
++	 * the registers are correctly locked.
++	 */
++	udelay(100);
++
++	return 0;
++}
++
++static int bms_unlock_output_data(struct bms_device_info *di)
++{
++	int ret;
++
++	ret = regmap_update_bits(di->regmap, di->base_addr +
++				 REG_BMS_CC_DATA_CTL,
++				 BMS_HOLD_OREG_DATA, 0);
++	if (ret < 0) {
++		dev_err(di->dev, "failed to unlock bms output: %d", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int bms_read_ocv(struct bms_device_info *di, int *ocv)
++{
++	unsigned long flags;
++	int ret;
++	u16 read_ocv;
++
++	spin_lock_irqsave(&di->bms_output_lock, flags);
++
++	ret = bms_lock_output_data(di);
++	if (ret < 0)
++		goto err_lock;
++
++	ret = regmap_bulk_read(di->regmap, di->base_addr +
++			       REG_BMS_OCV_FOR_SOC_DATA0, &read_ocv, 2);
++	if (ret < 0) {
++		dev_err(di->dev, "OCV read failed: %d", ret);
++		return ret;
++	}
++
++	dev_dbg(di->dev, "read OCV value of: %d", read_ocv);
++	*ocv = read_ocv;
++
++	ret = bms_unlock_output_data(di);
++
++err_lock:
++	spin_unlock_irqrestore(&di->bms_output_lock, flags);
++
++	return ret;
++}
++
++static int bms_read_cc(struct bms_device_info *di, s64 *cc_uah)
++{
++	unsigned long flags;
++	int ret;
++	s64 cc_raw_s36, cc_raw, cc_uv, cc_pvh;
++
++	spin_lock_irqsave(&di->bms_output_lock, flags);
++
++	ret = bms_lock_output_data(di);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_bulk_read(di->regmap, di->base_addr +
++			       REG_BMS_SHDW_CC_DATA0,
++			       &cc_raw_s36, 5);
++	if (ret < 0) {
++		dev_err(di->dev, "coulomb counter read failed: %d", ret);
++		return ret;
++	}
++
++	ret = bms_unlock_output_data(di);
++	if (ret < 0)
++		return ret;
++
++	spin_unlock_irqrestore(&di->bms_output_lock, flags);
++
++	cc_raw = sign_extend_s36(cc_raw_s36);
++
++	/* convert raw to uv */
++	cc_uv = div_s64(cc_raw * BMS_CC_READING_RESOLUTION_N,
++			BMS_CC_READING_RESOLUTION_D);
++
++	/* convert uv to pvh */
++	cc_pvh = div_s64(cc_uv * BMS_CC_READING_TICKS * 100000,
++			 BMS_SLEEP_CLK_HZ * SECONDS_PER_HOUR) * 10;
++
++	/* divide by impedance */
++	*cc_uah = div_s64(cc_pvh, 10000);
++
++	dev_dbg(di->dev, "read coulomb counter value of: %lld", *cc_uah);
++
++	return 0;
++}
++
++static void bms_reset_cc(struct bms_device_info *di)
++{
++	int ret;
++	unsigned long flags;
++
++	spin_lock_irqsave(&di->bms_output_lock, flags);
++
++	ret = regmap_update_bits(di->regmap, di->base_addr +
++				 REG_BMS_CC_CLEAR_CTL,
++				 BMS_CLEAR_SHDW_CC,
++				 BMS_CLEAR_SHDW_CC);
++	if (ret < 0) {
++		dev_err(di->dev, "coulomb counter reset failed: %d", ret);
++		goto err_lock;
++	}
++
++	/* wait two sleep cycles for cc to reset */
++	udelay(100);
++
++	ret = regmap_update_bits(di->regmap, di->base_addr +
++				 REG_BMS_CC_CLEAR_CTL,
++				 BMS_CLEAR_SHDW_CC, 0);
++	if (ret < 0)
++		dev_err(di->dev, "coulomb counter re-enable failed: %d", ret);
++
++err_lock:
++	spin_unlock_irqrestore(&di->bms_output_lock, flags);
++}
++
++static int bms_calculate_capacity(struct bms_device_info *di, int *capacity)
++{
++	unsigned long ocv_capacity, fcc;
++	int ret, temp, temp_degc;
++	s64 cc, capacity_nodiv;
++
++	ret = iio_read_channel_raw(di->adc, &temp);
++	if (ret < 0) {
++		dev_err(di->dev, "failed to read temperature: %d", ret);
++		return ret;
++	}
++
++	temp_degc = (temp + 500) / 1000;
++
++	ret = bms_read_cc(di, &cc);
++	if (ret < 0) {
++		dev_err(di->dev, "failed to read coulomb counter: %d", ret);
++		return ret;
++	}
++
++	ocv_capacity = interpolate_capacity(temp_degc, (di->ocv + 5) / 10,
++					    di->ocv_lut);
++	fcc = interpolate_fcc(temp_degc, di->fcc_lut);
++
++	capacity_nodiv = ((fcc * ocv_capacity) / 100 - cc) * 100;
++	*capacity = div64_ul(capacity_nodiv, fcc);
++
++	return 0;
++}
++
++
++
++/*
++ * Return power_supply property
++ */
++static int bms_get_property(struct power_supply *psy,
++				   enum power_supply_property psp,
++				   union power_supply_propval *val)
++{
++	struct bms_device_info *di = power_supply_get_drvdata(psy);
++	int ret;
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_CAPACITY:
++		ret = bms_calculate_capacity(di, &val->intval);
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++
++	if (val->intval == INT_MAX || val->intval == INT_MIN)
++		ret = -EINVAL;
++
++	return ret;
++}
++
++static enum power_supply_property bms_props[] = {
++	POWER_SUPPLY_PROP_CAPACITY,
++};
++
++static irqreturn_t bms_ocv_thr_irq_handler(int irq, void *dev_id)
++{
++	struct bms_device_info *di = dev_id;
++
++	if (bms_read_ocv(di, &di->ocv) < 0)
++		return IRQ_HANDLED;
++
++	bms_reset_cc(di);
++	return IRQ_HANDLED;
++}
++
++static int bms_probe(struct platform_device *pdev)
++{
++	struct power_supply_config psy_cfg = {};
++	struct bms_device_info *di;
++	int ret;
++
++	di = devm_kzalloc(&pdev->dev, sizeof(*di), GFP_KERNEL);
++	if (!di)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, di);
++
++	di->dev = &pdev->dev;
++
++	di->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!di->regmap) {
++		dev_err(di->dev, "Unable to get regmap");
++		return -EINVAL;
++	}
++
++	di->adc = devm_iio_channel_get(&pdev->dev, "temp");
++	if (IS_ERR(di->adc))
++		return PTR_ERR(di->adc);
++
++	ret = of_property_read_u32(di->dev->of_node, "reg", &di->base_addr);
++	if (ret < 0)
++		return ret;
++
++	ret = of_property_read_u8_array(di->dev->of_node,
++						 "qcom,ocv-temp-legend",
++						 (u8 *)di->ocv_lut.temp_legend,
++						 TEMPERATURE_COLS);
++	if (ret < 0) {
++		dev_err(di->dev, "no ocv temperature legend found");
++		return ret;
++	}
++
++	di->ocv_lut.rows = of_property_read_variable_u8_array(di->dev->of_node,
++						 "qcom,ocv-capacity-legend",
++						 di->ocv_lut.capacity_legend, 0,
++						 MAX_CAPACITY_ROWS);
++	if (di->ocv_lut.rows < 0) {
++		dev_err(di->dev, "no ocv capacity legend found");
++		return ret;
++	}
++
++	ret = of_property_read_variable_u16_array(di->dev->of_node,
++						  "qcom,ocv-lut",
++						  (u16 *)di->ocv_lut.lut,
++						  TEMPERATURE_COLS,
++						  TEMPERATURE_COLS *
++						  MAX_CAPACITY_ROWS);
++	if (ret < 0) {
++		dev_err(di->dev, "no ocv lut array found");
++		return ret;
++	}
++
++	ret = of_property_read_u8_array(di->dev->of_node,
++						 "qcom,fcc-temp-legend",
++						 (u8 *)di->fcc_lut.temp_legend,
++						 TEMPERATURE_COLS);
++	if (ret < 0) {
++		dev_err(di->dev, "no fcc temperature legend found");
++		return ret;
++	}
++
++	ret = of_property_read_u16_array(di->dev->of_node,
++						  "qcom,fcc-lut",
++						  di->fcc_lut.lut,
++						  TEMPERATURE_COLS);
++	if (ret < 0) {
++		dev_err(di->dev, "no fcc lut array found");
++		return ret;
++	}
++
++	ret = bms_read_ocv(di, &di->ocv);
++	if (ret < 0) {
++		dev_err(di->dev, "failed to read initial ocv: %d", ret);
++		return ret;
++	}
++
++	di->ocv_thr_irq = platform_get_irq_byname(pdev, "ocv_thr");
++
++	ret = devm_request_irq(di->dev, di->ocv_thr_irq,
++					bms_ocv_thr_irq_handler,
++					IRQF_TRIGGER_RISING,
++					pdev->name, di);
++	if (ret < 0) {
++		dev_err(di->dev, "failed to request handler for ocv threshold IRQ");
++		return ret;
++	}
++
++	spin_lock_init(&di->bms_output_lock);
++
++	di->bat_desc.name = "bms";
++	di->bat_desc.type = POWER_SUPPLY_TYPE_BATTERY;
++	di->bat_desc.properties = bms_props;
++	di->bat_desc.num_properties = ARRAY_SIZE(bms_props);
++	di->bat_desc.get_property = bms_get_property;
++
++	psy_cfg.drv_data = di;
++	di->bat = devm_power_supply_register(di->dev, &di->bat_desc, &psy_cfg);
++	if (IS_ERR(di->bat))
++		return PTR_ERR(di->bat);
++
++	return 0;
++}
++
++static const struct of_device_id bms_of_match[] = {
++	{.compatible = "qcom,pm8941-bms", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, bms_of_match);
++
++static struct platform_driver bms_driver = {
++	.probe = bms_probe,
++	.driver = {
++		.name = "qcom-bms",
++		.of_match_table = of_match_ptr(bms_of_match),
++	},
++};
++module_platform_driver(bms_driver);
++
++MODULE_AUTHOR("Craig Tatlor <ctatlor97@gmail.com>");
++MODULE_DESCRIPTION("Qualcomm BMS driver");
++MODULE_LICENSE("GPL");
+-- 
+2.17.0
