@@ -1,58 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752012AbeDGQuJ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 12:50:09 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36683 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751499AbeDGQuH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 12:50:07 -0400
-X-Google-Smtp-Source: AIpwx49Vq05S9O9ZyFvbUz7FgNwUCF4sKyEDo73YpeADgVHJhKXW+ppdkWUFRXwI7N0rnDe/3WWSavKP4+UAHRRLfeE=
+        id S1752196AbeDGQxk (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 12:53:40 -0400
+Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:56446 "EHLO
+        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751977AbeDGQxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 12:53:38 -0400
+Date: Sat, 7 Apr 2018 12:53:36 -0400
+From: Wakko Warner <wakko@animx.eu.org>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180407165335.GA2515@animx.eu.org>
+References: <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
+ <20180331221252.GA25573@animx.eu.org>
+ <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
+ <20180401113721.GA8471@animx.eu.org>
+ <20180401163604.GB25011@animx.eu.org>
+ <20180401182723.GA31755@animx.eu.org>
+ <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+ <20180406014644.GA16112@animx.eu.org>
+ <20180406020651.GB16112@animx.eu.org>
+ <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
-References: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 7 Apr 2018 09:50:05 -0700
-X-Google-Sender-Auth: 71uBF3Wb3ABbAYtkojs1CDxilsM
-Message-ID: <CA+55aFxtS1jyefWXG+H6UjfC5KaqPOgTf3imHxL1iS1avJP5Lw@mail.gmail.com>
-Subject: Re: [PATCH 00/20] afs: Fixes and development
-To: David Howells <dhowells@redhat.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-afs@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 5, 2018 at 1:29 PM, David Howells <dhowells@redhat.com> wrote:
->>
-> Here are a set of AFS patches, a few fixes, but mostly development.  The fixes
-> are:
+Bart Van Assche wrote:
+> On Thu, 2018-04-05 at 22:06 -0400, Wakko Warner wrote:
+> > I know now why scsi_print_command isn't doing anything.  cmd->cmnd is null.
+> > I added a dev_printk in scsi_print_command where the 2 if statements return.
+> > Logs:
+> > [  29.866415] sr 3:0:0:0: cmd->cmnd is NULL
+> 
+> That's something that should never happen. As one can see in
+> scsi_setup_scsi_cmnd() and scsi_setup_fs_cmnd() both functions initialize
+> that pointer. Since I have not yet been able to reproduce myself what you
+> reported, would it be possible for you to bisect this issue? You will need
+> to follow something like the following procedure (see also
+> https://git-scm.com/docs/git-bisect):
 
-So I pulled this after your updated fscache pull request, and I notice
-that these three commits are duplicate (not shared):
+After doing 3 successful compiles with good/bad, I got this error and was
+not able to compile any more kernels:
+  CC      scripts/mod/devicetable-offsets.s
+scripts/mod/empty.c:1:0: error: code model kernel does not support PIC mode
+ /* empty file to figure out endianness / word size */
+ 
+scripts/mod/devicetable-offsets.c:1:0: error: code model kernel does not support PIC mode
+ #include <linux/kbuild.h>
+ 
+scripts/Makefile.build:153: recipe for target 'scripts/mod/devicetable-offsets.s' failed
 
-      fscache: Attach the index key and aux data to the cookie
-      fscache: Pass object size in rather than calling back for it
-      fscache: Maintain a catalogue of allocated cookies
+I don't think it found the bad commit.
 
-and partly as a result I get some trivial conflicts.
-
-Now, the conflicts really do look entirely trivial, and that's not the
-problem, but the fact that you *didn't* re-send the AFS pull request
-makes me wonder if you perhaps didn't want me to pull it after all?
-
-So I decided to not do the resolution, and instead just verify with
-you that you still want this pulled?
-
-No need to rebase, no need to do anything at all, really, except reply
-with "yes I want you to pull this" or "no, the fscache pull updates
-meant that I want you to do something else, hold off".
-
-Pls advice.
-
-(I may decide later to pull anyway, because I *think* you want me to
-pull, but thought to ask in case you're online and answer quickly).
-
-                      Linus
+-- 
+ Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
+ million bugs.
