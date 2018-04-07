@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1965609-1523040782-2-8342074784328365123
+X-Cyrus-Session-Id: sloti22d1t05-2642158-1523063465-2-9776558049784810127
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -8,28 +8,29 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+X-Spam-charsets: plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523040782; b=g2Bj3hYl/mCOLNpY/WU6ItZV2U0aNV3dJrxj+qMH/Uee7W81nj
-    7pQOmxAjTf2VLAEkiYBP1wwhSdVb+aC7PIvMx371WrJKmeXd0ltDlc2fH6JtpOTV
-    gKhJ2Il651y0K9BWxexrLSFbfNMb7zo1wkil2YzTMFlBz3rygNwwQ1IyyAo7omlH
-    du25t5DSdthKpWiWtRTNNXkvNX/N3Fmz+2gm9K7HMNbeKPeKr52Iq4I7tog5tGWH
-    FxTNPiiy4k4XTTRzr3llW9jO1AmbnDk4AaPEnex8BhpHKjnPckSJnTvSPUgB6Lev
-    3RfpNeiEhO9drtbCe7wLwk+SV5Cs2irrCEuw==
+    1523063465; b=StCk1ylJ7l8we1Xmc87cyGNAocOXml9LNW5VzuUFooPB725Bsu
+    r0IHawMTTRbSTfSWPVLuLIns5cqPZhZHeSZZnz/m68RK0TkyjVb1IEmq4e3pgzOg
+    0/PmsDhccLkcIseT8nKbB+OBVkQe3mNeBjIU4tz73FT6rpY1gz7PBdhOgws3Mh88
+    /r/pZ9bNkj2KIwP34ANTWc9KKmehKZ4VjOlWf04gkwCcYoclgCznja7RNcMR+b1U
+    J/W5UHdehh7UBV9WDmTboBCWakIsrzn7iq71cKamRx0/lbY2Gf3J4tKZKPGMCy7H
+    uuO4yvJqnlkiw2A+4aYCcWw+/ofkxQKrmvLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:content-transfer-encoding:sender
-    :list-id; s=fm2; t=1523040782; bh=pY7zDxLXfaiN+A9oeY8feLydpa6wwD
-    GL3e6WK4SP+Gk=; b=i+zs0okocfFJCA0JSWaDBug2Umc0tXkJzbNGwguPymEWJo
-    y/VWsPC8BUjWBBywD2b3fgZfaSd91uGSqumI+8bxzxjBmb0umzfKh+/c71QipoIj
-    e4SCqSuWjwsTqJSEntIawgI4mBwJYuytg4U+Bi9hyEYKe2+Z/U/hWtxWvfydDZKK
-    qUowF+o61Bt6tDA6lMhB/keST8KblI0TKCmmOnhSyVPAtpL5ffhpZwqLBpTKVZ6T
-    eUG2ULG5aTNjA9EO00piMO8M83qf7ptFY8QC/YiG/VXBzGYNDPxAxTH/+Namf4e6
-    g4DoDof1c+rWxKwbkhBzOrvGVCi5PXlullLR9KXg==
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523063465;
+    bh=zsYVHUvE4wtH3rXb2mU05fIzpyEjmVJE48ofb4MqvVY=; b=syMZoUJpaKT8
+    alOLgkp9B1sTsoaUZ8uota58cARabWeZI+i2P+BYx1WY6KpoRyMxtx09WcxGafn6
+    AanC79i+0H50h2pk8ELZwY7G4Fl620m+1Wprz6o6BjiiE6GsJxB3YHL570WMr/Zq
+    DenZNa4d0NSft1afpDsos11OXbp73aueFrzLH28jF61doSggixmHAfR+9EYznxlv
+    dBiQVMYNZgTDzWyBEAsWLfMaLCqprA4xYNkJ4tMhS55/WY+0AfIuz5JdiTbKfUGc
+    WL1zKicSVCQ3NbJYgK1GbGw96/7mMGcsZAWuxO6yyyMMJE2ex36IjRvcPuJnYUl6
+    nrieEO+Qrg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -52,8 +53,8 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP0OL1cU7KbUatdi07fMWfgbbvdzSh91VwcLvcha1aMHOgAeM4dwRya+Zk2fCWamZF4IDJnVfCVJkNzM09WDgQG5Ru+fmNj3GXt3RnDGals79aJl0Bhg
-    bcjbRH0KNTzQ0slWf1X5eeSj8NSRsjUm2oujIOtiGlLpNz+1lccTccwCy4UVUfLajyQh0A5hv3MGa2f1XyFIX3G3a84RJCqsJSyxP59kb5DLgj/eCTv2HqmA
+X-CM-Envelope: MS4wfJ5RBJaXjApQZ/7AajufIgMvxfH8Lc5/P/kJIE8PcaeM9tQaQL2vzVUvI4uUDmcP+8nPs2wk2OUleGfYcaErawhbfIfjktTCAgAMtP/jLHDENN0WUCKC
+    hTT8DyNs84WxLjR+yzw/GkzmYO3OmxgJhCRdRD+6uvY6XauW5gARE8/khUl96ZgLGZ6OmAVhmsV1cv+/Zf+5+GNFso7/g+L5uxZDd5Azzwhi55h169OTEVBK
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
     a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=3F37EuN9M9Y0tdts9r8A:9
@@ -61,25 +62,24 @@ X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751312AbeDFSxA (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 14:53:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37058 "EHLO mx1.redhat.com"
+        id S1751754AbeDGBLD (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 6 Apr 2018 21:11:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44966 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751278AbeDFSw7 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:52:59 -0400
+        id S1751532AbeDGBLD (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 6 Apr 2018 21:11:03 -0400
 From: Lyude Paul <lyude@redhat.com>
 To: intel-gfx@lists.freedesktop.org
-Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
-        <ville.syrjala@linux.intel.com>, Laura Abbott <labbott@redhat.com>,
-        stable@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
+Cc: stable@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4] drm/i915/dp: Send DPCD ON for MST before phy_up
-Date: Fri,  6 Apr 2018 14:52:49 -0400
-Message-Id: <20180406185249.22952-1-lyude@redhat.com>
+Subject: [PATCH v5] drm/i915/dp: Send DPCD ON for MST before phy_up
+Date: Fri,  6 Apr 2018 21:10:53 -0400
+Message-Id: <20180407011053.22437-1-lyude@redhat.com>
+In-Reply-To: <20180406185249.22952-1-lyude@redhat.com>
+References: <20180406185249.22952-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -124,12 +124,16 @@ Changes since v3:
 - Check against is_mst, not intel_dp->is_mst - dhnkrn/vsyrjala
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Laura Abbott <labbott@redhat.com>
+Reviewed-by: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
 Cc: stable@vger.kernel.org
 Fixes: ad260ab32a4d9 ("drm/i915/dp: Write to SET_POWER dpcd to enable MST hub.")
 ---
+No actual changes other than t-b and r-bs. Resending because I don't
+have access to the "test latest revision again" button and I'm very much
+sure these CI results are bogus.
+
  drivers/gpu/drm/i915/intel_ddi.c    | 8 ++++++--
  drivers/gpu/drm/i915/intel_dp_mst.c | 8 +++++++-
  2 files changed, 13 insertions(+), 3 deletions(-)
