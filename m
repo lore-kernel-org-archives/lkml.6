@@ -1,159 +1,113 @@
-Return-Path: <ning.a.zhang@intel.com>
-X-Google-Smtp-Source: AIpwx4/zW7vXRumQ+jDxBaSxo2QKB9HqxFdgtH3VligtsXANDSKjtUoHo++JwNvu7sDrCCLYFb5e
-ARC-Seal: i=1; a=rsa-sha256; t=1523497570; cv=none;
+Return-Path: <00moses.alexander00@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523096515; cv=none;
         d=google.com; s=arc-20160816;
-        b=U8LgtWhglmG8KBsYM7ONpdFNlS7ezLinsW3xw78icZr5akSmqKU5GRTFGYqv8kJwVS
-         Wuo+73QamwQca25xTtfB2r5sHqg1wqee+raWMAPPNcgzNiyRO2sEadLVtAucIP7d/vQL
-         kDQXLrU7yupSfz7FgREbfHcopAfgnrWaq3Yit1eCHYEWTqeborqRnL6rnqsfHwXOCcXI
-         YQSv3LKpHn/k0iznh9YS7WLkfXXkcdZZ3xw34M2sqoJ7eaxv81uuauKXze3wS+MTWPrd
-         qpRoyfh9Sd2YfYV7GY0qEkUz0jxMRA99yh3oZg8de24QjxFl9JTxXHXCazyO1W6h19ki
-         57Og==
+        b=qZBKpDuE/X7tpgnYkvf40e/30N7iAY9NEh6VDOSMKKx9iqUbbotYPC6R+sn6mtH71S
+         MGJa8AB0a5uYSk4Mahd/YR5+VIAgjlpqvdXRYOvSUFBBEW8m5KxtXs8MswqcK4sCGnBH
+         Y0EGDtp2RHNAVNqky289YC9SOzfi7tdRW8T+n2R6SmFrJR5c/r5GZg8YN/1ob+Xxwclm
+         LbsZefXd9yPa5fxaor6SJOdwwZ2bN1/y16X9MSKaanrtmttFE+Kd3J6C6ptaQFoK2TB3
+         9wO7F1h8c4j9XNHOdlf7c64szMcTAINUOs4SwPGdOnJLEn3BmazP7OKNcj5i1oZEj/lm
+         2oeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-language:accept-language:in-reply-to
-         :references:message-id:date:thread-index:thread-topic:subject:cc:to
-         :from:arc-authentication-results;
-        bh=1nnnno3oUu/xx8t4PbZnv+3am7y1IEPWwD6UngiPNOk=;
-        b=BmQRJq4kQV8QoeSKmV4rdxQARj/Ok3drWt0D9AFpmNv2zYTo58yg3mUzp4/4ScnhpI
-         vKPvz10AomGZHFDR8xTXPrlyykzt6Puq2xPtAB+3bD7ECoIHDZar/bn4musKAypvm7u2
-         aksQau5DE6oacKYkfHugMLnw65HuqEWjxECoE8vx/gEF4ZCFB+fgqJCaI3I9UyfUFPk0
-         xAJBaWBW61FeGfx99uN79MG9fFsTNkILWyXGuRiCdJG8HPM8UHE1twPK0XVh7ZFIBCiu
-         oM44cmKkkYz2MRh/kO6kArDyDKjByzcSUnyPusYBk7rl6QQtjGokwPjG0wslWr3G4Mve
-         0wuA==
+        h=user-agent:content-disposition:mime-version:message-id:subject:to
+         :from:date:dkim-signature:arc-authentication-results;
+        bh=YXtHPTQV0900LKoudhELokoLrfSgGbsfUiJQxPid3/8=;
+        b=Happ2qCBmAwA37Ywgwqx2nW0KpYYtepEhWoE3tEHs6cFNq7zKsN9DURebbygN0IZmV
+         bHxgVrB3PEc47r8vbqLG46hsSW9mosU8jqsmpbySGF24jGDYIF9wo8rChr0Y+eT8sItF
+         cFGK1NpJqBs6K7f6BrcUwpQg1IOW8qlUU1hR9KnMIUcV4EFkeBWBRhNFBIe1eB3ttArc
+         ezYZYy4QDwMJ0Cj0xlD0mYbWhBL+niYw6AP9N691LALZl5p+gtP0woh3HqXXlwYXsP7L
+         vxYL27GsBxeNfYisaDs0Rc9UmHrp7QOREVlC33naOMjbH/6EPT8l9imfmBYPb/7Lhr1k
+         wfYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ning.a.zhang@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=ning.a.zhang@intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DR8NDkYh;
+       spf=pass (google.com: domain of 00moses.alexander00@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=00moses.alexander00@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ning.a.zhang@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=ning.a.zhang@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,439,1517904000";
-   d="scan'208,217";a="32034032"
-From: "Zhang, Ning A" <ning.a.zhang@intel.com>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC: "pombredanne@nexb.com" <pombredanne@nexb.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kstewart@linuxfoundation.org"
-	<kstewart@linuxfoundation.org>
-Subject: Re: 3 version of MKDEV: kernel, uapi, libc, why?
-Thread-Topic: 3 version of MKDEV: kernel, uapi, libc, why?
-Thread-Index: AQHT0XI4sEeugig6tUuuIe0XAMHC36P6z+SAgAEHGgA=
-Date: Thu, 12 Apr 2018 01:45:57 +0000
-Message-ID: <1523497556.1414.14.camel@intel.com>
-References: <1523436662.1414.12.camel@intel.com>
-	 <20180411100415.GA26356@kroah.com>
-In-Reply-To: <20180411100415.GA26356@kroah.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.239.16.113]
-Content-Type: multipart/alternative;
-	boundary="_000_1523497556141414camelintelcom_"
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DR8NDkYh;
+       spf=pass (google.com: domain of 00moses.alexander00@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=00moses.alexander00@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx4+P0r/Cn1KleXEQV2mH7BVsVBmpi20l5lOuC24U4d7w9B5MWD7p+86yFyw9JPkMYN93KG49BQ==
+Date: Sat, 7 Apr 2018 12:21:48 +0200
+From: Alexandru Moise <00moses.alexander00@gmail.com>
+To: axboe@kernel.dk, tj@kernel.org, shli@fb.com, nborisov@suse.com,
+	arnd@arndb.de, gregkh@linuxfoundation.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] blk-cgroup: remove entries in blkg_tree before queue
+ release
+Message-ID: <20180407102148.GA9729@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597439126464031035?=
-X-GMAIL-MSGID: =?utf-8?q?1597502987778220401?=
+X-GMAIL-THRID: =?utf-8?q?1597082451728716242?=
+X-GMAIL-MSGID: =?utf-8?q?1597082451728716242?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---_000_1523497556141414camelintelcom_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+The q->id is used as an index within the blkg_tree radix tree.
 
-VGhhbmsgeW91IGZvciB0aGUgYW5zd2Vycy4NCg0K5ZyoIDIwMTgtMDQtMTHkuInnmoQgMTI6MDQg
-KzAyMDDvvIxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZ+WGmemBk++8mg0KDQpPbiBXZWQsIEFw
-ciAxMSwgMjAxOCBhdCAwODo1MTowM0FNICswMDAwLCBaaGFuZywgTmluZyBBIHdyb3RlOg0KDQoN
-CkhpLCBHcmVnLCBUaG9tYXMNCg0KSSBmaW5kIDMgdmVyc2lvbiBvZiBNS0RFViAoYWN0dWFsbHkg
-MiArIG1ha2VkZXYpDQoNCmluIGluY2x1ZGUvbGludXgva2Rldl90LmgNCg0KICAgICNkZWZpbmUg
-TUlOT1JCSVRTICAgICAgICAgICAgICAgMjANCiAgICAjZGVmaW5lIE1LREVWKG1hLG1pKSAgICAg
-ICAgICAgICgoKG1hKSA8PCBNSU5PUkJJVFMpIHwgKG1pKSkNCg0KaW4gaW5sY3VkZS91YXBpL2xp
-bnV4L2tkZXZfdC5oDQoNCiAgICAjZGVmaW5lIE1LREVWKG1hLG1pKSAgICAgICAgICAgICgobWEp
-PDw4IHwgKG1pKSkNCg0KDQoNCklzbid0IGhpc3RvcnkgZ3JhbmQgOikNClRob3NlIGFyZSBkaWZm
-ZXJlbnQgYmVjYXVzZSB3ZSBpbmNyZWFzZWQgdGhlIHNpemUgd2F5IGJhY2sgaW4gdGhlIDIuNQ0K
-a2VybmVsIChJIHRoaW5rKSwgc28gd2UgaGFkIHRvIGRvIHNvIGluIGEgd2F5IHRoYXQgZGlkIG5v
-dCBicmVhaw0KdXNlcnNwYWNlLg0KDQoNCnNvIHR3byB2ZXJzaW9ucyBvZiBNS0RFViB3aWxsIGJl
-IGtlcHQgaW4gc291cmNlIGNvZGU/DQoNCg0KDQoNCg0KaW4gQW5kcm9pZCBiaW9uaWMNCg0KICAg
-ICNkZWZpbmUgbWFrZWRldihfX21ham9yLCBfX21pbm9yKSBcDQogICAgICAoIFwNCiAgICAgICAg
-KCgoX19tYWpvcikgJiAweGZmZmZmMDAwVUxMKSA8PCAzMikgfCAoKChfX21ham9yKSAmIDB4ZmZm
-VUxMKSA8PA0KICAgIDgpIHwgXA0KICAgICAgICAoKChfX21pbm9yKSAmIDB4ZmZmZmZmMDBVTEwp
-IDw8IDEyKSB8ICgoKF9fbWlub3IpICYgMHhmZlVMTCkpIFwNCiAgICAgICkNCg0KDQoNCkZ1biBz
-dHVmZiA6KQ0KDQoNCg0KaWYgSSB1c2UgbWtub2QoInJlbmRlckQxMjgiLCBTX0lGQ0hSfDA2NjYs
-IE1LREVWKDIyNiwgMTI4KSk7DQpJIGdldCB3cm9uZyBkZXZpY2U6DQpjcnctcnctcnctIDEgcm9v
-dCBncmFwaGljcyAwLCA1Nzk4NCAyMDExLTExLTExIDExOjIwIHJlbmRlckQxMjgNCg0KDQppZiBJ
-IHVzZSAoInJlbmRlckQxMjgiLFNfSUZDSFJ8MDY2NiwgbWFrZWRldigyMjYsIDEyOCkpOw0KSSBn
-ZXQgcmlnaHQgZGV2aWNlLg0KDQpidXQsIHdoZW4gSSB1c2U6IG1rbm9kKCJjYXJkMCIsIFNfSUZD
-SFJ8MDY2NiwgTUtERVYoMjI2LCAwKSk7DQpJIGNhbiBnZXQgcmlnaHQgZGV2aWNlLg0KDQoNCg0K
-V2h5IGFyZSB5b3UgY2FsbGluZyAnbWtub2QnIGF0IGFsbD8gIFRoZSBrZXJuZWwgZG9lcyB0aGlz
-IGF1dG9tYWdpY2FsbHkNCmZvciB5b3UgYWxyZWFkeSwgaW4gZGV2dG1wZnMuICBZb3Ugc2hvdWxk
-IG5vdCBoYXZlIHRvIGRvIHRoaXMgb24geW91cg0Kb3duIGV2ZXIuDQoNClVubGVzcyB5b3UgYXJl
-IHVzaW5nIGEgY3JhenkgQW5kcm9pZCBzeXN0ZW0gdGhhdCBkb2Vzbid0IHVzZSB0aGF0DQpmaWxl
-c3lzdGVtLiAgQW5kIGlmIHlvdSBhcmUsIGdvIGNvbXBsYWluIHRvIHRob3NlIGRldmVsb3BlcnMg
-YWJvdXQgaXQsDQpub3QgbXVjaCB3ZSBjYW4gZG8gZnJvbSB3aXRoaW4gdGhlIGtlcm5lbC4NCg0K
-QW5kIHRoZSBhbnN3ZXIgaXMgeWVzLCB1c2UgdGhlIHJpZ2h0IG1hY3JvLCBmb3Igd2hlbiB5b3Ug
-d2FudCB0byByZWFsbHkNCmRvIHRoaXMuICBZb3VyIGxpYmMgc2hvdWxkIHByb3ZpZGUgdGhlIGNv
-cnJlY3Qgb25lLCB0cnVzdCBpdC4NCg0KDQpBbmRyb2lkIGRvZXNuJ3QgdXNlIGtkZXZ0bXBmcy4N
-CkkgdGhpbmsgdGhpcyBtYWlubHkgYmVjYXVzZSBTRUxpbnV4LCBkZXZpY2UgVUlEL0dJRCBhbmQg
-bW9kZS4NCkFuZHJvaWQgdWV2ZW50ZCB3aWxsIGNyZWF0ZSBkZXZpY2VzIG5vZGVzIHdpdGggU0VM
-aW51eCBsYWJlbCwgYW5kIHNldCByaWdodCBVSUQvR0lELCBtb2RlIGFjY29yZGluZyB0byB1ZXZl
-bnQucmMNCg0Ka2RldnRtcGZzIGRvZXNuJ3Qgc3VwcG9ydCB0aGVzZSAzIGZlYXR1cmVzLg0KDQp1
-c2VzIGtkZXZ0bXBmcyBpcyBhbiBpZGVhIGluIG15IG1pbmQgdG8gb3B0aW1pemUgQW5kcm9pZCBj
-b2xkIGJvb3QuDQoNCkJSLg0KTmluZy4NCg0KDQpnb29kIGx1Y2shDQoNCmdyZWcgay1oDQoNCg==
+If the entry is not released before reclaiming the blk_queue_ida's id
+blkcg_init_queue() within a different driver from which this id
+was originally for can fail due to the entry at that index within
+the radix tree already existing.
 
---_000_1523497556141414camelintelcom_
-Content-Type: text/html; charset="utf-8"
-Content-ID: <7FD5A5750EE0FC469CB0278E0FE83C27@intel.com>
-Content-Transfer-Encoding: base64
+Signed-off-by: Alexandru Moise <00moses.alexander00@gmail.com>
+---
+v2: Added no-op for !CONFIG_BLK_CGROUP
 
-PGh0bWw+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0i
-dGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjwvaGVhZD4NCjxib2R5Pg0KPGRpdj5UaGFuayB5
-b3UgZm9yIHRoZSBhbnN3ZXJzLjwvZGl2Pg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+5ZyoIDIw
-MTgtMDQtMTHkuInnmoQgMTI6MDQgJiM0MzswMjAw77yMZ3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
-cmflhpnpgZPvvJo8L2Rpdj4NCjxibG9ja3F1b3RlIHR5cGU9ImNpdGUiPg0KPHByZT5PbiBXZWQs
-IEFwciAxMSwgMjAxOCBhdCAwODo1MTowM0FNICYjNDM7MDAwMCwgWmhhbmcsIE5pbmcgQSB3cm90
-ZToNCjxibG9ja3F1b3RlIHR5cGU9ImNpdGUiPg0KSGksIEdyZWcsIFRob21hcw0KDQpJIGZpbmQg
-MyB2ZXJzaW9uIG9mIE1LREVWIChhY3R1YWxseSAyICYjNDM7IG1ha2VkZXYpDQoNCmluIGluY2x1
-ZGUvbGludXgva2Rldl90LmgNCg0KICAgICNkZWZpbmUgTUlOT1JCSVRTICAgIAkgICAgMjANCiAg
-ICAjZGVmaW5lIE1LREVWKG1hLG1pKSAgICAJICAgICgoKG1hKSAmbHQ7Jmx0OyBNSU5PUkJJVFMp
-IHwgKG1pKSkNCg0KaW4gaW5sY3VkZS91YXBpL2xpbnV4L2tkZXZfdC5oDQoNCiAgICAjZGVmaW5l
-IE1LREVWKG1hLG1pKSAgICAJICAgICgobWEpJmx0OyZsdDs4IHwgKG1pKSkNCjwvYmxvY2txdW90
-ZT4NCg0KSXNuJ3QgaGlzdG9yeSBncmFuZCA6KQ0KVGhvc2UgYXJlIGRpZmZlcmVudCBiZWNhdXNl
-IHdlIGluY3JlYXNlZCB0aGUgc2l6ZSB3YXkgYmFjayBpbiB0aGUgMi41DQprZXJuZWwgKEkgdGhp
-bmspLCBzbyB3ZSBoYWQgdG8gZG8gc28gaW4gYSB3YXkgdGhhdCBkaWQgbm90IGJyZWFrDQp1c2Vy
-c3BhY2UuDQo8L3ByZT4NCjwvYmxvY2txdW90ZT4NCjxkaXY+PGJyPg0KPC9kaXY+DQo8ZGl2PnNv
-IHR3byB2ZXJzaW9ucyBvZiBNS0RFViB3aWxsIGJlIGtlcHQgaW4gc291cmNlIGNvZGU/PC9kaXY+
-DQo8ZGl2Pjxicj4NCjwvZGl2Pg0KPGJsb2NrcXVvdGUgdHlwZT0iY2l0ZSI+DQo8cHJlPg0KPGJs
-b2NrcXVvdGUgdHlwZT0iY2l0ZSI+DQppbiBBbmRyb2lkIGJpb25pYw0KDQogICAgI2RlZmluZSBt
-YWtlZGV2KF9fbWFqb3IsIF9fbWlub3IpIFwNCiAgICAmbmJzcDsgKCBcDQogICAgJm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7KCgoX19tYWpvcikgJmFtcDsgMHhmZmZmZjAwMFVMTCkgJmx0OyZsdDsg
-MzIpIHwgKCgoX19tYWpvcikgJmFtcDsgMHhmZmZVTEwpICZsdDsmbHQ7DQogICAgOCkgfCBcDQog
-ICAgJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7KCgoX19taW5vcikgJmFtcDsgMHhmZmZmZmYwMFVM
-TCkgJmx0OyZsdDsgMTIpIHwgKCgoX19taW5vcikgJmFtcDsgMHhmZlVMTCkpIFwNCiAgICAmbmJz
-cDsgKQ0KPC9ibG9ja3F1b3RlPg0KDQpGdW4gc3R1ZmYgOikNCg0KPGJsb2NrcXVvdGUgdHlwZT0i
-Y2l0ZSI+DQppZiBJIHVzZSBta25vZCgmcXVvdDtyZW5kZXJEMTI4JnF1b3Q7LCBTX0lGQ0hSfDA2
-NjYsIE1LREVWKDIyNiwgMTI4KSk7DQpJIGdldCB3cm9uZyBkZXZpY2U6DQpjcnctcnctcnctIDEg
-cm9vdCBncmFwaGljcyZuYnNwOzAsIDU3OTg0IDIwMTEtMTEtMTEgMTE6MjAgcmVuZGVyRDEyOA0K
-DQoNCmlmIEkgdXNlICgmcXVvdDtyZW5kZXJEMTI4JnF1b3Q7LFNfSUZDSFJ8MDY2NiwgbWFrZWRl
-digyMjYsIDEyOCkpOw0KSSBnZXQgcmlnaHQgZGV2aWNlLg0KDQpidXQsIHdoZW4gSSB1c2U6IG1r
-bm9kKCZxdW90O2NhcmQwJnF1b3Q7LCBTX0lGQ0hSfDA2NjYsIE1LREVWKDIyNiwgMCkpOw0KSSBj
-YW4gZ2V0IHJpZ2h0IGRldmljZS4NCjwvYmxvY2txdW90ZT4NCg0KV2h5IGFyZSB5b3UgY2FsbGlu
-ZyAnbWtub2QnIGF0IGFsbD8gIFRoZSBrZXJuZWwgZG9lcyB0aGlzIGF1dG9tYWdpY2FsbHkNCmZv
-ciB5b3UgYWxyZWFkeSwgaW4gZGV2dG1wZnMuICBZb3Ugc2hvdWxkIG5vdCBoYXZlIHRvIGRvIHRo
-aXMgb24geW91cg0Kb3duIGV2ZXIuDQoNClVubGVzcyB5b3UgYXJlIHVzaW5nIGEgY3JhenkgQW5k
-cm9pZCBzeXN0ZW0gdGhhdCBkb2Vzbid0IHVzZSB0aGF0DQpmaWxlc3lzdGVtLiAgQW5kIGlmIHlv
-dSBhcmUsIGdvIGNvbXBsYWluIHRvIHRob3NlIGRldmVsb3BlcnMgYWJvdXQgaXQsDQpub3QgbXVj
-aCB3ZSBjYW4gZG8gZnJvbSB3aXRoaW4gdGhlIGtlcm5lbC4NCg0KQW5kIHRoZSBhbnN3ZXIgaXMg
-eWVzLCB1c2UgdGhlIHJpZ2h0IG1hY3JvLCBmb3Igd2hlbiB5b3Ugd2FudCB0byByZWFsbHkNCmRv
-IHRoaXMuICBZb3VyIGxpYmMgc2hvdWxkIHByb3ZpZGUgdGhlIGNvcnJlY3Qgb25lLCB0cnVzdCBp
-dC4NCjwvcHJlPg0KPC9ibG9ja3F1b3RlPg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+QW5kcm9p
-ZCBkb2Vzbid0IHVzZSBrZGV2dG1wZnMuPC9kaXY+DQo8ZGl2PkkgdGhpbmsgdGhpcyBtYWlubHkg
-YmVjYXVzZSBTRUxpbnV4LCBkZXZpY2UgVUlEL0dJRCBhbmQgbW9kZS48L2Rpdj4NCjxkaXY+QW5k
-cm9pZCB1ZXZlbnRkIHdpbGwgY3JlYXRlIGRldmljZXMgbm9kZXMgd2l0aCBTRUxpbnV4IGxhYmVs
-LCBhbmQgc2V0IHJpZ2h0IFVJRC9HSUQsIG1vZGUgYWNjb3JkaW5nIHRvIHVldmVudC5yYzwvZGl2
-Pg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+a2RldnRtcGZzIGRvZXNuJ3Qgc3VwcG9ydCB0aGVz
-ZSAzIGZlYXR1cmVzLjwvZGl2Pg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+dXNlcyBrZGV2dG1w
-ZnMgaXMgYW4gaWRlYSBpbiBteSBtaW5kIHRvIG9wdGltaXplIEFuZHJvaWQgY29sZCBib290Ljwv
-ZGl2Pg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+QlIuPC9kaXY+DQo8ZGl2Pk5pbmcuPC9kaXY+
-DQo8YmxvY2txdW90ZSB0eXBlPSJjaXRlIj4NCjxwcmU+DQpnb29kIGx1Y2shDQoNCmdyZWcgay1o
-DQo8L3ByZT4NCjwvYmxvY2txdW90ZT4NCjwvYm9keT4NCjwvaHRtbD4NCg==
+ block/blk-cgroup.c         | 2 +-
+ block/blk-sysfs.c          | 4 ++++
+ include/linux/blk-cgroup.h | 3 +++
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
---_000_1523497556141414camelintelcom_--
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 1c16694ae145..224e937dbb59 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -369,7 +369,7 @@ static void blkg_destroy(struct blkcg_gq *blkg)
+  *
+  * Destroy all blkgs associated with @q.
+  */
+-static void blkg_destroy_all(struct request_queue *q)
++void blkg_destroy_all(struct request_queue *q)
+ {
+ 	struct blkcg_gq *blkg, *n;
+ 
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index d00d1b0ec109..a72866458f22 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -816,6 +816,10 @@ static void __blk_release_queue(struct work_struct *work)
+ 	if (q->bio_split)
+ 		bioset_free(q->bio_split);
+ 
++	spin_lock_irq(q->queue_lock);
++	blkg_destroy_all(q);
++	spin_unlock_irq(q->queue_lock);
++
+ 	ida_simple_remove(&blk_queue_ida, q->id);
+ 	call_rcu(&q->rcu_head, blk_free_queue_rcu);
+ }
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index 6c666fd7de3c..3d60b1d1973d 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -179,6 +179,8 @@ struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
+ int blkcg_init_queue(struct request_queue *q);
+ void blkcg_drain_queue(struct request_queue *q);
+ void blkcg_exit_queue(struct request_queue *q);
++void blkg_destroy_all(struct request_queue *q);
++
+ 
+ /* Blkio controller policy registration */
+ int blkcg_policy_register(struct blkcg_policy *pol);
+@@ -740,6 +742,7 @@ static inline struct blkcg_gq *blkg_lookup(struct blkcg *blkcg, void *key) { ret
+ static inline int blkcg_init_queue(struct request_queue *q) { return 0; }
+ static inline void blkcg_drain_queue(struct request_queue *q) { }
+ static inline void blkcg_exit_queue(struct request_queue *q) { }
++static inline void blkg_destroy_all(struct request_queue *q) { }
+ static inline int blkcg_policy_register(struct blkcg_policy *pol) { return 0; }
+ static inline void blkcg_policy_unregister(struct blkcg_policy *pol) { }
+ static inline int blkcg_activate_policy(struct request_queue *q,
+-- 
+2.16.2
