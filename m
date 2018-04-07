@@ -1,106 +1,146 @@
-Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AIpwx48UQSe9VyjCTzzKmWiJioQycqcwFvyn/7dofb/jCCEBUey/Z/JL+4D7OnVkZhQG+hAi4vcE
-ARC-Seal: i=1; a=rsa-sha256; t=1523023714; cv=none;
+Return-Path: <hdegoede@redhat.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523099613; cv=none;
         d=google.com; s=arc-20160816;
-        b=rXkqONrw+LD5O30kSg1sePOYD4jat1qac3MdTHwxLv0U2AaUtkuW5PAcAeVLxbysF/
-         kPudH3uJnykl0afFJFaddSHEtSD0Xibivua9n4wGSTHw/ggxxxTiArkDXRbesBJDcbXq
-         S1r+WpPQlpk1zcsF88OHBOxiTCFfb5l8sS9E5MkFZMshmVp6eRTBui3zqlbjUwFb/3R0
-         ePNTuYsW3MBV2LfG7PHnZMmkr3fvD/2ZDAEwnFZZdNfMCRCFfl76nAFpojz+JZYkl6sQ
-         mmytjbep4H2Mn2y9vhDBdsoa4X6zF5awpSHpgbWFz+8digSyBpeSBOdG/myRIoCSa0ft
-         6DpQ==
+        b=xK0gpWyQGVT1KajKyHFM7cCe5AH5MZtYM8KDtqt5b1JOFSsH19QnZDY4FDrqvYXQBn
+         OqZj0r6UzRk/x1peNcc4XtqcK4lFB0++czh4ZZkUDZt1kFn7M/cCfS+JvPQzKmPjsUBm
+         DFOtqaIdL9M8rN9BEzXhzar3p8rbv30vy3yqY56i4/uBR6wymdJDyxwtpOBosOAPTmxc
+         RszmHsTy1A47/SatmEebgO+a719fgya5zpAiKdq2rkaJisd8Lp5eQEwbVW0Htl09NLtM
+         rS3dh/xTLNwnLLs7g0X8+74mLS10h5WEvUOeNp6xRoPoaJ3Y/QWyynKNOFEizTD/d0as
+         uYHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=ghNSbWmTo8n1gdPIa9xtAK+sNZgxkRBCTpcsGD32W/I=;
-        b=z+m+JrS0bn0PH8p0jq8mPGLey9I2ok7+N8tdBGzhbrF8pK0RhA2M2RVF03fc8LuAHx
-         Zi5zqOUa2vT/E4X0gonRjZRBR6+39umMV93MnJhdNLAyghFg7e0Fd5RHsyDQt2aVRlHh
-         8uiPRW03qhDsJ404GyURBxjtckmwVf7Hude4TInkN94XRSgfOooIXx5IvXSb4s9kXayx
-         6kZAEQsxOk5pOexpe99u9uM6WF8SFmbrxYe3G1eRespSg8jA8MhrsJ5TPLyaQBC9SLbo
-         Uzq/+29oah1MKhJbyqxQ5WRPcp4O1DmMZIV3nXEarQLdKAbPcC5tuyAb+892Qbdvr2qO
-         J7Vw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=ZGEQPzaeJqD2dGpAT+Gjrw63a23e1rMu6INqHKxS2f4=;
+        b=kWhz/0R3WlYrX/3BmE+ry2+bAhvqc/61kR05OUQqErs6edvepJ3A0gT7yI5Q/+o3R5
+         il8YvfgKEm9uMDtMc8l0VcvLV3LK2s+G+NtIWUzsHhzB5eOwWgOcysMLlBI1sQZCdPre
+         O7iwx1k9kKKZ0ZWbLOzLY2md79lcdWG5xbsNX5hJfrsbL/JnkMwGu1nVEx6rn/XsJ2hU
+         jfkIyYEwYQnNomumwfEo1K0Zbflx+g5HL8QGSp/u4IchJjpblxZI/OyURnWc+wJeUUdw
+         OnqbLSOWMM9JuMIJ8QqFXnX++le4edRIp+1PU3Xb1CwDKot4uRZF6LrhCJkml8xfsEaY
+         MfkQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
-Date: Fri, 6 Apr 2018 14:08:32 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Peter Jones <pjones@redhat.com>, Hans de Goede <hdegoede@redhat.com>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kalle Valo <kvalo@codeaurora.org>,
-	Arend Van Spriel <arend.vanspriel@broadcom.com>,
-	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org, Dave Olsthoorn <dave@bewaar.me>,
-	x86@kernel.org, linux-efi@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Matt Fleming <matt@codeblueprint.co.uk>,
-	David Howells <dhowells@redhat.com>,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	dmitry.torokhov@gmail.com, mfuzzey@parkeon.com,
-	keescook@chromium.org, nbroeking@me.com, bjorn.andersson@linaro.org,
-	Torsten Duwe <duwe@suse.de>
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+X-Google-Smtp-Source: AIpwx48ma4/X3APQNnL97tjdHsXEkYFVu/4tAbXK3jJz19J9xtgNjN4NS+RYu54HLBCxoUTs9uOcFQ==
 Subject: Re: [PATCH 2/2] efi: Add embedded peripheral firmware support
-Message-ID: <20180406140832.GF30543@wotan.suse.de>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>, Lukas Wunner <lukas@wunner.de>
+Cc: Peter Jones <pjones@redhat.com>,
+ Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Kalle Valo <kvalo@codeaurora.org>,
+ Arend Van Spriel <arend.vanspriel@broadcom.com>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, Dave Olsthoorn <dave@bewaar.me>,
+ x86@kernel.org, linux-efi@vger.kernel.org, Will Deacon
+ <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
+ Matt Fleming <matt@codeblueprint.co.uk>, David Howells
+ <dhowells@redhat.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+ Josh Triplett <josh@joshtriplett.org>, Matthew Garrett
+ <mjg59@srcf.ucam.org>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+ Linus Torvalds <torvalds@linux-foundation.org>, dmitry.torokhov@gmail.com,
+ mfuzzey@parkeon.com, keescook@chromium.org, nbroeking@me.com,
+ bjorn.andersson@linaro.org, Torsten Duwe <duwe@suse.de>
 References: <78ae4d18-8964-5748-a69f-0017d0dca5f7@redhat.com>
  <20180404171835.xvllgcqirl3b5gd5@redhat.com>
- <20180405054349.GA25653@wunner.de>
+ <20180405054349.GA25653@wunner.de> <20180406140832.GF30543@wotan.suse.de>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <f5f6871c-ed41-fa43-3012-e01949686c2f@redhat.com>
+Date: Sat, 7 Apr 2018 13:13:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405054349.GA25653@wunner.de>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180406140832.GF30543@wotan.suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596455691844480056?=
-X-GMAIL-MSGID: =?utf-8?q?1597006115256349059?=
+X-GMAIL-MSGID: =?utf-8?q?1597085700453669088?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 05, 2018 at 07:43:49AM +0200, Lukas Wunner wrote:
-> On Wed, Apr 04, 2018 at 01:18:36PM -0400, Peter Jones wrote:
-> > > On Tue, Apr 03, 2018 at 08:07:11PM +0200, Lukas Wunner wrote:
-> > > > * Add the EFI Firmware Volume Protocol to include/linux/efi.h:
-> > > >   https://www.intel.com/content/dam/doc/reference-guide/efi-firmware-file-volume-specification.pdf
-> > > > 
-> > > > * Amend arch/x86/boot/compressed/eboot.c to read the files with the
-> > > >   GUIDs you're interested in into memory and pass the files to the
-> > > >   kernel as setup_data payloads.
-> > 
-> > To be honest, I'm a bit skeptical about the firmware volume approach.
-> > Tools like UEFITool[0] and uefi-firmware-parser[1] have existed for
-> > years, still don't seem to reliably parse firmware images I see in the
-> > wild, and have a fairly regular need for fixes.  These are tools
-> > maintained by smart people who are making a real effort, and it still
-> > looks pretty hard to do a good job that applies across a lot of
-> > platforms.
-> > 
-> > So I'd rather use Hans's existing patches, at least for now, and if
-> > someone is interested in hacking on making an efi firmware volume parser
-> > for the kernel, switch them to that when such a thing is ready.
+Hi,
+
+On 06-04-18 16:08, Luis R. Rodriguez wrote:
+> On Thu, Apr 05, 2018 at 07:43:49AM +0200, Lukas Wunner wrote:
+>> On Wed, Apr 04, 2018 at 01:18:36PM -0400, Peter Jones wrote:
+>>>> On Tue, Apr 03, 2018 at 08:07:11PM +0200, Lukas Wunner wrote:
+>>>>> * Add the EFI Firmware Volume Protocol to include/linux/efi.h:
+>>>>>    https://www.intel.com/content/dam/doc/reference-guide/efi-firmware-file-volume-specification.pdf
+>>>>>
+>>>>> * Amend arch/x86/boot/compressed/eboot.c to read the files with the
+>>>>>    GUIDs you're interested in into memory and pass the files to the
+>>>>>    kernel as setup_data payloads.
+>>>
+>>> To be honest, I'm a bit skeptical about the firmware volume approach.
+>>> Tools like UEFITool[0] and uefi-firmware-parser[1] have existed for
+>>> years, still don't seem to reliably parse firmware images I see in the
+>>> wild, and have a fairly regular need for fixes.  These are tools
+>>> maintained by smart people who are making a real effort, and it still
+>>> looks pretty hard to do a good job that applies across a lot of
+>>> platforms.
+>>>
+>>> So I'd rather use Hans's existing patches, at least for now, and if
+>>> someone is interested in hacking on making an efi firmware volume parser
+>>> for the kernel, switch them to that when such a thing is ready.
+>>
+>> Hello?  As I've written in the above-quoted e-mail the kernel should
+>> read the files using EFI_FIRMWARE_VOLUME_PROTOCOL.ReadFile().
+>>
+>> *Not* by parsing the firmware volume!
+>>
+>> Parsing the firmware volume is only necessary to find out the GUIDs
+>> of the files you're looking for.  You only do that *once*.
 > 
-> Hello?  As I've written in the above-quoted e-mail the kernel should
-> read the files using EFI_FIRMWARE_VOLUME_PROTOCOL.ReadFile().
+> How do you get the GUIDs for each driver BTW?
 > 
-> *Not* by parsing the firmware volume!
-> 
-> Parsing the firmware volume is only necessary to find out the GUIDs
-> of the files you're looking for.  You only do that *once*.
+> Hans, I do believe we should *try* this approach at the very least.
 
-How do you get the GUIDs for each driver BTW?
+Ok, so I've made a ROM dump of one of the tablets which I have with
+the touchscreen firmware embedded in the EFI code using flashrom,
+then I ran UEFIExtract on it, to get all the separate files.
 
-Hans, I do believe we should *try* this approach at the very least.
+Then I wrote a little test.sh script using hexdump piped to grep to
+find the magic prefix, here is the result of running this on all
+files UEFIExtract generated:
 
-Why not?
+[hans@shalem chuwi-vi8-plus-cwi519-bios.bin.dump]$ find -type f -exec ./test.sh '{}' \;
+0x00000c40        3136    B0 07 00 00 E4 07 00 00
+found in ./2 BIOS region/6 8C8CE578-8A3D-4F1C-9935-896185C32DD3/31 I2cHid/1 EE4E5898-3914-4259-9D6E-DC7BD79403CF/0 PE32 image section/body.bin
+0x00000be0        3040    B0 07 00 00 E4 07 00 00
+found in ./2 BIOS region/5 8C8CE578-8A3D-4F1C-9935-896185C32DD3/31 I2cHid/1 EE4E5898-3914-4259-9D6E-DC7BD79403CF/0 PE32 image section/body.bin
 
-Otherwise it would be wise to provide a technical reason for why
-we'd choose one custom mechanism which would only serve a few tablets
-over a mechanism which could serve more devices.
+With the version found at offset 0xbe0 of the "5 8C8CE578-8A3D-4F1C-9935-896185C32DD3"
+section matching what we find in the efi_boot_services_code while running.
 
-  Luis
+As the I2cHid name suggests this is embedded in the driver (which is a PE executable), not in a separate file:
+[hans@shalem chuwi-vi8-plus-cwi519-bios.bin.dump]$ file './2 BIOS region/5 8C8CE578-8A3D-4F1C-9935-896185C32DD3/31 I2cHid/1 EE4E5898-3914-4259-9D6E-DC7BD79403CF/0 PE32 image section/body.bin'
+./2 BIOS region/5 8C8CE578-8A3D-4F1C-9935-896185C32DD3/31 I2cHid/1 EE4E5898-3914-4259-9D6E-DC7BD79403CF/0 PE32 image section/body.bin: MS-DOS executable
+
+So using the EFI_FIRMWARE_VOLUME_PROTOCOL.ReadFile() is not really
+going to help here, since this is not in a separate file which we
+can consume in its entirety, we still need to scan for the prefix
+and do e.g. a CRC check to make sure we've actually got what we
+expect, at which point simply scanning all of efi_boot_services_code
+is a lot simpler and less error prone.
+
+Using an implementation specific EFI protocol for this means calling
+into EFI code and potentially triggering various bugs in there, breaking
+boot. This is esp. likely to happen since this is a protocol which is
+not used outside of the EFI ROMs internal code so there are likely
+little ABI guarantees making this approach extra error prone.
+
+Just scanning the efi_boot_services_code OTOH is quite safe TODO.
+
+As for the overhead of scanning the efi_boot_services_code, we are
+only doing this on a dmi match, so on most machines there is no
+overhead other then the dmi check. On machines where there is
+a dmi match, the price (I guess about 30 ms or so for the scan)
+is well worth the result of having the touchscreen OOTB.
+
+Regard,
+
+Hans
