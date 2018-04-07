@@ -1,31 +1,31 @@
 Return-Path: <ctatlor97@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523109589; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1523123931; cv=none;
         d=google.com; s=arc-20160816;
-        b=L0ahb7C5OTbgj+kqK0pW1m/x63tyEFHVNJey9ITzJVQgo7Ua/Ze/6i7aZLFpJduSpl
-         N7ub3tx82qmtZrakJOP55XjJc31k1Iqzf7dCRIpyRMhrG1TzTEeHIG0JItzFOPMKjJNA
-         K6BjNwiDUbVzfJngqzll119mjaMSjA0Hhm5DgPfbq/p1+pO5/5ogJ3O/+CPdTu1nvTsj
-         AaxDiBCI16oM1tpen1uaMfY/sIPPJhGfpqOtTX8TwXT9lteDRJ0uE8esG+AfE7FXLq/k
-         +orM7hu+MYV5pc2Tu4BO7vDjs9Vimq+NJ6N+iVk72pWIq4KMmvl+lNV8fRQMbIDm7nEv
-         bEgQ==
+        b=rMIwWEpZaBC3Mj70gVY2hGv9yyWgrtpU/Ez9vb6QR4AD4qoJkSjAYoinpd28LgGnnE
+         7UzcpBuy6K3yEbp3UAEoaGex0Na95Ajh3a2FJkzaqk/t013FrHkmKgiGYpPdbD2zXdvB
+         M/5Lwbp7jgnIyi3nqUPSTiBF3dkQu/koO8g7SoZi5R8zfyW//6KEC/9qNzZUhZYa27eS
+         syilOeP5fZL3GJARK5i0SZjiex7ns6RT8E/3l2vxL8dOiUN/gF4B071T9WLbDh63pjAu
+         XdWpKZSOx7VLremVzkJmxySxL/1b6sL9ul4/kz+dqme0qdHakv8uwpssHjW/ZNHcEUJW
+         i+Bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=80/5tlLDQ0JO8vlYLH/hPAyCmPHTnoqSyrD1WZ7pvRU=;
-        b=JDjgnfq1pEE4eie3S8ILqQjT95a5n9uXCxE6H/grwJxAmQV06OodmJCSUcXwfB2LkG
-         FpKgEXQ/aFts7DlCL50sbSi7pHVMFjmlBAHx8IguzuWlvICD2YQ66jH1jkUc90lqtfXK
-         r7ONTRHBuKi91fsw/KkhPVu2oazmVc0cgX8elYpDSxIvvp1JmLz+80LmRI4gY5ZjbAyY
-         wZItd7kjCbgnuTUs/A65OtVAzyVi2Yna6RMPKKFeYlgXFlcplMvRP4TLM8dY80jWFtX7
-         S3la3ECh1d4ArNtFnvWxKc0X/6r9BPSmvQcHCwYk/ETzwvng0WijFxCrwJQIQ6ymXNqp
-         OxgA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=cPNLRUB8XZKLUmmzCsV4e+2dIkHQd1tGpksZD90pjMY=;
+        b=M9UmFW4OE/Pfq6fxGUN6fyG+S17DQ/IqF170yZa/XI7hZgYnS69xAFtOdk+EjvrAFK
+         kfyG5jCXkioOxMklD6UMTjBu00gWPTVb5vkOZ4J5EYXrCtASPvIUX9sEjD/nsTYoNQri
+         YIdEXbJJ4Uo7u4UiEbh9vylbDSX37d886eaTUtFw2rKhNXVwJDwdS+ewYk8magwo+upZ
+         LBu9YYCEMiqYrGI8x8Zp6WlWXMgEo+MJwSuPCF4EWtH6ggKpURCBljeS9G4rio1etgx3
+         2bIiNyt83j/pRMBnyJHGwFZEv6Iyk5AdN7dLC0EhuuStt6k9bRJZhnbuB/rpAQa+7cSE
+         hrDw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QwTKydc0;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=sNsGIy1Q;
        spf=pass (google.com: domain of ctatlor97@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ctatlor97@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QwTKydc0;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=sNsGIy1Q;
        spf=pass (google.com: domain of ctatlor97@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ctatlor97@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx48WcaqrU68+6M6YshiUSpmt5iuLIrhzG4vwl+NmIyiM/Cy5iu7j57mnGSDdI4YXS3o9sa/1uQ==
+X-Google-Smtp-Source: AIpwx49E6qhdmU2b8ZCc545n8QRcQhUSG62o+1o4wWsn8WnWNTB2IRwq0SzBArqtrncGlYe1Ssrnsw==
 From: Craig Tatlor <ctatlor97@gmail.com>
 To: 
 Cc: ctatlor97@gmail.com,
@@ -42,13 +42,15 @@ Cc: ctatlor97@gmail.com,
 	linux-pm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] power: supply: Add support for the Qualcomm Battery Monitoring System
-Date: Sat,  7 Apr 2018 14:59:19 +0100
-Message-Id: <20180407135934.26122-1-ctatlor97@gmail.com>
+Subject: [PATCH v4 1/3] power: supply: Add support for the Qualcomm Battery Monitoring System
+Date: Sat,  7 Apr 2018 18:57:44 +0100
+Message-Id: <20180407175802.29444-1-ctatlor97@gmail.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180407135934.26122-1-ctatlor97@gmail.com>
+References: <20180407135934.26122-1-ctatlor97@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597095374964030475?=
-X-GMAIL-MSGID: =?utf-8?q?1597096160485123312?=
+X-GMAIL-MSGID: =?utf-8?q?1597111199645405597?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -100,7 +102,7 @@ index e83aa843bcc6..04204174b047 100644
  obj-$(CONFIG_BATTERY_DS2780)	+= ds2780_battery.o
 diff --git a/drivers/power/supply/qcom_bms.c b/drivers/power/supply/qcom_bms.c
 new file mode 100644
-index 000000000000..5aa6e906d1b9
+index 000000000000..f31c99c03518
 --- /dev/null
 +++ b/drivers/power/supply/qcom_bms.c
 @@ -0,0 +1,500 @@
@@ -193,7 +195,7 @@ index 000000000000..5aa6e906d1b9
 +
 +static unsigned int between(int left, int right, int val)
 +{
-+	if (left <= val && val >= right)
++	if (left <= val && val <= right)
 +		return 1;
 +
 +	return 0;
@@ -280,7 +282,7 @@ index 000000000000..5aa6e906d1b9
 +
 +	/*
 +	 * Sleep for 100 microseconds here to make sure there has
-+	 * been at least three cycles of the sleep clock so that 
++	 * been at least three cycles of the sleep clock so that
 +	 * the registers are correctly locked.
 +	 */
 +	udelay(100);
