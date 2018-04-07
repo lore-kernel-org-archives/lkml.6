@@ -1,130 +1,134 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4175590-1523112930-2-12567197440000846990
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4175590-1523113283-2-13434099965595870032
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523112929; b=U1MwtrySqtMNKzsuf2R94RbMWb8/Ek3Pin8ZOwAw+3io8ZkaXS
-    esJXYUVjtgL+lLN8HR/gf63PRNdBBu6EevZgUvR5w4WyxsMrxDLjEJzjGNB2SH7l
-    GAvD2rAmw7vHCPEYVeAt/O9r7GLwZFWM/L5mv/YDfJYlqdSuctV/TZJggWA6jRqR
-    j1x9+H92o5KIgy2OGwm3SzvMuOJL6FRFAvhCndtpZOXpf6kuC8Md1FYNF8mpTgsJ
-    mJk3eoEFPUI8dPBVS4eXBdCPZBMHbIRDctIunufJkdgfP8dfGIyGt+2Ruwwwx2xV
-    BFfDvPva7oERO2GruaIIKetDQ3wmgCIk92sQ==
+    1523113283; b=tuuGRO0U0EB3B+MbvGYwXDykZOIkTNM89B0om9zQ5mP4AGjVEk
+    rkmx1boFIwivnn9CuCHWdzi5MFlxmpaJ/PtIV+tGzDNwMyhB2cyqr7l+MpKd6CNe
+    hbi5QfSl0v0CS+wkx8AS/uiCHPXni/VNQFitQxG3p83y8h+3bJaV8nh4UZsbHoZs
+    ANQF25t2e/W7EyYgRRN0VwenNNYif5C1S3q7sc2D3ea6u4ubNvd4ZGffO84b/q2P
+    i+OepSt+NNMFxnccVNv+9DCw3fB0JbsGEjNjEe5dVTzyVXAjDm4l7JVu7di9/XYd
+    nmlBgolvxgBXJjNYyt/8Z0fa9YtPbpvNbdRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523112929; bh=V7XTv
-    z6QCeW36v3HCmnkmnismKZWxH7/4jdUzE+bbAE=; b=cYeT0g3S02/T87wpEndl2
-    5auOfx7UCvQv8I/q4nxhharJuH98TCQj3qSi2luxHi/ShHG5f1rx6Hd7AlKzt2dx
-    1Tb/A8DtXo6M36I99yOkQHc86rPPJ4jKd7oZylfHFtiS70RGZ7ilpMoh/cv2bJ3w
-    +jQti2e90UJb35bnOFeUYa/geATchvoPJbKlYrx0RRgrapncrgV0Z6Bsdz/ayIPM
-    Yna4xnQGWrAzP4Zu/kVUIVM2y+zZSPqBMx+v+M3wSW3F8F7rRsmA8DSaRqsOZ/g5
-    g2Ayfh1UKEQcgHAaixSyozEuSVjcfve4x7tmokZEzKPh2SjDX3ZJLLJSgjvPCucA
-    A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=riseup.net header.i=@riseup.net header.b=OxqqNFV0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=squak;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=riseup.net;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1523113283; bh=G2OU5ugkqyg8YUARiFxixj4XmifPrV
+    pWzJCmEvFv3L0=; b=Csa6bR2rIUZFrJMQWto66zsRUyW5VHZXhbAFvua3hOmiAg
+    +7d8rhQ7r5jDEjvxW/R7WsxsYhVUcKnYgqviK1DYy/yzVUL48vBmSOelNiW8wZtt
+    a1nhbtKCS6/6btI3hnnflvCWwh+jqc0JOJTGHKLAErWbcJPGcH9XUS21L1FjsGQ5
+    0s1/yx0tJQ5q/ul3wXO1MQFKp4sYAFN53642uB4wbqgAEh58MIiZyk7YeR5QuRh6
+    ijBHgrGC9RibAfyd/zHefo5roQyggsNxK2xIAk9kJ6GzLEI20i4VysUFGmeO4YJE
+    xwTXGZ4bdX8QeF+W35WyWJqLxcBjxEk8nQ/Q79Vg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=riseup.net header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=riseup.net header.i=@riseup.net header.b=OxqqNFV0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=squak;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=riseup.net;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=riseup.net header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFZTXIvI42UjXLBjAAsfZpEzuGpVqP2QEi4VA2soCw1cDBH+S2RcY3E4bXrua1ve4VFSHysb5IxMaUuOm86/A11L2cTpMH7hQjiY6vwEan8idgTAAOtd
-    VJZ3QsqOOCgY6v7glfK2DZrLHOZteJG+0JWcXNp7MB+qRISTOCgbkrl95B8fJesEgfc/pRDMzcDssE2C0JX7TzQzdEQXBaVDBAhJVrVsLdQbluSnY3EIN/87
-    msuRoP0ztVywFIsvXB/xGw==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=bBqXziUQAAAA:8 a=DDOyTI_5AAAA:8
-    a=xy1ZRjJBDHkVoAkOD3YA:9 a=CjuIK1q_8ugA:10 a=BjKv_IHbNJvPKzgot4uq:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfKyTtzlJZfsUnYfhedYyd4e9nW1Fk2FJh4J1V24/VddiZPn3Z4qjTEHLbrnY9C9iemqPYhwIY+QhiPZ1keUha39zvSu2uEb/D4GmzrcHThWol3J5Xqz1
+    /dic047fXyn3JAG/fwJfMptqHgcICkDTJ69zesnzcavT3o/Di3SgOqMIf3MeM9LaQkv0OX44MAZZ7JySyTQOjA7xfno0na5hY0bD81j82d3+dJnwGqjJUu7Y
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=w5gjqegq9f1TaFJGYl8A:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Riseup-User-ID: 7F60947B8C6137E992C45EFE11ABE6141E6E2B1BE01594BF9B71F30ABBA08EE7
-Date: Sat, 7 Apr 2018 11:55:15 -0300
-From: Danilo Alves <daniloalves@riseup.net>
-To: Forest Bond <forest@alittletooquiet.net>
-Subject: [PATCH] staging: vt6655: remove unnecessary line breaks in function
- definition.
-Message-ID: <20180407145508.thocnosycdk6wx55@glitch>
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751971AbeDGPAo (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 7 Apr 2018 11:00:44 -0400
+Received: from mga05.intel.com ([192.55.52.43]:56146 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751895AbeDGPAn (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 7 Apr 2018 11:00:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,419,1517904000";
+   d="scan'208";a="44244223"
+Subject: [PATCH] libnvdimm,
+ dimm: fix dpa reservation vs uninitialized label area
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: stable@vger.kernel.org,
+        Krzysztof Rusocki <krzysztof.rusocki@intel.com>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sat, 07 Apr 2018 07:50:46 -0700
+Message-ID: <152311264681.13507.15332881622190583231.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Disposition: inline
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch corrects the function definition style of CARDvSafeResetRx.
-Issue found by checkpatch.
+At initialization time the 'dimm' driver caches a copy of the memory
+device's label area and reserves address space for each of the
+namespaces defined.
 
-CHECK: Lines should not end with a '('
+However, as can be seen below, the reservation occurs even when the
+index blocks are invalid:
 
-Signed-off-by: Danilo Alves <daniloalves@riseup.net>
+ nvdimm nmem0: nvdimm_init_config_data: len: 131072 rc: 0
+ nvdimm nmem0: config data size: 131072
+ nvdimm nmem0: __nd_label_validate: nsindex0 labelsize 1 invalid
+ nvdimm nmem0: __nd_label_validate: nsindex1 labelsize 1 invalid
+ nvdimm nmem0: : pmem-6025e505: 0x1000000000 @ 0xf50000000 reserve <-- bad
+
+Gate dpa reservation on the presence of valid index blocks.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 4a826c83db4e ("libnvdimm: namespace indices: read and validate")
+Reported-by: Krzysztof Rusocki <krzysztof.rusocki@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/staging/vt6655/card.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/nvdimm/dimm.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/vt6655/card.c b/drivers/staging/vt6655/card.c
-index ea0a4b57852c..52e9e6b90b56 100644
---- a/drivers/staging/vt6655/card.c
-+++ b/drivers/staging/vt6655/card.c
-@@ -557,10 +557,7 @@ CARDvSafeResetTx(
-  *
-  * Return Value: none
-  */
--void
--CARDvSafeResetRx(
--	struct vnt_private *priv
--)
-+void CARDvSafeResetRx(struct vnt_private *priv)
- {
- 	unsigned int uu;
- 	struct vnt_rx_desc *pDesc;
--- 
-2.11.0
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/drivers/nvdimm/dimm.c b/drivers/nvdimm/dimm.c
+index f8913b8124b6..233907889f96 100644
+--- a/drivers/nvdimm/dimm.c
++++ b/drivers/nvdimm/dimm.c
+@@ -67,9 +67,11 @@ static int nvdimm_probe(struct device *dev)
+ 	ndd->ns_next = nd_label_next_nsindex(ndd->ns_current);
+ 	nd_label_copy(ndd, to_next_namespace_index(ndd),
+ 			to_current_namespace_index(ndd));
+-	rc = nd_label_reserve_dpa(ndd);
+-	if (ndd->ns_current >= 0)
+-		nvdimm_set_aliasing(dev);
++	if (ndd->ns_current >= 0) {
++		rc = nd_label_reserve_dpa(ndd);
++		if (rc == 0)
++			nvdimm_set_aliasing(dev);
++	}
+ 	nvdimm_clear_locked(dev);
+ 	nvdimm_bus_unlock(dev);
+ 
