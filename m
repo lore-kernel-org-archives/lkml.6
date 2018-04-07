@@ -1,145 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751320AbeDGHy4 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 03:54:56 -0400
-Received: from mga12.intel.com ([192.55.52.136]:6311 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751031AbeDGHyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 03:54:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,418,1517904000";
-   d="scan'208";a="31746042"
-Subject: Re: [PATCH ipmi/kcs_bmc v1] ipmi: kcs_bmc: optimize the data buffers
- allocation
-From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
-To: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <1521116452-4993-1-git-send-email-haiyue.wang@linux.intel.com>
- <dd59cf14-e269-6c00-9e33-87316cdc8e8f@gmail.com>
- <dd4e07c4-7a99-3449-fd2d-58c2b829f7b7@linux.intel.com>
-Message-ID: <1710edd4-277b-1d2e-5885-a070751ddd2a@linux.intel.com>
-Date: Sat, 7 Apr 2018 15:54:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751330AbeDGIKE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 04:10:04 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59020 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751022AbeDGIKC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 04:10:02 -0400
+Date: Sat, 7 Apr 2018 10:10:00 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Tony Lindgren <tony@atomide.com>, Dan Williams <dcbw@redhat.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: simultaneous voice/data works (was Re: call/normal switch was Re:
+ omap4-droid4: voice call support was)
+Message-ID: <20180407081000.GB7818@amd>
+References: <20180401131852.GA11086@amd>
+ <20180401153631.GA5700@atomide.com>
+ <20180401173012.GB5700@atomide.com>
+ <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
+ <20180402155754.GD5700@atomide.com>
+ <20180403150444.GE5700@atomide.com>
+ <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
+ <20180403194419.GG5700@atomide.com>
+ <20180406120423.GA18691@amd>
+ <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
 MIME-Version: 1.0
-In-Reply-To: <dd4e07c4-7a99-3449-fd2d-58c2b829f7b7@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
+Content-Disposition: inline
+In-Reply-To: <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Corey,
 
-Since IPMI 2.0 just defined minimum, no maximum:
+--E39vaYmALEf/7YXx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-----
+Hi!
 
-KCS/SMIC Input : Required: 40 bytes IPMI Message, minimum
+It seems qmicli can be used while unicsy_demo/ofone talks to the modem
+using the AT commands.
 
-KCS/SMIC Output : Required: 38 bytes IPMI Message, minimum
+So I could do:
 
-----
+qmicli -d /dev/cdc-wdm0 --wds-follow-network --wds-start-network=3Dapn=3Din=
+ternet.t-mobile.cz
+route del default
+sudo ifconfig wwan0 up
+dhclient wwan0
 
-We can enlarge the block size for avoiding waste, and make our driver
+to get GPRS/UMTS connection. AT commands still work.
 
-support most worst message size case. And I think this patch make checking
+Does anyone have any idea what to do to get the GPS to work?
 
-simple (from 3 to 1), and the code clean, this is the biggest reason I 
-want to
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-change. The TLB is just memory management study from book, no data to
+--E39vaYmALEf/7YXx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-support access improvement. :)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-BR,
+iEYEARECAAYFAlrIfNgACgkQMOfwapXb+vLUgwCeM8xvN8f4NiGsYsGYTtPbEpiu
++kMAn0ncGuWCT/d3i8uOStcDckMHMnJ9
+=sXKV
+-----END PGP SIGNATURE-----
 
-Haiyue
-
-
-On 2018-04-07 10:37, Wang, Haiyue wrote:
->
->
-> On 2018-04-07 05:47, Corey Minyard wrote:
->> On 03/15/2018 07:20 AM, Haiyue Wang wrote:
->>> Allocate a continuous memory block for the three KCS data buffers with
->>> related index assignment.
->>
->> I'm finally getting to this.
->>
->> Is there a reason you want to do this?  In general, it's better to 
->> not try to
->> outsmart your base system.  Depending on the memory allocator, in this
->> case, you might actually use more memory.  You probably won't use any
->> less.
->>
-> I got this idea from another code review, but that patch allocates 30 
-> more
-> the same size memory block, reducing the devm_kmalloc call will be 
-> better.
-> For KCS only have 3, may be the key point is memory waste.
->
->> In the original case, you allocate three 1000 byte buffers, resulting 
->> in 3
->> 1024 byte slab allocated.
->>
->> In the changed case, you will allocate a 3000 byte buffer, resulting in
->> a single 4096 byte slab allocation, wasting 1024 more bytes of memory.
->>
-> As the kcs has memory copy between in/out/kbuffer, put them in the same
-> page will be better ? Such as the same TLB ? (Well, I just got this 
-> from book,
-> no real experience of memory accessing performance. And also, I was told
-> that using space to save the time. :-)).
->
-> Just my stupid thinking. I'm OK to drop this patch if it doesn't help 
-> with
-> performance, or something else.
->
-> BR.
-> Haiyue
->
->> -corey
->>
->>> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
->>> ---
->>>   drivers/char/ipmi/kcs_bmc.c | 10 ++++++----
->>>   1 file changed, 6 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
->>> index fbfc05e..dc19c0d 100644
->>> --- a/drivers/char/ipmi/kcs_bmc.c
->>> +++ b/drivers/char/ipmi/kcs_bmc.c
->>> @@ -435,6 +435,7 @@ static const struct file_operations kcs_bmc_fops 
->>> = {
->>>   struct kcs_bmc *kcs_bmc_alloc(struct device *dev, int sizeof_priv, 
->>> u32 channel)
->>>   {
->>>       struct kcs_bmc *kcs_bmc;
->>> +    void *buf;
->>>         kcs_bmc = devm_kzalloc(dev, sizeof(*kcs_bmc) + sizeof_priv, 
->>> GFP_KERNEL);
->>>       if (!kcs_bmc)
->>> @@ -448,11 +449,12 @@ struct kcs_bmc *kcs_bmc_alloc(struct device 
->>> *dev, int sizeof_priv, u32 channel)
->>>       mutex_init(&kcs_bmc->mutex);
->>>       init_waitqueue_head(&kcs_bmc->queue);
->>>   -    kcs_bmc->data_in = devm_kmalloc(dev, KCS_MSG_BUFSIZ, 
->>> GFP_KERNEL);
->>> -    kcs_bmc->data_out = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
->>> -    kcs_bmc->kbuffer = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
->>> -    if (!kcs_bmc->data_in || !kcs_bmc->data_out || !kcs_bmc->kbuffer)
->>> +    buf = devm_kmalloc_array(dev, 3, KCS_MSG_BUFSIZ, GFP_KERNEL);
->>> +    if (!buf)
->>>           return NULL;
->>> +    kcs_bmc->data_in  = buf;
->>> +    kcs_bmc->data_out = buf + KCS_MSG_BUFSIZ;
->>> +    kcs_bmc->kbuffer  = buf + KCS_MSG_BUFSIZ * 2;
->>>         kcs_bmc->miscdev.minor = MISC_DYNAMIC_MINOR;
->>>       kcs_bmc->miscdev.name = dev_name(dev);
->>
->>
->
+--E39vaYmALEf/7YXx--
