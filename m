@@ -1,43 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751981AbeDGPkU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 11:40:20 -0400
-Received: from la.guarana.org ([173.254.219.205]:58264 "EHLO la.guarana.org"
+        id S1752079AbeDGPkf (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 11:40:35 -0400
+Received: from la.guarana.org ([173.254.219.205]:58588 "EHLO la.guarana.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751807AbeDGPkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 11:40:19 -0400
-Date: Sat, 7 Apr 2018 11:40:18 -0400
+        id S1751965AbeDGPkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 11:40:33 -0400
+Date: Sat, 7 Apr 2018 11:40:33 -0400
 From: Kevin Easton <kevin@guarana.org>
 To: Steffen Klassert <steffen.klassert@secunet.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] af_key: Fix for sadb_key memcpy read overrun
-Message-ID: <cover.1523115061.git.kevin@guarana.org>
+Subject: [PATCH v2 1/2] af_key: Always verify length of provided sadb_key
+Message-ID: <de803d3d01f8b70d306c0d52569cc5265ed20bc9.1523115061.git.kevin@guarana.org>
+References: <cover.1523115061.git.kevin@guarana.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1523115061.git.kevin@guarana.org>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As found by syzbot, af_key does not properly validate the key length in
-sadb_key messages from userspace.  This can result in copying from beyond
-the end of the sadb_key part of the message, or indeed beyond the end of
-the entire packet.
+Key extensions (struct sadb_key) include a user-specified number of key
+bits.  The kernel uses that number to determine how much key data to copy
+out of the message in pfkey_msg2xfrm_state().
 
-Both these patches apply cleanly to ipsec-next.  Based on Steffen's
-feedback I have re-ordered them so that the fix only is in patch 1, which
-I would suggest is also a stable tree candidate, whereas patch 2 is a
-cleanup only.
+The length of the sadb_key message must be verified to be long enough,
+even in the case of SADB_X_AALG_NULL.  Furthermore, the sadb_key_len value
+must be long enough to include both the key data and the struct sadb_key
+itself.
 
-Kevin Easton (2):
-  af_key: Always verify length of provided sadb_key
-  af_key: Use DIV_ROUND_UP() instead of open-coded equivalent
+Introduce a helper function verify_key_len(), and call it from
+parse_exthdrs() where other exthdr types are similarly checked for
+correctness.
 
- net/key/af_key.c | 58 ++++++++++++++++++++++++++++++++++++++++----------------
- 1 file changed, 42 insertions(+), 16 deletions(-)
+Signed-off-by: Kevin Easton <kevin@guarana.org>
+Reported-by: syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com
+---
+ net/key/af_key.c | 45 +++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 35 insertions(+), 10 deletions(-)
 
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index 7e2e718..e62e52e 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -437,6 +437,24 @@ static int verify_address_len(const void *p)
+ 	return 0;
+ }
+ 
++static inline int sadb_key_len(const struct sadb_key *key)
++{
++	int key_bytes = DIV_ROUND_UP(key->sadb_key_bits, 8);
++
++	return DIV_ROUND_UP(sizeof(struct sadb_key) + key_bytes,
++			    sizeof(uint64_t));
++}
++
++static int verify_key_len(const void *p)
++{
++	const struct sadb_key *key = p;
++
++	if (sadb_key_len(key) > key->sadb_key_len)
++		return -EINVAL;
++
++	return 0;
++}
++
+ static inline int pfkey_sec_ctx_len(const struct sadb_x_sec_ctx *sec_ctx)
+ {
+ 	return DIV_ROUND_UP(sizeof(struct sadb_x_sec_ctx) +
+@@ -533,16 +551,25 @@ static int parse_exthdrs(struct sk_buff *skb, const struct sadb_msg *hdr, void *
+ 				return -EINVAL;
+ 			if (ext_hdrs[ext_type-1] != NULL)
+ 				return -EINVAL;
+-			if (ext_type == SADB_EXT_ADDRESS_SRC ||
+-			    ext_type == SADB_EXT_ADDRESS_DST ||
+-			    ext_type == SADB_EXT_ADDRESS_PROXY ||
+-			    ext_type == SADB_X_EXT_NAT_T_OA) {
++			switch (ext_type) {
++			case SADB_EXT_ADDRESS_SRC:
++			case SADB_EXT_ADDRESS_DST:
++			case SADB_EXT_ADDRESS_PROXY:
++			case SADB_X_EXT_NAT_T_OA:
+ 				if (verify_address_len(p))
+ 					return -EINVAL;
+-			}
+-			if (ext_type == SADB_X_EXT_SEC_CTX) {
++				break;
++			case SADB_X_EXT_SEC_CTX:
+ 				if (verify_sec_ctx_len(p))
+ 					return -EINVAL;
++				break;
++			case SADB_EXT_KEY_AUTH:
++			case SADB_EXT_KEY_ENCRYPT:
++				if (verify_key_len(p))
++					return -EINVAL;
++				break;
++			default:
++				break;
+ 			}
+ 			ext_hdrs[ext_type-1] = (void *) p;
+ 		}
+@@ -1104,14 +1131,12 @@ static struct xfrm_state * pfkey_msg2xfrm_state(struct net *net,
+ 	key = ext_hdrs[SADB_EXT_KEY_AUTH - 1];
+ 	if (key != NULL &&
+ 	    sa->sadb_sa_auth != SADB_X_AALG_NULL &&
+-	    ((key->sadb_key_bits+7) / 8 == 0 ||
+-	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
++	    key->sadb_key_bits == 0)
+ 		return ERR_PTR(-EINVAL);
+ 	key = ext_hdrs[SADB_EXT_KEY_ENCRYPT-1];
+ 	if (key != NULL &&
+ 	    sa->sadb_sa_encrypt != SADB_EALG_NULL &&
+-	    ((key->sadb_key_bits+7) / 8 == 0 ||
+-	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
++	    key->sadb_key_bits == 0)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	x = xfrm_state_alloc(net);
 -- 
 2.8.1
