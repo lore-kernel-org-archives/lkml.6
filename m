@@ -1,73 +1,130 @@
-Return-Path: <johannes@sipsolutions.net>
-X-Google-Smtp-Source: AIpwx4//mySbG1DKMDd7ufngoP6m3ONfTMtVnqJO/F0jqXYra4hcDcgsCPC1fuCqaOVyWsr5/wO1
-ARC-Seal: i=1; a=rsa-sha256; t=1523128746; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Jo4m09AKEyanRpX4MVJBSv4xCh7c8/y+iA5/wS9Kr7/b2yFHQg7/O/QZjv62C9H5dC
-         xJR7wlN7G4U1IsLMIo767YeQvgO0NM4TlNxMHKK5Qmx4IjjDF4Qeyqu6BLXwaqZB8Dtw
-         e8E0hTc+oc6xknqfE8of6EMHxAzATAOs13Wd6LTDHmoHQ3UfvOF3Au+iKndRlB91iB9v
-         KVn3toK6wLSwZIsr3bL49Dasw1V207lKv/j6hBRtja0CifwnZsxiHAKFuokxTmNdakLh
-         kiJxBrcrfKVqn0SoQRQgUC1t9Uxy72vZVikM1rHmp/OSK+Ng5jdr917dF8bMhQwDK6kb
-         t5EA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:arc-authentication-results;
-        bh=WkV6CzwBODBKw2NLXPKtU3pwPRkvz0FQwJun7H5i0T0=;
-        b=XMOSSoyf0Jw5yq2wbkJrGrZ0MGQzlyh+QtnA2LBYg5Ns3Lq725L1TaN+Hv6a8kdQWj
-         m9LhTaz084Hf6CDA8QQz1kgT4xa+fuih05pb7BvBI4PGX1Al0HPvm9g+FvfSFGyMVcxc
-         NIEr81oEP3K6r6xnqzuep5m7BU5c3nDHkiTD0tA18XVelc7VrkcJtGTpha73qyJljIhJ
-         PYQtsMwTTmPnb50Lq76KOtpZUjRTuNryL3TtZc0MmP5WzlNw6OytLHvyRxcQyPQKEC1l
-         OLgfozbBvtqtnmiMjF6IYZKyRHPLbxN3WQNKkZrsFZ0WRFss2+LPwyAN2pNDsoaIePkQ
-         qA1w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of johannes@sipsolutions.net designates 2a01:4f8:191:72ef::2 as permitted sender) smtp.mailfrom=johannes@sipsolutions.net
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of johannes@sipsolutions.net designates 2a01:4f8:191:72ef::2 as permitted sender) smtp.mailfrom=johannes@sipsolutions.net
-Message-ID: <1523128743.6507.5.camel@sipsolutions.net>
-Subject: Re: make xmldocs failed with error after 4.17 merge period
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Markus Heiser <markus.heiser@darmarit.de>, Heikki Krogerus
-	 <heikki.krogerus@linux.intel.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Masanari Iida
- <standby24x7@gmail.com>,  LKML <linux-kernel@vger.kernel.org>, Linux Doc
- Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
- <corbet@lwn.net>, linux-usb@vger.kernel.org
-Date: Sat, 07 Apr 2018 21:19:03 +0200
-In-Reply-To: <B8BFEE5C-F2CF-485D-80D6-8EC31EE2429C@darmarit.de>
-References: <CALLJCT0MFg6b+dG50cqe_hv6hxmQDj-ZM066BOtQt_wOiC8ENA@mail.gmail.com>
-	 <20180406075109.GA21589@kuha.fi.intel.com>
-	 <20180406075734.GA16728@kroah.com>
-	 <20180406081555.GB21589@kuha.fi.intel.com>
-	 <20180406083010.GA20174@kroah.com>
-	 <20180406091126.GC21589@kuha.fi.intel.com>
-	 <2A917B38-AFF6-44DC-A4A9-796B2BE560E2@darmarit.de>
-	 <20180406105139.GA28862@kuha.fi.intel.com>
-	 <B8BFEE5C-F2CF-485D-80D6-8EC31EE2429C@darmarit.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-4175590-1523112930-2-12567197440000846990
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523112929; b=U1MwtrySqtMNKzsuf2R94RbMWb8/Ek3Pin8ZOwAw+3io8ZkaXS
+    esJXYUVjtgL+lLN8HR/gf63PRNdBBu6EevZgUvR5w4WyxsMrxDLjEJzjGNB2SH7l
+    GAvD2rAmw7vHCPEYVeAt/O9r7GLwZFWM/L5mv/YDfJYlqdSuctV/TZJggWA6jRqR
+    j1x9+H92o5KIgy2OGwm3SzvMuOJL6FRFAvhCndtpZOXpf6kuC8Md1FYNF8mpTgsJ
+    mJk3eoEFPUI8dPBVS4eXBdCPZBMHbIRDctIunufJkdgfP8dfGIyGt+2Ruwwwx2xV
+    BFfDvPva7oERO2GruaIIKetDQ3wmgCIk92sQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523112929; bh=V7XTv
+    z6QCeW36v3HCmnkmnismKZWxH7/4jdUzE+bbAE=; b=cYeT0g3S02/T87wpEndl2
+    5auOfx7UCvQv8I/q4nxhharJuH98TCQj3qSi2luxHi/ShHG5f1rx6Hd7AlKzt2dx
+    1Tb/A8DtXo6M36I99yOkQHc86rPPJ4jKd7oZylfHFtiS70RGZ7ilpMoh/cv2bJ3w
+    +jQti2e90UJb35bnOFeUYa/geATchvoPJbKlYrx0RRgrapncrgV0Z6Bsdz/ayIPM
+    Yna4xnQGWrAzP4Zu/kVUIVM2y+zZSPqBMx+v+M3wSW3F8F7rRsmA8DSaRqsOZ/g5
+    g2Ayfh1UKEQcgHAaixSyozEuSVjcfve4x7tmokZEzKPh2SjDX3ZJLLJSgjvPCucA
+    A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=riseup.net header.i=@riseup.net header.b=OxqqNFV0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=squak;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=riseup.net;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=riseup.net header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=riseup.net header.i=@riseup.net header.b=OxqqNFV0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=squak;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=riseup.net;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=riseup.net header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFZTXIvI42UjXLBjAAsfZpEzuGpVqP2QEi4VA2soCw1cDBH+S2RcY3E4bXrua1ve4VFSHysb5IxMaUuOm86/A11L2cTpMH7hQjiY6vwEan8idgTAAOtd
+    VJZ3QsqOOCgY6v7glfK2DZrLHOZteJG+0JWcXNp7MB+qRISTOCgbkrl95B8fJesEgfc/pRDMzcDssE2C0JX7TzQzdEQXBaVDBAhJVrVsLdQbluSnY3EIN/87
+    msuRoP0ztVywFIsvXB/xGw==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=bBqXziUQAAAA:8 a=DDOyTI_5AAAA:8
+    a=xy1ZRjJBDHkVoAkOD3YA:9 a=CjuIK1q_8ugA:10 a=BjKv_IHbNJvPKzgot4uq:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Riseup-User-ID: 7F60947B8C6137E992C45EFE11ABE6141E6E2B1BE01594BF9B71F30ABBA08EE7
+Date: Sat, 7 Apr 2018 11:55:15 -0300
+From: Danilo Alves <daniloalves@riseup.net>
+To: Forest Bond <forest@alittletooquiet.net>
+Subject: [PATCH] staging: vt6655: remove unnecessary line breaks in function
+ definition.
+Message-ID: <20180407145508.thocnosycdk6wx55@glitch>
+MIME-Version: 1.0
+Content-Disposition: inline
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596966487828993292?=
-X-GMAIL-MSGID: =?utf-8?q?1597116248784027630?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 2018-04-06 at 13:38 +0200, Markus Heiser wrote:
-> 
-> Sorry, not yet. Johannes started a discussion about this. Its a long
-> time ago and I do not have any new ideas yet :/ see:
-> 
->   https://www.mail-archive.com/linux-doc@vger.kernel.org/msg07035.html
+This patch corrects the function definition style of CARDvSafeResetRx.
+Issue found by checkpatch.
 
-I still think the tools themselves don't matter all that much, as long
-as there aren't totally onerous requirements. I'd argue pretty much
-everything available on a modern distro would be OK provided we have a
-reasonable fallback (e.g. to ASCII as I had even written), along with
-some sort of documentation of dependencies, or perhaps better, some
-command line option to gather the info dynamically.
+CHECK: Lines should not end with a '('
 
-But then again, I've already said pretty much this a year and a half ago
-and most people seemed more interested in some kind of purity argument
-than having better documentation :-)
+Signed-off-by: Danilo Alves <daniloalves@riseup.net>
+---
+ drivers/staging/vt6655/card.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-johannes
+diff --git a/drivers/staging/vt6655/card.c b/drivers/staging/vt6655/card.c
+index ea0a4b57852c..52e9e6b90b56 100644
+--- a/drivers/staging/vt6655/card.c
++++ b/drivers/staging/vt6655/card.c
+@@ -557,10 +557,7 @@ CARDvSafeResetTx(
+  *
+  * Return Value: none
+  */
+-void
+-CARDvSafeResetRx(
+-	struct vnt_private *priv
+-)
++void CARDvSafeResetRx(struct vnt_private *priv)
+ {
+ 	unsigned int uu;
+ 	struct vnt_rx_desc *pDesc;
+-- 
+2.11.0
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
