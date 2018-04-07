@@ -1,36 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751849AbeDGOIX (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 10:08:23 -0400
-Received: from mga14.intel.com ([192.55.52.115]:36393 "EHLO mga14.intel.com"
+        id S1751968AbeDGOMk (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 10:12:40 -0400
+Received: from mga01.intel.com ([192.55.52.88]:31841 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751512AbeDGOIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 10:08:22 -0400
+        id S1751571AbeDGOMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 10:12:39 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,419,1517904000";
-   d="scan'208";a="218460563"
-Message-ID: <1523110098.21176.409.camel@linux.intel.com>
-Subject: Re: [PATCH v4 2/9] vsprintf: Consistent %pK handling for
- kptr_restrict == 0
+   d="scan'208";a="40090986"
+Message-ID: <1523110355.21176.412.camel@linux.intel.com>
+Subject: Re: [PATCH v4 3/9] vsprintf: Do not check address of well-known
+ strings
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
+To: Petr Mladek <pmladek@suse.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Michal Hocko <mhocko@suse.cz>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Date: Sat, 07 Apr 2018 17:08:18 +0300
-In-Reply-To: <20180405144602.qnpwoxinepgnjhds@pathway.suse.cz>
+        linux-kernel@vger.kernel.org
+Date: Sat, 07 Apr 2018 17:12:35 +0300
+In-Reply-To: <20180406091543.sh6efp24kflluxco@pathway.suse.cz>
 References: <20180404085843.16050-1-pmladek@suse.com>
-         <20180404085843.16050-3-pmladek@suse.com>
-         <1522933485.21176.353.camel@linux.intel.com>
-         <20180405144602.qnpwoxinepgnjhds@pathway.suse.cz>
+         <20180404085843.16050-4-pmladek@suse.com>
+         <0ff89c4e-e20d-467e-de36-61e3a5557c7d@rasmusvillemoes.dk>
+         <20180406091543.sh6efp24kflluxco@pathway.suse.cz>
 Organization: Intel Finland Oy
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.26.5-1+b1 
@@ -40,39 +40,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-04-05 at 16:46 +0200, Petr Mladek wrote:
-> On Thu 2018-04-05 16:04:45, Andy Shevchenko wrote:
-> > On Wed, 2018-04-04 at 10:58 +0200, Petr Mladek wrote:
-> > > restricted_pointer() pretends that it prints the address when
-> > > kptr_restrict
-> > > is set to zero. But it is never called in this situation. Instead,
-> > > pointer() falls back to ptr_to_id() and hashes the pointer.
+On Fri, 2018-04-06 at 11:15 +0200, Petr Mladek wrote:
+> On Thu 2018-04-05 15:30:51, Rasmus Villemoes wrote:
+> > On 2018-04-04 10:58, Petr Mladek wrote:
+> > > We are going to check the address using probe_kernel_address(). It
+> > > will
+> > > be more expensive and it does not make sense for well known
+> > > address.
 > > > 
-> > > This patch removes the potential confusion. klp_restrict is
-> > > checked
-> > > only
-> > > in restricted_pointer().
+> > > This patch splits the string() function. The variant without the
+> > > check
+> > > is then used on locations that handle string constants or strings
+> > > defined
+> > > as local variables.
 > > > 
+> > > This patch does not change the existing behavior.
 > > 
-> > 
-> > >  /* Maps a pointer to a 32 bit unique identifier. */
-> > > -static char *ptr_to_id(char *buf, char *end, void *ptr, struct
-> > > printf_spec spec)
-> > > +static char *ptr_to_id(char *buf, char *end,
-> > > +		       const void *ptr, struct printf_spec spec)
-> > 
-> > I don't think this change belongs to the patch.
+> > Please leave string() alone, except for moving the < PAGE_SIZE check
+> > to
+> > a new helper checked_string (feel free to find a better name), and
+> > use
+> > checked_string for handling %s and possibly the few other cases
+> > where
+> > we're passing a user-supplied pointer. That avoids cluttering the
+> > entire
+> > file with double-underscore calls, and e.g. in the %pO case, it's
+> > easier
+> > to understand why one uses two different *string() helpers if the
+> > name
+> > of one somehow conveys how it is different from the other.
 > 
-> The const should have been there from the beginning. I have found it
-> because this patch added a call to ptr_to_id() which had the const
-> and compiler warned about cast problems.
+> I understand your reasoning. I thought about exactly this as well.
+> My problem is that string() will then be unsafe. It might be dangerous
+> when porting patches.
 
-So, why not to do a separate patch with clear intention?
+I agree with Rasmus, and your argument here from my point of view kinda
+weak. Are we really going to backport this patches? Why? We lived w/o
+them for a long time. What's changed now?
 
-> IMHO, it is rather cosmetic change.
+> Is _string() really that bad? 
 
->From my experience I'm afraid of cosmetic changes in the patches which
-might focus out attention on real fix.
+I would think so.
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
