@@ -1,109 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751105AbeDGFhf (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 01:37:35 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40662 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750921AbeDGFhd (ORCPT
+        id S1751153AbeDGFnE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 01:43:04 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50882 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750941AbeDGFnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 01:37:33 -0400
-X-Google-Smtp-Source: AIpwx496DijbL8dxB1oap5lbPAx+nMBpE9Q+pU7YE/frWnzcc71YVK+071oWqI2G31Dlma1PTZrdvA==
-From: "=?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?=" <jprvita@gmail.com>
-X-Google-Original-From: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>
-To: Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc: platform-driver-x86@vger.kernel.org,
-        acpi4asus-user@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        linux@endlessm.com, Dun Hum <bitter.taste@gmx.com>,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>
-Subject: [PATCH] platform/x86: asus-wireless: Fix NULL pointer dereference
-Date: Fri,  6 Apr 2018 22:37:29 -0700
-Message-Id: <20180407053729.5434-1-jprvita@endlessm.com>
-X-Mailer: git-send-email 2.16.3
+        Sat, 7 Apr 2018 01:43:03 -0400
+X-Google-Smtp-Source: AIpwx4/crOLDe9CJKxks4xBEXA8tDBmOzuNzJfrHvgKV9ixeHCATR6Mek/yT4QlhFbrJTnNGiXMMVw==
+X-ME-Sender: <xms:Y1rIWkh6IjE-r21YUKkBI6Of6Xyllre1hZTdPUchJ_Q2-DthTwAPlw>
+Date: Sat, 7 Apr 2018 13:47:11 +0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        peterz@infradead.org, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
+        catalin.marinas@arm.com
+Subject: Re: [PATCH 10/10] locking/qspinlock: Elide back-to-back RELEASE
+ operations with smp_wmb()
+Message-ID: <20180407054711.rldyfcmni2wtblyu@tardis>
+References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
+ <1522947547-24081-11-git-send-email-will.deacon@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hchqiumxxg5z2323"
+Content-Disposition: inline
+In-Reply-To: <1522947547-24081-11-git-send-email-will.deacon@arm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the module is removed the led workqueue is destroyed in the remove
-callback, before the led device is unregistered from the led subsystem.
 
-This leads to a NULL pointer derefence when the led device is
-unregistered automatically later as part of the module removal cleanup.
-Bellow is the backtrace showing the problem.
+--hchqiumxxg5z2323
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  BUG: unable to handle kernel NULL pointer dereference at           (null)
-  IP: __queue_work+0x8c/0x410
-  PGD 0 P4D 0
-  Oops: 0000 [#1] SMP NOPTI
-  Modules linked in: ccm edac_mce_amd kvm_amd kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 joydev crypto_simd asus_nb_wmi glue_helper uvcvideo snd_hda_codec_conexant snd_hda_codec_generic snd_hda_codec_hdmi snd_hda_intel asus_wmi snd_hda_codec cryptd snd_hda_core sparse_keymap videobuf2_vmalloc arc4 videobuf2_memops snd_hwdep input_leds videobuf2_v4l2 ath9k psmouse videobuf2_core videodev ath9k_common snd_pcm ath9k_hw media fam15h_power ath k10temp snd_timer mac80211 i2c_piix4 r8169 mii mac_hid cfg80211 asus_wireless(-) snd soundcore wmi shpchp 8250_dw ip_tables x_tables amdkfd amd_iommu_v2 amdgpu radeon chash i2c_algo_bit drm_kms_helper syscopyarea serio_raw sysfillrect sysimgblt fb_sys_fops ahci ttm libahci drm video
-  CPU: 3 PID: 2177 Comm: rmmod Not tainted 4.15.0-5-generic #6+dev94.b4287e5bem1-Endless
-  Hardware name: ASUSTeK COMPUTER INC. X555DG/X555DG, BIOS 5.011 05/05/2015
-  RIP: 0010:__queue_work+0x8c/0x410
-  RSP: 0018:ffffbe8cc249fcd8 EFLAGS: 00010086
-  RAX: ffff992ac6810800 RBX: 0000000000000000 RCX: 0000000000000008
-  RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff992ac6400e18
-  RBP: ffffbe8cc249fd18 R08: ffff992ac6400db0 R09: 0000000000000000
-  R10: 0000000000000040 R11: ffff992ac6400dd8 R12: 0000000000002000
-  R13: ffff992abd762e00 R14: ffff992abd763e38 R15: 000000000001ebe0
-  FS:  00007f318203e700(0000) GS:ffff992aced80000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000000 CR3: 00000001c720e000 CR4: 00000000001406e0
-  Call Trace:
-   queue_work_on+0x38/0x40
-   led_state_set+0x2c/0x40 [asus_wireless]
-   led_set_brightness_nopm+0x14/0x40
-   led_set_brightness+0x37/0x60
-   led_trigger_set+0xfc/0x1d0
-   led_classdev_unregister+0x32/0xd0
-   devm_led_classdev_release+0x11/0x20
-   release_nodes+0x109/0x1f0
-   devres_release_all+0x3c/0x50
-   device_release_driver_internal+0x16d/0x220
-   driver_detach+0x3f/0x80
-   bus_remove_driver+0x55/0xd0
-   driver_unregister+0x2c/0x40
-   acpi_bus_unregister_driver+0x15/0x20
-   asus_wireless_driver_exit+0x10/0xb7c [asus_wireless]
-   SyS_delete_module+0x1da/0x2b0
-   entry_SYSCALL_64_fastpath+0x24/0x87
-  RIP: 0033:0x7f3181b65fd7
-  RSP: 002b:00007ffe74bcbe18 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-  RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f3181b65fd7
-  RDX: 000000000000000a RSI: 0000000000000800 RDI: 0000555ea2559258
-  RBP: 0000555ea25591f0 R08: 00007ffe74bcad91 R09: 000000000000000a
-  R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000003
-  R13: 00007ffe74bcae00 R14: 0000000000000000 R15: 0000555ea25591f0
-  Code: 01 00 00 02 0f 85 7d 01 00 00 48 63 45 d4 48 c7 c6 00 f4 fa 87 49 8b 9d 08 01 00 00 48 03 1c c6 4c 89 f7 e8 87 fb ff ff 48 85 c0 <48> 8b 3b 0f 84 c5 01 00 00 48 39 f8 0f 84 bc 01 00 00 48 89 c7
-  RIP: __queue_work+0x8c/0x410 RSP: ffffbe8cc249fcd8
-  CR2: 0000000000000000
-  ---[ end trace 7aa4f4a232e9c39c ]---
+On Thu, Apr 05, 2018 at 05:59:07PM +0100, Will Deacon wrote:
+> The qspinlock slowpath must ensure that the MCS node is fully initialised
+> before it can be reached by another other CPU. This is currently enforced
+> by using a RELEASE operation when updating the tail and also when linking
+> the node into the waitqueue (since the control dependency off xchg_tail
+> is insufficient to enforce sufficient ordering -- see 95bcade33a8a
+> ("locking/qspinlock: Ensure node is initialised before updating prev->nex=
+t")).
+>=20
+> Back-to-back RELEASE operations may be expensive on some architectures,
+> particularly those that implement them using fences under the hood. We
+> can replace the two RELEASE operations with a single smp_wmb() fence and
+> use RELAXED operations for the subsequent publishing of the node.
+>=20
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
+> ---
+>  kernel/locking/qspinlock.c | 32 +++++++++++++++-----------------
+>  1 file changed, 15 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+> index 3ad8786a47e2..42c61f7b37c5 100644
+> --- a/kernel/locking/qspinlock.c
+> +++ b/kernel/locking/qspinlock.c
+> @@ -141,10 +141,10 @@ static __always_inline void clear_pending_set_locke=
+d(struct qspinlock *lock)
+>  static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
+>  {
+>  	/*
+> -	 * Use release semantics to make sure that the MCS node is properly
+> -	 * initialized before changing the tail code.
+> +	 * We can use relaxed semantics since the caller ensures that the
+> +	 * MCS node is properly initialized before updating the tail.
+>  	 */
+> -	return (u32)xchg_release(&lock->tail,
+> +	return (u32)xchg_relaxed(&lock->tail,
+>  				 tail >> _Q_TAIL_OFFSET) << _Q_TAIL_OFFSET;
+>  }
+> =20
+> @@ -178,10 +178,11 @@ static __always_inline u32 xchg_tail(struct qspinlo=
+ck *lock, u32 tail)
+>  	for (;;) {
+>  		new =3D (val & _Q_LOCKED_PENDING_MASK) | tail;
+>  		/*
+> -		 * Use release semantics to make sure that the MCS node is
+> -		 * properly initialized before changing the tail code.
+> +		 * We can use relaxed semantics since the caller ensures that
+> +		 * the MCS node is properly initialized before updating the
+> +		 * tail.
+>  		 */
+> -		old =3D atomic_cmpxchg_release(&lock->val, val, new);
+> +		old =3D atomic_cmpxchg_relaxed(&lock->val, val, new);
+>  		if (old =3D=3D val)
+>  			break;
+> =20
+> @@ -340,12 +341,17 @@ void queued_spin_lock_slowpath(struct qspinlock *lo=
+ck, u32 val)
+>  		goto release;
+> =20
+>  	/*
+> +	 * Ensure that the initialisation of @node is complete before we
+> +	 * publish the updated tail and potentially link @node into the
 
-Unregistering the led device on the remove callback before destroying the
-workqueue avoids this problem.
+I think it might be better if we mention exactly where we "publish the
+updated tail" and "link @node", how about:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=196097
+	* publish the update tail via xchg_tail() and potentially link
+	* @node into the waitqueue via WRITE_ONCE(->next,..) below.
 
-Reported-by: Dun Hum <bitter.taste@gmx.com>
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
----
- drivers/platform/x86/asus-wireless.c | 1 +
- 1 file changed, 1 insertion(+)
+and also add comments below like:
 
-diff --git a/drivers/platform/x86/asus-wireless.c b/drivers/platform/x86/asus-wireless.c
-index 343e12547660..ecd715c82de5 100644
---- a/drivers/platform/x86/asus-wireless.c
-+++ b/drivers/platform/x86/asus-wireless.c
-@@ -181,6 +181,7 @@ static int asus_wireless_remove(struct acpi_device *adev)
- {
- 	struct asus_wireless_data *data = acpi_driver_data(adev);
- 
-+	devm_led_classdev_unregister(&adev->dev, &data->led);
- 	if (data->wq)
- 		destroy_workqueue(data->wq);
- 	return 0;
--- 
-2.16.3
+> +	 * waitqueue.
+> +	 */
+> +	smp_wmb();
+> +
+> +	/*
+>  	 * We have already touched the queueing cacheline; don't bother with
+>  	 * pending stuff.
+>  	 *
+>  	 * p,*,* -> n,*,*
+> -	 *
+> -	 * RELEASE, such that the stores to @node must be complete.
+
+	* publish the updated tail
+
+>  	 */
+>  	old =3D xchg_tail(lock, tail);
+>  	next =3D NULL;
+> @@ -356,15 +362,7 @@ void queued_spin_lock_slowpath(struct qspinlock *loc=
+k, u32 val)
+>  	 */
+>  	if (old & _Q_TAIL_MASK) {
+>  		prev =3D decode_tail(old);
+> -
+> -		/*
+> -		 * We must ensure that the stores to @node are observed before
+> -		 * the write to prev->next. The address dependency from
+> -		 * xchg_tail is not sufficient to ensure this because the read
+> -		 * component of xchg_tail is unordered with respect to the
+> -		 * initialisation of @node.
+> -		 */
+> -		smp_store_release(&prev->next, node);
+
+		/* Eventually link @node to the wait queue */
+=09
+Thoughts?
+
+Regards,
+Boqun
+
+> +		WRITE_ONCE(prev->next, node);
+> =20
+>  		pv_wait_node(node, prev);
+>  		arch_mcs_spin_lock_contended(&node->locked);
+> --=20
+> 2.1.4
+>=20
+
+--hchqiumxxg5z2323
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlrIW1wACgkQSXnow7UH
++rgkAQf/SS2aZeHDOVr/tDVYJegkRpetMU7oWjRIZpASQLwwvdYwNO5SpiyOHZXO
+rYvoKW7GR/DLHdq9HyCclqURYNQ7RoyNTjK8VikbNOgMi661e8CktwB/hmCDQLfu
+H+2mgM4/jZWJ++yPVFZzi7VUK3mHOkK5iqFGxLseSIKAyqiN/oMKZkhPWo3fo9NO
+VeWCNU5Alhs+ZI1fCos+giafuVIxb+w2n9n8a8kxzieF69CcU2wbDcCdM8BWXLrY
+M8zls2UtyOKroxhSKGs0bA2y7aRAWEuDr7hAaXr2PoJmy8dLTGrSjrFaoV/bGWQO
+peJP4nTLQ/z442/xjSGWuVnEACd42Q==
+=p9TP
+-----END PGP SIGNATURE-----
+
+--hchqiumxxg5z2323--
