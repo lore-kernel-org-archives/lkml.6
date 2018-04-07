@@ -1,90 +1,125 @@
-Return-Path: <kernel-hardening-return-12889-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/1hYPD7lw4J8DUR4h9nGdxbW8GXDZGfPD7uFy7md44xNj/gK7N/NdQjOKggVbvrsjvbgWG
-ARC-Seal: i=1; a=rsa-sha256; t=1523177749; cv=none;
+Return-Path: <kernel-hardening-return-12881-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+vuOy5jehG/uwstv1O2JHk55EvfP1QcQqa9AXa5BmGvqh3noIRMl2cOkYIONVadTlJviY8
+ARC-Seal: i=1; a=rsa-sha256; t=1523126434; cv=none;
         d=google.com; s=arc-20160816;
-        b=ha7O896x1rpTuKqQBeKUa7vZoekhnpkw1ME96ufT1I3hmXKx6RM9s4LStGt6S8TGkD
-         4OL4joRcG/pMS/zuh3hN15WMCkgmzMXJkI9lX7fR2294XC3Xi2dtArxaQaQMGH9egrj1
-         E7EWesh/PIDxIbv5QiFWGmlIP29Q2m86/hxje+mU8KXzeS8IpuUg693JGwRexqUA+iYR
-         psDRnpLsiqf8C/ZD8ZcOtwg3mHBMPI5pzcleZAlzdJd+k8DP4su5wn8nUrcst5JhHPHK
-         UEbxdQUXhdVUPPfK2ZfJVCRKoHYOBx98unumpaE2jKjiPcWzutdXA39N+QdwhviA6on6
-         F9BA==
+        b=a4qlLq/NdhapYBBMb9XT2hTE5CO/Lo3zbY9E6Jyirros0ZH8g/yHhR3xGVxwaBqrGH
+         8V8A1P5uQM4NGEsDPnQYjqzCBO6/xJ1qkdP1J7YvOE/SK+hlKD8uB2pwk5/BSuqFKvd8
+         SZSgZ+qvhbGQuOut43Vmo5xh75JhL2dPVQAIHiHHpQC+B9b9qW70vtOsOzhPVQHoftPE
+         Cz5HRGKP6dcgmCG/Ftl+vnTyOpRGhGLmR0A3uCKJEligEAZWdagW/OJVj7nJ5ophySKU
+         oqyOq2wgNnHr2hcwYN9TFgGTI0e8N5I4Nhlw/d90qeUihnweVv5rVr+aOdhhtNqn1zV+
+         FCYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
+         :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=qKsP/qas9OvfKvrgkVQ3baBiMl9ZDLuBuGEtHn2aAAg=;
-        b=AnLL/V0UV7eV0j7yjJD6VbKNBUfCP1PREu3w/2bqba3Qw1fxLm3HDN1TmsdL+jMy89
-         +x0m4xrB9P1pYoaKnqaHg2iGD4OWjpJUbzvygkxP4/V310XRDbXRTapvi/ZSLSEeHKTr
-         E/tG0KR0M5nDpb77HFsK5tyUODzM4THd8Oa+3kMM5mkBwrvtjAiF6n9BSGnIRapdpU8R
-         Lwhh7MiyzRnEGAIZ+W5QZPhputA/dRTTTPtNYkXZ5cYLqIyI4/bwgRPcZP2maJPqWdTM
-         j5dQAOUTygrCPuCnO6O9Srzflyp3p1tv1zxzeUnnWpYCPxsGfP1soKPvSAYP/+AelOKD
-         OTCQ==
+        bh=6NB0vqSoUgWTZAcA6cfxu0y92CQriqdtNfdKQsTwrqs=;
+        b=0F5QIKDBwq+GL+Zr/FjlLdwxoVQgnKK3DE/FQV8abpEBudvs2Pbx6Nqu6aOxRlQPXD
+         BgP0yR8l9chp5iXtVCdNIJSt6248natrfdid7+Kv0vufWGYQR4J/2BdlBf953LqrrwwX
+         BY2GWQOpj/YUtIWdsMRl9GpXD1tf3PQ4cMw6iaMKAgVt8O1SFZZOwTmoZKbTAMLy92Vk
+         hosvlpZFXr6BS61VVE8XDmY5iIZS/39pcxxYucXxt60ZV+B/lTjDXEpqXLlQo1bqkHIc
+         PPhnR/UP6ej+Y865pjhn08qkraYtcDHZANdm0TI/5BfjeGAUXYttRtx+PPUg7JpZgsQq
+         zjww==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=snl12KvI;
-       spf=pass (google.com: domain of kernel-hardening-return-12889-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12889-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=BNZY2eJb;
+       spf=pass (google.com: domain of kernel-hardening-return-12881-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12881-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=snl12KvI;
-       spf=pass (google.com: domain of kernel-hardening-return-12889-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12889-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=BNZY2eJb;
+       spf=pass (google.com: domain of kernel-hardening-return-12881-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12881-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+cETZ7udEG9pgmxfdwZLmNzO0Br4KAL7_ZdyOP2_CANQ@mail.gmail.com>
-References: <1523126303-23205-1-git-send-email-s.mesoraca16@gmail.com> <CAGXu5j+cETZ7udEG9pgmxfdwZLmNzO0Br4KAL7_ZdyOP2_CANQ@mail.gmail.com>
 From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date: Sun, 8 Apr 2018 10:55:09 +0200
-Message-ID: <CAJHCu1LLVoov_dHb-GuzyZpO3EVAwpeoJN_1PQHipBpAh8S1Gw@mail.gmail.com>
-Subject: Re: [PATCH 0/6] Remove several VLAs in the crypto subsystem
-To: Kees Cook <keescook@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	linux-crypto <linux-crypto@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
-	Herbert Xu <herbert@gondor.apana.org.au>, Eric Biggers <ebiggers3@gmail.com>,
+To: linux-kernel@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com,
+	linux-crypto@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Kees Cook <keescook@chromium.org>,
+	Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+	Eric Biggers <ebiggers3@gmail.com>,
 	Laura Abbott <labbott@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH 6/6] crypto: cfb - avoid VLA use
+Date: Sat,  7 Apr 2018 20:38:23 +0200
+Message-Id: <1523126303-23205-7-git-send-email-s.mesoraca16@gmail.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1523126303-23205-1-git-send-email-s.mesoraca16@gmail.com>
+References: <1523126303-23205-1-git-send-email-s.mesoraca16@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597113743875859229?=
-X-GMAIL-MSGID: =?utf-8?q?1597167631468739467?=
+X-GMAIL-THRID: =?utf-8?q?1597113824063796204?=
+X-GMAIL-MSGID: =?utf-8?q?1597113824063796204?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-04-07 21:56 GMT+02:00 Kees Cook <keescook@chromium.org>:
-> On Sat, Apr 7, 2018 at 11:38 AM, Salvatore Mesoraca
-> <s.mesoraca16@gmail.com> wrote:
->> As suggested by Laura Abbott[2], I'm resending my patch with
->> MAX_BLOCKSIZE and MAX_ALIGNMASK defined in an header, so they
->> can be used in other places.
->> I take this opportuinuty to deal with some other VLAs not
->> handled in the old patch.
->>
->> [1] http://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
->> [2] http://lkml.kernel.org/r/4e536889-439a-49e6-dd95-2d4286913202@redhat.com
->>
->> Salvatore Mesoraca (6):
->>   crypto: api - laying macros for statically allocated buffers
->>   crypto: ctr - avoid VLA use
->>   crypto: api - avoid VLA use
->>   crypto: pcbc - avoid VLA use
->>   crypto: cts - avoid VLA use
->>   crypto: cfb - avoid VLA use
->>
->>  crypto/cfb.c      | 14 ++++++++++----
->>  crypto/cipher.c   |  7 ++++++-
->>  crypto/ctr.c      | 13 +++++++++++--
->>  crypto/cts.c      |  8 ++++++--
->>  crypto/internal.h |  8 ++++++++
->>  crypto/pcbc.c     |  9 +++++++--
->>  6 files changed, 48 insertions(+), 11 deletions(-)
->
-> These all look good to me! Thanks for the refactoring. :)
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+We avoid 3 VLAs[1] by always allocating MAX_BLOCKSIZE bytes or,
+when needed for alignement, MAX_BLOCKSIZE + MAX_ALIGNMASK bytes.
+We also check the selected cipher at instance creation time, if
+it doesn't comply with these limits, the creation will fail.
 
-Thank you!
+[1] http://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Salvatore
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+---
+ crypto/cfb.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/crypto/cfb.c b/crypto/cfb.c
+index 94ee39b..f500816 100644
+--- a/crypto/cfb.c
++++ b/crypto/cfb.c
+@@ -28,6 +28,7 @@
+ #include <linux/slab.h>
+ #include <linux/string.h>
+ #include <linux/types.h>
++#include "internal.h"
+ 
+ struct crypto_cfb_ctx {
+ 	struct crypto_cipher *child;
+@@ -53,9 +54,8 @@ static void crypto_cfb_encrypt_one(struct crypto_skcipher *tfm,
+ static void crypto_cfb_final(struct skcipher_walk *walk,
+ 			     struct crypto_skcipher *tfm)
+ {
+-	const unsigned int bsize = crypto_cfb_bsize(tfm);
+ 	const unsigned long alignmask = crypto_skcipher_alignmask(tfm);
+-	u8 tmp[bsize + alignmask];
++	u8 tmp[MAX_BLOCKSIZE + MAX_ALIGNMASK];
+ 	u8 *stream = PTR_ALIGN(tmp + 0, alignmask + 1);
+ 	u8 *src = walk->src.virt.addr;
+ 	u8 *dst = walk->dst.virt.addr;
+@@ -94,7 +94,7 @@ static int crypto_cfb_encrypt_inplace(struct skcipher_walk *walk,
+ 	unsigned int nbytes = walk->nbytes;
+ 	u8 *src = walk->src.virt.addr;
+ 	u8 *iv = walk->iv;
+-	u8 tmp[bsize];
++	u8 tmp[MAX_BLOCKSIZE];
+ 
+ 	do {
+ 		crypto_cfb_encrypt_one(tfm, iv, tmp);
+@@ -164,7 +164,7 @@ static int crypto_cfb_decrypt_inplace(struct skcipher_walk *walk,
+ 	unsigned int nbytes = walk->nbytes;
+ 	u8 *src = walk->src.virt.addr;
+ 	u8 *iv = walk->iv;
+-	u8 tmp[bsize];
++	u8 tmp[MAX_BLOCKSIZE];
+ 
+ 	do {
+ 		crypto_cfb_encrypt_one(tfm, iv, tmp);
+@@ -295,6 +295,12 @@ static int crypto_cfb_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 	if (err)
+ 		goto err_drop_spawn;
+ 
++	err = -EINVAL;
++	if (alg->cra_blocksize > MAX_BLOCKSIZE)
++		goto err_drop_spawn;
++	if (alg->cra_alignmask > MAX_ALIGNMASK)
++		goto err_drop_spawn;
++
+ 	inst->alg.base.cra_priority = alg->cra_priority;
+ 	/* we're a stream cipher independend of the crypto cra_blocksize */
+ 	inst->alg.base.cra_blocksize = 1;
+-- 
+1.9.1
