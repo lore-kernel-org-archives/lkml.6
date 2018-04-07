@@ -1,53 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751448AbeDGKgU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 06:36:20 -0400
-Received: from mga18.intel.com ([134.134.136.126]:5840 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751334AbeDGKgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 06:36:19 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,418,1517904000";
-   d="scan'208";a="218374847"
-Date: Sat, 7 Apr 2018 13:36:10 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peterhuewe@gmx.de, tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com
-Subject: Re: [PATCH] tpm: moves the delay_msec increment after sleep in
- tpm_transmit()
-Message-ID: <20180407103610.GA22542@linux.intel.com>
-References: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
- <20180405101210.GA21636@linux.intel.com>
- <95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
+        id S1751511AbeDGKnL (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 06:43:11 -0400
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:43986 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751181AbeDGKnK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 06:43:10 -0400
+X-Google-Smtp-Source: AIpwx48d2qgWfWYU6Sfhu7i3rudN2gyrXLqzUeO2DjC1WX+VrVNhqcy+FJHcHaBd0AUmmlrBafXJjA==
+Subject: Re: [PATCH v3 2/2] drivers: soc: Add LLCC driver
+To: rishabhb@codeaurora.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, kyan@codeaurora.org, ckadabi@codeaurora.org
+References: <1522176722-12691-1-git-send-email-rishabhb@codeaurora.org>
+ <1522176722-12691-3-git-send-email-rishabhb@codeaurora.org>
+ <ff949d44-1b2a-15d4-511d-8686a973b081@linaro.org>
+ <a44193e11069b4107985776fa323782b@codeaurora.org>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <f6671b63-8f61-7a6b-8e4a-93dbe06a2da0@linaro.org>
+Date: Sat, 7 Apr 2018 13:43:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a44193e11069b4107985776fa323782b@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 02:03:37PM +0530, Nayna Jain wrote:
-> On 04/05/2018 03:42 PM, Jarkko Sakkinen wrote:
-> > On Mon, Apr 02, 2018 at 09:50:06PM +0530, Nayna Jain wrote:
-> > > Commit e2fb992d82c6 ("tpm: add retry logic") introduced a new loop to
-> > > handle the TPM2_RC_RETRY error. The loop retries the command after
-> > > sleeping for the specified time, which is incremented exponentially in
-> > > every iteration. This patch fixes the initial sleep to be the default
-> > > sleep time.
-> > I think I understand the code change but do not understand what the
-> > long description.
+Hi,
+
+On  4.04.2018 20:30, rishabhb@codeaurora.org wrote:
+> Hi Stanimir,
+> We incorporated all your comments except the following:
+> 1. Removing the driver that maintains the SCT (system cache table)
+> per chipset. As responded earlier the data is expected to change
+> from chipset to chipset and would clutter the main driver if we
+> choose using compatible string. We think its good to keep the data
+> separate from core driver.
+> 2. Changing struct llcc_slice_desc to llcc_desc:
+> The descriptor is specific to each slice and not the whole llcc.
+> All the properties such as id and size are specific to each slice
+> and not whole llcc.
 > 
-> It tells that the first sleep is delay_msec * 2 and not delay_msec.
+> please let me know if you are ok with the approach. Based on that
+> I can send my next revision of changes.
 
-So the problem is that the loop doubles the time before sleeping
-for the first time. This is missing from the description. Please
-refine it in some way.
+Yes, please go ahead and send the next version.
 
-/Jarkko
+regards,
+Stan
