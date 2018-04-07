@@ -1,39 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752366AbeDGRUN (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 13:20:13 -0400
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:35243 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752239AbeDGRUK (ORCPT
+        id S1752000AbeDGSEN (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 14:04:13 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:34450 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751482AbeDGSEM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 13:20:10 -0400
-X-Google-Smtp-Source: AIpwx4/26GIr1K5IUzTWWj4SkEbvTudMvHrFwiOS5vBnqB9yFbj3QD1FcpbqzZlnbVlICZ2vtP4Jfw==
-Date: Sun, 8 Apr 2018 02:20:06 +0900
-From: Stafford Horne <shorne@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the openrisc tree
-Message-ID: <20180407172006.GL2836@lianli.shorne-pla.net>
-References: <20180407233624.18bdb1d8@canb.auug.org.au>
+        Sat, 7 Apr 2018 14:04:12 -0400
+X-Google-Smtp-Source: AIpwx4+tQKCjXOb6tluvJ2rNf8bZPJPqgoknuAO9HeRXHgBvf50QT12dlN0eUpJxz15D8o4hSM1eiCSvSnEPWf0tFuQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180407233624.18bdb1d8@canb.auug.org.au>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180407171906.GB30522@ZenIV.linux.org.uk>
+References: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
+ <CA+55aFxtS1jyefWXG+H6UjfC5KaqPOgTf3imHxL1iS1avJP5Lw@mail.gmail.com> <20180407171906.GB30522@ZenIV.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 7 Apr 2018 11:04:10 -0700
+X-Google-Sender-Auth: V_wReTMJNZKT3PBQMSXh_GBfQw0
+Message-ID: <CA+55aFzVpZC1S2EbkZn81b7_NVrbTk7FUpcfw4NrUiPr-QFZ2Q@mail.gmail.com>
+Subject: Re: [PATCH 00/20] afs: Fixes and development
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-afs@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 07, 2018 at 11:36:24PM +1000, Stephen Rothwell wrote:
-> Hi Stafford,
-> 
-> Commit
-> 
->   bf118b74c385 ("openrisc: remove unused __ARCH_HAVE_MMU define")
-> 
-> is missing a Signed-off-by from its committer.
+On Sat, Apr 7, 2018 at 10:19 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> That, of course, can be dealt with after merge, but since that commit
+> has to be at least rebased to avoid bisection hazard... might as well
+> get rid of dget_parent() there at the same time.
 
-Thanks this is updated now.
+Ok, I will skip the afs updates for now, but am open to pulling a
+fixed version the second week of the merge window.
 
--Stafford
+Thanks,
+             Linus
