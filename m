@@ -1,149 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751981AbeDGAJ4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 20:09:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43162 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751544AbeDGAJz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 20:09:55 -0400
-Date: Fri, 6 Apr 2018 17:09:43 -0700
-From: Ram Pai <linuxram@us.ibm.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, shakeelb@google.com,
-        stable@kernel.org, tglx@linutronix.de, dave.hansen@intel.com,
-        mpe@ellerman.id.au, mingo@kernel.org, akpm@linux-foundation.org,
-        shuah@kernel.org
-Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from
- PROT_EXEC
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <20180326172721.D5B2CBB4@viggo.jf.intel.com>
- <20180326172727.025EBF16@viggo.jf.intel.com>
+        id S1752128AbeDGAQ4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 20:16:56 -0400
+Received: from mga04.intel.com ([192.55.52.120]:25669 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751528AbeDGAQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 20:16:55 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,417,1517904000";
+   d="scan'208";a="214590782"
+Date: Fri, 6 Apr 2018 17:17:01 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] x86,sched: allow topologies where NUMA nodes share an
+ LLC
+Message-ID: <20180407001701.GA18897@alison-desk.jf.intel.com>
+References: <20180403211230.GA12842@alison-desk.jf.intel.com>
+ <2d00edef-c8bf-2fc6-c342-274a0681e225@linux.intel.com>
+ <20180404173848.GA10518@alison-desk.jf.intel.com>
+ <d179ced2-e862-0a67-e653-39c0cb55dbaf@linux.intel.com>
+ <20180404190045.GA11617@alison-desk.jf.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180326172727.025EBF16@viggo.jf.intel.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-TM-AS-GCONF: 00
-x-cbid: 18040700-0012-0000-0000-000005C80081
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040700-0013-0000-0000-000019441FCD
-Message-Id: <20180407000943.GA15890@ram.oc3035372033.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-06_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804070000
+In-Reply-To: <20180404190045.GA11617@alison-desk.jf.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 10:27:27AM -0700, Dave Hansen wrote:
+On Wed, Apr 04, 2018 at 12:00:45PM -0700, Alison Schofield wrote:
+> On Wed, Apr 04, 2018 at 11:42:11AM -0700, Tim Chen wrote:
+> > On 04/04/2018 10:38 AM, Alison Schofield wrote:
+> > > On Wed, Apr 04, 2018 at 10:24:49AM -0700, Tim Chen wrote:
+> > >> On 04/03/2018 02:12 PM, Alison Schofield wrote:
+> > >>
+> > >>> +
+> > >>> +	/*
+> > >>> +	 * topology_sane() considers LLCs that span NUMA nodes to be
+> > >>> +	 * insane and will display a warning message. Bypass the call
+> > >>> +	 * to topology_sane() for snc_cpu's to avoid that warning.
+> > >>> +	 */
+> > >>> +
+> > >>> +	if (!topology_same_node(c, o) && x86_match_cpu(snc_cpu)) {
+> > >>> +		/* Indicate that package has NUMA nodes inside: */
+> > >>> +		x86_has_numa_in_package = true;
+> > >>
+> > >> Why does the x86_has_numa_in_package has to be set here when it would have
+> > >> been done later in set_cpu_sibling_map?
+> > > 
+> > > Tim,
+> > > I had that same thought when you commented on it previously. After 
+> > > discussing w DaveH, decided that match_llc() and match_die(c,0)
+> > > could be different and chose to be (cautiously) redundant.
+> > > alisons
+> > 
+> > If it is redundant, I suggest it be removed, and only added if
+> > there is truly a case where the current logic 
+> > 
+> >                 if (match_die(c, o) && !topology_same_node(c, o))
+> >                         x86_has_numa_in_package = true;
+> > 
+> > fails.  And also the modification of this logic should be at the
+> > same place for easy code maintenance. 
 > 
-> From: Dave Hansen <dave.hansen@linux.intel.com>
+> That makes good sense. I'll look to define the difference or remove
+> the redundancy.
 > 
-> I got a bug report that the following code (roughly) was
-> causing a SIGSEGV:
+> alisons
+I found not reason for the redundancy via experimentation w my Skylake,
+nor through code examination. I've removed it in v5. I'll see if
+anyone claims theoretical case.
+alisons
 > 
-> 	mprotect(ptr, size, PROT_EXEC);
-> 	mprotect(ptr, size, PROT_NONE);
-> 	mprotect(ptr, size, PROT_READ);
-> 	*ptr = 100;
-> 
-> The problem is hit when the mprotect(PROT_EXEC)
-> is implicitly assigned a protection key to the VMA, and made
-> that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
-> failed to remove the protection key, and the PROT_NONE->
-> PROT_READ left the PTE usable, but the pkey still in place
-> and left the memory inaccessible.
-> 
-> To fix this, we ensure that we always "override" the pkee
-> at mprotect() if the VMA does not have execute-only
-> permissions, but the VMA has the execute-only pkey.
-> 
-> We had a check for PROT_READ/WRITE, but it did not work
-> for PROT_NONE.  This entirely removes the PROT_* checks,
-> which ensures that PROT_NONE now works.
-> 
-> Reported-by: Shakeel Butt <shakeelb@google.com>
-> 
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Fixes: 62b5f7d013f ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
-> Cc: stable@kernel.org
-> Cc: Ram Pai <linuxram@us.ibm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Michael Ellermen <mpe@ellerman.id.au>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Shuah Khan <shuah@kernel.org>
-> ---
-> 
->  b/arch/x86/include/asm/pkeys.h |   12 +++++++++++-
->  b/arch/x86/mm/pkeys.c          |   19 ++++++++++---------
->  2 files changed, 21 insertions(+), 10 deletions(-)
-> 
-> diff -puN arch/x86/include/asm/pkeys.h~pkeys-abandon-exec-only-pkey-more-aggressively arch/x86/include/asm/pkeys.h
-> --- a/arch/x86/include/asm/pkeys.h~pkeys-abandon-exec-only-pkey-more-aggressively	2018-03-26 10:22:35.380170193 -0700
-> +++ b/arch/x86/include/asm/pkeys.h	2018-03-26 10:22:35.385170193 -0700
-> @@ -2,6 +2,8 @@
->  #ifndef _ASM_X86_PKEYS_H
->  #define _ASM_X86_PKEYS_H
-> 
-> +#define ARCH_DEFAULT_PKEY	0
-> +
->  #define arch_max_pkey() (boot_cpu_has(X86_FEATURE_OSPKE) ? 16 : 1)
-> 
->  extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
-> @@ -15,7 +17,7 @@ extern int __execute_only_pkey(struct mm
->  static inline int execute_only_pkey(struct mm_struct *mm)
->  {
->  	if (!boot_cpu_has(X86_FEATURE_OSPKE))
-> -		return 0;
-> +		return ARCH_DEFAULT_PKEY;
-> 
->  	return __execute_only_pkey(mm);
->  }
-> @@ -56,6 +58,14 @@ bool mm_pkey_is_allocated(struct mm_stru
->  		return false;
->  	if (pkey >= arch_max_pkey())
->  		return false;
-> +	/*
-> +	 * The exec-only pkey is set in the allocation map, but
-> +	 * is not available to any of the user interfaces like
-> +	 * mprotect_pkey().
-> +	 */
-> +	if (pkey == mm->context.execute_only_pkey)
-> +		return false;
-> +
->  	return mm_pkey_allocation_map(mm) & (1U << pkey);
->  }
-> 
-> diff -puN arch/x86/mm/pkeys.c~pkeys-abandon-exec-only-pkey-more-aggressively arch/x86/mm/pkeys.c
-> --- a/arch/x86/mm/pkeys.c~pkeys-abandon-exec-only-pkey-more-aggressively	2018-03-26 10:22:35.381170193 -0700
-> +++ b/arch/x86/mm/pkeys.c	2018-03-26 10:22:35.385170193 -0700
-> @@ -94,15 +94,7 @@ int __arch_override_mprotect_pkey(struct
->  	 */
->  	if (pkey != -1)
->  		return pkey;
-> -	/*
-> -	 * Look for a protection-key-drive execute-only mapping
-> -	 * which is now being given permissions that are not
-> -	 * execute-only.  Move it back to the default pkey.
-> -	 */
-> -	if (vma_is_pkey_exec_only(vma) &&
-> -	    (prot & (PROT_READ|PROT_WRITE))) {
-> -		return 0;
-> -	}
-> +
-
-Dave,
-	this can be simply:
-
-	if ((vma_is_pkey_exec_only(vma) && (prot != PROT_EXEC))
-		return ARCH_DEFAULT_PKEY;
-
-No?
-RP
+> > 
+> > Tim  
+> > 
+> > > 
+> > > 
+> > > 
+> > >>
+> > >>> +
+> > >>> +		/*
+> > >>> +		 * false means 'c' does not share the LLC of 'o'.
+> > >>> +		 * Note: this decision gets reflected all the way
+> > >>> +		 * out to userspace.
+> > >>> +		 */
+> > >>> +
+> > >>> +		return false;
+> > >>
+> > >> Thanks.
+> > >>
+> > >> Tim
+> > 
