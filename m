@@ -1,52 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeDGQo7 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 12:44:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38646 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751704AbeDGQo5 (ORCPT
+        id S1752012AbeDGQuJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 12:50:09 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36683 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751499AbeDGQuH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 12:44:57 -0400
-Date: Sat, 7 Apr 2018 09:44:48 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: mjg59@srcf.ucam.org, pali.rohar@gmail.com, andy@infradead.org,
-        mario.limonciello@dell.com, tiwai@suse.com,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 1/3] dell-led: Change dell-led.h to dell-common.h
-Message-ID: <20180407164448.GC11256@fury>
-References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
+        Sat, 7 Apr 2018 12:50:07 -0400
+X-Google-Smtp-Source: AIpwx49Vq05S9O9ZyFvbUz7FgNwUCF4sKyEDo73YpeADgVHJhKXW+ppdkWUFRXwI7N0rnDe/3WWSavKP4+UAHRRLfeE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308091023.9061-1-kai.heng.feng@canonical.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
+References: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 7 Apr 2018 09:50:05 -0700
+X-Google-Sender-Auth: 71uBF3Wb3ABbAYtkojs1CDxilsM
+Message-ID: <CA+55aFxtS1jyefWXG+H6UjfC5KaqPOgTf3imHxL1iS1avJP5Lw@mail.gmail.com>
+Subject: Re: [PATCH 00/20] afs: Fixes and development
+To: David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-afs@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 05:10:21PM +0800, Kai-Heng Feng wrote:
-> This header will be used for more than just led. Change it to a more
-> generic name.
-> 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
-> v2: Mario suggested to squash the HDA part into the same series.
+On Thu, Apr 5, 2018 at 1:29 PM, David Howells <dhowells@redhat.com> wrote:
+>>
+> Here are a set of AFS patches, a few fixes, but mostly development.  The fixes
+> are:
 
-Apologies for the silence on my end. I've reviewed all the comments, and
-my understanding is we are awaiting a v3 from Kai-Heng. Is that correct?
+So I pulled this after your updated fscache pull request, and I notice
+that these three commits are duplicate (not shared):
 
-Mario and Pali, thank you for working through the heuristics of platform
-identification. I appreciate taking the time to look at the big picture,
-or the scale impacts ("what if everyone did this?") - that leads to
-better solutions. Of course, this is the platform driver subsystem, and
-part of why we exist is to cover the quirks of today's systems, so we
-can't spend too much time on what-ifs. I think your conclusions were
-reasonable.
+      fscache: Attach the index key and aux data to the cookie
+      fscache: Pass object size in rather than calling back for it
+      fscache: Maintain a catalogue of allocated cookies
 
-So I'm waiting for v3 from Kai-Heng - unless I've misunderstood the
-conclusion of this thread.
--- 
-Darren Hart
-VMware Open Source Technology Center
+and partly as a result I get some trivial conflicts.
+
+Now, the conflicts really do look entirely trivial, and that's not the
+problem, but the fact that you *didn't* re-send the AFS pull request
+makes me wonder if you perhaps didn't want me to pull it after all?
+
+So I decided to not do the resolution, and instead just verify with
+you that you still want this pulled?
+
+No need to rebase, no need to do anything at all, really, except reply
+with "yes I want you to pull this" or "no, the fscache pull updates
+meant that I want you to do something else, hold off".
+
+Pls advice.
+
+(I may decide later to pull anyway, because I *think* you want me to
+pull, but thought to ask in case you're online and answer quickly).
+
+                      Linus
