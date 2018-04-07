@@ -1,75 +1,84 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3908280-1523104102-2-17534988944444860356
+X-Cyrus-Session-Id: sloti22d1t05-219526-1523120859-3-8932563993206648489
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523104102; b=bq5iSOG5/5ujOMuUgaWDS8LHyABqkA1xF1vQslhsqvKgM1kaKN
-    B0vcK7grYbIJ0d3IXEW6C48Aq0WU1v5me031yccfnCaBpn3P6a7fc1QQmO3yKMrV
-    xC+8SxUGd7oM+Ws1aq0Fxo9GACjr7BAkz7FAQMSEiP0Dx4t8+2S9dJbhPtB5aTuM
-    c3t6RulrzPleQNpH97Xa4P8DEP52ruXcC/WacJs8G5t3sFQL49en9HWc+SU9vks6
-    on2YHi54E2KIWnCuSN5K1NW/wevgx2ObE2PUf28I2BMf19puAO8Q/swfCN+7eHVw
-    sVWW0YbaESLBbSOCEv625n7qMTuKzf/BCezA==
+    1523120858; b=XxokLo249oq/RFSFchxicj14yJdqlL+wiku1oPLW8AdhNhwuJ9
+    Fnm26nG0JK3g2SKsy9f6i90OoVQ37TSdxroxrrgAYI6ur6CpJaigFDOEgTTg/gPz
+    cNUc5xck4npdQD+Hu6ryFjtIZnMDynjRt/1AjrUruwi+HNWDOneuXLVukZsOFocJ
+    8+fCcnCAWwpkAFx5dPwTyedWuQ1sM71eRPFFzPvE2dTCJpCr25zJiep33j6Fiawt
+    cNtl8Snr1QnHSyUq+roIN9oxp24xdJjhZfkHeCQDcskHMsoXL2Efaiv1ssK/IOly
+    xXA8lVsUfjmipusnb+qwwAYXeFFBar7pOmEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1523104102; bh=Ohp1dgAKb9+
-    5RtIvnGQNU5wW2tH4v3bfp5eg8g0u/0Y=; b=JRRdVSDWDmtMM+jhyqxLJd7yCxP
-    ASwNRMRpNHwBldw/zq9G/Pm24Gz8A9/2nb9Q4MZvF9fMreKpR28+MnSfSZ/IDM5H
-    EK+pGFpaLSz30hHg9d0nyrEQTQ99z3T6SUhk1BJBQJM2fNcrVnM2U4niqDK/Ij13
-    nTnDUbQdsPzgtsOlwCTenWTIGpAofDfb+rrV+7H60u7qnFj0806WzkRJSYI/DtHa
-    3oBxJ2hty0g50PjDrrsVpAP7l/Ws1ztHe4p68yKeSevkdY9Sc7GzpS8uZypv17qc
-    jUjXZ6GXp8lTGgh59b6y+mfW+1Bw63n91CC61LtC1EijjNm99HEdBkhWxiw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523120858;
+    bh=ZrO3+WBHTf1DN+lj7ULzIMaKA+PmOWt0+4iDGeFO6dI=; b=ttadINnFZ0be
+    3fsydf/YPr2Hg4J0M/zXoxQzlvmBErmdOeUF5IL42K4Blu+6DMRRqBwF5HH6ZjnH
+    TLwiJP3lGx6slIzLDvWcd7a6izx+pLGyuwwF3/jE36d39s/8DRbMzeSRs3L1D0z6
+    rYW+JmOexC9efakGaHahR4kThmU4mdYJCsZkMu02qlSdcoaYybGhs2S23cotRrD0
+    QEetSJjMtITSzghofUIJwU8gjcFyBewjHqpZz65X+HwwPyov1qS0l6t02IfJ+VYY
+    iZ9XO96shmY865TgTiizykFnQpnD5PIyTPB2rRedkBc3Oqy0WXrfyc7EjeS4Fxdx
+    Y8PHryWRNg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=NH6AlUwc x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PB/r8VbP;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=NH6AlUwc x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PB/r8VbP;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIRYi6h77zu60fkZTiBpw/LyfROaSLLv5HVP27optHYg8bf3QJ3uh8B9QDiJWG19IRCCkx/x00/ZZBqfbHpmpKW2Z8X/1BmwWsiQYyaEujhnKY47qtK+
-    oy8ujOMimVY+eEZ20aZ3vMjFHx6zHqttwrqeMktUv14Pas7XF6WiyDEuG/HBCjDnx/JxTkoiTwEWzd5t4szpmm8J4DWqKBPips6AlRDILhcybjM44075ZYF2
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBfm3szEm0a9O8F2zFUYhroijINaxQWGDBerSoqiM8CG3n0kR9mBycAzCvkVCE0BFS5CMBnsxNV3QkACXbfOtQ8jLziG9+hsyCypS1bXeOwnVMUkP6CI
+    wPAFAczhUAajzT3+1siby35f6JufmJ7mJR4/dHZvuEeloGMctTOgW1uIJA0c5deYYDWHo43TwFT95FEIaRw1I1BAutOzvYwVIk5t4wEbFXFWa8iqpT8ianRv
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=wslChEY2J8gA:10
-    a=Kd1tUaAdevIA:10 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
-    a=UhOjoZm1NaWo7w_ywRQA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
+    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=awofrA4z_IkSCh5LJgkA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751485AbeDGM2S (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 7 Apr 2018 08:28:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33230 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751475AbeDGM2S (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 7 Apr 2018 08:28:18 -0400
-Date: Sat, 7 Apr 2018 14:28:15 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
+        id S1751967AbeDGRHg (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 7 Apr 2018 13:07:36 -0400
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:34756 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751704AbeDGRHg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 7 Apr 2018 13:07:36 -0400
+X-Google-Smtp-Source: AIpwx4+BLD7qrmahpU8XjZFYVKA0C4ISaX30m7GBosnyYgnuqEF1hjK9SX8zWl55EJAHX7q92umljnrJRJSYq5UXTs0=
+MIME-Version: 1.0
+In-Reply-To: <20180407122815.GA2399@kroah.com>
+References: <20180406084340.999820380@linuxfoundation.org> <CA+G9fYsbMhN_h8d7QGpEXwG9RZRg0otP9DZHfO8CtQo2tv4Vag@mail.gmail.com>
+ <20180407122815.GA2399@kroah.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 7 Apr 2018 22:37:33 +0530
+Message-ID: <CA+G9fYvim=o4cc0PtM1UMKznThkX0C7RqVr370GiK8J7Bb9ceg@mail.gmail.com>
+Subject: Re: [PATCH 4.16 00/31] 4.16.1-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: open list <linux-kernel@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -78,59 +87,35 @@ Cc: open list <linux-kernel@vger.kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         lkft-triage@lists.linaro.org,
         linux- stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.16 00/31] 4.16.1-stable review
-Message-ID: <20180407122815.GA2399@kroah.com>
-References: <20180406084340.999820380@linuxfoundation.org>
- <CA+G9fYsbMhN_h8d7QGpEXwG9RZRg0otP9DZHfO8CtQo2tv4Vag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYsbMhN_h8d7QGpEXwG9RZRg0otP9DZHfO8CtQo2tv4Vag@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Apr 07, 2018 at 01:31:34PM +0530, Naresh Kamboju wrote:
-> On 6 April 2018 at 18:54, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > This is the start of the stable review cycle for the 4.16.1 release.
-> > There are 31 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sun Apr  8 08:43:15 UTC 2018.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.1-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm and x86_64.
-> 
-> Summary
-> ------------------------------------------------------------------------
-> 
-> kernel: 4.16.1-rc1
-> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> git branch: linux-4.16.y
-> git commit: 30380aa579224caf6a737160802151f466fe3953
-> git describe: v4.16-32-g30380aa57922
-> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.16-oe/build/v4.16-32-g30380aa57922
-> 
-> No regressions (compared to build )
+>> Results from Linaro=E2=80=99s test farm.
+>> No regressions on arm64, arm and x86_64.
+>>
+>> Summary
+>> ------------------------------------------------------------------------
+>>
+>> kernel: 4.16.1-rc1
+>> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-s=
+table-rc.git
+>> git branch: linux-4.16.y
+>> git commit: 30380aa579224caf6a737160802151f466fe3953
+>> git describe: v4.16-32-g30380aa57922
+>> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.16-oe=
+/build/v4.16-32-g30380aa57922
+>>
+>> No regressions (compared to build )
+>
+> Compared to what build?  :)
 
-Compared to what build?  :)
+There is no previous build to compare.
+stable-rc 4.16 is the new build in our system.
+This build results will act as base line for coming up 4.16 builds.
 
-thanks,
-
-greg k-h
+- Naresh
