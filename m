@@ -1,83 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751022AbeDGE3E (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 00:29:04 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:37894 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750807AbeDGE3D (ORCPT
+        id S1751186AbeDGEkw (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 00:40:52 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:45405 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeDGEku (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 00:29:03 -0400
-X-Google-Smtp-Source: AIpwx4/dwtrLKdebxxDr8zRk1pDTc5QqVk8z7NBfI9ez7X87TdecbOkjr0bNDdAj7Or4bc2W+HvF23En/xeYU8VxHmg=
+        Sat, 7 Apr 2018 00:40:50 -0400
+X-Google-Smtp-Source: AIpwx4/9c2xUoNsH2qz70Ch1ZxN8vH9Xvngsq9AdzN4oR9iXGeX2J4545f40QdJgYDRWpi2gKbuVzw==
+Date: Sat, 7 Apr 2018 10:10:36 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: afaerber@suse.de
+Cc: sboyd@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        robh+dt@kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, viresh.kumar@linaro.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com
+Subject: Re: [PATCH v7 01/11] arm64: dts: actions: Add S900 clock management
+ unit nodes
+Message-ID: <20180407044036.k3gi5ocnmpoll5gx@linaro.org>
+References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+ <20180326173905.22313-2-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <ff125919-66f7-6658-e9b1-817188c1bdd9@redhat.com>
-References: <CGME20180406045340epcas1p1ae6416dc25823212303c9109d125c018@epcas1p1.samsung.com>
- <1522990390-30804-1-git-send-email-chandan.vn@samsung.com> <ff125919-66f7-6658-e9b1-817188c1bdd9@redhat.com>
-From: Chandan Vn <vn.chandan@gmail.com>
-Date: Sat, 7 Apr 2018 09:58:21 +0530
-Message-ID: <CADYJ94eQyN7dtnnVN_AF0VixaJh3x52068xYtq54hsS4BpdwFg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] arm64: To remove initrd reserved area entry from memblock
-To: Laura Abbott <labbott@redhat.com>
-Cc: CHANDAN VN <chandan.vn@samsung.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, takahiro.akashi@linaro.org, james.morse@arm.com,
-        robin.murphy@arm.com, steve.capper@arm.com, kristina.martsenko@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        cpgs@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180326173905.22313-2-manivannan.sadhasivam@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 6, 2018 at 9:47 PM, Laura Abbott <labbott@redhat.com> wrote:
-> Does this have an impact on anything besides accounting
-> in memblock?
+Hi Andreas,
 
-Yes, the impact is only on accounting or debugging.
+Since the clk driver got applied, can you please take the dts changes
+through linux-actions tree?
 
-We were trying to reduce the reserved memory by removing initrd reserved area.
-After disabling "keepinitrd", only way to check if it was removed or
-not was to check
-/sys/kernel/debug/memblock/reserved. We found the entry to be present
-irrespective of
-"keepinitrd" being enabled/disabled.
-I hope that with the fix others wont face similar issue. Also we did
-not find any such problem
-with ARM32 ARCHITECTURE.
+Thanks,
+Mani
 
-On Fri, Apr 6, 2018 at 9:47 PM, Laura Abbott <labbott@redhat.com> wrote:
-> On 04/05/2018 09:53 PM, CHANDAN VN wrote:
->>
->> INITRD reserved area entry is not removed from memblock
->> even though initrd reserved area is freed. After freeing
->> the memory it is released from memblock. The same can be
->> checked from /sys/kernel/debug/memblock/reserved.
->>
->> The patch makes sure that the initrd entry is removed from
->> memblock when keepinitrd is not enabled.
->>
->
-> Does this have an impact on anything besides accounting
-> in memblock?
->
->
->> Signed-off-by: CHANDAN VN <chandan.vn@samsung.com>
->> ---
->>   arch/arm64/mm/init.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
->> index 9f3c47a..1b18b47 100644
->> --- a/arch/arm64/mm/init.c
->> +++ b/arch/arm64/mm/init.c
->> @@ -646,8 +646,10 @@ void free_initmem(void)
->>     void __init free_initrd_mem(unsigned long start, unsigned long end)
->>   {
->> -       if (!keep_initrd)
->> +       if (!keep_initrd) {
->>                 free_reserved_area((void *)start, (void *)end, 0,
->> "initrd");
->> +               memblock_free(__virt_to_phys(start), end - start);
->> +       }
->>   }
->>     static int __init keepinitrd_setup(char *__unused)
->>
->
+On Mon, Mar 26, 2018 at 11:08:55PM +0530, Manivannan Sadhasivam wrote:
+> Add Actions Semi S900 Clock Management Unit (CMU) nodes
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  arch/arm64/boot/dts/actions/s900.dtsi | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+> index 11406f6d3a6d..fee0c9557656 100644
+> --- a/arch/arm64/boot/dts/actions/s900.dtsi
+> +++ b/arch/arm64/boot/dts/actions/s900.dtsi
+> @@ -4,6 +4,7 @@
+>   * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>   */
+>  
+> +#include <dt-bindings/clock/actions,s900-cmu.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+>  / {
+> @@ -88,6 +89,18 @@
+>  		#clock-cells = <0>;
+>  	};
+>  
+> +	losc: losc {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <32768>;
+> +		#clock-cells = <0>;
+> +	};
+> +
+> +	diff24M: diff24M {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <24000000>;
+> +		#clock-cells = <0>;
+> +	};
+> +
+>  	soc {
+>  		compatible = "simple-bus";
+>  		#address-cells = <2>;
+> @@ -154,6 +167,13 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		cmu: clock-controller@e0160000 {
+> +			compatible = "actions,s900-cmu";
+> +			reg = <0x0 0xe0160000 0x0 0x1000>;
+> +			clocks = <&hosc>, <&losc>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+>  		timer: timer@e0228000 {
+>  			compatible = "actions,s900-timer";
+>  			reg = <0x0 0xe0228000 0x0 0x8000>;
+> -- 
+> 2.14.1
+> 
