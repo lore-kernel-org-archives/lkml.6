@@ -1,55 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751973AbeDGQDc (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 12:03:32 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37184 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbeDGQDa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 12:03:30 -0400
-X-Google-Smtp-Source: AIpwx4+5+lLtQqS0XJ+LCDW1b7UfbDUAI2c9mgsiobphphGE9y7sq0j0+BG2ptIBSXUgu8UwkZE+8ZIV313vPMh48yY=
-MIME-Version: 1.0
-In-Reply-To: <20180407153937.GR4082@hirez.programming.kicks-ass.net>
-References: <1522678324-4855-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20180402153530.GN3948@linux.vnet.ibm.com> <CACT4Y+Yk0hEDj2EcXTJ5BcTHE0m1Sn0e9RfY=6KC4nWhWOHPmw@mail.gmail.com>
- <201804050705.BHE57833.HVFOFtSOMQJFOL@I-love.SAKURA.ne.jp>
- <201804072131.AEF86988.OFOQLJMVFFtOSH@I-love.SAKURA.ne.jp> <20180407153937.GR4082@hirez.programming.kicks-ass.net>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sat, 7 Apr 2018 18:03:09 +0200
-Message-ID: <CACT4Y+Z6_P9mj2TEE3mtCez1je7dbviftM0rPcgsmQ-yFYYmBg@mail.gmail.com>
-Subject: Re: [PATCH v2] locking/hung_task: Show all hung tasks before panic
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mandeep Singh Baines <msb@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vegard Nossum <vegard.nossum@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751886AbeDGQQK (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 12:16:10 -0400
+Received: from mga18.intel.com ([134.134.136.126]:46521 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751387AbeDGQQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 12:16:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,419,1517904000";
+   d="scan'208";a="30891379"
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Date: Sat,  7 Apr 2018 19:12:36 +0300
+Message-Id: <20180407161236.22969-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 7, 2018 at 5:39 PM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Sat, Apr 07, 2018 at 09:31:19PM +0900, Tetsuo Handa wrote:
->> are for replacing debug_show_all_locks() in check_hung_task() for cases like
->> https://syzkaller.appspot.com/bug?id=26aa22915f5e3b7ca2cfca76a939f12c25d624db
->> because we are interested in only threads holding locks.
->>
->> SysRq-t is too much but SysRq-w is useless for killable/interruptible threads...
->
-> Or use a script to process the sysrq-t output? I mean, we can add all
-> sorts, but where does it end?
+In crb_map_io() function, __crb_request_locality() is called prior
+to crb_cmd_ready(), but if one of the consecutive function fails
+the flow bails out instead of trying to relinquish locality.
+This patch adds goto jump to __crb_relinquish_locality() on the error path.
 
-Good question.
-We are talking about few dozen more stacks, right?
+Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting locality)
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/char/tpm/tpm_crb.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Not all kernel bugs are well reproducible, so it's not always possible
-to go back and hit sysrq-t. And this come up in the context of syzbot,
-which is an automated system. It reported a bunch of hangs and most of
-them are real bugs, but not all of them are easily actionable.
-Can it be a config or a command line argument, which will make syzbot
-capture more useful context for each such hang?
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 7f78482cd157..34fbc6cb097b 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 
+ 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+ 				   sizeof(struct crb_regs_tail));
+-	if (IS_ERR(priv->regs_t))
+-		return PTR_ERR(priv->regs_t);
++	if (IS_ERR(priv->regs_t)) {
++		ret = PTR_ERR(priv->regs_t);
++		goto out_relinquish_locality;
++	}
+ 
+ 	/*
+ 	 * PTT HW bug w/a: wake up the device to access
+@@ -520,7 +522,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	 */
+ 	ret = crb_cmd_ready(dev, priv);
+ 	if (ret)
+-		return ret;
++		goto out_relinquish_locality;
+ 
+ 	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+ 	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+@@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 
+ 	crb_go_idle(dev, priv);
+ 
++out_relinquish_locality:
++
+ 	__crb_relinquish_locality(dev, priv, 0);
+ 
+ 	return ret;
+-- 
+2.14.3
