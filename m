@@ -1,49 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752126AbeDGREA (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 13:04:00 -0400
-Received: from mail-io0-f173.google.com ([209.85.223.173]:35448 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751804AbeDGRD6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 13:03:58 -0400
-X-Google-Smtp-Source: AIpwx48RHuMF+yeGyVOx/ZxH0eTyYlDypOhh54Sr6dECc46q7J8cZVHGtOKKLfroEo8O/bd2ak/Sj/1ZyAjitcOJ/VQ=
+        id S1752234AbeDGRIo (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 13:08:44 -0400
+Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:56452 "EHLO
+        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751681AbeDGRIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 13:08:42 -0400
+Date: Sat, 7 Apr 2018 13:08:40 -0400
+From: Wakko Warner <wakko@animx.eu.org>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180407170840.GB2515@animx.eu.org>
+References: <20180331221252.GA25573@animx.eu.org>
+ <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
+ <20180401113721.GA8471@animx.eu.org>
+ <20180401163604.GB25011@animx.eu.org>
+ <20180401182723.GA31755@animx.eu.org>
+ <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+ <20180406014644.GA16112@animx.eu.org>
+ <20180406020651.GB16112@animx.eu.org>
+ <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
+ <20180407165335.GA2515@animx.eu.org>
 MIME-Version: 1.0
-In-Reply-To: <1523120055.31267.13.camel@btinternet.com>
-References: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
- <CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com> <1523120055.31267.13.camel@btinternet.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 7 Apr 2018 10:03:56 -0700
-X-Google-Sender-Auth: At8i_oLCuxqNFcbf8fVhypCvVUs
-Message-ID: <CA+55aFxo4Z3S7qG66esSL_qxg5jwzcFgZpYR0gRpto4Z_yghTQ@mail.gmail.com>
-Subject: Re: [GIT PULL] SELinux patches for v4.17
-To: Richard Haines <richard_c_haines@btinternet.com>
-Cc: Paul Moore <paul@paul-moore.com>, Xin Long <lucien.xin@gmail.com>,
-        selinux@tycho.nsa.gov,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180407165335.GA2515@animx.eu.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 7, 2018 at 9:54 AM, Richard Haines
-<richard_c_haines@btinternet.com> wrote:
->>
->> So please check my resolution, but also somebody should tell me
->> "Linus, you're a cretin, sctp_connect() doesn't want that
->> security_sctp_bind_connect() at all because it was already done by
->> XYZ"
->
-> sctp_connect() or __sctp_connect() do not need to call
-> security_sctp_bind_connect(). This is because the connect(2) call will
-> handle the checks required via security_socket_connect():
+Wakko Warner wrote:
+> Bart Van Assche wrote:
+> > On Thu, 2018-04-05 at 22:06 -0400, Wakko Warner wrote:
+> > > I know now why scsi_print_command isn't doing anything.  cmd->cmnd is null.
+> > > I added a dev_printk in scsi_print_command where the 2 if statements return.
+> > > Logs:
+> > > [  29.866415] sr 3:0:0:0: cmd->cmnd is NULL
+> > 
+> > That's something that should never happen. As one can see in
+> > scsi_setup_scsi_cmnd() and scsi_setup_fs_cmnd() both functions initialize
+> > that pointer. Since I have not yet been able to reproduce myself what you
+> > reported, would it be possible for you to bisect this issue? You will need
+> > to follow something like the following procedure (see also
+> > https://git-scm.com/docs/git-bisect):
+> 
+> After doing 3 successful compiles with good/bad, I got this error and was
+> not able to compile any more kernels:
+>   CC      scripts/mod/devicetable-offsets.s
+> scripts/mod/empty.c:1:0: error: code model kernel does not support PIC mode
+>  /* empty file to figure out endianness / word size */
+>  
+> scripts/mod/devicetable-offsets.c:1:0: error: code model kernel does not support PIC mode
+>  #include <linux/kbuild.h>
+>  
+> scripts/Makefile.build:153: recipe for target 'scripts/mod/devicetable-offsets.s' failed
+> 
+> I don't think it found the bad commit.
 
-Ok, thanks, that's exactly what I wanted to get.
+I forgot to mention my gcc version.
+gcc (Debian 6.2.1-7) 6.2.1 20161215
 
-Anyway, somebody should still verify that it all looks good in my
-tree, but I don't actually expect the merge to have had any issues
-even if the refactoring made it a bit more complex than most merges
-are.
-
-                      Linus
+-- 
+ Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
+ million bugs.
