@@ -1,66 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752469AbeDGBDj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 21:03:39 -0400
-Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:55823 "EHLO
-        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751488AbeDGBDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 21:03:37 -0400
-Date: Fri, 6 Apr 2018 21:03:34 -0400
-From: Wakko Warner <wakko@animx.eu.org>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: 4.15.14 crash with iscsi target and dvd
-Message-ID: <20180407010334.GA11092@animx.eu.org>
-References: <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
- <20180331221252.GA25573@animx.eu.org>
- <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
- <20180401113721.GA8471@animx.eu.org>
- <20180401163604.GB25011@animx.eu.org>
- <20180401182723.GA31755@animx.eu.org>
- <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
- <20180406014644.GA16112@animx.eu.org>
- <20180406020651.GB16112@animx.eu.org>
- <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
+        id S1752205AbeDGBJc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 21:09:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55842 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751528AbeDGBJb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 21:09:31 -0400
+Date: Fri, 6 Apr 2018 18:09:19 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, shakeelb@google.com,
+        stable@kernel.org, tglx@linutronix.de, mpe@ellerman.id.au,
+        mingo@kernel.org, akpm@linux-foundation.org, shuah@kernel.org
+Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from
+ PROT_EXEC
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <20180326172721.D5B2CBB4@viggo.jf.intel.com>
+ <20180326172727.025EBF16@viggo.jf.intel.com>
+ <20180407000943.GA15890@ram.oc3035372033.ibm.com>
+ <6e3f8e1c-afed-64de-9815-8478e18532aa@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <6e3f8e1c-afed-64de-9815-8478e18532aa@intel.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18040701-0012-0000-0000-000005C802CA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040701-0013-0000-0000-00001944221F
+Message-Id: <20180407010919.GB15890@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-06_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804070011
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bart Van Assche wrote:
-> On Thu, 2018-04-05 at 22:06 -0400, Wakko Warner wrote:
-> > I know now why scsi_print_command isn't doing anything.  cmd->cmnd is null.
-> > I added a dev_printk in scsi_print_command where the 2 if statements return.
-> > Logs:
-> > [  29.866415] sr 3:0:0:0: cmd->cmnd is NULL
+On Fri, Apr 06, 2018 at 05:47:29PM -0700, Dave Hansen wrote:
+> On 04/06/2018 05:09 PM, Ram Pai wrote:
+> >> -	/*
+> >> -	 * Look for a protection-key-drive execute-only mapping
+> >> -	 * which is now being given permissions that are not
+> >> -	 * execute-only.  Move it back to the default pkey.
+> >> -	 */
+> >> -	if (vma_is_pkey_exec_only(vma) &&
+> >> -	    (prot & (PROT_READ|PROT_WRITE))) {
+> >> -		return 0;
+> >> -	}
+> >> +
+> > Dave,
+> > 	this can be simply:
+> > 
+> > 	if ((vma_is_pkey_exec_only(vma) && (prot != PROT_EXEC))
+> > 		return ARCH_DEFAULT_PKEY;
 > 
-> That's something that should never happen. As one can see in
-> scsi_setup_scsi_cmnd() and scsi_setup_fs_cmnd() both functions initialize
-> that pointer. Since I have not yet been able to reproduce myself what you
-> reported, would it be possible for you to bisect this issue? You will need
-> to follow something like the following procedure (see also
-> https://git-scm.com/docs/git-bisect):
-> 
-> git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> git bisect start
-> git bisect bad v4.10
-> git bisect good v4.9
-> 
-> and then build the kernel, install it, boot the kernel and test it.
-> Depending on the result, run either git bisect bad or git bisect good and
-> keep going until git bisect comes to a conclusion. This can take an hour or
-> more.
+> Yes, but we're removing that code entirely. :)
 
-I have 1 question.  Should make clean be done between tests?  My box
-compiles the whole kernel in 2 minutes.
+Well :). my point is add this code and delete the other
+code that you add later in that function.
+
+RP
+
+
 
 -- 
- Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
- million bugs.
+Ram Pai
