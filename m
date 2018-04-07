@@ -1,109 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752090AbeDGChZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 6 Apr 2018 22:37:25 -0400
-Received: from mga04.intel.com ([192.55.52.120]:23401 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751949AbeDGChY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Apr 2018 22:37:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,417,1517904000";
-   d="scan'208";a="30792568"
-Subject: Re: [PATCH ipmi/kcs_bmc v1] ipmi: kcs_bmc: optimize the data buffers
- allocation
-To: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <1521116452-4993-1-git-send-email-haiyue.wang@linux.intel.com>
- <dd59cf14-e269-6c00-9e33-87316cdc8e8f@gmail.com>
-From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
-Message-ID: <dd4e07c4-7a99-3449-fd2d-58c2b829f7b7@linux.intel.com>
-Date: Sat, 7 Apr 2018 10:37:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752147AbeDGCkU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 6 Apr 2018 22:40:20 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:23847 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751447AbeDGCkT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Apr 2018 22:40:19 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w372eFwT022761
+X-Nifty-SrcIP: [209.85.217.182]
+X-Google-Smtp-Source: AIpwx4+7oS9Ql5Yw6LgNKqr0zdhW25xNVgkAcTkCU3kTMJPbyFIiUHcZ6OCV1JFIlDrV367lg7NvGIYFnNwj7DQ8OCs=
 MIME-Version: 1.0
-In-Reply-To: <dd59cf14-e269-6c00-9e33-87316cdc8e8f@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20180406130030.745-1-anders.roxell@linaro.org>
+References: <20180406130030.745-1-anders.roxell@linaro.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 7 Apr 2018 11:39:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQajRy=w3y_dRJN-oZoniwwfQRiGP0j0PN3Z7RzN35RdQ@mail.gmail.com>
+Message-ID: <CAK7LNAQajRy=w3y_dRJN-oZoniwwfQRiGP0j0PN3Z7RzN35RdQ@mail.gmail.com>
+Subject: Re: [PATCH] drivers/memory: can't open emif-asm-offsets.s for writing
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: Tony Lindgren <tony@atomide.com>, d-gerlach@ti.com,
+        santosh shilimkar <santosh.shilimkar@oracle.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w372ePip019392
+
+2018-04-06 22:00 GMT+09:00 Anders Roxell <anders.roxell@linaro.org>:
+> Build failes due to that the directory isn't created before we execute
+> the build rule.
+> cc1: fatal error: can’t open ‘drivers/memory/emif-asm-offsets.s’ for
+>   writing: No such file or directory compilation terminated.
+> drivers/memory/Makefile.asm-offsets:2: recipe for target 'drivers/memory/emif-asm-offsets.s' failed
+> make[2]: *** [drivers/memory/emif-asm-offsets.s] Error 1
+> Makefile:1060: recipe for target
+> 'arch/arm/mach-omap2' failed
+> make[1]: *** [arch/arm/mach-omap2] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+>
+> Current code adds a file check before checking the dependency, in
+> filechk it does mkdir -p $(dir $@).
+>
+> Fixes: 41d9d44d7258 ("ARM: OMAP2+: pm33xx-core: Add platform code needed for PM")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  drivers/memory/Makefile.asm-offsets | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/memory/Makefile.asm-offsets b/drivers/memory/Makefile.asm-offsets
+> index 843ff60ccb5a..70d44a9ed32a 100644
+> --- a/drivers/memory/Makefile.asm-offsets
+> +++ b/drivers/memory/Makefile.asm-offsets
+> @@ -1,4 +1,5 @@
+>  drivers/memory/emif-asm-offsets.s: drivers/memory/emif-asm-offsets.c
+> +       $(call filechk,$@)
+>         $(call if_changed_dep,cc_s_c)
+>
+>  include/generated/ti-emif-asm-offsets.h: drivers/memory/emif-asm-offsets.s FORCE
+> --
+> 2.16.3
+
+
+Why filechk just for creating a directory?
+
+
+$(Q)mkdir $(dir $@)
+
+is enough, but still this is a bad fix.
+
+
+Generating the same object from different directories
+is fragile in parallel building.
 
 
 
-On 2018-04-07 05:47, Corey Minyard wrote:
-> On 03/15/2018 07:20 AM, Haiyue Wang wrote:
->> Allocate a continuous memory block for the three KCS data buffers with
->> related index assignment.
->
-> I'm finally getting to this.
->
-> Is there a reason you want to do this?  In general, it's better to not 
-> try to
-> outsmart your base system.  Depending on the memory allocator, in this
-> case, you might actually use more memory.  You probably won't use any
-> less.
->
-I got this idea from another code review, but that patch allocates 30 more
-the same size memory block, reducing the devm_kmalloc call will be better.
-For KCS only have 3, may be the key point is memory waste.
 
-> In the original case, you allocate three 1000 byte buffers, resulting 
-> in 3
-> 1024 byte slab allocated.
->
-> In the changed case, you will allocate a 3000 byte buffer, resulting in
-> a single 4096 byte slab allocation, wasting 1024 more bytes of memory.
->
-As the kcs has memory copy between in/out/kbuffer, put them in the same
-page will be better ? Such as the same TLB ? (Well, I just got this from 
-book,
-no real experience of memory accessing performance. And also, I was told
-that using space to save the time. :-)).
-
-Just my stupid thinking. I'm OK to drop this patch if it doesn't help with
-performance, or something else.
-
-BR.
-Haiyue
-
-> -corey
->
->> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
->> ---
->>   drivers/char/ipmi/kcs_bmc.c | 10 ++++++----
->>   1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
->> index fbfc05e..dc19c0d 100644
->> --- a/drivers/char/ipmi/kcs_bmc.c
->> +++ b/drivers/char/ipmi/kcs_bmc.c
->> @@ -435,6 +435,7 @@ static const struct file_operations kcs_bmc_fops = {
->>   struct kcs_bmc *kcs_bmc_alloc(struct device *dev, int sizeof_priv, 
->> u32 channel)
->>   {
->>       struct kcs_bmc *kcs_bmc;
->> +    void *buf;
->>         kcs_bmc = devm_kzalloc(dev, sizeof(*kcs_bmc) + sizeof_priv, 
->> GFP_KERNEL);
->>       if (!kcs_bmc)
->> @@ -448,11 +449,12 @@ struct kcs_bmc *kcs_bmc_alloc(struct device 
->> *dev, int sizeof_priv, u32 channel)
->>       mutex_init(&kcs_bmc->mutex);
->>       init_waitqueue_head(&kcs_bmc->queue);
->>   -    kcs_bmc->data_in = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
->> -    kcs_bmc->data_out = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
->> -    kcs_bmc->kbuffer = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
->> -    if (!kcs_bmc->data_in || !kcs_bmc->data_out || !kcs_bmc->kbuffer)
->> +    buf = devm_kmalloc_array(dev, 3, KCS_MSG_BUFSIZ, GFP_KERNEL);
->> +    if (!buf)
->>           return NULL;
->> +    kcs_bmc->data_in  = buf;
->> +    kcs_bmc->data_out = buf + KCS_MSG_BUFSIZ;
->> +    kcs_bmc->kbuffer  = buf + KCS_MSG_BUFSIZ * 2;
->>         kcs_bmc->miscdev.minor = MISC_DYNAMIC_MINOR;
->>       kcs_bmc->miscdev.name = dev_name(dev);
->
->
+-- 
+Best Regards
+Masahiro Yamada
