@@ -1,118 +1,114 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3892947-1523367857-2-4671975273407511879
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523367856; b=KO+e1CZQCN0bJsztTd2CJeGlBTf27/0AKIXcDywGi57JpU/aa5
-    I0K3XxebETOG0cwWFE7L5bBndvQoPdKbpOS4G4DGypg2eRErQ5jkcghBeMAwx6wE
-    5MeqilvPKzg9pNnwvDjrr2qMfon4WgzF2tJj40wkVJ1eSMOCJCn0WPLiTRTVJTwD
-    sEO6YqooehaGU6njav02e41UC86H8bx4ITbH4LmYB6GP+JU3SoSCFSvF8tbb0PaJ
-    p9VmWWjZSZpCQs2ZSeRgbg+VAlLMh/YopveM26DlyXO4OBmpWAhrO7I5Zp4H6EcJ
-    dnApz3PmXvSq28uRhjtFs9zu8Cq/ZX2xrIKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523367856; bh=C95cTCq4wcXtTp1UI4OPjZcQs0PIcs
-    a3qjfjnKjlu5A=; b=qNBTR99dEWVEOnKK/jpXVztnpKSGV0X9M37qZ4RwJlfvQR
-    383JLioIKTMECgtjAAs9Gbd/CM15AocZX661DosR05oLikaHHEijUXRc+a8vSSAD
-    jGfGdlYn98QqpNwzm/C8AGsbWkkCBvzcgCit0OjgDV/gJ2+feEZaXBV95WNrsLze
-    uZwCASB8hLJfY+0KUkZ72MUG/gc7U0vfLNguEG1H+NwTXRb/1nXcbj2QzKMEG5R8
-    TqPEYlU2qWnVO4Z0+ZDsTbYeHVaiGmpdVgXu2SPUxvFJ7LrtUEuyYraE7YDrUYdI
-    Dn/wQ/BSUSARittwDSYsKTkgrzEF40RYg8aI/LOA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=atomide.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=atomide.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=atomide.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=atomide.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK/8QaYDvDYMANAdD1HLWiCYV8etXMFimN6pzeN0FdOEpLy3cwgwJXiA2kklKE6TfUkSHIJTesAJbL8j38ky2n3sWqgKoWW/99abKnZwNHZyN3g4d130
-    H48snw3U7mOOWxOdPAnSfzOSgBfG3B/M5ehXBseNnLWaHCm6DrpWilKXyow9iXoKtkUS1FlABM79jpVJi0LqZHgrpYekn4M3kUaqN1HE1jKcZxzViFEsY/kX
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=1m5ADOQ481-_TzztFuEA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753442AbeDJNoA (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 09:44:00 -0400
-Received: from muru.com ([72.249.23.125]:36034 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752912AbeDJNn7 (ORCPT <rfc822;linux-serial@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:43:59 -0400
-Date: Tue, 10 Apr 2018 06:43:54 -0700
+Return-Path: <tony@atomide.com>
+X-Google-Smtp-Source: AIpwx49v3KOvm3DIy8Oqsx9XRqzJRfhsa5j5FsrdHWGfbFadrPE5y7FCdV4CkqNX93+tA0A8HnD2
+ARC-Seal: i=1; a=rsa-sha256; t=1523121602; cv=none;
+        d=google.com; s=arc-20160816;
+        b=VSgby86Ov7iDrVZ+4PQ4VkO+KGWC1J5ErHL+26GkxGmK7/hJofOmlnLzRUo7Aqw4nU
+         czFU3kk71YbyLBM8yuc6wbpq08ohS1FObTyFP7DJyoMdQEKcVqCBvlrt7wa7BiiaQY5Y
+         UjdTAdgRRvU/HWwVmSTpxdrppy891vSYQAqnYKgG2YvKnaI8MmsFLmu6me8Rm6lTJo7e
+         Fdz+ghBanzr0bAGb3l1CyrZZP4oyVRrzqCall14+sXOHbo1FaQp8TA5fg1bE6d6vLJCV
+         2Q5GqaMgJicNFqVef45mzon32vlMLsYPcvO/MJx+ed2jNbxFxvaD6e3LdMqTLnSLCQPj
+         IjWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=KH56Gkfq7vwGQL1Tcvoy6BiLhwaCdQF8Gq5ACgos5ss=;
+        b=NXvwQwruAacpLIOE8hZ4NOhcjgCu6TfqvKF5NTxN3tMoJ5TtCkBM+Mj3kVMIvoNxhP
+         rc4PfYhLkJ1ypGNJmA3b+MmGb8p/vYkFmsDxRD1QIDIYPG9YEiY0iutIeZj4uhppsO7i
+         MJHwqF+H7+4l02x6LPWTw54eS4a3mb8aC2tn73Cg+/JYQKs/r5zoczWxKkH7OQ82Lpl8
+         oiM/CHgiXdvBRCOdLCCIGisswM1HF8oH7yaz5ogyykXIX/czQ3J3qYwyHuz7yuQIirWQ
+         zYHMUbWDe2VhryI6yTRVNt4A5VpfnMBMnTqbgVPbC4N2BuKthbkUOs3KdF1QL4H+j1aC
+         jVkQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
 From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Alan Cox <alan@llwyncelyn.cymru>,
-        Dan Williams <dcbw@redhat.com>,
-        Jiri Prchal <jiri.prchal@aksignal.cz>,
-        Jiri Slaby <jslaby@suse.cz>, Marcel Partap <mpartap@gmx.net>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Michael Scott <michael.scott@linaro.org>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Russ Gorby <russ.gorby@intel.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH 1/2] tty: n_gsm: Fix long delays with control frame
- timeouts in ADM mode
-Message-ID: <20180410134354.GR5700@atomide.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Alan Cox <alan@llwyncelyn.cymru>,
+	Dan Williams <dcbw@redhat.com>,
+	Jiri Prchal <jiri.prchal@aksignal.cz>,
+	Jiri Slaby <jslaby@suse.cz>,
+	Marcel Partap <mpartap@gmx.net>,
+	Merlijn Wajer <merlijn@wizzup.org>,
+	Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+	Michael Scott <michael.scott@linaro.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Peter Hurley <peter@hurleysoftware.com>,
+	Russ Gorby <russ.gorby@intel.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH 2/2] tty: n_gsm: Fix DLCI handling for ADM mode if debug & 2 is not set
+Date: Sat,  7 Apr 2018 10:19:51 -0700
+Message-Id: <20180407171951.122759-2-tony@atomide.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180407171951.122759-1-tony@atomide.com>
 References: <20180407171951.122759-1-tony@atomide.com>
- <20180408090259.GA8185@amd>
- <20180408165038.GM5700@atomide.com>
- <20180408190600.GA24342@amd>
- <20180408235740.GN5700@atomide.com>
- <20180409105407.GA15315@amd>
- <20180409134259.GO5700@atomide.com>
- <20180410110944.GB13697@amd>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410110944.GB13697@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597108757439873677?=
+X-GMAIL-MSGID: =?utf-8?q?1597108757439873677?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-* Pavel Machek <pavel@ucw.cz> [180410 11:11]:
-> Should the modem respond to AT commands on ttyS0? I launched minicom
-> (115200 8N1) and I'm not getting any responses.
+At least on droid 4 with control channel in ADM mode, there is no response
+to Modem Status Command (MSC). Currently gsmtty_modem_update() expects to
+have data in dlci->modem_rx unless debug & 2 is set. This means that on
+droid 4, things only work if debug & 2 is set.
 
-Not that I know. At least I never got anything out of it. But who knows,
-maybe it is in normal mode initially during boot or when mdm6600 is
-being flashed.
+Let's fix the issue by ignoring empty dlci->modem_rx for ADM mode. In
+the AMD mode, CMD_MSC will never respond and gsm_process_modem() won't
+get called to set dlci->modem_rx.
 
-Regards,
+And according to ts_127010v140000p.pdf, MSC is only relevant if basic
+option is chosen, so let's test for that too.
 
-Tony
+Fixes: ea3d8465ab9b ("tty: n_gsm: Allow ADM response in addition to UA for control dlci")
+Cc: linux-serial@vger.kernel.org
+Cc: Alan Cox <alan@llwyncelyn.cymru>
+Cc: Dan Williams <dcbw@redhat.com>
+Cc: Jiri Prchal <jiri.prchal@aksignal.cz>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: Marcel Partap <mpartap@gmx.net>
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc: Michael Scott <michael.scott@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Peter Hurley <peter@hurleysoftware.com>
+Cc: Russ Gorby <russ.gorby@intel.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Cc: stable <stable@vger.kernel.org>
+---
+ drivers/tty/n_gsm.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
+diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+--- a/drivers/tty/n_gsm.c
++++ b/drivers/tty/n_gsm.c
+@@ -2871,11 +2871,22 @@ static int gsmtty_modem_update(struct gsm_dlci *dlci, u8 brk)
+ static int gsm_carrier_raised(struct tty_port *port)
+ {
+ 	struct gsm_dlci *dlci = container_of(port, struct gsm_dlci, port);
++	struct gsm_mux *gsm = dlci->gsm;
++
+ 	/* Not yet open so no carrier info */
+ 	if (dlci->state != DLCI_OPEN)
+ 		return 0;
+ 	if (debug & 2)
+ 		return 1;
++
++	/*
++	 * Basic mode with control channel in ADM mode may not respond
++	 * to CMD_MSC at all and modem_rx is empty.
++	 */
++	if (gsm->encoding == 0 && gsm->dlci[0]->mode == DLCI_MODE_ADM &&
++	    !dlci->modem_rx)
++		return 1;
++
+ 	return dlci->modem_rx & TIOCM_CD;
+ }
+ 
+-- 
+2.17.0
