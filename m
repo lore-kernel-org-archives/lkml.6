@@ -1,151 +1,67 @@
-Return-Path: <paulmcquad@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523126874; cv=none;
+Return-Path: <joe@perches.com>
+X-Google-Smtp-Source: AIpwx4+RfSyH53aJh3mtV6s4FxKlLNY2iNKjLkWCMzDA0/SACl97N1axRU+JF2fC5rEntk+hg/OZ
+ARC-Seal: i=1; a=rsa-sha256; t=1523131872; cv=none;
         d=google.com; s=arc-20160816;
-        b=H5wB1iOgpSHOg/HTrvD2lIlG0gZbxbV00Vu9v5E3LkcNN2FYtWWbkEbS63aN0dAWQE
-         JpTn+h5AkgZldvmtvDDXETf1qmV/4qLMS8YCez2WdxooZ2JKwMalawY3az1PxlosLOZH
-         akXtlduKFQLMfefOidHUbv8p3W29A00Nw9GhfHRdQ+UAkBEgnGIFvSMQ1FMfjAn2cTaX
-         pacy/2TcDb6SSnpTc+o3adhXg3d00UsB90Z9Qg8oYcHOw3/LGkG0g0j78K3Io8WMSY/8
-         fX3j8mxCEwsWn904vhNWMjmGfWNZJVdWZuByzfiotzCITl9lHsS+A4NJXsNQEhHMSg30
-         cKgg==
+        b=gdNwB64VMEUtH1md3wDzZM/koLENrmV5KL9VhQZU6kLwjnNnRlSfygSqdFTGDElM5y
+         CtaJsYq0zMacrwWtoHY5l7q1j8ExcjA3/KNT0V2x0MtXA/hyXzLu6d0/Ula81T57ht27
+         tPiMRH1C1GTwwH4uh36XQLDzkYCSerrN+9/fvUOn8nQA4ZN7Xk370WOvBkINwgQedk5H
+         N57AJHyIq9GNboFLzHvK46EgnErvSOAtbG7rpwgLLSbbLvjhMCb4rqFA2zWT4eMAcmHP
+         /5IR/tsGND83HVr4MTVhMNpSEgsx7UocckMnhIAVV3KiZmQygN7mACMomm9dKQXeOkxD
+         5yVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=9C+sIhYgUd1V+aOu/sCv8Wkqazx/5p5yXUByivhAodw=;
-        b=vlX1dF4f+0HhhmchyuQzi/mRIn9eDSQV/F3LM84G/E0NabB3uKVCWPGWSaalhwtBeP
-         gcBl29XPKMWNSTPj0vBFvMsSBgxSEZqGlyz+szZWH3uuaYfPcwHDxcEwqB6kJ3h6u4pD
-         g0kvIZMDVxCQxyAqFHlHRu+WGD5lyNU60udYSohQZqy5PBc10hvPp91lMualu5/VPM7L
-         W6Wk44vTJhC66U3RxmSSxNxV9wXWYVwQ5iz0FJbImsTYZvwWRt2FUROxzsE5dI7wdJhj
-         SWGusWVpTLfPJyGd2U0yNMFpe5R2ykAQgmCv08RQCiivq7OdNUS07dF/rvp0dzaVyJaX
-         mZPw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:arc-authentication-results;
+        bh=9/WmfVYpbUS1d6wVLIVfzkn3pAm2Wx5U3uX0PG37X7w=;
+        b=Nh6PmqQWDFB4WijUtHL2rMCpfIvf1aLGMCqwa8rGvX12fWSW/JQGoNKLkpkd7UsNRB
+         XB9L3mCDX6E/FTz2IOUaj2HAQzGNhwAVC41n0rHXQpM1f7RB5wRDrUVUAnzJF2y1yGzd
+         s4eaaOaKtx1T6ZmkR2S7f2xSMgFvQSF7vVmTXJSzVkQL5phxyLJKxBKn6KcNQTLnEibY
+         Ijci3/uWYPDCLqdzg6nd3YsG0K0CWO/7QwR8APjxbnCMp+ADBEIMeivNbfp2lY+dcm0c
+         o+EQl8NldrwHRTB51Tm2/GlDBc25iMctv8+oKZzI7Sv2rSGZZ/MRprDbSH23MQGDjgfi
+         Etdg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=g+81DAnF;
-       spf=pass (google.com: domain of paulmcquad@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=paulmcquad@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=neutral (google.com: 216.40.44.130 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=g+81DAnF;
-       spf=pass (google.com: domain of paulmcquad@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=paulmcquad@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx494g9OSD8RXf6ItOlxnJ9gjhnv3Mnlw66YCQmaSqa1sUcGXCdGmTDKwbYYGmeUrTMKBsZFdjQ==
-From: Paul McQuade <paulmcquad@gmail.com>
-To: paulmcquad@gmail.com
-Cc: konrad.wilk@oracle.com,
-	labbott@redhat.com,
-	gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org,
-	guptap@codeaurora.org,
-	vbabka@suse.cz,
-	mgorman@techsingularity.net,
-	hannes@cmpxchg.org,
-	rientjes@google.com,
-	mhocko@suse.com,
-	rppt@linux.vnet.ibm.com,
-	dave@stgolabs.net,
-	hmclauchlan@fb.com,
-	tglx@linutronix.de,
-	pombredanne@nexb.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 1/3] mm: replace S_IRUGO with 0444
-Date: Sat,  7 Apr 2018 19:47:24 +0100
-Message-Id: <20180407184726.8634-1-paulmcquad@gmail.com>
-X-Mailer: git-send-email 2.16.2
+       spf=neutral (google.com: 216.40.44.130 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2110:2393:2525:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3867:3871:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6742:8957:8985:9025:10004:10400:10848:11232:11658:11914:12043:12050:12679:12740:12760:12895:13069:13311:13357:13439:14180:14181:14659:14721:21080:21324:21451:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: moon19_7e8c8be1d0759
+X-Filterd-Recvd-Size: 1506
+Message-ID: <03c43ed43d0ec3ab42940bfffd4c3778bf5d0f11.camel@perches.com>
+Subject: Re: [PATCH 1/3] mm: replace S_IRUGO with 0444
+From: Joe Perches <joe@perches.com>
+To: Paul McQuade <paulmcquad@gmail.com>
+Cc: konrad.wilk@oracle.com, labbott@redhat.com, gregkh@linuxfoundation.org,
+ akpm@linux-foundation.org, guptap@codeaurora.org, vbabka@suse.cz,
+ mgorman@techsingularity.net, hannes@cmpxchg.org, rientjes@google.com,
+ mhocko@suse.com, rppt@linux.vnet.ibm.com, dave@stgolabs.net,
+ hmclauchlan@fb.com,  tglx@linutronix.de, pombredanne@nexb.com,
+ linux-kernel@vger.kernel.org,  linux-mm@kvack.org
+Date: Sat, 07 Apr 2018 13:11:08 -0700
+In-Reply-To: <20180407184726.8634-1-paulmcquad@gmail.com>
+References: <20180407184726.8634-1-paulmcquad@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.0-4 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597114285663933591?=
-X-GMAIL-MSGID: =?utf-8?q?1597114285663933591?=
+X-GMAIL-MSGID: =?utf-8?q?1597119527013372411?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix checkpatch warnings about S_IRUGO being less readable than
-providing the permissions octal as '0444'.
+On Sat, 2018-04-07 at 19:47 +0100, Paul McQuade wrote:
+> Fix checkpatch warnings about S_IRUGO being less readable than
+> providing the permissions octal as '0444'.
 
-Signed-off-by: Paul McQuade <paulmcquad@gmail.com>
----
- mm/cleancache.c |  8 ++++----
- mm/cma_debug.c  | 12 ++++++------
- mm/dmapool.c    |  2 +-
- mm/frontswap.c  |  8 ++++----
- 4 files changed, 15 insertions(+), 15 deletions(-)
+Hey Paul.
 
-diff --git a/mm/cleancache.c b/mm/cleancache.c
-index f7b9fdc79d97..90d259e69496 100644
---- a/mm/cleancache.c
-+++ b/mm/cleancache.c
-@@ -307,11 +307,11 @@ static int __init init_cleancache(void)
- 	struct dentry *root = debugfs_create_dir("cleancache", NULL);
- 	if (root == NULL)
- 		return -ENXIO;
--	debugfs_create_u64("succ_gets", S_IRUGO, root, &cleancache_succ_gets);
--	debugfs_create_u64("failed_gets", S_IRUGO,
-+	debugfs_create_u64("succ_gets", 0444, root, &cleancache_succ_gets);
-+	debugfs_create_u64("failed_gets", 0444,
- 				root, &cleancache_failed_gets);
--	debugfs_create_u64("puts", S_IRUGO, root, &cleancache_puts);
--	debugfs_create_u64("invalidates", S_IRUGO,
-+	debugfs_create_u64("puts", 0444, root, &cleancache_puts);
-+	debugfs_create_u64("invalidates", 0444,
- 				root, &cleancache_invalidates);
- #endif
- 	return 0;
-diff --git a/mm/cma_debug.c b/mm/cma_debug.c
-index 275df8b5b22e..6494c7a7d257 100644
---- a/mm/cma_debug.c
-+++ b/mm/cma_debug.c
-@@ -178,17 +178,17 @@ static void cma_debugfs_add_one(struct cma *cma, int idx)
- 	debugfs_create_file("free", S_IWUSR, tmp, cma,
- 				&cma_free_fops);
- 
--	debugfs_create_file("base_pfn", S_IRUGO, tmp,
-+	debugfs_create_file("base_pfn", 0444, tmp,
- 				&cma->base_pfn, &cma_debugfs_fops);
--	debugfs_create_file("count", S_IRUGO, tmp,
-+	debugfs_create_file("count", 0444, tmp,
- 				&cma->count, &cma_debugfs_fops);
--	debugfs_create_file("order_per_bit", S_IRUGO, tmp,
-+	debugfs_create_file("order_per_bit", 0444, tmp,
- 				&cma->order_per_bit, &cma_debugfs_fops);
--	debugfs_create_file("used", S_IRUGO, tmp, cma, &cma_used_fops);
--	debugfs_create_file("maxchunk", S_IRUGO, tmp, cma, &cma_maxchunk_fops);
-+	debugfs_create_file("used", 0444, tmp, cma, &cma_used_fops);
-+	debugfs_create_file("maxchunk", 0444, tmp, cma, &cma_maxchunk_fops);
- 
- 	u32s = DIV_ROUND_UP(cma_bitmap_maxno(cma), BITS_PER_BYTE * sizeof(u32));
--	debugfs_create_u32_array("bitmap", S_IRUGO, tmp, (u32*)cma->bitmap, u32s);
-+	debugfs_create_u32_array("bitmap", 0444, tmp, (u32 *)cma->bitmap, u32s);
- }
- 
- static int __init cma_debugfs_init(void)
-diff --git a/mm/dmapool.c b/mm/dmapool.c
-index 4d90a64b2fdc..6d4b97e7e9e9 100644
---- a/mm/dmapool.c
-+++ b/mm/dmapool.c
-@@ -105,7 +105,7 @@ show_pools(struct device *dev, struct device_attribute *attr, char *buf)
- 	return PAGE_SIZE - size;
- }
- 
--static DEVICE_ATTR(pools, S_IRUGO, show_pools, NULL);
-+static DEVICE_ATTR(pools, 0444, show_pools, NULL);
- 
- /**
-  * dma_pool_create - Creates a pool of consistent memory blocks, for dma.
-diff --git a/mm/frontswap.c b/mm/frontswap.c
-index fec8b5044040..3b41425d34cd 100644
---- a/mm/frontswap.c
-+++ b/mm/frontswap.c
-@@ -486,11 +486,11 @@ static int __init init_frontswap(void)
- 	struct dentry *root = debugfs_create_dir("frontswap", NULL);
- 	if (root == NULL)
- 		return -ENXIO;
--	debugfs_create_u64("loads", S_IRUGO, root, &frontswap_loads);
--	debugfs_create_u64("succ_stores", S_IRUGO, root, &frontswap_succ_stores);
--	debugfs_create_u64("failed_stores", S_IRUGO, root,
-+	debugfs_create_u64("loads", 0444, root, &frontswap_loads);
-+	debugfs_create_u64("succ_stores", 0444, root, &frontswap_succ_stores);
-+	debugfs_create_u64("failed_stores", 0444, root,
- 				&frontswap_failed_stores);
--	debugfs_create_u64("invalidates", S_IRUGO,
-+	debugfs_create_u64("invalidates", 0444,
- 				root, &frontswap_invalidates);
- #endif
- 	return 0;
--- 
-2.16.2
+I sent a cleanup a couple weeks ago to Andrew Morton for the
+same thing.
+
+https://lkml.org/lkml/2018/3/26/638
+
+Andrew said he'd wait until after -rc1 is out.
+
+btw: checkpatch can do this substitution automatically
+
+cheers, Joe
