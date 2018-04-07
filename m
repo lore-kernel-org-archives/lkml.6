@@ -1,44 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752257AbeDGVh1 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 17:37:27 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:38710 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752006AbeDGVhZ (ORCPT
+        id S1752156AbeDGVnP (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 17:43:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50432 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751387AbeDGVnO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 17:37:25 -0400
-X-Google-Smtp-Source: AIpwx4//JDjz9hSTd7WME06vmesNc2s+/bDaW8rI+l2rYuO+IkJnOMjIJY+sRzu0qu9mSUlN8uIuZaBAMAijbNxLW1c=
+        Sat, 7 Apr 2018 17:43:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E5E7B605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
+ readX()
+To: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org, arnd@arndb.de, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
+        linux-kernel@vger.kernel.org
+References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
+ <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
+ <41e184ae-689e-93c9-7b15-0c68bd624130@codeaurora.org>
+ <b748fdcb-e09f-9fe3-dc74-30b6a7d40cbe@codeaurora.org>
+ <20180406212601.GA1730@saruman>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <0f1a4719-9a6f-0df0-7fd9-a25c10e824f5@codeaurora.org>
+Date: Sat, 7 Apr 2018 17:43:10 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180407204414.GC30522@ZenIV.linux.org.uk>
-References: <20180407204414.GC30522@ZenIV.linux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 7 Apr 2018 14:37:24 -0700
-X-Google-Sender-Auth: L-OiuJtVjENzhLYEiLhRsCP-u60
-Message-ID: <CA+55aFyzdWyGZoczjCQE0rK1Bp9fq54DHNv-TqEeBvZ-C00VtQ@mail.gmail.com>
-Subject: Re: [git pull] sparc syscall stuff
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        sparclinux@vger.kernel.org,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180406212601.GA1730@saruman>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 7, 2018 at 1:44 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->         Conflicts in arch/sparc/kernel/sys_sparc32.c are not hard to resolve,
-> but keep in mind that casts to u64 are needed there.  I'd pushed a variant of
-> resolution into #test-merge.
+On 4/6/2018 5:26 PM, James Hogan wrote:
+> On Fri, Apr 06, 2018 at 02:15:57PM -0400, Sinan Kaya wrote:
+>> On 4/5/2018 9:34 PM, Sinan Kaya wrote:
+>>> Can we get these merged to 4.17? 
+>>>
+>>> There was a consensus to fix the architectures having API violation issues.
+>>> https://www.mail-archive.com/netdev@vger.kernel.org/msg225971.html
+>>>
+>>>
+>>
+>> Any news on the MIPS front? Is this something that Arnd can merge? or does it have
+>> to go through the MIPS tree.
+> 
+> It needs some MIPS input really. I'll try and take a look soon. Thanks
+> for the nudge.
+> 
+>> It feels like the MIPS is dead since nobody replied to me in the last few weeks on
+>> a very important topic.
+> 
+> Not dead, just both maintainers heavily distracted by real life right
+> now (which sadly, for me at least, trumps this very important topic) and
+> doing the best they can given the circumstances.
 
-You say "keep in mind that casts to u64 are needed there", but then
-you seem to be missing them yourself in your test merge (see
-[f]truncate64).
+Thanks for the reply. Glad to hear somebody cares.
 
-I only noticed because I decided to check my merge against yours. I
-strive to always do the merge resolution, but if people give me a test
-merge, I then double-check against it after-the-fack.
+> 
+> Cheers
+> James
+> 
 
-Hmm?
 
-           Linus
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
