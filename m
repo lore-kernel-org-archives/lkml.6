@@ -1,116 +1,133 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3406967-1523888997-2-2875551061385582375
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523888996; b=ARfxCQgQDj+qIwEGHAlQQAEo1VnvW2QDcn/sgAOAIv7XDUd383
-    gJFseCSpLj3NiBHLgiUHecUlRgJhjFtUFfYQXtLJv5bIJ7imAm7m553MOsu17UnC
-    r1uHfJVPIz4dpu1jmUofLzprQK6/x/9xdVMZuGEzwdzRt0ALj2EpsMPQSTJiaf7U
-    mrtQfB6JGUNDMjeEL2p7eFlWgCDuOK+wAd0asiRMAGE3kqx6c+ucoMLgcFHYwMaD
-    ezEcOcglRkrHAhr6oN2zczFggbxBo5TSbSyY12fRbDBuun9akS8tH3oWXjMoGBoz
-    iTLg1ISKgLFOm1EhRftPgWIDk43OIMgtxZ/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1523888996; bh=EzzOetBBtJFlCgKNLcfRPVoRCYWfIqk9W8JQlPMnWx
-    A=; b=YWPj9ylgAiGXMd5TKh5Sr8so5j8QtQVT16mz6qlOoEnr+sG22MI52iUf+W
-    8Ou/UKqV5txG7g3/XbKigNCUmFb32As96kYDWz68PH98ddGJjDaSb0Gyq+1LF4qX
-    z1eYFNURsWk9p9r5cAh+LxwlmvaBNwoxkHggjfHRsWT7atH9F9UwHnmYmMd0RPq3
-    Xl88PCzE4TWODC0XiTuuewdhF1H1RWHPDU/X7WtqJ2AiY99jcE5vexoj2WJuxWze
-    /W+9Yn4AK9nvxbBPewxHfGK5DG1nguT+TUj0GpDa94AKzAMcGAJhazlYKQX9n5Gr
-    f1URIY1azqTLU+h4Cdq+xusrCU6A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=GOjHHR+j x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AghUw6A7;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=GOjHHR+j x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AghUw6A7;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP4l3hZgJzpYTFAeb4YpfCfB7XrC3dpceoyDB1xeLRfas/d2fnRGCIOFo6gyTGBkFEOdWpPo1wxJgqqmwFw8DQf1TC4trJk4BQr+V7SHQzlgEeR+d2YR
-    4Cknzd42Tdo35IaanpamtmJbkKWJ7zNH8FpUar1grRMlk9i8kRoJPW3sCTtyeIKouaViCb7+p2ifWXI+kmAJgzx820w4ILrzVb3Oy17KMbakSQgeqoV5EO0t
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=xIEnxEUKAAAA:8 a=tBb2bbeoAAAA:8 a=VwQbUJbxAAAA:8 a=gZgmVkEI4cvL1yREBBcA:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=JpDqF-G6Ufas406PgLIE:22
-    a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752310AbeDPO3y (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 16 Apr 2018 10:29:54 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:43189 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751857AbeDPO3w (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Mon, 16 Apr 2018 10:29:52 -0400
-X-Google-Smtp-Source: AIpwx48L1ytvLupY0YqO6ckq2KrnK6o6vaf8p8wOMwwzYhk7j8DmvDU/67J+UqDWHM88Y0AkEx69TY06SiVXcknHfaM=
-MIME-Version: 1.0
-In-Reply-To: <1523886928-14535-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523886928-14535-1-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Apr 2018 16:29:51 +0200
-X-Google-Sender-Auth: 68OHbaR5sD-K9m7K7A-k_xc1xhc
-Message-ID: <CAMuHMdWv0SbaPY3PgoEBKJ5zpC7pS5VYH7ESKV+H3D+zGnkbEA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: serial: sh-sci: Add support for r8a77965 (H)SCIF
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-serial@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Return-Path: <tony@atomide.com>
+X-Google-Smtp-Source: AIpwx49dOlFnBcE5ZGsvNOkLw2SJ5UZbgjWK9M2lxZykHEt9FN7r3XDieF4+VWYY644bI7+ff88E
+ARC-Seal: i=1; a=rsa-sha256; t=1523121600; cv=none;
+        d=google.com; s=arc-20160816;
+        b=RvoB/Q2RyV3NI8KbX6GymbHr4Cb9pwI/TJVmSey86BT/3V6s9128yIct+n20aUPYKn
+         Jsu3pRnCGSCyeQR47n25QvGf9SrErhnIS2TKmOcDw/DAy6usMrrobcYvP42MGLitkLok
+         7WedE++Tj0fsP9j3X7mjd+VGAU+7c4jjc1Ew8paWl3I2UN9N0aB8knRlsimhdzMd9tfh
+         dbyOzl7Y68Z3pRDnNuL9TRr1Jwn78E/4ejj+4L/xDzaNzjD3iH+QljsPtJj6tUucoYVj
+         NCdH1slkyT2z1b5s+wXoQLHMgGKRkNfSPc4TJD0fh0JzgFDn5x/NrjgDTy5Dnn8g/FPM
+         In/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=WKu6Tl7gGEMWDYU1H1shkE+ojWwmE/QZ8MJzXV/DYxs=;
+        b=x4EVlWJoc21o7amL0wjO5pIND+zkVC+wgF0D20OZ20JDmt8LvQgIYv1aEHzlcB/kCP
+         FKEJ7FGeWOiMq4LGhkztRd7mVqJzscsXJa0PnnCTkkv/4kijUy76kYuCkTMaijjxmc3V
+         AzeYAMHAjwJEz7tccKo8VfpvPh3TunAehjzKshWjcX1oxj/QVKPodk9m8+KpGt/2s3H6
+         G0IMlkiwcKLuSA0BJaBNEAtRyw3o3uO/RglcMySLuifUzdWuj9pPQKkdkaZV4tG6Pg6s
+         hTroegzpjPcwJTw0eY6o7o0+Fr/TDtyFDFg5agFYknBKYJXIxr/NWniOqz7V5QFyUF8L
+         msEA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
+From: Tony Lindgren <tony@atomide.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Alan Cox <alan@llwyncelyn.cymru>,
+	Dan Williams <dcbw@redhat.com>,
+	Jiri Prchal <jiri.prchal@aksignal.cz>,
+	Jiri Slaby <jslaby@suse.cz>,
+	Marcel Partap <mpartap@gmx.net>,
+	Merlijn Wajer <merlijn@wizzup.org>,
+	Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+	Michael Scott <michael.scott@linaro.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Peter Hurley <peter@hurleysoftware.com>,
+	Russ Gorby <russ.gorby@intel.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH 1/2] tty: n_gsm: Fix long delays with control frame timeouts in ADM mode
+Date: Sat,  7 Apr 2018 10:19:50 -0700
+Message-Id: <20180407171951.122759-1-tony@atomide.com>
+X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597108755036082132?=
+X-GMAIL-MSGID: =?utf-8?q?1597108755036082132?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 16, 2018 at 3:55 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add documentation for r8a77965 compatible string to Renesas sci-serial
-> device tree bindings documentation.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Commit ea3d8465ab9b ("tty: n_gsm: Allow ADM response in addition to UA for
+control dlci") added support for DLCI to stay in Asynchronous Disconnected
+Mode (ADM). But we still get long delays waiting for commands to other
+DLCI to complete:
 
-My
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-on v2 of the full r8a77965 series is still valid.
+--> 5) C: SABM(P)
+Q>  0) C: UIH(F)
+Q>  0) C: UIH(F)
+Q>  0) C: UIH(F)
+...
 
-Gr{oetje,eeting}s,
+This happens because gsm_control_send() sets cretries timer to T2 that is
+by default set to 34. This will cause resend for T2 times for the control
+frame. In ADM mode, we will never get a response so the control frame, so
+retries are just delaying all the commands.
 
-                        Geert
+Let's fix the issue by setting DLCI_MODE_ADM flag after detecting the ADM
+mode for the control DLCI. Then we can use that in gsm_control_send() to
+set retries to 1. This means the control frame will be sent once allowing
+the other end at an opportunity to switch from ADM to ABM mode.
 
+Note that retries will be decremented in gsm_control_retransmit() so
+we don't want to set it to 0 here.
+
+Fixes: ea3d8465ab9b ("tty: n_gsm: Allow ADM response in addition to UA for control dlci")
+Cc: linux-serial@vger.kernel.org
+Cc: Alan Cox <alan@llwyncelyn.cymru>
+Cc: Dan Williams <dcbw@redhat.com>
+Cc: Jiri Prchal <jiri.prchal@aksignal.cz>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: Marcel Partap <mpartap@gmx.net>
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc: Michael Scott <michael.scott@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Peter Hurley <peter@hurleysoftware.com>
+Cc: Russ Gorby <russ.gorby@intel.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Cc: stable <stable@vger.kernel.org>
+---
+ drivers/tty/n_gsm.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+--- a/drivers/tty/n_gsm.c
++++ b/drivers/tty/n_gsm.c
+@@ -121,6 +121,9 @@ struct gsm_dlci {
+ 	struct mutex mutex;
+ 
+ 	/* Link layer */
++	int mode;
++#define DLCI_MODE_ABM		0	/* Normal Asynchronous Balanced Mode */
++#define DLCI_MODE_ADM		1	/* Asynchronous Disconnected Mode */
+ 	spinlock_t lock;	/* Protects the internal state */
+ 	struct timer_list t1;	/* Retransmit timer for SABM and UA */
+ 	int retries;
+@@ -1364,7 +1367,13 @@ static struct gsm_control *gsm_control_send(struct gsm_mux *gsm,
+ 	ctrl->data = data;
+ 	ctrl->len = clen;
+ 	gsm->pending_cmd = ctrl;
+-	gsm->cretries = gsm->n2;
++
++	/* If DLCI0 is in ADM mode skip retries, it won't respond */
++	if (gsm->dlci[0]->mode == DLCI_MODE_ADM)
++		gsm->cretries = 1;
++	else
++		gsm->cretries = gsm->n2;
++
+ 	mod_timer(&gsm->t2_timer, jiffies + gsm->t2 * HZ / 100);
+ 	gsm_control_transmit(gsm, ctrl);
+ 	spin_unlock_irqrestore(&gsm->control_lock, flags);
+@@ -1472,6 +1481,7 @@ static void gsm_dlci_t1(struct timer_list *t)
+ 			if (debug & 8)
+ 				pr_info("DLCI %d opening in ADM mode.\n",
+ 					dlci->addr);
++			dlci->mode = DLCI_MODE_ADM;
+ 			gsm_dlci_open(dlci);
+ 		} else {
+ 			gsm_dlci_close(dlci);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.0
