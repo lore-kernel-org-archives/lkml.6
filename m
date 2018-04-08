@@ -1,149 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752831AbeDHJJr convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 05:09:47 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53460 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752111AbeDHJJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 05:09:45 -0400
-Date: Sun, 8 Apr 2018 11:09:32 +0200
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 08/13] ARM: sunxi: Add initialization of CNTVOFF
-Message-ID: <20180408110932.7ef29ed2@dell-desktop.home>
-In-Reply-To: <20180404074515.r6nbkpcyy6vfelbr@flea>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
-        <20180403061836.3926-9-mylene.josserand@bootlin.com>
-        <20180403091218.t6xuq6csjp4uyy5u@flea>
-        <20180403220628.19c9acaf@dell-desktop.home>
-        <20180404074515.r6nbkpcyy6vfelbr@flea>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752755AbeDHJPy (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 05:15:54 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:58174 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752111AbeDHJPw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 05:15:52 -0400
+Date: Sun, 8 Apr 2018 11:15:36 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Maninder Singh <maninder1.s@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 0/3] syscalls: clean up stub naming convention
+Message-ID: <20180408091536.GA10120@light.dominikbrodowski.net>
+References: <20180407074651.29014-1-linux@dominikbrodowski.net>
+ <20180408083550.32d65b6ra6yca5p7@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180408083550.32d65b6ra6yca5p7@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Maxime,
+On Sun, Apr 08, 2018 at 10:35:50AM +0200, Ingo Molnar wrote:
+>   - _____sys_waitid()      # ridiculous number of underscores?
+>   - __sys_waitid()         # too generic sounding?
 
-On Wed, 4 Apr 2018 09:45:15 +0200
-Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+... and we'd need to rename internal helpers in net/
 
-> On Tue, Apr 03, 2018 at 10:06:28PM +0200, Mylène Josserand wrote:
-> > Hello,
-> > 
-> > Thank you for the review.
-> > 
-> > On Tue, 3 Apr 2018 11:12:18 +0200
-> > Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >   
-> > > On Tue, Apr 03, 2018 at 08:18:31AM +0200, Mylène Josserand wrote:  
-> > > > Add the initialization of CNTVOFF for sun8i-a83t.
-> > > > 
-> > > > For boot CPU, Create a new machine that handles this
-> > > > function's call in an "init_early" callback.
-> > > > For secondary CPUs, add this function into secondary_startup
-> > > > assembly entry.
-> > > > 
-> > > > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> > > > ---
-> > > >  arch/arm/mach-sunxi/headsmp.S |  1 +
-> > > >  arch/arm/mach-sunxi/sunxi.c   | 18 +++++++++++++++++-
-> > > >  2 files changed, 18 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-> > > > index 79890fbe5613..b586b7cf803a 100644
-> > > > --- a/arch/arm/mach-sunxi/headsmp.S
-> > > > +++ b/arch/arm/mach-sunxi/headsmp.S
-> > > > @@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
-> > > >  
-> > > >  ENTRY(sunxi_mc_smp_secondary_startup)
-> > > >  	bl	sunxi_mc_smp_cluster_cache_enable
-> > > > +	bl	smp_init_cntvoff
-> > > >  	b	secondary_startup
-> > > >  ENDPROC(sunxi_mc_smp_secondary_startup)
-> > > >  
-> > > > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> > > > index 5e9602ce1573..090784108c0a 100644
-> > > > --- a/arch/arm/mach-sunxi/sunxi.c
-> > > > +++ b/arch/arm/mach-sunxi/sunxi.c
-> > > > @@ -16,6 +16,7 @@
-> > > >  #include <linux/platform_device.h>
-> > > >  
-> > > >  #include <asm/mach/arch.h>
-> > > > +#include <asm/smp_cntvoff.h>
-> > > >  
-> > > >  static const char * const sunxi_board_dt_compat[] = {
-> > > >  	"allwinner,sun4i-a10",
-> > > > @@ -62,7 +63,6 @@ MACHINE_END
-> > > >  static const char * const sun8i_board_dt_compat[] = {
-> > > >  	"allwinner,sun8i-a23",
-> > > >  	"allwinner,sun8i-a33",
-> > > > -	"allwinner,sun8i-a83t",
-> > > >  	"allwinner,sun8i-h2-plus",
-> > > >  	"allwinner,sun8i-h3",
-> > > >  	"allwinner,sun8i-r40",
-> > > > @@ -75,6 +75,22 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
-> > > >  	.dt_compat	= sun8i_board_dt_compat,
-> > > >  MACHINE_END
-> > > >  
-> > > > +void __init sun8i_cntvoff_init(void)
-> > > > +{
-> > > > +	smp_init_cntvoff();    
-> > > 
-> > > Can't this be moved to the SMP setup code?  
-> > 
-> > I tried to put it in the first lines of "sunxi_mc_smp_init" function
-> > but it did not work. I tried to find some callbacks to have an
-> > early "init" and I only found the "init_early"'s one. There is probably
-> > another way to handle that so do not hesitate to tell me any ideas.  
+>   - __inline_sys_waitid()  # too long?
+
+sounds acceptable, though a bit long (especially for the compat case, though
+it doesn't really matter in the case of 
+__inline_compat_sys_sched_rr_get_interval)
+
+> One more fundamental question: why do we have the __do_sys_waitid() and 
+> __inline_sys_waitid() distinction - aren't the function call signatures the same 
+> with no conversion done?
 > 
-> It's hard to say without more context about why it doesn't work. Have
-> you checked the order between early_initcall, the timer initialization
-> function and init_early?
+> I.e. couldn't we just do a single, static __do_sys_waitid(), where the compiler 
+> would decide to what extent inlining is justified? This would allow the compiler 
+> to inline all the intermediate code into the stubs themselves.
 > 
+> Or is this a side effect of the error injection feature, which needs to add extra 
+> logic at this intermediate level? That too should be able to use the 
+> __do_sys_waitid() variant though.
 
-Yes, I tested it. I wanted to test it again to give more context. Here
-is the boot log: http://code.bulix.org/n1x864-315948?raw
-I added printk in the 3 functions (with "===========>").
+Error injection is unrelated. It seems to be for three reasons, if I read
+the code (include/linux/syscalls.h) correctly:
 
-The "init_early" and "sun6i_timer" are executed before
-"arch_timer_of_init" (which is the function that parses the DT property
-that we used previously "arm,cpu-registers-not-fw-configured").
-The "sunxi_mc_smp_init" function is called later so I guess that is why
-it is not working in that case.
+	asmlinkage long __do_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))
 
-> > > > +}
-> > > > +
-> > > > +static const char * const sun8i_cntvoff_board_dt_compat[] = {
-> > > > +	"allwinner,sun8i-a83t",
-> > > > +	NULL,
-> > > > +};
-> > > > +
-> > > > +DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i boards needing cntvoff")    
-> > > 
-> > > All of the SoCs need CNTVOFF, so that doesn't really make sense. Why
-> > > not just calling it for what it is: an A83t?  
-> > 
-> > Sure, I will update it.  
-> 
-> Looking back at that code, I guess you want to change also the
-> smp_init_cntvoff function. It's not really related to SMP either.
+1)  This takes arguments of type long (to protect against CVE-2009-0029);
+    see https://lwn.net/Articles/604287/ : "Digging into the history of
+    this, it turns out that the long version ensures that 32-bit values
+    are correctly sign-extended for some 64-bit kernel platforms,
+    preventing a historical vulnerability."
 
-Yep, I will update it in next version.
+	{
+		long ret = __in_sys##name(__MAP(x,__SC_CAST,__VA_ARGS__));
+		__MAP(x,__SC_TEST,__VA_ARGS__);
+
+2) We can add testing whether one of the arguments is longer than long.
+
+		__PROTECT(x, ret,__MAP(x,__SC_ARGS,__VA_ARGS__));
+
+3) This adds asmlinkage_protect() on m68k, but seems to be a no-op on other
+architectures.
+
+
+While reasons 1 and 3 seem irrelevant on x86, I'd like to keep the code
+close to the generic one -- and reason 2 is valid in and by itself. So I'd
+recommend keeping the __inline_sys / __do_sys indirection.
+
+
+> Is UML unaffected by these renames?
+
+UML is only affected by patch 3/3, but kept happy by the patch to
+entry/syscalls/syscalltbl.sh.
+
+
+On a somewhat related note: I'll try to prepare a patch this evening which
+lets us build just the __ia32_sys and __x32_compat_sys stubs we actually
+need. We have that information already in entry/syscalls/syscall_{32,64}.tbl,
+it just needs to be extracted into another header file (in the form of
+	#define NEED_IA32_sys_xyzzz 1
+) and then tested within the stubs. After some randconfig testing, this
+might be worthwile to add on top of the patches already in tip-asm and the
+three renaming patches currently under discussion.
+
 
 Thanks,
-
-Best regards,
-
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+	Dominik
