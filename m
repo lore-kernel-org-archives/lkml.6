@@ -1,149 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752137AbeDHV43 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 17:56:29 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:39095 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbeDHV41 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 17:56:27 -0400
-X-Google-Smtp-Source: AIpwx48QyQIdUuuas3xlLS8YXeeM9Lo4Vvu/A/akBsWt/rHG1UdkbzkRWjsphlNeer2Gs/iAjOKptQ==
-Date: Sun, 8 Apr 2018 14:57:07 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: dccp@vger.kernel.org, gerrit@erg.abdn.ac.uk
-Cc: davem@davemloft.net, garsilva@embeddedor.com,
-        syzbot
-        <syzbot+3ca02e1a9272a28e8959b32039154c5605164653@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: BUG: please report to dccp@vger.kernel.org => prev = 0, last = 0
- at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_hist_sample_rtt()
-Message-ID: <20180408215707.GE685@sol.localdomain>
-References: <94eb2c05611406f6a5055d38a272@google.com>
- <001a1145f0b4076234056309aab9@google.com>
+        id S1752394AbeDHV4w (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 17:56:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55263 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752212AbeDHV4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 17:56:50 -0400
+From: NeilBrown <neil@brown.name>
+To: Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Date: Mon, 09 Apr 2018 07:56:36 +1000
+Cc: David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: spi-nor: clear Extended Address Reg on switch to 3-byte addressing.
+In-Reply-To: <61e255fa-ece4-5566-d63a-730aaa25f18c@gmail.com>
+References: <874lkmw54j.fsf@notabene.neil.brown.name> <61e255fa-ece4-5566-d63a-730aaa25f18c@gmail.com>
+Message-ID: <87sh85uzu3.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a1145f0b4076234056309aab9@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 18, 2018 at 01:34:02AM -0800, syzbot wrote:
-> syzbot has found reproducer for the following crash on linux-next commit
-> a362f6d2cdbd089dd7040ba66dcb0ad276a20cf7 (Thu Jan 18 07:07:54 2018 +0000)
-> Add linux-next specific files for 20180118
-> 
-> So far this crash happened 185 times on linux-next, mmots, net-next,
-> upstream.
-> C reproducer is attached.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by:
-> syzbot+3ca02e1a9272a28e8959b32039154c5605164653@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed.
-> 
-> BUG: please report to dccp@vger.kernel.org => prev = 0, last = 0 at
-> net/dccp/ccids/lib/packet_history.c:425/tfrc_rx_hist_sample_rtt()
-> CPU: 1 PID: 6246 Comm: syzkaller158939 Not tainted 4.15.0-rc8-next-20180118+
-> #100
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  tfrc_rx_hist_sample_rtt+0x407/0x4d0 net/dccp/ccids/lib/packet_history.c:422
->  ccid3_hc_rx_packet_recv+0x696/0xeb3 net/dccp/ccids/ccid3.c:765
->  ccid_hc_rx_packet_recv net/dccp/ccid.h:185 [inline]
->  dccp_deliver_input_to_ccids+0xd9/0x250 net/dccp/input.c:180
->  dccp_rcv_established+0x88/0xb0 net/dccp/input.c:378
->  dccp_v4_do_rcv+0x135/0x160 net/dccp/ipv4.c:653
->  sk_backlog_rcv include/net/sock.h:908 [inline]
->  __sk_receive_skb+0x33e/0xc10 net/core/sock.c:513
->  dccp_v4_rcv+0xf5f/0x1c80 net/dccp/ipv4.c:874
->  ip_local_deliver_finish+0x2f1/0xc50 net/ipv4/ip_input.c:216
->  NF_HOOK include/linux/netfilter.h:288 [inline]
->  ip_local_deliver+0x1ce/0x6e0 net/ipv4/ip_input.c:257
->  dst_input include/net/dst.h:449 [inline]
->  ip_rcv_finish+0x953/0x1e30 net/ipv4/ip_input.c:397
->  NF_HOOK include/linux/netfilter.h:288 [inline]
->  ip_rcv+0xc5a/0x1840 net/ipv4/ip_input.c:493
->  __netif_receive_skb_core+0x1a41/0x3460 net/core/dev.c:4537
->  __netif_receive_skb+0x2c/0x1b0 net/core/dev.c:4602
->  process_backlog+0x203/0x740 net/core/dev.c:5282
->  napi_poll net/core/dev.c:5680 [inline]
->  net_rx_action+0x792/0x1910 net/core/dev.c:5746
->  __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
->  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1150
->  </IRQ>
->  do_softirq.part.19+0x14d/0x190 kernel/softirq.c:329
->  do_softirq kernel/softirq.c:177 [inline]
->  __local_bh_enable_ip+0x1ee/0x230 kernel/softirq.c:182
->  local_bh_enable include/linux/bottom_half.h:32 [inline]
->  rcu_read_unlock_bh include/linux/rcupdate.h:726 [inline]
->  ip_finish_output2+0x962/0x1550 net/ipv4/ip_output.c:231
->  ip_finish_output+0x864/0xd10 net/ipv4/ip_output.c:317
->  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
->  ip_output+0x1d2/0x860 net/ipv4/ip_output.c:405
->  dst_output include/net/dst.h:443 [inline]
->  ip_local_out+0x95/0x160 net/ipv4/ip_output.c:124
->  ip_queue_xmit+0x8c0/0x18e0 net/ipv4/ip_output.c:504
->  dccp_transmit_skb+0x9ac/0x10f0 net/dccp/output.c:142
->  dccp_xmit_packet+0x215/0x740 net/dccp/output.c:281
->  dccp_write_xmit+0x17d/0x1d0 net/dccp/output.c:363
->  dccp_sendmsg+0x95f/0xdc0 net/dccp/proto.c:813
->  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
->  sock_sendmsg_nosec net/socket.c:630 [inline]
->  sock_sendmsg+0xca/0x110 net/socket.c:640
->  ___sys_sendmsg+0x767/0x8b0 net/socket.c:2020
->  __sys_sendmsg+0xe5/0x210 net/socket.c:2054
->  SYSC_sendmsg net/socket.c:2065 [inline]
->  SyS_sendmsg+0x2d/0x50 net/socket.c:2061
->  entry_SYSCALL_64_fastpath+0x29/0xa0
-> RIP: 0033:0x446469
-> RSP: 002b:00007fcecb23bda8 EFLAGS: 00000293 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00000000006dbc3c RCX: 0000000000446469
-> RDX: 0000000000000080 RSI: 00000000206c8000 RDI: 0000000000000005
-> RBP: 00000000006dbc38 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000293 R12: f8e4cbe49e572d45
-> R13: 54c1b85d98aba1df R14: a6eaa24dbeb18c29 R15: 000000000000000c
-> 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-This is still happening.  It *might* be related to the other bug "suspicious RCU
-usage at ./include/net/inet_sock.h:LINE".  Here's a simplified reproducer for
-this one:
+On Sun, Apr 08 2018, Marek Vasut wrote:
 
-#include <linux/dccp.h>
-#include <linux/in.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <unistd.h>
+> On 04/08/2018 09:04 AM, NeilBrown wrote:
+>>=20
+>> According to section
+>>    8.2.7 Write Extended Address Register (C5h)
+>>=20
+>> of the Winbond W25Q256FV data sheet (256M-BIT SPI flash)
+>>=20
+>>    The Extended Address Register is only effective when the device is
+>>    in the 3-Byte Address Mode.  When the device operates in the 4-Byte
+>>    Address Mode (ADS=3D1), any command with address input of A31-A24
+>>    will replace the Extended Address Register values. It is
+>>    recommended to check and update the Extended Address Register if
+>>    necessary when the device is switched from 4-Byte to 3-Byte Address
+>>    Mode.
+>>=20
+>> This patch adds code to implement that recommendation.  Without this,
+>> my GNUBEE-PC1 will not successfully reboot, as the Extended Address
+>> Register is left with a value of '1'. When the SOC attempts to read
+>> (in 3-byte address mode) the boot loader, it reads from the wrong
+>> location.
+>
+> Your board is broken by design and does not implement proper reset logic
+> for the SPI NOR chip, right ? That is, when the CPU resets, the SPI NOR
+> is left in some random undefined state instead of being reset too, yes?
 
-int main()
-{
-        struct sockaddr_in addr = { .sin_family = AF_INET };
-        socklen_t addrlen = sizeof(addr);
-        int fd;
+Thanks for the reply.
+"Broken" is an emotive word :-)  Certain the board *doesn't* reset the NOR
+chip on reset.
+However the NOR chip doesn't have a dedicated RESET pin. It has a pin
+that defaults to "HOLD" and can be programmed to act as "RESET".  This
+pin is tied to 3V3 on my board. If it were tied to a reset line, it
+would still need code changes to work (or switch from the default).
 
-        while (fork())
-                wait(NULL);
-        fd = socket(AF_INET, SOCK_DCCP, 0);
-        bind(fd, (void *)&addr, addrlen);
-        getsockname(fd, (void *)&addr, &addrlen);
-        listen(fd, 100);
-        if (fork()) {
-                fd = socket(AF_INET, SOCK_DCCP, 0);
-                setsockopt(fd, SOL_DCCP, DCCP_SOCKOPT_CCID, "\x03", 1);
-                connect(fd, (void *)&addr, sizeof(addr));
-        } else {
-                fd = accept(fd, NULL, 0);
-        }
-        for (int i = 0; i < 1000; i++)
-                write(fd, "X", 1);
-}
+A few month ago:
+Commit: 8dee1d971af9 ("mtd: spi-nor: add an API to restore the status of SP=
+I flash chip")
+Commit: 59b356ffd0b0 ("mtd: m25p80: restore the status of SPI flash when ex=
+iting")
+
+were added to Linux.  They appear to be designed to address a very
+similar situation to mine.  Unfortunately they aren't complete as the
+code to disable 4-byte addressing doesn't follow documented requirements
+(at least for winbond) and doesn't work as intended (at least in one
+case - mine). This code should either be fixed (e.g. with my patch), or rem=
+oved.
+
+>
+> Doesn't this chip support 4-byte addressing opcodes ? If so, we should
+> use those and keep the chip in 3-byte addressing mode. Would that work?
+
+Yes and no.
+If I
+=2D	{ "w25q256", INFO(0xef4019, 0, 64 * 1024, 512, SECT_4K | SPI_NOR_DUAL_R=
+EAD | SPI_NOR_QUAD_READ) },
++	{ "w25q256", INFO(0xef4019, 0, 64 * 1024, 512,
++			  SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
++			  SPI_NOR_4B_OPCODES) },
+
+then I can still read all the flash and it never gets switched to
+4-byte mode.
+However, if the last address read from the flash is beyond 16M, the
+extended address register gets implicitly set to 1, and reboot doesn't
+work.
+i.e. the problem isn't 4-byte mode exactly.  The problem is the Extended
+Address Register being set implicitly, and not being zero at reboot.
+It looks like we need to clear the extended address register before
+reboot, either by:
+ - software-reset the flash at shutdown
+ - write '0' in the shutdown handler
+ - write '0' after every transfer (or every transfer beyond 16M).
+
+Which would you prefer, or is there another option?
+
+Thanks,
+NeilBrown
+
+
+
+>
+>> Signed-off-by: NeilBrown <neil@brown.name>
+>> ---
+>>  drivers/mtd/spi-nor/spi-nor.c | 10 ++++++++++
+>>  include/linux/mtd/spi-nor.h   |  2 ++
+>>  2 files changed, 12 insertions(+)
+>>=20
+>> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor=
+.c
+>> index d445a4d3b770..c303bf0d2982 100644
+>> --- a/drivers/mtd/spi-nor/spi-nor.c
+>> +++ b/drivers/mtd/spi-nor/spi-nor.c
+>> @@ -269,6 +269,7 @@ static inline int set_4byte(struct spi_nor *nor, con=
+st struct flash_info *info,
+>>  	int status;
+>>  	bool need_wren =3D false;
+>>  	u8 cmd;
+>> +	u8 val;
+>>=20=20
+>>  	switch (JEDEC_MFR(info)) {
+>>  	case SNOR_MFR_MICRON:
+>> @@ -283,6 +284,15 @@ static inline int set_4byte(struct spi_nor *nor, co=
+nst struct flash_info *info,
+>>  		status =3D nor->write_reg(nor, cmd, NULL, 0);
+>>  		if (need_wren)
+>>  			write_disable(nor);
+>> +		if (!status && !enable &&
+>> +		    nor->read_reg(nor, SPINOR_OP_RDXA, &val, 1) =3D=3D 0 &&
+>> +		    val !=3D 0) {
+>> +			/* need to reset the Extended Address Register */
+>> +			write_enable(nor);
+>> +			val =3D 0;
+>> +			nor->write_reg(nor, SPINOR_OP_WRXA, &val, 1);
+>> +			write_disable(nor);
+>> +		}
+>>=20=20
+>>  		return status;
+>>  	default:
+>> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+>> index de36969eb359..42954419cfdf 100644
+>> --- a/include/linux/mtd/spi-nor.h
+>> +++ b/include/linux/mtd/spi-nor.h
+>> @@ -62,6 +62,8 @@
+>>  #define SPINOR_OP_RDCR		0x35	/* Read configuration register */
+>>  #define SPINOR_OP_RDFSR		0x70	/* Read flag status register */
+>>  #define SPINOR_OP_CLFSR		0x50	/* Clear flag status register */
+>> +#define SPINOR_OP_RDXA		0xc8	/* Read Extended Address Register */
+>> +#define SPINOR_OP_WRXA		0xc5	/* Write Extended Address Register */
+>>=20=20
+>>  /* 4-byte address opcodes - used on Spansion and some Macronix flashes.=
+ */
+>>  #define SPINOR_OP_READ_4B	0x13	/* Read data bytes (low frequency) */
+>>=20
+>
+>
+> --=20
+> Best regards,
+> Marek Vasut
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrKkBQACgkQOeye3VZi
+gbmP0A//ZMeppMmXBRCa1w6clTOoJAn2ExjKBrkiKhtTM7rx1Bt89+1U5o7WWbdk
+0AN7Mk5Ncj5aCFhFXdHwe25i2fKXCaNXDhrXFZUB9GTFzgZCGEuewutJbthcfvNY
+YGXuszfKqjUxwDZKz1mea9WP9CgghiR4ewberIHLzsgb/e3ejGg5F+EtHWAKtTnW
+/YQNBXT6vjWNq8ZPe677SsIJSPMs6g924DakJ+OnaTBPNAmUX/kny+SGw3EpckEf
+cmGDmOHH4R8S8KXX0iV1N5BjcTQqS7v46qj2vxVEPODzYx6/9+uoqARlulhrVvmW
+Cq0QwRCqssFL//Ql8YOKzNickpJZ+janG8kyHhpr+Dtl9ECQAffwzcsL2xeiQ0Ti
++r04BRPsvlbo7Sfs9cHZgZwFabgp566TDw44ZJo7AwiwJRrQfCOmt07egJoXvqFN
++LRrCBqE15B3YSNLQCHhQFpJhfo2OAMxyq8eIIG3MESOwc27/QcR9SZnemdA14BJ
+C14XYlcOKex1Loxe7s6Q54zR2vw2GI3pmPt3wRI0EPDwagwh2e4AVVLKWB/yOixC
+o/2Th7/u+9lsiemeuIaXSFDlQOsefy2S8Ie8tvXZnapS95lXzlQZ1YPGmJA2Nl0r
+kiQBApQB3i8P0WpRffQz9IYB44cC9qgHsf+MUUpQaKrdTDiNnlg=
+=uaMT
+-----END PGP SIGNATURE-----
+--=-=-=--
