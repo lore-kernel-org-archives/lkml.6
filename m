@@ -1,48 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751405AbeDHFzC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 01:55:02 -0400
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:39081 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750810AbeDHFzB (ORCPT
+        id S1751707AbeDHGAO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 02:00:14 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41968 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750810AbeDHGAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 01:55:01 -0400
-X-Google-Smtp-Source: AIpwx48sZc48rEREgF0cV8Ik1cXr8wOB4weqBxxesuYea/umO5pQizX5iWwG03HdYdjiSJZv+O2C7cUJWtWao61fRXU=
+        Sun, 8 Apr 2018 02:00:13 -0400
+Date: Sun, 8 Apr 2018 06:59:13 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+Subject: Re: WARNING in kmem_cache_free
+Message-ID: <20180408055900.GH30522@ZenIV.linux.org.uk>
+References: <001a114467482dbc4b05692df8f9@google.com>
+ <CACT4Y+adiXih0-jfNGHgf1kEQ2=KLY5NdX-87BTDbrQgEAHc9g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180407234812.2bf2b24b@gandalf.local.home>
-References: <1523153783-20579-1-git-send-email-zhaoyang.huang@spreadtrum.com> <20180407234812.2bf2b24b@gandalf.local.home>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Sun, 8 Apr 2018 13:54:59 +0800
-Message-ID: <CAGWkznHVGTpvfQOvaOGP6fYDWh0Os0pYXTC3gG_qvW6mCDuybQ@mail.gmail.com>
-Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal OOM_SCORE_ADJ_MIN
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-patch-test@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+adiXih0-jfNGHgf1kEQ2=KLY5NdX-87BTDbrQgEAHc9g@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 8, 2018 at 11:48 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Sun,  8 Apr 2018 10:16:23 +0800
-> Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
->
->> Don't choose the process with adj == OOM_SCORE_ADJ_MIN which
->> over-allocating pages for ring buffers.
->
-> Why?
->
-> -- Steve
-because in oom_evaluate_task, the process with adj == OOM_SCORE_ADJ_MIN will
-be suppressed by oom_badness, but with applying your latest patch,
-such process will
-be selected by oom_task_origin
+On Fri, Apr 06, 2018 at 03:33:36PM +0200, Dmitry Vyukov wrote:
 
-        if (oom_task_origin(task)) {
-                points = ULONG_MAX;
-                goto select;
-        }
+> Interesting type of bug, I think we see this for the first time.
+> 
+> Al, do you see how this can happen?
 
-        points = oom_badness(task, NULL, oc->nodemask, oc->totalpages);
-        if (!points || points < oc->chosen_points)
-                goto next;
+putname() on something that hasn't come from getname().  Short
+of reproducer, I don't see what can be done - it can be any
+kind of memory corruption.  We have
+        return filename_lookup(dfd, getname_flags(name, flags, empty),
+                               flags, path, NULL);
+with filename_lookup() hitting
+        putname(name);
+        return retval;
+on the way out (and seeing refcount 1, at that, so it hasn't ended
+up in audit context).  And object it's trying to free is not something
+getname_flags() has allocated.
