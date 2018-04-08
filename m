@@ -1,113 +1,92 @@
-Return-Path: <daniel@iogearbox.net>
-X-Google-Smtp-Source: AIpwx4+VHV3+M/3+nkka6va6DNsyYPxy8natkCwAK2r3BtNkAbUdneMpCn8AcTDDrGsvcKoHReLy
-ARC-Seal: i=1; a=rsa-sha256; t=1523261670; cv=none;
+Return-Path: <jlee@suse.com>
+X-Google-Smtp-Source: AIpwx49j9Vd9lSfYZoBadt9LUw/vi1FQaJWcS/U0XZzpNsLtOPXzO6rGcm+OUGvxRsWSY34sgnKG
+ARC-Seal: i=1; a=rsa-sha256; t=1523173485; cv=none;
         d=google.com; s=arc-20160816;
-        b=hg04XHQ82JYu7SHUf75QuT0dYOibqsb7nlqQq8wmQaSLhiImfFBxQMdOW/EtgD86bd
-         Bf2s4knaDmulewO5cGBEKL1n5grxp0P5wzlao2ebEZhd70xV53FUyqWfrFCKIKnhfc7o
-         hYNuo9GWlJmmiXGF6M7djbiCEiwO2M1BTxo5uSwk6O0nh9KTOD7z8CKpUpojrkSZ7Ux9
-         Kqn/Se1OE1NwGdA31LSRtV/IDk3pqk/tOTjqnYb7NBLVxwHtAo6RP3GxTyL0VyparSM2
-         7vfnJHIE8I0R/zGqHpA7RD4/jT8CfdKMN1hjvFQf/gQqNxI3pzNyPveQwbxYTptw94YZ
-         X3GQ==
+        b=RnLDWfaqwHRF2WELZQcyShnLqkEg7KU4uLvRcCR9hxUB2zHle3pS0LOF2Bg38mD0EQ
+         PVK75NiDnIsho3I/ssgnDUVim8PbRPAGzdzt4QW7aE3uoj9x3QJDBE/QFvs+O6vKcwuU
+         MUybbNnGdj2WpSTYLV33H/TtjWYjw0OqNmWtvGqRnEpcdOQRSo2fzLEc2dDbIo+H/kn7
+         tLTtZK3tr4dqTeDxvZKnuGPsgOrX+DkYg5uMLSeqm9UHEtfjluwajXPaFXVsI7mW0Ra4
+         WWuDF5JY8XXkRFf6KJa/S8Ak/SdjEPdDx4vmIPzFIMCzxFkEntMX5IxG1jnSN7bvXdyj
+         utKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=bqo450n//907qmUsvnv3cJQyNJEMeRysKUgNFJDbNzQ=;
-        b=XpIEi0U319yJKiEjx1uqNH8h+I6F1XadbXNKNBiUL38ZxcD1GXlCEA29jGyKVyS+7c
-         9Kl/tBMoqGoDily+b4gLtXVQfXwcN7m+vZCd+cyfdDa0/GMHX5nTzuU0+nVD9sgq61K4
-         BHtF2rNk9IiFmM+V6SapzCCxLHF0kG0aU/9K295foXK35j5g8eTUhuBOpQQRGDMPloBx
-         3sUiqJn9pr8YVUb8uUhfxwcjgocjiQjU0hzh3/NiRs7GLYWFXs3hAxRdTqjWkGG4KiPm
-         MvlBmW18LQnqS7aRiW26R8HroxjUT3zQn/EqoPfw+cw1+ijCYUMuyDkDD640L2lA9O6f
-         MH2g==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=nGoFMcTrcd2g77s680GoA0wKMU5vdzuWHC07S72uY2E=;
+        b=fwfCVDLbzFV3sn4pRsfBLakuQ2NxM4IptHVKtS06EiaG/ekG5xMB3+eXqSFUs+l4TM
+         r92/aiNTwj9pNvoqkvMHCXUoqFSeYSeoNhAbYrHJS3BjtlVpvtKpy4VcvrYv/+qz6Pij
+         6emMUILYcVe2PcsmzEXJvPpMc1Wk18Snb+yPljWvgQIHMlKwDOe+3mKYwTW3KNxbSNLj
+         sYsmFuCdT9iC39CCbhrjf77z1zMHPVwEkwenKdo2gVYLkJHRwKcD2FI5/QF6dH/IhJxq
+         COeFLvmN2vBMw1eURTMvMZO6FicXx05Igbz6DHWRVst8MJCx5GghHaiSQsFQNrEmVlgt
+         EMtw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of daniel@iogearbox.net designates 213.133.104.62 as permitted sender) smtp.mailfrom=daniel@iogearbox.net
+       spf=pass (google.com: domain of jlee@suse.com designates 195.135.221.5 as permitted sender) smtp.mailfrom=jlee@suse.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of daniel@iogearbox.net designates 213.133.104.62 as permitted sender) smtp.mailfrom=daniel@iogearbox.net
+       spf=pass (google.com: domain of jlee@suse.com designates 195.135.221.5 as permitted sender) smtp.mailfrom=jlee@suse.com
+Date: Sun, 8 Apr 2018 15:44:09 +0800
+From: joeyli <jlee@suse.com>
+To: Matthew Garrett <mjg59@google.com>
+Cc: alexei.starovoitov@gmail.com, luto@kernel.org,
+	David Howells <dhowells@redhat.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>, jmorris@namei.org,
+	Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	jforbes@redhat.com, linux-man@vger.kernel.org,
+	LSM List <linux-security-module@vger.kernel.org>,
+	linux-api@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+	linux-efi <linux-efi@vger.kernel.org>
 Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, joeyli <jlee@suse.com>
-Cc: Andy Lutomirski <luto@kernel.org>, David Howells <dhowells@redhat.com>,
- Ard Biesheuvel <ard.biesheuvel@linaro.org>, James Morris
- <jmorris@namei.org>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Matthew Garrett <mjg59@google.com>, Greg KH <gregkh@linuxfoundation.org>,
- LKML <linux-kernel@vger.kernel.org>, Justin Forbes <jforbes@redhat.com>,
- linux-man <linux-man@vger.kernel.org>,
- LSM List <linux-security-module@vger.kernel.org>,
- Linux API <linux-api@vger.kernel.org>, Kees Cook <keescook@chromium.org>,
- linux-efi <linux-efi@vger.kernel.org>
+Message-ID: <20180408074409.GD7362@linux-l9pv.suse>
 References: <CAADnVQLu5EZLJ1C9-dd4=K+sed6+38oy047+nqCMfuPFB=wttw@mail.gmail.com>
- <20180408080742.GE7362@linux-l9pv.suse>
- <20180409034008.dyte7k5kgkbjh5is@ast-mbp.dhcp.thefacebook.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <9040da29-2803-5c00-d47c-ae676a86b65c@iogearbox.net>
-Date: Mon, 9 Apr 2018 10:14:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ <CACdnJuv8t3kS5BCowWQ7rMjL2K73913wX2-bb5HF0ddY3iaBHg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180409034008.dyte7k5kgkbjh5is@ast-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACdnJuv8t3kS5BCowWQ7rMjL2K73913wX2-bb5HF0ddY3iaBHg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1596848216178927191?=
-X-GMAIL-MSGID: =?utf-8?q?1597255629144406285?=
+X-GMAIL-MSGID: =?utf-8?q?1597163159921311633?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/09/2018 05:40 AM, Alexei Starovoitov wrote:
-> On Sun, Apr 08, 2018 at 04:07:42PM +0800, joeyli wrote:
-[...]
->>> If the only thing that folks are paranoid about is reading
->>> arbitrary kernel memory with bpf_probe_read() helper
->>> then preferred patch would be to disable it during verification
->>> when in lockdown mode
->>
->> Sorry for I didn't fully understand your idea...
->> Do you mean that using bpf verifier to filter out bpf program that
->> uses bpf_probe_read()?
+On Wed, Apr 04, 2018 at 04:31:46AM +0000, Matthew Garrett wrote:
+> On Tue, Apr 3, 2018 at 7:34 PM Alexei Starovoitov <
+> alexei.starovoitov@gmail.com> wrote:
+> > If the only thing that folks are paranoid about is reading
+> > arbitrary kernel memory with bpf_probe_read() helper
+> > then preferred patch would be to disable it during verification
+> > when in lockdown mode.
+> > No run-time overhead and android folks will be happy
+> > that lockdown doesn't break their work.
+> > They converted out-of-tree networking accounting
+> > module and corresponding user daemon to use bpf:
 > 
-> Take a look bpf_get_trace_printk_proto().
-> Similarly we can add bpf_get_probe_read_proto() that
-> will return NULL if lockdown is on.
-> Then programs with bpf_probe_read() will be rejected by the verifier.
+> https://www.linuxplumbersconf.org/2017/ocw/system/presentations/4791/original/eBPF%20cgroup%20filters%20for%20data%20usage%20accounting%20on%20Android.pdf
+> 
+> An alternative would be to only disable kernel reads if the kernel contains
+> secrets that aren't supposed to be readable by root. If the keyring is
+> configured such that root can read everything, it seems like less of a
+> concern?
 
-Fully agree with the above. For the two helpers, something like the below
-would be sufficient to reject progs at verification time.
+Currently the KMK (kernel master key) can be a trusted key (TPM sealed) or a
+user key (plaintext). The EVM keeps a key (plaintext) in memory that
+it is decrypted from a KMK encrypted key. Those kernel reads functions should
+be disabled when the KMK be loaded to keyring.
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index d88e96d..51a6c2e 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -117,6 +117,11 @@ static const struct bpf_func_proto bpf_probe_read_proto = {
- 	.arg3_type	= ARG_ANYTHING,
- };
+You idea is good that kernel can keep those reads functions enabled until KMK
+be loaded. Which means those functions are still available before user enables
+KMK and EVM.
 
-+static const struct bpf_func_proto *bpf_get_probe_read_proto(void)
-+{
-+	return kernel_is_locked_down("BPF") ? NULL : &bpf_probe_read_proto;
-+}
-+
- BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
- 	   u32, size)
- {
-@@ -282,6 +287,9 @@ static const struct bpf_func_proto bpf_trace_printk_proto = {
+There have another idea is using a tree to register all sensitive data
+then blanking them when reading. Here is a very early developing version:
 
- const struct bpf_func_proto *bpf_get_trace_printk_proto(void)
- {
-+	if (kernel_is_locked_down("BPF"))
-+		return NULL;
-+
- 	/*
- 	 * this program might be calling bpf_trace_printk,
- 	 * so allocate per-cpu printk buffers
-@@ -535,7 +543,7 @@ tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_map_delete_elem:
- 		return &bpf_map_delete_elem_proto;
- 	case BPF_FUNC_probe_read:
--		return &bpf_probe_read_proto;
-+		return bpf_get_probe_read_proto();
- 	case BPF_FUNC_ktime_get_ns:
- 		return &bpf_ktime_get_ns_proto;
- 	case BPF_FUNC_tail_call:
+https://github.com/joeyli/linux-sensitive_data/commits/sensitive-data-tree-v0.1-v4.15
+
+But this approach causes runtime overhead and all sensitive data address must
+be found and registered (e.g. plaintext in encryption module)
+
+Thanks a lot!
+Joey Lee 
