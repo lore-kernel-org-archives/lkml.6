@@ -1,82 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752610AbeDHPme (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 11:42:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58994 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752239AbeDHPmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 11:42:32 -0400
-Date: Sun, 8 Apr 2018 11:42:31 -0400
-From: Joe Lawrence <joe.lawrence@redhat.com>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/livepatch: introduce tests
-Message-ID: <20180408154231.ihnglqyya5nric4q@redhat.com>
-References: <1522266588-11806-1-git-send-email-joe.lawrence@redhat.com>
- <1522266588-11806-2-git-send-email-joe.lawrence@redhat.com>
- <20180407023646.k3gjrgjwzhwgu6fq@treble>
+        id S1752272AbeDHPvR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 11:51:17 -0400
+Received: from h2.hallyn.com ([78.46.35.8]:32964 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751770AbeDHPvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 11:51:16 -0400
+Date: Sun, 8 Apr 2018 10:51:15 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: shinya1.takumi@toshiba.co.jp
+Cc: serge@hallyn.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v3 0/2] WhiteEgret LSM module
+Message-ID: <20180408155114.GE9715@mail.hallyn.com>
+References: <20180330083031.2199-1-masanobu2.koike@toshiba.co.jp>
+ <20180401200827.GA28101@mail.hallyn.com>
+ <OSBPR01MB21847D1D8A8BC8458CBAD39592BB0@OSBPR01MB2184.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180407023646.k3gjrgjwzhwgu6fq@treble>
-User-Agent: Mutt/1.6.2-neo (2016-08-08)
+In-Reply-To: <OSBPR01MB21847D1D8A8BC8458CBAD39592BB0@OSBPR01MB2184.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 09:36:46PM -0500, Josh Poimboeuf wrote:
-> On Wed, Mar 28, 2018 at 03:49:48PM -0400, Joe Lawrence wrote:
-> > Add a few livepatch modules and simple target modules that the included
-> > regression suite can run tests against.
-> > 
-> > Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-> > ---
-> >  lib/Kconfig.debug                                  |  12 +
-> >  lib/Makefile                                       |   2 +
-> >  lib/livepatch/Makefile                             |  18 +
-> >  lib/livepatch/test_klp_atomic_replace.c            |  69 +++
-> >  lib/livepatch/test_klp_callbacks_busy.c            |  43 ++
-> >  lib/livepatch/test_klp_callbacks_demo.c            | 132 ++++++
-> >  lib/livepatch/test_klp_callbacks_demo2.c           | 104 ++++
-> >  lib/livepatch/test_klp_callbacks_mod.c             |  24 +
-> >  lib/livepatch/test_klp_livepatch.c                 |  62 +++
-> >  tools/testing/selftests/Makefile                   |   1 +
-> >  tools/testing/selftests/livepatch/Makefile         |   8 +
-> >  tools/testing/selftests/livepatch/config           |   1 +
-> >  tools/testing/selftests/livepatch/functions.sh     | 202 ++++++++
-> >  .../testing/selftests/livepatch/test-callbacks.sh  | 526 +++++++++++++++++++++
-> >  .../testing/selftests/livepatch/test-livepatch.sh  | 177 +++++++
-> >  .../selftests/livepatch/test-shadow-vars.sh        |  13 +
-> >  16 files changed, 1394 insertions(+)
-> >  create mode 100644 lib/livepatch/Makefile
-> >  create mode 100644 lib/livepatch/test_klp_atomic_replace.c
-> >  create mode 100644 lib/livepatch/test_klp_callbacks_busy.c
-> >  create mode 100644 lib/livepatch/test_klp_callbacks_demo.c
-> >  create mode 100644 lib/livepatch/test_klp_callbacks_demo2.c
-> >  create mode 100644 lib/livepatch/test_klp_callbacks_mod.c
-> >  create mode 100644 lib/livepatch/test_klp_livepatch.c
-> >  create mode 100644 tools/testing/selftests/livepatch/Makefile
-> >  create mode 100644 tools/testing/selftests/livepatch/config
-> >  create mode 100644 tools/testing/selftests/livepatch/functions.sh
-> >  create mode 100755 tools/testing/selftests/livepatch/test-callbacks.sh
-> >  create mode 100755 tools/testing/selftests/livepatch/test-livepatch.sh
-> >  create mode 100755 tools/testing/selftests/livepatch/test-shadow-vars.sh
+Quoting shinya1.takumi@toshiba.co.jp (shinya1.takumi@toshiba.co.jp):
+> I am one of developers of WhiteEgret.
 > 
-> I love this.  Nice work!
-> 
-> As you and Petr discussed, it would be nice to get rid of some of the
-> delays, and also the callback tests will be very important.
+> > regardling the last one, do you have a plan for handling it?
+> Yes, we have a plan to release WhiteEgret v4 patch with a WEUA sample of access control for script programs.
 
-I've got v2 WIP that minimizes the delays, cleans up build flags, and
-adds a basic shadow variable test.
+Do you have a target date for posting that?
 
-Since these tests are based on top of Petr's current patchsets for
-atomic replace and shadow variables, it probably makes sense for those
-to merge first.  I can post test results to his patchsets if that helps.
+> The latest WhiteEgret cannot control script programs since script files read by an interpreter are not hooked by the execve system call.
+> We consider that script programs can be controlled by controlling the files inputted by interpreters, accordingly. 
+> We consider that the control can be realized using the read system call hooking.
 
-These tests are basically a mash up of some of the tedious callback
-Documentation and shadow variable sample livepatches.  Since there will
-be a lot of duplication, should we just remove redundant doc/samples in
-favor of these tests?
+So you have a design for being able to differentiate the interpreters reading
+versus reading with the intent to execute?  With or without their help?
 
--- Joe
+> Now, we are developing WhiteEgret with the read system call hooking and WEUA which controls the script files to be read to interpreters using information from the read system call hooking and white list.
+
+-serge
