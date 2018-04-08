@@ -1,101 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751834AbeDHHl2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 03:41:28 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59004 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750891AbeDHHl0 (ORCPT
+        id S1752063AbeDHHsb (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 03:48:31 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:37463 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751641AbeDHHsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 03:41:26 -0400
-Date: Sun, 8 Apr 2018 09:41:24 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Dan Williams <dcbw@redhat.com>
-Cc: Merlijn Wajer <merlijn@wizzup.org>, Tony Lindgren <tony@atomide.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: simultaneous voice/data works (was Re: call/normal switch was
- Re: omap4-droid4: voice call support was)
-Message-ID: <20180408074124.GA19844@amd>
-References: <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
- <20180402155754.GD5700@atomide.com>
- <20180403150444.GE5700@atomide.com>
- <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
- <20180403194419.GG5700@atomide.com>
- <20180406120423.GA18691@amd>
- <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
- <20180407081000.GB7818@amd>
- <20180407122233.GA11302@amd>
- <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
+        Sun, 8 Apr 2018 03:48:30 -0400
+X-Google-Smtp-Source: AIpwx49rkP8jhngFMwbHRrFNkIqnFChAeOrEHORIX2WbrgEuRdlgAmCjBgvJSbPukF8kqn+Z9LqE5g==
+Date: Sun, 8 Apr 2018 09:48:24 +0200
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: Joey Pabalinas <joeypabalinas@gmail.com>
+Cc: linux-sparse@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
+        Al Viro <viro@ZenIV.linux.org.uk>, Christopher Li <sparse@chrisli.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] add -Wpointer-arith sparse flag to toggle
+ sizeof(void) warnings
+Message-ID: <20180408074823.fgrmtrjzzjb7dlt2@ltop.local>
+References: <20180407215805.ze5rx4v3slbjngmo@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="dDRMvlgZJXvWKvBx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180407215805.ze5rx4v3slbjngmo@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Apr 07, 2018 at 11:58:05AM -1000, Joey Pabalinas wrote:
+> Recent changes to the min()/max() macros in include/linux/kernel.h
+> have added a lot of noise when compiling the kernel with Sparse checking
+> enabled. This mostly is due to the *huge* increase in the number of
+> sizeof(void) warnings, a larger number of which can safely be ignored.
+> 
+> Add the -Wpointer-arith flag to enable/disable these warnings (along
+> with the warning when applying sizeof to function types exactly like the
+> GCC -Wpointer-arith flag) on demand; the warning itself has been disabled
+> by default to reduce the large influx of noise which was inadvertently
+> added by commit 3c8ba0d61d04ced9f8 (kernel.h: Retain constant expression
+> output for max()/min()).
 
---dDRMvlgZJXvWKvBx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks. 
+It's good to me. I just have a few remarks/suggestions:
+ 
+With the warning disabled by default (for the moment), I had to adapt
+the testsuite with:
 
-Hi!
+diff --git a/validation/sizeof-function.c b/validation/sizeof-function.c
+index 27d535d4e..8ff67f214 100644
+--- a/validation/sizeof-function.c
++++ b/validation/sizeof-function.c
+@@ -35,7 +35,7 @@ int test(void)
+ 
+ /*
+  * check-name: sizeof-function
+- * check-command: sparse -Wno-decl $file
++ * check-command: sparse -Wpointer-arith -Wno-decl $file
+  *
+  * check-error-start
+ sizeof-function.c:22:14: warning: expression using sizeof on a function
 
-> > mmcli -m 0 --enable
-> > mmcli -m 0  --location-enable-gps-nmea
-> > watch -n .3 sudo mmcli -m 0  --location-get-gps-nmea
-> >=20
-> > ...can be used to get GPS data. Droid4 seems to have rather bad GPS,
-> > so you should probably put it near window for testing.
-> >=20
-> > Is there way to grab data from modemmanager and feed it to gpsd, so
-> > that normal applications can access gps? I don't see easy way.
-> >=20
-> > I tried --location-enable-gps-unmanaged , but that did not work for
-> > me.
->=20
-> That requires a TTY that would spit out the GPS data; in this mode MM
-> only sends the start/stop commands, and what comes out the GPS TTY is
-> undefined (at least by MM).
->=20
-> So unless you know that one of the 6600's TTYs does GPS and in what
-> format it does GPS, then no.
->=20
-> Doesn't --location-get-gps-nmea work for you?  That will spit out the
-> latest NMEA traces MM gets from the modem, if it supports NMEA.  I
-> believe --location-status will tell you what methods MM supports with
-> the modem.
+> diff --git a/sparse.1 b/sparse.1
+> index 88343f3170f195297a..4379406999c94b806e 100644
+> --- a/sparse.1
+> +++ b/sparse.1
+> @@ -288,6 +288,25 @@ Standard C syntax does not permit a parenthesized string as an array
+>  initializer.  GCC allows this syntax as an extension.  With
+>  \fB\-Wparen\-string\fR, Sparse will warn about this syntax.
+>  
+> +Sparse does not issue these warnings by default.
+> +.
+> +.TP
+> +.B \-Wpointer-arith
+> +Warn about anything that depends on the \fBsizeof\fR a function type or of void.
 
-Yes, --location-get-gps-nmea works for me.
+Maybe it would be useful to add something along the line of "like directly using
+the sizeof operator on void or doing pointer arithmetic on a void pointer" ?
 
-I guess one way forward would be to implement --location-get-gps-nmea
-support for qmicli, and use that?
+> +Although non-standard (and somewhat illogical), constructs such as \fBsizeof(void)\fR
+> +are often useful when the intent is to operate on an expression without evaluating
+> +it, e.g. in the following integer constant expression predicate:
+> +.nf
+> +#define __is_constexpr(x) \\
+> +	(sizeof(int) == sizeof(*(8 ? ((void *)((long)(x) * 0l)) : (int *)8)))
+> +.fi
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+I think that pointer arithmetic is much more useful than taking the size of void
+(being able to take the size of *any* thing is somewhere in the middle, IMO).
+But in all case, I don't think this part should belong to the man page.
 
---dDRMvlgZJXvWKvBx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrJx6QACgkQMOfwapXb+vKvOQCgsAtBVTQXYes1gXS4wxsb6+ju
-lKEAn25u8epgd3/FHcoh5BJa4dyYA7jJ
-=KX/F
------END PGP SIGNATURE-----
-
---dDRMvlgZJXvWKvBx--
+Cheers,
+-- Luc
