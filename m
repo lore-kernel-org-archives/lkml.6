@@ -1,279 +1,173 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3309672-1524148734-2-17557520004617299748
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1780087-1523176382-2-7617221218855550541
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='me',
   MailFrom='org'
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524148734; b=H0kgb7+F8iWnfZ1PtqFXsjYe4o/oC0QV+u7U1cDxjT8DToXquC
-    +RQJP8gdrXur6tE0gBDSPl6WHiIOrq7tvAhh0wcxWSuTWeEvsUwuUQOXtp8LDRKD
-    jxyj2DkwYBMGQflcemL21oA8GdIodGznTqFHBhafNJZsjAKLOYfZTgOcxuaJLPoK
-    HROm9irzCWf5W5FdZu46e1xvaFI8jz9bxW4RphP5wQnASnL2ZsuOw3B1Mh9SA3S+
-    DlB9HXTK+vGLcGT5gh3UKuNrP8uDkut1LwMYoPiwjobTWHc1mftLT8RAxe6XDwIU
-    SWQ3dPw2+hy3rYzP4a/Upm6s0IDlONdoc91A==
+    1523176381; b=C11y4Tp/yJryoBXkUmgaJdojBzlTH6R62vNsErO5298zNDMz6z
+    50BnnEdutUYvslnQc9SwtPoinKJb7Dsw5TXG3gy7sOJmhBPd9hISJIMMA66aTVLN
+    12AvDrHW9EDzVBP6iVfvb/ZOUbO+jxH7X7v+bBspd6M68JVG1SlNE8nc5PPCUkIF
+    kpmdFZBHZKVN1j3hLitgb683whP3ImoRyJ71Hh/Pk0PiqGdwmoEMfhY7dobNm3GT
+    tzLPxo/P62yHrfREnVv1MhDQN5xTax3bEbP6rTG3h/uLgh6cN1OP289ttNclfZvd
+    YxnbiPp03HxHYxcWIC88mItTutpWtOH5zR0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524148734; bh=
-    jhL3aVt+c/UKYTcjmYGEpdfxR/fhS9fWi01sNMXuEU0=; b=tgKhj/oqciSSZCUK
-    78LZN6YjPMLGLOtKwceheqkz2hu/Fh6VSnrKurTY71MOvpPkh1odLXcuNprqG23v
-    0WEvXQrqbzTeGhMG2eexwZSOrtDXafb+aLg2vN7LlmYE4LJqhb4miLz9LevRitQB
-    UtO4lNMtkKAhHrWl8w+0jZPNPxZIRmJo2U6QMwnpnpP5EwN+3fFHg4Yh9MmiFQUY
-    l8I4Ct+4aPSEx1EkwuBolTAD0kWQeAFvacXJGYNbqMw+L1iORcqrcn0xVO31Wz6d
-    FtIjlSaEL+TyKNOjJ6j3VdGYUM54GQ7dT4VAHLXsfcabMaXthV8MfdM/p4LDOwjd
-    uQ9Agg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1523176381; bh=VG06D/NsZWXo1xNHQMwheLQf5Yuz3N
+    VXtyT8KQuDlGI=; b=Gz0VcMLQE4m4rftX7WTPQVNJAaWATl/WlANIfG3uopANGe
+    P8+7E6uXsPpW85/oRjt0HXvzKu3VoiSX2Nob+qNqipU1tGsvsut9Dq8a9r1KMdpv
+    xlCcP7X4Oiw4W88uvKspX25/qY9n1H+u3gEv3ZvKN9xIOuek+9cZxIrVX0oym5kM
+    0aXm3pFKdD4NMSjajQqV0lT9w5R/wTcTy9PfkVGS2AuHTAq816Cgipjh/GVF8Y+s
+    rlVSizm4PcXoR0X6VOvK+1EfbFQofxZSYjAY3r+h3hioJ+9Fs8Lin1sRMnyH27XQ
+    AZKKiVVPJqvdI7fGI/msQcDBv1hQo7FoxujbGy2Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=kresin-me.20150623.gappssmtp.com header.i=@kresin-me.20150623.gappssmtp.com header.b=KV/or28b x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kresin.me;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NQEggHkF;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kresin.me header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    dkim=pass (2048-bit rsa key sha256) header.d=kresin-me.20150623.gappssmtp.com header.i=@kresin-me.20150623.gappssmtp.com header.b=KV/or28b x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kresin.me;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NQEggHkF;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kresin.me header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMSP1FJn964XEyxsk29u4JPJ4zDwQv8IASzljS+8aNFoJzVw+zDxYYKy+aOyKQQy8qfFVkeP+jsLYUZ4h3+vuMCNttUG5A/7V56R2/m4WfEt6lw5cVCU
-    BCB7hCrwRMeRBuqPHjhqio10Qi114DPQOAkpZVkQsMwWIWkbCUjFzUV2AYh121R+sLPGpuY+UPKSMTjq/PiJTlwkxAIrXKZflw6UhuAH6tCYdpeHf99sHvqr
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=gPkY2qt6JDp1UgQM5MoA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfNEr1k/TvOV5DY42yUgzwZihzb9d69hmuNnzr5ffief1PCsre+MxXP64tkOg5hMYN8kdbByO26V40HhWSxNCJNDXY92P6bqRd3ES3ExsBPJGNBvQR1zO
+    EnPsqTOF0VfnBTHWOl9kzAxDKts7eiJqWALsqz8usS2w5RZuEhO1H3XkiWJ2SeTJEiZ9hxGoDwnpE2+ZjGjStIZKmCsA07obc8zmYTLc1r2z94RzDbTzve4d
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=MKtGQD3n3ToA:10
+    a=1oJP67jkp3AA:10 a=Kd1tUaAdevIA:10 a=HT84mVL4G48A:10 a=ZZnuYtJkoWoA:10
+    a=VwQbUJbxAAAA:8 a=7tp3yMfCmjX2PYPYcJIA:9 a=74GVLRNJkQHWq88_:21
+    a=OmR0XSuFe3782xWj:21 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753299AbeDSOiv (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 10:38:51 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:57809 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753041AbeDSOis (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 10:38:48 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, libc-alpha@sourceware.org,
-        tglx@linutronix.de, deepa.kernel@gmail.com,
-        viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        albert.aribaud@3adev.fr, linux-s390@vger.kernel.org,
-        schwidefsky@de.ibm.com, x86@kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, linux-mips@linux-mips.org, jhogan@kernel.org,
-        ralf@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org
-Subject: [PATCH v3 11/17] y2038: xtensa: Extend sysvipc data structures
-Date: Thu, 19 Apr 2018 16:37:31 +0200
-Message-Id: <20180419143737.606138-12-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180419143737.606138-1-arnd@arndb.de>
-References: <20180419143737.606138-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:RczaO3VV23TE3Izuu2/VkNiF2tyQuFwKmqpdc/YL8CBp5WcSs8f
- S7w4zRSC7dL3lOomrg8jY5w0v3IxpvqSS7Lbfqff8ue6sJ/ZQatDJuSF2MRU1tYwXvOdNJS
- aHON6cCFUfZD+yjgNUM7nvDusVz7cDIPr1KhPsst8TU6KCPWrxo2GlNgYH8c27mmdwF1AVj
- 3eubHpola/+KJpp6otljg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:sGqednWy7yc=:hPjUxreVN+jMxHrmqkVeme
- CBkfadJTJCYmgZqAhzXYUDp39EG8pIX2OFLJx3XjruGECnE4tkmSJVhAeqwM2VNIioh75Po5s
- qeYKHwwAeSlJwzVvzghXAkUnMVvBLu/3lSYCClj031U3/Heja6iU54ufXNcH6G/2iwnTA12Cy
- bXxw1IaIjNJaccdpwF6wZIxRS4VloIznwkKKBEYVLY2+qftf+uIRMz9MoyrgpM/AdpB6DVKuX
- rbw91LOaOyKg7J7ndthqhraWjV4FSfMGxAWbG0kOZrbBlXEORFEj7BHPzLeg+N61tzIoOVsCB
- xH/qQstreXvkAg2sMYA2lmXMadM9Y1TBVO2wsQ4mSX5vVncwSn4+MhyCAiwaS/5k8wK+16nYK
- Em3eNe0AXH52kDvb6Mt2YlSmz5OSL9JMW41rc4vii92nQudH32JWgRZFqRLwwl5UPgCkOKxeq
- 7riz0YcV/+DvL1hVfjSSNl9WJEPzFmr5jaQ3R3d9l4Oepi6JNl2g+sxt6lbSFRuTAKCmo2Cc2
- 0h9eHMnNgkXZi/TEYQoJd9woSsHjiwXN1HEXslFy/In0ifQYPFHXyRgbPaU0TQS4ljeT5J57G
- eds8PbX1Ck+s5CT+/9D/OjwjYxlpTUOF5vAOTT5hQpdyCqWk+EoLP7tVgZ5hTVL2HlYNbDkx2
- dhMBK1XXpGuirQJfPrnT69luslGgheJ0sjrfRLh0TrtbYkbZGRL+1bPyyiVTds+LjqcHeWzhc
- TVrrrT91LDj0VLpMlScZXyKM6CRtZPdXg1lBLQ==
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1751402AbeDHIcs (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 04:32:48 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39146 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbeDHIcr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 8 Apr 2018 04:32:47 -0400
+X-Google-Smtp-Source: AIpwx4+PpHmh33bsHFSHu38EylOQ3J4Fok+cpJnChFWZpNyTZWq2B2anDZYf67mB5imTD+3gnMK+bA==
+From: Mathias Kresin <dev@kresin.me>
+To: john@phrozen.org, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de,
+        stable@vger.kernel.org
+Subject: [PATCH] MIPS: lantiq: gphy: Drop reboot/remove reset asserts
+Date: Sun,  8 Apr 2018 10:30:03 +0200
+Message-Id: <1523176203-18926-1-git-send-email-dev@kresin.me>
+X-Mailer: git-send-email 2.7.4
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-xtensa, uses a nonstandard variation of the generic sysvipc
-data structures, intended to have the padding moved around
-so it can deal with big-endian 32-bit user space that has
-64-bit time_t.
+While doing a global software reset, these bits are not cleared and let
+some bootloader fail to initialise the GPHYs. The bootloader don't
+expect the GPHYs in reset, as they aren't during power on.
 
-xtensa tries hard to define the structures so they work
-in both big-endian and little-endian systems with padding
-on the right side.
-However, they only succeeded for for two of the three structures,
-and their struct shmid64_ds ended up being defined in two
-identical copies, and the big-endian one is wrong.
+The asserts were a workaround for a wrong syscon-reboot mask. With a
+mask set which includes the GPHY resets, these resets aren't required
+any more.
 
-This takes just take the same approach here that we have for
-the asm-generic headers and adds separate 32-bit fields for the
-upper halves of the timestamps, to let libc deal with the mess
-in user space.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 126534141b45 ("MIPS: lantiq: Add a GPHY driver which uses the RCU syscon-mfd")
+Cc: stable@vger.kernel.org # 4.14+
+Signed-off-by: Mathias Kresin <dev@kresin.me>
 ---
- arch/xtensa/include/uapi/asm/msgbuf.h | 25 ++++++++++++-----------
- arch/xtensa/include/uapi/asm/sembuf.h | 17 ++++++++--------
- arch/xtensa/include/uapi/asm/shmbuf.h | 37 ++++++++---------------------------
- 3 files changed, 28 insertions(+), 51 deletions(-)
+ drivers/soc/lantiq/gphy.c | 34 ----------------------------------
+ 1 file changed, 34 deletions(-)
 
-diff --git a/arch/xtensa/include/uapi/asm/msgbuf.h b/arch/xtensa/include/uapi/asm/msgbuf.h
-index 36e2e103ca38..d6915e9f071c 100644
---- a/arch/xtensa/include/uapi/asm/msgbuf.h
-+++ b/arch/xtensa/include/uapi/asm/msgbuf.h
-@@ -7,7 +7,6 @@
-  * between kernel and user space.
-  *
-  * Pad space is left for:
-- * - 64-bit time_t to solve y2038 problem
-  * - 2 miscellaneous 32-bit values
-  *
-  * This file is subject to the terms and conditions of the GNU General
-@@ -21,19 +20,19 @@
- struct msqid64_ds {
- 	struct ipc64_perm msg_perm;
- #ifdef __XTENSA_EB__
--	unsigned int	__unused1;
--	__kernel_time_t msg_stime;	/* last msgsnd time */
--	unsigned int	__unused2;
--	__kernel_time_t msg_rtime;	/* last msgrcv time */
--	unsigned int	__unused3;
--	__kernel_time_t msg_ctime;	/* last change time */
-+	unsigned long  msg_stime_high;
-+	unsigned long  msg_stime;	/* last msgsnd time */
-+	unsigned long  msg_rtime_high;
-+	unsigned long  msg_rtime;	/* last msgrcv time */
-+	unsigned long  msg_ctime_high;
-+	unsigned long  msg_ctime;	/* last change time */
- #elif defined(__XTENSA_EL__)
--	__kernel_time_t msg_stime;	/* last msgsnd time */
--	unsigned int	__unused1;
--	__kernel_time_t msg_rtime;	/* last msgrcv time */
--	unsigned int	__unused2;
--	__kernel_time_t msg_ctime;	/* last change time */
--	unsigned int	__unused3;
-+	unsigned long  msg_stime;	/* last msgsnd time */
-+	unsigned long  msg_stime_high;
-+	unsigned long  msg_rtime;	/* last msgrcv time */
-+	unsigned long  msg_rtime_high;
-+	unsigned long  msg_ctime;	/* last change time */
-+	unsigned long  msg_ctime_high;
- #else
- # error processor byte order undefined!
- #endif
-diff --git a/arch/xtensa/include/uapi/asm/sembuf.h b/arch/xtensa/include/uapi/asm/sembuf.h
-index f61b6331a10c..09f348d643f1 100644
---- a/arch/xtensa/include/uapi/asm/sembuf.h
-+++ b/arch/xtensa/include/uapi/asm/sembuf.h
-@@ -14,7 +14,6 @@
-  * between kernel and user space.
-  *
-  * Pad space is left for:
-- * - 64-bit time_t to solve y2038 problem
-  * - 2 miscellaneous 32-bit values
-  *
-  */
-@@ -27,15 +26,15 @@
- struct semid64_ds {
- 	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
- #ifdef __XTENSA_EL__
--	__kernel_time_t	sem_otime;		/* last semop time */
--	unsigned long	__unused1;
--	__kernel_time_t	sem_ctime;		/* last change time */
--	unsigned long	__unused2;
-+	unsigned long	sem_otime;		/* last semop time */
-+	unsigned long	sem_otime_high;
-+	unsigned long	sem_ctime;		/* last change time */
-+	unsigned long	sem_ctime_high;
- #else
--	unsigned long	__unused1;
--	__kernel_time_t	sem_otime;		/* last semop time */
--	unsigned long	__unused2;
--	__kernel_time_t	sem_ctime;		/* last change time */
-+	unsigned long	sem_otime_high;
-+	unsigned long	sem_otime;		/* last semop time */
-+	unsigned long	sem_ctime_high;
-+	unsigned long	sem_ctime;		/* last change time */
- #endif
- 	unsigned long	sem_nsems;		/* no. of semaphores in array */
- 	unsigned long	__unused3;
-diff --git a/arch/xtensa/include/uapi/asm/shmbuf.h b/arch/xtensa/include/uapi/asm/shmbuf.h
-index 26550bdc8430..554a57a6a90f 100644
---- a/arch/xtensa/include/uapi/asm/shmbuf.h
-+++ b/arch/xtensa/include/uapi/asm/shmbuf.h
-@@ -4,10 +4,10 @@
-  *
-  * The shmid64_ds structure for Xtensa architecture.
-  * Note extra padding because this structure is passed back and forth
-- * between kernel and user space.
-+ * between kernel and user space, but the padding is on the wrong
-+ * side for big-endian xtensa, for historic reasons.
-  *
-  * Pad space is left for:
-- * - 64-bit time_t to solve y2038 problem
-  * - 2 miscellaneous 32-bit values
-  *
-  * This file is subject to the terms and conditions of the GNU General Public
-@@ -20,42 +20,21 @@
- #ifndef _XTENSA_SHMBUF_H
- #define _XTENSA_SHMBUF_H
- 
--#if defined (__XTENSA_EL__)
- struct shmid64_ds {
- 	struct ipc64_perm	shm_perm;	/* operation perms */
- 	size_t			shm_segsz;	/* size of segment (bytes) */
--	__kernel_time_t		shm_atime;	/* last attach time */
--	unsigned long		__unused1;
--	__kernel_time_t		shm_dtime;	/* last detach time */
--	unsigned long		__unused2;
--	__kernel_time_t		shm_ctime;	/* last change time */
--	unsigned long		__unused3;
-+	unsigned long		shm_atime;	/* last attach time */
-+	unsigned long		shm_atime_high;
-+	unsigned long		shm_dtime;	/* last detach time */
-+	unsigned long		shm_dtime_high;
-+	unsigned long		shm_ctime;	/* last change time */
-+	unsigned long		shm_ctime_high;
- 	__kernel_pid_t		shm_cpid;	/* pid of creator */
- 	__kernel_pid_t		shm_lpid;	/* pid of last operator */
- 	unsigned long		shm_nattch;	/* no. of current attaches */
- 	unsigned long		__unused4;
- 	unsigned long		__unused5;
+diff --git a/drivers/soc/lantiq/gphy.c b/drivers/soc/lantiq/gphy.c
+index 8d86594..8c31ae7 100644
+--- a/drivers/soc/lantiq/gphy.c
++++ b/drivers/soc/lantiq/gphy.c
+@@ -30,7 +30,6 @@ struct xway_gphy_priv {
+ 	struct clk *gphy_clk_gate;
+ 	struct reset_control *gphy_reset;
+ 	struct reset_control *gphy_reset2;
+-	struct notifier_block gphy_reboot_nb;
+ 	void __iomem *membase;
+ 	char *fw_name;
  };
--#elif defined (__XTENSA_EB__)
--struct shmid64_ds {
--	struct ipc64_perm	shm_perm;	/* operation perms */
--	size_t			shm_segsz;	/* size of segment (bytes) */
--	__kernel_time_t		shm_atime;	/* last attach time */
--	unsigned long		__unused1;
--	__kernel_time_t		shm_dtime;	/* last detach time */
--	unsigned long		__unused2;
--	__kernel_time_t		shm_ctime;	/* last change time */
--	unsigned long		__unused3;
--	__kernel_pid_t		shm_cpid;	/* pid of creator */
--	__kernel_pid_t		shm_lpid;	/* pid of last operator */
--	unsigned long		shm_nattch;	/* no. of current attaches */
--	unsigned long		__unused4;
--	unsigned long		__unused5;
--};
--#else
--# error endian order not defined
--#endif
--
+@@ -64,24 +63,6 @@ static const struct of_device_id xway_gphy_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, xway_gphy_match);
  
- struct shminfo64 {
- 	unsigned long	shmmax;
+-static struct xway_gphy_priv *to_xway_gphy_priv(struct notifier_block *nb)
+-{
+-	return container_of(nb, struct xway_gphy_priv, gphy_reboot_nb);
+-}
+-
+-static int xway_gphy_reboot_notify(struct notifier_block *reboot_nb,
+-				   unsigned long code, void *unused)
+-{
+-	struct xway_gphy_priv *priv = to_xway_gphy_priv(reboot_nb);
+-
+-	if (priv) {
+-		reset_control_assert(priv->gphy_reset);
+-		reset_control_assert(priv->gphy_reset2);
+-	}
+-
+-	return NOTIFY_DONE;
+-}
+-
+ static int xway_gphy_load(struct device *dev, struct xway_gphy_priv *priv,
+ 			  dma_addr_t *dev_addr)
+ {
+@@ -205,14 +186,6 @@ static int xway_gphy_probe(struct platform_device *pdev)
+ 	reset_control_deassert(priv->gphy_reset);
+ 	reset_control_deassert(priv->gphy_reset2);
+ 
+-	/* assert the gphy reset because it can hang after a reboot: */
+-	priv->gphy_reboot_nb.notifier_call = xway_gphy_reboot_notify;
+-	priv->gphy_reboot_nb.priority = -1;
+-
+-	ret = register_reboot_notifier(&priv->gphy_reboot_nb);
+-	if (ret)
+-		dev_warn(dev, "Failed to register reboot notifier\n");
+-
+ 	platform_set_drvdata(pdev, priv);
+ 
+ 	return ret;
+@@ -224,17 +197,10 @@ static int xway_gphy_remove(struct platform_device *pdev)
+ 	struct xway_gphy_priv *priv = platform_get_drvdata(pdev);
+ 	int ret;
+ 
+-	reset_control_assert(priv->gphy_reset);
+-	reset_control_assert(priv->gphy_reset2);
+-
+ 	iowrite32be(0, priv->membase);
+ 
+ 	clk_disable_unprepare(priv->gphy_clk_gate);
+ 
+-	ret = unregister_reboot_notifier(&priv->gphy_reboot_nb);
+-	if (ret)
+-		dev_warn(dev, "Failed to unregister reboot notifier\n");
+-
+ 	return 0;
+ }
+ 
 -- 
-2.9.0
-
+2.7.4
