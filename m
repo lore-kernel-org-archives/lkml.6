@@ -1,22 +1,23 @@
 Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AIpwx4+B3CzErg8y6MJ1AhkkxraoAgOp2c9aMzfjp28B7U94c/nsb3k6zttnrZNqnFNWu1KAGsMs
-ARC-Seal: i=1; a=rsa-sha256; t=1523208403; cv=none;
+X-Google-Smtp-Source: AIpwx48MTndaMX3g363grGcloNOgwf2pUmLBTmuVkSEp7+QFIirqVhM1YNwW0GxRbkceXTV2nNFR
+ARC-Seal: i=1; a=rsa-sha256; t=1523208417; cv=none;
         d=google.com; s=arc-20160816;
-        b=EdGaNcauTXHgDOaxFppmvjGZ88DNzZCXG8OJRLE5QVd94hQveceEbTlEQoAxqzy5cS
-         857JmzcIvQUOXh4kK7jorJJYcx20q8V1auZsl6lSyOUMp4wPhJ0zhm6M+odYhfgglq7L
-         wbYVDPRBaqp1bXKdqUfmS13GVM3TSXi+/vnnKI5IdTGOeF2rSlr5RYrEHWWTQ8OGISB9
-         5sgWUYUQCykRxawRRFXMuRE4IvtxrhGKqL3WCzJRsQD7BtTN5A6ILnKXmYM5svzzZs0B
-         Bs1tHCt2XP31C/NHXQsWlfQswU+QwOXipF/VI6xl8G8iD7PQ/59pW4RKg+uYWaBGhuUd
-         f55A==
+        b=wAUGSV15aMCAXn+bLw8yv4s9a0tGDE73WM4TOKGMxs4joA7GUdKHYrATWwYB7KvpXc
+         a6hhxGmvcjm5Vbfkb9WxUl2njDvs5I9kSX7I6ekhViBisOkzK2WSwCam5a0UhIfcIZ49
+         xRkysYGyBkvsxAMNslospoozNTqQWswlloSjeeKxt7E3Yon1EeB7GQRdGca5x0lNpfeZ
+         9jhTdBf2L8xa4pSrT431IZZVlak3CHnXW2t0IC772TrKvIPxNwd+riJyseFroV5dffgq
+         R94l617wURK4SNaHmFny6iA9U+H2cm1kbBz2xivotcTjb+jb31tPKX4AULmsCR8QcVcN
+         ePPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=700JYmxYtbCOaqcyEG7Kju9jo/6qo67aVMvDFYJ3O4Q=;
-        b=Buyl7M+tF19+ZlDB6yCakI/Au4e/urseYGCRD1SvU4CHKvOfTn58aFkR5+b8XwXDA+
-         OwozUczy02YmsTcfwmkfb/GsSYn8RwFAlb2Hk0nOktZZoG7rPyqJp1osfK1bloLRfb3y
-         mh9NAUn5anPuE7ERMkdN0JAbSAUboWLSto2ZKducjaU1aOVdiaC5ej7x4eioiL7XPZiM
-         CyJlAEhuw4IrxlgOLl0DcxRSSIPyQ3JnSzG0Y5igi6oEnTVU1M/TQbTtCCSNEE7Ro0a2
-         c11429Vh4JpD1CAcUW0xFEXjKwCKE0PmdwXEheWu/QbMockzVJ3hdm/Y9L5ldbbLinHc
-         M7fw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=o8OWddkfZw9kHBH3b1XRQegi+Y+8UbSQCju6rw1FuRQ=;
+        b=pc8SlpG7uR464u/ucos3DF7OmDyLgQh4DqTTFZNiL/sufdzD9/+XbCMZ6ILh9daiVC
+         q/ckRfnbJY1GXD6fWazsvXLOaoht/TaWb0cNP0iWfdBsBHMGQgRsBcnPEDNGVlY8Vpkz
+         ozcNk+NHbz0NQv+UkNI5hzaK0t9oQcsrkvqfW/O5Xhc+UE59NC/j4S/ZBGL3s1GtRA/n
+         qfWXa/u4b08+eG2y4sXs8yi+Q8JJSGinLTfeu4uRqxOOb06WXTigYhnFJyPk+7eFJE6B
+         kiEwpIogYzbCcIZ8dwsm3RihVzAuePGkVi1Za6puSkfTt7VVIJPwIpeQQHlf5lQ0/3Gr
+         dpPg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
@@ -54,70 +55,156 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
 	Torsten Duwe <duwe@suse.de>,
 	x86@kernel.org,
 	linux-efi@vger.kernel.org
-Subject: [PATCH v2 0/5] efi/firmware/platform-x86: Add EFI embedded fw support
-Date: Sun,  8 Apr 2018 19:26:31 +0200
-Message-Id: <20180408172636.13926-1-hdegoede@redhat.com>
+Subject: [PATCH v2 4/5] platform/x86: touchscreen_dmi: Add EFI embedded firmware info support
+Date: Sun,  8 Apr 2018 19:26:35 +0200
+Message-Id: <20180408172636.13926-5-hdegoede@redhat.com>
+In-Reply-To: <20180408172636.13926-1-hdegoede@redhat.com>
+References: <20180408172636.13926-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597199774524534426?=
-X-GMAIL-MSGID: =?utf-8?q?1597199774524534426?=
+X-GMAIL-THRID: =?utf-8?q?1597199789543333032?=
+X-GMAIL-MSGID: =?utf-8?q?1597199789543333032?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi All,
+Sofar we have been unable to get permission from the vendors to put the
+firmware for touchscreens listed in touchscreen_dmi in linux-firmware.
 
-Here is v2 of my patch-set to add support for EFI embedded fw to the kernel.
+Some of the tablets with such a touchscreen have a touchscreen driver, and
+thus a copy of the firmware, as part of their EFI code.
 
-The 3 most prominent changes are:
+This commit adds the necessary info for the new EFI embedded-firmware code
+to extract these firmwares, making the touchscreen work OOTB without the
+user needing to manually add the firmware.
 
-1) Add documentation describing the EFI embedded firmware mechanism to:
-   Documentation/driver-api/firmware/request_firmware.rst
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/firmware/efi/embedded-firmware.c |  3 +++
+ drivers/platform/x86/Kconfig             |  1 +
+ drivers/platform/x86/touchscreen_dmi.c   | 26 +++++++++++++++++++++++-
+ include/linux/efi_embedded_fw.h          |  2 ++
+ 4 files changed, 31 insertions(+), 1 deletion(-)
 
-2) Instead of having a single dmi_system_id array with its driver_data
-   members pointing to efi_embedded_fw_desc structs, have the drivers which
-   need EFI embedded-fw support export a dmi_system_id array and register
-   that with the EFI embedded-fw code
-
-   This series also includes the first driver to use this, in the form of
-   the touchscreen_dmi code (formerly silead_dmi) from drivers/platfrom/x86
-
-3) As discussed during the review of v1 we want to make the firmware_loader
-   code fallback to EFI embedded-fw optional.  Rather the adding yet another
-   firmware_request_foo variant for this, with the risk of later also needing
-   firmware_request_foo_nowait, etc. variants I've decided to make the code
-   check if the device has a "efi-embedded-fw" device-property bool set.
-
-   This also seemed better because the same driver may want to use the
-   fallback on some systems, but not on others since e.g. not all (x86)
-   systems with a silead touchscreen have their touchscreen firmware embedded
-   in their EFI.
-
-   Note that (as discussed) when the EFI fallback path is requested, the
-   usermodehelper fallback path is skipped.
-
-Here is the full changelog of patch 2/5 which is where most of the changes are:
-
-Changes in v2:
--Rebased on driver-core/driver-core-next
--Add documentation describing the EFI embedded firmware mechanism to:
- Documentation/driver-api/firmware/request_firmware.rst
--Add a new EFI_EMBEDDED_FIRMWARE Kconfig bool and only build the embedded
- fw support if this is set. This is an invisible option which should be
- selected by drivers which need this
--Remove the efi_embedded_fw_desc and dmi_system_id-s for known devices
- from the efi-embedded-fw code, instead drivers using this are expected to
- export a dmi_system_id array, with each entries' driver_data pointing to a
- efi_embedded_fw_desc struct and register this with the efi-embedded-fw code
--Use kmemdup to make a copy instead of efi_mem_reserve()-ing the firmware,
- this avoids us messing with the EFI memmap and avoids the need to make
- changes to efi_mem_desc_lookup()
--Make the firmware-loader code only fallback to efi_get_embedded_fw() if
- the passed in device has the "efi-embedded-fw" device-property bool set
--Skip usermodehelper fallback when "efi-embedded-firmware" device-property
- is set
-
-Patches 3-5 are new and implement using the EFI embedded-fw mechanism for
-Silead gslXXXX and Chipone icn8505 touchscreens on x86 devices.
-
-Regards,
-
-Hans
+diff --git a/drivers/firmware/efi/embedded-firmware.c b/drivers/firmware/efi/embedded-firmware.c
+index cb57225a340d..26101ac1a282 100644
+--- a/drivers/firmware/efi/embedded-firmware.c
++++ b/drivers/firmware/efi/embedded-firmware.c
+@@ -23,6 +23,9 @@ struct embedded_fw {
+ static LIST_HEAD(found_fw_list);
+ 
+ static const struct dmi_system_id * const embedded_fw_table[] = {
++#ifdef CONFIG_TOUCHSCREEN_DMI
++	touchscreen_dmi_table,
++#endif
+ 	NULL
+ };
+ 
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index b836576f0fe4..5bb0f5edd7f2 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1197,6 +1197,7 @@ config INTEL_TURBO_MAX_3
+ config TOUCHSCREEN_DMI
+ 	bool "DMI based touchscreen configuration info"
+ 	depends on ACPI && DMI && I2C=y && TOUCHSCREEN_SILEAD
++	select EFI_EMBEDDED_FIRMWARE if EFI_STUB
+ 	---help---
+ 	  Certain ACPI based tablets with e.g. Silead or Chipone touchscreens
+ 	  do not have enough data in ACPI tables for the touchscreen driver to
+diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+index 87fc839b28f7..6488cd50ba79 100644
+--- a/drivers/platform/x86/touchscreen_dmi.c
++++ b/drivers/platform/x86/touchscreen_dmi.c
+@@ -15,12 +15,15 @@
+ #include <linux/acpi.h>
+ #include <linux/device.h>
+ #include <linux/dmi.h>
++#include <linux/efi_embedded_fw.h>
+ #include <linux/i2c.h>
+ #include <linux/notifier.h>
+ #include <linux/property.h>
+ #include <linux/string.h>
+ 
+ struct ts_dmi_data {
++	/* The EFI embedded-fw code expects this to be the first member! */
++	struct efi_embedded_fw_desc embedded_fw;
+ 	const char *acpi_name;
+ 	const struct property_entry *properties;
+ };
+@@ -31,10 +34,17 @@ static const struct property_entry cube_iwork8_air_props[] = {
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+ 	PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-cube-iwork8-air.fw"),
+ 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
++	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
+ 	{ }
+ };
+ 
+ static const struct ts_dmi_data cube_iwork8_air_data = {
++	.embedded_fw = {
++		.name	= "silead/gsl3670-cube-iwork8-air.fw",
++		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
++		.length	= 38808,
++		.crc	= 0xfecde51f,
++	},
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= cube_iwork8_air_props,
+ };
+@@ -119,10 +129,17 @@ static const struct property_entry pipo_w2s_props[] = {
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+ 	PROPERTY_ENTRY_STRING("firmware-name",
+ 			      "gsl1680-pipo-w2s.fw"),
++	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
+ 	{ }
+ };
+ 
+ static const struct ts_dmi_data pipo_w2s_data = {
++	.embedded_fw = {
++		.name	= "silead/gsl1680-pipo-w2s.fw",
++		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
++		.length	= 39072,
++		.crc	= 0x28d5dc6c,
++	},
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= pipo_w2s_props,
+ };
+@@ -162,10 +179,17 @@ static const struct property_entry chuwi_hi8_pro_props[] = {
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+ 	PROPERTY_ENTRY_STRING("firmware-name", "gsl3680-chuwi-hi8-pro.fw"),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
++	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
+ 	{ }
+ };
+ 
+ static const struct ts_dmi_data chuwi_hi8_pro_data = {
++	.embedded_fw = {
++		.name	= "silead/gsl3680-chuwi-hi8-pro.fw",
++		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
++		.length	= 39864,
++		.crc	= 0xfe2bedba,
++	},
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= chuwi_hi8_pro_props,
+ };
+@@ -277,7 +301,7 @@ static const struct ts_dmi_data teclast_x3_plus_data = {
+ 	.properties	= teclast_x3_plus_props,
+ };
+ 
+-static const struct dmi_system_id touchscreen_dmi_table[] = {
++const struct dmi_system_id touchscreen_dmi_table[] = {
+ 	{
+ 		/* CUBE iwork8 Air */
+ 		.driver_data = (void *)&cube_iwork8_air_data,
+diff --git a/include/linux/efi_embedded_fw.h b/include/linux/efi_embedded_fw.h
+index 0f7d4df3f57a..4c8cfe38ec02 100644
+--- a/include/linux/efi_embedded_fw.h
++++ b/include/linux/efi_embedded_fw.h
+@@ -20,6 +20,8 @@ struct efi_embedded_fw_desc {
+ 	u32 crc;
+ };
+ 
++extern const struct dmi_system_id touchscreen_dmi_table[];
++
+ int efi_get_embedded_fw(const char *name, void **dat, size_t *sz, size_t msize);
+ 
+ #endif
+-- 
+2.17.0
