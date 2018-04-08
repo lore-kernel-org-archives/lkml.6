@@ -1,101 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752574AbeDHQP7 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 12:15:59 -0400
-Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:56934 "EHLO
-        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752340AbeDHQP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 12:15:58 -0400
-Date: Sun, 8 Apr 2018 12:15:56 -0400
-From: Wakko Warner <wakko@animx.eu.org>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: 4.15.14 crash with iscsi target and dvd
-Message-ID: <20180408161556.GB22869@animx.eu.org>
-References: <20180401113721.GA8471@animx.eu.org>
- <20180401163604.GB25011@animx.eu.org>
- <20180401182723.GA31755@animx.eu.org>
- <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
- <20180406014644.GA16112@animx.eu.org>
- <20180406020651.GB16112@animx.eu.org>
- <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
- <20180407165335.GA2515@animx.eu.org>
- <1ff8d234cc565ba9701ce31899fca5faa597e050.camel@wdc.com>
- <20180408160254.GA22869@animx.eu.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180408160254.GA22869@animx.eu.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1752615AbeDHQbJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 12:31:09 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54439 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752492AbeDHQbH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 12:31:07 -0400
+X-Google-Smtp-Source: AIpwx49wXBx9VeNg3TsHs2eFXfUvXvTNQPLSNSuAWNpLIPoLHt3P8imRLIk9awxRC062HQIy28zPvA==
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@linux.vnet.ibm.com,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: [RFC PATCH v2 0/6] Documentation/features: Provide and apply 'features-refresh.sh'
+Date: Sun,  8 Apr 2018 18:30:21 +0200
+Message-Id: <1523205027-31786-1-git-send-email-andrea.parri@amarulasolutions.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wakko Warner wrote:
-> Bart Van Assche wrote:
-> > Have you tried to modify the kernel Makefile as indicated in the following
-> > e-mail? This should make the kernel build:
-> > 
-> > https://lists.ubuntu.com/archives/kernel-team/2016-May/077178.html
-> 
-> Thanks.  That helped.
-> 
-> I finished with git bisect.  Here's the output:
-> 84c8590646d5b35804bac60eb58b145839b5893e is the first bad commit
-> commit 84c8590646d5b35804bac60eb58b145839b5893e
-> Author: Ming Lei <tom.leiming@gmail.com>
-> Date:   Fri Nov 11 20:05:32 2016 +0800
-> 
->     target: avoid accessing .bi_vcnt directly
->     
->     When the bio is full, bio_add_pc_page() will return zero,
->     so use this information tell when the bio is full.
->     
->     Also replace access to .bi_vcnt for pr_debug() with bio_segments().
->     
->     Reviewed-by: Christoph Hellwig <hch@lst.de>
->     Signed-off-by: Ming Lei <tom.leiming@gmail.com>
->     Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
->     Signed-off-by: Jens Axboe <axboe@fb.com>
-> 
-> :040000 040000 a3ebbb71c52ee4eb8c3be4d033b81179211bf704 de39a328dbd1b18519946b3ad46d9302886e0dd0 M      drivers
-> 
-> I did a diff between HEAD^ and HEAD and manually patched the file from
-> 4.15.14.  It's not an exact revert.  I'm running it now and it's working.
-> I'll do a better test later on.  Here's the patch:
-> 
-> --- a/drivers/target/target_core_pscsi.c	2018-02-04 14:31:31.077316617 -0500
-> +++ b/drivers/target/target_core_pscsi.c	2018-04-08 11:43:49.588641374 -0400
-> @@ -915,7 +915,9 @@
->  					bio, page, bytes, off);
->  			pr_debug("PSCSI: bio->bi_vcnt: %d nr_vecs: %d\n",
->  				bio_segments(bio), nr_vecs);
-> -			if (rc != bytes) {
-> +			if (rc != bytes)
-> +				goto fail;
-> +			if (bio->bi_vcnt > nr_vecs) {
->  				pr_debug("PSCSI: Reached bio->bi_vcnt max:"
->  					" %d i: %d bio: %p, allocating another"
->  					" bio\n", bio->bi_vcnt, i, bio);
-> 
-> I really appreciate your time and assistance with this.
+Hi,
 
-One thing I noticed after doing this is errors in the kernel log on the
-initiator:
-[9072625.181744] sr 26:0:0:0: [sr1] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
-[9072625.181802] sr 26:0:0:0: [sr1] tag#0 Sense Key : 0x2 [current] 
-[9072625.181835] sr 26:0:0:0: [sr1] tag#0 ASC=0x8 ASCQ=0x0 
-[9072625.181866] sr 26:0:0:0: [sr1] tag#0 CDB: opcode=0x28 28 00 00 0a 81 22 00 00 80 00
-[9072625.181919] blk_update_request: I/O error, dev sr1, sector 2753672
+This series provides the script 'features-refresh.sh', which operates on
+the arch support status files, and it applies this script to refresh the
+status files in place; previous discussions about this series are at [1].
 
-When doing the exact same thing on the target, no mention.  My patch may not
-be right, but it doesn't cause an oops.
+The series is organized as follows.
 
-I'm going to try 4.16.1 and see what happens.
+  - Patch 1/6 adds the script to 'Documentation/features/scripts/'.
+
+  - Patch 2/6 presents the results of running the script; this run
+    also printed the messages
+
+       WARNING: 'HAVE_BPF_JIT' is not a valid Kconfig
+       WARNING: '__HAVE_ARCH_STRNCASECMP' is not a valid Kconfig
+       WARNING: 'Optimized asm/rwsem.h' is not a valid Kconfig
+       WARNING: '__HAVE_ARCH_PTE_SPECIAL' is not a valid Kconfig
+
+    to standard output.
+
+  - Patches 3-6/6 fix each of these warnings.
+
+(Applies on today's mainline.)
+
+Cheers,
+  Andrea
+
+[1] https://marc.info/?l=linux-kernel&m=152223974927255&w=2
+    https://marc.info/?l=linux-kernel&m=152277458614862&w=2
+
+Changes in v2:
+  - support negation operators in Kconfig (suggested by Ingo Molnar)
+  - reorder patches 2/6 and 3/6 (suggested by Ingo Molnar)
+  - add patches 4-6/6 (suggested by Ingo Molnar)
+
+Andrea Parri (6):
+  Documentation/features: Add script that refreshes the arch support
+    status files in place
+  Documentation/features: Refresh the arch support status files in place
+  Documentation/features/core: Add arch support status files for
+    'cBPF-JIT' and 'eBPF-JIT'
+  Documentation/features/locking: Use '!RWSEM_GENERIC_SPINLOCK' as
+    Kconfig for 'rwsem-optimized'
+  Documentation/features/lib: Remove arch support status file for
+    'strncasecmp'
+  Documentation/features/vm: Remove arch support status file for
+    'pte_special'
+
+ .../features/core/BPF-JIT/arch-support.txt         | 31 -------
+ .../features/core/cBPF-JIT/arch-support.txt        | 33 ++++++++
+ .../features/core/eBPF-JIT/arch-support.txt        | 33 ++++++++
+ .../core/generic-idle-thread/arch-support.txt      |  4 +-
+ .../features/core/jump-labels/arch-support.txt     |  2 +
+ .../features/core/tracehook/arch-support.txt       |  2 +
+ .../features/debug/KASAN/arch-support.txt          |  4 +-
+ .../debug/gcov-profile-all/arch-support.txt        |  2 +
+ Documentation/features/debug/kgdb/arch-support.txt |  4 +-
+ .../debug/kprobes-on-ftrace/arch-support.txt       |  2 +
+ .../features/debug/kprobes/arch-support.txt        |  4 +-
+ .../features/debug/kretprobes/arch-support.txt     |  4 +-
+ .../features/debug/optprobes/arch-support.txt      |  4 +-
+ .../features/debug/stackprotector/arch-support.txt |  2 +
+ .../features/debug/uprobes/arch-support.txt        |  6 +-
+ .../debug/user-ret-profiler/arch-support.txt       |  2 +
+ .../features/io/dma-api-debug/arch-support.txt     |  2 +
+ .../features/io/dma-contiguous/arch-support.txt    |  4 +-
+ .../features/io/sg-chain/arch-support.txt          |  2 +
+ .../features/lib/strncasecmp/arch-support.txt      | 31 -------
+ .../locking/cmpxchg-local/arch-support.txt         |  4 +-
+ .../features/locking/lockdep/arch-support.txt      |  4 +-
+ .../locking/queued-rwlocks/arch-support.txt        | 10 ++-
+ .../locking/queued-spinlocks/arch-support.txt      |  8 +-
+ .../locking/rwsem-optimized/arch-support.txt       | 10 ++-
+ .../features/perf/kprobes-event/arch-support.txt   |  6 +-
+ .../features/perf/perf-regs/arch-support.txt       |  4 +-
+ .../features/perf/perf-stackdump/arch-support.txt  |  4 +-
+ .../sched/membarrier-sync-core/arch-support.txt    |  2 +
+ .../features/sched/numa-balancing/arch-support.txt |  6 +-
+ Documentation/features/scripts/features-refresh.sh | 98 ++++++++++++++++++++++
+ .../seccomp/seccomp-filter/arch-support.txt        |  6 +-
+ .../time/arch-tick-broadcast/arch-support.txt      |  4 +-
+ .../features/time/clockevents/arch-support.txt     |  4 +-
+ .../time/context-tracking/arch-support.txt         |  2 +
+ .../features/time/irq-time-acct/arch-support.txt   |  4 +-
+ .../time/modern-timekeeping/arch-support.txt       |  2 +
+ .../features/time/virt-cpuacct/arch-support.txt    |  2 +
+ .../features/vm/ELF-ASLR/arch-support.txt          |  4 +-
+ .../features/vm/PG_uncached/arch-support.txt       |  2 +
+ Documentation/features/vm/THP/arch-support.txt     |  2 +
+ Documentation/features/vm/TLB/arch-support.txt     |  2 +
+ .../features/vm/huge-vmap/arch-support.txt         |  2 +
+ .../features/vm/ioremap_prot/arch-support.txt      |  2 +
+ .../features/vm/numa-memblock/arch-support.txt     |  4 +-
+ .../features/vm/pte_special/arch-support.txt       | 31 -------
+ 46 files changed, 279 insertions(+), 128 deletions(-)
+ delete mode 100644 Documentation/features/core/BPF-JIT/arch-support.txt
+ create mode 100644 Documentation/features/core/cBPF-JIT/arch-support.txt
+ create mode 100644 Documentation/features/core/eBPF-JIT/arch-support.txt
+ delete mode 100644 Documentation/features/lib/strncasecmp/arch-support.txt
+ create mode 100755 Documentation/features/scripts/features-refresh.sh
+ delete mode 100644 Documentation/features/vm/pte_special/arch-support.txt
 
 -- 
- Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
- million bugs.
+2.7.4
