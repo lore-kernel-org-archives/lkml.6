@@ -1,34 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752920AbeDHQvR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 12:51:17 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:51884 "EHLO
+        id S1752954AbeDHQwd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 12:52:33 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:51908 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752137AbeDHQvP (ORCPT
+        with ESMTP id S1751919AbeDHQwc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 12:51:15 -0400
-Date: Sun, 08 Apr 2018 12:51:14 -0400 (EDT)
-Message-Id: <20180408.125114.2111042327285982582.davem@davemloft.net>
-To: march511@gmail.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] make net_gso_ok return false when gso_type is
- zero(invalid)
+        Sun, 8 Apr 2018 12:52:32 -0400
+Date: Sun, 08 Apr 2018 12:52:30 -0400 (EDT)
+Message-Id: <20180408.125230.1777996328363149390.davem@davemloft.net>
+To: haibinzhang@tencent.com
+Cc: mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lidongchen@tencent.com,
+        yunfangtai@tencent.com
+Subject: Re: [PATCH] vhost-net: set packet weight of tx polling to 2 * vq
+ size
 From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180406014340.1562-1-march511@gmail.com>
-References: <20180406014340.1562-1-march511@gmail.com>
+In-Reply-To: <88D661ADF6AFBF42B2AB88D8E7682B0901FC47D3@EXMBX-SZMAIL011.tencent.com>
+References: <88D661ADF6AFBF42B2AB88D8E7682B0901FC47D3@EXMBX-SZMAIL011.tencent.com>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=utf-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w38GqebI009722
 
-From: Wenhua Shi <march511@gmail.com>
-Date: Fri,  6 Apr 2018 03:43:39 +0200
+From: haibinzhang(张海斌) <haibinzhang@tencent.com>
+Date: Fri, 6 Apr 2018 08:22:37 +0000
 
-> Signed-off-by: Wenhua Shi <march511@gmail.com>
+> handle_tx will delay rx for tens or even hundreds of milliseconds when tx busy
+> polling udp packets with small length(e.g. 1byte udp payload), because setting
+> VHOST_NET_WEIGHT takes into account only sent-bytes but no single packet length.
+> 
+> Ping-Latencies shown below were tested between two Virtual Machines using
+> netperf (UDP_STREAM, len=1), and then another machine pinged the client:
+...
+> Signed-off-by: Haibin Zhang <haibinzhang@tencent.com>
+> Signed-off-by: Yunfang Tai <yunfangtai@tencent.com>
+> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
 
-This precondition should be made impossible instead of having to do
-an extra check everywhere that this helper is invoked, many of which
-are in fast paths.
+Michael and Jason, please review.
