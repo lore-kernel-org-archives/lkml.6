@@ -1,193 +1,177 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1850428-1523178560-2-11636447789300463606
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='iso-8859-1', plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523178559; b=Ao1X/oSIB5h4N61Qk/Flawhbx5KuAByqZewrzvwsrePvEvCS7m
-    6TDgDNU3WVYZhbxG1rl9F/f74SlgznY0tPvij2snvbZyrM8M/ShXuL6kdLlaIQZl
-    nXhEsHhAFAX/ePyjDJbI3MAxEgO4W8xiX4NuGlnllg5TD2mpZIRjC5w1FlXUm8dw
-    bekbIotGv117lIh4PIOaky1D7vVsGxtmgkNcdnDX2+c6ZlmME3PpOGUO8vFfT8uF
-    crErVhas9vmMccfH3Uc4VxMddYM19zYDT2Ii3AV77DPwk4p+uLPrzxSjK4RA6jms
-    dFUP9mz0A5cBIPNF0Ky+rwZoejNuuPmdbEFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523178559; bh=g0nYI
-    3XciCDWSx+wmdDDFAmEAfBheTKsjF9Lq0Tnqc4=; b=WFLCFqDneVWEyjgQhh7MB
-    Pq2dhQJSon7SZd3TSmy27NNS55AvSjaSDiv3AFsoYqh9abXcedOxMvFXTN/7Jrd/
-    DOkl2IxK/tOs0yYAmo6YUJdfuF1QbjIqEMB3FSMSBG4zBycrh3BpPpeMkt2kjlvG
-    q1sAOmQFgqrcdtU7lR4h7aJZrasFMfyDhmhdk0BT4E7ARE6+Aecy+ZGaHrNu3C7G
-    pfkBbuuWPVADUwM3jdRKT7jThd60EIlq6xYAnBs582BorYRwj2TsXLi5mymkYZws
-    bnWd/HFD4NbQGTITNsaMSctJCfE6+T/uy9pgJ4dKtPRDu4pUHtFFaaTez4HW9bZx
-    Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEGwQfPWvOomDDWyl4rmA9wdQabKttEFA8GmpKLwBoGVzMBczeUb5Y8QEVfMRW9fY/ZNOLxHV34WFFx0QaxirnDpUbF5hma4hp4V60IPY/sQwEwt47IL
-    vcCj3h1IvCOFcqozgJGf6PISx0rCls4Ftb6/Aosy5wpy1F87Xp6ws9u8mPSpBAKXbJL5HcFTSbA1lliNZ16BLKB9vCH6PV2F8gpiFwWIbPZRWu8R8Rc1mbct
-    0KtAXpqt5m7YeRtmmIwqEQ==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=NEAV23lmAAAA:8 a=bt8Zh30PAAAA:8
-    a=dlI4R5ZWAAAA:8 a=i3X5FwGiAAAA:8 a=DDOyTI_5AAAA:8 a=qG9lFEno9mWciLaZM6MA:9
-    a=CjuIK1q_8ugA:10 a=_Et68LT86lDbNqPJMOLW:22 a=mmqRlSCDY2ywfjPLJ4af:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Sun, 8 Apr 2018 17:09:03 +0800
-From: Baoquan He <bhe@redhat.com>
-To: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH v2 1/3] resource: Use list_head to link sibling resource
-Message-ID: <20180408090903.GE19345@localhost.localdomain>
-References: <20180408024724.16812-2-bhe@redhat.com>
- <201804081247.F3eqBMih%fengguang.wu@intel.com>
+Return-Path: <dongsheng.wang@hxt-semitech.com>
+X-Google-Smtp-Source: AIpwx499RPIF5ad/WCA6v02oJ44pLbavMUM0Z4oIpRAsSQc4hsahD7q59mbwm8Vse8/VZWpWOhP0
+ARC-Seal: i=1; a=rsa-sha256; t=1523175023; cv=none;
+        d=google.com; s=arc-20160816;
+        b=KnxP4EcmdemLwxd2x2cRkH6p6esPPweLGWMEFU51YXjzgpFYgQMoIoDuH7QET4YxgI
+         6K3ia+h+lqaFhCqIgr65QRuGKZguyd5iFWhEmtvtAkwm3+phFZUo2CCoNssWRlt5veL2
+         /ycjlvKrfeyVYJUKybdLfAeskL09VGNT9cAA6gGZFMUZIGuOy4W5A9rNl4ZJrKBjP3hD
+         2JRRWPXiizSAVHUIyQNupc1TuK2K1roqS+uKCwqs6AyEfjVUvmfPaaIGi8GSDc/J5yvl
+         Dkpb3ihS42mTLu7j3JGtOqoktlrmzcD63DwNDU738jFiZ3JllB5F9IGhCNCNCtqeCvyl
+         /8lg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:dlp-reaction:dlp-version
+         :dlp-product:content-language:accept-language:message-id:date
+         :thread-index:thread-topic:subject:cc:to:from
+         :arc-authentication-results;
+        bh=9QQoI2GYk/O+h4I89XMrmFRM9dxQvnp0kRm2UV4EXXI=;
+        b=Ts2m6i2+KrM0qtdjMS3fWBuy/N2P83BqJWKwyvdzLddF7fPimpwtMpvlP4i/Yag3G3
+         LUcp4CoEW7XHNmuBNJddvH9GCfAbMiZSSMIO7hKwknq8m1rYQETEjBY1pt0Bni4ENSLx
+         4oA0DStSnmmDkLMNjsG51ca5nK9NM4IOOCtSnWQH1/B/jaHno0/0DC/vwFVLE5R3v+1O
+         QKhDajI2667m6pWcusXS+rMO76JFyPGyDasND8gJy3JLfuMgtrol+tD34lWiRjSEXmWG
+         SeF8l9n/zb1rvb6Pc7sy+y58OWO9CK8Na+IBjSRWexrBI4Mchx9hlw+536HM3B7KlIew
+         hnyQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of dongsheng.wang@hxt-semitech.com designates 223.203.96.7 as permitted sender) smtp.mailfrom=dongsheng.wang@hxt-semitech.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of dongsheng.wang@hxt-semitech.com designates 223.203.96.7 as permitted sender) smtp.mailfrom=dongsheng.wang@hxt-semitech.com
+X-ASG-Debug-ID: 1523175019-093b7e10b33f590001-y9GDlS
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+From: "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To: Robin Murphy <robin.murphy@arm.com>, Lorenzo Pieralisi
+	<lorenzo.pieralisi@arm.com>
+CC: "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "hanjun.guo@linaro.org"
+	<hanjun.guo@linaro.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"Zheng, Joey" <yu.zheng@hxt-semitech.com>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: Re: [RFC PATCH 2/2] ACPI/IORT: use swiotlb_dma_ops when smmu
+ probe failed
+Thread-Topic: Re: [RFC PATCH 2/2] ACPI/IORT: use swiotlb_dma_ops when smmu
+ probe failed
+X-ASG-Orig-Subj: RE: Re: [RFC PATCH 2/2] ACPI/IORT: use swiotlb_dma_ops when smmu
+ probe failed
+Thread-Index: AdPPDfXxE8LZSQ+sRiaB1Yr0///HDA==
+Date: Sun, 8 Apr 2018 08:10:20 +0000
+Message-ID: <63635b42529a48d39f36112a031e3655@HXTBJIDCEMVIW02.hxtcorp.net>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.2.3
+dlp-reaction: no-action
+x-originating-ip: [10.64.6.71]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <201804081247.F3eqBMih%fengguang.wu@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Brijesh Singh <brijesh.singh@amd.com>, devicetree@vger.kernel.org,
- David Airlie <airlied@linux.ie>, linux-pci@vger.kernel.org,
- Wei Yang <richard.weiyang@gmail.com>, Keith Busch <keith.busch@intel.com>,
- Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
- Frank Rowand <frowand.list@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Stephen Hemminger <sthemmin@microsoft.com>, linux-nvdimm@lists.01.org,
- Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, linux-input@vger.kernel.org,
- Borislav Petkov <bp@suse.de>, Tom Lendacky <thomas.lendacky@amd.com>,
- Haiyang Zhang <haiyangz@microsoft.com>,
- =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
- Rob Herring <robh+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Derrick <jonathan.derrick@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org,
- kbuild-all@01.org, devel@linuxdriverproject.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-Barracuda-Connect: localhost[10.128.0.14]
+X-Barracuda-Start-Time: 1523175019
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5003 1.0000 0.7500
+X-Barracuda-Spam-Score: 0.75
+X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49685
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596265798784882877?=
+X-GMAIL-MSGID: =?utf-8?q?1597164773662991767?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
-
-Thanks for telling!
-
-On 04/08/18 at 12:12pm, kbuild test robot wrote:
-> Hi Baoquan,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.16 next-20180406]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Baoquan-He/resource-Use-list_head-to-link-sibling-resource/20180408-110108
-> config: parisc-c3000_defconfig (attached as .config)
-> compiler: hppa-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=parisc 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    drivers//parisc/lba_pci.c: In function 'lba_dump_res':
-> >> drivers//parisc/lba_pci.c:173:15: error: incompatible type for argument 1 of 'lba_dump_res'
->      lba_dump_res(r->child, d+2);
-
-I compiled with allyesconfig, don't know why this was missed. Will
-change and repost.
-
->                   ^
->    drivers//parisc/lba_pci.c:162:1: note: expected 'struct resource *' but argument is of type 'struct list_head'
->     lba_dump_res(struct resource *r, int d)
->     ^~~~~~~~~~~~
->    drivers//parisc/lba_pci.c:174:15: error: incompatible type for argument 1 of 'lba_dump_res'
->      lba_dump_res(r->sibling, d);
->                   ^
->    drivers//parisc/lba_pci.c:162:1: note: expected 'struct resource *' but argument is of type 'struct list_head'
->     lba_dump_res(struct resource *r, int d)
->     ^~~~~~~~~~~~
-> 
-> vim +/lba_dump_res +173 drivers//parisc/lba_pci.c
-> 
-> ^1da177e Linus Torvalds 2005-04-16  159  
-> ^1da177e Linus Torvalds 2005-04-16  160  
-> ^1da177e Linus Torvalds 2005-04-16  161  static void
-> ^1da177e Linus Torvalds 2005-04-16  162  lba_dump_res(struct resource *r, int d)
-> ^1da177e Linus Torvalds 2005-04-16  163  {
-> ^1da177e Linus Torvalds 2005-04-16  164  	int i;
-> ^1da177e Linus Torvalds 2005-04-16  165  
-> ^1da177e Linus Torvalds 2005-04-16  166  	if (NULL == r)
-> ^1da177e Linus Torvalds 2005-04-16  167  		return;
-> ^1da177e Linus Torvalds 2005-04-16  168  
-> ^1da177e Linus Torvalds 2005-04-16  169  	printk(KERN_DEBUG "(%p)", r->parent);
-> ^1da177e Linus Torvalds 2005-04-16  170  	for (i = d; i ; --i) printk(" ");
-> 645d11d4 Matthew Wilcox 2006-12-24  171  	printk(KERN_DEBUG "%p [%lx,%lx]/%lx\n", r,
-> 645d11d4 Matthew Wilcox 2006-12-24  172  		(long)r->start, (long)r->end, r->flags);
-> ^1da177e Linus Torvalds 2005-04-16 @173  	lba_dump_res(r->child, d+2);
-> ^1da177e Linus Torvalds 2005-04-16  174  	lba_dump_res(r->sibling, d);
-> ^1da177e Linus Torvalds 2005-04-16  175  }
-> ^1da177e Linus Torvalds 2005-04-16  176  
-> 
-> :::::: The code at line 173 was first introduced by commit
-> :::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
-> 
-> :::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
-> :::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFJvYmluIE11cnBoeSBbbWFp
+bHRvOnJvYmluLm11cnBoeUBhcm0uY29tXQ0KPiBTZW50OiBUaHVyc2RheSwgQXByaWwgMDUsIDIw
+MTggMjo1NyBBTQ0KPiBUbzogTG9yZW56byBQaWVyYWxpc2kgPGxvcmVuem8ucGllcmFsaXNpQGFy
+bS5jb20+OyBXYW5nLCBEb25nc2hlbmcNCj4gPGRvbmdzaGVuZy53YW5nQGh4dC1zZW1pdGVjaC5j
+b20+DQo+IENjOiByandAcmp3eXNvY2tpLm5ldDsgZ3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc7
+IGhhbmp1bi5ndW9AbGluYXJvLm9yZzsNCj4gc3VkZWVwLmhvbGxhQGFybS5jb207IFpoZW5nLCBK
+b2V5IDx5dS56aGVuZ0BoeHQtc2VtaXRlY2guY29tPjsNCj4gbGludXgtYWNwaUB2Z2VyLmtlcm5l
+bC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW+atpOmCruS7
+tuWPr+iDveWtmOWcqOmjjumZqV0gUmU6IFtSRkMgUEFUQ0ggMi8yXSBBQ1BJL0lPUlQ6IHVzZQ0K
+PiBzd2lvdGxiX2RtYV9vcHMgd2hlbiBzbW11IHByb2JlIGZhaWxlZA0KPiANCj4gT24gMDQvMDQv
+MTggMTc6MDEsIExvcmVuem8gUGllcmFsaXNpIHdyb3RlOg0KPiA+IFsrY2MgUm9iaW5dDQo+ID4N
+Cj4gPiBPbiBUaHUsIE1hciAyOSwgMjAxOCBhdCAwMzowMTowMEFNIC0wNzAwLCBXYW5nIERvbmdz
+aGVuZyB3cm90ZToNCj4gPj4gSWYgU01NVSBwcm9iZSBmYWlsZWQsIG1hc3RlciBzaG91bGQgdXNl
+IHN3aW90bGIgYXMgZG1hIG9wcy4NCj4gPj4gU01NVSBtYXkgcHJvYmUgZmFpbGVkIHdpdGggc3Bl
+Y2lmaWVkIGVudmlyb25tZW50LCBzbyB0aGVyZQ0KPiA+PiBhcmUgbm90IGFueSBpb21tdSByZXNv
+dXJjZXMgaW4gaW9tbXVfZGV2aWNlX2xpc3QuDQo+ID4+DQo+ID4+IFRoZSBtYXN0ZXIgd2lsbCBh
+bHdheXMgZ2V0IEVQUk9CRV9ERUZFUiBmcm9tIHJlYWxseV9wcm9iZQ0KPiA+PiAoZG1hX2NvbmZp
+Z3VyZSkgYnV0IGluIGZhY3QgU01NVSBoYXMgcHJvYmUgZmFpbGVkLiBUaGUgaXNzdWUNCj4gPj4g
+Y2F1c2VzIGFsbCBvZiBtYXN0ZXJzIGZhaWxlZCB0byBiZSBkcml2ZW4uDQo+IA0KPiBMZXQncyBq
+dXN0IHRha2UgYSBzdGVwIGJhY2sgLSB3aHkgaXMgU01NVSBwcm9iZSBmYWlsaW5nPyBUaGF0IHNl
+ZW1zIHRvDQo+IGJlIHRoZSBwcmltYXJ5IGlzc3VlIGhlcmUsIGJlY2F1c2UgaXQgaW1wbGllcyB0
+aGF0IGVpdGhlciB5b3VyIGhhcmR3YXJlLA0KPiBmaXJtd2FyZSBvciBrZXJuZWwgaXMgYnJva2Vu
+LCBhbnkgb2Ygd2hpY2ggd291bGQgbWFrZSBib290IGZhaWx1cmUNCj4gc29tZXdoYXQgdW5zdXJw
+cmlzaW5nIGFueXdheS4NCj4gDQpJdCdzIGFjdHVhbGx5IG5vdCBhIGhhcmR3YXJlIGlzc3VlLiBU
+aGlzIGlzIG15IHRlc3QgY2FzZSwganVzdCByZXR1cm4NCi1FSU5WQUwgaW4gYXJtX3NtbXVfZGV2
+aWNlX3Byb2JlLiBUaGUgSFcgcHJvYmUoYXJtX3NtbXVfZGV2aWNlX2h3X3Byb2JlKQ0KaXMganVz
+dCBwYXJ0IG9mIFNNTVUgZHJpdmVyIHByb2JlIGFuZCB0aGUgZmFpbHVyZSBtYXkgYmUgY2F1c2Vk
+IGJ5IFNXLiBTbw0KSSBkZXNpZ24gdGhpcyBjYXNlLCBqdXN0IG1ha2Ugc3VyZSBldmVuIGlmIFNN
+TVUgcHJvYmUgZmFpbGVkIHRoYXQgY2F1c2UgYnkgU1csDQp0aGUgTUFTVEVSIGFsc28gY2FuIHdv
+cmsuIF9CZWNhdXNlIG9mIG91ciBTTU1VIGRlZmF1bHQgbW9kZSBpcyBieXBhc3MuXw0KDQoNCj4g
+PiBJIGFkZGVkIFJvYmluIHRvIHBpY2sgaGlzIGJyYWluLiBBbiBhbHRlcm5hdGl2ZSB3b3VsZCBj
+b25zaXN0DQo+ID4gaW4gdXNpbmcgYSBidXMgbm90aWZpZXIgdG8gcHJldmVudCBkZWZlcnJlZCBw
+cm9iaW5nIG9uY2UgdGhlIFNNTVUNCj4gPiBkcml2ZXIgcHJvYmluZyBmYWlsZWQgYnV0IHRoYXQg
+c2VlbXMgYmFja3dhcmRzIGdpdmVuIHRoYXQgYSBtYWpvcg0KPiA+IHJlYXNvbiB0byBtb3ZlIHRv
+IGRlZmVycmVkIHByb2Jpbmcgd2FzIHRvIHJlbW92ZSB0aGUgYnVzIG5vdGlmaWVycw0KPiA+IGRl
+cGVuZGVuY3kgaW4gdGhlIGZpcnN0IHBsYWNlLg0KPiA+DQo+ID4gSXQgc2VlbXMgdG8gbWUgdGhp
+cyBpcyBib3RoIGFuIE9GL0FDUEkgaXNzdWUgLSBpdCBpcyBub3QgYW4gSU9SVA0KPiA+IG9ubHkg
+cHJvYmxlbS4NCj4gDQo+IFllcywgdGhpcyBpcyBqdXN0IGFuIGluc3RhbmNlIG9mIHRoZSBnZW5l
+cmFsIHByb2JlLWRlZmVycmFsIHByb2JsZW0sDQo+IGUuZy4gb25jZSB5b3UgaGF2ZSBtdWx0aXBs
+ZSBkZXBlbmRlbmNpZXMgaXQncyBwb3NzaWJsZSB0byBlbmQgdXAgaW4gYQ0KPiBzdGFsZW1hdGUg
+d2hlcmUgZXZlcnl0aGluZyBpbmNsdWRpbmcgdGhlIElPTU1VIGVuZHMgdXAgb24gdGhlIGRlZmVy
+cmVkDQo+IHByb2JlIGxpc3Qgd2l0aCBub3RoaW5nIHRvIGtpY2sgaXQgYW5kIG1ha2UgcHJvZ3Jl
+c3MgYWdhaW4uDQo+IA0KPiBGdXJ0aGVybW9yZSBpdCBzZWVtcyB0byBtZSB0aGF0IHRoZSB3aG9s
+ZSBwcmVtaXNlIGluIHRoaXMgcGF0Y2ggaXMNCj4gZmxhd2VkLA0KRGl0dG8uIDopDQoNCg0KPiBz
+aW5jZSBldmVuIGdlbnVpbmUgcHJvYmUgZmFpbHVyZSBtYXkgd2VsbCBiZSB0cmFuc2llbnQgLSBq
+dXN0DQo+IGJlY2F1c2Ugb25lIGF0dGVtcHQgZmFpbGVkIGRvZXNuJ3QgbWVhbiBhIGxhdGVyIGF0
+dGVtcHQgY2FuJ3Qgc3VjY2VlZC4NCj4gVGh1cyAidGhlIG1vc3QgcmVjZW50IHByb2JlIGF0dGVt
+cHQgZmFpbGVkIiBjYW5ub3QgYmUgY29uc2lkZXJlZCBhDQo+IGZ1bmRhbWVudGFsbHkgZGlmZmVy
+ZW50IHN0YXRlIGZyb20gIm5vIGRyaXZlciBpcyBjdXJyZW50bHkgYm91bmQiLg0KPiANCkFncmVl
+LCB0aGUgZ2VudWluZSBwcm9iZSBmYWlsdXJlIG1heSB3ZWxsIGJlIHRyYW5zaWVudC4gQnV0IHRo
+ZXJlIGlzDQpkZXBlbmQgb24gU01NVSBwcm9iZShJT01NVSBpbnN0YW5jZSkgc3RhdHVzLiBUaGVy
+ZSBhcmUgdHdvIHNpdHVhdGlvbnM6DQoNCjEuIE1BU1RFUiBwcm9iaW5nLCBTTU1VIGRvZXNuJ3Qg
+cHJvYmUgeWV0Lg0KCVRoaXMgY2FzZSB3aWxsIG1hdGNoICJ0aGUgdHJhbnNpZW50IGZhaWx1cmUi
+Lg0KCXJlYWxseV9wcm9iZSBnZXQgYW4gRVBST0JFX0RFRkVSIGZyb20gSU9SVCBhbmQgdGhlIE1B
+U1RFUiBwcm9iZSB3aWxsIGJlDQoJZGVsYXllZCB1bnRpbCBTTU1VIHByb2JlIHN1Y2Nlc3NmdWwu
+DQoyLiBNQVNURVIgcHJvYmluZywgU01NVSBwcm9iZSBoYXMgZmFpbGVkLg0KCXJlYWxseV9wcm9i
+ZSB3aWxsIGFsd2F5cyBnZXQgYW4gRVBST0JFX0RFRkVSIGZyb20gSU9SVCwgYmVjYXVzZSBrZXJu
+ZWwNCgloYXMgYnVpbGQgaW4gU01NVSBkcml2ZXIuKGlvcnRfaW9tbXVfZHJpdmVyX2VuYWJsZWQp
+IEFuZCB0aGUgbWFzdGVyDQoJbmV2ZXIgY2Fubm90IGRvIHByb2JlLg0KDQpUaGUgY2FzZSAyIGlz
+IEkgd2FudCB0byBoYW5kbGUuDQoNCkNoZWVycywNCi1Eb25nc2hlbmcNCg0KPiBSb2Jpbi4NCj4g
+DQo+ID4NCj4gPiBMb3JlbnpvDQo+ID4NCj4gPj4gU2lnbmVkLW9mZi1ieTogV2FuZyBEb25nc2hl
+bmcgPGRvbmdzaGVuZy53YW5nQGh4dC1zZW1pdGVjaC5jb20+DQo+ID4+IC0tLQ0KPiA+PiAgIGRy
+aXZlcnMvYWNwaS9hcm02NC9pb3J0LmMgfCAzOQ0KPiArKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKystLS0tLS0NCj4gPj4gICAxIGZpbGUgY2hhbmdlZCwgMzMgaW5zZXJ0aW9ucygrKSwg
+NiBkZWxldGlvbnMoLSkNCj4gPj4NCj4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvYWNwaS9hcm02
+NC9pb3J0LmMgYi9kcml2ZXJzL2FjcGkvYXJtNjQvaW9ydC5jDQo+ID4+IGluZGV4IGUyZjdiZGQu
+LmE2ZjRjMjcgMTAwNjQ0DQo+ID4+IC0tLSBhL2RyaXZlcnMvYWNwaS9hcm02NC9pb3J0LmMNCj4g
+Pj4gKysrIGIvZHJpdmVycy9hY3BpL2FybTY0L2lvcnQuYw0KPiA+PiBAQCAtNzc0LDE3ICs3NzQs
+NDUgQEAgc3RhdGljIGludCBhcm1fc21tdV9pb3J0X3hsYXRlKHN0cnVjdCBkZXZpY2UNCj4gKmRl
+diwgdTMyIHN0cmVhbWlkLA0KPiA+PiAgIAlyZXR1cm4gcmV0Ow0KPiA+PiAgIH0NCj4gPj4NCj4g
+Pj4gLXN0YXRpYyBpbmxpbmUgYm9vbCBpb3J0X2lvbW11X2RyaXZlcl9lbmFibGVkKHU4IHR5cGUp
+DQo+ID4+ICtzdGF0aWMgaW50IGlvcnRfY2hlY2tfZGV2X2RsX3N0YXR1cyhzdHJ1Y3QgZGV2aWNl
+ICpkZXYsIHZvaWQgKmRhdGEpDQo+ID4+ICAgew0KPiA+PiArCXN0cnVjdCBmd25vZGVfaGFuZGxl
+ICpmd25vZGUgPSBkYXRhOw0KPiA+PiArDQo+ID4+ICsJaWYgKGRldi0+Zndub2RlICE9IGZ3bm9k
+ZSkNCj4gPj4gKwkJcmV0dXJuIDA7DQo+ID4+ICsNCj4gPj4gKwlpZiAoZGV2LT5saW5rcy5zdGF0
+dXMgPT0gRExfREVWX1BST0JFX0ZBSUxFRCkNCj4gPj4gKwkJcmV0dXJuIC1FTk9ERVY7DQo+ID4+
+ICsNCj4gPj4gKwlyZXR1cm4gLUVQUk9CRV9ERUZFUjsNCj4gPj4gK30NCj4gPj4gKw0KPiA+PiAr
+c3RhdGljIGludCBpb3J0X2lvbW11X2RyaXZlcl9lbmFibGVkKHU4IHR5cGUsIHN0cnVjdCBmd25v
+ZGVfaGFuZGxlDQo+ICpmd25vZGUpDQo+ID4+ICt7DQo+ID4+ICsJYm9vbCBidWlsZGluOw0KPiA+
+PiArCWludCByZXQ7DQo+ID4+ICsNCj4gPj4gICAJc3dpdGNoICh0eXBlKSB7DQo+ID4+ICAgCWNh
+c2UgQUNQSV9JT1JUX05PREVfU01NVV9WMzoNCj4gPj4gLQkJcmV0dXJuIElTX0JVSUxUSU4oQ09O
+RklHX0FSTV9TTU1VX1YzKTsNCj4gPj4gKwkJYnVpbGRpbiA9IElTX0JVSUxUSU4oQ09ORklHX0FS
+TV9TTU1VX1YzKTsNCj4gPj4gKwkJYnJlYWs7DQo+ID4+ICAgCWNhc2UgQUNQSV9JT1JUX05PREVf
+U01NVToNCj4gPj4gLQkJcmV0dXJuIElTX0JVSUxUSU4oQ09ORklHX0FSTV9TTU1VKTsNCj4gPj4g
+KwkJYnVpbGRpbiA9IElTX0JVSUxUSU4oQ09ORklHX0FSTV9TTU1VKTsNCj4gPj4gKwkJYnJlYWs7
+DQo+ID4+ICAgCWRlZmF1bHQ6DQo+ID4+ICAgCQlwcl93YXJuKCJJT1JUIG5vZGUgdHlwZSAldSBk
+b2VzIG5vdCBkZXNjcmliZSBhbiBTTU1VXG4iLA0KPiB0eXBlKTsNCj4gPj4gLQkJcmV0dXJuIGZh
+bHNlOw0KPiA+PiArCQlidWlsZGluID0gZmFsc2U7DQo+ID4+ICAgCX0NCj4gPj4gKw0KPiA+PiAr
+CWlmICghYnVpbGRpbikNCj4gPj4gKwkJcmV0dXJuIC1FTk9ERVY7DQo+ID4+ICsNCj4gPj4gKwly
+ZXQgPSBidXNfZm9yX2VhY2hfZGV2KCZwbGF0Zm9ybV9idXNfdHlwZSwgTlVMTCwgZndub2RlLA0K
+PiA+PiArCQkJICAgICAgIGlvcnRfY2hlY2tfZGV2X2RsX3N0YXR1cyk7DQo+ID4+ICsJaWYgKCFy
+ZXQpDQo+ID4+ICsJCXJldHVybiAtRVBST0JFX0RFRkVSOw0KPiA+PiArDQo+ID4+ICsJcmV0dXJu
+IHJldDsNCj4gPj4gICB9DQo+ID4+DQo+ID4+ICAgI2lmZGVmIENPTkZJR19JT01NVV9BUEkNCj4g
+Pj4gQEAgLTkxOSw4ICs5NDcsNyBAQCBzdGF0aWMgaW50IGlvcnRfaW9tbXVfeGxhdGUoc3RydWN0
+IGRldmljZSAqZGV2LA0KPiBzdHJ1Y3QgYWNwaV9pb3J0X25vZGUgKm5vZGUsDQo+ID4+ICAgCSAq
+Lw0KPiA+PiAgIAlvcHMgPSBpb21tdV9vcHNfZnJvbV9md25vZGUoaW9ydF9md25vZGUpOw0KPiA+
+PiAgIAlpZiAoIW9wcykNCj4gPj4gLQkJcmV0dXJuIGlvcnRfaW9tbXVfZHJpdmVyX2VuYWJsZWQo
+bm9kZS0+dHlwZSkgPw0KPiA+PiAtCQkgICAgICAgLUVQUk9CRV9ERUZFUiA6IC1FTk9ERVY7DQo+
+ID4+ICsJCXJldHVybiBpb3J0X2lvbW11X2RyaXZlcl9lbmFibGVkKG5vZGUtPnR5cGUsIGlvcnRf
+Zndub2RlKTsNCj4gPj4NCj4gPj4gICAJcmV0dXJuIGFybV9zbW11X2lvcnRfeGxhdGUoZGV2LCBz
+dHJlYW1pZCwgaW9ydF9md25vZGUsIG9wcyk7DQo+ID4+ICAgfQ0KPiA+PiAtLQ0KPiA+PiAyLjcu
+NA0KPiA+Pg0K
