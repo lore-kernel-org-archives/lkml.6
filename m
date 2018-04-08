@@ -1,85 +1,87 @@
-Return-Path: <kernel-hardening-return-13046-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/Dma8w7R1ZqhJaSmHip0I13Hn7vytfVQ8L0MBmogCevr5HELxQqGdMCyxL/c0bO58vdav5
-ARC-Seal: i=1; a=rsa-sha256; t=1524081030; cv=none;
+Return-Path: <arend.vanspriel@broadcom.com>
+X-Google-Smtp-Source: AIpwx494p7/GjgQy6RopszazL94Sn3LQydTV16u/AuWBUd20U306OmaE5dLL1cBtQqNoCgnqMAiB
+ARC-Seal: i=1; a=rsa-sha256; t=1523224660; cv=none;
         d=google.com; s=arc-20160816;
-        b=jKjtsgfATLU9rCyVL+Q9ZdklTkHnOIWdq6bDiE9pDmwYHusbQnUQRbMN7UGDet4c9i
-         gA77KvGQKlzu1cyZZemd7pXcXoq86XR5plKvNUFG+INkuK+DDgW/zz4UeNzmcEn1ilAI
-         2shJP5qEehnym2g52/3bfzocA0Y9oAUT0Ix1bkPrrkaSUAHK7ljAkJOFAWun/USBASd5
-         lt/73UC+t3ZgSuhXqQBftfxUXP9EKcDBYfhT6hu3+xHYgvMdbLfNbKRvk8arj047RUrp
-         paX0Miu3YuCDP4G9gXOmFxUEOeTJfGVuny0Riyl9Vj97ujLe3hrbFeR2mdDv1+dmpTtl
-         dj8Q==
+        b=DUiYvQ/WKtvRt7Nv9aywmSDjIl9VdM6jEHc7Zs80pJFWVdRNOnxhypI7VadvPOSrvT
+         V1nB1cECw9RdBkPZi25a9gZEospBOdV6xByjwJDt/q98Ix6NZf9719TMgs7dwftZDJeF
+         jCUgjKlfe5RthCxt/qVlWoIIwtsBAHV15j4/yhVtE8uKgR2HCICX8fLq2sjBLDTnopr/
+         85WxzCwoS2zAAK43jwQKh9/qks7QZqFWGb9QvN6Ra3g/M5D1f8LM6Rsn3wMuX5u3s9oe
+         vBWSPR+hx2iG/qYZnW5KhZF+zQoL3dxmyJ/xdXcfKI19p8AbI2VarPBDd4zaqgqFgmOT
+         ZjcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=TT0oAoffY/QgdwF87ie0MQODftxNQDFM281k2xRoB84=;
-        b=osDPXSol3w4UZsTYUw6Fcb3CoilNmSN/jG12EI/02iHTtf5wsfloH/In6FduWA9LxF
-         SKcaATZPYWmjNagDkGPBUjWSbT5cZlx+U/yyg3vl/fDbeYxe6DMAKyqL6d/cc4q3gkYT
-         we+nFa7x83hweJnb3/N4D2cJarkcksKQAx8n+vNYVZCwVr4U1l27UBI99OtQMHXix0Z1
-         rBeP2QX+OY8iehGmKhGHoWybkFBsCtw0/L6cwEA4wXC13Uy9LGaRBn0T8b9oUE2jpak8
-         jP52WSQQa/plMHpkZCImlW8cEPhNc4bZK9qoRG0N26IhhOspYeYVfVG0C6EWhFMHv7KG
-         SBpg==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=PrK7FhpT4rzuiAe6sZu8ZDGdoYut3Z5VpXt289UJ/J4=;
+        b=wgkucwHZpoOqiQFCldgcTEtTB9d1UHQBy5x+uBRGHO+UoJt48Cd26U/LmwavBMwME8
+         KHXDZYbvyjv/1FWawFWBmOUqCQ/8tRlvpruev5PhIXJr1EjZTjGlzspjZaxvXNmqNbMX
+         ajMYfp8LyBDCrhRVWnPAFn0txqYo4nKgCLkZhS9dWj+MiASN/mTpCNTNygEL6kBtT33S
+         MpsYuBCEGI5F/WN3UI/X2IPsC7giHAKSRfw8QpOu1i9RwlwKKTVF1NEr813PkmQiHC7Y
+         g2dlawXLTtOcDeapT7876vfkhdOn6OBtXcKbmz+f4fmKE0C99I1CGbEH1kbAuU4rod8D
+         C+tg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13046-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13046-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 192.19.229.170 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13046-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13046-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Wed, 18 Apr 2018 12:50:08 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Michal Hocko <mhocko@kernel.org>, Andy Lutomirski <luto@kernel.org>,
- Laura Abbott <labbott@redhat.com>, Rasmus Villemoes
- <rasmus.villemoes@prevas.dk>, LKML <linux-kernel@vger.kernel.org>, Kernel
- Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH v2] fork: Unconditionally clear stack on fork
-Message-Id: <20180418125008.203632feeaf0cac4e51c5b79@linux-foundation.org>
-In-Reply-To: <CAGXu5j+PmPUg9-gx3769X+kjXJo+markuPA3FwredM7jU8CdXg@mail.gmail.com>
-References: <20180221021659.GA37073@beast>
-	<20180221102933.GD2231@dhcp22.suse.cz>
-	<20180221125914.dc95830eada5fb958c13e36b@linux-foundation.org>
-	<CAGXu5j+dc=y+1M=unyvEvCo+QrX3MCW5Hm=2Z+q0a6iC3pgN6g@mail.gmail.com>
-	<CAGXu5j+PmPUg9-gx3769X+kjXJo+markuPA3FwredM7jU8CdXg@mail.gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+       spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 192.19.229.170 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+From: Arend van Spriel <aspriel@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Brian Norris <briannorris@chromium.org>,
+	Arend van Spriel <aspriel@gmail.com>
+Subject: [RESEND PATCH] drivers: change struct device_driver::coredump() return type to void
+Date: Sun,  8 Apr 2018 23:57:07 +0200
+Message-Id: <1523224627-24136-1-git-send-email-aspriel@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592975104699087561?=
-X-GMAIL-MSGID: =?utf-8?q?1598114790019841577?=
+X-GMAIL-THRID: =?utf-8?q?1597216821863949278?=
+X-GMAIL-MSGID: =?utf-8?q?1597216821863949278?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 18 Apr 2018 09:38:07 -0700 Kees Cook <keescook@chromium.org> wrote:
+Upon submitting a patch for mwifiex [1] it was discussed whether this
+callback function could fail. To keep things simple there is no need
+for the error code so the driver can do the task synchronous or not
+without worries. Currently the device driver core already ignores the
+return value so changing it to void.
 
-> >> So some quite careful quantitative testing is needed here, methinks.
-> >
-> > Well, I did some more with perf and cycle counts on running 100,000
-> > execs of /bin/true.
-> >
-> > before:
-> > Cycles: 218858861551 218853036130 214727610969 227656844122 224980542841
-> > Mean:  221015379122.60
-> > Std Dev: 4662486552.47
-> >
-> > after:
-> > Cycles: 213868945060 213119275204 211820169456 224426673259 225489986348
-> > Mean:  217745009865.40
-> > Std Dev: 5935559279.99
-> >
-> > It continues to look like it's faster, though the deviation is rather
-> > wide, but I'm not sure what I could do that would be less noisy. I'm
-> > open to ideas!
-> 
-> Friendly ping. Andrew, can you add this to -mm?
+[1] https://patchwork.kernel.org/patch/10231933/
 
-I did so on Feb 21 but didn't merge it up because I'd told myself that
-careful perf testing is needed.  I guess we've sufficiently ticked that
-box.  Kind of.  Maybe.
+Signed-off-by: Arend van Spriel <aspriel@gmail.com>
+---
+Hi Greg,
 
-Oh well, it's easy enough to revert.  I'll add it to the next
-batch-for-Linus.
+Here is a resend of my patch that got lost. See if it makes it
+this time ;-)
+
+Regards,
+Arend
+---
+ include/linux/device.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 0059b99..4779569 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -256,7 +256,9 @@ enum probe_type {
+  *		automatically.
+  * @pm:		Power management operations of the device which matched
+  *		this driver.
+- * @coredump:	Called through sysfs to initiate a device coredump.
++ * @coredump:	Called when sysfs entry is written to. The device driver
++ *		is expected to call the dev_coredump API resulting in a
++ *		uevent.
+  * @p:		Driver core's private data, no one other than the driver
+  *		core can touch this.
+  *
+@@ -288,7 +290,7 @@ struct device_driver {
+ 	const struct attribute_group **groups;
+ 
+ 	const struct dev_pm_ops *pm;
+-	int (*coredump) (struct device *dev);
++	void (*coredump) (struct device *dev);
+ 
+ 	struct driver_private *p;
+ };
+-- 
+2.7.4
