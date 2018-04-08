@@ -1,69 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751917AbeDHHUm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 03:20:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41151 "EHLO mx2.suse.de"
+        id S1751568AbeDHHek (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 03:34:40 -0400
+Received: from www.zeus03.de ([194.117.254.33]:38702 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751524AbeDHHUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 03:20:41 -0400
-From: Takashi Iwai <tiwai@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ram Pai <linuxram@us.ibm.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Michael Henders <hendersm@shaw.ca>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] resource: Fix integer overflow at reallocation
-Date: Sun,  8 Apr 2018 09:20:26 +0200
-Message-Id: <20180408072026.27365-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.3
+        id S1750892AbeDHHej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 03:34:39 -0400
+X-UD-Smtp-Session: l3s3148p1@1mQ5UlFpHI8gAwDPW+3FAAId4P/+oMhl
+Date: Sun, 8 Apr 2018 09:34:36 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Peter Rosin <peda@axentia.se>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] i2c: Add i2c_verify_device_id() to verify device
+ id
+Message-ID: <20180408073435.i5nq2ngx2fslaz6a@katana>
+References: <1521475859-16765-1-git-send-email-linux@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="355pi5ptdjvmh26z"
+Content-Disposition: inline
+In-Reply-To: <1521475859-16765-1-git-send-email-linux@roeck-us.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We've got a bug report indicating a kernel panic at booting on an
-x86-32 system, and it turned out to be the invalid resource assigned
-after PCI resource reallocation.  __find_resource() first aligns the
-resource start address and resets the end address with start+size-1
-accordingly, then checks whether it's contained.  Here the end address
-may overflow the integer, although resource_contains() still returns
-true because the function validates only start and end address.  So
-this ends up with returning an invalid resource (start > end).
 
-There was already an attempt to cover such a problem in the commit
-47ea91b4052d ("Resource: fix wrong resource window calculation"), but
-this case is an overseen one.
+--355pi5ptdjvmh26z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds the validity check in resource_contains() to see
-whether the given resource has a valid range for avoiding the integer
-overflow problem.
+Hi,
 
-Bugzilla: http://bugzilla.opensuse.org/show_bug.cgi?id=1086739
-Fixes: 23c570a67448 ("resource: ability to resize an allocated resource")
-Reported-and-tested-by: Michael Henders <hendersm@shaw.ca>
-Reviewed-by: Ram Pai <linuxram@us.ibm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
+On Mon, Mar 19, 2018 at 09:10:58AM -0700, Guenter Roeck wrote:
+> Commit dde67eb1beeb ("i2c: add i2c_get_device_id() to get the standard
+> I2C device id") added a function to return the standard I2C device ID.
+> Use that function to verify the device ID of a given device.
 
-Andrew, could you pick this? It's still in a wild west...
-Thanks!
+I am very open to these patches, just...
 
-v1->v2: check in resource_contains() instead of in __find_resource()
+>=20
+> Cc: Peter Rosin <peda@axentia.se>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> RFC:
+> - Compile tested only
 
- include/linux/ioport.h | 3 +++
- 1 file changed, 3 insertions(+)
+=2E.. I would really like to have them tested. After that happened, Peter
+and I can figure out who should apply them for seamless upstreaming.
 
-diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-index da0ebaec25f0..466d7be046eb 100644
---- a/include/linux/ioport.h
-+++ b/include/linux/ioport.h
-@@ -212,6 +212,9 @@ static inline bool resource_contains(struct resource *r1, struct resource *r2)
- 		return false;
- 	if (r1->flags & IORESOURCE_UNSET || r2->flags & IORESOURCE_UNSET)
- 		return false;
-+	/* sanity check whether it's a valid resource range */
-+	if (r2->end < r2->start)
-+		return false;
- 	return r1->start <= r2->start && r1->end >= r2->end;
- }
- 
--- 
-2.16.3
+> - Should there also be I2C_DEVICE_PART_ID_ANY to enable maching
+>   against all parts from a given manufacturer ?
+
+Can't we just add it when we need it?
+
+> +		dev_err(&client->dev, "unexpected device id %03x-%03x-%x\n",
+> +			real_id.manufacturer_id, real_id.part_id,
+> +			real_id.die_revision);
+> +		return -ENODEV;
+
+I wonder about the ERR loglevel. ENODEV is not an error, I'd think?
+
+Regards,
+
+   Wolfram
+
+
+--355pi5ptdjvmh26z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrJxgYACgkQFA3kzBSg
+Kba2jw//W3l6XYe8D3Pl8nu2sG/38e6Xv8qPeqYe5phtDPxWvoZ0Ts0FgOCZF9If
+DqYPIuscqH1AIWxE1UpQtoS0zNqYS/fuBbXY/yA9zM+ybx/Vz3zKLpVVgPE3IxkQ
+cAd2OdgIRte9w9waDxPHbcLbsASxwsPhmKItCrtXZKtKenKhsy4ryucEBtKyoiio
+y1TiBE8R/3iZFnQReda1KPsAb3zx11lhXjAUT27nxhmf7amATzMFCvfHJTdcecTI
+yCQMzdRULuoowNX0TVxqBw6ZKRTFhOsV95gJMNN17B4Jx2RUh99eIe8FcnpfGfjr
+vMHefXVRqwFYWhU6EV0F07SrAV6EWULbvYzr4TqJSkMZiIgahVleh3XIlgrMCC3y
+VeJ3rMpv+IqHKN9l0tGvvyiZrkiKcneYlVU/Oi5qkGTQBnsDtO42bztKcP2bGmzy
+i97fbmxYPRTqcAYg+YSH4QMUDkL+dwEdfsKC533y+B+MTAQ5+e9EC97bmDUq4VZK
+nYZM+/sobtHT0SACcttBDZvpe9yK0dSIDbGvTTD8gakSxb12ftbrfhmH/4ipFvBX
+TQ7YhvbLyFZjRdw7ha9Fbn7Nr38h6pjPk03ZyCKbxLNBTkO8vLHZcRxCsUkVnv5J
+wMw1PSEr6Z2U8SNrUhAEln7VlW0+FT5yaSm4YsSUvOCd5n1/RM4=
+=PmkI
+-----END PGP SIGNATURE-----
+
+--355pi5ptdjvmh26z--
