@@ -1,67 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752888AbeDHQc2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 12:32:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35244 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752859AbeDHQc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 12:32:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E90AA217D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 8 Apr 2018 17:32:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        nfarnesi4@gmail.com, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] iio: sca3000: Fix an error handling path in
- 'sca3000_probe()'
-Message-ID: <20180408173220.7f2483c7@archlinux>
-In-Reply-To: <20180402165942.9056-1-christophe.jaillet@wanadoo.fr>
-References: <20180402165942.9056-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752929AbeDHQck (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 12:32:40 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53955 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752389AbeDHQci (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 12:32:38 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH v9 00/10] sched/cpuidle: Idle loop rework
+Date: Sun, 08 Apr 2018 18:32:45 +0200
+Message-ID: <1607755.Sz6cLBVOsW@aspire.rjw.lan>
+In-Reply-To: <1736751.LdhZHb50jq@aspire.rjw.lan>
+References: <1736751.LdhZHb50jq@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  2 Apr 2018 18:59:42 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-
-> In case of error, we must undo the previous 'sca3000_configure_ring()' call
-> in order to free some memory.
+On Wednesday, April 4, 2018 10:32:12 AM CEST Rafael J. Wysocki wrote:
+> Hi All,
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Perhaps we can simplify this by using devm_iio_kfifo_allocate in
-the ring configure function?
-
-> ---
->  drivers/iio/accel/sca3000.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> Thanks a lot for the feedback so far!
 > 
-> diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
-> index f33dadf7b262..dae4c594c170 100644
-> --- a/drivers/iio/accel/sca3000.c
-> +++ b/drivers/iio/accel/sca3000.c
-> @@ -1496,7 +1496,7 @@ static int sca3000_probe(struct spi_device *spi)
->  					   "sca3000",
->  					   indio_dev);
->  		if (ret)
-> -			return ret;
-> +			goto error_unconfigure_ring;
->  	}
->  	indio_dev->setup_ops = &sca3000_ring_setup_ops;
->  	ret = sca3000_clean_setup(st);
-> @@ -1513,6 +1513,9 @@ static int sca3000_probe(struct spi_device *spi)
->  	if (spi->irq)
->  		free_irq(spi->irq, indio_dev);
->  
-> +error_unconfigure_ring:
-> +	sca3000_unconfigure_ring(indio_dev);
-> +
->  	return ret;
->  }
->  
+> For the motivation/summary, please refer to the BZ entry at
+> 
+>  https://bugzilla.kernel.org/show_bug.cgi?id=199227
+> 
+> created for collecting information related to this patch series.  Some v7.3
+> testing results from Len and Doug are in there already.
+> 
+> The testing so far shows significant idle power improvements, both in terms of
+> reducing the average idle power (about 10% on some systems) and in terms of
+> reducing the idle power noise (in the vast majority of cases, with this series
+> applied the idle power is mostly stable around the power floor of the system).
+> The average power is also reduced in some non-idle workloads and there are
+> some performance improvements in them.
+> 
+> It also is reported that the series generally addresses the problem it has been
+> motivated by (ie. the "powernightmares" issue).
+> 
+> This revision is mostly a re-send of the v8 with three patches changed as
+> follows.
+> 
+> > Patch 1 prepares the tick-sched code for the subsequent modifications and it
+> > doesn't change the code's functionality (at least not intentionally).
+> > 
+> > Patch 2 starts pushing the tick stopping decision deeper into the idle
+> > loop, but that is limited to do_idle() and tick_nohz_irq_exit().
+> > 
+> > Patch 3 makes cpuidle_idle_call() decide whether or not to stop the tick
+> > and sets the stage for the subsequent changes.
+> >
+> > Patch 4 is a new one just for the TICK_USEC definition changes.
+> >
+> > Patch 5 adds a bool pointer argument to cpuidle_select() and the ->select
+> > governor callback allowing them to return a "nohz" hint on whether or not to
+> > stop the tick to the caller.  It also adds code to decide what value to
+> > return as "nohz" to the menu governor and modifies its correction factor
+> > computations to take running tick into account if need be.
+> >
+> > Patch 6 (which is new) contains some changes that previously were included
+> > into the big reordering patch (patch [6/8] in the v7).  Essentially, it does
+> > more tick-sched code reorganization in preparation for the subsequent changes
+> > (and should not modify the functionality).
+> 
+> Patch 7 is a new version of its v8 counterpart.  It makes fewer changes to the
+> existing code and adds a special function for the handling of the use case it
+> is about.  It still makes some hrtimer code modifications allowing it to return
+> the time to the next event with one timer excluded (which needs to be done with
+> respect to the tick timer), though.
+> 
+> Patch 8 reorders the idle state selection with respect to the stopping of
+> the tick and causes the additional "nohz" hint from cpuidle_select() to be
+> used for deciding whether or not to stop the tick.  It is a rebased version
+> of its v8 counterpart.
+> 
+> Patch 9 causes the menu governor to refine the state selection in case the
+> tick is not going to be stopped and the already selected state does not fit
+> the interval before the next tick time.  It is a new version that avoids
+> using state 0 if it has been disabled (if state 0 has been disabled, the
+> governor only should use it when no states are enabled at all).
+> 
+> > Patch 10 Deals with the situation in which the tick was stopped previously,
+> > but the idle governor still predicts short idle (it has not changed).
+> 
+> This series is complementary to the poll_idle() patches discussed recently
+> 
+> https://patchwork.kernel.org/patch/10282237/
+> https://patchwork.kernel.org/patch/10311775/
+> 
+> that have been merged for v4.17 already.
+> 
+> There is a new git branch containing the current series at
+> 
+>  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>  idle-loop-v9
+
+The v9 along with some cleanups suggested by Frederic on top of it and with
+ACKs from Peter (obtained on IRC) is now available from the pm-cpuidle branch
+in the linux-pm.git tree.
+
+It has been added to my linux-next branch, so it probably will be picked up by
+linux-next tomorrow and I have a plan to push it for v4.17 in the second half
+of the next week unless a major issue with it is found in the meantime.
+
+Thanks,
+Rafael
