@@ -1,1213 +1,414 @@
-Date: Sun, 8 Apr 2018 17:10:20 +0200
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2451319-1523200196-2-10620408979410874456
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Attached: signature.asc
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523200196; b=vn9N3OjuLhu54GKq2EMjspnxsCg4N9+P8GG3ccD1wY225v66I/
+    Z98XdmUjIKUJ3WbUD7LsDHt4zW0OVTUM3LM5DEyjPfAUf61NH6FfMlWdmXlPrdtT
+    iZvFEbATrzQFW+rKAlOyCI3IFK14adqiH0BaC+BpV0lubHTOCRUV1R/Crq9RpQuM
+    nQorzNUEBgpoRaavTD7gUwbbGYXbBvJb4JWgiqRr+cMM3ttrDSirzXbc9hwI2lNO
+    CLVeWDoMVT6v7m/u7/mraEL2wodeEgv7/fMHZo/gmfgx69n6nwCVdyGe39Aw3KVe
+    zj1h8rDfWl9tAWtjp2mPy0wbgbbJ/Unr19vA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1523200196;
+    bh=/mFYdiFew9m8V2et5q/QxRKASezV5euFcoh0JgL52Kw=; b=omPSq36mienU
+    I5z++9dHmbbopm3DsQ5tL6fgc4WhIM63vp324FufjGUMKKZcXPt+rAj4bYlGtTU+
+    dxtntybr0ZKW7wMqCWoZEJflz79BpO63P9A31KWyKNwRYaVvH0esNqumTc9BsKZy
+    hVWRHAQkAZTgzn9eeHj2wS1haqkIrPycg+3Ih+JY2YSc2t8923aFfXwvpbs8e0cy
+    p1qBXr1Su8zxZpCuaqYR+VjMlj0F1974R0imIGRsV87WyC6JWC6/nTtu5gD9BpMs
+    j7EXY8+p9lUA6+JctV1oPbUtUEJROUTI0wLanPaT5Rf3Z1nNoUcLan2LJYb4+cYu
+    KioQvOG9+A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMM9Ftl4MPvTQWSC+ETcWcWthwfYWnXZakSRaYmHOLWtqPBjLVXiFDhr4v5u2jDZlTCEMT0JFbUREokxHcso+k84/JiVe4XdVGGGDAWCOdykgeWhnAxc
+    D7xNwCUQ1OMblHC8T4OjGyCsbG6VHMi1gg8pJUyIdn6+wc6ZbeYIdo/fICF6i9ph4QtMc9k7wP/PTtHL7xAy5HW3ObGQknLggxmXsftY6HVq2BeebV/50sxA
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=gaia86k_lr-1IOVnSLEA:9 a=wC-PpJC1oAI8KJDw:21 a=qU-_RKM5gcuY19Gv:21
+    a=CjuIK1q_8ugA:10 a=HU7zQE8jnHKcxmIf95AA:9 a=ONNS8QRKHyMA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751552AbeDHPJx (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 11:09:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50370 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751423AbeDHPJw (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 8 Apr 2018 11:09:52 -0400
+Date: Sun, 8 Apr 2018 17:09:47 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	torvalds@linux-foundation.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.16.1
-Message-ID: <20180408151020.GB16271@kroah.com>
-References: <20180408151014.GA16271@kroah.com>
+Subject: Linux 4.15.16
+Message-ID: <20180408150947.GA16184@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
 Content-Disposition: inline
-In-Reply-To: <20180408151014.GA16271@kroah.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-diff --git a/Documentation/devicetree/bindings/serial/8250.txt b/Documentation/devicetree/bindings/serial/8250.txt
-index dad3b2ec66d4..aeb6db4e35c3 100644
---- a/Documentation/devicetree/bindings/serial/8250.txt
-+++ b/Documentation/devicetree/bindings/serial/8250.txt
-@@ -24,6 +24,7 @@ Required properties:
- 	- "ti,da830-uart"
- 	- "aspeed,ast2400-vuart"
- 	- "aspeed,ast2500-vuart"
-+	- "nuvoton,npcm750-uart"
- 	- "serial" if the port type is unknown.
- - reg : offset and length of the register set for the device.
- - interrupts : should contain uart interrupt.
-diff --git a/Makefile b/Makefile
-index 363dd096e46e..1773c718074e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 4
- PATCHLEVEL = 16
--SUBLEVEL = 0
-+SUBLEVEL = 1
- EXTRAVERSION =
- NAME = Fearless Coyote
- 
-diff --git a/arch/arm/crypto/Makefile b/arch/arm/crypto/Makefile
-index 30ef8e291271..c9919c2b7ad1 100644
---- a/arch/arm/crypto/Makefile
-+++ b/arch/arm/crypto/Makefile
-@@ -54,6 +54,7 @@ crct10dif-arm-ce-y	:= crct10dif-ce-core.o crct10dif-ce-glue.o
- crc32-arm-ce-y:= crc32-ce-core.o crc32-ce-glue.o
- chacha20-neon-y := chacha20-neon-core.o chacha20-neon-glue.o
- 
-+ifdef REGENERATE_ARM_CRYPTO
- quiet_cmd_perl = PERL    $@
-       cmd_perl = $(PERL) $(<) > $(@)
- 
-@@ -62,5 +63,6 @@ $(src)/sha256-core.S_shipped: $(src)/sha256-armv4.pl
- 
- $(src)/sha512-core.S_shipped: $(src)/sha512-armv4.pl
- 	$(call cmd,perl)
-+endif
- 
- .PRECIOUS: $(obj)/sha256-core.S $(obj)/sha512-core.S
-diff --git a/arch/arm64/crypto/Makefile b/arch/arm64/crypto/Makefile
-index cee9b8d9830b..dfe651bdf993 100644
---- a/arch/arm64/crypto/Makefile
-+++ b/arch/arm64/crypto/Makefile
-@@ -67,6 +67,7 @@ CFLAGS_aes-glue-ce.o	:= -DUSE_V8_CRYPTO_EXTENSIONS
- $(obj)/aes-glue-%.o: $(src)/aes-glue.c FORCE
- 	$(call if_changed_rule,cc_o_c)
- 
-+ifdef REGENERATE_ARM64_CRYPTO
- quiet_cmd_perlasm = PERLASM $@
-       cmd_perlasm = $(PERL) $(<) void $(@)
- 
-@@ -75,5 +76,6 @@ $(src)/sha256-core.S_shipped: $(src)/sha512-armv8.pl
- 
- $(src)/sha512-core.S_shipped: $(src)/sha512-armv8.pl
- 	$(call cmd,perlasm)
-+endif
- 
- .PRECIOUS: $(obj)/sha256-core.S $(obj)/sha512-core.S
-diff --git a/arch/x86/crypto/cast5_avx_glue.c b/arch/x86/crypto/cast5_avx_glue.c
-index dbea6020ffe7..575292a33bdf 100644
---- a/arch/x86/crypto/cast5_avx_glue.c
-+++ b/arch/x86/crypto/cast5_avx_glue.c
-@@ -66,8 +66,6 @@ static int ecb_crypt(struct blkcipher_desc *desc, struct blkcipher_walk *walk,
- 	void (*fn)(struct cast5_ctx *ctx, u8 *dst, const u8 *src);
- 	int err;
- 
--	fn = (enc) ? cast5_ecb_enc_16way : cast5_ecb_dec_16way;
--
- 	err = blkcipher_walk_virt(desc, walk);
- 	desc->flags &= ~CRYPTO_TFM_REQ_MAY_SLEEP;
- 
-@@ -79,6 +77,7 @@ static int ecb_crypt(struct blkcipher_desc *desc, struct blkcipher_walk *walk,
- 
- 		/* Process multi-block batch */
- 		if (nbytes >= bsize * CAST5_PARALLEL_BLOCKS) {
-+			fn = (enc) ? cast5_ecb_enc_16way : cast5_ecb_dec_16way;
- 			do {
- 				fn(ctx, wdst, wsrc);
- 
-diff --git a/block/bio.c b/block/bio.c
-index e1708db48258..53e0f0a1ed94 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -43,9 +43,9 @@
-  * break badly! cannot be bigger than what you can fit into an
-  * unsigned short
-  */
--#define BV(x) { .nr_vecs = x, .name = "biovec-"__stringify(x) }
-+#define BV(x, n) { .nr_vecs = x, .name = "biovec-"#n }
- static struct biovec_slab bvec_slabs[BVEC_POOL_NR] __read_mostly = {
--	BV(1), BV(4), BV(16), BV(64), BV(128), BV(BIO_MAX_PAGES),
-+	BV(1, 1), BV(4, 4), BV(16, 16), BV(64, 64), BV(128, 128), BV(BIO_MAX_PAGES, max),
- };
- #undef BV
- 
-diff --git a/crypto/ahash.c b/crypto/ahash.c
-index 266fc1d64f61..c03cc177870b 100644
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -92,13 +92,14 @@ int crypto_hash_walk_done(struct crypto_hash_walk *walk, int err)
- 
- 	if (nbytes && walk->offset & alignmask && !err) {
- 		walk->offset = ALIGN(walk->offset, alignmask + 1);
--		walk->data += walk->offset;
--
- 		nbytes = min(nbytes,
- 			     ((unsigned int)(PAGE_SIZE)) - walk->offset);
- 		walk->entrylen -= nbytes;
- 
--		return nbytes;
-+		if (nbytes) {
-+			walk->data += walk->offset;
-+			return nbytes;
-+		}
- 	}
- 
- 	if (walk->flags & CRYPTO_ALG_ASYNC)
-diff --git a/crypto/lrw.c b/crypto/lrw.c
-index cbbd7c50ad19..1d813a6d3fec 100644
---- a/crypto/lrw.c
-+++ b/crypto/lrw.c
-@@ -313,7 +313,7 @@ static void exit_crypt(struct skcipher_request *req)
- 	rctx->left = 0;
- 
- 	if (rctx->ext)
--		kfree(rctx->ext);
-+		kzfree(rctx->ext);
- }
- 
- static int do_encrypt(struct skcipher_request *req, int err)
-diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-index 6044f6906bd6..69fb51e7b6f1 100644
---- a/crypto/testmgr.h
-+++ b/crypto/testmgr.h
-@@ -548,7 +548,7 @@ static const struct akcipher_testvec rsa_tv_template[] = {
- static const struct akcipher_testvec pkcs1pad_rsa_tv_template[] = {
- 	{
- 	.key =
--	"\x30\x82\x03\x1f\x02\x01\x10\x02\x82\x01\x01\x00\xd7\x1e\x77\x82"
-+	"\x30\x82\x03\x1f\x02\x01\x00\x02\x82\x01\x01\x00\xd7\x1e\x77\x82"
- 	"\x8c\x92\x31\xe7\x69\x02\xa2\xd5\x5c\x78\xde\xa2\x0c\x8f\xfe\x28"
- 	"\x59\x31\xdf\x40\x9c\x60\x61\x06\xb9\x2f\x62\x40\x80\x76\xcb\x67"
- 	"\x4a\xb5\x59\x56\x69\x17\x07\xfa\xf9\x4c\xbd\x6c\x37\x7a\x46\x7d"
-@@ -597,8 +597,8 @@ static const struct akcipher_testvec pkcs1pad_rsa_tv_template[] = {
- 	"\xfe\xf8\x27\x1b\xd6\x55\x60\x5e\x48\xb7\x6d\x9a\xa8\x37\xf9\x7a"
- 	"\xde\x1b\xcd\x5d\x1a\x30\xd4\xe9\x9e\x5b\x3c\x15\xf8\x9c\x1f\xda"
- 	"\xd1\x86\x48\x55\xce\x83\xee\x8e\x51\xc7\xde\x32\x12\x47\x7d\x46"
--	"\xb8\x35\xdf\x41\x02\x01\x30\x02\x01\x30\x02\x01\x30\x02\x01\x30"
--	"\x02\x01\x30",
-+	"\xb8\x35\xdf\x41\x02\x01\x00\x02\x01\x00\x02\x01\x00\x02\x01\x00"
-+	"\x02\x01\x00",
- 	.key_len = 804,
- 	/*
- 	 * m is SHA256 hash of following message:
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index 52ec5174bcb1..e7cb0c6ade81 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -169,11 +169,11 @@ bool __init topology_parse_cpu_capacity(struct device_node *cpu_node, int cpu)
- }
- 
- #ifdef CONFIG_CPU_FREQ
--static cpumask_var_t cpus_to_visit __initdata;
--static void __init parsing_done_workfn(struct work_struct *work);
--static __initdata DECLARE_WORK(parsing_done_work, parsing_done_workfn);
-+static cpumask_var_t cpus_to_visit;
-+static void parsing_done_workfn(struct work_struct *work);
-+static DECLARE_WORK(parsing_done_work, parsing_done_workfn);
- 
--static int __init
-+static int
- init_cpu_capacity_callback(struct notifier_block *nb,
- 			   unsigned long val,
- 			   void *data)
-@@ -209,7 +209,7 @@ init_cpu_capacity_callback(struct notifier_block *nb,
- 	return 0;
- }
- 
--static struct notifier_block init_cpu_capacity_notifier __initdata = {
-+static struct notifier_block init_cpu_capacity_notifier = {
- 	.notifier_call = init_cpu_capacity_callback,
- };
- 
-@@ -242,7 +242,7 @@ static int __init register_cpufreq_notifier(void)
- }
- core_initcall(register_cpufreq_notifier);
- 
--static void __init parsing_done_workfn(struct work_struct *work)
-+static void parsing_done_workfn(struct work_struct *work)
- {
- 	cpufreq_unregister_notifier(&init_cpu_capacity_notifier,
- 					 CPUFREQ_POLICY_NOTIFIER);
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index 40b9fb247010..47a4127a6067 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -1080,6 +1080,7 @@ static const struct hci_uart_proto bcm_proto = {
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id bcm_acpi_match[] = {
- 	{ "BCM2E1A", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
-+	{ "BCM2E38", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
- 	{ "BCM2E39", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
- 	{ "BCM2E3A", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
- 	{ "BCM2E3D", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
-@@ -1092,12 +1093,17 @@ static const struct acpi_device_id bcm_acpi_match[] = {
- 	{ "BCM2E67", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
- 	{ "BCM2E71", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
- 	{ "BCM2E72", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
-+	{ "BCM2E74", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
- 	{ "BCM2E7B", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
- 	{ "BCM2E7C", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
- 	{ "BCM2E7E", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
-+	{ "BCM2E83", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
-+	{ "BCM2E84", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
-+	{ "BCM2E90", (kernel_ulong_t)&acpi_bcm_int_last_gpios },
- 	{ "BCM2E95", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
- 	{ "BCM2E96", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
- 	{ "BCM2EA4", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
-+	{ "BCM2EAA", (kernel_ulong_t)&acpi_bcm_int_first_gpios },
- 	{ },
- };
- MODULE_DEVICE_TABLE(acpi, bcm_acpi_match);
-diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-index 052011bcf100..ffeb60d3434c 100644
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -137,7 +137,7 @@ static ssize_t read_mem(struct file *file, char __user *buf,
- 
- 	while (count > 0) {
- 		unsigned long remaining;
--		int allowed;
-+		int allowed, probe;
- 
- 		sz = size_inside_page(p, count);
- 
-@@ -160,9 +160,9 @@ static ssize_t read_mem(struct file *file, char __user *buf,
- 			if (!ptr)
- 				goto failed;
- 
--			err = probe_kernel_read(bounce, ptr, sz);
-+			probe = probe_kernel_read(bounce, ptr, sz);
- 			unxlate_dev_mem_ptr(p, ptr);
--			if (err)
-+			if (probe)
- 				goto failed;
- 
- 			remaining = copy_to_user(buf, bounce, sz);
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index e843cf410373..361e750f9cba 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -815,9 +815,6 @@ static int caam_probe(struct platform_device *pdev)
- 	return 0;
- 
- caam_remove:
--#ifdef CONFIG_DEBUG_FS
--	debugfs_remove_recursive(ctrlpriv->dfs_root);
--#endif
- 	caam_remove(pdev);
- 	return ret;
- 
-diff --git a/drivers/crypto/ccp/ccp-crypto-aes-cmac.c b/drivers/crypto/ccp/ccp-crypto-aes-cmac.c
-index 60fc0fa26fd3..26687f318de6 100644
---- a/drivers/crypto/ccp/ccp-crypto-aes-cmac.c
-+++ b/drivers/crypto/ccp/ccp-crypto-aes-cmac.c
-@@ -46,7 +46,7 @@ static int ccp_aes_cmac_complete(struct crypto_async_request *async_req,
- 	}
- 
- 	/* Update result area if supplied */
--	if (req->result)
-+	if (req->result && rctx->final)
- 		memcpy(req->result, rctx->iv, digest_size);
- 
- e_free:
-diff --git a/drivers/crypto/ccp/ccp-crypto-rsa.c b/drivers/crypto/ccp/ccp-crypto-rsa.c
-index e6db8672d89c..05850dfd7940 100644
---- a/drivers/crypto/ccp/ccp-crypto-rsa.c
-+++ b/drivers/crypto/ccp/ccp-crypto-rsa.c
-@@ -60,10 +60,9 @@ static int ccp_rsa_complete(struct crypto_async_request *async_req, int ret)
- 
- static unsigned int ccp_rsa_maxsize(struct crypto_akcipher *tfm)
- {
--	if (ccp_version() > CCP_VERSION(3, 0))
--		return CCP5_RSA_MAXMOD;
--	else
--		return CCP_RSA_MAXMOD;
-+	struct ccp_ctx *ctx = akcipher_tfm_ctx(tfm);
-+
-+	return ctx->u.rsa.n_len;
- }
- 
- static int ccp_rsa_crypt(struct akcipher_request *req, bool encrypt)
-diff --git a/drivers/crypto/ccp/ccp-crypto-sha.c b/drivers/crypto/ccp/ccp-crypto-sha.c
-index 8b9b16d433f7..871c9628a2ee 100644
---- a/drivers/crypto/ccp/ccp-crypto-sha.c
-+++ b/drivers/crypto/ccp/ccp-crypto-sha.c
-@@ -47,7 +47,7 @@ static int ccp_sha_complete(struct crypto_async_request *async_req, int ret)
- 	}
- 
- 	/* Update result area if supplied */
--	if (req->result)
-+	if (req->result && rctx->final)
- 		memcpy(req->result, rctx->ctx, digest_size);
- 
- e_free:
-diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
-index 225e74a7f724..0dd3a7ac1dd1 100644
---- a/drivers/crypto/inside-secure/safexcel.c
-+++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -894,7 +894,7 @@ static int safexcel_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->base);
- 	}
- 
--	priv->clk = of_clk_get(dev->of_node, 0);
-+	priv->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (!IS_ERR(priv->clk)) {
- 		ret = clk_prepare_enable(priv->clk);
- 		if (ret) {
-diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-index 6882fa2f8bad..c805d0122c0b 100644
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -832,8 +832,6 @@ struct talitos_ctx {
- 	unsigned int keylen;
- 	unsigned int enckeylen;
- 	unsigned int authkeylen;
--	dma_addr_t dma_buf;
--	dma_addr_t dma_hw_context;
- };
- 
- #define HASH_MAX_BLOCK_SIZE		SHA512_BLOCK_SIZE
-@@ -1130,10 +1128,10 @@ static int sg_to_link_tbl_offset(struct scatterlist *sg, int sg_count,
- 	return count;
- }
- 
--static int talitos_sg_map(struct device *dev, struct scatterlist *src,
--		   unsigned int len, struct talitos_edesc *edesc,
--		   struct talitos_ptr *ptr,
--		   int sg_count, unsigned int offset, int tbl_off)
-+static int talitos_sg_map_ext(struct device *dev, struct scatterlist *src,
-+			      unsigned int len, struct talitos_edesc *edesc,
-+			      struct talitos_ptr *ptr, int sg_count,
-+			      unsigned int offset, int tbl_off, int elen)
- {
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
-@@ -1142,6 +1140,7 @@ static int talitos_sg_map(struct device *dev, struct scatterlist *src,
- 		to_talitos_ptr(ptr, 0, 0, is_sec1);
- 		return 1;
- 	}
-+	to_talitos_ptr_ext_set(ptr, elen, is_sec1);
- 	if (sg_count == 1) {
- 		to_talitos_ptr(ptr, sg_dma_address(src) + offset, len, is_sec1);
- 		return sg_count;
-@@ -1150,7 +1149,7 @@ static int talitos_sg_map(struct device *dev, struct scatterlist *src,
- 		to_talitos_ptr(ptr, edesc->dma_link_tbl + offset, len, is_sec1);
- 		return sg_count;
- 	}
--	sg_count = sg_to_link_tbl_offset(src, sg_count, offset, len,
-+	sg_count = sg_to_link_tbl_offset(src, sg_count, offset, len + elen,
- 					 &edesc->link_tbl[tbl_off]);
- 	if (sg_count == 1) {
- 		/* Only one segment now, so no link tbl needed*/
-@@ -1164,6 +1163,15 @@ static int talitos_sg_map(struct device *dev, struct scatterlist *src,
- 	return sg_count;
- }
- 
-+static int talitos_sg_map(struct device *dev, struct scatterlist *src,
-+			  unsigned int len, struct talitos_edesc *edesc,
-+			  struct talitos_ptr *ptr, int sg_count,
-+			  unsigned int offset, int tbl_off)
-+{
-+	return talitos_sg_map_ext(dev, src, len, edesc, ptr, sg_count, offset,
-+				  tbl_off, 0);
-+}
-+
- /*
-  * fill in and submit ipsec_esp descriptor
-  */
-@@ -1181,7 +1189,7 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
- 	unsigned int ivsize = crypto_aead_ivsize(aead);
- 	int tbl_off = 0;
- 	int sg_count, ret;
--	int sg_link_tbl_len;
-+	int elen = 0;
- 	bool sync_needed = false;
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
-@@ -1223,17 +1231,11 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
- 	 * extent is bytes of HMAC postpended to ciphertext,
- 	 * typically 12 for ipsec
- 	 */
--	sg_link_tbl_len = cryptlen;
--
--	if (is_ipsec_esp) {
--		to_talitos_ptr_ext_set(&desc->ptr[4], authsize, is_sec1);
--
--		if (desc->hdr & DESC_HDR_MODE1_MDEU_CICV)
--			sg_link_tbl_len += authsize;
--	}
-+	if (is_ipsec_esp && (desc->hdr & DESC_HDR_MODE1_MDEU_CICV))
-+		elen = authsize;
- 
--	ret = talitos_sg_map(dev, areq->src, sg_link_tbl_len, edesc,
--			     &desc->ptr[4], sg_count, areq->assoclen, tbl_off);
-+	ret = talitos_sg_map_ext(dev, areq->src, cryptlen, edesc, &desc->ptr[4],
-+				 sg_count, areq->assoclen, tbl_off, elen);
- 
- 	if (ret > 1) {
- 		tbl_off += ret;
-@@ -1690,9 +1692,30 @@ static void common_nonsnoop_hash_unmap(struct device *dev,
- 				       struct ahash_request *areq)
- {
- 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
-+	struct talitos_private *priv = dev_get_drvdata(dev);
-+	bool is_sec1 = has_ftr_sec1(priv);
-+	struct talitos_desc *desc = &edesc->desc;
-+	struct talitos_desc *desc2 = desc + 1;
-+
-+	unmap_single_talitos_ptr(dev, &edesc->desc.ptr[5], DMA_FROM_DEVICE);
-+	if (desc->next_desc &&
-+	    desc->ptr[5].ptr != desc2->ptr[5].ptr)
-+		unmap_single_talitos_ptr(dev, &desc2->ptr[5], DMA_FROM_DEVICE);
- 
- 	talitos_sg_unmap(dev, edesc, req_ctx->psrc, NULL, 0, 0);
- 
-+	/* When using hashctx-in, must unmap it. */
-+	if (from_talitos_ptr_len(&edesc->desc.ptr[1], is_sec1))
-+		unmap_single_talitos_ptr(dev, &edesc->desc.ptr[1],
-+					 DMA_TO_DEVICE);
-+	else if (desc->next_desc)
-+		unmap_single_talitos_ptr(dev, &desc2->ptr[1],
-+					 DMA_TO_DEVICE);
-+
-+	if (is_sec1 && req_ctx->nbuf)
-+		unmap_single_talitos_ptr(dev, &desc->ptr[3],
-+					 DMA_TO_DEVICE);
-+
- 	if (edesc->dma_len)
- 		dma_unmap_single(dev, edesc->dma_link_tbl, edesc->dma_len,
- 				 DMA_BIDIRECTIONAL);
-@@ -1766,8 +1789,10 @@ static int common_nonsnoop_hash(struct talitos_edesc *edesc,
- 
- 	/* hash context in */
- 	if (!req_ctx->first || req_ctx->swinit) {
--		to_talitos_ptr(&desc->ptr[1], ctx->dma_hw_context,
--			       req_ctx->hw_context_size, is_sec1);
-+		map_single_talitos_ptr(dev, &desc->ptr[1],
-+				       req_ctx->hw_context_size,
-+				       (char *)req_ctx->hw_context,
-+				       DMA_TO_DEVICE);
- 		req_ctx->swinit = 0;
- 	}
- 	/* Indicate next op is not the first. */
-@@ -1793,10 +1818,9 @@ static int common_nonsnoop_hash(struct talitos_edesc *edesc,
- 	 * data in
- 	 */
- 	if (is_sec1 && req_ctx->nbuf) {
--		dma_addr_t dma_buf = ctx->dma_buf + req_ctx->buf_idx *
--						    HASH_MAX_BLOCK_SIZE;
--
--		to_talitos_ptr(&desc->ptr[3], dma_buf, req_ctx->nbuf, is_sec1);
-+		map_single_talitos_ptr(dev, &desc->ptr[3], req_ctx->nbuf,
-+				       req_ctx->buf[req_ctx->buf_idx],
-+				       DMA_TO_DEVICE);
- 	} else {
- 		sg_count = talitos_sg_map(dev, req_ctx->psrc, length, edesc,
- 					  &desc->ptr[3], sg_count, offset, 0);
-@@ -1812,8 +1836,9 @@ static int common_nonsnoop_hash(struct talitos_edesc *edesc,
- 				       crypto_ahash_digestsize(tfm),
- 				       areq->result, DMA_FROM_DEVICE);
- 	else
--		to_talitos_ptr(&desc->ptr[5], ctx->dma_hw_context,
--			       req_ctx->hw_context_size, is_sec1);
-+		map_single_talitos_ptr(dev, &desc->ptr[5],
-+				       req_ctx->hw_context_size,
-+				       req_ctx->hw_context, DMA_FROM_DEVICE);
- 
- 	/* last DWORD empty */
- 
-@@ -1832,9 +1857,14 @@ static int common_nonsnoop_hash(struct talitos_edesc *edesc,
- 		desc->hdr |= DESC_HDR_MODE0_MDEU_CONT;
- 		desc->hdr &= ~DESC_HDR_DONE_NOTIFY;
- 
--		to_talitos_ptr(&desc2->ptr[1], ctx->dma_hw_context,
--			       req_ctx->hw_context_size, is_sec1);
--
-+		if (desc->ptr[1].ptr)
-+			copy_talitos_ptr(&desc2->ptr[1], &desc->ptr[1],
-+					 is_sec1);
-+		else
-+			map_single_talitos_ptr(dev, &desc2->ptr[1],
-+					       req_ctx->hw_context_size,
-+					       req_ctx->hw_context,
-+					       DMA_TO_DEVICE);
- 		copy_talitos_ptr(&desc2->ptr[2], &desc->ptr[2], is_sec1);
- 		sg_count = talitos_sg_map(dev, req_ctx->psrc, length, edesc,
- 					  &desc2->ptr[3], sg_count, offset, 0);
-@@ -1842,8 +1872,10 @@ static int common_nonsnoop_hash(struct talitos_edesc *edesc,
- 			sync_needed = true;
- 		copy_talitos_ptr(&desc2->ptr[5], &desc->ptr[5], is_sec1);
- 		if (req_ctx->last)
--			to_talitos_ptr(&desc->ptr[5], ctx->dma_hw_context,
--				       req_ctx->hw_context_size, is_sec1);
-+			map_single_talitos_ptr(dev, &desc->ptr[5],
-+					       req_ctx->hw_context_size,
-+					       req_ctx->hw_context,
-+					       DMA_FROM_DEVICE);
- 
- 		next_desc = dma_map_single(dev, &desc2->hdr1, TALITOS_DESC_SIZE,
- 					   DMA_BIDIRECTIONAL);
-@@ -1881,12 +1913,8 @@ static struct talitos_edesc *ahash_edesc_alloc(struct ahash_request *areq,
- static int ahash_init(struct ahash_request *areq)
- {
- 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
--	struct talitos_ctx *ctx = crypto_ahash_ctx(tfm);
--	struct device *dev = ctx->dev;
- 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
- 	unsigned int size;
--	struct talitos_private *priv = dev_get_drvdata(dev);
--	bool is_sec1 = has_ftr_sec1(priv);
- 
- 	/* Initialize the context */
- 	req_ctx->buf_idx = 0;
-@@ -1898,18 +1926,6 @@ static int ahash_init(struct ahash_request *areq)
- 			: TALITOS_MDEU_CONTEXT_SIZE_SHA384_SHA512;
- 	req_ctx->hw_context_size = size;
- 
--	if (ctx->dma_hw_context)
--		dma_unmap_single(dev, ctx->dma_hw_context, size,
--				 DMA_BIDIRECTIONAL);
--	ctx->dma_hw_context = dma_map_single(dev, req_ctx->hw_context, size,
--					     DMA_BIDIRECTIONAL);
--	if (ctx->dma_buf)
--		dma_unmap_single(dev, ctx->dma_buf, sizeof(req_ctx->buf),
--				 DMA_TO_DEVICE);
--	if (is_sec1)
--		ctx->dma_buf = dma_map_single(dev, req_ctx->buf,
--					      sizeof(req_ctx->buf),
--					      DMA_TO_DEVICE);
- 	return 0;
- }
- 
-@@ -1920,9 +1936,6 @@ static int ahash_init(struct ahash_request *areq)
- static int ahash_init_sha224_swinit(struct ahash_request *areq)
- {
- 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
--	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
--	struct talitos_ctx *ctx = crypto_ahash_ctx(tfm);
--	struct device *dev = ctx->dev;
- 
- 	ahash_init(areq);
- 	req_ctx->swinit = 1;/* prevent h/w initting context with sha256 values*/
-@@ -1940,9 +1953,6 @@ static int ahash_init_sha224_swinit(struct ahash_request *areq)
- 	req_ctx->hw_context[8] = 0;
- 	req_ctx->hw_context[9] = 0;
- 
--	dma_sync_single_for_device(dev, ctx->dma_hw_context,
--				   req_ctx->hw_context_size, DMA_TO_DEVICE);
--
- 	return 0;
- }
- 
-@@ -2046,13 +2056,6 @@ static int ahash_process_req(struct ahash_request *areq, unsigned int nbytes)
- 	/* request SEC to INIT hash. */
- 	if (req_ctx->first && !req_ctx->swinit)
- 		edesc->desc.hdr |= DESC_HDR_MODE0_MDEU_INIT;
--	if (is_sec1) {
--		dma_addr_t dma_buf = ctx->dma_buf + req_ctx->buf_idx *
--						    HASH_MAX_BLOCK_SIZE;
--
--		dma_sync_single_for_device(dev, dma_buf,
--					   req_ctx->nbuf, DMA_TO_DEVICE);
--	}
- 
- 	/* When the tfm context has a keylen, it's an HMAC.
- 	 * A first or last (ie. not middle) descriptor must request HMAC.
-@@ -2106,12 +2109,7 @@ static int ahash_export(struct ahash_request *areq, void *out)
- {
- 	struct talitos_ahash_req_ctx *req_ctx = ahash_request_ctx(areq);
- 	struct talitos_export_state *export = out;
--	struct crypto_ahash *ahash = crypto_ahash_reqtfm(areq);
--	struct talitos_ctx *ctx = crypto_ahash_ctx(ahash);
--	struct device *dev = ctx->dev;
- 
--	dma_sync_single_for_cpu(dev, ctx->dma_hw_context,
--				req_ctx->hw_context_size, DMA_FROM_DEVICE);
- 	memcpy(export->hw_context, req_ctx->hw_context,
- 	       req_ctx->hw_context_size);
- 	memcpy(export->buf, req_ctx->buf[req_ctx->buf_idx], req_ctx->nbuf);
-@@ -2130,31 +2128,14 @@ static int ahash_import(struct ahash_request *areq, const void *in)
- 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
- 	const struct talitos_export_state *export = in;
- 	unsigned int size;
--	struct talitos_ctx *ctx = crypto_ahash_ctx(tfm);
--	struct device *dev = ctx->dev;
--	struct talitos_private *priv = dev_get_drvdata(dev);
--	bool is_sec1 = has_ftr_sec1(priv);
- 
- 	memset(req_ctx, 0, sizeof(*req_ctx));
- 	size = (crypto_ahash_digestsize(tfm) <= SHA256_DIGEST_SIZE)
- 			? TALITOS_MDEU_CONTEXT_SIZE_MD5_SHA1_SHA256
- 			: TALITOS_MDEU_CONTEXT_SIZE_SHA384_SHA512;
- 	req_ctx->hw_context_size = size;
--	if (ctx->dma_hw_context)
--		dma_unmap_single(dev, ctx->dma_hw_context, size,
--				 DMA_BIDIRECTIONAL);
--
- 	memcpy(req_ctx->hw_context, export->hw_context, size);
--	ctx->dma_hw_context = dma_map_single(dev, req_ctx->hw_context, size,
--					     DMA_BIDIRECTIONAL);
--	if (ctx->dma_buf)
--		dma_unmap_single(dev, ctx->dma_buf, sizeof(req_ctx->buf),
--				 DMA_TO_DEVICE);
- 	memcpy(req_ctx->buf[0], export->buf, export->nbuf);
--	if (is_sec1)
--		ctx->dma_buf = dma_map_single(dev, req_ctx->buf,
--					      sizeof(req_ctx->buf),
--					      DMA_TO_DEVICE);
- 	req_ctx->swinit = export->swinit;
- 	req_ctx->first = export->first;
- 	req_ctx->last = export->last;
-@@ -3064,27 +3045,6 @@ static void talitos_cra_exit(struct crypto_tfm *tfm)
- 		dma_unmap_single(dev, ctx->dma_key, ctx->keylen, DMA_TO_DEVICE);
- }
- 
--static void talitos_cra_exit_ahash(struct crypto_tfm *tfm)
--{
--	struct talitos_ctx *ctx = crypto_tfm_ctx(tfm);
--	struct device *dev = ctx->dev;
--	unsigned int size;
--
--	talitos_cra_exit(tfm);
--
--	size = (crypto_ahash_digestsize(__crypto_ahash_cast(tfm)) <=
--		SHA256_DIGEST_SIZE)
--	       ? TALITOS_MDEU_CONTEXT_SIZE_MD5_SHA1_SHA256
--	       : TALITOS_MDEU_CONTEXT_SIZE_SHA384_SHA512;
--
--	if (ctx->dma_hw_context)
--		dma_unmap_single(dev, ctx->dma_hw_context, size,
--				 DMA_BIDIRECTIONAL);
--	if (ctx->dma_buf)
--		dma_unmap_single(dev, ctx->dma_buf, HASH_MAX_BLOCK_SIZE * 2,
--				 DMA_TO_DEVICE);
--}
--
- /*
-  * given the alg's descriptor header template, determine whether descriptor
-  * type and primary/secondary execution units required match the hw
-@@ -3183,7 +3143,7 @@ static struct talitos_crypto_alg *talitos_alg_alloc(struct device *dev,
- 	case CRYPTO_ALG_TYPE_AHASH:
- 		alg = &t_alg->algt.alg.hash.halg.base;
- 		alg->cra_init = talitos_cra_init_ahash;
--		alg->cra_exit = talitos_cra_exit_ahash;
-+		alg->cra_exit = talitos_cra_exit;
- 		alg->cra_type = &crypto_ahash_type;
- 		t_alg->algt.alg.hash.init = ahash_init;
- 		t_alg->algt.alg.hash.update = ahash_update;
-diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
-index dbe57da8c1a1..4a3bc168a4a7 100644
---- a/drivers/input/mouse/alps.c
-+++ b/drivers/input/mouse/alps.c
-@@ -2544,13 +2544,31 @@ static int alps_update_btn_info_ss4_v2(unsigned char otp[][4],
- }
- 
- static int alps_update_dual_info_ss4_v2(unsigned char otp[][4],
--				       struct alps_data *priv)
-+					struct alps_data *priv,
-+					struct psmouse *psmouse)
- {
- 	bool is_dual = false;
-+	int reg_val = 0;
-+	struct ps2dev *ps2dev = &psmouse->ps2dev;
- 
--	if (IS_SS4PLUS_DEV(priv->dev_id))
-+	if (IS_SS4PLUS_DEV(priv->dev_id)) {
- 		is_dual = (otp[0][0] >> 4) & 0x01;
- 
-+		if (!is_dual) {
-+			/* For support TrackStick of Thinkpad L/E series */
-+			if (alps_exit_command_mode(psmouse) == 0 &&
-+				alps_enter_command_mode(psmouse) == 0) {
-+				reg_val = alps_command_mode_read_reg(psmouse,
-+									0xD7);
-+			}
-+			alps_exit_command_mode(psmouse);
-+			ps2_command(ps2dev, NULL, PSMOUSE_CMD_ENABLE);
-+
-+			if (reg_val == 0x0C || reg_val == 0x1D)
-+				is_dual = true;
-+		}
-+	}
-+
- 	if (is_dual)
- 		priv->flags |= ALPS_DUALPOINT |
- 					ALPS_DUALPOINT_WITH_PRESSURE;
-@@ -2573,7 +2591,7 @@ static int alps_set_defaults_ss4_v2(struct psmouse *psmouse,
- 
- 	alps_update_btn_info_ss4_v2(otp, priv);
- 
--	alps_update_dual_info_ss4_v2(otp, priv);
-+	alps_update_dual_info_ss4_v2(otp, priv, psmouse);
- 
- 	return 0;
- }
-diff --git a/drivers/input/serio/i8042-x86ia64io.h b/drivers/input/serio/i8042-x86ia64io.h
-index 6cbbdc6e9687..b353d494ad40 100644
---- a/drivers/input/serio/i8042-x86ia64io.h
-+++ b/drivers/input/serio/i8042-x86ia64io.h
-@@ -530,6 +530,20 @@ static const struct dmi_system_id __initconst i8042_dmi_nomux_table[] = {
- 	{ }
- };
- 
-+static const struct dmi_system_id i8042_dmi_forcemux_table[] __initconst = {
-+	{
-+		/*
-+		 * Sony Vaio VGN-CS series require MUX or the touch sensor
-+		 * buttons will disturb touchpad operation
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "VGN-CS"),
-+		},
-+	},
-+	{ }
-+};
-+
- /*
-  * On some Asus laptops, just running self tests cause problems.
-  */
-@@ -620,6 +634,13 @@ static const struct dmi_system_id __initconst i8042_dmi_reset_table[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "20046"),
- 		},
- 	},
-+	{
-+		/* Lenovo ThinkPad L460 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad L460"),
-+		},
-+	},
- 	{
- 		/* Clevo P650RS, 650RP6, Sager NP8152-S, and others */
- 		.matches = {
-@@ -1163,6 +1184,9 @@ static int __init i8042_platform_init(void)
- 	if (dmi_check_system(i8042_dmi_nomux_table))
- 		i8042_nomux = true;
- 
-+	if (dmi_check_system(i8042_dmi_forcemux_table))
-+		i8042_nomux = false;
-+
- 	if (dmi_check_system(i8042_dmi_notimeout_table))
- 		i8042_notimeout = true;
- 
-diff --git a/drivers/media/usb/usbtv/usbtv-core.c b/drivers/media/usb/usbtv/usbtv-core.c
-index 127f8a0c098b..0c2e628e8723 100644
---- a/drivers/media/usb/usbtv/usbtv-core.c
-+++ b/drivers/media/usb/usbtv/usbtv-core.c
-@@ -112,6 +112,8 @@ static int usbtv_probe(struct usb_interface *intf,
- 	return 0;
- 
- usbtv_audio_fail:
-+	/* we must not free at this point */
-+	usb_get_dev(usbtv->udev);
- 	usbtv_video_free(usbtv);
- 
- usbtv_video_fail:
-diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
-index 758dc73602d5..7bb013644aeb 100644
---- a/drivers/misc/mei/main.c
-+++ b/drivers/misc/mei/main.c
-@@ -507,7 +507,6 @@ static long mei_ioctl(struct file *file, unsigned int cmd, unsigned long data)
- 		break;
- 
- 	default:
--		dev_err(dev->dev, ": unsupported ioctl %d.\n", cmd);
- 		rets = -ENOIOCTLCMD;
- 	}
- 
-diff --git a/drivers/parport/parport_pc.c b/drivers/parport/parport_pc.c
-index 489492b608cf..380916bff9e0 100644
---- a/drivers/parport/parport_pc.c
-+++ b/drivers/parport/parport_pc.c
-@@ -2646,6 +2646,7 @@ enum parport_pc_pci_cards {
- 	netmos_9901,
- 	netmos_9865,
- 	quatech_sppxp100,
-+	wch_ch382l,
- };
- 
- 
-@@ -2708,6 +2709,7 @@ static struct parport_pc_pci {
- 	/* netmos_9901 */               { 1, { { 0, -1 }, } },
- 	/* netmos_9865 */               { 1, { { 0, -1 }, } },
- 	/* quatech_sppxp100 */		{ 1, { { 0, 1 }, } },
-+	/* wch_ch382l */		{ 1, { { 2, -1 }, } },
- };
- 
- static const struct pci_device_id parport_pc_pci_tbl[] = {
-@@ -2797,6 +2799,8 @@ static const struct pci_device_id parport_pc_pci_tbl[] = {
- 	/* Quatech SPPXP-100 Parallel port PCI ExpressCard */
- 	{ PCI_VENDOR_ID_QUATECH, PCI_DEVICE_ID_QUATECH_SPPXP_100,
- 	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, quatech_sppxp100 },
-+	/* WCH CH382L PCI-E single parallel port card */
-+	{ 0x1c00, 0x3050, 0x1c00, 0x3050, 0, 0, wch_ch382l },
- 	{ 0, } /* terminate list */
- };
- MODULE_DEVICE_TABLE(pci, parport_pc_pci_tbl);
-diff --git a/drivers/siox/siox-core.c b/drivers/siox/siox-core.c
-index fdfcdea25867..16590dfaafa4 100644
---- a/drivers/siox/siox-core.c
-+++ b/drivers/siox/siox-core.c
-@@ -594,7 +594,7 @@ static ssize_t device_add_store(struct device *dev,
- 	size_t inbytes = 0, outbytes = 0;
- 	u8 statustype = 0;
- 
--	ret = sscanf(buf, "%20s %zu %zu %hhu", type, &inbytes,
-+	ret = sscanf(buf, "%19s %zu %zu %hhu", type, &inbytes,
- 		     &outbytes, &statustype);
- 	if (ret != 3 && ret != 4)
- 		return -EINVAL;
-diff --git a/drivers/staging/comedi/drivers/ni_mio_common.c b/drivers/staging/comedi/drivers/ni_mio_common.c
-index 5d610af6799f..9753042b7e1f 100644
---- a/drivers/staging/comedi/drivers/ni_mio_common.c
-+++ b/drivers/staging/comedi/drivers/ni_mio_common.c
-@@ -1275,6 +1275,8 @@ static void ack_a_interrupt(struct comedi_device *dev, unsigned short a_status)
- 		ack |= NISTC_INTA_ACK_AI_START;
- 	if (a_status & NISTC_AI_STATUS1_STOP)
- 		ack |= NISTC_INTA_ACK_AI_STOP;
-+	if (a_status & NISTC_AI_STATUS1_OVER)
-+		ack |= NISTC_INTA_ACK_AI_ERR;
- 	if (ack)
- 		ni_stc_writew(dev, ack, NISTC_INTA_ACK_REG);
- }
-diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
-index 160b8906d9b9..9835b1c1cbe1 100644
---- a/drivers/tty/serial/8250/8250_of.c
-+++ b/drivers/tty/serial/8250/8250_of.c
-@@ -316,6 +316,7 @@ static const struct of_device_id of_platform_serial_table[] = {
- 	{ .compatible = "mrvl,mmp-uart",
- 		.data = (void *)PORT_XSCALE, },
- 	{ .compatible = "ti,da830-uart", .data = (void *)PORT_DA830, },
-+	{ .compatible = "nuvoton,npcm750-uart", .data = (void *)PORT_NPCM, },
- 	{ /* end of list */ },
- };
- MODULE_DEVICE_TABLE(of, of_platform_serial_table);
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 1328c7e70108..804c1af6fd33 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -47,6 +47,10 @@
- #define UART_EXAR_SLEEP		0x8b	/* Sleep mode */
- #define UART_EXAR_DVID		0x8d	/* Device identification */
- 
-+/* Nuvoton NPCM timeout register */
-+#define UART_NPCM_TOR          7
-+#define UART_NPCM_TOIE         BIT(7)  /* Timeout Interrupt Enable */
-+
- /*
-  * Debugging.
-  */
-@@ -293,6 +297,15 @@ static const struct serial8250_config uart_config[] = {
- 				  UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
- 		.flags		= UART_CAP_FIFO,
- 	},
-+	[PORT_NPCM] = {
-+		.name		= "Nuvoton 16550",
-+		.fifo_size	= 16,
-+		.tx_loadsz	= 16,
-+		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10 |
-+				  UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
-+		.rxtrig_bytes	= {1, 4, 8, 14},
-+		.flags		= UART_CAP_FIFO,
-+	},
- };
- 
- /* Uart divisor latch read */
-@@ -2140,6 +2153,15 @@ int serial8250_do_startup(struct uart_port *port)
- 				UART_DA830_PWREMU_MGMT_FREE);
- 	}
- 
-+	if (port->type == PORT_NPCM) {
-+		/*
-+		 * Nuvoton calls the scratch register 'UART_TOR' (timeout
-+		 * register). Enable it, and set TIOC (timeout interrupt
-+		 * comparator) to be 0x20 for correct operation.
-+		 */
-+		serial_port_out(port, UART_NPCM_TOR, UART_NPCM_TOIE | 0x20);
-+	}
-+
- #ifdef CONFIG_SERIAL_8250_RSA
- 	/*
- 	 * If this is an RSA port, see if we can kick it up to the
-@@ -2462,6 +2484,15 @@ static unsigned int xr17v35x_get_divisor(struct uart_8250_port *up,
- 	return quot_16 >> 4;
- }
- 
-+/* Nuvoton NPCM UARTs have a custom divisor calculation */
-+static unsigned int npcm_get_divisor(struct uart_8250_port *up,
-+		unsigned int baud)
-+{
-+	struct uart_port *port = &up->port;
-+
-+	return DIV_ROUND_CLOSEST(port->uartclk, 16 * baud + 2) - 2;
-+}
-+
- static unsigned int serial8250_get_divisor(struct uart_8250_port *up,
- 					   unsigned int baud,
- 					   unsigned int *frac)
-@@ -2482,6 +2513,8 @@ static unsigned int serial8250_get_divisor(struct uart_8250_port *up,
- 		quot = 0x8002;
- 	else if (up->port.type == PORT_XR17V35X)
- 		quot = xr17v35x_get_divisor(up, baud, frac);
-+	else if (up->port.type == PORT_NPCM)
-+		quot = npcm_get_divisor(up, baud);
- 	else
- 		quot = uart_get_divisor(port, baud);
- 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index b4e57c5a8bba..f97251f39c26 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -1354,6 +1354,11 @@ static void csi_m(struct vc_data *vc)
- 		case 3:
- 			vc->vc_italic = 1;
- 			break;
-+		case 21:
-+			/*
-+			 * No console drivers support double underline, so
-+			 * convert it to a single underline.
-+			 */
- 		case 4:
- 			vc->vc_underline = 1;
- 			break;
-@@ -1389,7 +1394,6 @@ static void csi_m(struct vc_data *vc)
- 			vc->vc_disp_ctrl = 1;
- 			vc->vc_toggle_meta = 1;
- 			break;
--		case 21:
- 		case 22:
- 			vc->vc_intensity = 1;
- 			break;
-diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
-index 06d502b3e913..de1e759dd512 100644
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -155,6 +155,7 @@ static const struct usb_device_id id_table[] = {
- 	{ USB_DEVICE(0x12B8, 0xEC62) }, /* Link G4+ ECU */
- 	{ USB_DEVICE(0x13AD, 0x9999) }, /* Baltech card reader */
- 	{ USB_DEVICE(0x1555, 0x0004) }, /* Owen AC4 USB-RS485 Converter */
-+	{ USB_DEVICE(0x155A, 0x1006) },	/* ELDAT Easywave RX09 */
- 	{ USB_DEVICE(0x166A, 0x0201) }, /* Clipsal 5500PACA C-Bus Pascal Automation Controller */
- 	{ USB_DEVICE(0x166A, 0x0301) }, /* Clipsal 5800PC C-Bus Wireless PC Interface */
- 	{ USB_DEVICE(0x166A, 0x0303) }, /* Clipsal 5500PCU C-Bus USB interface */
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index f58c4ff6b387..87202ad5a50d 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -769,6 +769,7 @@ static const struct usb_device_id id_table_combined[] = {
- 		.driver_info = (kernel_ulong_t)&ftdi_NDI_device_quirk },
- 	{ USB_DEVICE(TELLDUS_VID, TELLDUS_TELLSTICK_PID) },
- 	{ USB_DEVICE(NOVITUS_VID, NOVITUS_BONO_E_PID) },
-+	{ USB_DEVICE(FTDI_VID, RTSYSTEMS_USB_VX8_PID) },
- 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_S03_PID) },
- 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_59_PID) },
- 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_57A_PID) },
-@@ -931,6 +932,7 @@ static const struct usb_device_id id_table_combined[] = {
- 	{ USB_DEVICE(FTDI_VID, FTDI_SCIENCESCOPE_LS_LOGBOOK_PID) },
- 	{ USB_DEVICE(FTDI_VID, FTDI_SCIENCESCOPE_HS_LOGBOOK_PID) },
- 	{ USB_DEVICE(FTDI_VID, FTDI_CINTERION_MC55I_PID) },
-+	{ USB_DEVICE(FTDI_VID, FTDI_FHE_PID) },
- 	{ USB_DEVICE(FTDI_VID, FTDI_DOTEC_PID) },
- 	{ USB_DEVICE(QIHARDWARE_VID, MILKYMISTONE_JTAGSERIAL_PID),
- 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
-diff --git a/drivers/usb/serial/ftdi_sio_ids.h b/drivers/usb/serial/ftdi_sio_ids.h
-index 8b4ecd2bd297..975d02666c5a 100644
---- a/drivers/usb/serial/ftdi_sio_ids.h
-+++ b/drivers/usb/serial/ftdi_sio_ids.h
-@@ -923,6 +923,9 @@
- /*
-  * RT Systems programming cables for various ham radios
-  */
-+/* This device uses the VID of FTDI */
-+#define RTSYSTEMS_USB_VX8_PID   0x9e50  /* USB-VX8 USB to 7 pin modular plug for Yaesu VX-8 radio */
-+
- #define RTSYSTEMS_VID		0x2100	/* Vendor ID */
- #define RTSYSTEMS_USB_S03_PID	0x9001	/* RTS-03 USB to Serial Adapter */
- #define RTSYSTEMS_USB_59_PID	0x9e50	/* USB-59 USB to 8 pin plug */
-@@ -1441,6 +1444,12 @@
-  */
- #define FTDI_CINTERION_MC55I_PID	0xA951
- 
-+/*
-+ * Product: FirmwareHubEmulator
-+ * Manufacturer: Harman Becker Automotive Systems
-+ */
-+#define FTDI_FHE_PID		0xA9A0
-+
- /*
-  * Product: Comet Caller ID decoder
-  * Manufacturer: Crucible Technologies
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index f53470112670..c7b75dd58fad 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1262,6 +1262,8 @@ static noinline int csum_exist_in_range(struct btrfs_fs_info *fs_info,
- 		list_del(&sums->list);
- 		kfree(sums);
- 	}
-+	if (ret < 0)
-+		return ret;
- 	return 1;
- }
- 
-@@ -1394,10 +1396,23 @@ static noinline int run_delalloc_nocow(struct inode *inode,
- 				goto out_check;
- 			if (btrfs_extent_readonly(fs_info, disk_bytenr))
- 				goto out_check;
--			if (btrfs_cross_ref_exist(root, ino,
--						  found_key.offset -
--						  extent_offset, disk_bytenr))
-+			ret = btrfs_cross_ref_exist(root, ino,
-+						    found_key.offset -
-+						    extent_offset, disk_bytenr);
-+			if (ret) {
-+				/*
-+				 * ret could be -EIO if the above fails to read
-+				 * metadata.
-+				 */
-+				if (ret < 0) {
-+					if (cow_start != (u64)-1)
-+						cur_offset = cow_start;
-+					goto error;
-+				}
-+
-+				WARN_ON_ONCE(nolock);
- 				goto out_check;
-+			}
- 			disk_bytenr += extent_offset;
- 			disk_bytenr += cur_offset - found_key.offset;
- 			num_bytes = min(end + 1, extent_end) - cur_offset;
-@@ -1415,10 +1430,22 @@ static noinline int run_delalloc_nocow(struct inode *inode,
- 			 * this ensure that csum for a given extent are
- 			 * either valid or do not exist.
- 			 */
--			if (csum_exist_in_range(fs_info, disk_bytenr,
--						num_bytes)) {
-+			ret = csum_exist_in_range(fs_info, disk_bytenr,
-+						  num_bytes);
-+			if (ret) {
- 				if (!nolock)
- 					btrfs_end_write_no_snapshotting(root);
-+
-+				/*
-+				 * ret could be -EIO if the above fails to read
-+				 * metadata.
-+				 */
-+				if (ret < 0) {
-+					if (cow_start != (u64)-1)
-+						cur_offset = cow_start;
-+					goto error;
-+				}
-+				WARN_ON_ONCE(nolock);
- 				goto out_check;
- 			}
- 			if (!btrfs_inc_nocow_writers(fs_info, disk_bytenr)) {
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 5f11fbdc27f8..1ee46f492267 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -302,12 +302,20 @@ static inline void bitmap_complement(unsigned long *dst, const unsigned long *sr
- 		__bitmap_complement(dst, src, nbits);
- }
- 
-+#ifdef __LITTLE_ENDIAN
-+#define BITMAP_MEM_ALIGNMENT 8
-+#else
-+#define BITMAP_MEM_ALIGNMENT (8 * sizeof(unsigned long))
-+#endif
-+#define BITMAP_MEM_MASK (BITMAP_MEM_ALIGNMENT - 1)
-+
- static inline int bitmap_equal(const unsigned long *src1,
- 			const unsigned long *src2, unsigned int nbits)
- {
- 	if (small_const_nbits(nbits))
- 		return !((*src1 ^ *src2) & BITMAP_LAST_WORD_MASK(nbits));
--	if (__builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
-+	if (__builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-+	    IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
- 		return !memcmp(src1, src2, nbits / 8);
- 	return __bitmap_equal(src1, src2, nbits);
- }
-@@ -358,8 +366,10 @@ static __always_inline void bitmap_set(unsigned long *map, unsigned int start,
- {
- 	if (__builtin_constant_p(nbits) && nbits == 1)
- 		__set_bit(start, map);
--	else if (__builtin_constant_p(start & 7) && IS_ALIGNED(start, 8) &&
--		 __builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
-+	else if (__builtin_constant_p(start & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(start, BITMAP_MEM_ALIGNMENT) &&
-+		 __builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
- 		memset((char *)map + start / 8, 0xff, nbits / 8);
- 	else
- 		__bitmap_set(map, start, nbits);
-@@ -370,8 +380,10 @@ static __always_inline void bitmap_clear(unsigned long *map, unsigned int start,
- {
- 	if (__builtin_constant_p(nbits) && nbits == 1)
- 		__clear_bit(start, map);
--	else if (__builtin_constant_p(start & 7) && IS_ALIGNED(start, 8) &&
--		 __builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
-+	else if (__builtin_constant_p(start & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(start, BITMAP_MEM_ALIGNMENT) &&
-+		 __builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
- 		memset((char *)map + start / 8, 0, nbits / 8);
- 	else
- 		__bitmap_clear(map, start, nbits);
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 16c3027074a2..6970e7922c69 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -222,6 +222,8 @@ typedef struct compat_siginfo {
- #ifdef __ARCH_SI_TRAPNO
- 			int _trapno;	/* TRAP # which caused the signal */
- #endif
-+#define __COMPAT_ADDR_BND_PKEY_PAD  (__alignof__(compat_uptr_t) < sizeof(short) ? \
-+				     sizeof(short) : __alignof__(compat_uptr_t))
- 			union {
- 				/*
- 				 * used when si_code=BUS_MCEERR_AR or
-@@ -230,13 +232,13 @@ typedef struct compat_siginfo {
- 				short int _addr_lsb;	/* Valid LSB of the reported address. */
- 				/* used when si_code=SEGV_BNDERR */
- 				struct {
--					compat_uptr_t _dummy_bnd;
-+					char _dummy_bnd[__COMPAT_ADDR_BND_PKEY_PAD];
- 					compat_uptr_t _lower;
- 					compat_uptr_t _upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
- 				struct {
--					compat_uptr_t _dummy_pkey;
-+					char _dummy_pkey[__COMPAT_ADDR_BND_PKEY_PAD];
- 					u32 _pkey;
- 				} _addr_pkey;
- 			};
-diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-index 99c902e460c2..65d405770b95 100644
---- a/include/uapi/asm-generic/siginfo.h
-+++ b/include/uapi/asm-generic/siginfo.h
-@@ -94,6 +94,9 @@ typedef struct siginfo {
- 			unsigned int _flags;	/* see ia64 si_flags */
- 			unsigned long _isr;	/* isr */
- #endif
-+
-+#define __ADDR_BND_PKEY_PAD  (__alignof__(void *) < sizeof(short) ? \
-+			      sizeof(short) : __alignof__(void *))
- 			union {
- 				/*
- 				 * used when si_code=BUS_MCEERR_AR or
-@@ -102,13 +105,13 @@ typedef struct siginfo {
- 				short _addr_lsb; /* LSB of the reported address */
- 				/* used when si_code=SEGV_BNDERR */
- 				struct {
--					void *_dummy_bnd;
-+					char _dummy_bnd[__ADDR_BND_PKEY_PAD];
- 					void __user *_lower;
- 					void __user *_upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
- 				struct {
--					void *_dummy_pkey;
-+					char _dummy_pkey[__ADDR_BND_PKEY_PAD];
- 					__u32 _pkey;
- 				} _addr_pkey;
- 			};
-diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
-index 1c8413f93e3d..dce5f9dae121 100644
---- a/include/uapi/linux/serial_core.h
-+++ b/include/uapi/linux/serial_core.h
-@@ -76,6 +76,9 @@
- #define PORT_SUNZILOG	38
- #define PORT_SUNSAB	39
- 
-+/* Nuvoton UART */
-+#define PORT_NPCM	40
-+
- /* Intel EG20 */
- #define PORT_PCH_8LINE	44
- #define PORT_PCH_2LINE	45
+
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.15.16 kernel.
+
+All users of the 4.15 kernel series must upgrade.
+
+The updated 4.15.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.15.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Documentation/devicetree/bindings/serial/8250.txt  |    1=20
+ Makefile                                           |    2=20
+ arch/arm/boot/dts/am335x-pepper.dts                |    2=20
+ arch/arm/boot/dts/dra76-evm.dts                    |    1=20
+ arch/arm/boot/dts/omap3-n900.dts                   |    4=20
+ arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts   |   63 +++++++
+ arch/arm/crypto/Makefile                           |    2=20
+ arch/arm/plat-omap/include/plat/sram.h             |   11 -
+ arch/arm/plat-omap/sram.c                          |   36 ++++
+ arch/arm/vfp/vfpmodule.c                           |    2=20
+ arch/arm64/crypto/Makefile                         |    2=20
+ arch/powerpc/include/asm/book3s/64/mmu.h           |    3=20
+ arch/powerpc/include/asm/mmu_context.h             |   18 +-
+ arch/powerpc/kernel/exceptions-64s.S               |    2=20
+ arch/powerpc/kernel/irq.c                          |    8 +
+ arch/powerpc/mm/mmu_context_book3s64.c             |    1=20
+ arch/powerpc/mm/tlb-radix.c                        |   50 +++++-
+ arch/x86/crypto/cast5_avx_glue.c                   |    3=20
+ arch/x86/include/asm/hw_irq.h                      |    1=20
+ arch/x86/kernel/idt.c                              |    3=20
+ arch/x86/platform/uv/tlb_uv.c                      |    2=20
+ block/bio.c                                        |    4=20
+ block/partitions/msdos.c                           |    4=20
+ crypto/ahash.c                                     |    7=20
+ crypto/lrw.c                                       |    2=20
+ crypto/testmgr.h                                   |    6=20
+ drivers/base/arch_topology.c                       |   12 -
+ drivers/char/mem.c                                 |    6=20
+ drivers/cpufreq/cpufreq.c                          |    6=20
+ drivers/crypto/caam/ctrl.c                         |    3=20
+ drivers/crypto/ccp/ccp-crypto-rsa.c                |    7=20
+ drivers/crypto/inside-secure/safexcel.c            |    2=20
+ drivers/crypto/talitos.c                           |  168 ++++++++--------=
+-----
+ drivers/gpu/drm/i915/intel_ddi.c                   |   12 -
+ drivers/i2c/busses/i2c-stm32f7.c                   |    5=20
+ drivers/infiniband/core/addr.c                     |   25 +++
+ drivers/infiniband/core/ucma.c                     |   61 ++++---
+ drivers/input/mouse/alps.c                         |   24 ++-
+ drivers/input/serio/i8042-x86ia64io.h              |   24 +++
+ drivers/media/usb/usbtv/usbtv-core.c               |    2=20
+ drivers/misc/mei/main.c                            |    1=20
+ drivers/mtd/chips/jedec_probe.c                    |    2=20
+ drivers/mtd/nand/atmel/pmecc.c                     |    2=20
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c |    2=20
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c  |    2=20
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c  |    2=20
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c   |    4=20
+ drivers/parport/parport_pc.c                       |    4=20
+ drivers/phy/qualcomm/phy-qcom-ufs.c                |    5=20
+ drivers/staging/comedi/drivers/ni_mio_common.c     |    2=20
+ drivers/tty/serial/8250/8250_of.c                  |    1=20
+ drivers/tty/serial/8250/8250_port.c                |   33 ++++
+ drivers/tty/vt/vt.c                                |    6=20
+ drivers/usb/serial/cp210x.c                        |    1=20
+ drivers/usb/serial/ftdi_sio.c                      |    2=20
+ drivers/usb/serial/ftdi_sio_ids.h                  |    9 +
+ fs/btrfs/inode.c                                   |   37 ++++
+ fs/ceph/file.c                                     |    9 -
+ include/linux/bitmap.h                             |   22 ++
+ include/linux/netfilter/x_tables.h                 |    2=20
+ include/rdma/ib_addr.h                             |    2=20
+ include/uapi/linux/serial_core.h                   |    3=20
+ ipc/shm.c                                          |   12 +
+ kernel/events/hw_breakpoint.c                      |   30 ---
+ mm/percpu-km.c                                     |    8 -
+ mm/percpu-vm.c                                     |   18 +-
+ mm/percpu.c                                        |   45 +++--
+ net/bluetooth/smp.c                                |    8 -
+ net/bridge/netfilter/ebt_among.c                   |   34 ++++
+ net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c     |   14 +
+ net/ipv6/ip6_vti.c                                 |   20 --
+ net/ipv6/route.c                                   |   13 -
+ net/l2tp/l2tp_core.c                               |   38 ++--
+ net/l2tp/l2tp_core.h                               |    3=20
+ net/netfilter/x_tables.c                           |   37 ++++
+ net/netfilter/xt_hashlimit.c                       |   16 +-
+ net/netfilter/xt_recent.c                          |    6=20
+ net/xfrm/xfrm_ipcomp.c                             |    2=20
+ net/xfrm/xfrm_state.c                              |    5=20
+ net/xfrm/xfrm_user.c                               |   21 +-
+ sound/core/oss/pcm_oss.c                           |    4=20
+ sound/core/pcm_native.c                            |    2=20
+ sound/usb/quirks.c                                 |    1=20
+ 83 files changed, 730 insertions(+), 357 deletions(-)
+
+Alexander Gerasiov (1):
+      parport_pc: Add support for WCH CH382L PCI-E single parallel port car=
+d.
+
+Andrew Banman (1):
+      x86/platform/uv/BAU: Add APIC idt entry
+
+Arnd Bergmann (1):
+      phy: qcom-ufs: add MODULE_LICENSE tag
+
+Benjamin Herrenschmidt (2):
+      powerpc/mm: Add tracking of the number of coprocessors using a context
+      powerpc/mm: Workaround Nest MMU bug with TLB invalidations
+
+Boris Brezillon (1):
+      mtd: nand: atmel: Fix get_sectorsize() function
+
+Clemens Werther (1):
+      USB: serial: ftdi_sio: add support for Harman FirmwareHubEmulator
+
+Colin Ian King (1):
+      mei: remove dev_err message on an unsupported ioctl
+
+Conor McLoughlin (1):
+      crypto: testmgr - Fix incorrect values in PKCS#1 test vector
+
+Dan Carpenter (1):
+      ALSA: pcm: potential uninitialized return values
+
+Dennis Wassenberg (1):
+      Input: i8042 - add Lenovo ThinkPad L460 to i8042 reset list
+
+Dennis Zhou (1):
+      percpu: add __GFP_NORETRY semantics to the percpu balancing path
+
+Dhinakaran Pandiyan (1):
+      drm/i915/dp: Write to SET_POWER dpcd to enable MST hub.
+
+Eric Biggers (1):
+      crypto: x86/cast5-avx - fix ECB encryption when long sg follows short=
+ one
+
+Eric Dumazet (1):
+      ipv6: fix possible deadlock in rt6_age_examine_exception()
+
+Fabio Estevam (1):
+      ARM: 8746/1: vfp: Go back to clearing vfp_current_hw_state[]
+
+Florian Westphal (3):
+      xfrm_user: uncoditionally validate esn replay attribute struct
+      netfilter: bridge: ebt_among: add more missing match size checks
+      netfilter: x_tables: add and use xt_check_proc_name
+
+Frank Mori Hess (1):
+      staging: comedi: ni_mio_common: ack ai fifo error interrupts.
+
+Gaku Inami (1):
+      Revert "base: arch_topology: fix section mismatch build warnings"
+
+Greg Hackmann (1):
+      net: xfrm: use preempt-safe this_cpu_read() in ipcomp_alloc_tfms()
+
+Greg Kroah-Hartman (5):
+      Revert "ARM: dts: am335x-pepper: Fix the audio CODEC's reset pin"
+      Revert "ARM: dts: omap3-n900: Fix the audio CODEC's reset pin"
+      Revert "cpufreq: Fix governor module removal race"
+      Revert "ip6_vti: adjust vti mtu according to mtu of lower device"
+      Linux 4.15.16
+
+Gregory CLEMENT (1):
+      crypto: inside-secure - fix clock management
+
+Herbert Xu (2):
+      crypto: lrw - Free rctx->ext with kzfree
+      crypto: ahash - Fix early termination in hash walk
+
+Jason Gunthorpe (1):
+      RDMA/rdma_cm: Fix use after free race with process_one_req
+
+Joel Stanley (1):
+      serial: 8250: Add Nuvoton NPCM UART
+
+Johan Hovold (1):
+      USB: serial: cp210x: add ELDAT Easywave RX09 id
+
+Keerthy (1):
+      ARM: dts: DRA76-EVM: Set powerhold property for tps65917
+
+Kees Cook (1):
+      /dev/mem: Avoid overwriting "err" in read_mem()
+
+LEROY Christophe (2):
+      crypto: talitos - don't persistently map req_ctx->hw_context and req_=
+ctx->buf
+      crypto: talitos - fix IPsec cipher in length
+
+Leon Romanovsky (5):
+      RDMA/ucma: Check AF family prior resolving address
+      RDMA/ucma: Fix use-after-free access in ucma_close
+      RDMA/ucma: Ensure that CM_ID exists prior to access it
+      RDMA/ucma: Check that device is connected prior to access it
+      RDMA/ucma: Check that device exists prior to accessing it
+
+Leonard Crestez (1):
+      crypto: arm,arm64 - Fix random regeneration of S_shipped
+
+Linus Torvalds (1):
+      perf/hwbp: Simplify the perf-hwbp code, fix documentation
+
+Linus Walleij (1):
+      mtd: jedec_probe: Fix crash in jedec_read_mfr()
+
+Liu Bo (1):
+      Btrfs: fix unexpected cow in run_delalloc_nocow
+
+Maciej S. Szmigiero (1):
+      crypto: ccp - return an actual key size from RSA max_size callback
+
+Major Hayden (1):
+      USB: serial: ftdi_sio: add RT Systems VX-8 cable
+
+Masaki Ota (1):
+      Input: ALPS - fix TrackStick detection on Thinkpad L570 and Latitude =
+7370
+
+Matthias Brugger (1):
+      net: hns: Fix ethtool private flags
+
+Michal Hocko (1):
+      netfilter: x_tables: make allocation less aggressive
+
+Mike Frysinger (1):
+      vt: change SGR 21 to follow the standards
+
+Mike Kravetz (1):
+      ipc/shm.c: add split function to shm_vm_ops
+
+Mikulas Patocka (1):
+      Fix slab name "biovec-(1<<(21-12))"
+
+Nicholas Piggin (2):
+      powerpc/64s: Fix lost pending interrupt due to race causing lost upda=
+te to irq_happened
+      powerpc/64s: Fix i-side SLB miss bad address handler saving nonvolati=
+le GPRs
+
+Nobutaka Okabe (1):
+      ALSA: usb-audio: Add native DSD support for TEAC UD-301
+
+Oliver Neukum (1):
+      media: usbtv: prevent double free in error case
+
+Omar Sandoval (1):
+      bitmap: fix memset optimization on big-endian systems
+
+Ondrej Zary (1):
+      Input: i8042 - enable MUX on Sony VAIO VGN-CS series to fix touchpad
+
+Paolo Abeni (2):
+      l2tp: fix races with ipv4-mapped ipv6 addresses
+      netfilter: drop template ct when conntrack is skipped.
+
+Philipp Rossak (2):
+      ARM: dts: sun6i: a31s: bpi-m2: improve pmic properties
+      ARM: dts: sun6i: a31s: bpi-m2: add missing regulators
+
+Pierre-Yves MORDRET (1):
+      i2c: i2c-stm32f7: fix no check on returned setup
+
+Richard Narron (1):
+      partitions/msdos: Unable to mount UFS 44bsd partitions
+
+Roland Dreier (1):
+      RDMA/ucma: Introduce safer rdma_addr_size() variants
+
+Rui Miguel Silva (1):
+      crypto: caam - Fix null dereference at error path
+
+Stefan Roese (1):
+      ALSA: pcm: Use dma_bytes as size parameter in dma_mmap_coherent()
+
+Steffen Klassert (1):
+      xfrm: Refuse to insert 32 bit userspace socket policies on 64 bit sys=
+tems
+
+Szymon Janc (1):
+      Bluetooth: Fix missing encryption refresh on Security Request
+
+Tony Lindgren (1):
+      ARM: OMAP: Fix SRAM W+X mapping
+
+Yan, Zheng (1):
+      ceph: only dirty ITER_IOVEC pages for direct read
+
+
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlrKMLoACgkQONu9yGCS
+aT43qg//ZIVmt9DioKqPAj5OZUHRqQRlGPxDZZlHvDiseGyZnVby4xNy4/ouDHbt
+kYiS4AmKxE2Qu8ECmdxKz1NNhV5DGonTzrIfdK/gD8m7u2TB2fdXN0n0vuXWoPPc
++XBy/6RtaPCQTki8Yux8F6G2r9flGZHhjCrE7UxChqisFy1Skk67/0PZJum6PftP
+h+xmUCr2Uoosj3uWIT8rJhojKuoQ+ISJ+u7KrnBzevRgClgMCaJCL7Vd/SGZWIWQ
+1M/+lIJFBVmRpHu9VSiDP4k3Z+xIkCRrMULFUX4sjPuPDyTZGwZ9TvhFaPMwzRMy
+moTlnEwubjp6rVn0Z/ZI4lacXDV+bb6NZo2C8YS950OTdvT4+OiCbyX6YGDa8rPd
+ErGUec25JMXydrNQxJajsw1uag/Lf5Xz4BHS7H7q5VkMTEHPTMRpClWOUf52YSsz
+ffteF5oBZc7nYcZhgfn2YSfZnLlYVxUTLi12+IX1jj2ZtqOuY57h9xI6/sBcnUT1
+bBuv51PS9I32BX2nNxwgFuCEdpzgn7OuwdhFVXgrFcXcW7hfLKDDAHE1kEoO6JMz
+zBb9zcrxijS1U5ZNaQBnamZBE49apf/HNbg8M/BiDRS5cP76cut2Z5ZsFLEkujDr
+mZsTGIa7zkjFkwwcXCHXdgwTpTq8BGT3eWOio186uhaFt5oMrxQ=
+=ncI+
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
