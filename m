@@ -1,70 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751775AbeDHMQX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 08:16:23 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:56688 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751367AbeDHMQW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 08:16:22 -0400
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sun, 08 Apr 2018 14:16:20 +0200
-X-ME-IP: 86.201.130.131
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Vinod Koul <vinod.koul@intel.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH 14/15] ARM: pxa: change SSP devices allocation
-References: <20180402142656.26815-1-robert.jarzmik@free.fr>
-        <20180402142656.26815-15-robert.jarzmik@free.fr>
-        <CAK8P3a2hYWO2eweg3zpR7iJoqtH4uxJLAxJAno7L96G7nA2HxQ@mail.gmail.com>
-        <87lge4485x.fsf@belgarion.home>
-        <CAK8P3a1ko=YEwR2VOahH0OWHfeOyWAzDYah4DSohBcvTNq_MKQ@mail.gmail.com>
-        <87zi2i2ljy.fsf@belgarion.home>
-        <CAK8P3a0xJnVfXfUtP+JXGNgc2-LuHUmZCMq-SnEQw3wu3azemA@mail.gmail.com>
-X-URL: http://belgarath.falguerolles.org/
-Date: Sun, 08 Apr 2018 14:16:17 +0200
-In-Reply-To: <CAK8P3a0xJnVfXfUtP+JXGNgc2-LuHUmZCMq-SnEQw3wu3azemA@mail.gmail.com>
-        (Arnd Bergmann's message of "Thu, 5 Apr 2018 09:29:30 +0200")
-Message-ID: <87o9it3nce.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1752037AbeDHMW2 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 08:22:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52480 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751340AbeDHMW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 08:22:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B448621785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: don't split checkpoint in fstrim
+Date: Sun,  8 Apr 2018 08:20:31 +0800
+Message-Id: <20180408002031.15571-1-chao@kernel.org>
+X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
+From: Chao Yu <yuchao0@huawei.com>
 
-> I don't know exactly how the probing works, but I'd assume that we have
-> the correct device pointers in pxa2xx_ac97_dev_probe() and
-> asoc_ssp_probe(), or maybe in pxa2xx_ac97_*_startup() and
-> pxa_ssp_startup().
+Now, we issue discard asynchronously in separated thread instead of in
+checkpoint, after that, we won't encounter long latency in checkpoint
+due to huge number of synchronous discard command handling, so, we don't
+need to split checkpoint to do trim in batch, merge it and obsolete
+related sysfs entry.
 
-Yes, let's try this way, in the former patch
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs |  1 +
+ fs/f2fs/f2fs.h                          |  5 -----
+ fs/f2fs/segment.c                       | 33 +++++++++------------------------
+ fs/f2fs/sysfs.c                         |  3 +++
+ 4 files changed, 13 insertions(+), 29 deletions(-)
 
-"ASoC: pxa: remove the dmaengine compat need" :
-+++ b/sound/arm/pxa2xx-pcm-lib.c
-@@ -126,7 +127,7 @@ int __pxa2xx_pcm_open(struct snd_pcm_substream *substream)
-                return ret;
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 540553c933b6..372b88f4e706 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -101,6 +101,7 @@ Date:		February 2015
+ Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+ Description:
+ 		 Controls the trimming rate in batch mode.
++		 <deprecated>
  
-        return snd_dmaengine_pcm_open(
--               substream, dma_request_slave_channel(rtd->platform->dev,
-+               substream, dma_request_slave_channel(rtd->cpu_dai->dev,
-                                                     dma_params->chan_name));
- }
-
-The cpu_dai device should be either pxa27x_ac97 or pxa-ssp-dai.<Id>, and amend
-the dma slave map accordingly.
-
-Cheers.
-
+ What:		/sys/fs/f2fs/<disk>/cp_interval
+ Date:		October 2015
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0aaf70955c77..f414f7ab8ddb 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -178,11 +178,6 @@ enum {
+ #define	CP_DISCARD	0x00000010
+ #define CP_TRIMMED	0x00000020
+ 
+-#define DEF_BATCHED_TRIM_SECTIONS	2048
+-#define BATCHED_TRIM_SEGMENTS(sbi)	\
+-		(GET_SEG_FROM_SEC(sbi, SM_I(sbi)->trim_sections))
+-#define BATCHED_TRIM_BLOCKS(sbi)	\
+-		(BATCHED_TRIM_SEGMENTS(sbi) << (sbi)->log_blocks_per_seg)
+ #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+ #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+ #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 2aff7834d821..7150ab22f968 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2450,30 +2450,17 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 
+ 	cpc.reason = CP_DISCARD;
+ 	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
++	cpc.trim_start = start_segno;
++	cpc.trim_end = end_segno;
+ 
+-	/* do checkpoint to issue discard commands safely */
+-	for (cur_segno = start_segno; cur_segno <= end_segno;
+-					cur_segno = cpc.trim_end + 1) {
+-		cpc.trim_start = cur_segno;
+-
+-		if (sbi->discard_blks == 0)
+-			break;
+-		else if (sbi->discard_blks < BATCHED_TRIM_BLOCKS(sbi))
+-			cpc.trim_end = end_segno;
+-		else
+-			cpc.trim_end = min_t(unsigned int,
+-				rounddown(cur_segno +
+-				BATCHED_TRIM_SEGMENTS(sbi),
+-				sbi->segs_per_sec) - 1, end_segno);
+-
+-		mutex_lock(&sbi->gc_mutex);
+-		err = write_checkpoint(sbi, &cpc);
+-		mutex_unlock(&sbi->gc_mutex);
+-		if (err)
+-			break;
++	if (sbi->discard_blks == 0)
++		goto out;
+ 
+-		schedule();
+-	}
++	mutex_lock(&sbi->gc_mutex);
++	err = write_checkpoint(sbi, &cpc);
++	mutex_unlock(&sbi->gc_mutex);
++	if (err)
++		goto out;
+ 
+ 	start_block = START_BLOCK(sbi, start_segno);
+ 	end_block = START_BLOCK(sbi, min(cur_segno, end_segno) + 1);
+@@ -3869,8 +3856,6 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
+ 	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
+ 	sm_info->min_ssr_sections = reserved_sections(sbi);
+ 
+-	sm_info->trim_sections = DEF_BATCHED_TRIM_SECTIONS;
+-
+ 	INIT_LIST_HEAD(&sm_info->sit_entry_set);
+ 
+ 	init_rwsem(&sm_info->curseg_lock);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index ab54990d057d..2130d9b031a2 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -251,6 +251,9 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 		return count;
+ 	}
+ 
++	if (!strcmp(a->attr.name, "trim_sections"))
++		return -EINVAL;
++
+ 	*ui = t;
+ 
+ 	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
 -- 
-Robert
+2.16.2.17.g38e79b1fd
