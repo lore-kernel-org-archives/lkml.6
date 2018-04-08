@@ -1,100 +1,76 @@
-Return-Path: <kernel-hardening-return-12879-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx49nSJU0vr3HtGoKYeBTwoEAgWRgz3cxyoH9B6IKJJRp0hFkLbmKVY8yRTNiTYuZtDP8bZvj
-ARC-Seal: i=1; a=rsa-sha256; t=1523126386; cv=none;
+Return-Path: <kernel-hardening-return-12885-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49NbHc8QllBEr6TSnI7u8mcBy5fIlnVjLAO9WeE5CBnoc1tQzqTtI+7uPJ0j5zKpSk0n27g
+ARC-Seal: i=1; a=rsa-sha256; t=1523157430; cv=none;
         d=google.com; s=arc-20160816;
-        b=sNwXJUwsAmTbdDxhbij8xxoDK1R9yvwDyGFXqEqgViP3ZAlwFpqiEjgx8SerD0Bj5/
-         waf/c7wyjEouuWGa4K2D/n0QD2LcLEM2NB3cMhcYsF9K8HF/fA+i7m1hKcGwU5xKv2/Q
-         mYjTYkT+xEENuOoq5KHgydeXSLJJm0nxIoR0AiKb85mA+8TZiQ+ta34eh4HAXrJezxS+
-         /syQATU/W8bQbw26yFBW6B3/hi3iHr5FIfXcKaaDO0sXhK/PREo0bt1dVmBqSW5Wap3p
-         gUG2Y5v6kUj4RkXix9YIbjjUfVWlKJbLQ6eWlhLpzhwI6VrTj6QxfxNV37h+NSnZ71rU
-         Hs4w==
+        b=pRxQVKf5MCgcv8rd35nCFDtD6Ek2ESmgqI1O1YUT/oCYXBY8za2GfMoPeGGvF83TYs
+         uC5+LtCG87IPHTt8UwJLCfTwUM75QQZPtNR23b8ZWvWWjSxeBZXAJpu71nnr1ilZRR14
+         eFqIz2I+PyMuhUOPwCH3TjG/8NgH+5Qay8ExfEeLwzl2d901aucFregdRKHg7nAQk+vH
+         Y1xQqeX4rsGabu7MUFsLO073DbRyo4R/Whn3tMFqpnSStu4yWkr/sq46ExymW83KiGNz
+         oXAmIU551Y6ztGFe0MEiywkdjUfcDH+ig9vaV/ULeMgebauwjN+/E0SmsjuWXHOz2z2C
+         hGAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=YAlTGdnPdSsRn+04SbOD45FkZFw5nVfUTH5BnaTOpDI=;
-        b=RCRBi6FlgXMxR7PsjtRFf7nmc0sYWuaq8+weq18ndaI9IJbD0+c34DAGxGK8NVMlPW
-         lNZA7hAs5EjaOuSmtZ2AEo7i54+NLxgRJ3gCqkJvjw2xdWF9boIzz+EPJwgEOqOJITx2
-         xtAAwyhfeUZfUxwpaVwJm/Y5/3lL2IbWCWs0D5A/5mXFweXMTRAxjP46XCns9EphTuzZ
-         VnueETmTjK2AcOEuUaulJCFUZ4sbAcvNcglgp38GSq3en3FoBukzprX8AocFw54yy7pD
-         P0VWGfJCDTy32pChvZhkNwFXbAR3wIy1cLq+MbmTz0I1P7ikKEzAbnD/SBNWPFOFca8E
-         CKYg==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=BCklTb1ilLtiiibpZEmX1ZzWKMK5NdnLVRkDECek0Os=;
+        b=J2gsv7LSHjiAWq2hTG+akGJKRSc4rAlPHRO6XPzWmBhV7lH0rm/i7Ms2X+hjAlxqVn
+         QUagM25WkX/coF35jiXLDZEEih0yFiyx5/nC6ORtGiXIj//SeGtBBYVKVoLJ87E8ud2l
+         Cgn1D9dCSjXjo/Z8b+T9IlrLxpvlSgZlxNYRsXZkVAj4fYtCq+wreuOyjK7sBK8YPjAN
+         Wy2yMi71+vryXBDlA8Aq6fEvO6+Ichfp4r2JemNJLim5S2aCpOTS3iWOMXcxo45PHFdl
+         0mFcFaiZfQtfwqtzW+arxWS7p7BuBvmQBGfkZHVBxbPvFVT+aa/RuwU5gj13LSGyKvlP
+         umWQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=fQbxwYCQ;
-       spf=pass (google.com: domain of kernel-hardening-return-12879-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12879-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12885-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12885-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=fQbxwYCQ;
-       spf=pass (google.com: domain of kernel-hardening-return-12879-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12879-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12885-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12885-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com,
+Date: Sun, 8 Apr 2018 11:16:20 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
 	linux-crypto@vger.kernel.org,
 	"David S. Miller" <davem@davemloft.net>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
 	Kees Cook <keescook@chromium.org>,
-	Salvatore Mesoraca <s.mesoraca16@gmail.com>,
 	Eric Biggers <ebiggers3@gmail.com>,
 	Laura Abbott <labbott@redhat.com>
-Subject: [PATCH 3/6] crypto: api - avoid VLA use
-Date: Sat,  7 Apr 2018 20:38:20 +0200
-Message-Id: <1523126303-23205-4-git-send-email-s.mesoraca16@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1523126303-23205-1-git-send-email-s.mesoraca16@gmail.com>
+Subject: Re: [PATCH 3/6] crypto: api - avoid VLA use
+Message-ID: <20180408031619.GB25197@gondor.apana.org.au>
 References: <1523126303-23205-1-git-send-email-s.mesoraca16@gmail.com>
+ <1523126303-23205-4-git-send-email-s.mesoraca16@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523126303-23205-4-git-send-email-s.mesoraca16@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597113773763364977?=
-X-GMAIL-MSGID: =?utf-8?q?1597113773763364977?=
+X-GMAIL-MSGID: =?utf-8?q?1597146325863800526?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We avoid a VLA[1] by always allocating MAX_BLOCKSIZE +
-MAX_ALIGNMASK bytes.
-We also check the selected cipher at initialization time, if
-it doesn't comply with these limits, the initialization will
-fail.
+On Sat, Apr 07, 2018 at 08:38:20PM +0200, Salvatore Mesoraca wrote:
+>
+>  int crypto_init_cipher_ops(struct crypto_tfm *tfm)
+>  {
+> +	const unsigned long alignmask = crypto_tfm_alg_alignmask(tfm);
+> +	const unsigned int size = crypto_tfm_alg_blocksize(tfm);
+>  	struct cipher_tfm *ops = &tfm->crt_cipher;
+>  	struct cipher_alg *cipher = &tfm->__crt_alg->cra_cipher;
+>  
+> +	if (size > MAX_BLOCKSIZE || alignmask > MAX_ALIGNMASK)
+> +		return -EINVAL;
+> +
 
-[1] http://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+This check should be done when the algorithm is registered.  Perhaps
+crypto_check_alg.
 
-Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
----
- crypto/cipher.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/crypto/cipher.c b/crypto/cipher.c
-index 94fa355..9cedf23 100644
---- a/crypto/cipher.c
-+++ b/crypto/cipher.c
-@@ -67,7 +67,7 @@ static void cipher_crypt_unaligned(void (*fn)(struct crypto_tfm *, u8 *,
- {
- 	unsigned long alignmask = crypto_tfm_alg_alignmask(tfm);
- 	unsigned int size = crypto_tfm_alg_blocksize(tfm);
--	u8 buffer[size + alignmask];
-+	u8 buffer[MAX_BLOCKSIZE + MAX_ALIGNMASK];
- 	u8 *tmp = (u8 *)ALIGN((unsigned long)buffer, alignmask + 1);
- 
- 	memcpy(tmp, src, size);
-@@ -105,9 +105,14 @@ static void cipher_decrypt_unaligned(struct crypto_tfm *tfm,
- 
- int crypto_init_cipher_ops(struct crypto_tfm *tfm)
- {
-+	const unsigned long alignmask = crypto_tfm_alg_alignmask(tfm);
-+	const unsigned int size = crypto_tfm_alg_blocksize(tfm);
- 	struct cipher_tfm *ops = &tfm->crt_cipher;
- 	struct cipher_alg *cipher = &tfm->__crt_alg->cra_cipher;
- 
-+	if (size > MAX_BLOCKSIZE || alignmask > MAX_ALIGNMASK)
-+		return -EINVAL;
-+
- 	ops->cit_setkey = setkey;
- 	ops->cit_encrypt_one = crypto_tfm_alg_alignmask(tfm) ?
- 		cipher_encrypt_unaligned : cipher->cia_encrypt;
+Thanks,
 -- 
-1.9.1
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
