@@ -1,34 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeDHWua (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 18:50:30 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:45449 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751788AbeDHWu1 (ORCPT
+        id S1752645AbeDHXRR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 19:17:17 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38671 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751788AbeDHXRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 18:50:27 -0400
-X-Google-Smtp-Source: AIpwx4+4BcSgJzQX8DjqqWmXL/+FMI4gLVeEsWxl6A3bIV6q6PEDwVTWpoNBe3Z7/etCglOip049zg==
-Date: Sun, 8 Apr 2018 15:51:09 -0700
+        Sun, 8 Apr 2018 19:17:15 -0400
+X-Google-Smtp-Source: AIpwx48Vg9DvC4Sm2+nDdlj2e2JCIP1+ugZ9XdjWR3X+GLdpaClJ/lp3iLrLPuuKmmD9cYtDtFVgXQ==
+Date: Sun, 8 Apr 2018 16:17:56 -0700
 From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <bot+9989fce6df2040ae9a91d49373891afd5612fc3f@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, linux-crypto@vger.kernel.org
-Subject: Re: INFO: task hung in exit_aio
-Message-ID: <20180408225109.GG685@sol.localdomain>
-References: <94eb2c03c9bcf07754055ffc74d8@google.com>
+To: linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Cc: syzbot
+        <bot+db99bd25cd19d3347dbf8c05d7dd3ca9bab2d7ad@syzkaller.appspotmail.com>,
+        davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Subject: Re: KASAN: use-after-free Read in inet_create
+Message-ID: <20180408231756.GI685@sol.localdomain>
+References: <001a1144d1c8e819f6055fee7118@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <94eb2c03c9bcf07754055ffc74d8@google.com>
+In-Reply-To: <001a1144d1c8e819f6055fee7118@google.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+Cc linux-crypto]
+[+RDS list and maintainer]
 
-On Sun, Dec 10, 2017 at 05:33:01AM -0800, syzbot wrote:
+On Sat, Dec 09, 2017 at 12:50:01PM -0800, syzbot wrote:
 > Hello,
 > 
 > syzkaller hit the following crash on
@@ -37,106 +40,85 @@ On Sun, Dec 10, 2017 at 05:33:01AM -0800, syzbot wrote:
 > compiler: gcc (GCC) 7.1.1 20170620
 > .config is attached
 > Raw console output is attached.
-> C reproducer is attached
-> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> for information about syzkaller reproducers
+> 
+> Unfortunately, I don't have any reproducer for this bug yet.
 > 
 > 
-> INFO: task syzkaller265413:3189 blocked for more than 120 seconds.
->       Not tainted 4.15.0-rc2-mm1+ #39
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> syzkaller265413 D24320  3189   3150 0x80000000
-> Call Trace:
->  context_switch kernel/sched/core.c:2800 [inline]
->  __schedule+0x8eb/0x2060 kernel/sched/core.c:3376
->  schedule+0xf5/0x430 kernel/sched/core.c:3435
->  schedule_timeout+0x43a/0x560 kernel/time/timer.c:1776
->  do_wait_for_common kernel/sched/completion.c:91 [inline]
->  __wait_for_common kernel/sched/completion.c:112 [inline]
->  wait_for_common kernel/sched/completion.c:123 [inline]
->  wait_for_completion+0x44b/0x7b0 kernel/sched/completion.c:144
->  exit_aio+0x47f/0x530 fs/aio.c:903
->  __mmput kernel/fork.c:968 [inline]
->  mmput+0x1b1/0x6c0 kernel/fork.c:992
->  exit_mm kernel/exit.c:544 [inline]
->  do_exit+0x90a/0x1ae0 kernel/exit.c:856
->  do_group_exit+0x149/0x400 kernel/exit.c:972
->  SYSC_exit_group kernel/exit.c:983 [inline]
->  SyS_exit_group+0x1d/0x20 kernel/exit.c:981
->  entry_SYSCALL_64_fastpath+0x1f/0x96
-> RIP: 0033:0x440a99
-> RSP: 002b:00007ffc5abebf68 EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
-> RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 0000000000440a99
-> RDX: 0000000000440a99 RSI: 0000000000000058 RDI: 0000000000000000
-> RBP: 000000000001cbc8 R08: 000000005abec108 R09: 0000000000401fd0
-> R10: 000000005abec108 R11: 0000000000000202 R12: 0000000000000000
-> R13: 0000000000401fd0 R14: 0000000000000000 R15: 0000000000000000
+> ==================================================================
+> BUG: KASAN: use-after-free in inet_create+0xda0/0xf50 net/ipv4/af_inet.c:338
+> Read of size 4 at addr ffff8801bde28554 by task kworker/u4:5/3492
 > 
-> Showing all locks held in the system:
-> 2 locks held by khungtaskd/673:
->  #0:  (rcu_read_lock){....}, at: [<00000000a9ed5249>]
-> check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
->  #0:  (rcu_read_lock){....}, at: [<00000000a9ed5249>] watchdog+0x1c5/0xd60
-> kernel/hung_task.c:249
->  #1:  (tasklist_lock){.+.+}, at: [<0000000036eecee2>]
-> debug_show_all_locks+0xd3/0x400 kernel/locking/lockdep.c:4554
-> 2 locks held by getty/3117:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000008d3f9495>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000fafb010f>]
-> n_tty_read+0x2f2/0x1a10 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/3118:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000008d3f9495>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000fafb010f>]
-> n_tty_read+0x2f2/0x1a10 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/3119:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000008d3f9495>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000fafb010f>]
-> n_tty_read+0x2f2/0x1a10 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/3120:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000008d3f9495>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000fafb010f>]
-> n_tty_read+0x2f2/0x1a10 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/3121:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000008d3f9495>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000fafb010f>]
-> n_tty_read+0x2f2/0x1a10 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/3122:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000008d3f9495>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000fafb010f>]
-> n_tty_read+0x2f2/0x1a10 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/3123:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000008d3f9495>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000fafb010f>]
-> n_tty_read+0x2f2/0x1a10 drivers/tty/n_tty.c:2131
-> 
-> =============================================
-> 
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 673 Comm: khungtaskd Not tainted 4.15.0-rc2-mm1+ #39
+> CPU: 0 PID: 3492 Comm: kworker/u4:5 Not tainted 4.15.0-rc2-mm1+ #39
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > Google 01/01/2011
+> Workqueue: krdsd rds_connect_worker
 > Call Trace:
 >  __dump_stack lib/dump_stack.c:17 [inline]
 >  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
->  nmi_trigger_cpumask_backtrace+0x122/0x180 lib/nmi_backtrace.c:62
->  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
->  check_hung_task kernel/hung_task.c:132 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
->  watchdog+0x90c/0xd60 kernel/hung_task.c:249
+>  print_address_description+0x73/0x250 mm/kasan/report.c:252
+>  kasan_report_error mm/kasan/report.c:351 [inline]
+>  kasan_report+0x25b/0x340 mm/kasan/report.c:409
+>  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:429
+>  inet_create+0xda0/0xf50 net/ipv4/af_inet.c:338
+>  __sock_create+0x4d4/0x850 net/socket.c:1265
+>  sock_create_kern+0x3f/0x50 net/socket.c:1311
+>  rds_tcp_conn_path_connect+0x26f/0x920 net/rds/tcp_connect.c:108
+>  rds_connect_worker+0x156/0x1f0 net/rds/threads.c:165
+>  process_one_work+0xbfd/0x1bc0 kernel/workqueue.c:2113
+>  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
 >  kthread+0x37a/0x440 kernel/kthread.c:238
 >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
-> Sending NMI from CPU 1 to CPUs 0:
-> NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0x6/0x10
-> arch/x86/include/asm/irqflags.h:54
+> 
+> Allocated by task 3362:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
+>  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
+>  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3548
+>  kmem_cache_zalloc include/linux/slab.h:695 [inline]
+>  net_alloc net/core/net_namespace.c:362 [inline]
+>  copy_net_ns+0x196/0x580 net/core/net_namespace.c:402
+>  create_new_namespaces+0x425/0x880 kernel/nsproxy.c:107
+>  unshare_nsproxy_namespaces+0xae/0x1e0 kernel/nsproxy.c:206
+>  SYSC_unshare kernel/fork.c:2421 [inline]
+>  SyS_unshare+0x653/0xfa0 kernel/fork.c:2371
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> 
+> Freed by task 35:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
+>  __cache_free mm/slab.c:3492 [inline]
+>  kmem_cache_free+0x77/0x280 mm/slab.c:3750
+>  net_free+0xca/0x110 net/core/net_namespace.c:378
+>  net_drop_ns.part.11+0x26/0x30 net/core/net_namespace.c:385
+>  net_drop_ns net/core/net_namespace.c:384 [inline]
+>  cleanup_net+0x895/0xb60 net/core/net_namespace.c:502
+>  process_one_work+0xbfd/0x1bc0 kernel/workqueue.c:2113
+>  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
+>  kthread+0x37a/0x440 kernel/kthread.c:238
+>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
+> 
+> The buggy address belongs to the object at ffff8801bde28080
+>  which belongs to the cache net_namespace of size 6272
+> The buggy address is located 1236 bytes inside of
+>  6272-byte region [ffff8801bde28080, ffff8801bde29900)
+> The buggy address belongs to the page:
+> page:00000000df6a4dc0 count:1 mapcount:0 mapping:00000000553659f1 index:0x0
+> compound_mapcount: 0
+> flags: 0x2fffc0000008100(slab|head)
+> raw: 02fffc0000008100 ffff8801bde28080 0000000000000000 0000000100000001
+> raw: ffffea0006f75da0 ffffea0006f60220 ffff8801d989fe00 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>  ffff8801bde28400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8801bde28480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ffff8801bde28500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                                  ^
+>  ffff8801bde28580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8801bde28600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
 > 
 > 
 > ---
@@ -148,17 +130,23 @@ On Sun, Dec 10, 2017 at 05:33:01AM -0800, syzbot wrote:
 > syzbot will keep track of this bug report.
 > Once a fix for this bug is merged into any tree, reply to this email with:
 > #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
 > To mark this as a duplicate of another syzbot report, please reply with:
 > #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+> 
 
-Still happening occasionally, but the reproducer is using AF_ALG with the
-"rfc4309(pcrypt(pcrypt(rfc4106(gcm(aes)))))" algorithm which means it's very
-likely a duplicate of the recursive pcrypt bug, main thread here:
-https://groups.google.com/d/msg/syzkaller-bugs/1_CXUd3gBcg/BvsRLH0lAgAJ
-
-#syz dup: INFO: task hung in aead_recvmsg
+This is still happening regularly, though syzbot hasn't been able to generate a
+reproducer yet.  All the reports seem to involve rds_connect_worker()
+encountering a freed network namespace (struct net) when calling
+sock_create_kern() from rds_tcp_conn_path_connect().  Probably something in RDS
+needs to be taking a reference to the network namespace and isn't, or the RDS
+workqueue isn't being shut down correctly.  You can see all reports of this on
+the syzbot dashboard at
+https://syzkaller.appspot.com/bug?id=1f45ae538a0453220337ccb84962249fdd67107f.
+Last one was April 5 on Linus' tree (commit 3e968c9f1401088).
 
 - Eric
