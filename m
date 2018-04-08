@@ -1,45 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752272AbeDHPvR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 11:51:17 -0400
-Received: from h2.hallyn.com ([78.46.35.8]:32964 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751770AbeDHPvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 11:51:16 -0400
-Date: Sun, 8 Apr 2018 10:51:15 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: shinya1.takumi@toshiba.co.jp
-Cc: serge@hallyn.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 0/2] WhiteEgret LSM module
-Message-ID: <20180408155114.GE9715@mail.hallyn.com>
-References: <20180330083031.2199-1-masanobu2.koike@toshiba.co.jp>
- <20180401200827.GA28101@mail.hallyn.com>
- <OSBPR01MB21847D1D8A8BC8458CBAD39592BB0@OSBPR01MB2184.jpnprd01.prod.outlook.com>
+        id S1752474AbeDHPyB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 11:54:01 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44734 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751736AbeDHPx7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 11:53:59 -0400
+X-Google-Smtp-Source: AIpwx4/CXAfsnOQv4VFPEL7rXNV5qrNqeNNmBp/KWXFYKFPrQIQX0FGd5XyxoLPzPFjCIJHJlm/gpQ==
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Masaki Ota <masaki.ota@jp.alps.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: alps - Fix reporting pressure of v3 trackstick
+Date: Sun,  8 Apr 2018 17:53:21 +0200
+Message-Id: <20180408155321.10433-1-pali.rohar@gmail.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OSBPR01MB21847D1D8A8BC8458CBAD39592BB0@OSBPR01MB2184.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting shinya1.takumi@toshiba.co.jp (shinya1.takumi@toshiba.co.jp):
-> I am one of developers of WhiteEgret.
-> 
-> > regardling the last one, do you have a plan for handling it?
-> Yes, we have a plan to release WhiteEgret v4 patch with a WEUA sample of access control for script programs.
+According to documentation, all 7 lower bits represents trackpoint pressure.
 
-Do you have a target date for posting that?
+Fixes: 4621c9660459 ("Input: alps - report pressure of v3 and v7 trackstick")
+Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
+---
+ drivers/input/mouse/alps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> The latest WhiteEgret cannot control script programs since script files read by an interpreter are not hooked by the execve system call.
-> We consider that script programs can be controlled by controlling the files inputted by interpreters, accordingly. 
-> We consider that the control can be realized using the read system call hooking.
-
-So you have a design for being able to differentiate the interpreters reading
-versus reading with the intent to execute?  With or without their help?
-
-> Now, we are developing WhiteEgret with the read system call hooking and WEUA which controls the script files to be read to interpreters using information from the read system call hooking and white list.
-
--serge
+diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
+index 0a9e6a3a2f9f..1e28d9fc5492 100644
+--- a/drivers/input/mouse/alps.c
++++ b/drivers/input/mouse/alps.c
+@@ -583,7 +583,7 @@ static void alps_process_trackstick_packet_v3(struct psmouse *psmouse)
+ 
+ 	x = (s8)(((packet[0] & 0x20) << 2) | (packet[1] & 0x7f));
+ 	y = (s8)(((packet[0] & 0x10) << 3) | (packet[2] & 0x7f));
+-	z = packet[4] & 0x7c;
++	z = packet[4] & 0x7f;
+ 
+ 	/*
+ 	 * The x and y values tend to be quite large, and when used
+-- 
+2.11.0
