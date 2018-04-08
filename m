@@ -1,97 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752839AbeDHJ6H (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 05:58:07 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:63082 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751736AbeDHJ6G (ORCPT
+        id S1752711AbeDHKGV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 06:06:21 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:36206 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752061AbeDHKGT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 05:58:06 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <bcousson@baylibre.com>, <tony@atomide.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <paul@pwsan.com>, <lokeshvutla@ti.com>,
-        <faiz_abbas@ti.com>, <linux@armlinux.org.uk>
-Subject: [PATCH 1/3] ARM: dra762: hwmod: Add MCAN support
-Date: Sun, 8 Apr 2018 15:29:00 +0530
-Message-ID: <1523181542-3770-2-git-send-email-faiz_abbas@ti.com>
+        Sun, 8 Apr 2018 06:06:19 -0400
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] m68k: Fix style, spelling, and grammar in siginfo_build_tests()
+Date: Sun,  8 Apr 2018 12:06:11 +0200
+Message-Id: <1523181971-21536-1-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
-References: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lokesh Vutla <lokeshvutla@ti.com>
-
-Add MCAN hwmod data and register it for dra762 silicons.
-
-Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Fixes: 4be33329d46f80e8 ("m68k: Verify the offsets in struct siginfo never change.")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/m68k/kernel/signal.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-index 62352d1..a2cd7f8 100644
---- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-@@ -1356,6 +1356,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
- };
+diff --git a/arch/m68k/kernel/signal.c b/arch/m68k/kernel/signal.c
+index 61a65fa374e5d006..d12b84f1ae312779 100644
+--- a/arch/m68k/kernel/signal.c
++++ b/arch/m68k/kernel/signal.c
+@@ -576,41 +576,42 @@ static inline int rt_save_fpu_state(struct ucontext __user *uc, struct pt_regs *
  
- /*
-+ * 'mcan' class
-+ *
-+ */
-+static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
-+	.name	= "mcan",
-+};
-+
-+/* mcan */
-+static struct omap_hwmod dra76x_mcan_hwmod = {
-+	.name		= "mcan",
-+	.class		= &dra76x_mcan_hwmod_class,
-+	.clkdm_name	= "wkupaon_clkdm",
-+	.main_clk	= "mcan_clk",
-+	.prcm = {
-+		.omap4 = {
-+			.clkctrl_offs = DRA7XX_CM_WKUPAON_ADC_CLKCTRL_OFFSET,
-+			.context_offs = DRA7XX_RM_WKUPAON_ADC_CONTEXT_OFFSET,
-+			.modulemode   = MODULEMODE_SWCTRL,
-+		},
-+	},
-+};
-+
-+/*
-  * 'mcspi' class
-  *
-  */
-@@ -3818,6 +3841,14 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
- 	.user		= OCP_USER_MPU,
- };
+ static inline void siginfo_build_tests(void)
+ {
+-	/* This needs to be tested on m68k as it has a lesser
+-	 * alignment requirment than x86 and that can cause surprises.
++	/*
++	 * This needs to be tested on m68k as it has a lesser
++	 * alignment requirement than x86 and that can cause surprises.
+ 	 */
  
-+/* l3_main_1 -> mcan */
-+static struct omap_hwmod_ocp_if dra76x_l3_main_1__mcan = {
-+	.master		= &dra7xx_l3_main_1_hwmod,
-+	.slave		= &dra76x_mcan_hwmod,
-+	.clk		= "l3_iclk_div",
-+	.user		= OCP_USER_MPU | OCP_USER_SDMA,
-+};
-+
- static struct omap_hwmod_ocp_if *dra7xx_hwmod_ocp_ifs[] __initdata = {
- 	&dra7xx_l3_main_1__dmm,
- 	&dra7xx_l3_main_2__l3_instr,
-@@ -3958,6 +3989,7 @@ static struct omap_hwmod_ocp_if *dra7xx_gp_hwmod_ocp_ifs[] __initdata = {
- /* SoC variant specific hwmod links */
- static struct omap_hwmod_ocp_if *dra76x_hwmod_ocp_ifs[] __initdata = {
- 	&dra7xx_l4_per3__usb_otg_ss4,
-+	&dra76x_l3_main_1__mcan,
- 	NULL,
- };
+ 	/* This is part of the ABI and can never change in size: */
+ 	BUILD_BUG_ON(sizeof(siginfo_t) != 128);
+ 
+-	/* Ensure the know fields never change in location */
++	/* Ensure the known fields never change in location */
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_signo) != 0);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_errno) != 4);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_code)  != 8);
+ 
+ 	/* _kill */
+-	BUILD_BUG_ON(offsetof(siginfo_t, si_pid) != 0x0C);
++	BUILD_BUG_ON(offsetof(siginfo_t, si_pid) != 0x0c);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_uid) != 0x10);
+ 
+ 	/* _timer */
+-	BUILD_BUG_ON(offsetof(siginfo_t, si_tid)     != 0x0C);
++	BUILD_BUG_ON(offsetof(siginfo_t, si_tid)     != 0x0c);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_overrun) != 0x10);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_value)   != 0x14);
+ 
+ 	/* _rt */
+-	BUILD_BUG_ON(offsetof(siginfo_t, si_pid)   != 0x0C);
++	BUILD_BUG_ON(offsetof(siginfo_t, si_pid)   != 0x0c);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_uid)   != 0x10);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_value) != 0x14);
+ 
+ 	/* _sigchld */
+-	BUILD_BUG_ON(offsetof(siginfo_t, si_pid)    != 0x0C);
++	BUILD_BUG_ON(offsetof(siginfo_t, si_pid)    != 0x0c);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_uid)    != 0x10);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_status) != 0x14);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_utime)  != 0x18);
+-	BUILD_BUG_ON(offsetof(siginfo_t, si_stime)  != 0x1C);
++	BUILD_BUG_ON(offsetof(siginfo_t, si_stime)  != 0x1c);
+ 
+ 	/* _sigfault */
+-	BUILD_BUG_ON(offsetof(siginfo_t, si_addr) != 0x0C);
++	BUILD_BUG_ON(offsetof(siginfo_t, si_addr) != 0x0c);
+ 
+ 	/* _sigfault._mcerr */
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_addr_lsb) != 0x10);
+@@ -623,11 +624,11 @@ static inline void siginfo_build_tests(void)
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_pkey) != 0x12);
+ 
+ 	/* _sigpoll */
+-	BUILD_BUG_ON(offsetof(siginfo_t, si_band)   != 0x0C);
++	BUILD_BUG_ON(offsetof(siginfo_t, si_band)   != 0x0c);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_fd)     != 0x10);
+ 
+ 	/* _sigsys */
+-	BUILD_BUG_ON(offsetof(siginfo_t, si_call_addr) != 0x0C);
++	BUILD_BUG_ON(offsetof(siginfo_t, si_call_addr) != 0x0c);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_syscall)   != 0x10);
+ 	BUILD_BUG_ON(offsetof(siginfo_t, si_arch)      != 0x14);
  
 -- 
 2.7.4
