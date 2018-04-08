@@ -1,80 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752564AbeDHCSv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 22:18:51 -0400
-Received: from zxshcas2.zhaoxin.com ([180.169.121.92]:34690 "EHLO
-        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752068AbeDHCSu (ORCPT
+        id S1752572AbeDHCU1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 22:20:27 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39180 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752068AbeDHCU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 22:18:50 -0400
-From: David Wang <davidwang@zhaoxin.com>
-To: "'Borislav Petkov'" <bp@alien8.de>
-CC: <tony.luck@intel.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>, <x86@kernel.org>, <linux-edac@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "'Bruce Chang (VAS)'" <BruceChang@via-alliance.com>,
-        "'Cooper Yan(BJ-RD)'" <CooperYan@zhaoxin.com>,
-        "'Qiyuan Wang(BJ-RD)'" <QiyuanWang@zhaoxin.com>,
-        "'Benjamin Pan'" <BenjaminPan@viatech.com>,
-        "'Luke Lin'" <LukeLin@viacpu.com>,
-        "'Tim Guo(BJ-RD)'" <TimGuo@zhaoxin.com>
-References: <1522403622-31146-1-git-send-email-davidwang@zhaoxin.com> <1522403622-31146-2-git-send-email-davidwang@zhaoxin.com> <20180330102621.GA30063@pd.tnic> <0e48bb8d5dda4c8fbff849a052714524@zhaoxin.com> <20180404111822.GA16437@pd.tnic>
-In-Reply-To: <20180404111822.GA16437@pd.tnic>
-Subject: =?utf-8?Q?=E7=AD=94=E5=A4=8D:_=E7=AD=94=E5=A4=8D:_=5BPATCH_1/2=5D_x86/mce?=
-        =?utf-8?Q?:_new_centaur_CPUs_support_MCE_b?=
-        =?utf-8?Q?roadcasting?=
-Date: Sun, 8 Apr 2018 10:18:05 +0800
-Message-ID: <006001d3cedf$d44559e0$7cd00da0$@zhaoxin.com>
+        Sat, 7 Apr 2018 22:20:26 -0400
+Date: Sun, 8 Apr 2018 03:19:56 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mateusz Guzik <mguzik@redhat.com>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Message-ID: <20180408021945.GF30522@ZenIV.linux.org.uk>
+References: <20180319170627.04eae43b@canb.auug.org.au>
+ <20180403122629.688f2cab@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGYmrVyn8DjGaOlaVUVJbKDnwnSCwIJVfHVAOI2Jb4CwpPPoAKcLQg1pCo3ZHA=
-Content-Language: zh-cn
-X-Originating-IP: [10.29.8.18]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx3.zhaoxin.com (10.29.252.165)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403122629.688f2cab@canb.auug.org.au>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----邮件原件-----
-> 发件人: Borislav Petkov [mailto:bp@alien8.de]
-> 发送时间: 2018年4月4日 19:18
-> 收件人: David Wang <DavidWang@zhaoxin.com>
-> 抄送: tony.luck@intel.com; tglx@linutronix.de; mingo@redhat.com;
-> hpa@zytor.com; x86@kernel.org; linux-edac@vger.kernel.org;
-> linux-kernel@vger.kernel.org; Bruce Chang (VAS)
-> <BruceChang@via-alliance.com>; Cooper Yan(BJ-RD)
-> <CooperYan@zhaoxin.com>; Qiyuan Wang(BJ-RD)
-> <QiyuanWang@zhaoxin.com>; Benjamin Pan <BenjaminPan@viatech.com>;
-> Luke Lin <LukeLin@viacpu.com>; Tim Guo(BJ-RD) <TimGuo@zhaoxin.com>
-> 主题: Re: 答复: [PATCH 1/2] x86/mce: new centaur CPUs support MCE
-> broadcasting
+On Tue, Apr 03, 2018 at 12:26:29PM +1000, Stephen Rothwell wrote:
+> Hi Al,
 > 
-> On Wed, Apr 04, 2018 at 02:34:52AM +0000, David Wang wrote:
-> > Those are new processors and main usage of CentaurHauls CPUs in recent
-> > years is for limited and/or embedded instead of distribution markets.
-> > So there is no plan or resource to create such document for public
-> > access. Is public spec mandatory for code check-in? We can provide
-> > platforms for verification instead.
+> On Mon, 19 Mar 2018 17:06:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the vfs tree, today's linux-next build (x86_64 allnoconfig)
+> > failed like this:
+> > 
+> > fs/super.c: In function 'do_thaw_all_callback':
+> > fs/super.c:942:3: error: implicit declaration of function 'emergency_thaw_bdev'; did you mean 'emergency_remount'? [-Werror=implicit-function-declaration]
+> >    emergency_thaw_bdev(sb);
+> >    ^~~~~~~~~~~~~~~~~~~
+> >    emergency_remount
+> > 
+> > Caused by commit
+> > 
+> >   92afc556e622 ("buffer.c: call thaw_super during emergency thaw")
+> > 
+> > I have reverted that commit for today.
 > 
-> Nah, not needed. As long as the code paths don't break anything else and as
-> long as we can CC you to fix bugs people report, we're good. :-)
-> 
-> Btw, please do not top-post on a public ML.
+> I am still doing that revert ...
 
-I got it.
-Thanks.
-
----
-David
-
-> 
-> Thx.
-> 
-> --
-> Regards/Gruss,
->     Boris.
-> 
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+That's interesting, seeing that this commit is *not* in #for-next and
+08fdc8a0138a should not have that problem...
