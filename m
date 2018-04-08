@@ -1,128 +1,129 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-937867-1524672278-2-12072905854716923314
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524672277; b=tjw+t4MJqATUy60KyNM0nvlZ5u39a1CGb6YANK9M9URFSY4yqr
-    2uZR4UsCEzbpfrSAk0RSEww2f1XqRGaxnZjLrK/duVr329M5m4l7WUGVm4eogYhB
-    V0mVZbyh560Gdd1qiC30IkxIMx4PxLt+zkImARS+wAEnktZlD6eJuf8G12+3LRzx
-    opRlHYg/FRNHPqu7k+i5ACGHOkpuihf2vXlfdsVIdlP7ZXf+ouJZ4PTnWKTObfrb
-    LPbOMbwTHvzu2GRd4kIkUKsAsAp0H+07bqY98IajJHkGx6EpjK11rWwyd6xhxPci
-    vOKCSlrdH3MBv45/qUX89HsrJlivSMMlbjpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524672277; bh=
-    vSwZBJKwJ+bVFrpimY3P5kJVpg9EDLF30TLfvtrMRs8=; b=H+j6ICOLCk64A9ms
-    EzcxDYd4HDtiHgR1WQMl/IEi2uulmMxebnx7ajQpCEVSqf9A6cYvpEY0wfHfZhtL
-    WEwN2LiRLWgOgcsk7CkStR5dPXNySLKtj+FByKi5xJ7mf116wW2eZOFY+/UUmQ2/
-    3RvCuwCHrHCW/KusvZ7GUYGXLAdwqjvDBDyV/XgzFP1G7dRUrQe3l7WJGJ2Vyueb
-    xWXvrJvvw11wxJQinaovIlG+POwqUak6ZjJybnUCeQMinOEx4Hfes1sTAvIvRpBo
-    zVYuo3g1oJ1SUlPVwHUPxbzBF9wrISri3nSkRw8SF2q+pg79zEbH8dVYwpOS1q67
-    UD7AAg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKvG7KrsxjLlFJ0cCAixtRa9sGz+xPlmitfbZHIAdamM4Yl+hwuzHWWFsMNOsb+rvl8Vodi40HBqXeozBihGhxGljcS9/QhAHc81WdmrQj+/TGIFKCQH
-    //MS85GxuLvSSWoE3TbIQOe/UhezxD9x4eL/IrwGqnb3Kvu8alenXzrCGQA2PsY/hQmcyw3TMv3JnjnVqdPlgEcgh8dmOKgV/U0Z6z+fk515mdzZMXQr+wEz
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=fUSZZkATYxXnQMecnGkA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755752AbeDYQEd (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 12:04:33 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:35241 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755687AbeDYQE0 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 12:04:26 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, libc-alpha@sourceware.org,
-        tglx@linutronix.de, netdev@vger.kernel.org, deepa.kernel@gmail.com,
-        viro@zeniv.linux.org.uk, albert.aribaud@3adev.fr,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: [PATCH 05/17] asm-generic: Remove empty asm/unistd.h
-Date: Wed, 25 Apr 2018 18:02:59 +0200
-Message-Id: <20180425160311.2718314-6-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180425160311.2718314-1-arnd@arndb.de>
-References: <20180425160311.2718314-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:Iqhu6K5CFPzkxjpoVKOS/JYGU7MWmLrn22hfZ05QYUSkywuDiAR
- SSmoJVcI8IoJKA+EAgTkitYfloXSJyepaRXN1HBwbd2FhWxr/fMro8nkyzHGiHNfoMofZjc
- NHNDPAS6T2dipAbffSrB6GamA3/jvZkOtJ1nUB4H4JO0lAfzeP6XjU1xgAGXA7szGyTEBL7
- RT3+A6wrmeSs2FO1bjuBQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:cF4Rt6VqImo=:f3kBY75BnxBLFdMCi7joox
- Xno79JNaZnwmHHYiwVC1c3mOXlc0G+lh06h8jEK1q262qXk/n3CfiBg3darvN9+b5we4Rg5s8
- Fp/mZA1eRdAerXkaoO4onnsPifzfR4DIgu4WYti5r3679GodnYTr/QEIxw8P5/ZW5q6ecV+NK
- wgQwIBSpdcLeBFYjmS4EYZYBnIoDZQ/9ZyTcHAA3JHFnQrsB3F+/EVLBc+mo0E9nYe3O+92Rg
- bBRZgdfeBjplkQ8cHA3SPzM7rTO5oQfg3cwPqkHyZ0+6ib+UCPWqTZP5dOdEgZUGJcrrlFU3+
- d9KgIJ5cXM8Cco5WL06KImVKghavfRwKYEj8OGD0gZTyfJOhFBVOPzFIem2ioc/MMKqV2LelP
- 7MienlBWF1u9LefrRZFHaY9G0P20Vr04DMimcoj3kJKsKlS5BdtvG16VqKKxnydMSICtl2C2L
- N3XbtWsXKSW6A7wTcKTyzTXj8meOXyFLEHWSr1eOoJoExWWemdbB3FnlEkVUkF8OrIlDJTJJq
- eLyiEiMCFSjJ4QqOfrf81q1Jqxe3fmNwpvuiD9aPMkc9pOlTVAp5VgcXe3Rj+2TudcuKxfr+C
- QcHuXYS0mHd81Ibit10duOpmbdcJk+DARRU+CfysM9lXg7C+tHRFE3ispwhhR2Z7C+q3qvmkb
- I3aoh8TbcK4QpDigmZU92oTJxeyum2nu8lePuxRUnuGNVQqslQxJmNYeO8EAU2ibroXw=
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+Return-Path: <hdegoede@redhat.com>
+X-Google-Smtp-Source: AIpwx4+aDqG2DJmRYtdRrdv+aOr25EKcEwu1LTmio7Uf13WXoA/jXHU3ePfz2shS6MZrbabYkAlW
+ARC-Seal: i=1; a=rsa-sha256; t=1523209219; cv=none;
+        d=google.com; s=arc-20160816;
+        b=jtLVnTBBQrvth7puDvzwY2bOa1CL6n2ls+kcFjTKJzUPn01nzewL6aYyt0gGxH750H
+         cCeZjpWq1UmFSpQb+hALFUMI+7lMxKIMi98mtZuQBp6ncuV40IX3D1rZgXKdnqQqRW5b
+         LAInbadZLP4Bwcc+rtM5WbjpX7y8SYofJYCfI7+/lNflNN9WhixWKjPyzeii56ChyOJL
+         /WNh1hjlRIuiuLmnTw3C7+lEAXSYYfWzYQG21LUQiLpZltGF465A0BHazMqwAeFa9CDC
+         kR8fyU+0bo/JDwfy4B3dj+iByjl11J/Vk8OVi1GCbeRD7aTuFwyQyiRn42jwt86FwRmR
+         mVfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=bfShRy/zDWSslrry3+oK7d/nk4sxvB/W2D9/7NQJaPw=;
+        b=GRwl/jPordwMUYRYJBXu8gmTe5OqfkTUChyiyUlU1AJSLsVVplCDU/J3lhJJytFSLM
+         2ssIOxU00y9CvuoSuNhLbQG3k8EyOksTRJZrTt5PkebWLZW8Fi2Y7QjpHc/jzpyHAiBu
+         0m9T2IXph9YjCQmK+0ttyh/AYS/3ndfTDtFGOCoYlnYPUQUYA8d9ZtZHyv/Acl89bAZX
+         j4ewAu8bIwfU7iUoI0vItz0PBj8QOInRQt6N8cRMwgqxZptocWD/9RH0ofei6rL2J9RD
+         /SdvZeJIOArdVVLK/JjVjs/qHIstV9L24aqpPoYLe8OKycjwFHqatO3kDGMKvMtIE6eO
+         RHUw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+	Andy Shevchenko <andy@infradead.org>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Peter Jones <pjones@redhat.com>,
+	Dave Olsthoorn <dave@bewaar.me>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Matt Fleming <matt@codeblueprint.co.uk>,
+	David Howells <dhowells@redhat.com>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	dmitry.torokhov@gmail.com,
+	mfuzzey@parkeon.com,
+	keescook@chromium.org,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Arend Van Spriel <arend.vanspriel@broadcom.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	nbroeking@me.com,
+	bjorn.andersson@linaro.org,
+	Torsten Duwe <duwe@suse.de>,
+	x86@kernel.org,
+	linux-efi@vger.kernel.org
+Subject: [PATCH v3 0/5] efi/firmware/platform-x86: Add EFI embedded fw support
+Date: Sun,  8 Apr 2018 19:40:09 +0200
+Message-Id: <20180408174014.21908-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597199774524534426?=
+X-GMAIL-MSGID: =?utf-8?q?1597200630945431169?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Nothing is left in asm/unistd.h except for the redirect to
-uapi/asm/unistd.h, so removing the file simply leads to that one being
-used directly.  The linux/export.h inclusion is a leftover from commit
-e1b5bb6d1236 ("consolidate cond_syscall and SYSCALL_ALIAS declarations")
-and should not be used anyway.
+Hi All,
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/asm-generic/unistd.h | 3 ---
- 1 file changed, 3 deletions(-)
- delete mode 100644 include/asm-generic/unistd.h
+Sorry for sending a v3 so soon after v2, I got the property name wrong in the
+documentation added in v2 and of course noticed that minutes after sending v2.
+This version fixes this.
 
-diff --git a/include/asm-generic/unistd.h b/include/asm-generic/unistd.h
-deleted file mode 100644
-index 71d2fcf9dbcd..000000000000
---- a/include/asm-generic/unistd.h
-+++ /dev/null
-@@ -1,3 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#include <uapi/asm-generic/unistd.h>
--#include <linux/export.h>
--- 
-2.9.0
+Here is the v2 coverletter again:
 
+Here is v2 of my patch-set to add support for EFI embedded fw to the kernel.
+
+The 3 most prominent changes are:
+
+1) Add documentation describing the EFI embedded firmware mechanism to:
+   Documentation/driver-api/firmware/request_firmware.rst
+
+2) Instead of having a single dmi_system_id array with its driver_data
+   members pointing to efi_embedded_fw_desc structs, have the drivers which
+   need EFI embedded-fw support export a dmi_system_id array and register
+   that with the EFI embedded-fw code
+
+   This series also includes the first driver to use this, in the form of
+   the touchscreen_dmi code (formerly silead_dmi) from drivers/platfrom/x86
+
+3) As discussed during the review of v1 we want to make the firmware_loader
+   code fallback to EFI embedded-fw optional.  Rather the adding yet another
+   firmware_request_foo variant for this, with the risk of later also needing
+   firmware_request_foo_nowait, etc. variants I've decided to make the code
+   check if the device has a "efi-embedded-firmware" device-property bool set.
+
+   This also seemed better because the same driver may want to use the
+   fallback on some systems, but not on others since e.g. not all (x86)
+   systems with a silead touchscreen have their touchscreen firmware embedded
+   in their EFI.
+
+   Note that (as discussed) when the EFI fallback path is requested, the
+   usermodehelper fallback path is skipped.
+
+Here is the full changelog of patch 2/5 which is where most of the changes are:
+
+Changes in v2:
+-Rebased on driver-core/driver-core-next
+-Add documentation describing the EFI embedded firmware mechanism to:
+ Documentation/driver-api/firmware/request_firmware.rst
+-Add a new EFI_EMBEDDED_FIRMWARE Kconfig bool and only build the embedded
+ fw support if this is set. This is an invisible option which should be
+ selected by drivers which need this
+-Remove the efi_embedded_fw_desc and dmi_system_id-s for known devices
+ from the efi-embedded-fw code, instead drivers using this are expected to
+ export a dmi_system_id array, with each entries' driver_data pointing to a
+ efi_embedded_fw_desc struct and register this with the efi-embedded-fw code
+-Use kmemdup to make a copy instead of efi_mem_reserve()-ing the firmware,
+ this avoids us messing with the EFI memmap and avoids the need to make
+ changes to efi_mem_desc_lookup()
+-Make the firmware-loader code only fallback to efi_get_embedded_fw() if the
+ passed in device has the "efi-embedded-firmware" device-property bool set
+-Skip usermodehelper fallback when "efi-embedded-firmware" device-property
+ is set
+
+Patches 3-5 are new and implement using the EFI embedded-fw mechanism for
+Silead gslXXXX and Chipone icn8505 touchscreens on x86 devices.
+
+Regards,
+
+Hans
