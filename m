@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751856AbeDHG75 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 02:59:57 -0400
+        id S1752202AbeDHHA0 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 03:00:26 -0400
 Received: from mail-sh2.amlogic.com ([58.32.228.45]:44175 "EHLO
         mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751040AbeDHG74 (ORCPT
+        with ESMTP id S1751040AbeDHG76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 02:59:56 -0400
+        Sun, 8 Apr 2018 02:59:58 -0400
 From: Yixun Lan <yixun.lan@amlogic.com>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -19,10 +19,12 @@ CC: Yixun Lan <yixun.lan@amlogic.com>, Carlo Caione <carlo@caione.org>,
         <linux-amlogic@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH 0/3] irqchip: meson-gpio: add support for Meson-AXG SoCs
-Date: Sun, 8 Apr 2018 14:56:57 +0000
-Message-ID: <20180408145700.23520-1-yixun.lan@amlogic.com>
+Subject: [PATCH 2/3] dt-bindings: interrupt-controller: New binding for Meson-AXG SoC
+Date: Sun, 8 Apr 2018 14:56:59 +0000
+Message-ID: <20180408145700.23520-3-yixun.lan@amlogic.com>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180408145700.23520-1-yixun.lan@amlogic.com>
+References: <20180408145700.23520-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.18.20.250]
@@ -30,18 +32,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This series try to add GPIO interrupt controller support for Meson-AXG SoCs.
-  The first patch is a trivial typo fix, I can fold the first two patches
-together if necessary.
+Update the dt-binding documentation to support new compatible string
+for the GPIO interrupt controller which found in Amlogic's Meson-AXG SoC.
 
-Yixun Lan (3):
-  dt-bindings: interrupt-controller: fix the double quotes
-  dt-bindings: interrupt-controller: New binding for Meson-AXG SoC
-  irqchip/meson-gpio: add support for Meson-AXG SoCs
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ .../devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/interrupt-controller/amlogic,meson-gpio-intc.txt | 11 ++++++-----
- drivers/irqchip/irq-meson-gpio.c                              |  5 +++++
- 2 files changed, 11 insertions(+), 5 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+index c753d99d43db..89674ad8a097 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+@@ -14,6 +14,7 @@ Required properties:
+     "amlogic,meson8b-gpio-intc" for meson8b SoCs (S805) or
+     "amlogic,meson-gxbb-gpio-intc" for GXBB SoCs (S905) or
+     "amlogic,meson-gxl-gpio-intc" for GXL SoCs (S905X, S912)
++    "amlogic,meson-axg-gpio-intc" for AXG SoCs (A113D, A113X)
+ - interrupt-parent : a phandle to the GIC the interrupts are routed to.
+    Usually this is provided at the root level of the device tree as it is
+    common to most of the SoC.
 -- 
 2.16.2
