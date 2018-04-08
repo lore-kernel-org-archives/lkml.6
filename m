@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeDHQbj (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 12:31:39 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46109 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752623AbeDHQbf (ORCPT
+        id S1752815AbeDHQbo (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 12:31:44 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:43890 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752798AbeDHQbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 12:31:35 -0400
-X-Google-Smtp-Source: AIpwx4/3J6de4xSRZZIa3Wa4myA/8CnDXMb5KnGkbgi7Ip9Xtt/lMr0K5bx176/oQ+4JpHww1m/DKA==
+        Sun, 8 Apr 2018 12:31:41 -0400
+X-Google-Smtp-Source: AIpwx49p9dLTNbkrk1z6JPnw581N1aCxquYiUsrcnZoDvW+OkFFnsMFimWxL/kObxVD2HdUSg1KIKw==
 From: Andrea Parri <andrea.parri@amarulasolutions.com>
 To: Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>, paulmck@linux.vnet.ibm.com,
         Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [RFC PATCH v2 4/6] Documentation/features/locking: Use '!RWSEM_GENERIC_SPINLOCK' as Kconfig for 'rwsem-optimized'
-Date: Sun,  8 Apr 2018 18:30:25 +0200
-Message-Id: <1523205027-31786-5-git-send-email-andrea.parri@amarulasolutions.com>
+Subject: [RFC PATCH v2 6/6] Documentation/features/vm: Remove arch support status file for 'pte_special'
+Date: Sun,  8 Apr 2018 18:30:27 +0200
+Message-Id: <1523205027-31786-7-git-send-email-andrea.parri@amarulasolutions.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523205027-31786-1-git-send-email-andrea.parri@amarulasolutions.com>
 References: <1523205027-31786-1-git-send-email-andrea.parri@amarulasolutions.com>
@@ -24,52 +24,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Uses '!RWSEM_GENERIC_SPINLOCK' in place of 'Optimized asm/rwsem.h' as
-Kconfig for 'rwsem-optimized': the new Kconfig expresses this feature
-equivalently, while also enabling the script 'features-refresh.sh' to
-operate on the corresponding arch support status file. Also refreshes
-the status matrix by using the script 'features-refresh.sh'.
-
 Suggested-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 Cc: Ingo Molnar <mingo@kernel.org>
 Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
- Documentation/features/locking/rwsem-optimized/arch-support.txt | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ .../features/vm/pte_special/arch-support.txt       | 33 ----------------------
+ 1 file changed, 33 deletions(-)
+ delete mode 100644 Documentation/features/vm/pte_special/arch-support.txt
 
-diff --git a/Documentation/features/locking/rwsem-optimized/arch-support.txt b/Documentation/features/locking/rwsem-optimized/arch-support.txt
-index 8afe24ffa3ab4..e54b1f1a8091d 100644
---- a/Documentation/features/locking/rwsem-optimized/arch-support.txt
-+++ b/Documentation/features/locking/rwsem-optimized/arch-support.txt
-@@ -1,6 +1,6 @@
- #
- # Feature name:          rwsem-optimized
--#         Kconfig:       Optimized asm/rwsem.h
-+#         Kconfig:       !RWSEM_GENERIC_SPINLOCK
- #         description:   arch provides optimized rwsem APIs
- #
-     -----------------------
-@@ -8,8 +8,8 @@
-     -----------------------
-     |       alpha: |  ok  |
-     |         arc: | TODO |
--    |         arm: | TODO |
--    |       arm64: | TODO |
-+    |         arm: |  ok  |
-+    |       arm64: |  ok  |
-     |         c6x: | TODO |
-     |       h8300: | TODO |
-     |     hexagon: | TODO |
-@@ -26,7 +26,7 @@
-     |        s390: |  ok  |
-     |          sh: |  ok  |
-     |       sparc: |  ok  |
+diff --git a/Documentation/features/vm/pte_special/arch-support.txt b/Documentation/features/vm/pte_special/arch-support.txt
+deleted file mode 100644
+index 6a608a6dcf71d..0000000000000
+--- a/Documentation/features/vm/pte_special/arch-support.txt
++++ /dev/null
+@@ -1,33 +0,0 @@
+-#
+-# Feature name:          pte_special
+-#         Kconfig:       __HAVE_ARCH_PTE_SPECIAL
+-#         description:   arch supports the pte_special()/pte_mkspecial() VM APIs
+-#
+-    -----------------------
+-    |         arch |status|
+-    -----------------------
+-    |       alpha: | TODO |
+-    |         arc: |  ok  |
+-    |         arm: |  ok  |
+-    |       arm64: |  ok  |
+-    |         c6x: | TODO |
+-    |       h8300: | TODO |
+-    |     hexagon: | TODO |
+-    |        ia64: | TODO |
+-    |        m68k: | TODO |
+-    |  microblaze: | TODO |
+-    |        mips: | TODO |
+-    |       nds32: | TODO |
+-    |       nios2: | TODO |
+-    |    openrisc: | TODO |
+-    |      parisc: | TODO |
+-    |     powerpc: |  ok  |
+-    |       riscv: | TODO |
+-    |        s390: |  ok  |
+-    |          sh: |  ok  |
+-    |       sparc: |  ok  |
 -    |          um: | TODO |
-+    |          um: |  ok  |
-     |   unicore32: | TODO |
-     |         x86: |  ok  |
-     |      xtensa: |  ok  |
+-    |   unicore32: | TODO |
+-    |         x86: |  ok  |
+-    |      xtensa: | TODO |
+-    -----------------------
 -- 
 2.7.4
