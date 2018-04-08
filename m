@@ -1,155 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752668AbeDHV70 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 17:59:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43228 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752188AbeDHV7Y (ORCPT
+        id S1752706AbeDHWoR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 18:44:17 -0400
+Received: from rgout0703.bt.lon5.cpcloud.co.uk ([65.20.0.143]:61868 "EHLO
+        rgout0703.bt.lon5.cpcloud.co.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752285AbeDHWoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 17:59:24 -0400
-Date: Sun, 8 Apr 2018 15:00:21 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        David Howells <dhowells@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v4 1/3] locking: Document the semantics of
- spin_is_locked()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
- <1523044060-5568-1-git-send-email-andrea.parri@amarulasolutions.com>
- <b0dbf383-6403-a408-047d-0dd0d2135a03@infradead.org>
- <20180406210741.GF3948@linux.vnet.ibm.com>
- <30d15756-1cb4-7123-b4d9-ce2e66861df3@infradead.org>
- <20180406215825.GA3646@andrea>
- <20180408211446.GU3948@linux.vnet.ibm.com>
- <2a404a5a-de6b-8cf8-325a-9c6c2d78bc10@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a404a5a-de6b-8cf8-325a-9c6c2d78bc10@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040821-0040-0000-0000-00000413616D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008820; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000256; SDB=6.01015083; UDB=6.00517545; IPR=6.00794334;
- MB=3.00020476; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-08 21:59:23
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040821-0041-0000-0000-000008147A03
-Message-Id: <20180408220021.GY3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-08_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804080241
+        Sun, 8 Apr 2018 18:44:16 -0400
+X-OWM-Source-IP: 81.132.46.200 (GB)
+X-OWM-Env-Sender: richard_c_haines@btinternet.com
+X-RazorGate-Vade-Classification: clean
+X-RazorGate-Vade-Verdict: clean 0
+X-VadeSecure-score: verdict=clean score=0/300, class=clean
+X-SNCR-VADESECURE: CLEAN
+X-RazorGate-Vade-Verdict: clean 0
+X-RazorGate-Vade-Classification: clean
+X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedtgedrheefgddugecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfhgtofgggfesthejredtredtjeenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuffhomhgrihhnpehtihhonhdrohhrghdpkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhdpmhgrrhgtrdhinhhfohdpphgruhhlqdhmohhorhgvrdgtohhmnecukfhppeekuddrudefvddrgeeirddvtddtnecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhinhgvthepkedurddufedvrdegiedrvddttddpmhgrihhlfhhrohhmpeeorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuvehluhhsthgvrhfuihiivgeptd
+Message-ID: <1523227451.5003.1.camel@btinternet.com>
+Subject: Re: [GIT PULL] SELinux patches for v4.17
+From: Richard Haines <richard_c_haines@btinternet.com>
+To: Xin Long <lucien.xin@gmail.com>
+Cc: LSM List <linux-security-module@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, selinux@tycho.nsa.gov,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Sun, 08 Apr 2018 23:44:11 +0100
+In-Reply-To: <1523213955.3552.9.camel@btinternet.com>
+References: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
+         <CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
+         <1523120055.31267.13.camel@btinternet.com>
+         <CA+55aFxo4Z3S7qG66esSL_qxg5jwzcFgZpYR0gRpto4Z_yghTQ@mail.gmail.com>
+         <162a54f1470.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+         <1523196560.6192.3.camel@btinternet.com>
+         <CADvbK_eFNkA5uJ36sBEFxWnWXLOPwKyvgUuTHJG96g0zxOwPLg@mail.gmail.com>
+         <1523213955.3552.9.camel@btinternet.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 08, 2018 at 02:32:53PM -0700, Randy Dunlap wrote:
-> On 04/08/2018 02:14 PM, Paul E. McKenney wrote:
-> > On Fri, Apr 06, 2018 at 11:58:25PM +0200, Andrea Parri wrote:
-> >> On Fri, Apr 06, 2018 at 02:08:16PM -0700, Randy Dunlap wrote:
-> >>> On 04/06/2018 02:07 PM, Paul E. McKenney wrote:
-> >>>> On Fri, Apr 06, 2018 at 02:01:41PM -0700, Randy Dunlap wrote:
-> >>>>> On 04/06/2018 12:47 PM, Andrea Parri wrote:
-> >>>>>> There appeared to be a certain, recurrent uncertainty concerning the
-> >>>>>> semantics of spin_is_locked(), likely a consequence of the fact that
-> >>>>>> this semantics remains undocumented or that it has been historically
-> >>>>>> linked to the (likewise unclear) semantics of spin_unlock_wait().
-> >>>>>>
-> >>>>>> A recent auditing [1] of the callers of the primitive confirmed that
-> >>>>>> none of them are relying on particular ordering guarantees; document
-> >>>>>> this semantics by adding a docbook header to spin_is_locked(). Also,
-> >>>>>> describe behaviors specific to certain CONFIG_SMP=n builds.
-> >>>>>>
-> >>>>>> [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
-> >>>>>>     https://marc.info/?l=linux-kernel&m=152042843808540&w=2
-> >>>>>>     https://marc.info/?l=linux-kernel&m=152043346110262&w=2
-> >>>>>>
-> >>>>>> Co-Developed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> >>>>>> Co-Developed-by: Alan Stern <stern@rowland.harvard.edu>
-> >>>>>> Co-Developed-by: David Howells <dhowells@redhat.com>
-> >>>>>> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> >>>>>> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> >>>>>> Signed-off-by: David Howells <dhowells@redhat.com>
-> >>>>>> Cc: Will Deacon <will.deacon@arm.com>
-> >>>>>> Cc: Peter Zijlstra <peterz@infradead.org>
-> >>>>>> Cc: Boqun Feng <boqun.feng@gmail.com>
-> >>>>>> Cc: Nicholas Piggin <npiggin@gmail.com>
-> >>>>>> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> >>>>>> Cc: Luc Maranget <luc.maranget@inria.fr>
-> >>>>>> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> >>>>>> Cc: Akira Yokosawa <akiyks@gmail.com>
-> >>>>>> Cc: Ingo Molnar <mingo@kernel.org>
-> >>>>>> ---
-> >>>>>>  include/linux/spinlock.h | 18 ++++++++++++++++++
-> >>>>>>  1 file changed, 18 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-> >>>>>> index 4894d322d2584..1e8a464358384 100644
-> >>>>>> --- a/include/linux/spinlock.h
-> >>>>>> +++ b/include/linux/spinlock.h
-> >>>>>> @@ -380,6 +380,24 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
-> >>>>>>  	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
-> >>>>>>  })
-> >>>>>>  
-> >>>>>> +/**
-> >>>>>> + * spin_is_locked() - Check whether a spinlock is locked.
-> >>>>>> + * @lock: Pointer to the spinlock.
-> >>>>>> + *
-> >>>>>> + * This function is NOT required to provide any memory ordering
-> >>>>>> + * guarantees; it could be used for debugging purposes or, when
-> >>>>>> + * additional synchronization is needed, accompanied with other
-> >>>>>> + * constructs (memory barriers) enforcing the synchronization.
-> >>>>>> + *
-> >>>>>> + * Returns: 1 if @lock is locked, 0 otherwise.
-> >>>>>
-> >>>>> Sorry, minor nit:
-> >>>>> s/Returns:/Return:/
-> >>>>> (according to kernel-doc.rst)
-> >>>>>
-> >>>>> although I agree that "Returns:" is better.
-> >>>>> [I should have changed that years ago.]
-> >>>>
-> >>>> Agreed, English grammar and templates often seem to conflict.
-> >>>>
-> >>>> So should we change this comment, or are you instead proposing to add
-> >>>> "Returns:" as valid kernel-doc?
-> >>>
-> >>> Please change this patch to current doc syntax.
-> >>> Any changes to kernel-doc syntax would come later.
+On Sun, 2018-04-08 at 19:59 +0100, Richard Haines via Selinux wrote:
+> On Mon, 2018-04-09 at 01:43 +0800, Xin Long wrote:
+> > On Sun, Apr 8, 2018 at 10:09 PM, Richard Haines
+> > <richard_c_haines@btinternet.com> wrote:
+> > > On Sun, 2018-04-08 at 08:50 -0400, Paul Moore wrote:
+> > > > On April 7, 2018 1:03:57 PM Linus Torvalds <torvalds@linux-foun
+> > > > da
+> > > > tion
+> > > > .org> wrote:
+> > > > On Sat, Apr 7, 2018 at 9:54 AM, Richard Haines
+> > > > <richard_c_haines@btinternet.com> wrote:
+> > > > 
+> > > > So please check my resolution, but also somebody should tell me
+> > > > "Linus, you're a cretin, sctp_connect() doesn't want that
+> > > > security_sctp_bind_connect() at all because it was already done
+> > > > by
+> > > > XYZ"
+> > > > 
+> > > > sctp_connect() or __sctp_connect() do not need to call
+> > > > security_sctp_bind_connect(). This is because the connect(2)
+> > > > call
+> > > > will
+> > > > handle the checks required via security_socket_connect():
+> > > > 
+> > > > Ok, thanks, that's exactly what I wanted to get.
+> > > > 
+> > > > Anyway, somebody should still verify that it all looks good in
+> > > > my
+> > > > tree, but I don't actually expect the merge to have had any
+> > > > issues
+> > > > even if the refactoring made it a bit more complex than most
+> > > > merges
+> > > > are.
+> > > > 
+> > > > Thanks for the quick response Richard.
+> > > > 
+> > > > Xin Long looked it over and gave it the thumbs up, I'll take a
+> > > > look
+> > > > too, but to be honest I trust his SCTP understanding much more
+> > > > than
+> > > > mine.  I also do weekly tests of each rcX release at a minimum
+> > > > so
+> > > > if
+> > > > something odd pops up I'll make sure you get a fix.
+> > > > 
+> > > > Thanks again everyone.
+> > > 
+> > > I built the kernel this morning and sorry to spoil the party, but
+> > > I've
+> > > run into a problem with lksctp-tools when running the func_tests:
+> > > 
+> > > make v6test
+> > > ..
+> > > ..
+> > > ./test_timetolive_v6
+> > > test_timetolive.c  0 INFO : Creating fillmsg of size 3087
+> > > test_timetolive.c  1 PASS : Send a message with timeout
+> > > test_timetolive.c  2 PASS : Send a message with no timeout
+> > > test_timetolive.c  3 PASS : Send a fragmented message with
+> > > timeout
+> > > test_timetolive.c  0 INFO :  **  SLEEPING for 3 seconds **
+> > > test_timetolive.c  4 BROK : Got a datamsg of unexpected
+> > > length:23,
+> > > expected length:27
+> > > DUMP_CORE sctputil.c: 247
+> > > /bin/sh: line 1: 30981 Segmentation fault      (core dumped) ./$a
+> > > test_timetolive_v6 fails
+> > > 
+> > > make v4 test fails the same way. I'm using lksctp-tools from [1].
+> > > I
+> > > have not investigated the cause yet as just found this and
+> > > thought
+> > > I
+> > > should flag first just in case someone has the answer !!!
 > > 
-> > Are you sure?
+> > test_timetolive(_v6) works for me, In lksctp-tools/src/func_tests,
+> > I
+> > had
+> > another case failed,./test_1_to_1_events,  it's caused by:
+> > commit 30f6ebf65bc46161c5aaff1db2e6e7c76aa4a06b
+> > Author: Xin Long <lucien.xin@gmail.com>
+> > Date:   Wed Mar 14 19:05:34 2018 +0800
 > > 
-> > $ git grep "\* Returns:" | wc -l
-> > 2470
-> > $ git grep "\* Return:" | wc -l
-> > 4144
+> >     sctp: add SCTP_AUTH_NO_AUTH type for AUTHENTICATION_EVENT
 > > 
-> > Looks like more than a third of them are already "Returns:".  ;-)
+> > It's not kernel's issue, after that commit, ./test_1_to_1_events
+> > should
+> > have been improved. or avoid it by 'sysctl -w
+> > net.sctp.auth_enable=1'
 > > 
-> >> Paul: I understand that you're going to do this change "in place"; please
-> >> let me know if I'm wrong/if you need a new submission.
-> > 
-> > If Randy is certain that he would like to continue propagating
-> > this grammatical infelicity, sure.  ;-)
+> > I'm not sure why test_timetolive(_v6) is not working in your env.
 > 
-> eh?
-> Well, Documentation/doc-guide/kernel-doc.rst says "Return:", but it appears
-> that it does not matter to scripts/kernel-doc -- it's just the name of a
-> "section" of the documentation and can be spelled any way!  oh well.  :)
+> It appears to depend on the run sequence of the tests. I rebooted the
+> system, ran test_timetolive_v6, it worked okay.
+> Ran "sctp-tests run" on a terminal, then ran test_timetolive_v6 at
+> various intervals on another terminal. Once sctp-tests started the
+> "===
+> ndatasched ===" sequence, test_timetolive_v6 failed.
+
+1) When SCTP is initialised /proc/sys/net/sctp/prsctp_enable = 1
+2) When sctp-tests/testcase/regression/extoverflow/test.sh is executed,
+on exit it sets prsctp_enable = 0. This seems to be causing the issue
+I'm seeing. I can now simulate the problem:
+
+Running from fresh boot:
+checksctp
+cat /proc/sys/net/sctp/prsctp_enable
+1
+./test_timetolive_v6
+passes
+echo 0 > /proc/sys/net/sctp/prsctp_enable
+./test_timetolive_v6
+fails
+echo 1 > /proc/sys/net/sctp/prsctp_enable
+./test_timetolive_v6
+passes
+
+I've no idea why as yet !!!
+
+
 > 
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Applied, thank you both!
-
-							Thanx, Paul
+> > 
+> > > 
+> > > On the bright side, I've run the sctp-tests from [2] with no
+> > > problems
+> > > and also the selinux-testsuite with my SCTP patch from [3] using
+> > > an
+> > > updated Fedora policy from [4] (with sctp support added), all in
+> > > enforcing mode.
+> > > 
+> > > Also the LTP test passed:
+> > > cd /opt/ltp/
+> > > cat runtest/syscalls |grep connect01>runtest/connect-syscall
+> > > ./runltp -pq -f connect-syscall
+> > > ....
+> > > 
+> > > [1] https://github.com/sctp/lksctp-tools
+> > > [2] https://github.com/sctp/sctp-tests
+> > > [3] https://marc.info/?l=selinux&m=152156947715709&w=2
+> > > [4] https://github.com/fedora-selinux/selinux-policy
+> > > 
+> > > 
+> > > > 
+> > > > --
+> > > > paul moore
+> > > > www.paul-moore.com
+> > > > 
+> > > > 
+> > > > 
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-
+> > security-module" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
