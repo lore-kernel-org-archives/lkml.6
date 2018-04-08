@@ -1,172 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752669AbeDHTHS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 15:07:18 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:48180 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752172AbeDHTHQ (ORCPT
+        id S1752470AbeDHT3N (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 15:29:13 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33243 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752054AbeDHT3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 15:07:16 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 452623358F9
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Kees Cook <keescook@chromium.org>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-Date: Sun, 08 Apr 2018 21:07:12 +0200
-Message-ID: <2679696.GDoj5zcZOu@natalenko.name>
-In-Reply-To: <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com> <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
+        Sun, 8 Apr 2018 15:29:11 -0400
+X-Google-Smtp-Source: AIpwx49QtLjSVctp2X7NKB4dKaIeXy1Sf6fzZ1Js1wrhht/Lznhqm3xRmU4z8ASycf6LJS3CVB90Zg==
+Date: Sun, 8 Apr 2018 12:29:52 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot
+        <syzbot+79de6f09efc55fec084b706de3c91e9457433ac5@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, dccp@vger.kernel.org, dvyukov@google.com,
+        gerrit@erg.abdn.ac.uk, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Subject: Re: suspicious RCU usage at ./include/net/inet_sock.h:LINE
+Message-ID: <20180408192952.GB685@sol.localdomain>
+References: <001a1140ad88c4f006055d3836d2@google.com>
+ <001a113f8d5653a67c0561346ed3@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1523214433;
-        h=from:sender:reply-to:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:in-reply-to:references:list-id:list-owner:list-unsubscribe:list-subscribe:list-post;
-        bh=5DddNIuUVj7WbcE0gicrhp+MwhM/h4Ucn54IVRUkEcg=;
-        b=zo1U3KVY1SXYOusMaoJ73RETFqeOVvL2d5SstjvQOxVT0Vi+T56pjAAa9DGYc6PiAKT4/M
-        MSmbg4iHYYmF35t7dd6kJr1jG8pjywyYwWSFPBo1aB1sihv+Zo6PDa8mW6CAl0KqmpiseK
-        fBj07Z5ITHnBEcw8mfuiAv56OE3wBWI=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1523214433; a=rsa-sha256;
-        cv=none;
-        b=gSUe0xq8XhR6zLJWmOQdAOBF/nNNWmm3Rhm3iPJGqfsp/kWrRQ2ar/T2FCQCQFnvS8S9VRLH7FJ0q5R/fNOFdmJq2/lJ8bR9G01kjA49YS6lOXekxAiFQXL1HqbNG47sWBv4Ol/wYwHzZXPcNI0hzyZje92salXSrd/yIflfVew=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <001a113f8d5653a67c0561346ed3@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+On Mon, Dec 25, 2017 at 05:45:00PM -0800, syzbot wrote:
+> syzkaller has found reproducer for the following crash on
+> fba961ab29e5ffb055592442808bb0f7962e05da
+> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> C reproducer is attached
+> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> for information about syzkaller reproducers
+> 
+> 
+> Can not set IPV6_FL_F_REFLECT if flowlabel_consistency sysctl is enable
+> 
+> =============================
+> WARNING: suspicious RCU usage
+> 4.15.0-rc4+ #164 Not tainted
+> -----------------------------
+> ./include/net/inet_sock.h:136 suspicious rcu_dereference_check() usage!
+> 
+> other info that might help us debug this:
+> 
+> 
+> rcu_scheduler_active = 2, debug_locks = 1
+> 1 lock held by syzkaller667189/5780:
+>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>] lock_sock
+> include/net/sock.h:1462 [inline]
+>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>]
+> do_ipv6_setsockopt.isra.9+0x23d/0x38f0 net/ipv6/ipv6_sockglue.c:167
+> 
+> stack backtrace:
+> CPU: 0 PID: 5780 Comm: syzkaller667189 Not tainted 4.15.0-rc4+ #164
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4585
+>  ireq_opt_deref include/net/inet_sock.h:135 [inline]
+>  inet_csk_route_req+0x824/0xca0 net/ipv4/inet_connection_sock.c:544
+>  dccp_v4_send_response+0xa7/0x640 net/dccp/ipv4.c:485
+>  dccp_v4_conn_request+0x9ee/0x11b0 net/dccp/ipv4.c:633
+>  dccp_v6_conn_request+0xd30/0x1350 net/dccp/ipv6.c:317
+>  dccp_rcv_state_process+0x574/0x1620 net/dccp/input.c:612
+>  dccp_v4_do_rcv+0xeb/0x160 net/dccp/ipv4.c:682
+>  dccp_v6_do_rcv+0x81a/0x9b0 net/dccp/ipv6.c:578
+>  sk_backlog_rcv include/net/sock.h:907 [inline]
+>  __release_sock+0x124/0x360 net/core/sock.c:2274
+>  release_sock+0xa4/0x2a0 net/core/sock.c:2789
+>  do_ipv6_setsockopt.isra.9+0x50f/0x38f0 net/ipv6/ipv6_sockglue.c:898
+>  ipv6_setsockopt+0xd7/0x150 net/ipv6/ipv6_sockglue.c:922
+>  dccp_setsockopt+0x85/0xd0 net/dccp/proto.c:573
+>  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2978
+>  SYSC_setsockopt net/socket.c:1821 [inline]
+>  SyS_setsockopt+0x189/0x360 net/socket.c:1800
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> RIP: 0033:0x445ec9
+> RSP: 002b:00007fa001b58db8 EFLAGS: 00000297 ORIG_RAX: 0000000000000036
+> RAX: ffffffffffffffda RBX: 00000000006dbc24 RCX: 0000000000445ec9
+> RDX: 0000000000000020 RSI: 0000000000000029 RDI: 0000000000000004
+> RBP: 00000000006dbc20 R08: 0000000000000020 R09: 0000000000000000
+> R10: 000000002030a000 R11: 0000000000000297 R12: 0000000000000000
+> R13: 00007fff809eec1f R14: 00007fa001b599c0 R15: 0000000000000001
+> 
+> =============================
+> WARNING: suspicious RCU usage
+> 4.15.0-rc4+ #164 Not tainted
+> -----------------------------
+> ./include/net/inet_sock.h:136 suspicious rcu_dereference_check() usage!
+> 
+> other info that might help us debug this:
+> 
+> 
+> rcu_scheduler_active = 2, debug_locks = 1
+> 1 lock held by syzkaller667189/5780:
+>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>] lock_sock
+> include/net/sock.h:1462 [inline]
+>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>]
+> do_ipv6_setsockopt.isra.9+0x23d/0x38f0 net/ipv6/ipv6_sockglue.c:167
+> 
+> stack backtrace:
+> CPU: 0 PID: 5780 Comm: syzkaller667189 Not tainted 4.15.0-rc4+ #164
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4585
+>  ireq_opt_deref include/net/inet_sock.h:135 [inline]
+>  dccp_v4_send_response+0x4b0/0x640 net/dccp/ipv4.c:496
+>  dccp_v4_conn_request+0x9ee/0x11b0 net/dccp/ipv4.c:633
+>  dccp_v6_conn_request+0xd30/0x1350 net/dccp/ipv6.c:317
+>  dccp_rcv_state_process+0x574/0x1620 net/dccp/input.c:612
+>  dccp_v4_do_rcv+0xeb/0x160 net/dccp/ipv4.c:682
+>  dccp_v6_do_rcv+0x81a/0x9b0 net/dccp/ipv6.c:578
+>  sk_backlog_rcv include/net/sock.h:907 [inline]
+>  __release_sock+0x124/0x360 net/core/sock.c:2274
+>  release_sock+0xa4/0x2a0 net/core/sock.c:2789
+>  do_ipv6_setsockopt.isra.9+0x50f/0x38f0 net/ipv6/ipv6_sockglue.c:898
+>  ipv6_setsockopt+0xd7/0x150 net/ipv6/ipv6_sockglue.c:922
+>  dccp_setsockopt+0x85/0xd0 net/dccp/proto.c:573
+>  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2978
+>  SYSC_setsockopt net/socket.c:1821 [inline]
+>  SyS_setsockopt+0x189/0x360 net/socket.c:1800
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> RIP: 0033:0x445ec9
+> RSP: 002b:00007fa001b58db8 EFLAGS: 00000297 ORIG_RAX: 0000000000000036
+> RAX: ffffffffffffffda RBX: 00000000006dbc24 RCX: 0000000000445ec9
+> RDX: 0000000000000020 RSI: 0000000000000029 RDI: 0000000000000004
+> RBP: 00000000006dbc20 R08: 0000000000000020 R09: 0000000000000000
+> R10: 000000002030a000 R11: 0000000000000297 R12: 0000000000000000
+> R13: 00007fff809eec1f R14: 00007fa001b599c0 R15: 0000000000000001
 
-Cc'ing linux-block people (mainly, Christoph) too because of 17cb960f29c2. 
-Also, duplicating the initial statement for them.
+syzbot stopped hitting this for some reason, but the bug is still there.
+Here's a simplified reproducer that works on Linus' tree as of today:
 
-With v4.16 (and now with v4.16.1) it is possible to trigger usercopy whitelist 
-warning and/or bug while doing smartctl on a SATA disk having blk-mq and BFQ 
-enabled. The warning looks like this:
+#include <linux/in.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
-===
-[  574.997022] Bad or missing usercopy whitelist? Kernel memory exposure 
-attempt detected from SLUB object 'scsi_sense_cache' (offset 76, size 22)!
-[  575.017332] WARNING: CPU: 0 PID: 32436 at mm/usercopy.c:81 usercopy_warn
-+0x7d/0xa0
-[  575.025262] Modules linked in: nls_iso8859_1 nls_cp437 vfat fat kvm_intel 
-kvm bochs_drm iTCO_wdt ttm irqbypass iTCO_vendor_support ppdev drm_kms_helper 
-psmouse parport_pc i2c_i801 joydev pcspkr drm parport rtc_cmos mousedev 
-input_leds led_class intel_agp evdev syscopyarea qemu_fw_cfg intel_gtt 
-sysfillrect mac_hid lpc_ich sysimgblt agpgart fb_sys_fops ip_tables x_tables 
-xfs dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio libcrc32c 
-crc32c_generic dm_crypt algif_skcipher af_alg hid_generic usbhid hid dm_mod 
-raid10 md_mod sr_mod sd_mod cdrom uhci_hcd crct10dif_pclmul crc32_pclmul 
-crc32c_intel ghash_clmulni_intel pcbc serio_raw xhci_pci ahci atkbd libps2 
-ehci_pci xhci_hcd aesni_intel libahci aes_x86_64 ehci_hcd crypto_simd 
-glue_helper cryptd libata usbcore usb_common i8042 serio virtio_scsi scsi_mod
-[  575.068775]  virtio_blk virtio_net virtio_pci virtio_ring virtio
-[  575.073935] CPU: 0 PID: 32436 Comm: smartctl Not tainted 4.16.0-pf2 #1
-[  575.078078] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 
-02/06/2015
-[  575.082451] RIP: 0010:usercopy_warn+0x7d/0xa0
-[  575.086223] RSP: 0018:ffff9ca84aee7c40 EFLAGS: 00010286
-[  575.097637] RAX: 0000000000000000 RBX: ffff95199d68304c RCX: 
-0000000000000001
-[  575.101471] RDX: 0000000000000001 RSI: ffffffffaeeb050a RDI: 
-00000000ffffffff
-[  575.105939] RBP: 0000000000000016 R08: 0000000000000000 R09: 
-000000000000028b
-[  575.110370] R10: ffffffffaee854e9 R11: 0000000000000001 R12: 
-0000000000000001
-[  575.113269] R13: ffff95199d683062 R14: ffff95199d68304c R15: 
-0000000000000016
-[  575.116132] FS:  00007f993d405040(0000) GS:ffff95199f600000(0000) knlGS:
-0000000000000000
-[  575.119285] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  575.129619] CR2: 00007ffe2390f0a8 CR3: 000000001d774004 CR4: 
-0000000000160ef0
-[  575.133976] Call Trace:
-[  575.136311]  __check_object_size+0x12f/0x1a0
-[  575.139576]  sg_io+0x269/0x3f0
-[  575.142000]  ? path_lookupat+0xaa/0x1f0
-[  575.144521]  ? current_time+0x18/0x70
-[  575.147006]  scsi_cmd_ioctl+0x257/0x410
-[  575.149782]  ? xfs_bmapi_read+0x1c3/0x340 [xfs]
-[  575.161441]  sd_ioctl+0xbf/0x1a0 [sd_mod]
-[  575.165036]  blkdev_ioctl+0x8ca/0x990
-[  575.168291]  ? read_null+0x10/0x10
-[  575.171638]  block_ioctl+0x39/0x40
-[  575.174998]  do_vfs_ioctl+0xa4/0x630
-[  575.178261]  ? vfs_write+0x164/0x1a0
-[  575.181410]  SyS_ioctl+0x74/0x80
-[  575.190904]  do_syscall_64+0x74/0x190
-[  575.195200]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-[  575.199267] RIP: 0033:0x7f993c984d87
-[  575.201350] RSP: 002b:00007ffe238aeed8 EFLAGS: 00000246 ORIG_RAX: 
-0000000000000010
-[  575.204386] RAX: ffffffffffffffda RBX: 00007ffe238af180 RCX: 
-00007f993c984d87
-[  575.208349] RDX: 00007ffe238aeef0 RSI: 0000000000002285 RDI: 
-0000000000000003
-[  575.211254] RBP: 00007ffe238af1d0 R08: 0000000000000010 R09: 
-0000000000000000
-[  575.220511] R10: 0000000000000000 R11: 0000000000000246 R12: 
-00005637ec8e9ce0
-[  575.225238] R13: 0000000000000000 R14: 00005637ec8e3550 R15: 
-00000000000000da
-[  575.230056] Code: 6c e4 ae 41 51 48 c7 c0 19 6e e5 ae 49 89 f1 48 0f 44 c2 
-48 89 f9 4d 89 d8 4c 89 d2 48 c7 c7 70 6e e5 ae 48 89 c6 e8 c3 5c e5 ff <0f> 
-0b 48 83 c4 18 c3 48 c7 c6 04 cb e4 ae 49 89 f1 49 89 f3 eb 
-[  575.239027] ---[ end trace 6e3293933bdd4761 ]---
-===
-
-Usually, the warning is triggered first, and all the subsequent printouts are 
-bugs because offset gets too big so that it doesn't fit into a real SLAB 
-object size:
-
-[ 1687.609889] usercopy: Kernel memory exposure attempt detected from SLUB 
-object 'scsi_sense_cache' (offset 107, size 22)!
-[ 1687.614197] ------------[ cut here ]------------
-[ 1687.615993] kernel BUG at mm/usercopy.c:100!
-
-To give you an idea regarding variety of offsets, I've summarised the kernel 
-log from my server:
-
-$ sudo journalctl -kb | grep "Kernel memory exposure attempt detected" | 
-grep -oE 'offset [0-9]+, size [0-9]+' | sort | uniq -c
-       9 offset 107, size 22
-       6 offset 108, size 22
-       8 offset 109, size 22
-       7 offset 110, size 22
-       5 offset 111, size 22
-       5 offset 112, size 22
-       2 offset 113, size 22
-       2 offset 114, size 22
-       1 offset 115, size 22
-       1 offset 116, size 22
-       1 offset 119, size 22
-       1 offset 85, size 22
-
-So far, I wasn't able to trigger this with mq-deadline (or without blk-mq). 
-Maybe, this has something to do with blk-mq+BFQ re-queuing, or it's just me 
-not being persistent enough.
-
-It looks like this code path was re-written completely with 17cb960f29c2, but 
-it went merged for the upcoming v4.17 only, and thus I haven't tried it yet.
-
-Kees took a brief look at it already: [1]. This is what smartctl does [2] 
-(just a usual strace capture when the bug is not triggered).
-
-Christoph, do you have some idea on why this can happen?
-
-Thanks.
-
-Regards,
-  Oleksandr
-
-[1] https://marc.info/?l=linux-scsi&m=152287333013845&w=2
-[2] https://gist.github.com/pfactum/6f58f8891468aeba1ab2cc9f45668735
+int main()
+{
+        int is_parent = (fork() != 0);
+        for (;;) {
+                int fd = socket(AF_INET, SOCK_DCCP, 0);
+                struct sockaddr_in addr = {
+                        .sin_family = AF_INET,
+                        .sin_port = htobe16(0x4e23),
+                };
+                if (is_parent) {
+                        connect(fd, (void *)&addr, sizeof(addr));
+                } else {
+                        bind(fd, (void *)&addr, sizeof(addr));
+                        listen(fd, 100);
+                        setsockopt(fd, 0, 0xFFFF, NULL, 0);
+                }
+                close(fd);
+        }
+}
