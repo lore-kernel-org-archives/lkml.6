@@ -1,90 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751557AbeDHGvE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 02:51:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44020 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750924AbeDHGvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 02:51:03 -0400
-Date: Sun, 8 Apr 2018 14:50:55 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        pagupta@redhat.com, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v3 2/4] mm/sparsemem: Defer the ms->section_mem_map
- clearing
-Message-ID: <20180408065055.GA19345@localhost.localdomain>
-References: <20180228032657.32385-1-bhe@redhat.com>
- <20180228032657.32385-3-bhe@redhat.com>
- <8e147320-50f5-f809-31d2-992c35ecc418@intel.com>
+        id S1751635AbeDHG7K (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 02:59:10 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34029 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750892AbeDHG7I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 02:59:08 -0400
+X-Google-Smtp-Source: AIpwx4+yFG+QcMSo/sFJGFSEjHUidXyhNagjfNDS6vkI4VzjmppjPuMaVqwz2IOxNzZ4+Szh26p/cA==
+Date: Sun, 8 Apr 2018 06:59:05 +0000
+From: Sargun Dhillon <sargun@sargun.me>
+To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: penguin-kernel@i-love.sakura.ne.jp, casey@schaufler-ca.com,
+        jmorris@namei.org, oiaohm@gmail.com, igor.stoppa@huawei.com
+Subject: [PATCH v5 0/1] Safe LSM (un)loading, and immutable hooks
+Message-ID: <20180408065902.GA2823@ircssh-2.c.rugged-nimbus-611.internal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8e147320-50f5-f809-31d2-992c35ecc418@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
+The primary security benefit of this patchset is the introduction of read-only
+hooks, even if some security modules have mutable hooks. Currently, if you have
+any LSMs with mutable hooks it will render all heads, and list nodes mutable.
+These are a prime place to attack because being able to manipulate those hooks
+is a way to bypass all LSMs easily and to create a persistent, covert channel to
+intercept nearly all calls.
 
-Thanks a lot for your careful reviewing!
+If LSMs have a model to be unloaded or are compiled as modules, they should mark
+themselves mutable at compile time, and use the LSM_HOOK_INIT_MUTABLE macro
+instead of the LSM_HOOK_INIT macro, so their hooks are on the mutable chain.
 
-On 04/06/18 at 07:23am, Dave Hansen wrote:
-> On 02/27/2018 07:26 PM, Baoquan He wrote:
-> > In sparse_init(), if CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER=y, system
-> > will allocate one continuous memory chunk for mem maps on one node and
-> > populate the relevant page tables to map memory section one by one. If
-> > fail to populate for a certain mem section, print warning and its
-> > ->section_mem_map will be cleared to cancel the marking of being present.
-> > Like this, the number of mem sections marked as present could become
-> > less during sparse_init() execution.
-> > 
-> > Here just defer the ms->section_mem_map clearing if failed to populate
-> > its page tables until the last for_each_present_section_nr() loop. This
-> > is in preparation for later optimizing the mem map allocation.
-> > 
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > ---
-> >  mm/sparse-vmemmap.c |  1 -
-> >  mm/sparse.c         | 12 ++++++++----
-> >  2 files changed, 8 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> > index bd0276d5f66b..640e68f8324b 100644
-> > --- a/mm/sparse-vmemmap.c
-> > +++ b/mm/sparse-vmemmap.c
-> > @@ -303,7 +303,6 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
-> >  		ms = __nr_to_section(pnum);
-> >  		pr_err("%s: sparsemem memory map backing failed some memory will not be available\n",
-> >  		       __func__);
-> > -		ms->section_mem_map = 0;
-> >  	}
-> 
-> I think you might have been trying to say this in the description, but I
-> was not able to parse it out of there.  What is in ms->section_mem_map
-> that needs to get cleared?
-> 
-> It *looks* like memory_present() uses ms->section_mem_map to just mark
-> which sections are online relatively early in boot.  We need this
-> clearing to mark that they are effectively *not* present any longer.
-> Correct?
-> 
-> I guess the concern here is that if you miss any of the error sites,
-> we'll end up with a bogus, non-null ms->section_mem_map.  Do we handle
-> that nicely?
-> 
-> Should the " = 0" instead be clearing SECTION_MARKED_PRESENT or
-> something?  That would make it easier to match the code up with the code
-> that it is effectively undoing.
+There is a shares SRCU between all security hooks to facilitate safe LSM-
+unloading. This SRCU is very cheap for runtime overhead on reads, but there is
+synchronization around it for unloads. There is only a cost to pay at unload
+time, which is based on the execution time of longest chain of callbacks after
+synchronization begins.
 
+Because of all of this, we can now load LSMs at runtime, so those APIs are
+exposed. It is up to the module author to check if
+CONFIG_SECURITY_WRITABLE_HOOKS is enabled before trying to load. Even if this
+flag is set to true at compile time, to unload modules, the
+CONFIG_SECURITY_UNLOADABLE_MODULES flag must be enabled as well. This behaviour
+of allowing modules to unload at runtime can be can be disabled either at boot
+time or runtime by changing the security.allow_unload_hooks kernel parameter.
+Once module unloading is disabled, no longer will users be able to call
+delete_module on their LSM's LKM. It still allows LSMs themselves to trigger
+unloading, as to not break the existing (SELinux-utilized) API.
 
-Not sure if I understand your question correctly. From memory_present(),
-information encoded into ms->section_mem_map including numa node,
-SECTION_IS_ONLINE and SECTION_MARKED_PRESENT. Not sure if it's OK to only
-clear SECTION_MARKED_PRESENT.  People may wrongly check SECTION_IS_ONLINE
-and do something on this memory section?
+Changes since:
+v4:
+	* Introduce the configuration flag "CONFIG_SECURITY_UNLOADABLE_MODULES"
+	  to disable module unloading
+	* Introduce the kernel parameter security.allow_unload_hooks
+v3:
+	* Instead of taking the approach of a "null hook", using the approach of
+	  a second set of hooks -- this was mostly done through the
+	  FOR_EACH_SECURITY_HOOK_MUTABLE macro, which gets compiled out if
+	  CONFIG_SECURITY_WRITABLE_HOOKS is disabled.
+v2:
+	* Split out hlist_head patch
+	* Apply Tetsuo's changes to clean up functions which are not
+      covered by call_int_hook / call_void_hook
+	* Disable NULL hook checking when uneeded
+v1:
+	* Add SRCU to allow for code-unloading
+	* Add concurrency control around hook mutation
 
-Thanks
-Baoquan
+Sargun Dhillon (1):
+  security: Add mechanism to safely (un)load LSMs after boot time
+
+ include/linux/lsm_hooks.h |  36 ++--
+ security/Kconfig          |  13 +-
+ security/security.c       | 280 ++++++++++++++++++++++++++---
+ security/selinux/hooks.c  | 448 ++++++++++++++++++++++++----------------------
+ 4 files changed, 518 insertions(+), 259 deletions(-)
+
+-- 
+2.14.1
