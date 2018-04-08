@@ -1,158 +1,210 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2924715-1524135382-2-15600927475537922735
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2548284-1523200980-2-12678287690820748952
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='de', MailFrom='org'
+X-Spam-charsets: cc='UTF-8', plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524135381; b=p747oVs8BBpZPAZ2vpXzk+cxWjDyzhTvhtVy+vQjmjgI3rqgq1
-    reBJkjSWX8Un9241XDDXWRbwHHZ23Z+BHLUXJqY0shva0jCMulB2sHCv6L31Ykqn
-    ePqKH18eFCwbpBH3MIyov4j+jCRL+ArO54XBpPsy/8NtkMw69lDAimbce1sjDo/+
-    +lDMCu50hihnp2txhJJh9Rfd4kKYgoCPXUEIC64I5jzl0ugDh5ngHGjxmXWMBY+n
-    VWfJiTZmDmdYepHyDQ7RdlAvrwToU1Bg6iSrwkgm6d9/Pv5PjPNVgqQciJR5ToOj
-    xSefm36+45pGc8mCn3OiVic2SfeAro+x/emQ==
+    1523200980; b=uMatd5yIzIV6uVb3WOgUdFJvf/RYfO09FVeqXAvlVCjME8tp6h
+    rSndvTB5337GGAodXvRiy8HxnZ033AHQgxqTDSgRZQ40aNJQG2rbGVICvCy0f1mq
+    aLVgMAXLFstJv01tT/Gj/97tWzy64y/3wa1viBROqjFvxaWRXFdG8OFg4BBf94ws
+    9Ha10OrOZwyYBJqeehhy5z+KF0bzdH+wl1k9RwrOcplypbaxBditBuN69UzC/VqZ
+    w0oJHYTQM46T+eJrjHigzk8y/X4NveSkvPVA1YFcX40AB/klffY8PGuQzScuY2GD
+    wKsh65FQRXrHi4UQKdeY1Kkfhxt7W63ENzxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1524135381; bh=rQHZinOg0u+1TrnkN6pFszmvAHao7h
-    u9OTqrubUbYLc=; b=cdU1Dmgmn6p7sdUMuQYenIVwgQZ2VL2HFF9wAUM0aBPEDa
-    q6fkFeBVwb/PWt35YVbBUgAHGEXN8//rva/tCvAJwWl6l1LQ3vJ0zCwXNkW5IleG
-    z+h+SEC/vr6RAM9A0sLdq/EQFkwM8oT3e8lN5FpqylJpYH3w7u/GRHz/62XlkaLD
-    efVtcVu8Ai4EhXlLZnosbgdricWFFgzte3e1xluIs1NDuyxscZ3WylpIXZUwNrWI
-    f3G/u1VKYXEUgwerXqwv36DJf78KcpS6awNKhgiJnVMRn81VcPSOcen8wQ3KqL40
-    QvbmJyRQhkf859EyL3aoBxUIgCbOu3MTc8AGfrFg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:references:from:message-id
+    :date:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523200980; bh=aw3hd
+    2DpDyb0JA4IbGFTblP4gwhvw3kPmynhejkMygw=; b=qljQQMR+NhHQI3eiPG+vw
+    uJTmFKrDMGcGjPslwwlewYoAJADdRlIy9GdYhptMQGEPlu0TGaWFf1+qlNDa4z0I
+    DSns+UG9gygfY4G+nFQiqbrFH1bMveEbXPZB3zA1+fPS02Jk8XcRHVDlSATecIZD
+    Zdh5U+UX9JyNq31aMmc3WWUiN69pHHnK0ZbuxTbzFZ9ZOzxjUW4enzT+wJuKDeJy
+    2BcOyq/eXS/1HjzH0jDBA2QkZYG7AGzttgsweV0HPJ9peDzYiNlW5OUCqo6zCAru
+    bZqxYkoYUhB7qGlpW66ZsyIyO+Cx6sV10yyFNf7Pj0gLYspYPx1Vx/obJ/hLyX3/
+    g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.ibm.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=smarthome-wolf.de;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=smarthome-wolf.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.ibm.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=smarthome-wolf.de;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=smarthome-wolf.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIMi3rxQZHXtRBxtD7YytY2hclxrGj4fOew76qA6dSIaeyXH45iBPY7GUOrl+akuKcSg/AhIM+M+CByBDwXcASRCDF+CEvia5Ck2PHB/IWSi5Ry/3SQ5
-    UF8Je3oksUmAR5SXu6EskWv05y+o7zXwRSbNVtS0+ZswUWsCasdBTy4Ln393N4sSuEwRLa3KH/ZQso5//QLxkW4ohT5ro7mamc7LLBpbK5wcQ/L4te4gtsWY
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=VnNF1IyMAAAA:8 a=QyXUC8HyAAAA:8 a=J1Y8HTJGAAAA:8 a=meVymXHHAAAA:8
-    a=ww5qIvrlSSbEfUhZvcEA:9 a=nAUM5Cd-vjmbAWX7:21 a=AyBW54rlQHj31xK3:21
-    a=AjGcO6oz07-iQ99wixmX:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=2JgSa4NbpEOStq-L5dxp:22
+X-CM-Envelope: MS4wfAJMp2l7lj/utv6sfS9u9CQiT74HH/3E01siK3ih8jdwe8FQDYzb1oATNZcWNnwOZbw9DYGXemvYi+60jUVi+uJCiHfE7wunC3ilVKW6wHicmX82jG6n
+    34ak+NMGzBytK5cyk99EYlJVWDWY/EaIlAS/IB6tpG2OKzfi92wS/s7EsBUnzOUO9cz8CGNkzICddo+b47D3p9BKxiK1CMXVZTkf/J3ZR0lAPQkPqhbbuqhr
+    MR2CNEaYlO/Ivjz+gF7YtQ==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=VbyBoA-nuDIoTskZjREA:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751822AbeDSK4T (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 06:56:19 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55144 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751420AbeDSK4S (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 19 Apr 2018 06:56:18 -0400
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: heiko.carstens@de.ibm.com, brueckner@linux.vnet.ibm.com,
-        schwidefsky@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>,
-        stable@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        David S Miller <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>, acme@kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH] kprobes: Fix random address output of blacklist file
-Date: Thu, 19 Apr 2018 12:55:56 +0200
-X-Mailer: git-send-email 2.13.5
-X-TM-AS-GCONF: 00
-x-cbid: 18041910-0008-0000-0000-000004ED0994
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041910-0009-0000-0000-00001E8119DA
-Message-Id: <20180419105556.86664-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804190098
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Subject: Re: [PATCH] staging: pi433: add descriptions for mutex locks
+To: Valentin Vidic <Valentin.Vidic@CARNet.hr>,
+ Marcus Wolf <marcus.wolf@smarthome-wolf.de>
+References: <20180323094725.4904-1-Valentin.Vidic@CARNet.hr>
+ <d263c605-f652-fe24-2034-c699f2d27693@smarthome-wolf.de>
+ <20180323114254.GL31333@gavran.carpriv.carnet.hr>
+ <9442615c-5606-328a-f8cc-ad389af55ee3@smarthome-wolf.de>
+ <20180323180027.GM31333@gavran.carpriv.carnet.hr>
+ <20180323221821.GP31333@gavran.carpriv.carnet.hr>
+ <8544b858-673f-0f59-0d8b-0474036068ce@smarthome-wolf.de>
+ <20180325130944.GU31333@gavran.carpriv.carnet.hr>
+From: Marcus Wolf <marcus.wolf@smarthome-wolf.de>
+Openpgp: preference=signencrypt
+Message-ID: <68bb0145-b144-b442-7ff3-c6080e44f377@smarthome-wolf.de>
+Date: Sun, 8 Apr 2018 17:22:46 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180325130944.GU31333@gavran.carpriv.carnet.hr>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Derek Robson <robsonde@gmail.com>,
+ Michael Panzlaff <michael.panzlaff@fau.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Luca_S=c3=b6the?= <luca@acul.me>, linux-kernel@vger.kernel.org,
+ Marcin Ciupak <marcin.s.ciupak@gmail.com>,
+ Marcus Wolf <linux@Wolf-Entwicklungen.de>,
+ =?UTF-8?Q?Simon_Sandstr=c3=b6m?= <simon@nikanor.nu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-File /sys/kernel/debug/kprobes/blacklist displays random addresses:
+Hi Valentin,
 
-[root@s8360046 linux]# cat /sys/kernel/debug/kprobes/blacklist
-0x0000000047149a90-0x00000000bfcb099a	print_type_x8
-....
+like promissed, I finally had a deeper look to your proposal with
+kfifo_avail and your patch from 24th of March.
+In principle, I think it is a very nice idea, and we should try
+to implement it.
+But there is a snag: There is no guarantee, that kfifo_in will
+only fail, if the fifo is full. If there will be any another
+reason for kfifo_in to fail, with the new implementation there
+will be no handling for that.
+But I think the chance of such an situation is low to impossible
+and the win in simplicity of the code is really great.
 
-This breaks 'perf probe' which uses the blacklist file to prohibit
-probes on certain functions by checking the address range.
+Regarding your patch, I did not understand, why you did not remove
+the mutex_lock in pi433_write. Wasn't it the goal to remove it?
 
-Fix this by printing the correct (unhashed) address.
+Below find a proposal of pi433_write function, I wrote on base
+of my outdated (!), private repo. It is not compiled and not tested.
+Since there is no more handling in case of an error (as well in the
+propsal as in your patch), I removed the error handling completely.
+I only do a test to detect proplems while writing to the tx_fifo,
+but (like in your patch) do nothing for solving, just printing a line.
+If this unexpected situation will occur (most probably never),
+the tx_fifo will be (and stay) out of sync until driver gets unloaded.
+We have to decide, whether we can stay with that. Like written above,
+I thinkt the benefits are great, the chance of such kind of error
+very low.
+What do you think?
 
-The file mode is read all but this is not an issue as the file
-hierarchy points out:
- # ls -ld /sys/ /sys/kernel/ /sys/kernel/debug/ /sys/kernel/debug/kprobes/
-	/sys/kernel/debug/kprobes/blacklist
-dr-xr-xr-x 12 root root 0 Apr 19 07:56 /sys/
-drwxr-xr-x  8 root root 0 Apr 19 07:56 /sys/kernel/
-drwx------ 16 root root 0 Apr 19 06:56 /sys/kernel/debug/
-drwxr-xr-x  2 root root 0 Apr 19 06:56 /sys/kernel/debug/kprobes/
--r--r--r--  1 root root 0 Apr 19 06:56 /sys/kernel/debug/kprobes/blacklist
+It could be discussed, whether it is better to return EMSGSIZE or
+EAGAIN on the first check. On the one hand, there is a problem with
+the message size, on the other hand (if message isn't generally too
+big) after a while, there should be some more space available in
+fifo, so EAGAIN may be better choice.
 
-Everything in and below /sys/kernel/debug is rwx to root only,
-no group or others have access.
 
-Background:
-Directory /sys/kernel/debug/kprobes is created by debugfs_create_dir()
-which sets the mode bits to rwxr-xr-x. Maybe change that to use the
-parent's directory mode bits instead?
+static ssize_t
+pi433_write(struct file *filp, const char __user *buf,
+		size_t count, loff_t *f_pos)
+{
+	struct pi433_instance	*instance;
+	struct pi433_device	*device;
+	int    required, copied, retval;
 
-Fixes: ad67b74d2469 ("printk: hash addresses printed with %p")
-Cc: <stable@vger.kernel.org> # v4.15+
-Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: David S Miller <davem@davemloft.net>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: acme@kernel.org
-Cc: Steven Rostedt <rostedt@goodmis.org>
+	instance = filp->private_data;
+	device = instance->device;
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
----
- kernel/kprobes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	/* check whether there is enough space available in tx_fifo */
+	required = sizeof(instance->tx_cfg) + sizeof(size_t) + count;
+	if ( num_of_bytes_to_store_in_fifo > kfifo_avail(&device->tx_fifo) ) {
+		dev_dbg(device->dev, "Not enough space in fifo. Need %d, but only have"
+						   , required
+						   , kfifo_avail(&device->tx_fifo) );
+		return -EMSGSIZE;
+	}
+	
+	/* write the following sequence into fifo:
+	 * - tx_cfg
+	 * - size of message
+	 * - message
+	 */
+	retval  = kfifo_in(&device->tx_fifo, &instance->tx_cfg, sizeof(instance->tx_cfg));
+	retval += kfifo_in (&device->tx_fifo, &count, sizeof(size_t));
+	retval += kfifo_from_user(&device->tx_fifo, buf, count, &copied);
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 102160ff5c66..ea619021d901 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -2428,7 +2428,7 @@ static int kprobe_blacklist_seq_show(struct seq_file *m, void *v)
- 	struct kprobe_blacklist_entry *ent =
- 		list_entry(v, struct kprobe_blacklist_entry, list);
- 
--	seq_printf(m, "0x%p-0x%p\t%ps\n", (void *)ent->start_addr,
-+	seq_printf(m, "0x%px-0x%px\t%ps\n", (void *)ent->start_addr,
- 		   (void *)ent->end_addr, (void *)ent->start_addr);
- 	return 0;
- }
--- 
-2.14.3
+	if (retval != required ) {
+		dev_dbg(device->dev, "write to fifo failed, reason unknown, non recoverable.");
+		return -EAGAIN;
+	}
+	
+	/* start transfer */
+	wake_up_interruptible(&device->tx_wait_queue);
+	dev_dbg(device->dev, "write: generated new msg with %d bytes.", copied);
+
+	return 0;
+}
+
+Hope this helps :-)
+
+Marcus
+
+
+Am 25.03.2018 um 15:09 schrieb Valentin Vidic:
+> On Sun, Mar 25, 2018 at 03:00:09PM +0200, Marcus Wolf wrote:
+>> Unfortunaly I can't find the time to have a closer look on the code this
+>> weekend - still busy with tax stuff :-(
+>>
+>> Idea sounds great. I'll try to look at the code and think about it
+>> during Easter hollidays.
+> 
+> No problem, there is no hurry. But please do test the patch I sent yesterday:
+> 
+>   [PATCH] staging: pi433: cleanup tx_fifo locking
+> 
+> As I don't have the hardware this is just compile tested now :)
+> 
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
