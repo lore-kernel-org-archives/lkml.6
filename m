@@ -1,170 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752214AbeDHINi (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 04:13:38 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6728 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751040AbeDHINh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 04:13:37 -0400
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: set deadline to drop expired inmem pages
-Date: Sun, 8 Apr 2018 16:13:12 +0800
-Message-ID: <20180408081312.6190-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
+        id S1751799AbeDHIUZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 04:20:25 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:43428 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751309AbeDHIUY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 04:20:24 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH v9 07/10] time: hrtimer: Introduce hrtimer_next_event_without()
+Date: Sun, 08 Apr 2018 10:20:30 +0200
+Message-ID: <3441609.rVjWXosy3s@aspire.rjw.lan>
+In-Reply-To: <20180407144637.GC16600@lerouge>
+References: <1736751.LdhZHb50jq@aspire.rjw.lan> <101528364.6nGUqP0EsC@aspire.rjw.lan> <20180407144637.GC16600@lerouge>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-f2fs doesn't allow abuse on atomic write class interface, so except
-limiting in-mem pages' total memory usage capacity, we need to limit
-start-commit time as well, otherwise we may run into infinite loop
-during foreground GC because target blocks in victim segment are
-belong to atomic opened file for long time.
+On Saturday, April 7, 2018 4:46:38 PM CEST Frederic Weisbecker wrote:
+> On Wed, Apr 04, 2018 at 10:45:39AM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > 
+> > The next set of changes will need to compute the time to the next
+> > hrtimer event over all hrtimers except for the scheduler tick one.
+> > 
+> > To that end introduce a new helper function,
+> > hrtimer_next_event_without(), for computing the time until the next
+> > hrtimer event over all timers except for one and modify the underlying
+> > code in __hrtimer_next_event_base() to prepare it for being called by
+> > that new function.
+> > 
+> > No intentional changes in functionality.
+> > 
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> > 
+> > v8 -> v9:
+> >  * Make fewer changes to the existing code.
+> >  * Add a new helper function for the handling of the use case at hand.
+> > 
+> > ---
+> >  include/linux/hrtimer.h |    1 
+> >  kernel/time/hrtimer.c   |   55 ++++++++++++++++++++++++++++++++++++++++++++++--
+> >  2 files changed, 54 insertions(+), 2 deletions(-)
+> > 
+> > Index: linux-pm/include/linux/hrtimer.h
+> > ===================================================================
+> > --- linux-pm.orig/include/linux/hrtimer.h
+> > +++ linux-pm/include/linux/hrtimer.h
+> > @@ -426,6 +426,7 @@ static inline ktime_t hrtimer_get_remain
+> >  }
+> >  
+> >  extern u64 hrtimer_get_next_event(void);
+> > +extern u64 hrtimer_next_event_without(const struct hrtimer *exclude);
+> >  
+> >  extern bool hrtimer_active(const struct hrtimer *timer);
+> >  
+> > Index: linux-pm/kernel/time/hrtimer.c
+> > ===================================================================
+> > --- linux-pm.orig/kernel/time/hrtimer.c
+> > +++ linux-pm/kernel/time/hrtimer.c
+> > @@ -490,6 +490,7 @@ __next_base(struct hrtimer_cpu_base *cpu
+> >  	while ((base = __next_base((cpu_base), &(active))))
+> >  
+> >  static ktime_t __hrtimer_next_event_base(struct hrtimer_cpu_base *cpu_base,
+> > +					 const struct hrtimer *exclude,
+> >  					 unsigned int active,
+> >  					 ktime_t expires_next)
+> >  {
+> > @@ -502,9 +503,24 @@ static ktime_t __hrtimer_next_event_base
+> >  
+> >  		next = timerqueue_getnext(&base->active);
+> >  		timer = container_of(next, struct hrtimer, node);
+> > +		if (timer == exclude) {
+> > +			/* Get to the next timer in the queue. */
+> > +			struct rb_node *rbn = rb_next(&next->node);
+> > +
+> > +			next = rb_entry_safe(rbn, struct timerqueue_node, node);
+> > +			if (!next)
+> > +				continue;
+> 
+> Minor cosmectic detail again, timerqueue_iterate_next() would do the job and
+> avoid browsing timerqueue details.
 
-Now, we will check the condition with f2fs_balance_fs_bg in
-background threads, once if user doesn't commit data exceeding 30
-seconds, we will drop all cached data, so I expect it can keep our
-system running safely to prevent Dos attack.
+And below is a patch to make this change on top of the original.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/f2fs.h    |  2 ++
- fs/f2fs/segment.c | 40 ++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/segment.h |  2 ++
- fs/f2fs/super.c   |  1 +
- 4 files changed, 45 insertions(+)
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Subject: [PATCH] time: hrtimer: Use timerqueue_iterate_next() to get to the next timer
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1725b82d9fb2..5b617231970b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -653,6 +653,7 @@ struct f2fs_inode_info {
- 	struct list_head dirty_list;	/* dirty list for dirs and files */
- 	struct list_head gdirty_list;	/* linked in global dirty list */
- 	struct list_head inmem_ilist;	/* list for inmem inodes */
-+	struct timespec inmem_time;	/* atomic write start time */
- 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
- 	struct task_struct *inmem_task;	/* store inmemory task */
- 	struct mutex inmem_lock;	/* lock for inmemory pages */
-@@ -2859,6 +2860,7 @@ void destroy_node_manager_caches(void);
- bool need_SSR(struct f2fs_sb_info *sbi);
- void register_inmem_page(struct inode *inode, struct page *page);
- void drop_inmem_pages_all(struct f2fs_sb_info *sbi);
-+void drop_inmem_pages_exceed_time(struct f2fs_sb_info *sbi);
- void drop_inmem_pages(struct inode *inode);
- void drop_inmem_page(struct inode *inode, struct page *page);
- int commit_inmem_pages(struct inode *inode);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index e61faff9b109..8a558f038f9f 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -208,6 +208,8 @@ void register_inmem_page(struct inode *inode, struct page *page)
- 	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
- 	if (list_empty(&fi->inmem_ilist))
- 		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
-+	if (!timespec_valid(&fi->inmem_time))
-+		fi->inmem_time = current_kernel_time();
- 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
- 	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
- 	mutex_unlock(&fi->inmem_lock);
-@@ -295,6 +297,36 @@ void drop_inmem_pages_all(struct f2fs_sb_info *sbi)
- 	goto next;
- }
+Use timerqueue_iterate_next() to get to the next timer in
+__hrtimer_next_event_base() without browsing the timerqueue
+details diredctly.
+
+No intentional changes in functionality.
+
+Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ kernel/time/hrtimer.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+Index: linux-pm/kernel/time/hrtimer.c
+===================================================================
+--- linux-pm.orig/kernel/time/hrtimer.c
++++ linux-pm/kernel/time/hrtimer.c
+@@ -505,9 +505,7 @@ static ktime_t __hrtimer_next_event_base
+ 		timer = container_of(next, struct hrtimer, node);
+ 		if (timer == exclude) {
+ 			/* Get to the next timer in the queue. */
+-			struct rb_node *rbn = rb_next(&next->node);
+-
+-			next = rb_entry_safe(rbn, struct timerqueue_node, node);
++			next = timerqueue_iterate_next(next);
+ 			if (!next)
+ 				continue;
  
-+void drop_inmem_pages_exceed_time(struct f2fs_sb_info *sbi)
-+{
-+	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
-+	struct inode *inode;
-+	struct f2fs_inode_info *fi, *tmp;
-+
-+next:
-+	inode = NULL;
-+
-+	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-+	list_for_each_entry_safe(fi, tmp, head, inmem_ilist) {
-+		struct timespec ts = current_kernel_time();
-+
-+		ts.tv_sec -= DEF_ATOMIC_COMMIT_INTERVAL;
-+		if (timespec_compare(&fi->inmem_time, &ts) >= 0)
-+			continue;
-+		inode = igrab(&fi->vfs_inode);
-+		break;
-+	}
-+	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-+
-+	if (inode) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"drop inmem pages of inode (ino:%lu)", inode->i_ino);
-+		drop_inmem_pages(inode);
-+		iput(inode);
-+		goto next;
-+	}
-+}
-+
- void drop_inmem_pages(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-@@ -306,6 +338,9 @@ void drop_inmem_pages(struct inode *inode)
- 	if (!list_empty(&fi->inmem_ilist))
- 		list_del_init(&fi->inmem_ilist);
- 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-+
-+	fi->inmem_time.tv_sec = -1;
-+
- 	mutex_unlock(&fi->inmem_lock);
- 
- 	clear_inode_flag(inode, FI_ATOMIC_FILE);
-@@ -441,6 +476,9 @@ int commit_inmem_pages(struct inode *inode)
- 	if (!list_empty(&fi->inmem_ilist))
- 		list_del_init(&fi->inmem_ilist);
- 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-+
-+	fi->inmem_time.tv_sec = -1;
-+
- 	mutex_unlock(&fi->inmem_lock);
- 
- 	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
-@@ -491,6 +529,8 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
- 	else
- 		build_free_nids(sbi, false, false);
- 
-+	drop_inmem_pages_exceed_time(sbi);
-+
- 	if (!is_idle(sbi) && !excess_dirty_nats(sbi))
- 		return;
- 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 3325d0769723..f5410dcb76b4 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -215,6 +215,8 @@ struct segment_allocation {
- #define IS_DUMMY_WRITTEN_PAGE(page)			\
- 		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
- 
-+#define DEF_ATOMIC_COMMIT_INTERVAL		30
-+
- struct inmem_pages {
- 	struct list_head list;
- 	struct page *page;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1f758f66ef26..2e997d63c64a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -819,6 +819,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	INIT_LIST_HEAD(&fi->dirty_list);
- 	INIT_LIST_HEAD(&fi->gdirty_list);
- 	INIT_LIST_HEAD(&fi->inmem_ilist);
-+	fi->inmem_time.tv_sec = -1;
- 	INIT_LIST_HEAD(&fi->inmem_pages);
- 	mutex_init(&fi->inmem_lock);
- 	init_rwsem(&fi->dio_rwsem[READ]);
--- 
-2.15.0.55.gc2ece9dc4de6
