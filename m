@@ -1,131 +1,127 @@
-Return-Path: <jhogan@kernel.org>
-X-Google-Smtp-Source: AIpwx4/zvtbQUh9wlHV4hAcdJx9cUvP/yYutwFVP6KtdJxTSRY91PD8vHxCUk+9pmtXst4m5v/WI
-ARC-Seal: i=1; a=rsa-sha256; t=1524001063; cv=none;
+Return-Path: <hdegoede@redhat.com>
+X-Google-Smtp-Source: AIpwx4+9K6Ft0Cxwb0TWwcDacZKMCwB4O3UZyYvVFcwtppIfNYZfKrv1GRuU8tjaGmvWKci0Yu+K
+ARC-Seal: i=1; a=rsa-sha256; t=1523203584; cv=none;
         d=google.com; s=arc-20160816;
-        b=K3vZkDU3QAAU+g8mUQVm6Bk6LUVtbKLkHWSy+7pXLo+ZgYJviHqzHOmfkY+TcOkwRe
-         0UAD35yCxwRuLSZCg9legWvrhOYwZ4swD4wB64u0LpLacJnN+Gy1jvdGkrnT4qu8czoX
-         wBeC+T/EaKKs8FIzQf5TZMMeVoj2uD/4UP32MvAWTT39T4TtmT7GSxrX7cjoCdqqsxvv
-         sxVZnSXhOI7voqQPUTGFw6onC4zbZc4LFeGV+lwzt2YXntZei2Je6R+bmCQ6D23S3UPA
-         LEQrmeVXVU+tK3c7hWFFOBJvg9oGeN5dA1Q2PQTTIMCT1kgjOmSFvgGbQvGp2llKUZUa
-         APdQ==
+        b=GvXRy8djYGeD5DAIgLwHkbfWk6EHd0wH2DKHaIlXcmlnRHVTnmYDma2Vs+U5/+2jGt
+         67idHulzSrKXZAntS5ScMfIK2HVeYiRbfgygr7tydzUu7nVWS09cNoeRFD3BIArFRayO
+         71PNbYRYoTSEZ32HIEVakikNZ/OqPELG4CyyyMEAiofDy3rbpVi9c3KAF/c3YXrLgVji
+         oKHyG8rg9bA255QcA7j/UmOmsPjeHwbHfReGOo6gWhhqOhdqxjb5rxVf/YMStf/w4Qk7
+         E0sUQsffmAUtZnHZjbPRO/sT+pfkm2h0/4po/RDn4QEUnPkbNBfUhB5w9P6fnS3Tae8A
+         cM2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=yvuR7rxMpLIlng0Oc9X6mQ1buZxy6s536dwbCw7fB8o=;
-        b=az8U0WXqa3uH0iIFYz6xrae+hefLkCSqOLcSnLXMlQ7jUl1lG38WkJjp3Po0TfUseX
-         VIIBFAQyP/VWXMW/tsYHVE+58u++jdyoy+T87gcEC+HM7H9svziJVnZ2O04m9mcCZYmL
-         iWQu+Uebv3D1AWP7J3phtekQwcyhsWc1OzPTFkysnuA1IcALcrdu5tFj2d+kPWonfxtx
-         wl0aohOazqyOFbwl+trxCne1MDmyG43BOItV60xNOi/l/NNbOQ09WIzul8JYp/HoMmYe
-         JlXUbHgHYJPc3wYKpGhJfdu14HUlRaCxE0bWZFoP4673KgTJISEGQLqCAaNB8CXnalQB
-         6zgw==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=2MgJykez0BJm/yfLJ4cTjF4J41F5c/kTfIoqmRfh8ic=;
+        b=Z7X9RjeJoUeurPs5hH88nQucZPq92UXp5llutTY4FxsTKG6zPtLO9v4uoogWmbXc1y
+         EIdCg15qBXEXbfEg2MdO15FLkRf8UL/mdksZKKhqj/6pcJ5sH0Gev+9D1dvrThEliYnB
+         i/rGW1moqeEbPi9yPMKUZJmudo2VFUthhMTUJfOjgnbzZnRoQVJeDmeY9pODybItsB+X
+         rfJOI769h9wnHVeLlsaA+1H/4Hgo3j8eMxFa/MXNrwqpSFrUJhDoe3InfButFhomA6Mq
+         gSOV+gXl1mam9AbM4Q4OyLX+W7HwVON8E+FF6Hope1Bt8c1loAqrIhTIYDlwrKMfiWnw
+         2q5w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jhogan@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jhogan@kernel.org
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jhogan@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jhogan@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7238321789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Tue, 17 Apr 2018 22:37:36 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-	Paul Cercueil <paul@crapouillou.net>, devicetree@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Mathieu Malaterre <malat@debian.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Harvey Hunt <harvey.hunt@imgtec.com>
-Subject: Re: [PATCH] MIPS: dts: avoid unneeded built-in.a creation in vendor
- DTS directories
-Message-ID: <20180417213736.GC21386@saruman>
-References: <1523893290-7958-1-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jousvV0MzM2p6OtC"
-Content-Disposition: inline
-In-Reply-To: <1523893290-7958-1-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+From: Hans de Goede <hdegoede@redhat.com>
+To: "Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] firmware: Fix firmware documentation for recent file renames
+Date: Sun,  8 Apr 2018 18:06:21 +0200
+Message-Id: <20180408160621.13042-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597917995942758168?=
-X-GMAIL-MSGID: =?utf-8?q?1598030939376240778?=
+X-GMAIL-THRID: =?utf-8?q?1597194722140266854?=
+X-GMAIL-MSGID: =?utf-8?q?1597194722140266854?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+firmware_class.c was split into several files under
+drivers/base/firmware_loader. The new main.c has the functions which
+/request_firmware.rst references.
 
---jousvV0MzM2p6OtC
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+---
+Changes in v2:
+-Fix the same issue in 2 more files
+-Add Luis' Acked-by
+---
+ Documentation/driver-api/firmware/request_firmware.rst | 10 +++++-----
+ Documentation/driver-api/infrastructure.rst            |  2 +-
+ Documentation/power/suspend-and-cpuhotplug.txt         |  2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-On Tue, Apr 17, 2018 at 12:41:30AM +0900, Masahiro Yamada wrote:
-> arch/mips/boot/dts/Makefile collects objects from sub-directories
-> into built-in.a only when CONFIG_BUILTIN_DTB is enabled.  Reflect
-> it also to the sub-directory Makefiles.  This suppresses unneeded
-> built-in.a creation in arch/mips/boot/dts/*/ directories.
->=20
-> While I am here, I replaced $(patsubst %.dtb, %.dtb.o, $(dtb-y))
-> with $(addsuffix .o, $(dtb-y)) to simplify the code a little bit.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->=20
->  arch/mips/boot/dts/brcm/Makefile          | 2 +-
->  arch/mips/boot/dts/cavium-octeon/Makefile | 2 +-
->  arch/mips/boot/dts/ingenic/Makefile       | 2 +-
->  arch/mips/boot/dts/lantiq/Makefile        | 2 +-
->  arch/mips/boot/dts/mscc/Makefile          | 2 +-
->  arch/mips/boot/dts/mti/Makefile           | 2 +-
->  arch/mips/boot/dts/netlogic/Makefile      | 2 +-
->  arch/mips/boot/dts/pic32/Makefile         | 2 +-
->  arch/mips/boot/dts/ralink/Makefile        | 2 +-
->  arch/mips/boot/dts/xilfpga/Makefile       | 2 +-
->  10 files changed, 10 insertions(+), 10 deletions(-)
->=20
-> diff --git a/arch/mips/boot/dts/brcm/Makefile b/arch/mips/boot/dts/brcm/M=
-akefile
-> index d8787c9..d85f446 100644
-> --- a/arch/mips/boot/dts/brcm/Makefile
-> +++ b/arch/mips/boot/dts/brcm/Makefile
-> @@ -34,4 +34,4 @@ dtb-$(CONFIG_DT_NONE) +=3D \
->  	bcm97425svmb.dtb \
->  	bcm97435svmb.dtb
-> =20
-> -obj-y				+=3D $(patsubst %.dtb, %.dtb.o, $(dtb-y))
-> +obj-$(CONFIG_BUILTIN_DTB)	+=3D $(addsuffix .o, $(dtb-y))
-
-I like this. I had also spotted the .o files being unnecessarily
-generated when building the dtbs target with bmips and CONFIG_DT_NONE=3Dy.
-I'll apply for 4.18.
-
-Thanks
-James
-
---jousvV0MzM2p6OtC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlrWaSAACgkQbAtpk944
-dnpdnw//YD2A/1lEIzZxj8CEUQ2ujJJrxQouFF1sJi9IXcJbCLSImNRiuI9qsoc3
-h9T4YeQAAHCkXjIfwwQ2HL3wkCH+KK3xnF/Hq6h6wSMFcFHvoDRNrDwLP6XQx/xL
-4cEtVo5DD2IltrFqx1aKI2LFZ9t3kFvaDPQx8rmpLQy/eeExvOG7x0B9MnI49wrT
-5wChz2eKWFj3ngy5PSkMD1KaOfjT8aL5gzgLMKGvl6byo5nuiMSG3waSe8K0izJu
-KPuwgmL5bJp/hEJOCmc9IiG9HzYlBLzC5wXnkkZ+AGx7wj8N6J6A8fgboziQqvND
-CM9LdLwETacwHijTRpRZb66/OjjBgD4gg0Q3Djd6rdkpJJ/g632wZiZm0z8dP722
-BxEfunGnDtUl02fTfcPwLlnMQPDXdQ3ZwyRdl5gbPhGHK6jp5aYVU9bXTcDmimOm
-/SxylcFCf625dBWeqa0JdxR+UvsOnq6B5iTPhQQ2NYG6E6FPZy+tcFGuuYPzYXld
-Lm/SVcoGlfWQpUMm4QMWq8QCISzGQ4bH+c53JzgBpNQ+Hgif+TZGh9SWZFiNfDXw
-vQj2DBxAysPkje/ZFNQ+poAwQqvG1WApk9BUvDsojLcP/8TmV8jQuFwdez4n/P64
-HA5fXyD8gVVezoGESjXOdmVQOBpZS+siBHrvSBOootQH1zyHgUA=
-=wV2M
------END PGP SIGNATURE-----
-
---jousvV0MzM2p6OtC--
+diff --git a/Documentation/driver-api/firmware/request_firmware.rst b/Documentation/driver-api/firmware/request_firmware.rst
+index cf4516dfbf96..20f21ed427a5 100644
+--- a/Documentation/driver-api/firmware/request_firmware.rst
++++ b/Documentation/driver-api/firmware/request_firmware.rst
+@@ -17,17 +17,17 @@ an error is returned.
+ 
+ request_firmware
+ ----------------
+-.. kernel-doc:: drivers/base/firmware_class.c
++.. kernel-doc:: drivers/base/firmware_loader/main.c
+    :functions: request_firmware
+ 
+ request_firmware_direct
+ -----------------------
+-.. kernel-doc:: drivers/base/firmware_class.c
++.. kernel-doc:: drivers/base/firmware_loader/main.c
+    :functions: request_firmware_direct
+ 
+ request_firmware_into_buf
+ -------------------------
+-.. kernel-doc:: drivers/base/firmware_class.c
++.. kernel-doc:: drivers/base/firmware_loader/main.c
+    :functions: request_firmware_into_buf
+ 
+ Asynchronous firmware requests
+@@ -41,7 +41,7 @@ in atomic contexts.
+ 
+ request_firmware_nowait
+ -----------------------
+-.. kernel-doc:: drivers/base/firmware_class.c
++.. kernel-doc:: drivers/base/firmware_loader/main.c
+    :functions: request_firmware_nowait
+ 
+ Special optimizations on reboot
+@@ -55,7 +55,7 @@ firmare to be loaded.
+ 
+ firmware_request_cache()
+ -----------------------
+-.. kernel-doc:: drivers/base/firmware_class.c
++.. kernel-doc:: drivers/base/firmware_loader/main.c
+    :functions: firmware_request_cache
+ 
+ request firmware API expected driver use
+diff --git a/Documentation/driver-api/infrastructure.rst b/Documentation/driver-api/infrastructure.rst
+index 6d9ff316b608..bee1b9a1702f 100644
+--- a/Documentation/driver-api/infrastructure.rst
++++ b/Documentation/driver-api/infrastructure.rst
+@@ -28,7 +28,7 @@ Device Drivers Base
+ .. kernel-doc:: drivers/base/node.c
+    :internal:
+ 
+-.. kernel-doc:: drivers/base/firmware_class.c
++.. kernel-doc:: drivers/base/firmware_loader/main.c
+    :export:
+ 
+ .. kernel-doc:: drivers/base/transport_class.c
+diff --git a/Documentation/power/suspend-and-cpuhotplug.txt b/Documentation/power/suspend-and-cpuhotplug.txt
+index 31abd04b9572..6f55eb960a6d 100644
+--- a/Documentation/power/suspend-and-cpuhotplug.txt
++++ b/Documentation/power/suspend-and-cpuhotplug.txt
+@@ -168,7 +168,7 @@ update on the CPUs, as discussed below:
+ 
+ [Please bear in mind that the kernel requests the microcode images from
+ userspace, using the request_firmware() function defined in
+-drivers/base/firmware_class.c]
++drivers/base/firmware_loader/main.c]
+ 
+ 
+ a. When all the CPUs are identical:
+-- 
+2.17.0
