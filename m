@@ -1,163 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752963AbeDHQdD (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 12:33:03 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:32977 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752678AbeDHQbc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 12:31:32 -0400
-X-Google-Smtp-Source: AIpwx48FjpeTEQKts7jH/iN3slaZgQgr4mSalXwnKeFWnXFkQxo5GjINqrVuUyMfcK3k9Jp4YbKDZA==
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@linux.vnet.ibm.com,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [RFC PATCH v2 3/6] Documentation/features/core: Add arch support status files for 'cBPF-JIT' and 'eBPF-JIT'
-Date: Sun,  8 Apr 2018 18:30:24 +0200
-Message-Id: <1523205027-31786-4-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523205027-31786-1-git-send-email-andrea.parri@amarulasolutions.com>
-References: <1523205027-31786-1-git-send-email-andrea.parri@amarulasolutions.com>
+        id S1753008AbeDHQdn (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 12:33:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752502AbeDHQdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 12:33:41 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BF221772
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sun, 8 Apr 2018 17:33:36 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        nfarnesi4@gmail.com, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: sca3000: Handle errors returned by
+ 'sca3000_configure_ring()' in 'sca3000_probe()'
+Message-ID: <20180408173336.7be562f3@archlinux>
+In-Reply-To: <20180402165953.9110-1-christophe.jaillet@wanadoo.fr>
+References: <20180402165953.9110-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 6077776b5908e split 'HAVE_BPF_JIT' into cBPF and eBPF variant.
-Adds arch support status files for the new variants, and removes the
-status file corresponding to 'HAVE_BPT_JIT'. The new status matrices
-were auto-generated using the script 'features-refresh.sh'.
+On Mon,  2 Apr 2018 18:59:53 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- .../features/core/BPF-JIT/arch-support.txt         | 33 ----------------------
- .../features/core/cBPF-JIT/arch-support.txt        | 33 ++++++++++++++++++++++
- .../features/core/eBPF-JIT/arch-support.txt        | 33 ++++++++++++++++++++++
- 3 files changed, 66 insertions(+), 33 deletions(-)
- delete mode 100644 Documentation/features/core/BPF-JIT/arch-support.txt
- create mode 100644 Documentation/features/core/cBPF-JIT/arch-support.txt
- create mode 100644 Documentation/features/core/eBPF-JIT/arch-support.txt
+> 'sca3000_configure_ring()' can fail, so test its return value and
+> propagate it if needed.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Un-tested and not 100% sure that we should bail-out if it fails.
+Good catch - and yes we should bail out on error here.
 
-diff --git a/Documentation/features/core/BPF-JIT/arch-support.txt b/Documentation/features/core/BPF-JIT/arch-support.txt
-deleted file mode 100644
-index d277f971ccd6b..0000000000000
---- a/Documentation/features/core/BPF-JIT/arch-support.txt
-+++ /dev/null
-@@ -1,33 +0,0 @@
--#
--# Feature name:          BPF-JIT
--#         Kconfig:       HAVE_BPF_JIT
--#         description:   arch supports BPF JIT optimizations
--#
--    -----------------------
--    |         arch |status|
--    -----------------------
--    |       alpha: | TODO |
--    |         arc: | TODO |
--    |         arm: |  ok  |
--    |       arm64: |  ok  |
--    |         c6x: | TODO |
--    |       h8300: | TODO |
--    |     hexagon: | TODO |
--    |        ia64: | TODO |
--    |        m68k: | TODO |
--    |  microblaze: | TODO |
--    |        mips: |  ok  |
--    |       nds32: | TODO |
--    |       nios2: | TODO |
--    |    openrisc: | TODO |
--    |      parisc: | TODO |
--    |     powerpc: |  ok  |
--    |       riscv: | TODO |
--    |        s390: |  ok  |
--    |          sh: | TODO |
--    |       sparc: |  ok  |
--    |          um: | TODO |
--    |   unicore32: | TODO |
--    |         x86: |  ok  |
--    |      xtensa: | TODO |
--    -----------------------
-diff --git a/Documentation/features/core/cBPF-JIT/arch-support.txt b/Documentation/features/core/cBPF-JIT/arch-support.txt
-new file mode 100644
-index 0000000000000..90459cdde3143
---- /dev/null
-+++ b/Documentation/features/core/cBPF-JIT/arch-support.txt
-@@ -0,0 +1,33 @@
-+#
-+# Feature name:          cBPF-JIT
-+#         Kconfig:       HAVE_CBPF_JIT
-+#         description:   arch supports cBPF JIT optimizations
-+#
-+    -----------------------
-+    |         arch |status|
-+    -----------------------
-+    |       alpha: | TODO |
-+    |         arc: | TODO |
-+    |         arm: | TODO |
-+    |       arm64: | TODO |
-+    |         c6x: | TODO |
-+    |       h8300: | TODO |
-+    |     hexagon: | TODO |
-+    |        ia64: | TODO |
-+    |        m68k: | TODO |
-+    |  microblaze: | TODO |
-+    |        mips: |  ok  |
-+    |       nds32: | TODO |
-+    |       nios2: | TODO |
-+    |    openrisc: | TODO |
-+    |      parisc: | TODO |
-+    |     powerpc: |  ok  |
-+    |       riscv: | TODO |
-+    |        s390: | TODO |
-+    |          sh: | TODO |
-+    |       sparc: |  ok  |
-+    |          um: | TODO |
-+    |   unicore32: | TODO |
-+    |         x86: | TODO |
-+    |      xtensa: | TODO |
-+    -----------------------
-diff --git a/Documentation/features/core/eBPF-JIT/arch-support.txt b/Documentation/features/core/eBPF-JIT/arch-support.txt
-new file mode 100644
-index 0000000000000..c90a0382fe667
---- /dev/null
-+++ b/Documentation/features/core/eBPF-JIT/arch-support.txt
-@@ -0,0 +1,33 @@
-+#
-+# Feature name:          eBPF-JIT
-+#         Kconfig:       HAVE_EBPF_JIT
-+#         description:   arch supports eBPF JIT optimizations
-+#
-+    -----------------------
-+    |         arch |status|
-+    -----------------------
-+    |       alpha: | TODO |
-+    |         arc: | TODO |
-+    |         arm: |  ok  |
-+    |       arm64: |  ok  |
-+    |         c6x: | TODO |
-+    |       h8300: | TODO |
-+    |     hexagon: | TODO |
-+    |        ia64: | TODO |
-+    |        m68k: | TODO |
-+    |  microblaze: | TODO |
-+    |        mips: |  ok  |
-+    |       nds32: | TODO |
-+    |       nios2: | TODO |
-+    |    openrisc: | TODO |
-+    |      parisc: | TODO |
-+    |     powerpc: |  ok  |
-+    |       riscv: | TODO |
-+    |        s390: |  ok  |
-+    |          sh: | TODO |
-+    |       sparc: |  ok  |
-+    |          um: | TODO |
-+    |   unicore32: | TODO |
-+    |         x86: |  ok  |
-+    |      xtensa: | TODO |
-+    -----------------------
--- 
-2.7.4
+I'll pick this one up when we finish discussion of patch 1.
+(or possibly in v2 if you agree with my suggestion there).
+
+Thanks,
+
+Jonathan
+> ---
+>  drivers/iio/accel/sca3000.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
+> index dae4c594c170..45285edd216f 100644
+> --- a/drivers/iio/accel/sca3000.c
+> +++ b/drivers/iio/accel/sca3000.c
+> @@ -1486,7 +1486,9 @@ static int sca3000_probe(struct spi_device *spi)
+>  	}
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  
+> -	sca3000_configure_ring(indio_dev);
+> +	ret = sca3000_configure_ring(indio_dev);
+> +	if (ret)
+> +		return ret;
+>  
+>  	if (spi->irq) {
+>  		ret = request_threaded_irq(spi->irq,
