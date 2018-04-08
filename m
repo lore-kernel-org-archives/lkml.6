@@ -1,63 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752790AbeDHDT3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 23:19:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57918 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752463AbeDHDT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 23:19:27 -0400
-Date: Sun, 8 Apr 2018 11:19:13 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Laurence Oberman <loberman@redhat.com>
-Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-Message-ID: <20180408031912.GA24737@ming.t460p>
-References: <20180308105358.1506-1-ming.lei@redhat.com>
- <20180308105358.1506-5-ming.lei@redhat.com>
- <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de>
- <20180403160001.GA25255@ming.t460p>
- <alpine.DEB.2.21.1804041017530.2056@nanos.tec.linutronix.de>
- <20180404150759.GA24824@ming.t460p>
- <alpine.DEB.2.21.1804042027130.1492@nanos.tec.linutronix.de>
- <20180406091257.GA9605@ming.t460p>
- <alpine.DEB.2.21.1804061145180.1982@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1804062348080.1533@nanos.tec.linutronix.de>
+        id S1752852AbeDHDU0 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 23:20:26 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:14835 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752034AbeDHDUY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 23:20:24 -0400
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v4 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+Date: Sun, 8 Apr 2018 11:19:31 +0800
+Message-ID: <20180408031938.153474-1-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1804062348080.1533@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.235]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 11:49:47PM +0200, Thomas Gleixner wrote:
-> On Fri, 6 Apr 2018, Thomas Gleixner wrote:
-> 
-> > On Fri, 6 Apr 2018, Ming Lei wrote:
-> > > 
-> > > I will post V4 soon by using cpu_present_mask in the 1st stage irq spread.
-> > > And it should work fine for Kashyap's case in normal cases.
-> > 
-> > No need to resend. I've changed it already and will push it out after
-> > lunch.
-> 
-> No. Lunch did not last that long :)
-> 
-> I pushed out the lot to
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-> 
-> Please double check the modifications I did. The first related commit fixes
-> an existing error handling bug.
+  This patch try to add AO clock and Reset driver for Amlogic's
+Meson-AXG SoC.
+  Please note that patch 7 need to wait for the DTS changes[3] merged
+into mainline first, otherwise it will break the serial console.
 
-I think your modification is better, especially about adding comment in
-irq_create_affinity_masks().
+ patch 1: factor the common code into a dedicated file
+ patch 3-5: add the aoclk driver for AXG SoC
+ patch 6-7: drop unnecessary clock flags
 
-I also testes these patches again, and they just work fine.
+changes since v3 at [4]: 
+ - add 'const' contraint to the read-only data
+ - switch to devm_of_clk_add_hw_provider API
+ - check return value of devm_reset_controller_register
 
-Thanks,
-Ming
+changes since v2 at [2]: 
+ - rework meson_aoclkc_probe() which leverage the of_match_data
+ - merge patch 5-6 into this series
+ - seperate DTS patch, will send to Kevin Hilman independently
+ 
+changes since v1 at [0]: 
+ - rebase to clk-meson's branch 'next/drivers' [1]
+ - fix license, update to BSD-3-Clause
+ - drop un-used include header file
+
+[0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
+[1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
+[2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+[3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
+[4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
+
+
+Qiufang Dai (1):
+  clk: meson-axg: Add AO Clock and Reset controller driver
+
+Yixun Lan (6):
+  clk: meson: aoclk: refactor common code into dedicated file
+  clk: meson: migrate to devm_of_clk_add_hw_provider API
+  dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+  dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+  clk: meson: drop CLK_SET_RATE_PARENT flag
+  clk: meson: drop CLK_IGNORE_UNUSED flag
+
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         |   1 +
+ drivers/clk/meson/Makefile                         |   4 +-
+ drivers/clk/meson/axg-aoclk.c                      | 163 +++++++++++++++++++++
+ drivers/clk/meson/axg-aoclk.h                      |  31 ++++
+ drivers/clk/meson/gxbb-aoclk.c                     |  92 ++++--------
+ drivers/clk/meson/gxbb-aoclk.h                     |   7 +
+ drivers/clk/meson/meson-aoclk.c                    |  83 +++++++++++
+ drivers/clk/meson/meson-aoclk.h                    |  35 +++++
+ include/dt-bindings/clock/axg-aoclkc.h             |  26 ++++
+ include/dt-bindings/reset/axg-aoclkc.h             |  20 +++
+ 10 files changed, 399 insertions(+), 63 deletions(-)
+ create mode 100644 drivers/clk/meson/axg-aoclk.c
+ create mode 100644 drivers/clk/meson/axg-aoclk.h
+ create mode 100644 drivers/clk/meson/meson-aoclk.c
+ create mode 100644 drivers/clk/meson/meson-aoclk.h
+ create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+
+-- 
+2.15.1
