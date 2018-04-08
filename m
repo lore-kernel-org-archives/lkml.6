@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752746AbeDHD2T (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 23:28:19 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:56026 "EHLO huawei.com"
+        id S1752212AbeDHDfk (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 23:35:40 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57846 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752463AbeDHD2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 23:28:18 -0400
+        id S1751387AbeDHDfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 23:35:39 -0400
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
 CC: <linux-f2fs-devel@lists.sourceforge.net>,
         <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to show missing bits in FS_IOC_GETFLAGS
-Date: Sun, 8 Apr 2018 11:27:14 +0800
-Message-ID: <20180408032714.23458-1-yuchao0@huawei.com>
+        Chao Yu <yuchao0@huawei.com>, Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: remove redundant block plug
+Date: Sun, 8 Apr 2018 11:34:39 +0800
+Message-ID: <20180408033439.24830-1-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -23,35 +23,52 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes to show missing encrypt/inline_data flag in
-FS_IOC_GETFLAGS like ext4 does.
+For buffered IO, we don't need to use block plug to cache bio,
+for direct IO, generic f2fs_direct_IO has already added block
+plug, so let's remove redundant one in .write_iter.
 
+As Yunlei described in his patch:
+
+-f2fs_file_write_iter
+  -blk_start_plug
+    -__generic_file_write_iter
+	...
+	  -do_blockdev_direct_IO
+	    -blk_start_plug
+		...
+	    -blk_finish_plug
+	...
+  -blk_finish_plug
+
+which may conduct performance decrease in our platform
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/file.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ fs/f2fs/file.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 3fd485395f9d..79cfaad21705 100644
+index 7b8fb31086c3..cb315d23c56f 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -1584,8 +1584,15 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+@@ -2886,7 +2886,6 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
  {
- 	struct inode *inode = file_inode(filp);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
--	unsigned int flags = fi->i_flags &
--			(F2FS_FL_USER_VISIBLE | F2FS_PROJINHERIT_FL);
-+	unsigned int flags = fi->i_flags;
-+
-+	if (file_is_encrypt(inode))
-+		flags |= F2FS_ENCRYPT_FL;
-+	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
-+		flags |= F2FS_INLINE_DATA_FL;
-+
-+	flags &= F2FS_FL_USER_VISIBLE;
-+
- 	return put_user(flags, (int __user *)arg);
- }
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file_inode(file);
+-	struct blk_plug plug;
+ 	ssize_t ret;
  
+ 	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
+@@ -2931,9 +2930,7 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 				return err;
+ 			}
+ 		}
+-		blk_start_plug(&plug);
+ 		ret = __generic_file_write_iter(iocb, from);
+-		blk_finish_plug(&plug);
+ 		clear_inode_flag(inode, FI_NO_PREALLOC);
+ 
+ 		/* if we couldn't write data, we should deallocate blocks. */
 -- 
 2.15.0.55.gc2ece9dc4de6
