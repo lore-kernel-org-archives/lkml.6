@@ -1,227 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752236AbeDHIYN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 04:24:13 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:35908 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751309AbeDHIYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 04:24:11 -0400
-From: "liwei (CM)" <liwei213@huawei.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>, Ryan Grachek <ryan@edited.us>,
-        "Jinguojun (A)" <kid.jin@hisilicon.com>,
-        "jingbing (C)" <jingbing2@hisilicon.com>
-CC: Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        Suzhuangluan <suzhuangluan@hisilicon.com>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIG1tYzogZHdfbW1jLWszOiBGaXggRERSNTIgbW9k?=
- =?utf-8?Q?e_by_setting_required_clock_divisor?=
-Thread-Topic: [PATCH] mmc: dw_mmc-k3: Fix DDR52 mode by setting required
- clock divisor
-Thread-Index: AQHTztwoqvBFzez3EUacN3S8Mg/6rqP2h9ZA
-Date: Sun, 8 Apr 2018 08:23:53 +0000
-Message-ID: <1699CE87DE933F49876AD744B5DC140FA596C5@DGGEMM506-MBS.china.huawei.com>
-References: <20180329182423.21201-1-ryan@edited.us>
- <e3ec3a77-f2f3-2164-4dbb-80e1ba3ebc63@rock-chips.com>
- <CAGoBSJq+tSpvFZsJLPffTaFBg5o2Nn2eeXXvHqt4Us_dd7==1w@mail.gmail.com>
- <bed16723-6bf0-4bcf-f44c-ebcf7a1e7cc5@rock-chips.com>
- <CAGoBSJogjG9efE9EKdinTCN9Px0zsW1_=5msXjHrLZXVjLBgow@mail.gmail.com>
- <9d4bec45-42e3-da8d-ff29-1f24db27faf5@rock-chips.com>
-In-Reply-To: <9d4bec45-42e3-da8d-ff29-1f24db27faf5@rock-chips.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.189.155.72]
-Content-Type: text/plain; charset="utf-8"
+        id S1752077AbeDHIf5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 04:35:57 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39036 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751641AbeDHIfz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 04:35:55 -0400
+X-Google-Smtp-Source: AIpwx49MbQs1N3TnphqKW6Nkp03/3MZ/mPYFLAENm8LTk2ZW4G0Quu+0HhwMxTYMUyb8ibnzi09l2w==
+Date: Sun, 8 Apr 2018 10:35:50 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Maninder Singh <maninder1.s@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 0/3] syscalls: clean up stub naming convention
+Message-ID: <20180408083550.32d65b6ra6yca5p7@gmail.com>
+References: <20180407074651.29014-1-linux@dominikbrodowski.net>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180407074651.29014-1-linux@dominikbrodowski.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w388OLwI010917
 
-+jinguojun jingbing
 
------邮件原件-----
-发件人: Shawn Lin [mailto:shawn.lin@rock-chips.com] 
-发送时间: 2018年4月8日 9:52
-收件人: Ryan Grachek
-抄送: shawn.lin@rock-chips.com; Jaehoon Chung; Ulf Hansson; linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org; Zhangfei Gao; liwei (CM); Suzhuangluan
-主题: Re: [PATCH] mmc: dw_mmc-k3: Fix DDR52 mode by setting required clock divisor
+* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
 
-On 2018/4/6 21:41, Ryan Grachek wrote:
-> On Wed, Apr 4, 2018 at 7:51 PM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->> [+ Zhangfei Gao who added support for hi6220]
->>
->> On 2018/4/4 23:31, Ryan Grachek wrote:
->>>
->>> On Tue, Apr 3, 2018 at 6:31 AM, Shawn Lin <shawn.lin@rock-chips.com 
->>> <mailto:shawn.lin@rock-chips.com>> wrote:
->>>
->>>      On 2018/3/30 2:24, oscardagrach wrote:
->>>
->>>      Need at least one line commit body.
->>>
->>>          Signed-off-by: oscardagrach <ryan@edited.us 
->>> <mailto:ryan@edited.us>>
->>>
->>>          ---
->>>             drivers/mmc/host/dw_mmc-k3.c | 10 ++++++++--
->>>             1 file changed, 8 insertions(+), 2 deletions(-)
->>>
->>>          diff --git a/drivers/mmc/host/dw_mmc-k3.c
->>>          b/drivers/mmc/host/dw_mmc-k3.c
->>>          index 89cdb3d533bb..efc546cb4db8 100644
->>>          --- a/drivers/mmc/host/dw_mmc-k3.c
->>>          +++ b/drivers/mmc/host/dw_mmc-k3.c
->>>          @@ -194,8 +194,14 @@ static void dw_mci_hi6220_set_ios(struct
->>>          dw_mci *host, struct mmc_ios *ios)
->>>                   int ret;
->>>                   unsigned int clock;
->>>             -     clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
->>>          -
->>>          +       /* CLKDIV must be 1 for DDR52/8-bit mode */
->>>          +       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
->>>          +               ios->timing == MMC_TIMING_MMC_DDR52) {
->>>          +               mci_writel(host, CLKDIV, 0x1);
->>>          +               clock = ios->clock;
->>>          +       } else {
->>>          +               clock = (ios->clock <= 25000000) ? 25000000 :
->>>          ios->clock;
->>>          +       }
->>>
->>>
->>>      I undertand DDR52/8-bit need CLKDIV fixed 1, but shouldn't the 
->>> following
->>>      change is more sensible?
->>>
->>>      if (ios->bus_width == MMC_BUS_WIDTH_8 && ios->timing ==
->>>      MMC_TIMING_MMC_DDR52)
->>>               clock = ios->clock * 2;
->>>      else
->>>               clock = (ios->clock <= 25000000) ? 25000000 : 
->>> ios->clock;
->>>
->>>
->>>      The reason is ios->clock is 52MHz and you could claim 104MHz from the
->>>      clock provider and let dw_mmc core take care of the divder to be 1.
->>>      Otherwise, you just force it to be DDR52/8-bit with a clk rate 
->>> of 26MHz.
->>>
->>>
->>>                   ret = clk_set_rate(host->biu_clk, clock);
->>>                   if (ret)
->>>                           dev_warn(host->dev, "failed to set rate
->>>          %uHz\n", clock);
->>>
->>>
->>>
->>
->> For future wise, please use plain mode mail, but not HTML format.
->>
->>> Your feedback is correct. I see the Rockchip dwmmc driver has a 
->>> similar implementation. After applying your suggested changes, 
->>> however, my board reports "dwmmc_k3 f723d000.dwmmc0: failed to set rate 104000000Hz"
->>> during intialization of eMMC. In addition, I do not see CLKDIV being 
->>> set to 1. clk_set_rate fails and I wonder if this is out-of-scope of 
->>> the driver.
->>>
->>> If I set CLKDIV where I did prior, with your changes, the device 
->>> fails to set the clock and falls back to 52 MHz (26 MHz) and works 
->>> fine, but again, CLKDIV is reported as 0 (even though it is 1.) One 
->>> thing of interest to note is when I manually set the clock by doing:
->>> (echo 104000000 > /sys/kernel/debug/mmc0/clock) the device reports 
->>> back 'mmc_host mmc0: Bus speed (slot 0) = 198400000Hz (slot req 104000000Hz,
->>>    actual 99200000HZ div = 1)' which works reliably and clk_set_rate 
->>> does not report any error.
->>>
->>
->> When looking closely into the code, at least dw_mci_hi6220_set_ios 
->> goes wrong with the bus_hz, since it should be ciu_clk but not biu_clk.
->> "b" stands for bus, and "c" stands for card IMHO, however bus_hz 
->> describs the clock to the card, provided by controller. Does the 
->> following patch help?
->>
->>
->> diff --git a/drivers/mmc/host/dw_mmc-k3.c 
->> b/drivers/mmc/host/dw_mmc-k3.c index 89cdb3d..9e78cf2 100644
->> --- a/drivers/mmc/host/dw_mmc-k3.c
->> +++ b/drivers/mmc/host/dw_mmc-k3.c
->> @@ -194,13 +194,21 @@ static void dw_mci_hi6220_set_ios(struct dw_mci 
->> *host, struct mmc_ios *ios)
->>          int ret;
->>          unsigned int clock;
->>
->> -       clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
->> +       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
->> +           ios->timing == MMC_TIMING_MMC_DDR52)
->> +               clock = ios->clock * 2;
->> +       else
->> +               clock = (ios->clock <= 25000000) ? 25000000 : 
->> + ios->clock;
->>
->> -       ret = clk_set_rate(host->biu_clk, clock);
->> +       ret = clk_set_rate(host->ciu_clk, clock);
->>          if (ret)
->>                  dev_warn(host->dev, "failed to set rate %uHz\n", 
->> clock);
->>
->> -       host->bus_hz = clk_get_rate(host->biu_clk);
->> +       clock = clk_get_rate(host->ciu_clk);
->> +       if (clock != host->bus_hz) {
->> +               host->bus_hz = clock;
->> +               host->current_speed = 0;
->> +       }
->>
->>   }
->>
->>
->>> I am not sure where to begin debugging these clock issues and 
->>> welcome any feedback.
->>
->>
+> In short (0xffffffff prefix removed, re-ordered):
 > 
-> The change results in the following:
-> 'dwmmc_k3 f723e000.dwmmc1: failed to set rate 25000000Hz'
-> 'dwmmc_k3 f723d000.dwmmc0: failed to set rate 25000000Hz'
-> 'dwmmc_k3 f723f000.dwmmc2: failed to set rate 25000000Hz'
+> 810f0af0 t            kernel_waitid	# common (32/64) kernel helper
 > 
-> and later on:
-> 'dwmmc_k3 f723d000.dwmmc0: failed to set rate 52000000Hz'
-> 'dwmmc_k3 f723d000.dwmmc0: failed to set rate 104000000Hz'
+> <inline>            __in_sys_waitid	# inlined helper doing actual work
+> 810f0be0 t          __do_sys_waitid	# C func calling inlined helper
 > 
-> Eventually mmc1 (UHS-1 MicroSD) will settle down after repeated 
-> attempts at setting 25 MHz:
-> 'mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req 
-> 100000000Hz, actual 100000000HZ div = 0)'
-> 'mmc1: new ultra high speed SDR50 SDHC card at address 0001'
-> 'mmcblk1: mmc1:0001 GB1QT 29.8 GiB'
+> <inline>     __in_compat_sys_waitid	# inlined helper doing actual work
+> 810f0d80 t   __do_compat_sys_waitid	# compat C func calling inlined helper
 > 
-> Same for mmc2 (SDIO WL1835MOD WiFi):
-> 'mmc_host mmc2: Bus speed (slot 0) = 100000000Hz (slot req 50000000Hz, 
-> actual 50000000HZ div = 1)'
-> 'mmc2: new high speed SDIO card at address 0001'
-> 
-> So mmc1 and mmc2 will initialize eventually. I had not observed this 
-> behavior prior. It appears to fail setting all devices to an initial 
-> rate of 25 MHz. However, the same cannot be said for mmc0 (eMMC).
-> Again, I observed being able to set the clock manually through debugfs 
-> to 104MHz(/2) which is successful and the card becomes stable and will 
-> initialize properly.
-> 
-> 'echo 104000000 > /sys/kernel/debug/mmc0/clock'
-> 'mmc_host mmc0: Bus speed (slot 0) = 200000000Hz (slot req 
-> 104000000Hz, actual 100000000HZ div = 1)'
-> 
-> So it seems to settle down at 50 MHz, but only if set manually. It 
-> does appear CLKDIV is being set accordingly now.
+> 810f2080 T         __x64_sys_waitid	# x64 64-bit-ptregs -> C stub
+> 810f20b0 T        __ia32_sys_waitid	# ia32 32-bit-ptregs -> C stub [unused]
+> 810f2470 T __ia32_compat_sys_waitid	# ia32 32-bit-ptregs -> compat C stub
+> 810f2490 T  __x32_compat_sys_waitid	# x32 64-bit-ptregs -> compat C stub
 
-Hmm.... I can't see any differences.. And failed to set clock rate in the first place and finally got it, which beyond the mmc driver scope. Maybe hisilicon guys have more idea here.
+Ok, looks pretty clean and nice to me all around, and looking at the highest level 
+syscall tables the actual calling convention and address encoding is now a _lot_ 
+more obvious at first sight as well.
 
+The "in" part is a tiny bit confusing because it reads like a preposition:
+"are we in sys_waitid?".
+
+But I have no better idea, other than we could perhaps use more underscores to 
+signal the inline helper, instead of the 'in_' prefix:
+
+> 810f0af0 t            kernel_waitid	# common (32/64) kernel helper
 > 
+> <inline>            _____sys_waitid	# inlined helper doing actual work
+> 810f0be0 t          __do_sys_waitid	# C func calling inlined helper
 > 
+> <inline>     _____compat_sys_waitid	# inlined helper doing actual work
+> 810f0d80 t   __do_compat_sys_waitid	# compat C func calling inlined helper
 > 
+> 810f2080 T         __x64_sys_waitid	# x64 64-bit-ptregs -> C stub
+> 810f20b0 T        __ia32_sys_waitid	# ia32 32-bit-ptregs -> C stub [unused]
+> 810f2470 T __ia32_compat_sys_waitid	# ia32 32-bit-ptregs -> compat C stub
+> 810f2490 T  __x32_compat_sys_waitid	# x32 64-bit-ptregs -> compat C stub
+
+?
+
+There are some other variants as well, here's the list of all the options I could 
+think of:
+
+  - _____sys_waitid()      # ridiculous number of underscores?
+  - __sys_waitid()         # too generic sounding?
+  - __inline_sys_waitid()  # too long?
+  - __il_sys_waitid()      # reminds me of the IL country code ;-)
+  - __in_sys_waitid()      # easy to read as 'are we in syscall?'
+
+None is super convinging - but maybe __inline_sys_waitid is the most natural one.
+
+[ Note, whichever we pick (if we pick a new one), there no need to resend, I can 
+  edit the patches in place if you agree. ]
+
+One more fundamental question: why do we have the __do_sys_waitid() and 
+__inline_sys_waitid() distinction - aren't the function call signatures the same 
+with no conversion done?
+
+I.e. couldn't we just do a single, static __do_sys_waitid(), where the compiler 
+would decide to what extent inlining is justified? This would allow the compiler 
+to inline all the intermediate code into the stubs themselves.
+
+Or is this a side effect of the error injection feature, which needs to add extra 
+logic at this intermediate level? That too should be able to use the 
+__do_sys_waitid() variant though.
+
+> The kbuild test robot barked at an alleged +20038 bytes kernel size regression
+> for i386-tinyconfig due to the first patch of this series. That seems to be a
+> false positive, as it likely doesn't take into account the change to
+> scripts/bloat-o-meter. Moreover, I could not reproduce such a size regression
+> on local i386 builds.
+
+Ok, I'll ignore that.
+
+Is UML unaffected by these renames?
+
+Thanks,
+
+	Ingo
