@@ -1,82 +1,70 @@
-Return-Path: <kernel-hardening-return-12891-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/FrKcIjX2qLi7kHeuKplT0hjG4tr7VLyafGiWVffpJ7qsTmY0NpgIapza8JDYAmqQoJAuu
-ARC-Seal: i=1; a=rsa-sha256; t=1523177966; cv=none;
+Return-Path: <kernel-hardening-return-12893-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/uzZbm8O1rAZlKIyhFz2J4qZv+3dSeILWoKk36GJ454e/N+9gaVj0xWEaPHY2zCg9iSvsq
+ARC-Seal: i=1; a=rsa-sha256; t=1523179132; cv=none;
         d=google.com; s=arc-20160816;
-        b=GtMn9NaDaSQz6IOpWFB/sFFYIQsUG4PckdJvhk9Z6GsmVho/UHopxD1TSv9Oid9vSN
-         vIJTehqN7IO8MUe5uPewBDjyRkhcdarkvOdbUXhzbAFUvwn3zsqg6Q27/lGoKgGkrPwN
-         9zbL1WiMXW8DBR6kyhzNi9He8eBgWLbWb7IU8BkfPHwD3MaJCEpnWxQWoFdvCc0Ni7TL
-         ITFcmn6yoNkjlN1ZBxqatnfRe0OXGNvZr3VOlwh3p8NPwTs/wFAZiWNJYSZj+8Hw3CHy
-         CxHn8C6rx5BPl2onqU6tFVDZ+4bbJjCbHzD44jO/jIyFuMghqpOe70GQ9jBo6zZU0pL2
-         xHGA==
+        b=L2oNA8aKh0HOi/8G1SoMxihhGkoXMSWp8n1g7MX0qmlXiH2d2NcOCqi1Pha7UIgFPY
+         LHo1PXgarSeJAltvjCvRZ0du2f2egWMq6x4fqHugoTc8DEf+Hal7xRbbZ/G7JxO8WNlC
+         05MRoOSlKqtGECWT6+yz4ElU5WegSx8FnaYvFoCefYYzFpT0pcoMD3yNlJKLslngCwze
+         AbBXEdsaRo1HA1aRqfuprr+uvuPbL2L8pq30KEWDo5sAB0opnEVW4rcAylQDiv1dxmPZ
+         8XsSx0NcnRx87RZJ5PMfsQ9MGHIcTU4x7LaWzyINcU/vc0+6cMChc9zThy9A30Rcq6i6
+         6gcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=kGjzDJpnHEu4U/ZnYuasmd2evtUBy8zSWfjxwlzLlJU=;
-        b=oAusnp5C3LsmCiTwDC2ZbG724iQqt+mpKKHPf1dPgBV7dJSJWzkG5JjyH+L1cgR8Il
-         qojj1kxpehXUktUHr+pNijL1+8pvxj/4vL6F2jQQ+Y9os7y8mE5oHaSdITWfsqmyq+Wa
-         YAlPNlOVgL4fNCAV2MYiq417gvisYXfoTbAcKrqX4lEZ2rxHCnKPGQTCO0CO+qUTUwch
-         GWvHq8QpbZIH2xUGu3TTvPTfu9Tfb6tikNvGRr0zzSllKV0fgYN1LYdKTHaBucuS+qE+
-         HGIMJACnc/eLtb85gRVOlvwV5kU+wWS4tk2Tm4QPZVOZ/WpJ0Su/Ws7Qmtvkm4fMYqO8
-         2O1Q==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=ZrLVurKNzastxVuVnp6meA/ceL68ZcEHstk2CiysyMM=;
+        b=so2dNqDzTvS71BWseS1LqHPYPidHfuQpsVvxG7TTfhFs0fZjCrkY32YUiyt/Wi7xEH
+         ddCO+H4shJnfw3BeXMp2UHkerPLauk1conAEJwGNoGB2nZqz7Ncu2rkEta7U7ANOBn8r
+         4czZRptCA+iQrFUZ2DWl9X9jv5sRC704gRTcr/NGq7mfbLp31xGs6qWYovEN/P/kunYp
+         PlOOHB8wJ7STKUPTGk/cFqTpWf5PgXhaTeszVqgHTgtIiEB7Owfa5A5IZy9k+uWbeRG6
+         xwZs/xU3l6ObqF6/BEfwkzAe4TbjKwLsF6jg9VRGlAzpp0wM/LAMpk1qwLES8SOgViL5
+         +pTw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=qhbyn5GZ;
-       spf=pass (google.com: domain of kernel-hardening-return-12891-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12891-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12893-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12893-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=qhbyn5GZ;
-       spf=pass (google.com: domain of kernel-hardening-return-12891-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12891-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12893-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12893-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-In-Reply-To: <20180408031935.GC25197@gondor.apana.org.au>
-References: <1523126303-23205-1-git-send-email-s.mesoraca16@gmail.com>
- <1523126303-23205-3-git-send-email-s.mesoraca16@gmail.com> <20180408031935.GC25197@gondor.apana.org.au>
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date: Sun, 8 Apr 2018 10:58:48 +0200
-Message-ID: <CAJHCu1LQuvcxsfTYddN5o3=pMzj6mtnBKvTG9O378pv3w_Q24Q@mail.gmail.com>
-Subject: Re: [PATCH 2/6] crypto: ctr - avoid VLA use
-To: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Sun, 8 Apr 2018 17:18:23 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, linux-crypto@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>, Kees Cook <keescook@chromium.org>,
-	Eric Biggers <ebiggers3@gmail.com>, Laura Abbott <labbott@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+	Kernel Hardening <kernel-hardening@lists.openwall.com>,
+	linux-crypto@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Kees Cook <keescook@chromium.org>,
+	Eric Biggers <ebiggers3@gmail.com>,
+	Laura Abbott <labbott@redhat.com>
+Subject: Re: [PATCH 2/6] crypto: ctr - avoid VLA use
+Message-ID: <20180408091823.4m6xw477ly6yfnzt@gondor.apana.org.au>
+References: <1523126303-23205-1-git-send-email-s.mesoraca16@gmail.com>
+ <1523126303-23205-3-git-send-email-s.mesoraca16@gmail.com>
+ <20180408031935.GC25197@gondor.apana.org.au>
+ <CAJHCu1LQuvcxsfTYddN5o3=pMzj6mtnBKvTG9O378pv3w_Q24Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJHCu1LQuvcxsfTYddN5o3=pMzj6mtnBKvTG9O378pv3w_Q24Q@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597113761628441569?=
-X-GMAIL-MSGID: =?utf-8?q?1597167859511204427?=
+X-GMAIL-MSGID: =?utf-8?q?1597169081610863412?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-018-04-08 5:19 GMT+02:00 Herbert Xu <herbert@gondor.apana.org.au>:
-> On Sat, Apr 07, 2018 at 08:38:19PM +0200, Salvatore Mesoraca wrote:
->>
->> @@ -206,6 +207,14 @@ static struct crypto_instance *crypto_ctr_alloc(struct rtattr **tb)
->>       if (alg->cra_blocksize < 4)
->>               goto out_put_alg;
->>
->> +     /* Block size must be <= MAX_BLOCKSIZE. */
->> +     if (alg->cra_blocksize > MAX_BLOCKSIZE)
->> +             goto out_put_alg;
->> +
->> +     /* Alignmask must be <= MAX_ALIGNMASK. */
->> +     if (alg->cra_alignmask > MAX_ALIGNMASK)
->> +             goto out_put_alg;
->> +
+On Sun, Apr 08, 2018 at 10:58:48AM +0200, Salvatore Mesoraca wrote:
 >
-> Since you're also adding a check to cipher algorithms in general,
-> none of these individual checks are needed anymore.
+> Fair enough.
+> After removing the individual checks the modification to the single files
+> will be just a couple of lines, is it OK for you if I collapse all of them in
+> just a single commit?
 
-Fair enough.
-After removing the individual checks the modification to the single files
-will be just a couple of lines, is it OK for you if I collapse all of them in
-just a single commit?
-
-Thank you,
-
-Salvatore
+Sure.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
