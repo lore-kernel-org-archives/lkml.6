@@ -1,81 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752628AbeDHTn1 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 15:43:27 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33329 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752137AbeDHTn0 (ORCPT
+        id S1752763AbeDHToL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 15:44:11 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:60956 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752688AbeDHToK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 15:43:26 -0400
-X-Google-Smtp-Source: AIpwx4/gDTxNKgYWTGlgFigFTjk3hVh9sorjd9RNsOyYdiCyCSfiXmujRJpPDDbhKJcHk8qtRl09Pg==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc/32: Make some functions static
-Date: Sun,  8 Apr 2018 21:43:18 +0200
-Message-Id: <20180408194318.8062-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Sun, 8 Apr 2018 15:44:10 -0400
+X-ME-Helo: linux.numericable.fr
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 08 Apr 2018 21:44:08 +0200
+X-ME-IP: 77.198.79.136
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        nfarnesi4@gmail.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 1/2] iio: sca3000: Fix an error handling path in 'sca3000_probe()'
+Date: Sun,  8 Apr 2018 21:44:01 +0200
+Message-Id: <20180408194401.18348-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit 4aea909eeba3 ("powerpc: Add missing prototypes in setup_32.c")
-prototypes for
+Use 'devm_iio_kfifo_allocate()' instead of 'iio_kfifo_allocate()' in order
+to simplify code and avoid a memory leak in an error path in
+'sca3000_probe()'. A call to 'sca3000_unconfigure_ring()' was missing.
 
-- ppc_setup_l2cr
-- ppc_setup_l3cr
-- ppc_init
-
-were added but at the same time in commit d15a261d876d ("powerpc/32: Make
-some functions static") those same functions were made static. Fix
-conflicting changes by removing the prototypes and leave the function as
-static. Fix the following warnings, treated as errors with W=1:
-
-  arch/powerpc/kernel/setup_32.c:127:19: error: static declaration of ‘ppc_setup_l2cr’ follows non-static declaration
-  arch/powerpc/kernel/setup_32.c:140:19: error: static declaration of ‘ppc_setup_l3cr’ follows non-static declaration
-  arch/powerpc/kernel/setup_32.c:186:19: error: static declaration of ‘ppc_init’ follows non-static declaration
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/powerpc/kernel/setup_32.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+v2: Use a devm_ function to fix the leak reported in v1.
+    This makes 'sca3000_unconfigure_ring()' useless and simplify code.
+---
+ drivers/iio/accel/sca3000.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
-index 9827b6b3aaaa..9e79be13b937 100644
---- a/arch/powerpc/kernel/setup_32.c
-+++ b/arch/powerpc/kernel/setup_32.c
-@@ -124,7 +124,7 @@ notrace void __init machine_init(u64 dt_ptr)
+diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
+index f33dadf7b262..562f125235db 100644
+--- a/drivers/iio/accel/sca3000.c
++++ b/drivers/iio/accel/sca3000.c
+@@ -1277,7 +1277,7 @@ static int sca3000_configure_ring(struct iio_dev *indio_dev)
+ {
+ 	struct iio_buffer *buffer;
+ 
+-	buffer = iio_kfifo_allocate();
++	buffer = devm_iio_kfifo_allocate(&indio_dev->dev);
+ 	if (!buffer)
+ 		return -ENOMEM;
+ 
+@@ -1287,11 +1287,6 @@ static int sca3000_configure_ring(struct iio_dev *indio_dev)
+ 	return 0;
  }
  
- /* Checks "l2cr=xxxx" command-line option */
--static int __init ppc_setup_l2cr(char *str)
-+int __init ppc_setup_l2cr(char *str)
+-static void sca3000_unconfigure_ring(struct iio_dev *indio_dev)
+-{
+-	iio_kfifo_free(indio_dev->buffer);
+-}
+-
+ static inline
+ int __sca3000_hw_ring_state_set(struct iio_dev *indio_dev, bool state)
  {
- 	if (cpu_has_feature(CPU_FTR_L2CR)) {
- 		unsigned long val = simple_strtoul(str, NULL, 0);
-@@ -137,7 +137,7 @@ static int __init ppc_setup_l2cr(char *str)
- __setup("l2cr=", ppc_setup_l2cr);
+@@ -1546,8 +1541,6 @@ static int sca3000_remove(struct spi_device *spi)
+ 	if (spi->irq)
+ 		free_irq(spi->irq, indio_dev);
  
- /* Checks "l3cr=xxxx" command-line option */
--static int __init ppc_setup_l3cr(char *str)
-+int __init ppc_setup_l3cr(char *str)
- {
- 	if (cpu_has_feature(CPU_FTR_L3CR)) {
- 		unsigned long val = simple_strtoul(str, NULL, 0);
-@@ -183,7 +183,7 @@ EXPORT_SYMBOL(nvram_sync);
+-	sca3000_unconfigure_ring(indio_dev);
+-
+ 	return 0;
+ }
  
- #endif /* CONFIG_NVRAM */
- 
--static int __init ppc_init(void)
-+int __init ppc_init(void)
- {
- 	/* clear the progress line */
- 	if (ppc_md.progress)
 -- 
-2.11.0
+2.14.1
