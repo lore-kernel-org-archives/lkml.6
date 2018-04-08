@@ -1,108 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752576AbeDHCpG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 22:45:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41688 "EHLO mx1.redhat.com"
+        id S1752605AbeDHCrb (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 22:47:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41792 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752034AbeDHCpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 22:45:03 -0400
-Message-ID: <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
-Subject: Re: simultaneous voice/data works (was Re: call/normal switch was
- Re: omap4-droid4: voice call support was)
-From: Dan Williams <dcbw@redhat.com>
-To: Pavel Machek <pavel@ucw.cz>, Merlijn Wajer <merlijn@wizzup.org>
-Cc: Tony Lindgren <tony@atomide.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Date: Sat, 07 Apr 2018 21:44:59 -0500
-In-Reply-To: <20180407122233.GA11302@amd>
-References: <20180401153631.GA5700@atomide.com>
-         <20180401173012.GB5700@atomide.com>
-         <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
-         <20180402155754.GD5700@atomide.com> <20180403150444.GE5700@atomide.com>
-         <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
-         <20180403194419.GG5700@atomide.com> <20180406120423.GA18691@amd>
-         <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
-         <20180407081000.GB7818@amd> <20180407122233.GA11302@amd>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752257AbeDHCra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 22:47:30 -0400
+From: Baoquan He <bhe@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Baoquan He <bhe@redhat.com>
+Subject: [PATCH v2 0/3] resource: Use list_head to link sibling resource
+Date: Sun,  8 Apr 2018 10:47:21 +0800
+Message-Id: <20180408024724.16812-1-bhe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-04-07 at 14:22 +0200, Pavel Machek wrote:
-> On Sat 2018-04-07 10:10:00, Pavel Machek wrote:
-> > Hi!
-> > 
-> > It seems qmicli can be used while unicsy_demo/ofone talks to the
-> > modem
-> > using the AT commands.
-> > 
-> > So I could do:
-> > 
-> > qmicli -d /dev/cdc-wdm0 --wds-follow-network --wds-start-
-> > network=apn=internet.t-mobile.cz
-> > route del default
-> > sudo ifconfig wwan0 up
-> > dhclient wwan0
-> > 
-> > to get GPRS/UMTS connection. AT commands still work.
-> > 
-> > Does anyone have any idea what to do to get the GPS to work?
-> 
-> Got that to work.
-> 
-> I installed modemmanager -- unfortunately that claims ttyUSB4 so it
-> breaks voice/sms -- but then
+This post mainly converts strut resource's sibling list from singly
+linked list to doubly linked list, list_head. This is suggested by
+Andrew. Since I need a reversed searching on iomem_resource's
+IORESOURCE_SYSTEM_RAM children,  the old singly linked list way makes
+the code in v1 post really ugly.
 
-It shouldn't break SMS since MM will do SMS via QMI, but yeah for now
-it'll break voice because that would happen via QMI too, and we haven't
-implemented voice for QMI yet.
+With this change, we only need one simple list_for_each_entry_reverse()
+to do reversed iteration on sibling list. The relevant codes in
+kernel/resource.c are more readable since those dazzling pointer
+operation codes for singly linked list are replaced. 
 
---help-messaging
---help-sms
+With the help of list_head, in patch 0002 we can have a very simple
+walk_system_ram_res_rev(). And in patch 0003, will use it to search
+available system RAM region for kexec_buffer of kexec_file from top to
+down, just like we have been doing all along in kexec loading which is
+done in kexec-tools utility.
 
-Also available via D-Bus of course.
+Note:
+This patchset passed testing on my kvm guest, x86_64 arch with network
+enabling. The thing we need pay attetion to is that a root resource's
+child member need be initialized specifically with LIST_HEAD_INIT() if
+sttically defined or INIT_LIST_HEAD() for dynamically definition. Here
+Just like we do for iomem_resource/ioport_resource, or the change in
+get_pci_domain_busn_res().
 
-> mmcli -m 0 --enable
-> mmcli -m 0  --location-enable-gps-nmea
-> watch -n .3 sudo mmcli -m 0  --location-get-gps-nmea
-> 
-> ...can be used to get GPS data. Droid4 seems to have rather bad GPS,
-> so you should probably put it near window for testing.
-> 
-> Is there way to grab data from modemmanager and feed it to gpsd, so
-> that normal applications can access gps? I don't see easy way.
-> 
-> I tried --location-enable-gps-unmanaged , but that did not work for
-> me.
+And there are two places of change I am not very sure. One is in
+drivers/hv/vmbus_drv.c, the other is in drivers/pci/host/vmd.c. So will
+invite experts on these areas to help review.
 
-That requires a TTY that would spit out the GPS data; in this mode MM
-only sends the start/stop commands, and what comes out the GPS TTY is
-undefined (at least by MM).
+v1->v2:
+  Use list_head instead to link resource siblings. This is suggested by
+  Andrew.
 
-So unless you know that one of the 6600's TTYs does GPS and in what
-format it does GPS, then no.
+  Rewrite walk_system_ram_res_rev() after list_head is taken to link
+  resouce siblings.
 
-Doesn't --location-get-gps-nmea work for you?  That will spit out the
-latest NMEA traces MM gets from the modem, if it supports NMEA.  I
-believe --location-status will tell you what methods MM supports with
-the modem.
+Baoquan He (3):
+  resource: Use list_head to link sibling resource
+  resource: add walk_system_ram_res_rev()
+  kexec_file: Load kernel at top of system RAM if required
 
-Also available via D-Bus of course.
+ drivers/gpu/drm/gma500/gtt.c                |   5 +-
+ drivers/hv/vmbus_drv.c                      |  52 +++----
+ drivers/input/joystick/iforce/iforce-main.c |   4 +-
+ drivers/nvdimm/e820.c                       |   2 +-
+ drivers/nvdimm/namespace_devs.c             |  14 +-
+ drivers/nvdimm/nd.h                         |   5 +-
+ drivers/of/address.c                        |   4 +-
+ drivers/pci/host/vmd.c                      |   8 +-
+ drivers/pci/probe.c                         |   2 +
+ drivers/pci/setup-bus.c                     |   2 +-
+ include/linux/ioport.h                      |   7 +-
+ kernel/kexec_file.c                         |   2 +
+ kernel/resource.c                           | 233 +++++++++++++++++-----------
+ 13 files changed, 196 insertions(+), 144 deletions(-)
 
-> Is modemmanager enabling GPS, or is it talking to libqmi to do that?
-> The code is quite confusing to me...
-
-Yes.  When the modem is driven with QMI, then all the data comes from
-QMI.  For other modems (like Huawei HiLink and Gobi 1000) the enabling
-commands are done via AT on the main command port and then one of the
-TTYs starts spewing out NMEA.
-
-Dan
+-- 
+2.13.6
