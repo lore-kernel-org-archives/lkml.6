@@ -1,52 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752572AbeDHCU1 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 22:20:27 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39180 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752068AbeDHCU0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 22:20:26 -0400
-Date: Sun, 8 Apr 2018 03:19:56 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mateusz Guzik <mguzik@redhat.com>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Message-ID: <20180408021945.GF30522@ZenIV.linux.org.uk>
-References: <20180319170627.04eae43b@canb.auug.org.au>
- <20180403122629.688f2cab@canb.auug.org.au>
+        id S1752509AbeDHCbL (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 22:31:11 -0400
+Received: from home.keithp.com ([63.227.221.253]:47796 "EHLO elaine.keithp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752278AbeDHCbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 22:31:10 -0400
+From: "Keith Packard" <keithp@keithp.com>
+To: Jason Ekstrand <jason@jlekstrand.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Dave Airlie <airlied@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] drm: Add crtc_queue_syncobj and crtc_get_syncobj ioctls
+In-Reply-To: <CAOFGe94tJG-GELF-RnokWOQHjrbAMOZp2EGM2=Vgh=hP0Ne1jg@mail.gmail.com>
+References: <20180406235649.9494-1-keithp@keithp.com> <20180406235649.9494-2-keithp@keithp.com> <CAOFGe943O_premhAP0JLV4QMTqxxr3vgm2o_-7m1_S=dpj7dEw@mail.gmail.com> <87muyfpw3y.fsf@keithp.com> <CAOFGe94tJG-GELF-RnokWOQHjrbAMOZp2EGM2=Vgh=hP0Ne1jg@mail.gmail.com>
+Date: Sat, 07 Apr 2018 19:31:05 -0700
+Message-ID: <87k1tipgye.fsf@keithp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180403122629.688f2cab@canb.auug.org.au>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 12:26:29PM +1000, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> On Mon, 19 Mar 2018 17:06:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the vfs tree, today's linux-next build (x86_64 allnoconfig)
-> > failed like this:
-> > 
-> > fs/super.c: In function 'do_thaw_all_callback':
-> > fs/super.c:942:3: error: implicit declaration of function 'emergency_thaw_bdev'; did you mean 'emergency_remount'? [-Werror=implicit-function-declaration]
-> >    emergency_thaw_bdev(sb);
-> >    ^~~~~~~~~~~~~~~~~~~
-> >    emergency_remount
-> > 
-> > Caused by commit
-> > 
-> >   92afc556e622 ("buffer.c: call thaw_super during emergency thaw")
-> > 
-> > I have reverted that commit for today.
-> 
-> I am still doing that revert ...
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-That's interesting, seeing that this commit is *not* in #for-next and
-08fdc8a0138a should not have that problem...
+Jason Ekstrand <jason@jlekstrand.net> writes:
+
+> Yeah, I suppose an application could ask for 10k frames in the future or
+> something ridiculous like that.  For sync_file, people strongly want a
+> finite time guarantee for security/deadlock reasons.  I don't know how
+> happy they would be with a finite time of 10 minutes...
+
+Sure, we've put arbitrary finite limits on vblank counters in other
+places, so adding some kind of arbitrary limit like a couple of seconds
+would be entirely reasonable here. The Vulkan API doesn't need any of
+this complexity at all; the one I'm doing only lets you create a fence
+for the next vblank.
+
+> Ok, that's not expected... Part of the point of sync objects is that
+> they're re-usable.  The client is free to not re-use them or to be very
+> careful about the recycling process.
+
+Heh. I thought the opposite -- lightweight objects that you'd use once
+and delete. I can certainly change the API to pass in an existing
+syncobj rather than creating a new one. That would be easier in some
+ways as it reduces the failure paths a bit.
+
+> Is the event the important part or the moderately accurate timestamp?
+
+I need the timestamp and sequence number, getting them in an event would
+mean not having to make another syscall.
+
+> We could probably modify drm_syncobj to have a "last signaled"
+> timestamp that's queryable through an IOCTL.
+
+That's exactly what I did, but it only works for these new syncobjs. The
+fields are global and could be filled in by other bits of the code.
+
+> Is the sequence number returned necessary?  Will it ever be different from
+> the one requested?
+
+Yes, when the application queues it just slightly too late.
+
+The application doesn't actually need either of these values directly,
+but the system needs them to respond to requests to queue presentation
+at a specific time, so the vulkan driver wants 'recent' vblank
+time/sequence data to estimate when a vblank will occur.
+
+=2D-=20
+=2Dkeith
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEw4O3eCVWE9/bQJ2R2yIaaQAAABEFAlrJfukACgkQ2yIaaQAA
+ABHnRQ/9G44GtfqSHadKeZSHfUcx5/k/jS3LGmKn6hqBVfdGnO3qmQq8G4yRX3AK
+S7khQ5z5lkHVloBEKJRA35W9KJVV/Fpae75QZ8o5koGowMW4C/Ue3MSK8Bl1v2L2
+3Fqwua1purDj5GC8fasz5hTUVLB/gV7HVG1DXXb9vugbVjPJkrWhytmSJ0kJ40zv
+ahqzwxCsOTLk186lX4Vqnv2kajkpOoEza0XUGG8DEwXYJF6xAojhmfwUPasFOqzc
+Q32JO0DWQBi51TN/qovwTwVT6uEwwFCUy7bv1oQva9KUZLb5Uwm5TtCMw+9zf54S
+MRuVMVXUnUS1sQtjMnLevDt9Y4Myz/WY+ita9SPJW0A9bC8DXIWYLWjU8bN/+v6S
+svHk4I8aQ0KwCnth21IFPaoc712q72l4OWXVNbI1XVK6yAUj/mRhJbuYkHoyXbqH
+rM6mAXmgrRVtnHGlbk2ul4Q8SIXJPBd6MO3g61C5/LiDO3c9/WAJShxDfXkCkTFV
+pPPBWB1CMZdvcqIanqWMr/drGKt1wM5F0hZvCzE8oN4lIInXS4FLVfIeLeyx1wxH
+PC8v22/qgkhQLCZQ4RRBsHKVxQWrjFRWp+uH6e31Ejis4F6fBgQlMf5ProI3qBVA
+4gJLqQ8+gFvfR75KtXbHKeFQEtDC8jKHeH5SS93QEKzWg7Mi1ls=
+=nkn4
+-----END PGP SIGNATURE-----
+--=-=-=--
