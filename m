@@ -1,45 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752954AbeDHQwd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 12:52:33 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:51908 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751919AbeDHQwc (ORCPT
+        id S1751788AbeDHRHL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 13:07:11 -0400
+Received: from smtprelay0128.hostedemail.com ([216.40.44.128]:55113 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751372AbeDHRHK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 12:52:32 -0400
-Date: Sun, 08 Apr 2018 12:52:30 -0400 (EDT)
-Message-Id: <20180408.125230.1777996328363149390.davem@davemloft.net>
-To: haibinzhang@tencent.com
-Cc: mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lidongchen@tencent.com,
-        yunfangtai@tencent.com
-Subject: Re: [PATCH] vhost-net: set packet weight of tx polling to 2 * vq
- size
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <88D661ADF6AFBF42B2AB88D8E7682B0901FC47D3@EXMBX-SZMAIL011.tencent.com>
-References: <88D661ADF6AFBF42B2AB88D8E7682B0901FC47D3@EXMBX-SZMAIL011.tencent.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+        Sun, 8 Apr 2018 13:07:10 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1566:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3867:3868:3871:3872:3873:3874:4321:5007:10004:10400:10848:11232:11658:11914:12740:12760:12895:13069:13311:13357:13439:14180:14659:21060:21080:21627:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: uncle96_21518f3089e13
+X-Filterd-Recvd-Size: 1181
+Message-ID: <7d9467ac5aee4b81b5c58c167ac553c75dd26f4c.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: relax check for revert commit
+From: Joe Perches <joe@perches.com>
+To: Jia He <hejianet@gmail.com>, Andy Whitcroft <apw@canonical.com>
+Cc: linux-kernel@vger.kernel.org, Jia He <jia.he@hxt-semitech.com>
+Date: Sun, 08 Apr 2018 10:07:07 -0700
+In-Reply-To: <d5f5fbc7-d01f-05e1-f8ac-c1db8ba5fd9e@gmail.com>
+References: <1522679339-19067-1-git-send-email-hejianet@gmail.com>
+         <1522679339-19067-2-git-send-email-hejianet@gmail.com>
+         <d5f5fbc7-d01f-05e1-f8ac-c1db8ba5fd9e@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.0-4 
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w38GqebI009722
 
-From: haibinzhang(张海斌) <haibinzhang@tencent.com>
-Date: Fri, 6 Apr 2018 08:22:37 +0000
-
-> handle_tx will delay rx for tens or even hundreds of milliseconds when tx busy
-> polling udp packets with small length(e.g. 1byte udp payload), because setting
-> VHOST_NET_WEIGHT takes into account only sent-bytes but no single packet length.
+On Sun, 2018-04-08 at 10:12 +0800, Jia He wrote:
+> Hi Andy & Joe
 > 
-> Ping-Latencies shown below were tested between two Virtual Machines using
-> netperf (UDP_STREAM, len=1), and then another machine pinged the client:
-...
-> Signed-off-by: Haibin Zhang <haibinzhang@tencent.com>
-> Signed-off-by: Yunfang Tai <yunfangtai@tencent.com>
-> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+> Although it is minor, it is a real bug, I thought.
+> 
+> Is there any comment? Thank you
 
-Michael and Jason, please review.
+If you really want to do something useful here,
+quote the quote characters and compare for that.
