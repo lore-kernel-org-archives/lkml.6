@@ -1,124 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751615AbeDHHE7 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 03:04:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39906 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750810AbeDHHE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 03:04:58 -0400
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "Cc"
-From: NeilBrown <neil@brown.name>
-To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Marek Vasut <marek.vasut@gmail.com>
-Date: Sun, 08 Apr 2018 17:04:44 +1000
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: spi-nor: clear Extended Address Reg on switch to 3-byte addressing.
-Message-ID: <874lkmw54j.fsf@notabene.neil.brown.name>
+        id S1751820AbeDHHHD (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 03:07:03 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:51224 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751653AbeDHHHB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 03:07:01 -0400
+X-Google-Smtp-Source: AIpwx4/yWyWiRZq04ldl5IFdF88oM1VK+ryvWRLIKKFH1I+z2d90iAgRvirhFNrk8o/Fa9qzJSrOxH/Qky8rxD29ndnbymwt7K6V
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Sun, 08 Apr 2018 00:07:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000092ad87056950ef9e@google.com>
+Subject: KMSAN: uninit-value in af_alg_free_areq_sgls
+From: syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hello,
+
+syzbot hit the following crash on  
+https://github.com/google/kmsan.git/master commit
+e2ab7e8abba47a2f2698216258e5d8727ae58717 (Fri Apr 6 16:24:31 2018 +0000)
+kmsan: temporarily disable visitAsmInstruction() to help syzbot
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=9c251bdd09f83b92ba95
+
+So far this crash happened 11 times on  
+https://github.com/google/kmsan.git/master.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5551473324720128
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=4782073151750144
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5003160619843584
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=6627248707860932248
+compiler: clang version 7.0.0 (trunk 329391)
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+==================================================================
+BUG: KMSAN: uninit-value in atomic_sub arch/x86/include/asm/atomic.h:65  
+[inline]
+BUG: KMSAN: uninit-value in af_alg_free_areq_sgls+0x5ff/0xb20  
+crypto/af_alg.c:669
+CPU: 1 PID: 3568 Comm: syzkaller909997 Not tainted 4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+  atomic_sub arch/x86/include/asm/atomic.h:65 [inline]
+  af_alg_free_areq_sgls+0x5ff/0xb20 crypto/af_alg.c:669
+  af_alg_free_resources+0x66/0xf0 crypto/af_alg.c:1033
+  _aead_recvmsg crypto/algif_aead.c:321 [inline]
+  aead_recvmsg+0x9a4/0x2960 crypto/algif_aead.c:334
+  aead_recvmsg_nokey+0x129/0x160 crypto/algif_aead.c:452
+  sock_recvmsg_nosec net/socket.c:803 [inline]
+  sock_recvmsg+0x1d0/0x230 net/socket.c:810
+  ___sys_recvmsg+0x3fb/0x810 net/socket.c:2205
+  __sys_recvmsg net/socket.c:2250 [inline]
+  SYSC_recvmsg+0x298/0x3c0 net/socket.c:2262
+  SyS_recvmsg+0x54/0x80 net/socket.c:2257
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x43ff29
+RSP: 002b:00007ffd9919c808 EFLAGS: 00000207 ORIG_RAX: 000000000000002f
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ff29
+RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000004
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000207 R12: 0000000000401850
+R13: 00000000004018e0 R14: 0000000000000000 R15: 0000000000000000
+
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  __kmalloc+0x23c/0x350 mm/slub.c:3791
+  kmalloc include/linux/slab.h:517 [inline]
+  sock_kmalloc+0x14e/0x270 net/core/sock.c:1986
+  af_alg_get_rsgl+0x427/0xe10 crypto/af_alg.c:1149
+  _aead_recvmsg crypto/algif_aead.c:163 [inline]
+  aead_recvmsg+0x953/0x2960 crypto/algif_aead.c:334
+  aead_recvmsg_nokey+0x129/0x160 crypto/algif_aead.c:452
+  sock_recvmsg_nosec net/socket.c:803 [inline]
+  sock_recvmsg+0x1d0/0x230 net/socket.c:810
+  ___sys_recvmsg+0x3fb/0x810 net/socket.c:2205
+  __sys_recvmsg net/socket.c:2250 [inline]
+  SYSC_recvmsg+0x298/0x3c0 net/socket.c:2262
+  SyS_recvmsg+0x54/0x80 net/socket.c:2257
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+==================================================================
 
 
-According to section
-   8.2.7 Write Extended Address Register (C5h)
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-of the Winbond W25Q256FV data sheet (256M-BIT SPI flash)
-
-   The Extended Address Register is only effective when the device is
-   in the 3-Byte Address Mode.  When the device operates in the 4-Byte
-   Address Mode (ADS=3D1), any command with address input of A31-A24
-   will replace the Extended Address Register values. It is
-   recommended to check and update the Extended Address Register if
-   necessary when the device is switched from 4-Byte to 3-Byte Address
-   Mode.
-
-This patch adds code to implement that recommendation.  Without this,
-my GNUBEE-PC1 will not successfully reboot, as the Extended Address
-Register is left with a value of '1'. When the SOC attempts to read
-(in 3-byte address mode) the boot loader, it reads from the wrong
-location.
-
-Signed-off-by: NeilBrown <neil@brown.name>
-=2D--
- drivers/mtd/spi-nor/spi-nor.c | 10 ++++++++++
- include/linux/mtd/spi-nor.h   |  2 ++
- 2 files changed, 12 insertions(+)
-
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index d445a4d3b770..c303bf0d2982 100644
-=2D-- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -269,6 +269,7 @@ static inline int set_4byte(struct spi_nor *nor, const =
-struct flash_info *info,
- 	int status;
- 	bool need_wren =3D false;
- 	u8 cmd;
-+	u8 val;
-=20
- 	switch (JEDEC_MFR(info)) {
- 	case SNOR_MFR_MICRON:
-@@ -283,6 +284,15 @@ static inline int set_4byte(struct spi_nor *nor, const=
- struct flash_info *info,
- 		status =3D nor->write_reg(nor, cmd, NULL, 0);
- 		if (need_wren)
- 			write_disable(nor);
-+		if (!status && !enable &&
-+		    nor->read_reg(nor, SPINOR_OP_RDXA, &val, 1) =3D=3D 0 &&
-+		    val !=3D 0) {
-+			/* need to reset the Extended Address Register */
-+			write_enable(nor);
-+			val =3D 0;
-+			nor->write_reg(nor, SPINOR_OP_WRXA, &val, 1);
-+			write_disable(nor);
-+		}
-=20
- 		return status;
- 	default:
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index de36969eb359..42954419cfdf 100644
-=2D-- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -62,6 +62,8 @@
- #define SPINOR_OP_RDCR		0x35	/* Read configuration register */
- #define SPINOR_OP_RDFSR		0x70	/* Read flag status register */
- #define SPINOR_OP_CLFSR		0x50	/* Clear flag status register */
-+#define SPINOR_OP_RDXA		0xc8	/* Read Extended Address Register */
-+#define SPINOR_OP_WRXA		0xc5	/* Write Extended Address Register */
-=20
- /* 4-byte address opcodes - used on Spansion and some Macronix flashes. */
- #define SPINOR_OP_READ_4B	0x13	/* Read data bytes (low frequency) */
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrJvwwACgkQOeye3VZi
-gbkV3A/+NvOnM5VU3pW4nS9rZnQ4zrCRmGF5IqmTm95eLLRRbhMlUXymQxToVFjW
-wFdPvnogqaFvUnBBE/YuzLvWwuwLk4YCSt3du0fxWXAN60jCRRm2PM4ATxrYjaDK
-qFu4exU2aWf/BFnuNgH3ydH9uhU69b9oEc1RQ+MqRam1SLDucg1grGFsbFRVR3bV
-L77Q0TsxCwGqLBS7Znc+A+kUJ1M1Pq2Uw55JZhB/3178d+K0A951LjUXBLG95jjh
-hURozyDaJpqeWVaIHbMn2lANt2WXDC9b/fj02/8gScACcYrEfuHbGtYJAMDktX4I
-eO8QTPqQ1aKPlYWrUpm+etHFjoHu1n6yUSd6OP9Abg+L3B0PQrMWX3mX/AAbn/AV
-Gh1Mk4V3DDERZz1Yibnb9drRxK5R3X2Y3Rxbm+5Yn+5QlYeHFeg7ZOkW9iZuVA+n
-K7Ke7xCmeLBE6wJHO0PNHYTEJT+LNbU6XIfQoPnEiU7W1rvjdxkWXOo6ggKi3rSn
-N+64yqOrqj+ZqR1ndSe9GsCewxcUIcE80VvyDerxNlGepDVrQvaybANC4zFRt5hB
-ZVygUBI9LMdA3kKw8egve0B0ylAY0ViWIVVmA7462KlAjVZ4q8BY6KpjWlnsf3nb
-RCt0R4tQa5Mje2rf5kanzsYQdFSLIP61DiC6EYkynloKOPnWsBs=
-=S+TY
------END PGP SIGNATURE-----
---=-=-=--
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
