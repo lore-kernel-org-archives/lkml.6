@@ -1,119 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751387AbeDHE1M (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 00:27:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50992 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750760AbeDHE1L (ORCPT
+        id S1751343AbeDHElK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 00:41:10 -0400
+Received: from mail-pl0-f49.google.com ([209.85.160.49]:37161 "EHLO
+        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750760AbeDHElJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 00:27:11 -0400
-Date: Sat, 7 Apr 2018 21:27:09 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: __GFP_LOW
-Message-ID: <20180408042709.GC32632@bombadil.infradead.org>
-References: <20180405025841.GA9301@bombadil.infradead.org>
- <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
- <20180405142258.GA28128@bombadil.infradead.org>
- <20180405142749.GL6312@dhcp22.suse.cz>
- <20180405151359.GB28128@bombadil.infradead.org>
- <20180405153240.GO6312@dhcp22.suse.cz>
- <20180405161501.GD28128@bombadil.infradead.org>
- <20180405185444.GQ6312@dhcp22.suse.cz>
- <20180405201557.GA3666@bombadil.infradead.org>
- <20180406060953.GA8286@dhcp22.suse.cz>
+        Sun, 8 Apr 2018 00:41:09 -0400
+X-Google-Smtp-Source: AIpwx4/875G0Flr+NwsDgLJRH+j5UjnjaJra1SOKv4ImxNl7m58bH3yZzczhs9TazTxsk4Vo70XSxw==
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+To: broonie@kernel.org, mika.penttila@nextfour.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        alsa-devel@alsa-project.org, tiwai@suse.com, perex@perex.cz,
+        lgirdwood@gmail.com, fabio.estevam@nxp.com, timur@tabi.org
+Subject: [PATCH] ASoC: fsl_ssi: Fix mode setting when changing channel number
+Date: Sat,  7 Apr 2018 21:40:21 -0700
+Message-Id: <1523162421-26400-1-git-send-email-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406060953.GA8286@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 08:09:53AM +0200, Michal Hocko wrote:
-> OK, we already split the documentation into these categories. So we got
-> at least the structure right ;)
+This is a partial revert (in a cleaner way) of commit ebf08ae3bc90
+("ASoC: fsl_ssi: Keep ssi->i2s_net updated") to fix a regression
+at test cases when switching between mono and stereo audio.
 
-Yes, this part of the documentation makes sense to me :-)
+The problem is that ssi->i2s_net is initialized in set_dai_fmt()
+only, while this set_dai_fmt() is only called during the dai-link
+probe(). The original patch assumed set_dai_fmt() would be called
+during every playback instance, so it failed at the overriding use
+cases.
 
-> >  - What kind of memory to allocate (DMA, NORMAL, HIGHMEM)
-> >  - Where to get the pages from
-> >    - Local node only (THISNODE)
-> >    - Only in compliance with cpuset policy (HARDWALL)
-> >    - Spread the pages between zones (WRITE)
-> >    - The movable zone (MOVABLE)
-> >    - The reclaimable zone (RECLAIMABLE)
-> >  - What you are willing to do if no free memory is available:
-> >    - Nothing at all (NOWAIT)
-> >    - Use my own time to free memory (DIRECT_RECLAIM)
-> >      - But only try once (NORETRY)
-> >      - Can call into filesystems (FS)
-> >      - Can start I/O (IO)
-> >      - Can sleep (!ATOMIC)
-> >    - Steal time from other processes to free memory (KSWAPD_RECLAIM)
-> 
-> What does that mean? If I drop the flag, do not steal? Well I do because
-> they will hit direct reclaim sooner...
+This patch adds the local variable i2s_net back to let regular use
+cases still follow the mode settings from the set_dai_fmt().
 
-If they allocate memory, sure.  A process which stays in its working
-set won't, unless it's preempted by kswapd.
+Meanwhile, the original commit of keeping ssi->i2s_net updated was
+to make set_tdm_slot() clean by checking the ssi->i2s_net directly
+instead of reading SCR register. However, the change itself is not
+necessary (or even harmful) because the set_tdm_slot() might fail
+to check the slot number for Normal-Mode-None-Net settings while
+mono audio cases still need 2 slots. So this patch can also fix it.
+And it adds an extra line of comments to declare ssi->i2s_net does
+not reflect the register value but merely the initial setting from
+the set_dai_fmt().
 
-> >    - Kill other processes to get their memory (!RETRY_MAYFAIL)
-> 
-> Not really for costly orders.
-
-Yes, need to be more precise there.
-
-> >    - All of the above, and wait forever (NOFAIL)
-> >    - Take from emergency reserves (HIGH)
-> >    - ... but not the last parts of the regular reserves (LOW)
-> 
-> What does that mean and how it is different from NOWAIT? Is this about
-> the low watermark and if yes do we want to teach users about this and
-> make the whole thing even more complicated?  Does it wake
-> kswapd? What is the eagerness ordering? LOW, NOWAIT, NORETRY,
-> RETRY_MAYFAIL, NOFAIL?
-
-LOW doesn't quite fit into the eagerness scale with the other flags;
-instead it's composable with them.  So you can specify NOWAIT | LOW,
-NORETRY | LOW, NOFAIL | LOW, etc.  All I have in mind is something
-like this:
-
-        if (alloc_flags & ALLOC_HIGH)
-                min -= min / 2;
-+	if (alloc_flags & ALLOC_LOW)
-+		min += min / 2;
-
-The idea is that a GFP_KERNEL | __GFP_LOW allocation cannot force a
-GFP_KERNEL allocation into an OOM situation because it cannot take
-the last pages of memory before the watermark.  It can still make a
-GFP_KERNEL allocation *more likely* to hit OOM (just like any other kind
-of allocation can), but it can't do it by itself.
-
+Reported-by: Mika Penttilä <mika.penttila@nextfour.com>
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Mika Penttilä <mika.penttila@nextfour.com>
 ---
+ sound/soc/fsl/fsl_ssi.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-I've been wondering about combining the DIRECT_RECLAIM, NORETRY,
-RETRY_MAYFAIL and NOFAIL flags together into a single field:
-0 => RECLAIM_NEVER,	/* !DIRECT_RECLAIM */
-1 => RECLAIM_ONCE,	/* NORETRY */
-2 => RECLAIM_PROGRESS,	/* RETRY_MAYFAIL */
-3 => RECLAIM_FOREVER,	/* NOFAIL */
-
-The existance of __GFP_RECLAIM makes this a bit tricky.  I honestly don't
-know what this code is asking for:
-
-kernel/power/swap.c:                       __get_free_page(__GFP_RECLAIM | __GFP_HIGH);
-but I suspect I'll have to find out.  There's about 60 places to look at.
-
-I also want to add __GFP_KILL (to be part of the GFP_KERNEL definition).
-That way, each bit that you set in the GFP mask increases the things the
-page allocator can do to get memory for you.  At the moment, RETRY_MAYFAIL
-subtracts the ability to kill other tasks, which is unusual.  For example,
-this test in kvmalloc_node:
-
-        WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
-
-doesn't catch RETRY_MAYFAIL being set.
+diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
+index 0823b08..89df2d9 100644
+--- a/sound/soc/fsl/fsl_ssi.c
++++ b/sound/soc/fsl/fsl_ssi.c
+@@ -217,6 +217,7 @@ struct fsl_ssi_soc_data {
+  * @dai_fmt: DAI configuration this device is currently used with
+  * @streams: Mask of current active streams: BIT(TX) and BIT(RX)
+  * @i2s_net: I2S and Network mode configurations of SCR register
++ *           (this is the initial settings based on the DAI format)
+  * @synchronous: Use synchronous mode - both of TX and RX use STCK and SFCK
+  * @use_dma: DMA is used or FIQ with stream filter
+  * @use_dual_fifo: DMA with support for dual FIFO mode
+@@ -829,16 +830,23 @@ static int fsl_ssi_hw_params(struct snd_pcm_substream *substream,
+ 	}
+ 
+ 	if (!fsl_ssi_is_ac97(ssi)) {
++		/*
++		 * Keep the ssi->i2s_net intact while having a local variable
++		 * to override settings for special use cases. Otherwise, the
++		 * ssi->i2s_net will lose the settings for regular use cases.
++		 */
++		u8 i2s_net = ssi->i2s_net;
++
+ 		/* Normal + Network mode to send 16-bit data in 32-bit frames */
+ 		if (fsl_ssi_is_i2s_cbm_cfs(ssi) && sample_size == 16)
+-			ssi->i2s_net = SSI_SCR_I2S_MODE_NORMAL | SSI_SCR_NET;
++			i2s_net = SSI_SCR_I2S_MODE_NORMAL | SSI_SCR_NET;
+ 
+ 		/* Use Normal mode to send mono data at 1st slot of 2 slots */
+ 		if (channels == 1)
+-			ssi->i2s_net = SSI_SCR_I2S_MODE_NORMAL;
++			i2s_net = SSI_SCR_I2S_MODE_NORMAL;
+ 
+ 		regmap_update_bits(regs, REG_SSI_SCR,
+-				   SSI_SCR_I2S_NET_MASK, ssi->i2s_net);
++				   SSI_SCR_I2S_NET_MASK, i2s_net);
+ 	}
+ 
+ 	/* In synchronous mode, the SSI uses STCCR for capture */
+-- 
+2.7.4
