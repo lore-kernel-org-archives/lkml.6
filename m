@@ -1,100 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752648AbeDHDHT (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 23:07:19 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:36283 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752498AbeDHDHS (ORCPT
+        id S1752701AbeDHDH1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 23:07:27 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43290 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752653AbeDHDHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 23:07:18 -0400
-X-Google-Smtp-Source: AIpwx4/PdzLfK4gMEqmel8RygXBxe2I5xYmt5L0lbsfx4oUrqT4t6o0QgU0bEVQ9R2lmJ9DwoqCehw==
+        Sat, 7 Apr 2018 23:07:21 -0400
+X-Google-Smtp-Source: AIpwx4/mx0kCZ4SsX2BVe4M0R1psHGjhgVAPRFrygZrVUSSTh5jZfE3qaM5JJxdLbX2q/kkg1gVqEw==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: ohad@wizery.com, bjorn.andersson@linaro.org
 Cc: arnd@arndb.de, broonie@kernel.org, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org, baolin.wang@linaro.org
-Subject: [PATCH 1/2] hwspinlock: Convert to use 'switch' statement
-Date: Sun,  8 Apr 2018 11:06:56 +0800
-Message-Id: <d7fe0ed3d2dccf51e04a5c9032a73d1fd62dd1c1.1523156656.git.baolin.wang@linaro.org>
+Subject: [PATCH 2/2] hwspinlock: Introduce one new mode for hwspinlock
+Date: Sun,  8 Apr 2018 11:06:57 +0800
+Message-Id: <f18e7e37046873a393ca43ee91986b9e192e977c.1523156656.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <d7fe0ed3d2dccf51e04a5c9032a73d1fd62dd1c1.1523156656.git.baolin.wang@linaro.org>
+References: <d7fe0ed3d2dccf51e04a5c9032a73d1fd62dd1c1.1523156656.git.baolin.wang@linaro.org>
+In-Reply-To: <d7fe0ed3d2dccf51e04a5c9032a73d1fd62dd1c1.1523156656.git.baolin.wang@linaro.org>
+References: <d7fe0ed3d2dccf51e04a5c9032a73d1fd62dd1c1.1523156656.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have different hwspinlock modes to select, thus it will be more
-readable to handle different modes with using 'switch' statement
-instead of 'if' statement.
+In some scenarios, user need do some time-consuming or sleepable
+operations under the hardware spinlock protection for synchronization
+between the multiple subsystems.
+
+For example, there is one PMIC efuse on Spreadtrum platform, which
+need to be accessed under one hardware lock. But during the hardware
+lock protection, the efuse operation is time-consuming to almost 5 ms,
+so we can not disable the interrupts or preemption so long in this case.
+
+Thus we can introduce one new mode to indicate that we just acquire the
+hardware lock and do not disable interrupts or preemption, meanwhile we
+should force user to protect the hardware lock with mutex or spinlock to
+avoid dead-lock.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/hwspinlock/hwspinlock_core.c |   33 ++++++++++++++++++++++++---------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+ drivers/hwspinlock/hwspinlock_core.c |   34 ++++++++++++++++----
+ include/linux/hwspinlock.h           |   58 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 85 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index 4074441..f4a59f5 100644
+index f4a59f5..5278d05 100644
 --- a/drivers/hwspinlock/hwspinlock_core.c
 +++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -106,12 +106,17 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
- 	 *    problems with hwspinlock usage (e.g. scheduler checks like
- 	 *    'scheduling while atomic' etc.)
- 	 */
--	if (mode == HWLOCK_IRQSTATE)
-+	switch (mode) {
-+	case HWLOCK_IRQSTATE:
- 		ret = spin_trylock_irqsave(&hwlock->lock, *flags);
--	else if (mode == HWLOCK_IRQ)
-+		break;
-+	case HWLOCK_IRQ:
+@@ -71,10 +71,16 @@
+  * This function attempts to lock an hwspinlock, and will immediately
+  * fail if the hwspinlock is already taken.
+  *
+- * Upon a successful return from this function, preemption (and possibly
+- * interrupts) is disabled, so the caller must not sleep, and is advised to
+- * release the hwspinlock as soon as possible. This is required in order to
+- * minimize remote cores polling on the hardware interconnect.
++ * Caution: If the mode is HWLOCK_RAW, that means user must protect the routine
++ * of getting hardware lock with mutex or spinlock. Since in some scenarios,
++ * user need some time-consuming or sleepable operations under the hardware
++ * lock, they need one sleepable lock (like mutex) to protect the operations.
++ *
++ * If the mode is not HWLOCK_RAW, upon a successful return from this function,
++ * preemption (and possibly interrupts) is disabled, so the caller must not
++ * sleep, and is advised to release the hwspinlock as soon as possible. This is
++ * required in order to minimize remote cores polling on the hardware
++ * interconnect.
+  *
+  * The user decides whether local interrupts are disabled or not, and if yes,
+  * whether he wants their previous state to be saved. It is up to the user
+@@ -113,6 +119,9 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+ 	case HWLOCK_IRQ:
  		ret = spin_trylock_irq(&hwlock->lock);
--	else
+ 		break;
++	case HWLOCK_RAW:
++		ret = 1;
 +		break;
-+	default:
+ 	default:
  		ret = spin_trylock(&hwlock->lock);
-+		break;
-+	}
- 
- 	/* is lock already taken by another context on the local cpu ? */
- 	if (!ret)
-@@ -122,12 +127,17 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
- 
- 	/* if hwlock is already taken, undo spin_trylock_* and exit */
- 	if (!ret) {
--		if (mode == HWLOCK_IRQSTATE)
-+		switch (mode) {
-+		case HWLOCK_IRQSTATE:
- 			spin_unlock_irqrestore(&hwlock->lock, *flags);
--		else if (mode == HWLOCK_IRQ)
-+			break;
-+		case HWLOCK_IRQ:
+ 		break;
+@@ -134,6 +143,9 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+ 		case HWLOCK_IRQ:
  			spin_unlock_irq(&hwlock->lock);
--		else
+ 			break;
++		case HWLOCK_RAW:
++			/* Nothing to do */
 +			break;
-+		default:
+ 		default:
  			spin_unlock(&hwlock->lock);
-+			break;
-+		}
- 
- 		return -EBUSY;
- 	}
-@@ -249,12 +259,17 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
- 	hwlock->bank->ops->unlock(hwlock);
- 
- 	/* Undo the spin_trylock{_irq, _irqsave} called while locking */
--	if (mode == HWLOCK_IRQSTATE)
-+	switch (mode) {
-+	case HWLOCK_IRQSTATE:
- 		spin_unlock_irqrestore(&hwlock->lock, *flags);
--	else if (mode == HWLOCK_IRQ)
-+		break;
-+	case HWLOCK_IRQ:
+ 			break;
+@@ -170,9 +182,14 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+  * is already taken, the function will busy loop waiting for it to
+  * be released, but give up after @timeout msecs have elapsed.
+  *
+- * Upon a successful return from this function, preemption is disabled
+- * (and possibly local interrupts, too), so the caller must not sleep,
+- * and is advised to release the hwspinlock as soon as possible.
++ * Caution: If the mode is HWLOCK_RAW, that means user must protect the routine
++ * of getting hardware lock with mutex or spinlock. Since in some scenarios,
++ * user need some time-consuming or sleepable operations under the hardware
++ * lock, they need one sleepable lock (like mutex) to protect the operations.
++ *
++ * If the mode is not HWLOCK_RAW, upon a successful return from this function,
++ * preemption is disabled (and possibly local interrupts, too), so the caller
++ * must not sleep, and is advised to release the hwspinlock as soon as possible.
+  * This is required in order to minimize remote cores polling on the
+  * hardware interconnect.
+  *
+@@ -266,6 +283,9 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+ 	case HWLOCK_IRQ:
  		spin_unlock_irq(&hwlock->lock);
--	else
+ 		break;
++	case HWLOCK_RAW:
++		/* Nothing to do */
 +		break;
-+	default:
+ 	default:
  		spin_unlock(&hwlock->lock);
-+		break;
-+	}
- }
- EXPORT_SYMBOL_GPL(__hwspin_unlock);
+ 		break;
+diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
+index 859d673..fe450ee 100644
+--- a/include/linux/hwspinlock.h
++++ b/include/linux/hwspinlock.h
+@@ -24,6 +24,7 @@
+ /* hwspinlock mode argument */
+ #define HWLOCK_IRQSTATE	0x01	/* Disable interrupts, save state */
+ #define HWLOCK_IRQ	0x02	/* Disable interrupts, don't save state */
++#define HWLOCK_RAW	0x03
  
+ struct device;
+ struct device_node;
+@@ -176,6 +177,25 @@ static inline int hwspin_trylock_irq(struct hwspinlock *hwlock)
+ }
+ 
+ /**
++ * hwspin_trylock_raw() - attempt to lock a specific hwspinlock
++ * @hwlock: an hwspinlock which we want to trylock
++ *
++ * This function attempts to lock an hwspinlock, and will immediately fail
++ * if the hwspinlock is already taken.
++ *
++ * Caution: User must protect the routine of getting hardware lock with mutex
++ * or spinlock to avoid dead-lock, that will let user can do some time-consuming
++ * or sleepable operations under the hardware lock.
++ *
++ * Returns 0 if we successfully locked the hwspinlock, -EBUSY if
++ * the hwspinlock was already taken, and -EINVAL if @hwlock is invalid.
++ */
++static inline int hwspin_trylock_raw(struct hwspinlock *hwlock)
++{
++	return __hwspin_trylock(hwlock, HWLOCK_RAW, NULL);
++}
++
++/**
+  * hwspin_trylock() - attempt to lock a specific hwspinlock
+  * @hwlock: an hwspinlock which we want to trylock
+  *
+@@ -243,6 +263,29 @@ int hwspin_lock_timeout_irq(struct hwspinlock *hwlock, unsigned int to)
+ }
+ 
+ /**
++ * hwspin_lock_timeout_raw() - lock an hwspinlock with timeout limit
++ * @hwlock: the hwspinlock to be locked
++ * @to: timeout value in msecs
++ *
++ * This function locks the underlying @hwlock. If the @hwlock
++ * is already taken, the function will busy loop waiting for it to
++ * be released, but give up when @timeout msecs have elapsed.
++ *
++ * Caution: User must protect the routine of getting hardware lock with mutex
++ * or spinlock to avoid dead-lock, that will let user can do some time-consuming
++ * or sleepable operations under the hardware lock.
++ *
++ * Returns 0 when the @hwlock was successfully taken, and an appropriate
++ * error code otherwise (most notably an -ETIMEDOUT if the @hwlock is still
++ * busy after @timeout msecs). The function will never sleep.
++ */
++static inline
++int hwspin_lock_timeout_raw(struct hwspinlock *hwlock, unsigned int to)
++{
++	return __hwspin_lock_timeout(hwlock, to, HWLOCK_RAW, NULL);
++}
++
++/**
+  * hwspin_lock_timeout() - lock an hwspinlock with timeout limit
+  * @hwlock: the hwspinlock to be locked
+  * @to: timeout value in msecs
+@@ -302,6 +345,21 @@ static inline void hwspin_unlock_irq(struct hwspinlock *hwlock)
+ }
+ 
+ /**
++ * hwspin_unlock_raw() - unlock hwspinlock
++ * @hwlock: a previously-acquired hwspinlock which we want to unlock
++ *
++ * This function will unlock a specific hwspinlock.
++ *
++ * @hwlock must be already locked (e.g. by hwspin_trylock()) before calling
++ * this function: it is a bug to call unlock on a @hwlock that is already
++ * unlocked.
++ */
++static inline void hwspin_unlock_raw(struct hwspinlock *hwlock)
++{
++	__hwspin_unlock(hwlock, HWLOCK_RAW, NULL);
++}
++
++/**
+  * hwspin_unlock() - unlock hwspinlock
+  * @hwlock: a previously-acquired hwspinlock which we want to unlock
+  *
 -- 
 1.7.9.5
