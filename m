@@ -1,825 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752990AbeDHUWw (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 16:22:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34008 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752669AbeDHUSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 16:18:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 597022184A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180408201834.279807065@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Sun, 08 Apr 2018 16:17:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: "John Warthog9 Hawley" <warthog9@kernel.org>,
-        Scott Wood <swood@redhat.com>,
-        Tim Tianyang Chen <tianyang.chen@oracle.com>
-Subject: [for-next][PATCH 07/23] ktest: Add standalone config-bisect.pl program
-References: <20180408201708.346970379@goodmis.org>
+        id S1752585AbeDHUbD (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 16:31:03 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:42640 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752077AbeDHUbC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 16:31:02 -0400
+X-Google-Smtp-Source: AIpwx4/oie1R1pq1D4eYCFuZooY92dJplCe9ORNTRgZISbA4z2xh26h1jgw1VIhVsNo6p+OcRAidU4qAadSsWEEyzm9Lkh/I3jD3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0007-ktest-Add-standalone-config-bisect.pl-program.patch
+Date: Sun, 08 Apr 2018 13:31:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <001a113fe6d0e6c80d05695c2a8c@google.com>
+Subject: INFO: rcu detected stall in snd_pcm_stream_unlock_irq
+From: syzbot <syzbot+584505e6ccdbedcf7629@syzkaller.appspotmail.com>
+To: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        o-takashi@sakamocchi.jp, perex@perex.cz,
+        syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
+Hello,
 
-Started working on a stand alone program that can do a config bisect. It is
-based on the config bisect code of ktest.pl. Instead of needing all the
-infrastructure of ktest.pl, all that is required for config-bisect.pl is two
-config files. One that works, and one that does not. The goal is to pass in
-the two files, and it will create a new "good" and a new "bad" config file
-based on input from the user. After several iterations (calls to this
-program), it will eventually end with a minimum config value that allows one
-config to work and the other config to break.
+syzbot hit the following crash on upstream commit
+3fd14cdcc05a682b03743683ce3a726898b20555 (Fri Apr 6 19:15:41 2018 +0000)
+Merge tag 'mtd/for-4.17' of git://git.infradead.org/linux-mtd
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=584505e6ccdbedcf7629
 
-The program uses a technique that takes the good config and then makes half
-of the configs that differ from the bad config just like the bad config.
-The code will use make oldconfig to make sure the configs that are set are
-not all converted back due to incorrect dependencies on other configs set in
-the bad config but not in the new test config.
+Unfortunately, I don't have any reproducer for this crash yet.
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5653573555716096
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-5813481738265533882
+compiler: gcc (GCC) 8.0.1 20180301 (experimental)
 
-This is still a work in progress, but as it was written while I was working
-at Red Hat, I want this code to be submitted as such.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+584505e6ccdbedcf7629@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-Signed-off-by: Steven Rostedt (Red Hat) <rostedt@goodmis.org>
+random: crng init done
+INFO: rcu_sched self-detected stall on CPU
+	1-....: (124996 ticks this GP) idle=c9a/1/4611686018427387906  
+softirq=17918/17918 fqs=31239
+	 (t=125000 jiffies g=9607 c=9606 q=187)
+NMI backtrace for cpu 1
+CPU: 1 PID: 6608 Comm: syz-executor4 Not tainted 4.16.0+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
+  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
+  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
+  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
+  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+  rcu_pending kernel/rcu/tree.c:3401 [inline]
+  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0xa0/0x180 kernel/time/tick-sched.c:171
+  tick_sched_timer+0x42/0x130 kernel/time/tick-sched.c:1179
+  __run_hrtimer kernel/time/hrtimer.c:1337 [inline]
+  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1399
+  hrtimer_interrupt+0x286/0x650 kernel/time/hrtimer.c:1457
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
+  </IRQ>
+RIP: 0010:check_kcov_mode kernel/kcov.c:67 [inline]
+RIP: 0010:__sanitizer_cov_trace_pc+0x20/0x50 kernel/kcov.c:101
+RSP: 0018:ffff8801c82feb50 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: ffff8801b5330040 RBX: 0000000000000000 RCX: 1ffff10036a6611b
+RDX: 0000000000000000 RSI: ffffffff859d514c RDI: ffffffff88b172b8
+RBP: ffff8801c82feb50 R08: ffff8801b53308b8 R09: 0000000000000006
+R10: ffff8801b5330040 R11: 0000000000000000 R12: 0000000000000004
+R13: 00000000ffffffe0 R14: ffff8801d128ab00 R15: ffff8801ce80e040
+  snd_pcm_stream_unlock_irq+0xbc/0xf0 sound/core/pcm_native.c:167
+  __snd_pcm_lib_xfer+0x739/0x1d10 sound/core/pcm_lib.c:2246
+  snd_pcm_oss_write3+0xe9/0x220 sound/core/oss/pcm_oss.c:1236
+  snd_pcm_oss_write2+0x34c/0x460 sound/core/oss/pcm_oss.c:1373
+  snd_pcm_oss_sync1+0x332/0x5a0 sound/core/oss/pcm_oss.c:1606
+  snd_pcm_oss_sync.isra.29+0x790/0x980 sound/core/oss/pcm_oss.c:1682
+  snd_pcm_oss_release+0x214/0x290 sound/core/oss/pcm_oss.c:2559
+  __fput+0x34d/0x890 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1aee/0x2730 kernel/exit.c:865
+  do_group_exit+0x16f/0x430 kernel/exit.c:968
+  get_signal+0x886/0x1960 kernel/signal.c:2469
+  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
+  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x792/0x9d0 arch/x86/entry/common.c:292
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x455259
+RSP: 002b:00007f20e223bce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 000000000072c038 RCX: 0000000000455259
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072c038
+RBP: 000000000072c038 R08: 0000000000000000 R09: 000000000072c010
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000a3e81f R14: 00007f20e223c9c0 R15: 0000000000000002
+
+
 ---
- tools/testing/ktest/config-bisect.pl | 763 +++++++++++++++++++++++++++++++++++
- 1 file changed, 763 insertions(+)
- create mode 100755 tools/testing/ktest/config-bisect.pl
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-diff --git a/tools/testing/ktest/config-bisect.pl b/tools/testing/ktest/config-bisect.pl
-new file mode 100755
-index 000000000000..37cd796efa2b
---- /dev/null
-+++ b/tools/testing/ktest/config-bisect.pl
-@@ -0,0 +1,763 @@
-+#!/usr/bin/perl -w
-+#
-+# Copyright 2015 - Steven Rostedt, Red Hat Inc.
-+# Copyright 2017 - Steven Rostedt, VMware, Inc.
-+#
-+# Licensed under the terms of the GNU GPL License version 2
-+#
-+
-+# usage:
-+#  config-bisect.pl [options] good-config bad-config [good|bad]
-+#
-+
-+# Compares a good config to a bad config, then takes half of the diffs
-+# and produces a config that is somewhere between the good config and
-+# the bad config. That is, the resulting config will start with the
-+# good config and will try to make half of the differences of between
-+# the good and bad configs match the bad config. It tries because of
-+# dependencies between the two configs it may not be able to change
-+# exactly half of the configs that are different between the two config
-+# files.
-+
-+# Here's a normal way to use it:
-+#
-+#  $ cd /path/to/linux/kernel
-+#  $ config-bisect.pl /path/to/good/config /path/to/bad/config
-+
-+# This will now pull in good config (blowing away .config in that directory
-+# so do not make that be one of the good or bad configs), and then
-+# build the config with "make oldconfig" to make sure it matches the
-+# current kernel. It will then store the configs in that result for
-+# the good config. It does the same for the bad config as well.
-+# The algorithm will run, merging half of the differences between
-+# the two configs and building them with "make oldconfig" to make sure
-+# the result changes (dependencies may reset changes the tool had made).
-+# It then copies the result of its good config to /path/to/good/config.tmp
-+# and the bad config to /path/to/bad/config.tmp (just appends ".tmp" to the
-+# files passed in). And the ".config" that you should test will be in
-+# directory
-+
-+# After the first run, determine if the result is good or bad then
-+# run the same command appending the result
-+
-+# For good results:
-+#  $ config-bisect.pl /path/to/good/config /path/to/bad/config good
-+
-+# For bad results:
-+#  $ config-bisect.pl /path/to/good/config /path/to/bad/config bad
-+
-+# Do not change the good-config or bad-config, config-bisect.pl will
-+# copy the good-config to a temp file with the same name as good-config
-+# but with a ".tmp" after it. It will do the same with the bad-config.
-+
-+# If "good" or "bad" is not stated at the end, it will copy the good and
-+# bad configs to the .tmp versions. If a .tmp version already exists, it will
-+# warn before writing over them. If the last config is labeled "good", then
-+# it will copy it to the good .tmp version. If the last config is labeled
-+# "bad", it will copy it to the bad .tmp version. It will continue this until
-+# it can not merge the two any more without the result being equal to either
-+# the good or bad .tmp configs.
-+
-+my $start = 0;
-+my $val = "";
-+
-+my $pwd = `pwd`;
-+chomp $pwd;
-+my $tree = $pwd;
-+my $build;
-+
-+my $output_config;
-+
-+sub usage {
-+    print << "EOF"
-+
-+usage: config-bisect.pl [-l linux-tree][-b build-dir] good-config bad-config [good|bad]
-+  -l [optional] define location of linux-tree (default is current directory)
-+  -b [optional] define location to build (O=build-dir) (default is linux-tree)
-+  good-config the config that is considered good
-+  bad-config the config that does not work
-+  "good" add this if the last run produced a good config
-+  "bad" add this if the last run produced a bad config
-+  If "good" or "bad" is not specified, then it is the start of a new bisect
-+
-+  Note, each run will create copy of good and bad configs with ".tmp" appended.
-+
-+EOF
-+;
-+
-+    exit(-1);
-+}
-+
-+sub doprint {
-+    print @_;
-+}
-+
-+sub dodie {
-+    doprint "CRITICAL FAILURE... ", @_, "\n";
-+
-+    die @_, "\n";
-+}
-+
-+sub expand_path {
-+    my ($file) = @_;
-+
-+    if ($file =~ m,^/,) {
-+	return $file;
-+    }
-+    return "$pwd/$file";
-+}
-+
-+sub read_prompt {
-+    my ($cancel, $prompt) = @_;
-+
-+    my $ans;
-+
-+    for (;;) {
-+	if ($cancel) {
-+	    print "$prompt [y/n/C] ";
-+	} else {
-+	    print "$prompt [y/N] ";
-+	}
-+	$ans = <STDIN>;
-+	chomp $ans;
-+	if ($ans =~ /^\s*$/) {
-+	    if ($cancel) {
-+		$ans = "c";
-+	    } else {
-+		$ans = "n";
-+	    }
-+	}
-+	last if ($ans =~ /^y$/i || $ans =~ /^n$/i);
-+	if ($cancel) {
-+	    last if ($ans =~ /^c$/i);
-+	    print "Please answer either 'y', 'n' or 'c'.\n";
-+	} else {
-+	    print "Please answer either 'y' or 'n'.\n";
-+	}
-+    }
-+    if ($ans =~ /^c/i) {
-+	exit;
-+    }
-+    if ($ans !~ /^y$/i) {
-+	return 0;
-+    }
-+    return 1;
-+}
-+
-+sub read_yn {
-+    my ($prompt) = @_;
-+
-+    return read_prompt 0, $prompt;
-+}
-+
-+sub read_ync {
-+    my ($prompt) = @_;
-+
-+    return read_prompt 1, $prompt;
-+}
-+
-+sub run_command {
-+    my ($command, $redirect) = @_;
-+    my $start_time;
-+    my $end_time;
-+    my $dord = 0;
-+    my $pid;
-+
-+    $start_time = time;
-+
-+    doprint("$command ... ");
-+
-+    $pid = open(CMD, "$command 2>&1 |") or
-+	dodie "unable to exec $command";
-+
-+    if (defined($redirect)) {
-+	open (RD, ">$redirect") or
-+	    dodie "failed to write to redirect $redirect";
-+	$dord = 1;
-+    }
-+
-+    while (<CMD>) {
-+	print RD  if ($dord);
-+    }
-+
-+    waitpid($pid, 0);
-+    my $failed = $?;
-+
-+    close(CMD);
-+    close(RD)  if ($dord);
-+
-+    $end_time = time;
-+    my $delta = $end_time - $start_time;
-+
-+    if ($delta == 1) {
-+	doprint "[1 second] ";
-+    } else {
-+	doprint "[$delta seconds] ";
-+    }
-+
-+    if ($failed) {
-+	doprint "FAILED!\n";
-+    } else {
-+	doprint "SUCCESS\n";
-+    }
-+
-+    return !$failed;
-+}
-+
-+###### CONFIG BISECT ######
-+
-+# config_ignore holds the configs that were set (or unset) for
-+# a good config and we will ignore these configs for the rest
-+# of a config bisect. These configs stay as they were.
-+my %config_ignore;
-+
-+# config_set holds what all configs were set as.
-+my %config_set;
-+
-+# config_off holds the set of configs that the bad config had disabled.
-+# We need to record them and set them in the .config when running
-+# olddefconfig, because olddefconfig keeps the defaults.
-+my %config_off;
-+
-+# config_off_tmp holds a set of configs to turn off for now
-+my @config_off_tmp;
-+
-+# config_list is the set of configs that are being tested
-+my %config_list;
-+my %null_config;
-+
-+my %dependency;
-+
-+my $make;
-+
-+sub make_oldconfig {
-+
-+    if (!run_command "$make olddefconfig") {
-+	# Perhaps olddefconfig doesn't exist in this version of the kernel
-+	# try oldnoconfig
-+	doprint "olddefconfig failed, trying make oldnoconfig\n";
-+	if (!run_command "$make oldnoconfig") {
-+	    doprint "oldnoconfig failed, trying yes '' | make oldconfig\n";
-+	    # try a yes '' | oldconfig
-+	    run_command "yes '' | $make oldconfig" or
-+		dodie "failed make config oldconfig";
-+	}
-+    }
-+}
-+
-+sub assign_configs {
-+    my ($hash, $config) = @_;
-+
-+    doprint "Reading configs from $config\n";
-+
-+    open (IN, $config)
-+	or dodie "Failed to read $config";
-+
-+    while (<IN>) {
-+	chomp;
-+	if (/^((CONFIG\S*)=.*)/) {
-+	    ${$hash}{$2} = $1;
-+	} elsif (/^(# (CONFIG\S*) is not set)/) {
-+	    ${$hash}{$2} = $1;
-+	}
-+    }
-+
-+    close(IN);
-+}
-+
-+sub process_config_ignore {
-+    my ($config) = @_;
-+
-+    assign_configs \%config_ignore, $config;
-+}
-+
-+sub get_dependencies {
-+    my ($config) = @_;
-+
-+    my $arr = $dependency{$config};
-+    if (!defined($arr)) {
-+	return ();
-+    }
-+
-+    my @deps = @{$arr};
-+
-+    foreach my $dep (@{$arr}) {
-+	print "ADD DEP $dep\n";
-+	@deps = (@deps, get_dependencies $dep);
-+    }
-+
-+    return @deps;
-+}
-+
-+sub save_config {
-+    my ($pc, $file) = @_;
-+
-+    my %configs = %{$pc};
-+
-+    doprint "Saving configs into $file\n";
-+
-+    open(OUT, ">$file") or dodie "Can not write to $file";
-+
-+    foreach my $config (keys %configs) {
-+	print OUT "$configs{$config}\n";
-+    }
-+    close(OUT);
-+}
-+
-+sub create_config {
-+    my ($name, $pc) = @_;
-+
-+    doprint "Creating old config from $name configs\n";
-+
-+    save_config $pc, $output_config;
-+
-+    make_oldconfig;
-+}
-+
-+# compare two config hashes, and return configs with different vals.
-+# It returns B's config values, but you can use A to see what A was.
-+sub diff_config_vals {
-+    my ($pa, $pb) = @_;
-+
-+    # crappy Perl way to pass in hashes.
-+    my %a = %{$pa};
-+    my %b = %{$pb};
-+
-+    my %ret;
-+
-+    foreach my $item (keys %a) {
-+	if (defined($b{$item}) && $b{$item} ne $a{$item}) {
-+	    $ret{$item} = $b{$item};
-+	}
-+    }
-+
-+    return %ret;
-+}
-+
-+# compare two config hashes and return the configs in B but not A
-+sub diff_configs {
-+    my ($pa, $pb) = @_;
-+
-+    my %ret;
-+
-+    # crappy Perl way to pass in hashes.
-+    my %a = %{$pa};
-+    my %b = %{$pb};
-+
-+    foreach my $item (keys %b) {
-+	if (!defined($a{$item})) {
-+	    $ret{$item} = $b{$item};
-+	}
-+    }
-+
-+    return %ret;
-+}
-+
-+# return if two configs are equal or not
-+# 0 is equal +1 b has something a does not
-+# +1 if a and b have a different item.
-+# -1 if a has something b does not
-+sub compare_configs {
-+    my ($pa, $pb) = @_;
-+
-+    my %ret;
-+
-+    # crappy Perl way to pass in hashes.
-+    my %a = %{$pa};
-+    my %b = %{$pb};
-+
-+    foreach my $item (keys %b) {
-+	if (!defined($a{$item})) {
-+	    return 1;
-+	}
-+	if ($a{$item} ne $b{$item}) {
-+	    return 1;
-+	}
-+    }
-+
-+    foreach my $item (keys %a) {
-+	if (!defined($b{$item})) {
-+	    return -1;
-+	}
-+    }
-+
-+    return 0;
-+}
-+
-+sub process_failed {
-+    my ($config) = @_;
-+
-+    doprint "\n\n***************************************\n";
-+    doprint "Found bad config: $config\n";
-+    doprint "***************************************\n\n";
-+}
-+
-+sub process_new_config {
-+    my ($tc, $nc, $gc, $bc) = @_;
-+
-+    my %tmp_config = %{$tc};
-+    my %good_configs = %{$gc};
-+    my %bad_configs = %{$bc};
-+
-+    my %new_configs;
-+
-+    my $runtest = 1;
-+    my $ret;
-+
-+    create_config "tmp_configs", \%tmp_config;
-+    assign_configs \%new_configs, $output_config;
-+
-+    $ret = compare_configs \%new_configs, \%bad_configs;
-+    if (!$ret) {
-+	doprint "New config equals bad config, try next test\n";
-+	$runtest = 0;
-+    }
-+
-+    if ($runtest) {
-+	$ret = compare_configs \%new_configs, \%good_configs;
-+	if (!$ret) {
-+	    doprint "New config equals good config, try next test\n";
-+	    $runtest = 0;
-+	}
-+    }
-+
-+    %{$nc} = %new_configs;
-+
-+    return $runtest;
-+}
-+
-+sub convert_config {
-+    my ($config) = @_;
-+
-+    if ($config =~ /^# (.*) is not set/) {
-+	$config = "$1=n";
-+    }
-+
-+    $config =~ s/^CONFIG_//;
-+    return $config;
-+}
-+
-+sub print_config {
-+    my ($sym, $config) = @_;
-+
-+    $config = convert_config $config;
-+    doprint "$sym$config\n";
-+}
-+
-+sub print_config_compare {
-+    my ($good_config, $bad_config) = @_;
-+
-+    $good_config = convert_config $good_config;
-+    $bad_config = convert_config $bad_config;
-+
-+    my $good_value = $good_config;
-+    my $bad_value = $bad_config;
-+    $good_value =~ s/(.*)=//;
-+    my $config = $1;
-+
-+    $bad_value =~ s/.*=//;
-+
-+    doprint " $config $good_value -> $bad_value\n";
-+}
-+
-+# Pass in:
-+# $phalf: half of the configs names you want to add
-+# $oconfigs: The orginial configs to start with
-+# $sconfigs: The source to update $oconfigs with (from $phalf)
-+# $which: The name of which half that is updating (top / bottom)
-+# $type: The name of the source type (good / bad)
-+sub make_half {
-+    my ($phalf, $oconfigs, $sconfigs, $which, $type) = @_;
-+
-+    my @half = @{$phalf};
-+    my %orig_configs = %{$oconfigs};
-+    my %source_configs = %{$sconfigs};
-+
-+    my %tmp_config = %orig_configs;
-+
-+    doprint "Settings bisect with $which half of $type configs:\n";
-+    foreach my $item (@half) {
-+	doprint "Updating $item to $source_configs{$item}\n";
-+	$tmp_config{$item} = $source_configs{$item};
-+    }
-+
-+    return %tmp_config;
-+}
-+
-+sub run_config_bisect {
-+    my ($pgood, $pbad) = @_;
-+
-+    my %good_configs = %{$pgood};
-+    my %bad_configs = %{$pbad};
-+
-+    my %diff_configs = diff_config_vals \%good_configs, \%bad_configs;
-+    my %b_configs = diff_configs \%good_configs, \%bad_configs;
-+    my %g_configs = diff_configs \%bad_configs, \%good_configs;
-+
-+    # diff_arr is what is in both good and bad but are different (y->n)
-+    my @diff_arr = keys %diff_configs;
-+    my $len_diff = $#diff_arr + 1;
-+
-+    # b_arr is what is in bad but not in good (has depends)
-+    my @b_arr = keys %b_configs;
-+    my $len_b = $#b_arr + 1;
-+
-+    # g_arr is what is in good but not in bad
-+    my @g_arr = keys %g_configs;
-+    my $len_g = $#g_arr + 1;
-+
-+    my $runtest = 0;
-+    my %new_configs;
-+    my $ret;
-+
-+    # Look at the configs that are different between good and bad.
-+    # This does not include those that depend on other configs
-+    #  (configs depending on other configs that are not set would
-+    #   not show up even as a "# CONFIG_FOO is not set"
-+
-+
-+    doprint "# of configs to check:             $len_diff\n";
-+    doprint "# of configs showing only in good: $len_g\n";
-+    doprint "# of configs showing only in bad:  $len_b\n";
-+
-+    if ($len_diff > 0) {
-+	# Now test for different values
-+
-+	doprint "Configs left to check:\n";
-+	doprint "  Good Config\t\t\tBad Config\n";
-+	doprint "  -----------\t\t\t----------\n";
-+	foreach my $item (@diff_arr) {
-+	    doprint "  $good_configs{$item}\t$bad_configs{$item}\n";
-+	}
-+
-+	my $half = int($#diff_arr / 2);
-+	my @tophalf = @diff_arr[0 .. $half];
-+
-+	doprint "Set tmp config to be good config with some bad config values\n";
-+
-+	my %tmp_config = make_half \@tophalf, \%good_configs,
-+	    \%bad_configs, "top", "bad";
-+
-+	$runtest = process_new_config \%tmp_config, \%new_configs,
-+			    \%good_configs, \%bad_configs;
-+
-+	if (!$runtest) {
-+	    doprint "Set tmp config to be bad config with some good config values\n";
-+
-+	    my %tmp_config = make_half \@tophalf, \%bad_configs,
-+		\%good_configs, "top", "good";
-+
-+	    $runtest = process_new_config \%tmp_config, \%new_configs,
-+		\%good_configs, \%bad_configs;
-+	}
-+    }
-+
-+    if (!$runtest && $len_diff > 0) {
-+	# do the same thing, but this time with bottom half
-+
-+	my $half = int($#diff_arr / 2);
-+	my @bottomhalf = @diff_arr[$half+1 .. $#diff_arr];
-+
-+	doprint "Set tmp config to be good config with some bad config values\n";
-+
-+	my %tmp_config = make_half \@bottomhalf, \%good_configs,
-+	    \%bad_configs, "bottom", "bad";
-+
-+	$runtest = process_new_config \%tmp_config, \%new_configs,
-+			    \%good_configs, \%bad_configs;
-+
-+	if (!$runtest) {
-+	    doprint "Set tmp config to be bad config with some good config values\n";
-+
-+	    my %tmp_config = make_half \@bottomhalf, \%bad_configs,
-+		\%good_configs, "bottom", "good";
-+
-+	    $runtest = process_new_config \%tmp_config, \%new_configs,
-+		\%good_configs, \%bad_configs;
-+	}
-+    }
-+
-+    if ($runtest) {
-+	make_oldconfig;
-+	doprint "READY TO TEST .config IN $build\n";
-+	return 0;
-+    }
-+
-+    doprint "\n%%%%%%%% FAILED TO FIND SINGLE BAD CONFIG %%%%%%%%\n";
-+    doprint "Hmm, can't make any more changes without making good == bad?\n";
-+    doprint "Difference between good (+) and bad (-)\n";
-+
-+    foreach my $item (keys %bad_configs) {
-+	if (!defined($good_configs{$item})) {
-+	    print_config "-", $bad_configs{$item};
-+	}
-+    }
-+
-+    foreach my $item (keys %good_configs) {
-+	next if (!defined($bad_configs{$item}));
-+	if ($good_configs{$item} ne $bad_configs{$item}) {
-+	    print_config_compare $good_configs{$item}, $bad_configs{$item};
-+	}
-+    }
-+
-+    foreach my $item (keys %good_configs) {
-+	if (!defined($bad_configs{$item})) {
-+	    print_config "+", $good_configs{$item};
-+	}
-+    }
-+    return -1;
-+}
-+
-+sub config_bisect {
-+    my ($good_config, $bad_config) = @_;
-+    my $ret;
-+
-+    my %good_configs;
-+    my %bad_configs;
-+    my %tmp_configs;
-+
-+    doprint "Run good configs through make oldconfig\n";
-+    assign_configs \%tmp_configs, $good_config;
-+    create_config "$good_config", \%tmp_configs;
-+    assign_configs \%good_configs, $output_config;
-+
-+    doprint "Run bad configs through make oldconfig\n";
-+    assign_configs \%tmp_configs, $bad_config;
-+    create_config "$bad_config", \%tmp_configs;
-+    assign_configs \%bad_configs, $output_config;
-+
-+    save_config \%good_configs, $good_config;
-+    save_config \%bad_configs, $bad_config;
-+
-+    return run_config_bisect \%good_configs, \%bad_configs;
-+}
-+
-+while ($#ARGV >= 0) {
-+    if ($ARGV[0] !~ m/^-/) {
-+	last;
-+    }
-+    my $opt = shift @ARGV;
-+
-+    if ($opt eq "-b") {
-+	$val = shift @ARGV;
-+	if (!defined($val)) {
-+	    die "-b requires value\n";
-+	}
-+	$build = $val;
-+    }
-+
-+    elsif ($opt eq "-l") {
-+	$val = shift @ARGV;
-+	if (!defined($val)) {
-+	    die "-l requires value\n";
-+	}
-+	$tree = $val;
-+    }
-+
-+    elsif ($opt eq "-h") {
-+	usage;
-+    }
-+
-+    else {
-+	die "Unknow option $opt\n";
-+    }
-+}
-+
-+$build = $tree if (!defined($build));
-+
-+$tree = expand_path $tree;
-+$build = expand_path $build;
-+
-+if ( ! -d $tree ) {
-+    die "$tree not a directory\n";
-+}
-+
-+if ( ! -d $build ) {
-+    die "$build not a directory\n";
-+}
-+
-+usage if $#ARGV < 1;
-+
-+if ($#ARGV == 1) {
-+    $start = 1;
-+} elsif ($#ARGV == 2) {
-+    $val = $ARGV[2];
-+    if ($val ne "good" && $val ne "bad") {
-+	die "Unknown command '$val', bust be either \"good\" or \"bad\"\n";
-+    }
-+} else {
-+    usage;
-+}
-+
-+my $good_start = expand_path $ARGV[0];
-+my $bad_start = expand_path $ARGV[1];
-+
-+my $good = "$good_start.tmp";
-+my $bad = "$bad_start.tmp";
-+
-+$make = "make";
-+
-+if ($build ne $tree) {
-+    $make = "make O=$build"
-+}
-+
-+$output_config = "$build/.config";
-+
-+if ($start) {
-+    if ( ! -f $good_start ) {
-+	die "$good_start not found\n";
-+    }
-+    if ( ! -f $bad_start ) {
-+	die "$bad_start not found\n";
-+    }
-+    if ( -f $good || -f $bad ) {
-+	my $p = "";
-+
-+	if ( -f $good ) {
-+	    $p = "$good exists\n";
-+	}
-+
-+	if ( -f $bad ) {
-+	    $p = "$p$bad exists\n";
-+	}
-+
-+	if (!read_yn "${p}Overwrite and start new bisect anyway?") {
-+	    exit (-1);
-+	}
-+    }
-+    run_command "cp $good_start $good" or die "failed to copy to $good\n";
-+    run_command "cp $bad_start $bad" or die "faield to copy to $bad\n";
-+} else {
-+    if ( ! -f $good ) {
-+	die "Can not find file $good\n";
-+    }
-+    if ( ! -f $bad ) {
-+	die "Can not find file $bad\n";
-+    }
-+    if ($val eq "good") {
-+	run_command "cp $output_config $good" or die "failed to copy $config to $good\n";
-+    } elsif ($val eq "bad") {
-+	run_command "cp $output_config $bad" or die "failed to copy $config to $bad\n";
-+    }
-+}
-+
-+chdir $tree || die "can't change directory to $tree";
-+
-+my $ret = config_bisect $good, $bad;
-+
-+if (!$ret) {
-+    exit(0);
-+}
-+
-+if ($ret > 0) {
-+    doprint "Cleaning temp files\n";
-+    run_command "rm $good";
-+    run_command "rm $bad";
-+    exit(1);
-+} else {
-+    doprint "See good and bad configs for details:\n";
-+    doprint "good: $good\n";
-+    doprint "bad:  $bad\n";
-+    doprint "%%%%%%%% FAILED TO FIND SINGLE BAD CONFIG %%%%%%%%\n";
-+}
-+exit(2);
--- 
-2.16.3
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
