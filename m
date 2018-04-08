@@ -1,132 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752591AbeDHSlo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 14:41:44 -0400
-Received: from mail-io0-f172.google.com ([209.85.223.172]:34553 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752274AbeDHSln (ORCPT
+        id S1752654AbeDHSoN (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 14:44:13 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41720 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752076AbeDHSoM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 14:41:43 -0400
-X-Google-Smtp-Source: AIpwx4+fCpjpcaZBjCQvh3OrEuHWwkmeLCnZectfbw7OgQrUPl8ah8hhhNOVmExmlpNcm/U1DVFlfkoAHlTTXjEa2Rs=
+        Sun, 8 Apr 2018 14:44:12 -0400
+X-Google-Smtp-Source: AIpwx49jlGV6HPW0DdnHnWAD9w7iXvlHJ2HA1yftcEZ1QrhCM6Vi6/j5oMqibJjIOcI7NdBtXjqrXA==
+Date: Sun, 8 Apr 2018 11:44:09 -0700
+From: Matt Turner <mattst88@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Sinan Kaya <okaya@codeaurora.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Michael Cree <mcree@orcon.net.nz>, linux-alpha@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PULL] alpha.git
+Message-ID: <20180408184409.GA27396@ivybridge.mattst88.com>
 MIME-Version: 1.0
-In-Reply-To: <20180408.125114.2111042327285982582.davem@davemloft.net>
-References: <20180406014340.1562-1-march511@gmail.com> <20180408.125114.2111042327285982582.davem@davemloft.net>
-From: Wenhua Shi <march511@gmail.com>
-Date: Sun, 8 Apr 2018 20:41:21 +0200
-Message-ID: <CAN6D2npQd9AowLCz5CXGNPPib+10nABh1dOvLWV15r1z6FvF8w@mail.gmail.com>
-Subject: Re: [PATCH] make net_gso_ok return false when gso_type is zero(invalid)
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-08 18:51 GMT+02:00 David Miller <davem@davemloft.net>:
->
-> From: Wenhua Shi <march511@gmail.com>
-> Date: Fri,  6 Apr 2018 03:43:39 +0200
->
-> > Signed-off-by: Wenhua Shi <march511@gmail.com>
->
-> This precondition should be made impossible instead of having to do
-> an extra check everywhere that this helper is invoked, many of which
-> are in fast paths.
 
-I believe the precondition you said is quite true. In my situation, I
-have to disable GSO for some packet and I notice that it leads to a
-worse performance (slower than 1Mbps, was almost 800Mbps).
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Here's the hook I use on debian 9.4, kernel version 4.9:
+Hi Linus,
 
-    #include <linux/init.h>
-    #include <linux/module.h>
-    #include <linux/kernel.h>
-    #include <linux/netfilter.h>
-    #include <linux/netfilter_ipv4.h>
-    #include <linux/netfilter_ipv6.h>
-    #include <linux/skbuff.h>
-    #include <linux/tcp.h>
-    #include <linux/ip.h>
+Please pull a few small changes for alpha.
 
-    unsigned int hook_outgoing (
-        void * priv,
-        struct sk_buff * skb,
-        const struct nf_hook_state * state)
-    {
-        /* for some reason I have to disable GSO */
-        skb_gso_reset(skb);
-
-        /* After I force sk_can_gso to return false here, the
-performance comes back normal. */
-        // skb->sk->sk_gso_type = ~0;
-
-        return NF_ACCEPT;
-
-    }
-
-    static struct nf_hook_ops hook =
-    {
-        .hook = hook_outgoing,
-        .pf = PF_INET,
-        .hooknum = NF_INET_POST_ROUTING,
-        .priority = NF_IP_PRI_LAST,
-    };
-
-    static int __init init_testing(void)
-    {
-        nf_register_hook(&hook);
-        return 0;
-    }
-
-    static void __exit exit_testing(void)
-    {
-        nf_unregister_hook(&hook);
-    }
-
-    module_init(init_testing);
-    module_exit(exit_testing);
+Thanks,
+Matt
 
 
-Here are the performance measurements.
-Without the previous hook:
+The following changes since commit bf6879dcc483f0aa087afe27d103285daf435951:
 
-    root@debian-s-1vcpu-1gb-sfo1-01:~/test# iperf -c myanothernormaldebian -d
-    ------------------------------------------------------------
-    Server listening on TCP port 5001
-    TCP window size: 85.3 KByte (default)
-    ------------------------------------------------------------
-    ------------------------------------------------------------
-    Client connecting to myanothernormaldebian, TCP port 5001
-    TCP window size:  255 KByte (default)
-    ------------------------------------------------------------
-    [  3] local 192.241.204.XXX port 60528 connected with
-104.131.148.XXX port 5001
-    [  5] local 192.241.204.XXX port 5001 connected with
-104.131.148.XXX port 58576
-    [ ID] Interval       Transfer     Bandwidth
-    [  3]  0.0-10.0 sec   922 MBytes   773 Mbits/sec
-    [  5]  0.0-10.1 sec  1.00 GBytes   849 Mbits/sec
+  Merge branch 'misc.compat' of git://git.kernel.org/pub/scm/linux/kernel/g=
+it/viro/vfs (2018-04-07 14:38:01 -0700)
 
-And with the previous hook:
+are available in the Git repository at:
 
-    root@debian-s-1vcpu-1gb-sfo1-01:~/test# iperf -c myanothernormaldebian -d
-    ------------------------------------------------------------
-    Server listening on TCP port 5001
-    TCP window size: 85.3 KByte (default)
-    ------------------------------------------------------------
-    ------------------------------------------------------------
-    Client connecting to myanothernormaldebian, TCP port 5001
-    TCP window size: 85.0 KByte (default)
-    ------------------------------------------------------------
-    [  3] local 192.241.204.XXX port 60530 connected with
-104.131.148.XXX port 5001
-    [  5] local 192.241.204.XXX port 5001 connected with
-104.131.148.XXX port 58578
-    [ ID] Interval       Transfer     Bandwidth
-    [  5]  0.0-10.2 sec  1.02 GBytes   864 Mbits/sec
-    [  3]  0.0-13.5 sec   170 KBytes   103 Kbits/sec
+  git://git.kernel.org/pub/scm/linux/kernel/git/mattst88/alpha.git=20
 
+for you to fetch changes up to cd0e00c106722eca40b38ebf11cf134c01901086:
 
+  alpha: io: reorder barriers to guarantee writeX() and iowriteX() ordering=
+ (2018-04-07 15:04:15 -0700)
 
-Or it's just because of that I'm disabling the GSO in a wrong way?
+----------------------------------------------------------------
+Alexandre Belloni (2):
+      alpha: rtc: remove unused set_mmss ops
+      alpha: rtc: stop validating rtc_time in .read_time
+
+Michael Cree (1):
+      alpha: Implement CPU vulnerabilities sysfs functions.
+
+Sinan Kaya (1):
+      alpha: io: reorder barriers to guarantee writeX() and iowriteX() orde=
+ring
+
+ arch/alpha/Kconfig          |   1 +
+ arch/alpha/include/asm/io.h |  14 +++---
+ arch/alpha/kernel/Makefile  |   2 +-
+ arch/alpha/kernel/bugs.c    |  45 ++++++++++++++++++++
+ arch/alpha/kernel/rtc.c     | 101 +---------------------------------------=
+----
+ 5 files changed, 55 insertions(+), 108 deletions(-)
+ create mode 100644 arch/alpha/kernel/bugs.c
+
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEO7Y55W+GH6LoZQVpD91oLZdMpyoFAlrKYvIACgkQD91oLZdM
+pyrAZg//R+9VhRxjNCt1SuQ6gP04fvQURGdwPgqueRdr5cW8pv2UgCeKxu3yAd92
+EbhEsq7p0di7sXunzQBwKSM7ifAhVtXBKsFVrtvFrEc/1/pGbwckReQ1Hd5t4lwB
+zXrmjJRGvxupyh3yqsY81vWR5t5kxfLZ1QdFvuCSdQq6LefVE+S0uBZzhhFoSOgb
+z7VpCZyo9ca70or5NeysIAXYZtmLar3GyHKb1427c9zAJhmgFEhiO+WNKPpOm8wT
+36rT1GF4Ot9PC/TgYQIGK3Vnds9NaRmi08iMXgiu975h0aMHQliFCSjm5r9Bhsse
+GuMPMRp4HUTLHfvMsLKwBp7wYe2sq5dzbDqFbughkduHa3Dro72SzfWcrovy/PPe
+lFnFxGuS024Ihp23JDDmd0kPju3y1hQxoKqj+n3Wui4HTsnvlPfKdTrTg2N0THZH
+RfAsQOaApAUv1bpEcLCOyyJGIMm5IpMZhdL4ieVndGibgBDiT/HY5dXUNKpdb7we
+LvN52Dh1Tc8xXdsi8iA6burQA82OGRS6sqT3G0U2rz86tAJIRQc+6knYcrBzL3Eq
+Z2QBTljnw1X6n7o0GNbvUcU4RDyIIwu4Z8pyrKD55xpHGnkqUbzHgWcZck3cXgXH
+DrI/MFButts4dNzDKER8iCcETds7XgL4ssXuV7ow8vWiidVLvic=
+=e8Jg
+-----END PGP SIGNATURE-----
+
+--PNTmBPCT7hxwcZjr--
