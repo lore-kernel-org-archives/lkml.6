@@ -1,93 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752212AbeDHB3g (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 21:29:36 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51977 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752006AbeDHB3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 21:29:34 -0400
-Subject: Re: [PATCH] f2fs: enlarge block plug coverage
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20180404085404.82184-1-yuchao0@huawei.com>
- <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
-Date: Sun, 8 Apr 2018 09:29:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1752412AbeDHBbg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 21:31:36 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41082 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752262AbeDHBbf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 21:31:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDFC660540
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkuo@codeaurora.org
+Date: Sat, 7 Apr 2018 20:31:30 -0500
+From: Richard Kuo <rkuo@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] hexagon: add memset_io() helper
+Message-ID: <20180408013130.GC3036@codeaurora.org>
+References: <20180406142832.2243021-1-arnd@arndb.de>
+ <20180406142832.2243021-2-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406142832.2243021-2-arnd@arndb.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/5 11:51, Jaegeuk Kim wrote:
-> On 04/04, Chao Yu wrote:
->> This patch enlarges block plug coverage in __issue_discard_cmd, in
->> order to collect more pending bios before issuing them, to avoid
->> being disturbed by previous discard I/O in IO aware discard mode.
+On Fri, Apr 06, 2018 at 04:28:22PM +0200, Arnd Bergmann wrote:
+> We already have memcpy_toio(), but not memset_io(), so let's
+> add the obvious version to allow building an allmodconfig kernel
+> without errors like
 > 
-> Hmm, then we need to wait for huge discard IO for over 10 secs, which
-
-We found that total discard latency is rely on total discard number we issued
-last time instead of range or length discard covered. IMO, if we don't change
-.max_requests value, we will not suffer longer latency.
-
-> will affect following read/write IOs accordingly. In order to avoid that,
-> we actually need to limit the discard size.
-
-If you are worry about I/O interference in between discard and rw, I suggest to
-decrease .max_requests value.
-
-Thanks,
-
+> drivers/gpu/drm/ttm/ttm_bo_util.c: In function 'ttm_bo_move_memcpy':
+> drivers/gpu/drm/ttm/ttm_bo_util.c:390:3: error: implicit declaration of function 'memset_io' [-Werror=implicit-function-declaration]
 > 
-> Thanks,
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/hexagon/include/asm/io.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/segment.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 8f0b5ba46315..4287e208c040 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>  		pend_list = &dcc->pend_list[i];
->>  
->>  		mutex_lock(&dcc->cmd_lock);
->> +
->> +		blk_start_plug(&plug);
->> +
->>  		if (list_empty(pend_list))
->>  			goto next;
->>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
->> -		blk_start_plug(&plug);
->>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
->>  			f2fs_bug_on(sbi, dc->state != D_PREP);
->>  
->> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>  			if (++iter >= dpolicy->max_requests)
->>  				break;
->>  		}
->> -		blk_finish_plug(&plug);
->>  next:
->> +		blk_finish_plug(&plug);
->> +
->>  		mutex_unlock(&dcc->cmd_lock);
->>  
->>  		if (iter >= dpolicy->max_requests)
->> -- 
->> 2.15.0.55.gc2ece9dc4de6
-> 
-> .
-> 
+> diff --git a/arch/hexagon/include/asm/io.h b/arch/hexagon/include/asm/io.h
+> index 9e8621d94ee9..e17262ad125e 100644
+> --- a/arch/hexagon/include/asm/io.h
+> +++ b/arch/hexagon/include/asm/io.h
+> @@ -216,6 +216,12 @@ static inline void memcpy_toio(volatile void __iomem *dst, const void *src,
+>  	memcpy((void *) dst, src, count);
+>  }
+>  
+> +static inline void memset_io(volatile void __iomem *addr, int value,
+> +			     size_t size)
+> +{
+> +	memset((void __force *)addr, value, size);
+> +}
+> +
+>  #define PCI_IO_ADDR	(volatile void __iomem *)
+>  
+>  /*
+
+Acked-by: Richard Kuo <rkuo@codeaurora.org>
+
+
+
+-- 
+Employee of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
+a Linux Foundation Collaborative Project
