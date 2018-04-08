@@ -1,123 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752794AbeDHRnE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 13:43:04 -0400
-Received: from mail-it0-f47.google.com ([209.85.214.47]:34252 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752081AbeDHRnD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 13:43:03 -0400
-X-Google-Smtp-Source: AIpwx49C4O+b9QQA6hDlRZMwhNkvdGLMHfyjKbvBYYepYxOAf+SJWj4rjdC+ct9Zhs5G1ECChY2qmvHGjH/HTzn8ZyE=
+        id S1752188AbeDHR6y (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 13:58:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43824 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751552AbeDHR6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 13:58:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0D62177A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Sun, 8 Apr 2018 19:58:48 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH v9 07/10] time: hrtimer: Introduce
+ hrtimer_next_event_without()
+Message-ID: <20180408175847.GA21904@lerouge>
+References: <1736751.LdhZHb50jq@aspire.rjw.lan>
+ <101528364.6nGUqP0EsC@aspire.rjw.lan>
+ <20180407144637.GC16600@lerouge>
+ <3441609.rVjWXosy3s@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <1523196560.6192.3.camel@btinternet.com>
-References: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
- <CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
- <1523120055.31267.13.camel@btinternet.com> <CA+55aFxo4Z3S7qG66esSL_qxg5jwzcFgZpYR0gRpto4Z_yghTQ@mail.gmail.com>
- <162a54f1470.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com> <1523196560.6192.3.camel@btinternet.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Mon, 9 Apr 2018 01:43:01 +0800
-Message-ID: <CADvbK_eFNkA5uJ36sBEFxWnWXLOPwKyvgUuTHJG96g0zxOwPLg@mail.gmail.com>
-Subject: Re: [GIT PULL] SELinux patches for v4.17
-To: Richard Haines <richard_c_haines@btinternet.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>, selinux@tycho.nsa.gov,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3441609.rVjWXosy3s@aspire.rjw.lan>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 8, 2018 at 10:09 PM, Richard Haines
-<richard_c_haines@btinternet.com> wrote:
-> On Sun, 2018-04-08 at 08:50 -0400, Paul Moore wrote:
->> On April 7, 2018 1:03:57 PM Linus Torvalds <torvalds@linux-foundation
->> .org> wrote:
->> On Sat, Apr 7, 2018 at 9:54 AM, Richard Haines
->> <richard_c_haines@btinternet.com> wrote:
->>
->> So please check my resolution, but also somebody should tell me
->> "Linus, you're a cretin, sctp_connect() doesn't want that
->> security_sctp_bind_connect() at all because it was already done by
->> XYZ"
->>
->> sctp_connect() or __sctp_connect() do not need to call
->> security_sctp_bind_connect(). This is because the connect(2) call
->> will
->> handle the checks required via security_socket_connect():
->>
->> Ok, thanks, that's exactly what I wanted to get.
->>
->> Anyway, somebody should still verify that it all looks good in my
->> tree, but I don't actually expect the merge to have had any issues
->> even if the refactoring made it a bit more complex than most merges
->> are.
->>
->> Thanks for the quick response Richard.
->>
->> Xin Long looked it over and gave it the thumbs up, I'll take a look
->> too, but to be honest I trust his SCTP understanding much more than
->> mine.  I also do weekly tests of each rcX release at a minimum so if
->> something odd pops up I'll make sure you get a fix.
->>
->> Thanks again everyone.
->
-> I built the kernel this morning and sorry to spoil the party, but I've
-> run into a problem with lksctp-tools when running the func_tests:
->
-> make v6test
-> ..
-> ..
-> ./test_timetolive_v6
-> test_timetolive.c  0 INFO : Creating fillmsg of size 3087
-> test_timetolive.c  1 PASS : Send a message with timeout
-> test_timetolive.c  2 PASS : Send a message with no timeout
-> test_timetolive.c  3 PASS : Send a fragmented message with timeout
-> test_timetolive.c  0 INFO :  **  SLEEPING for 3 seconds **
-> test_timetolive.c  4 BROK : Got a datamsg of unexpected length:23,
-> expected length:27
-> DUMP_CORE sctputil.c: 247
-> /bin/sh: line 1: 30981 Segmentation fault      (core dumped) ./$a
-> test_timetolive_v6 fails
->
-> make v4 test fails the same way. I'm using lksctp-tools from [1]. I
-> have not investigated the cause yet as just found this and thought I
-> should flag first just in case someone has the answer !!!
-test_timetolive(_v6) works for me, In lksctp-tools/src/func_tests, I had
-another case failed,./test_1_to_1_events,  it's caused by:
-commit 30f6ebf65bc46161c5aaff1db2e6e7c76aa4a06b
-Author: Xin Long <lucien.xin@gmail.com>
-Date:   Wed Mar 14 19:05:34 2018 +0800
+On Sun, Apr 08, 2018 at 10:20:30AM +0200, Rafael J. Wysocki wrote:
+> On Saturday, April 7, 2018 4:46:38 PM CEST Frederic Weisbecker wrote:
+> > On Wed, Apr 04, 2018 at 10:45:39AM +0200, Rafael J. Wysocki wrote:
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > 
+> > > The next set of changes will need to compute the time to the next
+> > > hrtimer event over all hrtimers except for the scheduler tick one.
+> > > 
+> > > To that end introduce a new helper function,
+> > > hrtimer_next_event_without(), for computing the time until the next
+> > > hrtimer event over all timers except for one and modify the underlying
+> > > code in __hrtimer_next_event_base() to prepare it for being called by
+> > > that new function.
+> > > 
+> > > No intentional changes in functionality.
+> > > 
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > ---
+> > > 
+> > > v8 -> v9:
+> > >  * Make fewer changes to the existing code.
+> > >  * Add a new helper function for the handling of the use case at hand.
+> > > 
+> > > ---
+> > >  include/linux/hrtimer.h |    1 
+> > >  kernel/time/hrtimer.c   |   55 ++++++++++++++++++++++++++++++++++++++++++++++--
+> > >  2 files changed, 54 insertions(+), 2 deletions(-)
+> > > 
+> > > Index: linux-pm/include/linux/hrtimer.h
+> > > ===================================================================
+> > > --- linux-pm.orig/include/linux/hrtimer.h
+> > > +++ linux-pm/include/linux/hrtimer.h
+> > > @@ -426,6 +426,7 @@ static inline ktime_t hrtimer_get_remain
+> > >  }
+> > >  
+> > >  extern u64 hrtimer_get_next_event(void);
+> > > +extern u64 hrtimer_next_event_without(const struct hrtimer *exclude);
+> > >  
+> > >  extern bool hrtimer_active(const struct hrtimer *timer);
+> > >  
+> > > Index: linux-pm/kernel/time/hrtimer.c
+> > > ===================================================================
+> > > --- linux-pm.orig/kernel/time/hrtimer.c
+> > > +++ linux-pm/kernel/time/hrtimer.c
+> > > @@ -490,6 +490,7 @@ __next_base(struct hrtimer_cpu_base *cpu
+> > >  	while ((base = __next_base((cpu_base), &(active))))
+> > >  
+> > >  static ktime_t __hrtimer_next_event_base(struct hrtimer_cpu_base *cpu_base,
+> > > +					 const struct hrtimer *exclude,
+> > >  					 unsigned int active,
+> > >  					 ktime_t expires_next)
+> > >  {
+> > > @@ -502,9 +503,24 @@ static ktime_t __hrtimer_next_event_base
+> > >  
+> > >  		next = timerqueue_getnext(&base->active);
+> > >  		timer = container_of(next, struct hrtimer, node);
+> > > +		if (timer == exclude) {
+> > > +			/* Get to the next timer in the queue. */
+> > > +			struct rb_node *rbn = rb_next(&next->node);
+> > > +
+> > > +			next = rb_entry_safe(rbn, struct timerqueue_node, node);
+> > > +			if (!next)
+> > > +				continue;
+> > 
+> > Minor cosmectic detail again, timerqueue_iterate_next() would do the job and
+> > avoid browsing timerqueue details.
+> 
+> And below is a patch to make this change on top of the original.
+> 
+> ---
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Subject: [PATCH] time: hrtimer: Use timerqueue_iterate_next() to get to the next timer
+> 
+> Use timerqueue_iterate_next() to get to the next timer in
+> __hrtimer_next_event_base() without browsing the timerqueue
+> details diredctly.
+> 
+> No intentional changes in functionality.
+> 
+> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-    sctp: add SCTP_AUTH_NO_AUTH type for AUTHENTICATION_EVENT
-
-It's not kernel's issue, after that commit, ./test_1_to_1_events should
-have been improved. or avoid it by 'sysctl -w net.sctp.auth_enable=1'
-
-I'm not sure why test_timetolive(_v6) is not working in your env.
-
->
-> On the bright side, I've run the sctp-tests from [2] with no problems
-> and also the selinux-testsuite with my SCTP patch from [3] using an
-> updated Fedora policy from [4] (with sctp support added), all in
-> enforcing mode.
->
-> Also the LTP test passed:
-> cd /opt/ltp/
-> cat runtest/syscalls |grep connect01>runtest/connect-syscall
-> ./runltp -pq -f connect-syscall
-> ....
->
-> [1] https://github.com/sctp/lksctp-tools
-> [2] https://github.com/sctp/sctp-tests
-> [3] https://marc.info/?l=selinux&m=152156947715709&w=2
-> [4] https://github.com/fedora-selinux/selinux-policy
->
->
->>
->> --
->> paul moore
->> www.paul-moore.com
->>
->>
->>
+Thanks!
