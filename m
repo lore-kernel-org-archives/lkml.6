@@ -1,163 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752484AbeDHS7Y (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 14:59:24 -0400
-Received: from rgout0201.bt.lon5.cpcloud.co.uk ([65.20.0.200]:2464 "EHLO
-        rgout02.bt.lon5.cpcloud.co.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752081AbeDHS7X (ORCPT
+        id S1752669AbeDHTHS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 15:07:18 -0400
+Received: from vulcan.natalenko.name ([104.207.131.136]:48180 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752172AbeDHTHQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 14:59:23 -0400
-X-OWM-Source-IP: 81.132.46.200 (GB)
-X-OWM-Env-Sender: richard_c_haines@btinternet.com
-X-RazorGate-Vade-Classification: clean
-X-RazorGate-Vade-Verdict: clean 0
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-SNCR-VADESECURE: CLEAN
-X-RazorGate-Vade-Verdict: clean 0
-X-RazorGate-Vade-Classification: clean
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedtgedrhedvgddufedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuueftkffvkffujffvgffngfevqffopdfqfgfvnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkuffhvfffjghftgfoggfgsehtjeertdertdejnecuhfhrohhmpeftihgthhgrrhguucfjrghinhgvshcuoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqeenucffohhmrghinhepthhiohhnrdhorhhgpdhkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmpdhmrghrtgdrihhnfhhopdhprghulhdqmhhoohhrvgdrtghomhenucfkphepkedurddufedvrdegiedrvddttdenucfrrghrrghmpehhvghloheplhhotggrlhhhohhsthdrlhhotggrlhguohhmrghinhdpihhnvghtpeekuddrudefvddrgeeirddvtddtpdhmrghilhhfrhhomhepoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqeenucevlhhushhtvghrufhiiigvpedt
-Message-ID: <1523213955.3552.9.camel@btinternet.com>
-Subject: Re: [GIT PULL] SELinux patches for v4.17
-From: Richard Haines <richard_c_haines@btinternet.com>
-To: Xin Long <lucien.xin@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>, selinux@tycho.nsa.gov,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Sun, 08 Apr 2018 19:59:15 +0100
-In-Reply-To: <CADvbK_eFNkA5uJ36sBEFxWnWXLOPwKyvgUuTHJG96g0zxOwPLg@mail.gmail.com>
-References: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
-         <CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
-         <1523120055.31267.13.camel@btinternet.com>
-         <CA+55aFxo4Z3S7qG66esSL_qxg5jwzcFgZpYR0gRpto4Z_yghTQ@mail.gmail.com>
-         <162a54f1470.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-         <1523196560.6192.3.camel@btinternet.com>
-         <CADvbK_eFNkA5uJ36sBEFxWnWXLOPwKyvgUuTHJG96g0zxOwPLg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 8 Apr 2018 15:07:16 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 452623358F9
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Kees Cook <keescook@chromium.org>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+Date: Sun, 08 Apr 2018 21:07:12 +0200
+Message-ID: <2679696.GDoj5zcZOu@natalenko.name>
+In-Reply-To: <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
+References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com> <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1523214433;
+        h=from:sender:reply-to:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:in-reply-to:references:list-id:list-owner:list-unsubscribe:list-subscribe:list-post;
+        bh=5DddNIuUVj7WbcE0gicrhp+MwhM/h4Ucn54IVRUkEcg=;
+        b=zo1U3KVY1SXYOusMaoJ73RETFqeOVvL2d5SstjvQOxVT0Vi+T56pjAAa9DGYc6PiAKT4/M
+        MSmbg4iHYYmF35t7dd6kJr1jG8pjywyYwWSFPBo1aB1sihv+Zo6PDa8mW6CAl0KqmpiseK
+        fBj07Z5ITHnBEcw8mfuiAv56OE3wBWI=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1523214433; a=rsa-sha256;
+        cv=none;
+        b=gSUe0xq8XhR6zLJWmOQdAOBF/nNNWmm3Rhm3iPJGqfsp/kWrRQ2ar/T2FCQCQFnvS8S9VRLH7FJ0q5R/fNOFdmJq2/lJ8bR9G01kjA49YS6lOXekxAiFQXL1HqbNG47sWBv4Ol/wYwHzZXPcNI0hzyZje92salXSrd/yIflfVew=
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
+        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-09 at 01:43 +0800, Xin Long wrote:
-> On Sun, Apr 8, 2018 at 10:09 PM, Richard Haines
-> <richard_c_haines@btinternet.com> wrote:
-> > On Sun, 2018-04-08 at 08:50 -0400, Paul Moore wrote:
-> > > On April 7, 2018 1:03:57 PM Linus Torvalds <torvalds@linux-founda
-> > > tion
-> > > .org> wrote:
-> > > On Sat, Apr 7, 2018 at 9:54 AM, Richard Haines
-> > > <richard_c_haines@btinternet.com> wrote:
-> > > 
-> > > So please check my resolution, but also somebody should tell me
-> > > "Linus, you're a cretin, sctp_connect() doesn't want that
-> > > security_sctp_bind_connect() at all because it was already done
-> > > by
-> > > XYZ"
-> > > 
-> > > sctp_connect() or __sctp_connect() do not need to call
-> > > security_sctp_bind_connect(). This is because the connect(2) call
-> > > will
-> > > handle the checks required via security_socket_connect():
-> > > 
-> > > Ok, thanks, that's exactly what I wanted to get.
-> > > 
-> > > Anyway, somebody should still verify that it all looks good in my
-> > > tree, but I don't actually expect the merge to have had any
-> > > issues
-> > > even if the refactoring made it a bit more complex than most
-> > > merges
-> > > are.
-> > > 
-> > > Thanks for the quick response Richard.
-> > > 
-> > > Xin Long looked it over and gave it the thumbs up, I'll take a
-> > > look
-> > > too, but to be honest I trust his SCTP understanding much more
-> > > than
-> > > mine.  I also do weekly tests of each rcX release at a minimum so
-> > > if
-> > > something odd pops up I'll make sure you get a fix.
-> > > 
-> > > Thanks again everyone.
-> > 
-> > I built the kernel this morning and sorry to spoil the party, but
-> > I've
-> > run into a problem with lksctp-tools when running the func_tests:
-> > 
-> > make v6test
-> > ..
-> > ..
-> > ./test_timetolive_v6
-> > test_timetolive.c  0 INFO : Creating fillmsg of size 3087
-> > test_timetolive.c  1 PASS : Send a message with timeout
-> > test_timetolive.c  2 PASS : Send a message with no timeout
-> > test_timetolive.c  3 PASS : Send a fragmented message with timeout
-> > test_timetolive.c  0 INFO :  **  SLEEPING for 3 seconds **
-> > test_timetolive.c  4 BROK : Got a datamsg of unexpected length:23,
-> > expected length:27
-> > DUMP_CORE sctputil.c: 247
-> > /bin/sh: line 1: 30981 Segmentation fault      (core dumped) ./$a
-> > test_timetolive_v6 fails
-> > 
-> > make v4 test fails the same way. I'm using lksctp-tools from [1]. I
-> > have not investigated the cause yet as just found this and thought
-> > I
-> > should flag first just in case someone has the answer !!!
-> 
-> test_timetolive(_v6) works for me, In lksctp-tools/src/func_tests, I
-> had
-> another case failed,./test_1_to_1_events,  it's caused by:
-> commit 30f6ebf65bc46161c5aaff1db2e6e7c76aa4a06b
-> Author: Xin Long <lucien.xin@gmail.com>
-> Date:   Wed Mar 14 19:05:34 2018 +0800
-> 
->     sctp: add SCTP_AUTH_NO_AUTH type for AUTHENTICATION_EVENT
-> 
-> It's not kernel's issue, after that commit, ./test_1_to_1_events
-> should
-> have been improved. or avoid it by 'sysctl -w net.sctp.auth_enable=1'
-> 
-> I'm not sure why test_timetolive(_v6) is not working in your env.
+Hi.
 
-It appears to depend on the run sequence of the tests. I rebooted the
-system, ran test_timetolive_v6, it worked okay.
-Ran "sctp-tests run" on a terminal, then ran test_timetolive_v6 at
-various intervals on another terminal. Once sctp-tests started the "===
-ndatasched ===" sequence, test_timetolive_v6 failed.
+Cc'ing linux-block people (mainly, Christoph) too because of 17cb960f29c2. 
+Also, duplicating the initial statement for them.
 
-> 
-> > 
-> > On the bright side, I've run the sctp-tests from [2] with no
-> > problems
-> > and also the selinux-testsuite with my SCTP patch from [3] using an
-> > updated Fedora policy from [4] (with sctp support added), all in
-> > enforcing mode.
-> > 
-> > Also the LTP test passed:
-> > cd /opt/ltp/
-> > cat runtest/syscalls |grep connect01>runtest/connect-syscall
-> > ./runltp -pq -f connect-syscall
-> > ....
-> > 
-> > [1] https://github.com/sctp/lksctp-tools
-> > [2] https://github.com/sctp/sctp-tests
-> > [3] https://marc.info/?l=selinux&m=152156947715709&w=2
-> > [4] https://github.com/fedora-selinux/selinux-policy
-> > 
-> > 
-> > > 
-> > > --
-> > > paul moore
-> > > www.paul-moore.com
-> > > 
-> > > 
-> > > 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-
-> security-module" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+With v4.16 (and now with v4.16.1) it is possible to trigger usercopy whitelist 
+warning and/or bug while doing smartctl on a SATA disk having blk-mq and BFQ 
+enabled. The warning looks like this:
+
+===
+[  574.997022] Bad or missing usercopy whitelist? Kernel memory exposure 
+attempt detected from SLUB object 'scsi_sense_cache' (offset 76, size 22)!
+[  575.017332] WARNING: CPU: 0 PID: 32436 at mm/usercopy.c:81 usercopy_warn
++0x7d/0xa0
+[  575.025262] Modules linked in: nls_iso8859_1 nls_cp437 vfat fat kvm_intel 
+kvm bochs_drm iTCO_wdt ttm irqbypass iTCO_vendor_support ppdev drm_kms_helper 
+psmouse parport_pc i2c_i801 joydev pcspkr drm parport rtc_cmos mousedev 
+input_leds led_class intel_agp evdev syscopyarea qemu_fw_cfg intel_gtt 
+sysfillrect mac_hid lpc_ich sysimgblt agpgart fb_sys_fops ip_tables x_tables 
+xfs dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio libcrc32c 
+crc32c_generic dm_crypt algif_skcipher af_alg hid_generic usbhid hid dm_mod 
+raid10 md_mod sr_mod sd_mod cdrom uhci_hcd crct10dif_pclmul crc32_pclmul 
+crc32c_intel ghash_clmulni_intel pcbc serio_raw xhci_pci ahci atkbd libps2 
+ehci_pci xhci_hcd aesni_intel libahci aes_x86_64 ehci_hcd crypto_simd 
+glue_helper cryptd libata usbcore usb_common i8042 serio virtio_scsi scsi_mod
+[  575.068775]  virtio_blk virtio_net virtio_pci virtio_ring virtio
+[  575.073935] CPU: 0 PID: 32436 Comm: smartctl Not tainted 4.16.0-pf2 #1
+[  575.078078] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 
+02/06/2015
+[  575.082451] RIP: 0010:usercopy_warn+0x7d/0xa0
+[  575.086223] RSP: 0018:ffff9ca84aee7c40 EFLAGS: 00010286
+[  575.097637] RAX: 0000000000000000 RBX: ffff95199d68304c RCX: 
+0000000000000001
+[  575.101471] RDX: 0000000000000001 RSI: ffffffffaeeb050a RDI: 
+00000000ffffffff
+[  575.105939] RBP: 0000000000000016 R08: 0000000000000000 R09: 
+000000000000028b
+[  575.110370] R10: ffffffffaee854e9 R11: 0000000000000001 R12: 
+0000000000000001
+[  575.113269] R13: ffff95199d683062 R14: ffff95199d68304c R15: 
+0000000000000016
+[  575.116132] FS:  00007f993d405040(0000) GS:ffff95199f600000(0000) knlGS:
+0000000000000000
+[  575.119285] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  575.129619] CR2: 00007ffe2390f0a8 CR3: 000000001d774004 CR4: 
+0000000000160ef0
+[  575.133976] Call Trace:
+[  575.136311]  __check_object_size+0x12f/0x1a0
+[  575.139576]  sg_io+0x269/0x3f0
+[  575.142000]  ? path_lookupat+0xaa/0x1f0
+[  575.144521]  ? current_time+0x18/0x70
+[  575.147006]  scsi_cmd_ioctl+0x257/0x410
+[  575.149782]  ? xfs_bmapi_read+0x1c3/0x340 [xfs]
+[  575.161441]  sd_ioctl+0xbf/0x1a0 [sd_mod]
+[  575.165036]  blkdev_ioctl+0x8ca/0x990
+[  575.168291]  ? read_null+0x10/0x10
+[  575.171638]  block_ioctl+0x39/0x40
+[  575.174998]  do_vfs_ioctl+0xa4/0x630
+[  575.178261]  ? vfs_write+0x164/0x1a0
+[  575.181410]  SyS_ioctl+0x74/0x80
+[  575.190904]  do_syscall_64+0x74/0x190
+[  575.195200]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+[  575.199267] RIP: 0033:0x7f993c984d87
+[  575.201350] RSP: 002b:00007ffe238aeed8 EFLAGS: 00000246 ORIG_RAX: 
+0000000000000010
+[  575.204386] RAX: ffffffffffffffda RBX: 00007ffe238af180 RCX: 
+00007f993c984d87
+[  575.208349] RDX: 00007ffe238aeef0 RSI: 0000000000002285 RDI: 
+0000000000000003
+[  575.211254] RBP: 00007ffe238af1d0 R08: 0000000000000010 R09: 
+0000000000000000
+[  575.220511] R10: 0000000000000000 R11: 0000000000000246 R12: 
+00005637ec8e9ce0
+[  575.225238] R13: 0000000000000000 R14: 00005637ec8e3550 R15: 
+00000000000000da
+[  575.230056] Code: 6c e4 ae 41 51 48 c7 c0 19 6e e5 ae 49 89 f1 48 0f 44 c2 
+48 89 f9 4d 89 d8 4c 89 d2 48 c7 c7 70 6e e5 ae 48 89 c6 e8 c3 5c e5 ff <0f> 
+0b 48 83 c4 18 c3 48 c7 c6 04 cb e4 ae 49 89 f1 49 89 f3 eb 
+[  575.239027] ---[ end trace 6e3293933bdd4761 ]---
+===
+
+Usually, the warning is triggered first, and all the subsequent printouts are 
+bugs because offset gets too big so that it doesn't fit into a real SLAB 
+object size:
+
+[ 1687.609889] usercopy: Kernel memory exposure attempt detected from SLUB 
+object 'scsi_sense_cache' (offset 107, size 22)!
+[ 1687.614197] ------------[ cut here ]------------
+[ 1687.615993] kernel BUG at mm/usercopy.c:100!
+
+To give you an idea regarding variety of offsets, I've summarised the kernel 
+log from my server:
+
+$ sudo journalctl -kb | grep "Kernel memory exposure attempt detected" | 
+grep -oE 'offset [0-9]+, size [0-9]+' | sort | uniq -c
+       9 offset 107, size 22
+       6 offset 108, size 22
+       8 offset 109, size 22
+       7 offset 110, size 22
+       5 offset 111, size 22
+       5 offset 112, size 22
+       2 offset 113, size 22
+       2 offset 114, size 22
+       1 offset 115, size 22
+       1 offset 116, size 22
+       1 offset 119, size 22
+       1 offset 85, size 22
+
+So far, I wasn't able to trigger this with mq-deadline (or without blk-mq). 
+Maybe, this has something to do with blk-mq+BFQ re-queuing, or it's just me 
+not being persistent enough.
+
+It looks like this code path was re-written completely with 17cb960f29c2, but 
+it went merged for the upcoming v4.17 only, and thus I haven't tried it yet.
+
+Kees took a brief look at it already: [1]. This is what smartctl does [2] 
+(just a usual strace capture when the bug is not triggered).
+
+Christoph, do you have some idea on why this can happen?
+
+Thanks.
+
+Regards,
+  Oleksandr
+
+[1] https://marc.info/?l=linux-scsi&m=152287333013845&w=2
+[2] https://gist.github.com/pfactum/6f58f8891468aeba1ab2cc9f45668735
