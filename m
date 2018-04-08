@@ -1,121 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752521AbeDHA0E (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 20:26:04 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:42965 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752460AbeDHA0C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 20:26:02 -0400
-X-Google-Smtp-Source: AIpwx49u+1jY9X5BU1ZAPJjrgaUpc+8LNt3g9m6RkTli8rEAyzmgi9wNkDnJdxSi2x+/Km2qyLv6lO/mhRJP1U/sbkzQ8nJk8MhY
+        id S1752168AbeDHBPz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 21:15:55 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7155 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751387AbeDHBPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Apr 2018 21:15:54 -0400
+Subject: Re: [PATCH] f2fs: fix to show encrypt flag in FS_IOC_GETFLAGS
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180402102446.32832-1-yuchao0@huawei.com>
+ <20180402202105.GB19195@jaegeuk-macbookpro.roam.corp.google.com>
+ <3f76800a-8b68-b378-8b03-c14248966be4@huawei.com>
+ <20180405034609.GA50337@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <3993ce80-7446-2fce-e8da-c677c8cf5225@huawei.com>
+Date: Sun, 8 Apr 2018 09:15:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Date: Sat, 07 Apr 2018 17:26:01 -0700
-In-Reply-To: <0000000000008e46680569461f8d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113ff9ca86f59a05694b552f@google.com>
-Subject: Re: KMSAN: uninit-value in tipc_node_get_mtu
-From: syzbot <syzbot+b0975ce9355b347c1546@syzkaller.appspotmail.com>
-To: davem@davemloft.net, jon.maloy@ericsson.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net,
-        ying.xue@windriver.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180405034609.GA50337@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found reproducer for the following crash on  
-https://github.com/google/kmsan.git/master commit
-e2ab7e8abba47a2f2698216258e5d8727ae58717 (Fri Apr 6 16:24:31 2018 +0000)
-kmsan: temporarily disable visitAsmInstruction() to help syzbot
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=b0975ce9355b347c1546
+On 2018/4/5 11:46, Jaegeuk Kim wrote:
+> On 04/03, Chao Yu wrote:
+>> On 2018/4/3 4:21, Jaegeuk Kim wrote:
+>>> On 04/02, Chao Yu wrote:
+>>>> This patch fixes to show encrypt flag in FS_IOC_GETFLAGS like ext4 does.
+>>>
+>>> Actually, we have to show internal flags owned by f2fs, not generic ones.
+>>> We may need to define all of them separately?
+>>
+>> Agreed, I wrote a patch, could check that? and in that patch, do we need to
+>> delete flag definition f2fs don't use?
+> 
+> IMO, we'd better keep the flags. I merged it and could you add encryption part
 
-So far this crash happened 16 times on  
-https://github.com/google/kmsan.git/master.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5297557005664256
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4600034989441024
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5107856890134528
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=6627248707860932248
-compiler: clang version 7.0.0 (trunk 329391)
+Agreed.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b0975ce9355b347c1546@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed.
+> on top of it?
 
-==================================================================
-BUG: KMSAN: uninit-value in tipc_node_find net/tipc/node.c:236 [inline]
-BUG: KMSAN: uninit-value in tipc_node_get_mtu+0x200/0x7a0  
-net/tipc/node.c:185
-CPU: 1 PID: 3571 Comm: syzkaller770798 Not tainted 4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
-  tipc_node_find net/tipc/node.c:236 [inline]
-  tipc_node_get_mtu+0x200/0x7a0 net/tipc/node.c:185
-  __tipc_sendmsg+0x1b32/0x41c0 net/tipc/socket.c:1364
-  tipc_sendmsg+0xeb/0x140 net/tipc/socket.c:1265
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
-  __sys_sendmsg net/socket.c:2080 [inline]
-  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
-  SyS_sendmsg+0x54/0x80 net/socket.c:2087
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43fd49
-RSP: 002b:00007ffd0061aba8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd49
-RDX: 0000000000000000 RSI: 000000002095ffc8 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401670
-R13: 0000000000401700 R14: 0000000000000000 R15: 0000000000000000
+No problem. ;)
 
-Local variable description: ----dnode@__tipc_sendmsg
-Variable was created at:
-  __tipc_sendmsg+0x20c/0x41c0 net/tipc/socket.c:1272
-  tipc_sendmsg+0xeb/0x140 net/tipc/socket.c:1265
-==================================================================
-Kernel panic - not syncing: panic_on_warn set ...
+Thanks,
 
-CPU: 1 PID: 3571 Comm: syzkaller770798 Tainted: G    B            4.16.0+  
-#82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  panic+0x39d/0x940 kernel/panic.c:183
-  kmsan_report+0x238/0x240 mm/kmsan/kmsan.c:1083
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
-  tipc_node_find net/tipc/node.c:236 [inline]
-  tipc_node_get_mtu+0x200/0x7a0 net/tipc/node.c:185
-  __tipc_sendmsg+0x1b32/0x41c0 net/tipc/socket.c:1364
-  tipc_sendmsg+0xeb/0x140 net/tipc/socket.c:1265
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
-  __sys_sendmsg net/socket.c:2080 [inline]
-  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
-  SyS_sendmsg+0x54/0x80 net/socket.c:2087
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43fd49
-RSP: 002b:00007ffd0061aba8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd49
-RDX: 0000000000000000 RSI: 000000002095ffc8 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401670
-R13: 0000000000401700 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/file.c | 9 +++++++--
+>>>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>> index 8068b015ece5..271fadadaa36 100644
+>>>> --- a/fs/f2fs/file.c
+>>>> +++ b/fs/f2fs/file.c
+>>>> @@ -1584,8 +1584,13 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+>>>>  {
+>>>>  	struct inode *inode = file_inode(filp);
+>>>>  	struct f2fs_inode_info *fi = F2FS_I(inode);
+>>>> -	unsigned int flags = fi->i_flags &
+>>>> -			(FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL);
+>>>> +	unsigned int flags = fi->i_flags;
+>>>> +
+>>>> +	if (file_is_encrypt(inode))
+>>>> +		flags |= FS_ENCRYPT_FL;
+>>>> +
+>>>> +	flags &= FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL;
+>>>> +
+>>>>  	return put_user(flags, (int __user *)arg);
+>>>>  }
+>>>>  
+>>>> -- 
+>>>> 2.15.0.55.gc2ece9dc4de6
+>>>
+>>> .
+>>>
+> 
+> .
+> 
