@@ -1,128 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752202AbeDHIUq (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 04:20:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41054 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751958AbeDHIUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 04:20:44 -0400
-Date: Sun, 8 Apr 2018 16:20:38 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        pagupta@redhat.com, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v3 4/4] mm/sparse: Optimize memmap allocation during
- sparse_init()
-Message-ID: <20180408082038.GB19345@localhost.localdomain>
-References: <20180228032657.32385-1-bhe@redhat.com>
- <20180228032657.32385-5-bhe@redhat.com>
- <5dd3942a-cf66-f749-b1c6-217b0c3c94dc@intel.com>
+        id S1752236AbeDHIYN (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 04:24:13 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:35908 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751309AbeDHIYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 04:24:11 -0400
+From: "liwei (CM)" <liwei213@huawei.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>, Ryan Grachek <ryan@edited.us>,
+        "Jinguojun (A)" <kid.jin@hisilicon.com>,
+        "jingbing (C)" <jingbing2@hisilicon.com>
+CC: Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>
+Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIG1tYzogZHdfbW1jLWszOiBGaXggRERSNTIgbW9k?=
+ =?utf-8?Q?e_by_setting_required_clock_divisor?=
+Thread-Topic: [PATCH] mmc: dw_mmc-k3: Fix DDR52 mode by setting required
+ clock divisor
+Thread-Index: AQHTztwoqvBFzez3EUacN3S8Mg/6rqP2h9ZA
+Date: Sun, 8 Apr 2018 08:23:53 +0000
+Message-ID: <1699CE87DE933F49876AD744B5DC140FA596C5@DGGEMM506-MBS.china.huawei.com>
+References: <20180329182423.21201-1-ryan@edited.us>
+ <e3ec3a77-f2f3-2164-4dbb-80e1ba3ebc63@rock-chips.com>
+ <CAGoBSJq+tSpvFZsJLPffTaFBg5o2Nn2eeXXvHqt4Us_dd7==1w@mail.gmail.com>
+ <bed16723-6bf0-4bcf-f44c-ebcf7a1e7cc5@rock-chips.com>
+ <CAGoBSJogjG9efE9EKdinTCN9Px0zsW1_=5msXjHrLZXVjLBgow@mail.gmail.com>
+ <9d4bec45-42e3-da8d-ff29-1f24db27faf5@rock-chips.com>
+In-Reply-To: <9d4bec45-42e3-da8d-ff29-1f24db27faf5@rock-chips.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.189.155.72]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5dd3942a-cf66-f749-b1c6-217b0c3c94dc@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w388OLwI010917
 
-On 04/06/18 at 07:50am, Dave Hansen wrote:
-> I'm having a really hard time tying all the pieces back together.  Let
-> me give it a shot and you can tell me where I go wrong.
++jinguojun jingbing
+
+-----邮件原件-----
+发件人: Shawn Lin [mailto:shawn.lin@rock-chips.com] 
+发送时间: 2018年4月8日 9:52
+收件人: Ryan Grachek
+抄送: shawn.lin@rock-chips.com; Jaehoon Chung; Ulf Hansson; linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org; Zhangfei Gao; liwei (CM); Suzhuangluan
+主题: Re: [PATCH] mmc: dw_mmc-k3: Fix DDR52 mode by setting required clock divisor
+
+On 2018/4/6 21:41, Ryan Grachek wrote:
+> On Wed, Apr 4, 2018 at 7:51 PM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>> [+ Zhangfei Gao who added support for hi6220]
+>>
+>> On 2018/4/4 23:31, Ryan Grachek wrote:
+>>>
+>>> On Tue, Apr 3, 2018 at 6:31 AM, Shawn Lin <shawn.lin@rock-chips.com 
+>>> <mailto:shawn.lin@rock-chips.com>> wrote:
+>>>
+>>>      On 2018/3/30 2:24, oscardagrach wrote:
+>>>
+>>>      Need at least one line commit body.
+>>>
+>>>          Signed-off-by: oscardagrach <ryan@edited.us 
+>>> <mailto:ryan@edited.us>>
+>>>
+>>>          ---
+>>>             drivers/mmc/host/dw_mmc-k3.c | 10 ++++++++--
+>>>             1 file changed, 8 insertions(+), 2 deletions(-)
+>>>
+>>>          diff --git a/drivers/mmc/host/dw_mmc-k3.c
+>>>          b/drivers/mmc/host/dw_mmc-k3.c
+>>>          index 89cdb3d533bb..efc546cb4db8 100644
+>>>          --- a/drivers/mmc/host/dw_mmc-k3.c
+>>>          +++ b/drivers/mmc/host/dw_mmc-k3.c
+>>>          @@ -194,8 +194,14 @@ static void dw_mci_hi6220_set_ios(struct
+>>>          dw_mci *host, struct mmc_ios *ios)
+>>>                   int ret;
+>>>                   unsigned int clock;
+>>>             -     clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+>>>          -
+>>>          +       /* CLKDIV must be 1 for DDR52/8-bit mode */
+>>>          +       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
+>>>          +               ios->timing == MMC_TIMING_MMC_DDR52) {
+>>>          +               mci_writel(host, CLKDIV, 0x1);
+>>>          +               clock = ios->clock;
+>>>          +       } else {
+>>>          +               clock = (ios->clock <= 25000000) ? 25000000 :
+>>>          ios->clock;
+>>>          +       }
+>>>
+>>>
+>>>      I undertand DDR52/8-bit need CLKDIV fixed 1, but shouldn't the 
+>>> following
+>>>      change is more sensible?
+>>>
+>>>      if (ios->bus_width == MMC_BUS_WIDTH_8 && ios->timing ==
+>>>      MMC_TIMING_MMC_DDR52)
+>>>               clock = ios->clock * 2;
+>>>      else
+>>>               clock = (ios->clock <= 25000000) ? 25000000 : 
+>>> ios->clock;
+>>>
+>>>
+>>>      The reason is ios->clock is 52MHz and you could claim 104MHz from the
+>>>      clock provider and let dw_mmc core take care of the divder to be 1.
+>>>      Otherwise, you just force it to be DDR52/8-bit with a clk rate 
+>>> of 26MHz.
+>>>
+>>>
+>>>                   ret = clk_set_rate(host->biu_clk, clock);
+>>>                   if (ret)
+>>>                           dev_warn(host->dev, "failed to set rate
+>>>          %uHz\n", clock);
+>>>
+>>>
+>>>
+>>
+>> For future wise, please use plain mode mail, but not HTML format.
+>>
+>>> Your feedback is correct. I see the Rockchip dwmmc driver has a 
+>>> similar implementation. After applying your suggested changes, 
+>>> however, my board reports "dwmmc_k3 f723d000.dwmmc0: failed to set rate 104000000Hz"
+>>> during intialization of eMMC. In addition, I do not see CLKDIV being 
+>>> set to 1. clk_set_rate fails and I wonder if this is out-of-scope of 
+>>> the driver.
+>>>
+>>> If I set CLKDIV where I did prior, with your changes, the device 
+>>> fails to set the clock and falls back to 52 MHz (26 MHz) and works 
+>>> fine, but again, CLKDIV is reported as 0 (even though it is 1.) One 
+>>> thing of interest to note is when I manually set the clock by doing:
+>>> (echo 104000000 > /sys/kernel/debug/mmc0/clock) the device reports 
+>>> back 'mmc_host mmc0: Bus speed (slot 0) = 198400000Hz (slot req 104000000Hz,
+>>>    actual 99200000HZ div = 1)' which works reliably and clk_set_rate 
+>>> does not report any error.
+>>>
+>>
+>> When looking closely into the code, at least dw_mci_hi6220_set_ios 
+>> goes wrong with the bus_hz, since it should be ciu_clk but not biu_clk.
+>> "b" stands for bus, and "c" stands for card IMHO, however bus_hz 
+>> describs the clock to the card, provided by controller. Does the 
+>> following patch help?
+>>
+>>
+>> diff --git a/drivers/mmc/host/dw_mmc-k3.c 
+>> b/drivers/mmc/host/dw_mmc-k3.c index 89cdb3d..9e78cf2 100644
+>> --- a/drivers/mmc/host/dw_mmc-k3.c
+>> +++ b/drivers/mmc/host/dw_mmc-k3.c
+>> @@ -194,13 +194,21 @@ static void dw_mci_hi6220_set_ios(struct dw_mci 
+>> *host, struct mmc_ios *ios)
+>>          int ret;
+>>          unsigned int clock;
+>>
+>> -       clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+>> +       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
+>> +           ios->timing == MMC_TIMING_MMC_DDR52)
+>> +               clock = ios->clock * 2;
+>> +       else
+>> +               clock = (ios->clock <= 25000000) ? 25000000 : 
+>> + ios->clock;
+>>
+>> -       ret = clk_set_rate(host->biu_clk, clock);
+>> +       ret = clk_set_rate(host->ciu_clk, clock);
+>>          if (ret)
+>>                  dev_warn(host->dev, "failed to set rate %uHz\n", 
+>> clock);
+>>
+>> -       host->bus_hz = clk_get_rate(host->biu_clk);
+>> +       clock = clk_get_rate(host->ciu_clk);
+>> +       if (clock != host->bus_hz) {
+>> +               host->bus_hz = clock;
+>> +               host->current_speed = 0;
+>> +       }
+>>
+>>   }
+>>
+>>
+>>> I am not sure where to begin debugging these clock issues and 
+>>> welcome any feedback.
+>>
+>>
 > 
-> On 02/27/2018 07:26 PM, Baoquan He wrote:
-> > In sparse_init(), two temporary pointer arrays, usemap_map and map_map
-> > are allocated with the size of NR_MEM_SECTIONS.
+> The change results in the following:
+> 'dwmmc_k3 f723e000.dwmmc1: failed to set rate 25000000Hz'
+> 'dwmmc_k3 f723d000.dwmmc0: failed to set rate 25000000Hz'
+> 'dwmmc_k3 f723f000.dwmmc2: failed to set rate 25000000Hz'
 > 
-> In sparse_init(), two temporary pointer arrays, usemap_map and map_map
-> are allocated to hold the maps for every possible memory section
-> (NR_MEM_SECTIONS).  However, we obviously only need the array sized for
-> nr_present_sections (introduced in patch 1).
-
-Yes, correct.
-
+> and later on:
+> 'dwmmc_k3 f723d000.dwmmc0: failed to set rate 52000000Hz'
+> 'dwmmc_k3 f723d000.dwmmc0: failed to set rate 104000000Hz'
 > 
-> The reason this is a problem is that, with 5-level paging,
-> NR_MEM_SECTIONS (8M->512M) went up dramatically and these temporary
-> arrays can eat all of memory, like on kdump kernels.
-
-With 5-level paging enabled, MAX_PHYSMEM_BITS changed from 46 to
-52. You can see NR_MEM_SECTIONS becomes 64 times of the old value. So
-the two temporary pointer arrays eat more memory, 8M -> 8M*64 = 512M.
-
-# define MAX_PHYSMEM_BITS       (pgtable_l5_enabled ? 52 : 46)
-
+> Eventually mmc1 (UHS-1 MicroSD) will settle down after repeated 
+> attempts at setting 25 MHz:
+> 'mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req 
+> 100000000Hz, actual 100000000HZ div = 0)'
+> 'mmc1: new ultra high speed SDR50 SDHC card at address 0001'
+> 'mmcblk1: mmc1:0001 GB1QT 29.8 GiB'
 > 
-> This patch does two things: it makes sure to give usemap_map/mem_map a
-> less gluttonous size on small systems, and it changes the map allocation
-> and handling to handle the now more compact, less sparse arrays.
-
-Yes, because 99.9% of systems do not have PB level of memory, not even TB.
-Any place of memory allocatin with the size of NR_MEM_SECTIONS should be
-avoided.
-
+> Same for mmc2 (SDIO WL1835MOD WiFi):
+> 'mmc_host mmc2: Bus speed (slot 0) = 100000000Hz (slot req 50000000Hz, 
+> actual 50000000HZ div = 1)'
+> 'mmc2: new high speed SDIO card at address 0001'
 > 
-> ---
+> So mmc1 and mmc2 will initialize eventually. I had not observed this 
+> behavior prior. It appears to fail setting all devices to an initial 
+> rate of 25 MHz. However, the same cannot be said for mmc0 (eMMC).
+> Again, I observed being able to set the clock manually through debugfs 
+> to 104MHz(/2) which is successful and the card becomes stable and will 
+> initialize properly.
 > 
-> The code looks fine to me.  It's a bit of a shame that there's no
-> verification to ensure that idx_present never goes beyond the shiny new
-> nr_present_sections. 
+> 'echo 104000000 > /sys/kernel/debug/mmc0/clock'
+> 'mmc_host mmc0: Bus speed (slot 0) = 200000000Hz (slot req 
+> 104000000Hz, actual 100000000HZ div = 1)'
+> 
+> So it seems to settle down at 50 MHz, but only if set manually. It 
+> does appear CLKDIV is being set accordingly now.
 
-This is a good point. Do you think it's OK to replace (section_nr <
-NR_MEM_SECTIONS) with (section_nr < nr_present_sections) in below
-for_each macro? This for_each_present_section_nr() is only used
-during sparse_init() execution.
-
-#define for_each_present_section_nr(start, section_nr)          \
-        for (section_nr = next_present_section_nr(start-1);     \
-             ((section_nr >= 0) &&                              \
-              (section_nr < NR_MEM_SECTIONS) &&                 \                                                                                 
-              (section_nr <= __highest_present_section_nr));    \
-             section_nr = next_present_section_nr(section_nr))
+Hmm.... I can't see any differences.. And failed to set clock rate in the first place and finally got it, which beyond the mmc driver scope. Maybe hisilicon guys have more idea here.
 
 > 
 > 
-> > @@ -583,6 +592,7 @@ void __init sparse_init(void)
-> >  	unsigned long *usemap;
-> >  	unsigned long **usemap_map;
-> >  	int size;
-> > +	int idx_present = 0;
 > 
-> I wonder whether idx_present is a good name.  Isn't it the number of
-> consumed mem_map[]s or usemaps?
-
-Yeah, in sparse_init(), it's the index of present memory sections, and
-also the number of consumed mem_map[]s or usemaps. And I remember you
-suggested nr_consumed_maps instead. seems nr_consumed_maps is a little
-long to index array to make code line longer than 80 chars. How about
-name it idx_present in sparse_init(), nr_consumed_maps in
-alloc_usemap_and_memmap(), the maps allocation function? I am also fine
-to use nr_consumed_maps for all of them.
-
-> 
-> > 
-> >  		if (!map) {
-> >  			ms->section_mem_map = 0;
-> > +			idx_present++;
-> >  			continue;
-> >  		}
-> >  
-> 
-> 
-> This hunk seems logically odd to me.  I would expect a non-used section
-> to *not* consume an entry from the temporary array.  Why does it?  The
-> error and success paths seem to do the same thing.
-
-Yes, this place is the hardest to understand. The temorary arrays are
-allocated beforehand with the size of 'nr_present_sections'. The error
-paths you mentioned is caused by allocation failure of mem_map or
-map_map, but whatever it's error or success paths, the sections must be
-marked as present in memory_present(). Error or success paths happened
-in alloc_usemap_and_memmap(), while checking if it's erorr or success
-paths happened in the last for_each_present_section_nr() of
-sparse_init(), and clear the ms->section_mem_map if it goes along error
-paths. This is the key point of this new allocation way.
-
-Thanks
-Baoquan
