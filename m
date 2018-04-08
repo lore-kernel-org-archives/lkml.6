@@ -1,182 +1,177 @@
 Return-Path: <hdegoede@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523955522; cv=none;
+X-Google-Smtp-Source: AIpwx4+rZlGPrqqA6hcmyoO2CykpZlhP1tqgBpr3pITU4dsLffS5ikDYHTzucwWAcULegQUx1M7q
+ARC-Seal: i=1; a=rsa-sha256; t=1523209223; cv=none;
         d=google.com; s=arc-20160816;
-        b=KzWI7140hoCQU+8UfR8QHPbI1MUkFZU9OrhAvMoE89zoJaluqttIO9RF0t3SmkHOl6
-         CLGqTMruLLczxUUyPT2vgE5U5w+FOuWHaKvJbh622we76W3NmgQLX3IzaSN6lkxImAPf
-         bNy1FRfS+gH06v2j+VqqS7HesE44weAJiOH+WohkCD7IUnNN4dQ3SucJfgB0Yh79KkRb
-         NROQ5go2wiHVKpuWL8d1w3Zm6D4ngcPlYea4q414oEJSg8aG+ddFJ6UI5gbvqLXDRDbi
-         UAfaxPBKJnWQ8tt6PtuMVIltixMdEPYD6ayxfgs53tYDre+qWe/olGGldulDxOir/iPF
-         7Wqw==
+        b=HTdXQRhkLfl12Ezz0NCY6frPQcygm2vuVNd0slQDRXCeyM4qpQmQGuoQv499ejd8MT
+         KSwB+M9oMbqfwRYFASzSg9nMwQy62+Vk3diDFPgmSYZ4gZ6pAOfYHVN0IAOCDzp+a9fJ
+         T3k0Qv5DAlprGRO6VG7dtposFVjXT5bzMiXlV5PHag/Hl5UaHg+b0HwMqle44TVR/IHH
+         uc8uyUk3eO52bFUZ+btzfDa9zmXKd5S558l9PiS2gL615YIQEiWaaIaYZfmsFhVj+Xut
+         G88JiJxF6pDN4NhHh2q10U0E3kAMveagKABntN+zrCBR2f8ld9bG8yeKNOXY/ErwPW29
+         IPtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=v63NvxHfZaQJZcSUERyR1c7CoXnxodhR6CDtJOjXKXw=;
-        b=EPZAENQXXN5k+sJDfi4rzM5MKVYtsrmjyZNtwigNYJmEfLDGvwNeAKNCoqaEhQN3LM
-         Lq+VmYjzPR8Jh+4Bsx23gR4D0ZxHWDwByUMz82mCthKYmlP366EmcHMQMxkL+x9cXlNf
-         8Qkc0BFZy3crrghVtqafRkjCe5l0eMTfuKUuU8cca4JoFWLoIF7p54UtL0vpeU5x/zub
-         wHFJWzQI3VQO5tshaZqO/HnlTO1Wq13iq23dxcWtubqG2hNWgwIQmi86bN2RUXQ2XHGo
-         mP1K4w+YC0PmGibzd9aDo3C6XowRP0FSWSx/nW8y89T5dyzTZYBDpV4QYHwoHrLufQch
-         N2Jg==
+        bh=LxxgdEq15Vaq4ncMLqShukuiVLnSB35xYN2Nv0kuSaw=;
+        b=ak6CBXmstGQwo/0rjd6UEjA6tztAVyxTeTnemFU4c7a5smXZZew3cOlVo7v/GL0SHM
+         +LluxqI9KNxVShMgzywbiIEkIIp9MUcO8a8gkA4nCauhi1Wm9g7o/51kzPH2usPPbSyr
+         SLmSdXmekzlEpdWyp2Kw5Fv2TKx8yfRKmzfngpciqXoOFibZ2qLrd6ZtEOB345tH/cRV
+         EvBgEMhJXdGGZbfhEZA8jC8KYSIdinC6XB7jajl5W43GSOcNUvacupjxnQwJuF9o2DS+
+         CfQoFyat9FP+trPBDi7+3IvomHDJEcwZw91YzuPd3eBOcGfag6ZTAe+FI3iYIysdOCQ0
+         lPRA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AIpwx4/OQRB+bKYxDIGC8nIcCHrf+hicqCBnTyP9uH0T2XgTwvMbzwt5NFKmsGhK6OmeEfmVWfwyVQ==
-Subject: Re: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
- Andres Rodriguez <andresx7@gmail.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>,
- Ard Biesheuvel <ard.biesheuvel@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H . Peter Anvin" <hpa@zytor.com>, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, Peter Jones <pjones@redhat.com>,
- Dave Olsthoorn <dave@bewaar.me>, Will Deacon <will.deacon@arm.com>,
- Andy Lutomirski <luto@kernel.org>, Matt Fleming <matt@codeblueprint.co.uk>,
- David Howells <dhowells@redhat.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
- Josh Triplett <josh@joshtriplett.org>, dmitry.torokhov@gmail.com,
- mfuzzey@parkeon.com, keescook@chromium.org, Kalle Valo
- <kvalo@codeaurora.org>, Arend Van Spriel <arend.vanspriel@broadcom.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, nbroeking@me.com,
- bjorn.andersson@linaro.org, Torsten Duwe <duwe@suse.de>, x86@kernel.org,
- linux-efi@vger.kernel.org
-References: <20180408174014.21908-1-hdegoede@redhat.com>
- <20180408174014.21908-3-hdegoede@redhat.com>
- <20180417001738.GN30543@wotan.suse.de>
 From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <aff2d267-e06d-f422-5623-6f6cc25af155@redhat.com>
-Date: Tue, 17 Apr 2018 10:58:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180417001738.GN30543@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: Darren Hart <dvhart@infradead.org>,
+	Andy Shevchenko <andy@infradead.org>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Peter Jones <pjones@redhat.com>,
+	Dave Olsthoorn <dave@bewaar.me>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Matt Fleming <matt@codeblueprint.co.uk>,
+	David Howells <dhowells@redhat.com>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	dmitry.torokhov@gmail.com,
+	mfuzzey@parkeon.com,
+	keescook@chromium.org,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Arend Van Spriel <arend.vanspriel@broadcom.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	nbroeking@me.com,
+	bjorn.andersson@linaro.org,
+	Torsten Duwe <duwe@suse.de>,
+	x86@kernel.org,
+	linux-efi@vger.kernel.org
+Subject: [PATCH v3 1/5] efi: Export boot-services code and data as debugfs-blobs
+Date: Sun,  8 Apr 2018 19:40:10 +0200
+Message-Id: <20180408174014.21908-2-hdegoede@redhat.com>
+In-Reply-To: <20180408174014.21908-1-hdegoede@redhat.com>
+References: <20180408174014.21908-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597199782052351527?=
-X-GMAIL-MSGID: =?utf-8?q?1597983185733014065?=
+X-GMAIL-THRID: =?utf-8?q?1597199777602363676?=
+X-GMAIL-MSGID: =?utf-8?q?1597200635145451855?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+Sometimes it is useful to be able to dump the efi boot-services code and
+data. This commit adds these as debugfs-blobs to /sys/kernel/debug/efi,
+but only if efi=debug is passed on the kernel-commandline as this requires
+not freeing those memory-regions, which costs 20+ MB of RAM.
 
-On 17-04-18 02:17, Luis R. Rodriguez wrote:
-> On Sun, Apr 08, 2018 at 07:40:11PM +0200, Hans de Goede wrote:
->>   static void firmware_free_data(const struct firmware *fw)
->>   {
->> @@ -576,6 +600,15 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
->>   		goto out;
->>   
->>   	ret = fw_get_filesystem_firmware(device, fw->priv);
->> +#ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
->> +	if (ret && device &&
->> +	    device_property_read_bool(device, "efi-embedded-firmware")) {
->> +		ret = fw_get_efi_embedded_fw(device, fw->priv, ret);
->> +		if (ret == 0)
->> +			ret = assign_fw(fw, device, opt_flags | FW_OPT_NOCACHE);
->> +		goto out;
->> +	}
->> +#endif
-> 
-> You mussed what I asked for in terms of adding a new flag, (please work on top
-> of Andre's patches as those likely will be merged first, and also have kdocs
-> for the flags)
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v2:
+-Do not call pr_err on debugfs call failures
+---
+ arch/x86/platform/efi/quirks.c |  4 +++
+ drivers/firmware/efi/efi.c     | 53 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
-Ok I will base my next version on top of Andres' series.
-
-> and then a new firmware API to wrap the above into a function
-> which would only do something if the driver *asked* for it on their firmware
-> API call.
-> Ie, please add a new firmware_request_efi_fw().
-
-As I tried to explain in the changelog the problem with doing this, is that
-this makes it a driver decision, where it really needs to be platform-code driven,
-not driver driven.
-
-Take for example the drivers/input/touchscreen/silead.c code that is used on
-a lot of 32 bit ARM platforms too, which don't have EFI at all, so if that
-needs to call request_firmware_efi() then should I add:
-
-#ifdef CONFIG_X86
-	fw = request_firmware_efi(...);
-#else
-	fw = request_firmware(...);
-#endif
-
-? But even on x86 only some devices with a silead touchscreen have EFI
-embedded firmware, so then I would need something like:
-
-#ifdef CONFIG_X86
-	if (device_property_get_bool(dev, "some-prop-name"))
-		fw = request_firmware_efi(...);
-	else
-#else
-		fw = request_firmware(...);
-#endif
-
-That is assuming I still want the normal fallback path in the
-case no EFI firmware is available, which I do because then
-something like packagekit may see if the firmware is packaged
-in one of the configured distro repositories.
-
-We already have (x86) platform code in place to attach
-properties (like a board specific firmware filename) to the
-device using device-properties so that drivers like silead.c
-don't get filled / polluted with board/platform specific knowledge,
-which IMHO is the place where the knowledge fallback to
-an EFI embedded firmware copy belongs.
-
-As the further patches in v3 of this series shows, this actually
-works quite nicely, because this also allows bundling the
-EFI-embedded firmware info (prefix, length, crc, name) together
-with the other board specific properties.
-
-TL;DR: using request_firmware_efi() vs request_firmware() is
-a driver decision, but whether EFI firmware fallback should be
-is board/platform specific not driver specific, therefor I
-believe that using a device-property to signal this is better.
-
-
-If you insist on me adding a request_firmware_efi() I can give
-this a shot, but I know that Dmitry (the input maintainer) will
-very much dislike the silead.c changes that implies...
-
-Still a question for lets sat we go that route, what do we
-then do with request_firmware_efi() when CONFIG_EFI is not set ?
-Should it be defined then or not, and if it should be defined
-when CONFIG_EFI is not set what should it do then?
-
-> Also if you see the
-> work I've done to remove the ifdefs over fallback mechanism you'll see it helps
-> split code and make it easier to read. We should strive to not add any more
-> ifdefery and instead make tehis code read easily.
-
-So looking at how the CONFIG_FW_LOADER_USER_HELPER stuff deals
-with this, I should:
-
-1) Move the definition of fw_get_efi_embedded_fw() to a new
-drivers/base/firmware_loader/fallback_efi.c,
-which only gets build if CONFIG_EFI_EMBEDDED_FIRMWARE is set
-
-2) Put the following in fallback.h:
-
-#ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
-int fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret);
-#else
-static inline int
-fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret)
-{
-	return ret;
-}
-#endif
-
-have I got that right?
-
-Regards,
-
-Hans
+diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+index 5b513ccffde4..0f968c7bcfec 100644
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -374,6 +374,10 @@ void __init efi_free_boot_services(void)
+ 	int num_entries = 0;
+ 	void *new, *new_md;
+ 
++	/* Keep all regions for /sys/kernel/debug/efi */
++	if (efi_enabled(EFI_DBG))
++		return;
++
+ 	for_each_efi_memory_desc(md) {
+ 		unsigned long long start = md->phys_addr;
+ 		unsigned long long size = md->num_pages << EFI_PAGE_SHIFT;
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index cd42f66a7c85..10c896e8b82b 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -18,6 +18,7 @@
+ #include <linux/kobject.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
++#include <linux/debugfs.h>
+ #include <linux/device.h>
+ #include <linux/efi.h>
+ #include <linux/of.h>
+@@ -316,6 +317,55 @@ static __init int efivar_ssdt_load(void)
+ static inline int efivar_ssdt_load(void) { return 0; }
+ #endif
+ 
++#ifdef CONFIG_DEBUG_FS
++
++#define EFI_DEBUGFS_MAX_BLOBS 32
++
++static struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
++
++static void __init efi_debugfs_init(void)
++{
++	struct dentry *efi_debugfs;
++	efi_memory_desc_t *md;
++	char name[32];
++	int type_count[EFI_BOOT_SERVICES_DATA + 1] = {};
++	int i = 0;
++
++	efi_debugfs = debugfs_create_dir("efi", NULL);
++	if (IS_ERR_OR_NULL(efi_debugfs))
++		return;
++
++	for_each_efi_memory_desc(md) {
++		switch (md->type) {
++		case EFI_BOOT_SERVICES_CODE:
++			snprintf(name, sizeof(name), "boot_services_code%d",
++				 type_count[md->type]++);
++			break;
++		case EFI_BOOT_SERVICES_DATA:
++			snprintf(name, sizeof(name), "boot_services_data%d",
++				 type_count[md->type]++);
++			break;
++		default:
++			continue;
++		}
++
++		debugfs_blob[i].size = md->num_pages << EFI_PAGE_SHIFT;
++		debugfs_blob[i].data = memremap(md->phys_addr,
++						debugfs_blob[i].size,
++						MEMREMAP_WB);
++		if (!debugfs_blob[i].data)
++			continue;
++
++		debugfs_create_blob(name, 0400, efi_debugfs, &debugfs_blob[i]);
++		i++;
++		if (i == EFI_DEBUGFS_MAX_BLOBS)
++			break;
++	}
++}
++#else
++static inline void efi_debugfs_init(void) {}
++#endif
++
+ /*
+  * We register the efi subsystem with the firmware subsystem and the
+  * efivars subsystem with the efi subsystem, if the system was booted with
+@@ -360,6 +410,9 @@ static int __init efisubsys_init(void)
+ 		goto err_remove_group;
+ 	}
+ 
++	if (efi_enabled(EFI_DBG))
++		efi_debugfs_init();
++
+ 	return 0;
+ 
+ err_remove_group:
+-- 
+2.17.0
