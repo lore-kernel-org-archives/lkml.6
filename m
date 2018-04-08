@@ -1,191 +1,342 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752770AbeDHDK2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 23:10:28 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48488 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752466AbeDHDK0 (ORCPT
+        id S1752693AbeDHDQt (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 23:16:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52414 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752034AbeDHDQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 23:10:26 -0400
-Date: Sat, 7 Apr 2018 20:11:13 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Jan Kara <jack@suse.cz>, linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Jeff Moyer <jmoyer@redhat.com>, Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Josh Triplett <josh.triplett@intel.com>
-Subject: Re: [PATCH v8 15/18] mm, fs, dax: handle layout changes to pinned
- dax mappings
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152246901060.36038.4487158506830998280.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180404094656.dssixqvvdcp5jff2@quack2.suse.cz>
- <CAPcyv4joRA=BrurYZ1kzXpMG=jnXik9+LdLqH9961jM5VnmU7w@mail.gmail.com>
+        Sat, 7 Apr 2018 23:16:47 -0400
+Date: Sat, 7 Apr 2018 20:16:46 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Use struct page for filename
+Message-ID: <20180408031646.GB32632@bombadil.infradead.org>
+References: <001a114467482dbc4b05692df8f9@google.com>
+ <CACT4Y+adiXih0-jfNGHgf1kEQ2=KLY5NdX-87BTDbrQgEAHc9g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4joRA=BrurYZ1kzXpMG=jnXik9+LdLqH9961jM5VnmU7w@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040803-0008-0000-0000-000002F2BDD4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008816; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000256; SDB=6.01014707; UDB=6.00517332; IPR=6.00793962;
- MB=3.00020464; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-08 03:10:17
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040803-0009-0000-0000-000038D21EDE
-Message-Id: <20180408031113.GO3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-07_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- malwarescore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804080033
+In-Reply-To: <CACT4Y+adiXih0-jfNGHgf1kEQ2=KLY5NdX-87BTDbrQgEAHc9g@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 07, 2018 at 12:38:24PM -0700, Dan Williams wrote:
-> [ adding Paul and Josh ]
+On Fri, Apr 06, 2018 at 03:33:36PM +0200, Dmitry Vyukov wrote:
+> On Fri, Apr 6, 2018 at 3:24 PM, syzbot
+> <syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com> wrote:
+> > cache_from_obj: Wrong slab cache. names_cache but object is from kmalloc-96
 > 
-> On Wed, Apr 4, 2018 at 2:46 AM, Jan Kara <jack@suse.cz> wrote:
-> > On Fri 30-03-18 21:03:30, Dan Williams wrote:
-> >> Background:
-> >>
-> >> get_user_pages() in the filesystem pins file backed memory pages for
-> >> access by devices performing dma. However, it only pins the memory pages
-> >> not the page-to-file offset association. If a file is truncated the
-> >> pages are mapped out of the file and dma may continue indefinitely into
-> >> a page that is owned by a device driver. This breaks coherency of the
-> >> file vs dma, but the assumption is that if userspace wants the
-> >> file-space truncated it does not matter what data is inbound from the
-> >> device, it is not relevant anymore. The only expectation is that dma can
-> >> safely continue while the filesystem reallocates the block(s).
-> >>
-> >> Problem:
-> >>
-> >> This expectation that dma can safely continue while the filesystem
-> >> changes the block map is broken by dax. With dax the target dma page
-> >> *is* the filesystem block. The model of leaving the page pinned for dma,
-> >> but truncating the file block out of the file, means that the filesytem
-> >> is free to reallocate a block under active dma to another file and now
-> >> the expected data-incoherency situation has turned into active
-> >> data-corruption.
-> >>
-> >> Solution:
-> >>
-> >> Defer all filesystem operations (fallocate(), truncate()) on a dax mode
-> >> file while any page/block in the file is under active dma. This solution
-> >> assumes that dma is transient. Cases where dma operations are known to
-> >> not be transient, like RDMA, have been explicitly disabled via
-> >> commits like 5f1d43de5416 "IB/core: disable memory registration of
-> >> filesystem-dax vmas".
-> >>
-> >> The dax_layout_busy_page() routine is called by filesystems with a lock
-> >> held against mm faults (i_mmap_lock) to find pinned / busy dax pages.
-> >> The process of looking up a busy page invalidates all mappings
-> >> to trigger any subsequent get_user_pages() to block on i_mmap_lock.
-> >> The filesystem continues to call dax_layout_busy_page() until it finally
-> >> returns no more active pages. This approach assumes that the page
-> >> pinning is transient, if that assumption is violated the system would
-> >> have likely hung from the uncompleted I/O.
-> >>
-> >> Cc: Jan Kara <jack@suse.cz>
-> >> Cc: Jeff Moyer <jmoyer@redhat.com>
-> >> Cc: Dave Chinner <david@fromorbit.com>
-> >> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> >> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> >> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> >> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-> >> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> >> Cc: Andrew Morton <akpm@linux-foundation.org>
-> >> Reported-by: Christoph Hellwig <hch@lst.de>
-> >> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> >> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> >> ---
-> >>  drivers/dax/super.c |    2 +
-> >>  fs/dax.c            |   92 +++++++++++++++++++++++++++++++++++++++++++++++++++
-> >>  include/linux/dax.h |   25 ++++++++++++++
-> >>  mm/gup.c            |    5 +++
-> >>  4 files changed, 123 insertions(+), 1 deletion(-)
-> >
-> > ...
-> >
-> >> +/**
-> >> + * dax_layout_busy_page - find first pinned page in @mapping
-> >> + * @mapping: address space to scan for a page with ref count > 1
-> >> + *
-> >> + * DAX requires ZONE_DEVICE mapped pages. These pages are never
-> >> + * 'onlined' to the page allocator so they are considered idle when
-> >> + * page->count == 1. A filesystem uses this interface to determine if
-> >> + * any page in the mapping is busy, i.e. for DMA, or other
-> >> + * get_user_pages() usages.
-> >> + *
-> >> + * It is expected that the filesystem is holding locks to block the
-> >> + * establishment of new mappings in this address_space. I.e. it expects
-> >> + * to be able to run unmap_mapping_range() and subsequently not race
-> >> + * mapping_mapped() becoming true. It expects that get_user_pages() pte
-> >> + * walks are performed under rcu_read_lock().
-> >> + */
-> >> +struct page *dax_layout_busy_page(struct address_space *mapping)
-> >> +{
-> >> +     pgoff_t indices[PAGEVEC_SIZE];
-> >> +     struct page *page = NULL;
-> >> +     struct pagevec pvec;
-> >> +     pgoff_t index, end;
-> >> +     unsigned i;
-> >> +
-> >> +     /*
-> >> +      * In the 'limited' case get_user_pages() for dax is disabled.
-> >> +      */
-> >> +     if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
-> >> +             return NULL;
-> >> +
-> >> +     if (!dax_mapping(mapping) || !mapping_mapped(mapping))
-> >> +             return NULL;
-> >> +
-> >> +     pagevec_init(&pvec);
-> >> +     index = 0;
-> >> +     end = -1;
-> >> +     /*
-> >> +      * Flush dax_layout_lock() sections to ensure all possible page
-> >> +      * references have been taken, or otherwise arrange for faults
-> >> +      * to block on the filesystem lock that is taken for
-> >> +      * establishing new mappings.
-> >> +      */
-> >> +     unmap_mapping_range(mapping, 0, 0, 1);
-> >> +     synchronize_rcu();
-> >
-> > So I still don't like the use of RCU for this. It just seems as an abuse to
-> > use RCU like that. Furthermore it has a hefty latency cost for the truncate
-> > path. A trivial test to truncate 100 times the last page of a 16k file that
-> > is mmaped (only the first page):
-> >
-> > DAX+your patches        3.899s
-> > non-DAX                 0.015s
-> >
-> > So you can see synchronize_rcu() increased time to run truncate(2) more
-> > than 200 times (the process is indeed sitting in __wait_rcu_gp all the
-> > time). IMHO that's just too costly.
-> 
-> I wonder if this can be trivially solved by using srcu. I.e. we don't
-> need to wait for a global quiescent state, just a
-> get_user_pages_fast() quiescent state. ...or is that an abuse of the
-> srcu api?
+> Al, do you see how this can happen?
 
->From what I can see (not that I claim to understand DAX), SRCU
-is worth trying.  Another thing to try (as a test) is to replace the
-synchronize_rcu() above with synchronize_rcu_expedited(), which might
-get you an order of magnitude or thereabouts.
+I don't see how it happened, but when looking at this bug, I thought
+"This is very complicated, I think there's a simpler way to handle this".
 
-							Thanx, Paul
+Here's a proposal.  It won't apply to any existing tree (depends on a
+couple of local commits), but I think you'll get the general flavour
+of it.  It's mostly compile-tested (build still running, but fs/ and
+kernel/ compiled without issue).
+
+ fs/dcache.c              |   7 ----
+ fs/namei.c               | 102 ++++++++++++-----------------------------------
+ include/linux/fs.h       |  26 ++++++------
+ include/linux/mm_types.h |  12 +++++-
+ kernel/auditsc.c         |   8 ++--
+ 5 files changed, 51 insertions(+), 104 deletions(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 593079176123..749b82b8fa1c 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -3172,10 +3172,6 @@ static void __init dcache_init(void)
+ 	d_hash_shift = 32 - d_hash_shift;
+ }
+ 
+-/* SLAB cache for __getname() consumers */
+-struct kmem_cache *names_cachep __read_mostly;
+-EXPORT_SYMBOL(names_cachep);
+-
+ void __init vfs_caches_init_early(void)
+ {
+ 	int i;
+@@ -3189,9 +3185,6 @@ void __init vfs_caches_init_early(void)
+ 
+ void __init vfs_caches_init(void)
+ {
+-	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
+-			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
+-
+ 	dcache_init();
+ 	inode_init();
+ 	files_init();
+diff --git a/fs/namei.c b/fs/namei.c
+index a09419379f5d..16fb4779d29f 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -122,71 +122,46 @@
+  * PATH_MAX includes the nul terminator --RR.
+  */
+ 
+-#define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
++struct filename *alloc_filename(void)
++{
++	struct page *page = alloc_page(GFP_KERNEL);
++
++	page->filename.name = page_to_virt(page);
++	return &page->filename;
++}
++
++void putname(struct filename *name)
++{
++	__free_page(container_of(name, struct page, filename));
++}
++
++void filename_get(struct filename *name)
++{
++	page_ref_inc(container_of(name, struct page, filename));
++}
+ 
+ struct filename *
+ getname_flags(const char __user *filename, int flags, int *empty)
+ {
+ 	struct filename *result;
+-	char *kname;
+ 	int len;
+ 
+ 	result = audit_reusename(filename);
+ 	if (result)
+ 		return result;
+ 
+-	result = __getname();
++	result = alloc_filename();
+ 	if (unlikely(!result))
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	/*
+-	 * First, try to embed the struct filename inside the names_cache
+-	 * allocation
+-	 */
+-	kname = (char *)result->iname;
+-	result->name = kname;
+-
+-	len = strncpy_from_user(kname, filename, EMBEDDED_NAME_MAX);
++	len = strncpy_from_user((char *)result->name, filename, PATH_MAX);
++	if (unlikely(len == PATH_MAX))
++		len = -ENAMETOOLONG;
+ 	if (unlikely(len < 0)) {
+-		__putname(result);
++		putname(result);
+ 		return ERR_PTR(len);
+ 	}
+ 
+-	/*
+-	 * Uh-oh. We have a name that's approaching PATH_MAX. Allocate a
+-	 * separate struct filename so we can dedicate the entire
+-	 * names_cache allocation for the pathname, and re-do the copy from
+-	 * userland.
+-	 */
+-	if (unlikely(len == EMBEDDED_NAME_MAX)) {
+-		const size_t size = offsetof(struct filename, iname[1]);
+-		kname = (char *)result;
+-
+-		/*
+-		 * size is chosen that way we to guarantee that
+-		 * result->iname[0] is within the same object and that
+-		 * kname can't be equal to result->iname, no matter what.
+-		 */
+-		result = kzalloc(size, GFP_KERNEL);
+-		if (unlikely(!result)) {
+-			__putname(kname);
+-			return ERR_PTR(-ENOMEM);
+-		}
+-		result->name = kname;
+-		len = strncpy_from_user(kname, filename, PATH_MAX);
+-		if (unlikely(len < 0)) {
+-			__putname(kname);
+-			kfree(result);
+-			return ERR_PTR(len);
+-		}
+-		if (unlikely(len == PATH_MAX)) {
+-			__putname(kname);
+-			kfree(result);
+-			return ERR_PTR(-ENAMETOOLONG);
+-		}
+-	}
+-
+-	result->refcnt = 1;
+ 	/* The empty path is special. */
+ 	if (unlikely(!len)) {
+ 		if (empty)
+@@ -215,49 +190,22 @@ getname_kernel(const char * filename)
+ 	struct filename *result;
+ 	int len = strlen(filename) + 1;
+ 
+-	result = __getname();
++	result = alloc_filename();
+ 	if (unlikely(!result))
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	if (len <= EMBEDDED_NAME_MAX) {
+-		result->name = (char *)result->iname;
+-	} else if (len <= PATH_MAX) {
+-		struct filename *tmp;
+-
+-		tmp = kmalloc(sizeof(*tmp), GFP_KERNEL);
+-		if (unlikely(!tmp)) {
+-			__putname(result);
+-			return ERR_PTR(-ENOMEM);
+-		}
+-		tmp->name = (char *)result;
+-		result = tmp;
+-	} else {
+-		__putname(result);
++	if (len > PATH_MAX) {
++		putname(result);
+ 		return ERR_PTR(-ENAMETOOLONG);
+ 	}
+ 	memcpy((char *)result->name, filename, len);
+ 	result->uptr = NULL;
+ 	result->aname = NULL;
+-	result->refcnt = 1;
+ 	audit_getname(result);
+ 
+ 	return result;
+ }
+ 
+-void putname(struct filename *name)
+-{
+-	BUG_ON(name->refcnt <= 0);
+-
+-	if (--name->refcnt > 0)
+-		return;
+-
+-	if (name->name != name->iname) {
+-		__putname(name->name);
+-		kfree(name);
+-	} else
+-		__putname(name);
+-}
+-
+ static int check_acl(struct inode *inode, int mask)
+ {
+ #ifdef CONFIG_FS_POSIX_ACL
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ab44a19f2ddd..5c93ebc519fe 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2376,15 +2376,6 @@ static inline int break_layout(struct inode *inode, bool wait)
+ #endif /* CONFIG_FILE_LOCKING */
+ 
+ /* fs/open.c */
+-struct audit_names;
+-struct filename {
+-	const char		*name;	/* pointer to actual string */
+-	const __user char	*uptr;	/* original userland pointer */
+-	struct audit_names	*aname;
+-	int			refcnt;
+-	const char		iname[];
+-};
+-
+ extern long vfs_truncate(const struct path *, loff_t);
+ extern int do_truncate(struct dentry *, loff_t start, unsigned int time_attrs,
+ 		       struct file *filp);
+@@ -2399,6 +2390,18 @@ extern struct file *file_open_root(struct dentry *, struct vfsmount *,
+ extern struct file * dentry_open(const struct path *, int, const struct cred *);
+ extern int filp_close(struct file *, fl_owner_t id);
+ 
++/* fs/namei.c */
++static inline void *__getname(void)
++{
++	return (void *)__get_free_page(GFP_KERNEL);
++}
++
++static inline void __putname(const void *name)
++{
++	free_page((unsigned long)name);
++}
++
++void filename_get(struct filename *);
+ extern struct filename *getname_flags(const char __user *, int, int *);
+ extern struct filename *getname(const char __user *);
+ extern struct filename *getname_kernel(const char *);
+@@ -2421,11 +2424,6 @@ extern int ioctl_preallocate(struct file *filp, void __user *argp);
+ extern void __init vfs_caches_init_early(void);
+ extern void __init vfs_caches_init(void);
+ 
+-extern struct kmem_cache *names_cachep;
+-
+-#define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
+-#define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
+-
+ #ifdef CONFIG_BLOCK
+ extern int register_blkdev(unsigned int, const char *);
+ extern void unregister_blkdev(unsigned int, const char *);
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 97ceec1c6e21..a6ca28ef4277 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -25,6 +25,13 @@
+ struct address_space;
+ struct mem_cgroup;
+ struct hmm;
++struct audit_names;
++
++struct filename {
++	const char		*name;	/* pointer to actual string */
++	const __user char	*uptr;	/* original userland pointer */
++	struct audit_names	*aname;
++};
+ 
+ /*
+  * Each physical page in the system has a struct page associated with
+@@ -188,6 +195,7 @@ struct page {
+ 			spinlock_t ptl;
+ #endif
+ 		};
++		struct filename filename;
+ 	};
+ 
+ #ifdef CONFIG_MEMCG
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index e80459f7e132..e539550f5983 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -1722,7 +1722,7 @@ __audit_reusename(const __user char *uptr)
+ 		if (!n->name)
+ 			continue;
+ 		if (n->name->uptr == uptr) {
+-			n->name->refcnt++;
++			filename_get(n->name);
+ 			return n->name;
+ 		}
+ 	}
+@@ -1751,7 +1751,7 @@ void __audit_getname(struct filename *name)
+ 	n->name = name;
+ 	n->name_len = AUDIT_NAME_FULL;
+ 	name->aname = n;
+-	name->refcnt++;
++	filename_get(name);
+ 
+ 	if (!context->pwd.dentry)
+ 		get_fs_pwd(current->fs, &context->pwd);
+@@ -1825,7 +1825,7 @@ void __audit_inode(struct filename *name, const struct dentry *dentry,
+ 		return;
+ 	if (name) {
+ 		n->name = name;
+-		name->refcnt++;
++		filename_get(name);
+ 	}
+ 
+ out:
+@@ -1954,7 +1954,7 @@ void __audit_inode_child(struct inode *parent,
+ 		if (found_parent) {
+ 			found_child->name = found_parent->name;
+ 			found_child->name_len = AUDIT_NAME_FULL;
+-			found_child->name->refcnt++;
++			filename_get(found_child->name);
+ 		}
+ 	}
+ 
