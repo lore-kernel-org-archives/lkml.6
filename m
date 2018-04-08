@@ -1,86 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752381AbeDHSC7 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 14:02:59 -0400
-Received: from imap.thunk.org ([74.207.234.97]:44616 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751601AbeDHSC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 14:02:57 -0400
-Date: Sun, 8 Apr 2018 14:02:52 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Eric Biggers <ebiggers@google.com>, Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: Running syzkaller repros using kvm-xfstests
-Message-ID: <20180408180252.GC9720@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <001a1148578c10e4700568e814eb@google.com>
- <CACT4Y+bL_+3ZJLE_1KzGNrz4hi=Si-KKsKLCd09TMD1Ux2jpgg@mail.gmail.com>
- <20180404193504.GA7715@bombadil.infradead.org>
- <20180405032200.GC22358@thunk.org>
- <20180405032454.GD9301@bombadil.infradead.org>
- <20180405223226.GA729@dastard>
- <20180406001325.GA133204@google.com>
- <20180406013741.GA7345@thunk.org>
- <20180408063114.GB9720@thunk.org>
- <CACT4Y+Ynbn9qAmk3jVBs6pUjDAz6gJMD5YHM4+EyzEuwBj+4-Q@mail.gmail.com>
+        id S1752539AbeDHSDe (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 14:03:34 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.161]:26679 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752463AbeDHSDd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 14:03:33 -0400
+X-RZG-AUTH: :P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9x2YdNp5Oujd5kpkCUA==
+X-RZG-CLASS-ID: mo00
+From: Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To: syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: [PATCH] AF_ALG: register completely initialized request in list
+Date: Sun, 08 Apr 2018 19:57:12 +0200
+Message-ID: <3337259.MW9pfDCdka@positron.chronox.de>
+In-Reply-To: <00000000000092ad87056950ef9e@google.com>
+References: <00000000000092ad87056950ef9e@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+Ynbn9qAmk3jVBs6pUjDAz6gJMD5YHM4+EyzEuwBj+4-Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 08, 2018 at 03:18:39PM +0200, Dmitry Vyukov wrote:
-> 
-> But note that syzkaller is under active development, so pre-canned
-> binaries may not always work. Mismatching binary may not understand
-> all syscalls, fail to parse program, interpret arguments differently,
-> execute program differently, setup a different environment for the
-> test, etc. Now a C program captures all of this, because code that
-> transforms syzkaller programs into C is versioned along with the rest
-> of the system.
-> Strictly saying, for syzkaller reproducers one needs to use the exact
-> syzkaller revision listed along with the reproducer, see for example:
-> https://syzkaller.appspot.com/bug?id=3fb9c4777053e79a6d2a65ac3738664c87629a21
-> The "#syz test" styzbot command does this. Using a different syzkaller
-> revision may or may not work.
+Hi,
 
-Thanks for the warning.  I assume you try to maintain backwards
-compatibility where possible?  It might be nice if you could add some
-kind of explicit versioning scheme --- perhaps with a major/minor
-version scheme where the syz-executor needs to have the same major
-number, and a minor number >= the minor version number of the test?
+May I ask to check whether this patch fixes the issue? I cannot re-create
+the issue with the reproducter. Yet, as far as I understand, you try to
+induce errors which shall validate whether the error code paths are correct.
 
-One of the reasons why the C program is not so useful for me is that
-in the Repeat:true case, the C program repeats forever.  So for
-example, I translate Repeat:true to -repeat=100.  See:
+The fix below should ensure this now.
 
-https://github.com/tytso/xfstests-bld/blob/master/kvm-xfstests/test-appliance/files/usr/local/bin/run-syz
+Thanks a lot.
 
-I suppose I could just abort the test after N minutes and assume if
-the kernel hasn't crashed, that it's probably not going to.  But some
-way that the C program can be given an argument or an environment
-variable to control how number of loops it will run might be useful.
-And some kind of hint as how reliable the repro would be (e.g,. some
-indication that you should try to run it at least N times to get a
-failure at least 95% of the time).
+---8<---
 
-						- Ted
+>From 8f083e7b0684a9f91c186d7b46eec34e439689c3 Mon Sep 17 00:00:00 2001
+From: Stephan Mueller <smueller@chronox.de>
+Date: Sun, 8 Apr 2018 19:53:59 +0200
+Subject: [PATCH] AF_ALG: Initialize sg_num_bytes in error code path
+
+The RX SGL in processing is already registered with the RX SGL tracking
+list to support proper cleanup. The cleanup code path uses the
+sg_num_bytes variable which must therefore be always initialized, even
+in the error code path.
+
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+Reported-by: syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
+---
+ crypto/af_alg.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+index c49766b03165..0d555c072669 100644
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -1156,8 +1156,10 @@ int af_alg_get_rsgl(struct sock *sk, struct msghdr *msg, int flags,
+ 
+ 		/* make one iovec available as scatterlist */
+ 		err = af_alg_make_sg(&rsgl->sgl, &msg->msg_iter, seglen);
+-		if (err < 0)
++		if (err < 0) {
++			rsgl->sg_num_bytes = 0;
+ 			return err;
++		}
+ 
+ 		/* chain the new scatterlist with previous one */
+ 		if (areq->last_rsgl)
+-- 
+2.14.3
