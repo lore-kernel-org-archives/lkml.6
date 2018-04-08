@@ -1,94 +1,123 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48TIc0mAvFMDizFLdSuiZBIkklqX1v7WPp3yo10K6kqwRsXmQc+Y+BSunoVsaf1wTZ9lwDf
-ARC-Seal: i=1; a=rsa-sha256; t=1523021104; cv=none;
+Return-Path: <hdegoede@redhat.com>
+X-Google-Smtp-Source: AIpwx4+B3CzErg8y6MJ1AhkkxraoAgOp2c9aMzfjp28B7U94c/nsb3k6zttnrZNqnFNWu1KAGsMs
+ARC-Seal: i=1; a=rsa-sha256; t=1523208403; cv=none;
         d=google.com; s=arc-20160816;
-        b=wSOprnr89/MMcuy5UEaMhriNxSZoLWnj0w2LEWQRFmTdQTNHSAcx1FjS8/0Cf3RXO+
-         yazSf3vm3N6pU4lJN/ghPQA56zyT7WWh6TbtyBP0rz9D7w4bPJQ4uCNGSgBW5Nkv6kle
-         LdVj/UtmgKT7EhfBDE+JYqwVEDsUaefW3bsKcs4ACCmmCm0pRNaT0gE+SaBxw1Vpa6kR
-         Z8pVfpFHKRpJpKwIcBY01WnoHYRWVeuICkF1pFrpHUjm6XEgTsjtJfJuR52ystuRUsNx
-         aZpICjWw2qMDFoZFN2+xlA7nWCQ0s7P6QoHpfXVJ82SCK3HZRmmGhW5zp7mg/erF7uV7
-         MR6A==
+        b=EdGaNcauTXHgDOaxFppmvjGZ88DNzZCXG8OJRLE5QVd94hQveceEbTlEQoAxqzy5cS
+         857JmzcIvQUOXh4kK7jorJJYcx20q8V1auZsl6lSyOUMp4wPhJ0zhm6M+odYhfgglq7L
+         wbYVDPRBaqp1bXKdqUfmS13GVM3TSXi+/vnnKI5IdTGOeF2rSlr5RYrEHWWTQ8OGISB9
+         5sgWUYUQCykRxawRRFXMuRE4IvtxrhGKqL3WCzJRsQD7BtTN5A6ILnKXmYM5svzzZs0B
+         Bs1tHCt2XP31C/NHXQsWlfQswU+QwOXipF/VI6xl8G8iD7PQ/59pW4RKg+uYWaBGhuUd
+         f55A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=w6doEwUz0e0tiMRE/sj2xjFIXDHN4n+lhXn5USPQ9b4=;
-        b=dcK9DrkCuP1UH3dJg2gVvbgbr2amUAjiHzaK8OuOXjt3IyfQsb63dN3EB6i7I9Tt2j
-         XzdjrVkekpiDk0QiHCMuAtRwVpFoOL5fTSY7gkYje2lEoRMW/dTL5ConaPKfuGd1Tdt/
-         7sV7htDBq7txTFeohQZoClFxcu6NHDpC8NkqeankV7coyjXRbZ86BLHV9/dNSzhLToH4
-         MJoCvLTN5KMawp4oPMDg/9732zWeh2vqW/QeEr7aOS+nyWxE/cCAnRPQF3BeQh0XL0c4
-         MXUs2Fq/BJ1GULiVhBPNivkjrsBJoPFXagaHw68bG8s37a0WnxEADwH8rEFlSqKVJmCE
-         qqWA==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=700JYmxYtbCOaqcyEG7Kju9jo/6qo67aVMvDFYJ3O4Q=;
+        b=Buyl7M+tF19+ZlDB6yCakI/Au4e/urseYGCRD1SvU4CHKvOfTn58aFkR5+b8XwXDA+
+         OwozUczy02YmsTcfwmkfb/GsSYn8RwFAlb2Hk0nOktZZoG7rPyqJp1osfK1bloLRfb3y
+         mh9NAUn5anPuE7ERMkdN0JAbSAUboWLSto2ZKducjaU1aOVdiaC5ej7x4eioiL7XPZiM
+         CyJlAEhuw4IrxlgOLl0DcxRSSIPyQ3JnSzG0Y5igi6oEnTVU1M/TQbTtCCSNEE7Ro0a2
+         c11429Vh4JpD1CAcUW0xFEXjKwCKE0PmdwXEheWu/QbMockzVJ3hdm/Y9L5ldbbLinHc
+         M7fw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Kirill Marinushkin <k.marinushkin@gmail.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 01/93] ALSA: usb-audio: Fix parsing descriptor of UAC2 processing unit
-Date: Fri,  6 Apr 2018 15:22:30 +0200
-Message-Id: <20180406084225.029537157@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180406084224.918716300@linuxfoundation.org>
-References: <20180406084224.918716300@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+	Andy Shevchenko <andy@infradead.org>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Peter Jones <pjones@redhat.com>,
+	Dave Olsthoorn <dave@bewaar.me>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Matt Fleming <matt@codeblueprint.co.uk>,
+	David Howells <dhowells@redhat.com>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	dmitry.torokhov@gmail.com,
+	mfuzzey@parkeon.com,
+	keescook@chromium.org,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Arend Van Spriel <arend.vanspriel@broadcom.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	nbroeking@me.com,
+	bjorn.andersson@linaro.org,
+	Torsten Duwe <duwe@suse.de>,
+	x86@kernel.org,
+	linux-efi@vger.kernel.org
+Subject: [PATCH v2 0/5] efi/firmware/platform-x86: Add EFI embedded fw support
+Date: Sun,  8 Apr 2018 19:26:31 +0200
+Message-Id: <20180408172636.13926-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597003377535296095?=
-X-GMAIL-MSGID: =?utf-8?q?1597003377535296095?=
+X-GMAIL-THRID: =?utf-8?q?1597199774524534426?=
+X-GMAIL-MSGID: =?utf-8?q?1597199774524534426?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+Hi All,
 
-------------------
+Here is v2 of my patch-set to add support for EFI embedded fw to the kernel.
 
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
+The 3 most prominent changes are:
 
-commit a6618f4aedb2b60932d766bd82ae7ce866e842aa upstream.
+1) Add documentation describing the EFI embedded firmware mechanism to:
+   Documentation/driver-api/firmware/request_firmware.rst
 
-Currently, the offsets in the UAC2 processing unit descriptor are
-calculated incorrectly. It causes an issue when connecting the device which
-provides such a feature:
+2) Instead of having a single dmi_system_id array with its driver_data
+   members pointing to efi_embedded_fw_desc structs, have the drivers which
+   need EFI embedded-fw support export a dmi_system_id array and register
+   that with the EFI embedded-fw code
 
-~~~~
-[84126.724420] usb 1-1.3.1: invalid Processing Unit descriptor (id 18)
-~~~~
+   This series also includes the first driver to use this, in the form of
+   the touchscreen_dmi code (formerly silead_dmi) from drivers/platfrom/x86
 
-After this patch is applied, the UAC2 processing unit inits w/o this error.
+3) As discussed during the review of v1 we want to make the firmware_loader
+   code fallback to EFI embedded-fw optional.  Rather the adding yet another
+   firmware_request_foo variant for this, with the risk of later also needing
+   firmware_request_foo_nowait, etc. variants I've decided to make the code
+   check if the device has a "efi-embedded-fw" device-property bool set.
 
-Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
-Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+   This also seemed better because the same driver may want to use the
+   fallback on some systems, but not on others since e.g. not all (x86)
+   systems with a silead touchscreen have their touchscreen firmware embedded
+   in their EFI.
 
----
- include/uapi/linux/usb/audio.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+   Note that (as discussed) when the EFI fallback path is requested, the
+   usermodehelper fallback path is skipped.
 
---- a/include/uapi/linux/usb/audio.h
-+++ b/include/uapi/linux/usb/audio.h
-@@ -369,7 +369,7 @@ static inline __u8 uac_processing_unit_b
- {
- 	return (protocol == UAC_VERSION_1) ?
- 		desc->baSourceID[desc->bNrInPins + 4] :
--		desc->baSourceID[desc->bNrInPins + 6];
-+		2; /* in UAC2, this value is constant */
- }
- 
- static inline __u8 *uac_processing_unit_bmControls(struct uac_processing_unit_descriptor *desc,
-@@ -377,7 +377,7 @@ static inline __u8 *uac_processing_unit_
- {
- 	return (protocol == UAC_VERSION_1) ?
- 		&desc->baSourceID[desc->bNrInPins + 5] :
--		&desc->baSourceID[desc->bNrInPins + 7];
-+		&desc->baSourceID[desc->bNrInPins + 6];
- }
- 
- static inline __u8 uac_processing_unit_iProcessing(struct uac_processing_unit_descriptor *desc,
+Here is the full changelog of patch 2/5 which is where most of the changes are:
+
+Changes in v2:
+-Rebased on driver-core/driver-core-next
+-Add documentation describing the EFI embedded firmware mechanism to:
+ Documentation/driver-api/firmware/request_firmware.rst
+-Add a new EFI_EMBEDDED_FIRMWARE Kconfig bool and only build the embedded
+ fw support if this is set. This is an invisible option which should be
+ selected by drivers which need this
+-Remove the efi_embedded_fw_desc and dmi_system_id-s for known devices
+ from the efi-embedded-fw code, instead drivers using this are expected to
+ export a dmi_system_id array, with each entries' driver_data pointing to a
+ efi_embedded_fw_desc struct and register this with the efi-embedded-fw code
+-Use kmemdup to make a copy instead of efi_mem_reserve()-ing the firmware,
+ this avoids us messing with the EFI memmap and avoids the need to make
+ changes to efi_mem_desc_lookup()
+-Make the firmware-loader code only fallback to efi_get_embedded_fw() if
+ the passed in device has the "efi-embedded-fw" device-property bool set
+-Skip usermodehelper fallback when "efi-embedded-firmware" device-property
+ is set
+
+Patches 3-5 are new and implement using the EFI embedded-fw mechanism for
+Silead gslXXXX and Chipone icn8505 touchscreens on x86 devices.
+
+Regards,
+
+Hans
