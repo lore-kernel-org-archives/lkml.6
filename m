@@ -1,171 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752470AbeDHT3N (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 15:29:13 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33243 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752054AbeDHT3L (ORCPT
+        id S1752654AbeDHTha (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 15:37:30 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:37147 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752137AbeDHTh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 15:29:11 -0400
-X-Google-Smtp-Source: AIpwx49QtLjSVctp2X7NKB4dKaIeXy1Sf6fzZ1Js1wrhht/Lznhqm3xRmU4z8ASycf6LJS3CVB90Zg==
-Date: Sun, 8 Apr 2018 12:29:52 -0700
+        Sun, 8 Apr 2018 15:37:29 -0400
+X-Google-Smtp-Source: AIpwx4/IbSyQVGKrt/NW19FdhgqRVmvvU4XbW1MikOrnIs3irQvofzVPrhgsaOPG2yAkFeiw2ISOIg==
+Date: Sun, 8 Apr 2018 12:38:10 -0700
 From: Eric Biggers <ebiggers3@gmail.com>
 To: syzbot
-        <syzbot+79de6f09efc55fec084b706de3c91e9457433ac5@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, dccp@vger.kernel.org, dvyukov@google.com,
-        gerrit@erg.abdn.ac.uk, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Subject: Re: suspicious RCU usage at ./include/net/inet_sock.h:LINE
-Message-ID: <20180408192952.GB685@sol.localdomain>
-References: <001a1140ad88c4f006055d3836d2@google.com>
- <001a113f8d5653a67c0561346ed3@google.com>
+        <bot+bd88d15aeeb92bfef9294e3da5edf50331e0257b@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, ebiggers@google.com, edumazet@google.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tom@quantonium.net,
+        xiaolou4617@gmail.com, xiyou.wangcong@gmail.com
+Subject: Re: WARNING in kcm_exit_net (2)
+Message-ID: <20180408193810.GC685@sol.localdomain>
+References: <001a113ed51610bad9055f2d130e@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <001a113f8d5653a67c0561346ed3@google.com>
+In-Reply-To: <001a113ed51610bad9055f2d130e@google.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 25, 2017 at 05:45:00PM -0800, syzbot wrote:
-> syzkaller has found reproducer for the following crash on
-> fba961ab29e5ffb055592442808bb0f7962e05da
+On Wed, Nov 29, 2017 at 10:08:01PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzkaller hit the following crash on
+> 1d3b78bbc6e983fabb3fbf91b76339bf66e4a12c
 > git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
 > compiler: gcc (GCC) 7.1.1 20170620
 > .config is attached
 > Raw console output is attached.
-> C reproducer is attached
-> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> for information about syzkaller reproducers
+> 
+> Unfortunately, I don't have any reproducer for this bug yet.
 > 
 > 
-> Can not set IPV6_FL_F_REFLECT if flowlabel_consistency sysctl is enable
+> WARNING: CPU: 1 PID: 4099 at net/kcm/kcmsock.c:2014 kcm_exit_net+0x317/0x360
+> net/kcm/kcmsock.c:2014
+> Kernel panic - not syncing: panic_on_warn set ...
 > 
-> =============================
-> WARNING: suspicious RCU usage
-> 4.15.0-rc4+ #164 Not tainted
-> -----------------------------
-> ./include/net/inet_sock.h:136 suspicious rcu_dereference_check() usage!
-> 
-> other info that might help us debug this:
-> 
-> 
-> rcu_scheduler_active = 2, debug_locks = 1
-> 1 lock held by syzkaller667189/5780:
->  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>] lock_sock
-> include/net/sock.h:1462 [inline]
->  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>]
-> do_ipv6_setsockopt.isra.9+0x23d/0x38f0 net/ipv6/ipv6_sockglue.c:167
-> 
-> stack backtrace:
-> CPU: 0 PID: 5780 Comm: syzkaller667189 Not tainted 4.15.0-rc4+ #164
+> CPU: 1 PID: 4099 Comm: kworker/u4:9 Not tainted 4.14.0+ #129
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > Google 01/01/2011
+> Workqueue: netns cleanup_net
+> device lo entered promiscuous mode
 > Call Trace:
 >  __dump_stack lib/dump_stack.c:17 [inline]
 >  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4585
->  ireq_opt_deref include/net/inet_sock.h:135 [inline]
->  inet_csk_route_req+0x824/0xca0 net/ipv4/inet_connection_sock.c:544
->  dccp_v4_send_response+0xa7/0x640 net/dccp/ipv4.c:485
->  dccp_v4_conn_request+0x9ee/0x11b0 net/dccp/ipv4.c:633
->  dccp_v6_conn_request+0xd30/0x1350 net/dccp/ipv6.c:317
->  dccp_rcv_state_process+0x574/0x1620 net/dccp/input.c:612
->  dccp_v4_do_rcv+0xeb/0x160 net/dccp/ipv4.c:682
->  dccp_v6_do_rcv+0x81a/0x9b0 net/dccp/ipv6.c:578
->  sk_backlog_rcv include/net/sock.h:907 [inline]
->  __release_sock+0x124/0x360 net/core/sock.c:2274
->  release_sock+0xa4/0x2a0 net/core/sock.c:2789
->  do_ipv6_setsockopt.isra.9+0x50f/0x38f0 net/ipv6/ipv6_sockglue.c:898
->  ipv6_setsockopt+0xd7/0x150 net/ipv6/ipv6_sockglue.c:922
->  dccp_setsockopt+0x85/0xd0 net/dccp/proto.c:573
->  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2978
->  SYSC_setsockopt net/socket.c:1821 [inline]
->  SyS_setsockopt+0x189/0x360 net/socket.c:1800
->  entry_SYSCALL_64_fastpath+0x1f/0x96
-> RIP: 0033:0x445ec9
-> RSP: 002b:00007fa001b58db8 EFLAGS: 00000297 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 00000000006dbc24 RCX: 0000000000445ec9
-> RDX: 0000000000000020 RSI: 0000000000000029 RDI: 0000000000000004
-> RBP: 00000000006dbc20 R08: 0000000000000020 R09: 0000000000000000
-> R10: 000000002030a000 R11: 0000000000000297 R12: 0000000000000000
-> R13: 00007fff809eec1f R14: 00007fa001b599c0 R15: 0000000000000001
-> 
-> =============================
-> WARNING: suspicious RCU usage
-> 4.15.0-rc4+ #164 Not tainted
-> -----------------------------
-> ./include/net/inet_sock.h:136 suspicious rcu_dereference_check() usage!
-> 
-> other info that might help us debug this:
+>  panic+0x1e4/0x41c kernel/panic.c:183
+>  __warn+0x1dc/0x200 kernel/panic.c:547
+>  report_bug+0x211/0x2d0 lib/bug.c:184
+>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:177
+>  fixup_bug arch/x86/kernel/traps.c:246 [inline]
+>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:295
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:314
+>  invalid_op+0x18/0x20 arch/x86/entry/entry_64.S:926
+> RIP: 0010:kcm_exit_net+0x317/0x360 net/kcm/kcmsock.c:2014
+> RSP: 0000:ffff8801d9d27198 EFLAGS: 00010293
+> RAX: ffff8801c0884540 RBX: 1ffff1003b3a4e33 RCX: ffffffff84a738e7
+> RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000286
+> RBP: ffff8801d9d27260 R08: 0000000000000003 R09: 1ffff1003b3a4e0c
+> R10: ffff8801c0884540 R11: 0000000000000003 R12: 1ffff1003b3a4e37
+> R13: ffff8801d9d27238 R14: ffff8801c5fec8a0 R15: ffff8801c4b62e40
+>  ops_exit_list.isra.6+0xae/0x150 net/core/net_namespace.c:142
+>  cleanup_net+0x5c7/0xb60 net/core/net_namespace.c:484
+>  process_one_work+0xbfd/0x1be0 kernel/workqueue.c:2112
+>  worker_thread+0x223/0x1990 kernel/workqueue.c:2246
+>  kthread+0x37a/0x440 kernel/kthread.c:238
+>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:437
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
 > 
 > 
-> rcu_scheduler_active = 2, debug_locks = 1
-> 1 lock held by syzkaller667189/5780:
->  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>] lock_sock
-> include/net/sock.h:1462 [inline]
->  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>]
-> do_ipv6_setsockopt.isra.9+0x23d/0x38f0 net/ipv6/ipv6_sockglue.c:167
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
 > 
-> stack backtrace:
-> CPU: 0 PID: 5780 Comm: syzkaller667189 Not tainted 4.15.0-rc4+ #164
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4585
->  ireq_opt_deref include/net/inet_sock.h:135 [inline]
->  dccp_v4_send_response+0x4b0/0x640 net/dccp/ipv4.c:496
->  dccp_v4_conn_request+0x9ee/0x11b0 net/dccp/ipv4.c:633
->  dccp_v6_conn_request+0xd30/0x1350 net/dccp/ipv6.c:317
->  dccp_rcv_state_process+0x574/0x1620 net/dccp/input.c:612
->  dccp_v4_do_rcv+0xeb/0x160 net/dccp/ipv4.c:682
->  dccp_v6_do_rcv+0x81a/0x9b0 net/dccp/ipv6.c:578
->  sk_backlog_rcv include/net/sock.h:907 [inline]
->  __release_sock+0x124/0x360 net/core/sock.c:2274
->  release_sock+0xa4/0x2a0 net/core/sock.c:2789
->  do_ipv6_setsockopt.isra.9+0x50f/0x38f0 net/ipv6/ipv6_sockglue.c:898
->  ipv6_setsockopt+0xd7/0x150 net/ipv6/ipv6_sockglue.c:922
->  dccp_setsockopt+0x85/0xd0 net/dccp/proto.c:573
->  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2978
->  SYSC_setsockopt net/socket.c:1821 [inline]
->  SyS_setsockopt+0x189/0x360 net/socket.c:1800
->  entry_SYSCALL_64_fastpath+0x1f/0x96
-> RIP: 0033:0x445ec9
-> RSP: 002b:00007fa001b58db8 EFLAGS: 00000297 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 00000000006dbc24 RCX: 0000000000445ec9
-> RDX: 0000000000000020 RSI: 0000000000000029 RDI: 0000000000000004
-> RBP: 00000000006dbc20 R08: 0000000000000020 R09: 0000000000000000
-> R10: 000000002030a000 R11: 0000000000000297 R12: 0000000000000000
-> R13: 00007fff809eec1f R14: 00007fa001b599c0 R15: 0000000000000001
+> syzbot will keep track of this bug report.
+> Once a fix for this bug is committed, please reply to this email with:
+> #syz fix: exact-commit-title
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
 
-syzbot stopped hitting this for some reason, but the bug is still there.
-Here's a simplified reproducer that works on Linus' tree as of today:
+No reproducer, this last occurred on Dec 26 (103 days ago, commit fba961ab29e),
+and there have been several potentially relevant KCM fixes since then such as
+581e7226a5d ("kcm: Only allow TCP sockets to be attached to a KCM mux") and
+e5571240236 ("kcm: Check if sk_user_data already set in kcm_attach").  So I am
+invalidating this for syzbot, but if anyone thinks this may still be a bug then
+feel free to look into it.
 
-#include <linux/in.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <unistd.h>
+#syz invalid
 
-int main()
-{
-        int is_parent = (fork() != 0);
-        for (;;) {
-                int fd = socket(AF_INET, SOCK_DCCP, 0);
-                struct sockaddr_in addr = {
-                        .sin_family = AF_INET,
-                        .sin_port = htobe16(0x4e23),
-                };
-                if (is_parent) {
-                        connect(fd, (void *)&addr, sizeof(addr));
-                } else {
-                        bind(fd, (void *)&addr, sizeof(addr));
-                        listen(fd, 100);
-                        setsockopt(fd, 0, 0xFFFF, NULL, 0);
-                }
-                close(fd);
-        }
-}
+Eric
