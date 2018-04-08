@@ -1,218 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752364AbeDHBwB (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 7 Apr 2018 21:52:01 -0400
-Received: from lucky1.263xmail.com ([211.157.147.130]:40262 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752006AbeDHBwA (ORCPT
+        id S1752311AbeDHCF0 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 7 Apr 2018 22:05:26 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34786 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752034AbeDHCFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Apr 2018 21:52:00 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: shawn.lin@rock-chips.com
-X-FST-TO: suzhuangluan@hisilicon.com
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: shawn.lin@rock-chips.com
-X-UNIQUE-TAG: <4bb17a9c1c8f7c7be1d9bc55456332da>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Cc: shawn.lin@rock-chips.com, Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zhangfei Gao <zhangfei.gao@linaro.org>,
-        liwei <liwei213@huawei.com>, Suzhuangluan <suzhuangluan@hisilicon.com>
-Subject: Re: [PATCH] mmc: dw_mmc-k3: Fix DDR52 mode by setting required clock
- divisor
-To: Ryan Grachek <ryan@edited.us>
-References: <20180329182423.21201-1-ryan@edited.us>
- <e3ec3a77-f2f3-2164-4dbb-80e1ba3ebc63@rock-chips.com>
- <CAGoBSJq+tSpvFZsJLPffTaFBg5o2Nn2eeXXvHqt4Us_dd7==1w@mail.gmail.com>
- <bed16723-6bf0-4bcf-f44c-ebcf7a1e7cc5@rock-chips.com>
- <CAGoBSJogjG9efE9EKdinTCN9Px0zsW1_=5msXjHrLZXVjLBgow@mail.gmail.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <9d4bec45-42e3-da8d-ff29-1f24db27faf5@rock-chips.com>
-Date: Sun, 8 Apr 2018 09:51:49 +0800
+        Sat, 7 Apr 2018 22:05:24 -0400
+X-Google-Smtp-Source: AIpwx4/4O1s6JKGTHGovoxuq8XnDT5R+TSp0kK8gQOgcvQe7gi+HdgykYv1n1h7JjCDnZXG98V7J7A==
+Subject: Re: [PATCH v7 2/5] arm: arm64: page_alloc: reduce unnecessary binary
+ search in memblock_next_valid_pfn()
+To: Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Jia He <jia.he@hxt-semitech.com>
+References: <1522915478-5044-1-git-send-email-hejianet@gmail.com>
+ <1522915478-5044-3-git-send-email-hejianet@gmail.com>
+ <20180405113444.GB2647@bombadil.infradead.org>
+ <1f809296-e88d-1090-0027-890782b91d6e@gmail.com>
+ <20180405125054.GC2647@bombadil.infradead.org>
+ <20180406090920.GM16141@n2100.armlinux.org.uk>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <3308d7f2-e793-8f8e-7811-448b808bf736@gmail.com>
+Date: Sun, 8 Apr 2018 10:05:08 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAGoBSJogjG9efE9EKdinTCN9Px0zsW1_=5msXjHrLZXVjLBgow@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180406090920.GM16141@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/6 21:41, Ryan Grachek wrote:
-> On Wed, Apr 4, 2018 at 7:51 PM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->> [+ Zhangfei Gao who added support for hi6220]
->>
->> On 2018/4/4 23:31, Ryan Grachek wrote:
->>>
->>> On Tue, Apr 3, 2018 at 6:31 AM, Shawn Lin <shawn.lin@rock-chips.com
->>> <mailto:shawn.lin@rock-chips.com>> wrote:
->>>
->>>      On 2018/3/30 2:24, oscardagrach wrote:
->>>
->>>      Need at least one line commit body.
->>>
->>>          Signed-off-by: oscardagrach <ryan@edited.us
->>> <mailto:ryan@edited.us>>
->>>
->>>          ---
->>>             drivers/mmc/host/dw_mmc-k3.c | 10 ++++++++--
->>>             1 file changed, 8 insertions(+), 2 deletions(-)
->>>
->>>          diff --git a/drivers/mmc/host/dw_mmc-k3.c
->>>          b/drivers/mmc/host/dw_mmc-k3.c
->>>          index 89cdb3d533bb..efc546cb4db8 100644
->>>          --- a/drivers/mmc/host/dw_mmc-k3.c
->>>          +++ b/drivers/mmc/host/dw_mmc-k3.c
->>>          @@ -194,8 +194,14 @@ static void dw_mci_hi6220_set_ios(struct
->>>          dw_mci *host, struct mmc_ios *ios)
->>>                   int ret;
->>>                   unsigned int clock;
->>>             -     clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
->>>          -
->>>          +       /* CLKDIV must be 1 for DDR52/8-bit mode */
->>>          +       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
->>>          +               ios->timing == MMC_TIMING_MMC_DDR52) {
->>>          +               mci_writel(host, CLKDIV, 0x1);
->>>          +               clock = ios->clock;
->>>          +       } else {
->>>          +               clock = (ios->clock <= 25000000) ? 25000000 :
->>>          ios->clock;
->>>          +       }
->>>
->>>
->>>      I undertand DDR52/8-bit need CLKDIV fixed 1, but shouldn't the
->>> following
->>>      change is more sensible?
->>>
->>>      if (ios->bus_width == MMC_BUS_WIDTH_8 && ios->timing ==
->>>      MMC_TIMING_MMC_DDR52)
->>>               clock = ios->clock * 2;
->>>      else
->>>               clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
->>>
->>>
->>>      The reason is ios->clock is 52MHz and you could claim 104MHz from the
->>>      clock provider and let dw_mmc core take care of the divder to be 1.
->>>      Otherwise, you just force it to be DDR52/8-bit with a clk rate of
->>> 26MHz.
->>>
->>>
->>>                   ret = clk_set_rate(host->biu_clk, clock);
->>>                   if (ret)
->>>                           dev_warn(host->dev, "failed to set rate
->>>          %uHz\n", clock);
->>>
->>>
->>>
->>
->> For future wise, please use plain mode mail, but not HTML format.
->>
->>> Your feedback is correct. I see the Rockchip dwmmc driver has a similar
->>> implementation. After applying your suggested changes, however, my board
->>> reports "dwmmc_k3 f723d000.dwmmc0: failed to set rate 104000000Hz"
->>> during intialization of eMMC. In addition, I do not see CLKDIV being
->>> set to 1. clk_set_rate fails and I wonder if this is out-of-scope of
->>> the driver.
->>>
->>> If I set CLKDIV where I did prior, with your changes, the device fails
->>> to set the clock and falls back to 52 MHz (26 MHz) and works fine, but
->>> again, CLKDIV is reported as 0 (even though it is 1.) One thing of
->>> interest to note is when I manually set the clock by doing:
->>> (echo 104000000 > /sys/kernel/debug/mmc0/clock) the device reports back
->>> 'mmc_host mmc0: Bus speed (slot 0) = 198400000Hz (slot req 104000000Hz,
->>>    actual 99200000HZ div = 1)' which works reliably and clk_set_rate does
->>> not report any error.
->>>
->>
->> When looking closely into the code, at least dw_mci_hi6220_set_ios
->> goes wrong with the bus_hz, since it should be ciu_clk but not biu_clk.
->> "b" stands for bus, and "c" stands for card IMHO, however bus_hz
->> describs the clock to the card, provided by controller. Does the
->> following patch help?
->>
->>
->> diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
->> index 89cdb3d..9e78cf2 100644
->> --- a/drivers/mmc/host/dw_mmc-k3.c
->> +++ b/drivers/mmc/host/dw_mmc-k3.c
->> @@ -194,13 +194,21 @@ static void dw_mci_hi6220_set_ios(struct dw_mci *host,
->> struct mmc_ios *ios)
->>          int ret;
->>          unsigned int clock;
->>
->> -       clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
->> +       if (ios->bus_width == MMC_BUS_WIDTH_8 &&
->> +           ios->timing == MMC_TIMING_MMC_DDR52)
->> +               clock = ios->clock * 2;
->> +       else
->> +               clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
->>
->> -       ret = clk_set_rate(host->biu_clk, clock);
->> +       ret = clk_set_rate(host->ciu_clk, clock);
->>          if (ret)
->>                  dev_warn(host->dev, "failed to set rate %uHz\n", clock);
->>
->> -       host->bus_hz = clk_get_rate(host->biu_clk);
->> +       clock = clk_get_rate(host->ciu_clk);
->> +       if (clock != host->bus_hz) {
->> +               host->bus_hz = clock;
->> +               host->current_speed = 0;
->> +       }
->>
->>   }
->>
->>
->>> I am not sure where to begin debugging these clock issues and welcome
->>> any feedback.
->>
->>
-> 
-> The change results in the following:
-> 'dwmmc_k3 f723e000.dwmmc1: failed to set rate 25000000Hz'
-> 'dwmmc_k3 f723d000.dwmmc0: failed to set rate 25000000Hz'
-> 'dwmmc_k3 f723f000.dwmmc2: failed to set rate 25000000Hz'
-> 
-> and later on:
-> 'dwmmc_k3 f723d000.dwmmc0: failed to set rate 52000000Hz'
-> 'dwmmc_k3 f723d000.dwmmc0: failed to set rate 104000000Hz'
-> 
-> Eventually mmc1 (UHS-1 MicroSD) will settle down after repeated
-> attempts at setting 25 MHz:
-> 'mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req
-> 100000000Hz, actual 100000000HZ div = 0)'
-> 'mmc1: new ultra high speed SDR50 SDHC card at address 0001'
-> 'mmcblk1: mmc1:0001 GB1QT 29.8 GiB'
-> 
-> Same for mmc2 (SDIO WL1835MOD WiFi):
-> 'mmc_host mmc2: Bus speed (slot 0) = 100000000Hz (slot req 50000000Hz,
-> actual 50000000HZ div = 1)'
-> 'mmc2: new high speed SDIO card at address 0001'
-> 
-> So mmc1 and mmc2 will initialize eventually. I had not observed this
-> behavior prior. It appears to fail setting
-> all devices to an initial rate of 25 MHz. However, the same cannot be
-> said for mmc0 (eMMC).
-> Again, I observed being able to set the clock manually through debugfs
-> to 104MHz(/2) which is successful
-> and the card becomes stable and will initialize properly.
-> 
-> 'echo 104000000 > /sys/kernel/debug/mmc0/clock'
-> 'mmc_host mmc0: Bus speed (slot 0) = 200000000Hz (slot req
-> 104000000Hz, actual 100000000HZ div = 1)'
-> 
-> So it seems to settle down at 50 MHz, but only if set manually. It
-> does appear CLKDIV is being set accordingly now.
+Thanks for your comments, Russell
 
-Hmm.... I can't see any differences.. And failed to set clock rate
-in the first place and finally got it, which beyond the mmc driver
-scope. Maybe hisilicon guys have more idea here.
 
-> 
-> 
-> 
+On 4/6/2018 5:09 PM, Russell King - ARM Linux Wrote:
+> On Thu, Apr 05, 2018 at 05:50:54AM -0700, Matthew Wilcox wrote:
+>> On Thu, Apr 05, 2018 at 08:44:12PM +0800, Jia He wrote:
+>>>
+>>> On 4/5/2018 7:34 PM, Matthew Wilcox Wrote:
+>>>> On Thu, Apr 05, 2018 at 01:04:35AM -0700, Jia He wrote:
+>>>>> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+>>>>> where possible") optimized the loop in memmap_init_zone(). But there is
+>>>>> still some room for improvement. E.g. if pfn and pfn+1 are in the same
+>>>>> memblock region, we can simply pfn++ instead of doing the binary search
+>>>>> in memblock_next_valid_pfn.
+>>>> Sure, but I bet if we are >end_pfn, we're almost certainly going to the
+>>>> start_pfn of the next block, so why not test that as well?
+>>>>
+>>>>> +	/* fast path, return pfn+1 if next pfn is in the same region */
+>>>>> +	if (early_region_idx != -1) {
+>>>>> +		start_pfn = PFN_DOWN(regions[early_region_idx].base);
+>>>>> +		end_pfn = PFN_DOWN(regions[early_region_idx].base +
+>>>>> +				regions[early_region_idx].size);
+>>>>> +
+>>>>> +		if (pfn >= start_pfn && pfn < end_pfn)
+>>>>> +			return pfn;
+>>>> 		early_region_idx++;
+>>>> 		start_pfn = PFN_DOWN(regions[early_region_idx].base);
+>>>> 		if (pfn >= end_pfn && pfn <= start_pfn)
+>>>> 			return start_pfn;
+>>> Thanks, thus the binary search in next step can be discarded?
+>> I don't know all the circumstances in which this is called.  Maybe a linear
+>> search with memo is more appropriate than a binary search.
+> That's been brought up before, and the reasoning appears to be
+> something along the lines of...
+>
+> Academics and published wisdom is that on cached architectures, binary
+> searches are bad because it doesn't operate efficiently due to the
+> overhead from having to load cache lines.  Consequently, there seems
+> to be a knee-jerk reaction that "all binary searches are bad, we must
+> eliminate them."
+IIUC, are you opposed to entirely removing the binary search instead of my
+previous patch set?
+>
+> What is failed to be grasped here, though, is that it is typical that
+> the number of entries in this array tend to be small, so the entire
+> array takes up one or two cache lines, maybe a maximum of four lines
+> depending on your cache line length and number of entries.
+>
+> This means that the binary search expense is reduced, and is lower
+> than a linear search for the majority of cases.
+>
+> What is key here as far as performance is concerned is whether the
+> general usage of pfn_valid() by the kernel is optimal.  We should
+> not optimise only for the boot case, which means evaluating the
+> effect of these changes with _real_ workloads, not just "does my
+> machine boot a milliseconds faster".
+hmm.. But pfn is linearly increased during the booting time. This assumption
+is not correct in real workload for pfn_valid out of booting time. So in my
+patchset, I defined another pfn_valid_region for booting time only.
+
+I didn't have many arm/arm64 boxes to verifed. What I can do is guaranteeing
+the improvemnet in my armv8a (qualcom centriq 2400). Sorry about it.
+
+  --
+Cheers,
+Jia
