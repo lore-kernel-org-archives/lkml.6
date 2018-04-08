@@ -1,357 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752558AbeDHUKo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 16:10:44 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:49900 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751788AbeDHUKb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 16:10:31 -0400
-Date: Sun, 8 Apr 2018 21:59:52 +0200
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andi Kleen <ak@linux.intel.com>,
+        id S1752836AbeDHUMJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 16:12:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60008 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751631AbeDHUMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 16:12:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA342177A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Message-Id: <20180408201203.759339811@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Sun, 08 Apr 2018 16:10:01 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Maninder Singh <maninder1.s@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH 0/3] syscalls: clean up stub naming convention
-Message-ID: <20180408195952.GA27462@light.dominikbrodowski.net>
-References: <20180407074651.29014-1-linux@dominikbrodowski.net>
- <20180408083550.32d65b6ra6yca5p7@gmail.com>
- <20180408091536.GA10120@light.dominikbrodowski.net>
+        Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
+Subject: [for-next][PATCH 1/4] init, tracing: Add initcall trace events
+References: <20180408201000.540816094@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180408091536.GA10120@light.dominikbrodowski.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0001-init-tracing-Add-initcall-trace-events.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 08, 2018 at 11:15:36AM +0200, Dominik Brodowski wrote:
-> On a somewhat related note: I'll try to prepare a patch this evening which
-> lets us build just the __ia32_sys and __x32_compat_sys stubs we actually
-> need. We have that information already in entry/syscalls/syscall_{32,64}.tbl,
-> it just needs to be extracted into another header file (in the form of
-> 	#define NEED_IA32_sys_xyzzz 1
-> ) and then tested within the stubs. After some randconfig testing, this
-> might be worthwile to add on top of the patches already in tip-asm and the
-> three renaming patches currently under discussion.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-So this got a bit more complicated than I though, for a -5k text size
-decrease. I have my doubts whether the increased code complexity is really
-worth that minor size decrease. I'll send another patch shortly, though,
-which fixes up the naming of a few macros in <asm/syscall_wrapper.h>.
+Being able to trace the start and stop of initcalls is useful to see where
+the timings are an issue. There is already an "initcall_debug" parameter,
+but that can cause a large overhead itself, as the printing of the
+information may take longer than the initcall functions.
 
---------------------------------------------------------------------------
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Date: Sun, 8 Apr 2018 21:38:54 +0200
-Subject: [PATCH] syscalls/x86: only build stubs which are actually needed
+Adding in a start and finish trace event around the initcall functions, as
+well as a trace event that records the level of the initcalls, one can get a
+much finer measurement of the times and interactions of the initcalls
+themselves, as trace events are much lighter than printk()s.
 
-A new script arch/x86/entry/syscalls/syscallstubs.sh generates
-defines in <asm/syscall_stubs.h>
+Suggested-by: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ include/trace/events/initcall.h | 66 +++++++++++++++++++++++++++++++++++++++++
+ init/main.c                     |  7 +++++
+ 2 files changed, 73 insertions(+)
+ create mode 100644 include/trace/events/initcall.h
 
-	for all __ia32_sys_ stubs which are actually needed for
-	IA32_EMULATION,
-
-and
-
-	for all __x32_compat_sys_ stubs which are actually needed
-	for X32.
-
-By omitting to build the remaining stubs (which are defined as
-__SYSCALL_STUBx_UNUSED), there is a measurable decrease in kernel
-size (-5k):
-
-    text    data      bss      dec     hex filename
-12892057 7094202 13570252 33556511 200081f vmlinux-orig
-12886397 7087514 13570252 33544163 1ffd7e3 vmlinux
-
-Further size cuttings could be achieved by not building stubs for
-syscalls and compat_syscalls which are not referenced in the syscall
-tables, such as (at least)
-
-	sys_gethostname
-	sys_sync_file_range2
-	sys_send
-	sys_recv
-	compat_sys_mbind
-	compat_sys_set_mempolicy
-	compat_sys_migrate_pages
-	compat_sys_sendtimedop
-	compat_sys_msgrcv
-	compat_sys_semctl
-	compat_sys_send
-	compat_sys_recv
-
-Not-yet-signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-
-diff --git a/arch/x86/entry/syscalls/Makefile b/arch/x86/entry/syscalls/Makefile
-index 6fb9b57ed5ba..036199136513 100644
---- a/arch/x86/entry/syscalls/Makefile
-+++ b/arch/x86/entry/syscalls/Makefile
-@@ -11,6 +11,7 @@ syscall64 := $(srctree)/$(src)/syscall_64.tbl
- 
- syshdr := $(srctree)/$(src)/syscallhdr.sh
- systbl := $(srctree)/$(src)/syscalltbl.sh
-+sysstubs := $(srctree)/$(src)/syscallstubs.sh
- 
- quiet_cmd_syshdr = SYSHDR  $@
-       cmd_syshdr = $(CONFIG_SHELL) '$(syshdr)' '$<' '$@' \
-@@ -20,6 +21,11 @@ quiet_cmd_syshdr = SYSHDR  $@
- quiet_cmd_systbl = SYSTBL  $@
-       cmd_systbl = $(CONFIG_SHELL) '$(systbl)' $< $@
- 
-+quiet_cmd_sysstubs = SYSSTUBS  $@
-+      cmd_sysstubs = $(CONFIG_SHELL) '$(sysstubs)' \
-+		   '$(syscall32)' '$(syscall64)' \
-+		    $@
-+
- quiet_cmd_hypercalls = HYPERCALLS $@
-       cmd_hypercalls = $(CONFIG_SHELL) '$<' $@ $(filter-out $<,$^)
- 
-@@ -51,6 +57,9 @@ $(out)/syscalls_32.h: $(syscall32) $(systbl)
- $(out)/syscalls_64.h: $(syscall64) $(systbl)
- 	$(call if_changed,systbl)
- 
-+$(out)/syscall_stubs.h:  $(syscall32) $(syscall64) $(sysstubs)
-+	$(call if_changed,sysstubs)
-+
- $(out)/xen-hypercalls.h: $(srctree)/scripts/xen-hypercalls.sh
- 	$(call if_changed,hypercalls)
- 
-@@ -60,6 +69,7 @@ uapisyshdr-y			+= unistd_32.h unistd_64.h unistd_x32.h
- syshdr-y			+= syscalls_32.h
- syshdr-$(CONFIG_X86_64)		+= unistd_32_ia32.h unistd_64_x32.h
- syshdr-$(CONFIG_X86_64)		+= syscalls_64.h
-+syshdr-$(CONFIG_X86_64)		+= syscall_stubs.h
- syshdr-$(CONFIG_XEN)		+= xen-hypercalls.h
- 
- targets	+= $(uapisyshdr-y) $(syshdr-y)
-diff --git a/arch/x86/entry/syscalls/syscallstubs.sh b/arch/x86/entry/syscalls/syscallstubs.sh
+diff --git a/include/trace/events/initcall.h b/include/trace/events/initcall.h
 new file mode 100644
-index 000000000000..4db64d4db75a
+index 000000000000..8d6cf10d27c9
 --- /dev/null
-+++ b/arch/x86/entry/syscalls/syscallstubs.sh
-@@ -0,0 +1,110 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
++++ b/include/trace/events/initcall.h
+@@ -0,0 +1,66 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM initcall
 +
-+in32="$1"
-+in64="$2"
-+out="$3"
++#if !defined(_TRACE_INITCALL_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_INITCALL_H
 +
-+emit_stub() {
-+    entry="$1"
-+    if [ "${entry}" != "${entry#__ia32_sys_}" ]; then
-+	# We need a stub named __ia32_sys which is common to 64-bit
-+	# except for a different pt_regs layout.
-+	stubname=${entry#__ia32_sys_}
-+	echo "#define __IA32_SYS_STUBx_${stubname} __IA32_SYS_STUBx"
-+	echo "#define ASM_X86_HAS__ia32_sys_${stubname} 1"
-+    elif [ "$entry" != "${entry#__x32_compat_sys}" ]; then
-+	# We need a stub named __x32_compat_sys_ which decodes a
-+	# 64-bit pt_regs and then calls the real syscall function 
-+	stubname="${entry%%/*}" # handle qualifier
-+	stubname=${stubname#__x32_compat_sys_} # handle prefix
-+	echo "#define __X32_COMPAT_SYS_STUBx_${stubname} __X32_COMPAT_SYS_STUBx"
-+	echo "#define ASM_X86_HAS__x32_compat_sys_${stubname} 1"
-+    elif [ "$entry" != "${entry#__ia32_compat_sys_x86}" ]; then
-+	# The compat entry starts with __ia32_compat_sys_x86, so it
-+	# is a specific x86 compat syscall; no need for __ia32_sys_*()
-+	stubname=${entry#__ia32_compat_sys_x86_}
-+	echo "#define __IA32_SYS_STUBx_${stubname} __SYSCALL_STUBx_UNUSED"
-+	echo "#define ASM_X86_HAS__ia32_sys_${stubname} 1"
-+    elif [ "$entry" != "${entry#__ia32_compat_sys_}" ]; then
-+	# The compat entry starts with __ia32_compat_sys, so it is
-+	# is a generic x86 compat syscall; no need for __ia32_sys_*()
-+	stubname=${entry#__ia32_compat_sys_}
-+	echo "#define __IA32_SYS_STUBx_${stubname} __SYSCALL_STUBx_UNUSED"
-+	echo "#define ASM_X86_HAS__ia32_sys_${stubname} 1"
-+    fi;
-+}
++#include <linux/tracepoint.h>
 +
-+# First, we need to check which stubs we *need*. While at it, we can determine
-+# quite many ia32 stubs we do *not* need as the syscall is handled by a compat
-+# syscall
-+grep '^[0-9]' "$in32" | sort -n | (
-+    while read nr abi name entry compat; do
-+	abi=`echo "$abi" | tr '[a-z]' '[A-Z]'`
-+	if [ "$abi" = "I386" -a -n "$compat" ]; then
-+	    emit_stub "$compat"
-+	fi
-+    done
-+) > "$out"
++TRACE_EVENT(initcall_level,
 +
-+grep '^[0-9]' "$in64" | sort -n | (
-+    while read nr abi name entry compat; do
-+	abi=`echo "$abi" | tr '[a-z]' '[A-Z]'`
-+	if [ "$abi" = "X32" -a -n "$entry" ]; then
-+	    emit_stub "$entry"
-+	fi
-+    done
-+) >> "$out"
++	TP_PROTO(const char *level),
 +
-+# Then, we need to determine all (remaining) stubs we *do not* need.
-+grep '^[0-9]' "$in64" | sort -n | (
-+    while read nr abi name entry compat; do
-+	abi=`echo "$abi" | tr '[a-z]' '[A-Z]'`
-+	if [ "$abi" = "COMMON" -o "$abi" = "64" ]; then
-+	    if [ -n "$entry" -a "$entry" != "${entry#__x64_sys_}" ]; then
-+		# what's the actual stubname?
-+		stubname="${entry%%/*}" # handle qualifier
-+		stubname="${stubname#__x64_sys_}" # handle prefix
++	TP_ARGS(level),
 +
-+		# syscalls only referenced for 64-bit do not need a stub for
-+		# IA32_EMULATION
-+		echo "#ifndef ASM_X86_HAS__ia32_sys_${stubname}"
-+		echo "#define __IA32_SYS_STUBx_${stubname} __SYSCALL_STUBx_UNUSED"
-+		echo "#endif"
++	TP_STRUCT__entry(
++		__string(level, level)
++	),
 +
-+		# A number of compat syscalls are built in even though they are
-+		# completely unused -- e.g. mbind set_mempolicy migrate_pages
-+		# sendtimedop msgrcv semctl. We probably define more compat
-+		# syscalls than exist, but better be safe than sorry...
-+		echo "#ifndef ASM_X86_HAS__x32_compat_sys_${stubname}"
-+		echo "#define __X32_COMPAT_SYS_STUBx_${stubname} __SYSCALL_STUBx_UNUSED"
-+		echo "#endif"
-+	    fi
-+	fi
-+    done
-+) >> "$out"
++	TP_fast_assign(
++		__assign_str(level, level);
++	),
 +
-+grep '^[0-9]' "$in32" | sort -n | (
-+    while read nr abi name entry compat; do
-+	abi=`echo "$abi" | tr '[a-z]' '[A-Z]'`
-+	if [ "$abi" = "I386" -a -n "$compat" ]; then
-+	    if [ "$compat" != "${compat#__ia32_compat_sys}" ]; then
-+		stubname="${compat#__ia32_compat_sys_}"
-+		# If a compat syscall is not needed for x32 (see above),
-+		# we need to assert that the stub is defined as unused
-+		echo "#ifndef ASM_X86_HAS__x32_compat_sys_${stubname}"
-+		echo "#define __X32_COMPAT_SYS_STUBx_${stubname} __SYSCALL_STUBx_UNUSED"
-+		echo "#endif"
-+	    fi
-+	fi
-+    done
-+) >> "$out"
++	TP_printk("level=%s", __get_str(level))
++);
 +
-+# FIXME: These syscalls get build even though they are completely unused on x86
-+( for unused_syscall in gethostname sync_file_range2 send recv; do
-+    echo "#define __IA32_SYS_STUBx_${unused_syscall} __SYSCALL_STUBx_UNUSED"
-+done ) >> "$out"
-+( for unused_compat_syscall in send recv; do
-+    echo "#define __X32_COMPAT_SYS_STUBx_${unused_compat_syscall} __SYSCALL_STUBx_UNUSED"
-+done ) >> "$out"
++TRACE_EVENT(initcall_start,
 +
-diff --git a/arch/x86/include/asm/Kbuild b/arch/x86/include/asm/Kbuild
-index de690c2d2e33..3aeb3a794da4 100644
---- a/arch/x86/include/asm/Kbuild
-+++ b/arch/x86/include/asm/Kbuild
-@@ -5,6 +5,7 @@ generated-y += syscalls_64.h
- generated-y += unistd_32_ia32.h
- generated-y += unistd_64_x32.h
- generated-y += xen-hypercalls.h
-+generated-y += syscall_stubs.h
- 
- generic-y += dma-contiguous.h
- generic-y += early_ioremap.h
-diff --git a/arch/x86/include/asm/syscall_wrapper.h b/arch/x86/include/asm/syscall_wrapper.h
-index bad0295739bf..0b847f422bf6 100644
---- a/arch/x86/include/asm/syscall_wrapper.h
-+++ b/arch/x86/include/asm/syscall_wrapper.h
-@@ -4,7 +4,10 @@
-  */
- 
- #ifndef _ASM_X86_SYSCALL_WRAPPER_H
--#define _ASM_X86_SYSCALL_WRAPPER_H
-+#define _ASM_X86_SYSCALL_WRAPPER_H 1
++	TP_PROTO(initcall_t func),
 +
-+#define __SYSCALL_STUBx_UNUSED(x, name, ...)
-+#include <asm/syscall_stubs.h>
++	TP_ARGS(func),
++
++	TP_STRUCT__entry(
++		__field(initcall_t, func)
++	),
++
++	TP_fast_assign(
++		__entry->func = func;
++	),
++
++	TP_printk("func=%pS", __entry->func)
++);
++
++TRACE_EVENT(initcall_finish,
++
++	TP_PROTO(initcall_t func, int ret),
++
++	TP_ARGS(func, ret),
++
++	TP_STRUCT__entry(
++		__field(initcall_t,	func)
++		__field(int,		ret)
++	),
++
++	TP_fast_assign(
++		__entry->func = func;
++		__entry->ret = ret;
++	),
++
++	TP_printk("func=%pS ret=%d", __entry->func, __entry->ret)
++);
++
++#endif /* if !defined(_TRACE_GPIO_H) || defined(TRACE_HEADER_MULTI_READ) */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+diff --git a/init/main.c b/init/main.c
+index 0ebdd5f15be8..2af8f2bb5ca8 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -97,6 +97,9 @@
+ #include <asm/sections.h>
+ #include <asm/cacheflush.h>
  
- /* Mapping of registers to parameters for syscalls on x86-64 and x32 */
- #define SC_X86_64_REGS_TO_ARGS(x, ...)					\
-@@ -28,15 +31,15 @@
-  * kernel/sys_ni.c and SYS_NI in kernel/time/posix-stubs.c to cover this
-  * case as well.
-  */
--#define COMPAT_SC_IA32_STUBx(x, name, ...)				\
-+#define __IA32_COMPAT_SYS_STUBx(x, name, ...)				\
- 	asmlinkage long __ia32_compat_sys##name(const struct pt_regs *regs);\
- 	ALLOW_ERROR_INJECTION(__ia32_compat_sys##name, ERRNO);		\
- 	asmlinkage long __ia32_compat_sys##name(const struct pt_regs *regs)\
- 	{								\
- 		return __do_compat_sys##name(SC_IA32_REGS_TO_ARGS(x,__VA_ARGS__));\
--	}								\
-+	}
++#define CREATE_TRACE_POINTS
++#include <trace/events/initcall.h>
++
+ static int kernel_init(void *);
  
--#define SC_IA32_WRAPPERx(x, name, ...)					\
-+#define __IA32_SYS_STUBx(x, name, ...)					\
- 	asmlinkage long __ia32_sys##name(const struct pt_regs *regs);	\
- 	ALLOW_ERROR_INJECTION(__ia32_sys##name, ERRNO);			\
- 	asmlinkage long __ia32_sys##name(const struct pt_regs *regs)	\
-@@ -64,8 +67,8 @@
- 	SYSCALL_ALIAS(__ia32_sys_##name, sys_ni_posix_timers)
+ extern void init_IRQ(void);
+@@ -827,10 +830,12 @@ int __init_or_module do_one_initcall(initcall_t fn)
+ 	if (initcall_blacklisted(fn))
+ 		return -EPERM;
  
- #else /* CONFIG_IA32_EMULATION */
--#define COMPAT_SC_IA32_STUBx(x, name, ...)
--#define SC_IA32_WRAPPERx(x, fullname, name, ...)
-+#define __IA32_COMPAT_SYS_STUBx(x, name, ...)
-+#define __IA32_SYS_STUBx(x, name, ...)
- #endif /* CONFIG_IA32_EMULATION */
++	trace_initcall_start(fn);
+ 	if (initcall_debug)
+ 		ret = do_one_initcall_debug(fn);
+ 	else
+ 		ret = fn();
++	trace_initcall_finish(fn, ret);
  
+ 	msgbuf[0] = 0;
  
-@@ -75,7 +78,7 @@
-  * of the x86-64-style parameter ordering of x32 syscalls. The syscalls common
-  * with x86_64 obviously do not need such care.
-  */
--#define COMPAT_SC_X32_STUBx(x, name, ...)				\
-+#define __X32_COMPAT_SYS_STUBx(x, name, ...)				\
- 	asmlinkage long __x32_compat_sys##name(const struct pt_regs *regs);\
- 	ALLOW_ERROR_INJECTION(__x32_compat_sys##name, ERRNO);		\
- 	asmlinkage long __x32_compat_sys##name(const struct pt_regs *regs)\
-@@ -84,7 +87,7 @@
- 	}								\
+@@ -895,6 +900,7 @@ static void __init do_initcall_level(int level)
+ 		   level, level,
+ 		   NULL, &repair_env_string);
  
- #else /* CONFIG_X86_X32 */
--#define COMPAT_SC_X32_STUBx(x, name, ...)
-+#define __X32_COMPAT_SYS_STUBx(x, name, ...)
- #endif /* CONFIG_X86_X32 */
++	trace_initcall_level(initcall_level_names[level]);
+ 	for (fn = initcall_levels[level]; fn < initcall_levels[level+1]; fn++)
+ 		do_one_initcall(*fn);
+ }
+@@ -929,6 +935,7 @@ static void __init do_pre_smp_initcalls(void)
+ {
+ 	initcall_t *fn;
  
- 
-@@ -97,8 +100,8 @@
- #define COMPAT_SYSCALL_DEFINEx(x, name, ...)					\
- 	static long __do_compat_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
- 	static inline long __in_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
--	COMPAT_SC_IA32_STUBx(x, name, __VA_ARGS__)				\
--	COMPAT_SC_X32_STUBx(x, name, __VA_ARGS__)				\
-+	__IA32_COMPAT_SYS_STUBx(x, name, __VA_ARGS__)				\
-+	__X32_COMPAT_SYS_STUBx##name(x, name, __VA_ARGS__)			\
- 	static long __do_compat_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
- 	{									\
- 		return __in_compat_sys##name(__MAP(x,__SC_DELOUSE,__VA_ARGS__));\
-@@ -120,7 +123,6 @@
- 
- #endif /* CONFIG_COMPAT */
- 
--
- /*
-  * Instead of the generic __SYSCALL_DEFINEx() definition, this macro takes
-  * struct pt_regs *regs as the only argument of the syscall stub named
-@@ -163,7 +165,7 @@
- 	{								\
- 		return __do_sys##name(SC_X86_64_REGS_TO_ARGS(x,__VA_ARGS__));\
- 	}								\
--	SC_IA32_WRAPPERx(x, name, __VA_ARGS__)				\
-+	__IA32_SYS_STUBx##name(x, name, __VA_ARGS__)			\
- 	static long __do_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
- 	{								\
- 		long ret = __in_sys##name(__MAP(x,__SC_CAST,__VA_ARGS__));\
++	trace_initcall_level("early");
+ 	for (fn = __initcall_start; fn < __initcall0_start; fn++)
+ 		do_one_initcall(*fn);
+ }
+-- 
+2.16.3
