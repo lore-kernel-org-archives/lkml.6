@@ -1,44 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751918AbeDHHgI (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 03:36:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45252 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751728AbeDHHgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 03:36:06 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CA+55aFxtS1jyefWXG+H6UjfC5KaqPOgTf3imHxL1iS1avJP5Lw@mail.gmail.com>
-References: <CA+55aFxtS1jyefWXG+H6UjfC5KaqPOgTf3imHxL1iS1avJP5Lw@mail.gmail.com> <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dhowells@redhat.com, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-afs@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/20] afs: Fixes and development
+        id S1752010AbeDHHia (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 03:38:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41921 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751545AbeDHHi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 03:38:29 -0400
+Date: Sun, 8 Apr 2018 09:38:26 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] firmware: dmi_scan: Use lowercase letters for UUID
+Message-ID: <20180408093826.3107ada1@endymion>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7258.1523172965.1@warthog.procyon.org.uk>
-Date: Sun, 08 Apr 2018 08:36:05 +0100
-Message-ID: <7259.1523172965@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+RFC 4122 asks for letters a-f in UUID to be lowercase. Follow this
+recommendation.
 
-> Now, the conflicts really do look entirely trivial, and that's not the
-> problem, but the fact that you *didn't* re-send the AFS pull request
-> makes me wonder if you perhaps didn't want me to pull it after all?
+Suggested by Paul Dagnelie at:
+https://savannah.nongnu.org/bugs/index.php?53569
 
-Sorry: Al pointed out that I was incorrectly using lookup_one_len().  I
-proposed a fix, but he decided that he wanted to rejig lookup_one_len()
-instead, so I was waiting for that.
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+---
+ drivers/firmware/dmi_scan.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Al: Can you rebase your vfs/work.dcache branch on top of linus/master (I think
-the rest of your branch is pulled already)?  Or should I just merge together
-the fscache patches with it and rebase my afs-next branch off of that?
+--- linux-4.16.orig/drivers/firmware/dmi_scan.c	2018-04-01 23:20:27.000000000 +0200
++++ linux-4.16/drivers/firmware/dmi_scan.c	2018-04-08 09:32:20.508719012 +0200
+@@ -210,9 +210,9 @@ static void __init dmi_save_uuid(const s
+ 	 * says that this is the defacto standard.
+ 	 */
+ 	if (dmi_ver >= 0x020600)
+-		sprintf(s, "%pUL", d);
++		sprintf(s, "%pUl", d);
+ 	else
+-		sprintf(s, "%pUB", d);
++		sprintf(s, "%pUb", d);
+ 
+ 	dmi_ident[slot] = s;
+ }
 
-David
+
+-- 
+Jean Delvare
+SUSE L3 Support
