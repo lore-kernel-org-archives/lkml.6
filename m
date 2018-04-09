@@ -1,71 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeDIH0M (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:26:12 -0400
-Received: from mga02.intel.com ([134.134.136.20]:61078 "EHLO mga02.intel.com"
+        id S1752303AbeDIH0u (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:26:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37874 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751140AbeDIH0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:26:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,426,1517904000";
-   d="scan'208";a="31225627"
-Subject: [PATCH v5 2/3] perf report: extend raw dump (-D) out with switch out
- event type
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <ff228fc5-5742-a5fe-8cad-79704742672c@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <6f5aebb9-b96c-f304-f08f-8f046d38de4f@linux.intel.com>
-Date: Mon, 9 Apr 2018 10:26:05 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751767AbeDIH0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 03:26:48 -0400
+Date: Mon, 9 Apr 2018 09:26:45 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+cc: Martin <bugs@mrvanes.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: input: fix battery level reporting on BT mice
+In-Reply-To: <20180403175220.GA148162@dtor-ws>
+Message-ID: <nycvar.YFH.7.76.1804090926190.28129@cbobk.fhfr.pm>
+References: <20180403175220.GA148162@dtor-ws>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <ff228fc5-5742-a5fe-8cad-79704742672c@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 3 Apr 2018, Dmitry Torokhov wrote:
 
-Print additional 'preempt' tag for PERF_RECORD_SWITCH[_CPU_WIDE] OUT records when
-event header misc field contains PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit set 
-designating preemption context switch out event:
+> The commit 581c4484769e ("HID: input: map digitizer battery usage")
+> assumed that devices having input (qas opposed to feature) report for
+> battery strength would report the data on their own, without the need to
+> be polled by the kernel; unfortunately it is not so. Many wireless mice
+> do not send unsolicited reports with battery strength data and have to
+> be polled explicitly. As a complication, stylus devices on digitizers
+> are not normally connected to the base and thus can not be polled - the
+> base can only determine battery strength in the stylus when it is in
+> proximity.
+> 
+> To solve this issue, we add a special flag that tells the kernel
+> to avoid polling the device (and expect unsolicited reports) and set it
+> when report field with physical usage of digitizer stylus (HID_DG_STYLUS).
+> Unless this flag is set, and we have not seen the unsolicited reports,
+> the kernel will attempt to poll the device when userspace attempts to
+> read "capacity" and "state" attributes of power_supply object
+> corresponding to the devices battery.
+> 
+> Fixes: 581c4484769e ("HID: input: map digitizer battery usage")
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198095
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-tools/perf/perf report -D -i perf.data | grep _SWITCH
+Applied for 4.17, thanks.
 
-0 768361415226 0x27f076 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     8/8    
-4 768362216813 0x28f45e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-4 768362217824 0x28f486 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
-0 768362414027 0x27f0ce [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:     8/8    
-0 768362414367 0x27f0f6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- tools/perf/util/event.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index f0a6cbd033cc..98ff3a6a3d50 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1421,7 +1421,9 @@ size_t perf_event__fprintf_itrace_start(union perf_event *event, FILE *fp)
- size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp)
- {
- 	bool out = event->header.misc & PERF_RECORD_MISC_SWITCH_OUT;
--	const char *in_out = out ? "OUT" : "IN ";
-+	const char *in_out = !out ? "IN         " :
-+		!(event->header.misc & PERF_RECORD_MISC_SWITCH_OUT_PREEMPT) ?
-+				    "OUT        " : "OUT preempt";
- 
- 	if (event->header.type == PERF_RECORD_SWITCH)
- 		return fprintf(fp, " %s\n", in_out);
+-- 
+Jiri Kosina
+SUSE Labs
