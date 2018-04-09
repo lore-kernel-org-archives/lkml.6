@@ -1,65 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753267AbeDIQDW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 12:03:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752493AbeDIQDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 12:03:20 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A704721456
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1753280AbeDIQEH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 12:04:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58044 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752493AbeDIQEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 12:04:05 -0400
+Date: Mon, 9 Apr 2018 17:03:56 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: bhelgaas@google.com, Joao.Pinto@synopsys.com, jingoohan1@gmail.com,
+        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 6/9] PCI: dwc: Define maximum number of vectors
+Message-ID: <20180409160356.GA14533@e107981-ln.cambridge.arm.com>
+References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
+ <bf7062c863f33b2951acc586b1f22d3497ee2f10.1523266508.git.gustavo.pimentel@synopsys.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Rajendra Nayak <rnayak@codeaurora.org>, andy.gross@linaro.org,
-        ulf.hansson@linaro.org, viresh.kumar@linaro.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180316040824.21472-6-rnayak@codeaurora.org>
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>
-References: <20180316040824.21472-1-rnayak@codeaurora.org>
- <20180316040824.21472-6-rnayak@codeaurora.org>
-Message-ID: <152328979897.180276.15963925877442657158@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 5/7] arm64: dts: msm8996: Add rpmpd device node
-Date: Mon, 09 Apr 2018 09:03:18 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf7062c863f33b2951acc586b1f22d3497ee2f10.1523266508.git.gustavo.pimentel@synopsys.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rajendra Nayak (2018-03-15 21:08:22)
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index 0a6f7952bbb1..43757a078146 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -297,6 +297,52 @@
->                                 #clock-cells = <1>;
->                         };
+On Mon, Apr 09, 2018 at 10:41:15AM +0100, Gustavo Pimentel wrote:
+> Adds a callback that defines the maximum number of vectors that can be use
+> by the Root Complex.
+> 
+> Since this is a parameter associated to each SoC IP setting, makes sense to
+> be configurable and easily visible to future modifications.
+> 
+> The designware IP supports a maximum of 256 vectors.
+
+I think that a DT property instead of a callback would have made more
+sense - I struggle to see the point in defining a callback to initialize
+a variable, this can be done in the generic dwc code (and a DT binding).
+
+Lorenzo
+
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+> Change v1->v2:
+> - Nothing changed, just to follow the patch set version.
+> 
+>  drivers/pci/dwc/pcie-designware-plat.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
+> index 5382a7a..94da252 100644
+> --- a/drivers/pci/dwc/pcie-designware-plat.c
+> +++ b/drivers/pci/dwc/pcie-designware-plat.c
+> @@ -48,8 +48,14 @@ static int dw_plat_pcie_host_init(struct pcie_port *pp)
+>  	return 0;
+>  }
 >  
-> +                       rpmpd: qcom,rpmpd {
-
-power-controller? power-domain-controller? power-domains? Or something
-like that.
-
-> +                               compatible = "qcom,rpmpd-msm8996";
-> +                               #power-domain-cells = <1>;
-> +                               operating-points-v2 = <&rpmpd_opp_table>, /* cx */
-> +                                                     <&rpmpd_opp_table>, /* cx_ao */
-> +                                                     <&rpmpd_opp_table>, /* cx_vfc */
-> +                                                     <&rpmpd_opp_table>, /* mx */
-> +                                                     <&rpmpd_opp_table>, /* mx_ao */
-> +                                                     <&rpmpd_opp_table>, /* sscx */
-> +                                                     <&rpmpd_opp_table>; /* sscx_vfc */
-> +                       };
+> +static void dw_plat_set_num_vectors(struct pcie_port *pp)
+> +{
+> +	pp->num_vectors = MAX_MSI_IRQS;
+> +}
 > +
-> +                       rpmpd_opp_table: opp-table {
-
-This should go into the root of the tree? Otherwise it may be populated
-by the RPMh platform populate code which would be odd. We should go and
-update the platform populate code to always ignore operating-points-v2
-compatible nodes too.
-
-> +                               compatible = "operating-points-v2", "operating-points-v2-qcom";
-
-This is backwards? I thought more specific compatible went first.
+>  static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
+>  	.host_init = dw_plat_pcie_host_init,
+> +	.set_num_vectors = dw_plat_set_num_vectors,
+>  };
+>  
+>  static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
+> -- 
+> 2.7.4
+> 
+> 
