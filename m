@@ -1,105 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752107AbeDIKKQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 06:10:16 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:37285 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751455AbeDIKKM (ORCPT
+        id S1751716AbeDIKXD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 06:23:03 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39730 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbeDIKXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 06:10:12 -0400
-X-Google-Smtp-Source: AIpwx493oHCgKQ6S9TIe/LRo3MMh/yVJgZPJbTJLhars2skZ2XagBpPCyO5FmivAyuRNI0Cv84v9zTVTegimun218Qs=
+        Mon, 9 Apr 2018 06:23:01 -0400
+Date: Mon, 9 Apr 2018 11:22:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: jacopo mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        a.hajda@samsung.com, airlied@linux.ie, vladimir_zapolskiy@mentor.com,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/2] dt-bindings: display: bridge: Document
+ THC63LVD1024 LVDS decoder
+Message-ID: <20180409102244.GB11532@sirena.org.uk>
+References: <1523018517-24121-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1664336.M7KDjLhzuK@avalon>
+ <20180406142558.GP20945@w540>
+ <2441543.5xTHaLXzZ0@avalon>
 MIME-Version: 1.0
-In-Reply-To: <d9b30262-3b0b-1b46-dee7-ee1a4b77e66e@st.com>
-References: <1520852307-26659-1-git-send-email-fabien.dessenne@st.com>
- <1520852307-26659-3-git-send-email-fabien.dessenne@st.com>
- <CABb+yY1x7J_oEgU-LR5jPYCoCoUHng84E+CibTxLzdtxhENTBw@mail.gmail.com>
- <4a2170b7-e5e9-4f5c-8ff7-79e102a658c1@st.com> <CABb+yY182+7xMbGCurzqxyoGFCRZn4_xKr3AvTQ2c+KyR1vx_w@mail.gmail.com>
- <f9a45a6e-5b3c-ddd0-e465-cfcad6ece818@st.com> <CABb+yY2Dd2Gr_-+4RaJarq3tve8tgzVqcoJw+MGT=+Vy56PwLw@mail.gmail.com>
- <d9b30262-3b0b-1b46-dee7-ee1a4b77e66e@st.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Mon, 9 Apr 2018 15:40:10 +0530
-Message-ID: <CABb+yY0ThbeqOGnFVcUUhYk86h7mfkeU_JQJQViUjCCVUP5Z8g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mailbox: add STMicroelectronics STM32 IPCC driver
-To: Fabien DESSENNE <fabien.dessenne@st.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Ludovic BARRE <ludovic.barre@st.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org"
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
+Content-Disposition: inline
+In-Reply-To: <2441543.5xTHaLXzZ0@avalon>
+X-Cookie: Professional sample - not for sale.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 9, 2018 at 2:33 PM, Fabien DESSENNE <fabien.dessenne@st.com> wrote:
->
->
-> On 06/04/18 18:20, Jassi Brar wrote:
->> On Fri, Apr 6, 2018 at 8:35 PM, Fabien DESSENNE <fabien.dessenne@st.com> wrote:
->>> On 06/04/18 14:56, Jassi Brar wrote:
->>>> On Fri, Apr 6, 2018 at 5:59 PM, Fabien DESSENNE <fabien.dessenne@st.com> wrote:
->>>>> Hi
->>>>>
->>>>>
->>>>> On 05/04/18 11:38, Jassi Brar wrote:
->>>>>> On Mon, Mar 12, 2018 at 4:28 PM, Fabien Dessenne <fabien.dessenne@st.com> wrote:
->>>>>> ....
->>>>>>> +
->>>>>>> +       /* irq */
->>>>>>> +       for (i = 0; i < IPCC_IRQ_NUM; i++) {
->>>>>>> +               ipcc->irqs[i] = of_irq_get_byname(dev->of_node, irq_name[i]);
->>>>>>> +               if (ipcc->irqs[i] < 0) {
->>>>>>> +                       dev_err(dev, "no IRQ specified %s\n", irq_name[i]);
->>>>>>> +                       ret = ipcc->irqs[i];
->>>>>>> +                       goto err_clk;
->>>>>>> +               }
->>>>>>> +
->>>>>>> +               ret = devm_request_threaded_irq(dev, ipcc->irqs[i], NULL,
->>>>>>> +                                               irq_thread[i], IRQF_ONESHOT,
->>>>>>> +                                               dev_name(dev), ipcc);
->>>>>>>
->>>>>> In your interrupt handlers you don't do anything that could block.
->>>>>> Threads only adds some delay to your message handling.
->>>>>> So maybe use devm_request_irq() ?
->>>>> The interrupt handlers call mbox_chan_received_data() /
->>>>> mbox_chan_txdone(), which call in turn client's rx_callback() /
->>>>> tx_done() / tx_prepare() which behavior may be unsafe. Hence, using a
->>>>> threaded irq here seems to be a good choice.
->>>>>
->>>> rx_callback() is supposed to be atomic.
->>> I am worried with this atomic part (and honestly I did not note that the
->>> callbacks were expected to be)
->>>
->>> In my case, remoteproc->virtio->rpmsg is the mailbox client defining the
->>> rx_callback.
->>> If I follow your suggestion, I shall make this rx_callback Atomic in
->>> remoteproc (or in virtio or rpmsg). And this does not seem to be so
->>> simple (add a worker in the middle of somewhere?). Bjorn, feel free to
->>> comment this part.
->>>
->>> An alternate implementation consists in using a threaded IRQ for the
->>> mailbox interrupt.
->>> This option is not only simple, but also ensures to split bottom & half
->>> parts at the irq level which is IMHO a general good practice.
->>>
->>> I can see that some mailbox clients implement callbacks that are NOT
->>> atomic and I suspect this is the reason why some mailbox drivers use
->>> threaded_irq (rockchip mailbox splits the bottom & half parts).
->>>
->>> Would it be acceptable to consider the "atomic client callback" as a
->>> non-strict rule ?
->>>
->> Of course you can traverse atomic path from sleepable context (but not
->> vice-versa).
->
-> So, to be sure we understand each other, I can use threaded_irq, right?
->
-Yes. Its platform specific driver, I can't dictate the features you want :)
+
+--lEGEL1/lMxI0MVQ2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Apr 06, 2018 at 06:40:14PM +0300, Laurent Pinchart wrote:
+> On Friday, 6 April 2018 17:25:58 EEST jacopo mondi wrote:
+
+> > Same on the mandatory/optional VCC supply thing. Let's try to make
+> > next version the final one. If the optional property with the dummy
+> > regulator doesn't satisfy you and it is preferred to have a fixed-regul=
+ator
+> > anyhow in DT I'll do in next version, othewise let's try not to change
+> > it again. I'll just remark here that in the current Eagle design vcc is
+> > connected to a power rail with no regulator at all :)
+
+> I don't like the dummy regulator much, as it generates a dev_warn(), whic=
+h=20
+> makes me believe that it's a hack rather than a proper solution. You migh=
+t=20
+> want to ask Mark Brown for his opinion.
+
+The DT should describe the physical supplies the device needs, if that's
+a fixed regulator with no software control then the DT should have a
+fixed regulator with no software control.
+
+--lEGEL1/lMxI0MVQ2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrLPvQACgkQJNaLcl1U
+h9Aqvwf/ciDfXmVqKQSvxMtmLhQMHUGmfRiXwnrhL+GeughyU+/cdRY39m4DlJ/r
+l6SO9pxgy35Nafx9kK9N+SaJytNy/WI7qMqvEtO7Ekl0ySaCxVHDSz9EPIyV0C3r
++HJ8ZpLzBvg8Vxprv38qSt8rbwzuejiIsaz7wamIEwmY0QH650COYddR34+29EGq
+hfwfseobZuIrHIBJ6o/bLV5js0xHiY68cXVAhSNWZK2RA935yVnD4mjWGakkvydu
+7G55zw9GVulr11UYjP7XDamnkRVqS7WsHt9B0vge0oIXqyAXhWWhsx14GxsJyhpI
+TNMbXD8PGAMasYAQ3cd+l0MgbD0dhQ==
+=OXuF
+-----END PGP SIGNATURE-----
+
+--lEGEL1/lMxI0MVQ2--
