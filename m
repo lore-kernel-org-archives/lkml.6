@@ -1,153 +1,257 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752499AbeDIHeP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:34:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38684 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752394AbeDIHeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:34:11 -0400
-Date: Mon, 9 Apr 2018 09:34:07 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: __GFP_LOW
-Message-ID: <20180409073407.GD21835@dhcp22.suse.cz>
-References: <CAJWu+oqP64QzvPM6iHtzowek6s4p+3rb7WDXs1z51mwW-9mLbA@mail.gmail.com>
- <20180405142258.GA28128@bombadil.infradead.org>
- <20180405142749.GL6312@dhcp22.suse.cz>
- <20180405151359.GB28128@bombadil.infradead.org>
- <20180405153240.GO6312@dhcp22.suse.cz>
- <20180405161501.GD28128@bombadil.infradead.org>
- <20180405185444.GQ6312@dhcp22.suse.cz>
- <20180405201557.GA3666@bombadil.infradead.org>
- <20180406060953.GA8286@dhcp22.suse.cz>
- <20180408042709.GC32632@bombadil.infradead.org>
+        id S1752565AbeDIHeZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:34:25 -0400
+Received: from mail-io0-f171.google.com ([209.85.223.171]:43167 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751792AbeDIHeW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 03:34:22 -0400
+X-Google-Smtp-Source: AIpwx4+FjAbEfumNrM9NlqtWL9wi8L/8HbuI9gUs12zTIZIbzKr9s6rE6jYc9K7goy7bNaAhFKapaCErfYv5WjlzilQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180408042709.GC32632@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180406125825.GT4589@e105550-lin.cambridge.arm.com>
+References: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
+ <20180329125324.GR4589@e105550-lin.cambridge.arm.com> <CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com>
+ <74865492-d9a6-649d-d37c-a5a6a8c28f23@arm.com> <CAKfTPtDy2uUj4amA9MARUz9qS=+urwV2edyQn+fW70hkN+CgoQ@mail.gmail.com>
+ <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com> <CAKfTPtCQayuu5-84931ZxzXV1-roV_CfRd_5wXG1oxOEUZmZgw@mail.gmail.com>
+ <20180405154630.GS4589@e105550-lin.cambridge.arm.com> <CAKfTPtBv7BzAqZWTxU9HaCoNjQa2B8usk6dfO1qgofjGYG7S=w@mail.gmail.com>
+ <20180406125825.GT4589@e105550-lin.cambridge.arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 9 Apr 2018 09:34:00 +0200
+Message-ID: <CAKfTPtCfCZzuBgdYzWW_KcT34VTgj6utUF+Q5zSpre+Ky2r4eA@mail.gmail.com>
+Subject: Re: [PATCH] sched: support dynamiQ cluster
+To: Morten Rasmussen <morten.rasmussen@arm.com>
+Cc: Valentin Schneider <valentin.schneider@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 07-04-18 21:27:09, Matthew Wilcox wrote:
-> On Fri, Apr 06, 2018 at 08:09:53AM +0200, Michal Hocko wrote:
-> > OK, we already split the documentation into these categories. So we got
-> > at least the structure right ;)
-> 
-> Yes, this part of the documentation makes sense to me :-)
-> 
-> > >  - What kind of memory to allocate (DMA, NORMAL, HIGHMEM)
-> > >  - Where to get the pages from
-> > >    - Local node only (THISNODE)
-> > >    - Only in compliance with cpuset policy (HARDWALL)
-> > >    - Spread the pages between zones (WRITE)
-> > >    - The movable zone (MOVABLE)
-> > >    - The reclaimable zone (RECLAIMABLE)
-> > >  - What you are willing to do if no free memory is available:
-> > >    - Nothing at all (NOWAIT)
-> > >    - Use my own time to free memory (DIRECT_RECLAIM)
-> > >      - But only try once (NORETRY)
-> > >      - Can call into filesystems (FS)
-> > >      - Can start I/O (IO)
-> > >      - Can sleep (!ATOMIC)
-> > >    - Steal time from other processes to free memory (KSWAPD_RECLAIM)
-> > 
-> > What does that mean? If I drop the flag, do not steal? Well I do because
-> > they will hit direct reclaim sooner...
-> 
-> If they allocate memory, sure.  A process which stays in its working
-> set won't, unless it's preempted by kswapd.
+Hi Morten,
 
-Well, I was probably not clear here. KSWAPD_RECLAIM is not something you
-want to drop because this is a cooperative flag. If you do not use it
-then you are effectivelly pushing others to the direct reclaim because
-the kswapd won't be woken up and won't do the background work. Your
-working make it sound as a good thing to drop.
+On 6 April 2018 at 14:58, Morten Rasmussen <morten.rasmussen@arm.com> wrote:
+> On Thu, Apr 05, 2018 at 06:22:48PM +0200, Vincent Guittot wrote:
+>> Hi Morten,
+>>
+>> On 5 April 2018 at 17:46, Morten Rasmussen <morten.rasmussen@arm.com> wrote:
+>> > On Wed, Apr 04, 2018 at 03:43:17PM +0200, Vincent Guittot wrote:
+>> >> On 4 April 2018 at 12:44, Valentin Schneider <valentin.schneider@arm.com> wrote:
 
-> > >    - Kill other processes to get their memory (!RETRY_MAYFAIL)
-> > 
-> > Not really for costly orders.
-> 
-> Yes, need to be more precise there.
-> 
-> > >    - All of the above, and wait forever (NOFAIL)
-> > >    - Take from emergency reserves (HIGH)
-> > >    - ... but not the last parts of the regular reserves (LOW)
-> > 
-> > What does that mean and how it is different from NOWAIT? Is this about
-> > the low watermark and if yes do we want to teach users about this and
-> > make the whole thing even more complicated?  Does it wake
-> > kswapd? What is the eagerness ordering? LOW, NOWAIT, NORETRY,
-> > RETRY_MAYFAIL, NOFAIL?
-> 
-> LOW doesn't quite fit into the eagerness scale with the other flags;
-> instead it's composable with them.  So you can specify NOWAIT | LOW,
-> NORETRY | LOW, NOFAIL | LOW, etc.  All I have in mind is something
-> like this:
-> 
->         if (alloc_flags & ALLOC_HIGH)
->                 min -= min / 2;
-> +	if (alloc_flags & ALLOC_LOW)
-> +		min += min / 2;
-> 
-> The idea is that a GFP_KERNEL | __GFP_LOW allocation cannot force a
-> GFP_KERNEL allocation into an OOM situation because it cannot take
-> the last pages of memory before the watermark.
+[snip]
 
-So what are we going to do if the LOW watermark cannot succeed?
+>> >> > What I meant was that if the task composition changes, IOW we mix "small"
+>> >> > tasks (e.g. periodic stuff) and "big" tasks (performance-sensitive stuff like
+>> >> > sysbench threads), we shouldn't assume all of those require to run on a big
+>> >> > CPU. The thing is, ASYM_PACKING can't make the difference between those, so
+>> >>
+>> >> That's the 1st point where I tend to disagree: why big cores are only
+>> >> for long running task and periodic stuff can't need to run on big
+>> >> cores to get max compute capacity ?
+>> >> You make the assumption that only long running tasks need high compute
+>> >> capacity. This patch wants to always provide max compute capacity to
+>> >> the system and not only long running task
+>> >
+>> > There is no way we can tell if a periodic or short-running tasks
+>> > requires the compute capacity of a big core or not based on utilization
+>> > alone. The utilization can only tell us if a task could potentially use
+>> > more compute capacity, i.e. the utilization approaches the compute
+>> > capacity of its current cpu.
+>> >
+>> > How we handle low utilization tasks comes down to how we define
+>> > "performance" and if we care about the cost of "performance" (e.g.
+>> > energy consumption).
+>> >
+>> > Placing a low utilization task on a little cpu should always be fine
+>> > from _throughput_ point of view. As long as the cpu has spare cycles it
+>>
+>> I disagree, throughput is not only a matter of spare cycle it's also a
+>> matter of how fast you compute the work like with IO activity as an
+>> example
+>
+> From a cpu centric point of view it is, but I agree that from a
+> application/user point of view completion time might impact throughput
+> too. For example of if your throughput depends on how fast you can
+> offload work to some peripheral device (GPU for example).
+>
+> However, as I said in the beginning we don't know what the task does.
 
-> It can still make a
-> GFP_KERNEL allocation *more likely* to hit OOM (just like any other kind
-> of allocation can), but it can't do it by itself.
+I agree but that's not what you do with misfit as you assume long
+running task has higher priority but not shorter running tasks
 
-So who would be a user of __GFP_LOW?
+>
+>> > means that work isn't piling up faster than it can be processed.
+>> > However, from a _latency_ (completion time) point of view it might be a
+>> > problem, and for latency sensitive tasks I can agree that going for max
+>> > capacity might be better choice.
+>> >
+>> > The misfit patches places tasks based on utilization to ensure that
+>> > tasks get the _throughput_ they need if possible. This is in line with
+>> > the placement policy we have in select_task_rq_fair() already.
+>> >
+>> > We shouldn't forget that what we are discussing here is the default
+>> > behaviour when we don't have sufficient knowledge about the tasks in the
+>> > scheduler. So we are looking a reasonable middle-of-the-road policy that
+>> > doesn't kill your performance or the battery. If user-space has its own
+>>
+>> But misfit task kills performance and might also kills your battery as
+>> it doesn't prevent small task to run on big cores
+>
+> As I said it is not perfect for all use-cases, it is middle-of-the-road
+> approach. But I strongly disagree that it is always a bad choice for
 
-> ---
-> 
-> I've been wondering about combining the DIRECT_RECLAIM, NORETRY,
-> RETRY_MAYFAIL and NOFAIL flags together into a single field:
-> 0 => RECLAIM_NEVER,	/* !DIRECT_RECLAIM */
-> 1 => RECLAIM_ONCE,	/* NORETRY */
-> 2 => RECLAIM_PROGRESS,	/* RETRY_MAYFAIL */
-> 3 => RECLAIM_FOREVER,	/* NOFAIL */
-> 
-> The existance of __GFP_RECLAIM makes this a bit tricky.  I honestly don't
-> know what this code is asking for:
+mmh ... I never said that it's always a bad choice; I said that it can
+also easily make bad choice and kills performance and / or battery. In
+fact, we can't really predict the behavior of the system as short
+running tasks can be randomly put on big or little cores and random
+behavior are impossible to predict and mitigate.
 
-I am not sure I follow here. Is the RECLAIM_ an internal thing to the
-allocator?
+> both energy and performance as you suggest. ASYM_PACKING doesn't
+> guarantee max "throughput" (by your definition) either as you may fill
+> up your big cores with smaller tasks leaving the big tasks behind on
+> little cpus.
 
-> kernel/power/swap.c:                       __get_free_page(__GFP_RECLAIM | __GFP_HIGH);
-> but I suspect I'll have to find out.  There's about 60 places to look at.
+You didn't understand the point here. Asym ensures the max throughput
+to the system because it will provide the max compute capacity per
+seconds to the whole system and not only to some specific tasks. You
+assume that long running tasks must run on big cores and not short
+running tasks. But why filling a big core with long running task and
+filling a little core with short running tasks is the best choice ?
+Why the opposite should not be better as long as the big core is fully
+used ? The goal is to keep big CPU used whatever the type of tasks.
+then, there are other mechanism like cgroup to help sorting groups of
+tasks.
 
-Well, it would be more understandable if this was written as
-(GFP_KERNEL | __GFP_HIGH) & ~(__GFP_FS|__GFP_IO)
- 
-> I also want to add __GFP_KILL (to be part of the GFP_KERNEL definition).
+You try to partially do 2 things at the same time
 
-What does __GFP_KILL means?
+>
+>> The default behavior of the scheduler is to provide max _throughput_
+>> not middle performance and then side activity can mitigate the power
+>> impact like frequency scaling or like EAS which tries to optimize the
+>> usage of energy when system is not overloaded.
+>
+> That view doesn't fit very well with all activities around integrating
+> cpufreq and the scheduler. Frequency scaling is an important factor in
+> optimizing the throughput.
+>
 
-> That way, each bit that you set in the GFP mask increases the things the
-> page allocator can do to get memory for you.  At the moment, RETRY_MAYFAIL
-> subtracts the ability to kill other tasks, which is unusual.
+Here you didn't catch my point too. Pleas don't give me intention that
+I don't have.
+By side activity, I'm not saying that it should not consolidate the
+cpufreq and other framework decisions. Scheduler is the best place to
+consolidate CPU related decision. I'm just saying that it's an
+additional action taken to optimize energy.
+The scheduler doesn't use current frequency in task placement and load
+balancing as it assumes that max throughput is available if needed and
+adjust frequency to current needs
 
-Well, it is not all that great because some flags add capabilities while
-some remove them but, well, life is hard when you try to extend an
-interface which was not all that great from the very beginning.
+>
+>> With misfit task, you
+>> make the assumption that short task on little core is the best
+>> placement to do even for a performance PoV.
+>
+> I never said it was the best placement, I said it was a reasonable
+> default policy for big.LITTLE systems.
 
-> For example,
-> this test in kvmalloc_node:
-> 
->         WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
-> 
-> doesn't catch RETRY_MAYFAIL being set.
+But "The primary job for the task scheduler is to deliver the highest
+possible throughput with minimal latency."
 
-It doesn't really have to. We want to catch obviously broken gfp flags
-here. That means mostly GFP_NO{FS,IO} because those might simply
-deadlock. RETRY_MAYFAIL is even supported to some extend.
--- 
-Michal Hocko
-SUSE Labs
+>
+>> It seems that you make
+>> some power/performance assumption without using an energy model which
+>> can make such decision. This is all the interest of EAS.
+>
+> I'm trying to see the bigger picture where you seem not to. The
+
+Thanks for helping me to get the bigger picture ;-)
+
+> ASYM_PACKING solution is incompatible with EAS. CFS has a cpu centric
+> view and the default policy I'm suggesting doesn't violate that view.
+
+Sorry I don't catch the sentences above
+
+> Your own code in group_is_overloaded() follows this view as it is
+> utilization based and happily accepts partially utilized groups as being
+
+But this is done for SMP system where all cores have same capacity and
+to detect when tasks can get more throughput on another CPU.
+ASYM_PACKING is there to add capacity awareness in the load balance
+when CPUs have different capacity
+
+> fine without need to be offloaded despite you could have multiple tasks
+> waiting to execute.
+> CFS doesn't not provide any latency guarantees, but
+> we of course do the best we can within reason to minimize it.
+>
+> Seen in the bigger picture I would consider going for max capacity for
+> big.LITTLE systems more aggressive than using the performance cpufreq
+> govenor. Nobody does the latter for battery powered devices, hence I
+> don't see why anyone would to go big-always for big.LITTLE systems.
+
+And that's why EAS exists: to make battery friendly decision
+
+>
+>>
+>> > opinion about performance requirements it is free to use task affinity
+>> > to control which cpu the task end up on and ensure that the task gets
+>> > max capacity always. On top of that we have had interfaces in Android
+>> > for years to specify performance requirements for task (groups) to allow
+>> > small tasks to be placed on big cpus and big task to be placed on little
+>> > cpus depending on their requirements. It is even tied into cpufreq as
+>> > well. A lot of effort has gone into Android to get this balance right.
+>> > Patrick is working hard on upstreaming some of those features.
+>> >
+>> > In the bigger picture always going for max capacity is not desirable for
+>> > well-configured big.LITTLE system. You would never exploit the advantage
+>> > of the little cpus as you always use big first and only use little when
+>> > the bigs are overloaded at which point having little cpus at all makes
+>>
+>> If i'm not wrong misfit task patchset doesn't prevent little task to
+>> run on big core
+>
+> It does not, in fact it doesn't touch small tasks at all, that is not
+> the point of the patch set. The point is to make sure that big tasks
+> don't get stuck on little cpus. IOW, a selective little to big
+> migration based on task utilization.
+>
+>>
+>> > little sense. Vendors build big.LITTLE systems because they want a
+>> > better performance/energy trade-off, if they wanted max capacity always,
+>> > they would just built big-only systems.
+>>
+>> And that's all the purpose of the EAS patchset. EAS patchset is there
+>> to put some energy awareness in the scheduler decision. There is 2
+>> running mode for EAS: one when there is spare cycles so tasks can be
+>> placed to optimize energy consumption. And one when the system or part
+>> of the system is overloaded and it goes back to default performance
+>> mode because there is no interest for energy efficiency and we just
+>> want to provide max performance. So the asym packing fits with this
+>> latter mode as it provide the max compute capacity to the default mode
+>> and doesn't break EAS as it uses the load balance which is disable by
+>> EAS in not overloaded mode
+>
+> We still care about energy even when we are overutilized. We really
+> don't want a vastly different placement policy depending on whether we
+> are overutilized or not if we can avoid it as the situation changes
+> frequently in many real world scenarios. With ASYM_PACKING everything
+> could suddenly shift to big cpus if a little cpu is suddenly
+> overutilized. With the misfit patches, we would detect exactly which
+
+Not everything. The same happens with ASYM_PACKING. It doesn't blindly
+put everything on "big" cores and do use parallelism too.
+
+Regards,
+Vincent
+
+> little cpu that needs help, migrate the misfit task and everything will
+> return to non-overutilized. That is why I said that ASYM_PACKING is
+> incompatible with energy-aware scheduling and we would need the misfit
+> patches anyway.
+>
+> Morten
