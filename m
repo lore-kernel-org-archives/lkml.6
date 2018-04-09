@@ -1,160 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752091AbeDIIXn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 04:23:43 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50985 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750863AbeDIIXl (ORCPT
+        id S1752168AbeDIIYo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 04:24:44 -0400
+Received: from mail-qk0-f180.google.com ([209.85.220.180]:35272 "EHLO
+        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750759AbeDIIYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 04:23:41 -0400
-X-Google-Smtp-Source: AIpwx4/6ACUaXuH9nQ2APJbgkSK6k3b45WbR2TbNu3P5FYFaxbc3/sXcdzsmRdVN1W43mDnsY7Farg==
-Date: Mon, 9 Apr 2018 10:23:37 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Ayan Halder <ayan.halder@arm.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        Dave Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>
-Subject: Re: [PATCH 8/8] drm/arm/malidp: Added the late system pm functions
-Message-ID: <20180409082337.GG31310@phenom.ffwll.local>
-Mail-Followup-To: Ayan Halder <ayan.halder@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        Dave Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>
-References: <1522083800-30100-1-git-send-email-ayan.halder@arm.com>
- <1522083800-30100-9-git-send-email-ayan.halder@arm.com>
- <20180327082903.GS14155@phenom.ffwll.local>
- <20180327095907.GA18146@arm.com>
- <CAKMK7uF8mmLOBQtwfQgkdpPHfoy7yM9UApWgc9YiEudoP5WEyw@mail.gmail.com>
- <20180406190216.GA18433@arm.com>
+        Mon, 9 Apr 2018 04:24:43 -0400
+X-Google-Smtp-Source: AIpwx48j2haFINQEZ+zRTLl2Zl86CCARjuOr9XdmKrZ6hkiVXk0/tfFTXNyZKcglugbuDAVyRo7wayuT8Q471P3pI+8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406190216.GA18433@arm.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <86vad7qc21.wl-marc.zyngier@arm.com>
+References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
+ <20180403061836.3926-8-mylene.josserand@bootlin.com> <06308f46-ce7c-ddeb-ebca-abd1153138ba@arm.com>
+ <20180404155909.148085f7@dell-desktop.home> <86vad7qc21.wl-marc.zyngier@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Apr 2018 10:24:41 +0200
+X-Google-Sender-Auth: VbCfh_ofHz29FMeWHoWD4Umd2nU
+Message-ID: <CAMuHMdUoUVF+WYrPG1Dx515_de_2nhGhLfn9+tJUm5jgs1uz0w@mail.gmail.com>
+Subject: Re: [PATCH v5 07/13] ARM: smp: Add initialization of CNTVOFF
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        LABBE Corentin <clabbe.montjoie@gmail.com>, quentin.schulz@bootlin.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w398OmVd014160
 
-On Fri, Apr 06, 2018 at 08:02:16PM +0100, Ayan Halder wrote:
-> On Tue, Mar 27, 2018 at 01:09:36PM +0200, Daniel Vetter wrote:
-> > On Tue, Mar 27, 2018 at 11:59 AM, Ayan Halder <ayan.halder@arm.com> wrote:
-> > > On Tue, Mar 27, 2018 at 10:29:03AM +0200, Daniel Vetter wrote:
-> > >> On Mon, Mar 26, 2018 at 06:03:20PM +0100, Ayan Kumar Halder wrote:
-> > >> > malidp_pm_suspend_late checks if the runtime status is not suspended
-> > >> > and if so, invokes malidp_runtime_pm_suspend which disables the
-> > >> > display engine/core interrupts and the clocks. It sets the runtime status
-> > >> > as suspended. Subsequently, malidp_pm_resume_early will invoke
-> > >> > malidp_runtime_pm_resume which enables the clocks and the interrupts
-> > >> > (previously disabled) and sets the runtime status as active.
-> > >> >
-> > >> > Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
-> > >> > Change-Id: I5f8c3d28f076314a1c9da2a46760a9c37039ccda
-> > >>
-> > >> Why exactly do you need late/early hooks? If you have dependencies with
-> > >> other devices, pls consider adding device_links instead. This here
-> > >> shouldn't be necessary.
-> > >> -Daniel
-> > > We need to late/early hooks to disable malidp interrupts and the
-> > > clocks.
-> > 
-> > Yes, but why this ordering constraint? Why can't you just disable the
-> > interrupts/clocks in the normal suspend code. I see that the patch
-> > does this, I want to understand why it does it.
-> > -Daniel
-> Apologies for my delayed response on this. 
-> 
-> With reference to https://lwn.net/Articles/505683/ :-
-> 1. "suspend() should leave the device in a quiescent state." We invoke
-> drm_mode_config_helper_suspend() which deactivates the crtc. I
-> understand that this is the quiescent state.
-> 
-> 2. "suspend_late() can often be the same as runtime_suspend()."  We
-> invoke runtime suspend/resume calls in late/early hooks.
+On Wed, Apr 4, 2018 at 4:30 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On Wed, 04 Apr 2018 14:59:09 +0100,
+> Mylčne Josserand wrote:
 
-This article is from 2012. That's not really recommended best practices
-anymore. device_links have only been added a few years ago, so ofc an
-article from 2012 can't tell you that you should use those instead :-)
+[Marc: stuck in ISO-8859-1? ;-]
 
-That's why I brought this up, we have much better ways to handle device
-dependencies now.
+>> > It'd be good to take this opportunity to refactor the shmobile code.
+>>
+>> I can do it in this series but I do not have any shmobile platforms so
+>> I will not be able to test my modifications (only compilation).
+>>
+>> If someone can test it for me (who?), it is okay for me to refactor this
+>> code :)
+>
+> I guess you could Cc the shmobile folks (Geert Uytterhoeven, Simon
+> Horman), and get them to review/test the changes.
 
-Also, you still haven't explained what exactly the dependency is.
--Daniel
+Correct. I can test on a remote R-Car E2 ALT board that needs it.
 
-> 
-> > >> > ---
-> > >> >  drivers/gpu/drm/arm/malidp_drv.c | 17 +++++++++++++++++
-> > >> >  1 file changed, 17 insertions(+)
-> > >> >
-> > >> > diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-> > >> > index bd44a6d..f6124d8 100644
-> > >> > --- a/drivers/gpu/drm/arm/malidp_drv.c
-> > >> > +++ b/drivers/gpu/drm/arm/malidp_drv.c
-> > >> > @@ -766,8 +766,25 @@ static int __maybe_unused malidp_pm_resume(struct device *dev)
-> > >> >     return 0;
-> > >> >  }
-> > >> >
-> > >> > +static int __maybe_unused malidp_pm_suspend_late(struct device *dev)
-> > >> > +{
-> > >> > +   if (!pm_runtime_status_suspended(dev)) {
-> > >> > +           malidp_runtime_pm_suspend(dev);
-> > >> > +           pm_runtime_set_suspended(dev);
-> > >> > +   }
-> > >> > +   return 0;
-> > >> > +}
-> > >> > +
-> > >> > +static int __maybe_unused malidp_pm_resume_early(struct device *dev)
-> > >> > +{
-> > >> > +   malidp_runtime_pm_resume(dev);
-> > >> > +   pm_runtime_set_active(dev);
-> > >> > +   return 0;
-> > >> > +}
-> > >> > +
-> > >> >  static const struct dev_pm_ops malidp_pm_ops = {
-> > >> >     SET_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend, malidp_pm_resume) \
-> > >> > +   SET_LATE_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend_late, malidp_pm_resume_early) \
-> > >> >     SET_RUNTIME_PM_OPS(malidp_runtime_pm_suspend, malidp_runtime_pm_resume, NULL)
-> > >> >  };
-> > >> >
-> > >> > --
-> > >> > 2.7.4
-> > >> >
-> > >> > _______________________________________________
-> > >> > dri-devel mailing list
-> > >> > dri-devel@lists.freedesktop.org
-> > >> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > >>
-> > >> --
-> > >> Daniel Vetter
-> > >> Software Engineer, Intel Corporation
-> > >> http://blog.ffwll.ch
-> > >> _______________________________________________
-> > >> dri-devel mailing list
-> > >> dri-devel@lists.freedesktop.org
-> > >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > > IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > 
-> > 
-> > 
-> > -- 
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+P.S. Interestingly, none of the Renesas CA15 SoCs seem to suffer from it,
+     only CA7.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
