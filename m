@@ -1,214 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752084AbeDIRKf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 13:10:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60965 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751507AbeDIRKd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 13:10:33 -0400
-Date: Mon, 9 Apr 2018 10:10:02 -0700
-From: tip-bot for Prashant Bhole <tipbot@zytor.com>
-Message-ID: <tip-621b6d2ea297d0fb6030452c5bcd221f12165fcf@git.kernel.org>
-Cc: oleg@redhat.com, jolsa@redhat.com, mingo@kernel.org, hpa@zytor.com,
-        peterz@infradead.org, torvalds@linux-foundation.org,
-        namhyung@kernel.org, bhole_prashant_q7@lab.ntt.co.jp,
-        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, stable@kernel.org, acme@kernel.org
-Reply-To: alexander.shishkin@linux.intel.com, bhole_prashant_q7@lab.ntt.co.jp,
-        torvalds@linux-foundation.org, namhyung@kernel.org, oleg@redhat.com,
-        hpa@zytor.com, mingo@kernel.org, peterz@infradead.org,
-        jolsa@redhat.com, acme@kernel.org, stable@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org
-In-Reply-To: <20180409100346.6416-1-bhole_prashant_q7@lab.ntt.co.jp>
-References: <20180409100346.6416-1-bhole_prashant_q7@lab.ntt.co.jp>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/core: Fix use-after-free in
- uprobe_perf_close()
-Git-Commit-ID: 621b6d2ea297d0fb6030452c5bcd221f12165fcf
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752422AbeDIRKt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 13:10:49 -0400
+Received: from foss.arm.com ([217.140.101.70]:58730 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752202AbeDIRKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 13:10:48 -0400
+Date: Mon, 9 Apr 2018 18:10:41 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: lizhijian@cn.fujitsu.com, sandipan@linux.vnet.ibm.com
+Subject: Re: [PATCH] tools: restore READ_ONCE() C++ compatibility
+Message-ID: <20180409171041.6qfabrccsqu4bdlc@lakrids.cambridge.arm.com>
+References: <20180404163445.16492-1-mark.rutland@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180404163445.16492-1-mark.rutland@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  621b6d2ea297d0fb6030452c5bcd221f12165fcf
-Gitweb:     https://git.kernel.org/tip/621b6d2ea297d0fb6030452c5bcd221f12165fcf
-Author:     Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-AuthorDate: Mon, 9 Apr 2018 19:03:46 +0900
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 9 Apr 2018 18:15:58 +0200
+Hi Arnaldo,
 
-perf/core: Fix use-after-free in uprobe_perf_close()
+As Sandipan gave a Tested-by for this, are you happy to pick it up as a
+fix for v4.17?
 
-A use-after-free bug was caught by KASAN while running usdt related
-code (BCC project. bcc/tests/python/test_usdt2.py):
+Or would you prefer that I resend this?
 
-	==================================================================
-	BUG: KASAN: use-after-free in uprobe_perf_close+0x222/0x3b0
-	Read of size 4 at addr ffff880384f9b4a4 by task test_usdt2.py/870
+Thanks,
+Mark.
 
-	CPU: 4 PID: 870 Comm: test_usdt2.py Tainted: G        W         4.16.0-next-20180409 #215
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-	Call Trace:
-	 dump_stack+0xc7/0x15b
-	 ? show_regs_print_info+0x5/0x5
-	 ? printk+0x9c/0xc3
-	 ? kmsg_dump_rewind_nolock+0x6e/0x6e
-	 ? uprobe_perf_close+0x222/0x3b0
-	 print_address_description+0x83/0x3a0
-	 ? uprobe_perf_close+0x222/0x3b0
-	 kasan_report+0x1dd/0x460
-	 ? uprobe_perf_close+0x222/0x3b0
-	 uprobe_perf_close+0x222/0x3b0
-	 ? probes_open+0x180/0x180
-	 ? free_filters_list+0x290/0x290
-	 trace_uprobe_register+0x1bb/0x500
-	 ? perf_event_attach_bpf_prog+0x310/0x310
-	 ? probe_event_disable+0x4e0/0x4e0
-	 perf_uprobe_destroy+0x63/0xd0
-	 _free_event+0x2bc/0xbd0
-	 ? lockdep_rcu_suspicious+0x100/0x100
-	 ? ring_buffer_attach+0x550/0x550
-	 ? kvm_sched_clock_read+0x1a/0x30
-	 ? perf_event_release_kernel+0x3e4/0xc00
-	 ? __mutex_unlock_slowpath+0x12e/0x540
-	 ? wait_for_completion+0x430/0x430
-	 ? lock_downgrade+0x3c0/0x3c0
-	 ? lock_release+0x980/0x980
-	 ? do_raw_spin_trylock+0x118/0x150
-	 ? do_raw_spin_unlock+0x121/0x210
-	 ? do_raw_spin_trylock+0x150/0x150
-	 perf_event_release_kernel+0x5d4/0xc00
-	 ? put_event+0x30/0x30
-	 ? fsnotify+0xd2d/0xea0
-	 ? sched_clock_cpu+0x18/0x1a0
-	 ? __fsnotify_update_child_dentry_flags.part.0+0x1b0/0x1b0
-	 ? pvclock_clocksource_read+0x152/0x2b0
-	 ? pvclock_read_flags+0x80/0x80
-	 ? kvm_sched_clock_read+0x1a/0x30
-	 ? sched_clock_cpu+0x18/0x1a0
-	 ? pvclock_clocksource_read+0x152/0x2b0
-	 ? locks_remove_file+0xec/0x470
-	 ? pvclock_read_flags+0x80/0x80
-	 ? fcntl_setlk+0x880/0x880
-	 ? ima_file_free+0x8d/0x390
-	 ? lockdep_rcu_suspicious+0x100/0x100
-	 ? ima_file_check+0x110/0x110
-	 ? fsnotify+0xea0/0xea0
-	 ? kvm_sched_clock_read+0x1a/0x30
-	 ? rcu_note_context_switch+0x600/0x600
-	 perf_release+0x21/0x40
-	 __fput+0x264/0x620
-	 ? fput+0xf0/0xf0
-	 ? do_raw_spin_unlock+0x121/0x210
-	 ? do_raw_spin_trylock+0x150/0x150
-	 ? SyS_fchdir+0x100/0x100
-	 ? fsnotify+0xea0/0xea0
-	 task_work_run+0x14b/0x1e0
-	 ? task_work_cancel+0x1c0/0x1c0
-	 ? copy_fd_bitmaps+0x150/0x150
-	 ? vfs_read+0xe5/0x260
-	 exit_to_usermode_loop+0x17b/0x1b0
-	 ? trace_event_raw_event_sys_exit+0x1a0/0x1a0
-	 do_syscall_64+0x3f6/0x490
-	 ? syscall_return_slowpath+0x2c0/0x2c0
-	 ? lockdep_sys_exit+0x1f/0xaa
-	 ? syscall_return_slowpath+0x1a3/0x2c0
-	 ? lockdep_sys_exit+0x1f/0xaa
-	 ? prepare_exit_to_usermode+0x11c/0x1e0
-	 ? enter_from_user_mode+0x30/0x30
-	random: crng init done
-	 ? __put_user_4+0x1c/0x30
-	 entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-	RIP: 0033:0x7f41d95f9340
-	RSP: 002b:00007fffe71e4268 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-	RAX: 0000000000000000 RBX: 000000000000000d RCX: 00007f41d95f9340
-	RDX: 0000000000000000 RSI: 0000000000002401 RDI: 000000000000000d
-	RBP: 0000000000000000 R08: 00007f41ca8ff700 R09: 00007f41d996dd1f
-	R10: 00007fffe71e41e0 R11: 0000000000000246 R12: 00007fffe71e4330
-	R13: 0000000000000000 R14: fffffffffffffffc R15: 00007fffe71e4290
-
-	Allocated by task 870:
-	 kasan_kmalloc+0xa0/0xd0
-	 kmem_cache_alloc_node+0x11a/0x430
-	 copy_process.part.19+0x11a0/0x41c0
-	 _do_fork+0x1be/0xa20
-	 do_syscall_64+0x198/0x490
-	 entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-	Freed by task 0:
-	 __kasan_slab_free+0x12e/0x180
-	 kmem_cache_free+0x102/0x4d0
-	 free_task+0xfe/0x160
-	 __put_task_struct+0x189/0x290
-	 delayed_put_task_struct+0x119/0x250
-	 rcu_process_callbacks+0xa6c/0x1b60
-	 __do_softirq+0x238/0x7ae
-
-	The buggy address belongs to the object at ffff880384f9b480
-	 which belongs to the cache task_struct of size 12928
-
-It occurs because task_struct is freed before perf_event which refers
-to the task and task flags are checked while teardown of the event.
-perf_event_alloc() assigns task_struct to hw.target of perf_event,
-but there is no reference counting for it.
-
-As a fix we get_task_struct() in perf_event_alloc() at above mentioned
-assignment and put_task_struct() in _free_event().
-
-Signed-off-by: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <stable@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 63b6da39bb38e8f1a1ef3180d32a39d6 ("perf: Fix perf_event_exit_task() race")
-Link: http://lkml.kernel.org/r/20180409100346.6416-1-bhole_prashant_q7@lab.ntt.co.jp
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/events/core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index fc1c330c6bd6..d7af82827373 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4447,6 +4447,9 @@ static void _free_event(struct perf_event *event)
- 	if (event->ctx)
- 		put_ctx(event->ctx);
- 
-+	if (event->hw.target)
-+		put_task_struct(event->hw.target);
-+
- 	exclusive_event_destroy(event);
- 	module_put(event->pmu->module);
- 
-@@ -9955,6 +9958,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 		 * and we cannot use the ctx information because we need the
- 		 * pmu before we get a ctx.
- 		 */
-+		get_task_struct(task);
- 		event->hw.target = task;
- 	}
- 
-@@ -10070,6 +10074,8 @@ err_ns:
- 		perf_detach_cgroup(event);
- 	if (event->ns)
- 		put_pid_ns(event->ns);
-+	if (event->hw.target)
-+		put_task_struct(event->hw.target);
- 	kfree(event);
- 
- 	return ERR_PTR(err);
+On Wed, Apr 04, 2018 at 05:34:45PM +0100, Mark Rutland wrote:
+> Our userspace <linux/compiler.h> defines READ_ONCE() in a way that clang
+> doesn't like, as we have an anonymous union in which neither field is
+> initialized.
+> 
+> WRITE_ONCE() is fine since it initializes the __val field. For
+> READ_ONCE() we can keep clang and GCC happy with a dummy initialization
+> of the __c field, so let's do that.
+> 
+> At the same time, let's split READ_ONCE() and WRITE_ONCE() over several
+> lines for legibility, as we do in the in-kernel <linux/compiler.h>.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Fixes: 6aa7de059173a986 ("locking/atomics: COCCINELLE/treewide: Convert trivial ACCESS_ONCE() patterns to READ_ONCE()/WRITE_ONCE()")
+> Reported-by: Li Zhijian <lizhijian@cn.fujitsu.com>
+> Reported-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/include/linux/compiler.h | 20 +++++++++++++++-----
+>  1 file changed, 15 insertions(+), 5 deletions(-)
+> 
+> Hi,
+> 
+> This is fallout from my automated ACCESS_ONCE() removal, and I'm not that
+> familiar with using clang for perf.
+> 
+> In local testing, this fixes READ_ONCE() when compiling with clang, but I
+> subsequently hit some other issues which I believe are down to LLVM API
+> changes.
+> 
+> Zhijian, Sandipan, does this patch work for you?
+> 
+> Thanks,
+> Mark.
+> 
+> diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
+> index 04e32f965ad7..1827c2f973f9 100644
+> --- a/tools/include/linux/compiler.h
+> +++ b/tools/include/linux/compiler.h
+> @@ -151,11 +151,21 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
+>   * required ordering.
+>   */
+>  
+> -#define READ_ONCE(x) \
+> -	({ union { typeof(x) __val; char __c[1]; } __u; __read_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
+> -
+> -#define WRITE_ONCE(x, val) \
+> -	({ union { typeof(x) __val; char __c[1]; } __u = { .__val = (val) }; __write_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
+> +#define READ_ONCE(x)					\
+> +({							\
+> +	union { typeof(x) __val; char __c[1]; } __u =	\
+> +		{ .__c = { 0 } };			\
+> +	__read_once_size(&(x), __u.__c, sizeof(x));	\
+> +	__u.__val;					\
+> +})
+> +
+> +#define WRITE_ONCE(x, val)				\
+> +({							\
+> +	union { typeof(x) __val; char __c[1]; } __u =	\
+> +		{ .__val = (val) }; 			\
+> +	__write_once_size(&(x), __u.__c, sizeof(x));	\
+> +	__u.__val;					\
+> +})
+>  
+>  
+>  #ifndef __fallthrough
+> -- 
+> 2.11.0
+> 
