@@ -1,46 +1,86 @@
-Return-Path: <Alexander.Levin@microsoft.com>
-X-Google-Smtp-Source: AIpwx49wZSMNfWHQFIu2StH2sLlSTN6xGFOK+3yJ4InEr6f45X450LMgkA1EFKyTBWylK1e8pwIK
-ARC-Seal: i=1; a=rsa-sha256; t=1523234025; cv=none;
-        d=google.com; s=arc-20160816;
-        b=aXBdi78jCtXBoeiWSBv9k6+QjGCxhQQU2b7dEDSIC6Dtlgt+PoaC92t6Uou58Bjdum
-         6o7aFQUjd0Sg9kmqvpHc3LwSlV2w5r+903T/3i4ovvSExC5tgPoCqFmDxWIm4XeKkaxl
-         c89VmbljN+vtEL2Fpb4+bshy+hkpb7hWi+RnXmgnMaJeNYeAwWib30ffRnxGA4yJh7dU
-         13tPfRDVTWXL1dknzw9lpODylQbLGAjVoQchJRF5qojoM98VkdHpHHeSkwalFx4KMHrn
-         B6lFY5/1cIR1VI/JxmQpE+FMvUUSFBNS33nj01o7g7AZoKUNWXOa0Gd89tDw39nn8VpG
-         H9lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
-         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
-         :references:message-id:date:thread-index:thread-topic:subject:cc:to
-         :from:dkim-signature:arc-authentication-results;
-        bh=yEDW0jrsfW7/cQmHpeL7KF6TqDwzm+xRiMF/fNxDGIQ=;
-        b=jKA+7TCLcUd2ZfFq4zgoDR40Q6ac/QlZKSAvK/9kRXWDtZiTUR5kPGzESVFwEWwe6G
-         BtjJdbWGq3Ug9ojWsfT8qM/PKhul75BqadgpJSnQJGiZSyxIOGY9jxYbhpnKZ2KNTXJu
-         UY0ik4P1iGrq2gPEvTQiBQYqiqe+BbRl5OlhXOsOe97AwhnIapPPfpmQfJI0bc3q9n6l
-         bQI0lcTsU5Lr2uo0oaxZ/rsMi/GYIpJKFjqFv8o5mQ9Boz2Qt7EcZcBAbYAgFRhHoKdM
-         hGRxTc87IePPcraLnGZ/IskIoDv1Mz2C77oDGqZzDV+ZGEZnyOeC8VOPPzHoU+mP9Onn
-         Wyaw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=BWhw8NJG;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.34.105 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=BWhw8NJG;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.34.105 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3607359-1523233999-2-7839007289073352629
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523233998; b=DOwvMSW5AmEj7P5PZ2q059JTBk/6BzqRAJXEGk+TJ3zp9wC/C0
+    H9XhpzCL7LYhV9L8HiMQSZ4RLmjQDx6/oCJvmqzMYrHbQLHgugaAOhCOyNxjAKvo
+    3fFXh8sfsz67EhhcZtly71YqpzViN13xHjHWCMCSzFCNe1118Tvjb/lEdj1wegaf
+    mvZ3WBUW023S7i5FlboRYxeMdKbGNQViqDy5pr0MIY/fkL5hifKvp9iWhek2h0e6
+    tsdJc27UsZ/HWED9HQ1YpZsqwDzXy+qRrEp3d7CEvyC9AfhU4VmROi3t7Un/2/zv
+    HkuIzOFkFD0bqJiK2QOu2Re3ZDi8fTxuAUWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=fm2; t=1523233998; bh=r7mkdapx0/
+    O++TAvu2cUZ1OmDCkILFYNQz2Dl2DcPo0=; b=JqHdz/dshZk7SogHBadvmtA2ao
+    4n1uZp5b+Gk1DH/qNQ/kMOeDmzgT0Ehq69debHUFddBz5eYZD3KMHq/GjEoPebzy
+    aF0YRVCTw8fkCUiBZLLMFvxVEDS2Ef+qn9UY9BkHfn3y16okthongdgHwsh9KY46
+    un43FcVWMvCBzIDN1nWV0uDeANPM4xp6hOXf7fIfNoA1t1RUk4ZfqJSQ/X46p/fM
+    nxk1LjvphHBZALHuF2gKWRsZa7jgM8vsL2A970UamuV3zJE8o8F3K1mRaahEbK8b
+    6XjCbEJa2pk74N9wWwohkH9OCE9VrhVhC6rESWKjb4A8vh6jISHbqf5TYAlQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ICi1x/sG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ICi1x/sG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGKXST/a3A6La+UeL7/WFsFFrGnHYYh2DTuqf1cGQ8FwebPHv1l2tVNbucZotNcTHmaP1LfXO2EcAOj2swEGHwCUdeanYeo0PmrrRtsMNiAM9YZXM5YG
+    9MYZEknBkme5QN5WfBF/7TkBZuuHR/luI8BWJpUAlzhiKQHjAQfDNreWwdVrq1eacHENzCavajBiqkYqhfamyMsqiSF3wcF1zDgYtkVaKkuFKAp92iS/MV6Z
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
+    a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=Lf-vpJhqX20A:10 a=pGLkceISAAAA:8 a=c-n4J4-pAAAA:8 a=yMhMjlubAAAA:8
+    a=gZW_3bEixuK0yuQyb0QA:9 a=wPNLvfGTeEIA:10 a=L0NDqeB7ZLmQzAogN4cw:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932225AbeDIAdO (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:33:14 -0400
+Received: from mail-sn1nam01on0094.outbound.protection.outlook.com ([104.47.32.94]:49836
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932267AbeDIAdJ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:33:09 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Corey Minyard
-	<minyard@acm.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha
- Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 245/293] device property: Define type of
- PROPERTY_ENRTY_*() macros
-Thread-Topic: [PATCH AUTOSEL for 4.9 245/293] device property: Define type of
- PROPERTY_ENRTY_*() macros
-Thread-Index: AQHTz5lYNAlSHOGbNkC96ywKEQC0LQ==
-Date: Mon, 9 Apr 2018 00:26:04 +0000
-Message-ID: <20180409002239.163177-245-alexander.levin@microsoft.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Ulf Magnusson <ulfalizer@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 233/293] kconfig: Fix automatic menu creation
+ mem leak
+Thread-Topic: [PATCH AUTOSEL for 4.9 233/293] kconfig: Fix automatic menu
+ creation mem leak
+Thread-Index: AQHTz5lTgD6CTPYQrEekGUR5DJuBEw==
+Date: Mon, 9 Apr 2018 00:25:55 +0000
+Message-ID: <20180409002239.163177-233-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -49,109 +89,90 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0998;7:Ohhg7oaF5z3NHC0ZASzDAMzsC4hc8+cCjFr3087St449hn4NrqnE6Sb73jyNffFB8lwvE4e/DOxQ//BEq4d9d9SPEHeE9IpQ8nnN9+anwru+46Sw1BBc1f146uju5F2ioSlXNUHdl1M4pGHXP5lWD26z6Dz7Uz9AJf2gGSoZfUSZJTQLzu3jqs1ZgzXGKKMnJD7LD0HUFZW4TKKOD3VHqHLlGL3OxaKpopKkpJ5wobXKkLmwUxKcIlXKmX5EMV7T;20:/hxXQV1aqtwuz+BAN2ftocH2oMCBNhqnDI/EqbyOYeEnbIzlwRCHhy3sPoE6PvDL08onLEvNSiMJHgKdAnDbGd+w4skT5ocyFTwOB53LDEIyW+UT4A74f55SZMeWK1tElAJ5QQbaJXz5ouUMzPLrSIEzifiwHF+YYEgi3bze7is=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0902;7:Swz68mu2EdG1aOnd0m3YvOB27u7m/ferBtw1w8llsmDpH1KkidtAJPkmo22Y7kBofrjgXekRpvWdNwr4YGeP9rBFmuglRU8LK7sQkiIgv3Q2DM5uzQLRkDrKaC599FF/34sBFOCQ1eAJpk1rD5DOUrK1Chc8KcPjpexHOw5Gx4RunK3hqu0vC4lG0TKBj0X8dNZSHPhlkTRveIaEFt947pQXt7nbslxyMZeWp6VxaKyx/3MwWIiJGXAOtK4U4Coc;20:tyOQLYCbsi6172LXnCXUyVlheoCL7NuFOg8N8vxIq1WyEj8ooouzPODvFaP0s5aSLFYpbhwRSvtDAV5N5+2L8VRiB6Qp4c5w62rjBsAvFAoo6scZH3RByycK562+eGgDVB7uMcqfZV8af5NodO5XpcPNvBTZpXtvE+wIHZEQr5c=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 764bd7de-e76a-4472-1599-08d59db18c62
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0998;
-x-ms-traffictypediagnostic: DM5PR2101MB0998:
+X-MS-Office365-Filtering-Correlation-Id: dc355f05-cb7c-488f-d08f-08d59db1761e
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0902;
+x-ms-traffictypediagnostic: DM5PR2101MB0902:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB09981A87A8FD37A1C0601AC2FBBF0@DM5PR2101MB0998.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(213716511872227)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0998;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0998;
+x-microsoft-antispam-prvs: <DM5PR2101MB0902984FDAEFA7A10236963EFBBF0@DM5PR2101MB0902.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0902;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0902;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(376002)(396003)(366004)(39860400002)(189003)(199004)(25786009)(105586002)(14454004)(76176011)(68736007)(2906002)(316002)(97736004)(8676002)(86612001)(3660700001)(3280700002)(102836004)(6116002)(4326008)(8936002)(36756003)(22452003)(81166006)(81156014)(54906003)(6506007)(10090500001)(2501003)(6512007)(186003)(6666003)(3846002)(486006)(5660300001)(26005)(7736002)(5250100002)(305945005)(99286004)(2900100001)(110136005)(1076002)(6436002)(53936002)(106356001)(107886003)(72206003)(86362001)(476003)(446003)(66066001)(11346002)(478600001)(10290500003)(2616005)(6486002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0998;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 624ABOGul0zkqmD8inloM7Jh8cSJTR98+QYpPQ31398Vv39jyMuoYQieyM954iIWs5hd1Z3ZHRxVNoHMms/S60im0wK23HrUn9UHie9drTEYEp1SM2QhY2kTs02EfMWRH0+5+jSdNJpt6rZxXZlD6mTXZLvdQNFZl5YqOgZqZ583PnbPv/50eli034I+Gi7pIiwcM0I7WUdofB848Ddtl3d8DJn98WVOrYTASOob9m6B87WPsEKP21iC3uqWq5TDTzqL73UDN6ypKhziPrJEA3NL/XxEqSwzyp44rb6g6BmjOpYd8qm18Elz4XsqJ9ww3TuhzRSn/+hJhFvou2NeHwFBOVG2JUiH6RRYwpzFahlSQcwXn6j6BheXzGxTfwUjBMbUIUWsWunoDX+JP5g6+ht9ZRvZsOffToaKpRFdKQM=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(39860400002)(39380400002)(346002)(199004)(189003)(5660300001)(478600001)(86612001)(3846002)(6116002)(106356001)(25786009)(6486002)(72206003)(10290500003)(8936002)(6436002)(76176011)(2616005)(6506007)(2900100001)(97736004)(26005)(486006)(10090500001)(36756003)(81166006)(8676002)(81156014)(102836004)(2906002)(99286004)(11346002)(476003)(3660700001)(66066001)(6512007)(575784001)(86362001)(53936002)(105586002)(186003)(5250100002)(14454004)(22452003)(6666003)(2501003)(446003)(7736002)(39060400002)(316002)(1076002)(110136005)(3280700002)(68736007)(54906003)(107886003)(4326008)(305945005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0902;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: ekvznAfgRxUcwUgnWkCQt+G23Z8nRzNeZILDkvumHN1uS2HH+3/7BQb4gupyV8TDpjMhozTpnhh7fH3AH8MShwcztT/g6HRxt0c9hwU35CpxQhbRU5cR2v0LHkqccbXhkWsTwcydYSSSGbl/8Tl+sFmX33ky/pjk6hp4WvFVDDBVqaPRV00nxnJ1D4m/etKNYWQx4ikMQygrRTB9qSgLTZK3mpt4olwujuyLhJbT1TbxJkKoJlaHJIxihJ4ixdD3pTp2AmVJnQFBBTG0VcN8mtVbfv6+sDfMjjiEperzh1EEtvFR7LxmpXTz6+R9zN0lCSqS6GpgFRUY4MR6fvYyLAAGHrPYPD3cImOEp+myBUSNqvsQMR1k3YVuLOqvZTOT8O5qLB3OifQA4tUwGChT6dj+acU5DMDIG2KR9m+ZDgs=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 764bd7de-e76a-4472-1599-08d59db18c62
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:26:04.1599
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc355f05-cb7c-488f-d08f-08d59db1761e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:25:55.4255
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0998
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0902
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597225731447440120?=
-X-GMAIL-MSGID: =?utf-8?q?1597226641214399076?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
 
-[ Upstream commit c505cbd45f6e9c539d57dd171d95ec7e5e9f9cd0 ]
+[ Upstream commit ae7440ef0c8013d68c00dad6900e7cce5311bb1c ]
 
-Some of the drivers may use the macro at runtime flow, like
+expr_trans_compare() always allocates and returns a new expression,
+giving the following leak outline:
 
-  struct property_entry p[10];
-...
-  p[index++] =3D PROPERTY_ENTRY_U8("u8 property", u8_data);
+	...
+	*Allocate*
+	basedep =3D expr_trans_compare(basedep, E_UNEQUAL, &symbol_no);
+	...
+	for (menu =3D parent->next; menu; menu =3D menu->next) {
+		...
+		*Copy*
+		dep2 =3D expr_copy(basedep);
+		...
+		*Free copy*
+		expr_free(dep2);
+	}
+	*basedep lost!*
 
-In that case and absence of the data type compiler fails the build:
+Fix by freeing 'basedep' after the loop.
 
-drivers/char/ipmi/ipmi_dmi.c:79:29: error: Expected ; at end of statement
-drivers/char/ipmi/ipmi_dmi.c:79:29: error: got {
+Summary from Valgrind on 'menuconfig' (ARCH=3Dx86) before the fix:
 
-Acked-by: Corey Minyard <cminyard@mvista.com>
-Cc: Corey Minyard <minyard@acm.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	LEAK SUMMARY:
+	   definitely lost: 344,376 bytes in 14,349 blocks
+	   ...
+
+Summary after the fix:
+
+	LEAK SUMMARY:
+	   definitely lost: 44,448 bytes in 1,852 blocks
+	   ...
+
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/linux/property.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ scripts/kconfig/menu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/property.h b/include/linux/property.h
-index 338f9b76914b..459337fb44d0 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -187,7 +187,7 @@ struct property_entry {
-  */
-=20
- #define PROPERTY_ENTRY_INTEGER_ARRAY(_name_, _type_, _val_)	\
--{								\
-+(struct property_entry) {					\
- 	.name =3D _name_,						\
- 	.length =3D ARRAY_SIZE(_val_) * sizeof(_type_),		\
- 	.is_array =3D true,					\
-@@ -205,7 +205,7 @@ struct property_entry {
- 	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u64, _val_)
-=20
- #define PROPERTY_ENTRY_STRING_ARRAY(_name_, _val_)		\
--{								\
-+(struct property_entry) {					\
- 	.name =3D _name_,						\
- 	.length =3D ARRAY_SIZE(_val_) * sizeof(const char *),	\
- 	.is_array =3D true,					\
-@@ -214,7 +214,7 @@ struct property_entry {
- }
-=20
- #define PROPERTY_ENTRY_INTEGER(_name_, _type_, _val_)	\
--{							\
-+(struct property_entry) {				\
- 	.name =3D _name_,					\
- 	.length =3D sizeof(_type_),			\
- 	.is_string =3D false,				\
-@@ -231,7 +231,7 @@ struct property_entry {
- 	PROPERTY_ENTRY_INTEGER(_name_, u64, _val_)
-=20
- #define PROPERTY_ENTRY_STRING(_name_, _val_)		\
--{							\
-+(struct property_entry) {				\
- 	.name =3D _name_,					\
- 	.length =3D sizeof(_val_),			\
- 	.is_string =3D true,				\
-@@ -239,7 +239,7 @@ struct property_entry {
- }
-=20
- #define PROPERTY_ENTRY_BOOL(_name_)		\
--{						\
-+(struct property_entry) {			\
- 	.name =3D _name_,				\
- }
-=20
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index aed678e8a777..4a61636158dd 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -364,6 +364,7 @@ void menu_finalize(struct menu *parent)
+ 			menu->parent =3D parent;
+ 			last_menu =3D menu;
+ 		}
++		expr_free(basedep);
+ 		if (last_menu) {
+ 			parent->list =3D parent->next;
+ 			parent->next =3D last_menu->next;
 --=20
 2.15.1
