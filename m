@@ -1,77 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752283AbeDIShR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 14:37:17 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:46072 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751610AbeDIShQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 14:37:16 -0400
-X-Google-Smtp-Source: AIpwx4+cgCFJXFvB/K0DPblk4rGIFu4CqWXP422S5fhcxq23F4bihs2ZiSh1hVW6WDvbc/bYYZ+Azg==
-Date: Mon, 9 Apr 2018 13:37:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>, Jacopo Mondi <jacopo@jmondi.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/5] drm: bridge: lvds-encoder: allow specifying the
- input bus format
-Message-ID: <20180409183713.xk7qt4mukb24vr64@rob-hp-laptop>
-References: <20180326212447.7380-1-peda@axentia.se>
- <20180326212447.7380-5-peda@axentia.se>
+        id S1753089AbeDISia (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 14:38:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50790 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752556AbeDISi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 14:38:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519DD21771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Mon, 9 Apr 2018 11:38:27 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180326212447.7380-5-peda@axentia.se>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 11:24:46PM +0200, Peter Rosin wrote:
-> If the bridge changes the bus format, allow this to be described in
-> the bridge, instead of providing false information about the bus
-> format of the connector or panel.
-
-I guess this is dead, but I'll comment here anyway because this issue 
-has come up several times and I think something is needed.
-
+On 04/09, Minchan Kim wrote:
+> On Mon, Apr 09, 2018 at 04:14:03AM -0700, Matthew Wilcox wrote:
+> > On Mon, Apr 09, 2018 at 12:09:30PM +0900, Minchan Kim wrote:
+> > > On Sun, Apr 08, 2018 at 07:49:25PM -0700, Matthew Wilcox wrote:
+> > > > On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
+> > > > > It assumes shadow entry of radix tree relies on the init state
+> > > > > that node->private_list allocated should be list_empty state.
+> > > > > Currently, it's initailized in SLAB constructor which means
+> > > > > node of radix tree would be initialized only when *slub allocates
+> > > > > new page*, not *new object*. So, if some FS or subsystem pass
+> > > > > gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
+> > > > 
+> > > > Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
+> > > > I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
+> > > > with GFP_ZERO.
+> > > 
+> > > Look at fs/f2fs/inode.c
+> > > mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> > > 
+> > > __add_to_page_cache_locked
+> > >   radix_tree_maybe_preload
+> > > 
+> > > add_to_page_cache_lru
+> > > 
+> > > What's the wrong with setting __GFP_ZERO with mapping->gfp_mask?
+> > 
+> > Because it's a stupid thing to do.  Pages are allocated and then filled
+> > from disk.  Zeroing them before DMAing to them is just a waste of time.
 > 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  .../bindings/display/bridge/lvds-transmitter.txt   |  6 ++++++
->  drivers/gpu/drm/bridge/lvds-encoder.c              | 25 ++++++++++++++++++++++
->  2 files changed, 31 insertions(+)
+> Every FSes do address_space to read pages from storage? I'm not sure.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-> index 50220190c203..8d40a2069252 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-> +++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-> @@ -30,6 +30,12 @@ Required properties:
->    device-specific version corresponding to the device first
->    followed by the generic version.
->  
-> +Optional properties:
-> +
-> +- interface-pix-fmt:
-> +  List of valid input bus formats of the encoder. Recognized bus formats
-> +  are listed in ../bus-format.txt
+> If you're right, we need to insert WARN_ON to catch up __GFP_ZERO
+> on mapping_set_gfp_mask at the beginning and remove all of those
+> stupid thins. 
+> 
+> Jaegeuk, why do you need __GFP_ZERO? Could you explain?
 
-We already have bus interface properties defined in 
-media/video-interfaces.txt. It's the same problem though the bus/pixel 
-formats are somewhat different. "bus-width" is probably enough to handle 
-your particular case, but I'd imagine that could easily not be the case. 
-If so, we should extend the existing binding rather than diverge with 
-something new.
+Comment says "__GFP_ZERO returns a zeroed page on success."
 
-Rob
+The f2fs maintains two inodes to manage some metadata in the page cache,
+which requires zeroed data when introducing a new structure. It's not
+a big deal to avoid __GFP_ZERO for whatever performance reasons tho, does
+it only matters with f2fs?
+
+Thanks,
