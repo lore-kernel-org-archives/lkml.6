@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752544AbeDIK7x (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 06:59:53 -0400
-Received: from mail-db5eur01on0139.outbound.protection.outlook.com ([104.47.2.139]:45136
+        id S1752591AbeDILAA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 07:00:00 -0400
+Received: from mail-db5eur01on0131.outbound.protection.outlook.com ([104.47.2.131]:45133
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752487AbeDIK7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 06:59:48 -0400
+        id S1752498AbeDIK7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 06:59:53 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se;
 From: Peter Rosin <peda@axentia.se>
@@ -19,9 +19,9 @@ Cc: Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/5] drm/atmel-hlcdc: allow overriding the output mode
-Date: Mon,  9 Apr 2018 12:59:16 +0200
-Message-Id: <20180409105918.20792-4-peda@axentia.se>
+Subject: [PATCH 4/5] drm/atmel-hlcdc: add support for connecting to tda998x HDMI encoder
+Date: Mon,  9 Apr 2018 12:59:17 +0200
+Message-Id: <20180409105918.20792-5-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180409105918.20792-1-peda@axentia.se>
 References: <20180409105918.20792-1-peda@axentia.se>
@@ -32,48 +32,48 @@ X-ClientProxiedBy: AM5P190CA0024.EURP190.PROD.OUTLOOK.COM
  (2603:10a6:206:14::37) To DB6PR0202MB2775.eurprd02.prod.outlook.com
  (2603:10a6:4:a8::21)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a052f0f4-90c6-4107-9a02-08d59e09012e
+X-MS-Office365-Filtering-Correlation-Id: faa9f1ad-f62d-4779-e1b2-08d59e090451
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:DB6PR0202MB2775;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2775;3:t4RTA8r4AOKn4L6S39s80syFPS2YQuITZWeCKazFdA0jyqrwKCu917Xv5+cknjE07l8S4pwAUcvJp9YnelU8YcM2Day33FIVuDxTh6MBQSkdmbRDBczKtz7H7NwDDK1h7D1aG0QlNAkc+8pV0R23ObLQC38t3Ozkhd2iAqjKTL2wpIBbQnIj0mWDDNQ8XVFh1FCjwFR/7f+fvAOeG9lTNvGFuyiY2nOdHYKG9mVz5Qu+xYGIuPEavE8LOXi/ZsaK;25:M9iXF4niJCjk/10ghdpEpwKKGH0MoP0Ji1IKW29ECiK0s7yj+fXkMB4o048If1KJY5fqwjVHwMQKEh2bZzWoJ0ngG1LQ2uFhiwdumiu7DwFUSox3i4cXptv3k5jwLCek/OHQvEbLOKKyHKJsPfTikVXNRdSvllKJtS/aHEgqeSlRwVxDX0tbfSlO61r7iy1Vdg1y6cTl5iYL/dKv9PILCMGM2REZz1W0nwlnbqMJeBOf4gKawOdc+11ihZnkCvQVHdyb8xgQ4AMf1cDpMBi6qFOp55BDa8b34BTd2KHfqjavTqXp90AMcUETmJhQ3ngOOo8WP0UeYmmHS/eS8nWacQ==;31:Mwc9b2MR3orx/XBfe1LdLzIUIZKHxi+0j4ly2nWgjMY4w4GO6j7KHhhRuloL9kDrJqBZ4XFB0+bUl/M6QaPuGHWsSEwl0REn50Qaue1We3w56EGFbytAnJXjnBm0wbYtnQwlFi15rlXKUJ63pKw5rr+VPbEplSCsnm2xG8pCwd6XMuTtpR2vsFOZYEbzDxvy7aw8o6gvUG1DG4B7fGHRhKvJmePFv8cubx4vRjfzTlE=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2775;3:h4i4kq7VyVCOF4/iwkAWCYvS5yUEUxeQ1QaX2feCQoad1oAhLTXvc5ekFhLmMNIJEdWkkhNxsZabRDy5YRq8GMoisCsLPJGpjWndnaFHMKa8tOAcq4n7dMhYOObz2dNMCV3fX0JHSjQMK9XRElW7/mr60jhfBlFAxUsiiv5SeLpDPM5VBer/Qf1zSUT86vtwznhUkLjei6PoTvJWvThDlpWnwtFntZTwE4VaXQ24RgVXvEqvUbrkHOliS0wA/ibi;25:6Or24rkHioQJ9Luv+Mfq6Kf/xqb+EHVYJPCWJXP6nOk5Nxc7hizuGBwPnYW+WE5ijPHGurDhvOWBUK9A3mbHY23o/F3Vh7FuUuAsIvFqM0V6fkm5xZJsUkPrJ9NV0kMG+4x3nOhDwCe6ljjn9hNUhWD9r2hvGZmbYFjBvKkZbErXY3HzOUvdJOZ8TANOl+QoU/dhFJ1YvyCCQQyzUbWVXK1yukAzi44zytRWsoaDuPYk4K2+6Bv6yInwuAP3eEZMIMqs/YIICmr4wfqxtOWZLdFQttbUkWbwHAU3u2X79toSXq3O/4UPPfN7FXGocZx5VwXib1mZfsVJPqz6AOBIbQ==;31:nIpXbzZscDdUU4ju6aJcV8Pe/Cp0Om7VKcJ2G5QF9ld5Vsg3X6a7L76mVhHsL0izQkHYkhPclGHIqk+3hJo4i9kgphyQCLScDArrb+SeoZXfNyi/MLnyicoF6cAWmcEmrbsjyRxilbFc4XZBqHl1v/CU+vk7dB5I9kDE1hu9s4tc/AAt1e41dd3uByu7A1h0ZraehjOzvX45+ozkrgWUfe2bVLeSA2sYtXEKdA1ucUo=
 X-MS-TrafficTypeDiagnostic: DB6PR0202MB2775:
-X-Microsoft-Antispam-PRVS: <DB6PR0202MB2775DC9F47053487DEA0CD08BCBF0@DB6PR0202MB2775.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Antispam-PRVS: <DB6PR0202MB27759E78414B64C5CCC0268DBCBF0@DB6PR0202MB2775.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(250305191791016)(31051911155226)(22074186197030)(58145275503218);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231221)(944501327)(52105095)(6041310)(20161123560045)(2016111802025)(20161123558120)(20161123562045)(20161123564045)(6043046)(6072148)(201708071742011);SRVR:DB6PR0202MB2775;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0202MB2775;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2775;4:kR3pOW+WE1sth/9+fawwngehlsCpYKsNxwQ9mF12rfzxlv+Uuhjf0rCZjidjvjCjZtxsyc0MvhSvKvwlx3hkQdHb7M5U7jynYnaRtSeUBt55dn8QWVRJo4UF+BeOaEk8Kk70Q56XZpmmvCKw/Yr4JiCaffoVMMX2aP3nxBRCh5EBi5w+RMnIWJHLDJ/a0aISkDROsyif2hQB4q0C3HeDqm3dqq0Awmm7c2+IjhxDzZF62LEV2uAmbkVjWmH9CJgUd0+MxokO6C9hn7dc3lMGXw==
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2775;4:QArdugtRzFGUAEQ/iPWZ0GFF3SKVwJH2d2P2hhorZw3sgLTddXKF5kphmn8ZC5jf6X/zlGTbkTNWQFZ80iPnNuHWbX9g7dN9B33kTN4DqcQtmNi1FPVwHAWLQZ0mL7FQc2tFThRd/M7vZV/b1b2rcfpKzV83QrMvtgApZJeKs/z/gpKeVZHpxZj4JA9QkWlOy7HJs2J3rC+ODCoJyJTt3LDKqPEHQjcTABGYa7H4Iok15w+kqt/1K2sppiMBChkAzryqSALqNRiYQqbmbfcik+rfFwTld5OueKgSDnQ0d2IscZsRLacnGX8QdxyKSgKDIk8WB+QjbrXogheDxBStHBqTq/jDBh84rqEL/cuJbPGZ6phCH4antDYwP5pF3wYDgPiaatSKh+zYXMweATK8HMIXHVs+51zYR8Leih99NzI=
 X-Forefront-PRVS: 0637FCE711
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(346002)(39830400003)(396003)(366004)(199004)(189003)(575784001)(5890100001)(86362001)(68736007)(26005)(106356001)(478600001)(186003)(2351001)(16526019)(2361001)(74482002)(446003)(48376002)(16586007)(50466002)(76176011)(54906003)(386003)(6506007)(316002)(52116002)(51416003)(6666003)(6916009)(2906002)(6116002)(1076002)(105586002)(66066001)(47776003)(97736004)(7736002)(6512007)(7416002)(305945005)(11346002)(53936002)(5660300001)(8676002)(3846002)(81156014)(81166006)(36756003)(8936002)(476003)(2616005)(486006)(50226002)(4326008)(6486002)(25786009)(956004)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0202MB2775;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0202MB2775;23:iA0vctC6UImcFy/DsFBMpiCfNH1P6nIz3V7QxEU?=
- =?us-ascii?Q?37LQBaQp3EBDwGPg9gRFwO4GyF8GNminPpnayqaFYHr8fQ0ECShIBLN4adQp?=
- =?us-ascii?Q?9xGe7MBfOYM++C8Gbrksy3be26U03dh2HzWbRT9aB1SH48OeP8DoUMSweoRi?=
- =?us-ascii?Q?Hy7GEfAMHSw5b79OMObIqF1G+tZn2bGGVz99hQ9Cga0g3GBNL32AfhPc6nSn?=
- =?us-ascii?Q?mYhioty+UvCA6V0zdcrWxKL9wTEE7MVAUFLqYI4jlsOq4Zp8LkYUJ9AWyRbv?=
- =?us-ascii?Q?SJXhbp+gJicBVt091WQhN9CbRp1urhqBPjOyFCsRrsUfA4JsPmTe0wJkxGbY?=
- =?us-ascii?Q?h8qTWfRsPmTlAoPEw/CB5zJq6Gwd/pnMemzt7NsbLEHq1pdUOTnycJpshdM/?=
- =?us-ascii?Q?ctA5VhRBuJ/YgWKxTyh0ZW+r3gquRaQHRkhKruCd3LGpLX1azvBu7GmPg49G?=
- =?us-ascii?Q?d3caaxaZn5OErYjLWAjLzdo5oRJyth7b69KywvfIWAYaRr2FTeQmUYD3Iieu?=
- =?us-ascii?Q?MGRUPJ3m4eeqZ+rByeZ/psHX1GfCx9Bv2FcH7h5v0VO2GGZ43/+M29BeHYxZ?=
- =?us-ascii?Q?7ZEf2aAX5oDm+98iwcSofljkTw4uuMc0tMgbTwIS8HLpeqGBM7LviqrkZybi?=
- =?us-ascii?Q?b4niN2XHVYQLwYTn730OBxsOuHdermxoWHOHy7L8RNGN0m9eb1YfRUfuXv1b?=
- =?us-ascii?Q?OopvRYI+ZO7aDfxGruVSZFxf6Pw3ogZ17A5CyGUFIt8pxuffO1bVhlCBfEc3?=
- =?us-ascii?Q?rmYCCr8QNk/yzTJE3H68P47RS96TyuqUptb1KklMrrG4zKj3GCyQ6mh9IDN3?=
- =?us-ascii?Q?dHajesXmVcS9X/Nam1lCkeAah9T2mvMHSUjnLzXnFmKG3riDo5qXqsZ7TbmJ?=
- =?us-ascii?Q?8nE0W3KgYgPOfj56EJR5Lgc5/Vx4i0ZBnJR9VCtU4/JYyaxCdBbYyavMXc2a?=
- =?us-ascii?Q?IBTB6QKhBKvyoIP/n2xggTXl6vhz84wWBHKWQId/UQG77AIvJzKrNPK4GP/L?=
- =?us-ascii?Q?5TEoKGM4VQa/sKODSGN8G5TQ/ARzhmmjPj7W1rHgwFkFYgkgrR2q4RpDO3oV?=
- =?us-ascii?Q?FE5yzjd6nxUlp7R3aQVCSuA0sNRJgLdPXeceRbiQFOcDJEn5LMPxV/8SgKpR?=
- =?us-ascii?Q?QR1uNCWzS7lqN6uWU+entqBOWyD3FwtQtjzphaJa79iqQrbTp1YtgMACez5w?=
- =?us-ascii?Q?0d8AOBon041OB5M47b2Dpxj7u+WZ7exVIVqy81CnpdendcOP2GMfs6D3uRXr?=
- =?us-ascii?Q?2Elz7NG0K/Ntiai6WPrm1uLslS1+kkZ6Lh28OisFejHxLuszZjj+NcWV94Nt?=
- =?us-ascii?Q?MhIqXisZimsF9kTO/0Kj5UDZNXNilPcy/SicDSycDAJMmsu/FLp5U9Cay1U9?=
- =?us-ascii?Q?VOD4dYTFMhAXnKYBellS9M2j7NhA=3D?=
-X-Microsoft-Antispam-Message-Info: Um6sxCwMLYz5Rt26P5Jg4PR0tb5z4BtdTmi/IBe0L/3gZ8D4aHGE41twv1cWODL71oT91VE3SCAI40h4yWw66Xn35pJZ1lsPDbtJBf1nbFaXMLN99cNVB1SpNEAe42aQJFNpzk5N2CF/IiZ1lDfhNeyivszInZDbZKF5H0Ku6P/UOE9pDziDmh6At9o1Eqvi
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2775;6:oDFyFO3TqPM+PgGInGse/vvNw0JfYTH/17qry48IwqObXCNZGLMvsR5SNm14uRPfkrs9ROYQS2I8j9LtOckuu2ES5vKKsVtI6oyZ3sCvuWyIcImrNIQ5xLamI/+upuAnp2HtJqeI/VjDz2JsScIAeI3DCTg6WPVjLkHsjD3AGaGHOr4NAakZSOabLnYn2fYIwBaxxkbLsGyrWAFWHwGYpAQOs8+BY8fya42WL+I9OfkoTVG87wcSQxbvqt/oZn9n9+hhnkv/XVR2nWFDeUKMUOaeNfKTwJemiUDsQ5Gw8ajiNd2NS9sOYVJcNN6cFUk6a1Eowr1n375EeBVPADyhDpgCTeUT0X8wxf4VZiSRltvPlzK98ZQLMQcxcbGzHMrv/jshWXXuLwDs0GGUMK0DYYkHuuGy4HnRaFW9+Th7/bgT1Po3i42P6djbip6l6zT6Z5/WMHIL+BPypjtfVJ/lpQ==;5:i3Dii4ZWZK4mTqUkzNb4RlRN/XcYEsDLaQtX1iaGrYwnxfTcWUXTJvIcupFKmQ47ctB6Eginri1OY9e4ZSmq0z58SWca5ACRZeiL+F9MUUGnT+q5FIS6NJDzrUqSlzG2xfOqqVK7wSlZwOzjsX3JiHRJcUvdBKozapsc76B1iGU=;24:KYgeYyvZGtCyiBGEhw7T7+a5bmA2QcEVy3JlqhcGZRK4GpVKsU2dYpEfMgner9mZpI8UOl7HYwAs+BIdvWLFt4aVz5S0XBD1niv1/DHDr54=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(346002)(39830400003)(396003)(366004)(199004)(189003)(575784001)(86362001)(68736007)(26005)(106356001)(478600001)(186003)(2351001)(16526019)(2361001)(74482002)(446003)(48376002)(16586007)(50466002)(76176011)(54906003)(386003)(6506007)(316002)(59450400001)(52116002)(51416003)(6666003)(6916009)(2906002)(6116002)(1076002)(105586002)(66066001)(47776003)(97736004)(7736002)(6512007)(7416002)(305945005)(11346002)(6306002)(53936002)(5660300001)(8676002)(3846002)(81156014)(81166006)(36756003)(8936002)(476003)(2616005)(486006)(50226002)(4326008)(6486002)(25786009)(956004)(2004002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0202MB2775;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0202MB2775;23:M/9wuWskMnMi1j+jQhjGGifOctHgCKI3xFLk4md?=
+ =?us-ascii?Q?bzYz8BB7RQybEJBuDtkSt5GD/jFVsBobiPbMYmjSp4p2iKo9+4NtGqVwUAJk?=
+ =?us-ascii?Q?9AvS0qo5I34L5wnUOVy7xDk5dmUZSXfClbnGLshGoUs2rWQeaP2mi48Uff5Z?=
+ =?us-ascii?Q?rGc5SR2usiuhK8rBUdOqbzSsLbAdGZ793Gev2SOHmKoa7czMYcnnHRPzp9Mu?=
+ =?us-ascii?Q?Wjow5HNXqwcPqfzTMQmZgCucxhYVGfktiOrKnLuEG8DrXbHRiZdcVRf9pqD9?=
+ =?us-ascii?Q?5OB32GSq1Yg5N/jbtMnlMh0YX+J4hvZb46cOq4X0lzvuPwknofOZLZa/eYi6?=
+ =?us-ascii?Q?p9dvx1EfgE/AhfY7N4No76Euw6bokm0tpIVAbPW7PAfOQ628o+GTcm+CjfxK?=
+ =?us-ascii?Q?1x2yaKhL7DPQeWWAVx1btCBHOtwcYwRH8lR0iKdblb+KYryShfAsLkniS+8i?=
+ =?us-ascii?Q?pU7F4qu4wj7HqAo9nIh4ElGshWfKlRm2q6JZWr5eS3xjAbopcZaV659JomRn?=
+ =?us-ascii?Q?Zmjh0cMd+1OeTi0De1eApUSXQ3rprOKUx9DYADmsbfGSHWseRbOGWeTeGYZS?=
+ =?us-ascii?Q?v/9Gc5OioekXl3nVjZ/vrgIMKc1PmGwDmLJ7x7cELZWjC3c9i2NBRbEIrjCu?=
+ =?us-ascii?Q?j9XV+tUEfcLWNb38SP4JG/dQ13IjGXIO21/n4v3fwxNcIeMIIc/d17dYN7n/?=
+ =?us-ascii?Q?pQWMGOdZfyPfq490IVp/UgEMygHPe5hmWKLnejqd++mcFBIYicosgHbP/F18?=
+ =?us-ascii?Q?4Bq7hIAkL+1On3FNc+2zLx0a7pEpsIhVYn+whuySO9OTjwiVAEip0cNO2dgq?=
+ =?us-ascii?Q?pIgNnOXJvSWa1DJDM71ecRArhapolZrmBv0B9iYeM02E71kxUPt9GOk1yJFl?=
+ =?us-ascii?Q?iKT2dulO6kMM2XepHucsekiBK6Lna462DKbqr7SXAJPJdTG9AvaZKixNai52?=
+ =?us-ascii?Q?nvmJXK4GuJtaF9JTmsoVCSvpx+gUH1eyIAq9A37p6ONK6lLggaqWXr1rWNtV?=
+ =?us-ascii?Q?t/YCxXrsLhRbvk/OUrcXt6JFHegh78VUqiPCXNE6Y8w6kUlKEcnI+ezOn9Zf?=
+ =?us-ascii?Q?MU4zgKGkC/7poS+KZvo9RYxNSrsX7gybKVPh4sc4e8EXiKRleww6XCzYI5VE?=
+ =?us-ascii?Q?bHFI5g9twe4e29/mFOf2PV/t4Eshic0cK1oN2H8ZcX9iA3kjnZhlj4cdKab5?=
+ =?us-ascii?Q?+95Q5eu89jkG13VUeZSMWUjb1xF7as7aUdKcag4XVEvKwW9A18a5HXCRF20I?=
+ =?us-ascii?Q?eJyMVpDsWfyIMajOc1lsJDCuQYEd1eJyLXgAc0SIKClqaGKD7KwEzlAjp2ge?=
+ =?us-ascii?Q?fviXcf8rNq1Rm2fNEuprTu4m0eteUA6zXpYtx8HH1Yfa47+lkxOba/vLf/4B?=
+ =?us-ascii?Q?JrE6j8Uepn0qy+y058hSXok2GZ3Y5VPLHEJQ1Q/Vk0/zgOoi+?=
+X-Microsoft-Antispam-Message-Info: tPG+1YGLnnzZO0kmzKrvZD8xwGqLDY7OvAGktG/7d8GR1wizrF0A4KY5ir3oKq/8wwRkAhVIuZA3vdm4eM/wWgIXprF/59A/BXQYfNuKbiSrNVP0UMSNbqBrsRGpEpnGK0kYfwO2/+CUIfoD/zqXNi6beSd8w3k8tHv1NTerDIIUPGv6BQbsbMoLnXmdkylA
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2775;6:H4y61LPXrgAGUqBxUmKvgGJ5dlJ7+h5q6OYXy48G8XUow4PTTQvqP/7TKJRzNsl3I2h/j7vAO05oE2IQR2D1HATk+Wc5MFjTZHxGvNd/48CHzk3OtZ5TOFfSNO0og0O3Of42T0gyHqiVniFDLU+VTh6KtlykzidMo42YMRntcXJJY1YVeoQWFVdjf23u0YgN7gM1cnUVQ7CpcvKhBucbQG7BFdbTvqoK2ct+64hL/C8sGhBiHjkhB04Ononef7VcXF4OmyfQ7mNDRRkKNh0AEfKC5wXCHHJ+7V0iOEnJH8NswRoi23G1uSbBZUD/PZPzuuca2s6PnYjYkXNBtdLUlsb98mM5fD9OqGAVanHXpNCnusss7qEYoIDunp9/+Cp7vBrVmSLMabGGpmWo4pJ64Feg+ziAz+5/1eS9BvyEqVosrKEMiw+XIVUPBpcnCV8DPs7r5Kqkd7JW5EjcofbadA==;5:hVEsuSoCq9Ka+DjAS7Y+lCmZh1HMb9t360WqQzErosXFgJeMiqe6fxwcblVWHbmR2Ha7XfKf43ocy5q5gPu91Gx+F0r9IxSIOGkz2p2DNYt3iv1OOvXqxBGETTYidFzCKhsBC4WwM8qGhBVg0mSDxsvxdzBYaxu4t2tTAwMxnS4=;24:3cIVBtcJL2FeQDVHWGahdXNN3gz0IihHHYzdb1YWOLs811nKo7k9h3sIR2X/HGvKq/tEO7rntUujJ89UXPK0gf/RU5hfGsXwzkrrOGh6ExU=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2775;7:Swe1Vv8saR82QeVzqhXCTzNY0Yw8ewCTrYX2VaxhWnaRlkmAZUhxzQ8upH7FrTvoHxxrIyfgjv3ploJSOY53aAzgizYGKmpmmW/n42MMx5hlqZOBxAV+SpZ/s6YZvYpuqbUTrTgrNYiiVw8Xob9L8rzoWuUs3XEskqR9Lp73mH84wWxWGmi4pKaETZ96WAkJ1Hvk+JP5N1wZL7TAdfVyCQVZ2eeW0Uv+3368buFBfX7BbM4Sj6KmQx2vGb+928+f
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2775;7:oKx9JUYSDCB/ydVLFzLRyTEwT4Pd+xZZH5/LpmH84SXFdB9Z3a+GVwkDtwyDQUYUgppKbq5z7f9ccrPR3gJuMiyqJeK5qJeWbC87ws3PECITt1DLhP+M9roL1ViDfFXUIosCyJjZ9aQdo6IeHAZiud8NZDmkuJ84hsAJ4fLZcQQl1ZU03CDLTpquTwqHQG2Uml6aN9+1AYHIXrosYGaDGNzawcqt1f3lOQIHtIPSxebnC49k2zNMGmih0LHoOKFu
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2018 10:59:44.8073 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a052f0f4-90c6-4107-9a02-08d59e09012e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2018 10:59:50.0917 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: faa9f1ad-f62d-4779-e1b2-08d59e090451
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0202MB2775
@@ -81,120 +81,340 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This beats the heuristic that the connector is involved in what format
-should be output for cases where this fails.
-
-E.g. if there is a bridge that changes format between the encoder and the
-connector, or if the encoder and connector provided by the tda998x driver
-is in use in which case the connector does not advertize and format at
-all.
+When the of-graph points to a tda998x-compatible HDMI encoder, register
+as a component master and bind to the encoder/connector provided by
+the tda998x driver.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 12 ++++++------
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c   | 19 +++++++++++++++++++
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h   |  8 ++++++++
- 3 files changed, 33 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c     |  81 ++++++++++++--
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h     |  15 +++
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c | 130 +++++++++++++++++++++++
+ 3 files changed, 220 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-index d73281095fac..9bfff228f893 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-@@ -220,12 +220,6 @@ static void atmel_hlcdc_crtc_atomic_enable(struct drm_crtc *c,
- 	drm_crtc_vblank_on(c);
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+index dccd0be548a9..b411038890a9 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+@@ -20,6 +20,7 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/component.h>
+ #include <linux/irq.h>
+ #include <linux/irqchip.h>
+ #include <linux/module.h>
+@@ -568,10 +569,13 @@ static int atmel_hlcdc_dc_modeset_init(struct drm_device *dev)
+ 
+ 	drm_mode_config_init(dev);
+ 
+-	ret = atmel_hlcdc_create_outputs(dev);
+-	if (ret) {
+-		dev_err(dev->dev, "failed to create HLCDC outputs: %d\n", ret);
+-		return ret;
++	if (!dc->is_componentized) {
++		ret = atmel_hlcdc_create_outputs(dev);
++		if (ret) {
++			dev_err(dev->dev,
++				"failed to create HLCDC outputs: %d\n", ret);
++			return ret;
++		}
+ 	}
+ 
+ 	ret = atmel_hlcdc_create_planes(dev);
+@@ -586,6 +590,16 @@ static int atmel_hlcdc_dc_modeset_init(struct drm_device *dev)
+ 		return ret;
+ 	}
+ 
++	if (dc->is_componentized) {
++		ret = component_bind_all(dev->dev, dev);
++		if (ret < 0)
++			return ret;
++
++		ret = atmel_hlcdc_add_component_encoder(dev);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	dev->mode_config.min_width = dc->desc->min_width;
+ 	dev->mode_config.min_height = dc->desc->min_height;
+ 	dev->mode_config.max_width = dc->desc->max_width;
+@@ -618,6 +632,9 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
+ 	if (!dc)
+ 		return -ENOMEM;
+ 
++	dc->is_componentized =
++		atmel_hlcdc_get_external_components(dev->dev, NULL) > 0;
++
+ 	dc->wq = alloc_ordered_workqueue("atmel-hlcdc-dc", 0);
+ 	if (!dc->wq)
+ 		return -ENOMEM;
+@@ -770,7 +787,7 @@ static struct drm_driver atmel_hlcdc_dc_driver = {
+ 	.minor = 0,
+ };
+ 
+-static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
++static int atmel_hlcdc_dc_drm_init(struct platform_device *pdev)
+ {
+ 	struct drm_device *ddev;
+ 	int ret;
+@@ -798,7 +815,7 @@ static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
+ 	return ret;
  }
  
--#define ATMEL_HLCDC_RGB444_OUTPUT	BIT(0)
--#define ATMEL_HLCDC_RGB565_OUTPUT	BIT(1)
--#define ATMEL_HLCDC_RGB666_OUTPUT	BIT(2)
--#define ATMEL_HLCDC_RGB888_OUTPUT	BIT(3)
--#define ATMEL_HLCDC_OUTPUT_MODE_MASK	GENMASK(3, 0)
--
- static int atmel_hlcdc_crtc_select_output_mode(struct drm_crtc_state *state)
+-static int atmel_hlcdc_dc_drm_remove(struct platform_device *pdev)
++static int atmel_hlcdc_dc_drm_fini(struct platform_device *pdev)
  {
- 	unsigned int output_fmts = ATMEL_HLCDC_OUTPUT_MODE_MASK;
-@@ -237,6 +231,12 @@ static int atmel_hlcdc_crtc_select_output_mode(struct drm_crtc_state *state)
+ 	struct drm_device *ddev = platform_get_drvdata(pdev);
  
- 	crtc = drm_crtc_to_atmel_hlcdc_crtc(state->crtc);
+@@ -809,6 +826,58 @@ static int atmel_hlcdc_dc_drm_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
-+	if (crtc->dc->force_output_mode) {
-+		hstate = drm_crtc_state_to_atmel_hlcdc_crtc_state(state);
-+		hstate->output_mode = fls(crtc->dc->force_output_mode) - 1;
++static int atmel_hlcdc_bind(struct device *dev)
++{
++	return atmel_hlcdc_dc_drm_init(to_platform_device(dev));
++}
++
++static void atmel_hlcdc_unbind(struct device *dev)
++{
++	struct drm_device *ddev = dev_get_drvdata(dev);
++
++	/* Check if a subcomponent has already triggered the unloading. */
++	if (!ddev->dev_private)
++		return;
++
++	atmel_hlcdc_dc_drm_fini(to_platform_device(dev));
++}
++
++static const struct component_master_ops atmel_hlcdc_comp_ops = {
++	.bind = atmel_hlcdc_bind,
++	.unbind = atmel_hlcdc_unbind,
++};
++
++static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
++{
++	struct component_match *match = NULL;
++	int ret;
++
++	ret = atmel_hlcdc_get_external_components(&pdev->dev, &match);
++	if (ret < 0)
++		return ret;
++	else if (ret)
++		return component_master_add_with_match(&pdev->dev,
++						       &atmel_hlcdc_comp_ops,
++						       match);
++	else
++		return atmel_hlcdc_dc_drm_init(pdev);
++}
++
++static int atmel_hlcdc_dc_drm_remove(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = atmel_hlcdc_get_external_components(&pdev->dev, NULL);
++	if (ret < 0)
++		return ret;
++	else if (ret)
++		component_master_del(&pdev->dev, &atmel_hlcdc_comp_ops);
++	else
++		atmel_hlcdc_dc_drm_fini(pdev);
++
++	return 0;
++}
++
+ #ifdef CONFIG_PM_SLEEP
+ static int atmel_hlcdc_dc_drm_suspend(struct device *dev)
+ {
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
+index a810171b9353..53f780827889 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
+@@ -377,6 +377,10 @@ struct atmel_hlcdc_plane_properties {
+  * @wq: display controller workqueue
+  * @suspend: used to store the HLCDC state when entering suspend
+  * @commit: used for async commit handling
++ * @external_encoder: used encoder when componentized
++ * @external_connector: used connector when componentized
++ * @connector_funcs: original helper funcs of the external connector
++ * @is_componentized: operating mode
+  */
+ struct atmel_hlcdc_dc {
+ 	const struct atmel_hlcdc_dc_desc *desc;
+@@ -394,6 +398,12 @@ struct atmel_hlcdc_dc {
+ 		wait_queue_head_t wait;
+ 		bool pending;
+ 	} commit;
++
++	struct drm_encoder *external_encoder;
++	struct drm_connector *external_connector;
++	const struct drm_connector_helper_funcs *connector_funcs;
++
++	bool is_componentized;
+ };
+ 
+ extern struct atmel_hlcdc_formats atmel_hlcdc_plane_rgb_formats;
+@@ -463,4 +473,9 @@ int atmel_hlcdc_crtc_create(struct drm_device *dev);
+ 
+ int atmel_hlcdc_create_outputs(struct drm_device *dev);
+ 
++struct component_match;
++int atmel_hlcdc_add_component_encoder(struct drm_device *dev);
++int atmel_hlcdc_get_external_components(struct device *dev,
++					struct component_match **match);
++
+ #endif /* DRM_ATMEL_HLCDC_H */
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+index 8db51fb131db..3f86527e0473 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+@@ -6,6 +6,11 @@
+  * Author: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+  * Author: Boris BREZILLON <boris.brezillon@free-electrons.com>
+  *
++ * Handling of external components adapted from the tilcdc driver
++ * by Peter Rosin <peda@axentia.se>. That original code had:
++ *   Copyright (C) 2015 Texas Instruments
++ *   Author: Jyri Sarha <jsarha@ti.com>
++ *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms of the GNU General Public License version 2 as published by
+  * the Free Software Foundation.
+@@ -19,6 +24,7 @@
+  * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <linux/component.h>
+ #include <linux/of_graph.h>
+ 
+ #include <drm/drmP.h>
+@@ -88,3 +94,127 @@ int atmel_hlcdc_create_outputs(struct drm_device *dev)
+ 
+ 	return ret;
+ }
++
++static int atmel_hlcdc_external_mode_valid(struct drm_connector *connector,
++					   struct drm_display_mode *mode)
++{
++	struct atmel_hlcdc_dc *dc = connector->dev->dev_private;
++	int ret;
++
++	ret = atmel_hlcdc_dc_mode_valid(dc, mode);
++	if (ret != MODE_OK)
++		return ret;
++
++	if (WARN_ON(dc->external_connector != connector))
++		return MODE_ERROR;
++	if (WARN_ON(!dc->connector_funcs))
++		return MODE_ERROR;
++
++	if (IS_ERR(dc->connector_funcs) || !dc->connector_funcs->mode_valid)
++		return MODE_OK;
++
++	/* The connector has its own mode_valid, call it. */
++	return dc->connector_funcs->mode_valid(connector, mode);
++}
++
++static int atmel_hlcdc_add_external_connector(struct drm_device *dev,
++					      struct drm_connector *connector)
++{
++	struct atmel_hlcdc_dc *dc = dev->dev_private;
++	struct drm_connector_helper_funcs *connector_funcs;
++
++	/* There should never be more than one connector. */
++	if (WARN_ON(dc->external_connector))
++		return -EINVAL;
++
++	dc->external_connector = connector;
++	connector_funcs = devm_kzalloc(dev->dev, sizeof(*connector_funcs),
++				       GFP_KERNEL);
++	if (!connector_funcs)
++		return -ENOMEM;
++
++	/*
++	 * connector->helper_private always contains the struct
++	 * connector_helper_funcs pointer. For the atmel-hlcdc crtc
++	 * to have a say if a specific mode is Ok, we install our
++	 * own helper functions. In our helper functions we copy
++	 * everything else but use our own mode_valid() (above).
++	 */
++	if (connector->helper_private) {
++		dc->connector_funcs = connector->helper_private;
++		*connector_funcs = *dc->connector_funcs;
++	} else {
++		dc->connector_funcs = ERR_PTR(-ENOENT);
++	}
++	connector_funcs->mode_valid = atmel_hlcdc_external_mode_valid;
++	drm_connector_helper_add(connector, connector_funcs);
++
++	dev_dbg(dev->dev, "External connector '%s' connected\n",
++		connector->name);
++
++	return 0;
++}
++
++static struct drm_connector *
++atmel_hlcdc_encoder_find_connector(struct drm_device *dev,
++				   struct drm_encoder *encoder)
++{
++	struct drm_connector *connector;
++	int i;
++
++	list_for_each_entry(connector, &dev->mode_config.connector_list, head)
++		for (i = 0; i < DRM_CONNECTOR_MAX_ENCODER; i++)
++			if (connector->encoder_ids[i] == encoder->base.id)
++				return connector;
++
++	dev_err(dev->dev, "No connector found for %s encoder (id %d)\n",
++		encoder->name, encoder->base.id);
++
++	return NULL;
++}
++
++int atmel_hlcdc_add_component_encoder(struct drm_device *dev)
++{
++	struct atmel_hlcdc_dc *dc = dev->dev_private;
++	struct drm_connector *connector;
++	struct drm_encoder *encoder;
++
++	list_for_each_entry(encoder, &dev->mode_config.encoder_list, head) {
++		if (encoder->possible_crtcs & (1 << dc->crtc->index))
++			break;
++	}
++
++	if (!encoder) {
++		dev_err(dev->dev, "%s: No suitable encoder found\n", __func__);
++		return -ENODEV;
++	}
++
++	connector = atmel_hlcdc_encoder_find_connector(dev, encoder);
++	if (!connector)
++		return -ENODEV;
++
++	return atmel_hlcdc_add_external_connector(dev, connector);
++}
++
++static int dev_match_of(struct device *dev, void *data)
++{
++	return dev->of_node == data;
++}
++
++int atmel_hlcdc_get_external_components(struct device *dev,
++					struct component_match **match)
++{
++	struct device_node *node;
++
++	node = of_graph_get_remote_node(dev->of_node, 0, 0);
++
++	if (!of_device_is_compatible(node, "nxp,tda998x")) {
++		of_node_put(node);
 +		return 0;
 +	}
 +
- 	for_each_new_connector_in_state(state->state, connector, cstate, i) {
- 		struct drm_display_info *info = &connector->display_info;
- 		unsigned int supported_fmts = 0;
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-index c1ea5c36b006..dccd0be548a9 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-@@ -600,6 +600,7 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
- 	struct platform_device *pdev = to_platform_device(dev->dev);
- 	const struct of_device_id *match;
- 	struct atmel_hlcdc_dc *dc;
-+	const char *output_mode;
- 	int ret;
- 
- 	match = of_match_node(atmel_hlcdc_of_match, dev->dev->parent->of_node);
-@@ -634,6 +635,24 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
- 
- 	pm_runtime_enable(dev->dev);
- 
-+	ret = of_property_read_string(dev->dev->of_node,
-+				      "output-mode", &output_mode);
-+	if (!ret) {
-+		if (!strcmp(output_mode, "rgb444")) {
-+			dc->force_output_mode = ATMEL_HLCDC_RGB444_OUTPUT;
-+		} else if (!strcmp(output_mode, "rgb565")) {
-+			dc->force_output_mode = ATMEL_HLCDC_RGB565_OUTPUT;
-+		} else if (!strcmp(output_mode, "rgb666")) {
-+			dc->force_output_mode = ATMEL_HLCDC_RGB666_OUTPUT;
-+		} else if (!strcmp(output_mode, "rgb888")) {
-+			dc->force_output_mode = ATMEL_HLCDC_RGB888_OUTPUT;
-+		} else {
-+			dev_err(dev->dev, "unknown output-mode\n");
-+			ret = -EINVAL;
-+			goto err_destroy_wq;
-+		}
-+	}
-+
- 	ret = drm_vblank_init(dev, 1);
- 	if (ret < 0) {
- 		dev_err(dev->dev, "failed to initialize vblank\n");
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
-index ab32d5b268d2..a810171b9353 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
-@@ -153,6 +153,12 @@
- 
- #define ATMEL_HLCDC_MAX_LAYERS			6
- 
-+#define ATMEL_HLCDC_RGB444_OUTPUT		BIT(0)
-+#define ATMEL_HLCDC_RGB565_OUTPUT		BIT(1)
-+#define ATMEL_HLCDC_RGB666_OUTPUT		BIT(2)
-+#define ATMEL_HLCDC_RGB888_OUTPUT		BIT(3)
-+#define ATMEL_HLCDC_OUTPUT_MODE_MASK		GENMASK(3, 0)
-+
- /**
-  * Atmel HLCDC Layer registers layout structure
-  *
-@@ -365,6 +371,7 @@ struct atmel_hlcdc_plane_properties {
-  * @hlcdc: pointer to the atmel_hlcdc structure provided by the MFD device
-  * @fbdev: framebuffer device attached to the Display Controller
-  * @crtc: CRTC provided by the display controller
-+ * @force_output_mode: if set, this output mode beats the selection heuristic
-  * @planes: instantiated planes
-  * @layers: active HLCDC layers
-  * @wq: display controller workqueue
-@@ -376,6 +383,7 @@ struct atmel_hlcdc_dc {
- 	struct dma_pool *dscrpool;
- 	struct atmel_hlcdc *hlcdc;
- 	struct drm_crtc *crtc;
-+	unsigned int force_output_mode;
- 	struct atmel_hlcdc_layer *layers[ATMEL_HLCDC_MAX_LAYERS];
- 	struct workqueue_struct *wq;
- 	struct {
++	if (match)
++		drm_of_component_match_add(dev, match, dev_match_of, node);
++	of_node_put(node);
++	return 1;
++}
 -- 
 2.11.0
