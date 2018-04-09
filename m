@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3689844-1523236701-2-16952882967139954146
+X-Cyrus-Session-Id: sloti22d1t05-3689844-1523236690-2-4497134637360095845
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523236700; b=mT202I3/qDEmIJEuOwOKu4aaD9CBAmAn4UHBv3z81bmJcU6M0q
-    99GbLTo3m4guwFTGV0o4R5l+1GPNPaF1Hg5gV9HQMy+FtbZ4yyw72m8v8hRv2CWL
-    wV/4umXBmm2ijGufbpv1Y9rmvkm/8XejYp8Hh3s7gEz6rkFYtNxU1JLcdCmK2+vJ
-    EcZ/2A17nnS8IjrGKkA2MkQFOUTxGwSiX28U2dyfMVELqB9ydmpAxuYsOnzhrjuF
-    l1Yg08bQgt+P/Suk0qsgBNmmPWne43n4HisIRinJ53lELMS9Hlu5WTtGB4FxLTwQ
-    AMJdHCsJXyBueNlpOiKgFUTdNVFJ1D++I58A==
+    1523236689; b=T+NLuDFbp7YupeccN+iGVl3JTA/95/Up1O0HGk5Hkrx1TOSsAW
+    +fWquViMcqHfwvIloySbrMySZgXS0VYHHJpWMu99mWgpb3QVWGVdsJDA0vcPovNV
+    EggWnuVCQuSO/zB+LbhD2ypbjGH7iZI4o9LO+y99qDzdK2x4nhK/Ux7zjO+DUufW
+    VKFapgVB5ogiXFuo01GBezDQ1XE6FO1yWzTrfn4EFfSShE09f90r37MxpxTv3nCF
+    bS3DMAhPHr1N45lc6iZ2BDWs2ENcPH3UaTSzud4huBoXgKw4jkArIxT2nOUgB1HP
+    /JPvOAXjKhp9Mst5PMgksN/ApHRFtwSMAUKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523236700; bh=5S81j+AtAY
-    DeyEEDIVplnCQ0UwHKSGiuj8bUtV3NME8=; b=wXfjq8CGYNiv79YJ5mQY2Qs+5L
-    F8RJa0n85rBmkZbMYGjBAzqEjMk5pB/E1BY1rH6ces3InQduvu43AOGzkpr6OljS
-    YGOM3rsZFx5TtDW/FRrxqcA5gIEwPQXYikdqCZKqfXMcNrxpfziV0DdBZPVB2mXI
-    cY+VoAWDE02GBXD8UAEuj2sQRSy4QphPrbMNwy97tHx6hOW3+Q2q5hxa2X7TVvwJ
-    tG6a4pj2pc4//R7uLM+dRY++XbW9gwS0ecVJelKnwqIrCkUVY2OVuWvOno3hQCLI
-    c8I484pZFJajsU3b+ZRvr5zPxl6rPMWG556O4k5GAExjKX2AwiS4/SgcnYfg==
+    :mime-version:sender:list-id; s=fm2; t=1523236689; bh=pTTMAMSl2o
+    wG853ZhpPBT6lVxrcyzBBsiEWRcfJwQTQ=; b=XI/6uMXyZ/L25VV8Yv+CepqO1K
+    Ny6jb7onRLQiiK2vDTqKy8mmAVZ1GzXioR3i1+dUnXrxP4zx7f9GJ6QHKQM/pssH
+    azEJnwJKrVvlOTqs/xNxZwZsxiagovLTRJmNBTm/oiSNqJo9SdclKHGZW+o3Wc1l
+    vYfTf7YG/LNr511e5S9Drw8qLEb9dWgTV3tMNt+Rw3m/uXPvI2Cj+GCvzsMWt8u6
+    R/FyOLNmKx/xjin8unW2MJf+X0uZ4aSnA55b4Cd1N/asJbEoGdcPKx9IVqMg2vFy
+    3Gan74dz4Eavw5JH/3kTjayFVeCHvdhup7hAKdo3wbdYxHXSxTwhIcEDGO1g==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=hNTEs8pt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=GE8rJ5BU x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-vs=clean score=-100 state=0
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=hNTEs8pt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=GE8rJ5BU x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,36 +51,38 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG82rokLLFBa4Nx1BZ0uzoC7r31bF7BVEdJfYq6qw1jKNJY78RqtF5mz3244R6+P7f9war/qaO8teTTmqVj4ZIynNHXovoYhoBxrOv+piq9SbICOe5K6
-    GCIkM8g7AdBTF/Ct9xYlAPQg+KXBo2PoC8qwqhS4DJy2ELEhMaLZvORvipbNd3EQFoeq2SQx3M1inhoeE7dQpNCgP/FTht5/bqwoeLVmcRPm+/g2LK0hJu1H
+X-CM-Envelope: MS4wfCgPYUlCxATFPsq7WykUT+Q/b9HoheDJ+QUFHtWkQIYGHDzytwbLVBXmARsfNWn21Pcv0vyVUL5cSPuS4XaLQfSFhBtVMup1J2Dhc1aZ1tdWVAQDYq1r
+    n7WfyxmT5Zm7QLM2Cy0jsDPFX4EKYmNnRbfA0iTTrEbuA8zwp6Df8F6eAdMi0PXg7HMYZx9s4XvHLS2bPj/xO7agoaVjsWnmUC0WqgsHfH0Z3qaYQ+g2mku8
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=7CQSdrXTAAAA:8 a=yMhMjlubAAAA:8 a=6qjhLcChD2huaRmL0j0A:9
-    a=wPNLvfGTeEIA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=Lf-vpJhqX20A:10 a=xjQjg--fAAAA:8 a=HH5vDtPzAAAA:8 a=U7UbAiMzAAAA:8
+    a=hD80L64hAAAA:8 a=yMhMjlubAAAA:8 a=mX7iJj9eJ85zrJ8fbVoA:9 a=wPNLvfGTeEIA:10
+    a=L4vkcYpMSA5nFlNZ2tk3:22 a=QM_-zKB-Ew0MsOlNKMB5:22 a=cNtvukwP7kaFzDVqf0Q5:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757236AbeDIBSO (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 21:18:14 -0400
+        id S1756501AbeDIBRv (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 21:17:51 -0400
 Received: from mail-bl2nam02on0103.outbound.protection.outlook.com ([104.47.38.103]:27456
         "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932835AbeDIAhs (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:37:48 -0400
+        id S932846AbeDIAhu (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:37:50 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+CC: Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Alan Hourihane <alanh@fairlite.demon.co.uk>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 102/162] irqchip/gic-v3: Report failures in
- gic_irq_domain_alloc
-Thread-Topic: [PATCH AUTOSEL for 4.4 102/162] irqchip/gic-v3: Report failures
- in gic_irq_domain_alloc
-Thread-Index: AQHTz5nBihZuzVcJoEyiVVM67zR2RQ==
-Date: Mon, 9 Apr 2018 00:29:01 +0000
-Message-ID: <20180409002738.163941-102-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 104/162] vmlfb: Fix error handling in
+ cr_pll_init()
+Thread-Topic: [PATCH AUTOSEL for 4.4 104/162] vmlfb: Fix error handling in
+ cr_pll_init()
+Thread-Index: AQHTz5nDM8uPJCEcSUWSHf3KSrrZWg==
+Date: Mon, 9 Apr 2018 00:29:03 +0000
+Message-ID: <20180409002738.163941-104-alexander.levin@microsoft.com>
 References: <20180409002738.163941-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,27 +91,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1110;7:dxmTx/bmmojDM59YOO85qomyUa2rUFEUgRAy+uvpDllgLkctIxrfF7wjC6uxlSLzOtrZftVf1n8BZGk0qZiVVKgyNbzZPoPhViJxIhh6gE49LR/UCABL2zJ9aZSttQxdsVG2TOyaIC2JTqWKK8++cl5bbrFFuVgloxqottEcYK66eDqKOE0IQth57qHtSnUdSHuctRTpDoNSpKVbLeGPbdCQCVNvinPULqsrktPsTuk4B2sjyER8woowoOlLoR8l;20:P/kOtptDx6Iq5s9RvdIH3NI3muytteFyZqswQ8Z1ameqw7GkrHyq1YIaqrNTjYKJrofE5d0KPQkmtILfa6Ct1ObGf3L2AC4a7O4DKjm9RSy2R9QsppgZ+DS9hRYQhh6ZijRt9EkCRepAyewehyrQLl8haud6mVXyilrsGJ2AFwQ=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1110;7:dHXZyCO1rkJEzrjSky5pyncMG912KcyRVGFObPikCePPBe0AkFLh5UlAL7BwBo/n7OI7C4LLlXRDb5VCHxUekTJns53JKT62ioOrK/BZXejqbxf7ZSZEx3vmG7Y/uMCNk6oYLIfuDG117XM1F0jVG89OLhPnDP3EnV4/Xhus9mV91XdSnLmwHQUTpA9oDujtGywtFwnXYAzXr732u3Kx2KIJZBzP8zyaQ1h1k4PK357frMTI5e7bAAo4hUFdlAW4;20:htkzK2vPAXT5llQye6v4x2W8u1cH2zDAnkN4SOgOmOfhuwfqtc4NLAkMduCnuys3I345eCg0ZF77/glzX3K79d0rcCw26Of+M0ZLCCcJzaral9L4J9bh4hYCxuTyjRtDgFozYE3zgcQYFVPGMnRKMEacY18URQ4RSX/3fm1gy0g=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 1a6a61ab-f7df-4610-b943-08d59db21cbf
+X-MS-Office365-Filtering-Correlation-Id: 8fd08ce7-e39d-418e-b23e-08d59db21d5a
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1110;
 x-ms-traffictypediagnostic: DM5PR2101MB1110:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB11100E645A10406087AAB813FBBF0@DM5PR2101MB1110.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB1110C566E2A095F2E82D90F6FBBF0@DM5PR2101MB1110.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(7411616537696);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1110;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1110;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(39860400002)(39380400002)(346002)(396003)(376002)(366004)(199004)(189003)(53936002)(186003)(5250100002)(105586002)(11346002)(99286004)(476003)(66066001)(6512007)(86362001)(575784001)(3660700001)(1076002)(54906003)(68736007)(110136005)(3280700002)(316002)(305945005)(4326008)(107886003)(22452003)(14454004)(7736002)(446003)(6666003)(2501003)(10290500003)(3846002)(6116002)(72206003)(106356001)(25786009)(6486002)(6436002)(8936002)(478600001)(5660300001)(86612001)(8676002)(81156014)(59450400001)(2906002)(102836004)(81166006)(6506007)(2900100001)(76176011)(2616005)(486006)(26005)(36756003)(10090500001)(97736004)(22906009)(217873001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1110;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: xNQV2lJ0dNvepce2Tsn6w2szmfv2YIqagrUABap2BYWamhxSpJlv0UeQ0m/37ap76T2caGKVkffeiYHFt5dlQn0ZNpDNsjdhOzZ3x6LoDQRQ4LIXGPEoXC5bxCXWZsbub7VzAvb0T9TSwJeTV1No0iTHw854yTe0uiC7dxueC+G1Ifg+uiIGfsCdz7nkQY9ikjV8UbGhxiEaIBnM9TDn88da+ZDERUQ+GiSNJtEhFTA0ZhMw7TY7ZCGepaIFUZMjNQmNLCbIwNn1CSbDtoI/bTHjWuINPJZDVqFHBCgdBDhEsTAgqPCY+L1wrb3+YaUOz30fd6aZRRNiPezaHQUePzat2O8fjouHeh4CHEIFQ7dHTCfeA49vpEwmYRxj3ICx2Q6AIZFXKNmEMee9HeYtBaHTyiKlO9v16nkhKKiVdU0=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(346002)(396003)(376002)(366004)(199004)(189003)(53936002)(186003)(5250100002)(105586002)(11346002)(99286004)(476003)(66066001)(6512007)(86362001)(575784001)(3660700001)(4477795004)(1076002)(54906003)(68736007)(110136005)(3280700002)(316002)(305945005)(4326008)(107886003)(22452003)(14454004)(7736002)(446003)(6666003)(2501003)(10290500003)(3846002)(6116002)(72206003)(106356001)(25786009)(6486002)(6436002)(8936002)(478600001)(5660300001)(86612001)(8676002)(81156014)(59450400001)(2906002)(102836004)(81166006)(6506007)(2900100001)(76176011)(2616005)(486006)(26005)(36756003)(10090500001)(97736004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1110;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: rhFokO3LlUYiaaIDDUuXnlgM8pzv2E0FrGNmKaHBfa8YD9HYo0iOoB8hVuNKEvNb0KcbEpQnj0Y0eYhbYPahDBGAFQfoWdozmKPsla+c2H93Px820ocIIFxwbwbW3WSMcXSErNQeu8GV5YwciDwq7YJotv4jRaq1ZzAeA7LfOmi103RPVwgvNau1YjFA36bHDQr0qIAPyMX/a7Upc9+l2+TgF5wUixhi4873+svyKRpvTmo3Sg8yzLAXUvdPZOczMWRpRNHp7cuSv0xIWSP38l1wtEaJDpjaV9ZFaxEnZod1SrNu1rC66g3q9qKnGsuGcjbt25rtZ2gp/VDYtlwUve19FRSF8a2zOK8JSttSGVyPuo6u3OezD18rijgi4J35++kJHrKN5rzSUcFBiX86NUt6Rr1ESGePoSP6s4pIVAE=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a6a61ab-f7df-4610-b943-08d59db21cbf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:29:01.5054
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fd08ce7-e39d-418e-b23e-08d59db21d5a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:29:03.6148
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -120,42 +122,34 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 63c16c6eacb69d0cbdaee5dea0dd56d238375fe6 ]
+[ Upstream commit 6af574e826740bf17663b48ba3f8fadb81d2113f ]
 
-If the GIC cannot map an IRQ via irq_domain_ops->alloc(), it doesn't
-return an error code.  This can cause a problem with drivers, where
-it thinks it has successfully got an IRQ for the device, but requesting
-the same ends up failure with -ENOSYS (as the IRQ's chip is not set).
+There is an error path, where iomemory is left mapped.
 
-Fixes: commit 443acc4f37f6 ("irqchip: GICv3: Convert to domain hierarchy")
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Alan Hourihane <alanh@fairlite.demon.co.uk>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/irqchip/irq-gic-v3.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/vermilion/cr_pll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 3f1c4dea8866..5d93e0254d70 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -802,8 +802,11 @@ static int gic_irq_domain_alloc(struct irq_domain *dom=
-ain, unsigned int virq,
- 	if (ret)
- 		return ret;
-=20
--	for (i =3D 0; i < nr_irqs; i++)
--		gic_irq_domain_map(domain, virq + i, hwirq + i);
-+	for (i =3D 0; i < nr_irqs; i++) {
-+		ret =3D gic_irq_domain_map(domain, virq + i, hwirq + i);
-+		if (ret)
-+			return ret;
-+	}
-=20
- 	return 0;
- }
+diff --git a/drivers/video/fbdev/vermilion/cr_pll.c b/drivers/video/fbdev/v=
+ermilion/cr_pll.c
+index ebc6e6e0dd0f..ba105c876bed 100644
+--- a/drivers/video/fbdev/vermilion/cr_pll.c
++++ b/drivers/video/fbdev/vermilion/cr_pll.c
+@@ -185,6 +185,7 @@ static int __init cr_pll_init(void)
+ 	if (err) {
+ 		printk(KERN_ERR
+ 		       "Carillo Ranch failed to initialize vml_sys.\n");
++		iounmap(mch_regs_base);
+ 		pci_dev_put(mch_dev);
+ 		return err;
+ 	}
 --=20
 2.15.1
