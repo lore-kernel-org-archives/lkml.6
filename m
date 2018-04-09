@@ -1,32 +1,32 @@
-Return-Path: <kernel-hardening-return-12912-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/W+Dsg4lLawFFvvrObtRiv7og+4c63pZZYA1bXms2BSW3+DRl9QLNr0LO7TNY26xmjOgGB
-ARC-Seal: i=1; a=rsa-sha256; t=1523275461; cv=none;
+Return-Path: <kernel-hardening-return-12913-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx48N9ChxObXVJgiqA+BwUAE+viRHoVO1gEfYhMjWgm1reLqzHJRnznCPAxutTE5A4ANaiB5n
+ARC-Seal: i=1; a=rsa-sha256; t=1523275470; cv=none;
         d=google.com; s=arc-20160816;
-        b=DvfTplR7Gw+QsXMNeWmqs/bHveh7yrrnroVTpVMBNg6qjhGCpwEsJGzjWFtFHAevlM
-         fNm8pWTt5CaG1TSENW4Y1P9BV/V9pxQoMTVkrysyESK0IRTztZwjLiImZaDeO+6kQAtk
-         n//mXr0MZQRslTR44fSGIatb1P0A35VRQ6kvClKxG71IeQgyR4Xmo15665yI4nHFeBKC
-         4n/IRZVAXRsHq0g/p1ggJIv1DKYFbhBiNvrDCPWnx7b0634hORta94C7rxFOIuohCCfc
-         j0lobD08qHhvRHDgrCqbUr5Gupjc35qwZpCUtOiEmlMudWfDUdRwt9zWARPiwtMF3k+3
-         h7fw==
+        b=jY/U+uuzyKduW3ZPenZRIHMqoTVS24Z/JM9aHS7g6xLUAh3q7IlaOzauPCuIl9QN1H
+         wcZYffM02Ckurjedi5dPmnPAaNEJD+o0FPvHeAnkcwq7Daj0i+mTjaN+IFIFaP0TcVFW
+         T/98/FaDLwGlT4iiG34JorY1PKd9+6aAvZqBj/DFQMRdJx0ZhULJuQaJ8eQNK26xPiI4
+         ttWbOHeuys92AbciFmNiLIVTuR86KaK0zbmx7opJj0C9qAZiOYeMyaihQ43hkMB8qrjz
+         aaT/ckHNrx1H08kDz+cos03MzwphdezHoeOcRLEY3qDTmUrFCi4N5JtAc6IJcFRnyYKd
+         JCDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
          :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=OO4MCep2Vgr8RC0TiPbOpkksdvxbBTXB+tEq2zvklQA=;
-        b=qLNt1kleHeB43lj0IHYLmcfkMuSI8xOWZ5NRKoilIJhELrDNN9nG6amPz5fp5FXQXC
-         LjLjFMKorNi0M2uCVgRQSU+eTTJF+ZzY/F/z1gs9HWfqy6QztQ6HwUDi6Z+HJPx/z4V9
-         Z51QcswcfiSM8wlje4fKZS/bg2JtGx/QAW/iiTt50YDZLR3DHKM28iPQe8A+Snu3NpHy
-         9IArG4Fwj7kTu000juii/J12vkl7v+KS8nm8pl10h0Bvz7zv/7RAqYkerN+tsnAZqaVX
-         Y0f7rNhbOFxWs8LFjgei3OATH3QayZzMVI7Ko5kXhVDujs0kpw7YxZ2IW90UBoksveFy
-         00cA==
+        bh=zqw89oX0VDYEFbNnHUf8KMoRxXhoyIJsc7kMYSn54rA=;
+        b=qc9Zq9QDpgR8H0j7UEbleC7AZLQnq7DqQ9ky2VdUptcEtt53kn5Qe+YbvBYHCAdRmn
+         pzsVVQik8LzH5VfEpDVz1Gnn+MirdpqeOOpJtnRbAfMIZR4yIcuwuMttr88aPf/2W8kp
+         ymVnd1AhtVvbVLrr0/lM4jlbZJ+7G9Nmw6l+zN3kFm1yqS1vxitDk+joImmcXXByb5C1
+         zzzj13Hel/TcjuUs35qpfTpVldmLSDTt91j/l+oNpMghYp6Ju+a1LN9jCW4jMsFo61k2
+         mFnIkEahZDo4I4Xu1wNuGTSJVtJhx8Zp4uKUhfxyx8OGriKbUyB20PRu3xy5JnbP4kFW
+         6WpQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=R0+XbIdX;
-       spf=pass (google.com: domain of kernel-hardening-return-12912-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12912-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YxooVLzS;
+       spf=pass (google.com: domain of kernel-hardening-return-12913-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12913-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=R0+XbIdX;
-       spf=pass (google.com: domain of kernel-hardening-return-12912-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12912-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YxooVLzS;
+       spf=pass (google.com: domain of kernel-hardening-return-12913-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12913-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
@@ -46,287 +46,137 @@ Cc: catalin.marinas@arm.com,
 	jpoimboe@redhat.com,
 	mingo@kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] stacktrace: move arch_within_stack_frames from thread_info.h
-Date: Mon,  9 Apr 2018 15:59:14 +0400
-Message-Id: <1523275156-29087-2-git-send-email-kpark3469@gmail.com>
+Subject: [PATCH v3 2/3] arm64: usercopy: implement arch_within_stack_frames
+Date: Mon,  9 Apr 2018 15:59:15 +0400
+Message-Id: <1523275156-29087-3-git-send-email-kpark3469@gmail.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523275156-29087-1-git-send-email-kpark3469@gmail.com>
+In-Reply-To: <1523275156-29087-2-git-send-email-kpark3469@gmail.com>
 References: <1523275156-29087-1-git-send-email-kpark3469@gmail.com>
+ <1523275156-29087-2-git-send-email-kpark3469@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597270090297365615?=
-X-GMAIL-MSGID: =?utf-8?q?1597270090297365615?=
+X-GMAIL-THRID: =?utf-8?q?1597247891648306653?=
+X-GMAIL-MSGID: =?utf-8?q?1597270100084034595?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Sahara <keun-o.park@darkmatter.ae>
+From: James Morse <james.morse@arm.com>
 
-Since the inlined arch_within_stack_frames function was placed within
-asm/thread_info.h, using stacktrace functions to unwind stack was
-restricted. Now in order to have this function use more abundant apis,
-it is moved to architecture's stacktrace.c. And, it is changed from
-inline to noinline function to clearly have three depth calls like:
+This implements arch_within_stack_frames() for arm64 that should
+validate if a given object is contained by a kernel stack frame.
 
-do_usercopy_stack()
-  copy_[to|from]_user() : inline
-    check_copy_size() : inline
-      __check_object_size()
-        check_stack_object()
-          arch_within_stack_frames()
-
-With this change, the x86's implementation was slightly changed also.
-
-Signed-off-by: Sahara <keun-o.park@darkmatter.ae>
+Signed-off-by: James Morse <james.morse@arm.com>
+Reviewed-by: Sahara <keun-o.park@darkmatter.ae>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/include/asm/thread_info.h | 51 +-------------------------------------
- arch/x86/kernel/Makefile           |  2 +-
- arch/x86/kernel/stacktrace.c       | 49 ++++++++++++++++++++++++++++++++++++
- include/linux/page_ext.h           |  1 -
- include/linux/stacktrace.h         | 24 ++++++++++++++++++
- include/linux/thread_info.h        | 21 ----------------
- mm/usercopy.c                      |  2 +-
- 7 files changed, 76 insertions(+), 74 deletions(-)
+ arch/arm64/Kconfig             |  1 +
+ arch/arm64/kernel/stacktrace.c | 76 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 77 insertions(+)
 
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index a5d9521..e25d70a 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -156,59 +156,10 @@ struct thread_info {
-  *
-  * preempt_count needs to be 1 initially, until the scheduler is functional.
-  */
--#ifndef __ASSEMBLY__
--
--/*
-- * Walks up the stack frames to make sure that the specified object is
-- * entirely contained by a single stack frame.
-- *
-- * Returns:
-- *	GOOD_FRAME	if within a frame
-- *	BAD_STACK	if placed across a frame boundary (or outside stack)
-- *	NOT_STACK	unable to determine (no frame pointers, etc)
-- */
--static inline int arch_within_stack_frames(const void * const stack,
--					   const void * const stackend,
--					   const void *obj, unsigned long len)
--{
--#if defined(CONFIG_FRAME_POINTER)
--	const void *frame = NULL;
--	const void *oldframe;
--
--	oldframe = __builtin_frame_address(1);
--	if (oldframe)
--		frame = __builtin_frame_address(2);
--	/*
--	 * low ----------------------------------------------> high
--	 * [saved bp][saved ip][args][local vars][saved bp][saved ip]
--	 *                     ^----------------^
--	 *               allow copies only within here
--	 */
--	while (stack <= frame && frame < stackend) {
--		/*
--		 * If obj + len extends past the last frame, this
--		 * check won't pass and the next frame will be 0,
--		 * causing us to bail out and correctly report
--		 * the copy as invalid.
--		 */
--		if (obj + len <= frame)
--			return obj >= oldframe + 2 * sizeof(void *) ?
--				GOOD_FRAME : BAD_STACK;
--		oldframe = frame;
--		frame = *(const void * const *)frame;
--	}
--	return BAD_STACK;
--#else
--	return NOT_STACK;
--#endif
--}
--
--#else /* !__ASSEMBLY__ */
--
-+#ifdef __ASSEMBLY__
- #ifdef CONFIG_X86_64
- # define cpu_current_top_of_stack (cpu_tss_rw + TSS_sp1)
- #endif
--
- #endif
- 
- #ifdef CONFIG_COMPAT
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5c..3b8afd5 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -70,7 +70,7 @@ obj-$(CONFIG_IA32_EMULATION)	+= tls.o
- obj-y				+= step.o
- obj-$(CONFIG_INTEL_TXT)		+= tboot.o
- obj-$(CONFIG_ISA_DMA_API)	+= i8237.o
--obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
-+obj-y				+= stacktrace.o
- obj-y				+= cpu/
- obj-y				+= acpi/
- obj-y				+= reboot.o
-diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
-index 093f2ea..ff178a0 100644
---- a/arch/x86/kernel/stacktrace.c
-+++ b/arch/x86/kernel/stacktrace.c
-@@ -12,6 +12,54 @@
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 177be0d..72d0747 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -128,6 +128,7 @@ config ARM64
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_KPROBES
+ 	select HAVE_KRETPROBES
++	select HAVE_ARCH_WITHIN_STACK_FRAMES
+ 	select IOMMU_DMA if IOMMU_SUPPORT
+ 	select IRQ_DOMAIN
+ 	select IRQ_FORCED_THREADING
+diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.c
+index d5718a0..5eb3784 100644
+--- a/arch/arm64/kernel/stacktrace.c
++++ b/arch/arm64/kernel/stacktrace.c
+@@ -27,6 +27,11 @@
+ #include <asm/stack_pointer.h>
  #include <asm/stacktrace.h>
- #include <asm/unwind.h>
  
++#define FAKE_FRAME(frame, my_func) do {				\
++	frame.fp = (unsigned long)__builtin_frame_address(0);	\
++	frame.pc = (unsigned long)my_func;			\
++} while (0)
 +
-+/*
-+ * Walks up the stack frames to make sure that the specified object is
-+ * entirely contained by a single stack frame.
-+ *
-+ * Returns:
-+ *	GOOD_FRAME	if within a frame
-+ *	BAD_STACK	if placed across a frame boundary (or outside stack)
-+ *	NOT_STACK	unable to determine (no frame pointers, etc)
-+ */
-+int arch_within_stack_frames(const void * const stack,
-+			     const void * const stackend,
-+			     const void *obj, unsigned long len)
-+{
-+#if defined(CONFIG_FRAME_POINTER)
-+	const void *frame = NULL;
-+	const void *oldframe;
-+
-+	oldframe = __builtin_frame_address(2);
-+	if (oldframe)
-+		frame = __builtin_frame_address(3);
-+	/*
-+	 * low ----------------------------------------------> high
-+	 * [saved bp][saved ip][args][local vars][saved bp][saved ip]
-+	 *                     ^----------------^
-+	 *               allow copies only within here
-+	 */
-+	while (stack <= frame && frame < stackend) {
-+		/*
-+		 * If obj + len extends past the last frame, this
-+		 * check won't pass and the next frame will be 0,
-+		 * causing us to bail out and correctly report
-+		 * the copy as invalid.
-+		 */
-+		if (obj + len <= frame)
-+			return obj >= oldframe + 2 * sizeof(void *) ?
-+				GOOD_FRAME : BAD_STACK;
-+		oldframe = frame;
-+		frame = *(const void * const *)frame;
-+	}
-+	return BAD_STACK;
-+#else
-+	return NOT_STACK;
-+#endif
-+}
-+
-+#ifdef CONFIG_STACKTRACE
-+
- static int save_stack_address(struct stack_trace *trace, unsigned long addr,
- 			      bool nosched)
- {
-@@ -241,3 +289,4 @@ void save_stack_trace_user(struct stack_trace *trace)
- 	if (trace->nr_entries < trace->max_entries)
- 		trace->entries[trace->nr_entries++] = ULONG_MAX;
+ /*
+  * AArch64 PCS assigns the frame pointer to x29.
+  *
+@@ -100,6 +105,77 @@ void notrace walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
+ 	}
  }
-+#endif /* CONFIG_STACKTRACE */
-diff --git a/include/linux/page_ext.h b/include/linux/page_ext.h
-index ca5461e..f3b7dd9 100644
---- a/include/linux/page_ext.h
-+++ b/include/linux/page_ext.h
-@@ -3,7 +3,6 @@
- #define __LINUX_PAGE_EXT_H
  
- #include <linux/types.h>
--#include <linux/stacktrace.h>
- #include <linux/stackdepot.h>
- 
- struct pglist_data;
-diff --git a/include/linux/stacktrace.h b/include/linux/stacktrace.h
-index ba29a06..60bb988 100644
---- a/include/linux/stacktrace.h
-+++ b/include/linux/stacktrace.h
-@@ -7,6 +7,30 @@
- struct task_struct;
- struct pt_regs;
- 
-+/*
-+ * For per-arch arch_within_stack_frames() implementations, defined in
-+ * kernel/stacktrace.c.
-+ */
-+enum {
-+	BAD_STACK = -1,
-+	NOT_STACK = 0,
-+	GOOD_FRAME,
-+	GOOD_STACK,
++struct check_frame_arg {
++	unsigned long obj_start;
++	unsigned long obj_end;
++	unsigned long frame_start;
++	int discard_frames;
++	int err;
 +};
 +
-+#ifdef CONFIG_HAVE_ARCH_WITHIN_STACK_FRAMES
-+extern int arch_within_stack_frames(const void * const stack,
-+				    const void * const stackend,
-+				    const void *obj, unsigned long len);
-+#else
-+static inline int arch_within_stack_frames(const void * const stack,
-+					   const void * const stackend,
-+					   const void *obj, unsigned long len)
++static int check_frame(struct stackframe *frame, void *d)
 +{
-+	return NOT_STACK;
++	struct check_frame_arg *arg = d;
++	unsigned long frame_end = frame->fp;
++
++	/* object overlaps multiple frames */
++	if (arg->obj_start < frame->fp && frame->fp < arg->obj_end) {
++		arg->err = BAD_STACK;
++		return 1;
++	}
++
++	/*
++	 * Discard frames and check object is in a frame written early
++	 * enough.
++	 */
++	if (arg->discard_frames)
++		arg->discard_frames--;
++	else if ((arg->frame_start <= arg->obj_start &&
++			arg->obj_start < frame_end) &&
++		(arg->frame_start < arg->obj_end && arg->obj_end <= frame_end))
++		return 1;
++
++	/* object exists in a previous frame */
++	if (arg->obj_end < arg->frame_start) {
++		arg->err = BAD_STACK;
++		return 1;
++	}
++
++	arg->frame_start = frame_end + 0x10;
++
++	return 0;
 +}
-+#endif
++
++/* Check obj doesn't overlap a stack frame record */
++int arch_within_stack_frames(const void *stack,
++			     const void *stack_end,
++			     const void *obj, unsigned long obj_len)
++{
++	struct stackframe frame;
++	struct check_frame_arg arg;
++
++	if (!IS_ENABLED(CONFIG_FRAME_POINTER))
++		return NOT_STACK;
++
++	arg.err = GOOD_FRAME;
++	arg.obj_start = (unsigned long)obj;
++	arg.obj_end = arg.obj_start + obj_len;
++
++	FAKE_FRAME(frame, arch_within_stack_frames);
++	arg.frame_start = frame.fp;
++
++	/*
++	 * Skip 4 non-inlined frames: <fake frame>,
++	 * arch_within_stack_frames(), check_stack_object() and
++	 * __check_object_size().
++	 */
++	arg.discard_frames = 4;
++
++	walk_stackframe(current, &frame, check_frame, &arg);
++
++	return arg.err;
++}
 +
  #ifdef CONFIG_STACKTRACE
- struct stack_trace {
- 	unsigned int nr_entries, max_entries;
-diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-index 34f053a..5403851 100644
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -23,18 +23,6 @@
- #endif
- 
- #include <linux/bitops.h>
--
--/*
-- * For per-arch arch_within_stack_frames() implementations, defined in
-- * asm/thread_info.h.
-- */
--enum {
--	BAD_STACK = -1,
--	NOT_STACK = 0,
--	GOOD_FRAME,
--	GOOD_STACK,
--};
--
- #include <asm/thread_info.h>
- 
- #ifdef __KERNEL__
-@@ -92,15 +80,6 @@ static inline int test_ti_thread_flag(struct thread_info *ti, int flag)
- 
- #define tif_need_resched() test_thread_flag(TIF_NEED_RESCHED)
- 
--#ifndef CONFIG_HAVE_ARCH_WITHIN_STACK_FRAMES
--static inline int arch_within_stack_frames(const void * const stack,
--					   const void * const stackend,
--					   const void *obj, unsigned long len)
--{
--	return 0;
--}
--#endif
--
- #ifdef CONFIG_HARDENED_USERCOPY
- extern void __check_object_size(const void *ptr, unsigned long n,
- 					bool to_user);
-diff --git a/mm/usercopy.c b/mm/usercopy.c
-index e9e9325..6a74776 100644
---- a/mm/usercopy.c
-+++ b/mm/usercopy.c
-@@ -19,7 +19,7 @@
- #include <linux/sched.h>
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
--#include <linux/thread_info.h>
-+#include <linux/stacktrace.h>
- #include <asm/sections.h>
- 
- /*
+ struct stack_trace_data {
+ 	struct stack_trace *trace;
 -- 
 2.7.4
