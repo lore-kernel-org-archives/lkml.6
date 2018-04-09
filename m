@@ -1,83 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeDINcb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:32:31 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36338 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752246AbeDINc2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:32:28 -0400
-Subject: Re: [PATCH v2 7/9] trace_uprobe/sdt: Fix multiple update of same
- reference counter
+        id S1752763AbeDINcx convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:32:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52492 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752250AbeDINcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 09:32:50 -0400
+Subject: Re: [PATCH] locking/rwsem: Add up_write_non_owner() for
+ percpu_up_write()
 To: Oleg Nesterov <oleg@redhat.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
-        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-References: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180404083110.18647-8-ravi.bangoria@linux.vnet.ibm.com>
- <20180409131730.GA25631@redhat.com>
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Date: Mon, 9 Apr 2018 19:02:02 +0530
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>
+References: <1522852646-2196-1-git-send-email-longman@redhat.com>
+ <20180409112013.GA23240@redhat.com>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <38c89c59-5ff0-20df-2628-880db397006e@redhat.com>
+Date: Mon, 9 Apr 2018 09:32:49 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180409131730.GA25631@redhat.com>
+In-Reply-To: <20180409112013.GA23240@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18040913-0040-0000-0000-0000044B5E6D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040913-0041-0000-0000-000020EF82FF
-Message-Id: <90d2fc35-0d58-1cab-a474-642192c7e1ff@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804090144
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oleg,
-
-On 04/09/2018 06:47 PM, Oleg Nesterov wrote:
-> On 04/04, Ravi Bangoria wrote:
->> +static void sdt_add_mm_list(struct trace_uprobe *tu, struct mm_struct *mm)
+On 04/09/2018 07:20 AM, Oleg Nesterov wrote:
+> On 04/04, Waiman Long wrote:
+>> --- a/kernel/locking/percpu-rwsem.c
+>> +++ b/kernel/locking/percpu-rwsem.c
+>> @@ -179,8 +179,10 @@ void percpu_up_write(struct percpu_rw_semaphore *sem)
+>>  
+>>  	/*
+>>  	 * Release the write lock, this will allow readers back in the game.
+>> +	 * percpu_up_write() may be called from a task different from the one
+>> +	 * taking the lock.
+>>  	 */
+>> -	up_write(&sem->rw_sem);
+>> +	up_write_non_owner(&sem->rw_sem);
+>>  
+>>  	/*
+>>  	 * Once this completes (at least one RCU-sched grace period hence) the
+>> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+>> index 30465a2..140d5ef 100644
+>> --- a/kernel/locking/rwsem.c
+>> +++ b/kernel/locking/rwsem.c
+>> @@ -222,4 +222,17 @@ void up_read_non_owner(struct rw_semaphore *sem)
+>>  
+>>  #endif
+>>  
+>> +#ifdef CONFIG_DEBUG_RWSEMS
+>> +/*
+>> + * release a write lock from a different task
+>> + */
+>> +void up_write_non_owner(struct rw_semaphore *sem)
 >> +{
->> +	struct mmu_notifier *mn;
->> +	struct sdt_mm_list *sml = kzalloc(sizeof(*sml), GFP_KERNEL);
->> +
->> +	if (!sml)
->> +		return;
->> +	sml->mm = mm;
->> +	list_add(&(sml->list), &(tu->sml.list));
->> +
->> +	/* Register mmu_notifier for this mm. */
->> +	mn = kzalloc(sizeof(*mn), GFP_KERNEL);
->> +	if (!mn)
->> +		return;
->> +
->> +	mn->ops = &sdt_mmu_notifier_ops;
->> +	__mmu_notifier_register(mn, mm);
+>> +	rwsem_release(&sem->dep_map, 1, _RET_IP_);
+>> +	DEBUG_RWSEMS_WARN_ON(!sem->owner || (sem->owner == RWSEM_READER_OWNED));
+>>  
+>> +	rwsem_clear_owner(sem);
+>> +	__up_write(sem);
 >> +}
-> I didn't read this version yet, just one question...
->
-> So now it depends on CONFIG_MMU_NOTIFIER, yes? I do not see any changes in Kconfig
-> files, this doesn't look right...
+> Hmm. Can you look at lockdep_sb_freeze_release() and lockdep_sb_freeze_acquire()?
 
-Yes, you are write. I'll make CONFIG_UPROBE_EVENTS dependent on
-CONFIG_MMU_NOTIFIER.
+These 2 functions are there to deal with the lockdep code.
 
-Thanks,
-Ravi
+> At first glance, it would be much better to set sem->owner = current in
+> percpu_rwsem_acquire(), no?
+
+The primary purpose of the owner field is to enable optimistic spinning
+to improve locking performance. So it needs to be set during an
+up_write() call.
+
+My rwsem debug patch does use it also to check for consistency in the
+use of lock/unlock call. Anyway, I don't think it is right to set it
+again in percpu_rwsem_acquire() if there is no guarantee that the task
+that call percpu_rwsem_acquire will be the one that will do the unlock.
+
+I am wondering if it makes sense to do optimistic spinning in the case
+of percpu_rwsem where the unlocker may be a different task. We could set
+a special code for writer owned lock, but don't do optimistic spinning
+in this case.
+
+Cheers,
+Longman
