@@ -1,178 +1,86 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1972233-1523039437-2-3009155764605963179
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523039437; b=NL2+3bELwXfj2xvUFiY/tUC619k1pRU7e0jEtxgAmEY9Va58x6
-    IX8e/UtpI2Bju4nAh9yu4IHFlHZ4TokQdZNo7HWT0+fwI8qCHKkEyemQSRMxUu7+
-    iLBbzp5aZdSDwi4fxC1ZI7cU1t/yLK5EaflGdGn9p8VWD/NwUj/m/w7xgyozQThK
-    KhpE6cItUq40NcQoFgs6/2BHdngm+6EqEKRNw8pqF5zH9imjFF1nDyNhTzBdwJNn
-    zz2J2Tvfry1fA4Q9v6bwigkzK35bqt1JDbZPC/WEQS1wYbbNHovwZym/tdVWLxZT
-    cxGDuE9IScbq+D7QmY8axYiQOXRUFckbgs9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1523039437; bh=
-    yLKNNFzyqSWIXHkm2GdEJWuyS1GPJUoS7J/tUtAYUMY=; b=e2fk8AUxctnFerj2
-    FY+dtDivHyOX7BPTa2oF8ciUU5cxnCdPzDSte2haR6AqkJQsTB1koxEfdTYuqIis
-    lnmzJDFKDZHEwn2tvuNuJGNX4Ek1lUW25M0CIeZ+m4MXYqE+T8lXyzEzxHKF/+Me
-    jXcUzl6SShTKlco9JIr63lwhRKhxPt7rBEAft9xqLoDGv/qxGJuBWj0nWb0OhB3O
-    Syoce5OKSE5DwwpziHrRuSLNYzklaYMOUoe8offycrjgV43nO2LVP8+5wjn9/xOF
-    3fD1+0RpCphyqeBRZEgxqvtWgxyPKOjv+53LLt7vvkf67m8lQjCyAXTP6MqUV+xy
-    k5HeNQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHrs/dpBpW4QQd9/I2/F5b/u8FGaBn3MRVRAeqp1/ZvubBY+P/6HymzglZYm/K67tLCZ8RzHo7niiC41lVICtUHlcekMW7SnqdgyVTe8Vz/nVJPJ3xk4
-    86SI1QLvxRsTPsPERAmzVjzmw5qekVloO3t35Pre9XuWXMg5uBPR1nYqTHU4QEpp6hfQFRLbWmIb8reWpZcvPnZICJo/mkjpqVRMtSQzTOSah1IOI8gis0OH
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=QyXUC8HyAAAA:8
-    a=zd2uoN0lAAAA:8 a=VwQbUJbxAAAA:8 a=0aE5WbeoMfx8o801NA0A:9
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751934AbeDFSaf (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 14:30:35 -0400
-Received: from mga06.intel.com ([134.134.136.31]:38636 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752012AbeDFSae (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 6 Apr 2018 14:30:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,416,1517904000";
-   d="scan'208";a="31611448"
-From: Ashok Raj <ashok.raj@intel.com>
-To: gregkh@linuxfoundation.org, tglx@linutronix.de
-Cc: Ashok Raj <ashok.raj@intel.com>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, bp@suse.de, thomas.lendacky@amd.com,
-        arjan.van.de.ven@intel.com, asit.k.mallick@intel.com
-Subject: [4.15 & 4.14 stable 05/12] x86/microcode/intel: Check microcode revision before updating sibling threads
-Date: Fri,  6 Apr 2018 11:30:19 -0700
-Message-Id: <1523039426-3938-6-git-send-email-ashok.raj@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523039426-3938-1-git-send-email-ashok.raj@intel.com>
-References: <1523039426-3938-1-git-send-email-ashok.raj@intel.com>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <kernel-hardening-return-12935-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx48JZmra0sB8HgWB7rJ/QBCQFoyz99Yz4LV3hJv0+1uvxkz55IeL6acg+3kxtl3FNgtJNlZF
+ARC-Seal: i=1; a=rsa-sha256; t=1523307990; cv=none;
+        d=google.com; s=arc-20160816;
+        b=esHGKNX++KHckoUiw2OqH/sKigVDSlylPf0BTczkHnse8m4LR04AEjSjcn/luUWQro
+         0Ns8NqKTex1/qVyapiwa+jMb7K8kSlFthdaE27DymhBevnVcoaYAV4aSf8TewOHoLi8n
+         0z+Tbay7QA1yP4Xn7YniWyjIXJWP8Izm3TTxYs8ZFS8VRCjSK/Gz+PUt1XcVHGn232Tb
+         vRuv8rQCWFEAq/y8zRX67VicEhgFOkDvGL04FSqk5A1uFcFFCD9ZodOgyLNYjyCan5LI
+         olDqs2gevBRg/2VribDKX0DXWLb/X3xTgtKcO/UFwV0YLWXDIFHuV/u55Fahl+GgGXEA
+         uA/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=oOrV9n4ebDhS1W/G4uF4IMdlLq4fzkwhLWhjwpOaIG8=;
+        b=K/LaNlrtHzrrT3ireiIs4CQRVSRbDwMM7tjk5A6BSkqCuK0xFDLzczL6m0QaLgLcGw
+         T6oJjPAY+t/OguzupMGPoNrIR8nPHz9czAZJ9v/TR5RPX0OiO9MCONokVZi9Kh1rXbhZ
+         PU/CDD83wETSQhIM84r7VY9ZY2CYz2R2kDQUBwmDwQiEPXFjgXt5ZcrePoQwzFnzS5ZB
+         jcOMf+RQtotvNjdoByFatQZQfr73WmqI1OycEvjHp2GLKVgzlVhkNGLo7SbeEiLV0skf
+         ia13SRwhpDBKJRO8quSMY3csjNsbCxgKCRjvqo86W53yc2YQOrH7Kyn5h4dzLmlWPiAC
+         iOLg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-12935-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12935-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-12935-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12935-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Laura Abbott <labbott@redhat.com>
+To: Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Cc: Laura Abbott <labbott@redhat.com>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH] dmaengine: dmatest: Remove use of VLAs
+Date: Mon,  9 Apr 2018 14:06:03 -0700
+Message-Id: <20180409210603.3575-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597304199213101990?=
+X-GMAIL-MSGID: =?utf-8?q?1597304199213101990?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-commit c182d2b7d0ca48e0d6ff16f7d883161238c447ed upstream
+There's an ongoing effort to remove VLAs from the kernel
+(https://lkml.org/lkml/2018/3/7/621) to eventually turn on -Wvla.
+The uses in dmatest are bounded by a check to make sure they fit
+in a u8 so use that as an upper bound.
 
-After updating microcode on one of the threads of a core, the other
-thread sibling automatically gets the update since the microcode
-resources on a hyperthreaded core are shared between the two threads.
-
-Check the microcode revision on the CPU before performing a microcode
-update and thus save us the WRMSR 0x79 because it is a particularly
-expensive operation.
-
-[ Borislav: Massage changelog and coding style. ]
-
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Asit K Mallick <asit.k.mallick@intel.com>
-Cc: stable@vger.kernel.org
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Link: http://lkml.kernel.org/r/1519352533-15992-2-git-send-email-ashok.raj@intel.com
-Link: https://lkml.kernel.org/r/20180228102846.13447-3-bp@alien8.de
+Signed-off-by: Laura Abbott <labbott@redhat.com>
 ---
- arch/x86/kernel/cpu/microcode/intel.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+ drivers/dma/dmatest.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 923054a..87bd6dc 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -589,6 +589,17 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
- 	if (!mc)
- 		return 0;
+diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+index 80cc2be6483c..dcf787b173e4 100644
+--- a/drivers/dma/dmatest.c
++++ b/drivers/dma/dmatest.c
+@@ -556,7 +556,8 @@ static int dmatest_func(void *data)
+ 	       && !(params->iterations && total_tests >= params->iterations)) {
+ 		struct dma_async_tx_descriptor *tx = NULL;
+ 		struct dmaengine_unmap_data *um;
+-		dma_addr_t srcs[src_cnt];
++		/* total buffer count must fit into u8 */
++		dma_addr_t srcs[255];
+ 		dma_addr_t *dsts;
+ 		unsigned int src_off, dst_off, len;
  
-+	/*
-+	 * Save us the MSR write below - which is a particular expensive
-+	 * operation - when the other hyperthread has updated the microcode
-+	 * already.
-+	 */
-+	rev = intel_get_microcode_revision();
-+	if (rev >= mc->hdr.rev) {
-+		uci->cpu_sig.rev = rev;
-+		return UCODE_OK;
-+	}
-+
- 	/* write microcode via MSR 0x79 */
- 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+@@ -669,7 +670,8 @@ static int dmatest_func(void *data)
+ 						      srcs, src_cnt,
+ 						      len, flags);
+ 		else if (thread->type == DMA_PQ) {
+-			dma_addr_t dma_pq[dst_cnt];
++			/* dst_cnt can't be more than u8 */
++			dma_addr_t dma_pq[255];
  
-@@ -776,7 +787,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
- {
- 	struct microcode_intel *mc;
- 	struct ucode_cpu_info *uci;
--	struct cpuinfo_x86 *c;
-+	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	static int prev_rev;
- 	u32 rev;
- 
-@@ -793,6 +804,18 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 			return UCODE_NFOUND;
- 	}
- 
-+	/*
-+	 * Save us the MSR write below - which is a particular expensive
-+	 * operation - when the other hyperthread has updated the microcode
-+	 * already.
-+	 */
-+	rev = intel_get_microcode_revision();
-+	if (rev >= mc->hdr.rev) {
-+		uci->cpu_sig.rev = rev;
-+		c->microcode = rev;
-+		return UCODE_OK;
-+	}
-+
- 	/* write microcode via MSR 0x79 */
- 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
-@@ -813,8 +836,6 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 		prev_rev = rev;
- 	}
- 
--	c = &cpu_data(cpu);
--
- 	uci->cpu_sig.rev = rev;
- 	c->microcode = rev;
- 
+ 			for (i = 0; i < dst_cnt; i++)
+ 				dma_pq[i] = dsts[i] + dst_off;
 -- 
-2.7.4
+2.14.3
