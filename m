@@ -1,200 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753308AbeDIQPR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 12:15:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58142 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752083AbeDIQPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 12:15:15 -0400
-Date: Mon, 9 Apr 2018 17:15:08 +0100
-From: Brian Starkey <brian.starkey@arm.com>
-To: daniel@ffwll.ch
-Cc: Ayan Halder <ayan.halder@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        Dave Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>
-Subject: Re: [PATCH 8/8] drm/arm/malidp: Added the late system pm functions
-Message-ID: <20180409161226.GA6726@e107564-lin.cambridge.arm.com>
-References: <1522083800-30100-1-git-send-email-ayan.halder@arm.com>
- <1522083800-30100-9-git-send-email-ayan.halder@arm.com>
- <20180327082903.GS14155@phenom.ffwll.local>
- <20180327095907.GA18146@arm.com>
- <CAKMK7uF8mmLOBQtwfQgkdpPHfoy7yM9UApWgc9YiEudoP5WEyw@mail.gmail.com>
- <20180406190216.GA18433@arm.com>
- <20180409082337.GG31310@phenom.ffwll.local>
+        id S1753264AbeDIQRc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 12:17:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33910 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752957AbeDIQRa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 12:17:30 -0400
+Subject: Re: [PATCH 0/3] move __HAVE_ARCH_PTE_SPECIAL in Kconfig
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "aneesh.kumar@linux.vnet.ibm.com" <aneesh.kumar@linux.vnet.ibm.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "paulus@samba.org" <paulus@samba.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+References: <1523282229-20731-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <17b19aac-fed7-23a2-013c-43ca867152e9@synopsys.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Mon, 9 Apr 2018 18:17:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180409082337.GG31310@phenom.ffwll.local>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <17b19aac-fed7-23a2-013c-43ca867152e9@synopsys.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18040916-0044-0000-0000-000005452C35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040916-0045-0000-0000-000028855870
+Message-Id: <21c34965-ec30-4d7f-aeaf-cb3da9758a0e@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804090168
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On 09/04/2018 18:03, Vineet Gupta wrote:
+> On 04/09/2018 06:57 AM, Laurent Dufour wrote:
+>> The per architecture __HAVE_ARCH_PTE_SPECIAL is defined statically in the
+>> per architecture header files. This doesn't allow to make other
+>> configuration dependent on it.
+> 
+> So I understand this series has more "readability" value and I'm fine with this
+> change but I wonder if you really would want to make something depend on it or
+> make this de-configurable. PTE special is really a fundamental construct - e.g.
+> it is used for anon mapped pages where zero page has been wired up etc...
 
-On Mon, Apr 09, 2018 at 10:23:37AM +0200, Daniel Vetter wrote:
->On Fri, Apr 06, 2018 at 08:02:16PM +0100, Ayan Halder wrote:
->> On Tue, Mar 27, 2018 at 01:09:36PM +0200, Daniel Vetter wrote:
->> > On Tue, Mar 27, 2018 at 11:59 AM, Ayan Halder <ayan.halder@arm.com> wrote:
->> > > On Tue, Mar 27, 2018 at 10:29:03AM +0200, Daniel Vetter wrote:
->> > >> On Mon, Mar 26, 2018 at 06:03:20PM +0100, Ayan Kumar Halder wrote:
->> > >> > malidp_pm_suspend_late checks if the runtime status is not suspended
->> > >> > and if so, invokes malidp_runtime_pm_suspend which disables the
->> > >> > display engine/core interrupts and the clocks. It sets the runtime status
->> > >> > as suspended. Subsequently, malidp_pm_resume_early will invoke
->> > >> > malidp_runtime_pm_resume which enables the clocks and the interrupts
->> > >> > (previously disabled) and sets the runtime status as active.
->> > >> >
->> > >> > Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
->> > >> > Change-Id: I5f8c3d28f076314a1c9da2a46760a9c37039ccda
->> > >>
->> > >> Why exactly do you need late/early hooks? If you have dependencies with
->> > >> other devices, pls consider adding device_links instead. This here
->> > >> shouldn't be necessary.
->> > >> -Daniel
->> > > We need to late/early hooks to disable malidp interrupts and the
->> > > clocks.
->> >
->> > Yes, but why this ordering constraint? Why can't you just disable the
->> > interrupts/clocks in the normal suspend code. I see that the patch
->> > does this, I want to understand why it does it.
->> > -Daniel
->> Apologies for my delayed response on this.
->>
->> With reference to https://lwn.net/Articles/505683/ :-
->> 1. "suspend() should leave the device in a quiescent state." We invoke
->> drm_mode_config_helper_suspend() which deactivates the crtc. I
->> understand that this is the quiescent state.
->>
->> 2. "suspend_late() can often be the same as runtime_suspend()."  We
->> invoke runtime suspend/resume calls in late/early hooks.
->
->This article is from 2012. That's not really recommended best practices
->anymore. device_links have only been added a few years ago, so ofc an
->article from 2012 can't tell you that you should use those instead :-)
->
->That's why I brought this up, we have much better ways to handle device
->dependencies now.
->
+I don't want it to be de-configurable. This is almost like
+ARCH_SUPPORTS_MEMORY_FAILURE, ARCH_USES_HIGH_VMA_FLAGS, ARCH_HAS_HMM...
 
-We aren't trying to manage any device dependencies here, I don't know
-where that idea came from?
+These values are selected by per architecture Kconfig files and are not exposed
+through the configuration menu.
 
-The kernel-doc on drm-next this afternoon says effectively the same
-thing:
-
-   * @suspend: Executed before putting the system into a sleep state in which the
-   *      contents of main memory are preserved.  The exact action to perform
-   *      depends on the device's subsystem (PM domain, device type, class or bus
-   *      type), but generally the device must be quiescent after subsystem-level
-   *      @suspend() has returned, so that it doesn't do any I/O or DMA.
-   *      Subsystem-level @suspend() is executed for all devices after invoking
-   *      subsystem-level @prepare() for all of them.
-
-(i.e. suspend() makes the device quiescent).
-
-   * @suspend_late: Continue operations started by @suspend().  For a number of
-   *      devices @suspend_late() may point to the same callback routine as the
-   *      runtime suspend callback.
-
-(suggests suspend_late() be assigned to the same function as runtime
-suspend).
-
-As for why, my understanding is like so:
-
-For ->suspend(), we use the DRM helper, which disables the CRTC.
-Normally disabling the CRTC would be enough to also invoke our
-pm_runtime callback to do the final clock disable etc., however when a
-system suspend is in-progress, the core forcibly takes a runtime
-reference on all devices - preventing any pm_runtime paths from
-running.
-
-This means that after the CRTC is disabled in ->suspend(), our normal
-pm_runtime path will not be invoked, and so the things done in
-malidp_runtime_pm_suspend() will never happen.
-
-We were just following the advice in the kernel-doc to deal with this.
-
-The alternative would be to call malidp_runtime_pm_{suspend,resume}
-from the "not late" hooks, but I'd ask why?
-
->Also, you still haven't explained what exactly the dependency is.
-
-Because there isn't one :-)
+Concerning making something depend on it, I will probably make
+CONFIG_SPECULATIVE_PAGE_FAULT introduced by the SPF series dependent on it.
+For details, please see https://lkml.org/lkml/2018/3/13/1143
 
 Thanks,
--Brian
-
->-Daniel
->
->>
->> > >> > ---
->> > >> >  drivers/gpu/drm/arm/malidp_drv.c | 17 +++++++++++++++++
->> > >> >  1 file changed, 17 insertions(+)
->> > >> >
->> > >> > diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
->> > >> > index bd44a6d..f6124d8 100644
->> > >> > --- a/drivers/gpu/drm/arm/malidp_drv.c
->> > >> > +++ b/drivers/gpu/drm/arm/malidp_drv.c
->> > >> > @@ -766,8 +766,25 @@ static int __maybe_unused malidp_pm_resume(struct device *dev)
->> > >> >     return 0;
->> > >> >  }
->> > >> >
->> > >> > +static int __maybe_unused malidp_pm_suspend_late(struct device *dev)
->> > >> > +{
->> > >> > +   if (!pm_runtime_status_suspended(dev)) {
->> > >> > +           malidp_runtime_pm_suspend(dev);
->> > >> > +           pm_runtime_set_suspended(dev);
->> > >> > +   }
->> > >> > +   return 0;
->> > >> > +}
->> > >> > +
->> > >> > +static int __maybe_unused malidp_pm_resume_early(struct device *dev)
->> > >> > +{
->> > >> > +   malidp_runtime_pm_resume(dev);
->> > >> > +   pm_runtime_set_active(dev);
->> > >> > +   return 0;
->> > >> > +}
->> > >> > +
->> > >> >  static const struct dev_pm_ops malidp_pm_ops = {
->> > >> >     SET_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend, malidp_pm_resume) \
->> > >> > +   SET_LATE_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend_late, malidp_pm_resume_early) \
->> > >> >     SET_RUNTIME_PM_OPS(malidp_runtime_pm_suspend, malidp_runtime_pm_resume, NULL)
->> > >> >  };
->> > >> >
->> > >> > --
->> > >> > 2.7.4
->> > >> >
->> > >> > _______________________________________________
->> > >> > dri-devel mailing list
->> > >> > dri-devel@lists.freedesktop.org
->> > >> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
->> > >>
->> > >> --
->> > >> Daniel Vetter
->> > >> Software Engineer, Intel Corporation
->> > >> http://blog.ffwll.ch
->> > >> _______________________________________________
->> > >> dri-devel mailing list
->> > >> dri-devel@lists.freedesktop.org
->> > >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->> > > IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
->> > > _______________________________________________
->> > > dri-devel mailing list
->> > > dri-devel@lists.freedesktop.org
->> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
->> >
->> >
->> >
->> > --
->> > Daniel Vetter
->> > Software Engineer, Intel Corporation
->> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
->
->-- 
->Daniel Vetter
->Software Engineer, Intel Corporation
->http://blog.ffwll.ch
+Laurent.
