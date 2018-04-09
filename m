@@ -1,83 +1,72 @@
-Return-Path: <kernel-hardening-return-12938-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx49eu8jm8AsAHAhrg5OqpMCDpeeVZ/W6/tUCWMHVvwiQ0ICa7C7yTsPiFgD+hlOIMbMxLY/6
-ARC-Seal: i=1; a=rsa-sha256; t=1523308052; cv=none;
+Return-Path: <kernel-hardening-return-12942-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/WrRuw4yNo58HaL15boMJj0zLnib+2IcH+x69pZWPiXJRCZDBMhPLL1Ob8GvEncrmQknv3
+ARC-Seal: i=1; a=rsa-sha256; t=1523312534; cv=none;
         d=google.com; s=arc-20160816;
-        b=HGYjMsPxz4ed1Y7VNo3F6mZ8GykNYmceZRxzawulf9ekZ0BPzxPT+gc53Iu/DFfngD
-         4/tMKsdAJdltVT1is9WmeaR52lfuXft4MXSJoWM75uw5QjK6XKkNq31Fh1RONuOU1VpJ
-         h+5vR0cLc4jnj16hRB4bfH2Zp4adRNF5UEhPAIcfUUDhTWhsmyEPDPBMzYH83Bpvbm+6
-         WO3app+TxZ5ImVj6fc5n6QYRaNR0BkE151mvyyUea+jno3YUttnV40dvWVl07D/R4yHp
-         yd2ED0jb3YT0X6BeSdCXn7g/pf0wq86v1XLxnrGdXDsKLhG7IA5NLeMF7FubV5qyZd26
-         6Mjw==
+        b=xkIfdNMLAlczH6HCziiD9314VuykKpZ+ycuAxtP9YsfcrmoQcw/tYP2G8SG8xjWn28
+         wXO54ePn/f4BYBQNKeQZbvVHHvP605FsGz7HynWybWDfJn8B4opzUcSinf6xr3AqLz+T
+         Mm3Y7uneIcF7YmrFhMZ4FQ51CPI+TUfoIWeW1ZBLha336MfPqj0RRHZ34FOLJeReuqTq
+         0pxVx6i/odtg2lMtCIGBkP7W4XtJhbnr+2F0Ki5Ab4FkMmDudn0bRllB4ucIAgq4sSDi
+         Fh39DQuzB6kkaE8BZV+jgAzs/7d6tTlubL6CB0oM9Ma/jt28pBcdMYRrhaMMAzmREc2U
+         95Jw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=ft8euLnYqYFE3+0oIj+O4FrUx+5GzgMA2wcdWZG5Gds=;
-        b=s9mL1mrw/zXkrCRJbklUPisBGWqS7xWDMKXGfoK32asaLD1VfnXNuRxLmZA5lNp4DD
-         Ib5Dc/tpyKzOYZsrTC9BskeJoSNHeabrkMUz9ft3N9gMy5m+IwKCxGFLDYC3B49soU3W
-         Zod7qKtlYwS3kXy8XANdhzzHnsNCoIXf7RO7Ujf4JHLn0dH/Zy+NW9TpeYfxJ/UvUeew
-         Pd18aiPLOozMwT8pJGdt8v+42oOsGP9yZQ8feO+r5zcbBg70eSbLkLUz1vouM4bfYxl5
-         PaBMDFSoRyhC8IpUmEAHhZmzKiS7ryAhkft5tv+Ozg6/kKnBQ+BIca+RFK0OF7VWiHxa
-         Gw1Q==
+        h=sender:user-agent:in-reply-to:content-disposition:mime-version
+         :references:message-id:subject:cc:to:from:date:dkim-signature
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=Lpom34oTIIagmiCwV1gox+SofcsC0GhihfdeVrCb+XM=;
+        b=Uvrvp3UhrzylTA7/IvFbGueXGvmwD4EBI9X7mjjhJ6Ryoli+VZYESnq7G8h1o/nKEI
+         fjSW+fMh6V00tz99CdM/CkVMaNFuLgN7PdUc8jgHXkM1aTYucdHxOoLl1cF43JEMp4xw
+         sMGn776EsTWFKU38TTmud859gwkJxk+Hx36U+HCCg43VbMUIptjmnsseXVMlpj2dzhA4
+         DWDR7S/9bJWLqxuNIXlXUAUht0LzQ74L+Lt+FDpbkuYVe9Uan+YmAiZ586+I0lTBAzYD
+         Bh3m9iUvixOBzr1hPKpaWIuE2TYfcZGpHQ8ZY8u2POPrPcOOOhWXEU6ScLh4tXyYdxr1
+         ksqw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12938-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12938-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=fail header.i=@armlinux.org.uk header.s=pandora-2014 header.b=fABparhz;
+       spf=pass (google.com: domain of kernel-hardening-return-12942-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12942-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=armlinux.org.uk
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12938-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12938-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=fail header.i=@armlinux.org.uk header.s=pandora-2014 header.b=fABparhz;
+       spf=pass (google.com: domain of kernel-hardening-return-12942-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12942-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=armlinux.org.uk
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Laura Abbott <labbott@redhat.com>
-To: Russell King <linux@armlinux.org.uk>,
-	David Airlie <airlied@linux.ie>
-Cc: Laura Abbott <labbott@redhat.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
+Date: Mon, 9 Apr 2018 23:21:41 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Laura Abbott <labbott@redhat.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
 	Kees Cook <keescook@chromium.org>
-Subject: [PATCH] drm/i2c: tda998x: Remove VLA usage
-Date: Mon,  9 Apr 2018 14:07:03 -0700
-Message-Id: <20180409210703.3787-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.14.3
+Subject: Re: [PATCH] drm/i2c: tda998x: Remove VLA usage
+Message-ID: <20180409222141.GR16141@n2100.armlinux.org.uk>
+References: <20180409210703.3787-1-labbott@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409210703.3787-1-labbott@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597304263905140111?=
-X-GMAIL-MSGID: =?utf-8?q?1597304263905140111?=
+X-GMAIL-MSGID: =?utf-8?q?1597308964471575226?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There's an ongoing effort to remove VLAs[1] from the kernel to eventually
-turn on -Wvla. The vla in reg_write_range is based on the length of data
-passed. The one use of a non-constant size for this range is bounded by
-the size buffer passed to hdmi_infoframe_pack which is a fixed size.
-Switch to this upper bound.
+On Mon, Apr 09, 2018 at 02:07:03PM -0700, Laura Abbott wrote:
+> There's an ongoing effort to remove VLAs[1] from the kernel to eventually
+> turn on -Wvla. The vla in reg_write_range is based on the length of data
+> passed. The one use of a non-constant size for this range is bounded by
+> the size buffer passed to hdmi_infoframe_pack which is a fixed size.
+> Switch to this upper bound.
 
-[1] https://lkml.org/lkml/2018/3/7/621
+Does this _really_ make it safer?  What if the code is modified to write
+more than 32 bytes in the future?
 
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-This one really feels like it should be a #define but I wasn't sure
-where the 32 came from. It looks like most other uses use one of the
-#defines in include/linux/hdmi?
----
- drivers/gpu/drm/i2c/tda998x_drv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Sorry, I don't think this is safer at all.
 
-diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
-index 9e67a7b4e3a4..29e2f49601c7 100644
---- a/drivers/gpu/drm/i2c/tda998x_drv.c
-+++ b/drivers/gpu/drm/i2c/tda998x_drv.c
-@@ -470,7 +470,8 @@ static void
- reg_write_range(struct tda998x_priv *priv, u16 reg, u8 *p, int cnt)
- {
- 	struct i2c_client *client = priv->hdmi;
--	u8 buf[cnt+1];
-+	/* This is the maximum size of the buffer passed in */
-+	u8 buf[33];
- 	int ret;
- 
- 	buf[0] = REG2ADDR(reg);
 -- 
-2.14.3
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
