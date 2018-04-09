@@ -1,118 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752412AbeDIFZm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 01:25:42 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43836 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752334AbeDIFZk (ORCPT
+        id S1752489AbeDIFbJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 01:31:09 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:54130 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751549AbeDIFbH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 01:25:40 -0400
+        Mon, 9 Apr 2018 01:31:07 -0400
+X-Google-Smtp-Source: AIpwx4+x367jmllI17xhU/eItlPfGFbckhHnCUAm1lAYAkWSnmno5fpBmncuml782UrJleiNvKQHsmnnYm2twrLSdvI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 09 Apr 2018 10:55:38 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] clk: qcom: Add Global Clock controller (GCC)
- driver for SDM845
-In-Reply-To: <152296902025.143116.550838977705296456@swboyd.mtv.corp.google.com>
-References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
- <1520493495-3084-5-git-send-email-anischal@codeaurora.org>
- <152150657982.254778.14132033041219278756@swboyd.mtv.corp.google.com>
- <624665d7af39686d331c863ba7b9af4d@codeaurora.org>
- <152296902025.143116.550838977705296456@swboyd.mtv.corp.google.com>
-Message-ID: <f6aaef343c3e6b4904e82b5693a0d135@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <1523227451.5003.1.camel@btinternet.com>
+References: <CAHC9VhQExmdXutVEhysGzf95CDzO_0sXFWQqndeeuChQ=0xbmA@mail.gmail.com>
+ <CA+55aFzzxfAL+Khed9nc-RzB2P3FxrCgr6Whmh_bYondTQvO6A@mail.gmail.com>
+ <1523120055.31267.13.camel@btinternet.com> <CA+55aFxo4Z3S7qG66esSL_qxg5jwzcFgZpYR0gRpto4Z_yghTQ@mail.gmail.com>
+ <162a54f1470.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <1523196560.6192.3.camel@btinternet.com> <CADvbK_eFNkA5uJ36sBEFxWnWXLOPwKyvgUuTHJG96g0zxOwPLg@mail.gmail.com>
+ <1523213955.3552.9.camel@btinternet.com> <1523227451.5003.1.camel@btinternet.com>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Mon, 9 Apr 2018 13:31:05 +0800
+Message-ID: <CADvbK_chP8w+9+mUscLs3vgcepv+J+wTW5QRSE3HK2AvyBjGGQ@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux patches for v4.17
+To: Richard Haines <richard_c_haines@btinternet.com>
+Cc: LSM List <linux-security-module@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, selinux@tycho.nsa.gov,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-06 04:27, Stephen Boyd wrote:
-> Quoting Amit Nischal (2018-04-03 05:24:41)
->> On 2018-03-20 06:12, Stephen Boyd wrote:
->> > Quoting Amit Nischal (2018-03-07 23:18:15)
->> >> +};
->> >> +
->> >> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
->> >> +       .cmd_rcgr = 0x1600c,
->> >> +       .mnd_width = 8,
->> >> +       .hid_width = 5,
->> >> +       .parent_map = gcc_parent_map_0,
->> >> +       .freq_tbl = ftbl_gcc_sdcc4_apps_clk_src,
->> >> +       .safe_src_freq_tbl = &cxo_safe_src_f,
+On Mon, Apr 9, 2018 at 6:44 AM, Richard Haines
+<richard_c_haines@btinternet.com> wrote:
+> On Sun, 2018-04-08 at 19:59 +0100, Richard Haines via Selinux wrote:
+>> On Mon, 2018-04-09 at 01:43 +0800, Xin Long wrote:
+>> > On Sun, Apr 8, 2018 at 10:09 PM, Richard Haines
+>> > <richard_c_haines@btinternet.com> wrote:
+>> > > On Sun, 2018-04-08 at 08:50 -0400, Paul Moore wrote:
+>> > > > On April 7, 2018 1:03:57 PM Linus Torvalds <torvalds@linux-foun
+>> > > > da
+>> > > > tion
+>> > > > .org> wrote:
+>> > > > On Sat, Apr 7, 2018 at 9:54 AM, Richard Haines
+>> > > > <richard_c_haines@btinternet.com> wrote:
+>> > > >
+>> > > > So please check my resolution, but also somebody should tell me
+>> > > > "Linus, you're a cretin, sctp_connect() doesn't want that
+>> > > > security_sctp_bind_connect() at all because it was already done
+>> > > > by
+>> > > > XYZ"
+>> > > >
+>> > > > sctp_connect() or __sctp_connect() do not need to call
+>> > > > security_sctp_bind_connect(). This is because the connect(2)
+>> > > > call
+>> > > > will
+>> > > > handle the checks required via security_socket_connect():
+>> > > >
+>> > > > Ok, thanks, that's exactly what I wanted to get.
+>> > > >
+>> > > > Anyway, somebody should still verify that it all looks good in
+>> > > > my
+>> > > > tree, but I don't actually expect the merge to have had any
+>> > > > issues
+>> > > > even if the refactoring made it a bit more complex than most
+>> > > > merges
+>> > > > are.
+>> > > >
+>> > > > Thanks for the quick response Richard.
+>> > > >
+>> > > > Xin Long looked it over and gave it the thumbs up, I'll take a
+>> > > > look
+>> > > > too, but to be honest I trust his SCTP understanding much more
+>> > > > than
+>> > > > mine.  I also do weekly tests of each rcX release at a minimum
+>> > > > so
+>> > > > if
+>> > > > something odd pops up I'll make sure you get a fix.
+>> > > >
+>> > > > Thanks again everyone.
+>> > >
+>> > > I built the kernel this morning and sorry to spoil the party, but
+>> > > I've
+>> > > run into a problem with lksctp-tools when running the func_tests:
+>> > >
+>> > > make v6test
+>> > > ..
+>> > > ..
+>> > > ./test_timetolive_v6
+>> > > test_timetolive.c  0 INFO : Creating fillmsg of size 3087
+>> > > test_timetolive.c  1 PASS : Send a message with timeout
+>> > > test_timetolive.c  2 PASS : Send a message with no timeout
+>> > > test_timetolive.c  3 PASS : Send a fragmented message with
+>> > > timeout
+>> > > test_timetolive.c  0 INFO :  **  SLEEPING for 3 seconds **
+>> > > test_timetolive.c  4 BROK : Got a datamsg of unexpected
+>> > > length:23,
+>> > > expected length:27
+>> > > DUMP_CORE sctputil.c: 247
+>> > > /bin/sh: line 1: 30981 Segmentation fault      (core dumped) ./$a
+>> > > test_timetolive_v6 fails
+>> > >
+>> > > make v4 test fails the same way. I'm using lksctp-tools from [1].
+>> > > I
+>> > > have not investigated the cause yet as just found this and
+>> > > thought
+>> > > I
+>> > > should flag first just in case someone has the answer !!!
 >> >
->> > Why does sdcc have safe src stuff? Is something turning on the sdcc clk
->> > outside of our control?
->> 
->> I will get more details on this and will get back.
-> 
-> Any news?
-> 
-
-I am removing the safe src for SDCC, but I am trying to get details from
-teams as to why this was added, if it would be required I will add back
-the safe src index again and submit the patch.
-
->> 
+>> > test_timetolive(_v6) works for me, In lksctp-tools/src/func_tests,
+>> > I
+>> > had
+>> > another case failed,./test_1_to_1_events,  it's caused by:
+>> > commit 30f6ebf65bc46161c5aaff1db2e6e7c76aa4a06b
+>> > Author: Xin Long <lucien.xin@gmail.com>
+>> > Date:   Wed Mar 14 19:05:34 2018 +0800
 >> >
->> >> +       .clkr.hw.init = &(struct clk_init_data){
->> >> +               .name = "gcc_sdcc4_apps_clk_src",
->> >> +               .parent_names = gcc_parent_names_0,
->> >> +               .num_parents = 4,
->> >> +               .flags = CLK_SET_RATE_PARENT,
->> >> +               .ops = &clk_rcg2_shared_ops,
->> >> +       },
->> >> +};
->> >> +
->> > [...]
->> >> +
->> >> +static struct clk_branch gcc_video_xo_clk = {
->> >> +       .halt_reg = 0xb028,
->> >> +       .halt_check = BRANCH_HALT,
->> >> +       .clkr = {
->> >> +               .enable_reg = 0xb028,
->> >> +               .enable_mask = BIT(0),
->> >> +               .hw.init = &(struct clk_init_data){
->> >> +                       .name = "gcc_video_xo_clk",
->> >> +                       .flags = CLK_IS_CRITICAL,
->> >> +                       .ops = &clk_branch2_ops,
->> >> +
+>> >     sctp: add SCTP_AUTH_NO_AUTH type for AUTHENTICATION_EVENT
 >> >
->> > These things have no parents and we mark them critical. Why are we
->> > even exposing them to the kernel? Are they not on by default? Are we
->> > going to change these to non-critical at some point in the future?
->> 
->> These clocks are not enabled by default and going to video or other
->> multimedia cores so we are marking them as critical and need to expose
->> to the kernel. As of now, there is no plan to change these to
->> non-critical.
-> 
-> Ok. Can we open code enabling these branches in the driver probe then?
-> Still seems wasteful if nobody uses these.
-> 
-> Put another way, either a driver (or other clk controller) should be
-> toggling these gates at runtime or we should enable them once and leave
-> them out of the framework. If the driver approach is taken, then the
-> drivers should be able to turn the clks on and off to save some power.
+>> > It's not kernel's issue, after that commit, ./test_1_to_1_events
+>> > should
+>> > have been improved. or avoid it by 'sysctl -w
+>> > net.sctp.auth_enable=1'
+>> >
+>> > I'm not sure why test_timetolive(_v6) is not working in your env.
+>>
+>> It appears to depend on the run sequence of the tests. I rebooted the
+>> system, ran test_timetolive_v6, it worked okay.
+>> Ran "sctp-tests run" on a terminal, then ran test_timetolive_v6 at
+>> various intervals on another terminal. Once sctp-tests started the
+>> "===
+>> ndatasched ===" sequence, test_timetolive_v6 failed.
+>
+> 1) When SCTP is initialised /proc/sys/net/sctp/prsctp_enable = 1
+> 2) When sctp-tests/testcase/regression/extoverflow/test.sh is executed,
+> on exit it sets prsctp_enable = 0. This seems to be causing the issue
+> I'm seeing. I can now simulate the problem:
+>
+> Running from fresh boot:
+> checksctp
+> cat /proc/sys/net/sctp/prsctp_enable
+> 1
+> ./test_timetolive_v6
+> passes
+> echo 0 > /proc/sys/net/sctp/prsctp_enable
+> ./test_timetolive_v6
+> fails
+> echo 1 > /proc/sys/net/sctp/prsctp_enable
+> ./test_timetolive_v6
+> passes
+I see ...
 
-As of now, no client driver is taking care of toggling these gates at
-runtime. We want these clocks to be always on and that's why marked
-them as CRITICAL so that if any user tries to unprepare/disable then
-it won't happen and framework generates the warning.
-Once the client drivers will take care of above, then we will submit
-a cleanup patch.
+commit 8ae808eb853e3789b81b8a502cdf22bb01b76880
+Author: Xin Long <lucien.xin@gmail.com>
+Date:   Sat Oct 8 11:40:16 2016 +0800
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+    sctp: remove the old ttl expires policy
+
+ttl expire is considered as one of the prsctp policies after
+this commit, so prsctp_enable is required. I will think to
+update this test case in lksctp-tools.
+
+Thanks for the reproducer.
