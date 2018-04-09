@@ -1,62 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeDIOLd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 10:11:33 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:36277 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752542AbeDIOLb (ORCPT
+        id S1752240AbeDIONK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 10:13:10 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44536 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751643AbeDIONI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 10:11:31 -0400
-X-Google-Smtp-Source: AIpwx4+VMGTi8hOO3I+qzxThBbJHbSj2x2euaci/cFkoW6qHLuHbDh3NPzQOMmD2HkrdIejoSFOnfw==
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: jon.maloy@ericsson.com, ying.xue@windriver.com, davem@davemloft.net
-Cc: netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] net: tipc: Replace GFP_ATOMIC with GFP_KERNEL in tipc_mon_create
-Date: Mon,  9 Apr 2018 22:11:25 +0800
-Message-Id: <1523283085-25749-1-git-send-email-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 9 Apr 2018 10:13:08 -0400
+X-Google-Smtp-Source: AIpwx4+pnNSohnXFq1W8IGuFoUlNzJtDdfLzWkIhmTy2xf12zV9qkYRESjED1qYIdRaD9FhfNIPa2w==
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: bulk: silently error out on EPROBE_DEFER
+Date: Mon,  9 Apr 2018 16:13:03 +0200
+Message-Id: <20180409141303.14537-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tipc_mon_create() is never called in atomic context.
+In clk_bulk_get(), if we fail to get the clock due to probe deferal, we
+shouldn't print an error message. Just be silent in this case.
 
-The call chain ending up at dn_route_init() is:
-[1] tipc_mon_create() <- tipc_enable_bearer() <- tipc_nl_bearer_enable()
-tipc_nl_bearer_enable() calls rtnl_lock(), which indicates this function
-is not called in atomic context.
-
-Despite never getting called from atomic context,
-tipc_mon_create() calls kzalloc() with GFP_ATOMIC,
-which waits busily for allocation.
-GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-to avoid busy waiting and improve the possibility of sucessful allocation.
-
-This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- net/tipc/monitor.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/clk-bulk.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/net/tipc/monitor.c b/net/tipc/monitor.c
-index 9e109bb..9714d80 100644
---- a/net/tipc/monitor.c
-+++ b/net/tipc/monitor.c
-@@ -604,9 +604,9 @@ int tipc_mon_create(struct net *net, int bearer_id)
- 	if (tn->monitors[bearer_id])
- 		return 0;
- 
--	mon = kzalloc(sizeof(*mon), GFP_ATOMIC);
--	self = kzalloc(sizeof(*self), GFP_ATOMIC);
--	dom = kzalloc(sizeof(*dom), GFP_ATOMIC);
-+	mon = kzalloc(sizeof(*mon), GFP_KERNEL);
-+	self = kzalloc(sizeof(*self), GFP_KERNEL);
-+	dom = kzalloc(sizeof(*dom), GFP_KERNEL);
- 	if (!mon || !self || !dom) {
- 		kfree(mon);
- 		kfree(self);
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index 4c10456f8a32..6904ed6da504 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -42,8 +42,9 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 		clks[i].clk = clk_get(dev, clks[i].id);
+ 		if (IS_ERR(clks[i].clk)) {
+ 			ret = PTR_ERR(clks[i].clk);
+-			dev_err(dev, "Failed to get clk '%s': %d\n",
+-				clks[i].id, ret);
++			if (ret != -EPROBE_DEFER)
++				dev_err(dev, "Failed to get clk '%s': %d\n",
++					clks[i].id, ret);
+ 			clks[i].clk = NULL;
+ 			goto err;
+ 		}
 -- 
-1.9.1
+2.14.3
