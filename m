@@ -1,77 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeDIIek (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 04:34:40 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57826 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752296AbeDIIdp (ORCPT
+        id S1751970AbeDIIgy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 04:36:54 -0400
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:37197 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751416AbeDIIfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 04:33:45 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Daniel Thompson <daniel.thompson@linaro.org>,
-        Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Brian Norris <briannorris@google.com>,
-        Guenter Roeck <groeck@google.com>, Alexandru Stan <amstan@google.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: [RESEND PATCH v3 2/4] dt-bindings: pwm-backlight: add a num-interpolation-steps property.
-Date: Mon,  9 Apr 2018 10:33:31 +0200
-Message-Id: <20180409083333.1249-3-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180409083333.1249-1-enric.balletbo@collabora.com>
-References: <20180409083333.1249-1-enric.balletbo@collabora.com>
+        Mon, 9 Apr 2018 04:35:33 -0400
+X-Google-Smtp-Source: AIpwx4+kdQao1dt/G63aicb1t/WkQJ2VWn4n776nzPm84UhVoyCZw6ZE65TPPQCU4Wtdk314tx2ATw==
+Date: Mon, 9 Apr 2018 10:35:29 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Deepak Singh Rawat <drawat@vmware.com>
+Cc: Thomas Hellstrom <thellstrom@vmware.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Sinclair Yeh <syeh@vmware.com>,
+        linux-graphics-maintainer <linux-graphics-maintainer@vmware.com>,
+        "ville.syrjala@linux.intel.com" <ville.syrjala@linux.intel.com>,
+        "lukasz.spintzyk@displaylink.com" <lukasz.spintzyk@displaylink.com>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        "robdclark@gmail.com" <robdclark@gmail.com>,
+        "gustavo@padovan.org" <gustavo@padovan.org>,
+        "maarten.lankhorst@linux.intel.com"
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC 2/3] drm: Add helper iterator functions to iterate over
+ plane damage.
+Message-ID: <20180409083529.GN31310@phenom.ffwll.local>
+Mail-Followup-To: Deepak Singh Rawat <drawat@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Sinclair Yeh <syeh@vmware.com>,
+        linux-graphics-maintainer <linux-graphics-maintainer@vmware.com>,
+        "ville.syrjala@linux.intel.com" <ville.syrjala@linux.intel.com>,
+        "lukasz.spintzyk@displaylink.com" <lukasz.spintzyk@displaylink.com>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        "robdclark@gmail.com" <robdclark@gmail.com>,
+        "gustavo@padovan.org" <gustavo@padovan.org>,
+        "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1522885748-67122-1-git-send-email-drawat@vmware.com>
+ <1522885748-67122-3-git-send-email-drawat@vmware.com>
+ <20180405075205.GQ3881@phenom.ffwll.local>
+ <bdf67c61-3f4f-f321-9125-dc608c05c9b3@vmware.com>
+ <MWHPR05MB3117ABEF02B500A3558FB14BBABB0@MWHPR05MB3117.namprd05.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MWHPR05MB3117ABEF02B500A3558FB14BBABB0@MWHPR05MB3117.namprd05.prod.outlook.com>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The num-interpolated-steps property specifies the number of
-interpolated steps between each value of brightness-level table. This is
-useful for high resolution PWMs to not have to list out every possible
-value in the brightness-level array.
+On Thu, Apr 05, 2018 at 11:59:57PM +0000, Deepak Singh Rawat wrote:
+> > plane damage.
+> > 
+> > On 04/05/2018 09:52 AM, Daniel Vetter wrote:
+> > >
+> > > TYPE_PLANE I have no idea who needs that. I suggest we just drop it.
+> > 
+> > I'm assuming CRTC plane coordinates here. They are used for uploading
+> > contents of hardware planes. Like, in the simplest case, cursor images.
+> 
+> Yes they are CRTC plane coordinates, so is TYPE_PLANE naming confusing ?
+> And should be named to TYPE_CRTC_PLANE but then it is confusing with
+> TYPE_CRTC.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/leds/backlight/pwm-backlight.txt         | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Yeah, I think TYPE_PLANE is really confusing, and too much aimied at your
+vmwgfx special case (where the virtual hw requires that this all lines up
+properly). I think providing FB coordinates, and doing the vmwgfx-specific
+remapping in vmwgfx code is better.
 
-diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-index 310810906613..ce9b5746b774 100644
---- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-+++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-@@ -21,6 +21,11 @@ Optional properties:
-                           and enabling the backlight using GPIO.
-   - pwm-off-delay-ms: Delay in ms between disabling the backlight using GPIO
-                       and setting PWM value to 0.
-+  - num-interpolated-steps: Number of interpolated steps between each value
-+                            of brightness-levels table. This way a high
-+                            resolution pwm duty cycle can be used without
-+                            having to list out every possible value in the
-+                            brightness-level array.
- 
- [0]: Documentation/devicetree/bindings/pwm/pwm.txt
- [1]: Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -39,3 +44,17 @@ Example:
- 		post-pwm-on-delay-ms = <10>;
- 		pwm-off-delay-ms = <10>;
- 	};
-+
-+Example using num-interpolation-steps:
-+
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 5000000>;
-+
-+		brightness-levels = <0 2048 4096 8192 16384 65535>;
-+		num-interpolated-steps = <2048>;
-+		default-brightness-level = <4096>;
-+
-+		power-supply = <&vdd_bl_reg>;
-+		enable-gpios = <&gpio 58 0>;
-+	};
+And someone else can then figure out how to handle CRTC overall damage for
+physical devices. As mentioned by me (and Rob Clark too), most hw only
+allows for 1 (or maybe 2) overall damage rects, so that helper would need
+to combine all the damge rects into 1. Plus take stuff like
+gamma/ctm/alpha into account too. Better we leave that to someone who
+needs it.
+-Daniel
 -- 
-2.16.3
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
