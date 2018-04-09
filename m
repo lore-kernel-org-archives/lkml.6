@@ -1,69 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752291AbeDIGj5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 02:39:57 -0400
-Received: from mx.socionext.com ([202.248.49.38]:3259 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750877AbeDIGjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 02:39:05 -0400
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH net-next 2/3] dt-bindings: net: ave: add syscon-phy-mode property to configure phy-mode setting
-Date: Mon,  9 Apr 2018 15:38:44 +0900
-Message-Id: <1523255925-6469-3-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523255925-6469-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1523255925-6469-1-git-send-email-hayashi.kunihiko@socionext.com>
+        id S1752493AbeDIGlX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 02:41:23 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35249 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751886AbeDIGlV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 02:41:21 -0400
+X-Google-Smtp-Source: AIpwx4+2WxvZDekq6ceX2LW8o5mJV9W2hYP7GlIgXKp9NqNUZswT/scyrhf3ar6Gbu8o0sDZdUM/KQ==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: wsa@the-dreams.de
+Cc: broonie@kernel.org, baolin.wang@linaro.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] i2c: sprd: Prevent i2c accesses after suspend is called
+Date: Mon,  9 Apr 2018 14:40:54 +0800
+Message-Id: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "socionext,syscon-phy-mode" property to specify system controller that
-configures the settings about phy-mode.
+Add one flag to indicate if the i2c controller has been in suspend state,
+which can prevent i2c accesses after i2c controller is suspended following
+system suspend.
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- Documentation/devicetree/bindings/net/socionext,uniphier-ave4.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-sprd.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.txt b/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.txt
-index 85e0c49..fc8f017 100644
---- a/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.txt
-+++ b/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.txt
-@@ -13,7 +13,8 @@ Required properties:
-  - reg: Address where registers are mapped and size of region.
-  - interrupts: Should contain the MAC interrupt.
-  - phy-mode: See ethernet.txt in the same directory. Allow to choose
--	"rgmii", "rmii", or "mii" according to the PHY.
-+	"rgmii", "rmii", "mii", or "internal" according to the PHY.
-+	The acceptable mode is SoC-dependent.
-  - phy-handle: Should point to the external phy device.
- 	See ethernet.txt file in the same directory.
-  - clocks: A phandle to the clock for the MAC.
-@@ -27,6 +28,8 @@ Required properties:
-  - reset-names: Should contain
- 	- "ether", "gio" for Pro4 SoC
- 	- "ether" for others
-+ - socionext,syscon-phy-mode: A phandle to syscon with one argument
-+	that configures phy mode. The argument is the ID of MAC instance.
+diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
+index 25fcc3c..2fdad63 100644
+--- a/drivers/i2c/busses/i2c-sprd.c
++++ b/drivers/i2c/busses/i2c-sprd.c
+@@ -86,6 +86,7 @@ struct sprd_i2c {
+ 	u32 count;
+ 	int irq;
+ 	int err;
++	bool is_suspended;
+ };
  
- Optional properties:
-  - local-mac-address: See ethernet.txt in the same directory.
-@@ -47,6 +50,7 @@ Example:
- 		clocks = <&sys_clk 6>;
- 		reset-names = "ether";
- 		resets = <&sys_rst 6>;
-+		socionext,syscon-phy-mode = <&soc_glue 0>;
- 		local-mac-address = [00 00 00 00 00 00];
+ static void sprd_i2c_set_count(struct sprd_i2c *i2c_dev, u32 count)
+@@ -283,6 +284,9 @@ static int sprd_i2c_master_xfer(struct i2c_adapter *i2c_adap,
+ 	struct sprd_i2c *i2c_dev = i2c_adap->algo_data;
+ 	int im, ret;
  
- 		mdio {
++	if (i2c_dev->is_suspended)
++		return -EBUSY;
++
+ 	ret = pm_runtime_get_sync(i2c_dev->dev);
+ 	if (ret < 0)
+ 		return ret;
+@@ -586,11 +590,23 @@ static int sprd_i2c_remove(struct platform_device *pdev)
+ 
+ static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
+ {
++	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
++
++	i2c_lock_adapter(&i2c_dev->adap);
++	i2c_dev->is_suspended = true;
++	i2c_unlock_adapter(&i2c_dev->adap);
++
+ 	return pm_runtime_force_suspend(pdev);
+ }
+ 
+ static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
+ {
++	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
++
++	i2c_lock_adapter(&i2c_dev->adap);
++	i2c_dev->is_suspended = false;
++	i2c_unlock_adapter(&i2c_dev->adap);
++
+ 	return pm_runtime_force_resume(pdev);
+ }
+ 
 -- 
-2.7.4
+1.7.9.5
