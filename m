@@ -1,109 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752081AbeDILnU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 07:43:20 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34479 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751549AbeDILnT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 07:43:19 -0400
-Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
- external PMIC
-To: Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180409113744.GA14582@dragon> <20180409114022.GE11532@sirena.org.uk>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <c3883979-8658-96d2-e62f-396aa5be332d@pengutronix.de>
-Date: Mon, 9 Apr 2018 13:43:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752147AbeDILnh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 07:43:37 -0400
+Received: from mga02.intel.com ([134.134.136.20]:14459 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751505AbeDILng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 07:43:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,427,1517904000";
+   d="scan'208";a="44655569"
+Message-ID: <5ACB52AB.5020200@intel.com>
+Date: Mon, 09 Apr 2018 19:46:51 +0800
+From: Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180409114022.GE11532@sirena.org.uk>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL"
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
-X-SA-Exim-Mail-From: o.rempel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        pbonzini@redhat.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com, huangzhichao@huawei.com
+Subject: Re: [PATCH v31 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+References: <1523017045-18315-1-git-send-email-wei.w.wang@intel.com> <1523017045-18315-3-git-send-email-wei.w.wang@intel.com> <20180409085457-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180409085457-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL
-Content-Type: multipart/mixed; boundary="TvrTA2pS7JKYsMy9WzeD1NqvW6wOQ9FIE";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>
-Message-ID: <c3883979-8658-96d2-e62f-396aa5be332d@pengutronix.de>
-Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
- external PMIC
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180409113744.GA14582@dragon> <20180409114022.GE11532@sirena.org.uk>
-In-Reply-To: <20180409114022.GE11532@sirena.org.uk>
+On 04/09/2018 02:03 PM, Michael S. Tsirkin wrote:
+> On Fri, Apr 06, 2018 at 08:17:23PM +0800, Wei Wang wrote:
+>> Negotiation of the VIRTIO_BALLOON_F_FREE_PAGE_HINT feature indicates the
+>> support of reporting hints of guest free pages to host via virtio-balloon.
+>>
+>> Host requests the guest to report free page hints by sending a new cmd
+>> id to the guest via the free_page_report_cmd_id configuration register.
+>>
+>> When the guest starts to report, the first element added to the free page
+>> vq is the cmd id given by host. When the guest finishes the reporting
+>> of all the free pages, VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID is added
+>> to the vq to tell host that the reporting is done. Host polls the free
+>> page vq after sending the starting cmd id, so the guest doesn't need to
+>> kick after filling an element to the vq.
+>>
+>> Host may also requests the guest to stop the reporting in advance by
+>> sending the stop cmd id to the guest via the configuration register.
+>>
+>> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+>> Signed-off-by: Liang Li <liang.z.li@intel.com>
+>> Cc: Michael S. Tsirkin <mst@redhat.com>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>
+> Pretty good by now, Minor comments below.
 
---TvrTA2pS7JKYsMy9WzeD1NqvW6wOQ9FIE
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Thanks for the comments.
 
-On 09.04.2018 13:40, Mark Brown wrote:
-> On Mon, Apr 09, 2018 at 07:37:45PM +0800, Shawn Guo wrote:
->> On Mon, Mar 05, 2018 at 11:25:17AM +0100, Oleksij Rempel wrote:
->=20
->>> As this patch set touches multiple subsystems I think it would make
->>> sense for Shawn Guo to take the all patch set.
->>> The only part which didn't receive an ACK is regulator stuff. So I wo=
-uld
->>> hope that Mark Brown can ACK it.
->=20
->> Besides regulator changes, I did not see an ACK on kernel/reboot.c
->> either.
->=20
-> Right, that's the big blocker here.
->=20
+>
+>> ---
+>>   drivers/virtio/virtio_balloon.c     | 272 +++++++++++++++++++++++++++++++-----
+>>   include/uapi/linux/virtio_balloon.h |   4 +
+>>   2 files changed, 240 insertions(+), 36 deletions(-)
+>>
+>> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+>> index dfe5684..aef73ee 100644
+>> --- a/drivers/virtio/virtio_balloon.c
+>> +++ b/drivers/virtio/virtio_balloon.c
+>> @@ -51,9 +51,22 @@ MODULE_PARM_DESC(oom_pages, "pages to free on OOM");
+>>   static struct vfsmount *balloon_mnt;
+>>   #endif
+>>   
+>> +enum virtio_balloon_vq {
+>> +	VIRTIO_BALLOON_VQ_INFLATE,
+>> +	VIRTIO_BALLOON_VQ_DEFLATE,
+>> +	VIRTIO_BALLOON_VQ_STATS,
+>> +	VIRTIO_BALLOON_VQ_FREE_PAGE,
+>> +	VIRTIO_BALLOON_VQ_MAX
+>> +};
+>> +
+>>   struct virtio_balloon {
+>>   	struct virtio_device *vdev;
+>> -	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq;
+>> +	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq, *free_page_vq;
+>> +
+>> +	/* Balloon's own wq for cpu-intensive work items */
+>> +	struct workqueue_struct *balloon_wq;
+>> +	/* The free page reporting work item submitted to the balloon wq */
+>> +	struct work_struct report_free_page_work;
+>>   
+>>   	/* The balloon servicing is delegated to a freezable workqueue. */
+>>   	struct work_struct update_balloon_stats_work;
+>> @@ -63,6 +76,13 @@ struct virtio_balloon {
+>>   	spinlock_t stop_update_lock;
+>>   	bool stop_update;
+>>   
+>> +	/* The new cmd id received from host */
+>> +	uint32_t cmd_id_received;
+>> +	/* The cmd id that is in use */
+>> +	__virtio32 cmd_id_use;
+> I'd prefer cmd_id_active but it's not critical.
 
-Ok, Who should ACK it?
+OK, will change.
+
+>
+> +
+> +static void report_free_page_func(struct work_struct *work)
+> +{
+> +	struct virtio_balloon *vb;
+> +	struct virtqueue *vq;
+> +	unsigned int unused;
+> +	int ret;
+> +
+> +	vb = container_of(work, struct virtio_balloon, report_free_page_work);
+> +	vq = vb->free_page_vq;
+> +
+> +	/* Start by sending the received cmd id to host with an outbuf. */
+> +	ret = send_start_cmd_id(vb, vb->cmd_id_received);
+> +	if (unlikely(ret))
+> +		goto err;
+> +
+> +	ret = walk_free_mem_block(vb, 0, &virtio_balloon_send_free_pages);
+> +	if (unlikely(ret == -EIO))
+> +		goto err;
+> why is EIO special? I think you should special-case EINTR maybe.
+
+Actually EINTR isn't an error which needs to bail out. That's just the 
+case that the vq is full, that hint isn't added. Maybe it is not 
+necessary to treat the "vq full" case as an error.
+How about just returning "0" when the vq is full, instead of returning 
+"EINTR"? (The next hint will continue to be added)
 
 
---TvrTA2pS7JKYsMy9WzeD1NqvW6wOQ9FIE--
 
---g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+>
+>> +
+>> +	/* End by sending a stop id to host with an outbuf. */
+>> +	ret = send_stop_cmd_id(vb);
+>> +	if (likely(!ret)) {
+> What happens on failure? Don't we need to detach anyway?
 
------BEGIN PGP SIGNATURE-----
+Yes. Please see below, we could make some more change.
+>
+>> +		/* Ending: detach all the used buffers from the vq. */
+>> +		while (vq->num_free != virtqueue_get_vring_size(vq))
+>> +			virtqueue_get_buf(vq, &unused);
+> This isn't all that happens here. It also waits for buffers to
+> be consumed. Is this by design? And why is it good idea to
+> busy poll while doing it?
 
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlrLUccACgkQdQOiSHVI
-77TVsgf/aAmByLZtRwbKkAWW7yBOKHJxklPPJ7/V6ZHppEhiX2Imv+F91ikGcpwX
-ubux4WNizQ3gFZtU40RCOC4twLnty3lh2w1DUR9+H+79EwZGTo4NcQdYtrx1NYW8
-yvGFx3bZtMvVwk/ABGgzj5Uix39nrtY1+G9Tar+VDjT1xMrTRNggj/UVGVo90a55
-IqUf+U4h3UCrUD0bOL4768yuOSK2CukOUL02Xh+JVLFoMIkcfMdYk7pb6jMt6uen
-GcphITM8GkhHxLYbV9tQ3tnVuYH5w0s1HsL9Lt+NhrTJruw77vwxfw4Vkb2YDDgh
-CEjde5aDNPqUnZs49NgYKZcEGYWP/Q==
-=M5YS
------END PGP SIGNATURE-----
+Because host and guest operations happen asynchronously. When the guest 
+reaches here, host may have not put anything to the vq yet. How about 
+doing this via the free page vq handler?
+Host will send a free page vq interrupt before exiting the optimization. 
+I think this would be nicer.
 
---g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL--
+
+Best,
+Wei
