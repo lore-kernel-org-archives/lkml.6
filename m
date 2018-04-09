@@ -1,173 +1,88 @@
-Return-Path: <poza@qualcomm.com>
-X-Google-Smtp-Source: AIpwx48Z5qASFApRoPVUqxX5y9qCJsiU5QHZ8KZ5lqeyeOq2oSAg6XEpJlVJLgjiQs2VT9T/x/1y
-ARC-Seal: i=1; a=rsa-sha256; t=1523284938; cv=none;
+Return-Path: <keith.busch@intel.com>
+X-Google-Smtp-Source: AIpwx49SIL36rEB+2qSiEs8851yOGkHC+NlM/zQY3Q5UK3Kg4uthbTTJoiSw2Gq8YAFv1XWlhY6q
+ARC-Seal: i=1; a=rsa-sha256; t=1523316158; cv=none;
         d=google.com; s=arc-20160816;
-        b=bI1XsFWgPGOBf3D4RxczGZIFsj5WugKznUjh+/OrTuHMpdeFQ0hDTTYsrHbhqG6BKe
-         OJ49STDT9OyrI5k3vE5kNneeusDsutHd3tY4YGBc2q1GNQyAibGDjNmnyvIVc9ghuySC
-         k7cfFivVaDHEt2lEyb2ErA5z6uH52ekb7YVbuwdAQ6DAEt4Jcy5b6vQA2obM+NseVnqT
-         wf5mdrn+h04UhjTVC7QRMjkuZpm7qECm3U+OLtHR7ZYod3pOZAt0QPLTmtgcwUTjs/MH
-         C9wLjzwheOUsr0ao2xDVVu2VHtVll+kj1jqcBHlgcQKLK+/7TnmnMtPVYKEM/VWfnRKQ
-         /jfQ==
+        b=bgEaJhDmVfsh3G8m0QYut8fKHw6+EP+d7HkE1edcjE9h2k+JCZOLoNGI8l0l/Cfq5g
+         YZY7fmnrJJNvXR2pzOjHT+S6Bqgc6Y0X7+j0T39rbxkvwwvmeRYJy6wGixkZXZ3afqVv
+         AbBaznWVYczJo1XiM0M3yVo2yff25vN5fKu/vAAiE7CjTj/8JlKBgMBgQSQbpBJfGYyF
+         xHa1RzrdDsEXM2zDb1H9yVqSZ9/6UcQcbB6o8gB4QYS5zcORbS+5xdHN5kq24NkmkPyE
+         THyMQj3iLQYMWN8+XvMR3X/fTyIBHEZd5f9bIYWdg9kC16KaKJrJOMrn+H1G+glTifyI
+         PiRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=mWEKmoZm82PibK2mGEYujmW+o+/4oCioQV+dZ/hIcH8=;
-        b=SB6eMfZpBcUDCWyNq+XPpD3bLTKsrj8swwfE6+96wf5MkWJfBKGgeE028761D7kX0B
-         XfmGDRfB5/8lMRnVabgPzyQvIDnkFedBBAwZEuJQv2PTyi+nnLC55Q+NVMRFSIjX+Y5Z
-         hv6QD7EWpmSCcINNceWbhPqwJtQXHMEEzqsIYBqtNP7Z3PWuu1QSkc5arzT+4DC5WsLy
-         jfB1czg3p9Sz+qr9QE7TMSC5v3iUCmqCBOkJLIxNv4Rqj5eteyoX2FdJdNO+3fiGlujT
-         lgBTq1wQUyycaFJwD9hLbIPnyfXBrneBkptCCVLfbPzbbcyzD3Y+GgbAe1+jf6C/ShyQ
-         To+A==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=Eo+mlPlXjY7llQmGuN3kaKYMctoEi/BeYviAMmr1IbM=;
+        b=FJygc2Ta48oS5srlGgsKUOjOwcHTszMYdUt/uJ+hW8PlSWxptXmenxp74fGcI8Hoex
+         Wnp87yCp7vpcXS/6xReCTZb/HOyfaxrffolj66dGt3IbC88eW4k0b8jkUIvWzyrl34Id
+         7y+9szhw9/mEwHqspvAdV17UM1CgSdZYpLQemW5CnOcRAU9Ga1/3aQePmJZqdMS0dKMQ
+         Hkw6XTg22OPn7tg7cdI0EOsp6fCXuGGvNvv4UOb9SSlVU1ghGoOSYBx4pmCFGht0tVxf
+         y6MqL7gbkW2vtYlxJJlcw7aFUFb0CM4NPKhENesSJ5balsV+R+0TW85wjjUjFKAQv6e3
+         A44w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 129.46.98.28 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+       spf=pass (google.com: domain of keith.busch@intel.com designates 134.134.136.24 as permitted sender) smtp.mailfrom=keith.busch@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 129.46.98.28 as permitted sender) smtp.mailfrom=poza@qualcomm.com
-X-IronPort-AV: E=Sophos;i="5.48,427,1517904000";
-   d="scan'208";a="16629445"
-X-IronPort-AV: E=McAfee;i="5900,7806,8857"; a="161794002"
-From: Oza Pawandeep <poza@codeaurora.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
+       spf=pass (google.com: domain of keith.busch@intel.com designates 134.134.136.24 as permitted sender) smtp.mailfrom=keith.busch@intel.com
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,429,1517904000";
+   d="scan'208";a="190133576"
+Date: Mon, 9 Apr 2018 17:25:28 -0600
+From: Keith Busch <keith.busch@intel.com>
+To: Oza Pawandeep <poza@codeaurora.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dongdong Liu <liudongdong3@huawei.com>,
-	Keith Busch <keith.busch@intel.com>,
-	Wei Zhang <wzhang@fb.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dongdong Liu <liudongdong3@huawei.com>, Wei Zhang <wzhang@fb.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
-Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v13 5/6] PCI: Unify wait for link active into generic PCI
-Date: Mon,  9 Apr 2018 10:41:53 -0400
-Message-Id: <1523284914-2037-6-git-send-email-poza@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523284914-2037-1-git-send-email-poza@codeaurora.org>
+Subject: Re: [PATCH v13 5/6] PCI: Unify wait for link active into generic PCI
+Message-ID: <20180409232528.GE6283@localhost.localdomain>
 References: <1523284914-2037-1-git-send-email-poza@codeaurora.org>
+ <1523284914-2037-6-git-send-email-poza@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523284914-2037-6-git-send-email-poza@codeaurora.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597280028398870927?=
-X-GMAIL-MSGID: =?utf-8?q?1597280028398870927?=
+X-GMAIL-MSGID: =?utf-8?q?1597312763905134062?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Clients such as HP, DPC are using pcie_wait_link_active(), which waits
-till the link becomes active or inactive.
+On Mon, Apr 09, 2018 at 10:41:53AM -0400, Oza Pawandeep wrote:
+> +/**
+> + * pcie_wait_for_link - Wait for link till it's active/inactive
+> + * @pdev: Bridge device
+> + * @active: waiting for active or inactive ?
+> + *
+> + * Use this to wait till link becomes active or inactive.
+> + */
+> +bool pcie_wait_for_link(struct pci_dev *pdev, bool active)
+> +{
+> +	int timeout = 1000;
+> +	bool ret;
+> +	u16 lnk_status;
+> +
+> +	for (;;) {
+> +		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+> +		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
+> +		if (ret == active)
+> +			return true;
+> +		if (timeout <= 0)
+> +			break;
+> +		timeout -= 10;
+> +	}
 
-Made generic function and moved it to drivers/pci/pci.c
+This is missing an msleep(10) at each iteration.
 
-Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 18a42f8..e0c2b8e 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -231,25 +231,11 @@ bool pciehp_check_link_active(struct controller *ctrl)
- 	return ret;
- }
- 
--static void __pcie_wait_link_active(struct controller *ctrl, bool active)
--{
--	int timeout = 1000;
--
--	if (pciehp_check_link_active(ctrl) == active)
--		return;
--	while (timeout > 0) {
--		msleep(10);
--		timeout -= 10;
--		if (pciehp_check_link_active(ctrl) == active)
--			return;
--	}
--	ctrl_dbg(ctrl, "Data Link Layer Link Active not %s in 1000 msec\n",
--			active ? "set" : "cleared");
--}
--
- static void pcie_wait_link_active(struct controller *ctrl)
- {
--	__pcie_wait_link_active(ctrl, true);
-+	struct pci_dev *pdev = ctrl_dev(ctrl);
-+
-+	pcie_wait_for_link(pdev, true);
- }
- 
- static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index f6a4dd1..bbea997 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4176,6 +4176,35 @@ static int pci_pm_reset(struct pci_dev *dev, int probe)
- 	return 0;
- }
- 
-+/**
-+ * pcie_wait_for_link - Wait for link till it's active/inactive
-+ * @pdev: Bridge device
-+ * @active: waiting for active or inactive ?
-+ *
-+ * Use this to wait till link becomes active or inactive.
-+ */
-+bool pcie_wait_for_link(struct pci_dev *pdev, bool active)
-+{
-+	int timeout = 1000;
-+	bool ret;
-+	u16 lnk_status;
-+
-+	for (;;) {
-+		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-+		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
-+		if (ret == active)
-+			return true;
-+		if (timeout <= 0)
-+			break;
-+		timeout -= 10;
-+	}
-+
-+	pci_info(pdev, "Data Link Layer Link Active not %s in 1000 msec\n",
-+		 active ? "set" : "cleared");
-+
-+	return false;
-+}
-+
- void pci_reset_secondary_bus(struct pci_dev *dev)
- {
- 	u16 ctrl;
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index abc514e..5c44fbc 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -345,6 +345,8 @@ void pci_enable_acs(struct pci_dev *dev);
- /* PCI error reporting and recovery */
- void pcie_do_recovery(struct pci_dev *dev, int severity);
- 
-+bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
-+
- #ifdef CONFIG_PCIEASPM
- void pcie_aspm_init_link_state(struct pci_dev *pdev);
- void pcie_aspm_exit_link_state(struct pci_dev *pdev);
-diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
-index 517c8b4..8e1553b 100644
---- a/drivers/pci/pcie/pcie-dpc.c
-+++ b/drivers/pci/pcie/pcie-dpc.c
-@@ -95,19 +95,9 @@ static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
- 
- static void dpc_wait_link_inactive(struct dpc_dev *dpc)
- {
--	unsigned long timeout = jiffies + HZ;
- 	struct pci_dev *pdev = dpc->dev->port;
--	struct device *dev = &dpc->dev->device;
--	u16 lnk_status;
- 
--	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
--					!time_after(jiffies, timeout)) {
--		msleep(10);
--		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	}
--	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
--		dev_warn(dev, "Link state not disabled for DPC event\n");
-+	pcie_wait_for_link(pdev, false);
- }
- 
- /**
--- 
-2.7.4
+> +
+> +	pci_info(pdev, "Data Link Layer Link Active not %s in 1000 msec\n",
+> +		 active ? "set" : "cleared");
+> +
+> +	return false;
+> +}
