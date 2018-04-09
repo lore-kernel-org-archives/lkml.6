@@ -1,124 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754420AbeDITkk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 15:40:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46470 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754312AbeDITkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 15:40:37 -0400
-Date: Mon, 9 Apr 2018 16:40:32 -0300
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, lizhijian@cn.fujitsu.com,
-        sandipan@linux.vnet.ibm.com
-Subject: Re: [PATCH] tools: restore READ_ONCE() C++ compatibility
-Message-ID: <20180409194032.GA7184@redhat.com>
-References: <20180404163445.16492-1-mark.rutland@arm.com>
- <20180409171041.6qfabrccsqu4bdlc@lakrids.cambridge.arm.com>
+        id S1754436AbeDITks (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 15:40:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50462 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754141AbeDITkr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 15:40:47 -0400
+Date: Mon, 9 Apr 2018 12:40:44 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Minchan Kim <minchan@kernel.org>, Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180409194044.GA15295@bombadil.infradead.org>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409171041.6qfabrccsqu4bdlc@lakrids.cambridge.arm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
+In-Reply-To: <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Apr 09, 2018 at 06:10:41PM +0100, Mark Rutland escreveu:
-> Hi Arnaldo,
+On Mon, Apr 09, 2018 at 11:38:27AM -0700, Jaegeuk Kim wrote:
+> On 04/09, Minchan Kim wrote:
+> > On Mon, Apr 09, 2018 at 04:14:03AM -0700, Matthew Wilcox wrote:
+> > > On Mon, Apr 09, 2018 at 12:09:30PM +0900, Minchan Kim wrote:
+> > > > On Sun, Apr 08, 2018 at 07:49:25PM -0700, Matthew Wilcox wrote:
+> > > > > On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
+> > > > > > It assumes shadow entry of radix tree relies on the init state
+> > > > > > that node->private_list allocated should be list_empty state.
+> > > > > > Currently, it's initailized in SLAB constructor which means
+> > > > > > node of radix tree would be initialized only when *slub allocates
+> > > > > > new page*, not *new object*. So, if some FS or subsystem pass
+> > > > > > gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
+> > > > > 
+> > > > > Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
+> > > > > I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
+> > > > > with GFP_ZERO.
+> > > > 
+> > > > Look at fs/f2fs/inode.c
+> > > > mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> > > > 
+> > > > __add_to_page_cache_locked
+> > > >   radix_tree_maybe_preload
+> > > > 
+> > > > add_to_page_cache_lru
+> > > > 
+> > > > What's the wrong with setting __GFP_ZERO with mapping->gfp_mask?
+> > > 
+> > > Because it's a stupid thing to do.  Pages are allocated and then filled
+> > > from disk.  Zeroing them before DMAing to them is just a waste of time.
+> > 
+> > Every FSes do address_space to read pages from storage? I'm not sure.
+> > 
+> > If you're right, we need to insert WARN_ON to catch up __GFP_ZERO
+> > on mapping_set_gfp_mask at the beginning and remove all of those
+> > stupid thins. 
+> > 
+> > Jaegeuk, why do you need __GFP_ZERO? Could you explain?
 > 
-> As Sandipan gave a Tested-by for this, are you happy to pick it up as a
-> fix for v4.17?
+> Comment says "__GFP_ZERO returns a zeroed page on success."
 > 
-> Or would you prefer that I resend this?
+> The f2fs maintains two inodes to manage some metadata in the page cache,
+> which requires zeroed data when introducing a new structure. It's not
+> a big deal to avoid __GFP_ZERO for whatever performance reasons tho, does
+> it only matters with f2fs?
 
-I forgot about this fix, but was exposed to it while processing
-Sandipan's patches for fixing up builtin clang support, so I ended up
-adding the following patch:
+This isn't a performance issue.
 
-https://git.kernel.org/acme/c/ad0902e0c400
+The problem is that the mapping gfp flags are used not only for allocating
+pages, but also for allocating the page cache data structures that hold
+the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
+so it's the first time anyone's noticed that the page cache passes the
+__GFP_ZERO bit through to the radix tree allocation routines, which
+causes the radix tree nodes to be zeroed instead of constructed.
 
-This sidesteps this issue by removing the sequence of includes that ends
-up including the compiler.h from a C++ file.
+I think the right solution to this is:
 
-Now 'make LIBCLANGLLVM=1 -C tools/perf' works, but I'll look at the
-patch below, probably it will save some time in the future if we get to
-include compiler.h from C++ code again...
-
-Take a look at my perf/urgent branch, that I just asked Ingo to pull.
-
-- Arnaldo
+diff --git a/mm/filemap.c b/mm/filemap.c
+index c2147682f4c3..a87a523eea8e 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -785,7 +785,7 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
+ 	VM_BUG_ON_PAGE(!PageLocked(new), new);
+ 	VM_BUG_ON_PAGE(new->mapping, new);
  
-> Thanks,
-> Mark.
-> 
-> On Wed, Apr 04, 2018 at 05:34:45PM +0100, Mark Rutland wrote:
-> > Our userspace <linux/compiler.h> defines READ_ONCE() in a way that clang
-> > doesn't like, as we have an anonymous union in which neither field is
-> > initialized.
-> > 
-> > WRITE_ONCE() is fine since it initializes the __val field. For
-> > READ_ONCE() we can keep clang and GCC happy with a dummy initialization
-> > of the __c field, so let's do that.
-> > 
-> > At the same time, let's split READ_ONCE() and WRITE_ONCE() over several
-> > lines for legibility, as we do in the in-kernel <linux/compiler.h>.
-> > 
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Fixes: 6aa7de059173a986 ("locking/atomics: COCCINELLE/treewide: Convert trivial ACCESS_ONCE() patterns to READ_ONCE()/WRITE_ONCE()")
-> > Reported-by: Li Zhijian <lizhijian@cn.fujitsu.com>
-> > Reported-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-> > Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > ---
-> >  tools/include/linux/compiler.h | 20 +++++++++++++++-----
-> >  1 file changed, 15 insertions(+), 5 deletions(-)
-> > 
-> > Hi,
-> > 
-> > This is fallout from my automated ACCESS_ONCE() removal, and I'm not that
-> > familiar with using clang for perf.
-> > 
-> > In local testing, this fixes READ_ONCE() when compiling with clang, but I
-> > subsequently hit some other issues which I believe are down to LLVM API
-> > changes.
-> > 
-> > Zhijian, Sandipan, does this patch work for you?
-> > 
-> > Thanks,
-> > Mark.
-> > 
-> > diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
-> > index 04e32f965ad7..1827c2f973f9 100644
-> > --- a/tools/include/linux/compiler.h
-> > +++ b/tools/include/linux/compiler.h
-> > @@ -151,11 +151,21 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
-> >   * required ordering.
-> >   */
-> >  
-> > -#define READ_ONCE(x) \
-> > -	({ union { typeof(x) __val; char __c[1]; } __u; __read_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
-> > -
-> > -#define WRITE_ONCE(x, val) \
-> > -	({ union { typeof(x) __val; char __c[1]; } __u = { .__val = (val) }; __write_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
-> > +#define READ_ONCE(x)					\
-> > +({							\
-> > +	union { typeof(x) __val; char __c[1]; } __u =	\
-> > +		{ .__c = { 0 } };			\
-> > +	__read_once_size(&(x), __u.__c, sizeof(x));	\
-> > +	__u.__val;					\
-> > +})
-> > +
-> > +#define WRITE_ONCE(x, val)				\
-> > +({							\
-> > +	union { typeof(x) __val; char __c[1]; } __u =	\
-> > +		{ .__val = (val) }; 			\
-> > +	__write_once_size(&(x), __u.__c, sizeof(x));	\
-> > +	__u.__val;					\
-> > +})
-> >  
-> >  
-> >  #ifndef __fallthrough
-> > -- 
-> > 2.11.0
-> > 
+-	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_preload(gfp_mask & ~(__GFP_HIGHMEM | __GFP_ZERO));
+ 	if (!error) {
+ 		struct address_space *mapping = old->mapping;
+ 		void (*freepage)(struct page *);
+@@ -841,7 +841,8 @@ static int __add_to_page_cache_locked(struct page *page,
+ 			return error;
+ 	}
+ 
+-	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_maybe_preload(gfp_mask &
++			~(__GFP_HIGHMEM | __GFP_ZERO));
+ 	if (error) {
+ 		if (!huge)
+ 			mem_cgroup_cancel_charge(page, memcg, false);
