@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3689844-1523236765-2-12706646208380715000
+X-Cyrus-Session-Id: sloti22d1t05-3689844-1523236760-2-986745558855274558
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523236764; b=C98X4X8QOqceGUfzC5PGyUujqud1m21SwfJhegjnRJOG8KJDub
-    3x1GG1fPAnS3Yn9ofngym+f0a9cQYe9lAn0owCkoCje/2F9+XOH8lGCuiYIaEeIm
-    8BMZffQan2m85fOe8JqDfOz39M5bneleW42ldPsgQu+zYkIcNtYk9z+ca9dPyzE8
-    mgHpLsjimEJeJq7d1Pg2wToGmIU1Z7PlNJvJvu8MQSURgq/eC3NqlXB0uGdY3KIK
-    V33KbZVSIXYkJlmlPvrA+n3Hez15RXZ3e67vJTuwaeognRC2euQGj30KVNsa4szW
-    irFnhtsD/Fkp84xw2Sij3sKtmbExGJvVrT+A==
+    1523236759; b=X6W2W0qtgf0OekEi6vOkOZqWGXACjZgTu+JKOYSk3LFmzoFMiR
+    ImYZ0EzxuH3Im8/Ajf1LL5cFLYsjOloFf4Zvbuz5oYyEVlu29UJSy2uzZJb2eJx6
+    VaiGA5WfkpJ4udAWVDN9lIEdNYQDa+aqKCtUSZQ25blBRyPqUYl9z2qPGk/Cf1Tc
+    V4YjMQOJX6WbN9QzzsKOCkpPgC6vFFHasPPBRIV69X44d2hZQARtnEWgLyyp2PXb
+    tFBnHlZ6Gm9IewUiZdR2d+RlQFWX5rPXvIlBT/+vzKKHvHyNhin8oZuL5LbOc5/w
+    UCXW6eB2X65iFapk6T11PtRwtmzpDJ1Eo+rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523236764; bh=PbYxSaU4Gy
-    XNRGN/JZ9u5BHlUUjDEZ1Q82t4l6YPzyw=; b=Xnbnh5v25D/yjx9gAszi07aoEk
-    0zGZ0OxXojMz63opIPpuFJPItA3elHOLQFMg3IzP5RxPORoy1L6RuuvkKPwB/Ztm
-    Fulhjbu2H1Fj/GvcMf1rhKQbDxRr6XMoIayRwvhFwUyGn+DDY22u/Hkh+wJHOS6E
-    +lHzcQVYYfaJN6zI/8+Fr5F1ANOlHBOYQaYP6L1jWzhtdNT2ZgEGRjmpI4J9N+qJ
-    dACYYT7DXudtSyjXdLg7l6HkmQo5/PxIFQLJgvxKmI/W7iQZRTYdznpBh/jSLB7q
-    Jd43rA+46xhMh+lkb/NhIaHZDyb1QQfhhb1o0Xdy2PXVua7DHMufVNqFM98w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PS9dqYt1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523236759; bh=37khSAsiMv
+    5fdXBnAWBc4DLFHSjjckv9Le4azQybBkU=; b=dz76odYoiupY83FwxYhdomUZbe
+    gOckLv+gqajhHxbGzo67PaDzsF67ShiEU988hjPWRBYvkXCHmn7T6zkBBz6F0WBI
+    tGDlUg/x5cK3e8L9PmN3o7SH9XMr7hH3jUJwYMVjhrAWe+Bv6xzObAzSEvVhuk2f
+    Z5VbKk5ofi05fr0GhmZL6iA97d4ep3m8C2wcDee6YV/zhA8/Gtj4VuJeSlZsukf4
+    em8BsH7AwDPXn9NEOIoddd5gNTSTVK/cDhug9hRIK2f7y8TuYwGZudbO5eqXHBFE
+    fr6VRFTdc03zI9ZABry1fVFKxt80792LB/o7fhouo97pXN+jR40FoanCs/kw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=j0mwNm+k x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PS9dqYt1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=j0mwNm+k x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,36 +51,36 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGgNlBYYJHOfwVBmRroyXaDIkD9UwSShu6+OBTL2wZCs0gSoGIVWOJs9RDdCi5E+DlPJWvFW6PFfHLc8ryyNcmo+UWlTX+MMEQAPWlkXb8D7gkFGoh5O
-    Z7+Z2PS0aqWj7e6/wETGd8Gh4iVyuybcZqv4hIo9J8ZGPERqhIBoiG1NcS7McEEByddUlYKYDdh3Q+cejvhC8tF1MHWnKF4DXKC6pzyIpni4DXspThJTbzgH
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIwqT2munN+ospHrp6bJ+UKRlEXTgPm8Bz1ksYN3IM9SNhLSH3D0h1rhFtrnO8fM0HOkg2l02a43BH0kL6yJEhmKqpFecoelM5xGFNShIDWV85EELOnl
+    qxmPrYMYcJT2dyMcTZXEh99rvLf/DyEbJs+FMXGTwg6pgY1FpNXXDvSdu2c5wGwtnX4Qb10T3nxryJqNQXTRIasFRZJOAn+DrXIYV8RkiMktc2X3RDb+urlW
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=IUqagsr5woBtfdQQkWYA:9
-    a=wPNLvfGTeEIA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Lf-vpJhqX20A:10 a=1XWaLZrsAAAA:8 a=RPJ6JBhKAAAA:8 a=yMhMjlubAAAA:8
+    a=Fmfs_lXRlCNEQNX1f9oA:9 a=V0ImqIf7RNU8Dc9g:21 a=AKvhE3tlVnw-sZAo:21
+    a=wPNLvfGTeEIA:10 a=fa_un-3J20JGBB2Tu-mn:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932825AbeDIAhq (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:37:46 -0400
+        id S1754324AbeDIBSt (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 21:18:49 -0400
 Received: from mail-sn1nam02on0135.outbound.protection.outlook.com ([104.47.36.135]:3040
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755747AbeDIAhm (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:37:42 -0400
+        id S932828AbeDIAhr (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:37:47 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: Tahsin Erdogan <tahsin@google.com>, Theodore Ts'o <tytso@mit.edu>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 093/162] arcnet: change irq handler to lock
- irqsave
-Thread-Topic: [PATCH AUTOSEL for 4.4 093/162] arcnet: change irq handler to
- lock irqsave
-Thread-Index: AQHTz5m8Uxp38QS4DU28rvrGdG52kA==
-Date: Mon, 9 Apr 2018 00:28:52 +0000
-Message-ID: <20180409002738.163941-93-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 099/162] ext4: change fast symlink test to not
+ rely on i_blocks
+Thread-Topic: [PATCH AUTOSEL for 4.4 099/162] ext4: change fast symlink test
+ to not rely on i_blocks
+Thread-Index: AQHTz5m/IYExRoG+qUehDlHNOqMMJg==
+Date: Mon, 9 Apr 2018 00:28:57 +0000
+Message-ID: <20180409002738.163941-99-alexander.levin@microsoft.com>
 References: <20180409002738.163941-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,27 +89,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1031;7:zBzuTdmTp1nB9em/JnggSQFd04jYTfs4aUnFh4FOI+7XwHSvHoybNFAxSfJ/0oKtkjDMiUTYg4+Wv9G+Sp+kpC0sZT7Rl9KOcmelOy/jUj8a7ZvkUKwz3YIJ+zeGYomMxjbuZZVX4CiSbErOMOFPr0/wWLP+dOacRhkjHQaHNAGmW7syeOD6JBN5xxxzCxBY53UXNXcKDwEa3fi4Cy+f4PX7LcslPcmMCTe1AIlJCpXH3+06U8r7LojEQJrywPVh;20:OIPXf8EYjEzvcNbw+lZQgGgo6HbFtDmWhpU/pN636pBFVwSMqkA9C9lkkntOdrEJeCijuOHSbpQW48yJVTgt01gOpxgyo9ga3Dqw+pGJDfG62TEk3cE18sWBOGZirL7YfcaFotzMSK3sFirpLFjtCJ1botBPDGTWJQFnAWwg6uc=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1031;7:Mwl3+Rhfl8GtSCWGUzNGSe5VpRgczodp5GbkURZ+A5TReXEcFXIwhbfiFB7OwoHm01DvmDxDPpZD6YPmihLafTFL4PjAHnkkmzNfWjwhsfLOInHPsn/E6jhYh2bsBuv+0OP4YVHMYOtNnY9CInfGERERDwase6nFKT7GWfBGybdi9d8+kr9IdesH3uD6P5pCD8mkQONXmL8bdt/FGfROtieDlPjbYNm31TeNbYAZRUNqEjTizUeBvbUJmb/tvg+e;20:kmJQVPyMSlT2tPwjBU70c/k91Yu27DPa6gqwkmlUPK8dFQINPuQxgEGjGfd5XXafqkIXv/3l6gKWQXz4N4FfHpHjigb6NdrLd2ZCsdQV2ShBvhfQjXmp/gRAlhfZnAwca91uvC5lTgNXYBXga9+LSOGt4+eOdlkrw2USJ4lRDI4=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 5733955d-36b9-4dd5-68b7-08d59db21984
+X-MS-Office365-Filtering-Correlation-Id: 6de8d8c8-ade5-4868-ffd8-08d59db21bc2
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1031;
 x-ms-traffictypediagnostic: DM5PR2101MB1031:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10316B784D19B045B2862A19FBBF0@DM5PR2101MB1031.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB1031355B0299006B7BD64D77FBBF0@DM5PR2101MB1031.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(211936372134217)(153496737603132)(240460790083961);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1031;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1031;
 x-forefront-prvs: 0637FCE711
 x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(39380400002)(346002)(39860400002)(189003)(199004)(2900100001)(10290500003)(99286004)(76176011)(14454004)(7736002)(11346002)(26005)(6666003)(86612001)(72206003)(478600001)(36756003)(106356001)(66066001)(2616005)(186003)(575784001)(22452003)(86362001)(68736007)(305945005)(54906003)(102836004)(486006)(59450400001)(110136005)(316002)(6506007)(446003)(107886003)(53936002)(4326008)(105586002)(6436002)(6486002)(476003)(6512007)(5660300001)(5250100002)(25786009)(3846002)(6116002)(1076002)(97736004)(3280700002)(2501003)(2906002)(81156014)(8676002)(10090500001)(81166006)(8936002)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1031;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: uTgUZyXnfyYXCmhJTPmn8p4yZH5yqKgIiQ8jBCM9kcxsozDIz02LaqHkgF6jIaekxgeliRitD4h6XYI5dalCcqD/GPKF8azUfNWjriUC4QSm+6oFW9a9pamE2r17m7R1Z6hugB+hIyPPPY/4bynXVGyXpXUxx5Ow6ocgYpMz0DV7b0RvGgsAneH/NVxChsNODpphHT5so4j0KEUSnNzNSg0M+UrV9oA1CUcYkcBNT+qefNecGrP846CR7ruDJIIa8oD3LodhOkIB7LdaTejuP4HGXFSDf3UgQRUmqakJzjAJujMJyk2bFKv428pbwQLv5TLu6kcpgvbtiCvadBNcGs4+YwqzgNryfBc0Ow8k0+MvlaxMamVNzOvPVsa65OJUB1hF6SOSLtYT81qjG0sWhwUPzWAoTmMEkv5IcAlOqnU=
+x-microsoft-antispam-message-info: mQAq5UCWN4UcM/eKmu2oEUDzDHcDCagq28tEoZwKchEs3ZxZWgvPu066BH0fGmP4EazB2cdh0mw6VC7jN6MiJCsN7Mo9GUu/ryA9+ZQSqK72ijJ71yzbkkdbXhCsc/lnbewc2cbu/f7hOd/sxDP2mvV5UBg/sXByI2zfxWPU9d22eeD5nl+t7rNS5Ic/EIzcglrxqHr18jriHhI3ybPPJguDEAvLss2Vfjjs0svsWeb440DREPLWgtGQUMtOfeiFMxqIJRXfidE8tKC+JV7AUdGXAMahotnF8VguMKiE9ZW2I7oBkgoDf7wnsXT8CuWxUMkWoYGA8ABuS69bu587unzAAe6blR4+/zGloenb3UU1wJO9aQtgLoKFJyQJ+8iM2v7ECYGc32rj8uXtKdIPBEgyqUDuh4n0gKCXcP074PY=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5733955d-36b9-4dd5-68b7-08d59db21984
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:28:52.6147
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6de8d8c8-ade5-4868-ffd8-08d59db21bc2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:28:57.5053
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -120,265 +120,99 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+From: Tahsin Erdogan <tahsin@google.com>
 
-[ Upstream commit 5b85840320151f61e04d83a23ef2567a07094503 ]
+[ Upstream commit 407cd7fb83c0ebabb490190e673d8c71ee7df97e ]
 
-This patch prevents the arcnet driver from the following deadlock.
+ext4_inode_info->i_data is the storage area for 4 types of data:
 
-[   41.273910] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[   41.280397] [ INFO: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected ]
-[   41.287433] 4.4.0-00034-gc0ae784 #536 Not tainted
-[   41.292366] ------------------------------------------------------
-[   41.298863] arcecho/233 [HC0[0]:SC0[2]:HE0:SE0] is trying to acquire:
-[   41.305628]  (&(&lp->lock)->rlock){+.+...}, at: [<bf083bc8>] arcnet_send=
-_packet+0x60/0x1c0 [arcnet]
-[   41.315199]
-[   41.315199] and this task is already holding:
-[   41.321324]  (_xmit_ARCNET#2){+.-...}, at: [<c06b934c>] packet_direct_xm=
-it+0xfc/0x1c8
-[   41.329593] which would create a new lock dependency:
-[   41.334893]  (_xmit_ARCNET#2){+.-...} -> (&(&lp->lock)->rlock){+.+...}
-[   41.341801]
-[   41.341801] but this new dependency connects a SOFTIRQ-irq-safe lock:
-[   41.350108]  (_xmit_ARCNET#2){+.-...}
-... which became SOFTIRQ-irq-safe at:
-[   41.357539]   [<c06f8fc8>] _raw_spin_lock+0x30/0x40
-[   41.362677]   [<c063ab8c>] dev_watchdog+0x5c/0x264
-[   41.367723]   [<c0094edc>] call_timer_fn+0x6c/0xf4
-[   41.372759]   [<c00950b8>] run_timer_softirq+0x154/0x210
-[   41.378340]   [<c0036b30>] __do_softirq+0x144/0x298
-[   41.383469]   [<c0036fb4>] irq_exit+0xcc/0x130
-[   41.388138]   [<c0085c50>] __handle_domain_irq+0x60/0xb4
-[   41.393728]   [<c0014578>] __irq_svc+0x58/0x78
-[   41.398402]   [<c0010274>] arch_cpu_idle+0x24/0x3c
-[   41.403443]   [<c007127c>] cpu_startup_entry+0x1f8/0x25c
-[   41.409029]   [<c09adc90>] start_kernel+0x3c0/0x3cc
-[   41.414170]
-[   41.414170] to a SOFTIRQ-irq-unsafe lock:
-[   41.419931]  (&(&lp->lock)->rlock){+.+...}
-... which became SOFTIRQ-irq-unsafe at:
-[   41.427996] ...  [<c06f8fc8>] _raw_spin_lock+0x30/0x40
-[   41.433409]   [<bf083d54>] arcnet_interrupt+0x2c/0x800 [arcnet]
-[   41.439646]   [<c0089120>] handle_nested_irq+0x8c/0xec
-[   41.445063]   [<c03c1170>] regmap_irq_thread+0x190/0x314
-[   41.450661]   [<c0087244>] irq_thread_fn+0x1c/0x34
-[   41.455700]   [<c0087548>] irq_thread+0x13c/0x1dc
-[   41.460649]   [<c0050f10>] kthread+0xe4/0xf8
-[   41.465158]   [<c000f810>] ret_from_fork+0x14/0x24
-[   41.470207]
-[   41.470207] other info that might help us debug this:
-[   41.470207]
-[   41.478627]  Possible interrupt unsafe locking scenario:
-[   41.478627]
-[   41.485763]        CPU0                    CPU1
-[   41.490521]        ----                    ----
-[   41.495279]   lock(&(&lp->lock)->rlock);
-[   41.499414]                                local_irq_disable();
-[   41.505636]                                lock(_xmit_ARCNET#2);
-[   41.511967]                                lock(&(&lp->lock)->rlock);
-[   41.518741]   <Interrupt>
-[   41.521490]     lock(_xmit_ARCNET#2);
-[   41.525356]
-[   41.525356]  *** DEADLOCK ***
-[   41.525356]
-[   41.531587] 1 lock held by arcecho/233:
-[   41.535617]  #0:  (_xmit_ARCNET#2){+.-...}, at: [<c06b934c>] packet_dire=
-ct_xmit+0xfc/0x1c8
-[   41.544355]
-the dependencies between SOFTIRQ-irq-safe lock and the holding lock:
-[   41.552362] -> (_xmit_ARCNET#2){+.-...} ops: 27 {
-[   41.557357]    HARDIRQ-ON-W at:
-[   41.560664]                     [<c06f8fc8>] _raw_spin_lock+0x30/0x40
-[   41.567445]                     [<c063ba28>] dev_deactivate_many+0x114/0=
-x304
-[   41.574866]                     [<c063bc3c>] dev_deactivate+0x24/0x38
-[   41.581646]                     [<c0630374>] linkwatch_do_dev+0x40/0x74
-[   41.588613]                     [<c06305d8>] __linkwatch_run_queue+0xec/=
-0x140
-[   41.596120]                     [<c0630658>] linkwatch_event+0x2c/0x34
-[   41.602991]                     [<c004af30>] process_one_work+0x188/0x40=
-c
-[   41.610131]                     [<c004b200>] worker_thread+0x4c/0x480
-[   41.616912]                     [<c0050f10>] kthread+0xe4/0xf8
-[   41.623048]                     [<c000f810>] ret_from_fork+0x14/0x24
-[   41.629735]    IN-SOFTIRQ-W at:
-[   41.633039]                     [<c06f8fc8>] _raw_spin_lock+0x30/0x40
-[   41.639820]                     [<c063ab8c>] dev_watchdog+0x5c/0x264
-[   41.646508]                     [<c0094edc>] call_timer_fn+0x6c/0xf4
-[   41.653190]                     [<c00950b8>] run_timer_softirq+0x154/0x2=
-10
-[   41.660425]                     [<c0036b30>] __do_softirq+0x144/0x298
-[   41.667201]                     [<c0036fb4>] irq_exit+0xcc/0x130
-[   41.673518]                     [<c0085c50>] __handle_domain_irq+0x60/0x=
-b4
-[   41.680754]                     [<c0014578>] __irq_svc+0x58/0x78
-[   41.687077]                     [<c0010274>] arch_cpu_idle+0x24/0x3c
-[   41.693769]                     [<c007127c>] cpu_startup_entry+0x1f8/0x2=
-5c
-[   41.701006]                     [<c09adc90>] start_kernel+0x3c0/0x3cc
-[   41.707791]    INITIAL USE at:
-[   41.711003]                    [<c06f8fc8>] _raw_spin_lock+0x30/0x40
-[   41.717696]                    [<c063ba28>] dev_deactivate_many+0x114/0x=
-304
-[   41.725026]                    [<c063bc3c>] dev_deactivate+0x24/0x38
-[   41.731718]                    [<c0630374>] linkwatch_do_dev+0x40/0x74
-[   41.738593]                    [<c06305d8>] __linkwatch_run_queue+0xec/0=
-x140
-[   41.746011]                    [<c0630658>] linkwatch_event+0x2c/0x34
-[   41.752789]                    [<c004af30>] process_one_work+0x188/0x40c
-[   41.759847]                    [<c004b200>] worker_thread+0x4c/0x480
-[   41.766541]                    [<c0050f10>] kthread+0xe4/0xf8
-[   41.772596]                    [<c000f810>] ret_from_fork+0x14/0x24
-[   41.779198]  }
-[   41.780945]  ... key      at: [<c124d620>] netdev_xmit_lock_key+0x38/0x1=
-c8
-[   41.788192]  ... acquired at:
-[   41.791309]    [<c007bed8>] lock_acquire+0x70/0x90
-[   41.796361]    [<c06f9140>] _raw_spin_lock_irqsave+0x40/0x54
-[   41.802324]    [<bf083bc8>] arcnet_send_packet+0x60/0x1c0 [arcnet]
-[   41.808844]    [<c06b9380>] packet_direct_xmit+0x130/0x1c8
-[   41.814622]    [<c06bc7e4>] packet_sendmsg+0x3b8/0x680
-[   41.820034]    [<c05fe8b0>] sock_sendmsg+0x14/0x24
-[   41.825091]    [<c05ffd68>] SyS_sendto+0xb8/0xe0
-[   41.829956]    [<c05ffda8>] SyS_send+0x18/0x20
-[   41.834638]    [<c000f780>] ret_fast_syscall+0x0/0x1c
-[   41.839954]
-[   41.841514]
-the dependencies between the lock to be acquired and SOFTIRQ-irq-unsafe loc=
-k:
-[   41.850302] -> (&(&lp->lock)->rlock){+.+...} ops: 5 {
-[   41.855644]    HARDIRQ-ON-W at:
-[   41.858945]                     [<c06f8fc8>] _raw_spin_lock+0x30/0x40
-[   41.865726]                     [<bf083d54>] arcnet_interrupt+0x2c/0x800=
- [arcnet]
-[   41.873607]                     [<c0089120>] handle_nested_irq+0x8c/0xec
-[   41.880666]                     [<c03c1170>] regmap_irq_thread+0x190/0x3=
-14
-[   41.887901]                     [<c0087244>] irq_thread_fn+0x1c/0x34
-[   41.894593]                     [<c0087548>] irq_thread+0x13c/0x1dc
-[   41.901195]                     [<c0050f10>] kthread+0xe4/0xf8
-[   41.907338]                     [<c000f810>] ret_from_fork+0x14/0x24
-[   41.914025]    SOFTIRQ-ON-W at:
-[   41.917328]                     [<c06f8fc8>] _raw_spin_lock+0x30/0x40
-[   41.924106]                     [<bf083d54>] arcnet_interrupt+0x2c/0x800=
- [arcnet]
-[   41.931981]                     [<c0089120>] handle_nested_irq+0x8c/0xec
-[   41.939028]                     [<c03c1170>] regmap_irq_thread+0x190/0x3=
-14
-[   41.946264]                     [<c0087244>] irq_thread_fn+0x1c/0x34
-[   41.952954]                     [<c0087548>] irq_thread+0x13c/0x1dc
-[   41.959548]                     [<c0050f10>] kthread+0xe4/0xf8
-[   41.965689]                     [<c000f810>] ret_from_fork+0x14/0x24
-[   41.972379]    INITIAL USE at:
-[   41.975595]                    [<c06f8fc8>] _raw_spin_lock+0x30/0x40
-[   41.982283]                    [<bf083d54>] arcnet_interrupt+0x2c/0x800 =
-[arcnet]
-[   41.990063]                    [<c0089120>] handle_nested_irq+0x8c/0xec
-[   41.997027]                    [<c03c1170>] regmap_irq_thread+0x190/0x31=
-4
-[   42.004172]                    [<c0087244>] irq_thread_fn+0x1c/0x34
-[   42.010766]                    [<c0087548>] irq_thread+0x13c/0x1dc
-[   42.017267]                    [<c0050f10>] kthread+0xe4/0xf8
-[   42.023314]                    [<c000f810>] ret_from_fork+0x14/0x24
-[   42.029903]  }
-[   42.031648]  ... key      at: [<bf0854cc>] __key.42091+0x0/0xfffff0f8 [a=
-rcnet]
-[   42.039255]  ... acquired at:
-[   42.042372]    [<c007bed8>] lock_acquire+0x70/0x90
-[   42.047413]    [<c06f9140>] _raw_spin_lock_irqsave+0x40/0x54
-[   42.053364]    [<bf083bc8>] arcnet_send_packet+0x60/0x1c0 [arcnet]
-[   42.059872]    [<c06b9380>] packet_direct_xmit+0x130/0x1c8
-[   42.065634]    [<c06bc7e4>] packet_sendmsg+0x3b8/0x680
-[   42.071030]    [<c05fe8b0>] sock_sendmsg+0x14/0x24
-[   42.076069]    [<c05ffd68>] SyS_sendto+0xb8/0xe0
-[   42.080926]    [<c05ffda8>] SyS_send+0x18/0x20
-[   42.085601]    [<c000f780>] ret_fast_syscall+0x0/0x1c
-[   42.090918]
-[   42.092481]
-[   42.092481] stack backtrace:
-[   42.097065] CPU: 0 PID: 233 Comm: arcecho Not tainted 4.4.0-00034-gc0ae7=
-84 #536
-[   42.104751] Hardware name: Generic AM33XX (Flattened Device Tree)
-[   42.111183] [<c0017ec8>] (unwind_backtrace) from [<c00139d0>] (show_stac=
-k+0x10/0x14)
-[   42.119337] [<c00139d0>] (show_stack) from [<c02a82c4>] (dump_stack+0x8c=
-/0x9c)
-[   42.126937] [<c02a82c4>] (dump_stack) from [<c0078260>] (check_usage+0x4=
-bc/0x63c)
-[   42.134815] [<c0078260>] (check_usage) from [<c0078438>] (check_irq_usag=
-e+0x58/0xb0)
-[   42.142964] [<c0078438>] (check_irq_usage) from [<c007aaa0>] (__lock_acq=
-uire+0x1524/0x20b0)
-[   42.151740] [<c007aaa0>] (__lock_acquire) from [<c007bed8>] (lock_acquir=
-e+0x70/0x90)
-[   42.159886] [<c007bed8>] (lock_acquire) from [<c06f9140>] (_raw_spin_loc=
-k_irqsave+0x40/0x54)
-[   42.168768] [<c06f9140>] (_raw_spin_lock_irqsave) from [<bf083bc8>] (arc=
-net_send_packet+0x60/0x1c0 [arcnet])
-[   42.179115] [<bf083bc8>] (arcnet_send_packet [arcnet]) from [<c06b9380>]=
- (packet_direct_xmit+0x130/0x1c8)
-[   42.189182] [<c06b9380>] (packet_direct_xmit) from [<c06bc7e4>] (packet_=
-sendmsg+0x3b8/0x680)
-[   42.198059] [<c06bc7e4>] (packet_sendmsg) from [<c05fe8b0>] (sock_sendms=
-g+0x14/0x24)
-[   42.206199] [<c05fe8b0>] (sock_sendmsg) from [<c05ffd68>] (SyS_sendto+0x=
-b8/0xe0)
-[   42.213978] [<c05ffd68>] (SyS_sendto) from [<c05ffda8>] (SyS_send+0x18/0=
-x20)
-[   42.221388] [<c05ffda8>] (SyS_send) from [<c000f780>] (ret_fast_syscall+=
-0x0/0x1c)
+  a) Extents data
+  b) Inline data
+  c) Block map
+  d) Fast symlink data (symlink length < 60)
 
-Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Extents data case is positively identified by EXT4_INODE_EXTENTS flag.
+Inline data case is also obvious because of EXT4_INODE_INLINE_DATA
+flag.
 
-   ---
-   v1 -> v2: removed unneeded zero assignment of flags
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Distinguishing c) and d) however requires additional logic. This
+currently relies on i_blocks count. After subtracting external xattr
+block from i_blocks, if it is greater than 0 then we know that some
+data blocks exist, so there must be a block map.
+
+This logic got broken after ea_inode feature was added. That feature
+charges the data blocks of external xattr inodes to the referencing
+inode and so adds them to the i_blocks. To fix this, we could subtract
+ea_inode blocks by iterating through all xattr entries and then check
+whether remaining i_blocks count is zero. Besides being complicated,
+this won't change the fact that the current way of distinguishing
+between c) and d) is fragile.
+
+The alternative solution is to test whether i_size is less than 60 to
+determine fast symlink case. ext4_symlink() uses the same test to decide
+whether to store the symlink in i_data. There is one caveat to address
+before this can work though.
+
+If an inode's i_nlink is zero during eviction, its i_size is set to
+zero and its data is truncated. If system crashes before inode is removed
+from the orphan list, next boot orphan cleanup may find the inode with
+zero i_size. So, a symlink that had its data stored in a block may now
+appear to be a fast symlink. The solution used in this patch is to treat
+i_size =3D 0 as a non-fast symlink case. A zero sized symlink is not legal
+so the only time this can happen is the mentioned scenario. This is also
+logically correct because a i_size =3D 0 symlink has no data stored in
+i_data.
+
+Suggested-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Tahsin Erdogan <tahsin@google.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/arcnet/arcnet.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/ext4/inode.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/arcnet/arcnet.c b/drivers/net/arcnet/arcnet.c
-index 6ea963e3b89a..915d55337e4c 100644
---- a/drivers/net/arcnet/arcnet.c
-+++ b/drivers/net/arcnet/arcnet.c
-@@ -756,6 +756,7 @@ irqreturn_t arcnet_interrupt(int irq, void *dev_id)
- 	struct net_device *dev =3D dev_id;
- 	struct arcnet_local *lp;
- 	int recbuf, status, diagstatus, didsomething, boguscount;
-+	unsigned long flags;
- 	int retval =3D IRQ_NONE;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index f0cabc8c96cb..e62afd15b35b 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -143,16 +143,12 @@ static int ext4_meta_trans_blocks(struct inode *inode=
+, int lblocks,
 =20
- 	arc_printk(D_DURING, dev, "\n");
-@@ -765,7 +766,7 @@ irqreturn_t arcnet_interrupt(int irq, void *dev_id)
- 	lp =3D netdev_priv(dev);
- 	BUG_ON(!lp);
-=20
--	spin_lock(&lp->lock);
-+	spin_lock_irqsave(&lp->lock, flags);
-=20
- 	/* RESET flag was enabled - if device is not running, we must
- 	 * clear it right away (but nothing else).
-@@ -774,7 +775,7 @@ irqreturn_t arcnet_interrupt(int irq, void *dev_id)
- 		if (lp->hw.status(dev) & RESETflag)
- 			lp->hw.command(dev, CFLAGScmd | RESETclear);
- 		lp->hw.intmask(dev, 0);
--		spin_unlock(&lp->lock);
-+		spin_unlock_irqrestore(&lp->lock, flags);
- 		return retval;
- 	}
-=20
-@@ -998,7 +999,7 @@ irqreturn_t arcnet_interrupt(int irq, void *dev_id)
- 	udelay(1);
- 	lp->hw.intmask(dev, lp->intmask);
-=20
--	spin_unlock(&lp->lock);
-+	spin_unlock_irqrestore(&lp->lock, flags);
- 	return retval;
+ /*
+  * Test whether an inode is a fast symlink.
++ * A fast symlink has its symlink data stored in ext4_inode_info->i_data.
+  */
+ int ext4_inode_is_fast_symlink(struct inode *inode)
+ {
+-        int ea_blocks =3D EXT4_I(inode)->i_file_acl ?
+-		EXT4_CLUSTER_SIZE(inode->i_sb) >> 9 : 0;
+-
+-	if (ext4_has_inline_data(inode))
+-		return 0;
+-
+-	return (S_ISLNK(inode->i_mode) && inode->i_blocks - ea_blocks =3D=3D 0);
++	return S_ISLNK(inode->i_mode) && inode->i_size &&
++	       (inode->i_size < EXT4_N_BLOCKS * 4);
  }
- EXPORT_SYMBOL(arcnet_interrupt);
+=20
+ /*
+@@ -256,6 +252,16 @@ void ext4_evict_inode(struct inode *inode)
+=20
+ 	if (IS_SYNC(inode))
+ 		ext4_handle_sync(handle);
++
++	/*
++	 * Set inode->i_size to 0 before calling ext4_truncate(). We need
++	 * special handling of symlinks here because i_size is used to
++	 * determine whether ext4_inode_info->i_data contains symlink data or
++	 * block mappings. Setting i_size to 0 will remove its fast symlink
++	 * status. Erase i_data so that it becomes a valid empty block map.
++	 */
++	if (ext4_inode_is_fast_symlink(inode))
++		memset(EXT4_I(inode)->i_data, 0, sizeof(EXT4_I(inode)->i_data));
+ 	inode->i_size =3D 0;
+ 	err =3D ext4_mark_inode_dirty(handle, inode);
+ 	if (err) {
 --=20
 2.15.1
