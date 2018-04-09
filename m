@@ -1,190 +1,147 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3828464-1523239888-2-13823415751637695569
+X-Cyrus-Session-Id: sloti22d1t05-1942698-1523305613-2-8318595427624052781
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Attached: signature.asc
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523239888; b=XJtvgUKew1kqKmDuzbeR9RXF5A3L+sfslzLvsRR9LXt8pvo/JB
-    L3P5qoJLSMX+x0CwYwPBexSlpVDCpd1VcSmFk94fhAM78oHjtzeiUDGsuKx1eVwT
-    h2D0z+rquZoCWs3K7YMttSzFMbiWFKHUvgIb3hgKUjKZ7okg5AT//z4iimh7VQq9
-    nMDxCiqk7IoFeQKuT1Zz/POxtRTK6+AygQ7UPNQkZsu55vBn/gJ1HmLa25MpX+vs
-    pdA8Tl/ME4ftb5ZlIOQv+MoPSEe2s/qe1/TuaMTKS4p859ZrSsFiGED2Sk+4J32r
-    v++NO/lHwOU2zaMg4XwcJ7ZCwOCBInfjkPBg==
+    1523305612; b=S44ahwwzwPwtU+NNPnuvEWcriNnhu5fMmv0utJvsiauxaKKfl5
+    UeR+/3hO/RMrhjQhedrvOsej50hWgpM6DXOZqRA5C9R8rJji7MBM/byAiAUC+Hjn
+    2ub2cvzrfWh+rFvuLXQ3oLV6BGXhiUDbN8pTu305UY24s3TDkCD4jRwjyBg7EcKN
+    QRHpSpJ2EjxzGLCtsboBROv6J9wPuzHQf/HWvQYvRDUMlH7LisE1z0mMJEXuxias
+    Hk5RLOHwa8UPydhbEt9bIdLb6uIceW2tyJhGc9+UV/phHTr4s6O2g6839AbhgAJT
+    EfhdrTzx9OfPd9MT3IsSdjpT3vb+2SxGb4+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523239888; bh=akIE3DNCbC
-    isK8ypbCrSNwHe7ZYNZox2PsqVVSVwZY4=; b=H+V/iLGiX1Ku2YvW4vAc1cu1pH
-    HRW95jGaZNTd89bfezvWLnUWx4lr3ZHkzlI6yls2jYkILSOynj68Xx1O95zKj7Uq
-    XY7OWZhKuS2NyX3udWLXUZ2Kw+S2htvNgo8ys1KQxRU7qYNFL3OACTQ1UrAmWrSQ
-    mo/X+yGbTQO05t9ss0P2Z2mE3Wkl+rAjWZ+j3mIascIJ4IXaZZn0ey8eYf08Vs8j
-    a1MD8k4BEn81MICYzPfeEhYwBXCBiCnIC25uDFHI4cvfDXx/kzOcN6RwqWk3VZB8
-    a7XjqmPPwp9I6wKmTzTUoqxXQtkP80M6kbzKUE7K+PrAUxHREBWhW228kT3A==
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1523305612; bh=uuzBIstw5tGJ+WgoNcqruxBD50Yrgk
+    K3zNTLDeZST/c=; b=iCrogXdWhDoVvwSlyBgDAHenWnT5wUiSiG+d1YJXrdEzps
+    OKFHn7u3RprG50tKyrX5d/dY1fgPWa4XX+qSL6HZv83UZxdkxrMvKOYSsjqpAzdn
+    Zy1tZ8bfMXM+IuntMYpNHUYNIi6sQ/pMO+O9of3bclIM0yQb4Thh/v2rLoZy0EIV
+    qu14f3chaBxCaB/oUQ6sdeiZZjTZdLmhBZhf/ARGe1Q9tOO407qLf9lyVjQIuziz
+    ayxMS4EvzbIHVRPu15Ib62oRl1gJU/rrSh2MsQT7JxPLmfqtfAND6TfDhqR34Zkf
+    8OiMHRa6+WhKlBxrvJtBXY5Eea3gBJpn0RSKQa2g==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=RBWA7M6m x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=RBWA7M6m x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJAmcv5LVPQhzN9qYxgg007r8s1J/Yb2oW9Se+WuAcbzlNu2iby92aagOf/ktf7L4I6C/T1Y+EYF3EuQHPq4DPZ0HefwC9CCh4Tmm7oBoc+OsdYFPDDP
-    YdTIdHRcG3a+JyZFH4/IrOkvU0UQP3WTLkNOAc8N3v1ah/0R7suxHZWt8MTunOEsS+9Bf6Vc9dWD4SK124cVPEUfyfq5hPcu/inu0uEHB3AqHuKltXAufuDj
+X-CM-Envelope: MS4wfLVhuL48oNz7xTX9+f91LeHg+oOpnIjDadC0adpZoTleTSvhiyGca6qXqwQKv2F50AlcAplPdG7df9+GCeRfODV+BIMsMgUxAdnv6hdQFFeG67yi4DNr
+    CUdR+Alo2T86dWNvpw2gHGP/cce/UnE3SIkiYD2eJM0J9cOxwwESSRWlGgMhIglbmLSw4MhsveOzPUHbB2sGd95AY36C6oF/upr1mek2ukoFvmQDxVK+qFwA
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
-    a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=zAyngx5bAAAA:8 a=VwQbUJbxAAAA:8 a=hWMQpYRtAAAA:8
-    a=r_1tXGB3AAAA:8 a=WPyIoOwQAAAA:8 a=yMhMjlubAAAA:8 a=alu17TBV0nYOAdpRZVwA:9
-    a=wPNLvfGTeEIA:10 a=4LA4qAFo6bo561LpWNDU:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=KCsI-UfzjElwHeZNREa_:22 a=t8nPyN_e6usw4ciXM-Pk:22 a=S-HzPIwwDS8t1QcwSuWs:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=zAyngx5bAAAA:8
+    a=H7ZmIP57pRhpxBjkKAMA:9 a=QEXdDO2ut3YA:10 a=5W5dxfQKieNU4hkFybMA:9
+    a=ONNS8QRKHyMA:10 a=4LA4qAFo6bo561LpWNDU:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757926AbeDICK4 (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 22:10:56 -0400
-Received: from mail-by2nam03on0135.outbound.protection.outlook.com ([104.47.42.135]:16544
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756209AbeDIAbO (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:31:14 -0400
-From: Sasha Levin <Alexander.Levin@microsoft.com>
-To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: David Daney <david.daney@cavium.com>,
+        id S1754270AbeDIU0t (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 9 Apr 2018 16:26:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40954 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753480AbeDIU0t (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 9 Apr 2018 16:26:49 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE9C420838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Mon, 9 Apr 2018 21:26:43 +0100
+From: James Hogan <jhogan@kernel.org>
+To: Sasha Levin <Alexander.Levin@microsoft.com>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Daney <david.daney@cavium.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Matt Redfearn <matt.redfearn@imgtec.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 160/293] MIPS: Give __secure_computing()
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH AUTOSEL for 4.9 160/293] MIPS: Give __secure_computing()
  access to syscall arguments.
-Thread-Topic: [PATCH AUTOSEL for 4.9 160/293] MIPS: Give __secure_computing()
- access to syscall arguments.
-Thread-Index: AQHTz5kw90QkbJtP7EiDzyohS4co6Q==
-Date: Mon, 9 Apr 2018 00:24:58 +0000
-Message-ID: <20180409002239.163177-160-alexander.levin@microsoft.com>
+Message-ID: <20180409202642.GD17347@saruman>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0917;7:/+Yi4XP4VgaZBRdcCIAFdErbQT5p9zNR6Zpsk8YKxsjAIayStHje3HDyaZcUEqOEFUxEIS9GXMyjV8/qTIdhJg4o6mO7iYs9mdkU/S8AucR0rXVTWLOLhqQjcyl4ZTys0d+WroZX8FeN+JF0D0FDzfhs5t6VEzzAkjXtSspBlvYVsooU0vYD29trLmhmneHHYMrxQftOZpuPj4PG5Ui3GiUqbwx1EqimBtrARmba3zD0ueNuBHLI3hdBZecpcwSO;20:q8NccyA9g5QlU1cT6qx71k2AXRgK7f78zkzTYpiMyH7fMN7iIfLWcanIo6NMVli0AU7s92zoZCUkMRgs9e8chVT5xuyo5ADr2pG5lsQzT4Zkui0QUxSdWIvzHPcJ9yezVJ843gNfuF0yVINU0btfnggiK7ipZWOl8ZI4E45WyEs=
-X-MS-Office365-Filtering-Correlation-Id: a4f90c6b-f992-4ac8-7b35-08d59db13205
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB0917;
-x-ms-traffictypediagnostic: DM5PR2101MB0917:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0917FAE53FF2EDCF02C8A292FBBF0@DM5PR2101MB0917.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0917;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0917;
-x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(366004)(396003)(346002)(376002)(189003)(199004)(99286004)(22452003)(106356001)(26005)(110136005)(478600001)(54906003)(10290500003)(316002)(1076002)(72206003)(186003)(4326008)(97736004)(66066001)(11346002)(25786009)(86362001)(575784001)(476003)(446003)(2906002)(6666003)(6486002)(105586002)(86612001)(3280700002)(3660700001)(6512007)(3846002)(6306002)(6116002)(6436002)(2616005)(486006)(53936002)(7736002)(8676002)(81166006)(81156014)(8936002)(68736007)(305945005)(10090500001)(76176011)(6506007)(102836004)(36756003)(107886003)(59450400001)(2900100001)(2501003)(14454004)(966005)(5660300001)(5250100002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0917;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: l7R997OkgbQEl4UQl7Ro9U5+0SArx81lOssqy9vqN4pP2zH+3BxJAKdkgJFWzHpyGcyvh0dVYmFDGoTNgOEsmRHdRD0766tvty2GfraOiQ7Jp1rJxCe5/XB1MxMeknFVrAHOeqxu/1Egq0oInwUicS4SSkrkkX3TDnAoFWF7Fau4RM3aUqSHU854WhrtlC/nb33uHxSSrr6oBDzOOFOj/ODBOjle6Sb4NJlbdF45Lu8kYzbPMeoh/NaxMmsG87OY4yNRLdAZxEhrLuqkTx3gyPY0KiJYFuz0mzYQudupcx5iBx9uBlx2iSh1rr9a5jV/K5t9CjYGd8enpCLVbNGYK5JjZyS6gjoP891h57qjZiTx/bNzrUKQH7ezFFEGvkfC52ueZEI2EGPwOVZjkc2wltPL3J4wHyfk7mGAWMBiAiY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ <20180409002239.163177-160-alexander.levin@microsoft.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4f90c6b-f992-4ac8-7b35-08d59db13205
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:24:58.1126
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0917
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="FFoLq8A0u+X9iRU8"
+Content-Disposition: inline
+In-Reply-To: <20180409002239.163177-160-alexander.levin@microsoft.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: David Daney <david.daney@cavium.com>
 
-[ Upstream commit 669c4092225f0ed5df12ebee654581b558a5e3ed ]
+--FFoLq8A0u+X9iRU8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-KProbes of __seccomp_filter() are not very useful without access to
-the syscall arguments.
+On Mon, Apr 09, 2018 at 12:24:58AM +0000, Sasha Levin wrote:
+> From: David Daney <david.daney@cavium.com>
+>=20
+> [ Upstream commit 669c4092225f0ed5df12ebee654581b558a5e3ed ]
+>=20
+> KProbes of __seccomp_filter() are not very useful without access to
+> the syscall arguments.
+>=20
+> Do what x86 does, and populate a struct seccomp_data to be passed to
+> __secure_computing().  This allows samples/bpf/tracex5 to extract a
+> sensible trace.
 
-Do what x86 does, and populate a struct seccomp_data to be passed to
-__secure_computing().  This allows samples/bpf/tracex5 to extract a
-sensible trace.
+This broke o32 indirect syscalls, and was fixed by commit 3d729deaf287
+("MIPS: seccomp: Fix indirect syscall args").
 
-Signed-off-by: David Daney <david.daney@cavium.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Matt Redfearn <matt.redfearn@imgtec.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/16368/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- arch/mips/kernel/ptrace.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+Cheers
+James
 
-diff --git a/arch/mips/kernel/ptrace.c b/arch/mips/kernel/ptrace.c
-index 0c8ae2cc6380..956dae7e6a69 100644
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -1011,8 +1011,26 @@ asmlinkage long syscall_trace_enter(struct pt_regs *=
-regs, long syscall)
- 	    tracehook_report_syscall_entry(regs))
- 		return -1;
-=20
--	if (secure_computing(NULL) =3D=3D -1)
--		return -1;
-+#ifdef CONFIG_SECCOMP
-+	if (unlikely(test_thread_flag(TIF_SECCOMP))) {
-+		int ret, i;
-+		struct seccomp_data sd;
-+
-+		sd.nr =3D syscall;
-+		sd.arch =3D syscall_get_arch();
-+		for (i =3D 0; i < 6; i++) {
-+			unsigned long v, r;
-+
-+			r =3D mips_get_syscall_arg(&v, current, regs, i);
-+			sd.args[i] =3D r ? 0 : v;
-+		}
-+		sd.instruction_pointer =3D KSTK_EIP(current);
-+
-+		ret =3D __secure_computing(&sd);
-+		if (ret =3D=3D -1)
-+			return ret;
-+	}
-+#endif
-=20
- 	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
- 		trace_sys_enter(regs, regs->regs[2]);
---=20
-2.15.1
+--FFoLq8A0u+X9iRU8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlrLzIIACgkQbAtpk944
+dnp/EA//SDhwZXbydTT8VuWsDZylcxmerobSmLfJ5EQPDcXUXH423Ae7UsznJ/k5
+2d1ag8rbdB1VOTue43G8KJq6q7fXIp8MhO8KkcNvgBJrojbCoUCAoSKyeptCB2EP
+AELPmibm2j+TPGc3JgnzHzB+GMKTjcpmEv0hSG4u+PEqWQOAMHJhcHGEc9eSaOry
+ELGeogq44tITbjTEKKDenEv8OJ2gfb037e5deBNGcAWDbi0g9jF8O0wi4FK50G3v
+Lj6Gnf/DC2HCJ8KxemOFNWzkgJ+/xu3flP96uR85hq3UnjMGK9qrTml2mg4VsIeH
+lwmHoTRlpsgxYJrXI1KSTytKw725OhLHp+5GIYsyTrjOdUo5UZt0YmIW8y7Nt01q
+gxjx5nYbTvVPzabUAH0l1RL6skEgSB6QvP/JnohMtDJ3ex7KJM/QVi07KuIvIVJ/
+qSFXbhui8r4ALY0IOvLb5+YT88hzVBLxa1/ujdRr3WSjvvShHPcTtXUqwOAXVu2V
+XvWJyaZOGzCo3UqZbxOPAY0nuB5NrO1wlbhuWlBfOi13+bD24f2nPUDgIvMH8bP8
+znv1WRoytoIjBJqqeQWHLxU7BNmnR4f1s7ApVK9PBrDwhRNUnBaSH5D72clPUK/H
+/Fpe2lJ7Z7zs9SgNW7plUu9wmbbY5x76jDHtHlKoD4kzW5RpE2Y=
+=8wTE
+-----END PGP SIGNATURE-----
+
+--FFoLq8A0u+X9iRU8--
