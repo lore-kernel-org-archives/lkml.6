@@ -1,86 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751978AbeDIIRI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 04:17:08 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53804 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750952AbeDIIRG (ORCPT
+        id S1752091AbeDIIXn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 04:23:43 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50985 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750863AbeDIIXl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 04:17:06 -0400
-X-Google-Smtp-Source: AIpwx4+i2qX4XKzyWEOelJVrNwKqnCtT2DXmUtYqsHfIE87ocAtCL6KHoqSln5R8wkBGpRee7Zbaaw==
-Date: Mon, 9 Apr 2018 09:17:02 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-        Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Brian Norris <briannorris@google.com>,
-        Guenter Roeck <groeck@google.com>, Alexandru Stan <amstan@google.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v3 0/4] backlight: pwm_bl: support linear interpolation
- and brightness to human eye
-Message-ID: <20180409081702.rwj773h6ndglnejm@dell>
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+        Mon, 9 Apr 2018 04:23:41 -0400
+X-Google-Smtp-Source: AIpwx4/6ACUaXuH9nQ2APJbgkSK6k3b45WbR2TbNu3P5FYFaxbc3/sXcdzsmRdVN1W43mDnsY7Farg==
+Date: Mon, 9 Apr 2018 10:23:37 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Ayan Halder <ayan.halder@arm.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Liviu Dudau <liviu.dudau@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Mali DP Maintainers <malidp@foss.arm.com>,
+        Dave Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Subject: Re: [PATCH 8/8] drm/arm/malidp: Added the late system pm functions
+Message-ID: <20180409082337.GG31310@phenom.ffwll.local>
+Mail-Followup-To: Ayan Halder <ayan.halder@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Mali DP Maintainers <malidp@foss.arm.com>,
+        Dave Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+References: <1522083800-30100-1-git-send-email-ayan.halder@arm.com>
+ <1522083800-30100-9-git-send-email-ayan.halder@arm.com>
+ <20180327082903.GS14155@phenom.ffwll.local>
+ <20180327095907.GA18146@arm.com>
+ <CAKMK7uF8mmLOBQtwfQgkdpPHfoy7yM9UApWgc9YiEudoP5WEyw@mail.gmail.com>
+ <20180406190216.GA18433@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180208113032.27810-1-enric.balletbo@collabora.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180406190216.GA18433@arm.com>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 08 Feb 2018, Enric Balletbo i Serra wrote:
+On Fri, Apr 06, 2018 at 08:02:16PM +0100, Ayan Halder wrote:
+> On Tue, Mar 27, 2018 at 01:09:36PM +0200, Daniel Vetter wrote:
+> > On Tue, Mar 27, 2018 at 11:59 AM, Ayan Halder <ayan.halder@arm.com> wrote:
+> > > On Tue, Mar 27, 2018 at 10:29:03AM +0200, Daniel Vetter wrote:
+> > >> On Mon, Mar 26, 2018 at 06:03:20PM +0100, Ayan Kumar Halder wrote:
+> > >> > malidp_pm_suspend_late checks if the runtime status is not suspended
+> > >> > and if so, invokes malidp_runtime_pm_suspend which disables the
+> > >> > display engine/core interrupts and the clocks. It sets the runtime status
+> > >> > as suspended. Subsequently, malidp_pm_resume_early will invoke
+> > >> > malidp_runtime_pm_resume which enables the clocks and the interrupts
+> > >> > (previously disabled) and sets the runtime status as active.
+> > >> >
+> > >> > Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
+> > >> > Change-Id: I5f8c3d28f076314a1c9da2a46760a9c37039ccda
+> > >>
+> > >> Why exactly do you need late/early hooks? If you have dependencies with
+> > >> other devices, pls consider adding device_links instead. This here
+> > >> shouldn't be necessary.
+> > >> -Daniel
+> > > We need to late/early hooks to disable malidp interrupts and the
+> > > clocks.
+> > 
+> > Yes, but why this ordering constraint? Why can't you just disable the
+> > interrupts/clocks in the normal suspend code. I see that the patch
+> > does this, I want to understand why it does it.
+> > -Daniel
+> Apologies for my delayed response on this. 
+> 
+> With reference to https://lwn.net/Articles/505683/ :-
+> 1. "suspend() should leave the device in a quiescent state." We invoke
+> drm_mode_config_helper_suspend() which deactivates the crtc. I
+> understand that this is the quiescent state.
+> 
+> 2. "suspend_late() can often be the same as runtime_suspend()."  We
+> invoke runtime suspend/resume calls in late/early hooks.
 
-> Dear all,
-> 
-> This series is a third patchset integrating the requested changes.
-> 
-> The first and second patch what tries to solve is the problem of
-> granularity for high resolution PWMs. The idea is simple interpolate
-> between 2 brightness values so we can have a high PWM duty cycle (a
-> 16 bits PWM is up to 65535 possible steps) without having to list
-> out every possible value in the dts. I think that this patch is
-> required to not break backward compability, to be more flexible and
-> also extend the functionality to be able to use high resolution PWM
-> with enough steps to have a good UI experience in userspace.
-> 
-> The thirth and fourth patch is a bit more ambicious, the idea is let
-> decide the driver the brightness-levels required in function of the PWM
-> resolution. To do this create a brightness-levels table filled with the
-> CIE 1931 algorithm values to convert brightness to PWM duty cycle.
-> 
-> More detailed info is available in the commit message of every patch.
-> 
-> Both functionalities were tested on a Samsung Chromebook Plus (that has
-> a 16 bits PWM) and a SL50 device (with a 8 bits PWM)
-> 
-> Waiting for your feedback.
+This article is from 2012. That's not really recommended best practices
+anymore. device_links have only been added a few years ago, so ofc an
+article from 2012 can't tell you that you should use those instead :-)
 
-Looks like you now have some positive feedback. :)
+That's why I brought this up, we have much better ways to handle device
+dependencies now.
 
-Could you please collect all of your received Acks and re-post this
-set as a [RESEND] please?
+Also, you still haven't explained what exactly the dependency is.
+-Daniel
 
-> Best regards,
 > 
-> Enric Balletbo i Serra (4):
->   backlight: pwm_bl: linear interpolation between brightness-levels
->   dt-bindings: pwm-backlight: add a num-interpolation-steps property.
->   backlight: pwm_bl: compute brightness of LED linearly to human eye.
->   dt-bindings: pwm-backlight: move brightness-levels to optional.
-> 
->  .../bindings/leds/backlight/pwm-backlight.txt      |  34 ++-
->  drivers/video/backlight/pwm_bl.c                   | 232 +++++++++++++++++++--
->  2 files changed, 246 insertions(+), 20 deletions(-)
-
+> > >> > ---
+> > >> >  drivers/gpu/drm/arm/malidp_drv.c | 17 +++++++++++++++++
+> > >> >  1 file changed, 17 insertions(+)
+> > >> >
+> > >> > diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+> > >> > index bd44a6d..f6124d8 100644
+> > >> > --- a/drivers/gpu/drm/arm/malidp_drv.c
+> > >> > +++ b/drivers/gpu/drm/arm/malidp_drv.c
+> > >> > @@ -766,8 +766,25 @@ static int __maybe_unused malidp_pm_resume(struct device *dev)
+> > >> >     return 0;
+> > >> >  }
+> > >> >
+> > >> > +static int __maybe_unused malidp_pm_suspend_late(struct device *dev)
+> > >> > +{
+> > >> > +   if (!pm_runtime_status_suspended(dev)) {
+> > >> > +           malidp_runtime_pm_suspend(dev);
+> > >> > +           pm_runtime_set_suspended(dev);
+> > >> > +   }
+> > >> > +   return 0;
+> > >> > +}
+> > >> > +
+> > >> > +static int __maybe_unused malidp_pm_resume_early(struct device *dev)
+> > >> > +{
+> > >> > +   malidp_runtime_pm_resume(dev);
+> > >> > +   pm_runtime_set_active(dev);
+> > >> > +   return 0;
+> > >> > +}
+> > >> > +
+> > >> >  static const struct dev_pm_ops malidp_pm_ops = {
+> > >> >     SET_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend, malidp_pm_resume) \
+> > >> > +   SET_LATE_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend_late, malidp_pm_resume_early) \
+> > >> >     SET_RUNTIME_PM_OPS(malidp_runtime_pm_suspend, malidp_runtime_pm_resume, NULL)
+> > >> >  };
+> > >> >
+> > >> > --
+> > >> > 2.7.4
+> > >> >
+> > >> > _______________________________________________
+> > >> > dri-devel mailing list
+> > >> > dri-devel@lists.freedesktop.org
+> > >> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > >>
+> > >> --
+> > >> Daniel Vetter
+> > >> Software Engineer, Intel Corporation
+> > >> http://blog.ffwll.ch
+> > >> _______________________________________________
+> > >> dri-devel mailing list
+> > >> dri-devel@lists.freedesktop.org
+> > >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > 
+> > 
+> > 
+> > -- 
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
