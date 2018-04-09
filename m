@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753901AbeDIQ4y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 12:56:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:58608 "EHLO foss.arm.com"
+        id S1753861AbeDIQ4v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 12:56:51 -0400
+Received: from foss.arm.com ([217.140.101.70]:58578 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753746AbeDIQ4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 12:56:52 -0400
+        id S1753746AbeDIQ4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 12:56:45 -0400
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
@@ -18,9 +18,9 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Morten Rasmussen <morten.rasmussen@arm.com>,
         Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>
-Subject: [PATCH 7/7] sched/cpufreq: uclamp: add utilization clamping for RT tasks
-Date: Mon,  9 Apr 2018 17:56:15 +0100
-Message-Id: <20180409165615.2326-8-patrick.bellasi@arm.com>
+Subject: [PATCH 5/7] sched/core: uclamp: use TG clamps to restrict TASK clamps
+Date: Mon,  9 Apr 2018 17:56:13 +0100
+Message-Id: <20180409165615.2326-6-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180409165615.2326-1-patrick.bellasi@arm.com>
 References: <20180409165615.2326-1-patrick.bellasi@arm.com>
@@ -28,89 +28,77 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently schedutil enforces a maximum frequency when RT tasks are
-RUNNABLE.  Such a mandatory policy can be made more tunable from
-userspace thus allowing for example to define a max frequency which is
-still reasonable for the execution of a specific RT workload. This
-will contribute to make the RT class more friendly for power/energy
-sensitive use-cases.
+When a task's util_clamp value is configured via sched_setattr, this
+value has to be properly accounted in the corresponding clamp group
+every time the task is enqueue and dequeued. When cgroups are also in
+use, per-task clamp values have to be aggregated to those of the CPU's
+controller's CGroup in which the task is currently living.
 
-This patch extends the usage of util_{min,max} to the RT scheduling
-class.  Whenever a task in this class is RUNNABLE, the util required is
-defined by the constraints of the CPU control group the task belongs to.
+Let's update uclamp_cpu_get() to provide an aggregation between the task
+and the TG clamp values. Every time a task is enqueued, it will be
+accounted in the clamp_group which defines the smaller clamp value
+between the task and the TG's ones. This mimics what already happen for
+a task's CPU affinity mask when the task is also living in a cpuset.
+The overall idea is that: CGroups attributes are always used to restrict
+the per-task attributes.
 
-The IO wait boost value is thus subject to clamping for RT tasks too.
-This is to ensure that RT tasks as well as CFS ones are always subject
-to the set of current utilization clampinig constraints.
-It's worth to notice that, by default, clamp values are
-    min_util, max_util = (0, SCHED_CAPACITY_SCALE)
-and thus, RT tasks always run at the maximum OPP if not otherwise
-constrained by userspace.
+For consistency purposes, as well as to properly inform userspace, the
+sched_getattr call is updated to always return the properly aggregated
+constrains as described above. This will also make sched_getattr a
+convenient userpace API to know the utilization constraints enforced on
+a task by the CGroups's CPU controller.
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Paul Turner <pjt@google.com>
 Cc: Joel Fernandes <joelaf@google.com>
+Cc: Steve Muckle <smuckle@google.com>
 Cc: Juri Lelli <juri.lelli@redhat.com>
 Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Cc: Morten Rasmussen <morten.rasmussen@arm.com>
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-pm@vger.kernel.org
 ---
- kernel/sched/cpufreq_schedutil.c | 29 ++++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
+ kernel/sched/core.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index fe53984d06a0..1c80ad65065a 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -182,16 +182,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index b8299a4f03e7..592de8d32427 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -966,9 +966,18 @@ static inline void uclamp_cpu_get(struct task_struct *p, int cpu, int clamp_id)
+ 	clamp_value = p->uclamp[clamp_id].value;
+ 	group_id = p->uclamp[clamp_id].group_id;
  
- static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- {
-+	unsigned long util = sg_cpu->util_dl;
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
--	unsigned long util;
++#ifdef CONFIG_UCLAMP_TASK_GROUP
++	/* Use TG's clamp value to limit task specific values */
++	if (group_id == UCLAMP_NONE ||
++	    clamp_value >= task_group(p)->uclamp[clamp_id].value) {
++		clamp_value = task_group(p)->uclamp[clamp_id].value;
++		group_id = task_group(p)->uclamp[clamp_id].group_id;
++	}
++#else
+ 	/* No task specific clamp values: nothing to do */
+ 	if (group_id == UCLAMP_NONE)
+ 		return;
++#endif
  
--	if (rq->rt.rt_nr_running) {
--		util = sg_cpu->max;
--	} else {
--		util = sg_cpu->util_dl;
--		if (rq->cfs.h_nr_running)
--			util += uclamp_util(sg_cpu->cpu, sg_cpu->util_cfs);
--	}
-+	/*
-+	 * RT and CFS utilization are clamped, according to the current CPU
-+	 * constrains, only when they have RUNNABLE tasks.
-+	 * Their utilization are individually clamped to ensure fairness across
-+	 * classes, meaning that CFS always get (if possible) the (minimum)
-+	 * required bandwidth on top of that required by higher priority
-+	 * classes.
-+	 */
-+	if (rq->rt.rt_nr_running)
-+		util += uclamp_util(sg_cpu->cpu, sg_cpu->max);
-+	if (rq->cfs.h_nr_running)
-+		util += uclamp_util(sg_cpu->cpu, sg_cpu->util_cfs);
+ 	/* Increment the current group_id */
+ 	uc_cpu->group[group_id].tasks += 1;
+@@ -5401,6 +5410,12 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
+ #ifdef CONFIG_UCLAMP_TASK
+ 	attr.sched_util_min = p->uclamp[UCLAMP_MIN].value;
+ 	attr.sched_util_max = p->uclamp[UCLAMP_MAX].value;
++#ifdef CONFIG_UCLAMP_TASK_GROUP
++	if (task_group(p)->uclamp[UCLAMP_MIN].value < attr.sched_util_min)
++		attr.sched_util_min = task_group(p)->uclamp[UCLAMP_MIN].value;
++	if (task_group(p)->uclamp[UCLAMP_MAX].value < attr.sched_util_max)
++		attr.sched_util_max = task_group(p)->uclamp[UCLAMP_MAX].value;
++#endif
+ #endif
  
- 	/*
- 	 * Ideally we would like to set util_dl as min/guaranteed freq and
-@@ -235,12 +240,10 @@ static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, unsigned int flags)
- 	 *
- 	 * Since DL tasks have a much more advanced bandwidth control, it's
- 	 * safe to assume that IO boost does not apply to those tasks.
--	 * Instead, since for RT tasks we are going to max, we don't want to
--	 * clamp the IO boost max value.
-+	 * Instead, for CFS and RT tasks we clamp the IO boost max value
-+	 * considering the current constraints for the CPU.
- 	 */
--	max_boost = sg_cpu->iowait_boost_max;
--	if (!cpu_rq(sg_cpu->cpu)->rt.rt_nr_running)
--		max_boost = uclamp_util(sg_cpu->cpu, max_boost);
-+	max_boost = uclamp_util(sg_cpu->cpu, sg_cpu->iowait_boost_max);
- 
- 	/* Double the IO boost at each frequency increase */
- 	sg_cpu->iowait_boost <<= 1;
+ 	rcu_read_unlock();
 -- 
 2.15.1
