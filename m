@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3607359-1523234637-2-5387043954697277937
+X-Cyrus-Session-Id: sloti22d1t05-3643807-1523234622-2-9201600213516440765
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523234636; b=mVfTqRqqI0tFLsbPTtUFT0eas/wXHGTmB4NdLYwpWirygzET+f
-    Wbpg9WiTPRC75oKBDDM5xwLeVWQwLzj7qL/DXi715Oy2DKgn10WiY92q45r+ePNq
-    fZxYyEnB/iS5vk2kjYZ5tkftI3RC0+qPgJHT890C6LXfArUdooxbOYzt00lbWZMt
-    BVdeFbZIpiyvPo4iItobjxULMJ3INr3GLXhkonrT5AeDYDolLXgVNDCeMCOqOz8M
-    3pG/5ENqOzWpBJejiNLg17AMHJHvAVntsoPIs2rGsEwdLgfJ2O2na5Jdqav+sdyO
-    VjelkpRdMbSjiilmZxZ8miEmd7ix4bAPDG/g==
+    1523234621; b=aFkvb02QUVI6xGiUNdH6OFKASL4NN9k9Cx82OShsOkX88Tjq1l
+    wBlY4FcQrk4JDlwoHcPARYAkMxsmDiVEm4qgSutdIAUHtKHgYlIwnHY2kYurAxTe
+    0pyc+NRjLEUCwUd3aYs2lA+myZXVS1GHn8iLCPtvNgGbv+1ULej3eV10bbNo3fTv
+    xifSxor7f1Aa7EkNhi4fLad8Pqh4kWIjTAf1wugDmDpsPkX1y0VixbOjhEpJByr8
+    dd/5ifqP3/EgHdTZJ4BsV8AZj6kbZuKoLK64Nh6b2+r0WgJbmV8EY1jEVn4Y6Yx8
+    bttPCfSBMoGWnPWKMoUte6iEZeXulKsx+PXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523234636; bh=l9Qh9daUiC
-    JOtiFVeI7ZVtEog8KCK7r9m58IgC1W1/o=; b=QsogK26Ktky38xonDxxUjIPAww
-    67ddWCD5FSP1QCGD/skNGNfN911W16mU1sLpXnMyHo1oKlGJVHPzfqOH+yYi7yPJ
-    PgrpIxwOxxlYQaQkwzF/szNs76VsL2pgpikM1rMm34kGDC+apAL05v4ZMJKtRHrt
-    0VNeJJUQlENtAuqgeuhK7/+ptvqZLEaDMxXF1eePT6vdjesPk1uGf8JgxAVyIScJ
-    gAHskaEo2ud9Ovum4jdZuBrNtIs8oGpagw1yPi7vXI58DJqzUOp0aAmorjkNy663
-    /JGANo3OEJCZuNhKMoHWEplro8FL0ibkrsBiK4P0wl+OPXLBxpHp1FF+fkrA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eozvAQx8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523234621; bh=b/Ishiur8L
+    j3PuG0dQJxY72VCjfr0HxTScybQz6ldgw=; b=g225w9R/flT14W8X3EMv5qKIQY
+    8+6k7/AVQDa9pZcnNA01GHyIk1dNXEm5C7f9DbeYlq2gC2qCGyjUdvl3a3SD+ARQ
+    /0AmVdkuJxTw9tpOPjLX24w9eXtdhEFrxwv90njQeovg2dqH6icQag8yUOQzL/j5
+    JDYndjZNqhb5NhoTd4DDveAKsBo5YgnMzsKfudPPKIk2tJBwhb5zK5bo/Su/tUGd
+    pwqZwk976F5TIuh1jVFrPu44U40bTinkKr3JadQINrmAL1B4GHMGFyeOVasbhk0b
+    XfptstbHcwAoTXDi3SreTtMpGUSeGRVInV+dwwlV3lpodzkz+HwxCAcJyI/Q==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=P15MCXqv x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eozvAQx8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=P15MCXqv x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,36 +51,40 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMYoFE7Jt9ndZO771qawD38L1kwJ+xNK2SZvZBJG0FZxVAAiMCmGIQYFUuMDE1MS5X7gI1XJo2TaxBQraM+nXK+DyJN+EEcmu1xYpFl3aBNWXBF8x/FF
-    xNMClCam+UCMER67OVemQz2miy0tmrD3x4Eh6dsisrA8EwWO6gc61w22gB/QCfh5Sf2vlqVNfnbOSH1x7EL1sJaSAodoompzDDBSc0dgjPeiFbI/h4Gvibvq
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKFZgKOiwlnCJ4irl3Fe7HdYx29Ev0M/HdFkQ9Qflx5JsSWj33k1BM59MmfnSctFt8a51KaoDPH848mWF6rUacGkKhrt+xUi46xXPdpHB5VHjn8a3zgu
+    QRXE7IQX5XY+091Ok7KJ79Tl+KEkfcU+PA86OAvch2FzCGCOP9sZeg9UWz+NlDRef9+xcc3P51kV8V3BRDVLGEWn+jf8ybiVSDk8ZbwN2whew2fLLijAV+FW
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=20KFwNOVAAAA:8 a=7CQSdrXTAAAA:8 a=yMhMjlubAAAA:8
-    a=-xatWzGfyKS8k81ClTMA:9 a=wPNLvfGTeEIA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=Lf-vpJhqX20A:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=6rqHouBjAAAA:8
+    a=TYBLyS7eAAAA:8 a=Z4Rwk6OoAAAA:8 a=yMhMjlubAAAA:8 a=YMnRgragKNPXYa1Kh6cA:9
+    a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Hx1yvPaMooE3kwe23bt7:22
+    a=zvYvwCWiE4KgVXXeO06c:22 a=HkZW87K1Qel5hWWM3VKY:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932599AbeDIAnW (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:43:22 -0400
-Received: from mail-sn1nam02on0133.outbound.protection.outlook.com ([104.47.36.133]:59745
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S932460AbeDIAnV (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:43:21 -0400
+Received: from mail-cys01nam02on0126.outbound.protection.outlook.com ([104.47.37.126]:44046
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756794AbeDIAmf (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1756772AbeDIAmf (ORCPT <rfc822;stable@vger.kernel.org>);
         Sun, 8 Apr 2018 20:42:35 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Mark Salter <msalter@redhat.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+CC: Alexey Dobriyan <adobriyan@gmail.com>,
+        Pavel Emelyanov <xemul@openvz.org>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 3.18 101/101] irqchip/gic-v3: Change pr_debug
- message to pr_devel
-Thread-Topic: [PATCH AUTOSEL for 3.18 101/101] irqchip/gic-v3: Change pr_debug
- message to pr_devel
-Thread-Index: AQHTz5uP+MoLNiNrBU290svySM1EeQ==
-Date: Mon, 9 Apr 2018 00:41:55 +0000
-Message-ID: <20180409004042.164920-51-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 3.18 094/101] proc: fix /proc/*/map_files lookup
+Thread-Topic: [PATCH AUTOSEL for 3.18 094/101] proc: fix /proc/*/map_files
+ lookup
+Thread-Index: AQHTz5uMXk30SWKDZUW8EWP0Jaiv0w==
+Date: Mon, 9 Apr 2018 00:41:51 +0000
+Message-ID: <20180409004042.164920-44-alexander.levin@microsoft.com>
 References: <20180409004042.164920-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409004042.164920-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,199 +93,139 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1029;7:fFoXy6f1/jkHSYU7R6+KEIjZco7nS0SC3lNZ/ukA4Un6HkDqvNs/DNrj3oQT+i9FkXGKpufToUHdHE9ZnyVIxmT+uGmrnLs80UocemrvBgIUGhQ7UDQdzdtduXKSoXORbYU2/nGxIuVvCqTEc931l+JHI+r9bO9lh73vnZmYK+zCGGXc5Xx8oO5K7RnbRej6n9n2MpSQaHlqX3M6gGShYC8LB0gZjIWVqaSZsayWBwDC+/m7f9AE7z2NXuVmkQ3e;20:baAKljSfGuNc0qAtwwXebOpHWAyvnoG6hyRAPfpHiNxZCE/namoBNf0mXNlNinfONFDCQGutlYB5unWN4pO6AIGBcN6+qT/cejHst0CEpoYAUG4sI27dy2P2huV2vqQTEU71fekds/0b/sYK1NCu68GGGO/tETwzEIhnudCZwOM=
-X-MS-Office365-Filtering-Correlation-Id: 70008c1c-bb5d-40ad-7d6e-08d59db2c617
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1062;7:IOpWUn1UjVrdG2u3OKkyXODyc2XauOX0PZYMI4onm1cGp2lf1XWK7IT55AP2nnIB/Wu9EBXwqhBSCitXrUb4VFLg5e4C8ecMLuzNHabel8s1WVABJabWCJ/gHCFUu3kRZz4FNdo93uHrnVBGg0vrqutZxpSzEl1MRa2eOBVMy6fEHpQK0NQwtwp5U2MUYsR4nicrYWiUyi/L8nmS9/vUoxekeKCBY/q4jm8BV36oAPJ4ZMrdKCvvd72hMT+04XIk;20:vP6z5imS2oMsM/AHOSGYusM+P3eACNkkeLot0NfFcIeS/nzrnI2arkr3ScAu+0xJwCc6fKY36+aHPE9SYrkbTHD0isXhdEURGF6wx7XAjwSXapiGUouCVR2GnZi+WIgf/SQnuZjftUvnB3ywjRgFFnIh/4mMiN8IUF2nKA7kd04=
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB1029;
-x-ms-traffictypediagnostic: DM5PR2101MB1029:
+X-MS-Office365-Filtering-Correlation-Id: 70a70733-3631-4a7a-38a8-08d59db2c38a
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1062;
+x-ms-traffictypediagnostic: DM5PR2101MB1062:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1029ECE2EA1D57B060C2CB50FBBF0@DM5PR2101MB1029.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1029;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1029;
+x-microsoft-antispam-prvs: <DM5PR2101MB10621AC83C674BE2B75157F0FBBF0@DM5PR2101MB1062.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(42068640409301);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1062;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1062;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(376002)(346002)(39860400002)(366004)(189003)(199004)(7736002)(5250100002)(53936002)(66066001)(97736004)(22452003)(99286004)(68736007)(186003)(6506007)(26005)(2616005)(6486002)(86362001)(15650500001)(11346002)(486006)(305945005)(59450400001)(316002)(3280700002)(110136005)(76176011)(476003)(102836004)(6666003)(446003)(3660700001)(5660300001)(8936002)(8676002)(6512007)(81166006)(81156014)(2906002)(6436002)(36756003)(14454004)(86612001)(10090500001)(54906003)(2501003)(105586002)(25786009)(4326008)(478600001)(10290500003)(1076002)(3846002)(72206003)(6116002)(106356001)(107886003)(2900100001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1029;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: d/18/eAQwjAV9moiXF0j8YTNpHxErKIggRjGVQjzhFyxtH0vWCIcG4YaQ7NDOzs1CrUZOlvtOSGqTn9CpvqES5WChcbjL42mpYEskzPNm7tWhXP107KbHSaBj6GdAEebif5qgKVp7MAew2ltk9E0lBSVQdTqukt3dpw7s2vmDEm0k27oYGud2JVb2vACx3z4kI8Z1YZjdV8rnzHVkg29a/6sDpPUtUxiBYA3P3ccEm/u2f6lV/91Po33APEnwUqQH8rA3AK4UoXCCrYiMRgyzSQrBKEvTt55CixnDjFUrepF9NHKnbw5ZTL6WmTxsuEgFMVOarwPKz9mUhn1hwm3Mv/JVjgtIn1BFYyZzscvl+7dQVaORIicpStlOs5R/0GKdwjWT/VqJM8Ii/Fdpr4YLuJxo+XHmbw3DOvoljLqEpk=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(376002)(39380400002)(396003)(346002)(199004)(189003)(68736007)(6512007)(316002)(486006)(6486002)(6666003)(54906003)(5660300001)(110136005)(102836004)(6306002)(14454004)(99286004)(36756003)(86612001)(72206003)(105586002)(97736004)(106356001)(2906002)(22452003)(1076002)(2900100001)(10090500001)(6436002)(3660700001)(6116002)(3846002)(305945005)(59450400001)(86362001)(39060400002)(66066001)(10290500003)(3280700002)(5250100002)(25786009)(8676002)(81166006)(8936002)(7736002)(478600001)(476003)(81156014)(26005)(4326008)(186003)(2501003)(107886003)(966005)(6506007)(2616005)(76176011)(11346002)(446003)(53936002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1062;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: ccDXDqhQ0UlgcydRbsWkULq8pD5NaAcDcc4KMWWLfZByhmrRwau9VZHtIRObXrSbNcCZgm7+IUQ2raWAalfl+tbMbEsN58/rObtWk8R2TBkWUYAtWP0OymU7WTd/9Sl0uf15TKHjyUAlwV9dylkd3mZDeZrny0n58X1FQHvOPVWeWSF9UhE3O/xw987vT4po8fJk3ZPam4Df9LgZcdVG5WgN10WfwcEbkdN9B8YfFmgDsC1K/Z2dO58COLnrvIWKrRIJAMXwFuGU2fVY/4O9cH3K3InBsJRJkcOCXkiSotb2R1VHUp4V7LzyBH/b32cN+YAXy/lnu30k3rBlAHxtZ5+s2LPq3q/KKhimV6FcgnrZ8+Lkm/x4Nzj4v85ACaKAFVwFKScRZJ8OeQ/c1ooJEPe9hh96F5LNhe4LODL80RQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70008c1c-bb5d-40ad-7d6e-08d59db2c617
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:41:55.7522
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70a70733-3631-4a7a-38a8-08d59db2c38a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:41:51.0959
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1029
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1062
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Mark Salter <msalter@redhat.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
 
-[ Upstream commit b6dd4d83dc2f78cebc9a7e6e7e4bc2be4d29b94d ]
+[ Upstream commit ac7f1061c2c11bb8936b1b6a94cdb48de732f7a4 ]
 
-The pr_debug() in gic-v3 gic_send_sgi() can trigger a circular locking
-warning:
+Current code does:
 
- GICv3: CPU10: ICC_SGI1R_EL1 5000400
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
- WARNING: possible circular locking dependency detected
- 4.15.0+ #1 Tainted: G        W
- ------------------------------------------------------
- dynamic_debug01/1873 is trying to acquire lock:
-  ((console_sem).lock){-...}, at: [<0000000099c891ec>] down_trylock+0x20/0x=
-4c
+	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) !=3D 2)
 
- but task is already holding lock:
-  (&rq->lock){-.-.}, at: [<00000000842e1587>] __task_rq_lock+0x54/0xdc
+However sscanf() is broken garbage.
 
- which lock already depends on the new lock.
+It silently accepts whitespace between format specifiers
+(did you know that?).
 
- the existing dependency chain (in reverse order) is:
+It silently accepts valid strings which result in integer overflow.
 
- -> #2 (&rq->lock){-.-.}:
-        __lock_acquire+0x3b4/0x6e0
-        lock_acquire+0xf4/0x2a8
-        _raw_spin_lock+0x4c/0x60
-        task_fork_fair+0x3c/0x148
-        sched_fork+0x10c/0x214
-        copy_process.isra.32.part.33+0x4e8/0x14f0
-        _do_fork+0xe8/0x78c
-        kernel_thread+0x48/0x54
-        rest_init+0x34/0x2a4
-        start_kernel+0x45c/0x488
+Do not use sscanf() for any even remotely reliable parsing code.
 
- -> #1 (&p->pi_lock){-.-.}:
-        __lock_acquire+0x3b4/0x6e0
-        lock_acquire+0xf4/0x2a8
-        _raw_spin_lock_irqsave+0x58/0x70
-        try_to_wake_up+0x48/0x600
-        wake_up_process+0x28/0x34
-        __up.isra.0+0x60/0x6c
-        up+0x60/0x68
-        __up_console_sem+0x4c/0x7c
-        console_unlock+0x328/0x634
-        vprintk_emit+0x25c/0x390
-        dev_vprintk_emit+0xc4/0x1fc
-        dev_printk_emit+0x88/0xa8
-        __dev_printk+0x58/0x9c
-        _dev_info+0x84/0xa8
-        usb_new_device+0x100/0x474
-        hub_port_connect+0x280/0x92c
-        hub_event+0x740/0xa84
-        process_one_work+0x240/0x70c
-        worker_thread+0x60/0x400
-        kthread+0x110/0x13c
-        ret_from_fork+0x10/0x18
+	OK
+	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000'
+	/lib/systemd/systemd
 
- -> #0 ((console_sem).lock){-...}:
-        validate_chain.isra.34+0x6e4/0xa20
-        __lock_acquire+0x3b4/0x6e0
-        lock_acquire+0xf4/0x2a8
-        _raw_spin_lock_irqsave+0x58/0x70
-        down_trylock+0x20/0x4c
-        __down_trylock_console_sem+0x3c/0x9c
-        console_trylock+0x20/0xb0
-        vprintk_emit+0x254/0x390
-        vprintk_default+0x58/0x90
-        vprintk_func+0xbc/0x164
-        printk+0x80/0xa0
-        __dynamic_pr_debug+0x84/0xac
-        gic_raise_softirq+0x184/0x18c
-        smp_cross_call+0xac/0x218
-        smp_send_reschedule+0x3c/0x48
-        resched_curr+0x60/0x9c
-        check_preempt_curr+0x70/0xdc
-        wake_up_new_task+0x310/0x470
-        _do_fork+0x188/0x78c
-        SyS_clone+0x44/0x50
-        __sys_trace_return+0x0/0x4
+	broken
+	# readlink '/proc/1/map_files/               55a23af39000-55a23b05b000'
+	/lib/systemd/systemd
 
- other info that might help us debug this:
+	broken
+	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000    '
+	/lib/systemd/systemd
 
- Chain exists of:
-   (console_sem).lock --> &p->pi_lock --> &rq->lock
+	very broken
+	# readlink '/proc/1/map_files/1000000000000000055a23af39000-55a23b05b000'
+	/lib/systemd/systemd
 
-  Possible unsafe locking scenario:
+Andrei said:
 
-        CPU0                    CPU1
-        ----                    ----
-   lock(&rq->lock);
-                                lock(&p->pi_lock);
-                                lock(&rq->lock);
-   lock((console_sem).lock);
+: This patch breaks criu.  It was a bug in criu.  And this bug is on a mino=
+r
+: path, which works when memfd_create() isn't available.  It is a reason wh=
+y
+: I ask to not backport this patch to stable kernels.
+:
+: In CRIU this bug can be triggered, only if this patch will be backported
+: to a kernel which version is lower than v3.16.
 
-  *** DEADLOCK ***
-
- 2 locks held by dynamic_debug01/1873:
-  #0:  (&p->pi_lock){-.-.}, at: [<000000001366df53>] wake_up_new_task+0x40/=
-0x470
-  #1:  (&rq->lock){-.-.}, at: [<00000000842e1587>] __task_rq_lock+0x54/0xdc
-
- stack backtrace:
- CPU: 10 PID: 1873 Comm: dynamic_debug01 Tainted: G        W        4.15.0+=
- #1
- Hardware name: GIGABYTE R120-T34-00/MT30-GS2-00, BIOS T48 10/02/2017
- Call trace:
-  dump_backtrace+0x0/0x188
-  show_stack+0x24/0x2c
-  dump_stack+0xa4/0xe0
-  print_circular_bug.isra.31+0x29c/0x2b8
-  check_prev_add.constprop.39+0x6c8/0x6dc
-  validate_chain.isra.34+0x6e4/0xa20
-  __lock_acquire+0x3b4/0x6e0
-  lock_acquire+0xf4/0x2a8
-  _raw_spin_lock_irqsave+0x58/0x70
-  down_trylock+0x20/0x4c
-  __down_trylock_console_sem+0x3c/0x9c
-  console_trylock+0x20/0xb0
-  vprintk_emit+0x254/0x390
-  vprintk_default+0x58/0x90
-  vprintk_func+0xbc/0x164
-  printk+0x80/0xa0
-  __dynamic_pr_debug+0x84/0xac
-  gic_raise_softirq+0x184/0x18c
-  smp_cross_call+0xac/0x218
-  smp_send_reschedule+0x3c/0x48
-  resched_curr+0x60/0x9c
-  check_preempt_curr+0x70/0xdc
-  wake_up_new_task+0x310/0x470
-  _do_fork+0x188/0x78c
-  SyS_clone+0x44/0x50
-  __sys_trace_return+0x0/0x4
- GICv3: CPU0: ICC_SGI1R_EL1 12000
-
-This could be fixed with printk_deferred() but that might lessen its
-usefulness for debugging. So change it to pr_devel to keep it out of
-production kernels. Developers working on gic-v3 can enable it as
-needed in their kernels.
-
-Signed-off-by: Mark Salter <msalter@redhat.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Link: http://lkml.kernel.org/r/20171120212706.GA14325@avx2
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Pavel Emelyanov <xemul@openvz.org>
+Cc: Andrei Vagin <avagin@virtuozzo.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/irqchip/irq-gic-v3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/proc/base.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index ec8468829aef..b08de05bf627 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -488,7 +488,7 @@ static void gic_send_sgi(u64 cluster_id, u16 tlist, uns=
-igned int irq)
- 	       MPIDR_TO_SGI_AFFINITY(cluster_id, 1)	|
- 	       tlist << ICC_SGI1R_TARGET_LIST_SHIFT);
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index dc98620634a3..71e586465168 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -94,6 +94,8 @@
+ #include "internal.h"
+ #include "fd.h"
 =20
--	pr_debug("CPU%d: ICC_SGI1R_EL1 %llx\n", smp_processor_id(), val);
-+	pr_devel("CPU%d: ICC_SGI1R_EL1 %llx\n", smp_processor_id(), val);
- 	gic_write_sgi1r(val);
++#include "../../lib/kstrtox.h"
++
+ /* NOTE:
+  *	Implementing inode permission operations in /proc is almost
+  *	certainly an error.  Permission checks need to happen during
+@@ -1642,8 +1644,33 @@ end_instantiate:
+ static int dname_to_vma_addr(struct dentry *dentry,
+ 			     unsigned long *start, unsigned long *end)
+ {
+-	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) !=3D 2)
++	const char *str =3D dentry->d_name.name;
++	unsigned long long sval, eval;
++	unsigned int len;
++
++	len =3D _parse_integer(str, 16, &sval);
++	if (len & KSTRTOX_OVERFLOW)
++		return -EINVAL;
++	if (sval !=3D (unsigned long)sval)
+ 		return -EINVAL;
++	str +=3D len;
++
++	if (*str !=3D '-')
++		return -EINVAL;
++	str++;
++
++	len =3D _parse_integer(str, 16, &eval);
++	if (len & KSTRTOX_OVERFLOW)
++		return -EINVAL;
++	if (eval !=3D (unsigned long)eval)
++		return -EINVAL;
++	str +=3D len;
++
++	if (*str !=3D '\0')
++		return -EINVAL;
++
++	*start =3D sval;
++	*end =3D eval;
+=20
+ 	return 0;
  }
-=20
 --=20
 2.15.1
