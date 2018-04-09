@@ -1,125 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752692AbeDIJmH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 05:42:07 -0400
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:56258 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752522AbeDIJl0 (ORCPT
+        id S1752724AbeDIJm2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 05:42:28 -0400
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:34979 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751767AbeDIJm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 05:41:26 -0400
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v2 9/9] PCI: dwc: Replace magic number by defines
-Date: Mon,  9 Apr 2018 10:41:18 +0100
-Message-Id: <e16abfbbb45aff6f45d5e6821d2dc23cf4d61783.1523266508.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
-References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
-References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
+        Mon, 9 Apr 2018 05:42:26 -0400
+X-Google-Smtp-Source: AIpwx4+A6sw1T4nhqsSQyXFAVwy/sN2OnyEsdonaiXpFbVyMWXL3UDhFLjDClR5+63HbAN77qbQ0yg==
+Reply-To: christian.koenig@amd.com
+Subject: Re: AMD graphics performance regression in 4.15 and later
+To: Jean-Marc Valin <jmvalin@mozilla.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        airlied@linux.ie, alexander.deucher@amd.com, Felix.Kuehling@amd.com,
+        labbott@redhat.com, akpm@linux-foundation.org, michel.daenzer@amd.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
+ <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
+ <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
+ <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com>
+ <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
+ <d136f940-d807-d2f7-30a7-8617f130912d@amd.com>
+ <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com>
+Date: Mon, 9 Apr 2018 11:42:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace magic numbers by a well known define in order to make the code
-human readable and also facilitate the code reusability.
+Am 07.04.2018 um 00:00 schrieb Jean-Marc Valin:
+> Hi Christian,
+>
+> Thanks for the info. FYI, I've also opened a Firefox bug for that at:
+> https://bugzilla.mozilla.org/show_bug.cgi?id=1448778
+> Feel free to comment since you have a better understanding of what's
+> going on.
+>
+> One last question: right now I'm running 4.15.0 with the "offending"
+> patch reverted. Is that safe to run or are there possible bad
+> interactions with other changes.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
-Change v1->v2:
-- Nothing changed, just to follow the patch set version.
+That should work without problems.
 
- drivers/pci/dwc/pcie-designware-host.c | 34 ++++++++++++++++++++--------------
- drivers/pci/dwc/pcie-designware.h      |  1 +
- 2 files changed, 21 insertions(+), 14 deletions(-)
+But I just had another idea as well, if you want you could still test 
+the new code path which will be using in 4.17.
 
-diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
-index 8e6fed4..ff43b0f 100644
---- a/drivers/pci/dwc/pcie-designware-host.c
-+++ b/drivers/pci/dwc/pcie-designware-host.c
-@@ -83,18 +83,23 @@ irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
- 	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
- 
- 	for (i = 0; i < num_ctrls; i++) {
--		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4,
--				    &val);
-+		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS +
-+					(i * MSI_REG_CTRL_BLOCK_SIZE),
-+				    4, &val);
- 		if (!val)
- 			continue;
- 
- 		ret = IRQ_HANDLED;
- 		pos = 0;
--		while ((pos = find_next_bit((unsigned long *) &val, 32,
--					    pos)) != 32) {
--			irq = irq_find_mapping(pp->irq_domain, i * 32 + pos);
-+		while ((pos = find_next_bit((unsigned long *) &val,
-+					    MAX_MSI_IRQS_PER_CTRL,
-+					    pos)) != MAX_MSI_IRQS_PER_CTRL) {
-+			irq = irq_find_mapping(pp->irq_domain,
-+					       (i * MAX_MSI_IRQS_PER_CTRL) +
-+					       pos);
- 			generic_handle_irq(irq);
--			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12,
-+			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS +
-+						(i * MSI_REG_CTRL_BLOCK_SIZE),
- 					    4, 1 << pos);
- 			pos++;
- 		}
-@@ -157,9 +162,9 @@ static void dw_pci_bottom_mask(struct irq_data *data)
- 	if (pp->ops->msi_clear_irq) {
- 		pp->ops->msi_clear_irq(pp, data->hwirq);
- 	} else {
--		ctrl = data->hwirq / 32;
--		res = ctrl * 12;
--		bit = data->hwirq % 32;
-+		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
-+		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
-+		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
- 
- 		pp->irq_status[ctrl] &= ~(1 << bit);
- 		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
-@@ -180,9 +185,9 @@ static void dw_pci_bottom_unmask(struct irq_data *data)
- 	if (pp->ops->msi_set_irq) {
- 		pp->ops->msi_set_irq(pp, data->hwirq);
- 	} else {
--		ctrl = data->hwirq / 32;
--		res = ctrl * 12;
--		bit = data->hwirq % 32;
-+		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
-+		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
-+		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
- 
- 		pp->irq_status[ctrl] |= 1 << bit;
- 		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
-@@ -652,8 +657,9 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
- 
- 	/* Initialize IRQ Status array */
- 	for (ctrl = 0; ctrl < num_ctrls; ctrl++)
--		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE + (ctrl * 12), 4,
--				    &pp->irq_status[ctrl]);
-+		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
-+					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
-+				    4, &pp->irq_status[ctrl]);
- 
- 	/* Setup RC BARs */
- 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0x00000004);
-diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
-index fe811db..bee4e25 100644
---- a/drivers/pci/dwc/pcie-designware.h
-+++ b/drivers/pci/dwc/pcie-designware.h
-@@ -110,6 +110,7 @@
- #define MAX_MSI_IRQS			256
- #define MAX_MSI_IRQS_PER_CTRL		32
- #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
-+#define MSI_REG_CTRL_BLOCK_SIZE		12
- #define MSI_DEF_NUM_VECTORS		32
- 
- /* Maximum number of inbound/outbound iATUs */
--- 
-2.7.4
+Backporting all the detection logic is to invasive, but you could just 
+go into drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c and forcefull use the 
+other code path.
+
+Just look out for "#ifdef CONFIG_SWIOTLB" checks and disable those.
+
+Regards,
+Christian.
+
+>
+> Cheers,
+>
+> 	Jean-Marc
+>
+> On 04/06/2018 01:20 PM, Christian König wrote:
+>> Am 06.04.2018 um 18:42 schrieb Jean-Marc Valin:
+>>> Hi Christian,
+>>>
+>>> On 04/09/2018 07:48 AM, Christian König wrote:
+>>>> Am 06.04.2018 um 17:30 schrieb Jean-Marc Valin:
+>>>>> Hi Christian,
+>>>>>
+>>>>> Is there a way to turn off these huge pages at boot-time/run-time?
+>>>> Only at compile time by not setting CONFIG_TRANSPARENT_HUGEPAGE.
+>>> Any reason why
+>>> echo never > /sys/kernel/mm/transparent_hugepage/enabled
+>>> doesn't solve the problem?
+>> Because we unfortunately try to allocate huge pages anyway, we
+>> unfortunately just fail in 100% of all cases.
+>>
+>> That basically gives you both, the extra allocation overhead and the
+>> still bad throughput.
+>>
+>>> Also, I assume that disabling CONFIG_TRANSPARENT_HUGEPAGE will disable
+>>> them for everything and not just what your patch added, right?
+>> Correct, that's why I wrote that disabling SWIOTLBs might be better.
+>>
+>>>>> I'm not sure what you mean by "We mitigated the problem by avoiding the
+>>>>> slow coherent DMA code path on almost all platforms on newer
+>>>>> kernels". I
+>>>>> tested up to 4.16 and the performance regression is just as bad as
+>>>>> it is
+>>>>> for 4.15.
+>>>> Indeed 4.16 still doesn't have that. You could use the
+>>>> amd-staging-drm-next branch or wait for 4.17.
+>>> Is there a way to pull just that change or is there too much
+>>> interactions with other changes?
+>> It adds a new detection if memory allocation needs to be coherent or
+>> not, that is not something you can easily pull into older versions.
+>>
+>>>> That isn't related to the GFX hardware, but to your CPU/motherboard and
+>>>> whatever else you have in the system.
+>>> Well, I have an nvidia GPU in the same system (normally only used for
+>>> CUDA) and if I use it instead of my RX 560 then I'm not seeing any
+>>> performance issue with 4.15.
+>> That's because you are probably using the Nvidia binary driver which has
+>> a completely separate code base.
+>>
+>>>> Some part of your system needs SWIOTLB and that makes allocating memory
+>>>> much slower.
+>>> What would that part be? FTR, I have a complete description of my system
+>>> at https://jmvalin.dreamwidth.org/15583.html
+>>>
+>>> I don't know if it's related, but I can maybe see one thing in common
+>>> between my machine and the Core 2 Quad from the other bug report and
+>>> that's the "NUMA part". I have a dual-socket Xeon and (AFAIK) the Core 2
+>>> Quad is made of two two-core CPUs glued together with little
+>>> communication between them.
+>> Yeah, that is probably the reason.
+>>
+>>>> Intel doesn't use TTM because they don't have dedicated VRAM, but the
+>>>> open source nvidia driver should be affected as well.
+>>> I'm using the proprietary nvidia driver (because CUDA). Is that supposed
+>>> to be affected as well?
+>> No.
+>>
+>>>> We already mitigated that problem and I don't see any solution which
+>>>> will arrive faster than 4.17.
+>>> Is that supposed to make the slowdown unnoticeable or just slightly
+>>> better?
+>> It completely goes away. The issue with the coherent path is that it
+>> tries to always allocate the lowest possible memory to make sure that it
+>> fits into the DMA constrains of all devices in the system.
+>>
+>> But since AMD GPU can handle 40bits of addresses you would need at least
+>> 1TB of memory in the system to trigger that (or a NUMA where some system
+>> is low and some in a high area).
+>>
+>> Christian.
+>>
+>>>> The only quick workaround I can see is to avoid firefox, chrome for
+>>>> example is reported to work perfectly fine.
+>>> Or use an unaffected GPU/driver ;-)
+>>>
+>>> Cheers,
+>>>
+>>>      Jean-Marc
+>>>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
