@@ -1,79 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752883AbeDIRLA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 13:11:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58537 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752564AbeDIRK7 (ORCPT
+        id S1753352AbeDIRL2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 13:11:28 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54630 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751778AbeDIRLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 13:10:59 -0400
-Date: Mon, 9 Apr 2018 10:10:30 -0700
-From: tip-bot for Christoph Hellwig <tipbot@zytor.com>
-Message-ID: <tip-66bdb1478fd1a66d5b8b81e4e28e0ed3df63ed37@git.kernel.org>
-Cc: peterz@infradead.org, konrad.wilk@oracle.com, hch@lst.de,
-        linux-kernel@vger.kernel.org, hpa@zytor.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de, mingo@kernel.org,
-        linux@dominikbrodowski.net
-Reply-To: mingo@kernel.org, linux@dominikbrodowski.net, hpa@zytor.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de, hch@lst.de,
-        linux-kernel@vger.kernel.org, konrad.wilk@oracle.com,
-        peterz@infradead.org
-In-Reply-To: <20180409091517.6619-2-hch@lst.de>
-References: <20180409091517.6619-2-hch@lst.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] swiotlb: Use dma_direct_supported() for
- swiotlb_ops
-Git-Commit-ID: 66bdb1478fd1a66d5b8b81e4e28e0ed3df63ed37
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 9 Apr 2018 13:11:24 -0400
+Date: Mon, 9 Apr 2018 19:11:00 +0200 (CEST)
+From: Sebastian Ott <sebott@linux.ibm.com>
+X-X-Sender: sebott@schleppi
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Kees Cook <keescook@chromium.org>,
+        Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Subject: Re: [bisected] 3c8ba0d61d04ced9f8d9ff93977995a9e4e96e91 oopses on
+ s390
+In-Reply-To: <CA+55aFw1MoQ=7=U6QCGXAAiCniMKy8_igxgc8sMLykSRcDk-0g@mail.gmail.com>
+References: <alpine.LFD.2.21.1804061125390.1819@schleppi> <CAGXu5jKTtU3fvqP-ygV51WcOAmTkm=y5fysKNv+k0crhJACtVg@mail.gmail.com> <alpine.LFD.2.21.1804091809310.1698@schleppi> <CA+55aFw1MoQ=7=U6QCGXAAiCniMKy8_igxgc8sMLykSRcDk-0g@mail.gmail.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
+ =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
+ =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
+ =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
+ =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
+ =?ISO-8859-15?Q?94=22?=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+X-TM-AS-GCONF: 00
+x-cbid: 18040917-0040-0000-0000-0000044B741A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040917-0041-0000-0000-000020EF9981
+Message-Id: <alpine.LFD.2.21.1804091909270.1698@schleppi>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804090175
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  66bdb1478fd1a66d5b8b81e4e28e0ed3df63ed37
-Gitweb:     https://git.kernel.org/tip/66bdb1478fd1a66d5b8b81e4e28e0ed3df63ed37
-Author:     Christoph Hellwig <hch@lst.de>
-AuthorDate: Mon, 9 Apr 2018 11:15:17 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 9 Apr 2018 18:20:09 +0200
+On Mon, 9 Apr 2018, Linus Torvalds wrote:
+> On Mon, Apr 9, 2018 at 9:18 AM, Sebastian Ott <sebott@linux.ibm.com> wrote:
+> >
+> > Both of the following return 0 on my machine:
+> > +       pr_warn("%u\n", min_not_zero(100, 1000));
+> > +       pr_warn("%u\n", min_not_zero(1000, 100));
+> 
+> Oooh.
+> 
+> [ Raises hand, and says "I know, I know, pick me, pick me" ]
+> 
+> min_not_zero() hasinternal variables "__x" and "__y".
+> 
+> And "__cmp_once()" has internal variables "__x" and "__y".
 
-swiotlb: Use dma_direct_supported() for swiotlb_ops
+Argh....so obvious now :-)
 
-swiotlb_alloc() calls dma_direct_alloc(), which can satisfy lower than 32-bit
-DMA mask requests using GFP_DMA if the architecture supports it.  Various
-x86 drivers rely on that, so we need to support that.  At the same time
-the whole kernel expects a 32-bit DMA mask to just work, so the other magic
-in swiotlb_dma_supported() isn't actually needed either.
+When I change these it works.
 
-Reported-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: iommu@lists.linux-foundation.org
-Fixes: 6e4bf5867783 ("x86/dma: Use generic swiotlb_ops")
-Link: http://lkml.kernel.org/r/20180409091517.6619-2-hch@lst.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- lib/swiotlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index c43ec2271469..c67b06261160 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -1130,6 +1130,6 @@ const struct dma_map_ops swiotlb_dma_ops = {
- 	.unmap_sg		= swiotlb_unmap_sg_attrs,
- 	.map_page		= swiotlb_map_page,
- 	.unmap_page		= swiotlb_unmap_page,
--	.dma_supported		= swiotlb_dma_supported,
-+	.dma_supported		= dma_direct_supported,
- };
- #endif /* CONFIG_DMA_DIRECT_OPS */
+Sebastian
