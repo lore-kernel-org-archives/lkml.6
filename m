@@ -1,53 +1,53 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AIpwx49MEw7XxbL3Dky8qHfl8z68VIw06dTr3VcxwSLQqy+iOyo+5lJz2S4Kfcnke/sjVPjOx6ik
-ARC-Seal: i=1; a=rsa-sha256; t=1523517503; cv=none;
+X-Google-Smtp-Source: AIpwx4/WPVThSPvjzCxAxLt76xKyNm/LrlvnhoFuszRLjYKJDxv9LRb9s5abbBVMegWredfI7ac4
+ARC-Seal: i=1; a=rsa-sha256; t=1523294209; cv=none;
         d=google.com; s=arc-20160816;
-        b=iPlUad55lOtOPe9WLqlzbiTsNscKF8Q8FZG93vxOnpNfYl0dPWMx5130KQ1AAi4tcO
-         XfGTXWs26kj7CIxO7AZ/oKJfPpgF3vz2T2zURmiQCZKVtBYe//ChMNrxUo/lYaNUwbk6
-         O/Xo1S2RgjhaAd36LPR0Q1pDa/dqKqRqWfLOGfXrLa/5eWliy+Ds/3i4yrNqt4z8g9V+
-         tAMhPYu/EkRSAnrmKt61Ejf2oJqp253f5J37rgWahfPCssdsm0X8OwfZ3uP8xNhlTkm0
-         YCcSzH0Xh9Blmt/Rb1tlcy5IuiLEKQs3Qq1Hyi3dJGgzi+PMrlM93QF1bHORqozTXmUD
-         1o+A==
+        b=wKb6hbuV65l/1E5n48+HA1vBubA/yJ96T2vgUHjlcBB82e5bDAiSZz2qhAUwiMtRV4
+         HfhXYPsvJtM1GrYAD+oJ5zbd0UKiPuZpTo/oWbdzO95O3BseXch4vTh3Z0TPaQTMEqsH
+         WOO7GAfZsJGtI/lJgIJl3usJXo3tUmi+Ohqr2xVJZ8NBUnxbyhIzPueXe5nEcINFq6IM
+         6Re2I1mKB6iLGBXhJS0/xff55vRuaZByexvgIyGFcZc2sBp4b8YtF+O/NJ6nTRBsmJkW
+         jMmqsECk7aiIgtSKPf1iOpE6xxJFoPlLq4YsFBSTVzSWBnfxCEI3Qy6i6R/3fv5tGTB4
+         Q6uQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=7RKXtY1TEHoK6OQREzXKgzM3F54Y4MY0UzN17SrMThg=;
-        b=ohUzwi9gi9DveaGH6Agb5RKqt1gaNToJVUDkxmyWL4IEbunG4cwGyjV1aEr3BByFFN
-         tDwAYoP/FHzNaSxpCAIDOP/EhxUILU7PSlEhGh97UWGa292aAkLR919tcxWUV2S5Hmnr
-         PnSthq+4dgKegtakrud4IreqKNOH2hbMzWNBjp8BM0hUgsPPhxFbxCt81SZNYYl7x4xV
-         ur6ghW//BlGMO9bYumuSOAsmwvgiimbmzUJ9QaAAJEN99w5BokMQ0NtF91JFnz3ZWfwn
-         zlGk7gh2nu+gYkL6miBqO4WtrRa5JcKQRmorC2ONX3noY64IuChrBh2SzVRPtCZaJOy+
-         JcNw==
+        bh=Rgs5hDK9D763uC4Xo6A5elj0FKu6JIZ0B9Rb2XQ0PSk=;
+        b=yaiuPUhfLhy9epVJ7YMrGp0HbU7EjdLC52+8uOiNwk0ddtBIkkKa9YSl+qimVa/ics
+         6iZsT8V6F5z2CEF4pdmZ1oDIONw/JkbeICe4ICm3iawOK888C4T8IWg9lVvwNkGLdAFd
+         bnnj0fuIyxFXcKDGBKfQn354oJnvuJLvoCNH8k/BZXDy06eOsH6F16dR18VAzehd006J
+         HehoLXRKF4uxXeZXuSHsKT+WONE+tSGQ4FbIDt9Xt2hPtJ1aAvY7bHK0oCXaz589pEub
+         3I8Z+xYbmhB8MnGb/CLR8R4zzdGd+WebwuZC9gpX3hE6ygGI4aXL6P64Ewn6WcmQU+JQ
+         WRHg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Thu, 12 Apr 2018 00:16:30 -0700
+Date: Mon, 9 Apr 2018 10:16:05 -0700
 Sender: tip tree robot <tipbot@zytor.com>
 From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-39114b7a743e6759bab4d96b7d9651d44d17e3f9@git.kernel.org>
-Cc: mingo@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org,
-        hughd@google.com, tglx@linutronix.de, keescook@google.com,
-        jgross@suse.com, luto@kernel.org, jpoimboe@redhat.com, bp@alien8.de,
-        dan.j.williams@intel.com, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, aarcange@redhat.com, arjan@linux.intel.com,
-        dave.hansen@linux.intel.com, namit@vmware.com, peterz@infradead.org,
-        dwmw2@infradead.org
-Reply-To: jpoimboe@redhat.com, luto@kernel.org, jgross@suse.com,
-        torvalds@linux-foundation.org, hughd@google.com, hpa@zytor.com,
-        mingo@kernel.org, keescook@google.com, tglx@linutronix.de,
-        dave.hansen@linux.intel.com, dwmw2@infradead.org, peterz@infradead.org,
-        namit@vmware.com, linux-kernel@vger.kernel.org,
-        dan.j.williams@intel.com, gregkh@linuxfoundation.org, bp@alien8.de,
-        arjan@linux.intel.com, aarcange@redhat.com
+Message-ID: <tip-a5df4f1f0d7872f6030dd12b166e570e60ae9e1d@git.kernel.org>
+Cc: torvalds@linux-foundation.org, luto@kernel.org,
+        linux-kernel@vger.kernel.org, namit@vmware.com, peterz@infradead.org,
+        dave.hansen@linux.intel.com, tglx@linutronix.de, arjan@linux.intel.com,
+        dwmw2@infradead.org, keescook@google.com, dan.j.williams@intel.com,
+        bp@alien8.de, jpoimboe@redhat.com, hpa@zytor.com,
+        gregkh@linuxfoundation.org, mingo@kernel.org, jgross@suse.com,
+        hughd@google.com, aarcange@redhat.com
+Reply-To: namit@vmware.com, dave.hansen@linux.intel.com, tglx@linutronix.de,
+        peterz@infradead.org, linux-kernel@vger.kernel.org, luto@kernel.org,
+        torvalds@linux-foundation.org, aarcange@redhat.com, mingo@kernel.org,
+        gregkh@linuxfoundation.org, hughd@google.com, jgross@suse.com,
+        dan.j.williams@intel.com, hpa@zytor.com, bp@alien8.de,
+        jpoimboe@redhat.com, dwmw2@infradead.org, arjan@linux.intel.com,
+        keescook@google.com
 In-Reply-To: <20180406205517.C80FBE05@viggo.jf.intel.com>
 References: <20180406205517.C80FBE05@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/pti] x86/pti: Never implicitly clear _PAGE_GLOBAL for
  kernel image
-Git-Commit-ID: 39114b7a743e6759bab4d96b7d9651d44d17e3f9
+Git-Commit-ID: a5df4f1f0d7872f6030dd12b166e570e60ae9e1d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,16 +58,16 @@ Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597289749177813039?=
-X-GMAIL-MSGID: =?utf-8?q?1597523889282252737?=
+X-GMAIL-MSGID: =?utf-8?q?1597289749177813039?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  39114b7a743e6759bab4d96b7d9651d44d17e3f9
-Gitweb:     https://git.kernel.org/tip/39114b7a743e6759bab4d96b7d9651d44d17e3f9
+Commit-ID:  a5df4f1f0d7872f6030dd12b166e570e60ae9e1d
+Gitweb:     https://git.kernel.org/tip/a5df4f1f0d7872f6030dd12b166e570e60ae9e1d
 Author:     Dave Hansen <dave.hansen@linux.intel.com>
 AuthorDate: Fri, 6 Apr 2018 13:55:17 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 12 Apr 2018 09:06:00 +0200
+CommitDate: Mon, 9 Apr 2018 18:27:34 +0200
 
 x86/pti: Never implicitly clear _PAGE_GLOBAL for kernel image
 
