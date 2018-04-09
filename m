@@ -1,79 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752240AbeDIMVb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 08:21:31 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:56160 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751633AbeDIMV3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 08:21:29 -0400
-Date: Mon, 9 Apr 2018 14:21:25 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 2/7] arm64: dts: renesas: r8a77970: add VSPD support
-Message-ID: <20180409122124.qlzzuf5p6cp4jyf2@verge.net.au>
-References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
- <1523020092-25540-3-git-send-email-jacopo+renesas@jmondi.org>
- <3172265.bfWcyC1uqx@avalon>
+        id S1752345AbeDIMXr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 08:23:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35450 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752200AbeDIMXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 08:23:46 -0400
+Date: Mon, 9 Apr 2018 20:23:31 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Li Wang <liwang@redhat.com>
+Cc: Stefan Haberland <sth@linux.vnet.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-kernel@vger.kernel.org,
+        Xiao Ni <xni@redhat.com>
+Subject: Re: [s390x] New regression was found on kernel-4.16
+Message-ID: <20180409122330.GB31165@ming.t460p>
+References: <CAEemH2d_0DCUR9jnwu7ka-ngQBASuCOYMK5hd2oX582pF6fogQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3172265.bfWcyC1uqx@avalon>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAEemH2d_0DCUR9jnwu7ka-ngQBASuCOYMK5hd2oX582pF6fogQ@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 04:33:21PM +0300, Laurent Pinchart wrote:
-> On Friday, 6 April 2018 16:08:07 EEST Jacopo Mondi wrote:
-> > From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > 
-> > Describe VSPD0 in the R8A77970 device tree; it will be used by DU in
-> > the next patch...
-> > 
-> > Based on the original (and large) patch by Daisuke Matsushita
-> > <daisuke.matsushita.ns@hitachi.com>.
-> > 
-> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> >  arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> > b/arch/arm64/boot/dts/renesas/r8a77970.dtsi index 71f466d..db06c94 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> > @@ -625,6 +625,16 @@
-> >  			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-> >  			resets = <&cpg 603>;
-> >  		};
-> > +
-> > +		vspd0: vsp@fea20000 {
-> > +			compatible = "renesas,vsp2";
-> > +			reg = <0 0xfea20000 0 0x4000>;
-> 
-> You need to extend the memory region to include the V6_CLUTn_TBL* registers. I 
-> would recommend simply extending it to 0x8000 as all other VSP instances, even 
-> if the registers at 0x7000-0x7fff are not implemented.
-> 
-> Apart from that,
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Hi Li Wang,
 
-I applied the first patch of this series. Please update this,
-and any subsequent patches as appropriate and then repost the series
-without the first patch.
+On Mon, Apr 09, 2018 at 06:18:04PM +0800, Li Wang wrote:
+> Hi,
+> 
+> I got this BUG_ON() on s390x platform with kernel-v4.16.0.
 
-Thanks
+Today I saw this bug too, from my first look, seems it is because
+that get_max_io_size() returns zero in blk_bio_segment_split().
+
+And I trigger that in one MD queue, and Xiao Ni is looking at it.
+
+Thanks,
+Ming
