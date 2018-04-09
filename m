@@ -1,117 +1,117 @@
-Return-Path: <kernel-hardening-return-12930-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4849IEBezAxP168UmMtt0aP/sQsgN6yYldQYYzKeQXfp9Jeztj82y5YTEPTPu2Gl1nmIGM5
-ARC-Seal: i=1; a=rsa-sha256; t=1523284643; cv=none;
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AIpwx4+u+jvtkmHcYo/jzRQLo97hpFZwjXUs2tQ5+FePbImOd1A8O3qMDa2pJZW4xmeBKE3IcDeK
+ARC-Seal: i=1; a=rsa-sha256; t=1523294039; cv=none;
         d=google.com; s=arc-20160816;
-        b=kTQ9lRxR8OPZlDY0mczMQEylAMm0BhlsksgJXKhz1N+J2FVKtKnGLNvM9UG1afIUEv
-         KsB5jCTUWUbAV0AyoT25sE7Nf4AIQbnmlwEs7CwELeEwH0yYW87oov2+jXTD4NLkIIjp
-         +DFwt2Iwzxquc5V3xL3G0bb1k6SilM0RqnVczOr8PyzdSIx9AnQ1MHvX9lfcl0/D3jI/
-         cOl6cbPPDUKAz3Rq9C0RM1SxqNrmMq5C2jLyimCDvA6Lc7blNxZHiFrXiyGPoybXxd/c
-         POuO1DgwN3n0yEO6Cuux70/gWA6r+u++mfGvh4jBDFRYD+zYHH/aKyJA5lyHPK4cmh6X
-         NTxw==
+        b=MVrOyE3vF/WNCbp8dK7KGGoOGY093LhLIHlF9mQ7sQwguJwunAqyflcM1dYvG5Vb85
+         BzQxYBiAruc2O/t0MsC4yaIlP1kw1EyvRbksoR4KPj6D7QOqNxsRvrrWi6ycxP4mSM2F
+         EXHN2SBTMc5tBJOKA3VOt/Fb0BR9HohTVtBgYQPtVKnRvkN7/kMq2PCsLHJIUmBxXdON
+         9t1lmRx9Tbn0eFNKvdT8vMD+SGBp71zcX1ahLBcnSQOeFf5vkGjcp6ARctud1ijpn3B3
+         pfxmeUdHpSVBNGNWJcGoVr6Wzaridn5Ofd3a0H3zMGIE05fYkU2LZkq6pJdlU/1+OFxJ
+         VYQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=spL9fh0tyuY91UiXtmgfJiEp0HmOQr5vR3xgEGBVACQ=;
-        b=F5WI4pqF0GnXL6mTBhmmwnSP3WjNH3r8zhCD5c2bO9/R9B9OYy1KFABffogMVXGxvT
-         mdnsuSWmIcjLkKXawfrm9HoEGQ6IALmnFQJsz5a09GVhguo+TjT6RaJlXUVfiifGzeoR
-         i95aocMTEIsBKvthIAJNBJi9MLA10Ifp+c5aduuJNAeOSAeOJdfUc+CrzBdsQd0T1xZS
-         W0IXLWeudy+ZpePYTMowamxAwU4DYk6Aagj+FcSM1iUyqg1f2NIK63wuBXDfImLK31TL
-         OSzYsy15okJLPmgczhxjCILqgmlgCyHoHfH0jhE71HZn3IG5MrFf5074Ix1IMCfM8oC5
-         TvQw==
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
+         :arc-authentication-results;
+        bh=xL5lc5tbaPWy9c82VEJPW6go5jdwFN791VHTn4KyIW0=;
+        b=XrEIxcgCHoqQJdopFTl24vRQA/rmBbrOYaNF8CHsTrWxIcD+3xN7ax2EfmYyIxAAAx
+         I4G5KJBBT1DCDxfnnmD1Cmb6HG7+98fcrE8QbQShu6EbVJkz+V99kYBubN/8kBv0H7Ny
+         pO2ll2iZcWFdVzZoxriWd6t/eAsPERtc8PkREyr6Ase5GpFa9U2Q+LM/hi2IfceZ4e8A
+         3mMews18QpbHt85zxzOB09oB2BFK76wvztoa8eDVSGfwCdWZT9mtfFGcV2ED3NeBsv9m
+         i0+7bNDB8tzti7f1HpDhhfenK63aMebl/OvKm1v7LBdlbZXT3rceCx/EdY2vdwel0rqe
+         tUEg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12930-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12930-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12930-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12930-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Mon, 9 Apr 2018 15:37:00 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Christoffer Dall <cdall@kernel.org>
-Cc: Christoffer Dall <christoffer.dall@linaro.org>,
-	linux-arch@vger.kernel.org, cdall@linaro.org, arnd@arndb.de,
-	marc.zyngier@arm.com, catalin.marinas@arm.com, yao.qi@arm.com,
-	kernel-hardening@lists.openwall.com, will.deacon@arm.com,
-	linux-kernel@vger.kernel.org, awallis@codeaurora.org,
-	kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 10/12] arm64/kvm: context-switch ptrauth registers
-Message-ID: <20180409143700.w4uynkhdon36purz@lakrids.cambridge.arm.com>
-References: <20171127163806.31435-1-mark.rutland@arm.com>
- <20171127163806.31435-11-mark.rutland@arm.com>
- <20180206123847.GY21802@cbox>
- <20180309142838.uvcv3mhvqqlprktt@lakrids.cambridge.arm.com>
- <20180409125818.GE10904@cbox>
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Mon, 9 Apr 2018 10:13:17 -0700
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for Dave Hansen <tipbot@zytor.com>
+Message-ID: <tip-6baf4bec02dbc41645c3a5130ee15a8e1d62b80f@git.kernel.org>
+Cc: jpoimboe@redhat.com, torvalds@linux-foundation.org,
+        dave.hansen@linux.intel.com, arjan@linux.intel.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, namit@vmware.com,
+        bp@alien8.de, aarcange@redhat.com, luto@kernel.org, jgross@suse.com,
+        keescook@google.com, gregkh@linuxfoundation.org, peterz@infradead.org,
+        hpa@zytor.com, dan.j.williams@intel.com, hughd@google.com,
+        mingo@kernel.org, dwmw2@infradead.org
+Reply-To: jgross@suse.com, keescook@google.com, hpa@zytor.com,
+        peterz@infradead.org, gregkh@linuxfoundation.org, dwmw2@infradead.org,
+        mingo@kernel.org, hughd@google.com, dan.j.williams@intel.com,
+        dave.hansen@linux.intel.com, torvalds@linux-foundation.org,
+        jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+        arjan@linux.intel.com, luto@kernel.org, namit@vmware.com,
+        aarcange@redhat.com, bp@alien8.de, tglx@linutronix.de
+In-Reply-To: <20180406205507.BCF4D4F0@viggo.jf.intel.com>
+References: <20180406205507.BCF4D4F0@viggo.jf.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/espfix: Document use of _PAGE_GLOBAL
+Git-Commit-ID: 6baf4bec02dbc41645c3a5130ee15a8e1d62b80f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180409125818.GE10904@cbox>
-User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1585238074122761401?=
-X-GMAIL-MSGID: =?utf-8?q?1597279718538719971?=
+X-GMAIL-THRID: =?utf-8?q?1597289571344453428?=
+X-GMAIL-MSGID: =?utf-8?q?1597289571344453428?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 09, 2018 at 02:58:18PM +0200, Christoffer Dall wrote:
-> Hi Mark,
-> 
-> [Sorry for late reply]
-> 
-> On Fri, Mar 09, 2018 at 02:28:38PM +0000, Mark Rutland wrote:
-> > On Tue, Feb 06, 2018 at 01:38:47PM +0100, Christoffer Dall wrote:
-> > > On Mon, Nov 27, 2017 at 04:38:04PM +0000, Mark Rutland wrote:
-> > > > When pointer authentication is supported, a guest may wish to use it.
-> > > > This patch adds the necessary KVM infrastructure for this to work, with
-> > > > a semi-lazy context switch of the pointer auth state.
-> > > > 
-> > > > When we schedule a vcpu, 
-> > > 
-> > > That's not quite what the code does, the code only does this when we
-> > > schedule back a preempted or blocked vcpu thread.
-> > 
-> > Does that only leave the case of the vCPU being scheduled for the first
-> > time? Or am I missing something else?
-> > 
-> > [...]
-> 
-> In the current patch, you're only calling kvm_arm_vcpu_ptrauth_disable()
-> from kvm_arch_sched_in() which is only called on the preempt notifier
-> patch, which leaves out every time we enter the guest from userspace and
-> therefore also the initial run of the vCPU (assuming there's no
-> preemption in the kernel prior to running the first time).
-> 
-> vcpu_load() takes care of all the cases.
+Commit-ID:  6baf4bec02dbc41645c3a5130ee15a8e1d62b80f
+Gitweb:     https://git.kernel.org/tip/6baf4bec02dbc41645c3a5130ee15a8e1d62b80f
+Author:     Dave Hansen <dave.hansen@linux.intel.com>
+AuthorDate: Fri, 6 Apr 2018 13:55:07 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 9 Apr 2018 18:27:33 +0200
 
-I see.
+x86/espfix: Document use of _PAGE_GLOBAL
 
-> > > I still find this decision to begin trapping again quite arbitrary, and
-> > > would at least prefer this to be in vcpu_load (which would make the
-> > > behavior match the commit text as well).
-> > 
-> > Sure, done.
-> > 
-> > > My expectation would be that if a guest is running software with pointer
-> > > authentication enabled, then it's likely to either keep using the
-> > > feature, or not use it at all, so I would make this a one-time flag.
-> > 
-> > I think it's likely that some applications will use ptrauth while others
-> > do not. Even if the gust OS supports ptrauth, KVM may repeatedly preempt
-> > an application that doesn't use it, and we'd win in that case.
-> > 
-> > There are also some rarer cases, like kexec in a guest from a
-> > ptrauth-aware kernel to a ptrauth-oblivious one.
-> > 
-> > I don't have strong feelings either way, and I have no data.
-> 
-> I think your intuition sounds sane, and let's reset the flag on every
-> vcpu_load, and we can always revisit when we have hardware and data if
-> someone reports a performance issue.
+The "normal" kernel page table creation mechanisms using
+PAGE_KERNEL_* page protections will never set _PAGE_GLOBAL with PTI.
+The few places in the kernel that always want _PAGE_GLOBAL must
+avoid using PAGE_KERNEL_*.
 
-Cool. I've switched to vcpu_load() locally, and will use that in v3.
+Document that we want it here and its use is not accidental.
 
-Thanks,
-Mark.
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Kees Cook <keescook@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nadav Amit <namit@vmware.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180406205507.BCF4D4F0@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/espfix_64.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/x86/kernel/espfix_64.c b/arch/x86/kernel/espfix_64.c
+index e5ec3cafa72e..aebd0d5bc086 100644
+--- a/arch/x86/kernel/espfix_64.c
++++ b/arch/x86/kernel/espfix_64.c
+@@ -195,6 +195,10 @@ void init_espfix_ap(int cpu)
+ 
+ 	pte_p = pte_offset_kernel(&pmd, addr);
+ 	stack_page = page_address(alloc_pages_node(node, GFP_KERNEL, 0));
++	/*
++	 * __PAGE_KERNEL_* includes _PAGE_GLOBAL, which we want since
++	 * this is mapped to userspace.
++	 */
+ 	pte = __pte(__pa(stack_page) | ((__PAGE_KERNEL_RO | _PAGE_ENC) & ptemask));
+ 	for (n = 0; n < ESPFIX_PTE_CLONES; n++)
+ 		set_pte(&pte_p[n*PTE_STRIDE], pte);
