@@ -1,91 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753720AbeDIRML (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 13:12:11 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33491 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751291AbeDIRMJ (ORCPT
+        id S1753948AbeDIRO3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 13:14:29 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:52788 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752883AbeDIRO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 13:12:09 -0400
-Date: Mon, 9 Apr 2018 10:11:25 -0700
-From: tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-071ccc966ba5db1ac8f5c24b0faebb37698f68db@git.kernel.org>
-Cc: luto@kernel.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, mingo@kernel.org, peterz@infradead.org,
-        linux@dominikbrodowski.net, hpa@zytor.com, tglx@linutronix.de,
-        bp@alien8.de
-Reply-To: hpa@zytor.com, linux@dominikbrodowski.net, peterz@infradead.org,
-        tglx@linutronix.de, bp@alien8.de, linux-kernel@vger.kernel.org,
-        luto@kernel.org, mingo@kernel.org, torvalds@linux-foundation.org
-In-Reply-To: <90aab80c1f906e70742eaa4512e3c9b5e62d59d4.1522794757.git.luto@kernel.org>
-References: <90aab80c1f906e70742eaa4512e3c9b5e62d59d4.1522794757.git.luto@kernel.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Drop idtentry's manual stack switch for
- user entries
-Git-Commit-ID: 071ccc966ba5db1ac8f5c24b0faebb37698f68db
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 9 Apr 2018 13:14:27 -0400
+X-Google-Smtp-Source: AIpwx49mcRjJOimF4Oaxp0tgDjwhFmR6zFtCBNpOPXTMUJFPogPgDgUEybS1tv8BXI7PcQEFDLruq/pCyc0OCeUT3eg=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <CA+55aFw1MoQ=7=U6QCGXAAiCniMKy8_igxgc8sMLykSRcDk-0g@mail.gmail.com>
+References: <alpine.LFD.2.21.1804061125390.1819@schleppi> <CAGXu5jKTtU3fvqP-ygV51WcOAmTkm=y5fysKNv+k0crhJACtVg@mail.gmail.com>
+ <alpine.LFD.2.21.1804091809310.1698@schleppi> <CA+55aFw1MoQ=7=U6QCGXAAiCniMKy8_igxgc8sMLykSRcDk-0g@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 9 Apr 2018 10:14:25 -0700
+X-Google-Sender-Auth: EPQm1K2UT7wWGoJcQmAPdfJT6jY
+Message-ID: <CA+55aFy1jJPX2fu7ce2Z7hxn49RaSghtnziwsyUU1Em5WEH2yw@mail.gmail.com>
+Subject: Re: [bisected] 3c8ba0d61d04ced9f8d9ff93977995a9e4e96e91 oopses on s390
+To: Sebastian Ott <sebott@linux.ibm.com>
+Cc: Kees Cook <keescook@chromium.org>,
+        Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Content-Type: multipart/mixed; boundary="000000000000b484fa05696d89e5"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  071ccc966ba5db1ac8f5c24b0faebb37698f68db
-Gitweb:     https://git.kernel.org/tip/071ccc966ba5db1ac8f5c24b0faebb37698f68db
-Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Tue, 3 Apr 2018 15:39:26 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 9 Apr 2018 18:23:50 +0200
+--000000000000b484fa05696d89e5
+Content-Type: text/plain; charset="UTF-8"
 
-x86/entry/64: Drop idtentry's manual stack switch for user entries
+On Mon, Apr 9, 2018 at 10:03 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Our old "min()" had the internal variables called "min1" and "min2",
+> which is crazy too.
 
-For non-paranoid entries, idtentry knows how to switch from the
-kernel stack to the user stack, as does error_entry.  This results
-in pointless duplication and code bloat.  Make idtentry stop
-thinking about stacks for non-paranoid entries.
+Actually, no, it used the really cumbersome "__UNIQUE_ID" and then
+passed that odd as the name 'min1/2',
 
-This reduces text size by 5377 bytes.
+Ugh, I find that really nasty to read, but it was obviously done
+because we hit this before.
 
-This goes back to the following commit:
+And our __UNIQUE_ID() macro is garbage anyway, since it falls back on
+the line number, which doesn't really work for macros anyway. But we
+have proper macros for both clang and gcc, so maybe we should ignore
+the broken fallback.
 
-  7f2590a110b8 ("x86/entry/64: Use a per-CPU trampoline stack for IDT entries")
+A patch like the attached, perhaps?
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/90aab80c1f906e70742eaa4512e3c9b5e62d59d4.1522794757.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/entry_64.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+                    Linus
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 9b114675fbc0..e237913a056b 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -908,7 +908,7 @@ ENTRY(\sym)
- 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
- 	.endif
- 
--	.if \paranoid < 2
-+	.if \paranoid == 1
- 	testb	$3, CS-ORIG_RAX(%rsp)		/* If coming from userspace, switch stacks */
- 	jnz	.Lfrom_usermode_switch_stack_\@
- 	.endif
-@@ -955,7 +955,7 @@ ENTRY(\sym)
- 	jmp	error_exit
- 	.endif
- 
--	.if \paranoid < 2
-+	.if \paranoid == 1
- 	/*
- 	 * Entry from userspace.  Switch stacks and treat it
- 	 * as a normal entry.  This means that paranoid handlers
+--000000000000b484fa05696d89e5
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jfshydrl0
+
+IGluY2x1ZGUvbGludXgva2VybmVsLmggfCAxNyArKysrKysrKystLS0tLS0tLQogMSBmaWxlIGNo
+YW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9pbmNs
+dWRlL2xpbnV4L2tlcm5lbC5oIGIvaW5jbHVkZS9saW51eC9rZXJuZWwuaAppbmRleCA0YWUxZGZk
+OWJmMDUuLjUyYjcwODk0ZWFhNSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9rZXJuZWwuaAor
+KysgYi9pbmNsdWRlL2xpbnV4L2tlcm5lbC5oCkBAIC04MjIsMTQgKzgyMiwxNSBAQCBzdGF0aWMg
+aW5saW5lIHZvaWQgZnRyYWNlX2R1bXAoZW51bSBmdHJhY2VfZHVtcF9tb2RlIG9vcHNfZHVtcF9t
+b2RlKSB7IH0KIAogI2RlZmluZSBfX2NtcCh4LCB5LCBvcCkJKCh4KSBvcCAoeSkgPyAoeCkgOiAo
+eSkpCiAKLSNkZWZpbmUgX19jbXBfb25jZSh4LCB5LCBvcCkgKHsJCVwKLQkJdHlwZW9mKHgpIF9f
+eCA9ICh4KTsJXAotCQl0eXBlb2YoeSkgX195ID0gKHkpOwlcCi0JCV9fY21wKF9feCwgX195LCBv
+cCk7IH0pCi0KLSNkZWZpbmUgX19jYXJlZnVsX2NtcCh4LCB5LCBvcCkJCQkJXAotCQlfX2J1aWx0
+aW5fY2hvb3NlX2V4cHIoX19zYWZlX2NtcCh4LCB5KSwJXAotCQkJCSAgICAgIF9fY21wKHgsIHks
+IG9wKSwgX19jbXBfb25jZSh4LCB5LCBvcCkpCisjZGVmaW5lIF9fY21wX29uY2UoeCwgeSwgdW5p
+cXVlX3gsIHVuaXF1ZV95LCBvcCkgKHsJXAorCQl0eXBlb2YoeCkgdW5pcXVlX3ggPSAoeCk7CQlc
+CisJCXR5cGVvZih5KSB1bmlxdWVfeSA9ICh5KTsJCVwKKwkJX19jbXAodW5pcXVlX3gsIHVuaXF1
+ZV95LCBvcCk7IH0pCisKKyNkZWZpbmUgX19jYXJlZnVsX2NtcCh4LCB5LCBvcCkgXAorCV9fYnVp
+bHRpbl9jaG9vc2VfZXhwcihfX3NhZmVfY21wKHgsIHkpLCBcCisJCV9fY21wKHgsIHksIG9wKSwg
+XAorCQlfX2NtcF9vbmNlKHgsIHksIF9fVU5JUVVFX0lEKF9feCksIF9fVU5JUVVFX0lEKF9feSks
+IG9wKSkKIAogLyoqCiAgKiBtaW4gLSByZXR1cm4gbWluaW11bSBvZiB0d28gdmFsdWVzIG9mIHRo
+ZSBzYW1lIG9yIGNvbXBhdGlibGUgdHlwZXMK
+--000000000000b484fa05696d89e5--
