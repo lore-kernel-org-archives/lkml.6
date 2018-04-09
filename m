@@ -1,52 +1,52 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AIpwx495+wcXOQ67CsMvQuDDIcL6Gl8N/psiZ19ntB6zO6DMTtnvcw3lXVFBRblVcCFOZjwkZrab
-ARC-Seal: i=1; a=rsa-sha256; t=1523517308; cv=none;
+X-Google-Smtp-Source: AIpwx4+2QoPFZBzlAItbz1AAjPIKam58lgh4Nma11RKdTujaQVOpwv1xOKlEGVw7c6UE1PieJSJh
+ARC-Seal: i=1; a=rsa-sha256; t=1523294095; cv=none;
         d=google.com; s=arc-20160816;
-        b=GjL3yc/gM0fStpcK0DzJEH68qQ4GVyud2/wcqGRhrAiteLigN05y3ycj7q55ukRshj
-         H/I3zNDKvQ/XOp+rEIFtKattU/lJ5nNbDHZ3hyEjV5ur4SEeWFmE6HwSwvBH4iEQk8kc
-         nxiEXWk1UzMQ8TRFI7zSeyGxa2OXrHOW3kpjr1ck+70EmOibGUfNZ+7+OUmSsJrYZt6X
-         KUA1WemB3I3H8DgIJ4VCpomJ4bBPmIIXWDPRZVGid3nfMOchRvcOG6DJRHTY+9TyV+IX
-         kvvYSUgqG7O5aHV65yLrDYitfcd29D2Uy0XGYgBNk5DdRqMj1HGbZgL1WjVpK7eRbO1N
-         Z+vQ==
+        b=mgbTEv4tUQIQXkCQexszUdfzm62S5y7bgd1yjVvdRLOjkUR3NYxVhK1CZ9UDSlPog6
+         RpkR6bF/w49XsH0MhTexcN1n6V3mw2WtLNRxgfEaBHcqHOFin8oFauDFs1tkUPAK+9kq
+         BWhB7x3zJhqXiy8cOvpDqmLiiThSxXW8njNQXrM0/6JEGqOPZYwXmKfY/hqeaEfvLVgF
+         lhI3sQfgU6Sga1izOgEsSQvoXnizf4M/8nSmciTTTPKRHj0gqJTQ1JDA9zn0op421IUP
+         9wOmafaJrxEbQPDHgNYoCQwKtlTJho7Siu05rGDAjzi9BAwAHr06zhvWRgZUHziRaKOT
+         Pz9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=rVjUifQl0FFbr6o9TJXyylU54fYojEEmMOjQSZ6s8Dc=;
-        b=M1uFKBUiiaqaTgb/Y4J43HV9kTaPRdF8uluEslQrlQqVwLtuLvRBnbo+zEyb383eKJ
-         nm6M5qyLX//+aSplgOxCTGjeTu9T+CDyCpY1IqOfQacss4L6KlkWq2bzTbsBiYJIO1Ij
-         M7vWk+7hcJbV0wjpdmNXmnj1SlnObjwVrYDtGMwCQdwwzRzBi/fXEzOt6WaK4WXMQE7o
-         uBbIcmGwWRoC7RZQEZQBIYG1rSkE7WxZfT22tM6yxTSK32MfgSDeqSydTnvsjdO0Z11z
-         hNjLV6WcL8+n+nZ5aAOCLs0Jaffua4kmdcFDUpghUOiSWy+QByz5dQBMyes0K1CQQE4C
-         PMdw==
+        bh=79OdL8ByQVnc8Vqglpd73cx2itHLr9x0E3tQXBZXogI=;
+        b=vDzIfTrgnHOL6ssXQQwxu8nT6/aiX+94Dv8m4sQ30fwURV2cZsgJGL8R5U5sBaQ+YN
+         FeBrZwaT98q5OsKygWBk1J4Tr87FFgbvJDMUDxifQRKSoxIUj0UaPMpIkwFKuN03953P
+         1sre39/QMx2KApwxDxQtz3838d71ZQgVgngk+PQEJbC2azRdgpbbqWSnqEZxiYOSUjcy
+         r8cP7wvCbd1CTtP9uNziqpxIodcvs+6pXEU9OaB2ns+a+0JFhYf8v0mbpEiBFUsU1ZRz
+         F22wI/mhBxnwLV8kJ0D0XhTu1fj+KiObsBPSc2PMfAqD2mYIe0j30KnJ145NOh+F8QTD
+         VUqA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Thu, 12 Apr 2018 00:14:20 -0700
+Date: Mon, 9 Apr 2018 10:14:13 -0700
 Sender: tip tree robot <tipbot@zytor.com>
 From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-1a54420aeb4da1ba5b28283aa5696898220c9a27@git.kernel.org>
-Cc: dan.j.williams@intel.com, jpoimboe@redhat.com, tglx@linutronix.de,
-        dwmw2@infradead.org, luto@kernel.org, namit@vmware.com,
-        torvalds@linux-foundation.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        hughd@google.com, keescook@google.com, jgross@suse.com, bp@alien8.de,
-        mingo@kernel.org, hpa@zytor.com, arjan@linux.intel.com,
-        aarcange@redhat.com, dave.hansen@linux.intel.com
-Reply-To: keescook@google.com, hughd@google.com, mingo@kernel.org,
-        bp@alien8.de, jgross@suse.com, arjan@linux.intel.com, hpa@zytor.com,
-        aarcange@redhat.com, dave.hansen@linux.intel.com, tglx@linutronix.de,
-        dan.j.williams@intel.com, jpoimboe@redhat.com, luto@kernel.org,
-        dwmw2@infradead.org, torvalds@linux-foundation.org, namit@vmware.com,
-        gregkh@linuxfoundation.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org
+Message-ID: <tip-e71e836f463dd2cfb319ce88ae4a6e4f83904e6c@git.kernel.org>
+Cc: torvalds@linux-foundation.org, mingo@kernel.org, keescook@google.com,
+        dave.hansen@linux.intel.com, dan.j.williams@intel.com,
+        tglx@linutronix.de, bp@alien8.de, peterz@infradead.org,
+        dwmw2@infradead.org, aarcange@redhat.com, namit@vmware.com,
+        luto@kernel.org, jgross@suse.com, hughd@google.com, hpa@zytor.com,
+        arjan@linux.intel.com, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Reply-To: jgross@suse.com, aarcange@redhat.com, namit@vmware.com,
+        luto@kernel.org, jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, hughd@google.com, hpa@zytor.com,
+        arjan@linux.intel.com, dave.hansen@linux.intel.com,
+        torvalds@linux-foundation.org, mingo@kernel.org, keescook@google.com,
+        peterz@infradead.org, dwmw2@infradead.org, dan.j.williams@intel.com,
+        tglx@linutronix.de, bp@alien8.de
 In-Reply-To: <20180406205511.BC072352@viggo.jf.intel.com>
 References: <20180406205511.BC072352@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/pti] x86/mm: Remove extra filtering in pageattr code
-Git-Commit-ID: 1a54420aeb4da1ba5b28283aa5696898220c9a27
+Git-Commit-ID: e71e836f463dd2cfb319ce88ae4a6e4f83904e6c
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,16 +57,16 @@ Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597289629374494511?=
-X-GMAIL-MSGID: =?utf-8?q?1597523685694004764?=
+X-GMAIL-MSGID: =?utf-8?q?1597289629374494511?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  1a54420aeb4da1ba5b28283aa5696898220c9a27
-Gitweb:     https://git.kernel.org/tip/1a54420aeb4da1ba5b28283aa5696898220c9a27
+Commit-ID:  e71e836f463dd2cfb319ce88ae4a6e4f83904e6c
+Gitweb:     https://git.kernel.org/tip/e71e836f463dd2cfb319ce88ae4a6e4f83904e6c
 Author:     Dave Hansen <dave.hansen@linux.intel.com>
 AuthorDate: Fri, 6 Apr 2018 13:55:11 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 12 Apr 2018 09:05:58 +0200
+CommitDate: Mon, 9 Apr 2018 18:27:33 +0200
 
 x86/mm: Remove extra filtering in pageattr code
 
