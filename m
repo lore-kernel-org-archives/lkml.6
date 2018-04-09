@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3992186-1523244996-2-8537284490571276259
+X-Cyrus-Session-Id: sloti22d1t05-3992186-1523244994-2-11064855001005123489
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523244995; b=UQiFfX5aDRcFNWsZwVg3g/970BHWaQ6cpII3pDzuDpyFVsyZcS
-    B5XCMSsF3a1sytMIjnz1qAhd76VY3q0REB2kOuqOUzrHTS2dRLoWWppVR02YGXfI
-    gYrWt7+Pz9TBTc0j/wiBj/EE6DC+GPh+9yaxESgPEOYihqGGPnTNWCF9Voo/CxxX
-    +3A917q/2mqQgy59GE1MkY3EQCAs0Wr06Cr0SM9mqRPhFOqktSe7wbz87+wgNfiY
-    M+Ci0euuVtLeISPqaghFFwnl/UqggxZLDltbrkFfJMNoBNdpAeTTJGh/CAQogVdr
-    i76xhn+Oa0QJKZy0UyOEL2M6bWp9UHQfNoVA==
+    1523244993; b=MQPD+pnAe+OEajnIla6wI+6eQ0X418CmR/dgrB702jUogX3JN2
+    yWXYOL+XK16wxVbVSmn8eCltsiONucdXANDGVG2UNG3NuPN6wSGtwm+CMFv/X46S
+    e5pbNPBmCn33P+xh8JW1eXoufXn3UJs0uUDegkzVIOzW+0hmYUc7XelLSu9KEm5W
+    MTABr+946wxeUi5Iw8ZJEQENiiv3xaZMHiUHeEm8Elc/wWsegv+eN2j5dnGE5dXR
+    KhsjEfAJvr4D9YivaXelJ0dgGChtgZ5M4Ie75LH8aJxJuy1MH3eMROj7AMLc+zq0
+    kCmGfs2euh3HfxgbEnyfZHPiw2mojo+JhDYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523244995; bh=1mmgCQVKYJ
-    8unkZxMp+zJXj6A4XQ1G7IVwhrwBSjv8Y=; b=qrRj2FTdZ1rBJuOyv0D290evEx
-    ukhsawQX+/K6/Kb2CImjgnRSvpsMSULFKRf9vInx55fTSH5r72wlp2utmwYBUEML
-    VRHliF6TkYF0vzviM20XSbP3bJWPsgulSG6dNyaH86DCJmutQzPq6FXNaciR9/rD
-    6jN6wk+N8NiClkorlrb29ZI5KFZBY6AgHUoP8DHP3ZyQ9A2NhPZLQJ/IJGQN1+Yp
-    HVIaAfYODb+L3VyROtgdslTC4ScmxBomK6efpvguolhlWgUlL+yLQrzEmbKhAdzc
-    P4J1t+r6JytngB+XhG6o3C55WhrDCXiMqNhP6jpnaKIF+nYfTux9Be++AWbA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=J3wIFTqg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523244993; bh=wRODkf6K0U
+    //ChU/JUgkZBa/CwCLy9hGHYvSWS4MhDQ=; b=koQYYSZr7vp5+qPkX4wNvTefbo
+    alAjah0ljl0eeTfpxrkAMH41hH3FDQM+ZOyt0qYyps2gG/Z2gjlXPKUrzo0Ahe1y
+    KN+IJSX2t89bRe07Ofj9w4ePhVn820ljmEgSTCHKGvdBDQqDftw6VH0u5ZpovpLH
+    eqSxEBBQwg2ZJvwOpoQ7Uw0IgzlMKHg92paz/LiALSsy1jMfoD5ZlK2Y8/m562o9
+    DNDsO2r9LgBpax/Vv9XYx674PN85pMVrhGROLV611vxGF5gfOhH2FRte45Eavd0B
+    bdsavc15avIxz01s0K67WqgWHzPsaWHov8Qc5cC2HeLvQbqB7FnnvI4VSyzA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=cZ930hPJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=J3wIFTqg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=cZ930hPJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,35 +51,36 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFNihFy4zqQmMa+rZew4fjLbybymuTBhkqYyifW6ICUnMzQvOyfzlibeJPt8bXJnLvL/yKveJQBId4QP5YrYrqq8U5Itq5NlzkNUQ7E1yeFsj1gJ94om
-    Utxm54fKNRbfEatPJTiVvKc02uFvY2Gr7DDAuW8agM2zkglNgBhVdqkz6vXGcnG2wGukntdAAEUYgkArMCHBECrpZUONVlyxb37ADcNKYWBVTePBdPYcAGGo
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDdYsppN21GMzRwEX4GXGvhYSPHYLuZSHDiElAht0Y67IE1IOx7mMQGKPE5NEigfGV819dCjRdTR9B870ZJlyfuSgzghClKku5NdwpiqJjbZXDsyILO0
+    alR5jHJGtwLwRaK+XhFaFIhvhLW3GbBXaZUz6wkugoI5V60CTEYuIzQQelBn9/+WMqWSYFF99IklYyxRUs5Nu8IP2hPhngXOWJvDD4F1hGWYfPTdikWC8zWo
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=YF8PD-7RLpV57KenVnkA:9
-    a=wPNLvfGTeEIA:10
+    a=Lf-vpJhqX20A:10 a=yPCof4ZbAAAA:8 a=JDjsHSkAAAAA:8 a=20KFwNOVAAAA:8
+    a=yMhMjlubAAAA:8 a=l2jCzf7jOVhU8yY9kJsA:9 a=68qRyKIKyM3WOb4n:21
+    a=Dwz14HG9gQHMyJBE:21 a=wPNLvfGTeEIA:10 a=dseMxAR1CDlncBZeV_se:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754395AbeDIAVN (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:21:13 -0400
-Received: from mail-sn1nam01on0114.outbound.protection.outlook.com ([104.47.32.114]:12752
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S1752369AbeDIDgP (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 23:36:15 -0400
+Received: from mail-bn3nam01on0108.outbound.protection.outlook.com ([104.47.33.108]:54803
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754377AbeDIAVI (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:21:08 -0400
+        id S1754399AbeDIAVO (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:21:14 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Steve French <smfrench@gmail.com>,
+CC: Chuck Lever <chuck.lever@oracle.com>,
+        "J . Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 159/189] cifs: silence compiler warnings
- showing up with gcc-8.0.0
-Thread-Topic: [PATCH AUTOSEL for 4.15 159/189] cifs: silence compiler warnings
- showing up with gcc-8.0.0
-Thread-Index: AQHTz5hYHpe4hC8FsUadgqu6qzkleA==
-Date: Mon, 9 Apr 2018 00:18:55 +0000
-Message-ID: <20180409001637.162453-159-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 170/189] svcrdma: Fix Read chunk round-up
+Thread-Topic: [PATCH AUTOSEL for 4.15 170/189] svcrdma: Fix Read chunk
+ round-up
+Thread-Index: AQHTz5hd7FYH0eXtlEuxOjSxbzDZbA==
+Date: Mon, 9 Apr 2018 00:19:04 +0000
+Message-ID: <20180409001637.162453-170-alexander.levin@microsoft.com>
 References: <20180409001637.162453-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001637.162453-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -88,74 +89,121 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0920;7:hnHfhlcAon90pbvBsJEtOLN8lYyz5bocm7CLZImq++McFaHEREM/l5YX8vx/WgVhxK5VD6I17t+eMg5bRVzg5qkdJ5HmYgRa+WrfuOd2aickamUfedPAm5I6H1Q9XTR5epyNyHopnBkNEzrdkU34warHHFS3XQoh+4n9PxvrCHaa3FGuaRh9mQprSgzLIamyg6H7sM+9KuiLnKw/fsHAPG5iHIbOZaPz5Jf/mfxGossUW5VW3vM2aWWa2pwobg4d;20:iCSPUSajuOjXeoW1BplAPRIfRSf1coMVHhWXJfZe8Y4Kt2/07zzwu+drlctbSiD9+Ryje0VRnEU++qEuZULba5op6BuMmPasSQc+gW7+/yjGlW0t5A36HfIToEAMU+larTAwN8vNkalnqT5sjcT4P7ndtR/uBOVVdpgvFxHlx04=
-X-MS-Office365-Filtering-Correlation-Id: 56aa3c62-77ee-4823-284f-08d59dafc75f
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1125;7:JjjFqWBM9IRRmFd659CwvAIGDdSEE/gsW4RE9ueoMgFNNOaOsio6pMNl6+uxGprbvxR4STRepBl3+JAqA8DxNo4r9tXTrbdIjAfCxUxyeEIaLHXSInLFKQydA4xP4aPG4ST082/3KFaDqaYf4Np8/PlFaAD+7/vStpk/BqL/LeR/7ocom2/2sDoyqb+Nwak669w1ZVCUkngukxqYXWGM08SEiXMdsiSrqkRSEMDObeWx1KBuxLzg5RpnLeJX/47X;20:Yv3/UVaWgBw1+U/3j/pZdW/vAeZ0yUJcGb8RSo1S7l+RdAmiXFG4BRPJMdfWEVEryejNz0Zt3F5EKB5iehaMJF12Qb3soP4LQYktm/raROjfaZUHJY6AAWhqUmwlahPkweBsr1J6V2cM12fyTKXsx0Y/+7LZ+GdVscamGtIDu1I=
+X-MS-Office365-Filtering-Correlation-Id: 4b5f20de-b4e7-4693-7cd1-08d59dafcba5
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB0920;
-x-ms-traffictypediagnostic: DM5PR2101MB0920:
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB1125;
+x-ms-traffictypediagnostic: DM5PR2101MB1125:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0920EF662B86616430648975FBBF0@DM5PR2101MB0920.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0920;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0920;
+x-microsoft-antispam-prvs: <DM5PR2101MB112586ACD39B66F25C839EFFFBBF0@DM5PR2101MB1125.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(158342451672863)(89211679590171)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1125;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1125;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(396003)(366004)(346002)(376002)(199004)(189003)(66066001)(86362001)(3660700001)(3280700002)(25786009)(76176011)(2900100001)(36756003)(6506007)(2906002)(99286004)(86612001)(6486002)(102836004)(305945005)(1076002)(7736002)(97736004)(2616005)(446003)(11346002)(476003)(486006)(26005)(39060400002)(6666003)(6512007)(4326008)(107886003)(5660300001)(478600001)(6436002)(105586002)(10290500003)(5250100002)(22452003)(316002)(186003)(8676002)(110136005)(81166006)(54906003)(6116002)(8936002)(72206003)(53936002)(2501003)(3846002)(68736007)(14454004)(81156014)(10090500001)(106356001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0920;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: AZzfJG4eXV98LwH7Wivx6I/ytChC/IyLmw1LgTef0W9xnuOQc8ndrAErG4QwFREKIjzRhVtEJL4XvMS72Ijl13Y/7A8/rI6u+5azdzIkEsQz17PVsiYycME+tFuuxCkVpuAEZ5DCK6UZ3WG9i5+uc6Byd28zfRmTtZLtqTnX/G1nn/NyMfHoEoSIqaUM9FQBzah/3CSq+keeOoi1ZiJo6c89lO9/FP7B1tt24KCvz2GVTOESyTJxd5p3PDXCtPevdufxofAE5mT9UaNssgZO0U5lcxTcij7baZ5Pghl160pYBfp3a+od8HCuEtc2FxqU08kn2/+nmC5qHR7yCSIOfGiOXhJnTsaHnWMGT1lPfZKdJyliaitUNncCmjyPDpWNGlXanweqlKi31i6Y2LnbErjMK4TXuj4ty6tHNkp8en0=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(39380400002)(39860400002)(346002)(199004)(189003)(105586002)(7736002)(8676002)(97736004)(81166006)(59450400001)(106356001)(81156014)(305945005)(14454004)(66066001)(1076002)(102836004)(5250100002)(478600001)(2501003)(2900100001)(22452003)(72206003)(68736007)(26005)(86362001)(575784001)(8936002)(76176011)(6506007)(6116002)(6486002)(186003)(5660300001)(3660700001)(316002)(54906003)(110136005)(25786009)(2906002)(10090500001)(6512007)(3280700002)(6666003)(10290500003)(53936002)(99286004)(86612001)(3846002)(6436002)(486006)(4326008)(2616005)(11346002)(107886003)(36756003)(476003)(446003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1125;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: ylFW/C1gY3tOhrdrOK4KTF31X56UqEq3wR3JNH383CYkkXuPc/BvtDgdELYJnpZBbvQOSxjTyczCeg3vG/V0lhef8ACQca6W2KELx64b2YygznzQkBbLc19dyd9BtC3nlbIBBev8n4B+WyXBZmPd1cp91/2fuyzgckb6n2WfXVbg0FScqsTuql+C21tUGmBftf0ugTc+flSfNgan2B+WidS1gh2uZz8P/SpwCyZ2ppZbGo3fYmPTrZENBBbi8Mg0eJW+C9JhsYBBfx2+pYXJafQ9NHqeklpktS5sgLjtbj0xEtLNZCL6oQ/C25yPmRIcMGdPd4BsgT2aWRMy9ZOZ3RR+VB0nEASDz4UX7mvn0sT7GQ73v7J7nNXxPJQTn+HEt3P2RDnVStT4VRsXA67OfgLwSShVWRg+OvuhjXAk9+o=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56aa3c62-77ee-4823-284f-08d59dafc75f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:18:55.9401
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b5f20de-b4e7-4693-7cd1-08d59dafcba5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:19:04.0022
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0920
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1125
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-[ Upstream commit ade7db991b47ab3016a414468164f4966bd08202 ]
+[ Upstream commit 175e03101d36c3034f3c80038d4c28838351a7f2 ]
 
-This bug was fixed before, but came up again with the latest
-compiler in another function:
+A single NFSv4 WRITE compound can often have three operations:
+PUTFH, WRITE, then GETATTR.
 
-fs/cifs/cifssmb.c: In function 'CIFSSMBSetEA':
-fs/cifs/cifssmb.c:6362:3: error: 'strncpy' offset 8 is out of the bounds [0=
-, 4] [-Werror=3Darray-bounds]
-   strncpy(parm_data->list[0].name, ea_name, name_len);
+When the WRITE payload is sent in a Read chunk, the client places
+the GETATTR in the inline part of the RPC/RDMA message, just after
+the WRITE operation (sans payload). The position value in the Read
+chunk enables the receiver to insert the Read chunk at the correct
+place in the received XDR stream; that is between the WRITE and
+GETATTR.
 
-Let's apply the same fix that was used for the other instances.
+According to RFC 8166, an NFS/RDMA client does not have to add XDR
+round-up to the Read chunk that carries the WRITE payload. The
+receiver adds XDR round-up padding if it is absent and the
+receiver's XDR decoder requires it to be present.
 
-Fixes: b2a3ad9ca502 ("cifs: silence compiler warnings showing up with gcc-4=
-.7.0")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Steve French <smfrench@gmail.com>
+Commit 193bcb7b3719 ("svcrdma: Populate tail iovec when receiving")
+attempted to add support for receiving such a compound so that just
+the WRITE payload appears in rq_arg's page list, and the trailing
+GETATTR is placed in rq_arg's tail iovec. (TCP just strings the
+whole compound into the head iovec and page list, without regard
+to the alignment of the WRITE payload).
+
+The server transport logic also had to accommodate the optional XDR
+round-up of the Read chunk, which it did simply by lengthening the
+tail iovec when round-up was needed. This approach is adequate for
+the NFSv2 and NFSv3 WRITE decoders.
+
+Unfortunately it is not sufficient for nfsd4_decode_write. When the
+Read chunk length is a couple of bytes less than PAGE_SIZE, the
+computation at the end of nfsd4_decode_write allows argp->pagelen to
+go negative, which breaks the logic in read_buf that looks for the
+tail iovec.
+
+The result is that a WRITE operation whose payload length is just
+less than a multiple of a page succeeds, but the subsequent GETATTR
+in the same compound fails with NFS4ERR_OP_ILLEGAL because the XDR
+decoder can't find it. Clients ignore the error, but they must
+update their attribute cache via a separate round trip.
+
+As nfsd4_decode_write appears to expect the payload itself to always
+have appropriate XDR round-up, have svc_rdma_build_normal_read_chunk
+add the Read chunk XDR round-up to the page_len rather than
+lengthening the tail iovec.
+
+Reported-by: Olga Kornievskaia <kolga@netapp.com>
+Fixes: 193bcb7b3719 ("svcrdma: Populate tail iovec when receiving")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Tested-by: Olga Kornievskaia <kolga@netapp.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/cifs/cifssmb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/sunrpc/xprtrdma/svc_rdma_rw.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-index 35dc5bf01ee2..7fd39ea6e22e 100644
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -6331,9 +6331,7 @@ SetEARetry:
- 	pSMB->InformationLevel =3D
- 		cpu_to_le16(SMB_SET_FILE_EA);
+diff --git a/net/sunrpc/xprtrdma/svc_rdma_rw.c b/net/sunrpc/xprtrdma/svc_rd=
+ma_rw.c
+index 9bd04549a1ad..12b9a7e0b6d2 100644
+--- a/net/sunrpc/xprtrdma/svc_rdma_rw.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_rw.c
+@@ -727,12 +727,16 @@ static int svc_rdma_build_normal_read_chunk(struct sv=
+c_rqst *rqstp,
+ 		head->arg.head[0].iov_len - info->ri_position;
+ 	head->arg.head[0].iov_len =3D info->ri_position;
 =20
--	parm_data =3D
--		(struct fealist *) (((char *) &pSMB->hdr.Protocol) +
--				       offset);
-+	parm_data =3D (void *)pSMB + offsetof(struct smb_hdr, Protocol) + offset;
- 	pSMB->ParameterOffset =3D cpu_to_le16(param_offset);
- 	pSMB->DataOffset =3D cpu_to_le16(offset);
- 	pSMB->SetupCount =3D 1;
+-	/* Read chunk may need XDR roundup (see RFC 5666, s. 3.7).
++	/* Read chunk may need XDR roundup (see RFC 8166, s. 3.4.5.2).
+ 	 *
+-	 * NFSv2/3 write decoders need the length of the tail to
+-	 * contain the size of the roundup padding.
++	 * If the client already rounded up the chunk length, the
++	 * length does not change. Otherwise, the length of the page
++	 * list is increased to include XDR round-up.
++	 *
++	 * Currently these chunks always start at page offset 0,
++	 * thus the rounded-up length never crosses a page boundary.
+ 	 */
+-	head->arg.tail[0].iov_len +=3D 4 - (info->ri_chunklen & 3);
++	info->ri_chunklen =3D XDR_QUADLEN(info->ri_chunklen) << 2;
+=20
+ 	head->arg.page_len =3D info->ri_chunklen;
+ 	head->arg.len +=3D info->ri_chunklen;
 --=20
 2.15.1
