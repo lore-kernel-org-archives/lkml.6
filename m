@@ -1,127 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeDIHZ4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:25:56 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:46065 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751794AbeDIHZy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:25:54 -0400
-X-Originating-IP: 158.255.198.50
-Date: Mon, 9 Apr 2018 09:25:47 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, ysato@users.sourceforge.jp,
-        dalias@libc.org, laurent.pinchart@ideasonboard.com,
-        geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-sh@vger.kernel.org
-Subject: Re: [RFC v2 2/2] base: dma-mapping: Postpone page_to_pfn() on mmap()
-Message-ID: <20180409072547.GU20945@w540>
-References: <1510679286-6988-1-git-send-email-jacopo+renesas@jmondi.org>
- <1510679286-6988-3-git-send-email-jacopo+renesas@jmondi.org>
- <ea4f2d82-6a27-a7c1-091f-6230cfd988a3@arm.com>
+        id S1752226AbeDIH0M (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:26:12 -0400
+Received: from mga02.intel.com ([134.134.136.20]:61078 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751140AbeDIH0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 03:26:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,426,1517904000";
+   d="scan'208";a="31225627"
+Subject: [PATCH v5 2/3] perf report: extend raw dump (-D) out with switch out
+ event type
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+References: <ff228fc5-5742-a5fe-8cad-79704742672c@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <6f5aebb9-b96c-f304-f08f-8f046d38de4f@linux.intel.com>
+Date: Mon, 9 Apr 2018 10:26:05 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="8a48p4KKsB+A/3VY"
-Content-Disposition: inline
-In-Reply-To: <ea4f2d82-6a27-a7c1-091f-6230cfd988a3@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <ff228fc5-5742-a5fe-8cad-79704742672c@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---8a48p4KKsB+A/3VY
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Print additional 'preempt' tag for PERF_RECORD_SWITCH[_CPU_WIDE] OUT records when
+event header misc field contains PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit set 
+designating preemption context switch out event:
 
-Hi Robin, Laurent,
-    a long time passed, sorry about this.
+tools/perf/perf report -D -i perf.data | grep _SWITCH
 
-On Wed, Nov 15, 2017 at 01:38:23PM +0000, Robin Murphy wrote:
-> On 14/11/17 17:08, Jacopo Mondi wrote:
-> >On SH4 architecture, with SPARSEMEM memory model, translating page to
-> >pfn hangs the CPU. Post-pone translation to pfn after
-> >dma_mmap_from_dev_coherent() function call as it succeeds and make page
-> >translation not necessary.
-> >
-> >This patch was suggested by Laurent Pinchart and he's working to submit
-> >a proper fix mainline. Not sending for inclusion at the moment.
->
-> Y'know, I think this patch does have some merit by itself - until we know
-> that cpu_addr *doesn't* represent some device-private memory which is not
-> guaranteed to be backed by a struct page, calling virt_to_page() on it is
-> arguably semantically incorrect, even if it might happen to be benign in
-> most cases.
+0 768361415226 0x27f076 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     8/8    
+4 768362216813 0x28f45e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
+4 768362217824 0x28f486 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
+0 768362414027 0x27f0ce [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:     8/8    
+0 768362414367 0x27f0f6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
 
-I still need to carry this patch in my trees to have a working dma memory mapping
-on SH4 platforms. My understanding from your comment is that there may
-be a way forward for this patch, do you still think the same? Have you
-got any suggestion on how to improve this eventually for inclusion?
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ tools/perf/util/event.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks
-   j
-
->
-> Robin.
->
-> >Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >---
-> >  drivers/base/dma-mapping.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> >diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
-> >index e584edd..73d64d3 100644
-> >--- a/drivers/base/dma-mapping.c
-> >+++ b/drivers/base/dma-mapping.c
-> >@@ -227,8 +227,8 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
-> >  #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
-> >  	unsigned long user_count = vma_pages(vma);
-> >  	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> >-	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
-> >  	unsigned long off = vma->vm_pgoff;
-> >+	unsigned long pfn;
-> >
-> >  	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-> >
-> >@@ -236,6 +236,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
-> >  		return ret;
-> >
-> >  	if (off < count && user_count <= (count - off)) {
-> >+		pfn = page_to_pfn(virt_to_page(cpu_addr));
-> >  		ret = remap_pfn_range(vma, vma->vm_start,
-> >  				      pfn + off,
-> >  				      user_count << PAGE_SHIFT,
-> >--
-> >2.7.4
-> >
-> >_______________________________________________
-> >iommu mailing list
-> >iommu@lists.linux-foundation.org
-> >https://lists.linuxfoundation.org/mailman/listinfo/iommu
-> >
-
---8a48p4KKsB+A/3VY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJayxV7AAoJEHI0Bo8WoVY8poQP/RLuihAmfxnsaF8Y5vpyWWQT
-GS7+W9OGNVGOn8IeMsp0Lq+GSpzqHVd8o18/06m1Cp+4KIzhgbGrOPpSHBZ4qMON
-oi98PJHrMWxIqzgSt/ejjXQ70USkEAOfv4tMZ8R8QnzFcOZ4Ka/ppoH2JuSzb0E5
-XCKfgkqFu7VyT5cQCERb0+orAVmj5w4vpglIr6igE0UTh0XjubXqtIxFitH3qmdw
-cnboVo3SH7eTLTDzSWdOPUi0aPRditdbHOpencmWpwtKQRAwFx7xwtefWkrML+dT
-n8Ygl0VOk+B5zYlb1JMCmX1/btaxOl9P7wDI0IkUwuEY3S7ZWmpzoWnlw/Fzbnlb
-wWoEmTLuM514Qd9UTB98hDqpsZhe5D/Zo7kExHAU+peucxUyfZ6g2q1mwrDYwUY+
-BP78VWaQc4lHQZ9xBGkHgaXzmVHjmEjXFWe+L/3z1iGmngYdR4/b5Dhfw1GXT6mt
-PHcliy3AbgHT/wr55WBCEB2+xdl7tChdv/Hl2x89kDqkRXFnS+uWsIJ4qd4U0DIy
-oDb/6g4TAbGV7j/k3gEQT4MkclRYrv/rlDVyYZrGIWn6oX8iDieVLoJSa2mNa59K
-sAWLR3Ca+vLaGI+WOn+8mvg0ZxW4Wywi5xwiru98RVPHI1CxGQGL1Hm3ayyK/K+F
-H2NKjX9Nm20Zg0HDf/oh
-=MB4Z
------END PGP SIGNATURE-----
-
---8a48p4KKsB+A/3VY--
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index f0a6cbd033cc..98ff3a6a3d50 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1421,7 +1421,9 @@ size_t perf_event__fprintf_itrace_start(union perf_event *event, FILE *fp)
+ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp)
+ {
+ 	bool out = event->header.misc & PERF_RECORD_MISC_SWITCH_OUT;
+-	const char *in_out = out ? "OUT" : "IN ";
++	const char *in_out = !out ? "IN         " :
++		!(event->header.misc & PERF_RECORD_MISC_SWITCH_OUT_PREEMPT) ?
++				    "OUT        " : "OUT preempt";
+ 
+ 	if (event->header.type == PERF_RECORD_SWITCH)
+ 		return fprintf(fp, " %s\n", in_out);
