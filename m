@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752988AbeDIOjp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 10:39:45 -0400
+        id S1753015AbeDIOkF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 10:40:05 -0400
 Received: from mail-sh2.amlogic.com ([58.32.228.45]:33394 "EHLO
         mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752965AbeDIOjn (ORCPT
+        with ESMTP id S1751697AbeDIOjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 10:39:43 -0400
+        Mon, 9 Apr 2018 10:39:42 -0400
 From: Yixun Lan <yixun.lan@amlogic.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
@@ -18,9 +18,9 @@ CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
         Qiufang Dai <qiufang.dai@amlogic.com>,
         <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 7/7] clk: meson: drop CLK_IGNORE_UNUSED flag
-Date: Mon, 9 Apr 2018 22:37:49 +0800
-Message-ID: <20180409143749.71197-8-yixun.lan@amlogic.com>
+Subject: [PATCH v5 6/7] clk: meson: drop CLK_SET_RATE_PARENT flag
+Date: Mon, 9 Apr 2018 22:37:48 +0800
+Message-ID: <20180409143749.71197-7-yixun.lan@amlogic.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180409143749.71197-1-yixun.lan@amlogic.com>
 References: <20180409143749.71197-1-yixun.lan@amlogic.com>
@@ -31,39 +31,23 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rely on drivers to request the clock explicitly.
-
-Previous the kernel will leave the clock on while
-bootloader adready initilized the clock, this wasn't
-optimal way, so fix it here.
+The clk81 is not expected to be changed, so drop this flag.
 
 Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- drivers/clk/meson/axg-aoclk.c  | 1 -
- drivers/clk/meson/gxbb-aoclk.c | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/clk/meson/gxbb-aoclk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-index cb56d809d3df..8457b64b9b7c 100644
---- a/drivers/clk/meson/axg-aoclk.c
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -27,7 +27,6 @@ static struct clk_regmap _name##_ao = {					\
- 		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
--		.flags = CLK_IGNORE_UNUSED,				\
- 	},								\
- }
- 
 diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index b3c90a17c0e0..2327eb609fbe 100644
+index f2e0640a7f74..b3c90a17c0e0 100644
 --- a/drivers/clk/meson/gxbb-aoclk.c
 +++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -70,7 +70,6 @@ static struct clk_regmap _name##_ao = {					\
+@@ -70,7 +70,7 @@ static struct clk_regmap _name##_ao = {					\
  		.ops = &clk_regmap_gate_ops,				\
  		.parent_names = (const char *[]){ "clk81" },		\
  		.num_parents = 1,					\
--		.flags = CLK_IGNORE_UNUSED,				\
+-		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
++		.flags = CLK_IGNORE_UNUSED,				\
  	},								\
  }
  
