@@ -1,142 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753380AbeDITZB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 15:25:01 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:33107 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753056AbeDITY6 (ORCPT
+        id S1752857AbeDIT3u (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 15:29:50 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53856 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751543AbeDIT3s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 15:24:58 -0400
-X-Google-Smtp-Source: AIpwx48O1BqWsPcAqCTSEmBKcstT91w8y6bZPKWCcWNTQ0lc/fP+1Pj9Af4/0NlOAIh4dZ7s0kpKFg==
-Date: Mon, 9 Apr 2018 14:24:56 -0500
-From: Rob Herring <robh@kernel.org>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Lee Jones <lee.jones@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Wim Van Sebroeck <wim@iguana.be>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: mfd: Add Gateworks System Controller
- bindings
-Message-ID: <20180409192456.ne4zgdqozucquk42@rob-hp-laptop>
-References: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
- <1522250043-8065-2-git-send-email-tharvey@gateworks.com>
- <20180328162416.GB25325@roeck-us.net>
- <CAJ+vNU2aUN4ME3+RA3DNPO75O6vPBcQpuRSfQJ4_Ns_zQAtCCQ@mail.gmail.com>
- <20180328202321.GA21664@roeck-us.net>
- <CAJ+vNU1cJFYTv3N6TZQ3k-VQw=0jxHEntpMxeSAOhWAb_ap81g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJ+vNU1cJFYTv3N6TZQ3k-VQw=0jxHEntpMxeSAOhWAb_ap81g@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Mon, 9 Apr 2018 15:29:48 -0400
+X-Google-Smtp-Source: AIpwx4+Obj981OSi38i8kE74k3pE5g2ZP8OMjxODlmmzmzDmGMicCZXVvIQEEW+lJcUCvhkWR88GdQ==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/15] Memory controller hot reset
+Date: Mon,  9 Apr 2018 22:28:22 +0300
+Message-Id: <cover.1523301400.git.digetx@gmail.com>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 01:53:53PM -0700, Tim Harvey wrote:
-> On Wed, Mar 28, 2018 at 1:23 PM, Guenter Roeck <linux@roeck-us.net> wrote:
-> > On Wed, Mar 28, 2018 at 12:17:34PM -0700, Tim Harvey wrote:
-> >> On Wed, Mar 28, 2018 at 9:24 AM, Guenter Roeck <linux@roeck-us.net> wrote:
-> >> > On Wed, Mar 28, 2018 at 08:14:00AM -0700, Tim Harvey wrote:
-> >> >> This patch adds documentation of device-tree bindings for the
-> >> >> Gateworks System Controller (GSC).
-> >> >>
-> >> >> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> >> >> ---
-> >> >> v3:
-> >> >>  - replaced _ with -
-> >> >>  - remove input bindings
-> >> >>  - added full description of hwmon
-> >> >>  - fix unit address of hwmon child nodes
-> >> >>
-> >> >> ---
-> >> >>  .../devicetree/bindings/mfd/gateworks-gsc.txt      | 135 +++++++++++++++++++++
-> >> >>  1 file changed, 135 insertions(+)
-> >> >>  create mode 100644 Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
-> >> >>
-> >> >> diff --git a/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt b/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
-> >> >> new file mode 100644
-> >> >> index 0000000..8f530ed
-> >> >> --- /dev/null
-> >> >> +++ b/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
-> >> >> @@ -0,0 +1,135 @@
-> >> >> +Gateworks System Controller multi-function device
-> >> >> +
-> >> >> +The GSC is a Multifunction I2C slave device with the following submodules:
-> >> >> +- WDT
-> >> >> +- GPIO
-> >> >> +- Pushbutton controller
-> >> >> +- HWMON
-> >> >> +
-> >> >> +Required properties:
-> >> >> +- compatible : Must be "gw,gsc"
-> >> >> +- reg: I2C address of the device
-> >> >> +- interrupts: interrupt triggered by GSC_IRQ# signal
-> >> >> +- interrupt-parent: Interrupt controller GSC is connected to
-> >> >> +- #interrupt-cells: should be <1>, index of the interrupt within the
-> >> >> +  controller, in accordance with the "one cell" variant of
-> >> >> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
-> >> >> +
-> >> >> +Optional nodes:
-> >> >> +* watchdog:
-> >> >> +The GSC provides a Watchdog monitor which can power cycle the board's
-> >> >> +primary power supply on most board models when tripped.
-> >> >> +
-> >> >> +Required watchdog properties:
-> >> >> +- compatible: must be "gw,gsc-watchdog"
-> >> >> +
-> >> >> +* hwmon:
-> >> >> +The GSC provides a set of Analog to Digitcal Converter (ADC) pins used for
-> >> >> +temperature and/or voltage monitoring.
-> >> >> +
-> >> >> +Required hwmon properties:
-> >> >> +- compatible: must be "gw,gsc-hwmon"
-> >> >> +
-> >> >
-> >> > "hwmon" is a very Linux specific term. It might make sense to find a more
-> >> > generic term.
-> >>
-> >> The 'hwmon' driver supports child nodes that fall into the following category:
-> >>  - temperature sensor (GSC internal temperature sensor - i2c registers
-> >> returns value in C*10)
-> >>  - voltage rails (two types here; cooked: i2c registers return
-> >> pre-scaled value in mV), raw: i2c registers return a raw ADC value
-> >> that must be scaled based on ADC internal ref voltage and resolution
-> >> and adjusted for a voltage divider to convert to mV
-> >>  - fan setpoints (I'll explain these below)
-> >>
-> >> I called the node 'gw,gsc-hwmon' because the driver fits into the
-> >> 'hwmon' API. Isn't that appropriate here for the driver compatible
-> >> string?
-> >>
-> >
-> > Devicetree properties are supposed to be OS independent.
+Tegra's memory controller has a "memory hot reset" functionality that
+blocks all memory transactions for the memory client, which is required
+for a proper HW resetting. HW could be in process of performing DMA while
+being reset and this could lead to a system hang or memory corruption, so
+here comes the memory hot reset that blocks all interactions of HW with
+memory so that it could be reset safely.
 
-+1
+Changelog:
 
-> >
-> >> >
-> >> >> +Optional hwmon properties:
-> >> >> +- gw,reference-voltage: ADC reference voltage (mV) used in scaling raw ADCs
-> >> >
-> >> > AFAIK devicetree likes to specify voltages in uV.
-> >>
-> >> There are currently plenty of dt props specified in mV (grep -r mV
-> >> Documentation/devicetree/bindings/).
-> >>
-> >
-> > "But so many others are speeding, why do I get a ticket ?"
-> >
-> > Please discuss with Rob.
-> 
-> Yes - hoping for feedback on mV vs uV as well as naming of hwmon mfd child node.
+V4:
+        Fixed compilation warning about unused function for the case where
+        Tegra20 SoC isn't enabled in Kconfig, corrected typos in commit
+        messages.
 
-Use what is defined in 
-Documentation/devicetree/bindings/property-units.txt. If you don't like 
-what is there, then add to it first. But generally you should have some 
-reason why what's there doesn't work for you.
+V3:
+        Addressed review comments to V2 from Thierry Reding. MC now
+        uses generic reset controller API instead of a custom one,
+        hence DT changes are now involved and so Rob Herring is CC'd
+        for a review.
 
-Rob
+        Added couple minor cleanup/correction patches.
+
+V2:
+        Basically a re-send of V1 with some minor changes.
+
+
+Dmitry Osipenko (14):
+  dt-bindings: arm: tegra: Remove duplicated Tegra30+ MC binding
+  dt-bindings: memory: tegra: Document #reset-cells property of the
+    Tegra30 MC
+  dt-bindings: arm: tegra: Document #reset-cells property of the Tegra20
+    MC
+  dt-bindings: memory: tegra: Add hot resets definitions
+  memory: tegra: Do not handle spurious interrupts
+  memory: tegra: Setup interrupts mask before requesting IRQ
+  memory: tegra: Apply interrupts mask per SoC
+  memory: tegra: Remove unused headers inclusions
+  memory: tegra: Squash tegra20-mc into common tegra-mc driver
+  memory: tegra: Introduce memory client hot reset
+  memory: tegra: Add Tegra124 memory controller hot resets
+  memory: tegra: Add Tegra114 memory controller hot resets
+  memory: tegra: Add Tegra30 memory controller hot resets
+  memory: tegra: Add Tegra20 memory controller hot resets
+
+Thierry Reding (1):
+  memory: tegra: Add Tegra210 memory controller hot resets
+
+ .../bindings/arm/tegra/nvidia,tegra20-mc.txt       |  12 +-
+ .../bindings/arm/tegra/nvidia,tegra30-mc.txt       |  18 --
+ .../memory-controllers/nvidia,tegra30-mc.txt       |   5 +
+ drivers/memory/Kconfig                             |  10 -
+ drivers/memory/Makefile                            |   1 -
+ drivers/memory/tegra/Makefile                      |   1 +
+ drivers/memory/tegra/mc.c                          | 358 +++++++++++++++++++--
+ drivers/memory/tegra/mc.h                          |  22 ++
+ drivers/memory/tegra/tegra114.c                    |  35 ++
+ drivers/memory/tegra/tegra124.c                    |  48 +++
+ drivers/memory/tegra/tegra20.c                     | 296 +++++++++++++++++
+ drivers/memory/tegra/tegra210.c                    |  53 ++-
+ drivers/memory/tegra/tegra30.c                     |  35 ++
+ drivers/memory/tegra20-mc.c                        | 254 ---------------
+ include/dt-bindings/memory/tegra114-mc.h           |  19 ++
+ include/dt-bindings/memory/tegra124-mc.h           |  25 ++
+ include/dt-bindings/memory/tegra20-mc.h            |  21 ++
+ include/dt-bindings/memory/tegra210-mc.h           |  31 ++
+ include/dt-bindings/memory/tegra30-mc.h            |  19 ++
+ include/soc/tegra/mc.h                             |  37 ++-
+ 20 files changed, 978 insertions(+), 322 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-mc.txt
+ create mode 100644 drivers/memory/tegra/tegra20.c
+ delete mode 100644 drivers/memory/tegra20-mc.c
+ create mode 100644 include/dt-bindings/memory/tegra20-mc.h
+
+-- 
+2.16.3
