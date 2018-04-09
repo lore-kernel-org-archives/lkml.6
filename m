@@ -1,93 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753074AbeDISmD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 14:42:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59138 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751767AbeDISmC (ORCPT
+        id S1753070AbeDISpT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 14:45:19 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:38196 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751688AbeDISpS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 14:42:02 -0400
-Date: Mon, 9 Apr 2018 11:42:58 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH] memory-model: fix cheat sheet typo
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1523292618-10207-1-git-send-email-pbonzini@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523292618-10207-1-git-send-email-pbonzini@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040918-2213-0000-0000-0000028CD300
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008825; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000256; SDB=6.01015496; UDB=6.00517792; IPR=6.00794747;
- MB=3.00020488; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-09 18:41:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040918-2214-0000-0000-000059B0FB3B
-Message-Id: <20180409184258.GP3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804090189
+        Mon, 9 Apr 2018 14:45:18 -0400
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc: jgross@suse.com, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH] xen/pvh: Indicate XENFEAT_linux_rsdp_unrestricted to Xen
+Date: Mon,  9 Apr 2018 14:51:44 -0400
+Message-Id: <1523299904-18199-1-git-send-email-boris.ostrovsky@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8858 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804090189
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 06:50:15PM +0200, Paolo Bonzini wrote:
-> "RWM" should be "RMW", and that's more or less the extent to which I
-> can claim to change the document. :)  In particular, "Self" is not
-> documented and the difference between "Self" and "SV" is not clear
-> to me.
-> 
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Pre-4.17 kernels ignored start_info's rsdp_paddr pointer and instead
+relied on finding RSDP in standard location in BIOS RO memory. This
+has worked since that's where Xen used to place it.
 
-Applied, though without the questions.  ;-)
+However, with recent Xen change (commit 4a5733771e6f ("libxl: put RSDP
+for PVH guest near 4GB")) it prefers to keep RSDP at a "non-standard"
+address. Even though as of commit b17d9d1df3c3 ("x86/xen: Add pvh
+specific rsdp address retrieval function") Linux is able to find RSDP,
+for back-compatibility reasons we need to indicate to Xen that we can
+handle this, an we do so by setting XENFEAT_linux_rsdp_unrestricted
+flag in ELF notes.
 
-"Self" is for things like smp_load_acquire() and smp_store_release()
-that order themselves against later and earlier accesses, respectively.
-This ordering applies to later/earlier access to all variables, not
-just the one that smp_load_acquire()/smp_store_release() accessed.
-In contrast, things like smp_mb() order only other accesses, not
-themselves.  Or at least it is impossible to proves whether or not they
-order themselves because they are not separately visible to other CPUs.
+(Also take this opportunity and sync features.h header file with Xen)
 
-"SV" is "same variable", which applies to pretty much anything that
-accesses a variable, but not to things like smp_mb() which do not.
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+---
+XENFEAT_linux_rsdp_unrestricted inly makes sense for CONFIG_XEN_PVH but
+I set it uncoditionally to avoid what I think is unnecessary ifdefery.
 
-Does that help?
+ arch/x86/xen/xen-head.S          |  4 +++-
+ include/xen/interface/features.h | 23 +++++++++++++++++++++++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
 
-							Thanx, Paul
-
-> ---
->  tools/memory-model/Documentation/cheatsheet.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/memory-model/Documentation/cheatsheet.txt b/tools/memory-model/Documentation/cheatsheet.txt
-> index 956b1ae4aafb..c0eafdaddfa4 100644
-> --- a/tools/memory-model/Documentation/cheatsheet.txt
-> +++ b/tools/memory-model/Documentation/cheatsheet.txt
-> @@ -1,6 +1,6 @@
->                                    Prior Operation     Subsequent Operation
->                                    ---------------  ---------------------------
-> -                               C  Self  R  W  RWM  Self  R  W  DR  DW  RMW  SV
-> +                               C  Self  R  W  RMW  Self  R  W  DR  DW  RMW  SV
->                                --  ----  -  -  ---  ----  -  -  --  --  ---  --
-> 
->  Store, e.g., WRITE_ONCE()            Y                                       Y
-> -- 
-> 1.8.3.1
-> 
+diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
+index 96f26e0..5077ead 100644
+--- a/arch/x86/xen/xen-head.S
++++ b/arch/x86/xen/xen-head.S
+@@ -89,7 +89,9 @@ END(hypercall_page)
+ 	ELFNOTE(Xen, XEN_ELFNOTE_FEATURES,
+ 		.ascii "!writable_page_tables|pae_pgdir_above_4gb")
+ 	ELFNOTE(Xen, XEN_ELFNOTE_SUPPORTED_FEATURES,
+-		.long (1 << XENFEAT_writable_page_tables) | (1 << XENFEAT_dom0))
++		.long (1 << XENFEAT_writable_page_tables) |       \
++		      (1 << XENFEAT_dom0) |                       \
++		      (1 << XENFEAT_linux_rsdp_unrestricted))
+ 	ELFNOTE(Xen, XEN_ELFNOTE_PAE_MODE,       .asciz "yes")
+ 	ELFNOTE(Xen, XEN_ELFNOTE_LOADER,         .asciz "generic")
+ 	ELFNOTE(Xen, XEN_ELFNOTE_L1_MFN_VALID,
+diff --git a/include/xen/interface/features.h b/include/xen/interface/features.h
+index 9b0eb57..6d1384a 100644
+--- a/include/xen/interface/features.h
++++ b/include/xen/interface/features.h
+@@ -42,6 +42,9 @@
+ /* x86: Does this Xen host support the MMU_PT_UPDATE_PRESERVE_AD hypercall? */
+ #define XENFEAT_mmu_pt_update_preserve_ad  5
+ 
++/* x86: Does this Xen host support the MMU_{CLEAR,COPY}_PAGE hypercall? */
++#define XENFEAT_highmem_assist             6
++
+ /*
+  * If set, GNTTABOP_map_grant_ref honors flags to be placed into guest kernel
+  * available pte bits.
+@@ -60,6 +63,26 @@
+ /* operation as Dom0 is supported */
+ #define XENFEAT_dom0                      11
+ 
++/* Xen also maps grant references at pfn = mfn.
++ * This feature flag is deprecated and should not be used.
++#define XENFEAT_grant_map_identity        12
++ */
++
++/* Guest can use XENMEMF_vnode to specify virtual node for memory op. */
++#define XENFEAT_memory_op_vnode_supported 13
++
++/* arm: Hypervisor supports ARM SMC calling convention. */
++#define XENFEAT_ARM_SMCCC_supported       14
++
++/*
++ * x86/PVH: If set, ACPI RSDP can be placed at any address. Otherwise RSDP
++ * must be located in lower 1MB, as required by ACPI Specification for IA-PC
++ * systems.
++ * This feature flag is only consulted if XEN_ELFNOTE_GUEST_OS contains
++ * the "linux" string.
++ */
++#define XENFEAT_linux_rsdp_unrestricted   15
++
+ #define XENFEAT_NR_SUBMAPS 1
+ 
+ #endif /* __XEN_PUBLIC_FEATURES_H__ */
+-- 
+1.8.3.1
