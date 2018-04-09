@@ -1,60 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753499AbeDIRtV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 13:49:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48938 "EHLO
+        id S1752947AbeDIRxG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 13:53:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49326 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751942AbeDIRtT (ORCPT
+        with ESMTP id S1751942AbeDIRxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 13:49:19 -0400
-Date: Mon, 9 Apr 2018 10:49:18 -0700
+        Mon, 9 Apr 2018 13:53:04 -0400
+Date: Mon, 9 Apr 2018 10:52:51 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: "Oliver O'Halloran" <oohall@gmail.com>
-Cc: linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-        devicetree@vger.kernel.org, linux-nvdimm@lists.01.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] drivers/of: Introduce ARCH_HAS_OWN_OF_NUMA
-Message-ID: <20180409174918.GA4629@infradead.org>
-References: <20180409074604.17671-1-oohall@gmail.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, robin.murphy@arm.com,
+        dalias@libc.org, ysato@users.sourceforge.jp, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org
+Subject: Re: [PATCH] base: dma-mapping: Postpone cpu addr translation on
+ mmap()
+Message-ID: <20180409175251.GA5426@infradead.org>
+References: <1523293148-18726-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409074604.17671-1-oohall@gmail.com>
+In-Reply-To: <1523293148-18726-1-git-send-email-jacopo+renesas@jmondi.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 05:46:04PM +1000, Oliver O'Halloran wrote:
-> Some OF platforms (pseries and some SPARC systems) has their own
-> implementations of NUMA affinity detection rather than using the generic
-> OF_NUMA driver, which mainly exists for arm64. For other platforms one
-> of two fallbacks provided by the base OF driver are used depending on
-> CONFIG_NUMA.
-> 
-> In the CONFIG_NUMA=n case the fallback is an inline function in of.h.
-> In the =y case the fallback is a real function which is defined as a
-> weak symbol so that it may be overwritten by the architecture if desired.
-> 
-> The problem with this arrangement is that the real implementations all
-> export of_node_to_nid(). Unfortunately it's not possible to export the
-> fallback since it would clash with the non-weak version. As a result
-> we get build failures when:
-> 
-> a) CONFIG_NUMA=y && CONFIG_OF=y, and
-> b) The platform doesn't implement of_node_to_nid(), and
-> c) A module uses of_node_to_nid()
-> 
-> Given b) will be true for most platforms this is fairly easy to hit
-> and has been observed on ia64 and x86.
-> 
-> This patch remedies the problem by introducing the ARCH_HAS_OWN_OF_NUMA
-> Kconfig option which is selected if an architecture provides an
-> implementation of of_node_to_nid(). If a platform does not use it's own,
-> or the generic OF_NUMA, then always use the inline fallback in of.h so
-> we don't need to futz around with exports.
+On Mon, Apr 09, 2018 at 06:59:08PM +0200, Jacopo Mondi wrote:
+> I'm still a bit puzzled on what happens if dma_mmap_from_dev_coherent() fails.
+> Does a dma_mmap_from_dev_coherent() failure guarantee anyhow that the
+> successive virt_to_page() isn't problematic as it is today?
+> Or is it the
+>  	if (off < count && user_count <= (count - off))
+> check that makes the translation safe?
 
-I'd rather have a specific kconfig symbol for the 'generic'
-implementation, especially given that it doesn't appear to be all
-that generic.
+It doesn't.  I think one major issue is that we should not simply fall
+to dma_common_mmap if no method is required, but need every instance of
+dma_map_ops to explicitly opt into an mmap method that is known to work.
+
+>  #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
+>  	unsigned long user_count = vma_pages(vma);
+>  	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> -	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
+>  	unsigned long off = vma->vm_pgoff;
+> +	unsigned long pfn;
+> 
+>  	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+> 
+> @@ -235,6 +235,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+>  		return ret;
+> 
+>  	if (off < count && user_count <= (count - off)) {
+> +		pfn = page_to_pfn(virt_to_page(cpu_addr));
+>  		ret = remap_pfn_range(vma, vma->vm_start,
+>  				      pfn + off,
+>  				      user_count << PAGE_SHIFT,
+
+Why not:
+
+		ret = remap_pfn_range(vma, vma->vm_start,
+				page_to_pfn(virt_to_page(cpu_addr)) + off,
+
+and save the temp variable?
