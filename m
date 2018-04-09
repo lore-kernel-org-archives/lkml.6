@@ -1,203 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751767AbeDIFhz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 01:37:55 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:43452 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750895AbeDIFhy (ORCPT
+        id S1752136AbeDIFln (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 01:41:43 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.167]:13984 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751549AbeDIFll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 01:37:54 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="38702747"
-Subject: Re: [RFC PATCH] x86/acpi: Prevent x2apic id -1 from being accounted
-To: Li RongQing <lirongqing@baidu.com>, <linux-kernel@vger.kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <jgross@suse.com>, <x86@kernel.org>, <peterz@infradead.org>
-References: <1523187531-29837-1-git-send-email-lirongqing@baidu.com>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <f137d895-b8b9-d2eb-bbf9-3e5cd8089291@cn.fujitsu.com>
-Date: Mon, 9 Apr 2018 13:37:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Mon, 9 Apr 2018 01:41:41 -0400
+X-RZG-AUTH: :P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9x24dP3Zg1I6xSGfZ
+X-RZG-CLASS-ID: mo00
+From: Stephan Mueller <smueller@chronox.de>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+        Eric Biggers <ebiggers3@gmail.com>,
+        syzbot <syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] crypto: DRBG - guard uninstantion by lock
+Date: Mon, 09 Apr 2018 07:40:55 +0200
+Message-ID: <58589900.TM7ux0T285@tauon.chronox.de>
+In-Reply-To: <20180408224603.GA32004@thunk.org>
+References: <001a114467482dbc4b05692df8f9@google.com> <6541596.TtyMCBNA0Q@positron.chronox.de> <20180408224603.GA32004@thunk.org>
 MIME-Version: 1.0
-In-Reply-To: <1523187531-29837-1-git-send-email-lirongqing@baidu.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 1652F4D0EFE7.AE2AD
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi RongQing,
+Am Montag, 9. April 2018, 00:46:03 CEST schrieb Theodore Y. Ts'o:
 
-Is there an local x2apic whose ID is 0xFFFFFFFF in your machine?
-
-At 04/08/2018 07:38 PM, Li RongQing wrote:
-> local_apic_id of acpi_madt_local_x2apic is u32, it is converted to
-> int when checked by default_apic_id_valid() and return true if it is
-> larger than 0x7fffffff, this is wrong
+Hi Theodore,
 > 
+> So the syzbot will run while the patch goes through the normal e-mail
+> review process, which is kind of neat.  :-)
 
-For x2apic enabled systems,
+Thank you very much for the hint. That is a neat feature indeed.
 
-   - the byte length of X2APIC ID is 4, and it can be larger than 	
-     0x7fffffff in theory
+As I came late to the party and I missed the original mails, I am wondering 
+about which GIT repo was used and which branch of it. With that, I would be 
+happy to resubmit with the test line.
 
-   - the ->apic_id_valid points to x2apic_apic_id_valid(), which always
-     return _ture_ , not default_apic_id_valid().
-
-Thanks,
-	dou
-
-> and if local_apic_id is invalid, we should prevent it from being
-> accounted >
-> This fixes a bug that Purley platform displays too many possible cpu
-> 
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
-> ---
->   arch/x86/include/asm/apic.h          |  4 ++--
->   arch/x86/kernel/acpi/boot.c          | 10 ++++++----
->   arch/x86/kernel/apic/apic_common.c   |  2 +-
->   arch/x86/kernel/apic/apic_numachip.c |  2 +-
->   arch/x86/kernel/apic/x2apic.h        |  2 +-
->   arch/x86/kernel/apic/x2apic_phys.c   |  2 +-
->   arch/x86/kernel/apic/x2apic_uv_x.c   |  2 +-
->   arch/x86/xen/apic.c                  |  2 +-
->   8 files changed, 14 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-> index 40a3d3642f3a..08acd954f00e 100644
-> --- a/arch/x86/include/asm/apic.h
-> +++ b/arch/x86/include/asm/apic.h
-> @@ -313,7 +313,7 @@ struct apic {
->   	/* Probe, setup and smpboot functions */
->   	int	(*probe)(void);
->   	int	(*acpi_madt_oem_check)(char *oem_id, char *oem_table_id);
-> -	int	(*apic_id_valid)(int apicid);
-> +	int	(*apic_id_valid)(u32 apicid);
->   	int	(*apic_id_registered)(void);
->   
->   	bool	(*check_apicid_used)(physid_mask_t *map, int apicid);
-> @@ -486,7 +486,7 @@ static inline unsigned int read_apic_id(void)
->   	return apic->get_apic_id(reg);
->   }
->   
-> -extern int default_apic_id_valid(int apicid);
-> +extern int default_apic_id_valid(u32 apicid);
->   extern int default_acpi_madt_oem_check(char *, char *);
->   extern void default_setup_apic_routing(void);
->   
-> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-> index 7a37d9357bc4..7412564dc2a7 100644
-> --- a/arch/x86/kernel/acpi/boot.c
-> +++ b/arch/x86/kernel/acpi/boot.c
-> @@ -200,7 +200,7 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
->   {
->   	struct acpi_madt_local_x2apic *processor = NULL;
->   #ifdef CONFIG_X86_X2APIC
-> -	int apic_id;
-> +	u32 apic_id;
->   	u8 enabled;
->   #endif
->   
-> @@ -222,10 +222,12 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
->   	 * to not preallocating memory for all NR_CPUS
->   	 * when we use CPU hotplug.
->   	 */
-> -	if (!apic->apic_id_valid(apic_id) && enabled)
-> +	if (!apic->apic_id_valid(apic_id)) {
->   		printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
-> -	else
-> -		acpi_register_lapic(apic_id, processor->uid, enabled);
-> +		return 0;
-> +	}
-> +
-> +	acpi_register_lapic(apic_id, processor->uid, enabled);
->   #else
->   	printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
->   #endif
-> diff --git a/arch/x86/kernel/apic/apic_common.c b/arch/x86/kernel/apic/apic_common.c
-> index a360801779ae..02b4839478b1 100644
-> --- a/arch/x86/kernel/apic/apic_common.c
-> +++ b/arch/x86/kernel/apic/apic_common.c
-> @@ -40,7 +40,7 @@ int default_check_phys_apicid_present(int phys_apicid)
->   	return physid_isset(phys_apicid, phys_cpu_present_map);
->   }
->   
-> -int default_apic_id_valid(int apicid)
-> +int default_apic_id_valid(u32 apicid)
->   {
->   	return (apicid < 255);
->   }
-> diff --git a/arch/x86/kernel/apic/apic_numachip.c b/arch/x86/kernel/apic/apic_numachip.c
-> index 134e04506ab4..78778b54f904 100644
-> --- a/arch/x86/kernel/apic/apic_numachip.c
-> +++ b/arch/x86/kernel/apic/apic_numachip.c
-> @@ -56,7 +56,7 @@ static u32 numachip2_set_apic_id(unsigned int id)
->   	return id << 24;
->   }
->   
-> -static int numachip_apic_id_valid(int apicid)
-> +static int numachip_apic_id_valid(u32 apicid)
->   {
->   	/* Trust what bootloader passes in MADT */
->   	return 1;
-> diff --git a/arch/x86/kernel/apic/x2apic.h b/arch/x86/kernel/apic/x2apic.h
-> index b107de381cb5..a49b3604027f 100644
-> --- a/arch/x86/kernel/apic/x2apic.h
-> +++ b/arch/x86/kernel/apic/x2apic.h
-> @@ -1,6 +1,6 @@
->   /* Common bits for X2APIC cluster/physical modes. */
->   
-> -int x2apic_apic_id_valid(int apicid);
-> +int x2apic_apic_id_valid(u32 apicid);
->   int x2apic_apic_id_registered(void);
->   void __x2apic_send_IPI_dest(unsigned int apicid, int vector, unsigned int dest);
->   unsigned int x2apic_get_apic_id(unsigned long id);
-> diff --git a/arch/x86/kernel/apic/x2apic_phys.c b/arch/x86/kernel/apic/x2apic_phys.c
-> index e2829bf40e4a..b5cf9e7b3830 100644
-> --- a/arch/x86/kernel/apic/x2apic_phys.c
-> +++ b/arch/x86/kernel/apic/x2apic_phys.c
-> @@ -101,7 +101,7 @@ static int x2apic_phys_probe(void)
->   }
->   
->   /* Common x2apic functions, also used by x2apic_cluster */
-> -int x2apic_apic_id_valid(int apicid)
-> +int x2apic_apic_id_valid(u32 apicid)
->   {
->   	return 1;
->   }
-> diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-> index f11910b44638..efaf2d4f9c3c 100644
-> --- a/arch/x86/kernel/apic/x2apic_uv_x.c
-> +++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-> @@ -557,7 +557,7 @@ static void uv_send_IPI_all(int vector)
->   	uv_send_IPI_mask(cpu_online_mask, vector);
->   }
->   
-> -static int uv_apic_id_valid(int apicid)
-> +static int uv_apic_id_valid(u32 apicid)
->   {
->   	return 1;
->   }
-> diff --git a/arch/x86/xen/apic.c b/arch/x86/xen/apic.c
-> index 2163888497d3..5e53bfbe5823 100644
-> --- a/arch/x86/xen/apic.c
-> +++ b/arch/x86/xen/apic.c
-> @@ -112,7 +112,7 @@ static int xen_madt_oem_check(char *oem_id, char *oem_table_id)
->   	return xen_pv_domain();
->   }
->   
-> -static int xen_id_always_valid(int apicid)
-> +static int xen_id_always_valid(u32 apicid)
->   {
->   	return 1;
->   }
-> 
+Ciao
+Stephan
