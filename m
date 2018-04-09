@@ -1,76 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753362AbeDIPrl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:47:41 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:43652 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753239AbeDIPqm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:46:42 -0400
-X-Google-Smtp-Source: AIpwx4+xXOLq8G4BUvl9kBL1A0ubsy2jyxAQBxBk7w1UGgGH8ip/h6ExqTwAV0D3/FVuZ3NWwzoKCA==
-From: Jan Glauber <jglauber@cavium.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mahipal Challa <Mahipal.Challa@cavium.com>,
-        Robert Richter <rrichter@cavium.com>,
-        Jan Glauber <jglauber@cavium.com>
-Subject: [PATCH v2 5/5] crypto: thunderx_zip: Fix smp_processor_id() warnings
-Date: Mon,  9 Apr 2018 17:45:54 +0200
-Message-Id: <20180409154554.7578-6-jglauber@cavium.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180409154554.7578-1-jglauber@cavium.com>
-References: <20180409154554.7578-1-jglauber@cavium.com>
+        id S1753070AbeDIPtS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:49:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56647 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751902AbeDIPtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 11:49:17 -0400
+Date: Mon, 9 Apr 2018 17:49:16 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: jack@suse.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: quota: Replace GFP_ATOMIC with GFP_KERNEL in
+ dquot_init
+Message-ID: <20180409154916.mp5jznkgvxk4a4ti@quack2.suse.cz>
+References: <1523284279-25940-1-git-send-email-baijiaju1990@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523284279-25940-1-git-send-email-baijiaju1990@gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to raw_smp_processor_id() to prevent a number of
-warnings from kernel debugging. We do not care about
-preemption here, as the CPU number is only used as a
-poor mans load balancing or device selection. If preemption
-happens during a compress/decompress operation a small performance
-hit will occur but everything will continue to work, so just
-ignore it.
+On Mon 09-04-18 22:31:19, Jia-Ju Bai wrote:
+> dquot_init() is never called in atomic context.
+> This function is only set as a parameter of fs_initcall().
+> 
+> Despite never getting called from atomic context,
+> dquot_init() calls __get_free_pages() with GFP_ATOMIC,
+> which waits busily for allocation.
+> GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+> to avoid busy waiting and improve the possibility of sucessful allocation.
+> 
+> This is found by a static analysis tool named DCNS written by myself.
+> And I also manually check it.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-Signed-off-by: Jan Glauber <jglauber@cavium.com>
-Reviewed-by: Robert Richter <rrichter@cavium.com>
----
- drivers/crypto/cavium/zip/zip_device.c | 4 ++--
- drivers/crypto/cavium/zip/zip_main.c   | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Thanks, I have added the patch to my tree.
 
-diff --git a/drivers/crypto/cavium/zip/zip_device.c b/drivers/crypto/cavium/zip/zip_device.c
-index ccf21fb91513..f174ec29ed69 100644
---- a/drivers/crypto/cavium/zip/zip_device.c
-+++ b/drivers/crypto/cavium/zip/zip_device.c
-@@ -87,12 +87,12 @@ u32 zip_load_instr(union zip_inst_s *instr,
- 	 * Distribute the instructions between the enabled queues based on
- 	 * the CPU id.
- 	 */
--	if (smp_processor_id() % 2 == 0)
-+	if (raw_smp_processor_id() % 2 == 0)
- 		queue = 0;
- 	else
- 		queue = 1;
- 
--	zip_dbg("CPU Core: %d Queue number:%d", smp_processor_id(), queue);
-+	zip_dbg("CPU Core: %d Queue number:%d", raw_smp_processor_id(), queue);
- 
- 	/* Take cmd buffer lock */
- 	spin_lock(&zip_dev->iq[queue].lock);
-diff --git a/drivers/crypto/cavium/zip/zip_main.c b/drivers/crypto/cavium/zip/zip_main.c
-index ae5b20c695ca..be055b9547f6 100644
---- a/drivers/crypto/cavium/zip/zip_main.c
-+++ b/drivers/crypto/cavium/zip/zip_main.c
-@@ -113,7 +113,7 @@ struct zip_device *zip_get_device(int node)
-  */
- int zip_get_node_id(void)
- {
--	return cpu_to_node(smp_processor_id());
-+	return cpu_to_node(raw_smp_processor_id());
- }
- 
- /* Initializes the ZIP h/w sub-system */
+								Honza
+
+
+> ---
+>  fs/quota/dquot.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index 8381db9..d6e111e 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -2944,7 +2944,7 @@ static int __init dquot_init(void)
+>  			NULL);
+>  
+>  	order = 0;
+> -	dquot_hash = (struct hlist_head *)__get_free_pages(GFP_ATOMIC, order);
+> +	dquot_hash = (struct hlist_head *)__get_free_pages(GFP_KERNEL, order);
+>  	if (!dquot_hash)
+>  		panic("Cannot create dquot hash table");
+>  
+> -- 
+> 1.9.1
+> 
+> 
 -- 
-2.16.2
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
