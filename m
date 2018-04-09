@@ -1,68 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753323AbeDIQkk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 12:40:40 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:60912 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751662AbeDIQkj (ORCPT
+        id S1753363AbeDIQlC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 12:41:02 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:43559 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753328AbeDIQlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 12:40:39 -0400
-Subject: Re: [PATCH v6 04/16] arc: Switch to generic free_initrd_mem.
-To: Shea Levy <shea@shealevy.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-References: <20180329113207.30674-1-shea@shealevy.com>
- <20180401145931.7932-1-shea@shealevy.com>
- <20180401145931.7932-4-shea@shealevy.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <319c8fd1-28f7-4319-6a07-789054c17e14@synopsys.com>
-Date: Mon, 9 Apr 2018 09:40:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 9 Apr 2018 12:41:01 -0400
+X-Google-Smtp-Source: AIpwx4/ScTZgIFFWAQ58FH7JAf+kqQ0GXDDE8FOJvVv7rdQdRleelLt+9xAER7dkUUcDBkrroXSmPr1SsDmxfMd+C3M=
 MIME-Version: 1.0
-In-Reply-To: <20180401145931.7932-4-shea@shealevy.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.10.161.84]
+In-Reply-To: <20180409182233.5a9150c5@mschwideX1>
+References: <20180403111242.49f43ee7@mschwideX1> <20180409151821.2d92303f@mschwideX1>
+ <CAADWXX-188FC4aBjYMaRwrhcUNvoazwZSirPX3Y2P8PuFiV0bQ@mail.gmail.com> <20180409182233.5a9150c5@mschwideX1>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 9 Apr 2018 09:40:59 -0700
+X-Google-Sender-Auth: 8NgSpqRg2fgJ0c1CfhtzMS6sTEA
+Message-ID: <CA+55aFy2qWimgBHPdf_RBMK4O3Cci94bhMz15Z2QxXBe=FhgSA@mail.gmail.com>
+Subject: Re: [GIT PULL] s390 patches for the 4.17 merge window #1
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/01/2018 08:00 AM, Shea Levy wrote:
-> The first patch in this series added a weakly-defined generic
-> implementation, which is functionally identical to the
-> architecture-specific one removed here.
+On Mon, Apr 9, 2018 at 9:22 AM, Martin Schwidefsky
+<schwidefsky@de.ibm.com> wrote:
+>>
+>> I'm not finding the original at all, and this 'ping' message I found
+>> in my spam-box. Maybe the original was marked as spam too and I didn't
+>> notice, and it got deleted with the other spam.
 >
-> Series boot-tested on RISC-V (which now uses the generic
-> implementation) and x86_64 (which doesn't).
->
-> Signed-off-by: Shea Levy <shea@shealevy.com>
-> ---
->   arch/arc/mm/init.c | 7 -------
->   1 file changed, 7 deletions(-)
->
-> diff --git a/arch/arc/mm/init.c b/arch/arc/mm/init.c
-> index ba145065c579..7bcf23ab1756 100644
-> --- a/arch/arc/mm/init.c
-> +++ b/arch/arc/mm/init.c
-> @@ -229,10 +229,3 @@ void __ref free_initmem(void)
->   {
->   	free_initmem_default(-1);
->   }
-> -
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void __init free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
+> Not good, any idea why the ping message has been marked as spam?
+> Maybe there is something in the headers that gives a hint.
 
-LGTM.
+There's nothing that looks suspicious to me in the headers, and gmail
+doesn't leave any lines around either (ie no spamassassin-like scoring
+etc: I don't think they want people gaming the spam detector).
 
-Acked-by: Vineet Gupta <vgupta@synopsys.com>
+There's the IBM internal spam/AV detector markings (but they all say
+"not spam") and spf looks fine too (no dkim).
 
--Vineet
+Maybe it was me fat-fingering the original email, causing the ping to
+then be marked spam too. No way to know (although mis-marking email as
+spam  without even noticing is definitely not a pattern of mine).
+
+So I suspect it was some random word choice that triggered it.
+Hopefully the fact that I marked your ping message as non-spam means
+that it won't happen again for me.
+
+I actually check my spam box fairly religiously, because I do get a
+ton of spam and kernel emails occasionally do end up being false
+positives, and so I check it daily to not be overwhelmed. But I also
+obviously just scan it quickly, so the first one being missed and just
+deleted in my daily scan is not all that surprising if it triggered
+the gmail spam detector randomly.
+
+And even if the false-positive rate is pretty darn small, I get _so_
+much spam (because my email address is public and has been so long)
+that even a low false-positive rate still means "a couple of
+mis-marked messages each week".
+
+              Linus
