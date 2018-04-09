@@ -1,100 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeDIJ1n (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 05:27:43 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41285 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750863AbeDIJ1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 05:27:42 -0400
-Date: Mon, 9 Apr 2018 11:27:30 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Sergey Suloev <ssuloev@orpaltech.com>
-Cc: Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] spi: sun6i: restrict transfer length in PIO-mode
-Message-ID: <20180409092730.2moyhl5aaktjwbyn@flea>
-References: <20180403154449.2443-1-ssuloev@orpaltech.com>
- <20180403154449.2443-4-ssuloev@orpaltech.com>
- <20180404065048.n76r3ytuznd6fqsl@flea>
- <a6044902-8977-3ce1-d7d5-c6797341a5d0@orpaltech.com>
- <20180405091913.ky4dnmszoobn2xry@flea>
- <ee4adb1e-caf6-32f6-33d6-d8dd94d232cf@orpaltech.com>
- <20180405131735.GB12349@sirena.org.uk>
- <8159c3a5-af74-9f13-aedb-7ecc708bdff6@orpaltech.com>
- <20180406073441.xesojvzc3deljhoy@flea>
- <204e97cb-2f39-00f0-fd4e-3aa9a51f7cac@orpaltech.com>
+        id S1751767AbeDIJ3W (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 05:29:22 -0400
+Received: from mail-pl0-f42.google.com ([209.85.160.42]:41644 "EHLO
+        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbeDIJ3U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 05:29:20 -0400
+X-Google-Smtp-Source: AIpwx4/ddZvuKUwDavR7jUzgJcHfNf9/46xj0n8LqdF7wOZ/8dtONFLGnP3fXsk0QoVzJirUYIIHNGHDO+Brpx0MQiA=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3txxy5hs7e432z62"
-Content-Disposition: inline
-In-Reply-To: <204e97cb-2f39-00f0-fd4e-3aa9a51f7cac@orpaltech.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180408180252.GC9720@thunk.org>
+References: <001a1148578c10e4700568e814eb@google.com> <CACT4Y+bL_+3ZJLE_1KzGNrz4hi=Si-KKsKLCd09TMD1Ux2jpgg@mail.gmail.com>
+ <20180404193504.GA7715@bombadil.infradead.org> <20180405032200.GC22358@thunk.org>
+ <20180405032454.GD9301@bombadil.infradead.org> <20180405223226.GA729@dastard>
+ <20180406001325.GA133204@google.com> <20180406013741.GA7345@thunk.org>
+ <20180408063114.GB9720@thunk.org> <CACT4Y+Ynbn9qAmk3jVBs6pUjDAz6gJMD5YHM4+EyzEuwBj+4-Q@mail.gmail.com>
+ <20180408180252.GC9720@thunk.org>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 9 Apr 2018 11:28:59 +0200
+Message-ID: <CACT4Y+bXkR3Ecn8xPeeEJwUGYNPGcg-4o5Lshgo5eYf3GxE-9Q@mail.gmail.com>
+Subject: Re: Running syzkaller repros using kvm-xfstests
+To: "Theodore Y. Ts'o" <tytso@mit.edu>, Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@google.com>, Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Apr 8, 2018 at 8:02 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> On Sun, Apr 08, 2018 at 03:18:39PM +0200, Dmitry Vyukov wrote:
+>>
+>> But note that syzkaller is under active development, so pre-canned
+>> binaries may not always work. Mismatching binary may not understand
+>> all syscalls, fail to parse program, interpret arguments differently,
+>> execute program differently, setup a different environment for the
+>> test, etc. Now a C program captures all of this, because code that
+>> transforms syzkaller programs into C is versioned along with the rest
+>> of the system.
+>> Strictly saying, for syzkaller reproducers one needs to use the exact
+>> syzkaller revision listed along with the reproducer, see for example:
+>> https://syzkaller.appspot.com/bug?id=3fb9c4777053e79a6d2a65ac3738664c87629a21
+>> The "#syz test" styzbot command does this. Using a different syzkaller
+>> revision may or may not work.
+>
+> Thanks for the warning.  I assume you try to maintain backwards
+> compatibility where possible?  It might be nice if you could add some
+> kind of explicit versioning scheme --- perhaps with a major/minor
+> version scheme where the syz-executor needs to have the same major
+> number, and a minor number >= the minor version number of the test?
 
---3txxy5hs7e432z62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We try to not break backwards compatibility without a reason.
 
-On Fri, Apr 06, 2018 at 06:48:23PM +0300, Sergey Suloev wrote:
-> On 04/06/2018 10:34 AM, Maxime Ripard wrote:
-> > On Thu, Apr 05, 2018 at 04:44:16PM +0300, Sergey Suloev wrote:
-> > > On 04/05/2018 04:17 PM, Mark Brown wrote:
-> > > > On Thu, Apr 05, 2018 at 12:59:35PM +0300, Sergey Suloev wrote:
-> > > > > On 04/05/2018 12:19 PM, Maxime Ripard wrote:
-> > > > > > The point of that patch was precisely to allow to send more dat=
-a than
-> > > > > > the FIFO. You're breaking that behaviour without any justificat=
-ion,
-> > > > > > and this is not ok.
-> > > > > I am sorry, but you can't. That's a hardware limitation.
-> > > > Are you positive about that?  Normally you can add things to hardwa=
-re
-> > > > FIFOs while they're being drained so so long as you can keep data
-> > > > flowing in at least as fast as it's being consumed.
-> > > Well, normally yes, but this is not the case with the hardware that I=
- own.
-> > > My a20 (BPiM1+) and a31 (BPiM2) boards behaves differently. With a tr=
-ansfer
-> > > larger than FIFO then TC interrupt never happens.
-> > Because you're not supposed to have a transfer larger than the FIFO,
-> > but to have to setup at first a transfer the size of the FIFO, and
-> > then when it's (or starts to be) depleted, fill it up again.
->=20
-> According to what you said the driver must implement
-> "transfer_one_message" instead of "transfer_one"
+Preserving full backwards compatibility within a single binary is
+extremely hard. It's like asking kernel to support each and every ever
+existed version of every in-memory data structure and all of the
+non-functional aspects (like any fluctuations in performance). If one
+could give us several additional FTEs for this, then it might be
+doable. But even then I don't  think it's the best use of the FTE time
+because version control system already gives us exactly this -- exact
+behavior on a past revision. On top of this, the backward
+compatibility support will sure have bugs too. In the best case we
+will spent time debugging why a new version does not precisely model
+behavior of an old version. In the worst case you will test something
+and think that the bug is fixed, but it's just that the new version
+does not behave exactly as the old one. On top of this, this still
+does not give us forward compatibility, something that one wants in
+majority of cases with an old pre-canned binary. On top of this, the
+binaries will be huge because they will need to capture exact versions
+of all system call descriptions (and the simplest option for this is
+keeping copies all versions), a 87 MiB image definitely won't be
+enough to hold this, the binary will be somewhere between gigs and
+tens of gigs.
 
-I'm not sure what makes you think that I said that.
 
-Maxime
+> One of the reasons why the C program is not so useful for me is that
+> in the Repeat:true case, the C program repeats forever.  So for
+> example, I translate Repeat:true to -repeat=100.  See:
+>
+> https://github.com/tytso/xfstests-bld/blob/master/kvm-xfstests/test-appliance/files/usr/local/bin/run-syz
+>
+> I suppose I could just abort the test after N minutes and assume if
+> the kernel hasn't crashed, that it's probably not going to.  But some
+> way that the C program can be given an argument or an environment
+> variable to control how number of loops it will run might be useful.
+> And some kind of hint as how reliable the repro would be (e.g,. some
+> indication that you should try to run it at least N times to get a
+> failure at least 95% of the time).
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I think:
 
---3txxy5hs7e432z62
-Content-Type: application/pgp-signature; name="signature.asc"
+timeout -s KILL 450 ./a.out
 
------BEGIN PGP SIGNATURE-----
+is the solution.
+Repro logic runs programs for at most 7.5 minutes, so 450 should be good.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrLMgEACgkQ0rTAlCFN
-r3TtWQ/+MS3bXXuREbEWxlzRndXqFInds1H64yh0YGCQYch+oDERUjei967P+k7h
-/1Yhj5JgqF/zjGaf7dUg0Ho3trUuKUfbobjyOYIzKVjmDB3YJdFXqrUoJw5mGKYE
-RswK5GhVQY7EoJOZJ6hwT5Kop+6A0BuxbQ9A2oSOwfXFaXnap83mdohjYRgW8ZgH
-MpdLUNo1JX+Qxo7KnzGpKJko/u4ewKTm7NnxxkC98BUSRvkBgDn0imAMZK3wBHFz
-LqY6GB/iDI65H3iN+2ADcY0A5a3DjoMfqT/Ia9tgExjFbzf6QNgWcD8mmcmE+M5w
-soN3FAnyM04CnWDCJpkTLQ76EVKq0gCuuUj5gpCPn8tTOzK8JJ/VOssMG/Almcv9
-tdXpy0lPUAmWSyPUQebKAAOJv5sDGz4DfFf+W10+oCmpJMTMoxNBKwJ7jvZufOUp
-dK1axDC4HxzuAF+OFNWe4Af13jmKO5qm/rqvn7xmob0JLlhRBqQ9ouov96+7oyJA
-RdzWRnBEI0w5Y4rmXQo3X3f9dijW93/+s2EiB4WcUS7vZWdVJr1B6YNv/z/tS0TF
-sz+zgUWXr7uvSZO/NtL+xIDaWvVBgG4vCArgCHvzHPDDcygTciAa7Fxq2fPcG7Tc
-ExJ1DfXsni1JND0DpMP9o26RWhbqmBPiOD9084vdkSEa/lqRLXQ=
-=2Fb8
------END PGP SIGNATURE-----
-
---3txxy5hs7e432z62--
+Re env var. There are opposite views too. People complain that
+syzkaller C repros are mess (which they are). Currently they complain
+minimal amount of code to reproduce the bugs. If we also start
+staffing some aux logic in them, it won't be helpful. timeout command
+looks just as good.
