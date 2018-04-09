@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3607359-1523234339-2-14585871882133506963
+X-Cyrus-Session-Id: sloti22d1t05-3643807-1523234334-2-12189858908075868372
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES encaro, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523234338; b=Lx4+j9R0AwKbgqA5OKv2i67aV9CNdFbwOO8wmrnTlbaxexRfSC
-    kzYGstpB+ZZQmH3MDXNtB19o8G3zy2S6IaScwmGN3Vv0Z/CaBw7exeK3CfHt7H72
-    QDrdwJY+0SEDM/76bcFel4h/0ptGbWEwxH7uVYkx4gQ4P9iPJoQmc0Dez8kx2lKu
-    a4Ur6cXqEUoXJ+1T6Nn5nsasENyoLk1odYJaOY4RQ9R1f6IBNM1YXmsShkqvjQhE
-    TiSkQHkyrKIdN2R78fhtp3TnSykCWoGvTNjXgiriZFbQyjdDYtumtfGaCSQOe9a7
-    8IGQGzp5RnOo6skLTaTswmZRv5CEm4Z9t7fQ==
+    1523234334; b=HgiLOPCB9xRpVWo3gXF9QK/kbWCr3g6mHg/sx4wTu6Wgn4LQmi
+    zUEjB0Mrb7uYKNE3jYVxQdmdNQf9ndzqgKg8lfeCg24O/V3NBW3w8CavY4zTYq1p
+    1Eed9I3h9CvHe4gc6gYsOW62omzjDkZeNDN0tGf2ASNG5WsIK/91fCsBT34S3EiZ
+    X7wB0wtGt+qjYsLywq+oWXJRwYm/484bGd0d3+xpwLOJmmX6KCZr3gVCiCjdjRV4
+    jVCB+VSY/WOMb+apCivZnbZ/SwA1KE1JCnF0Anh0PhZ1XLNuM5vaITVSUP42g7WO
+    EC6ZF8hqrnDd89/gHjx4MpuYUGsKTAnCJ/7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523234338; bh=7nLDTwy7lF
-    k0OZCl6vadrXo/Fur0X1/RoczpNT5y3JI=; b=Qjlnm9xQfDAJivOLn221HWyEWv
-    mq3Yabw1nverhPN9u8JgypJ7pyKpEQQXfZ833LuT+lV0zLywp6sSPNWdqWOaMTij
-    ChZ9gCni4DfMHxz/8k/nYdqt+ALDsENGgKh2k+bZkjfKEFQeRYfGY4Df8dptGmRj
-    FDrTKMJ5I6wz7hg0xVBLbJPnlQ5NgZqkS9Yv018P0mT4+biRto7FT8tzIDjdzC4Y
-    2CmqobbQ45PC7hU3AuEZ5y4dEKn9PYzg0+ISaMMuUEHPdGCgrbxhM0m3X0DjCw0z
-    di3Fej06X9/scYBIgrJtlNzexVE3Hv09O8mrrlx21Ha93O5BlHjDXWEOn2kA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fB3gwDwM x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523234334; bh=hepAd4sxb2
+    Am5n+ZHPNqanFTBlUGgR/x8UzT1v4ak9k=; b=ltkhymbRb8iM6sAX1DCd68s1b9
+    ndR6nW+uLPMQcd1GliHDUJP6+jDxiJ0RArJdaO8Yf1f68FgCUwDOU8OU6oFMuVpw
+    EeKFgs6b898AoW2OsUoYEJZ7c9TUkQrzTW/iwjP4rlHvmuYl6Mz4U9oOU2r9SaJ1
+    ocDfTwFZctAGTJpfymcF1S5G6XGXK297I0FzSidQ0RtK4yUQfCRb/ikP56NIgtOl
+    cv7Xjym7XOTXFLT6y0Kyt/26u3I9nTDrTfLHN6h3Xs9LXTKfZpcvT0nhwo2NQa5R
+    3OxCZ4IWmn5Lq+Qn0WqXwRxLBaFLWlf33J0LFSOsVMB4Cz0Ne1YB6eW5BHTQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fAcipMme x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fB3gwDwM x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fAcipMme x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,38 +51,38 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHmiIoPQ8wDWQVXdsF9Svgp9Y9v5XVd8h+BxUpd3SCpaERajp/87WHT+lQjz0+fjiaWo40nXUsIIbU9rQHTxHaKX6WR9ivSedCqFBU/CPBdLv3RwMB47
-    mHepnI8u6ICIWRMQ2ZED02i/jRcdn7NIJeUTe1NDMtFHGn/JlO2gz5N8Mz4ZR7QbP4ZHBerQCe99D6Y5M0IX1qmENTEjcZo9YXnqT4aZYBlQqXOOJrqGnw7M
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOqeUuCFrzbPLK731f0oVbu4dYSzX10+9pyySL0AJqfaDAjeZSpXUGGzwjL/DP2qf3SskCY4J4s6MEzqxu4VCRcZ8XQmHDLfdSeMmzNoLrpBSDt2PYJW
+    m0wwa7bau+jkGpwklO4DBvfYrHtO3AKTdD0G/bEN/kvWTu69Zm8iQsofquiz5S40EoIEMuzYfHr2q9+9O1838HIeGWk+GENRlU+xF5LK3A5/aP+2xTLNrfWs
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=tHz9FfFoAAAA:8 a=yPCof4ZbAAAA:8 a=iox4zFpeAAAA:8
-    a=yMhMjlubAAAA:8 a=7001LfjWaACk81qKMQIA:9 a=bCt254BP69NXPnct:21
-    a=0qU56kgW7rI0cwCI:21 a=wPNLvfGTeEIA:10 a=Z52K5TbU17EcDgFyT5Ki:22
-    a=WzC6qhA0u3u7Ye7llzcV:22
+    a=Lf-vpJhqX20A:10 a=gXLdhW2jAAAA:8 a=iLNU1ar6AAAA:8 a=QyXUC8HyAAAA:8
+    a=yMhMjlubAAAA:8 a=98M8BWyZpLcfewlxYQQA:9 a=uLeawkheiNOiJFPd:21
+    a=yCE3bErIF824xLa6:21 a=wPNLvfGTeEIA:10 a=Dn9eIPSr_RzuO0KTJioD:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933005AbeDIAiz (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:38:55 -0400
-Received: from mail-co1nam03on0103.outbound.protection.outlook.com ([104.47.40.103]:64416
+        id S933046AbeDIAiu (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:38:50 -0400
+Received: from mail-co1nam03on0129.outbound.protection.outlook.com ([104.47.40.129]:43760
         "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933061AbeDIAix (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:38:53 -0400
+        id S933005AbeDIAio (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:38:44 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Juergen Gross <jgross@suse.com>,
+CC: Logan Gunthorpe <logang@deltatee.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Jon Mason <jdmason@kudzu.us>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 149/162] xen-netfront: Fix race between device
- setup and open
-Thread-Topic: [PATCH AUTOSEL for 4.4 149/162] xen-netfront: Fix race between
- device setup and open
-Thread-Index: AQHTz5ncqVMo8cT+bU2htnQO2xuoFA==
-Date: Mon, 9 Apr 2018 00:29:46 +0000
-Message-ID: <20180409002738.163941-149-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 135/162] ntb_transport: Fix bug with
+ max_mw_size parameter
+Thread-Topic: [PATCH AUTOSEL for 4.4 135/162] ntb_transport: Fix bug with
+ max_mw_size parameter
+Thread-Index: AQHTz5nTWqoAfqJYUkeju//C5Jp+kw==
+Date: Mon, 9 Apr 2018 00:29:30 +0000
+Message-ID: <20180409002738.163941-135-alexander.levin@microsoft.com>
 References: <20180409002738.163941-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -91,215 +91,78 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1125;7:kBelbnzWgaMUwSEwsnLL4W3214O8VhW9PKuhMzGk0ujTWpfUfGPbkXt7hfQgzctlu8cySoKoilOA2D00bScZseQ5i5BFksAqu5Lwp9h/RgStWPOg5a22xX5TL9DMYOlepWjm4FR+08IgR554cZVpJPzmtHwjJ9jiB6pqvltVOHnEZxlx3Uq4vuXnCsmDhMyH2i0XMdJsdpHgm27svjdNa4A6jnIJa7Bik5QnZpe8tpsmwcd5i15Z5I0Pe3q3MrJb;20:l6KLGjBxmT4kLFDgnxznblcElzNS2Or/G01TO7+b0PaeL+sGbgSNGTafDf5s5htSYvqlERmzfd+nu/Zym+iX4WFHM5L7hLXJbpiC50DJjQ3fwl1xpv3litPL/cPgkzpKFYpfzfgw5InGixENJeImwXtS79b4zVgEtUZcopBNT18=
-X-MS-Office365-Filtering-Correlation-Id: c1953583-7a20-4218-49c4-08d59db2416a
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1095;7:UOa+kAUpxjmKb8Uq9QqC9SZOdvWTem58lv7tWL6nvWamJtPzjgT/TI19TO3/q3fa9yvh18VvR3xtcGn7JS9mj9Z9Qmcl5V1nfwxVfPGG1w6NQ27TQ5wIWwsPcTyOJB19cTEwq/SwTNEdjzQpDyaqXJAwlcoa5vU+VJTxyJZvY6B/mr+qcbr6tSYHpO5gb4RuAyaESLTLs/9pYeBPGBBtY7iVmF2LxqtpmOqRD2651ozq8z3qVufPqD+QXlQHB7kd;20:tmDCpepLvbxC2SxoAhizV88s3Fb1iLSA35xD/xuPOtNZCyrqNv3tEyn3aZ3JX4D0D2olqE5HY/C4WS7enqL5THXjt0YzNyYR1SPFqUNrvsuLEoReeTRPhK9V5m/wg6Hc4Ez/qI1Eh00OadAu6izFHdMWihXcmukCutV7+HsszWs=
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB1125;
-x-ms-traffictypediagnostic: DM5PR2101MB1125:
+X-MS-Office365-Filtering-Correlation-Id: 10d26830-3186-41bd-a926-08d59db23c99
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1095;
+x-ms-traffictypediagnostic: DM5PR2101MB1095:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1125EB32668786DD4DCF44C4FBBF0@DM5PR2101MB1125.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(70601490899591)(146099531331640);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1125;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1125;
+x-microsoft-antispam-prvs: <DM5PR2101MB10958A81973F423DC83E3933FBBF0@DM5PR2101MB1095.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(56004941905204)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1095;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1095;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(39380400002)(366004)(376002)(396003)(189003)(199004)(55674003)(2906002)(25786009)(6512007)(10090500001)(551934003)(8666007)(3280700002)(10290500003)(3660700001)(316002)(110136005)(54906003)(11346002)(107886003)(2616005)(476003)(446003)(36756003)(99286004)(86612001)(53936002)(4326008)(486006)(6436002)(3846002)(81156014)(305945005)(5250100002)(1076002)(102836004)(14454004)(66066001)(7736002)(105586002)(81166006)(59450400001)(106356001)(8676002)(97736004)(6116002)(6506007)(6486002)(5660300001)(186003)(76176011)(22452003)(72206003)(478600001)(2501003)(2900100001)(26005)(86362001)(575784001)(8936002)(68736007)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1125;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: LWsGptI6ytbuu63Jy1Phatwulj0fA/NRwhlSLE1T/yGrQ4+TF0o4Fd/EAkzsR+N/ymyzZtGkWLZQQNxg4h1GGzOlev+YwLXOfxvp4Vp/b4E0P4TEsccC7MLRqL+/8Ll2QmQBaoHoqR+ce46ijfSqRyDyiQCDRHUiLJQeB7YAqUz6nbmGoDzu3nNyrtQPAV1D3O3nevGI3njo2zv3djEgLxBOWttQRP6flDUvtcTf0fn3bkQo/NJNMZc1sVPbKeHbRXrl4aYwGJTNf6kmjI4Hrmh/31RzMNwlhfRkzUD+3OQAghfsvVYA/9LrSJyZeGmvtECyZChlg+lQIYuq1YWUE5bSJniiKQDawwrL9IAJ9BW+ql26Iz3WeGisZHuhsPvYnxyilQuFQtqwv/nL9QjThsZx6fsvBcIVdSRxlsTSleI=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(366004)(396003)(39860400002)(376002)(189003)(199004)(26005)(10090500001)(476003)(105586002)(86362001)(107886003)(11346002)(446003)(2616005)(102836004)(76176011)(6512007)(97736004)(36756003)(6666003)(6506007)(8676002)(59450400001)(99286004)(4326008)(10290500003)(81156014)(86612001)(81166006)(186003)(486006)(2900100001)(106356001)(1076002)(72206003)(478600001)(305945005)(8936002)(25786009)(3660700001)(7736002)(68736007)(66066001)(110136005)(316002)(54906003)(3280700002)(2906002)(3846002)(6116002)(6436002)(53936002)(6486002)(22452003)(2501003)(5250100002)(14454004)(5660300001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1095;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: KrlPenI6ISFHcGqAzZheGTeXr6So+jY1GtqXsgIbG9JlhcNK3H+X/lEV1PfwkCL3YYMqD0/weQV1kcMrsf27COyGTSqLyZy6XgfvCukROaRn4n9v3VPZMC2M8wo4IzEmqdRypw5oKmCpEA1b6UsuBkYmg4CjpTOfURkfqe9aoq0O0uH7P2a2gdmZs7z3IoKLkz/3x4vV6EcU8G0ptCNTZ6nlgmm0FaCYjEMqdnXYjAOxMnZMgCwXdwg+JmVS+yu0Wly8+e+D88qAXs17JydEputDY29PVtWL+X2S3IUmr9boYEATiA7J+lN12xeK+PqNUfQysW7fsYxLYFEdfOOtE3JGbKSDvBPx9bWK5/ZS+vtq65LMUgPKybruesK/cYKBr/goUOJHd7LWVwHEkHbCslkHtnalFsj8mVlw5W68nGc=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1953583-7a20-4218-49c4-08d59db2416a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:29:46.2246
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10d26830-3186-41bd-a926-08d59db23c99
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:29:30.5994
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1125
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1095
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Logan Gunthorpe <logang@deltatee.com>
 
-[ Upstream commit f599c64fdf7d9c108e8717fb04bc41c680120da4 ]
+[ Upstream commit cbd27448faff4843ac4b66cc71445a10623ff48d ]
 
-When a netfront device is set up it registers a netdev fairly early on,
-before it has set up the queues and is actually usable. A userspace tool
-like NetworkManager will immediately try to open it and access its state
-as soon as it appears. The bug can be reproduced by hotplugging VIFs
-until the VM runs out of grant refs. It registers the netdev but fails
-to set up any queues (since there are no more grant refs). In the
-meantime, NetworkManager opens the device and the kernel crashes trying
-to access the queues (of which there are none).
+When using the max_mw_size parameter of ntb_transport to limit the size of
+the Memory windows, communication cannot be established and the queues
+freeze.
 
-Fix this in two ways:
-* For initial setup, register the netdev much later, after the queues
-are setup. This avoids the race entirely.
-* During a suspend/resume cycle, the frontend reconnects to the backend
-and the queues are recreated. It is possible (though highly unlikely) to
-race with something opening the device and accessing the queues after
-they have been destroyed but before they have been recreated. Extend the
-region covered by the rtnl semaphore to protect against this race. There
-is a possibility that we fail to recreate the queues so check for this
-in the open function.
+This is because the mw_size that's reported to the peer is correctly
+limited but the size used locally is not. So the MW is initialized
+with a buffer smaller than the window but the TX side is using the
+full window. This means the TX side will be writing to a region of the
+window that points nowhere.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+This is easily fixed by applying the same limit to tx_size in
+ntb_transport_init_queue().
+
+Fixes: e26a5843f7f5 ("NTB: Split ntb_hw_intel and ntb_transport drivers")
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Acked-by: Allen Hubbe <Allen.Hubbe@dell.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Jon Mason <jdmason@kudzu.us>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/xen-netfront.c | 46 ++++++++++++++++++++++++------------------=
-----
- 1 file changed, 24 insertions(+), 22 deletions(-)
+ drivers/ntb/ntb_transport.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index 0b8d2655985f..d612ed0a821c 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -342,6 +342,9 @@ static int xennet_open(struct net_device *dev)
- 	unsigned int i =3D 0;
- 	struct netfront_queue *queue =3D NULL;
+diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+index 3bbdf60f8908..49f3fba75f4d 100644
+--- a/drivers/ntb/ntb_transport.c
++++ b/drivers/ntb/ntb_transport.c
+@@ -955,6 +955,9 @@ static int ntb_transport_init_queue(struct ntb_transpor=
+t_ctx *nt,
+ 	mw_base =3D nt->mw_vec[mw_num].phys_addr;
+ 	mw_size =3D nt->mw_vec[mw_num].phys_size;
 =20
-+	if (!np->queues)
-+		return -ENODEV;
++	if (max_mw_size && mw_size > max_mw_size)
++		mw_size =3D max_mw_size;
 +
- 	for (i =3D 0; i < num_queues; ++i) {
- 		queue =3D &np->queues[i];
- 		napi_enable(&queue->napi);
-@@ -1363,18 +1366,8 @@ static int netfront_probe(struct xenbus_device *dev,
- #ifdef CONFIG_SYSFS
- 	info->netdev->sysfs_groups[0] =3D &xennet_dev_group;
- #endif
--	err =3D register_netdev(info->netdev);
--	if (err) {
--		pr_warn("%s: register_netdev err=3D%d\n", __func__, err);
--		goto fail;
--	}
+ 	tx_size =3D (unsigned int)mw_size / num_qps_mw;
+ 	qp_offset =3D tx_size * (qp_num / mw_count);
 =20
- 	return 0;
--
-- fail:
--	xennet_free_netdev(netdev);
--	dev_set_drvdata(&dev->dev, NULL);
--	return err;
- }
-=20
- static void xennet_end_access(int ref, void *page)
-@@ -1743,8 +1736,6 @@ static void xennet_destroy_queues(struct netfront_inf=
-o *info)
- {
- 	unsigned int i;
-=20
--	rtnl_lock();
--
- 	for (i =3D 0; i < info->netdev->real_num_tx_queues; i++) {
- 		struct netfront_queue *queue =3D &info->queues[i];
-=20
-@@ -1753,8 +1744,6 @@ static void xennet_destroy_queues(struct netfront_inf=
-o *info)
- 		netif_napi_del(&queue->napi);
- 	}
-=20
--	rtnl_unlock();
--
- 	kfree(info->queues);
- 	info->queues =3D NULL;
- }
-@@ -1770,8 +1759,6 @@ static int xennet_create_queues(struct netfront_info =
-*info,
- 	if (!info->queues)
- 		return -ENOMEM;
-=20
--	rtnl_lock();
--
- 	for (i =3D 0; i < *num_queues; i++) {
- 		struct netfront_queue *queue =3D &info->queues[i];
-=20
-@@ -1780,7 +1767,7 @@ static int xennet_create_queues(struct netfront_info =
-*info,
-=20
- 		ret =3D xennet_init_queue(queue);
- 		if (ret < 0) {
--			dev_warn(&info->netdev->dev,
-+			dev_warn(&info->xbdev->dev,
- 				 "only created %d queues\n", i);
- 			*num_queues =3D i;
- 			break;
-@@ -1794,10 +1781,8 @@ static int xennet_create_queues(struct netfront_info=
- *info,
-=20
- 	netif_set_real_num_tx_queues(info->netdev, *num_queues);
-=20
--	rtnl_unlock();
--
- 	if (*num_queues =3D=3D 0) {
--		dev_err(&info->netdev->dev, "no queues\n");
-+		dev_err(&info->xbdev->dev, "no queues\n");
- 		return -EINVAL;
- 	}
- 	return 0;
-@@ -1839,6 +1824,7 @@ static int talk_to_netback(struct xenbus_device *dev,
- 		goto out;
- 	}
-=20
-+	rtnl_lock();
- 	if (info->queues)
- 		xennet_destroy_queues(info);
-=20
-@@ -1849,6 +1835,7 @@ static int talk_to_netback(struct xenbus_device *dev,
- 		info->queues =3D NULL;
- 		goto out;
- 	}
-+	rtnl_unlock();
-=20
- 	/* Create shared ring, alloc event channel -- for each queue */
- 	for (i =3D 0; i < num_queues; ++i) {
-@@ -1945,8 +1932,10 @@ abort_transaction_no_dev_fatal:
- 	xenbus_transaction_end(xbt, 1);
-  destroy_ring:
- 	xennet_disconnect_backend(info);
-+	rtnl_lock();
- 	xennet_destroy_queues(info);
-  out:
-+	rtnl_unlock();
- 	device_unregister(&dev->dev);
- 	return err;
- }
-@@ -1982,6 +1971,15 @@ static int xennet_connect(struct net_device *dev)
- 	netdev_update_features(dev);
- 	rtnl_unlock();
-=20
-+	if (dev->reg_state =3D=3D NETREG_UNINITIALIZED) {
-+		err =3D register_netdev(dev);
-+		if (err) {
-+			pr_warn("%s: register_netdev err=3D%d\n", __func__, err);
-+			device_unregister(&np->xbdev->dev);
-+			return err;
-+		}
-+	}
-+
- 	/*
- 	 * All public and private state should now be sane.  Get
- 	 * ready to start sending and receiving packets and give the driver
-@@ -2167,10 +2165,14 @@ static int xennet_remove(struct xenbus_device *dev)
-=20
- 	xennet_disconnect_backend(info);
-=20
--	unregister_netdev(info->netdev);
-+	if (info->netdev->reg_state =3D=3D NETREG_REGISTERED)
-+		unregister_netdev(info->netdev);
-=20
--	if (info->queues)
-+	if (info->queues) {
-+		rtnl_lock();
- 		xennet_destroy_queues(info);
-+		rtnl_unlock();
-+	}
- 	xennet_free_netdev(info->netdev);
-=20
- 	return 0;
 --=20
 2.15.1
