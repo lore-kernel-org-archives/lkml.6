@@ -1,91 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753328AbeDIPxU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:53:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43684 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753209AbeDIPxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:53:18 -0400
-Message-ID: <d827bf66f88eab01d7716fbe36decb9a539da353.camel@redhat.com>
-Subject: Re: simultaneous voice/data works (was Re: call/normal switch was
- Re: omap4-droid4: voice call support was)
-From: Dan Williams <dcbw@redhat.com>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Merlijn Wajer <merlijn@wizzup.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Date: Mon, 09 Apr 2018 10:53:14 -0500
-In-Reply-To: <20180409140847.GP5700@atomide.com>
-References: <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
-         <20180402155754.GD5700@atomide.com> <20180403150444.GE5700@atomide.com>
-         <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
-         <20180403194419.GG5700@atomide.com> <20180406120423.GA18691@amd>
-         <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
-         <20180407081000.GB7818@amd> <20180407122233.GA11302@amd>
-         <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
-         <20180409140847.GP5700@atomide.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1753196AbeDIPyc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:54:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55542 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752320AbeDIPya (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 11:54:30 -0400
+Date: Mon, 9 Apr 2018 17:54:20 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mingo@kernel.org,
+        boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
+        catalin.marinas@arm.com
+Subject: Re: [PATCH 02/10] locking/qspinlock: Remove unbounded cmpxchg loop
+ from locking slowpath
+Message-ID: <20180409155420.GB4082@hirez.programming.kicks-ass.net>
+References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
+ <1522947547-24081-3-git-send-email-will.deacon@arm.com>
+ <dc5f5e43-a60a-05f2-16fb-46960c40459e@redhat.com>
+ <20180409105835.GC23134@arm.com>
+ <20180409145409.GA9661@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409145409.GA9661@arm.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-09 at 07:08 -0700, Tony Lindgren wrote:
-> * Dan Williams <dcbw@redhat.com> [180408 02:46]:
-> > On Sat, 2018-04-07 at 14:22 +0200, Pavel Machek wrote:
-> > > I tried --location-enable-gps-unmanaged , but that did not work
-> > > for
-> > > me.
-> > 
-> > That requires a TTY that would spit out the GPS data; in this mode
-> > MM
-> > only sends the start/stop commands, and what comes out the GPS TTY
-> > is
-> > undefined (at least by MM).
-> > 
-> > So unless you know that one of the 6600's TTYs does GPS and in what
-> > format it does GPS, then no.
-> 
-> There should be a NMEA port within the unknown port range
-> ttyUSB[123].
-> 
-> Is there some easy way to enable --location-enable-gps-unmanaged for
-> testing so I can check if GPS gets enabled for one of the ports?
+On Mon, Apr 09, 2018 at 03:54:09PM +0100, Will Deacon wrote:
 
-Not all modems support all of the ModemManager location options;
--unmanaged is only for devices that support sending the data to a
-separate port and for which we know the commands to do that.
+> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+> index 19261af9f61e..71eb5e3a3d91 100644
+> --- a/kernel/locking/qspinlock.c
+> +++ b/kernel/locking/qspinlock.c
+> @@ -139,6 +139,20 @@ static __always_inline void clear_pending_set_locked(struct qspinlock *lock)
+>  	WRITE_ONCE(lock->locked_pending, _Q_LOCKED_VAL);
+>  }
+>  
+> +/**
+> + * set_pending_fetch_acquire - set the pending bit and return the old lock
+> + *                             value with acquire semantics.
+> + * @lock: Pointer to queued spinlock structure
+> + *
+> + * *,*,* -> *,1,*
+> + */
+> +static __always_inline u32 set_pending_fetch_acquire(struct qspinlock *lock)
+> +{
+> +	u32 val = xchg_relaxed(&lock->pending, 1) << _Q_PENDING_OFFSET;
+> +	val |= (atomic_read_acquire(&lock->val) & ~_Q_PENDING_MASK);
+> +	return val;
+> +}
 
-It looks like QMI has a way to direct the output to a specific device:
+> @@ -289,18 +315,26 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+>  		return;
+>  
+>  	/*
+> -	 * If we observe any contention; queue.
+> +	 * If we observe queueing, then queue ourselves.
+>  	 */
+> -	if (val & ~_Q_LOCKED_MASK)
+> +	if (val & _Q_TAIL_MASK)
+>  		goto queue;
+>  
+>  	/*
+> +	 * We didn't see any queueing, so have one more try at snatching
+> +	 * the lock in case it became available whilst we were taking the
+> +	 * slow path.
+> +	 */
+> +	if (queued_spin_trylock(lock))
+> +		return;
+> +
+> +	/*
+>  	 * trylock || pending
+>  	 *
+>  	 * 0,0,0 -> 0,0,1 ; trylock
+>  	 * 0,0,1 -> 0,1,1 ; pending
+>  	 */
+> +	val = set_pending_fetch_acquire(lock);
+>  	if (!(val & ~_Q_LOCKED_MASK)) {
 
-// Enum to describe QMI PDS Output Devices
-enum eQMIPDSOutputDevices:UINT8
-{
-   eQMIPDSOutputDevices_NoneDisabled  = 0,
-   eQMIPDSOutputDevices_USB           = 1,
-   eQMIPDSOutputDevices_UART1         = 2,
-   eQMIPDSOutputDevices_UART2         = 3,
-   eQMIPDSOutputDevices_SharedMemory  = 4,
-};
+So, if I remember that partial paper correctly, the atomc_read_acquire()
+can see 'arbitrary' old values for everything except the pending byte,
+which it just wrote and will fwd into our load, right?
 
-so we could add support for that to libqmi and then to ModemManager,
-which could help implement --location-enable-gps-unmanaged on alternate
-ports.
+But I think coherence requires the read to not be older than the one
+observed by the trylock before (since it uses c-cas its acquire can be
+elided).
 
-But what might be simpler is implementing something like the "QMI GPS
-proxy" that already exists, but for ModemManager or libqmi directly. 
-That way you can use QMI and get known formatting of the output data,
-but proxy it to a normal-looking NMEA tty?  Instead of trying to figure
-out which TTY/UART/etc the information comes out of for each specific
-device and somehow encoding that into the platform.  We know what the
-QMI ports are already, that's easy.  We don't know what all the TTYs
-are for every given modem and hardcoding that info somewhere is error-
-prone and hard to keep up with.
-
-Dan
+I think this means we can miss a concurrent unlock vs the fetch_or. And
+I think that's fine, if we still see the lock set we'll needlessly 'wait'
+for it go become unlocked.
