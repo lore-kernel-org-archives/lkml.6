@@ -1,60 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754557AbeDIUZ6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 16:25:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52471 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753704AbeDIUZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 16:25:55 -0400
-Date: Mon, 9 Apr 2018 13:12:32 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Manfred Spraul <manfred@colorfullife.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] ipc/shm: fix use-after-free of shm file via
- remap_file_pages()
-Message-ID: <20180409201232.3rweldbjtvxjj5ql@linux-n805>
-Mail-Followup-To: Eric Biggers <ebiggers3@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Manfred Spraul <manfred@colorfullife.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        syzkaller-bugs@googlegroups.com
-References: <94eb2c06f65e5e2467055d036889@google.com>
- <20180409043039.28915-1-ebiggers3@gmail.com>
- <20180409094813.bsjc3u2hnsrdyiuk@black.fi.intel.com>
- <20180409185016.GA203367@gmail.com>
+        id S1754449AbeDIUaB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 16:30:01 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:44272 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752249AbeDIU35 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 16:29:57 -0400
+X-Google-Smtp-Source: AIpwx4/XNUsYsoST5LeF4fuIiJYZ5CE6drvPZaa3Mp9FtXnfdcybPHq/vUPCemGJLdR9zLBzLrvLnA==
+Date: Mon, 9 Apr 2018 15:29:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sebastian Reichel <sre@kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tony Lindgren <tony@atomide.com>, Pavel Machek <pavel@ucw.cz>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv3 5/8] dt-bindings: panel: common: document orientation
+ property
+Message-ID: <20180409202955.ztkmpbl2wz4igfo7@rob-hp-laptop>
+References: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
+ <20180330171822.25896-6-sebastian.reichel@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409185016.GA203367@gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180330171822.25896-6-sebastian.reichel@collabora.co.uk>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 09 Apr 2018, Eric Biggers wrote:
+On Fri, Mar 30, 2018 at 07:18:19PM +0200, Sebastian Reichel wrote:
+> Merge "rotation" property description into common panel
+> binding.
+> 
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> ---
+>  .../devicetree/bindings/display/panel/panel-common.txt       | 12 ++++++++++++
+>  Documentation/devicetree/bindings/display/panel/panel.txt    |  4 ----
+>  2 files changed, 12 insertions(+), 4 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/display/panel/panel.txt
 
->It's necessary because if we don't hold a reference to sfd->file, then it can be
->a stale pointer when we compare it in __shm_open().  In particular, if the new
->struct file happened to be allocated at the same address as the old one, then
->'sfd->file == shp->shm_file' so the mmap would be allowed.  But, it will be a
->different shm segment than was intended.  The caller may not even have
->permissions to map it normally, yet it would be done anyway.
->
->In the end it's just broken to have a pointer to something that can be freed out
->from under you...
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-So this is actually handled by shm_nattch, serialized by the ipc perm->lock.
-shm_destroy() is called when 0, which in turn does the fput(shm_file). Note
-that shm_file is given a count of 1 when a new segment is created (deep in
-get_empty_filp()). So I don't think the pointer is going anywhere, or am I missing
-something?
+Thanks for consolidating.
 
-Thanks,
-Davidlohr
+Rob
