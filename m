@@ -1,212 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752296AbeDIMQT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 08:16:19 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:59269 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751877AbeDIMQS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 08:16:18 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="38714287"
-Subject: =?UTF-8?B?UmU6IOetlOWkjTog562U5aSNOiBbUkZDIFBBVENIXSB4ODYvYWNwaTog?=
- =?UTF-8?Q?Prevent_x2apic_id_-1_from_being_accounted?=
-To: "Li,Rongqing" <lirongqing@baidu.com>,
+        id S1752442AbeDIMRZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 08:17:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37986 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751862AbeDIMRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 08:17:24 -0400
+Date: Mon, 9 Apr 2018 14:17:22 +0200
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "jgross@suse.com" <jgross@suse.com>, "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>
-References: <1523187531-29837-1-git-send-email-lirongqing@baidu.com>
- <f137d895-b8b9-d2eb-bbf9-3e5cd8089291@cn.fujitsu.com>
- <2AD939572F25A448A3AE3CAEA61328C23758FDF3@BC-MAIL-M28.internal.baidu.com>
- <148150f5-4b33-c064-a877-88c20f63e96e@cn.fujitsu.com>
- <2AD939572F25A448A3AE3CAEA61328C23759089A@BC-MAIL-M28.internal.baidu.com>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <2a37398c-0f81-23d7-86a7-4dca7821bfee@cn.fujitsu.com>
-Date: Mon, 9 Apr 2018 20:16:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        "himanshu.madhani@cavium.com" <himanshu.madhani@cavium.com>
+Subject: Re: [PATCH] qla2xxx: correctly shift host byte
+Message-ID: <20180409121722.zijiq63mo56ovewg@linux-x5ow.site>
+References: <20180406075222.7358-1-jthumshirn@suse.de>
+ <0753246e70d16062b87930b2b75eec31a4bb88eb.camel@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <2AD939572F25A448A3AE3CAEA61328C23759089A@BC-MAIL-M28.internal.baidu.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 87E00472400E.A7DE3
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+In-Reply-To: <0753246e70d16062b87930b2b75eec31a4bb88eb.camel@wdc.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rongqing,
-
-At 04/09/2018 05:33 PM, Li,Rongqing wrote:
-[...]
-> Thanks. How about the below modification:
+On Fri, Apr 06, 2018 at 03:01:20PM +0000, Bart Van Assche wrote:
+> Please mention in the description of this patch that this patch does not
+> change any functionality because DID_OK == 0. Anyway:
 > 
+> Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
 
-It is good to me. you need start a new v2 thread for this. so
-that maintainers can easy to get it.
-
-> commit 96ba42cf87ce0e62d500004c01bfa9a9479b2e87
-> Author: Li RongQing <lirongqing@baidu.com>
-> Date:   Sun Apr 8 18:54:10 2018 +0800
-> 
->      x86/acpi: Prevent all the X2APIC Id from being parsed in non-x2apic mode
->      
->      the values of x2APIC ID is greater than 0xff in ACPI MADT, if acpi
->      is apic_flat, default_apic_id_valid() is called to check id which
->      is converted from u32 to int, will return true if id is larger than
->      0x7fffffff, this is wrong
->      
->      and if local_apic_id is invalid, we should prevent it from being
->      accounted
->      
->      This fixes a bug that Purley platform displays too many possible cpu
->      
->      Signed-off-by: Li RongQing <lirongqing@baidu.com>
->      Suggested-by:: Dou Liyang <douly.fnst@cn.fujitsu.com>
-   Â  Â  Â ^-----------^---- no need to add this, it is my pleasure
-
-
-Thanks,
-
-	dou
-
->      Cc: Peter Zijlstra <peterz@infradead.org>
->      Cc: Thomas Gleixner <tglx@linutronix.de>
-> 
-> diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-> index 40a3d3642f3a..08acd954f00e 100644
-> --- a/arch/x86/include/asm/apic.h
-> +++ b/arch/x86/include/asm/apic.h
-> @@ -313,7 +313,7 @@ struct apic {
->          /* Probe, setup and smpboot functions */
->          int     (*probe)(void);
->          int     (*acpi_madt_oem_check)(char *oem_id, char *oem_table_id);
-> -       int     (*apic_id_valid)(int apicid);
-> +       int     (*apic_id_valid)(u32 apicid);
->          int     (*apic_id_registered)(void);
->   
->          bool    (*check_apicid_used)(physid_mask_t *map, int apicid);
-> @@ -486,7 +486,7 @@ static inline unsigned int read_apic_id(void)
->          return apic->get_apic_id(reg);
->   }
->   
-> -extern int default_apic_id_valid(int apicid);
-> +extern int default_apic_id_valid(u32 apicid);
->   extern int default_acpi_madt_oem_check(char *, char *);
->   extern void default_setup_apic_routing(void);
->   
-> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-> index 7a37d9357bc4..4ba949de1ca9 100644
-> --- a/arch/x86/kernel/acpi/boot.c
-> +++ b/arch/x86/kernel/acpi/boot.c
-> @@ -200,7 +200,7 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
->   {
->          struct acpi_madt_local_x2apic *processor = NULL;
->   #ifdef CONFIG_X86_X2APIC
-> -       int apic_id;
-> +       u32 apic_id;
->          u8 enabled;
->   #endif
->   
-> @@ -222,10 +222,13 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
->           * to not preallocating memory for all NR_CPUS
->           * when we use CPU hotplug.
->           */
-> -       if (!apic->apic_id_valid(apic_id) && enabled)
-> -               printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
-> -       else
-> -               acpi_register_lapic(apic_id, processor->uid, enabled);
-> +       if (!apic->apic_id_valid(apic_id)) {
-> +               if (enabled)
-> +                       printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
-> +               return 0;
-> +       }
-> +
-> +       acpi_register_lapic(apic_id, processor->uid, enabled);
->   #else
->          printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
->   #endif
-> diff --git a/arch/x86/kernel/apic/apic_common.c b/arch/x86/kernel/apic/apic_common.c
-> index a360801779ae..02b4839478b1 100644
-> --- a/arch/x86/kernel/apic/apic_common.c
-> +++ b/arch/x86/kernel/apic/apic_common.c
-> @@ -40,7 +40,7 @@ int default_check_phys_apicid_present(int phys_apicid)
->          return physid_isset(phys_apicid, phys_cpu_present_map);
->   }
->   
-> -int default_apic_id_valid(int apicid)
-> +int default_apic_id_valid(u32 apicid)
->   {
->          return (apicid < 255);
->   }
-> diff --git a/arch/x86/kernel/apic/apic_numachip.c b/arch/x86/kernel/apic/apic_numachip.c
-> index 134e04506ab4..78778b54f904 100644
-> --- a/arch/x86/kernel/apic/apic_numachip.c
-> +++ b/arch/x86/kernel/apic/apic_numachip.c
-> @@ -56,7 +56,7 @@ static u32 numachip2_set_apic_id(unsigned int id)
->          return id << 24;
->   }
->   
-> -static int numachip_apic_id_valid(int apicid)
-> +static int numachip_apic_id_valid(u32 apicid)
->   {
->          /* Trust what bootloader passes in MADT */
->          return 1;
-> diff --git a/arch/x86/kernel/apic/x2apic.h b/arch/x86/kernel/apic/x2apic.h
-> index b107de381cb5..a49b3604027f 100644
-> --- a/arch/x86/kernel/apic/x2apic.h
-> +++ b/arch/x86/kernel/apic/x2apic.h
-> @@ -1,6 +1,6 @@
->   /* Common bits for X2APIC cluster/physical modes. */
->   
-> -int x2apic_apic_id_valid(int apicid);
-> +int x2apic_apic_id_valid(u32 apicid);
->   int x2apic_apic_id_registered(void);
->   void __x2apic_send_IPI_dest(unsigned int apicid, int vector, unsigned int dest);
->   unsigned int x2apic_get_apic_id(unsigned long id);
-> diff --git a/arch/x86/kernel/apic/x2apic_phys.c b/arch/x86/kernel/apic/x2apic_phys.c
-> index e2829bf40e4a..b5cf9e7b3830 100644
-> --- a/arch/x86/kernel/apic/x2apic_phys.c
-> +++ b/arch/x86/kernel/apic/x2apic_phys.c
-> @@ -101,7 +101,7 @@ static int x2apic_phys_probe(void)
->   }
->   
->   /* Common x2apic functions, also used by x2apic_cluster */
-> -int x2apic_apic_id_valid(int apicid)
-> +int x2apic_apic_id_valid(u32 apicid)
->   {
->          return 1;
->   }
-> diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-> index f11910b44638..efaf2d4f9c3c 100644
-> --- a/arch/x86/kernel/apic/x2apic_uv_x.c
-> +++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-> @@ -557,7 +557,7 @@ static void uv_send_IPI_all(int vector)
->          uv_send_IPI_mask(cpu_online_mask, vector);
->   }
->   
-> -static int uv_apic_id_valid(int apicid)
-> +static int uv_apic_id_valid(u32 apicid)
->   {
->          return 1;
->   }
-> diff --git a/arch/x86/xen/apic.c b/arch/x86/xen/apic.c
-> index 2163888497d3..5e53bfbe5823 100644
-> --- a/arch/x86/xen/apic.c
-> +++ b/arch/x86/xen/apic.c
-> @@ -112,7 +112,7 @@ static int xen_madt_oem_check(char *oem_id, char *oem_table_id)
->          return xen_pv_domain();
->   }
->   
-> -static int xen_id_always_valid(int apicid)
-> +static int xen_id_always_valid(u32 apicid)
->   {
->          return 1;
->   }
-> 
-> 
+I'll do. Thanks for the review.
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
