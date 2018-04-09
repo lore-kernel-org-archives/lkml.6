@@ -1,49 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752136AbeDIFln (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 01:41:43 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.167]:13984 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751549AbeDIFll (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 01:41:41 -0400
-X-RZG-AUTH: :P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9x24dP3Zg1I6xSGfZ
-X-RZG-CLASS-ID: mo00
-From: Stephan Mueller <smueller@chronox.de>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        Eric Biggers <ebiggers3@gmail.com>,
-        syzbot <syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] crypto: DRBG - guard uninstantion by lock
-Date: Mon, 09 Apr 2018 07:40:55 +0200
-Message-ID: <58589900.TM7ux0T285@tauon.chronox.de>
-In-Reply-To: <20180408224603.GA32004@thunk.org>
-References: <001a114467482dbc4b05692df8f9@google.com> <6541596.TtyMCBNA0Q@positron.chronox.de> <20180408224603.GA32004@thunk.org>
+        id S1751653AbeDIFq6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 01:46:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33356 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750877AbeDIFq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 01:46:56 -0400
+Date: Mon, 9 Apr 2018 08:46:55 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: =?utf-8?B?aGFpYmluemhhbmco5byg5rW35paMKQ==?=
+        <haibinzhang@tencent.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?bGlkb25nY2hlbijpmYjnq4vkuJwp?= <lidongchen@tencent.com>,
+        =?utf-8?B?eXVuZmFuZ3RhaSjlj7Dov5Dmlrkp?= <yunfangtai@tencent.com>
+Subject: Re: [PATCH] vhost-net: set packet weight of tx polling to 2 * vq size
+Message-ID: <20180409084601-mutt-send-email-mst@kernel.org>
+References: <88D661ADF6AFBF42B2AB88D8E7682B0901FC49BE@EXMBX-SZMAIL011.tencent.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <88D661ADF6AFBF42B2AB88D8E7682B0901FC49BE@EXMBX-SZMAIL011.tencent.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 9. April 2018, 00:46:03 CEST schrieb Theodore Y. Ts'o:
-
-Hi Theodore,
+On Mon, Apr 09, 2018 at 04:09:20AM +0000, haibinzhang(张海斌) wrote:
 > 
-> So the syzbot will run while the patch goes through the normal e-mail
-> review process, which is kind of neat.  :-)
+> > On Fri, Apr 06, 2018 at 08:22:37AM +0000, haibinzhang(张海斌) wrote:
+> > > handle_tx will delay rx for tens or even hundreds of milliseconds when tx busy
+> > > polling udp packets with small length(e.g. 1byte udp payload), because setting
+> > > VHOST_NET_WEIGHT takes into account only sent-bytes but no single packet length.
+> > > 
+> > > Ping-Latencies shown below were tested between two Virtual Machines using
+> > > netperf (UDP_STREAM, len=1), and then another machine pinged the client:
+> > > 
+> > > Packet-Weight      Ping-Latencies(millisecond)
+> > >                    min      avg       max
+> > > Origin           3.319   18.489    57.303
+> > > 64               1.643    2.021     2.552
+> > > 128              1.825    2.600     3.224
+> > > 256              1.997    2.710     4.295
+> > > 512              1.860    3.171     4.631
+> > > 1024             2.002    4.173     9.056
+> > > 2048             2.257    5.650     9.688
+> > > 4096             2.093    8.508    15.943
+> >
+> > And this is with Q size 256 right?
+> 
+> Yes. Ping-latencies with 512 VQ size show below.
+> 
+> Packet-Weight      Ping-Latencies(millisecond)
+>                     min      avg       max
+> Origin           6.357   29.177    66.245
+> 64               2.798    3.614     4.403
+> 128              2.861    3.820     4.775
+> 256              3.008    4.018     4.807
+> 512              3.254    4.523     5.824
+> 1024             3.079    5.335     7.747
+> 2048             3.944    8.201     12.762
+> 4096             4.158   11.057    19.985
+> 
+> We will submit again. Is there anything else?
 
-Thank you very much for the hint. That is a neat feature indeed.
+Seems pretty consistent, a small dip at 2 VQ sizes.
 
-As I came late to the party and I missed the original mails, I am wondering 
-about which GIT repo was used and which branch of it. With that, I would be 
-happy to resubmit with the test line.
 
-Ciao
-Stephan
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
+> >
+> > > Ring size is a hint from device about a burst size it can tolerate. Based on
+> > > benchmarks, set the weight to 2 * vq size.
+> > > 
+> > > To evaluate this change, another tests were done using netperf(RR, TX) between
+> > > two machines with Intel(R) Xeon(R) Gold 6133 CPU @ 2.50GHz, and vq size was
+> > > tweaked through qemu. Results shown below does not show obvious changes.
+> >
+> > What I asked for is ping-latency with different VQ sizes,
+> > streaming below does not show anything.
+> >
+> > > vq size=256 TCP_RR                vq size=512 TCP_RR
+> > > size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
+> > >    1/       1/  -7%/        -2%      1/       1/   0%/        -2%
+> > >    1/       4/  +1%/         0%      1/       4/  +1%/         0%
+> > >    1/       8/  +1%/        -2%      1/       8/   0%/        +1%
+> > >   64/       1/  -6%/         0%     64/       1/  +7%/        +3%
+> > >   64/       4/   0%/        +2%     64/       4/  -1%/        +1%
+> > >   64/       8/   0%/         0%     64/       8/  -1%/        -2%
+> > >  256/       1/  -3%/        -4%    256/       1/  -4%/        -2%
+> > >  256/       4/  +3%/        +4%    256/       4/  +1%/        +2%
+> > >  256/       8/  +2%/         0%    256/       8/  +1%/        -1%
+> > > 
+> > > vq size=256 UDP_RR                vq size=512 UDP_RR
+> > > size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
+> > >    1/       1/  -5%/        +1%      1/       1/  -3%/        -2%
+> > >    1/       4/  +4%/        +1%      1/       4/  -2%/        +2%
+> > >    1/       8/  -1%/        -1%      1/       8/  -1%/         0%
+> > >   64/       1/  -2%/        -3%     64/       1/  +1%/        +1%
+> > >   64/       4/  -5%/        -1%     64/       4/  +2%/         0%
+> > >   64/       8/   0%/        -1%     64/       8/  -2%/        +1%
+> > >  256/       1/  +7%/        +1%    256/       1/  -7%/         0%
+> > >  256/       4/  +1%/        +1%    256/       4/  -3%/        -4%
+> > >  256/       8/  +2%/        +2%    256/       8/  +1%/        +1%
+> > > 
+> > > vq size=256 TCP_STREAM            vq size=512 TCP_STREAM
+> > > size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
+> > >   64/       1/   0%/        -3%     64/       1/   0%/         0%
+> > >   64/       4/  +3%/        -1%     64/       4/  -2%/        +4%
+> > >   64/       8/  +9%/        -4%     64/       8/  -1%/        +2%
+> > >  256/       1/  +1%/        -4%    256/       1/  +1%/        +1%
+> > >  256/       4/  -1%/        -1%    256/       4/  -3%/         0%
+> > >  256/       8/  +7%/        +5%    256/       8/  -3%/         0%
+> > >  512/       1/  +1%/         0%    512/       1/  -1%/        -1%
+> > >  512/       4/  +1%/        -1%    512/       4/   0%/         0%
+> > >  512/       8/  +7%/        -5%    512/       8/  +6%/        -1%
+> > > 1024/       1/   0%/        -1%   1024/       1/   0%/        +1%
+> > > 1024/       4/  +3%/         0%   1024/       4/  +1%/         0%
+> > > 1024/       8/  +8%/        +5%   1024/       8/  -1%/         0%
+> > > 2048/       1/  +2%/        +2%   2048/       1/  -1%/         0%
+> > > 2048/       4/  +1%/         0%   2048/       4/   0%/        -1%
+> > > 2048/       8/  -2%/         0%   2048/       8/   5%/        -1%
+> > > 4096/       1/  -2%/         0%   4096/       1/  -2%/         0%
+> > > 4096/       4/  +2%/         0%   4096/       4/   0%/         0%
+> > > 4096/       8/  +9%/        -2%   4096/       8/  -5%/        -1%
+> > > 
+> > > Signed-off-by: Haibin Zhang <haibinzhang@tencent.com>
+> > > Signed-off-by: Yunfang Tai <yunfangtai@tencent.com>
+> > > Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+> >
+> > Code is fine but I'd like to see validation of the heuristic
+> > 2*vq->num with another vq size.
+> >
+> >
+> >
+> > > ---
+> > >  drivers/vhost/net.c | 8 +++++++-
+> > >  1 file changed, 7 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> > > index 8139bc70ad7d..3563a305cc0a 100644
+> > > --- a/drivers/vhost/net.c
+> > > +++ b/drivers/vhost/net.c
+> > > @@ -44,6 +44,10 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
+> > >   * Using this limit prevents one virtqueue from starving others. */
+> > >  #define VHOST_NET_WEIGHT 0x80000
+> > >  
+> > > +/* Max number of packets transferred before requeueing the job.
+> > > + * Using this limit prevents one virtqueue from starving rx. */
+> > > +#define VHOST_NET_PKT_WEIGHT(vq) ((vq)->num * 2)
+> > > +
+> > >  /* MAX number of TX used buffers for outstanding zerocopy */
+> > >  #define VHOST_MAX_PEND 128
+> > >  #define VHOST_GOODCOPY_LEN 256
+> > > @@ -473,6 +477,7 @@ static void handle_tx(struct vhost_net *net)
+> > >  	struct socket *sock;
+> > >  	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+> > >  	bool zcopy, zcopy_used;
+> > > +	int sent_pkts = 0;
+> > >  
+> > >  	mutex_lock(&vq->mutex);
+> > >  	sock = vq->private_data;
+> > > @@ -580,7 +585,8 @@ static void handle_tx(struct vhost_net *net)
+> > >  		else
+> > >  			vhost_zerocopy_signal_used(net, vq);
+> > >  		vhost_net_tx_packet(net);
+> > > -		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
+> > > +		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
+> > > +		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT(vq))) {
+> > >  			vhost_poll_queue(&vq->poll);
+> > >  			break;
+> > >  		}
+> > > -- 
+> > > 2.12.3
+> > > 
+> 
