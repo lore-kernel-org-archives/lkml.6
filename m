@@ -1,25 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751998AbeDINvM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:51:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35006 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751539AbeDINvK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:51:10 -0400
-Date: Mon, 9 Apr 2018 06:51:04 -0700
-From: Christoph Hellwig <hch@infradead.org>
+        id S1752127AbeDINwU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:52:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46619 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751539AbeDINwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 09:52:19 -0400
+Date: Mon, 9 Apr 2018 15:52:15 +0200
+From: Michal Hocko <mhocko@kernel.org>
 To: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Minchan Kim <minchan@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
+Cc: Chao Yu <yuchao0@huawei.com>, Minchan Kim <minchan@kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
         Chris Fries <cfries@google.com>,
         linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180409135104.GA23434@infradead.org>
+Message-ID: <20180409135215.GH21835@dhcp22.suse.cz>
 References: <20180409015815.235943-1-minchan@kernel.org>
  <20180409024925.GA21889@bombadil.infradead.org>
  <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
@@ -32,13 +30,53 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20180409134114.GA30963@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 06:41:14AM -0700, Matthew Wilcox wrote:
+On Mon 09-04-18 06:41:14, Matthew Wilcox wrote:
+> On Mon, Apr 09, 2018 at 02:48:52PM +0200, Michal Hocko wrote:
+> > On Mon 09-04-18 20:25:06, Chao Yu wrote:
+> > [...]
+> > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > > index c85cccc2e800..cc63f8c448f0 100644
+> > > --- a/fs/f2fs/inode.c
+> > > +++ b/fs/f2fs/inode.c
+> > > @@ -339,10 +339,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+> > >  make_now:
+> > >  	if (ino == F2FS_NODE_INO(sbi)) {
+> > >  		inode->i_mapping->a_ops = &f2fs_node_aops;
+> > > -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> > > +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+> > 
+> > An unrelated question. Why do you make all allocations for the mapping
+> > NOFS automatically? What kind of reclaim recursion problems are you
+> > trying to prevent?
+> 
 > It's worth noting that this is endemic in filesystems.
 
-For the rationale in XFS take a look at commit ad22c7a043c2cc6792820e6c5da699935933e87d
+Yes, and I have strong suspicion that this is a mindless copy&pasting...
+Well, xfs had a good reason for it in the past - mostly to handle deep
+call stacks on complicated storage setups in the past when we used to
+trigger IO from the direct reclaim. I am not sure whether there are
+other reasons to keep the status quo except for finding somebody brave
+enough to post the patch, do all the due testing.
+
+> $ git grep mapping_set_gfp_mask.*FS
+> drivers/block/loop.c:   mapping_set_gfp_mask(mapping, lo->old_gfp_mask & ~(__GFP_IO|__GFP_FS));
+> fs/btrfs/disk-io.c:     mapping_set_gfp_mask(fs_info->btree_inode->i_mapping, GFP_NOFS);
+> fs/f2fs/inode.c:                mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> fs/f2fs/inode.c:                mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> fs/gfs2/glock.c:                mapping_set_gfp_mask(mapping, GFP_NOFS);
+> fs/gfs2/ops_fstype.c:   mapping_set_gfp_mask(mapping, GFP_NOFS);
+> fs/jfs/jfs_imap.c:      mapping_set_gfp_mask(ip->i_mapping, GFP_NOFS);
+> fs/jfs/super.c: mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+> fs/nilfs2/gcinode.c:    mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+> fs/nilfs2/page.c:       mapping_set_gfp_mask(mapping, GFP_NOFS);
+> fs/reiserfs/xattr.c:    mapping_set_gfp_mask(mapping, GFP_NOFS);
+> fs/xfs/xfs_iops.c:      mapping_set_gfp_mask(inode->i_mapping, (gfp_mask & ~(__GFP_FS)));
+
+-- 
+Michal Hocko
+SUSE Labs
