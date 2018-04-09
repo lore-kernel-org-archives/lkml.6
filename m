@@ -1,58 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752140AbeDIMvs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 08:51:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40900 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751589AbeDIMvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 08:51:47 -0400
-Date: Mon, 9 Apr 2018 14:51:43 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] firmware: dmi_scan: Fix UUID length safety check
-Message-ID: <20180409145143.4daa1706@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1751916AbeDIMyd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 08:54:33 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46999 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751522AbeDIMyb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 08:54:31 -0400
+X-Google-Smtp-Source: AIpwx4+nQuGPabZ4m6MPP3kQw25+nu2ANGwcRyx2mfp5S+Mpl/NBdHN0+VzXhhfIMbStwPlFP3QHohB3tFemZ19kXDg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <cdba869f704b457bc617007738870b9e1bdef9d3.1522546571.git.fthain@telegraphics.com.au>
+References: <cover.1522546571.git.fthain@telegraphics.com.au> <cdba869f704b457bc617007738870b9e1bdef9d3.1522546571.git.fthain@telegraphics.com.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Apr 2018 14:54:30 +0200
+X-Google-Sender-Auth: 0Ea0KBS5JrYmayLdlwanrUO24eI
+Message-ID: <CAMuHMdUy6C4OoGF44e_34+XjsQHe6RwfoesfBzcM8baEHUwzXw@mail.gmail.com>
+Subject: Re: [PATCH 03/12] m68k/mac: Don't remap SWIM MMIO region
+To: Finn Thain <fthain@telegraphics.com.au>
+Cc: Laurent Vivier <lvivier@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The test which ensures that the DMI type 1 structure is long enough
-to hold the UUID is off by one. It would fail if the structure is
-exactly 24 bytes long, while that's sufficient to hold the UUID.
+Hi Finn,
 
-I don't expect this bug to cause problem in practice because all
-implementations I have seen had length 8, 25 or 27 bytes, in line
-with the SMBIOS specifications. But let's fix it still.
+On Sun, Apr 1, 2018 at 3:41 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+> For reasons I don't understand, calling ioremap() then iounmap() on
+> the SWIM MMIO region causes a hang on 68030 (but not on 68040).
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: a814c3597a6b ("firmware: dmi_scan: Check DMI structure length")
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/firmware/dmi_scan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Michael Schmitz also notices strange things with ioremap() on '030.
 
---- linux-4.16.orig/drivers/firmware/dmi_scan.c	2018-04-08 09:32:20.508719012 +0200
-+++ linux-4.16/drivers/firmware/dmi_scan.c	2018-04-09 11:24:57.937044642 +0200
-@@ -186,7 +186,7 @@ static void __init dmi_save_uuid(const s
- 	char *s;
- 	int is_ff = 1, is_00 = 1, i;
- 
--	if (dmi_ident[slot] || dm->length <= index + 16)
-+	if (dmi_ident[slot] || dm->length < index + 16)
- 		return;
- 
- 	d = (u8 *) dm + index;
+> There's no need to call ioremap() for the SWIM address range, as it lies
+> within the usual IO device region at 0x5000 0000, which is already mapped.
 
+by head.S, right?
+
+> --- a/drivers/block/swim.c
+> +++ b/drivers/block/swim.c
+> @@ -911,7 +911,7 @@ static int swim_probe(struct platform_device *dev)
+>                 goto out;
+>         }
+>
+> -       swim_base = ioremap(res->start, resource_size(res));
+> +       swim_base = (struct swim __iomem *)res->start;
+
+I guess you need a __force to please sparse?
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Jean Delvare
-SUSE L3 Support
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
