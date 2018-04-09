@@ -1,162 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751918AbeDIHCi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:02:38 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39088 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751458AbeDIHCg (ORCPT
+        id S1752172AbeDIHDT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:03:19 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42754 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751767AbeDIHDR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:02:36 -0400
-X-Google-Smtp-Source: AIpwx49KRo41oV8+kbMoTlrgnj+8Bv5xDLhu1SOw2XraDL/BdY6YBuOum+4iSIzZmAblPHZUWsfBJg==
-Subject: Re: [PATCH] Revert "ata: ahci-platform: add reset control support"
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1523237554-7928-1-git-send-email-hayashi.kunihiko@socionext.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <c8ec7474-7eb4-24cf-1f53-b4bcee5508dd@redhat.com>
-Date: Mon, 9 Apr 2018 09:02:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1523237554-7928-1-git-send-email-hayashi.kunihiko@socionext.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 9 Apr 2018 03:03:17 -0400
+X-Google-Smtp-Source: AIpwx4/QlWsDA7lgKPHFXYKsi5A3gosvl7KWeUddsOvID4kgyG7yBKFx2xwkhE4372zsvhNt4qYtyg==
+From: Richard Cochran <richardcochran@gmail.com>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        David Miller <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Subject: [PATCH net] net: dsa: mv88e6xxx: Fix receive time stamp race condition.
+Date: Mon,  9 Apr 2018 00:03:14 -0700
+Message-Id: <20180409070314.12409-1-richardcochran@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI,
+The DSA stack passes received PTP frames to this driver via
+mv88e6xxx_port_rxtstamp() for deferred delivery.  The driver then
+queues the frame and kicks the worker thread.  The work callback reads
+out the latched receive time stamp and then works through the queue,
+delivering any non-matching frames without a time stamp.
 
-On 09-04-18 03:32, Kunihiko Hayashi wrote:
-> This reverts commit f0f56716fc3e5d547fd7811eb218a30ed0695605.
-> 
-> According to Thierry's view,
-> https://www.spinics.net/lists/linux-ide/msg55357.html
-> some hardware-specific drivers already use their own resets,
-> and the common reset might make a path to occur double controls of resets.
-> 
-> For now, revert the commit that adds reset control support to ahci-platform,
-> and hold until the solution is confirmed not be affect all hardware-specific
-> drivers.
-> 
-> Fixes: f0f56716fc3e ("ata: ahci-platform: add reset control support")
-> Reported-by: Thierry Reding <thierry.reding@gmail.com>
-> Suggested-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+If a new frame arrives after the worker thread has read out the time
+stamp register but enters the queue before the worker finishes
+processing the queue, that frame will be delivered without a time
+stamp.
 
-Acked-by: Hans de Goede <hdegoede@redhat.com>
+This patch fixes the race by moving the queue onto a list on the stack
+before reading out the latched time stamp value.
 
-Regards,
+Fixes: c6fe0ad2c3499 ("net: dsa: mv88e6xxx: add rx/tx timestamping support")
 
-Hans
+Signed-off-by: Richard Cochran <richardcochran@gmail.com>
+---
+ drivers/net/dsa/mv88e6xxx/hwtstamp.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-
-
-> ---
->   .../devicetree/bindings/ata/ahci-platform.txt      |  1 -
->   drivers/ata/ahci.h                                 |  1 -
->   drivers/ata/libahci_platform.c                     | 24 +++-------------------
->   3 files changed, 3 insertions(+), 23 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-> index f4006d3..c760ecb 100644
-> --- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
-> +++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-> @@ -30,7 +30,6 @@ compatible:
->   Optional properties:
->   - dma-coherent      : Present if dma operations are coherent
->   - clocks            : a list of phandle + clock specifier pairs
-> -- resets            : a list of phandle + reset specifier pairs
->   - target-supply     : regulator for SATA target power
->   - phys              : reference to the SATA PHY node
->   - phy-names         : must be "sata-phy"
-> diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
-> index 4356ef1..a9d996e 100644
-> --- a/drivers/ata/ahci.h
-> +++ b/drivers/ata/ahci.h
-> @@ -350,7 +350,6 @@ struct ahci_host_priv {
->   	u32			em_msg_type;	/* EM message type */
->   	bool			got_runtime_pm; /* Did we do pm_runtime_get? */
->   	struct clk		*clks[AHCI_MAX_CLKS]; /* Optional */
-> -	struct reset_control	*rsts;		/* Optional */
->   	struct regulator	**target_pwrs;	/* Optional */
->   	/*
->   	 * If platform uses PHYs. There is a 1:1 relation between the port number and
-> diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
-> index 46a7624..30cc8f1 100644
-> --- a/drivers/ata/libahci_platform.c
-> +++ b/drivers/ata/libahci_platform.c
-> @@ -25,7 +25,6 @@
->   #include <linux/phy/phy.h>
->   #include <linux/pm_runtime.h>
->   #include <linux/of_platform.h>
-> -#include <linux/reset.h>
->   #include "ahci.h"
->   
->   static void ahci_host_stop(struct ata_host *host);
-> @@ -196,8 +195,7 @@ EXPORT_SYMBOL_GPL(ahci_platform_disable_regulators);
->    * following order:
->    * 1) Regulator
->    * 2) Clocks (through ahci_platform_enable_clks)
-> - * 3) Resets
-> - * 4) Phys
-> + * 3) Phys
->    *
->    * If resource enabling fails at any point the previous enabled resources
->    * are disabled in reverse order.
-> @@ -217,19 +215,12 @@ int ahci_platform_enable_resources(struct ahci_host_priv *hpriv)
->   	if (rc)
->   		goto disable_regulator;
->   
-> -	rc = reset_control_deassert(hpriv->rsts);
-> -	if (rc)
-> -		goto disable_clks;
-> -
->   	rc = ahci_platform_enable_phys(hpriv);
->   	if (rc)
-> -		goto disable_resets;
-> +		goto disable_clks;
->   
->   	return 0;
->   
-> -disable_resets:
-> -	reset_control_assert(hpriv->rsts);
-> -
->   disable_clks:
->   	ahci_platform_disable_clks(hpriv);
->   
-> @@ -248,15 +239,12 @@ EXPORT_SYMBOL_GPL(ahci_platform_enable_resources);
->    * following order:
->    * 1) Phys
->    * 2) Clocks (through ahci_platform_disable_clks)
-> - * 3) Resets
-> - * 4) Regulator
-> + * 3) Regulator
->    */
->   void ahci_platform_disable_resources(struct ahci_host_priv *hpriv)
->   {
->   	ahci_platform_disable_phys(hpriv);
->   
-> -	reset_control_assert(hpriv->rsts);
-> -
->   	ahci_platform_disable_clks(hpriv);
->   
->   	ahci_platform_disable_regulators(hpriv);
-> @@ -405,12 +393,6 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev)
->   		hpriv->clks[i] = clk;
->   	}
->   
-> -	hpriv->rsts = devm_reset_control_array_get_optional_shared(dev);
-> -	if (IS_ERR(hpriv->rsts)) {
-> -		rc = PTR_ERR(hpriv->rsts);
-> -		goto err_out;
-> -	}
-> -
->   	hpriv->nports = child_nodes = of_get_child_count(dev->of_node);
->   
->   	/*
-> 
+diff --git a/drivers/net/dsa/mv88e6xxx/hwtstamp.c b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+index ac7694c71266..a036c490b7ce 100644
+--- a/drivers/net/dsa/mv88e6xxx/hwtstamp.c
++++ b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+@@ -285,10 +285,18 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
+ 			       struct sk_buff_head *rxq)
+ {
+ 	u16 buf[4] = { 0 }, status, seq_id;
+-	u64 ns, timelo, timehi;
+ 	struct skb_shared_hwtstamps *shwt;
++	struct sk_buff_head received;
++	u64 ns, timelo, timehi;
++	unsigned long flags;
+ 	int err;
+ 
++	/* The latched timestamp belongs to one of the received frames. */
++	__skb_queue_head_init(&received);
++	spin_lock_irqsave(&rxq->lock, flags);
++	skb_queue_splice_tail_init(rxq, &received);
++	spin_unlock_irqrestore(&rxq->lock, flags);
++
+ 	mutex_lock(&chip->reg_lock);
+ 	err = mv88e6xxx_port_ptp_read(chip, ps->port_id,
+ 				      reg, buf, ARRAY_SIZE(buf));
+@@ -311,7 +319,7 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
+ 	/* Since the device can only handle one time stamp at a time,
+ 	 * we purge any extra frames from the queue.
+ 	 */
+-	for ( ; skb; skb = skb_dequeue(rxq)) {
++	for ( ; skb; skb = __skb_dequeue(&received)) {
+ 		if (mv88e6xxx_ts_valid(status) && seq_match(skb, seq_id)) {
+ 			ns = timehi << 16 | timelo;
+ 
+-- 
+2.11.0
