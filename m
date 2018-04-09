@@ -1,65 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752356AbeDIVTn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 17:19:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58056 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751919AbeDIVTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 17:19:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E14E21785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 9 Apr 2018 17:19:35 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [GIT PULL] tracing: Updates for v4.17
-Message-ID: <20180409171935.37054fc7@gandalf.local.home>
-In-Reply-To: <20180409132305.16e8f956@gandalf.local.home>
-References: <20180409132305.16e8f956@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1753463AbeDIVTy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 17:19:54 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:43652 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752065AbeDIVTu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 17:19:50 -0400
+X-Google-Smtp-Source: AIpwx49p2Gk+byHNqFyUkK3503TShJOBDxQyCmJPL5ZAM3u8NM+0MQMhqaIokBwL7+vz3fifNir1JQ==
+Date: Mon, 9 Apr 2018 16:19:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] display: panel: Add AUO g070vvn01 display support
+ (800x480)
+Message-ID: <20180409211949.cp4jqmtlaswi5jyz@rob-hp-laptop>
+References: <20180403101525.22369-1-lukma@denx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403101525.22369-1-lukma@denx.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Apr 2018 13:23:05 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Tue, Apr 03, 2018 at 12:15:25PM +0200, Lukasz Majewski wrote:
+> This commit adds support for AUO's 7.0" display.
+> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> ---
+>  .../bindings/display/panel/auo,g070vvn01           | 30 +++++++++++++++++++++
 
-> Linus,
-> 
-> New features:
+.txt
 
-BTW, I forgot to mention that there will be some merge conflicts due to
-updates to the documentation directory.
+>  drivers/gpu/drm/panel/panel-simple.c               | 31 ++++++++++++++++++++++
+>  2 files changed, 61 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/auo,g070vvn01
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/auo,g070vvn01 b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01
+> new file mode 100644
+> index 000000000000..bd4017362094
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01
+> @@ -0,0 +1,30 @@
+> +AU Optronics Corporation 7.0" FHD (800 x 480) TFT LCD panel
+> +
+> +Required properties:
+> +- compatible: should be "auo,g070vvn01"
+> +- backlight: phandle of the backlight device attached to the panel
+> +- power-supply: single regulator to provide the supply voltage
+> +
+> +Required nodes:
+> +- port: Parallel port mapping to connect this display
+> +
+> +This panel needs single power supply voltage. Its backlight is conntrolled
+> +via PWM signal.
+> +
+> +Example:
+> +--------
+> +
+> +Example device-tree definition when connected to iMX6Q based board
+> +
+> +	lcd_panel: lcd-panel {
+> +		compatible = "auo,g070vvn01";
+> +		backlight = <&backlight_lcd>;
+> +		bus-format-override = "rgb565";
 
-The fix by Stephen should work.
+This is not documented though it appears in a few i.MX dts files.
 
- http://lkml.kernel.org/r/20180321153127.23737f6e@canb.auug.org.au
-
--- Steve
-
-> 
->  - Tom Zanussi's extended histogram work
->    This adds the synthetic events to have histograms from multiple event data
->    Adds triggers "onmatch" and "onmax" to call the synthetic events
->    Several updates to the histogram code from this
-> 
->  - Allow way to nest ring buffer calls in the same context
-> 
->  - Allow absolute time stamps in ring buffer
-> 
->  - Rewrite of filter code parsing based on Al Viro's suggestions
-> 
->  - Setting of trace_clock to global if TSC is unstable (on boot)
-> 
->  - Better OOM handling when allocating large ring buffers
-> 
->  - Added initcall tracepoints (consolidated initcall_debug code with them)
-> 
-> And other various fixes and clean ups
+> +		power-supply = <&reg_display>;
+> +
+> +		port {
+> +			lcd_panel_in: endpoint {
+> +				remote-endpoint = <&lcd_display_out>;
+> +			};
+> +		};
+> +	};
