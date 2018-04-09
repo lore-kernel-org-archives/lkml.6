@@ -1,37 +1,36 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3643807-1523234925-5-12936629795791604642
+X-Cyrus-Session-Id: sloti22d1t05-3643807-1523234924-2-15917887996798250860
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enda, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: cc='utf-8', plain='utf-8'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523234925; b=DZRTFzrNwCDkyTqkpjDJBriAfQ8B51Sd0POfM98BkC9vU2/lnA
-    lnd0+Rhai/hWR+7lVT7aFLOe3KTzvpEoMN69MawQQrIV2jvBq1basbVRAtK5sKZ/
-    a9wkrxk4wD0oF6yvuglvssJlcoC+SUTDX1cDylLv60Teq/ce4ONgYCnggoKobuhr
-    qhDFgXjRlKiSH8oKHtRGlZcnym3cs3qkkwYnDpwCuJaoZa3ghAlMrJQBJQADhH1n
-    /4DrqjnlhQ5tY19hZb4SBre2+g8fJ6iOqJAT56lYQnDyF9hKsymXbDRfxW08fQWC
-    dcQpkjpQocIkf0IthAR3zUJmbZEKn0mQK81g==
+    1523234923; b=kgHJUPGVpKxRCIghKwoTXLEYsXNhOSxoJkTHdidMt9x+GXUo6w
+    nzx8dfLjuymdf+ZdYM9Wrhbaf8FpR92OvcStdyIxNlvwG8yBGFBulrVbUfUgMw/O
+    RTdZQVetn8UZSfNKyVzNnjlMeKuGc0x2G1FavbDK0hWkk3xSqRWUYS9Rdm0gZJrf
+    y0veHZhW10OtTCBmG0SM35PRaDA4iCh1wu3Kw2AyRsorHFpXUaF9CA5Q/doo8e/s
+    CUvxFrzK+3cYSEPdWHv1UyIZkKzavivJ2/NrK0P491gcqglyIRrEyJD+CQ5V0/VC
+    9Wrg3Y8YcQwDGwABQ/LkdTxlxlaTO1xBrT3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
-    t=1523234925; bh=wI0DUnIXrjy/ZEizONRDke04mRf/7s7fxUkYMQuf6qU=; b=
-    KTnVk3jaEI7BzPdVR68I+eNRPAiwWB7lss9Cfx6DE+XPVynpFFUsuoQC4mYc3ovZ
-    Pf6hVs+PnEKxJUNm+1DuAplRTznAcgPNKk2NTTgzvXv+WhzvllkM6mFLO2n00fm5
-    l+RDFo8uspYjkaKIsQVP23eR615aMXRIoQJLotVvZKGu10HPNLAm/IMwKppPDB/c
-    4jt368Er7OhM/Et6MVky+DcLrq3i5g5/7qG5zrB3qYm11LCNe+86VH7zpw3JiGA8
-    6bERFcptsynoQ0y2/S88l+Nc7UxTJRfDdnCpta4OgQjjtQnDsPZlzAJuDmVAHqwT
-    T52a+zuYhtEr5sPIlz25ng==
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=fm2; t=1523234923; bh=2+UHVpWuo8
+    iYnoJucI8VNRa0U0S+XqiPF+/c2GH68lU=; b=FEHhkazgiNn5KfmAS0cPC8T4GV
+    OPhzcnYgeMdk+Truw/hUeVO5+JPg0FZ45tpq1xNK7yzWdvPbZGz3JOGmedpBblWC
+    X3TRPaJX9fyq3YS0CzKbhEbuqTJIcyDzJCEjs0jM/fFr1ALMxZDXJ8wTZUy/TTJ0
+    7GqRv2GDn5c2g7HAbPf7z46nR3XPyPtwbvZvIQUZVh3xsI1D45YAy4v8yK1NMjFf
+    YCKV31+UaAMT2sCAJLS+H6qLJ1ChsHuhxf2MBRK6TBR1EX1asVTIgwkn5q4eO4Ra
+    INoBsuONiqLDktKLPR0EvQWJfDnOmrZptBMp474PnHvwuSyV9Rxkof4DecXg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=WatXwdXc x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SXXXrzeW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -42,7 +41,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-vs=clean score=-100 state=0
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=WatXwdXc x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SXXXrzeW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -52,37 +51,36 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLqiPOSEST4fwXE9AxuFrSxHP8WMA4Op2AhoDuIvO0MN46894CKAdMMCbbPbDicb5g++1ZaYIuECr71bDxJ4I61IRabIq/QNxVHXbGU39CLDpQocOPN1
-    fwTcD6ZHmykVuALVo4IbUgSVT9mxNfnYLEHLsie8RYVosaVwkrvh58523wNbstmEhYEMRp22CCCPAu1Gi40l+JqsT6dTys/IlKRHZsOdc4+V2BDdmuSs/w7T
+X-CM-Envelope: MS4wfN29uf5WUfO9XMXcmrstS6Rp5Eg14Lb4opxp6ArS10JyI2Czs3ORULpJfIfujziW90tQuaqm6mcARxfd7LNFSvj3D2+D3/ihoH0WpHLgSbBvtSlpZSY1
+    VbAMHT3bR9j9U0XxcplhMYcZr6k6m5UYnaxlIwm1lo5Hn9VL9SsX8r7oe5c9qe6B2VkiF/giT/6A3b4xNs++ybaMix4v2oTkMwK6zuQBWiTvU+PkX9jHkCDa
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
-    a=mw6kJ3eo-EIA:10 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=_jlGtV7tAAAA:8 a=yMhMjlubAAAA:8 a=f5JUautJF78rpD-wVU0A:9
-    a=QEXdDO2ut3YA:10 a=nlm17XC03S6CtCLSeiRr:22
+    a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=Lf-vpJhqX20A:10 a=pGLkceISAAAA:8 a=c-n4J4-pAAAA:8 a=yMhMjlubAAAA:8
+    a=gZW_3bEixuK0yuQyb0QA:9 a=wPNLvfGTeEIA:10 a=L0NDqeB7ZLmQzAogN4cw:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757097AbeDIAsn (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:48:43 -0400
+        id S1757088AbeDIAsK (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:48:10 -0400
 Received: from mail-by2nam03on0117.outbound.protection.outlook.com ([104.47.42.117]:14462
         "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756345AbeDIAli (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:41:38 -0400
+        id S1756361AbeDIAlk (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:41:40 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Guenter Roeck <linux@roeck-us.net>,
-        =?utf-8?B?Wm9sdMOhbiBCw7ZzesO2cm3DqW55aQ==?= <zboszor@pr.hu>,
-        Wim Van Sebroeck <wim@iguana.be>,
+CC: Ulf Magnusson <ulfalizer@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 3.18 072/101] watchdog: sp5100_tco: Fix watchdog
- disable bit
-Thread-Topic: [PATCH AUTOSEL for 3.18 072/101] watchdog: sp5100_tco: Fix
- watchdog disable bit
-Thread-Index: AQHTz5uBO9F0FGkKmUudPzfbPuEdTA==
-Date: Mon, 9 Apr 2018 00:41:33 +0000
-Message-ID: <20180409004042.164920-22-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 3.18 074/101] kconfig: Fix automatic menu creation
+ mem leak
+Thread-Topic: [PATCH AUTOSEL for 3.18 074/101] kconfig: Fix automatic menu
+ creation mem leak
+Thread-Index: AQHTz5uCJGUHhCQ/nkSagq3rTwUa7A==
+Date: Mon, 9 Apr 2018 00:41:34 +0000
+Message-ID: <20180409004042.164920-24-alexander.levin@microsoft.com>
 References: <20180409004042.164920-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409004042.164920-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -91,28 +89,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0901;7:Qdq8JVhHF1D0DT7f9XW2ODqa+Eznk1MhAQuKppDoN3fSoogtnbK8jj7y4UsNCYvPMaHSis+p3ZJ3zH4Ft6lYbEVUvVcUrfgGgBRN5WII1vk+pfcSq25pL67Od2l0J8LzAzGcuONkxL10njolq7mXRiACvyy9QImMF3HYhMtjQJl+M7GaF+vu6jZApQVfqEkpTecAh69AVbMZXVRV/hd2jieLIVTfe9LOKuUBKx8wdV51Wtk4n4NtnA+UlK61F9df;20:jej3nHHtwluPj+XmbD183TNMCaa9TSAoH3hHMEdKCIxzrOg/mVDrjCwuxdaI/yKG6xd2bY4Gb3A9y3hY/ajavVnsxE8ZyRfWP+EYQ2zQqWq9tR2d3bS79dzNXqhPulIl3SrboVmw/8NJ0c76mHWpGcgx+0jp8MCGjl/k9u5M8Tk=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0901;7:CyJvTZ6YEVnMTD6Kb02q3Lc9y4UvmkHV+vXnlo7hQQikNmCgDixnlJq7iaYRKCP6xiKYq/V6S1EqHiGkZ/TsAOsLDFUHWylMS8z4bJAyDK3NZtk9jHQOfFNaXmbqTt85McIpsvMfxleBvwcwmzLrlPKkEoRD3tMrEpTTRu8tFW9QvCs/yTOTy+j1ENSU7sCnTqTkLQlGf2pY9MxW3Sc2Agjh9svXvzfvLMFTe/yChqCyVqLkKJdNFmsEWvTiFfyU;20:MvfWs0Ma2mMD58HzUDcaWQQwFrsp4RWhUYrXpBUZBMjkfadtRRV0AgvdNGsOTy64aVU4CAHmz2YRBkRnDrzyU7BPV7QjirAs/arhl4SDu5ErOgfPH5QHdDAOcutSi2KIX9vh0jkH97N1T9QwjnNqXduAc5PD0fbOChaHOohKUho=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: beabcfe5-1e2a-4185-b414-08d59db2a49e
+X-MS-Office365-Filtering-Correlation-Id: 25bcf8c5-ccb0-425f-fe83-08d59db2a6af
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0901;
 x-ms-traffictypediagnostic: DM5PR2101MB0901:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB09015C6A8CC7EFFD899D7998FBBF0@DM5PR2101MB0901.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB09017B3A5280CCB182CD6230FBBF0@DM5PR2101MB0901.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0901;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0901;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(376002)(346002)(396003)(366004)(189003)(199004)(59450400001)(99286004)(68736007)(10290500003)(25786009)(86612001)(6116002)(66066001)(97736004)(3846002)(76176011)(6512007)(54906003)(6436002)(4326008)(53936002)(105586002)(110136005)(6486002)(3280700002)(1076002)(107886003)(8676002)(10090500001)(2501003)(81156014)(81166006)(5660300001)(14454004)(186003)(3660700001)(102836004)(7736002)(2906002)(26005)(5250100002)(36756003)(478600001)(446003)(316002)(6506007)(2616005)(106356001)(8936002)(11346002)(575784001)(22452003)(2900100001)(86362001)(486006)(476003)(305945005)(72206003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0901;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: qQV6pvcbCvy8CHlGbbLIwNJ/m6pqS+o4nYqKkAB5MRCNwAe6DzkLvS5H5l78vX5rl49tuyzyfdk0TluGObUzv96GAbHPzJQi8VGsp5VJ3AhkM5bsDmySsMtSN+kQ1ykvIl0MsYQ4bUKhPtIbDZhik5JC3BLc3bSu7qEsnuXglS1Fxu/sL8rx51s9ZDLufvOKFBjWaF0c98vooKbbhLKJIE1KUx74qTX45Olp03IGVZDksPimgk4S7IYRh0K95KAV6QfVQBnyrjqhAn9IIrZLyXo2uAJNDJhmcsEjasudzRfoFovq4gOBCHZp4cSgOaXbiI5+rb32HCjf3xjQ8Hh4cCFeRH+uVGM0PlyPsdp1fkoyL/3NEThiOIB8dnLVJCq4NhDcjJVtT+fmDjFjdUVk0/siH8saN3q3doeNy4MCPUc=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(376002)(346002)(396003)(366004)(189003)(199004)(99286004)(68736007)(10290500003)(25786009)(86612001)(6116002)(66066001)(97736004)(3846002)(76176011)(6512007)(54906003)(6436002)(4326008)(53936002)(105586002)(110136005)(6486002)(3280700002)(1076002)(39060400002)(107886003)(8676002)(10090500001)(2501003)(81156014)(81166006)(5660300001)(14454004)(186003)(3660700001)(102836004)(7736002)(2906002)(26005)(5250100002)(36756003)(478600001)(446003)(316002)(6506007)(2616005)(106356001)(8936002)(11346002)(575784001)(22452003)(2900100001)(86362001)(486006)(476003)(305945005)(72206003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0901;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: UtUslY6IoxEeI2QiWEW0j6mXOLevQTMDYXNpgt8yT/Nb/XaGdz0NGwDo7EuRb7Mzlr7iuyjZO2f2U+xYGRYoTbHVr8k97jF9XUNzWBpMpl1eWEXTHj6J81Ii90bdN7gSi7UyODakjYu8OJ6J5rjU2dyJgWZWQeZOgET6P4YENnxoEXupCpr0YUfuNlVgtCjjQwgRJXkwDSZUlImE71MKvaI00AoyIwVNRs4gZLoQAtLjDgyjluCd1F+OI2zQRGne3WI+UslFIN7wq9DWsawjza/jzgBgizturhpGY40oqi/QM+ihZWrXSODTpv6EZwhWWRL+lbHFRqQtZZfzOebB3tzFlHednI6M+WRhHnIp/uFWVn6XVgSf2Az1vFZLVAuYWh5Qv5WBN1yqP6umvyQ1G0XxJGmRevcV6opOPJXtgiU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <37EB837FF5E69D42AACE10686698E30E@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: beabcfe5-1e2a-4185-b414-08d59db2a49e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:41:33.2678
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25bcf8c5-ccb0-425f-fe83-08d59db2a6af
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:41:34.6428
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -123,26 +120,59 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogR3VlbnRlciBSb2VjayA8bGludXhAcm9lY2stdXMubmV0Pg0KDQpbIFVwc3RyZWFtIGNv
-bW1pdCBmNTQxYzA5ZWJmYzYxNjk3YjU4NmIzOGM5ZWJhZjRiNzBkZWZiMjc4IF0NCg0KQWNjb3Jk
-aW5nIHRvIGFsbCBwdWJsaXNoZWQgaW5mb3JtYXRpb24sIHRoZSB3YXRjaGRvZyBkaXNhYmxlIGJp
-dCBmb3IgU0I4MDANCmNvbXBhdGlibGUgY29udHJvbGxlcnMgaXMgYml0IDEgb2YgUE0gcmVnaXN0
-ZXIgMHg0OCwgbm90IGJpdCAyLiBGb3IgdGhlDQptb3N0IHBhcnQgdGhhdCBkb2Vzbid0IG1hdHRl
-ciBpbiBwcmFjdGljZSwgc2luY2UgdGhlIGJpdCBoYXMgdG8gYmUgY2xlYXJlZA0KdG8gZW5hYmxl
-IHdhdGNoZG9nIGFkZHJlc3MgZGVjb2RpbmcsIHdoaWNoIGlzIHRoZSBkZWZhdWx0IHNldHRpbmcs
-IGJ1dCBpdA0Kc3RpbGwgbmVlZHMgdG8gYmUgZml4ZWQuDQoNCkNjOiBab2x0w6FuIELDtnN6w7Zy
-bcOpbnlpIDx6Ym9zem9yQHByLmh1Pg0KU2lnbmVkLW9mZi1ieTogR3VlbnRlciBSb2VjayA8bGlu
-dXhAcm9lY2stdXMubmV0Pg0KU2lnbmVkLW9mZi1ieTogV2ltIFZhbiBTZWJyb2VjayA8d2ltQGln
-dWFuYS5iZT4NClNpZ25lZC1vZmYtYnk6IFNhc2hhIExldmluIDxhbGV4YW5kZXIubGV2aW5AbWlj
-cm9zb2Z0LmNvbT4NCi0tLQ0KIGRyaXZlcnMvd2F0Y2hkb2cvc3A1MTAwX3Rjby5oIHwgMiArLQ0K
-IDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy93YXRjaGRvZy9zcDUxMDBfdGNvLmggYi9kcml2ZXJzL3dhdGNoZG9nL3Nw
-NTEwMF90Y28uaA0KaW5kZXggMmIyOGMwMGRhMGRmLi5kZmUyMGI4MWNlZDUgMTAwNjQ0DQotLS0g
-YS9kcml2ZXJzL3dhdGNoZG9nL3NwNTEwMF90Y28uaA0KKysrIGIvZHJpdmVycy93YXRjaGRvZy9z
-cDUxMDBfdGNvLmgNCkBAIC01NCw3ICs1NCw3IEBADQogI2RlZmluZSBTQjgwMF9QTV9XQVRDSERP
-R19DT05GSUcJMHg0Qw0KIA0KICNkZWZpbmUgU0I4MDBfUENJX1dBVENIRE9HX0RFQ09ERV9FTgko
-MSA8PCAwKQ0KLSNkZWZpbmUgU0I4MDBfUE1fV0FUQ0hET0dfRElTQUJMRQkoMSA8PCAyKQ0KKyNk
-ZWZpbmUgU0I4MDBfUE1fV0FUQ0hET0dfRElTQUJMRQkoMSA8PCAxKQ0KICNkZWZpbmUgU0I4MDBf
-UE1fV0FUQ0hET0dfU0VDT05EX1JFUwkoMyA8PCAwKQ0KICNkZWZpbmUgU0I4MDBfQUNQSV9NTUlP
-X0RFQ09ERV9FTgkoMSA8PCAwKQ0KICNkZWZpbmUgU0I4MDBfQUNQSV9NTUlPX1NFTAkJKDEgPDwg
-MSkNCi0tIA0KMi4xNS4xDQo=
+From: Ulf Magnusson <ulfalizer@gmail.com>
+
+[ Upstream commit ae7440ef0c8013d68c00dad6900e7cce5311bb1c ]
+
+expr_trans_compare() always allocates and returns a new expression,
+giving the following leak outline:
+
+	...
+	*Allocate*
+	basedep =3D expr_trans_compare(basedep, E_UNEQUAL, &symbol_no);
+	...
+	for (menu =3D parent->next; menu; menu =3D menu->next) {
+		...
+		*Copy*
+		dep2 =3D expr_copy(basedep);
+		...
+		*Free copy*
+		expr_free(dep2);
+	}
+	*basedep lost!*
+
+Fix by freeing 'basedep' after the loop.
+
+Summary from Valgrind on 'menuconfig' (ARCH=3Dx86) before the fix:
+
+	LEAK SUMMARY:
+	   definitely lost: 344,376 bytes in 14,349 blocks
+	   ...
+
+Summary after the fix:
+
+	LEAK SUMMARY:
+	   definitely lost: 44,448 bytes in 1,852 blocks
+	   ...
+
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ scripts/kconfig/menu.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index 72c9dba84c5d..095a6094d736 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -364,6 +364,7 @@ void menu_finalize(struct menu *parent)
+ 			menu->parent =3D parent;
+ 			last_menu =3D menu;
+ 		}
++		expr_free(basedep);
+ 		if (last_menu) {
+ 			parent->list =3D parent->next;
+ 			parent->next =3D last_menu->next;
+--=20
+2.15.1
