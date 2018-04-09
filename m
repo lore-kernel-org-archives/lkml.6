@@ -1,181 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752033AbeDIKZU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 06:25:20 -0400
-Received: from tama500.ecl.ntt.co.jp ([129.60.39.148]:37229 "EHLO
-        tama500.ecl.ntt.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751943AbeDIKZQ (ORCPT
+        id S1752091AbeDIKZw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 06:25:52 -0400
+Received: from smtprelay0170.hostedemail.com ([216.40.44.170]:49707 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751704AbeDIKZv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 06:25:16 -0400
-From: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-Subject: [PATCH] perf/core: fix use-after-free in uprobe_perf_close
-Date: Mon,  9 Apr 2018 19:03:46 +0900
-Message-Id: <20180409100346.6416-1-bhole_prashant_q7@lab.ntt.co.jp>
-X-Mailer: git-send-email 2.14.2
-X-CC-Mail-RelayStamp: 1
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org
-X-TM-AS-MML: disable
+        Mon, 9 Apr 2018 06:25:51 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:2902:3138:3139:3140:3141:3142:3622:3865:3867:3868:3870:3871:3872:4321:4605:5007:6119:7903:10004:10400:10848:11232:11658:11914:12043:12048:12679:12740:12760:12895:13069:13095:13181:13229:13311:13357:13439:14659:14721:21080:21433:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: table65_4fcb664aa1f3d
+X-Filterd-Recvd-Size: 1684
+Message-ID: <0dad6b43476c1a70944e3e7c245040243ddc2a04.camel@perches.com>
+Subject: Re: [PATCH v2 7/9] PCI: dwc: Replace lower into upper case
+ characters
+From: Joe Perches <joe@perches.com>
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>, bhelgaas@google.com,
+        lorenzo.pieralisi@arm.com, Joao.Pinto@synopsys.com,
+        jingoohan1@gmail.com, kishon@ti.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date: Mon, 09 Apr 2018 03:25:46 -0700
+In-Reply-To: <a28d463d04b198f51c64c1a7eb5b3f77da2d4ab9.1523266508.git.gustavo.pimentel@synopsys.com>
+References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
+         <a28d463d04b198f51c64c1a7eb5b3f77da2d4ab9.1523266508.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.0-4 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A use-after-free bug was caught by KASAN while running usdt related
-code. (BCC project. bcc/tests/python/test_usdt2.py)
+On Mon, 2018-04-09 at 10:41 +0100, Gustavo Pimentel wrote:
+> Replaces lower into upper case characters in comments and debug printks.
+> 
+> This is an attempt to keep the messages coherent within the designware
+> driver.
 
-==================================================================
-BUG: KASAN: use-after-free in uprobe_perf_close+0x222/0x3b0
-Read of size 4 at addr ffff880384f9b4a4 by task test_usdt2.py/870
+It'd be nice to make all the dwc drivers use the same
+message wording.
 
-CPU: 4 PID: 870 Comm: test_usdt2.py Tainted: G        W         4.16.0-next-20180409 #215
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-Call Trace:
- dump_stack+0xc7/0x15b
- ? show_regs_print_info+0x5/0x5
- ? printk+0x9c/0xc3
- ? kmsg_dump_rewind_nolock+0x6e/0x6e
- ? uprobe_perf_close+0x222/0x3b0
- print_address_description+0x83/0x3a0
- ? uprobe_perf_close+0x222/0x3b0
- kasan_report+0x1dd/0x460
- ? uprobe_perf_close+0x222/0x3b0
- uprobe_perf_close+0x222/0x3b0
- ? probes_open+0x180/0x180
- ? free_filters_list+0x290/0x290
- trace_uprobe_register+0x1bb/0x500
- ? perf_event_attach_bpf_prog+0x310/0x310
- ? probe_event_disable+0x4e0/0x4e0
- perf_uprobe_destroy+0x63/0xd0
- _free_event+0x2bc/0xbd0
- ? lockdep_rcu_suspicious+0x100/0x100
- ? ring_buffer_attach+0x550/0x550
- ? kvm_sched_clock_read+0x1a/0x30
- ? perf_event_release_kernel+0x3e4/0xc00
- ? __mutex_unlock_slowpath+0x12e/0x540
- ? wait_for_completion+0x430/0x430
- ? lock_downgrade+0x3c0/0x3c0
- ? lock_release+0x980/0x980
- ? do_raw_spin_trylock+0x118/0x150
- ? do_raw_spin_unlock+0x121/0x210
- ? do_raw_spin_trylock+0x150/0x150
- perf_event_release_kernel+0x5d4/0xc00
- ? put_event+0x30/0x30
- ? fsnotify+0xd2d/0xea0
- ? sched_clock_cpu+0x18/0x1a0
- ? __fsnotify_update_child_dentry_flags.part.0+0x1b0/0x1b0
- ? pvclock_clocksource_read+0x152/0x2b0
- ? pvclock_read_flags+0x80/0x80
- ? kvm_sched_clock_read+0x1a/0x30
- ? sched_clock_cpu+0x18/0x1a0
- ? pvclock_clocksource_read+0x152/0x2b0
- ? locks_remove_file+0xec/0x470
- ? pvclock_read_flags+0x80/0x80
- ? fcntl_setlk+0x880/0x880
- ? ima_file_free+0x8d/0x390
- ? lockdep_rcu_suspicious+0x100/0x100
- ? ima_file_check+0x110/0x110
- ? fsnotify+0xea0/0xea0
- ? kvm_sched_clock_read+0x1a/0x30
- ? rcu_note_context_switch+0x600/0x600
- perf_release+0x21/0x40
- __fput+0x264/0x620
- ? fput+0xf0/0xf0
- ? do_raw_spin_unlock+0x121/0x210
- ? do_raw_spin_trylock+0x150/0x150
- ? SyS_fchdir+0x100/0x100
- ? fsnotify+0xea0/0xea0
- task_work_run+0x14b/0x1e0
- ? task_work_cancel+0x1c0/0x1c0
- ? copy_fd_bitmaps+0x150/0x150
- ? vfs_read+0xe5/0x260
- exit_to_usermode_loop+0x17b/0x1b0
- ? trace_event_raw_event_sys_exit+0x1a0/0x1a0
- do_syscall_64+0x3f6/0x490
- ? syscall_return_slowpath+0x2c0/0x2c0
- ? lockdep_sys_exit+0x1f/0xaa
- ? syscall_return_slowpath+0x1a3/0x2c0
- ? lockdep_sys_exit+0x1f/0xaa
- ? prepare_exit_to_usermode+0x11c/0x1e0
- ? enter_from_user_mode+0x30/0x30
-random: crng init done
- ? __put_user_4+0x1c/0x30
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x7f41d95f9340
-RSP: 002b:00007fffe71e4268 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 000000000000000d RCX: 00007f41d95f9340
-RDX: 0000000000000000 RSI: 0000000000002401 RDI: 000000000000000d
-RBP: 0000000000000000 R08: 00007f41ca8ff700 R09: 00007f41d996dd1f
-R10: 00007fffe71e41e0 R11: 0000000000000246 R12: 00007fffe71e4330
-R13: 0000000000000000 R14: fffffffffffffffc R15: 00007fffe71e4290
+For instance:
 
-Allocated by task 870:
- kasan_kmalloc+0xa0/0xd0
- kmem_cache_alloc_node+0x11a/0x430
- copy_process.part.19+0x11a0/0x41c0
- _do_fork+0x1be/0xa20
- do_syscall_64+0x198/0x490
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Freed by task 0:
- __kasan_slab_free+0x12e/0x180
- kmem_cache_free+0x102/0x4d0
- free_task+0xfe/0x160
- __put_task_struct+0x189/0x290
- delayed_put_task_struct+0x119/0x250
- rcu_process_callbacks+0xa6c/0x1b60
- __do_softirq+0x238/0x7ae
-
-The buggy address belongs to the object at ffff880384f9b480
- which belongs to the cache task_struct of size 12928
-
-It occurs because task_struct is freed before perf_event which refers
-to the task and task flags are checked while teardown of the event.
-perf_event_alloc() assigns task_struct to hw.target of perf_event,
-but there is no reference counting for it.
-
-As a fix we get_task_struct() in perf_event_alloc() at above mentioned
-assignment and put_task_struct() in _free_event().
-
-Signed-off-by: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
----
- kernel/events/core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 1922f2e0980a..734192a718ec 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4447,6 +4447,9 @@ static void _free_event(struct perf_event *event)
- 	if (event->ctx)
- 		put_ctx(event->ctx);
- 
-+	if (event->hw.target)
-+		put_task_struct(event->hw.target);
-+
- 	exclusive_event_destroy(event);
- 	module_put(event->pmu->module);
- 
-@@ -9955,6 +9958,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 		 * and we cannot use the ctx information because we need the
- 		 * pmu before we get a ctx.
- 		 */
-+		get_task_struct(task);
- 		event->hw.target = task;
- 	}
- 
-@@ -10070,6 +10074,8 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 		perf_detach_cgroup(event);
- 	if (event->ns)
- 		put_pid_ns(event->ns);
-+	if (event->hw.target)
-+		put_task_struct(event->hw.target);
- 	kfree(event);
- 
- 	return ERR_PTR(err);
--- 
-2.13.6
+drivers/pci/dwc/pci-keystone.c: dev_err(dev, "phy link never came up\n");
+drivers/pci/dwc/pcie-designware.c:      dev_err(pci->dev, "phy link never came up\n");
+drivers/pci/host/pcie-xilinx-nwl.c:     dev_err(dev, "PHY link never came up\n");
