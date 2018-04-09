@@ -1,78 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933230AbeDICtc (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 22:49:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53984 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932070AbeDICt2 (ORCPT
+        id S1755567AbeDICud (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 22:50:33 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:57344 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755357AbeDICub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 22:49:28 -0400
-Date: Sun, 8 Apr 2018 19:49:25 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
-        Chris Fries <cfries@google.com>
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180409024925.GA21889@bombadil.infradead.org>
-References: <20180409015815.235943-1-minchan@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409015815.235943-1-minchan@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Sun, 8 Apr 2018 22:50:31 -0400
+Date: Sun, 08 Apr 2018 22:50:30 -0400 (EDT)
+Message-Id: <20180408.225030.1531175620528526172.davem@davemloft.net>
+To: torvalds@linux-foundation.org
+CC: akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Networking
+From: David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
-> It assumes shadow entry of radix tree relies on the init state
-> that node->private_list allocated should be list_empty state.
-> Currently, it's initailized in SLAB constructor which means
-> node of radix tree would be initialized only when *slub allocates
-> new page*, not *new object*. So, if some FS or subsystem pass
-> gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
 
-Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
-I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
-with GFP_ZERO.
+1) The sockmap code has to free socket memory on close if
+   there is corked data, from John Fastabend.
 
-Although, even if nobody's doing that intentionally, if somebody has
-a bitflip with the __GFP_ZERO bit, it's going to propagate widely.
-I think something like this might be appropriate:
+2) Tunnel names coming from userspace need to be length
+   validated.  From Eric Dumazet.
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 9e1100f9298f..0f55f0a0dcaa 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2714,8 +2714,10 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
- 		stat(s, ALLOC_FASTPATH);
- 	}
- 
--	if (unlikely(gfpflags & __GFP_ZERO) && object)
--		memset(object, 0, s->object_size);
-+	if (unlikely(gfpflags & __GFP_ZERO) && object) {
-+		if (!WARN_ON_ONCE(s->ctor))
-+			memset(object, 0, s->object_size);
-+	}
- 
- 	slab_post_alloc_hook(s, gfpflags, 1, &object);
- 
+3) arp_filter() has to take VRFs properly into account, from
+   Miguel Fadon Perlines.
 
-Something you could try is checking that the list is empty when the node
-is inserted into the radix tree.
+4) Fix oops in error path of tcf_bpf_init(), from Davide Caratti.
 
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index 8e00138d593f..580f52d0c072 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -428,6 +428,7 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
- 		ret->exceptional = exceptional;
- 		ret->parent = parent;
- 		ret->root = root;
-+		BUG_ON(!list_empty(&ret->private_list));
- 	}
- 	return ret;
- }
+5) Missing idr_remove() in u32_delete_key(), from Cong Wang.
+
+6) More syzbot stuff.  Several use of uninitialized value fixes all
+   over, from Eric Dumazet.
+
+7) Do not leak kernel memory to userspace in sctp, also from Eric
+   Dumazet.
+
+8) Discard frames from unused ports in DSA, from Andrew Lunn.
+
+9) Fix DMA mapping and reset/failover problems in ibmvnic, from Thomas
+   Falcon.
+
+10) Do not access dp83640 PHY registers prematurely after reset, from
+    Esben Haabendal.
+
+Please pull, thanks a lot!
+
+The following changes since commit 06dd3dfeea60e2a6457a6aedf97afc8e6d2ba497:
+
+  Merge tag 'char-misc-4.17-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc (2018-04-04 20:07:20 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
+
+for you to fetch changes up to 76327a35caabd1a932e83d6a42b967aa08584e5d:
+
+  dp83640: Ensure against premature access to PHY registers after reset (2018-04-08 19:58:52 -0400)
+
+----------------------------------------------------------------
+Anders Roxell (1):
+      kernel/bpf/syscall: fix warning defined but not used
+
+Andrew Lunn (1):
+      net: dsa: Discard frames from unused ports
+
+Anirudh Venkataramanan (1):
+      ice: Bug fixes in ethtool code
+
+Cong Wang (2):
+      net_sched: fix a missing idr_remove() in u32_delete_key()
+      tipc: use the right skb in tipc_sk_fill_sock_diag()
+
+David S. Miller (7):
+      Merge branch 'net-tunnel-name-validate'
+      Merge branch 'hv_netvsc-Fix-shutdown-issues-on-older-Windows-hosts'
+      Merge branch '100GbE' of git://git.kernel.org/.../jkirsher/net-queue
+      Merge branch 'net-fix-uninit-values-in-networking-stack'
+      Merge branch 'ibmvnic-Fix-driver-reset-and-DMA-bugs'
+      Merge branch 'for-upstream' of git://git.kernel.org/.../bluetooth/bluetooth
+      Merge git://git.kernel.org/.../bpf/bpf
+
+Davide Caratti (1):
+      net/sched: fix NULL dereference in the error path of tcf_bpf_init()
+
+Eric Dumazet (16):
+      net: fool proof dev_valid_name()
+      ip_tunnel: better validate user provided tunnel names
+      ipv6: sit: better validate user provided tunnel names
+      ip6_gre: better validate user provided tunnel names
+      ip6_tunnel: better validate user provided tunnel names
+      vti6: better validate user provided tunnel names
+      crypto: af_alg - fix possible uninit-value in alg_bind()
+      netlink: fix uninit-value in netlink_sendmsg
+      net: fix rtnh_ok()
+      net: initialize skb->peeked when cloning
+      net: fix uninit-value in __hw_addr_add_ex()
+      dccp: initialize ireq->ir_mark
+      ipv4: fix uninit-value in ip_route_output_key_hash_rcu()
+      soreuseport: initialise timewait reuseport field
+      sctp: do not leak kernel memory to user space
+      sctp: sctp_sockaddr_af must check minimal addr length for AF_INET6
+
+Esben Haabendal (4):
+      net: phy: marvell: Enable interrupt function on LED2 pin
+      net/fsl_pq_mdio: Allow explicit speficition of TBIPA address
+      ARM: dts: ls1021a: Specify TBIPA register address
+      dp83640: Ensure against premature access to PHY registers after reset
+
+Jeff Barnhill (1):
+      net/ipv6: Increment OUTxxx counters after netfilter hook
+
+Jiri Pirko (1):
+      devlink: convert occ_get op to separate registration
+
+John Fastabend (2):
+      bpf: sockmap, free memory on sock close with cork data
+      bpf: sockmap, duplicates release calls may NULL sk_prot
+
+Maxime Chevallier (1):
+      net: mvpp2: Fix parser entry init boundary check
+
+Miguel Fadon Perlines (1):
+      arp: fix arp_filter on l3slave devices
+
+Mohammed Gamal (4):
+      hv_netvsc: Use Windows version instead of NVSP version on GPAD teardown
+      hv_netvsc: Split netvsc_revoke_buf() and netvsc_teardown_gpadl()
+      hv_netvsc: Ensure correct teardown message sequence order
+      hv_netvsc: Pass net_device parameter to revoke and teardown functions
+
+Nathan Fontenot (1):
+      ibmvnic: Do not reset CRQ for Mobility driver resets
+
+Szymon Janc (1):
+      Bluetooth: Fix connection if directed advertising and privacy is used
+
+Thomas Falcon (4):
+      ibmvnic: Fix DMA mapping mistakes
+      ibmvnic: Zero used TX descriptor counter on reset
+      ibmvnic: Fix reset scheduler error handling
+      ibmvnic: Fix failover case for non-redundant configuration
+
+Wei Yongjun (1):
+      ice: Fix error return code in ice_init_hw()
+
+ Documentation/devicetree/bindings/net/fsl-tsec-phy.txt |   6 +++-
+ arch/arm/boot/dts/ls1021a.dtsi                         |   3 +-
+ crypto/af_alg.c                                        |   8 ++---
+ drivers/net/ethernet/freescale/fsl_pq_mdio.c           |  50 ++++++++++++++++++++----------
+ drivers/net/ethernet/ibm/ibmvnic.c                     | 146 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------
+ drivers/net/ethernet/ibm/ibmvnic.h                     |   1 +
+ drivers/net/ethernet/intel/ice/ice_common.c            |   4 ++-
+ drivers/net/ethernet/intel/ice/ice_ethtool.c           |   4 +--
+ drivers/net/ethernet/marvell/mvpp2.c                   |   2 +-
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c         |  24 +++------------
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.h         |   1 -
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c    |  67 +++++++++++++++++++++++-----------------
+ drivers/net/hyperv/netvsc.c                            |  60 ++++++++++++++++++++++++++----------
+ drivers/net/netdevsim/devlink.c                        |  65 +++++++++++++++++++--------------------
+ drivers/net/phy/dp83640.c                              |  18 +++++++++++
+ drivers/net/phy/marvell.c                              |  20 ++++++++++--
+ include/net/bluetooth/hci_core.h                       |   2 +-
+ include/net/devlink.h                                  |  40 +++++++++++++++---------
+ include/net/inet_timewait_sock.h                       |   1 +
+ include/net/nexthop.h                                  |   2 +-
+ kernel/bpf/sockmap.c                                   |  12 ++++++--
+ kernel/bpf/syscall.c                                   |  24 +++++++--------
+ net/bluetooth/hci_conn.c                               |  29 +++++++++++++-----
+ net/bluetooth/hci_event.c                              |  15 ++++++---
+ net/bluetooth/l2cap_core.c                             |   2 +-
+ net/core/dev.c                                         |   2 +-
+ net/core/dev_addr_lists.c                              |   4 +--
+ net/core/devlink.c                                     |  74 ++++++++++++++++++++++++++++++++++++++------
+ net/core/skbuff.c                                      |   1 +
+ net/dccp/ipv4.c                                        |   1 +
+ net/dccp/ipv6.c                                        |   1 +
+ net/dsa/dsa_priv.h                                     |   8 ++++-
+ net/ipv4/arp.c                                         |   2 +-
+ net/ipv4/inet_timewait_sock.c                          |   1 +
+ net/ipv4/ip_tunnel.c                                   |  11 ++++---
+ net/ipv4/route.c                                       |  11 ++++---
+ net/ipv6/ip6_gre.c                                     |   8 +++--
+ net/ipv6/ip6_output.c                                  |   7 +++--
+ net/ipv6/ip6_tunnel.c                                  |  11 ++++---
+ net/ipv6/ip6_vti.c                                     |   7 +++--
+ net/ipv6/sit.c                                         |   8 +++--
+ net/netlink/af_netlink.c                               |   2 ++
+ net/sched/act_bpf.c                                    |  12 +++++---
+ net/sched/cls_u32.c                                    |   1 +
+ net/sctp/ipv6.c                                        |   4 ++-
+ net/sctp/socket.c                                      |  13 +++++---
+ net/tipc/diag.c                                        |   2 +-
+ net/tipc/socket.c                                      |   6 ++--
+ net/tipc/socket.h                                      |   4 +--
+ 49 files changed, 534 insertions(+), 273 deletions(-)
