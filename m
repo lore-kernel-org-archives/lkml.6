@@ -1,123 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754636AbeDIVGq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 17:06:46 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:35438 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752422AbeDIVGl (ORCPT
+        id S1754192AbeDIVLb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 17:11:31 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:53584 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752422AbeDIVL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 17:06:41 -0400
-X-Google-Smtp-Source: AIpwx48XcRnso5Yfj3s5vtvrw6dIVkMd+y7o4SOmpZmnnk8ctGERelX8kTWZYRC0iUBAwvB9X30cgw==
-Date: Mon, 9 Apr 2018 16:06:38 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Sebastian Reichel <sre@kernel.org>, Milo Kim <Milo.Kim@ti.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Tony Lindgren <tony@atomide.com>, Jingoo Han <jingoohan1@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCHv4 09/10] dt-bindings: mfd: ti-lmu: update for backlight
-Message-ID: <20180409210638.hugfap4ega3bwgou@rob-hp-laptop>
-References: <20180330172414.26575-1-sebastian.reichel@collabora.co.uk>
- <20180330172414.26575-10-sebastian.reichel@collabora.co.uk>
+        Mon, 9 Apr 2018 17:11:27 -0400
+Subject: Re: [virtio-dev] Re: [PATCH v2] virtio_balloon: export hugetlb page
+ allocation counts
+To: Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc: virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        Mihai Carabas <mihai.carabas@oracle.com>
+References: <1521497654-24807-1-git-send-email-jonathan.helman@oracle.com>
+ <db6371af-f93d-4409-c910-2ff712196c5b@redhat.com>
+ <6ED6CAC9-FAD9-4A27-A9B1-C6EFC7627D68@oracle.com>
+ <c09d3570-a8f9-7a84-5dd6-46d385da2e15@redhat.com>
+ <20180322050842-mutt-send-email-mst@kernel.org>
+ <3f8a1b91-c5ba-8a24-72b8-02d884a67826@redhat.com>
+From: Jonathan Helman <jonathan.helman@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <b1414be4-84bc-5d02-afff-9e42c1fd7210@oracle.com>
+Date: Mon, 9 Apr 2018 14:11:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180330172414.26575-10-sebastian.reichel@collabora.co.uk>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <3f8a1b91-c5ba-8a24-72b8-02d884a67826@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8858 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804090213
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 07:24:13PM +0200, Sebastian Reichel wrote:
-> Update binding to integrate the backlight feature directly into
-> the main node, as suggested by Rob Herring.
+
+
+On 03/22/2018 07:38 PM, Jason Wang wrote:
 > 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> ---
->  Documentation/devicetree/bindings/mfd/ti-lmu.txt | 119 ++++++++++++-----------
->  1 file changed, 60 insertions(+), 59 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> index c885cf89b8ce..b3433e95dfa5 100644
-> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> @@ -28,10 +28,9 @@ Required properties:
->  
->  Optional property:
->    - enable-gpios: A GPIO specifier for hardware enable pin.
-> -
-> -Required node:
-> -  - backlight: All LMU devices have backlight child nodes.
-> -               For the properties, please refer to [1].
-> +  - pwm-names: Should be either "lmu-backlight" or unset
-> +  - pwm: This should be a PWM specifier following ../pwm/pwm.txt and must
-> +         only be specified, if the backlight should be used in PWM mode.
->  
->  Optional nodes:
->    - fault-monitor: Hardware fault monitoring driver for LM3633 and LM3697.
-> @@ -42,8 +41,31 @@ Optional nodes:
->    - leds: LED properties for LM3633. Please refer to [2].
->    - regulators: Regulator properties for LM3631 and LM3632.
->                  Please refer to [3].
-> +  - bank0, bank1, bank2: This contains the backlight configuration
-> +                         for each backlight control bank.
-> +
-> +Required properties in the bank subnodes:
-> +  - label: A string describing the backlight. Should contain "keyboard"
-> +           for a keyboard backlight and "lcd" for LCD panel backlights.
-> +  - ti,led-sources: A list of channels, that should be driven. Each channel
-> +                    should only be driven by one bank.
-> +
-> +Optional properties in the bank subnodes:
-> +  - default-brightness-level: Backlight initial brightness value.
-> +                              Type is <u32>. It is set as soon as backlight
-> +			      device is created.
-> +			      0 ~ 2047 = LM3631, LM3632, LM3633, LM3695 and
-> +					 LM3697
-> +			      0 ~ 255  = LM3532
-> +  - ti,ramp-up-ms, ti,ramp-down-ms: Light dimming effect properties.
-> +				    Type is <u32>. Unit is millisecond.
-> +					0 ~ 65 ms    = LM3532
-> +					0 ~ 4000 ms  = LM3631
-> +					0 ~ 16000 ms = LM3633 and LM3697
-> +  - pwm-period: PWM period. Only valid in PWM brightness mode.
-> +                Type is <u32>. If this property is missing, then control
-> +		mode is set to I2C by default.
->  
-> -[1] ../leds/backlight/ti-lmu-backlight.txt
->  [2] ../leds/leds-lm3633.txt
->  [3] ../regulator/lm363x-regulator.txt
->  
-> @@ -53,14 +75,11 @@ lm3532@38 {
->  
->  	enable-gpios = <&pioC 2 GPIO_ACTIVE_HIGH>;
->  
-> -	backlight {
-> -		compatible = "ti,lm3532-backlight";
-> -
-> -		lcd {
-> -			led-sources = <0 1 2>;
-> -			ramp-up-msec = <30>;
-> -			ramp-down-msec = <0>;
-> -		};
-> +	bank0 {
-> +		label = "lcd";
-> +		led-sources = <0 1 2>;
-> +		ramp-up-msec = <30>;
-> +		ramp-down-msec = <0>;
+> On 2018年03月22日 11:10, Michael S. Tsirkin wrote:
+>> On Thu, Mar 22, 2018 at 09:52:18AM +0800, Jason Wang wrote:
+>>> On 2018年03月20日 12:26, Jonathan Helman wrote:
+>>>>> On Mar 19, 2018, at 7:31 PM, Jason Wang<jasowang@redhat.com>  wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> On 2018年03月20日 06:14, Jonathan Helman wrote:
+>>>>>> Export the number of successful and failed hugetlb page
+>>>>>> allocations via the virtio balloon driver. These 2 counts
+>>>>>> come directly from the vm_events HTLB_BUDDY_PGALLOC and
+>>>>>> HTLB_BUDDY_PGALLOC_FAIL.
+>>>>>>
+>>>>>> Signed-off-by: Jonathan Helman<jonathan.helman@oracle.com>
+>>>>> Reviewed-by: Jason Wang<jasowang@redhat.com>
+>>>> Thanks.
+>>>>
+>>>>>> ---
+>>>>>>    drivers/virtio/virtio_balloon.c     | 6 ++++++
+>>>>>>    include/uapi/linux/virtio_balloon.h | 4 +++-
+>>>>>>    2 files changed, 9 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/virtio/virtio_balloon.c 
+>>>>>> b/drivers/virtio/virtio_balloon.c
+>>>>>> index dfe5684..6b237e3 100644
+>>>>>> --- a/drivers/virtio/virtio_balloon.c
+>>>>>> +++ b/drivers/virtio/virtio_balloon.c
+>>>>>> @@ -272,6 +272,12 @@ static unsigned int 
+>>>>>> update_balloon_stats(struct virtio_balloon *vb)
+>>>>>>                    pages_to_bytes(events[PSWPOUT]));
+>>>>>>        update_stat(vb, idx++, VIRTIO_BALLOON_S_MAJFLT, 
+>>>>>> events[PGMAJFAULT]);
+>>>>>>        update_stat(vb, idx++, VIRTIO_BALLOON_S_MINFLT, 
+>>>>>> events[PGFAULT]);
+>>>>>> +#ifdef CONFIG_HUGETLB_PAGE
+>>>>>> +    update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGALLOC,
+>>>>>> +            events[HTLB_BUDDY_PGALLOC]);
+>>>>>> +    update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGFAIL,
+>>>>>> +            events[HTLB_BUDDY_PGALLOC_FAIL]);
+>>>>>> +#endif
+>>>>>>    #endif
+>>>>>>        update_stat(vb, idx++, VIRTIO_BALLOON_S_MEMFREE,
+>>>>>>                    pages_to_bytes(i.freeram));
+>>>>>> diff --git a/include/uapi/linux/virtio_balloon.h 
+>>>>>> b/include/uapi/linux/virtio_balloon.h
+>>>>>> index 4e8b830..40297a3 100644
+>>>>>> --- a/include/uapi/linux/virtio_balloon.h
+>>>>>> +++ b/include/uapi/linux/virtio_balloon.h
+>>>>>> @@ -53,7 +53,9 @@ struct virtio_balloon_config {
+>>>>>>    #define VIRTIO_BALLOON_S_MEMTOT   5   /* Total amount of memory */
+>>>>>>    #define VIRTIO_BALLOON_S_AVAIL    6   /* Available memory as in 
+>>>>>> /proc */
+>>>>>>    #define VIRTIO_BALLOON_S_CACHES   7   /* Disk caches */
+>>>>>> -#define VIRTIO_BALLOON_S_NR       8
+>>>>>> +#define VIRTIO_BALLOON_S_HTLB_PGALLOC  8  /* Hugetlb page 
+>>>>>> allocations */
+>>>>>> +#define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page 
+>>>>>> allocation failures */
+>>>>>> +#define VIRTIO_BALLOON_S_NR       10
+>>>>>>      /*
+>>>>>>     * Memory statistics structure.
+>>>>> Not for this patch, but it looks to me that exporting such nr 
+>>>>> through uapi is fragile.
+>>>> Sorry, can you explain what you mean here?
+>>>>
+>>>> Jon
+>>> Spec said "Within an output buffer submitted to the statsq, the 
+>>> device MUST
+>>> ignore entries with tag values that it does not recognize". So exporting
+>>> VIRTIO_BALLOON_S_NR seems useless and device implementation can not 
+>>> depend
+>>> on such number in uapi.
+>>>
+>>> Thanks
+>> Suggestions? I don't like to break build for people ...
+>>
+> 
+> Didn't have a good idea. But maybe we should keep VIRTIO_BALLOON_S_NR 
+> unchanged, and add a comment here.
+> 
+> Thanks
 
-Looks like it was already wrong, but these are missing the vendor 
-prefixes.
+I think Jason's comment is for a future patch. Didn't see this patch get 
+applied, so wondering if it could be.
 
->  	};
->  };
->  
-> @@ -105,13 +124,10 @@ lm3631@29 {
-
-Are so many examples really needed? Examples aren't supposed to 
-enumerate all possible options...
-
-Rob
+Thanks,
+Jon
