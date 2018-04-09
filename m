@@ -1,117 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752320AbeDIHGR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:06:17 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37863 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751458AbeDIHGP (ORCPT
+        id S1752383AbeDIHHU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:07:20 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:27704 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeDIHHT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:06:15 -0400
-X-Google-Smtp-Source: AIpwx4+dbNiLQQvOf4Z0czOVu7TF3MwCDXscxLwJxPWpCLGwSacaTFcVW9vjvk75RFzpWVaUdHZWJg==
-Date: Mon, 9 Apr 2018 09:06:11 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Maninder Singh <maninder1.s@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH 0/3] syscalls: clean up stub naming convention
-Message-ID: <20180409070611.43iq66eay2ctwv2m@gmail.com>
-References: <20180407074651.29014-1-linux@dominikbrodowski.net>
- <20180408083550.32d65b6ra6yca5p7@gmail.com>
- <20180408091536.GA10120@light.dominikbrodowski.net>
- <20180409064511.ejhfqcurtlq2srq5@gmail.com>
+        Mon, 9 Apr 2018 03:07:19 -0400
+Date: Mon, 9 Apr 2018 15:07:11 +0800
+From: Alan Kao <alankao@andestech.com>
+To: Palmer Dabbelt <palmer@sifive.com>
+CC: <albert@sifive.com>, <peterz@infradead.org>, <mingo@redhat.com>,
+        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
+        <jolsa@redhat.com>, <namhyung@kernel.org>, <sols@sifive.com>,
+        <corbet@lwn.net>, <linux-riscv@lists.infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <nickhu@andestech.com>, <greentime@andestech.com>
+Subject: Re: [PATCH 1/2] perf: riscv: preliminary RISC-V support
+Message-ID: <20180409070710.GA3844@andestech.com>
+References: <1522051075-6442-2-git-send-email-alankao@andestech.com>
+ <mhng-c22f4be6-e89e-42b6-a776-bf4e035c10d4@palmer-si-x1c4>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180409064511.ejhfqcurtlq2srq5@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <mhng-c22f4be6-e89e-42b6-a776-bf4e035c10d4@palmer-si-x1c4>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w3971XTH047779
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Ingo Molnar <mingo@kernel.org> wrote:
-
+On Thu, Apr 05, 2018 at 09:47:50AM -0700, Palmer Dabbelt wrote:
+> On Mon, 26 Mar 2018 00:57:54 PDT (-0700), alankao@andestech.com wrote:
+> >This patch provide a basic PMU, riscv_base_pmu, which supports two
+> >general hardware event, instructions and cycles.  Furthermore, this
+> >PMU serves as a reference implementation to ease the portings in
+> >the future.
+> >
+> >riscv_base_pmu should be able to run on any RISC-V machine that
+> >conforms to the Priv-Spec.  Note that the latest qemu model hasn't
+> >fully support a proper behavior of Priv-Spec 1.10 yet, but work
+> >around should be easy with very small fixes.  Please check
+> >https://github.com/riscv/riscv-qemu/pull/115 for future updates.
+> >
+> >Cc: Nick Hu <nickhu@andestech.com>
+> >Cc: Greentime Hu <greentime@andestech.com>
+> >Signed-off-by: Alan Kao <alankao@andestech.com>
 > 
-> * Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+> We should really be able to detect PMU types at runtime (via a device tree
+> entry) rather than requiring that a single PMU is built in to the kernel.
+> This will require a handful of modifications to how this patch works, which
+> I'll try to list below.
+
+> >+menu "PMU type"
+> >+	depends on PERF_EVENTS
+> >+
+> >+config RISCV_BASE_PMU
+> >+	bool "Base Performance Monitoring Unit"
+> >+	def_bool y
+> >+	help
+> >+	  A base PMU that serves as a reference implementation and has limited
+> >+	  feature of perf.
+> >+
+> >+endmenu
+> >+
 > 
-> > On Sun, Apr 08, 2018 at 10:35:50AM +0200, Ingo Molnar wrote:
-> > >   - _____sys_waitid()      # ridiculous number of underscores?
-> > >   - __sys_waitid()         # too generic sounding?
-> > 
-> > ... and we'd need to rename internal helpers in net/
-> > 
-> > >   - __inline_sys_waitid()  # too long?
-> > 
-> > sounds acceptable, though a bit long (especially for the compat case, though
-> > it doesn't really matter in the case of 
-> > __inline_compat_sys_sched_rr_get_interval)
+> Rather than a menu where a single PMU can be selected, there should be
+> options to enable or disable support for each PMU type -- this is just like
+> how all our other drivers work.
 > 
-> So as per the previous mail this is not just an inline function, but an active 
-> type conversion wrapper that sign-extends 32-bit ints to longs, which is important 
-> on some 64-bit architectures.
+
+I see.  Sure.  The descriptions and implementation will be refined in v3.
+
+> >+struct pmu * __weak __init riscv_init_platform_pmu(void)
+> >+{
+> >+	riscv_pmu = &riscv_base_pmu;
+> >+	return riscv_pmu->pmu;
+> >+}
 > 
-> And that's a really non-obvious property IMO, and the name should probably reflect 
-> _that_ non-obvious property, not the inlining property which is really just a 
-> small detail.
+> Rather than relying on a weak symbol that gets overridden by other PMU
+> types, this should look through the device tree for a compatible PMU (in the
+> case of just the base PMU it could be any RISC-V hart) and install a PMU
+> handler for it.  There'd probably be some sort of priority scheme here, like
+> there are for other driver subsystems, where we'd pick the best PMU driver
+> that's compatible with the PMUs on every hart.
 > 
-> I.e. how about:
+> >+
+> >+int __init init_hw_perf_events(void)
+> >+{
+> >+	struct pmu *pmu = riscv_init_platform_pmu();
+> >+
+> >+	perf_irq = NULL;
+> >+	perf_pmu_register(pmu, "cpu", PERF_TYPE_RAW);
+> >+	return 0;
+> >+}
+> >+arch_initcall(init_hw_perf_events);
 > 
-> 	__se_sys_waitid()
-> 
-> ... where 'se' stands for sign-extended, with a comment in the macro that explains 
-> the prefix? (The historical abbreviation for sign extension is 'sext', which I 
-> think wouldn't really be suitable these days.)
+> Since we only have a single PMU type right now this isn't critical to handle
+> right away, but we will have to refactor this before adding another PMU.
 
-Ok, so I got confused there: I think it's the do_sys_waitid() intermediate that
-is actually doing the sign-extension - and the inlined helper is what is in the 
-syscall definition body.
+I see.  My rough plan is to do the device tree parsing here, and if no specific
+PMU string is found then just register the base PMU proposed in this patch.
+How about this idea?
 
-So it's all still somewhat of a confusing misnomer: the 'do' named function is 
-actually the sign-extension function variant - and the '_il' variant actually 
-'does' the real work ...
-
-I.e., old naming:
-
-810f08d0 t     kernel_waitid	# common C function (see kernel/exit.c)
-
-<inline>     __il_sys_waitid	# inlined helper doing the actual work
-				# (takes parameters as declared)
-
-810f1aa0 T   __do_sys_waitid	# C function calling inlined helper
-				# (takes parameters of type long; casts
-				#  them to the declared type)
-
-810f1aa0 T        sys_waitid	# alias to __do_sys_waitid() (taking
-				# parameters as declared), to be included
-				# in syscall table
-
-
-New suggested naming:
-
-810f08d0 t     kernel_waitid	# common C function (see kernel/exit.c)
-
-<inline>     __do_sys_waitid	# inlined helper doing the actual work
-				# (takes original parameters as declared)
-
-810f1aa0 T   __se_sys_waitid	# sign-extending C function calling inlined
-				# helper (takes parameters of type long;
-				# casts them to the declared type)
-
-810f1aa0 T        sys_waitid	# alias to __se_sys_waitid() (but taking
-				# original parameters as declared), to be
-				# included in syscall table
-
-Agreed?
-
-Thanks,
-
-	Ingo
+Thanks.
