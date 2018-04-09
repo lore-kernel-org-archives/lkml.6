@@ -1,71 +1,412 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752509AbeDIOZv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 10:25:51 -0400
-Received: from smtprelay0214.hostedemail.com ([216.40.44.214]:46155 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752100AbeDIOZu (ORCPT
+        id S1752544AbeDIO3t (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 10:29:49 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:25386 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751875AbeDIO3r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 10:25:50 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2902:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3871:3872:3874:4321:4605:5007:6119:7903:10004:10400:10848:11232:11658:11914:12043:12048:12740:12760:12895:13069:13071:13095:13311:13357:13439:14180:14659:14721:21060:21080:21433:21627:30054:30064:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: part23_89dd3b4aaf127
-X-Filterd-Recvd-Size: 2536
-Message-ID: <3c3fbc6afabaf7c007cba4543c90ea83196c1a6e.camel@perches.com>
-Subject: Re: [PATCH v2 7/9] PCI: dwc: Replace lower into upper case
- characters
-From: Joe Perches <joe@perches.com>
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Date: Mon, 09 Apr 2018 07:25:45 -0700
-In-Reply-To: <c7aa4990-92ad-3e5e-de27-40df4f29f08b@synopsys.com>
-References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
-         <a28d463d04b198f51c64c1a7eb5b3f77da2d4ab9.1523266508.git.gustavo.pimentel@synopsys.com>
-         <0dad6b43476c1a70944e3e7c245040243ddc2a04.camel@perches.com>
-         <c7aa4990-92ad-3e5e-de27-40df4f29f08b@synopsys.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.0-4 
-Mime-Version: 1.0
+        Mon, 9 Apr 2018 10:29:47 -0400
+Subject: Re: [PATCH v4 1/7] clk: meson: aoclk: refactor common code into
+ dedicated file
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+References: <20180408031938.153474-1-yixun.lan@amlogic.com>
+ <20180408031938.153474-2-yixun.lan@amlogic.com>
+ <1523275729.2764.25.camel@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <12349f2f-39c8-517c-42d0-758d41e97a25@amlogic.com>
+Date: Mon, 9 Apr 2018 22:29:39 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
+MIME-Version: 1.0
+In-Reply-To: <1523275729.2764.25.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [61.173.0.49]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-09 at 14:10 +0100, Gustavo Pimentel wrote:
-> Hi Joe,
+Hi Jerome
 
-Hello Gustavo.
+thanks for the review, I will fix them in next version
 
-> On 09/04/2018 11:25, Joe Perches wrote:
-> > On Mon, 2018-04-09 at 10:41 +0100, Gustavo Pimentel wrote:
-> > > Replaces lower into upper case characters in comments and debug printks.
-> > > 
-> > > This is an attempt to keep the messages coherent within the designware
-> > > driver.
-> > 
-> > It'd be nice to make all the dwc drivers use the same
-> > message wording.
-> > 
-> > For instance:
-> > 
-> > drivers/pci/dwc/pci-keystone.c: dev_err(dev, "phy link never came up\n");
-> > drivers/pci/dwc/pcie-designware.c:      dev_err(pci->dev, "phy link never came up\n");
-> > drivers/pci/host/pcie-xilinx-nwl.c:     dev_err(dev, "PHY link never came up\n");
+On 04/09/2018 08:08 PM, Jerome Brunet wrote:
+> On Sun, 2018-04-08 at 11:19 +0800, Yixun Lan wrote:
+>> We try to refactor the common code into one dedicated file,
+>> while preparing to add new Meson-AXG aoclk driver, this would
+>> help us to better share the code by all aoclk drivers.
+>>
+>> Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  drivers/clk/meson/Makefile      |  2 +-
+>>  drivers/clk/meson/gxbb-aoclk.c  | 91 ++++++++++++++---------------------------
+>>  drivers/clk/meson/gxbb-aoclk.h  |  7 ++++
+>>  drivers/clk/meson/meson-aoclk.c | 83 +++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/meson/meson-aoclk.h | 35 ++++++++++++++++
+>>  5 files changed, 157 insertions(+), 61 deletions(-)
+>>  create mode 100644 drivers/clk/meson/meson-aoclk.c
+>>  create mode 100644 drivers/clk/meson/meson-aoclk.h
+>>
+>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+>> index ffee82e60b7a..555ab9c6ab64 100644
+>> --- a/drivers/clk/meson/Makefile
+>> +++ b/drivers/clk/meson/Makefile
+>> @@ -4,6 +4,6 @@
+>>  
+>>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
+>>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+>> -obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+>> +obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o meson-aoclk.o gxbb-aoclk.o gxbb-aoclk-32k.o
+>                                                       ^
+> This is not going to end well ========================|
 > 
-> I also agree, I added a task to my backlog to fix that. However, this task
-> shouldn't be done in this patch series since it's a more broader task involving
-> many drivers and different maintainers. Agree?
+will address this
+> 
+>>  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
+>>  obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+>> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+>> index 9ec23ae9a219..59db8e92f8cf 100644
+>> --- a/drivers/clk/meson/gxbb-aoclk.c
+>> +++ b/drivers/clk/meson/gxbb-aoclk.c
+>> @@ -52,39 +52,13 @@
+>>   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+>>   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+>>   */
+>> -#include <linux/clk-provider.h>
+>> -#include <linux/of_address.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/reset-controller.h>
+>>  #include <linux/mfd/syscon.h>
+>> -#include <linux/regmap.h>
+>>  #include <linux/init.h>
+>> -#include <linux/delay.h>
+>> -#include <dt-bindings/clock/gxbb-aoclkc.h>
+>> -#include <dt-bindings/reset/gxbb-aoclkc.h>
+>>  #include "clk-regmap.h"
+>>  #include "gxbb-aoclk.h"
+>>  
+>> -struct gxbb_aoclk_reset_controller {
+>> -	struct reset_controller_dev reset;
+>> -	unsigned int *data;
+>> -	struct regmap *regmap;
+>> -};
+>> -
+>> -static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
+>> -			       unsigned long id)
+>> -{
+>> -	struct gxbb_aoclk_reset_controller *reset =
+>> -		container_of(rcdev, struct gxbb_aoclk_reset_controller, reset);
+>> -
+>> -	return regmap_write(reset->regmap, AO_RTI_GEN_CNTL_REG0,
+>> -			    BIT(reset->data[id]));
+>> -}
+>> -
+>> -static const struct reset_control_ops gxbb_aoclk_reset_ops = {
+>> -	.reset = gxbb_aoclk_do_reset,
+>> -};
+>> -
+>>  #define GXBB_AO_GATE(_name, _bit)					\
+>>  static struct clk_regmap _name##_ao = {					\
+>>  	.data = &(struct clk_regmap_gate_data) {			\
+>> @@ -117,7 +91,7 @@ static struct aoclk_cec_32k cec_32k_ao = {
+>>  	},
+>>  };
+>>  
+>> -static unsigned int gxbb_aoclk_reset[] = {
+>> +static const unsigned int gxbb_aoclk_reset[] = {
+>>  	[RESET_AO_REMOTE] = 16,
+>>  	[RESET_AO_I2C_MASTER] = 18,
+>>  	[RESET_AO_I2C_SLAVE] = 19,
+>> @@ -135,7 +109,7 @@ static struct clk_regmap *gxbb_aoclk_gate[] = {
+>>  	[CLKID_AO_IR_BLASTER] = &ir_blaster_ao,
+>>  };
+>>  
+>> -static struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
+>> +static const struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
+>>  	.hws = {
+>>  		[CLKID_AO_REMOTE] = &remote_ao.hw,
+>>  		[CLKID_AO_I2C_MASTER] = &i2c_master_ao.hw,
+>> @@ -145,19 +119,15 @@ static struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
+>>  		[CLKID_AO_IR_BLASTER] = &ir_blaster_ao.hw,
+>>  		[CLKID_AO_CEC_32K] = &cec_32k_ao.hw,
+>>  	},
+>> -	.num = 7,
+>> +	.num = NR_CLKS,
+>>  };
+>>  
+>> -static int gxbb_aoclkc_probe(struct platform_device *pdev)
+>> +static int gxbb_aoclkc_register_specific_clk(
+> 
+> Please call this something more explicit, gxbb_register_cec_ao_32k for example
+> 
+ok
 
-Right.
+>> +		struct platform_device *pdev)
+> 
+> Why do you put this on a new line ? it was not over 80 char ...
+> 
+>>  {
+>> -	struct gxbb_aoclk_reset_controller *rstc;
+>>  	struct device *dev = &pdev->dev;
+>>  	struct regmap *regmap;
+>> -	int ret, clkid;
+>> -
+>> -	rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
+>> -	if (!rstc)
+>> -		return -ENOMEM;
+>> +	int ret;
+>>  
+>>  	regmap = syscon_node_to_regmap(of_get_parent(dev->of_node));
+>>  	if (IS_ERR(regmap)) {
+>> @@ -165,38 +135,39 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
+>>  		return -ENODEV;
+>>  	}
+>>  
+>> -	/* Reset Controller */
+>> -	rstc->regmap = regmap;
+>> -	rstc->data = gxbb_aoclk_reset;
+>> -	rstc->reset.ops = &gxbb_aoclk_reset_ops;
+>> -	rstc->reset.nr_resets = ARRAY_SIZE(gxbb_aoclk_reset);
+>> -	rstc->reset.of_node = dev->of_node;
+>> -	ret = devm_reset_controller_register(dev, &rstc->reset);
+>> -
+>> -	/*
+>> -	 * Populate regmap and register all clks
+>> -	 */
+>> -	for (clkid = 0; clkid < ARRAY_SIZE(gxbb_aoclk_gate); clkid++) {
+>> -		gxbb_aoclk_gate[clkid]->map = regmap;
+>> -
+>> -		ret = devm_clk_hw_register(dev,
+>> -					   gxbb_aoclk_onecell_data.hws[clkid]);
+>> -		if (ret)
+>> -			return ret;
+>> -	}
+>> -
+>>  	/* Specific clocks */
+>>  	cec_32k_ao.regmap = regmap;
+>>  	ret = devm_clk_hw_register(dev, &cec_32k_ao.hw);
+>> -	if (ret)
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "clk cec_32k_ao register failed.\n");
+>>  		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct meson_aoclk_data gxbb_aoclkc_data = {
+>> +	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
+>> +	.num_reset	= ARRAY_SIZE(gxbb_aoclk_reset),
+>> +	.reset		= gxbb_aoclk_reset,
+>> +	.num_clks	= ARRAY_SIZE(gxbb_aoclk_gate),
+>> +	.clks		= gxbb_aoclk_gate,
+>> +	.hw_data	= &gxbb_aoclk_onecell_data,
+>> +};
+>> +
+>> +static int gxbb_aoclkc_probe(struct platform_device *pdev)
+>> +{
+>> +	if (gxbb_aoclkc_register_specific_clk(pdev))
+>> +		return -ENODEV;
+> 
+> It is not OK to just put your error code like that. If a function, such as
+> devm_clk_hw_register() return an error, you should fwd that error code.
+> 
+ok, will do
 
-I was just highlighting the inconsistency.
-So, no worries.  Whenever.
+>>  
+>> -	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+>> -			&gxbb_aoclk_onecell_data);
+>> +	return meson_aoclkc_probe(pdev);
+>>  }
+>>  
+>>  static const struct of_device_id gxbb_aoclkc_match_table[] = {
+>> -	{ .compatible = "amlogic,meson-gx-aoclkc" },
+>> +	{
+>> +		.compatible	= "amlogic,meson-gx-aoclkc",
+>> +		.data		= &gxbb_aoclkc_data,
+>> +	},
+>>  	{ }
+>>  };
+>>  
+>> diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
+>> index badc4c22b4ee..b031f1a0213e 100644
+>> --- a/drivers/clk/meson/gxbb-aoclk.h
+>> +++ b/drivers/clk/meson/gxbb-aoclk.h
+>> @@ -8,6 +8,10 @@
+>>  #ifndef __GXBB_AOCLKC_H
+>>  #define __GXBB_AOCLKC_H
+>>  
+>> +#include "meson-aoclk.h"
+>> +
+>> +#define NR_CLKS	7
+>> +
+>>  /* AO Configuration Clock registers offsets */
+>>  #define AO_RTI_PWR_CNTL_REG1	0x0c
+>>  #define AO_RTI_PWR_CNTL_REG0	0x10
+>> @@ -26,4 +30,7 @@ struct aoclk_cec_32k {
+>>  
+>>  extern const struct clk_ops meson_aoclk_cec_32k_ops;
+>>  
+>> +#include <dt-bindings/clock/gxbb-aoclkc.h>
+>> +#include <dt-bindings/reset/gxbb-aoclkc.h>
+>> +
+>>  #endif /* __GXBB_AOCLKC_H */
+>> diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+>> new file mode 100644
+>> index 000000000000..14862c22e20d
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/meson-aoclk.c
+>> @@ -0,0 +1,83 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * Amlogic Meson-AXG Clock Controller Driver
+>> + *
+>> + * Copyright (c) 2016 BayLibre, SAS.
+>> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+>> + *
+>> + * Copyright (c) 2018 Amlogic, inc.
+>> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
+>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+>> + */
+>> +
+>> +#include <linux/platform_device.h>
+>> +#include <linux/reset-controller.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/init.h>
+>> +#include <linux/of_device.h>
+>> +#include "clk-regmap.h"
+>> +#include "meson-aoclk.h"
+>> +
+>> +static int meson_aoclk_do_reset(struct reset_controller_dev *rcdev,
+>> +			       unsigned long id)
+>> +{
+>> +	struct meson_aoclk_reset_controller *rstc =
+>> +		container_of(rcdev, struct meson_aoclk_reset_controller, reset);
+>> +
+>> +	return regmap_write(rstc->regmap, rstc->data->reset_reg,
+>> +			    BIT(rstc->data->reset[id]));
+>> +}
+>> +
+>> +static const struct reset_control_ops meson_aoclk_reset_ops = {
+>> +	.reset = meson_aoclk_do_reset,
+>> +};
+>> +
+>> +int meson_aoclkc_probe(struct platform_device *pdev)
+>> +{
+>> +	struct meson_aoclk_reset_controller *rstc;
+>> +	struct meson_aoclk_data *data;
+>> +	struct device *dev = &pdev->dev;
+>> +	struct regmap *regmap;
+>> +	int ret, clkid;
+>> +
+>> +	data = (struct meson_aoclk_data *)
+>> +		of_device_get_match_data(dev);
+> 
+> Again, line would not be over 80 char ...
+> 
+will adjust
+>> +	if (!data)
+>> +		return -ENODEV;
+>> +
+>> +	rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
+>> +	if (!rstc)
+>> +		return -ENOMEM;
+>> +
+>> +	regmap = syscon_node_to_regmap(of_get_parent(dev->of_node));
+>> +	if (IS_ERR(regmap)) {
+>> +		dev_err(dev, "failed to get regmap\n");
+>> +		return -ENODEV;
+> 
+> Same as above, you can't decide to return error code like this ... use PTR_ERR.
+> 
+ok
+
+>> +	}
+>> +
+>> +	/* Reset Controller */
+>> +	rstc->data = data;
+>> +	rstc->regmap = regmap;
+>> +	rstc->reset.ops = &meson_aoclk_reset_ops;
+>> +	rstc->reset.nr_resets = data->num_reset,
+>> +	rstc->reset.of_node = dev->of_node;
+>> +	ret = devm_reset_controller_register(dev, &rstc->reset);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to register reset controller\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Populate regmap and register all clks
+>> +	 */
+>> +	for (clkid = 0; clkid < data->num_clks; clkid++) {
+>> +		data->clks[clkid]->map = regmap;
+>> +
+>> +		ret = devm_clk_hw_register(dev, data->hw_data->hws[clkid]);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+>> +		(void *) data->hw_data);
+>> +}
+>> diff --git a/drivers/clk/meson/meson-aoclk.h b/drivers/clk/meson/meson-aoclk.h
+>> new file mode 100644
+>> index 000000000000..f0fba19fff0a
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/meson-aoclk.h
+>> @@ -0,0 +1,35 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>> +/*
+>> + * Copyright (c) 2017 BayLibre, SAS
+>> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+>> + *
+>> + * Copyright (c) 2018 Amlogic, inc.
+>> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
+>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+>> + */
+>> +
+>> +#ifndef __MESON_AOCLK_H__
+>> +#define __MESON_AOCLK_H__
+>> +
+>> +#include <linux/platform_device.h>
+>> +#include <linux/reset-controller.h>
+>> +#include "clk-regmap.h"
+>> +
+>> +struct meson_aoclk_data {
+>> +	const unsigned int		reset_reg;
+>> +	const int			num_reset;
+>> +	const unsigned int		*reset;
+>> +	int				num_clks;
+>> +	struct clk_regmap		**clks;
+>> +	const struct clk_hw_onecell_data	*hw_data;
+> 
+> If you align structure member names, please do it for all them.
+> 
+ok,
+>> +};
+>> +
+>> +struct meson_aoclk_reset_controller {
+>> +	struct reset_controller_dev	reset;
+>> +	const struct meson_aoclk_data	*data;
+>> +	struct regmap			*regmap;
+>> +};
+>> +
+>> +int meson_aoclkc_probe(struct platform_device *pdev);
+>> +#endif
+>> +
+> 
+> .
+> 
