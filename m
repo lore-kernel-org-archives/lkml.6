@@ -1,45 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752076AbeDINLd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:11:33 -0400
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:39471 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750982AbeDINLc (ORCPT
+        id S1752185AbeDINLo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:11:44 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:56008 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbeDINLm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:11:32 -0400
-X-Google-Smtp-Source: AIpwx49lck0oOkD0DuTqTz3tQ9FGQTxU5ztgf39PIPywzxmjhR3YaDYs4dpNjToU/LMLx1OflOAiCUIPN8AtK0VYydE=
+        Mon, 9 Apr 2018 09:11:42 -0400
+Subject: Re: [PATCH v2 7/9] PCI: dwc: Replace lower into upper case characters
+To: Joe Perches <joe@perches.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
+ <a28d463d04b198f51c64c1a7eb5b3f77da2d4ab9.1523266508.git.gustavo.pimentel@synopsys.com>
+ <0dad6b43476c1a70944e3e7c245040243ddc2a04.camel@perches.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <c7aa4990-92ad-3e5e-de27-40df4f29f08b@synopsys.com>
+Date: Mon, 9 Apr 2018 14:10:44 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <455c2ccbea2f83947630e3068ecadf4ab4434fb9.1522546571.git.fthain@telegraphics.com.au>
-References: <cover.1522546571.git.fthain@telegraphics.com.au> <455c2ccbea2f83947630e3068ecadf4ab4434fb9.1522546571.git.fthain@telegraphics.com.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Apr 2018 15:11:31 +0200
-X-Google-Sender-Auth: 7mxqnMdM9K9utuDRsL8ONfKFc7I
-Message-ID: <CAMuHMdVqMqgWv9xiH35kpbr7exaLr73mQ9qS_WC5u+c6jZ+d6g@mail.gmail.com>
-Subject: Re: [PATCH 07/12] block/swim: Remove extra put_disk() call from error path
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Laurent Vivier <lvivier@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0dad6b43476c1a70944e3e7c245040243ddc2a04.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 1, 2018 at 3:41 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> Cc: Laurent Vivier <lvivier@redhat.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Tested-by: Stan Johnson <userm57@yahoo.com>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Hi Joe,
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+On 09/04/2018 11:25, Joe Perches wrote:
+> On Mon, 2018-04-09 at 10:41 +0100, Gustavo Pimentel wrote:
+>> Replaces lower into upper case characters in comments and debug printks.
+>>
+>> This is an attempt to keep the messages coherent within the designware
+>> driver.
+> 
+> It'd be nice to make all the dwc drivers use the same
+> message wording.
+> 
+> For instance:
+> 
+> drivers/pci/dwc/pci-keystone.c: dev_err(dev, "phy link never came up\n");
+> drivers/pci/dwc/pcie-designware.c:      dev_err(pci->dev, "phy link never came up\n");
+> drivers/pci/host/pcie-xilinx-nwl.c:     dev_err(dev, "PHY link never came up\n");
 
-Gr{oetje,eeting}s,
+I also agree, I added a task to my backlog to fix that. However, this task
+shouldn't be done in this patch series since it's a more broader task involving
+many drivers and different maintainers. Agree?
 
-                        Geert
+> 
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Gustavo
