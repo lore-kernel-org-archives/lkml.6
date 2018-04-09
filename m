@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753303AbeDIPqq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:46:46 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34367 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753243AbeDIPqj (ORCPT
+        id S1753277AbeDIPqp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:46:45 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54950 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753211AbeDIPql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:46:39 -0400
-X-Google-Smtp-Source: AIpwx4/QYkJcLFxcQ/xKyW23gztK6bmOkfmaTN78ptgrA90FmoKYtdbBDIdFKHXM7lkjdibRojtyFg==
+        Mon, 9 Apr 2018 11:46:41 -0400
+X-Google-Smtp-Source: AIpwx4/f2DiriwaAQRNe6HMIfXnsQfS7WDEtWhre4uh0kN+iNPq+wRZ/+pG0SzmkzIhf42xCINTwuQ==
 From: Jan Glauber <jglauber@cavium.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
@@ -15,9 +15,9 @@ Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
         Mahipal Challa <Mahipal.Challa@cavium.com>,
         Robert Richter <rrichter@cavium.com>,
         Jan Glauber <jglauber@cavium.com>
-Subject: [PATCH v2 3/5] crypto: thunderx_zip: Prevent division by zero
-Date: Mon,  9 Apr 2018 17:45:52 +0200
-Message-Id: <20180409154554.7578-4-jglauber@cavium.com>
+Subject: [PATCH v2 4/5] crypto: thunderx_zip: Fix statistics pending request value
+Date: Mon,  9 Apr 2018 17:45:53 +0200
+Message-Id: <20180409154554.7578-5-jglauber@cavium.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180409154554.7578-1-jglauber@cavium.com>
 References: <20180409154554.7578-1-jglauber@cavium.com>
@@ -25,34 +25,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoid two potential divisions by zero when calculating average
-values for the zip statistics.
+The pending request counter was read from the wrong register. While
+at it, there is no need to use an atomic for it as it is only read
+localy in a loop.
 
 Signed-off-by: Jan Glauber <jglauber@cavium.com>
 Reviewed-by: Robert Richter <rrichter@cavium.com>
 ---
- drivers/crypto/cavium/zip/zip_main.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/crypto/cavium/zip/zip_main.c | 13 +++++--------
+ drivers/crypto/cavium/zip/zip_main.h |  1 -
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/crypto/cavium/zip/zip_main.c b/drivers/crypto/cavium/zip/zip_main.c
-index 1cd8aa488185..79b449e0f955 100644
+index 79b449e0f955..ae5b20c695ca 100644
 --- a/drivers/crypto/cavium/zip/zip_main.c
 +++ b/drivers/crypto/cavium/zip/zip_main.c
-@@ -482,10 +482,11 @@ static int zip_show_stats(struct seq_file *s, void *unused)
- 				atomic64_add(val, &st->pending_req);
+@@ -469,6 +469,8 @@ static int zip_show_stats(struct seq_file *s, void *unused)
+ 	struct zip_stats  *st;
+ 
+ 	for (index = 0; index < MAX_ZIP_DEVICES; index++) {
++		u64 pending = 0;
++
+ 		if (zip_dev[index]) {
+ 			zip = zip_dev[index];
+ 			st  = &zip->stats;
+@@ -476,10 +478,8 @@ static int zip_show_stats(struct seq_file *s, void *unused)
+ 			/* Get all the pending requests */
+ 			for (q = 0; q < ZIP_NUM_QUEUES; q++) {
+ 				val = zip_reg_read((zip->reg_base +
+-						    ZIP_DBG_COREX_STA(q)));
+-				val = (val >> 32);
+-				val = val & 0xffffff;
+-				atomic64_add(val, &st->pending_req);
++						    ZIP_DBG_QUEX_STA(q)));
++				pending += val >> 32 & 0xffffff;
  			}
  
--			avg_chunk = (atomic64_read(&st->comp_in_bytes) /
--				     atomic64_read(&st->comp_req_complete));
--			avg_cr = (atomic64_read(&st->comp_in_bytes) /
--				  atomic64_read(&st->comp_out_bytes));
-+			val = atomic64_read(&st->comp_req_complete);
-+			avg_chunk = (val) ? atomic64_read(&st->comp_in_bytes) / val : 0;
-+
-+			val = atomic64_read(&st->comp_out_bytes);
-+			avg_cr = (val) ? atomic64_read(&st->comp_in_bytes) / val : 0;
- 			seq_printf(s, "        ZIP Device %d Stats\n"
- 				      "-----------------------------------\n"
- 				      "Comp Req Submitted        : \t%lld\n"
+ 			val = atomic64_read(&st->comp_req_complete);
+@@ -514,10 +514,7 @@ static int zip_show_stats(struct seq_file *s, void *unused)
+ 				       (u64)atomic64_read(&st->decomp_in_bytes),
+ 				       (u64)atomic64_read(&st->decomp_out_bytes),
+ 				       (u64)atomic64_read(&st->decomp_bad_reqs),
+-				       (u64)atomic64_read(&st->pending_req));
+-
+-			/* Reset pending requests  count */
+-			atomic64_set(&st->pending_req, 0);
++				       pending);
+ 		}
+ 	}
+ 	return 0;
+diff --git a/drivers/crypto/cavium/zip/zip_main.h b/drivers/crypto/cavium/zip/zip_main.h
+index 64e051f60784..e1e4fa92ce80 100644
+--- a/drivers/crypto/cavium/zip/zip_main.h
++++ b/drivers/crypto/cavium/zip/zip_main.h
+@@ -74,7 +74,6 @@ struct zip_stats {
+ 	atomic64_t    comp_req_complete;
+ 	atomic64_t    decomp_req_submit;
+ 	atomic64_t    decomp_req_complete;
+-	atomic64_t    pending_req;
+ 	atomic64_t    comp_in_bytes;
+ 	atomic64_t    comp_out_bytes;
+ 	atomic64_t    decomp_in_bytes;
 -- 
 2.16.2
