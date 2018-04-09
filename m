@@ -1,140 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752415AbeDIImV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 04:42:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47936 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751744AbeDIImS (ORCPT
+        id S1752491AbeDIImf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 04:42:35 -0400
+Received: from mail-vk0-f54.google.com ([209.85.213.54]:44576 "EHLO
+        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752458AbeDIImc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 04:42:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E78660AFB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 3/3] clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
-Date: Mon,  9 Apr 2018 14:11:46 +0530
-Message-Id: <1523263306-28665-4-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1523263306-28665-1-git-send-email-tdas@codeaurora.org>
-References: <1523263306-28665-1-git-send-email-tdas@codeaurora.org>
+        Mon, 9 Apr 2018 04:42:32 -0400
+X-Google-Smtp-Source: AIpwx48BEcyyHlg/8/waNFgiwIZtQWmMGjjxgQo2LVpk/LynIrmKFwWlw1LVumMzZ/P0fO6+ZlGPINP5ctth+RrwfI0=
+MIME-Version: 1.0
+X-Originating-IP: [62.219.136.235]
+In-Reply-To: <20180403101905.GA4245@gondor.apana.org.au>
+References: <1522049540-10042-1-git-send-email-gilad@benyossef.com>
+ <1522049540-10042-3-git-send-email-gilad@benyossef.com> <20180330172616.GB28120@gondor.apana.org.au>
+ <CAOtvUMd6MMyQBHU4E=5DKXndhZw90=K1V1apD0uRRaMLyp-0Ag@mail.gmail.com> <20180403101905.GA4245@gondor.apana.org.au>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Mon, 9 Apr 2018 11:42:31 +0300
+Message-ID: <CAOtvUMdCBky5Ay1WOSjNZYm=4O63bBaT_mV589xPXJdZ=EPOHg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] crypto: ccree: enable support for hardware keys
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amit Nischal <anischal@codeaurora.org>
+On Tue, Apr 3, 2018 at 1:19 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Sat, Mar 31, 2018 at 08:30:46PM +0300, Gilad Ben-Yossef wrote:
+>>
+>> However, as it uses the exact same mechanism of the regular xts-aes-ccree
+>> but takes the key from another source, I've marked it with a test of
+>> alg_test_null() on the premise that if the xts-aes-ccree works, so must this.
+>
+> Well it appears to be stubbed out as cc_is_hw_key always returns
+> false.
 
-The default behavior of the GDSC enable/disable sequence is to
-poll the status bits of either the actual GDSCR or the
-corresponding HW_CTRL registers.
+Please look again. The stub version of cc_is_hw_key() doing that is being
+replaced in this patch.
 
-On targets which have support for a CFG_GDSCR register, the
-status bits might not show the correct state of the GDSC,
-especially in the disable sequence, where the status bit
-will be cleared even before the core is completely power
-collapsed. On targets with this issue, poll the power on/off
-bits in the CFG_GDSCR register instead to correctly determine
-the GDSC state.
+>> > Are there other crypto drivers doing this?
+>>
+>> I thought the exact same thing until I ran into a presentation about the s390
+>> secure keys implementation. I basically imitated their use (or abuse?)
+>> of the Crypto API
+>> assuming it is the way to go.
+>>
+>> Take a look at arch/s390/crypto/paes_s390.c
+>
+> It's always nice to discover code that was never reviewed.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/gdsc.c | 39 +++++++++++++++++++++++++++++++++++----
- drivers/clk/qcom/gdsc.h |  1 +
- 2 files changed, 36 insertions(+), 4 deletions(-)
+ :-)
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index cb61c15..2dda2d5 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -33,6 +33,11 @@
- #define GMEM_CLAMP_IO_MASK	BIT(0)
- #define GMEM_RESET_MASK		BIT(4)
+>
+> The general approach seems sane though.
+>
+>> Anyway, if this is not the way to go I'd be more than happy to do whatever
+>> work is needed to create the right interface.
+>>
+>> PS. I'd be out of the office and away from email access to the coming week, so
+>> kindly excuse any delay in response.
+>
+> I think it's fine.  However, I don't really like the idea of everyone
+> coming up with their own "paes", i.e., your patch's use of "haes".
+> It should be OK to just use paes for everyone, no?
 
-+/* CFG_GDSCR */
-+#define GDSC_POWER_UP_COMPLETE		BIT(16)
-+#define GDSC_POWER_DOWN_COMPLETE	BIT(15)
-+#define CFG_GDSCR_OFFSET		0x4
-+
- /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
- #define EN_REST_WAIT_VAL	(0x2 << 20)
- #define EN_FEW_WAIT_VAL		(0x8 << 16)
-@@ -64,18 +69,43 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
- 	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
- }
+The s390 key and the cryptocell keys are not the same:
 
-+static int gdsc_is_enabled_by_poll_cfg_reg(struct gdsc *sc, bool en)
-+{
-+	u32 val;
-+	int ret;
-+
-+	ret = regmap_read(sc->regmap, sc->gdscr + CFG_GDSCR_OFFSET, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (en)
-+		return !!(val & GDSC_POWER_UP_COMPLETE);
-+
-+	return !(val & GDSC_POWER_DOWN_COMPLETE);
-+}
-+
- static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
- {
- 	ktime_t start;
+Their is, I believe, is an AES key encrypted by some internal key/algorithm.
 
- 	start = ktime_get();
- 	do {
--		if (gdsc_is_enabled(sc, reg) == en)
--			return 0;
-+		if (sc->flags & POLL_CFG_GDSCR) {
-+			if (gdsc_is_enabled_by_poll_cfg_reg(sc, en) == en)
-+				return 0;
-+		} else {
-+			if (gdsc_is_enabled(sc, reg) == en)
-+				return 0;
-+		}
- 	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
+The cryptocell "key" is a token, which is internally comprised of one
+or two indexes, referencing slots in the internal memory in the
+hardware, and a key size, that describe the size of the key.
 
--	if (gdsc_is_enabled(sc, reg) == en)
--		return 0;
-+	if (sc->flags & POLL_CFG_GDSCR) {
-+		if (gdsc_is_enabled_by_poll_cfg_reg(sc, en) == en)
-+			return 0;
-+	} else {
-+		if (gdsc_is_enabled(sc, reg) == en)
-+			return 0;
-+	}
+I thought it would be confusing to use "paes" to describe both, since
+they are not interchangeable.
+You would not be able to feed an paes key that works with the s390
+version to cryptocell and vice verse and get it work.
 
- 	return -ETIMEDOUT;
- }
-@@ -254,6 +284,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 		udelay(1);
+Having said, if you prefer to have "paes" simply designate
+"implementation specific token for an AES key" I'm perfectly fine with
+that.
 
- 		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
-+
- 		ret = gdsc_poll_status(sc, reg, true);
- 		if (ret)
- 			return ret;
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 9279278..0f992e8 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -55,6 +55,7 @@ struct gdsc {
- #define HW_CTRL		BIT(2)
- #define SW_RESET	BIT(3)
- #define AON_RESET	BIT(4)
-+#define POLL_CFG_GDSCR  BIT(5)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+>
+> As to your patch specifically, there is one issue where you're
+> directly dereferencing the key as a struct.  This is a no-no because
+> the key may have come from user-space.  You must treat it as a
+> binary blob.  The s390 code seems to do this correctly.
+>
+
+As noted above, the haes "key" is really a token encoding 3 different
+pieces of information:
+1. The index of the first key slot to use
+2. Potentially, the index of a 2nd key slot to use (for XTS)
+3. a key size, denoting the actual key size used, not the slot number
+
+I than have to parse this information encoded in the token and feed it
+to the HW (via 3 different registers)
+
+Therefore, I do not see how I can avoid parsing the token.
+
+I hope I've managed to explain things better now.
+
+Thanks,
+Gilad
+-- 
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
