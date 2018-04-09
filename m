@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3878504-1523241736-2-11611532371057782086
+X-Cyrus-Session-Id: sloti22d1t05-3913452-1523241720-2-9447683626961796629
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523241735; b=s+eLR7Ki9OySYhwEJF/7484tjV2FBmQolGBfLlzEfmUOGK18Dw
-    8e16+rYUhOCFq4XOJfmfYAvU5JRYJBfSq7IiSODTF1GZkBAIuG02ip6lMGf+xcsl
-    XsHTRWOAwhvzv2BqBrI9cvNNKPE/MsxCbs6e0RdcSncBYRGwVETF5XKK02hONeN7
-    xLnXdQb2nP0/TJNaO71XKDXF5oBL72UZ/PdwK9y9hbB6HPUvwf2a8X5m0pqJ8T0L
-    gkUhXh8DBaGqz5k63FlOlZJZ8YsU5t7d5HBHKiZdM66yaFSZyJvMwVcGpyX8vSsL
-    jq9QndCXTjBuhz1uyA52n94PvMPgV/iEr2Rw==
+    1523241719; b=NnctoWIz/WEkjs2qDnnhz/kR2fOLOQkx3IJ9Fo2lKIOvtMxQtp
+    DHGyXVavyQLn4/pf6ZWk7bNzFync7O8jZRhbt6dctP6K5A/GcH8U4mbeFMy73kYo
+    ER5+OwDZlciOGdcc09zzv5urdAnkDJCfczMkBvCId5sfQ6s5c2wrVaOzHGhPpfJv
+    yIcQicS1+nWt0/Y3LCEsxkuCiQGUd20686ZnAAQx5odsattGZ2SgAkSAfjVaNrDW
+    KawCRC1AWkYFkDI1lyLmNuOM+W5wpXPN8GVMgL98gA8zgvI4RisEO7USUs1m7i3J
+    zP01QxVofLyqmGqC6QIAzFL+2ebtyhcDsiiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523241735; bh=aqA+bVgbH5
-    DFnFVTGaKIPeDpk6hZZcoYAWGtx3mX2Uw=; b=qip5Jq7f1NpUArQlneP7m3ITfo
-    9m7Im0NtO5xtV4NFl28D3zC7pxeB+3h7tRTQCgg2ljmCnGkipmJiGsCC63bgCOi0
-    5YX0qDnqSEVkwSuZX7iAdOg5r/LONoGhiz4VeXuwRZKBrYJuqUf03TLZYnD1idCp
-    rZJmrul6+PxevDjoZIgRGD3DCgjl96Yi7fP/IRQFKWEOYLZ2DGdbnFpjCz5AkO8z
-    iIwajk5zsbSQqOc4L2jQx8P7BRDXlz8Sx0wuSjrP+qccQ4i92tpIhwsToAdvpSoH
-    VphjZIz/O+QNMVwB23QPLag0BFDcJgl7bwuKlpXS8z0UChoI9ZBVnu1U7Gcw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Vdmj9yeY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523241719; bh=ILEvKGmpkK
+    KJGWS6ga96BvZT1Au2ngryNO1jUNIiMHU=; b=tN4/NVEPQoPBhM4OL4NqdbcGHu
+    7J/aePHZgguj23cSS7n6yuzmYsBT/w37z/a7cNrTWDY38so/B81cEoQn5DevhFh6
+    qddMtPBoCQRNBBzDPk9PlHC84+JeSJWsnzIKnUbruY+R5qS3OQz2tv6VGbDdH/Pr
+    Dg000CxZBD93+DxE/ueHPoRhWYYZ2YpcrN+KDa+5ujhuix+65cXH5VkUPH/8Roio
+    dTIFaCJhFjeepcP/rolFo+aBfGK8H+Gl+3bNxJ5kFrk+54/wjbKBXh0FRnKJN7My
+    1KG0VT4GNwhn/0LNAwb++JNk+SSEaQwWZb2U3oP2Imc1jNIyqOt0NtL4UTUA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eEFZDAos x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Vdmj9yeY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eEFZDAos x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,37 +51,36 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBh656LVnyGxSktGuIWQr/N2pD4doow17rgG8RPErbkLdwyQPolH2MOLWKKXY2CvInmM3YJydjcib7Gcn618ZKAKGkc0OR9vV0pvq0M+I5EBSU9h1CP8
-    qtT+sDTY0OEx2vYh6u9NOj5242UL9CfgWlF3HbU81MITwLr8wkr9J5B+7MT5TTESNba0Npm3VCpUdduWWI/bY0G5kJfnpj7MPayY7ntXuEN36n1XXs4qKzXI
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfExLPVf0NV5K5ajdedDtDUKMWOWhayckB4ooMmpa9iMrMbry4ww8M8fTUldxdNY98DvYYXc8ZzsIF2tjiuH1ThNLRE2H4KfwT12O087gmx362/dJ7WK5
+    Gq+OpuPzDUVAtDANHMOgjfsDds+hmP1+5IEvgnt/xskHnRr8o5cqXL/MhvHXdCtdKv1jrI6WC+3+q3vtRt5BZdxy0Ldqg2YnM3zAXIiuS5a0f1SaUvaY2Vpr
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
     a=Lf-vpJhqX20A:10 a=yPCof4ZbAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=7EDWiz23SQz5kOWZxAoA:9 a=0bXxn9q0MV6snEgNplNhOjQmxlI=:19 a=wPNLvfGTeEIA:10
-    a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=SmCeFYOw6UMdjzz3AdkA:9 a=wPNLvfGTeEIA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755478AbeDIA04 (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:26:56 -0400
+        id S932232AbeDIClo (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 22:41:44 -0400
 Received: from mail-by2nam03on0126.outbound.protection.outlook.com ([104.47.42.126]:2432
         "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755453AbeDIA0u (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:26:50 -0400
+        id S1755479AbeDIA04 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:26:56 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Girish Moodalbail <girish.moodalbail@oracle.com>,
+CC: Jag Raman <jag.raman@oracle.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 024/293] geneve: add missing rx stats
- accounting
-Thread-Topic: [PATCH AUTOSEL for 4.9 024/293] geneve: add missing rx stats
- accounting
-Thread-Index: AQHTz5jvangZuMdkFUeUwFjNM9elCA==
-Date: Mon, 9 Apr 2018 00:23:08 +0000
-Message-ID: <20180409002239.163177-24-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 030/293] sparc64: ldc abort during vds iso
+ boot
+Thread-Topic: [PATCH AUTOSEL for 4.9 030/293] sparc64: ldc abort during vds
+ iso boot
+Thread-Index: AQHTz5jygqlrEZg320GmHJ8quCkciA==
+Date: Mon, 9 Apr 2018 00:23:13 +0000
+Message-ID: <20180409002239.163177-30-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,27 +89,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0885;7:cxCIiHgGLNnlOuhf5QaNmHJjQsIqmGxXJgirMfkYd++AVPFr7Rk5ggHJeC8IoxNYQnPtNF3/Q80F9045sdVFDmm4An2uoaLI0q+eT4fLO6nmDYtX/UjONO2xf4iFtNUitEvEdZ+jjIxV4oERlCXvjqrnNgYRrO7C5+CWxRZLDEBe+IergSEJ1g/axKMU5cFrjbSie9TTgezW6MyIpQ4YkZ4R30scZYVMx0tz3ggKkPVOvFFAMOCsgqMvG71cR2jt;20:vZxG1X6dgtRl8jIVZBzr1fkQYAu8tOLbXqWdswdOA0MIZR+5Z66ABpiEXFVOg840vwRPsBJzNK5A/fLVjzW8AkaxC4ydtn0IJzdfF9F+f7XsGoLumNyHtGxgoNnV+tAJuGFnyXPHkUddfKYmwSP3XklVaopl9tid0IfW1SFURmc=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0885;7:wQ3TePbkqwI5b8UamSBLvmEruov/IDWntdlCjayKTBQPvGB3R3TOc2HEb5d6F6uALe1rNvjVuGyL2IzY5aUc7s0bblICOjyvhXiZhEEVDufFmaqEsIB9w4fMYNCfCL95OSji6All7zuy3QtyYBA6dseprZJxSesPonbswK4yG0C/1Z5hPtqY/LPUbiOHmptnocc8qN6SsuqvDnKLlYNmunQYU0AalJHbxqBekECVFBntfollvGwybDow9+0Yps1V;20:xy6z5jQX81AacsrTbPLegtWrj1EXxUFHMkRyYnDwAx8C8coFfP6DJkDn5iW/8h3tLso1PXj67sF2eEGxwKhU0SaJtMd09+QHqxBi39cpiXRfRH0WolWp66KGG8jFChfkEP5jcAK68cObY1LfddO2tqbM5ni8elWouSBAn/kJBXU=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 8ba01d40-80c6-42b7-9b89-08d59db0925a
+X-MS-Office365-Filtering-Correlation-Id: 59d5468b-e6f1-4941-9639-08d59db0949b
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0885;
 x-ms-traffictypediagnostic: DM5PR2101MB0885:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0885A95A894FB7CECDFE2E06FBBF0@DM5PR2101MB0885.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB0885C56C3CD3A52DCC7F9ECFFBBF0@DM5PR2101MB0885.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0885;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0885;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(396003)(39380400002)(189003)(199004)(2906002)(68736007)(22452003)(316002)(6512007)(5660300001)(6666003)(54906003)(110136005)(486006)(6486002)(102836004)(36756003)(14454004)(99286004)(86612001)(105586002)(72206003)(106356001)(2900100001)(15650500001)(1076002)(97736004)(10090500001)(3280700002)(5250100002)(6436002)(3660700001)(6116002)(3846002)(305945005)(86362001)(59450400001)(66066001)(10290500003)(186003)(81166006)(8936002)(478600001)(476003)(25786009)(81156014)(8676002)(4326008)(7736002)(2501003)(107886003)(6506007)(2616005)(26005)(76176011)(446003)(53936002)(11346002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0885;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 8UQkqM1tFMApqOH1odh2XvxtnnQprsxGJea0gEAojRoJz8nRrQLMAm8lu3Fm/+RTTVQ82uYsgZ9r11dclEmKvis/wYOmpftuUzWt6pHbVJ9cHRpBuW8lDFdQXxs8o852XwTLKhOHLhAUrHhjq0EHExiyXCYRGua8CrQX3n3tShD8QvTgQbxVGHEIphNovbe27hBwP5W/mSUGHFYzb9gvCs1gZY8LDqrgeH2TXsBtFIpnhYdd4jyDe+ES0ne3Ye4qWdQNWPdM9yGiOIrTK/h4G1VS62mJCf+77UsBAYGQRKgyEVl6zu+BE3W01FXlVN1uhioS6IWydlF3+gMojcXXK066/Y8FoMLVB16J1nQXbM28vnmGp/g0SG6WLMDnZcQGtyseo2vCcim+ilOYdDp9aC1xrwpGDISR0kfU/D/t9E8=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(396003)(39380400002)(189003)(199004)(2906002)(68736007)(22452003)(316002)(6512007)(5660300001)(6666003)(54906003)(110136005)(486006)(6486002)(102836004)(36756003)(14454004)(99286004)(86612001)(105586002)(72206003)(106356001)(2900100001)(1076002)(97736004)(10090500001)(3280700002)(5250100002)(6436002)(3660700001)(6116002)(3846002)(305945005)(86362001)(59450400001)(66066001)(10290500003)(186003)(81166006)(8936002)(478600001)(476003)(25786009)(81156014)(8676002)(4326008)(7736002)(2501003)(107886003)(6506007)(2616005)(26005)(76176011)(446003)(53936002)(11346002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0885;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: kfQMhd/zVWSSGQeFTOcDwVj0piOwEZ1VEulLSyvT7RYMQAQxS/qSdxQ2ohlkSCIP17B8aDbpSPAZOKv1zthw0WejvscLXqxBPIZoztv9q+NaILQHmQ+um+1h9IgEPMuiUN3zN3OiDMoRDqUK831d9r4WIIVk4FXjut5uXa3Yea+GoWi4LHN5rDZJ3/sqD4W9/dRNRmg0tUjtL6o6fv6y1v2N/mTpqDRwQ/r/NBAxn2RcTaQ2V+rQy5WMYV9SkFUPYe7uDiyuluMonFiQdW8xfL6HTbG4N0UwD2A801gQ+Ap2lbull34t/ktGrrxNAVAL6izTejMl76nnSsRAUMcB4r1A+XtJ1ZSGkICYcoZWxJNtlriUK/xBzQjUpWrQ2f+iVky2KRnrHp2sEBaJdAPnnKE7I3THYOBj7REqlZBBlTA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ba01d40-80c6-42b7-9b89-08d59db0925a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:23:08.7842
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59d5468b-e6f1-4941-9639-08d59db0949b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:23:13.7998
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -121,119 +120,59 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Girish Moodalbail <girish.moodalbail@oracle.com>
+From: Jag Raman <jag.raman@oracle.com>
 
-[ Upstream commit fe741e2362f33bbea813bcc3a921de356c6653db ]
+[ Upstream commit 6c95483b768c62f8ee933ae08a1bdbcb78b5410f ]
 
-There are few places on the receive path where packet drops and packet
-errors were not accounted for. This patch fixes that issue.
+Orabug: 20902628
 
-Signed-off-by: Girish Moodalbail <girish.moodalbail@oracle.com>
+When an ldc control-only packet is received during data exchange in
+read_nonraw(), a new rx head is calculated but the rx queue head is not
+actually advanced (rx_set_head() is not called) and a branch is taken to
+'no_data' at which point two things can happen depending on the value
+of the newly calculated rx head and the current rx tail:
+
+- If the rx queue is determined to be not empty, then the wrong packet
+  is picked up.
+
+- If the rx queue is determined to be empty, then a read error (EAGAIN)
+  is eventually returned since it is falsely assumed that more data was
+  expected.
+
+The fix is to update the rx head and return in case of a control only
+packet during data exchange.
+
+Signed-off-by: Jagannathan Raman <jag.raman@oracle.com>
+Reviewed-by: Aaron Young <aaron.young@oracle.com>
+Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Reviewed-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/geneve.c | 36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+ arch/sparc/kernel/ldc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/geneve.c b/drivers/net/geneve.c
-index 3c1f89ab0110..92ad43e53c72 100644
---- a/drivers/net/geneve.c
-+++ b/drivers/net/geneve.c
-@@ -209,6 +209,7 @@ static void geneve_rx(struct geneve_dev *geneve, struct=
- geneve_sock *gs,
- 	struct genevehdr *gnvh =3D geneve_hdr(skb);
- 	struct metadata_dst *tun_dst =3D NULL;
- 	struct pcpu_sw_netstats *stats;
-+	unsigned int len;
- 	int err =3D 0;
- 	void *oiph;
+diff --git a/arch/sparc/kernel/ldc.c b/arch/sparc/kernel/ldc.c
+index 59d503866431..9cc600b2d68c 100644
+--- a/arch/sparc/kernel/ldc.c
++++ b/arch/sparc/kernel/ldc.c
+@@ -1733,9 +1733,14 @@ static int read_nonraw(struct ldc_channel *lp, void =
+*buf, unsigned int size)
 =20
-@@ -222,8 +223,10 @@ static void geneve_rx(struct geneve_dev *geneve, struc=
-t geneve_sock *gs,
- 		tun_dst =3D udp_tun_rx_dst(skb, geneve_get_sk_family(gs), flags,
- 					 vni_to_tunnel_id(gnvh->vni),
- 					 gnvh->opt_len * 4);
--		if (!tun_dst)
-+		if (!tun_dst) {
-+			geneve->dev->stats.rx_dropped++;
- 			goto drop;
-+		}
- 		/* Update tunnel dst according to Geneve options. */
- 		ip_tunnel_info_opts_set(&tun_dst->u.tun_info,
- 					gnvh->options, gnvh->opt_len * 4);
-@@ -231,8 +234,11 @@ static void geneve_rx(struct geneve_dev *geneve, struc=
-t geneve_sock *gs,
- 		/* Drop packets w/ critical options,
- 		 * since we don't support any...
- 		 */
--		if (gnvh->critical)
-+		if (gnvh->critical) {
-+			geneve->dev->stats.rx_frame_errors++;
-+			geneve->dev->stats.rx_errors++;
- 			goto drop;
-+		}
- 	}
+ 		lp->rcv_nxt =3D p->seqid;
 =20
- 	skb_reset_mac_header(skb);
-@@ -243,8 +249,10 @@ static void geneve_rx(struct geneve_dev *geneve, struc=
-t geneve_sock *gs,
- 		skb_dst_set(skb, &tun_dst->dst);
-=20
- 	/* Ignore packet loops (and multicast echo) */
--	if (ether_addr_equal(eth_hdr(skb)->h_source, geneve->dev->dev_addr))
-+	if (ether_addr_equal(eth_hdr(skb)->h_source, geneve->dev->dev_addr)) {
-+		geneve->dev->stats.rx_errors++;
- 		goto drop;
-+	}
-=20
- 	oiph =3D skb_network_header(skb);
- 	skb_reset_network_header(skb);
-@@ -276,13 +284,15 @@ static void geneve_rx(struct geneve_dev *geneve, stru=
-ct geneve_sock *gs,
++		/*
++		 * If this is a control-only packet, there is nothing
++		 * else to do but advance the rx queue since the packet
++		 * was already processed above.
++		 */
+ 		if (!(p->type & LDC_DATA)) {
+ 			new =3D rx_advance(lp, new);
+-			goto no_data;
++			break;
  		}
- 	}
-=20
--	stats =3D this_cpu_ptr(geneve->dev->tstats);
--	u64_stats_update_begin(&stats->syncp);
--	stats->rx_packets++;
--	stats->rx_bytes +=3D skb->len;
--	u64_stats_update_end(&stats->syncp);
--
--	gro_cells_receive(&geneve->gro_cells, skb);
-+	len =3D skb->len;
-+	err =3D gro_cells_receive(&geneve->gro_cells, skb);
-+	if (likely(err =3D=3D NET_RX_SUCCESS)) {
-+		stats =3D this_cpu_ptr(geneve->dev->tstats);
-+		u64_stats_update_begin(&stats->syncp);
-+		stats->rx_packets++;
-+		stats->rx_bytes +=3D len;
-+		u64_stats_update_end(&stats->syncp);
-+	}
- 	return;
- drop:
- 	/* Consume bad packet */
-@@ -332,7 +342,7 @@ static int geneve_udp_encap_recv(struct sock *sk, struc=
-t sk_buff *skb)
- 	struct geneve_sock *gs;
- 	int opts_len;
-=20
--	/* Need Geneve and inner Ethernet header to be present */
-+	/* Need UDP and Geneve header to be present */
- 	if (unlikely(!pskb_may_pull(skb, GENEVE_BASE_HLEN)))
- 		goto drop;
-=20
-@@ -355,8 +365,10 @@ static int geneve_udp_encap_recv(struct sock *sk, stru=
-ct sk_buff *skb)
- 	opts_len =3D geneveh->opt_len * 4;
- 	if (iptunnel_pull_header(skb, GENEVE_BASE_HLEN + opts_len,
- 				 htons(ETH_P_TEB),
--				 !net_eq(geneve->net, dev_net(geneve->dev))))
-+				 !net_eq(geneve->net, dev_net(geneve->dev)))) {
-+		geneve->dev->stats.rx_dropped++;
- 		goto drop;
-+	}
-=20
- 	geneve_rx(geneve, gs, skb);
- 	return 0;
+ 		if (p->stype & (LDC_ACK | LDC_NACK)) {
+ 			err =3D data_ack_nack(lp, p);
 --=20
 2.15.1
