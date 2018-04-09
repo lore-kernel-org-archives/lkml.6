@@ -1,114 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752556AbeDIVuL convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 17:50:11 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:39302 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751505AbeDIVuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 17:50:10 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        open list <linux-kernel@vger.kernel.org>, jcliang@chromium.org,
-        simon xue <xxm@rock-chips.com>, tfiga@chromium.org,
-        Romain Perier <romain.perier@collabora.com>,
-        Yakir Yang <kuankuan.y@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Liang Chen <cl@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Wu <david.wu@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Brian Norris <briannorris@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rocky Hao <rocky.hao@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Nickey Yang <nickey.yang@rock-chips.com>, devicetree@vger.kernel.org,
-        Mark Yao <markyao0591@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Sugar Zhang <sugar.zhang@rock-chips.com>,
-        Caesar Wang <wxt@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v8 07/14] ARM: dts: rockchip: add clocks in iommu nodes
-Date: Mon, 09 Apr 2018 23:49:58 +0200
-Message-ID: <5686492.Vgpi8vPSL1@diego>
-In-Reply-To: <2255884.b1SkkUdh3X@diego>
-References: <20180323073814.5802-1-jeffy.chen@rock-chips.com> <df522a01-6f4a-bb96-4423-19965b078a1b@arm.com> <2255884.b1SkkUdh3X@diego>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1753300AbeDIVxV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 17:53:21 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:55180 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753097AbeDIVxT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 17:53:19 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07402;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0T-w2frg_1523310774;
+From: Yang Shi <yang.shi@linux.alibaba.com>
+To: adobriyan@gmail.com, mhocko@kernel.org, willy@infradead.org,
+        mguzik@redhat.com, gorcunov@gmail.com, akpm@linux-foundation.org
+Cc: yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [v3 PATCH] mm: introduce arg_lock to protect arg_start|end and env_start|end in mm_struct
+Date: Tue, 10 Apr 2018 05:52:54 +0800
+Message-Id: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 9. April 2018, 17:55:40 CEST schrieb Heiko Stübner:
-> Am Montag, 9. April 2018, 17:53:01 CEST schrieb Robin Murphy:
-> > On 09/04/18 16:44, Heiko Stübner wrote:
-> > > Hi Tomeu,
-> > > 
-> > > Am Montag, 9. April 2018, 16:41:56 CEST schrieb Tomeu Vizoso:
-> > >> in today's linux-next, the DRM driver fails to probe because the iommu
-> > >> driver fails to find the aclk. I need to apply this patch for things
-> > >> to work again.
-> > > 
-> > > Thanks for catching that issue.
-> > > 
-> > > This seems to expose a backwards-compatibility issue, as this breaks
-> > > all old devicetrees, so should get a proper fix, apart from me applying
-> > > the dt-patch I missed.
-> > > 
-> > > Looking at the iommu-clock-handling patch, I imagine this part as
-> > > the culprit:
-> > > 
-> > > +	iommu->num_clocks = ARRAY_SIZE(rk_iommu_clocks);
-> > > +	iommu->clocks = devm_kcalloc(iommu->dev, iommu->num_clocks,
-> > > +				     sizeof(*iommu->clocks), GFP_KERNEL);
-> > > +	if (!iommu->clocks)
-> > > +		return -ENOMEM;
-> > > 
-> > > The clk-bulk functions seem to work with simple for loops and
-> > > should (as the other standard clock functions) just work fine with
-> > > an empty struct, so I guess a simple
-> > > 
-> > > 	if (!iommu->clocks && iommu->num_clocks > 0)
-> > > 	
-> > > 		return -ENOMEM;
-> > > 
-> > > should hopefully be enough. I'll try to give this a test later on
-> > > if nobody beats me to it :-)
-> > 
-> > But iommu->num_clocks is clearly set to a nonzero compile-time constant
-> > at this point ;)
-> > 
-> > I'd assume it's the return from devm_clk_bulk_get() which needs to
-> > special-case the "no clocks found" case from any other error, and *then*
-> > blat num_clocks to 0 if so.
-> 
-> you're right of course. Looking at it again, I now clearly see the
-> ARRAY_SIZE and am wondering what made me think num_clocks would be
-> runtime-read.
-> 
-> Must be those 25°C today ;-)
+mmap_sem is on the hot path of kernel, and it very contended, but it is
+abused too. It is used to protect arg_start|end and evn_start|end when
+reading /proc/$PID/cmdline and /proc/$PID/environ, but it doesn't make
+sense since those proc files just expect to read 4 values atomically and
+not related to VM, they could be set to arbitrary values by C/R.
 
-In any case, this does not seem to fully fix the issue ... or be more exact 
-seems to be the only issue.
+And, the mmap_sem contention may cause unexpected issue like below:
 
-- With 4.16 both pinky and kevin have working displays.
-- When I was merging display patches to drm-misc, I did boot-tests on
-  both pinky and kevin, keeping their displays in a working state.
+INFO: task ps:14018 blocked for more than 120 seconds.
+       Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+message.
+ ps              D    0 14018      1 0x00000004
+  ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+  ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+  00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+ Call Trace:
+  [<ffffffff817154d0>] ? __schedule+0x250/0x730
+  [<ffffffff817159e6>] schedule+0x36/0x80
+  [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+  [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+  [<ffffffff81717db0>] down_read+0x20/0x40
+  [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+  [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+  [<ffffffff81241d87>] __vfs_read+0x37/0x150
+  [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+  [<ffffffff81242266>] vfs_read+0x96/0x130
+  [<ffffffff812437b5>] SyS_read+0x55/0xc0
+  [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
 
-- With current torvalds head (iommu not merged yet)
-e9092d0d9796 ("Fix subtle macro variable shadowing in min_not_zero()")
+Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
+for them to mitigate the abuse of mmap_sem.
 
-I get display output on rk3399-kevin (edp), but not on
-rk3288-pinky (edp + hdmi). [components + hdmi device+modes get
-recognized correctly though]
+So, introduce a new spinlock in mm_struct to protect the concurrent
+access to arg_start|end, env_start|end and others except start_brk and
+brk, which are still protected by mmap_sem to avoid concurrent access
+from do_brk().
 
-- With iommu changes merged I end up with the failing clock issue
-  which can be countered by making the iommu-clocks optional.
+This patch just eliminates the abuse of mmap_sem, but it can't resolve the
+above hung task warning completely since the later access_remote_vm() call
+needs acquire mmap_sem. The mmap_sem scalability issue will be solved in the
+future.
 
-- After that I get working display output again on kevin but not pinky.
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Mateusz Guzik <mguzik@redhat.com>
+Cc: Cyrill Gorcunov <gorcunov@gmail.com>
+---
+v2 --> v3:
+* Restored down_write in prctl syscall
+* Elaborate the limitation of this patch suggested by Michal
+* Protect those fields by the new lock except brk and start_brk per Michal's
+  suggestion
+* Based off Cyrill's non PR_SET_MM_MAP oprations deprecation patch
+  (https://lkml.org/lkml/2018/4/5/541)
 
-Looks like this needs bisecting.
+v1 --> v2:
+* Use spinlock instead of rwlock per Mattew's suggestion
+* Replace down_write to down_read in prctl_set_mm (see commit log for details)
+
+ fs/proc/base.c           |  8 ++++----
+ include/linux/mm_types.h |  2 ++
+ kernel/fork.c            |  1 +
+ kernel/sys.c             | 13 ++++++++-----
+ mm/init-mm.c             |  1 +
+ 5 files changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index d532468..aa7ce07 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -239,12 +239,12 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
+ 		goto out_mmput;
+ 	}
+ 
+-	down_read(&mm->mmap_sem);
++	spin_lock(&mm->arg_lock);
+ 	arg_start = mm->arg_start;
+ 	arg_end = mm->arg_end;
+ 	env_start = mm->env_start;
+ 	env_end = mm->env_end;
+-	up_read(&mm->mmap_sem);
++	spin_unlock(&mm->arg_lock);
+ 
+ 	BUG_ON(arg_start > arg_end);
+ 	BUG_ON(env_start > env_end);
+@@ -926,10 +926,10 @@ static ssize_t environ_read(struct file *file, char __user *buf,
+ 	if (!mmget_not_zero(mm))
+ 		goto free;
+ 
+-	down_read(&mm->mmap_sem);
++	spin_lock(&mm->arg_lock);
+ 	env_start = mm->env_start;
+ 	env_end = mm->env_end;
+-	up_read(&mm->mmap_sem);
++	spin_unlock(&mm->arg_lock);
+ 
+ 	while (count > 0) {
+ 		size_t this_len, max_len;
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 2161234..26ff7bf 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -413,6 +413,8 @@ struct mm_struct {
+ 	unsigned long exec_vm;		/* VM_EXEC & ~VM_WRITE & ~VM_STACK */
+ 	unsigned long stack_vm;		/* VM_STACK */
+ 	unsigned long def_flags;
++
++	spinlock_t arg_lock; /* protect the below fields, except brk */
+ 	unsigned long start_code, end_code, start_data, end_data;
+ 	unsigned long start_brk, brk, start_stack;
+ 	unsigned long arg_start, arg_end, env_start, env_end;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 242c8c9..295f903 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -900,6 +900,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
+ 	mm->pinned_vm = 0;
+ 	memset(&mm->rss_stat, 0, sizeof(mm->rss_stat));
+ 	spin_lock_init(&mm->page_table_lock);
++	spin_lock_init(&mm->arg_lock);
+ 	mm_init_cpumask(mm);
+ 	mm_init_aio(mm);
+ 	mm_init_owner(mm, p);
+diff --git a/kernel/sys.c b/kernel/sys.c
+index f16725e..cbac235 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2011,8 +2011,6 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+ 			return error;
+ 	}
+ 
+-	down_write(&mm->mmap_sem);
+-
+ 	/*
+ 	 * We don't validate if these members are pointing to
+ 	 * real present VMAs because application may have correspond
+@@ -2025,17 +2023,23 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+ 	 *    to any problem in kernel itself
+ 	 */
+ 
++	/* Hold mmap_sem to avoid concurrent access by do_brk */
++	down_write(&mm->mmap_sem);
++	mm->start_brk	= prctl_map.start_brk;
++	mm->brk		= prctl_map.brk;
++	up_write(&mm->mmap_sem);
++
++	spin_lock(&mm->arg_lock);
+ 	mm->start_code	= prctl_map.start_code;
+ 	mm->end_code	= prctl_map.end_code;
+ 	mm->start_data	= prctl_map.start_data;
+ 	mm->end_data	= prctl_map.end_data;
+-	mm->start_brk	= prctl_map.start_brk;
+-	mm->brk		= prctl_map.brk;
+ 	mm->start_stack	= prctl_map.start_stack;
+ 	mm->arg_start	= prctl_map.arg_start;
+ 	mm->arg_end	= prctl_map.arg_end;
+ 	mm->env_start	= prctl_map.env_start;
+ 	mm->env_end	= prctl_map.env_end;
++	spin_unlock(&mm->arg_lock);
+ 
+ 	/*
+ 	 * Note this update of @saved_auxv is lockless thus
+@@ -2048,7 +2052,6 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+ 	if (prctl_map.auxv_size)
+ 		memcpy(mm->saved_auxv, user_auxv, sizeof(user_auxv));
+ 
+-	up_write(&mm->mmap_sem);
+ 	return 0;
+ }
+ #endif /* CONFIG_CHECKPOINT_RESTORE */
+diff --git a/mm/init-mm.c b/mm/init-mm.c
+index f94d5d1..f0179c9 100644
+--- a/mm/init-mm.c
++++ b/mm/init-mm.c
+@@ -22,6 +22,7 @@ struct mm_struct init_mm = {
+ 	.mm_count	= ATOMIC_INIT(1),
+ 	.mmap_sem	= __RWSEM_INITIALIZER(init_mm.mmap_sem),
+ 	.page_table_lock =  __SPIN_LOCK_UNLOCKED(init_mm.page_table_lock),
++	.arg_lock	=  __SPIN_LOCK_UNLOCKED(init_mm.arg_lock),
+ 	.mmlist		= LIST_HEAD_INIT(init_mm.mmlist),
+ 	.user_ns	= &init_user_ns,
+ 	INIT_MM_CONTEXT(init_mm)
+-- 
+1.8.3.1
