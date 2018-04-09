@@ -1,103 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753565AbeDIRLk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 13:11:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50789 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751728AbeDIRL1 (ORCPT
+        id S1753108AbeDIRL0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 13:11:26 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:46596 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751728AbeDIRLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 13:11:27 -0400
-Date: Mon, 9 Apr 2018 10:10:57 -0700
-From: tip-bot for Arnd Bergmann <tipbot@zytor.com>
-Message-ID: <tip-92e830f25fc0be447486a4658887ded68ef824f5@git.kernel.org>
-Cc: hpa@zytor.com, peterz@infradead.org, yamada.masahiro@socionext.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
-        mingo@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, arnd@arndb.de, mingo@kernel.org,
-        hpa@zytor.com, peterz@infradead.org, yamada.masahiro@socionext.com,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        tglx@linutronix.de
-In-Reply-To: <20180404124539.3817101-1-arnd@arndb.de>
-References: <20180404124539.3817101-1-arnd@arndb.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/olpc: Fix inconsistent MFD_CS5535
- configuration
-Git-Commit-ID: 92e830f25fc0be447486a4658887ded68ef824f5
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 9 Apr 2018 13:11:23 -0400
+X-Google-Smtp-Source: AIpwx48l+OITt8HXh7tQUB6dT1TInKl3vZ9JOtLIKUHx0To3nHQlLuesYBvc4NM/V1XmFDXcUcq614PYqRiejo/iDx4=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <CAOSf1CGjFOPPQPYNA=uLFJnVyNXQnsoBb8rm2qFi8uuUHmw8ZA@mail.gmail.com>
+References: <20180409131619.0bc5fb45@canb.auug.org.au> <CAOSf1CHToZ5+k90n_sgh_9ezJjXpx21E5-K66TWkdU7t7kUiEw@mail.gmail.com>
+ <CAOSf1CGjFOPPQPYNA=uLFJnVyNXQnsoBb8rm2qFi8uuUHmw8ZA@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 9 Apr 2018 10:11:22 -0700
+Message-ID: <CAPcyv4icJ8DRgaBfsJc22AtBz2EOJLK9mGkM_4fi6wLD7L9-OA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the nvdimm tree
+To: Oliver <oohall@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Device Tree <devicetree@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  92e830f25fc0be447486a4658887ded68ef824f5
-Gitweb:     https://git.kernel.org/tip/92e830f25fc0be447486a4658887ded68ef824f5
-Author:     Arnd Bergmann <arnd@arndb.de>
-AuthorDate: Wed, 4 Apr 2018 14:44:54 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 9 Apr 2018 18:22:34 +0200
+On Mon, Apr 9, 2018 at 12:34 AM, Oliver <oohall@gmail.com> wrote:
+> On Mon, Apr 9, 2018 at 1:38 PM, Oliver <oohall@gmail.com> wrote:
+>> On Mon, Apr 9, 2018 at 1:16 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Hi Dan,
+>>>
+>>> After merging the nvdimm tree, today's linux-next build (x86_64
+>>> allmodconfig) failed like this:
+>>>
+>>> ERROR: "of_node_to_nid" [drivers/nvdimm/of_pmem.ko] undefined!
+>>>
+>>> Caused by commit
+>>>
+>>>   717197608952 ("libnvdimm: Add device-tree based driver")
+>>>
+>>> X86 seems to not have a version of of_node_to_nid() even though CONFIG_OF
+>>> and CONFIG_NUMA are both 'y' in this build.
+>>
+>> It's a side effect of a driver selecting CONFIG_OF accidently. There's
+>> a patch to fix this in the drm-misc-next tree:
+>>
+>> https://lkml.org/lkml/2018/4/3/17
+>>
+>>> I have used the nvdimm tree from next-20180406 for today.
+>>
+>> That works too.
+>
+> Hmm, on closer inspection this is actually a bug in the of driver. The
+> patch above fixes the specific problem that we hit on ia64 due to
+> CONFIG_OF being selected by accident, but the underlying issue will
+> affect any platform that doesn't provide an implementation of
+> of_node_to_nid().
+>
+> The fundamental problem is that the various actual implementations of
+> of_node_to_nid (ppc, sparc and the generic one in of_numa.c) export
+> the symbol. While the fallback implementation does not because it is
+> defined as a weak symbol. As a result we'll get this build failure iff
+> there's a call to of_node_to_nid() in a module.
+>
+> The one-line fix is just to delete the call to of_node_to_nid() in
+> of_pmem.c. I have a patch that adds a Kconfig options and removes the
+> weak symbol games. That needs Acks from the ppc, sparc and DT
+> maintainers though so it'll take longer to organise.
 
-x86/olpc: Fix inconsistent MFD_CS5535 configuration
-
-This Kconfig warning appeared after a fix to the Kconfig validation.
-The GPIO_CS5535 driver depends on the MFD_CS5535 driver, but the former
-is selected in places where the latter is not:
-
-WARNING: unmet direct dependencies detected for GPIO_CS5535
-  Depends on [m]: GPIOLIB [=y] && (X86 [=y] || MIPS || COMPILE_TEST [=y]) && MFD_CS5535 [=m]
-  Selected by [y]:
-  - OLPC_XO1_SCI [=y] && X86_32 [=y] && OLPC [=y] && OLPC_XO1_PM [=y] && INPUT [=y]=y
-
-The warning does seem appropriate, since the GPIO_CS5535 driver won't
-work unless MFD_CS5535 is also present. However, there is no link time
-dependency between the two, so this caused no problems during randconfig
-testing before.
-
-This changes the 'select GPIO_CS5535' to 'depends on GPIO_CS5535' to
-avoid the issue, at the expense of making it harder to configure the
-driver (one now has to select the dependencies first).
-
-The 'select MFD_CORE' part is completely redundant, since we already
-depend on MFD_CS5535 here, so I'm removing that as well.
-
-Ideally, the private symbols exported by that cs5535 gpio driver would
-just be converted to gpiolib interfaces so we could expletely avoid
-this dependency.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kbuild@vger.kernel.org
-Fixes: f622f8279581 ("kconfig: warn unmet direct dependency of tristate symbols selected by y")
-Link: http://lkml.kernel.org/r/20180404124539.3817101-1-arnd@arndb.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/Kconfig | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index eb7f43f23521..a9f0048b880a 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2770,11 +2770,9 @@ config OLPC_XO1_RTC
- 
- config OLPC_XO1_SCI
- 	bool "OLPC XO-1 SCI extras"
--	depends on OLPC && OLPC_XO1_PM
-+	depends on OLPC && OLPC_XO1_PM && GPIO_CS5535=y
- 	depends on INPUT=y
- 	select POWER_SUPPLY
--	select GPIO_CS5535
--	select MFD_CORE
- 	---help---
- 	  Add support for SCI-based features of the OLPC XO-1 laptop:
- 	   - EC-driven system wakeups
+How about just marking OF_PMEM as bool for the time being until all of
+these other reworks land upstream?
