@@ -1,94 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754134AbeDIUVd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 16:21:33 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55986 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752249AbeDIUV3 (ORCPT
+        id S1754322AbeDIUVu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 16:21:50 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:45458 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754273AbeDIUVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 16:21:29 -0400
-Date: Mon, 9 Apr 2018 22:21:26 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Dan Williams <dcbw@redhat.com>, Merlijn Wajer <merlijn@wizzup.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: simultaneous voice/data works (was Re: call/normal switch was
- Re: omap4-droid4: voice call support was)
-Message-ID: <20180409202126.GA4548@amd>
-References: <20180402155754.GD5700@atomide.com>
- <20180403150444.GE5700@atomide.com>
- <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
- <20180403194419.GG5700@atomide.com>
- <20180406120423.GA18691@amd>
- <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
- <20180407081000.GB7818@amd>
- <20180407122233.GA11302@amd>
- <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
- <20180409140847.GP5700@atomide.com>
+        Mon, 9 Apr 2018 16:21:47 -0400
+X-Google-Smtp-Source: AIpwx48JWWhTfl5XVmihgFm8yBsy1p8skF2JsHTBXFRN2Zp8txwqjOp5Y+V91j4JHlAv1BKLDex+UA==
+Date: Mon, 9 Apr 2018 15:21:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        rjw@rjwysocki.net, viresh.kumar@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v4 10/14] dt-bindings: Add support for SAW documentation
+Message-ID: <20180409202144.76gjmc6kcn2msffl@rob-hp-laptop>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-11-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409140847.GP5700@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1522358807-10413-11-git-send-email-ilialin@codeaurora.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 30, 2018 at 12:26:43AM +0300, Ilia Lin wrote:
+> Add support for SAW controlled regulators in 8x96.
+> Document it.
 
---VS++wcV0S1rZb1Fb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Perhaps some clue in the subject what subsystem and/or device this 
+applies to.
 
-On Mon 2018-04-09 07:08:47, Tony Lindgren wrote:
-> * Dan Williams <dcbw@redhat.com> [180408 02:46]:
-> > On Sat, 2018-04-07 at 14:22 +0200, Pavel Machek wrote:
-> > > I tried --location-enable-gps-unmanaged , but that did not work for
-> > > me.
-> >=20
-> > That requires a TTY that would spit out the GPS data; in this mode MM
-> > only sends the start/stop commands, and what comes out the GPS TTY is
-> > undefined (at least by MM).
-> >=20
-> > So unless you know that one of the 6600's TTYs does GPS and in what
-> > format it does GPS, then no.
->=20
-> There should be a NMEA port within the unknown port range ttyUSB[123].
->=20
-> Is there some easy way to enable --location-enable-gps-unmanaged for
-> testing so I can check if GPS gets enabled for one of the ports?
+> 
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> index 57d2c65..406f2e5 100644
+> --- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> +++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> @@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
+>  	Definition: Reference to regulator supplying the input pin, as
+>  		    described in the data sheet.
+>  
+> +- qcom,saw-reg:
+> +	Usage: optional
+> +	Value type: <phandle>
+> +	Description: Reference to syscon node defining the SAW registers.
+> +
+>  
+>  The regulator node houses sub-nodes for each regulator within the device. Each
+>  sub-node is identified using the node's name, with valid values listed for each
+> @@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
+>  			2 = 0.55 uA
+>  			3 = 0.75 uA
+>  
+> +- qcom,saw-slave:
+> +	Usage: optional
+> +	Value type: <boo>
+> +	Description: SAW controlled gang slave. Will not be configured.
+> +
+> +- qcom,saw-leader:
+> +	Usage: optional
+> +	Value type: <boo>
+> +	Description: SAW controlled gang leader. Will be configured as
+> +		     SAW regulator.
 
-In the meantime, I got GPS to work :-).
+Would the coupled regulator binding work in this case?
 
-I modified qmicli to pipe NMEA data to stdout, which should be enough.
-
-But yes, directly exposing NMEA data on ttyGSM? would be even nicer.
-
-Thanks,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---VS++wcV0S1rZb1Fb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrLy0YACgkQMOfwapXb+vK6XACfQVUZLXMuojngmXdt6ojz5gb1
-v6IAn1H5PkXB/AyO1oWYpDT6jbnJnwuR
-=hwpN
------END PGP SIGNATURE-----
-
---VS++wcV0S1rZb1Fb--
+Rob
