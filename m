@@ -1,100 +1,149 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523280572; cv=none;
+Return-Path: <phil@raspberrypi.org>
+X-Google-Smtp-Source: AIpwx4+1liV2WH35B2jOK0oGEazOG71EGeea+wR7U1xQRaBi0VMNT88Ic9SQ+tyvGRQuPIirkaWa
+ARC-Seal: i=1; a=rsa-sha256; t=1523280377; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z+jANUibSXATotKV42N/g1UsodfFbzXgTaa51vr3k4QujNqiauSLiCmefVDcEtu8+7
-         EjyxMFQVAyc737o9msuiPBbhMKzgHQtI73w5IrJpbQzKn7sfH7rrDMz/OVCJ2+Q3GOMY
-         Fjyv8SiQ7FtC5f7G3VkqZIilmQYxLChASKCHHHV6+AFbRBSTtsXlbRdAZ3Uqyp48awRc
-         GhNRY49aV9bpY7uq9lXU36LMuhRDrKIbowNEZ9PSGE1Wb3pf/OgmnJxTVCtA/C3NgPrm
-         zmpCtIC/fpmVAknQ/i8iNNM3IKZv9DuaE6FtrXeiik71HhAvCulwdlGIzwF7D9ox0vvg
-         /PBw==
+        b=nx6nQl3Gv+1wt4Z9SAEXvPE9RYFMNGveHJTxAqlJx7e/8csKI3iTtW+Q1uO8ACz2a2
+         1ODlQuxT1hlnHyf/eAAuOVC19fQobfyyr/1zyql13tG/wAkK6zifrjLeOL2ZqImNUFFC
+         Ez7W24AtqSahf2NRPvRJo354b+BGRWer6Ry/0t7HWkDB3uNdnYQRRCI/6zxHlLpnaRNH
+         lXgzpUSr68L09f2o95gdjYAfxK8VJlRH6btXxK2PcEX2Cw9SS2AkPaJxiqdznicSbbRJ
+         dozrTZ3cmuf0kDqocyXdyrixaA0b2z7CUkMbxAiqEAiEzPmb2wNPTxbZszMtNGgvrVLu
+         XjWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:sender:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=iwTlc11A8zNBjNPb0iqmiXSbDnwLRTdTpNnK2H09uTk=;
-        b=ZA0IrvsFEI6bFJwryj33EkWe0AQ0nMivkEzQmmQBn6C7iCzVPGw0izY2HZUIJgDwSl
-         L7De54HCSyoBwcbDTPAyOBjhov9ohKZLZK9/doqJUJdy8HbkgYZmKelkGcxMaDf4A7IX
-         CpA8d6YOD4Q1H+ygsNDLFgMgeFes5W76HRvm86YKgXciNJqqpW1tpBI/wfzsL4vuGQ42
-         ElDrb7qcXiLSP6c/niSNj9CjcRsz5B1xHB4IA9nIlntywidQQLb14rJIdH+rrqlkxThX
-         BBTbPtMe0mwlYGlCpHVJ7K12fjc79tvvPwhO51lAr2BEMGAcuyEpdLCYPaLOYFWE1asP
-         FiUQ==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:dkim-signature:arc-authentication-results;
+        bh=ovmJNzEcW+FwEl0EEEQ5bOgEs8MyK2ExSZWR8Bq0R2U=;
+        b=SaYbm5mT1bFIPjQl0fextAPRZmhLSNlOR1uNXvX4Tli5Dd2Tuw7t6LLH7SZfKfNue2
+         S3YjCENeoDhajTsfP3aXGnWg7dK3ZCMhKHM92k6qTZjT1jEx5PzrfPQOQOVtY0IX5htG
+         hTQAKRFCgUdw+w4rZEU07YifpFl9SkV9djybMNpQSY2PpiX/y4a0KoV/LY2ajkjX84Xc
+         dT7ok6Ou8qlJ4qo/s/YCU0cQvwkMylgUaVtEkTLmOhspS65PW+DwoFm93R3uRTEU1Cqm
+         avBg+xDgYj/7kOyRTib7dSxqtCf9j6VKAw4Zs4Y/xHQxsPgkbyRqHWIX1S6QND986K4r
+         KDHw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=D1IuE6ml;
-       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+       dkim=fail header.i=@raspberrypi.org header.s=pp header.b=j+cXU8/+;
+       dkim=pass header.i=@raspberrypi-org.20150623.gappssmtp.com header.s=20150623 header.b=qSWnX504;
+       spf=pass (google.com: domain of phil@raspberrypi.org designates 62.209.51.214 as permitted sender) smtp.mailfrom=phil@raspberrypi.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=D1IuE6ml;
-       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
-X-Google-Smtp-Source: AIpwx4+Tg07Ahggbgs+PJoQ9XR7prq61SqjHpbNhbYgD9QAIkZPFZEv7e9u9jJRWszU213fyXPJQrwyRx2znv2XClbU=
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <2047337098.98106.1523186884813@email.1und1.de>
-References: <1523178315-30562-1-git-send-email-geert@linux-m68k.org> <2047337098.98106.1523186884813@email.1und1.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Apr 2018 15:29:32 +0200
-X-Google-Sender-Auth: t8XzGaTDbB_nSxs7b4_ZWcWYpkU
-Message-ID: <CAMuHMdWua5swcrNsvB5pbiMpuSyHSSoQhYSaqeq0ctP2csPtTA@mail.gmail.com>
+       dkim=fail header.i=@raspberrypi.org header.s=pp header.b=j+cXU8/+;
+       dkim=pass header.i=@raspberrypi-org.20150623.gappssmtp.com header.s=20150623 header.b=qSWnX504;
+       spf=pass (google.com: domain of phil@raspberrypi.org designates 62.209.51.214 as permitted sender) smtp.mailfrom=phil@raspberrypi.org
 Subject: Re: [PATCH/RFC] soc: bcm2835: Make !RASPBERRYPI_FIRMWARE dummies
  return failure
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Scott Branden <sbranden@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>,
-	Eric Anholt <eric@anholt.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	bcm-kernel-feedback-list@broadcom.com, Ray Jui <rjui@broadcom.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.org>, Phil Elwell <phil@raspberrypi.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Stefan Wahren <stefan.wahren@i2se.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, Eric Anholt <eric@anholt.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        bcm-kernel-feedback-list@broadcom.com, Ray Jui <rjui@broadcom.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-rpi-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1523178315-30562-1-git-send-email-geert@linux-m68k.org>
+ <2047337098.98106.1523186884813@email.1und1.de>
+From: Phil Elwell <phil@raspberrypi.org>
+Message-ID: <6542f11f-35c0-78ae-30f7-510797105c07@raspberrypi.org>
+Date: Mon, 9 Apr 2018 14:26:16 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <2047337098.98106.1523186884813@email.1und1.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_06:,,
+ signatures=0
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597168233130064314?=
-X-GMAIL-MSGID: =?utf-8?q?1597275450287065332?=
+X-GMAIL-MSGID: =?utf-8?q?1597275245096821219?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Stefan,
-
-On Sun, Apr 8, 2018 at 1:28 PM, Stefan Wahren <stefan.wahren@i2se.com> wrot=
-e:
->> Geert Uytterhoeven <geert@linux-m68k.org> hat am 8. April 2018 um 11:05 =
-geschrieben:
->> If CONFIG_RASPBERRYPI_FIRMWARE=3Dn:
+On 08/04/2018 12:28, Stefan Wahren wrote:
+> Hi Geert,
+> 
+> [add Phil]
+> 
+>> Geert Uytterhoeven <geert@linux-m68k.org> hat am 8. April 2018 um 11:05 geschrieben:
 >>
->>     drivers/gpio/gpio-raspberrypi-exp.c: In function =E2=80=98rpi_exp_gp=
-io_get_polarity=E2=80=99:
->>     drivers/gpio/gpio-raspberrypi-exp.c:71: warning: =E2=80=98get.polari=
-ty=E2=80=99 is used uninitialized in this function
->>     drivers/gpio/gpio-raspberrypi-exp.c: In function =E2=80=98rpi_exp_gp=
-io_get_direction=E2=80=99:
->>     drivers/gpio/gpio-raspberrypi-exp.c:150: warning: =E2=80=98get.direc=
-tion=E2=80=99 is used uninitialized in this function
+>>
+>> If CONFIG_RASPBERRYPI_FIRMWARE=n:
+>>
+>>     drivers/gpio/gpio-raspberrypi-exp.c: In function ‘rpi_exp_gpio_get_polarity’:
+>>     drivers/gpio/gpio-raspberrypi-exp.c:71: warning: ‘get.polarity’ is used uninitialized in this function
+>>     drivers/gpio/gpio-raspberrypi-exp.c: In function ‘rpi_exp_gpio_get_direction’:
+>>     drivers/gpio/gpio-raspberrypi-exp.c:150: warning: ‘get.direction’ is used uninitialized in this function
 >>
 >> The dummy firmware interface functions return 0, which means success,
 >> causing subsequent code to make use of the never initialized output
 >> parameter.
->
-> i think this is more theoritical, because we need to get rpi_firmware fir=
-st and in this case it's NULL.
-
-Sure, I just want to get rid of the ugly warnings when compile-testing.
-Most dummy functions for other subsystems return error codes.
-
+> 
+> i think this is more theoritical, because we need to get rpi_firmware first and in this case it's NULL.
+> 
+>>
 >> Fix this by making the dummy functions return an error code (-ENOSYS)
 >> instead.
->
+> 
 > Anyway i'm okay with the change.
+> 
+>>
+>> Note that this assumes the firmware always fills in the requested data
+>> in the CONFIG_RASPBERRYPI_FIRMWARE=y case.
+> 
+> Unfortunately i don't know.
 
-OK, thanks!
+The firmware overwrites the request code with an error return value. If this appears
+and has an error value of zero (RPI_FIRMWARE_STATUS_SUCCESS) then the firmware has
+written any expected fields.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> 
+>>
+>> Fixes: d45f1a563b92dac7 ("staging: vc04_services: fix up rpi firmware functions")
+>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> ---
+>> Should get.polarity resp. get.direction be preinitialized instead,
+>> like is done for get.state?
+>>
+>> static int rpi_exp_gpio_get(struct gpio_chip *gc, unsigned int off)
+>> {
+>>         ...
+>>         get.state = 0;          /* storage for returned value */
+>>
+>>         ret = rpi_firmware_property(gpio->fw, RPI_FIRMWARE_GET_GPIO_STATE,
+>>                                          &get, sizeof(get));
+>>         ...
+>> }
+>>
+>> This would avoid returning uninitialized data if the firmware did not
+>> fill in the requested data.
+>> ---
+>>  include/soc/bcm2835/raspberrypi-firmware.h | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
+>> index 50df5b28d2c9df6e..8ee8991aa099af3a 100644
+>> --- a/include/soc/bcm2835/raspberrypi-firmware.h
+>> +++ b/include/soc/bcm2835/raspberrypi-firmware.h
+>> @@ -143,13 +143,13 @@ struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node);
+>>  static inline int rpi_firmware_property(struct rpi_firmware *fw, u32 tag,
+>>  					void *data, size_t len)
+>>  {
+>> -	return 0;
+>> +	return -ENOSYS;
+>>  }
+>>  
+>>  static inline int rpi_firmware_property_list(struct rpi_firmware *fw,
+>>  					     void *data, size_t tag_size)
+>>  {
+>> -	return 0;
+>> +	return -ENOSYS;
+>>  }
+>>  
+>>  static inline struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
+>> -- 
+>> 2.7.4
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
