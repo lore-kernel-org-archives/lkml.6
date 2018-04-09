@@ -1,54 +1,52 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AIpwx4+LCwUmJ8Zs6L47Rw1AvY8mZ+554uYkaiuiYy8psOBE8YY3HDYxsoYCpaUBHdf3C/X4jz7S
-ARC-Seal: i=1; a=rsa-sha256; t=1523517305; cv=none;
+X-Google-Smtp-Source: AIpwx48Yb7bT4G8p0EkGBEHNvr7onJ/bUonDxvuk1VbsaWunw70IraKNjiJx+d3braxU/A6kd0ww
+ARC-Seal: i=1; a=rsa-sha256; t=1523294189; cv=none;
         d=google.com; s=arc-20160816;
-        b=LT4oM4kbj5K2x6oJ8g/Bet9uw8QQnWbkLkOvSSXBDej6Mvtka9kKrCGLpt/dRh1f2Z
-         EAkv8XvOvd5k/kfCBtS8GFwhuvyP72Od0k8+xKs5QeMfAluUPX/sPVyIAwkXqc23lnVY
-         qeP5GXan9QoL5s91efoPqTfX7WlkLuzoEHm75SDWxP7nGWY98BJjKtMeQGsZBtBNWy0i
-         st9mQnHb6opaGE1pRc7oSzndpxY3h7KMF4CM9w2XbJ9eO+dfFVGQe9fB0NBIs6kajYIj
-         DlopjFnd3UrbhaR0jeLUvV5wdG0h8tAiyyZqBbDFTO9YWYky9uj8f/5c+VkmPINtwNoD
-         k6Vg==
+        b=FTwqFmcfgQYVJfpmSqT4XECk2ZRlXho3PyzbPX82zy2khzUW8s3kjLy6ycq9vWS6uk
+         /R75zrkSLEffKai8yZOmaSy7EAe+MPjIisPt3FhmuEa/ks1Fai52AyG8+MFcLOknTDuG
+         I6IUmhpuGX4c47A5vWSllOZaxgr16VjoYY8imLrEAMG/D4LrZ7bwH5vCI6LnRxFMunjU
+         UBJ0R7JpAM/2TIj8mrE1lBKt2l2/+cicQAYpsPRcXpWBMI2Bk8+xFrRZ8W+CXgq1/WFK
+         mAe3Xh/Pt6v6TnT5O20e43RjJjbIg9pzNDJkvexAnLJdWy8bjQ6S66J4MOg8JDCKSImZ
+         SONA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=Hw/ALQxbzdbx8b7eAG7tff7xj313H86Ql0SbgrF+HLE=;
-        b=huLmaJfZYQiyn/dmVxDiuxHkgj0Jbq1ArIp6LzfLas7nhHHsd6nd+MEHM8VwwK0zMy
-         ZT8o+TEw9FydDkUC2wSNRcSp9NUcnxd2aLAYfRU62owEPm6if2+izE8eJ9qItnA4PyOB
-         GMK77KBGTdVEblk1ry0Mu0kc3eBMQpjmaqvF3cv2G+IbpNlNWwhqIgIFhvD1qyomzoqb
-         0yxsNkpo5Th8V2CcowWtubBgCJ83SWvaZP0W0y5Tg4kjr48U8QpTQL/87AJIPEqBLzun
-         sZVUd0GfdwOTVWr7muhotYblnSK+qRgORrK/08GDm+qdvvkge55iTR/IMif/z5kE/4OM
-         22oQ==
+        bh=u+HE09jlK9dRcguBV5NcvS8FuA2v2dfzeQXRxjbd1ks=;
+        b=W2JFIRxu8Yq+9OdF7BxwIVi55p3sDXWv6SeHJ2FmxTwjV1CvhQQBns56REVfA8lWD1
+         Ze8uOtr2VvHW/qqVRdBVeU84DxrG46pNz2MOD3KgNIb3qbcLpzxHtLN1vVcBA5HiMblC
+         1cj4+sdWcbjD3XQiDIYS7qPo20tzyp3jMAiX7EKSi9QERxi2VHkbV713ljfuA1jkVsZ0
+         1MUpQrpIvPKRY6F1ynozWjHh4XJTLZNxsCT+312MhlD9u/pZXcO+sFUocbMog5Oumndc
+         LBQ50fyrtLtu5dzh7cqmvQ2IhHw6pRFLzUkskkmB1gDioamYzdUwBsOylZLLdbzf5sxW
+         wyrQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Thu, 12 Apr 2018 00:13:44 -0700
+Date: Mon, 9 Apr 2018 10:13:45 -0700
 Sender: tip tree robot <tipbot@zytor.com>
 From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-fb43d6cb91ef57d9e58d5f69b423784ff4a4c374@git.kernel.org>
-Cc: dwmw2@infradead.org, keescook@google.com, jgross@suse.com,
-        hughd@google.com, tglx@linutronix.de, namit@vmware.com,
-        arjan@linux.intel.com, luto@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org,
-        thomas.lendacky@amd.com, bp@alien8.de, torvalds@linux-foundation.org,
-        gregkh@linuxfoundation.org, hpa@zytor.com, peterz@infradead.org,
-        jpoimboe@redhat.com, dan.j.williams@intel.com, aarcange@redhat.com,
-        arnd@arndb.de, efault@gmx.de
-Reply-To: dwmw2@infradead.org, jgross@suse.com, keescook@google.com,
-        hughd@google.com, tglx@linutronix.de, arjan@linux.intel.com,
-        namit@vmware.com, luto@kernel.org, mingo@kernel.org,
-        dave.hansen@linux.intel.com, thomas.lendacky@amd.com, bp@alien8.de,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        hpa@zytor.com, gregkh@linuxfoundation.org, peterz@infradead.org,
-        jpoimboe@redhat.com, dan.j.williams@intel.com, arnd@arndb.de,
-        efault@gmx.de, aarcange@redhat.com
+Message-ID: <tip-64c80759408f1c47d2414bfa79f80a4573a8d68d@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, jpoimboe@redhat.com, peterz@infradead.org,
+        arjan@linux.intel.com, dan.j.williams@intel.com, aarcange@redhat.com,
+        torvalds@linux-foundation.org, jgross@suse.com, keescook@google.com,
+        dave.hansen@linux.intel.com, bp@alien8.de, luto@kernel.org,
+        mingo@kernel.org, namit@vmware.com, hughd@google.com,
+        gregkh@linuxfoundation.org, dwmw2@infradead.org, tglx@linutronix.de,
+        hpa@zytor.com
+Reply-To: jgross@suse.com, torvalds@linux-foundation.org,
+        dave.hansen@linux.intel.com, bp@alien8.de, luto@kernel.org,
+        keescook@google.com, namit@vmware.com, gregkh@linuxfoundation.org,
+        hughd@google.com, mingo@kernel.org, hpa@zytor.com, dwmw2@infradead.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
+        peterz@infradead.org, arjan@linux.intel.com, dan.j.williams@intel.com,
+        aarcange@redhat.com
 In-Reply-To: <20180406205509.77E1D7F6@viggo.jf.intel.com>
 References: <20180406205509.77E1D7F6@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/pti] x86/mm: Do not auto-massage page protections
-Git-Commit-ID: fb43d6cb91ef57d9e58d5f69b423784ff4a4c374
+Git-Commit-ID: 64c80759408f1c47d2414bfa79f80a4573a8d68d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,16 +57,16 @@ Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597289727143871253?=
-X-GMAIL-MSGID: =?utf-8?q?1597523683011957789?=
+X-GMAIL-MSGID: =?utf-8?q?1597289727143871253?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  fb43d6cb91ef57d9e58d5f69b423784ff4a4c374
-Gitweb:     https://git.kernel.org/tip/fb43d6cb91ef57d9e58d5f69b423784ff4a4c374
+Commit-ID:  64c80759408f1c47d2414bfa79f80a4573a8d68d
+Gitweb:     https://git.kernel.org/tip/64c80759408f1c47d2414bfa79f80a4573a8d68d
 Author:     Dave Hansen <dave.hansen@linux.intel.com>
 AuthorDate: Fri, 6 Apr 2018 13:55:09 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 12 Apr 2018 09:04:22 +0200
+CommitDate: Mon, 9 Apr 2018 18:27:33 +0200
 
 x86/mm: Do not auto-massage page protections
 
@@ -91,14 +89,7 @@ unsupported bits and properly warn about them if we find them.  This
 might happen if an unfiltered __PAGE_KERNEL* value was passed in,
 for instance.
 
-- printk format warning fix from: Arnd Bergmann <arnd@arndb.de>
-- boot crash fix from:            Tom Lendacky <thomas.lendacky@amd.com>
-- crash bisected by:              Mike Galbraith <efault@gmx.de>
-
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reported-and-fixed-by: Arnd Bergmann <arnd@arndb.de>
-Fixed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Bisected-by: Mike Galbraith <efault@gmx.de>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
@@ -131,7 +122,7 @@ Signed-off-by: Ingo Molnar <mingo@kernel.org>
  10 files changed, 75 insertions(+), 12 deletions(-)
 
 diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index 66e42a098d70..a0a50b91ecef 100644
+index 66e42a098d70..c5196d2edd52 100644
 --- a/arch/x86/boot/compressed/kaslr.c
 +++ b/arch/x86/boot/compressed/kaslr.c
 @@ -54,6 +54,9 @@ unsigned int ptrs_per_p4d __ro_after_init = 1;
@@ -139,13 +130,13 @@ index 66e42a098d70..a0a50b91ecef 100644
  extern unsigned long get_cmd_line_ptr(void);
  
 +/* Used by PAGE_KERN* macros: */
-+pteval_t __default_kernel_pte_mask __read_mostly = ~0;
++pteval_t __default_kernel_pte_mask __read_mostly;
 +
  /* Simplified build-specific string for starting entropy. */
  static const char build_str[] = UTS_RELEASE " (" LINUX_COMPILE_BY "@"
  		LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION;
 diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 89d5c8886c85..5f49b4ff0c24 100644
+index 89d5c8886c85..50b207289ae1 100644
 --- a/arch/x86/include/asm/pgtable.h
 +++ b/arch/x86/include/asm/pgtable.h
 @@ -526,22 +526,39 @@ static inline pgprotval_t massage_pgprot(pgprot_t pgprot)
@@ -159,11 +150,11 @@ index 89d5c8886c85..5f49b4ff0c24 100644
 +	/* mmdebug.h can not be included here because of dependencies */
 +#ifdef CONFIG_DEBUG_VM
 +	WARN_ONCE(pgprot_val(pgprot) != massaged_val,
-+		  "attempted to set unsupported pgprot: %016llx "
-+		  "bits: %016llx supported: %016llx\n",
-+		  (u64)pgprot_val(pgprot),
-+		  (u64)pgprot_val(pgprot) ^ massaged_val,
-+		  (u64)__supported_pte_mask);
++		  "attempted to set unsupported pgprot: %016lx "
++		  "bits: %016lx supported: %016lx\n",
++		  pgprot_val(pgprot),
++		  pgprot_val(pgprot) ^ massaged_val,
++		  __supported_pte_mask);
 +#endif
 +
 +	return massaged_val;
