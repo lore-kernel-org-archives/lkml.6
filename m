@@ -1,100 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753332AbeDIPyk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:54:40 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34766 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753035AbeDIPyi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:54:38 -0400
-Date: Mon, 9 Apr 2018 17:54:33 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Milo Kim <Milo.Kim@ti.com>, Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Jingoo Han <jingoohan1@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCHv4 08/10] backlight: add TI LMU backlight driver
-Message-ID: <20180409155433.zxqs2b2k2xzn6kon@earth.universe>
-References: <20180330172414.26575-1-sebastian.reichel@collabora.co.uk>
- <20180330172414.26575-9-sebastian.reichel@collabora.co.uk>
- <20180403104908.GD6758@amd>
+        id S1753239AbeDIPzv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:55:51 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:35168 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752898AbeDIPzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 11:55:50 -0400
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        open list <linux-kernel@vger.kernel.org>, jcliang@chromium.org,
+        simon xue <xxm@rock-chips.com>, tfiga@chromium.org,
+        Romain Perier <romain.perier@collabora.com>,
+        Yakir Yang <kuankuan.y@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Liang Chen <cl@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        David Wu <david.wu@rock-chips.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Brian Norris <briannorris@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Rocky Hao <rocky.hao@rock-chips.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>, devicetree@vger.kernel.org,
+        Mark Yao <markyao0591@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Sugar Zhang <sugar.zhang@rock-chips.com>,
+        Caesar Wang <wxt@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v8 07/14] ARM: dts: rockchip: add clocks in iommu nodes
+Date: Mon, 09 Apr 2018 17:55:40 +0200
+Message-ID: <2255884.b1SkkUdh3X@diego>
+In-Reply-To: <df522a01-6f4a-bb96-4423-19965b078a1b@arm.com>
+References: <20180323073814.5802-1-jeffy.chen@rock-chips.com> <10157755.JROavG9E9U@diego> <df522a01-6f4a-bb96-4423-19965b078a1b@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2na4yo3f6lfp4s6v"
-Content-Disposition: inline
-In-Reply-To: <20180403104908.GD6758@amd>
-User-Agent: NeoMutt/20180323
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Montag, 9. April 2018, 17:53:01 CEST schrieb Robin Murphy:
+> On 09/04/18 16:44, Heiko Stübner wrote:
+> > Hi Tomeu,
+> > 
+> > Am Montag, 9. April 2018, 16:41:56 CEST schrieb Tomeu Vizoso:
+> >> in today's linux-next, the DRM driver fails to probe because the iommu
+> >> driver fails to find the aclk. I need to apply this patch for things
+> >> to work again.
+> > 
+> > Thanks for catching that issue.
+> > 
+> > This seems to expose a backwards-compatibility issue, as this breaks
+> > all old devicetrees, so should get a proper fix, apart from me applying
+> > the dt-patch I missed.
+> > 
+> > Looking at the iommu-clock-handling patch, I imagine this part as
+> > the culprit:
+> > 
+> > +	iommu->num_clocks = ARRAY_SIZE(rk_iommu_clocks);
+> > +	iommu->clocks = devm_kcalloc(iommu->dev, iommu->num_clocks,
+> > +				     sizeof(*iommu->clocks), GFP_KERNEL);
+> > +	if (!iommu->clocks)
+> > +		return -ENOMEM;
+> > 
+> > The clk-bulk functions seem to work with simple for loops and
+> > should (as the other standard clock functions) just work fine with
+> > an empty struct, so I guess a simple
+> > 
+> > 	if (!iommu->clocks && iommu->num_clocks > 0)
+> > 	
+> > 		return -ENOMEM;
+> > 
+> > should hopefully be enough. I'll try to give this a test later on
+> > if nobody beats me to it :-)
+> 
+> But iommu->num_clocks is clearly set to a nonzero compile-time constant
+> at this point ;)
+> 
+> I'd assume it's the return from devm_clk_bulk_get() which needs to
+> special-case the "no clocks found" case from any other error, and *then*
+> blat num_clocks to 0 if so.
 
---2na4yo3f6lfp4s6v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+you're right of course. Looking at it again, I now clearly see the ARRAY_SIZE
+and am wondering what made me think num_clocks would be runtime-read.
 
-Hi,
-
-On Tue, Apr 03, 2018 at 12:49:08PM +0200, Pavel Machek wrote:
-> > +enum ti_lmu_bl_type {
-> > +	TI_LMU_BL,  /* backlight userspace interface */
-> > +	TI_LMU_LED, /* led userspace interface */
-> > +};
-> ...
-> > +static int ti_lmu_bl_add_device(struct ti_lmu_bank *lmu_bank)
-> > +{
-> > +	switch (lmu_bank->type) {
-> > +	case TI_LMU_BL:
-> > +		return ti_lmu_bl_register_backlight(lmu_bank);
-> > +	case TI_LMU_LED:
-> > +		return ti_lmu_bl_register_led(lmu_bank);
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> > +}
->=20
-> Ok, this is somehow unusual/crazy. Single driver with two
-> interfaces.
->=20
-> Do we need the LED interface for something?
->
-> If yes, I believe reasonable solution would be to always provide LED
-> interface, and then have "backlight-trigger" which that would provide
-> backlight interface for arbitrary LED.
-
-Userspace expects keyboard backlight to be exposed via the LED
-subsystem and display backlight via the backlight subsystem.
-
-I considered always exposing the banks via the LED subsystem and
-using a generic backlight driver. That brings its own problems,
-since there is a dependency between the display and the backlight.
-This is described in DT using a phandle. Getting the right backlight
-device from the phandle will become very tricky with this approach.
-
--- Sebastian
-
---2na4yo3f6lfp4s6v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrLjLgACgkQ2O7X88g7
-+pppyw//R/dfe0kUn3Hw+xarTc6IIQBywupoH2tSnHBQYjj/KOsw5vhmwcJn1oOb
-PHPVyykxEF8UG7Ef1vwZrU1T7bAO374vL5VR6kI2BWjZWU43o7r5TunQRwLANRcg
-3QbRlkoHXt503LgaYKsVA6jZ7AW421IMJtzlaEw2Fh+jMuyHfPdC2tGP2H8tAej0
-TQTMnMmW5fxI01FkLrtgco4ixBRN0kpURex0VtAurI92wYXwXLnmerMgu2DLZs3e
-YNEvDOtFUgZUNLB+6IhwVUTP4Sra2XYpb451+fHMIv9qMy1asDGXzgtFh6362pv3
-gvwIkR7i3nmCnkIqX/aNk30kyVUE6OpFCMoJIRHKCZSsWx+jOIC+xTHXxiEHdh5t
-qWQEtRGdQUkUH3mOGOqEcxW3GmBVugWFAN4J4ViSfXi3YCZ+sDZt4lXSn0ku2oT+
-pqxVR6W54bNBtNFwWqQI9uauop+thVGeBK6j5mAuxCNs/F2RqlyePFSDczAFpq0L
-nckhvk8XzdYlkgpBxBKNO8qaqT4j0Zi5VIFonzQmSf3hfU2t1aC/TW5AtimO7fk4
-Zf1v/bMdhJW6ta1R/9yi+AubJ+WXkFWfX4xumPYnx63qJGwelX+7LB12GxEv84Zz
-VOL46e8lW767dhBkTfE9qxW8kVpA9jxiAc/rEBqvPvjGxgs0yos=
-=TEg9
------END PGP SIGNATURE-----
-
---2na4yo3f6lfp4s6v--
+Must be those 25°C today ;-)
