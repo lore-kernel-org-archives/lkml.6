@@ -1,110 +1,88 @@
-Return-Path: <labbott@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523386147; cv=none;
+Return-Path: <kernel-hardening-return-12936-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49N0VHYIQpMU4QeCa+P7WaY5KczzBkQvk/XBfhlJOL/AeisbV1l2LoQccW/1cYR4N7k/05s
+ARC-Seal: i=1; a=rsa-sha256; t=1523308012; cv=none;
         d=google.com; s=arc-20160816;
-        b=BvE8xcKLRMY7uIJwRp6iphoSkudi55xIXPgeswGL3Yp3b8zdGoi38UJkUMtiGUc6C+
-         RcmDIil0vxfWU/CWQQ/HmlVZIAKzopc1tU4IevcprTWW7RQCnEzCPDZ/jmxVx/MMgw2B
-         UN22IfXOK6iEhn6l+HXofABof3vgfVqBMaBlxJxvLDFky2jh3SVSYVbhDoN1XrTRyFcK
-         Hqh/SLKqF6su/y7RLf2c3XqEBAUoKjuuyWJTnhK4joV6w5OQ47WmCcSeO6C/MQW3hHbB
-         oH15PJfkhH/4CdPNO3bejQvHix0WmUyDs0cL/EFotUKzGMsRdNUpeKuaG0nWrjBif2tg
-         aEbQ==
+        b=WJLI4YIKB2dRCIzscz4aws8kJUOcqjbooDfA6q0x/ffF+pCi4Xm04U4EVHqMNumABH
+         hvAfDoQ4Q3FtUaQVnjZSs7NfQoeVtmbgpLc/AjwEFK5YM8mGwMUMVqU9VtN4FC4qYvz7
+         HJl+1o/AO8ws6uxHgegNb6/HLGZf7VhNsnc1AmD4rCeQbXjmtPbA8vXEh/06R7G4PD4t
+         HA1ZBEBm6m4IWyzJqChEUaucVYW3iABZzuH6j6cXA2RIcmLNKbC7xXl+QbJZ3vn8daEP
+         r3OY5nC+xkSjNFpoZuUK2i8uBHaunGRyZlxMZ4U2Jzdj5rp4tmkkLAdvwV2vr/9dN6LD
+         6dJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=3e7WjB7R03D7D8WOBg9xEyvx4TXO3Wd88HH4z9b/XxM=;
-        b=ujhwGKr+fuBcNnyPX14nJCa/KYQ7sPRaQX3aR7LaFeRBiWUKzB4VuZfM9nFOh5SPE4
-         Vz4sWv3cbCGu//0VFFEMm4xEbGdcCK2rWWRV52jqLq1zHM+yBQ/SFNJZUtBnq3CXk0nJ
-         odh/1pnSI6EM640PnJOpINO4lutHlOjLA53Frsn7RS8Db1tFLdTRZe5dFdc1wD1bTdYA
-         7sgVrotw7GIKxykjZtNHo2egPF9DhuKim9ZeTbnbxSZdoaaXzwrUxyHEWXLVmItLzeRB
-         jdWF+GEuecRV/7dcgf6hD6yVBlJT6YZuxM6JX1Ug1G+TSWVEUMYOGrudmgYh5PWaoHVY
-         pfBw==
+        h=message-id:date:subject:cc:to:from:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=txvQFbkVbneeHk7xGEu3Dvk+9Bxlu6Nrd6YkyLh2pW8=;
+        b=QuwigD0fp/fmvpH90qvZJjFrJ+G7MnhTwz3k9fCjmt+gDCTnaEAZaiyK/Z2mTKIfym
+         NyoihoJbOfjKkoHymprbRN90M8spcZGCSve643alc4/LMi0iDKm7R1UR3fpIqDQOZ58W
+         bCA8DA0TG7LtNjze06EBMPcspxxnpIYiIsgpTEPz32zwv+D23xVhPcwt66fYXbd+l0So
+         P3LfoEm+72uPg1qN7vv+MY3yRCi15Q6iuTZvzAXI5SGkC1Px84zUymipUTAaDGbi0hpY
+         Ztic8sqNy1pY1gqb//ZFY/d+7xBDXrs1rxTtpNrUgNbPbNA9wIynubDI2t6dYnXRWwm+
+         0Pzw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of labbott@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=labbott@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=pass (google.com: domain of kernel-hardening-return-12936-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12936-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of labbott@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=labbott@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AIpwx4/HqS7Pft1woScEh9IiFV/1OfUscNyBxmDT53GT+yRsk+CFutPFW13ysXvR7LHgv5GXejU9xQ==
-Subject: Re: [PATCH] misc: tifm: Remove VLA
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alex Dubov <oakad@yahoo.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Kernel Hardening <kernel-hardening@lists.openwall.com>
-References: <20180409210732.3919-1-labbott@redhat.com>
- <CAK8P3a3Yo0riMroM3x4EVz8FkMakdPkkJ-mCTYW0qOji+MCCiQ@mail.gmail.com>
+       spf=pass (google.com: domain of kernel-hardening-return-12936-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12936-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 From: Laura Abbott <labbott@redhat.com>
-Message-ID: <799e8f9a-0aa1-6f5d-8421-7c768d70f562@redhat.com>
-Date: Tue, 10 Apr 2018 11:49:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3Yo0riMroM3x4EVz8FkMakdPkkJ-mCTYW0qOji+MCCiQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: Oded Gabbay <oded.gabbay@gmail.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	"David (ChunMing) Zhou" <David1.Zhou@amd.com>
+Cc: Laura Abbott <labbott@redhat.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH] drm/amdkfd: Remove vla
+Date: Mon,  9 Apr 2018 14:06:20 -0700
+Message-Id: <20180409210620.3647-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597304272703650108?=
-X-GMAIL-MSGID: =?utf-8?q?1597386153666034366?=
+X-GMAIL-THRID: =?utf-8?q?1597304222291643357?=
+X-GMAIL-MSGID: =?utf-8?q?1597304222291643357?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/10/2018 12:57 AM, Arnd Bergmann wrote:
-> On Mon, Apr 9, 2018 at 11:07 PM, Laura Abbott <labbott@redhat.com> wrote:
->> There's an ongoing effort to remove VLAs[1] from the kernel to eventually
->> turn on -Wvla. The single VLA can either take a value of 2 or 4 so switch
->> to the upper bound.
->>
->> [1] https://lkml.org/lkml/2018/3/7/621
->>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->> ---
->>   drivers/misc/tifm_7xx1.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/misc/tifm_7xx1.c b/drivers/misc/tifm_7xx1.c
->> index e5f108713dd8..690eaaea5ce4 100644
->> --- a/drivers/misc/tifm_7xx1.c
->> +++ b/drivers/misc/tifm_7xx1.c
->> @@ -239,7 +239,8 @@ static int tifm_7xx1_resume(struct pci_dev *dev)
->>          unsigned long timeout;
->>          unsigned int good_sockets = 0, bad_sockets = 0;
->>          unsigned long flags;
->> -       unsigned char new_ids[fm->num_sockets];
->> +       /* Maximum number of entries is 4 */
->> +       unsigned char new_ids[4];
->>          DECLARE_COMPLETION_ONSTACK(finish_resume);
->>
-> 
-> I like the idea of removing all the VLAs, but this one appears to make
-> the code less robust rather than more: In case of an unexpected
-> fm->num_sockets value, we now not only overflow the kernel stack
-> area but also the local variable into the neighboring stack slots.
-> 
-> Maybe add an extra overflow check?
-> 
+There's an ongoing effort to remove VLAs[1] from the kernel to eventually
+turn on -Wvla. The single VLA usage in the amdkfd driver is actually
+constant across all current platforms. Switch to a constant size array
+instead.
 
-Sure.
+[1] https://lkml.org/lkml/2018/3/7/621
 
->         Arnd
-> 
-> diff --git a/drivers/misc/tifm_7xx1.c b/drivers/misc/tifm_7xx1.c
-> index e5f108713dd8..c702cd92d396 100644
-> --- a/drivers/misc/tifm_7xx1.c
-> +++ b/drivers/misc/tifm_7xx1.c
-> @@ -239,9 +239,12 @@ static int tifm_7xx1_resume(struct pci_dev *dev)
->          unsigned long timeout;
->          unsigned int good_sockets = 0, bad_sockets = 0;
->          unsigned long flags;
-> -       unsigned char new_ids[fm->num_sockets];
-> +      /* Maximum number of entries is 4 */
-> +       unsigned char new_ids[4];
->          DECLARE_COMPLETION_ONSTACK(finish_resume);
-> 
-> +       if (WARN_ON(fm->num_sockets > ARRAY_SIZE(new_ids)))
-> +               return -ENXIO;
-> +
->          pci_set_power_state(dev, PCI_D0);
->          pci_restore_state(dev);
->          rc = pci_enable_device(dev);
-> 
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c b/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
+index 035c351f47c5..c9863858f343 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
+@@ -139,10 +139,12 @@ static void interrupt_wq(struct work_struct *work)
+ {
+ 	struct kfd_dev *dev = container_of(work, struct kfd_dev,
+ 						interrupt_work);
++	uint32_t ih_ring_entry[4];
+ 
+-	uint32_t ih_ring_entry[DIV_ROUND_UP(
+-				dev->device_info->ih_ring_entry_size,
+-				sizeof(uint32_t))];
++	if (dev->device_info->ih_ring_entry_size > (4 * sizeof(uint32_t))) {
++		dev_err(kfd_chardev(), "Ring entry too small\n");
++		return;
++	}
+ 
+ 	while (dequeue_ih_ring_entry(dev, ih_ring_entry))
+ 		dev->device_info->event_interrupt_class->interrupt_wq(dev,
+-- 
+2.14.3
