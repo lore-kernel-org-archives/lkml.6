@@ -1,53 +1,53 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AIpwx4+oyHHxaI/s6DF9O84fgc1NmMxJnENZCZstYAmNVWNrpE0cH0H+TBAiqS4zmmEARP/vmfZC
-ARC-Seal: i=1; a=rsa-sha256; t=1523517387; cv=none;
+X-Google-Smtp-Source: AIpwx48suWIX+OmX0aWEVzVfS7UGtXye5MxNSSV1vBXrbMif9Npbkd7dYFUJdYje9tz/hhL4KGb5
+ARC-Seal: i=1; a=rsa-sha256; t=1523294152; cv=none;
         d=google.com; s=arc-20160816;
-        b=E65/I3qn45ZvBoWgVVjdfOrUwBBhz6SdSAOByovmUUbVFkj3zbWGCMic3d2eB+ScXq
-         sfj4IEv+k9FLWajdIwTkP7pFCGiz2nY7t4hyfujRpxOYc2jTRct/tAkidqhMG141c9uF
-         LFRbA7vssdcriSEhippb3J35EzhBR7TTCstICgY9XOiKMYYxIZd2QCmAw6l8GBaPrMhu
-         n96Vhq3E5S2UJNZIp55q2K0hxwVWKWlkLygc3guSVYiABo2Kb5OzRVw5TEkhffNFt5bo
-         y0bX8qUAWmTwHtprQcxrsaS7E+9VkPRiFJ4J7Bd23ZwEhVDXBDFbpywdTWXGgco/Tc49
-         JlWg==
+        b=uitdMOWXhetdosNEhWOi0QvsVgMjB+MjkLlpkiRidhvViCx6c2iKqLzsz0O9p4vX+N
+         8RFx6IPYDAq9bMzyiCvyQoQ0OTZ7VetMqgFP11QPa7AG+VqhsZSIbPQ1FyhTgbfy2ZHL
+         sC+xri5VrUFGxi6V9jfFD9AmB/v7rBgguD6VvIdgWZx4VE+cW1CAdmA+YJhMRI9LIfFm
+         t1Fi/6zh2G6+rNeAdExZ9YJhbrij/Pj/bEvghL5CSM4n826s1zyOn0V3BPKGecLEHQYg
+         4+r38x4A5EdHEJRahRC7AKiOoAsZng5vR+AH5h4ws4VOrwKHmqZZIBbB5CCGq2pbiZIS
+         uBcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=TWKnpOgYTh1HgnPbnlS9gN4/w6+oBcYVUe6EO0OLiFM=;
-        b=rnyPu0X4+FWuMaEijU6P6jdbq4M0hhN2PCNK4/Y/rbFk8opY+XxMzaToVUmRPKRLlB
-         Hyg+a+9UnkfdnK9t3+i6xTYGktILjThxB7GdX7P6U/2t8HyN1C3LmknDrLVIArhkhcEf
-         MzzbId/iCLj43EzrdVkzDEjoIFruw7ePjaqWkrF3rpQyEQhFhXrUOOVAKSNdEQo8By0Q
-         kgj7R4FJQsCY4m+d2xPioS1aqjafGBGIwC3LliSN0Eqfpx2szQ/w8YU/ATLULDFc4RDI
-         ceaROnQpRvF0xZcKXimzfdffqPif4ZS3hx7LchIyOBGuD7pqZA2bovgl8ozQ0hbXzhVW
-         K3jA==
+        bh=CvOmTyl8qrsAnT8JmlZ4Nah0JpzSWigr7FY+qOP1+xI=;
+        b=tIJFzQbsUof0C3sDAj7apuAsThuXAlC0T8gYAYJIi3Wv+6184mDeE+EqEuditLUYkv
+         AikIIOyfXZZhBGO/+0cIMeQ9jpTutdZjnPN/R3+7YdXi7qjfIPgA2OIaxr53Wk9szLLN
+         CoA3zakFtNKxOrxoJ1U3z792w7fpL9GiPOb05IuxLhi3xNU+6NctIc1eSHye/5yC5glY
+         intMJM6AjmoiDLxXIz6+FOZharHpN3t6lQrn7EalVGni7nojB+zIYZpCB3Ypphk7u1/C
+         0Sl72Qlqi+CHH6/YTok8L6FPeke2MPbTWpOXDWW+AnH1OiLksAAvce5Oo3ozWLd4530G
+         KtIw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Thu, 12 Apr 2018 00:15:28 -0700
+Date: Mon, 9 Apr 2018 10:15:09 -0700
 Sender: tip tree robot <tipbot@zytor.com>
 From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-639d6aafe437a7464399d2a77d006049053df06f@git.kernel.org>
-Cc: jpoimboe@redhat.com, tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
-        jgross@suse.com, hpa@zytor.com, dave.hansen@linux.intel.com,
-        keescook@chromium.org, dwmw2@infradead.org,
-        torvalds@linux-foundation.org, peterz@infradead.org, namit@vmware.com,
-        luto@kernel.org, dan.j.williams@intel.com, hughd@google.com,
-        arjan@linux.intel.com, gregkh@linuxfoundation.org, aarcange@redhat.com,
-        linux-kernel@vger.kernel.org
-Reply-To: jpoimboe@redhat.com, mingo@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, bp@alien8.de, jgross@suse.com, namit@vmware.com,
-        dave.hansen@linux.intel.com, dwmw2@infradead.org,
-        keescook@chromium.org, torvalds@linux-foundation.org,
-        peterz@infradead.org, hughd@google.com, arjan@linux.intel.com,
-        gregkh@linuxfoundation.org, luto@kernel.org, dan.j.williams@intel.com,
-        aarcange@redhat.com, linux-kernel@vger.kernel.org
+Message-ID: <tip-efad2b4151521c944e405272035a673c74125c65@git.kernel.org>
+Cc: luto@kernel.org, gregkh@linuxfoundation.org, namit@vmware.com,
+        hpa@zytor.com, dan.j.williams@intel.com, dave.hansen@linux.intel.com,
+        tglx@linutronix.de, dwmw2@infradead.org, torvalds@linux-foundation.org,
+        hughd@google.com, arjan@linux.intel.com, keescook@chromium.org,
+        aarcange@redhat.com, mingo@kernel.org, bp@alien8.de,
+        linux-kernel@vger.kernel.org, jpoimboe@redhat.com, jgross@suse.com,
+        peterz@infradead.org
+Reply-To: dan.j.williams@intel.com, dave.hansen@linux.intel.com,
+        torvalds@linux-foundation.org, dwmw2@infradead.org, tglx@linutronix.de,
+        luto@kernel.org, hpa@zytor.com, gregkh@linuxfoundation.org,
+        namit@vmware.com, aarcange@redhat.com, keescook@chromium.org,
+        mingo@kernel.org, hughd@google.com, arjan@linux.intel.com,
+        jpoimboe@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        jgross@suse.com, peterz@infradead.org
 In-Reply-To: <20180406205514.8D898241@viggo.jf.intel.com>
 References: <20180406205514.8D898241@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/pti] x86/mm: Do not forbid _PAGE_RW before init for
  __ro_after_init
-Git-Commit-ID: 639d6aafe437a7464399d2a77d006049053df06f
+Git-Commit-ID: efad2b4151521c944e405272035a673c74125c65
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,16 +58,16 @@ Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597289689293448520?=
-X-GMAIL-MSGID: =?utf-8?q?1597523768762578922?=
+X-GMAIL-MSGID: =?utf-8?q?1597289689293448520?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  639d6aafe437a7464399d2a77d006049053df06f
-Gitweb:     https://git.kernel.org/tip/639d6aafe437a7464399d2a77d006049053df06f
+Commit-ID:  efad2b4151521c944e405272035a673c74125c65
+Gitweb:     https://git.kernel.org/tip/efad2b4151521c944e405272035a673c74125c65
 Author:     Dave Hansen <dave.hansen@linux.intel.com>
 AuthorDate: Fri, 6 Apr 2018 13:55:14 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 12 Apr 2018 09:05:59 +0200
+CommitDate: Mon, 9 Apr 2018 18:27:34 +0200
 
 x86/mm: Do not forbid _PAGE_RW before init for __ro_after_init
 
