@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3752604-1523237114-2-506105954873933334
+X-Cyrus-Session-Id: sloti22d1t05-3695087-1523237113-2-11327321689581830839
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523237114; b=bLt+58xgSccmfPQwTdYFY6SlML5+qRSrgrqZO0FKqPqGWStybN
-    UP4PrN0crY8qoE9vSMNnPTLHYjxLtHoFzTVI8J8wN2EOc1STTj0YNWpQHFVblMqY
-    HCM5fGKXO0iaOb8811FHmycHKJ+LUI+/tDJVdNWq2OgEsgLoy2IVG1YanbQlYfjm
-    y/Lne7YFaUtYt275IomRxmb3ykRXnoSCfO22IkrROMA2ze7+Yi8gs3uQZHXfz4lP
-    kodRfj3L5U9OxTRqqqYcDENs+AFQRzvwQsqOgtbNuyk3bu4FHVbu0tpqlMGK6NcN
-    TLm4inG30754CR0j3z8xi51izdJ3R2yqeDVw==
+    1523237112; b=Ou+zL+084LjvQwW88Mu0pQwADMxagZG3tEb4sZLMVq9tkOivUy
+    vRxG79jQ/G3HYgL/86fCy3B+wfZQl6MLB8oC7mu2t8I6s95CzXSzLQgVAIaTuxnT
+    uJNT665BTK0/fjns8Syw45xa6AkprUEdkIJOMd3ZQnJ/olOGZY+1Sjzc0f2JTcOT
+    emJ7+2egUnEbtGADx0yKvE+5wT/erizqVAfXxjBS7mcbLYvoZV877Cd67Qs9mhaj
+    1LL4OyuGzqdtK+Bijqs7sQegmaCc0Aa0qnRl11+SyWp5mngkJbLdI243+wbqOmb3
+    8mxiBP0U7wkZWlaMW5x0jbVcWwIk7KMIJpPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523237114; bh=y+UZXJhKbG
-    CcwoKYTE185RMmkw611rJJv8vg2a4iDPc=; b=XKKvmR3VEsy4uWKns3JktsUhbQ
-    zq3ObGHSWy7HJTJJUqQyTBMXUndb1c7xp/ROt1ndbZp9bHBVzn4OUVs5hydRDvQQ
-    G0UZ4wkA6WQGCSYmW6lFlcUZ4J1DEYH2NKfnrpsy7ddDHOI6YKUAdWRuKESdqmQf
-    nLAvlp2eVl0V7pzat6GcfzniuF95Qx/rDtswcJ+E+4nWTAeBPPLTVplAdOd61LyR
-    hiPJ6mIGirg0VR/SoJephy7fEnOQ+pw16i0YSb/Dwinl2njYR1ZnZoC0BnG7SpPU
-    p2YQYNeFTfpM5nvRrj6wVkmggdF49QkkEc/4vBe2AbcPPLYeOsOAPey96yIw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=TlQpO3v5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523237112; bh=62ve8UCHSu
+    bx+XO3c8ZMjx63RwJU6FBU5Hxf7mYT8nI=; b=SQFQgOKGHjuhsAorlZ2PpQfqGY
+    C+JAG0XUFl5QbG8hd5KLGsipzK3otR6jKO2B5PQZyFHmX78E/Yv21+bO3FIp3kZJ
+    RD0TVhtREO/8KLBIaey20mvPBrd9DmXT7Av1AaFXI4+c2+ADHogUlEnRNxcpx42j
+    5kpYBMcXXiF/DDC4+qEvrKa/nLuyQnsgfG6It3359huh65d1dm3Gb8bnCZuPjRux
+    M+6KOAQDJkVFU0OMS2SvLvBc026smtFxPuVVEdk050nmKW6zzI4TRDDEKnNSLNKh
+    XOqU3RRPMTbn6XnpYvKJHvi9tSWgaGAxJazwWuad8VkRBqM61eAwMpbOi9nQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=E3kddusI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=TlQpO3v5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=E3kddusI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,37 +51,42 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOMngRzmx5txRAyzmPxpdh/zVByjVTVZsiTRDTBRceOKSctSUdVPMbofsgNcDtDpbmdpV3jDNbl2aFz3kx0AAbtlSmvrVpZ2QEtLij05iDOSC7qOhA0T
-    rJozDjA/+1XL05QVqfZ7jPqeXcX7UQyvuwOZORQ6Qg9TNDKaf8DiMp2BkLwxXWwLNJV/fkpOV5L6xWYZkRdcouBN/7Po+HQREWk1k75bsqReu3Xus8bpG9qm
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCYTDubG2P1DFAZ4k0GfCtdlnt94RptC892OsfldXwBR082pZl9WB9+q7TfEwXoobbyKSJjmnuS9MdmhAwpeBddtdWiHmxcw52724cf2vcq7RkUaJxIR
+    ok44ET1PM2MKZMIN0+wAQPE9+LTliq1RBvSTj7xlAikubkmSEfCU9+yLjViZo5N3n1d2iZypjdcJoRL5z78my2WwFRkNhdVP5N++km1eEMaHK92wknkt7tLK
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=vOUj_-VHQcnSsVn2sU0A:9 a=tCrYy2LnwLHUAUYh:21 a=O7QK-KX6cwF2c-gZ:21
-    a=wPNLvfGTeEIA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Lf-vpJhqX20A:10 a=iox4zFpeAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
+    a=o8Bf2xIQAAAA:8 a=IXr_WNlcAAAA:8 a=yPCof4ZbAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=yMhMjlubAAAA:8 a=Tway_pJnRvVg3gEtkSUA:9 a=wPNLvfGTeEIA:10
+    a=WzC6qhA0u3u7Ye7llzcV:22 a=AjGcO6oz07-iQ99wixmX:22 a=kLeBEu5l8tkQtVp4YdQK:22
+    a=K24ECnMRWNUKRqF_MnsZ:22 a=HkZW87K1Qel5hWWM3VKY:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932691AbeDIAgy (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:36:54 -0400
+        id S1752616AbeDIBY4 (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 21:24:56 -0400
 Received: from mail-sn1nam02on0127.outbound.protection.outlook.com ([104.47.36.127]:39469
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932682AbeDIAgw (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:36:52 -0400
+        id S932689AbeDIAgy (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:36:54 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Serhey Popovych <serhe.popovych@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: Eric Ren <zren@suse.com>, Mark Fasheh <mfasheh@versity.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 066/162] veth: Be more robust on network
- device creation when no attributes
-Thread-Topic: [PATCH AUTOSEL for 4.4 066/162] veth: Be more robust on network
- device creation when no attributes
-Thread-Index: AQHTz5mvC+PefVibSka45X1PzmkMSg==
-Date: Mon, 9 Apr 2018 00:28:30 +0000
-Message-ID: <20180409002738.163941-66-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 069/162] ocfs2: fix deadlock caused by
+ recursive locking in xattr
+Thread-Topic: [PATCH AUTOSEL for 4.4 069/162] ocfs2: fix deadlock caused by
+ recursive locking in xattr
+Thread-Index: AQHTz5mxawPyAQixBkGkq3QOAPkzrg==
+Date: Mon, 9 Apr 2018 00:28:33 +0000
+Message-ID: <20180409002738.163941-69-alexander.levin@microsoft.com>
 References: <20180409002738.163941-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,27 +95,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0885;7:LVyXIENzVmICuIAKw8sHjptYO3A69k7iqLrFYFTQml2OQnfC8l3ipcjS6JtPaFnEBdwUJd92aJk46+6VYA3jsxa00lJZGUKyPPQ0srj2wnamq/oedyp/rtDq4skxhWF1NS10gZM0DsO48dGTWtTHb29I4nvXB/RgjAPasrHi98Tj6vi0t7ljZmwOVYXBZoZu+01BzymYFpLPpQil6wP6FK+VK2+tr2YK6ZoSvJ4NMqlbvNbagRFNF41ftRYJZo0O;20:nj8Fy8oWE/rpYwC2clXj+zSyCp5ynNDiMnwKcKLFOAbGoiefa2Z3bgtB5y42NrOO0VjAnaweELIQLhaweS8M6TnhAmbr5eN3eiyRkMFLkoMCWhvNZQlNu9/7qI2wuopEmVGNZO9342xiJg473J/6mk3MxZYwofdSaAqv7Nt9c/4=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0885;7:7VtEPgbJmYYMLhHyD92wlYI8/GEywhs51KtnsBRVq42n1tKNzXRFlVu+yAcHKfxjdwk/DpwDjifPjQKVSDKt0kJ9oWh+rFaFpnua8btFGB08JapCIG3FxnOKIePYX8z9010i7bjpU2H8Ty9sv5ocWIPQccqBvmsQDa0ClJ2f6W1KUwsPHIVGzmeZeA0+HkvhJWqwbC+u2VDm7ZJ1GDs9lP/9Y+xYthDyfIsRn6J7QLElQ+d+ttK7tNHVixQJITSe;20:TvZh++eM2A7w/ndSXfp/1GgVJo+PDxDuO+Jv86QCTxgCS+ishzhCpZGuOmGI4PdYuU9iSfkQi+soLKUpZtq3WW5+7M2+zhEapnj5Zn9pIh+eonswpx9wxkAjOTjK6hjCzOaCUu+X7CwbdynSPSHzgjGjhHxQEjc4KIynT2N8y68=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 442e2629-7264-4bb1-7326-08d59db1fa26
+X-MS-Office365-Filtering-Correlation-Id: a135f996-bc78-402b-b601-08d59db1fb2c
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0885;
 x-ms-traffictypediagnostic: DM5PR2101MB0885:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB08853F5FDD358D8A5F9A755CFBBF0@DM5PR2101MB0885.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-microsoft-antispam-prvs: <DM5PR2101MB08851B38AAB67EFF09B1D00AFBBF0@DM5PR2101MB0885.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(42068640409301)(146099531331640);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0885;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0885;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(376002)(39860400002)(366004)(346002)(199004)(189003)(66066001)(39060400002)(3846002)(6116002)(86362001)(305945005)(10290500003)(6436002)(5250100002)(3280700002)(10090500001)(3660700001)(6506007)(2501003)(107886003)(446003)(53936002)(11346002)(2616005)(26005)(76176011)(7736002)(478600001)(476003)(81156014)(25786009)(8676002)(81166006)(186003)(8936002)(4326008)(97736004)(102836004)(99286004)(14454004)(36756003)(6512007)(316002)(2906002)(22452003)(68736007)(54906003)(110136005)(486006)(6486002)(6666003)(5660300001)(2900100001)(1076002)(72206003)(86612001)(105586002)(106356001)(22906009)(217873001)(357404004);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0885;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: cJRySXonMoXjuMp5OsgtSkE5UrJAxb8Cl1jdblCqN0+jqioRFA5ee8aXG1lCuK4ZO0BhgEZ5a+1QLvIPjU+EeklR46kww/PBo374UP886ChhZurOdkGvcGvYUFoecflmeZmwDqztL8wfgnH3BtIpe/Ghv4ng6H0gygKtSYh5eXMAgxAPdOtGKDlGzo1A7L1x134oSlihwgzB2yxeLBE6dtn1Eg+VW1l6UiT/wEmG1bl7ZrRAIhuwYd3ArX98h+oP8UIRAR73rSWnKYVwV0n+1I1tE/UMHLU7n6rOwKl9kJDOP9mQaCQ8Y+bGq4jwKAC/QVxs/4M8xDEyGiir7tM1/suCP1IP75f1gD7BTWlP9kspwUqFNpR3IcnfLGvLwmSfxWqH4w0nGD5Xx5Q3vbD8/2RD3T76o6ush3HpHiINm3Y=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(376002)(39860400002)(366004)(346002)(199004)(189003)(66066001)(3846002)(6116002)(59450400001)(86362001)(305945005)(10290500003)(6436002)(5250100002)(3280700002)(10090500001)(3660700001)(966005)(6506007)(2501003)(107886003)(446003)(53936002)(11346002)(2616005)(26005)(76176011)(7736002)(478600001)(476003)(81156014)(25786009)(8676002)(81166006)(186003)(8936002)(4326008)(97736004)(102836004)(99286004)(14454004)(6306002)(36756003)(6512007)(316002)(2906002)(22452003)(68736007)(54906003)(110136005)(486006)(6486002)(6666003)(5660300001)(2900100001)(1076002)(72206003)(86612001)(105586002)(106356001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0885;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: siuS1Ls7RishtU3vL7fLAbZq73ey2yVAXxhy0JbwLHCcvAytTMNLzNfxTlPv1bmNmZrLTtig7zoI3vwNv5xYmLTXZzuU5mqL6CBhtoyYCABkwRYEQ/E4PY09bJHKi5t1ctdfa96uY04aY/+wVbDx7/qDRjVZAz2nJgMPm5nV1f0wgwywEpD5AGLcdavBM9xcil6xPTp4hNjeWn1IsTv2hPI1VCGuqR0QV4eB6N5dvFbQhYSGXUryou26SJv3XYmyKC4/2pXzUAr0W9xCzhVhC7Q6oTm9Ndiz0y0k5ORjO8AZTrUYZgUkT7E8BD3KfZJ1AIwFdpJphHfdSUISm1EbDAXFpPsRpqNv5qUFwjL9ejivQo2+InlN1lYZsj/g1JQ+GDxxyj5fC6qqp91PAAW04T4MXIxZFFJ+/+E06RM/Krw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 442e2629-7264-4bb1-7326-08d59db1fa26
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:28:30.6770
+X-MS-Exchange-CrossTenant-Network-Message-Id: a135f996-bc78-402b-b601-08d59db1fb2c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:28:33.2707
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -121,75 +126,150 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Serhey Popovych <serhe.popovych@gmail.com>
+From: Eric Ren <zren@suse.com>
 
-[ Upstream commit 191cdb3822e5df6b3c8b9f8cb8c4bf93f6cc90c7 ]
+[ Upstream commit 8818efaaacb78c60a9d90c5705b6c99b75d7d442 ]
 
-There are number of problems with configuration peer
-network device in absence of IFLA_VETH_PEER attributes
-where attributes for main network device shared with
-peer.
+Another deadlock path caused by recursive locking is reported.  This
+kind of issue was introduced since commit 743b5f1434f5 ("ocfs2: take
+inode lock in ocfs2_iop_set/get_acl()").  Two deadlock paths have been
+fixed by commit b891fa5024a9 ("ocfs2: fix deadlock issue when taking
+inode lock at vfs entry points").  Yes, we intend to fix this kind of
+case in incremental way, because it's hard to find out all possible
+paths at once.
 
-First it is not feasible to configure both network
-devices with same MAC address since this makes
-communication in such configuration problematic.
+This one can be reproduced like this.  On node1, cp a large file from
+home directory to ocfs2 mountpoint.  While on node2, run
+setfacl/getfacl.  Both nodes will hang up there.  The backtraces:
 
-This case can be reproduced with following sequence:
+On node1:
+  __ocfs2_cluster_lock.isra.39+0x357/0x740 [ocfs2]
+  ocfs2_inode_lock_full_nested+0x17d/0x840 [ocfs2]
+  ocfs2_write_begin+0x43/0x1a0 [ocfs2]
+  generic_perform_write+0xa9/0x180
+  __generic_file_write_iter+0x1aa/0x1d0
+  ocfs2_file_write_iter+0x4f4/0xb40 [ocfs2]
+  __vfs_write+0xc3/0x130
+  vfs_write+0xb1/0x1a0
+  SyS_write+0x46/0xa0
 
-  # ip link add address 02:11:22:33:44:55 type veth
-  # ip li sh
-  ...
-  26: veth0@veth1: <BROADCAST,MULTICAST,M-DOWN> mtu 1500 qdisc \
-  noop state DOWN mode DEFAULT qlen 1000
-      link/ether 00:11:22:33:44:55 brd ff:ff:ff:ff:ff:ff
-  27: veth1@veth0: <BROADCAST,MULTICAST,M-DOWN> mtu 1500 qdisc \
-  noop state DOWN mode DEFAULT qlen 1000
-      link/ether 00:11:22:33:44:55 brd ff:ff:ff:ff:ff:ff
+On node2:
+  __ocfs2_cluster_lock.isra.39+0x357/0x740 [ocfs2]
+  ocfs2_inode_lock_full_nested+0x17d/0x840 [ocfs2]
+  ocfs2_xattr_set+0x12e/0xe80 [ocfs2]
+  ocfs2_set_acl+0x22d/0x260 [ocfs2]
+  ocfs2_iop_set_acl+0x65/0xb0 [ocfs2]
+  set_posix_acl+0x75/0xb0
+  posix_acl_xattr_set+0x49/0xa0
+  __vfs_setxattr+0x69/0x80
+  __vfs_setxattr_noperm+0x72/0x1a0
+  vfs_setxattr+0xa7/0xb0
+  setxattr+0x12d/0x190
+  path_setxattr+0x9f/0xb0
+  SyS_setxattr+0x14/0x20
 
-Second it is not possible to register both main and
-peer network devices with same name, that happens
-when name for main interface is given with IFLA_IFNAME
-and same attribute reused for peer.
+Fix this one by using ocfs2_inode_{lock|unlock}_tracker, which is
+exported by commit 439a36b8ef38 ("ocfs2/dlmglue: prepare tracking logic
+to avoid recursive cluster lock").
 
-This case can be reproduced with following sequence:
-
-  # ip link add dev veth1a type veth
-  RTNETLINK answers: File exists
-
-To fix both of the cases check if corresponding netlink
-attributes are taken from peer_tb when valid or
-name based on rtnl ops kind and random address is used.
-
-Signed-off-by: Serhey Popovych <serhe.popovych@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/20170622014746.5815-1-zren@suse.com
+Fixes: 743b5f1434f5 ("ocfs2: take inode lock in ocfs2_iop_set/get_acl()")
+Signed-off-by: Eric Ren <zren@suse.com>
+Reported-by: Thomas Voegtle <tv@lio96.de>
+Tested-by: Thomas Voegtle <tv@lio96.de>
+Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/veth.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ocfs2/dlmglue.c |  4 ++++
+ fs/ocfs2/xattr.c   | 23 +++++++++++++----------
+ 2 files changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index 6b4cc1c2e6b4..5446a1b6480c 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -374,7 +374,7 @@ static int veth_newlink(struct net *src_net, struct net=
-_device *dev,
- 		tbp =3D tb;
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index 555b57a16499..b41bbd133103 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -2608,6 +2608,10 @@ void ocfs2_inode_unlock_tracker(struct inode *inode,
+ 	struct ocfs2_lock_res *lockres;
+=20
+ 	lockres =3D &OCFS2_I(inode)->ip_inode_lockres;
++	/* had_lock means that the currect process already takes the cluster
++	 * lock previously. If had_lock is 1, we have nothing to do here, and
++	 * it will get unlocked where we got the lock.
++	 */
+ 	if (!had_lock) {
+ 		ocfs2_remove_holder(lockres, oh);
+ 		ocfs2_inode_unlock(inode, ex);
+diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+index 877830b05e12..d2b7192c0937 100644
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -1307,20 +1307,21 @@ static int ocfs2_xattr_get(struct inode *inode,
+ 			   void *buffer,
+ 			   size_t buffer_size)
+ {
+-	int ret;
++	int ret, had_lock;
+ 	struct buffer_head *di_bh =3D NULL;
++	struct ocfs2_lock_holder oh;
+=20
+-	ret =3D ocfs2_inode_lock(inode, &di_bh, 0);
+-	if (ret < 0) {
+-		mlog_errno(ret);
+-		return ret;
++	had_lock =3D ocfs2_inode_lock_tracker(inode, &di_bh, 0, &oh);
++	if (had_lock < 0) {
++		mlog_errno(had_lock);
++		return had_lock;
+ 	}
+ 	down_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 	ret =3D ocfs2_xattr_get_nolock(inode, di_bh, name_index,
+ 				     name, buffer, buffer_size);
+ 	up_read(&OCFS2_I(inode)->ip_xattr_sem);
+=20
+-	ocfs2_inode_unlock(inode, 0);
++	ocfs2_inode_unlock_tracker(inode, 0, &oh, had_lock);
+=20
+ 	brelse(di_bh);
+=20
+@@ -3516,11 +3517,12 @@ int ocfs2_xattr_set(struct inode *inode,
+ {
+ 	struct buffer_head *di_bh =3D NULL;
+ 	struct ocfs2_dinode *di;
+-	int ret, credits, ref_meta =3D 0, ref_credits =3D 0;
++	int ret, credits, had_lock, ref_meta =3D 0, ref_credits =3D 0;
+ 	struct ocfs2_super *osb =3D OCFS2_SB(inode->i_sb);
+ 	struct inode *tl_inode =3D osb->osb_tl_inode;
+ 	struct ocfs2_xattr_set_ctxt ctxt =3D { NULL, NULL, NULL, };
+ 	struct ocfs2_refcount_tree *ref_tree =3D NULL;
++	struct ocfs2_lock_holder oh;
+=20
+ 	struct ocfs2_xattr_info xi =3D {
+ 		.xi_name_index =3D name_index,
+@@ -3551,8 +3553,9 @@ int ocfs2_xattr_set(struct inode *inode,
+ 		return -ENOMEM;
  	}
 =20
--	if (tbp[IFLA_IFNAME]) {
-+	if (ifmp && tbp[IFLA_IFNAME]) {
- 		nla_strlcpy(ifname, tbp[IFLA_IFNAME], IFNAMSIZ);
- 		name_assign_type =3D NET_NAME_USER;
- 	} else {
-@@ -393,7 +393,7 @@ static int veth_newlink(struct net *src_net, struct net=
-_device *dev,
- 		return PTR_ERR(peer);
+-	ret =3D ocfs2_inode_lock(inode, &di_bh, 1);
+-	if (ret < 0) {
++	had_lock =3D ocfs2_inode_lock_tracker(inode, &di_bh, 1, &oh);
++	if (had_lock < 0) {
++		ret =3D had_lock;
+ 		mlog_errno(ret);
+ 		goto cleanup_nolock;
  	}
-=20
--	if (tbp[IFLA_ADDRESS] =3D=3D NULL)
-+	if (!ifmp || !tbp[IFLA_ADDRESS])
- 		eth_hw_addr_random(peer);
-=20
- 	if (ifmp && (dev->ifindex !=3D 0))
+@@ -3649,7 +3652,7 @@ cleanup:
+ 		if (ret)
+ 			mlog_errno(ret);
+ 	}
+-	ocfs2_inode_unlock(inode, 1);
++	ocfs2_inode_unlock_tracker(inode, 1, &oh, had_lock);
+ cleanup_nolock:
+ 	brelse(di_bh);
+ 	brelse(xbs.xattr_bh);
 --=20
 2.15.1
