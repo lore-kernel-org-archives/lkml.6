@@ -1,101 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753251AbeDIQfH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 12:35:07 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46592 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753069AbeDIQfG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 12:35:06 -0400
-Subject: Re: [PATCH v3] xen/privcmd: add IOCTL_PRIVCMD_MMAP_RESOURCE
-To: Paul Durrant <paul.durrant@citrix.com>, xen-devel@lists.xenproject.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-References: <20180409093629.9621-1-paul.durrant@citrix.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <bd84cd4b-1834-b631-303c-3e190ad7676d@oracle.com>
-Date: Mon, 9 Apr 2018 12:36:25 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753296AbeDIQjP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 12:39:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60377 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753243AbeDIQjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 12:39:13 -0400
+Date: Mon, 9 Apr 2018 18:39:10 +0200
+From: Jan Kara <jack@suse.cz>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Jeff Moyer <jmoyer@redhat.com>, Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Josh Triplett <josh.triplett@intel.com>
+Subject: Re: [PATCH v8 15/18] mm, fs, dax: handle layout changes to pinned
+ dax mappings
+Message-ID: <20180409163910.2f6t734pwefylak3@quack2.suse.cz>
+References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152246901060.36038.4487158506830998280.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180404094656.dssixqvvdcp5jff2@quack2.suse.cz>
+ <CAPcyv4joRA=BrurYZ1kzXpMG=jnXik9+LdLqH9961jM5VnmU7w@mail.gmail.com>
+ <20180408031113.GO3948@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180409093629.9621-1-paul.durrant@citrix.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8858 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=949
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804090171
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180408031113.GO3948@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2018 05:36 AM, Paul Durrant wrote:
-> My recent Xen patch series introduces a new HYPERVISOR_memory_op to
-> support direct priv-mapping of certain guest resources (such as ioreq
-> pages, used by emulators) by a tools domain, rather than having to access
-> such resources via the guest P2M.
->
-> This patch adds the necessary infrastructure to the privcmd driver and
-> Xen MMU code to support direct resource mapping.
->
-> NOTE: The adjustment in the MMU code is partially cosmetic. Xen will now
->       allow a PV tools domain to map guest pages either by GFN or MFN, thus
->       the term 'mfn' has been swapped for 'pfn' in the lower layers of the
->       remap code.
->
-> Signed-off-by: Paul Durrant <paul.durrant@citrix.com>
+On Sat 07-04-18 20:11:13, Paul E. McKenney wrote:
+> On Sat, Apr 07, 2018 at 12:38:24PM -0700, Dan Williams wrote:
+> > [ adding Paul and Josh ]
+> > 
+> > On Wed, Apr 4, 2018 at 2:46 AM, Jan Kara <jack@suse.cz> wrote:
+> > > On Fri 30-03-18 21:03:30, Dan Williams wrote:
+> > >> Background:
+> > >>
+> > >> get_user_pages() in the filesystem pins file backed memory pages for
+> > >> access by devices performing dma. However, it only pins the memory pages
+> > >> not the page-to-file offset association. If a file is truncated the
+> > >> pages are mapped out of the file and dma may continue indefinitely into
+> > >> a page that is owned by a device driver. This breaks coherency of the
+> > >> file vs dma, but the assumption is that if userspace wants the
+> > >> file-space truncated it does not matter what data is inbound from the
+> > >> device, it is not relevant anymore. The only expectation is that dma can
+> > >> safely continue while the filesystem reallocates the block(s).
+> > >>
+> > >> Problem:
+> > >>
+> > >> This expectation that dma can safely continue while the filesystem
+> > >> changes the block map is broken by dax. With dax the target dma page
+> > >> *is* the filesystem block. The model of leaving the page pinned for dma,
+> > >> but truncating the file block out of the file, means that the filesytem
+> > >> is free to reallocate a block under active dma to another file and now
+> > >> the expected data-incoherency situation has turned into active
+> > >> data-corruption.
+> > >>
+> > >> Solution:
+> > >>
+> > >> Defer all filesystem operations (fallocate(), truncate()) on a dax mode
+> > >> file while any page/block in the file is under active dma. This solution
+> > >> assumes that dma is transient. Cases where dma operations are known to
+> > >> not be transient, like RDMA, have been explicitly disabled via
+> > >> commits like 5f1d43de5416 "IB/core: disable memory registration of
+> > >> filesystem-dax vmas".
+> > >>
+> > >> The dax_layout_busy_page() routine is called by filesystems with a lock
+> > >> held against mm faults (i_mmap_lock) to find pinned / busy dax pages.
+> > >> The process of looking up a busy page invalidates all mappings
+> > >> to trigger any subsequent get_user_pages() to block on i_mmap_lock.
+> > >> The filesystem continues to call dax_layout_busy_page() until it finally
+> > >> returns no more active pages. This approach assumes that the page
+> > >> pinning is transient, if that assumption is violated the system would
+> > >> have likely hung from the uncompleted I/O.
+> > >>
+> > >> Cc: Jan Kara <jack@suse.cz>
+> > >> Cc: Jeff Moyer <jmoyer@redhat.com>
+> > >> Cc: Dave Chinner <david@fromorbit.com>
+> > >> Cc: Matthew Wilcox <mawilcox@microsoft.com>
+> > >> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > >> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> > >> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> > >> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > >> Cc: Andrew Morton <akpm@linux-foundation.org>
+> > >> Reported-by: Christoph Hellwig <hch@lst.de>
+> > >> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > >> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> > >> ---
+> > >>  drivers/dax/super.c |    2 +
+> > >>  fs/dax.c            |   92 +++++++++++++++++++++++++++++++++++++++++++++++++++
+> > >>  include/linux/dax.h |   25 ++++++++++++++
+> > >>  mm/gup.c            |    5 +++
+> > >>  4 files changed, 123 insertions(+), 1 deletion(-)
+> > >
+> > > ...
+> > >
+> > >> +/**
+> > >> + * dax_layout_busy_page - find first pinned page in @mapping
+> > >> + * @mapping: address space to scan for a page with ref count > 1
+> > >> + *
+> > >> + * DAX requires ZONE_DEVICE mapped pages. These pages are never
+> > >> + * 'onlined' to the page allocator so they are considered idle when
+> > >> + * page->count == 1. A filesystem uses this interface to determine if
+> > >> + * any page in the mapping is busy, i.e. for DMA, or other
+> > >> + * get_user_pages() usages.
+> > >> + *
+> > >> + * It is expected that the filesystem is holding locks to block the
+> > >> + * establishment of new mappings in this address_space. I.e. it expects
+> > >> + * to be able to run unmap_mapping_range() and subsequently not race
+> > >> + * mapping_mapped() becoming true. It expects that get_user_pages() pte
+> > >> + * walks are performed under rcu_read_lock().
+> > >> + */
+> > >> +struct page *dax_layout_busy_page(struct address_space *mapping)
+> > >> +{
+> > >> +     pgoff_t indices[PAGEVEC_SIZE];
+> > >> +     struct page *page = NULL;
+> > >> +     struct pagevec pvec;
+> > >> +     pgoff_t index, end;
+> > >> +     unsigned i;
+> > >> +
+> > >> +     /*
+> > >> +      * In the 'limited' case get_user_pages() for dax is disabled.
+> > >> +      */
+> > >> +     if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
+> > >> +             return NULL;
+> > >> +
+> > >> +     if (!dax_mapping(mapping) || !mapping_mapped(mapping))
+> > >> +             return NULL;
+> > >> +
+> > >> +     pagevec_init(&pvec);
+> > >> +     index = 0;
+> > >> +     end = -1;
+> > >> +     /*
+> > >> +      * Flush dax_layout_lock() sections to ensure all possible page
+> > >> +      * references have been taken, or otherwise arrange for faults
+> > >> +      * to block on the filesystem lock that is taken for
+> > >> +      * establishing new mappings.
+> > >> +      */
+> > >> +     unmap_mapping_range(mapping, 0, 0, 1);
+> > >> +     synchronize_rcu();
+> > >
+> > > So I still don't like the use of RCU for this. It just seems as an abuse to
+> > > use RCU like that. Furthermore it has a hefty latency cost for the truncate
+> > > path. A trivial test to truncate 100 times the last page of a 16k file that
+> > > is mmaped (only the first page):
+> > >
+> > > DAX+your patches        3.899s
+> > > non-DAX                 0.015s
+> > >
+> > > So you can see synchronize_rcu() increased time to run truncate(2) more
+> > > than 200 times (the process is indeed sitting in __wait_rcu_gp all the
+> > > time). IMHO that's just too costly.
+> > 
+> > I wonder if this can be trivially solved by using srcu. I.e. we don't
+> > need to wait for a global quiescent state, just a
+> > get_user_pages_fast() quiescent state. ...or is that an abuse of the
+> > srcu api?
+> 
+> From what I can see (not that I claim to understand DAX), SRCU
+> is worth trying.  Another thing to try (as a test) is to replace the
+> synchronize_rcu() above with synchronize_rcu_expedited(), which might
+> get you an order of magnitude or thereabouts.
 
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+But having synchronize_rcu_expedited() easily triggerable by userspace
+(potentially every 100 usec or even less) is not a great thing, right?
+It would be hogging the system with IPIs...
 
-I think this will have to wait until 4.18 though, it's somewhat late for
-current merge window right now.
-
--boris
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
