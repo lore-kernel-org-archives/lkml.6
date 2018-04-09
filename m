@@ -1,123 +1,173 @@
-Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AIpwx49M5Wd3UN6kNKNs54y0iCKM4G3Pbwh8a3pgrKDaebpurliIR/+PEgBW0Khq0ecumhYgev77
-ARC-Seal: i=1; a=rsa-sha256; t=1523887966; cv=none;
+Return-Path: <poza@qualcomm.com>
+X-Google-Smtp-Source: AIpwx48Z5qASFApRoPVUqxX5y9qCJsiU5QHZ8KZ5lqeyeOq2oSAg6XEpJlVJLgjiQs2VT9T/x/1y
+ARC-Seal: i=1; a=rsa-sha256; t=1523284938; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y6LNI9X+1Hb2O7L2FAE8zbULr2CevlhUDaQR6XXZcUJVVqD/dGxfY9IQpjctz1ZW2J
-         2g/qKjCtHEejMim6GYYaIBq+1+4TWAWAbMWd74hlN7jkHCbVukE6MfuPY/7tfAQXVUJn
-         oYR2DIRXHOH6h97jj6+rUh1+54ZljHTfqmENGB5qS4jyt8NOlnM029As7iKjLanlZPeJ
-         5aBBlH3BLyn/4niQgAgAWjtZuwavpNwuDAE0GtrkkihUjDIM94fQU+S+xYUnMCVXhalP
-         CDVMDqGCvO7iw8ceSCr4q93oCGsqjKap/Pc3KDVe1yo62la8qRJHAwuLa7ZN1bwxu0SP
-         8Waw==
+        b=bI1XsFWgPGOBf3D4RxczGZIFsj5WugKznUjh+/OrTuHMpdeFQ0hDTTYsrHbhqG6BKe
+         OJ49STDT9OyrI5k3vE5kNneeusDsutHd3tY4YGBc2q1GNQyAibGDjNmnyvIVc9ghuySC
+         k7cfFivVaDHEt2lEyb2ErA5z6uH52ekb7YVbuwdAQ6DAEt4Jcy5b6vQA2obM+NseVnqT
+         wf5mdrn+h04UhjTVC7QRMjkuZpm7qECm3U+OLtHR7ZYod3pOZAt0QPLTmtgcwUTjs/MH
+         C9wLjzwheOUsr0ao2xDVVu2VHtVll+kj1jqcBHlgcQKLK+/7TnmnMtPVYKEM/VWfnRKQ
+         /jfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
-         :date:content-transfer-encoding:mime-version:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=7RMGiAhUD4/D0kNjrtHygRC0sYeBlcVJi9S5jSE6f/M=;
-        b=HcmfIaq4+n0SB8KZL7rshpyNeeM7VXGX3ZzDnwZciyTU1WvvhlCaqOioP/5ROebSmE
-         +umcokB16V8aBpjShmp2ht+Mb7fpWy+TeS1rfocM8GaHckiWTrQjWXA25SB7apkRdDxK
-         l+iMt213unraQDQWQsaLpXPpIEu9piVaGTRLH9YBAOe/stDB3Qe3VH8W3IcQDh5JyLZN
-         7ZStOimW0XSxV6BgbFuJCJO7hWwpF7tTuljwB3LLqO99XNCjWmdktmBeB+0rB1oqJkgT
-         XCVmIWwmQt/MlXYIC4vJ0Szu9nHWj4QOgri2/Hj9wVuTPddDj+xkiqwQuQKfRNvr0zKR
-         gLpw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=mWEKmoZm82PibK2mGEYujmW+o+/4oCioQV+dZ/hIcH8=;
+        b=SB6eMfZpBcUDCWyNq+XPpD3bLTKsrj8swwfE6+96wf5MkWJfBKGgeE028761D7kX0B
+         XfmGDRfB5/8lMRnVabgPzyQvIDnkFedBBAwZEuJQv2PTyi+nnLC55Q+NVMRFSIjX+Y5Z
+         hv6QD7EWpmSCcINNceWbhPqwJtQXHMEEzqsIYBqtNP7Z3PWuu1QSkc5arzT+4DC5WsLy
+         jfB1czg3p9Sz+qr9QE7TMSC5v3iUCmqCBOkJLIxNv4Rqj5eteyoX2FdJdNO+3fiGlujT
+         lgBTq1wQUyycaFJwD9hLbIPnyfXBrneBkptCCVLfbPzbbcyzD3Y+GgbAe1+jf6C/ShyQ
+         To+A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=eNbRUkZf;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=eNbRUkZf;
-       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
+       spf=pass (google.com: domain of poza@qualcomm.com designates 129.46.98.28 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=eNbRUkZf;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=eNbRUkZf;
-       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 16 Apr 2018 19:42:44 +0530
-From: poza@codeaurora.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Sinan Kaya <okaya@codeaurora.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Philippe Ombredanne <pombredanne@nexb.com>, Thomas Gleixner
- <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kate
- Stewart <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
- Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Timur Tabi
- <timur@codeaurora.org>
-Subject: Re: [PATCH v13 0/6] Address error and recovery for AER and DPC
-In-Reply-To: <20180416132753.GA28657@bhelgaas-glaptop.roam.corp.google.com>
+       spf=pass (google.com: domain of poza@qualcomm.com designates 129.46.98.28 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+X-IronPort-AV: E=Sophos;i="5.48,427,1517904000";
+   d="scan'208";a="16629445"
+X-IronPort-AV: E=McAfee;i="5900,7806,8857"; a="161794002"
+From: Oza Pawandeep <poza@codeaurora.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dongdong Liu <liudongdong3@huawei.com>,
+	Keith Busch <keith.busch@intel.com>,
+	Wei Zhang <wzhang@fb.com>,
+	Sinan Kaya <okaya@codeaurora.org>,
+	Timur Tabi <timur@codeaurora.org>
+Cc: Oza Pawandeep <poza@codeaurora.org>
+Subject: [PATCH v13 5/6] PCI: Unify wait for link active into generic PCI
+Date: Mon,  9 Apr 2018 10:41:53 -0400
+Message-Id: <1523284914-2037-6-git-send-email-poza@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523284914-2037-1-git-send-email-poza@codeaurora.org>
 References: <1523284914-2037-1-git-send-email-poza@codeaurora.org>
- <20180416031600.GB80087@bhelgaas-glaptop.roam.corp.google.com>
- <5b4e667f-bead-a007-78dd-e42d3194f232@codeaurora.org>
- <9301606a70a213c180d9e6764b002cf9@codeaurora.org>
- <20180416132753.GA28657@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <0b94f5a75fbfec9063e2c07006be3fbb@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597280027023020186?=
-X-GMAIL-MSGID: =?utf-8?q?1597912348070514749?=
+X-GMAIL-THRID: =?utf-8?q?1597280028398870927?=
+X-GMAIL-MSGID: =?utf-8?q?1597280028398870927?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018-04-16 18:57, Bjorn Helgaas wrote:
-> On Mon, Apr 16, 2018 at 11:33:13AM +0530, poza@codeaurora.org wrote:
->> On 2018-04-16 09:23, Sinan Kaya wrote:
->> > On 4/15/2018 11:16 PM, Bjorn Helgaas wrote:
->> > > On Mon, Apr 09, 2018 at 10:41:48AM -0400, Oza Pawandeep wrote:
->> > > > This patch set brings in error handling support for DPC
->> > > >
->> > > > The current implementation of AER and error message broadcasting
->> > > > to the
->> > > > EP driver is tightly coupled and limited to AER service driver.
->> > > > It is important to factor out broadcasting and other link handling
->> > > > callbacks. So that not only when AER gets triggered, but also
->> > > > when DPC get
->> > > > triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
->> > > >
->> > > > DPC should behave identical to AER as far as error handling is
->> > > > concerned.
->> > > > DPC should remove the devices and not to do recovery for hotplug
->> > > > enabled system.
->> > >
->> > > Is there a specific bug that's fixed by these patches?  I didn't see
->> > > one mentioned in the changelogs.
->> > >
->> >
->> > There is no actual bug.
->> >
->> > We realized that DPC and hotplug is heavily integrated today. We
->> > have use cases for systems without hotplug support but still
->> > support DPC. That's the problem we are trying to solve with this
->> > patchset.
-> 
-> Apparently there's a problem with systems that have DPC but not
-> hotplug.  It will be extremely helpful if you can articulate what that
-> problem is and include it in the appropriate changelog.
-> 
->> Adding to what Sinan said;
->> 
->> DPC should handle the error handling and recovery similar to AER,
->> because finally both are attempting recovery in some or the other
->> way, and for that error handling and recovery framework has to be
->> loosely coupled.  It achieves uniformity and transparency to the
->> error handling agents such as AER, DPC, with respect to recovery and
->> error handling.
->> 
->> So, this patch-set tries to unify lot of things between error agents
->> and make them behave in a well defined way. (be it error (FATAL,
->> NON_FATAL) handling or recovery).
-> 
-> I totally support this objective.
+Clients such as HP, DPC are using pcie_wait_link_active(), which waits
+till the link becomes active or inactive.
 
-Thanks Bjorn, I will include this objective in Changelog along with 
-Sinan's text.
-I am not clear on one last thing Bjorn; which is;
-do we need last patch ? patch-6 which handles hotplug case.
-Also I think we could take this patch-set as basic changes/attempt to 
-unify the code which it does.
+Made generic function and moved it to drivers/pci/pci.c
 
-And, in the next follow-up patches we can improve upon the things such 
-as,
-whether to do different actions for FATAL cases and NON_FATAL cases. And 
-then I can make needed changes to AER and DPC
-Please let me know how this sounds.
+Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-> 
-> Bjorn
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index 18a42f8..e0c2b8e 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -231,25 +231,11 @@ bool pciehp_check_link_active(struct controller *ctrl)
+ 	return ret;
+ }
+ 
+-static void __pcie_wait_link_active(struct controller *ctrl, bool active)
+-{
+-	int timeout = 1000;
+-
+-	if (pciehp_check_link_active(ctrl) == active)
+-		return;
+-	while (timeout > 0) {
+-		msleep(10);
+-		timeout -= 10;
+-		if (pciehp_check_link_active(ctrl) == active)
+-			return;
+-	}
+-	ctrl_dbg(ctrl, "Data Link Layer Link Active not %s in 1000 msec\n",
+-			active ? "set" : "cleared");
+-}
+-
+ static void pcie_wait_link_active(struct controller *ctrl)
+ {
+-	__pcie_wait_link_active(ctrl, true);
++	struct pci_dev *pdev = ctrl_dev(ctrl);
++
++	pcie_wait_for_link(pdev, true);
+ }
+ 
+ static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index f6a4dd1..bbea997 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4176,6 +4176,35 @@ static int pci_pm_reset(struct pci_dev *dev, int probe)
+ 	return 0;
+ }
+ 
++/**
++ * pcie_wait_for_link - Wait for link till it's active/inactive
++ * @pdev: Bridge device
++ * @active: waiting for active or inactive ?
++ *
++ * Use this to wait till link becomes active or inactive.
++ */
++bool pcie_wait_for_link(struct pci_dev *pdev, bool active)
++{
++	int timeout = 1000;
++	bool ret;
++	u16 lnk_status;
++
++	for (;;) {
++		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
++		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
++		if (ret == active)
++			return true;
++		if (timeout <= 0)
++			break;
++		timeout -= 10;
++	}
++
++	pci_info(pdev, "Data Link Layer Link Active not %s in 1000 msec\n",
++		 active ? "set" : "cleared");
++
++	return false;
++}
++
+ void pci_reset_secondary_bus(struct pci_dev *dev)
+ {
+ 	u16 ctrl;
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index abc514e..5c44fbc 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -345,6 +345,8 @@ void pci_enable_acs(struct pci_dev *dev);
+ /* PCI error reporting and recovery */
+ void pcie_do_recovery(struct pci_dev *dev, int severity);
+ 
++bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
++
+ #ifdef CONFIG_PCIEASPM
+ void pcie_aspm_init_link_state(struct pci_dev *pdev);
+ void pcie_aspm_exit_link_state(struct pci_dev *pdev);
+diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
+index 517c8b4..8e1553b 100644
+--- a/drivers/pci/pcie/pcie-dpc.c
++++ b/drivers/pci/pcie/pcie-dpc.c
+@@ -95,19 +95,9 @@ static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
+ 
+ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
+ {
+-	unsigned long timeout = jiffies + HZ;
+ 	struct pci_dev *pdev = dpc->dev->port;
+-	struct device *dev = &dpc->dev->device;
+-	u16 lnk_status;
+ 
+-	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
+-					!time_after(jiffies, timeout)) {
+-		msleep(10);
+-		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	}
+-	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
+-		dev_warn(dev, "Link state not disabled for DPC event\n");
++	pcie_wait_for_link(pdev, false);
+ }
+ 
+ /**
+-- 
+2.7.4
