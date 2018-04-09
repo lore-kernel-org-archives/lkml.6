@@ -1,376 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752854AbeDIJoF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 05:44:05 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:52401 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752442AbeDIJlY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 05:41:24 -0400
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v2 2/9] PCI: dwc: Add support for endpoint mode
-Date: Mon,  9 Apr 2018 10:41:11 +0100
-Message-Id: <9ce10e6844863029992a5f4e74c89818615850e3.1523266508.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
-References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
-References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
+        id S1752551AbeDIJsT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 05:48:19 -0400
+Received: from mga14.intel.com ([192.55.52.115]:44797 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751367AbeDIJsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 05:48:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,426,1517904000";
+   d="scan'208";a="35629637"
+Date: Mon, 9 Apr 2018 12:48:14 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] ipc/shm: fix use-after-free of shm file via
+ remap_file_pages()
+Message-ID: <20180409094813.bsjc3u2hnsrdyiuk@black.fi.intel.com>
+References: <94eb2c06f65e5e2467055d036889@google.com>
+ <20180409043039.28915-1-ebiggers3@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409043039.28915-1-ebiggers3@gmail.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCIe controller dual mode is capable of operating in host mode as well
-as endpoint mode by configuration, therefore this patch aims to add
-endpoint mode support to the designware driver.
+On Mon, Apr 09, 2018 at 04:30:39AM +0000, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> syzbot reported a use-after-free of shm_file_data(file)->file->f_op in
+> shm_get_unmapped_area(), called via sys_remap_file_pages().
+> Unfortunately it couldn't generate a reproducer, but I found a bug which
+> I think caused it.  When remap_file_pages() is passed a full System V
+> shared memory segment, the memory is first unmapped, then a new map is
+> created using the ->vm_file.  Between these steps, the shm ID can be
+> removed and reused for a new shm segment.  But, shm_mmap() only checks
+> whether the ID is currently valid before calling the underlying file's
+> ->mmap(); it doesn't check whether it was reused.  Thus it can use the
+> wrong underlying file, one that was already freed.
+> 
+> Fix this by making the "outer" shm file (the one that gets put in
+> ->vm_file) hold a reference to the real shm file, and by making
+> __shm_open() require that the file associated with the shm ID matches
+> the one associated with the "outer" file.
+> 
+> Commit 1ac0b6dec656 ("ipc/shm: handle removed segments gracefully in
+> shm_mmap()") almost fixed this bug, but it didn't go far enough because
+> it didn't consider the case where the shm ID is reused.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
-Change v1->v2:
- - Removed dw_plat_pcie_stop_link empty function.
- - Implemented Kishon's suggestions about dw-pcie-rc and dw-pcie strings.
-compatibility.
- - Added second entry on pci_epf_test_ids structure.
+Right. Thanks for catching this.
 
- drivers/pci/dwc/Kconfig                       |  45 ++++++--
- drivers/pci/dwc/pcie-designware-ep.c          |   4 +-
- drivers/pci/dwc/pcie-designware-plat.c        | 153 ++++++++++++++++++++++++--
- drivers/pci/endpoint/functions/pci-epf-test.c |   9 ++
- 4 files changed, 190 insertions(+), 21 deletions(-)
+> The following program usually reproduces this bug:
+> 
+> 	#include <stdlib.h>
+> 	#include <sys/shm.h>
+> 	#include <sys/syscall.h>
+> 	#include <unistd.h>
+> 
+> 	int main()
+> 	{
+> 		int is_parent = (fork() != 0);
+> 		srand(getpid());
+> 		for (;;) {
+> 			int id = shmget(0xF00F, 4096, IPC_CREAT|0700);
+> 			if (is_parent) {
+> 				void *addr = shmat(id, NULL, 0);
+> 				usleep(rand() % 50);
+> 				while (!syscall(__NR_remap_file_pages, addr, 4096, 0, 0, 0));
+> 			} else {
+> 				usleep(rand() % 50);
+> 				shmctl(id, IPC_RMID, NULL);
+> 			}
+> 		}
+> 	}
+> 
+> It causes the following NULL pointer dereference due to a 'struct file'
+> being used while it's being freed.  (I couldn't actually get a KASAN
+> use-after-free splat like in the syzbot report.  But I think it's
+> possible with this bug; it would just take a more extraordinary race...)
+> 
+> 	BUG: unable to handle kernel NULL pointer dereference at 0000000000000058
+> 	PGD 0 P4D 0
+> 	Oops: 0000 [#1] SMP NOPTI
+> 	CPU: 9 PID: 258 Comm: syz_ipc Not tainted 4.16.0-05140-gf8cf2f16a7c95 #189
+> 	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
+> 	RIP: 0010:d_inode include/linux/dcache.h:519 [inline]
+> 	RIP: 0010:touch_atime+0x25/0xd0 fs/inode.c:1724
+> 	[...]
+> 	Call Trace:
+> 	 file_accessed include/linux/fs.h:2063 [inline]
+> 	 shmem_mmap+0x25/0x40 mm/shmem.c:2149
+> 	 call_mmap include/linux/fs.h:1789 [inline]
+> 	 shm_mmap+0x34/0x80 ipc/shm.c:465
+> 	 call_mmap include/linux/fs.h:1789 [inline]
+> 	 mmap_region+0x309/0x5b0 mm/mmap.c:1712
+> 	 do_mmap+0x294/0x4a0 mm/mmap.c:1483
+> 	 do_mmap_pgoff include/linux/mm.h:2235 [inline]
+> 	 SYSC_remap_file_pages mm/mmap.c:2853 [inline]
+> 	 SyS_remap_file_pages+0x232/0x310 mm/mmap.c:2769
+> 	 do_syscall_64+0x64/0x1a0 arch/x86/entry/common.c:287
+> 	 entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> 
+> Reported-by: syzbot+d11f321e7f1923157eac80aa990b446596f46439@syzkaller.appspotmail.com
+> Fixes: c8d78c1823f4 ("mm: replace remap_file_pages() syscall with emulation")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  ipc/shm.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/ipc/shm.c b/ipc/shm.c
+> index acefe44fefefa..c80c5691a9970 100644
+> --- a/ipc/shm.c
+> +++ b/ipc/shm.c
+> @@ -225,6 +225,12 @@ static int __shm_open(struct vm_area_struct *vma)
+>  	if (IS_ERR(shp))
+>  		return PTR_ERR(shp);
+>  
+> +	if (shp->shm_file != sfd->file) {
+> +		/* ID was reused */
+> +		shm_unlock(shp);
+> +		return -EINVAL;
+> +	}
+> +
+>  	shp->shm_atim = ktime_get_real_seconds();
+>  	ipc_update_pid(&shp->shm_lprid, task_tgid(current));
+>  	shp->shm_nattch++;
+> @@ -455,8 +461,9 @@ static int shm_mmap(struct file *file, struct vm_area_struct *vma)
+>  	int ret;
+>  
+>  	/*
+> -	 * In case of remap_file_pages() emulation, the file can represent
+> -	 * removed IPC ID: propogate shm_lock() error to caller.
+> +	 * In case of remap_file_pages() emulation, the file can represent an
+> +	 * IPC ID that was removed, and possibly even reused by another shm
+> +	 * segment already.  Propagate this case as an error to caller.
+>  	 */
+>  	ret = __shm_open(vma);
+>  	if (ret)
+> @@ -480,6 +487,7 @@ static int shm_release(struct inode *ino, struct file *file)
+>  	struct shm_file_data *sfd = shm_file_data(file);
+>  
+>  	put_ipc_ns(sfd->ns);
+> +	fput(sfd->file);
+>  	shm_file_data(file) = NULL;
+>  	kfree(sfd);
+>  	return 0;
+> @@ -1432,7 +1440,7 @@ long do_shmat(int shmid, char __user *shmaddr, int shmflg,
+>  	file->f_mapping = shp->shm_file->f_mapping;
+>  	sfd->id = shp->shm_perm.id;
+>  	sfd->ns = get_ipc_ns(ns);
+> -	sfd->file = shp->shm_file;
+> +	sfd->file = get_file(shp->shm_file);
+>  	sfd->vm_ops = NULL;
+>  
+>  	err = security_mmap_file(file, prot, flags);
 
-diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
-index 2f3f5c5..3fd7daf 100644
---- a/drivers/pci/dwc/Kconfig
-+++ b/drivers/pci/dwc/Kconfig
-@@ -7,8 +7,7 @@ config PCIE_DW
- 
- config PCIE_DW_HOST
-         bool
--	depends on PCI
--	depends on PCI_MSI_IRQ_DOMAIN
-+	depends on PCI && PCI_MSI_IRQ_DOMAIN
-         select PCIE_DW
- 
- config PCIE_DW_EP
-@@ -52,16 +51,42 @@ config PCI_DRA7XX_EP
- 
- config PCIE_DW_PLAT
- 	bool "Platform bus based DesignWare PCIe Controller"
--	depends on PCI
--	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIE_DW_HOST
--	---help---
--	 This selects the DesignWare PCIe controller support. Select this if
--	 you have a PCIe controller on Platform bus.
-+	help
-+	  There are two instances of PCIe controller in Designware IP.
-+	  This controller can work either as EP or RC. In order to enable
-+	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
-+	  order to enable device-specific features PCIE_DW_PLAT_EP must be
-+	  selected.
- 
--	 If you have a controller with this interface, say Y or M here.
-+config PCIE_DW_PLAT_HOST
-+	bool "Platform bus based DesignWare PCIe Controller - Host mode"
-+	depends on PCI && PCI_MSI_IRQ_DOMAIN
-+	select PCIE_DW_HOST
-+	select PCIE_DW_PLAT
-+	default y
-+	help
-+	  Enables support for the PCIe controller in the Designware IP to
-+	  work in host mode. There are two instances of PCIe controller in
-+	  Designware IP.
-+	  This controller can work either as EP or RC. In order to enable
-+	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
-+	  order to enable device-specific features PCI_DW_PLAT_EP must be
-+	  selected.
- 
--	 If unsure, say N.
-+config PCIE_DW_PLAT_EP
-+	bool "Platform bus based DesignWare PCIe Controller - Endpoint mode"
-+	depends on PCI && PCI_MSI_IRQ_DOMAIN
-+	depends on PCI_ENDPOINT
-+	select PCIE_DW_EP
-+	select PCIE_DW_PLAT
-+	help
-+	  Enables support for the PCIe controller in the Designware IP to
-+	  work in endpoint mode. There are two instances of PCIe controller
-+	  in Designware IP.
-+	  This controller can work either as EP or RC. In order to enable
-+	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
-+	  order to enable device-specific features PCI_DW_PLAT_EP must be
-+	  selected.
- 
- config PCI_EXYNOS
- 	bool "Samsung Exynos PCIe controller"
-diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-index f07678b..4ac135a 100644
---- a/drivers/pci/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/dwc/pcie-designware-ep.c
-@@ -15,8 +15,10 @@
- void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
- {
- 	struct pci_epc *epc = ep->epc;
-+	struct pci_epf *epf;
- 
--	pci_epc_linkup(epc);
-+	list_for_each_entry(epf, &epc->pci_epf, list)
-+		pci_epf_linkup(epf);
- }
- 
- static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar,
-diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
-index 5416aa8..5382a7a 100644
---- a/drivers/pci/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/dwc/pcie-designware-plat.c
-@@ -12,19 +12,29 @@
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-+#include <linux/of_device.h>
- #include <linux/of_gpio.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
- #include <linux/resource.h>
- #include <linux/signal.h>
- #include <linux/types.h>
-+#include <linux/regmap.h>
- 
- #include "pcie-designware.h"
- 
- struct dw_plat_pcie {
--	struct dw_pcie		*pci;
-+	struct dw_pcie			*pci;
-+	struct regmap			*regmap;
-+	enum dw_pcie_device_mode	mode;
- };
- 
-+struct dw_plat_pcie_of_data {
-+	enum dw_pcie_device_mode	mode;
-+};
-+
-+static const struct of_device_id dw_plat_pcie_of_match[];
-+
- static int dw_plat_pcie_host_init(struct pcie_port *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-@@ -42,9 +52,53 @@ static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
- 	.host_init = dw_plat_pcie_host_init,
- };
- 
--static int dw_plat_add_pcie_port(struct pcie_port *pp,
-+static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
-+{
-+	return 0;
-+}
-+
-+static const struct dw_pcie_ops dw_pcie_ops = {
-+	.start_link = dw_plat_pcie_establish_link,
-+};
-+
-+static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	enum pci_barno bar;
-+
-+	for (bar = BAR_0; bar <= BAR_5; bar++)
-+		dw_pcie_ep_reset_bar(pci, bar);
-+}
-+
-+static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-+				     enum pci_epc_irq_type type,
-+				     u8 interrupt_num)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+
-+	switch (type) {
-+	case PCI_EPC_IRQ_LEGACY:
-+		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
-+		return -EINVAL;
-+	case PCI_EPC_IRQ_MSI:
-+		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-+	default:
-+		dev_err(pci->dev, "UNKNOWN IRQ type\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static struct dw_pcie_ep_ops pcie_ep_ops = {
-+	.ep_init = dw_plat_pcie_ep_init,
-+	.raise_irq = dw_plat_pcie_ep_raise_irq,
-+};
-+
-+static int dw_plat_add_pcie_port(struct dw_plat_pcie *dw_plat_pcie,
- 				 struct platform_device *pdev)
- {
-+	struct dw_pcie *pci = dw_plat_pcie->pci;
-+	struct pcie_port *pp = &pci->pp;
- 	struct device *dev = &pdev->dev;
- 	int ret;
- 
-@@ -63,15 +117,44 @@ static int dw_plat_add_pcie_port(struct pcie_port *pp,
- 
- 	ret = dw_pcie_host_init(pp);
- 	if (ret) {
--		dev_err(dev, "failed to initialize host\n");
-+		dev_err(dev, "Failed to initialize host\n");
- 		return ret;
- 	}
- 
- 	return 0;
- }
- 
--static const struct dw_pcie_ops dw_pcie_ops = {
--};
-+static int dw_plat_add_pcie_ep(struct dw_plat_pcie *dw_plat_pcie,
-+			       struct platform_device *pdev)
-+{
-+	int ret;
-+	struct dw_pcie_ep *ep;
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	struct dw_pcie *pci = dw_plat_pcie->pci;
-+
-+	ep = &pci->ep;
-+	ep->ops = &pcie_ep_ops;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi2");
-+	pci->dbi_base2 = devm_ioremap(dev, res->start, resource_size(res));
-+	if (IS_ERR(pci->dbi_base2))
-+		return PTR_ERR(pci->dbi_base2);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
-+	if (!res)
-+		return -EINVAL;
-+
-+	ep->phys_base = res->start;
-+	ep->addr_size = resource_size(res);
-+
-+	ret = dw_pcie_ep_init(ep);
-+	if (ret) {
-+		dev_err(dev, "Failed to initialize endpoint\n");
-+		return ret;
-+	}
-+	return 0;
-+}
- 
- static int dw_plat_pcie_probe(struct platform_device *pdev)
- {
-@@ -80,6 +163,16 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
- 	struct dw_pcie *pci;
- 	struct resource *res;  /* Resource from DT */
- 	int ret;
-+	const struct of_device_id *match;
-+	const struct dw_plat_pcie_of_data *data;
-+	enum dw_pcie_device_mode mode;
-+
-+	match = of_match_device(dw_plat_pcie_of_match, dev);
-+	if (!match)
-+		return -EINVAL;
-+
-+	data = (struct dw_plat_pcie_of_data *)match->data;
-+	mode = (enum dw_pcie_device_mode)data->mode;
- 
- 	dw_plat_pcie = devm_kzalloc(dev, sizeof(*dw_plat_pcie), GFP_KERNEL);
- 	if (!dw_plat_pcie)
-@@ -93,23 +186,63 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
- 	pci->ops = &dw_pcie_ops;
- 
- 	dw_plat_pcie->pci = pci;
-+	dw_plat_pcie->mode = mode;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-+	if (!res)
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pci->dbi_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(pci->dbi_base))
- 		return PTR_ERR(pci->dbi_base);
- 
- 	platform_set_drvdata(pdev, dw_plat_pcie);
- 
--	ret = dw_plat_add_pcie_port(&pci->pp, pdev);
--	if (ret < 0)
--		return ret;
-+	switch (dw_plat_pcie->mode) {
-+	case DW_PCIE_RC_TYPE:
-+		if (!IS_ENABLED(CONFIG_PCIE_DW_PLAT_HOST))
-+			return -ENODEV;
-+
-+		ret = dw_plat_add_pcie_port(dw_plat_pcie, pdev);
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	case DW_PCIE_EP_TYPE:
-+		if (!IS_ENABLED(CONFIG_PCIE_DW_PLAT_EP))
-+			return -ENODEV;
-+
-+		ret = dw_plat_add_pcie_ep(dw_plat_pcie, pdev);
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	default:
-+		dev_err(dev, "INVALID device type %d\n", dw_plat_pcie->mode);
-+	}
- 
- 	return 0;
- }
- 
-+static const struct dw_plat_pcie_of_data dw_plat_pcie_rc_of_data = {
-+	.mode = DW_PCIE_RC_TYPE,
-+};
-+
-+static const struct dw_plat_pcie_of_data dw_plat_pcie_ep_of_data = {
-+	.mode = DW_PCIE_EP_TYPE,
-+};
-+
- static const struct of_device_id dw_plat_pcie_of_match[] = {
--	{ .compatible = "snps,dw-pcie", },
-+	{
-+		.compatible = "snps,dw-pcie",
-+		.data = &dw_plat_pcie_rc_of_data,
-+	},
-+	{
-+		.compatible = "snps,dw-pcie-rc",
-+		.data = &dw_plat_pcie_rc_of_data,
-+	},
-+	{
-+		.compatible = "snps,dw-pcie-ep",
-+		.data = &dw_plat_pcie_ep_of_data,
-+	},
- 	{},
- };
- 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 7cef851..45d1c63 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -459,10 +459,19 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 	return 0;
- }
- 
-+static const struct pci_epf_test_data data_cfg2 = {
-+	.test_reg_bar = BAR_0,
-+	.linkup_notifier = false
-+};
-+
- static const struct pci_epf_device_id pci_epf_test_ids[] = {
- 	{
- 		.name = "pci_epf_test",
- 	},
-+	{
-+		.name = "pci_epf_test_cfg2",
-+		.driver_data = (kernel_ulong_t)&data_cfg2,
-+	},
- 	{},
- };
- 
+Hm. Why do we need sfd->file refcounting now? It's not obvious to me.
+
+Looks like it's either a separate bug or an unneeded change.
+
 -- 
-2.7.4
+ Kirill A. Shutemov
