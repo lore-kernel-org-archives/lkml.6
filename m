@@ -1,112 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752228AbeDIOIi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 10:08:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34752 "EHLO mail.kernel.org"
+        id S1752296AbeDIOIx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 10:08:53 -0400
+Received: from muru.com ([72.249.23.125]:35912 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751543AbeDIOIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 10:08:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAE1320779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Mon, 9 Apr 2018 23:08:30 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: oleg@redhat.com, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
-        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com
-Subject: Re: [PATCH v2 9/9] perf probe: Support SDT markers having reference
- counter (semaphore)
-Message-Id: <20180409230830.48118d3c32f7ec448936ed8a@kernel.org>
-In-Reply-To: <643a8fb2-fb96-8dbe-9f36-2540bd8a1de5@linux.vnet.ibm.com>
-References: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
-        <20180404083110.18647-10-ravi.bangoria@linux.vnet.ibm.com>
-        <20180409162856.df4c32b840eb5f2ef8c028f1@kernel.org>
-        <643a8fb2-fb96-8dbe-9f36-2540bd8a1de5@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1751970AbeDIOIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 10:08:51 -0400
+Date: Mon, 9 Apr 2018 07:08:47 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Dan Williams <dcbw@redhat.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Merlijn Wajer <merlijn@wizzup.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: simultaneous voice/data works (was Re: call/normal switch was
+ Re: omap4-droid4: voice call support was)
+Message-ID: <20180409140847.GP5700@atomide.com>
+References: <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
+ <20180402155754.GD5700@atomide.com>
+ <20180403150444.GE5700@atomide.com>
+ <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
+ <20180403194419.GG5700@atomide.com>
+ <20180406120423.GA18691@amd>
+ <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
+ <20180407081000.GB7818@amd>
+ <20180407122233.GA11302@amd>
+ <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Apr 2018 13:59:16 +0530
-Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
-
-> Hi Masami,
+* Dan Williams <dcbw@redhat.com> [180408 02:46]:
+> On Sat, 2018-04-07 at 14:22 +0200, Pavel Machek wrote:
+> > I tried --location-enable-gps-unmanaged , but that did not work for
+> > me.
 > 
-> On 04/09/2018 12:58 PM, Masami Hiramatsu wrote:
-> > Hi Ravi,
-> >
-> > On Wed,  4 Apr 2018 14:01:10 +0530
-> > Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
-> >
-> >> @@ -2054,15 +2060,21 @@ char *synthesize_probe_trace_command(struct probe_trace_event *tev)
-> >>  	}
-> >>  
-> >>  	/* Use the tp->address for uprobes */
-> >> -	if (tev->uprobes)
-> >> +	if (tev->uprobes) {
-> >>  		err = strbuf_addf(&buf, "%s:0x%lx", tp->module, tp->address);
-> >> -	else if (!strncmp(tp->symbol, "0x", 2))
-> >> +		if (uprobe_ref_ctr_is_supported() &&
-> >> +		    tp->ref_ctr_offset &&
-> >> +		    err >= 0)
-> >> +			err = strbuf_addf(&buf, "(0x%lx)", tp->ref_ctr_offset);
-> > If the kernel doesn't support uprobe_ref_ctr but the event requires
-> > to increment uprobe_ref_ctr, I think we should (at least) warn user here.
+> That requires a TTY that would spit out the GPS data; in this mode MM
+> only sends the start/stop commands, and what comes out the GPS TTY is
+> undefined (at least by MM).
 > 
-> pr_debug("A semaphore is associated with %s:%s and seems your kernel doesn't support it.\n"
->          tev->group, tev->event);
-> 
-> Looks good?
+> So unless you know that one of the 6600's TTYs does GPS and in what
+> format it does GPS, then no.
 
-I think it should be pr_warning() and return NULL, since user may not be able to
-trace the event even if it is enabled.
+There should be a NMEA port within the unknown port range ttyUSB[123].
 
-> 
-> >> @@ -776,14 +784,21 @@ static char *synthesize_sdt_probe_command(struct sdt_note *note,
-> >>  {
-> >>  	struct strbuf buf;
-> >>  	char *ret = NULL, **args;
-> >> -	int i, args_count;
-> >> +	int i, args_count, err;
-> >> +	unsigned long long ref_ctr_offset;
-> >>  
-> >>  	if (strbuf_init(&buf, 32) < 0)
-> >>  		return NULL;
-> >>  
-> >> -	if (strbuf_addf(&buf, "p:%s/%s %s:0x%llx",
-> >> -				sdtgrp, note->name, pathname,
-> >> -				sdt_note__get_addr(note)) < 0)
-> >> +	err = strbuf_addf(&buf, "p:%s/%s %s:0x%llx",
-> >> +			sdtgrp, note->name, pathname,
-> >> +			sdt_note__get_addr(note));
-> >> +
-> >> +	ref_ctr_offset = sdt_note__get_ref_ctr_offset(note);
-> >> +	if (uprobe_ref_ctr_is_supported() && ref_ctr_offset && err >= 0)
-> >> +		err = strbuf_addf(&buf, "(0x%llx)", ref_ctr_offset);
-> > We don't have to care about uprobe_ref_ctr support here, because
-> > this information will be just cached, not directly written to
-> > uprobe_events.
-> 
-> Sure, will remove the check.
+Is there some easy way to enable --location-enable-gps-unmanaged for
+testing so I can check if GPS gets enabled for one of the ports?
 
-Thanks!
+Regards,
 
-> 
-> Thanks for the review :).
-> Ravi
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Tony
