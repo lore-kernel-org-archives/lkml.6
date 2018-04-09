@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3643807-1523233998-2-6178022112687134455
+X-Cyrus-Session-Id: sloti22d1t05-3607359-1523233997-2-9668860713146281654
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523233997; b=FK1v6mx+M1JWZ8PxdqsZiOEfCZtHBV1Rv7FUtfDzqG+YoKnVjJ
-    pnFMcvEVpRPdy6NwljA7LtfU9Yg2bZMkh2fPA9GZUeRijdu07T4ZGFi3kmf6MLc0
-    abG4/kPuELWN3h66zNQ6/4HxBUoz+tpBH8/cbqse240zwDC2JxnvUlTp3jW1PXRo
-    qDeROWl6QsV8wI7DC/rCV3EJto7lA/lvEmRi8An85oadgx1wvJ0f+IRmBh3PFhRe
-    AYevt11j9I/T2D4BFOL/A06Hr+Ob7p2MzVAgdx5fQykGipiUByaTN+ygQ7mmGEe3
-    eGSxUaCLWxQ285OQq/HPWyQRB1OCdQyz0n9Q==
+    1523233997; b=nyYXsSd1LT0By2TtwQquw9IQ6fIxB+GThry28gO11XqSLteR9I
+    Oh5Ou2HRWk5VLlua24sDU758F8n7AogBNvmrvlpwVmqDMrnivbevN7BQZ6YEHbry
+    m1fpGeKIHVN+QrbZ2JkK1iLfbuahRJiC5FSNVjtKT+d9/yViNLqeccQ8vqygAyG2
+    03yeQgXrAYRKwXQOC74Vk6NQ5pNXtFpC70HJyH5qnTqq6dmUdOmfxN2n8UEyi7NX
+    t1xu66z8NVWkFmBIh+OgrgVz1N5ZCCVeKYB+R5tJVicXy4/xLcuLV/OJrntnEoxZ
+    q4O9wpG5NXV9jsvaNOp9WWcG9Z6xQXivbMMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523233997; bh=K97QJA2rAc
-    aAd9Hgzn3upJnXA77lrqzCgTa1jF5HnHI=; b=CYFY5qufY62gxQi0xDehH1Pl55
-    BFDfe2H4RkEtgn7b6rTnyUreN2vsHSycrQEtqfgQjtdK38pRr6712WQMfB13gxBA
-    WmTemhSrmqqjUoiDV46iHiDrK8mH5oG0hPRLXOyoQ7X689wgt0OAw4TA5jqMls6d
-    Lh3UXew2/SNFgxiydh+hShhZARQ3s3LjdMI0lstVhKylZtugVGl5UHku+9iCyGpd
-    ml4cE54n43U4+KFlwZrw/4c8NJaVtbGim+G05S9oKigCFVDjcOQ37FVLtsUspDMw
-    xgdFbo2FZJNNqNJtAVCR1SZa6ILJkLFTWS9A1lk1ina7UZlGP1iIPVqaIBVQ==
+    :mime-version:sender:list-id; s=fm2; t=1523233997; bh=3iHcj7Pnti
+    r+pNLN3cPsM6LmPT9NPpo6GNW3HTG21tY=; b=CA2mUe2IRUkVJTEOeSyw/EEPre
+    afRRU4GJnEefiR/CxIKjRa/DYf8yWztLKNHbcEt9GYQCjGdY5QVZaZqgyHxfr8Lr
+    xJRE7A+Df2oqZHPCNG4/gWppWBv6W6yRkSUVQigoqUMo+v+Utuw+zO/MtvwfSGtf
+    EtBHwFlmtHfR1MykTCb+n0KpseFkgSWpsJnfm1wGRI3BR3yQ1XAiho91CjEEH3VX
+    LkGG8mc71syOlYHiXnJ8oRT/Vj2UWKFH+2yC8WSTeVW4kVz8ksT1n1COjbVOasrT
+    bFB6Ji5kNSDu/GFMVWRaPHhMxel75ovXGkXbnb3zCHHhonlr9mtJXeMiH9jA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MhM2fwTb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=AzNzFroF x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-vs=clean score=-100 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MhM2fwTb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=AzNzFroF x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -52,36 +52,37 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 X-CM-Envelope: MS4wfPymComehGrmVeHTw1m1dEYYGtmMeeTVH9OBQLN2pJf83LLJkf0OmoKftoH1szMX7hprPG+Emnb6Wyd2dJHKtIn/6dx8M/+1I6c9Lm34ymB+d+Nhounp
-    STQiSu940dQ7MK2TkMWPuYkvlm3bNTEjy0QKKXIdwjqPxf0z1W29Grb7O0kQloQTFXSIJtTEsf5sppT6b8fMgOmOMHAFPq1SPJZWZcrf434NfBZBjE/fkc+z
+    STQiSu940dQ7MK2TkMWPuYkvlm3bNTEjy0QKKXIdwjqPxf0z1W29Grb78t0YhYVGkE9OCYBKOard3Siqrmplrmff8E6gy2vAklF7cfiDZMMoGaR0+3rTz6Km
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=RW_g7ExWAAAA:8 a=VZJtwKKvAAAA:8 a=yMhMjlubAAAA:8
-    a=1C7F8m05DB2dRtyQP74A:9 a=wPNLvfGTeEIA:10 a=UQnFI0IN6KXBP4Chuhxn:22
-    a=vzdIw8kzLcqZOxdJCU6L:22
+    a=Lf-vpJhqX20A:10 a=mK_AVkanAAAA:8 a=wLoXeaFTAAAA:8 a=IpJZQVW2AAAA:8
+    a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=AJ2rPE6bBxiu49gAXV0A:9 a=wPNLvfGTeEIA:10
+    a=3gWm3jAn84ENXaBijsEo:22 a=z7qd7FD03Fuld11IDmZ3:22 a=IawgGOuG5U0WyFbmm1f5:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932268AbeDIAdK (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:33:10 -0400
-Received: from mail-sn1nam01on0094.outbound.protection.outlook.com ([104.47.32.94]:49836
+        id S932188AbeDIAdC (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:33:02 -0400
+Received: from mail-sn1nam01on0097.outbound.protection.outlook.com ([104.47.32.97]:22599
         "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932234AbeDIAdH (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:33:07 -0400
+        id S932160AbeDIAdA (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:33:00 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Jan Chochol <jan@chochol.info>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
+CC: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 229/293] nfs: Do not convert
- nfs_idmap_cache_timeout to jiffies
-Thread-Topic: [PATCH AUTOSEL for 4.9 229/293] nfs: Do not convert
- nfs_idmap_cache_timeout to jiffies
-Thread-Index: AQHTz5lRFvaMXW2pmUuH6Z1T7OmuMw==
-Date: Mon, 9 Apr 2018 00:25:52 +0000
-Message-ID: <20180409002239.163177-229-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 227/293] net: stmmac: dwmac-meson8b: fix
+ setting the RGMII TX clock on Meson8b
+Thread-Topic: [PATCH AUTOSEL for 4.9 227/293] net: stmmac: dwmac-meson8b: fix
+ setting the RGMII TX clock on Meson8b
+Thread-Index: AQHTz5lQDh0SZu+owEuTmwD9TPCIDg==
+Date: Mon, 9 Apr 2018 00:25:51 +0000
+Message-ID: <20180409002239.163177-227-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,27 +91,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0902;7:uIxRjGJlY+dtwal7IwJinG0nTdi/p56hsPEe4e0l165mVjxJY84V/LKhcyCdJj/GbVcb7Kj79wi71x++CyFa9TDnAGnLZb7xaUYswPgoxjq07SdHgFouacrEDxZYCbC5OiprpvEW8+JVsJpNcRzcNcFc0kq0Xzo24EcA9AdQsM8h3p2Kesj6Ept8ZT/eP2ZdkXkuUr9ga0D5vihvcrNDKbo6T4o9e6272v60IPoaRc76m7S22uz3si5Q89gd9G2x;20:U699/znQ0Eiv6RTv2juIX3FgQDmB09x+Hxlyi7Xg3JILMyHov8PX5cXuzW+S+AmJarDg2N46Azkr5BUtFsOhU1fDdDpVZ8EJMORFdYvb1zHZ2luAKSbsZJxexnYctyah3xErzDiDm6IBxnTNb275MQ/JTe9A75Jk94DAe52CBWY=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0902;7:ruFthmnkOiqBVIxOVNRQII6h5pN9bNoXEOHegw8S5DHkTIAqHrpqV2MD85gtWqCqxMY8HRmipR9gyHKPNS9VkqLORSE4eXKr6uPMn5EXV6R8dNDkIA1j7k20BdrNnVsZH35o2cu01WqcfwNYG46r6FfC25+JMg25Bp3hVMKNSWyfv8WUw0xxCfWaQSBHVoxqY4RFpCY3Iwv4GHP76EeCGQYJG0/UdaAxnR1nOB2Ps2FtWq+9KiFZrXGV+xmDM536;20:RFVJDyta7oWTszy+COjzxaUUE9PBy52EAseJAxZXQv9nsPiII7gfrOhrQ21hRbGX/1RM2poZHYtTTEKUZ7j6gMzIvY7MeKvq7h8OWwVn6dAINDlXuzKRf5VMZ7Dut3p4YzGm42KXj9hTxehL3STWDtxu5rps+qDXDU3DV25xFSI=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 21987191-12b1-4414-307f-08d59db17110
+X-MS-Office365-Filtering-Correlation-Id: 031d1eec-9d4c-4c2c-999d-08d59db17077
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0902;
 x-ms-traffictypediagnostic: DM5PR2101MB0902:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0902AF943DA0C381C6FA0948FBBF0@DM5PR2101MB0902.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB090221E0FAFAB177A8BF3228FBBF0@DM5PR2101MB0902.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(8415204561270)(17755550239193);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0902;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0902;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(39860400002)(39380400002)(346002)(199004)(189003)(5660300001)(478600001)(86612001)(3846002)(6116002)(106356001)(25786009)(6486002)(72206003)(10290500003)(8936002)(6436002)(76176011)(2616005)(6506007)(2900100001)(97736004)(26005)(486006)(10090500001)(36756003)(81166006)(8676002)(81156014)(59450400001)(102836004)(2906002)(99286004)(11346002)(476003)(3660700001)(66066001)(6512007)(86362001)(53936002)(105586002)(186003)(5250100002)(14454004)(22452003)(6666003)(2501003)(446003)(7736002)(316002)(1076002)(110136005)(3280700002)(68736007)(54906003)(107886003)(4326008)(305945005)(22906009)(217873001)(6606295002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0902;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: liNNY563FFCjn5iKknURqPmNRx9YQiAnWEQa2Jc3LbSI810Yt/udvJgWOsRV9Huae+DeOGFdrhyl2geLr1udCVc6LNjZNimw3yRUafSkGOPB4XK0ymh+HGxODkxCVEXCEIb1tA5zbUiRpiYhyE4tGVKSFEHQ1mgPZ8bRXYiBmrTFGVy9zFrgOkTICrthx7jUyrveyWPWRyyfSG9j24U8N2TIvOBULXYdRVCUpPawZos8zQC29pLWSjcMOqjAp+w8Rbr/B/enN8byKI9K1HmsMhNtQ5lvWtqW/nWt9Ywm/SljM3t35wkCVRfDkFnhrEDpy1lYd/arEZ2rD4z7gVb3bTJWrSjsif3Q/PunqoLhvBkEJtrLfkPontoTZayfyaaCPtHnvn7wqIGw3TCWSxbKho+/nm3XIiX4GlZs9UyR0YM=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(39860400002)(39380400002)(346002)(199004)(189003)(5660300001)(478600001)(86612001)(3846002)(6116002)(106356001)(25786009)(6486002)(72206003)(10290500003)(8936002)(6436002)(76176011)(2616005)(6506007)(2900100001)(97736004)(26005)(486006)(10090500001)(36756003)(81166006)(8676002)(81156014)(59450400001)(102836004)(2906002)(99286004)(11346002)(476003)(3660700001)(66066001)(6512007)(86362001)(53936002)(105586002)(186003)(5250100002)(14454004)(22452003)(6666003)(2501003)(446003)(7736002)(316002)(1076002)(110136005)(3280700002)(68736007)(54906003)(107886003)(4326008)(305945005)(22906009)(32563001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0902;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: TbWsZONoBz+JcidapraikU2hsXuhyEI5iKoBlNMQW8ERXWcs95Da+2LJ0W/6sixHueD6jCsIYmX2FMzCPACAwymxVDjbIxG++6yYNn8otSrSzvDReYE53eCMujKZzOIekMDO5KhAOUMDXcIHMVXq1oDfIX82Oc/2hqFx0AvXCHSauuWwfvlGeV/KqrkpYRXo9qPepkHp+qOwWEBkj+ftqUWKDgNPgc7w1bHXaPIhwrlP8i+ZIWtHApbk58lWthkAycNqW4t2oyAbMfZqGlUcOS35VXO3up+uckaavy9m1fYGhTrAFRh/1HxM8GuPlx7E1tzFSy7qMRgN4dec4hHNLaDMT59RKTkm0g0vhmDLlbZUeauJd+2O/rk+aGqIm/ZIae56mPm1vIwQlnVbmBR9S1/zuuKMl+DviDnyW5eTY4E=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21987191-12b1-4414-307f-08d59db17110
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:25:52.6129
+X-MS-Exchange-CrossTenant-Network-Message-Id: 031d1eec-9d4c-4c2c-999d-08d59db17077
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:25:51.2067
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -121,40 +122,65 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jan Chochol <jan@chochol.info>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit cbebc6ef4fc830f4040d4140bf53484812d5d5d9 ]
+[ Upstream commit 433c6cab9d298687c097f6ee82e49157044dc7c6 ]
 
-Since commit 57e62324e469 ("NFS: Store the legacy idmapper result in the
-keyring") nfs_idmap_cache_timeout changed units from jiffies to seconds.
-Unfortunately sysctl interface was not updated accordingly.
+Meson8b only supports MPLL2 as clock input. The rate of the MPLL2 clock
+set by Odroid-C1's u-boot is close to (but not exactly) 500MHz. The
+exact rate is 500002394Hz, which is calculated in
+drivers/clk/meson/clk-mpll.c using the following formula:
+DIV_ROUND_UP_ULL((u64)parent_rate * SDM_DEN, (SDM_DEN * n2) + sdm)
+Odroid-C1's u-boot configures MPLL2 with the following values:
+- SDM_DEN =3D 16384
+- SDM =3D 1638
+- N2 =3D 5
 
-As a effect updating /proc/sys/fs/nfs/idmap_cache_timeout with some
-value will incorrectly multiply this value by HZ.
-Also reading /proc/sys/fs/nfs/idmap_cache_timeout will show real value
-divided by HZ.
+The 250MHz clock (m250_div) inside dwmac-meson8b driver is derived from
+the MPLL2 clock. Due to MPLL2 running slightly faster than 500MHz the
+common clock framework chooses a divider which is too big to generate
+the 250MHz clock (a divider of 2 would be needed, but this is rounded up
+to a divider of 3). This breaks the RTL8211F RGMII PHY on Odroid-C1
+because it requires a (close to) 125MHz RGMII TX clock (on Gbit speeds,
+the IP block internally divides that down to 25MHz on 100Mbit/s
+connections and 2.5MHz on 10Mbit/s connections - we don't need any
+special configuration for that).
 
-Fixes: 57e62324e469 ("NFS: Store the legacy idmapper result in the keyring"=
-)
-Signed-off-by: Jan Chochol <jan@chochol.info>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Round the divider to the closest value to prevent this issue on Meson8b.
+This means we'll now end up with a clock rate for the RGMII TX clock of
+125001197Hz (=3D 125MHz plus 1197Hz), which is close-enough to 125MHz.
+This has no effect on the Meson GX SoCs since there fclk_div2 is used as
+input clock, which has a rate of 1000MHz (and thus is divisible cleanly
+to 250MHz and 125MHz).
+
+Fixes: 566e8251625304 ("net: stmmac: add a glue driver for the Amlogic Meso=
+n 8b / GXBB DWMAC")
+Reported-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/nfs/nfs4sysctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/nfs/nfs4sysctl.c b/fs/nfs/nfs4sysctl.c
-index 8693d77c45ea..76241aa8d853 100644
---- a/fs/nfs/nfs4sysctl.c
-+++ b/fs/nfs/nfs4sysctl.c
-@@ -31,7 +31,7 @@ static struct ctl_table nfs4_cb_sysctls[] =3D {
- 		.data =3D &nfs_idmap_cache_timeout,
- 		.maxlen =3D sizeof(int),
- 		.mode =3D 0644,
--		.proc_handler =3D proc_dointvec_jiffies,
-+		.proc_handler =3D proc_dointvec,
- 	},
- 	{ }
- };
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/=
+net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+index ffaed1f35efe..923033867a4d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+@@ -146,7 +146,9 @@ static int meson8b_init_clk(struct meson8b_dwmac *dwmac=
+)
+ 	dwmac->m250_div.shift =3D PRG_ETH0_CLK_M250_DIV_SHIFT;
+ 	dwmac->m250_div.width =3D PRG_ETH0_CLK_M250_DIV_WIDTH;
+ 	dwmac->m250_div.hw.init =3D &init;
+-	dwmac->m250_div.flags =3D CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO;
++	dwmac->m250_div.flags =3D CLK_DIVIDER_ONE_BASED |
++				CLK_DIVIDER_ALLOW_ZERO |
++				CLK_DIVIDER_ROUND_CLOSEST;
+=20
+ 	dwmac->m250_div_clk =3D devm_clk_register(dev, &dwmac->m250_div.hw);
+ 	if (WARN_ON(IS_ERR(dwmac->m250_div_clk)))
 --=20
 2.15.1
