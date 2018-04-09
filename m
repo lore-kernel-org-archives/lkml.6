@@ -1,105 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753610AbeDISRO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 14:17:14 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:38122 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752576AbeDISRN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 14:17:13 -0400
-X-Google-Smtp-Source: AIpwx4/TNbmu+D6FAf60h/Ji/I8a/tmoTgqB8eSG03Cg4ruENyx12iJqnFbeXXA3M5LT1r98ah9BFoekzY/JJEcrung=
+        id S1753740AbeDISRk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 14:17:40 -0400
+Received: from mga12.intel.com ([192.55.52.136]:4635 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751778AbeDISRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 14:17:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,427,1517904000";
+   d="scan'208";a="32897988"
+Subject: Re: [PATCH 00/11] [v5] Use global pages with PTI
+To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org
+References: <20180406205501.24A1A4E7@viggo.jf.intel.com>
+ <c96373d0-c16a-4463-147c-8624ad90af61@amd.com>
+Cc: linux-mm@kvack.org, aarcange@redhat.com, luto@kernel.org,
+        torvalds@linux-foundation.org, keescook@google.com, hughd@google.com,
+        jgross@suse.com, x86@kernel.org, namit@vmware.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <b9802f89-93b3-b535-742c-f84e9f5be832@linux.intel.com>
+Date: Mon, 9 Apr 2018 11:17:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLSbX-qYx2xWYrsPb-tUFcEhYG86MkhtJ3zMirBHtmurg@mail.gmail.com>
-References: <alpine.LFD.2.21.1804061125390.1819@schleppi> <CAGXu5jKTtU3fvqP-ygV51WcOAmTkm=y5fysKNv+k0crhJACtVg@mail.gmail.com>
- <alpine.LFD.2.21.1804091809310.1698@schleppi> <CA+55aFw1MoQ=7=U6QCGXAAiCniMKy8_igxgc8sMLykSRcDk-0g@mail.gmail.com>
- <CA+55aFy1jJPX2fu7ce2Z7hxn49RaSghtnziwsyUU1Em5WEH2yw@mail.gmail.com> <CAGXu5jLSbX-qYx2xWYrsPb-tUFcEhYG86MkhtJ3zMirBHtmurg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 9 Apr 2018 11:17:11 -0700
-X-Google-Sender-Auth: 8wMahn2QzubulVYDY24lbbY_3Ms
-Message-ID: <CA+55aFwHOTfcGcptyNhFyS_sO6RXrRhPedzXqKHRfrY05Xf1VQ@mail.gmail.com>
-Subject: Re: [bisected] 3c8ba0d61d04ced9f8d9ff93977995a9e4e96e91 oopses on s390
-To: Kees Cook <keescook@chromium.org>
-Cc: Sebastian Ott <sebott@linux.ibm.com>,
-        Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c96373d0-c16a-4463-147c-8624ad90af61@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 9, 2018 at 11:00 AM, Kees Cook <keescook@chromium.org> wrote:
->
-> Can we update the comment near the top to explain why we need
-> __UNIQUE_ID() since we've now rediscovered why it was originally
-> there?
+On 04/09/2018 11:04 AM, Tom Lendacky wrote:
+> On 4/6/2018 3:55 PM, Dave Hansen wrote:
+>> Changes from v4
+>>  * Fix compile error reported by Tom Lendacky
+> This built with CONFIG_RANDOMIZE_BASE=y, but failed to boot successfully.
+> I think you're missing the initialization of __default_kernel_pte_mask in
+> kaslr.c.
 
-Too late, since it's already committed in my tree and going through
-the build test paces.
-
-But I really hope somebody revisits __UNIQUE_ID, and maybe they can
-then add a comment to the users too.
-
-It looks like gcc needs at least version 4.3 to have a working
-__COUNTER__ implementation. What a coincidence - we don't really
-support anything older now anyway.
-
-And similarly for clang - the only versions that didn't have it are
-not able to build the kernel anyway.
-
-So we should remove any version conditionals, and we should remove the
-known-broken generic fallback that uses __LINE__ instead of
-__COUNTER__.
-
-And once you do that, the "prefix" is actually pointlessm and we could
-drop it to make __UNIQUE_ID() easier to use.
-
-The *REAL* problem, however, is that __UNIQUE_ID is such a pain to use
-in general. You basically have two choices:
-
- - use it as a single-declaration throwaway variable name that is
-never actually used
-
- - use it only in a wrapper macro that then passes it off as an
-argument to another macro that uses it several times
-
-That "throwaway" use sounds pointless, but it's actually the *common*
-use we have for this thing outside of this min/max case. It's used to
-shut up the compiler about other unused variables, where people do
-things like
-
-   static __unused__ __UNIQUE_ID(xyz) = .. mark other variable as used here ..;
-
-and I think the reason it's common is that it's the only *easy* use of
-that unique-name-generator macro. Having to pass it off to a second
-macro to use as a variable name makes it cumbersome to use for most
-normal macro cases.
-
-It would be nice to have the equivalent of __COUNTER__ that just
-expanded not to a continually increasing number, but expanded to a
-number that expands for each macro expansion.
-
-Then you could do things like
-
-    int UNIQUE(a) = (a);
-
-to generate a variable name that was unique within a particular macro
-expansion, and then actually _use_ UNIQUE(a) in the same macro
-expansion to refer to it without having to pass it off as a name to
-another macro that does the declaration and use.
-
-You can't use __UNIQUE_ID() for that, because every new __UNIQUE_ID(a)
-will give _another_ unique ID.
-
-(And you *could* use the __LINE__ based one for that, but then you'd
-get the whole "nasty shadowing" problem if we have nested macros
-again).
-
-Ugh. We have no wonderful model for unique names. Which is why we
-obviously just use the "add underscores until it's unique" and the get
-it wrong with nesting.
-
-                Linus
+This should be simple to fix (just add a -1 instead of 0), but let me
+double-check and actually boot the fix.
