@@ -1,86 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751931AbeDIKq6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 06:46:58 -0400
-Received: from foss.arm.com ([217.140.101.70]:54342 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751744AbeDIKqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 06:46:53 -0400
-Date: Mon, 9 Apr 2018 11:47:07 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        peterz@infradead.org, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-        catalin.marinas@arm.com
-Subject: Re: [PATCH 10/10] locking/qspinlock: Elide back-to-back RELEASE
- operations with smp_wmb()
-Message-ID: <20180409104707.GB23134@arm.com>
-References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
- <1522947547-24081-11-git-send-email-will.deacon@arm.com>
- <20180407054711.rldyfcmni2wtblyu@tardis>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180407054711.rldyfcmni2wtblyu@tardis>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1751991AbeDIKrQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 06:47:16 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44233 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751727AbeDIKrO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 06:47:14 -0400
+X-Google-Smtp-Source: AIpwx482wtw7W3UpWpyyiwJQGBCBd75Ob0PP5a0bRYWiUFI8g5J9Ntz1zKcSXtL3RkRaklC+TVC4IQ==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, pradeep.d.tewani@intel.com,
+        subhransu.s.prusty@intel.com, dharageswari.r@intel.com
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] sound: soc: intel: bxt_rt298: Replace GFP_ATOMIC with GFP_KERNEL in broxton_audio_probe
+Date: Mon,  9 Apr 2018 18:47:07 +0800
+Message-Id: <1523270827-22735-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boqun,
+broxton_audio_probe() is never called in atomic context.
+This function is only set as ".probe" in "struct platform_driver".
 
-On Sat, Apr 07, 2018 at 01:47:11PM +0800, Boqun Feng wrote:
-> On Thu, Apr 05, 2018 at 05:59:07PM +0100, Will Deacon wrote:
-> > @@ -340,12 +341,17 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
-> >  		goto release;
-> >  
-> >  	/*
-> > +	 * Ensure that the initialisation of @node is complete before we
-> > +	 * publish the updated tail and potentially link @node into the
-> 
-> I think it might be better if we mention exactly where we "publish the
-> updated tail" and "link @node", how about:
-> 
-> 	* publish the update tail via xchg_tail() and potentially link
-> 	* @node into the waitqueue via WRITE_ONCE(->next,..) below.
-> 
-> and also add comments below like:
-> 
-> > +	 * waitqueue.
-> > +	 */
-> > +	smp_wmb();
-> > +
-> > +	/*
-> >  	 * We have already touched the queueing cacheline; don't bother with
-> >  	 * pending stuff.
-> >  	 *
-> >  	 * p,*,* -> n,*,*
-> > -	 *
-> > -	 * RELEASE, such that the stores to @node must be complete.
-> 
-> 	* publish the updated tail
-> 
-> >  	 */
-> >  	old = xchg_tail(lock, tail);
-> >  	next = NULL;
-> > @@ -356,15 +362,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
-> >  	 */
-> >  	if (old & _Q_TAIL_MASK) {
-> >  		prev = decode_tail(old);
-> > -
-> > -		/*
-> > -		 * We must ensure that the stores to @node are observed before
-> > -		 * the write to prev->next. The address dependency from
-> > -		 * xchg_tail is not sufficient to ensure this because the read
-> > -		 * component of xchg_tail is unordered with respect to the
-> > -		 * initialisation of @node.
-> > -		 */
-> > -		smp_store_release(&prev->next, node);
-> 
-> 		/* Eventually link @node to the wait queue */
-> 	
-> Thoughts?
+Despite never getting called from atomic context,
+broxton_audio_probe() calls devm_kzalloc() with GFP_ATOMIC,
+which waits busily for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+to avoid busy waiting and improve the possibility of sucessful allocation.
 
-I'll make some changes along these lines for v2. Thanks!
+This is found by a static analysis tool named DCNS written by myself.
 
-Will
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ sound/soc/intel/boards/bxt_rt298.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/intel/boards/bxt_rt298.c b/sound/soc/intel/boards/bxt_rt298.c
+index 7843104..8257830 100644
+--- a/sound/soc/intel/boards/bxt_rt298.c
++++ b/sound/soc/intel/boards/bxt_rt298.c
+@@ -578,7 +578,7 @@ static int broxton_audio_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
++	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 
+-- 
+1.9.1
