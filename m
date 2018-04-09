@@ -1,49 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752024AbeDIK63 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 06:58:29 -0400
-Received: from foss.arm.com ([217.140.101.70]:54646 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751270AbeDIK60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 06:58:26 -0400
-Date: Mon, 9 Apr 2018 11:58:40 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@kernel.org,
-        boqun.feng@gmail.com, catalin.marinas@arm.com
-Subject: Re: [PATCH 02/10] locking/qspinlock: Remove unbounded cmpxchg loop
- from locking slowpath
-Message-ID: <20180409105840.GD23134@arm.com>
-References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
- <1522947547-24081-3-git-send-email-will.deacon@arm.com>
- <dc5f5e43-a60a-05f2-16fb-46960c40459e@redhat.com>
- <20180406210953.GA24165@linux.vnet.ibm.com>
- <20180407084732.GO4082@hirez.programming.kicks-ass.net>
+        id S1752322AbeDIK7d (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 06:59:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45544 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750759AbeDIK7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 06:59:30 -0400
+Subject: Re: [PATCH] kvm: x86: fix a prototype warning
+To: Peng Hao <peng.hao2@zte.com.cn>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com
+Cc: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523051252-110308-1-git-send-email-peng.hao2@zte.com.cn>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <7055d28b-10f4-eb22-069c-ea6e0a7037f3@redhat.com>
+Date: Mon, 9 Apr 2018 12:59:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180407084732.GO4082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1523051252-110308-1-git-send-email-peng.hao2@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 07, 2018 at 10:47:32AM +0200, Peter Zijlstra wrote:
-> On Fri, Apr 06, 2018 at 02:09:53PM -0700, Paul E. McKenney wrote:
-> > It would indeed be good to not be in the position of having to trade off
-> > forward-progress guarantees against performance, but that does appear to
-> > be where we are at the moment.
+On 06.04.2018 23:47, Peng Hao wrote:
+> warning: no previous prototype for ‘vmx_enable_tdp’
 > 
-> Depends of course on how unfair cmpxchg is. On x86 we trade one cmpxchg
-> loop for another so the patch doesn't cure anything at all there. And
-> our cmpxchg has 'some' hardware fairness to it.
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  arch/x86/kvm/vmx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> So while the patch is 'good' for platforms that have native fetch-or,
-> it doesn't help (or in our case even hurts) those that do not.
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index f0fd50b..86681bc 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -6954,7 +6954,7 @@ static void wakeup_handler(void)
+>  	spin_unlock(&per_cpu(blocked_vcpu_on_cpu_lock, cpu));
+>  }
+>  
+> -void vmx_enable_tdp(void)
+> +static void vmx_enable_tdp(void)
+>  {
+>  	kvm_mmu_set_mask_ptes(VMX_EPT_READABLE_MASK,
+>  		enable_ept_ad_bits ? VMX_EPT_ACCESS_BIT : 0ull,
+> 
 
-We need to get to the bottom of this, otherwise we're just relying on
-Waiman's testing to validate any changes to this code!
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Will
+-- 
+
+Thanks,
+
+David / dhildenb
