@@ -1,106 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753053AbeDIPZi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:25:38 -0400
-Received: from mail-pg0-f45.google.com ([74.125.83.45]:35979 "EHLO
-        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751633AbeDIPZh (ORCPT
+        id S1753178AbeDIP1V (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:27:21 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:62267 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751662AbeDIP1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:25:37 -0400
-X-Google-Smtp-Source: AIpwx4/pBVTUhm/Hdw+rydyIzHkFPZlyatmDzXbJJBRIZOti7ELGH1gGh+hYRVchJ6P25Oq6qs4EMRnmyEuqDCcvlt0=
+        Mon, 9 Apr 2018 11:27:19 -0400
+From: Philippe Cornu <philippe.cornu@st.com>
+To: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        "Vincent Abriou" <vincent.abriou@st.com>
+Subject: [PATCH] drm: clarify adjusted_mode documentation for bridges
+Date: Mon, 9 Apr 2018 17:24:27 +0200
+Message-ID: <20180409152427.12449-1-philippe.cornu@st.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <s5hbmesflxu.wl-tiwai@suse.de>
-References: <001a113fe6c005d8ac056922c4c3@google.com> <s5hbmesflxu.wl-tiwai@suse.de>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 9 Apr 2018 17:25:15 +0200
-Message-ID: <CACT4Y+Zx4SU_Pe28DroSVYMhPMUxE1uKTe9721WKdh-wqF3CNw@mail.gmail.com>
-Subject: Re: WARNING in snd_pcm_hw_params
-To: Takashi Iwai <tiwai@suse.de>
-Cc: syzbot <syzbot+803e0047ac3a3096bb4f@syzkaller.appspotmail.com>,
-        alsa-devel@alsa-project.org, syzkaller-bugs@googlegroups.com,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.32]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 9, 2018 at 5:18 PM, Takashi Iwai <tiwai@suse.de> wrote:
-> On Fri, 06 Apr 2018 02:02:02 +0200,
-> syzbot wrote:
->>
->> WARNING: CPU: 0 PID: 4468 at sound/core/pcm_native.c:620
->> snd_pcm_hw_params_choose sound/core/pcm_native.c:620 [inline]
->
-> This is a WARN_ON() to catch the inconsistent hw_params call.
-> This shouldn't happen in theory, but the reality looks weirder.
->
-> The necessary "fix" is just to get rid of snd_BUG_ON(), but still
-> wonder which condition it hits.  If it's an empty parameter, the
-> previous snd_pcm_hw_refine() should have caught and returned the error
-> beforehand...
+This patch clarifies the adjusted_mode documentation
+for bridges.
 
-Hi Takashi,
+Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+This patch follows discussions in:
+- "drm: clarify adjusted_mode for a bridge connected to a crtc"
+  https://patchwork.freedesktop.org/patch/206801/
+- "drm: bridge: Constify mode arguments to bridge .mode_set() operation"
+  https://patchwork.freedesktop.org/patch/215449/
 
-The reproducer for this is trivially simple:
+ include/drm/drm_bridge.h | 16 ++++++++++++++++
+ include/drm/drm_crtc.h   | 11 +++++++----
+ 2 files changed, 23 insertions(+), 4 deletions(-)
 
-https://syzkaller.appspot.com/x/repro.syz?id=4913841943085056
-
-(and I guess perf_event_open is red herring).
-
-But the really important part there is probably this: Fault:true
-FaultCall:2 FaultNth:18
-And you can see where it actually happened in the raw console log:
-
-Raw console output: https://syzkaller.appspot.com/x/log.txt?id=6314122077536256
-
-Does it explain things?
-
-> In anyway this can't be a real crash, let's remove the warning to stop
-> the chorus of syzbot birds.
->
->
-> thanks,
->
-> Takashi
->
-> -- 8< --
-> From: Takashi Iwai <tiwai@suse.de>
-> Subject: [PATCH] ALSA: pcm: Remove WARN_ON() at snd_pcm_hw_params() error
->
-> snd_pcm_hw_params() may hit WARN_ON() when an inconsistent parameter
-> set is passed.  Although this should have been caught by the former
-> snd_pcm_hw_refine() and returned the error, syzkaller succeeded to
-> pass through and hit the WARN_ON(), which in turn made it panic
-> unnecessarily.
->
-> For reducing this kind of noise, let's drop snd_BUG_ON() check.
->
-> Reported-by: syzbot+803e0047ac3a3096bb4f@syzkaller.appspotmail.com
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> ---
->  sound/core/pcm_native.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-> index b84554893fab..35ffccea94c3 100644
-> --- a/sound/core/pcm_native.c
-> +++ b/sound/core/pcm_native.c
-> @@ -617,7 +617,7 @@ static int snd_pcm_hw_params_choose(struct snd_pcm_substream *pcm,
->                         changed = snd_pcm_hw_param_first(pcm, params, *v, NULL);
->                 else
->                         changed = snd_pcm_hw_param_last(pcm, params, *v, NULL);
-> -               if (snd_BUG_ON(changed < 0))
-> +               if (changed < 0)
->                         return changed;
->                 if (changed == 0)
->                         continue;
-> --
-> 2.16.3
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/s5hbmesflxu.wl-tiwai%40suse.de.
-> For more options, visit https://groups.google.com/d/optout.
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index 3270fec46979..7d632c6a9214 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -178,6 +178,22 @@ struct drm_bridge_funcs {
+ 	 * then this would be &drm_encoder_helper_funcs.mode_set. The display
+ 	 * pipe (i.e.  clocks and timing signals) is off when this function is
+ 	 * called.
++	 *
++	 * The adjusted_mode parameter corresponds to the mode output by the CRTC
++	 * for the first bridge in the chain. It can be different from the mode
++	 * parameter that contains the desired mode for the connector at the end
++	 * of the bridges chain, for instance when the first bridge in the chain
++	 * performs scaling. The adjusted mode is mostly useful for the first
++	 * bridge in the chain and is likely irrelevant for the other bridges.
++	 *
++	 * For atomic drivers the adjusted_mode is the mode stored in
++	 * &drm_crtc_state.adjusted_mode.
++	 *
++	 * NOTE:
++	 *
++	 * If a need arises to store and access modes adjusted for other locations
++	 * than the connection between the CRTC and the first bridge, the DRM
++	 * framework will have to be extended with DRM bridge states.
+ 	 */
+ 	void (*mode_set)(struct drm_bridge *bridge,
+ 			 struct drm_display_mode *mode,
+diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+index a2d81d2907a9..65f749a9e9d3 100644
+--- a/include/drm/drm_crtc.h
++++ b/include/drm/drm_crtc.h
+@@ -134,10 +134,13 @@ struct drm_crtc_state {
+ 	 *
+ 	 * Internal display timings which can be used by the driver to handle
+ 	 * differences between the mode requested by userspace in @mode and what
+-	 * is actually programmed into the hardware. It is purely driver
+-	 * implementation defined what exactly this adjusted mode means. Usually
+-	 * it is used to store the hardware display timings used between the
+-	 * CRTC and encoder blocks.
++	 * is actually programmed into the hardware.
++	 *
++	 * For drivers using drm_bridge, this stores the hardware display timings
++	 * used between the CRTC and the first bridge. For other drivers, the
++	 * meaning of the adjusted_mode field is purely driver implementation
++	 * defined information, and will usually be used to store the hardware
++	 * display timings used between the CRTC and encoder blocks.
+ 	 */
+ 	struct drm_display_mode adjusted_mode;
+ 
+-- 
+2.15.1
