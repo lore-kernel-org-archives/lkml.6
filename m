@@ -1,218 +1,231 @@
-Return-Path: <dongsheng.wang@hxt-semitech.com>
-X-Google-Smtp-Source: AIpwx49FNWEMK/fc9eim+8U6FaKTliU50JmyabrU9/CafHjtSywKvpSWKWmdg7HArdjnjy9/xx4/
-ARC-Seal: i=1; a=rsa-sha256; t=1523416749; cv=none;
+Return-Path: <robin.murphy@arm.com>
+X-Google-Smtp-Source: AIpwx48INp3JHG/9MncK3W0R0LPNACgd9LyQpYnhoacoVOVfVixSMaT6hhTUnMoVuVUma/3RSTfA
+ARC-Seal: i=1; a=rsa-sha256; t=1523275836; cv=none;
         d=google.com; s=arc-20160816;
-        b=gD2Gc2uxLBwMW7j/6LvGWFBHF2RQKPbQkMZCPfsSwEVcpYVnpvd1NmrxYMzh3fowt/
-         AN1jOY2ThxqUPupNgTnwyFgheVA1XIWe8sry1Um+TiB/YFgeBAl2AYEHyYC+rHUyawIe
-         bcVWZcrh86viPxCRGq1mLOAD71J2O1VmXsFxjWjA7GzwAnw3W3lbddYFRA5bktX+o4rJ
-         0pNpm9nS/t51sMeqNLPR1qcuQbtE0xHHze/GCfMdo/CVvvp6u6bhNGinbTCXdyi/OM/V
-         rEvnxSAvCro3DljFv9xruaRwhylyJFOqNklo7bmCJcBGShBzsLNuqUbIfMg6af4K1tL4
-         isMg==
+        b=xS2fQ8SQxoZIiUMxPV2KQrN9Kj/A18G5f7b14rTYK2K8JvZx754B3C0rhA6hBfFQ5h
+         0gMrn0RSHDIsCf6BuxRnA127i07+Y24WE+rkgCiAFVcIrW526kkLaqI2B4HJ+abGiGoM
+         sNoS33n0WQCCHFegZumyuIf2tFxY2xTtDkGlacoeLXzkL5cmFyukdkgZAoO60iHb8jce
+         V9zn4xlfMNAAXaau1KiLSRqXRfMQg2kQFp+qRnCHiS4lAMH7/SJtvahKw/PkK009NwUV
+         F6mR1zFDrYR2aW23Fg/I+fn8IiErHo3YU41u+TXl8X5a0moZhE8q4T4SSR2wmbDhXruy
+         EtrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:dlp-reaction:dlp-version
-         :dlp-product:content-language:accept-language:message-id:date
-         :thread-index:thread-topic:subject:cc:to:from
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=tMtxhiXp5cnE0euwaArHJpj81Skpw0YL7O0TJdqNn40=;
-        b=ibdU9YvhS5jP1OW739GgOqmV9u+t058euN3BhsJls9ii4GOd7QMdj+8gd8zKmrqFy4
-         PldniHhijRuepSZrqS+2njWvXxjAC1/IkhcWA0+obcqeQu1O981gHimhaCXVyGhOEjCU
-         /piusUGslE3DPLGlxleEijTe/7p7oU3IqCuuA7iBZlGZq4xy9ncNf34X+F1Wm90tk567
-         0YOrkVc0GQWQMzkXtWnl8AG8xj9TGH5d4bGG2Bnqqq68TrK150DVIe+yp5BRhDB3ti8N
-         LXeBLeDxuCahXSJrrMvA300T+oq71jOXGQZYK8q0VLbpt1vzUrOW0A3vKWjbQ5AVKfuM
-         xTMA==
+        bh=Q1xujVIDNvsLz+1ny7Onm/7i2+/C4EWiu47K87U8J58=;
+        b=zzaIDSP6C/nTSEeJSykG0dHrF7ZbAM6UN/YOtnd6+M7Q4ovDrK08GiH8+ytRqeUU4w
+         JrHMT1mpmVE3WND4yuJSbFVSo6RUefiy6GZZiZMF18xQ3Ot3FPyxCK0DaicGaf/8XgSY
+         ayxNCIPbQrjlI/ARevyNFuYuCDg163i0bmalkfbHdUVGM2C6ru4tHYk64f5yaPDAIs5R
+         FGAMEm9TeAFKSDhnk3RX2Kl4k1LhoVdCFVMn4WcdxJbAtKgfc1xi7KgHyD8B52kddNwx
+         W3BC+gkHVAw9DifUT5KGCG5sSyspkWhC/TTV1JwR2qKHQpJkCCJCjZ8DXxosJBtF6Ftn
+         4ssQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of dongsheng.wang@hxt-semitech.com designates 223.203.96.7 as permitted sender) smtp.mailfrom=dongsheng.wang@hxt-semitech.com
+       spf=pass (google.com: domain of robin.murphy@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=robin.murphy@arm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of dongsheng.wang@hxt-semitech.com designates 223.203.96.7 as permitted sender) smtp.mailfrom=dongsheng.wang@hxt-semitech.com
-X-ASG-Debug-ID: 1523416745-093b7e10b35c1a0001-y9GDlS
-X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
-From: "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-To: Robin Murphy <robin.murphy@arm.com>, Lorenzo Pieralisi
-	<lorenzo.pieralisi@arm.com>
-CC: "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "hanjun.guo@linaro.org"
-	<hanjun.guo@linaro.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"Zheng, Joey" <yu.zheng@hxt-semitech.com>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: Re: [RFC PATCH 2/2] ACPI/IORT: use swiotlb_dma_ops when smmu
- probe failed
-Thread-Topic: Re: [RFC PATCH 2/2] ACPI/IORT: use swiotlb_dma_ops when smmu
- probe failed
-X-ASG-Orig-Subj: RE: Re: [RFC PATCH 2/2] ACPI/IORT: use swiotlb_dma_ops when smmu
- probe failed
-Thread-Index: AdPRQ84yaW8lTqhnRdK1xo8D4x/dMQ==
-Date: Wed, 11 Apr 2018 03:18:56 +0000
-Message-ID: <85a3b2c4bd9b49d9a9e7bf88ee670119@HXTBJIDCEMVIW02.hxtcorp.net>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.2.3
-dlp-reaction: no-action
-x-originating-ip: [10.64.6.78]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+       spf=pass (google.com: domain of robin.murphy@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=robin.murphy@arm.com
+Subject: Re: [RFC PATCH 2/2] ACPI/IORT: use swiotlb_dma_ops when smmu probe
+ failed
+To: "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "hanjun.guo@linaro.org" <hanjun.guo@linaro.org>,
+ "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+ "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <63635b42529a48d39f36112a031e3655@HXTBJIDCEMVIW02.hxtcorp.net>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <3fca23a7-8fe9-6832-9267-ebab73d48f68@arm.com>
+Date: Mon, 9 Apr 2018 13:10:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-Barracuda-Connect: localhost[10.128.0.15]
-X-Barracuda-Start-Time: 1523416745
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5797 1.0000 0.7500
-X-Barracuda-Spam-Score: 0.75
-X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49763
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+In-Reply-To: <63635b42529a48d39f36112a031e3655@HXTBJIDCEMVIW02.hxtcorp.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596265798784882877?=
-X-GMAIL-MSGID: =?utf-8?q?1597418241753539291?=
+X-GMAIL-MSGID: =?utf-8?q?1597270483884046809?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1hY3BpLW93bmVyQHZn
-ZXIua2VybmVsLm9yZw0KPiBbbWFpbHRvOmxpbnV4LWFjcGktb3duZXJAdmdlci5rZXJuZWwub3Jn
-XSBPbiBCZWhhbGYgT2YgUm9iaW4gTXVycGh5DQo+IFNlbnQ6IE1vbmRheSwgQXByaWwgMDksIDIw
-MTggODoxMSBQTQ0KPiBUbzogV2FuZywgRG9uZ3NoZW5nIDxkb25nc2hlbmcud2FuZ0BoeHQtc2Vt
-aXRlY2guY29tPjsgTG9yZW56byBQaWVyYWxpc2kNCj4gPGxvcmVuem8ucGllcmFsaXNpQGFybS5j
-b20+DQo+IENjOiByandAcmp3eXNvY2tpLm5ldDsgZ3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc7
-IGhhbmp1bi5ndW9AbGluYXJvLm9yZzsNCj4gc3VkZWVwLmhvbGxhQGFybS5jb207IFpoZW5nLCBK
-b2V5IDx5dS56aGVuZ0BoeHQtc2VtaXRlY2guY29tPjsNCj4gbGludXgtYWNwaUB2Z2VyLmtlcm5l
-bC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW+atpOmCruS7
-tuWPr+iDveWtmOWcqOmjjumZqV0gUmU6IFtSRkMgUEFUQ0ggMi8yXSBBQ1BJL0lPUlQ6IHVzZQ0K
-PiBzd2lvdGxiX2RtYV9vcHMgd2hlbiBzbW11IHByb2JlIGZhaWxlZA0KPiANCj4gT24gMDgvMDQv
-MTggMDk6MTAsIFdhbmcsIERvbmdzaGVuZyB3cm90ZToNCj4gPg0KPiA+PiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KPiA+PiBGcm9tOiBSb2JpbiBNdXJwaHkgW21haWx0bzpyb2Jpbi5tdXJw
-aHlAYXJtLmNvbV0NCj4gPj4gU2VudDogVGh1cnNkYXksIEFwcmlsIDA1LCAyMDE4IDI6NTcgQU0N
-Cj4gPj4gVG86IExvcmVuem8gUGllcmFsaXNpIDxsb3JlbnpvLnBpZXJhbGlzaUBhcm0uY29tPjsg
-V2FuZywgRG9uZ3NoZW5nDQo+ID4+IDxkb25nc2hlbmcud2FuZ0BoeHQtc2VtaXRlY2guY29tPg0K
-PiA+PiBDYzogcmp3QHJqd3lzb2NraS5uZXQ7IGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOw0K
-PiBoYW5qdW4uZ3VvQGxpbmFyby5vcmc7DQo+ID4+IHN1ZGVlcC5ob2xsYUBhcm0uY29tOyBaaGVu
-ZywgSm9leSA8eXUuemhlbmdAaHh0LXNlbWl0ZWNoLmNvbT47DQo+ID4+IGxpbnV4LWFjcGlAdmdl
-ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+ID4+IFN1YmplY3Q6
-IFvmraTpgq7ku7blj6/og73lrZjlnKjpo47pmaldIFJlOiBbUkZDIFBBVENIIDIvMl0gQUNQSS9J
-T1JUOiB1c2UNCj4gPj4gc3dpb3RsYl9kbWFfb3BzIHdoZW4gc21tdSBwcm9iZSBmYWlsZWQNCj4g
-Pj4NCj4gPj4gT24gMDQvMDQvMTggMTc6MDEsIExvcmVuem8gUGllcmFsaXNpIHdyb3RlOg0KPiA+
-Pj4gWytjYyBSb2Jpbl0NCj4gPj4+DQo+ID4+PiBPbiBUaHUsIE1hciAyOSwgMjAxOCBhdCAwMzow
-MTowMEFNIC0wNzAwLCBXYW5nIERvbmdzaGVuZyB3cm90ZToNCj4gPj4+PiBJZiBTTU1VIHByb2Jl
-IGZhaWxlZCwgbWFzdGVyIHNob3VsZCB1c2Ugc3dpb3RsYiBhcyBkbWEgb3BzLg0KPiA+Pj4+IFNN
-TVUgbWF5IHByb2JlIGZhaWxlZCB3aXRoIHNwZWNpZmllZCBlbnZpcm9ubWVudCwgc28gdGhlcmUN
-Cj4gPj4+PiBhcmUgbm90IGFueSBpb21tdSByZXNvdXJjZXMgaW4gaW9tbXVfZGV2aWNlX2xpc3Qu
-DQo+ID4+Pj4NCj4gPj4+PiBUaGUgbWFzdGVyIHdpbGwgYWx3YXlzIGdldCBFUFJPQkVfREVGRVIg
-ZnJvbSByZWFsbHlfcHJvYmUNCj4gPj4+PiAoZG1hX2NvbmZpZ3VyZSkgYnV0IGluIGZhY3QgU01N
-VSBoYXMgcHJvYmUgZmFpbGVkLiBUaGUgaXNzdWUNCj4gPj4+PiBjYXVzZXMgYWxsIG9mIG1hc3Rl
-cnMgZmFpbGVkIHRvIGJlIGRyaXZlbi4NCj4gPj4NCj4gPj4gTGV0J3MganVzdCB0YWtlIGEgc3Rl
-cCBiYWNrIC0gd2h5IGlzIFNNTVUgcHJvYmUgZmFpbGluZz8gVGhhdCBzZWVtcyB0bw0KPiA+PiBi
-ZSB0aGUgcHJpbWFyeSBpc3N1ZSBoZXJlLCBiZWNhdXNlIGl0IGltcGxpZXMgdGhhdCBlaXRoZXIg
-eW91ciBoYXJkd2FyZSwNCj4gPj4gZmlybXdhcmUgb3Iga2VybmVsIGlzIGJyb2tlbiwgYW55IG9m
-IHdoaWNoIHdvdWxkIG1ha2UgYm9vdCBmYWlsdXJlDQo+ID4+IHNvbWV3aGF0IHVuc3VycHJpc2lu
-ZyBhbnl3YXkuDQo+ID4+DQo+ID4gSXQncyBhY3R1YWxseSBub3QgYSBoYXJkd2FyZSBpc3N1ZS4g
-VGhpcyBpcyBteSB0ZXN0IGNhc2UsIGp1c3QgcmV0dXJuDQo+ID4gLUVJTlZBTCBpbiBhcm1fc21t
-dV9kZXZpY2VfcHJvYmUuIFRoZSBIVw0KPiBwcm9iZShhcm1fc21tdV9kZXZpY2VfaHdfcHJvYmUp
-DQo+ID4gaXMganVzdCBwYXJ0IG9mIFNNTVUgZHJpdmVyIHByb2JlIGFuZCB0aGUgZmFpbHVyZSBt
-YXkgYmUgY2F1c2VkIGJ5IFNXLiBTbw0KPiA+IEkgZGVzaWduIHRoaXMgY2FzZSwganVzdCBtYWtl
-IHN1cmUgZXZlbiBpZiBTTU1VIHByb2JlIGZhaWxlZCB0aGF0IGNhdXNlIGJ5IFNXLA0KPiA+IHRo
-ZSBNQVNURVIgYWxzbyBjYW4gd29yay4gX0JlY2F1c2Ugb2Ygb3VyIFNNTVUgZGVmYXVsdCBtb2Rl
-IGlzIGJ5cGFzcy5fDQo+IA0KPiBJIGRvbid0IHRoaW5rIGl0J3MgcGFydGljdWxhcmx5IGp1c3Rp
-ZmlhYmxlIHRvIG1ha2UgY29yZSBBUEkgY2hhbmdlcyBmb3INCj4gdGhlIHNha2Ugb2YgY29udHJp
-dmVkIHRlc3RjYXNlcy4gT24gcmVhbCBzeXN0ZW1zLCB0aGUgU01NVSBpcyBhDQo+IGZ1bmRhbWVu
-dGFsIHN5c3RlbSBjb21wb25lbnQgd2hpY2ggaXMgbm8gbW9yZSBleHBlY3RlZCB0byBmYWlsIHBy
-b2JlDQo+IHRoYW4sIHNheSwgdGhlIEdJQywgYW5kIGFzIHN1Y2ggaWYgaXQgKmRvZXMqIGZhaWwg
-dGhlbiBmdXJ0aGVyIHByb2dyZXNzDQo+IGlzIG9uIGEgYmVzdC1lZmZvcnQgYmFzaXMgYXQgbW9z
-dC4NClllcy4gQWdyZWUgd2l0aCB5b3UuDQoNCg0KPiBKdXN0IGJlY2F1c2UgKnlvdXIqIHN5c3Rl
-bSBoYXBwZW5zIHRvIHdvcmsgZmluZSBpbiB0aGlzIHN0YXRlIGRvZXNuJ3QgbWFrZSBpdCB0cnVl
-IGZvciBldmVyeSBTTU1VDQo+IGltcGxlbWVudGF0aW9uIGFuZCBpbnRlZ3JhdGlvbiB0aGF0IExp
-bnV4IG1heSBldmVyIHJ1biBvbi4NCjooLCB5ZXMsIHRoaXMgaXMgbXkgbWlzdGFrZS4NCg0KDQo+
-IAkJCQ0KPiBJZiB5b3Ugd2FudCB0aGUga2VybmVsIHRvIGlnbm9yZSBhbiBTTU1VLCBlaXRoZXIg
-Y29uZmlndXJlIG91dCB0aGUNCj4gZHJpdmVyIG9yIGRvbid0IGRlc2NyaWJlIHRoYXQgU01NVSBp
-biBmaXJtd2FyZSBpbiB0aGUgZmlyc3QgcGxhY2UuDQo+IA0KPiA+Pj4gSSBhZGRlZCBSb2JpbiB0
-byBwaWNrIGhpcyBicmFpbi4gQW4gYWx0ZXJuYXRpdmUgd291bGQgY29uc2lzdA0KPiA+Pj4gaW4g
-dXNpbmcgYSBidXMgbm90aWZpZXIgdG8gcHJldmVudCBkZWZlcnJlZCBwcm9iaW5nIG9uY2UgdGhl
-IFNNTVUNCj4gPj4+IGRyaXZlciBwcm9iaW5nIGZhaWxlZCBidXQgdGhhdCBzZWVtcyBiYWNrd2Fy
-ZHMgZ2l2ZW4gdGhhdCBhIG1ham9yDQo+ID4+PiByZWFzb24gdG8gbW92ZSB0byBkZWZlcnJlZCBw
-cm9iaW5nIHdhcyB0byByZW1vdmUgdGhlIGJ1cyBub3RpZmllcnMNCj4gPj4+IGRlcGVuZGVuY3kg
-aW4gdGhlIGZpcnN0IHBsYWNlLg0KPiA+Pj4NCj4gPj4+IEl0IHNlZW1zIHRvIG1lIHRoaXMgaXMg
-Ym90aCBhbiBPRi9BQ1BJIGlzc3VlIC0gaXQgaXMgbm90IGFuIElPUlQNCj4gPj4+IG9ubHkgcHJv
-YmxlbS4NCj4gPj4NCj4gPj4gWWVzLCB0aGlzIGlzIGp1c3QgYW4gaW5zdGFuY2Ugb2YgdGhlIGdl
-bmVyYWwgcHJvYmUtZGVmZXJyYWwgcHJvYmxlbSwNCj4gPj4gZS5nLiBvbmNlIHlvdSBoYXZlIG11
-bHRpcGxlIGRlcGVuZGVuY2llcyBpdCdzIHBvc3NpYmxlIHRvIGVuZCB1cCBpbiBhDQo+ID4+IHN0
-YWxlbWF0ZSB3aGVyZSBldmVyeXRoaW5nIGluY2x1ZGluZyB0aGUgSU9NTVUgZW5kcyB1cCBvbiB0
-aGUgZGVmZXJyZWQNCj4gPj4gcHJvYmUgbGlzdCB3aXRoIG5vdGhpbmcgdG8ga2ljayBpdCBhbmQg
-bWFrZSBwcm9ncmVzcyBhZ2Fpbi4NCj4gPj4NCj4gPj4gRnVydGhlcm1vcmUgaXQgc2VlbXMgdG8g
-bWUgdGhhdCB0aGUgd2hvbGUgcHJlbWlzZSBpbiB0aGlzIHBhdGNoIGlzDQo+ID4+IGZsYXdlZCwN
-Cj4gPiBEaXR0by4gOikNCj4gPg0KPiA+DQo+ID4+IHNpbmNlIGV2ZW4gZ2VudWluZSBwcm9iZSBm
-YWlsdXJlIG1heSB3ZWxsIGJlIHRyYW5zaWVudCAtIGp1c3QNCj4gPj4gYmVjYXVzZSBvbmUgYXR0
-ZW1wdCBmYWlsZWQgZG9lc24ndCBtZWFuIGEgbGF0ZXIgYXR0ZW1wdCBjYW4ndCBzdWNjZWVkLg0K
-PiA+PiBUaHVzICJ0aGUgbW9zdCByZWNlbnQgcHJvYmUgYXR0ZW1wdCBmYWlsZWQiIGNhbm5vdCBi
-ZSBjb25zaWRlcmVkIGENCj4gPj4gZnVuZGFtZW50YWxseSBkaWZmZXJlbnQgc3RhdGUgZnJvbSAi
-bm8gZHJpdmVyIGlzIGN1cnJlbnRseSBib3VuZCIuDQo+ID4+DQo+ID4gQWdyZWUsIHRoZSBnZW51
-aW5lIHByb2JlIGZhaWx1cmUgbWF5IHdlbGwgYmUgdHJhbnNpZW50LiBCdXQgdGhlcmUgaXMNCj4g
-PiBkZXBlbmQgb24gU01NVSBwcm9iZShJT01NVSBpbnN0YW5jZSkgc3RhdHVzLiBUaGVyZSBhcmUg
-dHdvIHNpdHVhdGlvbnM6DQo+ID4NCj4gPiAxLiBNQVNURVIgcHJvYmluZywgU01NVSBkb2Vzbid0
-IHByb2JlIHlldC4NCj4gPiAJVGhpcyBjYXNlIHdpbGwgbWF0Y2ggInRoZSB0cmFuc2llbnQgZmFp
-bHVyZSIuDQo+ID4gCXJlYWxseV9wcm9iZSBnZXQgYW4gRVBST0JFX0RFRkVSIGZyb20gSU9SVCBh
-bmQgdGhlIE1BU1RFUiBwcm9iZSB3aWxsDQo+IGJlDQo+ID4gCWRlbGF5ZWQgdW50aWwgU01NVSBw
-cm9iZSBzdWNjZXNzZnVsLg0KPiA+IDIuIE1BU1RFUiBwcm9iaW5nLCBTTU1VIHByb2JlIGhhcyBm
-YWlsZWQuDQo+ID4gCXJlYWxseV9wcm9iZSB3aWxsIGFsd2F5cyBnZXQgYW4gRVBST0JFX0RFRkVS
-IGZyb20gSU9SVCwgYmVjYXVzZSBrZXJuZWwNCj4gPiAJaGFzIGJ1aWxkIGluIFNNTVUgZHJpdmVy
-Lihpb3J0X2lvbW11X2RyaXZlcl9lbmFibGVkKSBBbmQgdGhlIG1hc3Rlcg0KPiA+IAluZXZlciBj
-YW5ub3QgZG8gcHJvYmUuDQo+ID4NCj4gPiBUaGUgY2FzZSAyIGlzIEkgd2FudCB0byBoYW5kbGUu
-DQo+IA0KPiBIYW5kbGUgaXQgYnkgbm90IGRlbGliZXJhdGVseSBicmVha2luZyB0aGUgU01NVSBk
-cml2ZXIuIEluIGFsbCBvdGhlcg0KPiBjYXNlcywgZWl0aGVyIHJlLXRyaWdnZXJpbmcgU01NVSBw
-cm9iZSBtaWdodCBtYWtlIGl0IHN1Y2NlZWQgKGkuZS4gdGhlDQo+IERMX0RFVl9QUk9CRV9GQUlM
-RUQgc3RhdGUgaXMgbWVhbmluZ2xlc3MpLCBvciB0aGluZ3MgYXJlIHNvIGJyb2tlbiB0aGF0DQo+
-IHlvdSdyZSBwcm9iYWJseSBkZWFkIGluIHRoZSB3YXRlciBhbnl3YXkuDQo+IA0KRHJvcCB0aGlz
-IHBhdGNoLg0KDQpUaGFua3MgZm9yIHlvdXIgcmV2aWV3Lg0KDQpDaGVlcnMsDQotRG9uZ3NoZW5n
-DQoNCj4gUm9iaW4uDQo+IA0KPiA+DQo+ID4gQ2hlZXJzLA0KPiA+IC1Eb25nc2hlbmcNCj4gPg0K
-PiA+PiBSb2Jpbi4NCj4gPj4NCj4gPj4+DQo+ID4+PiBMb3JlbnpvDQo+ID4+Pg0KPiA+Pj4+IFNp
-Z25lZC1vZmYtYnk6IFdhbmcgRG9uZ3NoZW5nIDxkb25nc2hlbmcud2FuZ0BoeHQtc2VtaXRlY2gu
-Y29tPg0KPiA+Pj4+IC0tLQ0KPiA+Pj4+ICAgIGRyaXZlcnMvYWNwaS9hcm02NC9pb3J0LmMgfCAz
-OQ0KPiA+PiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0NCj4gPj4+PiAg
-ICAxIGZpbGUgY2hhbmdlZCwgMzMgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkNCj4gPj4+
-Pg0KPiA+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2FjcGkvYXJtNjQvaW9ydC5jIGIvZHJpdmVy
-cy9hY3BpL2FybTY0L2lvcnQuYw0KPiA+Pj4+IGluZGV4IGUyZjdiZGQuLmE2ZjRjMjcgMTAwNjQ0
-DQo+ID4+Pj4gLS0tIGEvZHJpdmVycy9hY3BpL2FybTY0L2lvcnQuYw0KPiA+Pj4+ICsrKyBiL2Ry
-aXZlcnMvYWNwaS9hcm02NC9pb3J0LmMNCj4gPj4+PiBAQCAtNzc0LDE3ICs3NzQsNDUgQEAgc3Rh
-dGljIGludCBhcm1fc21tdV9pb3J0X3hsYXRlKHN0cnVjdCBkZXZpY2UNCj4gPj4gKmRldiwgdTMy
-IHN0cmVhbWlkLA0KPiA+Pj4+ICAgIAlyZXR1cm4gcmV0Ow0KPiA+Pj4+ICAgIH0NCj4gPj4+Pg0K
-PiA+Pj4+IC1zdGF0aWMgaW5saW5lIGJvb2wgaW9ydF9pb21tdV9kcml2ZXJfZW5hYmxlZCh1OCB0
-eXBlKQ0KPiA+Pj4+ICtzdGF0aWMgaW50IGlvcnRfY2hlY2tfZGV2X2RsX3N0YXR1cyhzdHJ1Y3Qg
-ZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEpDQo+ID4+Pj4gICAgew0KPiA+Pj4+ICsJc3RydWN0IGZ3
-bm9kZV9oYW5kbGUgKmZ3bm9kZSA9IGRhdGE7DQo+ID4+Pj4gKw0KPiA+Pj4+ICsJaWYgKGRldi0+
-Zndub2RlICE9IGZ3bm9kZSkNCj4gPj4+PiArCQlyZXR1cm4gMDsNCj4gPj4+PiArDQo+ID4+Pj4g
-KwlpZiAoZGV2LT5saW5rcy5zdGF0dXMgPT0gRExfREVWX1BST0JFX0ZBSUxFRCkNCj4gPj4+PiAr
-CQlyZXR1cm4gLUVOT0RFVjsNCj4gPj4+PiArDQo+ID4+Pj4gKwlyZXR1cm4gLUVQUk9CRV9ERUZF
-UjsNCj4gPj4+PiArfQ0KPiA+Pj4+ICsNCj4gPj4+PiArc3RhdGljIGludCBpb3J0X2lvbW11X2Ry
-aXZlcl9lbmFibGVkKHU4IHR5cGUsIHN0cnVjdCBmd25vZGVfaGFuZGxlDQo+ID4+ICpmd25vZGUp
-DQo+ID4+Pj4gK3sNCj4gPj4+PiArCWJvb2wgYnVpbGRpbjsNCj4gPj4+PiArCWludCByZXQ7DQo+
-ID4+Pj4gKw0KPiA+Pj4+ICAgIAlzd2l0Y2ggKHR5cGUpIHsNCj4gPj4+PiAgICAJY2FzZSBBQ1BJ
-X0lPUlRfTk9ERV9TTU1VX1YzOg0KPiA+Pj4+IC0JCXJldHVybiBJU19CVUlMVElOKENPTkZJR19B
-Uk1fU01NVV9WMyk7DQo+ID4+Pj4gKwkJYnVpbGRpbiA9IElTX0JVSUxUSU4oQ09ORklHX0FSTV9T
-TU1VX1YzKTsNCj4gPj4+PiArCQlicmVhazsNCj4gPj4+PiAgICAJY2FzZSBBQ1BJX0lPUlRfTk9E
-RV9TTU1VOg0KPiA+Pj4+IC0JCXJldHVybiBJU19CVUlMVElOKENPTkZJR19BUk1fU01NVSk7DQo+
-ID4+Pj4gKwkJYnVpbGRpbiA9IElTX0JVSUxUSU4oQ09ORklHX0FSTV9TTU1VKTsNCj4gPj4+PiAr
-CQlicmVhazsNCj4gPj4+PiAgICAJZGVmYXVsdDoNCj4gPj4+PiAgICAJCXByX3dhcm4oIklPUlQg
-bm9kZSB0eXBlICV1IGRvZXMgbm90IGRlc2NyaWJlIGFuDQo+IFNNTVVcbiIsDQo+ID4+IHR5cGUp
-Ow0KPiA+Pj4+IC0JCXJldHVybiBmYWxzZTsNCj4gPj4+PiArCQlidWlsZGluID0gZmFsc2U7DQo+
-ID4+Pj4gICAgCX0NCj4gPj4+PiArDQo+ID4+Pj4gKwlpZiAoIWJ1aWxkaW4pDQo+ID4+Pj4gKwkJ
-cmV0dXJuIC1FTk9ERVY7DQo+ID4+Pj4gKw0KPiA+Pj4+ICsJcmV0ID0gYnVzX2Zvcl9lYWNoX2Rl
-digmcGxhdGZvcm1fYnVzX3R5cGUsIE5VTEwsIGZ3bm9kZSwNCj4gPj4+PiArCQkJICAgICAgIGlv
-cnRfY2hlY2tfZGV2X2RsX3N0YXR1cyk7DQo+ID4+Pj4gKwlpZiAoIXJldCkNCj4gPj4+PiArCQly
-ZXR1cm4gLUVQUk9CRV9ERUZFUjsNCj4gPj4+PiArDQo+ID4+Pj4gKwlyZXR1cm4gcmV0Ow0KPiA+
-Pj4+ICAgIH0NCj4gPj4+Pg0KPiA+Pj4+ICAgICNpZmRlZiBDT05GSUdfSU9NTVVfQVBJDQo+ID4+
-Pj4gQEAgLTkxOSw4ICs5NDcsNyBAQCBzdGF0aWMgaW50IGlvcnRfaW9tbXVfeGxhdGUoc3RydWN0
-IGRldmljZSAqZGV2LA0KPiA+PiBzdHJ1Y3QgYWNwaV9pb3J0X25vZGUgKm5vZGUsDQo+ID4+Pj4g
-ICAgCSAqLw0KPiA+Pj4+ICAgIAlvcHMgPSBpb21tdV9vcHNfZnJvbV9md25vZGUoaW9ydF9md25v
-ZGUpOw0KPiA+Pj4+ICAgIAlpZiAoIW9wcykNCj4gPj4+PiAtCQlyZXR1cm4gaW9ydF9pb21tdV9k
-cml2ZXJfZW5hYmxlZChub2RlLT50eXBlKSA/DQo+ID4+Pj4gLQkJICAgICAgIC1FUFJPQkVfREVG
-RVIgOiAtRU5PREVWOw0KPiA+Pj4+ICsJCXJldHVybiBpb3J0X2lvbW11X2RyaXZlcl9lbmFibGVk
-KG5vZGUtPnR5cGUsIGlvcnRfZndub2RlKTsNCj4gPj4+Pg0KPiA+Pj4+ICAgIAlyZXR1cm4gYXJt
-X3NtbXVfaW9ydF94bGF0ZShkZXYsIHN0cmVhbWlkLCBpb3J0X2Z3bm9kZSwgb3BzKTsNCj4gPj4+
-PiAgICB9DQo+ID4+Pj4gLS0NCj4gPj4+PiAyLjcuNA0KPiA+Pj4+DQo+IC0tDQo+IFRvIHVuc3Vi
-c2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1h
-Y3BpIiBpbg0KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVs
-Lm9yZw0KPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21h
-am9yZG9tby1pbmZvLmh0bWwNCg==
+On 08/04/18 09:10, Wang, Dongsheng wrote:
+> 
+>> -----Original Message-----
+>> From: Robin Murphy [mailto:robin.murphy@arm.com]
+>> Sent: Thursday, April 05, 2018 2:57 AM
+>> To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>; Wang, Dongsheng
+>> <dongsheng.wang@hxt-semitech.com>
+>> Cc: rjw@rjwysocki.net; gregkh@linuxfoundation.org; hanjun.guo@linaro.org;
+>> sudeep.holla@arm.com; Zheng, Joey <yu.zheng@hxt-semitech.com>;
+>> linux-acpi@vger.kernel.org; linux-kernel@vger.kernel.org
+>> Subject: [此邮件可能存在风险] Re: [RFC PATCH 2/2] ACPI/IORT: use
+>> swiotlb_dma_ops when smmu probe failed
+>>
+>> On 04/04/18 17:01, Lorenzo Pieralisi wrote:
+>>> [+cc Robin]
+>>>
+>>> On Thu, Mar 29, 2018 at 03:01:00AM -0700, Wang Dongsheng wrote:
+>>>> If SMMU probe failed, master should use swiotlb as dma ops.
+>>>> SMMU may probe failed with specified environment, so there
+>>>> are not any iommu resources in iommu_device_list.
+>>>>
+>>>> The master will always get EPROBE_DEFER from really_probe
+>>>> (dma_configure) but in fact SMMU has probe failed. The issue
+>>>> causes all of masters failed to be driven.
+>>
+>> Let's just take a step back - why is SMMU probe failing? That seems to
+>> be the primary issue here, because it implies that either your hardware,
+>> firmware or kernel is broken, any of which would make boot failure
+>> somewhat unsurprising anyway.
+>>
+> It's actually not a hardware issue. This is my test case, just return
+> -EINVAL in arm_smmu_device_probe. The HW probe(arm_smmu_device_hw_probe)
+> is just part of SMMU driver probe and the failure may be caused by SW. So
+> I design this case, just make sure even if SMMU probe failed that cause by SW,
+> the MASTER also can work. _Because of our SMMU default mode is bypass._
+
+I don't think it's particularly justifiable to make core API changes for 
+the sake of contrived testcases. On real systems, the SMMU is a 
+fundamental system component which is no more expected to fail probe 
+than, say, the GIC, and as such if it *does* fail then further progress 
+is on a best-effort basis at most. Just because *your* system happens to 
+work fine in this state doesn't make it true for every SMMU 
+implementation and integration that Linux may ever run on.
+
+If you want the kernel to ignore an SMMU, either configure out the 
+driver, or don't describe that SMMU in firmware in the first place.
+
+>>> I added Robin to pick his brain. An alternative would consist
+>>> in using a bus notifier to prevent deferred probing once the SMMU
+>>> driver probing failed but that seems backwards given that a major
+>>> reason to move to deferred probing was to remove the bus notifiers
+>>> dependency in the first place.
+>>>
+>>> It seems to me this is both an OF/ACPI issue - it is not an IORT
+>>> only problem.
+>>
+>> Yes, this is just an instance of the general probe-deferral problem,
+>> e.g. once you have multiple dependencies it's possible to end up in a
+>> stalemate where everything including the IOMMU ends up on the deferred
+>> probe list with nothing to kick it and make progress again.
+>>
+>> Furthermore it seems to me that the whole premise in this patch is
+>> flawed,
+> Ditto. :)
+> 
+> 
+>> since even genuine probe failure may well be transient - just
+>> because one attempt failed doesn't mean a later attempt can't succeed.
+>> Thus "the most recent probe attempt failed" cannot be considered a
+>> fundamentally different state from "no driver is currently bound".
+>>
+> Agree, the genuine probe failure may well be transient. But there is
+> depend on SMMU probe(IOMMU instance) status. There are two situations:
+> 
+> 1. MASTER probing, SMMU doesn't probe yet.
+> 	This case will match "the transient failure".
+> 	really_probe get an EPROBE_DEFER from IORT and the MASTER probe will be
+> 	delayed until SMMU probe successful.
+> 2. MASTER probing, SMMU probe has failed.
+> 	really_probe will always get an EPROBE_DEFER from IORT, because kernel
+> 	has build in SMMU driver.(iort_iommu_driver_enabled) And the master
+> 	never cannot do probe.
+> 
+> The case 2 is I want to handle.
+
+Handle it by not deliberately breaking the SMMU driver. In all other 
+cases, either re-triggering SMMU probe might make it succeed (i.e. the 
+DL_DEV_PROBE_FAILED state is meaningless), or things are so broken that 
+you're probably dead in the water anyway.
+
+Robin.
+
+> 
+> Cheers,
+> -Dongsheng
+> 
+>> Robin.
+>>
+>>>
+>>> Lorenzo
+>>>
+>>>> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+>>>> ---
+>>>>    drivers/acpi/arm64/iort.c | 39
+>> +++++++++++++++++++++++++++++++++------
+>>>>    1 file changed, 33 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+>>>> index e2f7bdd..a6f4c27 100644
+>>>> --- a/drivers/acpi/arm64/iort.c
+>>>> +++ b/drivers/acpi/arm64/iort.c
+>>>> @@ -774,17 +774,45 @@ static int arm_smmu_iort_xlate(struct device
+>> *dev, u32 streamid,
+>>>>    	return ret;
+>>>>    }
+>>>>
+>>>> -static inline bool iort_iommu_driver_enabled(u8 type)
+>>>> +static int iort_check_dev_dl_status(struct device *dev, void *data)
+>>>>    {
+>>>> +	struct fwnode_handle *fwnode = data;
+>>>> +
+>>>> +	if (dev->fwnode != fwnode)
+>>>> +		return 0;
+>>>> +
+>>>> +	if (dev->links.status == DL_DEV_PROBE_FAILED)
+>>>> +		return -ENODEV;
+>>>> +
+>>>> +	return -EPROBE_DEFER;
+>>>> +}
+>>>> +
+>>>> +static int iort_iommu_driver_enabled(u8 type, struct fwnode_handle
+>> *fwnode)
+>>>> +{
+>>>> +	bool buildin;
+>>>> +	int ret;
+>>>> +
+>>>>    	switch (type) {
+>>>>    	case ACPI_IORT_NODE_SMMU_V3:
+>>>> -		return IS_BUILTIN(CONFIG_ARM_SMMU_V3);
+>>>> +		buildin = IS_BUILTIN(CONFIG_ARM_SMMU_V3);
+>>>> +		break;
+>>>>    	case ACPI_IORT_NODE_SMMU:
+>>>> -		return IS_BUILTIN(CONFIG_ARM_SMMU);
+>>>> +		buildin = IS_BUILTIN(CONFIG_ARM_SMMU);
+>>>> +		break;
+>>>>    	default:
+>>>>    		pr_warn("IORT node type %u does not describe an SMMU\n",
+>> type);
+>>>> -		return false;
+>>>> +		buildin = false;
+>>>>    	}
+>>>> +
+>>>> +	if (!buildin)
+>>>> +		return -ENODEV;
+>>>> +
+>>>> +	ret = bus_for_each_dev(&platform_bus_type, NULL, fwnode,
+>>>> +			       iort_check_dev_dl_status);
+>>>> +	if (!ret)
+>>>> +		return -EPROBE_DEFER;
+>>>> +
+>>>> +	return ret;
+>>>>    }
+>>>>
+>>>>    #ifdef CONFIG_IOMMU_API
+>>>> @@ -919,8 +947,7 @@ static int iort_iommu_xlate(struct device *dev,
+>> struct acpi_iort_node *node,
+>>>>    	 */
+>>>>    	ops = iommu_ops_from_fwnode(iort_fwnode);
+>>>>    	if (!ops)
+>>>> -		return iort_iommu_driver_enabled(node->type) ?
+>>>> -		       -EPROBE_DEFER : -ENODEV;
+>>>> +		return iort_iommu_driver_enabled(node->type, iort_fwnode);
+>>>>
+>>>>    	return arm_smmu_iort_xlate(dev, streamid, iort_fwnode, ops);
+>>>>    }
+>>>> --
+>>>> 2.7.4
+>>>>
