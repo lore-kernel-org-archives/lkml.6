@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3913452-1523241308-2-9782205753726819830
+X-Cyrus-Session-Id: sloti22d1t05-3878504-1523241284-2-10485228160254249701
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523241307; b=g/3o6gT4eD5aE3MedBHaxhyKLVvYJCVvVMx0MjX9yt/35R7Y6M
-    Zl8uH8PSkb8CrKy3ip5/5guvN4fcS4bsGTxy1fNsHedTLtl+IP2Ji7hyfum4ht+y
-    jmJGkec0ExDdKCRswXcUzyCY44+3tYJmLk4r/S/aIx5jBtayMj9RytMKTTPV78mV
-    XfdY5OHUrigFy0LI/g5Rbg6aqTOC367AuT6F/vJsfiPf84yDxbGHc7gk6vDZN7h+
-    ITloj1UAUYTtiqXd/GtMC2Fhl+HOpPZUSgHSFoMII4heXuK5t3vBiHWHNqbGwfXF
-    MfmSnfalHEaLZR0FVyyPUqV+2Qdrvt51SYgw==
+    1523241283; b=qYTcudTFFF2Bei7wL2bTY92gUYp0C5rkouv67EKUwkDzZ8mbfv
+    SgW0ySCLnYmA4WSvNUXQzNTUlykGa2E43igFO7gyP9UNSFPcEdCaeyQ0z8BHMkHg
+    fgN7K4p7g8lsKsdNM1WhT+u7IIdFazQPxyKAjysZprJyJfulp+bO+8Atl+kBHKLS
+    eDlaLeZ8ryMH1odLF9z3f+6fSQYBMggDUpcAlVkSZPbuJF+ZkuiQen4Q0MRwXU+E
+    71T490EMvu2pllQw5U884h1ICEkLY9GD3QTjvOu/8GDXFld3q1qvDdklJVbkp2tZ
+    B64KjJwuiUISSfrkzSJFK5ONuJpbHWc3m5WQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523241307; bh=2Ddgc3wv0B
-    gA+4wZmJ///QfhkNnPL1cDaS0l1tmnLjc=; b=gfktVde/DPU9e4qtG81xBvbKT/
-    6NcG4q7TMYBJbRtRhMSwbVltx/PYpXCJolLMlErLyXasOikJ84/t3YWDVrjnxed5
-    4WeG2QqQNywWy8JjRlnW3ea4J0rycWlaijDB3cHDv579vccaRhpTpiO0kEp8IXQa
-    OwooyQUCummOfrj3NoMVgDJiwmWrAcYjWXxXAPj0CcJQh6ss1u+BvDJ90SMehdKV
-    NIbBcW1jrQ+kNrfFTXWQPxzRaIScGgd8lbdD1yZGMCsg1kuBh4lotb24PKufCMCW
-    inxIIfW6sWfPEUAGAGVLJ6DcJq9l6Cxfiit3NTHm+aWSEQiWwfZ2EuS94nqg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=CsdG25qL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523241283; bh=7ifHEMwkdd
+    X8ethWo3GL/VnRnMN+luCoheg/ng5u1c0=; b=fc3Hr1W55VLdK2KVdx4sutWh/3
+    cwn3l4/R0Yse4zRFN9mfdZlcOIBk+4cO9EnXGH4bjFxFoSReOiyX7PPnxyfqJuHu
+    TH7TNzaY6KltWJ1TE4R4rC9hd0AiaOiZQi2tKJo7N102cddasThqkkG0b4yGwcCD
+    EgCPgdH3Tf0hwu0FjKAv8hd0Uk9apcYuEqsrx6oiMMQTTzL2T0KanHKUfY2ISJjP
+    mBYTn9fRBtT8/E0UvDGGrxck4vV4n3tibBLu/kvbz1j6bT3d1mksyppJ/ktxhj7y
+    VhR9fKSQbib4+vZa6DOLw1vcE3Isc99OyvZMte2fAsuXYX/XQK65cPczzWfA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SLawPzZa x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=CsdG25qL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SLawPzZa x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,37 +51,37 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHgfyZBiWIL1hUBMs52OndCZGHGMw7OOcHY00cE5Ufxqh72Xxozrgv4EFuG1YgJ3BN3Yv5QlS6l4SFiOmH51cgsZrM5h9VmMEh4GnMEZV7lt3StDkfg5
-    zzfhWClR7HjbPA4tqnSXB71KNeGwabwSbmpclQayo/Zx7ggeKdv50Rw2AHe3g5P8loU3CoTtjzwAA82oo6k6OnDEsueoIAdikHwfer/+CLNFJoUBwGErMI4T
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIny0z+uNFHHLwP6L7ijpYfZ0CdEvel69E4mArubPpKKnpRz/nfwdvPIA4O7vgkCvyiX1czq7uH6y04D+Y6DAPA55Sv1CfH4v32k5RMXn4q/Koz7sJDP
+    UkMF3Qx2MhxdxD/17inMJnWZmrMbUM5x+fbsGR3x4Qua6ZGtVYBUkRgTGNzStS5et5EsN6rOE2AX9ROpwrcdKdAYjnuxFBtxowbJ+zBWVKwwhhDIb6RsxZ6x
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=uP1ucDPQAAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8
-    a=-ITEmu96tX6iv3YGRBYA:9 a=wPNLvfGTeEIA:10 a=X3ieE3onHXUA:10
-    a=9a9ggB8z3XFZH39hjkD6:22
+    a=Lf-vpJhqX20A:10 a=QyXUC8HyAAAA:8 a=JfrnYn6hAAAA:8 a=yMhMjlubAAAA:8
+    a=3rXtplaHzHsDVF4GQQ0A:9 a=wPNLvfGTeEIA:10 a=1CNFftbPRP8L7MoqJWF3:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754434AbeDICev (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 22:34:51 -0400
+        id S1757728AbeDICe2 (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 22:34:28 -0400
 Received: from mail-sn1nam02on0101.outbound.protection.outlook.com ([104.47.36.101]:16522
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755602AbeDIA1j (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:27:39 -0400
+        id S1755667AbeDIA1l (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:27:41 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Brian Norris <computersforpeace@gmail.com>,
+CC: Priyalee Kushwaha <priyalee.kushwaha@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 058/293] mtd: handle partitioning on devices
- with 0 erasesize
-Thread-Topic: [PATCH AUTOSEL for 4.9 058/293] mtd: handle partitioning on
- devices with 0 erasesize
-Thread-Index: AQHTz5kAgWMN5LdnDUOlZJ62Cebi8g==
-Date: Mon, 9 Apr 2018 00:23:36 +0000
-Message-ID: <20180409002239.163177-58-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 060/293] platform/x86:
+ intel_telemetry_debugfs: fix oops when load/unload module
+Thread-Topic: [PATCH AUTOSEL for 4.9 060/293] platform/x86:
+ intel_telemetry_debugfs: fix oops when load/unload module
+Thread-Index: AQHTz5kBW7yzYCUTQUasV/y/FuZgxw==
+Date: Mon, 9 Apr 2018 00:23:38 +0000
+Message-ID: <20180409002239.163177-60-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,27 +90,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0871;7:+b0zTzfA9IC4YyeoyrZqN5Fh+4Xn/FUpESVE+J0i9sBKXfa/55mINMt8+ZaslT5huaNWOUxn0clRjtMOVUbJk3ELUC6Fsg9/Oas9g9hjWXXmqzcZIo+inWjSkngkJ9Yu2MxcVnC504H0Wcxf1lH4vaAi2/lI2La4E7oaBbJ7e0V5mTUTKRqwhHDVus2KbD0hC3CiEvyd7sQ554C2SHPc8RJy9sPJYYqQkCJD6gihfu8F7rC3cx0+gH2AiwsCWOdg;20:Ucm1UqzfM524+xIKIO9c4Bzv5l8VOyTE9QnFnxYyUZekhpZ5Lew6OUTzZfCjr5pjEBxWvYtfKdgT4dUT8E4bj8f0jqsTgADplebwOZeFGIyxCasrS09qOtCKPy0iRxVSeWHdT2B5UctpM5kKdXbCRyZKxguESW6CUHkokH6F8NE=
-X-MS-Office365-Filtering-Correlation-Id: 7e90a630-0db6-43d5-37d1-08d59db0b06d
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0871;7:JwB0ZlMBBBT1NLRSo/TMeaeVRWV5ZX37Edht2Eu7Ja4BQkTL5nun4bahGcpp3Bcx2GfWw361A3XGlEqMb4mUGJXWVJNCJ84zQlCfUqtGTMgxrtQRYgcfpZXmMvtt80FICZf3Zedyb3u1CFQpo4Msf9pZ7qEf/9nPWzwHUaNI2uVPBgDt0Ee8d3449mk4HoKdD2aLJrTm+49p943692p4AZ7V7KdyVVNBLWHN1jZJ+8JYRc+VllJQDQyL9Ttwdghv;20:QIh+DOf8WOVPYJ2ws0Hp16GWIXEhmq9grYbOBMg+YbBYsKXMqpR7DRkN/H8kBNyv2QefxzVSIqvJHCKBh2p2szyKBAT6iuHrdS9fRW119KzDBa3GOs88cZk3qq6nAsz6cwr6tQmtFzwUGhSeKs7BOR8jUOOcieBAFknkOP1ytsE=
+X-MS-Office365-Filtering-Correlation-Id: 5d3daad6-969b-46c2-a632-08d59db0b11d
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB0871;
 x-ms-traffictypediagnostic: DM5PR2101MB0871:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0871494D0E246E4D5137D6ACFBBF0@DM5PR2101MB0871.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(58145275503218);
+x-microsoft-antispam-prvs: <DM5PR2101MB0871C78C230ED913BCA5871FFBBF0@DM5PR2101MB0871.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB0871;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0871;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(39380400002)(376002)(39860400002)(199004)(189003)(105586002)(8676002)(59450400001)(3660700001)(3280700002)(6506007)(81156014)(81166006)(14454004)(99286004)(72206003)(110136005)(8936002)(54906003)(305945005)(2906002)(316002)(10290500003)(478600001)(7736002)(53936002)(6512007)(486006)(11346002)(39060400002)(4326008)(86362001)(446003)(3846002)(102836004)(76176011)(476003)(25786009)(22452003)(36756003)(107886003)(10090500001)(5660300001)(6486002)(86612001)(6436002)(2616005)(68736007)(26005)(1076002)(186003)(2501003)(5250100002)(2900100001)(106356001)(66066001)(6116002)(97736004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0871;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: ILoamaB9Q3l7HiqnKW7TfB8nX8gmTjRIl8nslztrMedKYUWGsd4CjJMn2klrfIgsU6N/7yOcdtNF86U/hmjoaCRVwU5j7zZhQKpQ3klxF7shdvCPnYmZPZ+aWhPi0vzy/cUZz58o5n1v19L9jhHcfAcvC+8Nk7KFrz/wm7tmlx6NmXHjv33GTVfN7pwT3z1JdfXFJ2p2kaWasbDYwJtYCjmZDlZoPcne4lDti4YkxcpwS/iB+GpT9sYWekccc0z7PJ0TZN8fEWNbCfWp4ZTpIObRIvZlGx5SzgBep0v8CQosLhtt1zrTBXqevhNNnxlsCTl3Z348Uf4M9UMGke5tAPsmdei8tptjGwiE8nyXSj1gRZP7t4vqwIh9y68+kCqBe/Hjyh6emnpH2LdmHVO+o/EYgBuwPg5YHZtMhvV7FIY=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(39380400002)(376002)(39860400002)(199004)(189003)(105586002)(8676002)(59450400001)(3660700001)(3280700002)(6506007)(81156014)(81166006)(14454004)(99286004)(72206003)(110136005)(8936002)(54906003)(305945005)(2906002)(316002)(10290500003)(478600001)(7736002)(53936002)(6512007)(486006)(11346002)(4326008)(86362001)(575784001)(446003)(3846002)(102836004)(76176011)(476003)(25786009)(22452003)(36756003)(107886003)(10090500001)(5660300001)(6486002)(86612001)(6436002)(2616005)(68736007)(26005)(1076002)(186003)(2501003)(5250100002)(2900100001)(106356001)(66066001)(6116002)(97736004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0871;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: BVM4J1w7hT5h5geMERa0Dfw5Zo6E4rp+4aQmIO2Rjt5XSnN7g5SFVdCfnKJJra1aJ0aog0Pn1hdNlk17kSyq7xiqPfSjcMr3rT4vV8vEuMEXBFe/5CnyoOIlx7Kpw+QhB6uhJiSbrnzyAijEKYLb/oxMd5JjXBpXiDFEzixmpcd6HokLj3VwwOHIftsjx56VViSDX+k15IY1NmWb24DHndRvon1/+MlWvO6NvAklgt444N7oLlByfczCSZwdc2105xJCFjd4j55bI3wJ1gc1rzFyodDx+x17j1GCFbclO0DOsU6hLuZ67nyOFDhMKc9dknEamEBCe+ACO5wq7k7rtHBerScl6pIvjIGCgIj6vPKq4pC7wJj+D5xxC47Hn49JR9KmcOY/1SrNB8soUHWNuO3/waU5wHPXLPR25uhk3jw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e90a630-0db6-43d5-37d1-08d59db0b06d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:23:36.7061
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d3daad6-969b-46c2-a632-08d59db0b11d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:23:38.4093
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -121,93 +121,135 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+From: Priyalee Kushwaha <priyalee.kushwaha@intel.com>
 
-[ Upstream commit 1eeef2d7483a7e3f8d2dd2a5b9939b3b814dc549 ]
+[ Upstream commit bf5d008164dd84d671ca2dd569a1676051f9faff ]
 
-erasesize is meaningful for flash devices but for SRAM there is no
-concept of an erase block so erasesize is set to 0. When partitioning
-these devices instead of ensuring partitions fall on erasesize
-boundaries we ensure they fall on writesize boundaries.
+This fixes an oops found while testing load/unload of the
+intel_telemetry_debugfs module. module_init uses register_pm_notifier
+for PM callbacks, but unregister_pm_notifier was missing from
+module_exit.
 
-Helped-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+ [ 97.481860] BUG: unable to handle kernel paging request at ffffffffa006f0=
+10
+ [ 97.489742] IP: blocking_notifier_chain_register+0x3a/0xa0
+ [ 97.495898] PGD 2e0a067
+ [ 97.495899] PUD 2e0b063
+ [ 97.498737] PMD 179e29067
+ [ 97.501573] PTE 0
+
+ [ 97.508423] Oops: 0000 1 PREEMPT SMP
+ [ 97.512724] Modules linked in: intel_telemetry_debugfs intel_rapl gpio_ke=
+ys dwc3 udc_core intel_telemetry_pltdrv intel_punit_ipc intel_telemetry_cor=
+e rtc_cmos efivars x86_pkg_temp_thermal iwlwifi snd_hda_codec_hdmi soc_butt=
+on_array btusb cfg80211 btrtl mei_me hci_uart btbcm mei btintel i915 blueto=
+oth intel_pmc_ipc snd_hda_intel spi_pxa2xx_platform snd_hda_codec dwc3_pci =
+snd_hda_core tpm_tis tpm_tis_core tpm efivarfs
+ [ 97.558453] CPU: 0 PID: 889 Comm: modprobe Not tainted 4.11.0-rc6-intel-d=
+ev-bkc #1
+ [ 97.566950] Hardware name: Intel Corp. Joule DVT3/SDS, BIOS GTPP181A.X64.=
+0143.B30.1701132137 01/13/2017
+ [ 97.577518] task: ffff8801793a21c0 task.stack: ffff8801793f0000
+ [ 97.584162] RIP: 0010:blocking_notifier_chain_register+0x3a/0xa0
+ [ 97.590903] RSP: 0018:ffff8801793f3c58 EFLAGS: 00010286
+ [ 97.596802] RAX: ffffffffa006f000 RBX: ffffffff81e3ea20 RCX: 000000000000=
+0000
+ [ 97.604812] RDX: ffff880179eaf210 RSI: ffffffffa0131000 RDI: ffffffff81e3=
+ea20
+ [ 97.612821] RBP: ffff8801793f3c68 R08: 0000000000000006 R09: 000000000000=
+005c
+ [ 97.620847] R10: 0000000000000000 R11: 0000000000000006 R12: ffffffffa013=
+1000
+ [ 97.628855] R13: 0000000000000000 R14: ffff880176e35f48 R15: ffff8801793f=
+3ea8
+ [ 97.636865] FS: 00007f7eeba07700(0000) GS:ffff88017fc00000(0000) knlGS:00=
+00000000000000
+ [ 97.645948] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ [ 97.652423] CR2: ffffffffa006f010 CR3: 00000001775ef000 CR4: 000000000034=
+06f0
+ [ 97.660423] Call Trace:
+ [ 97.663166] ? 0xffffffffa0031000
+ [ 97.666885] register_pm_notifier+0x18/0x20
+ [ 97.671581] telemetry_debugfs_init+0x92/0x1000
+
+Signed-off-by: Priyalee Kushwaha <priyalee.kushwaha@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mtd/mtdpart.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ drivers/platform/x86/intel_telemetry_debugfs.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
-index fccdd49bb964..4bb63503aabf 100644
---- a/drivers/mtd/mtdpart.c
-+++ b/drivers/mtd/mtdpart.c
-@@ -385,8 +385,12 @@ static struct mtd_part *allocate_partition(struct mtd_=
-info *master,
- 			const struct mtd_partition *part, int partno,
- 			uint64_t cur_offset)
+diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platf=
+orm/x86/intel_telemetry_debugfs.c
+index ef29f18b1951..4cc2f4ea0a25 100644
+--- a/drivers/platform/x86/intel_telemetry_debugfs.c
++++ b/drivers/platform/x86/intel_telemetry_debugfs.c
+@@ -97,11 +97,9 @@
+ 	} \
+ }
+=20
+-#ifdef CONFIG_PM_SLEEP
+ static u8 suspend_prep_ok;
+ static u32 suspend_shlw_ctr_temp, suspend_deep_ctr_temp;
+ static u64 suspend_shlw_res_temp, suspend_deep_res_temp;
+-#endif
+=20
+ struct telemetry_susp_stats {
+ 	u32 shlw_swake_ctr;
+@@ -807,7 +805,6 @@ static const struct file_operations telem_ioss_trc_verb=
+_ops =3D {
+ 	.release	=3D single_release,
+ };
+=20
+-#ifdef CONFIG_PM_SLEEP
+ static int pm_suspend_prep_cb(void)
  {
-+	int wr_alignment =3D (master->flags & MTD_NO_ERASE) ? master->writesize:
-+							    master->erasesize;
- 	struct mtd_part *slave;
-+	u32 remainder;
- 	char *name;
-+	u64 tmp;
+ 	struct telemetry_evtlog evtlog[TELEM_MAX_OS_ALLOCATED_EVENTS];
+@@ -937,7 +934,6 @@ static int pm_notification(struct notifier_block *this,
+ static struct notifier_block pm_notifier =3D {
+ 	.notifier_call =3D pm_notification,
+ };
+-#endif /* CONFIG_PM_SLEEP */
 =20
- 	/* allocate the partition structure */
- 	slave =3D kzalloc(sizeof(*slave), GFP_KERNEL);
-@@ -488,10 +492,11 @@ static struct mtd_part *allocate_partition(struct mtd=
-_info *master,
- 	if (slave->offset =3D=3D MTDPART_OFS_APPEND)
- 		slave->offset =3D cur_offset;
- 	if (slave->offset =3D=3D MTDPART_OFS_NXTBLK) {
-+		tmp =3D cur_offset;
- 		slave->offset =3D cur_offset;
--		if (mtd_mod_by_eb(cur_offset, master) !=3D 0) {
--			/* Round up to next erasesize */
--			slave->offset =3D (mtd_div_by_eb(cur_offset, master) + 1) * master->era=
-sesize;
-+		remainder =3D do_div(tmp, wr_alignment);
-+		if (remainder) {
-+			slave->offset +=3D wr_alignment - remainder;
- 			printk(KERN_NOTICE "Moving partition %d: "
- 			       "0x%012llx -> 0x%012llx\n", partno,
- 			       (unsigned long long)cur_offset, (unsigned long long)slave->offse=
-t);
-@@ -556,19 +561,22 @@ static struct mtd_part *allocate_partition(struct mtd=
-_info *master,
- 		slave->mtd.erasesize =3D master->erasesize;
- 	}
+ static int __init telemetry_debugfs_init(void)
+ {
+@@ -960,14 +956,13 @@ static int __init telemetry_debugfs_init(void)
+ 	if (err < 0)
+ 		return -EINVAL;
 =20
--	if ((slave->mtd.flags & MTD_WRITEABLE) &&
--	    mtd_mod_by_eb(slave->offset, &slave->mtd)) {
-+	tmp =3D slave->offset;
-+	remainder =3D do_div(tmp, wr_alignment);
-+	if ((slave->mtd.flags & MTD_WRITEABLE) && remainder) {
- 		/* Doesn't start on a boundary of major erase size */
- 		/* FIXME: Let it be writable if it is on a boundary of
- 		 * _minor_ erase size though */
- 		slave->mtd.flags &=3D ~MTD_WRITEABLE;
--		printk(KERN_WARNING"mtd: partition \"%s\" doesn't start on an erase bloc=
-k boundary -- force read-only\n",
-+		printk(KERN_WARNING"mtd: partition \"%s\" doesn't start on an erase/writ=
-e block boundary -- force read-only\n",
- 			part->name);
- 	}
--	if ((slave->mtd.flags & MTD_WRITEABLE) &&
--	    mtd_mod_by_eb(slave->mtd.size, &slave->mtd)) {
-+
-+	tmp =3D slave->mtd.size;
-+	remainder =3D do_div(tmp, wr_alignment);
-+	if ((slave->mtd.flags & MTD_WRITEABLE) && remainder) {
- 		slave->mtd.flags &=3D ~MTD_WRITEABLE;
--		printk(KERN_WARNING"mtd: partition \"%s\" doesn't end on an erase block =
--- force read-only\n",
-+		printk(KERN_WARNING"mtd: partition \"%s\" doesn't end on an erase/write =
-block -- force read-only\n",
- 			part->name);
- 	}
+-
+-#ifdef CONFIG_PM_SLEEP
+ 	register_pm_notifier(&pm_notifier);
+-#endif /* CONFIG_PM_SLEEP */
 =20
+ 	debugfs_conf->telemetry_dbg_dir =3D debugfs_create_dir("telemetry", NULL)=
+;
+-	if (!debugfs_conf->telemetry_dbg_dir)
+-		return -ENOMEM;
++	if (!debugfs_conf->telemetry_dbg_dir) {
++		err =3D -ENOMEM;
++		goto out_pm;
++	}
+=20
+ 	f =3D debugfs_create_file("pss_info", S_IFREG | S_IRUGO,
+ 				debugfs_conf->telemetry_dbg_dir, NULL,
+@@ -1014,6 +1009,8 @@ static int __init telemetry_debugfs_init(void)
+ out:
+ 	debugfs_remove_recursive(debugfs_conf->telemetry_dbg_dir);
+ 	debugfs_conf->telemetry_dbg_dir =3D NULL;
++out_pm:
++	unregister_pm_notifier(&pm_notifier);
+=20
+ 	return err;
+ }
+@@ -1022,6 +1019,7 @@ static void __exit telemetry_debugfs_exit(void)
+ {
+ 	debugfs_remove_recursive(debugfs_conf->telemetry_dbg_dir);
+ 	debugfs_conf->telemetry_dbg_dir =3D NULL;
++	unregister_pm_notifier(&pm_notifier);
+ }
+=20
+ late_initcall(telemetry_debugfs_init);
 --=20
 2.15.1
