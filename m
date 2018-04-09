@@ -1,108 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeDINGP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:06:15 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35167 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752081AbeDINGO (ORCPT
+        id S1751707AbeDINI7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:08:59 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:33046 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751524AbeDINI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:06:14 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: jacopo mondi <jacopo@jmondi.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>, ysato@users.sourceforge.jp,
-        dalias@libc.org, geert@linux-m68k.org,
-        linux-renesas-soc@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org
-Subject: Re: [RFC v2 2/2] base: dma-mapping: Postpone page_to_pfn() on mmap()
-Date: Mon, 09 Apr 2018 16:06:15 +0300
-Message-ID: <2555020.mSAUJ9kk90@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <7da3f31e-e4ad-7f1a-e66c-0d3e0fb8b27d@arm.com>
-References: <1510679286-6988-1-git-send-email-jacopo+renesas@jmondi.org> <20180409072547.GU20945@w540> <7da3f31e-e4ad-7f1a-e66c-0d3e0fb8b27d@arm.com>
+        Mon, 9 Apr 2018 09:08:57 -0400
+X-Google-Smtp-Source: AIpwx482EjHYOYuP7ORUEbzXmUupwwweZkSffE9ouAQf+SoTPoiSRoTS+GF4GaL8noYyo5kgOUnWRw8hzkYJDA0Bu6s=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <e5bd38c0bd81236e11fd391ec3339d3bdf3c29d5.1522546571.git.fthain@telegraphics.com.au>
+References: <cover.1522546571.git.fthain@telegraphics.com.au> <e5bd38c0bd81236e11fd391ec3339d3bdf3c29d5.1522546571.git.fthain@telegraphics.com.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Apr 2018 15:08:56 +0200
+X-Google-Sender-Auth: k4nRddCl6BtCXmjlqgkhll7rOuQ
+Message-ID: <CAMuHMdXC3d84tJLsr=mZx20qsF6ddvmNMSFOCY-xHmzqDF3qhQ@mail.gmail.com>
+Subject: Re: [PATCH 06/12] block/swim: Fix array bounds check
+To: Finn Thain <fthain@telegraphics.com.au>
+Cc: Laurent Vivier <lvivier@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Finn,
 
-On Monday, 9 April 2018 14:11:22 EEST Robin Murphy wrote:
-> On 09/04/18 08:25, jacopo mondi wrote:
-> > Hi Robin, Laurent,
-> > 
-> >      a long time passed, sorry about this.
-> > 
-> > On Wed, Nov 15, 2017 at 01:38:23PM +0000, Robin Murphy wrote:
-> >> On 14/11/17 17:08, Jacopo Mondi wrote:
-> >>> On SH4 architecture, with SPARSEMEM memory model, translating page to
-> >>> pfn hangs the CPU. Post-pone translation to pfn after
-> >>> dma_mmap_from_dev_coherent() function call as it succeeds and make page
-> >>> translation not necessary.
-> >>> 
-> >>> This patch was suggested by Laurent Pinchart and he's working to submit
-> >>> a proper fix mainline. Not sending for inclusion at the moment.
-> >> 
-> >> Y'know, I think this patch does have some merit by itself - until we know
-> >> that cpu_addr *doesn't* represent some device-private memory which is not
-> >> guaranteed to be backed by a struct page, calling virt_to_page() on it is
-> >> arguably semantically incorrect, even if it might happen to be benign in
-> >> most cases.
-> > 
-> > I still need to carry this patch in my trees to have a working dma memory
-> > mapping on SH4 platforms. My understanding from your comment is that
-> > there may be a way forward for this patch, do you still think the same?
-> > Have you got any suggestion on how to improve this eventually for
-> > inclusion?
-> 
-> As before, the change itself does seem reasonable; it might be worth
-> rewording the commit message in more general terms rather than making it
-> sound like an SH-specific workaround (which I really don't think it is),
-> but otherwise I'd say just repost it as a non-RFC patch.
+On Sun, Apr 1, 2018 at 3:41 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+> In the floppy_find() function in swim.c is a call to
+> get_disk(swd->unit[drive].disk). The actual parameter to this call
+> can be a NULL pointer when drive == swd->floppy_count. This causes
+> an oops in get_disk().
+>
+> Data read fault at 0x00000198 in Super Data (pc=0x1be5b6)
 
-I actually can't remember any better fix I would have in mind, so this looks 
-good to me :-) I agree with Robin, the commit message should be reworded. 
-Robin's explanation of why virt_to_page() should be postponed until we know 
-that cpu_addr represents memory that is guaranteed to be backed by a struct 
-page is a good starting point. You can mention SH4 as an example of an 
-architecture that will crash when calling virt_to_page() in such a case, but 
-the fix isn't specific to SH4.
+[...]
 
-> >>> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >>> ---
-> >>> 
-> >>>   drivers/base/dma-mapping.c | 3 ++-
-> >>>   1 file changed, 2 insertions(+), 1 deletion(-)
-> >>> 
-> >>> diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
-> >>> index e584edd..73d64d3 100644
-> >>> --- a/drivers/base/dma-mapping.c
-> >>> +++ b/drivers/base/dma-mapping.c
-> >>> @@ -227,8 +227,8 @@ int dma_common_mmap(struct device *dev, struct
-> >>> vm_area_struct *vma,
-> >>>   #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
-> >>>   	unsigned long user_count = vma_pages(vma);
-> >>>   	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> >>> -	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
-> >>>   	unsigned long off = vma->vm_pgoff;
-> >>> +	unsigned long pfn;
-> >>> 
-> >>>   	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-> >>> 
-> >>> @@ -236,6 +236,7 @@ int dma_common_mmap(struct device *dev, struct
-> >>> vm_area_struct *vma,
-> >>>   		return ret;
-> >>>   	
-> >>>   	if (off < count && user_count <= (count - off)) {
-> >>> +		pfn = page_to_pfn(virt_to_page(cpu_addr));
-> >>>   		ret = remap_pfn_range(vma, vma->vm_start,
-> >>>   				      pfn + off,
-> >>>   				      user_count << PAGE_SHIFT,
+> Fix the array index bounds check to avoid this.
+>
+> Fixes: 8852ecd97488 ("[PATCH] m68k: mac - Add SWIM floppy support")
+> Cc: Laurent Vivier <lvivier@redhat.com>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Tested-by: Stan Johnson <userm57@yahoo.com>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+Looks like amiflop.c:find_floppy() needs a check, too?
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
