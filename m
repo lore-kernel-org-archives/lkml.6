@@ -1,71 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752957AbeDIPW4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:22:56 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:59994 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751673AbeDIPWz (ORCPT
+        id S1753118AbeDIPXM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:23:12 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:49636 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753062AbeDIPXK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:22:55 -0400
-Date: Mon, 9 Apr 2018 18:22:53 +0300
-From: "Dmitry V. Levin" <ldv@altlinux.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: ppc compat v4.16 regression: sending SIGTRAP or SIGFPE via kill()
- returns wrong values in si_pid and si_uid
-Message-ID: <20180409152253.GD10489@altlinux.org>
-Mail-Followup-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J5MfuwkIyy7RmF4Q"
-Content-Disposition: inline
+        Mon, 9 Apr 2018 11:23:10 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [RFC] UBIFS authentication
+From: David Gstir <david@sigma-star.at>
+In-Reply-To: <20180409095912.f7d35y7yjdnj2ffz@pengutronix.de>
+Date: Mon, 9 Apr 2018 17:23:05 +0200
+Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Content-Transfer-Encoding: 8BIT
+Message-Id: <9EEA8AD6-E46F-45B7-8A85-98E4CC82B1D3@sigma-star.at>
+References: <E6D3BD02-AF3A-4B75-92FD-A8A07B4C9C51@sigma-star.at>
+ <20180409095912.f7d35y7yjdnj2ffz@pengutronix.de>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Sascha,
 
---J5MfuwkIyy7RmF4Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 09.04.2018, at 11:59, Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> 
+> Hi David,
+> 
+> On Wed, Jan 17, 2018 at 04:19:14PM +0100, David Gstir wrote:
+>> Hi everybody!
+>> 
+>> ### Index Authentication
+>> 
+>> Through UBIFS' concept of a wandering tree, it already takes care of only
+>> updating and persisting changed parts from leaf node up to the root node
+>> of the full B+ tree. This enables us to augment the index nodes of the tree
+>> with a hash over each node's child nodes. As a result, the index basically also
+>> a Merkle tree. Since the leaf nodes of the index contain the actual filesystem
+>> data, the hashes of their parent index nodes thus cover all the file contents
+>> and file metadata. When a file changes, the UBIFS index is updated accordingly
+>> from the leaf nodes up to the root node including the master node. This process
+>> can be hooked to recompute the hash only for each changed node at the same time.
+>> Whenever a file is read, UBIFS can verify the hashes from each leaf node up to
+>> the root node to ensure the node's integrity.
+>> 
+>> To ensure the authenticity of the whole index, the UBIFS master node stores a
+>> keyed hash (HMAC) over its own contents (which includes the location of the root
+>> node) and the root node of the index tree. As mentioned above, the master node
+>> is always written to the flash whenever the index is persisted (ie. on index
+>> commit).
+>> 
+>> Using this approach only UBIFS index nodes and the master node are changed to
+>> include a hash. All other types of nodes will remain unchanged. This reduces
+>> the storage overhead which is precious for users of UBIFS (ie. embedded
+>> devices).
+>> 
+>> 
+>>                                            HMAC Master Node
+>>                                                 |
+>>                      ' ' ' ' ' ' ' ' ' ' ' ' ' '|' '
+>>                      '     +---------------+    o  '
+>>                      '     |  Master Node  |       '
+>>                      '     +---------------+       '       Hash Index Node #1
+>>                      '             |               '                |
+>>       . . . . . . . .'. . . . . .  v . . . . . . . . . . . . . . . .|. . . . .
+>>       .              '      +---------------+      '                o        .
+>>       .              '      | Index Node #1 |      '                         .
+>>       .              '      +---------------+      '                         .
+>>       .              '        |    ...   |  (fanout: 8)                      .
+>>       .              ' ' ' '  | ' ' ' '  | ' ' ' ' '                         .
+>>       .               +-------+          +------+                            .
+>>       .               |                         |                            .
+>>       .     ' ' ' ' ' v ' ' ' ' '  ' ' ' ' ' '  v  ' ' ' ' ' ' ' ' ' ' '     .
+>>       .     ' +---------------+ '  '     +---------------+             '     .
+>>       .     ' | Index Node #2 | '  '     | Index Node #3 |             '     .
+>>       .     ' +---------------+ '  '     +---------------+             '     .
+>>       .     '   |   ...         '  '        |   ...   |                '     .
+>>       . . . ' . v . . . . . . . '. ' . . .  v . . . . v . . . . . . . .' . . .
+>>             ' +-----------+     '  '+----------+  +-----------+        '
+>>             ' | Data Node |     '  '| INO Node |  | DENT Node |        '
+>>             ' +-----------+     '  '+----------+  +-----------+        '
+>>             '  o                '  '                                o  '
+>>             ' '|' ' ' ' ' ' ' ' '  ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' '|' '
+>>                |                                                    |
+>>          Hash Index Node #2                                Hash Index Node #3
+> 
+> When a hash covers an index node and also its children then of course
+> this is really space efficient, but this also means that in order to
+> read a node we always have to read all of its children. Also adding a
+> new leaf node means rehashing all siblings. Is it really worth paying
+> this price to save a few bytes for more hashes?
+> I would rather suggest to add a hash per child to each index node.
 
-Hi,
+What you propose is a simple tradeoff between the required on-flash storage
+space and the amount of read operations needed to verify the index node integrity.
 
-There seems to be a regression in v4.16 on ppc compat very similar
-to sparc compat regression reported earlier at
-https://marc.info/?l=3Dlinux-sparc&m=3D151501500704383 .
+To get some numbers here: In case of SHA256 and a fanout of 8, we'd store an
+additional 224 bytes per index node and safe 7 index node reads per tree level.
 
-The symptoms are exactly the same: the same signal_receive test from
-the strace test suite fails with the same diagnostics:
-https://build.opensuse.org/public/build/home:ldv_alt/openSUSE_Factory_Power=
-PC/ppc/strace/_log
+I hope it is clear that having a single hash does _not_ mean we have to read
+the whole tree! :)
 
-Unfortunately, I do not have any means to investigate further,
-so just passing this information on to those who care.
+Considering that UBIFS is mostly used in embedded where storage space is rather
+precious, we opted for storing a single hash. But sure, storing a hash per
+branch/child  is a possibility and we have to discuss if that is acceptable
+in most use cases.
 
+As for adding new leaf nodes: If we add a leaf node, we'll always have to recompute
+the hash of every index node on the path to the root node. Even with a hash per
+branch/child. In case of TNC split/merge operations likely even more.
+But I don't get why you think that would mean we have to recompute the hash
+on all siblings of that nodes? Or do you simply mean that we have to re-read all
+those siblings to compute the hash on the parent?
 
---=20
-ldv
-
---J5MfuwkIyy7RmF4Q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJay4VNAAoJEAVFT+BVnCUIHsEP/0dzOuE/JsoqDDRsS7s2ZmMT
-lazRZD/0abRpsonCGvNoOXm2NtqE9679S1zEmRll7lB+RZKLV3G9YmbtKeOsom7g
-YS4j5lQVeHLV+KxqcBLgxUDePGu/pXPQyY8f5cvvB/iSKGqOTe7Yd+mBUii1lu4U
-AeW3YxV72atR9Ysw826Zi57FM2XE4XCMtGYFI8QJ3VYDWne/DkbcD7hlqjCzlOwR
-pUWddlREy2fQRxwCEGgb/7AfJ+zl0z1ENJ2xxD27EFvI7VfVD8GjFinW3lJlaKF4
-zR6V85RwJSshZOiyzgu7MbujX4R7jrH6Ac6s/L5qget7k1LGcsQRFmp62XmpMVJH
-A1ptiNBfk1+OMPtFvemPU/FAu9X05/902iakGsZV2hl3JRWyA9bUfmYRBqHXvoMX
-7GYAfrGpqKA4A4eNbPC2mjwkdUSRNZa2vI8vop4vttH0MlYjIDGwyEwUCeiOD53p
-AnjxPOP4ckslvo7VPbCr2u+PPC5CVhxzPzxULgmUVBs51Iqlak+AwSVv1t/S9uew
-Iko3u2Qpxp3aYj7MHXJjNLjquPHz9SJv0xN/ZmfExN4rYseNUrlbmFAkYwLCVzk4
-bFrehE0iUz0FyoHKqX91KeVvo+d7SbRox+rRzdVfq546EMrwcpXoiIBATHLPAE8a
-k5HLVlm4I1mVfWMFZm0o
-=0jiy
------END PGP SIGNATURE-----
-
---J5MfuwkIyy7RmF4Q--
+Thanks,
+David
