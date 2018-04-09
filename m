@@ -1,70 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751767AbeDII7s (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 04:59:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47238 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751650AbeDII7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 04:59:46 -0400
-Date: Mon, 9 Apr 2018 10:59:44 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: wen.yang99@zte.com.cn
-Cc: sergey.senozhatsky.work@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Bart.VanAssche@wdc.com, tj@kernel.org,
-        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn, tan.hu@zte.com.cn
-Subject: Re: =?utf-8?B?562U5aSNOiBSZTog562U5aSNOiBS?=
- =?utf-8?Q?e=3A_=5BPATCH_v2=5D_scsi?= =?utf-8?Q?=3A?= Introduce
- sdev_printk_ratelimited tothrottlefrequent printk
-Message-ID: <20180409085944.3bxu5cnvnfj43zs7@pathway.suse.cz>
-References: <20180406084901.3353tnfbup6gblfx@pathway.suse.cz>
- <201804091013439214247@zte.com.cn>
+        id S1751667AbeDIJDs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 05:03:48 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:37191 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeDIJDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 05:03:47 -0400
+X-Google-Smtp-Source: AIpwx4/eMLN1hZawC1tPWO2Ue7x8nphMDBawt2rlDrszyywVzikTP6KgP4SpbiHNozdbhfJSt6ZfgG1UYbA1lTb4Tfk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201804091013439214247@zte.com.cn>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <201804080124.GHG87587.SVFOOQFLOHMJtF@I-love.SAKURA.ne.jp>
+References: <CACT4Y+Yk0hEDj2EcXTJ5BcTHE0m1Sn0e9RfY=6KC4nWhWOHPmw@mail.gmail.com>
+ <201804050705.BHE57833.HVFOFtSOMQJFOL@I-love.SAKURA.ne.jp>
+ <201804072131.AEF86988.OFOQLJMVFFtOSH@I-love.SAKURA.ne.jp>
+ <20180407153937.GR4082@hirez.programming.kicks-ass.net> <CACT4Y+Z6_P9mj2TEE3mtCez1je7dbviftM0rPcgsmQ-yFYYmBg@mail.gmail.com>
+ <201804080124.GHG87587.SVFOOQFLOHMJtF@I-love.SAKURA.ne.jp>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 9 Apr 2018 11:03:26 +0200
+Message-ID: <CACT4Y+ZA_zYGxxj9oN8m5ApSbKSSS-mf2DXpHT3Ab3MdiEKKgQ@mail.gmail.com>
+Subject: Re: [PATCH v2] locking/hung_task: Show all hung tasks before panic
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mandeep Singh Baines <msb@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vegard Nossum <vegard.nossum@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-04-09 10:13:43, wen.yang99@zte.com.cn wrote:
-> That's a good idea, but it only solves part of the problem.
->  loopping printks under spinlock, there's two path:
-> one path is: 
+On Sat, Apr 7, 2018 at 6:24 PM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> Dmitry Vyukov wrote:
+>> On Sat, Apr 7, 2018 at 5:39 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+>> > On Sat, Apr 07, 2018 at 09:31:19PM +0900, Tetsuo Handa wrote:
+>> >> are for replacing debug_show_all_locks() in check_hung_task() for cases like
+>> >> https://syzkaller.appspot.com/bug?id=26aa22915f5e3b7ca2cfca76a939f12c25d624db
+>> >> because we are interested in only threads holding locks.
+>> >>
+>> >> SysRq-t is too much but SysRq-w is useless for killable/interruptible threads...
+>> >
+>> > Or use a script to process the sysrq-t output? I mean, we can add all
+>> > sorts, but where does it end?
+>
+> Maybe allow khungtaskd to call call_usermode_helper() to run arbitrary operations
+> instead of just calling panic()?
 
-> scsi_request_fn -->  loop ->  blk_peek_request-> scsi_prep_fn -> scsi_prep_state_check -> sdev_printk
+This would probably work for syzbot too.
 
-> another path is:
+>> Good question.
+>> We are talking about few dozen more stacks, right?
+>>
+>> Not all kernel bugs are well reproducible, so it's not always possible
+>> to go back and hit sysrq-t. And this come up in the context of syzbot,
+>> which is an automated system. It reported a bunch of hangs and most of
+>> them are real bugs, but not all of them are easily actionable.
+>> Can it be a config or a command line argument, which will make syzbot
+>> capture more useful context for each such hang?
+>>
+>
+> It will be nice if syzbot testing is done with kdump configured, and the
+> result of automated scripting on vmcore (such as "foreach bt -s -l") is
+> available.
 
-> scsi_request_fn -->  loop ->  sdev_printk
-
-Is this message redundant? It seems to be printed in the same
-situations as the messages in scsi_prep_state_check().
-
-In fact, there seems to be a mismatch. scsi_request_fn() prints
-about offline device also for sdev->sdev_state == SDEV_DEL.
-While scsi_prep_state_check() prints about a dead device
-in this case.
-
-Would it make sense to remove the redundant dev_printk() from
-scsi_request_fn()?
-
-
-Then we could add a flag into struct scsi_device that
-would remember if we already printed the error in
-scsi_prep_state_check() for the given device. It could
-be used to print the error only once.
-
-The flag might be scsi_device_state value for which
-we printed the error last time. We would need to reset
-it scsi_prep_state_check() see another state.
-
-It is a bit hairy but it really does not make much sense
-to print the same error message thousand times.
-
-Best Regards,
-Petr
-
-PS: Your mail was again strangely formatted. Please, send
-mails in plain text format (no html).
+kdump's popped up several times already
+(https://github.com/google/syzkaller/issues/491). But this will
+require some non-trivial amount of work to pipe it through the whole
+system (starting from investigation/testing, second kernel to storing
+them and exposing).
