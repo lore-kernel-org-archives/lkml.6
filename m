@@ -1,118 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752260AbeDIHkE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:40:04 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:54788 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751549AbeDIHkC (ORCPT
+        id S1752370AbeDIHll (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:41:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50401 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751875AbeDIHlk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:40:02 -0400
-X-Google-Smtp-Source: AIpwx4/82WV973lQcr1HXezl2ycTUSAQCNei9LcvOHO8sbpBq2Z3Kk1M2LZR1H4blEBOtleP+bgYjMC0GDB/5kbwfJQms6jYtIwY
-MIME-Version: 1.0
-Date: Mon, 09 Apr 2018 00:40:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <94eb2c0ce3aa7551d30569658325@google.com>
-Subject: WARNING in notify_change
-From: syzbot <syzbot+2b74da47f048a5046135@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Mon, 9 Apr 2018 03:41:40 -0400
+From: Aaron Ma <aaron.ma@canonical.com>
+To: jikos@kernel.org, benjamin.tissoires@redhat.com,
+        aaron.ma@canonical.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: i2c-hid: Fix resume issue on Raydium touchscreen device
+Date: Mon,  9 Apr 2018 15:41:31 +0800
+Message-Id: <1523259691-7672-1-git-send-email-aaron.ma@canonical.com>
+X-Mailer: git-send-email 1.8.5.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+When Rayd touchscreen resumed from S3, it issues too many errors like:
+i2c_hid i2c-RAYD0001:00: i2c_hid_get_input: incomplete report (58/5442)
 
-syzbot hit the following crash on upstream commit
-3fd14cdcc05a682b03743683ce3a726898b20555 (Fri Apr 6 19:15:41 2018 +0000)
-Merge tag 'mtd/for-4.17' of git://git.infradead.org/linux-mtd
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=2b74da47f048a5046135
+And all the report data are corrupted, touchscreen is unresponsive.
 
-So far this crash happened 3 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5084712116682752
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6394049002995712
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4711531803574272
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-5813481738265533882
-compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+Fix this by re-sending report description command after resume.
+Add device ID as a quirk.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2b74da47f048a5046135@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-WARNING: CPU: 1 PID: 4470 at fs/attr.c:213 notify_change+0xd94/0x10c0  
-fs/attr.c:213
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 4470 Comm: syzkaller570118 Not tainted 4.16.0+ #4
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:183
-  __warn.cold.8+0x163/0x1a3 kernel/panic.c:547
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:991
-RIP: 0010:notify_change+0xd94/0x10c0 fs/attr.c:213
-RSP: 0018:ffff8801ad76f860 EFLAGS: 00010293
-RAX: ffff8801d9f66680 RBX: ffff8801d32d4630 RCX: ffffffff81c36578
-RDX: 0000000000000000 RSI: ffffffff81c371b4 RDI: 0000000000000007
-RBP: ffff8801ad76f930 R08: ffff8801d9f66680 R09: ffffed003a65a8e2
-R10: ffffed003a65a8e2 R11: ffff8801d32d4717 R12: 0000000000004200
-R13: ffff8801ad76f970 R14: ffff8801d5260ce0 R15: 1ffff10035aedf18
-  __remove_privs fs/inode.c:1813 [inline]
-  file_remove_privs+0x2bf/0x530 fs/inode.c:1835
-  __generic_file_write_iter+0x169/0x5e0 mm/filemap.c:3209
-  blkdev_write_iter+0x233/0x420 fs/block_dev.c:1908
-  call_write_iter include/linux/fs.h:1782 [inline]
-  new_sync_write fs/read_write.c:474 [inline]
-  __vfs_write+0x5bc/0x880 fs/read_write.c:487
-  vfs_write+0x1f8/0x560 fs/read_write.c:549
-  ksys_write+0xf9/0x250 fs/read_write.c:598
-  SYSC_write fs/read_write.c:610 [inline]
-  SyS_write+0x24/0x30 fs/read_write.c:607
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x445c59
-RSP: 002b:00007f76203b7d38 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445c59
-RDX: 0000000000000050 RSI: 0000000020000400 RDI: 0000000000000008
-RBP: 0000000000000005 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 00000000006dac20
-R13: 0000000000000006 R14: 0030656c69662f2e R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
 ---
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+ drivers/hid/hid-ids.h         |  3 +++
+ drivers/hid/i2c-hid/i2c-hid.c | 13 +++++++++++++
+ 2 files changed, 16 insertions(+)
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 5a3a7ead3012..0b5cc910f62e 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -525,6 +525,9 @@
+ #define I2C_VENDOR_ID_HANTICK		0x0911
+ #define I2C_PRODUCT_ID_HANTICK_5288	0x5288
+ 
++#define I2C_VENDOR_ID_RAYD		0x2386
++#define I2C_PRODUCT_ID_RAYD_3118	0x3118
++
+ #define USB_VENDOR_ID_HANWANG		0x0b57
+ #define USB_DEVICE_ID_HANWANG_TABLET_FIRST	0x5000
+ #define USB_DEVICE_ID_HANWANG_TABLET_LAST	0x8fff
+diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+index 97689e98e53f..615a91ac93bd 100644
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -47,6 +47,7 @@
+ /* quirks to control the device */
+ #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
+ #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
++#define I2C_HID_QUIRK_RESEND_REPORT_DESCR	BIT(2)
+ 
+ /* flags */
+ #define I2C_HID_STARTED		0
+@@ -171,6 +172,8 @@ static const struct i2c_hid_quirks {
+ 		I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV },
+ 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
+ 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET },
++	{ I2C_VENDOR_ID_RAYD, I2C_PRODUCT_ID_RAYD_3118,
++		I2C_HID_QUIRK_RESEND_REPORT_DESCR },
+ 	{ 0, 0 }
+ };
+ 
+@@ -1220,6 +1223,16 @@ static int i2c_hid_resume(struct device *dev)
+ 	if (ret)
+ 		return ret;
+ 
++	/* RAYDIUM device (2386:3118) need to re-send report descr cmd
++	 * after resume, after this it will be back normal.
++	 * otherwise it issues too many incomplete reports.
++	 */
++	if (ihid->quirks & I2C_HID_QUIRK_RESEND_REPORT_DESCR) {
++		ret = i2c_hid_command(client, &hid_report_descr_cmd, NULL, 0);
++		if (!ret)
++			return ret;
++	}
++
+ 	if (hid->driver && hid->driver->reset_resume) {
+ 		ret = hid->driver->reset_resume(hid);
+ 		return ret;
+-- 
+2.14.3
