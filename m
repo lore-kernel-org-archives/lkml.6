@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3689844-1523236321-2-12732439216637578895
+X-Cyrus-Session-Id: sloti22d1t05-3689844-1523236308-2-13788234998279027604
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523236320; b=e2hUFsxzQE2truM7iMcqBzsHkALB6vEMwM7XjpBIgF12KDph4Y
-    D/tpMkWT15ultoPtQ5mUXgushsY36Dt6OoMjB/Xdve8lwTgHCOQEuZPlBgLLbTj9
-    vcqVRaGinD5wOECkkhB6hPZK+9WjfVyyQCNvAnpLwQq7UAUyFxpzlPCj/bhuE7jP
-    fPirmZFzLStWr6JmA6fGCGgoqIUjz2aEJmImopj59xSsZatebRT8i6lhTxZGdLQ7
-    L9PpE6JvE8I1BImLtAG18zSMDzFi6Hzu4cotV/JDst9xRjN2i7VetCs9bEZNPUbs
-    AdbNdu3nYHXXf3R7ZLOCKJcQlvj0rQF8WeeQ==
+    1523236307; b=pok72pI5jhgd7o1MkTWWGn9SVmf32oYn8soHGPFnoCea7thZ8N
+    zqipPT3bfuTXuzF4WWVlTTb86JTfEhFeBpiN7lR7dq51w/iQLh5G95jenM2KxiFY
+    KNpF+aUig+tW9+Z3jucRAPz9+GEx4yi4sU6TXnl91PhuP0sKEuJw1upExfX5rVNS
+    iQVVncYTa4GWPbRIZ4Vp3fGIa84kyh/g8gRn3ETqLVl1sK9MITAc4cZzKKfJsAMg
+    jfAsaPoWPR9cdGon6eKg5OpGR04a3lrybSTFDUQKMomq9mtVIslb88YuzazN+YJB
+    la320TkzAJ+4pUyQoGgYYmGAMnsMlz6/+LEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523236320; bh=/wGUSpKW1b
-    VhUr2s8pSeV/cIDbDASVu0OYV4NUE+a5w=; b=qLjTXgz+B2b5If79lORM1xWzVV
-    oJIBmvJzjB0vbs2aWu8eqcjiQgZO9TO7eJL5teohoswb37ZHRowFNfpALDdtYK4i
-    v3vkOMToohXW9o6U7CE3FehOCA4cQmX6IKBmZE25SOQrAMMQcl8ey4tVQO9YAYHp
-    IYhJYAbVn9VjO9p7Ft1oTBDJ5Nb72gr9xjA0jPQ/YT7txrEEPGMF0LAfKTUTmbPl
-    vqUSZ9DnBnEheNzjqEV5x3u3qdXXr2d9bMqoQlC9JsC59DNk2gL0JYYdv2gCKtGZ
-    vT6Mw1JNAf44en+aC59AzP/nstkkIsDafZtFXi+LS0q4gv/AUnTit84lwrOA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Ged6yqIi x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523236307; bh=ByOlUVT9DA
+    TQFJJ7GIcQrIArP/ImvbPtbXyAiL7B/V0=; b=fTowExvo1UK1655MjQlZ2KlOsn
+    KKm3QkbdLLGNbHU4QuxC+GBEZsO4FlkwkdGteiZSnAlzmCgtzG5WOPzpc0B/dAts
+    c02jT2nVDRwCBupg1z/6c3nuvwEoW2zdpYuX8mrVW4meOq8a401HcuNCxc8hu6rq
+    lK/WrLNGtB+QUAP5kxiaeO9eicJWXTRZ9MGiYSWBy1W2VX9WBgfhYkd10o8v4L36
+    uU+quHTXWJTfb4ioVKKOjLWo/tjzUQ3tUKY2MHCauKL+isGD+d1o2r6lkyHJMxD+
+    Oqi1AStMkADTNsUPYy0ZwiLcus8nVYkJ1lCeRTMbFi70CBkzziMHRraXwVsA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=FKExHOOX x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -38,10 +38,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Ged6yqIi x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=FKExHOOX x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -49,39 +49,38 @@ Authentication-Results: mx1.messagingengine.com;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI/Z7Ppg88yTdhd0aDZc3GnDXzzDDTzWJDHIU/maR7Jq3esj5oxPR+QbWibuLv1yVY/hmozBiV62klfeABaVMcxOTh0hkMnkWkEUzH0n41TR//iQJiDp
-    zhsmU0ke0dk9uIyO5Z1OYeHd2cybsooSKAVfv5CFLfR007reSXv5EEwyz+1dZm8J0i432fBEtafM9qIsvqZqFBmiJTvsSFyH3mX7JshAMRgQOtfXE8G0SvAO
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfPameDPJ1D3zvwhD4uMAQeKcgzdzIYg8ZLHwYNOvUiciR8nBgOTp/hi/6weePbGYS379NRO1HvpXly8ptzdQBCksXD6Eq+kxbsDXHCH3C3ZY/kd0f1K4
+    41xmrRde8kKwsjP2GGt9g7ChR7t39iSCP7zh2ScpFiXBXvD3+X9nklyheNRGh7plYeeE/DqQTv4FnRStZ6baQBkIAZdSzJwXMePasSucjxhG06+NQQ364r9G
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=pGLkceISAAAA:8 a=drOt6m5kAAAA:8 a=yMhMjlubAAAA:8
-    a=Hd4EjHANT1J2BtSiHa8A:9 a=fmYMAI2vvugCTNh3:21 a=OrL8zmcmXUHjIvll:21
-    a=wPNLvfGTeEIA:10 a=RMMjzBEyIzXRtoq5n5K6:22
+    a=Lf-vpJhqX20A:10 a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8 a=ker1sbzaWBn98nDuXL4A:9
+    a=Va9WcdoZwLmEpGs-:21 a=bm8wM3lKLVm61SVj:21 a=wPNLvfGTeEIA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754080AbeDIBLb (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 21:11:31 -0400
-Received: from mail-co1nam03on0137.outbound.protection.outlook.com ([104.47.40.137]:26752
+        id S1754088AbeDIBLc (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 21:11:32 -0400
+Received: from mail-co1nam03on0129.outbound.protection.outlook.com ([104.47.40.129]:43760
         "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754975AbeDIAim (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1755134AbeDIAim (ORCPT <rfc822;stable@vger.kernel.org>);
         Sun, 8 Apr 2018 20:38:42 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Jake Daryll Obina <jake.obina@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+CC: Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 131/162] jffs2: Fix use-after-free bug in
- jffs2_iget()'s error handling path
-Thread-Topic: [PATCH AUTOSEL for 4.4 131/162] jffs2: Fix use-after-free bug in
- jffs2_iget()'s error handling path
-Thread-Index: AQHTz5nRhoI6CcHV6EqYqBWnx5flEA==
-Date: Mon, 9 Apr 2018 00:29:27 +0000
-Message-ID: <20180409002738.163941-131-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 132/162] powerpc/numa: Use
+ ibm,max-associativity-domains to discover possible nodes
+Thread-Topic: [PATCH AUTOSEL for 4.4 132/162] powerpc/numa: Use
+ ibm,max-associativity-domains to discover possible nodes
+Thread-Index: AQHTz5nROQjwNJ96H0K1uEp5QPu/kw==
+Date: Mon, 9 Apr 2018 00:29:28 +0000
+Message-ID: <20180409002738.163941-132-alexander.levin@microsoft.com>
 References: <20180409002738.163941-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,27 +89,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1095;7:yAwcHB6jsr0Zf5hkTfnox3enLaGMhS2B8047bbIpeAY8el7FmiFZ1VG03Q6oFNdMTzy9P0zqMnkzcO9CjD+kjbsCye60wl+J7yUXbmzcQUSlAk6BppPX6zcNXD4QhH0x2dbrpnBpNcQf2hC6Yy4Qm8IcPdmGnpJyw52wh+Y68BEf6jXREuGj16UTsZ79SRDEbRpc0kXraFp+ubQnn4gnvmAYUgXTEv3cMKHNCBvUYNGvjmjjhj3VAc/MQGtfatLb;20:/MlR3QTvZg4DAWS7o8KumwL6lTSxW+0bbGd/4WlEiYt/PSNDR/FDWKzAPA9MtOGkfIVs7gAypJ/OuYrHqe44Z8ZIDhJjXwqlMAYQmGJaCQH0TYpnmxt2FRwHFCnfxaeN0iuj9czcfmQj8eUr7GRG3EBVwk6OVpF1QWgjtA7LQdM=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1095;7:M/CWJ3c4Oic9WvphRGqG7fZnmK9e9Pe9h7ScEltsLh21ATsq90dmkL2Tl+2O/e7vySk9LCMx98HJoJt/hFW9LtfhMkfU3NtofmBa3INY5bCG5OZ+Wk0usogo+20DuI/uzHaNTUmQd/Y46SmWNCEsW0IBHcmmNm1xbAkVbdFKdhsfv7ONyY/iJnoocqpF3KUJ7fNAKJo1TjHBQPYzaS3R+nyxTvaHTWo7MsySMNsC+SfE6QsMrC6xqP6QSVbCWZ0W;20:FbZPeAn0IUmeNzGe3KF2o/LsjEiNJ3rLnrB0gBKxeQsfBP6hPgQvwcVKn6g1HVGAxyZ5T602g0UU7gA49RBBwAJLzDIiARdm87OumqOYMpxnE1/jSyQQ2Zv7ymGTqKdLZU1kkB7AU1j3oZ7+X5/kXgKMZY39UMeBakVyB6xZjpU=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 76f93cf5-254c-4916-f297-08d59db23b5e
+X-MS-Office365-Filtering-Correlation-Id: 9e65f220-6074-442a-50b7-08d59db23bbe
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1095;
 x-ms-traffictypediagnostic: DM5PR2101MB1095:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10955C18BCA2EDE58642AD81FBBF0@DM5PR2101MB1095.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-microsoft-antispam-prvs: <DM5PR2101MB1095634765A7B04BBBCB28D0FBBF0@DM5PR2101MB1095.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(209352067349851)(104084551191319);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1095;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1095;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(366004)(396003)(39860400002)(376002)(189003)(199004)(26005)(10090500001)(476003)(105586002)(39060400002)(86362001)(107886003)(11346002)(446003)(2616005)(102836004)(76176011)(6512007)(97736004)(575784001)(36756003)(6666003)(6506007)(8676002)(59450400001)(99286004)(4326008)(10290500003)(81156014)(86612001)(81166006)(186003)(486006)(2900100001)(106356001)(1076002)(72206003)(478600001)(305945005)(8936002)(25786009)(3660700001)(7736002)(68736007)(66066001)(110136005)(316002)(54906003)(3280700002)(2906002)(3846002)(6116002)(6436002)(53936002)(6486002)(22452003)(2501003)(5250100002)(14454004)(5660300001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1095;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 3WFYEzcr/8SAmV/cY2VpalHLJ1ozEp3qEyNFZLQ7Z4bOIjB1DNMXc1HVuEMgD5q+k9p2zHgTf2zLWrUDkGJp6DOvNdSvVwFOswO02bT1OGK41WdWnBhAcpG68C76Ej9/O0y2S9xUKOkcEwuChj027ImdWoz9hepCG1YVgCoO2xwUsNPfT+x+qkCRBTZWsoqVxc45i9J7dVdEtP+knvewFsT1wLPP2jZ41O0XZnWhFPFyJJvI/hCAgO6JhEKhkaQDq7qlvalC+7UwuBOia6brwfOsaR7EiQ5TleOGsegvl1/xE1vpiI2uQ7PFgz3ZcRXc1reAYm5z8speffM6ZPKURfbKuiIFSMs0kOdYlrqRrDj6wPjFhJanfp5P76a6rEHxQK+xz3GNF7DEZpkuA3W+gPeQHXJUQHG3BnYcrTd8JmM=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(366004)(396003)(39860400002)(376002)(189003)(199004)(26005)(10090500001)(476003)(105586002)(86362001)(107886003)(11346002)(446003)(2616005)(102836004)(76176011)(6512007)(97736004)(36756003)(6666003)(6506007)(8676002)(59450400001)(99286004)(4326008)(10290500003)(81156014)(86612001)(81166006)(186003)(486006)(2900100001)(106356001)(1076002)(72206003)(478600001)(305945005)(8936002)(25786009)(3660700001)(7736002)(68736007)(66066001)(110136005)(316002)(54906003)(3280700002)(2906002)(3846002)(6116002)(6436002)(53936002)(6486002)(22452003)(2501003)(5250100002)(14454004)(5660300001)(22906009)(142933001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1095;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: l/Ez1Dkpb9fG7adKP/WHxi5EC2I2Y2JDaADbNQ0Pf7rg+z56eShZJzMS392Se+s5KHNTWHDB30TGx2tvd95R3rxPoKQTeYk0Act8NjLZ/Cmb8drMAeVnAhg+rW8JUA6EsxuZWwn29ahQvLBLh0nRBW+4R5oDX0wImRH6EU4WHt3k0UTvyrXzRcQcakbsQLTyxURXc+HEytZnnhSK291n3zBz6/lJOnkd3bVW72SbBXwxf2b6dqDqLVMd39TVpR1q7PvQyosUf0Q2NfemhJuBO98vs2VyDh3zUBjoTPKGH0Tf2VAvqwzGeJvvT2H2lMYlDcxcdPODfZimLKdK42Cikn0JdfV7S8AHYzskTKqJWJz5YAgTVX/c38wj1+7Nwrc7nbiGGUi3x32a6FKtCxrQeIxhXU6qjow+kmHfA452aZo=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76f93cf5-254c-4916-f297-08d59db23b5e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:29:27.5837
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e65f220-6074-442a-50b7-08d59db23bbe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:29:28.3025
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -121,90 +120,133 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jake Daryll Obina <jake.obina@gmail.com>
+From: Michael Bringmann <mwb@linux.vnet.ibm.com>
 
-[ Upstream commit 5bdd0c6f89fba430e18d636493398389dadc3b17 ]
+[ Upstream commit a346137e9142b039fd13af2e59696e3d40c487ef ]
 
-If jffs2_iget() fails for a newly-allocated inode, jffs2_do_clear_inode()
-can get called twice in the error handling path, the first call in
-jffs2_iget() itself and the second through iget_failed(). This can result
-to a use-after-free error in the second jffs2_do_clear_inode() call, such
-as shown by the oops below wherein the second jffs2_do_clear_inode() call
-was trying to free node fragments that were already freed in the first
-jffs2_do_clear_inode() call.
+On powerpc systems which allow 'hot-add' of CPU or memory resources,
+it may occur that the new resources are to be inserted into nodes that
+were not used for these resources at bootup. In the kernel, any node
+that is used must be defined and initialized. These empty nodes may
+occur when,
 
-[   78.178860] jffs2: error: (1904) jffs2_do_read_inode_internal: CRC faile=
-d for read_inode of inode 24 at physical location 0x1fc00c
-[   78.178914] Unable to handle kernel paging request at virtual address 6b=
-6b6b6b6b6b6b7b
-[   78.185871] pgd =3D ffffffc03a567000
-[   78.188794] [6b6b6b6b6b6b6b7b] *pgd=3D0000000000000000, *pud=3D000000000=
-0000000
-[   78.194968] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-...
-[   78.513147] PC is at rb_first_postorder+0xc/0x28
-[   78.516503] LR is at jffs2_kill_fragtree+0x28/0x90 [jffs2]
-[   78.520672] pc : [<ffffff8008323d28>] lr : [<ffffff8000eb1cc8>] pstate: =
-60000105
-[   78.526757] sp : ffffff800cea38f0
-[   78.528753] x29: ffffff800cea38f0 x28: ffffffc01f3f8e80
-[   78.532754] x27: 0000000000000000 x26: ffffff800cea3c70
-[   78.536756] x25: 00000000dc67c8ae x24: ffffffc033d6945d
-[   78.540759] x23: ffffffc036811740 x22: ffffff800891a5b8
-[   78.544760] x21: 0000000000000000 x20: 0000000000000000
-[   78.548762] x19: ffffffc037d48910 x18: ffffff800891a588
-[   78.552764] x17: 0000000000000800 x16: 0000000000000c00
-[   78.556766] x15: 0000000000000010 x14: 6f2065646f6e695f
-[   78.560767] x13: 6461657220726f66 x12: 2064656c69616620
-[   78.564769] x11: 435243203a6c616e x10: 7265746e695f6564
-[   78.568771] x9 : 6f6e695f64616572 x8 : ffffffc037974038
-[   78.572774] x7 : bbbbbbbbbbbbbbbb x6 : 0000000000000008
-[   78.576775] x5 : 002f91d85bd44a2f x4 : 0000000000000000
-[   78.580777] x3 : 0000000000000000 x2 : 000000403755e000
-[   78.584779] x1 : 6b6b6b6b6b6b6b6b x0 : 6b6b6b6b6b6b6b6b
-...
-[   79.038551] [<ffffff8008323d28>] rb_first_postorder+0xc/0x28
-[   79.042962] [<ffffff8000eb5578>] jffs2_do_clear_inode+0x88/0x100 [jffs2]
-[   79.048395] [<ffffff8000eb9ddc>] jffs2_evict_inode+0x3c/0x48 [jffs2]
-[   79.053443] [<ffffff8008201ca8>] evict+0xb0/0x168
-[   79.056835] [<ffffff8008202650>] iput+0x1c0/0x200
-[   79.060228] [<ffffff800820408c>] iget_failed+0x30/0x3c
-[   79.064097] [<ffffff8000eba0c0>] jffs2_iget+0x2d8/0x360 [jffs2]
-[   79.068740] [<ffffff8000eb0a60>] jffs2_lookup+0xe8/0x130 [jffs2]
-[   79.073434] [<ffffff80081f1a28>] lookup_slow+0x118/0x190
-[   79.077435] [<ffffff80081f4708>] walk_component+0xfc/0x28c
-[   79.081610] [<ffffff80081f4dd0>] path_lookupat+0x84/0x108
-[   79.085699] [<ffffff80081f5578>] filename_lookup+0x88/0x100
-[   79.089960] [<ffffff80081f572c>] user_path_at_empty+0x58/0x6c
-[   79.094396] [<ffffff80081ebe14>] vfs_statx+0xa4/0x114
-[   79.098138] [<ffffff80081ec44c>] SyS_newfstatat+0x58/0x98
-[   79.102227] [<ffffff800808354c>] __sys_trace_return+0x0/0x4
-[   79.106489] Code: d65f03c0 f9400001 b40000e1 aa0103e0 (f9400821)
+* Dedicated vs. shared resources. Shared resources require information
+  such as the VPHN hcall for CPU assignment to nodes. Associativity
+  decisions made based on dedicated resource rules, such as
+  associativity properties in the device tree, may vary from decisions
+  made using the values returned by the VPHN hcall.
 
-The jffs2_do_clear_inode() call in jffs2_iget() is unnecessary since
-iget_failed() will eventually call jffs2_do_clear_inode() if needed, so
-just remove it.
+* memoryless nodes at boot. Nodes need to be defined as 'possible' at
+  boot for operation with other code modules. Previously, the powerpc
+  code would limit the set of possible nodes to those which have
+  memory assigned at boot, and were thus online. Subsequent add/remove
+  of CPUs or memory would only work with this subset of possible
+  nodes.
 
-Fixes: 5451f79f5f81 ("iget: stop JFFS2 from using iget() and read_inode()")
-Reviewed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Jake Daryll Obina <jake.obina@gmail.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+* memoryless nodes with CPUs at boot. Due to the previous restriction
+  on nodes, nodes that had CPUs but no memory were being collapsed
+  into other nodes that did have memory at boot. In practice this
+  meant that the node assignment presented by the runtime kernel
+  differed from the affinity and associativity attributes presented by
+  the device tree or VPHN hcalls. Nodes that might be known to the
+  pHyp were not 'possible' in the runtime kernel because they did not
+  have memory at boot.
+
+This patch ensures that sufficient nodes are defined to support
+configuration requirements after boot, as well as at boot. This patch
+set fixes a couple of problems.
+
+* Nodes known to powerpc to be memoryless at boot, but to have CPUs in
+  them are allowed to be 'possible' and 'online'. Memory allocations
+  for those nodes are taken from another node that does have memory
+  until and if memory is hot-added to the node. * Nodes which have no
+  resources assigned at boot, but which may still be referenced
+  subsequently by affinity or associativity attributes, are kept in
+  the list of 'possible' nodes for powerpc. Hot-add of memory or CPUs
+  to the system can reference these nodes and bring them online
+  instead of redirecting to one of the set of nodes that were known to
+  have memory at boot.
+
+This patch extracts the value of the lowest domain level (number of
+allocable resources) from the device tree property
+"ibm,max-associativity-domains" to use as the maximum number of nodes
+to setup as possibly available in the system. This new setting will
+override the instruction:
+
+    nodes_and(node_possible_map, node_possible_map, node_online_map);
+
+presently seen in the function arch/powerpc/mm/numa.c:initmem_init().
+
+If the "ibm,max-associativity-domains" property is not present at
+boot, no operation will be performed to define or enable additional
+nodes, or enable the above 'nodes_and()'.
+
+Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+Reviewed-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/jffs2/fs.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/mm/numa.c | 37 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
-diff --git a/fs/jffs2/fs.c b/fs/jffs2/fs.c
-index 2caf1682036d..85e2594fe95c 100644
---- a/fs/jffs2/fs.c
-+++ b/fs/jffs2/fs.c
-@@ -361,7 +361,6 @@ error_io:
- 	ret =3D -EIO;
- error:
- 	mutex_unlock(&f->sem);
--	jffs2_do_clear_inode(c, f);
- 	iget_failed(inode);
- 	return ERR_PTR(ret);
+diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+index 669a15e7fa76..8fd8425af27f 100644
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -951,6 +951,34 @@ static void __init setup_node_data(int nid, u64 start_=
+pfn, u64 end_pfn)
+ 	NODE_DATA(nid)->node_spanned_pages =3D spanned_pages;
  }
+=20
++static void __init find_possible_nodes(void)
++{
++	struct device_node *rtas;
++	u32 numnodes, i;
++
++	if (min_common_depth <=3D 0)
++		return;
++
++	rtas =3D of_find_node_by_path("/rtas");
++	if (!rtas)
++		return;
++
++	if (of_property_read_u32_index(rtas,
++				"ibm,max-associativity-domains",
++				min_common_depth, &numnodes))
++		goto out;
++
++	for (i =3D 0; i < numnodes; i++) {
++		if (!node_possible(i)) {
++			setup_node_data(i, 0, 0);
++			node_set(i, node_possible_map);
++		}
++	}
++
++out:
++	of_node_put(rtas);
++}
++
+ void __init initmem_init(void)
+ {
+ 	int nid, cpu;
+@@ -966,12 +994,15 @@ void __init initmem_init(void)
+ 	memblock_dump_all();
+=20
+ 	/*
+-	 * Reduce the possible NUMA nodes to the online NUMA nodes,
+-	 * since we do not support node hotplug. This ensures that  we
+-	 * lower the maximum NUMA node ID to what is actually present.
++	 * Modify the set of possible NUMA nodes to reflect information
++	 * available about the set of online nodes, and the set of nodes
++	 * that we expect to make use of for this platform's affinity
++	 * calculations.
+ 	 */
+ 	nodes_and(node_possible_map, node_possible_map, node_online_map);
+=20
++	find_possible_nodes();
++
+ 	for_each_online_node(nid) {
+ 		unsigned long start_pfn, end_pfn;
+=20
 --=20
 2.15.1
