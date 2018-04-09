@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753464AbeDISJX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 14:09:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43716 "EHLO mx1.redhat.com"
+        id S1753056AbeDISJW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 14:09:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39752 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751676AbeDISJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751610AbeDISJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Apr 2018 14:09:21 -0400
 From: Waiman Long <longman@redhat.com>
 To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
@@ -12,77 +12,160 @@ Cc: linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
         boqun.feng@gmail.com, catalin.marinas@arm.com,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH 2/2] locking/qspinlock: Limit # of spins in _Q_PENDING_VAL wait loop
-Date: Mon,  9 Apr 2018 14:08:52 -0400
-Message-Id: <1523297332-22720-2-git-send-email-longman@redhat.com>
-In-Reply-To: <1523297332-22720-1-git-send-email-longman@redhat.com>
-References: <1523297332-22720-1-git-send-email-longman@redhat.com>
+Subject: [PATCH 1/2] locking/qspinlock: Add stat tracking for pending vs slowpath
+Date: Mon,  9 Apr 2018 14:08:51 -0400
+Message-Id: <1523297332-22720-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A locker in the pending code path is doing an infinite number of spins
-when waiting for the _Q_PENDING_VAL to _Q_LOCK_VAL transition. There
-is a concern that lock starvation can happen concurrent lockers are
-able to take the lock in the cmpxchg loop without queuing and pass it
-around amongst themselves.
+Currently, the qspinlock_stat code tracks only statistical counts in the
+PV qspinlock code. However, it may also be useful to track the number
+of locking operations done via the pending code vs. the MCS lock queue
+slowpath for the non-PV case.
 
-To ensure forward progress while still taking advantage of using
-the pending code path without queuing, the code is now modified
-to do a limited number of spins before aborting the effort and
-going to queue itself.
-
-Ideally, the spinning times should be at least a few times the typical
-cacheline load time from memory which I think can be down to 100ns or
-so for each cacheline load with the newest systems or up to several
-hundreds ns for older systems.
+The qspinlock stat code is modified to do that. The stat counter
+pv_lock_slowpath is renamed to lock_slowpath so that it can be used by
+both the PV and non-PV cases.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/locking/qspinlock.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ kernel/locking/qspinlock.c          | 14 +++++++++++---
+ kernel/locking/qspinlock_paravirt.h |  7 +------
+ kernel/locking/qspinlock_stat.h     |  9 ++++++---
+ 3 files changed, 18 insertions(+), 12 deletions(-)
 
 diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index 634a49b..35367cc 100644
+index d880296..634a49b 100644
 --- a/kernel/locking/qspinlock.c
 +++ b/kernel/locking/qspinlock.c
-@@ -82,6 +82,15 @@
- #endif
+@@ -12,11 +12,11 @@
+  * GNU General Public License for more details.
+  *
+  * (C) Copyright 2013-2015 Hewlett-Packard Development Company, L.P.
+- * (C) Copyright 2013-2014 Red Hat, Inc.
++ * (C) Copyright 2013-2014,2018 Red Hat, Inc.
+  * (C) Copyright 2015 Intel Corp.
+  * (C) Copyright 2015 Hewlett-Packard Enterprise Development LP
+  *
+- * Authors: Waiman Long <waiman.long@hpe.com>
++ * Authors: Waiman Long <longman@redhat.com>
+  *          Peter Zijlstra <peterz@infradead.org>
+  */
+ 
+@@ -33,6 +33,11 @@
+ #include <asm/qspinlock.h>
  
  /*
-+ * The pending bit spinning loop count.
-+ * This parameter can be overridden by another architecture specific
-+ * constant. Default is 512.
++ * Include queued spinlock statistics code
 + */
-+#ifndef _Q_PENDING_LOOP
-+#define _Q_PENDING_LOOP	(1 << 9)
-+#endif
++#include "qspinlock_stat.h"
 +
 +/*
-  * Per-CPU queue node structures; we can never have more than 4 nested
-  * contexts: task, softirq, hardirq, nmi.
-  *
-@@ -311,13 +320,19 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+  * The basic principle of a queue-based spinlock can best be understood
+  * by studying a classic queue-based spinlock implementation called the
+  * MCS lock. The paper below provides a good description for this kind
+@@ -300,7 +305,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 	BUILD_BUG_ON(CONFIG_NR_CPUS >= (1U << _Q_TAIL_CPU_BITS));
+ 
+ 	if (pv_enabled())
+-		goto queue;
++		goto pv_queue;
+ 
+ 	if (virt_spin_lock(lock))
  		return;
+@@ -342,6 +347,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
  
- 	/*
--	 * wait for in-progress pending->locked hand-overs
-+	 * wait for in-progress pending->locked hand-overs with a
-+	 * limited number of spins.
- 	 *
- 	 * 0,1,0 -> 0,0,1
- 	 */
- 	if (val == _Q_PENDING_VAL) {
--		while ((val = atomic_read(&lock->val)) == _Q_PENDING_VAL)
-+		int cnt = _Q_PENDING_LOOP;
-+
-+		while ((val = atomic_read(&lock->val)) == _Q_PENDING_VAL) {
-+			if (!--cnt)
-+				goto queue;
- 			cpu_relax();
-+		}
+ 		val = old;
  	}
++	qstat_inc(qstat_lock_pending, true);
  
  	/*
+ 	 * we won the trylock
+@@ -374,6 +380,8 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 	 * queuing.
+ 	 */
+ queue:
++	qstat_inc(qstat_lock_slowpath, true);
++pv_queue:
+ 	node = this_cpu_ptr(&mcs_nodes[0]);
+ 	idx = node->count++;
+ 	tail = encode_tail(smp_processor_id(), idx);
+diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
+index 6ee4777..39ca670 100644
+--- a/kernel/locking/qspinlock_paravirt.h
++++ b/kernel/locking/qspinlock_paravirt.h
+@@ -56,11 +56,6 @@ struct pv_node {
+ };
+ 
+ /*
+- * Include queued spinlock statistics code
+- */
+-#include "qspinlock_stat.h"
+-
+-/*
+  * Hybrid PV queued/unfair lock
+  *
+  * By replacing the regular queued_spin_trylock() with the function below,
+@@ -443,7 +438,7 @@ static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
+ 	/*
+ 	 * Tracking # of slowpath locking operations
+ 	 */
+-	qstat_inc(qstat_pv_lock_slowpath, true);
++	qstat_inc(qstat_lock_slowpath, true);
+ 
+ 	for (;; waitcnt++) {
+ 		/*
+diff --git a/kernel/locking/qspinlock_stat.h b/kernel/locking/qspinlock_stat.h
+index 4a30ef6..6bd78c0 100644
+--- a/kernel/locking/qspinlock_stat.h
++++ b/kernel/locking/qspinlock_stat.h
+@@ -22,13 +22,14 @@
+  *   pv_kick_wake	- # of vCPU kicks used for computing pv_latency_wake
+  *   pv_latency_kick	- average latency (ns) of vCPU kick operation
+  *   pv_latency_wake	- average latency (ns) from vCPU kick to wakeup
+- *   pv_lock_slowpath	- # of locking operations via the slowpath
+  *   pv_lock_stealing	- # of lock stealing operations
+  *   pv_spurious_wakeup	- # of spurious wakeups in non-head vCPUs
+  *   pv_wait_again	- # of wait's after a queue head vCPU kick
+  *   pv_wait_early	- # of early vCPU wait's
+  *   pv_wait_head	- # of vCPU wait's at the queue head
+  *   pv_wait_node	- # of vCPU wait's at a non-head queue node
++ *   lock_pending	- # of locking operations via pending code
++ *   lock_slowpath	- # of locking operations via MCS lock queue
+  *
+  * Writing to the "reset_counters" file will reset all the above counter
+  * values.
+@@ -46,13 +47,14 @@ enum qlock_stats {
+ 	qstat_pv_kick_wake,
+ 	qstat_pv_latency_kick,
+ 	qstat_pv_latency_wake,
+-	qstat_pv_lock_slowpath,
+ 	qstat_pv_lock_stealing,
+ 	qstat_pv_spurious_wakeup,
+ 	qstat_pv_wait_again,
+ 	qstat_pv_wait_early,
+ 	qstat_pv_wait_head,
+ 	qstat_pv_wait_node,
++	qstat_lock_pending,
++	qstat_lock_slowpath,
+ 	qstat_num,	/* Total number of statistical counters */
+ 	qstat_reset_cnts = qstat_num,
+ };
+@@ -73,12 +75,13 @@ enum qlock_stats {
+ 	[qstat_pv_spurious_wakeup] = "pv_spurious_wakeup",
+ 	[qstat_pv_latency_kick]	   = "pv_latency_kick",
+ 	[qstat_pv_latency_wake]    = "pv_latency_wake",
+-	[qstat_pv_lock_slowpath]   = "pv_lock_slowpath",
+ 	[qstat_pv_lock_stealing]   = "pv_lock_stealing",
+ 	[qstat_pv_wait_again]      = "pv_wait_again",
+ 	[qstat_pv_wait_early]      = "pv_wait_early",
+ 	[qstat_pv_wait_head]       = "pv_wait_head",
+ 	[qstat_pv_wait_node]       = "pv_wait_node",
++	[qstat_lock_pending]       = "lock_pending",
++	[qstat_lock_slowpath]      = "lock_slowpath",
+ 	[qstat_reset_cnts]         = "reset_counters",
+ };
+ 
 -- 
 1.8.3.1
