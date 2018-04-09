@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3878504-1523241072-5-12368377835224969412
+X-Cyrus-Session-Id: sloti22d1t05-3878504-1523241065-2-9746588952337454735
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523241072; b=ak9yV2xvfndSwuV+It5A55L4MdyoE4JaJOvD5zrNW4pMKZ5vb4
-    X9v7kLAxoyYBlhF2hbpeSVU26KSReKdEc7Zi3GMey19O9U39LkNhXj5SVTqrHRbA
-    wsXACpLZZa/Xdh2I+nlEjaPXwgrMsHvt9Zg2oA8FdXqYVDcU3XujiMYpDuAYenj3
-    lTf7aLL/+PnXKQzQHLV9S/oH+vJoj8hYV3fDX9kNpoLOedzFMNmY9PSIcb14GTT8
-    mB/aVgaSDOY9iGGeC6MUxGZ7I7Z3qaQI/Nu52ExJ6dAViRMEAzLHVBy9GAm5BFKb
-    djtezsQ5GfQt0Q0apxpke6hiTqV28+11f4qw==
+    1523241064; b=a3Q1G3wwEwApgQC8sos4+nIGEXWnYuRXyOndtiLdZvYsoEF5F4
+    YT2508ZizF10hroPF7nE+w9d4DXRJG3mu59z4X2D1LVGTfJpSuHoeYfs2GTbeh32
+    HzMhVSknfc5hsoaXUVsHKRCPnDxkz+9NEiCZr+18lKtCF373vCzKUTbMbuOAeKri
+    dfI4ByI6OoK8ae2Ee/x0L4do+vhqsnlSjoWckPo3OOvgrMps7UreQfbH6F7IZrSL
+    NPzUN6SSxFkcbTtdjHo0gqswF4qriK3IQhxfdiPFsd8dta2TcFPSoD0X1aadZYmk
+    xUAwhVGOhVM+nHW6lbIsRQh+boGFchE3k5jw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523241072; bh=2GUdenecmg
-    5ePh2Znep/ovKxhpBKmR97oMIspYMamno=; b=TJO/4r7SzjVnAzpVVUvfbfjH45
-    jYRrzgK70vQviCq4Ox62jfwBns2TTPLd0/m09LA9A5CMz46O9SxJzwRO0Io8I5Xd
-    dHksSFNapShUXJBoCjq4ZBUgOjtbg+jxya6Y3kwaw7QnVXF2Y5iy8Qc29nt0OdBz
-    1PIIZ6djtCkxOp7ZW4MQHKteTjzhDzWSK+uEIHKoARfR0qNyaUGGkWCVDRPv7iBE
-    0yR7+VIA8VIez/4aA50PRqx1E94SI1cUL0J5tMOj7HJdwoYtdrM/xz/cty5fEKeB
-    nbQ4uryo/DU6wwrEuXGedpf2Mf4doaPuEfk85j2Nntzp7/aWjcZKfL6PuGAg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MnEOJH8h x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523241064; bh=cXDy8JzI18
+    dDdE+npK9vSXXvDZqdIaRKIV/C688Pfvk=; b=CSoHWlYJA3UtpnWXZQW/8NtY87
+    5lnEzRRc0bHjf6W0F7NE3cIKgA+0hRRFScfJUmPMyZbQbSE8FRDBTDNE/me4zxRe
+    kwRuiO7TsMVFrR7wdCrCqP6tWmyDSgS3LVrpGmpRTZyYEQXxig0lMcPQTxKf/ahn
+    4PtdTQQOU3Yu5RRPYcO54RwymeO9qgFq792JsGeIPaWQX7o4znqQDb7CqyVLSbRG
+    RYX8HxiC5qAmR04PFt/g1xG9aJdj4+ORD/3fDT+AgWl5LZOlY3DjNPoBZZRqpf4h
+    mqr69I8N+DiohhyTvYvb/RvhvgdjAlLN1So/nEMY3/RkcV+VzjaKoA1AAERw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=YGyAeaKb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MnEOJH8h x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=YGyAeaKb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,44 +51,37 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCDwklGziKmQZItr5FvUOsyBp4ew1sFrEmW7poTOABU2cIYXTCBPcQULcXCOX0q6s7rtsEyq/KFld/pK8AMi+LdoCrmykScWPEbheQoiGTEfUu2812/n
-    PnA1N+q3MkBFc8gfy5k/MVWwwdCu4q8DIFIHP6M2+esIfp3aCqdYQFKMquD/M7Vr6NLtL2Reh7IMW2IZRxQvGGOI85SL32kxUkqcLcJc+GsZKkrluYXvItkI
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIcwX663bgccurItJee8W8fdfjbVZOaNUsSbBnzQe1O5YTbRoxeucwrNB1aQFdbj5p5XtRt7B5nJAOFf+ccXZNAzz0GDswEkZr+BqhGQR/tVL7opoU6+
+    L+XsaybNVk1rKc8SNH4LJBNohMWiP1Nb9MXX9llAUoUTMA5vHuZxxoE1P4xDK04StAQycKzcjqkkWPuKebgdal0JPPh7jdlJw/vuB2vg0BKTZeyvx2YaWMhm
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=zd2uoN0lAAAA:8 a=Z4Rwk6OoAAAA:8 a=JfrnYn6hAAAA:8
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=BKoL6aYy6hqYyL61QrwA:9
-    a=wPNLvfGTeEIA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=1CNFftbPRP8L7MoqJWF3:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=Lf-vpJhqX20A:10 a=AGRr4plBAAAA:8 a=dqWlGzSaAAAA:8 a=20KFwNOVAAAA:8
+    a=yMhMjlubAAAA:8 a=l1LozEJsoNGIBq6NN5sA:9 a=wPNLvfGTeEIA:10
+    a=bOnWt3ThIoLzEnqt84vq:22 a=zQxbTC3D8LPejNAg5Fck:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755826AbeDIA20 (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:28:26 -0400
-Received: from mail-sn1nam02on0134.outbound.protection.outlook.com ([104.47.36.134]:61393
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1755842AbeDICas (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 22:30:48 -0400
+Received: from mail-bn3nam01on0096.outbound.protection.outlook.com ([104.47.33.96]:38912
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755812AbeDIA2W (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:28:22 -0400
+        id S1755843AbeDIA2c (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:28:32 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Yazen Ghannam <yazen.ghannam@amd.com>,
-        Borislav Petkov <bp@suse.de>, Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
+CC: Raju Rangoju <rajur@chelsio.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 071/293] x86/mce: Don't disable MCA banks when
- offlining a CPU on AMD
-Thread-Topic: [PATCH AUTOSEL for 4.9 071/293] x86/mce: Don't disable MCA banks
- when offlining a CPU on AMD
-Thread-Index: AQHTz5kHvHpWssP4c0CBSQs9GaphXA==
-Date: Mon, 9 Apr 2018 00:23:49 +0000
-Message-ID: <20180409002239.163177-71-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 075/293] rdma/cxgb4: Fix memory leaks during
+ module exit
+Thread-Topic: [PATCH AUTOSEL for 4.9 075/293] rdma/cxgb4: Fix memory leaks
+ during module exit
+Thread-Index: AQHTz5kJCYZhJynaSEScsPhT89oelg==
+Date: Mon, 9 Apr 2018 00:23:52 +0000
+Message-ID: <20180409002239.163177-75-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -97,87 +90,94 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0871;7:rqvsb0WEOSWqqRbr++iDvodwr4tIcP8GBOJw3XPCl8FZmXQRJEv7dk6lxChyCFxuEXWL0BfbgiKOHLExDDPlvMWwh7Xm2gMqr2cmDoAmLJeUR/DUaaLAxFc1BSECdxos7rQnYtj8XtnrdaO8SZm8JnAUra9UjbziNxzDbITaR1mxqcOa8wbkjehBC9+vcyK6+B+Ypn0tg1AXAqcueuR3AHtaU0+X6+bpdMjD9yYpmAc9qcMDoPOds3bzXfUebzAs;20:u1tEl/QumzEli9FcKeQu/+J+pBnXVpsZwmxfYOverus7whZZQcR5k4PKZHL79bs5VpXg8dkY17mP6sAHN310dpubmK1oDJGJ9KRXqx18+DmefatpGna0+Z0c37qehFGCM8T5ywrQ/oKGnlK1LilGJBgY0GdH9NSNRxPB29zeVOs=
-X-MS-Office365-Filtering-Correlation-Id: 48e71d91-8cf3-448c-2fb0-08d59db0cb93
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0807;7:X3Ljka9gpblqVTPQeWPlCTO2EuTKnT+JD+cq2xj+aWQkeKGA7san97GsBU7P0HifiE65S9bwbZ3hthQ26Tj5rQDy5PSnMuAdjWrEcjl5+Hu8XyUFa4pzF0yHWxoA1CkJ3mNFPZlpREtmvVOND7LErKf1uNRWTh2DA9xuFETJUSVSiwc4J7O08kD1jtrhQc9zasFo1O4MiTfJJPWanJEgoNjgchUw2A5jwWEz/S2iNlslQnvO8+kE7/20RokmrKli;20:5tY45yHZ4TrDMAZ806I46V5rhj815rKfbfVlUw10SkpnGooKLk+7as5hu2MEMypA/xE3oWf6gEuJ3/bOp4eVZdAOqfaNntlMxNko1uR4fwgT20efW1InYwNegYYYDrPyjUTFoQTmpJHx5T6+ti16MV0k7aTZCRB0SCOXN+QcApk=
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB0871;
-x-ms-traffictypediagnostic: DM5PR2101MB0871:
+X-MS-Office365-Filtering-Correlation-Id: 91270810-6a0e-4bfc-bb94-08d59db0d0ad
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0807;
+x-ms-traffictypediagnostic: DM5PR2101MB0807:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0871AAF330C95D035D0AD308FBBF0@DM5PR2101MB0871.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(767451399110)(42068640409301)(211171220733660)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB0871;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0871;
+x-microsoft-antispam-prvs: <DM5PR2101MB0807D359A4FF9DF7D45DE86CFBBF0@DM5PR2101MB0807.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231221)(944501327)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB0807;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0807;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(39380400002)(376002)(39860400002)(199004)(189003)(105586002)(8676002)(59450400001)(3660700001)(3280700002)(6506007)(81156014)(81166006)(14454004)(99286004)(72206003)(110136005)(8936002)(54906003)(305945005)(2906002)(316002)(966005)(10290500003)(478600001)(7736002)(53936002)(6512007)(486006)(11346002)(4326008)(6306002)(86362001)(446003)(10710500007)(3846002)(102836004)(76176011)(476003)(25786009)(22452003)(36756003)(107886003)(6666003)(10090500001)(7110500001)(5660300001)(6486002)(86612001)(6436002)(2420400007)(2616005)(68736007)(8666007)(26005)(1076002)(186003)(15650500001)(2501003)(5250100002)(2900100001)(106356001)(7416002)(66066001)(6116002)(97736004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0871;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: 5ZIo9JdaW2Y2SgvjSBteGEI4hyVmJ1DEWhlze3SUl50XCozYqqmvWQX4ynlqXOcSMW+23e/SX0EEvdoMp3j0o8XdD1gSKHYB5qvs2Mqm60Xh7uv+0kZQf/Z8P4Ao7NSI+CTyWjUjkNnCvGa5FbcgKMsPzbmd5keWSAC3Bx0dpeAEzT7cB203yDxY58o+UDNEg3ifYXpAj/z6N4wXbhLCVtlSddnjvNrjrGeKu+vYPWd0/5/cim6KqjYxoXAXvJvjr9Ik9yJzkFMS7b8yUlwVrLzp7fbdd/nO/9Mhd4V+a5O/Aj8iecrUkPTPbTy4aAwGv8Hry+bVX9h9RYgFzrviCY0DF302r3oLpjWTSK03sktAl8HTinVqRBg1gb7N8ltJKE2zEXvF+dgEFLQoVHKVZxmzraVJlLtNAx4bNhTt+ZU=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(396003)(366004)(376002)(346002)(199004)(189003)(14454004)(4326008)(54906003)(25786009)(53936002)(2900100001)(1076002)(3280700002)(6486002)(186003)(2616005)(68736007)(110136005)(11346002)(10090500001)(6116002)(107886003)(3846002)(36756003)(8676002)(72206003)(22452003)(66066001)(26005)(6512007)(478600001)(3660700001)(81156014)(86362001)(81166006)(86612001)(7736002)(305945005)(8936002)(10290500003)(6436002)(105586002)(6666003)(316002)(59450400001)(76176011)(5660300001)(476003)(106356001)(2906002)(6506007)(446003)(2501003)(99286004)(5250100002)(486006)(102836004)(97736004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0807;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: ydLt3kmDEclXNwm97FE0EJb82bFNJdmkwzy56IyKMyN70DlTY1PR1o2ZStsn7iA3WllQPx/lnReOuS29E7Ou4vq4dE+0VUG45CyshCCrwU+hA7RkX3z+j7m0rzqZCz2oNNXtQUzlw88YZTY341OS4ZYt9POL8qZU4zeqd1ouZGLeiwSk6/Tcr4L5UGGtQ9XC24rebYbr8vqJTH4ENrZlGJJYIHcPKzoxEn3UNLiLoC5nT2UQ0DJtGpeH/GhcotqT0fQzw7HkyF06Ulkjz6oNOWPdAr5mQzE6GQNigCj8vgp2VnXZvs5OQZBKseDQdtN3g8flGz80cxW1BqfenY/thZ/A9pn2AMNX4iCD85Vmyo6Hu53aJ7q0VSUeJ4Lv3xkKG5qhZlDA6n6YXNG+xEoeviPX8wv9Eo7mOdd0OdK9tTU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48e71d91-8cf3-448c-2fb0-08d59db0cb93
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:23:49.2062
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91270810-6a0e-4bfc-bb94-08d59db0d0ad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:23:52.7843
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0871
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0807
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+From: Raju Rangoju <rajur@chelsio.com>
 
-[ Upstream commit ec33838244c8535b23b8d24b167996fd1318bb68 ]
+[ Upstream commit d4702645838c8e04893383b50406249382b4e6bf ]
 
-AMD systems have non-core, shared MCA banks within a die. These banks
-are controlled by a master CPU per die. If this CPU is offlined then all
-the shared banks are disabled in addition to the CPU's core banks.
+Fix memory leaks of iw_cxgb4 module in the exit path
 
-Also, Fam17h systems may have SMT enabled. The MCA_CTL register is shared
-between SMT thread siblings. If a CPU is offlined then all its sibling's
-MCA banks are also disabled.
-
-Extend the existing vendor check to AMD too.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-[ Fix up comment. ]
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20170613162835.30750-8-bp@alien8.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Raju Rangoju <rajur@chelsio.com>
+Reviewed-by: Steve Wise <swise@opengridcomputing.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/x86/kernel/cpu/mcheck/mce.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/cxgb4/device.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/=
-mce.c
-index 7bbd50fa72ad..0a8ba9adb04a 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -2187,12 +2187,13 @@ static void mce_disable_error_reporting(void)
- static void vendor_disable_error_reporting(void)
- {
- 	/*
--	 * Don't clear on Intel CPUs. Some of these MSRs are socket-wide.
-+	 * Don't clear on Intel or AMD CPUs. Some of these MSRs are socket-wide.
- 	 * Disabling them for just a single offlined CPU is bad, since it will
- 	 * inhibit reporting for all shared resources on the socket like the
- 	 * last level cache (LLC), the integrated memory controller (iMC), etc.
- 	 */
--	if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL)
-+	if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL ||
-+	    boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_AMD)
- 		return;
+diff --git a/drivers/infiniband/hw/cxgb4/device.c b/drivers/infiniband/hw/c=
+xgb4/device.c
+index b85a1a983e07..feb30db3ce3b 100644
+--- a/drivers/infiniband/hw/cxgb4/device.c
++++ b/drivers/infiniband/hw/cxgb4/device.c
+@@ -732,7 +732,7 @@ void c4iw_release_dev_ucontext(struct c4iw_rdev *rdev,
+ 		kfree(entry);
+ 	}
 =20
- 	mce_disable_error_reporting();
+-	list_for_each_safe(pos, nxt, &uctx->qpids) {
++	list_for_each_safe(pos, nxt, &uctx->cqids) {
+ 		entry =3D list_entry(pos, struct c4iw_qid_list, entry);
+ 		list_del_init(&entry->entry);
+ 		kfree(entry);
+@@ -851,13 +851,15 @@ static int c4iw_rdev_open(struct c4iw_rdev *rdev)
+ 	rdev->free_workq =3D create_singlethread_workqueue("iw_cxgb4_free");
+ 	if (!rdev->free_workq) {
+ 		err =3D -ENOMEM;
+-		goto err_free_status_page;
++		goto err_free_status_page_and_wr_log;
+ 	}
+=20
+ 	rdev->status_page->db_off =3D 0;
+=20
+ 	return 0;
+-err_free_status_page:
++err_free_status_page_and_wr_log:
++	if (c4iw_wr_log && rdev->wr_log)
++		kfree(rdev->wr_log);
+ 	free_page((unsigned long)rdev->status_page);
+ destroy_ocqp_pool:
+ 	c4iw_ocqp_pool_destroy(rdev);
+@@ -874,9 +876,11 @@ static void c4iw_rdev_close(struct c4iw_rdev *rdev)
+ {
+ 	destroy_workqueue(rdev->free_workq);
+ 	kfree(rdev->wr_log);
++	c4iw_release_dev_ucontext(rdev, &rdev->uctx);
+ 	free_page((unsigned long)rdev->status_page);
+ 	c4iw_pblpool_destroy(rdev);
+ 	c4iw_rqtpool_destroy(rdev);
++	c4iw_ocqp_pool_destroy(rdev);
+ 	c4iw_destroy_resource(&rdev->resource);
+ }
+=20
 --=20
 2.15.1
