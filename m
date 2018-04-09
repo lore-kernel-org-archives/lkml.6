@@ -1,37 +1,36 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3689844-1523235670-2-7450737089407527252
+X-Cyrus-Session-Id: sloti22d1t05-3695087-1523235653-2-8612346748361466424
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: cc='utf-8', plain='utf-8'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523235670; b=gYdfepBbGdjdUmTxykSxLXS9LBxmZ1/dd9yADRY0g3Y5pdx8aH
-    CfNDUXZNuUmi09B8NIRTEzIgtd/sQl4YWd0xGe4H2FfSLESZLdLkrrsdpVK7qEKq
-    yxnDrVXZdiuTO9JMfBYoENuWFapPr5JeP6zbNjfN7/EtTL9JPgi1wZ42psEY2VxW
-    qMHsQ45zitqdrvPuFhh2Esi95iX/HzqSA6cpyPb9fABx4Xpr4IA0bpXbSp+I4mGy
-    L33D5g2O6wdfuQjDptkbsCbdNQv2HQbf6l26ewmqcxdpi8BEmf5QMgKU+p6H48Dc
-    R4WgU/Wt2HE5dFu4lfPrRAEoOUC34/VGKSsg==
+    1523235653; b=DLKI85MlrNWmpc13VamgHePwn+g50rZZQubp5B4D8TdF5clR7C
+    /Fk9bP8U0r/mC63Dd5jITx/goBUuLK4lJID5HXNdJfaA0XChqmV6W6JUhYLQVeyr
+    7VRy+cYv32JRBg8vKUEb5nhnQrWCjygvp+ey2fgCNaV5JFH48hF2bvDWl6yyx3MD
+    A+L8lKmI6/m5QKbeKtHySVTJPsJaPiaAv11Vr+3Uaqsd530pr+nMBKuo0rHBRaaf
+    3bZzr0bJQn/RKlVPh5jxrGQ5mvu4of8LJKD4eeDwS/+cF+Gzwd/fRK36fLjz7ugX
+    aWQDxjn56dsxsHfmJd3dtiECUvMmxmNnItRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
-    t=1523235670; bh=ukkXRJyPLyOU4LbhI0rDWzk3x8zHMAirUjgi6g/Bcyk=; b=
-    mY1WC7iezEmdwT7tXIuuJDnjPew8wdZiDewUH9CpwlmrrgoOVKst/S5C2tx+KJRX
-    a0L9OJ/8L318BIx6+NQgQI+6u5KBCGTbJYnG5RBN0m20fQE8IRAEla4IrGxYVGR0
-    EHmr5luWfdQPhnwiKp/tMvZ+E8A0ZI/crVVi3XwzJmeM6tqxviNjw91wIUFldpEg
-    wCMfzNuxuRAGAMdB+uQ7Z80LWIL2MwRzGRDyc9H9T/09CnwBWo5RR4rGEKShi65+
-    dF3gLlk+UTfufFUtg3V7yDwEBRvoFP79flJErvTxMOW8YLDG+xoCjQOgoJaDTjl5
-    eXDcmAy9w5ytFkqAF+am3g==
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=fm2; t=1523235653; bh=e8UDj0/H1V
+    7ipQyzatHcVrUOw57HyTfFQ4om3LgXasI=; b=dH9dN6Y+7W82oGlajxJRepnng6
+    ZCqCEIVxGKgtPClfK/7JRVhioHgkPeZyzjsyg7orhrNmXCB36q9yru1GTXvRk03p
+    xAsafEtHODI+IDQ2gZLgtWbTI5lxuegBZelEpPON7rHKyilS46yvaHLRVzO4YSu5
+    1lk7qtRaKLa4Ph5tSTPEvbJdCyj7GQauIinP/dlIgsgSjzOoN503cCjiT7JhQWey
+    57HaEpmyJqgV5784LYypoaoTe/sB4RXGGmMdT0asehLRxVOsAGgI512/D7Jx6rBF
+    ReoVEKPsamDLx9+TjwScNNT9EMks0CQ1bpbwg5aKWwwUdKbG+5u9SZYcHnvA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eiDno0HM x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=o127M1GM x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -42,7 +41,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-vs=clean score=-100 state=0
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eiDno0HM x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=o127M1GM x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -52,36 +51,37 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPmdi7cawzvf7ZE3J+MTZf5qyNjHCnghmdt9p6KNbboze1kOOoGcEd8WT/kB4Q6h+ur2i1Hkr9kT6DmkHtRJV9+IhHE3SIXbe6dKaP1lDbx+YJByHCnS
-    q7+TBgnkKJYzwSJVK5M/z5gJKdWWbQeCj5IPjdtgPAyuMyL3thVnLW1U/QrCfHCaorMHstrlbq0Bi84IAhq3dn8Ne55HyiatlzjpiuGmAZ7EGFTpDAD2sMgm
+X-CM-Envelope: MS4wfM5sJ8raIqgRUmH4bv0gx1oWWSF6Kwu7Rmhi5wcwJ9nJMSQCwoMmiW6sNwwjFgTGbnswKOabGzl1foAsGFsRvKCv/3m8haMDVV5DYPAt7O6kh/ZxIsRK
+    J3K4KFHN75z3GPQT4AjFSXk+5mj5r+eTtGRRIRtB/j1So3dtazcZfyi7cqUN4Dpzqzmgkqz34JTLEHgxWbunWIZYPfNDzCefq1m0k08hG6G/QewuBNuWuLOZ
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
-    a=mw6kJ3eo-EIA:10 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8 a=cSqfOzabbhpC313mq-UA:9
-    a=QEXdDO2ut3YA:10
+    a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=Lf-vpJhqX20A:10 a=Byx-y9mGAAAA:8 a=Q-fNiiVtAAAA:8 a=yPCof4ZbAAAA:8
+    a=yMhMjlubAAAA:8 a=isfTqjNbOI2PD3KCteAA:9 a=wPNLvfGTeEIA:10
+    a=Fp8MccfUoT0GBdDC_Lng:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933298AbeDIBAy (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 21:00:54 -0400
-Received: from mail-co1nam03on0103.outbound.protection.outlook.com ([104.47.40.103]:45124
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S1754974AbeDIBAh (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 21:00:37 -0400
+Received: from mail-bn3nam01on0094.outbound.protection.outlook.com ([104.47.33.94]:21055
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933177AbeDIAjk (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S933180AbeDIAjk (ORCPT <rfc822;stable@vger.kernel.org>);
         Sun, 8 Apr 2018 20:39:40 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: =?utf-8?B?SmFuIEjDtnBwbmVy?= <hoeppner@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+CC: Jia-Ju Bai <baijiaju1990@163.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 3.18 017/101] s390/dasd: Display read-only
- attribute correctly
-Thread-Topic: [PATCH AUTOSEL for 3.18 017/101] s390/dasd: Display read-only
- attribute correctly
-Thread-Index: AQHTz5qlnGl6lOBfBkyfBD5Uur3j1w==
-Date: Mon, 9 Apr 2018 00:35:23 +0000
-Message-ID: <20180409003505.164715-17-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 3.18 020/101] scsi: megaraid: Fix a
+ sleep-in-atomic bug
+Thread-Topic: [PATCH AUTOSEL for 3.18 020/101] scsi: megaraid: Fix a
+ sleep-in-atomic bug
+Thread-Index: AQHTz5qnoOAv7ICgK0qivmjoJEyRiA==
+Date: Mon, 9 Apr 2018 00:35:26 +0000
+Message-ID: <20180409003505.164715-20-alexander.levin@microsoft.com>
 References: <20180409003505.164715-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409003505.164715-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,70 +90,71 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1047;7:dtHmQy6TD2RN5EosoxJhUxRIZ/euJJmkbDp+8u5V1WHkzYqvblBwo7zlLjigyUZaB1fKMGB/8MH60ptZMl5IqEC+un9FF6XsPkJ44vXRVVLcYjn+w5sdJPz7fw2PSB3xNzVvJI1ah4UvJiHsDlM4Z4te+fhk+MDYEvt1BwKURyyndnr1+cziE1uyKliL7OuR/xNA9AoMU2rqQOXe4rhXz5+jqw7ojks0N/3jFLgfKBMF+YPMgehjcTEiCIumE/xg;20:tjz4D9YtifeJ+5E41DBCHAQreUB4g9a30PQQoD+z5MEN1od+tPgLU4RFsyxGNG+BOkU5ts7OXMQSx1UGlDzZxm6PeDjQhC+FFxJRP1qkbfe22R4xxK/Zg+9yxOn57U2jhhRIJ/3IaKJ1uCBMV30MMai0kBStUaNMQHWU+wM1RbI=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0966;7:5yVDrMEhacKX0ZypvhO/VFs+nG1268PnKcXtCjdurGts6UBfftZtPKsHLkkV+JKzCm82cSwCCc7wKa2aXiouN9W/fdLfZWEUcS2eawQabjz7dhLWrr4fYB9AVeabRkQOc0pNcshdo6Bwu2XVaBGn6sizfxyWQV7QU7kcJIzwJRaLodu4fsGgT+X2DhVqzkLoGPvoi4KnmgCmeNMDTQGCjAWIgbfrjptDB5+Ne1tGRkTLfC7T99Z3PX8s6UvpXMm9;20:H6Jy0NanJ4/3GbJ2axU+7wYz0psUpLutmv1dpPbzUuvIKC6E/4OGn3HpyE0ZI4e1gkN+8x1BRRPmWxJJkaeZdnp501qEOEDcZBn1Aris/Uma6CcF+t9CkhpN0y5z0vk+9RHyM6ZHTw6+lej8NI4Ok/GzC1ZuhcoRyjU+ev43bt8=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 05f5cbcc-0ea7-4342-cc7b-08d59db25ece
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1047;
-x-ms-traffictypediagnostic: DM5PR2101MB1047:
+X-MS-Office365-Filtering-Correlation-Id: 7c644654-28f9-484d-fc7f-08d59db25fc1
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0966;
+x-ms-traffictypediagnostic: DM5PR2101MB0966:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1047B2E53A09F0331CE391CAFBBF0@DM5PR2101MB1047.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(190383065149520)(104084551191319);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1047;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1047;
+x-microsoft-antispam-prvs: <DM5PR2101MB0966FA3B823B5C997861F872FBBF0@DM5PR2101MB0966.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(130843839470238)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0966;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0966;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(366004)(39860400002)(346002)(39380400002)(189003)(199004)(97736004)(3660700001)(2900100001)(2906002)(8936002)(11346002)(3280700002)(106356001)(446003)(68736007)(72206003)(1076002)(86612001)(25786009)(3846002)(36756003)(107886003)(6116002)(81166006)(4326008)(486006)(81156014)(6512007)(6436002)(53936002)(14454004)(8676002)(26005)(575784001)(5250100002)(86362001)(105586002)(6666003)(305945005)(186003)(10290500003)(7736002)(10090500001)(102836004)(6486002)(2616005)(5660300001)(316002)(2501003)(66066001)(5890100001)(22452003)(54906003)(99286004)(110136005)(478600001)(59450400001)(476003)(76176011)(6506007)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1047;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: Qn3/u7fe7wH+dxfHvm23Ek6+Xgn72TRUtzNDSG9ZrbOXVEnUqSe/FMARaiPBB2DhXc6aVJmfbsVUq1AAe/oKr9TzzhmXiENvXQ55yG+lV6tsVi4qZj7OqogPsdnAet1JLq8eJBhk8kp+pgNksITlbjmWWMv+T57XDoS/kuBFJ717g+CtPXmGpDGrQFUWVej4MCSkG5A2RbGxiKKHvTkbUKl4MIJn0NpkDQJFPeIFhNQQWWGBO73uPTjB3OFtRsMcqvxPWsFjnpF6mQ3/eUc3tOqybwCsZfryZWlmETbrm+fvv8RlNnOyJqyDC86O17WHUE78qZeMY0FBXC5+3Rmh/VIVV+3F/lFwuLmvoL8dDbP3YaytRPobDBpPN1Vd1kL7wcGFIf36GIM2GDpUd3psrkgIbBzx3m2FIPt2N4BPRng=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39380400002)(376002)(346002)(39860400002)(189003)(199004)(5660300001)(26005)(6116002)(305945005)(3846002)(2616005)(68736007)(72206003)(86612001)(476003)(446003)(36756003)(66066001)(2501003)(99286004)(86362001)(478600001)(11346002)(7736002)(105586002)(3280700002)(97736004)(14454004)(110136005)(2906002)(54906003)(4326008)(3660700001)(6486002)(8936002)(486006)(22452003)(10290500003)(6506007)(81166006)(6436002)(316002)(6512007)(59450400001)(6666003)(2900100001)(186003)(76176011)(8676002)(5890100001)(10090500001)(107886003)(5250100002)(81156014)(1076002)(25786009)(106356001)(53936002)(102836004)(22906009)(31853002)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0966;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: ejgYzuyaFgc2kdddR1ga5rg6o3WlOiOo+qDgC7UyZRLaeLkCu/3uSysZH/KLt2WXOtIRP4Mh9cmTWqR+BR8yuRWZvSacgf8eyZ14Neq8q2SEhUfsMxUNKam4pJbST5OTptirYhBWUkU7Qu2qRkTIkLI37S6kryhsSavdutdVp0YOZb9gl1mfa/iNbVPVHhimzmqO13ahgBjoIXCHUJ4iDOSVekCMNXznheSZAXjY+htvDZwNw1b9BlgXEGe65KUba2ovYHQfH4Clm072kVRKJei2HLg1dJmvBwbqz8G8wSZzjyt5XZj1ZrHMTwWyGY3IOxXDWf69CTVYGxcsN3G75F2Bv6cczuHP/kOM3JkHG3g/sRDrkYDPCaWXEFgoJIukl83ZDaONkVXp/4UN3JAzz0ZnqUqQG1mbEzJiJQxi4uA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7725AC8BB78A8145A1FC7FAE8995D2D5@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05f5cbcc-0ea7-4342-cc7b-08d59db25ece
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:35:23.6579
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c644654-28f9-484d-fc7f-08d59db25fc1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:35:26.1579
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1047
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0966
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogSmFuIEjDtnBwbmVyIDxob2VwcG5lckBsaW51eC52bmV0LmlibS5jb20+DQoNClsgVXBz
-dHJlYW0gY29tbWl0IGI0ODdhOTE0Zjg1MzU0NTg0MmEwODk5MzI5YjZiNzJmZTU2YzQwODEgXQ0K
-DQpXZSBoYXZlIHR3byBmbGFncywgREFTRF9GTEFHX0RFVklDRV9STyBhbmQgREFTRF9GRUFUVVJF
-X1JFQURPTkxZLCB0aGF0DQp0ZWxsIHVzIHdoZXRoZXIgYSBkZXZpY2UgaXMgcmVhZC1vbmx5LiBE
-QVNEX0ZMQUdfREVWSUNFX1JPIGlzIHNldCB3aGVuIGENCmRldmljZSBpcyBhdHRhY2hlZCBhcyBy
-ZWFkLW9ubHkgdG8gei9WTSBhbmQgREFTRF9GRUFUVVJFX1JFQURPTkxZIGlzIHNldA0Kd2hlbiBl
-aXRoZXIgdGhlIGNvcnJlc3BvbmRpbmcga2VybmVsIHBhcmFtZXRlciBpcyBjb25maWd1cmVkLCBv
-ciB0aGUNCnJlYWQtb25seSBzdGF0ZSBpcyBjaGFuZ2VkIHZpYSBzeXNmcy4NClRoaXMgaXMgdmFs
-dWFibGUgaW5mb3JtYXRpb24gaW4gYW55IGNhc2UuIEhvd2V2ZXIsIG9ubHkgdGhlIGZlYXR1cmUg
-ZmxhZw0KaXMgYmVpbmcgY2hlY2tlZCBhdCB0aGUgbW9tZW50IHdoZW4gd2UgZGlzcGxheSB0aGUg
-Y3VycmVudCBzdGF0ZS4NCg0KRml4IHRoaXMgYnkgY2hlY2tpbmcgYm90aCBmbGFncy4NCg0KUmV2
-aWV3ZWQtYnk6IFN0ZWZhbiBIYWJlcmxhbmQgPHN0aEBsaW51eC52bmV0LmlibS5jb20+DQpTaWdu
-ZWQtb2ZmLWJ5OiBKYW4gSMO2cHBuZXIgPGhvZXBwbmVyQGxpbnV4LnZuZXQuaWJtLmNvbT4NClNp
-Z25lZC1vZmYtYnk6IE1hcnRpbiBTY2h3aWRlZnNreSA8c2Nod2lkZWZza3lAZGUuaWJtLmNvbT4N
-ClNpZ25lZC1vZmYtYnk6IFNhc2hhIExldmluIDxhbGV4YW5kZXIubGV2aW5AbWljcm9zb2Z0LmNv
-bT4NCi0tLQ0KIGRyaXZlcnMvczM5MC9ibG9jay9kYXNkX2Rldm1hcC5jIHwgMTkgKysrKysrKysr
-KysrKystLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9u
-cygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9zMzkwL2Jsb2NrL2Rhc2RfZGV2bWFwLmMgYi9k
-cml2ZXJzL3MzOTAvYmxvY2svZGFzZF9kZXZtYXAuYw0KaW5kZXggODI4NmY3NDI0MzZiLi5mNjFh
-OGUwYWU3YzggMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3MzOTAvYmxvY2svZGFzZF9kZXZtYXAuYw0K
-KysrIGIvZHJpdmVycy9zMzkwL2Jsb2NrL2Rhc2RfZGV2bWFwLmMNCkBAIC03NTgsMTMgKzc1OCwy
-MiBAQCBzdGF0aWMgc3NpemVfdA0KIGRhc2Rfcm9fc2hvdyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0
-cnVjdCBkZXZpY2VfYXR0cmlidXRlICphdHRyLCBjaGFyICpidWYpDQogew0KIAlzdHJ1Y3QgZGFz
-ZF9kZXZtYXAgKmRldm1hcDsNCi0JaW50IHJvX2ZsYWc7DQorCXN0cnVjdCBkYXNkX2RldmljZSAq
-ZGV2aWNlOw0KKwlpbnQgcm9fZmxhZyA9IDA7DQogDQogCWRldm1hcCA9IGRhc2RfZmluZF9idXNp
-ZChkZXZfbmFtZShkZXYpKTsNCi0JaWYgKCFJU19FUlIoZGV2bWFwKSkNCi0JCXJvX2ZsYWcgPSAo
-ZGV2bWFwLT5mZWF0dXJlcyAmIERBU0RfRkVBVFVSRV9SRUFET05MWSkgIT0gMDsNCi0JZWxzZQ0K
-LQkJcm9fZmxhZyA9IChEQVNEX0ZFQVRVUkVfREVGQVVMVCAmIERBU0RfRkVBVFVSRV9SRUFET05M
-WSkgIT0gMDsNCisJaWYgKElTX0VSUihkZXZtYXApKQ0KKwkJZ290byBvdXQ7DQorDQorCXJvX2Zs
-YWcgPSAhIShkZXZtYXAtPmZlYXR1cmVzICYgREFTRF9GRUFUVVJFX1JFQURPTkxZKTsNCisNCisJ
-c3Bpbl9sb2NrKCZkYXNkX2Rldm1hcF9sb2NrKTsNCisJZGV2aWNlID0gZGV2bWFwLT5kZXZpY2U7
-DQorCWlmIChkZXZpY2UpDQorCQlyb19mbGFnIHw9IHRlc3RfYml0KERBU0RfRkxBR19ERVZJQ0Vf
-Uk8sICZkZXZpY2UtPmZsYWdzKTsNCisJc3Bpbl91bmxvY2soJmRhc2RfZGV2bWFwX2xvY2spOw0K
-Kw0KK291dDoNCiAJcmV0dXJuIHNucHJpbnRmKGJ1ZiwgUEFHRV9TSVpFLCByb19mbGFnID8gIjFc
-biIgOiAiMFxuIik7DQogfQ0KIA0KLS0gDQoyLjE1LjENCg==
+From: Jia-Ju Bai <baijiaju1990@163.com>
+
+[ Upstream commit 896f6966fc815abe71f85fb26f0193875df8a035 ]
+
+The driver may sleep under a spin lock, and the function call path is:
+mraid_mm_attach_buf (acquire the lock by spin_lock_irqsave)
+  pci_pool_alloc(GFP_KERNEL) --> may sleep
+
+To fix it, the "GFP_KERNEL" is replaced with "GFP_ATOMIC".
+
+[mkp: fixed whitespace]
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/scsi/megaraid/megaraid_mm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/megaraid/megaraid_mm.c b/drivers/scsi/megaraid/me=
+garaid_mm.c
+index a70692779a16..bfc7984a1c17 100644
+--- a/drivers/scsi/megaraid/megaraid_mm.c
++++ b/drivers/scsi/megaraid/megaraid_mm.c
+@@ -570,7 +570,7 @@ mraid_mm_attach_buf(mraid_mmadp_t *adp, uioc_t *kioc, i=
+nt xferlen)
+=20
+ 	kioc->pool_index	=3D right_pool;
+ 	kioc->free_buf		=3D 1;
+-	kioc->buf_vaddr 	=3D pci_pool_alloc(pool->handle, GFP_KERNEL,
++	kioc->buf_vaddr		=3D pci_pool_alloc(pool->handle, GFP_ATOMIC,
+ 							&kioc->buf_paddr);
+ 	spin_unlock_irqrestore(&pool->lock, flags);
+=20
+--=20
+2.15.1
