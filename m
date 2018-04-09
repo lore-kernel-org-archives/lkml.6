@@ -1,70 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751886AbeDINlV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:41:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33376 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751291AbeDINlT (ORCPT
+        id S1752068AbeDINmL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:42:11 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46640 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751502AbeDINmK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:41:19 -0400
-Date: Mon, 9 Apr 2018 06:41:14 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, Minchan Kim <minchan@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
-        Chris Fries <cfries@google.com>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180409134114.GA30963@bombadil.infradead.org>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
- <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
- <20180409111403.GA31652@bombadil.infradead.org>
- <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
- <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
- <20180409124852.GE21835@dhcp22.suse.cz>
+        Mon, 9 Apr 2018 09:42:10 -0400
+Subject: Re: [PATCH v2 7/9] trace_uprobe/sdt: Fix multiple update of same
+ reference counter
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
+        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
+        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
+        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
+        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
+        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+References: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
+ <20180404083110.18647-8-ravi.bangoria@linux.vnet.ibm.com>
+ <20180409131730.GA25631@redhat.com>
+ <90d2fc35-0d58-1cab-a474-642192c7e1ff@linux.vnet.ibm.com>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Date: Mon, 9 Apr 2018 19:11:48 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409124852.GE21835@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <90d2fc35-0d58-1cab-a474-642192c7e1ff@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18040913-0044-0000-0000-000005451C78
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040913-0045-0000-0000-00002885480F
+Message-Id: <fd24639f-fe58-0078-1c7c-68d8b9484e08@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804090146
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 02:48:52PM +0200, Michal Hocko wrote:
-> On Mon 09-04-18 20:25:06, Chao Yu wrote:
-> [...]
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index c85cccc2e800..cc63f8c448f0 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -339,10 +339,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
-> >  make_now:
-> >  	if (ino == F2FS_NODE_INO(sbi)) {
-> >  		inode->i_mapping->a_ops = &f2fs_node_aops;
-> > -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> > +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
-> 
-> An unrelated question. Why do you make all allocations for the mapping
-> NOFS automatically? What kind of reclaim recursion problems are you
-> trying to prevent?
 
-It's worth noting that this is endemic in filesystems.
 
-$ git grep mapping_set_gfp_mask.*FS
-drivers/block/loop.c:   mapping_set_gfp_mask(mapping, lo->old_gfp_mask & ~(__GFP_IO|__GFP_FS));
-fs/btrfs/disk-io.c:     mapping_set_gfp_mask(fs_info->btree_inode->i_mapping, GFP_NOFS);
-fs/f2fs/inode.c:                mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-fs/f2fs/inode.c:                mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-fs/gfs2/glock.c:                mapping_set_gfp_mask(mapping, GFP_NOFS);
-fs/gfs2/ops_fstype.c:   mapping_set_gfp_mask(mapping, GFP_NOFS);
-fs/jfs/jfs_imap.c:      mapping_set_gfp_mask(ip->i_mapping, GFP_NOFS);
-fs/jfs/super.c: mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
-fs/nilfs2/gcinode.c:    mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
-fs/nilfs2/page.c:       mapping_set_gfp_mask(mapping, GFP_NOFS);
-fs/reiserfs/xattr.c:    mapping_set_gfp_mask(mapping, GFP_NOFS);
-fs/xfs/xfs_iops.c:      mapping_set_gfp_mask(inode->i_mapping, (gfp_mask & ~(__GFP_FS)));
+On 04/09/2018 07:02 PM, Ravi Bangoria wrote:
+> Hi Oleg,
+>
+> On 04/09/2018 06:47 PM, Oleg Nesterov wrote:
+>> I didn't read this version yet, just one question...
+>>
+>> So now it depends on CONFIG_MMU_NOTIFIER, yes? I do not see any changes in Kconfig
+>> files, this doesn't look right...
+> Yes, you are write.
+
+s/write/right.
