@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3752604-1523238744-2-17906605065470439615
+X-Cyrus-Session-Id: sloti22d1t05-3757758-1523238726-2-67330431611897616
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523238743; b=AQRnowGXymKVY2+Xe9v/KfZOFnjs53xi+aGgI5ciyO/4f3+9lP
-    zmZPOBll/L03o5tc0CoAetPO0RSSVL6mhR785ccspSn0zAw4ztuEoNQebwgnJFxi
-    bZHzhgc2m0xK5fB8NFNFaBbbqHvxwvBK/xVSqBOgdrJwXZ1nqdOPED51N2uls2JH
-    HvmO/S+IxsmhQQl/VAj9tJMQde2yjHrrwk+l19oui6+mVyUdWYCwzE5JP91hAPkT
-    TesgHy/VVs2YmzCUDcsCaSFiaN5uMlcYzW5XMpxQOvb2in+29/0HIAvNQw9CnI7I
-    +uS5h7nf8373tpgx97Ay7IEdqBEEdSuAZDFQ==
+    1523238725; b=V4mul9n8tW/xfkNZRHOjxdzo0CajMc7jksx7DKNNtiMOd5kWl6
+    aJC5fStj9u5ilzKGebtIcycuB+CjQNjrF03ALg4caZLo4jHJhUe00MmsJB5Qm+sc
+    8KV9TExf41UPjfzox8G8mD/awxoFVxgXU80Njy6Ltd9vw8AB89LVe1cfsKhq++wN
+    EwXpJrBb9jIuIKsAa676jZ8ev+2f1ee1OiAPYsvD4AtdtckKaRr/PNEGgHm4iBFr
+    gIR/4EP0a4SfySwSi/xcr12C5dTAOKf+kvkJBO7fbexE0FnGMGJaMxffzntpMh0m
+    wP7ZIM8JEqLrrbluz2IyjWKrxQH1DUYsjDCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523238743; bh=hzMZY3DaNp
-    1nbYji6bW4VPw/geV/k1dXAuXCwXMydOM=; b=fNi/L29GcskpI8HQ/wpvnNMlYh
-    i86HFdq5f63XtjwXz25LwjvtC1r51efksw4WCAUJdre7xpY7b3CElOi/eSGZ0/XI
-    ZHfrh46a6LxzYyVTFpC1FB2ZJJIB55mgZU3VDMZCd/fdkrCOqPfgTOkwjHF93+u+
-    qNGG1ezclQlcgrIDgiKCgI4od0kUmKWjAjpJMmR1xCFrktlFtsZSvFJolTtAM2bB
-    YBbic+AtyHu4uC6UP9kfsnYX+LBO444oiEd17AapkXvGIh/LvNGPDpPzko1nH5C5
-    Z+2lTuGnZEX9JuLGrmaBj5fo0HuLLf3WXWYUKepOrZxqoFWdii61jHAQ+rGg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PD6DbnXk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523238725; bh=d+eNvSC00q
+    gQ6PR9DmpR3bmlAcGLE/Cdmx09a+DxrBc=; b=rj4hTi2JVPjPuAdxCJjaOVmO9f
+    JNWDvo4zRo05CQylff96oi2K+pMvXw2thWRIYEIePdo4/VjzEIzQdjA42zvlfQMq
+    u+YCxKL0pUiqOjUvQZ1MdLVC51Xs2zHIDxOzp4CiOBSlldGhIVZUzObK2Kwh4L44
+    p1rHFyFWNSpxs9DFkQ+UyLyTKtHlwgRnk/io0UbnlVGnhkuRikdpBNu7fso2RjaK
+    RxMYKBAHP6772p3wJWkMojIm2R59OrzyEtJ6pNLwTxqICxaibCJ5eTV9aZS1kh/z
+    PYjbCnZoF5AsucRnDQgfeXGUJtP0CWZoGmFQSDJx66ATQU3rIlKSTsmRlNoQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SMAlgLa2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -38,10 +38,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PD6DbnXk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SMAlgLa2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -49,38 +49,38 @@ Authentication-Results: mx1.messagingengine.com;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfN/xKbwIuhR3gkuyGY/ZIJZ3hKw4iUc5ci0jA5dG4FPsJydUW1SAKPgH3J2H7w5Qxk4a7Ahv95aiyl5OsvsN/uR9ONGYu6QKym8Ni82plw892VD8c3+C
-    njKoTdKLqncESmHudAJpZ1Q1lv4Pxep8UzCcPkfmsasrupzt9FTzgdaEpi7s0IPp2NlI00YuSs6+GOUXuBDcXS/wKVIFvDXi5EmtZ1xkgnysOhGYVf9gotQ/
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIVd2pFaix+R8d4lddh3Te4hLyMjVr1Vbt/yM0NwXqQOg2c9ZlHnO01ROgPv4JO29uCLftqqYNhLOlm+m1NR+qitk3KRLL/mhte90NORejJems5+9tIC
+    f4UAZNRz80LnxfZ0uYIi6QZb/18SCu/5ZMVPLO0rivNUXenBv4t2tjSFXU4zTW2a3+Xx2oTN7WSP/mFIk+eP/aqQ9O0wSpIlBK/MIzwHCu4EZmg77aZjlWYB
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=Utfb4SCxKVlw79s-hMwA:9
+    a=Lf-vpJhqX20A:10 a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8 a=hMv0cHFdvlu8jOsBITgA:9
     a=wPNLvfGTeEIA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932485AbeDIBwK (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 21:52:10 -0400
+        id S1756565AbeDIBvt (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 21:51:49 -0400
 Received: from mail-by2nam01on0111.outbound.protection.outlook.com ([104.47.34.111]:45024
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932314AbeDIAdq (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:33:46 -0400
+        id S932334AbeDIAdt (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:33:49 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+CC: Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 242/293] scsi: fas216: fix sense buffer
- initialization
-Thread-Topic: [PATCH AUTOSEL for 4.9 242/293] scsi: fas216: fix sense buffer
- initialization
-Thread-Index: AQHTz5lWAfCMa5Mec0+j7LDQ0b3ueA==
-Date: Mon, 9 Apr 2018 00:26:01 +0000
-Message-ID: <20180409002239.163177-242-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 248/293] powerpc/numa: Ensure nodes
+ initialized for hotplug
+Thread-Topic: [PATCH AUTOSEL for 4.9 248/293] powerpc/numa: Ensure nodes
+ initialized for hotplug
+Thread-Index: AQHTz5lZg0C4hUcUZEqiqLYB2EIFQg==
+Date: Mon, 9 Apr 2018 00:26:06 +0000
+Message-ID: <20180409002239.163177-248-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,27 +89,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0998;7:fCmh6uljZ2wRqcouWNXS5kNp0fH5PqRwZofrawLe8JaYDKoY7v9UuuGb18JIdAKvi5NPhJCF2kivI9t+oZtFKmCt8Hr2i4Y/yGGhJ9UezZff8z2REk+nWYFOq4YA+B1BX5DuNpB4rNPn8OICb1yXcF2SrWTKNBrqIyLp6LoGU+bRLYvhQjLD6HLzy64zYFSrJWpRU7dUEeVk5kb9Dmn9vdXPigLWQw47EuPg1PTtixdP9oxlbK8H3pj4RLPPesDW;20:ycYtFjhN8wzdwa+U9O+kAsCxVYgEB7hb6jvmXO4WE66MN/9fKYcuaxNoio/Lk8xFSMXS0ywAMwCoevXsLB8qPdkj5liUSulqAMEIwVwP2Jn+QmxTl+DxPm6QECq29oK1e6bDK9EJj53/DnSx5/KXeF9yJVqheM4ZRJQofORv5ls=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0998;7:TKY5g8yxjhUgJH0GnLQY0W9x/fxQvNqVPBLA6TaoxAziVtmPzOQrCUt0gamfH/6vRmvS5W1qpYL3a0AKuIcjyaQYgeReN2g68O+HAAbmZTETsj5tLb8kPdOdOVv0Bsi3XhSvnHhlObCpC9+zK64xjsFAapYAAhfQgcfo6EW04oGkWV7eOqnO5YS7i6KsqaMBqzId+waSjtL2WRl2xWfPSv/crrgj91xve70p4TU6mR9XommVtdOWCYsSfrYW8ipz;20:kDj4T9/1yNfiYMmJNXwNHgI/5oxRQ26jEYGURUZeaLHh6PvyXlswe5GWjQOfqf81lvED+BwIrzclrXjhmuiJjrjUloHrFLsdI/hFa+gviA3xajVJBc0L3NKvF9f8SDbLSujLnZFyFEnLeGARNfJ/9HiCyV/5heFqXOMIWsUc0Ts=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: c66edbea-979a-40fd-f808-08d59db18b81
+X-MS-Office365-Filtering-Correlation-Id: 3625ee20-2c05-4299-92cd-08d59db18d82
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0998;
 x-ms-traffictypediagnostic: DM5PR2101MB0998:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB099804B2298ACD1BA77A9EA4FBBF0@DM5PR2101MB0998.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
+x-microsoft-antispam-prvs: <DM5PR2101MB099835628411B92ACD8381CAFBBF0@DM5PR2101MB0998.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(209352067349851)(104084551191319);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0998;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0998;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(346002)(39380400002)(376002)(396003)(366004)(39860400002)(189003)(199004)(25786009)(59450400001)(105586002)(14454004)(76176011)(68736007)(2906002)(316002)(97736004)(8676002)(86612001)(3660700001)(3280700002)(102836004)(6116002)(4326008)(8936002)(36756003)(22452003)(81166006)(81156014)(54906003)(6506007)(10090500001)(2501003)(6512007)(186003)(6666003)(3846002)(486006)(5660300001)(26005)(7736002)(5250100002)(305945005)(99286004)(2900100001)(110136005)(1076002)(6436002)(53936002)(106356001)(107886003)(72206003)(86362001)(476003)(446003)(66066001)(11346002)(478600001)(10290500003)(2616005)(6486002)(22906009)(217873001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0998;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: O6Zo/LxLhsnv0BKTawD1Euoq4+g8hcUQCHCGpNq+G0UH3fxSmCfN++n7jcFM3Hdj/sX9xkoNG2oFNrRSyxHEDDpX07IqryVr93FUDVbuPksB/PkHcnnbp9GYJjyCgqYwjD7PisrN9ewf77X4zGg9RFhdLvAmPuKP5BwDHnL4rE9Iug9AYTT6+6+yJnPlGUNHQrPsguH4NKFBPeBX2lbuosAZ4hCtUYRZcBR/768LSJS6MqCAXGnZvTx7235JMpBgaR/7drqTMmWIxd+brWDfLS6J7ai9eRrHUUbQgIIx35s+mPuARZBz6f5bpkMyzOmC3Fp25cOt5cYETIn9Wd2buP90b4DVk3Eu32wpUvNCzES5MkvvKiLVao/3ZHiCTLLEqIY3DW6D9aJZQv5Yq/jCNZCC3yEfqamrv3amSItiS9M=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(376002)(396003)(366004)(39860400002)(189003)(199004)(25786009)(59450400001)(105586002)(14454004)(76176011)(68736007)(2906002)(316002)(97736004)(8676002)(86612001)(3660700001)(3280700002)(102836004)(6116002)(4326008)(8936002)(36756003)(22452003)(81166006)(81156014)(54906003)(6506007)(10090500001)(2501003)(6512007)(186003)(6666003)(3846002)(486006)(5660300001)(26005)(7736002)(5250100002)(305945005)(99286004)(2900100001)(110136005)(1076002)(6436002)(53936002)(106356001)(575784001)(107886003)(72206003)(86362001)(476003)(446003)(66066001)(11346002)(478600001)(10290500003)(2616005)(6486002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0998;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: T3Hn9hVlFr1Ws+38D/UvbVn1T15HUkZ7Sd9vGEpeLf6l1I+bDMppKsy9RMoiMlV0AqOU2n0X0SLKLvdbdf0AHg9rW0p4/7x/KJuyu7B2sKq3SqBJL8DSdVWDEqCKCtcb10y3VBaCFfnNj0osFYdkNdD1xO/QXC90IecZTtEMd+hnlMsni4oikb1yE6UzhD9r4Pcn1eNGe+DSM0YTf7//vRWR/CN9lbB/genNXXlSDWEzAmeqJKH5FfSV45gEZ4DZJFcraQrCOHZD+Oinkyf9JYq2daPU2WCgMfAwBIEXTSy+Jij12PXAzJXEUpbWMd9i4TF0GaXer59Ki/dZKeZF/1MyJG3D2AjzzFLW7wZFedkj73JPz7aZiylDYzEn7CCRBNY6Kp2CEN6VFrQkcHR04BXLwt3t+3bd5fO/RMbgjzU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c66edbea-979a-40fd-f808-08d59db18b81
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:26:01.7849
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3625ee20-2c05-4299-92cd-08d59db18d82
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:26:06.2537
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -120,47 +120,140 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Michael Bringmann <mwb@linux.vnet.ibm.com>
 
-[ Upstream commit 96d5eaa9bb74d299508d811d865c2c41b38b0301 ]
+[ Upstream commit ea05ba7c559c8e5a5946c3a94a2a266e9a6680a6 ]
 
-While testing with the ARM specific memset() macro removed, I ran into a
-compiler warning that shows an old bug:
+This patch fixes some problems encountered at runtime with
+configurations that support memory-less nodes, or that hot-add CPUs
+into nodes that are memoryless during system execution after boot. The
+problems of interest include:
 
-drivers/scsi/arm/fas216.c: In function 'fas216_rq_sns_done':
-drivers/scsi/arm/fas216.c:2014:40: error: argument to 'sizeof' in 'memset' =
-call is the same expression as the destination; did you mean to provide an =
-explicit length? [-Werror=3Dsizeof-pointer-memaccess]
+* Nodes known to powerpc to be memoryless at boot, but to have CPUs in
+  them are allowed to be 'possible' and 'online'. Memory allocations
+  for those nodes are taken from another node that does have memory
+  until and if memory is hot-added to the node.
 
-It turns out that the definition of the scsi_cmd structure changed back
-in linux-2.6.25, so now we clear only four bytes (sizeof(pointer))
-instead of 96 (SCSI_SENSE_BUFFERSIZE). I did not check whether we
-actually need to initialize the buffer here, but it's clear that if we
-do it, we should use the correct size.
+* Nodes which have no resources assigned at boot, but which may still
+  be referenced subsequently by affinity or associativity attributes,
+  are kept in the list of 'possible' nodes for powerpc. Hot-add of
+  memory or CPUs to the system can reference these nodes and bring
+  them online instead of redirecting the references to one of the set
+  of nodes known to have memory at boot.
 
-Fixes: de25deb18016 ("[SCSI] use dynamically allocated sense buffer")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Note that this software operates under the context of CPU hotplug. We
+are not doing memory hotplug in this code, but rather updating the
+kernel's CPU topology (i.e. arch_update_cpu_topology /
+numa_update_cpu_topology). We are initializing a node that may be used
+by CPUs or memory before it can be referenced as invalid by a CPU
+hotplug operation. CPU hotplug operations are protected by a range of
+APIs including cpu_maps_update_begin/cpu_maps_update_done,
+cpus_read/write_lock / cpus_read/write_unlock, device locks, and more.
+Memory hotplug operations, including try_online_node, are protected by
+mem_hotplug_begin/mem_hotplug_done, device locks, and more. In the
+case of CPUs being hot-added to a previously memoryless node, the
+try_online_node operation occurs wholly within the CPU locks with no
+overlap. Using HMC hot-add/hot-remove operations, we have been able to
+add and remove CPUs to any possible node without failures. HMC
+operations involve a degree self-serialization, though.
+
+Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+Reviewed-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/scsi/arm/fas216.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/mm/numa.c | 47 +++++++++++++++++++++++++++++++++++++---------=
+-
+ 1 file changed, 37 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/scsi/arm/fas216.c b/drivers/scsi/arm/fas216.c
-index 24388795ee9a..936e8c735656 100644
---- a/drivers/scsi/arm/fas216.c
-+++ b/drivers/scsi/arm/fas216.c
-@@ -2011,7 +2011,7 @@ static void fas216_rq_sns_done(FAS216_Info *info, str=
-uct scsi_cmnd *SCpnt,
- 		 * have valid data in the sense buffer that could
- 		 * confuse the higher levels.
- 		 */
--		memset(SCpnt->sense_buffer, 0, sizeof(SCpnt->sense_buffer));
-+		memset(SCpnt->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE);
- //printk("scsi%d.%c: sense buffer: ", info->host->host_no, '0' + SCpnt->de=
-vice->id);
- //{ int i; for (i =3D 0; i < 32; i++) printk("%02x ", SCpnt->sense_buffer[=
-i]); printk("\n"); }
- 	/*
+diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+index 18ea1e49a323..6cff96e0d77b 100644
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -551,7 +551,7 @@ static int numa_setup_cpu(unsigned long lcpu)
+ 	nid =3D of_node_to_nid_single(cpu);
+=20
+ out_present:
+-	if (nid < 0 || !node_online(nid))
++	if (nid < 0 || !node_possible(nid))
+ 		nid =3D first_online_node;
+=20
+ 	map_cpu_to_node(lcpu, nid);
+@@ -922,10 +922,8 @@ static void __init find_possible_nodes(void)
+ 		goto out;
+=20
+ 	for (i =3D 0; i < numnodes; i++) {
+-		if (!node_possible(i)) {
+-			setup_node_data(i, 0, 0);
++		if (!node_possible(i))
+ 			node_set(i, node_possible_map);
+-		}
+ 	}
+=20
+ out:
+@@ -1305,6 +1303,40 @@ static long vphn_get_associativity(unsigned long cpu=
+,
+ 	return rc;
+ }
+=20
++static inline int find_and_online_cpu_nid(int cpu)
++{
++	__be32 associativity[VPHN_ASSOC_BUFSIZE] =3D {0};
++	int new_nid;
++
++	/* Use associativity from first thread for all siblings */
++	vphn_get_associativity(cpu, associativity);
++	new_nid =3D associativity_to_nid(associativity);
++	if (new_nid < 0 || !node_possible(new_nid))
++		new_nid =3D first_online_node;
++
++	if (NODE_DATA(new_nid) =3D=3D NULL) {
++#ifdef CONFIG_MEMORY_HOTPLUG
++		/*
++		 * Need to ensure that NODE_DATA is initialized for a node from
++		 * available memory (see memblock_alloc_try_nid). If unable to
++		 * init the node, then default to nearest node that has memory
++		 * installed.
++		 */
++		if (try_online_node(new_nid))
++			new_nid =3D first_online_node;
++#else
++		/*
++		 * Default to using the nearest node that has memory installed.
++		 * Otherwise, it would be necessary to patch the kernel MM code
++		 * to deal with more memoryless-node error conditions.
++		 */
++		new_nid =3D first_online_node;
++#endif
++	}
++
++	return new_nid;
++}
++
+ /*
+  * Update the CPU maps and sysfs entries for a single CPU when its NUMA
+  * characteristics change. This function doesn't perform any locking and i=
+s
+@@ -1370,7 +1402,6 @@ int arch_update_cpu_topology(void)
+ {
+ 	unsigned int cpu, sibling, changed =3D 0;
+ 	struct topology_update_data *updates, *ud;
+-	__be32 associativity[VPHN_ASSOC_BUFSIZE] =3D {0};
+ 	cpumask_t updated_cpus;
+ 	struct device *dev;
+ 	int weight, new_nid, i =3D 0;
+@@ -1405,11 +1436,7 @@ int arch_update_cpu_topology(void)
+ 			continue;
+ 		}
+=20
+-		/* Use associativity from first thread for all siblings */
+-		vphn_get_associativity(cpu, associativity);
+-		new_nid =3D associativity_to_nid(associativity);
+-		if (new_nid < 0 || !node_online(new_nid))
+-			new_nid =3D first_online_node;
++		new_nid =3D find_and_online_cpu_nid(cpu);
+=20
+ 		if (new_nid =3D=3D numa_cpu_lookup_table[cpu]) {
+ 			cpumask_andnot(&cpu_associativity_changes_mask,
 --=20
 2.15.1
