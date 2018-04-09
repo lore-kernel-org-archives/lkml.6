@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3643807-1523233881-2-2702326277100190062
+X-Cyrus-Session-Id: sloti22d1t05-3643807-1523233876-2-9218919455290766728
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523233880; b=V0MhlQin36zsq2d7kaCkZ91UfeqTMqibQt4vI88RF6nDz+VrC8
-    sPBXzjrbiHKziUzFP33w5efinkquBLqhUU2Qr81GzsWMkVU+657nR/4b6JvCuuEt
-    2bXgp/f3NnlT+5mKzq0IaZpi2Qvn6s/C4Ps4g6Gk6O7toZx5dadMVQAmCWqxcCil
-    OWeaRsEGZXv5lI/5Ohazc8EOFjhadwj3ppVe3KhQmG0ihfllGxe9n/HYoiv2r5Z9
-    i90jKhak29t4llTxTbKaJl0vMERN/i3RCfLaErWM7djguUCYC+nuo3D27mTF1u/Z
-    yXOWjBYC4+UA3xgkO+W7sS02e1Gr9xGXgSxg==
+    1523233875; b=uX2AgFcTrchVSIYTc8Nm3KoEwWXsY4QYdQYs7dIGSBtkAib51M
+    X4ZkmgK2RoP9MYB98sxwnnWug8Yxfd1GN8Vt1IZSyMo7QYz5pW+4L5IR0ISWiGOE
+    YkeArShpn4dVe5h51KR6j1tV7wy+6eN4UD5fVSQuZt42m/wV9wSseo+iEKxWy5Bm
+    QOXmwexysLokHAn/pUIJ6WcC2/IAZwrkQhngFWv4t6OmMsdESB8EJxi9QYInYzdG
+    b80F5JUhrfIw33IJ0sYXjpljWiayhyvRfvkxFA47GAAU5TLkyRYoQNDjBYcv87m7
+    vaHcHNTyd8LdpGjIxQoTiJFqnaoo/VcOxn7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523233880; bh=KXX9gbluy/
-    MviwQpX5fjrJ9oQMCD37NJ+A/b3XmRiD8=; b=Zx/T+DVdGKJAR8DK4Jq4FMbgxW
-    5lrazM1L5wQEYnaq8g1guruggEOxajs2xqOrSgCWVCojSZFdOcSiMfd8RSDU0t7g
-    ps3ejH4mYxh//L+eZAPkFmz7SRzEJXTnpjpzFSz7f5J9rMWvj5XaB1XcZpZyHy7G
-    Qi3m6Tz5HCJ1KCvBpePWzhtWFJA9+mLHPqZXuj6YWHW6DJCRnnRcmdn5rtEekhDn
-    r5SKF8ZKZiegFf/amwnclzG0X579ziSgPMbE4jPSzybwgWxOMfMTI1FKfTMibk3N
-    zvD+c36smdJwCZoaUUqlU+uSgq9qXiIm6albm1v5fD8LV4qFCzVv9UJ0YoMg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=cTfSk+Zf x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523233875; bh=jT6JNUBlow
+    EG8DdLmTS1af8XqPhLuXBn6EYjoXwEQDw=; b=UNWf5mhGXIWIeUIwOOcKAUjjXt
+    YU+7T5Lv/ai6zY/+JmVKAqyxLFxSyw0XTQ8nBtAULHvvGaAC8tzNmU0D4iprMG+8
+    FdS1t4HuOivMMSiyFqzzWsW9EZwkBiRnYHHuYbN6mqtc0voDnvjiTQyIOQnyC4mg
+    eswUiImwSahq6DPPXTbzshLk+etc0voTlXUuNdO5/TV1Ex7YWk2GTb9TKs5AzlBl
+    3ns6l/rykOFSsip/6+0Kg4ivGdrM3aHEw5cA55JZ4xO1wRLkoUQyIW6GYEOj1dV8
+    DMQwNRzipKtMAPYZDquh6afQl2KIfXbt7j6XUZPHkFi1I9b4yU7Ywc8g/UEA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=CGcfWwjL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=cTfSk+Zf x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=CGcfWwjL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,36 +51,36 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIUHYjboel2jr7JdNqKSq5GzEr8LPLAVGM6DHsun3utohIqwTo8nTjTovcGifcWUisl4dagswj6Bng7YywAFK+GEGUfdLoOVPGsxhEJFUkJtaX144x6g
-    n6zx2i2B+peqgEx70+n6j1m1HBynD7a4IPy+5wYc65CQ0bnNgnLLbqQ9NUKsD19sRElNlR/hYi4MvEONandT8Y6Tt+ONlX3oYMY5r4XM8IKu7s2VhwqsiPbM
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfPIBHGSWgHzahyY4Nek3/ze4ssnnx2YKuWOi3novtsJk4gsTjY4lCM9GUa3cFpCvLVgXzTIRRNQYN18lJ6894pQ/I/gOIS6rU8hqxmdRA+EFmK6W9C+Y
+    LV9yZ4B3+USuxvdRWoGOQwmpiaec1VYOVCOjNGqW/iysJBsJJ2/j3jFjDJcB1J5bhf0b16bHV5++alSbTHihr1AhCMz+7lYJvL9SG8JoYC7wOUG8SZD7jD3G
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=n4UDRAUPtKReBgLTtN8A:9
-    a=wPNLvfGTeEIA:10
+    a=Lf-vpJhqX20A:10 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ai3CC5yYEeFTzkOI7PkA:9
+    a=-jn4McuRXEzgZLuf:21 a=UgxcP5UigHXLDnlm:21 a=wPNLvfGTeEIA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755279AbeDIAbO (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:31:14 -0400
-Received: from mail-dm3nam03on0090.outbound.protection.outlook.com ([104.47.41.90]:62849
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1756194AbeDIAbN (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:31:13 -0400
+Received: from mail-by2nam03on0135.outbound.protection.outlook.com ([104.47.42.135]:16544
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753920AbeDIAbG (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:31:06 -0400
+        id S1754094AbeDIAbJ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:31:09 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Adam Lessnau <adam.lessnau@intel.com>,
+CC: Lv Zheng <lv.zheng@intel.com>,
         "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 151/293] powercap/RAPL: prevent overridding
- bits outside of the mask
-Thread-Topic: [PATCH AUTOSEL for 4.9 151/293] powercap/RAPL: prevent
- overridding bits outside of the mask
-Thread-Index: AQHTz5ksfKp4rR/osEKcSlF7PTFMmA==
-Date: Mon, 9 Apr 2018 00:24:51 +0000
-Message-ID: <20180409002239.163177-151-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 154/293] ACPI: EC: Fix EC command visibility
+ for dynamic debug
+Thread-Topic: [PATCH AUTOSEL for 4.9 154/293] ACPI: EC: Fix EC command
+ visibility for dynamic debug
+Thread-Index: AQHTz5kuyBiX6dTp/0ivm2DeCvA+eg==
+Date: Mon, 9 Apr 2018 00:24:53 +0000
+Message-ID: <20180409002239.163177-154-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,67 +89,71 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0807;7:/jhTi0fH7amIkawR4mgfRbfuEY7IEBbngVUj1quhh+c7+ccnYVFDLirHvnl9Gz8IWoYLCAI6EX3ZtVy3p6AUroy8YKfnEI9+GIHb0B+mZEFKL5WoqTgbbxWe9V2PGWQ/xnw5fRXOSmmi9Nr2WCnmzamMqOndJGxCodIF7Lj71B9qdQq/ZbnpqVRmo65Ih5jIEoJkafOf4kMJ1S+AI3OnaYZnizykSXOCdYEo76U04otAUHDZiqhv37iNwaR4svb5;20:DeWoL7nH8h6tBXWobReBxHE+ooyuJQMuqsWmYdz4eouQz22H2Ulhzc6Ula7YnwoBy2uE1ygBIvoguU/C7Ua9x3Hu8udvYk09vPyEu6M/O1MVha+u9BLflCs3NwN3r8nXf8udV/sBLI9cx+i+BFx0mfFU2HHveTkdgDoVDp1b7ro=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0917;7:tJHlipPD0AWP07uzwHJ3rns8wqMxr+xtgoS2NI93XVc25tCbyhzySD8yjDdaSctotONPpOZYR97uVrrKO+NwxXIkM5TbOanDWP6pTDTQBIAjub7sSgr0qARJlGcHOGpOiAbO2twUQK1XMRhzMthxhtrwf75lcZhUhYmvRqD4BugsjnMgUj4/gm7YutcSvENhsyRURbu62Vw4YerKMzHNZ7obsv/zwaiL2bpqr09RN0x9B0mpucMTmM7YHv3Z/z5J;20:KF8nciflP8XSAZb9GxPDOSdCcN7Yd+TvJZ0pp9kdexUo6WsZod4eCosw6HGMm5JqQIW6Vzxdm6vGWjGMejdMK4bY5C7FppywPxq1vrvj4aBR+1FdJ32tMrSjJHkk1mJN6z5IDIQS2U/hNltt07LkngQpgQHSa8LmnI2LWCjWuuU=
+X-MS-Office365-Filtering-Correlation-Id: f37bb4bc-a49a-42f1-875c-08d59db12f29
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 324b2ac2-f3bc-4a50-5b0a-08d59db12dd9
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0807;
-x-ms-traffictypediagnostic: DM5PR2101MB0807:
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB0917;
+x-ms-traffictypediagnostic: DM5PR2101MB0917:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0807030594B099936B45F48CFBBF0@DM5PR2101MB0807.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB0917682EA31ACA366CD5917CFBBF0@DM5PR2101MB0917.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231221)(944501327)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB0807;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0807;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0917;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0917;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(396003)(366004)(376002)(346002)(199004)(189003)(14454004)(4326008)(54906003)(25786009)(53936002)(2900100001)(1076002)(3280700002)(6486002)(186003)(2616005)(68736007)(110136005)(11346002)(10090500001)(6116002)(107886003)(3846002)(36756003)(8676002)(72206003)(22452003)(66066001)(26005)(6512007)(478600001)(3660700001)(81156014)(86362001)(81166006)(86612001)(7736002)(305945005)(8936002)(10290500003)(6436002)(105586002)(6666003)(316002)(575784001)(59450400001)(76176011)(5660300001)(476003)(106356001)(2906002)(6506007)(446003)(2501003)(99286004)(5250100002)(486006)(102836004)(97736004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0807;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: +ZoCrwqbZpALAa8agl5Fx8c9AwxbaO9AdiJ1FzZKh3lJz57c21GzAZMu3PRwjOQQfope3XY4zNZCP0kzFLTwkIUTljZKyfWKdOzVf3UgrqkV2To103CXYzdvvclnyROhFbzLEdkCOPIbGXPMbbU6/nPDnHL2puh32UliaBce4TDFbPT5rV0fUcJ+Ow7ZzT3y4wnGvAUrJ6NaudGEf57MqfTHbo16UEPFmVMD6oGOBBYDTVdOwoFDtXfYwbEp6dQY0X3O/rgcKJwN3AMh6o1yUkjBr+10irKmuUKwD0HCUlaV9dNMzCyekD8hkfYsCkJ4ujTA+bm41kdFtc0lbluy9M8efU4VQ3LibRbKoYM1yk8auDoJQWc2Qh3YQ8wem203u9oVfJ8Wru53D8flx3ROnmt/9bpuxltdGj34304t3wM=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(366004)(396003)(346002)(376002)(189003)(199004)(99286004)(22452003)(106356001)(26005)(110136005)(478600001)(54906003)(10290500003)(316002)(1076002)(72206003)(186003)(4326008)(97736004)(66066001)(11346002)(25786009)(86362001)(575784001)(476003)(446003)(2906002)(6666003)(6486002)(105586002)(86612001)(3280700002)(3660700001)(6512007)(3846002)(6116002)(6436002)(2616005)(486006)(53936002)(7736002)(8676002)(81166006)(81156014)(8936002)(68736007)(305945005)(10090500001)(76176011)(6506007)(102836004)(36756003)(107886003)(59450400001)(2900100001)(2501003)(14454004)(5660300001)(5250100002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0917;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: ST2Tqx9ysBcLhWi/iJbT095LSjobENSqs3FUKT6ZFoxZRhIw3PZRHB40eP60pj1de7qRHRUDw6Pzo2H/z1RB6tkWJj8Y5l064FjrP3hlCC+/JI0d5djpDGW2wOM2b7O2BSTxxSRq0rs1TnUqq2dIBjH5caw+HlkpNJj0VbXKYr95zzbFZvPaQ2GnhKk222hUAuNna5gEnk0fhuufumTr2IHyvL15XJ3+qejHed70r18zYpZ5yS7ElDefCxy6Xhitq4y28K4fiLpMl/mWdSre7QCyOC4CL33pUxabJ16wu7QiR7chO0cRHpI+QSXKLN3jq7TIM78bWf8U3nuO8DtU6sOp/7yQeJFMK5x1IM5Ub1OuLRrjSnL6lMRnomXOOoWQRL1/2qtbqmXqy9dC/kLhmM7QUCEhw44XIKCkPM2DGM4=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 324b2ac2-f3bc-4a50-5b0a-08d59db12dd9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:24:51.5657
+X-MS-Exchange-CrossTenant-Network-Message-Id: f37bb4bc-a49a-42f1-875c-08d59db12f29
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:24:53.6907
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0807
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0917
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Adam Lessnau <adam.lessnau@intel.com>
+From: Lv Zheng <lv.zheng@intel.com>
 
-[ Upstream commit edbdabc62328ec0ac98d83ca384bf9fd5251ade6 ]
+[ Upstream commit 4625d752e600c116e6327f9d7fc16e8f5be107e9 ]
 
-Fixes wrong bits shift operation in the rapl_write_data_raw function, which
-might cause overridding bits outside of the mask.
+acpi_ec_cmd_string() currently is only enabled for "DEBUG" macro, but users
+trend to use CONFIG_DYNAMIC_DEBUG and enable ec.c pr_debug() print-outs by
+"dyndbg=3D'file ec.c +p'". In this use case, all command names are turned
+into UNDEF and the log is confusing. This affects bugzilla triage work.
 
-For example, writing new TIME_WINDOW1 value can override POWER_LIMIT1.
+This patch fixes this issue by enabling acpi_ec_cmd_string() for
+CONFIG_DYNAMIC_DEBUG.
 
-Signed-off-by: Adam Lessnau <adam.lessnau@intel.com>
+Tested-by: Wang Wendy <wendy.wang@intel.com>
+Tested-by: Feng Chenzhou <chenzhoux.feng@intel.com>
+Signed-off-by: Lv Zheng <lv.zheng@intel.com>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/powercap/intel_rapl.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/acpi/ec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rapl.c
-index 3c71f608b444..6dc27afb8527 100644
---- a/drivers/powercap/intel_rapl.c
-+++ b/drivers/powercap/intel_rapl.c
-@@ -887,7 +887,9 @@ static int rapl_write_data_raw(struct rapl_domain *rd,
+diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+index 38136d608471..217b0bac33d9 100644
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -317,7 +317,7 @@ static inline void acpi_ec_write_data(struct acpi_ec *e=
+c, u8 data)
+ 	ec->timestamp =3D jiffies;
+ }
 =20
- 	cpu =3D rd->rp->lead_cpu;
- 	bits =3D rapl_unit_xlate(rd, rp->unit, value, 1);
--	bits |=3D bits << rp->shift;
-+	bits <<=3D rp->shift;
-+	bits &=3D rp->mask;
-+
- 	memset(&ma, 0, sizeof(ma));
-=20
- 	ma.msr_no =3D rd->msrs[rp->id];
+-#ifdef DEBUG
++#if defined(DEBUG) || defined(CONFIG_DYNAMIC_DEBUG)
+ static const char *acpi_ec_cmd_string(u8 cmd)
+ {
+ 	switch (cmd) {
 --=20
 2.15.1
