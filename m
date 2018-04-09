@@ -1,58 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752057AbeDINDt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:03:49 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35067 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751820AbeDINDp (ORCPT
+        id S1751877AbeDINFQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:05:16 -0400
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:36165 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbeDINFO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:03:45 -0400
-X-Google-Smtp-Source: AIpwx486wri9NwmZYHfbp79BtnlTrC/6RkppW9tPoZtjrMIwWwL5tkDrARbqTDnfGJ+wrt/ytQlv9A==
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: T-Bone@parisc-linux.org, perex@perex.cz, tiwai@suse.com
-Cc: linux-parisc@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 2/2] sound: ad1889: Replace mdelay with usleep_range in snd_ad1889_ac97_ready
-Date: Mon,  9 Apr 2018 21:03:38 +0800
-Message-Id: <1523279018-24017-1-git-send-email-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 9 Apr 2018 09:05:14 -0400
+X-Google-Smtp-Source: AIpwx48dde+nM8Kcnr0yC4bQC2kvuMNmvt4oQI5H64TwBVjt0UudtUDVvncRvgdcABLasNnTIPDuOw==
+Date: Mon, 9 Apr 2018 15:05:12 +0200
+From: Christoffer Dall <cdall@kernel.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Peter Maydell <peter.maydell@linaro.org>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, Andrew Jones <drjones@redhat.com>
+Subject: Re: [REPOST PATCH] arm/arm64: KVM: Add PSCI version selection API
+Message-ID: <20180409130512.GF10904@cbox>
+References: <20180215175803.6870-1-marc.zyngier@arm.com>
+ <db215c1e-0ce8-32e4-d131-e790bebf353e@redhat.com>
+ <86o9k63f7a.wl-marc.zyngier@arm.com>
+ <CAFEAcA8XYV=oSX81ON4CGDt0kfG1cgROqj30OC2Ov=bYhLSYig@mail.gmail.com>
+ <20180306092134.4bfbz34yhqfrfdlf@kamzik.brq.redhat.com>
+ <8042f946-49bf-5fc1-f513-4b76ccd5f7d6@arm.com>
+ <CAFEAcA-t1QvjW6eFQ4U+8odj0p_01F8sktpvN9KrZ1Kc-FhtnQ@mail.gmail.com>
+ <86169dc0-b13c-fab9-eaca-363d3873ad10@arm.com>
+ <20180409123042.GD10904@cbox>
+ <cf0f94ba-f5b7-79ca-1625-1235a5fec8b5@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cf0f94ba-f5b7-79ca-1625-1235a5fec8b5@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-snd_ad1889_ac97_ready() is never called in atomic context.
+On Mon, Apr 09, 2018 at 01:47:50PM +0100, Marc Zyngier wrote:
+> +Drew, who's look at the whole save/restore thing extensively
+> 
+> On 09/04/18 13:30, Christoffer Dall wrote:
+> > On Thu, Mar 15, 2018 at 07:26:48PM +0000, Marc Zyngier wrote:
+> >> On 15/03/18 19:13, Peter Maydell wrote:
+> >>> On 15 March 2018 at 19:00, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> >>>> On 06/03/18 09:21, Andrew Jones wrote:
+> >>>>> On Mon, Mar 05, 2018 at 04:47:55PM +0000, Peter Maydell wrote:
+> >>>>>> On 2 March 2018 at 11:11, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> >>>>>>> On Fri, 02 Mar 2018 10:44:48 +0000,
+> >>>>>>> Auger Eric wrote:
+> >>>>>>>> I understand the get/set is called as part of the migration process.
+> >>>>>>>> So my understanding is the benefit of this series is migration fails in
+> >>>>>>>> those cases:
+> >>>>>>>>
+> >>>>>>>>> =0.2 source -> 0.1 destination
+> >>>>>>>> 0.1 source -> >=0.2 destination
+> >>>>>>>
+> >>>>>>> It also fails in the case where you migrate a 1.0 guest to something
+> >>>>>>> that cannot support it.
+> >>>>>>
+> >>>>>> I think it would be useful if we could write out the various
+> >>>>>> combinations of source, destination and what we expect/want to
+> >>>>>> have happen. My gut feeling here is that we're sacrificing
+> >>>>>> exact migration compatibility in favour of having the guest
+> >>>>>> automatically get the variant-2 mitigations, but it's not clear
+> >>>>>> to me exactly which migration combinations that's intended to
+> >>>>>> happen for. Marc?
+> >>>>>>
+> >>>>>> If this wasn't a mitigation issue the desired behaviour would be
+> >>>>>> straightforward:
+> >>>>>>  * kernel should default to 0.2 on the basis that
+> >>>>>>    that's what it did before
+> >>>>>>  * new QEMU version should enable 1.0 by default for virt-2.12
+> >>>>>>    and 0.2 for virt-2.11 and earlier
+> >>>>>>  * PSCI version info shouldn't appear in migration stream unless
+> >>>>>>    it's something other than 0.2
+> >>>>>> But that would leave some setups (which?) unnecessarily without the
+> >>>>>> mitigation, so we're not doing that. The question is, exactly
+> >>>>>> what *are* we aiming for?
+> >>>>>
+> >>>>> The reason Marc dropped this patch from the series it was first introduced
+> >>>>> in was because we didn't have the aim 100% understood. We want the
+> >>>>> mitigation by default, but also to have the least chance of migration
+> >>>>> failure, and when we must fail (because we're not doing the
+> >>>>> straightforward approach listed above, which would prevent failures), then
+> >>>>> we want to fail with the least amount of damage to the user.
+> >>>>>
+> >>>>> I experimented with a couple different approaches and provided tables[1]
+> >>>>> with my results. I even recommended an approach, but I may have changed
+> >>>>> my mind after reading Marc's follow-up[2]. The thread continues from
+> >>>>> there as well with follow-ups from Christoffer, Marc, and myself. Anyway,
+> >>>>> Marc did this repost for us to debate it and work out the best approach
+> >>>>> here.
+> >>>> It doesn't look like we've made much progress on this, which makes me
+> >>>> think that we probably don't need anything of the like.
+> >>>
+> >>> I was waiting for a better explanation from you of what we're trying to
+> >>> achieve. If you want to take the "do nothing" approach then a list
+> >>> also of what migrations succeed/fail/break in that case would also
+> >>> be useful.
+> >>>
+> >>> (I am somewhat lazily trying to avoid having to spend time reverse
+> >>> engineering the "what are we trying to do and what effects are
+> >>> we accepting" parts from the patch and the code that's already gone
+> >>> into the kernel.)
+> >>
+> >> OK, let me (re)state the problem:
+> >>
+> >> For a guest that requests PSCI 0.2 (i.e. all guests from the past 4 or 5
+> >> years), we now silently upgrade the PSCI version to 1.0 allowing the new
+> >> SMCCC to be discovered, and the ARCH_WORKAROUND_1 service to be called.
+> >>
+> >> Things get funny, specially with migration (and the way QEMU works).
+> >>
+> >> If we "do nothing":
+> >>
+> >> (1) A guest migrating from an "old" host to a "new" host will silently
+> >> see its PSCI version upgraded. Not a big deal in my opinion, as 1.0 is a
+> >> strict superset of 0.2 (apart from the version number...).
+> >>
+> >> (2) A guest migrating from a "new" host to an "old" host will silently
+> >> loose its Spectre v2 mitigation. That's quite a big deal.
+> >>
+> >> (3, not related to migration) A guest having a hardcoded knowledge of
+> >> PSCI 0.2 will se that we've changed something, and may decide to catch
+> >> fire. Oh well.
+> >>
+> >> If we take this patch:
+> >>
+> >> (1) still exists
+> > 
+> > No problem, IMHO.
+> > 
+> >>
+> >> (2) will now fail to migrate. I see this as a feature.
+> > 
+> > Yes, I agree.  This is actually the most important reason for doing
+> > anything beyond what's already merged.
+> 
+> Indeed, and that's the reason I wrote this patch the first place.
+> 
+> > 
+> >>
+> >> (3) can be worked around by setting the "PSCI version pseudo register"
+> >> to 0.2.
+> > 
+> > Nice to have, but we're probably not expecting this to be of major
+> > concern.  I initially thought it was a nice debugging feature as well,
+> > but that may be a ridiculous point.
+> > 
+> >>
+> >> These are the main things I can think of at the moment.
+> > 
+> > So I think we we should merge this patch.
+> > 
+> > If userspace then wants to support "migrate from explicitly set v0.2 new
+> > kernel to old kernel", then it must add specific support to filter out
+> > the register from the register list; not that I think anyone will need
+> > that or bother to implement it.
+> > 
+> > In other words, I think you should merge this:
+> > 
+> > Reviewed-by: Christoffer Dall <cdall@kernel.org>
+> > 
+> 
+> Thanks. One issue is that we've now missed the 4.16 train, and that this
+> effectively is an ABI change (a fairly minor one, but still). Would we
+> consider slapping this as a retrospective fix to 4.16-stable, or keep it
+> as a 4.17 feature?
 
-The call chain ending up at snd_ad1889_ac97_ready() is:
-[1] snd_ad1889_ac97_ready() <- snd_ad1889_ac97_xinit() <- 
-	snd_ad1889_ac97_init() <- snd_ad1889_probe()
+Given that it fixes a potentially dangerous migration, and it's a fairly
+simple patch, I think it's reasonable to apply as a fix to the next 4.16
+release.  Would we be violating any hard-set rules in doing so?
 
-snd_ad1889_probe() is only set as ".probe" in struct pci_driver.
-This function is not called in atomic context.
-
-Despite never getting called from atomic context, snd_ad1889_ac97_ready()
-calls mdelay for busy wait.
-This is not necessary and can be replaced with usleep_range to
-avoid busy waiting.
-
-This is found by a static analysis tool named DCNS written by myself.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- sound/pci/ad1889.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/pci/ad1889.c b/sound/pci/ad1889.c
-index 0bf2c04..a2a8e1d 100644
---- a/sound/pci/ad1889.c
-+++ b/sound/pci/ad1889.c
-@@ -258,7 +258,7 @@ struct snd_ad1889 {
- 	
- 	while (!(ad1889_readw(chip, AD_AC97_ACIC) & AD_AC97_ACIC_ACRDY) 
- 			&& --retry)
--		mdelay(1);
-+		usleep_range(1000, 2000);
- 	if (!retry) {
- 		dev_err(chip->card->dev, "[%s] Link is not ready.\n",
- 			__func__);
--- 
-1.9.1
+Thanks,
+-Christoffer
