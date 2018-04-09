@@ -1,86 +1,82 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3607359-1523233135-2-13858083533599605369
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3607359-1523233133-2-8972122851229555846
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523233134; b=NwwKRzaG7naEVZHRSgOSFyMQxxiayNwRuzka0yf5+fbiHg08rx
-    +quHwrso/Hkf5YeEDAnLimM6OzBOj91kmOS9H1Elq8s0sf5CJhvjc4jIIrR+rjXx
-    Hxw063aXkfycQh/B3b76OgtLC7A1j+IJWcUYOqYw1gi2d75E2wChEyMDtOst2B28
-    OFpmLJzxFE/Z+yn3Yzvvrjzr4pLQWoXS7YyOJPMo+wOykyNurwjNE/Hi2NBCVCSA
-    JmuWqXYIT+xFNuChR1wpTskDqAAWnZx33NNI0y/O7R9EKpHWZMrLuQYWQK29C/r8
-    87JAwzFKwPqHsUb2YSiUXeITKMt4BKEMCttA==
+    1523233132; b=t6QO3eAlIqktQVmpCSv219vxLG0p55I1XKLhqLwr3pRxgWI6vn
+    S05PGGOSLUUMjQo1aAfMOyEJ1HQ2NyyUXs0lrTw5yinKstAZOZ4Axz3KrOYahGXH
+    iNDIo0Ney1JTozaRfr/5qhne6B3jIjxxd6UiQOOgpNBX2XrLI4OYq1Q5JeC2JiEC
+    cR0U5SectSOmRoxaot8S9Cvgku9yJBRfZe3Fvwfs1+ECSXy5N61tVLE4fBckaX86
+    Mc1gNwIG5BZz4qNNKQDUXHBEyGiYrlzL1p4WrfpgGsZDMaDlM7nF6jV++WaeTVXQ
+    Q88ri1bg8CuGx159MKYRBwvG7E6cuwhyjC/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523233134; bh=X6y/opAYAO
-    ujZEy4aW+1UBKbbUHe/TAZQ1gH5WdyxyY=; b=teYfQELZew/qq0t2SxZzu2TbDs
-    L3+ufvWAHOxyIHOceGsGCVldGcLKIQzs6WOvFWDglFS+i0Gmm65RPE4xgl3XwzBU
-    tCoS58b6VZBGfGEuHdGcoUVU/G0u1OsRM+36Q3wSbqQjyKCDuhecq1rjOtKppTGp
-    cPgv1PybawIu+vPcTndHIWAdRAut+WCRj3eo1VymwwseomS2ejIB5k5zmEMNjZ+I
-    dxi93h8BqbfIQYAn2s013YazPtmivamhn+kDS2ey/1JBnU5nPQ4RKnHB5zt8ttIa
-    7Ql9VIEcN0BZE8QCSe2IaDwmRq+yeq45arSyxJpVhzVx8CWXaAghVXvtXTPw==
+    messagingengine.com; h=from:to:subject:date:message-id
+    :references:in-reply-to:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523233132; bh=7Fs6n
+    ATmFYTQMtJyQXgE+0FKk07KYH51LqHvYJ6SUgc=; b=odET1jfQwfus/V5mAac1x
+    dr1MzevuL9vG4PT9x+lRDBscEX7Zv4bSN9BsdSJ7KSM/fWAua96tMYefB8k7zsSQ
+    I6oUN56b9DVdSYx6Y/kzQHggb61pjX8vReg9M8QHW75a+AWVt8qlb0yqoUuPwFFB
+    nwaQESIjCiv1lzHrGLClue3GInnPRfSIvKzUke3YdJrpRedh68E9BNMR5nDp3LCL
+    m9hgzkaBpPP9o85zAE5+fvMhEy4DO48S/N+5IUsRpS4TqK5po0/D75LBWN8WBeTO
+    UC+OVBbpoCpYOQoQHr0K4NOaC1vzhDMugtvTvsSmKK/6VeokD3qGszLjMM0McYyf
+    A==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=IHdhgsDK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=nwKXz4Sm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=IHdhgsDK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=nwKXz4Sm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOprjKQUNRxigsZsuv+iSwM8OKkOo9rNFgIOIletVB5nRLAQSI+EVttv/jZqidEzzGsxrGuj47ltqM5FS/3lk9BNfhysNv0EBDaqrwpMkNd6ZAGZhPbA
-    bK5R14LxUroY4TgtKkgzHHyZpUIvA+wrDsLiKnVfXlER/Bl4K1F33rlJUkJiv9t3+PmuZdElhzg8YxlNqf6uEufULKZBx9vW0La5DLZGxvYDsbRuQEhYawy5
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
-    a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8
-    a=nR6cGN4Ah6g1CHLdDo4A:9 a=wPNLvfGTeEIA:10
+X-CM-Envelope: MS4wfPmWnw3RgxXhKHSaSKU05JIDLxLGpmQtYs/TXzXYYOnjJF3U1UOnuiRFmG+pvHhLKALe/pzNsINSdc+aiQmao/KUU4jtFRPqnttfobyWPmHV4nUTuvvt
+    BqBxbEHD3DkdxbmgTHDqpL/BEvOXSCZcLVrIGIJ5jF0CDi8XmzHPurosD9BtkMn18XgIJDCLG4TNoHf2V2x3reLtJGMNzo20AkL17u/gr/6Zy3pg6NYzKpyb
+    bW5oOZSbUW3aA79gh/28XQ==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
+    a=mw6kJ3eo-EIA:10 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=Lf-vpJhqX20A:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=20KFwNOVAAAA:8
+    a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8 a=DDOyTI_5AAAA:8 a=W_74OEVURaC5T3cw8B8A:9
+    a=RxRZKoE8Xjc6tsPY:21 a=kmib79klV2sqd964:21 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753779AbeDIASu (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:18:50 -0400
-Received: from mail-bn3nam01on0092.outbound.protection.outlook.com ([104.47.33.92]:62923
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753729AbeDIASq (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:18:46 -0400
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: David Hildenbrand <david@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 082/189] KVM: s390: vsie: use READ_ONCE to
- access some SCB fields
-Thread-Topic: [PATCH AUTOSEL for 4.15 082/189] KVM: s390: vsie: use READ_ONCE
- to access some SCB fields
-Thread-Index: AQHTz5gxW2wJA8Z0TUyOo1OcUKXVqQ==
-Date: Mon, 9 Apr 2018 00:17:49 +0000
-Message-ID: <20180409001637.162453-82-alexander.levin@microsoft.com>
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH AUTOSEL for 4.15 090/189] x86/hyperv: Stop suppressing
+ X86_FEATURE_PCID
+Thread-Topic: [PATCH AUTOSEL for 4.15 090/189] x86/hyperv: Stop suppressing
+ X86_FEATURE_PCID
+Thread-Index: AQHTz5g15HDkqLJsS0OmaDtuGWKt9Q==
+Date: Mon, 9 Apr 2018 00:17:56 +0000
+Message-ID: <20180409001637.162453-90-alexander.levin@microsoft.com>
 References: <20180409001637.162453-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001637.162453-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,234 +85,149 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1128;7:jMj6V8b0Ga23tq9FoYOWYeZyE3LQh0gWSACs8LRxpyWzTc6LgP06SvFi/YUw2qUMxyDtoYaC95GHkbmF5MMSV7LEElWukF33MfHjOZsOjixQ3VJ6hJlOeDv1vIuZzCdDuCnJoI+KajXD5Q6n28E65ahInI9ZHzPV2UJQDmR9K2ij1LyDtngS+ji5De+DlFX3DsX4ntDNGzAw+cB3QVfgGR43rsuAiu1cjoSRjkxTzvB3RYoBoTdcxEMq6D7jfsab;20:/TP9eYlHiVzX3F0jgIJ1VvHWol723J7Lf6JvIKk10BJWfGMAISnWvfgoh+WZiM9SKuGrJboPiZml1DmbiDqdBrf/rN7yWA+cBzbNo72v943VxbFHqjjL8wf4ULm1pWZpbATborRfNtSZo7eefeot1JFbFTh0AUOAZPfDkjS+ZSs=
+x-microsoft-exchange-diagnostics: 1; DM5PR2101MB1128;
+ 7:/GWfbmz4REF1KeL7djRiGjCercRyn+pfd+HHHsZB9sW8rggkEH8HVB8h6Tn4lAc7SjJT82RkeEg0oLsgSpebguj+Gq1Dj4AmCb6kzdVh9UI5pO45uuNtaQtTwv3OqknyweiZuFa8AcpwdpUFwxH6zXuF2yL0O54jbTver6ffJ32cfzPzLid0fRTjXhdN1NlCs4258LHIGI+wnb0c5ehLl1D8Qft1WU74uDo91uUNMJyOZIfBqXfFfWXUky8XJpHM;
+ 20:u6HwcYJ6tc/s1kXvXqg0YZKDvp3ra3gq9tKMcES5d5t/1q9gU0M/TcFvv9qV4AxB4eJVCB3uftJDh49TsSvfAXzP4zEpzyVho4DSu+uG/pCmVuXE4gEmHQdJg7bEf3ecwDJ9kWOLa60tKu0S5mZSmcLwEobDYmQywW3uIsJzl8w=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: a2863a27-75e0-4577-929a-08d59daf71db
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1128;
+X-MS-Office365-Filtering-Correlation-Id: fb2aef26-456a-4179-d43a-08d59daf740b
+x-microsoft-antispam: UriScan:; BCL:0; PCL:0;
+ RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);
+ SRVR:DM5PR2101MB1128;
 x-ms-traffictypediagnostic: DM5PR2101MB1128:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1128E18B29FA44F4F34F7A84FBBF0@DM5PR2101MB1128.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(190383065149520)(104084551191319);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1128;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1128;
+x-microsoft-antispam-prvs: <DM5PR2101MB1128177ECA52FA5E72A405BBFBBF0@DM5PR2101MB1128.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(42068640409301); 
+x-exchange-antispam-report-cfa-test: BCL:0; PCL:0;
+ RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);
+ SRVR:DM5PR2101MB1128; BCL:0; PCL:0; RULEID:; SRVR:DM5PR2101MB1128;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(396003)(376002)(366004)(39380400002)(199004)(189003)(66066001)(86362001)(59450400001)(3660700001)(3280700002)(2900100001)(25786009)(36756003)(6506007)(76176011)(2906002)(6486002)(86612001)(99286004)(102836004)(1076002)(7736002)(575784001)(97736004)(2616005)(446003)(486006)(11346002)(476003)(26005)(305945005)(6666003)(6512007)(4326008)(107886003)(478600001)(6436002)(5660300001)(10290500003)(5250100002)(22452003)(316002)(105586002)(186003)(8676002)(110136005)(54906003)(72206003)(53936002)(2501003)(68736007)(14454004)(6116002)(8936002)(3846002)(81156014)(10090500001)(106356001)(81166006)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1128;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: TT6AP1VJT7ArlhMNVh1GNM5UYYlMs8ZDJcRNBCZGK5BNV6gJ7m5qekmgeEmX2tPgAUKLwyc+xo/G0QZgv4yjspa+6JOKdnJM8bnNDVGuvtNMzudDjcRdgAhd8An831p7yph4lhwd/yuZykbZgyTxHdifyctKqv7vCPK5QpSG+Pledc92pkSuDxPSsU+n3d0IflOumZPpnw2i/VSGrS24ljZOlbZVDbcfZkh/U8VBvzHVIxu952HX43sMDc9piMFJez933ZSBH6LLn3fuE3ZVp96dELJT3W016CWfaN1P+v5WvbdixZPKYUGMT1dxLnGjHLtf/Ddf8+pLeLfKx4iAFAE36kb7jzQXMFcDmRYUU/FCv2fsSV+hyRFlr1FSd9DXyQBbgHwvTMLvobeCvyLkj7No49cQwvNDmT4j+bkZQt8=
+x-forefront-antispam-report: SFV:NSPM;
+ SFS:(10019020)(346002)(39860400002)(396003)(376002)(366004)(39380400002)(199004)(189003)(66066001)(86362001)(3660700001)(3280700002)(2900100001)(25786009)(36756003)(6506007)(76176011)(2906002)(6486002)(86612001)(99286004)(102836004)(1076002)(7736002)(97736004)(2616005)(446003)(486006)(11346002)(476003)(26005)(305945005)(6666003)(6512007)(4326008)(6306002)(107886003)(15760500003)(478600001)(6436002)(5660300001)(10290500003)(5250100002)(22452003)(316002)(105586002)(186003)(8676002)(110136005)(966005)(54906003)(72206003)(53936002)(2501003)(68736007)(14454004)(6116002)(8936002)(3846002)(81156014)(10090500001)(106356001)(81166006)(22906009)(217873001);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:DM5PR2101MB1128;
+ H:DM5PR2101MB1032.namprd21.prod.outlook.com; FPR:; SPF:None; LANG:en;
+ PTR:InfoNoRecords; A:1; MX:1;
+x-microsoft-antispam-message-info: 3O4MJlHyKIAR3SHpnPlza90TE7MiKs2f5QQ/Sj1hLX0U2NA3YuN2clRm+JCLcx3MAznBR6CWSAKsXvbXzuEvw7tUqpp9eoDhiSsjA4HbzxkSGfawTBFtVm0/eCTRr4at5/cWELejPIxX7Rwz52kpDEdfq64zMcjCktpQ1nKe2kRyLYq1CBVVm2rTf7QIg0Uwl12igx7Kj1phrGeHBId5jBzHsn/WfC0BxfS/robNzmCXyxDAd/2PRWomiDf49YZPhhV09UZglzYGCFWCU+e1jPzi0B9t5rZnJusesPPdCTF8vhiV1b+8ZPHh+0ChZui07nxSIZh9bu2zcAAREiUo/yHryAkeeum14IraOjEQcXwBS6L7kKlIAplTaNV31h0TtEJslRxMvYjazo2/iUlZfFN/6QD2nRZ0VnbOUeqW+yw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2863a27-75e0-4577-929a-08d59daf71db
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:17:49.8827
- (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb2aef26-456a-4179-d43a-08d59daf740b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:17:56.8665 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1128
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Sasha Levin <Alexander.Levin@microsoft.com>,
+ Stephen Hemminger <sthemmin@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>,
+ Aditya Bhandari <adityabh@microsoft.com>, "Michael
+ Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+ Andy Lutomirski <luto@kernel.org>,
+ "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+ Vitaly Kuznetsov <vkuznets@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ David Zhang <dazhan@microsoft.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: David Hildenbrand <david@redhat.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-[ Upstream commit b3ecd4aa8632a86428605ab73393d14779019d82 ]
+[ Upstream commit 617ab45c9a8900e64a78b43696c02598b8cad68b ]
 
-Another VCPU might try to modify the SCB while we are creating the
-shadow SCB. In general this is no problem - unless the compiler decides
-to not load values once, but e.g. twice.
+When hypercall-based TLB flush was enabled for Hyper-V guests PCID feature
+was deliberately suppressed as a precaution: back then PCID was never
+exposed to Hyper-V guests and it wasn't clear what will happen if some day
+it becomes available. The day came and PCID/INVPCID features are already
+exposed on certain Hyper-V hosts.
 
-For us, this is only relevant when checking/working with such values.
-E.g. the prefix value, the mso, state of transactional execution and
-addresses of satellite blocks.
+>From TLFS (as of 5.0b) it is unclear how TLB flush hypercalls combine with
+PCID. In particular the usage of PCID is per-cpu based: the same mm gets
+different CR3 values on different CPUs. If the hypercall does exact
+matching this will fail. However, this is not the case. David Zhang
+explains:
 
-E.g. if we blindly forward values (e.g. general purpose registers or
-execution controls after masking), we don't care.
+ "In practice, the AddressSpace argument is ignored on any VM that supports
+  PCIDs.
 
-Leaving unpin_blocks() untouched for now, will handle it separately.
+  Architecturally, the AddressSpace argument must match the CR3 with PCID
+  bits stripped out (i.e., the low 12 bits of AddressSpace should be 0 in
+  long mode). The flush hypercalls flush all PCIDs for the specified
+  AddressSpace."
 
-The worst thing right now that I can see would be a missed prefix
-un/remap (mso, prefix, tx) or using wrong guest addresses. Nothing
-critical, but let's try to avoid unpredictable behavior.
+With this, PCID can be enabled.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Message-Id: <20180116171526.12343-2-david@redhat.com>
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Acked-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Zhang <dazhan@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: devel@linuxdriverproject.org
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Aditya Bhandari <adityabh@microsoft.com>
+Link: https://lkml.kernel.org/r/20180124103629.29980-1-vkuznets@redhat.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/s390/kvm/vsie.c | 50 +++++++++++++++++++++++++++++++-----------------=
---
- 1 file changed, 31 insertions(+), 19 deletions(-)
+ arch/x86/hyperv/mmu.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-index 751348348477..11fc525e6e7f 100644
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -28,7 +28,11 @@ struct vsie_page {
- 	 * the same offset as that in struct sie_page!
- 	 */
- 	struct mcck_volatile_info mcck_info;    /* 0x0200 */
--	/* the pinned originial scb */
-+	/*
-+	 * The pinned original scb. Be aware that other VCPUs can modify
-+	 * it while we read from it. Values that are used for conditions or
-+	 * are reused conditionally, should be accessed via READ_ONCE.
-+	 */
- 	struct kvm_s390_sie_block *scb_o;	/* 0x0218 */
- 	/* the shadow gmap in use by the vsie_page */
- 	struct gmap *gmap;			/* 0x0220 */
-@@ -140,12 +144,13 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct=
- vsie_page *vsie_page)
- {
- 	struct kvm_s390_sie_block *scb_s =3D &vsie_page->scb_s;
- 	struct kvm_s390_sie_block *scb_o =3D vsie_page->scb_o;
--	u32 crycb_addr =3D scb_o->crycbd & 0x7ffffff8U;
-+	const uint32_t crycbd_o =3D READ_ONCE(scb_o->crycbd);
-+	const u32 crycb_addr =3D crycbd_o & 0x7ffffff8U;
- 	unsigned long *b1, *b2;
- 	u8 ecb3_flags;
-=20
- 	scb_s->crycbd =3D 0;
--	if (!(scb_o->crycbd & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
-+	if (!(crycbd_o & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
- 		return 0;
- 	/* format-1 is supported with message-security-assist extension 3 */
- 	if (!test_kvm_facility(vcpu->kvm, 76))
-@@ -183,12 +188,15 @@ static void prepare_ibc(struct kvm_vcpu *vcpu, struct=
- vsie_page *vsie_page)
- {
- 	struct kvm_s390_sie_block *scb_s =3D &vsie_page->scb_s;
- 	struct kvm_s390_sie_block *scb_o =3D vsie_page->scb_o;
-+	/* READ_ONCE does not work on bitfields - use a temporary variable */
-+	const uint32_t __new_ibc =3D scb_o->ibc;
-+	const uint32_t new_ibc =3D READ_ONCE(__new_ibc) & 0x0fffU;
- 	__u64 min_ibc =3D (sclp.ibc >> 16) & 0x0fffU;
-=20
- 	scb_s->ibc =3D 0;
- 	/* ibc installed in g2 and requested for g3 */
--	if (vcpu->kvm->arch.model.ibc && (scb_o->ibc & 0x0fffU)) {
--		scb_s->ibc =3D scb_o->ibc & 0x0fffU;
-+	if (vcpu->kvm->arch.model.ibc && new_ibc) {
-+		scb_s->ibc =3D new_ibc;
- 		/* takte care of the minimum ibc level of the machine */
- 		if (scb_s->ibc < min_ibc)
- 			scb_s->ibc =3D min_ibc;
-@@ -259,6 +267,10 @@ static int shadow_scb(struct kvm_vcpu *vcpu, struct vs=
-ie_page *vsie_page)
- {
- 	struct kvm_s390_sie_block *scb_o =3D vsie_page->scb_o;
- 	struct kvm_s390_sie_block *scb_s =3D &vsie_page->scb_s;
-+	/* READ_ONCE does not work on bitfields - use a temporary variable */
-+	const uint32_t __new_prefix =3D scb_o->prefix;
-+	const uint32_t new_prefix =3D READ_ONCE(__new_prefix);
-+	const bool wants_tx =3D READ_ONCE(scb_o->ecb) & ECB_TE;
- 	bool had_tx =3D scb_s->ecb & ECB_TE;
- 	unsigned long new_mso =3D 0;
- 	int rc;
-@@ -306,14 +318,14 @@ static int shadow_scb(struct kvm_vcpu *vcpu, struct v=
-sie_page *vsie_page)
- 	scb_s->icpua =3D scb_o->icpua;
-=20
- 	if (!(atomic_read(&scb_s->cpuflags) & CPUSTAT_SM))
--		new_mso =3D scb_o->mso & 0xfffffffffff00000UL;
-+		new_mso =3D READ_ONCE(scb_o->mso) & 0xfffffffffff00000UL;
- 	/* if the hva of the prefix changes, we have to remap the prefix */
--	if (scb_s->mso !=3D new_mso || scb_s->prefix !=3D scb_o->prefix)
-+	if (scb_s->mso !=3D new_mso || scb_s->prefix !=3D new_prefix)
- 		prefix_unmapped(vsie_page);
- 	 /* SIE will do mso/msl validity and exception checks for us */
- 	scb_s->msl =3D scb_o->msl & 0xfffffffffff00000UL;
- 	scb_s->mso =3D new_mso;
--	scb_s->prefix =3D scb_o->prefix;
-+	scb_s->prefix =3D new_prefix;
-=20
- 	/* We have to definetly flush the tlb if this scb never ran */
- 	if (scb_s->ihcpu !=3D 0xffffU)
-@@ -325,11 +337,11 @@ static int shadow_scb(struct kvm_vcpu *vcpu, struct v=
-sie_page *vsie_page)
- 	if (test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_ESOP))
- 		scb_s->ecb |=3D scb_o->ecb & ECB_HOSTPROTINT;
- 	/* transactional execution */
--	if (test_kvm_facility(vcpu->kvm, 73)) {
-+	if (test_kvm_facility(vcpu->kvm, 73) && wants_tx) {
- 		/* remap the prefix is tx is toggled on */
--		if ((scb_o->ecb & ECB_TE) && !had_tx)
-+		if (!had_tx)
- 			prefix_unmapped(vsie_page);
--		scb_s->ecb |=3D scb_o->ecb & ECB_TE;
-+		scb_s->ecb |=3D ECB_TE;
+diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
+index 9cc9e1c1e2db..56c9ebac946f 100644
+--- a/arch/x86/hyperv/mmu.c
++++ b/arch/x86/hyperv/mmu.c
+@@ -137,7 +137,12 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
  	}
- 	/* branch prediction */
- 	if (test_kvm_facility(vcpu->kvm, 82))
-@@ -539,9 +551,9 @@ static int pin_blocks(struct kvm_vcpu *vcpu, struct vsi=
-e_page *vsie_page)
- 	gpa_t gpa;
- 	int rc =3D 0;
-=20
--	gpa =3D scb_o->scaol & ~0xfUL;
-+	gpa =3D READ_ONCE(scb_o->scaol) & ~0xfUL;
- 	if (test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_64BSCAO))
--		gpa |=3D (u64) scb_o->scaoh << 32;
-+		gpa |=3D (u64) READ_ONCE(scb_o->scaoh) << 32;
- 	if (gpa) {
- 		if (!(gpa & ~0x1fffUL))
- 			rc =3D set_validity_icpt(scb_s, 0x0038U);
-@@ -561,7 +573,7 @@ static int pin_blocks(struct kvm_vcpu *vcpu, struct vsi=
-e_page *vsie_page)
- 		scb_s->scaol =3D (u32)(u64)hpa;
+ 
+ 	if (info->mm) {
++		/*
++		 * AddressSpace argument must match the CR3 with PCID bits
++		 * stripped out.
++		 */
+ 		flush->address_space = virt_to_phys(info->mm->pgd);
++		flush->address_space &= CR3_ADDR_MASK;
+ 		flush->flags = 0;
+ 	} else {
+ 		flush->address_space = 0;
+@@ -219,7 +224,12 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
  	}
-=20
--	gpa =3D scb_o->itdba & ~0xffUL;
-+	gpa =3D READ_ONCE(scb_o->itdba) & ~0xffUL;
- 	if (gpa && (scb_s->ecb & ECB_TE)) {
- 		if (!(gpa & ~0x1fffU)) {
- 			rc =3D set_validity_icpt(scb_s, 0x0080U);
-@@ -576,7 +588,7 @@ static int pin_blocks(struct kvm_vcpu *vcpu, struct vsi=
-e_page *vsie_page)
- 		scb_s->itdba =3D hpa;
- 	}
-=20
--	gpa =3D scb_o->gvrd & ~0x1ffUL;
-+	gpa =3D READ_ONCE(scb_o->gvrd) & ~0x1ffUL;
- 	if (gpa && (scb_s->eca & ECA_VX) && !(scb_s->ecd & ECD_HOSTREGMGMT)) {
- 		if (!(gpa & ~0x1fffUL)) {
- 			rc =3D set_validity_icpt(scb_s, 0x1310U);
-@@ -594,7 +606,7 @@ static int pin_blocks(struct kvm_vcpu *vcpu, struct vsi=
-e_page *vsie_page)
- 		scb_s->gvrd =3D hpa;
- 	}
-=20
--	gpa =3D scb_o->riccbd & ~0x3fUL;
-+	gpa =3D READ_ONCE(scb_o->riccbd) & ~0x3fUL;
- 	if (gpa && (scb_s->ecb3 & ECB3_RI)) {
- 		if (!(gpa & ~0x1fffUL)) {
- 			rc =3D set_validity_icpt(scb_s, 0x0043U);
-@@ -612,8 +624,8 @@ static int pin_blocks(struct kvm_vcpu *vcpu, struct vsi=
-e_page *vsie_page)
- 	if ((scb_s->ecb & ECB_GS) && !(scb_s->ecd & ECD_HOSTREGMGMT)) {
- 		unsigned long sdnxc;
-=20
--		gpa =3D scb_o->sdnxo & ~0xfUL;
--		sdnxc =3D scb_o->sdnxo & 0xfUL;
-+		gpa =3D READ_ONCE(scb_o->sdnxo) & ~0xfUL;
-+		sdnxc =3D READ_ONCE(scb_o->sdnxo) & 0xfUL;
- 		if (!gpa || !(gpa & ~0x1fffUL)) {
- 			rc =3D set_validity_icpt(scb_s, 0x10b0U);
- 			goto unpin;
-@@ -778,7 +790,7 @@ static void retry_vsie_icpt(struct vsie_page *vsie_page=
-)
- static int handle_stfle(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page=
-)
- {
- 	struct kvm_s390_sie_block *scb_s =3D &vsie_page->scb_s;
--	__u32 fac =3D vsie_page->scb_o->fac & 0x7ffffff8U;
-+	__u32 fac =3D READ_ONCE(vsie_page->scb_o->fac) & 0x7ffffff8U;
-=20
- 	if (fac && test_kvm_facility(vcpu->kvm, 7)) {
- 		retry_vsie_icpt(vsie_page);
---=20
+ 
+ 	if (info->mm) {
++		/*
++		 * AddressSpace argument must match the CR3 with PCID bits
++		 * stripped out.
++		 */
+ 		flush->address_space = virt_to_phys(info->mm->pgd);
++		flush->address_space &= CR3_ADDR_MASK;
+ 		flush->flags = 0;
+ 	} else {
+ 		flush->address_space = 0;
+@@ -278,8 +288,6 @@ void hyperv_setup_mmu_ops(void)
+ 	if (!(ms_hyperv.hints & HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED))
+ 		return;
+ 
+-	setup_clear_cpu_cap(X86_FEATURE_PCID);
+-
+ 	if (!(ms_hyperv.hints & HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED)) {
+ 		pr_info("Using hypercall for remote TLB flush\n");
+ 		pv_mmu_ops.flush_tlb_others = hyperv_flush_tlb_others;
+-- 
 2.15.1
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
