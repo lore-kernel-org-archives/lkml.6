@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4102378-1523245813-2-17140051068981672943
+X-Cyrus-Session-Id: sloti22d1t05-4029176-1523245805-2-16584779716646386897
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,29 +8,30 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MUL
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
+X-Spam-charsets: cc='utf-8', plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523245813; b=d8oXdWIsW1e3M7pIv32vQbGWdvBnAj+K8kA/mBm+gZYdQ/w2Sl
-    pn+LGC9IeSbDdKgGn+AOJ+QkfvfmwGbXCe9N7bU+cbpAp/lR7fSa4+A+Zcmb1zw2
-    /ISKDLNnea9AMlQpDN4W/P+Pg6U7ziqhi9IWuThqefkBRGu3bCjU3pzYpXDtchWp
-    nXUNHgdwSaH4fMLVOt8gFOgYn6sS5NQ+0ePCDGiNa4Ehsju2vU5lLpy5Sf3s0fZD
-    rZ5Vkt5IDBJq41kLOBfm9BRlZQ432QP7kzs4t6Ea6FDVoR3SpXuy0UYBydd4lGxc
-    sgtiUYxKTsRN5fUwfZrhO5T4zw8ClljchJgg==
+    1523245805; b=BFh4d072c99kKPdomIlycop8qD316Se6VZ7ecL/DQxm6gyOmCT
+    IeKq69DypQUWvwmwUiKPu+gASMlZvaLCP0IKC+ekD/uVRGNNbUGygYQqdgJrRtqH
+    E7UWwpo7cr8pYmBTBqrUBIHcKJF//GDFXoadkNUVLDB16HcnUjwKV0gfP5GUqmim
+    ilXn5+62wNHNnvZoqSJN9e8YKIfVRaWBXk5cnLFiWp+qub+i/xdtxKv+A09TQvKD
+    0KLnGQSNhlQMQEj2+aX7OH7cz6iEJHTzBZi4mmTztHqyL/gm7BFEnzRCA2EGT7DQ
+    5QunogZi3PX2KMjU2dJwyzbS9Tpif0pxxUzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523245813; bh=4S/+i+SbJG
-    xtZjeE8m8h3LR/uZqTvCFeAGCivq0q/Ng=; b=VjaLyyCxEeDnhxiDfyhVsqdl0I
-    Yr4MKUYaaK13S2nUBd//Wq21UtzLR0z0DIdxRj834f9Doxw1vO3Wc5TBYCnpB32G
-    JcEAVUOs8dnZg9mqrutkINRf2PtuZ3x7cib3TmkWmlEqyXN/cP0/oU9gKvap3Jh4
-    39SAXap2PSc7L08GIBOluVoEvY/2CaIuZc4YI6tfAHqamASgsHnw0B+LUCUyfGrx
-    3G6/ZEtKdzJ406Aj1ROMTHYd7yUdvz9veEfKO953SCn2NMnbSnMG0SU1u3TzZQOm
-    0ekn6sNOrOXtGwHQ/dl03N5ox1GwW/SpBrgNtgeXqAVJkQ6tMzwn9gPlo9mQ==
+    :references:in-reply-to:content-type:content-id
+    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
+    t=1523245805; bh=XSPNm5cW044QiP/JTTVtIeqMdngqTvtlpl7a7sAshsA=; b=
+    Z77++v7TC29f7i9f8IATKZtMLi9R9v6w4WahgIljJkcQDktpeMo+3NH9EF26tJJV
+    CpTeGK6PuiK+A90leceZc6OY29MmqqXhcJQvvCqMqzAqdGBhLqvvPozfAXeCf0M7
+    r9/mjNKr4Aa4q386CKJVMnezVZ6e66wKQ+selwSahFH1YP28/ITQYjvJt7F2XJNV
+    Mi29lw0zBEG8i4ygD8/rkPSeZWWW4xkUOk8D0HR6RIl1G9shOeI51iS5DfbZBQCo
+    ue5P2vglDu7aM5SrrWTYxndGOcuAv76N+1BMdNd278MNnd/PlRhtAUa/p0KVCF4p
+    RLKzbzgEq5Vn0WkHKmAwxg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gJXNAwjC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=n1LPtH5g x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +42,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-vs=clean score=-100 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gJXNAwjC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=n1LPtH5g x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,37 +52,38 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMXx1ETZv4KBLi1yGKP1Lh7ZbXX7rxC6HiodWgg0xDIalrllLsL8eNslnTEtJ27Y2uS+36Y9V8KUejJMGOv45izlc01DBzNwwc90oY0/IrNXoaXZxXEy
-    Z2cJwLl0lTdmkKcyJj7I1GloFY7SQ+jQcIZGxchJXCSq8KNHxqfKt+dilX5pJvGzVEmza5NIM7qZgz0qZccwDvbs4fnByQ9/h7bLrgTEvIdwdod0aRfj/grN
+X-CM-Envelope: MS4wfHPYQz0i0ptg14JizwsxwR2gS0PkVLM3UT23JIBkAHU+5J1HTZCkKpU6uJF13m9BT2b8Abr6J29AOREuOqtfDkbDSUe06y0NJxzxrXUMfvCFRJYzJ3QS
+    5Ep4AKlteltWJTxSJoXVJCgFcTSc95l5xep5LBEB+B/LIxS+dHyWKd2G3BZY1A8gbmhKX2vjhBZ2dlsNTLsy47zWS0/+sW3xtywCrh4MUKs9c6sqaCuPGmQQ
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
-    a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=VnNF1IyMAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=O-mhGO4gxEug2gm9yakA:9 a=IHtxeMSv5_HvZ_Ze:21 a=3yXupeBVGe-ocoZQ:21
-    a=wPNLvfGTeEIA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=mw6kJ3eo-EIA:10 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=Lf-vpJhqX20A:10 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
+    a=jcNx0Mm0w_ZaHCl8CLIA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754687AbeDIDtd (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 23:49:33 -0400
-Received: from mail-bn3nam01on0100.outbound.protection.outlook.com ([104.47.33.100]:20288
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1752860AbeDIDtf (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 23:49:35 -0400
+Received: from mail-sn1nam02on0102.outbound.protection.outlook.com ([104.47.36.102]:30848
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754058AbeDIATa (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1754059AbeDIATa (ORCPT <rfc822;stable@vger.kernel.org>);
         Sun, 8 Apr 2018 20:19:30 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 108/189] ibmvnic: Wait for device response
- when changing MAC
-Thread-Topic: [PATCH AUTOSEL for 4.15 108/189] ibmvnic: Wait for device
- response when changing MAC
-Thread-Index: AQHTz5g+WAl5T0NJUUCbXtMDE8bouw==
-Date: Mon, 9 Apr 2018 00:18:11 +0000
-Message-ID: <20180409001637.162453-108-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 113/189] kvm: Map PFN-type memory regions as
+ writable (if possible)
+Thread-Topic: [PATCH AUTOSEL for 4.15 113/189] kvm: Map PFN-type memory
+ regions as writable (if possible)
+Thread-Index: AQHTz5hALtN0vF3+mEaxPFeibnUJqQ==
+Date: Mon, 9 Apr 2018 00:18:15 +0000
+Message-ID: <20180409001637.162453-113-alexander.levin@microsoft.com>
 References: <20180409001637.162453-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001637.162453-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,137 +92,71 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1063;7:+hXRQZA+RM0dlzmtQlmAxRBvEVZ4bvP+mQxSfPF7w/88u09XE3/4F2dhgGFtB4jG57DZTrFFu6fqq5nu+JCDj0Qzfv0DCsCn9PiAPShF86nQblC+iDBCsQb3rZ53l4YnXT+EmmwRd6BmiVhJCkqbWalulPrDkovPTjoDJ0qnbrRi5gSOkKpbpQ0Y8QMq7RA7oP8Uz5cIva2QduIGxUnNFzZLTd3Mv40sG6Bo+y6vnIU14WdMjE+g/jxBTnG6MB6Z;20:jJ2hXW1t4nh5NwxwQmepRdubSmcn9pD9HxttdIA/2p7J3zoN7QCFwTZZREPd5d6whIDmWOicUr/ghrBqkAMiM8jGqCxxqlYqMCgAqA+dJeBpFX20UxfPK4whGPPz73u2jPuCzNzaC4CG9VfewEAjUiCFfSjEE6u0kaP80OdNGjk=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0726;7:aeXy7qOmF5R/o3unlemUtPjO+ulpTikNfJFwNMvs9UfUR7R7jiKv8F0telgd5blk37/JL+X3HAKbWxswpUIFSOm8ACCUcIxLnzd9lOxPV0OVBq16++Ex4zhmUGw28oYpchw0zdmqmvhBZ7bAxP1TAj7qIyjVxNSMmRoXkb2wms0YClEg1MzANMp9DAuNJuaPDZZfwbbOXPIhk2IwWWLMdzLRD2VSURbqW50sqRvJ4Sr9qWJCNHxHRQlgyogv5bQ0;20:9KFiaakmDfTaYjysEsWZYWz3qutvTgTz6RGQ/WdSVSkQ/NKct6QUgsWflVDaEWYYWi1GWGdmcKbF2YL8cexypy9+D3dYXXwzg3UmOQUZCV1Nmnr+1sDnKSRqH52g4/5e9ezL6cHD6Lq3TEPU8p3kPCgU0YiiXq2gbSFgE+4OPVg=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 765e86d9-aa95-46db-eb82-08d59daf8c38
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1063;
-x-ms-traffictypediagnostic: DM5PR2101MB1063:
+X-MS-Office365-Filtering-Correlation-Id: 2e981af0-ba24-487e-2340-08d59daf8dda
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0726;
+x-ms-traffictypediagnostic: DM5PR2101MB0726:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10634A8BF617295188B38D4BFBBF0@DM5PR2101MB1063.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(158342451672863)(89211679590171)(104084551191319);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1063;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1063;
+x-microsoft-antispam-prvs: <DM5PR2101MB0726A5A0D7AE4BB9C29AE8E3FBBF0@DM5PR2101MB0726.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0726;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0726;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(39860400002)(376002)(396003)(366004)(189003)(199004)(2900100001)(6436002)(7736002)(10090500001)(102836004)(3660700001)(6506007)(76176011)(305945005)(4326008)(5250100002)(97736004)(26005)(25786009)(6512007)(2906002)(81166006)(106356001)(107886003)(68736007)(14454004)(86612001)(66066001)(10290500003)(59450400001)(6666003)(5660300001)(81156014)(478600001)(476003)(486006)(6486002)(72206003)(3280700002)(99286004)(105586002)(36756003)(1076002)(2616005)(11346002)(53936002)(446003)(8676002)(186003)(3846002)(54906003)(6116002)(2501003)(8936002)(316002)(110136005)(86362001)(22452003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1063;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: J26HAUor7fZ1vh9ggcMiA05x9xjfa1R4GBnv2KNdE2p51c2OYDe8y2akdC/o1EODEBSf9SBI9f30yE/zesc7QniGjsdRzQ7NL1li1K1o/CT/zgEi8WPga5U/OSkFE/0yl3JfZC+cz1Vv5cr+hbOUUFQfLZmwvTCq1TlsPb7pdhQpyJahtuz70zW5wN0P9CSeYN4GX547Q+uI2M+m9xmyYUaCNJ1TKTnrGCiidQt1S88kpEbasSOPq9krJwEz42qNKbaEkoF/epIUCv11XMKYQXnxM4jyNjEiekX+wvrpF+/6FovnDqoZ6Yi1NAUZb9zZhLqVsx25RaekErZmStTeGjw1XqXc0TAtUKqqQVB1VZ5vud9nJqEExGx1AHjgaVcPqwou7ZyDtpWffJxQyc3f6ADCYKdq7ti+wOSnep+hZIA=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39380400002)(39860400002)(396003)(376002)(199004)(189003)(6486002)(26005)(6512007)(4326008)(81166006)(6666003)(6436002)(81156014)(8676002)(97736004)(186003)(36756003)(72206003)(53936002)(107886003)(2906002)(86362001)(575784001)(76176011)(110136005)(305945005)(10090500001)(486006)(3660700001)(102836004)(5660300001)(14454004)(476003)(86612001)(446003)(99286004)(68736007)(66066001)(11346002)(54906003)(2616005)(1076002)(7736002)(5250100002)(25786009)(8936002)(478600001)(2900100001)(2501003)(3280700002)(105586002)(316002)(106356001)(22452003)(6506007)(3846002)(10290500003)(6116002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0726;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: rdoZsAt+H1c9A0U3zfxgrio6r9mnVFJq7qxmAP4QazyXQNFC8y8434na+6OuNEt3HXhXgRDWkuEybxzi/olGiUm+mtLEMTEvjVtgP1K0ALwLhuwcGEb+MEflLPNH6Hb7ijjrVeK8zd4H0ZNrNmCs5ZiO/IhSf2gufRDSMECfS0vQ+ZP8qQ9+IHzvvrFjs0D83t2ZbC1HvHaeU+RTFvdh5lcA3I+6w2EdthZiU8mKRM8Ex5231G0V896jCtGosubmnUZFUBvq5jUcziLEegDmJqZrONN7OEjxoiIJGxgb3jRAJYRqoNAsnSWtACJywVYyDLqVcG0iuUfbAtuZ9oXxb6yalvt2oCgFqnAQWtuiTacAusWatG6E1G+0IMsjBt/uMVoZ8xMY1W8J+G+xEGSFCOji4V0CmCK5HzF07FbIm1Y=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <263EB0FD930EA34692ED17E74B9646D1@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 765e86d9-aa95-46db-eb82-08d59daf8c38
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:18:11.1311
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e981af0-ba24-487e-2340-08d59daf8dda
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:18:15.3809
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1063
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0726
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
-
-[ Upstream commit f813614f531114db796ad66ced75c5dc8db7aa3a ]
-
-Wait for a response from the VNIC server before exiting after setting
-the MAC address. The resolves an issue with bonding a VNIC client in
-ALB or TLB modes. The bonding driver was changing the MAC address more
-rapidly than the device could respond, causing the following errors.
-
-"bond0: the hw address of slave eth2 is in use by the bond;
-couldn't find a slave with a free hw address to give it
-(this should not have happened)"
-
-If the function waits until the change is finalized, these errors are
-avoided.
-
-Signed-off-by: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/net/ethernet/ibm/ibmvnic.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/=
-ibmvnic.c
-index b65f5f3ac034..d4e87333bac2 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -1543,15 +1543,19 @@ static int __ibmvnic_set_mac(struct net_device *net=
-dev, struct sockaddr *p)
- 	crq.change_mac_addr.first =3D IBMVNIC_CRQ_CMD;
- 	crq.change_mac_addr.cmd =3D CHANGE_MAC_ADDR;
- 	ether_addr_copy(&crq.change_mac_addr.mac_addr[0], addr->sa_data);
-+
-+	init_completion(&adapter->fw_done);
- 	ibmvnic_send_crq(adapter, &crq);
-+	wait_for_completion(&adapter->fw_done);
- 	/* netdev->dev_addr is changed in handle_change_mac_rsp function */
--	return 0;
-+	return adapter->fw_done_rc ? -EIO : 0;
- }
-=20
- static int ibmvnic_set_mac(struct net_device *netdev, void *p)
- {
- 	struct ibmvnic_adapter *adapter =3D netdev_priv(netdev);
- 	struct sockaddr *addr =3D p;
-+	int rc;
-=20
- 	if (adapter->state =3D=3D VNIC_PROBED) {
- 		memcpy(&adapter->desired.mac, addr, sizeof(struct sockaddr));
-@@ -1559,9 +1563,9 @@ static int ibmvnic_set_mac(struct net_device *netdev,=
- void *p)
- 		return 0;
- 	}
-=20
--	__ibmvnic_set_mac(netdev, addr);
-+	rc =3D __ibmvnic_set_mac(netdev, addr);
-=20
--	return 0;
-+	return rc;
- }
-=20
- /**
-@@ -3558,8 +3562,8 @@ static void handle_error_indication(union ibmvnic_crq=
- *crq,
- 		ibmvnic_reset(adapter, VNIC_RESET_NON_FATAL);
- }
-=20
--static void handle_change_mac_rsp(union ibmvnic_crq *crq,
--				  struct ibmvnic_adapter *adapter)
-+static int handle_change_mac_rsp(union ibmvnic_crq *crq,
-+				 struct ibmvnic_adapter *adapter)
- {
- 	struct net_device *netdev =3D adapter->netdev;
- 	struct device *dev =3D &adapter->vdev->dev;
-@@ -3568,10 +3572,13 @@ static void handle_change_mac_rsp(union ibmvnic_crq=
- *crq,
- 	rc =3D crq->change_mac_addr_rsp.rc.code;
- 	if (rc) {
- 		dev_err(dev, "Error %ld in CHANGE_MAC_ADDR_RSP\n", rc);
--		return;
-+		goto out;
- 	}
- 	memcpy(netdev->dev_addr, &crq->change_mac_addr_rsp.mac_addr[0],
- 	       ETH_ALEN);
-+out:
-+	complete(&adapter->fw_done);
-+	return rc;
- }
-=20
- static void handle_request_cap_rsp(union ibmvnic_crq *crq,
-@@ -4031,7 +4038,7 @@ static void ibmvnic_handle_crq(union ibmvnic_crq *crq=
-,
- 		break;
- 	case CHANGE_MAC_ADDR_RSP:
- 		netdev_dbg(netdev, "Got MAC address change Response\n");
--		handle_change_mac_rsp(crq, adapter);
-+		adapter->fw_done_rc =3D handle_change_mac_rsp(crq, adapter);
- 		break;
- 	case ERROR_INDICATION:
- 		netdev_dbg(netdev, "Got Error Indication\n");
---=20
-2.15.1
+RnJvbTogS2FyaW1BbGxhaCBBaG1lZCA8a2FyYWhtZWRAYW1hem9uLmRlPg0KDQpbIFVwc3RyZWFt
+IGNvbW1pdCBhMzQwYjNlMjI5YjI0YTU2ZjFjN2Y1ODI2YjE1YTNhZjBmNGIxM2U1IF0NCg0KRm9y
+IEVQVC12aW9sYXRpb25zIHRoYXQgYXJlIHRyaWdnZXJlZCBieSBhIHJlYWQsIHRoZSBwYWdlcyBh
+cmUgYWxzbyBtYXBwZWQgd2l0aA0Kd3JpdGUgcGVybWlzc2lvbnMgKGlmIHRoZWlyIG1lbW9yeSBy
+ZWdpb24gaXMgYWxzbyB3cml0YWJsZSkuIFRoYXQgd291bGQgYXZvaWQNCmdldHRpbmcgeWV0IGFu
+b3RoZXIgZmF1bHQgb24gdGhlIHNhbWUgcGFnZSB3aGVuIGEgd3JpdGUgb2NjdXJzLg0KDQpUaGlz
+IG9wdGltaXphdGlvbiBvbmx5IGhhcHBlbnMgd2hlbiB5b3UgaGF2ZSBhICJzdHJ1Y3QgcGFnZSIg
+YmFja2luZyB0aGUgbWVtb3J5DQpyZWdpb24uIFNvIGFsc28gZW5hYmxlIGl0IGZvciBtZW1vcnkg
+cmVnaW9ucyB0aGF0IGRvIG5vdCBoYXZlIGEgInN0cnVjdCBwYWdlIi4NCg0KQ2M6IFBhb2xvIEJv
+bnppbmkgPHBib256aW5pQHJlZGhhdC5jb20+DQpDYzogUmFkaW0gS3LEjW3DocWZIDxya3JjbWFy
+QHJlZGhhdC5jb20+DQpDYzoga3ZtQHZnZXIua2VybmVsLm9yZw0KQ2M6IGxpbnV4LWtlcm5lbEB2
+Z2VyLmtlcm5lbC5vcmcNClNpZ25lZC1vZmYtYnk6IEthcmltQWxsYWggQWhtZWQgPGthcmFobWVk
+QGFtYXpvbi5kZT4NClJldmlld2VkLWJ5OiBQYW9sbyBCb256aW5pIDxwYm9uemluaUByZWRoYXQu
+Y29tPg0KU2lnbmVkLW9mZi1ieTogUmFkaW0gS3LEjW3DocWZIDxya3JjbWFyQHJlZGhhdC5jb20+
+DQpTaWduZWQtb2ZmLWJ5OiBTYXNoYSBMZXZpbiA8YWxleGFuZGVyLmxldmluQG1pY3Jvc29mdC5j
+b20+DQotLS0NCiB2aXJ0L2t2bS9rdm1fbWFpbi5jIHwgNyArKysrKy0tDQogMSBmaWxlIGNoYW5n
+ZWQsIDUgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL3ZpcnQv
+a3ZtL2t2bV9tYWluLmMgYi92aXJ0L2t2bS9rdm1fbWFpbi5jDQppbmRleCBlNTM2OTc3ZTdiNmQu
+LjIzNGQwM2FiY2I3NSAxMDA2NDQNCi0tLSBhL3ZpcnQva3ZtL2t2bV9tYWluLmMNCisrKyBiL3Zp
+cnQva3ZtL2t2bV9tYWluLmMNCkBAIC0xNDMzLDcgKzE0MzMsOCBAQCBzdGF0aWMgYm9vbCB2bWFf
+aXNfdmFsaWQoc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEsIGJvb2wgd3JpdGVfZmF1bHQpDQog
+DQogc3RhdGljIGludCBodmFfdG9fcGZuX3JlbWFwcGVkKHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAq
+dm1hLA0KIAkJCSAgICAgICB1bnNpZ25lZCBsb25nIGFkZHIsIGJvb2wgKmFzeW5jLA0KLQkJCSAg
+ICAgICBib29sIHdyaXRlX2ZhdWx0LCBrdm1fcGZuX3QgKnBfcGZuKQ0KKwkJCSAgICAgICBib29s
+IHdyaXRlX2ZhdWx0LCBib29sICp3cml0YWJsZSwNCisJCQkgICAgICAga3ZtX3Bmbl90ICpwX3Bm
+bikNCiB7DQogCXVuc2lnbmVkIGxvbmcgcGZuOw0KIAlpbnQgcjsNCkBAIC0xNDU5LDYgKzE0NjAs
+OCBAQCBzdGF0aWMgaW50IGh2YV90b19wZm5fcmVtYXBwZWQoc3RydWN0IHZtX2FyZWFfc3RydWN0
+ICp2bWEsDQogDQogCX0NCiANCisJaWYgKHdyaXRhYmxlKQ0KKwkJKndyaXRhYmxlID0gdHJ1ZTsN
+CiANCiAJLyoNCiAJICogR2V0IGEgcmVmZXJlbmNlIGhlcmUgYmVjYXVzZSBjYWxsZXJzIG9mICpo
+dmFfdG9fcGZuKiBhbmQNCkBAIC0xNTI0LDcgKzE1MjcsNyBAQCByZXRyeToNCiAJaWYgKHZtYSA9
+PSBOVUxMKQ0KIAkJcGZuID0gS1ZNX1BGTl9FUlJfRkFVTFQ7DQogCWVsc2UgaWYgKHZtYS0+dm1f
+ZmxhZ3MgJiAoVk1fSU8gfCBWTV9QRk5NQVApKSB7DQotCQlyID0gaHZhX3RvX3Bmbl9yZW1hcHBl
+ZCh2bWEsIGFkZHIsIGFzeW5jLCB3cml0ZV9mYXVsdCwgJnBmbik7DQorCQlyID0gaHZhX3RvX3Bm
+bl9yZW1hcHBlZCh2bWEsIGFkZHIsIGFzeW5jLCB3cml0ZV9mYXVsdCwgd3JpdGFibGUsICZwZm4p
+Ow0KIAkJaWYgKHIgPT0gLUVBR0FJTikNCiAJCQlnb3RvIHJldHJ5Ow0KIAkJaWYgKHIgPCAwKQ0K
+LS0gDQoyLjE1LjENCg==
