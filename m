@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3752604-1523238064-2-18433467494501922963
+X-Cyrus-Session-Id: sloti22d1t05-3752604-1523238048-2-10636175363315781624
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523238063; b=gcLEQ9zLuKII6zBtSgbAax1KQSMPFWMkw8ZJvXAxZwjmiUYBIC
-    IulSNrGQjgFAlTwYGlpj58pDJ8qjXhjQMEMGYIs+anBcgBS39Ouu3WnkHWcK6AKl
-    p0MLvmjtgBLDvV9NwzrfToA2iZrbuxkZv1UAf7Zu1o/KIoVtsw1A2ZNJhqbf9Ta0
-    2s6GG80xCLjPWSXjBT9ogEVzGPcGPpKJfMXvvLABWVUue6+H8UcVmsyIGMqkZdmQ
-    npL4ZJYVObg2UCSGlKV7RLhsaXoFBMqsN3YcPzQkUk4FZFomHiX/dDQ2NNhC+l2d
-    rb9PGiQgbO8wMXnbK/TGb+2CIS7PZySDPn3g==
+    1523238048; b=R7SxrKSV1nKqFWCL3H4DGA7leuCqOA3cx2CKn+Nk9L+u+u3cKo
+    5gYbTskesB7Z3GZFI/Lbt4oKJ7Y/6lDQAHWbrolB2yfdp5utwn8pMByaMhs1D0vp
+    kR+qgvUymtL9vjaAXXMZEg4OK/QoFS3wAY7xJsYEMpD2j/60SVPJbDLnYbg2T4h9
+    ZVLZ5Pfz5qXi4lCTfFHroSipRNcn9fQ0B8OO5C7VeMhG7KPQQ4WB+gAwyVOc88ye
+    dOzS9V4Mf394TBGOCzpWP6G2XLVbNgacJubj/1fuyjTdd3dRXUk+rtZA3At0lRQw
+    FvpBFKG79gegOoSoyS2ERT92G9s2FHWYTFSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523238063; bh=RyXMgCUzfB
-    D9VWIyYNj1J/MrhGAazEZ0UppUpOvheHU=; b=Xmcy8MdoHL2Qs0125k5GJoXN9J
-    gx2DFAsVejm2reDZ+KYOsbgcyOACAUemw/SJurnsmfEkX7cJiD7fb3XLZyUyJTHh
-    0Az/xPb7+tcdw1Yx6vKBKaT4dObmAB8MmOCPTdL4Cb36GeMFVI343vDGfAYTRXOM
-    NdqcWxGgQAGL0kqXAaHrAPSfFVpZuTPyLAcR9Ejs0PwURrkcfZODWCAjvzRoJ6l2
-    /Q9udoEzpEJOFf8+jk0B2DdY5UakMbnbeterHrRJs/OxkeOyJlC1wynavz74M5sl
-    yNIxsypiZ3N1SYr13OQUqaJoAXHDzeCs3tV3Xw59aQXKdicRTyZLeStG+nuA==
+    :mime-version:sender:list-id; s=fm2; t=1523238048; bh=Owe+6O+Pgq
+    zUoi0UhjZx4R7ZQFkQoYIB2fiTKSPaMQw=; b=cmM7453q4iyBuK2mIpear6gXao
+    1pq4ZiRCV9POwDJpDby+/6r+Pe+aSMP0wMiBlbOZOTQ9vj7QBM0c4o2dXgGdZ7ir
+    sHKvNsImQRb7eGm7CUge9FFBkXyOLHpAJM+Eo1/lp8uP+VsWuLb2V3VL33VHPFxj
+    Z+IYaBxvkf/9t+k81TX/Ti/Ohpa8oCoMwu/xCNsIZlgo7GKQXaoDGhARA57Jq1SI
+    JhanqnfzrWzdC5VcquxSGmqmQHYb7ou0uH/6FSlvQKrT8igCDJHiS4rndTi+kw4B
+    Tgtxy8wq2O9GV8u6dGkNyMV1WnZb52izZWynWOlvK9ylOphUoIE9ed8QIBmA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JSsWSeVZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PVTkVVDI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-vs=clean score=-100 state=0
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JSsWSeVZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PVTkVVDI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,35 +51,46 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMufGToPkORilqrvIF5DphjRF6JZZ8j49Vc27szdMo5i6xOJX3XFpuGHJ9B5ZM6bQA6GP0dbgjThQ4uiXE5YJSQBbYAoHNScL06QHXFV7YwF8s1aUdFJ
-    MV6hBuMD1VFIKAgcYe9vXkrzClJMq1L+utUrwxT71xVCxiFq3vCeXlYqjz96y+AufO380CS8K08CXnCCyRp2a8F9YRx7Of3lyMsDMllKJF31jZCmYkHNM8jz
+X-CM-Envelope: MS4wfOo1TMvBAdm/y/uwUnhTF3QMjkVocz76rDPCSf+n2YWWdkHBOQvBGxup098+aRqr9kuzxFxSFoeHfv/56xpF8Pdhn7EGQvI+lMXFgMfMmyoHSRHU97LR
+    0N3oxkHE9thz74+W6am2JyiSa/41DTk9/iGieIFgUzcl2Pr4kQTUPgwbBjQ46OUcIzqY42nRebWKmCrC6e7kf69Mm5k/MpeQZUmH2Xe+CWxIS/RLR9GA905L
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8 a=L-5fpCUWJdCBqBJfpMEA:9
-    a=wPNLvfGTeEIA:10
+    a=Lf-vpJhqX20A:10 a=JfrnYn6hAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8
+    a=Z4Rwk6OoAAAA:8 a=1XWaLZrsAAAA:8 a=TiaNW0bfAAAA:8 a=WsHKUha7AAAA:8
+    a=yMhMjlubAAAA:8 a=HwfIkp-pSQ9a9caPooYA:9 a=wPNLvfGTeEIA:10
+    a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22
+    a=AEymbdFwRXaGbywpKsZu:22 a=H4LAKuo8djmI0KOkngUh:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932695AbeDIBkr (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 21:40:47 -0400
-Received: from mail-sn1nam02on0094.outbound.protection.outlook.com ([104.47.36.94]:35040
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S932540AbeDIBkb (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 21:40:31 -0400
+Received: from mail-by2nam01on0110.outbound.protection.outlook.com ([104.47.34.110]:2593
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932536AbeDIAe6 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:34:58 -0400
+        id S932537AbeDIAe7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:34:59 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+CC: Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vince@deater.net>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 008/162] rcu: Make synchronize_rcu_mult()
- check for duplicates
-Thread-Topic: [PATCH AUTOSEL for 4.4 008/162] rcu: Make synchronize_rcu_mult()
- check for duplicates
-Thread-Index: AQHTz5mWDzgG3nSpl0uHhynD/HCkPA==
-Date: Mon, 9 Apr 2018 00:27:48 +0000
-Message-ID: <20180409002738.163941-8-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 003/162] perf/core: Correct event creation
+ with PERF_FORMAT_GROUP
+Thread-Topic: [PATCH AUTOSEL for 4.4 003/162] perf/core: Correct event
+ creation with PERF_FORMAT_GROUP
+Thread-Index: AQHTz5mUoLANajnT1EOSCoXrBbYc1g==
+Date: Mon, 9 Apr 2018 00:27:45 +0000
+Message-ID: <20180409002738.163941-3-alexander.levin@microsoft.com>
 References: <20180409002738.163941-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -88,97 +99,122 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1013;7:AngtjdLtZXL1XeO3PdhD8KgZfwCJ3fJvSHd9KQjGcej0ETw0biv+jWOi/oSk5WshNBS+dihmIwRBdSlLvFQQ+ktBbpl7w+waompdl52psnsjzWThCwJeB4IKiz/QIA1pKpSQS+FB6WUwrzsEDByjOWC8+y4QatCvp7WKFtNij/vuKZTQ5rnj50jV+h023MbrP6adHwv/kww2V+sq1LtzqmIjUVNUoSmHTABKi58Laa8qMNpi4745dzwHBJ4Scts8;20:SExEELf3hpP97MdxQttdNsVuBEYtfP1MRFwhwdU1UkQEcOyyZdJNoUc/hgWABnsGfn9zfNXyWWoSPs5dHz2eUfkwWg1QP3gTYtC04ar/xNI9tgScTMhaMOYlvxdt4H6Nn2Y0Yampzu5OMglbnc+Wv2L6YUFUQqcIGj3mzeOjWWc=
-X-MS-Office365-Filtering-Correlation-Id: 7b921443-7a19-448b-7774-08d59db1b6ce
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0806;7:uGyAGl5xOzITVczSleHKrir3LQFgWjXKufypvjkgZltUDt/577qu7NpLbS809SLnP3MLezlra13cGiXunINep/jKMHPkk9/6n6rt18RODDTb4IkW6jrTOuGMfOuqDdSGiSjluQJdQY1eP+06tFV8wtti4hxzUG1QvEa8VkRsv8GkOmZfGNxfIhECUGMxJkfzuR6QKIWedQbdb6Nb42Epqj5rK5UTID8dtXP2Qt3sacbqxAHX2Ulx5fS/m31RZe3A;20:inpz3OZCsX+UT5B3Ce39BshAK0CziPXZO2U9uIXDyGtssSqOrmXkOk8bpCNczCxe2VLx02zq/XY0LDGvDnVBTHXGBhpRkTlWFiBOCsOWn2EvA6NSdXN8zcU7IlX235uf1I6bDFioGKOatTR48l32rFWUoOOF9+lF6QYuldciqeU=
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB1013;
-x-ms-traffictypediagnostic: DM5PR2101MB1013:
+X-MS-Office365-Filtering-Correlation-Id: 7898014f-f387-4c61-904d-08d59db1b4bf
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0806;
+x-ms-traffictypediagnostic: DM5PR2101MB0806:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10130B59E10387C615685D04FBBF0@DM5PR2101MB1013.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(104084551191319);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1013;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1013;
+x-microsoft-antispam-prvs: <DM5PR2101MB08067C80D425A93A53C0A7C4FBBF0@DM5PR2101MB0806.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(211936372134217)(42068640409301)(153496737603132)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0806;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0806;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(396003)(346002)(366004)(376002)(189003)(199004)(478600001)(10290500003)(6436002)(5250100002)(2501003)(14454004)(305945005)(4326008)(66066001)(99286004)(10090500001)(6506007)(36756003)(102836004)(54906003)(486006)(107886003)(76176011)(59450400001)(2900100001)(22452003)(316002)(110136005)(575784001)(86362001)(3660700001)(2906002)(81166006)(186003)(86612001)(81156014)(2616005)(8936002)(3280700002)(11346002)(53936002)(7736002)(476003)(446003)(72206003)(68736007)(6116002)(5660300001)(106356001)(6666003)(6486002)(8676002)(1076002)(105586002)(26005)(6512007)(3846002)(97736004)(25786009)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1013;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: ngD9JDU7aAjLjNZ5LBIvsIzjXsh6uUcD90OlIPAMBBnpDDipVK57rf9bX+9S9O2R38vTUshwj6Yllfm7PERzScq694+QYtilaLitRjWxo2FKquM5C1IPNLV4JWVuwWYeRTVkTATcYBglqBKyWzT05cQqpRRneZ5oCEvucyHjDas3oURxjBKYDKbw7n6OI4fL30OnP8AUDucchtraLdZJlYN+C/rdmJPo+dt9KajKM6N0oSRT5RWkxMoJvod3MfQcHysZ9ybk/FnlPawzpbOhm/BdfLwmZnLXJ6B0OmlfNJmwOubdFISCCyrJ2H/LxEaYnxqQSus5AnNmH379UcQ1qXqrOd8jgOiNMcXJ9eKL6O6fpEFcOSNuh31VFo4MXIsn57nxgYo8FMFBPXw0SeG2jbutVPFQeZO3LgwId7Losow=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(376002)(396003)(366004)(39380400002)(199004)(189003)(2906002)(25786009)(2501003)(10290500003)(476003)(11346002)(446003)(97736004)(5250100002)(68736007)(2616005)(102836004)(6506007)(3846002)(3660700001)(486006)(3280700002)(305945005)(6666003)(99286004)(5660300001)(76176011)(7416002)(1076002)(186003)(26005)(7736002)(6116002)(81156014)(81166006)(86612001)(4326008)(105586002)(10090500001)(2900100001)(54906003)(22452003)(316002)(36756003)(110136005)(107886003)(8676002)(6436002)(478600001)(53936002)(66066001)(6486002)(6512007)(6306002)(86362001)(966005)(14454004)(72206003)(8936002)(106356001)(22906009)(21314002)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0806;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: lvS2xFRjnJoLOnZCK2AVMNC9joO0MaOwVB1ZxnQjED9gjUNhtaaU6tM/IFRT1QVUDh6ZKKHd3Tl6xvpxYTflfRv7v6nq2oiM0QD1IOJQVvPLcO9pbTXcoWvzmBa6xM4eYBXgWq/rsXIabOD0A82iQSAnWC6mwms3Uv1wkSZp32U5I9u30P9dOC3xx88BxuUuOT3phvC4BUNgsRROqsJEb/xMyp9pWfG+evaVNDt6aHOc8hFIU88+w9zzNi+5gYYZSeIYO+c8imX6Rs9gAVCt3od8cByT9ldgJidit7Ql5nuSv4o3ftQw5mmgQXDrQz+QGR9D3dAOAtp8qZAU3i3ctR1sasNtdnX71bBSiFCaG2rH538uBtF4LD0v/wgGLtpG0Y5vquy47vME6A6Ia6zs3xjoE12Kdv50MvEoYwfbwY0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b921443-7a19-448b-7774-08d59db1b6ce
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:27:48.7859
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7898014f-f387-4c61-904d-08d59db1b4bf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:27:45.3328
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1013
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0806
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 68ab0b4263224157f4d0c0e42854169a183d7534 ]
+[ Upstream commit ba5213ae6b88fb170c4771fef6553f759c7d8cdd ]
 
-Currently, doing synchronize_rcu_mult(call_rcu, call_rcu) might
-(or might not) wait for two RCU grace periods.  One approach is
-of course "don't do that!", but in CONFIG_PREEMPT=3Dn kernels,
-synchronize_rcu_mult(call_rcu, call_rcu_sched) does exactly that.
-This results in an ugly #ifdef in sched_cpu_deactivate().
+Andi was asking about PERF_FORMAT_GROUP vs inherited events, which led
+to the discovery of a bug from commit:
 
-This commit therefore makes __wait_rcu_gp() check for duplicates,
-which in turn allows duplicates to be passed to synchronize_rcu_mult()
-without risk of waiting twice on the same type of grace period.
+  3dab77fb1bf8 ("perf: Rework/fix the whole read vs group stuff")
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+ -       PERF_SAMPLE_GROUP                       =3D 1U << 4,
+ +       PERF_SAMPLE_READ                        =3D 1U << 4,
+
+ -       if (attr->inherit && (attr->sample_type & PERF_SAMPLE_GROUP))
+ +       if (attr->inherit && (attr->read_format & PERF_FORMAT_GROUP))
+
+is a clear fail :/
+
+While this changes user visible behaviour; it was previously possible
+to create an inherited event with PERF_SAMPLE_READ; this is deemed
+acceptible because its results were always incorrect.
+
+Reported-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vince@deater.net>
+Fixes:  3dab77fb1bf8 ("perf: Rework/fix the whole read vs group stuff")
+Link: http://lkml.kernel.org/r/20170530094512.dy2nljns2uq7qa3j@hirez.progra=
+mming.kicks-ass.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- kernel/rcu/update.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ kernel/events/core.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 5f748c5a40f0..d98acb903325 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -324,6 +324,7 @@ void __wait_rcu_gp(bool checktiny, int n, call_rcu_func=
-_t *crcu_array,
- 		   struct rcu_synchronize *rs_array)
- {
- 	int i;
-+	int j;
-=20
- 	/* Initialize and register callbacks for each flavor specified. */
- 	for (i =3D 0; i < n; i++) {
-@@ -335,7 +336,11 @@ void __wait_rcu_gp(bool checktiny, int n, call_rcu_fun=
-c_t *crcu_array,
- 		}
- 		init_rcu_head_on_stack(&rs_array[i].head);
- 		init_completion(&rs_array[i].completion);
--		(crcu_array[i])(&rs_array[i].head, wakeme_after_rcu);
-+		for (j =3D 0; j < i; j++)
-+			if (crcu_array[j] =3D=3D crcu_array[i])
-+				break;
-+		if (j =3D=3D i)
-+			(crcu_array[i])(&rs_array[i].head, wakeme_after_rcu);
- 	}
-=20
- 	/* Wait for all callbacks to be invoked. */
-@@ -344,7 +349,11 @@ void __wait_rcu_gp(bool checktiny, int n, call_rcu_fun=
-c_t *crcu_array,
- 		    (crcu_array[i] =3D=3D call_rcu ||
- 		     crcu_array[i] =3D=3D call_rcu_bh))
- 			continue;
--		wait_for_completion(&rs_array[i].completion);
-+		for (j =3D 0; j < i; j++)
-+			if (crcu_array[j] =3D=3D crcu_array[i])
-+				break;
-+		if (j =3D=3D i)
-+			wait_for_completion(&rs_array[i].completion);
- 		destroy_rcu_head_on_stack(&rs_array[i].head);
- 	}
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 8f75386e61a7..835ac4d9f349 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5271,9 +5271,6 @@ static void perf_output_read_one(struct perf_output_h=
+andle *handle,
+ 	__output_copy(handle, values, n * sizeof(u64));
  }
+=20
+-/*
+- * XXX PERF_FORMAT_GROUP vs inherited events seems difficult.
+- */
+ static void perf_output_read_group(struct perf_output_handle *handle,
+ 			    struct perf_event *event,
+ 			    u64 enabled, u64 running)
+@@ -5318,6 +5315,13 @@ static void perf_output_read_group(struct perf_outpu=
+t_handle *handle,
+ #define PERF_FORMAT_TOTAL_TIMES (PERF_FORMAT_TOTAL_TIME_ENABLED|\
+ 				 PERF_FORMAT_TOTAL_TIME_RUNNING)
+=20
++/*
++ * XXX PERF_SAMPLE_READ vs inherited events seems difficult.
++ *
++ * The problem is that its both hard and excessively expensive to iterate =
+the
++ * child list, not to mention that its impossible to IPI the children runn=
+ing
++ * on another CPU, from interrupt/NMI context.
++ */
+ static void perf_output_read(struct perf_output_handle *handle,
+ 			     struct perf_event *event)
+ {
+@@ -7958,9 +7962,10 @@ perf_event_alloc(struct perf_event_attr *attr, int c=
+pu,
+ 	local64_set(&hwc->period_left, hwc->sample_period);
+=20
+ 	/*
+-	 * we currently do not support PERF_FORMAT_GROUP on inherited events
++	 * We currently do not support PERF_SAMPLE_READ on inherited events.
++	 * See perf_output_read().
+ 	 */
+-	if (attr->inherit && (attr->read_format & PERF_FORMAT_GROUP))
++	if (attr->inherit && (attr->sample_type & PERF_SAMPLE_READ))
+ 		goto err_ns;
+=20
+ 	if (!has_branch_stack(event))
 --=20
 2.15.1
