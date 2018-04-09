@@ -1,65 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753560AbeDISBA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 14:01:00 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:37389 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751653AbeDISA7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 14:00:59 -0400
-X-Google-Smtp-Source: AIpwx48sZqoZrI7htfphUBXvboCwGDK0hCHBgS/ZGVKHewWKUz8NZdB5i4oPhv1eoHotdyQo2Twvve2amaYPYDqrF4M=
+        id S1753597AbeDISCn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 14:02:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39934 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751728AbeDISCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 14:02:42 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F91C21771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Mon, 9 Apr 2018 11:02:41 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        chao@kernel.org
+Subject: Re: [PATCH] f2fs: enlarge block plug coverage
+Message-ID: <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180404085404.82184-1-yuchao0@huawei.com>
+ <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
+ <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFy1jJPX2fu7ce2Z7hxn49RaSghtnziwsyUU1Em5WEH2yw@mail.gmail.com>
-References: <alpine.LFD.2.21.1804061125390.1819@schleppi> <CAGXu5jKTtU3fvqP-ygV51WcOAmTkm=y5fysKNv+k0crhJACtVg@mail.gmail.com>
- <alpine.LFD.2.21.1804091809310.1698@schleppi> <CA+55aFw1MoQ=7=U6QCGXAAiCniMKy8_igxgc8sMLykSRcDk-0g@mail.gmail.com>
- <CA+55aFy1jJPX2fu7ce2Z7hxn49RaSghtnziwsyUU1Em5WEH2yw@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 9 Apr 2018 11:00:56 -0700
-X-Google-Sender-Auth: 1d2jk938M1FW5i1rwu9wSynsCoo
-Message-ID: <CAGXu5jLSbX-qYx2xWYrsPb-tUFcEhYG86MkhtJ3zMirBHtmurg@mail.gmail.com>
-Subject: Re: [bisected] 3c8ba0d61d04ced9f8d9ff93977995a9e4e96e91 oopses on s390
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Sebastian Ott <sebott@linux.ibm.com>,
-        Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 9, 2018 at 10:14 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Mon, Apr 9, 2018 at 10:03 AM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> Our old "min()" had the internal variables called "min1" and "min2",
->> which is crazy too.
->
-> Actually, no, it used the really cumbersome "__UNIQUE_ID" and then
-> passed that odd as the name 'min1/2',
->
-> Ugh, I find that really nasty to read, but it was obviously done
-> because we hit this before.
+On 04/08, Chao Yu wrote:
+> On 2018/4/5 11:51, Jaegeuk Kim wrote:
+> > On 04/04, Chao Yu wrote:
+> >> This patch enlarges block plug coverage in __issue_discard_cmd, in
+> >> order to collect more pending bios before issuing them, to avoid
+> >> being disturbed by previous discard I/O in IO aware discard mode.
+> > 
+> > Hmm, then we need to wait for huge discard IO for over 10 secs, which
+> 
+> We found that total discard latency is rely on total discard number we issued
+> last time instead of range or length discard covered. IMO, if we don't change
+> .max_requests value, we will not suffer longer latency.
+> 
+> > will affect following read/write IOs accordingly. In order to avoid that,
+> > we actually need to limit the discard size.
+> 
+> If you are worry about I/O interference in between discard and rw, I suggest to
+> decrease .max_requests value.
 
-Ooof. Nice find.
+What do you mean? This will produce more pending requests in the queue?
 
-> And our __UNIQUE_ID() macro is garbage anyway, since it falls back on
-> the line number, which doesn't really work for macros anyway. But we
-> have proper macros for both clang and gcc, so maybe we should ignore
-> the broken fallback.
->
-> A patch like the attached, perhaps?
-
-Can we update the comment near the top to explain why we need
-__UNIQUE_ID() since we've now rediscovered why it was originally
-there?
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+> 
+> Thanks,
+> 
+> > 
+> > Thanks,
+> > 
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/segment.c | 7 +++++--
+> >>  1 file changed, 5 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >> index 8f0b5ba46315..4287e208c040 100644
+> >> --- a/fs/f2fs/segment.c
+> >> +++ b/fs/f2fs/segment.c
+> >> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  		pend_list = &dcc->pend_list[i];
+> >>  
+> >>  		mutex_lock(&dcc->cmd_lock);
+> >> +
+> >> +		blk_start_plug(&plug);
+> >> +
+> >>  		if (list_empty(pend_list))
+> >>  			goto next;
+> >>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+> >> -		blk_start_plug(&plug);
+> >>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
+> >>  			f2fs_bug_on(sbi, dc->state != D_PREP);
+> >>  
+> >> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  			if (++iter >= dpolicy->max_requests)
+> >>  				break;
+> >>  		}
+> >> -		blk_finish_plug(&plug);
+> >>  next:
+> >> +		blk_finish_plug(&plug);
+> >> +
+> >>  		mutex_unlock(&dcc->cmd_lock);
+> >>  
+> >>  		if (iter >= dpolicy->max_requests)
+> >> -- 
+> >> 2.15.0.55.gc2ece9dc4de6
+> > 
+> > .
+> > 
