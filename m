@@ -1,83 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754316AbeDID2o (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 23:28:44 -0400
-Received: from mail-pf0-f177.google.com ([209.85.192.177]:42091 "EHLO
-        mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752235AbeDID2k (ORCPT
+        id S1754863AbeDIDiQ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 23:38:16 -0400
+Received: from mail-io0-f175.google.com ([209.85.223.175]:39723 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752460AbeDIDiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 23:28:40 -0400
-X-Google-Smtp-Source: AIpwx4+7yMq4xz6rlzOea/kD2JPU3+PLE6FieZ1fiMXWXPqkekd/odXrssrpSC0b3MM/oL4jygOGoA==
-Date: Mon, 9 Apr 2018 11:28:35 +0800
-From: Stefan Hajnoczi <stefanha@gmail.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: syzbot <syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com>,
-        Jason Wang <jasowang@redhat.com>, kvm <kvm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>
-Subject: Re: kernel BUG at drivers/vhost/vhost.c:LINE! (2)
-Message-ID: <20180409032835.GB1648@stefanha-x1.localdomain>
-References: <001a11449424f11322056932b09c@google.com>
- <CAJSP0QVHk7NSQcjfLWq13=1Vzm=_vtmKZqp4dDjuh8ETLO5g_g@mail.gmail.com>
- <20180409054316-mutt-send-email-mst@kernel.org>
+        Sun, 8 Apr 2018 23:38:13 -0400
+X-Google-Smtp-Source: AIpwx4/amAB0wAKquffGqj2Pu5cyp1TBlLk36OEfNo8OT47GEJEGOaO6oke3AhvOY0WnbywSq4rRuWcmqTeVXVBbzlo=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
-Content-Disposition: inline
-In-Reply-To: <20180409054316-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180409131619.0bc5fb45@canb.auug.org.au>
+References: <20180409131619.0bc5fb45@canb.auug.org.au>
+From: Oliver <oohall@gmail.com>
+Date: Mon, 9 Apr 2018 13:38:11 +1000
+Message-ID: <CAOSf1CHToZ5+k90n_sgh_9ezJjXpx21E5-K66TWkdU7t7kUiEw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the nvdimm tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 9, 2018 at 1:16 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Dan,
+>
+> After merging the nvdimm tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> ERROR: "of_node_to_nid" [drivers/nvdimm/of_pmem.ko] undefined!
+>
+> Caused by commit
+>
+>   717197608952 ("libnvdimm: Add device-tree based driver")
+>
+> X86 seems to not have a version of of_node_to_nid() even though CONFIG_OF
+> and CONFIG_NUMA are both 'y' in this build.
 
---xXmbgvnjoT4axfJE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It's a side effect of a driver selecting CONFIG_OF accidently. There's
+a patch to fix this in the drm-misc-next tree:
 
-On Mon, Apr 09, 2018 at 05:44:36AM +0300, Michael S. Tsirkin wrote:
-> On Mon, Apr 09, 2018 at 10:37:45AM +0800, Stefan Hajnoczi wrote:
-> > On Sat, Apr 7, 2018 at 3:02 AM, syzbot
-> > <syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com> wrote:
-> > > syzbot hit the following crash on upstream commit
-> > > 38c23685b273cfb4ccf31a199feccce3bdcb5d83 (Fri Apr 6 04:29:35 2018 +00=
-00)
-> > > Merge tag 'armsoc-drivers' of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
-> > > syzbot dashboard link:
-> > > https://syzkaller.appspot.com/bug?extid=3D65a84dde0214b0387ccd
-> >=20
-> > To prevent duplicated work: I am working on this one.
-> >=20
-> > Stefan
->=20
-> Do you want to try this patchset:
-> https://lkml.org/lkml/2018/4/5/665
->=20
-> ?
+https://lkml.org/lkml/2018/4/3/17
 
-Thanks, I'll give it a shot.
+> I have used the nvdimm tree from next-20180406 for today.
 
-I also noticed a regression in commit
-d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ("vhost: validate log when
-IOTLB is enabled") and am currently testing a fix.
+That works too.
 
-Stefan
-
---xXmbgvnjoT4axfJE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAEBAgAGBQJayt3jAAoJEJykq7OBq3PIvCQH/2E79UtiLD6eBIXZkG58tEo5
-Ez30uLYssZ++XNLiJVf/zFggkbtAbO7MxF7NC7irzgyaywS9mClGLlmfV9RTN5En
-AwEnk1TVhOfZdrsO97o/k37V8WCF16mGNmQVA2XCoex6P8vnnUIMEBvdZGSToEQx
-WgtPjrHCAMfpEjotN/3mstAdv6O3+Cm/utLUNC4ZsJexuk7JvskDO9AljnCViVcz
-ZUAZsVHHY2nQZfjzyx1GudJrkceB/3/newMoDQDVLqvLKoFZEV65nxXWhmDO4zO9
-ocWB9oLqCU+CpD3LG1Eh+BMT+KuqvWXMzzO48IFZtUn22BHAQGNrWBDdrVo22Fs=
-=K4YJ
------END PGP SIGNATURE-----
-
---xXmbgvnjoT4axfJE--
+Oliver
