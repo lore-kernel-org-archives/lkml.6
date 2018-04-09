@@ -1,61 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753566AbeDIVTh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 17:19:37 -0400
-Received: from mga11.intel.com ([192.55.52.93]:39476 "EHLO mga11.intel.com"
+        id S1752356AbeDIVTn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 17:19:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753100AbeDIVTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 17:19:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,429,1517904000";
-   d="scan'208";a="42001515"
-Subject: [PATCH] libnvdimm, of_pmem: workaround OF_NUMA=n build error
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Rob Herring <robh@kernel.org>, "Oliver O'Halloran" <oohall@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date: Mon, 09 Apr 2018 14:09:38 -0700
-Message-ID: <152330817871.32685.18143005199739186530.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1751919AbeDIVTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 17:19:38 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E14E21785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 9 Apr 2018 17:19:35 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [GIT PULL] tracing: Updates for v4.17
+Message-ID: <20180409171935.37054fc7@gandalf.local.home>
+In-Reply-To: <20180409132305.16e8f956@gandalf.local.home>
+References: <20180409132305.16e8f956@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen reports that an x86 allmodconfig build fails to build the
-of_pmem driver due to a missing definition of of_node_to_nid(). That
-helper is currently only exported in the OF_NUMA=y case. In other cases,
-ppc and sparc, it is a weak symbol, and outside of those platforms it is
-a static inline.
+On Mon, 9 Apr 2018 13:23:05 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Until an OF_NUMA=n configuration can reliably support usage of
-of_node_to_nid() in modules across architectures, mark this driver as
-'bool' instead of 'tristate'.
+> Linus,
+> 
+> New features:
 
-Cc: Rob Herring <robh@kernel.org>
-Cc: Oliver O'Halloran <oohall@gmail.com>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/nvdimm/Kconfig |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+BTW, I forgot to mention that there will be some merge conflicts due to
+updates to the documentation directory.
 
-diff --git a/drivers/nvdimm/Kconfig b/drivers/nvdimm/Kconfig
-index 2d6862bf7436..f6c533c4d09b 100644
---- a/drivers/nvdimm/Kconfig
-+++ b/drivers/nvdimm/Kconfig
-@@ -103,7 +103,8 @@ config NVDIMM_DAX
- 	  Select Y if unsure
- 
- config OF_PMEM
--	tristate "Device-tree support for persistent memory regions"
-+	# FIXME: make tristate once OF_NUMA dependency removed
-+	bool "Device-tree support for persistent memory regions"
- 	depends on OF
- 	default LIBNVDIMM
- 	help
+The fix by Stephen should work.
+
+ http://lkml.kernel.org/r/20180321153127.23737f6e@canb.auug.org.au
+
+-- Steve
+
+> 
+>  - Tom Zanussi's extended histogram work
+>    This adds the synthetic events to have histograms from multiple event data
+>    Adds triggers "onmatch" and "onmax" to call the synthetic events
+>    Several updates to the histogram code from this
+> 
+>  - Allow way to nest ring buffer calls in the same context
+> 
+>  - Allow absolute time stamps in ring buffer
+> 
+>  - Rewrite of filter code parsing based on Al Viro's suggestions
+> 
+>  - Setting of trace_clock to global if TSC is unstable (on boot)
+> 
+>  - Better OOM handling when allocating large ring buffers
+> 
+>  - Added initcall tracepoints (consolidated initcall_debug code with them)
+> 
+> And other various fixes and clean ups
