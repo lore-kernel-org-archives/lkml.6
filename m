@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752653AbeDIJlb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 05:41:31 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:52395 "EHLO
+        id S1752598AbeDIJl2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 05:41:28 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:56229 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752412AbeDIJlY (ORCPT
+        with ESMTP id S1752289AbeDIJlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Apr 2018 05:41:24 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
@@ -13,9 +13,9 @@ To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v2 4/9] PCI: Adds device ID for Synopsys Sample Endpoint.
-Date: Mon,  9 Apr 2018 10:41:13 +0100
-Message-Id: <4c852c0e38fc2367d2ef4066de1080e889a4e7a0.1523266508.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v2 3/9] bindings: PCI: designware: Add support for the EP in Designware driver
+Date: Mon,  9 Apr 2018 10:41:12 +0100
+Message-Id: <a4b867ae738f80042744d7185434c5901bf401a3.1523266508.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
 References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
@@ -25,28 +25,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCIe controller dual mode is capable of operating in host mode as well
-as endpoint mode by configuration.
+Add device tree binding documentation for the Endpoint in PCIe Designware
+driver.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
 Change v1->v2:
-- Register new device id following Kishon's suggestion.
+ - Add a missing log description.
+ - Add "snps,dw-pcie" compatible string following Kishon's suggestion.
 
- include/linux/pci_ids.h | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/pci/designware-pcie.txt | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index f22124e..887c04e 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -2349,6 +2349,7 @@
- #define PCI_DEVICE_ID_CENATEK_IDE	0x0001
- 
- #define PCI_VENDOR_ID_SYNOPSYS		0x16c3
-+#define PCI_DEVICE_ID_SYNOPSYS_SMPL_EP	0xedda
- 
- #define PCI_VENDOR_ID_VITESSE		0x1725
- #define PCI_DEVICE_ID_VITESSE_VSC7174	0x7174
+diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+index f02cd20..f5da9cf 100644
+--- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+@@ -3,6 +3,7 @@
+ Required properties:
+ - compatible:
+ 	"snps,dw-pcie-rc", "snps,dw-pcie" for RC mode;
++	"snps,dw-pcie-ep", "snps,dw-pcie" for EP mode;
+ - reg: Should contain the configuration address space.
+ - reg-names: Must be "config" for the PCIe configuration space.
+     (The old way of getting the configuration address space from "ranges"
+@@ -56,3 +57,15 @@ Example configuration:
+ 		#interrupt-cells = <1>;
+ 		num-lanes = <1>;
+ 	};
++or
++	pcie_ep: pcie_ep@dfc00000 {
++		compatible = "snps,dw-pcie-ep", "snps,dw_pcie";
++		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
++		      <0xdfc01000 0x0001000>, /* IP registers 2 */
++		      <0xd0000000 0x2000000>; /* Configuration space */
++		reg-names = "dbi", "dbi2", "addr_space";
++		device_type = "pci";
++		num-ib-windows = <6>;
++		num-ob-windows = <2>;
++		num-lanes = <1>;
++	};
 -- 
 2.7.4
