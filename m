@@ -1,118 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeDIXGV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 19:06:21 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:36290 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751624AbeDIXFq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 19:05:46 -0400
-From: Mike Kravetz <mike.kravetz@oracle.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@gmail.com>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v3 1/3] mm/shmem: add __rcu annotations and properly deref radix entry
-Date: Mon,  9 Apr 2018 16:05:03 -0700
-Message-Id: <20180409230505.18953-2-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180409230505.18953-1-mike.kravetz@oracle.com>
-References: <20180409230505.18953-1-mike.kravetz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8858 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804090228
+        id S1751667AbeDIXez (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 19:34:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35906 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750759AbeDIXex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 19:34:53 -0400
+Date: Tue, 10 Apr 2018 07:34:37 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "wakko@animx.eu.org" <wakko@animx.eu.org>
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180409233436.GC6450@ming.t460p>
+References: <20180401163604.GB25011@animx.eu.org>
+ <20180401182723.GA31755@animx.eu.org>
+ <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+ <20180406014644.GA16112@animx.eu.org>
+ <20180406020651.GB16112@animx.eu.org>
+ <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
+ <20180407165335.GA2515@animx.eu.org>
+ <1ff8d234cc565ba9701ce31899fca5faa597e050.camel@wdc.com>
+ <20180408160254.GA22869@animx.eu.org>
+ <f9467e78ce05446e7a89f06713c36fb638d1b6ad.camel@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9467e78ce05446e7a89f06713c36fb638d1b6ad.camel@wdc.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for memfd code restucture, clean up sparse warnings.
-Most changes required adding __rcu annotations.  The routine
-find_swap_entry was modified to properly deference radix tree
-entries.
+On Mon, Apr 09, 2018 at 09:30:11PM +0000, Bart Van Assche wrote:
+> On Sun, 2018-04-08 at 12:02 -0400, Wakko Warner wrote:
+> > I finished with git bisect.  Here's the output:
+> > 84c8590646d5b35804bac60eb58b145839b5893e is the first bad commit
+> > commit 84c8590646d5b35804bac60eb58b145839b5893e
+> > Author: Ming Lei <tom.leiming@gmail.com>
+> > Date:   Fri Nov 11 20:05:32 2016 +0800
+> > 
+> >     target: avoid accessing .bi_vcnt directly
+> >     
+> >     When the bio is full, bio_add_pc_page() will return zero,
+> >     so use this information tell when the bio is full.
+> >     
+> >     Also replace access to .bi_vcnt for pr_debug() with bio_segments().
+> >     
+> >     Reviewed-by: Christoph Hellwig <hch@lst.de>
+> >     Signed-off-by: Ming Lei <tom.leiming@gmail.com>
+> >     Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+> >     Signed-off-by: Jens Axboe <axboe@fb.com>
+> > 
+> > :040000 040000 a3ebbb71c52ee4eb8c3be4d033b81179211bf704 de39a328dbd1b18519946b3ad46d9302886e0dd0 M      drivers
+> > 
+> > I did a diff between HEAD^ and HEAD and manually patched the file from
+> > 4.15.14.  It's not an exact revert.  I'm running it now and it's working.
+> > I'll do a better test later on.  Here's the patch:
+> > 
+> > --- a/drivers/target/target_core_pscsi.c	2018-02-04 14:31:31.077316617 -0500
+> > +++ b/drivers/target/target_core_pscsi.c	2018-04-08 11:43:49.588641374 -0400
+> > @@ -915,7 +915,9 @@
+> >  					bio, page, bytes, off);
+> >  			pr_debug("PSCSI: bio->bi_vcnt: %d nr_vecs: %d\n",
+> >  				bio_segments(bio), nr_vecs);
+> > -			if (rc != bytes) {
+> > +			if (rc != bytes)
+> > +				goto fail;
+> > +			if (bio->bi_vcnt > nr_vecs) {
+> >  				pr_debug("PSCSI: Reached bio->bi_vcnt max:"
+> >  					" %d i: %d bio: %p, allocating another"
+> >  					" bio\n", bio->bi_vcnt, i, bio);
+> 
+> Hello Ming,
+> 
+> Can you have a look at this? The start of this e-mail thread is available at
+> https://www.mail-archive.com/linux-scsi@vger.kernel.org/msg72574.html.
 
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
----
- mm/shmem.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+Sure, thanks for your sharing.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index b85919243399..c7bad16fe884 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -327,7 +327,7 @@ static int shmem_radix_tree_replace(struct address_space *mapping,
- 			pgoff_t index, void *expected, void *replacement)
- {
- 	struct radix_tree_node *node;
--	void **pslot;
-+	void __rcu **pslot;
- 	void *item;
+Wakko, could you test the following patch and see if there is any
+difference?
+
+--
+diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
+index 0d99b242e82e..6147178f1f37 100644
+--- a/drivers/target/target_core_pscsi.c
++++ b/drivers/target/target_core_pscsi.c
+@@ -888,7 +888,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+ 		if (len > 0 && data_len > 0) {
+ 			bytes = min_t(unsigned int, len, PAGE_SIZE - off);
+ 			bytes = min(bytes, data_len);
+-
++ new_bio:
+ 			if (!bio) {
+ 				nr_vecs = min_t(int, BIO_MAX_PAGES, nr_pages);
+ 				nr_pages -= nr_vecs;
+@@ -931,6 +931,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+ 				 * be allocated with pscsi_get_bio() above.
+ 				 */
+ 				bio = NULL;
++				goto new_bio;
+ 			}
  
- 	VM_BUG_ON(!expected);
-@@ -395,7 +395,7 @@ static bool shmem_confirm_swap(struct address_space *mapping,
- #ifdef CONFIG_TRANSPARENT_HUGE_PAGECACHE
- /* ifdef here to avoid bloating shmem.o when not necessary */
- 
--int shmem_huge __read_mostly;
-+static int shmem_huge __read_mostly;
- 
- #if defined(CONFIG_SYSFS) || defined(CONFIG_TMPFS)
- static int shmem_parse_huge(const char *str)
-@@ -682,7 +682,7 @@ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
- 						pgoff_t start, pgoff_t end)
- {
- 	struct radix_tree_iter iter;
--	void **slot;
-+	void __rcu **slot;
- 	struct page *page;
- 	unsigned long swapped = 0;
- 
-@@ -1098,13 +1098,19 @@ static void shmem_evict_inode(struct inode *inode)
- static unsigned long find_swap_entry(struct radix_tree_root *root, void *item)
- {
- 	struct radix_tree_iter iter;
--	void **slot;
-+	void __rcu **slot;
- 	unsigned long found = -1;
- 	unsigned int checked = 0;
- 
- 	rcu_read_lock();
- 	radix_tree_for_each_slot(slot, root, &iter, 0) {
--		if (*slot == item) {
-+		void *entry = radix_tree_deref_slot(slot);
-+
-+		if (radix_tree_deref_retry(entry)) {
-+			slot = radix_tree_iter_retry(&iter);
-+			continue;
-+		}
-+		if (entry == item) {
- 			found = iter.index;
- 			break;
- 		}
-@@ -2623,7 +2629,7 @@ static loff_t shmem_file_llseek(struct file *file, loff_t offset, int whence)
- static void shmem_tag_pins(struct address_space *mapping)
- {
- 	struct radix_tree_iter iter;
--	void **slot;
-+	void __rcu **slot;
- 	pgoff_t start;
- 	struct page *page;
- 
-@@ -2665,7 +2671,7 @@ static void shmem_tag_pins(struct address_space *mapping)
- static int shmem_wait_for_pins(struct address_space *mapping)
- {
- 	struct radix_tree_iter iter;
--	void **slot;
-+	void __rcu **slot;
- 	pgoff_t start;
- 	struct page *page;
- 	int error, scan;
+ 			data_len -= bytes;
+
 -- 
-2.13.6
+Ming
