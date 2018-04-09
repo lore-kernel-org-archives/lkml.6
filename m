@@ -1,91 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752763AbeDINcx convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:32:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52492 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752250AbeDINcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:32:50 -0400
-Subject: Re: [PATCH] locking/rwsem: Add up_write_non_owner() for
- percpu_up_write()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-References: <1522852646-2196-1-git-send-email-longman@redhat.com>
- <20180409112013.GA23240@redhat.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <38c89c59-5ff0-20df-2628-880db397006e@redhat.com>
-Date: Mon, 9 Apr 2018 09:32:49 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1751886AbeDINlV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:41:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33376 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbeDINlT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 09:41:19 -0400
+Date: Mon, 9 Apr 2018 06:41:14 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>, Minchan Kim <minchan@kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180409134114.GA30963@bombadil.infradead.org>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
+ <20180409124852.GE21835@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180409112013.GA23240@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409124852.GE21835@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2018 07:20 AM, Oleg Nesterov wrote:
-> On 04/04, Waiman Long wrote:
->> --- a/kernel/locking/percpu-rwsem.c
->> +++ b/kernel/locking/percpu-rwsem.c
->> @@ -179,8 +179,10 @@ void percpu_up_write(struct percpu_rw_semaphore *sem)
->>  
->>  	/*
->>  	 * Release the write lock, this will allow readers back in the game.
->> +	 * percpu_up_write() may be called from a task different from the one
->> +	 * taking the lock.
->>  	 */
->> -	up_write(&sem->rw_sem);
->> +	up_write_non_owner(&sem->rw_sem);
->>  
->>  	/*
->>  	 * Once this completes (at least one RCU-sched grace period hence) the
->> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
->> index 30465a2..140d5ef 100644
->> --- a/kernel/locking/rwsem.c
->> +++ b/kernel/locking/rwsem.c
->> @@ -222,4 +222,17 @@ void up_read_non_owner(struct rw_semaphore *sem)
->>  
->>  #endif
->>  
->> +#ifdef CONFIG_DEBUG_RWSEMS
->> +/*
->> + * release a write lock from a different task
->> + */
->> +void up_write_non_owner(struct rw_semaphore *sem)
->> +{
->> +	rwsem_release(&sem->dep_map, 1, _RET_IP_);
->> +	DEBUG_RWSEMS_WARN_ON(!sem->owner || (sem->owner == RWSEM_READER_OWNED));
->>  
->> +	rwsem_clear_owner(sem);
->> +	__up_write(sem);
->> +}
-> Hmm. Can you look at lockdep_sb_freeze_release() and lockdep_sb_freeze_acquire()?
+On Mon, Apr 09, 2018 at 02:48:52PM +0200, Michal Hocko wrote:
+> On Mon 09-04-18 20:25:06, Chao Yu wrote:
+> [...]
+> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > index c85cccc2e800..cc63f8c448f0 100644
+> > --- a/fs/f2fs/inode.c
+> > +++ b/fs/f2fs/inode.c
+> > @@ -339,10 +339,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+> >  make_now:
+> >  	if (ino == F2FS_NODE_INO(sbi)) {
+> >  		inode->i_mapping->a_ops = &f2fs_node_aops;
+> > -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> > +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+> 
+> An unrelated question. Why do you make all allocations for the mapping
+> NOFS automatically? What kind of reclaim recursion problems are you
+> trying to prevent?
 
-These 2 functions are there to deal with the lockdep code.
+It's worth noting that this is endemic in filesystems.
 
-> At first glance, it would be much better to set sem->owner = current in
-> percpu_rwsem_acquire(), no?
-
-The primary purpose of the owner field is to enable optimistic spinning
-to improve locking performance. So it needs to be set during an
-up_write() call.
-
-My rwsem debug patch does use it also to check for consistency in the
-use of lock/unlock call. Anyway, I don't think it is right to set it
-again in percpu_rwsem_acquire() if there is no guarantee that the task
-that call percpu_rwsem_acquire will be the one that will do the unlock.
-
-I am wondering if it makes sense to do optimistic spinning in the case
-of percpu_rwsem where the unlocker may be a different task. We could set
-a special code for writer owned lock, but don't do optimistic spinning
-in this case.
-
-Cheers,
-Longman
+$ git grep mapping_set_gfp_mask.*FS
+drivers/block/loop.c:   mapping_set_gfp_mask(mapping, lo->old_gfp_mask & ~(__GFP_IO|__GFP_FS));
+fs/btrfs/disk-io.c:     mapping_set_gfp_mask(fs_info->btree_inode->i_mapping, GFP_NOFS);
+fs/f2fs/inode.c:                mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+fs/f2fs/inode.c:                mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+fs/gfs2/glock.c:                mapping_set_gfp_mask(mapping, GFP_NOFS);
+fs/gfs2/ops_fstype.c:   mapping_set_gfp_mask(mapping, GFP_NOFS);
+fs/jfs/jfs_imap.c:      mapping_set_gfp_mask(ip->i_mapping, GFP_NOFS);
+fs/jfs/super.c: mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+fs/nilfs2/gcinode.c:    mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+fs/nilfs2/page.c:       mapping_set_gfp_mask(mapping, GFP_NOFS);
+fs/reiserfs/xattr.c:    mapping_set_gfp_mask(mapping, GFP_NOFS);
+fs/xfs/xfs_iops.c:      mapping_set_gfp_mask(inode->i_mapping, (gfp_mask & ~(__GFP_FS)));
