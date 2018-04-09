@@ -1,166 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752093AbeDIHPS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:15:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37015 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751502AbeDIHPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:15:16 -0400
-Date: Mon, 9 Apr 2018 09:15:14 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: akpm@linux-foundation.org, catalin.marinas@arm.com,
-        torvalds@linux-foundation.org, pasha.tatashin@oracle.com,
-        ard.biesheuvel@linaro.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/memblock: introduce PHYS_ADDR_MAX
-Message-ID: <20180409071514.GC21835@dhcp22.suse.cz>
-References: <20180406213809.566-1-stefan@agner.ch>
+        id S1752260AbeDIHPp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:15:45 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:45655 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752181AbeDIHPn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 03:15:43 -0400
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To: Michal Hocko <mhocko@kernel.org>
+CC: "Kirill A. Shutemov" <kirill@shutemov.name>, Zi Yan <zi.yan@sent.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
+ consider non-anonymous thp as unmovable page)
+Thread-Topic: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
+ consider non-anonymous thp as unmovable page)
+Thread-Index: AQHTzVRbJLbJcuvidESXEazGlmX3mKPymtkAgAAfroCABLjegA==
+Date: Mon, 9 Apr 2018 07:14:57 +0000
+Message-ID: <20180409071456.GA8693@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180405085927.GC6312@dhcp22.suse.cz>
+ <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
+ <20180405124830.GJ6312@dhcp22.suse.cz>
+ <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
+ <20180405150547.GN6312@dhcp22.suse.cz>
+ <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
+ <20180405160317.GP6312@dhcp22.suse.cz>
+ <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
+ <20180406051452.GB23467@hori1.linux.bs1.fc.nec.co.jp>
+ <20180406070815.GC8286@dhcp22.suse.cz>
+In-Reply-To: <20180406070815.GC8286@dhcp22.suse.cz>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.128.101.18]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <46617E8EBD5C594E93BC92C5255CD427@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406213809.566-1-stefan@agner.ch>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 06-04-18 23:38:09, Stefan Agner wrote:
-> So far code was using ULLONG_MAX and type casting to obtain a
-> phys_addr_t with all bits set. The typecast is necessary to
-> silence compiler warnings on 32-bit platforms.
+On Fri, Apr 06, 2018 at 09:08:15AM +0200, Michal Hocko wrote:
+> On Fri 06-04-18 05:14:53, Naoya Horiguchi wrote:
+> > On Fri, Apr 06, 2018 at 03:07:11AM +0000, Horiguchi Naoya(堀口 直也) wrote:
+> > ...
+> > > -----
+> > > From e31ec037701d1cc76b26226e4b66d8c783d40889 Mon Sep 17 00:00:00 2001
+> > > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > Date: Fri, 6 Apr 2018 10:58:35 +0900
+> > > Subject: [PATCH] mm: enable thp migration for shmem thp
+> > > 
+> > > My testing for the latest kernel supporting thp migration showed an
+> > > infinite loop in offlining the memory block that is filled with shmem
+> > > thps.  We can get out of the loop with a signal, but kernel should
+> > > return with failure in this case.
+> > > 
+> > > What happens in the loop is that scan_movable_pages() repeats returning
+> > > the same pfn without any progress. That's because page migration always
+> > > fails for shmem thps.
+> > > 
+> > > In memory offline code, memory blocks containing unmovable pages should
+> > > be prevented from being offline targets by has_unmovable_pages() inside
+> > > start_isolate_page_range(). So it's possible to change migratability
+> > > for non-anonymous thps to avoid the issue, but it introduces more complex
+> > > and thp-specific handling in migration code, so it might not good.
+> > > 
+> > > So this patch is suggesting to fix the issue by enabling thp migration
+> > > for shmem thp. Both of anon/shmem thp are migratable so we don't need
+> > > precheck about the type of thps.
+> > > 
+> > > Fixes: commit 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
+> > > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > Cc: stable@vger.kernel.org # v4.15+
+> > 
+> > ... oh, I don't think this is suitable for stable.
+> > Michal's fix in another email can come first with "CC: stable",
+> > then this one.
+> > Anyway I want to get some feedback on the change of this patch.
 > 
-> Use the simpler but still type safe approach "~(phys_addr_t)0"
-> to create a preprocessor define for all bits set.
+> My patch is indeed much simpler but it depends on [1] and that doesn't
+> sound like a stable material as well because it depends on onether 2
+> patches. Maybe we need some other hack for 4.15 if we really care enough.
 > 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> [1] http://lkml.kernel.org/r/20180103082555.14592-4-mhocko@kernel.org
 
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
-> Hi,
-> 
-> There are about a dozen other instances of (phys_addr_t)ULLONG_MAX
-> accross the tree. Should I address them too?
-
-Yes, please. Maybe wait until the merge window sattles (rc1).
-
-> --
-> Stefan
-> 
->  include/linux/kernel.h |  1 +
->  mm/memblock.c          | 22 +++++++++++-----------
->  2 files changed, 12 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> index 3fd291503576..1ba9e2d71bc9 100644
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -29,6 +29,7 @@
->  #define LLONG_MIN	(-LLONG_MAX - 1)
->  #define ULLONG_MAX	(~0ULL)
->  #define SIZE_MAX	(~(size_t)0)
-> +#define PHYS_ADDR_MAX	(~(phys_addr_t)0)
->  
->  #define U8_MAX		((u8)~0U)
->  #define S8_MAX		((s8)(U8_MAX>>1))
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 696829a198ba..957587178b36 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -67,7 +67,7 @@ ulong __init_memblock choose_memblock_flags(void)
->  /* adjust *@size so that (@base + *@size) doesn't overflow, return new size */
->  static inline phys_addr_t memblock_cap_size(phys_addr_t base, phys_addr_t *size)
->  {
-> -	return *size = min(*size, (phys_addr_t)ULLONG_MAX - base);
-> +	return *size = min(*size, PHYS_ADDR_MAX - base);
->  }
->  
->  /*
-> @@ -924,7 +924,7 @@ void __init_memblock __next_mem_range(u64 *idx, int nid, ulong flags,
->  			r = &type_b->regions[idx_b];
->  			r_start = idx_b ? r[-1].base + r[-1].size : 0;
->  			r_end = idx_b < type_b->cnt ?
-> -				r->base : (phys_addr_t)ULLONG_MAX;
-> +				r->base : PHYS_ADDR_MAX;
->  
->  			/*
->  			 * if idx_b advanced past idx_a,
-> @@ -1040,7 +1040,7 @@ void __init_memblock __next_mem_range_rev(u64 *idx, int nid, ulong flags,
->  			r = &type_b->regions[idx_b];
->  			r_start = idx_b ? r[-1].base + r[-1].size : 0;
->  			r_end = idx_b < type_b->cnt ?
-> -				r->base : (phys_addr_t)ULLONG_MAX;
-> +				r->base : PHYS_ADDR_MAX;
->  			/*
->  			 * if idx_b advanced past idx_a,
->  			 * break out to advance idx_a
-> @@ -1543,13 +1543,13 @@ phys_addr_t __init_memblock memblock_end_of_DRAM(void)
->  
->  static phys_addr_t __init_memblock __find_max_addr(phys_addr_t limit)
->  {
-> -	phys_addr_t max_addr = (phys_addr_t)ULLONG_MAX;
-> +	phys_addr_t max_addr = PHYS_ADDR_MAX;
->  	struct memblock_region *r;
->  
->  	/*
->  	 * translate the memory @limit size into the max address within one of
->  	 * the memory memblock regions, if the @limit exceeds the total size
-> -	 * of those regions, max_addr will keep original value ULLONG_MAX
-> +	 * of those regions, max_addr will keep original value PHYS_ADDR_MAX
->  	 */
->  	for_each_memblock(memory, r) {
->  		if (limit <= r->size) {
-> @@ -1564,7 +1564,7 @@ static phys_addr_t __init_memblock __find_max_addr(phys_addr_t limit)
->  
->  void __init memblock_enforce_memory_limit(phys_addr_t limit)
->  {
-> -	phys_addr_t max_addr = (phys_addr_t)ULLONG_MAX;
-> +	phys_addr_t max_addr = PHYS_ADDR_MAX;
->  
->  	if (!limit)
->  		return;
-> @@ -1572,14 +1572,14 @@ void __init memblock_enforce_memory_limit(phys_addr_t limit)
->  	max_addr = __find_max_addr(limit);
->  
->  	/* @limit exceeds the total size of the memory, do nothing */
-> -	if (max_addr == (phys_addr_t)ULLONG_MAX)
-> +	if (max_addr == PHYS_ADDR_MAX)
->  		return;
->  
->  	/* truncate both memory and reserved regions */
->  	memblock_remove_range(&memblock.memory, max_addr,
-> -			      (phys_addr_t)ULLONG_MAX);
-> +			      PHYS_ADDR_MAX);
->  	memblock_remove_range(&memblock.reserved, max_addr,
-> -			      (phys_addr_t)ULLONG_MAX);
-> +			      PHYS_ADDR_MAX);
->  }
->  
->  void __init memblock_cap_memory_range(phys_addr_t base, phys_addr_t size)
-> @@ -1607,7 +1607,7 @@ void __init memblock_cap_memory_range(phys_addr_t base, phys_addr_t size)
->  	/* truncate the reserved regions */
->  	memblock_remove_range(&memblock.reserved, 0, base);
->  	memblock_remove_range(&memblock.reserved,
-> -			base + size, (phys_addr_t)ULLONG_MAX);
-> +			base + size, PHYS_ADDR_MAX);
->  }
->  
->  void __init memblock_mem_limit_remove_map(phys_addr_t limit)
-> @@ -1620,7 +1620,7 @@ void __init memblock_mem_limit_remove_map(phys_addr_t limit)
->  	max_addr = __find_max_addr(limit);
->  
->  	/* @limit exceeds the total size of the memory, do nothing */
-> -	if (max_addr == (phys_addr_t)ULLONG_MAX)
-> +	if (max_addr == PHYS_ADDR_MAX)
->  		return;
->  
->  	memblock_cap_memory_range(0, max_addr);
-> -- 
-> 2.17.0
-> 
-
--- 
-Michal Hocko
-SUSE Labs
+OK, so I like just giving up sending to stable.
