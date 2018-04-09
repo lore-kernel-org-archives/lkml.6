@@ -1,92 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753240AbeDIPxK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:53:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:57912 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752314AbeDIPxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:53:08 -0400
-Subject: Re: [PATCH v8 07/14] ARM: dts: rockchip: add clocks in iommu nodes
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-        open list <linux-kernel@vger.kernel.org>, jcliang@chromium.org,
-        simon xue <xxm@rock-chips.com>, tfiga@chromium.org,
-        Romain Perier <romain.perier@collabora.com>,
-        Yakir Yang <kuankuan.y@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Liang Chen <cl@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Wu <david.wu@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Brian Norris <briannorris@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rocky Hao <rocky.hao@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Nickey Yang <nickey.yang@rock-chips.com>, devicetree@vger.kernel.org,
-        Mark Yao <markyao0591@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Sugar Zhang <sugar.zhang@rock-chips.com>,
-        Caesar Wang <wxt@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>
-References: <20180323073814.5802-1-jeffy.chen@rock-chips.com>
- <20180323073814.5802-8-jeffy.chen@rock-chips.com>
- <CAAObsKCkg4+Ji=HPXnHCoxF9g0=uBgx+f+p-ehZ_D4Ld5RVVgg@mail.gmail.com>
- <10157755.JROavG9E9U@diego>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <df522a01-6f4a-bb96-4423-19965b078a1b@arm.com>
-Date: Mon, 9 Apr 2018 16:53:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <10157755.JROavG9E9U@diego>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1753328AbeDIPxU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:53:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43684 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753209AbeDIPxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 11:53:18 -0400
+Message-ID: <d827bf66f88eab01d7716fbe36decb9a539da353.camel@redhat.com>
+Subject: Re: simultaneous voice/data works (was Re: call/normal switch was
+ Re: omap4-droid4: voice call support was)
+From: Dan Williams <dcbw@redhat.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Merlijn Wajer <merlijn@wizzup.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Date: Mon, 09 Apr 2018 10:53:14 -0500
+In-Reply-To: <20180409140847.GP5700@atomide.com>
+References: <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
+         <20180402155754.GD5700@atomide.com> <20180403150444.GE5700@atomide.com>
+         <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
+         <20180403194419.GG5700@atomide.com> <20180406120423.GA18691@amd>
+         <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
+         <20180407081000.GB7818@amd> <20180407122233.GA11302@amd>
+         <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
+         <20180409140847.GP5700@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/18 16:44, Heiko Stübner wrote:
-> Hi Tomeu,
+On Mon, 2018-04-09 at 07:08 -0700, Tony Lindgren wrote:
+> * Dan Williams <dcbw@redhat.com> [180408 02:46]:
+> > On Sat, 2018-04-07 at 14:22 +0200, Pavel Machek wrote:
+> > > I tried --location-enable-gps-unmanaged , but that did not work
+> > > for
+> > > me.
+> > 
+> > That requires a TTY that would spit out the GPS data; in this mode
+> > MM
+> > only sends the start/stop commands, and what comes out the GPS TTY
+> > is
+> > undefined (at least by MM).
+> > 
+> > So unless you know that one of the 6600's TTYs does GPS and in what
+> > format it does GPS, then no.
 > 
-> Am Montag, 9. April 2018, 16:41:56 CEST schrieb Tomeu Vizoso:
->> in today's linux-next, the DRM driver fails to probe because the iommu
->> driver fails to find the aclk. I need to apply this patch for things
->> to work again.
+> There should be a NMEA port within the unknown port range
+> ttyUSB[123].
 > 
-> Thanks for catching that issue.
-> 
-> This seems to expose a backwards-compatibility issue, as this breaks
-> all old devicetrees, so should get a proper fix, apart from me applying
-> the dt-patch I missed.
-> 
-> Looking at the iommu-clock-handling patch, I imagine this part as
-> the culprit:
-> 
-> +	iommu->num_clocks = ARRAY_SIZE(rk_iommu_clocks);
-> +	iommu->clocks = devm_kcalloc(iommu->dev, iommu->num_clocks,
-> +				     sizeof(*iommu->clocks), GFP_KERNEL);
-> +	if (!iommu->clocks)
-> +		return -ENOMEM;
-> 
-> The clk-bulk functions seem to work with simple for loops and
-> should (as the other standard clock functions) just work fine with
-> an empty struct, so I guess a simple
-> 
-> 	if (!iommu->clocks && iommu->num_clocks > 0)
-> 		return -ENOMEM;
-> 
-> should hopefully be enough. I'll try to give this a test later on
-> if nobody beats me to it :-)
+> Is there some easy way to enable --location-enable-gps-unmanaged for
+> testing so I can check if GPS gets enabled for one of the ports?
 
-But iommu->num_clocks is clearly set to a nonzero compile-time constant 
-at this point ;)
+Not all modems support all of the ModemManager location options;
+-unmanaged is only for devices that support sending the data to a
+separate port and for which we know the commands to do that.
 
-I'd assume it's the return from devm_clk_bulk_get() which needs to 
-special-case the "no clocks found" case from any other error, and *then* 
-blat num_clocks to 0 if so.
+It looks like QMI has a way to direct the output to a specific device:
 
-Robin.
+// Enum to describe QMI PDS Output Devices
+enum eQMIPDSOutputDevices:UINT8
+{
+   eQMIPDSOutputDevices_NoneDisabled  = 0,
+   eQMIPDSOutputDevices_USB           = 1,
+   eQMIPDSOutputDevices_UART1         = 2,
+   eQMIPDSOutputDevices_UART2         = 3,
+   eQMIPDSOutputDevices_SharedMemory  = 4,
+};
+
+so we could add support for that to libqmi and then to ModemManager,
+which could help implement --location-enable-gps-unmanaged on alternate
+ports.
+
+But what might be simpler is implementing something like the "QMI GPS
+proxy" that already exists, but for ModemManager or libqmi directly. 
+That way you can use QMI and get known formatting of the output data,
+but proxy it to a normal-looking NMEA tty?  Instead of trying to figure
+out which TTY/UART/etc the information comes out of for each specific
+device and somehow encoding that into the platform.  We know what the
+QMI ports are already, that's easy.  We don't know what all the TTYs
+are for every given modem and hardcoding that info somewhere is error-
+prone and hard to keep up with.
+
+Dan
