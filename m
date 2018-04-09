@@ -1,112 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751667AbeDIXez (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 19:34:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35906 "EHLO mx1.redhat.com"
+        id S1752372AbeDIXkm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 19:40:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58882 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750759AbeDIXex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 19:34:53 -0400
-Date: Tue, 10 Apr 2018 07:34:37 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "wakko@animx.eu.org" <wakko@animx.eu.org>
-Subject: Re: 4.15.14 crash with iscsi target and dvd
-Message-ID: <20180409233436.GC6450@ming.t460p>
-References: <20180401163604.GB25011@animx.eu.org>
- <20180401182723.GA31755@animx.eu.org>
- <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
- <20180406014644.GA16112@animx.eu.org>
- <20180406020651.GB16112@animx.eu.org>
- <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
- <20180407165335.GA2515@animx.eu.org>
- <1ff8d234cc565ba9701ce31899fca5faa597e050.camel@wdc.com>
- <20180408160254.GA22869@animx.eu.org>
- <f9467e78ce05446e7a89f06713c36fb638d1b6ad.camel@wdc.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9467e78ce05446e7a89f06713c36fb638d1b6ad.camel@wdc.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752295AbeDIXkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 19:40:39 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
+Date: Mon,  9 Apr 2018 19:34:22 -0400
+Message-Id: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 09:30:11PM +0000, Bart Van Assche wrote:
-> On Sun, 2018-04-08 at 12:02 -0400, Wakko Warner wrote:
-> > I finished with git bisect.  Here's the output:
-> > 84c8590646d5b35804bac60eb58b145839b5893e is the first bad commit
-> > commit 84c8590646d5b35804bac60eb58b145839b5893e
-> > Author: Ming Lei <tom.leiming@gmail.com>
-> > Date:   Fri Nov 11 20:05:32 2016 +0800
-> > 
-> >     target: avoid accessing .bi_vcnt directly
-> >     
-> >     When the bio is full, bio_add_pc_page() will return zero,
-> >     so use this information tell when the bio is full.
-> >     
-> >     Also replace access to .bi_vcnt for pr_debug() with bio_segments().
-> >     
-> >     Reviewed-by: Christoph Hellwig <hch@lst.de>
-> >     Signed-off-by: Ming Lei <tom.leiming@gmail.com>
-> >     Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-> >     Signed-off-by: Jens Axboe <axboe@fb.com>
-> > 
-> > :040000 040000 a3ebbb71c52ee4eb8c3be4d033b81179211bf704 de39a328dbd1b18519946b3ad46d9302886e0dd0 M      drivers
-> > 
-> > I did a diff between HEAD^ and HEAD and manually patched the file from
-> > 4.15.14.  It's not an exact revert.  I'm running it now and it's working.
-> > I'll do a better test later on.  Here's the patch:
-> > 
-> > --- a/drivers/target/target_core_pscsi.c	2018-02-04 14:31:31.077316617 -0500
-> > +++ b/drivers/target/target_core_pscsi.c	2018-04-08 11:43:49.588641374 -0400
-> > @@ -915,7 +915,9 @@
-> >  					bio, page, bytes, off);
-> >  			pr_debug("PSCSI: bio->bi_vcnt: %d nr_vecs: %d\n",
-> >  				bio_segments(bio), nr_vecs);
-> > -			if (rc != bytes) {
-> > +			if (rc != bytes)
-> > +				goto fail;
-> > +			if (bio->bi_vcnt > nr_vecs) {
-> >  				pr_debug("PSCSI: Reached bio->bi_vcnt max:"
-> >  					" %d i: %d bio: %p, allocating another"
-> >  					" bio\n", bio->bi_vcnt, i, bio);
-> 
-> Hello Ming,
-> 
-> Can you have a look at this? The start of this e-mail thread is available at
-> https://www.mail-archive.com/linux-scsi@vger.kernel.org/msg72574.html.
+There were two formats of the audit MAC_STATUS record, one of which was more
+standard than the other.  One listed enforcing status changes and the
+other listed enabled status changes with a non-standard label.  In
+addition, the record was missing information about which LSM was
+responsible and the operation's completion status.  While this record is
+only issued on success, the parser expects the res= field to be present.
 
-Sure, thanks for your sharing.
+old enforcing/permissive:
+type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
+old enable/disable:
+type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
 
-Wakko, could you test the following patch and see if there is any
-difference?
+List both sets of status and old values and add the lsm= field and the
+res= field.
 
---
-diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
-index 0d99b242e82e..6147178f1f37 100644
---- a/drivers/target/target_core_pscsi.c
-+++ b/drivers/target/target_core_pscsi.c
-@@ -888,7 +888,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
- 		if (len > 0 && data_len > 0) {
- 			bytes = min_t(unsigned int, len, PAGE_SIZE - off);
- 			bytes = min(bytes, data_len);
--
-+ new_bio:
- 			if (!bio) {
- 				nr_vecs = min_t(int, BIO_MAX_PAGES, nr_pages);
- 				nr_pages -= nr_vecs;
-@@ -931,6 +931,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
- 				 * be allocated with pscsi_get_bio() above.
- 				 */
- 				bio = NULL;
-+				goto new_bio;
- 			}
+Here is the new format:
+type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
+
+This record already accompanied a SYSCALL record.
+
+See: https://github.com/linux-audit/audit-kernel/issues/46
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ security/selinux/selinuxfs.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index 00eed84..00b21b2 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
+ 		if (length)
+ 			goto out;
+ 		audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+-			"enforcing=%d old_enforcing=%d auid=%u ses=%u",
++			"enforcing=%d old_enforcing=%d auid=%u ses=%u"
++			" enabled=%d old-enabled=%d lsm=selinux res=1",
+ 			new_value, selinux_enforcing,
+ 			from_kuid(&init_user_ns, audit_get_loginuid(current)),
+-			audit_get_sessionid(current));
++			audit_get_sessionid(current), selinux_enabled, selinux_enabled);
+ 		selinux_enforcing = new_value;
+ 		if (selinux_enforcing)
+ 			avc_ss_reset(0);
+@@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
+ 		if (length)
+ 			goto out;
+ 		audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+-			"selinux=0 auid=%u ses=%u",
++			"enforcing=%d old_enforcing=%d auid=%u ses=%u"
++			" enabled=%d old-enabled=%d lsm=selinux res=1",
++			selinux_enforcing, selinux_enforcing,
+ 			from_kuid(&init_user_ns, audit_get_loginuid(current)),
+-			audit_get_sessionid(current));
++			audit_get_sessionid(current), 0, 1);
+ 	}
  
- 			data_len -= bytes;
-
+ 	length = count;
 -- 
-Ming
+1.8.3.1
