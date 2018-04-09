@@ -1,76 +1,80 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1705864-1523174888-5-7962784162727232067
+X-Cyrus-Session-Id: sloti22d1t05-3992186-1523245235-2-4593669086970598202
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523174887; b=fMpRHxRxDsw627f/kPP2Y6QgWLkJaTDFsIh+y3nbEpJSm7rzu5
-    LXE4ac6fX2U5ckGWHxKOuGwQrjymwePyJM24VrAcWohiErjb6dGcqnStFCd87fhf
-    rjLi1anzv0y50upqcgqKhieZOQ010iy/VERPmmhWiUO9QSBH5HxXihOa+vSbwwIC
-    xQ6/QKjPIk8xdqc2UBSMGbouJaLpNxoItXpQts2PRx6yRnhyEfhZ77s3R+EqwxXA
-    lp5ZVxUEClg3zLMz/qe/DDw1lNqAmqLBzDticUYfCUzDM7qNTwZhUlCdsb931Ci8
-    jp+mWutWEK3kMKQk0Esf5wYhfltiukzr1gmw==
+    1523245234; b=uvLGr9jMDdswqFJtI9QfaojI5EcCNElWnhahpAfkf3PlIaqTpb
+    v6IcTw78X/yb8pXkv6bNDEerStVDLZHUGsYqqHHcN0h98EZNMLjuzICgY8T3dKX4
+    W1l0a/PvayZFZuxg9dTMUs1Ihq5zP15p2JG98MFUXLDi8GGPyH02zDZZhV+HTWvT
+    FnK5WfUvkTx2t26IAHTxw0kUQv52anMyep75zZcTsAnQH7etGGCr0xJGNekByajb
+    4NnpO1TDQdvzlvQskC8gm+AW2RbiKC1XYBcGEP0BWE6PsdORZCVNGDLtCsAQMmIg
+    8QVNM0XS36nnpPv2MOYq2lcuiJar7SgVQb2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523174887; bh=lIYjZMwCvbAWR0CSIXclKtRCQZYF9v
-    8CRWdw9zkSd/Y=; b=OM+zfLjgIPKB4v8+++Wsd2CQ1dJaSTWqGxhS/vo0QGpqZF
-    q4HyEE+GtMvc+arUag+Birc3TAsOtRW6ixd1Gaw5G9TOkdSZRS0qefYzkoQlmHcC
-    vED4lnbGdxv4fBRZfK0B4u7ks5mWUR3IhTDjeZrvXTG+DbeXmu4MGN18O7hyiBo8
-    NcuOk/bUYnwVKLT3UtwBHvP5UVfypJ6xB9+VAJ40f8yTRlV2ViYzj//VhKujS9PV
-    a/qWYWpi2ACK+cm2lkl9s/7wjH10mn8RPeXChUerWowlFpRxhItCmn1hxoefDKZR
-    bWlXFijSqr6do3BOARK0oqAMEQ4SQKyLBpqJp27Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    :list-id; s=fm2; t=1523245234; bh=BrTlr//0h1pdvdO4ZFBLapNcfqGpK9
+    UD2TIyAaR/Ebo=; b=CJB6e5JAeFZni3jjd+fyi5PCTVUhauh/hcDX9CYwW5wojS
+    UDsLW9ftWbORjbOJuDt7IQ6pugDMAsdA4GJ6yNty0UWsj4hojsl5rI2R7yZhpHVy
+    Wk+0h9UwtnDm3aAwbvEwGBhMglh0fRxmNlyNSw+wnAii/JNOGFAJzq0XIU1+NR+j
+    ueSQ56WknZbFIRPrXHQFAlX6lYzaHquMgE3w5iVbO99uHIQILvVSRJ4gzYZb8GWI
+    4GBC8AyjbHtf98fmtPDlYb1izP9VZWou9V9S4R3Njv0FYkPdQ2/ELMRT2/oN0Rbt
+    Y7B4hl9BkQxcLsUIfin1JHrnmlKul+rlLgJHC4Mw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=gEXWU5c4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=f+7Vv2VJ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=gEXWU5c4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=f+7Vv2VJ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEPY61aJ+54KtX2t4+WAet6m7AkNqDvRSInQ8PuvZBlJhGgK/TochMkCpBT27/CXrPcywOd1384UuPiGvVDh2LY+7cqLHpIeCedQO6Tcc0WTIc8nkNSk
-    sc1EQSZhFz+fk9b1Xrdk/LEUBLZ0fwGphC0SDoO4UEypCoBl3F9jnBCZFPU2mXJFb+XY99hrkZoixv4VsX/aMtJxlXB8u3CbOmVSfKdjG58UumAdsuMPYi70
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=gQGbs8_HAAAA:8 a=9eUR4hBT7iw1T6XgGNQA:9
-    a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=1pMqk7AwgTXjlBDkgM7h:22
+X-CM-Envelope: MS4wfOmC1NQSS1CRsSfE0P5QSCL3PXUrUgWztS8o9ofp4f2wdViVXloZBuOmOVyTheWXlOHBqHj5wMcLYAK3fFXHLtDLBENRfDymJmRS1U8b/Y7MYtx77QoZ
+    44AqN4SS35qvObGcY9P6uY33VOxZK37PZJIBjU2vdwOHarzJI9pZlMTaCQElixTn48qIkSFutjDyr6sxdhS0LvbMD8tSaQAvzIQB6e7MV9mxlPTEbS6W+Njn
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=RXHMGUnP3f0A:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=7RQkSx1-yMdvnn_fdoAA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751309AbeDHIID (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 04:08:03 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:46642 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750891AbeDHIIC (ORCPT
-        <rfc822;groupwise-linux-api@vger.kernel.org:0:0>);
-        Sun, 8 Apr 2018 04:08:02 -0400
-Date: Sun, 8 Apr 2018 16:07:42 +0800
-From: joeyli <jlee@suse.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+        id S1754421AbeDIDkR (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 23:40:17 -0400
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:46098 "EHLO
+        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754377AbeDIDkN (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Sun, 8 Apr 2018 23:40:13 -0400
+X-Google-Smtp-Source: AIpwx4+4Gr7u4W0JLop4sD3HBCLWsVSwkQ0BY2rOqPfvM3Sy9MahFdSOM+E880hJME4gbOO+dXm+cA==
+Date: Sun, 8 Apr 2018 20:40:10 -0700
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: joeyli <jlee@suse.com>
 Cc: Andy Lutomirski <luto@kernel.org>,
         David Howells <dhowells@redhat.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
@@ -85,69 +89,36 @@ Cc: Andy Lutomirski <luto@kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        linux-efi <linux-efi@vger.kernel.org>
+        linux-efi <linux-efi@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
 Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-Message-ID: <20180408080742.GE7362@linux-l9pv.suse>
+Message-ID: <20180409034008.dyte7k5kgkbjh5is@ast-mbp.dhcp.thefacebook.com>
 References: <CAADnVQLu5EZLJ1C9-dd4=K+sed6+38oy047+nqCMfuPFB=wttw@mail.gmail.com>
+ <20180408080742.GE7362@linux-l9pv.suse>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAADnVQLu5EZLJ1C9-dd4=K+sed6+38oy047+nqCMfuPFB=wttw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180408080742.GE7362@linux-l9pv.suse>
+User-Agent: NeoMutt/20180223
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 03, 2018 at 07:34:25PM -0700, Alexei Starovoitov wrote:
-> On Tue, Apr 3, 2018 at 9:26 AM, Andy Lutomirski <luto@kernel.org> wrote:
-> > On Tue, Apr 3, 2018 at 8:41 AM, Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> >> On Tue, Apr 03, 2018 at 08:11:07AM -0700, Andy Lutomirski wrote:
-> >>> >
-> >>> >> "bpf: Restrict kernel image access functions when the kernel is locked down":
-> >>> >> This patch just sucks in general.
-> >>> >
-> >>> > Yes - but that's what Alexei Starovoitov specified.  bpf kind of sucks since
-> >>> > it gives you unrestricted access to the kernel.
-> >>>
-> >>> bpf, in certain contexts, gives you unrestricted access to *reading*
-> >>> kernel memory.  bpf should, under no circumstances, let you write to
-> >>> the kernel unless you're using fault injection or similar.
-> >>>
-> >>> I'm surprised that Alexei acked this patch.  If something like XDP or
-> >>> bpfilter starts becoming widely used, this patch will require a lot of
-> >>> reworking to avoid breaking standard distros.
-> >>
-> >> my understanding was that this lockdown set attemps to disallow _reads_
-> >> of kernel memory from anything, so first version of patch was adding
-> >> run-time checks for bpf_probe_read() which is no-go
-> >> and without this helper the bpf for tracing is losing a lot of its power,
-> >> so the easiest is to disable it all.
-> >
-> > Fair enough.
+On Sun, Apr 08, 2018 at 04:07:42PM +0800, joeyli wrote:
 > 
-> Actually looking at the patch again:
-> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=efi-lock-down&id=78bb0059c3b8304a8d124b55feebc780fb3e0500
+> > If the only thing that folks are paranoid about is reading
+> > arbitrary kernel memory with bpf_probe_read() helper
+> > then preferred patch would be to disable it during verification
+> > when in lockdown mode
 > 
+> Sorry for I didn't fully understand your idea...
+> Do you mean that using bpf verifier to filter out bpf program that
+> uses bpf_probe_read()?
 
-The bpf is totally disabled in this patch.
+Take a look bpf_get_trace_printk_proto().
+Similarly we can add bpf_get_probe_read_proto() that
+will return NULL if lockdown is on.
+Then programs with bpf_probe_read() will be rejected by the verifier.
 
-> If the only thing that folks are paranoid about is reading
-> arbitrary kernel memory with bpf_probe_read() helper
-> then preferred patch would be to disable it during verification
-> when in lockdown mode
-
-Sorry for I didn't fully understand your idea...
-Do you mean that using bpf verifier to filter out bpf program that
-uses bpf_probe_read()?
-.
-> No run-time overhead and android folks will be happy
-> that lockdown doesn't break their work.
-> They converted out-of-tree networking accounting
-> module and corresponding user daemon to use bpf:
-> https://www.linuxplumbersconf.org/2017/ocw/system/presentations/4791/original/eBPF%20cgroup%20filters%20for%20data%20usage%20accounting%20on%20Android.pdf
-
-Thanks
-Joey Lee
