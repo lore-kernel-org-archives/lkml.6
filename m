@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4029176-1523245880-2-6128820442384273170
+X-Cyrus-Session-Id: sloti22d1t05-4102378-1523245869-2-17437044754059749164
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523245879; b=NuJ5aTVSVgLbwfhWu9bBmnNfwiX3elwAovoIdBKvkz2I+ZifnZ
-    Al3PncWym3HDQwXdAMdNgiHBg/idsOivoBt9ugreM80IPoAaK59/sEqI82r+bcXC
-    v9zpjpc59eWGVYh4WrTQMaMxL7TdEIhrRcAxGcvx/YcZJvqGdEua/q3fwM9728Oz
-    g4yh4jEB6t3hKM9LW1/v6i7WlWk4llCWhXKzcYejHGb6qkupRORX0Ihn5RYCD9jk
-    +kEsiJHJOjynZACUQ0IXM0qsDNcWmuePyEpQOVUVemgldu4yPCV15jyIpTvN/cdD
-    U/wD3d6XwVjSrhSWT2RYtL1yDsI6mppQVwBA==
+    1523245868; b=wSLv6T3tKr+/U/oqLyKeZ4deDNBW8M5IeJyvcwMr0TKqC3kiHk
+    HblUwNdJzJ9Q0AgtuvaYty6i13BWEYS9AY0YT+NBmM7SUcUa+QzOWX6sMkjhoeE3
+    CyKKABDyThrspDThT5aFOMa3QxJP/g2m9HheSpVxBaHdOWuktmdKU/dT3UAGsoXh
+    Oo3pEEqXGK0LiOJVUj/JkBmJAw3ZrAiqnVfP9IyKZ6Ob1DgVORIFW2KMAPdHoPgk
+    1Bod4aeYvKScvt3r5OT4VeG4hFFTTlYEQjp+IX2yQQGRBgZgrZQLMV5ZAvhK+JMC
+    YRUWyYQ60oSSVfwyzVWz24lQ6BetMPdVm8XQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523245879; bh=Y15dqUYV6z
-    0EUpgzIGUpKOsJgSGCgtRXk1KsZ8ud9UE=; b=MzoNeoM3RjI4brcP94rtB/Jehe
-    gGzJKUvaA3SsmO/5QkAVVUyl3NTF452B1M8D3OhDRw0L4YaKy+Af6TAxib1C64Vq
-    jdFIIEjwRiCYkxLhEoiycx9GE9OQEvldVou/Gwk66JjuoSRiNPqwD1xvdWkF/UvS
-    6CSriOtuowYEzkmZpFB9bstI6JYOklyAhNFdvlM2PXKQ91MAmRkEQsukmF82xYzF
-    THPT9QBqkY79hcqU+UnQ5c90tSyWcJkhsr7kwpNNdUDiWKbdVlt0HekdVfDG7G8m
-    fUWD89wyMn/GSsSNQz/2qtZtTiMokp3+WDadaGOwIpLQlo4RYAsbTfKPkbWw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=YwJk3dAg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523245868; bh=ynQjRCtn02
+    SgZ6Y4sKpMZbj9uyTwC2zSxCFbk0h37vk=; b=HF3nKhEvQD+Cvv7YfCPcm1wXbc
+    0yVZXngiW5/IoUw+uCZsKIglsS+z78LpIlaYQI74o3kgiBsjf44gEyMoRmDuktR2
+    iXx6fkam8eAhkJBYm0KxVIaK6YepYeVovd9CU60QV8sww5qFrlwSGBK+Z6vUJDFx
+    Jk4oP5Bfa1Xeydzj8LPOc5KzQ+T9yjUbpRJrxzUIUrIZTqgUqKV+CTZ8gV6mHMxX
+    pPJrcSBCC+Nw5UeGaAXKyo3H2SgnIxcQKxVe11t/tzzUjbQ2jv1pFzktS86eGc6X
+    JHTTlnYcMmAr7RRtg8kKgoRK72IxNwfWFu0IdIsrEix4NlvLCuLsaKTpdMug==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JvSCoUZG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=YwJk3dAg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JvSCoUZG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,36 +51,37 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNrNSKphnNELwPMf7E1mHCBMJ++Xhczk1KVG77ooJJEC/VnEW3165kF6CobzIg1VP02PncRciFNRrOu0bn5Jib0e2Pl09g/3Il++kHOf7xN0HBBS2vT9
-    Jh8JzEmSaATCbITNSvDOlRbvUpvZoqVwkVzpNysYZfOh6otIQCJ6grhmT0FW9Rm6iWlYLwrHuZF7RC/C+EAtbCdtTUvzX9tT9710p671sa3o/sStKLX1A2tr
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJwIrJyeOQwdfz8imlXoqcKvaTZ6xBWbOQsKPKId2xefyoi2kiiVkr3G7K58jHRdyLXhk46Hlfow9YUqahjYKFfp6g5El5scLeb5VN/04oI7ysTCSZu5
+    U0WGHeCAm2lT0xs70HOUh6oNyOD58qCTIHXAutP2XWX8BSldChxeyAKiXY2tphMh1+3i8Fvio0qQnhJQ0rp2nM/rT7RS+2kxhdWJ6k0ZDQ2G4Rayr6PxT8Ai
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=gXLdhW2jAAAA:8 a=yMhMjlubAAAA:8 a=KI7VP4KqZqssnbVXWhIA:9
-    a=wPNLvfGTeEIA:10 a=Dn9eIPSr_RzuO0KTJioD:22
+    a=Lf-vpJhqX20A:10 a=9isDrUItAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=CLeWWt8dGckd-uDcp54A:9 a=RfgONM9Q38_H_8yf:21 a=CC5GkahYXGZ71kRb:21
+    a=wPNLvfGTeEIA:10 a=01Cuw3xjDqt1ySEFOcFQ:22 a=y1Q9-5lHfBjTkpIzbSAN:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753304AbeDIDue (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 23:50:34 -0400
-Received: from mail-bn3nam01on0100.outbound.protection.outlook.com ([104.47.33.100]:20288
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1754055AbeDIDuh (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 23:50:37 -0400
+Received: from mail-by2nam03on0122.outbound.protection.outlook.com ([104.47.42.122]:11088
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754055AbeDIAT3 (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1754057AbeDIAT3 (ORCPT <rfc822;stable@vger.kernel.org>);
         Sun, 8 Apr 2018 20:19:29 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Logan Gunthorpe <logang@deltatee.com>,
-        Jon Mason <jdmason@kudzu.us>,
+CC: Andy Spencer <aspencer@spacex.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 106/189] ntb_hw_switchtec: Check for
- alignment of the buffer in mw_set_trans()
-Thread-Topic: [PATCH AUTOSEL for 4.15 106/189] ntb_hw_switchtec: Check for
- alignment of the buffer in mw_set_trans()
-Thread-Index: AQHTz5g94RiWsAj6lUin796tWIIR3g==
-Date: Mon, 9 Apr 2018 00:18:09 +0000
-Message-ID: <20180409001637.162453-106-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 107/189] gianfar: prevent integer wrapping in
+ the rx handler
+Thread-Topic: [PATCH AUTOSEL for 4.15 107/189] gianfar: prevent integer
+ wrapping in the rx handler
+Thread-Index: AQHTz5g96A+9eAIDV0Sr+epalbYDjw==
+Date: Mon, 9 Apr 2018 00:18:10 +0000
+Message-ID: <20180409001637.162453-107-alexander.levin@microsoft.com>
 References: <20180409001637.162453-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001637.162453-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,27 +90,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1063;7:Viq8ArFNVnSr0QlCZhtV3kQecmc3dl46xHCEmFwghDDLfa5qt/ONSRG/jmYrRvH2mKgbwBuKWn6zlSnA+o+59/yTnIphNoY8narPYv+5HKAKv8g42xnmK7LfOd2cd5oIZ3XNqHI+LKBHlgstAay0reHDtqYxOr+0r7i1J36M6GckulgqmYiG6zOICW0SmBODrDzGCkgkEsarcSIHCA6D1uherjICU546IcDkLyV2G514TgxuC2P/MfSeltks6o4H;20:sPTg/th+7KlVLUAOzaUOgaIoec9t9CpZD5lcT6JTbfvUicC+ugUTCIY+Nb4dnFNYQoJNQYQpIWerLA2uVY3oHHkMtCF6HtXNWHORC0agv2no/egbhROQ+C5cJ3Lguzt1zMKngmzVpaBeKqlyG69bEket3jfMf9SqoRnWILvdAsE=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1063;7:05w1PrN2NKZsKff+WEADUBs1vfOonZyUdmPC7sZ6kt6oJAeAtbDQM1YyBjtHiv9glM6NNiSmIe4U48nHTaHmcywLsx5YTLIu4S5YkfctQO6S/i0/4yNtE03oJSqXSxlSVQ61ffqpwbbAJl3UmQfxIqIkOkTZsMvjcQhCIjuVXCJywn2exhW8qq56+IUO4U/KauZqbVxrwghp+zvu9iYp7v2YLjP/k+tUN5TaFm66GDgAT0ir/o0CAWYjyoj5UdOr;20:eCA/9Zh3ZpYv4OFuDfoZME1ylUrD14frlfJGcpQgLe6ez5pPQaq/DxYrhSd72fE6eUGmgCeZ1xn3aI1Z3MvuQ3TQ7U7di69A5O8tugIQAq+8xoz+/aC6UAolLnyFARh3oKtmiWOad35X+Tb7QN9de1S5sNh/q5iKl0bhrMCIv1s=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: d57f589f-dca4-407f-2db7-08d59daf8bb8
+X-MS-Office365-Filtering-Correlation-Id: 6861b55f-a983-4d98-514b-08d59daf8bfd
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1063;
 x-ms-traffictypediagnostic: DM5PR2101MB1063:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10637A04548A49633D6C1824FBBF0@DM5PR2101MB1063.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB106308EDE752B746D1EA16F1FBBF0@DM5PR2101MB1063.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1063;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1063;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(39860400002)(376002)(396003)(366004)(189003)(199004)(2900100001)(6436002)(7736002)(10090500001)(102836004)(3660700001)(6506007)(76176011)(305945005)(4326008)(5250100002)(97736004)(26005)(25786009)(6512007)(2906002)(81166006)(106356001)(107886003)(68736007)(14454004)(86612001)(66066001)(10290500003)(59450400001)(6666003)(5660300001)(81156014)(478600001)(476003)(486006)(6486002)(72206003)(3280700002)(99286004)(105586002)(36756003)(1076002)(2616005)(11346002)(53936002)(446003)(8676002)(186003)(3846002)(54906003)(6116002)(2501003)(8936002)(316002)(110136005)(575784001)(86362001)(22452003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1063;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 7CIGUlCQvFtjILvFZdKVBIBBDlzQFjgQHHuWkFDKIT6UQAgJa799tDXa3RObnV9ic0Fi/dJ07sB1zdji2rN4OqcIacqKo4kdBt/UtAeGYnhbokhxAqv2MPZoPMo7w68fgRZPS4MdTU/ToYBdab1ThbzcEq8eHySH2/82X0ztQzL0UfnSnpoaCjDR0N4CEEj5iTGiQkFLfY/OKKh2aqeBn5AGs6HmCFShFmll5u51xNfAriPbbL/rcpkG7GM6KeBrqAS0WDl348+L0R2jECBP1FhyspVIoc5zfmJ/q71jMQWUPSXQ6+HHQvMKAhJqbKLLr9swxnI2tP5nUNKnxdxlO1ZJhMooiNcLQMYCS0WwfLbuDfCj4uvQDcvAjTcDdpKbApnfkEtryyXcf/rwcwYJMPpoUwQ+T2D0+/kMqwWdszI=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(39860400002)(376002)(396003)(366004)(189003)(199004)(2900100001)(6436002)(7736002)(10090500001)(102836004)(3660700001)(6506007)(76176011)(305945005)(4326008)(5250100002)(97736004)(26005)(25786009)(6512007)(2906002)(81166006)(106356001)(107886003)(68736007)(14454004)(86612001)(66066001)(10290500003)(6666003)(5660300001)(81156014)(478600001)(476003)(486006)(6486002)(72206003)(3280700002)(99286004)(105586002)(36756003)(1076002)(2616005)(11346002)(53936002)(446003)(8676002)(186003)(3846002)(54906003)(6116002)(2501003)(8936002)(316002)(110136005)(575784001)(86362001)(22452003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1063;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: EtLrxx3QekQK7qgr1L0lSadtHPHPsyYAnbA2QH985/SeoU+DgU/+Nr5TdkO69484562OU6kat/83I1OBEj/SWi8KnjAw2wjnF+ibtypMjB6Jsh5AWNSNPvuMXRnMUc30zk4ng+NySI7RU1nH0PdRea7F7BzfynM/9AA6lrhmYMzXhG/57dH4G28vG4O1WLqG/42kSUloWP96vEujpM2WMjIfo2SSGa4AuBMIjGpuNEPC39jO2tE2wFGEgcNPcIVObGSIY+CCet9pWSOVLLpf3E5kXr1YTSO3y2gxoXXYIacZcSit0fTbD/1CxrreC8F4vHhaFOsysiK6rNGpzpclR2Z6lSJAL1wVrwwc2Mo1nGFMba9IyWvVzdev7frHtoO9qN2YczrtDYEeTa/S5DqQCzcHwl7DczCycj/OaeWaEvM=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d57f589f-dca4-407f-2db7-08d59daf8bb8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:18:09.6625
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6861b55f-a983-4d98-514b-08d59daf8bfd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:18:10.3812
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -120,51 +121,87 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Andy Spencer <aspencer@spacex.com>
 
-[ Upstream commit 1e2fd202f8593985cdadca32e0c322f98e7fe7cb ]
+[ Upstream commit 202a0a70e445caee1d0ec7aae814e64b1189fa4d ]
 
-With Switchtec hardware, the buffer used for a memory window must be
-aligned to its size (the hardware only replaces the lower bits). In
-certain circumstances dma_alloc_coherent() will not provide a buffer
-that adheres to this requirement like when using the CMA and
-CONFIG_CMA_ALIGNMENT is set lower than the buffer size.
+When the frame check sequence (FCS) is split across the last two frames
+of a fragmented packet, part of the FCS gets counted twice, once when
+subtracting the FCS, and again when subtracting the previously received
+data.
 
-When we get an unaligned buffer mw_set_trans() should return an error.
-We also log an error so we know the cause of the problem.
+For example, if 1602 bytes are received, and the first fragment contains
+the first 1600 bytes (including the first two bytes of the FCS), and the
+second fragment contains the last two bytes of the FCS:
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Jon Mason <jdmason@kudzu.us>
+  'skb->len =3D=3D 1600' from the first fragment
+
+  size  =3D lstatus & BD_LENGTH_MASK; # 1602
+  size -=3D ETH_FCS_LEN;              # 1598
+  size -=3D skb->len;                 # -2
+
+Since the size is unsigned, it wraps around and causes a BUG later in
+the packet handling, as shown below:
+
+  kernel BUG at ./include/linux/skbuff.h:2068!
+  Oops: Exception in kernel mode, sig: 5 [#1]
+  ...
+  NIP [c021ec60] skb_pull+0x24/0x44
+  LR [c01e2fbc] gfar_clean_rx_ring+0x498/0x690
+  Call Trace:
+  [df7edeb0] [c01e2c1c] gfar_clean_rx_ring+0xf8/0x690 (unreliable)
+  [df7edf20] [c01e33a8] gfar_poll_rx_sq+0x3c/0x9c
+  [df7edf40] [c023352c] net_rx_action+0x21c/0x274
+  [df7edf90] [c0329000] __do_softirq+0xd8/0x240
+  [df7edff0] [c000c108] call_do_irq+0x24/0x3c
+  [c0597e90] [c00041dc] do_IRQ+0x64/0xc4
+  [c0597eb0] [c000d920] ret_from_except+0x0/0x18
+  --- interrupt: 501 at arch_cpu_idle+0x24/0x5c
+
+Change the size to a signed integer and then trim off any part of the
+FCS that was received prior to the last fragment.
+
+Fixes: 6c389fc931bc ("gianfar: fix size of scatter-gathered frames")
+Signed-off-by: Andy Spencer <aspencer@spacex.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/net/ethernet/freescale/gianfar.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/n=
-tb_hw_switchtec.c
-index ca0334a6b759..fc9ce0a31c04 100644
---- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-+++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-@@ -315,6 +315,19 @@ static int switchtec_ntb_mw_set_trans(struct ntb_dev *=
-ntb, int pidx, int widx,
- 	if (xlate_pos < 12)
- 		return -EINVAL;
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/etherne=
+t/freescale/gianfar.c
+index 7f837006bb6a..3bdeb295514b 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -2932,7 +2932,7 @@ static irqreturn_t gfar_transmit(int irq, void *grp_i=
+d)
+ static bool gfar_add_rx_frag(struct gfar_rx_buff *rxb, u32 lstatus,
+ 			     struct sk_buff *skb, bool first)
+ {
+-	unsigned int size =3D lstatus & BD_LENGTH_MASK;
++	int size =3D lstatus & BD_LENGTH_MASK;
+ 	struct page *page =3D rxb->page;
+ 	bool last =3D !!(lstatus & BD_LFLAG(RXBD_LAST));
 =20
-+	if (!IS_ALIGNED(addr, BIT_ULL(xlate_pos))) {
-+		/*
-+		 * In certain circumstances we can get a buffer that is
-+		 * not aligned to its size. (Most of the time
-+		 * dma_alloc_coherent ensures this). This can happen when
-+		 * using large buffers allocated by the CMA
-+		 * (see CMA_CONFIG_ALIGNMENT)
+@@ -2947,11 +2947,16 @@ static bool gfar_add_rx_frag(struct gfar_rx_buff *r=
+xb, u32 lstatus,
+ 		if (last)
+ 			size -=3D skb->len;
+=20
+-		/* in case the last fragment consisted only of the FCS */
++		/* Add the last fragment if it contains something other than
++		 * the FCS, otherwise drop it and trim off any part of the FCS
++		 * that was already received.
 +		 */
-+		dev_err(&sndev->stdev->dev,
-+			"ERROR: Memory window address is not aligned to it's size!\n");
-+		return -EINVAL;
-+	}
-+
- 	rc =3D switchtec_ntb_part_op(sndev, ctl, NTB_CTRL_PART_OP_LOCK,
- 				   NTB_CTRL_PART_STATUS_LOCKED);
- 	if (rc)
+ 		if (size > 0)
+ 			skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page,
+ 					rxb->page_offset + RXBUF_ALIGNMENT,
+ 					size, GFAR_RXB_TRUESIZE);
++		else if (size < 0)
++			pskb_trim(skb, skb->len + size);
+ 	}
+=20
+ 	/* try reuse page */
 --=20
 2.15.1
