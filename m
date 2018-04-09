@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3992186-1523243907-2-11801014065460318496
+X-Cyrus-Session-Id: sloti22d1t05-3992186-1523243891-2-8075288515947932843
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523243906; b=O4oh3n6cmnsRMT+Bem1XxQiuAqVQNqhy89Rz9uvQZnb61gdKgE
-    Mve1o6ZDcakU2EEZ92LMskIvh6raP6sKdowB/e8A6ZqJGJzS4RXYo9zQfuc6lI3O
-    s69qPc0fNkgV9a8AfrdEpMOOUNoBeeOPg65GJ8Bquun5uPG1uJ4rhBQxvnlNcCdF
-    +Zg5raYgCjmtpfHWTCbD1Dj67/uWHgjy+f/NUoNzpZqNiP3yyyeG0v7stde5U2U7
-    GbbOrFxDojWGFbKfAb/1yuC8aNjNiqRTqsE8HXhGwJilQwwONNHIiRCFDO4ESGnO
-    lkIRfwN0DIO40VZ0QgexqrTW4RV+5i6SLp9Q==
+    1523243890; b=h1cLF+UYuR1B1t4CplnBmafidz2t4kVAWK0p42HVN2Gp+q35J4
+    M9GMDaYC6iS9M4YCpxpKo6htL90W7Zs6mAWpJBtN0bBWQIvxnK/4G3bj9/NQVKez
+    Rne3oM6Ng5bezaCCiYhi8Rp5Pht78tZy+o57psYT/32fC1gDxuWx7r2ey4TQa6vb
+    lpR5JSrEyGndC0AnYynRcaYvVTfM3NdsCYRMmeGoIs16juoNKj1FMyBVoBhiLb6l
+    a6KOXfl+juSn4RjUe9ortbc8MvmVJUr1LF/7UoNMbz9EAMQkJexncqlyZRQaoGFZ
+    UhKDpmrmyuDBE6+9r7Y4IRwbphzjvO098WUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523243906; bh=h3T8s03CLc
-    aBUqU94DredU/6mVTfi4dRYdosap5vhHg=; b=MTwht5svRfFglT5OZ/8mHe0a00
-    3RQmFOIaJiTsN2McD0g+RHYk3dwtWhwdQt/4lHNr3zuKEZ0RcgKdAyDXN4LXoM/z
-    J5ajZtg1A2JuX7CMTjBsPG7YzOZ7kPCxETTeI5X3h47mBRC0I9A5YlRI3CZLgisz
-    GzL4e7qNCGuhV2yVUhDUY77pk0mHU3AMzBKGKAGzNAfYHwsemyWdwvhKsm5qVkLB
-    92QFbmxKxPx+29VSmKJsJ3IUB7tpk0i9cSPNm3e2YuTrP6roVUXgend+1sEVl0K9
-    W2PPLcvC4dYcd/tGKR33kI3Ltrvdk7ZhuHl5rTlb3YbCi4Zp2MwPqXc2nxIw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=iGfIQcGc x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523243890; bh=+Zokax6wRD
+    Fz2Zp/depPC4uT2kZ6Cehm4eS1EScPHUU=; b=WTmAmSm1APKt+agPvh524pkFtW
+    OWDzqsYf6OZQ8h4IGVkm4EvQb2skikvvoyogOmyFoKuwFaACU9qF2kNhWlOgrN8D
+    HBs6JW9tpXSNqQMOeKTk2sx6EyAu4Kl+qIqG6Wsdz41PawJAnToOQxlxo0UcPDRN
+    0GNwDF+Zdo93ZFyDr5a2hNCFwR7ynB8+eU0ZPJoAScOc8UBCR1wyOf9eAE7PXbu+
+    sV/WomYniSWa5w5FzrdV8QZaLk0ns/tf/SpXPJQrmYfpSVLRMG6bufUSWMeKn1Au
+    QHNDE01dB0N6L78Rh0OBW4OjZLFjGeCWbdpnSklrTWoU+Yj7wUd6tmiaBMpg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Y+ofKHpw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=iGfIQcGc x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Y+ofKHpw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,37 +51,36 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHnKz88jGto5+rktnQSUo0U+E8nBmZ6LmG/hfCPY3bdG3wkGBoTCt0UXCgfoq0iVxsURVnD+aQEZsJnO8AcYnLiToM7/2brAxiyx5RnmWw5otGBN234F
-    LPle7QPA2WGQhzyWLUoOpboO1pzognVY/ki1PDnu7JAdkvJ3jILeeKtJ2/OCzb7lsn8uElY87yLFhyPXjBn8R08s3BNXHbxJ9RDbsMbiJgy5LOU197Cp4Q4F
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMYAqDB0QqgV4jhqH2Dv+FgbH3SpZtLN3SAu+Ak8wG8TWlb2FlFMTJgt3gNbxAdve04hCljXT4By16G44eiYr703qu9IsW7nshT7l46g+q5JPab7EtHh
+    sUN+X5+71B3P2VxhO1HaHSTpHHANQ/dEBzfl93U+M4TgagdnOWGlf88mXNZxChwqdRBeXgSxG2bWr/yKrAOaxkRBrLEoHwDhES+RwjlDxwxEb4YbWbkYSDcR
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=yPCof4ZbAAAA:8 a=BLFmf6ASAAAA:8 a=FOH2dFAWAAAA:8
-    a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8 a=tDy0FKqA7Mug1Dnmm1sA:9
-    a=LTB1CHobwV3oVk2y:21 a=bp23uTJJbwDivF6A:21 a=wPNLvfGTeEIA:10
-    a=CO9zRrxQzJsrzgl5TAGA:22 a=i3VuKzQdj-NEYjvDI-p3:22 a=WzC6qhA0u3u7Ye7llzcV:22
+    a=Lf-vpJhqX20A:10 a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
+    a=RpywtofDEX2MDo3HS_AA:9 a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751815AbeDIDSH (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 23:18:07 -0400
-Received: from mail-bn3nam01on0095.outbound.protection.outlook.com ([104.47.33.95]:56127
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1751845AbeDIDRu (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 23:17:50 -0400
+Received: from mail-by2nam03on0112.outbound.protection.outlook.com ([104.47.42.112]:27929
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753924AbeDIAXd (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:23:33 -0400
+        id S1754875AbeDIAXe (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:23:34 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Liu Bo <bo.li.liu@oracle.com>, David Sterba <dsterba@suse.com>,
+CC: Sheng Yong <shengyong1@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 055/161] Btrfs: fix unexpected EEXIST from
- btrfs_get_extent
-Thread-Topic: [PATCH AUTOSEL for 4.14 055/161] Btrfs: fix unexpected EEXIST
- from btrfs_get_extent
-Thread-Index: AQHTz5iRCmx8QNbuakOCPYr7rEv2Lg==
-Date: Mon, 9 Apr 2018 00:20:31 +0000
-Message-ID: <20180409001936.162706-55-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 058/161] f2fs: avoid hungtask when GC
+ encrypted block if io_bits is set
+Thread-Topic: [PATCH AUTOSEL for 4.14 058/161] f2fs: avoid hungtask when GC
+ encrypted block if io_bits is set
+Thread-Index: AQHTz5iTUvE8ADvBCEyJXEsASvbGBQ==
+Date: Mon, 9 Apr 2018 00:20:33 +0000
+Message-ID: <20180409001936.162706-58-alexander.levin@microsoft.com>
 References: <20180409001936.162706-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001936.162706-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,182 +89,150 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1014;7:TNdSUOuABnJx1URCLXlapQ53wQnIqyqtLm5ufGi4m/SChwcqmwglbcGhcw/EBU5xX8ldqJKVSxq906ciKvyVp6K+dViucu7dc6Rhh5sfjFr8EjN0go6WLZreqNsgQlyvZVdTsebrAgrYhfkWxxY8iSlYLcbikZT+JJ9FO9ZMtnoPipcCpG67AF/HrQWkw3yhOZ2vhGb0a4BMm744k17DKeD0KHJSJeVHFVZXgkg+WwvxRFlDQYrjQ0j5HI2W5LMo;20:z7Bld/ePNa57irR4K/0Jrxm/k3MAz9qjF4FthjJ8qaDYHxVOKWJ1VLjR9HFIVPEoIk6R3WIZXAv9J24+7puG1ii+N6W+MlEzC9tuVRI+OWO6EvP4TnUEbF296EmirCumy/P1flpZ2H7w26Ne1wOZEXUb4JsZ6bCemyiXdLrQsaQ=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1080;7:Pvz3chK0/67DMa5l/cNEsRH2pttdl53crKufpz0R+Pv+1ggyVC2dS907FcVep3lWXmhGCuov+5N4ivF0eVSBSNnW40Cj6nf1isa4FELBxK4N9RR7tWUjhjPYsg//HodYrvSblS6o/AnJ31t6XijiFXPEbEhpglUB2psSXkctmeFK66PvSVWbxjMJXUWV+oXhtSQ6SSXYA5bN4oRswwCXCKG1iS3vtd8XgJgDPM+qUGBOeGscCyajuUWV95b0x2se;20:EIq+IAHJhaM8AkU8Y6mfETl5Y5yek6eUQm7v2QlWEYNoBVoE90u/QFS36iLa4I/V4cOFIZsP30yPuc8iVaEQIV05/okp62sRCHiJdfyZB/rFA5WC3p2gzF5K+D6ZoscH/ZOIdmcoOH8tU+akEKq8hGBuZ3gKm307RN9eyyDeMFs=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 72dc1cfa-5c28-4b51-61e3-08d59db01ef6
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1014;
-x-ms-traffictypediagnostic: DM5PR2101MB1014:
+X-MS-Office365-Filtering-Correlation-Id: 99d19d54-9c1c-4e3c-b8fa-08d59db01ff0
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1080;
+x-ms-traffictypediagnostic: DM5PR2101MB1080:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB101464547487714470519AC5FBBF0@DM5PR2101MB1014.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(67672495146484)(146099531331640);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1014;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1014;
+x-microsoft-antispam-prvs: <DM5PR2101MB10800D1591A2FA0C50A30772FBBF0@DM5PR2101MB1080.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231221)(944501327)(52105095)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1080;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1080;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(346002)(366004)(39860400002)(39380400002)(396003)(376002)(189003)(199004)(81166006)(81156014)(478600001)(6436002)(72206003)(8936002)(10290500003)(106356001)(99286004)(86362001)(2616005)(7736002)(2501003)(446003)(476003)(8676002)(11346002)(105586002)(305945005)(5250100002)(6512007)(53936002)(68736007)(107886003)(66066001)(86612001)(2906002)(14454004)(186003)(22452003)(25786009)(4326008)(2900100001)(486006)(36756003)(6486002)(3660700001)(59450400001)(54906003)(26005)(3280700002)(110136005)(1076002)(10090500001)(76176011)(6506007)(97736004)(316002)(3846002)(6116002)(102836004)(5660300001)(22906009)(217873001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1014;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: d4rKjVZ/6RRTK6BHPWeS9UnNDFcr02HaCfDDZdLtZQhGApTFU7n2znhkahvIIs9l4bK5TJaxCr5Gc+xE3CQkA4pJSURlzA1iDRhCZpBpR8Yd+ltvxfysb7K67h7UwBjbowS/9Y0J887D7x8qACNnQ3SQ7SbXjIJ8xUgKrCgyEjjLCwQCjWVya77lh75GOHUHUAgMNVlRm+ecU8zcTRgFBZ1iesI6KW29MWqEFa7GKg3GMNwVs4bW71KUCTcdKMeLiNffAize5dMv3/+ML308HlughNfU0I3Z7300Myu3tQZbfkg3wo+tjf8UH3RM6R93tcRNvpJwGBvHWPhGA64Pnsdzjjm2ksyATyYq1oTi16Y1bxQnIEkW7GldMs09Adh95osk9c9scu4iaxqB8pRw7ciEp3CsNNRmrHoyr5we6Mc=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(39380400002)(366004)(39860400002)(199004)(189003)(51234002)(2501003)(5250100002)(8936002)(10090500001)(5660300001)(3660700001)(446003)(107886003)(14454004)(36756003)(6436002)(476003)(3280700002)(2616005)(11346002)(4326008)(53936002)(6512007)(22452003)(305945005)(10290500003)(316002)(102836004)(2906002)(6116002)(66066001)(6506007)(3846002)(7736002)(486006)(54906003)(110136005)(186003)(72206003)(26005)(1076002)(105586002)(2900100001)(6486002)(97736004)(478600001)(81156014)(81166006)(86612001)(8676002)(106356001)(99286004)(86362001)(76176011)(59450400001)(68736007)(25786009)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1080;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: f1HChaQ3W6BcNOfYS0u6Ly0OireBA2fHPRFIGbR5edSE89d2T3sW8ydEHS9eA+SBMBA0kq+HTutj4q05rJMxuXaQx5OzHRHryO7vHFRr0+nz3/I76QPq/BtU+OMjj4GPgdK/lwwz8vFvaj7iVwOjW2jRevH212KuTp4x+F1zlmjDrJztO/IuGFk3SIkV7lDoVeDALfR39wqxeZCUr1PgalkKDE0AoE34J3gvCVBVwo/6xovOGGO1CMzU/Ru8Zu1CV01gv2lgDBr2n4cvJNSxr4s8EphdbMqI/BNTPMWY3lc7vEyBwfZOrdDFdJSYKa5cu0uC4fS+0e/PQoyKSlS9mH/MdIlKn+MPHZcr4osLbgYvkd0vtXeWjXHl5Qu2ZUVfbP+rml/yG7jeHx97D+TZN6I9BbcFEGMl8bUfXdR/WoY=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72dc1cfa-5c28-4b51-61e3-08d59db01ef6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:20:31.1755
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99d19d54-9c1c-4e3c-b8fa-08d59db01ff0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:20:33.3943
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1014
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1080
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Sheng Yong <shengyong1@huawei.com>
 
-[ Upstream commit 18e83ac75bfe67009c4ddcdd581bba8eb16f4030 ]
+[ Upstream commit a9d572c7550044d5b217b5287d99a2e6d34b97b0 ]
 
-This fixes a corner case that is caused by a race of dio write vs dio
-read/write.
+When io_bits is set, GCing encrypted block may hit the following hungtask.
+Since io_bits requires aligned block address, f2fs_submit_page_write may
+return -EAGAIN if new_blkaddr does not satisify io_bits alignment. As a
+result, the encrypted page will never be writtenback.
 
-Here is how the race could happen.
+This patch makes move_data_block aware the EAGAIN error and cancel the
+writeback.
 
-Suppose that no extent map has been loaded into memory yet.
-There is a file extent [0, 32K), two jobs are running concurrently
-against it, t1 is doing dio write to [8K, 32K) and t2 is doing dio
-read from [0, 4K) or [4K, 8K).
+[  246.751371] INFO: task kworker/u4:4:797 blocked for more than 90 seconds=
+.
+[  246.752423]       Not tainted 4.15.0-rc4+ #11
+[  246.754176] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables =
+this message.
+[  246.755336] kworker/u4:4    D25448   797      2 0x80000000
+[  246.755597] Workqueue: writeback wb_workfn (flush-7:0)
+[  246.755616] Call Trace:
+[  246.755695]  ? __schedule+0x322/0xa90
+[  246.755761]  ? blk_init_request_from_bio+0x120/0x120
+[  246.755773]  ? pci_mmcfg_check_reserved+0xb0/0xb0
+[  246.755801]  ? __radix_tree_create+0x19e/0x200
+[  246.755813]  ? delete_node+0x136/0x370
+[  246.755838]  schedule+0x43/0xc0
+[  246.755904]  io_schedule+0x17/0x40
+[  246.755939]  wait_on_page_bit_common+0x17b/0x240
+[  246.755950]  ? wake_page_function+0xa0/0xa0
+[  246.755961]  ? add_to_page_cache_lru+0x160/0x160
+[  246.755972]  ? page_cache_tree_insert+0x170/0x170
+[  246.755983]  ? __lru_cache_add+0x96/0xb0
+[  246.756086]  __filemap_fdatawait_range+0x14f/0x1c0
+[  246.756097]  ? wait_on_page_bit_common+0x240/0x240
+[  246.756120]  ? __wake_up_locked_key_bookmark+0x20/0x20
+[  246.756167]  ? wait_on_all_pages_writeback+0xc9/0x100
+[  246.756179]  ? __remove_ino_entry+0x120/0x120
+[  246.756192]  ? wait_woken+0x100/0x100
+[  246.756204]  filemap_fdatawait_range+0x9/0x20
+[  246.756216]  write_checkpoint+0x18a1/0x1f00
+[  246.756254]  ? blk_get_request+0x10/0x10
+[  246.756265]  ? cpumask_next_and+0x43/0x60
+[  246.756279]  ? f2fs_sync_inode_meta+0x160/0x160
+[  246.756289]  ? remove_element.isra.4+0xa0/0xa0
+[  246.756300]  ? __put_compound_page+0x40/0x40
+[  246.756310]  ? f2fs_sync_fs+0xec/0x1c0
+[  246.756320]  ? f2fs_sync_fs+0x120/0x1c0
+[  246.756329]  f2fs_sync_fs+0x120/0x1c0
+[  246.756357]  ? trace_event_raw_event_f2fs__page+0x260/0x260
+[  246.756393]  ? ata_build_rw_tf+0x173/0x410
+[  246.756397]  f2fs_balance_fs_bg+0x198/0x390
+[  246.756405]  ? drop_inmem_page+0x230/0x230
+[  246.756415]  ? ahci_qc_prep+0x1bb/0x2e0
+[  246.756418]  ? ahci_qc_issue+0x1df/0x290
+[  246.756422]  ? __accumulate_pelt_segments+0x42/0xd0
+[  246.756426]  ? f2fs_write_node_pages+0xd1/0x380
+[  246.756429]  f2fs_write_node_pages+0xd1/0x380
+[  246.756437]  ? sync_node_pages+0x8f0/0x8f0
+[  246.756440]  ? update_curr+0x53/0x220
+[  246.756444]  ? __accumulate_pelt_segments+0xa2/0xd0
+[  246.756448]  ? __update_load_avg_se.isra.39+0x349/0x360
+[  246.756452]  ? do_writepages+0x2a/0xa0
+[  246.756456]  do_writepages+0x2a/0xa0
+[  246.756460]  __writeback_single_inode+0x70/0x490
+[  246.756463]  ? check_preempt_wakeup+0x199/0x310
+[  246.756467]  writeback_sb_inodes+0x2a2/0x660
+[  246.756471]  ? is_empty_dir_inode+0x40/0x40
+[  246.756474]  ? __writeback_single_inode+0x490/0x490
+[  246.756477]  ? string+0xbf/0xf0
+[  246.756480]  ? down_read_trylock+0x35/0x60
+[  246.756484]  __writeback_inodes_wb+0x9f/0xf0
+[  246.756488]  wb_writeback+0x41d/0x4b0
+[  246.756492]  ? writeback_inodes_wb.constprop.55+0x150/0x150
+[  246.756498]  ? set_worker_desc+0xf7/0x130
+[  246.756502]  ? current_is_workqueue_rescuer+0x60/0x60
+[  246.756511]  ? _find_next_bit+0x2c/0xa0
+[  246.756514]  ? wb_workfn+0x400/0x5d0
+[  246.756518]  wb_workfn+0x400/0x5d0
+[  246.756521]  ? finish_task_switch+0xdf/0x2a0
+[  246.756525]  ? inode_wait_for_writeback+0x30/0x30
+[  246.756529]  process_one_work+0x3a7/0x6f0
+[  246.756533]  worker_thread+0x82/0x750
+[  246.756537]  kthread+0x16f/0x1c0
+[  246.756541]  ? trace_event_raw_event_workqueue_work+0x110/0x110
+[  246.756544]  ? kthread_create_worker_on_cpu+0xb0/0xb0
+[  246.756548]  ret_from_fork+0x1f/0x30
 
-t1 goes ahead of t2 and splits em [0, 32K) to em [0K, 8K) and [8K 32K).
-
-------------------------------------------------------
-             t1                                t2
-      btrfs_get_blocks_direct()         btrfs_get_blocks_direct()
-       -> btrfs_get_extent()              -> btrfs_get_extent()
-           -> lookup_extent_mapping()
-           -> add_extent_mapping()            -> lookup_extent_mapping()
-              # load [0, 32K)
-       -> btrfs_new_extent_direct()
-           -> btrfs_drop_extent_cache()
-              # split [0, 32K) and
-	      # drop [8K, 32K)
-           -> add_extent_mapping()
-              # add [8K, 32K)
-                                              -> add_extent_mapping()
-                                                 # handle -EEXIST when addi=
-ng
-                                                 # [0, 32K)
-------------------------------------------------------
-About how t2(dio read/write) runs into -EEXIST:
-
-a) add_extent_mapping() gets -EEXIST for adding em [0, 32k),
-
-b) search_extent_mapping() then returns [0, 8k) as the existing em,
-   even though start =3D=3D existing->start, em is [0, 32k) so that
-   extent_map_end(em) > extent_map_end(existing), i.e. 32k > 8k,
-
-c) then it goes thru merge_extent_mapping() which tries to add a [8k, 8k)
-   (with a length 0) and returns -EEXIST as [8k, 32k) is already in tree,
-
-d) so btrfs_get_extent() ends up returning -EEXIST to dio read/write,
-   which is confusing applications.
-
-Here I conclude all the possible situations,
-1) start < existing->start
-
-            +-----------+em+-----------+
-+--prev---+ |     +-------------+      |
-|         | |     |             |      |
-+---------+ +     +---+existing++      ++
-                +
-                |
-                +
-             start
-
-2) start =3D=3D existing->start
-
-      +------------em------------+
-      |     +-------------+      |
-      |     |             |      |
-      +     +----existing-+      +
-            |
-            |
-            +
-         start
-
-3) start > existing->start && start < (existing->start + existing->len)
-
-      +------------em------------+
-      |     +-------------+      |
-      |     |             |      |
-      +     +----existing-+      +
-               |
-               |
-               +
-             start
-
-4) start >=3D (existing->start + existing->len)
-
-+-----------+em+-----------+
-|     +-------------+      | +--next---+
-|     |             |      | |         |
-+     +---+existing++      + +---------+
-                      +
-                      |
-                      +
-                   start
-
-As we can see, it turns out that if start is within existing em (front
-inclusive), then the existing em should be returned as is, otherwise,
-we try our best to merge candidate em with sibling ems to form a
-larger em (in order to reduce the total number of em).
-
-Reported-by: David Vallender <david.vallender@landmark.co.uk>
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/btrfs/inode.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+ fs/f2fs/gc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 59a01a0844c9..bdff397fe9ea 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -7234,19 +7234,12 @@ insert:
- 		 * existing will always be non-NULL, since there must be
- 		 * extent causing the -EEXIST.
- 		 */
--		if (existing->start =3D=3D em->start &&
--		    extent_map_end(existing) >=3D extent_map_end(em) &&
--		    em->block_start =3D=3D existing->block_start) {
--			/*
--			 * The existing extent map already encompasses the
--			 * entire extent map we tried to add.
--			 */
-+		if (start >=3D existing->start &&
-+		    start < extent_map_end(existing)) {
- 			free_extent_map(em);
- 			em =3D existing;
- 			err =3D 0;
--
--		} else if (start >=3D extent_map_end(existing) ||
--		    start <=3D existing->start) {
-+		} else {
- 			/*
- 			 * The existing extent map is the one nearest to
- 			 * the [start, start + len) range which overlaps
-@@ -7258,10 +7251,6 @@ insert:
- 				free_extent_map(em);
- 				em =3D NULL;
- 			}
--		} else {
--			free_extent_map(em);
--			em =3D existing;
--			err =3D 0;
- 		}
- 	}
- 	write_unlock(&em_tree->lock);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index bfe6a8ccc3a0..7fb2729d8ee0 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -695,7 +695,12 @@ static void move_data_block(struct inode *inode, block=
+_t bidx,
+ 	fio.op =3D REQ_OP_WRITE;
+ 	fio.op_flags =3D REQ_SYNC;
+ 	fio.new_blkaddr =3D newaddr;
+-	f2fs_submit_page_write(&fio);
++	err =3D f2fs_submit_page_write(&fio);
++	if (err) {
++		if (PageWriteback(fio.encrypted_page))
++			end_page_writeback(fio.encrypted_page);
++		goto put_page_out;
++	}
+=20
+ 	f2fs_update_iostat(fio.sbi, FS_GC_DATA_IO, F2FS_BLKSIZE);
+=20
 --=20
 2.15.1
