@@ -1,168 +1,255 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-237307-1522720042-2-4263050093928818854
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1164579-1523280775-2-17892336673073403885
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522720042; b=iWoOOMGyZMluKbAmdYnlh2sKthd+2E3ic4d7auGSsLO11uAHC+
-    /PgcSW6YSVvIrG6bEGV7dO12QsgYaPn9WMTP6yTj2rhVVRrz5f8FFQChhePbx1WQ
-    vgzroNDyimQm4f6ACyLYL4trDKFz9Ws9wruuMmAgBACLi2lTDRvARMVzXkJFOytB
-    +r7jGzzTbiecx0MfcjdECVshC92J9hMIikP13v5aATo6lrQ5SCMz/pPT2H0WuJ0D
-    7OuNT0vNhM+LwKCjeEuMSJHoZonuBNwDg+ZSkIZ119WZgExfm1xrCFb1QLNvhM1y
-    aNIpFHqXvfxOqDXCVQpAv1fwUHotMg3cH/bg==
+    1523280775; b=wf5YqpsrEAAvkBi2eSfZW8o60WFUjltXvj0D9PSC8uvdDFf1ML
+    XyBMEY8ka2y1bnFOnWUGl4hT7fL+7EgL/zciNIi/Fn6HJjeC6SApz34qNclru8ab
+    dAPYENQltZQEuy3Pm2ltWavI8OKgUhHCOX5YXU8/9MeY+DxXSY1zLW8lUBEULsOp
+    Bb5kuOJFAGYUb+sEodyTjeW7U3tXt/v4Ld0uxACo2bbABjzlijZLtkBtaN6TaYcB
+    xuLecM5xL2wqium1yMTHg848lE7fAMEBzTGAimWb+fA27rj1sciw6rbYucO7MWsk
+    LHcpTYjOyZTynL+h8K25LKhsIDJ0WVRa8gqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:mime-version:subject:from
-    :in-reply-to:date:cc:content-transfer-encoding:message-id
-    :references:to:sender:list-id; s=fm2; t=1522720042; bh=lfGVLQaWX
-    cn7fED9RMk/NHD9ymumvniNENUrq4Yuv3k=; b=vLQhcgcxKcFZa/zwt+2Kpiac3
-    y1m1hWnCeFA6HdKDpINVmRcQ9OmN4AqKKb99tuh4cJBD2QWV8PKysMhc7yKQhbaW
-    cw38wXoyDeG2auFHGWgVA2Mn3rcRFGmTZJNd2XJpwAZ3ZMzAA64ij+n+yoCNbR2M
-    r17AZbihZLKHyzCXcbqlOxEgr3eqU2O1T5W5cebislcLgnDgz+NYHpwYBhX8AD6a
-    AcHe6yHjiB2hKDRsO1xbH4r1dp+PonHqnr1gxhWPJ5iBZWHuUEdtZlEjcBrsB+D5
-    dFgyIcFfnkDMIRExvmtnklQJquIFZLLJ4SYO2M+XuhkCAoNligrQ/FvotGAXg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b=ROe2A6fl x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=amacapital.net;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1523280775; bh=PXm/kZZplnFN825kx3wNpiW7yANgZCAbh7sYfEqL7h
+    E=; b=wfWgEgOfK0VP+n/PpvJaFj+dAgBxWBFuD2gpqmG5UYcV2Jtqs3nCyMWjAG
+    IHY/tYg4N6JdBCJXu2RDj4F9c7CMAfN59wzXiFKny9xalQ+aZrarsw+23IL/l5v5
+    kRB4RAm4uqHKK0OjyUc3zObaRyI086KRAOCcbpXzcROf2/t66q3NqV+1htVe5K3N
+    NEtO8zfJGFFR+2Xh+hidfoEv39A7RdMXkPn2uApklaGCDA4RtLrlrMTLeGgS+bRg
+    qc49VBuFTJCpb1WNRcv+aSVJo7DIW0iBYOocnz3KbwGk6wRyH7e4xTQs3IlyrBR0
+    fOu2H8IEyAwRenbIA7mMNGuQJd6g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DrSF4EbM;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amacapital.net header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b=ROe2A6fl x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=amacapital.net;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DrSF4EbM;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amacapital.net header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIX2Xke0DN1fX9+KYX6b+RYTP3DRDflqRwHktQ0M1/hohEjNQfXV5H5GAAWsMPnmS2YU8C+w0lHW/gtx/jnSusLNfXaIs7AQ/QkZdrBrwaNogBV3rpf6
-    mFdILkrpYf9hu88tW51qwQHTTR/P0owCxVEE6+m2KFB1IYf2VF0YWGaiWTsh/zQQDtL3o2dONFu3xRRIxIQlpdvJB9aayEfRRLLUktOiITjbTlNJUsAl0EvK
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
-    a=4_-BN3WEXhEA:10 a=Kd1tUaAdevIA:10 a=cm27Pg_UAAAA:8 a=VwQbUJbxAAAA:8
-    a=F3Iv0LtgPt91XtbWnV8A:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=xmb-EsYY8bH0VWELuYED:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfAlyV9TmUlrDnRrNMjuEk+DoGjffxZNBxcCVEp3XrsBhmUnt8gxhnLd2Boi7VDAgrWMougUMvEF7pjj57/esgZ/BjI4JI2TWCnpbZBoLxaJ6NnwXXc8q
+    /CbbqUfrVlXrngEezn1q42btYMkzRtg1Pf+fpaWlM+34mLH4Fg1YGh975Ql1uI83cn9kesjSz+aP6OUiFq5ebUIi+kKVOVGXzBEC/vE9g10IDrInT1UQWc9J
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=c-n4J4-pAAAA:8 a=VwQbUJbxAAAA:8 a=yA3rI6-E96diDjWMYaYA:9
+    a=UHAfCyYiKH0xDiRG:21 a=B80H-sZvkSca27oI:21 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=L0NDqeB7ZLmQzAogN4cw:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754777AbeDCBrK (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 2 Apr 2018 21:47:10 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39172 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754778AbeDCBrH (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Mon, 2 Apr 2018 21:47:07 -0400
-X-Google-Smtp-Source: AIpwx4/Dl2EKF2/ZydFSqseXUj5hBK/Z3lRcCL1az5hzrr2Ei8mnLtdD7gpSD8sdkptJy3ihKpiCmQ==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-From: Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15D100)
-In-Reply-To: <CAGXu5j+UWQWDacMvvRCke3xUOb7uTkxn=WaHzG4kJTKWh-6tAA@mail.gmail.com>
-Date: Mon, 2 Apr 2018 18:47:05 -0700
-Cc: Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        David Howells <dhowells@redhat.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Justin Forbes <jforbes@redhat.com>,
-        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <70C7A8C3-3DCC-4448-9FBD-534ADDE2D6E6@amacapital.net>
-References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org> <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <CAGXu5j+UWQWDacMvvRCke3xUOb7uTkxn=WaHzG4kJTKWh-6tAA@mail.gmail.com>
-To: Kees Cook <keescook@chromium.org>
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1752246AbeDINci (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 9 Apr 2018 09:32:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752688AbeDINcd (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Mon, 9 Apr 2018 09:32:33 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E94F217D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AIpwx4/zqRACXAbF2wTUyu7I+rrz4Ng7ShjclvIEgLep+iCVJAKnSNLj6w9MEHysuPhy7zen+TtrSzSJ20YeWTBfbdY=
+MIME-Version: 1.0
+In-Reply-To: <CAK7LNAQixwNS1djgn3SUp=GUsZ58c+5z-B6ou-4NQykrO6AxMw@mail.gmail.com>
+References: <1521113998-25052-1-git-send-email-yamada.masahiro@socionext.com>
+ <1521113998-25052-2-git-send-email-yamada.masahiro@socionext.com>
+ <20180318125209.juoa3gkgdv2djciw@rob-hp-laptop> <CAK7LNAQT8wfAk55c40zrZ15wPh3fnsh=B1ciNfVx4uA-oGi34g@mail.gmail.com>
+ <CAK7LNAQixwNS1djgn3SUp=GUsZ58c+5z-B6ou-4NQykrO6AxMw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 9 Apr 2018 08:32:11 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJkcNZf1gLXVu11u4S4hiCxPcs7p_eS=ArxFG3AeQ21+Q@mail.gmail.com>
+Message-ID: <CAL_JsqJkcNZf1gLXVu11u4S4hiCxPcs7p_eS=ArxFG3AeQ21+Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] usb: dwc3: add clock and resets
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        devicetree@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Wed, Mar 28, 2018 at 11:32 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-03-19 7:37 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>> Hi Rob,
+>>
+>> 2018-03-18 21:52 GMT+09:00 Rob Herring <robh@kernel.org>:
+>>> On Thu, Mar 15, 2018 at 08:39:58PM +0900, Masahiro Yamada wrote:
+>>>> dwc3-of-simple.c only handles arbitrary number of clocks and resets.
+>>>> They are both generic enough to be put into the dwc3 core.  For simple
+>>>> cases, a nested node structure like follows:
+>>>>
+>>>>   dwc3-glue {
+>>>>           compatible = "foo,dwc3";
+>>>>           clocks = ...;
+>>>>           resets = ...;
+>>>>           ...
+>>>>
+>>>>           dwc3 {
+>>>>                   compatible = "snps,dwc3";
+>>>>                   ...
+>>>>           };
+>>>
+>>> I'm not a fan of how this was done.
+>>>
+>>>
+>>>>   }
+>>>>
+>>>> would be turned into a single node:
+>>>>
+>>>>   dwc3 {
+>>>>           compatible = "foo,dwc3", "snps,dwc3";
+>>>>           clocks = ...;
+>>>>           resets = ...;
+>>>>           ...
+>>>>   }
+>>>
+>>> And yes, this is what I'd prefer.
+>>
+>>
+>>
+>> Not only dwc3-of-simple.c, but all dwc3 nodes are
+>> written like this.
+>>
+>>
+>> omap_dwc3_1: omap_dwc3_1@48880000 {
+>>         compatible = "ti,dwc3";
+>>         reg = <0x48880000 0x10000>;
+>>         #address-cells = <1>;
+>>         #size-cells = <1>;
+>>         ranges;
+>>         ...
+>>
+>>         usb1: usb@48890000 {
+>>                 compatible = "snps,dwc3";
+>>                 reg = <0x48890000 0x17000>;
+>>                 ...
+>>         };
+>> };
+>>
+>>
+>> The glue layer initializes SoC-specific things,
+>> then populates the child "snps,dwc3".
+>>
+>>
+>> I think the following structure should work
+>> by handling EPROBE_DEFER properly.
+>>
+>> omap_dwc3_1: omap_dwc3_1@48880000 {
+>>         compatible = "ti,dwc3"; (should be "ti,dwc3-glue" or something)
+>>         reg = <0x48880000 0x10000>;
+>>         ...
+>> };
+>>
+>> usb1: usb@48890000 {
+>>         compatible = "snps,dwc3";
+>>         reg = <0x48890000 0x17000>;
+>>         ...
+>> };
+>>
+>>
+>>
+>>>>
+>>>> I inserted reset_control_deassert() and clk_enable() before the first
+>>>> register access, i.e. dwc3_cache_hwparams().
+>>>>
+>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>> ---
+>>>>
+>>>>  Documentation/devicetree/bindings/usb/dwc3.txt |   2 +
+>>>>  drivers/usb/dwc3/core.c                        | 127 ++++++++++++++++++++++++-
+>>>>  drivers/usb/dwc3/core.h                        |   5 +
+>>>>  3 files changed, 132 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
+>>>> index 44e8bab..67e9cfb 100644
+>>>> --- a/Documentation/devicetree/bindings/usb/dwc3.txt
+>>>> +++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+>>>> @@ -9,12 +9,14 @@ Required properties:
+>>>>   - interrupts: Interrupts used by the dwc3 controller.
+>>>>
+>>>>  Optional properties:
+>>>> + - clocks: list of phandle and clock specifier pairs
+>>>
+>>> However, this should be specific as to how many clocks and their
+>>> function. This should be readily available to someone with access to
+>>> Synopsys datasheet. The number of clocks should generally be the same
+>>> across SoCs, it is just some SoCs either tie clocks together or don't
+>>> provide s/w control of some of the clocks.
+>>
+>>
+>> Make sense.
+>> You also implies this property is mandatory.
+>> The number of clocks should be available in the datasheet
+>> and no hardware can work with zero clock.
+>>
+>> However, making it mandatory breaks the binding
+>> since the existing DT files do not specify clocks at all
+>> in the "snps,dwc3" node.
 
-> On Apr 2, 2018, at 5:59 PM, Kees Cook <keescook@chromium.org> wrote:
->=20
->> On Mon, Apr 2, 2018 at 5:37 PM, Andy Lutomirski <luto@kernel.org> wrote:
->>> On 03/30/2018 05:46 PM, James Morris wrote:
->>>=20
->>>> On Sat, 31 Mar 2018, David Howells wrote:
->>>>=20
->>>> Date: Thu, 26 Oct 2017 17:37:38 +0100
->>>>=20
->>>> Hi James,
->>>>=20
->>>> Can you pull this patchset into security/next please?  It has been in
->>>> linux-next since the beginning of March.
->>>>=20
->>>> It adds kernel lockdown support for EFI secure boot.
->>>=20
->>>=20
->>> Applied to
->>> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git=
+Because of this it has to be optional. We could list what compatibles
+it is optional for and that it is mandatory for new users.
 
->>> next-lockdown and next-testing
->>>=20
->>> Are there any known coverage gaps now?
->>>=20
->>>=20
->>>=20
->>=20
->> This is an attempt at a review.  I'm replying here because I can't find t=
-he
->> actual relevant patch emails.
->>=20
->> Cover letter:
->>=20
->>> Here's a set of patches to institute a "locked-down mode" in the
->>> kernel and to trigger that mode if the kernel is booted in secure-boot >=
+>>
+>> Anyway, our current situation:
+>>
+>> - We have the dwc3-core under the glue layer node
+>>   despite they are independent in the CPU address view
+>> - We add all sorts of clocks and resets in the glue layer node,
+>>   and nothing in the dwc3-core node.
+>>
+>> If these are design mistake, what should we do?
+>>
+>> Continue development based on it?
+>> If we fix it, how to change the course?
+>>
+>
+> Any insight about this?
 
->>> mode or through the command line.
->>=20
->> I think this is seriously problematic in that it's not well defined.  It
->> sounds like "locked-down mode" means "make me feel good about something".=
+We just need to reject new bindings that do things the old way. The
+driver will have to support both cases for some time period.
 
->=20
-> Naming of this feature has been multi-year bikeshedding, so if we
-> could just leave the name, that'd be nice.
 
-Fair enough. How about enum kernel_lockdown_level with three modes?
+> I think this is rather a general question.
+>
+> If somebody upstreams a driver without clocks,
+> then later it turns out clocks are necessary,
+> adding required clocks would break existing platforms
+> since clk_get() fails.
 
->=20
->=20
+We should try to prevent that, but of course that is not always
+possible. Unless that platform is deemed unstable and we break
+compatibility, we'd have to handle both cases in the driver.
 
->> "Restrict /dev/{mem,kmem,port} when the kernel is locked down": this shou=
-ld
->> probably split into one restriction for read and one for write.
->=20
-> I think splitting read and write is only useful if there is a use-case
-> for only blocking one of them. I struggle to imagine allowing write
-> and blocking read, so really it's the case of wanting to allow read
-> and disallow write. Is there actually a use-case for this? In all the
-> "locked down" cases I've seen, both are desired.
->=20
-
-Let=E2=80=99s suppose for the sake of argument that UEFI really has a good r=
-eason to block writes. Blocking reads (kprobes, perf, etc) sounds extremely a=
-nnoying, especially if running a stock distro, and I=E2=80=99d much rather n=
-ot do it unless there=E2=80=99s a specific use case that needs it.=20=
+Rob
