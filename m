@@ -1,134 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751721AbeDIHZl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:25:41 -0400
-Received: from mga09.intel.com ([134.134.136.24]:10170 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750759AbeDIHZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:25:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,426,1517904000";
-   d="scan'208";a="45318238"
-Subject: [PATCH v5 1/3] perf/core: store context switch out type into Perf
- trace
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <ff228fc5-5742-a5fe-8cad-79704742672c@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <9ff84e83-a0ca-dd82-a6d0-cb951689be74@linux.intel.com>
-Date: Mon, 9 Apr 2018 10:25:32 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752100AbeDIHZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:25:56 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:46065 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751794AbeDIHZy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 03:25:54 -0400
+X-Originating-IP: 158.255.198.50
+Date: Mon, 9 Apr 2018 09:25:47 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, ysato@users.sourceforge.jp,
+        dalias@libc.org, laurent.pinchart@ideasonboard.com,
+        geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-sh@vger.kernel.org
+Subject: Re: [RFC v2 2/2] base: dma-mapping: Postpone page_to_pfn() on mmap()
+Message-ID: <20180409072547.GU20945@w540>
+References: <1510679286-6988-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1510679286-6988-3-git-send-email-jacopo+renesas@jmondi.org>
+ <ea4f2d82-6a27-a7c1-091f-6230cfd988a3@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <ff228fc5-5742-a5fe-8cad-79704742672c@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="8a48p4KKsB+A/3VY"
+Content-Disposition: inline
+In-Reply-To: <ea4f2d82-6a27-a7c1-091f-6230cfd988a3@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Store preempting context switch out event into Perf trace as a part of 
-PERF_RECORD_SWITCH[_CPU_WIDE] record.
+--8a48p4KKsB+A/3VY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Percentage of preempting and non-preempting context switches help 
-understanding the nature of workloads (CPU or IO bound) that are running 
-on a machine;
+Hi Robin, Laurent,
+    a long time passed, sorry about this.
 
-The event is treated as preemption one when task->state value of the 
-thread being switched out is TASK_RUNNING. Event type encoding is 
-implemented using PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit;
-	
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- include/uapi/linux/perf_event.h       | 18 +++++++++++++++---
- kernel/events/core.c                  |  4 ++++
- tools/include/uapi/linux/perf_event.h | 18 +++++++++++++++---
- 3 files changed, 34 insertions(+), 6 deletions(-)
+On Wed, Nov 15, 2017 at 01:38:23PM +0000, Robin Murphy wrote:
+> On 14/11/17 17:08, Jacopo Mondi wrote:
+> >On SH4 architecture, with SPARSEMEM memory model, translating page to
+> >pfn hangs the CPU. Post-pone translation to pfn after
+> >dma_mmap_from_dev_coherent() function call as it succeeds and make page
+> >translation not necessary.
+> >
+> >This patch was suggested by Laurent Pinchart and he's working to submit
+> >a proper fix mainline. Not sending for inclusion at the moment.
+>
+> Y'know, I think this patch does have some merit by itself - until we know
+> that cpu_addr *doesn't* represent some device-private memory which is not
+> guaranteed to be backed by a struct page, calling virt_to_page() on it is
+> arguably semantically incorrect, even if it might happen to be benign in
+> most cases.
 
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 912b85b52344..b8e288a1f740 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -650,11 +650,23 @@ struct perf_event_mmap_page {
- #define PERF_RECORD_MISC_COMM_EXEC		(1 << 13)
- #define PERF_RECORD_MISC_SWITCH_OUT		(1 << 13)
- /*
-- * Indicates that the content of PERF_SAMPLE_IP points to
-- * the actual instruction that triggered the event. See also
-- * perf_event_attr::precise_ip.
-+ * These PERF_RECORD_MISC_* flags below are safely reused
-+ * for the following events:
-+ *
-+ *   PERF_RECORD_MISC_EXACT_IP           - PERF_RECORD_SAMPLE of precise events
-+ *   PERF_RECORD_MISC_SWITCH_OUT_PREEMPT - PERF_RECORD_SWITCH* events
-+ *
-+ *
-+ * PERF_RECORD_MISC_EXACT_IP:
-+ *   Indicates that the content of PERF_SAMPLE_IP points to
-+ *   the actual instruction that triggered the event. See also
-+ *   perf_event_attr::precise_ip.
-+ *
-+ * PERF_RECORD_MISC_SWITCH_OUT_PREEMPT:
-+ *   Indicates that thread was preempted in TASK_RUNNING state.
-  */
- #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
-+#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
- /*
-  * Reserve the last bit to indicate some extended misc field
-  */
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index fc1c330c6bd6..872a5aaa77eb 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7584,6 +7584,10 @@ static void perf_event_switch(struct task_struct *task,
- 		},
- 	};
- 
-+	if (!sched_in && task->state == TASK_RUNNING)
-+		switch_event.event_id.header.misc |=
-+				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
-+
- 	perf_iterate_sb(perf_event_switch_output,
- 		       &switch_event,
- 		       NULL);
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 912b85b52344..b8e288a1f740 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -650,11 +650,23 @@ struct perf_event_mmap_page {
- #define PERF_RECORD_MISC_COMM_EXEC		(1 << 13)
- #define PERF_RECORD_MISC_SWITCH_OUT		(1 << 13)
- /*
-- * Indicates that the content of PERF_SAMPLE_IP points to
-- * the actual instruction that triggered the event. See also
-- * perf_event_attr::precise_ip.
-+ * These PERF_RECORD_MISC_* flags below are safely reused
-+ * for the following events:
-+ *
-+ *   PERF_RECORD_MISC_EXACT_IP           - PERF_RECORD_SAMPLE of precise events
-+ *   PERF_RECORD_MISC_SWITCH_OUT_PREEMPT - PERF_RECORD_SWITCH* events
-+ *
-+ *
-+ * PERF_RECORD_MISC_EXACT_IP:
-+ *   Indicates that the content of PERF_SAMPLE_IP points to
-+ *   the actual instruction that triggered the event. See also
-+ *   perf_event_attr::precise_ip.
-+ *
-+ * PERF_RECORD_MISC_SWITCH_OUT_PREEMPT:
-+ *   Indicates that thread was preempted in TASK_RUNNING state.
-  */
- #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
-+#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
- /*
-  * Reserve the last bit to indicate some extended misc field
-  */
+I still need to carry this patch in my trees to have a working dma memory mapping
+on SH4 platforms. My understanding from your comment is that there may
+be a way forward for this patch, do you still think the same? Have you
+got any suggestion on how to improve this eventually for inclusion?
+
+Thanks
+   j
+
+>
+> Robin.
+>
+> >Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >---
+> >  drivers/base/dma-mapping.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
+> >index e584edd..73d64d3 100644
+> >--- a/drivers/base/dma-mapping.c
+> >+++ b/drivers/base/dma-mapping.c
+> >@@ -227,8 +227,8 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+> >  #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
+> >  	unsigned long user_count = vma_pages(vma);
+> >  	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> >-	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
+> >  	unsigned long off = vma->vm_pgoff;
+> >+	unsigned long pfn;
+> >
+> >  	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+> >
+> >@@ -236,6 +236,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+> >  		return ret;
+> >
+> >  	if (off < count && user_count <= (count - off)) {
+> >+		pfn = page_to_pfn(virt_to_page(cpu_addr));
+> >  		ret = remap_pfn_range(vma, vma->vm_start,
+> >  				      pfn + off,
+> >  				      user_count << PAGE_SHIFT,
+> >--
+> >2.7.4
+> >
+> >_______________________________________________
+> >iommu mailing list
+> >iommu@lists.linux-foundation.org
+> >https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> >
+
+--8a48p4KKsB+A/3VY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJayxV7AAoJEHI0Bo8WoVY8poQP/RLuihAmfxnsaF8Y5vpyWWQT
+GS7+W9OGNVGOn8IeMsp0Lq+GSpzqHVd8o18/06m1Cp+4KIzhgbGrOPpSHBZ4qMON
+oi98PJHrMWxIqzgSt/ejjXQ70USkEAOfv4tMZ8R8QnzFcOZ4Ka/ppoH2JuSzb0E5
+XCKfgkqFu7VyT5cQCERb0+orAVmj5w4vpglIr6igE0UTh0XjubXqtIxFitH3qmdw
+cnboVo3SH7eTLTDzSWdOPUi0aPRditdbHOpencmWpwtKQRAwFx7xwtefWkrML+dT
+n8Ygl0VOk+B5zYlb1JMCmX1/btaxOl9P7wDI0IkUwuEY3S7ZWmpzoWnlw/Fzbnlb
+wWoEmTLuM514Qd9UTB98hDqpsZhe5D/Zo7kExHAU+peucxUyfZ6g2q1mwrDYwUY+
+BP78VWaQc4lHQZ9xBGkHgaXzmVHjmEjXFWe+L/3z1iGmngYdR4/b5Dhfw1GXT6mt
+PHcliy3AbgHT/wr55WBCEB2+xdl7tChdv/Hl2x89kDqkRXFnS+uWsIJ4qd4U0DIy
+oDb/6g4TAbGV7j/k3gEQT4MkclRYrv/rlDVyYZrGIWn6oX8iDieVLoJSa2mNa59K
+sAWLR3Ca+vLaGI+WOn+8mvg0ZxW4Wywi5xwiru98RVPHI1CxGQGL1Hm3ayyK/K+F
+H2NKjX9Nm20Zg0HDf/oh
+=MB4Z
+-----END PGP SIGNATURE-----
+
+--8a48p4KKsB+A/3VY--
