@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3968184-1523243339-2-11311118621432374745
+X-Cyrus-Session-Id: sloti22d1t05-3968184-1523243298-2-2264898504619186100
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523243338; b=SdaqRqhF4w/aNca0KG9KW5phlH2OfmSvjkXapykb6ernh80fLz
-    bknxw0dwBoU8cYfirMM2V46Zgyd/wE10c3BTekwr/iXgLn8zhN3rjE7lL4QhTOEu
-    hNXILIa+Thg+b65kBD88kQ+k7TXTJwyPvtCXU4bmJUwGRzJsTrALUG67X/BkK5yg
-    G5PiC8rJlvKQPyQdoI39x9OqA0BWZAwuED1A6aUqLlrCTsURh02B9Hyn/2Iurn6Q
-    l38JVuDnjCqHLLHSNtBo4wlxbmGjVXoM/EkjoMnys7dALniRpCdkA0Rr6E/FtwuJ
-    3njoLzbJ2Sl7HgMbM6wznMNIloA5dYKtbfSA==
+    1523243298; b=n+QotvAYAceyOMDpsaQUzKkA4HJedanUP6N8C5I8PhAVrNC/QP
+    75GSmH0JCGozCutGi/y54NFv+w6u6Y+yXiWfObTTgR+C3TgoQ581Sf3v6ReYF2KG
+    gOlTvrCUMAXq1eaZ6lMuabWuS4//vLmau+yFyCIPnWjW0QViwZ1RG2Ho4POTebc/
+    k1izvaE83QoI804rVUpZmRSmzxrzqii8rjo4DP03HPj/8H2g5S3MHzfuTNFlZ3/5
+    APnGwZleeLXVpL/8XtooWTBH9H0ecrrcmYjqRspMTpYbBZfHjp7zE2uk7E67gnzu
+    MqmnV7kt5ZV+bNRm4BMjDDLVwZFDP8eGKHLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523243338; bh=ynQjRCtn02
-    SgZ6Y4sKpMZbj9uyTwC2zSxCFbk0h37vk=; b=wTx7CGF2cS1kr/WnqU7s1uMVlI
-    w06IHBFX0FpMoz+Hedj1OXCEpUZRGyK45A1nybjNh8RQf0oZqVbsEy3xLFEvjpdd
-    nivGxttjlQcrchu6imXz03PxViOz8Kg4kP6nUVc9IuH+uoljeU3H6s09X4ZDxGPB
-    GaSliyDOtryzf2Fk05ST27/Mctke3hL1sn55W4VNIuF4WnP3GjempYkVIXkvB+4C
-    aITIKJU+a6lrMpifeMkY/+5RXek1VFlic1VEe+NfjsPE8cPOTkAGnRnw/L8r78Ov
-    IDiaFYR0/mClOvFGgDZzkrSg87BMhsv2IXoZestjr7xQrwLd6sb2OS/oVMOQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PxocHlvV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523243298; bh=Mu6AAgV+06
+    4yHX06Aa3/YRUBpVYDTxVLagaZqulEd+E=; b=Ya9XtrF0rLsEiLH9QaHBXFHEoo
+    T+biKYXAbduj8Nf2WhNbRwofeh14hJX6Z1BlT12NnQzZmdxC5wQoaq5TGhQve4HI
+    fIz8NCOSSj8KKZ4J8lLyfdjvgEcoPhaunPe0jrjYND3sxV3pZrlrfOL/d2ihmbXl
+    IXUMxzAJcRtTBaL67hr1vbiuq1mXTtf+B1bUxLlzxuIZx9nGN6lYyhAqjaOtszub
+    OHb44EsJTZ/WlBzyqE3NMNvc0oDnqQJk8IAk5gztVPznpNvnPl/gH5WQJn7ddjGs
+    dlpBXnAvWJbx83O0yRKxXFldapMK3vZ5AuC+Qox69BihmGy/43eUiZxZiqyA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=iwlJMBWL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PxocHlvV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=iwlJMBWL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,37 +51,37 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLmgQ5+vmiuo38KfDwiyBxvIlzx+ZFieIhOC5EtMxsnE3mwk4h1pFzoqZwoqJGQIX8nowmF7bZgQxgzXhp5Yw5hrWRAB5u07DefDCLqjxMY0FDjPYvYF
-    ODGA8fiVIyctrfxN5xYSlki74GUzZkTUoy42qBO5aWQnssRhEGmNGQCwOgWMF50P1olUiy9pLKOoqcqqSgdaJHiJzddtI2v/78oiy+ngHiMjTKs3TnyFTO3v
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDITTbi6/iHatlJt1KLYGbA2PgOQel7J7++vQ25AvEC9kqIgySv2SKsp1QUm61VbGm2sx9CepZQUX1E3Fheb8Kt+Is6c4F9rui86FK5EkS7f/2UsCnlz
+    nbFVhnM91eqfSZhbotwIWDRb6GL1fCUALxDwWHjsiX679Wt6Qv2zXKb8P4o0mOtfBH9UQrxx5abU30VEpLXShClW3wyvSXtLjD/ZBeUbqcj0SY70kKVhfzMa
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=9isDrUItAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=CLeWWt8dGckd-uDcp54A:9 a=RfgONM9Q38_H_8yf:21 a=CC5GkahYXGZ71kRb:21
-    a=wPNLvfGTeEIA:10 a=01Cuw3xjDqt1ySEFOcFQ:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Lf-vpJhqX20A:10 a=_Wotqz80AAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=3QStbVbEtIqWIzV9RIIA:9 a=wPNLvfGTeEIA:10 a=buJP51TR1BpY-zbLSsyS:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754315AbeDIDIy (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 23:08:54 -0400
+        id S1754118AbeDIDHz (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 23:07:55 -0400
 Received: from mail-by2nam03on0117.outbound.protection.outlook.com ([104.47.42.117]:63840
         "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932068AbeDIAYe (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:24:34 -0400
+        id S932084AbeDIAYh (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:24:37 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Andy Spencer <aspencer@spacex.com>,
+CC: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 089/161] gianfar: prevent integer wrapping in
- the rx handler
-Thread-Topic: [PATCH AUTOSEL for 4.14 089/161] gianfar: prevent integer
- wrapping in the rx handler
-Thread-Index: AQHTz5iikHYdLvPwK06Al4mvZhcwkA==
-Date: Mon, 9 Apr 2018 00:20:59 +0000
-Message-ID: <20180409001936.162706-89-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 092/161] tcp_nv: fix potential integer
+ overflow in tcpnv_acked
+Thread-Topic: [PATCH AUTOSEL for 4.14 092/161] tcp_nv: fix potential integer
+ overflow in tcpnv_acked
+Thread-Index: AQHTz5ikrQ/M50ayzUaqkui/pvzBnA==
+Date: Mon, 9 Apr 2018 00:21:03 +0000
+Message-ID: <20180409001936.162706-92-alexander.levin@microsoft.com>
 References: <20180409001936.162706-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001936.162706-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,27 +90,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0984;7:qL5kcJFGP5HPBAxZ2JTArLRpy+qloA6/wDC+XxyvwAip89Iun6lTUjfd5LjxNjBarftPTcypxTDFt3eQrXKtszq+r/SzCC5XAgP2Mmkld9yoJBs3Km2PnaMh0s3TTStlj2yMD4Da8FmA1kl4qRBmBsB+YMdYgwuIMjPMojZ1JD6gNmNPOkiNYvh9I/nmZ702heIb/sWKkCTJrR95CmksPQYzQ2HSqSV57trJhQBDzTy9lwtLL4itzlU5RjtKkHAY;20:zMIIK+QCTY6Urz9FdhHjL/2+oK3SXxPTtXV0vmWi5xqXGk3YM/EelvjUSMuMu4tCjnAjVSmQcj1P4wb0TpqGF1ywRp5p3/uql6gTT+70dbOcLtMt8Cj/tcE4TYe3i1VNyia+CC7oXdX5ZkylYeK4u7mAVIdTefpxSV4clqISE9I=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0984;7:aeVOLyv8qz2GnznqcjlLEV8GNCkVwoKYnBXDKLXIqFDlMEhSA+gSbeGm7fgx2Yeo3UoWRm5Ffz87F51A8pM8uR0jKMmWW9GNY0MnCCEltXJUXLL9OL8z1TO4XEebrHbHI/JSfhd0J9EhoQzOAt5cG9W79cWLIDopXDqfvoCJ9CPTFYifsA+d+BYMEV7HJwnyogagmFIxFElaWffIGXBp+4eIffdqhzN05H0jF1reXLTRE77M6GK2dgjhKPCcylIY;20:P4t45n7y7gwBeRBF8gtK3s0iN/RwzWzYok2cMPATpNaA9XBrpSYOxPsxLn7brmjwONiDGQRooOR2ZbL6v/b6UfEigtZxAsKGDuxDNz37VbODXP1/6WNzUTe/iOb0IFSjMqgb0wvF+gowilYZq2FTKIpaYGjXh/1Ajqllv70dBQw=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 7da63497-9eee-4b58-208b-08d59db0430d
+X-MS-Office365-Filtering-Correlation-Id: 522cadaa-3468-4a85-0b62-08d59db044de
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0984;
 x-ms-traffictypediagnostic: DM5PR2101MB0984:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB09846D4F49F22E01B55872FCFBBF0@DM5PR2101MB0984.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB0984E96DBFE0D0A3EBAE4F5FFBBF0@DM5PR2101MB0984.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0984;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0984;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(376002)(366004)(39860400002)(396003)(189003)(199004)(5250100002)(2501003)(110136005)(54906003)(6116002)(6436002)(11346002)(1076002)(486006)(25786009)(105586002)(2900100001)(102836004)(86612001)(3846002)(68736007)(107886003)(316002)(10290500003)(5660300001)(86362001)(2616005)(305945005)(4326008)(446003)(6486002)(22452003)(7736002)(575784001)(476003)(8676002)(81156014)(81166006)(8936002)(6512007)(10090500001)(186003)(3280700002)(106356001)(76176011)(2906002)(99286004)(26005)(97736004)(14454004)(6666003)(478600001)(53936002)(6506007)(36756003)(72206003)(66066001)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0984;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: qkTuQnT9oFqMmW8+nwNvMeyUtkmWM8Nwcmw7nVn3N4WMIiaja/XE2gnHCkfisVB2nq8b9XjzsDa18RpH2vqpthZQuRSfakkmGdx7mMuQcQx8icxv6OZmLc8i03NnRfIWRavGUOF/8LoCtXoj9AxMWX9h5xPfAOOUXixzPpsPmYuvTaXhxLf0FHmOsCla9Z+uVtRvc2pivkqFj4u/64Tq9PLvfn7x6OhIbJE8mXc245BdgNti4+Btay4TSGIr3O/9ENPgCOVAaSYov7tWGUKMsIfvjUE9oq/mCnVWHSggC/GYQtUedtvOwtj/Sjx4yen+0cpQhjfS1ePI/QU5g4hrPo0xLFWQ5NNE8KJ7rinFggM277tcSptSJZU0+Okde3dtU8an04nrS0sIHuEGXcvSfAw0iMVUf6835W779yQMhDY=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(376002)(366004)(39860400002)(396003)(189003)(199004)(5250100002)(2501003)(110136005)(54906003)(6116002)(6436002)(11346002)(1076002)(486006)(25786009)(105586002)(2900100001)(102836004)(86612001)(3846002)(68736007)(107886003)(316002)(10290500003)(5660300001)(86362001)(2616005)(305945005)(4326008)(446003)(6486002)(22452003)(7736002)(476003)(8676002)(81156014)(81166006)(8936002)(6512007)(10090500001)(186003)(3280700002)(106356001)(76176011)(2906002)(99286004)(26005)(97736004)(59450400001)(14454004)(6666003)(478600001)(53936002)(6506007)(36756003)(72206003)(66066001)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0984;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: 48MQeHAySWmuEDE8ZEDU20JQ+IjRmEvlsg3td+nj0fmTnuaVytLTOJ9CUoi1+6KcxEX6oE+5cqWeqVlA6IbudNbL4bp9tghUNDomr5heAEKUxtCum/IrzqkV5ZPxoEtYae3uOKm3o4zq08xb/OgTOg8Q99B5IX+PXIEYxdVVpKpV8ETc/EDidJxzlbAD8IGbJnjjWtGjBfQfBDjZ3ejfdQvzbkdIxxhtz+GImfr5KuXv0nvSQQ420P5jd0CSSn74jnDiaQorEfLcCBosv1DoYlUGAZ4HKWm3xWs16tZqqBuy9Z39NCloIVbrpMVMOGJcn1YXvtVORyuN5JupLIHjXyhXMv6Qp806y2SicNmX9s77KAtEvsGAmfesAkDRpzqQSYJ7KmYoT/7jSIfCqJf0WdwUvBDt5xvNtdz1fIsDFRQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7da63497-9eee-4b58-208b-08d59db0430d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:20:59.5502
+X-MS-Exchange-CrossTenant-Network-Message-Id: 522cadaa-3468-4a85-0b62-08d59db044de
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:21:03.5189
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -121,87 +121,44 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andy Spencer <aspencer@spacex.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 202a0a70e445caee1d0ec7aae814e64b1189fa4d ]
+[ Upstream commit e4823fbd229bfbba368b40cdadb8f4eeb20604cc ]
 
-When the frame check sequence (FCS) is split across the last two frames
-of a fragmented packet, part of the FCS gets counted twice, once when
-subtracting the FCS, and again when subtracting the previously received
-data.
+Add suffix ULL to constant 80000 in order to avoid a potential integer
+overflow and give the compiler complete information about the proper
+arithmetic to use. Notice that this constant is used in a context that
+expects an expression of type u64.
 
-For example, if 1602 bytes are received, and the first fragment contains
-the first 1600 bytes (including the first two bytes of the FCS), and the
-second fragment contains the last two bytes of the FCS:
+The current cast to u64 effectively applies to the whole expression
+as an argument of type u64 to be passed to div64_u64, but it does
+not prevent it from being evaluated using 32-bit arithmetic instead
+of 64-bit arithmetic.
 
-  'skb->len =3D=3D 1600' from the first fragment
+Also, once the expression is properly evaluated using 64-bit arithmentic,
+there is no need for the parentheses and the external cast to u64.
 
-  size  =3D lstatus & BD_LENGTH_MASK; # 1602
-  size -=3D ETH_FCS_LEN;              # 1598
-  size -=3D skb->len;                 # -2
-
-Since the size is unsigned, it wraps around and causes a BUG later in
-the packet handling, as shown below:
-
-  kernel BUG at ./include/linux/skbuff.h:2068!
-  Oops: Exception in kernel mode, sig: 5 [#1]
-  ...
-  NIP [c021ec60] skb_pull+0x24/0x44
-  LR [c01e2fbc] gfar_clean_rx_ring+0x498/0x690
-  Call Trace:
-  [df7edeb0] [c01e2c1c] gfar_clean_rx_ring+0xf8/0x690 (unreliable)
-  [df7edf20] [c01e33a8] gfar_poll_rx_sq+0x3c/0x9c
-  [df7edf40] [c023352c] net_rx_action+0x21c/0x274
-  [df7edf90] [c0329000] __do_softirq+0xd8/0x240
-  [df7edff0] [c000c108] call_do_irq+0x24/0x3c
-  [c0597e90] [c00041dc] do_IRQ+0x64/0xc4
-  [c0597eb0] [c000d920] ret_from_except+0x0/0x18
-  --- interrupt: 501 at arch_cpu_idle+0x24/0x5c
-
-Change the size to a signed integer and then trim off any part of the
-FCS that was received prior to the last fragment.
-
-Fixes: 6c389fc931bc ("gianfar: fix size of scatter-gathered frames")
-Signed-off-by: Andy Spencer <aspencer@spacex.com>
+Addresses-Coverity-ID: 1357588 ("Unintentional integer overflow")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/freescale/gianfar.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/ipv4/tcp_nv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/etherne=
-t/freescale/gianfar.c
-index 7f837006bb6a..3bdeb295514b 100644
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -2932,7 +2932,7 @@ static irqreturn_t gfar_transmit(int irq, void *grp_i=
-d)
- static bool gfar_add_rx_frag(struct gfar_rx_buff *rxb, u32 lstatus,
- 			     struct sk_buff *skb, bool first)
- {
--	unsigned int size =3D lstatus & BD_LENGTH_MASK;
-+	int size =3D lstatus & BD_LENGTH_MASK;
- 	struct page *page =3D rxb->page;
- 	bool last =3D !!(lstatus & BD_LFLAG(RXBD_LAST));
+diff --git a/net/ipv4/tcp_nv.c b/net/ipv4/tcp_nv.c
+index 125fc1450b01..09f8773fd769 100644
+--- a/net/ipv4/tcp_nv.c
++++ b/net/ipv4/tcp_nv.c
+@@ -327,7 +327,7 @@ static void tcpnv_acked(struct sock *sk, const struct a=
+ck_sample *sample)
+ 		 */
+ 		cwnd_by_slope =3D (u32)
+ 			div64_u64(((u64)ca->nv_rtt_max_rate) * ca->nv_min_rtt,
+-				  (u64)(80000 * tp->mss_cache));
++				  80000ULL * tp->mss_cache);
+ 		max_win =3D cwnd_by_slope + nv_pad;
 =20
-@@ -2947,11 +2947,16 @@ static bool gfar_add_rx_frag(struct gfar_rx_buff *r=
-xb, u32 lstatus,
- 		if (last)
- 			size -=3D skb->len;
-=20
--		/* in case the last fragment consisted only of the FCS */
-+		/* Add the last fragment if it contains something other than
-+		 * the FCS, otherwise drop it and trim off any part of the FCS
-+		 * that was already received.
-+		 */
- 		if (size > 0)
- 			skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page,
- 					rxb->page_offset + RXBUF_ALIGNMENT,
- 					size, GFAR_RXB_TRUESIZE);
-+		else if (size < 0)
-+			pskb_trim(skb, skb->len + size);
- 	}
-=20
- 	/* try reuse page */
+ 		/* If cwnd > max_win, decrease cwnd
 --=20
 2.15.1
