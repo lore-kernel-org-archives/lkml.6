@@ -1,128 +1,154 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4102378-1523246482-5-13562533232835031756
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523246482; b=m5gsEBY+hlELaiB5np0SQe+wRvTJzmm5kisaIErEkKdLUy/Ebw
-    /B8cx4a2q2NtQggvHJ07cwvt5hILwfKJ5lPJVIVhkAMTUP4apS8ZW1aNp74W/w3m
-    nZpfppDedSzXYDIn3ErmlO6GH8EULoK3jUZOMIHZXVIy4aZXF5I3rnW2p/3R5iBB
-    k72px42pSrksPfpWG6MR5eRRTf8TkATm+FuXvYRqZCd6OOfjvN+OolNS2CViVcHF
-    cW2XHec3UcSkOzsDzbRWpWGpZGEu1gnCBmAJ27oGQKnV49N0eSLg7WRnk/AqgsAs
-    8VxcTdqk/dNf8VLckO2+dIIpiLk6ucslZNEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523246482; bh=Yg5Gx
-    up0LsP+1UPJqoxwv9o60mLM00bXwJq8ZorFJ3k=; b=Py56C/x2mhcPPvIQk1xST
-    pDRUi3M2PVO8NP5RKlzVnnnkYFq5hRkhrO5IQpcUe5H81YwKq5Hmg1wV0cx6We1h
-    E2bSPdngKdU7Z6EqEwclaxJy4ARdSJ/eJdTPXLXm4zRvDWzAfVgr1DsMVSxys4Bw
-    2oQ7EJP95g5ppk3McYcux6+dCEyAsdzX+vk5sAp61f/twj1toCkhpsy6oC/oHz1E
-    rBvK7lqqiE/yqYSWP0lxwQGV4mMO8s9bus15yFz1DK+RUS5hDUsbsS6m0LuPj9SQ
-    hVEJ9BiS58TmiU+vQ5KZHLeBfJisvyakP4/anQT5GXAcPy5Y08v4fG2flp7G9vzk
-    Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ZhoH4QB5 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sSFsj1UE;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ZhoH4QB5 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sSFsj1UE;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNsJVMlRTb7bzFiZnu6EgYnCppOVAeB0rOhdxP4GEz2vX3YTjhoNGdH72AMvzocVLtcQ2zLNxuM3v6fplhmwW+YOK+PcOFVIgzLpx3rx+Tu4czoPIn1s
-    GtBgoyod/Hpznjt15nWKtdeVnXrsNW7unSwy88hCbzFHTFbfHA1u2nvqO15USNlCO2NXXv73SyE0YVPRzGTB7Va9JSukFZn8yCA007oXxymi5i17TotIzZ99
-    2LlTcbghthr3FY7icTt5oQ==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=2OGnzELo1qEA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10
-    a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=pwh-PkiZz6V0pp13r1MA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AIpwx49DI2EuIKpC+uc9ptzF9yp65+2M1ksX2evOaplGre/i7HPpQQtf6/CVZPcMBDkUOyJA/86K6w==
-From: Shannon Booth <shannon.ml.booth@gmail.com>
-To: gregkh@linuxfoundation.org
-Subject: [PATCH] Staging: pi433: Fixed a coding style issue.
-Date: Mon,  9 Apr 2018 15:58:56 +1200
-Message-Id: <1523246336-5958-1-git-send-email-shannon.ml.booth@gmail.com>
-X-Mailer: git-send-email 2.7.4
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
- Shannon Booth <shannon.ml.booth@gmail.com>
+Return-Path: <DavidWang@zhaoxin.com>
+X-Google-Smtp-Source: AIpwx4/WhTcdi1uwh44Aow0OlOfP88n0HFlkShiJcHxC0RT9cW0Xg0hDDQb49YtTQKsGwoPnhXUD
+ARC-Seal: i=1; a=rsa-sha256; t=1523251199; cv=none;
+        d=google.com; s=arc-20160816;
+        b=OaE0UsFSXrpjjiTttpysVqdF8PQFYBDgnfq3Amw+wS2/9oJbK1PjqNWjZh6kFYiKxs
+         g29XIPopGb/7vnY3ViUw03O9t6CJcL2Q8MQ4GA0im/BHuyP4sXJQGE+CCEc09ut+Xkzw
+         5h8u8OEr6/XrB+eieySZl6Qv33TfKZ+mEoYkQ/cgf3P81iEJj54dhxeaqU3zKVWanBqJ
+         kwOWyNs076FbOzgOTO6oRV/SJRhDn23BsZDz9136RjMpu6q0imTcXsgS8BFdLltnfllb
+         FXeNQVWzL3CYQ5k1zxMOb5U4+7qTbVz28WCMdyxyRulGag0aQkI7STZNnAxdhr0wH1gb
+         jIjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-language:thread-index:content-transfer-encoding
+         :mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=nYCbTntMuFCr7OhC5m+2v62zWhZaWalFkY21OyKEthg=;
+        b=MFnMgA4S1Xykzq9Y7ocGCXCo/ERzcMdUo3ygA8eKwMiUoVaKs3oPlTWildC8lvDR+E
+         210UMSC1pKvwpc06FzlvhOqTd1tfl1xkBS1y/jGj9EGlr7iI8aQJws/V3j7ycOrHkdHB
+         YLd1X1dJgoSTxrNv6+pbrxS3iJbMZRDxBd/1x7nzPAFx626A6ZvuIOhjlgQJ/JSK4RbN
+         lwVmCPX8KqsUejVZjdnFfE6KC4ilXpG4VJ3FxjznFaiA+idprU/Z2fBBVqedDH2lyrLr
+         T19YiZwhB7R0cTFpPwQKl4mKp9moCflt97X6D88T+UIP3pzh5Nh/AVqzabqKoJQu4nBC
+         dDbA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 180.169.121.91 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 180.169.121.91 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
+From: David Wang <davidwang@zhaoxin.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+	<mingo@kernel.org>, <gregkh@linuxfoundation.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
+	<qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>, <lukelin@viacpu.com>,
+	<timguo@zhaoxin.com>
+Subject: Re: [PATCH] x86/Centaur: show more HW features in /proc/cpuinfo
+Date: Mon, 9 Apr 2018 13:19:15 +0800
+Message-ID: <000001d3cfc2$4dedee00$e9c9ca00$@zhaoxin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdPPwhHVO+BlzNqFRbqGOGJvLjphPw==
+Content-Language: zh-cn
+X-Originating-IP: [10.29.8.18]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx3.zhaoxin.com (10.29.252.165)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597244649472600155?=
+X-GMAIL-MSGID: =?utf-8?q?1597244649472600155?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fixed incorrect indentation of a return statement.
+> -----=D3=CA=BC=FE=D4=AD=BC=FE-----
+> =B7=A2=BC=FE=C8=CB: David Wang [mailto:davidwang@zhaoxin.com]
+> =B7=A2=CB=CD=CA=B1=BC=E4: 2018=C4=EA4=D4=C28=C8=D5 17:36
+> =CA=D5=BC=FE=C8=CB: tglx@linutronix.de; mingo@redhat.com; =
+hpa@zytor.com;
+> mingo@kernel.org; grehkg@linuxfoundation.org; x86@kernel.org;
+> linux-kernel@vger.kernel.org
+> =B3=AD=CB=CD: brucechang@via-alliance.com; cooperyan@zhaoxin.com;
+> qiyuanwang@zhaoxin.com; benjaminpan@viatech.com; lukelin@viacpu.com;
+> timguo@zhaoxin.com; David Wang <davidwang@zhaoxin.com>
+> =D6=F7=CC=E2: [PATCH] x86/Centaur: show more HW features in =
+/proc/cpuinfo
+>=20
+> We add this patch to show correct HW features(arch_perfmon, =
+tpr_shadow,
+> vnmi, flexpriority, ept and vpid) when user execute "cat =
+/proc/cpuinfo".
+>=20
+> Signed-off-by: David Wang <davidwang@zhaoxin.com>
+> ---
+>  arch/x86/kernel/cpu/centaur.c | 49
+> +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>=20
+> diff --git a/arch/x86/kernel/cpu/centaur.c =
+b/arch/x86/kernel/cpu/centaur.c
+> index e5ec0f1..969fb8f 100644
+> --- a/arch/x86/kernel/cpu/centaur.c
+> +++ b/arch/x86/kernel/cpu/centaur.c
+> @@ -112,6 +112,44 @@ static void early_init_centaur(struct cpuinfo_x86 =
+*c)
+>  	}
+>  }
+>=20
+> +static void centaur_detect_vmx_virtcap(struct cpuinfo_x86 *c) {
+> +#define X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW	0x00200000
+> +#define X86_VMX_FEATURE_PROC_CTLS_VNMI		0x00400000
+> +#define X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS	0x80000000
+> +#define X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC	0x00000001
+> +#define X86_VMX_FEATURE_PROC_CTLS2_EPT		0x00000002
+> +#define X86_VMX_FEATURE_PROC_CTLS2_VPID		0x00000020
+> +
+> +	u32 vmx_msr_low, vmx_msr_high, msr_ctl, msr_ctl2;
+> +
+> +	clear_cpu_cap(c, X86_FEATURE_TPR_SHADOW);
+> +	clear_cpu_cap(c, X86_FEATURE_VNMI);
+> +	clear_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
+> +	clear_cpu_cap(c, X86_FEATURE_EPT);
+> +	clear_cpu_cap(c, X86_FEATURE_VPID);
+> +
+> +	rdmsr(MSR_IA32_VMX_PROCBASED_CTLS, vmx_msr_low, vmx_msr_high);
+> +	msr_ctl =3D vmx_msr_high | vmx_msr_low;
+> +
+> +	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW)
+> +		set_cpu_cap(c, X86_FEATURE_TPR_SHADOW);
+> +	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_VNMI)
+> +		set_cpu_cap(c, X86_FEATURE_VNMI);
+> +	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS) {
+> +		rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2,
+> +		      vmx_msr_low, vmx_msr_high);
+> +		msr_ctl2 =3D vmx_msr_high | vmx_msr_low;
+> +		if ((msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC) &&
+> +		    (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW))
+> +			set_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
+> +		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_EPT)
+> +			set_cpu_cap(c, X86_FEATURE_EPT);
+> +		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VPID)
+> +			set_cpu_cap(c, X86_FEATURE_VPID);
+> +	}
+> +}
+> +
+>  static void init_centaur(struct cpuinfo_x86 *c)  {  #ifdef =
+CONFIG_X86_32
+> @@ -128,6 +166,14 @@ static void init_centaur(struct cpuinfo_x86 *c)
+>  	clear_cpu_cap(c, 0*32+31);
+>  #endif
+>  	early_init_centaur(c);
+> +
+> +	if (c->cpuid_level > 9) {
+> +		unsigned eax =3D cpuid_eax(10);
+> +		/* Check for version and the number of counters */
+> +		if ((eax & 0xff) && (((eax >> 8) & 0xff) > 1))
+> +			set_cpu_cap(c, X86_FEATURE_ARCH_PERFMON);
+> +	}
+> +
+>  	switch (c->x86) {
+>  #ifdef CONFIG_X86_32
+>  	case 5:
+> @@ -199,6 +245,9 @@ static void init_centaur(struct cpuinfo_x86 *c)
+#ifdef
+> CONFIG_X86_64
+>  	set_cpu_cap(c, X86_FEATURE_LFENCE_RDTSC);  #endif
+> +
+> +	if (cpu_has(c, X86_FEATURE_VMX))
+> +		centaur_detect_vmx_virtcap(c);
+>  }
+>=20
+>  #ifdef CONFIG_X86_32
+> --
+> 1.9.1
 
-Signed-off-by: Shannon Booth <shannon.ml.booth@gmail.com>
+Sorry to send to wrong email address.
 ---
- drivers/staging/pi433/rf69.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-index 5b05548..430f7ad 100644
---- a/drivers/staging/pi433/rf69.c
-+++ b/drivers/staging/pi433/rf69.c
-@@ -579,7 +579,8 @@ bool rf69_get_flag(struct spi_device *spi, enum flag flag)
- 		return (rf69_read_reg(spi, REG_IRQFLAGS2) & MASK_IRQFLAGS2_CRC_OK);
- 	case battery_low:
- 		return (rf69_read_reg(spi, REG_IRQFLAGS2) & MASK_IRQFLAGS2_LOW_BAT);
--	default:			 return false;
-+	default:
-+		return false;
- 	}
- }
- 
--- 
-2.7.4
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+David
