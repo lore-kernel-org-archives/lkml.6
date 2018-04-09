@@ -1,62 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751875AbeDINKd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:10:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33112 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751367AbeDINKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:10:32 -0400
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: virtualization@lists.linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, jasowang@redhat.com, kvm@vger.kernel.org,
-        mst@redhat.com, syzkaller-bugs@googlegroups.com,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: [PATCH] vhost: fix vhost_vq_access_ok() log check
-Date: Mon,  9 Apr 2018 21:10:21 +0800
-Message-Id: <20180409131021.5132-1-stefanha@redhat.com>
+        id S1752076AbeDINLd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:11:33 -0400
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:39471 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbeDINLc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 09:11:32 -0400
+X-Google-Smtp-Source: AIpwx49lck0oOkD0DuTqTz3tQ9FGQTxU5ztgf39PIPywzxmjhR3YaDYs4dpNjToU/LMLx1OflOAiCUIPN8AtK0VYydE=
+MIME-Version: 1.0
+In-Reply-To: <455c2ccbea2f83947630e3068ecadf4ab4434fb9.1522546571.git.fthain@telegraphics.com.au>
+References: <cover.1522546571.git.fthain@telegraphics.com.au> <455c2ccbea2f83947630e3068ecadf4ab4434fb9.1522546571.git.fthain@telegraphics.com.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Apr 2018 15:11:31 +0200
+X-Google-Sender-Auth: 7mxqnMdM9K9utuDRsL8ONfKFc7I
+Message-ID: <CAMuHMdVqMqgWv9xiH35kpbr7exaLr73mQ9qS_WC5u+c6jZ+d6g@mail.gmail.com>
+Subject: Re: [PATCH 07/12] block/swim: Remove extra put_disk() call from error path
+To: Finn Thain <fthain@telegraphics.com.au>
+Cc: Laurent Vivier <lvivier@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ("vhost: validate log
-when IOTLB is enabled") introduced a regression.  The logic was
-originally:
+On Sun, Apr 1, 2018 at 3:41 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+> Cc: Laurent Vivier <lvivier@redhat.com>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Tested-by: Stan Johnson <userm57@yahoo.com>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
-  if (vq->iotlb)
-      return 1;
-  return A && B;
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-After the patch the short-circuit logic for A was inverted:
+Gr{oetje,eeting}s,
 
-  if (A || vq->iotlb)
-      return A;
-  return B;
+                        Geert
 
-The correct logic is:
-
-  if (!A || vq->iotlb)
-      return A;
-  return B;
-
-Reported-by: syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com
-Cc: Jason Wang <jasowang@redhat.com>
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
----
- drivers/vhost/vhost.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 5320039671b7..f6af4210679a 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1246,7 +1246,7 @@ int vhost_vq_access_ok(struct vhost_virtqueue *vq)
- {
- 	int ret = vq_log_access_ok(vq, vq->log_base);
- 
--	if (ret || vq->iotlb)
-+	if (!ret || vq->iotlb)
- 		return ret;
- 
- 	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
 -- 
-2.14.3
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
