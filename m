@@ -1,92 +1,116 @@
-Return-Path: <cyndis@kapsi.fi>
-X-Google-Smtp-Source: AIpwx4/5ZD2phKocOHZdSDWAoivO2vr0ZR7hwP58aMl7JxvSSmRi6czz5Tj8gZIpryyD+itOF6oj
-ARC-Seal: i=1; a=rsa-sha256; t=1523252346; cv=none;
+Return-Path: <robh@kernel.org>
+X-Google-Smtp-Source: AIpwx48bXdQtsm2SHp+OhBjQLqDlhV6XglsE2uph52pSPv0x1M6FjwUF1z9+UNbhdJfx64vzRXxu
+ARC-Seal: i=1; a=rsa-sha256; t=1523280100; cv=none;
         d=google.com; s=arc-20160816;
-        b=g7scsJyqPpj9AGGxuM+3QYodcdEqSUaEug/QPDdR0GVO0206Yzh2am8K2uI8GJxBk1
-         Soh3+9raga/AwuN0+RibV9DsconPehPJR7EIQdqMXGBCIq1zcilntpeX38kmZT5cH7Sr
-         2rQ4Lj8K9e0zF9kGizkM+k3bDYDrz0JCszqZVfYiNYfOx/QZNVNsspbtVVGJLaCyIWYL
-         2x9u2VTQ070+17S9bKzgqSvOI5ml9MPmG5HExZapKgK3AZDF5doRq/at1493D6zP5lRf
-         lbu9Y4as+56hz7EmkP+W33H1BCWlGm6wcStKKyP7lyLHiivQ9NVt/uSvnPA4aX0uUzbJ
-         0Jig==
+        b=lFWqt1fSEdv2HnyTxx1th9h9JQBwRxrI1IxqOPiAMfEOV2ln1wt52dFgOU4C5gU+hs
+         UOhCrFQ4BLmahMinJr/yYoNrxDOaG4Okve0MfnYE2hy/ZZz3CZhnuxakt7AsJ9clX8RP
+         WUpg3pHgQBi26Zx75h4hUfsSVKeaJssLPdPRjvTUZD5h6p8gYD2iRXro8S/SwPhGmRIR
+         SmsTw9TciyHd1isPXpW51ExiqNc62K6pGNs+Mv7lDrQcu7LKqb5vuXEfadxX0csb2JZF
+         SuOnZeZKAsnYgazP3Bz4QJTynkiFE9LnT29aqGxuPXmV156edEyDCnGxJqJMjxTFTEna
+         h5Pw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=8yhTcKZPGB1uk/tNL5TX+IRjD7LVZSJZVEF3A/bHi3A=;
-        b=ALD3BXPgZ4lAAkUWT/rDb8/EceCWvAG5VviL5jQZZodH/Vsx3CLEZ8qZ8wDBUoC7lS
-         ZGiTjveZl76fxq4xQaTiY53RTyXo59GyximU+pUtJhRgjbT6BwYuGorpDhwvVQ1YeM6+
-         t6Tizr51Y4JJ8CGN6sWF1C52qHwp2V9zzHfOx4DuvWXTgB9sD4qgxnf51WHb2b/PvMVT
-         7wXJAqkpJ1+h/E+bvNunPTSUwPGH7gBgJ2+7viblNbknvNYyhMTg05juOgH17mv09A8T
-         OyJBjo5h6w3fwyYK7m1yZrMkDkKfNd0Sm7PdZqb426Eny4jv3v7rF6R2X7NurglBOccu
-         PXKw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dmarc-filter:arc-authentication-results;
+        bh=mXZL5cw0VmGIlJds6KyvKj3Mvi6557jKhWcnIO2zj4g=;
+        b=A03R2cKvAHkkPsg6lVT8O2pPPm4PIiNDU4Nd/gvkOwxv8J9dJpETb2YFMhQTDQrHOl
+         O5Ga7flol9yNaMR5GGSg/KApEXVT2pKr1UuBAIx+CeK7a3aEP21RMGfbdFzLzbrwa/l3
+         qsm7FGnt0ZGY5MkslZHCdLvBCDAD9SlO//T0sAcMuUyz77JbgCtYoSQW1RFOdsx1kwND
+         toMQR8H72AlEbID/gJjjTFqJVd9KcwD3QvXMEDgzt9AupR+MyxsRRjZHblsihvkKmNQ9
+         w0YKeuUahLqJJwgsUsxa+vK6O1suHAdfV+MNwYkWJ/nnnx3ok14rgkgE1Bf7KxUH7Jew
+         +tjQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kapsi.fi header.s=20161220 header.b=u67iKMU2;
-       spf=pass (google.com: domain of cyndis@kapsi.fi designates 2001:67c:1be8::25 as permitted sender) smtp.mailfrom=cyndis@kapsi.fi
+       spf=pass (google.com: best guess record for domain of robh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=robh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kapsi.fi header.s=20161220 header.b=u67iKMU2;
-       spf=pass (google.com: domain of cyndis@kapsi.fi designates 2001:67c:1be8::25 as permitted sender) smtp.mailfrom=cyndis@kapsi.fi
-Subject: Re: [PATCH V2 3/9] dt-bindings: Tegra186 tachometer device tree
- bindings
-To: Rob Herring <robh@kernel.org>, Rajkumar Rampelli <rrajk@nvidia.com>
-Cc: mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
- jdelvare@suse.com, linux@roeck-us.net, corbet@lwn.net,
- catalin.marinas@arm.com, will.deacon@arm.com, kstewart@linuxfoundation.org,
- gregkh@linuxfoundation.org, pombredanne@nexb.com, mmaddireddy@nvidia.com,
- mperttunen@nvidia.com, arnd@arndb.de, timur@codeaurora.org,
- andy.gross@linaro.org, xuwei5@hisilicon.com, elder@linaro.org,
- heiko@sntech.de, krzk@kernel.org, ard.biesheuvel@linaro.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, ldewangan@nvidia.com
-References: <1521607244-29734-1-git-send-email-rrajk@nvidia.com>
- <1521607244-29734-4-git-send-email-rrajk@nvidia.com>
- <20180327145249.xjoo42qow34ksdle@rob-hp-laptop>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <867aace8-dac7-51d4-bd46-15919b58b37d@kapsi.fi>
-Date: Mon, 9 Apr 2018 08:38:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+       spf=pass (google.com: best guess record for domain of robh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=robh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830C42183E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
 MIME-Version: 1.0
-In-Reply-To: <20180327145249.xjoo42qow34ksdle@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.250.162.250
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+In-Reply-To: <867aace8-dac7-51d4-bd46-15919b58b37d@kapsi.fi>
+References: <1521607244-29734-1-git-send-email-rrajk@nvidia.com>
+ <1521607244-29734-4-git-send-email-rrajk@nvidia.com> <20180327145249.xjoo42qow34ksdle@rob-hp-laptop>
+ <867aace8-dac7-51d4-bd46-15919b58b37d@kapsi.fi>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 9 Apr 2018 08:21:17 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+AsUiWWBQ7K4OUM58KqQbvBHuFYmXxXLwr7viwoKW-Yw@mail.gmail.com>
+Message-ID: <CAL_Jsq+AsUiWWBQ7K4OUM58KqQbvBHuFYmXxXLwr7viwoKW-Yw@mail.gmail.com>
+Subject: Re: [PATCH V2 3/9] dt-bindings: Tegra186 tachometer device tree bindings
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: Rajkumar Rampelli <rrajk@nvidia.com>, Mark Rutland <mark.rutland@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>,
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Philippe Ombredanne <pombredanne@nexb.com>,
+	Manikanta Maddireddy <mmaddireddy@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>,
+	Arnd Bergmann <arnd@arndb.de>, Timur Tabi <timur@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
+	Wei Xu <xuwei5@hisilicon.com>, Alex Elder <elder@linaro.org>,
+	"heiko@sntech.de" <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>, devicetree@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	linux-tegra@vger.kernel.org, Linux HWMON List <linux-hwmon@vger.kernel.org>,
+	linux-doc@vger.kernel.org,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595520871004470026?=
-X-GMAIL-MSGID: =?utf-8?q?1597245851984006036?=
+X-GMAIL-MSGID: =?utf-8?q?1597274954204032224?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Rob,
+On Mon, Apr 9, 2018 at 12:38 AM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
+> Rob,
 
-this binding is for a specific IP block (for measuring/aggregating input 
-pulses) on the Tegra186 SoC, so I don't think it fits into any generic 
-binding.
+Please don't top post to lists.
 
-Thanks,
-Mikko
+> this binding is for a specific IP block (for measuring/aggregating input
+> pulses) on the Tegra186 SoC, so I don't think it fits into any generic
+> binding.
 
-On 03/27/2018 05:52 PM, Rob Herring wrote:
-> On Wed, Mar 21, 2018 at 10:10:38AM +0530, Rajkumar Rampelli wrote:
->> Supply Device tree binding documentation for the NVIDIA
->> Tegra186 SoC's Tachometer Controller
+What is it hooked up to to measure? You only mention "fan" five times
+in the doc.
+
+You have #pwm-cells too, so this block has PWM output as well? If not,
+then where's the PWM for the fan control because there is no point in
+having fan tach without some control mechanism.
+
+There's only so many ways to control fans and types of fans, so yes,
+the interface of control and feedback lines between a fan and its
+controller should absolutely be generic.
+
+Rob
+
+>
+> Thanks,
+> Mikko
+>
+>
+> On 03/27/2018 05:52 PM, Rob Herring wrote:
 >>
->> Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
->> ---
+>> On Wed, Mar 21, 2018 at 10:10:38AM +0530, Rajkumar Rampelli wrote:
+>>>
+>>> Supply Device tree binding documentation for the NVIDIA
+>>> Tegra186 SoC's Tachometer Controller
+>>>
+>>> Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
+>>> ---
+>>>
+>>> V2: Renamed compatible string to "nvidia,tegra186-pwm-tachometer"
+>>>      Renamed dt property values of clock-names and reset-names to
+>>> "tachometer"
+>>>      from "tach"
 >>
->> V2: Renamed compatible string to "nvidia,tegra186-pwm-tachometer"
->>      Renamed dt property values of clock-names and reset-names to "tachometer"
->>      from "tach"
-> 
-> Read my prior comments on v1.
-> 
-> Rob
+>>
+>> Read my prior comments on v1.
+>>
+>> Rob
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
