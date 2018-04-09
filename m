@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3913452-1523241912-2-15729429037465862209
+X-Cyrus-Session-Id: sloti22d1t05-3913452-1523241881-2-13237652330854145362
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523241912; b=T7AQbT7KCKdHYWz8S9fV7W4sayYLAfXl5jtEoqpDZlputPdupO
-    s3HaRLaxnjAxLF56QMOwx+/SgFSEmttSvcg0CoxqRpnulMvPZ1P4flKA0lB3M3x8
-    tG3Ke6W7jeL+IIug/PWLOE1Jn7zpRXCSY6qcdtlgB8T5+7kPJf9sVN8pG+09fL3r
-    g5ztoLo8jpTMnq5+MwgFnzH1QLG0UsNwuDIOboFe7PjxL/M+o0NRShu/w1Vctedc
-    cPOgLydwZDr5CuDj7fg7f042v/9EHGOs0LZ27o3ENIW7IbDOy0cKOa69hQ6fr0gD
-    TSsuvE+sfv33TlsSvtLAaCMgKifFCFvkC7Xw==
+    1523241880; b=PMJwa01zOcBaSSR4RvdhximLHMNTnFJRSvFElTfc3vIAUz1LIx
+    cuLyBcvidyqJ8HCMKDa9sX5ldQTFfujmLp0QhkLhisqINEl/cL7p+GrwOwKndMx5
+    7hSIwXwxY8YsyT8Uilbn+QB+dlLs+0tlcuR2P4y9injM37bo7w/y93a9tI0JOKub
+    CatSGvh36KTKujNzvDqGh8m4kqBCCK/9e+Ufd6VJkbBpaQCymvPyDjAuz9IhTHf9
+    isMNFi7Jg0XVz4RqaOseCamBHmvp0qPxwX27rkbnw+hmssJ1YvtrHnxqb8iZ/QR5
+    I3jeVTq7ajwFRXqPEK4Fn11AomuC58zgHIWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523241912; bh=oC6cDmq05p
-    gQTTWZL+itGtoHYTjaXK+KsS7ePpOOycw=; b=ogh6y1Mv6JhULUGVl+os2BDQJB
-    XQD4rGxNUvG/1v/bwoNkJT2AZLgKZiLjJsyj6AzGvVNYCSnsSdFclu6Kf6MeB9Qt
-    LwfAfUEPrR/xLE7TJBuFn7DfD9GVCjcLba3H3mZS8kzGeY+aRtntNMbf9SzobLiH
-    agGUtuOCZSIjOHeqllSNn/RrdNxzV6VFbX238TZRrm9ziGpTPJaHTWxJBakKvYrr
-    XNoYWXvXkpcp+P36O9RyEHFIwFxKfJrOEulti4mSLR6xbb3to2FtXOXxdbaxezcb
-    NutqVmjCjmUfwok20CXDhNxrKYnnoaTMy+RGhoWzeNcu0AbVPfmDW7NPSlSA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lXjw9qHm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523241880; bh=6t624br08x
+    8uU0nOLrPQmOWuWdRdlRC9ZlMjT1ZEev0=; b=Kkd4aH/Mp5EvcvslUyung5EuSU
+    EImCWEaeVPIYWyZv01XC8gbtvzNnXDsW/zPbTjNNoTb6F9FfO0bA2l+8csBs8VsD
+    hVOyGEjOIwe3Ppubu8baYm+TIAg0Wbfqe1rPXjDukeS7ijuMy3FRzNb/p3Q8101F
+    HaVgnwuyKn5QCv9znfaYJger47gFIDiDXA1xt0hfmo3Zhu/zFqIielRmiXj4wa8B
+    1jms5A/OSucYsS8Zxb/nrafxDsL30VXpDUVydxMaWDorELNKs0fIP7F5AcPYu5t0
+    plAe0QaYD+WlSXU6bQKU7Pgd9PMqzvAmJzeKuFWcE5DNxsTbPTO4TFq7Wp1g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=OvmaEtwU x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lXjw9qHm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=OvmaEtwU x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,42 +51,44 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLmiN7dUiAwdKLUSDnhePkZDxEONZRHsJO7yzLJkwz+GgUHcKBJuSgi+RvbdZgUtsJEvcMIgB+O40336av8F8+1vErIhgeMyCJNOk67dShnLC4NTLnlw
-    J2xGaX5l39WiwUHEXtXlzCl2/1Q+yXt6j1D8Mf/k2hysQB6g+gSDW7SvkLG2S8e092/YCYTYUmpMBXGwK6qApLDiDzowK4cAL9MQe0+478mtwq7lDu3mcgwx
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJiVDVTsQp0SU8Vc7vHWqP1ZVUxCExRfRitydrqtr7EHf6DcjoNm8gUj7EPSOohfB/EeU0TPdtXGwMmDHbDavc61Cu2P/MfbwO2KoH8+dBl7ECYzn1Ty
+    mjTJ7v9B8jj/Lkkdua7dCsUSEzxt10V/KvyR/xnUZ6Zkbhuuhd/DRjmiLoazc6u8GzdCEnOSFT9vDnjtm2APbzz2Pkh3/uZfJJJhJXAIJNzRld1xeTNHOfDS
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
     a=Lf-vpJhqX20A:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=pGLkceISAAAA:8
     a=i0EeH86SAAAA:8 a=57SyGIRnAAAA:8 a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8
-    a=TZeuQikzWl3-NoflrHoA:9 a=Zi6-US_SWx-mtsx8:21 a=mnnB2Esgnu3DsEuZ:21
-    a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22 a=YzT4AsKTxtEdF6UtD8mD:22
+    a=Hk1IqXJRDU7dKb4ppkAA:9 a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=YzT4AsKTxtEdF6UtD8mD:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755436AbeDIA0r (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:26:47 -0400
-Received: from mail-by2nam03on0126.outbound.protection.outlook.com ([104.47.42.126]:2432
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S1755449AbeDIA0s (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:26:48 -0400
+Received: from mail-by2nam01on0099.outbound.protection.outlook.com ([104.47.34.99]:2811
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754647AbeDIA0o (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:26:44 -0400
+        id S1755428AbeDIA0p (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:26:45 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC: Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Taeung Song <treeze.taeung@gmail.com>,
         Wang Nan <wangnan0@huawei.com>,
         "kernel-team@lge.com" <kernel-team@lge.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 016/293] perf tests: Decompress kernel module
- before objdump
-Thread-Topic: [PATCH AUTOSEL for 4.9 016/293] perf tests: Decompress kernel
- module before objdump
-Thread-Index: AQHTz5jrALn3ow7XIk+jZZngG7wkkg==
-Date: Mon, 9 Apr 2018 00:23:01 +0000
-Message-ID: <20180409002239.163177-16-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 014/293] perf annotate: Fix symbolic link of
+ build-id cache
+Thread-Topic: [PATCH AUTOSEL for 4.9 014/293] perf annotate: Fix symbolic link
+ of build-id cache
+Thread-Index: AQHTz5jpbdO9KJvFPUCRHGIbjiRcfA==
+Date: Mon, 9 Apr 2018 00:22:59 +0000
+Message-ID: <20180409002239.163177-14-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -95,31 +97,31 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0885;7:e6vmq+50B+CsXG5O9yFN/jS+PkTjdpph1YvepJ5FV7FORN81oxFSiEGYkX9ujYSrSiq1d8DSl2cbVYR6tVZ4OAAQEx9LbDnr56OHBXgfoDIK2bj27jQ+07uTBo9pW/T+3xmINo8GLxJZHmr2GnvNUHnJsQGDazuZoHKwx4CA4awzT2iWAJl2DqToHDYnR/QTU2wX0PHJaXX8+sRZwpIis2vtjFQ2Bw+jwtRQwreM1S4AmFz69M9kt0DERFuFJ0+U;20:rtBpQr2ckQwVoTBQQ4D5TXX61NjAClugqLkYTAHMdJAr0WONlfNrDUa408CM25iweMCEodCHMihErdYMH6nPdfxB0Yc6n7E5SMlhKEslbSn0E2I8+CM2+hFDq1UdiT0ESRGfBvxbpCvzZVQr54IYT/SsEIPb6Xyq5kyMwS+AF4s=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1015;7:YAbpZnq6e9DkntyTSNlrJ9fUhG0byOaRBykdGVc3ubm+OIoCn+wOZuxI7BKGoy1yptbDdFw8sBe+fEHh3m0XAVVxIFd3/Zy+GxjJTo/+q/Bfai39LnZ8J27QZimo+ruz8/B4srrJv5OKiglPGjR1DrmoTVmndGz/kpyuCmyU2rvUTNhX+asYH1fdiAdakStHVDB9zG/YCDupZke1D8Axqvypo3jtStZaiNhgsyYa6u6WkZPM8FD9AahOSDiVYDVi;20:jYgmgNQ2ntm/j4zlO8r3JcQqJVDPUem6DNr8V4+y4N4ACVExAtj8vI8utFpvK8uClwR4j1Dmhpgpc1pUBDSC6MzDKHvnPaWG6WvL87oLFX7InnAy+lLzURefX6tpL/VuEsV+p5/sOSiNRp9i14kmh6myJFXhr873me8H9A23CGg=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 225234af-ad5d-40a3-42ea-08d59db08fba
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0885;
-x-ms-traffictypediagnostic: DM5PR2101MB0885:
+X-MS-Office365-Filtering-Correlation-Id: 169bdf46-cc57-416f-3989-08d59db08ece
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1015;
+x-ms-traffictypediagnostic: DM5PR2101MB1015:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0885B90AF8039F0B2A6CF5CAFBBF0@DM5PR2101MB0885.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB101589F298AA6738A923446AFBBF0@DM5PR2101MB1015.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513)(85827821059158)(42068640409301)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0885;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0885;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1015;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1015;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(39860400002)(366004)(346002)(376002)(396003)(39380400002)(189003)(199004)(2906002)(68736007)(22452003)(316002)(6512007)(5660300001)(6666003)(54906003)(110136005)(486006)(6486002)(102836004)(6306002)(36756003)(14454004)(99286004)(86612001)(105586002)(72206003)(106356001)(2900100001)(1076002)(97736004)(10090500001)(3280700002)(5250100002)(6436002)(3660700001)(6116002)(575784001)(3846002)(305945005)(86362001)(59450400001)(66066001)(39060400002)(10290500003)(186003)(81166006)(8936002)(478600001)(476003)(25786009)(81156014)(8676002)(4326008)(7736002)(2501003)(107886003)(966005)(6506007)(2616005)(26005)(76176011)(446003)(53936002)(11346002)(22906009)(217873001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0885;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: Uu0WxjcYr5QHQ+mJY2FG7oXOfiLbATOhsLnbIlEDMkN8kboLkZVoisFYlRyJviuQuJAcE3Iv82C+ufWwXuL3HQOub8Khq1zn0zMo6Xykz70lwf8JYKG04CIjoIe+39g+0eiH/Oe6nRBlCjFxy60PYEmqY/ehNQnuYRS1s+Nn+wTXmEFi/EgDTExnF4iJpCzqa79UWBWu8rdow4zB6NFu/e9dXH6zg4SsQevLh3+0zc5m9awJhe/rrMsOL9QZksIdZvBp+8vNIdmwus2Cv5ObxMO58H+LvHTHJ2ZxrxI7hV9sPcmUC6SCEKU7Xv+huYN0lva+Jl33a4nvojKYIQdQlqnajBKs7CGLetJhp0lFOFE1QEYDIfuXTh+7iUjU16rhGwoLg4lZG42uciat4iREx5TjzzeeffK2WVrIXnRJdx0=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(39380400002)(376002)(346002)(366004)(189003)(199004)(53936002)(4326008)(478600001)(72206003)(3280700002)(2616005)(14454004)(305945005)(5250100002)(3660700001)(2501003)(2900100001)(54906003)(110136005)(86362001)(1076002)(966005)(107886003)(6506007)(36756003)(446003)(68736007)(6512007)(7736002)(486006)(2906002)(6306002)(5660300001)(6436002)(3846002)(86612001)(6486002)(66066001)(11346002)(7416002)(476003)(6666003)(59450400001)(26005)(10090500001)(316002)(22452003)(8676002)(81156014)(81166006)(6116002)(105586002)(99286004)(186003)(106356001)(76176011)(39060400002)(25786009)(97736004)(10290500003)(102836004)(8936002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1015;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: J/EIebK8r9zrkkGdi2QqLYr1j5RBz2qA0XOpT56lnD+oa5h/H1WINFIkCrHvYsUyn0OfbuCSHqVC210nEFAtoUow4Wpe97CAJbFQZ8fOPk9ybP9vtDoEn08s4x8aLqpPidTthE/JNfxyUHjDmYObv29ckzgECEcNiNFBtv4mlQq127IRWyuQHh3iWQa45zUWKu5uylJYM+e5xL8CgNH5JIqrHDUFroASHZf8LK45yIKiR63Tyo/uKQ8XLtx8k/XByti+zorTSUyRJpjd+bl+6fWPsfLj8MQ8XazF64h8kra/QAmrmOIvKXBqe1r1HplFqFDwAwvGx8qww8LRVn9Jm6lH19di/VTcEzVvCqPWfA6uMrdtUm3rEUYgejFLIGw52wwYu+qmvyMmsrzKswc6jmVYHK11tdp7AesEe5VBn5Y=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 225234af-ad5d-40a3-42ea-08d59db08fba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:23:01.3310
+X-MS-Exchange-CrossTenant-Network-Message-Id: 169bdf46-cc57-416f-3989-08d59db08ece
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:22:59.2373
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0885
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1015
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -128,69 +130,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Namhyung Kim <namhyung@kernel.org>
 
-[ Upstream commit 94df1040b1e6aacd8dec0ba3c61d7e77cd695f26 ]
+[ Upstream commit 3619ef76b37d4803bc9daee9d03d82c8526db378 ]
 
-If a kernel modules is compressed, it should be decompressed before
-running objdump to parse binary data correctly.  This fixes a failure of
-object code reading test for me.
+The commit 6ebd2547dd24 ("perf annotate: Fix a bug following symbolic
+link of a build-id file") changed to use dirname to follow the symlink.
+But it only considers new-style build-id cache names so old names fail
+on readlink() and force to use system path which might not available.
 
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Taeung Song <treeze.taeung@gmail.com>
 Cc: Wang Nan <wangnan0@huawei.com>
 Cc: kernel-team@lge.com
-Link: http://lkml.kernel.org/r/20170608073109.30699-8-namhyung@kernel.org
+Fixes: 6ebd2547dd24 ("perf annotate: Fix a bug following symbolic link of a=
+ build-id file")
+Link: http://lkml.kernel.org/r/20170608073109.30699-2-namhyung@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/perf/tests/code-reading.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ tools/perf/util/annotate.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-readin=
-g.c
-index ff5bc6363a79..150334064071 100644
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -224,6 +224,8 @@ static int read_object_code(u64 addr, size_t len, u8 cp=
-umode,
- 	unsigned char buf2[BUFSZ];
- 	size_t ret_len;
- 	u64 objdump_addr;
-+	const char *objdump_name;
-+	char decomp_name[KMOD_DECOMP_LEN];
- 	int ret;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index a38227eb5450..ffe9153480a8 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1251,6 +1251,7 @@ static int dso__disassemble_filename(struct dso *dso,=
+ char *filename, size_t fil
+ 	char linkname[PATH_MAX];
+ 	char *build_id_filename;
+ 	char *build_id_path =3D NULL;
++	char *pos;
 =20
- 	pr_debug("Reading object code for memory address: %#"PRIx64"\n", addr);
-@@ -284,9 +286,25 @@ static int read_object_code(u64 addr, size_t len, u8 c=
-pumode,
- 		state->done[state->done_cnt++] =3D al.map->start;
- 	}
+ 	if (dso->symtab_type =3D=3D DSO_BINARY_TYPE__KALLSYMS &&
+ 	    !dso__is_kcore(dso))
+@@ -1270,7 +1271,14 @@ static int dso__disassemble_filename(struct dso *dso=
+, char *filename, size_t fil
+ 	if (!build_id_path)
+ 		return -1;
 =20
-+	objdump_name =3D al.map->dso->long_name;
-+	if (dso__needs_decompress(al.map->dso)) {
-+		if (dso__decompress_kmodule_path(al.map->dso, objdump_name,
-+						 decomp_name,
-+						 sizeof(decomp_name)) < 0) {
-+			pr_debug("decompression failed\n");
-+			return -1;
-+		}
-+
-+		objdump_name =3D decomp_name;
-+	}
-+
- 	/* Read the object code using objdump */
- 	objdump_addr =3D map__rip_2objdump(al.map, al.addr);
--	ret =3D read_via_objdump(al.map->dso->long_name, objdump_addr, buf2, len)=
-;
-+	ret =3D read_via_objdump(objdump_name, objdump_addr, buf2, len);
-+
-+	if (dso__needs_decompress(al.map->dso))
-+		unlink(objdump_name);
-+
- 	if (ret > 0) {
- 		/*
- 		 * The kernel maps are inaccurate - assume objdump is right in
+-	dirname(build_id_path);
++	/*
++	 * old style build-id cache has name of XX/XXXXXXX.. while
++	 * new style has XX/XXXXXXX../{elf,kallsyms,vdso}.
++	 * extract the build-id part of dirname in the new style only.
++	 */
++	pos =3D strrchr(build_id_path, '/');
++	if (pos && strlen(pos) < SBUILD_ID_SIZE - 2)
++		dirname(build_id_path);
+=20
+ 	if (dso__is_kcore(dso) ||
+ 	    readlink(build_id_path, linkname, sizeof(linkname)) < 0 ||
 --=20
 2.15.1
