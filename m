@@ -1,61 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752296AbeDIOIx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 10:08:53 -0400
-Received: from muru.com ([72.249.23.125]:35912 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751970AbeDIOIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 10:08:51 -0400
-Date: Mon, 9 Apr 2018 07:08:47 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Dan Williams <dcbw@redhat.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Merlijn Wajer <merlijn@wizzup.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: simultaneous voice/data works (was Re: call/normal switch was
- Re: omap4-droid4: voice call support was)
-Message-ID: <20180409140847.GP5700@atomide.com>
-References: <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
- <20180402155754.GD5700@atomide.com>
- <20180403150444.GE5700@atomide.com>
- <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
- <20180403194419.GG5700@atomide.com>
- <20180406120423.GA18691@amd>
- <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
- <20180407081000.GB7818@amd>
- <20180407122233.GA11302@amd>
- <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752275AbeDIOKQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 10:10:16 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42270 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751539AbeDIOKO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 10:10:14 -0400
+X-Google-Smtp-Source: AIpwx4/GBS27v0mcNZTysNN0NwwQWGiM1jIz6Jny4KY21VALCXWr14o2C87e5UfExoWKTgCFvygq2A==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: gerrit@erg.abdn.ac.uk, davem@davemloft.net
+Cc: dccp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] net: dccp: Replace GFP_ATOMIC with GFP_KERNEL in dccp_init
+Date: Mon,  9 Apr 2018 22:10:04 +0800
+Message-Id: <1523283004-25581-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Dan Williams <dcbw@redhat.com> [180408 02:46]:
-> On Sat, 2018-04-07 at 14:22 +0200, Pavel Machek wrote:
-> > I tried --location-enable-gps-unmanaged , but that did not work for
-> > me.
-> 
-> That requires a TTY that would spit out the GPS data; in this mode MM
-> only sends the start/stop commands, and what comes out the GPS TTY is
-> undefined (at least by MM).
-> 
-> So unless you know that one of the 6600's TTYs does GPS and in what
-> format it does GPS, then no.
+dccp_init() is never called in atomic context.
+This function is only set as a parameter of module_init().
 
-There should be a NMEA port within the unknown port range ttyUSB[123].
+Despite never getting called from atomic context,
+dccp_init() calls __get_free_pages() with GFP_ATOMIC,
+which waits busily for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+to avoid busy waiting and improve the possibility of sucessful allocation.
 
-Is there some easy way to enable --location-enable-gps-unmanaged for
-testing so I can check if GPS gets enabled for one of the ports?
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
 
-Regards,
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ net/dccp/proto.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Tony
+diff --git a/net/dccp/proto.c b/net/dccp/proto.c
+index b68168f..f63ba93 100644
+--- a/net/dccp/proto.c
++++ b/net/dccp/proto.c
+@@ -1159,7 +1159,7 @@ static int __init dccp_init(void)
+ 			hash_size--;
+ 		dccp_hashinfo.ehash_mask = hash_size - 1;
+ 		dccp_hashinfo.ehash = (struct inet_ehash_bucket *)
+-			__get_free_pages(GFP_ATOMIC|__GFP_NOWARN, ehash_order);
++			__get_free_pages(GFP_KERNEL|__GFP_NOWARN, ehash_order);
+ 	} while (!dccp_hashinfo.ehash && --ehash_order > 0);
+ 
+ 	if (!dccp_hashinfo.ehash) {
+@@ -1182,7 +1182,7 @@ static int __init dccp_init(void)
+ 		    bhash_order > 0)
+ 			continue;
+ 		dccp_hashinfo.bhash = (struct inet_bind_hashbucket *)
+-			__get_free_pages(GFP_ATOMIC|__GFP_NOWARN, bhash_order);
++			__get_free_pages(GFP_KERNEL|__GFP_NOWARN, bhash_order);
+ 	} while (!dccp_hashinfo.bhash && --bhash_order >= 0);
+ 
+ 	if (!dccp_hashinfo.bhash) {
+-- 
+1.9.1
