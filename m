@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4029176-1523245462-2-18273263592587461933
+X-Cyrus-Session-Id: sloti22d1t05-4029176-1523245448-2-8861588883651956152
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES encaro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523245461; b=L6Z+VHFGAD8r1J/W8CDJhCZ7y6iqgNt7maGIZifSnQ3kyVn253
-    CLHrVMkC7eInesjL+Oy9qsAPVb+fdrVX7yvGVgb1Kv0dZYaFJ/AitX2oxgjZGjYG
-    0E5eHl+wCzgknU55IBbrYnKvFBsJCdhgbgdysmsQKP8vDvmihVMOJX/fX0VJoOME
-    qQ0mqlzBotveat7qyGLeTJLtOE96WCu5FeVX5lpK+sBjiuYRgN+FDkAvMM8kJvBe
-    7EZQVE6l2fUB+4DFpaRhW41mLDImIisdShQjNcgWCny8h3ltrUGYdMYpZaU9Moth
-    1xd3F5u9c6EIF9iU/vMZx0iVAuI3+jtGCipw==
+    1523245447; b=sduNzR7C01vUPsbla1mDfylOkOawKTLGvQNVrhubPpgfZ2iLYv
+    JRk8wNH4BzbmQgzX4ExQTbmqOv868bYzeK4tQLVvROS2BQX+VM7ZuXj9Zv98vxK2
+    qa5emjjcz4UamiibNXwZrV0o3LaUH3yFOih1aZ8rxdu1W5Z3RKkPAqPrT0iKSdOC
+    YIXGPHBgGAOg2ClhSf7xwTYBTtsy2xvwsqwijp4iKOPTc3quraCdhQI24E2HbGIF
+    yfgArMyObb5bm8/cdf4F9rYDmFLg49IsbUIkE3vSrzNuGR9xq7mSUcfxZk8UyMRR
+    kLQ7HSq1aM+Zv8PvcQZtu42qk29vMlvc5KDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523245461; bh=kEbeKIWgUC
-    GqWIDBLL4m+5ADVnQGu8x9ekPXTk31yvc=; b=wqg8GnnkFnz3ZpEQe+LMG9xK1w
-    6tm7fKnDuHPVq2vUVBSliBRYGmfk4RA9ye5FqVuydWeD8Ge8usdS0G78S0HQKXah
-    qFh9nlt1SOx0zVS10WGzJDS30R/qyr+akEWiybdPJ7nw1akQOiQbjVKFBfHtG6Ss
-    sAzRch7MFxdCySaCvDOcZiNkxVrQ46Z5Bqi3NMJ1nf52PPsWHd/zKJgPEZksM58P
-    xEAmxptdC39aJABAv9ygavLztcGVE/o8OL3R1uSZSZ0nGuz6rSVGzyjmVAoyQhME
-    ARaZEFtBlr3/WqkKY7Jc5gPLCPfLNJ20+N19mGgAGBe+LamTyuZxFdteyCkw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=HjhCEDxI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523245447; bh=92LPbcuP1+
+    Nu6hJ7JSAFmsZgtoYGVkr1KtL7T+wJ5YU=; b=bS5ZUX/sGoBSWfEMvWKGxW2nQY
+    8VZJIJJtEmhD4+JeG1wgQOV9LMHeUoJmmaHBQIAgPUHxYPzYa3QJROUIpw6FDmcq
+    FEvys0VG5BA952qsc9hvmEMUJ6Gpq9oE0oTwJdUQslHruGCUC5NUlu5/YJk9WXbf
+    pYDf9y8aMb0rnpSu7t7IR85apLgwwsoOiKVrs22K7wX+N3ZuO02KKZNihKmi3wOv
+    TfWXDIpZ97s0mnsmNntWOMAgaPZklLrd1ide2c+tBl4j9GOqEoarVD2RFpZ9ymO2
+    7udRdBNJOU2lNLUxtMPBa3xeq8Av1G6OBU2vpSX39Klivu/vEn9EYUOtvG6w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=IJCJfXZ3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=HjhCEDxI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=IJCJfXZ3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,46 +51,45 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCfDQcxtcciFWvMEMsqnv8rT1M36GOS51ioaVFwsb1Tl+aFJeqdqE3gKXqOK754YmHMh/dhV5l1amAXp0kGpUXF4diAzRYLx2GT1amv37HnlGOilWg8q
-    a8GTohgvSqec6oHlMdp6WrlApMQMF5DvGFhT96dqhZ4uMuEnvgV8z5sLYaGYzuasz4bjJhwWvSyLQOmjiUp5mHknyuXva+RlIpdnLM4ZwZPqWBdGiAcrA8YN
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMOQqIZiiQSOvfav/C7SrurVIGIXKKHOnI5aDmPrzNJsNYZRE83zjfzG2B0nQrjK2ZN5cY83K8wXAZLJfx66aySZbLhBFpu6Hvvo/OXxoCq+FW1i9lBM
+    rhBxDsFZIYqNJo5maNp8UcEMM9FUY7rXzSuE6HLkn6LLTL8taCcBsIGu/KT9FRWcQWDoVnujmGLUBRTtPFXGKo0XleZrtCRE3Yke1eHpfavLCIfIIBUx6YoP
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=QyXUC8HyAAAA:8 a=KKAkSRfTAAAA:8 a=JfrnYn6hAAAA:8
-    a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8 a=9IefVlp6ptrRNx8ANt4A:9
-    a=wPNLvfGTeEIA:10 a=cvBusfyB2V15izCimMoJ:22 a=1CNFftbPRP8L7MoqJWF3:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=Lf-vpJhqX20A:10 a=QyXUC8HyAAAA:8 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8
+    a=p-nOP-kxAAAA:8 a=JF9118EUAAAA:8 a=yMhMjlubAAAA:8 a=m1UO6bD35eZV1AGazdsA:9
+    a=wPNLvfGTeEIA:10 a=cvBusfyB2V15izCimMoJ:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=XN2wCei03jY4uMu7D0Wg:22 a=xVlTc564ipvMDusKsbsT:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754239AbeDIDnm (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 23:43:42 -0400
-Received: from mail-cys01nam02on0123.outbound.protection.outlook.com ([104.47.37.123]:10471
+        id S1754734AbeDIDno (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 23:43:44 -0400
+Received: from mail-cys01nam02on0118.outbound.protection.outlook.com ([104.47.37.118]:44776
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754237AbeDIAUc (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:20:32 -0400
+        id S1754235AbeDIAUb (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:20:31 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC: Arnd Bergmann <arnd@arndb.de>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Len Brown <len.brown@intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         Nicolas Pitre <nico@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Borislav Petkov <bpetkov@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 141/189] x86/dumpstack: Avoid uninitlized
- variable
-Thread-Topic: [PATCH AUTOSEL for 4.15 141/189] x86/dumpstack: Avoid
- uninitlized variable
-Thread-Index: AQHTz5hQkVxYcYH2SkeekWG29rcgqA==
-Date: Mon, 9 Apr 2018 00:18:41 +0000
-Message-ID: <20180409001637.162453-141-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 140/189] x86/power: Fix swsusp_arch_resume
+ prototype
+Thread-Topic: [PATCH AUTOSEL for 4.15 140/189] x86/power: Fix
+ swsusp_arch_resume prototype
+Thread-Index: AQHTz5hPI3hswFjA/UizBoQlW/Tn3Q==
+Date: Mon, 9 Apr 2018 00:18:40 +0000
+Message-ID: <20180409001637.162453-140-alexander.levin@microsoft.com>
 References: <20180409001637.162453-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001637.162453-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -99,27 +98,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1110;7:q56VWK8qEWi82wX/ge/P5/1bctzcJNIY0mxw8Q2ZDHrGP8g741eyOHZ7b7DdcdTIewYfUPuX/XzCBagbHRYmO1Xumc0WabPjv+I6fh/SqvTvpKF/QHOGXyA+F1yH7oq5NMvn0N3hpfL4bpds1Ad/Z7GjXt0EhwXDrLDw3FBFCfTidLr3OXSi6nDW/2/JHLxINqym7rVLF7QzZ2B5eKG6BJ/jhUwZP1jZ4+TGJYIOAYwDpQ8I4mG7Hl/S/oUT5UFw;20:DWegGj13jVKgwt/mjaRMXx0zfwUDjGFXCmgqUFjoq5BaQAv+eToAQmjVG78sp29Hg5hQtdbr4MrNpGaiKzjfRQDu9j1hUGpl/vfAB8VXUcF+E0gELuJqzMee99GmbG8QIvdLKS9SGo1KOAankFxv1xIaP/7jt7PdflVNVfbRggk=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1110;7:Xc71B+BMtMc7QBuc2F/KwJYX7vgBog4Wy1nipqUZY2exu2Nyg8Xwh9LVgAMGbICrBMoYDqlxzTx+UL8BSxQFou7CrnMCEm0OvTFn+dxupnt14l9AUOjveWSV9wHKsjNgjqpRQQXymOh/ilOb7gQ+vnUHyVnJRlKTYfKNrlb83GLRwwogyzTVRglsMdEyftKD94cb/30rif29Hv2UN/Xn7rknFCYiJWna4mSPBYWxQykecPTcBoo0I0TSTsZeFeUg;20:kHFpjO/AxI7IuZNNJ/+gGvVlpeUnA+XD6o7pGl3/Tog5gVCNt8ze304VfI1uSTqWusewuTPeDjHzoToXB4od5eTY9w6jmR40OeCGrjLhgU1wuF4UiKxGAP5Babhmain4HG5DW66wIEiWbcZju0KWlXgGl45GkfoR9O53LZqTX/k=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: fcaffa6d-2c1b-4ad1-9b63-08d59dafad3f
+X-MS-Office365-Filtering-Correlation-Id: 0a3e17fd-a309-4392-c8aa-08d59dafacca
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1110;
 x-ms-traffictypediagnostic: DM5PR2101MB1110:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1110287260F5D750A569EE1DFBBF0@DM5PR2101MB1110.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(42068640409301)(228905959029699);
+x-microsoft-antispam-prvs: <DM5PR2101MB11104251739DABA4BD36E809FBBF0@DM5PR2101MB1110.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(42068640409301)(228905959029699);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1110;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1110;
 x-forefront-prvs: 0637FCE711
 x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(346002)(396003)(39380400002)(39860400002)(199004)(189003)(5660300001)(7416002)(478600001)(86612001)(3846002)(6116002)(106356001)(6486002)(72206003)(25786009)(10290500003)(8936002)(6436002)(76176011)(2616005)(6506007)(2900100001)(97736004)(486006)(26005)(36756003)(10090500001)(81166006)(8676002)(81156014)(59450400001)(102836004)(2906002)(99286004)(11346002)(476003)(3660700001)(66066001)(6512007)(575784001)(86362001)(6306002)(53936002)(966005)(105586002)(186003)(5250100002)(14454004)(22452003)(6666003)(2501003)(446003)(7736002)(316002)(1076002)(110136005)(3280700002)(54906003)(68736007)(107886003)(4326008)(305945005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1110;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: k6qSu3NdU4WRY0OPAIxU0Hbgu2uuW4TfxOuMmTk+otnsS8aXC6JEt765NRzxZPKTPrjpFPOLTYmA7X+cmEYT8fqAt8mCsNH6MR9ehklMYX9qQujG++Z/DTMN5ITS5nMzeA8ffj2FEhcHiAjZDZodiFbTe7ZEZFXkf7/gBc0oO3yWrJu+8n/N62VDtyBEW/1HARcRzJaR8s45KqMJsfCvjdijbyYoT026D14WC0KPxrOKP4Ok8ozaKMsCOupr8vJS5vGozN/+1MCfivGzN9Mr7yw4IAxfbvpXZj5BYaG1DDRchWMHTXq1Xt6+O/FRP/a3JTWQx0/U/XG5vWYAYOq57AMUscnCZjMcUTHewTGUh+LLZ7/2huOEBHgW9DK7hUEsgMrQpiIkrVDjRY0JmMRwvAPBaP2iJYwVcUDmEdcwY10=
+x-microsoft-antispam-message-info: uvaZff6Vft6rNCqIL/JyAlTBIT3IeGuyhgFZfzcIvPQGbCv1DynfMg+WUvidXf6ZTkj8y1X9BcL9/BXjYeozvsdqSUON3Oc7PgzFNvaq/HwTHQO54noksnNoO1e96Z8PB8swnXkBswLPIZ4jBl+Gv++SG4qbBRT2EdNg3M3+mtbrmnD9dZE4JjQM0OesMRimj8wcc0jO+36RsW+XfVhc/kkiCBNZj82IJLfr7ZdFXaa8Xrxymp9OOaXjrH2KPJq0/XfZE8ErgsIzbWElwNDDbMEFi3KQax5+OH5RJExf/PTumwvR3ddeDTbH4/A9bXftcnqCDG5U3gL6fPu38T28zqXnSUI5nXXABvsi+TxswOvfYz5E0tA94UvzMidyTx+DLxL1mienga2JFTKwBT3pD8JBPz9IS/rnfh5P1x1y1aI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fcaffa6d-2c1b-4ad1-9b63-08d59dafad3f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:18:41.6282
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a3e17fd-a309-4392-c8aa-08d59dafacca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:18:40.3470
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -132,49 +131,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit ebfc15019cfa72496c674ffcb0b8ef10790dcddc ]
+[ Upstream commit 328008a72d38b5bde6491e463405c34a81a65d3e ]
 
-In some configurations, 'partial' does not get initialized, as shown by
-this gcc-8 warning:
+The declaration for swsusp_arch_resume marks it as 'asmlinkage', but the
+definition in x86-32 does not, and it fails to include the header with the
+declaration. This leads to a warning when building with
+link-time-optimizations:
 
-arch/x86/kernel/dumpstack.c: In function 'show_trace_log_lvl':
-arch/x86/kernel/dumpstack.c:156:4: error: 'partial' may be used uninitializ=
-ed in this function [-Werror=3Dmaybe-uninitialized]
-    show_regs_if_on_stack(&stack_info, regs, partial);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/power/power.h:108:23: error: type of 'swsusp_arch_resume' does not m=
+atch original declaration [-Werror=3Dlto-type-mismatch]
+ extern asmlinkage int swsusp_arch_resume(void);
+                       ^
+arch/x86/power/hibernate_32.c:148:0: note: 'swsusp_arch_resume' was previou=
+sly declared here
+ int swsusp_arch_resume(void)
 
-This initializes it to false, to get the previous behavior in this case.
+This moves the declaration into a globally visible header file and fixes up
+both x86 definitions to match it.
 
-Fixes: a9cdbe72c4e8 ("x86/dumpstack: Fix partial register dumps")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Len Brown <len.brown@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Nicolas Pitre <nico@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Borislav Petkov <bpetkov@suse.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Link: https://lkml.kernel.org/r/20180202145634.200291-1-arnd@arndb.de
+Cc: linux-pm@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Link: https://lkml.kernel.org/r/20180202145634.200291-2-arnd@arndb.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/x86/kernel/dumpstack.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/power/hibernate_32.c | 2 +-
+ arch/x86/power/hibernate_64.c | 2 +-
+ include/linux/suspend.h       | 2 ++
+ kernel/power/power.h          | 3 ---
+ 4 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index afbecff161d1..a2d8a3908670 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -109,7 +109,7 @@ void show_trace_log_lvl(struct task_struct *task, struc=
-t pt_regs *regs,
- 	struct stack_info stack_info =3D {0};
- 	unsigned long visit_mask =3D 0;
- 	int graph_idx =3D 0;
--	bool partial;
-+	bool partial =3D false;
+diff --git a/arch/x86/power/hibernate_32.c b/arch/x86/power/hibernate_32.c
+index c35fdb585c68..afc4ed7b1578 100644
+--- a/arch/x86/power/hibernate_32.c
++++ b/arch/x86/power/hibernate_32.c
+@@ -145,7 +145,7 @@ static inline void resume_init_first_level_page_table(p=
+gd_t *pg_dir)
+ #endif
+ }
 =20
- 	printk("%sCall Trace:\n", log_lvl);
+-int swsusp_arch_resume(void)
++asmlinkage int swsusp_arch_resume(void)
+ {
+ 	int error;
 =20
+diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
+index f910c514438f..0ef5e5204968 100644
+--- a/arch/x86/power/hibernate_64.c
++++ b/arch/x86/power/hibernate_64.c
+@@ -174,7 +174,7 @@ out:
+ 	return 0;
+ }
+=20
+-int swsusp_arch_resume(void)
++asmlinkage int swsusp_arch_resume(void)
+ {
+ 	int error;
+=20
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index d60b0f5c38d5..8544357d92d0 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -384,6 +384,8 @@ extern int swsusp_page_is_forbidden(struct page *);
+ extern void swsusp_set_page_free(struct page *);
+ extern void swsusp_unset_page_free(struct page *);
+ extern unsigned long get_safe_page(gfp_t gfp_mask);
++extern asmlinkage int swsusp_arch_suspend(void);
++extern asmlinkage int swsusp_arch_resume(void);
+=20
+ extern void hibernation_set_ops(const struct platform_hibernation_ops *ops=
+);
+ extern int hibernate(void);
+diff --git a/kernel/power/power.h b/kernel/power/power.h
+index f29cd178df90..9e58bdc8a562 100644
+--- a/kernel/power/power.h
++++ b/kernel/power/power.h
+@@ -104,9 +104,6 @@ extern int in_suspend;
+ extern dev_t swsusp_resume_device;
+ extern sector_t swsusp_resume_block;
+=20
+-extern asmlinkage int swsusp_arch_suspend(void);
+-extern asmlinkage int swsusp_arch_resume(void);
+-
+ extern int create_basic_memory_bitmaps(void);
+ extern void free_basic_memory_bitmaps(void);
+ extern int hibernate_preallocate_memory(void);
 --=20
 2.15.1
