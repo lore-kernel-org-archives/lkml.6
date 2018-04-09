@@ -1,82 +1,91 @@
-Return-Path: <colin.king@canonical.com>
-X-Google-Smtp-Source: AIpwx4+CwT1BdmCo412t5alavUddAQrsE3s3ZkQIX9pPzzxAQbwgkCVWm0vhvcdbY6qSGm0XH74A
-ARC-Seal: i=1; a=rsa-sha256; t=1523031706; cv=none;
+Return-Path: <jarkko.sakkinen@linux.intel.com>
+X-Google-Smtp-Source: AIpwx4+OntGiW/8Zc3kJvRsK6DXOeseTk7YY5IWAyBToglhcA3/4iHW8ASdquCuveHx2tFbnHtQP
+ARC-Seal: i=1; a=rsa-sha256; t=1523272275; cv=none;
         d=google.com; s=arc-20160816;
-        b=L+MYrLRpxPB+ZleLog6jScATBRnObTjbpnVHR7RJW0EG4AXR3SHPHC0pp+f9n4/ua8
-         fksTCjbaSuQPvUBZrEux0tn4gIcgUoE0tAEu/cWMTX1NDnfBwQfdV25X02oEH6l5Alft
-         EFMjPmwoQUF3zvCLxtU/+E3qK8B74mqeIuWOre3e96JJPIymI0ZFQ3efknuxCpQORMAC
-         PXdje1v68zctY84wXANO6T4/6oBLrkfUvvWWyBjTilSRqKAmKApwmbEADBSqnD/q3Ass
-         vVHdOg7ErMCTJCXaV3XHf9ZQ2S9mLfRdv2As05CIdU2u4slDLzzw9xo+x1+riEsAP9P8
-         aXRw==
+        b=pdvUbwfHwrLi8eMyKkoZguGXnGBzgLLENiVjzdMvDZfVacsKlPD0vKKgC0c6/8yJj6
+         6GKazCHS9AbVaznefsoQ5NEm/utOoWCCOo3QRdKrLRN84e9gUz1a6Oqt3x5WQBJoY6yI
+         ief2t51LuVPo131MiX/U82Daze+bSsRnp07O7YnnavdETRcI6dh9XkwNAUUI5r0lYZH9
+         UJLMhqE4zp6vXdgOTn7uqks6j/m15L8QoQWoJAdZFKGKDmL4YM+jwUA4n0/yVHznWuFK
+         MVdkQGXnmAicT5iGljzB08lAao7nDtvHmgScf74etOy9t3tUB4jT7OW/huWXUC/v9HlB
+         3Cxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:arc-authentication-results;
-        bh=u/SQU1lkYzVGbf8K7TxLHT8P/TmCLdKNjtuVDN2HLsk=;
-        b=g5eCIgrxBjzUELXjIBi+dGp2HytYSDTRZJaY+0bx+QXQarB1i9mTtgk1l+VdlgMa09
-         1zOuRhPp8ES3gmGjNbAFq9mJFEh/boptHruJ1QXV4flmu+Z4+ASBAXT1FJHP32wU3W3R
-         ejImnIshkeZqDHxmmyU+XFYaQM1+/0NEltbf1VlUvxjd9pRgkXfPfzzetnvgqA/0Hs84
-         /HTTlXEzjD7Km3FuQc9J7xZTsMO5T+y5LTPqVp1bNBbXSBMVK9F+XPIGvydoEmGf+bOr
-         /aNLBW5hYWDaPvX+ZNNRtVNyx2f32tHh/CmQj6x3SU0L4lxjlJ7iDM1dDDgjXdhUHTnZ
-         C5UQ==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:date:cc:to:from:subject:message-id
+         :arc-authentication-results;
+        bh=REKAe9hCbMVSDM832URGN18TZOx/31kOCjfu/3eWxMg=;
+        b=p7s4A3rxbwWaAGDEbRM9hSVVzl0Cv3/cFGH4sDGy/5hR/rifMmgUZXQNl52lxSLgf3
+         eUTRCMLMq4tlp2R7pYYG5YUURuonWDLouX4t/tlHGjyuHbFEyTGdtemctFDBGXveRbtD
+         jiMYFLYQ0bLVN7QJmxWlKA0maYJP617ebnc/lkYZj1mn1QYhbeU/DxpiD9T4Hjp2cf+l
+         bcvOxLwSxYknMHvf8tv9ruvn0Fmb0fxZXfirnth52SvHzZdiWXYX7mHSOdeADzaD/f21
+         EsVsGheilUVmXe9FNSRhkQ0uyv7o1NLdOkPUM+xzyJD3zn5IjGcWD0rQ82cvNfrh0UJ0
+         AZBg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+       spf=pass (google.com: best guess record for domain of jarkko.sakkinen@linux.intel.com designates 192.55.52.43 as permitted sender) smtp.mailfrom=jarkko.sakkinen@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
-From: Colin King <colin.king@canonical.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-integrity@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: st33zp24: remove redundant null check on chip
-Date: Fri,  6 Apr 2018 17:21:44 +0100
-Message-Id: <20180406162144.14717-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+       spf=pass (google.com: best guess record for domain of jarkko.sakkinen@linux.intel.com designates 192.55.52.43 as permitted sender) smtp.mailfrom=jarkko.sakkinen@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,427,1517904000";
+   d="scan'208";a="35647115"
+Message-ID: <4ea103c15998af56813fb870ac9a27a34a694f49.camel@linux.intel.com>
+Subject: Re: [PATCH] tpm: st33zp24: remove redundant null check on chip
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Colin King <colin.king@canonical.com>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe
+	 <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>, linux-integrity@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 09 Apr 2018 14:11:08 +0300
+In-Reply-To: <20180406162144.14717-1-colin.king@canonical.com>
+References: <20180406162144.14717-1-colin.king@canonical.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.0-4 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597014495178816118?=
-X-GMAIL-MSGID: =?utf-8?q?1597014495178816118?=
+X-GMAIL-MSGID: =?utf-8?q?1597266749496419239?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 2018-04-06 at 17:21 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently chip is being dereferenced by the call to dev_get_drvdata
+> before it is being null checked, however, chip can never be null, so
+> this check is misleading and redundant. Remove it.
+> 
+> Detected by CoverityScan, CID#1357806 ("Dereference before null check")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> ---
+> 
+> V2: don't check for null, just remove redundant null check,
+>     thanks to Jason Gunthorpe for spotting that.
+> 
+> ---
+>  drivers/char/tpm/st33zp24/st33zp24.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/st33zp24/st33zp24.c
+> b/drivers/char/tpm/st33zp24/st33zp24.c
+> index f95b9c75175b..abd675bec88c 100644
+> --- a/drivers/char/tpm/st33zp24/st33zp24.c
+> +++ b/drivers/char/tpm/st33zp24/st33zp24.c
+> @@ -373,8 +373,6 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned
+> char *buf,
+>  	int ret;
+>  	u8 data;
+>  
+> -	if (!chip)
+> -		return -EBUSY;
+>  	if (len < TPM_HEADER_SIZE)
+>  		return -EBUSY;
+>  
 
-Currently chip is being dereferenced by the call to dev_get_drvdata
-before it is being null checked, however, chip can never be null, so
-this check is misleading and redundant. Remove it.
+Reviewed-by: Jarkko Sakkinen <jarkkko.sakkinen@linux.intel.com>
 
-Detected by CoverityScan, CID#1357806 ("Dereference before null check")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
----
-
-V2: don't check for null, just remove redundant null check,
-    thanks to Jason Gunthorpe for spotting that.
-
----
- drivers/char/tpm/st33zp24/st33zp24.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-index f95b9c75175b..abd675bec88c 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.c
-+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-@@ -373,8 +373,6 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
- 	int ret;
- 	u8 data;
- 
--	if (!chip)
--		return -EBUSY;
- 	if (len < TPM_HEADER_SIZE)
- 		return -EBUSY;
- 
--- 
-2.15.1
+/Jarkko
