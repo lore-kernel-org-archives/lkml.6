@@ -1,28 +1,28 @@
 Return-Path: <robherring2@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523305571; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1523305524; cv=none;
         d=google.com; s=arc-20160816;
-        b=GEpzcBidqnB2eKxoF5ivZK/PHksga91EG2Rwep/489kkCiR5gXknt33qvJB6J2fAn4
-         45XGeOmiFbLq+KivmIzrWygqWGatO6oJT5j3lRsx7Tfg9CyT63GPYOtZzVvpSrQqylhB
-         /oTd6bt0bSLROvmwk0rjXRt9glU6lmv0/tAsF17OxeyIg1uQ3hO4cJ4TwV7Cm3crG9cw
-         I4qMWTVrl6ng548aZ0jUI1GOXQWCQ/eQEbwQkc8E2Ey8PuhoAeryOVSCJ5AgSqoJJoY1
-         ctVmCP5BW1sR1cfnC/zdYKbJQeS/O4iTt9gWAucUjle7VYM0gSfVpoFaXnUYdwouUcFU
-         S65A==
+        b=C53kmSWo4sfIdd/KDAYddJwBx6oEU39ArP5vrg4ZJGQqYNRa+B8/6iCGhmQSbNnfOK
+         UaN67LxTSaE/VSOHNkurv6rg03MJq4JmnfkWLGjfCteiDEE2VINABBAEZnbskegbDoAH
+         CXsgoMr3ESzsCrrLn2lddrGkhClcTTqWt7wp44qBiMpbaGvPXp1bf8gz/AcloPjp+5zM
+         qy0luUOlU14jfRCLcq0xAeMf7rWMFeJworI8/jXrL+SzcduV+YSxjarJsPJ2PQHuwfIM
+         ypiPzWf3NiRppucI81FYx2lYi7p2E9hnh/SD84X70Hd+4brViEl4J9JoEYpRmpR1MXeq
+         0ncg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=0amWzqW/FHLqypWUnlrt3ApmERgAEnTe+kwFOUB3XJU=;
-        b=WLAMssOGNX89+tCNe7z1fZDzuqdVNadJki7I5K8t/hN9OLp0Lf6TBBgMrdVPTpQmNM
-         1AJtAgxPLoAjWufHqFJ2lDFJUzfCnkmK1n5RNw8QT3VghtkMt9EmuwTM4P+aegy2wCSs
-         sDLSFayKwzmCM5M7NyDy9ueAyfC7E4vw6YetYjKgd9o6BCBczMQq2IoyERorth6WBn9m
-         MILByY8/BXLze+Mtk9klGagPpgNW9+I9BbCvDrNg636eFEkkXexbj0Dci9qNF7YODmqT
-         bXzPxoHM2jg45uEgw7lC/B6sVruOKo/QbbS6RMIM9XwXw0eaLzl/M5J5VD300lFyIP2B
-         cOIA==
+        bh=75LEPbVu5ri5dixdUFcrqokMMTlWbKwNBAa/U5hLSJ8=;
+        b=LHiytXiRBkjyxkQ7aSMWe8bM2UviS0h6IG6zG3g2KngbeiotP+NJ8k58msykcySUzT
+         pihfimIV9xrNaZjMojDoF3gix/nLICp9E647Vw4G9RQaLEPRrzBubBlgVT58Gmed+0Ff
+         YeqYmVX/svAGFNuAupTeozShQp45PmfUflKWunFuCeo98RDTO+rnz28r3DPgCg467SxL
+         n2lyPt2PM3f7KfPXKW8y1qmT4epgnt+yF5rP69/2YKaqrhuU4qHLFz0tdM7CI+K/3zVV
+         eJgsvkYcOSB2nMYI+rcwd7ABwD0d+nUfXRcuOP97sH3LwFX5M33MVuQh66awLzm339R4
+         pb3A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=robherring2@gmail.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=robherring2@gmail.com
-X-Google-Smtp-Source: AIpwx48bDr0J9frlFbCMmH5AsfW2uvFyCUHQ5x0aFXHELwZEDlbHNZfShQ8lcubdlUSWmOx5NPu8TQ==
-Date: Mon, 9 Apr 2018 15:26:10 -0500
+X-Google-Smtp-Source: AIpwx48FomVXSlJ734jW+1ELhDK0fFC3SLRr4Kp8HCPpaxmXxSg8pPdbWZjao/BQCREUXymoWLFlrw==
+Date: Mon, 9 Apr 2018 15:25:22 -0500
 From: Rob Herring <robh@kernel.org>
 To: Boris Brezillon <boris.brezillon@bootlin.com>
 Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
@@ -47,33 +47,32 @@ Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 10/10] dt-bindings: gpio: Add bindings for Cadence I3C
- gpio expander
-Message-ID: <20180409202610.2ckwi4ekswiaumym@rob-hp-laptop>
+Subject: Re: [PATCH v4 08/10] dt-bindings: i3c: Document Cadence I3C master
+ bindings
+Message-ID: <20180409202522.x7pooixnfgz572jn@rob-hp-laptop>
 References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
- <20180330074751.25987-11-boris.brezillon@bootlin.com>
+ <20180330074751.25987-9-boris.brezillon@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180330074751.25987-11-boris.brezillon@bootlin.com>
+In-Reply-To: <20180330074751.25987-9-boris.brezillon@bootlin.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596347993996271622?=
-X-GMAIL-MSGID: =?utf-8?q?1597301662894360206?=
+X-GMAIL-THRID: =?utf-8?q?1596347992501604184?=
+X-GMAIL-MSGID: =?utf-8?q?1597301613370783304?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 30, 2018 at 09:47:51AM +0200, Boris Brezillon wrote:
-> Document the Cadence I3C gpio expander bindings.
+On Fri, Mar 30, 2018 at 09:47:49AM +0200, Boris Brezillon wrote:
+> Document Cadence I3C master DT bindings.
 > 
 > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 > ---
 > Changes in v4:
-> - Use GPIO_ and IRQ_TYPE_ macros instead of raw numbers
-> - Fix the unit-address in the example
+> - Fix example to match the new representation
 > ---
->  .../devicetree/bindings/gpio/gpio-cdns-i3c.txt     | 39 ++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
+>  .../devicetree/bindings/i3c/cdns,i3c-master.txt    | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
 
 Reviewed-by: Rob Herring <robh@kernel.org>
