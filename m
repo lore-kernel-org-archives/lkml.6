@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3913452-1523242196-2-12913326727035069607
+X-Cyrus-Session-Id: sloti22d1t05-3878504-1523242121-2-3008640942248890304
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523242195; b=JnLXgEU1aALcfw9eIAeiQZQHAvMYxp0QNOVdKWK9hgcVQm2O1U
-    66o7+UrZcafDL5TfjyyMwaZ+B2IovqG1Sd5bT1eDpxDK1nHJVLFl1SQy0D8FzIK7
-    /bUGCSgZxiAsr4vAE1dEJDFFUR/ppmQESDu5jemUhiUgmimu387X03xp6VGUILRd
-    hrf6mAPssA0JoD0ZH3GGm2Ks9i49T9SeVmVKo4dE4HjdX/Cg7kT15FAc7xEtY453
-    97XOf+h6fk5oz0yKsUj1BHJjNvJ2fN+FitNqj0Hi8fxdwCsS5UUgeTZE4AoRwYGd
-    L4i6q6gpWw4K8Alg4GHW1cZPSnAgV3fdy+7A==
+    1523242120; b=GowQhFRCaKzgXKqs2b6XWH0HGWhO14BfRnIsTVGda3eUNGG1A2
+    SEinoj2SB2GD8C1/hqXygIIAATx6P0DdUzV0TxedyZCMAEDo3JymlFbDCzzfmaFu
+    D9WSEFZ01vUwkEJvz2zXEvl+c3CbKlqfieFf1DHhEZ/BG1vObCIqryw7WVHJa/o1
+    cfrqT+dWEVZUxhm85Kii+iyBBGLOXbWKEnTrm/Sa4yKVzl62TBB8+fesUNwXZHtL
+    VUirrzLjR2tFW1gAoHxWG3QfV9ClZyYRMAnDQwEhrvXvKaynXrGE/8P1y5le5hjA
+    tIzTk1MMNmhe2OeKoMmG1eiJbnKUmH0XxB3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523242195; bh=9bAY5ZNTGf
-    fjTx57TVlw1PVfEb0OUE6f+PC5IWDjfUo=; b=fpBvHwCdpzjwkPlhN2da2T+b9+
-    ygyOalwyZccBMxkl0Rhle4P6JzOaekx9KM7uWSQfwaHbeN1PeBDuJi0CAMHJc0u9
-    GWRe+Ms4pRvS/IFAX5g4hY2pWBkMMpLd2Y6wKNEJg6arXL3AkUvjZwJwDV9xHuZU
-    sYNgGUidChXdqgGiHIMuF/hLgif9JBu07HvSgjJyrGo4bNaHZ8nXmB3vbVwDU/vt
-    jCeimQXWq/9umxb0SKVjJnPMYF2IK726Dr11GUX0JK48LKwkMjnZApbo6/HIBRjl
-    wgGxEXvpJ+zrSPc1UbcNOos7b/16tK1vk8503aGIiANPKxYPdoo4hOg77mWQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PkxRXfZT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523242120; bh=5o0Gp6KZ9T
+    f4Xv71SgvCYFonaw8IFtVXXltacFtbIO8=; b=u+asyDzAal38gv8xEmhoLsMGsT
+    XH2REC9rsf5xYCVwWNmDGpg/rYXl2lfxGLYFIyvFqZC3XwhJhd28AIAikSYMy9WU
+    zxTszXFy0QM1HgaRRPgiu2lfQHreTddAljIjFVcFtUkAgKOh4dS72nKihqjCVpGk
+    LNSvwTfIWMgQRp9OIsXmUEWMTNeukPdusltYW6rJwphdxqXi+QqrpLuuD8UFMyQV
+    XCq1bnYAQa/NcICMta/AUGeXhDqIjbFBEEV739uglIXqGaKnW4+kfauHPwI/mgVH
+    U5lCK6ujCfQenljm2MowzVV5mCsuXS7wSII7pr2d2O4ELZ6Zh6ElntphNrgA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=XXU7XjST x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PkxRXfZT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=XXU7XjST x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,35 +51,33 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCHj6hquJvr9jkuDJtxGQ5B7n/jm2kFiX3JLCpt+YGylN3Iz0sJTM/7NOQF/66ANHkpuGtuKZLZAx23IzTpO2aEe+ZScQU8SS1156JswdI56tIwRnHFu
-    PYtEHa2UVMSybS4arvm2QRliBZsMR+zVUqalFvwpohNCPClUJpKb9+On7RMj95hq0Sk1ahmJ5+z0+kP88i0ONzXcgB+LDCe/gG6blJT56/xuWrSSYDf8CsxU
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfB3T6sysjK4cBgm+zztZWx3001Agc7fB0Jw11JkJjuzzwIWmgNANfBxQay0uuURI9osdwJHY8MRYJyASqty/M7EHH1lAkJmo0JOzB1B0ufPxB9FVK38Y
+    qA6BI/ccH0PtQIRTZv8yQXqZ5D1/4BQuW7WBK4V4o3NLNCcAeyuBD/iGzMDKjt3Hv6no4rY/sTbwWrkrX8t6RqKC5mFTY4Gi4RDvJqzlTHLv5Gd3CMdyedSS
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=3DfWnJiXAAAA:8 a=yMhMjlubAAAA:8 a=wlzNjK1lAZS8pu3RYYIA:9
-    a=wPNLvfGTeEIA:10 a=fbZbCd7XTi_oNd1tYRxB:22
+    a=Lf-vpJhqX20A:10 a=20KFwNOVAAAA:8 a=3DfWnJiXAAAA:8 a=yMhMjlubAAAA:8
+    a=c5t9UXjes9Jb_MSDGH8A:9 a=wPNLvfGTeEIA:10 a=fbZbCd7XTi_oNd1tYRxB:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932597AbeDICs4 (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 22:48:56 -0400
-Received: from mail-by2nam01on0099.outbound.protection.outlook.com ([104.47.34.99]:2811
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S1754391AbeDICsg (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 22:48:36 -0400
+Received: from mail-cys01nam02on0098.outbound.protection.outlook.com ([104.47.37.98]:9607
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755330AbeDIA0g (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:26:36 -0400
+        id S1755379AbeDIA0h (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:26:37 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Rakesh Pandit <rakesh@tuxera.com>, Christoph Hellwig <hch@lst.de>,
+CC: Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 002/293] nvme-pci: fix multiple ctrl removal
- scheduling
-Thread-Topic: [PATCH AUTOSEL for 4.9 002/293] nvme-pci: fix multiple ctrl
- removal scheduling
-Thread-Index: AQHTz5jiabZzN+tEhkKG9rDuoA+X1A==
-Date: Mon, 9 Apr 2018 00:22:47 +0000
-Message-ID: <20180409002239.163177-2-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 003/293] nvme: fix hang in remove path
+Thread-Topic: [PATCH AUTOSEL for 4.9 003/293] nvme: fix hang in remove path
+Thread-Index: AQHTz5jjezob4o4mckaPt/N5DpmfrA==
+Date: Mon, 9 Apr 2018 00:22:48 +0000
+Message-ID: <20180409002239.163177-3-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -88,27 +86,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1015;7:TnxaJ9RMUcIu26VGsaiMJ4LWl9XCZAjZP9Wpt0bS6UOy3CDm6Owyzi0Ersukw2PnH3WKKzjnQlpFpr2DXCDeTEdFdOmM1Ud/EezD0LcPzBYlhb2V19+FJBh3eP7vbOmv+4ToehqwhIj6TFuM/GKfm3bpZK7mIFhsVbaONfNaNxUoa5iQnNS9UZwoZIhLkOCiwUCJTB19jEuVm0WrQ1f3nV/+o31JKFj/FEQ0d1k3s6h+hynFYE/YIi3/ZQlNW58W;20:3b50G+wHdZCAWemQvntLjqqXXvVPR/pnmlZgIwzPYiHpYG6VTCK+cxMeEf9HERFUupvnSrlzumHsrXwGewIvbjp6g0RenXq7ApSL1fBPztZRVSCxXEWi0KLo6nfc7At9fwRGKxLCzsqGk5QdgU05uoiDiCQxignzn9wRAUN3wiE=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1015;7:XqTYrOV60+xVy9+SnWwL2b4uejmPuozti93+uXBC2hhC3afX5VrDXhB1431gPSrR+8WMDFkrgDwtB5a+Qq735vixOFxGatjHPjxFIun1UR64SJWSgdUAn4Bd03GHzoavuE8CdSFloINpn4vjEfeY7V//CntHclq07QHSkVvqf02moDSZt3OYqHqpk2UXhCmGkVZDExolSq5sDSjCrvAs9IjIVmEIq2Q/LCqD+hz649m2ROGHu7P2McLH5vw80a5n;20:Jxg7tt9heu7PjiDF7r8v8GC+W2TYzr34ItrG0KCCi8tbnGBTOiBm+5IbfuneiKirjFbYj5rUKIbrgISVk6981vIQyje0wBga4sYpt7zW5Yd9iXjn4f4rgWMv37FWNazkwQaCYVw66OK+s1mhN9tKWHtlp5nCVi+6uqQwZPV4r2k=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 885d5ee0-f68d-472f-f658-08d59db08a3d
+X-MS-Office365-Filtering-Correlation-Id: 0ddef4b9-918f-47a2-54ad-08d59db08a9d
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1015;
 x-ms-traffictypediagnostic: DM5PR2101MB1015:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10152D3E272029D5CA7A26A1FBBF0@DM5PR2101MB1015.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(17755550239193);
+x-microsoft-antispam-prvs: <DM5PR2101MB1015EFE63E532FF89A5CB581FBBF0@DM5PR2101MB1015.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1015;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1015;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(39380400002)(376002)(346002)(366004)(51234002)(189003)(199004)(53936002)(4326008)(478600001)(72206003)(3280700002)(2616005)(14454004)(305945005)(5250100002)(3660700001)(2501003)(2900100001)(54906003)(110136005)(86362001)(1076002)(107886003)(6506007)(36756003)(446003)(68736007)(6512007)(7736002)(486006)(2906002)(5660300001)(6436002)(3846002)(86612001)(6486002)(66066001)(11346002)(575784001)(476003)(6666003)(59450400001)(26005)(10090500001)(316002)(22452003)(8676002)(81156014)(81166006)(6116002)(105586002)(99286004)(186003)(106356001)(76176011)(25786009)(97736004)(10290500003)(102836004)(8936002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1015;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: pby+OspKorrhnoJefm8Ig+97aM5oqBrxwH4dSdiKrcVbBqz+xoTU/MWqkOIrsvQWkV6X+ghTzuX73YIRwZJGxv6GYWVjE8Y0pBKlpBbKjZwSIG2HbS2g0MGiRbh7oktHQKkqQf/tnRE2YI4dR3orvhffE/zhPhyAGWqM+GHhvQtpcHgD/KV6G2frSjEzHaS4MtzRVRDT3M0mUlArKQZvINWdUHeh7a5jR+c/vdSFVP6j9y/Ak/kHEBO3BciUZAJX/rCgdbB3hTfKw6+obEeZsmzmU4kldOpwS9DppH/2ZjVhRJBinsGpqW3WhQCz+F7CXha1Bu0Ax80F24Dtc+KUKs5imvwVNBx1ekeDKq04ZvAtQb1iXb4CYuJwLv7ToruwKCU/kF+0//MeDu4ZD4DlfcxFvl9pujMEBSbPEaSMH4c=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(39380400002)(376002)(346002)(366004)(189003)(199004)(53936002)(4326008)(478600001)(72206003)(3280700002)(2616005)(14454004)(305945005)(5250100002)(3660700001)(2501003)(2900100001)(54906003)(110136005)(86362001)(1076002)(107886003)(6506007)(36756003)(446003)(68736007)(6512007)(7736002)(486006)(2906002)(5660300001)(6436002)(3846002)(86612001)(6486002)(66066001)(11346002)(476003)(6666003)(59450400001)(26005)(10090500001)(316002)(22452003)(8676002)(81156014)(81166006)(6116002)(105586002)(99286004)(186003)(106356001)(76176011)(25786009)(97736004)(10290500003)(102836004)(8936002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1015;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: smxqBU1s3ce8BIulyWnsOLeA/f3BG/A4JSQLs7Sgnw44Aur+FX9x23t4GqeEpxgCW/+/4AMlq8ZD5mpzAEoQTuzp0KHioDIN+30K45RDXH6od+VSjAI9cq+X0VGTG1h8lGwBoGDeyMwLuNrDj7Iwg2CCrj39odaSlH4+oFhnkIyYlnEo+tj6DYISEMVUc9JRTZlAS5UJwFz5I+shbkPRZ98U/lgJnO6TZdIJYM6c/+K3xdCmPDk7yLOBeOB50vaBvaYQJb25AeNNNgCU7bzofkcmGAgkxF5wRzRwjSwrdU+EPyPrtkNOE77jEBGq/r17oR0Uu46JcwdKRLeB6iEgsaxU9UqURBFY5GRaUo9AE5+FAjW94JBeK55UqZDC/tPTNH96n2uipBbtDdc1yfh355czHMa/Iaza/0T56Gyckdk=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 885d5ee0-f68d-472f-f658-08d59db08a3d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:22:47.0654
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ddef4b9-918f-47a2-54ad-08d59db08a9d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:22:48.0029
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -119,140 +117,65 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Rakesh Pandit <rakesh@tuxera.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-[ Upstream commit 82b057caefaff2a891f821a617d939f46e03e844 ]
+[ Upstream commit 82654b6b8ef8b93ee87a97fc562f87f081fc2f91 ]
 
-Commit c5f6ce97c1210 tries to address multiple resets but fails as
-work_busy doesn't involve any synchronization and can fail.  This is
-reproducible easily as can be seen by WARNING below which is triggered
-with line:
+We need to start admin queues too in nvme_kill_queues()
+for avoiding hang in remove path[1].
 
-WARN_ON(dev->ctrl.state =3D=3D NVME_CTRL_RESETTING)
+This patch is very similar with 806f026f9b901eaf(nvme: use
+blk_mq_start_hw_queues() in nvme_kill_queues()).
 
-Allowing multiple resets can result in multiple controller removal as
-well if different conditions inside nvme_reset_work fail and which
-might deadlock on device_release_driver.
+[1] hang stack trace
+[<ffffffff813c9716>] blk_execute_rq+0x56/0x80
+[<ffffffff815cb6e9>] __nvme_submit_sync_cmd+0x89/0xf0
+[<ffffffff815ce7be>] nvme_set_features+0x5e/0x90
+[<ffffffff815ce9f6>] nvme_configure_apst+0x166/0x200
+[<ffffffff815cef45>] nvme_set_latency_tolerance+0x35/0x50
+[<ffffffff8157bd11>] apply_constraint+0xb1/0xc0
+[<ffffffff8157cbb4>] dev_pm_qos_constraints_destroy+0xf4/0x1f0
+[<ffffffff8157b44a>] dpm_sysfs_remove+0x2a/0x60
+[<ffffffff8156d951>] device_del+0x101/0x320
+[<ffffffff8156db8a>] device_unregister+0x1a/0x60
+[<ffffffff8156dc4c>] device_destroy+0x3c/0x50
+[<ffffffff815cd295>] nvme_uninit_ctrl+0x45/0xa0
+[<ffffffff815d4858>] nvme_remove+0x78/0x110
+[<ffffffff81452b69>] pci_device_remove+0x39/0xb0
+[<ffffffff81572935>] device_release_driver_internal+0x155/0x210
+[<ffffffff81572a02>] device_release_driver+0x12/0x20
+[<ffffffff815d36fb>] nvme_remove_dead_ctrl_work+0x6b/0x70
+[<ffffffff810bf3bc>] process_one_work+0x18c/0x3a0
+[<ffffffff810bf61e>] worker_thread+0x4e/0x3b0
+[<ffffffff810c5ac9>] kthread+0x109/0x140
+[<ffffffff8185800c>] ret_from_fork+0x2c/0x40
+[<ffffffffffffffff>] 0xffffffffffffffff
 
-[  480.327007] WARNING: CPU: 3 PID: 150 at drivers/nvme/host/pci.c:1900 nvm=
-e_reset_work+0x36c/0xec0
-[  480.327008] Modules linked in: rfcomm fuse nf_conntrack_netbios_ns nf_co=
-nntrack_broadcast...
-[  480.327044]  btusb videobuf2_core ghash_clmulni_intel snd_hwdep cfg80211=
- acer_wmi hci_uart..
-[  480.327065] CPU: 3 PID: 150 Comm: kworker/u16:2 Not tainted 4.12.0-rc1+ =
-#13
-[  480.327065] Hardware name: Acer Predator G9-591/Mustang_SLS, BIOS V1.10 =
-03/03/2016
-[  480.327066] Workqueue: nvme nvme_reset_work
-[  480.327067] task: ffff880498ad8000 task.stack: ffffc90002218000
-[  480.327068] RIP: 0010:nvme_reset_work+0x36c/0xec0
-[  480.327069] RSP: 0018:ffffc9000221bdb8 EFLAGS: 00010246
-[  480.327070] RAX: 0000000000460000 RBX: ffff880498a98128 RCX: dead0000000=
-00200
-[  480.327070] RDX: 0000000000000001 RSI: ffff8804b1028020 RDI: ffff880498a=
-98128
-[  480.327071] RBP: ffffc9000221be50 R08: 0000000000000000 R09: 00000000000=
-00000
-[  480.327071] R10: ffffc90001963ce8 R11: 000000000000020d R12: ffff880498a=
-98000
-[  480.327072] R13: ffff880498a53500 R14: ffff880498a98130 R15: ffff880498a=
-98128
-[  480.327072] FS:  0000000000000000(0000) GS:ffff8804c1cc0000(0000) knlGS:=
-0000000000000000
-[  480.327073] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  480.327074] CR2: 00007ffcf3c37f78 CR3: 0000000001e09000 CR4: 00000000003=
-406e0
-[  480.327074] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
-00000
-[  480.327075] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
-00400
-[  480.327075] Call Trace:
-[  480.327079]  ? __switch_to+0x227/0x400
-[  480.327081]  process_one_work+0x18c/0x3a0
-[  480.327082]  worker_thread+0x4e/0x3b0
-[  480.327084]  kthread+0x109/0x140
-[  480.327085]  ? process_one_work+0x3a0/0x3a0
-[  480.327087]  ? kthread_park+0x60/0x60
-[  480.327102]  ret_from_fork+0x2c/0x40
-[  480.327103] Code: e8 5a dc ff ff 85 c0 41 89 c1 0f.....
-
-This patch addresses the problem by using state of controller to
-decide whether reset should be queued or not as state change is
-synchronizated using controller spinlock.  Also cancel_work_sync is
-used to make sure remove cancels the reset_work and waits for it to
-finish.  This patch also changes return value from -ENODEV to more
-appropriate -EBUSY if nvme_reset fails to change state.
-
-Fixes: c5f6ce97c1210 ("nvme: don't schedule multiple resets")
-Signed-off-by: Rakesh Pandit <rakesh@tuxera.com>
+Fixes: c5552fde102fc("nvme: Enable autonomous power state transitions")
+Reported-by: Rakesh Pandit <rakesh@tuxera.com>
+Tested-by: Rakesh Pandit <rakesh@tuxera.com>
 Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/nvme/host/pci.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/nvme/host/core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index e48ecb9303ca..8cc856ecec95 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1263,7 +1263,7 @@ static bool nvme_should_reset(struct nvme_dev *dev, u=
-32 csts)
- 	bool nssro =3D dev->subsystem && (csts & NVME_CSTS_NSSRO);
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index ad9d82eb2aed..c823e9346389 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2040,6 +2040,10 @@ void nvme_kill_queues(struct nvme_ctrl *ctrl)
+ 	struct nvme_ns *ns;
 =20
- 	/* If there is a reset ongoing, we shouldn't reset again. */
--	if (work_busy(&dev->reset_work))
-+	if (dev->ctrl.state =3D=3D NVME_CTRL_RESETTING)
- 		return false;
-=20
- 	/* We shouldn't reset unless the controller is on fatal error state
-@@ -1755,7 +1755,7 @@ static void nvme_reset_work(struct work_struct *work)
- 	struct nvme_dev *dev =3D container_of(work, struct nvme_dev, reset_work);
- 	int result =3D -ENODEV;
-=20
--	if (WARN_ON(dev->ctrl.state =3D=3D NVME_CTRL_RESETTING))
-+	if (WARN_ON(dev->ctrl.state !=3D NVME_CTRL_RESETTING))
- 		goto out;
-=20
- 	/*
-@@ -1765,9 +1765,6 @@ static void nvme_reset_work(struct work_struct *work)
- 	if (dev->ctrl.ctrl_config & NVME_CC_ENABLE)
- 		nvme_dev_disable(dev, false);
-=20
--	if (!nvme_change_ctrl_state(&dev->ctrl, NVME_CTRL_RESETTING))
--		goto out;
--
- 	result =3D nvme_pci_enable(dev);
- 	if (result)
- 		goto out;
-@@ -1841,8 +1838,8 @@ static int nvme_reset(struct nvme_dev *dev)
- {
- 	if (!dev->ctrl.admin_q || blk_queue_dying(dev->ctrl.admin_q))
- 		return -ENODEV;
--	if (work_busy(&dev->reset_work))
--		return -ENODEV;
-+	if (!nvme_change_ctrl_state(&dev->ctrl, NVME_CTRL_RESETTING))
-+		return -EBUSY;
- 	if (!queue_work(nvme_workq, &dev->reset_work))
- 		return -EBUSY;
- 	return 0;
-@@ -1944,6 +1941,7 @@ static int nvme_probe(struct pci_dev *pdev, const str=
-uct pci_device_id *id)
- 	if (result)
- 		goto release_pools;
-=20
-+	nvme_change_ctrl_state(&dev->ctrl, NVME_CTRL_RESETTING);
- 	dev_info(dev->ctrl.device, "pci function %s\n", dev_name(&pdev->dev));
-=20
- 	queue_work(nvme_workq, &dev->reset_work);
-@@ -1987,6 +1985,7 @@ static void nvme_remove(struct pci_dev *pdev)
-=20
- 	nvme_change_ctrl_state(&dev->ctrl, NVME_CTRL_DELETING);
-=20
-+	cancel_work_sync(&dev->reset_work);
- 	pci_set_drvdata(pdev, NULL);
-=20
- 	if (!pci_device_is_present(pdev)) {
+ 	mutex_lock(&ctrl->namespaces_mutex);
++
++	/* Forcibly start all queues to avoid having stuck requests */
++	blk_mq_start_hw_queues(ctrl->admin_q);
++
+ 	list_for_each_entry(ns, &ctrl->namespaces, list) {
+ 		/*
+ 		 * Revalidating a dead namespace sets capacity to 0. This will
 --=20
 2.15.1
