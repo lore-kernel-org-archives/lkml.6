@@ -1,49 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932696AbeDICok (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 22:44:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49140 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755583AbeDICoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 22:44:38 -0400
-Date: Mon, 9 Apr 2018 05:44:36 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Stefan Hajnoczi <stefanha@gmail.com>
-Cc: syzbot <syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com>,
-        Jason Wang <jasowang@redhat.com>, kvm <kvm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>
-Subject: Re: kernel BUG at drivers/vhost/vhost.c:LINE! (2)
-Message-ID: <20180409054316-mutt-send-email-mst@kernel.org>
-References: <001a11449424f11322056932b09c@google.com>
- <CAJSP0QVHk7NSQcjfLWq13=1Vzm=_vtmKZqp4dDjuh8ETLO5g_g@mail.gmail.com>
+        id S933230AbeDICtc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 22:49:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53984 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932070AbeDICt2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 22:49:28 -0400
+Date: Sun, 8 Apr 2018 19:49:25 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180409024925.GA21889@bombadil.infradead.org>
+References: <20180409015815.235943-1-minchan@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJSP0QVHk7NSQcjfLWq13=1Vzm=_vtmKZqp4dDjuh8ETLO5g_g@mail.gmail.com>
+In-Reply-To: <20180409015815.235943-1-minchan@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 10:37:45AM +0800, Stefan Hajnoczi wrote:
-> On Sat, Apr 7, 2018 at 3:02 AM, syzbot
-> <syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com> wrote:
-> > syzbot hit the following crash on upstream commit
-> > 38c23685b273cfb4ccf31a199feccce3bdcb5d83 (Fri Apr 6 04:29:35 2018 +0000)
-> > Merge tag 'armsoc-drivers' of
-> > git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
-> > syzbot dashboard link:
-> > https://syzkaller.appspot.com/bug?extid=65a84dde0214b0387ccd
-> 
-> To prevent duplicated work: I am working on this one.
-> 
-> Stefan
+On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
+> It assumes shadow entry of radix tree relies on the init state
+> that node->private_list allocated should be list_empty state.
+> Currently, it's initailized in SLAB constructor which means
+> node of radix tree would be initialized only when *slub allocates
+> new page*, not *new object*. So, if some FS or subsystem pass
+> gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
 
-Do you want to try this patchset:
-https://lkml.org/lkml/2018/4/5/665
+Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
+I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
+with GFP_ZERO.
 
-?
+Although, even if nobody's doing that intentionally, if somebody has
+a bitflip with the __GFP_ZERO bit, it's going to propagate widely.
+I think something like this might be appropriate:
 
--- 
-MST
+diff --git a/mm/slub.c b/mm/slub.c
+index 9e1100f9298f..0f55f0a0dcaa 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2714,8 +2714,10 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
+ 		stat(s, ALLOC_FASTPATH);
+ 	}
+ 
+-	if (unlikely(gfpflags & __GFP_ZERO) && object)
+-		memset(object, 0, s->object_size);
++	if (unlikely(gfpflags & __GFP_ZERO) && object) {
++		if (!WARN_ON_ONCE(s->ctor))
++			memset(object, 0, s->object_size);
++	}
+ 
+ 	slab_post_alloc_hook(s, gfpflags, 1, &object);
+ 
+
+Something you could try is checking that the list is empty when the node
+is inserted into the radix tree.
+
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index 8e00138d593f..580f52d0c072 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -428,6 +428,7 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
+ 		ret->exceptional = exceptional;
+ 		ret->parent = parent;
+ 		ret->root = root;
++		BUG_ON(!list_empty(&ret->private_list));
+ 	}
+ 	return ret;
+ }
