@@ -1,81 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754390AbeDID0M (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 23:26:12 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36904 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753904AbeDID0H (ORCPT
+        id S1754316AbeDID2o (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 23:28:44 -0400
+Received: from mail-pf0-f177.google.com ([209.85.192.177]:42091 "EHLO
+        mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752235AbeDID2k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 23:26:07 -0400
-X-Google-Smtp-Source: AIpwx4/Px0LhIZ9urI2oL2emyqG8G/ScDKrozlPYSvG0c9BjqR+CrZlst5aCEokj5wX2M31TpAgR4A==
-Date: Mon, 9 Apr 2018 11:26:01 +0800
+        Sun, 8 Apr 2018 23:28:40 -0400
+X-Google-Smtp-Source: AIpwx4+7yMq4xz6rlzOea/kD2JPU3+PLE6FieZ1fiMXWXPqkekd/odXrssrpSC0b3MM/oL4jygOGoA==
+Date: Mon, 9 Apr 2018 11:28:35 +0800
 From: Stefan Hajnoczi <stefanha@gmail.com>
-To: Pankaj Gupta <pagupta@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>, kwolf@redhat.com,
-        haozhong zhang <haozhong.zhang@intel.com>, jack@suse.cz,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>, kvm@vger.kernel.org,
-        riel@surriel.com, linux-nvdimm@ml01.01.org, mst@redhat.com,
-        ross zwisler <ross.zwisler@intel.com>, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, hch@infradead.org, pbonzini@redhat.com,
-        stefanha@redhat.com, niteshnarayanlal@hotmail.com, marcel@redhat.com,
-        imammedo@redhat.com, dan j williams <dan.j.williams@intel.com>,
-        nilal@redhat.com
-Subject: Re: [Qemu-devel] [RFC] qemu: Add virtio pmem device
-Message-ID: <20180409032601.GA1648@stefanha-x1.localdomain>
-References: <20180405104834.10457-1-pagupta@redhat.com>
- <20180405104834.10457-4-pagupta@redhat.com>
- <ad08ca09-71ee-08d5-3479-8b3d06380a03@redhat.com>
- <416823501.16310251.1522930166070.JavaMail.zimbra@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: syzbot <syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com>,
+        Jason Wang <jasowang@redhat.com>, kvm <kvm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>
+Subject: Re: kernel BUG at drivers/vhost/vhost.c:LINE! (2)
+Message-ID: <20180409032835.GB1648@stefanha-x1.localdomain>
+References: <001a11449424f11322056932b09c@google.com>
+ <CAJSP0QVHk7NSQcjfLWq13=1Vzm=_vtmKZqp4dDjuh8ETLO5g_g@mail.gmail.com>
+ <20180409054316-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
+        protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
 Content-Disposition: inline
-In-Reply-To: <416823501.16310251.1522930166070.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20180409054316-mutt-send-email-mst@kernel.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---cWoXeonUoKmBZSoM
+--xXmbgvnjoT4axfJE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 05, 2018 at 08:09:26AM -0400, Pankaj Gupta wrote:
-> > Will this raw file already have the "disk information header" (no idea
-> > how that stuff is called) encoded? Are there any plans/possible ways to
+On Mon, Apr 09, 2018 at 05:44:36AM +0300, Michael S. Tsirkin wrote:
+> On Mon, Apr 09, 2018 at 10:37:45AM +0800, Stefan Hajnoczi wrote:
+> > On Sat, Apr 7, 2018 at 3:02 AM, syzbot
+> > <syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com> wrote:
+> > > syzbot hit the following crash on upstream commit
+> > > 38c23685b273cfb4ccf31a199feccce3bdcb5d83 (Fri Apr 6 04:29:35 2018 +00=
+00)
+> > > Merge tag 'armsoc-drivers' of
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
+> > > syzbot dashboard link:
+> > > https://syzkaller.appspot.com/bug?extid=3D65a84dde0214b0387ccd
 > >=20
-> > a) automatically create the headers? (if that's even possible)
+> > To prevent duplicated work: I am working on this one.
+> >=20
+> > Stefan
 >=20
-> Its raw. Right now we are just supporting raw format. =20
+> Do you want to try this patchset:
+> https://lkml.org/lkml/2018/4/5/665
 >=20
-> As this is direct mapping of memory into guest address space, I don't
-> think we can have an abstraction of headers for block specific features.
-> Or may be we can get opinion of others(Qemu block people) it is at all po=
-ssible?
+> ?
 
-memdev and the block layer are completely separate.  The block layer
-isn't designed for memory-mapped access.
+Thanks, I'll give it a shot.
 
-I think it makes sense to use memdev here.  If the user wants a block
-device, they should use an emulated block device, not virtio-pmem,
-because buffering is necessary anyway when an image file format is used.
+I also noticed a regression in commit
+d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ("vhost: validate log when
+IOTLB is enabled") and am currently testing a fix.
 
 Stefan
 
---cWoXeonUoKmBZSoM
+--xXmbgvnjoT4axfJE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEcBAEBAgAGBQJayt1JAAoJEJykq7OBq3PI+GkH/1E+ci/o0GU4EORh4j1KOyFX
-JtWmDNcdJfKLdUonRX6ZCns34at7dTNf0U6nFlqzDB5bkMdh3H8Tid/8u57Q9MdI
-Y2e1Xr/IxugahIok4g5c9bN43zNWnKzGF+G/OMuCDe76oLpAm9GccKl/M2EaiXo3
-rLACtHLAv+t8FNmFHw4BTz2Nt5zW6D3YiAj/M/wdk9N/z/QnbN4glWWbI8ukmNMc
-+e7n/yZH4TmJikN6BAvRvCrT4EemU9LpXloM5z5qXGJkJaNn+9ZQQCjwaJXdyOKt
-OTKLvVMdOt3x+0JxnSnisMkPtmIJtuHJY0bmjYfnrn9fh1blM9SQ8Q3nXVHQv9E=
-=9Dfp
+iQEcBAEBAgAGBQJayt3jAAoJEJykq7OBq3PIvCQH/2E79UtiLD6eBIXZkG58tEo5
+Ez30uLYssZ++XNLiJVf/zFggkbtAbO7MxF7NC7irzgyaywS9mClGLlmfV9RTN5En
+AwEnk1TVhOfZdrsO97o/k37V8WCF16mGNmQVA2XCoex6P8vnnUIMEBvdZGSToEQx
+WgtPjrHCAMfpEjotN/3mstAdv6O3+Cm/utLUNC4ZsJexuk7JvskDO9AljnCViVcz
+ZUAZsVHHY2nQZfjzyx1GudJrkceB/3/newMoDQDVLqvLKoFZEV65nxXWhmDO4zO9
+ocWB9oLqCU+CpD3LG1Eh+BMT+KuqvWXMzzO48IFZtUn22BHAQGNrWBDdrVo22Fs=
+=K4YJ
 -----END PGP SIGNATURE-----
 
---cWoXeonUoKmBZSoM--
+--xXmbgvnjoT4axfJE--
