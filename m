@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753577AbeDIT35 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 15:29:57 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36956 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752781AbeDIT3v (ORCPT
+        id S1753685AbeDITaC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 15:30:02 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:32777 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751919AbeDIT36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 15:29:51 -0400
-X-Google-Smtp-Source: AIpwx492tpQBHXT8icuAHveyNMPpO6/h2AO2dszRDschJ1orta+InbDeG9x9ZBr3B6Kht6RhJMI46A==
+        Mon, 9 Apr 2018 15:29:58 -0400
+X-Google-Smtp-Source: AIpwx4/f8y/h8zk+srQNrcAV76baAbQWOb1+8Q3sr+3dU3qme8zi0irg1+9oBCbdRLlHr7w1ndO/nw==
 From: Dmitry Osipenko <digetx@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 02/15] dt-bindings: memory: tegra: Document #reset-cells property of the Tegra30 MC
-Date: Mon,  9 Apr 2018 22:28:24 +0300
-Message-Id: <9efb02bebbb192696d2833eb78c920d774faa2f9.1523301400.git.digetx@gmail.com>
+Subject: [PATCH v4 07/15] memory: tegra: Apply interrupts mask per SoC
+Date: Mon,  9 Apr 2018 22:28:29 +0300
+Message-Id: <82a5ab9342fa5ed3f57b62cab755086057a1a5fb.1523301400.git.digetx@gmail.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <cover.1523301400.git.digetx@gmail.com>
 References: <cover.1523301400.git.digetx@gmail.com>
@@ -25,44 +25,168 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory Controller has a memory client "hot reset" functionality, which
-resets the DMA interface of a memory client. So MC is a reset controller
-in addition to IOMMU.
+Currently we are enabling handling of interrupts specific to Tegra124+
+which happen to overlap with previous generations. Let's specify
+interrupts mask per SoC generation for consistency and in a preparation
+of squashing of Tegra20 driver into the common one that will enable
+handling of GART faults which may be undesirable by newer generations.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt     | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/memory/tegra/mc.c       | 21 +++------------------
+ drivers/memory/tegra/mc.h       |  9 +++++++++
+ drivers/memory/tegra/tegra114.c |  2 ++
+ drivers/memory/tegra/tegra124.c |  6 ++++++
+ drivers/memory/tegra/tegra210.c |  3 +++
+ drivers/memory/tegra/tegra30.c  |  2 ++
+ include/soc/tegra/mc.h          |  2 ++
+ 7 files changed, 27 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
-index 14968b048cd3..a878b5908a4d 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
-@@ -12,6 +12,9 @@ Required properties:
- - clock-names: Must include the following entries:
-   - mc: the module's clock input
- - interrupts: The interrupt outputs from the controller.
-+- #reset-cells : Should be 1. This cell represents memory client module ID.
-+  The assignments may be found in header file <dt-bindings/memory/tegra30-mc.h>
-+  or in the TRM documentation.
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index e55b9733bd83..60509f0a386b 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -20,14 +20,6 @@
+ #include "mc.h"
  
- Required properties for Tegra30, Tegra114, Tegra124, Tegra132 and Tegra210:
- - #iommu-cells: Should be 1. The single cell of the IOMMU specifier defines
-@@ -72,12 +75,14 @@ Example SoC include file:
- 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+ #define MC_INTSTATUS 0x000
+-#define  MC_INT_DECERR_MTS (1 << 16)
+-#define  MC_INT_SECERR_SEC (1 << 13)
+-#define  MC_INT_DECERR_VPR (1 << 12)
+-#define  MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
+-#define  MC_INT_INVALID_SMMU_PAGE (1 << 10)
+-#define  MC_INT_ARBITRATION_EMEM (1 << 9)
+-#define  MC_INT_SECURITY_VIOLATION (1 << 8)
+-#define  MC_INT_DECERR_EMEM (1 << 6)
  
- 		#iommu-cells = <1>;
-+		#reset-cells = <1>;
- 	};
+ #define MC_INTMASK 0x004
  
- 	sdhci@700b0000 {
- 		compatible = "nvidia,tegra124-sdhci";
- 		...
- 		iommus = <&mc TEGRA_SWGROUP_SDMMC1A>;
-+		resets = <&mc TEGRA124_MC_RESET_SDMMC1>;
- 	};
+@@ -248,13 +240,11 @@ static const char *const error_names[8] = {
+ static irqreturn_t tegra_mc_irq(int irq, void *data)
+ {
+ 	struct tegra_mc *mc = data;
+-	unsigned long status, mask;
++	unsigned long status;
+ 	unsigned int bit;
+ 
+ 	/* mask all interrupts to avoid flooding */
+-	mask = mc_readl(mc, MC_INTMASK);
+-	status = mc_readl(mc, MC_INTSTATUS) & mask;
+-
++	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
+ 	if (!status)
+ 		return IRQ_NONE;
+ 
+@@ -349,7 +339,6 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 	const struct of_device_id *match;
+ 	struct resource *res;
+ 	struct tegra_mc *mc;
+-	u32 value;
+ 	int err;
+ 
+ 	match = of_match_node(tegra_mc_of_match, pdev->dev.of_node);
+@@ -409,11 +398,7 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 
+ 	WARN(!mc->soc->client_id_mask, "Missing client ID mask for this SoC\n");
+ 
+-	value = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
+-		MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
+-		MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM;
+-
+-	mc_writel(mc, value, MC_INTMASK);
++	mc_writel(mc, mc->soc->intmask, MC_INTMASK);
+ 
+ 	err = devm_request_irq(&pdev->dev, mc->irq, tegra_mc_irq, IRQF_SHARED,
+ 			       dev_name(&pdev->dev), mc);
+diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+index ddb16676c3af..24e020b4609b 100644
+--- a/drivers/memory/tegra/mc.h
++++ b/drivers/memory/tegra/mc.h
+@@ -14,6 +14,15 @@
+ 
+ #include <soc/tegra/mc.h>
+ 
++#define MC_INT_DECERR_MTS (1 << 16)
++#define MC_INT_SECERR_SEC (1 << 13)
++#define MC_INT_DECERR_VPR (1 << 12)
++#define MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
++#define MC_INT_INVALID_SMMU_PAGE (1 << 10)
++#define MC_INT_ARBITRATION_EMEM (1 << 9)
++#define MC_INT_SECURITY_VIOLATION (1 << 8)
++#define MC_INT_DECERR_EMEM (1 << 6)
++
+ static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+ {
+ 	return readl(mc->regs + offset);
+diff --git a/drivers/memory/tegra/tegra114.c b/drivers/memory/tegra/tegra114.c
+index b20e6e3e208e..7560b2f558a7 100644
+--- a/drivers/memory/tegra/tegra114.c
++++ b/drivers/memory/tegra/tegra114.c
+@@ -945,4 +945,6 @@ const struct tegra_mc_soc tegra114_mc_soc = {
+ 	.atom_size = 32,
+ 	.client_id_mask = 0x7f,
+ 	.smmu = &tegra114_smmu_soc,
++	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
++		   MC_INT_DECERR_EMEM,
+ };
+diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
+index 8b6360eabb8a..bd16555cca0f 100644
+--- a/drivers/memory/tegra/tegra124.c
++++ b/drivers/memory/tegra/tegra124.c
+@@ -1035,6 +1035,9 @@ const struct tegra_mc_soc tegra124_mc_soc = {
+ 	.smmu = &tegra124_smmu_soc,
+ 	.emem_regs = tegra124_mc_emem_regs,
+ 	.num_emem_regs = ARRAY_SIZE(tegra124_mc_emem_regs),
++	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
++		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
++		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
+ };
+ #endif /* CONFIG_ARCH_TEGRA_124_SOC */
+ 
+@@ -1059,5 +1062,8 @@ const struct tegra_mc_soc tegra132_mc_soc = {
+ 	.atom_size = 32,
+ 	.client_id_mask = 0x7f,
+ 	.smmu = &tegra132_smmu_soc,
++	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
++		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
++		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
+ };
+ #endif /* CONFIG_ARCH_TEGRA_132_SOC */
+diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
+index d398bcd3fc57..3b8d0100088c 100644
+--- a/drivers/memory/tegra/tegra210.c
++++ b/drivers/memory/tegra/tegra210.c
+@@ -1092,4 +1092,7 @@ const struct tegra_mc_soc tegra210_mc_soc = {
+ 	.atom_size = 64,
+ 	.client_id_mask = 0xff,
+ 	.smmu = &tegra210_smmu_soc,
++	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
++		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
++		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
+ };
+diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
+index d756c837f23e..d2ba50ed0490 100644
+--- a/drivers/memory/tegra/tegra30.c
++++ b/drivers/memory/tegra/tegra30.c
+@@ -967,4 +967,6 @@ const struct tegra_mc_soc tegra30_mc_soc = {
+ 	.atom_size = 16,
+ 	.client_id_mask = 0x7f,
+ 	.smmu = &tegra30_smmu_soc,
++	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
++		   MC_INT_DECERR_EMEM,
+ };
+diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+index 233bae954970..be6e49124c6d 100644
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -108,6 +108,8 @@ struct tegra_mc_soc {
+ 	u8 client_id_mask;
+ 
+ 	const struct tegra_smmu_soc *smmu;
++
++	u32 intmask;
  };
  
+ struct tegra_mc {
 -- 
 2.16.3
