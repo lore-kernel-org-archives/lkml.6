@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754109AbeDITb3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 15:31:29 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40760 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752939AbeDIT3x (ORCPT
+        id S1754099AbeDITb2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 15:31:28 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42049 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753070AbeDIT3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 15:29:53 -0400
-X-Google-Smtp-Source: AIpwx48BQC40sF/u/dq4QuXDmuidk+Ob79PylWA7yo+hSKVWE5pCyJG9cOLt0zHpBqPdjiJSsGNEnw==
+        Mon, 9 Apr 2018 15:29:54 -0400
+X-Google-Smtp-Source: AIpwx4/2VZsJ4/znt94wxF4IsUwEMG3uVlFQ4oB8SwWEmDxJuKfW/mjGlRbb+vnMCUZhKEwrhv1c0Q==
 From: Dmitry Osipenko <digetx@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 03/15] dt-bindings: arm: tegra: Document #reset-cells property of the Tegra20 MC
-Date: Mon,  9 Apr 2018 22:28:25 +0300
-Message-Id: <57c08ef0d2e3dbc6ad0e91f426c5db5b181b0ab9.1523301400.git.digetx@gmail.com>
+Subject: [PATCH v4 04/15] dt-bindings: memory: tegra: Add hot resets definitions
+Date: Mon,  9 Apr 2018 22:28:26 +0300
+Message-Id: <cfec415d74fe708209905088bbe9944557f92415.1523301400.git.digetx@gmail.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <cover.1523301400.git.digetx@gmail.com>
 References: <cover.1523301400.git.digetx@gmail.com>
@@ -25,41 +25,175 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory Controller has a memory client "hot reset" functionality, which
-resets the DMA interface of a memory client, so MC is a reset controller.
+Add definitions for the Tegra20+ memory controller hot resets.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt      | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ include/dt-bindings/memory/tegra114-mc.h | 19 +++++++++++++++++++
+ include/dt-bindings/memory/tegra124-mc.h | 25 +++++++++++++++++++++++++
+ include/dt-bindings/memory/tegra20-mc.h  | 21 +++++++++++++++++++++
+ include/dt-bindings/memory/tegra210-mc.h | 31 +++++++++++++++++++++++++++++++
+ include/dt-bindings/memory/tegra30-mc.h  | 19 +++++++++++++++++++
+ 5 files changed, 115 insertions(+)
+ create mode 100644 include/dt-bindings/memory/tegra20-mc.h
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt
-index f9632bacbd04..7d60a50a4fa1 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt
-@@ -6,11 +6,21 @@ Required properties:
-   example below. Note that the MC registers are interleaved with the
-   GART registers, and hence must be represented as multiple ranges.
- - interrupts : Should contain MC General interrupt.
-+- #reset-cells : Should be 1. This cell represents memory client module ID.
-+  The assignments may be found in header file <dt-bindings/memory/tegra20-mc.h>
-+  or in the TRM documentation.
+diff --git a/include/dt-bindings/memory/tegra114-mc.h b/include/dt-bindings/memory/tegra114-mc.h
+index 27c8386987ff..54a12adec7b8 100644
+--- a/include/dt-bindings/memory/tegra114-mc.h
++++ b/include/dt-bindings/memory/tegra114-mc.h
+@@ -23,4 +23,23 @@
+ #define TEGRA_SWGROUP_EMUCIF	18
+ #define TEGRA_SWGROUP_TSEC	19
  
- Example:
--	memory-controller@7000f000 {
-+	mc: memory-controller@7000f000 {
- 		compatible = "nvidia,tegra20-mc";
- 		reg = <0x7000f000 0x024
- 		       0x7000f03c 0x3c4>;
- 		interrupts = <0 77 0x04>;
-+		#reset-cells = <1>;
-+	};
++#define TEGRA114_MC_RESET_AFI		0
++#define TEGRA114_MC_RESET_AVPC		1
++#define TEGRA114_MC_RESET_DC		2
++#define TEGRA114_MC_RESET_DCB		3
++#define TEGRA114_MC_RESET_EPP		4
++#define TEGRA114_MC_RESET_2D		5
++#define TEGRA114_MC_RESET_HC		6
++#define TEGRA114_MC_RESET_HDA		7
++#define TEGRA114_MC_RESET_ISP		8
++#define TEGRA114_MC_RESET_MPCORE	9
++#define TEGRA114_MC_RESET_MPCORELP	10
++#define TEGRA114_MC_RESET_MPE		11
++#define TEGRA114_MC_RESET_3D		12
++#define TEGRA114_MC_RESET_3D2		13
++#define TEGRA114_MC_RESET_PPCS		14
++#define TEGRA114_MC_RESET_SATA		15
++#define TEGRA114_MC_RESET_VDE		16
++#define TEGRA114_MC_RESET_VI		17
 +
-+	video-codec@6001a000 {
-+		compatible = "nvidia,tegra20-vde";
-+		...
-+		resets = <&mc TEGRA20_MC_RESET_VDE>;
- 	};
+ #endif
+diff --git a/include/dt-bindings/memory/tegra124-mc.h b/include/dt-bindings/memory/tegra124-mc.h
+index f534d7c06019..186e6b7e9b35 100644
+--- a/include/dt-bindings/memory/tegra124-mc.h
++++ b/include/dt-bindings/memory/tegra124-mc.h
+@@ -29,4 +29,29 @@
+ #define TEGRA_SWGROUP_VIC	24
+ #define TEGRA_SWGROUP_VI	25
+ 
++#define TEGRA124_MC_RESET_AFI		0
++#define TEGRA124_MC_RESET_AVPC		1
++#define TEGRA124_MC_RESET_DC		2
++#define TEGRA124_MC_RESET_DCB		3
++#define TEGRA124_MC_RESET_HC		4
++#define TEGRA124_MC_RESET_HDA		5
++#define TEGRA124_MC_RESET_ISP2		6
++#define TEGRA124_MC_RESET_MPCORE	7
++#define TEGRA124_MC_RESET_MPCORELP	8
++#define TEGRA124_MC_RESET_MSENC		9
++#define TEGRA124_MC_RESET_PPCS		10
++#define TEGRA124_MC_RESET_SATA		11
++#define TEGRA124_MC_RESET_VDE		12
++#define TEGRA124_MC_RESET_VI		13
++#define TEGRA124_MC_RESET_VIC		14
++#define TEGRA124_MC_RESET_XUSB_HOST	15
++#define TEGRA124_MC_RESET_XUSB_DEV	16
++#define TEGRA124_MC_RESET_TSEC		17
++#define TEGRA124_MC_RESET_SDMMC1	18
++#define TEGRA124_MC_RESET_SDMMC2	19
++#define TEGRA124_MC_RESET_SDMMC3	20
++#define TEGRA124_MC_RESET_SDMMC4	21
++#define TEGRA124_MC_RESET_ISP2B		22
++#define TEGRA124_MC_RESET_GPU		23
++
+ #endif
+diff --git a/include/dt-bindings/memory/tegra20-mc.h b/include/dt-bindings/memory/tegra20-mc.h
+new file mode 100644
+index 000000000000..35e131eee198
+--- /dev/null
++++ b/include/dt-bindings/memory/tegra20-mc.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef DT_BINDINGS_MEMORY_TEGRA20_MC_H
++#define DT_BINDINGS_MEMORY_TEGRA20_MC_H
++
++#define TEGRA20_MC_RESET_AVPC		0
++#define TEGRA20_MC_RESET_DC		1
++#define TEGRA20_MC_RESET_DCB		2
++#define TEGRA20_MC_RESET_EPP		3
++#define TEGRA20_MC_RESET_2D		4
++#define TEGRA20_MC_RESET_HC		5
++#define TEGRA20_MC_RESET_ISP		6
++#define TEGRA20_MC_RESET_MPCORE		7
++#define TEGRA20_MC_RESET_MPEA		8
++#define TEGRA20_MC_RESET_MPEB		9
++#define TEGRA20_MC_RESET_MPEC		10
++#define TEGRA20_MC_RESET_3D		11
++#define TEGRA20_MC_RESET_PPCS		12
++#define TEGRA20_MC_RESET_VDE		13
++#define TEGRA20_MC_RESET_VI		14
++
++#endif
+diff --git a/include/dt-bindings/memory/tegra210-mc.h b/include/dt-bindings/memory/tegra210-mc.h
+index 4490f7cf4772..cacf05617e03 100644
+--- a/include/dt-bindings/memory/tegra210-mc.h
++++ b/include/dt-bindings/memory/tegra210-mc.h
+@@ -34,4 +34,35 @@
+ #define TEGRA_SWGROUP_ETR	29
+ #define TEGRA_SWGROUP_TSECB	30
+ 
++#define TEGRA210_MC_RESET_AFI		0
++#define TEGRA210_MC_RESET_AVPC		1
++#define TEGRA210_MC_RESET_DC		2
++#define TEGRA210_MC_RESET_DCB		3
++#define TEGRA210_MC_RESET_HC		4
++#define TEGRA210_MC_RESET_HDA		5
++#define TEGRA210_MC_RESET_ISP2		6
++#define TEGRA210_MC_RESET_MPCORE	7
++#define TEGRA210_MC_RESET_NVENC		8
++#define TEGRA210_MC_RESET_PPCS		9
++#define TEGRA210_MC_RESET_SATA		10
++#define TEGRA210_MC_RESET_VI		11
++#define TEGRA210_MC_RESET_VIC		12
++#define TEGRA210_MC_RESET_XUSB_HOST	13
++#define TEGRA210_MC_RESET_XUSB_DEV	14
++#define TEGRA210_MC_RESET_A9AVP		15
++#define TEGRA210_MC_RESET_TSEC		16
++#define TEGRA210_MC_RESET_SDMMC1	17
++#define TEGRA210_MC_RESET_SDMMC2	18
++#define TEGRA210_MC_RESET_SDMMC3	19
++#define TEGRA210_MC_RESET_SDMMC4	20
++#define TEGRA210_MC_RESET_ISP2B		21
++#define TEGRA210_MC_RESET_GPU		22
++#define TEGRA210_MC_RESET_NVDEC		23
++#define TEGRA210_MC_RESET_APE		24
++#define TEGRA210_MC_RESET_SE		25
++#define TEGRA210_MC_RESET_NVJPG		26
++#define TEGRA210_MC_RESET_AXIAP		27
++#define TEGRA210_MC_RESET_ETR		28
++#define TEGRA210_MC_RESET_TSECB		29
++
+ #endif
+diff --git a/include/dt-bindings/memory/tegra30-mc.h b/include/dt-bindings/memory/tegra30-mc.h
+index 3cac81919023..169f005fbc78 100644
+--- a/include/dt-bindings/memory/tegra30-mc.h
++++ b/include/dt-bindings/memory/tegra30-mc.h
+@@ -22,4 +22,23 @@
+ #define TEGRA_SWGROUP_MPCORE	17
+ #define TEGRA_SWGROUP_ISP	18
+ 
++#define TEGRA30_MC_RESET_AFI		0
++#define TEGRA30_MC_RESET_AVPC		1
++#define TEGRA30_MC_RESET_DC		2
++#define TEGRA30_MC_RESET_DCB		3
++#define TEGRA30_MC_RESET_EPP		4
++#define TEGRA30_MC_RESET_2D		5
++#define TEGRA30_MC_RESET_HC		6
++#define TEGRA30_MC_RESET_HDA		7
++#define TEGRA30_MC_RESET_ISP		8
++#define TEGRA30_MC_RESET_MPCORE		9
++#define TEGRA30_MC_RESET_MPCORELP	10
++#define TEGRA30_MC_RESET_MPE		11
++#define TEGRA30_MC_RESET_3D		12
++#define TEGRA30_MC_RESET_3D2		13
++#define TEGRA30_MC_RESET_PPCS		14
++#define TEGRA30_MC_RESET_SATA		15
++#define TEGRA30_MC_RESET_VDE		16
++#define TEGRA30_MC_RESET_VI		17
++
+ #endif
 -- 
 2.16.3
