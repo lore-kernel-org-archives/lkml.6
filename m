@@ -1,62 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752366AbeDIMDu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 08:03:50 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45754 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752320AbeDIMDs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 08:03:48 -0400
-X-Google-Smtp-Source: AIpwx4+cNitxAK/IOYFP4Yru2/P6jjtefbZtxCJSqvlebIaA2E5mX1Im5shic0QI5uqcuRIJRTztRw==
-Message-ID: <1523275425.2764.20.camel@baylibre.com>
-Subject: Re: [PATCH v4 2/7] clk: meson: migrate to
- devm_of_clk_add_hw_provider API
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Mon, 09 Apr 2018 14:03:45 +0200
-In-Reply-To: <20180408031938.153474-3-yixun.lan@amlogic.com>
-References: <20180408031938.153474-1-yixun.lan@amlogic.com>
-         <20180408031938.153474-3-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752639AbeDIMFa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 08:05:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36289 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752185AbeDIMF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 08:05:28 -0400
+Date: Mon, 9 Apr 2018 14:05:26 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v4 2/9] vsprintf: Consistent %pK handling for
+ kptr_restrict == 0
+Message-ID: <20180409120526.66ubl3by4cvaaprq@pathway.suse.cz>
+References: <20180404085843.16050-1-pmladek@suse.com>
+ <20180404085843.16050-3-pmladek@suse.com>
+ <1522933485.21176.353.camel@linux.intel.com>
+ <20180405144602.qnpwoxinepgnjhds@pathway.suse.cz>
+ <1523110098.21176.409.camel@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523110098.21176.409.camel@linux.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-04-08 at 11:19 +0800, Yixun Lan wrote:
-> There is a protential memory leak, as of_clk_del_provider is
-> never called if of_clk_add_hw_provider has been executed.
-> Fix this by using devm variant API.
+On Sat 2018-04-07 17:08:18, Andy Shevchenko wrote:
+> On Thu, 2018-04-05 at 16:46 +0200, Petr Mladek wrote:
+> > On Thu 2018-04-05 16:04:45, Andy Shevchenko wrote:
+> > > On Wed, 2018-04-04 at 10:58 +0200, Petr Mladek wrote:
+> > > > restricted_pointer() pretends that it prints the address when
+> > > > kptr_restrict
+> > > > is set to zero. But it is never called in this situation. Instead,
+> > > > pointer() falls back to ptr_to_id() and hashes the pointer.
+> > > > 
+> > > > This patch removes the potential confusion. klp_restrict is
+> > > > checked
+> > > > only
+> > > > in restricted_pointer().
+> > > > 
+> > > 
+> > > 
+> > > >  /* Maps a pointer to a 32 bit unique identifier. */
+> > > > -static char *ptr_to_id(char *buf, char *end, void *ptr, struct
+> > > > printf_spec spec)
+> > > > +static char *ptr_to_id(char *buf, char *end,
+> > > > +		       const void *ptr, struct printf_spec spec)
+> > > 
+> > > I don't think this change belongs to the patch.
+> > 
+> > The const should have been there from the beginning. I have found it
+> > because this patch added a call to ptr_to_id() which had the const
+> > and compiler warned about cast problems.
 > 
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> So, why not to do a separate patch with clear intention?
 
-Please make this the 1st patch of the series and add the proper fixes tag.
+If you insist I could do it as separate patch.
 
-> ---
->  drivers/clk/meson/meson-aoclk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+
+> > IMHO, it is rather cosmetic change.
 > 
-> diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-> index 14862c22e20d..14a1e46a4de6 100644
-> --- a/drivers/clk/meson/meson-aoclk.c
-> +++ b/drivers/clk/meson/meson-aoclk.c
-> @@ -78,6 +78,6 @@ int meson_aoclkc_probe(struct platform_device *pdev)
->  			return ret;
->  	}
->  
-> -	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->  		(void *) data->hw_data);
->  }
+> >From my experience I'm afraid of cosmetic changes in the patches which
+> might focus out attention on real fix.
+
+I would understand this if it was part of a large patch that changed
+complex chain of functions. But this patch touched 5 lines. The const
+is added into static function that is almost leaf and was called
+only from a single location.
+
+Best Regards,
+Petr
