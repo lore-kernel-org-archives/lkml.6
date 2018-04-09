@@ -1,85 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751704AbeDILKt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 07:10:49 -0400
-Received: from smtp43.i.mail.ru ([94.100.177.103]:58288 "EHLO smtp43.i.mail.ru"
+        id S1752125AbeDILLb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 07:11:31 -0400
+Received: from foss.arm.com ([217.140.101.70]:54882 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751270AbeDILKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 07:10:48 -0400
-Subject: Re: [PATCH v3 3/6] spi: sun6i: restrict transfer length in PIO-mode
-To: Mark Brown <broonie@kernel.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-References: <20180404065048.n76r3ytuznd6fqsl@flea>
- <a6044902-8977-3ce1-d7d5-c6797341a5d0@orpaltech.com>
- <20180405091913.ky4dnmszoobn2xry@flea>
- <ee4adb1e-caf6-32f6-33d6-d8dd94d232cf@orpaltech.com>
- <20180405131735.GB12349@sirena.org.uk>
- <8159c3a5-af74-9f13-aedb-7ecc708bdff6@orpaltech.com>
- <20180406073441.xesojvzc3deljhoy@flea>
- <204e97cb-2f39-00f0-fd4e-3aa9a51f7cac@orpaltech.com>
- <20180409092730.2moyhl5aaktjwbyn@flea>
- <94a394bd-89bf-9334-c500-4cbadf4c1044@orpaltech.com>
- <20180409105001.GC11532@sirena.org.uk>
-From: Sergey Suloev <ssuloev@orpaltech.com>
-Message-ID: <67c2006b-17f2-2459-e3c9-e91e3c694d8c@orpaltech.com>
-Date: Mon, 9 Apr 2018 14:10:40 +0300
+        id S1751702AbeDILL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 07:11:29 -0400
+Subject: Re: [RFC v2 2/2] base: dma-mapping: Postpone page_to_pfn() on mmap()
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, ysato@users.sourceforge.jp,
+        dalias@libc.org, laurent.pinchart@ideasonboard.com,
+        geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-sh@vger.kernel.org
+References: <1510679286-6988-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1510679286-6988-3-git-send-email-jacopo+renesas@jmondi.org>
+ <ea4f2d82-6a27-a7c1-091f-6230cfd988a3@arm.com> <20180409072547.GU20945@w540>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <7da3f31e-e4ad-7f1a-e66c-0d3e0fb8b27d@arm.com>
+Date: Mon, 9 Apr 2018 12:11:22 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180409105001.GC11532@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180409072547.GU20945@w540>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Authentication-Results: smtp43.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
-X-7FA49CB5: 0D63561A33F958A5DA60E13DFBE702210E2B8329FB0861BC3E017661983E1680725E5C173C3A84C3A1C30C8AFC676C8B9E7D8EADAC458C63843AE0F20224B8D0C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
-X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917910E9D38B7A2C135A0E49671BDC5AC63069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
-X-Mras: OK
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2018 01:50 PM, Mark Brown wrote:
-> On Mon, Apr 09, 2018 at 01:26:23PM +0300, Sergey Suloev wrote:
->> On 04/09/2018 12:27 PM, Maxime Ripard wrote:
->>> On Fri, Apr 06, 2018 at 06:48:23PM +0300, Sergey Suloev wrote:
->>>> On 04/06/2018 10:34 AM, Maxime Ripard wrote:
->>>> According to what you said the driver must implement
->>>> "transfer_one_message" instead of "transfer_one"
->>> I'm not sure what makes you think that I said that.
->> Because current implementation tries to send more than FIFO-depth of data in
->> a single call to "transfer_one" which is wrong.
-> No, that's absolutely not the case.  All any of these functions has to
-> do is transfer whatever they were asked to, how they do it is not at all
-> important to the framework.
+Hi Jacopo,
 
-I think you don't fully understand the issue. Let's talk about sun4i 
-and  sun6i SPI  drivers separately.
+On 09/04/18 08:25, jacopo mondi wrote:
+> Hi Robin, Laurent,
+>      a long time passed, sorry about this.
+> 
+> On Wed, Nov 15, 2017 at 01:38:23PM +0000, Robin Murphy wrote:
+>> On 14/11/17 17:08, Jacopo Mondi wrote:
+>>> On SH4 architecture, with SPARSEMEM memory model, translating page to
+>>> pfn hangs the CPU. Post-pone translation to pfn after
+>>> dma_mmap_from_dev_coherent() function call as it succeeds and make page
+>>> translation not necessary.
+>>>
+>>> This patch was suggested by Laurent Pinchart and he's working to submit
+>>> a proper fix mainline. Not sending for inclusion at the moment.
+>>
+>> Y'know, I think this patch does have some merit by itself - until we know
+>> that cpu_addr *doesn't* represent some device-private memory which is not
+>> guaranteed to be backed by a struct page, calling virt_to_page() on it is
+>> arguably semantically incorrect, even if it might happen to be benign in
+>> most cases.
+> 
+> I still need to carry this patch in my trees to have a working dma memory mapping
+> on SH4 platforms. My understanding from your comment is that there may
+> be a way forward for this patch, do you still think the same? Have you
+> got any suggestion on how to improve this eventually for inclusion?
 
-sun4i
+As before, the change itself does seem reasonable; it might be worth 
+rewording the commit message in more general terms rather than making it 
+sound like an SH-specific workaround (which I really don't think it is), 
+but otherwise I'd say just repost it as a non-RFC patch.
 
-1)it is correctly declaring max_transfer_size=FIFO depth for PIO mode  
-but transfer_one() function doesn't follow the declaration allowing PIO 
-transfers longer than FIFO depth  by just refilling FIFO using 3/4 FIFO 
-empty interrupt. I can definitely state here that long transfers WON'T 
-WORK on real hardware. I tested it and that's why I can say that. But as 
-soon as sun4i SPI driver  is correctly declaring max_transfer_size then 
-"smart" clients will work well by limiting a single transfer size to 
-FIFO depth. I tested it with real hardware, again.
+Robin.
 
-
-sun6i
-
-2) it allows PIO transfers of any length by declaring max_transfer_size 
-to a huge number, i.e. you can ONLY make this driver work in PIO mode  
-by limiting a single transfer size to FIFO depth (64 or 128 bytes) on 
-client side  and ignore max_transfer_size  exposed by the driver. Again, 
-tested with real hardware.
-
-All above doesn't work for DMA mode as there is no such limitation.
-
-I can't clearly explain what is happening in the hardware in PIO mode 
-but it seems that TC interrupt doesn't arrive in time when refilling 
-FIFO multiple times takes place and every long transfer will end up with 
-a timeout error.
+> 
+> Thanks
+>     j
+> 
+>>
+>> Robin.
+>>
+>>> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>> ---
+>>>   drivers/base/dma-mapping.c | 3 ++-
+>>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
+>>> index e584edd..73d64d3 100644
+>>> --- a/drivers/base/dma-mapping.c
+>>> +++ b/drivers/base/dma-mapping.c
+>>> @@ -227,8 +227,8 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+>>>   #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
+>>>   	unsigned long user_count = vma_pages(vma);
+>>>   	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+>>> -	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
+>>>   	unsigned long off = vma->vm_pgoff;
+>>> +	unsigned long pfn;
+>>>
+>>>   	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+>>>
+>>> @@ -236,6 +236,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+>>>   		return ret;
+>>>
+>>>   	if (off < count && user_count <= (count - off)) {
+>>> +		pfn = page_to_pfn(virt_to_page(cpu_addr));
+>>>   		ret = remap_pfn_range(vma, vma->vm_start,
+>>>   				      pfn + off,
+>>>   				      user_count << PAGE_SHIFT,
+>>> --
+>>> 2.7.4
+>>>
+>>> _______________________________________________
+>>> iommu mailing list
+>>> iommu@lists.linux-foundation.org
+>>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+>>>
