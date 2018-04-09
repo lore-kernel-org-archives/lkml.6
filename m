@@ -1,94 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753074AbeDIVma (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 17:42:30 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39465 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751728AbeDIVm1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 17:42:27 -0400
-X-Google-Smtp-Source: AIpwx49z+Z597hqvZvZocs1SrTK5iEV96TUJuCZCzdibdmUnu17iByI7WFIsaliQ0oyOMYjCxoLOVQ==
-From: Niklas Cassel <niklas.cassel@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] firmware: qcom: scm: Fix crash in qcom_scm_call_atomic1()
-Date: Mon,  9 Apr 2018 23:40:15 +0200
-Message-Id: <20180409214016.21219-1-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.14.3
+        id S1752556AbeDIVuL convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 17:50:11 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:39302 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751505AbeDIVuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 17:50:10 -0400
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        open list <linux-kernel@vger.kernel.org>, jcliang@chromium.org,
+        simon xue <xxm@rock-chips.com>, tfiga@chromium.org,
+        Romain Perier <romain.perier@collabora.com>,
+        Yakir Yang <kuankuan.y@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Liang Chen <cl@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        David Wu <david.wu@rock-chips.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Brian Norris <briannorris@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Rocky Hao <rocky.hao@rock-chips.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>, devicetree@vger.kernel.org,
+        Mark Yao <markyao0591@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Sugar Zhang <sugar.zhang@rock-chips.com>,
+        Caesar Wang <wxt@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v8 07/14] ARM: dts: rockchip: add clocks in iommu nodes
+Date: Mon, 09 Apr 2018 23:49:58 +0200
+Message-ID: <5686492.Vgpi8vPSL1@diego>
+In-Reply-To: <2255884.b1SkkUdh3X@diego>
+References: <20180323073814.5802-1-jeffy.chen@rock-chips.com> <df522a01-6f4a-bb96-4423-19965b078a1b@arm.com> <2255884.b1SkkUdh3X@diego>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qcom_scm_call_atomic1() can crash with a NULL pointer dereference at
-qcom_scm_call_atomic1+0x30/0x48.
+Am Montag, 9. April 2018, 17:55:40 CEST schrieb Heiko Stübner:
+> Am Montag, 9. April 2018, 17:53:01 CEST schrieb Robin Murphy:
+> > On 09/04/18 16:44, Heiko Stübner wrote:
+> > > Hi Tomeu,
+> > > 
+> > > Am Montag, 9. April 2018, 16:41:56 CEST schrieb Tomeu Vizoso:
+> > >> in today's linux-next, the DRM driver fails to probe because the iommu
+> > >> driver fails to find the aclk. I need to apply this patch for things
+> > >> to work again.
+> > > 
+> > > Thanks for catching that issue.
+> > > 
+> > > This seems to expose a backwards-compatibility issue, as this breaks
+> > > all old devicetrees, so should get a proper fix, apart from me applying
+> > > the dt-patch I missed.
+> > > 
+> > > Looking at the iommu-clock-handling patch, I imagine this part as
+> > > the culprit:
+> > > 
+> > > +	iommu->num_clocks = ARRAY_SIZE(rk_iommu_clocks);
+> > > +	iommu->clocks = devm_kcalloc(iommu->dev, iommu->num_clocks,
+> > > +				     sizeof(*iommu->clocks), GFP_KERNEL);
+> > > +	if (!iommu->clocks)
+> > > +		return -ENOMEM;
+> > > 
+> > > The clk-bulk functions seem to work with simple for loops and
+> > > should (as the other standard clock functions) just work fine with
+> > > an empty struct, so I guess a simple
+> > > 
+> > > 	if (!iommu->clocks && iommu->num_clocks > 0)
+> > > 	
+> > > 		return -ENOMEM;
+> > > 
+> > > should hopefully be enough. I'll try to give this a test later on
+> > > if nobody beats me to it :-)
+> > 
+> > But iommu->num_clocks is clearly set to a nonzero compile-time constant
+> > at this point ;)
+> > 
+> > I'd assume it's the return from devm_clk_bulk_get() which needs to
+> > special-case the "no clocks found" case from any other error, and *then*
+> > blat num_clocks to 0 if so.
+> 
+> you're right of course. Looking at it again, I now clearly see the
+> ARRAY_SIZE and am wondering what made me think num_clocks would be
+> runtime-read.
+> 
+> Must be those 25°C today ;-)
 
-disassembly of qcom_scm_call_atomic1():
-...
-<0xc08d73b0 <+12>: ldr r3, [r12]
-... (no instruction explicitly modifies r12)
-0xc08d73cc <+40>: smc 0
-... (no instruction explicitly modifies r12)
-0xc08d73d4 <+48>: ldr r3, [r12] <- crashing instruction
-...
+In any case, this does not seem to fully fix the issue ... or be more exact 
+seems to be the only issue.
 
-Since the first ldr is successful, and since r12 isn't explicitly
-modified by any instruction between the first and the second ldr,
-it must have been modified by the smc call, which is ok,
-since r12 is caller save according to the AAPCS.
+- With 4.16 both pinky and kevin have working displays.
+- When I was merging display patches to drm-misc, I did boot-tests on
+  both pinky and kevin, keeping their displays in a working state.
 
-Add r12 to the clobber list so that the compiler knows that the
-callee potentially overwrites the value in r12.
-Clobber descriptions may not in any way overlap with an input or
-output operand.
+- With current torvalds head (iommu not merged yet)
+e9092d0d9796 ("Fix subtle macro variable shadowing in min_not_zero()")
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- drivers/firmware/qcom_scm-32.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I get display output on rk3399-kevin (edp), but not on
+rk3288-pinky (edp + hdmi). [components + hdmi device+modes get
+recognized correctly though]
 
-diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
-index dfbd894d5bb7..4e24e591ae74 100644
---- a/drivers/firmware/qcom_scm-32.c
-+++ b/drivers/firmware/qcom_scm-32.c
-@@ -147,7 +147,7 @@ static u32 smc(u32 cmd_addr)
- 			"smc	#0	@ switch to secure world\n"
- 			: "=r" (r0)
- 			: "r" (r0), "r" (r1), "r" (r2)
--			: "r3");
-+			: "r3", "r12");
- 	} while (r0 == QCOM_SCM_INTERRUPTED);
- 
- 	return r0;
-@@ -263,7 +263,7 @@ static s32 qcom_scm_call_atomic1(u32 svc, u32 cmd, u32 arg1)
- 			"smc    #0      @ switch to secure world\n"
- 			: "=r" (r0)
- 			: "r" (r0), "r" (r1), "r" (r2)
--			: "r3");
-+			: "r3", "r12");
- 	return r0;
- }
- 
-@@ -298,7 +298,7 @@ static s32 qcom_scm_call_atomic2(u32 svc, u32 cmd, u32 arg1, u32 arg2)
- 			"smc    #0      @ switch to secure world\n"
- 			: "=r" (r0)
- 			: "r" (r0), "r" (r1), "r" (r2), "r" (r3)
--			);
-+			: "r12");
- 	return r0;
- }
- 
-@@ -328,7 +328,7 @@ u32 qcom_scm_get_version(void)
- 			"smc	#0	@ switch to secure world\n"
- 			: "=r" (r0), "=r" (r1)
- 			: "r" (r0), "r" (r1)
--			: "r2", "r3");
-+			: "r2", "r3", "r12");
- 	} while (r0 == QCOM_SCM_INTERRUPTED);
- 
- 	version = r1;
--- 
-2.14.3
+- With iommu changes merged I end up with the failing clock issue
+  which can be countered by making the iommu-clocks optional.
+
+- After that I get working display output again on kevin but not pinky.
+
+Looks like this needs bisecting.
