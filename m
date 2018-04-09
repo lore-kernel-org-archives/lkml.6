@@ -1,211 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753795AbeDISNJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 14:13:09 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47474 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753760AbeDISNG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 14:13:06 -0400
-Date: Mon, 9 Apr 2018 11:14:02 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Jeff Moyer <jmoyer@redhat.com>, Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Josh Triplett <josh.triplett@intel.com>
-Subject: Re: [PATCH v8 15/18] mm, fs, dax: handle layout changes to pinned
- dax mappings
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152246901060.36038.4487158506830998280.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180404094656.dssixqvvdcp5jff2@quack2.suse.cz>
- <CAPcyv4joRA=BrurYZ1kzXpMG=jnXik9+LdLqH9961jM5VnmU7w@mail.gmail.com>
- <20180408031113.GO3948@linux.vnet.ibm.com>
- <20180409163910.2f6t734pwefylak3@quack2.suse.cz>
+        id S1753861AbeDISOF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 14:14:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41784 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752883AbeDISOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 14:14:03 -0400
+Date: Mon, 9 Apr 2018 20:14:00 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: __GFP_LOW
+Message-ID: <20180409181400.GO21835@dhcp22.suse.cz>
+References: <20180405142749.GL6312@dhcp22.suse.cz>
+ <20180405151359.GB28128@bombadil.infradead.org>
+ <20180405153240.GO6312@dhcp22.suse.cz>
+ <20180405161501.GD28128@bombadil.infradead.org>
+ <20180405185444.GQ6312@dhcp22.suse.cz>
+ <20180405201557.GA3666@bombadil.infradead.org>
+ <20180406060953.GA8286@dhcp22.suse.cz>
+ <20180408042709.GC32632@bombadil.infradead.org>
+ <20180409073407.GD21835@dhcp22.suse.cz>
+ <20180409155157.GC11756@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409163910.2f6t734pwefylak3@quack2.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040918-0044-0000-0000-000003FFE60F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008825; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000256; SDB=6.01015486; UDB=6.00517786; IPR=6.00794737;
- MB=3.00020488; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-09 18:13:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040918-0045-0000-0000-0000082FFF1B
-Message-Id: <20180409181402.GN3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804090184
+In-Reply-To: <20180409155157.GC11756@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 06:39:10PM +0200, Jan Kara wrote:
-> On Sat 07-04-18 20:11:13, Paul E. McKenney wrote:
-> > On Sat, Apr 07, 2018 at 12:38:24PM -0700, Dan Williams wrote:
-> > > [ adding Paul and Josh ]
+On Mon 09-04-18 08:51:57, Matthew Wilcox wrote:
+> On Mon, Apr 09, 2018 at 09:34:07AM +0200, Michal Hocko wrote:
+> > On Sat 07-04-18 21:27:09, Matthew Wilcox wrote:
+> > > > >    - Steal time from other processes to free memory (KSWAPD_RECLAIM)
+> > > > 
+> > > > What does that mean? If I drop the flag, do not steal? Well I do because
+> > > > they will hit direct reclaim sooner...
 > > > 
-> > > On Wed, Apr 4, 2018 at 2:46 AM, Jan Kara <jack@suse.cz> wrote:
-> > > > On Fri 30-03-18 21:03:30, Dan Williams wrote:
-> > > >> Background:
-> > > >>
-> > > >> get_user_pages() in the filesystem pins file backed memory pages for
-> > > >> access by devices performing dma. However, it only pins the memory pages
-> > > >> not the page-to-file offset association. If a file is truncated the
-> > > >> pages are mapped out of the file and dma may continue indefinitely into
-> > > >> a page that is owned by a device driver. This breaks coherency of the
-> > > >> file vs dma, but the assumption is that if userspace wants the
-> > > >> file-space truncated it does not matter what data is inbound from the
-> > > >> device, it is not relevant anymore. The only expectation is that dma can
-> > > >> safely continue while the filesystem reallocates the block(s).
-> > > >>
-> > > >> Problem:
-> > > >>
-> > > >> This expectation that dma can safely continue while the filesystem
-> > > >> changes the block map is broken by dax. With dax the target dma page
-> > > >> *is* the filesystem block. The model of leaving the page pinned for dma,
-> > > >> but truncating the file block out of the file, means that the filesytem
-> > > >> is free to reallocate a block under active dma to another file and now
-> > > >> the expected data-incoherency situation has turned into active
-> > > >> data-corruption.
-> > > >>
-> > > >> Solution:
-> > > >>
-> > > >> Defer all filesystem operations (fallocate(), truncate()) on a dax mode
-> > > >> file while any page/block in the file is under active dma. This solution
-> > > >> assumes that dma is transient. Cases where dma operations are known to
-> > > >> not be transient, like RDMA, have been explicitly disabled via
-> > > >> commits like 5f1d43de5416 "IB/core: disable memory registration of
-> > > >> filesystem-dax vmas".
-> > > >>
-> > > >> The dax_layout_busy_page() routine is called by filesystems with a lock
-> > > >> held against mm faults (i_mmap_lock) to find pinned / busy dax pages.
-> > > >> The process of looking up a busy page invalidates all mappings
-> > > >> to trigger any subsequent get_user_pages() to block on i_mmap_lock.
-> > > >> The filesystem continues to call dax_layout_busy_page() until it finally
-> > > >> returns no more active pages. This approach assumes that the page
-> > > >> pinning is transient, if that assumption is violated the system would
-> > > >> have likely hung from the uncompleted I/O.
-> > > >>
-> > > >> Cc: Jan Kara <jack@suse.cz>
-> > > >> Cc: Jeff Moyer <jmoyer@redhat.com>
-> > > >> Cc: Dave Chinner <david@fromorbit.com>
-> > > >> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> > > >> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > > >> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> > > >> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-> > > >> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > > >> Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > >> Reported-by: Christoph Hellwig <hch@lst.de>
-> > > >> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > >> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > > >> ---
-> > > >>  drivers/dax/super.c |    2 +
-> > > >>  fs/dax.c            |   92 +++++++++++++++++++++++++++++++++++++++++++++++++++
-> > > >>  include/linux/dax.h |   25 ++++++++++++++
-> > > >>  mm/gup.c            |    5 +++
-> > > >>  4 files changed, 123 insertions(+), 1 deletion(-)
-> > > >
-> > > > ...
-> > > >
-> > > >> +/**
-> > > >> + * dax_layout_busy_page - find first pinned page in @mapping
-> > > >> + * @mapping: address space to scan for a page with ref count > 1
-> > > >> + *
-> > > >> + * DAX requires ZONE_DEVICE mapped pages. These pages are never
-> > > >> + * 'onlined' to the page allocator so they are considered idle when
-> > > >> + * page->count == 1. A filesystem uses this interface to determine if
-> > > >> + * any page in the mapping is busy, i.e. for DMA, or other
-> > > >> + * get_user_pages() usages.
-> > > >> + *
-> > > >> + * It is expected that the filesystem is holding locks to block the
-> > > >> + * establishment of new mappings in this address_space. I.e. it expects
-> > > >> + * to be able to run unmap_mapping_range() and subsequently not race
-> > > >> + * mapping_mapped() becoming true. It expects that get_user_pages() pte
-> > > >> + * walks are performed under rcu_read_lock().
-> > > >> + */
-> > > >> +struct page *dax_layout_busy_page(struct address_space *mapping)
-> > > >> +{
-> > > >> +     pgoff_t indices[PAGEVEC_SIZE];
-> > > >> +     struct page *page = NULL;
-> > > >> +     struct pagevec pvec;
-> > > >> +     pgoff_t index, end;
-> > > >> +     unsigned i;
-> > > >> +
-> > > >> +     /*
-> > > >> +      * In the 'limited' case get_user_pages() for dax is disabled.
-> > > >> +      */
-> > > >> +     if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
-> > > >> +             return NULL;
-> > > >> +
-> > > >> +     if (!dax_mapping(mapping) || !mapping_mapped(mapping))
-> > > >> +             return NULL;
-> > > >> +
-> > > >> +     pagevec_init(&pvec);
-> > > >> +     index = 0;
-> > > >> +     end = -1;
-> > > >> +     /*
-> > > >> +      * Flush dax_layout_lock() sections to ensure all possible page
-> > > >> +      * references have been taken, or otherwise arrange for faults
-> > > >> +      * to block on the filesystem lock that is taken for
-> > > >> +      * establishing new mappings.
-> > > >> +      */
-> > > >> +     unmap_mapping_range(mapping, 0, 0, 1);
-> > > >> +     synchronize_rcu();
-> > > >
-> > > > So I still don't like the use of RCU for this. It just seems as an abuse to
-> > > > use RCU like that. Furthermore it has a hefty latency cost for the truncate
-> > > > path. A trivial test to truncate 100 times the last page of a 16k file that
-> > > > is mmaped (only the first page):
-> > > >
-> > > > DAX+your patches        3.899s
-> > > > non-DAX                 0.015s
-> > > >
-> > > > So you can see synchronize_rcu() increased time to run truncate(2) more
-> > > > than 200 times (the process is indeed sitting in __wait_rcu_gp all the
-> > > > time). IMHO that's just too costly.
-> > > 
-> > > I wonder if this can be trivially solved by using srcu. I.e. we don't
-> > > need to wait for a global quiescent state, just a
-> > > get_user_pages_fast() quiescent state. ...or is that an abuse of the
-> > > srcu api?
+> > > If they allocate memory, sure.  A process which stays in its working
+> > > set won't, unless it's preempted by kswapd.
 > > 
-> > From what I can see (not that I claim to understand DAX), SRCU
-> > is worth trying.  Another thing to try (as a test) is to replace the
-> > synchronize_rcu() above with synchronize_rcu_expedited(), which might
-> > get you an order of magnitude or thereabouts.
+> > Well, I was probably not clear here. KSWAPD_RECLAIM is not something you
+> > want to drop because this is a cooperative flag. If you do not use it
+> > then you are effectivelly pushing others to the direct reclaim because
+> > the kswapd won't be woken up and won't do the background work. Your
+> > working make it sound as a good thing to drop.
 > 
-> But having synchronize_rcu_expedited() easily triggerable by userspace
-> (potentially every 100 usec or even less) is not a great thing, right?
-> It would be hogging the system with IPIs...
+> If memory is low, *somebody* has to reclaim.  As I understand it, kswapd
+> was originally introduced because networking might do many allocations
+> from interrupt context, and so was unable to do its own reclaiming.  On a
+> machine which was used only for routing, there was no userspace process to
+> do the reclaiming, so it ran out of memory.  But if you're an HPC person
+> who's expecting their long-running tasks to be synchronised and not be
+> unnecessarily disturbed, having kswapd preempting your task is awful.
+> 
+> I'm not arguing in favour of removing kswapd or anything like that,
+> but if you're not willing/able to reclaim memory yourself, then you're
+> necessarily stealing time from other tasks in order to have reclaim
+> happen.
 
-Yes, and that is why I have "(as a test)" above.  If doing that restores
-performance in the trivial-truncation case, that at least lets us know what
-needs to happen, even though it does have some drawbacks.
+Sure, you are right, except if you do not wake kswapd then other
+allocators will pay when they hit the wmark and that will happen sooner
+or later with our caching semantic. The more users who drop
+KSWAPD_RECLAIM we have the more this will be visible. That is all I want
+to say.
+ 
+> > > > What does that mean and how it is different from NOWAIT? Is this about
+> > > > the low watermark and if yes do we want to teach users about this and
+> > > > make the whole thing even more complicated?  Does it wake
+> > > > kswapd? What is the eagerness ordering? LOW, NOWAIT, NORETRY,
+> > > > RETRY_MAYFAIL, NOFAIL?
+> > > 
+> > > LOW doesn't quite fit into the eagerness scale with the other flags;
+> > > instead it's composable with them.  So you can specify NOWAIT | LOW,
+> > > NORETRY | LOW, NOFAIL | LOW, etc.  All I have in mind is something
+> > > like this:
+> > > 
+> > >         if (alloc_flags & ALLOC_HIGH)
+> > >                 min -= min / 2;
+> > > +	if (alloc_flags & ALLOC_LOW)
+> > > +		min += min / 2;
+> > > 
+> > > The idea is that a GFP_KERNEL | __GFP_LOW allocation cannot force a
+> > > GFP_KERNEL allocation into an OOM situation because it cannot take
+> > > the last pages of memory before the watermark.
+> > 
+> > So what are we going to do if the LOW watermark cannot succeed?
+> 
+> Depends on the other flags.  GFP_NOWAIT | GFP_LOW will just return NULL
+> (somewhat more readily than a plain GFP_NOWAIT would).  GFP_NORETRY |
+> GFP_LOW will do one pass through reclaim.  If it gets enough pages
+> to drag the zone above the watermark, then it'll succeed, otherwise
+> return NULL.  NOFAIL | LOW will keep retrying forever.  GFP_KERNEL |
+> GFP_LOW ... hmm, that'll OOM-kill another process more eagerly that
 
-And there is a synchronize_srcu_expedited() that does not do IPIs, if
-that helps.
+s@more eagerly@less eagerly@? And what does that mean actually?
 
-Another approach is to use call_rcu(), but I am guessing that you cannot
-safely return to user until the grace period has completed.
+> a regular GFP_KERNEL allocation would.  We'll need a little tweak so
+> GFP_LOW implies __GFP_RETRY_MAYFAIL.
 
-							Thanx, Paul
+I am not really convinced we really need to make the current code, which
+is already dreadfully complicated, even more complicated. So color me
+unconvinced but I do not really think we absolutely need yet another
+flag with a nontrivial semantic. E.g. GFP_KERNEL | __GFP_LOW sounds
+quite subtle to me.
+
+> > > It can still make a
+> > > GFP_KERNEL allocation *more likely* to hit OOM (just like any other kind
+> > > of allocation can), but it can't do it by itself.
+> > 
+> > So who would be a user of __GFP_LOW?
+> 
+> vmalloc and Steven's ringbuffer.  If I write a kernel module that tries
+> to vmalloc 1TB of space, it'll OOM-kill everything on the machine trying
+> to get enough memory to fill the page array.
+
+Yes, we assume certain etiquette and sanity from the code running in
+ring 0. I am not really sure we want to make life of any code that
+thinks "let's allocated a bunch of memory just in case" very much. Sure
+there are places which want to allocate optimistically with some
+reasonable fallback but we _do_ have flags for those.
+
+> Probably everyone using
+> __GFP_RETRY_MAYFAIL today, to be honest.  It's more likely to accomplish
+> what they want -- trying slightly less hard to get memory than GFP_KERNEL
+> allocations would.
+
+The main point of __GFP_RETRY_MAYFAIL was to have a consistent failure
+semantic regardless of the request size. __GFP_REPEAT was unusable for
+that purpose because it was costly order only.
+
+> > > I've been wondering about combining the DIRECT_RECLAIM, NORETRY,
+> > > RETRY_MAYFAIL and NOFAIL flags together into a single field:
+> > > 0 => RECLAIM_NEVER,	/* !DIRECT_RECLAIM */
+> > > 1 => RECLAIM_ONCE,	/* NORETRY */
+> > > 2 => RECLAIM_PROGRESS,	/* RETRY_MAYFAIL */
+> > > 3 => RECLAIM_FOREVER,	/* NOFAIL */
+> > > 
+> > > The existance of __GFP_RECLAIM makes this a bit tricky.  I honestly don't
+> > > know what this code is asking for:
+> > 
+> > I am not sure I follow here. Is the RECLAIM_ an internal thing to the
+> > allocator?
+> 
+> No, I'm talking about changing the __GFP flags like this:
+
+OK. I was just confused because we have ALLOC_* for internal use so I
+though you want to introduce another concept of RECLAIM_*
+
+Anyway...
+> 
+> @@ -24,10 +24,8 @@ struct vm_area_struct;
+>  #define ___GFP_HIGH            0x20u
+>  #define ___GFP_IO              0x40u
+>  #define ___GFP_FS              0x80u
+> +#define ___GFP_ACCOUNT         0x100u
+>  #define ___GFP_NOWARN          0x200u
+> -#define ___GFP_RETRY_MAYFAIL   0x400u
+> -#define ___GFP_NOFAIL          0x800u
+> -#define ___GFP_NORETRY         0x1000u
+>  #define ___GFP_MEMALLOC                0x2000u
+>  #define ___GFP_COMP            0x4000u
+>  #define ___GFP_ZERO            0x8000u
+> @@ -35,8 +33,10 @@ struct vm_area_struct;
+>  #define ___GFP_HARDWALL                0x20000u
+>  #define ___GFP_THISNODE                0x40000u
+>  #define ___GFP_ATOMIC          0x80000u
+> -#define ___GFP_ACCOUNT         0x100000u
+> -#define ___GFP_DIRECT_RECLAIM  0x400000u
+> +#define ___GFP_RECLAIM_NEVER   0x00000u
+> +#define ___GFP_RECLAIM_ONCE    0x10000u
+> +#define ___GFP_RECLAIM_PROGRESS        0x20000u
+> +#define ___GFP_RECLAIM_FOREVER 0x30000u
+>  #define ___GFP_WRITE           0x800000u
+>  #define ___GFP_KSWAPD_RECLAIM  0x1000000u
+>  #ifdef CONFIG_LOCKDEP
+
+... I really do not care about names much. It would be a bit pain to do
+the flag day and all the renaming but maybe we do not have hundreds of
+those. I haven't checked. But I do not see a good reason to do that TBH.
+I am pretty sure that you will gate 10 different opinions when you close
+3-5 people in the room and let them discuss for more than 10 minutes.
+
+> > > kernel/power/swap.c:                       __get_free_page(__GFP_RECLAIM | __GFP_HIGH);
+> > > but I suspect I'll have to find out.  There's about 60 places to look at.
+> > 
+> > Well, it would be more understandable if this was written as
+> > (GFP_KERNEL | __GFP_HIGH) & ~(__GFP_FS|__GFP_IO)
+> 
+> Yeah, I think it's really (GFP_NOIO | __GFP_HIGH)
+> 
+> > > I also want to add __GFP_KILL (to be part of the GFP_KERNEL definition).
+> > 
+> > What does __GFP_KILL means?
+> 
+> Allows OOM killing.  So it's the inverse of the GFP_RETRY_MAYFAIL bit.
+
+We have GFP_NORETRY for that. Because we absolutely do not want to give
+users any control over the OOM killer behavior. This is and should be an
+implementation detail of the MM implementation. GFP_NORETRY on the other
+hand is not about the OOM killer. It is about to give up early.
+-- 
+Michal Hocko
+SUSE Labs
