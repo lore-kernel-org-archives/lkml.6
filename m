@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4102378-1523246439-2-10251021538262968733
+X-Cyrus-Session-Id: sloti22d1t05-4122441-1523246421-2-17022112697658568544
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523246438; b=cFj8SCblefJp4Mlr9n/2bASOEFXM+FrBdSqoW3OfWqrEesNr1/
-    cEPrbAKDMmttquFzayjKlwv+an9u5ehiii8MeddhajMyKPqSxNxY7Ig0KT2h3Q6h
-    EGa4qdTZg6hUb4GcDZ122nSNsVxXYp0qrZGaj130jeJpzaulaQr2fz/398wwE/f6
-    BN9B0ikvAguUYhADiIAp3svSwl1HWqT3A42NoVGmWUgxLUgLKIXOoe6DB6VIrB5L
-    kBPFGlN3zUGBTfinLdNAcvXDmhViH9t9rsW/SHCRcTZaya+ZIlTPq2HKE++JlDml
-    2CJBDXBUkPlp4EA6Lh/7lTvcXDE8oKhEI9Hw==
+    1523246420; b=uiop/F1WGCtxDn8KjsRAYGhQ/6bWKedEpyzL1Uo5+dH0Aa8bVX
+    T8ORon8+Iioy5IFgYoWqvIdDWhZK3HZnCdj22Ryb62ev4ng5JDt6T0kBvXNqezgp
+    BKw2EWV3LXm5o2VkU3/KBUwmmaZmhRvjS+gfzJ8tdDfywUiaR2gSKMyGu733I3Pu
+    PEVGF0GPhXwrelrrQQC1O3C4akZAwi4HdxtbsvQu2UgAxFW71b6QismRtA4wbsIQ
+    Rrvy1Mzgbb+/krZD+pqJSkwia49WcSPTMNBYkrcgMau7TUV70yA5ssi4CJSBzuee
+    rTu53OLqacwuY+qmT/W7BgrnKpoil21TU37w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523246438; bh=RitbNNY9S5
-    rtn3jrihg+7MOd7yn8m+UQurnrhqJloZ8=; b=HNxy+j/EZoaslj4OhSNe48Ny/H
-    uYImVHUZrOuUboY92NmllHoQdwtKGek+gYOKRcwENodDj7+VWk/HJOzJaNYUhgbR
-    LIymwllj4wcOZarbVTq+6sAEVkMJJ9YJ3XJcd7VjqtgHJH2NNQQIu95ydnBVU1Ht
-    pRF1EuEFO09leSazrqexBUwYwWGhBS5DWD1A+wVEz2GmnAF8GzOHU+hosJaDlaVZ
-    0IRwsv9sij6ke/wSXzvb5KDVhsz4Yc/utMy6/cd0lo9Ky3gzDkQFwQn/8OdQNsBu
-    MsXI6l1Y5BDo+iCVfgQ+zEvJb8dADQU51o9OOwg1bq04t0ToYzJ5thNx6WIA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Ox6H3Nnc x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523246420; bh=UmlLDbfp4f
+    Sp7kSkOg2ge47Xxul6jEn/QjWe4KcbOlQ=; b=ipBQmFcCRt5VaQYxAJhXj4nmCS
+    0Q/4fEDxNF/r986GGqAvzOGr7l+MZJa8kCQPhtfdD3YNO1cCj2Ku+UdJ9G59Etlk
+    pGUlekvrpWAgER/EdDR2cubf5kqr+gtCVaON4YHdy8VPnqhDyfx32k7+PSyI97r0
+    SvqZaoA07GntC+M/52No1Y9TJzahOyEOhqZPoCLOytVuMzot5dGhXpL8OSJlimfG
+    v/aO0gJxx0lIoL7RHVO7/uJrI0GRgbLNSiDLN7d+VNWwUzEFoiMd7gjv9GeH0ps5
+    3xwUgKRgezjAk5vauq1tjgQGN2co2D8J4Q+nGIyN6on22ERZengwwYyPjKWQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=mHP6H6Mn x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Ox6H3Nnc x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=mHP6H6Mn x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,36 +51,37 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMGPA6aexhy14N5YrzKbyIOKSGGVeWDDssa+4GO6YQCEqa4Dp87++9a/j/cArZ5iPK6FPxjpUoBd3Zf5Vci5FH0LCbKtuJ57zlOZPWXBZyDi5PYWf7Ec
-    0wHwRF9pQ8amXni9j4UvEjLcAQrf2I1dyIuy7ZFnYEuDE23YsEO3e2jjWvNJdGs9he2g9cz5jlaKSdnlE9zdQEFtit/DLFR/jLdwfCRWQXtGtY4PRIbV76yT
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMxBaeTPVbDqrdzm0BFlx5ZDRj4k8FlJkTkTEoQEgC3uJ1JZ5J7491+1KEtaOm/hXkqzFD4QWyN55yzOTm8Jd2NU6HMJbVkVnqhhLMGQ3TjVYkKzDlPx
+    YIG6202U1LDHdf6ccf6xDVVmwIX7Pp/SfOh/W2EH6fup/YGuAmP8c6rwCWkpN3pk7sBcbPzQdzyGYlWtqr8YYPUwXlm53I1+G2EWEyf9z37uI2oIuyRw2yOM
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8 a=M8ztRHds-MF4GhK9o70A:9
-    a=wPNLvfGTeEIA:10 a=WzC6qhA0u3u7Ye7llzcV:22
+    a=Lf-vpJhqX20A:10 a=yPCof4ZbAAAA:8 a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8
+    a=CayBMKeuEvu4Z8dvqTcA:9 a=wPNLvfGTeEIA:10 a=WzC6qhA0u3u7Ye7llzcV:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752504AbeDIEAc (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 9 Apr 2018 00:00:32 -0400
+        id S1751522AbeDIEAD (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 9 Apr 2018 00:00:03 -0400
 Received: from mail-co1nam03on0109.outbound.protection.outlook.com ([104.47.40.109]:37278
         "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753599AbeDIASc (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:18:32 -0400
+        id S1753603AbeDIASd (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:18:33 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Nikolay Borisov <nborisov@suse.com>,
+CC: Anand Jain <Anand.Jain@oracle.com>,
+        Anand Jain <anand.jain@oracle.com>,
         David Sterba <dsterba@suse.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 062/189] btrfs: Fix out of bounds access in
- btrfs_search_slot
-Thread-Topic: [PATCH AUTOSEL for 4.15 062/189] btrfs: Fix out of bounds access
- in btrfs_search_slot
-Thread-Index: AQHTz5go0EZDqiGBZ0KktMShoQ7aeg==
-Date: Mon, 9 Apr 2018 00:17:34 +0000
-Message-ID: <20180409001637.162453-62-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 064/189] btrfs: fail mount when sb flag is
+ not in BTRFS_SUPER_FLAG_SUPP
+Thread-Topic: [PATCH AUTOSEL for 4.15 064/189] btrfs: fail mount when sb flag
+ is not in BTRFS_SUPER_FLAG_SUPP
+Thread-Index: AQHTz5gpd0Mzikat/Eu5QXAWvDiCUQ==
+Date: Mon, 9 Apr 2018 00:17:35 +0000
+Message-ID: <20180409001637.162453-64-alexander.levin@microsoft.com>
 References: <20180409001637.162453-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001637.162453-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,27 +90,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1046;7:VbbaBvg7cqQhDKsvQIs49IvSSZpn/f7gKvC1qFpMxHz2Gt+CnAO0COhEXHQwa4PiSf763w6ztiHBuaXDsf7WTTNXsus3CWx0oh/R2Tc3fPOwubtdaeETzRk54JofqErajbuCwBjJ9PJKhurjr83Hh1OYSkMnbr7QkBSaBTooon7mimimrPV3aLN1GfRAerQn0DFA3uygldmWYnutsmxG0SE/lY+1EHIJUBoZ/IVb2WvmORqeVpq3VoZCh+2mCJNR;20:DLLaOTCjIYtoF4LLuzFZ2EG+ZNWOEywPGNhSKvpHKYJAuy1GP9y/a0/9I1ggJmPFgi4Qs5gQappS9GAm7PAEfBC38EseG3fvaQoY1EHf+qN3rpvOSjfl18aycSAcGzWaRp+WBgZnGw28i9a+LqItq6ta6/8FzpXcRNYHY0KP76c=
-X-MS-Office365-Filtering-Correlation-Id: f32cbb45-9a52-4516-7177-08d59daf6b0a
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1046;7:I3OkYdFcLKJIMxh1hGDppOmxKnAMgobYABfPx2cSfEtYMGmqJWS8a2BZwNxFszaDFt3V/xsKQfam3LH9WPQotemiYU+7BpxXdODd+zgEnH8nmrFWfYrDartoYajQ0RQJXm+mUVCrWDpggGnnefUGlTZRh4WoGavWRzMMMeEkq4z0S4OU940kN1p7+8NlL+jh01sqs4EFe6M36DMFqrye8WQF1IYnDaxZzRK1v0e+CJOnF+Lu1t1xBCVueiQenNez;20:DItFLEV+4F4v27kgdLvR0HSP0LG2WPVlWLOA2QS/Gl5Jd8QE2HmvPpoVPQtSQlKdh6GnknXXwgFg00+B0vpa/j6jtX+l82eSdrHRxQsQPyUxSZq9mW+xvvia9Hb0hnDzcDpy/OyHx3Upwmf6ZxCs7pSpB41QrAHfEymSlD9Q74A=
+X-MS-Office365-Filtering-Correlation-Id: 6d52136e-06a8-4ed1-2af2-08d59daf6bc9
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB1046;
 x-ms-traffictypediagnostic: DM5PR2101MB1046:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10460A9E6CCC3C4D2EFCCB90FBBF0@DM5PR2101MB1046.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB1046788684FB8FBC1A5A0B32FBBF0@DM5PR2101MB1046.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1046;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1046;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(376002)(396003)(366004)(39860400002)(199004)(189003)(36756003)(186003)(11346002)(446003)(476003)(2616005)(7736002)(5660300001)(26005)(10290500003)(478600001)(106356001)(6666003)(68736007)(10090500001)(54906003)(3846002)(59450400001)(22452003)(6116002)(86612001)(110136005)(99286004)(86362001)(72206003)(305945005)(76176011)(102836004)(6506007)(486006)(316002)(3280700002)(3660700001)(81166006)(81156014)(8676002)(2906002)(14454004)(2900100001)(97736004)(6486002)(8936002)(1076002)(6512007)(6436002)(105586002)(25786009)(4326008)(2501003)(5250100002)(53936002)(66066001)(107886003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1046;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: 5c1QOct2n0TOSz3kOpbuKR05oz1YxMWOvTg2qiOgQwWt+tp56uq8G3u5eruwbcFPCEUDoePBhpt80jK+QTW+S9AoDVPJsaHe1ngNOJdfccdY2BDSu+Yw0V7V257N8n4+3WVe+4i/0h5yxs6RgqG6pHONENJ7zyHI31IUr+Q+A2Bk/Zy0qL+jnt3VzHXI+acA6N73ZZ0KpDdMF7tjrBiGA//+jm7ykq90hathp1wfjKU7ZoV7pEpj3Q4znZrCGQDqcfssArJv1yxlZOobSheezyD+pXkhkRFuowKTqiLPZvOO8Y/hsXteV5j4r9G+2Gz3NE22JdtKu0ZUFzAOdse1cUTJrj1mWjqSxWosr6wyOil7t4YBvVp1x6JBnHDlpQ+0GLOOfiqeghrpDMXEai+/ZXQYOC+6M90N0sIxZxJ8OEo=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(376002)(396003)(366004)(39860400002)(199004)(189003)(36756003)(575784001)(186003)(11346002)(446003)(476003)(2616005)(7736002)(5660300001)(26005)(10290500003)(478600001)(106356001)(6666003)(68736007)(10090500001)(54906003)(3846002)(59450400001)(22452003)(6116002)(86612001)(110136005)(99286004)(86362001)(72206003)(305945005)(76176011)(102836004)(6506007)(486006)(316002)(3280700002)(3660700001)(81166006)(81156014)(8676002)(2906002)(14454004)(2900100001)(97736004)(6486002)(8936002)(1076002)(6512007)(6436002)(105586002)(25786009)(4326008)(2501003)(5250100002)(53936002)(66066001)(107886003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1046;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: oM/me1+Jw0vy+mimdzvVZQx5wpfN829+g09Zmzx7E/xKJgV6u2gt2QvOxkgQIw3xuwluux7wvGkR0HOs2f481ET6Mk5GxPNHVE+NlzIuRQQVtQjJPPTVEeacU7OAOZ09ViYR7q3hI9HODUQO1WlW2/mAQSQ/Hu0B39fLXjMdBqBNHqMMwKgvuIsj9/HNscUfLUYFt01gb3LWvALB5GTrcS8eZnzyPL0LjSeMAQJfFt6Tfk8IVxD6J/t9byGUqKRrm37pxBOVSx4LTYgYFanAa9KryRfzLVI07oM87/CR6Lo+at7lP56BhyPNR8c+8V59TQJxYzDueIREYkZ/5slH8da1udESwbQlicxQ8rDcFmUzkcxPzDZoim+3ltxAVoYrTZaitWx83F4RcXxH0DSw7kgLR0SV3lcw0Y280FMsYbU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f32cbb45-9a52-4516-7177-08d59daf6b0a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:17:34.2747
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d52136e-06a8-4ed1-2af2-08d59daf6bc9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:17:35.7120
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -120,66 +121,46 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Anand Jain <Anand.Jain@oracle.com>
 
-[ Upstream commit 9ea2c7c9da13c9073e371c046cbbc45481ecb459 ]
+[ Upstream commit 6f794e3c5c8f8fdd3b5bb20d9ded894e685b5bbe ]
 
-When modifying a tree where the root is at BTRFS_MAX_LEVEL - 1 then
-the level variable is going to be 7 (this is the max height of the
-tree). On the other hand btrfs_cow_block is always called with
-"level + 1" as an index into the nodes and slots arrays. This leads to
-an out of bounds access. Admittdely this will be benign since an OOB
-access of the nodes array will likely read the 0th element from the
-slots array, which in this case is going to be 0 (since we start CoW at
-the top of the tree). The OOB access into the slots array in turn will
-read the 0th and 1st values of the locks array, which would both be 0
-at the time. However, this benign behavior relies on the fact that the
-path being passed hasn't been initialised, if it has already been used to
-query a btree then it could potentially have populated the nodes/slots arra=
-ys.
+It appears from the original commit [1] that there isn't any design
+specific reason not to fail the mount instead of just warning. This
+patch will change it to fail.
 
-Fix it by explicitly checking if we are at level 7 (the maximum allowed
-index in nodes/slots arrays) and explicitly call the CoW routine with
-NULL for parent's node/slot.
+[1]
+ commit 319e4d0661e5323c9f9945f0f8fb5905e5fe74c3
+    btrfs: Enhance super validation check
 
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Fixes-coverity-id: 711515
+Fixes: 319e4d0661e5323 ("btrfs: Enhance super validation check")
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/btrfs/ctree.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/btrfs/disk-io.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
-index 1e74cf826532..5361f69433a3 100644
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -2774,6 +2774,8 @@ again:
- 		 * contention with the cow code
- 		 */
- 		if (cow) {
-+			bool last_level =3D (level =3D=3D (BTRFS_MAX_LEVEL - 1));
-+
- 			/*
- 			 * if we don't really need to cow this block
- 			 * then we don't want to set the path blocking,
-@@ -2798,9 +2800,13 @@ again:
- 			}
-=20
- 			btrfs_set_path_blocking(p);
--			err =3D btrfs_cow_block(trans, root, b,
--					      p->nodes[level + 1],
--					      p->slots[level + 1], &b);
-+			if (last_level)
-+				err =3D btrfs_cow_block(trans, root, b, NULL, 0,
-+						      &b);
-+			else
-+				err =3D btrfs_cow_block(trans, root, b,
-+						      p->nodes[level + 1],
-+						      p->slots[level + 1], &b);
- 			if (err) {
- 				ret =3D err;
- 				goto done;
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index a8ecccfc36de..3353d3de726a 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -3910,9 +3910,11 @@ static int btrfs_check_super_valid(struct btrfs_fs_i=
+nfo *fs_info)
+ 		btrfs_err(fs_info, "no valid FS found");
+ 		ret =3D -EINVAL;
+ 	}
+-	if (btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP)
+-		btrfs_warn(fs_info, "unrecognized super flag: %llu",
++	if (btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP) {
++		btrfs_err(fs_info, "unrecognized or unsupported super flag: %llu",
+ 				btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP);
++		ret =3D -EINVAL;
++	}
+ 	if (btrfs_super_root_level(sb) >=3D BTRFS_MAX_LEVEL) {
+ 		btrfs_err(fs_info, "tree_root level too big: %d >=3D %d",
+ 				btrfs_super_root_level(sb), BTRFS_MAX_LEVEL);
 --=20
 2.15.1
