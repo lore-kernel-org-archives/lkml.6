@@ -1,56 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752249AbeDINxH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:53:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46700 "EHLO mx2.suse.de"
+        id S1752763AbeDIN4v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:56:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47129 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751896AbeDINxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:53:05 -0400
-Date: Mon, 9 Apr 2018 15:53:03 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-cc: Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] livepatch: Add atomic replace
-In-Reply-To: <20180406220530.snglx7m3quye34wp@treble>
-Message-ID: <alpine.LSU.2.21.1804091547190.20943@pobox.suse.cz>
-References: <20180323120028.31451-1-pmladek@suse.com> <20180323120028.31451-4-pmladek@suse.com> <20180406220530.snglx7m3quye34wp@treble>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1751507AbeDIN4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 09:56:50 -0400
+Subject: Re: [PATCH] scsi: qla2xxx: Correct setting of
+ SAM_STAT_CHECK_CONDITION
+To: Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
+        Bart Van Assche <Bart.VanAssche@sandisk.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>
+References: <20180409123922.854-1-jthumshirn@suse.de>
+From: Hannes Reinecke <hare@suse.de>
+Organization: SUSE Linux GmbH
+Message-ID: <bac29060-8106-fe43-21b4-dabd6e5f5ab2@suse.de>
+Date: Mon, 9 Apr 2018 15:56:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180409123922.854-1-jthumshirn@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +	 * see klp_init_object_loaded().
-> > +	 */
-> > +	if (!func->new_func && !func->nop)
-> >  		return -EINVAL;
+On 04/09/2018 02:39 PM, Johannes Thumshirn wrote:
+> Bart reports that in qla_isr.c's qla2x00_handle_dif_error we're
+> wrongly shifting the SAM_STAT_CHECK_CONDITION by one instead of
+> directly ORing it onto the SCSI command's result.
 > 
-> >  
-> >  	INIT_LIST_HEAD(&func->stack_node);
-> > @@ -742,6 +920,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
-> >  			return -ENOENT;
-> >  		}
-> >  
-> > +		if (func->nop)
-> > +			func->new_func = (void *)func->old_addr;
-> > +
+> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+> Reported-by: Bart Van Assche <Bart.VanAssche@wdc.com>
+> Cc: Himanshu Madhani <himanshu.madhani@cavium.com>
+> ---
+>  drivers/scsi/qla2xxx/qla_isr.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> These changes make it more obvious that 'new_func' isn't quite the right
-> name.  It should really be 'new_addr' IMO.
+> diff --git a/drivers/scsi/qla2xxx/qla_isr.c b/drivers/scsi/qla2xxx/qla_isr.c
+> index 49d67e1d571f..ed6cdfea00b4 100644
+> --- a/drivers/scsi/qla2xxx/qla_isr.c
+> +++ b/drivers/scsi/qla2xxx/qla_isr.c
+> @@ -2195,7 +2195,7 @@ qla2x00_handle_dif_error(srb_t *sp, struct sts_entry_24xx *sts24)
+>  		    0x10, 0x1);
+>  		set_driver_byte(cmd, DRIVER_SENSE);
+>  		set_host_byte(cmd, DID_ABORT);
+> -		cmd->result |= SAM_STAT_CHECK_CONDITION << 1;
+> +		cmd->result |= SAM_STAT_CHECK_CONDITION;
+>  		return 1;
+>  	}
+>  
+> @@ -2205,7 +2205,7 @@ qla2x00_handle_dif_error(srb_t *sp, struct sts_entry_24xx *sts24)
+>  		    0x10, 0x3);
+>  		set_driver_byte(cmd, DRIVER_SENSE);
+>  		set_host_byte(cmd, DID_ABORT);
+> -		cmd->result |= SAM_STAT_CHECK_CONDITION << 1;
+> +		cmd->result |= SAM_STAT_CHECK_CONDITION;
+>  		return 1;
+>  	}
+>  
+> @@ -2215,7 +2215,7 @@ qla2x00_handle_dif_error(srb_t *sp, struct sts_entry_24xx *sts24)
+>  		    0x10, 0x2);
+>  		set_driver_byte(cmd, DRIVER_SENSE);
+>  		set_host_byte(cmd, DID_ABORT);
+> -		cmd->result |= SAM_STAT_CHECK_CONDITION << 1;
+> +		cmd->result |= SAM_STAT_CHECK_CONDITION;
+>  		return 1;
+>  	}
+>  
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 
-I think we wanted to point out the difference from old_addr which is 
-initialized with the symbol name while new_func is initialized with the 
-new function itself (function pointer). I agree though that it looks 
-awkward in this context and I'm not against changing it to new_addr.
+Cheers,
 
-Petr, could you also add a note to the changelog why we need to setup 
-new_func for nop functions, please? It's not obvious because of the hack 
-in klp_ftrace_handler() 
-(klp_cancel_transition()->...->klp_check_stack_func() needs it).
-
-Miroslav
+Hannes
+-- 
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
