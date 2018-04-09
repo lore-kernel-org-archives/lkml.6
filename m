@@ -1,371 +1,311 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753595AbeDISKI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 14:10:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60556 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753083AbeDISKG (ORCPT
+        id S1753679AbeDISLR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 14:11:17 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:46161 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752846AbeDISLN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 14:10:06 -0400
-Date: Mon, 9 Apr 2018 11:11:04 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        syzbot <syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs@googlegroups.com, Peter Zijlstra <peterz@infradead.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: INFO: task hung in perf_trace_event_unreg
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180402153332.GM3948@linux.vnet.ibm.com>
- <CACT4Y+brGUyXsogDsSAakSFq=bh+136JptfS_=sBqkQA1Pc=tQ@mail.gmail.com>
- <20180402162135.GW3948@linux.vnet.ibm.com>
- <CACT4Y+Yq1Pus2QjLprJ6Hb=nqNtAME419-SYDzbFoXKBsNpPRA@mail.gmail.com>
- <20180402163912.GY3948@linux.vnet.ibm.com>
- <CACT4Y+Z+PFu8gRSb5Q_nTnvc6uz=-NzcT6numxzDXcmC2dDRFQ@mail.gmail.com>
- <20180402172325.GZ3948@linux.vnet.ibm.com>
- <CACT4Y+Zx4R9EEUkRA_sFb0d5gEtWicFArBisy9bWK6Lnfqdovw@mail.gmail.com>
- <20180409162050.GH3948@linux.vnet.ibm.com>
- <CACT4Y+bbaih8hym_n4D5dzDF3ig53+a5XLN0+btATPfmXZAZ7A@mail.gmail.com>
+        Mon, 9 Apr 2018 14:11:13 -0400
+X-Google-Smtp-Source: AIpwx48Qyf8c+iEkUnSGbDA0Jg9MeJrk2cUxYUIZvtL/wogMRm7n5YuMTNHK2bKjTvCtnH/pqJgVqw==
+Subject: Re: [RFC PATCH 3/4] acpi: apei: Do not panic() in NMI because of GHES
+ messages
+To: James Morse <james.morse@arm.com>
+Cc: linux-acpi@vger.kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
+        tony.luck@intel.com, bp@alien8.de, tbaicar@codeaurora.org,
+        will.deacon@arm.com, shiju.jose@huawei.com, zjzhang@codeaurora.org,
+        gengdongjiu@huawei.com, linux-kernel@vger.kernel.org,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com
+References: <20180403170830.29282-1-mr.nuke.me@gmail.com>
+ <20180403170830.29282-4-mr.nuke.me@gmail.com>
+ <338e9bb4-a837-69f9-36e5-5ee2ddcaaa38@arm.com>
+ <d6492b41-612a-b256-44c9-4ff3b3d5ae4b@gmail.com>
+ <e65986c8-55a1-14c4-5c06-f34fa25916d8@arm.com>
+ <9e29e5c6-b942-617e-f92e-728627799506@gmail.com>
+ <cdea7af5-6c9b-10c5-a9a9-1481446c65a8@arm.com>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <2120d34a-41d2-9fff-2710-d11e9a19e12a@gmail.com>
+Date: Mon, 9 Apr 2018 13:11:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <cdea7af5-6c9b-10c5-a9a9-1481446c65a8@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACT4Y+bbaih8hym_n4D5dzDF3ig53+a5XLN0+btATPfmXZAZ7A@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040918-0056-0000-0000-00000439EE7A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008825; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000256; SDB=6.01015486; UDB=6.00517786; IPR=6.00794736;
- MB=3.00020488; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-09 18:10:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040918-0057-0000-0000-0000087C080C
-Message-Id: <20180409181104.GM3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804090184
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 06:28:16PM +0200, Dmitry Vyukov wrote:
-> On Mon, Apr 9, 2018 at 6:20 PM, Paul E. McKenney
-> <paulmck@linux.vnet.ibm.com> wrote:
-> > On Mon, Apr 09, 2018 at 02:54:20PM +0200, Dmitry Vyukov wrote:
-> >> On Mon, Apr 2, 2018 at 7:23 PM, Paul E. McKenney
-> >> <paulmck@linux.vnet.ibm.com> wrote:
-> >> >> >> >> >>
-> >> >> >> >> >> > Hello,
-> >> >> >> >> >> >
-> >> >> >> >> >> > syzbot hit the following crash on upstream commit
-> >> >> >> >> >> > 0adb32858b0bddf4ada5f364a84ed60b196dbcda (Sun Apr 1 21:20:27 2018 +0000)
-> >> >> >> >> >> > Linux 4.16
-> >> >> >> >> >> > syzbot dashboard link:
-> >> >> >> >> >> > https://syzkaller.appspot.com/bug?extid=2dbc55da20fa246378fd
-> >> >> >> >> >> >
-> >> >> >> >> >> > Unfortunately, I don't have any reproducer for this crash yet.
-> >> >> >> >> >> > Raw console output:
-> >> >> >> >> >> > https://syzkaller.appspot.com/x/log.txt?id=5487937873510400
-> >> >> >> >> >> > Kernel config:
-> >> >> >> >> >> > https://syzkaller.appspot.com/x/.config?id=-2374466361298166459
-> >> >> >> >> >> > compiler: gcc (GCC) 7.1.1 20170620
-> >> >> >> >> >> >
-> >> >> >> >> >> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >> >> >> >> >> > Reported-by: syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com
-> >> >> >> >> >> > It will help syzbot understand when the bug is fixed. See footer for
-> >> >> >> >> >> > details.
-> >> >> >> >> >> > If you forward the report, please keep this part and the footer.
-> >> >> >> >> >> >
-> >> >> >> >> >> > REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount
-> >> >> >> >> >> > option "g �;e�K�׫>pquota"
-> >> >> >> >> >
-> >> >> >> >> > Might not hurt to look into the above, though perhaps this is just syzkaller
-> >> >> >> >> > playing around with mount options.
-> >> >> >> >> >
-> >> >> >> >> >> > INFO: task syz-executor3:10803 blocked for more than 120 seconds.
-> >> >> >> >> >> >        Not tainted 4.16.0+ #10
-> >> >> >> >> >> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> >> >> >> >> >> > syz-executor3   D20944 10803   4492 0x80000002
-> >> >> >> >> >> > Call Trace:
-> >> >> >> >> >> >   context_switch kernel/sched/core.c:2862 [inline]
-> >> >> >> >> >> >   __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
-> >> >> >> >> >> >   schedule+0xf5/0x430 kernel/sched/core.c:3499
-> >> >> >> >> >> >   schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
-> >> >> >> >> >> >   do_wait_for_common kernel/sched/completion.c:86 [inline]
-> >> >> >> >> >> >   __wait_for_common kernel/sched/completion.c:107 [inline]
-> >> >> >> >> >> >   wait_for_common kernel/sched/completion.c:118 [inline]
-> >> >> >> >> >> >   wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
-> >> >> >> >> >> >   __wait_rcu_gp+0x221/0x340 kernel/rcu/update.c:414
-> >> >> >> >> >> >   synchronize_sched.part.64+0xac/0x100 kernel/rcu/tree.c:3212
-> >> >> >> >> >> >   synchronize_sched+0x76/0xf0 kernel/rcu/tree.c:3213
-> >> >> >> >> >>
-> >> >> >> >> >> I don't think this is a perf issue. Looks like something is preventing
-> >> >> >> >> >> rcu_sched from completing. If there's a CPU that is running in kernel
-> >> >> >> >> >> space and never scheduling, that can cause this issue. Or if RCU
-> >> >> >> >> >> somehow missed a transition into idle or user space.
-> >> >> >> >> >
-> >> >> >> >> > The RCU CPU stall warning below strongly supports this position ...
-> >> >> >> >>
-> >> >> >> >> I think this is this guy then:
-> >> >> >> >>
-> >> >> >> >> https://syzkaller.appspot.com/bug?id=17f23b094cd80df750e5b0f8982c521ee6bcbf40
-> >> >> >> >>
-> >> >> >> >> #syz dup: INFO: rcu detected stall in __process_echoes
-> >> >> >> >
-> >> >> >> > Seems likely to me!
-> >> >> >> >
-> >> >> >> >> Looking retrospectively at the various hang/stall bugs that we have, I
-> >> >> >> >> think we need some kind of priority between them. I.e. we have rcu
-> >> >> >> >> stalls, spinlock stalls, workqueue hangs, task hangs, silent machine
-> >> >> >> >> hang and maybe something else. It would be useful if they fire
-> >> >> >> >> deterministically according to priorities. If there is an rcu stall,
-> >> >> >> >> that's always detected as CPU stall. Then if there is no RCU stall,
-> >> >> >> >> but a workqueue stall, then that's always detected as workqueue stall,
-> >> >> >> >> etc.
-> >> >> >> >> Currently if we have an RCU stall (effectively CPU stall), that can be
-> >> >> >> >> detected either RCU stall or a task hung, producing 2 different bug
-> >> >> >> >> reports (which is bad).
-> >> >> >> >> One can say that it's only a matter of tuning timeouts, but at least
-> >> >> >> >> task hung detector has a problem that if you set timeout to X, it can
-> >> >> >> >> detect hung anywhere between X and 2*X. And on one hand we need quite
-> >> >> >> >> large timeout (a minute may not be enough), and on the other hand we
-> >> >> >> >> can't wait for an hour just to make sure that the machine is indeed
-> >> >> >> >> dead (these things happen every few minutes).
-> >> >> >> >
-> >> >> >> > I suppose that we could have a global variable that was set to the
-> >> >> >> > priority of the complaint in question, which would suppress all
-> >> >> >> > lower-priority complaints.  Might need to be opt-in, though -- I would
-> >> >> >> > guess that not everyone is going to be happy with one complaint suppressing
-> >> >> >> > others, especially given the possibility that the two complaints might
-> >> >> >> > be about different things.
-> >> >> >> >
-> >> >> >> > Or did you have something more deft in mind?
-> >> >> >>
-> >> >> >>
-> >> >> >> syzkaller generally looks only at the first report. One does not know
-> >> >> >> if/when there will be a second one, or the second one can be induced
-> >> >> >> by the first one, and we generally want clean reports on a non-tainted
-> >> >> >> kernel. So we don't just need to suppress lower priority ones, we need
-> >> >> >> to produce the right report first.
-> >> >> >> I am thinking maybe setting:
-> >> >> >>  - rcu stalls at 1.5 minutes
-> >> >> >>  - workqueue stalls at 2 minutes
-> >> >> >>  - task hungs at 2.5 minutes
-> >> >> >>  - and no output whatsoever at 3 minutes
-> >> >> >> Do I miss anything? I think at least spinlocks. Should they go before
-> >> >> >> or after rcu?
-> >> >> >
-> >> >> > That is what I know of, but the Linux kernel being what it is, there is
-> >> >> > probably something more out there.  If not now, in a few months.  The
-> >> >> > RCU CPU stall timeout can be set on the kernel-boot command line, but
-> >> >> > you probably already knew that.
-> >> >>
-> >> >> Well, it's all based solely on a large number of patches and stopgaps.
-> >> >> If we fix main problems for today, it's already good.
-> >> >
-> >> > Fair enough!
-> >> >
-> >> >> > Just for comparison, back in DYNIX/ptx days the RCU CPU stall timeout
-> >> >> > was 1.5 -seconds-.  ;-)
-> >> >>
-> >> >> Have you tried to instrument every basic block with a function call to
-> >> >> collect coverage, check every damn memory access for validity, enable
-> >> >> all thinkable and unthinkable debug configs and put the insanest load
-> >> >> one can imagine from a swarm of parallel threads? It makes things a
-> >> >> bit slower ;)
-> >> >
-> >> > Given that we wouldn't have had enough CPU or memory to accommodate
-> >> > all of that back in DYNIX/ptx days, I am forced to answer "no".  ;-)
-> >> >
-> >> >> >> This will require fixing task hung. Have not yet looked at workqueue detector.
-> >> >> >> Does at least RCU respect the given timeout more or less precisely?
-> >> >> >
-> >> >> > Assuming that there is at least one CPU capable of taking scheduling-clock
-> >> >> > interrupts, it should respect the timeout to within a few jiffies.
-> >>
-> >>
-> >> Hi Paul,
-> >>
-> >> Speaking of stalls and rcu, we are seeing lots of crashes that go like this:
-> >>
-> >> INFO: rcu_sched self-detected stall on CPU[  404.992530] INFO:
-> >> rcu_sched detected stalls on CPUs/tasks:
-> >> INFO: rcu_sched self-detected stall on CPU[  454.347448] INFO:
-> >> rcu_sched detected stalls on CPUs/tasks:
-> >> INFO: rcu_sched self-detected stall on CPU[  396.073634] INFO:
-> >> rcu_sched detected stalls on CPUs/tasks:
-> >>
-> >> or like this:
-> >>
-> >> INFO: rcu_sched self-detected stall on CPU
-> >> INFO: rcu_sched detected stalls on CPUs/tasks:
-> >> 0-....: (125000 ticks this GP) idle=0ba/1/4611686018427387906
-> >> softirq=57641/57641 fqs=31151
-> >> 0-....: (125000 ticks this GP) idle=0ba/1/4611686018427387906
-> >> softirq=57641/57641 fqs=31151
-> >>  (t=125002 jiffies g=31656 c=31655 q=910)
-> >>
-> >>  INFO: rcu_sched self-detected stall on CPU
-> >> INFO: rcu_sched detected stalls on CPUs/tasks:
-> >> 0-....: (125000 ticks this GP) idle=49a/1/4611686018427387906
-> >> softirq=65194/65194 fqs=31231
-> >> 0-....: (125000 ticks this GP) idle=49a/1/4611686018427387906
-> >> softirq=65194/65194 fqs=31231
-> >>  (t=125002 jiffies g=34421 c=34420 q=1119)
-> >> (detected by 1, t=125002 jiffies, g=34421, c=34420, q=1119)
-> >>
-> >>
-> >> and then there is an unintelligible mess of 2 reports. Such crashes go
-> >> to trash bin, because we can't even say which function hanged. It
-> >> seems that in all cases 2 different rcu stall detection facilities
-> >> race with each other. Is it possible to make them not race?
-> >
-> > How about the following (untested, not for mainline) patch?  It suppresses
-> > all but the "main" RCU flavor, which is rcu_sched for !PREEMPT builds and
-> > rcu_preempt otherwise.  Either way, this is the RCU flavor corresponding
-> > to synchronize_rcu().  This works well in the common case where there
-> > is almost always an RCU grace period in flight.
-> >
-> > One reason that this patch is not for mainline is that I am working on
-> > merging the RCU-bh, RCU-preempt, and RCU-sched flavors into one thing,
-> > at which point there won't be any races.  But that might be a couple
-> > merge windows away from now.
-> >
-> >                                                         Thanx, Paul
-> >
-> > ------------------------------------------------------------------------
-> >
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index 381b47a68ac6..31f7818f2d63 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -1552,7 +1552,7 @@ static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
-> >         struct rcu_node *rnp;
-> >
-> >         if ((rcu_cpu_stall_suppress && !rcu_kick_kthreads) ||
-> > -           !rcu_gp_in_progress(rsp))
-> > +           !rcu_gp_in_progress(rsp) || rsp != rcu_state_p)
-> >                 return;
-> >         rcu_stall_kick_kthreads(rsp);
-> >         j = jiffies;
+Hi James,
+
+On 04/06/2018 01:24 PM, James Morse wrote:
+
+Do you have any ETA on when your SEA patches are going to make it
+upstream? There's not much point in updating my patchset if it's going
+to conflict with your work.
+
+(snip)
+>> On the contrary. No output, followed by a watchdog reboot is usually
+>> what happens when the panic() is in NMI. One of the very few ways that
+>> can be debugged is over a NULL modem cable.
 > 
-> But doesn't they both relate to the same rcu flavor? They both say
-> rcu_sched. I assumed that the difference is "self-detected" vs "on
-> CPUs/tasks", i.e. on the current CPU vs on other CPUs.
+> (IPMI-SOL?)
+> 
+> Really? printk has NMI support, and panic()s call to bust_spinlocks() should
+> unblank the screen before printk_safe_flush_on_panic() dumps the messages. (I'm
+> assuming some BMC-VGA exists to capture the 'screen').
 
-Right you are!
+Plausible. There are other mechanisms though that may reset the system
+before it is practical to capture the screen.
 
-One approach would be to increase the value of RCU_STALL_RAT_DELAY,
-which is currently two jiffies to (say) 20 jiffies.  This is in
-kernel/rcu/tree.h.  But this would fail on a sufficiently overloaded
-system -- and the failure of the two-jiffy delay is a bit of a surprise,
-given interrupts disabled and all that.  Are you by any chance loaded
-heavily enough to see vCPU preemption?
+(snip)
+>> But if on arm64, you can return to firmware,
+>> then we have wildly different constraints.
+> 
+> We can't return to firmware, but we can take the error again, causing another
+> trap to firmware.
+> 
+> e.g.: If a program accesses a value in the cache and the cache location is
+> discovered to be corrupt/marked-as-poisoned. This causes an 'external abort'
+> exception, which firmware has configured to trap to firmware. Once there, it
+> generates CPER records and sets-up an external-abort-exception for Linux.
+> If linux returns from this external-abort, we return to whatever program
+> accessed the bad-cache-value in the first case, re-run the instruction that
+> generates the external abort, and the same thing happens again, but to firmware
+> it looks like a second fault at the same address.
 
-I could avoid at least some of these timing issues instead using cmpxchg()
-on ->jiffies_stall to allow only one CPU in, but leave the non-atomic
-update to discourage overly long stall prints from running into the
-next one.  This is not perfect, either, and is roughly equivalent to
-setting RCU_STALL_RAT_DELAY to many second's worth of jiffies, but
-avoiding that minute's delay.  But it should get rid of the duplication
-in almost all cases, though it could allow a stall warning to overlap
-with a later stall warning for that same grace period.  Which can
-already happen anyway.  Also, a tens-of-seconds vCPU preemption can
-still cause concurrent stall warnings, but if that is happening to you,
-the concurrent stall warnings are probably the least of your problems.
-Besides, we do need at least one CPU to actually report the stall, which
-won't happen if that CPU's vCPU is indefinitely preempted.  So there is
-only so much I can do about that particular corner case.
+This is a very good example of why we should _not_ panic in NMI.
+Invalidate the cache-line, next load causes a memory round-trip, and
+everyone's happy. Of course, FFS can't do that because it doesn't know
+if it's valid to invalidate (pun intended). But the OS does. So you
+_want_ to reach the error handler downstream of NMI context, and you do
+_not_ want to crash.
 
-So how does the following (untested) patch work for you?
 
-							Thanx, Paul
+(snip)
+>> On x86, you can't return to SMM. You can have a new SMI triggered while
+>> servicing the NMI, but you can't re-enter an SMI that you've returned
+>> from. SMM holds all the cores, and they all leave SMM at roughly the
+>> same time, so you don't deal with coexistence issues. This probably also
+>> avoids the multiple notifications that you are trying to implement on arm.
+> 
+> its the new SMI case.
+> 
+> (We don't necessarily have all cores pulled into firmware, (although firmware
+> could do that in software), so different CPUs taking NMI-like notifications is
+> one of the things we have to handle.)
 
-------------------------------------------------------------------------
+How does FFS handle race conditions that can occur when accessing HW
+concurrently with the OS? I'm told it's the main reasons why BIOS
+doesn't release unused cores from SMM early.
 
-commit 6a5ab1e68f8636d8823bb5a9aee35fc44c2be866
-Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Date:   Mon Apr 9 11:04:46 2018 -0700
 
-    rcu: Exclude near-simultaneous RCU CPU stall warnings
-    
-    There is a two-jiffy delay between the time that a CPU will self-report
-    an RCU CPU stall warning and the time that some other CPU will report a
-    warning on behalf of the first CPU.  This has worked well in the past,
-    but on busy systems, it is possible for the two warnings to overlap,
-    which makes interpreting them extremely difficult.
-    
-    This commit therefore uses a cmpxchg-based timing decision that
-    allows only one report in a given one-minute period (assuming default
-    stall-warning Kconfig parameters).  This approach will of course fail
-    if you are seeing minute-long vCPU preemption, but in that case the
-    overlapping RCU CPU stall warnings are the least of your worries.
-    
-    Reported-by: Dmitry Vyukov <dvyukov@google.com>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>> On quick thought, I think the best way to go for both series is to leave
+>> the entry points arch-specific, and prevent hax86 and harm64 from
+>> stepping on each other's toes. Thoughts?
+> 
+> The behaviour should be driven from the standard. I agree there is some leeway,
+> which linux should handle on all architectures that support GHES.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 381b47a68ac6..b7246bcbf633 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1429,8 +1429,6 @@ static void print_other_cpu_stall(struct rcu_state *rsp, unsigned long gpnum)
- 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 		return;
- 	}
--	WRITE_ONCE(rsp->jiffies_stall,
--		   jiffies + 3 * rcu_jiffies_till_stall_check() + 3);
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 
- 	/*
-@@ -1481,6 +1479,10 @@ static void print_other_cpu_stall(struct rcu_state *rsp, unsigned long gpnum)
- 			sched_show_task(current);
- 		}
- 	}
-+	/* Rewrite if needed in case of slow consoles. */
-+	if (ULONG_CMP_GE(jiffies, READ_ONCE(rsp->jiffies_stall)))
-+		WRITE_ONCE(rsp->jiffies_stall,
-+			   jiffies + 3 * rcu_jiffies_till_stall_check() + 3);
- 
- 	rcu_check_gp_kthread_starvation(rsp);
- 
-@@ -1525,6 +1527,7 @@ static void print_cpu_stall(struct rcu_state *rsp)
- 	rcu_dump_cpu_stacks(rsp);
- 
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
-+	/* Rewrite if needed in case of slow consoles. */
- 	if (ULONG_CMP_GE(jiffies, READ_ONCE(rsp->jiffies_stall)))
- 		WRITE_ONCE(rsp->jiffies_stall,
- 			   jiffies + 3 * rcu_jiffies_till_stall_check() + 3);
-@@ -1548,6 +1551,7 @@ static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
- 	unsigned long gpnum;
- 	unsigned long gps;
- 	unsigned long j;
-+	unsigned long jn;
- 	unsigned long js;
- 	struct rcu_node *rnp;
- 
-@@ -1586,14 +1590,17 @@ static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
- 	    ULONG_CMP_GE(gps, js))
- 		return; /* No stall or GP completed since entering function. */
- 	rnp = rdp->mynode;
-+	jn = jiffies + 3 * rcu_jiffies_till_stall_check() + 3;
- 	if (rcu_gp_in_progress(rsp) &&
--	    (READ_ONCE(rnp->qsmask) & rdp->grpmask)) {
-+	    (READ_ONCE(rnp->qsmask) & rdp->grpmask) &&
-+	    cmpxchg(&rsp->jiffies_stall, js, jn) == js) {
- 
- 		/* We haven't checked in, so go dump stack. */
- 		print_cpu_stall(rsp);
- 
- 	} else if (rcu_gp_in_progress(rsp) &&
--		   ULONG_CMP_GE(j, js + RCU_STALL_RAT_DELAY)) {
-+		   ULONG_CMP_GE(j, js + RCU_STALL_RAT_DELAY) &&
-+		   cmpxchg(&rsp->jiffies_stall, js, jn) == js) {
- 
- 		/* They had a few time units to dump stack, so complain. */
- 		print_other_cpu_stall(rsp, gpnum);
+"The standard" deals mostly with firmware behavior. While I'm all for
+following specifications in order to ensure smooth interaction and
+integration, Linux is an OS and it deals with a plethora of "standards".
+Its job is to serve user requests. When a "standard" deviates from this,
+such as mandating a crash when one is not required, it's the OS's job to
+_not_ follow this requirement.
+
+
+> The entry points from the arch code are already separate, as these have
+> different notification types in the HEST->GHES entries and different
+> registration requirements.
+> Once in ghes.c all the NMI-like notifications get merged together as the only
+> relevant thing about them is we have to use the estatus-queue, and can't call
+> any of the sleepy recovery helpers.
+> 
+> I don't think this is the issue though: An NMI notification could by any of the
+> eleven CPER notification record types.
+> Your argument is Linux probably can handle PCIe-AER errors,
+
+My argument is that Linux should do a best effort to recover from
+hardware (or FFS) errors. In support of that argument, I presented
+evidence that Linux already can handle a variety of errors. How those
+errors are reported determines whether the OS crashes or not, and that's
+not right. When errors are reported natively, we make it to the error
+handlers before crashing. And the essence of my argument is that there
+is no reason to have a different behavior with FFS.
+
+> even if broken firmware thinks they are fatal.
+
+I think the idea of firmware-first is broken. But it's there, it's
+shipping in FW, so we have to accommodate it in SW.
+
+
+> This is only one of the eleven notification record types. Returning to handle
+> the error definitely doesn't work for some classes of fatal error, especially
+> when interrupts are masked.
+
+> I think its straightforward to test whether the CPER records contain only errors
+> where we can do better: (not tested/built, I haven't checked whether this is nmi
+> safe):
+That looks very similar to what I had originally implemented.
+> ---------------------%<---------------------
+> /*
+>  * Return true if only PCIe-AER CPER sections are present. We ignore the fatal
+>  * severity in this case as linux knows better. Called in_nmi().
+>  */
+> static bool ghes_is_deferrable(struct ghes *ghes,
+>        const struct acpi_hest_generic_status *estatus)
+> {
+>        guid_t *sec_type;
+>        struct acpi_hest_generic_data *gdata;
+> 
+>        apei_estatus_for_each_section(estatus, gdata) {
+>                sec_type = (guid_t *)gdata->section_type;
+>                if (!guid_equal(sec_type, &CPER_SEC_PCIE))
+
+Also need to check if the CPER record contains enough information to
+identify the cause of the error. There's no guarantee the record even
+has a valid PCI BDF, let alone error information. Possible? yes. Easy?
+yes. Advisable? maybe.
+
+
+(snip)
+>>> My point was there is a class of reported-as-fatal error that really is fatal,
+>>> and for these trying to defer the work to irq_work is worse than panic()ing as
+>>> we get less information about what happened.
+>>
+>> How do we get less information? We save the GHES structure on the
+>> estatus_queue, and use it as the error source in either case. Is there a
+>> class of errors where we can reasonable expect things to be okay in NMI,
+>> but go horribly wrong on return from NMI?
+> 
+> Yes, (described above). This could happen if we see Arm64's 'SEA' CPER  records
+> or x86's 'MCE' CPER records. I'm pretty sure it will happen on both
+> architectures if you return to a context with interrupts masked.
+
+And linux can handle a wide subset of MCEs just fine, so the
+ghes_is_deferrable() logic would, under my argument, agree to pass
+execution to the actual handlers. I do agree that this is one case where
+splitting the handler in a top half and bottom half would make sense.
+Though in that case, the problem is generalized to "how to best handle
+error Y", rather than "how to handle error Y in FFS".
+
+
+>> (snip)
+>>> Are all AER errors recoverable?  (is an OS:'fatal' AER error ever valid?)
+>>
+>> PCIe "fatal" means that your link is gone and you might not get it back.
+>> You lose all the downstream devices. You may be able to reset the link
+>> and get it back. This sort of "fatal" has no impact on a machine's
+>> ability to continue operation.
+>>
+>> From ACPI, FFS should only send a "fatal" error if a machine needs reset
+>> [1], so it's clearly a firmware bug to mark any PCIe error "fatal". This
+>> won't stop BIOS vendors from taking shortcuts and deciding to crash an
+>> OS by sending the error as "fatal".
+>>
+>> [1]ACPI 6.2: 18.1Hardware Errors and Error Sources
+> 
+> Great! Its never valid. So we can check the CPER records in the NMI handler, and
+> for AER errors, clear the fatal bit printing a nasty message about the firmware.
+
+There's the counter-argument that the machine is a "XYZ" appliance, and
+losing the PCIe link to the "XYZ" device is essentially "fatal" to the
+(purpose of the) machine. As you noted, there is some leeway ;)
+Sarcasm aside, I do like the idea of a message complaining about the
+firmware.
+
+(snip)
+>> That's the approach I originally tried, but I didn't like it. The
+>> parsing gets deeper and deeper, and, by the time you realize if the
+>> error can be handled or not, you're already halfway through recovery.
+>>
+>> This is a perfectly viable approach. However, is there a palpable
+>> (non-theoretical) concern that warrants complicating things this way?
+> 
+> For AER your text above says no, we can always handle an error, they are never
+> fatal.
+> 
+> For memory-errors, yes. An ECC error for a location on the kernel stack while
+> the affected thread was preempt_disable()d. We can't kick the thread off the
+> CPU, and we can't return from the handler as we can't stop accesses to the stack
+> when we return.
+> 
+> We can avoid it being complicated by just separating AER errors out when they
+> come in. You've said they never mean the OS has to reboot.
+
+If we're going to split recovery paths, then it makes better sense to
+have a system where handleable errors are passed down to a lesser
+context. Or even run non-blocking handlers in whatever context they are
+received. Much more than having a special case for a specific error.
+
+
+(snip)
+>> I abstract things at irq_work_queue(): "queue this work and let me
+>> return from this interrupt"
+> 
+> ('from this NMI', to come back later as an IRQ, from where we can call
+> schedule_work_on(). This chaining is because the scheduler takes irqsave
+> spin-locks to schedule the work.)
+
+Hopefully, the handling is set up in such a way that I don't have to
+worry about these details on a per-error basis. If I do have to worry,
+them I must be doing something wrong.
+
+
+(snip)
+>> In the event that FFS fails to prevent and SMI storm, and keeps spamming
+>> the CPU with NMIs, that is a clear firmware bug. It's also the sort of
+>> bug I haven't observed in the wild.
+> 
+> Do these SMI ever occur synchronously with the CPUs execution? i.e. if I execute
+> this instruction, I will get an SMI. (or are these your handled-elsewhere-NMI case?)
+
+I'm not aware of synchronous exceptions that end up as SMIs, though I
+imagine it is possible on x86. An IO write to an SMI trap is equivalent
+to that.
+
+> On arm64 poisoned-cache locations triggering an external abort (leading to a
+> NOTIFY_SEA NMI-like notification to APEI) in response to a load is synchronous,
+> hence the live-lock problem.
+
+How is this currently handled in the kernel-first case?
+
+
+(snip)
+> Maybe. On arm systems error sources might have their own interrupts that are
+> taken to firmware,
+
+That sounds like an even bigger headache than x86.
+
+
+>> I am not concert about livelocking the system.
+> 
+> This is what keeps me awake at night.
+
+Nothing keeps me awake at night. I keep others awake at night.
+
+> I think your platform has NMI handled as MCE/kernel-first for synchronous CPU
+> errors. SMI triggered by PCI-AER are notified by NMI too, but handled by
+> firmware-first.
+
+MCEs come in via FFS. There's a school of thought that sees a certain
+value in logging ECC errors to the BMC. It's arguable whether the ECC
+errors are synchronous in 100% of cases.
+
+> This hybrid kernel/firmware first depending on the error-source isn't the only
+> way of building things. Appendix-N of the UEFI spec lists CPER records for
+> firmware-first handling of types of error that your platform must 'handle
+> elsewhere'.
+> 
+> We have arm systems where kernel-first isn't viable as the equivalent of the MCA
+> registers is platform/integration/silicon-revision specific. These systems
+> handle all their errors using firmware-first. These systems will generate CPER
+> records where fatal means fatal, and returning from the NMI-like notification
+> will either send us into the weeds, or trap us back into firmware.
+
+Without getting into details, the non-viablity of kernel-first is
+subjective.
+
+Alex
