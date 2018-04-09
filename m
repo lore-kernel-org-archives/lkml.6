@@ -1,83 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752482AbeDIJ4G (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 05:56:06 -0400
-Received: from mga03.intel.com ([134.134.136.65]:20397 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752061AbeDIJ4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 05:56:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,426,1517904000";
-   d="scan'208";a="35631042"
-Subject: Re: [PATCH v5 1/3] perf/core: store context switch out type into Perf
- trace
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <ff228fc5-5742-a5fe-8cad-79704742672c@linux.intel.com>
- <9ff84e83-a0ca-dd82-a6d0-cb951689be74@linux.intel.com>
- <20180409092603.GY4043@hirez.programming.kicks-ass.net>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <37886fed-e39f-3aa1-d909-0c91e746adc7@linux.intel.com>
-Date: Mon, 9 Apr 2018 12:56:00 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751845AbeDIJ7W (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 05:59:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51688 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbeDIJ7U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 05:59:20 -0400
+Date: Mon, 9 Apr 2018 02:59:19 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: Race-free unlinking of directory entries
+Message-ID: <20180409095919.GA9621@infradead.org>
+References: <20171220191844.wnb3bgkpreg2tjia@pali>
+ <20180409074241.2ibvhh3g5lzxnt4g@pali>
 MIME-Version: 1.0
-In-Reply-To: <20180409092603.GY4043@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180409074241.2ibvhh3g5lzxnt4g@pali>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.04.2018 12:26, Peter Zijlstra wrote:
-> On Mon, Apr 09, 2018 at 10:25:32AM +0300, Alexey Budankov wrote:
->>
->> Store preempting context switch out event into Perf trace as a part of 
->> PERF_RECORD_SWITCH[_CPU_WIDE] record.
->>
->> Percentage of preempting and non-preempting context switches help 
->> understanding the nature of workloads (CPU or IO bound) that are running 
->> on a machine;
->>
->> The event is treated as preemption one when task->state value of the 
->> thread being switched out is TASK_RUNNING. Event type encoding is 
->> implemented using PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit;
->> 	
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
-> Acme, I'm thinking you should route this, since most of the changes are
-> actually to the tool.
-> 
->> diff --git a/kernel/events/core.c b/kernel/events/core.c
->> index fc1c330c6bd6..872a5aaa77eb 100644
->> --- a/kernel/events/core.c
->> +++ b/kernel/events/core.c
->> @@ -7584,6 +7584,10 @@ static void perf_event_switch(struct task_struct *task,
->>  		},
->>  	};
->>  
->> +	if (!sched_in && task->state == TASK_RUNNING)
->> +		switch_event.event_id.header.misc |=
->> +				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
-> 
-> I typically prefer {} over any multi-line expression.
+On Mon, Apr 09, 2018 at 09:42:41AM +0200, Pali Rohár wrote:
+> Hi! I would like to remind this my older email about race free
+> unlinking. Is there any plan to provide such support?
 
-Yep, makes sense. Sorry for missing that here.
-
-> 
->>  	perf_iterate_sb(perf_event_switch_output,
->>  		       &switch_event,
->>  		       NULL);
-> 
+Given that in Linux we know which directory entry a given fd refers to,
+we shouldn't even need a new syscall, but simply support the
+AT_EMPTY_PATH flag for funlinkat.
