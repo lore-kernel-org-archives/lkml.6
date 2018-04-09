@@ -1,36 +1,37 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3607359-1523234283-2-12550830335365791422
+X-Cyrus-Session-Id: sloti22d1t05-3643807-1523234272-2-4529812361722297030
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enrosv, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523234282; b=MnorZim3coY/XpZHPSWfe6djdByfyzToZpO7sgL+yFSYeoGbHU
-    fZ/dtS4MXJr1OT2IpOaub3or1mbPRKqV2wkyoAchewqHS28vi24mx0XQXyTinGBe
-    4+DdkskwmUc/7eYtJj7SR4gtIiecm5aEzIfYmmcW+aVhVVY8JC9bjFaKjLtwgeen
-    T4umBfwaIDAWGqnkoyT7GauzWDCUWor4uR8QYKGKyXaIUrB/hDezAn3wcqvpXk0e
-    7ViPLDQOOebKAJRaPCsElaX7tYkdJyldsKUNEGxkYpNn+2OJsbe06iMhGp15snU+
-    xmr2nnSj0FNpdNO201/U41jofLHS8fyswJMQ==
+    1523234271; b=XTeJs13+nIYj6CCjVx/HSdcw348Cay/1rIoeNfDiyhOwsocMm1
+    142Y7x+lOZRIzqaKPfeeAUdxIB3cLf/ZCutEJtvd3x6HqgmL2XGXLbrCrTMkfHGv
+    pcG73FMtvGl/UzW52V4CwBRn8BReqTZfeY4ZyKwFuzb3JmKcilvN8+Jij6Td+l15
+    frZLWEol0djAPo0lxJ0/XT4YwS4ESGI55+qlWPYg+YKoQZS3ZbUULqdj6Wfz17z2
+    7soXD62yTpLc0MnhOxy9obZYSVWX5vxdWEPMpj7Nwpq8EIJvLghcjCO2gyY9pfvX
+    e7paJA8vPl2MmYrGpBn6myxeCWu+gdr7j69g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523234282; bh=pv2XmIehKR
-    oc3CfilaoWpnuvQAPfo+a+GJOh7h8gdSw=; b=JBTnpBxYLGmUnFGGSigalAj/Uu
-    +6S8yiPfNJkqbEL4DwEtKltX0iNqz9hBDrX9KSxbd6Jv2yLf18Kj1xx4Nl2JXK8C
-    OuQVIsZ/UO6RWhefAlMEvn67aNeY4Ckpzn1r+4F6frsTAiHOgwKHM2IBqLv84c8M
-    I1CIfy8nz0ykyVdzZZ2gdf0tUh0k/DoWJoZZROdru0BLAiPcmqHTLSp5rXpb0EVs
-    Mpm17dXpfAD0Ld7lL9fdDg0Ud0J7LNQtBycb7MYegO4IdKehFZUyFACu9UHkp5LF
-    PDMF/WOgej2Zd9uQCnttXQAxWujzatlD1f9lApAzONwS/Q5DWODLDf+9IJJQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MF0f3hGs x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :references:in-reply-to:content-type:content-id
+    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
+    t=1523234271; bh=IZXcWMIQZpZpU0ZyG399u6FY7VNot1nA8Y0EpSWmsaQ=; b=
+    Xn3EnPyurRtqyesJh8GffuTLu7vs2FTy1mLcFG122v0IXupaUjUO/lyFAX2L7f7P
+    f1gJdICFaOymGWm+bs4HqoPh/QJpwMbzIe9oV9Vm2gtMlq8waWWzez5wzX0E1jg9
+    qSFFJGRvyemX950XB8+ci+wGbWvyLvo5/33qRE0dDS4/BuNuka2uR07PMXnQ7fCF
+    2OvE5z6WfagUZdGtfRz9pufDTovNGOXH7+Ge6GWM4GVNW2iHB4R3HreHlkyBH0yt
+    m9HsDXm1l1fEXK4k81Hlkx4xLpCuIMRou6qvs8twCeZ0MR3jz6bnU3dCbi637VcT
+    9Vu7Q9v0i+7YSlLtMjK3HQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=g4l7CcR3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +40,9 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MF0f3hGs x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=g4l7CcR3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,43 +52,36 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEq+O+BMN5S4pylZVlIK5rIeBtqR9tSY/Jk1Sx09gbbSoRm+t6rLo7E8PnUNCRL04X8zFRhDcsivgP4Gk4zmFw8EwkW9VJMe5vzz5i38qvGMLXRRw2rZ
-    D1/ymsh+N71l6fjb/zqwZY3NcNEeD6nhWMvuOD4lw6AcWsC1JwZJJ4zV/n/LbBrrXGceZ3EzFV/YOKpenE2mI8TgnhHlQFfeWgDCIzB0LU/x5LXgMdkp/6el
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDmK0TZd6JFGyxlIZddtP9NN907B+OCSpeZCY2fQszCbvWLhJ/1bvjuJsJgiYHrb7/xUDQnsUxSBZMcNqCPthfvmOkDB/CUJL/H7Ibg5TQPii/uRDNd4
+    jfj+9nXb5udXY81Hjwofp2/z1CavSzDLMSVoY7ulCzc0N7idtjOqKlvcYYdAe+fUGu7bJ3ZgxXN1i8F0S7PzcKn+XOSih/4A0toGT/myw1M6N77f84szVbWp
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
-    a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=pGLkceISAAAA:8
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8 a=yMhMjlubAAAA:8
-    a=l3Aku9My3eCd2UEZK4AA:9 a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=mw6kJ3eo-EIA:10 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=Lf-vpJhqX20A:10 a=FOH2dFAWAAAA:8 a=AYdrOdEoAAAA:8 a=yPCof4ZbAAAA:8
+    a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8 a=wEQHMdzYEBxiOzsUMLkA:9 a=QEXdDO2ut3YA:10
+    a=i3VuKzQdj-NEYjvDI-p3:22 a=OGUpGO79hC_v-Tb66Uh5:22 a=WzC6qhA0u3u7Ye7llzcV:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932844AbeDIAh6 (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:37:58 -0400
-Received: from mail-by2nam01on0100.outbound.protection.outlook.com ([104.47.34.100]:3232
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S1756168AbeDIAhn (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:37:43 -0400
+Received: from mail-sn1nam02on0135.outbound.protection.outlook.com ([104.47.36.135]:3040
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932882AbeDIAhz (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:37:55 -0400
+        id S1755422AbeDIAhl (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:37:41 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Hendrick Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>,
+CC: Omar Sandoval <osandov@fb.com>, David Sterba <dsterba@suse.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 113/162] perf callchain: Fix
- attr.sample_max_stack setting
-Thread-Topic: [PATCH AUTOSEL for 4.4 113/162] perf callchain: Fix
- attr.sample_max_stack setting
-Thread-Index: AQHTz5nIxLCOa4/DJEGtVc2/OdknNw==
-Date: Mon, 9 Apr 2018 00:29:12 +0000
-Message-ID: <20180409002738.163941-113-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 092/162] Btrfs: always account pinned bytes
+ when dropping a tree block ref
+Thread-Topic: [PATCH AUTOSEL for 4.4 092/162] Btrfs: always account pinned
+ bytes when dropping a tree block ref
+Thread-Index: AQHTz5m8btwz92UiwEehnyryWNOvGA==
+Date: Mon, 9 Apr 2018 00:28:51 +0000
+Message-ID: <20180409002738.163941-92-alexander.levin@microsoft.com>
 References: <20180409002738.163941-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -96,141 +90,74 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1110;7:ra7ZfhGX3rl2bpfdOH1SxhWyHvyzDsHEnwlFWs6Mqvz1KcVgO2mkA56SbXNx+ugnfwh0zYbX4D2MQpfRBmNW2Cm4OohkhONCQCKn6RZkez3Rk468n9ttVQisp08HvJEy0mNtMTfyL5Kf6k0B+otP5qlMxSBEBCq/VlJa2lRiG0gRQnLi+HIEQCP1+yiYUFVvdd4S/hZ79CNugJHvgbhwk22FHlXZrQKZqXG3Mb//ZJXddlSirFeWGL+GhnhoEeQB;20:fCoZU9z5MWXhouTXGlcvOU3nz3qvcp1yyvehiAtMGMyeDckZ0h7o8YSb8LNBXCXENAsWKV9+iN12kVoYx4sMZzOax5lkPJfYb286o81YnUL03XTM2BEsxxUCRYFPBdXzjC09I3ARJKdNoTy3IyGXjoWzvEyHOrgL9tFjJGm5EdQ=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1031;7:ZOHaxShbIhX0X6rZhTiYdUBkiQ8WdYRhqtr3s7i345kKYaaYnoPDpz8e/4+zVPfZok6Jok2gtQ33ZmqLcDwCMzViVjWzE/Z4GXWVqFarlz4X1x5ezSUGQeY3VvBI7H7TpInbro5bVoIjX9Fk522Bj6kA+Es2JEdR1DlthzS6Fe0au67bA/7duUZ9Y4/7E6y0Cn/O9pwUZSGJbOBjYuchZlYbgaLVlnuMCoLiokC38EtGuPLP3sjQinGMwfWF6Gan;20:9uxh0FOw3UOyVJFKYq9Bg+w3kYx+UUrLtKP/ygn08JGXPO48J8k9P+D52mGG81zBOsW1pWyiuUMat07iefnRFwUav30+5bBbKSIqJn8Yvi2QUbqgOs1badFRnCh/ff37kZf2fP/bLVWyDXCTppbfH6nybIMBSA5wG3mTIfVH7ao=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 8a2deb90-ff4d-4553-4528-08d59db21ff6
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1110;
-x-ms-traffictypediagnostic: DM5PR2101MB1110:
+X-MS-Office365-Filtering-Correlation-Id: 01d2e1b9-5efb-446f-5b84-08d59db218f5
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1031;
+x-ms-traffictypediagnostic: DM5PR2101MB1031:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1110D1C14933892DCC192D0CFBBF0@DM5PR2101MB1110.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513)(85827821059158)(42068640409301)(84791874153150)(104084551191319)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1110;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1110;
+x-microsoft-antispam-prvs: <DM5PR2101MB1031F841A582180AA7BC49A7FBBF0@DM5PR2101MB1031.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(67672495146484)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1031;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1031;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(346002)(396003)(376002)(366004)(199004)(189003)(53936002)(6306002)(186003)(5250100002)(105586002)(966005)(11346002)(99286004)(476003)(66066001)(6512007)(86362001)(575784001)(3660700001)(1076002)(54906003)(68736007)(110136005)(3280700002)(39060400002)(316002)(305945005)(4326008)(107886003)(22452003)(14454004)(7736002)(446003)(6666003)(2501003)(10290500003)(3846002)(6116002)(72206003)(106356001)(25786009)(6486002)(6436002)(8936002)(478600001)(7416002)(5660300001)(86612001)(8676002)(81156014)(2906002)(102836004)(81166006)(6506007)(2900100001)(76176011)(2616005)(486006)(26005)(36756003)(10090500001)(97736004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1110;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: C+CYCEOYEAVHM2zZmdcrQhpaghDdM3gYnBIa6PmVKqgw0mad/IxOsXHqqj9I9+lIXoV951qyb+n5kA3NDDsK34bCGw2Fwy/Jheiim8oK4/PHc9cFMgltvDQxpLl1v+OWd/Ljhia+aV1w5f6cfqoQBHsb5kt9qZeY3mTZRN7TF6g68HJQ3Yl1nZ0i55Qef0FYYmGGXCt7GBp8oY2Pv/NlC1bxOTlSjtMrAupsZO9fFgBZvLQkVLc6RLcyOESrdBD9rzd3AXusW2In/ZqKUQGw5MxXF8gta1co/UV0tTB9MnizguidG9YN/BnG5zKTq1o9K/QZHo2aCdVHoPPUvJESlSn1/rg1NiiZH5iQbEhYXnyuw6uoHoCZYQCwI3rxzba2DrHE7RNq4aHyyKpQ2yKkxxCQdb2HViveRLGmvaWLqbo=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(39380400002)(346002)(39860400002)(189003)(199004)(2900100001)(10290500003)(99286004)(76176011)(14454004)(7736002)(11346002)(26005)(6666003)(86612001)(72206003)(478600001)(551934003)(36756003)(106356001)(66066001)(2616005)(186003)(575784001)(22452003)(86362001)(68736007)(305945005)(54906003)(102836004)(486006)(110136005)(316002)(6506007)(446003)(107886003)(53936002)(4326008)(105586002)(6436002)(6486002)(476003)(6512007)(5660300001)(5250100002)(25786009)(3846002)(6116002)(1076002)(97736004)(3280700002)(2501003)(2906002)(81156014)(8676002)(10090500001)(81166006)(8936002)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1031;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: uKGklANXDdkJh43F31hDVg3xtA0Pgb1lePkPlmZBZG3fhoGDURkporJfkhJtUdNIrngvwVF0B0KPd9ybj1yHgPRZinEMt5e4mU5e6+pVfV6PJhXNQprdSBvCJ+OAlqdpWAoreqEOjNOOMa4WDIhRqDO5lwFLnHtEYIICPbFlUb5UfKGtHERm3jrHzZrO1hncsir3y1qVtwnUZ+reZnxVJ4XmhH1I1WRshdwriwwN7cs4WXzv0Ylv90bYc0x+dE+S9YZ7+vEZ9J45s390yjBNg1adS3rJn8EAUy7YWRZLtL0s+kSO9FKqB+oB+TlzcdgQWKcZReAmzkABNw3XgN+2TOZbLqxsLYXJYN7nQVQJF8eTquzYseZVvqypoquzMAcr1KH6k6ukVZvrx1DXGB6l/dC+L0x4ad18TzSXNt3o+44=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0EA1A6EB00501742AF7C1E43ED73F14E@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a2deb90-ff4d-4553-4528-08d59db21ff6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:29:12.2398
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01d2e1b9-5efb-446f-5b84-08d59db218f5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:28:51.8334
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1110
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1031
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-[ Upstream commit 249d98e567e25dd03e015e2d31e1b7b9648f34df ]
-
-When setting the "dwarf" unwinder for a specific event and not
-specifying the max-stack, the attr.sample_max_stack ended up using an
-uninitialized callchain_param.max_stack, fix it by using designated
-initializers for that callchain_param variable, zeroing all non
-explicitely initialized struct members.
-
-Here is what happened:
-
-  # perf trace -vv --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call=
--graph=3Ddwarf/ ping -6 -c 1 ::1
-  callchain: type DWARF
-  callchain: stack dump size 8192
-  perf_event_attr:
-    type                             2
-    size                             112
-    config                           0x730
-    { sample_period, sample_freq }   1
-    sample_type                      IP|TID|TIME|ADDR|CALLCHAIN|CPU|PERIOD|=
-RAW|REGS_USER|STACK_USER|DATA_SRC
-    exclude_callchain_user           1
-    { wakeup_events, wakeup_watermark } 1
-    sample_regs_user                 0xff0fff
-    sample_stack_user                8192
-    sample_max_stack                 50656
-  sys_perf_event_open failed, error -75
-  Value too large for defined data type
-  # perf trace -vv --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call=
--graph=3Ddwarf/ ping -6 -c 1 ::1
-  callchain: type DWARF
-  callchain: stack dump size 8192
-  perf_event_attr:
-    type                             2
-    size                             112
-    config                           0x730
-    sample_type                      IP|TID|TIME|ADDR|CALLCHAIN|CPU|PERIOD|=
-RAW|REGS_USER|STACK_USER|DATA_SRC
-    exclude_callchain_user           1
-    sample_regs_user                 0xff0fff
-    sample_stack_user                8192
-    sample_max_stack                 30448
-  sys_perf_event_open failed, error -75
-  Value too large for defined data type
-  #
-
-Now the attr.sample_max_stack is set to zero and the above works as
-expected:
-
-  # perf trace --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-gra=
-ph=3Ddwarf/ ping -6 -c 1 ::1
-  PING ::1(::1) 56 data bytes
-  64 bytes from ::1: icmp_seq=3D1 ttl=3D64 time=3D0.072 ms
-
-  --- ::1 ping statistics ---
-  1 packets transmitted, 1 received, 0% packet loss, time 0ms
-  rtt min/avg/max/mdev =3D 0.072/0.072/0.072/0.000 ms
-       0.000 probe_libc:inet_pton:(7feb7a998350))
-                                         __inet_pton (inlined)
-                                         gaih_inet.constprop.7 (/usr/lib64/=
-libc-2.26.so)
-                                         __GI_getaddrinfo (inlined)
-                                         [0xffffaa39b6108f3f] (/usr/bin/pin=
-g)
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Hendrick Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-is9tramondqa9jlxxsgcm9iz@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- tools/perf/util/evsel.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 397fb4ed3c97..f0bd4825f95a 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -624,13 +624,13 @@ static void apply_config_terms(struct perf_evsel *evs=
-el,
- 	struct perf_evsel_config_term *term;
- 	struct list_head *config_terms =3D &evsel->config_terms;
- 	struct perf_event_attr *attr =3D &evsel->attr;
--	struct callchain_param param;
-+	/* callgraph default */
-+	struct callchain_param param =3D {
-+		.record_mode =3D callchain_param.record_mode,
-+	};
- 	u32 dump_size =3D 0;
- 	char *callgraph_buf =3D NULL;
-=20
--	/* callgraph default */
--	param.record_mode =3D callchain_param.record_mode;
--
- 	list_for_each_entry(term, config_terms, list) {
- 		switch (term->type) {
- 		case PERF_EVSEL__CONFIG_TERM_PERIOD:
---=20
-2.15.1
+RnJvbTogT21hciBTYW5kb3ZhbCA8b3NhbmRvdkBmYi5jb20+DQoNClsgVXBzdHJlYW0gY29tbWl0
+IDBhMTZjN2Q3YWVjZmFlODk4NzE5N2U1MDExNmViZmMzMzhjYmUwYTIgXQ0KDQpDdXJyZW50bHks
+IHdlIG9ubHkgaW5jcmVtZW50IHRvdGFsX2J5dGVzX3Bpbm5lZCBpbg0KYnRyZnNfZnJlZV90cmVl
+X2Jsb2NrKCkgd2hlbiBkcm9wcGluZyB0aGUgbGFzdCByZWZlcmVuY2Ugb24gdGhlIGJsb2NrLg0K
+SG93ZXZlciwgd2hlbiB0aGUgZGVsYXllZCByZWYgaXMgcnVuIGxhdGVyLCB3ZSB3aWxsIGRlY3Jl
+bWVudA0KdG90YWxfYnl0ZXNfcGlubmVkIHJlZ2FyZGxlc3Mgb2Ygd2hldGhlciBpdCB3YXMgdGhl
+IGxhc3QgcmVmZXJlbmNlIG9yDQpub3QuIFRoaXMgY2F1c2VzIHRoZSBjb3VudGVyIHRvIHVuZGVy
+ZmxvdyB3aGVuIHRoZSByZWZlcmVuY2Ugd2UgZHJvcHBlZA0Kd2FzIG5vdCB0aGUgbGFzdCByZWZl
+cmVuY2UuIEZpeCBpdCBieSBpbmNyZW1lbnRpbmcgdGhlIGNvdW50ZXINCnVuY29uZGl0aW9uYWxs
+eSwgd2hpY2ggaXMgd2hhdCBidHJmc19mcmVlX2V4dGVudCgpIGRvZXMuIFRoaXMgbWFrZXMNCnRv
+dGFsX2J5dGVzX3Bpbm5lZCBhbiBvdmVyZXN0aW1hdGUgd2hlbiByZWZlcmVuY2VzIHRvIHNoYXJl
+ZCBleHRlbnRzIGFyZQ0KZHJvcHBlZCwgYnV0IGluIHRoZSB3b3JzdCBjYXNlIHRoaXMgd2lsbCBq
+dXN0IG1ha2UgdXMgdHJ5IHRvIGNvbW1pdCB0aGUNCnRyYW5zYWN0aW9uIHRvIHRyeSB0byBmcmVl
+IHVwIHNwYWNlIGFuZCBmaW5kIHdlIGRpZG4ndCBmcmVlIGVub3VnaC4NCg0KU2lnbmVkLW9mZi1i
+eTogT21hciBTYW5kb3ZhbCA8b3NhbmRvdkBmYi5jb20+DQpUZXN0ZWQtYnk6IEhvbGdlciBIb2Zm
+c3TDpHR0ZSA8aG9sZ2VyQGFwcGxpZWQtYXN5bmNocm9ueS5jb20+DQpSZXZpZXdlZC1ieTogTGl1
+IEJvIDxiby5saS5saXVAb3JhY2xlLmNvbT4NClNpZ25lZC1vZmYtYnk6IERhdmlkIFN0ZXJiYSA8
+ZHN0ZXJiYUBzdXNlLmNvbT4NClNpZ25lZC1vZmYtYnk6IFNhc2hhIExldmluIDxhbGV4YW5kZXIu
+bGV2aW5AbWljcm9zb2Z0LmNvbT4NCi0tLQ0KIGZzL2J0cmZzL2V4dGVudC10cmVlLmMgfCAxNyAr
+KysrKysrKy0tLS0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDkgZGVs
+ZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9mcy9idHJmcy9leHRlbnQtdHJlZS5jIGIvZnMvYnRy
+ZnMvZXh0ZW50LXRyZWUuYw0KaW5kZXggODc1ZTE3OWJiMmQ1Li4yZDU5YjM5MjcyMjMgMTAwNjQ0
+DQotLS0gYS9mcy9idHJmcy9leHRlbnQtdHJlZS5jDQorKysgYi9mcy9idHJmcy9leHRlbnQtdHJl
+ZS5jDQpAQCAtNjc3MCwxMCArNjc3MCw3IEBAIHZvaWQgYnRyZnNfZnJlZV90cmVlX2Jsb2NrKHN0
+cnVjdCBidHJmc190cmFuc19oYW5kbGUgKnRyYW5zLA0KIAkJQlVHX09OKHJldCk7IC8qIC1FTk9N
+RU0gKi8NCiAJfQ0KIA0KLQlpZiAoIWxhc3RfcmVmKQ0KLQkJcmV0dXJuOw0KLQ0KLQlpZiAoYnRy
+ZnNfaGVhZGVyX2dlbmVyYXRpb24oYnVmKSA9PSB0cmFucy0+dHJhbnNpZCkgew0KKwlpZiAobGFz
+dF9yZWYgJiYgYnRyZnNfaGVhZGVyX2dlbmVyYXRpb24oYnVmKSA9PSB0cmFucy0+dHJhbnNpZCkg
+ew0KIAkJc3RydWN0IGJ0cmZzX2Jsb2NrX2dyb3VwX2NhY2hlICpjYWNoZTsNCiANCiAJCWlmIChy
+b290LT5yb290X2tleS5vYmplY3RpZCAhPSBCVFJGU19UUkVFX0xPR19PQkpFQ1RJRCkgew0KQEAg
+LTY4MDQsMTEgKzY4MDEsMTMgQEAgb3V0Og0KIAkJCQkgYnRyZnNfaGVhZGVyX2xldmVsKGJ1Ziks
+DQogCQkJCSByb290LT5yb290X2tleS5vYmplY3RpZCk7DQogDQotCS8qDQotCSAqIERlbGV0aW5n
+IHRoZSBidWZmZXIsIGNsZWFyIHRoZSBjb3JydXB0IGZsYWcgc2luY2UgaXQgZG9lc24ndCBtYXR0
+ZXINCi0JICogYW55bW9yZS4NCi0JICovDQotCWNsZWFyX2JpdChFWFRFTlRfQlVGRkVSX0NPUlJV
+UFQsICZidWYtPmJmbGFncyk7DQorCWlmIChsYXN0X3JlZikgew0KKwkJLyoNCisJCSAqIERlbGV0
+aW5nIHRoZSBidWZmZXIsIGNsZWFyIHRoZSBjb3JydXB0IGZsYWcgc2luY2UgaXQgZG9lc24ndA0K
+KwkJICogbWF0dGVyIGFueW1vcmUuDQorCQkgKi8NCisJCWNsZWFyX2JpdChFWFRFTlRfQlVGRkVS
+X0NPUlJVUFQsICZidWYtPmJmbGFncyk7DQorCX0NCiB9DQogDQogLyogQ2FuIHJldHVybiAtRU5P
+TUVNICovDQotLSANCjIuMTUuMQ0K
