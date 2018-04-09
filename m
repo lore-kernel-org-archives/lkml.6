@@ -1,92 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752586AbeDIVi4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 17:38:56 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38586 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751662AbeDIViy (ORCPT
+        id S1753074AbeDIVma (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 17:42:30 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:39465 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751728AbeDIVm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 17:38:54 -0400
-X-Google-Smtp-Source: AIpwx499378tX3/Zab/xjzRWhWDj/lT9awIdIar/CFiYi/fTXcWiNn/QSN4UiIVc1EZ6ryjIKO2yTA==
-Date: Mon, 9 Apr 2018 23:38:52 +0200
-From: Christoffer Dall <cdall@kernel.org>
-To: Eric Auger <eric.auger@redhat.com>
-Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, peter.maydell@linaro.org, andre.przywara@arm.com,
-        drjones@redhat.com, wei@redhat.com
-Subject: Re: [RFC v2 02/12] KVM: arm/arm64: Document
- KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Message-ID: <20180409213852.GJ10904@cbox>
-References: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
- <1522159456-10419-3-git-send-email-eric.auger@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522159456-10419-3-git-send-email-eric.auger@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 9 Apr 2018 17:42:27 -0400
+X-Google-Smtp-Source: AIpwx49z+Z597hqvZvZocs1SrTK5iEV96TUJuCZCzdibdmUnu17iByI7WFIsaliQ0oyOMYjCxoLOVQ==
+From: Niklas Cassel <niklas.cassel@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] firmware: qcom: scm: Fix crash in qcom_scm_call_atomic1()
+Date: Mon,  9 Apr 2018 23:40:15 +0200
+Message-Id: <20180409214016.21219-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+qcom_scm_call_atomic1() can crash with a NULL pointer dereference at
+qcom_scm_call_atomic1+0x30/0x48.
 
-On Tue, Mar 27, 2018 at 04:04:06PM +0200, Eric Auger wrote:
-> We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
-> KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
-> base address and size of a redistributor region
-> 
-> Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
-> to declare several separate redistributor regions.
-> 
-> So the whole redist space does not need to be contiguous anymore.
-> 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> ---
->  Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> index 9293b45..0ded904 100644
-> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> @@ -27,6 +27,24 @@ Groups:
->        VCPU and all of the redistributor pages are contiguous.
->        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
->        This address needs to be 64K aligned.
-> +
-> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
-> +      The attr field of kvm_device_attr encodes 3 values:
-> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
-> +      values:   |     count      |       base      |  flags   | index
-> +      - index encodes the unique redistributor region index
-> +      - flags: reserved for future use, currently 0
-> +      - base field encodes bits [51:16] of the guest physical base address
-> +        of the first redistributor in the region. There are two 64K pages
-> +        for each VCPU and all of the redistributor pages are contiguous
+disassembly of qcom_scm_call_atomic1():
+...
+<0xc08d73b0 <+12>: ldr r3, [r12]
+... (no instruction explicitly modifies r12)
+0xc08d73cc <+40>: smc 0
+... (no instruction explicitly modifies r12)
+0xc08d73d4 <+48>: ldr r3, [r12] <- crashing instruction
+...
 
-should this be two 64K pages for the number of redistributors in this
-region as specified by count ?
+Since the first ldr is successful, and since r12 isn't explicitly
+modified by any instruction between the first and the second ldr,
+it must have been modified by the smc call, which is ok,
+since r12 is caller save according to the AAPCS.
 
-> +        within the redistributor region.
-> +      - count encodes the number of redistributors in the region.
+Add r12 to the clobber list so that the compiler knows that the
+callee potentially overwrites the value in r12.
+Clobber descriptions may not in any way overlap with an input or
+output operand.
 
-I assume it's implied that the user must register a total number of
-redistributors across all the regions that matches the number of vcpus,
-and that otherwise something bad happens?
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+ drivers/firmware/qcom_scm-32.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> +      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-> +
-> +  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
-> +  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes. When attempted an
-> +  -EINVAL error is returned.
-> +
->    Errors:
->      -E2BIG:  Address outside of addressable IPA range
->      -EINVAL: Incorrectly aligned address
-> -- 
-> 2.5.5
-> 
-
-Thanks,
--Christoffer
+diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
+index dfbd894d5bb7..4e24e591ae74 100644
+--- a/drivers/firmware/qcom_scm-32.c
++++ b/drivers/firmware/qcom_scm-32.c
+@@ -147,7 +147,7 @@ static u32 smc(u32 cmd_addr)
+ 			"smc	#0	@ switch to secure world\n"
+ 			: "=r" (r0)
+ 			: "r" (r0), "r" (r1), "r" (r2)
+-			: "r3");
++			: "r3", "r12");
+ 	} while (r0 == QCOM_SCM_INTERRUPTED);
+ 
+ 	return r0;
+@@ -263,7 +263,7 @@ static s32 qcom_scm_call_atomic1(u32 svc, u32 cmd, u32 arg1)
+ 			"smc    #0      @ switch to secure world\n"
+ 			: "=r" (r0)
+ 			: "r" (r0), "r" (r1), "r" (r2)
+-			: "r3");
++			: "r3", "r12");
+ 	return r0;
+ }
+ 
+@@ -298,7 +298,7 @@ static s32 qcom_scm_call_atomic2(u32 svc, u32 cmd, u32 arg1, u32 arg2)
+ 			"smc    #0      @ switch to secure world\n"
+ 			: "=r" (r0)
+ 			: "r" (r0), "r" (r1), "r" (r2), "r" (r3)
+-			);
++			: "r12");
+ 	return r0;
+ }
+ 
+@@ -328,7 +328,7 @@ u32 qcom_scm_get_version(void)
+ 			"smc	#0	@ switch to secure world\n"
+ 			: "=r" (r0), "=r" (r1)
+ 			: "r" (r0), "r" (r1)
+-			: "r2", "r3");
++			: "r2", "r3", "r12");
+ 	} while (r0 == QCOM_SCM_INTERRUPTED);
+ 
+ 	version = r1;
+-- 
+2.14.3
