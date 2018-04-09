@@ -1,64 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752198AbeDKDqw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 23:46:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35736 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751546AbeDKDqv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 23:46:51 -0400
-X-Google-Smtp-Source: AIpwx4+Sobx7gd7ggAy3bXLfMAbnh5M7Jr4szdB5dNP3y6zOAZhqQmEmBoktxy0pCnEa19rvDLT1lw==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: Regression caused by commit bc976233a872, ethernet r8169 stops
- working after system S3
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <alpine.DEB.2.21.1804031050020.2511@nanos.tec.linutronix.de>
-Date: Wed, 11 Apr 2018 11:46:44 +0800
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <E5521441-BE1E-4A43-AB5C-0E91165E0AEC@canonical.com>
-References: <E3F55561-8733-4056-ABEC-5AF87AC288CB@canonical.com>
- <alpine.DEB.2.21.1803302137510.1479@nanos.tec.linutronix.de>
- <4ABF72ED-A0C3-405D-8F02-785ED111F9FB@canonical.com>
- <alpine.DEB.2.21.1804031050020.2511@nanos.tec.linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-X-Mailer: Apple Mail (2.3445.6.18)
+        id S1752295AbeDKDrp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 23:47:45 -0400
+Received: from m12-18.163.com ([220.181.12.18]:46859 "EHLO m12-18.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752234AbeDKDrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 23:47:43 -0400
+From: sxauwsk <sxauwsk@163.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sxauwsk@163.com, guojian <guojian@innoinstrument.net>,
+        wangshikai <wangshikai@inno-instrument.cn>
+Subject: [PATCH] spi: cadence: Add usleep_range() for cdns_spi_fill_tx_fifo()
+Date: Mon,  9 Apr 2018 19:16:50 +0800
+Message-Id: <1523272610-49116-1-git-send-email-sxauwsk@163.com>
+X-Mailer: git-send-email 1.7.9.5
+X-CM-TRANSID: EsCowACXsdBEhc1atNCREg--.17491S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtw1rtF1kuw1UZF13Zw47Arb_yoWfAFbEvF
+        1UAws7Gay5JF9FyFy29rsrZryjva1Fqr1kuF1qqas8JwsrZan2vrn5Zr1DKw17Zw4UuFnx
+        Zr1vga4DArsxKjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRJ3ktUUUUU==
+X-Originating-IP: [113.140.17.238]
+X-CM-SenderInfo: 5v0d34lvn6il2tof0z/xtbBZA8lJlQG-7C1lAAAsU
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+In case of xspi work in busy condition, may send bytes failed.
+Add one bytes delay
 
-> On Apr 3, 2018, at 4:51 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> Bah. The patch is broken. New version written with brain awake below.
+Signed-off-by: sxauwsk <sxauwsk@163.com>
+Signed-off-by: guojian <guojian@innoinstrument.net>
+Signed-off-by: wangshikai <wangshikai@inno-instrument.cn>
+---
+ drivers/spi/spi-cadence.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Actually I can't reproduce this issue anymore on latest Linus' tree.
-
-I'll do a bisect and ask linux-stable maintainer to include the commit.
-
-Thanks for your help!
-
-Kai-Heng
-
->
-> Thanks,
->
-> 	tglx
->
-> 8<---------------------
-> --- a/kernel/irq/cpuhotplug.c
-> +++ b/kernel/irq/cpuhotplug.c
-> @@ -134,6 +134,10 @@ static bool migrate_one_irq(struct irq_d
->  		brokeaff = false;
->  	}
->
-> +	pr_info("IRQ%u: New affinity: %*pbl effective: %*pbl\n",
-> +		d->irq, cpumask_pr_args(affinity),
-> +		cpumask_pr_args(irq_data_get_effective_affinity_mask(d)));
-> +
->  	if (maskchip && chip->irq_unmask)
->  		chip->irq_unmask(d);
+diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
+index 5c9516a..66ae055 100644
+--- a/drivers/spi/spi-cadence.c
++++ b/drivers/spi/spi-cadence.c
+@@ -313,6 +313,12 @@ static void cdns_spi_fill_tx_fifo(struct cdns_spi *xspi)
+ 
+ 	while ((trans_cnt < CDNS_SPI_FIFO_DEPTH) &&
+ 	       (xspi->tx_bytes > 0)) {
++
++		/* When xspi in busy condition, bytes may send failed,
++		 * caused communication failure so add one byte delay
++		 */
++		usleep_range(10, 20);
++
+ 		if (xspi->txbuf)
+ 			cdns_spi_write(xspi, CDNS_SPI_TXD, *xspi->txbuf++);
+ 		else
+-- 
+1.7.9.5
