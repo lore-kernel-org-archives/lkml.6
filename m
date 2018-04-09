@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4029176-1523244963-2-10373005774327778666
+X-Cyrus-Session-Id: sloti22d1t05-4029176-1523244945-2-2393133448331308714
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523244962; b=Um3h/eBzXFGrzZ1G9HE/l1mKUltq+y3sqTl+fb08Tizu7zZBem
-    csEa88tahL1gVo48426ppLR8aehS7jA4tzeYf4WgIY+5BsyhSw6/hqDuM6eBLVYa
-    XUST6Jfpv1tW/JavTP0DchHof3PJCnz1tmUKapdMqtVH+amqK5Bcrz1NIQv1jxLm
-    FV036oxF1svt3Stu041GDQpbmQFethQ7vsreU3874Id4TfUrSTbXUToD4RANoIxW
-    tsRGM+Ftd7Z9A92X2pFnQxiAoLsKT28dVKjhWWf5lZUjL8A2aAK3Tsg1TGhRuvfo
-    LicbevDPxF4RBNaw65jGIDvrCd/o6NkDpZKg==
+    1523244944; b=K3DR5oSUMlpWu5xdaOZeV1SzYm9vVSWyi84gLG/lmG19OLXu0e
+    gSb8SqS9twr4VYEVI1IxdqvUR81Hru//t+t14dPMRdCYzB+oRDmoJgVfpWX59lGN
+    c8XAkCA94AtdYfF85R+EAclyLMxcdPo1UbF+zI98zlmf9ND7gQIGfRZmtk0P08LX
+    qzISHgZy7LBGsIS6aWhVsPM6UncdYouNfHc5SPr7MeGHJFN1vnKP5eCGO2TclX5z
+    6o4YIkAtecjb0RVhmnOpqYpELI7UDmFxNd2oUXmSbAR/RE3O0mmU1+UIaKQdjAsn
+    krPcihJozaHwzHuoQSIPVqOifYSBdtCzGSEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523244962; bh=jf4oRWtZ2W
-    ak4hwLu/SSwqBSQ3StucjuEFs0HGbX2Ek=; b=dLor5y56hjbOUjs9t56foRI1Me
-    AxLzG/tTaMg9T4do+u6AN5BXs2zDC2Jt/59LFuR/wa6h5OTR/1W6Iy2gg+PGKwS6
-    yhzgStCfczHQhfOluKEjW+cMbuZ1/5+CzIMaM2k1vGhcvKCJi/L1RNKjb1m9yCsE
-    uvYBiJhslss3EFMkEBXe+d2tFPWWhJNEhmYH98GN4IAQPywrzNVT11X8M5Qalqco
-    4UdXuSOA3TZW6VTyJZQxwtJlxP084xoQyAUjL1ljnpjjmhYj9TuB8teYWEtiFs2I
-    +LWm98slJotJpBAZ0K1wak4o5iv7URfsf89uWE/8WoQq8oGp8WFAUMm3rx4g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ogGhBbZa x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523244944; bh=5b78OoYqT+
+    MEfnPLrX++jD8sqVwomxZ4j4gnBNfNI24=; b=I2+CzMVZIJByxAlDpSqY/zvSKs
+    x8XmsPlahabN/ubrQqpWK9FAYI9EpD7sLXIk/yH35h/M7z11SW3D16wb6VzHuvAw
+    U+dzCWEcQYgfUtTnCse4w96pQtJ/F9V+rKtUtTVgIxBxNCuXIgkI9le5y4RywueV
+    dt1BXnGhAHjSTikPbD78UZ2j77uabm1FCOlhVzaMsxaFI70L/gBNPell7Ag/qS0R
+    Y92VTeByo14kY16Q8tQ4sbu9BNNSNzcR1rh+h8qm5xOSRpGtvE6/I7m8GsjrEiy7
+    BZUDvT5hGYzUOmQ2h2xai5+97EVy5SuaHK0gAFT/gT9Y7od+EEJ0dxZ5IlrQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=n/lwg60U x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ogGhBbZa x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=n/lwg60U x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,36 +51,37 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDpXWQPD+nzsdGTL/QllgX+Ns0GhhK2X89QpTcP8ifPMu5XZX7k48pNRQe+H1vJGwAFeR+UBnFtqPdimz+nnvBzjasyl1VCfJkcmNa/Lz7y5v36Gk+rI
-    hxAmCxjm9MulYpTGBB6zLK+FLksDiyLG+Zjrkh6PV0qwWgZ0RqdsUTBdxPaB/MF5zyfjNG5FO3ZT0Oix7WCjWrBpguWvu+5jtyA3K59+QtTWVPQiMCDI60wy
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfLnAeagMQP4o4JD+8w90WXbnajClMK8F7lU+uKlnI409kDwFOY1pQghCFCNEug0p/NOeymNo7TC72C69DKk7ufoB7NhKxqcs78WHfTwWt55esJ/cWDZ5
+    L3mSlePSNJz+Z44bKrNceUhzsyZ7xnO/nGqFueeuVD8vr15A8mMhsZtjYOf1LyJZiP/jska3THAAIkckyAiquktHS2hOBTwjbM6gD2fKfkrqMxjGtFrBnvGV
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=QyXUC8HyAAAA:8 a=aatUQebYAAAA:8 a=yMhMjlubAAAA:8
-    a=pXeBbtYkOXvbKU-YMDkA:9 a=wPNLvfGTeEIA:10 a=7715FyvI7WU-l6oqrZBK:22
+    a=Lf-vpJhqX20A:10 a=20KFwNOVAAAA:8 a=Q8eMNLGMAAAA:8 a=BS-Bl4eDAAAA:8
+    a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=fRbur1geQbNQeGRPq20A:9 a=wPNLvfGTeEIA:10
+    a=raiHlmlptQsBXkgpqFpg:22 a=Mz5RY1mrK68yK6INR7tS:22 a=y1Q9-5lHfBjTkpIzbSAN:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753254AbeDIDfp (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 23:35:45 -0400
-Received: from mail-bn3nam01on0124.outbound.protection.outlook.com ([104.47.33.124]:4000
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1753093AbeDIDf0 (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 23:35:26 -0400
+Received: from mail-bl2nam02on0107.outbound.protection.outlook.com ([104.47.38.107]:21664
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754411AbeDIAVP (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1754407AbeDIAVP (ORCPT <rfc822;stable@vger.kernel.org>);
         Sun, 8 Apr 2018 20:21:15 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Chen Yu <yu.c.chen@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+CC: David Howells <dhowells@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 166/189] cpufreq: intel_pstate: Enable HWP
- during system resume on CPU0
-Thread-Topic: [PATCH AUTOSEL for 4.15 166/189] cpufreq: intel_pstate: Enable
- HWP during system resume on CPU0
-Thread-Index: AQHTz5hbRQtn7uEcYUmTOqKGtEmP1w==
-Date: Mon, 9 Apr 2018 00:19:00 +0000
-Message-ID: <20180409001637.162453-166-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 169/189] rxrpc: Don't put crypto buffers on
+ the stack
+Thread-Topic: [PATCH AUTOSEL for 4.15 169/189] rxrpc: Don't put crypto buffers
+ on the stack
+Thread-Index: AQHTz5hddYiUQ0vvUUiHL9j+DGmg/g==
+Date: Mon, 9 Apr 2018 00:19:03 +0000
+Message-ID: <20180409001637.162453-169-alexander.levin@microsoft.com>
 References: <20180409001637.162453-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001637.162453-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,83 +90,288 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1110;7:qyNnWxPxr0Dqyrz2X/tEtCi0il9VGUNylxLFUa3mRSmtYWhWMBLnPqzy8iimSgNH3a3A3o+vO9Q4sY3Bswbyv74cDR9hYfq27xMSUbWivCCdtrpZrMzPHskElUGH7mpN3A7+hovrJpwBofdDjjGHFVZIOryecoXobJBNnddwCc1yxJtIln2YeLwrNv4WOhPHat34WCupxUomObNdf0rVOztwbrp85m+0B5YOWHxDJ/iGSk4YZMOyLshfb+or5jf4;20:iS+JY62/yr4N30IxWoBlM1PS8VxPSLlzOJC81eMK7vSZvbi8UAMWKEdIntUuPTKSuKo8oMNt0HTAE/aMQaQDwS3oPPSt6v0St22/1WardAdlmpqKXJIcUMewF3os9TgPen0GTUKYaEyRqkiAXQJZkcZDo4e8W0v2vUXP1pACmiA=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1125;7:XNBTRTmECrItScp57tJPDMs8bLZXwtoA+i/Ku5IukTDEODyU5XGJic2s4uG8o9DZsqtDLQ0xLsJyRgRlYfGTkwTHwYh1aobihFqCIJ0OfH7iGgbNGonvGyVgY2pPpE07z4qOg0UTSVBuDFaoA9pLPyHEzoiDTCcuvBZbFQ7Ow1z9JmmzoPqjK9g3ZQPZO6QSjaEgC69UCRWYSvxAWJ8dMo1xiWM73LZ+fehUmDhskz2U1j84Md6N84vp0woSGeUh;20:ghW4dAF9BhYvJwiM02Wj+0LDrqRPT7WrqDLEnp1O5PKbZeucOv2nLt8ZHuFzOEdfdzEwSQavMUQNq/i9McxN60a80UKA4qo1mkaFetsJ7Hn3Geyy/GnMsyEzh617UwDsPIaQ2/zQcEOOTYG1neAyaT1fu4O/xQYKn9AULucO+rk=
+X-MS-Office365-Filtering-Correlation-Id: c444dbc4-4f0a-47b1-58c6-08d59dafcb60
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: e8fe25d9-ce79-43e8-8d6e-08d59dafca50
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1110;
-x-ms-traffictypediagnostic: DM5PR2101MB1110:
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB1125;
+x-ms-traffictypediagnostic: DM5PR2101MB1125:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB11103FA0C6631EAC865EE6BBFBBF0@DM5PR2101MB1110.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(209352067349851)(228905959029699)(54914632383503);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1110;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1110;
+x-microsoft-antispam-prvs: <DM5PR2101MB1125F9319F08AE4BF4EE0301FBBF0@DM5PR2101MB1125.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(158342451672863)(89211679590171)(192374486261705)(17755550239193);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1125;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1125;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(346002)(396003)(39380400002)(39860400002)(54534003)(199004)(189003)(5660300001)(478600001)(86612001)(3846002)(6116002)(106356001)(6486002)(72206003)(25786009)(10290500003)(8936002)(6436002)(76176011)(2616005)(6506007)(2900100001)(97736004)(486006)(26005)(36756003)(10090500001)(81166006)(8676002)(81156014)(59450400001)(102836004)(2906002)(99286004)(11346002)(476003)(3660700001)(66066001)(6512007)(575784001)(86362001)(53936002)(105586002)(186003)(5250100002)(14454004)(22452003)(6666003)(2501003)(446003)(7736002)(316002)(1076002)(110136005)(3280700002)(54906003)(68736007)(107886003)(4326008)(305945005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1110;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: vX/JBSufBKGZk2xsdLRczdTuThomTyLIL20aVc3bYlFbXE1pQf6PCQn3VLXg+DIgpPJ4jkfoli2Qx7uun7UnHiBfq0dSI8r+IIj2Ye85Bt6S7pLBhTsU8B7imJrulhuLYaJFPjLscZKiJnHPT01MFGvLVx1eWyjpgJxwgIdae1b6k1U6gHGLwrV5XP85Kot+VlgZ6QUlFq1aKwysnsvOr/+r9vHm0l6pEwtHOHTeEN4QuLQAOD8e4A6Em5Mew+E0Dq+fdaXEKB92klnWV6E6AH5kE43ZbhArE/mijUvt8ScQQL5YDKMp2nLhKseO4nIW7K98b1JYu0JIuBQp8p0D+MOkY7KGSDy2HaITWm6FwilXcF3VQsBmrhEPuTQHQ1hQkZKscmiKR3oJBUbIlzgma7Fy9KVe+BoJwjrNzENBQNA=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(39380400002)(39860400002)(346002)(199004)(189003)(105586002)(7736002)(8676002)(97736004)(81166006)(59450400001)(106356001)(81156014)(305945005)(14454004)(66066001)(1076002)(102836004)(5250100002)(478600001)(2501003)(2900100001)(22452003)(72206003)(68736007)(26005)(86362001)(575784001)(8936002)(76176011)(6506007)(6116002)(6486002)(186003)(5660300001)(3660700001)(316002)(54906003)(110136005)(25786009)(2906002)(10090500001)(6512007)(3280700002)(6666003)(10290500003)(53936002)(99286004)(86612001)(3846002)(6436002)(486006)(4326008)(2616005)(11346002)(107886003)(36756003)(476003)(446003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1125;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: ibu6L7Gk7Im86MvTYIq11Tf4ziu2OOO/a4e8NONQBBj8ClQWuEi6KvDlLT95XxwSvCNJCuUg+Uhgq8iKohQ67lGxwgTCDm45fA5kZG2oQTtnTAwyWeSKMgNXDkV9wGsQcwbyR/KoyLnee/H9bPEVg03kPCdG3UgBFnKTu/QFIhDcX8hw8GixOu8vF01ezj51VC+ZCoqB6NVQNnFiZg7MwFysOgys7dBhYfUgDRIbcegCCrFhK5xm8sEnIre2+sIJeYyzUzZiWoH+4HlD65g9AnIPQw7l0PEx8ixY7+5jns09Gi8go88DIZwrxX2ZSD59acBVRVA7t1ZTOqf/kptq/flLdGTAT9AX+/MI+DP9zT2SXKdzpS9A8RD0V6OEJgLwQJAe9CZvAN3OWs6BvK6vY/kF2S1amt1NZf51/8/s4nU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8fe25d9-ce79-43e8-8d6e-08d59dafca50
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:19:00.9555
+X-MS-Exchange-CrossTenant-Network-Message-Id: c444dbc4-4f0a-47b1-58c6-08d59dafcb60
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:19:03.2991
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1110
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1125
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Chen Yu <yu.c.chen@intel.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 70f6bf2a3b7e40c3f802b0ea837762a8bc6c1430 ]
+[ Upstream commit 8c2f826dc36314059ac146c78d3bf8056b626446 ]
 
-When maxcpus=3D1 is in the kernel command line, the BP is responsible
-for re-enabling the HWP - because currently only the APs invoke
-intel_pstate_hwp_enable() during their online process - which might
-put the system into unstable state after resume.
+Don't put buffers of data to be handed to crypto on the stack as this may
+cause an assertion failure in the kernel (see below).  Fix this by using an
+kmalloc'd buffer instead.
 
-Fix this by enabling the HWP explicitly on BP during resume.
+kernel BUG at ./include/linux/scatterlist.h:147!
+...
+RIP: 0010:rxkad_encrypt_response.isra.6+0x191/0x1b0 [rxrpc]
+RSP: 0018:ffffbe2fc06cfca8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff989277d59900 RCX: 0000000000000028
+RDX: 0000259dc06cfd88 RSI: 0000000000000025 RDI: ffffbe30406cfd88
+RBP: ffffbe2fc06cfd60 R08: ffffbe2fc06cfd08 R09: ffffbe2fc06cfd08
+R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff7c5f80d9f95
+R13: ffffbe2fc06cfd88 R14: ffff98927a3f7aa0 R15: ffffbe2fc06cfd08
+FS:  0000000000000000(0000) GS:ffff98927fc00000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055b1ff28f0f8 CR3: 000000001b412003 CR4: 00000000003606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ rxkad_respond_to_challenge+0x297/0x330 [rxrpc]
+ rxrpc_process_connection+0xd1/0x690 [rxrpc]
+ ? process_one_work+0x1c3/0x680
+ ? __lock_is_held+0x59/0xa0
+ process_one_work+0x249/0x680
+ worker_thread+0x3a/0x390
+ ? process_one_work+0x680/0x680
+ kthread+0x121/0x140
+ ? kthread_create_worker_on_cpu+0x70/0x70
+ ret_from_fork+0x3a/0x50
 
-Reported-by: Doug Smythies <dsmythies@telus.net>
-Suggested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Yu Chen <yu.c.chen@intel.com>
-[ rjw: Subject/changelog, minor modifications ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reported-by: Jonathan Billings <jsbillings@jsbillings.org>
+Reported-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Tested-by: Jonathan Billings <jsbillings@jsbillings.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/cpufreq/intel_pstate.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ net/rxrpc/conn_event.c |  1 +
+ net/rxrpc/rxkad.c      | 92 ++++++++++++++++++++++++++++------------------=
+----
+ 2 files changed, 52 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.=
-c
-index 93a0e88bef76..20226d4243f2 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -779,6 +779,8 @@ static int intel_pstate_hwp_save_state(struct cpufreq_p=
-olicy *policy)
- 	return 0;
- }
-=20
-+static void intel_pstate_hwp_enable(struct cpudata *cpudata);
-+
- static int intel_pstate_resume(struct cpufreq_policy *policy)
+diff --git a/net/rxrpc/conn_event.c b/net/rxrpc/conn_event.c
+index 4ca11be6be3c..b1dfae107431 100644
+--- a/net/rxrpc/conn_event.c
++++ b/net/rxrpc/conn_event.c
+@@ -460,6 +460,7 @@ void rxrpc_process_connection(struct work_struct *work)
+ 		case -EKEYEXPIRED:
+ 		case -EKEYREJECTED:
+ 			goto protocol_error;
++		case -ENOMEM:
+ 		case -EAGAIN:
+ 			goto requeue_and_leave;
+ 		case -ECONNABORTED:
+diff --git a/net/rxrpc/rxkad.c b/net/rxrpc/rxkad.c
+index c38b3a1de56c..77cb23c7bd0a 100644
+--- a/net/rxrpc/rxkad.c
++++ b/net/rxrpc/rxkad.c
+@@ -773,8 +773,7 @@ static int rxkad_respond_to_challenge(struct rxrpc_conn=
+ection *conn,
  {
- 	if (!hwp_active)
-@@ -786,6 +788,9 @@ static int intel_pstate_resume(struct cpufreq_policy *p=
-olicy)
+ 	const struct rxrpc_key_token *token;
+ 	struct rxkad_challenge challenge;
+-	struct rxkad_response resp
+-		__attribute__((aligned(8))); /* must be aligned for crypto */
++	struct rxkad_response *resp;
+ 	struct rxrpc_skb_priv *sp =3D rxrpc_skb(skb);
+ 	const char *eproto;
+ 	u32 version, nonce, min_level, abort_code;
+@@ -818,26 +817,29 @@ static int rxkad_respond_to_challenge(struct rxrpc_co=
+nnection *conn,
+ 	token =3D conn->params.key->payload.data[0];
 =20
- 	mutex_lock(&intel_pstate_limits_lock);
-=20
-+	if (policy->cpu =3D=3D 0)
-+		intel_pstate_hwp_enable(all_cpu_data[policy->cpu]);
+ 	/* build the response packet */
+-	memset(&resp, 0, sizeof(resp));
+-
+-	resp.version			=3D htonl(RXKAD_VERSION);
+-	resp.encrypted.epoch		=3D htonl(conn->proto.epoch);
+-	resp.encrypted.cid		=3D htonl(conn->proto.cid);
+-	resp.encrypted.securityIndex	=3D htonl(conn->security_ix);
+-	resp.encrypted.inc_nonce	=3D htonl(nonce + 1);
+-	resp.encrypted.level		=3D htonl(conn->params.security_level);
+-	resp.kvno			=3D htonl(token->kad->kvno);
+-	resp.ticket_len			=3D htonl(token->kad->ticket_len);
+-
+-	resp.encrypted.call_id[0] =3D htonl(conn->channels[0].call_counter);
+-	resp.encrypted.call_id[1] =3D htonl(conn->channels[1].call_counter);
+-	resp.encrypted.call_id[2] =3D htonl(conn->channels[2].call_counter);
+-	resp.encrypted.call_id[3] =3D htonl(conn->channels[3].call_counter);
++	resp =3D kzalloc(sizeof(struct rxkad_response), GFP_NOFS);
++	if (!resp)
++		return -ENOMEM;
 +
- 	all_cpu_data[policy->cpu]->epp_policy =3D 0;
- 	intel_pstate_hwp_set(policy->cpu);
++	resp->version			=3D htonl(RXKAD_VERSION);
++	resp->encrypted.epoch		=3D htonl(conn->proto.epoch);
++	resp->encrypted.cid		=3D htonl(conn->proto.cid);
++	resp->encrypted.securityIndex	=3D htonl(conn->security_ix);
++	resp->encrypted.inc_nonce	=3D htonl(nonce + 1);
++	resp->encrypted.level		=3D htonl(conn->params.security_level);
++	resp->kvno			=3D htonl(token->kad->kvno);
++	resp->ticket_len		=3D htonl(token->kad->ticket_len);
++	resp->encrypted.call_id[0]	=3D htonl(conn->channels[0].call_counter);
++	resp->encrypted.call_id[1]	=3D htonl(conn->channels[1].call_counter);
++	resp->encrypted.call_id[2]	=3D htonl(conn->channels[2].call_counter);
++	resp->encrypted.call_id[3]	=3D htonl(conn->channels[3].call_counter);
 =20
+ 	/* calculate the response checksum and then do the encryption */
+-	rxkad_calc_response_checksum(&resp);
+-	rxkad_encrypt_response(conn, &resp, token->kad);
+-	return rxkad_send_response(conn, &sp->hdr, &resp, token->kad);
++	rxkad_calc_response_checksum(resp);
++	rxkad_encrypt_response(conn, resp, token->kad);
++	ret =3D rxkad_send_response(conn, &sp->hdr, resp, token->kad);
++	kfree(resp);
++	return ret;
+=20
+ protocol_error:
+ 	trace_rxrpc_rx_eproto(NULL, sp->hdr.serial, eproto);
+@@ -1048,8 +1050,7 @@ static int rxkad_verify_response(struct rxrpc_connect=
+ion *conn,
+ 				 struct sk_buff *skb,
+ 				 u32 *_abort_code)
+ {
+-	struct rxkad_response response
+-		__attribute__((aligned(8))); /* must be aligned for crypto */
++	struct rxkad_response *response;
+ 	struct rxrpc_skb_priv *sp =3D rxrpc_skb(skb);
+ 	struct rxrpc_crypt session_key;
+ 	const char *eproto;
+@@ -1061,17 +1062,22 @@ static int rxkad_verify_response(struct rxrpc_conne=
+ction *conn,
+=20
+ 	_enter("{%d,%x}", conn->debug_id, key_serial(conn->server_key));
+=20
++	ret =3D -ENOMEM;
++	response =3D kzalloc(sizeof(struct rxkad_response), GFP_NOFS);
++	if (!response)
++		goto temporary_error;
++
+ 	eproto =3D tracepoint_string("rxkad_rsp_short");
+ 	abort_code =3D RXKADPACKETSHORT;
+ 	if (skb_copy_bits(skb, sizeof(struct rxrpc_wire_header),
+-			  &response, sizeof(response)) < 0)
++			  response, sizeof(*response)) < 0)
+ 		goto protocol_error;
+-	if (!pskb_pull(skb, sizeof(response)))
++	if (!pskb_pull(skb, sizeof(*response)))
+ 		BUG();
+=20
+-	version =3D ntohl(response.version);
+-	ticket_len =3D ntohl(response.ticket_len);
+-	kvno =3D ntohl(response.kvno);
++	version =3D ntohl(response->version);
++	ticket_len =3D ntohl(response->ticket_len);
++	kvno =3D ntohl(response->kvno);
+ 	_proto("Rx RESPONSE %%%u { v=3D%u kv=3D%u tl=3D%u }",
+ 	       sp->hdr.serial, version, kvno, ticket_len);
+=20
+@@ -1105,31 +1111,31 @@ static int rxkad_verify_response(struct rxrpc_conne=
+ction *conn,
+ 	ret =3D rxkad_decrypt_ticket(conn, skb, ticket, ticket_len, &session_key,
+ 				   &expiry, _abort_code);
+ 	if (ret < 0)
+-		goto temporary_error_free;
++		goto temporary_error_free_resp;
+=20
+ 	/* use the session key from inside the ticket to decrypt the
+ 	 * response */
+-	rxkad_decrypt_response(conn, &response, &session_key);
++	rxkad_decrypt_response(conn, response, &session_key);
+=20
+ 	eproto =3D tracepoint_string("rxkad_rsp_param");
+ 	abort_code =3D RXKADSEALEDINCON;
+-	if (ntohl(response.encrypted.epoch) !=3D conn->proto.epoch)
++	if (ntohl(response->encrypted.epoch) !=3D conn->proto.epoch)
+ 		goto protocol_error_free;
+-	if (ntohl(response.encrypted.cid) !=3D conn->proto.cid)
++	if (ntohl(response->encrypted.cid) !=3D conn->proto.cid)
+ 		goto protocol_error_free;
+-	if (ntohl(response.encrypted.securityIndex) !=3D conn->security_ix)
++	if (ntohl(response->encrypted.securityIndex) !=3D conn->security_ix)
+ 		goto protocol_error_free;
+-	csum =3D response.encrypted.checksum;
+-	response.encrypted.checksum =3D 0;
+-	rxkad_calc_response_checksum(&response);
++	csum =3D response->encrypted.checksum;
++	response->encrypted.checksum =3D 0;
++	rxkad_calc_response_checksum(response);
+ 	eproto =3D tracepoint_string("rxkad_rsp_csum");
+-	if (response.encrypted.checksum !=3D csum)
++	if (response->encrypted.checksum !=3D csum)
+ 		goto protocol_error_free;
+=20
+ 	spin_lock(&conn->channel_lock);
+ 	for (i =3D 0; i < RXRPC_MAXCALLS; i++) {
+ 		struct rxrpc_call *call;
+-		u32 call_id =3D ntohl(response.encrypted.call_id[i]);
++		u32 call_id =3D ntohl(response->encrypted.call_id[i]);
+=20
+ 		eproto =3D tracepoint_string("rxkad_rsp_callid");
+ 		if (call_id > INT_MAX)
+@@ -1153,12 +1159,12 @@ static int rxkad_verify_response(struct rxrpc_conne=
+ction *conn,
+=20
+ 	eproto =3D tracepoint_string("rxkad_rsp_seq");
+ 	abort_code =3D RXKADOUTOFSEQUENCE;
+-	if (ntohl(response.encrypted.inc_nonce) !=3D conn->security_nonce + 1)
++	if (ntohl(response->encrypted.inc_nonce) !=3D conn->security_nonce + 1)
+ 		goto protocol_error_free;
+=20
+ 	eproto =3D tracepoint_string("rxkad_rsp_level");
+ 	abort_code =3D RXKADLEVELFAIL;
+-	level =3D ntohl(response.encrypted.level);
++	level =3D ntohl(response->encrypted.level);
+ 	if (level > RXRPC_SECURITY_ENCRYPT)
+ 		goto protocol_error_free;
+ 	conn->params.security_level =3D level;
+@@ -1168,9 +1174,10 @@ static int rxkad_verify_response(struct rxrpc_connec=
+tion *conn,
+ 	 * as for a client connection */
+ 	ret =3D rxrpc_get_server_data_key(conn, &session_key, expiry, kvno);
+ 	if (ret < 0)
+-		goto temporary_error_free;
++		goto temporary_error_free_ticket;
+=20
+ 	kfree(ticket);
++	kfree(response);
+ 	_leave(" =3D 0");
+ 	return 0;
+=20
+@@ -1179,12 +1186,15 @@ protocol_error_unlock:
+ protocol_error_free:
+ 	kfree(ticket);
+ protocol_error:
++	kfree(response);
+ 	trace_rxrpc_rx_eproto(NULL, sp->hdr.serial, eproto);
+ 	*_abort_code =3D abort_code;
+ 	return -EPROTO;
+=20
+-temporary_error_free:
++temporary_error_free_ticket:
+ 	kfree(ticket);
++temporary_error_free_resp:
++	kfree(response);
+ temporary_error:
+ 	/* Ignore the response packet if we got a temporary error such as
+ 	 * ENOMEM.  We just want to send the challenge again.  Note that we
 --=20
 2.15.1
