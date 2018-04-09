@@ -1,78 +1,539 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752576AbeDIS3W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 14:29:22 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:45280 "EHLO
+        id S1753118AbeDISaV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 14:30:21 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39326 "EHLO
         mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751742AbeDIS3U (ORCPT
+        with ESMTP id S1751688AbeDISaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 14:29:20 -0400
-X-Google-Smtp-Source: AIpwx4+bGpTmj1l0l/CM8/CqMmHVvMJI3tVbx1HY3FkPMJiJwjInz5xMl/RR2HmxBJ8CrVWgLzWg3g==
-Date: Mon, 9 Apr 2018 11:29:17 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Peter Rosin <peda@axentia.se>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] i2c: Add i2c_verify_device_id() to verify device
- id
-Message-ID: <20180409182917.GA20731@roeck-us.net>
-References: <1521475859-16765-1-git-send-email-linux@roeck-us.net>
- <20180408073435.i5nq2ngx2fslaz6a@katana>
+        Mon, 9 Apr 2018 14:30:18 -0400
+X-Google-Smtp-Source: AIpwx4/yx70G70xllzt26kay9WutjFa5vCOmr3SD/I0La23dATM8PsZ6Q/XC3ugkjHtaIcJL5oXYqAExqc9zf++xBY4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180408073435.i5nq2ngx2fslaz6a@katana>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1523263049-31993-1-git-send-email-karahmed@amazon.de>
+References: <1523263049-31993-1-git-send-email-karahmed@amazon.de>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 9 Apr 2018 11:30:17 -0700
+Message-ID: <CALMp9eSthgX0cKkMHm8zBqbC0=iyEVZMovMFdSJveWUZZNDu=A@mail.gmail.com>
+Subject: Re: [PATCH v2] kvm: nVMX: Introduce KVM_CAP_STATE
+To: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w39IUTCD027390
 
-On Sun, Apr 08, 2018 at 09:34:36AM +0200, Wolfram Sang wrote:
-> Hi,
-> 
-> On Mon, Mar 19, 2018 at 09:10:58AM -0700, Guenter Roeck wrote:
-> > Commit dde67eb1beeb ("i2c: add i2c_get_device_id() to get the standard
-> > I2C device id") added a function to return the standard I2C device ID.
-> > Use that function to verify the device ID of a given device.
-> 
-> I am very open to these patches, just...
-> 
-> > 
-> > Cc: Peter Rosin <peda@axentia.se>
-> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > ---
-> > RFC:
-> > - Compile tested only
-> 
-> ... I would really like to have them tested. After that happened, Peter
-> and I can figure out who should apply them for seamless upstreaming.
-> 
+On Mon, Apr 9, 2018 at 1:37 AM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
+> From: Jim Mattson <jmattson@google.com>
+>
+> For nested virtualization L0 KVM is managing a bit of state for L2 guests,
+> this state can not be captured through the currently available IOCTLs. In
+> fact the state captured through all of these IOCTLs is usually a mix of L1
+> and L2 state. It is also dependent on whether the L2 guest was running at
+> the moment when the process was interrupted to save its state.
+>
+> With this capability, there are two new vcpu ioctls: KVM_GET_VMX_STATE and
+> KVM_SET_VMX_STATE. These can be used for saving and restoring a VM that is
+> in VMX operation.
+>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Jim Mattson <jmattson@google.com>
+> [karahmed@ - rename structs and functions and make them ready for AMD and
+>              address previous comments.
+>            - rebase & a bit of refactoring.
+>            - Merge 7/8 and 8/8 into one patch.
+>            - Force a VMExit from L2 after reading the kvm_state to avoid
+>              mixed state between L1 and L2 on resurrecting the instance. ]
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 
-Patch 2/2 was for real HW. I don't have access to such HW right now.
-Guess we'll have to wait until someone does, unless Adrian is willing
-to test it.
+First, let me say "thank you" for picking this up!
 
-> > - Should there also be I2C_DEVICE_PART_ID_ANY to enable maching
-> >   against all parts from a given manufacturer ?
-> 
-> Can't we just add it when we need it?
-> 
-Perfectly fine with me.
+> ---
+> v1 -> v2:
+> - rename structs and functions and make them ready for AMD and address
+>   previous comments.
+> - rebase & a bit of refactoring.
+> - Merge 7/8 and 8/8 into one patch.
+> - Force a VMExit from L2 after reading the kvm_state to avoid mixed state
+>   between L1 and L2 on resurrecting the instance.
+> ---
+>  Documentation/virtual/kvm/api.txt |  46 ++++++++++
+>  arch/x86/include/asm/kvm_host.h   |   7 ++
+>  arch/x86/include/uapi/asm/kvm.h   |  38 ++++++++
+>  arch/x86/kvm/vmx.c                | 189 +++++++++++++++++++++++++++++++++++++-
+>  arch/x86/kvm/x86.c                |  21 +++++
+>  include/uapi/linux/kvm.h          |   5 +
+>  6 files changed, 302 insertions(+), 4 deletions(-)
+>
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> index d6b3ff5..3ed56df 100644
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -3516,6 +3516,52 @@ Returns: 0 on success; -1 on error
+>  This ioctl can be used to unregister the guest memory region registered
+>  with KVM_MEMORY_ENCRYPT_REG_REGION ioctl above.
+>
+> +4.112 KVM_GET_STATE
 
-> > +		dev_err(&client->dev, "unexpected device id %03x-%03x-%x\n",
-> > +			real_id.manufacturer_id, real_id.part_id,
-> > +			real_id.die_revision);
-> > +		return -ENODEV;
-> 
-> I wonder about the ERR loglevel. ENODEV is not an error, I'd think?
-> 
-2d74187d5b4e, where this is derived from, uses dev_warn() instead,
-so that may be a better choice.
+More specifically, KVM_GET_NESTED_STATE?
 
-Thanks,
-Guenter
+> +
+> +Capability: KVM_CAP_STATE
 
-> Regards,
-> 
->    Wolfram
-> 
+KVM_CAP_NESTED_STATE?
+
+> +Architectures: x86
+> +Type: vcpu ioctl
+> +Parameters: struct kvm_state (in/out)
+> +Returns: 0 on success, -1 on error
+> +Errors:
+> +  E2BIG:     the data size exceeds the value of 'size' specified by
+> +             the user (the size required will be written into size).
+> +
+> +struct kvm_state {
+> +       __u16 flags;
+> +       __u16 format;
+> +       __u32 size;
+> +       union {
+> +               struct kvm_vmx_state vmx;
+> +               struct kvm_svm_state svm;
+> +               __u8 pad[120];
+> +       };
+> +       __u8 data[0];
+> +};
+> +
+> +This ioctl copies the vcpu's kvm_state struct from the kernel to userspace.
+> +
+> +4.113 KVM_SET_STATE
+
+KVM_SET_NESTED_STATE?
+
+> +
+> +Capability: KVM_CAP_STATE
+
+KVM_CAP_NESTED_STATE?
+
+> +Architectures: x86
+> +Type: vcpu ioctl
+> +Parameters: struct kvm_state (in)
+> +Returns: 0 on success, -1 on error
+> +
+> +struct kvm_state {
+> +       __u16 flags;
+> +       __u16 format;
+> +       __u32 size;
+> +       union {
+> +               struct kvm_vmx_state vmx;
+> +               struct kvm_svm_state svm;
+> +               __u8 pad[120];
+> +       };
+> +       __u8 data[0];
+> +};
+> +
+> +This copies the vcpu's kvm_state struct from userspace to the kernel.
+>
+>  5. The kvm_run structure
+>  ------------------------
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index fad4d46..902db9e 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -73,6 +73,7 @@
+>  #define KVM_REQ_HV_RESET               KVM_ARCH_REQ(20)
+>  #define KVM_REQ_HV_EXIT                        KVM_ARCH_REQ(21)
+>  #define KVM_REQ_HV_STIMER              KVM_ARCH_REQ(22)
+> +#define KVM_REQ_GET_VMCS12_PAGES       KVM_ARCH_REQ(23)
+>
+>  #define CR0_RESERVED_BITS                                               \
+>         (~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_TS \
+> @@ -1090,6 +1091,12 @@ struct kvm_x86_ops {
+>
+>         void (*setup_mce)(struct kvm_vcpu *vcpu);
+>
+> +       int (*get_state)(struct kvm_vcpu *vcpu,
+
+get_nested_state
+
+> +                        struct kvm_state __user *user_kvm_state);
+> +       int (*set_state)(struct kvm_vcpu *vcpu,
+
+set_nested_state
+
+> +                        struct kvm_state __user *user_kvm_state);
+> +       void (*get_vmcs12_pages)(struct kvm_vcpu *vcpu);
+> +
+>         int (*smi_allowed)(struct kvm_vcpu *vcpu);
+>         int (*pre_enter_smm)(struct kvm_vcpu *vcpu, char *smstate);
+>         int (*pre_leave_smm)(struct kvm_vcpu *vcpu, u64 smbase);
+> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+> index f3a9604..1d1cd26 100644
+> --- a/arch/x86/include/uapi/asm/kvm.h
+> +++ b/arch/x86/include/uapi/asm/kvm.h
+> @@ -361,4 +361,42 @@ struct kvm_sync_regs {
+>  #define KVM_X86_QUIRK_LINT0_REENABLED  (1 << 0)
+>  #define KVM_X86_QUIRK_CD_NW_CLEARED    (1 << 1)
+>
+> +#define KVM_STATE_GUEST_MODE   0x00000001
+> +#define KVM_STATE_RUN_PENDING  0x00000002
+> +#define KVM_STATE_GIF          0x00000004
+> +
+> +struct kvm_vmx_state {
+> +       __u64 vmxon_pa;
+> +       __u64 vmcs_pa;
+> +};
+> +
+> +struct kvm_svm_state {
+> +       __u64 hsave_pa;
+> +       __u64 vmcb_pa;
+> +};
+> +
+> +/* for KVM_CAP_STATE */
+> +struct kvm_state {
+> +       /* KVM_STATE_* flags */
+> +       __u16 flags;
+> +
+> +       /* 0 for VMX, 1 for SVM.  */
+> +       __u16 format;
+> +
+> +       /* 128 for SVM, 128 + VMCS size for VMX.  */
+> +       __u32 size;
+> +
+> +       union {
+> +               /* VMXON, VMCS */
+> +               struct kvm_vmx_state vmx;
+> +               /* HSAVE_PA, VMCB */
+> +               struct kvm_svm_state svm;
+> +
+> +               /* Pad the union to 120 bytes.  */
+> +               __u8 pad[120];
+> +       };
+> +
+> +       __u8 data[0];
+> +};
+> +
+>  #endif /* _ASM_X86_KVM_H */
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 14655df..4d830f7 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -10056,10 +10056,10 @@ static void vmx_inject_page_fault_nested(struct kvm_vcpu *vcpu,
+>  static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+>                                                  struct vmcs12 *vmcs12);
+>
+> -static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu,
+> -                                       struct vmcs12 *vmcs12)
+> +static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
+>  {
+>         struct vcpu_vmx *vmx = to_vmx(vcpu);
+> +       struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+>
+>         if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES)) {
+>                 if (vmcs12->apic_access_addr != vmx->nested.apic_access_mapping.gfn << PAGE_SHIFT) {
+> @@ -11101,8 +11101,6 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, bool from_vmentry)
+>                 return 1;
+>         }
+>
+> -       nested_get_vmcs12_pages(vcpu, vmcs12);
+> -
+>         msr_entry_idx = nested_vmx_load_msr(vcpu,
+>                                             vmcs12->vm_entry_msr_load_addr,
+>                                             vmcs12->vm_entry_msr_load_count);
+> @@ -11200,6 +11198,8 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+>         if (ret)
+>                 return ret;
+>
+> +       nested_get_vmcs12_pages(vcpu);
+> +
+>         /*
+>          * If we're entering a halted L2 vcpu and the L2 vcpu won't be woken
+>          * by event injection, halt vcpu.
+> @@ -12259,6 +12259,183 @@ static int enable_smi_window(struct kvm_vcpu *vcpu)
+>         return 0;
+>  }
+>
+> +static int get_vmcs_cache(struct kvm_vcpu *vcpu,
+> +                         struct kvm_state __user *user_kvm_state)
+> +{
+> +       struct vcpu_vmx *vmx = to_vmx(vcpu);
+> +       struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+> +
+> +       /*
+> +        * When running L2, the authoritative vmcs12 state is in the
+> +        * vmcs02. When running L1, the authoritative vmcs12 state is
+> +        * in the shadow vmcs linked to vmcs01, unless
+> +        * sync_shadow_vmcs is set, in which case, the authoritative
+> +        * vmcs12 state is in the vmcs12 already.
+> +        */
+> +       if (is_guest_mode(vcpu))
+> +               sync_vmcs12(vcpu, vmcs12);
+> +       else if (enable_shadow_vmcs && !vmx->nested.sync_shadow_vmcs)
+> +               copy_shadow_to_vmcs12(vmx);
+> +
+> +       if (copy_to_user(user_kvm_state->data, vmcs12, sizeof(*vmcs12)))
+> +               return -EFAULT;
+> +
+> +       /*
+> +        * Force a nested exit that guarantees that any state capture
+> +        * afterwards by any IOCTLs (MSRs, etc) will not capture a mix of L1
+> +        * and L2 state.
+> +        *
+> +        * One example where that would lead to an issue is the TSC DEADLINE
+> +        * MSR vs the guest TSC. If the L2 guest is running, the guest TSC will
+> +        * be the L2 TSC while the TSC deadline MSR will contain the L1 TSC
+> +        * deadline MSR. That would lead to a very large (and wrong) "expire"
+> +        * diff when LAPIC is initialized during instance restore (i.e. the
+> +        * instance will appear to have hanged!).
+> +        */
+> +       if (is_guest_mode(vcpu))
+> +               nested_vmx_vmexit(vcpu, -1, 0, 0);
+
+Injecting a fake VM-exit on restore is as bad as injecting a fake
+VM-exit on save, and I don't think this is a good approach.
+
+> +
+> +       return 0;
+> +}
+> +
+> +static int get_vmx_state(struct kvm_vcpu *vcpu,
+> +                        struct kvm_state __user *user_kvm_state)
+> +{
+> +       u32 user_data_size;
+> +       struct vcpu_vmx *vmx = to_vmx(vcpu);
+> +       struct kvm_state kvm_state = {
+> +               .flags = 0,
+> +               .format = 0,
+> +               .size = sizeof(kvm_state),
+> +               .vmx.vmxon_pa = -1ull,
+> +               .vmx.vmcs_pa = -1ull,
+> +       };
+> +
+> +       if (copy_from_user(&user_data_size, &user_kvm_state->size,
+> +                          sizeof(user_data_size)))
+> +               return -EFAULT;
+> +
+> +       if (nested_vmx_allowed(vcpu) && vmx->nested.vmxon) {
+> +               kvm_state.vmx.vmxon_pa = vmx->nested.vmxon_ptr;
+> +               kvm_state.vmx.vmcs_pa = vmx->nested.current_vmptr;
+> +
+> +               if (vmx->nested.current_vmptr != -1ull)
+> +                       kvm_state.size += VMCS12_SIZE;
+> +
+> +               if (is_guest_mode(vcpu)) {
+> +                       kvm_state.flags |= KVM_STATE_GUEST_MODE;
+> +
+> +                       if (vmx->nested.nested_run_pending)
+> +                               kvm_state.flags |= KVM_STATE_RUN_PENDING;
+
+IIRC, when I initially posted this set of changes, I neglected to
+include the one that set nested_run_pending before prepare_vmcs02(),
+and so this bit isn't actually tracked correctly for save/restore at
+the moment.
+
+> +               }
+> +       }
+> +
+> +       if (user_data_size < kvm_state.size) {
+> +               if (copy_to_user(&user_kvm_state->size, &kvm_state.size,
+> +                                sizeof(kvm_state.size)))
+> +                       return -EFAULT;
+> +               return -E2BIG;
+> +       }
+> +
+> +       if (copy_to_user(user_kvm_state, &kvm_state, sizeof(kvm_state)))
+> +               return -EFAULT;
+> +
+> +       if (vmx->nested.current_vmptr == -1ull)
+> +               return 0;
+> +
+> +       return get_vmcs_cache(vcpu, user_kvm_state);
+> +}
+> +
+> +static int set_vmcs_cache(struct kvm_vcpu *vcpu,
+> +                         struct kvm_state __user *user_kvm_state,
+> +                         struct kvm_state *kvm_state)
+> +
+> +{
+> +       struct vcpu_vmx *vmx = to_vmx(vcpu);
+> +       struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+> +       u32 exit_qual;
+> +       int ret;
+> +
+> +       if ((kvm_state->size < (sizeof(*vmcs12) + sizeof(*kvm_state))) ||
+> +           kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
+> +           !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
+> +               return -EINVAL;
+> +
+> +       if (copy_from_user(vmcs12, user_kvm_state->data, sizeof(*vmcs12)))
+> +               return -EFAULT;
+> +
+> +       if (vmcs12->revision_id != VMCS12_REVISION)
+> +               return -EINVAL;
+> +
+> +       set_current_vmptr(vmx, kvm_state->vmx.vmcs_pa);
+> +
+> +       if (!(kvm_state->flags & KVM_STATE_GUEST_MODE))
+> +               return 0;
+> +
+> +       if (check_vmentry_prereqs(vcpu, vmcs12) ||
+> +           check_vmentry_postreqs(vcpu, vmcs12, &exit_qual))
+> +               return -EINVAL;
+> +
+> +       ret = enter_vmx_non_root_mode(vcpu, true);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /*
+> +        * This request will result in a call to
+> +        * nested_get_vmcs12_pages before the next VM-entry.
+> +        */
+> +       kvm_make_request(KVM_REQ_GET_VMCS12_PAGES, vcpu);
+> +
+> +       vmx->nested.nested_run_pending = 1;
+> +
+> +       return 0;
+> +}
+> +
+> +static int set_vmx_state(struct kvm_vcpu *vcpu,
+> +                        struct kvm_state __user *user_kvm_state)
+> +{
+> +       struct vcpu_vmx *vmx = to_vmx(vcpu);
+> +       struct kvm_state kvm_state;
+> +       int ret;
+> +
+> +       if (copy_from_user(&kvm_state, user_kvm_state, sizeof(kvm_state)))
+> +               return -EFAULT;
+> +
+> +       if (kvm_state.size < sizeof(kvm_state))
+> +               return -EINVAL;
+> +
+> +       if (kvm_state.format != 0)
+> +               return -EINVAL;
+> +
+> +       if (kvm_state.flags &
+> +           ~(KVM_STATE_RUN_PENDING | KVM_STATE_GUEST_MODE))
+> +               return -EINVAL;
+> +
+> +       if (!nested_vmx_allowed(vcpu))
+> +               return kvm_state.vmx.vmxon_pa == -1ull ? 0 : -EINVAL;
+> +
+> +       vmx_leave_nested(vcpu);
+> +
+> +       vmx->nested.nested_run_pending =
+> +               !!(kvm_state.flags & KVM_STATE_RUN_PENDING);
+> +
+> +       if (kvm_state.vmx.vmxon_pa == -1ull)
+> +               return 0;
+> +
+> +       if (!page_address_valid(vcpu, kvm_state.vmx.vmxon_pa))
+> +               return -EINVAL;
+> +
+> +       vmx->nested.vmxon_ptr = kvm_state.vmx.vmxon_pa;
+> +       ret = enter_vmx_operation(vcpu);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (kvm_state.vmx.vmcs_pa == -1ull)
+> +               return 0;
+> +
+> +       return set_vmcs_cache(vcpu, user_kvm_state, &kvm_state);
+> +}
+> +
+>  static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+>         .cpu_has_kvm_support = cpu_has_kvm_support,
+>         .disabled_by_bios = vmx_disabled_by_bios,
+> @@ -12387,6 +12564,10 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+>
+>         .setup_mce = vmx_setup_mce,
+>
+> +       .get_state = get_vmx_state,
+> +       .set_state = set_vmx_state,
+> +       .get_vmcs12_pages = nested_get_vmcs12_pages,
+> +
+>         .smi_allowed = vmx_smi_allowed,
+>         .pre_enter_smm = vmx_pre_enter_smm,
+>         .pre_leave_smm = vmx_pre_leave_smm,
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 963cdb9..1ab7cc5 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -2873,6 +2873,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>         case KVM_CAP_X2APIC_API:
+>                 r = KVM_X2APIC_API_VALID_FLAGS;
+>                 break;
+> +       case KVM_CAP_STATE:
+> +               r = !!kvm_x86_ops->get_state;
+> +               break;
+>         default:
+>                 r = 0;
+>                 break;
+> @@ -3892,6 +3895,22 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+>                 r = kvm_vcpu_ioctl_enable_cap(vcpu, &cap);
+>                 break;
+>         }
+> +       case KVM_GET_STATE: {
+> +               struct kvm_state __user *user_kvm_state = argp;
+> +
+> +               r = -EINVAL;
+> +               if (kvm_x86_ops->get_state)
+> +                       r = kvm_x86_ops->get_state(vcpu, user_kvm_state);
+> +               break;
+> +       }
+> +       case KVM_SET_STATE: {
+> +               struct kvm_state __user *user_kvm_state = argp;
+> +
+> +               r = -EINVAL;
+> +               if (kvm_x86_ops->set_state)
+> +                       r = kvm_x86_ops->set_state(vcpu, user_kvm_state);
+> +               break;
+> +       }
+>         default:
+>                 r = -EINVAL;
+>         }
+> @@ -7051,6 +7070,8 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>         bool req_immediate_exit = false;
+>
+>         if (kvm_request_pending(vcpu)) {
+> +               if (kvm_check_request(KVM_REQ_GET_VMCS12_PAGES, vcpu))
+> +                       kvm_x86_ops->get_vmcs12_pages(vcpu);
+>                 if (kvm_check_request(KVM_REQ_MMU_RELOAD, vcpu))
+>                         kvm_mmu_unload(vcpu);
+>                 if (kvm_check_request(KVM_REQ_MIGRATE_TIMER, vcpu))
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 4e1d7f5..4c170ff 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -949,6 +949,7 @@ struct kvm_ppc_resize_hpt {
+>  #define KVM_CAP_PPC_GET_CPU_CHAR 151
+>  #define KVM_CAP_S390_BPB 152
+>  #define KVM_CAP_GET_MSR_FEATURES 153
+> +#define KVM_CAP_STATE 154
+>
+>  #ifdef KVM_CAP_IRQ_ROUTING
+>
+> @@ -1380,6 +1381,10 @@ struct kvm_s390_ucas_mapping {
+>  /* Memory Encryption Commands */
+>  #define KVM_MEMORY_ENCRYPT_OP      _IOWR(KVMIO, 0xba, unsigned long)
+>
+> +/* Available with KVM_CAP_STATE */
+> +#define KVM_GET_STATE         _IOWR(KVMIO, 0xbb, struct kvm_vmx_state)
+> +#define KVM_SET_STATE         _IOW(KVMIO,  0xbc, struct kvm_vmx_state)
+> +
+>  struct kvm_enc_region {
+>         __u64 addr;
+>         __u64 size;
+> --
+> 2.7.4
+>
