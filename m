@@ -1,74 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751667AbeDIJDs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 05:03:48 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:37191 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751367AbeDIJDr (ORCPT
+        id S1751954AbeDIJD5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 05:03:57 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35378 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751673AbeDIJDw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 05:03:47 -0400
-X-Google-Smtp-Source: AIpwx4/eMLN1hZawC1tPWO2Ue7x8nphMDBawt2rlDrszyywVzikTP6KgP4SpbiHNozdbhfJSt6ZfgG1UYbA1lTb4Tfk=
+        Mon, 9 Apr 2018 05:03:52 -0400
+From: Fabien DESSENNE <fabien.dessenne@st.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        "Devicetree List" <devicetree@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org"
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        "Arnaud POULIQUEN" <arnaud.pouliquen@st.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 2/2] mailbox: add STMicroelectronics STM32 IPCC driver
+Thread-Topic: [PATCH v2 2/2] mailbox: add STMicroelectronics STM32 IPCC driver
+Thread-Index: AQHTzMHdHpageEh13EG70mtSxYSG6qPziqSAgAAHpwCAACQdAIAAFPoAgAQ8yQA=
+Date: Mon, 9 Apr 2018 09:03:25 +0000
+Message-ID: <d9b30262-3b0b-1b46-dee7-ee1a4b77e66e@st.com>
+References: <1520852307-26659-1-git-send-email-fabien.dessenne@st.com>
+ <1520852307-26659-3-git-send-email-fabien.dessenne@st.com>
+ <CABb+yY1x7J_oEgU-LR5jPYCoCoUHng84E+CibTxLzdtxhENTBw@mail.gmail.com>
+ <4a2170b7-e5e9-4f5c-8ff7-79e102a658c1@st.com>
+ <CABb+yY182+7xMbGCurzqxyoGFCRZn4_xKr3AvTQ2c+KyR1vx_w@mail.gmail.com>
+ <f9a45a6e-5b3c-ddd0-e465-cfcad6ece818@st.com>
+ <CABb+yY2Dd2Gr_-+4RaJarq3tve8tgzVqcoJw+MGT=+Vy56PwLw@mail.gmail.com>
+In-Reply-To: <CABb+yY2Dd2Gr_-+4RaJarq3tve8tgzVqcoJw+MGT=+Vy56PwLw@mail.gmail.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EC60E1EDAC1290478E87939229E6BF7D@st.com>
 MIME-Version: 1.0
-In-Reply-To: <201804080124.GHG87587.SVFOOQFLOHMJtF@I-love.SAKURA.ne.jp>
-References: <CACT4Y+Yk0hEDj2EcXTJ5BcTHE0m1Sn0e9RfY=6KC4nWhWOHPmw@mail.gmail.com>
- <201804050705.BHE57833.HVFOFtSOMQJFOL@I-love.SAKURA.ne.jp>
- <201804072131.AEF86988.OFOQLJMVFFtOSH@I-love.SAKURA.ne.jp>
- <20180407153937.GR4082@hirez.programming.kicks-ass.net> <CACT4Y+Z6_P9mj2TEE3mtCez1je7dbviftM0rPcgsmQ-yFYYmBg@mail.gmail.com>
- <201804080124.GHG87587.SVFOOQFLOHMJtF@I-love.SAKURA.ne.jp>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 9 Apr 2018 11:03:26 +0200
-Message-ID: <CACT4Y+ZA_zYGxxj9oN8m5ApSbKSSS-mf2DXpHT3Ab3MdiEKKgQ@mail.gmail.com>
-Subject: Re: [PATCH v2] locking/hung_task: Show all hung tasks before panic
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mandeep Singh Baines <msb@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vegard Nossum <vegard.nossum@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w39942Bm017770
 
-On Sat, Apr 7, 2018 at 6:24 PM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Dmitry Vyukov wrote:
->> On Sat, Apr 7, 2018 at 5:39 PM, Peter Zijlstra <peterz@infradead.org> wrote:
->> > On Sat, Apr 07, 2018 at 09:31:19PM +0900, Tetsuo Handa wrote:
->> >> are for replacing debug_show_all_locks() in check_hung_task() for cases like
->> >> https://syzkaller.appspot.com/bug?id=26aa22915f5e3b7ca2cfca76a939f12c25d624db
->> >> because we are interested in only threads holding locks.
->> >>
->> >> SysRq-t is too much but SysRq-w is useless for killable/interruptible threads...
->> >
->> > Or use a script to process the sysrq-t output? I mean, we can add all
->> > sorts, but where does it end?
->
-> Maybe allow khungtaskd to call call_usermode_helper() to run arbitrary operations
-> instead of just calling panic()?
 
-This would probably work for syzbot too.
 
->> Good question.
->> We are talking about few dozen more stacks, right?
+On 06/04/18 18:20, Jassi Brar wrote:
+> On Fri, Apr 6, 2018 at 8:35 PM, Fabien DESSENNE <fabien.dessenne@st.com> wrote:
+>> On 06/04/18 14:56, Jassi Brar wrote:
+>>> On Fri, Apr 6, 2018 at 5:59 PM, Fabien DESSENNE <fabien.dessenne@st.com> wrote:
+>>>> Hi
+>>>>
+>>>>
+>>>> On 05/04/18 11:38, Jassi Brar wrote:
+>>>>> On Mon, Mar 12, 2018 at 4:28 PM, Fabien Dessenne <fabien.dessenne@st.com> wrote:
+>>>>> ....
+>>>>>> +
+>>>>>> +       /* irq */
+>>>>>> +       for (i = 0; i < IPCC_IRQ_NUM; i++) {
+>>>>>> +               ipcc->irqs[i] = of_irq_get_byname(dev->of_node, irq_name[i]);
+>>>>>> +               if (ipcc->irqs[i] < 0) {
+>>>>>> +                       dev_err(dev, "no IRQ specified %s\n", irq_name[i]);
+>>>>>> +                       ret = ipcc->irqs[i];
+>>>>>> +                       goto err_clk;
+>>>>>> +               }
+>>>>>> +
+>>>>>> +               ret = devm_request_threaded_irq(dev, ipcc->irqs[i], NULL,
+>>>>>> +                                               irq_thread[i], IRQF_ONESHOT,
+>>>>>> +                                               dev_name(dev), ipcc);
+>>>>>>
+>>>>> In your interrupt handlers you don't do anything that could block.
+>>>>> Threads only adds some delay to your message handling.
+>>>>> So maybe use devm_request_irq() ?
+>>>> The interrupt handlers call mbox_chan_received_data() /
+>>>> mbox_chan_txdone(), which call in turn client's rx_callback() /
+>>>> tx_done() / tx_prepare() which behavior may be unsafe. Hence, using a
+>>>> threaded irq here seems to be a good choice.
+>>>>
+>>> rx_callback() is supposed to be atomic.
+>> I am worried with this atomic part (and honestly I did not note that the
+>> callbacks were expected to be)
 >>
->> Not all kernel bugs are well reproducible, so it's not always possible
->> to go back and hit sysrq-t. And this come up in the context of syzbot,
->> which is an automated system. It reported a bunch of hangs and most of
->> them are real bugs, but not all of them are easily actionable.
->> Can it be a config or a command line argument, which will make syzbot
->> capture more useful context for each such hang?
+>> In my case, remoteproc->virtio->rpmsg is the mailbox client defining the
+>> rx_callback.
+>> If I follow your suggestion, I shall make this rx_callback Atomic in
+>> remoteproc (or in virtio or rpmsg). And this does not seem to be so
+>> simple (add a worker in the middle of somewhere?). Bjorn, feel free to
+>> comment this part.
 >>
->
-> It will be nice if syzbot testing is done with kdump configured, and the
-> result of automated scripting on vmcore (such as "foreach bt -s -l") is
-> available.
+>> An alternate implementation consists in using a threaded IRQ for the
+>> mailbox interrupt.
+>> This option is not only simple, but also ensures to split bottom & half
+>> parts at the irq level which is IMHO a general good practice.
+>>
+>> I can see that some mailbox clients implement callbacks that are NOT
+>> atomic and I suspect this is the reason why some mailbox drivers use
+>> threaded_irq (rockchip mailbox splits the bottom & half parts).
+>>
+>> Would it be acceptable to consider the "atomic client callback" as a
+>> non-strict rule ?
+>>
+> Of course you can traverse atomic path from sleepable context (but not
+> vice-versa).
 
-kdump's popped up several times already
-(https://github.com/google/syzkaller/issues/491). But this will
-require some non-trivial amount of work to pipe it through the whole
-system (starting from investigation/testing, second kernel to storing
-them and exposing).
+So, to be sure we understand each other, I can use threaded_irq, right?
+
+> Please send in the final revision.
+>
+> Thanks.
