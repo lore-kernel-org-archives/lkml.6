@@ -1,61 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751707AbeDINI7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:08:59 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33046 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751524AbeDINI5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:08:57 -0400
-X-Google-Smtp-Source: AIpwx482EjHYOYuP7ORUEbzXmUupwwweZkSffE9ouAQf+SoTPoiSRoTS+GF4GaL8noYyo5kgOUnWRw8hzkYJDA0Bu6s=
-MIME-Version: 1.0
-In-Reply-To: <e5bd38c0bd81236e11fd391ec3339d3bdf3c29d5.1522546571.git.fthain@telegraphics.com.au>
-References: <cover.1522546571.git.fthain@telegraphics.com.au> <e5bd38c0bd81236e11fd391ec3339d3bdf3c29d5.1522546571.git.fthain@telegraphics.com.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Apr 2018 15:08:56 +0200
-X-Google-Sender-Auth: k4nRddCl6BtCXmjlqgkhll7rOuQ
-Message-ID: <CAMuHMdXC3d84tJLsr=mZx20qsF6ddvmNMSFOCY-xHmzqDF3qhQ@mail.gmail.com>
-Subject: Re: [PATCH 06/12] block/swim: Fix array bounds check
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Laurent Vivier <lvivier@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751875AbeDINKd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:10:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33112 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751367AbeDINKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 09:10:32 -0400
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: virtualization@lists.linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, jasowang@redhat.com, kvm@vger.kernel.org,
+        mst@redhat.com, syzkaller-bugs@googlegroups.com,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Subject: [PATCH] vhost: fix vhost_vq_access_ok() log check
+Date: Mon,  9 Apr 2018 21:10:21 +0800
+Message-Id: <20180409131021.5132-1-stefanha@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
+Commit d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ("vhost: validate log
+when IOTLB is enabled") introduced a regression.  The logic was
+originally:
 
-On Sun, Apr 1, 2018 at 3:41 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> In the floppy_find() function in swim.c is a call to
-> get_disk(swd->unit[drive].disk). The actual parameter to this call
-> can be a NULL pointer when drive == swd->floppy_count. This causes
-> an oops in get_disk().
->
-> Data read fault at 0x00000198 in Super Data (pc=0x1be5b6)
+  if (vq->iotlb)
+      return 1;
+  return A && B;
 
-[...]
+After the patch the short-circuit logic for A was inverted:
 
-> Fix the array index bounds check to avoid this.
->
-> Fixes: 8852ecd97488 ("[PATCH] m68k: mac - Add SWIM floppy support")
-> Cc: Laurent Vivier <lvivier@redhat.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Tested-by: Stan Johnson <userm57@yahoo.com>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+  if (A || vq->iotlb)
+      return A;
+  return B;
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+The correct logic is:
 
-Looks like amiflop.c:find_floppy() needs a check, too?
+  if (!A || vq->iotlb)
+      return A;
+  return B;
 
-Gr{oetje,eeting}s,
+Reported-by: syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com
+Cc: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+---
+ drivers/vhost/vhost.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        Geert
-
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index 5320039671b7..f6af4210679a 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1246,7 +1246,7 @@ int vhost_vq_access_ok(struct vhost_virtqueue *vq)
+ {
+ 	int ret = vq_log_access_ok(vq, vq->log_base);
+ 
+-	if (ret || vq->iotlb)
++	if (!ret || vq->iotlb)
+ 		return ret;
+ 
+ 	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.14.3
