@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3828464-1523239150-5-12109356099467082103
+X-Cyrus-Session-Id: sloti22d1t05-3828464-1523239128-2-12228972918699428259
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523239149; b=nnmLa+rTtFwBgFoVITSG2Jng77Zs24yykD12zc6NKCbixqcpW3
-    8SNcRyXvr8kEaeb+RDX13qQM3Joklh3QpyE2l4TTz3VQy9+8n9Lt6zYZ4pFJe+Fu
-    ylvoPGu7daji7ehUOw+1+MWDKG/wB0hArXtlFHbW0IO2GIxi0UbHeNZO01bdZG1Q
-    65jPVlI030vnybbvTD4TkSlExeNq3EZQ29zpHdfvLWW0QgKpUyz/3JJcRBcZLLf6
-    w+ivFNEjFLQ7Krvxcf6M+cFxwbtjZIoGKvMkaokEWiyh8y2nwol1Ei27IVaVcYrK
-    kFBtz97XsBmn/oHJkNjoVPsQi5m2nQdAKM1Q==
+    1523239127; b=Ubw5cvJ1wbPe22nyPBilTSWbhjiHP7l0NbOn3UG6Mk+BlPoAOu
+    8sxLRQKahU164ROz9ky+nMs+Wtk6k6cz7ZETjJTo6Bx6omY52l3ehlnZ/f6WnXgl
+    0YloqJBP4P55nKRbKXYPyHUoeM3MbJ79cGLN9QjeK+lLDmgumqxRGfjwhO/qh23d
+    gpZUlg2u3flwpv9ulXGEA3b/EbVomR+ynLqyeOfWoYAtfhRs+oeCt1muVOydMHw/
+    q1mMFNDJ3ZGoBLUdrWxh3IZ7nuFc9duBY9URxK8PYNmeiy5uTRkSemWT21Up5KGB
+    JFcCzO2DN2cFQII1t6GqEacOvKs9gJ0s5BpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523239149; bh=CBSaHzeTZT
-    zPvyfG2vXQy6e7lh82YpaHBNaCY46N8Go=; b=INlZOGhthuOCr1jFG9/L838VT7
-    i51m/XO9naxvZuQIKrwR8rQMEb0/xGCKeGZhTWtmF2t0kcEbXpWXjihg1Cn1X8wb
-    lIT0L9nuOcBO69JRrB77XQmNzOtBZdpnGEeKdwid+WEbFUrVDbymHix0l90d4S40
-    7APD6uzN2zFiTUvo2RAukbg1t098AtutFHAfMBT2oOaNKvGlrsQczlGLw39cN0GZ
-    fIPPJ5KOrLUnTBJ7aomziTdw2AYoEtSnLIkZf7/3iSyzVjR3tHAQ/XGmLu7VtsDE
-    3ATmbDzTSH15rgElXrAR+e3EhBFwYzU1I7IpXwFOI9tVfTc9kTRXUH1rOWeA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SSWWs8JQ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523239127; bh=c8+/r+pD+9
+    a5kiQbSCvrJ+H/zMVyve8q4gS9Jy4WSvE=; b=NFD2Rv8/GFQeif2M3Jdco+pjGg
+    FDHY3h5PLF3b3xwJuXzzgMu1yadBebolEifEWpk+izmldVhD6CpkVJNkSW9xUfhE
+    A+L9XUSjldqrynQ5UItA37I/nLg5bdfOYQ8mCqlRtHxLF4cWjf1oP+4g8cVOAIv+
+    xN+fp6C8RzKE0zqx83tGC6Peew1YFOSpq5ODncMLErz/G6PeFv3RhXV3LET++nuU
+    8bPg1xb3CwVHMQS8UooffIDOnkuzE5naoXNSmSc9b/PCeD3PxvBTDFBRRRfXFeWH
+    PxpkuJvy3E5xTC/qeIBtHwD4zzejOft8yig86tZDyPh3anYdrzM/Vh7hG4Mw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=WGW4kGLY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SSWWs8JQ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=WGW4kGLY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,35 +51,36 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGnkTw+cogaWkPZav3Hd1eMTbbGUFnF0nB7mziIZE6e7rAHQ3RfhPd7RCevzLGmXnc3mKTKHAz98Ruyvh2bisvXLJVACizcu35c3/TqsiT6KhVVyAlBo
-    wIc1D0I+E8AgeGBfxssnWhF3UwYCvScrvjGur00odN1qvDddEGYNGrHJcATniZR3sx8XEDXnlVCz990vsHE3mD0BMjGRp808iVp9ffV4JrDo0/IhlzgilgPr
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfLvF/kaP9vtw+aF32f/M9WnClSebTk7H2Tj7cjIoNSyUXXHUOXrv3H6QLriVa66UbU4sV8UjWf1b/GLUwGNLe0jaWTZa5as3mMslIOaZXx2AQlQeUPM2
+    /K8CCkrS48nf8QPZvjY4BnB3XQ1e3NopuDZUITaRAT4QgsUcP0iISUuispHuKm37h4c5Q6mkY5z8h6grrlWYhhpkMwc3ZAiAIsI0nTYi/hz6P7QVgKenJDLi
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=JfrnYn6hAAAA:8 a=yMhMjlubAAAA:8 a=XsaRKbsCnGI0xWDK90sA:9
-    a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=wPNLvfGTeEIA:10 a=1CNFftbPRP8L7MoqJWF3:22
+    a=Lf-vpJhqX20A:10 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
+    a=TCZwIYwWp4WjhJQ2Fw4A:9 a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757434AbeDIB6o (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 21:58:44 -0400
+        id S1757388AbeDIB6n (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 21:58:43 -0400
 Received: from mail-by2nam01on0107.outbound.protection.outlook.com ([104.47.34.107]:56905
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756352AbeDIAcs (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1756493AbeDIAcs (ORCPT <rfc822;stable@vger.kernel.org>);
         Sun, 8 Apr 2018 20:32:48 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Takashi Iwai <tiwai@suse.de>,
+CC: Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 213/293] ALSA: hda - Use IS_REACHABLE() for
- dependency on input
-Thread-Topic: [PATCH AUTOSEL for 4.9 213/293] ALSA: hda - Use IS_REACHABLE()
- for dependency on input
-Thread-Index: AQHTz5lJ6LNJSybRqUW0fwm37iSjdA==
-Date: Mon, 9 Apr 2018 00:25:40 +0000
-Message-ID: <20180409002239.163177-213-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 214/293] ASoC: au1x: Fix timeout tests in
+ au1xac97c_ac97_read()
+Thread-Topic: [PATCH AUTOSEL for 4.9 214/293] ASoC: au1x: Fix timeout tests in
+ au1xac97c_ac97_read()
+Thread-Index: AQHTz5lK8DPN/1kHCEahPKfiCXOVoA==
+Date: Mon, 9 Apr 2018 00:25:41 +0000
+Message-ID: <20180409002239.163177-214-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -88,27 +89,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0806;7:ci89e4kbOVlJ2PfRSrYL7djS7fntwJucXFVwD8ddNPW0Of4yAoCDtQ/yaGvPDQtHmZbcQJtnJNtFuYfBa1Qnjc1I7sRFLyLx1f/RPCBo+/SCEXjpHQA40i6TiVheYlSDc42+jJlpn1bUTUwV+NRYcdbftKr3kLrLkuptTfZtZxH6MBBsOhh18sFBWAi3YfgKokal4hEejBcn/Yg6lsITDvXDALVj8pk1jnzibKfokH74+KfEsz1CwJGC8ZaspsM8;20:5xqPEH+qo0eNtj6iZctKPsiNjl3kzXVuZ5o3aZNDSKRdewytXooe8S2F+CaWuUGIM2kLvuDA6KRqKz0A/TDuvDgbeevA06JxkwkACTKjw4KEniQ0omLh3toRMTrWGDX8g40WF7nQOXT3TmO/jv9mC2nN08/cuS0dI4pRlt2czRM=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0806;7:Xh9HWE+ljP+k0pnx6LS87TuhpcZa0RFYWmUhQOLQgytMalPhhRLTuWEw7LW66SdycVc6ar0R6Cbq0FzTmhVm+HmzArfgdJjVEMFepkFVjJpkEVKuheEQJYrdc6Hk9HTy9nSU74scxQ12l8k3k6377RDSWBT95pHfGfcY1zbk2tyhL/S4KteHojNYVqpQuwk1vDU7diae85nhqiDRWg1sTU9EEZ+n8jgoiJLBXVV439hwiNn7rOUtcU1eHWAyHoUP;20:ijdSBI1yIWP6jDMvKC8TiCilqZCgYl5G1Khg3GeXK/2+lwplAokxGlPBXC40UrBpH1KpAUPrOE2+vtaEPXG4zeLhR2X2N25w9UvkvTT3j0sh3s3/iQOkiPN4uPQOizFpIYzMPkNU9PXWlfjr1AF6rV6Erd6Iyz1B29OHrnC5Wh8=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 50e74eda-b435-443f-799c-08d59db16a86
+X-MS-Office365-Filtering-Correlation-Id: bfbaef20-db72-4b79-62ac-08d59db16ad0
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0806;
 x-ms-traffictypediagnostic: DM5PR2101MB0806:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB08060089CA3BE191ADEFB793FBBF0@DM5PR2101MB0806.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB080675723D52AB2759EE50E7FBBF0@DM5PR2101MB0806.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0806;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0806;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(376002)(396003)(366004)(39380400002)(199004)(189003)(2906002)(25786009)(2501003)(10290500003)(476003)(11346002)(446003)(97736004)(5250100002)(68736007)(2616005)(102836004)(6506007)(59450400001)(3846002)(3660700001)(486006)(3280700002)(305945005)(6666003)(99286004)(5660300001)(76176011)(1076002)(186003)(26005)(7736002)(6116002)(81156014)(81166006)(86612001)(4326008)(105586002)(10090500001)(2900100001)(54906003)(22452003)(316002)(36756003)(110136005)(107886003)(8676002)(6436002)(478600001)(53936002)(66066001)(6486002)(6512007)(86362001)(14454004)(72206003)(8936002)(106356001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0806;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: mdhsx6e+rS6fCLaml0V5JD2guKYSx1+jYOyCPDIri9geiQKjvqOCJDy+Ul0+D3vvG74GXJb6z6bkU7k/8GAiFazui6EeSUHOHC5uoIpTrKBErSQQbkC07x9te+02XngjYZRLVHj6lzNvXy5h5WXoWfYxRM+SDi0ogyaCYxjvbgzTFSXpo/MvQh1BtAQWM7pkLmduod5rEcOqb5pXV0JwR4MhGuNOj9T4JAFBT7b51Jz4Ej8f+Em7cB+MwpAwXiyWorguZR8erN6AAzMJiYbLBCTZM59rcbqOK8r+juZJdgCH7j9rcUYNv+Dlvq+H/s+SWcuKHgKnCRpU8lyZP/olpxuQrXS7usmf+gM5ePrXZRors5Z0gKtj8ELcDrIBNOCILJ35qs63XLDLCpfbmMqfZopph6uty7JmioxmsWJJbjk=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(376002)(396003)(366004)(39380400002)(199004)(189003)(2906002)(25786009)(2501003)(10290500003)(476003)(11346002)(446003)(97736004)(5250100002)(68736007)(2616005)(102836004)(6506007)(59450400001)(3846002)(3660700001)(486006)(3280700002)(305945005)(6666003)(99286004)(5660300001)(76176011)(1076002)(186003)(15760500003)(26005)(7736002)(6116002)(81156014)(81166006)(86612001)(4326008)(105586002)(10090500001)(2900100001)(54906003)(22452003)(316002)(36756003)(110136005)(107886003)(8676002)(6436002)(478600001)(53936002)(66066001)(6486002)(6512007)(86362001)(14454004)(72206003)(8936002)(106356001)(22906009)(32563001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0806;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: Pdg/mOQ2Azzd5QAXRuPdRsvQlSDfvrE+st6OMRP7XDLLeLuYyNC+hMsEDJmEKtDXvB7hWawtUEAaCYagP+BVGRRHr0jyoDJJ0FE4EiShYHqv6rJj/SbHIxe8zyNUVAsrlIvdG0DErA5rLWoNqANyeXlvPbVSaAXjbjqf0UFdlNqkA4SISf0+4VUMe6aY9NAuQUvOv7C6YjOJmD6y/WNMbSsneV8LtfSjQhs8NhgvkMGVT4sOZwDyn3qmTMUhmEqJeSSPaNr2yFSh2MAFMqT0c99JavYSQAOTGRB/YKrjTMPC+hPsSIaKmE54G4Aw3X7D6mXgqAQQCdv5KWFvlFm0bT7eh0PRNMweAdv5sRiO4FRfUnuk9Ahcrmcs6hJupZa2Mp/okvLT8e++JR31GO6IQTO7w/6X/bHRi4403zeaviI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50e74eda-b435-443f-799c-08d59db16a86
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:25:40.4409
+X-MS-Exchange-CrossTenant-Network-Message-Id: bfbaef20-db72-4b79-62ac-08d59db16ad0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:25:41.3316
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -119,65 +120,48 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit c469652bb5e8fb715db7d152f46d33b3740c9b87 ]
+[ Upstream commit 123af9043e93cb6f235207d260d50f832cdb5439 ]
 
-The commit ffcd28d88e4f ("ALSA: hda - Select INPUT for Realtek
-HD-audio codec") introduced the reverse-selection of CONFIG_INPUT for
-Realtek codec in order to avoid the mess with dependency between
-built-in and modules.  Later on, we obtained IS_REACHABLE() macro
-exactly for this kind of problems, and now we can remove th INPUT
-selection in Kconfig and put IS_REACHABLE(INPUT) to the appropriate
-places in the code, so that the driver doesn't need to select other
-subsystem forcibly.
+The loop timeout doesn't work because it's a post op and ends with "tmo"
+set to -1.  I changed it from a post-op to a pre-op and I changed the
+initial the starting value from 5 to 6 so we still iterate 5 times.  I
+left the other as it was because it's a large number.
 
-Fixes: ffcd28d88e4f ("ALSA: hda - Select INPUT for Realtek HD-audio codec")
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # and build-tested
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/pci/hda/Kconfig         | 1 -
- sound/pci/hda/patch_realtek.c | 5 +++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ sound/soc/au1x/ac97c.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
-index 7f3b5ed81995..f7a492c382d9 100644
---- a/sound/pci/hda/Kconfig
-+++ b/sound/pci/hda/Kconfig
-@@ -88,7 +88,6 @@ config SND_HDA_PATCH_LOADER
- config SND_HDA_CODEC_REALTEK
- 	tristate "Build Realtek HD-audio codec support"
- 	select SND_HDA_GENERIC
--	select INPUT
- 	help
- 	  Say Y or M here to include Realtek HD-audio codec support in
- 	  snd-hda-intel driver, such as ALC880.
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index e2230bed7409..242c80efbbef 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -3494,6 +3494,7 @@ static void alc280_fixup_hp_gpio4(struct hda_codec *c=
-odec,
- 	}
- }
+diff --git a/sound/soc/au1x/ac97c.c b/sound/soc/au1x/ac97c.c
+index 29a97d52e8ad..66d6c52e7761 100644
+--- a/sound/soc/au1x/ac97c.c
++++ b/sound/soc/au1x/ac97c.c
+@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_read(struct snd_ac97=
+ *ac97,
+ 	do {
+ 		mutex_lock(&ctx->lock);
 =20
-+#if IS_REACHABLE(INPUT)
- static void gpio2_mic_hotkey_event(struct hda_codec *codec,
- 				   struct hda_jack_callback *event)
- {
-@@ -3626,6 +3627,10 @@ static void alc233_fixup_lenovo_line2_mic_hotkey(str=
-uct hda_codec *codec,
- 		spec->kb_dev =3D NULL;
- 	}
- }
-+#else /* INPUT */
-+#define alc280_fixup_hp_gpio2_mic_hotkey	NULL
-+#define alc233_fixup_lenovo_line2_mic_hotkey	NULL
-+#endif /* INPUT */
+-		tmo =3D 5;
+-		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
++		tmo =3D 6;
++		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
+ 			udelay(21);	/* wait an ac97 frame time */
+ 		if (!tmo) {
+ 			pr_debug("ac97rd timeout #1\n");
+@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_read(struct snd_ac=
+97 *ac97,
+ 		 * poll, Forrest, poll...
+ 		 */
+ 		tmo =3D 0x10000;
+-		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
++		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
+ 			asm volatile ("nop");
+ 		data =3D RD(ctx, AC97_CMDRESP);
 =20
- static void alc269_fixup_hp_line1_mic1_led(struct hda_codec *codec,
- 				const struct hda_fixup *fix, int action)
 --=20
 2.15.1
