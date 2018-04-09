@@ -1,80 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751996AbeDIJEg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 05:04:36 -0400
-Received: from foss.arm.com ([217.140.101.70]:53254 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750863AbeDIJEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 05:04:34 -0400
-Subject: Re: [PATCH v5 07/13] ARM: smp: Add initialization of CNTVOFF
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>, quentin.schulz@bootlin.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
- <20180403061836.3926-8-mylene.josserand@bootlin.com>
- <06308f46-ce7c-ddeb-ebca-abd1153138ba@arm.com>
- <20180404155909.148085f7@dell-desktop.home>
- <86vad7qc21.wl-marc.zyngier@arm.com>
- <CAMuHMdUoUVF+WYrPG1Dx515_de_2nhGhLfn9+tJUm5jgs1uz0w@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <bd94a149-267e-1089-7884-1bf0c7602c43@arm.com>
-Date: Mon, 9 Apr 2018 10:04:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUoUVF+WYrPG1Dx515_de_2nhGhLfn9+tJUm5jgs1uz0w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        id S1751882AbeDIJLD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 05:11:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58964 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751348AbeDIJLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 05:11:02 -0400
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kt.liao@emc.com.tw, Oliver Haessler <oliver@redhat.com>,
+        Benjamin Berg <bberg@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH v2 0/9] Input: support for latest Lenovo thinkpads (series 80)
+Date: Mon,  9 Apr 2018 11:10:42 +0200
+Message-Id: <20180409091051.2944-1-benjamin.tissoires@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/18 09:24, Geert Uytterhoeven wrote:
-> On Wed, Apr 4, 2018 at 4:30 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> On Wed, 04 Apr 2018 14:59:09 +0100,
->> Mylčne Josserand wrote:
-> 
-> [Marc: stuck in ISO-8859-1? ;-]
+Hi Dmitry,
 
-I have no idea what Wanderlust does (that's what I use on my laptop).
-But Thunderbird definitely interprets the original posting as 'è', which
-should work with a 8859-1. I need to have a look at how to get UTF-8 to
-be the default... (I hate email clients).
+Here is the v2 of the Lenovo 80 series.
+Changes from v1:
+- included patch to convert a function to static from build bot
+- use of device property instead of platform data (thus the new device tree
+  binding)
 
-> 
->>>> It'd be good to take this opportunity to refactor the shmobile code.
->>>
->>> I can do it in this series but I do not have any shmobile platforms so
->>> I will not be able to test my modifications (only compilation).
->>>
->>> If someone can test it for me (who?), it is okay for me to refactor this
->>> code :)
->>
->> I guess you could Cc the shmobile folks (Geert Uytterhoeven, Simon
->> Horman), and get them to review/test the changes.
-> 
-> Correct. I can test on a remote R-Car E2 ALT board that needs it.
-> 
-> P.S. Interestingly, none of the Renesas CA15 SoCs seem to suffer from it,
->      only CA7.
+BTW, KT, if you want to add your Signed-off-by on the patches, feel free to
+do so. You were of tremendous help :)
 
-I suspect A15 has the courtesy of resetting CNTVOFF to zero, and A7
-doesn't. But the letter of the architecture is that it has an "UNKNOWN
-reset value".
+Cheers,
+Benjamin
 
-Thanks,
+Benjamin Tissoires (9):
+  Input: synaptics - add Lenovo 80 series ids to SMBus
+  input: elan_i2c_smbus - fix corrupted stack
+  Input: elan_i2c - add trackstick report
+  Input: elantech - split device info into a separate structure
+  Input: elantech_query_info() can be static
+  Input: elantech - query the resolution in query_info
+  Input: elantech - add support for SMBus devices
+  Input: elantech - detect new ICs and setup Host Notify for them
+  input: psmouse-smbus: allow to control psmouse_deactivate
 
-	M.
+ .../devicetree/bindings/input/elan_i2c.txt         |   1 +
+ drivers/input/mouse/Kconfig                        |  12 +
+ drivers/input/mouse/elan_i2c_core.c                |  90 +++-
+ drivers/input/mouse/elan_i2c_smbus.c               |  22 +-
+ drivers/input/mouse/elantech.c                     | 479 +++++++++++++++------
+ drivers/input/mouse/elantech.h                     |  69 ++-
+ drivers/input/mouse/psmouse-base.c                 |  21 +-
+ drivers/input/mouse/psmouse-smbus.c                |  24 +-
+ drivers/input/mouse/psmouse.h                      |   2 +
+ drivers/input/mouse/synaptics.c                    |   5 +-
+ 10 files changed, 565 insertions(+), 160 deletions(-)
+
 -- 
-Jazz is not dead. It just smells funny...
+2.14.3
