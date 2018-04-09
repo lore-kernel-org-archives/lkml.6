@@ -1,69 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753352AbeDIRL2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 13:11:28 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54630 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751778AbeDIRLY (ORCPT
+        id S1753565AbeDIRLk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 13:11:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50789 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751728AbeDIRL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 13:11:24 -0400
-Date: Mon, 9 Apr 2018 19:11:00 +0200 (CEST)
-From: Sebastian Ott <sebott@linux.ibm.com>
-X-X-Sender: sebott@schleppi
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Kees Cook <keescook@chromium.org>,
-        Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: Re: [bisected] 3c8ba0d61d04ced9f8d9ff93977995a9e4e96e91 oopses on
- s390
-In-Reply-To: <CA+55aFw1MoQ=7=U6QCGXAAiCniMKy8_igxgc8sMLykSRcDk-0g@mail.gmail.com>
-References: <alpine.LFD.2.21.1804061125390.1819@schleppi> <CAGXu5jKTtU3fvqP-ygV51WcOAmTkm=y5fysKNv+k0crhJACtVg@mail.gmail.com> <alpine.LFD.2.21.1804091809310.1698@schleppi> <CA+55aFw1MoQ=7=U6QCGXAAiCniMKy8_igxgc8sMLykSRcDk-0g@mail.gmail.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
- =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
- =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
- =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
- =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
- =?ISO-8859-15?Q?94=22?=
+        Mon, 9 Apr 2018 13:11:27 -0400
+Date: Mon, 9 Apr 2018 10:10:57 -0700
+From: tip-bot for Arnd Bergmann <tipbot@zytor.com>
+Message-ID: <tip-92e830f25fc0be447486a4658887ded68ef824f5@git.kernel.org>
+Cc: hpa@zytor.com, peterz@infradead.org, yamada.masahiro@socionext.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
+        mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, arnd@arndb.de, mingo@kernel.org,
+        hpa@zytor.com, peterz@infradead.org, yamada.masahiro@socionext.com,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        tglx@linutronix.de
+In-Reply-To: <20180404124539.3817101-1-arnd@arndb.de>
+References: <20180404124539.3817101-1-arnd@arndb.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/olpc: Fix inconsistent MFD_CS5535
+ configuration
+Git-Commit-ID: 92e830f25fc0be447486a4658887ded68ef824f5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-TM-AS-GCONF: 00
-x-cbid: 18040917-0040-0000-0000-0000044B741A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040917-0041-0000-0000-000020EF9981
-Message-Id: <alpine.LFD.2.21.1804091909270.1698@schleppi>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804090175
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Apr 2018, Linus Torvalds wrote:
-> On Mon, Apr 9, 2018 at 9:18 AM, Sebastian Ott <sebott@linux.ibm.com> wrote:
-> >
-> > Both of the following return 0 on my machine:
-> > +       pr_warn("%u\n", min_not_zero(100, 1000));
-> > +       pr_warn("%u\n", min_not_zero(1000, 100));
-> 
-> Oooh.
-> 
-> [ Raises hand, and says "I know, I know, pick me, pick me" ]
-> 
-> min_not_zero() hasinternal variables "__x" and "__y".
-> 
-> And "__cmp_once()" has internal variables "__x" and "__y".
+Commit-ID:  92e830f25fc0be447486a4658887ded68ef824f5
+Gitweb:     https://git.kernel.org/tip/92e830f25fc0be447486a4658887ded68ef824f5
+Author:     Arnd Bergmann <arnd@arndb.de>
+AuthorDate: Wed, 4 Apr 2018 14:44:54 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 9 Apr 2018 18:22:34 +0200
 
-Argh....so obvious now :-)
+x86/olpc: Fix inconsistent MFD_CS5535 configuration
 
-When I change these it works.
+This Kconfig warning appeared after a fix to the Kconfig validation.
+The GPIO_CS5535 driver depends on the MFD_CS5535 driver, but the former
+is selected in places where the latter is not:
 
-Sebastian
+WARNING: unmet direct dependencies detected for GPIO_CS5535
+  Depends on [m]: GPIOLIB [=y] && (X86 [=y] || MIPS || COMPILE_TEST [=y]) && MFD_CS5535 [=m]
+  Selected by [y]:
+  - OLPC_XO1_SCI [=y] && X86_32 [=y] && OLPC [=y] && OLPC_XO1_PM [=y] && INPUT [=y]=y
+
+The warning does seem appropriate, since the GPIO_CS5535 driver won't
+work unless MFD_CS5535 is also present. However, there is no link time
+dependency between the two, so this caused no problems during randconfig
+testing before.
+
+This changes the 'select GPIO_CS5535' to 'depends on GPIO_CS5535' to
+avoid the issue, at the expense of making it harder to configure the
+driver (one now has to select the dependencies first).
+
+The 'select MFD_CORE' part is completely redundant, since we already
+depend on MFD_CS5535 here, so I'm removing that as well.
+
+Ideally, the private symbols exported by that cs5535 gpio driver would
+just be converted to gpiolib interfaces so we could expletely avoid
+this dependency.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kbuild@vger.kernel.org
+Fixes: f622f8279581 ("kconfig: warn unmet direct dependency of tristate symbols selected by y")
+Link: http://lkml.kernel.org/r/20180404124539.3817101-1-arnd@arndb.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/Kconfig | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index eb7f43f23521..a9f0048b880a 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2770,11 +2770,9 @@ config OLPC_XO1_RTC
+ 
+ config OLPC_XO1_SCI
+ 	bool "OLPC XO-1 SCI extras"
+-	depends on OLPC && OLPC_XO1_PM
++	depends on OLPC && OLPC_XO1_PM && GPIO_CS5535=y
+ 	depends on INPUT=y
+ 	select POWER_SUPPLY
+-	select GPIO_CS5535
+-	select MFD_CORE
+ 	---help---
+ 	  Add support for SCI-based features of the OLPC XO-1 laptop:
+ 	   - EC-driven system wakeups
