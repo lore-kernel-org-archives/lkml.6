@@ -1,72 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752535AbeDIGl0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 02:41:26 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45040 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752499AbeDIGlY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 02:41:24 -0400
-X-Google-Smtp-Source: AIpwx49EmCMMgQsJAg8qzwH0I931iVq8vM2QRlCpTWB755urN8byNL7GLwOZwtQQmCZVfGUO9NOKaQ==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: wsa@the-dreams.de
-Cc: broonie@kernel.org, baolin.wang@linaro.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] i2c: sprd: Fix the i2c count issue
-Date: Mon,  9 Apr 2018 14:40:55 +0800
-Message-Id: <e42cc3e001d612e811166b8d21f44802ff20069e.1523255712.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
-References: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
-In-Reply-To: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
-References: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
+        id S1751991AbeDIGmx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 02:42:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46200 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750925AbeDIGmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 02:42:51 -0400
+Subject: Re: [Qemu-devel] [RFC] qemu: Add virtio pmem device
+To: Stefan Hajnoczi <stefanha@gmail.com>,
+        Pankaj Gupta <pagupta@redhat.com>
+Cc: kwolf@redhat.com, haozhong zhang <haozhong.zhang@intel.com>,
+        jack@suse.cz, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        kvm@vger.kernel.org, riel@surriel.com, linux-nvdimm@ml01.01.org,
+        mst@redhat.com, ross zwisler <ross.zwisler@intel.com>,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org, hch@infradead.org,
+        pbonzini@redhat.com, stefanha@redhat.com, niteshnarayanlal@hotmail.com,
+        marcel@redhat.com, imammedo@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, nilal@redhat.com
+References: <20180405104834.10457-1-pagupta@redhat.com>
+ <20180405104834.10457-4-pagupta@redhat.com>
+ <ad08ca09-71ee-08d5-3479-8b3d06380a03@redhat.com>
+ <416823501.16310251.1522930166070.JavaMail.zimbra@redhat.com>
+ <20180409032601.GA1648@stefanha-x1.localdomain>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <36218ea8-5fa8-e670-104d-616da790a333@redhat.com>
+Date: Mon, 9 Apr 2018 08:42:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180409032601.GA1648@stefanha-x1.localdomain>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We found the I2C controller count register is unreliable sometimes,
-that will cause I2C to lose data. Thus we can read the data count
-from 'i2c_dev->count' instead of the I2C controller count register.
+On 09.04.2018 05:26, Stefan Hajnoczi wrote:
+> On Thu, Apr 05, 2018 at 08:09:26AM -0400, Pankaj Gupta wrote:
+>>> Will this raw file already have the "disk information header" (no idea
+>>> how that stuff is called) encoded? Are there any plans/possible ways to
+>>>
+>>> a) automatically create the headers? (if that's even possible)
+>>
+>> Its raw. Right now we are just supporting raw format.  
+>>
+>> As this is direct mapping of memory into guest address space, I don't
+>> think we can have an abstraction of headers for block specific features.
+>> Or may be we can get opinion of others(Qemu block people) it is at all possible?
+> 
+> memdev and the block layer are completely separate.  The block layer
+> isn't designed for memory-mapped access.
+> 
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/i2c/busses/i2c-sprd.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Not questioning if this is the right thing to do now. I was wondering if
+we could expose any block device in the future as virtio-pmem. And I
+think with quite some work it could be possible.
 
-diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
-index 2fdad63..4053259 100644
---- a/drivers/i2c/busses/i2c-sprd.c
-+++ b/drivers/i2c/busses/i2c-sprd.c
-@@ -368,13 +368,12 @@ static irqreturn_t sprd_i2c_isr_thread(int irq, void *dev_id)
- 	struct sprd_i2c *i2c_dev = dev_id;
- 	struct i2c_msg *msg = i2c_dev->msg;
- 	bool ack = !(readl(i2c_dev->base + I2C_STATUS) & I2C_RX_ACK);
--	u32 i2c_count = readl(i2c_dev->base + I2C_COUNT);
- 	u32 i2c_tran;
- 
- 	if (msg->flags & I2C_M_RD)
- 		i2c_tran = i2c_dev->count >= I2C_FIFO_FULL_THLD;
- 	else
--		i2c_tran = i2c_count;
-+		i2c_tran = i2c_dev->count;
- 
- 	/*
- 	 * If we got one ACK from slave when writing data, and we did not
-@@ -412,14 +411,13 @@ static irqreturn_t sprd_i2c_isr(int irq, void *dev_id)
- {
- 	struct sprd_i2c *i2c_dev = dev_id;
- 	struct i2c_msg *msg = i2c_dev->msg;
--	u32 i2c_count = readl(i2c_dev->base + I2C_COUNT);
- 	bool ack = !(readl(i2c_dev->base + I2C_STATUS) & I2C_RX_ACK);
- 	u32 i2c_tran;
- 
- 	if (msg->flags & I2C_M_RD)
- 		i2c_tran = i2c_dev->count >= I2C_FIFO_FULL_THLD;
- 	else
--		i2c_tran = i2c_count;
-+		i2c_tran = i2c_dev->count;
- 
- 	/*
- 	 * If we did not get one ACK from slave when writing data, then we
+As you said, we will need some buffering. Maybe userfaultfd and friends
+(WP) could allow to implement that.
+
+> I think it makes sense to use memdev here.  If the user wants a block
+> device, they should use an emulated block device, not virtio-pmem,
+> because buffering is necessary anyway when an image file format is used.
+> 
+> Stefan
+> 
+
+
 -- 
-1.7.9.5
+
+Thanks,
+
+David / dhildenb
