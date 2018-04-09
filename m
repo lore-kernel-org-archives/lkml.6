@@ -1,74 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751970AbeDIGzI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 02:55:08 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:51058 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750877AbeDIGzG (ORCPT
+        id S1752239AbeDIG4q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 02:56:46 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:37844 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750759AbeDIG4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 02:55:06 -0400
-Date: Mon, 9 Apr 2018 08:53:43 +0200
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Maninder Singh <maninder1.s@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH 0/3] syscalls: clean up stub naming convention
-Message-ID: <20180409065343.GA6676@light.dominikbrodowski.net>
-References: <20180407074651.29014-1-linux@dominikbrodowski.net>
- <20180408083550.32d65b6ra6yca5p7@gmail.com>
- <20180408091536.GA10120@light.dominikbrodowski.net>
- <20180409064511.ejhfqcurtlq2srq5@gmail.com>
+        Mon, 9 Apr 2018 02:56:44 -0400
+X-Google-Smtp-Source: AIpwx4+1uFQmYfWNNwZMpnMz7ZvXfGQEC1XoD/6BAjlnwfdXObGUtulm/IdiAOtERK2fuGPhB/v8n1rpEdMGFS7rJjU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409064511.ejhfqcurtlq2srq5@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAOuPNLjoNFa4sAhT4B_Xx7YfLwOMOF9VsK-O_dwWhhw2GGdMMQ@mail.gmail.com>
+References: <CAOuPNLjoNFa4sAhT4B_Xx7YfLwOMOF9VsK-O_dwWhhw2GGdMMQ@mail.gmail.com>
+From: Pintu Kumar <pintu.ping@gmail.com>
+Date: Mon, 9 Apr 2018 12:26:42 +0530
+Message-ID: <CAOuPNLjvW4LTuim1BC29ZfTeCb=6E202tXoc-CRhc2DQquF91Q@mail.gmail.com>
+Subject: Re: [HELP] CPU Hard LOCKUP during boot up with HPET clock source
+To: open list <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 08:45:11AM +0200, Ingo Molnar wrote:
-> 
-> * Dominik Brodowski <linux@dominikbrodowski.net> wrote:
-> 
-> > On Sun, Apr 08, 2018 at 10:35:50AM +0200, Ingo Molnar wrote:
-> > >   - _____sys_waitid()      # ridiculous number of underscores?
-> > >   - __sys_waitid()         # too generic sounding?
-> > 
-> > ... and we'd need to rename internal helpers in net/
-> > 
-> > >   - __inline_sys_waitid()  # too long?
-> > 
-> > sounds acceptable, though a bit long (especially for the compat case, though
-> > it doesn't really matter in the case of 
-> > __inline_compat_sys_sched_rr_get_interval)
-> 
-> So as per the previous mail this is not just an inline function, but an active 
-> type conversion wrapper that sign-extends 32-bit ints to longs, which is important 
-> on some 64-bit architectures.
-> 
-> And that's a really non-obvious property IMO, and the name should probably reflect 
-> _that_ non-obvious property, not the inlining property which is really just a 
-> small detail.
-> 
-> I.e. how about:
-> 
-> 	__se_sys_waitid()
-> 
-> ... where 'se' stands for sign-extended, with a comment in the macro that explains 
-> the prefix? (The historical abbreviation for sign extension is 'sext', which I 
-> think wouldn't really be suitable these days.)
+Hi,
 
-Agreed. Could you do that when applying my patches, please?
+As a simple query,
+Is there a way to skip current available clock source (hpet) and allow
+to pick the next one ?
+I guess this will solve our purpose.
+
 
 Thanks,
-	Dominik
+Pintu
+
+
+On Fri, Apr 6, 2018 at 8:37 PM, Pintu Kumar <pintu.ping@gmail.com> wrote:
+> Hi,
+>
+> First the few details:
+> Kernel: 4.9.20
+> Machine: x86_64 (AMD)
+> Model: Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz
+> Cores: 8
+> Available clock source:
+> # cat /sys/devices/system/clocksource/clocksource0/available_clocksource
+> tsc hpet acpi_pm
+>
+> Problem:
+> [   28.027409] NMI watchdog: Watchdog detected hard LOCKUP on cpu
+> 1dModules linked in:c
+> [   28.136317] RIP: 0010:[<ffffffff98058c43>] c [<ffffffff98058c43>]
+> read_hpet+0xb3/0x120
+> [...]
+>
+> ------------------
+> This lockup happens during boot when the cpu is stuck for about ~28 seconds.
+> This is because of our internal code changes.
+> During our init function we are running some calibrate loops
+> 10,000,000 (10MHz) times twice.
+> The LOCKUP is coming because of this loop.
+>
+> But, we observed that the main issue is the clock source that is
+> available at that time.
+> At the time this loop is executed, the available clock source is HPET (not TSC).
+> With HPET the loop runs slower. It takes almost 28 seconds to complete
+> with HPET clock source. Hence the boot time also increase by 28
+> seconds.
+> Where as with TSC the loop completes in less than 4 seconds. So, with
+> TSC we dont get the LOCKUP.
+>
+> Thus, the lockup is happening only because the loop executes with HPET
+> clock source.
+>
+> To fix the problem, I tried the following approach:
+> 1) Use late_initcall for our driver init to delay the call until TSC
+> clock source is ready.
+>     => With this there is no LOCKUP trace and no impact on boot time.
+>     This is because the loop executes with TSC.
+>
+> 2) We have 2 loops. So I split the local_irq_save/restore part for
+> each loops separately.
+>      => With this also there is no backtrace seen.
+>      => But boot time is increased.
+>
+> 3) I used delayed_workqueue to delay the execution of the loop by 5
+> seconds, until TSC is ready.
+>     => With this there is no back trace and also boot time is normal.
+>     => But if we disable TSC then we still get the back trace.
+>
+> 4) Disabled HPET from kernel command line using : hpet=disable
+>     => This also works as the loop executes with the next available
+> clock source: acpi_pm
+>     => But changing boot args is not recommended in our case.
+>
+> 5) Disable HPET related configs in kernel
+>     => CONFIG_HPET=n
+>     => CONFIG_HPET_TIMER=n
+>     => This method does not work as we were not able to disable
+> HPET_TIMER on x86_64.
+>
+> 6) Use hpet_disable() from our code.
+>     => This method also does not work. It actually does not disable
+> HPET clock source.
+>
+>
+> -----------------------------
+> Thus we wanted to know your opinion which is the right solution to fix
+> this lockup during boot time.
+>
+> Is there a way to purposefully fallback to next available clock source
+> (acpi_pm) instead of hpet, from the source code, before executing our
+> loop ?
+>
+>
+> Please let me know if there are alternate options.
+>
+>
+>
+> Thanks,
+> Pintu
