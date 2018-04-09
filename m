@@ -1,75 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752422AbeDITMh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 15:12:37 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:39864 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751546AbeDITMf (ORCPT
+        id S1753118AbeDITNy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 15:13:54 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:38809 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751610AbeDITNw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 15:12:35 -0400
-X-Google-Smtp-Source: AIpwx48+edazKEc0Md3Bt3eXQyZQRxx8qUdUPGt6Du78CCUqmLXEnUlsMBA/1h+1/aWdVIUCaXzjXQ==
-Date: Mon, 9 Apr 2018 14:12:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        mark.rutland@arm.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/8] bindings: PCI: designware: Add support for the EP in
- designware driver
-Message-ID: <20180409191233.l2s5hnrq7gejrmq6@rob-hp-laptop>
-References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
- <dd582bfc2780679b7a092d23547c316234a84c34.1522235224.git.gustavo.pimentel@synopsys.com>
+        Mon, 9 Apr 2018 15:13:52 -0400
+X-Google-Smtp-Source: AIpwx4/3Q+E3ritXQR09/7nPP46hWQIViOHQECPK/yHllEt3p4YewrRJRIB9/oxBIiAFfC6oAOuNz2xrNm+du7TKwRc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dd582bfc2780679b7a092d23547c316234a84c34.1522235224.git.gustavo.pimentel@synopsys.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180409063921.wkrqbnv4lzxb3isg@gmail.com>
+References: <20180407074651.29014-1-linux@dominikbrodowski.net>
+ <20180408083550.32d65b6ra6yca5p7@gmail.com> <20180408091536.GA10120@light.dominikbrodowski.net>
+ <20180409063921.wkrqbnv4lzxb3isg@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 9 Apr 2018 12:13:50 -0700
+X-Google-Sender-Auth: 0SlGy8dE6rl3fc-jTIyNJzcL66I
+Message-ID: <CA+55aFzB1+e+X0pWgNyyQXiU34RnTk8swaqewbzSYK29gu-_dA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] syscalls: clean up stub naming convention
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Maninder Singh <maninder1.s@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 12:38:33PM +0100, Gustavo Pimentel wrote:
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
->  Documentation/devicetree/bindings/pci/designware-pcie.txt | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> index 6300762..4bb2e08 100644
-> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> @@ -3,6 +3,7 @@
->  Required properties:
->  - compatible:
->  	"snps,dw-pcie" for RC mode;
-> +	"snps,dw-pcie-ep" for EP mode;
->  - reg: Should contain the configuration address space.
->  - reg-names: Must be "config" for the PCIe configuration space.
->      (The old way of getting the configuration address space from "ranges"
-> @@ -56,3 +57,15 @@ Example configuration:
->  		#interrupt-cells = <1>;
->  		num-lanes = <1>;
->  	};
-> +or
-> +	pcie_ep: pcie_ep@dfc00000 {
+On Sun, Apr 8, 2018 at 11:39 PM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> I see - so it's _not_ the same function call signature, but a wrapper with a
+> sign-extended version, which is fair and useful. So on architectures where this
+> matters there's type conversion and active code generated.
 
-pcie-ep@...
+Exactly. Some architectures have that as part of their ABI.
 
-Or what others have used. We should define a standard name in the DT 
-spec for this.
+On Powerpc, for example, when you pass an "int" argument, the ABI
+specifies that you have to sign-extend the register in the caller to
+64 bits.
 
-> +		compatible = "snps,dw-pcie-ep";
-> +		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
-> +		      <0xdfc01000 0x0001000>, /* IP registers 2 */
-> +		      <0xd0000000 0x2000000>; /* Configuration space */
-> +		reg-names = "dbi", "dbi2", "addr_space";
-> +		device_type = "pci";
-> +		num-ib-windows = <6>;
-> +		num-ob-windows = <2>;
-> +		num-lanes = <1>;
-> +	};
-> -- 
-> 2.7.4
-> 
-> 
+And the generated code actually depends on that behavior, in that
+maybe it first tests the 32 bit value, but then _uses_ the full 64
+bits, knowing that the caller sign-extended it properly.
+
+This is a problem with the system call interface, since the caller
+isn't a trusted entity, and user space could pass an "int" value with
+the high bits set to something that _isn't_ the sign-extended thing,
+so then the compiler generates unsafe code.
+
+On x86, this never happens, since x86 doesn't have that "hidden higher
+bits matter" ABI model. So that part of the wrapper will be a complete
+no-op. But some other architectures depend on it.
+
+               Linus
