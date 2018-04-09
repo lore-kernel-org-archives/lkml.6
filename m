@@ -1,65 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752068AbeDINmL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:42:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46640 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751502AbeDINmK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:42:10 -0400
-Subject: Re: [PATCH v2 7/9] trace_uprobe/sdt: Fix multiple update of same
- reference counter
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
-        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-References: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180404083110.18647-8-ravi.bangoria@linux.vnet.ibm.com>
- <20180409131730.GA25631@redhat.com>
- <90d2fc35-0d58-1cab-a474-642192c7e1ff@linux.vnet.ibm.com>
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Date: Mon, 9 Apr 2018 19:11:48 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751550AbeDINtt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:49:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750759AbeDINts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 09:49:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAD6A20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 9 Apr 2018 09:49:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal
+ OOM_SCORE_ADJ_MIN
+Message-ID: <20180409094944.6399b211@gandalf.local.home>
+In-Reply-To: <CAGWkznEQbaw7HMvE1pbVDMriOL8yW74Ka5UEci4YFRdLnVbFzA@mail.gmail.com>
+References: <1523153783-20579-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+        <20180407234812.2bf2b24b@gandalf.local.home>
+        <CAGWkznHVGTpvfQOvaOGP6fYDWh0Os0pYXTC3gG_qvW6mCDuybQ@mail.gmail.com>
+        <20180408084717.62ee4f9e@gandalf.local.home>
+        <CAGWkznEQbaw7HMvE1pbVDMriOL8yW74Ka5UEci4YFRdLnVbFzA@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <90d2fc35-0d58-1cab-a474-642192c7e1ff@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18040913-0044-0000-0000-000005451C78
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040913-0045-0000-0000-00002885480F
-Message-Id: <fd24639f-fe58-0078-1c7c-68d8b9484e08@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804090146
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 9 Apr 2018 08:56:01 +0800
+Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
 
+> >>
+> >>         if (oom_task_origin(task)) {
+> >>                 points = ULONG_MAX;
+> >>                 goto select;
+> >>         }
+> >>
+> >>         points = oom_badness(task, NULL, oc->nodemask, oc->totalpages);
+> >>         if (!points || points < oc->chosen_points)
+> >>                 goto next;  
+> >
+> > And what's wrong with that?
+> >
+> > -- Steve  
+> I think the original thought of OOM is the flag 'OOM_SCORE_ADJ_MIN' is
+> most likely to be set by process himself via accessing the proc file,
+> if it does so, OOM can select it as the victim. except, it is
+> reluctant to choose the critical process to be killed, so I suggest
+> not to set such heavy flag as OOM_SCORE_ADJ_MIN on behalf of -1000
+> process.
 
-On 04/09/2018 07:02 PM, Ravi Bangoria wrote:
-> Hi Oleg,
->
-> On 04/09/2018 06:47 PM, Oleg Nesterov wrote:
->> I didn't read this version yet, just one question...
->>
->> So now it depends on CONFIG_MMU_NOTIFIER, yes? I do not see any changes in Kconfig
->> files, this doesn't look right...
-> Yes, you are write.
+Really, I don't think tasks that are setting OOM_CORE_ADJ_MIN should be
+allocating a lot of memory in the kernel (via ring buffer). It sounds
+like a good way to wreck havoc on the system.
 
-s/write/right.
+It's basically saying, "I'm going to take up all memory, but don't kill
+me, just kill some random user on the system".
+
+-- Steve
