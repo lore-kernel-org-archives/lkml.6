@@ -1,56 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751954AbeDIIA5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 04:00:57 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:38710 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751416AbeDIIAz (ORCPT
+        id S1751967AbeDIIMf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 04:12:35 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:37055 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751464AbeDIIMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 04:00:55 -0400
-X-Google-Smtp-Source: AIpwx49urL6r2UF83SDjuKXsLe1M3W+zbWvCMW1jtksdeti4TihCczqSRTiz1uk2mfNOUcUFj49Rxw==
-Date: Mon, 9 Apr 2018 10:00:51 +0200
+        Mon, 9 Apr 2018 04:12:31 -0400
+X-Google-Smtp-Source: AIpwx49shvz/otqeIw+ortN43oWgL8cElb+JDa7DlBMrkucwgjsNjHrYE42w9bVJmyDKQ0+aTZBtxQ==
+Date: Mon, 9 Apr 2018 10:12:27 +0200
 From: Daniel Vetter <daniel@ffwll.ch>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: Daniel Stone <daniel@fooishbar.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>, qemu-devel@nongnu.org,
+To: Matt Roper <matthew.d.roper@intel.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Gerd Hoffmann <kraxel@redhat.com>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>, qemu-devel@nongnu.org,
         "moderated list:DMA BUFFER SHARING FRAMEWORK"
         <linaro-mm-sig@lists.linaro.org>,
         "open list:DMA BUFFER SHARING FRAMEWORK"
         <linux-media@vger.kernel.org>
 Subject: Re: [RfC PATCH] Add udmabuf misc device
-Message-ID: <20180409080051.GD31310@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Stone <daniel@fooishbar.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>, qemu-devel@nongnu.org,
+Message-ID: <20180409081226.GE31310@phenom.ffwll.local>
+Mail-Followup-To: Matt Roper <matthew.d.roper@intel.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>, qemu-devel@nongnu.org,
         "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
         "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>
 References: <20180313154826.20436-1-kraxel@redhat.com>
  <20180313161035.GL4788@phenom.ffwll.local>
  <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
- <CAPj87rPKtuQ4SZePYDUesWY9VSSGR=1p-LO=yByY_6Q8=BfoyA@mail.gmail.com>
- <20180406105422.6tewkkciwerud3tm@sirius.home.kraxel.org>
+ <CAKMK7uGG6Z6XLc6GuKv7-3grCNg+EK2Lh6XWpavjsbZWF_L5Wg@mail.gmail.com>
+ <20180406001117.GD31612@mdroper-desk.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180406105422.6tewkkciwerud3tm@sirius.home.kraxel.org>
+In-Reply-To: <20180406001117.GD31612@mdroper-desk.amr.corp.intel.com>
 X-Operating-System: Linux phenom 4.15.0-1-amd64 
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 12:54:22PM +0200, Gerd Hoffmann wrote:
-> On Fri, Apr 06, 2018 at 10:52:21AM +0100, Daniel Stone wrote:
-> > Hi Gerd,
+On Thu, Apr 05, 2018 at 05:11:17PM -0700, Matt Roper wrote:
+> On Thu, Apr 05, 2018 at 10:32:04PM +0200, Daniel Vetter wrote:
+> > Pulling this out of the shadows again.
 > > 
-> > On 14 March 2018 at 08:03, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> > We now also have xen-zcopy from Oleksandr and the hyper dmabuf stuff
+> > from Matt and Dongwong.
+> > 
+> > At least from the intel side there seems to be the idea to just have 1
+> > special device that can handle cross-gues/host sharing for all kinds
+> > of hypervisors, so I guess you all need to work together :-)
+> > 
+> > Or we throw out the idea that hyper dmabuf will be cross-hypervisor
+> > (not sure how useful/reasonable that is, someone please convince me
+> > one way or the other).
+> > 
+> > Cheers, Daniel
+> 
+> Dongwon (DW) is the one doing all the real work on hyper_dmabuf, but I'm
+> familiar with the use cases he's trying to address, and I think there
+> are a couple high-level goals of his work that are worth calling out as
+> we discuss the various options for sharing buffers produced in one VM
+> with a consumer running in another VM:
+> 
+>  * We should try to keep the interface/usage separate from the
+>    underlying hypervisor implementation details.  I.e., in DW's design
+>    the sink/source drivers that handle the actual buffer passing in the
+>    two VM's should provide a generic interface that does not depend on a
+>    specific hypervisor.  Behind the scenes there could be various
+>    implementations for specific hypervisors (Xen, KVM, ACRN, etc.), and
+>    some of those backends may have additional restrictions, but it would
+>    be best if userspace didn't have to know the specific hypervisor
+>    running on the system and could just query the general capabilities
+>    available to it.  We've already got projects in flight that are
+>    wanting this functionality on Xen and ACRN today.
+
+Two comments on this:
+
+- Just because it's in drivers/gpu doesn't mean you can't use it for
+  anything else. E.g. the xen-zcopy driver can very much be used for any
+  dma-buf, there's nothing gpu specific with it - well besides that it
+  resuses some useful DRM ioctls, but if that annoys you just do a #define
+  TOTALLY_GENERIC DRM and be done :-)
+
+- Especially the kvm memory and hypervisor model seems totally different
+  from other hypervisors, e.g. no real use for guest-guest sharing (which
+  doesn't go through the host) and other cases. So trying to make
+  something 100% generic seems like a bad idea.
+
+  Wrt making it generic: Just use generic interfaces - if you can somehow
+  use xen-front for the display sharing, then a) no need for hyper-dmabuf
+  and b) already fully generic since it looks like a normal drm device to
+  the guest userspace.
+
+>  * The general interface should be able to express sharing from any
+>    guest:guest, not just guest:host.  Arbitrary G:G sharing might be
+>    something some hypervisors simply aren't able to support, but the
+>    userspace API itself shouldn't make assumptions or restrict that.  I
+>    think ideally the sharing API would include some kind of
+>    query_targets interface that would return a list of VM's that your
+>    current OS is allowed to share with; that list would be depend on the
+>    policy established by the system integrator, but obviously wouldn't
+>    include targets that the hypervisor itself wouldn't be capable of
+>    handling.
+
+Uh ... has a proper security architect analyzed this idea?
+
+>  * A lot of the initial use cases are in the realm of graphics, but this
+>    shouldn't be a graphics-specific API.  Buffers might contain other
+>    types of content as well (e.g., audio).  Really the content producer
+>    could potentially be any driver (or userspace) running in the VM that
+>    knows how to import/export dma_buf's (or maybe just import given
+>    danvet's suggestion that we should make the sink driver do all the
+>    actual memory allocation for any buffers that may be shared).
+
+See above, just because it uses drm ioctls doesn't make it gfx specific.
+
+Otoh making it even more graphics specific might be even better, i.e. just
+sharing the backend tech (grant tables or whatever), but having dedicated
+front-ents for each use-case so there's less code to type.
+
+>  * We need to be able to handle cross-VM coordination of buffer usage as
+>    well, so I think we'd want to include fence forwarding support in the
+>    API as well to signal back and forth about production/consumption
+>    completion.  And of course document really well what should happen
+>    if, for example, the entire VM you're sharing with/from dies.
+
+Implicit fencing has been proven to be a bad idea. Please do explicit
+passing of dma_fences (plus assorted protocol).
+
+>  * The sharing API could be used to share multiple kinds of content in a
+>    single system.  The sharing sink driver running in the content
+>    producer's VM should accept some additional metadata that will be
+>    passed over to the target VM as well.  The sharing source driver
+>    running in the content consumer's VM would then be able to use this
+>    metadata to determine the purpose of a new buffer that arrives and
+>    filter/dispatch it to the appropriate consumer.
+
+If you want metadata, why not use xen-front or something similar to have a
+well-defined means to transfer everything? One of the key design decisions
+of dma-buf was to _not_ have metadata, just buffer sharing.
+-Daniel
+
+> 
+> 
+> For reference, the terminology I'm using is
+> 
+>  /----------\  dma_buf   /------\ HV /--------\  dma_buf   /----------\
+>  | Producer |----------->| Sink | HV | Source |----------->| Consumer |
+>  \----------/   ioctls   \------/ HV \--------/  uevents   \----------/
+> 
+> 
+> 
+> In the realm of graphics, "Producer" could potentially be something like
+> an EGL client that sends the buffer at context setup and then signals
+> with fences on each SwapBuffers.  "Consumer" could be a Wayland client
+> that proxies the buffers into surfaces or dispatches them to other
+> userspace software that's waiting for buffers.
+> 
+> With the hyper_dmabuf approach, there's a lot of ABI details that need
+> to be worked out and really clearly documented before we worry too much
+> about the backend hypervisor-specific stuff.
+> 
+> I'm not super familiar with xen-zcopy and udmabuf, but it sounds like
+> they're approaching similar problems from slightly different directions,
+> so we should make sure we can come up with something that satisfies
+> everyone's requirements. 
+> 
+> 
+> Matt
+> 
+> > 
+> > On Wed, Mar 14, 2018 at 9:03 AM, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> > >   Hi,
+> > >
 > > >> Either mlock account (because it's mlocked defacto), and get_user_pages
 > > >> won't do that for you.
 > > >>
@@ -62,61 +195,69 @@ On Fri, Apr 06, 2018 at 12:54:22PM +0200, Gerd Hoffmann wrote:
 > > > I guess I'll look at mlock accounting for starters then.  Easier for
 > > > now, and leaves the door open to switch to userptr later as this should
 > > > be transparent to userspace.
+> > >
+> > >> > Known issue:  Driver API isn't complete yet.  Need add some flags, for
+> > >> > example to support read-only buffers.
+> > >>
+> > >> dma-buf has no concept of read-only. I don't think we can even enforce
+> > >> that (not many iommus can enforce this iirc), so pretty much need to
+> > >> require r/w memory.
+> > >
+> > > Ah, ok.  Just saw the 'write' arg for get_user_pages_fast and figured we
+> > > might support that, but if iommus can't handle that anyway it's
+> > > pointless indeed.
+> > >
+> > >> > Cc: David Airlie <airlied@linux.ie>
+> > >> > Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> > >> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> > >>
+> > >> btw there's also the hyperdmabuf stuff from the xen folks, but imo their
+> > >> solution of forwarding the entire dma-buf api is over the top. This here
+> > >> looks _much_ better, pls cc all the hyperdmabuf people on your next
+> > >> version.
+> > >
+> > > Fun fact: googling for "hyperdmabuf" found me your mail and nothing else :-o
+> > > (Trying "hyper dmabuf" instead worked better then).
+> > >
+> > > Yes, will cc them on the next version.  Not sure it'll help much on xen
+> > > though due to the memory management being very different.  Basically xen
+> > > owns the memory, not the kernel of the control domain (dom0), so
+> > > creating dmabufs for guest memory chunks isn't that simple ...
+> > >
+> > > Also it's not clear whenever they really need guest -> guest exports or
+> > > guest -> dom0 exports.
+> > >
+> > >> Overall I like the idea, but too lazy to review.
+> > >
+> > > Cool.  General comments on the idea was all I was looking for for the
+> > > moment.  Spare yor review cycles for the next version ;)
+> > >
+> > >> Oh, some kselftests for this stuff would be lovely.
+> > >
+> > > I'll look into it.
+> > >
+> > > thanks,
+> > >   Gerd
+> > >
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
 > > 
-> > Out of interest, do you have usecases for full userptr support? Maybe
-> > another way would be to allow creation of dmabufs from memfds.
+> > 
+> > 
+> > -- 
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
 > 
-> I have two things in mind.
-> 
-> One is vga emulation.  I have virtual pci memory bar for the virtual
-> vga.  qemu backs vga memory with anonymous pages right now, switching
-> that to shmem should be easy though if that makes things easier.  Guest
-> places the framebuffer somewhere in the pci bar, and I want export the
-> chunk which represents the framebuffer as dma-buf to display it on the
-> host without copying around data.  Framebuffer is linear in guest
-> physical memory, so a single block only.  That is the simpler case.
-> 
-> The more difficuilt one is virtio-gpu ressources.  virtio-gpu resources
-> live in host memory (guest has no direct access).  The guest can
-> optionally specify guest memory pages as backing storage for the
-> resource.  Guest backing storage is allowed to be scattered.  Commands
-> exist to copy both ways between host storage and guest backing.
-> 
-> With virgl (opengl acceleration) enabled the guest will send rendering
-> commands to fill the framebuffer ressource, so there is no need to copy
-> content to the framebuffer ressource.  The guest may fill other
-> resources such as textures used for rendering with copy commands.
-> 
-> Without acceleration the guest does software-rendering to the backing
-> storage, then sends a command to copy the framebuffer content from guest
-> backing storage to host ressource.
-> 
-> Now it would be useful to allow a shared mapping, so no copying between
-> guest backing storage and host resource is needed, especially for the
-> software rendering case (i.e. dumb gem buffers).  Being able to export
-> guest dumb buffers to other host processes would be useful too, for
-> example to display guest windows seamlessly on the host wayland server.
-> 
-> So getting a dma-buf for the guest backing storage via udmabuf looked
-> like a useful approach.  We can export the guest gem buffers to other
-> host processes that way.  qemu itself could map it too, to get a linear
-> representation of the scattered guest backing storage.
-> 
-> The other obvious approach would be to do it the other way around and
-> allow the guest map the host resource somehow.  On the host side qemu
-> could use vgem to allocate resource memory, so it'll be a gem object
-> already.  Mapping that into the guest isn't that straight-forward
-> though.  The guest manages its physical address space, so the guest
-> would need to find a free spot and ask the host to place the resource
-> there.  Then the guest needs page structs covering the mapped resource,
-> so it can work with it.  Didn't investigate how difficuilt that is.  Use
-> memory hotplug maybe?  Can we easily unmap the resource then?  Also I
-> think updating the guests physical memory layout (which we would need to
-> do on every resource map/unmap) isn't an exactly cheap operation ...
+> -- 
+> Matt Roper
+> Graphics Software Engineer
+> IoTG Platform Enabling & Development
+> Intel Corporation
+> (916) 356-2795
 
-Generally we try to cache mappings as much as possible. And wrt finding a
-slot: Create a sufficiently sized BAR on the virgl device, just for that?
--Daniel
 -- 
 Daniel Vetter
 Software Engineer, Intel Corporation
