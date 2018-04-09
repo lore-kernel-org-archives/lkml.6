@@ -1,62 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752234AbeDINRj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:17:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51844 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750982AbeDINRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752309AbeDINRv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:17:51 -0400
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:41481 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeDINRh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Apr 2018 09:17:37 -0400
-Date: Mon, 9 Apr 2018 15:17:31 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
-        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com
-Subject: Re: [PATCH v2 7/9] trace_uprobe/sdt: Fix multiple update of same
- reference counter
-Message-ID: <20180409131730.GA25631@redhat.com>
-References: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180404083110.18647-8-ravi.bangoria@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AIpwx4/9g6so3C+tNju9iRGv9TAsiN6/G5pwotmQRADKYAPHWSuDXxQsNoo//VCFYf47cYdLroqADnOvFNDMTvaVdP4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404083110.18647-8-ravi.bangoria@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180409032835.GB1648@stefanha-x1.localdomain>
+References: <001a11449424f11322056932b09c@google.com> <CAJSP0QVHk7NSQcjfLWq13=1Vzm=_vtmKZqp4dDjuh8ETLO5g_g@mail.gmail.com>
+ <20180409054316-mutt-send-email-mst@kernel.org> <20180409032835.GB1648@stefanha-x1.localdomain>
+From: Stefan Hajnoczi <stefanha@gmail.com>
+Date: Mon, 9 Apr 2018 21:17:35 +0800
+Message-ID: <CAJSP0QUgySKEk79EzFSQAdTfbmFRE+CdJPkLdV5+6MoX6tf3eg@mail.gmail.com>
+Subject: Re: kernel BUG at drivers/vhost/vhost.c:LINE! (2)
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: syzbot <syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com>,
+        Jason Wang <jasowang@redhat.com>, kvm <kvm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/04, Ravi Bangoria wrote:
+On Mon, Apr 9, 2018 at 11:28 AM, Stefan Hajnoczi <stefanha@gmail.com> wrote:
+> On Mon, Apr 09, 2018 at 05:44:36AM +0300, Michael S. Tsirkin wrote:
+>> On Mon, Apr 09, 2018 at 10:37:45AM +0800, Stefan Hajnoczi wrote:
+>> > On Sat, Apr 7, 2018 at 3:02 AM, syzbot
+>> > <syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com> wrote:
+>> > > syzbot hit the following crash on upstream commit
+>> > > 38c23685b273cfb4ccf31a199feccce3bdcb5d83 (Fri Apr 6 04:29:35 2018 +0000)
+>> > > Merge tag 'armsoc-drivers' of
+>> > > git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
+>> > > syzbot dashboard link:
+>> > > https://syzkaller.appspot.com/bug?extid=65a84dde0214b0387ccd
+>> >
+>> > To prevent duplicated work: I am working on this one.
+>> >
+>> > Stefan
+>>
+>> Do you want to try this patchset:
+>> https://lkml.org/lkml/2018/4/5/665
+>>
+>> ?
 >
-> +static void sdt_add_mm_list(struct trace_uprobe *tu, struct mm_struct *mm)
-> +{
-> +	struct mmu_notifier *mn;
-> +	struct sdt_mm_list *sml = kzalloc(sizeof(*sml), GFP_KERNEL);
-> +
-> +	if (!sml)
-> +		return;
-> +	sml->mm = mm;
-> +	list_add(&(sml->list), &(tu->sml.list));
-> +
-> +	/* Register mmu_notifier for this mm. */
-> +	mn = kzalloc(sizeof(*mn), GFP_KERNEL);
-> +	if (!mn)
-> +		return;
-> +
-> +	mn->ops = &sdt_mmu_notifier_ops;
-> +	__mmu_notifier_register(mn, mm);
-> +}
+> Thanks, I'll give it a shot.
+>
+> I also noticed a regression in commit
+> d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ("vhost: validate log when
+> IOTLB is enabled") and am currently testing a fix.
 
-I didn't read this version yet, just one question...
+I have sent a fix:
+https://lkml.org/lkml/2018/4/9/390
 
-So now it depends on CONFIG_MMU_NOTIFIER, yes? I do not see any changes in Kconfig
-files, this doesn't look right...
-
-Oleg.
+Stefan
