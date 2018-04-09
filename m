@@ -1,135 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751845AbeDIMZ2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 08:25:28 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7161 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750759AbeDIMZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 08:25:26 -0400
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-To: Minchan Kim <minchan@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-CC: Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, "Jan Kara" <jack@suse.cz>,
-        Chris Fries <cfries@google.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
- <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
- <20180409111403.GA31652@bombadil.infradead.org>
- <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
-Date: Mon, 9 Apr 2018 20:25:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1752168AbeDIMZe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 08:25:34 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:34924 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751919AbeDIMZ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 08:25:29 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Cc: linux-mtd@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] mtd: partitions: Handle add_mtd_device() failures gracefully
+Date: Mon,  9 Apr 2018 14:25:21 +0200
+Message-Id: <1523276721-4982-1-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/9 19:25, Minchan Kim wrote:
-> On Mon, Apr 09, 2018 at 04:14:03AM -0700, Matthew Wilcox wrote:
->> On Mon, Apr 09, 2018 at 12:09:30PM +0900, Minchan Kim wrote:
->>> On Sun, Apr 08, 2018 at 07:49:25PM -0700, Matthew Wilcox wrote:
->>>> On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
->>>>> It assumes shadow entry of radix tree relies on the init state
->>>>> that node->private_list allocated should be list_empty state.
->>>>> Currently, it's initailized in SLAB constructor which means
->>>>> node of radix tree would be initialized only when *slub allocates
->>>>> new page*, not *new object*. So, if some FS or subsystem pass
->>>>> gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
->>>>
->>>> Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
->>>> I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
->>>> with GFP_ZERO.
->>>
->>> Look at fs/f2fs/inode.c
->>> mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
->>>
->>> __add_to_page_cache_locked
->>>   radix_tree_maybe_preload
->>>
->>> add_to_page_cache_lru
->>>
->>> What's the wrong with setting __GFP_ZERO with mapping->gfp_mask?
->>
->> Because it's a stupid thing to do.  Pages are allocated and then filled
->> from disk.  Zeroing them before DMAing to them is just a waste of time.
-> 
-> Every FSes do address_space to read pages from storage? I'm not sure.
+Currently add_mtd_device() failures are plainly ignored, which may lead
+to kernel crashes later.
 
-No, sometimes, we need to write meta data to new allocated block address,
-then we will allocate a zeroed page in inner inode's address space, and
-fill partial data in it, and leave other place with zero value which means
-some fields are initial status.
+E.g. after flipping SW17 on r8a7791/koelsch, to switch from the large to
+the small QSPI FLASH, without updating the partition description in DT,
+the following happens:
 
-There are two inner inodes (meta inode and node inode) setting __GFP_ZERO,
-I have just checked them, for both of them, we can avoid using __GFP_ZERO,
-and do initialization by ourselves to avoid unneeded/redundant zeroing
-from mm.
+    m25p80 spi0.0: found s25sl032p, expected s25fl512s
+    3 fixed-partitions partitions found on MTD device spi0.0
+    Creating 3 MTD partitions on "spi0.0":
+    0x000000000000-0x000000080000 : "loader"
+    0x000000080000-0x000000600000 : "user"
+    mtd: partition "user" extends beyond the end of device "spi0.0" -- size truncated to 0x380000
 
-To Jaegeuk, if I missed something, please let me know.
+The second partition is truncated correctly.
 
+    0x000000600000-0x000004000000 : "flash"
+    mtd: partition "flash" is out of reach -- disabled
+
+The third partition is disabled by allocate_partition(), which means
+fields like erasesize are not filled in.  Hence add_mtd_device() fails
+and screams, rightfully:
+
+    ------------[ cut here ]------------
+    WARNING: CPU: 1 PID: 1 at drivers/mtd/mtdcore.c:508 add_mtd_device+0x2a0/0x2e0
+    Modules linked in:
+    CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.16.0-koelsch-08649-g58e35e77b00c075d #4029
+    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+    [<c020f660>] (unwind_backtrace) from [<c020b2f4>] (show_stack+0x10/0x14)
+    [<c020b2f4>] (show_stack) from [<c076d088>] (dump_stack+0x7c/0x9c)
+    [<c076d088>] (dump_stack) from [<c02210d8>] (__warn+0xd4/0x104)
+    [<c02210d8>] (__warn) from [<c0221218>] (warn_slowpath_null+0x38/0x44)
+    [<c0221218>] (warn_slowpath_null) from [<c0553db4>] (add_mtd_device+0x2a0/0x2e0)
+    [<c0553db4>] (add_mtd_device) from [<c0556a70>] (add_mtd_partitions+0xd0/0x16c)
+    [<c0556a70>] (add_mtd_partitions) from [<c0553f88>] (mtd_device_parse_register+0xc4/0x1b4)
+    [<c0553f88>] (mtd_device_parse_register) from [<c055a97c>] (m25p_probe+0x148/0x188)
+    [<c055a97c>] (m25p_probe) from [<c055e278>] (spi_drv_probe+0x84/0xa0)
+
+    [...]
+
+    ---[ end trace d43ce221bca7ab5c ]---
+
+However, that failure is ignored by add_mtd_partitions(), leading to a
+crash later:
+
+    ------------[ cut here ]------------
+    kernel BUG at fs/sysfs/file.c:330!
+    Internal error: Oops - BUG: 0 [#1] SMP ARM
+    Modules linked in:
+    CPU: 1 PID: 1 Comm: swapper/0 Tainted: G        W        4.16.0-koelsch-08649-g58e35e77b00c075d #4029
+    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+    PC is at sysfs_create_file_ns+0x24/0x40
+    LR is at 0x1
+    pc : [<c03604cc>]    lr : [<00000001>]    psr: 60000013
+    sp : eb447c00  ip : 00000000  fp : c0e20174
+    r10: 00000003  r9 : c0e20150  r8 : eb7e3818
+    r7 : ea8b20f8  r6 : c0e2017c  r5 : 00000000  r4 : 00000000
+    r3 : 00000200  r2 : 00000000  r1 : c0e2019c  r0 : 00000000
+    Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
+    Control: 30c5387d  Table: 40003000  DAC: 55555555
+    Process swapper/0 (pid: 1, stack limit = 0x7eba272f)
+    Stack: (0xeb447c00 to 0xeb448000)
+
+    [...]
+
+    [<c03604cc>] (sysfs_create_file_ns) from [<c036051c>] (sysfs_create_files+0x34/0x70)
+    [<c036051c>] (sysfs_create_files) from [<c0556288>] (mtd_add_partition_attrs+0x10/0x34)
+    [<c0556288>] (mtd_add_partition_attrs) from [<c0556a78>] (add_mtd_partitions+0xd8/0x16c)
+    [<c0556a78>] (add_mtd_partitions) from [<c0553f88>] (mtd_device_parse_register+0xc4/0x1b4)
+    [<c0553f88>] (mtd_device_parse_register) from [<c055a97c>] (m25p_probe+0x148/0x188)
+    [<c055a97c>] (m25p_probe) from [<c055e278>] (spi_drv_probe+0x84/0xa0)
+
+Fix this by ignoring and freeing partitions that failed to add in
+add_mtd_partitions().  The same issue is present in mtd_add_partition(),
+so fix that as well.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- fs/f2fs/inode.c | 4 ++--
- fs/f2fs/node.c  | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+I don't know if it is worthwhile factoring out the common handling.
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index c85cccc2e800..cc63f8c448f0 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -339,10 +339,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- make_now:
- 	if (ino == F2FS_NODE_INO(sbi)) {
- 		inode->i_mapping->a_ops = &f2fs_node_aops;
--		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-+		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
- 	} else if (ino == F2FS_META_INO(sbi)) {
- 		inode->i_mapping->a_ops = &f2fs_meta_aops;
--		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-+		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
- 	} else if (S_ISREG(inode->i_mode)) {
- 		inode->i_op = &f2fs_file_inode_operations;
- 		inode->i_fop = &f2fs_file_operations;
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 9dedd4b5e077..31e5ecf98ffd 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1078,6 +1078,7 @@ struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs)
- 	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
+Should allocate_partition() fail instead?  There's a comment saying
+"let's register it anyway to preserve ordering".
+---
+ drivers/mtd/mtdpart.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
- 	f2fs_wait_on_page_writeback(page, NODE, true);
-+	memset(F2FS_NODE(page), 0, PAGE_SIZE);
- 	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
- 	set_cold_node(page, S_ISDIR(dn->inode->i_mode));
- 	if (!PageUptodate(page))
-@@ -2321,6 +2322,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
-
- 	if (!PageUptodate(ipage))
- 		SetPageUptodate(ipage);
-+	memset(F2FS_NODE(page), 0, PAGE_SIZE);
- 	fill_node_footer(ipage, ino, ino, 0, true);
- 	set_cold_node(page, false);
-
+diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
+index 023516a632766c42..d41adc1397dcf95e 100644
+--- a/drivers/mtd/mtdpart.c
++++ b/drivers/mtd/mtdpart.c
+@@ -637,7 +637,14 @@ int mtd_add_partition(struct mtd_info *parent, const char *name,
+ 	list_add(&new->list, &mtd_partitions);
+ 	mutex_unlock(&mtd_partitions_mutex);
+ 
+-	add_mtd_device(&new->mtd);
++	ret = add_mtd_device(&new->mtd);
++	if (ret) {
++		mutex_lock(&mtd_partitions_mutex);
++		list_del(&new->list);
++		mutex_unlock(&mtd_partitions_mutex);
++		free_partition(new);
++		return ret;
++	}
+ 
+ 	mtd_add_partition_attrs(new);
+ 
+@@ -731,7 +738,7 @@ int add_mtd_partitions(struct mtd_info *master,
+ {
+ 	struct mtd_part *slave;
+ 	uint64_t cur_offset = 0;
+-	int i;
++	int i, ret;
+ 
+ 	printk(KERN_NOTICE "Creating %d MTD partitions on \"%s\":\n", nbparts, master->name);
+ 
+@@ -746,7 +753,15 @@ int add_mtd_partitions(struct mtd_info *master,
+ 		list_add(&slave->list, &mtd_partitions);
+ 		mutex_unlock(&mtd_partitions_mutex);
+ 
+-		add_mtd_device(&slave->mtd);
++		ret = add_mtd_device(&slave->mtd);
++		if (ret) {
++			mutex_lock(&mtd_partitions_mutex);
++			list_del(&slave->list);
++			mutex_unlock(&mtd_partitions_mutex);
++			free_partition(slave);
++			continue;
++		}
++
+ 		mtd_add_partition_attrs(slave);
+ 		if (parts[i].types)
+ 			mtd_parse_part(slave, parts[i].types);
 -- 
-
-> 
-> If you're right, we need to insert WARN_ON to catch up __GFP_ZERO
-> on mapping_set_gfp_mask at the beginning and remove all of those
-> stupid thins. 
-> 
-> Jaegeuk, why do you need __GFP_ZERO? Could you explain?
-> 
-> .
-> 
+2.7.4
