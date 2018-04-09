@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3607359-1523233814-2-8615030191224916089
+X-Cyrus-Session-Id: sloti22d1t05-3607359-1523233804-2-14153453451647384331
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,29 +8,30 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523233813; b=aWCCu7usrsBcdoz8wc5Y0wIxTdXDF/PMQ/S900CiZAie5qXhQH
-    /i4ujKSKt67KQJKcFwmpRB0hzE7PK08GoVGP9kvc1nI/DYSOiYuUau7TBBba+fQ6
-    EQSqUchI7y1qQ2oLzZHEX+o35ZHSjQ7IpyafMURIdfx/4CEKXUbifCxD/9f9KIT0
-    ieNeUS7i9g8TYUv54D4T4huDGCQy6uRX4s1Utn7XNFQ78g0hYvtar/GFe8LNrDrY
-    vrs9w+cHE1o8exgUMa4BbWfmyjcfpSDYARqREP/0FBlojxUoPIGiyScWmFfaRqoW
-    0tncqcuymIKF5+HpMi792AMETQvaDsdsOfuw==
+    1523233803; b=csoYIYOPTK3HVkIJTfnIeby4AGBc4JQ1IJX3cGyApltxM4r4Aj
+    6YgVwrsjn+4AIFhqkgWfkc6Sm7wFPbYdTNUceANsQuu1t4MPFLP+GL6XYhcAk2NE
+    hM6lWpspaFHssJpS7assc2f3aYACDyGkXIJCqtcwdpaz2dUJDhzjUWOp4QCUi607
+    MMDe4T8DsToK4ua/hL4T6hvRGPtxbFUTIIXvaMUQu3y1i+3mrv6pHUVYRWmuPpW6
+    U/1KtziP6TfGfdUd650hDa4/+V9vIiLMAHvxHfO41k66IeV9ufaC1QC1hXPe3vlW
+    HRxS1tw84fkAG9cx7AOKf3Z3w5+4wOF0+qIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523233813; bh=t/zY1GG1w8
-    e3DU60BGItVFT+b3jF4Kxx0+f7gMTU06g=; b=LdkUwGD9PGktM1LDKV2FxdSUHj
-    tt7zMriKkTJxtcF8w1ha2TdD+bhYO2+8V4mncavNL+y4Iqnz7dJM7XYcx5zEYGwj
-    QyNyWsXvl9bwhp2LSkEmTbuJx0ok9HV9o2De9vk8zTaRdPQRz6W26ot75A4ZZ7nn
-    6TTOJQ/wAYN54CE8YY9dQimOt4Kwy/+z/BGvPSMVtNfD/FuMu9Fj5WMCwg7MjhtZ
-    UW/rutdfLQDwjoEaxiqACWq4cGc7zgin90oH3QiPfiJmu/lPs2qToE+OFZPxTYwO
-    JpPbfUZyg/J4e42bntl/S9dKOIP5dcf4ezUWqO/rhaDNiOtozTZuyj0TDKiQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=af24Wb9Y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :references:in-reply-to:content-type:content-id
+    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
+    t=1523233803; bh=bLZxxb9OrDITSScPDPe/npaGPGQwSKeSqi2Eb94SvpM=; b=
+    A02CEeVA32XNJz/pOHwKeUzE/g2JqmGCU4v/bUhgVTKisRX1DH+NXdQ1lG9XkKxV
+    VrARzxSgwvZ/wPQTQcEWuphq/cGUJTj1B79TF1M/8SLBfwVpSgTCvbBvMpwZHumO
+    ZJICK/yoHBuTs1sSGHlZUx0kaz0usmnFI8FZuMzZRLSbiq+qYx6Hvprfj83Mmooo
+    Yu3Hu/Lw/vAN3jPoSDQEIWmIxGoNaxhqxQfnknuC2vrRY2SFmgfv5ZBzUhrgouRg
+    lJ1r6ib+AiCM6MVhtWeS72+5XmAV4hqjHgZmbl7fgkHUNmxV9bJ9KKudKNF1gTDH
+    MhaXd2ftoEoMHUXW+zjxQA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=f75ec5Kk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +40,9 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=af24Wb9Y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=f75ec5Kk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,37 +52,37 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKPYAI9ZIuwU989A+AN1kr3FBCiKBpYIbGxbOVdw1Fv3zmEpcrQg7gp9ItI9GxxurNGBHGgr30sVjmPbFOt9IIJxMQg+2t4PPy/7j+dGEoFzz3mErn7J
-    CRvGDbgzmQ8FQNJ16CeArxMQJG/SndES8Ti8nsCU06nvNEFhD2YxuOIbFLaz2e4uYc2+ka1d5eOvVH+NygCgk2qy4HwxN91Phvwt3dJNu86R4ZwFDC1cArAJ
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIjmf9KdqdUGPhrw9LVkTD/CvkDjoN+bz86J/Ht+oGpEanGqncooe11M0OOuQvcsiUHOpoke02tpoUTfMNtpvbfVQXAToHCX9zJqRePhUHaG5TPgzkO0
+    gWmxf7iUBYiny8WU00bIvy02Mi2NE6O0KevP+kLb92z4s3IjoNqmMT0O6KmZOqZXejo9AvJc/1clfGi3oGmN012DzSpPkwlakBlakXop2Q+k1ARw+XxM8/fW
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
-    a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=uP1ucDPQAAAA:8 a=7CQSdrXTAAAA:8 a=yMhMjlubAAAA:8
-    a=gnAFLUE-NMrtnB6PDwIA:9 a=wPNLvfGTeEIA:10 a=9a9ggB8z3XFZH39hjkD6:22
-    a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=mw6kJ3eo-EIA:10 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=Lf-vpJhqX20A:10 a=DfNHnWVPAAAA:8 a=pGLkceISAAAA:8 a=QyXUC8HyAAAA:8
+    a=yMhMjlubAAAA:8 a=NNxdam4jXssEnxCv9nYA:9 a=MLcyE3zIsjVxBJJr:21
+    a=Qn9xUNJF3qNZQCoP:21 a=QEXdDO2ut3YA:10 a=rjTVMONInIDnV1a_A2c_:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932129AbeDIA3t (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:29:49 -0400
-Received: from mail-sn1nam02on0106.outbound.protection.outlook.com ([104.47.36.106]:7529
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1753028AbeDIA3j (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:29:39 -0400
+Received: from mail-by2nam03on0107.outbound.protection.outlook.com ([104.47.42.107]:6816
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932101AbeDIA3r (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:29:47 -0400
+        id S1755997AbeDIA3g (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:29:36 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+CC: Kai Heng Feng <kai.heng.feng@canonical.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 119/293] irqchip/armada-370-xp: Re-enable
- per-CPU interrupts at resume time
-Thread-Topic: [PATCH AUTOSEL for 4.9 119/293] irqchip/armada-370-xp: Re-enable
- per-CPU interrupts at resume time
-Thread-Index: AQHTz5kdHxUuK3qSjEiaeMsWS7vg5w==
-Date: Mon, 9 Apr 2018 00:24:25 +0000
-Message-ID: <20180409002239.163177-119-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 106/293] platform/x86: dell-laptop: Fix bogus
+ keyboard backlight sysfs interface
+Thread-Topic: [PATCH AUTOSEL for 4.9 106/293] platform/x86: dell-laptop: Fix
+ bogus keyboard backlight sysfs interface
+Thread-Index: AQHTz5kX5IBk2wT7Q0qQPOqmts+89Q==
+Date: Mon, 9 Apr 2018 00:24:16 +0000
+Message-ID: <20180409002239.163177-106-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,177 +91,66 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1032;7:v07iyxXGk1kdQ3z0I2ULRQ36bBGnWDd5EDv/0GYTdZuesNjh6+jAwLUGcI8rpO5ehwC3q1/MbDxFtMryz+LBrNZgIg88JEBxdSAZ7v2PnpVGKGJzWEw54mtam3r4g/a5Yr0xf9qIn+h4K7GtpFWz8tXLEMQjaK11gFUqjUT8c64RURQymKZusVVf56zI02CLGTfjKdk/YYW+EsOCF/U+iD/gbXfyoPDn0tS8HsavpPt0xzLVw2gG1nU1pU9LCkIV;20:XxKqwfqOCNGGTXU+CBYAgeHAHJlJtn+w23/NLZ9Gco+qQUs+DNe3amTQ6YIPx4ndK9HM2xAmykKAcyMhCtpAnWfL7GxNx7/ECUWAuGx9B5k6kvSS75cP7cEn89octCNLPY5PBPpaQMwyuXsDXMJB0hSag42hxb1PkYatYpxFIDg=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0967;7:7djEmrWv+9x/UW0zG3YpDKMYDm2xAVvyqh6pFlfIMVe9E/6GnJbe4wA1Nn9TtjMNJb/m9q0Dl66V7kRsB5lsn/7e7M+VMipyK1ArXBJOVZrJusW8v2v8kF08OyyRhpVLoW7T7EhuAJdvZ6vFiC2El23cvO7gVt/uPJ9yQTqVSzAU20BL+sdKq9msVIf/LWQ9km3HHtStGsVo2F/XEK52wNhbsis6FC8c/VgcPG2m9iVySrwtOvoG7yk5ErrSK0Pn;20:fvPylRhieKObbaJOoEffRUXVoVCArdTMzkaxy3xMoe4risHf3xoZ6V4nEDz8LpJxHgnXHH4DziiRRS/yM08YEVmrvy8gu4grULEEcJcgiR8Ifux6laN4BW1uyL1jT4DP7waxs3r2db6A1FjLJJ4ULiqlQsysJaUDDjJXYqaBf7g=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: b9e03f67-0ea4-4628-cbf3-08d59db0fcfd
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1032;
-x-ms-traffictypediagnostic: DM5PR2101MB1032:
+X-MS-Office365-Filtering-Correlation-Id: dd469a9a-20da-4a8f-aa91-08d59db0f72b
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0967;
+x-ms-traffictypediagnostic: DM5PR2101MB0967:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10327B25E2A3E366E7668BEBFBBF0@DM5PR2101MB1032.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171)(58145275503218);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231221)(944501327)(52105095)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1032;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1032;
+x-microsoft-antispam-prvs: <DM5PR2101MB096768902396CCB636978A6CFBBF0@DM5PR2101MB0967.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(20558992708506)(89211679590171)(85827821059158)(198206253151910)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0967;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0967;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(396003)(39860400002)(376002)(366004)(189003)(199004)(5660300001)(76176011)(99286004)(10090500001)(2900100001)(105586002)(305945005)(7736002)(107886003)(2501003)(5250100002)(14454004)(53936002)(4326008)(8936002)(68736007)(25786009)(86612001)(3846002)(66066001)(1076002)(486006)(316002)(72206003)(22452003)(106356001)(186003)(97736004)(6436002)(6116002)(476003)(2616005)(478600001)(6486002)(10290500003)(2906002)(110136005)(54906003)(6512007)(81156014)(81166006)(8676002)(36756003)(11346002)(3660700001)(446003)(6666003)(86362001)(26005)(102836004)(575784001)(3280700002)(6506007)(59450400001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1032;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: eV7sbAH9awN70QHjab58iKQ3Gk6QmES9rIQ8CulfNVyjZr76JXHZfJy9aD1NWTxqfaa4TCmAaFbD+pV9DfmDnYrKSN3edGJZY5uN+Tb/Di1hmBXJVY5sG/lyykPjP/kW8t57T0khOJExFqvxvIESoH/W5eAX/4Clwh8jeGkp7+D9h619BxU2xZAciRx8SBkBxzBSW99khpBokrI/tveNAeACJAB7Z967+XPLLJTTLWMygKRZsMfSmiumRcFwKt0MYaKatT4+HdEV6l74w5cYr38pnD50DHpNWrb6imRZbXhjCdLPoBD1DDj7HfX6cQ5n49MQ3gp24zsVBBXQWEC6vFoJAXOTpB29XcJc5KG8IahID9imBa7l3zlTAxemtx1OULAfTrAJmpj5ch8ihdK42iq5vNDJnA2JXuzmbUT6aUI=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(376002)(39380400002)(346002)(199004)(189003)(6506007)(486006)(86362001)(14454004)(59450400001)(68736007)(102836004)(99286004)(26005)(3846002)(6116002)(186003)(476003)(2616005)(1076002)(3280700002)(86612001)(72206003)(4326008)(446003)(54906003)(76176011)(11346002)(2906002)(22452003)(3660700001)(110136005)(97736004)(316002)(6666003)(5660300001)(478600001)(8676002)(6512007)(8936002)(107886003)(6486002)(53936002)(81166006)(36756003)(81156014)(10290500003)(6436002)(10090500001)(25786009)(66066001)(106356001)(305945005)(7736002)(2501003)(5250100002)(105586002)(2900100001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0967;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: izd8nAn9nsCiP2YlH6uBXPoh+SOpeI3hPwEa8EPS1NOda+anFZIMZwxrOSBw7ryRzgn0/ThB5o5teihpbM3Z6uW1sKrvvRJnwZ3cPI67IoJCPmj7deG174tVc7nqQlhX5m5CZAGy6ZvjYjENJHztu7yyoEacvSOQHWYqaMTT/S59edMadYYrXbEtzWFzlSxiGQhMrhrlzhwreOSqIz6WDLvudpupmTYMPAPU2jkPHXjxmNEaXcaVWAl2l7PO2zJNlEll42LBQ0INHjZ1jWOtFoCkuJqEDKduBa1qbIpLKrRDDsqYrqF1hhc4eJ6ataChnZIh2ywg2eR7wNVLYey6mqym0pMLQrRU2kDmOrrzKye3LXI04yS58DOuW7xUppXYf37UNTFfcpLaVGr021u8gvIpJ18zHd9D9n9GboEgKqc=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <403F5352981C774CA24B00C547D69715@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9e03f67-0ea4-4628-cbf3-08d59db0fcfd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:24:25.9094
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd469a9a-20da-4a8f-aa91-08d59db0f72b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:24:16.3781
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1032
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0967
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-
-[ Upstream commit 0fa4ce746d1d8c8aa3d09fbc675497fa4c4a5475 ]
-
-Commit d17cab4451df1 ("irqchip: Kill off set_irq_flags usage") changed
-the code of armada_370_xp_mpic_irq_map() from using set_irq_flags() to
-irq_set_probe().
-
-While the commit log seems to imply that there are no functional
-changes, there are indeed functional changes introduced by this commit:
-the IRQ_NOAUTOEN flag is no longer cleared. This functional change
-caused a regression on Armada XP, which no longer works properly after
-suspend/resume because per-CPU interrupts remain disabled. This
-regression was temporarly worked around in commit
-353d6d6c82e5d ("irqchip/armada-370-xp: Fix regression by clearing
-IRQ_NOAUTOEN"), but it is not the most satisfying solution. This commit
-implements the solution that was initially discussed with Thomas
-Gleixner.
-
-Due to how the hardware registers work, the irq-armada-370-xp cannot
-simply save/restore a bunch of registers at suspend/resume to make sure
-that the interrupts remain in the same state after resuming. Therefore,
-it relies on the kernel to say whether the interrupt is disabled or not,
-using the irqd_irq_disabled() function. This was all working fine while
-the IRQ_NOAUTOEN flag was cleared.
-
-With the change introduced by Rob Herring in d17cab4451df1, the
-IRQ_NOAUTOEN flag is now set for all interrupts. irqd_irq_disabled()
-returns false for per-CPU interrupts, and therefore our per-CPU
-interrupts are no longer re-enabled after resume.
-
-This commit fixes that by using irqd_irq_disabled() only for global
-interrupts, and using the newly introduced irq_percpu_is_enabled() for
-per-CPU interrupts.
-
-Also, it fixes a related problems that per-CPU interrupts were only
-re-enabled on the boot CPU and not other CPUs. Until now this wasn't a
-problem since on this platform, only the local timers are using per-CPU
-interrupts and the local timers of secondary CPUs are turned off/on
-during CPU hotplug before suspend, after after resume. However, since
-Linux 4.4, we are also be using per-CPU interrupts for the network
-controller, so we need to properly restore the per-CPU interrupts on
-secondary CPUs as well.
-
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/irqchip/irq-armada-370-xp.c | 46 ++++++++++++++++++++++++++++++++-=
-----
- 1 file changed, 40 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-arma=
-da-370-xp.c
-index 8bcee65a0b8c..08cd669dc1e2 100644
---- a/drivers/irqchip/irq-armada-370-xp.c
-+++ b/drivers/irqchip/irq-armada-370-xp.c
-@@ -281,7 +281,6 @@ static int armada_370_xp_mpic_irq_map(struct irq_domain=
- *h,
- 		irq_set_percpu_devid(virq);
- 		irq_set_chip_and_handler(virq, &armada_370_xp_irq_chip,
- 					handle_percpu_devid_irq);
--
- 	} else {
- 		irq_set_chip_and_handler(virq, &armada_370_xp_irq_chip,
- 					handle_level_irq);
-@@ -345,16 +344,40 @@ static void armada_mpic_send_doorbell(const struct cp=
-umask *mask,
- 		ARMADA_370_XP_SW_TRIG_INT_OFFS);
- }
-=20
-+static void armada_xp_mpic_reenable_percpu(void)
-+{
-+	unsigned int irq;
-+
-+	/* Re-enable per-CPU interrupts that were enabled before suspend */
-+	for (irq =3D 0; irq < ARMADA_370_XP_MAX_PER_CPU_IRQS; irq++) {
-+		struct irq_data *data;
-+		int virq;
-+
-+		virq =3D irq_linear_revmap(armada_370_xp_mpic_domain, irq);
-+		if (virq =3D=3D 0)
-+			continue;
-+
-+		data =3D irq_get_irq_data(virq);
-+
-+		if (!irq_percpu_is_enabled(virq))
-+			continue;
-+
-+		armada_370_xp_irq_unmask(data);
-+	}
-+}
-+
- static int armada_xp_mpic_starting_cpu(unsigned int cpu)
- {
- 	armada_xp_mpic_perf_init();
- 	armada_xp_mpic_smp_cpu_init();
-+	armada_xp_mpic_reenable_percpu();
- 	return 0;
- }
-=20
- static int mpic_cascaded_starting_cpu(unsigned int cpu)
- {
- 	armada_xp_mpic_perf_init();
-+	armada_xp_mpic_reenable_percpu();
- 	enable_percpu_irq(parent_irq, IRQ_TYPE_NONE);
- 	return 0;
- }
-@@ -502,16 +525,27 @@ static void armada_370_xp_mpic_resume(void)
- 		if (virq =3D=3D 0)
- 			continue;
-=20
--		if (!is_percpu_irq(irq))
-+		data =3D irq_get_irq_data(virq);
-+
-+		if (!is_percpu_irq(irq)) {
-+			/* Non per-CPU interrupts */
- 			writel(irq, per_cpu_int_base +
- 			       ARMADA_370_XP_INT_CLEAR_MASK_OFFS);
--		else
-+			if (!irqd_irq_disabled(data))
-+				armada_370_xp_irq_unmask(data);
-+		} else {
-+			/* Per-CPU interrupts */
- 			writel(irq, main_int_base +
- 			       ARMADA_370_XP_INT_SET_ENABLE_OFFS);
-=20
--		data =3D irq_get_irq_data(virq);
--		if (!irqd_irq_disabled(data))
--			armada_370_xp_irq_unmask(data);
-+			/*
-+			 * Re-enable on the current CPU,
-+			 * armada_xp_mpic_reenable_percpu() will take
-+			 * care of secondary CPUs when they come up.
-+			 */
-+			if (irq_percpu_is_enabled(virq))
-+				armada_370_xp_irq_unmask(data);
-+		}
- 	}
-=20
- 	/* Reconfigure doorbells for IPIs and MSIs */
---=20
-2.15.1
+RnJvbTogS2FpIEhlbmcgRmVuZyA8a2FpLmhlbmcuZmVuZ0BjYW5vbmljYWwuY29tPg0KDQpbIFVw
+c3RyZWFtIGNvbW1pdCAxYjFmZmM1N2ExYjJlZGY1OGU4MDNlNDYzOTgwYjMyNjc2NWEyMzdmIF0N
+Cg0KRGVsbCBMYXRpdHVkZSAzMTYwIGRvZXMgbm90IGhhdmUga2V5Ym9hcmQgYmFja2xpZ2h0LCBi
+dXQgdGhlcmUgaXMgYQ0Kc3lzZnMgaW50ZXJmYWNlIGZvciBpdCwgd2hpY2ggZG9lcyBub3RoaW5n
+IGF0IGFsbC4NCg0KS0JEX0xFRF9PTl9UT0tFTiBpcyB0aGUgb25seSB0b2tlbiBjYW4gYmUgZm91
+bmQuIFNpbmNlIGl0IGRvZXNuJ3QgaGF2ZQ0KS0JEX0xFRF9PRkZfVE9LRU4gb3IgS0JEX0xFRF9B
+VVRPXypfVE9LRU4sIGl0IHNob3VsZCBiZSBzYWZlIHRvIGFzc3VtZQ0KYXQgbGVhc3QgdHdvIHRv
+a2VucyBzaG91bGQgYmUgcHJlc2VudCB0byBzdXBwb3J0IGtleWJvYXJkIGJhY2tsaWdodC4NCk5v
+dCBhbGwgbW9kZWxzIGhhdmUgT04gdG9rZW4gLSB0aGV5IG1heSBoYXZlIG11bHRpcGxlIEFVVE8g
+dG9rZW5zIGluc3RlYWQuDQoNCk1vZGVscyB3aGljaCBkbyBub3QgdXNlIFNNQklPUyB0b2tlbiB0
+byBjb250cm9sIGtleWJvYXJkIGJhY2tsaWdodCwgYWxzbw0KaGF2ZSB0aGlzIGlzc3VlLiBCcmln
+aHRuZXNzIGxldmVsIGlzIDAgb24gdGhlc2UgbW9kZWxzLiBWZXJpZmllZCBvbiBEZWxsDQpJbnNw
+aXJvbiAzNTY1Lg0KDQpSZXBvcnRzIGtleWJvYXJkIGJhY2tsaWdodCBpcyBzdXBwb3J0ZWQgb25s
+eSB3aGVuIGF0IGxlYXN0IHR3byBtb2RlcyBhcmUNCnByZXNlbnQuDQoNClNpZ25lZC1vZmYtYnk6
+IEthaS1IZW5nIEZlbmcgPGthaS5oZW5nLmZlbmdAY2Fub25pY2FsLmNvbT4NClJldmlld2VkLWJ5
+OiBQYWxpIFJvaMOhciA8cGFsaS5yb2hhckBnbWFpbC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBBbmR5
+IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVsLmNvbT4NClNpZ25lZC1v
+ZmYtYnk6IFNhc2hhIExldmluIDxhbGV4YW5kZXIubGV2aW5AbWljcm9zb2Z0LmNvbT4NCi0tLQ0K
+IGRyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwtbGFwdG9wLmMgfCA2ICsrKysrLQ0KIDEgZmlsZSBj
+aGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvcGxhdGZvcm0veDg2L2RlbGwtbGFwdG9wLmMgYi9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9k
+ZWxsLWxhcHRvcC5jDQppbmRleCAxNjdkNTA0MmE2MjkuLjE3NTIzNWZhNzViYyAxMDA2NDQNCi0t
+LSBhL2RyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwtbGFwdG9wLmMNCisrKyBiL2RyaXZlcnMvcGxh
+dGZvcm0veDg2L2RlbGwtbGFwdG9wLmMNCkBAIC0xNDg2LDcgKzE0ODYsMTEgQEAgc3RhdGljIHZv
+aWQga2JkX2luaXQodm9pZCkNCiAJcmV0ID0ga2JkX2luaXRfaW5mbygpOw0KIAlrYmRfaW5pdF90
+b2tlbnMoKTsNCiANCi0JaWYgKGtiZF90b2tlbl9iaXRzICE9IDAgfHwgcmV0ID09IDApDQorCS8q
+DQorCSAqIE9ubHkgc3VwcG9ydHMga2V5Ym9hcmQgYmFja2xpZ2h0IHdoZW4gaXQgaGFzIGF0IGxl
+YXN0IHR3byBtb2Rlcy4NCisJICovDQorCWlmICgocmV0ID09IDAgJiYgKGtiZF9pbmZvLmxldmVs
+cyAhPSAwIHx8IGtiZF9tb2RlX2xldmVsc19jb3VudCA+PSAyKSkNCisJICAgIHx8IGtiZF9nZXRf
+dmFsaWRfdG9rZW5fY291bnRzKCkgPj0gMikNCiAJCWtiZF9sZWRfcHJlc2VudCA9IHRydWU7DQog
+fQ0KIA0KLS0gDQoyLjE1LjENCg==
