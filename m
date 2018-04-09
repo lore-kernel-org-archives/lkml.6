@@ -1,53 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752826AbeDIOmm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 10:42:42 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:39114 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751794AbeDIOmZ (ORCPT
+        id S1753072AbeDIOno (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 10:43:44 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:38504 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753046AbeDIOnl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 10:42:25 -0400
-X-Google-Smtp-Source: AIpwx496Jk1eedmj3xPuRoEtyIz5h0FmCJleBo0SwpJHUESKyORK6RimdL4vAfAOt6l43DLtnzmrOw==
-Subject: Re: [PATCH] net: dccp: Replace GFP_ATOMIC with GFP_KERNEL in
- dccp_init
-To: Jia-Ju Bai <baijiaju1990@gmail.com>, gerrit@erg.abdn.ac.uk,
-        davem@davemloft.net
-Cc: dccp@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1523283004-25581-1-git-send-email-baijiaju1990@gmail.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <8216dee8-5e52-421e-026a-4c75d654be54@gmail.com>
-Date: Mon, 9 Apr 2018 07:42:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 9 Apr 2018 10:43:41 -0400
+X-Google-Smtp-Source: AIpwx48CY/pRkh8+VEaNkNg44ckzKiEiG5hBmEGDH2vZlqERbIcOwWcNcpjdN0O4+qwus7UVEVqnow/xvntirABomGQ=
 MIME-Version: 1.0
-In-Reply-To: <1523283004-25581-1-git-send-email-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180409143741.dzooqrzcgi2bnvd5@salvia>
+References: <20180409105322.2247296-1-arnd@arndb.de> <20180409143741.dzooqrzcgi2bnvd5@salvia>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 9 Apr 2018 16:43:40 +0200
+X-Google-Sender-Auth: Gek5hfsyr82KC6MAET9iw9YE3oU
+Message-ID: <CAK8P3a1GH5OSu62TBh46S0OdiXTJODsvV3To5=Jp2nL+fz1Puw@mail.gmail.com>
+Subject: Re: [PATCH] netfilter: fix CONFIG_NF_REJECT_IPV6=m link error
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 9, 2018 at 4:37 PM, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> Hi Arnd,
+>
+> On Mon, Apr 09, 2018 at 12:53:12PM +0200, Arnd Bergmann wrote:
+>> We get a new link error with CONFIG_NFT_REJECT_INET=y and CONFIG_NF_REJECT_IPV6=m
+>
+> I think we can update NFT_REJECT_INET so it depends on NFT_REJECT_IPV4
+> and NFT_REJECT_IPV6. This doesn't allow here CONFIG_NFT_REJECT_INET=y
+> and CONFIG_NF_REJECT_IPV6=m.
+>
+> I mean, just like we do with NFT_FIB_INET.
 
+That can only work if NFT_REJECT_INET can be made a 'tristate' symbol
+again, so that code gets built as a loadable module if
+CONFIG_NF_REJECT_IPV6=m.
 
-On 04/09/2018 07:10 AM, Jia-Ju Bai wrote:
-> dccp_init() is never called in atomic context.
-> This function is only set as a parameter of module_init().
-> 
-> Despite never getting called from atomic context,
-> dccp_init() calls __get_free_pages() with GFP_ATOMIC,
-> which waits busily for allocation.
+> BTW, I think this problem has been is not related to the recent patch,
+> but something older that kbuild robot has triggered more easily for
+> some reason?
 
-What do you mean by "waits busily" ?
+02c7b25e5f54 is the one that turned NF_TABLES_INET into a 'bool'
+symbol. NFT_REJECT depends on NF_TABLES_INET, so it used to
+restricted to a loadable module with IPV6=m, but can now be
+built-in, which causes that link error.
 
-GFP_ATOMIC does not sleep, does not wait.
-
-> GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-> to avoid busy waiting and improve the possibility of sucessful allocation.
-> 
-> This is found by a static analysis tool named DCNS written by myself.
-> And I also manually check it.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
+      Arnd
