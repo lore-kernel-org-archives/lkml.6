@@ -1,149 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751954AbeDILHH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 07:07:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45574 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751820AbeDILHF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 07:07:05 -0400
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-To: acme@redhat.com
-Cc: mhiramat@kernel.org, kstewart@linuxfoundation.org, tglx@linutronix.de,
-        pombredanne@nexb.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, uneedsihyeon@gmail.com, kjlx@templeofstupid.com,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH 3/3] perf/buildid-cache: Support --purge-all option
-Date: Mon,  9 Apr 2018 16:36:33 +0530
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180409110633.20767-1-ravi.bangoria@linux.vnet.ibm.com>
-References: <20180409110633.20767-1-ravi.bangoria@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18040911-0040-0000-0000-0000044B4FCA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040911-0041-0000-0000-000020EF7379
-Message-Id: <20180409110633.20767-4-ravi.bangoria@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804090121
+        id S1751704AbeDILKt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 07:10:49 -0400
+Received: from smtp43.i.mail.ru ([94.100.177.103]:58288 "EHLO smtp43.i.mail.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751270AbeDILKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 07:10:48 -0400
+Subject: Re: [PATCH v3 3/6] spi: sun6i: restrict transfer length in PIO-mode
+To: Mark Brown <broonie@kernel.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+References: <20180404065048.n76r3ytuznd6fqsl@flea>
+ <a6044902-8977-3ce1-d7d5-c6797341a5d0@orpaltech.com>
+ <20180405091913.ky4dnmszoobn2xry@flea>
+ <ee4adb1e-caf6-32f6-33d6-d8dd94d232cf@orpaltech.com>
+ <20180405131735.GB12349@sirena.org.uk>
+ <8159c3a5-af74-9f13-aedb-7ecc708bdff6@orpaltech.com>
+ <20180406073441.xesojvzc3deljhoy@flea>
+ <204e97cb-2f39-00f0-fd4e-3aa9a51f7cac@orpaltech.com>
+ <20180409092730.2moyhl5aaktjwbyn@flea>
+ <94a394bd-89bf-9334-c500-4cbadf4c1044@orpaltech.com>
+ <20180409105001.GC11532@sirena.org.uk>
+From: Sergey Suloev <ssuloev@orpaltech.com>
+Message-ID: <67c2006b-17f2-2459-e3c9-e91e3c694d8c@orpaltech.com>
+Date: Mon, 9 Apr 2018 14:10:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180409105001.GC11532@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Authentication-Results: smtp43.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
+X-7FA49CB5: 0D63561A33F958A5DA60E13DFBE702210E2B8329FB0861BC3E017661983E1680725E5C173C3A84C3A1C30C8AFC676C8B9E7D8EADAC458C63843AE0F20224B8D0C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
+X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917910E9D38B7A2C135A0E49671BDC5AC63069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
+X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-User can remove files from cache using --remove/--purge options
-but both needs list of files as an argument. It's not convenient
-when you want to flush out entire cache. Add an option to purge
-all files from cache.
+On 04/09/2018 01:50 PM, Mark Brown wrote:
+> On Mon, Apr 09, 2018 at 01:26:23PM +0300, Sergey Suloev wrote:
+>> On 04/09/2018 12:27 PM, Maxime Ripard wrote:
+>>> On Fri, Apr 06, 2018 at 06:48:23PM +0300, Sergey Suloev wrote:
+>>>> On 04/06/2018 10:34 AM, Maxime Ripard wrote:
+>>>> According to what you said the driver must implement
+>>>> "transfer_one_message" instead of "transfer_one"
+>>> I'm not sure what makes you think that I said that.
+>> Because current implementation tries to send more than FIFO-depth of data in
+>> a single call to "transfer_one" which is wrong.
+> No, that's absolutely not the case.  All any of these functions has to
+> do is transfer whatever they were asked to, how they do it is not at all
+> important to the framework.
 
-Ex,
-  # perf buildid-cache -l
-    /tmp/a.out (8a86ef73e44067bca52cc3f6cd3e5446c783391c)
-    /tmp/a.out.1 (ebe71fdcf4b366518cc154d570a33cd461a51c36)
-  # perf buildid-cache -P -v
-    Removing /tmp/a.out (8a86ef73e44067bca52cc3f6cd3e5446c783391c): Ok
-    Removing /tmp/a.out.1 (ebe71fdcf4b366518cc154d570a33cd461a51c36): Ok
-    Purged all: Ok
+I think you don't fully understand the issue. Let's talk about sun4i 
+and  sun6i SPI  drivers separately.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
----
- tools/perf/Documentation/perf-buildid-cache.txt |  3 +++
- tools/perf/builtin-buildid-cache.c              | 36 ++++++++++++++++++++++++-
- 2 files changed, 38 insertions(+), 1 deletion(-)
+sun4i
 
-diff --git a/tools/perf/Documentation/perf-buildid-cache.txt b/tools/perf/Documentation/perf-buildid-cache.txt
-index 3f285ba6e1f9..f6de0952ff3c 100644
---- a/tools/perf/Documentation/perf-buildid-cache.txt
-+++ b/tools/perf/Documentation/perf-buildid-cache.txt
-@@ -48,6 +48,9 @@ OPTIONS
- --purge=::
-         Purge all cached binaries including older caches which have specified
- 	path from the cache.
-+-P::
-+--purge-all::
-+	Purge all cached binaries. This will flush out entire cache.
- -M::
- --missing=::
- 	List missing build ids in the cache for the specified file.
-diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
-index 50db05bd0cc6..3b4373cabd49 100644
---- a/tools/perf/builtin-buildid-cache.c
-+++ b/tools/perf/builtin-buildid-cache.c
-@@ -240,6 +240,34 @@ static int build_id_cache__purge_path(const char *pathname, struct nsinfo *nsi)
- 	return err;
- }
- 
-+static int build_id_cache__purge_all(void)
-+{
-+	struct strlist *list;
-+	struct str_node *pos;
-+	int err;
-+	char *buf;
-+
-+	list = build_id_cache__list_all(false);
-+	if (!list) {
-+		pr_debug("Failed to get buildids: -%d\n", errno);
-+		return -EINVAL;
-+	}
-+
-+	strlist__for_each_entry(pos, list) {
-+		buf = build_id_cache__origname(pos->s);
-+		err = build_id_cache__remove_s(pos->s);
-+		pr_debug("Removing %s (%s): %s\n", buf, pos->s,
-+			 err ? "FAIL" : "Ok");
-+		free(buf);
-+		if (err)
-+			break;
-+	}
-+	strlist__delete(list);
-+
-+	pr_debug("Purged all: %s\n", err ? "FAIL" : "Ok");
-+	return err;
-+}
-+
- static bool dso__missing_buildid_cache(struct dso *dso, int parm __maybe_unused)
- {
- 	char filename[PATH_MAX];
-@@ -326,6 +354,7 @@ int cmd_buildid_cache(int argc, const char **argv)
- 	bool force = false;
- 	bool list_files = false;
- 	bool opts_flag = false;
-+	bool purge_all = false;
- 	char const *add_name_list_str = NULL,
- 		   *remove_name_list_str = NULL,
- 		   *purge_name_list_str = NULL,
-@@ -349,6 +378,7 @@ int cmd_buildid_cache(int argc, const char **argv)
- 		    "file(s) to remove"),
- 	OPT_STRING('p', "purge", &purge_name_list_str, "file list",
- 		    "file(s) to remove (remove old caches too)"),
-+	OPT_BOOLEAN('P', "purge-all", &purge_all, "purge all cached files"),
- 	OPT_BOOLEAN('l', "list", &list_files, "list all cached files"),
- 	OPT_STRING('M', "missing", &missing_filename, "file",
- 		   "to find missing build ids in the cache"),
-@@ -369,7 +399,8 @@ int cmd_buildid_cache(int argc, const char **argv)
- 
- 	opts_flag = add_name_list_str || kcore_filename ||
- 		remove_name_list_str || purge_name_list_str ||
--		missing_filename || update_name_list_str;
-+		missing_filename || update_name_list_str ||
-+		purge_all;
- 
- 	if (argc || !(list_files || opts_flag))
- 		usage_with_options(buildid_cache_usage, buildid_cache_options);
-@@ -455,6 +486,9 @@ int cmd_buildid_cache(int argc, const char **argv)
- 		}
- 	}
- 
-+	if (purge_all)
-+		ret = build_id_cache__purge_all();
-+
- 	if (missing_filename)
- 		ret = build_id_cache__fprintf_missing(session, stdout);
- 
--- 
-2.14.3
+1)it is correctly declaring max_transfer_size=FIFO depth for PIO mode  
+but transfer_one() function doesn't follow the declaration allowing PIO 
+transfers longer than FIFO depth  by just refilling FIFO using 3/4 FIFO 
+empty interrupt. I can definitely state here that long transfers WON'T 
+WORK on real hardware. I tested it and that's why I can say that. But as 
+soon as sun4i SPI driver  is correctly declaring max_transfer_size then 
+"smart" clients will work well by limiting a single transfer size to 
+FIFO depth. I tested it with real hardware, again.
+
+
+sun6i
+
+2) it allows PIO transfers of any length by declaring max_transfer_size 
+to a huge number, i.e. you can ONLY make this driver work in PIO mode  
+by limiting a single transfer size to FIFO depth (64 or 128 bytes) on 
+client side  and ignore max_transfer_size  exposed by the driver. Again, 
+tested with real hardware.
+
+All above doesn't work for DMA mode as there is no such limitation.
+
+I can't clearly explain what is happening in the hardware in PIO mode 
+but it seems that TC interrupt doesn't arrive in time when refilling 
+FIFO multiple times takes place and every long transfer will end up with 
+a timeout error.
