@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3757758-1523238027-2-12209067854613764183
+X-Cyrus-Session-Id: sloti22d1t05-3757758-1523238011-2-689534636224287796
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523238027; b=YF5dT92xztKDg7jyVj/6ludD+TdO5GqtAy9FRNX3MD1fi4onM9
-    KV2b60Ftn5fFrbvG3CT+xBhFkWPPoIyHlAdO/wrUzH4GQyOdBbJ5eAIoH+I4Mge7
-    Em0BUeif4L42KAMDv1NibIQ9NcS6cBjpH+EAJDgy21bJ5KSWsup/TkTRxghDFeRX
-    dVjFCaBUi6BT0+xvBPdcIAjqSTaaczeQVCTiopnIvAwoC0ewhXWTBYrbHIPqy7yC
-    m/2G5RgY0TGH6xot4sAu/xtC80SAix37N2G5qrDLeVU3Go1BH2HBSswiDoW3RC1u
-    daBMsuuaXK8GPO2h4QP0n7YKQBUbMy1cSJAQ==
+    1523238011; b=rlpgKoD8yo2Z6VvPI6XwOSIQRu4pB9pEqVYj2y0XXeBI4y+QYo
+    7L33RqZbcjWRZm4ifvvCFmVqeKOnb4t+Z/CkUs+gHFK2d2py4f+uYph4QCx3GI4E
+    iAW3J5JkDJpHHPLG9L4s2CdEw4tzvJsLnIG4ughv3u+JIProyRylc+5UH8n8058e
+    uy37uarIrIjfTg5c6ZqMYjIx72wfP/o8ZAEvw1kVYOazI2LxUcupJRdQaTbZrlwf
+    J/GtToJmXudc1kSi9+s/AZd07NvkDrOPKUTv9nzlJtqU/sLscEIOnTmOGMLJDW0v
+    stSAI5fYHzFqU7007CAvt5oYVGMvvF+TZo8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523238027; bh=eJCr+ENV2x
-    tSuikKtG94QoJhvimjb4qTNrW9jPVmO1w=; b=EKKY16sO4o2j/Yg6tHGrQD3wWi
-    6kr77GTt8O16j421nbTu6vsUCzwldoChzW0QFlXPfBMTo0hISLIR0r4/fHaprF6m
-    /l3N1S/FTBMWfSHhm+s7ISN+QnGs7m/aExb6e3+1g/Zna3uwpstkmafR1qxn1QSY
-    syDNI5wbnpeIBmnMHGpY2PYw8q74AIbyqKh7vV8RULDgstRBiuqM89SEvNFmtmyz
-    vy6/WfOkBQKGEV9OR1kNbDD8e1WrHxteDRc+PojHdaFa7jc+DwgkHef1dN/ziIxU
-    idSx0BIUEcF0rBRBNyl+IRJumhwztGuS6RvUsF4jVE6FgCqLDypnKV8hOpTA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SgyM/2jK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523238011; bh=fO5hYRPcF3
+    Gc7qg+DmbRLNDSUBftWJoCoPGykGQY4MY=; b=k7b+K6av7avbpKe7wZT5wjizXf
+    Tv3icbcZ2A6jJWkofuff7C0YNx06NEnVglbsS6AR8e8UegsgFs/24dJQrG2nkrqx
+    MQikE881HwLGBcjVQDWskvgDzazBx4zKD2DnjSs0agyv4UmKnWnOE9XbWZ0V2dBX
+    Hkbq+LphXc5RwVj4u//yu68/xCeS3ux2PPp/0FI26920gI7MH0AC/J2sVUstmiJZ
+    gBnUPOMcHnHTbWY/jkQ707qbaXUfGu1CKh1TGwuIbMcOWc4RhJ/edeaQ4X/9Qfh+
+    uXvPWMtd+ATn0LjwJdv5mwelt/OJ+UI1kl6v9j+HTBxrKUxrkugN5FheLDpQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fFxKXZ0n x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SgyM/2jK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fFxKXZ0n x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,23 +51,23 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIESjVFtYjOxeKI4mfSG7lOx2UUBA2i0ldxDwTQYvMMZMbB8oilYNhbNSg2/rQ4nRsxAoQkzOtsrXWFBsj64H+fW8kfT7Cip3VV15QBSKeSpNKhswr49
-    huEVWqMpQKAxVfS6Trj0J2FsDIeF3IoDhuctJ8L6n73PcHazOyLIzMIrDq8YJ4ZpE17wrgFAyJMPqwnfqG7gHoyEz4yzvbUJNNpyhuuGS6IOrmlYsK6eT19X
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDjMzmncnhvvQ88SBJWsmg9jc4zEHm3ypKE9YHWmN1WVd4bKs38wezZImq1kdo0HD0w9SnU/9rYFJOFKz8SeK/1QZE39Yh4wJSEwBjw4LHIaojHdxSVj
+    tsvf+el7Tgp4PaABEnubu3XpL6L9gvE1HnL+9E36xWclR6QfP2isYY5cOSWxZr/Gb+ky07vGMSopLkN4XqTaMTR7GxZ/FNUPOKg7yIwbpPedcTwU0QGk16PC
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
     a=Lf-vpJhqX20A:10 a=r_1tXGB3AAAA:8 a=WPyIoOwQAAAA:8 a=yMhMjlubAAAA:8
-    a=72xZbA8UcqOln83T7vIA:9 a=4zZynRfxn_piIYhw:21 a=IFRIY7OpxCe8iowW:21
-    a=wPNLvfGTeEIA:10 a=t8nPyN_e6usw4ciXM-Pk:22 a=S-HzPIwwDS8t1QcwSuWs:22
+    a=m57dygxWIdCukqG92xcA:9 a=wPNLvfGTeEIA:10 a=t8nPyN_e6usw4ciXM-Pk:22
+    a=S-HzPIwwDS8t1QcwSuWs:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756584AbeDIBkM (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 21:40:12 -0400
-Received: from mail-by2nam01on0123.outbound.protection.outlook.com ([104.47.34.123]:51296
+        id S1754240AbeDIBjm (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 21:39:42 -0400
+Received: from mail-by2nam01on0110.outbound.protection.outlook.com ([104.47.34.110]:2593
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932540AbeDIAfA (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S932547AbeDIAfA (ORCPT <rfc822;stable@vger.kernel.org>);
         Sun, 8 Apr 2018 20:35:00 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
@@ -76,13 +76,13 @@ CC: Marcin Nowakowski <marcin.nowakowski@imgtec.com>,
         "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
         Ralf Baechle <ralf@linux-mips.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 004/162] MIPS: mm: fixed mappings: correct
- initialisation
-Thread-Topic: [PATCH AUTOSEL for 4.4 004/162] MIPS: mm: fixed mappings:
- correct initialisation
-Thread-Index: AQHTz5mUIncaie/cnE+GboGi7TBUeA==
+Subject: [PATCH AUTOSEL for 4.4 005/162] MIPS: kprobes: flush_insn_slot should
+ flush only if probe initialised
+Thread-Topic: [PATCH AUTOSEL for 4.4 005/162] MIPS: kprobes: flush_insn_slot
+ should flush only if probe initialised
+Thread-Index: AQHTz5mVq/s529bU5Eev+r5672+hQg==
 Date: Mon, 9 Apr 2018 00:27:46 +0000
-Message-ID: <20180409002738.163941-4-alexander.levin@microsoft.com>
+Message-ID: <20180409002738.163941-5-alexander.levin@microsoft.com>
 References: <20180409002738.163941-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -91,27 +91,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0806;7:Yx9z+JCxgiwzTLG5di5YQGG6vS1dS7/uGHbgySHU7Gu1aPtxpNKFMMz0S8/Nwgd5g+HB1moSJyt002l0n3C2lnwKs/zjCq7SiGGShGML66HapdKR27qRTZ5oVOP5zVVn8d8DeglUpXWuGh9FYlSJy/5xY0RJTSjz8OmWCDLoNo/FnUW9uhJOJ76Dpo1Ma7P2HYlu8k0+i6EjWJ9bIRsyQF4ObSg1lrFf+wg1I5f1le4jDeueuK/G8cs2WvDICDfc;20:BHH3ikTQiiW6EcXw5PL1Vg/YvIgo6EgSDCt5xggJlQxXf1YHPm8pGQN8reHVXph3/3mpCIHEW6lSK0Nk23+f/I3c3hsunUY3xJaqw6YpxIu8GDyiDXkljNbGJn33xDCRHOdFOkK1P4XIXrDx5924Ntav2KeiEtYar4U+U79d3yI=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0806;7:SDvTOsWQwwHiA51LazWc/hKpi66oKnJDU81S4nMxRfYXBraQNKdhO39NOw6P8iz8VpHMx0dok5Gl7BW1sqeKFxfPWknooD9hYosOVC6gJORqsu+nolo1KDBkQZiaFfZvO6p1pWbq74FIONpKcAENZ4KKXvb42BlNodK166hjeVM2PTogVyk1NfVCybAvpi9hATCE9VeBaWtzNgzNKSRgC8bG3/I+MClmszOJYgDe7if2AMDAUBhBfj9cR3ynrxQv;20:nXBkO5k6yitRUj3Y4rj2BzCPTjKAdnsC0LRhG+B2SKVYzEd+UBjmoRVkCfU4FFiMKE9u+o3mO/Nwec/+6JXbI1i4tPG9D+xg2b7hHjhlbeMwA3uyxA8WSuXDgnb2m823YGXG92CDUfTB1w6kmYWaqRTHNltpaEP3Sx7Y0oZtMSE=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 1f4af986-9792-4d4e-50a4-08d59db1b521
+X-MS-Office365-Filtering-Correlation-Id: 9d674a07-a22d-42f4-d2b1-08d59db1b5c5
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0806;
 x-ms-traffictypediagnostic: DM5PR2101MB0806:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0806E0071199C91EC44843A1FBBF0@DM5PR2101MB0806.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB0806D07A4E2F24FC9AB1F3BCFBBF0@DM5PR2101MB0806.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0806;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0806;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(376002)(396003)(366004)(39380400002)(199004)(189003)(2906002)(25786009)(2501003)(10290500003)(476003)(11346002)(446003)(97736004)(5250100002)(68736007)(2616005)(102836004)(6506007)(3846002)(3660700001)(486006)(3280700002)(305945005)(6666003)(99286004)(5660300001)(76176011)(1076002)(186003)(26005)(7736002)(6116002)(81156014)(81166006)(86612001)(4326008)(105586002)(10090500001)(2900100001)(54906003)(22452003)(316002)(36756003)(110136005)(107886003)(8676002)(6436002)(478600001)(53936002)(66066001)(6486002)(6512007)(6306002)(86362001)(966005)(14454004)(72206003)(8936002)(106356001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0806;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: pTDUWnGGRdP2fzi1cvNimZ8/+fYhQiGTQ5BP0VRDRe5RP3hlD0K7utqme6r0rxh55RVNIPqEr106OOItHPwX7dlmQNV4YYGrcIq4qeEB2PBu/SA4SpmFM35tQMWnC3XyRoQnU4aTTLLQHcdCkb040Qk0TINzDq0gPEQyGG9hRQUex+0gaSPT25IzMRNVY+uBALTkvBLnq/7n79c79EGZJLkYy74moM5YF/SVKXiZ23rMAde281gzZItDk45FRt2IQ+DN9dAF/+yqcs7JIgSjMXUfWThl5cvKTeZyBBnobx93eQOlqRqwqmIbMSf9NVsAfxNGbgRihiFAozeBzMpXGiFbPAjf+pkhs9j2Nmvl6TaUUIwtTnvnm46H6FzsOme8BTO3883VdYZVZy/MnRR6iddYFssjh9N9Ul0BqXENy1U=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(376002)(396003)(366004)(39380400002)(199004)(189003)(2906002)(25786009)(2501003)(10290500003)(476003)(11346002)(446003)(97736004)(5250100002)(68736007)(2616005)(102836004)(6506007)(59450400001)(3846002)(3660700001)(486006)(3280700002)(305945005)(6666003)(99286004)(5660300001)(76176011)(1076002)(186003)(26005)(7736002)(6116002)(81156014)(81166006)(86612001)(4326008)(105586002)(10090500001)(2900100001)(54906003)(22452003)(316002)(36756003)(110136005)(107886003)(8676002)(6436002)(478600001)(53936002)(66066001)(6486002)(6512007)(6306002)(86362001)(966005)(14454004)(72206003)(8936002)(106356001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0806;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: bWLRexXteMuhyW55zB+mExA2NTZngTSm+9kYudwjAkNX6Ik9MugOuj0LCcDDTPQiEpNQasLHX+rvU6UZWdo8bm6UAuHTvReh/FciAmwYuob7u0A2mezKdH9Ri9mvOb08Qd3mT/X/3g7Y7yMjVnXLRZpi4afJOJ3E/iGrbrRDgcKZSB5MRkTD7UvI3AHpeZRoDwHcte2V0QYajmLfCsi+dXxA4Yt9N0GTVUg2r+aye7NMcohHijQXFGZ/LmbwimKeeTgEbZzbEHH808vf/QbPJ5xcJpSM6dFdMuiO+PPqFF6dxP5Migrzy37SAHh2hEyNLUyibKyzt3WJ1gfeYFg0LWnIX6N/UPEpV1Eq/WbMxKSJ76D0n6puDPaGBk2pPIe8QswcPnMgj613nmJJb3V+3n8npVQ9NtehhjYccJQk+xk=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f4af986-9792-4d4e-50a4-08d59db1b521
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:27:46.0671
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d674a07-a22d-42f4-d2b1-08d59db1b5c5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:27:46.7703
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -124,48 +124,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
 
-[ Upstream commit 71eb989ab5a110df8bcbb9609bacde73feacbedd ]
+[ Upstream commit 698b851073ddf5a894910d63ca04605e0473414e ]
 
-fixrange_init operates at PMD-granularity and expects the addresses to
-be PMD-size aligned, but currently that might not be the case for
-PKMAP_BASE unless it is defined properly, so ensure a correct alignment
-is used before passing the address to fixrange_init.
+When ftrace is used with kprobes, it is possible for a kprobe to contain
+an invalid location (ie. only initialised to 0 and not to a specific
+location in the code). Trying to perform a cache flush on such location
+leads to a crash r4k_flush_icache_range().
 
-fixed mappings: only align the start address that is passed to
-fixrange_init rather than the value before adding the size, as we may
-end up with uninitialised upper part of the range.
-
+Fixes: c1bf207d6ee1 ("MIPS: kprobe: Add support.")
 Signed-off-by: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
 Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/15948/
+Patchwork: https://patchwork.linux-mips.org/patch/16296/
 Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/mips/mm/pgtable-32.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/mips/include/asm/kprobes.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/mm/pgtable-32.c b/arch/mips/mm/pgtable-32.c
-index adc6911ba748..b19a3c506b1e 100644
---- a/arch/mips/mm/pgtable-32.c
-+++ b/arch/mips/mm/pgtable-32.c
-@@ -51,15 +51,15 @@ void __init pagetable_init(void)
- 	/*
- 	 * Fixed mappings:
- 	 */
--	vaddr =3D __fix_to_virt(__end_of_fixed_addresses - 1) & PMD_MASK;
--	fixrange_init(vaddr, vaddr + FIXADDR_SIZE, pgd_base);
-+	vaddr =3D __fix_to_virt(__end_of_fixed_addresses - 1);
-+	fixrange_init(vaddr & PMD_MASK, vaddr + FIXADDR_SIZE, pgd_base);
+diff --git a/arch/mips/include/asm/kprobes.h b/arch/mips/include/asm/kprobe=
+s.h
+index daba1f9a4f79..174aedce3167 100644
+--- a/arch/mips/include/asm/kprobes.h
++++ b/arch/mips/include/asm/kprobes.h
+@@ -40,7 +40,8 @@ typedef union mips_instruction kprobe_opcode_t;
 =20
- #ifdef CONFIG_HIGHMEM
- 	/*
- 	 * Permanent kmaps:
- 	 */
- 	vaddr =3D PKMAP_BASE;
--	fixrange_init(vaddr, vaddr + PAGE_SIZE*LAST_PKMAP, pgd_base);
-+	fixrange_init(vaddr & PMD_MASK, vaddr + PAGE_SIZE*LAST_PKMAP, pgd_base);
-=20
- 	pgd =3D swapper_pg_dir + __pgd_offset(vaddr);
- 	pud =3D pud_offset(pgd, vaddr);
+ #define flush_insn_slot(p)						\
+ do {									\
+-	flush_icache_range((unsigned long)p->addr,			\
++	if (p->addr)							\
++		flush_icache_range((unsigned long)p->addr,		\
+ 			   (unsigned long)p->addr +			\
+ 			   (MAX_INSN_SIZE * sizeof(kprobe_opcode_t)));	\
+ } while (0)
 --=20
 2.15.1
