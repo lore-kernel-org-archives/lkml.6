@@ -1,109 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeDILLb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 07:11:31 -0400
-Received: from foss.arm.com ([217.140.101.70]:54882 "EHLO foss.arm.com"
+        id S1752239AbeDILN2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 07:13:28 -0400
+Received: from mga06.intel.com ([134.134.136.31]:27590 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751702AbeDILL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 07:11:29 -0400
-Subject: Re: [RFC v2 2/2] base: dma-mapping: Postpone page_to_pfn() on mmap()
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, ysato@users.sourceforge.jp,
-        dalias@libc.org, laurent.pinchart@ideasonboard.com,
-        geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-sh@vger.kernel.org
-References: <1510679286-6988-1-git-send-email-jacopo+renesas@jmondi.org>
- <1510679286-6988-3-git-send-email-jacopo+renesas@jmondi.org>
- <ea4f2d82-6a27-a7c1-091f-6230cfd988a3@arm.com> <20180409072547.GU20945@w540>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <7da3f31e-e4ad-7f1a-e66c-0d3e0fb8b27d@arm.com>
-Date: Mon, 9 Apr 2018 12:11:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180409072547.GU20945@w540>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1751609AbeDILN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 07:13:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,427,1517904000";
+   d="scan'208";a="45365290"
+Message-ID: <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Mon, 09 Apr 2018 14:13:20 +0300
+In-Reply-To: <20180407161236.22969-1-tomas.winkler@intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.0-4 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
-
-On 09/04/18 08:25, jacopo mondi wrote:
-> Hi Robin, Laurent,
->      a long time passed, sorry about this.
+On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> In crb_map_io() function, __crb_request_locality() is called prior
+> to crb_cmd_ready(), but if one of the consecutive function fails
+> the flow bails out instead of trying to relinquish locality.
+> This patch adds goto jump to __crb_relinquish_locality() on the error path.
 > 
-> On Wed, Nov 15, 2017 at 01:38:23PM +0000, Robin Murphy wrote:
->> On 14/11/17 17:08, Jacopo Mondi wrote:
->>> On SH4 architecture, with SPARSEMEM memory model, translating page to
->>> pfn hangs the CPU. Post-pone translation to pfn after
->>> dma_mmap_from_dev_coherent() function call as it succeeds and make page
->>> translation not necessary.
->>>
->>> This patch was suggested by Laurent Pinchart and he's working to submit
->>> a proper fix mainline. Not sending for inclusion at the moment.
->>
->> Y'know, I think this patch does have some merit by itself - until we know
->> that cpu_addr *doesn't* represent some device-private memory which is not
->> guaranteed to be backed by a struct page, calling virt_to_page() on it is
->> arguably semantically incorrect, even if it might happen to be benign in
->> most cases.
+> Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
+> locality)
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+>  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> I still need to carry this patch in my trees to have a working dma memory mapping
-> on SH4 platforms. My understanding from your comment is that there may
-> be a way forward for this patch, do you still think the same? Have you
-> got any suggestion on how to improve this eventually for inclusion?
+> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> index 7f78482cd157..34fbc6cb097b 100644
+> --- a/drivers/char/tpm/tpm_crb.c
+> +++ b/drivers/char/tpm/tpm_crb.c
+> @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device, struct
+> crb_priv *priv,
+>  
+>  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+>  				   sizeof(struct crb_regs_tail));
+> -	if (IS_ERR(priv->regs_t))
+> -		return PTR_ERR(priv->regs_t);
+> +	if (IS_ERR(priv->regs_t)) {
+> +		ret = PTR_ERR(priv->regs_t);
+> +		goto out_relinquish_locality;
+> +	}
+>  
+>  	/*
+>  	 * PTT HW bug w/a: wake up the device to access
+> @@ -520,7 +522,7 @@ static int crb_map_io(struct acpi_device *device, struct
+> crb_priv *priv,
+>  	 */
+>  	ret = crb_cmd_ready(dev, priv);
+>  	if (ret)
+> -		return ret;
+> +		goto out_relinquish_locality;
+>  
+>  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+>  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device, struct
+> crb_priv *priv,
+>  
+>  	crb_go_idle(dev, priv);
+>  
+> +out_relinquish_locality:
+> +
+>  	__crb_relinquish_locality(dev, priv, 0);
+>  
+>  	return ret;
 
-As before, the change itself does seem reasonable; it might be worth 
-rewording the commit message in more general terms rather than making it 
-sound like an SH-specific workaround (which I really don't think it is), 
-but otherwise I'd say just repost it as a non-RFC patch.
+Thanks, please just call it before returning in the error path.
 
-Robin.
-
-> 
-> Thanks
->     j
-> 
->>
->> Robin.
->>
->>> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>> ---
->>>   drivers/base/dma-mapping.c | 3 ++-
->>>   1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
->>> index e584edd..73d64d3 100644
->>> --- a/drivers/base/dma-mapping.c
->>> +++ b/drivers/base/dma-mapping.c
->>> @@ -227,8 +227,8 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
->>>   #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
->>>   	unsigned long user_count = vma_pages(vma);
->>>   	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
->>> -	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
->>>   	unsigned long off = vma->vm_pgoff;
->>> +	unsigned long pfn;
->>>
->>>   	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
->>>
->>> @@ -236,6 +236,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
->>>   		return ret;
->>>
->>>   	if (off < count && user_count <= (count - off)) {
->>> +		pfn = page_to_pfn(virt_to_page(cpu_addr));
->>>   		ret = remap_pfn_range(vma, vma->vm_start,
->>>   				      pfn + off,
->>>   				      user_count << PAGE_SHIFT,
->>> --
->>> 2.7.4
->>>
->>> _______________________________________________
->>> iommu mailing list
->>> iommu@lists.linux-foundation.org
->>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
->>>
+/Jarkko
