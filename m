@@ -1,94 +1,128 @@
-Return-Path: <minchan.kim@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523341337; cv=none;
-        d=google.com; s=arc-20160816;
-        b=piYjO919CSgxJZHUkRLqtSEaIH9NHqSCX+YAqM3aoPwgLRDi7/R6JyznrlgQpHESHx
-         gL5mZzXCRu39OyT9VWZIbZ05DKThpH34nwIAWu2iq9DID1duvZT6SVOr/A4fsdOB5ewo
-         /b1XJbXnAbO2JHJ52VmJtY7IXpHDXheARM4NYcqUpsPGYUMZrTNit/EwCl5dRJn8CMX3
-         r9XEJn58M1Ubi+TWsetvt2+wvNqmOVfP2g8XyVfxwP8Q9NLefjv9sZrwwOS5l1hiQOdY
-         VuRsIikB/n48F9GZyVe2NwWzL7SzGiiNxsYF/Cf6QdwOSDgZc6noVJFtRlPEpxOFahNz
-         8uPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:sender:dkim-signature:arc-authentication-results;
-        bh=0kCfHoVVqJJTp5LFvZRbZ7+RzIoz5GpRGRK5aL3U4Ik=;
-        b=cBCya9aUwgquGLRkslTCs0pUEXt2mplq0lDTJFWJskjghau6rqjPTrxHkVBAKS5GaG
-         WAGsE2YYT/eBbr8P8iYwQ1/GEudyVOBH+ok9BhZ+WQ/20oHHSGnxFg28WJf45FWq/PdF
-         pbX+cwmTZR4/uT8t9iOH7zhLcAT5tfFzvATVeKfhOFeZRbVIjg7DirUdHgX602eqKzG3
-         fMmMMRTTGCV1SpD+KmnavYLurLrumqjmxnp3y/Q8I1aoxyPcH7whQhgR3am8zWocGApi
-         NZ/f1ixke/rqYKUybrOGkhK0WP/9cM40NwETb6wKL83B0MrA0iF/HPZvAjPIkWH/72hc
-         WofQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RH7R7p3n;
-       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RH7R7p3n;
-       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com
-X-Google-Smtp-Source: AIpwx4++WRnxQofZjw/tmEgLiXcSyc/G7M+HtuJFKc3mHK/Yps1gqtsLwHfkSDIIT6Z1jJ+Yu1KUPw==
-Sender: Minchan Kim <minchan.kim@gmail.com>
-Date: Tue, 10 Apr 2018 15:22:11 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date: Mon, 9 Apr 2018 10:03:45 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Minchan Kim <minchan@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
 	LKML <linux-kernel@vger.kernel.org>,
-	Greg KH <gregkh@linuxfoundation.org>
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 Subject: Re: [PATCH v3 4/4] zram: introduce zram memory tracking
-Message-ID: <20180410062211.GB38000@rodete-desktop-imager.corp.google.com>
+Message-ID: <20180409080345.GC18095@kroah.com>
 References: <20180409055435.135695-1-minchan@kernel.org>
  <20180409055435.135695-5-minchan@kernel.org>
- <20180410000305.GA6942@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180410000305.GA6942@jagdpanzerIV>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597246846962715384?=
-X-GMAIL-MSGID: =?utf-8?q?1597339166389189201?=
+In-Reply-To: <20180409055435.135695-5-minchan@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 10, 2018 at 09:03:05AM +0900, Sergey Senozhatsky wrote:
-> Hi Minchan,
+On Mon, Apr 09, 2018 at 02:54:35PM +0900, Minchan Kim wrote:
+> zRam as swap is useful for small memory device. However, swap means
+> those pages on zram are mostly cold pages due to VM's LRU algorithm.
+> Especially, once init data for application are touched for launching,
+> they tend to be not accessed any more and finally swapped out.
+> zRAM can store such cold pages as compressed form but it's pointless
+> to keep in memory. Better idea is app developers free them directly
+> rather than remaining them on heap.
 > 
-> On (04/09/18 14:54), Minchan Kim wrote:
-> > +static long long ns2usecs(u64 nsec)
-> > +{
-> > +	nsec += 500;
-> > +	do_div(nsec, 1000);
-> > +	return nsec;
-> > +}
+> This patch tell us last access time of each block of zram via
+> "cat /sys/kernel/debug/zram/zram0/block_state".
 > 
-> Sorry, I don't quite understand "nsec += 500".
+> The output is as follows,
+>       300    75.033841 .wh
+>       301    63.806904 s..
+>       302    63.806919 ..h
+> 
+> First column is zram's block index and 3rh one represents symbol
+> (s: same page w: written page to backing store h: huge page) of the
+> block state. Second column represents usec time unit of the block
+> was last accessed. So above example means the 300th block is accessed
+> at 75.033851 second and it was huge so it was written to the backing
+> store.
+> 
+> Admin can leverage this information to catch cold|incompressible pages
+> of process with *pagemap* once part of heaps are swapped out.
+> 
+> Cc: Greg KH <gregkh@linuxfoundation.org>
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
+> ---
+>  Documentation/blockdev/zram.txt |  24 ++++++
+>  drivers/block/zram/Kconfig      |   9 +++
+>  drivers/block/zram/zram_drv.c   | 139 +++++++++++++++++++++++++++++---
+>  drivers/block/zram/zram_drv.h   |   5 ++
+>  4 files changed, 166 insertions(+), 11 deletions(-)
+> 
+> diff --git a/Documentation/blockdev/zram.txt b/Documentation/blockdev/zram.txt
+> index 78db38d02bc9..45509c7d5716 100644
+> --- a/Documentation/blockdev/zram.txt
+> +++ b/Documentation/blockdev/zram.txt
+> @@ -243,5 +243,29 @@ to backing storage rather than keeping it in memory.
+>  User should set up backing device via /sys/block/zramX/backing_dev
+>  before disksize setting.
+>  
+> += memory tracking
+> +
+> +With CONFIG_ZRAM_MEMORY_TRACKING, user can know information of the
+> +zram block. It could be useful to catch cold or incompressible
+> +pages of the proess with*pagemap.
+> +If you enable the feature, you could see block state via
+> +/sys/kernel/debug/zram/zram0/block_state". The output is as follows,
+> +
+> +	  300    75.033841 .wh
+> +	  301    63.806904 s..
+> +	  302    63.806919 ..h
+> +
+> +First column is zram's block index.
+> +Second column is access time.
+> +Third column is state of the block.
+> +(s: same page
+> +w: written page to backing store
+> +h: huge page)
+> +
+> +First line of above example says 300th block is accessed at 75.033841sec
+> +and the block's state is huge so it is written back to the backing
+> +storage. It's a debugging feature so anyone shouldn't rely on it to work
+> +properly.
+> +
+>  Nitin Gupta
+>  ngupta@vflare.org
+> diff --git a/drivers/block/zram/Kconfig b/drivers/block/zram/Kconfig
+> index ac3a31d433b2..efe60c82d8ec 100644
+> --- a/drivers/block/zram/Kconfig
+> +++ b/drivers/block/zram/Kconfig
+> @@ -26,3 +26,12 @@ config ZRAM_WRITEBACK
+>  	 /sys/block/zramX/backing_dev.
+>  
+>  	 See zram.txt for more infomration.
+> +
+> +config ZRAM_MEMORY_TRACKING
+> +	bool "Tracking zram block status"
+> +	depends on ZRAM
+> +	select DEBUG_FS
 
-Round-off
+Select?  Shouldn't you depend on this instead?  Selecting is a pain to
+try to track down what is keeping an option enabled.
 
-> 
-> > +static ssize_t read_block_state(struct file *file, char __user *buf,
-> > +				size_t count, loff_t *ppos)
-> > +{
-> [..]
-> > +
-> > +	up_read(&zram->init_lock);
-> > +	copy_to_user(buf, kbuf, written);
-> 
-> drivers/block/zram/zram_drv.c: In function ‘read_block_state’:
-> drivers/block/zram/zram_drv.c:701:2: warning: ignoring return value of ‘copy_to_user’, declared with attribute warn_unused_result [-Wunused-result]
->   copy_to_user(buf, kbuf, written);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +	help
+> +	  With this feature, admin can track the state of allocated block
+> +	  of zRAM. Admin could see the information via
+> +	  /sys/kernel/debug/zram/zramX/block_state.
 
-Good catch.
+A short note here as to where to find the documentation for what that
+info is (i.e. in the file you wrote above?)
 
-> 
-> [..]
-> > @@ -61,7 +61,9 @@ struct zram_table_entry {
-> >  		unsigned long element;
-> >  	};
-> >  	unsigned long value;
-> > +#ifdef	CONFIG_ZRAM_MEMORY_TRACKING
-> 
-> A silly nitpick, but since you are going to resend this one, could you
-> remove TAB between ifdef and CONFIG_ZRAM_MEMORY_TRACKING?
+> +#else
+> +static void zram_debugfs_create(void) {};
+> +static void zram_debugfs_destroy(void) {};
+> +static void zram_accessed(struct zram *zram, u32 index) {};
+> +static void zram_reset_access(struct zram *zram, u32 index) {};
+> +static void zram_debugfs_register(struct zram *zram) {};
+> +static void zram_debugfs_unregister(struct zram *zram) {};
+> +#endif
 
-Sure.
+Much nicer, thanks!
+
+The above was only very minor nits, no need to change anything if you
+don't want to.
+
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
