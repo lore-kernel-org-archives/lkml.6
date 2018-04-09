@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeDIF6D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 01:58:03 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:44008 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751464AbeDIF6C (ORCPT
+        id S1752340AbeDIF7E (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 01:59:04 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:57102 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751526AbeDIF7C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 01:58:02 -0400
-X-Google-Smtp-Source: AIpwx48DEaqAGP1pVezV3Ev6Ldr1s496ToF1zNpOkjLmFObotN0GZzdfJpjXYRiOjA40ShkTx8vdxk5RSp180Bc4Kc8+pgvHVE+m
+        Mon, 9 Apr 2018 01:59:02 -0400
+X-Google-Smtp-Source: AIpwx49MHt1MUjeqnS4mgM+h84fUPf4MX8MLlVFNPujub7z3BLdzyTrozeB8K3wHilNUZBFdoyaq/x4rKm1r/RXb+YEa35jqMR4N
 MIME-Version: 1.0
-Date: Sun, 08 Apr 2018 22:58:01 -0700
+Date: Sun, 08 Apr 2018 22:59:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000abcd98056964164c@google.com>
-Subject: BUG: soft lockup in snd_virmidi_output_trigger
-From: syzbot <syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com>
-To: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Message-ID: <001a11408d9c43ff4a0569641a3f@google.com>
+Subject: WARNING in ip_rt_bug
+From: syzbot <syzbot+b09ac67a2af842b12eab@syzkaller.appspotmail.com>
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -24,88 +25,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-syzbot hit the following crash on upstream commit
-3fd14cdcc05a682b03743683ce3a726898b20555 (Fri Apr 6 19:15:41 2018 +0000)
-Merge tag 'mtd/for-4.17' of git://git.infradead.org/linux-mtd
+syzbot hit the following crash on net-next commit
+8bde261e535257e81087d39ff808414e2f5aa39d (Sun Apr 1 02:31:43 2018 +0000)
+Merge tag 'mlx5-updates-2018-03-30' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/saeed/linux
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=619d9f40141d826b097e
+https://syzkaller.appspot.com/bug?extid=b09ac67a2af842b12eab
 
 Unfortunately, I don't have any reproducer for this crash yet.
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4594231414882304
+https://syzkaller.appspot.com/x/log.txt?id=5991727739437056
 Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-5813481738265533882
-compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+https://syzkaller.appspot.com/x/.config?id=3327544840960562528
+compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com
+Reported-by: syzbot+b09ac67a2af842b12eab@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-8021q: adding VLAN 0 to HW filter on device team0
-IPv6: ADDRCONF(NETDEV_UP): team0: link is not ready
-8021q: adding VLAN 0 to HW filter on device team0
-IPv6: ADDRCONF(NETDEV_UP): team0: link is not ready
-8021q: adding VLAN 0 to HW filter on device team0
-watchdog: BUG: soft lockup - CPU#1 stuck for 134s! [syz-executor2:10431]
-Modules linked in:
-irq event stamp: 35856
-hardirqs last  enabled at (35855): [<ffffffff874a1734>]  
-__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
-hardirqs last  enabled at (35855): [<ffffffff874a1734>]  
-_raw_spin_unlock_irqrestore+0x74/0xc0 kernel/locking/spinlock.c:184
-hardirqs last disabled at (35856): [<ffffffff87600901>]  
-interrupt_entry+0xb1/0xf0 arch/x86/entry/entry_64.S:624
-softirqs last  enabled at (162): [<ffffffff87800778>]  
-__do_softirq+0x778/0xaf5 kernel/softirq.c:311
-softirqs last disabled at (95): [<ffffffff81467a61>] invoke_softirq  
-kernel/softirq.c:365 [inline]
-softirqs last disabled at (95): [<ffffffff81467a61>] irq_exit+0x1d1/0x200  
-kernel/softirq.c:405
-CPU: 1 PID: 10431 Comm: syz-executor2 Not tainted 4.16.0+ #4
+netlink: 'syz-executor6': attribute type 3 has an invalid length.
+WARNING: CPU: 0 PID: 11678 at net/ipv4/route.c:1213 ip_rt_bug+0x15/0x20  
+net/ipv4/route.c:1212
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 11678 Comm: kworker/u4:7 Not tainted 4.16.0-rc6+ #289
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
-[inline]
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160  
-[inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xa1/0xc0  
-kernel/locking/spinlock.c:184
-RSP: 0018:ffff880184db7780 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 0000000000000282 RCX: 0000000000000000
-RDX: 1ffffffff1162e55 RSI: 0000000000000001 RDI: 0000000000000282
-RBP: ffff880184db7790 R08: ffffed0035d21962 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801ae90cb08
-R13: ffff880184db7810 R14: 0000000000000001 R15: ffff8801cb9a5880
-FS:  00007fc943ad8700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc943ad7db8 CR3: 00000001b070d000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  spin_unlock_irqrestore include/linux/spinlock.h:365 [inline]
-  snd_virmidi_output_trigger+0x522/0x6c0 sound/core/seq/seq_virmidi.c:205
-  snd_rawmidi_output_trigger sound/core/rawmidi.c:150 [inline]
-  snd_rawmidi_kernel_write1+0x519/0x700 sound/core/rawmidi.c:1288
-  snd_rawmidi_write+0x2e2/0xdc0 sound/core/rawmidi.c:1338
-  __vfs_write+0x10b/0x880 fs/read_write.c:485
-  vfs_write+0x1f8/0x560 fs/read_write.c:549
-  ksys_write+0xf9/0x250 fs/read_write.c:598
-  SYSC_write fs/read_write.c:610 [inline]
-  SyS_write+0x24/0x30 fs/read_write.c:607
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x455259
-RSP: 002b:00007fc943ad7c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007fc943ad86d4 RCX: 0000000000455259
-RDX: 00000000e78e624c RSI: 0000000020000040 RDI: 0000000000000014
-RBP: 000000000072c010 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000006ca R14: 00000000006fd390 R15: 0000000000000002
-Code: c7 a8 72 b1 88 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80  
-3c 02 00 75 21 48 83 3d 4e 5b 67 01 00 74 0e 48 89 df 57 9d <0f> 1f 44 00  
-00 eb bb 0f 0b 0f 0b e8 6f 29 68 fa eb 97 e8 68 29
+  <IRQ>
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:ip_rt_bug+0x15/0x20 net/ipv4/route.c:1212
+RSP: 0018:ffff8801db007290 EFLAGS: 00010282
+RAX: dffffc0000000000 RBX: ffff8801d8dda3c0 RCX: ffffffff856c31ca
+RDX: 0000000000000100 RSI: ffffffff8858c300 RDI: 0000000000000282
+RBP: ffff8801db007298 R08: 1ffff1003b600de1 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801d8dda3c0
+R13: ffff88019bdb2200 R14: ffff88019bdeed80 R15: ffff8801d8dda418
+  dst_output include/net/dst.h:444 [inline]
+  ip_local_out+0x95/0x160 net/ipv4/ip_output.c:124
+  ip_send_skb+0x3c/0xc0 net/ipv4/ip_output.c:1414
+  ip_push_pending_frames+0x64/0x80 net/ipv4/ip_output.c:1434
+  icmp_push_reply+0x395/0x4f0 net/ipv4/icmp.c:394
+  icmp_send+0x1136/0x19b0 net/ipv4/icmp.c:741
+  ipv4_link_failure+0x2a/0x1b0 net/ipv4/route.c:1200
+  dst_link_failure include/net/dst.h:427 [inline]
+  arp_error_report+0xae/0x180 net/ipv4/arp.c:297
+  neigh_invalidate+0x225/0x530 net/core/neighbour.c:883
+  neigh_timer_handler+0x897/0xd60 net/core/neighbour.c:969
+  call_timer_fn+0x228/0x820 kernel/time/timer.c:1326
+  expire_timers kernel/time/timer.c:1363 [inline]
+  __run_timers+0x7ee/0xb70 kernel/time/timer.c:1666
+  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+  __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
+  invoke_softirq kernel/softirq.c:365 [inline]
+  irq_exit+0x1cc/0x200 kernel/softirq.c:405
+  exiting_irq arch/x86/include/asm/apic.h:541 [inline]
+  smp_apic_timer_interrupt+0x16b/0x700 arch/x86/kernel/apic/apic.c:1052
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:857
+  </IRQ>
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:778  
+[inline]
+RIP: 0010:lock_acquire+0x256/0x580 kernel/locking/lockdep.c:3923
+RSP: 0018:ffff880197b3f980 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff12
+RAX: dffffc0000000000 RBX: ffff8801d225e400 RCX: 0000000000000000
+RDX: 1ffffffff10a24e5 RSI: 00000000b98b8227 RDI: 0000000000000282
+RBP: ffff880197b3fa78 R08: 1ffff10032f67e93 R09: 0000000000000004
+R10: ffff880197b3f960 R11: 0000000000000003 R12: 1ffff10032f67f36
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
+  down_write_killable+0x8a/0x140 kernel/locking/rwsem.c:84
+  __bprm_mm_init fs/exec.c:297 [inline]
+  bprm_mm_init fs/exec.c:414 [inline]
+  do_execveat_common.isra.30+0xc8e/0x23c0 fs/exec.c:1771
+  do_execve+0x31/0x40 fs/exec.c:1847
+  call_usermodehelper_exec_async+0x457/0x8f0 kernel/umh.c:100
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
