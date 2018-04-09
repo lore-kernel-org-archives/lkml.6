@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3643807-1523235207-8-1616551711922415468
+X-Cyrus-Session-Id: sloti22d1t05-3607359-1523234473-2-13756237042826549250
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enda, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523235207; b=FppMEXlixWaHfAgQ9i8RtExRBqq7dmMt/nncBpPldKZ+jOsjlH
-    LRixsu87BB/ZENO5SaHr7FOqpLO9AK2fh4AUI0MYN1xgKv66E96FA61eGieNftDR
-    gki18maHKdiM5Tq7IqQhozkTTmawhPGojfctlq5WDPRHh2j10VzeW2ONlIz/XxCZ
-    Axrs+UBM3TRvukyIpsSS+6w070GE73dOGB4xDPeiAYRAD+QGMvMiLVfuCS25uSzw
-    nPfUrY3xnqzXubtrBOIJ2FLKEcaWz6tUoaFKdGEFS3Tacq71msCIiFd8xwkcVjJ9
-    mwpOYWSIKpzW8ccUhPCLX1aoMRb9XkqKjtvw==
+    1523234473; b=DrUHOqS4L8ocKdeYHrn4Tp50nM25qoPOnCvf5ib05N7WuITS8M
+    lAgkk1hGTIvX15X/jBkbmETrxe76KhGT1fpNmT05sMf85lnGrmdW/qyyOZ5Nx/Nh
+    WobnYeG4uktQNAAQlzqYE6eDE5sCs/BSA2l6oIMy95xeaSHXjLuPN0qc8psq2YNY
+    EKERiKrnI2TZClS/98ds7a+Nasa7wAv1XYbiQDK2VXGEieV9vdl3P6iefZxQX26Z
+    s2HxrSyZzq4BHpcPIgqx5pdrJVK3136uOhZEM4E3HF2lbwkGZ/IPjom33noCzwX+
+    5OXdGkrbsfvfyOrCWrRSRVuWzdTXftTyB5Wg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523235207; bh=tZ/WVNCSU/
-    ybSfzEyTrpXTM61s0I5ULjxa43+zZ8YFs=; b=wgQayT0AaYp5/xbPGrqy8Q8bMs
-    D4GMHeTsA/W5UE9/wdQaRXYNtZMDDlwOpoEZmmH8l2arnB6QBPLiOrLNCoQS1iKt
-    yDzLBBWI530o8+cWb11xSOJc+zSQ3Jq6/gDJ37PpvxZpSZ8W9hrUMbSCJxfiNjMC
-    kTYNilpLAvLDe7wBsUbgPcZH8z35ely4FBwFnYaE455vTg4Ocir7sQbm8uDtx+w/
-    heSg+IvRC/myF8putG6Jc821mur7RgGXH6T8cw4jBhOk1pVxDjrLj5lv7V3x+Gf0
-    j+fQ13g2W4vJ3xnsCKHNN8gYjmKeJ+NU7phraW3kvWvZgg4IL8HVuehtsnOA==
+    :mime-version:sender:list-id; s=fm2; t=1523234473; bh=yAVfl2ip7v
+    cDFPJXAghOUIxZOB0YyMkqVK+4Frdj7gY=; b=XgPU/30yxgMIQgJgsfyrQO9q57
+    Kbe5HjVFNJZnsIzJnyqxuK+ZakkAOnsJtVOzwlN0q6ms+rZ0MUFXmrxa41Vj61wf
+    /+KJlFZxJGxmLJPRQWViY1YbpaITCJo3Y8QpmY8vpFFeCNGfOq8S4a+ZPhIhnDx4
+    Vup5MaeOs6zouBesdFH4l8Baey1GTF8hg8k0fd+X6czws53ZzelLujPghoG1CpmQ
+    i5hXiZXbqT1afFYRd+Xkft3eYd/J8HMIpFRV/mYEMbXfGg4nu3c6o2k4s3DPh/4o
+    Qlgl+CZ1opQzNjfSANztna+N6U8GJJi9OQABItYQ8ws4FAuMULAPkxS1lp0g==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ILmhuCUu x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Z60NHrsj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-vs=clean score=-100 state=0
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ILmhuCUu x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Z60NHrsj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,36 +51,36 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOfEpEOPZgj2haprEhyV2vrdVHzeIY/gGwUnJkq7DX7xACmYdPwQXhw256TyDtGuGau8Ju4KZHAl9bSAEtRDGLWFGbR6AS/EbRmA42QK9uLOgLDqsQe8
-    GSYCeX0tShGJ2jElH9fypx9/Ixos5k6a8g5z8WE0OTp+kHJJUaTWBgoWd3R1Yrxke9Gbr0D8zKkModRy6r6331Hlw9c5cK1D4nQxTw6o61KKAbnfblX+ykop
+X-CM-Envelope: MS4wfAIVzRGGwA7YaNas61woZg7bwlDkCoi1rDyka1cenOfryzHHVElglYEchBgOe8fQsemPuGhueLwqWd62c4yTcUa8yOeUhx7sg5qVHXUPDVjlJNBXBgO2
+    Dwd+UQqVSdnmfxRLV4aNMOZabrDhKv66Je5qeMSMuDrxAIxJe60Z22KEsgp4nOR3PAkIhiRmQ7snGwQbrDcRurpkjMQqg3puLcsvz/5rpL/6hx97aeJm4C/r
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8 a=XE-PKwxKN_fx57-GDosA:9
-    a=wPNLvfGTeEIA:10
+    a=Lf-vpJhqX20A:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
+    a=Z5yqLHp-0Zm_W5QtMCIA:9 a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933405AbeDIAlW (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:41:22 -0400
-Received: from mail-sn1nam02on0122.outbound.protection.outlook.com ([104.47.36.122]:2607
+        id S932518AbeDIAlJ (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:41:09 -0400
+Received: from mail-sn1nam02on0130.outbound.protection.outlook.com ([104.47.36.130]:38544
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932479AbeDIAlT (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:41:19 -0400
+        id S933325AbeDIAka (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:40:30 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+CC: Johan Hovold <johan@kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 3.18 052/101] powerpc/fadump: avoid duplicates in
- crash memory ranges
-Thread-Topic: [PATCH AUTOSEL for 3.18 052/101] powerpc/fadump: avoid
- duplicates in crash memory ranges
-Thread-Index: AQHTz5t3I6aA62QDmkug64efo4LPsg==
-Date: Mon, 9 Apr 2018 00:41:16 +0000
-Message-ID: <20180409003505.164715-52-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 3.18 051/101] scsi: sun_esp: fix device reference
+ leaks
+Thread-Topic: [PATCH AUTOSEL for 3.18 051/101] scsi: sun_esp: fix device
+ reference leaks
+Thread-Index: AQHTz5q+gQqAjHyNZ0K3ZksnBQk4xw==
+Date: Mon, 9 Apr 2018 00:36:06 +0000
+Message-ID: <20180409003505.164715-51-alexander.levin@microsoft.com>
 References: <20180409003505.164715-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409003505.164715-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,28 +89,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0870;7:BS5RvdG20qZdmnUZL0RvuYSGJohSAJNtgchGVRKXUOBwYYncvCU3wWfOGLaVKseHpwFBVOnVuLwCRtTAbxyq9SUb82sNxsGspgA/k0mi4RHmALYKUhpWLuhIJlOylWYAbmXjDKQKY1nMjaD10Bnm1zTiQSpfzxbfHfGdhxe/RxGoL/9hot9SblxImkiq1/pEKI4lu3onlEjR12EjRAxTcZYG2f+mfMTmVz6PQnLWnkr5TySDaJ1cYJvN28sd1S8r;20:/N++aNV/kGBsOZgZtKEs1BBQGcTt40fHLqeKfXY3L4cIgnb2LhsRqUuVqXOyvVFLTN7V4356E0w3nkTqMZ42cXkPsaFAQRE4MoEOu1npwNN+3JzRfUFDN52BHF3qiHIBd3sZYt1BhD8chnGnfEl+hqHKSTdUt6dIoi7vdLGWVXI=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0870;7:wrR2MZMzdKrNk1Sm9ni8klcFGdC/uQi0mUBrD96k0mxFkSXQvQrJLsGMHsEwF3UujBdnvaXK/7spSsSu2rw959LEiL++rhmAhvsdlTMY5vt2wm8NYLxq0XhOYlvCFgPcgTC770x9PYRhAVq0nfMLkUXKAateuWBSyPieuKAgiCtcZ9WpT6fuU9xoGEMy6sSAdAQvPZRSUKakk3bhnIECcPIX4parNWSdsjmbOpRnkjCYjYyX1oNw7hBNkujpEmJ3;20:5z0JWva7Mo0/wShYjJG1P31td3Z6tO1gcd+F8edyQ2pQ6TmMCsywdhTtfbLjjNjbyy0/DWA+/iwl8SW5poMdSOfj3FcvIMIUAwyUq6DJFB618mU6SA1NR5hP4piSSeZHmvbr3vZt6+7nMWQAyUYteXtg+76yviYkXuxg2Rsd+J0=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: fc210618-2895-4053-d0f4-08d59db29b5c
+X-MS-Office365-Filtering-Correlation-Id: 0e2fb4b3-7621-462d-736c-08d59db27c78
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0870;
 x-ms-traffictypediagnostic: DM5PR2101MB0870:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0870607C1AB0F72CD1E9F2F1FBBF0@DM5PR2101MB0870.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(104084551191319);
+x-microsoft-antispam-prvs: <DM5PR2101MB087033F153E53C1DD53BBB93FBBF0@DM5PR2101MB0870.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231221)(944501327)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB0870;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0870;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(366004)(376002)(39860400002)(346002)(199004)(189003)(5250100002)(5660300001)(26005)(10290500003)(2501003)(478600001)(68736007)(8676002)(8936002)(81156014)(81166006)(22452003)(3846002)(86362001)(36756003)(1076002)(305945005)(54906003)(72206003)(186003)(316002)(4326008)(25786009)(6486002)(110136005)(7736002)(446003)(10090500001)(76176011)(14454004)(11346002)(476003)(2900100001)(97736004)(107886003)(486006)(2906002)(6512007)(53936002)(102836004)(2616005)(86612001)(6116002)(3280700002)(6506007)(66066001)(6436002)(3660700001)(105586002)(99286004)(106356001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0870;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: bbvfUKLf+x3ZMyd7TdvHNP8oH2sRBhMLc2tusa6290CrcrHG2bafrw/YZc2baKi/pCFEFyCqrKKyRcp0rr6qzeQIPnfNwbkBdxafsJtamtXQ+DJeTn1tqlxZs5eW1O5gjAWicbuPrqeVBpebfMxZTzeGw+ac88TvWjg3Kn+21W3SzR2tWL0+zRURXOrMRF0My//4B0pFCkcL2ClxL3XgjTmk694m+0IB4m5Y+x1rAH6ePhWa1Jlm39QkuWJnvtfIn70Ws5vM5LdpaG4395R7+L75yLnQMjh1SDjPVjjGkv/OGAxqWqFzwxjO3FL0+ciLYaAvcmXABgPmpXEBkFOdYl7217HRGaxtR0g85NHJuGluMS1SmTpP9hGRXT8zd8NnaJKcUz7otCbmc7hK1oaBq8wjK3EjZ5FQQgtiZIMuF8Y=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(366004)(376002)(39860400002)(346002)(199004)(189003)(5250100002)(5660300001)(26005)(10290500003)(2501003)(478600001)(68736007)(8676002)(8936002)(81156014)(81166006)(22452003)(3846002)(86362001)(36756003)(1076002)(305945005)(54906003)(72206003)(186003)(316002)(4326008)(25786009)(6486002)(110136005)(7736002)(446003)(10090500001)(76176011)(14454004)(11346002)(476003)(2900100001)(97736004)(107886003)(486006)(59450400001)(2906002)(6512007)(53936002)(102836004)(2616005)(86612001)(6116002)(3280700002)(6666003)(6506007)(66066001)(6436002)(3660700001)(105586002)(99286004)(106356001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0870;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: FYAARAQlWmrIq6ivu/qxHo7PaEyKaBjugOHLssnNXrTRYPfBvUbYM/jkGcvinFQlzxhOBpMo9pWZUqhrLkga1BLWfzdOn/IdIUHugw48Th8gFMYjKBCl1jjvWAg0xrZu1j7nsuKlm9PaH4ZCnHAAq071qARj44C0GmC9IW66HRz2CfVSmJDEye0+IZb1Mndl/PQ+RxkJMtHsuYrFWOs+cIh9iye2MchD54kZA5IOd1UZgcGv6R2ChL5vxwCM3GXjkgPtLBQxV2idE15LKGJ1aM6MkBaJatoEVtw/Y4jydbKOBBOaPzbpGz1np7KCGznfrwjTxIoaXr85k4MMYOS4Atsej1xPur8AHW7xQMJ7kKC5ip1bV9dcr2coJLao47GDUfGWfNgSbB41OCGLVEe8+4FnciGoQY59v6kCI0Zlwe0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc210618-2895-4053-d0f4-08d59db29b5c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:41:16.3458
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e2fb4b3-7621-462d-736c-08d59db27c78
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:36:06.1265
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -121,88 +120,54 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Hari Bathini <hbathini@linux.vnet.ibm.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit a77af552ccc9d4d54459a39f9e5f7ad307aeb4f9 ]
+[ Upstream commit f62f9ffdb5ef683ef8cffb43932fa72cc3713e94 ]
 
-fadump sets up crash memory ranges to be used for creating PT_LOAD
-program headers in elfcore header. Memory chunk RMA_START through
-boot memory area size is added as the first memory range because
-firmware, at the time of crash, moves this memory chunk to different
-location specified during fadump registration making it necessary to
-create a separate program header for it with the correct offset.
-This memory chunk is skipped while setting up the remaining memory
-ranges. But currently, there is possibility that some of this memory
-may have duplicate entries like when it is hot-removed and added
-again. Ensure that no two memory ranges represent the same memory.
+Make sure to drop the reference to the dma device taken by
+of_find_device_by_node() on probe errors and on driver unbind.
 
-When 5 lmbs are hot-removed and then hot-plugged before registering
-fadump, here is how the program headers in /proc/vmcore exported by
-fadump look like
-
-without this change:
-
-  Program Headers:
-    Type           Offset             VirtAddr           PhysAddr
-                   FileSiz            MemSiz              Flags  Align
-    NOTE           0x0000000000010000 0x0000000000000000 0x0000000000000000
-                   0x0000000000001894 0x0000000000001894         0
-    LOAD           0x0000000000021020 0xc000000000000000 0x0000000000000000
-                   0x0000000040000000 0x0000000040000000  RWE    0
-    LOAD           0x0000000040031020 0xc000000000000000 0x0000000000000000
-                   0x0000000010000000 0x0000000010000000  RWE    0
-    LOAD           0x0000000050040000 0xc000000010000000 0x0000000010000000
-                   0x0000000050000000 0x0000000050000000  RWE    0
-    LOAD           0x00000000a0040000 0xc000000060000000 0x0000000060000000
-                   0x000000019ffe0000 0x000000019ffe0000  RWE    0
-
-and with this change:
-
-  Program Headers:
-    Type           Offset             VirtAddr           PhysAddr
-                   FileSiz            MemSiz              Flags  Align
-    NOTE           0x0000000000010000 0x0000000000000000 0x0000000000000000
-                   0x0000000000001894 0x0000000000001894         0
-    LOAD           0x0000000000021020 0xc000000000000000 0x0000000000000000
-                   0x0000000040000000 0x0000000040000000  RWE    0
-    LOAD           0x0000000040030000 0xc000000040000000 0x0000000040000000
-                   0x0000000020000000 0x0000000020000000  RWE    0
-    LOAD           0x0000000060030000 0xc000000060000000 0x0000000060000000
-                   0x000000019ffe0000 0x000000019ffe0000  RWE    0
-
-Signed-off-by: Hari Bathini <hbathini@linux.vnet.ibm.com>
-Reviewed-by: Mahesh J Salgaonkar <mahesh@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 334ae614772b ("sparc: Kill SBUS DVMA layer.")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/powerpc/kernel/fadump.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/scsi/sun_esp.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-index 26d091a1a54c..5df362630ffc 100644
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -812,8 +812,19 @@ static void fadump_setup_crash_memory_ranges(void)
- 	for_each_memblock(memory, reg) {
- 		start =3D (unsigned long long)reg->base;
- 		end =3D start + (unsigned long long)reg->size;
--		if (start =3D=3D RMA_START && end >=3D fw_dump.boot_memory_size)
--			start =3D fw_dump.boot_memory_size;
-+
-+		/*
-+		 * skip the first memory chunk that is already added (RMA_START
-+		 * through boot_memory_size). This logic needs a relook if and
-+		 * when RMA_START changes to a non-zero value.
-+		 */
-+		BUILD_BUG_ON(RMA_START !=3D 0);
-+		if (start < fw_dump.boot_memory_size) {
-+			if (end > fw_dump.boot_memory_size)
-+				start =3D fw_dump.boot_memory_size;
-+			else
-+				continue;
-+		}
+diff --git a/drivers/scsi/sun_esp.c b/drivers/scsi/sun_esp.c
+index f2e68459f7ea..6585d75bf732 100644
+--- a/drivers/scsi/sun_esp.c
++++ b/drivers/scsi/sun_esp.c
+@@ -566,6 +566,7 @@ static int esp_sbus_probe(struct platform_device *op)
+ 	struct device_node *dp =3D op->dev.of_node;
+ 	struct platform_device *dma_of =3D NULL;
+ 	int hme =3D 0;
++	int ret;
 =20
- 		/* add this range excluding the reserved dump area. */
- 		fadump_exclude_reserved_area(start, end);
+ 	if (dp->parent &&
+ 	    (!strcmp(dp->parent->name, "espdma") ||
+@@ -580,7 +581,11 @@ static int esp_sbus_probe(struct platform_device *op)
+ 	if (!dma_of)
+ 		return -ENODEV;
+=20
+-	return esp_sbus_probe_one(op, dma_of, hme);
++	ret =3D esp_sbus_probe_one(op, dma_of, hme);
++	if (ret)
++		put_device(&dma_of->dev);
++
++	return ret;
+ }
+=20
+ static int esp_sbus_remove(struct platform_device *op)
+@@ -613,6 +618,8 @@ static int esp_sbus_remove(struct platform_device *op)
+=20
+ 	dev_set_drvdata(&op->dev, NULL);
+=20
++	put_device(&dma_of->dev);
++
+ 	return 0;
+ }
+=20
 --=20
 2.15.1
