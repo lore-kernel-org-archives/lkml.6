@@ -1,92 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751917AbeDIMj5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 08:39:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38672 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751786AbeDIMj4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 08:39:56 -0400
-Date: Mon, 9 Apr 2018 14:39:34 +0200
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: Joe Perches <joe@perches.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Petr Mladek <pmladek@suse.com>
-Subject: Re: s390: defective uses of va_arg in __debug_sprintf_event
-In-Reply-To: <1523041723.6127.33.camel@perches.com>
-References: <1523041723.6127.33.camel@perches.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18040912-0008-0000-0000-000004E858E5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040912-0009-0000-0000-00001E7B7D10
-Message-Id: <20180409143934.3f27902c@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804090136
+        id S1751940AbeDIMkl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 08:40:41 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:29614 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751270AbeDIMkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 08:40:39 -0400
+Message-Id: <61ed0c8c54d32d94ee7fb8c16d9f5c0873201bae.1523276971.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 1/2] powerpc/time: inline arch_vtime_task_switch()
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Mon,  9 Apr 2018 14:40:33 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 06 Apr 2018 12:08:43 -0700
-Joe Perches <joe@perches.com> wrote:
+arch_vtime_task_switch() is a small function which is called
+only from vtime_common_task_switch(), so it is worth inlining
 
-> debug_sprintf_event calls __debug_sprintf_event
-> with a format and arguments.
-> 
-> There various types of arguments used in these
-> call, but __debug_sprintf_event uses va_arg
-> with only long as the type argument so random
-> errors could occur because the type and argument
-> are supposed to match.
-> 
->     debug_entry_t *__debug_sprintf_event(debug_info_t *id, int level, char *string, ...)
->     {
->     	    [...]
->     	    va_start(ap, string);
->     	    curr_event->string = string;
->     	    for (idx = 0; idx < min(numargs, (int)(id->buf_size / sizeof(long)) - 1); idx++)
->     	    	    curr_event->args[idx] = va_arg(ap, long);
->     	    va_end(ap);
->     	    [...]
->     }
-> 
-> from man va_arg
-> 
->     va_arg()
-> 
->     if type is not compatible with the type of the actual next argument
->     (as promoted according to the default argument promotions),
->     random errors will occur.
-> 
-> For instance, uses like:
-> 
-> arch/s390/kernel/perf_cpum_sf.c:919:    debug_sprintf_event(sfdbg, 6, "pmu_enable: es=%i cs=%i ed=%i cd=%i "
-> arch/s390/kernel/perf_cpum_sf.c-920-                        "tear=%p dear=%p\n", cpuhw->lsctl.es, cpuhw->lsctl.cs,
-> arch/s390/kernel/perf_cpum_sf.c-921-                        cpuhw->lsctl.ed, cpuhw->lsctl.cd,
-> arch/s390/kernel/perf_cpum_sf.c-922-                        (void *) cpuhw->lsctl.tear, (void *) cpuhw->lsctl.dear);
-> 
-> where the first 3 arguments are int but their type
-> as used by va_arg in __debug_sprintf_event is long
-> which could produce random errors.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v2: added a local pointer for get_accounting(prev) to avoid GCC to read it twice
 
-In principle you are right that the va_arg handling is not 100%
-correct. It works though because the C ABI for s390x requires
-that arguments are sign- or zero-extended to 64 bits by the caller
-of a function. This is true for values passed in registers and for
-the variable argument list.
+ arch/powerpc/include/asm/cputime.h | 16 +++++++++++++++-
+ arch/powerpc/kernel/time.c         | 21 ---------------------
+ 2 files changed, 15 insertions(+), 22 deletions(-)
 
+diff --git a/arch/powerpc/include/asm/cputime.h b/arch/powerpc/include/asm/cputime.h
+index 99b541865d8d..bc4903badb3f 100644
+--- a/arch/powerpc/include/asm/cputime.h
++++ b/arch/powerpc/include/asm/cputime.h
+@@ -47,9 +47,23 @@ static inline unsigned long cputime_to_usecs(const cputime_t ct)
+  * has to be populated in the new task
+  */
+ #ifdef CONFIG_PPC64
++#define get_accounting(tsk)	(&get_paca()->accounting)
+ static inline void arch_vtime_task_switch(struct task_struct *tsk) { }
+ #else
+-void arch_vtime_task_switch(struct task_struct *tsk);
++#define get_accounting(tsk)	(&task_thread_info(tsk)->accounting)
++/*
++ * Called from the context switch with interrupts disabled, to charge all
++ * accumulated times to the current process, and to prepare accounting on
++ * the next process.
++ */
++static inline void arch_vtime_task_switch(struct task_struct *prev)
++{
++	struct cpu_accounting_data *acct = get_accounting(current);
++	struct cpu_accounting_data *acct0 = get_accounting(prev);
++
++	acct->starttime = acct0->starttime;
++	acct->startspurr = acct0->startspurr;
++}
+ #endif
+ 
+ #endif /* __KERNEL__ */
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index 360e71d455cc..a3ed2eb99d88 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -163,12 +163,6 @@ EXPORT_SYMBOL(__cputime_usec_factor);
+ void (*dtl_consumer)(struct dtl_entry *, u64);
+ #endif
+ 
+-#ifdef CONFIG_PPC64
+-#define get_accounting(tsk)	(&get_paca()->accounting)
+-#else
+-#define get_accounting(tsk)	(&task_thread_info(tsk)->accounting)
+-#endif
+-
+ static void calc_cputime_factors(void)
+ {
+ 	struct div_result res;
+@@ -421,21 +415,6 @@ void vtime_flush(struct task_struct *tsk)
+ 	acct->softirq_time = 0;
+ }
+ 
+-#ifdef CONFIG_PPC32
+-/*
+- * Called from the context switch with interrupts disabled, to charge all
+- * accumulated times to the current process, and to prepare accounting on
+- * the next process.
+- */
+-void arch_vtime_task_switch(struct task_struct *prev)
+-{
+-	struct cpu_accounting_data *acct = get_accounting(current);
+-
+-	acct->starttime = get_accounting(prev)->starttime;
+-	acct->startspurr = get_accounting(prev)->startspurr;
+-}
+-#endif /* CONFIG_PPC32 */
+-
+ #else /* ! CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
+ #define calc_cputime_factors()
+ #endif
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+2.13.3
