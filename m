@@ -1,68 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753070AbeDIPtS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:49:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56647 "EHLO mx2.suse.de"
+        id S1753134AbeDIPu1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:50:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56720 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751902AbeDIPtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:49:17 -0400
-Date: Mon, 9 Apr 2018 17:49:16 +0200
+        id S1751633AbeDIPu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 11:50:26 -0400
+Date: Mon, 9 Apr 2018 17:50:25 +0200
 From: Jan Kara <jack@suse.cz>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: jack@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: quota: Replace GFP_ATOMIC with GFP_KERNEL in
- dquot_init
-Message-ID: <20180409154916.mp5jznkgvxk4a4ti@quack2.suse.cz>
-References: <1523284279-25940-1-git-send-email-baijiaju1990@gmail.com>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nikolay Borisov <nborisov@suse.com>, Tejun Heo <tj@kernel.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] backing: silence compiler warning using __printf
+Message-ID: <20180409155025.ortsxj4fl3kxh36v@quack2.suse.cz>
+References: <20180406201453.32683-1-malat@debian.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1523284279-25940-1-git-send-email-baijiaju1990@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180406201453.32683-1-malat@debian.org>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 09-04-18 22:31:19, Jia-Ju Bai wrote:
-> dquot_init() is never called in atomic context.
-> This function is only set as a parameter of fs_initcall().
+On Fri 06-04-18 22:14:51, Mathieu Malaterre wrote:
+> __printf marker was added in commit d2cc4dde9206 ("bdi_register: add
+> __printf verification, fix arg mismatch") for function `bdi_register`
+> since it is useful to verify format and arguments. Apply equivalent gcc
+> attribute to `bdi_register_va`.
 > 
-> Despite never getting called from atomic context,
-> dquot_init() calls __get_free_pages() with GFP_ATOMIC,
-> which waits busily for allocation.
-> GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-> to avoid busy waiting and improve the possibility of sucessful allocation.
+> Remove warning triggered with W=1:
 > 
-> This is found by a static analysis tool named DCNS written by myself.
-> And I also manually check it.
+>   mm/backing-dev.c:881:2: warning: function might be possible candidate for ‘gnu_printf’ format attribute [-Wsuggest-attribute=format]
 > 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  include/linux/backing-dev.h | 1 +
+>  1 file changed, 1 insertion(+)
 
-Thanks, I have added the patch to my tree.
+Yeah, the patch looks good. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
-
-> ---
->  fs/quota/dquot.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-> index 8381db9..d6e111e 100644
-> --- a/fs/quota/dquot.c
-> +++ b/fs/quota/dquot.c
-> @@ -2944,7 +2944,7 @@ static int __init dquot_init(void)
->  			NULL);
+> diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+> index 3e4ce54d84ab..0e9c0f71f726 100644
+> --- a/include/linux/backing-dev.h
+> +++ b/include/linux/backing-dev.h
+> @@ -28,6 +28,7 @@ void bdi_put(struct backing_dev_info *bdi);
 >  
->  	order = 0;
-> -	dquot_hash = (struct hlist_head *)__get_free_pages(GFP_ATOMIC, order);
-> +	dquot_hash = (struct hlist_head *)__get_free_pages(GFP_KERNEL, order);
->  	if (!dquot_hash)
->  		panic("Cannot create dquot hash table");
->  
+>  __printf(2, 3)
+>  int bdi_register(struct backing_dev_info *bdi, const char *fmt, ...);
+> +__printf(2, 0)
+>  int bdi_register_va(struct backing_dev_info *bdi, const char *fmt,
+>  		    va_list args);
+>  int bdi_register_owner(struct backing_dev_info *bdi, struct device *owner);
 > -- 
-> 1.9.1
-> 
+> 2.11.0
 > 
 -- 
 Jan Kara <jack@suse.com>
