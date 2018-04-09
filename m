@@ -1,84 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752988AbeDIRTq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 13:19:46 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58790 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751549AbeDIRTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 13:19:45 -0400
-Date: Mon, 9 Apr 2018 18:19:59 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@kernel.org,
-        boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
-        catalin.marinas@arm.com
-Subject: Re: [PATCH 02/10] locking/qspinlock: Remove unbounded cmpxchg loop
- from locking slowpath
-Message-ID: <20180409171959.GB9661@arm.com>
-References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
- <1522947547-24081-3-git-send-email-will.deacon@arm.com>
- <dc5f5e43-a60a-05f2-16fb-46960c40459e@redhat.com>
- <20180409105835.GC23134@arm.com>
- <20180409145409.GA9661@arm.com>
- <20180409155420.GB4082@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409155420.GB4082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1752239AbeDIRWk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 13:22:40 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:35160 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbeDIRWi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 13:22:38 -0400
+X-Google-Smtp-Source: AIpwx495p9HKtjcf4hwhwvVH/nATcOUAFlqhPsWtgf5OvzsiSQ8zjIOvLBajFhdHpcdDmhI+7CKAug==
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon updates for v4.17
+Date: Mon,  9 Apr 2018 10:22:35 -0700
+Message-Id: <1523294555-29481-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 05:54:20PM +0200, Peter Zijlstra wrote:
-> On Mon, Apr 09, 2018 at 03:54:09PM +0100, Will Deacon wrote:
-> > @@ -289,18 +315,26 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
-> >  		return;
-> >  
-> >  	/*
-> > -	 * If we observe any contention; queue.
-> > +	 * If we observe queueing, then queue ourselves.
-> >  	 */
-> > -	if (val & ~_Q_LOCKED_MASK)
-> > +	if (val & _Q_TAIL_MASK)
-> >  		goto queue;
-> >  
-> >  	/*
-> > +	 * We didn't see any queueing, so have one more try at snatching
-> > +	 * the lock in case it became available whilst we were taking the
-> > +	 * slow path.
-> > +	 */
-> > +	if (queued_spin_trylock(lock))
-> > +		return;
-> > +
-> > +	/*
-> >  	 * trylock || pending
-> >  	 *
-> >  	 * 0,0,0 -> 0,0,1 ; trylock
-> >  	 * 0,0,1 -> 0,1,1 ; pending
-> >  	 */
-> > +	val = set_pending_fetch_acquire(lock);
-> >  	if (!(val & ~_Q_LOCKED_MASK)) {
-> 
-> So, if I remember that partial paper correctly, the atomc_read_acquire()
-> can see 'arbitrary' old values for everything except the pending byte,
-> which it just wrote and will fwd into our load, right?
-> 
-> But I think coherence requires the read to not be older than the one
-> observed by the trylock before (since it uses c-cas its acquire can be
-> elided).
-> 
-> I think this means we can miss a concurrent unlock vs the fetch_or. And
-> I think that's fine, if we still see the lock set we'll needlessly 'wait'
-> for it go become unlocked.
+Hi Linus,
 
-Ah, but there is a related case that doesn't work. If the lock becomes
-free just before we set pending, then another CPU can succeed on the
-fastpath. We'll then set pending, but the lockword we get back may still
-have the locked byte of 0, so two people end up holding the lock.
+Please pull hwmon updates for Linux v4.17 from signed tag:
 
-I think it's worth giving this a go with the added trylock, but I can't
-see a way to avoid the atomic_fetch_or at the moment.
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-linus-v4.17
 
-Will
+Thanks,
+Guenter
+------
+
+The following changes since commit 91ab883eb21325ad80f3473633f794c78ac87f51:
+
+  Linux 4.16-rc2 (2018-02-18 17:29:42 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-linus-v4.17
+
+for you to fetch changes up to e3a2d2be510ec8a35ecd2a17a42467d417962bb7:
+
+  hwmon: (via-cputemp) support new centaur CPUs (2018-03-30 07:53:57 -0700)
+
+----------------------------------------------------------------
+hwmon updates for v4.17
+
+- Added chip support: new centaur CPUs, ADM1272, NCT6796D
+- ucd9000: added debugfs attributes, gpio support
+- Cleanup and minor bug fixes
+
+----------------------------------------------------------------
+Alvaro G. M (2):
+      hwmon: (lm92) Do not try to detect MAX6635
+      hwmon: (lm92) Add max6635 to lm92_id[]
+
+Christopher Bostic (2):
+      hwmon: (ucd9000) Add gpio chip interface
+      hwmon: (ucd9000) Add debugfs attributes to provide mfr_status
+
+Danilo Bargen (2):
+      hwmon: (sht21) Update data sheet URLs
+      hwmon: (sht3x) Update data sheet URL
+
+Guenter Roeck (8):
+      hwmon: (pmbus/max8688) Accept negative page register values
+      hwmon: (pmbus/adm1275) Accept negative page register values
+      hwmon: (nct6775) Use NUM_FAN consistently
+      hwmon: (nct6775) Improve fan6/pwm6 support
+      hwmon: (nct6775) Initialize boolean variables with declaration
+      hwmon: (nct6775) Add support for NCT6796D
+      hwmon: (pmbus/adm1275) Add support for ADM1272
+      hwmon: (nct6775) Fix writing pwmX_mode
+
+Hao Peng (1):
+      hwmon: (g762) handle cleanup with devm_add_action
+
+davidwang (1):
+      hwmon: (via-cputemp) support new centaur CPUs
+
+ Documentation/hwmon/adm1275   |  20 ++-
+ Documentation/hwmon/lm92      |   6 +-
+ Documentation/hwmon/nct6775   |  56 ++++---
+ Documentation/hwmon/sht21     |   6 +-
+ Documentation/hwmon/sht3x     |   2 +-
+ drivers/hwmon/Kconfig         |   5 +-
+ drivers/hwmon/g762.c          |  53 ++-----
+ drivers/hwmon/lm92.c          |  63 +-------
+ drivers/hwmon/nct6775.c       | 231 ++++++++++++++++++----------
+ drivers/hwmon/pmbus/Kconfig   |   4 +-
+ drivers/hwmon/pmbus/adm1275.c |  71 ++++++++-
+ drivers/hwmon/pmbus/max8688.c |   2 +-
+ drivers/hwmon/pmbus/ucd9000.c | 350 +++++++++++++++++++++++++++++++++++++++++-
+ drivers/hwmon/sht21.c         |   3 +-
+ drivers/hwmon/via-cputemp.c   |  31 ++--
+ 15 files changed, 662 insertions(+), 241 deletions(-)
