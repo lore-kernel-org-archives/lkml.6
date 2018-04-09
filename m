@@ -1,74 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752596AbeDIHej (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:34:39 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:52449 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751792AbeDIHeg (ORCPT
+        id S1752182AbeDIHih (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:38:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39910 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751770AbeDIHig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:34:36 -0400
-X-Google-Smtp-Source: AIpwx4/O//flYnzvViCscw9yBi+EwrQ2VGaK4bX9ne4TyJb+0QV5cLqyVb7uGLJ1Tagdpzbh2AvT6A==
-Date: Mon, 9 Apr 2018 09:34:31 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Maninder Singh <maninder1.s@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH 0/3] syscalls: clean up stub naming convention
-Message-ID: <20180409073431.3acda3qpyhb35wnt@gmail.com>
-References: <20180407074651.29014-1-linux@dominikbrodowski.net>
- <20180408083550.32d65b6ra6yca5p7@gmail.com>
- <20180408091536.GA10120@light.dominikbrodowski.net>
- <20180409064511.ejhfqcurtlq2srq5@gmail.com>
- <20180409070611.43iq66eay2ctwv2m@gmail.com>
- <20180409070800.GA14257@light.dominikbrodowski.net>
+        Mon, 9 Apr 2018 03:38:36 -0400
+Date: Mon, 9 Apr 2018 09:38:27 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+Cc: Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: uprobes/perf: KASAN: use-after-free in uprobe_perf_close
+Message-ID: <20180409073827.GS4082@hirez.programming.kicks-ass.net>
+References: <4da123ee-1ad1-fbd3-d5c0-bd9f5ed26434@lab.ntt.co.jp>
+ <20180222163715.GA1485@redhat.com>
+ <20180222170427.GQ25181@hirez.programming.kicks-ass.net>
+ <20180222170947.GW25235@hirez.programming.kicks-ass.net>
+ <20180222174041.GA2802@redhat.com>
+ <35f890f7-1194-4509-a1e4-d63d1c7d22ab@lab.ntt.co.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409070800.GA14257@light.dominikbrodowski.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <35f890f7-1194-4509-a1e4-d63d1c7d22ab@lab.ntt.co.jp>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Mar 06, 2018 at 06:49:10PM +0900, Prashant Bhole wrote:
+> Sorry for late reply. I tried these changes. It didn't fix the problem. With
 
-* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+He, sorry for completely forgetting about this one :/
 
-> > New suggested naming:
-> > 
-> > 810f08d0 t     kernel_waitid	# common C function (see kernel/exit.c)
-> > 
-> > <inline>     __do_sys_waitid	# inlined helper doing the actual work
-> > 				# (takes original parameters as declared)
-> > 
-> > 810f1aa0 T   __se_sys_waitid	# sign-extending C function calling inlined
-> > 				# helper (takes parameters of type long;
-> > 				# casts them to the declared type)
-> > 
-> > 810f1aa0 T        sys_waitid	# alias to __se_sys_waitid() (but taking
-> > 				# original parameters as declared), to be
-> > 				# included in syscall table
-> > 
-> > Agreed?
+> these changes, the use-after-free access of task_struct occurs at
+> _free_event() for the last remaining event.
 > 
-> Yes.
+> In your changes, I tried keeping get/put_task_struct() in
+> perf_alloc_context()/put_ctx() intact and The problem did not occur. Changes
+> are mentioned below.
 
-Ok, great. Since these re-renames look complex enough, mind re-sending the series 
-with these changes incorporated and the 4/3 patch incorporated as well (and the 
-image shrinking script left out)?
+Yes, I think you're right in that this is the cleanest solution; it adds
+reference counting to the exact pointer we're using.
 
-The base patches are looking good here so I plan sending these to Linus 
-tomorrow-ish. (The renames don't affect functionality so they don't need
-as much testing.)
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index c98cce4ceebd..65889d2b5ae2 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -4109,6 +4109,8 @@ static void _free_event(struct perf_event *event)
+> 
+>  	if (event->ctx)
+>  		put_ctx(event->ctx);
+> +	if (event->hw.target)
+> +		put_task_struct(event->hw.target);
+> 
+>  	exclusive_event_destroy(event);
+>  	module_put(event->pmu->module);
+> @@ -9593,6 +9595,7 @@ perf_event_alloc(struct perf_event_attr *attr, int
+> cpu,
+>  		 * and we cannot use the ctx information because we need the
+>  		 * pmu before we get a ctx.
+>  		 */
+> +		get_task_struct(task);
+>  		event->hw.target = task;
+>  	}
+> 
+> @@ -9708,6 +9711,8 @@ perf_event_alloc(struct perf_event_attr *attr, int
+> cpu,
+>  		perf_detach_cgroup(event);
+>  	if (event->ns)
+>  		put_pid_ns(event->ns);
+> +	if (task)
 
-Thanks,
+Should this not too be 'event->hw.target', for consistency and clarity?
 
-	Ingo
+> +		put_task_struct(task);
+>  	kfree(event);
+> 
+>  	return ERR_PTR(err);
