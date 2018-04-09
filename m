@@ -1,96 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753196AbeDIPyc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:54:32 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55542 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752320AbeDIPya (ORCPT
+        id S1753380AbeDIPym (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:54:42 -0400
+Received: from vulcan.natalenko.name ([104.207.131.136]:50454 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751633AbeDIPyh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:54:30 -0400
-Date: Mon, 9 Apr 2018 17:54:20 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@kernel.org,
-        boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
-        catalin.marinas@arm.com
-Subject: Re: [PATCH 02/10] locking/qspinlock: Remove unbounded cmpxchg loop
- from locking slowpath
-Message-ID: <20180409155420.GB4082@hirez.programming.kicks-ass.net>
-References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
- <1522947547-24081-3-git-send-email-will.deacon@arm.com>
- <dc5f5e43-a60a-05f2-16fb-46960c40459e@redhat.com>
- <20180409105835.GC23134@arm.com>
- <20180409145409.GA9661@arm.com>
+        Mon, 9 Apr 2018 11:54:37 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 861AB335ECA
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409145409.GA9661@arm.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Mon, 09 Apr 2018 17:54:33 +0200
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Kees Cook <keescook@chromium.org>, David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+In-Reply-To: <20180409093520.GB10405@lst.de>
+References: <10360653.ov98egbaqx@natalenko.name>
+ <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
+ <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
+ <2679696.GDoj5zcZOu@natalenko.name> <20180409093520.GB10405@lst.de>
+Message-ID: <20ba00cdfd1428aff13b7ea4cb42b03c@natalenko.name>
+User-Agent: Roundcube Webmail/1.3.5
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1523289274;
+        h=from:sender:reply-to:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:in-reply-to:references:list-id:list-owner:list-unsubscribe:list-subscribe:list-post;
+        bh=qKYGAfhths+YLACd1NnLdG9gJEPf/L+5kUpE9ZQy2Ig=;
+        b=fafQLpEF98uZq15Ed21Jk5lVMNRHFiU0WsYlPtfBl59Gj6R1uE8uW3NDaS8rOb/jIg+ceK
+        WduEcG2Rouc0EaJJPx7wT95236oBaCd+6r8SM8xKk0nO+d/A9xmR0pjZ4q4kk9QS2sOKMy
+        OJ25QFIADALiJCLrxPluVap/JAeb0ug=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1523289274; a=rsa-sha256;
+        cv=none;
+        b=G03H+6UjdUzeHHqH1lAcgLY132PylisQi52+iXHxorx8XF06jNfb+I71+h8e7GCUs8GLoFB4aJMjNPT/M07xTYpHbaw6uwAujW5HpTt8cx/prRfc0jhYnHV2lnz/zbsUUyiL4v9hmXCPQhEJimSFO0XhzeD8J+K2IXnJB9LpGtM=
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
+        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 03:54:09PM +0100, Will Deacon wrote:
+Hi.
 
-> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-> index 19261af9f61e..71eb5e3a3d91 100644
-> --- a/kernel/locking/qspinlock.c
-> +++ b/kernel/locking/qspinlock.c
-> @@ -139,6 +139,20 @@ static __always_inline void clear_pending_set_locked(struct qspinlock *lock)
->  	WRITE_ONCE(lock->locked_pending, _Q_LOCKED_VAL);
->  }
->  
-> +/**
-> + * set_pending_fetch_acquire - set the pending bit and return the old lock
-> + *                             value with acquire semantics.
-> + * @lock: Pointer to queued spinlock structure
-> + *
-> + * *,*,* -> *,1,*
-> + */
-> +static __always_inline u32 set_pending_fetch_acquire(struct qspinlock *lock)
-> +{
-> +	u32 val = xchg_relaxed(&lock->pending, 1) << _Q_PENDING_OFFSET;
-> +	val |= (atomic_read_acquire(&lock->val) & ~_Q_PENDING_MASK);
-> +	return val;
-> +}
+09.04.2018 11:35, Christoph Hellwig wrote:
+> I really can't make sense of that report.
 
-> @@ -289,18 +315,26 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
->  		return;
->  
->  	/*
-> -	 * If we observe any contention; queue.
-> +	 * If we observe queueing, then queue ourselves.
->  	 */
-> -	if (val & ~_Q_LOCKED_MASK)
-> +	if (val & _Q_TAIL_MASK)
->  		goto queue;
->  
->  	/*
-> +	 * We didn't see any queueing, so have one more try at snatching
-> +	 * the lock in case it became available whilst we were taking the
-> +	 * slow path.
-> +	 */
-> +	if (queued_spin_trylock(lock))
-> +		return;
-> +
-> +	/*
->  	 * trylock || pending
->  	 *
->  	 * 0,0,0 -> 0,0,1 ; trylock
->  	 * 0,0,1 -> 0,1,1 ; pending
->  	 */
-> +	val = set_pending_fetch_acquire(lock);
->  	if (!(val & ~_Q_LOCKED_MASK)) {
+Sorry, I have nothing to add there so far, I just see the symptom of 
+something going wrong in the ioctl code path that is invoked by 
+smartctl, but I have no idea what's the minimal environment to reproduce 
+it. I'll try to collect more info.
 
-So, if I remember that partial paper correctly, the atomc_read_acquire()
-can see 'arbitrary' old values for everything except the pending byte,
-which it just wrote and will fwd into our load, right?
+> And I'm also curious why
+> you think 17cb960f29c2 should change anything for that code path.
 
-But I think coherence requires the read to not be older than the one
-observed by the trylock before (since it uses c-cas its acquire can be
-elided).
+Maybe, I've just mis-read that code.
 
-I think this means we can miss a concurrent unlock vs the fetch_or. And
-I think that's fine, if we still see the lock set we'll needlessly 'wait'
-for it go become unlocked.
+Regards,
+   Oleksandr
