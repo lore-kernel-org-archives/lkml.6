@@ -1,85 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752866AbeDIDPj (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 8 Apr 2018 23:15:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48430 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752879AbeDIDPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Apr 2018 23:15:35 -0400
-Message-ID: <1a37aaadcd25b849d81bf295b28cdad7d5ffd1d2.camel@redhat.com>
-Subject: Re: simultaneous voice/data works (was Re: call/normal switch was
- Re: omap4-droid4: voice call support was)
-From: Dan Williams <dcbw@redhat.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Merlijn Wajer <merlijn@wizzup.org>, Tony Lindgren <tony@atomide.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Date: Sun, 08 Apr 2018 22:15:30 -0500
-In-Reply-To: <20180408074124.GA19844@amd>
-References: <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
-         <20180402155754.GD5700@atomide.com> <20180403150444.GE5700@atomide.com>
-         <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
-         <20180403194419.GG5700@atomide.com> <20180406120423.GA18691@amd>
-         <516eb3f7-e300-d59d-6a31-ab7545c656f1@wizzup.org>
-         <20180407081000.GB7818@amd> <20180407122233.GA11302@amd>
-         <cbfc3cfa8acbc02dde848ec4e1d71b5089ff1d10.camel@redhat.com>
-         <20180408074124.GA19844@amd>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752587AbeDIDRV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 8 Apr 2018 23:17:21 -0400
+Received: from ozlabs.org ([103.22.144.67]:46007 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751526AbeDIDRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Apr 2018 23:17:19 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 9 Apr 2018 13:16:19 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Oliver O'Halloran" <oohall@gmail.com>
+Subject: linux-next: build failure after merge of the nvdimm tree
+Message-ID: <20180409131619.0bc5fb45@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5hwoHcGrw4QE8IXDvwO3B+y"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-04-08 at 09:41 +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > > mmcli -m 0 --enable
-> > > mmcli -m 0  --location-enable-gps-nmea
-> > > watch -n .3 sudo mmcli -m 0  --location-get-gps-nmea
-> > > 
-> > > ...can be used to get GPS data. Droid4 seems to have rather bad
-> > > GPS,
-> > > so you should probably put it near window for testing.
-> > > 
-> > > Is there way to grab data from modemmanager and feed it to gpsd,
-> > > so
-> > > that normal applications can access gps? I don't see easy way.
-> > > 
-> > > I tried --location-enable-gps-unmanaged , but that did not work
-> > > for
-> > > me.
-> > 
-> > That requires a TTY that would spit out the GPS data; in this mode
-> > MM
-> > only sends the start/stop commands, and what comes out the GPS TTY
-> > is
-> > undefined (at least by MM).
-> > 
-> > So unless you know that one of the 6600's TTYs does GPS and in what
-> > format it does GPS, then no.
-> > 
-> > Doesn't --location-get-gps-nmea work for you?  That will spit out
-> > the
-> > latest NMEA traces MM gets from the modem, if it supports NMEA.  I
-> > believe --location-status will tell you what methods MM supports
-> > with
-> > the modem.
-> 
-> Yes, --location-get-gps-nmea works for me.
-> 
-> I guess one way forward would be to implement --location-get-gps-nmea
-> support for qmicli, and use that?
+--Sig_/5hwoHcGrw4QE8IXDvwO3B+y
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, libqmi already has the necessary bits but it's not plumbed
-through to qmicli.  Note that qmicli is a straight interface to QMI and
-doesn't try to impose abstractions on anything, so you wouldn't get --
-location-get-gps-nmea, but you'd instead be working directly with the
-QMI PDS (older) and/or LOC (newer) service commands.
+Hi Dan,
 
-Dan
+After merging the nvdimm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+ERROR: "of_node_to_nid" [drivers/nvdimm/of_pmem.ko] undefined!
+
+Caused by commit
+
+  717197608952 ("libnvdimm: Add device-tree based driver")
+
+X86 seems to not have a version of of_node_to_nid() even though CONFIG_OF
+and CONFIG_NUMA are both 'y' in this build.
+
+I have used the nvdimm tree from next-20180406 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/5hwoHcGrw4QE8IXDvwO3B+y
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrK2wQACgkQAVBC80lX
+0GyZoQf+KEOKWub2lWSqItFYQpcFmrCVWdp/5A+I3QG4GTZvq1e1MDVmgZVcgOS8
+uRlkOMLWBiHVDeP2vH//UraJiMc+8kEFNNUKVQ7waEdZeBZ8ocidZVobQ4CghAL+
+1DbbBNwoGaDB6fAR5UfYEboz6mtGnR65bS0jbLyyHs3jLEiKjlWgQAE80aaHB5Ts
+aWoIKefZGolth+lxkH5z1dzMDc141pzTfCwI6XwjVtN+lXQ1SavGFW/kzSI47roK
+MFXf7qkL+qjGjXDwJ0FEvB4XiAECpWYHOI0FqLg0P/IKVx5fx8gc8VwXUF2oVmuF
+D5ey9piew20WD2BW07c2NJKlB4bnZA==
+=E15y
+-----END PGP SIGNATURE-----
+
+--Sig_/5hwoHcGrw4QE8IXDvwO3B+y--
