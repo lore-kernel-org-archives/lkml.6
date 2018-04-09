@@ -1,209 +1,93 @@
-Return-Path: <kernel-hardening-return-12914-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4+aAFJpaoMGfQBw0IAgNRlQl+exp84WT1tOfEGTzC4sq9hY9PZbKB56trO0Fj0kFohfWTWR
-ARC-Seal: i=1; a=rsa-sha256; t=1523275484; cv=none;
+Return-Path: <kernel-hardening-return-12916-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49EouKYfmt22tUMUsn8u/naHheH3hZuA/5j8i5eo69KLN75oSTgAEdtSNrCL3wLPnGoDTff
+ARC-Seal: i=1; a=rsa-sha256; t=1523279659; cv=none;
         d=google.com; s=arc-20160816;
-        b=RrsMIRk3uuKsRrkOhulHmHB8dRthdjtBVbs+tEUXvJpXxyk2jz/NWJma5GdD24XV5D
-         iNzJEkA36DPUbQsjMeZHcRPKHOphMWNFbKqeQgpdtH3LhZhCy9MtLV150csrusyvN5Fu
-         WzNpsxR0obupczcb+dSvtl4pFj1mgHw0L9j0SFmj/m98vCZuZ+OEDJBGk1HETHfiqMla
-         yHcKPC+jFkimHa6rRqE/W8N03ls8hlpuoJyASS1UN4rFrRvW1yJY03xe4FohWt4KnqoP
-         37R9md0dLaixzsO7bPVvYoftC2txTop20IK829mgLjfsIz9zpZKOjilRWiPUVLAjRN+4
-         rkWQ==
+        b=IoqjU70+6qWkyowKkHc9PQm0olHk1YJdQFAe/pMKp3WoUyM5UDuY8McmYh+gJe99AI
+         Snks81j2guLJ0qMX5f5OGRessN/aD9LsJQAdYzaHNxlnTKp7RJ3vRMuWqo7wVGNPZzHa
+         8XlsbBbO9E/TKgFFMmqX/xgdAbjD2orTXFKIbR38gPLO87tyJ3+ZkIS+cCWvFahQZcgj
+         D3ffOmAgXltt0st9MqSRG4g0Sys/uLdLjVj5CB8YDqLVzeM7vw2WFWCwfECup0rPswa8
+         lGPd4TNgRMzzNiUOsYy6f77n8kV3gZ8fMTqHYlLxVdgeBT+pWJ7H2QDLmQFgolxlw/4K
+         /hfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
+        h=mime-version:content-transfer-encoding:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=KkoAn0XKI3SIyBj98Z9iP8iiibOgEVzCiE0UvoSvhKw=;
-        b=khGTyagEpbmmAw5hsbAIl6NvllfPtMe29dxE0EScJkMDK/Y/XAY9uV14gfd8fyEPA4
-         HxgXSKcWzkKpmMC9QQfgcBd+6JID0nbktNxNDFXAWjF9b3mPiZ3tdLYOYgEi3yki2SFW
-         Jkky4tutDiO/L7OtxbhcRWKuYU6tDYl8BEWj/JwC7eKZ59fVEc0nYymENIrxV6JMW4O1
-         OWeG5v6s5iRSMTigDuoEUywOOIgedUMIAJT6XYpH/JdFQkAORTVaenyNP6RFMkEEki1K
-         j0WqVHypZJx7mBTpSgzFCy1jIv5dUEPL5p/DZlXy2/fejMBPM1Q+6roMFAkbJARghtVc
-         sTzQ==
+        bh=2AUdWCIXsaanpDpWSP0+0Fy0EGXFfrEKCgM0GvXwSDo=;
+        b=sTQ1Tw0fDRPJXIiJOJn5LNMGugd1SZaYyg+06KUezMxcUmn1Dq1t7J4WXqwc3duHLX
+         47Mij7oAcP2Tyeh4Kf9h41b5TJJTKqJ+ZIr70wOozzmzKpALWFQBsMeVBcu4uYCpdlPj
+         ZU1ow6Gyru5DDipwo8/CoRlHO5ih/27lTkNMYyvYc/v75f4BNTPMIV8BbgOZyWiZmA6D
+         BYeq4VaPYDwlFYbO9j4tQdj8GfgO5tE/HHN6DfuwjfaI6seBLljEoZT6vemvhy8zR6XD
+         oMCfjU+c2+RW+UJqHpmfDKS8if3K9aF7MdUDiMqVPK9tcqQBxm5LW3DZnn97p8UTLeNi
+         pL+g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=aqHSuic0;
-       spf=pass (google.com: domain of kernel-hardening-return-12914-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12914-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12916-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12916-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=aqHSuic0;
-       spf=pass (google.com: domain of kernel-hardening-return-12914-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12914-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12916-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12916-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: kpark3469@gmail.com
-To: kernel-hardening@lists.openwall.com
-Cc: catalin.marinas@arm.com,
-	keescook@chromium.org,
-	will.deacon@arm.com,
-	mark.rutland@arm.com,
-	james.morse@arm.com,
-	panand@redhat.com,
-	keun-o.park@darkmatter.ae,
-	psodagud@codeaurora.org,
-	jpoimboe@redhat.com,
-	mingo@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] x86: usercopy: reimplement arch_within_stack_frames with unwinder
-Date: Mon,  9 Apr 2018 15:59:16 +0400
-Message-Id: <1523275156-29087-4-git-send-email-kpark3469@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523275156-29087-3-git-send-email-kpark3469@gmail.com>
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'kpark3469@gmail.com'" <kpark3469@gmail.com>,
+	"kernel-hardening@lists.openwall.com" <kernel-hardening@lists.openwall.com>
+CC: "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"keescook@chromium.org" <keescook@chromium.org>, "will.deacon@arm.com"
+	<will.deacon@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"james.morse@arm.com" <james.morse@arm.com>, "panand@redhat.com"
+	<panand@redhat.com>, "keun-o.park@darkmatter.ae" <keun-o.park@darkmatter.ae>,
+	"psodagud@codeaurora.org" <psodagud@codeaurora.org>, "jpoimboe@redhat.com"
+	<jpoimboe@redhat.com>, "mingo@kernel.org" <mingo@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 3/3] x86: usercopy: reimplement
+ arch_within_stack_frames with unwinder
+Thread-Topic: [PATCH v3 3/3] x86: usercopy: reimplement
+ arch_within_stack_frames with unwinder
+Thread-Index: AQHTz/sSAuKS/MpI00yCw1px+eBQn6P4ZtyQ
+Date: Mon, 9 Apr 2018 13:14:58 +0000
+Message-ID: <a59b818d84b74c13a4f25f757eba1f93@AcuMS.aculab.com>
 References: <1523275156-29087-1-git-send-email-kpark3469@gmail.com>
  <1523275156-29087-2-git-send-email-kpark3469@gmail.com>
  <1523275156-29087-3-git-send-email-kpark3469@gmail.com>
+ <1523275156-29087-4-git-send-email-kpark3469@gmail.com>
+In-Reply-To: <1523275156-29087-4-git-send-email-kpark3469@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593731067679840173?=
-X-GMAIL-MSGID: =?utf-8?q?1597270113971147470?=
+X-GMAIL-MSGID: =?utf-8?q?1597274492326962702?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Sahara <keun-o.park@darkmatter.ae>
+From: kpark3469@gmail.com
+> Sent: 09 April 2018 12:59
+>
+> The old arch_within_stack_frames which used the frame pointer is
+> now reimplemented to use frame pointer unwinder apis. So the main
+> functionality is same as before.
 
-The old arch_within_stack_frames which used the frame pointer is
-now reimplemented to use frame pointer unwinder apis. So the main
-functionality is same as before.
+How much slower does this make the code?
+Following stack frames using %bp is reasonably quick.
+I can't imagine some of the other unwinder APIs being any where
+near that fast.
+While fine for fault tracebacks, using them during usercopy
+is likely to have measurable performance impact.
 
-Signed-off-by: Sahara <keun-o.park@darkmatter.ae>
----
- arch/x86/include/asm/unwind.h  |  5 ++++
- arch/x86/kernel/stacktrace.c   | 64 +++++++++++++++++++++++++++++++++---------
- arch/x86/kernel/unwind_frame.c |  4 +--
- 3 files changed, 57 insertions(+), 16 deletions(-)
-
-diff --git a/arch/x86/include/asm/unwind.h b/arch/x86/include/asm/unwind.h
-index 1f86e1b..6f04906f 100644
---- a/arch/x86/include/asm/unwind.h
-+++ b/arch/x86/include/asm/unwind.h
-@@ -87,6 +87,11 @@ void unwind_init(void);
- void unwind_module_init(struct module *mod, void *orc_ip, size_t orc_ip_size,
- 			void *orc, size_t orc_size);
- #else
-+#ifdef CONFIG_UNWINDER_FRAME_POINTER
-+#define FRAME_HEADER_SIZE (sizeof(long) * 2)
-+size_t regs_size(struct pt_regs *regs);
-+#endif
-+
- static inline void unwind_init(void) {}
- static inline
- void unwind_module_init(struct module *mod, void *orc_ip, size_t orc_ip_size,
-diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
-index ff178a0..3de1105 100644
---- a/arch/x86/kernel/stacktrace.c
-+++ b/arch/x86/kernel/stacktrace.c
-@@ -13,6 +13,33 @@
- #include <asm/unwind.h>
- 
- 
-+static inline void *get_cur_frame(struct unwind_state *state)
-+{
-+	void *frame = NULL;
-+
-+#if defined(CONFIG_UNWINDER_FRAME_POINTER)
-+	if (state->regs)
-+		frame = (void *)state->regs;
-+	else
-+		frame = (void *)state->bp;
-+#endif
-+	return frame;
-+}
-+
-+static inline void *get_frame_end(struct unwind_state *state)
-+{
-+	void *frame_end = NULL;
-+
-+#if defined(CONFIG_UNWINDER_FRAME_POINTER)
-+	if (state->regs) {
-+		frame_end = (void *)state->regs + regs_size(state->regs);
-+	} else {
-+		frame_end = (void *)state->bp + FRAME_HEADER_SIZE;
-+	}
-+#endif
-+	return frame_end;
-+}
-+
- /*
-  * Walks up the stack frames to make sure that the specified object is
-  * entirely contained by a single stack frame.
-@@ -26,31 +53,42 @@ int arch_within_stack_frames(const void * const stack,
- 			     const void * const stackend,
- 			     const void *obj, unsigned long len)
- {
--#if defined(CONFIG_FRAME_POINTER)
--	const void *frame = NULL;
--	const void *oldframe;
--
--	oldframe = __builtin_frame_address(2);
--	if (oldframe)
--		frame = __builtin_frame_address(3);
-+#if defined(CONFIG_UNWINDER_FRAME_POINTER)
-+	struct unwind_state state;
-+	void *prev_frame_end = NULL;
- 	/*
- 	 * low ----------------------------------------------> high
- 	 * [saved bp][saved ip][args][local vars][saved bp][saved ip]
- 	 *                     ^----------------^
- 	 *               allow copies only within here
-+	 *
-+	 * Skip 3 non-inlined frames: arch_within_stack_frames(),
-+	 * check_stack_object() and __check_object_size().
-+	 *
- 	 */
--	while (stack <= frame && frame < stackend) {
-+	unsigned int discard_frames = 3;
-+
-+	for (unwind_start(&state, current, NULL, NULL); !unwind_done(&state);
-+	     unwind_next_frame(&state)) {
- 		/*
- 		 * If obj + len extends past the last frame, this
- 		 * check won't pass and the next frame will be 0,
- 		 * causing us to bail out and correctly report
- 		 * the copy as invalid.
- 		 */
--		if (obj + len <= frame)
--			return obj >= oldframe + 2 * sizeof(void *) ?
--				GOOD_FRAME : BAD_STACK;
--		oldframe = frame;
--		frame = *(const void * const *)frame;
-+		if (discard_frames) {
-+			discard_frames--;
-+		} else {
-+			void *frame = get_cur_frame(&state);
-+
-+			if (!frame || !prev_frame_end)
-+				return NOT_STACK;
-+			if (obj + len <= frame)
-+				return obj >= prev_frame_end ?
-+						GOOD_FRAME : BAD_STACK;
-+		}
-+		/* save current frame end before move to next frame */
-+		prev_frame_end = get_frame_end(&state);
- 	}
- 	return BAD_STACK;
- #else
-diff --git a/arch/x86/kernel/unwind_frame.c b/arch/x86/kernel/unwind_frame.c
-index 3dc26f9..c8bfa5c 100644
---- a/arch/x86/kernel/unwind_frame.c
-+++ b/arch/x86/kernel/unwind_frame.c
-@@ -8,8 +8,6 @@
- #include <asm/stacktrace.h>
- #include <asm/unwind.h>
- 
--#define FRAME_HEADER_SIZE (sizeof(long) * 2)
--
- unsigned long unwind_get_return_address(struct unwind_state *state)
- {
- 	if (unwind_done(state))
-@@ -69,7 +67,7 @@ static void unwind_dump(struct unwind_state *state)
- 	}
- }
- 
--static size_t regs_size(struct pt_regs *regs)
-+size_t regs_size(struct pt_regs *regs)
- {
- 	/* x86_32 regs from kernel mode are two words shorter: */
- 	if (IS_ENABLED(CONFIG_X86_32) && !user_mode(regs))
--- 
-2.7.4
+	David
