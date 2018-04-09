@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3968184-1523243958-2-6526945141013273490
+X-Cyrus-Session-Id: sloti22d1t05-3992186-1523243946-2-18119659878136795620
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523243957; b=riiqHqxlIPUlfVbGUVLe1nISreH+mrkPZtBe+vO47u/mLBZ7FP
-    Y02xLtJDMwHUHsXQ+v/NNDbc7Bb3Xqn2mcxkR2m4avB++t/NDPkIyHUdxNqwge7t
-    MiZWUsstrCA0Wxk1FbeaLyc6ytfS7+e7/mNCE33d9KPOpiQPvx8MK7x/ya/ejj/w
-    lQ/SvrzhlRsCNBKX9lIHV0qk75J5k6EKT5vs+g92F3ZJil2kjlPsHAnsdrvVi6Tx
-    0juGKLsa6hlyAq3jii4qlzxWTEkKzHX4j8B2kg0nZPKviCfWimnEnNpzICYPZeRA
-    mrTs+ES8RcKJVLP+p5d7/u4Gl2rh06sQ5ZXA==
+    1523243945; b=XWkWLuNO9yvEa5DZJLtxPIhJU3vs+8ISNoK/CJ4qgczjTndPgp
+    IsA8oFUorAfSZVxCwdo2OPJA1rF/K+K5kUtgX/++8KudsS5iWkGF5GFmMN8hHvsA
+    JSJZ93tNGeEbKGitY2+Y9ZuHMCAOG+xkv49ZXWLLIDPKIT+Vg5N90FvZJa5prVJp
+    fW0U752rkMt+guf5LhkZgvWVcPoOOzpuPKnDGnrNhpmdS8ajD8RTtbJrJx27hqPP
+    SOi++rXBvrlKm34zBZWcAoqUqgO+y6g9/grP93qH3dGR4Rpt87Rj3YefhwRSgVtu
+    Y4ljCE2sIP9elS2VruWqwvjB2PozjhtFywuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523243957; bh=3fH1xlmjvb
-    eYiIYT7nf3lvYzCjIISLwJP4FG5O2u68c=; b=M2bCn62hGxqOXPPwxlDO2Ere/s
-    6Iwf5GmvvGb5EmijVGVHpM+3EKk+igqb79KqND/H+kHoqW1ue+dnHziwq84t03Db
-    1LvHzUZlatORFxvfkKF9domG+/B/3qBac2HuGK4w3+DMd8qlWPXlVNUYpseDw/n9
-    rp/PAdm0G01QnmENlRW/3EgcFPhyDY5NPk0xYY3sot8WWxA34kH2vC2LsiuFVgb+
-    NB7qNUQohVsk38uqF7ODc8ketiMVRIzT2LdQGfdoelq3zRwcC6ZiZTiJuybGG5Mw
-    WhUFAJUfQM0ZT3Ui43SCPuCyPLw5G86grD6tyFxuGmYBYe5EnC6IKnxaNoig==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EC8Uhl6B x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523243945; bh=nIzuqi4tgt
+    SdMOL+Zm7Ww4nxJychdwpl9BSS0htazYY=; b=WecEFa5/hGJbbpIh2JyABlJoXY
+    lTXjtUpZjnYVPuVlzCQqaHpW6fEEVf1bG7J3r47ndu2uRx3+LLxd2AsTKpLzQt4D
+    WRlSruDf5qm45mFgQD4ZeyZe375eXInhBTWN+N7Poa4B/kU+wtKLUyziVCtACG5e
+    b9+/o/h3Af0nCThXBCxyqTwT09i83sGT1035Q4lty2OgIYm6nhu/nBHfZX+genYM
+    K7OD4Ow0Q+gj/jQHAy4Q/eMcGBdZFa7gotoZf7EfNqZlUlgmmhPajTqJbXudqOKb
+    OLdSG1GDDoxcb+X4P6cKnAKYwb1ysYNpBYxp6Ie+asyt+fZyJMnbOMLaRpPg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=kwvLrHRL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EC8Uhl6B x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=kwvLrHRL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,37 +51,37 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAR+By5QJk1krg/JQiG4De7i1UBwYf9YDp8yuXMs7wadvfpzH9xPdh0Ex7Azkg0diDJ/DzkLt8ovB+H7fJvIp9aP316UuSBp6YrDC5ZpcpRpK/5bnRDN
-    twDFV4ekS47N4dXuZzd128ek8hSKIl+qT3rGk4FRuSo/QM6VzHStcjULtcwWzg9nnAudnDqfzcSHQZ1tReAYjJB9AGjwoHIi0sizgz3yw6Z9KieumHu7PKos
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGnW7/rRyP7h+839iFHIf13FDdWvGPbky8F6jKV6rL8hVixitkwKm6QZNSX8QE6mx8248cQOYKbAC5GyASBh6+hKztbHtYrtxh62psK5+DqKl3gPlkSf
+    oJjloILMF+tVpUfS69Dk421Mr/dXlh7nS0J9x841ao3C5RNVYT6lhuLdZV3kW/iQwEALqyNEqJiOOQ4jNuHbH0QzuL169M3VVs3Afe8NgDzNb4hY+C9IRpFF
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8
-    a=yMhMjlubAAAA:8 a=sdoPFwP2wC3FMohMv5EA:9 a=bHE92GVGLNHByvyT:21
-    a=SXdcV7TddoC2q5Dh:21 a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=WzC6qhA0u3u7Ye7llzcV:22
+    a=Lf-vpJhqX20A:10 a=yPCof4ZbAAAA:8 a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8
+    a=CayBMKeuEvu4Z8dvqTcA:9 a=wPNLvfGTeEIA:10 a=WzC6qhA0u3u7Ye7llzcV:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeDIDTB (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 23:19:01 -0400
+        id S1752737AbeDIDSr (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 23:18:47 -0400
 Received: from mail-bn3nam01on0095.outbound.protection.outlook.com ([104.47.33.95]:56127
         "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753917AbeDIAXb (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:23:31 -0400
+        id S1753918AbeDIAXc (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:23:32 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Liu Bo <bo.li.liu@oracle.com>, David Sterba <dsterba@suse.com>,
+CC: Anand Jain <Anand.Jain@oracle.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 053/161] Btrfs: fix scrub to repair raid6
- corruption
-Thread-Topic: [PATCH AUTOSEL for 4.14 053/161] Btrfs: fix scrub to repair
- raid6 corruption
-Thread-Index: AQHTz5iQJZXOBPKxsU2+abgRTAprVg==
-Date: Mon, 9 Apr 2018 00:20:29 +0000
-Message-ID: <20180409001936.162706-53-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 054/161] btrfs: fail mount when sb flag is
+ not in BTRFS_SUPER_FLAG_SUPP
+Thread-Topic: [PATCH AUTOSEL for 4.14 054/161] btrfs: fail mount when sb flag
+ is not in BTRFS_SUPER_FLAG_SUPP
+Thread-Index: AQHTz5iRI1Ee4Gxi7UiBbb/Rw9TUBA==
+Date: Mon, 9 Apr 2018 00:20:30 +0000
+Message-ID: <20180409001936.162706-54-alexander.levin@microsoft.com>
 References: <20180409001936.162706-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001936.162706-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,27 +90,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1014;7:LbmItQTg+XIskVbTCd2NMDKZJsyPnTrZHST+JM+XB45Yfor/VRDpJOKeZKaTzUmxr1knGOLobfAIKFis8wJ/5DhEOWINPaTqa/egvlxAnU9zXguA1iYPDAwlpA4Z1Ul9hdJUevvT1QIZURhN3UuDNZKfWHNGISD66iuaYmfblg99150y0CXYRfMVc1u2x2xw/g6NhXpcXNCdAaEjd28KIIHt+zS8hcAgZ/0QsMMLPUvii9BGXyqEVyImr1jDh9mP;20:1hDigbF1jVDcMELWcTYBPhCQl55nunXZrkFTIQhp2L8IHLumb4s+tzDniAzQXdk80nTOIAjyqEH0cOdjJvsy8YMVg7vAB0Qe+WeQrqVNtWcCfXdb8b5r1dtiFyYycewX0a87M4xK/6FAAsp8cgpD4cXa9i/CivAm13WuefYloMI=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1014;7:8ypvQFrizc6Otu0YWjbOyL4EuRf6nY54Ipt2oKi4cBCuf3tvvaZEILhHEAOccRMzxfM0fxUcC2cdut38P2k/hQuXvrCsI2rEf1dSc0K6Ato5xmSZXGsv0jzjwFASAGM5onvrTfyJm4I9OZwcpFmPv8rMUgO7UdY3MtrnV8Y/mzCSULdUWAjRsOcUJLlp7QPUsnGsQKds9XI7Y9aoFaZ2ZfJT8JaLI+sNtTVId4R8LMryE8YJUZozg2WCiThPaaxe;20:8pD2VwATDDHzxsDKB5NG7/QcgdytsbJ68Lt6+ckYQDDMqEFgaHDB6nNjpPhlxhtVjgiOvyZ8emZ4vL+6QOll4BY44TgD6jAP5JwOVjQqbytoLP4fk+ZEb0xDd5ssXZ6IXBAVE3mr/z4eyzXypwjW2CUCuhvLsdQQ+iogMwEa04Q=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 545c761c-18ba-402e-df84-08d59db01e51
+X-MS-Office365-Filtering-Correlation-Id: da98eabb-da1e-4e33-3da5-08d59db01eb1
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1014;
 x-ms-traffictypediagnostic: DM5PR2101MB1014:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10147FD57174FF99093B303AFBBF0@DM5PR2101MB1014.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB10140BD01DCBD84D515C5AC6FBBF0@DM5PR2101MB1014.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1014;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1014;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(39380400002)(396003)(376002)(189003)(199004)(81166006)(81156014)(478600001)(6436002)(72206003)(8936002)(10290500003)(106356001)(99286004)(86362001)(2616005)(7736002)(2501003)(446003)(476003)(8676002)(11346002)(105586002)(305945005)(5250100002)(6512007)(53936002)(68736007)(6306002)(107886003)(66066001)(86612001)(966005)(2906002)(14454004)(186003)(22452003)(25786009)(4326008)(2900100001)(486006)(36756003)(6486002)(3660700001)(59450400001)(54906003)(26005)(3280700002)(110136005)(1076002)(10090500001)(76176011)(6506007)(97736004)(316002)(3846002)(6116002)(102836004)(5660300001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1014;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: Mh6xbSwND/HDCet1AgnwZcfbDFPBW3Gz1Pacog9X9YR6FbFCiZ1yVpL9rtPd6nFA9D0CSYRVi9FU3q30RTadaawqgyvcjSrHV+zfJ5sTpfdaKVp4kg9MjSCSsCUHDdnrJ20ei0gMVb4jks6AC8uJ6s8kucthpES+56XjKAVFYJsk7qWsBcZgEAYHceOL7n38mbgFvIINeZ7HsnSGqIc6EkVqcrnblZ3XsaI4XWisMBJfDJRPyB1M/Aozdcpdu7DPiuFZlOxSnEe9bSmRS+mZWwzie+bgirD1dUBQVwW2D6ziP0wAWu0W0IPssBn6xkDIG5V8dnOrkSb72UHQ2Ftncgpb+xJlRh4tmR9ILteN5nY6kEHKdB4pUO0BhXURKomDuZykjtaTyy3KN6SP/lgIN239L16d2Ah4Le6Kd6sg2VM=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(39380400002)(396003)(376002)(189003)(199004)(81166006)(81156014)(478600001)(6436002)(72206003)(575784001)(8936002)(10290500003)(106356001)(99286004)(86362001)(2616005)(7736002)(2501003)(6666003)(446003)(476003)(8676002)(11346002)(105586002)(305945005)(5250100002)(6512007)(53936002)(68736007)(107886003)(66066001)(86612001)(2906002)(14454004)(186003)(22452003)(25786009)(4326008)(2900100001)(486006)(36756003)(6486002)(3660700001)(59450400001)(54906003)(26005)(3280700002)(110136005)(1076002)(10090500001)(76176011)(6506007)(97736004)(316002)(3846002)(6116002)(102836004)(5660300001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1014;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: Ry6fGpHypfalGBrMMzGwqsybKR0WuKdEByGXiRyw4ye8p59vduK+uosR0rQrLG5C3YCzcH6f0+kfITB48RTekAJa/UEatyAiQyuMzwJTQlVgLWd/S1ZtLn4ACmpPx8bdwV7v9E6f6oHVB/k7HONE8qa45LTuD0/hAzZqMi0V0wikftXDIfye/6mmgNCgckhezkq6BzOeALmTxmWS8vjkJdeWLaTFHu/vQ/DUqyZEgXV9dw4GKye4YZ90zrE+7gdNrIeVwdBmtFv3WJSqsR6LMkLSpXjTC77drQ1liqh3oT7Rv9MVC50g6+evdzJo8EfA8gsU8YL5ypdbNzZloCl/I4CTME9uamJn8FNwvttrqxrzp3KYdIqlqEOQsuQa4z0dHAV4EBqamNS7YPpFiKj+QrP5PnMfWPQlPuksv4v2Wxc=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 545c761c-18ba-402e-df84-08d59db01e51
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:20:29.3631
+X-MS-Exchange-CrossTenant-Network-Message-Id: da98eabb-da1e-4e33-3da5-08d59db01eb1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:20:30.4255
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -121,89 +121,46 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Anand Jain <Anand.Jain@oracle.com>
 
-[ Upstream commit 762221f095e3932669093466aaf4b85ed9ad2ac1 ]
+[ Upstream commit 6f794e3c5c8f8fdd3b5bb20d9ded894e685b5bbe ]
 
-The raid6 corruption is that,
-suppose that all disks can be read without problems and if the content
-that was read out doesn't match its checksum, currently for raid6
-btrfs at most retries twice,
+It appears from the original commit [1] that there isn't any design
+specific reason not to fail the mount instead of just warning. This
+patch will change it to fail.
 
-- the 1st retry is to rebuild with all other stripes, it'll eventually
-  be a raid5 xor rebuild,
-- if the 1st fails, the 2nd retry will deliberately fail parity p so
-  that it will do raid6 style rebuild,
+[1]
+ commit 319e4d0661e5323c9f9945f0f8fb5905e5fe74c3
+    btrfs: Enhance super validation check
 
-however, the chances are that another non-parity stripe content also
-has something corrupted, so that the above retries are not able to
-return correct content.
-
-We've fixed normal reads to rebuild raid6 correctly with more retries
-in Patch "Btrfs: make raid6 rebuild retry more"[1], this is to fix
-scrub to do the exactly same rebuild process.
-
-[1]: https://patchwork.kernel.org/patch/10091755/
-
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Fixes: 319e4d0661e5323 ("btrfs: Enhance super validation check")
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/btrfs/raid56.c  | 18 ++++++++++++++----
- fs/btrfs/volumes.c |  9 ++++++++-
- 2 files changed, 22 insertions(+), 5 deletions(-)
+ fs/btrfs/disk-io.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
-index 32b186c5694c..dcab41157899 100644
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -2159,11 +2159,21 @@ int raid56_parity_recover(struct btrfs_fs_info *fs_=
-info, struct bio *bio,
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 167ce43cabe8..79f0f282a0ef 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -4063,9 +4063,11 @@ static int btrfs_check_super_valid(struct btrfs_fs_i=
+nfo *fs_info)
+ 		btrfs_err(fs_info, "no valid FS found");
+ 		ret =3D -EINVAL;
  	}
-=20
- 	/*
--	 * reconstruct from the q stripe if they are
--	 * asking for mirror 3
-+	 * Loop retry:
-+	 * for 'mirror =3D=3D 2', reconstruct from all other stripes.
-+	 * for 'mirror_num > 2', select a stripe to fail on every retry.
- 	 */
--	if (mirror_num =3D=3D 3)
--		rbio->failb =3D rbio->real_stripes - 2;
-+	if (mirror_num > 2) {
-+		/*
-+		 * 'mirror =3D=3D 3' is to fail the p stripe and
-+		 * reconstruct from the q stripe.  'mirror > 3' is to
-+		 * fail a data stripe and reconstruct from p+q stripe.
-+		 */
-+		rbio->failb =3D rbio->real_stripes - (mirror_num - 1);
-+		ASSERT(rbio->failb > 0);
-+		if (rbio->failb <=3D rbio->faila)
-+			rbio->failb--;
+-	if (btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP)
+-		btrfs_warn(fs_info, "unrecognized super flag: %llu",
++	if (btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP) {
++		btrfs_err(fs_info, "unrecognized or unsupported super flag: %llu",
+ 				btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP);
++		ret =3D -EINVAL;
 +	}
-=20
- 	ret =3D lock_stripe_add(rbio);
-=20
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 71b3cd634436..5c72b9d2a885 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -5101,7 +5101,14 @@ int btrfs_num_copies(struct btrfs_fs_info *fs_info, =
-u64 logical, u64 len)
- 	else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
- 		ret =3D 2;
- 	else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
--		ret =3D 3;
-+		/*
-+		 * There could be two corrupted data stripes, we need
-+		 * to loop retry in order to rebuild the correct data.
-+		 *=20
-+		 * Fail a stripe at a time on every retry except the
-+		 * stripe under reconstruction.
-+		 */
-+		ret =3D map->num_stripes;
- 	else
- 		ret =3D 1;
- 	free_extent_map(em);
+ 	if (btrfs_super_root_level(sb) >=3D BTRFS_MAX_LEVEL) {
+ 		btrfs_err(fs_info, "tree_root level too big: %d >=3D %d",
+ 				btrfs_super_root_level(sb), BTRFS_MAX_LEVEL);
 --=20
 2.15.1
