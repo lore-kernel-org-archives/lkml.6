@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3689844-1523236308-2-13788234998279027604
+X-Cyrus-Session-Id: sloti22d1t05-3695087-1523236287-2-4344214662478829920
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523236307; b=pok72pI5jhgd7o1MkTWWGn9SVmf32oYn8soHGPFnoCea7thZ8N
-    zqipPT3bfuTXuzF4WWVlTTb86JTfEhFeBpiN7lR7dq51w/iQLh5G95jenM2KxiFY
-    KNpF+aUig+tW9+Z3jucRAPz9+GEx4yi4sU6TXnl91PhuP0sKEuJw1upExfX5rVNS
-    iQVVncYTa4GWPbRIZ4Vp3fGIa84kyh/g8gRn3ETqLVl1sK9MITAc4cZzKKfJsAMg
-    jfAsaPoWPR9cdGon6eKg5OpGR04a3lrybSTFDUQKMomq9mtVIslb88YuzazN+YJB
-    la320TkzAJ+4pUyQoGgYYmGAMnsMlz6/+LEw==
+    1523236286; b=oHdiM82ENmIm6gCbNS8kmv9+wNDd65O8kdE/gUQHY8uSWKREqp
+    XOlqELuWjk4SZf6Gww8dBjrYkRFvcMX9XbLbTMcml47LMr+p/jtB8NCP1TKU451i
+    ZnJr3GpDe5TKYxxwfUfhHvq36v5sVpw1Ilun5pewHeqf/REG8s5G0pL/mgkqKTlB
+    GceksuCZRYQWbnGxHoeEIeQOiTB96oRvEEpI9avhD0NHDUu/9zOWtpVdz4pJlf2s
+    1KxTfJpGK7ls//nDMeouQI2uJBvS/1C/oRNv1NyJqbLG2GXPqpOarT6EFkvNqtxQ
+    MrO0FTdjjJ6SHeONW4pTwWmUm2FUW/o7sLCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523236307; bh=ByOlUVT9DA
-    TQFJJ7GIcQrIArP/ImvbPtbXyAiL7B/V0=; b=fTowExvo1UK1655MjQlZ2KlOsn
-    KKm3QkbdLLGNbHU4QuxC+GBEZsO4FlkwkdGteiZSnAlzmCgtzG5WOPzpc0B/dAts
-    c02jT2nVDRwCBupg1z/6c3nuvwEoW2zdpYuX8mrVW4meOq8a401HcuNCxc8hu6rq
-    lK/WrLNGtB+QUAP5kxiaeO9eicJWXTRZ9MGiYSWBy1W2VX9WBgfhYkd10o8v4L36
-    uU+quHTXWJTfb4ioVKKOjLWo/tjzUQ3tUKY2MHCauKL+isGD+d1o2r6lkyHJMxD+
-    Oqi1AStMkADTNsUPYy0ZwiLcus8nVYkJ1lCeRTMbFi70CBkzziMHRraXwVsA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=FKExHOOX x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523236286; bh=2/+CMCDbSl
+    cOwFT6dTGwVjqJdyrkMwAk9RQvZ7mF/z0=; b=HEJiNXXiPs8xNtNTKIo9OZ7c0D
+    ZpSZGG+0L3X4GQei7hXv0bZEmXOVHYjYoriq14GGC7uKiri12B/tUMxiuWRsYabt
+    rQzNw0spqtr0bSrP8LL7HCdR4pYF8Bv8Mnjb0Z1NMIB7RQ4oB4zPkeZVpaVU5/SN
+    xszpBmiDyCO46yizLZ9yUrRHZzIxBsYP2H/j9bmI0oYz68HPN3I+r8eUQnmTj/YG
+    fOBUmFRNd+PAzZpgtPVOjUVZkmMrbzW3WHZoZwj0zlci51KJ2k7reFSF45EMH5yg
+    mvwNvulq4O9sgi52bnokmin7Wy7vWJEgcgqAQzh9YecB4FiLcqtpb3zrD4+w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EDotNk5r x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -38,10 +38,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=FKExHOOX x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EDotNk5r x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -49,38 +49,42 @@ Authentication-Results: mx3.messagingengine.com;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPameDPJ1D3zvwhD4uMAQeKcgzdzIYg8ZLHwYNOvUiciR8nBgOTp/hi/6weePbGYS379NRO1HvpXly8ptzdQBCksXD6Eq+kxbsDXHCH3C3ZY/kd0f1K4
-    41xmrRde8kKwsjP2GGt9g7ChR7t39iSCP7zh2ScpFiXBXvD3+X9nklyheNRGh7plYeeE/DqQTv4FnRStZ6baQBkIAZdSzJwXMePasSucjxhG06+NQQ364r9G
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOHZ6HGwueGN9wefCOZeiCn8KvgmJbWFg+psJ+y+V8aMAuA78MTYCdolDZYYym6gwwSJxCABAXQbvMFAuumkkK+uPricuMIl/enp/x1Ks+/kr57TWndS
+    O42G7fCkHZeJak8P/To+HzBg8xyCgPKS8D/tgrB+/zCK6aThA7G5G33OJGqoVgEx7vOrEZuolApI0E9thkzr/D4csB40mySswioFC/r3/KIy1ql19DzG2L+W
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8 a=ker1sbzaWBn98nDuXL4A:9
-    a=Va9WcdoZwLmEpGs-:21 a=bm8wM3lKLVm61SVj:21 a=wPNLvfGTeEIA:10
+    a=Lf-vpJhqX20A:10 a=R_Myd5XaAAAA:8 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
+    a=Z4Rwk6OoAAAA:8 a=yMhMjlubAAAA:8 a=5UkYvFHTB3ZtRazDmScA:9
+    a=PROXMrZXyT9UIZUq:21 a=m7OeU_N4EMFnT3V8:21 a=wPNLvfGTeEIA:10
+    a=L2g4Dz8VuBQ37YGmWQah:22 a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754088AbeDIBLc (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 21:11:32 -0400
-Received: from mail-co1nam03on0129.outbound.protection.outlook.com ([104.47.40.129]:43760
+        id S1757167AbeDIBKy (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 21:10:54 -0400
+Received: from mail-co1nam03on0120.outbound.protection.outlook.com ([104.47.40.120]:40064
         "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755134AbeDIAim (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:38:42 -0400
+        id S933007AbeDIAip (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:38:45 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+CC: Mel Gorman <mgorman@techsingularity.net>,
+        "Huang, Ying" <ying.huang@intel.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 132/162] powerpc/numa: Use
- ibm,max-associativity-domains to discover possible nodes
-Thread-Topic: [PATCH AUTOSEL for 4.4 132/162] powerpc/numa: Use
- ibm,max-associativity-domains to discover possible nodes
-Thread-Index: AQHTz5nROQjwNJ96H0K1uEp5QPu/kw==
-Date: Mon, 9 Apr 2018 00:29:28 +0000
-Message-ID: <20180409002738.163941-132-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 142/162] mm: pin address_space before
+ dereferencing it while isolating an LRU page
+Thread-Topic: [PATCH AUTOSEL for 4.4 142/162] mm: pin address_space before
+ dereferencing it while isolating an LRU page
+Thread-Index: AQHTz5nYXt3GbxuflEemEDB3mA6xew==
+Date: Mon, 9 Apr 2018 00:29:39 +0000
+Message-ID: <20180409002738.163941-142-alexander.levin@microsoft.com>
 References: <20180409002738.163941-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,164 +93,134 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1095;7:M/CWJ3c4Oic9WvphRGqG7fZnmK9e9Pe9h7ScEltsLh21ATsq90dmkL2Tl+2O/e7vySk9LCMx98HJoJt/hFW9LtfhMkfU3NtofmBa3INY5bCG5OZ+Wk0usogo+20DuI/uzHaNTUmQd/Y46SmWNCEsW0IBHcmmNm1xbAkVbdFKdhsfv7ONyY/iJnoocqpF3KUJ7fNAKJo1TjHBQPYzaS3R+nyxTvaHTWo7MsySMNsC+SfE6QsMrC6xqP6QSVbCWZ0W;20:FbZPeAn0IUmeNzGe3KF2o/LsjEiNJ3rLnrB0gBKxeQsfBP6hPgQvwcVKn6g1HVGAxyZ5T602g0UU7gA49RBBwAJLzDIiARdm87OumqOYMpxnE1/jSyQQ2Zv7ymGTqKdLZU1kkB7AU1j3oZ7+X5/kXgKMZY39UMeBakVyB6xZjpU=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1125;7:1nE5cR6RApFSTjtXHGWNjY394bZqJoAbxuddF5yst666bm1xkSlHdDof3MZi1+HNJi6bHtMNQoNnI5wfhL8IwMf8TXfh6A00x+wQW09AoeyIUBychINiFnKDBGtomURbAa6uEyCd7nHoPraKrPbwgtygI3NdzV0mgCFq2zQ3PxaTWDaCopgPxtCVH8n2GSHZYwOePPztzhFzUl7xnh0OGy7bdKTlvrmOZ/NNqyxzRCye4rYEWu0QWYoHak3krvGA;20:tFfk14uKaEWiaOrmJ4tP9NcYOpIPpboW6/DGmxa7fApHT9Qx+ToUA/P1h77+cwXj5QfMFuIjR0fja0OJEqtsMJWgQ91VvwYn40G9Pa9LDzD9NviZyGFQ9vacoUSpNBJtoKroJEuCh7n7CKeM/f0KshoT3QOBQoSUoEbvkMWeMWk=
+X-MS-Office365-Filtering-Correlation-Id: bc4dac58-61ee-408b-d854-08d59db23f51
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 9e65f220-6074-442a-50b7-08d59db23bbe
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1095;
-x-ms-traffictypediagnostic: DM5PR2101MB1095:
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB1125;
+x-ms-traffictypediagnostic: DM5PR2101MB1125:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1095634765A7B04BBBCB28D0FBBF0@DM5PR2101MB1095.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(209352067349851)(104084551191319);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1095;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1095;
+x-microsoft-antispam-prvs: <DM5PR2101MB1125A88D61E2BED395C22C08FBBF0@DM5PR2101MB1125.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(42068640409301)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1125;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1125;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(366004)(396003)(39860400002)(376002)(189003)(199004)(26005)(10090500001)(476003)(105586002)(86362001)(107886003)(11346002)(446003)(2616005)(102836004)(76176011)(6512007)(97736004)(36756003)(6666003)(6506007)(8676002)(59450400001)(99286004)(4326008)(10290500003)(81156014)(86612001)(81166006)(186003)(486006)(2900100001)(106356001)(1076002)(72206003)(478600001)(305945005)(8936002)(25786009)(3660700001)(7736002)(68736007)(66066001)(110136005)(316002)(54906003)(3280700002)(2906002)(3846002)(6116002)(6436002)(53936002)(6486002)(22452003)(2501003)(5250100002)(14454004)(5660300001)(22906009)(142933001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1095;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: l/Ez1Dkpb9fG7adKP/WHxi5EC2I2Y2JDaADbNQ0Pf7rg+z56eShZJzMS392Se+s5KHNTWHDB30TGx2tvd95R3rxPoKQTeYk0Act8NjLZ/Cmb8drMAeVnAhg+rW8JUA6EsxuZWwn29ahQvLBLh0nRBW+4R5oDX0wImRH6EU4WHt3k0UTvyrXzRcQcakbsQLTyxURXc+HEytZnnhSK291n3zBz6/lJOnkd3bVW72SbBXwxf2b6dqDqLVMd39TVpR1q7PvQyosUf0Q2NfemhJuBO98vs2VyDh3zUBjoTPKGH0Tf2VAvqwzGeJvvT2H2lMYlDcxcdPODfZimLKdK42Cikn0JdfV7S8AHYzskTKqJWJz5YAgTVX/c38wj1+7Nwrc7nbiGGUi3x32a6FKtCxrQeIxhXU6qjow+kmHfA452aZo=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(39380400002)(366004)(376002)(396003)(189003)(199004)(2906002)(25786009)(6512007)(10090500001)(3280700002)(10290500003)(6666003)(6306002)(3660700001)(316002)(110136005)(54906003)(11346002)(107886003)(2616005)(476003)(446003)(36756003)(99286004)(86612001)(53936002)(4326008)(486006)(6436002)(3846002)(81156014)(305945005)(966005)(5250100002)(1076002)(102836004)(14454004)(66066001)(7736002)(105586002)(81166006)(59450400001)(106356001)(8676002)(97736004)(6116002)(6506007)(6486002)(5660300001)(186003)(76176011)(22452003)(72206003)(478600001)(2501003)(2900100001)(26005)(86362001)(8936002)(68736007)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1125;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: jlFPaZQMp+/22/GFOuUa564fGs4e/L2k71vNBIm15XpeWf++qWPDdE08SqPPOUTY5+pK/Ijq2roxdJmgnC6s8aM4BwHDw/JGW5rT8KSwpmZYZbS6UN9sHeAOALfbNnUkCznse3coTbRE5S11/l6HAjOd5ASRofceTJKzQJFETUFT3rCPjspR0J7HtinSUZKgQhLwjum8uo7s/GlkUlXJGMABZkuQe5+XugJcPnI2D+YVMoU17LfptLR2lpvm+gaIH2B5p6+pHksTuhQGi55U37jf2BPxMRzR1tuhi4Qk51MxuEj65TaCzsA43btcE6UVkM+y3dJZV/2JtQIcYhDLUinLwavVZdUz1cqyqUWSiP6ypUSsKRym8MOKF2nZbS329Kx2poaBTy1ka+DICPjMVjwNCnZJpGr75+3TVVLLczQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e65f220-6074-442a-50b7-08d59db23bbe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:29:28.3025
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc4dac58-61ee-408b-d854-08d59db23f51
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:29:39.3495
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1095
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1125
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Michael Bringmann <mwb@linux.vnet.ibm.com>
+From: Mel Gorman <mgorman@techsingularity.net>
 
-[ Upstream commit a346137e9142b039fd13af2e59696e3d40c487ef ]
+[ Upstream commit 69d763fc6d3aee787a3e8c8c35092b4f4960fa5d ]
 
-On powerpc systems which allow 'hot-add' of CPU or memory resources,
-it may occur that the new resources are to be inserted into nodes that
-were not used for these resources at bootup. In the kernel, any node
-that is used must be defined and initialized. These empty nodes may
-occur when,
+Minchan Kim asked the following question -- what locks protects
+address_space destroying when race happens between inode trauncation and
+__isolate_lru_page? Jan Kara clarified by describing the race as follows
 
-* Dedicated vs. shared resources. Shared resources require information
-  such as the VPHN hcall for CPU assignment to nodes. Associativity
-  decisions made based on dedicated resource rules, such as
-  associativity properties in the device tree, may vary from decisions
-  made using the values returned by the VPHN hcall.
+CPU1                                            CPU2
 
-* memoryless nodes at boot. Nodes need to be defined as 'possible' at
-  boot for operation with other code modules. Previously, the powerpc
-  code would limit the set of possible nodes to those which have
-  memory assigned at boot, and were thus online. Subsequent add/remove
-  of CPUs or memory would only work with this subset of possible
-  nodes.
+truncate(inode)                                 __isolate_lru_page()
+  ...
+  truncate_inode_page(mapping, page);
+    delete_from_page_cache(page)
+      spin_lock_irqsave(&mapping->tree_lock, flags);
+        __delete_from_page_cache(page, NULL)
+          page_cache_tree_delete(..)
+            ...                                   mapping =3D page_mapping(=
+page);
+            page->mapping =3D NULL;
+            ...
+      spin_unlock_irqrestore(&mapping->tree_lock, flags);
+      page_cache_free_page(mapping, page)
+        put_page(page)
+          if (put_page_testzero(page)) -> false
+- inode now has no pages and can be freed including embedded address_space
 
-* memoryless nodes with CPUs at boot. Due to the previous restriction
-  on nodes, nodes that had CPUs but no memory were being collapsed
-  into other nodes that did have memory at boot. In practice this
-  meant that the node assignment presented by the runtime kernel
-  differed from the affinity and associativity attributes presented by
-  the device tree or VPHN hcalls. Nodes that might be known to the
-  pHyp were not 'possible' in the runtime kernel because they did not
-  have memory at boot.
+                                                  if (mapping && !mapping->=
+a_ops->migratepage)
+- we've dereferenced mapping which is potentially already free.
 
-This patch ensures that sufficient nodes are defined to support
-configuration requirements after boot, as well as at boot. This patch
-set fixes a couple of problems.
+The race is theoretically possible but unlikely.  Before the
+delete_from_page_cache, truncate_cleanup_page is called so the page is
+likely to be !PageDirty or PageWriteback which gets skipped by the only
+caller that checks the mappping in __isolate_lru_page.  Even if the race
+occurs, a substantial amount of work has to happen during a tiny window
+with no preemption but it could potentially be done using a virtual
+machine to artifically slow one CPU or halt it during the critical
+window.
 
-* Nodes known to powerpc to be memoryless at boot, but to have CPUs in
-  them are allowed to be 'possible' and 'online'. Memory allocations
-  for those nodes are taken from another node that does have memory
-  until and if memory is hot-added to the node. * Nodes which have no
-  resources assigned at boot, but which may still be referenced
-  subsequently by affinity or associativity attributes, are kept in
-  the list of 'possible' nodes for powerpc. Hot-add of memory or CPUs
-  to the system can reference these nodes and bring them online
-  instead of redirecting to one of the set of nodes that were known to
-  have memory at boot.
+This patch should eliminate the race with truncation by try-locking the
+page before derefencing mapping and aborting if the lock was not
+acquired.  There was a suggestion from Huang Ying to use RCU as a
+side-effect to prevent mapping being freed.  However, I do not like the
+solution as it's an unconventional means of preserving a mapping and
+it's not a context where rcu_read_lock is obviously protecting rcu data.
 
-This patch extracts the value of the lowest domain level (number of
-allocable resources) from the device tree property
-"ibm,max-associativity-domains" to use as the maximum number of nodes
-to setup as possibly available in the system. This new setting will
-override the instruction:
-
-    nodes_and(node_possible_map, node_possible_map, node_online_map);
-
-presently seen in the function arch/powerpc/mm/numa.c:initmem_init().
-
-If the "ibm,max-associativity-domains" property is not present at
-boot, no operation will be performed to define or enable additional
-nodes, or enable the above 'nodes_and()'.
-
-Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
-Reviewed-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: http://lkml.kernel.org/r/20180104102512.2qos3h5vqzeisrek@techsingular=
+ity.net
+Fixes: c82449352854 ("mm: compaction: make isolate_lru_page() filter-aware =
+again")
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Acked-by: Minchan Kim <minchan@kernel.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/powerpc/mm/numa.c | 37 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 34 insertions(+), 3 deletions(-)
+ mm/vmscan.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
-index 669a15e7fa76..8fd8425af27f 100644
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -951,6 +951,34 @@ static void __init setup_node_data(int nid, u64 start_=
-pfn, u64 end_pfn)
- 	NODE_DATA(nid)->node_spanned_pages =3D spanned_pages;
- }
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 930f7c67a9c1..d9dc6a48936c 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1312,6 +1312,7 @@ int __isolate_lru_page(struct page *page, isolate_mod=
+e_t mode)
 =20
-+static void __init find_possible_nodes(void)
-+{
-+	struct device_node *rtas;
-+	u32 numnodes, i;
-+
-+	if (min_common_depth <=3D 0)
-+		return;
-+
-+	rtas =3D of_find_node_by_path("/rtas");
-+	if (!rtas)
-+		return;
-+
-+	if (of_property_read_u32_index(rtas,
-+				"ibm,max-associativity-domains",
-+				min_common_depth, &numnodes))
-+		goto out;
-+
-+	for (i =3D 0; i < numnodes; i++) {
-+		if (!node_possible(i)) {
-+			setup_node_data(i, 0, 0);
-+			node_set(i, node_possible_map);
-+		}
-+	}
-+
-+out:
-+	of_node_put(rtas);
-+}
-+
- void __init initmem_init(void)
- {
- 	int nid, cpu;
-@@ -966,12 +994,15 @@ void __init initmem_init(void)
- 	memblock_dump_all();
+ 		if (PageDirty(page)) {
+ 			struct address_space *mapping;
++			bool migrate_dirty;
 =20
- 	/*
--	 * Reduce the possible NUMA nodes to the online NUMA nodes,
--	 * since we do not support node hotplug. This ensures that  we
--	 * lower the maximum NUMA node ID to what is actually present.
-+	 * Modify the set of possible NUMA nodes to reflect information
-+	 * available about the set of online nodes, and the set of nodes
-+	 * that we expect to make use of for this platform's affinity
-+	 * calculations.
- 	 */
- 	nodes_and(node_possible_map, node_possible_map, node_online_map);
-=20
-+	find_possible_nodes();
+ 			/* ISOLATE_CLEAN means only clean pages */
+ 			if (mode & ISOLATE_CLEAN)
+@@ -1320,10 +1321,19 @@ int __isolate_lru_page(struct page *page, isolate_m=
+ode_t mode)
+ 			/*
+ 			 * Only pages without mappings or that have a
+ 			 * ->migratepage callback are possible to migrate
+-			 * without blocking
++			 * without blocking. However, we can be racing with
++			 * truncation so it's necessary to lock the page
++			 * to stabilise the mapping as truncation holds
++			 * the page lock until after the page is removed
++			 * from the page cache.
+ 			 */
++			if (!trylock_page(page))
++				return ret;
 +
- 	for_each_online_node(nid) {
- 		unsigned long start_pfn, end_pfn;
-=20
+ 			mapping =3D page_mapping(page);
+-			if (mapping && !mapping->a_ops->migratepage)
++			migrate_dirty =3D mapping && mapping->a_ops->migratepage;
++			unlock_page(page);
++			if (!migrate_dirty)
+ 				return ret;
+ 		}
+ 	}
 --=20
 2.15.1
