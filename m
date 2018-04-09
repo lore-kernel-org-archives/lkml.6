@@ -1,91 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752196AbeDIW6d (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 18:58:33 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42320 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751539AbeDIW6a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 18:58:30 -0400
-X-Google-Smtp-Source: AIpwx49S1SM7M8uBG0xD5Kf5oKH1sgNPeuIAK4vc+Ys5pb3rn5yuzCH+Z04xWTaPkEyVtIMNRghYmQ==
-Date: Mon, 9 Apr 2018 15:58:53 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Taniya Das <tdas@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [[PATCH v2] 2/2] dt-bindings: clock: Introduce QCOM RPMh clock
- bindings
-Message-ID: <20180409225853.GM453@tuxbook-pro>
-References: <1523183533-23171-1-git-send-email-tdas@codeaurora.org>
- <1523183533-23171-3-git-send-email-tdas@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523183533-23171-3-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752351AbeDIXAq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 19:00:46 -0400
+Received: from anholt.net ([50.246.234.109]:54628 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751546AbeDIXAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 19:00:44 -0400
+From: Eric Anholt <eric@anholt.net>
+To: dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
+        linux-rpi-kernel@lists.infradead.org
+Cc: Eric Anholt <eric@anholt.net>
+Subject: [PATCH 3/3] ARM: dts: cygnus: Remove the vc4 GPU subsystem node.
+Date: Mon,  9 Apr 2018 16:00:40 -0700
+Message-Id: <20180409230040.1100-3-eric@anholt.net>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180409230040.1100-1-eric@anholt.net>
+References: <20180409230040.1100-1-eric@anholt.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 08 Apr 03:32 PDT 2018, Taniya Das wrote:
+This is no longer required by the DRM driver, and was just a temporary
+hack for it.
 
-> From: Amit Nischal <anischal@codeaurora.org>
-> 
-> Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
-> devices would be used for communicating resource state requests to control
-> the clocks managed by RPMh.
-> 
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-> new file mode 100644
-> index 0000000..4ade82b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-> @@ -0,0 +1,22 @@
-> +Qualcomm Technologies, Inc. RPMh Clocks
-> +-------------------------------------------------------
-> +
-> +Resource Power Manager Hardened (RPMh) manages shared resources on
-> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
-> +other hardware subsystems via RSC to control clocks.
-> +
-> +Required properties :
-> +- compatible : shall contain "qcom,rpmh-clk-sdm845"
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ arch/arm/boot/dts/bcm-cygnus.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
 
-We have a chance to fix this to Rob's liking, so please make this
-"qcom,sdm845-rpmh-clock" (or maybe "qcom,sdm845-rpmhcc"?)
-
-> +
-> +- #clock-cells : must contain 1
-> +
-> +Example :
-> +
-> +#include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +	&apps_rsc {
-> +		rpmh: clock-controller {
-
-I believe the clock-controller, the power-domain and the bus-scaler are
-equal contenders of the label "rpmh", so please make it more specific.
-How about "rpmhcc" to mimic previous platforms?
-
-> +			compatible = "qcom,rpmh-clk-sdm845";
-> +			#clock-cells = <1>;
-> +		};
-> +	};
-
-Regards,
-Bjorn
+diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-cygnus.dtsi
+index 699fdf94d139..258bb3d61582 100644
+--- a/arch/arm/boot/dts/bcm-cygnus.dtsi
++++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
+@@ -492,10 +492,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		vc4: gpu {
+-			compatible = "brcm,cygnus-vc4";
+-		};
+-
+ 		gpio_asiu: gpio@180a5000 {
+ 			compatible = "brcm,cygnus-asiu-gpio";
+ 			reg = <0x180a5000 0x668>;
+-- 
+2.17.0
