@@ -1,34 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752185AbeDINLo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:11:44 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:56008 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750982AbeDINLm (ORCPT
+        id S1752239AbeDINLr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:11:47 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:33464 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752184AbeDINLo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:11:42 -0400
-Subject: Re: [PATCH v2 7/9] PCI: dwc: Replace lower into upper case characters
-To: Joe Perches <joe@perches.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
- <a28d463d04b198f51c64c1a7eb5b3f77da2d4ab9.1523266508.git.gustavo.pimentel@synopsys.com>
- <0dad6b43476c1a70944e3e7c245040243ddc2a04.camel@perches.com>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <c7aa4990-92ad-3e5e-de27-40df4f29f08b@synopsys.com>
-Date: Mon, 9 Apr 2018 14:10:44 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 9 Apr 2018 09:11:44 -0400
+X-Google-Smtp-Source: AIpwx49sWTeDWWmfvso3REfy6W6tEeoQkQ0cf5rL5LDsPIipj6MNMNovqUbxn7ZQD1Gxfdqvd/M/UQ==
+Subject: Re: WARNING in ip_rt_bug
+To: Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+b09ac67a2af842b12eab@syzkaller.appspotmail.com>
+Cc: David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Eric Dumazet <edumazet@google.com>
+References: <001a11408d9c43ff4a0569641a3f@google.com>
+ <CACT4Y+YfM=SL3-cgeJ_7JCvAwX2KsyMWV=HHpGfLV=-RKo7TQQ@mail.gmail.com>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <7707b322-1313-d0db-485c-2821874d78c0@gmail.com>
+Date: Mon, 9 Apr 2018 06:11:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <0dad6b43476c1a70944e3e7c245040243ddc2a04.camel@perches.com>
+In-Reply-To: <CACT4Y+YfM=SL3-cgeJ_7JCvAwX2KsyMWV=HHpGfLV=-RKo7TQQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -36,29 +33,51 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
 
-On 09/04/2018 11:25, Joe Perches wrote:
-> On Mon, 2018-04-09 at 10:41 +0100, Gustavo Pimentel wrote:
->> Replaces lower into upper case characters in comments and debug printks.
+
+On 04/08/2018 11:06 PM, Dmitry Vyukov wrote:
+> On Mon, Apr 9, 2018 at 7:59 AM, syzbot
+> <syzbot+b09ac67a2af842b12eab@syzkaller.appspotmail.com> wrote:
+>> Hello,
 >>
->> This is an attempt to keep the messages coherent within the designware
->> driver.
+>> syzbot hit the following crash on net-next commit
+>> 8bde261e535257e81087d39ff808414e2f5aa39d (Sun Apr 1 02:31:43 2018 +0000)
+>> Merge tag 'mlx5-updates-2018-03-30' of
+>> git://git.kernel.org/pub/scm/linux/kernel/git/saeed/linux
+>> syzbot dashboard link:
+>> https://syzkaller.appspot.com/bug?extid=b09ac67a2af842b12eab
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>> Raw console output:
+>> https://syzkaller.appspot.com/x/log.txt?id=5991727739437056
+>> Kernel config:
+>> https://syzkaller.appspot.com/x/.config?id=3327544840960562528
+>> compiler: gcc (GCC) 7.1.1 20170620
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+b09ac67a2af842b12eab@syzkaller.appspotmail.com
+>> It will help syzbot understand when the bug is fixed. See footer for
+>> details.
+>> If you forward the report, please keep this part and the footer.
 > 
-> It'd be nice to make all the dwc drivers use the same
-> message wording.
 > 
-> For instance:
+> +Eric said that perhaps we just need to revert:
 > 
-> drivers/pci/dwc/pci-keystone.c: dev_err(dev, "phy link never came up\n");
-> drivers/pci/dwc/pcie-designware.c:      dev_err(pci->dev, "phy link never came up\n");
-> drivers/pci/host/pcie-xilinx-nwl.c:     dev_err(dev, "PHY link never came up\n");
+> commit c378a9c019cf5e017d1ed24954b54fae7bebd2bc
+> Date:   Sat May 21 07:16:42 2011 +0000
+>     ipv4: Give backtrace in ip_rt_bug().
+> 
 
-I also agree, I added a task to my backlog to fix that. However, this task
-shouldn't be done in this patch series since it's a more broader task involving
-many drivers and different maintainers. Agree?
+And David replied :
 
-> 
+<quote>
+Let's not do the revert, I wouldn't have seen the backtrace which
+points where this bug is if we had.
 
-Regards,
-Gustavo
+icmp_route_lookup(), in one branch, does an input route lookup and
+uses the result of that to send the icmp message.
+
+That can't be right, input routes should never be used for
+transmitting traffice and that's how we end up at ip_rt_bug().
+
+</quote>
