@@ -1,75 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753316AbeDIQEO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 12:04:14 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:59955 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753285AbeDIQEJ (ORCPT
+        id S1753111AbeDIQHP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 12:07:15 -0400
+Received: from mail-it0-f51.google.com ([209.85.214.51]:39004 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751803AbeDIQHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 12:04:09 -0400
-Subject: Re: [PATCH 0/3] move __HAVE_ARCH_PTE_SPECIAL in Kconfig
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "aneesh.kumar@linux.vnet.ibm.com" <aneesh.kumar@linux.vnet.ibm.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-References: <1523282229-20731-1-git-send-email-ldufour@linux.vnet.ibm.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <17b19aac-fed7-23a2-013c-43ca867152e9@synopsys.com>
-Date: Mon, 9 Apr 2018 09:03:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 9 Apr 2018 12:07:14 -0400
+X-Google-Smtp-Source: AIpwx4/GKsiYyPNpDkMU2zIRITp2zMroRBt3sGHEsSR3U7JKvuCoLC/DHWsAU/iijhYSRuaQPu44kbe/rnTGcieCazs=
 MIME-Version: 1.0
-In-Reply-To: <1523282229-20731-1-git-send-email-ldufour@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.10.161.84]
+In-Reply-To: <20180409151821.2d92303f@mschwideX1>
+References: <20180403111242.49f43ee7@mschwideX1> <20180409151821.2d92303f@mschwideX1>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 9 Apr 2018 09:07:12 -0700
+Message-ID: <CAADWXX-188FC4aBjYMaRwrhcUNvoazwZSirPX3Y2P8PuFiV0bQ@mail.gmail.com>
+Subject: Re: [GIT PULL] s390 patches for the 4.17 merge window #1
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2018 06:57 AM, Laurent Dufour wrote:
-> The per architecture __HAVE_ARCH_PTE_SPECIAL is defined statically in the
-> per architecture header files. This doesn't allow to make other
-> configuration dependent on it.
-
-So I understand this series has more "readability" value and I'm fine with this 
-change but I wonder if you really would want to make something depend on it or 
-make this de-configurable. PTE special is really a fundamental construct - e.g. it 
-is used for anon mapped pages where zero page has been wired up etc...
-
--Vineet
-
-> This series is moving the __HAVE_ARCH_PTE_SPECIAL into the Kconfig files,
-> setting it automatically when architectures was already setting it in
-> header file.
+On Mon, Apr 9, 2018 at 6:18 AM, Martin Schwidefsky
+<schwidefsky@de.ibm.com> wrote:
+> Hi Linus,
 >
-> There is no functional change introduced by this series.
+> On Tue, 3 Apr 2018 11:12:42 +0200
+> Martin Schwidefsky <schwidefsky@de.ibm.com> wrote:
+>
+>> please pull from the 'for-linus' branch of
+>>
+>>       git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
+>>
+>> to receive the following updates:
+>
+> Ping.
+>
+> Did this please-pull get lost or is there a deeper reason that prevents
+> the upstream integration?
+
+I'm not finding the original at all, and this 'ping' message I found
+in my spam-box. Maybe the original was marked as spam too and I didn't
+notice, and it got deleted with the other spam.
+
+Anyway, pulled now (even if this ping didn't have the diffstat and
+shortlog to check against - everything looks sane)
+
+                Linus
