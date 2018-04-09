@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752627AbeDIJla (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 05:41:30 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:56221 "EHLO
+        id S1752653AbeDIJlb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 05:41:31 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:52395 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752391AbeDIJlY (ORCPT
+        with ESMTP id S1752412AbeDIJlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Apr 2018 05:41:24 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
@@ -13,9 +13,9 @@ To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v2 1/9] bindings: PCI: designware: Example update
-Date: Mon,  9 Apr 2018 10:41:10 +0100
-Message-Id: <a3eebc66b17172b92e91d95c12a9d0289b9417c2.1523266508.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v2 4/9] PCI: Adds device ID for Synopsys Sample Endpoint.
+Date: Mon,  9 Apr 2018 10:41:13 +0100
+Message-Id: <4c852c0e38fc2367d2ef4066de1080e889a4e7a0.1523266508.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
 References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
@@ -25,57 +25,28 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers,
-however it still be compatible with any previous DT that uses the old
-reg-name.
-
-Replaces the PCIe base address example by a real PCIe base address in use.
+The PCIe controller dual mode is capable of operating in host mode as well
+as endpoint mode by configuration.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
-Changes v1->v2:
- - Removed any iATU reference or changes to avoid confusion.
- - Add "snps,dw-pcie" compatible string following Kishon's suggestion.
+Change v1->v2:
+- Register new device id following Kishon's suggestion.
 
- Documentation/devicetree/bindings/pci/designware-pcie.txt | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ include/linux/pci_ids.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-index 1da7ade..f02cd20 100644
---- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-@@ -1,7 +1,8 @@
- * Synopsys DesignWare PCIe interface
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index f22124e..887c04e 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -2349,6 +2349,7 @@
+ #define PCI_DEVICE_ID_CENATEK_IDE	0x0001
  
- Required properties:
--- compatible: should contain "snps,dw-pcie" to identify the core.
-+- compatible:
-+	"snps,dw-pcie-rc", "snps,dw-pcie" for RC mode;
- - reg: Should contain the configuration address space.
- - reg-names: Must be "config" for the PCIe configuration space.
-     (The old way of getting the configuration address space from "ranges"
-@@ -41,11 +42,11 @@ EP mode:
+ #define PCI_VENDOR_ID_SYNOPSYS		0x16c3
++#define PCI_DEVICE_ID_SYNOPSYS_SMPL_EP	0xedda
  
- Example configuration:
- 
--	pcie: pcie@dffff000 {
--		compatible = "snps,dw-pcie";
--		reg = <0xdffff000 0x1000>, /* Controller registers */
--		      <0xd0000000 0x2000>; /* PCI config space */
--		reg-names = "ctrlreg", "config";
-+	pcie: pcie@dfc00000 {
-+		compatible = "snps,dw-pcie-rc", "snps,dw-pcie";
-+		reg = <0xdfc00000 0x0001000>, /* IP registers */
-+		      <0xd0000000 0x0002000>; /* Configuration space */
-+		reg-names = "dbi", "config";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		device_type = "pci";
-@@ -54,5 +55,4 @@ Example configuration:
- 		interrupts = <25>, <24>;
- 		#interrupt-cells = <1>;
- 		num-lanes = <1>;
--		num-viewport = <3>;
- 	};
+ #define PCI_VENDOR_ID_VITESSE		0x1725
+ #define PCI_DEVICE_ID_VITESSE_VSC7174	0x7174
 -- 
 2.7.4
