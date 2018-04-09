@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4029176-1523244214-2-12169108502530541056
+X-Cyrus-Session-Id: sloti22d1t05-3968184-1523244211-2-3420527274276938543
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523244214; b=bvfBillmtT2g8DyVqAxoQUBSwPomO7Yv7s7WIwwJb7vDT6IBcu
-    CoExLQ1xDk0IeFSbtbUFda6rXxoI95FLlRfBarl37kRs7uGMJGveioJCRI5ZuIhd
-    +gzngGW955IVwsoXmAH84Nm7mKwOAdOcke5Vgwhe6m3167tXc1Tk+Xmqa2zw5x9q
-    S4RLgBb7DtThw80OuGAYseF05wYPWetxJVYHjyVVgsLn8hNOlw0IB29+2Lk6sJU/
-    1cZrM/+KAYYGf92UHqF7R3wpYIj8vi9G+undK3lZ8DOwFpeFDi8+JoJRCSVTfLoy
-    y3gSLahZyGJMC8th+aQWLs7AdZllH5iyu60w==
+    1523244210; b=GTtOBPdQfxnnM+kTQwvRnVIgMNIcJ7qnhVxCj6iZ1DDUaVIDdx
+    q9e3WoAnw+Q/qIrWXmkBxOtCFjKXDZ0Jdt6tCCrBIQP9c7hDcBa8Ud3e85/ojgo+
+    w3A4xNuPt6FCMXuOgNRdGBY+qdyix22oGCoUvV+nIwb9EXWmfxrXqQb9aG2u1gMd
+    XMdT5Zfh41AiuIHYzKAJLaQ1YJH6hrylo3CN/OmZJ1oNgY/MKlKfbVdei8/pQiDA
+    duAUKBbU78BvRoY+a9VX9amB+x/BtW0Hm3UBvumvtx7h0Wd8e5A0UEP8nT9pEYbO
+    xw89e/CG/PyZLcad9Ryl/+trDvZpySVq0m1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523244214; bh=M9CE1Q1nfa
-    CweWI3pv9lgFRNPKfOwSy32PZihRdstbw=; b=ln+3xlBkQJ2515BggJKr3acOfT
-    oCjmgqLjp/v7vDoegNaaFqZ51iUH5Xn7AdLE/pbJkGY90xBGwId2vi77qcxoeDDN
-    iH2rz/hyno9uc+DkKNjCQmbab1Fucc0Q1gBqlhubA6XxlNNPj1GfZF2KzPocI0Ts
-    CST6+BaUMeMobIOri+Vsk6CCVFPJNTT2q4f9X0DCf4Tr1mFXQAosyzkzY8MD2hxF
-    JlSfQBS5eqQV3gxyt8V7R88WNX8VomT/TrfRqprhrEpA9fdutiMbX/YT4J4qEwLk
-    ObWk/xBKgtlvMJe0lE3rrPopisDa2ZhxTqAe5T5v0d1HB/29xlahJDhotTYQ==
+    :mime-version:sender:list-id; s=fm2; t=1523244210; bh=B1igtjuQFr
+    DHBLBxodMJSweTYpWN8RPOP1VZ5/2ud3s=; b=GkIeC/RO3AUsYolPAtqh9lYFtc
+    z4vB8adZ5YeP0DmdIEH6SNcZRlhbELz+3mlsLcipamJVbIb8+CrlB9Y1yjYvTdom
+    HuW0t6JndYR3044+hS5NphKcfA++sqZjsCTk+Y5JS8GQBUb+QqrzvQ/7dw+WoaMR
+    7U/PGcqaaTXSPzVU0ukHtwct1Fgo4LvpmQHHpdL72RqyZrVByDdK0IAPkMFbtbSY
+    n96MNetm5mg8L4e3u0pejOMuoSOIGv9tu6TAAgwkUfN6s4U3IIdEQ2brIkl5vw2Q
+    2evDQqkUR6/wH7/hXBPkDa0NXRUcgIeTQRhBy2Ud8T22tWQBbFDZav9S/Vhg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=jnln0Yri x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=HakT1W1R x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-vs=clean score=-100 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=jnln0Yri x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=HakT1W1R x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,37 +51,35 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEMj4ED22jCI8C31WVPr/JSbjBrBhq7usLIr6x09slxZCzQ+uLxatt/FE2JnlcC5bIa0QEq5IoQ5dcAhz5/GjCyOJArkQD4zjZBTKvWEyfrKx8FsuFU5
-    j0hi0BrXmDIDc44ixrfrjpZOhcyeW/4kVK58dsA6ip70V1gbMgT9SpKB1Clkauj5pZXpNFYk7G/AC1RmPbR8MwaapdlImVfL0Y9l6Roq/0PtLswxPvbKD3OR
+X-CM-Envelope: MS4wfNTHepKshdYLn3JJmkPd19BpWiSC+IsgyTeEUI4a7OqimFzP5hMP7Uo8vn4dgmjxFDTs11meVvcUWy51/1tLqiguuvKjAo6rGaYo+6ZCl7zsOYOY+1bz
+    0TarfIaYYKxeoeiHV02zfeJ16VXwOXI/+/W2988qErJPl2SGQgB09+46lYPVgwqbo6RPdNMk/H9E+8njrdP0uPi/oCuNht4OK3KCGczNqQrhl10BSjYqkf65
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=RW_g7ExWAAAA:8 a=VZJtwKKvAAAA:8 a=yMhMjlubAAAA:8
-    a=1C7F8m05DB2dRtyQP74A:9 a=wPNLvfGTeEIA:10 a=UQnFI0IN6KXBP4Chuhxn:22
-    a=vzdIw8kzLcqZOxdJCU6L:22
+    a=Lf-vpJhqX20A:10 a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8 a=alC0domXPAuWEL2TSGoA:9
+    a=wPNLvfGTeEIA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754088AbeDIDXa (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 23:23:30 -0400
-Received: from mail-sn1nam01on0134.outbound.protection.outlook.com ([104.47.32.134]:37792
+        id S1754738AbeDIAWw (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:22:52 -0400
+Received: from mail-sn1nam01on0122.outbound.protection.outlook.com ([104.47.32.122]:20813
         "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754740AbeDIAWw (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:22:52 -0400
+        id S1754709AbeDIAWt (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:22:49 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Jan Chochol <jan@chochol.info>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
+CC: mulhern <amulhern@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 040/161] nfs: Do not convert
- nfs_idmap_cache_timeout to jiffies
-Thread-Topic: [PATCH AUTOSEL for 4.14 040/161] nfs: Do not convert
- nfs_idmap_cache_timeout to jiffies
-Thread-Index: AQHTz5iJbNzBDdhMIUieuUBkWzZEFg==
-Date: Mon, 9 Apr 2018 00:20:17 +0000
-Message-ID: <20180409001936.162706-40-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 032/161] dm thin: fix documentation relative
+ to low water mark threshold
+Thread-Topic: [PATCH AUTOSEL for 4.14 032/161] dm thin: fix documentation
+ relative to low water mark threshold
+Thread-Index: AQHTz5iEjGiVTWR7Ykalw5LQdzXY8g==
+Date: Mon, 9 Apr 2018 00:20:09 +0000
+Message-ID: <20180409001936.162706-32-alexander.levin@microsoft.com>
 References: <20180409001936.162706-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001936.162706-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -90,71 +88,79 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1014;7:Xkoo+a1/bJebFMb5Sd86nz9+JxZOuBPwJN1wXfa4o281QCvy6MiAfFn687239F5wL8Nz/afj7KGBFcKVtdCdq9isqYzmza4PNOf7YnZltHWw+o8Xs7iPIJrYlnoX6b0kN1+u8gCQ2gTvv8JFi1aIaKlL5s9H68HuUAAPlsAwEg6cN2WPp/Jc6boZswga6jzjUJEgw9/gCAmujgbCXB6fF3uyFC3F3UPVSKD+QcTY6OXtlEPQGZWyc3gUvtCDMCm/;20:nLbR/FEDR3312xYZvwpVYY6+3DLY8ct/Gpmdx9kjbGsOgWy4kcFSsjrLDT/N+0YLZeJfUCb95W41gEorMiTeFjJynyynPO2OtlJW1dZVntfOCLudC/gxaAaWuHUCBuxJfcrnNYpszZE4VgP2I+emCiHbp4B5CNhfGAv37YbQZ54=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0966;7:gyRKnqXLDinlz0a/dB2lkGps4BzqRf09XP2yjAXiCGKqFmLumwH/FnPmkzTBALatro4pzqzbub1RHbUAlJRSCJS41PKtaRtcGm3JfG7iFoVZltwFtgN6zR4oi3SnDxccDaTv7sezA8xGb1c6N34te3cb+7j/F8rEP/07dOOL4z+dmwVPQykIBw1QvRCJwKY+2cLdg0h9WO7wdmCRAl/i3q1G2Rc6ozG09paIHRwdqTTQHKoqNbzHo1M2mgz2lmTA;20:HvDag95rIin6hOXmufA8nn1bQ+iISyWPcpmZj3YUZSHcBbTJruEoukSgxa6n02rSyaoMg4OxozKYGW9P5ZzRLElp+UpSL6DMZyAZzMR6D/Ug6C+VAlvroUB8KW2pMsrWdeFgA2J4+tRJDp2UP049z+pufEhi3hu/XsaR/Yd8ykg=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 5c4cd13b-0a62-4f71-fdf1-08d59db00763
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1014;
-x-ms-traffictypediagnostic: DM5PR2101MB1014:
+X-MS-Office365-Filtering-Correlation-Id: a33f36b7-a589-4211-b03d-08d59db003ea
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0966;
+x-ms-traffictypediagnostic: DM5PR2101MB0966:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB101471A09442069B8463DBD4FBBF0@DM5PR2101MB1014.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB0966803C49831A958BE0D6DFFBBF0@DM5PR2101MB0966.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1014;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1014;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0966;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0966;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(39380400002)(396003)(376002)(189003)(199004)(81166006)(81156014)(478600001)(6436002)(72206003)(8936002)(10290500003)(106356001)(99286004)(86362001)(2616005)(7736002)(2501003)(6666003)(446003)(476003)(8676002)(11346002)(105586002)(305945005)(5250100002)(6512007)(53936002)(68736007)(107886003)(66066001)(86612001)(2906002)(14454004)(186003)(22452003)(25786009)(4326008)(2900100001)(486006)(36756003)(6486002)(3660700001)(59450400001)(54906003)(26005)(3280700002)(110136005)(1076002)(10090500001)(76176011)(6506007)(97736004)(316002)(3846002)(6116002)(102836004)(5660300001)(22906009)(217873001)(6606295002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1014;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: ibrCri+PLY//oSvmsY84pqp2g/wQbZKM1CVk/i4bpBaKRlVXFx8NIs2i900/0hTqIch/P4y4icNkin3O+/3+TovQNiGjfyk9L2ZMMWOHJ+SxWC0dnK7cZXkb3/VZmEdVeWdUf+keT1Vsu9MAd6/j/6RvgawJXFDdBKpmi3AtfDNVEAgAooTiYFGPrhY7ERH2mkv+qt8DRWnDvuaKyM4ES9dXNqJ7oGH3oUw7r9tzHEMYjKHjwzJrC+foSs2WTkcFs1YJP1x/APpWQ/TlxA3zYb/lZO+q5EiA9a1GN6ZNUNHGPkNRuJUQ4eIfqIZsCeQAdLljAPwlcC6+gVBrJlFN1gQbqurFwFo8K2RLB9UL36LE/e6TUoeR9x3tiXW0a4ngR2ReB3Q5ufKPDF85++m3dtXcAJK4oPkTVb8qSusAfFs=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(39380400002)(396003)(366004)(199004)(189003)(6512007)(316002)(59450400001)(6436002)(186003)(6666003)(2900100001)(8936002)(486006)(6486002)(6506007)(10290500003)(81166006)(22452003)(25786009)(1076002)(81156014)(53936002)(106356001)(10090500001)(5250100002)(107886003)(102836004)(76176011)(8676002)(66066001)(2501003)(446003)(476003)(36756003)(99286004)(478600001)(86362001)(72206003)(2616005)(68736007)(5660300001)(305945005)(3846002)(6116002)(26005)(86612001)(14454004)(97736004)(3660700001)(4326008)(2906002)(110136005)(54906003)(3280700002)(105586002)(7736002)(11346002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0966;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: OjbsrDRX5egSYqhX+2UfAXvO4+ewfqpqlmNMVkWnjIlozJTBwnlPQyQVVc/cCjAhaD2p2TqiQorF4nmCSfE3Vv7+irGQ1+WPI2d3iZIzvz9RaCSGb2BQ3E1tLGcDIlFAmefZxh/EoeKer4MzMuv7XZl7Yy+Ia2xQpeCgMey7urwyTLI7Voa1Fo+3guDKjsGpYi9BifQD0Nu9wd9f+jLDR2Mv/6daaZqOrvTE0IXImVvSeneVmlkaWC3/DG88oxOa9lQko9sUoUAMpeL4ERO3XD/K9af7/6J/tzx7b4lBZa4ACldH57QYYncHXXAWyrJ/pcBJ+DnckS5ko5NBKLkC9GWMeYWlEaSLuCIpNosJ5CmWeMg7I9MpOvDADCKagpS1rFDSoy01i5XiI084sIpV3M1wEEGb1AupCfsRy1I7Ygg=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c4cd13b-0a62-4f71-fdf1-08d59db00763
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:20:17.0195
+X-MS-Exchange-CrossTenant-Network-Message-Id: a33f36b7-a589-4211-b03d-08d59db003ea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:20:09.2853
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1014
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0966
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jan Chochol <jan@chochol.info>
+From: mulhern <amulhern@redhat.com>
 
-[ Upstream commit cbebc6ef4fc830f4040d4140bf53484812d5d5d9 ]
+[ Upstream commit 9b28a1102efc75d81298198166ead87d643a29ce ]
 
-Since commit 57e62324e469 ("NFS: Store the legacy idmapper result in the
-keyring") nfs_idmap_cache_timeout changed units from jiffies to seconds.
-Unfortunately sysctl interface was not updated accordingly.
+Fixes:
+1. The use of "exceeds" when the opposite of exceeds, falls below,
+was meant.
+2. Properly speaking, a table can not exceed a threshold.
 
-As a effect updating /proc/sys/fs/nfs/idmap_cache_timeout with some
-value will incorrectly multiply this value by HZ.
-Also reading /proc/sys/fs/nfs/idmap_cache_timeout will show real value
-divided by HZ.
+It emphasizes the important point, which is that it is the userspace
+daemon's responsibility to check for low free space when a device
+is resumed, since it won't get a special event indicating low free
+space in that situation.
 
-Fixes: 57e62324e469 ("NFS: Store the legacy idmapper result in the keyring"=
-)
-Signed-off-by: Jan Chochol <jan@chochol.info>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Signed-off-by: mulhern <amulhern@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/nfs/nfs4sysctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/device-mapper/thin-provisioning.txt | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/fs/nfs/nfs4sysctl.c b/fs/nfs/nfs4sysctl.c
-index 0d91d84e5822..c394e4447100 100644
---- a/fs/nfs/nfs4sysctl.c
-+++ b/fs/nfs/nfs4sysctl.c
-@@ -32,7 +32,7 @@ static struct ctl_table nfs4_cb_sysctls[] =3D {
- 		.data =3D &nfs_idmap_cache_timeout,
- 		.maxlen =3D sizeof(int),
- 		.mode =3D 0644,
--		.proc_handler =3D proc_dointvec_jiffies,
-+		.proc_handler =3D proc_dointvec,
- 	},
- 	{ }
- };
+diff --git a/Documentation/device-mapper/thin-provisioning.txt b/Documentat=
+ion/device-mapper/thin-provisioning.txt
+index 1699a55b7b70..ef639960b272 100644
+--- a/Documentation/device-mapper/thin-provisioning.txt
++++ b/Documentation/device-mapper/thin-provisioning.txt
+@@ -112,9 +112,11 @@ $low_water_mark is expressed in blocks of size $data_b=
+lock_size.  If
+ free space on the data device drops below this level then a dm event
+ will be triggered which a userspace daemon should catch allowing it to
+ extend the pool device.  Only one such event will be sent.
+-Resuming a device with a new table itself triggers an event so the
+-userspace daemon can use this to detect a situation where a new table
+-already exceeds the threshold.
++
++No special event is triggered if a just resumed device's free space is bel=
+ow
++the low water mark. However, resuming a device always triggers an
++event; a userspace daemon should verify that free space exceeds the low
++water mark when handling this event.
+=20
+ A low water mark for the metadata device is maintained in the kernel and
+ will trigger a dm event if free space on the metadata device drops below
 --=20
 2.15.1
