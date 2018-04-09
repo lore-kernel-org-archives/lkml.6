@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3607359-1523233997-2-9668860713146281654
+X-Cyrus-Session-Id: sloti22d1t05-3643807-1523233979-2-13138542998085179433
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523233997; b=nyYXsSd1LT0By2TtwQquw9IQ6fIxB+GThry28gO11XqSLteR9I
-    Oh5Ou2HRWk5VLlua24sDU758F8n7AogBNvmrvlpwVmqDMrnivbevN7BQZ6YEHbry
-    m1fpGeKIHVN+QrbZ2JkK1iLfbuahRJiC5FSNVjtKT+d9/yViNLqeccQ8vqygAyG2
-    03yeQgXrAYRKwXQOC74Vk6NQ5pNXtFpC70HJyH5qnTqq6dmUdOmfxN2n8UEyi7NX
-    t1xu66z8NVWkFmBIh+OgrgVz1N5ZCCVeKYB+R5tJVicXy4/xLcuLV/OJrntnEoxZ
-    q4O9wpG5NXV9jsvaNOp9WWcG9Z6xQXivbMMg==
+    1523233978; b=lcUg4z1XAdJ/I9LSU4XwsoS/4IfsHvBpZnlXtSHRoe8cQmuXvh
+    hV+aOGiQrYdKgx9fWLg7n0bi0PHRHQ+EVASh7YWSuB61k51e04DJlmAnLIc1Vvov
+    zDi7aJG7czVmN8QO0j0I+2SHJ8P/KQtbB11tJkeo5ZYANoQnOdKnmrmb0gBZ8Lwg
+    as664qNmEphOvWw3dUxiOJPeuWGl7JqNabkdqut5BDmSu8Hq4oWb/BlgerQY9BM2
+    6VpgjQS7cTeTR70ryKt1kPAq8+FWtMW26C4W2yoXtkZ45d1nHPPWuAakgUL6068f
+    opjosu0y7VL6klWXwuI6HS2fluE9RrTvMl3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523233997; bh=3iHcj7Pnti
-    r+pNLN3cPsM6LmPT9NPpo6GNW3HTG21tY=; b=CA2mUe2IRUkVJTEOeSyw/EEPre
-    afRRU4GJnEefiR/CxIKjRa/DYf8yWztLKNHbcEt9GYQCjGdY5QVZaZqgyHxfr8Lr
-    xJRE7A+Df2oqZHPCNG4/gWppWBv6W6yRkSUVQigoqUMo+v+Utuw+zO/MtvwfSGtf
-    EtBHwFlmtHfR1MykTCb+n0KpseFkgSWpsJnfm1wGRI3BR3yQ1XAiho91CjEEH3VX
-    LkGG8mc71syOlYHiXnJ8oRT/Vj2UWKFH+2yC8WSTeVW4kVz8ksT1n1COjbVOasrT
-    bFB6Ji5kNSDu/GFMVWRaPHhMxel75ovXGkXbnb3zCHHhonlr9mtJXeMiH9jA==
+    :mime-version:sender:list-id; s=fm2; t=1523233978; bh=Gt3UIj1TFL
+    VLFW2KYMcSaRUdZYIC9w4YfKeXktJZXV8=; b=pUpD7+wTchW3/ZSLSeSKLf2aIw
+    Z9U9iCtsbfUsOSGETZb3b7hrjNLGDF0+lOgiPgaXLv1gPwPObRg/3sYxtdeFMF1X
+    nbBMdZDuLovLewF45nJtEu0MffsVaZkBY+Z0PLCLBthuTXSS//7N//a3QYPSNpRY
+    GYB+oh6/9MQ19WuseiZFJ9Aki8T91Pr85ynasySOynmyzGAzk7IZbJmKHAmqq0ri
+    qKBn+PUGQBM87L7HwH/R2E/eW/XzUN5LiHfHC8sYXj5OcvEWFNKdkjLjIgF5VKjg
+    gqrhVhOYbHRJBtpc5dZ2fEmwljL2n3GkbeUfDv6becVXhpdcOUNRl68Xzrcw==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=AzNzFroF x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=XjCoh5w8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-vs=clean score=-100 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=AzNzFroF x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=XjCoh5w8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,38 +51,38 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPymComehGrmVeHTw1m1dEYYGtmMeeTVH9OBQLN2pJf83LLJkf0OmoKftoH1szMX7hprPG+Emnb6Wyd2dJHKtIn/6dx8M/+1I6c9Lm34ymB+d+Nhounp
-    STQiSu940dQ7MK2TkMWPuYkvlm3bNTEjy0QKKXIdwjqPxf0z1W29Grb78t0YhYVGkE9OCYBKOard3Siqrmplrmff8E6gy2vAklF7cfiDZMMoGaR0+3rTz6Km
+X-CM-Envelope: MS4wfE9/5N2a9CoFp4RxCH58ZUm5lYr7Rboj16SZbvAiJEtOAHlhIedwYVjHFSnSYrG6lMi2E+16GjgsE5vdvIb5lh1tvxzRvBSG+BCAJ+BOrCLIzC4s3Yvh
+    BAip3HH0DSUKe1GC+rJMrmnDyCRlPoUtXcwnrJGPzLT/QeQY1HwvKIjhkhJZsxxIHwclKE6UysNRyl2APhMNrsVfGOA0c8qkDVTs3w8ntOtvmBw3BOoU40GN
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=mK_AVkanAAAA:8 a=wLoXeaFTAAAA:8 a=IpJZQVW2AAAA:8
-    a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=AJ2rPE6bBxiu49gAXV0A:9 a=wPNLvfGTeEIA:10
-    a=3gWm3jAn84ENXaBijsEo:22 a=z7qd7FD03Fuld11IDmZ3:22 a=IawgGOuG5U0WyFbmm1f5:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Lf-vpJhqX20A:10 a=LpQP-O61AAAA:8 a=qMv-qn4yAAAA:8 a=3HDBlxybAAAA:8
+    a=yMhMjlubAAAA:8 a=izA1NLxABTmRaxt-_GoA:9 a=mEoWeofvHKVP_fee:21
+    a=QgpgY2_U_S3bupyR:21 a=wPNLvfGTeEIA:10 a=pioyyrs4ZptJ924tMmac:22
+    a=izTqne_Zf0vEa248vB0h:22 a=laEoCiVfU_Unz3mSdgXN:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932188AbeDIAdC (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 20:33:02 -0400
-Received: from mail-sn1nam01on0097.outbound.protection.outlook.com ([104.47.32.97]:22599
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S932150AbeDIAcx (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:32:53 -0400
+Received: from mail-by2nam01on0124.outbound.protection.outlook.com ([104.47.34.124]:8059
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932160AbeDIAdA (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:33:00 -0400
+        id S1756533AbeDIAcv (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:32:51 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 227/293] net: stmmac: dwmac-meson8b: fix
- setting the RGMII TX clock on Meson8b
-Thread-Topic: [PATCH AUTOSEL for 4.9 227/293] net: stmmac: dwmac-meson8b: fix
- setting the RGMII TX clock on Meson8b
-Thread-Index: AQHTz5lQDh0SZu+owEuTmwD9TPCIDg==
-Date: Mon, 9 Apr 2018 00:25:51 +0000
-Message-ID: <20180409002239.163177-227-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 216/293] netfilter: ipv6: nf_defrag: Pass on
+ packets to stack per RFC2460
+Thread-Topic: [PATCH AUTOSEL for 4.9 216/293] netfilter: ipv6: nf_defrag: Pass
+ on packets to stack per RFC2460
+Thread-Index: AQHTz5lLjvOOBpUI00SuEFLHBjsZfQ==
+Date: Mon, 9 Apr 2018 00:25:42 +0000
+Message-ID: <20180409002239.163177-216-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -91,96 +91,139 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0902;7:ruFthmnkOiqBVIxOVNRQII6h5pN9bNoXEOHegw8S5DHkTIAqHrpqV2MD85gtWqCqxMY8HRmipR9gyHKPNS9VkqLORSE4eXKr6uPMn5EXV6R8dNDkIA1j7k20BdrNnVsZH35o2cu01WqcfwNYG46r6FfC25+JMg25Bp3hVMKNSWyfv8WUw0xxCfWaQSBHVoxqY4RFpCY3Iwv4GHP76EeCGQYJG0/UdaAxnR1nOB2Ps2FtWq+9KiFZrXGV+xmDM536;20:RFVJDyta7oWTszy+COjzxaUUE9PBy52EAseJAxZXQv9nsPiII7gfrOhrQ21hRbGX/1RM2poZHYtTTEKUZ7j6gMzIvY7MeKvq7h8OWwVn6dAINDlXuzKRf5VMZ7Dut3p4YzGm42KXj9hTxehL3STWDtxu5rps+qDXDU3DV25xFSI=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0998;7:3d8BOTHoFsaipBAldrVNe2wChhd0J2rpGFasorUeloUf+2dBXMXrsHCpf4U4XE79iR3AJVJNcc+B6HreIMBoUrbT8VwP05stSTXeBPePIAHpVnocym0LV2QlGxR83ZrIOFrz6PmgudyNFp5l32+3GdLwsqP0H9J90wPrtTY7qqxPBEvUKtn8mBwKzKg869f2UkNw2M42tf9LJ5Pbxio7o1H/bZSOa5DJ7HnNQ57SN2q2c+muI2Dwut1eGGpDB4ob;20:ztiiJki5SoBliuwRKEAw8qgdUuEBRfSCgpy3h6rt68YX+jS1r13p9ekfHW8VY6Wg2xvFOaQvlw/u3G14ubJpsAQyr/b/Ow6H5P2r3hrmD6H0peqQf09QQ2vHA51094iFAUbWeKxdlHo6h597qDrby1R7j7rhCUttdTRSfpfufGY=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 031d1eec-9d4c-4c2c-999d-08d59db17077
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0902;
-x-ms-traffictypediagnostic: DM5PR2101MB0902:
+X-MS-Office365-Filtering-Correlation-Id: 36e99630-428e-4dde-de88-08d59db16c0f
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0998;
+x-ms-traffictypediagnostic: DM5PR2101MB0998:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB090221E0FAFAB177A8BF3228FBBF0@DM5PR2101MB0902.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(8415204561270)(17755550239193);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0902;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0902;
+x-microsoft-antispam-prvs: <DM5PR2101MB0998AFD0F4D08CCEDCA1F5BCFBBF0@DM5PR2101MB0998.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0998;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0998;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(39860400002)(39380400002)(346002)(199004)(189003)(5660300001)(478600001)(86612001)(3846002)(6116002)(106356001)(25786009)(6486002)(72206003)(10290500003)(8936002)(6436002)(76176011)(2616005)(6506007)(2900100001)(97736004)(26005)(486006)(10090500001)(36756003)(81166006)(8676002)(81156014)(59450400001)(102836004)(2906002)(99286004)(11346002)(476003)(3660700001)(66066001)(6512007)(86362001)(53936002)(105586002)(186003)(5250100002)(14454004)(22452003)(6666003)(2501003)(446003)(7736002)(316002)(1076002)(110136005)(3280700002)(68736007)(54906003)(107886003)(4326008)(305945005)(22906009)(32563001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0902;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: TbWsZONoBz+JcidapraikU2hsXuhyEI5iKoBlNMQW8ERXWcs95Da+2LJ0W/6sixHueD6jCsIYmX2FMzCPACAwymxVDjbIxG++6yYNn8otSrSzvDReYE53eCMujKZzOIekMDO5KhAOUMDXcIHMVXq1oDfIX82Oc/2hqFx0AvXCHSauuWwfvlGeV/KqrkpYRXo9qPepkHp+qOwWEBkj+ftqUWKDgNPgc7w1bHXaPIhwrlP8i+ZIWtHApbk58lWthkAycNqW4t2oyAbMfZqGlUcOS35VXO3up+uckaavy9m1fYGhTrAFRh/1HxM8GuPlx7E1tzFSy7qMRgN4dec4hHNLaDMT59RKTkm0g0vhmDLlbZUeauJd+2O/rk+aGqIm/ZIae56mPm1vIwQlnVbmBR9S1/zuuKMl+DviDnyW5eTY4E=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(376002)(396003)(366004)(39860400002)(189003)(199004)(25786009)(59450400001)(105586002)(14454004)(76176011)(68736007)(2906002)(316002)(97736004)(8676002)(966005)(86612001)(3660700001)(3280700002)(102836004)(6116002)(4326008)(8936002)(36756003)(22452003)(81166006)(81156014)(54906003)(6506007)(10090500001)(2501003)(6512007)(186003)(6666003)(3846002)(486006)(5660300001)(6306002)(26005)(7736002)(5250100002)(305945005)(99286004)(2900100001)(110136005)(1076002)(6436002)(53936002)(106356001)(107886003)(72206003)(86362001)(476003)(446003)(66066001)(11346002)(478600001)(10290500003)(2616005)(6486002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0998;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: aKyUCRNAT19blUVtPGxcvHB7YUpva1C4NSlaO4JbwzHtVkh3xsAjlTAtwPPHAKovqZlav7OAG9j395P0koazdD0teHxpy1GuN9qSUk4XGChIVqDw97b2DCjBu4/RH+DV44tyo/YD5qDnR47fxeGfmr1afPOJLAdkKHdkeQ6TVDEb8Fx5T4VWQ3iwnsmCpJ6OMQc0H+V5wJRgDuMD4kjDhIqcv7o3E0/aPHgSlAYfvfhZnYJ+gH28Q5rkNTpRPf5I0u5HdHGHUMQ+meRYUJlBDF9e4gvjaDN0JRCwZyS2IKBy189VhOFr4C2B3+vvI2RWV21PILuw4walLNCuLyo3i8NJbaUFvl3s9Kqf/yXqfGDBvSVCK+HQ/uGPWR2gU8D2uqT23q6I5RHHxKbn6xo5bPrX7kEdtayemrrqfG2IlWY=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 031d1eec-9d4c-4c2c-999d-08d59db17077
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:25:51.2067
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36e99630-428e-4dde-de88-08d59db16c0f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:25:42.8785
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0902
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0998
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
 
-[ Upstream commit 433c6cab9d298687c097f6ee82e49157044dc7c6 ]
+[ Upstream commit 83f1999caeb14e15df205e80d210699951733287 ]
 
-Meson8b only supports MPLL2 as clock input. The rate of the MPLL2 clock
-set by Odroid-C1's u-boot is close to (but not exactly) 500MHz. The
-exact rate is 500002394Hz, which is calculated in
-drivers/clk/meson/clk-mpll.c using the following formula:
-DIV_ROUND_UP_ULL((u64)parent_rate * SDM_DEN, (SDM_DEN * n2) + sdm)
-Odroid-C1's u-boot configures MPLL2 with the following values:
-- SDM_DEN =3D 16384
-- SDM =3D 1638
-- N2 =3D 5
+ipv6_defrag pulls network headers before fragment header. In case of
+an error, the netfilter layer is currently dropping these packets.
+This results in failure of some IPv6 standards tests which passed on
+older kernels due to the netfilter framework using cloning.
 
-The 250MHz clock (m250_div) inside dwmac-meson8b driver is derived from
-the MPLL2 clock. Due to MPLL2 running slightly faster than 500MHz the
-common clock framework chooses a divider which is too big to generate
-the 250MHz clock (a divider of 2 would be needed, but this is rounded up
-to a divider of 3). This breaks the RTL8211F RGMII PHY on Odroid-C1
-because it requires a (close to) 125MHz RGMII TX clock (on Gbit speeds,
-the IP block internally divides that down to 25MHz on 100Mbit/s
-connections and 2.5MHz on 10Mbit/s connections - we don't need any
-special configuration for that).
+The test case run here is a check for ICMPv6 error message replies
+when some invalid IPv6 fragments are sent. This specific test case is
+listed in https://www.ipv6ready.org/docs/Core_Conformance_Latest.pdf
+in the Extension Header Processing Order section.
 
-Round the divider to the closest value to prevent this issue on Meson8b.
-This means we'll now end up with a clock rate for the RGMII TX clock of
-125001197Hz (=3D 125MHz plus 1197Hz), which is close-enough to 125MHz.
-This has no effect on the Meson GX SoCs since there fclk_div2 is used as
-input clock, which has a rate of 1000MHz (and thus is divisible cleanly
-to 250MHz and 125MHz).
+A packet with unrecognized option Type 11 is sent and the test expects
+an ICMP error in line with RFC2460 section 4.2 -
 
-Fixes: 566e8251625304 ("net: stmmac: add a glue driver for the Amlogic Meso=
-n 8b / GXBB DWMAC")
-Reported-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-Tested-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+11 - discard the packet and, only if the packet's Destination
+     Address was not a multicast address, send an ICMP Parameter
+     Problem, Code 2, message to the packet's Source Address,
+     pointing to the unrecognized Option Type.
+
+Since netfilter layer now drops all invalid IPv6 frag packets, we no
+longer see the ICMP error message and fail the test case.
+
+To fix this, save the transport header. If defrag is unable to process
+the packet due to RFC2460, restore the transport header and allow packet
+to be processed by stack. There is no change for other packet
+processing paths.
+
+Tested by confirming that stack sends an ICMP error when it receives
+these packets. Also tested that fragmented ICMP pings succeed.
+
+v1->v2: Instead of cloning always, save the transport_header and
+restore it in case of this specific error. Update the title and
+commit message accordingly.
+
+Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/ipv6/netfilter/nf_conntrack_reasm.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/=
-net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-index ffaed1f35efe..923033867a4d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-@@ -146,7 +146,9 @@ static int meson8b_init_clk(struct meson8b_dwmac *dwmac=
-)
- 	dwmac->m250_div.shift =3D PRG_ETH0_CLK_M250_DIV_SHIFT;
- 	dwmac->m250_div.width =3D PRG_ETH0_CLK_M250_DIV_WIDTH;
- 	dwmac->m250_div.hw.init =3D &init;
--	dwmac->m250_div.flags =3D CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO;
-+	dwmac->m250_div.flags =3D CLK_DIVIDER_ONE_BASED |
-+				CLK_DIVIDER_ALLOW_ZERO |
-+				CLK_DIVIDER_ROUND_CLOSEST;
+diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/n=
+f_conntrack_reasm.c
+index b263bf3a19f7..5edfe66a3d7a 100644
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -230,7 +230,7 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, str=
+uct sk_buff *skb,
 =20
- 	dwmac->m250_div_clk =3D devm_clk_register(dev, &dwmac->m250_div.hw);
- 	if (WARN_ON(IS_ERR(dwmac->m250_div_clk)))
+ 	if ((unsigned int)end > IPV6_MAXPLEN) {
+ 		pr_debug("offset is too large.\n");
+-		return -1;
++		return -EINVAL;
+ 	}
+=20
+ 	ecn =3D ip6_frag_ecn(ipv6_hdr(skb));
+@@ -263,7 +263,7 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, str=
+uct sk_buff *skb,
+ 			 * this case. -DaveM
+ 			 */
+ 			pr_debug("end of fragment not rounded to 8 bytes.\n");
+-			return -1;
++			return -EPROTO;
+ 		}
+ 		if (end > fq->q.len) {
+ 			/* Some bits beyond end -> corruption. */
+@@ -357,7 +357,7 @@ found:
+ discard_fq:
+ 	inet_frag_kill(&fq->q, &nf_frags);
+ err:
+-	return -1;
++	return -EINVAL;
+ }
+=20
+ /*
+@@ -566,6 +566,7 @@ find_prev_fhdr(struct sk_buff *skb, u8 *prevhdrp, int *=
+prevhoff, int *fhoff)
+=20
+ int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
+ {
++	u16 savethdr =3D skb->transport_header;
+ 	struct net_device *dev =3D skb->dev;
+ 	int fhoff, nhoff, ret;
+ 	struct frag_hdr *fhdr;
+@@ -599,8 +600,12 @@ int nf_ct_frag6_gather(struct net *net, struct sk_buff=
+ *skb, u32 user)
+=20
+ 	spin_lock_bh(&fq->q.lock);
+=20
+-	if (nf_ct_frag6_queue(fq, skb, fhdr, nhoff) < 0) {
+-		ret =3D -EINVAL;
++	ret =3D nf_ct_frag6_queue(fq, skb, fhdr, nhoff);
++	if (ret < 0) {
++		if (ret =3D=3D -EPROTO) {
++			skb->transport_header =3D savethdr;
++			ret =3D 0;
++		}
+ 		goto out_unlock;
+ 	}
+=20
 --=20
 2.15.1
