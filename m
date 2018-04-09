@@ -1,71 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeDIIYo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 04:24:44 -0400
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:35272 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750759AbeDIIYn (ORCPT
+        id S1751721AbeDII1p (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 04:27:45 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39454 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751348AbeDII1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 04:24:43 -0400
-X-Google-Smtp-Source: AIpwx48j2haFINQEZ+zRTLl2Zl86CCARjuOr9XdmKrZ6hkiVXk0/tfFTXNyZKcglugbuDAVyRo7wayuT8Q471P3pI+8=
+        Mon, 9 Apr 2018 04:27:44 -0400
+X-Google-Smtp-Source: AIpwx4/zSqznEVJhUDsewWTnOpDn/zsJLCjDHiVsNqigjVVG1xGEUvwZox/42hrQN6oQ1vuNBbvwww==
+Date: Mon, 9 Apr 2018 10:27:40 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: Re: [PATCH 1/1] drm/xen-zcopy: Add Xen zero-copy helper DRM driver
+Message-ID: <20180409082740.GI31310@phenom.ffwll.local>
+Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180329131931.29957-1-andr2000@gmail.com>
+ <20180329131931.29957-2-andr2000@gmail.com>
+ <20180403094734.GT3881@phenom.ffwll.local>
+ <1ef9290a-7564-007d-81c6-cf7db74252f3@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <86vad7qc21.wl-marc.zyngier@arm.com>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
- <20180403061836.3926-8-mylene.josserand@bootlin.com> <06308f46-ce7c-ddeb-ebca-abd1153138ba@arm.com>
- <20180404155909.148085f7@dell-desktop.home> <86vad7qc21.wl-marc.zyngier@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Apr 2018 10:24:41 +0200
-X-Google-Sender-Auth: VbCfh_ofHz29FMeWHoWD4Umd2nU
-Message-ID: <CAMuHMdUoUVF+WYrPG1Dx515_de_2nhGhLfn9+tJUm5jgs1uz0w@mail.gmail.com>
-Subject: Re: [PATCH v5 07/13] ARM: smp: Add initialization of CNTVOFF
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>, quentin.schulz@bootlin.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1ef9290a-7564-007d-81c6-cf7db74252f3@gmail.com>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w398OmVd014160
 
-On Wed, Apr 4, 2018 at 4:30 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On Wed, 04 Apr 2018 14:59:09 +0100,
-> MylÄne Josserand wrote:
+On Fri, Apr 06, 2018 at 02:25:08PM +0300, Oleksandr Andrushchenko wrote:
+> On 04/03/2018 12:47 PM, Daniel Vetter wrote:
+> > On Thu, Mar 29, 2018 at 04:19:31PM +0300, Oleksandr Andrushchenko wrote:
+> > > From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> > > +static int to_refs_grant_foreign_access(struct xen_gem_object *xen_obj)
+> > > +{
+> > > +	grant_ref_t priv_gref_head;
+> > > +	int ret, j, cur_ref, num_pages;
+> > > +	struct sg_page_iter sg_iter;
+> > > +
+> > > +	ret = gnttab_alloc_grant_references(xen_obj->num_pages,
+> > > +			&priv_gref_head);
+> > > +	if (ret < 0) {
+> > > +		DRM_ERROR("Cannot allocate grant references\n");
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	j = 0;
+> > > +	num_pages = xen_obj->num_pages;
+> > > +	for_each_sg_page(xen_obj->sgt->sgl, &sg_iter, xen_obj->sgt->nents, 0) {
+> > > +		struct page *page;
+> > > +
+> > > +		page = sg_page_iter_page(&sg_iter);
+> > Quick drive-by: You can't assume that an sgt is struct page backed.
+> Do you mean that someone could give me sgt which never
+> seen sg_assign_page for its entries?
 
-[Marc: stuck in ISO-8859-1? ;-]
+Yes.
 
->> > It'd be good to take this opportunity to refactor the shmobile code.
->>
->> I can do it in this series but I do not have any shmobile platforms so
->> I will not be able to test my modifications (only compilation).
->>
->> If someone can test it for me (who?), it is okay for me to refactor this
->> code :)
->
-> I guess you could Cc the shmobile folks (Geert Uytterhoeven, Simon
-> Horman), and get them to review/test the changes.
+> What are the other use-cases for that to happen?
 
-Correct. I can test on a remote R-Car E2 ALT board that needs it.
+Sharing vram or other resources which are not backed by a struct page. See
+Christian König's recent work to accomplish just that for admgpu.
 
-P.S. Interestingly, none of the Renesas CA15 SoCs seem to suffer from it,
-     only CA7.
+> > And you probably want to check this at import/attach time.
+> The check you mean is to make sure that when I call
+> page = sg_page_iter_page(&sg_iter);
+> I have to make sure that I get a valid page?
 
-Gr{oetje,eeting}s,
+Yup.
 
-                        Geert
+> > -Daniel
+> Thank you,
+> Oleksandr
 
+Cheers, Daniel
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
