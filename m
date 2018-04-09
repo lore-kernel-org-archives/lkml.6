@@ -1,56 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751978AbeDIL7t (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 07:59:49 -0400
-Received: from smtprelay0047.hostedemail.com ([216.40.44.47]:58169 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751662AbeDIL7s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 07:59:48 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1566:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3871:3873:4321:5007:6119:7903:10004:10400:10848:11232:11658:11914:12740:12760:12895:13069:13311:13357:13439:14659:21080:21451:21627:30012:30054:30069:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: brake19_1af5e1443e52c
-X-Filterd-Recvd-Size: 1736
-Message-ID: <a96f9d11a31e403b0042990d17199c6bbe2667d6.camel@perches.com>
-Subject: Re: [PATCH v4 6/9] vsprintf: Factor out %pV handler as va_format()
-From: Joe Perches <joe@perches.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org
-Date: Mon, 09 Apr 2018 04:59:43 -0700
-In-Reply-To: <20180409114455.6wt6zvn6dzlgyhvp@pathway.suse.cz>
-References: <20180404085843.16050-1-pmladek@suse.com>
-         <20180404085843.16050-7-pmladek@suse.com>
-         <1522851967.11185.1.camel@perches.com>
-         <20180406131242.mnxutlobi7r6qi6u@pathway.suse.cz>
-         <1523024355.6127.3.camel@perches.com>
-         <20180409114455.6wt6zvn6dzlgyhvp@pathway.suse.cz>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.0-4 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752121AbeDIMAD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 08:00:03 -0400
+Received: from smtp47.i.mail.ru ([94.100.177.107]:59224 "EHLO smtp47.i.mail.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751738AbeDIMAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 08:00:01 -0400
+Subject: Re: [PATCH v3 3/6] spi: sun6i: restrict transfer length in PIO-mode
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-spi@vger.kernel.org
+References: <20180405091913.ky4dnmszoobn2xry@flea>
+ <ee4adb1e-caf6-32f6-33d6-d8dd94d232cf@orpaltech.com>
+ <20180405131735.GB12349@sirena.org.uk>
+ <8159c3a5-af74-9f13-aedb-7ecc708bdff6@orpaltech.com>
+ <20180406073441.xesojvzc3deljhoy@flea>
+ <204e97cb-2f39-00f0-fd4e-3aa9a51f7cac@orpaltech.com>
+ <20180409092730.2moyhl5aaktjwbyn@flea>
+ <94a394bd-89bf-9334-c500-4cbadf4c1044@orpaltech.com>
+ <20180409105001.GC11532@sirena.org.uk>
+ <67c2006b-17f2-2459-e3c9-e91e3c694d8c@orpaltech.com>
+ <20180409113603.2iexkqvyeqmysp5e@flea>
+From: Sergey Suloev <ssuloev@orpaltech.com>
+Message-ID: <0e2fefa5-b6e7-5e42-cf6e-8fc921f972dd@orpaltech.com>
+Date: Mon, 9 Apr 2018 14:59:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180409113603.2iexkqvyeqmysp5e@flea>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Authentication-Results: smtp47.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
+X-7FA49CB5: 0D63561A33F958A50BB0DBCD8E08F1621EE9EE00ADE1A8F6E04EAE875677D07E725E5C173C3A84C3A1C30C8AFC676C8BBE60D505D8957FE9CCFFBAE954C2DE44C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
+X-Mailru-Sender: C5364AD02485212F3ACDC11E67D849173CADCD3248F81C39A73BF5B14D1B1C02069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
+X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-09 at 13:44 +0200, Petr Mladek wrote:
-> What exactly is wrong?
+On 04/09/2018 02:36 PM, Maxime Ripard wrote:
+> On Mon, Apr 09, 2018 at 02:10:40PM +0300, Sergey Suloev wrote:
+>> On 04/09/2018 01:50 PM, Mark Brown wrote:
+>>> On Mon, Apr 09, 2018 at 01:26:23PM +0300, Sergey Suloev wrote:
+>>>> On 04/09/2018 12:27 PM, Maxime Ripard wrote:
+>>>>> On Fri, Apr 06, 2018 at 06:48:23PM +0300, Sergey Suloev wrote:
+>>>>>> On 04/06/2018 10:34 AM, Maxime Ripard wrote:
+>>>>>> According to what you said the driver must implement
+>>>>>> "transfer_one_message" instead of "transfer_one"
+>>>>> I'm not sure what makes you think that I said that.
+>>>> Because current implementation tries to send more than FIFO-depth of data in
+>>>> a single call to "transfer_one" which is wrong.
+>>> No, that's absolutely not the case.  All any of these functions has to
+>>> do is transfer whatever they were asked to, how they do it is not at all
+>>> important to the framework.
+>> I think you don't fully understand the issue. Let's talk about sun4i and
+>> sun6i SPI  drivers separately.
+>>
+>> sun4i
+>>
+>> 1)it is correctly declaring max_transfer_size=FIFO depth for PIO mode  but
+>> transfer_one() function doesn't follow the declaration allowing PIO
+>> transfers longer than FIFO depth  by just refilling FIFO using 3/4 FIFO
+>> empty interrupt. I can definitely state here that long transfers WON'T WORK
+>> on real hardware.
+> Surely the original author of the patch allowing to do just that
+> disagrees with you.
+I am not getting the point why the driver is declaring the max transfer 
+length value and not following the rule.
+> And it's not about the hardware itself, it's about
+> how the driver operates as well.
+>
+>> I tested it and that's why I can say that.
+> Then it must be fixed, and not silently reverted.
+>
+>> But as soon as sun4i SPI driver  is correctly declaring
+>> max_transfer_size then "smart" clients will work well by limiting a
+>> single transfer size to FIFO depth. I tested it with real hardware,
+>> again.
+> This is really not my point. What would prevent you from doing
+> multiple transfers in that case, and filling the FIFO entirely,
+> waiting for it to be done, then resuming until you have sent the right
+> number of bytes?
+Because it makes no sense IMHO. I can't see any single point in allowing 
+long PIO transfers. Can you find at least one ?
 
-I doubt the need.
-Adding complexity doesn't seem useful.
+I think we should reuse as much SPI core code as possible. The SPI core 
+can handle an SPI message with multiple transfers,
+all we need is to have max_transfer_size = FIFO depth and restrict it in 
+transfer_one().
 
-> What you would suggest instead?
-
-A static analysis on the source code instead
-of runtime checking.
-
-Perhaps a gcc plugin to validate extension to
-pointer type or an external tool to do the same.
+>
+> Maxime
+>
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
