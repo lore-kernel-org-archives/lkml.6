@@ -1,98 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeDIWYZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 18:24:25 -0400
-Received: from mail-yw0-f181.google.com ([209.85.161.181]:43390 "EHLO
-        mail-yw0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751751AbeDIWYV (ORCPT
+        id S1751991AbeDIWZP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 18:25:15 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:43902 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbeDIWZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 18:24:21 -0400
-X-Google-Smtp-Source: AIpwx4+oKUSihCqL6CC2DnMMDnItC5sb1517056+Nxz5a6bMp7rMKVNANuEJQuJHiVoVTjQFAiUKIQ==
-Date: Mon, 9 Apr 2018 15:24:17 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH 4/7] sched/core: uclamp: add utilization clamping to the
- CPU controller
-Message-ID: <20180409222417.GK3126663@devbig577.frc2.facebook.com>
-References: <20180409165615.2326-1-patrick.bellasi@arm.com>
- <20180409165615.2326-5-patrick.bellasi@arm.com>
+        Mon, 9 Apr 2018 18:25:12 -0400
+X-Google-Smtp-Source: AIpwx4+A2L6ywLEsgzL2wqjsi+BxoMSs+fHQ1pt3GrV9vyHb2BtPxZpl1U8Vvgbr3sRkw7T6fh+Guw==
+Date: Mon, 9 Apr 2018 15:25:09 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [GIT PULL] rpmsg updates for v4.17
+Message-ID: <20180409222509.GC17344@builder>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409165615.2326-5-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Patrick.
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-Comments purely on cgroup interface side.
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
-On Mon, Apr 09, 2018 at 05:56:12PM +0100, Patrick Bellasi wrote:
-> This patch extends the CPU controller by adding a couple of new attributes,
-> util_min and util_max, which can be used to enforce frequency boosting and
-> capping. Specifically:
-> 
-> - util_min: defines the minimum CPU utilization which should be considered,
-> 	    e.g. when  schedutil selects the frequency for a CPU while a
-> 	    task in this group is RUNNABLE.
-> 	    i.e. the task will run at least at a minimum frequency which
-> 	         corresponds to the min_util utilization
-> 
-> - util_max: defines the maximum CPU utilization which should be considered,
-> 	    e.g. when schedutil selects the frequency for a CPU while a
-> 	    task in this group is RUNNABLE.
-> 	    i.e. the task will run up to a maximum frequency which
-> 	         corresponds to the max_util utilization
+are available in the Git repository at:
 
-I'm not too enthusiastic about util_min/max given that it can easily
-be read as actual utilization based bandwidth control when what's
-actually implemented, IIUC, is affecting CPU frequency selection.
-Maybe something like cpu.freq.min/max are better names?
+  git://github.com/andersson/remoteproc tags/rpmsg-v4.17
 
-> These attributes:
-> a) are tunable at all hierarchy levels, i.e. at root group level too, thus
->    allowing to define the minimum and maximum frequency constraints for all
->    otherwise non-classified tasks (e.g. autogroups) and to be a sort-of
->    replacement for cpufreq's powersave, ondemand and performance
->    governors.
+for you to fetch changes up to 0d72038c303c616a63415a07366f916b5edc3830:
 
-This is a problem which exists for all other interfaces.  For
-historical and other reasons, at least till now, we've opted to put
-everything at system level outside of cgroup interface.  We might
-change this in the future and duplicate system-level information and
-interfaces in the root cgroup but we wanna do that in a more systemtic
-fashion than adding an one-off knob in the cgroup root.
+  rpmsg: smd: Use announce_create to process any receive work (2018-03-27 21:54:37 -0700)
 
-Besides, if a feature makes sense at the system level which is the
-cgroup root, it makes sense without cgroup mounted or enabled, so it
-needs a place outside cgroup one way or the other.
+----------------------------------------------------------------
+rpmsg updates for v4.17
 
-> b) allow to create subgroups of tasks which are not violating the
->    utilization constraints defined by the parent group.
+This transitions the rpmsg_trysend() code paths of SMD and GLINK to use
+non-sleeping locks, it reverts the overly optimistic handling of
+discovered SMD channels and fixes an issue in SMD where incoming
+messages races with the probing of a client driver.
 
-Tying creation / config operations to the config propagation doesn't
-work well with delegation and is inconsistent with what other
-controllers are doing.  For cases where the propagated config being
-visible in a sub cgroup is necessary, please add .effective files.
+----------------------------------------------------------------
+Arvind Yadav (2):
+      rpmsg: glink: use put_device() if device_register fail
+      rpmsg: smd: use put_device() if device_register fail
 
-> Tasks on a subgroup can only be more boosted and/or capped, which is
+Bjorn Andersson (6):
+      rpmsg: smd: Use spinlock in tx path
+      rpmsg: glink: Use spinlock in tx path
+      Revert "rpmsg: smd: Create device for all channels"
+      rpmsg: smd: Fix container_of macros
+      rpmsg: Only invoke announce_create for rpdev with endpoints
+      rpmsg: smd: Use announce_create to process any receive work
 
-Less boosted.  .low at a parent level must set the upper bound of .low
-that all its descendants can have.
-
-Thanks.
-
--- 
-tejun
+ drivers/rpmsg/qcom_glink_native.c | 18 ++++++++------
+ drivers/rpmsg/qcom_glink_smem.c   |  3 ++-
+ drivers/rpmsg/qcom_smd.c          | 51 +++++++++++++++++++++++++++++----------
+ drivers/rpmsg/rpmsg_core.c        |  2 +-
+ 4 files changed, 52 insertions(+), 22 deletions(-)
