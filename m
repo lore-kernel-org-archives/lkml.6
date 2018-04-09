@@ -1,137 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752127AbeDIFz1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 01:55:27 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45796 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751673AbeDIFys (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 01:54:48 -0400
-X-Google-Smtp-Source: AIpwx49GHXlEsj+y9dOCOe1MDQWJSvji8/ZlIPHYj47p6T005QQeWCtayBqcqutILmDMpZPldUORlw==
-From: Minchan Kim <minchan@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Minchan Kim <minchan@kernel.org>
-Subject: [PATCH v3 2/4] zram: mark incompressible page as ZRAM_HUGE
-Date: Mon,  9 Apr 2018 14:54:33 +0900
-Message-Id: <20180409055435.135695-3-minchan@kernel.org>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
-In-Reply-To: <20180409055435.135695-1-minchan@kernel.org>
-References: <20180409055435.135695-1-minchan@kernel.org>
+        id S1752202AbeDIF4i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 01:56:38 -0400
+Received: from la.guarana.org ([173.254.219.205]:38312 "EHLO la.guarana.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751291AbeDIF4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 01:56:37 -0400
+Date: Mon, 9 Apr 2018 01:56:36 -0400
+From: Kevin Easton <kevin@guarana.org>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com,
+        syzbot
+        <bot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in pfkey_add
+Message-ID: <20180409055636.GA2551@la.guarana.org>
+References: <001a114292fadd3e2505607060a8@google.com>
+ <20180409040433.GJ685@sol.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409040433.GJ685@sol.localdomain>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark incompressible pages so that we could investigate who is the
-owner of the incompressible pages once the page is swapped out
-via using upcoming zram memory tracker feature.
+On Sun, Apr 08, 2018 at 09:04:33PM -0700, Eric Biggers wrote:
+...
+> 
+> Looks like this is going to be fixed by
+> https://patchwork.kernel.org/patch/10327883/ ("af_key: Always verify length of
+> provided sadb_key"), but it's not applied yet to the ipsec tree yet.  Kevin, for
+> future reference, for syzbot bugs it would be helpful to reply to the original
+> bug report and say that a patch was sent out, or even better send the patch as a
+> reply to the bug report email, e.g.
+> 
+> 	git format-patch --in-reply-to="<001a114292fadd3e2505607060a8@google.com>"
+> 
+> for this one (and the Message ID can be found in the syzkaller-bugs archive even
+> if the email isn't in your inbox).
 
-With it, we could prevent such pages to be swapped out by using
-mlock. Otherwise we might remove them.
+Sure, I can do that.
 
-This patch exposes new stat for huge pages via mm_stat.
-
-Signed-off-by: Minchan Kim <minchan@kernel.org>
----
- Documentation/blockdev/zram.txt |  1 +
- drivers/block/zram/zram_drv.c   | 17 ++++++++++++++---
- drivers/block/zram/zram_drv.h   |  2 ++
- 3 files changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/blockdev/zram.txt b/Documentation/blockdev/zram.txt
-index 257e65714c6a..78db38d02bc9 100644
---- a/Documentation/blockdev/zram.txt
-+++ b/Documentation/blockdev/zram.txt
-@@ -218,6 +218,7 @@ The stat file represents device's mm statistics. It consists of a single
-  same_pages       the number of same element filled pages written to this disk.
-                   No memory is allocated for such pages.
-  pages_compacted  the number of pages freed during compaction
-+ huge_pages	  the number of incompressible pages
- 
- 9) Deactivate:
- 	swapoff /dev/zram0
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 18dadeab775b..777fb3339f59 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -729,14 +729,15 @@ static ssize_t mm_stat_show(struct device *dev,
- 	max_used = atomic_long_read(&zram->stats.max_used_pages);
- 
- 	ret = scnprintf(buf, PAGE_SIZE,
--			"%8llu %8llu %8llu %8lu %8ld %8llu %8lu\n",
-+			"%8llu %8llu %8llu %8lu %8ld %8llu %8lu %8llu\n",
- 			orig_size << PAGE_SHIFT,
- 			(u64)atomic64_read(&zram->stats.compr_data_size),
- 			mem_used << PAGE_SHIFT,
- 			zram->limit_pages << PAGE_SHIFT,
- 			max_used << PAGE_SHIFT,
- 			(u64)atomic64_read(&zram->stats.same_pages),
--			pool_stats.pages_compacted);
-+			pool_stats.pages_compacted,
-+			(u64)atomic64_read(&zram->stats.huge_pages));
- 	up_read(&zram->init_lock);
- 
- 	return ret;
-@@ -805,6 +806,11 @@ static void zram_free_page(struct zram *zram, size_t index)
- {
- 	unsigned long handle;
- 
-+	if (zram_test_flag(zram, index, ZRAM_HUGE)) {
-+		zram_clear_flag(zram, index, ZRAM_HUGE);
-+		atomic64_dec(&zram->stats.huge_pages);
-+	}
-+
- 	if (zram_wb_enabled(zram) && zram_test_flag(zram, index, ZRAM_WB)) {
- 		zram_wb_clear(zram, index);
- 		atomic64_dec(&zram->stats.pages_stored);
-@@ -973,6 +979,7 @@ static int __zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
- 	}
- 
- 	if (unlikely(comp_len >= huge_class_size)) {
-+		comp_len = PAGE_SIZE;
- 		if (zram_wb_enabled(zram) && allow_wb) {
- 			zcomp_stream_put(zram->comp);
- 			ret = write_to_bdev(zram, bvec, index, bio, &element);
-@@ -984,7 +991,6 @@ static int __zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
- 			allow_wb = false;
- 			goto compress_again;
- 		}
--		comp_len = PAGE_SIZE;
- 	}
- 
- 	/*
-@@ -1046,6 +1052,11 @@ static int __zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
- 	zram_slot_lock(zram, index);
- 	zram_free_page(zram, index);
- 
-+	if (comp_len == PAGE_SIZE) {
-+		zram_set_flag(zram, index, ZRAM_HUGE);
-+		atomic64_inc(&zram->stats.huge_pages);
-+	}
-+
- 	if (flags) {
- 		zram_set_flag(zram, index, flags);
- 		zram_set_element(zram, index, element);
-diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
-index 8d8959ceabd1..ff0547bdb586 100644
---- a/drivers/block/zram/zram_drv.h
-+++ b/drivers/block/zram/zram_drv.h
-@@ -47,6 +47,7 @@ enum zram_pageflags {
- 	ZRAM_LOCK = ZRAM_FLAG_SHIFT,
- 	ZRAM_SAME,	/* Page consists the same element */
- 	ZRAM_WB,	/* page is stored on backing_device */
-+	ZRAM_HUGE,	/* Incompressible page */
- 
- 	__NR_ZRAM_PAGEFLAGS,
- };
-@@ -71,6 +72,7 @@ struct zram_stats {
- 	atomic64_t invalid_io;	/* non-page-aligned I/O requests */
- 	atomic64_t notify_free;	/* no. of swap slot free notifications */
- 	atomic64_t same_pages;		/* no. of same element filled pages */
-+	atomic64_t huge_pages;		/* no. of huge pages */
- 	atomic64_t pages_stored;	/* no. of pages currently stored */
- 	atomic_long_t max_used_pages;	/* no. of maximum pages stored */
- 	atomic64_t writestall;		/* no. of write slow paths */
--- 
-2.17.0.484.g0c8726318c-goog
+    - Kevin
