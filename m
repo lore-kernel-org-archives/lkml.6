@@ -1,45 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753271AbeDIPvq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:51:46 -0400
-Received: from mail-it0-f43.google.com ([209.85.214.43]:37773 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751623AbeDIPvp (ORCPT
+        id S1753301AbeDIPwA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:52:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60008 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752314AbeDIPv6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:51:45 -0400
-X-Google-Smtp-Source: AIpwx48/nNE+J+tUuaNSPLXAvyHEwEZn6rGb2PFLwFXNefnrP7FImBberc8FhHaYQMq5XEX73tBDcw==
-Subject: Re: [PATCH] backing: silence compiler warning using __printf
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        Nikolay Borisov <nborisov@suse.com>, Tejun Heo <tj@kernel.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org
-References: <20180406201453.32683-1-malat@debian.org>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <f8d37511-2a23-53f5-3c70-8a7f5f9e965e@kernel.dk>
-Date: Mon, 9 Apr 2018 09:51:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 9 Apr 2018 11:51:58 -0400
+Date: Mon, 9 Apr 2018 08:51:57 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: __GFP_LOW
+Message-ID: <20180409155157.GC11756@bombadil.infradead.org>
+References: <20180405142258.GA28128@bombadil.infradead.org>
+ <20180405142749.GL6312@dhcp22.suse.cz>
+ <20180405151359.GB28128@bombadil.infradead.org>
+ <20180405153240.GO6312@dhcp22.suse.cz>
+ <20180405161501.GD28128@bombadil.infradead.org>
+ <20180405185444.GQ6312@dhcp22.suse.cz>
+ <20180405201557.GA3666@bombadil.infradead.org>
+ <20180406060953.GA8286@dhcp22.suse.cz>
+ <20180408042709.GC32632@bombadil.infradead.org>
+ <20180409073407.GD21835@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180406201453.32683-1-malat@debian.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409073407.GD21835@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/6/18 2:14 PM, Mathieu Malaterre wrote:
-> __printf marker was added in commit d2cc4dde9206 ("bdi_register: add
-> __printf verification, fix arg mismatch") for function `bdi_register`
-> since it is useful to verify format and arguments. Apply equivalent gcc
-> attribute to `bdi_register_va`.
+On Mon, Apr 09, 2018 at 09:34:07AM +0200, Michal Hocko wrote:
+> On Sat 07-04-18 21:27:09, Matthew Wilcox wrote:
+> > > >    - Steal time from other processes to free memory (KSWAPD_RECLAIM)
+> > > 
+> > > What does that mean? If I drop the flag, do not steal? Well I do because
+> > > they will hit direct reclaim sooner...
+> > 
+> > If they allocate memory, sure.  A process which stays in its working
+> > set won't, unless it's preempted by kswapd.
 > 
-> Remove warning triggered with W=1:
+> Well, I was probably not clear here. KSWAPD_RECLAIM is not something you
+> want to drop because this is a cooperative flag. If you do not use it
+> then you are effectivelly pushing others to the direct reclaim because
+> the kswapd won't be woken up and won't do the background work. Your
+> working make it sound as a good thing to drop.
+
+If memory is low, *somebody* has to reclaim.  As I understand it, kswapd
+was originally introduced because networking might do many allocations
+from interrupt context, and so was unable to do its own reclaiming.  On a
+machine which was used only for routing, there was no userspace process to
+do the reclaiming, so it ran out of memory.  But if you're an HPC person
+who's expecting their long-running tasks to be synchronised and not be
+unnecessarily disturbed, having kswapd preempting your task is awful.
+
+I'm not arguing in favour of removing kswapd or anything like that,
+but if you're not willing/able to reclaim memory yourself, then you're
+necessarily stealing time from other tasks in order to have reclaim
+happen.
+
+> > > What does that mean and how it is different from NOWAIT? Is this about
+> > > the low watermark and if yes do we want to teach users about this and
+> > > make the whole thing even more complicated?  Does it wake
+> > > kswapd? What is the eagerness ordering? LOW, NOWAIT, NORETRY,
+> > > RETRY_MAYFAIL, NOFAIL?
+> > 
+> > LOW doesn't quite fit into the eagerness scale with the other flags;
+> > instead it's composable with them.  So you can specify NOWAIT | LOW,
+> > NORETRY | LOW, NOFAIL | LOW, etc.  All I have in mind is something
+> > like this:
+> > 
+> >         if (alloc_flags & ALLOC_HIGH)
+> >                 min -= min / 2;
+> > +	if (alloc_flags & ALLOC_LOW)
+> > +		min += min / 2;
+> > 
+> > The idea is that a GFP_KERNEL | __GFP_LOW allocation cannot force a
+> > GFP_KERNEL allocation into an OOM situation because it cannot take
+> > the last pages of memory before the watermark.
 > 
->   mm/backing-dev.c:881:2: warning: function might be possible candidate for ‘gnu_printf’ format attribute [-Wsuggest-attribute=format]
+> So what are we going to do if the LOW watermark cannot succeed?
 
-Applied, thanks.
+Depends on the other flags.  GFP_NOWAIT | GFP_LOW will just return NULL
+(somewhat more readily than a plain GFP_NOWAIT would).  GFP_NORETRY |
+GFP_LOW will do one pass through reclaim.  If it gets enough pages
+to drag the zone above the watermark, then it'll succeed, otherwise
+return NULL.  NOFAIL | LOW will keep retrying forever.  GFP_KERNEL |
+GFP_LOW ... hmm, that'll OOM-kill another process more eagerly that
+a regular GFP_KERNEL allocation would.  We'll need a little tweak so
+GFP_LOW implies __GFP_RETRY_MAYFAIL.
 
--- 
-Jens Axboe
+> > It can still make a
+> > GFP_KERNEL allocation *more likely* to hit OOM (just like any other kind
+> > of allocation can), but it can't do it by itself.
+> 
+> So who would be a user of __GFP_LOW?
+
+vmalloc and Steven's ringbuffer.  If I write a kernel module that tries
+to vmalloc 1TB of space, it'll OOM-kill everything on the machine trying
+to get enough memory to fill the page array.  Probably everyone using
+__GFP_RETRY_MAYFAIL today, to be honest.  It's more likely to accomplish
+what they want -- trying slightly less hard to get memory than GFP_KERNEL
+allocations would.
+
+> > I've been wondering about combining the DIRECT_RECLAIM, NORETRY,
+> > RETRY_MAYFAIL and NOFAIL flags together into a single field:
+> > 0 => RECLAIM_NEVER,	/* !DIRECT_RECLAIM */
+> > 1 => RECLAIM_ONCE,	/* NORETRY */
+> > 2 => RECLAIM_PROGRESS,	/* RETRY_MAYFAIL */
+> > 3 => RECLAIM_FOREVER,	/* NOFAIL */
+> > 
+> > The existance of __GFP_RECLAIM makes this a bit tricky.  I honestly don't
+> > know what this code is asking for:
+> 
+> I am not sure I follow here. Is the RECLAIM_ an internal thing to the
+> allocator?
+
+No, I'm talking about changing the __GFP flags like this:
+
+@@ -24,10 +24,8 @@ struct vm_area_struct;
+ #define ___GFP_HIGH            0x20u
+ #define ___GFP_IO              0x40u
+ #define ___GFP_FS              0x80u
++#define ___GFP_ACCOUNT         0x100u
+ #define ___GFP_NOWARN          0x200u
+-#define ___GFP_RETRY_MAYFAIL   0x400u
+-#define ___GFP_NOFAIL          0x800u
+-#define ___GFP_NORETRY         0x1000u
+ #define ___GFP_MEMALLOC                0x2000u
+ #define ___GFP_COMP            0x4000u
+ #define ___GFP_ZERO            0x8000u
+@@ -35,8 +33,10 @@ struct vm_area_struct;
+ #define ___GFP_HARDWALL                0x20000u
+ #define ___GFP_THISNODE                0x40000u
+ #define ___GFP_ATOMIC          0x80000u
+-#define ___GFP_ACCOUNT         0x100000u
+-#define ___GFP_DIRECT_RECLAIM  0x400000u
++#define ___GFP_RECLAIM_NEVER   0x00000u
++#define ___GFP_RECLAIM_ONCE    0x10000u
++#define ___GFP_RECLAIM_PROGRESS        0x20000u
++#define ___GFP_RECLAIM_FOREVER 0x30000u
+ #define ___GFP_WRITE           0x800000u
+ #define ___GFP_KSWAPD_RECLAIM  0x1000000u
+ #ifdef CONFIG_LOCKDEP
+
+> > kernel/power/swap.c:                       __get_free_page(__GFP_RECLAIM | __GFP_HIGH);
+> > but I suspect I'll have to find out.  There's about 60 places to look at.
+> 
+> Well, it would be more understandable if this was written as
+> (GFP_KERNEL | __GFP_HIGH) & ~(__GFP_FS|__GFP_IO)
+
+Yeah, I think it's really (GFP_NOIO | __GFP_HIGH)
+
+> > I also want to add __GFP_KILL (to be part of the GFP_KERNEL definition).
+> 
+> What does __GFP_KILL means?
+
+Allows OOM killing.  So it's the inverse of the GFP_RETRY_MAYFAIL bit.
+
+> > That way, each bit that you set in the GFP mask increases the things the
+> > page allocator can do to get memory for you.  At the moment, RETRY_MAYFAIL
+> > subtracts the ability to kill other tasks, which is unusual.
+> 
+> Well, it is not all that great because some flags add capabilities while
+> some remove them but, well, life is hard when you try to extend an
+> interface which was not all that great from the very beginning.
+
+That's the story of Linux ;-)
