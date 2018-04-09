@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3836577-1523240562-2-15936145211678787303
+X-Cyrus-Session-Id: sloti22d1t05-3828464-1523240560-2-9398366914549356057
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523240561; b=fMlwpPXxxb/0fVeeXKm0L5xR8K+Fnfwsh2p7KeVfM8M4iFCQ18
-    MHQUxRfVFBX3kvVAh/OZh+GBat00nBVNRVNc1wayl8c58EEw3WpOSdg6UXvutLeA
-    NMNqoRtduYAlKbk49K6UjA+QQHJzSPMV3sxJ+52vOPRv/dVwl8r+9hBID6kHBiF2
-    r+I5x7IBDIMtjzILNpcDUCqNsWE+3KlsmJ1EIv6Z9XFdTlRAzaU0ia0KttnpO2BY
-    OpgmBe2+lG9p5srTnN/66FVKZO8vjisvcqksgTZIIIeIk8vZT+xc3K/fahMw2BJ3
-    e/VI0YcpJa1eZeHDNvr3gjwQZicts0OmDHow==
+    1523240559; b=NAkPMrySOeexULqVLLiPVNCrs0VBGQIO1qy1o6mDp+gFDUrFhB
+    iWNVzaKSsus0Wb6+sqnABimMk2Iy3jqbgNYD3EEGfyJx6uA7buGJrU5LscCsSmqr
+    Hgg4dJ5s5oGlihQ006mbQHtxrfyUaxZvkpFTk+3sTAe3mniFBdyfIXn56/i/YNlh
+    RQzNf0jt+NL2Ik+bBZkvJ/a0EMMxoGjKNY82ZMbpN7+DGAU9ueGOG9zVe3G+ru7l
+    O+fTt79nGoqb3sU6//NqlrCnc+Jh6l5QElMPE3oDFdut8i0VsSD2erQrTDGmiN1q
+    eflvoyOACmhzfl/Dt9AV+4UvoZ6NWcl8RyaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523240561; bh=/Wqe582Qrp
-    s8wd4sOu9/yBZEnqP/TxQ8yj2Yo61ri+g=; b=h6nK0Q9/vZd3hXyGrirJ+HQ8kF
-    G6yY0zPUMh8g2NbGeosYPZaxNS17aYFy4x/Y6u9gpTgDmu4Xulm0nUjTkrUKioum
-    d9TUM9SCf2YEIMQpDUSppqUDtuE8TBp13WEJnyPBxPv6adHnDQ2niTN7SCKmRDot
-    4xWcHhkDToCMS53SmsrXjeMg/9gxeGkaitZwCBnB3XBQGw87+T/IKJYZg3KrPljh
-    dPIdklQ+Wzklhn9zhMvxTXvnC/411E1XF35qYi6YvbXzuoMSfBp+KTwJPDAQhhiq
-    aMqn8IsBN82ZgGqu9Q5N1Y3gKYdj10NlFk4Xtf3tonUzTVpYmXh5qC5ZFwXQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JQwSKlEI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523240559; bh=sCkdtetybf
+    3W/Qbd5I8Qn1aGUQlPvmHPF22HvhTYaFg=; b=u5FIeTZnJRhnJfF91Vafc6TP7Y
+    0P61oodnq8YyxXlp/uRS2SNtAEV0jnAGJjQNNbfviauiukFdIKZDY6i5AZ9+aTwB
+    NUQ9Z66d5BzSDVq7v9P3+6cwPOTJK+krOZD3AcST2/OOPQXFKcZTg2NZ+wZB9dXz
+    Q+TIbsSpvDWo2hemPAV/Wv3Z3JyYxUfIqzid6r9OdXGzrfSBsnBJmEkKCVM1+Pc4
+    /Z33Bz7pi31oXC6ms4SdPjzHy1Z4P3qnC/6R6Fvdpw5lMGXAKy+rUSOSKn0aKMWg
+    KTz/y8cAnHcYWIldSoj5f1WUiSmXflejwOEc7EKQY16qLWX8sOvzsLC3GTCQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EwgbLiuO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JQwSKlEI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EwgbLiuO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,36 +51,36 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfO4el8XheBUsKmQGqS5VP5ZnpsrnxwkWtN4pHfLBusdayBjvyi7q4aH0luOXr/S9F/d7JYHf4q1r3ApZjGtEe4gIt5xLHpX4Iw3KiiJFui/aNxhjplB/
-    Ff84JIDycwA7vpK8boe3TE0XF6ITG+iCVjxNEB0QJHKAHcJ4TSriyYRQvElCUg+vMrIzaBxz0Vb0f0ohPTGBRS5Ul1fDMVB/cYyhXWBdKK++tJLNmRgdKDDa
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfH8HUVVYZbkCnBdjefHHPFkgYY7fWagO7pHbSLgq5o9eAhgIr1f8klwsAr+WL4kZz7odyuCEMTFYQZs52wva+7F6ofPzLhVq6MSLJCoXtIw+NeGNp+By
+    wdNwnVhU+/jFsjbb8kJNoJk5TI+J+6E8JIeakZ1T33EKq85Unv+sb1ybnsS99JbAGjCXrud0eT7u5Zk0LlAn6q/Gd+1kR8da62b0O+LdfV+nt8ZAhlNavx2C
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8 a=tlxZNUUtLAkpftw_GhIA:9
-    a=-hJDkygSm-Lx3iek:21 a=VW0SpRvjVJlYc6IK:21 a=wPNLvfGTeEIA:10
-    a=WzC6qhA0u3u7Ye7llzcV:22
+    a=Lf-vpJhqX20A:10 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=Y2_x_n7zU42nOnbLo8UA:9
+    a=zz_jtDW6Q1VDNVcO:21 a=y6sKZ4TK0xXHHzTG:21 a=wPNLvfGTeEIA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932979AbeDICVw (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 22:21:52 -0400
-Received: from mail-sn1nam02on0106.outbound.protection.outlook.com ([104.47.36.106]:7529
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1754851AbeDICVy (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 22:21:54 -0400
+Received: from mail-by2nam03on0108.outbound.protection.outlook.com ([104.47.42.108]:9678
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755032AbeDIA3l (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:29:41 -0400
+        id S1756031AbeDIA3k (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:29:40 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Filipe Manana <fdmanana@suse.com>, David Sterba <dsterba@suse.com>,
+CC: Jacob Keller <jacob.e.keller@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 113/293] Btrfs: send, fix invalid path after
- renaming and linking file
-Thread-Topic: [PATCH AUTOSEL for 4.9 113/293] Btrfs: send, fix invalid path
- after renaming and linking file
-Thread-Index: AQHTz5kb5Z1azJ67cUuCAB6hlIpbrA==
-Date: Mon, 9 Apr 2018 00:24:21 +0000
-Message-ID: <20180409002239.163177-113-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 110/293] i40evf: assign num_active_queues
+ inside i40evf_alloc_queues
+Thread-Topic: [PATCH AUTOSEL for 4.9 110/293] i40evf: assign num_active_queues
+ inside i40evf_alloc_queues
+Thread-Index: AQHTz5kZet1POMSreE6BRb+oumHUoQ==
+Date: Mon, 9 Apr 2018 00:24:19 +0000
+Message-ID: <20180409002239.163177-110-alexander.levin@microsoft.com>
 References: <20180409002239.163177-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,167 +89,134 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1032;7:GIRkht/Y9VAjWTHuKo4ukj5Lz0bBANmfJmhJJJPq3PkR3CE9ygDvlX1mwLhvMDBwulv8gIDUMdAqy/UMHeSD4E2waaNFVVAASqSUVEUprbvwlSY6KW8XWmUjUqH/zJ0udo+ry350/6DhEMGMgQPyegsWHP/QoeY+dGdcMtw6UFuZAb2LmsWUuUVo/8+noVP/cr62xxX+y8E2tRzlBemhVmIyCSR6VN0/DgwbYMmRNuE/3zut4TmVcGkE/2dROVr+;20:IEefjt52Qi1Iw8+bxwvSZPi2xJrssCJItOjZ0YSTG+2o5Qc0ee8bWtUbLE1jaQmRAFlir41t+o8MyoS5syo1bsEr8B/bBU/0kP2QCtz7CZEQLCRk9gfYIcTnHfmuhv1gEc0dlmzUn937g+vqAq0zvTdcm95dOmM+2nVlGaXxwWo=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0967;7:A7X/sD2UCB/eRwPaBuYOPLBmbwp0/O78nr2n5kiS87fnrrSVw+rt2C0kuahF2KX9+p/OqCZ1rXyngqJwNxuCu4GEkSRYLOY2DlD4durJcrl4I1+2cUOelr8upF450HE/TzKQ83r+AA8YZGrT3KoaG9aR1DNN40s3xuIIDpTPjoWD4KgONYidqEeJMrYtlnIx0EnnAgjyOQLSEzlhagswQOCvpCsjFNivUHVDTGTmsHyQvvZn2eGOXes53XKhZ9pF;20:bKz/n9ulhJl0lwwYkMmthljs5j6UL4uwkHSCIIjb8OTRrl9KpsnYzQIHQLgyrJrpz3jQkSe0fcDfojnXOgsspNclwbuhmMWMd1Ado1T5j9EgZ457IpA//nTgokAJqL7Id3hMP+vatoz/U3NHT+SiANd3WHCu95/XPUnfmuc9WSk=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 4ae69e66-efea-4cb5-708e-08d59db0fa9b
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1032;
-x-ms-traffictypediagnostic: DM5PR2101MB1032:
+X-MS-Office365-Filtering-Correlation-Id: b5baf6ec-ef99-4653-d05c-08d59db0f916
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0967;
+x-ms-traffictypediagnostic: DM5PR2101MB0967:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1032EAE78A21DDADA6CA3971FBBF0@DM5PR2101MB1032.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231221)(944501327)(52105095)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1032;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1032;
+x-microsoft-antispam-prvs: <DM5PR2101MB0967C01647C1CF6B2BE301E8FBBF0@DM5PR2101MB0967.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699)(17755550239193);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0967;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0967;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(396003)(39860400002)(376002)(366004)(189003)(199004)(5660300001)(76176011)(99286004)(10090500001)(2900100001)(105586002)(305945005)(7736002)(107886003)(2501003)(5250100002)(14454004)(53936002)(4326008)(8936002)(68736007)(25786009)(86612001)(3846002)(66066001)(1076002)(486006)(316002)(72206003)(22452003)(106356001)(186003)(97736004)(6436002)(6116002)(476003)(2616005)(478600001)(6486002)(10290500003)(2906002)(110136005)(54906003)(6512007)(81156014)(81166006)(8676002)(36756003)(11346002)(3660700001)(446003)(6666003)(86362001)(26005)(102836004)(3280700002)(6506007)(59450400001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1032;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: IBa56OKJAsk3hv7oQD+ePVRE1YZcaFycALX9/rRZyCHTTc1gR7vgXJJUBpD5LZHU6PKQCmlag8uY/6CYGanm1ghQxRfaQ1paofOoFxLiNxTpd9/MpdipOTG/HO/5xmBl9waPKRuogZINGNekyunNGcspnq65/1FNZca3JirbD1e5gZCPa3ezuMu22TwqUtRvmcQRz1r05S9J4C82XAjPtIWHwVhFzSI3v5mx88Be+Ena9zienUeFgYQhwNjztg9QYlYluznz3jRjNNIxX4bgv+BxhOCSZFmO+qyafLajLGUJ2oqkPIRRkjWO4VlzY1yS6rlnChNXIbt5pOSlHTiI/+IdB1ZZm2obP4zCTiapkAJupBXKb/yEVAPwxcICHyWX5zD3U1+sOO4exLcvhMH+YsWzA6QswnegdiyLOrpaC3A=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(376002)(39380400002)(346002)(199004)(189003)(6506007)(486006)(86362001)(14454004)(59450400001)(68736007)(102836004)(99286004)(26005)(3846002)(6116002)(186003)(15760500003)(476003)(2616005)(1076002)(3280700002)(86612001)(72206003)(4326008)(446003)(54906003)(76176011)(11346002)(2906002)(22452003)(3660700001)(110136005)(97736004)(316002)(6666003)(5660300001)(478600001)(8676002)(6512007)(8936002)(107886003)(6486002)(53936002)(81166006)(36756003)(81156014)(10290500003)(6436002)(10090500001)(25786009)(66066001)(106356001)(305945005)(7736002)(2501003)(5250100002)(105586002)(2900100001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0967;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: M9Ois2KJxVlOIbzg6ARXz7nMD0LeFGHenWejBCGo+pPyY/o3VqCc057F2bdofT+T/dHlCcakc9Xd4Zbkq154q9lR4feVKuVNmSsnHl1rZ94S+AF5N/pW6Kby2mYWeFuVUa1/AjHp3W1tRHSlUHWhHD85wsZlPJm8GPfjmyRuw34Elt/KnU8iCSgonYI0RbQ2Ks9oYnlnFj/vS0ql7E6a9n832hrTYdpIE+ajJCjET7fa3EaaELWjvpYYpBts2nMTavPSPvt3xlGfwvDPQijGc+954yJnQaMWIj3as63pX1iKp6epbXB0tL6aIrkDAuzMXPFXv3NtR09pquUjttHyDtXH24cBvOBJJkRBTN4NHV0yW7vFGfeNXQmsoCQ1v0fQZrbkm2PudiHqUrzk6i1B37/YM2RD4nv6a2Ko+Ky7Kfk=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ae69e66-efea-4cb5-708e-08d59db0fa9b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:24:21.7062
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5baf6ec-ef99-4653-d05c-08d59db0f916
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:24:19.1594
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1032
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0967
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Jacob Keller <jacob.e.keller@intel.com>
 
-[ Upstream commit 72c3668fed2b3eec7c6fc059e7b54855361e3011 ]
+[ Upstream commit 65c7006f234c9ede887d468f595f259a5c5cc552 ]
 
-Currently an incremental snapshot can generate link operations which
-contain an invalid target path. Such case happens when in the send
-snapshot a file was renamed, a new hard link added for it and some
-other inode (with a lower number) got renamed to the former name of
-that file. Example:
+The variable num_active_queues represents the number of active queues we
+have for the device. We assign this pretty early in i40evf_init_subtask.
 
-Parent snapshot
+Several code locations are written with loops over the tx_rings and
+rx_rings structures, which don't get allocated until
+i40evf_alloc_queues, and which get freed by i40evf_free_queues.
 
- .                  (ino 256)
- |
- |--- f1            (ino 257)
- |--- f2            (ino 258)
- |--- f3            (ino 259)
+These call sites were written under the assumption that tx_rings and
+rx_rings would always be allocated at least when num_active_queues is
+non-zero.
 
-Send snapshot
+Lets fix this by moving the assignment into the function where we
+allocate queues. We'll use a temporary variable for storage so that we
+don't assign the value in the adapter structure until after the rings
+have been set up.
 
- .                  (ino 256)
- |
- |--- f2            (ino 257)
- |--- f3            (ino 258)
- |--- f4            (ino 259)
- |--- f5            (ino 258)
+Finally, when we free the queues, we'll clear the value to ensure that
+we do not loop over the rings memory that no longer exists.
 
-The following steps happen when computing the incremental send stream:
+This resolves a possible NULL pointer dereference in
+i40evf_get_ethtool_stats which could occur if the VF fails to recover
+from a reset, and then a user requests statistics.
 
-1) When processing inode 257, inode 258 is orphanized (renamed to
-   "o258-7-0"), because its current reference has the same name as the
-   new reference for inode 257;
-
-2) When processing inode 258, we iterate over all its new references,
-   which have the names "f3" and "f5". The first iteration sees name
-   "f5" and renames the inode from its orphan name ("o258-7-0") to
-   "f5", while the second iteration sees the name "f3" and, incorrectly,
-   issues a link operation with a target name matching the orphan name,
-   which no longer exists. The first iteration had reset the current
-   valid path of the inode to "f5", but in the second iteration we lost
-   it because we found another inode, with a higher number of 259, which
-   has a reference named "f3" as well, so we orphanized inode 259 and
-   recomputed the current valid path of inode 258 to its old orphan
-   name because inode 259 could be an ancestor of inode 258 and therefore
-   the current valid path could contain the pre-orphanization name of
-   inode 259. However in this case inode 259 is not an ancestor of inode
-   258 so the current valid path should not be recomputed.
-   This makes the receiver fail with the following error:
-
-   ERROR: link f3 -> o258-7-0 failed: No such file or directory
-
-So fix this by not recomputing the current valid path for an inode
-whenever we find a colliding reference from some not yet processed inode
-(inode number higher then the one currently being processed), unless
-that other inode is an ancestor of the one we are currently processing.
-
-A test case for fstests will follow soon.
-
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/btrfs/send.c | 35 +++++++++++++++++++++++++++--------
- 1 file changed, 27 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/intel/i40evf/i40evf_main.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-index d040afc966fe..c3836978967c 100644
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -3531,9 +3531,17 @@ static int is_ancestor(struct btrfs_root *root,
- 		       struct fs_path *fs_path)
+diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_main.c b/drivers/net/=
+ethernet/intel/i40evf/i40evf_main.c
+index 14372810fc27..34fc948bf550 100644
+--- a/drivers/net/ethernet/intel/i40evf/i40evf_main.c
++++ b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
+@@ -1123,6 +1123,7 @@ static void i40evf_free_queues(struct i40evf_adapter =
+*adapter)
  {
- 	u64 ino =3D ino2;
-+	bool free_path =3D false;
-+	int ret =3D 0;
+ 	if (!adapter->vsi_res)
+ 		return;
++	adapter->num_active_queues =3D 0;
+ 	kfree(adapter->tx_rings);
+ 	adapter->tx_rings =3D NULL;
+ 	kfree(adapter->rx_rings);
+@@ -1139,18 +1140,22 @@ static void i40evf_free_queues(struct i40evf_adapte=
+r *adapter)
+  **/
+ static int i40evf_alloc_queues(struct i40evf_adapter *adapter)
+ {
+-	int i;
++	int i, num_active_queues;
 +
-+	if (!fs_path) {
-+		fs_path =3D fs_path_alloc();
-+		if (!fs_path)
-+			return -ENOMEM;
-+		free_path =3D true;
-+	}
++	num_active_queues =3D min_t(int,
++				  adapter->vsi_res->num_queue_pairs,
++				  (int)(num_online_cpus()));
 =20
- 	while (ino > BTRFS_FIRST_FREE_OBJECTID) {
--		int ret;
- 		u64 parent;
- 		u64 parent_gen;
+-	adapter->tx_rings =3D kcalloc(adapter->num_active_queues,
++	adapter->tx_rings =3D kcalloc(num_active_queues,
+ 				    sizeof(struct i40e_ring), GFP_KERNEL);
+ 	if (!adapter->tx_rings)
+ 		goto err_out;
+-	adapter->rx_rings =3D kcalloc(adapter->num_active_queues,
++	adapter->rx_rings =3D kcalloc(num_active_queues,
+ 				    sizeof(struct i40e_ring), GFP_KERNEL);
+ 	if (!adapter->rx_rings)
+ 		goto err_out;
 =20
-@@ -3542,13 +3550,18 @@ static int is_ancestor(struct btrfs_root *root,
- 		if (ret < 0) {
- 			if (ret =3D=3D -ENOENT && ino =3D=3D ino2)
- 				ret =3D 0;
--			return ret;
-+			goto out;
-+		}
-+		if (parent =3D=3D ino1) {
-+			ret =3D parent_gen =3D=3D ino1_gen ? 1 : 0;
-+			goto out;
- 		}
--		if (parent =3D=3D ino1)
--			return parent_gen =3D=3D ino1_gen ? 1 : 0;
- 		ino =3D parent;
+-	for (i =3D 0; i < adapter->num_active_queues; i++) {
++	for (i =3D 0; i < num_active_queues; i++) {
+ 		struct i40e_ring *tx_ring;
+ 		struct i40e_ring *rx_ring;
+=20
+@@ -1172,6 +1177,8 @@ static int i40evf_alloc_queues(struct i40evf_adapter =
+*adapter)
+ 		rx_ring->rx_itr_setting =3D (I40E_ITR_DYNAMIC | I40E_ITR_RX_DEF);
  	}
--	return 0;
-+ out:
-+	if (free_path)
-+		fs_path_free(fs_path);
-+	return ret;
- }
 =20
- static int wait_for_parent_move(struct send_ctx *sctx,
-@@ -3809,9 +3822,15 @@ static int process_recorded_refs(struct send_ctx *sc=
-tx, int *pending_move)
- 				 * might contain the pre-orphanization name of
- 				 * ow_inode, which is no longer valid.
- 				 */
--				fs_path_reset(valid_path);
--				ret =3D get_cur_path(sctx, sctx->cur_ino,
--					   sctx->cur_inode_gen, valid_path);
-+				ret =3D is_ancestor(sctx->parent_root,
-+						  ow_inode, ow_gen,
-+						  sctx->cur_ino, NULL);
-+				if (ret > 0) {
-+					fs_path_reset(valid_path);
-+					ret =3D get_cur_path(sctx, sctx->cur_ino,
-+							   sctx->cur_inode_gen,
-+							   valid_path);
-+				}
- 				if (ret < 0)
- 					goto out;
- 			} else {
++	adapter->num_active_queues =3D num_active_queues;
++
+ 	return 0;
+=20
+ err_out:
+@@ -2440,9 +2447,6 @@ static void i40evf_init_task(struct work_struct *work=
+)
+ 	adapter->watchdog_timer.data =3D (unsigned long)adapter;
+ 	mod_timer(&adapter->watchdog_timer, jiffies + 1);
+=20
+-	adapter->num_active_queues =3D min_t(int,
+-					   adapter->vsi_res->num_queue_pairs,
+-					   (int)(num_online_cpus()));
+ 	adapter->tx_desc_count =3D I40EVF_DEFAULT_TXD;
+ 	adapter->rx_desc_count =3D I40EVF_DEFAULT_RXD;
+ 	err =3D i40evf_init_interrupt_scheme(adapter);
 --=20
 2.15.1
