@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3695087-1523236903-2-11752903287401838617
+X-Cyrus-Session-Id: sloti22d1t05-3695087-1523236872-2-7331640999405936600
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523236902; b=hYEwdB7Jck4bgJkTmWVgqhbuzDivxZHUaTHeZGzrcUNIWNFvNH
-    FiYPX6lOHGoxeWxTCu1LYGm0U4lsSEsi6l+SjiW5Z29SCtZ4imh1whobw5x8+24p
-    i16iNgwZRFlJcqEFL9jU+QWCAT9TCeF2aZHTdjygU0aM1ScRnV+Xwf2yIDgMQLdB
-    MJCahUzfFs0sTXHTMeumKVhKW/lssERRx61k/DthVtgy90EeLmbgIS6HWiOQpSBr
-    Oci2hB4kBTNFLbkfeA0TYXy0TCwCUQ29XFt87J/vfb8jC4ZXbqCbNt5rf/z6LETb
-    JZ/v86Dt+6QuHpCXSHXnzCSo4vokcEjYhQOw==
+    1523236871; b=WoK9qhzSnGm7zfsGB6JqZPwIeBumSUeE+zqRFUnyspYdkX4Hrv
+    LFSL0XwQrDRr1BBu7uvI7fRad7nVPLdVoAQkmGr5Nit0LGfWYCOdpeZZxKSwLDPs
+    hmBK9BD9MJ49r/ortXCnH5HeoJ6WgNwx4LHdFsbIUyueHy3Rrh874DjucuQSWd7f
+    2qZicuDvikGxf7AWmw2mDhZw+QCscPwMXrZsoZLYSS16nJ22bDdf+oDC9R9RKamN
+    iH/hDFiByxXYmzla216DCYjZaUKtQE7qn85w+Vuh/6H2VPRsFEq8fJcnjdzyKW6O
+    NSatEWSo7F0mMdGgiT+Jga3gCq1I7jZ7mimg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523236902; bh=7qJW/yIGwc
-    HOK1kweyKsSfSaYEvSs9k2OsCOVArFgSE=; b=EzNb3iWi9gprk8LvD10y6MMRRp
-    EqS6pxrcPdOsPZzXUw2j6yMKBmQWDfD0oX7CRhYMV3aRz6MKg7CRQlq6usHVlVO4
-    /DgYwB7/wnlAm6NmLmbUgl5cXC3yUDVMxXUzzQ1lcZyBT2ZYn8qCECRDlnm7o9UD
-    22g4fCb0jVumPdOuwP7t7rfADAChjtG8gzeiqOnPlxr7Yn6rNEvoDnI0FlJYeZWe
-    HxYrG0UuVklPL11MDeDoMqta1rEu7lW8nhWV/UT1Q20g0dL6+sbjhlBcfYM6O1y2
-    l8kC1F48Aef0vOqX+E5NMAiex3jEYq8qMKLEmMHKugkAzubzHtryw4+iCNCA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=J5ilVsxW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523236871; bh=avTkr7d8KH
+    na2eEQ0+vo0pgXqHOb5wU2F/wQmAHQJIQ=; b=jvXY1J0whyTmdGxre6yvEcSExY
+    GORdK9xyvv2rCOpOHxurAxNPSeOFLKFOsXoimrG6lSL2iPUu4/k2+0wsDQXve6md
+    4ysVBej6rEBXoolCjV1A+/Xcg2H8sqQdaY3fo3YgLSdb+ei5wDlS3ipVt+N+87IX
+    VOG3KWg2eWleaH2juPNrLxErtyQiShohfzyvTIT7Ng99CIbzhGEW9/rFUwxvcBZD
+    NXOg0jyf1Ib5SSclVmpXEjbaYWPsjls6a4rZBZ+OWwglOBbj87cri6jQeG1Gu+Z0
+    +/VK5rf1SdCxRMNtHgiPWAiCwnLyJs+XuxCbjaiTx4tKc3MMyb6pXSjSYPQw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=i/5+IUjJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=J5ilVsxW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=i/5+IUjJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,45 +51,36 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLCtWarGKT3uGKeJAIA+EU7EMV0L1MOmardg6LQAK6YH+7D0SoGQE04T+aAT61xY4r4LagMkqmRrNYhb1vKyAc/DnEqven9gxNbVb0o+2WH70nZrcNbm
-    /5TgKgK6ILIL5lSjbquP/cDbi30O1EhUqy+yRVJH17zpDRRukRMgugPJe9GTjIHaVW3hzKpwDmocGOOrpd0s9EBx+v1QlCD//71CJB7IWkNh+4xuVKx8mycc
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfO65WUixq8V7EgUQhd9ZIAdUX/k8CRBD3R1nT+llMB1l4UUjdjSLbx28iyarnlWXpbhxDUYCmvPl/ShLhtQRE+KFTSWjt8GHopiYn4BwCPP7Plw6yf/i
+    C7/d632Vv+TP82+/CXo5xwUxNolvo/yE7Lpd3UZl5kmAyCIyFpzKsn311q/mcaUvv/WG6pfMdjWsF+l3q7hWyaNu9JLRbocOTEElrwB0RNZSjVUWQoHZKUxh
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=r_1tXGB3AAAA:8 a=WPyIoOwQAAAA:8 a=VwQbUJbxAAAA:8
-    a=yMhMjlubAAAA:8 a=X8tl4U4nn9uvCpgtE2IA:9 a=wPNLvfGTeEIA:10
-    a=t8nPyN_e6usw4ciXM-Pk:22 a=S-HzPIwwDS8t1QcwSuWs:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Lf-vpJhqX20A:10 a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8 a=DK71M3eg1XlkCCJWKQcA:9
+    a=q5JH5klM5hVBZkxl:21 a=Gx1OJJjL2uEIAqQd:21 a=wPNLvfGTeEIA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755803AbeDIBVL (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 21:21:11 -0400
-Received: from mail-sn1nam02on0111.outbound.protection.outlook.com ([104.47.36.111]:14488
+        id S932748AbeDIAhK (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:37:10 -0400
+Received: from mail-sn1nam02on0113.outbound.protection.outlook.com ([104.47.36.113]:53303
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932757AbeDIAhK (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:37:10 -0400
+        id S932744AbeDIAhH (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:37:07 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Goran Ferenc <goran.ferenc@imgtec.com>,
-        Miodrag Dinic <miodrag.dinic@imgtec.com>,
-        Aleksandar Markovic <aleksandar.markovic@imgtec.com>,
-        Douglas Leung <douglas.leung@imgtec.com>,
-        James Hogan <james.hogan@imgtec.com>,
-        Paul Burton <paul.burton@imgtec.com>,
-        Petar Jovanovic <petar.jovanovic@imgtec.com>,
-        Raghu Gandham <raghu.gandham@imgtec.com>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
+CC: Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 086/162] MIPS: VDSO: Fix conversions in
- do_monotonic()/do_monotonic_coarse()
-Thread-Topic: [PATCH AUTOSEL for 4.4 086/162] MIPS: VDSO: Fix conversions in
- do_monotonic()/do_monotonic_coarse()
-Thread-Index: AQHTz5m5YFd8LuNn7UOsfh2ttKDoxg==
-Date: Mon, 9 Apr 2018 00:28:46 +0000
-Message-ID: <20180409002738.163941-86-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 080/162] s390/pci: improve error handling
+ during interrupt deregistration
+Thread-Topic: [PATCH AUTOSEL for 4.4 080/162] s390/pci: improve error handling
+ during interrupt deregistration
+Thread-Index: AQHTz5m2lA8DqZ0680+8ss81b3nX/A==
+Date: Mon, 9 Apr 2018 00:28:41 +0000
+Message-ID: <20180409002738.163941-80-alexander.levin@microsoft.com>
 References: <20180409002738.163941-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -98,167 +89,175 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1031;7:Wk0UcKDUXf2NrkU8+T1lSdtPIgTEZr+pxBwV28r249fivuehbE0ijIp294U8USNa1dM62NhprPPd/uqoV1/fkQUB4tHmYmfqP8wPpzviYx0wtTE/GmApqHchbmu/Na7ApCqXXu3Ulx9mkPJlgjtD/QNH/4cDzl3mP5Bd9eTXSWiziAhRMQVZI/pPMst+cXylwxq91yYMlrwpihmlQPWrfJ+suGdnUS2IbXDqkeis09NLXrPqWYn+RdpjWB+p8qeJ;20:WLeweGt1wgCyY88EdJ2aSoDpDc0aO95wh1xxFr2CsNWpqTqQOj3kyXW/rKff5OQ+FLG8wOVEitky9/IhgX3f+klUx4jOGcQ51HI9i1Bt92FyoAIZgQEE68LZIxZui1Y9wphuPfdCfhdkVLfsuFP/w5nCIOwkyRdKsKOKe0dIJlQ=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0885;7:vFSFBYNpnrFfy+bQqrVfJtPXag88zbQWjCU1LLjKlpIQApnjfzycVmMDFEq9CCdq+rg3dygmYjqL7dw+FABbHv8O46MToWRbcsv6bWvVXBbG0QPHZ/AW0cZ+B1JIWoa6LCVOpv+ETGALCj9IZKG8VbwqW1b0QZ8STkdT8jUF8JSRuzLffr5FMdIHmkCtpw5g0SrLzD7OCb41gqz9c/BEsikfKLBWcqwMONw2LPq1tRYhlk2SMa+1Z3Mz9B0RJPNq;20:7w9Y1NTynVr78kY4iNyCqaHMBOyGQJ59lzxU+H4WksmSyjFgWogD4ePzpWrzi+/r6y7xdXnQ1bxPM+lo0bdKrsMZKlbbgH5SE/hbNImVrLUwNlFohyjB73TNM8wv+kcMzRtJQsYNZkAiNw+kZZyRZ5TPVaJdY1FGkJKxMtZvQxA=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: f802f542-8350-4a27-ba7b-08d59db204f1
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1031;
-x-ms-traffictypediagnostic: DM5PR2101MB1031:
+X-MS-Office365-Filtering-Correlation-Id: ac4fc6fe-ebaf-4839-72ec-08d59db202a2
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0885;
+x-ms-traffictypediagnostic: DM5PR2101MB0885:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10315C030260A08BCA6D003EFBBF0@DM5PR2101MB1031.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1031;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1031;
+x-microsoft-antispam-prvs: <DM5PR2101MB0885507329EF64E982E8F9DDFBBF0@DM5PR2101MB0885.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(190383065149520)(104084551191319);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0885;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0885;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(39380400002)(346002)(39860400002)(189003)(377424004)(199004)(2900100001)(10290500003)(99286004)(76176011)(14454004)(966005)(7736002)(11346002)(26005)(6666003)(86612001)(7416002)(72206003)(478600001)(36756003)(106356001)(66066001)(2616005)(186003)(22452003)(86362001)(68736007)(305945005)(54906003)(102836004)(486006)(59450400001)(110136005)(316002)(6506007)(446003)(107886003)(53936002)(4326008)(105586002)(6306002)(6436002)(6486002)(476003)(6512007)(5660300001)(5250100002)(25786009)(3846002)(6116002)(1076002)(97736004)(3280700002)(2501003)(2906002)(81156014)(8676002)(10090500001)(81166006)(8936002)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1031;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 2/twVTYnqjQmkpaJUtdS/z1tJUuqn7TouiyEny519hbpqRmqC+NkriR+WmCtAPH6VpzjKiTcLWVlLSlbJ49JQbU0k1a5HJ9jgSdt/Rk0K3f9Xh+YjpSPChtKEtAv3VbQN7txw30UG0sf0+FeD/dp2rJf7oMfS0tEMyOhUhBln0VI96UxUuEk+Q3KNqiprHXlD9IL7bb4EMw23E3tGmLfb/xTVsuXMtnNONIvxg/xXneS+qRTQGkm7QMhDfXeJU4WrIol9RQnn3ITfHfW7snZNCxU8Kcr/W0sxyrAqcdXN4w46Np3xk1bAghfR2bLZLJNEpRZ4WK32myj5Dgj32jiuPWIFNLYkfJfqhFi4kKhbn34+beFo91NcOjYVFDVlG1u9K/V7nZMZ8cekq48oBLM3+QfEUyY2Jq2NLYU4phbV58=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(376002)(39860400002)(366004)(346002)(199004)(189003)(66066001)(575784001)(3846002)(6116002)(59450400001)(86362001)(305945005)(10290500003)(6436002)(5250100002)(3280700002)(10090500001)(3660700001)(6506007)(2501003)(107886003)(446003)(53936002)(11346002)(2616005)(26005)(76176011)(7736002)(478600001)(476003)(81156014)(25786009)(8676002)(81166006)(186003)(8936002)(4326008)(97736004)(102836004)(99286004)(14454004)(36756003)(6512007)(316002)(2906002)(22452003)(68736007)(54906003)(110136005)(486006)(6486002)(6666003)(5660300001)(2900100001)(1076002)(72206003)(86612001)(105586002)(106356001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0885;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: XQmrjtMeRI2am8oJo2MUmJKlv/Cl/JBE6Qi3aAMf0Y0VhswakXrgOYBB1FiWU36raKzPFlSkh0HFMGzT5nCVJ6FcvBPpRcw8XFg8cnt0IoW04FCG1BWc+2QVgs1RdhjgY00Fu8tm7hiYQTPGadDl9FguqB93V+XJsqDHrFevFLI16tcrpwH0hV14CJm7obhS4rnye0nkFuBp+6K/Oyjd8qT2a2gziqplL0y45PI2CGV4u950axDCTRrzgts/MpseCyQ8ORBGU/ULk9WHH99696+DFrVq6eFKVcDmIqCTKx3A/4Jbu/HCBtfO4yEiaULxWs7XirAhHj3IbGOPfQSX1lzYh5NQhBjyG3RLez15OBw24sxkyry3nEohz+dKY5+Gc6LLKC3kXmTDL8XBgIbJ01TfqEQcS24HyPC73Ow1G08=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f802f542-8350-4a27-ba7b-08d59db204f1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:28:46.8021
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac4fc6fe-ebaf-4839-72ec-08d59db202a2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:28:41.9739
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1031
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0885
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Goran Ferenc <goran.ferenc@imgtec.com>
+From: Sebastian Ott <sebott@linux.vnet.ibm.com>
 
-[ Upstream commit 8ec7f15b8cca4f790df5cdf33f26e2926d4ee2fd ]
+[ Upstream commit 4dfbd3efe3f0cf9ff1325b87491e1b1fe07afaf1 ]
 
-Fix incorrect calculation in do_monotonic() and do_monotonic_coarse()
-function that in turn caused incorrect values returned by the vdso
-version of system call clock_gettime() on mips64 if its system clock
-ID parameter was CLOCK_MONOTONIC or CLOCK_MONOTONIC_COARSE.
+When we ask a function to stop creating interrupts this may fail
+due to the function being already gone (e.g. after hot-unplug).
 
-Consider these variables and their types on mips32 and mips64:
+Consequently we don't free associated resources like summary bits
+and bit vectors used for irq processing. This could lead to
+situations where we ran out of these resources and fail to setup
+new interrupts.
 
-tk->wall_to_monotonic.tv_sec  s64, s64   (kernel/vdso.c)
-vdso_data.wall_to_mono_sec    u32, u32   (kernel/vdso.c)
-to_mono_sec                   u32, u32   (vdso/gettimeofday.c)
-ts->tv_sec                    s32, s64   (vdso/gettimeofday.c)
+The fix is to just ignore the errors in cases where we can be
+sure no new interrupts are generated.
 
-For mips64 case, u32 vdso_data.wall_to_mono_sec variable is updated
-from the 64-bit signed variable tk->wall_to_monotonic.tv_sec
-(kernel/vdso.c:76) which is a negative number holding the time passed
-from 1970-01-01 to the time boot started. This 64-bit signed value is
-currently around 47+ years, in seconds. For instance, let this value
-be:
-
--1489757461
-
-or
-
-11111111111111111111111111111111 10100111001101000001101011101011
-
-By updating 32-bit vdso_data.wall_to_mono_sec variable, we lose upper
-32 bits (signed 1's).
-
-to_mono_sec variable is a parameter of do_monotonic() and
-do_monotonic_coarse() functions which holds vdso_data.wall_to_mono_sec
-value. Its value needs to be added (or subtracted considering it holds
-negative value from the tk->wall_to_monotonic.tv_sec) to the current
-time passed from 1970-01-01 (ts->tv_sec), which is again something like
-47+ years, but increased by the time passed from the boot to the
-current time. ts->tv_sec is 32-bit long in case of 32-bit architecture
-and 64-bit long in case of 64-bit architecture. Consider the update of
-ts->tv_sec (vdso/gettimeofday.c:55 & 167):
-
-ts->tv_sec +=3D to_mono_sec;
-
-mips32 case: This update will be performed correctly, since both
-ts->tv_sec and to_mono_sec are 32-bit long and the sign in to_mono_sec
-is preserved. Implicit conversion from u32 to s32 will be done
-correctly.
-
-mips64 case: This update will be wrong, since the implicit conversion
-will not be done correctly. The reason is that the conversion will be
-from u32 to s64. This is because to_mono_sec is 32-bit long for both
-mips32 and mips64 cases and s64..33 bits of converted to_mono_sec
-variable will be zeros.
-
-So, in order to make MIPS64 implementation work properly for
-MONOTONIC and MONOTONIC_COARSE clock ids on mips64, the size of
-wall_to_mono_sec variable in mips_vdso_data union and respective
-parameters in do_monotonic() and do_monotonic_coarse() functions
-should be changed from u32 to u64. Because of consistency, this
-size change from u32 and u64 is also done for wall_to_mono_nsec
-variable and corresponding function parameters.
-
-As far as similar situations for other architectures are concerned,
-let's take a look at arm. Arm has two distinct vdso_data structures
-for 32-bit & 64-bit cases, and arm's wall_to_mono_sec and
-wall_to_mono_nsec are u32 for 32-bit and u64 for 64-bit cases.
-On the other hand, MIPS has only one structure (mips_vdso_data),
-hence the need for changing the size of above mentioned parameters.
-
-Signed-off-by: Goran Ferenc <goran.ferenc@imgtec.com>
-Signed-off-by: Miodrag Dinic <miodrag.dinic@imgtec.com>
-Signed-off-by: Aleksandar Markovic <aleksandar.markovic@imgtec.com>
-Cc: Douglas Leung <douglas.leung@imgtec.com>
-Cc: James Hogan <james.hogan@imgtec.com>
-Cc: Paul Burton <paul.burton@imgtec.com>
-Cc: Petar Jovanovic <petar.jovanovic@imgtec.com>
-Cc: Raghu Gandham <raghu.gandham@imgtec.com>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/16638/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/mips/include/asm/vdso.h  | 4 ++--
- arch/mips/vdso/gettimeofday.c | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ arch/s390/include/asm/pci_insn.h |  2 +-
+ arch/s390/pci/pci.c              | 29 +++++++++++++++++++----------
+ arch/s390/pci/pci_insn.c         | 10 +++++-----
+ 3 files changed, 25 insertions(+), 16 deletions(-)
 
-diff --git a/arch/mips/include/asm/vdso.h b/arch/mips/include/asm/vdso.h
-index 8f4ca5dd992b..b7cd6cf77b83 100644
---- a/arch/mips/include/asm/vdso.h
-+++ b/arch/mips/include/asm/vdso.h
-@@ -79,8 +79,8 @@ union mips_vdso_data {
- 	struct {
- 		u64 xtime_sec;
- 		u64 xtime_nsec;
--		u32 wall_to_mono_sec;
--		u32 wall_to_mono_nsec;
-+		u64 wall_to_mono_sec;
-+		u64 wall_to_mono_nsec;
- 		u32 seq_count;
- 		u32 cs_shift;
- 		u8 clock_mode;
-diff --git a/arch/mips/vdso/gettimeofday.c b/arch/mips/vdso/gettimeofday.c
-index ce89c9e294f9..fd7d433970bf 100644
---- a/arch/mips/vdso/gettimeofday.c
-+++ b/arch/mips/vdso/gettimeofday.c
-@@ -39,8 +39,8 @@ static __always_inline int do_monotonic_coarse(struct tim=
-espec *ts,
- 					       const union mips_vdso_data *data)
+diff --git a/arch/s390/include/asm/pci_insn.h b/arch/s390/include/asm/pci_i=
+nsn.h
+index 9e02cb7955c1..a74efc02ad2c 100644
+--- a/arch/s390/include/asm/pci_insn.h
++++ b/arch/s390/include/asm/pci_insn.h
+@@ -76,7 +76,7 @@ struct zpci_fib {
+ 	u32 gd;
+ } __packed __aligned(8);
+=20
+-int zpci_mod_fc(u64 req, struct zpci_fib *fib);
++u8 zpci_mod_fc(u64 req, struct zpci_fib *fib, u8 *status);
+ int zpci_refresh_trans(u64 fn, u64 addr, u64 range);
+ int zpci_load(u64 *data, u64 req, u64 offset);
+ int zpci_store(u64 data, u64 req, u64 offset);
+diff --git a/arch/s390/pci/pci.c b/arch/s390/pci/pci.c
+index ef0499b76c50..d95bfffdcc2e 100644
+--- a/arch/s390/pci/pci.c
++++ b/arch/s390/pci/pci.c
+@@ -113,6 +113,7 @@ static int zpci_set_airq(struct zpci_dev *zdev)
  {
- 	u32 start_seq;
--	u32 to_mono_sec;
--	u32 to_mono_nsec;
-+	u64 to_mono_sec;
-+	u64 to_mono_nsec;
+ 	u64 req =3D ZPCI_CREATE_REQ(zdev->fh, 0, ZPCI_MOD_FC_REG_INT);
+ 	struct zpci_fib fib =3D {0};
++	u8 status;
+=20
+ 	fib.isc =3D PCI_ISC;
+ 	fib.sum =3D 1;		/* enable summary notifications */
+@@ -122,7 +123,22 @@ static int zpci_set_airq(struct zpci_dev *zdev)
+ 	fib.aisb =3D (unsigned long) zpci_aisb_iv->vector + (zdev->aisb/64)*8;
+ 	fib.aisbo =3D zdev->aisb & 63;
+=20
+-	return zpci_mod_fc(req, &fib);
++	return zpci_mod_fc(req, &fib, &status) ? -EIO : 0;
++}
++
++/* Modify PCI: Unregister adapter interruptions */
++static int zpci_clear_airq(struct zpci_dev *zdev)
++{
++	u64 req =3D ZPCI_CREATE_REQ(zdev->fh, 0, ZPCI_MOD_FC_DEREG_INT);
++	struct zpci_fib fib =3D {0};
++	u8 cc, status;
++
++	cc =3D zpci_mod_fc(req, &fib, &status);
++	if (cc =3D=3D 3 || (cc =3D=3D 1 && status =3D=3D 24))
++		/* Function already gone or IRQs already deregistered. */
++		cc =3D 0;
++
++	return cc ? -EIO : 0;
+ }
+=20
+ struct mod_pci_args {
+@@ -136,13 +152,14 @@ static int mod_pci(struct zpci_dev *zdev, int fn, u8 =
+dmaas, struct mod_pci_args
+ {
+ 	u64 req =3D ZPCI_CREATE_REQ(zdev->fh, dmaas, fn);
+ 	struct zpci_fib fib =3D {0};
++	u8 status;
+=20
+ 	fib.pba =3D args->base;
+ 	fib.pal =3D args->limit;
+ 	fib.iota =3D args->iota;
+ 	fib.fmb_addr =3D args->fmb_addr;
+=20
+-	return zpci_mod_fc(req, &fib);
++	return zpci_mod_fc(req, &fib, &status) ? -EIO : 0;
+ }
+=20
+ /* Modify PCI: Register I/O address translation parameters */
+@@ -164,14 +181,6 @@ int zpci_unregister_ioat(struct zpci_dev *zdev, u8 dma=
+as)
+ 	return mod_pci(zdev, ZPCI_MOD_FC_DEREG_IOAT, dmaas, &args);
+ }
+=20
+-/* Modify PCI: Unregister adapter interruptions */
+-static int zpci_clear_airq(struct zpci_dev *zdev)
+-{
+-	struct mod_pci_args args =3D { 0, 0, 0, 0 };
+-
+-	return mod_pci(zdev, ZPCI_MOD_FC_DEREG_INT, 0, &args);
+-}
+-
+ /* Modify PCI: Set PCI function measurement parameters */
+ int zpci_fmb_enable_device(struct zpci_dev *zdev)
+ {
+diff --git a/arch/s390/pci/pci_insn.c b/arch/s390/pci/pci_insn.c
+index bc065392f7ab..c005dbb01563 100644
+--- a/arch/s390/pci/pci_insn.c
++++ b/arch/s390/pci/pci_insn.c
+@@ -41,20 +41,20 @@ static inline u8 __mpcifc(u64 req, struct zpci_fib *fib=
+, u8 *status)
+ 	return cc;
+ }
+=20
+-int zpci_mod_fc(u64 req, struct zpci_fib *fib)
++u8 zpci_mod_fc(u64 req, struct zpci_fib *fib, u8 *status)
+ {
+-	u8 cc, status;
++	u8 cc;
 =20
  	do {
- 		start_seq =3D vdso_data_read_begin(data);
-@@ -148,8 +148,8 @@ static __always_inline int do_monotonic(struct timespec=
- *ts,
- {
- 	u32 start_seq;
- 	u64 ns;
--	u32 to_mono_sec;
--	u32 to_mono_nsec;
-+	u64 to_mono_sec;
-+	u64 to_mono_nsec;
+-		cc =3D __mpcifc(req, fib, &status);
++		cc =3D __mpcifc(req, fib, status);
+ 		if (cc =3D=3D 2)
+ 			msleep(ZPCI_INSN_BUSY_DELAY);
+ 	} while (cc =3D=3D 2);
 =20
- 	do {
- 		start_seq =3D vdso_data_read_begin(data);
+ 	if (cc)
+-		zpci_err_insn(cc, status, req, 0);
++		zpci_err_insn(cc, *status, req, 0);
+=20
+-	return (cc) ? -EIO : 0;
++	return cc;
+ }
+=20
+ /* Refresh PCI Translations */
 --=20
 2.15.1
