@@ -1,58 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751803AbeDIXml (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 19:42:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51306 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750759AbeDIXmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 19:42:40 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak47 V1] audit: normalize MAC_POLICY_LOAD record
-Date: Mon,  9 Apr 2018 19:36:31 -0400
-Message-Id: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
+        id S1752163AbeDIXnI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 19:43:08 -0400
+Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:57258 "EHLO
+        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751877AbeDIXnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 19:43:06 -0400
+Date: Mon, 9 Apr 2018 19:43:01 -0400
+From: Wakko Warner <wakko@animx.eu.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180409234301.GA17037@animx.eu.org>
+References: <20180401182723.GA31755@animx.eu.org>
+ <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+ <20180406014644.GA16112@animx.eu.org>
+ <20180406020651.GB16112@animx.eu.org>
+ <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
+ <20180407165335.GA2515@animx.eu.org>
+ <1ff8d234cc565ba9701ce31899fca5faa597e050.camel@wdc.com>
+ <20180408160254.GA22869@animx.eu.org>
+ <f9467e78ce05446e7a89f06713c36fb638d1b6ad.camel@wdc.com>
+ <20180409233436.GC6450@ming.t460p>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409233436.GC6450@ming.t460p>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The audit MAC_POLICY_LOAD record had redundant dangling keywords and was
-missing information about which LSM was responsible and its completion
-status.  While this record is only issued on success, the parser expects
-the res= field to be present.
+Ming Lei wrote:
+> On Mon, Apr 09, 2018 at 09:30:11PM +0000, Bart Van Assche wrote:
+> > Hello Ming,
+> > 
+> > Can you have a look at this? The start of this e-mail thread is available at
+> > https://www.mail-archive.com/linux-scsi@vger.kernel.org/msg72574.html.
+> 
+> Sure, thanks for your sharing.
+> 
+> Wakko, could you test the following patch and see if there is any
+> difference?
 
-Old record:
-type=MAC_POLICY_LOAD msg=audit(1479299795.404:43): policy loaded auid=0 ses=1
+Sure, one question, is this against 4.15 or does it matter.  Last I looked,
+4.16 hasn't changed from 4.15 for that file.
 
-Delete the redundant dangling keywords, add the lsm= field and the res=
-field.
-
-New record:
-type=MAC_POLICY_LOAD msg=audit(1523293846.204:894): auid=0 ses=1 lsm=selinux res=1
-
-See: https://github.com/linux-audit/audit-kernel/issues/47
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- security/selinux/selinuxfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index 00b21b2..496915a 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -531,7 +531,7 @@ static ssize_t sel_write_load(struct file *file, const char __user *buf,
- 
- out1:
- 	audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
--		"policy loaded auid=%u ses=%u",
-+		"auid=%u ses=%u lsm=selinux res=1",
- 		from_kuid(&init_user_ns, audit_get_loginuid(current)),
- 		audit_get_sessionid(current));
- out:
+> diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
+> index 0d99b242e82e..6147178f1f37 100644
+> --- a/drivers/target/target_core_pscsi.c
+> +++ b/drivers/target/target_core_pscsi.c
+> @@ -888,7 +888,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+>  		if (len > 0 && data_len > 0) {
+>  			bytes = min_t(unsigned int, len, PAGE_SIZE - off);
+>  			bytes = min(bytes, data_len);
+> -
+> + new_bio:
+>  			if (!bio) {
+>  				nr_vecs = min_t(int, BIO_MAX_PAGES, nr_pages);
+>  				nr_pages -= nr_vecs;
+> @@ -931,6 +931,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+>  				 * be allocated with pscsi_get_bio() above.
+>  				 */
+>  				bio = NULL;
+> +				goto new_bio;
+>  			}
+>  
+>  			data_len -= bytes;
+> 
+> -- 
+> Ming
 -- 
-1.8.3.1
+ Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
+ million bugs.
