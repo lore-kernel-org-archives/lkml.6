@@ -1,133 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752137AbeDIHqW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:46:22 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:45795 "EHLO
+        id S1751875AbeDIHvg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:51:36 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33803 "EHLO
         mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751140AbeDIHqU (ORCPT
+        with ESMTP id S1750759AbeDIHve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:46:20 -0400
-X-Google-Smtp-Source: AIpwx4+4e+KFgKnmST7Y0DDeTzBQqjxS0FaS9c/kdCsdcVbL/C+7mS/+mijlG88A1DH0f3YZVvCKVg==
-From: "Oliver O'Halloran" <oohall@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: sfr@canb.auug.org.au, linux-nvdimm@lists.01.org,
-        "Oliver O'Halloran" <oohall@gmail.com>, devicetree@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] drivers/of: Introduce ARCH_HAS_OWN_OF_NUMA
-Date: Mon,  9 Apr 2018 17:46:04 +1000
-Message-Id: <20180409074604.17671-1-oohall@gmail.com>
-X-Mailer: git-send-email 2.9.5
+        Mon, 9 Apr 2018 03:51:34 -0400
+X-Google-Smtp-Source: AIpwx48hEuqBV4Qq57mG1jcU1sHK0In+jcIdFERlHpIyDmoJgqAE60DuRoen6hSD7Ssx5yaOj7kVuR/1JdNixuAOKqU=
+MIME-Version: 1.0
+In-Reply-To: <3337259.MW9pfDCdka@positron.chronox.de>
+References: <00000000000092ad87056950ef9e@google.com> <3337259.MW9pfDCdka@positron.chronox.de>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 9 Apr 2018 09:51:13 +0200
+Message-ID: <CACT4Y+bGDOi-+vVs=-eD=wHaUbFz2ZVO13yF8hq4cU4dkGXorg@mail.gmail.com>
+Subject: Re: [PATCH] AF_ALG: register completely initialized request in list
+To: =?UTF-8?Q?Stephan_M=C3=BCller?= <smueller@chronox.de>
+Cc: syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w397pfDI014037
 
-Some OF platforms (pseries and some SPARC systems) has their own
-implementations of NUMA affinity detection rather than using the generic
-OF_NUMA driver, which mainly exists for arm64. For other platforms one
-of two fallbacks provided by the base OF driver are used depending on
-CONFIG_NUMA.
+On Sun, Apr 8, 2018 at 7:57 PM, Stephan Müller <smueller@chronox.de> wrote:
+> Hi,
+>
+> May I ask to check whether this patch fixes the issue? I cannot re-create
+> the issue with the reproducter. Yet, as far as I understand, you try to
+> induce errors which shall validate whether the error code paths are correct.
 
-In the CONFIG_NUMA=n case the fallback is an inline function in of.h.
-In the =y case the fallback is a real function which is defined as a
-weak symbol so that it may be overwritten by the architecture if desired.
+You can ask syzbot to test by replying to its report email with a test
+command, see:
+https://github.com/google/syzkaller/blob/master/docs/syzbot.md#communication-with-syzbot
 
-The problem with this arrangement is that the real implementations all
-export of_node_to_nid(). Unfortunately it's not possible to export the
-fallback since it would clash with the non-weak version. As a result
-we get build failures when:
+Note that all testing of KMSAN bugs needs to go to KMSAN tree, for details see:
+https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
 
-a) CONFIG_NUMA=y && CONFIG_OF=y, and
-b) The platform doesn't implement of_node_to_nid(), and
-c) A module uses of_node_to_nid()
 
-Given b) will be true for most platforms this is fairly easy to hit
-and has been observed on ia64 and x86.
 
-This patch remedies the problem by introducing the ARCH_HAS_OWN_OF_NUMA
-Kconfig option which is selected if an architecture provides an
-implementation of of_node_to_nid(). If a platform does not use it's own,
-or the generic OF_NUMA, then always use the inline fallback in of.h so
-we don't need to futz around with exports.
 
-Cc: devicetree@vger.kernel.org
-Cc: sparclinux@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Fixes: 298535c00a2c ("of, numa: Add NUMA of binding implementation.")
-Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
----
- arch/powerpc/Kconfig | 1 +
- arch/sparc/Kconfig   | 1 +
- drivers/of/Kconfig   | 3 +++
- drivers/of/base.c    | 7 -------
- include/linux/of.h   | 2 +-
- 5 files changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index c32a181a7cbb..74ce5f3564ae 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -625,6 +625,7 @@ config NUMA
- 	bool "NUMA support"
- 	depends on PPC64
- 	default y if SMP && PPC_PSERIES
-+	select ARCH_HAS_OWN_OF_NUMA
- 
- config NODES_SHIFT
- 	int
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index 8767e45f1b2b..f8071f1c3edb 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -299,6 +299,7 @@ config GENERIC_LOCKBREAK
- config NUMA
- 	bool "NUMA support"
- 	depends on SPARC64 && SMP
-+	select ARCH_HAS_OWN_OF_NUMA
- 
- config NODES_SHIFT
- 	int "Maximum NUMA Nodes (as a power of 2)"
-diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-index ad3fcad4d75b..01c62b747b25 100644
---- a/drivers/of/Kconfig
-+++ b/drivers/of/Kconfig
-@@ -103,4 +103,7 @@ config OF_OVERLAY
- config OF_NUMA
- 	bool
- 
-+config ARCH_HAS_OWN_OF_NUMA
-+	bool
-+
- endif # OF
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 848f549164cd..82a9584bb0e2 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -84,13 +84,6 @@ int of_n_size_cells(struct device_node *np)
- }
- EXPORT_SYMBOL(of_n_size_cells);
- 
--#ifdef CONFIG_NUMA
--int __weak of_node_to_nid(struct device_node *np)
--{
--	return NUMA_NO_NODE;
--}
--#endif
--
- static struct device_node **phandle_cache;
- static u32 phandle_cache_mask;
- 
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 4d25e4f952d9..9bb42dac5e65 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -942,7 +942,7 @@ static inline int of_cpu_node_to_id(struct device_node *np)
- #define of_node_cmp(s1, s2)		strcasecmp((s1), (s2))
- #endif
- 
--#if defined(CONFIG_OF) && defined(CONFIG_NUMA)
-+#if defined(CONFIG_OF_NUMA) || defined(CONFIG_ARCH_HAS_OWN_OF_NUMA)
- extern int of_node_to_nid(struct device_node *np);
- #else
- static inline int of_node_to_nid(struct device_node *device)
--- 
-2.9.5
+> The fix below should ensure this now.
+>
+> Thanks a lot.
+>
+> ---8<---
+>
+> From 8f083e7b0684a9f91c186d7b46eec34e439689c3 Mon Sep 17 00:00:00 2001
+> From: Stephan Mueller <smueller@chronox.de>
+> Date: Sun, 8 Apr 2018 19:53:59 +0200
+> Subject: [PATCH] AF_ALG: Initialize sg_num_bytes in error code path
+>
+> The RX SGL in processing is already registered with the RX SGL tracking
+> list to support proper cleanup. The cleanup code path uses the
+> sg_num_bytes variable which must therefore be always initialized, even
+> in the error code path.
+>
+> Signed-off-by: Stephan Mueller <smueller@chronox.de>
+> Reported-by: syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
+> ---
+>  crypto/af_alg.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+> index c49766b03165..0d555c072669 100644
+> --- a/crypto/af_alg.c
+> +++ b/crypto/af_alg.c
+> @@ -1156,8 +1156,10 @@ int af_alg_get_rsgl(struct sock *sk, struct msghdr *msg, int flags,
+>
+>                 /* make one iovec available as scatterlist */
+>                 err = af_alg_make_sg(&rsgl->sgl, &msg->msg_iter, seglen);
+> -               if (err < 0)
+> +               if (err < 0) {
+> +                       rsgl->sg_num_bytes = 0;
+>                         return err;
+> +               }
+>
+>                 /* chain the new scatterlist with previous one */
+>                 if (areq->last_rsgl)
+> --
+> 2.14.3
+>
+>
+>
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/3337259.MW9pfDCdka%40positron.chronox.de.
+> For more options, visit https://groups.google.com/d/optout.
