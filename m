@@ -1,123 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753118AbeDIPXM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:23:12 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:49636 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753062AbeDIPXK (ORCPT
+        id S1753053AbeDIPZi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:25:38 -0400
+Received: from mail-pg0-f45.google.com ([74.125.83.45]:35979 "EHLO
+        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751633AbeDIPZh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:23:10 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [RFC] UBIFS authentication
-From: David Gstir <david@sigma-star.at>
-In-Reply-To: <20180409095912.f7d35y7yjdnj2ffz@pengutronix.de>
-Date: Mon, 9 Apr 2018 17:23:05 +0200
-Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Content-Transfer-Encoding: 8BIT
-Message-Id: <9EEA8AD6-E46F-45B7-8A85-98E4CC82B1D3@sigma-star.at>
-References: <E6D3BD02-AF3A-4B75-92FD-A8A07B4C9C51@sigma-star.at>
- <20180409095912.f7d35y7yjdnj2ffz@pengutronix.de>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: Apple Mail (2.3445.6.18)
+        Mon, 9 Apr 2018 11:25:37 -0400
+X-Google-Smtp-Source: AIpwx4/pBVTUhm/Hdw+rydyIzHkFPZlyatmDzXbJJBRIZOti7ELGH1gGh+hYRVchJ6P25Oq6qs4EMRnmyEuqDCcvlt0=
+MIME-Version: 1.0
+In-Reply-To: <s5hbmesflxu.wl-tiwai@suse.de>
+References: <001a113fe6c005d8ac056922c4c3@google.com> <s5hbmesflxu.wl-tiwai@suse.de>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 9 Apr 2018 17:25:15 +0200
+Message-ID: <CACT4Y+Zx4SU_Pe28DroSVYMhPMUxE1uKTe9721WKdh-wqF3CNw@mail.gmail.com>
+Subject: Re: WARNING in snd_pcm_hw_params
+To: Takashi Iwai <tiwai@suse.de>
+Cc: syzbot <syzbot+803e0047ac3a3096bb4f@syzkaller.appspotmail.com>,
+        alsa-devel@alsa-project.org, syzkaller-bugs@googlegroups.com,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sascha,
+On Mon, Apr 9, 2018 at 5:18 PM, Takashi Iwai <tiwai@suse.de> wrote:
+> On Fri, 06 Apr 2018 02:02:02 +0200,
+> syzbot wrote:
+>>
+>> WARNING: CPU: 0 PID: 4468 at sound/core/pcm_native.c:620
+>> snd_pcm_hw_params_choose sound/core/pcm_native.c:620 [inline]
+>
+> This is a WARN_ON() to catch the inconsistent hw_params call.
+> This shouldn't happen in theory, but the reality looks weirder.
+>
+> The necessary "fix" is just to get rid of snd_BUG_ON(), but still
+> wonder which condition it hits.  If it's an empty parameter, the
+> previous snd_pcm_hw_refine() should have caught and returned the error
+> beforehand...
 
-> On 09.04.2018, at 11:59, Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> 
-> Hi David,
-> 
-> On Wed, Jan 17, 2018 at 04:19:14PM +0100, David Gstir wrote:
->> Hi everybody!
->> 
->> ### Index Authentication
->> 
->> Through UBIFS' concept of a wandering tree, it already takes care of only
->> updating and persisting changed parts from leaf node up to the root node
->> of the full B+ tree. This enables us to augment the index nodes of the tree
->> with a hash over each node's child nodes. As a result, the index basically also
->> a Merkle tree. Since the leaf nodes of the index contain the actual filesystem
->> data, the hashes of their parent index nodes thus cover all the file contents
->> and file metadata. When a file changes, the UBIFS index is updated accordingly
->> from the leaf nodes up to the root node including the master node. This process
->> can be hooked to recompute the hash only for each changed node at the same time.
->> Whenever a file is read, UBIFS can verify the hashes from each leaf node up to
->> the root node to ensure the node's integrity.
->> 
->> To ensure the authenticity of the whole index, the UBIFS master node stores a
->> keyed hash (HMAC) over its own contents (which includes the location of the root
->> node) and the root node of the index tree. As mentioned above, the master node
->> is always written to the flash whenever the index is persisted (ie. on index
->> commit).
->> 
->> Using this approach only UBIFS index nodes and the master node are changed to
->> include a hash. All other types of nodes will remain unchanged. This reduces
->> the storage overhead which is precious for users of UBIFS (ie. embedded
->> devices).
->> 
->> 
->>                                            HMAC Master Node
->>                                                 |
->>                      ' ' ' ' ' ' ' ' ' ' ' ' ' '|' '
->>                      '     +---------------+    o  '
->>                      '     |  Master Node  |       '
->>                      '     +---------------+       '       Hash Index Node #1
->>                      '             |               '                |
->>       . . . . . . . .'. . . . . .  v . . . . . . . . . . . . . . . .|. . . . .
->>       .              '      +---------------+      '                o        .
->>       .              '      | Index Node #1 |      '                         .
->>       .              '      +---------------+      '                         .
->>       .              '        |    ...   |  (fanout: 8)                      .
->>       .              ' ' ' '  | ' ' ' '  | ' ' ' ' '                         .
->>       .               +-------+          +------+                            .
->>       .               |                         |                            .
->>       .     ' ' ' ' ' v ' ' ' ' '  ' ' ' ' ' '  v  ' ' ' ' ' ' ' ' ' ' '     .
->>       .     ' +---------------+ '  '     +---------------+             '     .
->>       .     ' | Index Node #2 | '  '     | Index Node #3 |             '     .
->>       .     ' +---------------+ '  '     +---------------+             '     .
->>       .     '   |   ...         '  '        |   ...   |                '     .
->>       . . . ' . v . . . . . . . '. ' . . .  v . . . . v . . . . . . . .' . . .
->>             ' +-----------+     '  '+----------+  +-----------+        '
->>             ' | Data Node |     '  '| INO Node |  | DENT Node |        '
->>             ' +-----------+     '  '+----------+  +-----------+        '
->>             '  o                '  '                                o  '
->>             ' '|' ' ' ' ' ' ' ' '  ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' '|' '
->>                |                                                    |
->>          Hash Index Node #2                                Hash Index Node #3
-> 
-> When a hash covers an index node and also its children then of course
-> this is really space efficient, but this also means that in order to
-> read a node we always have to read all of its children. Also adding a
-> new leaf node means rehashing all siblings. Is it really worth paying
-> this price to save a few bytes for more hashes?
-> I would rather suggest to add a hash per child to each index node.
+Hi Takashi,
 
-What you propose is a simple tradeoff between the required on-flash storage
-space and the amount of read operations needed to verify the index node integrity.
+The reproducer for this is trivially simple:
 
-To get some numbers here: In case of SHA256 and a fanout of 8, we'd store an
-additional 224 bytes per index node and safe 7 index node reads per tree level.
+https://syzkaller.appspot.com/x/repro.syz?id=4913841943085056
 
-I hope it is clear that having a single hash does _not_ mean we have to read
-the whole tree! :)
+(and I guess perf_event_open is red herring).
 
-Considering that UBIFS is mostly used in embedded where storage space is rather
-precious, we opted for storing a single hash. But sure, storing a hash per
-branch/child  is a possibility and we have to discuss if that is acceptable
-in most use cases.
+But the really important part there is probably this: Fault:true
+FaultCall:2 FaultNth:18
+And you can see where it actually happened in the raw console log:
 
-As for adding new leaf nodes: If we add a leaf node, we'll always have to recompute
-the hash of every index node on the path to the root node. Even with a hash per
-branch/child. In case of TNC split/merge operations likely even more.
-But I don't get why you think that would mean we have to recompute the hash
-on all siblings of that nodes? Or do you simply mean that we have to re-read all
-those siblings to compute the hash on the parent?
+Raw console output: https://syzkaller.appspot.com/x/log.txt?id=6314122077536256
 
-Thanks,
-David
+Does it explain things?
+
+> In anyway this can't be a real crash, let's remove the warning to stop
+> the chorus of syzbot birds.
+>
+>
+> thanks,
+>
+> Takashi
+>
+> -- 8< --
+> From: Takashi Iwai <tiwai@suse.de>
+> Subject: [PATCH] ALSA: pcm: Remove WARN_ON() at snd_pcm_hw_params() error
+>
+> snd_pcm_hw_params() may hit WARN_ON() when an inconsistent parameter
+> set is passed.  Although this should have been caught by the former
+> snd_pcm_hw_refine() and returned the error, syzkaller succeeded to
+> pass through and hit the WARN_ON(), which in turn made it panic
+> unnecessarily.
+>
+> For reducing this kind of noise, let's drop snd_BUG_ON() check.
+>
+> Reported-by: syzbot+803e0047ac3a3096bb4f@syzkaller.appspotmail.com
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> ---
+>  sound/core/pcm_native.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+> index b84554893fab..35ffccea94c3 100644
+> --- a/sound/core/pcm_native.c
+> +++ b/sound/core/pcm_native.c
+> @@ -617,7 +617,7 @@ static int snd_pcm_hw_params_choose(struct snd_pcm_substream *pcm,
+>                         changed = snd_pcm_hw_param_first(pcm, params, *v, NULL);
+>                 else
+>                         changed = snd_pcm_hw_param_last(pcm, params, *v, NULL);
+> -               if (snd_BUG_ON(changed < 0))
+> +               if (changed < 0)
+>                         return changed;
+>                 if (changed == 0)
+>                         continue;
+> --
+> 2.16.3
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/s5hbmesflxu.wl-tiwai%40suse.de.
+> For more options, visit https://groups.google.com/d/optout.
